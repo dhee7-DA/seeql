@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { buildQueryPlan, SUPPORTED_DIALECTS, type Dialect } from "@/lib/sql-parser";
+import { buildAstTree } from "@/lib/ast-tree";
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,6 +13,11 @@ export async function POST(req: NextRequest) {
       : "postgresql";
 
     const result = buildQueryPlan(sql, dialect);
+    if (result.ok) {
+      // best-effort AST tree — never fails the parse response
+      const tree = buildAstTree(sql, dialect);
+      return NextResponse.json({ ...result, tree });
+    }
     return NextResponse.json(result);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unexpected server error";

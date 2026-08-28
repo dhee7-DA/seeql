@@ -85,6 +85,8 @@ export interface QueryPlan {
   setOps: string[];
   hasSubquery: boolean;
   stats: PlanStats;
+  /** Collapsible AST tree (null when it could not be derived) */
+  tree?: TreeNode | null;
 }
 
 export interface ParseError {
@@ -105,4 +107,72 @@ export interface PipelineStep {
   present: boolean;
   chips: string[];
   count: number;
+}
+
+/* ---------------- execution (Run) types ---------------- */
+
+export type CellValue = string | number | boolean | null;
+
+/** One EXPLAIN QUERY PLAN row */
+export interface PlanRow {
+  id: number;
+  parent: number | null;
+  detail: string;
+}
+
+export interface ExecResult {
+  ok: true;
+  statementType: string;
+  columns: string[];
+  rows: CellValue[][];
+  rowCount: number;
+  durationMs: number;
+  /** Rows affected for write statements */
+  changes: number | null;
+  /** Payload was capped at MAX_ROWS */
+  truncated: boolean;
+  /** EXPLAIN QUERY PLAN output for read statements (null when unavailable) */
+  plan: PlanRow[] | null;
+}
+
+export interface ExecError {
+  ok: false;
+  error: string;
+  hint?: string;
+}
+
+export type ExecResponse = ExecResult | ExecError;
+
+/* ---------------- parse tree (AST) types ---------------- */
+
+export interface TreeNode {
+  id: string;
+  /** Short human label, e.g. "INNER JOIN" or "SUM(...)" */
+  label: string;
+  /** Raw AST node type, e.g. binary_expr / aggr_func / table */
+  type: string;
+  /** Optional extra info shown as a subtitle */
+  detail?: string;
+  children: TreeNode[];
+}
+
+/* ---------------- schema (sample DB metadata) ---------------- */
+
+export interface SchemaColumn {
+  name: string;
+  type: string;
+  pk?: boolean;
+  fk?: { table: string; column: string };
+}
+
+export interface SchemaTable {
+  name: string;
+  description: string;
+  columns: SchemaColumn[];
+}
+
+export interface SchemaRelationship {
+  from: { table: string; column: string };
+  to: { table: string; column: string };
+  label: string;
 }

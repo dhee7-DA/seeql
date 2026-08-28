@@ -8,12 +8,14 @@ export interface SampleQuery {
   sql: string;
 }
 
+// Every sample runs against the built-in sample database (SQLite),
+// so pressing Run always produces real results.
 export const SAMPLE_QUERIES: SampleQuery[] = [
   {
     id: "join-agg",
     name: "Join + aggregation",
     description: "2 tables, INNER JOIN, GROUP BY, HAVING",
-    dialect: "postgresql",
+    dialect: "sqlite",
     sql: `SELECT c.name,
        o.status,
        COUNT(*) AS order_count,
@@ -29,7 +31,7 @@ ORDER BY revenue DESC;`,
     id: "star-schema",
     name: "Star schema (4-way join)",
     description: "Fact table joined to 3 dimensions",
-    dialect: "postgresql",
+    dialect: "sqlite",
     sql: `SELECT c.region,
        p.category,
        COUNT(DISTINCT o.id) AS orders,
@@ -47,13 +49,13 @@ LIMIT 25;`,
     id: "cte-window",
     name: "CTE + window function",
     description: "WITH clause feeding a RANK() window",
-    dialect: "postgresql",
+    dialect: "sqlite",
     sql: `WITH monthly AS (
   SELECT customer_id,
-         DATE_TRUNC('month', created_at) AS month,
+         strftime('%Y-%m', created_at) AS month,
          SUM(total) AS spend
   FROM orders
-  GROUP BY customer_id, DATE_TRUNC('month', created_at)
+  GROUP BY customer_id, strftime('%Y-%m', created_at)
 )
 SELECT m.month,
        m.customer_id,
@@ -67,7 +69,7 @@ ORDER BY m.month, spend_rank;`,
     id: "subquery",
     name: "Correlated subquery",
     description: "Per-row comparison against an aggregate",
-    dialect: "postgresql",
+    dialect: "sqlite",
     sql: `SELECT p.name, p.price
 FROM products p
 WHERE p.price > (
@@ -81,7 +83,7 @@ ORDER BY p.price DESC;`,
     id: "union",
     name: "UNION set operation",
     description: "Two sources merged, then sorted",
-    dialect: "postgresql",
+    dialect: "sqlite",
     sql: `SELECT name, 'customer' AS source
 FROM customers
 WHERE region = 'EU'
@@ -95,12 +97,29 @@ ORDER BY name;`,
     id: "simple",
     name: "Simple filtered lookup",
     description: "Single table, WHERE, ORDER BY, LIMIT",
-    dialect: "postgresql",
-    sql: `SELECT id, name, email
-FROM users
+    dialect: "sqlite",
+    sql: `SELECT id, name, email, city
+FROM customers
 WHERE active = 1 AND created_at > '2024-06-01'
 ORDER BY name
 LIMIT 20;`,
+  },
+  {
+    id: "catalog",
+    name: "Inventory snapshot",
+    description: "Products joined to suppliers, priced in stock",
+    dialect: "sqlite",
+    sql: `SELECT s.name AS supplier,
+       p.name AS product,
+       p.category,
+       p.price,
+       p.stock,
+       p.stock * p.price AS stock_value
+FROM products p
+JOIN suppliers s ON s.id = p.supplier_id
+WHERE p.stock > 100
+ORDER BY stock_value DESC
+LIMIT 15;`,
   },
 ];
 

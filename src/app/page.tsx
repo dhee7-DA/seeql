@@ -5,17 +5,22 @@ import {
   AlertTriangle,
   Braces,
   Check,
+  ClipboardList,
   Copy,
   Database,
+  DatabaseZap,
   Eraser,
   Filter,
   GitMerge,
+  History,
+  ListTree,
   Loader2,
   Network,
   Play,
-  ListTree,
+  RotateCcw,
   Sigma,
   Table2,
+  Timer,
   Workflow,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -31,10 +36,22 @@ import { SqlEditor } from "@/components/sql-editor";
 import { PipelineView } from "@/components/pipeline-view";
 import { JoinsView } from "@/components/joins-view";
 import { BreakdownView } from "@/components/breakdown-view";
+import { ResultsView, WriteResultView } from "@/components/results-view";
+import { PlanView } from "@/components/plan-view";
+import { ParseTreeView } from "@/components/parse-tree-view";
+import { SchemaView } from "@/components/schema-view";
 import { DEFAULT_SAMPLE, SAMPLE_QUERIES } from "@/lib/samples";
 import { DIALECTS, type DialectName } from "@/lib/sql-types";
-import type { ParseResult, QueryPlan } from "@/lib/sql-types";
+import type {
+  ExecResponse,
+  ExecResult,
+  ParseResult,
+  QueryPlan,
+} from "@/lib/sql-types";
 import { cn } from "@/lib/utils";
+
+const HISTORY_KEY = "sql-visualizer-history";
+const HISTORY_MAX = 12;
 
 function StatChip({
   icon: Icon,
@@ -71,7 +88,7 @@ function StatChip({
 
 function JsonView({ plan }: { plan: QueryPlan }) {
   const [copied, setCopied] = useState(false);
-  const json = JSON.stringify(plan, null, 2);
+  const json = JSON.stringify({ ...plan, tree: undefined }, null, 2);
 
   const copy = async () => {
     try {
@@ -111,29 +128,82 @@ export default function Home() {
   const [dialect, setDialect] = useState<DialectName>(DEFAULT_SAMPLE.dialect);
   const [sampleId, setSampleId] = useState<string>(DEFAULT_SAMPLE.id);
   const [plan, setPlan] = useState<ParseResult | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [exec, setExec] = useState<ExecResponse | null>(null);
+  const [running, setRunning] = useState(false);
+  const [history, setHistory] = useState<string[]>([]);
+  const [resetting, setResetting] = useState(false);
 
-  const runParse = useCallback(async (sqlText: string, dia: DialectName) => {
-    setLoading(true);
+  const loadHistory = useCallback(() => {
+    try {
+      const raw = window.localStorage.getItem(HISTORY_KEY);
+      if (raw) setHistory(JSON.parse(raw) as string[]);
+    } catch {
+      // ignore malformed history
+    }
+  }, []);
+
+  const pushHistory = useCallback((text: string) => {
+    setHistory((prev) => {
+      const next = [text, ...prev.filter((h) => h !== text)].slice(0, HISTORY_MAX);
+      try {
+        window.localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
+      } catch {
+        // storage unavailable
+      }
+      return next;
+    });
+  }, []);
+
+  /** Parse + execute in parallel; both panels update independently. */
+  const runAll = useCallback(
+    async (sqlText: string, dia: DialectName) => {
+      const trimmed = sqlText.trim();
+      if (!trimmed) return;
+      setRunning(true);
+      try {
+        const [parseRes, execRes] = await Promise.all([
+          fetch("/api/parse", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sql: trimmed, dialect: dia }),
+          }).then((r) => r.json() as Promise<ParseResult>),
+          fetch("/api/query", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sql: trimmed }),
+          }).then((r) => r.json() as Promise<ExecResponse>),
+        ]);
+        setPlan(parseRes);
+        setExec(execRes);
+        pushHistory(trimmed);
+      } catch {
+        setPlan((p) => p ?? { ok: false, error: "Could not reach the server. Please try again." });
+        setExec({ ok: false, error: "Could not reach the server. Please try again." });
+      } finally {
+        setRunning(false);
+      }
+    },
+    [pushHistory],
+  );
+
+  const parseOnly = useCallback(async (sqlText: string, dia: DialectName) => {
     try {
       const res = await fetch("/api/parse", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sql: sqlText, dialect: dia }),
       });
-      const data = (await res.json()) as ParseResult;
-      setPlan(data);
+      setPlan((await res.json()) as ParseResult);
     } catch {
       setPlan({ ok: false, error: "Could not reach the parser. Please try again." });
-    } finally {
-      setLoading(false);
     }
   }, []);
 
-  // parse the default sample once on load so the page shows a live diagram
+  // run the default sample once on load so the page shows live diagrams + data
   useEffect(() => {
-    runParse(DEFAULT_SAMPLE.sql, DEFAULT_SAMPLE.dialect);
-  }, [runParse]);
+    loadHistory();
+    runAll(DEFAULT_SAMPLE.sql, DEFAULT_SAMPLE.dialect);
+  }, [loadHistory, runAll]);
 
   const onSampleChange = (id: string) => {
     const sample = SAMPLE_QUERIES.find((s) => s.id === id);
@@ -141,16 +211,46 @@ export default function Home() {
     setSampleId(id);
     setSql(sample.sql);
     setDialect(sample.dialect);
-    runParse(sample.sql, sample.dialect);
+    runAll(sample.sql, sample.dialect);
   };
 
   const onDialectChange = (d: string) => {
     const next = d as DialectName;
     setDialect(next);
-    runParse(sql, next);
+    parseOnly(sql, next);
+  };
+
+  const onHistoryPick = (text: string) => {
+    setSampleId("");
+    setSql(text);
+    runAll(text, dialect);
+  };
+
+  const onSchemaPickTable = (table: string) => {
+    const text = `SELECT *\nFROM ${table}\nLIMIT 5;`;
+    setSampleId("");
+    setSql(text);
+    runAll(text, dialect);
+  };
+
+  const resetDatabase = async () => {
+    if (!window.confirm("Restore the sample database to its original data?")) return;
+    setResetting(true);
+    try {
+      await fetch("/api/reset", { method: "POST" });
+      // re-run current query so the user sees fresh results
+      await runAll(sql, dialect);
+    } catch {
+      // keep silent — the re-run will surface errors if any
+    } finally {
+      setResetting(false);
+    }
   };
 
   const good = plan !== null && plan.ok;
+  const execOk = exec !== null && exec.ok;
+  const planSteps = execOk ? (exec as ExecResult).plan?.length ?? 0 : 0;
+  const isWrite = execOk && (exec as ExecResult).changes !== null;
 
   return (
     <div className="flex min-h-screen flex-col bg-zinc-950 text-zinc-100">
@@ -164,7 +264,7 @@ export default function Home() {
             <div>
               <h1 className="text-sm font-semibold tracking-tight sm:text-base">SQL Visualizer</h1>
               <p className="hidden text-xs text-zinc-500 sm:block">
-                Paste a query — see how the database actually reads it
+                Write a query — see it parsed, executed and explained
               </p>
             </div>
           </div>
@@ -176,12 +276,13 @@ export default function Home() {
                 className="w-[190px] border-zinc-700 bg-zinc-900 text-xs sm:w-[220px]"
                 aria-label="Load a sample query"
               >
-                <SelectValue placeholder="Samples" />
+                <SelectValue placeholder="Sample queries" />
               </SelectTrigger>
               <SelectContent>
                 {SAMPLE_QUERIES.map((s) => (
                   <SelectItem key={s.id} value={s.id} className="text-xs">
                     <span className="font-medium">{s.name}</span>
+                    <span className="ml-2 text-zinc-500">{s.description}</span>
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -205,16 +306,16 @@ export default function Home() {
             </Select>
 
             <Button
-              onClick={() => runParse(sql, dialect)}
-              disabled={loading}
+              onClick={() => runAll(sql, dialect)}
+              disabled={running}
               className="h-8 gap-1.5 bg-emerald-500 font-medium text-zinc-950 hover:bg-emerald-400"
             >
-              {loading ? (
+              {running ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <Play className="h-4 w-4" />
               )}
-              Visualize
+              Run
             </Button>
           </div>
         </div>
@@ -229,10 +330,28 @@ export default function Home() {
               <h2 className="text-xs font-semibold tracking-widest text-zinc-400 uppercase">
                 Query
               </h2>
-              <div className="flex items-center gap-2">
-                <span className="hidden font-mono text-[11px] text-zinc-600 sm:inline">
-                  {sql.split("\n").length} lines · {sql.length} chars
-                </span>
+              <div className="flex items-center gap-1">
+                {history.length > 0 && (
+                  <Select onValueChange={onHistoryPick}>
+                    <SelectTrigger
+                      size="sm"
+                      className="h-7 gap-1 border-none bg-transparent px-2 text-xs text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 focus:ring-0"
+                      aria-label="Query history"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <History className="h-3.5 w-3.5" />
+                        History
+                      </span>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {history.map((h, i) => (
+                        <SelectItem key={i} value={h} className="max-w-[320px] font-mono text-xs">
+                          <span className="block truncate">{h.split("\n")[0]}</span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
                 <Button
                   variant="ghost"
                   size="sm"
@@ -246,9 +365,12 @@ export default function Home() {
             </div>
             <SqlEditor
               value={sql}
-              onChange={setSql}
-              onVisualize={() => runParse(sql, dialect)}
-              className="h-[380px] xl:h-[460px]"
+              onChange={(v) => {
+                setSql(v);
+                setSampleId("");
+              }}
+              onVisualize={() => runAll(sql, dialect)}
+              className="h-[300px] xl:h-[340px]"
             />
             <p className="px-1 text-[11px] text-zinc-600">
               Press{" "}
@@ -259,7 +381,8 @@ export default function Home() {
               <kbd className="rounded border border-zinc-700 bg-zinc-900 px-1 py-0.5 font-mono text-[10px] text-zinc-400">
                 Enter
               </kbd>{" "}
-              to visualize · <span className="text-zinc-500">Tab inserts spaces</span>
+              to run · executes on the built-in{" "}
+              <span className="text-zinc-500">SQLite sample DB</span>
             </p>
           </section>
 
@@ -344,6 +467,18 @@ export default function Home() {
                       <ListTree className="h-3.5 w-3.5" /> Breakdown
                     </TabsTrigger>
                     <TabsTrigger
+                      value="tree"
+                      className="gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+                    >
+                      <ClipboardList className="h-3.5 w-3.5" /> Parse Tree
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="schema"
+                      className="gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+                    >
+                      <DatabaseZap className="h-3.5 w-3.5" /> Schema
+                    </TabsTrigger>
+                    <TabsTrigger
                       value="json"
                       className="gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
                     >
@@ -358,6 +493,18 @@ export default function Home() {
                   </TabsContent>
                   <TabsContent value="breakdown" className="mt-3">
                     <BreakdownView plan={plan} />
+                  </TabsContent>
+                  <TabsContent value="tree" className="mt-3">
+                    {plan.tree ? (
+                      <ParseTreeView tree={plan.tree} />
+                    ) : (
+                      <p className="rounded-lg border border-zinc-800 bg-zinc-900/60 px-4 py-6 text-center text-sm text-zinc-500">
+                        No syntax tree for this statement.
+                      </p>
+                    )}
+                  </TabsContent>
+                  <TabsContent value="schema" className="mt-3">
+                    <SchemaView onPickTable={onSchemaPickTable} />
                   </TabsContent>
                   <TabsContent value="json" className="mt-3">
                     <JsonView plan={plan} />
@@ -376,13 +523,118 @@ export default function Home() {
             )}
           </section>
         </div>
+
+        {/* results panel — full width */}
+        <section aria-label="Query results" className="mt-5">
+          <div className="flex items-center justify-between px-1 pb-2">
+            <h2 className="flex items-center gap-2 text-xs font-semibold tracking-widest text-zinc-400 uppercase">
+              <DatabaseZap className="h-3.5 w-3.5 text-emerald-500" />
+              Live results · SQLite
+            </h2>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={resetDatabase}
+              disabled={resetting}
+              className="h-7 gap-1.5 px-2 text-xs text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
+            >
+              {resetting ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <RotateCcw className="h-3.5 w-3.5" />
+              )}
+              Reset database
+            </Button>
+          </div>
+
+          <div className="overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50">
+            {exec === null && (
+              <div className="flex h-40 items-center justify-center text-sm text-zinc-400">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {running ? "Running on SQLite…" : "Press Run to execute a query"}
+              </div>
+            )}
+
+            {exec && !exec.ok && (
+              <div className="p-4">
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 shrink-0 text-rose-400" />
+                  <h3 className="text-sm font-semibold text-rose-200">
+                    Execution failed
+                  </h3>
+                </div>
+                <pre className="thin-scrollbar mt-2.5 max-h-32 overflow-auto rounded-lg bg-zinc-950/70 p-3 font-mono text-xs break-words whitespace-pre-wrap text-rose-200/90">
+                  {exec.error}
+                </pre>
+                {exec.hint && (
+                  <p className="mt-2 text-xs leading-relaxed text-zinc-400">{exec.hint}</p>
+                )}
+              </div>
+            )}
+
+            {exec && exec.ok && (
+              <Tabs defaultValue="results">
+                <div className="flex flex-wrap items-center gap-2 border-b border-zinc-800/70 px-3 py-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-0.5 font-mono text-xs font-bold text-emerald-300">
+                    {exec.statementType}
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-800/60 px-2.5 py-0.5 text-xs text-zinc-300">
+                    <Timer className="h-3.5 w-3.5" />
+                    {exec.durationMs} ms
+                  </span>
+                  <TabsList className="ml-auto h-7 bg-zinc-950/60">
+                    <TabsTrigger
+                      value="results"
+                      className="h-7 gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+                    >
+                      <Table2 className="h-3 w-3" /> Results
+                    </TabsTrigger>
+                    {!isWrite && exec.plan && exec.plan.length > 0 && (
+                      <TabsTrigger
+                        value="plan"
+                        className="h-7 gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+                      >
+                        <Workflow className="h-3 w-3" /> Plan
+                        <span className="rounded-full bg-zinc-800 px-1.5 text-[10px] text-zinc-400">
+                          {exec.plan.length}
+                        </span>
+                      </TabsTrigger>
+                    )}
+                  </TabsList>
+                </div>
+                <TabsContent value="results" className="mt-0">
+                  {exec.columns.length > 0 ? (
+                    <ResultsView
+                      columns={exec.columns}
+                      rows={exec.rows}
+                      truncated={exec.truncated}
+                    />
+                  ) : (
+                    <WriteResultView
+                      statementType={exec.statementType}
+                      changes={exec.changes ?? 0}
+                    />
+                  )}
+                </TabsContent>
+                {!isWrite && exec.plan && exec.plan.length > 0 && (
+                  <TabsContent value="plan" className="p-3">
+                    <PlanView rows={exec.plan} />
+                  </TabsContent>
+                )}
+              </Tabs>
+            )}
+          </div>
+        </section>
       </main>
 
       {/* footer */}
       <footer className="mt-auto border-t border-zinc-800/80">
         <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-3 text-[11px] text-zinc-600">
-          <span>SQL Visualizer · queries are parsed for structure only and never stored</span>
-          <span className="font-mono">PostgreSQL · MySQL · SQLite · T-SQL · BigQuery</span>
+          <span>
+            SQL Visualizer · queries run against a sandboxed SQLite sample database · nothing is
+            stored
+          </span>
+          <span className="font-mono">parse · execute · explain</span>
         </div>
       </footer>
     </div>

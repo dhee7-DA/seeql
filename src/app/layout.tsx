@@ -14,10 +14,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SQL Visualizer — see how the database reads your query",
+  title: "SQL Visualizer — parse, run and explain your queries",
   description:
-    "Paste a SQL query and instantly see its logical execution pipeline, table/join relationships and a clause-by-clause breakdown. Supports PostgreSQL, MySQL, SQLite, T-SQL and BigQuery dialects.",
-  keywords: ["SQL", "SQL visualizer", "query plan", "execution order", "joins", "database", "learn SQL"],
+    "Paste a SQL query and instantly see its logical execution pipeline, table/join relationships, parse tree and clause-by-clause breakdown — then run it live on a sample SQLite database with real results and the engine's query plan.",
+  keywords: [
+    "SQL",
+    "SQL visualizer",
+    "query plan",
+    "execution order",
+    "joins",
+    "parse tree",
+    "explain",
+    "database",
+    "learn SQL",
+  ],
   icons: {
     icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
   },

@@ -25,3 +25,24 @@ Stage Summary:
 - Deliverable: SQL Visualizer at / (single route) + /api/parse
 - Key files: src/lib/sql-parser.ts, src/app/api/parse/route.ts, src/components/{sql-editor,pipeline-view,joins-view,breakdown-view}.tsx, src/app/page.tsx
 - Lint clean; dev server 200; browser console clean; all samples parse correctly
+
+---
+Task ID: 2
+Agent: Super Z (main agent)
+Task: Extend SQL Visualizer with real query execution, results, EXPLAIN plan, parse tree and schema ERD
+
+Work Log:
+- Redesigned prisma/schema.prisma with 5 mapped models (customers, suppliers, products, orders, order_items) and pushed via db:push
+- Built src/lib/sample-db.ts: raw DDL + deterministic LCG-seeded dataset (16 customers, 6 suppliers, 16 products, ~103 orders, ~250 order_items, power-buyer weighting), ensureDatabase()/resetDatabase() lifecycle
+- Built /api/query route: single-statement scanner (quote/comment aware), $queryRawUnsafe for reads / $executeRawUnsafe for writes, BigInt/Date/Buffer cell normalization, 1000-row payload cap, EXPLAIN QUERY PLAN capture, friendly SQLite error hints (Prisma boilerplate stripped)
+- Built /api/reset (drop+recreate+reseed) and /api/stats (live row counts)
+- Built src/lib/ast-tree.ts: defensive AST→TreeNode converter with dedicated handling for select clauses, sqlite {expr,as} column items (no type wrapper!), FROM/JOIN entries with ON text, CTEs, window functions, CASE, set ops, subquery wrapper unwrap, node/depth budget caps; wired into /api/parse response as tree
+- Built components: results-view (sticky header, zebra rows, NULL styling, numeric right-align, CSV copy/download, render cap + show-all, write-statement success banner), plan-view (id/parent tree build, SCAN/SEARCH/SUBQUERY icons), parse-tree-view (collapsible branches, type-colored badges, legend), schema-view (SVG bezier FK edges with 1—N labels, hover highlight/dim, live row counts, click table → SELECT * query)
+- Rewrote page.tsx: Run button fires parse+execute in parallel, results section with Results/Plan sub-tabs, Reset database action, localStorage query history dropdown, Schema tab click-through, updated footer/metadata; all 7 samples rewritten to runnable SQLite (DATE_TRUNC→strftime, users→customers)
+- Fixed 3 bugs found in browser verification: lowercase <icon> JSX tag treated as DOM element; sqlite column items rendering as generic "node" in parse tree; sparse join-agg seed data returning 0 rows for HAVING > 5
+- Verified via agent-browser: desktop + mobile render, all 6 tabs, sample switching, Ctrl+Enter, UPDATE statement, error states (parse + execution), history persistence, reset; zero console errors; lint clean
+
+Stage Summary:
+- App now parses AND executes: structure visualizations + live SQLite results + engine plan + AST tree + ERD
+- Key new files: src/lib/{sample-db,ast-tree,schema-meta}.ts, src/app/api/{query,reset,stats}/route.ts, src/components/{results-view,plan-view,parse-tree-view,schema-view}.tsx
+- All 7 samples parse and execute successfully; verified screenshots in scripts/verify-*.png
