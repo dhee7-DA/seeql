@@ -132,3 +132,19 @@ Stage Summary:
 - Module 3 delivers the user's picks: Set+CASE topic, visual-led diagrams-first lessons, in-depth bullets, per-lesson dialect watch (incl. the empirically proven SQLite-vs-standard precedence difference and SQLite's paren-arm syntax error), MySQL <8.0.31 caveats, Postgres FILTER/EXCEPT ALL notes.
 - Key files: src/lib/curriculum/lessons/lesson-17..24.ts (new), lessons/index.ts, types.ts, src/components/learn/diagrams.tsx (+8 figures, Chip helper, stepper fix), src/components/landing.tsx, src/components/learn/learn-app.tsx, src/lib/curriculum/expected.ts (regenerated), scripts/facts-m3.ts, scripts/audit-ids-m3.ts.
 - Next-round queue (user-selected): Progress dashboard, Data Explorer, mixed quiz mode.
+
+---
+Task ID: 15-recovery
+Agent: Super Z (main agent)
+Task: Recover project tree after environment rollback wiped everything after Task 2
+
+Work Log:
+- Mid-session the working tree was rolled back to post-Task-2 state (git history rebuilt, Module 1-3 + learn app gone, HEAD moved from the Module 3 commit to a rebuilt 4-commit history)
+- Exhausted recovery paths: git fsck (no dangling objects), no remotes/stash, .next dev cache empty of curriculum
+- Broad filesystem sweep found the intact tree at /tmp/my-project (24 lessons, 13 learn components incl. theory-blocks/quiz-runner/case-study-view/fx, diagrams, mcqs/ + problems/ + case-studies* dirs, facts/audit scripts, worklog through Task 14)
+- Verified integrity: audit-ids-m3.ts -> 24 lessons, 164 MCQs, 132 problems, 296 unique ids, 0 dupes, 0 orphans; deps identical (no reinstall); landing 200; /api/stats correct
+- rsync restored everything except platform mounts (upload/ handled separately); kept current node_modules/.git; committed as 54847da
+
+Stage Summary:
+- Tree fully restored to post-Task-14 state; backup of the interim post-Task-2 state kept at /home/z/backup-rolledback-task2.tar.gz
+- Resume Task 15 (content quality upgrade A-E) on top of the restored tree
