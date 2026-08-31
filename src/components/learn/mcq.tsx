@@ -85,6 +85,15 @@ export function McqCard({ mcq, onAnswered }: { mcq: Mcq; onAnswered?: (correct: 
             {correct ? "Correct. " : "Not quite. "}
           </span>
           {mcq.why}
+          {!correct && picked !== null && (() => {
+            const note = mcq.notes?.find((n) => n.choice === picked);
+            return note ? (
+              <span className="mt-1.5 block border-t border-amber-400/20 pt-1.5">
+                <span className="font-medium text-amber-300">About your pick: </span>
+                {note.why}
+              </span>
+            ) : null;
+          })()}
         </div>
       )}
       {!checked && (

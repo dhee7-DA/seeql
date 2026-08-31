@@ -17,6 +17,12 @@ import { celebrate } from "./celebrate";
 
 type Tab = "learn" | "quiz" | "practice";
 
+const DIALECT_META: Record<string, { label: string; pill: string }> = {
+  postgres: { label: "PostgreSQL", pill: "border-sky-400/40 bg-sky-400/10 text-sky-300" },
+  mysql: { label: "MySQL", pill: "border-orange-400/40 bg-orange-400/10 text-orange-300" },
+  sqlite: { label: "SQLite", pill: "border-violet-400/40 bg-violet-400/10 text-violet-300" },
+};
+
 function looksLikeRead(sql: string): boolean {
   return /^\s*(select|with)\b/i.test(sql.trim());
 }
@@ -199,6 +205,18 @@ export function LessonView({ lesson, onBonusChecked }: { lesson: Lesson; onBonus
                     <Rich text={b.text} className="mt-1 text-sm leading-relaxed text-zinc-300" />
                   </div>
                 );
+              case "dialect": {
+                const meta = DIALECT_META[b.db] ?? { label: b.db, pill: "border-zinc-700 text-zinc-300" };
+                return (
+                  <div key={i} className="my-4 rounded-lg border border-zinc-800 bg-zinc-900/40 px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Dialect watch</span>
+                      <span className={cn("rounded-full border px-2 py-0.5 text-[10px] font-medium", meta.pill)}>{meta.label}</span>
+                    </div>
+                    <Rich text={b.text} className="mt-1.5 text-sm leading-relaxed text-zinc-300" />
+                  </div>
+                );
+              }
               case "table":
                 return (
                   <div key={i} className="my-4 overflow-hidden rounded-lg border border-zinc-800">
@@ -227,7 +245,13 @@ export function LessonView({ lesson, onBonusChecked }: { lesson: Lesson; onBonus
                 return null;
             }
           })}
-          <div className="mt-8 flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-3">
+          {lesson.takeaway && (
+            <div className="mt-8 rounded-lg border border-violet-400/30 bg-violet-400/5 px-4 py-3">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-violet-300">In one sentence</span>
+              <p className="mt-1 text-[15px] font-medium leading-7 text-zinc-100">{lesson.takeaway}</p>
+            </div>
+          )}
+          <div className="mt-6 flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-3">
             <p className="text-sm text-zinc-400">
               Ready to prove it? Take the quiz, then solve the practice queries.
             </p>

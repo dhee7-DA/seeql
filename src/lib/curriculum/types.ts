@@ -37,7 +37,11 @@ export type Block =
   | { kind: "diagram"; figure: FigureId }
   | { kind: "tip"; text: string }
   | { kind: "warn"; text: string }
+  | { kind: "dialect"; db: DbDialect; text: string }
   | { kind: "table"; headers: string[]; rows: string[][]; caption?: string };
+
+/** Engine whose behavior differs from SQLite in the context of the note. */
+export type DbDialect = "postgres" | "mysql" | "sqlite";
 
 export interface Mcq {
   /** Stable id, e.g. "l3-q2" — referenced by the XP ledger. */
@@ -48,6 +52,8 @@ export interface Mcq {
   answer: number;
   /** Shown after answering, right or wrong. */
   why: string;
+  /** Coached explanations for the most tempting wrong choice(s), shown when picked. */
+  notes?: Array<{ choice: number; why: string }>;
 }
 
 export interface ExpectedResult {
@@ -55,11 +61,21 @@ export interface ExpectedResult {
   rows: CellValue[][];
 }
 
+/** Coaching rule: fires when a failed attempt matches `test` (case-insensitive
+ *  regex source run against the whitespace-normalized SQL). */
+export interface ProblemMistake {
+  test: string;
+  message: string;
+}
+
 export interface Problem {
   /** Stable id, e.g. "l3-p2" — referenced by the XP ledger. */
   id: string;
   title: string;
   brief: string;
+  /** Progressive help: [0] conceptual nudge, [1] syntax skeleton. */
+  hints?: [string, string];
+  /** @deprecated legacy flat hint — migrated to `hints` across the curriculum. */
   hint?: string;
   difficulty: "easy" | "medium" | "hard";
   /** Reference solution — also shown after solving. */
@@ -70,6 +86,8 @@ export interface Problem {
   ordered?: boolean;
   /** Column names may differ by case/alias when false. Default: exact match. */
   relaxedColumns?: boolean;
+  /** Targeted coaching for common wrong attempts, checked on failed runs. */
+  mistakes?: ProblemMistake[];
 }
 
 export interface Lesson {
@@ -82,6 +100,8 @@ export interface Lesson {
   blocks: Block[];
   mcqs: Mcq[];
   problems: Problem[];
+  /** One-sentence closing takeaway, shown at the end of the theory tab. */
+  takeaway?: string;
 }
 
 /** Inline `code` and **bold** markers are rendered by the rich-text helper. */

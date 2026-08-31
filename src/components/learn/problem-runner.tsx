@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { SqlEditor } from "@/components/sql-editor";
 import { useProgress } from "@/lib/curriculum/progress";
 import { xpForDifficulty } from "@/lib/curriculum/gamification";
+import { firstMistake } from "@/lib/curriculum/coach";
 import type { Problem } from "@/lib/curriculum/types";
 import type { ExecResponse, ExecResult } from "@/lib/sql-types";
 import { cn } from "@/lib/utils";
@@ -57,15 +58,21 @@ export function gradeResult(res: ExecResponse, p: Problem): { ok: boolean; reaso
   };
 }
 
+const HINT_LABELS = ["Nudge", "The shape"] as const;
+
 export function ProblemCard({ problem, index, onSolved }: { problem: Problem; index: number; onSolved?: () => void }) {
   const [sql, setSql] = useState("");
   const [result, setResult] = useState<ExecResult | null>(null);
   const [verdict, setVerdict] = useState<{ ok: boolean; reason?: string } | null>(null);
+  const [coachMsg, setCoachMsg] = useState<string | null>(null);
   const [runs, setRuns] = useState(0);
-  const [showHint, setShowHint] = useState(false);
+  const [hintLevel, setHintLevel] = useState(0); // 0 = hidden, 1..2 = revealed depth
   const [showSolution, setShowSolution] = useState(false);
   const [running, setRunning] = useState(false);
   const solvedRef = useRef(false);
+
+  // Progressive hints: [0] conceptual nudge, [1] syntax skeleton.
+  const hints: readonly string[] = problem.hints ?? (problem.hint ? [problem.hint] : []);
 
   const solved = useProgress((s) => s.xpEvents[`solve:${problem.id}`] !== undefined);
 
@@ -82,6 +89,7 @@ export function ProblemCard({ problem, index, onSolved }: { problem: Problem; in
       setResult(data as ExecResult);
       const v = gradeResult(data, problem);
       setVerdict(v);
+      setCoachMsg(v.ok ? null : firstMistake(sql, problem.mistakes));
       setRuns((n) => n + 1);
       if (v.ok && !solvedRef.current) {
         solvedRef.current = true;
@@ -138,14 +146,14 @@ export function ProblemCard({ problem, index, onSolved }: { problem: Problem; in
             {running ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5" />}
             Run &amp; grade
           </Button>
-          {problem.hint && (
+          {hintLevel < hints.length && (
             <Button
               variant="outline"
-              onClick={() => setShowHint((v) => !v)}
+              onClick={() => setHintLevel((v) => v + 1)}
               className="h-8 gap-1.5 rounded-md border-zinc-800 bg-transparent px-3 text-xs text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200"
             >
               <Lightbulb className="h-3.5 w-3.5" />
-              {showHint ? "Hide hint" : "Hint"}
+              {hintLevel === 0 ? "Hint" : hints.length > 1 ? "Another hint" : "Hint"}
             </Button>
           )}
           {(solved || runs >= 3) && !showSolution && (
@@ -163,11 +171,25 @@ export function ProblemCard({ problem, index, onSolved }: { problem: Problem; in
           )}
         </div>
 
-        {showHint && problem.hint && (
-          <p className="mt-2.5 rounded-md border border-zinc-800 bg-zinc-900 px-3 py-2 text-xs text-zinc-400">
-            <span className="font-medium text-zinc-300">Hint · </span>
-            <span className="font-mono">{problem.hint}</span>
-          </p>
+        {hintLevel > 0 && (
+          <div className="mt-2.5 space-y-1.5">
+            {hints.slice(0, hintLevel).map((h, hi) => (
+              <p key={hi} className="rounded-md border border-zinc-800 bg-zinc-900 px-3 py-2 text-xs text-zinc-400">
+                <span className="font-medium text-zinc-300">{HINT_LABELS[hi] ?? `Hint ${hi + 1}`} · </span>
+                <span className="font-mono">{h}</span>
+              </p>
+            ))}
+          </div>
+        )}
+
+        {coachMsg && verdict && !verdict.ok && (
+          <div className="mt-2.5 flex items-start gap-2 rounded-md border border-sky-400/40 bg-sky-400/5 px-3 py-2.5 text-xs leading-relaxed text-zinc-300">
+            <Lightbulb className="mt-0.5 h-3.5 w-3.5 shrink-0 text-sky-300" />
+            <div className="min-w-0">
+              <span className="font-semibold text-sky-300">Coach · </span>
+              <span>{coachMsg}</span>
+            </div>
+          </div>
         )}
 
         {verdict && (

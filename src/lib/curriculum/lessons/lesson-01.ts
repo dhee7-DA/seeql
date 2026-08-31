@@ -22,6 +22,11 @@ export const lesson01: Lesson = {
       ],
     },
     { kind: "diagram", figure: "l1-anatomy" },
+    {
+      kind: "dialect",
+      db: "postgres",
+      text: "PostgreSQL and MySQL reject a number inserted into a TEXT column; SQLite's dynamic typing quietly accepts it. Every query in this course runs on SQLite — so correctness has to come from your SQL, not from the schema guarding you.",
+    },
     { kind: "h", text: "The two glues: primary & foreign keys" },
     {
       kind: "bullets",
@@ -44,6 +49,11 @@ export const lesson01: Lesson = {
       ],
     },
     {
+      kind: "dialect",
+      db: "mysql",
+      text: "The 0/1 `active` flag is SQLite's boolean. PostgreSQL has a native BOOLEAN accepting `TRUE`/`FALSE`, and MySQL's BOOL is an alias for TINYINT(1) — comparisons like `active = 1` work in all three engines.",
+    },
+    {
       kind: "p",
       text: "Notice the grain: an order for a keyboard **and** a mouse is one row in `orders` plus two rows in `order_items` — the finest grain in the schema. Real shops model data exactly this way, so everything you practice here transfers directly to production work.",
     },
@@ -64,6 +74,9 @@ export const lesson01: Lesson = {
       ],
       answer: 1,
       why: "A primary key uniquely identifies each row: values are unique and never NULL. It doesn't have to be numeric, and sorting is a separate concern entirely.",
+      notes: [
+        { choice: 2, why: "Ids are *often* numbers, but that's convention, not a guarantee — a PK promises uniqueness and no NULLs, nothing about the type." },
+      ],
     },
     {
       id: "l1-q2",
@@ -76,6 +89,9 @@ export const lesson01: Lesson = {
       ],
       answer: 1,
       why: "customer_id lives in orders but identifies a customer — that's the definition of a foreign key: a column that references another table's primary key.",
+      notes: [
+        { choice: 0, why: "orders already has its own PK (`id`) — customer_id repeats across many orders, which is exactly what a primary key must never do." },
+      ],
     },
     {
       id: "l1-q3",
@@ -88,6 +104,9 @@ export const lesson01: Lesson = {
       ],
       answer: 0,
       why: "orders holds the purchase event once; order_items holds one row per product line. That's why order_items is the finest grain of the schema.",
+      notes: [
+        { choice: 2, why: "That's the spreadsheet instinct — hard-coding one column per product breaks the moment an order has three items; the line-item table scales to any basket." },
+      ],
     },
     {
       id: "l1-q4",
@@ -100,6 +119,9 @@ export const lesson01: Lesson = {
       ],
       answer: 2,
       why: "SQL guarantees no order without ORDER BY. SQLite often returns rows in insertion or id order, but relying on that is a classic bug — any engine, any version, may differ.",
+      notes: [
+        { choice: 0, why: "SQLite often *looks* like it returns insertion order — precisely why this bug survives testing. The guarantee simply doesn't exist." },
+      ],
     },
     {
       id: "l1-q5",
@@ -112,13 +134,19 @@ export const lesson01: Lesson = {
       ],
       answer: 1,
       why: "order_items carries two foreign keys: order_id (which order) and product_id (which product). quantity and unit_price are facts about the line itself, not pointers.",
+      notes: [
+        { choice: 0, why: "order_id points at the *order*, not the product — each line carries two foreign keys, one per neighbor." },
+      ],
     },
     {
       id: "l1-q6",
       prompt: "How many rows does the `orders` table hold in this store right now?",
-      choices: ["16", "103", "251", "It changes on every page load"],
+      choices: ["16", "103", "248", "It changes on every page load"],
       answer: 1,
-      why: "103 orders — a fixed, deterministic seed. The 251 figure belongs to order_items (order lines), and 16 to customers/products.",
+      why: "103 orders — a fixed, deterministic seed. The 248 figure belongs to order_items (order lines), and 16 to customers/products.",
+      notes: [
+        { choice: 2, why: "That's the order_items count — one order usually spawns several line rows, so the line table (248) is bigger than orders (103)." },
+      ],
     },
     {
       id: "l1-q7",
@@ -131,6 +159,9 @@ export const lesson01: Lesson = {
       ],
       answer: 1,
       why: "It's the finest grain of the schema: if one order contains three different products, that's one orders row and three order_items rows.",
+      notes: [
+        { choice: 0, why: "The order itself lives as a single orders row — order_items zooms into its *contents*, one product line per row." },
+      ],
     },
     {
       id: "l1-q8",
@@ -143,6 +174,9 @@ export const lesson01: Lesson = {
       ],
       answer: 1,
       why: "That's normalization: one fact, one table. Joins (Module 2) read the structure back together at query time.",
+      notes: [
+        { choice: 3, why: "The win is correctness, not scan speed: one fact in one place can never go stale. Query performance depends on the join you write, not on this layout." },
+      ],
     },
     {
       id: "l1-q9",
@@ -150,6 +184,9 @@ export const lesson01: Lesson = {
       choices: ["Text", "Integer", "Decimal number (REAL)", "A 0/1 flag"],
       answer: 2,
       why: "Ratings have fractional parts, so they're stored as REAL. Integers would round 4.6 to 5 and distort the data.",
+      notes: [
+        { choice: 1, why: "An INTEGER column can't hold the fraction — 4.6 would become 4 or 5. Faithful decimals need REAL (or a DECIMAL type in Postgres/MySQL)." },
+      ],
     },
     {
       id: "l1-q10",
@@ -157,6 +194,9 @@ export const lesson01: Lesson = {
       choices: ["orders", "order_items", "products", "suppliers"],
       answer: 2,
       why: "Stock is an attribute of a product, so it lives in products.stock. Orders tell you what sold, not what's on the shelf.",
+      notes: [
+        { choice: 1, why: "order_items records what *sold* — what's on the shelf is an attribute of the product itself: products.stock." },
+      ],
     },
     {
       id: "l1-q11",
@@ -169,6 +209,9 @@ export const lesson01: Lesson = {
       ],
       answer: 1,
       why: "0/1 flags are the classic way to store true/false. SQLite has no separate BOOLEAN type, so integers carry the meaning.",
+      notes: [
+        { choice: 0, why: "A foreign key points at another table's row — 1/0 references nothing. It's a boolean flag wearing an integer costume." },
+      ],
     },
     {
       id: "l1-q12",
@@ -181,6 +224,9 @@ export const lesson01: Lesson = {
       ],
       answer: 1,
       why: "NULL means 'no value here'. For this store it marks pending and cancelled orders — real holes in the data you'll learn to query in lesson 4.",
+      notes: [
+        { choice: 0, why: "'Unknown when' and 'not yet' are different facts. Here a NULL shipped_at means the order hasn't shipped — it's pending or cancelled." },
+      ],
     },
   ],
   problems: [
@@ -188,73 +234,122 @@ export const lesson01: Lesson = {
       id: "l1-p1",
       title: "Meet the suppliers",
       brief: "Return every column of every row in the `suppliers` table. No filtering, no sorting — just look at what's there.",
-      hint: "The star in `SELECT *` means \"all columns\".",
+      hints: [
+        "The star in `SELECT *` means \"all columns\" — you don't name any columns at all.",
+        "Shape: SELECT * FROM <table>;",
+      ],
       difficulty: "easy",
       solution: "SELECT * FROM suppliers;",
+      mistakes: [
+        { test: "\\bselect\\s+\\*\\s+(?!from\\b)[a-z]", message: "After SELECT * comes FROM — the table goes in its own clause: `SELECT * FROM suppliers;`." },
+      ],
       expected: EXPECTED["l1-p1"],
     },
     {
       id: "l1-p2",
       title: "Browse the catalog",
       brief: "Show all columns of `products`, but only the first 8 rows.",
-      hint: "`LIMIT 8` caps the number of rows returned.",
+      hints: [
+        "`LIMIT <n>` at the very end of the query caps how many rows come back.",
+        "Shape: SELECT * FROM products LIMIT <n>;",
+      ],
       difficulty: "easy",
       solution: "SELECT * FROM products LIMIT 8;",
+      mistakes: [
+        { test: "\\btop\\s+\\d+", message: "`TOP <n>` is SQL Server syntax — SQLite, PostgreSQL and MySQL all cap rows with `LIMIT <n>` at the end of the query." },
+      ],
       expected: EXPECTED["l1-p2"],
     },
     {
       id: "l1-p3",
       title: "A taste of projection",
       brief: "From `customers`, return only `name` and `city` — the first 10 rows. Listing specific columns instead of `*` is called projection, and it's how every report starts.",
-      hint: "Column names go after SELECT, separated by a comma.",
+      hints: [
+        "Projection = naming exactly the columns you want, comma-separated, right after SELECT.",
+        "Shape: SELECT name, city FROM customers LIMIT <n>;",
+      ],
       difficulty: "medium",
       solution: "SELECT name, city FROM customers LIMIT 10;",
+      mistakes: [
+        { test: "\\bselect\\s+\\*", message: "The star returns every column — the brief asks for a projection: name exactly `name` and `city`." },
+      ],
       expected: EXPECTED["l1-p3"],
     },
     {
       id: "l1-p4",
       title: "The supplier register",
       brief: "From `suppliers`, return `name` and `rating` for every supplier — a first look at who we buy from.",
-      hint: "Projection again: two column names after SELECT, one table after FROM.",
+      hints: [
+        "Two columns from suppliers — the table has only six rows, so no LIMIT is needed.",
+        "Shape: SELECT name, rating FROM suppliers;",
+      ],
       difficulty: "easy",
       solution: "SELECT name, rating FROM suppliers;",
+      mistakes: [
+        { test: "\\bselect\\s+\\*", message: "Projection again, not the star: the register wants only `name` and `rating`." },
+      ],
       expected: EXPECTED["l1-p4"],
     },
     {
       id: "l1-p5",
       title: "Signup ledger",
       brief: "Return the `id` and `created_at` (signup date) of the first 8 customers. Dates are stored as text like '2023-11-02' — you'll filter on them in lesson 3.",
-      hint: "SELECT id, created_at FROM customers LIMIT 8.",
+      hints: [
+        "Dates here are plain TEXT — select them like any other column.",
+        "Shape: SELECT id, created_at FROM customers LIMIT <n>;",
+      ],
       difficulty: "easy",
       solution: "SELECT id, created_at FROM customers LIMIT 8;",
+      mistakes: [
+        { test: "\\bselect\\s+\\*", message: "Only two columns are asked for: `id` and `created_at` — not the whole customer record." },
+      ],
       expected: EXPECTED["l1-p5"],
     },
     {
       id: "l1-p6",
       title: "Inventory at a glance",
       brief: "Return `name` and `stock` for every product. Scan the list by eye: the widest and narrowest shelves will jump out (you'll make the database find them in lesson 7).",
-      hint: "Two columns, all rows — no LIMIT needed.",
+      hints: [
+        "Two columns, all rows — no LIMIT, no filtering, no functions.",
+        "Shape: SELECT name, stock FROM products;",
+      ],
       difficulty: "easy",
       solution: "SELECT name, stock FROM products;",
+      mistakes: [
+        { test: "\\b(max|min|count)\\s*\\(", message: "Aggregates like MAX/MIN/COUNT collapse rows into one summary — the brief wants every product listed as-is. Finding extremes arrives in lesson 7." },
+      ],
       expected: EXPECTED["l1-p6"],
     },
     {
       id: "l1-p7",
       title: "Meet the finest grain",
       brief: "Look at the first 5 rows of `order_items` — every column. Notice the two foreign keys (order_id, product_id) and the line facts (quantity, unit_price).",
-      hint: "SELECT * FROM order_items LIMIT 5.",
+      hints: [
+        "Five rows, all columns, no conditions — pure observation.",
+        "Shape: SELECT * FROM order_items LIMIT <n>;",
+      ],
       difficulty: "easy",
       solution: "SELECT * FROM order_items LIMIT 5;",
+      mistakes: [
+        { test: "\\bjoin\\b", message: "No join needed — order_items is a single table. Its two foreign keys (order_id, product_id) are just plain columns you can SELECT." },
+      ],
       expected: EXPECTED["l1-p7"],
     },
     {
       id: "l1-p8",
       title: "Who we buy from, where",
       brief: "Return `name` and `region` for all suppliers. Six rows — including regions you'll later compare against customer regions.",
-      hint: "Projection on suppliers: name and region.",
+      hints: [
+        "Projection again — every supplier belongs in the register, so nothing is filtered.",
+        "Shape: SELECT name, region FROM suppliers;",
+      ],
       difficulty: "easy",
       solution: "SELECT name, region FROM suppliers;",
+      mistakes: [
+        { test: "\\bwhere\\b", message: "The brief asks for *every* supplier — a WHERE clause would silently drop rows from the register." },
+      ],
       expected: EXPECTED["l1-p8"],
     },
   ],
+  takeaway: "A table is an unordered grid of typed rows; primary and foreign keys glue tables together — and every SELECT you'll ever write is just a question asked over that structure.",
 };
