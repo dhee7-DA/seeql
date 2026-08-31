@@ -76,10 +76,10 @@ LIMIT 5;`,
     },
     {
       id: "l11-q3",
-      prompt: "order_items has 248 rows and every row matches. After joining orders AND customers (both 1:1 hops), how many rows?",
-      choices: ["16", "103", "248", "248 × 103 × 16"],
+      prompt: "order_items has 251 rows and every row matches. After joining orders AND customers (both 1:1 hops), how many rows?",
+      choices: ["16", "103", "251", "251 × 103 × 16"],
       answer: 2,
-      why: "Both hops are many-to-one: each item belongs to exactly one order, each order to exactly one customer. The row count is unchanged — 248 — only the columns grow.",
+      why: "Both hops are many-to-one: each item belongs to exactly one order, each order to exactly one customer. The row count is unchanged — 251 — only the columns grow.",
       notes: [
         { choice: 3, why: "Multiplication needs one row matching MANY on the other side — these hops are many-to-one (each item has exactly one order, each order one customer), so nothing multiplies." },
       ],

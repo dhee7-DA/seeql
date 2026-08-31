@@ -17,7 +17,7 @@ export const lesson16: Lesson = {
     {
       kind: "bullets",
       items: [
-        "Lesson 10's row multiplication in its most expensive costume: the store's 103 orders spread across **248 order lines**, so joining `orders` to `order_items` replicates each order row once per line.",
+        "Lesson 10's row multiplication in its most expensive costume: the store's 103 orders spread across **251 order lines**, so joining `orders` to `order_items` replicates each order row once per line.",
         "Each order's `total` rides along 2–4 times — and `SUM` dutifully adds every copy.",
         "`DISTINCT` won't save you: two orders can legitimately share a total.",
       ],
@@ -76,7 +76,7 @@ LIMIT 10;`,
         "SUM cannot handle joined columns",
       ],
       answer: 1,
-      why: "248 item rows carry copies of their order's total, so every total is counted ~2–4×. The multiplication happens at join time; SUM just tells the truth about the rows it receives.",
+      why: "251 item rows carry copies of their order's total, so every total is counted ~2–4×. The multiplication happens at join time; SUM just tells the truth about the rows it receives.",
       notes: [
         { choice: 2, why: "order_items has no hidden rows — its 248 lines are all visible; the inflation comes from each order's total being copied onto every one of its lines." },
       ],

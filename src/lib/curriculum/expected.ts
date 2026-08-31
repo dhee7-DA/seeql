@@ -5053,6 +5053,82 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
       ]
     ]
   },
+  "l8-p10": {
+    "columns": [
+      "customer_id",
+      "delivered_spend"
+    ],
+    "rows": [
+      [
+        7,
+        3054.89
+      ],
+      [
+        1,
+        2961.81
+      ],
+      [
+        13,
+        2075.47
+      ],
+      [
+        3,
+        1358.01
+      ]
+    ]
+  },
+  "l8-p11": {
+    "columns": [
+      "customer_id",
+      "open_orders"
+    ],
+    "rows": [
+      [
+        3,
+        2
+      ],
+      [
+        11,
+        2
+      ],
+      [
+        5,
+        4
+      ],
+      [
+        13,
+        4
+      ],
+      [
+        1,
+        6
+      ]
+    ]
+  },
+  "l8-p12": {
+    "columns": [
+      "status",
+      "n",
+      "revenue"
+    ],
+    "rows": [
+      [
+        "delivered",
+        52,
+        15571.07
+      ],
+      [
+        "shipped",
+        30,
+        11996.72
+      ],
+      [
+        "pending",
+        14,
+        6113
+      ]
+    ]
+  },
   "l9-p1": {
     "columns": [
       "id",

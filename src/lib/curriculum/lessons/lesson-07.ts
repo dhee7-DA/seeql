@@ -218,7 +218,7 @@ export const lesson07: Lesson = {
         "COUNT(product_id) isn't valid",
       ],
       answer: 1,
-      why: "With a NOT NULL column the two agree (248 = 248). The gap opens when NULLs exist — which is why knowing your schema matters before trusting either.",
+      why: "With a NOT NULL column the two agree (251 = 251). The gap opens when NULLs exist — which is why knowing your schema matters before trusting either.",
       notes: [
         { choice: 0, why: "They only *look* identical because product_id is never NULL here — one NULL row would split the two counts, which is why they're different questions." },
       ],

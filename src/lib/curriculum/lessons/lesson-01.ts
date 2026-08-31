@@ -141,11 +141,11 @@ export const lesson01: Lesson = {
     {
       id: "l1-q6",
       prompt: "How many rows does the `orders` table hold in this store right now?",
-      choices: ["16", "103", "248", "It changes on every page load"],
+      choices: ["16", "103", "251", "It changes on every page load"],
       answer: 1,
-      why: "103 orders — a fixed, deterministic seed. The 248 figure belongs to order_items (order lines), and 16 to customers/products.",
+      why: "103 orders — a fixed, deterministic seed. The 251 figure belongs to order_items (order lines), and 16 to customers/products.",
       notes: [
-        { choice: 2, why: "That's the order_items count — one order usually spawns several line rows, so the line table (248) is bigger than orders (103)." },
+        { choice: 2, why: "That's the order_items count — one order usually spawns several line rows, so the line table (251) is bigger than orders (103)." },
       ],
     },
     {

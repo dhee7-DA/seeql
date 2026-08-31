@@ -75,7 +75,7 @@ export const GLOBAL_MISTAKES: ProblemMistake[] = [
       "`FORM` is a typo for `FROM` — the clause that names the table is spelled FROM.",
   },
   {
-    test: /\bhaving\b(?![^;]*\bgroup by\b)/.source,
+    test: /^(?:(?!\bgroup\s+by\b).)*\bhaving\b/.source,
     message:
       "HAVING without GROUP BY treats the whole table as one group. If you meant to filter rows before aggregation, that's WHERE; if you meant to filter groups, write the GROUP BY first.",
   },

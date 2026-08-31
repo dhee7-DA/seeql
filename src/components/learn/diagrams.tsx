@@ -957,7 +957,7 @@ function J7Fanout() {
         <Label x={496} y={186} cls="fill-zinc-300">true revenue — SUM(orders.total)</Label>
         <rect x={496} y={198} width={48} height={26} rx={6} className="fill-emerald-400/20 stroke-emerald-400/60" />
         <Label x={620} y={216} anchor="end" cls="fill-emerald-300" size={11}>34,833.28</Label>
-        <Label x={496} y={248} cls="fill-zinc-500" size={9}>≈ 3× inflated (248 items × 103 orders)</Label>
+        <Label x={496} y={248} cls="fill-zinc-500" size={9}>≈ 3× inflated (251 items × 103 orders)</Label>
       </motion.g>
     </svg>
   );
