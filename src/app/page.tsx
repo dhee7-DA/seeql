@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import {
   AlertTriangle,
+  ArrowLeft,
   Braces,
   Check,
   ClipboardList,
@@ -12,7 +13,9 @@ import {
   Eraser,
   Filter,
   GitMerge,
+  GraduationCap,
   History,
+  Link2,
   ListTree,
   Loader2,
   Network,
@@ -40,6 +43,10 @@ import { ResultsView, WriteResultView } from "@/components/results-view";
 import { PlanView } from "@/components/plan-view";
 import { ParseTreeView } from "@/components/parse-tree-view";
 import { SchemaView } from "@/components/schema-view";
+import { Landing } from "@/components/landing";
+import { LearnApp } from "@/components/learn/learn-app";
+import { LogoFull } from "@/components/brand";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 import { DEFAULT_SAMPLE, SAMPLE_QUERIES } from "@/lib/samples";
 import { DIALECTS, type DialectName } from "@/lib/sql-types";
 import type {
@@ -123,10 +130,22 @@ function JsonView({ plan }: { plan: QueryPlan }) {
   );
 }
 
-export default function Home() {
-  const [sql, setSql] = useState(DEFAULT_SAMPLE.sql);
-  const [dialect, setDialect] = useState<DialectName>(DEFAULT_SAMPLE.dialect);
-  const [sampleId, setSampleId] = useState<string>(DEFAULT_SAMPLE.id);
+type Mode = "landing" | "playground" | "learn";
+
+function PlaygroundView({
+  go,
+  sharedSql,
+  sharedDialect,
+}: {
+  go: (m: Mode) => void;
+  /** SQL coming from a #playground?q=… share link — boots the editor with it. */
+  sharedSql?: string | null;
+  sharedDialect?: DialectName;
+}) {
+  const [sql, setSql] = useState(sharedSql ?? DEFAULT_SAMPLE.sql);
+  const [dialect, setDialect] = useState<DialectName>(sharedDialect ?? DEFAULT_SAMPLE.dialect);
+  const [sampleId, setSampleId] = useState<string>(sharedSql ? "" : DEFAULT_SAMPLE.id);
+  const [copiedLink, setCopiedLink] = useState(false);
   const [plan, setPlan] = useState<ParseResult | null>(null);
   const [exec, setExec] = useState<ExecResponse | null>(null);
   const [running, setRunning] = useState(false);
@@ -199,11 +218,45 @@ export default function Home() {
     }
   }, []);
 
-  // run the default sample once on load so the page shows live diagrams + data
+  // run the initial query once on load — a #playground?q=… share link boots
+  // its own SQL, otherwise the default sample runs so the page shows live
+  // diagrams + data immediately
+  const bootSql = sharedSql ?? DEFAULT_SAMPLE.sql;
+  const bootDialect = sharedDialect ?? DEFAULT_SAMPLE.dialect;
   useEffect(() => {
     loadHistory();
-    runAll(DEFAULT_SAMPLE.sql, DEFAULT_SAMPLE.dialect);
-  }, [loadHistory, runAll]);
+    runAll(bootSql, bootDialect);
+  }, [loadHistory, runAll, bootSql, bootDialect]);
+
+  /** Copy a link that reopens the playground with the current query loaded. */
+  const shareLink = async () => {
+    const params = new URLSearchParams({ q: sql });
+    if (dialect !== DEFAULT_SAMPLE.dialect) params.set("d", dialect);
+    const url = `${window.location.origin}${window.location.pathname}#playground?${params.toString()}`;
+    let ok = false;
+    try {
+      await navigator.clipboard.writeText(url);
+      ok = true;
+    } catch {
+      // clipboard API unavailable/denied — legacy fallback for restricted contexts
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = url;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        ok = document.execCommand("copy");
+        document.body.removeChild(ta);
+      } catch {
+        ok = false;
+      }
+    }
+    if (ok) {
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 1600);
+    }
+  };
 
   const onSampleChange = (id: string) => {
     const sample = SAMPLE_QUERIES.find((s) => s.id === id);
@@ -258,18 +311,25 @@ export default function Home() {
       <header className="sticky top-0 z-40 border-b border-zinc-800/80 bg-zinc-950/85 backdrop-blur">
         <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center gap-x-4 gap-y-3 px-4 py-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-400/15 ring-1 ring-emerald-400/30">
-              <Database className="h-4.5 w-4.5 text-emerald-400" />
-            </div>
-            <div>
-              <h1 className="text-sm font-semibold tracking-tight sm:text-base">SQL Visualizer</h1>
-              <p className="hidden text-xs text-zinc-500 sm:block">
+            <button onClick={() => go("landing")} aria-label="SeeQL — back to home" className="transition-opacity hover:opacity-80">
+              <LogoFull />
+            </button>
+            <div className="hidden border-l border-zinc-800 pl-3 sm:block">
+              <p className="text-xs text-zinc-500">
                 Write a query — see it parsed, executed and explained
               </p>
             </div>
           </div>
 
           <div className="ml-auto flex flex-wrap items-center gap-2">
+            <ThemeSwitcher />
+            <button
+              onClick={() => go("learn")}
+              className="hidden items-center gap-1.5 rounded-md border border-zinc-800 px-3.5 py-2 text-sm text-zinc-300 transition-colors hover:bg-zinc-900 sm:flex"
+            >
+              <GraduationCap className="h-4 w-4 text-emerald-400" />
+              Learn
+            </button>
             <Select value={sampleId} onValueChange={onSampleChange}>
               <SelectTrigger
                 size="sm"
@@ -304,6 +364,21 @@ export default function Home() {
                 ))}
               </SelectContent>
             </Select>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={shareLink}
+              className="h-8 gap-1.5 px-2.5 text-xs text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
+              aria-label="Copy a link to this query"
+            >
+              {copiedLink ? (
+                <Check className="h-4 w-4 text-emerald-400" />
+              ) : (
+                <Link2 className="h-4 w-4" />
+              )}
+              {copiedLink ? "Copied" : "Share"}
+            </Button>
 
             <Button
               onClick={() => runAll(sql, dialect)}
@@ -631,7 +706,7 @@ export default function Home() {
       <footer className="mt-auto border-t border-zinc-800/80">
         <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-3 text-[11px] text-zinc-600">
           <span>
-            SQL Visualizer · queries run against a sandboxed SQLite sample database · nothing is
+            SeeQL Playground · queries run against a sandboxed SQLite sample database · nothing is
             stored
           </span>
           <span className="font-mono">parse · execute · explain</span>
@@ -639,4 +714,83 @@ export default function Home() {
       </footer>
     </div>
   );
+}
+
+/**
+ * App shell — single exposed route, three views:
+ *   /            → landing
+ *   /#playground → SQL playground (the original visualizer)
+ *   /#learn      → the learning app
+ * Hash syncs with browser history so back/forward work.
+ */
+function subscribeHash(cb: () => void) {
+  window.addEventListener("hashchange", cb);
+  return () => window.removeEventListener("hashchange", cb);
+}
+
+export default function Home() {
+  // The hash IS the router — subscribe to it as an external system.
+  // useSyncExternalStore renders the server snapshot during hydration
+  // (landing) and re-renders with the real hash right after — no
+  // hydration mismatch, no setState-in-effect.
+  const hash = useSyncExternalStore(
+    subscribeHash,
+    () => window.location.hash,
+    () => "",
+  );
+  // The route is the part before "?" — a shared query rides along as
+  // #playground?q=<encoded sql>&d=<dialect> and never breaks deep links.
+  const qMark = hash.indexOf("?");
+  const route = qMark === -1 ? hash : hash.slice(0, qMark);
+  const mode: Mode =
+    route === "#playground" ? "playground" : route === "#learn" ? "learn" : "landing";
+
+  let sharedSql: string | null = null;
+  let sharedDialect: DialectName | undefined;
+  if (mode === "playground" && qMark !== -1) {
+    const params = new URLSearchParams(hash.slice(qMark + 1));
+    const q = params.get("q");
+    if (q && q.trim()) sharedSql = q;
+    const d = params.get("d");
+    if (d && (DIALECTS as readonly string[]).includes(d)) sharedDialect = d as DialectName;
+  }
+
+  const go = useCallback((m: Mode) => {
+    window.location.hash = m === "landing" ? "" : `#${m}`;
+    window.scrollTo({ top: 0 });
+  }, []);
+
+  if (mode === "landing") {
+    return <Landing onStart={() => go("learn")} onPlayground={() => go("playground")} />;
+  }
+  if (mode === "learn") {
+    return (
+      <div className="flex min-h-screen flex-col bg-zinc-950 text-zinc-100">
+        <header className="sticky top-0 z-40 border-b border-zinc-800/80 bg-zinc-950/85 backdrop-blur">
+          <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+            <button onClick={() => go("landing")} aria-label="SeeQL — back to home" className="transition-opacity hover:opacity-80">
+              <LogoFull />
+            </button>
+            <div className="flex items-center gap-2">
+              <ThemeSwitcher />
+              <button
+                onClick={() => go("playground")}
+                className="hidden rounded-md border border-zinc-800 px-3.5 py-2 text-sm text-zinc-300 transition-colors hover:bg-zinc-900 sm:block"
+              >
+                Playground
+              </button>
+            </div>
+          </div>
+        </header>
+        <LearnApp />
+        <footer className="mt-auto border-t border-zinc-800/80">
+          <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3 text-[11px] text-zinc-600 sm:px-6">
+            <span>SeeQL Learn · progress saved on this device</span>
+            <span className="font-mono">read · watch · prove</span>
+          </div>
+        </footer>
+      </div>
+    );
+  }
+  return <PlaygroundView key={sharedSql ?? ""} go={go} sharedSql={sharedSql} sharedDialect={sharedDialect} />;
 }

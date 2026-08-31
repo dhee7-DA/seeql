@@ -40,7 +40,8 @@ const DDL: string[] = [
     customer_id INTEGER NOT NULL REFERENCES customers(id),
     status TEXT NOT NULL,
     total REAL NOT NULL,
-    created_at TEXT NOT NULL
+    created_at TEXT NOT NULL,
+    shipped_at TEXT
   )`,
   `CREATE TABLE IF NOT EXISTS order_items (
     id INTEGER PRIMARY KEY,
@@ -115,7 +116,7 @@ const STATUSES = ["delivered", "delivered", "delivered", "delivered", "delivered
 
 interface SeedRow {
   table: string;
-  values: Array<string | number>;
+  values: Array<string | number | null>;
 }
 
 function buildSeed(): { rows: SeedRow[]; counts: Record<string, number> } {
@@ -176,7 +177,15 @@ function buildSeed(): { rows: SeedRow[]; counts: Record<string, number> } {
       }
       total = Math.round(total * 100) / 100;
 
-      rows.push({ table: "orders", values: [orderId, customerId, status, total, created] });
+      // shipped_at: set once the order leaves the warehouse — pending and
+      // cancelled orders keep it NULL (this is the lesson-4 teaching data).
+      let shippedAt: string | null = null;
+      if (status === "delivered" || status === "shipped") {
+        const d = new Date(`${created}T00:00:00Z`);
+        d.setUTCDate(d.getUTCDate() + 2 + Math.floor(rng() * 3));
+        shippedAt = d.toISOString().slice(0, 10);
+      }
+      rows.push({ table: "orders", values: [orderId, customerId, status, total, created, shippedAt] });
       for (const [productId, quantity, unitPrice] of itemRows) {
         itemId++;
         rows.push({ table: "order_items", values: [itemId, orderId, productId, quantity, unitPrice] });
@@ -194,12 +203,12 @@ function buildSeed(): { rows: SeedRow[]; counts: Record<string, number> } {
 
 async function insertSeed() {
   const { rows } = buildSeed();
-  const statements: Array<[string, Array<string | number>]> = [];
+  const statements: Array<[string, Array<string | number | null>]> = [];
   const columns: Record<string, string[]> = {
     customers: ["id", "name", "email", "city", "region", "active", "created_at"],
     suppliers: ["id", "name", "region", "rating"],
     products: ["id", "name", "category", "price", "stock", "supplier_id"],
-    orders: ["id", "customer_id", "status", "total", "created_at"],
+    orders: ["id", "customer_id", "status", "total", "created_at", "shipped_at"],
     order_items: ["id", "order_id", "product_id", "quantity", "unit_price"],
   };
   for (const r of rows) {

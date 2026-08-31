@@ -112,12 +112,298 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* =====================================================================
+   THEME BLOCKS
+   Each theme redefines the palette ramps the app paints with
+   (zinc = surfaces + text, emerald/teal = brand accent) plus the shadcn
+   token set. Dark themes re-tint the ramps; light themes INVERT the zinc
+   ramp (components hardcode dark-mode roles: zinc-950 = page, zinc-200 =
+   headline …), so the roles keep their contrast relationships mirrored.
+   Light themes also darken the chromatic 200–400 steps, which carry text.
+   Everything is solid color — the design language has no gradients.
+   ===================================================================== */
+
+/* ---- CARBON · sleek graphite + signal green (default; zinc/emerald
+        Tailwind defaults already match — only brand + tokens here) ---- */
+.theme-carbon {
+  --brand-accent: #3ecf8e;
+  --brand-ink: #052e1c;
+  --background: #09090b;
+  --foreground: #f4f4f5;
+  --card: #111113;
+  --card-foreground: #f4f4f5;
+  --popover: #131316;
+  --popover-foreground: #f4f4f5;
+  --primary: #f4f4f5;
+  --primary-foreground: #131316;
+  --secondary: #1c1c1f;
+  --secondary-foreground: #e4e4e7;
+  --muted: #1c1c1f;
+  --muted-foreground: #9f9fa8;
+  --accent: #1c1c1f;
+  --accent-foreground: #e4e4e7;
+  --destructive: #c85a54;
+  --border: #26262b;
+  --input: #2c2c31;
+  --ring: #3ecf8e;
+}
+
+/* ---- PAPER · classic warm paper, ink, forest green (light) ---- */
+.theme-paper {
+  /* zinc inverted: 950 page → 200 headline (50/100 are bright TEXT roles
+     on dark, so they invert to near-ink, not to light greys) */
+  --color-zinc-50: #171613;
+  --color-zinc-100: #1b1a16;
+  --color-zinc-200: #201f1b;
+  --color-zinc-300: #34322c;
+  --color-zinc-400: #4d4a43;
+  --color-zinc-500: #6d6a62;
+  --color-zinc-600: #a8a496;
+  --color-zinc-700: #cbc7ba;
+  --color-zinc-800: #e2dfd5;
+  --color-zinc-900: #fdfcf8;
+  --color-zinc-950: #f6f5f0;
+  /* brand: forest green */
+  --color-emerald-200: #b5cdb9;
+  --color-emerald-300: #8fb698;
+  --color-emerald-400: #3f7d4e;
+  --color-emerald-500: #33673f;
+  --color-teal-200: #b7cbc9;
+  --color-teal-300: #8bafac;
+  --color-teal-400: #477d78;
+  --color-teal-500: #3a6661;
+  /* chromatic text steps darkened for paper */
+  --color-amber-200: #8a5a10;
+  --color-amber-300: #9a6512;
+  --color-amber-400: #b45309;
+  --color-rose-200: #9f3d4a;
+  --color-rose-300: #b04a57;
+  --color-rose-400: #c0394b;
+  --color-violet-200: #52409a;
+  --color-violet-300: #5f43b8;
+  --color-violet-400: #6f4fd0;
+  --color-lime-200: #557018;
+  --color-lime-300: #6f9c33;
+  --color-lime-400: #5c8a1e;
+  --color-orange-200: #9a4310;
+  --color-orange-300: #b34a12;
+  --color-orange-400: #c2410c;
+  --color-fuchsia-300: #a121a9;
+  --color-fuchsia-400: #a92bb1;
+  --color-red-300: #b73327;
+  --color-red-400: #cf3a2e;
+  --color-red-50: #fdecec;
+  /* tokens */
+  --brand-accent: #3f7d4e;
+  --brand-ink: #ffffff;
+  --background: #f6f5f0;
+  --foreground: #201f1b;
+  --card: #fdfcf8;
+  --card-foreground: #201f1b;
+  --popover: #ffffff;
+  --popover-foreground: #201f1b;
+  --primary: #201f1b;
+  --primary-foreground: #f6f5f0;
+  --secondary: #ebe9df;
+  --secondary-foreground: #34322c;
+  --muted: #ebe9df;
+  --muted-foreground: #6d6a62;
+  --accent: #ebe9df;
+  --accent-foreground: #34322c;
+  --destructive: #c0394b;
+  --border: #e2dfd5;
+  --input: #d8d4c8;
+  --ring: #3f7d4e;
+  --chart-1: #3f7d4e;
+  --chart-2: #477d78;
+  --chart-3: #b45309;
+  --chart-4: #6f4fd0;
+  --chart-5: #c0394b;
+  --sidebar: #f1efe8;
+  --sidebar-foreground: #201f1b;
+  --sidebar-primary: #3f7d4e;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #ebe9df;
+  --sidebar-accent-foreground: #34322c;
+  --sidebar-border: #e2dfd5;
+  --sidebar-ring: #3f7d4e;
+}
+
+/* ---- MARINE · modern deep navy, steel cyan (dark) ---- */
+.theme-marine {
+  --color-zinc-50: #f0f6fc;
+  --color-zinc-100: #e4edf8;
+  --color-zinc-200: #d7e3f3;
+  --color-zinc-300: #a9c0dc;
+  --color-zinc-400: #7e99bd;
+  --color-zinc-500: #557199;
+  --color-zinc-600: #3a527a;
+  --color-zinc-700: #27395c;
+  --color-zinc-800: #1a2a47;
+  --color-zinc-900: #101c33;
+  --color-zinc-950: #0a1120;
+  --color-emerald-200: #b9e4f2;
+  --color-emerald-300: #8ed2ea;
+  --color-emerald-400: #62c1e5;
+  --color-emerald-500: #3ba6cf;
+  --color-teal-200: #b2e7ee;
+  --color-teal-300: #7fd3de;
+  --color-teal-400: #4dbdcc;
+  --color-teal-500: #2f9fb0;
+  --brand-accent: #62c1e5;
+  --brand-ink: #062a3a;
+  --background: #0a1120;
+  --foreground: #e9f0fa;
+  --card: #101a30;
+  --card-foreground: #e9f0fa;
+  --popover: #121e37;
+  --popover-foreground: #e9f0fa;
+  --primary: #e9f0fa;
+  --primary-foreground: #101a30;
+  --secondary: #18263f;
+  --secondary-foreground: #d7e3f3;
+  --muted: #18263f;
+  --muted-foreground: #8ba3c4;
+  --accent: #18263f;
+  --accent-foreground: #d7e3f3;
+  --destructive: #e08585;
+  --border: #1e2f50;
+  --input: #243759;
+  --ring: #62c1e5;
+}
+
+/* ---- OXBLOOD · statement warm noir, deep red (dark) ---- */
+.theme-oxblood {
+  --color-zinc-50: #f7f3f1;
+  --color-zinc-100: #ece4e0;
+  --color-zinc-200: #d8cbc5;
+  --color-zinc-300: #b8a49c;
+  --color-zinc-400: #967c73;
+  --color-zinc-500: #775d54;
+  --color-zinc-600: #5c453e;
+  --color-zinc-700: #453430;
+  --color-zinc-800: #2f221f;
+  --color-zinc-900: #1d1413;
+  --color-zinc-950: #141010;
+  --color-emerald-200: #f0c3b4;
+  --color-emerald-300: #e5a08c;
+  --color-emerald-400: #d97b6c;
+  --color-emerald-500: #c05f50;
+  --color-teal-200: #e8d5bd;
+  --color-teal-300: #d9bd99;
+  --color-teal-400: #c9a476;
+  --color-teal-500: #b08a5b;
+  --brand-accent: #d97b6c;
+  --brand-ink: #2a0f0b;
+  --background: #141010;
+  --foreground: #f3ece9;
+  --card: #1d1413;
+  --card-foreground: #f3ece9;
+  --popover: #211716;
+  --popover-foreground: #f3ece9;
+  --primary: #f3ece9;
+  --primary-foreground: #211716;
+  --secondary: #2a1e1c;
+  --secondary-foreground: #d8cbc5;
+  --muted: #2a1e1c;
+  --muted-foreground: #a89189;
+  --accent: #2a1e1c;
+  --accent-foreground: #d8cbc5;
+  --destructive: #e07a6a;
+  --border: #342624;
+  --input: #3d2d2a;
+  --ring: #d97b6c;
+}
+
+/* ---- GALLERY · minimal white walls, black ink, persimmon (light) ---- */
+.theme-gallery {
+  /* zinc inverted, neutral — 50/100 are bright-text roles → invert to ink */
+  --color-zinc-50: #0c0c0b;
+  --color-zinc-100: #0f0f0e;
+  --color-zinc-200: #141412;
+  --color-zinc-300: #2c2c29;
+  --color-zinc-400: #454540;
+  --color-zinc-500: #6b6b66;
+  --color-zinc-600: #a3a39e;
+  --color-zinc-700: #d4d4d0;
+  --color-zinc-800: #e8e8e5;
+  --color-zinc-900: #ffffff;
+  --color-zinc-950: #fcfcfb;
+  /* brand: persimmon */
+  --color-emerald-200: #f0b9a3;
+  --color-emerald-300: #e68a66;
+  --color-emerald-400: #d1532b;
+  --color-emerald-500: #b54423;
+  --color-teal-200: #d6c4b2;
+  --color-teal-300: #b39a80;
+  --color-teal-400: #8a6d52;
+  --color-teal-500: #71573f;
+  /* chromatic text steps darkened */
+  --color-amber-200: #8a5a10;
+  --color-amber-300: #9a6512;
+  --color-amber-400: #b45309;
+  --color-rose-200: #9f3d4a;
+  --color-rose-300: #b04a57;
+  --color-rose-400: #c0394b;
+  --color-violet-200: #52409a;
+  --color-violet-300: #5f43b8;
+  --color-violet-400: #6f4fd0;
+  --color-lime-200: #557018;
+  --color-lime-300: #6f9c33;
+  --color-lime-400: #5c8a1e;
+  --color-orange-200: #9a4310;
+  --color-orange-300: #b34a12;
+  --color-orange-400: #c2410c;
+  --color-fuchsia-300: #a121a9;
+  --color-fuchsia-400: #a92bb1;
+  --color-red-300: #b73327;
+  --color-red-400: #cf3a2e;
+  --color-red-50: #fdecec;
+  /* tokens */
+  --brand-accent: #d1532b;
+  --brand-ink: #ffffff;
+  --background: #fcfcfb;
+  --foreground: #141412;
+  --card: #ffffff;
+  --card-foreground: #141412;
+  --popover: #ffffff;
+  --popover-foreground: #141412;
+  --primary: #141412;
+  --primary-foreground: #fcfcfb;
+  --secondary: #f0f0ed;
+  --secondary-foreground: #2c2c29;
+  --muted: #f0f0ed;
+  --muted-foreground: #6b6b66;
+  --accent: #f0f0ed;
+  --accent-foreground: #2c2c29;
+  --destructive: #c0394b;
+  --border: #e8e8e5;
+  --input: #dcdcd8;
+  --ring: #d1532b;
+  --chart-1: #d1532b;
+  --chart-2: #8a6d52;
+  --chart-3: #b45309;
+  --chart-4: #6f4fd0;
+  --chart-5: #c0394b;
+  --sidebar: #f7f7f5;
+  --sidebar-foreground: #141412;
+  --sidebar-primary: #d1532b;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f0f0ed;
+  --sidebar-accent-foreground: #2c2c29;
+  --sidebar-border: #e8e8e5;
+  --sidebar-ring: #d1532b;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--brand-accent) 28%, transparent);
   }
 }
 

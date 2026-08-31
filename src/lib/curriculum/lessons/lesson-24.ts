@@ -1,0 +1,205 @@
+import type { Lesson } from "../types";
+import { EXPECTED } from "../expected";
+
+export const lesson24: Lesson = {
+  id: "lesson-24",
+  num: 24,
+  title: "Capstone: one report, three patterns",
+  blurb: "Segment with CASE, stack a TOTAL row, run an EXCEPT audit — the module's whole toolkit in three queries",
+  minutes: 15,
+  blocks: [
+    {
+      kind: "p",
+      text: "Everything in this module now clicks together. One business report, three moves: **CASE** segments customers by spend, **UNION ALL** pins a TOTAL row under a ledger, and **EXCEPT** audits categories. Every number below is real and re-verified against the store.",
+    },
+    { kind: "diagram", figure: "s8-capstone" },
+    { kind: "h", text: "Pattern 1 — segment, then count" },
+    {
+      kind: "code",
+      caption: "Spend tiers: aggregate per customer FIRST, classify SECOND",
+      sql: `SELECT tier, COUNT(*) AS customers FROM (
+  SELECT CASE WHEN SUM(o.total) >= 3000 THEN 'high'
+              WHEN SUM(o.total) >= 1000 THEN 'mid'
+              ELSE 'low'
+         END AS tier
+  FROM customers c
+  JOIN orders o ON o.customer_id = c.id
+  GROUP BY c.id
+)
+GROUP BY tier
+ORDER BY customers DESC, tier;    -- low 8 · high 4 · mid 4`,
+    },
+    {
+      kind: "bullets",
+      items: [
+        "The **two-stage shape** matters: an inner query aggregates per customer (`GROUP BY c.id`), then the outer query groups the tiers. You cannot CASE *and* tier in one flat GROUP BY — aggregates cannot nest.",
+        "The tiers are honest: **high** is Alice 7,262.35 (24 orders), Emma 6,640.56, Grace 4,574.23, Maya 3,644.56 — exactly the 4 customers ≥ 3,000. **mid** holds Chloe, Pedro, Farid and Keiko; the other **8** — down to Olivia's 444.80 — ride low.",
+        "This is lesson 7's GROUP BY, lesson 22's CASE, and lesson 17's \"stack-then-summarize\" FROM-wrap — three lessons, one query.",
+      ],
+    },
+    { kind: "h", text: "Pattern 2 — stack a TOTAL row under the ledger" },
+    {
+      kind: "code",
+      caption: "Delivered-revenue ledger with a pinned TOTAL",
+      sql: `SELECT month, orders, revenue FROM (
+  SELECT substr(created_at, 1, 7) AS month,
+         COUNT(*) AS orders,
+         ROUND(SUM(total), 2) AS revenue
+  FROM orders
+  WHERE status = 'delivered'
+  GROUP BY month
+  ORDER BY month DESC
+  LIMIT 3
+)
+UNION ALL
+SELECT 'TOTAL', COUNT(*), ROUND(SUM(total), 2)
+FROM orders
+WHERE status = 'delivered'
+ORDER BY month;   -- 2024-12 · 2025-01 · 2025-02 · TOTAL`,
+    },
+    {
+      kind: "bullets",
+      items: [
+        "The detail arm is a wrapped group-by (its own `ORDER BY … LIMIT` — legal inside FROM, impossible as a bare arm). The TOTAL arm is a flat aggregate. `UNION ALL` stacks them: 4 rows, 1,103.13 + 724.11 + 707.35 under a **TOTAL of 52 delivered orders and 15,571.07**.",
+        "`UNION ALL`, not `UNION` — a TOTAL row never duplicates a month row, but the dedupe pass would still burn a sort. And if a TOTAL row *did* coincide with a detail row, `UNION` would silently delete it.",
+        "Sorting a mixed pile ('2025-02' vs 'TOTAL') is string sorting — 'T' > '2' pins TOTAL last here by luck. Make it deterministic with `ORDER BY CASE WHEN month = 'TOTAL' THEN 1 ELSE 0 END, month`.",
+      ],
+    },
+    { kind: "h", text: "Pattern 3 — EXCEPT as a data audit" },
+    {
+      kind: "code",
+      caption: "Categories with delivered revenue but zero pending revenue",
+      sql: `SELECT p.category
+FROM orders o
+JOIN order_items oi ON oi.order_id = o.id
+JOIN products p ON p.id = oi.product_id
+WHERE o.status = 'delivered'
+GROUP BY p.category
+EXCEPT
+SELECT p.category
+FROM orders o
+JOIN order_items oi ON oi.order_id = o.id
+JOIN products p ON p.id = oi.product_id
+WHERE o.status = 'pending'
+GROUP BY p.category
+ORDER BY category;    -- exactly one row: Apparel`,
+    },
+    {
+      kind: "bullets",
+      items: [
+        "Six of seven categories carry both delivered and pending revenue; **Apparel** alone is delivered-only — nothing in that category is stuck in a queue. One operator turns that into an auditable row.",
+        "**Fan-out, one last time**: joining `order_items` multiplies order rows by their items (34,833.28 of true revenue became 103,244.55 in lesson 16). Here it is safe *only* because each arm groups by category before the EXCEPT compares them — compare categories, never raw sums across a fan-out.",
+        "The arms compare **entire rows** — both select exactly `category`. Projecting extra columns in one arm would silently shrink or break the overlap.",
+      ],
+    },
+    { kind: "h", text: "Dialect watch" },
+    {
+      kind: "bullets",
+      items: [
+        "All three patterns run as-written on **SQLite, Postgres and MySQL 8.0.31+**; the EXCEPT audit is the only line item MySQL versions before 8.0.31 cannot say (use `LEFT JOIN … IS NULL` there).",
+        "The TOTAL-row stack is the classic pre-window-function report. Engines can now do it with `GROUPING SETS`/`ROLLUP` (Postgres, MySQL 8) — but the UNION ALL ledger is the version you will actually write from memory.",
+        "`substr` is SQLite/Postgres spelling; MySQL says `SUBSTRING` — one of the few functions in this module with a dialect name.",
+      ],
+    },
+    {
+      kind: "tip",
+      text: "Notice what the capstone did NOT need: subqueries in WHERE, loops, application code. Segment, stack, audit — three composable patterns cover most reports analysts are asked for. That is the floor, not the ceiling.",
+    },
+  ],
+  mcqs: [
+    {
+      id: "l24-q1",
+      prompt: "Why does the tier query wrap the per-customer aggregation in a FROM subquery instead of tiering directly in one GROUP BY?",
+      choices: [
+        "Subqueries run faster than single-level GROUP BY",
+        "Aggregates cannot nest — you must SUM per customer first, then classify and count the resulting tiers",
+        "SQLite forbids CASE in the same SELECT as an aggregate",
+        "The outer query needs UNION ALL",
+      ],
+      answer: 1,
+      why: "Tiering depends on SUM(o.total), which only exists after grouping per customer. Two stages, wrapped: aggregate → classify → count. The result: high 4, mid 4, low 8.",
+    },
+    {
+      id: "l24-q2",
+      prompt: "In the TOTAL-row ledger, why UNION ALL rather than UNION?",
+      choices: [
+        "UNION cannot stack aggregates",
+        "UNION ALL skips the dedupe pass, and a TOTAL row that coincided with a detail row would be silently deleted by UNION",
+        "UNION sorts alphabetically and would break the month order",
+        "No reason — they are identical here",
+      ],
+      answer: 1,
+      why: "The append must be unconditional. UNION's dedupe pass costs a sort and — in the pathological case where TOTAL equals a detail row — removes the very row you added.",
+    },
+    {
+      id: "l24-q3",
+      prompt: "The EXCEPT audit returns exactly one category. Which, and why is it interesting?",
+      choices: [
+        "Audio — it has the highest revenue",
+        "Fitness — lowest delivered revenue",
+        "Apparel — it has delivered revenue but no pending revenue: nothing stuck in the queue",
+        "Electronics — it is the only category without cancellations",
+      ],
+      answer: 2,
+      why: "Six categories appear in both the delivered and pending revenue lists; only Apparel is delivered-only. EXCEPT surfaces it as a clean audit row.",
+    },
+    {
+      id: "l24-q4",
+      prompt: "Why is joining order_items in the EXCEPT arms safe here, when lesson 16 called the same join a fan-out trap?",
+      choices: [
+        "It is never safe — the query is wrong",
+        "Because each arm groups by category before the set operation compares them; no SUM crosses the fan-out ungrouped",
+        "Because order_items has fewer rows than orders",
+        "Because EXCEPT removes duplicated items",
+      ],
+      answer: 1,
+      why: "The trap is aggregating across the fan-out (SUM(o.total) → 103,244.55). Grouping by category per arm keeps every aggregate scoped — 34,833.28 stays true.",
+    },
+  ],
+  problems: [
+    {
+      id: "l24-p1",
+      title: "Spend tiers",
+      brief: "Classify every customer by total spend: `high` ≥ 3000, `mid` ≥ 1000, else `low`. Output: `tier`, `customers` (count) — ordered by count descending, then tier. Three rows.",
+      hint: "Inner query: CASE over SUM(o.total) with GROUP BY c.id. Outer: GROUP BY tier, ORDER BY customers DESC, tier.",
+      difficulty: "medium",
+      solution:
+        "SELECT tier, COUNT(*) AS customers FROM (\n  SELECT CASE WHEN SUM(o.total) >= 3000 THEN 'high'\n              WHEN SUM(o.total) >= 1000 THEN 'mid'\n              ELSE 'low' END AS tier\n  FROM customers c\n  JOIN orders o ON o.customer_id = c.id\n  GROUP BY c.id\n)\nGROUP BY tier\nORDER BY customers DESC, tier;",
+      expected: EXPECTED["l24-p1"],
+      ordered: true,
+    },
+    {
+      id: "l24-p2",
+      title: "Ledger with a TOTAL",
+      brief: "Delivered revenue per month (`month`, `orders`, `revenue`) for the 3 most recent months, then a `'TOTAL'` row stacked underneath via UNION ALL. Output ordered by `month` — the TOTAL row sorts last alphabetically.",
+      hint: "Wrap the per-month arm (with its own ORDER BY month DESC LIMIT 3) in a FROM subquery, UNION ALL the TOTAL aggregate, ORDER BY month.",
+      difficulty: "hard",
+      solution:
+        "SELECT month, orders, revenue FROM (\n  SELECT substr(created_at, 1, 7) AS month,\n         COUNT(*) AS orders,\n         ROUND(SUM(total), 2) AS revenue\n  FROM orders\n  WHERE status = 'delivered'\n  GROUP BY month\n  ORDER BY month DESC\n  LIMIT 3\n)\nUNION ALL\nSELECT 'TOTAL', COUNT(*), ROUND(SUM(total), 2)\nFROM orders\nWHERE status = 'delivered'\nORDER BY month;",
+      expected: EXPECTED["l24-p2"],
+      ordered: true,
+    },
+    {
+      id: "l24-p3",
+      title: "The delivered-only category",
+      brief: "Categories with delivered-order revenue but **no** pending-order revenue — both arms built from orders ⋈ order_items ⋈ products, grouped by category. Output one column `category`.",
+      hint: "Two identical three-table arms differing only in status, GROUP BY p.category, joined by EXCEPT, ORDER BY category.",
+      difficulty: "hard",
+      solution:
+        "SELECT p.category\nFROM orders o\nJOIN order_items oi ON oi.order_id = o.id\nJOIN products p ON p.id = oi.product_id\nWHERE o.status = 'delivered'\nGROUP BY p.category\nEXCEPT\nSELECT p.category\nFROM orders o\nJOIN order_items oi ON oi.order_id = o.id\nJOIN products p ON p.id = oi.product_id\nWHERE o.status = 'pending'\nGROUP BY p.category\nORDER BY category;",
+      expected: EXPECTED["l24-p3"],
+      ordered: true,
+    },
+    {
+      id: "l24-p4",
+      title: "The order book",
+      brief: "Bucket every order with CASE — delivered/shipped → `BIG`, pending → `OPEN`, else `LOST` — reporting `bucket`, `orders`, `revenue` per bucket, then stack a `'TOTAL'` row with UNION ALL. Output ordered by `bucket`.",
+      hint: "CASE with IN ('delivered','shipped') for BIG, GROUP BY bucket, wrap in FROM, UNION ALL the TOTAL, ORDER BY bucket.",
+      difficulty: "hard",
+      solution:
+        "SELECT bucket, orders, revenue FROM (\n  SELECT CASE WHEN status IN ('delivered', 'shipped') THEN 'BIG'\n              WHEN status = 'pending' THEN 'OPEN'\n              ELSE 'LOST' END AS bucket,\n         COUNT(*) AS orders,\n         ROUND(SUM(total), 2) AS revenue\n  FROM orders\n  GROUP BY bucket\n)\nUNION ALL\nSELECT 'TOTAL', COUNT(*), ROUND(SUM(total), 2)\nFROM orders\nORDER BY bucket;",
+      expected: EXPECTED["l24-p4"],
+      ordered: true,
+    },
+  ],
+};

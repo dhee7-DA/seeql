@@ -1,0 +1,1034 @@
+     1→"use client";
+     2→
+     3→// Interactive SQL diagrams — flat visual language: solid fills, 1px lines,
+     4→// no gradients, no glow. Every number shown is real (computed from the
+     5→// seeded storefront db by scripts/gen-expected.ts). Figures animate in via
+     6→// framer-motion and re-skin automatically because they paint with Tailwind
+     7→// palette utilities (which the theme engine redefines per theme).
+     8→
+     9→import { useState } from "react";
+    10→import { motion } from "framer-motion";
+    11→import type { FigureId } from "@/lib/curriculum/types";
+    12→import { cn } from "@/lib/utils";
+    13→
+    14→/* ---------------- shared bits ---------------- */
+    15→
+    16→const MONO = "ui-monospace, SFMono-Regular, Menlo, monospace";
+    17→
+    18→function Label({
+    19→  x,
+    20→  y,
+    21→  children,
+    22→  anchor = "start",
+    23→  cls = "fill-zinc-400",
+    24→  size = 11,
+    25→}: {
+    26→  x: number;
+    27→  y: number;
+    28→  children: React.ReactNode;
+    29→  anchor?: "start" | "middle" | "end";
+    30→  cls?: string;
+    31→  size?: number;
+    32→}) {
+    33→  return (
+    34→    <text x={x} y={y} textAnchor={anchor} fontSize={size} className={cls} fontFamily={MONO}>
+    35→      {children}
+    36→    </text>
+    37→  );
+    38→}
+    39→
+    40→function ArrowHead({ x, y, ang = 0, cls = "stroke-zinc-600", h = 6.5, delay = 0 }: { x: number; y: number; ang?: number; cls?: string; h?: number; delay?: number }) {
+    41→  // ang = direction of travel at the tip (radians, 0 = pointing right)
+    42→  const a1 = ang + Math.PI - 0.46;
+    43→  const a2 = ang + Math.PI + 0.46;
+    44→  return (
+    45→    <motion.g {...fade(delay)} className={cls} strokeWidth={1.5} strokeLinecap="round" fill="none">
+    46→      <line x1={x} y1={y} x2={x + h * Math.cos(a1)} y2={y + h * Math.sin(a1)} />
+    47→      <line x1={x} y1={y} x2={x + h * Math.cos(a2)} y2={y + h * Math.sin(a2)} />
+    48→    </motion.g>
+    49→  );
+    50→}
+    51→
+    52→function Arrow({ x1, y1, x2, y2, cls = "stroke-zinc-600" }: { x1: number; y1: number; x2: number; y2: number; cls?: string }) {
+    53→  const ang = Math.atan2(y2 - y1, x2 - x1);
+    54→  const h = 6.5;
+    55→  const a1 = ang + Math.PI - 0.46;
+    56→  const a2 = ang + Math.PI + 0.46;
+    57→  return (
+    58→    <g className={cls} strokeWidth={1.5} strokeLinecap="round" fill="none">
+    59→      <line x1={x1} y1={y1} x2={x2} y2={y2} />
+    60→      <line x1={x2} y1={y2} x2={x2 + h * Math.cos(a1)} y2={y2 + h * Math.sin(a1)} />
+    61→      <line x1={x2} y1={y2} x2={x2 + h * Math.cos(a2)} y2={y2 + h * Math.sin(a2)} />
+    62→    </g>
+    63→  );
+    64→}
+    65→
+    66→/** Animated reveal for connection paths (framer-motion draws the stroke). */
+    67→function drawIn(delay = 0) {
+    68→  return {
+    69→    initial: { pathLength: 0.0001, opacity: 1 },
+    70→    whileInView: { pathLength: 1, opacity: 1 },
+    71→    viewport: { once: true, margin: "-40px" },
+    72→    transition: { duration: 0.7, delay, ease: "easeInOut" as const },
+    73→  };
+    74→}
+    75→
+    76→/** Smooth S-curve link with horizontal tangents — the workhorse for
+    77→ *  row-to-row foreign-key connections. Points rightward (x2 > x1). */
+    78→function Link({
+    79→  x1,
+    80→  y1,
+    81→  x2,
+    82→  y2,
+    83→  cls = "stroke-zinc-600",
+    84→  w = 1.5,
+    85→  dash,
+    86→  arrow = true,
+    87→  dot,
+    88→  bend = 0.42,
+    89→  delay = 0,
+    90→}: {
+    91→  x1: number;
+    92→  y1: number;
+    93→  x2: number;
+    94→  y2: number;
+    95→  cls?: string;
+    96→  w?: number;
+    97→  dash?: string;
+    98→  arrow?: boolean;
+    99→  dot?: string;
+   100→  bend?: number;
+   101→  delay?: number;
+   102→}) {
+   103→  const dx = Math.max(8, Math.min(Math.abs(x2 - x1) * bend, Math.abs(x2 - x1) / 2));
+   104→  const d = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
+   105→  return (
+   106→    <g>
+   107→      <motion.path {...drawIn(delay)} d={d} className={cls} strokeWidth={w} strokeDasharray={dash} fill="none" strokeLinecap="round" />
+   108→      {dot && <motion.circle {...fade(delay + 0.1)} cx={x1} cy={y1} r={3} className={dot} />}
+   109→      {arrow && <ArrowHead x={x2} y={y2} ang={0} cls={cls} delay={delay + 0.45} />}
+   110→    </g>
+   111→  );
+   112→}
+   113→
+   114→/** Rounded orthogonal polyline through the given points — for routes that
+   115→ *  must travel around other elements (down, across, up). */
+   116→function Pipe({
+   117→  pts,
+   118→  cls = "stroke-zinc-600",
+   119→  w = 1.5,
+   120→  dash,
+   121→  arrowAng,
+   122→  arrowCls,
+   123→  r = 12,
+   124→  delay = 0,
+   125→}: {
+   126→  pts: Array<[number, number]>;
+   127→  cls?: string;
+   128→  w?: number;
+   129→  dash?: string;
+   130→  /** direction of travel at the final point, if an arrowhead is wanted */
+   131→  arrowAng?: number;
+   132→  arrowCls?: string;
+   133→  r?: number;
+   134→  delay?: number;
+   135→}) {
+   136→  let d = `M ${pts[0][0]} ${pts[0][1]}`;
+   137→  for (let i = 1; i < pts.length - 1; i++) {
+   138→    const [px, py] = pts[i - 1];
+   139→    const [cx, cy] = pts[i];
+   140→    const [nx, ny] = pts[i + 1];
+   141→    const inLen = Math.hypot(cx - px, cy - py) || 1;
+   142→    const outLen = Math.hypot(nx - cx, ny - cy) || 1;
+   143→    const r1 = Math.min(r, inLen / 2);
+   144→    const r2 = Math.min(r, outLen / 2);
+   145→    const ax = cx - ((cx - px) / inLen) * r1;
+   146→    const ay = cy - ((cy - py) / inLen) * r1;
+   147→    const bx = cx + ((nx - cx) / outLen) * r2;
+   148→    const by = cy + ((ny - cy) / outLen) * r2;
+   149→    d += ` L ${ax} ${ay} Q ${cx} ${cy}, ${bx} ${by}`;
+   150→  }
+   151→  const last = pts[pts.length - 1];
+   152→  d += ` L ${last[0]} ${last[1]}`;
+   153→  return (
+   154→    <g>
+   155→      <motion.path {...drawIn(delay)} d={d} className={cls} strokeWidth={w} strokeDasharray={dash} fill="none" strokeLinecap="round" />
+   156→      {arrowAng !== undefined && <ArrowHead x={last[0]} y={last[1]} ang={arrowAng} cls={arrowCls ?? cls} delay={delay + 0.45} />}
+   157→    </g>
+   158→  );
+   159→}
+   160→
+   161→/** Small × marker — a row that hit the match rule and did not survive. */
+   162→function XMark({ x, y, cls = "stroke-zinc-500", s = 4, delay = 0 }: { x: number; y: number; cls?: string; s?: number; delay?: number }) {
+   163→  return (
+   164→    <motion.g {...fade(delay)} className={cls} strokeWidth={1.6} strokeLinecap="round">
+   165→      <line x1={x - s} y1={y - s} x2={x + s} y2={y + s} />
+   166→      <line x1={x - s} y1={y + s} x2={x + s} y2={y - s} />
+   167→    </motion.g>
+   168→  );
+   169→}
+   170→
+   171→function Panel({ x, y, w, h, cls = "fill-zinc-900 stroke-zinc-800" }: { x: number; y: number; w: number; h: number; cls?: string }) {
+   172→  return <rect x={x} y={y} width={w} height={h} rx={8} className={cls} strokeWidth={1} />;
+   173→}
+   174→
+   175→function fade(delay = 0) {
+   176→  return {
+   177→    initial: { opacity: 0, y: 8 },
+   178→    whileInView: { opacity: 1, y: 0 },
+   179→    viewport: { once: true, margin: "-40px" },
+   180→    transition: { duration: 0.45, delay },
+   181→  };
+   182→}
+   183→
+   184→/** Deterministic pseudo-random for dot layouts (stable across renders). */
+   185→function rng(seed: number) {
+   186→  let s = seed >>> 0;
+   187→  return () => {
+   188→    s = (1664525 * s + 1013904223) >>> 0;
+   189→    return s / 4294967296;
+   190→  };
+   191→}
+   192→
+   193→function DotField({ n, cols, x0, y0, gap = 15, r = 4, passFrom }: { n: number; cols: number; x0: number; y0: number; gap?: number; r?: number; passFrom?: number }) {
+   194→  const rand = rng(7);
+   195→  const dots: React.JSX.Element[] = [];
+   196→  for (let i = 0; i < n; i++) {
+   197→    const cx = x0 + (i % cols) * gap + rand() * 4 - 2;
+   198→    const cy = y0 + Math.floor(i / cols) * gap + rand() * 4 - 2;
+   199→    const pass = passFrom === undefined || i < passFrom;
+   200→    dots.push(
+   201→      <circle key={i} cx={cx} cy={cy} r={r} className={pass ? "fill-zinc-500" : "fill-zinc-700"} opacity={pass ? 0.9 : 0.55} />,
+   202→    );
+   203→  }
+   204→  return <g>{dots}</g>;
+   205→}
+   206→
+   207→/* ---------------- figures ---------------- */
+   208→
+   209→function L1Anatomy() {
+   210→  const cx = [200, 320, 470, 560];
+   211→  const rows = [
+   212→    ["1", "Alice Chen", "Berlin", "1"],
+   213→    ["2", "Bruno Silva", "São Paulo", "1"],
+   214→    ["3", "Chloe Dubois", "Lyon", "1"],
+   215→  ];
+   216→  return (
+   217→    <svg viewBox="0 0 720 300" className="w-full" role="img" aria-label="Anatomy of a table: rows, columns, primary key">
+   218→      <motion.g {...fade(0)}>
+   219→        <Panel x={130} y={54} w={500} h={196} />
+   220→        {["id", "name", "city", "active"].map((h, i) => (
+   221→          <Label key={h} x={cx[i]} y={80} anchor="middle" cls="fill-zinc-300">{h}</Label>
+   222→        ))}
+   223→        <line x1={130} y1={92} x2={630} y2={92} className="stroke-zinc-800" />
+   224→        {rows.map((r, ri) =>
+   225→          r.map((cell, ci) => (
+   226→            <g key={`${ri}-${ci}`}>
+   227→              <Label x={cx[ci]} y={118 + ri * 34} anchor="middle" cls={ci === 0 ? "fill-emerald-300" : "fill-zinc-400"}>
+   228→                {cell}
+   229→              </Label>
+   230→            </g>
+   231→          )),
+   232→        )}
+   233→        {/* row band */}
+   234→        <motion.rect {...fade(0.3)} x={134} y={98} width={492} height={30} rx={6} className="fill-emerald-400/10 stroke-emerald-400/60" />
+   235→        <Label x={126} y={117} anchor="end" cls="fill-emerald-300">a row = one customer</Label>
+   236→        {/* column band */}
+   237→        <motion.rect {...fade(0.5)} x={434} y={62} width={72} height={184} rx={6} className="fill-teal-400/10 stroke-teal-400/60" />
+   238→        <Label x={470} y={270} anchor="middle" cls="fill-teal-300">a column — one attribute</Label>
+   239→        {/* PK flag */}
+   240→        <motion.g {...fade(0.7)}>
+   241→          <rect x={168} y={30} width={64} height={18} rx={4} className="fill-emerald-400" />
+   242→          <Label x={200} y={43} anchor="middle" cls="fill-[#052e1c]" size={10}>PK · unique</Label>
+   243→          <Arrow x1={200} y1={48} x2={200} y2={58} cls="stroke-emerald-400" />
+   244→          <Label x={620} y={43} anchor="end" cls="fill-zinc-500">customers</Label>
+   245→        </motion.g>
+   246→      </motion.g>
+   247→    </svg>
+   248→  );
+   249→}
+   250→
+   251→function L2Projection() {
+   252→  const before = [
+   253→    ["1", "Mechanical Keyboard K1", "Electronics", "89.99", "120"],
+   254→    ["2", "Wireless Mouse M3", "Electronics", "34.50", "300"],
+   255→    ["4", "Noise-Canceling Headset", "Audio", "149.99", "60"],
+   256→    ["9", "HDMI 2.1 Cable 2m", "Accessories", "14.99", "500"],
+   257→  ];
+   258→  const after = [
+   259→    ["Mechanical Keyboard K1", "89.99"],
+   260→    ["Wireless Mouse M3", "34.50"],
+   261→    ["Noise-Canceling Headset", "149.99"],
+   262→    ["HDMI 2.1 Cable 2m", "14.99"],
+   263→  ];
+   264→  return (
+   265→    <svg viewBox="0 0 720 260" className="w-full" role="img" aria-label="Projection keeps only chosen columns">
+   266→      <motion.g {...fade(0)}>
+   267→        <Panel x={16} y={40} w={280} h={168} />
+   268→        <Label x={28} y={28} cls="fill-zinc-500">products · 5 columns</Label>
+   269→        {before.map((r, ri) =>
+   270→          r.map((c, ci) => (
+   271→            <Label key={`${ri}-${ci}`} x={ci === 1 ? 40 : 28 + [0, 0, 150, 212, 252][ci] + (ci > 1 ? 0 : 0)} y={66 + ri * 34} cls={ci === 1 ? "fill-zinc-300" : "fill-zinc-500"} size={10}>
+   272→              {ci === 1 && c.length > 22 ? c.slice(0, 21) + "…" : c}
+   273→            </Label>
+   274→          )),
+   275→        )}
+   276→      </motion.g>
+   277→      <motion.g {...fade(0.35)}>
+   278→        <rect x={318} y={92} width={118} height={30} rx={6} className="fill-emerald-400/15 stroke-emerald-400/70" />
+   279→        <Label x={377} y={111} anchor="middle" cls="fill-emerald-300" size={10}>SELECT name, price</Label>
+   280→        <Arrow x1={300} y1={124} x2={314} y2={107} />
+   281→        <Arrow x1={440} y1={107} x2={454} y2={124} cls="stroke-emerald-400" />
+   282→      </motion.g>
+   283→      <motion.g {...fade(0.6)}>
+   284→        <Panel x={458} y={40} w={246} h={168} cls="fill-zinc-900 stroke-emerald-400/50" />
+   285→        <Label x={470} y={28} cls="fill-emerald-300">result · 2 columns, same rows</Label>
+   286→        {after.map((r, ri) => (
+   287→          <g key={ri}>
+   288→            <Label x={470} y={66 + ri * 34} cls="fill-zinc-300" size={10}>{r[0].length > 24 ? r[0].slice(0, 23) + "…" : r[0]}</Label>
+   289→            <Label x={692} y={66 + ri * 34} anchor="end" cls="fill-zinc-400" size={10}>{r[1]}</Label>
+   290→          </g>
+   291→        ))}
+   292→      </motion.g>
+   293→    </svg>
+   294→  );
+   295→}
+   296→
+   297→function L3WhereGate() {
+   298→  return (
+   299→    <svg viewBox="0 0 720 250" className="w-full" role="img" aria-label="WHERE filters rows: 103 orders in, 65 pass total > 200">
+   300→      <motion.g {...fade(0)}>
+   301→        <Label x={30} y={30} cls="fill-zinc-300">FROM orders</Label>
+   302→        <Label x={30} y={48} cls="fill-zinc-500" size={10}>103 rows</Label>
+   303→        <DotField n={103} cols={12} x0={30} y0={62} gap={16} />
+   304→      </motion.g>
+   305→      <motion.g {...fade(0.4)}>
+   306→        <rect x={280} y={92} width={132} height={44} rx={8} className="fill-zinc-900 stroke-emerald-400/70" />
+   307→        <Label x={346} y={110} anchor="middle" cls="fill-emerald-300" size={10}>WHERE</Label>
+   308→        <Label x={346} y={126} anchor="middle" cls="fill-zinc-200" size={11}>total &gt; 200</Label>
+   309→        <Arrow x1={228} y1={114} x2={276} y2={114} />
+   310→      </motion.g>
+   311→      <motion.g {...fade(0.8)}>
+   312→        <Label x={560} y={30} cls="fill-emerald-300">65 rows pass</Label>
+   313→        <g>
+   314→          {[...Array(65)].map((_, i) => (
+   315→            <circle key={i} cx={470 + (i % 9) * 16} cy={44 + Math.floor(i / 9) * 16} r={4} className="fill-emerald-400" opacity={0.85} />
+   316→          ))}
+   317→        </g>
+   318→        <Label x={470} y={216} cls="fill-zinc-500" size={10}>38 rows dropped — they never reach SELECT</Label>
+   319→        <Link x1={414} y1={106} x2={458} y2={54} cls="stroke-emerald-400" w={1.4} bend={0.65} delay={0.9} />
+   320→        <Link x1={414} y1={130} x2={458} y2={168} cls="stroke-zinc-700" w={1.3} bend={0.65} delay={1.05} />
+   321→        <Label x={466} y={192} cls="fill-zinc-600" size={10}>dropped</Label>
+   322→      </motion.g>
+   323→    </svg>
+   324→  );
+   325→}
+   326→
+   327→function L3NullLogic() {
+   328→  const rows = [
+   329→    { expr: "shipped_at = NULL", res: "unknown", cls: "fill-amber-300" },
+   330→    { expr: "shipped_at != NULL", res: "unknown", cls: "fill-amber-300" },
+   331→    { expr: "shipped_at IS NULL", res: "true / false", cls: "fill-emerald-300" },
+   332→  ];
+   333→  return (
+   334→    <svg viewBox="0 0 720 250" className="w-full" role="img" aria-label="Three-valued logic: only IS NULL can match missing values">
+   335→      <motion.g {...fade(0)}>
+   336→        <Panel x={16} y={26} w={330} h={160} />
+   337→        <Label x={30} y={50} cls="fill-zinc-300">comparing against NULL</Label>
+   338→        {rows.map((r, i) => (
+   339→          <g key={i}>
+   340→            <Label x={30} y={82 + i * 34} cls="fill-zinc-400" size={11}>{r.expr}</Label>
+   341→            <Label x={332} y={82 + i * 34} anchor="end" cls={r.cls} size={11}>{r.res}</Label>
+   342→            {i < 2 && <line x1={30} y1={92 + i * 34} x2={332} y2={92 + i * 34} className="stroke-zinc-800" />}
+   343→          </g>
+   344→        ))}
+   345→        <Label x={16} y={214} cls="fill-zinc-500" size={10}>WHERE keeps only rows where the condition is definitely true — so = NULL matches nothing.</Label>
+   346→      </motion.g>
+   347→      <motion.g {...fade(0.5)}>
+   348→        <rect x={400} y={26} width={130} height={44} rx={8} className="fill-zinc-900 stroke-emerald-400/70" />
+   349→        <Label x={465} y={44} anchor="middle" cls="fill-emerald-300" size={10}>WHERE</Label>
+   350→        <Label x={465} y={60} anchor="middle" cls="fill-zinc-200" size={11}>shipped_at IS NULL</Label>
+   351→        <Label x={400} y={100} cls="fill-zinc-500" size={10}>103 orders</Label>
+   352→        <Arrow x1={536} y1={48} x2={570} y2={48} cls="stroke-emerald-400" />
+   353→        <rect x={576} y={26} width={128} height={44} rx={8} className="fill-emerald-400/10 stroke-emerald-400/60" />
+   354→        <Label x={640} y={44} anchor="middle" cls="fill-emerald-300" size={12}>21 rows</Label>
+   355→        <Label x={640} y={60} anchor="middle" cls="fill-zinc-500" size={9}>pending + cancelled</Label>
+   356→        <Arrow x1={536} y1={64} x2={570} y2={140} cls="stroke-zinc-700" />
+   357→        <rect x={576} y={118} width={128} height={44} rx={8} className="fill-zinc-900 stroke-zinc-800" />
+   358→        <Label x={640} y={136} anchor="middle" cls="fill-zinc-400" size={12}>82 rows</Label>
+   359→        <Label x={640} y={152} anchor="middle" cls="fill-zinc-500" size={9}>have a ship date</Label>
+   360→      </motion.g>
+   361→    </svg>
+   362→  );
+   363→}
+   364→
+   365→function L4SortLimit() {
+   366→  const unsorted = [312.4, 945.21, 1088.44, 64.2, 845.92, 199.8, 421.05];
+   367→  const sorted = [...unsorted].sort((a, b) => b - a);
+   368→  const top3 = sorted.slice(0, 3);
+   369→  const colX = 300;
+   370→  const colX2 = 470;
+   371→  return (
+   372→    <svg viewBox="0 0 720 260" className="w-full" role="img" aria-label="ORDER BY sorts, LIMIT cuts the top of the sorted list">
+   373→      <motion.g {...fade(0)}>
+   374→        <Label x={30} y={34} cls="fill-zinc-300">totals as they come</Label>
+   375→        {unsorted.map((v, i) => (
+   376→          <g key={i}>
+   377→            <rect x={30} y={46 + i * 26} width={150} height={20} rx={4} className={top3.includes(v) ? "fill-emerald-400/15 stroke-emerald-400/60" : "fill-zinc-900 stroke-zinc-800"} />
+   378→            <Label x={170} y={60 + i * 26} anchor="end" cls="fill-zinc-400" size={10}>{v.toFixed(2)}</Label>
+   379→          </g>
+   380→        ))}
+   381→      </motion.g>
+   382→      <motion.g {...fade(0.4)}>
+   383→        <rect x={196} y={100} width={90} height={30} rx={6} className="fill-zinc-900 stroke-zinc-700" />
+   384→        <Label x={241} y={119} anchor="middle" cls="fill-zinc-300" size={9}>ORDER BY</Label>
+   385→        <Label x={241} y={131} anchor="middle" cls="fill-zinc-300" size={9}>total DESC</Label>
+   386→        <Arrow x1={186} y1={115} x2={192} y2={115} />
+   387→        <Arrow x1={288} y1={115} x2={294} y2={115} />
+   388→      </motion.g>
+   389→      <motion.g {...fade(0.6)}>
+   390→        <Label x={colX} y={34} cls="fill-zinc-300">sorted</Label>
+   391→        {sorted.map((v, i) => (
+   392→          <g key={i}>
+   393→            <rect x={colX} y={46 + i * 26} width={120} height={20} rx={4} className={i < 3 ? "fill-emerald-400/15 stroke-emerald-400/60" : "fill-zinc-900 stroke-zinc-800"} />
+   394→            <Label x={colX + 110} y={60 + i * 26} anchor="end" cls={i < 3 ? "fill-emerald-300" : "fill-zinc-500"} size={10}>{v.toFixed(2)}</Label>
+   395→          </g>
+   396→        ))}
+   397→      </motion.g>
+   398→      <motion.g {...fade(0.8)}>
+   399→        <rect x={560} y={70} width={70} height={30} rx={6} className="fill-zinc-900 stroke-rose-400/70" />
+   400→        <Label x={595} y={89} anchor="middle" cls="fill-rose-300" size={10}>LIMIT 3</Label>
+   401→        <Arrow x1={592} y1={100} x2={592} y2={118} cls="stroke-rose-400/80" />
+   402→        <Label x={colX2 + 40} y={34} cls="fill-emerald-300">top 3</Label>
+   403→        {top3.map((v, i) => (
+   404→          <g key={i}>
+   405→            <rect x={colX2} y={124 + i * 30} width={150} height={24} rx={5} className="fill-emerald-400/15 stroke-emerald-400/70" />
+   406→            <Label x={colX2 + 10} y={140 + i * 30} cls="fill-zinc-300" size={10}>order #{[74, 43, 39][i]}</Label>
+   407→            <Label x={colX2 + 140} y={140 + i * 30} anchor="end" cls="fill-emerald-300" size={10}>{v.toFixed(2)}</Label>
+   408→          </g>
+   409→        ))}
+   410→      </motion.g>
+   411→    </svg>
+   412→  );
+   413→}
+   414→
+   415→const STATUS_CLS: Record<string, string> = {
+   416→  delivered: "fill-emerald-400",
+   417→  shipped: "fill-teal-400",
+   418→  pending: "fill-amber-400",
+   419→  cancelled: "fill-rose-400",
+   420→};
+   421→
+   422→function L5Distinct() {
+   423→  // one tick per order (103), colored by status — then collapse
+   424→  const seq: string[] = [
+   425→    ...Array(52).fill("delivered"), ...Array(30).fill("shipped"),
+   426→    ...Array(14).fill("pending"), ...Array(7).fill("cancelled"),
+   427→  ];
+   428→  const rand = rng(11);
+   429→  const shuffled = seq
+   430→    .map((v) => ({ v, k: rand() }))
+   431→    .sort((a, b) => a.k - b.k)
+   432→    .map((x) => x.v);
+   433→  const unique: Array<[string, number]> = [
+   434→    ["delivered", 52], ["shipped", 30], ["pending", 14], ["cancelled", 7],
+   435→  ];
+   436→  return (
+   437→    <svg viewBox="0 0 720 250" className="w-full" role="img" aria-label="DISTINCT collapses 103 status values into the 4 that exist">
+   438→      <motion.g {...fade(0)}>
+   439→        <Label x={30} y={30} cls="fill-zinc-300">SELECT status FROM orders</Label>
+   440→        <Label x={30} y={48} cls="fill-zinc-500" size={10}>103 rows, only 4 different values</Label>
+   441→        {shuffled.map((s, i) => (
+   442→          <rect key={i} x={30 + (i % 26) * 9} y={62 + Math.floor(i / 26) * 14} width={6} height={10} rx={2} className={STATUS_CLS[s]} opacity={0.8} />
+   443→        ))}
+   444→      </motion.g>
+   445→      <motion.g {...fade(0.45)}>
+   446→        <rect x={300} y={100} width={96} height={32} rx={6} className="fill-zinc-900 stroke-emerald-400/70" />
+   447→        <Label x={348} y={120} anchor="middle" cls="fill-emerald-300" size={11}>DISTINCT</Label>
+   448→        <Arrow x1={286} y1={116} x2={296} y2={116} />
+   449→      </motion.g>
+   450→      <motion.g {...fade(0.7)}>
+   451→        <Label x={452} y={30} cls="fill-emerald-300">4 rows — one per value</Label>
+   452→        {unique.map(([s, n], i) => (
+   453→          <g key={s}>
+   454→            <rect x={452} y={44 + i * 40} width={238} height={32} rx={6} className="fill-zinc-900 stroke-zinc-800" />
+   455→            <rect x={462} y={53 + i * 40} width={14} height={14} rx={3} className={STATUS_CLS[s]} />
+   456→            <Label x={486} y={64 + i * 40} cls="fill-zinc-200" size={11}>{s}</Label>
+   457→            <Label x={680} y={64 + i * 40} anchor="end" cls="fill-zinc-500" size={10}>× {n}</Label>
+   458→          </g>
+   459→        ))}
+   460→      </motion.g>
+   461→    </svg>
+   462→  );
+   463→}
+   464→
+   465→function L6Aggregate() {
+   466→  const stats: Array<[string, string]> = [
+   467→    ["COUNT(*)", "103"],
+   468→    ["SUM(total)", "34,833.28"],
+   469→    ["AVG(total)", "338.19"],
+   470→    ["MIN(total)", "25.47"],
+   471→    ["MAX(total)", "1,088.44"],
+   472→  ];
+   473→  return (
+   474→    <svg viewBox="0 0 720 240" className="w-full" role="img" aria-label="Aggregates collapse the whole table into one row">
+   475→      <motion.g {...fade(0)}>
+   476→        <Label x={30} y={34} cls="fill-zinc-300">FROM orders — 103 rows</Label>
+   477→        <DotField n={103} cols={11} x0={30} y0={52} gap={16} />
+   478→      </motion.g>
+   479→      <motion.g {...fade(0.4)}>
+   480→        <Arrow x1={225} y1={130} x2={278} y2={130} />
+   481→        <Label x={252} y={120} anchor="middle" cls="fill-zinc-500" size={9}>collapse</Label>
+   482→      </motion.g>
+   483→      <motion.g {...fade(0.7)}>
+   484→        <Panel x={284} y={60} w={410} h={150} cls="fill-zinc-900 stroke-emerald-400/50" />
+   485→        <Label x={302} y={88} cls="fill-emerald-300">one row out</Label>
+   486→        {stats.map(([k, v], i) => (
+   487→          <g key={k}>
+   488→            <Label x={302} y={114 + i * 20} cls="fill-zinc-400" size={11}>{k}</Label>
+   489→            <Label x={678} y={114 + i * 20} anchor="end" cls="fill-zinc-200" size={11}>{v}</Label>
+   490→            {i < 4 && <line x1={302} y1={120 + i * 20} x2={678} y2={120 + i * 20} className="stroke-zinc-800" />}
+   491→          </g>
+   492→        ))}
+   493→      </motion.g>
+   494→    </svg>
+   495→  );
+   496→}
+   497→
+   498→function L7GroupBy() {
+   499→  const buckets: Array<[string, number, string]> = [
+   500→    ["delivered", 52, "fill-emerald-400"],
+   501→    ["shipped", 30, "fill-teal-400"],
+   502→    ["pending", 14, "fill-amber-400"],
+   503→    ["cancelled", 7, "fill-rose-400"],
+   504→  ];
+   505→  return (
+   506→    <svg viewBox="0 0 720 260" className="w-full" role="img" aria-label="GROUP BY splits rows into buckets, one result row per bucket">
+   507→      <motion.g {...fade(0)}>
+   508→        <Label x={30} y={34} cls="fill-zinc-300">103 rows</Label>
+   509→        <DotField n={103} cols={12} x0={30} y0={52} gap={16} />
+   510→        <Arrow x1={255} y1={140} x2={300} y2={140} />
+   511→        <Label x={278} y={128} anchor="middle" cls="fill-emerald-300" size={9}>GROUP BY</Label>
+   512→        <Label x={278} y={158} anchor="middle" cls="fill-zinc-500" size={9}>status</Label>
+   513→      </motion.g>
+   514→      <motion.g {...fade(0.5)}>
+   515→        {buckets.map(([s, n, cls], i) => {
+   516→          const bx = 324 + i * 96;
+   517→          const h = 12 + Math.round(n * 1.6);
+   518→          return (
+   519→            <g key={s}>
+   520→              <rect x={bx} y={190 - h} width={72} height={h} rx={5} className={cn(cls, "opacity-80")} />
+   521→              <Label x={bx + 36} y={206} anchor="middle" cls="fill-zinc-300" size={10}>{s}</Label>
+   522→              <Label x={bx + 36} y={222} anchor="middle" cls="fill-zinc-500" size={10}>n = {n}</Label>
+   523→              <Label x={bx + 36} y={196 - h} anchor="middle" cls="fill-zinc-400" size={11}>{n}</Label>
+   524→            </g>
+   525→          );
+   526→        })}
+   527→        <Label x={324} y={248} cls="fill-zinc-500" size={10}>COUNT(*) per bucket → one result row per status</Label>
+   528→      </motion.g>
+   529→    </svg>
+   530→  );
+   531→}
+   532→
+   533→function useSteps(n: number) {
+   534→  const [step, setStep] = useState(0);
+   535→  return { step, next: () => setStep((s) => Math.min(n - 1, s + 1)), prev: () => setStep((s) => Math.max(0, s - 1)), setStep };
+   536→}
+   537→
+   538→function L8WhereHaving() {
+   539→  const { step, next, prev } = useSteps(3);
+   540→  const buckets: Array<[string, number, string]> = [
+   541→    ["delivered", 52, "fill-emerald-400"],
+   542→    ["shipped", 30, "fill-teal-400"],
+   543→    ["pending", 14, "fill-amber-400"],
+   544→    ["cancelled", 7, "fill-rose-400"],
+   545→  ];
+   546→  return (
+   547→    <div>
+   548→      <svg viewBox="0 0 720 270" className="w-full" role="img" aria-label="The full pipeline: FROM, GROUP BY, HAVING">
+   549→        {/* FROM stage */}
+   550→        <g opacity={step === 0 ? 1 : 0.35}>
+   551→          <Label x={26} y={30} cls={step === 0 ? "fill-zinc-200" : "fill-zinc-500"}>① FROM orders — 103 rows</Label>
+   552→          <DotField n={103} cols={10} x0={26} y0={48} gap={14} />
+   553→        </g>
+   554→        {/* GROUP BY stage */}
+   555→        <g opacity={step === 1 ? 1 : step > 1 ? 0.7 : 0.3}>
+   556→          <Label x={288} y={30} cls={step === 1 ? "fill-zinc-200" : "fill-zinc-500"}>② GROUP BY status — buckets</Label>
+   557→          {buckets.map(([s, n, cls], i) => {
+   558→            const bx = 288 + i * 86;
+   559→            const h = 10 + Math.round(n * 1.5);
+   560→            return (
+   561→              <g key={s}>
+   562→                <rect x={bx} y={186 - h} width={64} height={h} rx={4} className={cn(cls, "opacity-80")} />
+   563→                <Label x={bx + 32} y={200} anchor="middle" cls="fill-zinc-400" size={9}>{s}</Label>
+   564→                <Label x={bx + 32} y={214} anchor="middle" cls="fill-zinc-500" size={10}>{n}</Label>
+   565→              </g>
+   566→            );
+   567→          })}
+   568→        </g>
+   569→        {/* HAVING stage */}
+   570→        <g opacity={step === 2 ? 1 : 0.3}>
+   571→          <Label x={288} y={240} cls={step === 2 ? "fill-zinc-200" : "fill-zinc-500"}>
+   572→            ③ HAVING COUNT(*) &gt; 10 — cancelled (7) is struck
+   573→          </Label>
+   574→          {step === 2 && (
+   575→            <g>
+   576→              <line x1={520} y1={168} x2={556} y2={120} className="stroke-rose-400" strokeWidth={2} />
+   577→              <line x1={556} y1={168} x2={520} y2={120} className="stroke-rose-400" strokeWidth={2} />
+   578→              <rect x={608} y={128} width={100} height={54} rx={7} className="fill-emerald-400/10 stroke-emerald-400/60" />
+   579→              <Label x={658} y={150} anchor="middle" cls="fill-emerald-300" size={11}>3 rows out</Label>
+   580→              <Label x={658} y={168} anchor="middle" cls="fill-zinc-500" size={9}>delivered · shipped · pending</Label>
+   581→            </g>
+   582→          )}
+   583→        </g>
+   584→        {/* progress rail */}
+   585→        <rect x={26} y={252} width={668} height={3} rx={1.5} className="fill-zinc-800" />
+   586→        <rect x={26} y={252} width={222 + step * 223} height={3} rx={1.5} className="fill-emerald-400" />
+   587→      </svg>
+   588→      <div className="mt-1 flex items-center justify-between">
+   589→        <div className="flex gap-1.5">
+   590→          {[0, 1, 2].map((i) => (
+   591→            <span key={i} className={cn("h-1.5 w-6 rounded-full", i <= step ? "bg-emerald-400" : "bg-zinc-800")} />
+   592→          ))}
+   593→        </div>
+   594→        <div className="flex gap-2">
+   595→          <button onClick={prev} disabled={step === 0} className="rounded-md border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-900 disabled:opacity-40">
+   596→            Back
+   597→          </button>
+   598→          <button onClick={next} disabled={step === 2} className="rounded-md bg-emerald-400 px-3 py-1.5 text-xs font-medium text-[#052e1c] hover:brightness-110 disabled:opacity-40">
+   599→            {step === 2 ? "Done" : "Next step"}
+   600→          </button>
+   601→        </div>
+   602→      </div>
+   603→    </div>
+   604→  );
+   605→}
+   606→
+   607→/* ---------------- join figures (Module 2) ---------------- */
+   608→
+   609→function RowCard({
+   610→  x,
+   611→  y,
+   612→  w,
+   613→  h,
+   614→  title,
+   615→  rows,
+   616→  cols,
+   617→  colX,
+   618→  highlight = [],
+   619→  accent = false,
+   620→}: {
+   621→  x: number;
+   622→  y: number;
+   623→  w: number;
+   624→  h: number;
+   625→  title: string;
+   626→  rows: string[][];
+   627→  cols: string[];
+   628→  colX: number[];
+   629→  highlight?: number[];
+   630→  accent?: boolean;
+   631→}) {
+   632→  return (
+   633→    <g>
+   634→      <Panel x={x} y={y} w={w} h={h} cls={accent ? "fill-zinc-900 stroke-emerald-400/50" : "fill-zinc-900 stroke-zinc-800"} />
+   635→      <Label x={x + 12} y={y - 8} cls={accent ? "fill-emerald-300" : "fill-zinc-500"} size={10}>{title}</Label>
+   636→      {cols.map((c, i) => (
+   637→        <Label key={c} x={x + colX[i]} y={y + 18} cls="fill-zinc-500" size={9}>{c}</Label>
+   638→      ))}
+   639→      <line x1={x} y1={y + 26} x2={x + w} y2={y + 26} className="stroke-zinc-800" />
+   640→      {rows.map((r, ri) => (
+   641→        <g key={ri} opacity={highlight.includes(ri) ? 1 : 0.85}>
+   642→          {highlight.includes(ri) && (
+   643→            <rect x={x + 2} y={y + 32 + ri * 24} width={w - 4} height={21} rx={4} className="fill-emerald-400/10 stroke-emerald-400/50" />
+   644→          )}
+   645→          {r.map((cell, ci) => (
+   646→            <Label
+   647→              key={ci}
+   648→              x={x + colX[ci]}
+   649→              y={y + 47 + ri * 24}
+   650→              cls={highlight.includes(ri) ? "fill-zinc-100" : ci === 0 ? "fill-zinc-300" : "fill-zinc-400"}
+   651→              size={10}
+   652→            >
+   653→              {cell}
+   654→            </Label>
+   655→          ))}
+   656→        </g>
+   657→      ))}
+   658→    </g>
+   659→  );
+   660→}
+   661→
+   662→function J1FkLookup() {
+   663→  // real rows: order 1 → Pedro Alvarez (id 16), order 2 → Maya Patel (id 13),
+   664→  // order 3 → Alice Chen (id 1). Row band centers: y + 42.5 + ri * 24.
+   665→  const oy = 44; // orders card y
+   666→  const cy = 44; // customers card y
+   667→  const links = [
+   668→    { from: 0, to: 2, delay: 0.45 }, // order 1 → id 16 Pedro
+   669→    { from: 1, to: 1, delay: 0.62 }, // order 2 → id 13 Maya
+   670→    { from: 2, to: 0, delay: 0.79 }, // order 3 → id 1 Alice
+   671→  ];
+   672→  return (
+   673→    <svg viewBox="0 0 720 260" className="w-full" role="img" aria-label="JOIN follows the foreign key to look up rows in the other table">
+   674→      <motion.g {...fade(0)}>
+   675→        <RowCard
+   676→          x={30} y={oy} w={270} h={150} title="orders"
+   677→          cols={["id", "customer_id", "total"]} colX={[46, 130, 220]}
+   678→          rows={[
+   679→            ["1", "16", "576.54"],
+   680→            ["2", "13", "416.81"],
+   681→            ["3", "1", "767.64"],
+   682→          ]}
+   683→        />
+   684→        <RowCard
+   685→          x={430} y={cy} w={250} h={126} title="customers" accent
+   686→          cols={["id", "name", "city"]} colX={[16, 62, 190]}
+   687→          rows={[
+   688→            ["1", "Alice Chen", "Berlin"],
+   689→            ["13", "Maya Patel", "Mumbai"],
+   690→            ["16", "Pedro Alvarez", "Madrid"],
+   691→          ]}
+   692→        />
+   693→      </motion.g>
+   694→      <g>
+   695→        {links.map((l) => (
+   696→          <Link
+   697→            key={l.from}
+   698→            x1={300} y1={oy + 42.5 + l.from * 24}
+   699→            x2={426} y2={cy + 42.5 + l.to * 24}
+   700→            cls="stroke-emerald-400" w={1.4}
+   701→            dot="fill-emerald-400"
+   702→            bend={0.55}
+   703→            delay={l.delay}
+   704→          />
+   705→        ))}
+   706→      </g>
+   707→      <motion.g {...fade(1)}>
+   708→        <Label x={365} y={216} anchor="middle" cls="fill-emerald-300" size={10}>JOIN customers c ON c.id = o.customer_id</Label>
+   709→        <Label x={365} y={252} anchor="middle" cls="fill-zinc-500" size={10}>each order borrows one customer row at run time — follow the arrows</Label>
+   710→      </motion.g>
+   711→    </svg>
+   712→  );
+   713→}
+   714→
+   715→function J2InnerMatch() {
+   716→  // real: order 1 → Pedro (LATAM), order 2 → Maya (APAC), order 80 → Dmitri (EU);
+   717→  // restricted to EU customers only order 80 survives.
+   718→  return (
+   719→    <svg viewBox="0 0 720 280" className="w-full" role="img" aria-label="INNER JOIN keeps only rows with a match on both sides">
+   720→      <motion.g {...fade(0)}>
+   721→        <RowCard
+   722→          x={30} y={48} w={230} h={174} title="orders"
+   723→          cols={["id", "customer_id"]} colX={[46, 150]}
+   724→          rows={[
+   725→            ["1", "16 · Pedro"],
+   726→            ["2", "13 · Maya"],
+   727→            ["80", "3 · Dmitri"],
+   728→          ]}
+   729→          highlight={[2]}
+   730→        />
+   731→        <RowCard
+   732→          x={460} y={48} w={220} h={126} title="customers · region = 'EU'" accent
+   733→          cols={["id", "name"]} colX={[16, 76]}
+   734→          rows={[
+   735→            ["1", "Alice Chen"],
+   736→            ["3", "Dmitri Volkov"],
+   737→          ]}
+   738→          highlight={[1]}
+   739→        />
+   740→      </motion.g>
+   741→      <motion.g {...fade(0.45)}>
+   742→        <Label x={374} y={90} anchor="middle" cls="fill-emerald-300" size={10}>JOIN … ON region = 'EU'</Label>
+   743→        <rect x={300} y={98} width={120} height={52} rx={8} className="fill-zinc-900 stroke-emerald-400/70" />
+   744→      </motion.g>
+   745→      {/* unmatched rows stop before the gate */}
+   746→      <g>
+   747→        <Link x1={260} y1={90.5} x2={287} y2={90.5} cls="stroke-zinc-600" w={1.3} dash="3 4" arrow={false} delay={0.6} />
+   748→        <Link x1={260} y1={114.5} x2={287} y2={114.5} cls="stroke-zinc-600" w={1.3} dash="3 4" arrow={false} delay={0.72} />
+   749→        <XMark x={293} y={90.5} cls="stroke-zinc-500" s={3.5} delay={0.95} />
+   750→        <XMark x={293} y={114.5} cls="stroke-zinc-500" s={3.5} delay={1.05} />
+   751→      </g>
+   752→      {/* the one matched pair flows through the gate */}
+   753→      <g>
+   754→        <Link x1={260} y1={138.5} x2={456} y2={114.5} cls="stroke-emerald-400" w={1.4} dot="fill-emerald-400" bend={0.5} delay={0.9} />
+   755→      </g>
+   756→      <motion.g {...fade(0.8)}>
+   757→        <Label x={30} y={252} cls="fill-zinc-500" size={10}>orders 1 and 2 have no EU match — INNER JOIN silently drops them</Label>
+   758→      </motion.g>
+   759→    </svg>
+   760→  );
+   761→}
+   762→
+   763→function J3Chain() {
+   764→  return (
+   765→    <svg viewBox="0 0 720 250" className="w-full" role="img" aria-label="A three-table chain: order_items to orders to customers, plus products">
+   766→      <motion.g {...fade(0)}>
+   767→        <Panel x={24} y={70} w={140} h={84} cls="fill-zinc-900 stroke-emerald-400/50" />
+   768→        <Label x={38} y={62} cls="fill-emerald-300" size={10}>order_items</Label>
+   769→        <Label x={38} y={94} cls="fill-zinc-300" size={10}>id = 1</Label>
+   770→        <Label x={38} y={114} cls="fill-zinc-400" size={10}>order_id = 1</Label>
+   771→        <Label x={38} y={134} cls="fill-zinc-400" size={10}>product_id = 16</Label>
+   772→
+   773→        <Panel x={230} y={70} w={140} h={84} />
+   774→        <Label x={244} y={62} cls="fill-zinc-500" size={10}>orders</Label>
+   775→        <Label x={244} y={94} cls="fill-zinc-300" size={10}>id = 1</Label>
+   776→        <Label x={244} y={114} cls="fill-zinc-400" size={10}>customer_id = 16</Label>
+   777→        <Label x={244} y={134} cls="fill-zinc-400" size={10}>status = delivered</Label>
+   778→
+   779→        <Panel x={436} y={70} w={130} h={84} cls="fill-zinc-900 stroke-emerald-400/50" />
+   780→        <Label x={450} y={62} cls="fill-emerald-300" size={10}>customers</Label>
+   781→        <Label x={450} y={94} cls="fill-zinc-300" size={10}>id = 16</Label>
+   782→        <Label x={450} y={114} cls="fill-zinc-400" size={10}>Pedro Alvarez</Label>
+   783→        <Label x={450} y={134} cls="fill-zinc-400" size={10}>Madrid</Label>
+   784→
+   785→        <Panel x={596} y={70} w={110} h={84} cls="fill-zinc-900 stroke-emerald-400/50" />
+   786→        <Label x={610} y={62} cls="fill-emerald-300" size={10}>products</Label>
+   787→        <Label x={610} y={94} cls="fill-zinc-300" size={10}>id = 16</Label>
+   788→        <Label x={610} y={114} cls="fill-zinc-400" size={10}>Yoga Mat</Label>
+   789→        <Label x={610} y={134} cls="fill-zinc-400" size={10}>Fitness</Label>
+   790→      </motion.g>
+   791→      <motion.g {...fade(0.5)}>
+   792→        <Arrow x1={168} y1={112} x2={226} y2={112} cls="stroke-emerald-400" />
+   793→        <Label x={197} y={100} anchor="middle" cls="fill-zinc-500" size={8}>ON o.id</Label>
+   794→        <Arrow x1={374} y1={112} x2={432} y2={112} cls="stroke-emerald-400" />
+   795→        <Label x={403} y={100} anchor="middle" cls="fill-zinc-500" size={8}>ON c.id</Label>
+   796→        <Pipe
+   797→          pts={[[94, 158], [94, 198], [651, 198], [651, 158]]}
+   798→          cls="stroke-zinc-500" w={1.3} dash="4 3"
+   799→          arrowAng={-Math.PI / 2} arrowCls="stroke-zinc-500"
+   800→          delay={0.7}
+   801→        />
+   802→        <Label x={372} y={190} anchor="middle" cls="fill-zinc-500" size={9}>ON p.id — the second link hangs off order_items</Label>
+   803→        <Label x={365} y={232} anchor="middle" cls="fill-zinc-400" size={10}>“which customer bought which product” = 3 hops, one query</Label>
+   804→      </motion.g>
+   805→    </svg>
+   806→  );
+   807→}
+   808→
+   809→function J4LeftJoin() {
+   810→  return (
+   811→    <svg viewBox="0 0 720 280" className="w-full" role="img" aria-label="LEFT JOIN carries customers with no delivered order, filling the right side with NULL">
+   812→      <motion.g {...fade(0)}>
+   813→        <Label x={30} y={30} cls="fill-zinc-300">FROM customers — 16 rows</Label>
+   814→        <DotField n={16} cols={8} x0={30} y0={48} gap={18} />
+   815→        <Label x={430} y={30} cls="fill-zinc-500" size={10}>LEFT JOIN orders · status = 'delivered'</Label>
+   816→      </motion.g>
+   817→      <motion.g {...fade(0.4)}>
+   818→        {[
+   819→          ["Alice Chen", "12 delivered orders", false],
+   820→          ["Bruno Silva", "orders, none delivered*", true],
+   821→          ["Maya Patel", "orders, none delivered*", true],
+   822→          ["Liam O'Brien", "no match → NULL", true],
+   823→        ].map(([name, note, dim], i) => (
+   824→          <g key={i}>
+   825→            <rect x={30} y={118 + i * 36} width={330} height={28} rx={5} className={i === 3 ? "fill-zinc-900 stroke-emerald-400/60" : "fill-zinc-900 stroke-zinc-800"} strokeDasharray={i === 3 ? "4 3" : undefined} />
+   826→            <Label x={44} y={136 + i * 36} cls="fill-zinc-200" size={11}>{name}</Label>
+   827→            <Label x={348} y={136 + i * 36} anchor="end" cls={i === 3 ? "fill-emerald-300" : "fill-zinc-500"} size={9}>{note}</Label>
+   828→          </g>
+   829→        ))}
+   830→        <Label x={30} y={266} cls="fill-zinc-600" size={9}>* delivered counts vary — the point: the left row survives either way</Label>
+   831→      </motion.g>
+   832→      <motion.g {...fade(0.7)}>
+   833→        <rect x={430} y={196} width={250} height={56} rx={8} className="fill-zinc-900 stroke-emerald-400/60" />
+   834→        <Label x={444} y={218} cls="fill-emerald-300" size={10}>Liam O'Brien | NULL | NULL | NULL</Label>
+   835→        <Label x={444} y={238} cls="fill-zinc-500" size={9}>kept, with the right side filled by NULL</Label>
+   836→        <Link x1={364} y1={240} x2={426} y2={224} cls="stroke-emerald-400" w={1.4} dot="fill-emerald-400" delay={0.85} />
+   837→      </motion.g>
+   838→    </svg>
+   839→  );
+   840→}
+   841→
+   842→function J5AntiJoin() {
+   843→  return (
+   844→    <svg viewBox="0 0 720 260" className="w-full" role="img" aria-label="Anti-join: WHERE o.id IS NULL keeps only customers with no delivered order">
+   845→      <motion.g {...fade(0)}>
+   846→        <Label x={30} y={34} cls="fill-zinc-300">16 customers</Label>
+   847→        <DotField n={16} cols={4} x0={30} y0={52} gap={22} r={5} />
+   848→        <Arrow x1={140} y1={90} x2={216} y2={90} />
+   849→        <rect x={222} y={62} width={210} height={56} rx={8} className="fill-zinc-900 stroke-zinc-700" />
+   850→        <Label x={327} y={84} anchor="middle" cls="fill-zinc-300" size={10}>LEFT JOIN orders</Label>
+   851→        <Label x={327} y={102} anchor="middle" cls="fill-zinc-400" size={9}>ON customer_id AND status='delivered'</Label>
+   852→      </motion.g>
+   853→      <motion.g {...fade(0.45)}>
+   854→        <Arrow x1={436} y1={90} x2={496} y2={90} />
+   855→        <rect x={502} y={54} width={190} height={72} rx={8} className="fill-zinc-900 stroke-emerald-400/70" />
+   856→        <Label x={597} y={76} anchor="middle" cls="fill-emerald-300" size={10}>WHERE o.id IS NULL</Label>
+   857→        <Label x={597} y={94} anchor="middle" cls="fill-zinc-400" size={9}>“never matched”</Label>
+   858→        <Label x={597} y={112} anchor="middle" cls="fill-zinc-500" size={9}>the two-gate trick from lesson 8</Label>
+   859→      </motion.g>
+   860→      <motion.g {...fade(0.75)}>
+   861→        <rect x={30} y={150} width={330} height={84} rx={8} className="fill-emerald-400/5 stroke-emerald-400/50" />
+   862→        <Label x={46} y={176} cls="fill-emerald-300" size={11}>Result — 1 customer</Label>
+   863→        <Label x={46} y={200} cls="fill-zinc-200" size={11}>Liam O'Brien · 1 order · none delivered</Label>
+   864→        <Label x={46} y={222} cls="fill-zinc-500" size={9}>every other customer has at least one delivered order</Label>
+   865→        <rect x={400} y={150} width={290} height={84} rx={8} className="fill-zinc-900 stroke-zinc-800" />
+   866→        <Label x={416} y={176} cls="fill-zinc-300" size={10}>Change one word — status = 'shipped'</Label>
+   867→        <Label x={416} y={198} cls="fill-zinc-400" size={10}>→ 6 customers have nothing shipped</Label>
+   868→        <Label x={416} y={218} cls="fill-zinc-500" size={9}>same pattern answers “who is still waiting?”</Label>
+   869→      </motion.g>
+   870→    </svg>
+   871→  );
+   872→}
+   873→
+   874→function J6SelfJoin() {
+   875→  const apac = ["Farid", "Grace", "Hiro", "Keiko", "Maya"];
+   876→  return (
+   877→    <svg viewBox="0 0 720 280" className="w-full" role="img" aria-label="Self-join pairs customers from the same region: 39 pairs in total">
+   878→      <motion.g {...fade(0)}>
+   879→        <Label x={30} y={34} cls="fill-zinc-300">FROM customers c1</Label>
+   880→        <Label x={400} y={34} cls="fill-zinc-300">JOIN customers c2</Label>
+   881→        <Label x={30} y={52} cls="fill-zinc-500" size={10}>the same table, two aliases</Label>
+   882→        {apac.map((n, i) => (
+   883→          <g key={n}>
+   884→            <rect x={30} y={68 + i * 36} width={120} height={26} rx={5} className="fill-zinc-900 stroke-zinc-800" />
+   885→            <Label x={42} y={85 + i * 36} cls="fill-zinc-300" size={10}>{n}</Label>
+   886→            <rect x={400} y={68 + i * 36} width={120} height={26} rx={5} className="fill-zinc-900 stroke-zinc-800" />
+   887→            <Label x={412} y={85 + i * 36} cls="fill-zinc-300" size={10}>{n}</Label>
+   888→          </g>
+   889→        ))}
+   890→        <Label x={30} y={266} cls="fill-zinc-500" size={9}>APAC members (5) — same list on both sides</Label>
+   891→      </motion.g>
+   892→      <motion.g {...fade(0.5)}>
+   893→        <Label x={275} y={60} anchor="middle" cls="fill-emerald-300" size={9}>ON c1.region = c2.region</Label>
+   894→        <Label x={275} y={75} anchor="middle" cls="fill-zinc-500" size={9}>AND c1.id &lt; c2.id</Label>
+   895→        {apac.flatMap((a, i) =>
+   896→          apac.map((b, j) => {
+   897→            if (i >= j) return null;
+   898→            const y1 = 81 + i * 36;
+   899→            const y2 = 81 + j * 36;
+   900→            const sag = 9 + (j - i) * 7;
+   901→            return (
+   902→              <g key={`${a}-${b}`}>
+   903→                <path
+   904→                  d={`M 152 ${y1} Q 274 ${Math.max(y1, y2) + sag} 396 ${y2}`}
+   905→                  className="stroke-emerald-400" strokeWidth={1} fill="none" opacity={0.5}
+   906→                />
+   907→                <circle cx={152} cy={y1} r={2.2} className="fill-emerald-400" opacity={0.75} />
+   908→                <circle cx={396} cy={y2} r={2.2} className="fill-emerald-400" opacity={0.75} />
+   909→              </g>
+   910→            );
+   911→          }),
+   912→        )}
+   913→        <Label x={275} y={254} anchor="middle" cls="fill-zinc-400" size={10}>5 × 5 grid, half kept → C(5,2) = 10 pairs</Label>
+   914→      </motion.g>
+   915→      <motion.g {...fade(0.8)}>
+   916→        <rect x={540} y={168} width={160} height={86} rx={8} className="fill-emerald-400/5 stroke-emerald-400/50" />
+   917→        <Label x={620} y={192} anchor="middle" cls="fill-emerald-300" size={16}>39 pairs</Label>
+   918→        <Label x={620} y={212} anchor="middle" cls="fill-zinc-400" size={9}>EU 28 · APAC 10</Label>
+   919→        <Label x={620} y={228} anchor="middle" cls="fill-zinc-400" size={9}>US 1 · LATAM 0</Label>
+   920→        <Label x={620} y={246} anchor="middle" cls="fill-zinc-500" size={9}>across the whole store</Label>
+   921→      </motion.g>
+   922→    </svg>
+   923→  );
+   924→}
+   925→
+   926→function J7Fanout() {
+   927→  return (
+   928→    <svg viewBox="0 0 720 270" className="w-full" role="img" aria-label="Joining orders to order_items duplicates each order total — SUM inflates from 34,833 to 103,244">
+   929→      <motion.g {...fade(0)}>
+   930→        <Panel x={30} y={40} w={200} h={64} />
+   931→        <Label x={44} y={62} cls="fill-zinc-300" size={11}>orders · one row</Label>
+   932→        <Label x={44} y={84} cls="fill-zinc-400" size={10}>total = its own amount</Label>
+   933→      </motion.g>
+   934→      <motion.g {...fade(0.4)}>
+   935→        {["item A", "item B", "item C", "item D"].map((it, i) => (
+   936→          <g key={it}>
+   937→            <rect x={288} y={26 + i * 52} width={160} height={40} rx={6} className="fill-zinc-900 stroke-zinc-800" />
+   938→            <Label x={302} y={44 + i * 52} cls="fill-zinc-400" size={10}>{it} — one line</Label>
+   939→            <Label x={302} y={58 + i * 52} cls="fill-amber-300" size={9}>carries a copy of the order total</Label>
+   940→          </g>
+   941→        ))}
+   942→        {[0, 1, 2, 3].map((i) => (
+   943→          <Link
+   944→            key={i}
+   945→            x1={234} y1={72} x2={284} y2={46 + i * 52}
+   946→            cls="stroke-amber-400/80" w={1.3}
+   947→            dot="fill-amber-400" bend={0.6}
+   948→            delay={0.5 + i * 0.14}
+   949→          />
+   950→        ))}
+   951→        <Label x={259} y={244} anchor="middle" cls="fill-zinc-500" size={9}>the JOIN fans one order row out across its 4 items</Label>
+   952→      </motion.g>
+   953→      <motion.g {...fade(0.7)}>
+   954→        <Label x={496} y={40} cls="fill-zinc-300">SUM(o.total) after the join</Label>
+   955→        <rect x={496} y={52} width={150} height={110} rx={6} className="fill-amber-400/15 stroke-amber-400/60" />
+   956→        <Label x={571} y={114} anchor="middle" cls="fill-amber-200" size={12}>103,244.55</Label>
+   957→        <Label x={496} y={186} cls="fill-zinc-300">true revenue — SUM(orders.total)</Label>
+   958→        <rect x={496} y={198} width={48} height={26} rx={6} className="fill-emerald-400/20 stroke-emerald-400/60" />
+   959→        <Label x={620} y={216} anchor="end" cls="fill-emerald-300" size={11}>34,833.28</Label>
+   960→        <Label x={496} y={248} cls="fill-zinc-500" size={9}>≈ 3× inflated (251 items × 103 orders)</Label>
+   961→      </motion.g>
+   962→    </svg>
+   963→  );
+   964→}
+   965→
+   966→function J8JoinAggregate() {
+   967→  const top = [
+   968→    ["Alice Chen", 7262.35, 24],
+   969→    ["Emma Wilson", 6640.56, 17],
+   970→    ["Grace Kim", 4574.23, 14],
+   971→    ["Maya Patel", 3644.56, 13],
+   972→  ] as const;
+   973→  const max = top[0][1];
+   974→  return (
+   975→    <svg viewBox="0 0 720 250" className="w-full" role="img" aria-label="Join customers to orders, group by customer, sum the totals: top 4 spenders">
+   976→      <motion.g {...fade(0)}>
+   977→        <Label x={30} y={30} cls="fill-zinc-300">customers JOIN orders</Label>
+   978→        <Label x={30} y={48} cls="fill-zinc-500" size={10}>103 order rows, each carrying its customer</Label>
+   979→        <DotField n={103} cols={12} x0={30} y0={62} gap={15} />
+   980→        <Arrow x1={250} y1={140} x2={296} y2={140} />
+   981→        <Label x={273} y={128} anchor="middle" cls="fill-emerald-300" size={9}>GROUP BY</Label>
+   982→        <Label x={273} y={158} anchor="middle" cls="fill-zinc-500" size={9}>customer</Label>
+   983→      </motion.g>
+   984→      <motion.g {...fade(0.5)}>
+   985→        <Label x={330} y={30} cls="fill-emerald-300">SUM(o.total) — top 4 of 16</Label>
+   986→        {top.map(([name, spend, orders], i) => (
+   987→          <g key={name}>
+   988→            <rect x={330} y={48 + i * 44} width={Math.round((spend / max) * 280)} height={30} rx={5} className="fill-emerald-400/15 stroke-emerald-400/60" />
+   989→            <Label x={340} y={67 + i * 44} cls="fill-zinc-200" size={10}>{name}</Label>
+   990→            <Label x={676} y={67 + i * 44} anchor="end" cls="fill-zinc-300" size={10}>{spend.toFixed(2)}</Label>
+   991→            <Label x={676} y={40 + i * 44} anchor="end" cls="fill-zinc-500" size={8}>{orders} orders</Label>
+   992→          </g>
+   993→        ))}
+   994→        <Label x={330} y={234} cls="fill-zinc-500" size={10}>16 groups out — one per customer, even those with a single order</Label>
+   995→      </motion.g>
+   996→    </svg>
+   997→  );
+   998→}
+   999→
+  1000→/* ---------------- registry ---------------- */
+  1001→
+  1002→const FIGURES: Record<FigureId, () => React.JSX.Element> = {
+  1003→  "l1-anatomy": L1Anatomy,
+  1004→  "l2-projection": L2Projection,
+  1005→  "l3-where-gate": L3WhereGate,
+  1006→  "l3-null-logic": L3NullLogic,
+  1007→  "l4-sort-limit": L4SortLimit,
+  1008→  "l5-distinct": L5Distinct,
+  1009→  "l6-aggregate": L6Aggregate,
+  1010→  "l7-groupby": L7GroupBy,
+  1011→  "l8-where-having": L8WhereHaving,
+  1012→  "j1-fk-lookup": J1FkLookup,
+  1013→  "j2-inner-match": J2InnerMatch,
+  1014→  "j3-chain": J3Chain,
+  1015→  "j4-left-join": J4LeftJoin,
+  1016→  "j5-anti-join": J5AntiJoin,
+  1017→  "j6-self-join": J6SelfJoin,
+  1018→  "j7-fanout": J7Fanout,
+  1019→  "j8-join-aggregate": J8JoinAggregate,
+  1020→};
+  1021→
+  1022→export function Figure({ id }: { id: FigureId }) {
+  1023→  const Cmp = FIGURES[id];
+  1024→  if (!Cmp) return null;
+  1025→  return (
+  1026→    <figure className="my-5 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950 p-3">
+  1027→      <Cmp />
+  1028→      <figcaption className="mt-2 border-t border-zinc-800 pt-2 text-[11px] text-zinc-500">
+  1029→        Interactive diagram — real numbers from the storefront database.
+  1030→      </figcaption>
+  1031→    </figure>
+  1032→  );
+  1033→}
+  1034→

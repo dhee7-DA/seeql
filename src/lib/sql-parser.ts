@@ -17,6 +17,7 @@ export { DIALECTS as SUPPORTED_DIALECTS } from "./sql-types";
 import type { DialectName } from "./sql-types";
 
 export type { DialectName as Dialect };
+type Dialect = DialectName;
 
 /* ------------------------------------------------------------------ */
 /* Helpers                                                             */

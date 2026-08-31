@@ -17,7 +17,7 @@ function buildTree(rows: PlanRow[]) {
   return roots;
 }
 
-function PlanNode({ node, depth }: { node: PlanRow & { children: PlanRow[] }; depth: number }) {
+function PlanNode({ node, depth }: { node: PlanRow & { children?: PlanRow[] }; depth: number }) {
   const detail = node.detail;
   let Icon = Workflow;
   let tone = "text-zinc-400";
@@ -41,14 +41,14 @@ function PlanNode({ node, depth }: { node: PlanRow & { children: PlanRow[] }; de
         <Icon className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${tone}`} />
         <div className="min-w-0">
           <p className="font-mono text-xs leading-relaxed break-words text-zinc-200">{detail}</p>
-          {depth === 0 && node.children.length === 0 && (
+          {depth === 0 && (node.children?.length ?? 0) === 0 && (
             <p className="mt-0.5 text-[10px] tracking-wide text-zinc-600 uppercase">
               step {node.id}
             </p>
           )}
         </div>
       </div>
-      {node.children.map((c) => (
+      {node.children?.map((c) => (
         <div key={c.id} className="mt-1.5 mb-1.5">
           <PlanNode node={c} depth={depth + 1} />
         </div>

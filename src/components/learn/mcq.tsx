@@ -1,0 +1,101 @@
+"use client";
+
+// Single MCQ card: choose, check, learn. XP is awarded once per question
+// (idempotent ledger keys), with a first-try bonus tracked by the store.
+
+import { useRef, useState } from "react";
+import { Check, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useProgress } from "@/lib/curriculum/progress";
+import { XP } from "@/lib/curriculum/gamification";
+import type { Mcq } from "@/lib/curriculum/types";
+import { cn } from "@/lib/utils";
+import { celebrate } from "./celebrate";
+
+export function McqCard({ mcq, onAnswered }: { mcq: Mcq; onAnswered?: (correct: boolean) => void }) {
+  const [picked, setPicked] = useState<number | null>(null);
+  const [checked, setChecked] = useState(false);
+  const awardRef = useRef(false);
+
+  const correct = checked && picked === mcq.answer;
+
+  function check() {
+    if (picked === null || awardRef.current) return;
+    awardRef.current = true;
+    setChecked(true);
+    const store = useProgress.getState();
+    const isFirst = store.recordMcqCheck(mcq.id, picked === mcq.answer);
+    if (picked === mcq.answer) {
+      store.awardXp(`mcq:${mcq.id}`, XP.mcq);
+      if (isFirst) store.awardXp(`mcqfirst:${mcq.id}`, XP.mcqFirstBonus);
+      celebrate({
+        kind: "xp",
+        title: `+${XP.mcq + (isFirst ? XP.mcqFirstBonus : 0)} XP`,
+        sub: isFirst ? "Correct on the first try — bonus included" : "Correct",
+      });
+    }
+    onAnswered?.(picked === mcq.answer);
+  }
+
+  return (
+    <div className="rounded-lg border border-zinc-800 bg-zinc-950 p-4">
+      <p className="text-sm font-medium text-zinc-100">{mcq.prompt}</p>
+      <div className="mt-3 grid gap-2">
+        {mcq.choices.map((choice, i) => {
+          const isPicked = picked === i;
+          const isAnswer = i === mcq.answer;
+          return (
+            <button
+              key={i}
+              onClick={() => !checked && setPicked(i)}
+              disabled={checked}
+              className={cn(
+                "flex items-center gap-3 rounded-md border px-3 py-2.5 text-left text-sm transition-colors",
+                checked
+                  ? isAnswer
+                    ? "border-emerald-400/70 bg-emerald-400/10 text-zinc-100"
+                    : isPicked
+                      ? "border-rose-400/70 bg-rose-400/10 text-zinc-300"
+                      : "border-zinc-800 bg-zinc-950 text-zinc-500"
+                  : isPicked
+                    ? "border-zinc-500 bg-zinc-900 text-zinc-100"
+                    : "border-zinc-800 bg-zinc-950 text-zinc-300 hover:border-zinc-600 hover:bg-zinc-900",
+              )}
+            >
+              <span
+                className={cn(
+                  "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[11px]",
+                  checked && isAnswer
+                    ? "border-emerald-400 bg-emerald-400 text-[#052e1c]"
+                    : checked && isPicked
+                      ? "border-rose-400 bg-rose-400 text-zinc-950"
+                      : "border-zinc-600 text-zinc-400",
+                )}
+              >
+                {checked && isAnswer ? <Check className="h-3 w-3" /> : checked && isPicked ? <X className="h-3 w-3" /> : String.fromCharCode(65 + i)}
+              </span>
+              <span className="font-mono text-xs leading-snug">{choice}</span>
+            </button>
+          );
+        })}
+      </div>
+      {checked && (
+        <div className={cn("mt-3 rounded-md border px-3 py-2.5 text-xs leading-relaxed", correct ? "border-emerald-400/40 bg-emerald-400/5 text-zinc-300" : "border-amber-400/40 bg-amber-400/5 text-zinc-300")}>
+          <span className={cn("font-semibold", correct ? "text-emerald-300" : "text-amber-300")}>
+            {correct ? "Correct. " : "Not quite. "}
+          </span>
+          {mcq.why}
+        </div>
+      )}
+      {!checked && (
+        <Button
+          onClick={check}
+          disabled={picked === null}
+          className="mt-3 h-8 rounded-md bg-emerald-400 px-4 text-xs font-medium text-[#052e1c] hover:bg-emerald-300"
+        >
+          Check answer
+        </Button>
+      )}
+    </div>
+  );
+}
