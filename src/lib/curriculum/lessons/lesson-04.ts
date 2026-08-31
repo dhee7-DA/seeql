@@ -37,6 +37,7 @@ export const lesson04: Lesson = {
       sql: "SELECT id, status, created_at FROM orders WHERE shipped_at IS NULL;",
       runnable: true,
     },
+    { kind: "diagram", figure: "l4-null-spread" },
     {
       kind: "tip",
       text: "If you ever need \"treat missing as zero\", the function is `COALESCE(x, 0)` — it returns the first non-NULL argument. You'll meet it properly in a later module.",

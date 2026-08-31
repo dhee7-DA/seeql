@@ -38,6 +38,7 @@ export const lesson02: Lesson = {
       sql: "SELECT id, quantity, unit_price, quantity * unit_price AS line_total FROM order_items LIMIT 5;",
       runnable: true,
     },
+    { kind: "diagram", figure: "l2-expr-math" },
     { kind: "h", text: "Habits that scale" },
     {
       kind: "bullets",

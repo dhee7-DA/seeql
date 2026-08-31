@@ -48,6 +48,7 @@ export const lesson01: Lesson = {
         ["order_items", "one product line inside an order", "id (PK), order_id → orders, product_id → products"],
       ],
     },
+    { kind: "diagram", figure: "l1-schema-map" },
     {
       kind: "dialect",
       db: "mysql",

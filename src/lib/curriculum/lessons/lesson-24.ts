@@ -37,6 +37,7 @@ ORDER BY customers DESC, tier;    -- low 8 · high 4 · mid 4`,
         "This is lesson 7's GROUP BY, lesson 22's CASE, and lesson 17's \"stack-then-summarize\" FROM-wrap — three lessons, one query.",
       ],
     },
+    { kind: "diagram", figure: "s16-two-stage" },
     { kind: "h", text: "Pattern 2 — stack a TOTAL row under the ledger" },
     {
       kind: "code",

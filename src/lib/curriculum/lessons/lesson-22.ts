@@ -56,6 +56,7 @@ ORDER BY closed;    -- 0 → 21 (pending + cancelled), 1 → 82`,
         "CASE stops at the first true branch — evaluations after it never happen. Unlike most SQL, **order inside CASE is control flow**.",
       ],
     },
+    { kind: "diagram", figure: "s14-row-router" },
     {
       kind: "dialect",
       db: "sqlite",

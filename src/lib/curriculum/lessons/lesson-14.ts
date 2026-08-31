@@ -29,6 +29,7 @@ ORDER BY c1.region, pair_a;`,
       text: "Self-joins take no special syntax in SQLite — or in PostgreSQL or MySQL: the same table simply appears twice in FROM, once per alias. The names c1 and c2 are conventions; the only hard requirement is that the aliases differ.",
     },
     { kind: "h", text: "The two guard rails" },
+    { kind: "diagram", figure: "j14-two-aliases" },
     {
       kind: "bullets",
       items: [

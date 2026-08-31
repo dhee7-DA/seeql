@@ -1247,6 +1247,322 @@ function S8Capstone() {
   );
 }
 
+/* ---------------- module 1 — second-wave figures ---------------- */
+
+function L1SchemaMap() {
+  const card = (x: number, y: number, name: string, n: string, key: string, keyCls: string, w = 150) => (
+    <motion.g {...fade(0)}>
+      <Panel x={x} y={y} w={w} h={72} />
+      <Label x={x + 14} y={y + 22} cls="fill-zinc-100" size={12}>{name}</Label>
+      <Label x={x + 14} y={y + 46} cls="fill-teal-300" size={15}>{n}</Label>
+      <Label x={x + 14} y={y + 62} cls={keyCls} size={8.5}>{key}</Label>
+    </motion.g>
+  );
+  return (
+    <svg viewBox="0 0 720 300" className="w-full" role="img" aria-label="The storefront schema: five tables glued by four one-to-many foreign keys">
+      {card(30, 60, "customers", "16 rows", "id — primary key", "fill-emerald-300")}
+      {card(295, 60, "orders", "103 rows", "customer_id — foreign key", "fill-amber-300")}
+      {card(555, 60, "order_items", "251 rows", "order_id · product_id", "fill-amber-300", 135)}
+      {card(30, 196, "suppliers", "6 rows", "id — primary key", "fill-emerald-300")}
+      {card(295, 196, "products", "16 rows", "supplier_id — foreign key", "fill-amber-300")}
+      <Link x1={180} y1={88} x2={295} y2={88} cls="stroke-emerald-400/70" delay={0.3} />
+      <Label x={237} y={78} anchor="middle" cls="fill-emerald-300" size={9}>1 : N</Label>
+      <Link x1={445} y1={88} x2={555} y2={88} cls="stroke-emerald-400/70" delay={0.45} />
+      <Label x={500} y={78} anchor="middle" cls="fill-emerald-300" size={9}>1 : N</Label>
+      <Link x1={445} y1={222} x2={575} y2={118} cls="stroke-emerald-400/70" delay={0.6} />
+      <Label x={502} y={162} anchor="middle" cls="fill-emerald-300" size={9}>1 : N</Label>
+      <Link x1={180} y1={232} x2={295} y2={232} cls="stroke-emerald-400/70" delay={0.75} />
+      <Label x={237} y={222} anchor="middle" cls="fill-emerald-300" size={9}>1 : N</Label>
+      <motion.g {...fade(0.9)}>
+        <Label x={30} y={40} cls="fill-zinc-500" size={9}>one customer places many orders — one order holds many lines — one supplier feeds many products</Label>
+        <Label x={30} y={290} cls="fill-zinc-500" size={9.5}>five tables, four foreign keys — every query in this course walks some path across this map</Label>
+      </motion.g>
+    </svg>
+  );
+}
+
+function L2ExprMath() {
+  const rows = [
+    { id: "1", qty: "3", price: "31.02", out: "93.06" },
+    { id: "2", qty: "2", price: "15.15", out: "30.30" },
+    { id: "3", qty: "1", price: "25.26", out: "25.26" },
+  ];
+  return (
+    <svg viewBox="0 0 720 250" className="w-full" role="img" aria-label="The expression quantity times unit_price is evaluated once per row, producing line_total for each">
+      <motion.g {...fade(0)}>
+        <Label x={30} y={44} cls="fill-zinc-500">order_items</Label>
+        <Panel x={30} y={54} w={210} h={148} />
+        <Label x={58} y={76} cls="fill-zinc-500" size={9}>id</Label>
+        <Label x={120} y={76} cls="fill-zinc-500" size={9}>quantity</Label>
+        <Label x={226} y={76} anchor="end" cls="fill-zinc-500" size={9}>unit_price</Label>
+        {rows.map((r, i) => (
+          <g key={i}>
+            <Label x={58} y={104 + i * 34} cls="fill-zinc-400">{r.id}</Label>
+            <Label x={120} y={104 + i * 34} cls="fill-zinc-300">{r.qty}</Label>
+            <Label x={226} y={104 + i * 34} anchor="end" cls="fill-zinc-300">{r.price}</Label>
+          </g>
+        ))}
+      </motion.g>
+      <motion.g {...fade(0.4)}>
+        <rect x={296} y={98} width={148} height={58} rx={8} className="fill-zinc-900 stroke-sky-400/70" strokeWidth={1} />
+        <Label x={370} y={122} anchor="middle" cls="fill-sky-300" size={10}>quantity * unit_price</Label>
+        <Label x={370} y={140} anchor="middle" cls="fill-zinc-500" size={8}>evaluated once per row</Label>
+        {[0, 1, 2].map((i) => (
+          <Link key={`in${i}`} x1={244} y1={100 + i * 34} x2={292} y2={120} cls="stroke-zinc-600" arrow={i === 2} bend={0.5} delay={0.5 + i * 0.12} />
+        ))}
+        {[0, 1, 2].map((i) => (
+          <Link key={`out${i}`} x1={448} y1={128} x2={486} y2={100 + i * 34} cls="stroke-sky-400/70" arrow={i === 2} bend={0.5} delay={0.7 + i * 0.12} />
+        ))}
+      </motion.g>
+      <motion.g {...fade(0.6)}>
+        <Label x={490} y={44} cls="fill-emerald-300">result — line_total</Label>
+        <Panel x={490} y={54} w={200} h={148} cls="fill-zinc-900 stroke-emerald-400/50" />
+        {rows.map((r, i) => (
+          <g key={i}>
+            <Label x={518} y={104 + i * 34} cls="fill-zinc-500">{r.id}</Label>
+            <Label x={666} y={104 + i * 34} anchor="end" cls="fill-sky-300">{r.out}</Label>
+          </g>
+        ))}
+        <Label x={490} y={222} cls="fill-zinc-500" size={9}>AS line_total gives the computed column a real heading</Label>
+      </motion.g>
+      <motion.g {...fade(0.8)}>
+        <Label x={30} y={236} cls="fill-zinc-500" size={9.5}>quantity * unit_price AS line_total — one output value per row; the stored table is never touched</Label>
+      </motion.g>
+    </svg>
+  );
+}
+
+function L3LikeMatch() {
+  const names = [
+    { t: "Mechanical Keyboard K1", hit: true },
+    { t: "Wireless Mouse M3", hit: false },
+    { t: "USB-C Hub 7-in-1", hit: false },
+    { t: "Noise-Canceling Headset", hit: false },
+    { t: "HDMI 2.1 Cable 2m", hit: false },
+    { t: "Studio Desktop Mic", hit: false },
+  ];
+  return (
+    <svg viewBox="0 0 720 280" className="w-full" role="img" aria-label="The pattern percent Keyboard percent matches one of sixteen product names, case-insensitively in SQLite">
+      <motion.g {...fade(0)}>
+        <rect x={30} y={36} width={176} height={30} rx={8} className="fill-zinc-900 stroke-amber-400/70" strokeWidth={1} />
+        <Label x={118} y={55} anchor="middle" cls="fill-amber-200" size={13}>{"%Keyboard%"}</Label>
+        <Label x={224} y={55} cls="fill-emerald-300" size={11}>matches 1 of 16 products</Label>
+      </motion.g>
+      <motion.g {...fade(0.3)}>
+        {names.map((n, i) => {
+          const y = 96 + i * 26;
+          return (
+            <g key={n.t}>
+              {n.hit && <rect x={30} y={y - 14} width={420} height={22} rx={5} className="fill-emerald-400/10 stroke-emerald-400/60" strokeWidth={1} />}
+              {!n.hit && <XMark x={44} y={y - 3} s={4} delay={0.5 + i * 0.08} />}
+              {n.hit && (
+                <path d={`M ${40} ${y - 3} l 4 4 l 7 -8`} fill="none" className="stroke-emerald-400" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" />
+              )}
+              <Label x={58} y={y} cls={n.hit ? "fill-zinc-100" : "fill-zinc-500"}>{n.t}</Label>
+            </g>
+          );
+        })}
+        <g>
+          <Label x={122} y={82} cls="fill-amber-300" size={9}>% = anything</Label>
+          <Label x={196} y={82} cls="fill-amber-300" size={9}>anything = %</Label>
+          <line x1={130} y1={99} x2={186} y2={99} className="stroke-emerald-400" strokeWidth={2} strokeLinecap="round" />
+        </g>
+      </motion.g>
+      <motion.g {...fade(0.6)}>
+        <Panel x={500} y={84} w={190} h={118} />
+        <Label x={514} y={106} cls="fill-zinc-300" size={10}>% any run of chars</Label>
+        <Label x={514} y={124} cls="fill-zinc-300" size={10}>_ exactly one char</Label>
+        <line x1={514} y1={136} x2={676} y2={136} className="stroke-zinc-800" />
+        <Label x={514} y={156} cls="fill-sky-300" size={10}>{"%Desk% → 2 rows"}</Label>
+        <Label x={514} y={174} cls="fill-zinc-500" size={8.5}>Studio Desktop Mic</Label>
+        <Label x={514} y={188} cls="fill-zinc-500" size={8.5}>Desk Mat Extended</Label>
+      </motion.g>
+      <motion.g {...fade(0.8)}>
+        <Label x={30} y={262} cls="fill-zinc-500" size={9.5}>SQLite&apos;s LIKE ignores case — &quot;%KEYBOARD%&quot; finds the same row; PostgreSQL&apos;s LIKE is case-sensitive (it offers ILIKE)</Label>
+      </motion.g>
+    </svg>
+  );
+}
+
+function L4NullSpread() {
+  const rows = [
+    { id: "1", total: "576.54", ship: "NULL", hole: true },
+    { id: "2", total: "416.81", ship: "2024-01-18", hole: false },
+    { id: "3", total: "767.64", ship: "2024-01-26", hole: false },
+  ];
+  return (
+    <svg viewBox="0 0 720 270" className="w-full" role="img" aria-label="COUNT star counts 103 rows, COUNT of shipped_at counts only 82 values because 21 orders have no ship date">
+      <motion.g {...fade(0)}>
+        <Label x={30} y={44} cls="fill-zinc-500">orders — the ship-date holes</Label>
+        <Panel x={30} y={54} w={330} h={130} />
+        <Label x={58} y={76} cls="fill-zinc-500" size={9}>id</Label>
+        <Label x={110} y={76} cls="fill-zinc-500" size={9}>total</Label>
+        <Label x={330} y={76} anchor="end" cls="fill-zinc-500" size={9}>shipped_at</Label>
+        {rows.map((r, i) => (
+          <g key={i}>
+            <Label x={58} y={102 + i * 28} cls="fill-zinc-400">{r.id}</Label>
+            <Label x={110} y={102 + i * 28} cls="fill-zinc-300">{r.total}</Label>
+            <Label x={330} y={102 + i * 28} anchor="end" cls={r.hole ? "fill-amber-300" : "fill-zinc-300"}>{r.ship}</Label>
+          </g>
+        ))}
+        <Label x={30} y={208} cls="fill-amber-300" size={9.5}>shipped_at + 0 → NULL — math that touches a hole returns a hole</Label>
+      </motion.g>
+      <motion.g {...fade(0.4)}>
+        <Panel x={420} y={54} w={270} h={56} />
+        <Label x={436} y={78} cls="fill-zinc-400" size={11}>COUNT(*)</Label>
+        <Label x={674} y={82} anchor="end" cls="fill-zinc-200" size={17}>103</Label>
+        <Label x={436} y={96} cls="fill-zinc-600" size={8.5}>every row counts, holes included</Label>
+      </motion.g>
+      <motion.g {...fade(0.6)}>
+        <Panel x={420} y={128} w={270} h={56} cls="fill-zinc-900 stroke-emerald-400/50" />
+        <Label x={436} y={152} cls="fill-zinc-400" size={11}>COUNT(shipped_at)</Label>
+        <Label x={674} y={156} anchor="end" cls="fill-emerald-300" size={17}>82</Label>
+        <Label x={436} y={170} cls="fill-zinc-600" size={8.5}>NULL rows are skipped by the aggregate</Label>
+      </motion.g>
+      <motion.g {...fade(0.8)}>
+        {Array.from({ length: 103 }, (_, i) => (
+          <rect key={i} x={30 + i * 6.4} y={226} width={5} height={14} rx={1}
+            className={i % 5 === 0 ? "fill-amber-400/80" : "fill-zinc-600"} />
+        ))}
+        <Label x={30} y={256} cls="fill-zinc-500" size={9}>103 slots = COUNT(*)</Label>
+        <Label x={690} y={256} anchor="end" cls="fill-amber-300/90" size={9}>21 amber slots = shipped_at IS NULL (14 pending + 7 cancelled)</Label>
+      </motion.g>
+    </svg>
+  );
+}
+
+function L5MultiKeySort() {
+  const eu = [
+    { name: "Chloe Dubois", total: "945.21" },
+    { name: "Alice Chen", total: "767.64" },
+    { name: "Liam O'Brien", total: "705.39" },
+  ];
+  const apac = [
+    { name: "Farid Nasser", total: "1,088.44" },
+    { name: "Grace Kim", total: "826.03" },
+    { name: "Grace Kim", total: "625.14" },
+  ];
+  const band = (x: number, title: string, cls: string, rows: Array<{ name: string; total: string }>, delay: number) => (
+    <motion.g {...fade(delay)}>
+      <Panel x={x} y={58} w={300} h={182} cls="fill-zinc-900 stroke-zinc-800" />
+      <Label x={x + 16} y={82} cls={cls} size={10}>{title}</Label>
+      {rows.map((r, i) => (
+        <g key={i}>
+          <Label x={x + 16} y={112 + i * 32} cls="fill-zinc-300">{r.name}</Label>
+          <Label x={x + 284} y={112 + i * 32} anchor="end" cls="fill-emerald-200">{r.total}</Label>
+        </g>
+      ))}
+      <Label x={x + 16} y={224} cls="fill-zinc-600" size={8.5}>… more orders below, same internal sort</Label>
+    </motion.g>
+  );
+  return (
+    <svg viewBox="0 0 720 290" className="w-full" role="img" aria-label="Two-key sort: region ascending forms the bands, total descending orders rows inside each band">
+      <motion.g {...fade(0)}>
+        <Label x={30} y={38} cls="fill-zinc-200" size={12}>ORDER BY region ASC, total DESC</Label>
+        <Label x={690} y={38} anchor="end" cls="fill-sky-300" size={9.5}>key 2 · total DESC — sorts inside each band</Label>
+        <Label x={30} y={52} cls="fill-violet-300" size={9.5}>key 1 · region ASC — decides which band a row lands in</Label>
+      </motion.g>
+      {band(30, "APAC — first band (A before E)", "fill-sky-300", apac, 0.3)}
+      {band(390, "EU — second band", "fill-violet-300", eu, 0.5)}
+      <motion.g {...fade(0.8)}>
+        <Label x={30} y={272} cls="fill-zinc-500" size={9.5}>top 3 of each region shown — Grace Kim appears twice because she placed two APAC orders; region sorts once, total re-sorts every band</Label>
+      </motion.g>
+    </svg>
+  );
+}
+
+function L6DistinctMech() {
+  const rows = [
+    { t: "EU · Berlin", cls: "fill-sky-300" },
+    { t: "LATAM · São Paulo", cls: "fill-teal-300" },
+    { t: "EU · Lyon", cls: "fill-sky-300" },
+    { t: "EU · Tallinn", cls: "fill-sky-300" },
+    { t: "US · Austin", cls: "fill-amber-300" },
+    { t: "APAC · Dubai", cls: "fill-violet-300" },
+    { t: "APAC · Seoul", cls: "fill-violet-300" },
+    { t: "APAC · Osaka", cls: "fill-violet-300" },
+  ];
+  return (
+    <svg viewBox="0 0 720 300" className="w-full" role="img" aria-label="DISTINCT region collapses sixteen customers into four regions, but region with city has no equal rows so all sixteen survive">
+      <motion.g {...fade(0)}>
+        <Label x={30} y={36} cls="fill-zinc-300" size={11}>SELECT DISTINCT region FROM customers</Label>
+        {rows.map((r, i) => {
+          const x = 30 + (i % 8) * 84;
+          const y = i < 8 ? 50 : 78;
+          return (
+            <g key={r.t}>
+              <rect x={x} y={y} width={78} height={20} rx={6} className="fill-zinc-900 stroke-zinc-800" strokeWidth={1} />
+              <Label x={x + 39} y={y + 14} anchor="middle" cls={r.cls} size={8}>{r.t}</Label>
+            </g>
+          );
+        })}
+        <Label x={30 + 7 * 84 + 78} y={64} cls="fill-zinc-600" size={10}>+8 more</Label>
+        <Arrow x1={360} y1={106} x2={360} y2={128} cls="stroke-emerald-400" />
+        <Label x={374} y={120} cls="fill-zinc-500" size={9}>equal rows merge</Label>
+      </motion.g>
+      <motion.g {...fade(0.4)}>
+        {[
+          { t: "APAC × 5", cls: "fill-violet-300 stroke-violet-400/60" },
+          { t: "EU × 8", cls: "fill-sky-300 stroke-sky-400/60" },
+          { t: "LATAM × 1", cls: "fill-teal-300 stroke-teal-400/60" },
+          { t: "US × 2", cls: "fill-amber-300 stroke-amber-400/60" },
+        ].map((c, i) => (
+          <g key={c.t}>
+            <rect x={30 + i * 96} y={138} width={88} height={24} rx={7} className={`fill-zinc-900 ${c.cls}`} strokeWidth={1} />
+            <Label x={30 + i * 96 + 44} y={154} anchor="middle" cls={c.cls} size={10}>{c.t}</Label>
+          </g>
+        ))}
+        <Label x={30 + 3 * 96 + 88 + 16} y={154} cls="fill-emerald-300" size={11}>16 rows → 4</Label>
+      </motion.g>
+      <motion.g {...fade(0.6)}>
+        <Label x={30} y={204} cls="fill-zinc-300" size={11}>SELECT DISTINCT region, city</Label>
+        <Label x={30} y={226} cls="fill-zinc-500" size={9.5}>same 16 rows, two columns — Berlin ≠ Lyon ≠ Tallinn … no two selected rows are equal</Label>
+        <rect x={30} y={238} width={210} height={26} rx={7} className="fill-zinc-900 stroke-emerald-400/60" strokeWidth={1} />
+        <Label x={135} y={255} anchor="middle" cls="fill-emerald-300" size={11}>16 rows → 16</Label>
+      </motion.g>
+      <motion.g {...fade(0.8)}>
+        <Label x={30} y={290} cls="fill-zinc-500" size={9.5}>DISTINCT compares the whole selected row — widen the SELECT list and previously equal rows separate</Label>
+      </motion.g>
+    </svg>
+  );
+}
+
+function L7CountStar() {
+  const cards = [
+    { label: "COUNT(*)", value: "103", cls: "fill-teal-300" },
+    { label: "SUM(total)", value: "34,833.28", cls: "fill-emerald-300" },
+    { label: "AVG(total)", value: "338.19", cls: "fill-sky-300" },
+    { label: "MIN(total)", value: "25.47", cls: "fill-zinc-200" },
+    { label: "MAX(total)", value: "1,088.44", cls: "fill-zinc-200" },
+  ];
+  return (
+    <svg viewBox="0 0 720 260" className="w-full" role="img" aria-label="Five aggregates answer real storefront numbers, and COUNT star versus COUNT of shipped_at exposes the twenty-one NULL rows">
+      <motion.g {...fade(0)}>
+        <Label x={30} y={36} cls="fill-zinc-500" size={10}>SELECT COUNT(*), SUM(total), AVG(total), MIN(total), MAX(total) FROM orders</Label>
+        {cards.map((c, i) => (
+          <g key={c.label}>
+            <Panel x={30 + i * 136} y={52} w={124} h={64} />
+            <Label x={30 + i * 136 + 14} y={74} cls="fill-zinc-500" size={9}>{c.label}</Label>
+            <Label x={30 + i * 136 + 14} y={100} cls={c.cls} size={c.value.length > 8 ? 14 : 16}>{c.value}</Label>
+          </g>
+        ))}
+      </motion.g>
+      <motion.g {...fade(0.4)}>
+        <Label x={30} y={152} cls="fill-zinc-300" size={11}>COUNT(*) = 103  vs  COUNT(shipped_at) = 82</Label>
+        {Array.from({ length: 103 }, (_, i) => (
+          <rect key={i} x={30 + i * 6.4} y={164} width={5} height={14} rx={1}
+            className={i % 5 === 0 ? "fill-amber-400/80" : "fill-zinc-600"} />
+        ))}
+        <Label x={30} y={198} cls="fill-zinc-500" size={9}>■ a row (82 with a ship date)</Label>
+        <Label x={690} y={198} anchor="end" cls="fill-amber-300/90" size={9}>■ shipped_at IS NULL (21)</Label>
+      </motion.g>
+      <motion.g {...fade(0.7)}>
+        <Label x={30} y={236} cls="fill-zinc-500" size={9.5}>COUNT(*) counts rows; COUNT(column) counts values — the 21 holes are the pending + cancelled orders, and MIN/MAX ignore them too</Label>
+      </motion.g>
+    </svg>
+  );
+}
+
 /* ---------------- registry ---------------- */
 
 const FIGURES: Partial<Record<FigureId, () => React.JSX.Element>> = {
@@ -1277,6 +1593,13 @@ const FIGURES: Partial<Record<FigureId, () => React.JSX.Element>> = {
   "s6-case-switch": S6CaseSwitch,
   "s7-case-agg": S7CaseAgg,
   "s8-capstone": S8Capstone,
+  "l1-schema-map": L1SchemaMap,
+  "l2-expr-math": L2ExprMath,
+  "l3-like-match": L3LikeMatch,
+  "l4-null-spread": L4NullSpread,
+  "l5-multikey-sort": L5MultiKeySort,
+  "l6-distinct-mech": L6DistinctMech,
+  "l7-count-star": L7CountStar,
 };
 
 export function Figure({ id }: { id: FigureId }) {

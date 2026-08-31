@@ -50,6 +50,7 @@ LEFT JOIN (
 WHERE pend.product_id IS NULL
 ORDER BY p.name;`,
     },
+    { kind: "diagram", figure: "j13-three-spellings" },
     {
       kind: "warn",
       text: "You may meet `NOT IN (SELECT …)` as an alternative. It has a famous trap: if the subquery returns even one NULL, NOT IN returns *nothing at all*. LEFT JOIN + IS NULL has no such failure mode — prefer it.",

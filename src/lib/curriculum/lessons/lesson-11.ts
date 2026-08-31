@@ -25,6 +25,7 @@ ORDER BY oi.id
 LIMIT 5;`,
     },
     { kind: "h", text: "Habits for chains" },
+    { kind: "diagram", figure: "j11-hop-map" },
     {
       kind: "bullets",
       items: [

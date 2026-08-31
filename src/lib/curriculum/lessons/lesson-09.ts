@@ -36,6 +36,7 @@ LIMIT 5;`,
     },
     { kind: "diagram", figure: "j1-fk-lookup" },
     { kind: "h", text: "Read the query" },
+    { kind: "diagram", figure: "j9-mental-model" },
     {
       kind: "steps",
       items: [

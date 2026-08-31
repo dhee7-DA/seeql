@@ -47,6 +47,7 @@ SELECT DISTINCT customer_id AS v FROM orders WHERE status = 'pending';    -- C: 
         "Bonus: the FROM-subquery style is **self-documenting**. The grouping you wrote is the grouping you meant — no engine gets a vote.",
       ],
     },
+    { kind: "diagram", figure: "s13-eval-order" },
     { kind: "code",
       caption: "Both readings, stated explicitly — portable on every engine",
       sql: `-- left-to-right reading (what SQLite does): 8

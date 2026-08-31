@@ -46,6 +46,7 @@ export const lesson07: Lesson = {
       kind: "tip",
       text: "`COUNT(*)` counts rows; `COUNT(column)` counts values. Compare them to measure missingness: `SELECT COUNT(*) AS all_rows, COUNT(shipped_at) AS shipped FROM orders;`",
     },
+    { kind: "diagram", figure: "l7-count-star" },
     {
       kind: "dialect",
       db: "sqlite",

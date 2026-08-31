@@ -157,7 +157,7 @@ export function Landing({ onStart, onPlayground }: { onStart: () => void; onPlay
         <div className="mx-auto grid w-full max-w-6xl grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
           {[
             [String(LESSONS.length), "lessons, start to capstone"],
-            ["25", "interactive diagrams"],
+            ["48", "interactive diagrams"],
             [String(TOTAL_MCQ), "quiz questions"],
             [String(TOTAL_PROBLEMS), "live-graded queries"],
             ["1", "real storefront database"],

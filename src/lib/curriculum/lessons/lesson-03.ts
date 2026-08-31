@@ -42,6 +42,7 @@ export const lesson03: Lesson = {
       caption: "The three shorthands",
       sql: "-- products in two categories\nSELECT name, category FROM products WHERE category IN ('Audio', 'Video');\n\n-- orders from March 2024, inclusive range\nSELECT id, created_at FROM orders WHERE created_at BETWEEN '2024-03-01' AND '2024-03-31';\n\n-- everything keyboard-shaped\nSELECT name FROM products WHERE name LIKE '%Keyboard%';",
     },
+    { kind: "diagram", figure: "l3-like-match" },
     {
       kind: "dialect",
       db: "sqlite",

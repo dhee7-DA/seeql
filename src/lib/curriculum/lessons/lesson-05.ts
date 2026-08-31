@@ -28,6 +28,7 @@ export const lesson05: Lesson = {
         "Add a final tiebreaker (often the primary key) when the exact order of your export matters.",
       ],
     },
+    { kind: "diagram", figure: "l5-multikey-sort" },
     { kind: "h", text: "LIMIT & OFFSET" },
     {
       kind: "bullets",

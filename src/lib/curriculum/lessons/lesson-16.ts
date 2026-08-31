@@ -23,6 +23,7 @@ export const lesson16: Lesson = {
       ],
     },
     { kind: "h", text: "The fix: aggregate before you join" },
+    { kind: "diagram", figure: "j16-agg-first" },
     {
       kind: "bullets",
       items: [

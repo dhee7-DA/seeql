@@ -42,6 +42,7 @@ SELECT status FROM orders;   -- deduped: 4 rows`,
         "The dedupe costs a sort or hash under the hood. On big results that is real time — **reach for `UNION ALL` first and upgrade to `UNION` only when duplicates actually hurt**.",
       ],
     },
+    { kind: "diagram", figure: "s9-union-vs-all" },
     { kind: "code",
       caption: "The classic pile: stack, then summarize outside",
       sql: `SELECT region, COUNT(*) AS n FROM (

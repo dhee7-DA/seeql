@@ -13,6 +13,7 @@ export const lesson10: Lesson = {
       text: "An `INNER JOIN` is a strict gatekeeper: a pair of rows (one from each side) only makes it into the result if the `ON` condition is true for that pair. Rows on either side with **no partner are silently dropped** — no error, no warning.",
     },
     { kind: "h", text: "Three things to internalize" },
+    { kind: "diagram", figure: "j10-cartesian" },
     {
       kind: "bullets",
       items: [

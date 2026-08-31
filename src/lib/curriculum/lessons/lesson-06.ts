@@ -29,6 +29,7 @@ export const lesson06: Lesson = {
         "**One caution** — if you're deduping to \"fix\" doubled rows, first ask **why** the duplicates exist. Often the real bug is a repeated join or a missing filter; DISTINCT silences the symptom, not the bug.",
       ],
     },
+    { kind: "diagram", figure: "l6-distinct-mech" },
     {
       kind: "dialect",
       db: "postgres",

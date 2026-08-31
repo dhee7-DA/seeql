@@ -31,6 +31,7 @@ export const lesson12: Lesson = {
       text: "MySQL understands RIGHT JOIN but has no FULL OUTER JOIN at all — protecting both sides there takes an emulation: a LEFT JOIN arm UNION ALL'd with a reversed LEFT JOIN + IS NULL arm. PostgreSQL has had FULL OUTER JOIN all along, SQLite since 3.39.",
     },
     { kind: "h", text: "The subtle part: WHERE vs ON" },
+    { kind: "diagram", figure: "j12-where-vs-on" },
     {
       kind: "bullets",
       items: [

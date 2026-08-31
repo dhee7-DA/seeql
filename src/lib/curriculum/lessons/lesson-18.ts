@@ -59,6 +59,7 @@ ORDER BY tag DESC, total DESC, id;`,
         "`NULL` stacks without any ceremony — an arm returning NULLs just hands the pile a few holes, which matters next lesson when `INTERSECT`/`EXCEPT` compare rows.",
       ],
     },
+    { kind: "diagram", figure: "s10-position-binding" },
     {
       kind: "dialect",
       db: "sqlite",

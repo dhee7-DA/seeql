@@ -39,6 +39,7 @@ ORDER BY id;      -- 6 customers, ids 2, 3, 4, 6, 11, 15`,
         "The DISTINCT matters: `NOT EXISTS` preserves duplicates from the left side; EXCEPT collapses them. Usually harmless — occasionally the whole point.",
       ],
     },
+    { kind: "diagram", figure: "s12-except-audit" },
     { kind: "code",
       caption: "Minus applied to products — price > 100, but not Audio",
       sql: `SELECT name FROM products WHERE price > 100

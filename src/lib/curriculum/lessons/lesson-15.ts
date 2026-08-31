@@ -13,6 +13,7 @@ export const lesson15: Lesson = {
       text: "Lesson 8 taught you GROUP BY on a single table. Real reporting almost always aggregates **joined** data: spend per customer (totals in `orders`, names in `customers`), revenue per category (amounts in `order_items`, categories in `products`). The recipe is unchanged — **join first, collapse second** — the only new skill is qualifying the group key and the measure.",
     },
     { kind: "h", text: "One quiet detail, loudly" },
+    { kind: "diagram", figure: "j15-agg-pipeline" },
     {
       kind: "bullets",
       items: [

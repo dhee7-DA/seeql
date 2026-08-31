@@ -62,6 +62,7 @@ JOIN customers c ON c.id = o.customer_id
 GROUP BY c.region
 ORDER BY c.region;`,
     },
+    { kind: "diagram", figure: "s15-pivot-build" },
     { kind: "h", text: "CASE in ORDER BY — your sort, your rules" },
     {
       kind: "bullets",

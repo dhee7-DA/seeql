@@ -30,6 +30,7 @@ ORDER BY customer_id;      -- 4 customers: ids 1, 5, 11, 13`,
         "Comparison is **NULL-safe**: for set operations, two NULLs are considered duplicates of each other — unlike `WHERE col = col`, which never matches when NULL is involved. The `shipped_at` holes from lesson 4 do not poison an INTERSECT.",
       ],
     },
+    { kind: "diagram", figure: "s11-both-sides" },
     { kind: "h", text: "The join you already know" },
     {
       kind: "bullets",

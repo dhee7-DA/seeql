@@ -228,3 +228,51 @@ Stage Summary:
 - Coach engine is data-driven: per-problem mistakes + globals in coach.ts; regexes run on lowercased normalized SQL, first match wins, QA-enforced precision
 - Key files: src/lib/curriculum/{types,coach}.ts, lessons/lesson-01..24.ts, expected.ts (regen), src/components/learn/{problem-runner,mcq,lesson-view}.tsx, scripts/{qa-coach,gen-expected}.ts
 - Next-round queue unchanged: Progress dashboard, Data Explorer, mixed quiz mode
+
+---
+Task ID: 16-b
+Agent: general-purpose subagent (16-b)
+Task: Add one new concept-deep SVG figure to each of lessons 17–24 (s9–s16, 8 figures in diagrams-m3.tsx) + block insertion
+Work Log:
+- Read worklog, diagrams-kit API, style-absorbed from diagrams.tsx (L7GroupBy/S1Union/S6CaseSwitch/S8Capstone), all 8 lesson files, types.ts FigureId/Block unions.
+- Verified every rendered number live via throwaway scripts/tmp-16b.ts (SELECT-only, no reset; deleted after): UNION ALL statuses 206 vs UNION 4 (distinct: cancelled/delivered/pending/shipped); arm1 delivered 52/shipped 30/pending 14/cancelled 7, arm2 suppliers EU 2/APAC 2/US 1/LATAM 1; delivered∩cancelled = 15∩4 → ids 1·5·11·13 (Alice Chen, Emma Wilson, Keiko Sato, Maya Patel), delivered-only 11, cancelled-only 0; customers 16 − shipped-customer set 10 → EXCEPT = 6 (ids 2 Bruno Silva, 3 Chloe Dubois, 4 Dmitri Volkov, 6 Farid Nasser, 11 Keiko Sato, 15 Olivia Brown); customers-with-order EXCEPT delivered = 1 (Liam O'Brien, id 12); A∪B∩C: A {1..11,13,14,15,16}, B {1,5,11,13}, C {1,3,5,6,7,11,13,16}, SQLite reading (A∪B)∩C = 8 ids 1·3·5·6·7·11·13·16, standard reading A∪(B∩C) = 15; CASE router streams 52/30/14/7 (ELSE = cancelled 7), Σ 103; pivot APAC 21/8/37 · EU 24/12/45 · LATAM 2/0/2 · US 5/10/19; tiers high 4 (Σ 22,121.70: Alice 7,262.35 · Emma 6,640.56 · Grace 4,574.23 · Maya 3,644.56), mid 4 (Σ 6,911.67: Chloe 2,667.93 · Pedro 1,686.17 · Farid 1,458.97 · Keiko 1,098.60), low 8 (Σ 5,799.91, Olivia 444.80 last).
+- diagrams-m3.tsx: local Chip helper + 8 components (S9UnionVsAll 62 ln, S10PositionBinding 76, S11BothSides 59, S12ExceptAudit 67, S13EvalOrder 70, S14RowRouter 66, S15PivotBuild 88, S16TwoStage 78; file 620 ln), all 720-wide viewBoxes H 300–330, kit helpers only (Label/Panel/Arrow/Link/XMark/DotField/fade/drawIn), motion.g fade stages + drawIn tree edges, mono SQL fragment caption inside every figure.
+- Figures: s9 two-panel ALL-vs-UNION dot piles 206→4 with repeat-struck chip; s10 two arms (orders/suppliers) feeding one pile whose headers are arm 1's, arm-2 rows sky-highlighted "bound by position"; s11 venn overlap with the 4 real names + 15∩4=4 equation strip; s12 16-customer grid with the 10 shipped ids X-struck rose, 6 emerald survivors + rose "NOT IN dies on NULL" card; s13 side-by-side parse trees (∩-root vs ∪-root) with dashed grouping boxes and 8 vs 15 result strips; s14 103-dot field → simple-CASE router → 4 sized exit streams; s15 3-stage pivot build (long rows → 1/0 flag grid → matrix); s16 3-panel derived-table pipeline (16 dots → per-customer CASE tiers → tier counts with Σ).
+- Block insertion: one `{ kind: "diagram", figure: "sX-…" }` per lesson inside the specified section (L17 after "Dedupe is the whole difference" bullets; L18 after "Alignment: count is law…" bullets; L19 after "What counts as "in both"" bullets; L20 after "EXCEPT is an anti-join with DISTINCT" bullets; L21 after "The standard says INTERSECT first" bullets; L22 after "An expression, not a statement" bullets; L23 after the region×status code block in "Rows into columns — the pivot"; L24 after "Pattern 1 — segment, then count" bullets). No other blocks touched; intro figures untouched.
+- QA: bunx tsc --noEmit | grep ^src/ → empty; bunx eslint on diagrams-m3 + lessons 17–24 → clean; throwaway check script (deleted): every lesson exactly 2 diagram blocks, ids ∈ FigureId, all 8 registered in FIGURES_M3 → ALL CHECKS PASSED; bunx tsx scripts/facts-viz.ts → db-ok; extra static render audit (deleted): all 8 figures render server-side, viewBoxes within contract, no estimated text overflow (caught + fixed 2 long captions in s12/s16 before finishing).
+Stage Summary:
+- Lessons 17–24 now have 2 diagrams each (25 → 33 figures total); all new numbers re-verified against db/custom.db seed; FIGURES_M3 merged into diagrams.tsx registry via existing spread — no registry/wiring changes needed.
+- No content bugs in lesson prose found; one nuance noted: the task brief offered "customers with an order EXCEPT customers with a delivered order = 1" (Liam O'Brien, id 12) — verified true, but the figure uses the lesson's own worked example (customers EXCEPT shipped = 6) per preference for the lesson's example.
+- Key files: src/components/learn/diagrams-m3.tsx (rewritten from stub), src/lib/curriculum/lessons/lesson-17..24.ts (+1 block each). Nothing else modified; no dev server, no commit, no resetDatabase from my own scripts.
+
+---
+Task ID: 16-a
+Agent: general-purpose subagent (16-a) — report stage timed out; edits landed and were verified centrally by main agent
+Task: Add one new concept-deep SVG figure to each of lessons 09–16 (j9–j16, 8 figures in diagrams-m2.tsx) + block insertion
+
+Work Log:
+- All 8 figures landed in src/components/learn/diagrams-m2.tsx (544 lines), all registered in FIGURES_M2; one { kind: "diagram" } block added per lesson 09–16 (now 2 each), placements at the requested sections (j9 after "Read the query", j10 after "Three things to internalize", j11 near "Habits for chains", j12 inside "The subtle part: WHERE vs ON", j13 after the first anti-join code, j14 near "The two guard rails", j15 near the GROUP BY section, j16 inside "The fix: aggregate before you join")
+- Spot-verified figures against canonical seed: j9 order 1 → customer 16 Pedro Alvarez (Madrid), total 576.54; j10 cartesian 103 × 16 = 1648 vs 103 matched pairs; j12 in-ON 103 (58 NULL-filled) vs in-WHERE 45 (= INNER); j14 same-region pairs 39 total / 10 in APAC (5 APAC customers); j16 honest SUM 34833.28 vs fanout-inflated 103244.55; j11 funnel 16 → 103 → 251
+- Central QA by main agent: bunx tsc --noEmit | grep ^src/ → empty; bunx eslint diagrams-m2.tsx + lessons 09–16 → clean; 48/48 lesson figure ids resolve to registered components; browser render of l12 confirmed both figures
+
+Stage Summary:
+- Lessons 09–16 now carry 2 diagrams each; all rendered numbers match the canonical seed; no other blocks touched
+- Key files: src/components/learn/diagrams-m2.tsx, src/lib/curriculum/lessons/lesson-09..16.ts
+
+---
+Task ID: 16
+Agent: Super Z (main agent)
+Task: "Add more visualizations to the current study materials" — second, concept-deep diagram per lesson (25 → 48 figures)
+
+Work Log:
+- Designed 23 new figures (one per lesson; l08 already had two), each illustrating a LATER, different concept than the lesson's intro figure; verified every number against the live seed first via scripts/facts-viz.ts (kept for reuse) + throwaway queries (deleted): counts customers 16 / suppliers 6 / products 16 / orders 103 / order_items 251, line_total rows 93.06/30.30/25.26, LIKE %Keyboard% 1-of-16 + %KEYBOARD% 1 + %Desk% 2, NULL 103 vs 82 (21 = 14 pending + 7 cancelled), APAC/EU two-key sort samples, DISTINCT region 16→4 (APAC 5/EU 8/LATAM 1/US 2) vs (region, city) 16→16, aggregates 103 · 34833.28 · 338.19 · 25.47 · 1088.44
+- Architecture for conflict-free parallelism: extracted the shared SVG helpers verbatim into src/components/learn/diagrams-kit.tsx (Label/Arrow/ArrowHead/Link/Pipe/Panel/XMark/DotField/fade/drawIn/rng/MONO); diagrams.tsx now imports from the kit; FIGURES typed Partial<Record<FigureId, FC>> and merged via ...FIGURES_M2 / ...FIGURES_M3; extended types.ts FigureId with all 23 ids upfront; stub registries created before spawning agents; deleted the orphaned foreign-lineage src/components/learn/diagrams/ folder + 5 stale foreign scripts (test-funnel/test-quality/test-samples-api/verify-curriculum/inspect-ast); scaffold committed separately (729d723)
+- M2 (lessons 09–16) + M3 (lessons 17–24) delegated to subagents 16-a/16-b with per-figure specs, verified facts, style contract and QA gates; 16-b reported clean, 16-a timed out at report stage but all edits landed (verified centrally, see 16-a section)
+- M1 (lessons 01–07) built by main agent in diagrams.tsx: l1-schema-map (5 cards, 4 FK links, real counts), l2-expr-math (per-row quantity*unit_price → 93.06/30.30/25.26), l3-like-match (%Keyboard% windows + case-insensitivity + %Desk% 2), l4-null-spread (103 vs 82 slot strip + contagion rule), l5-multikey-sort (APAC band first — A before E! — then EU, total DESC inside), l6-distinct-mech (16 real region·city chips, 16→4 vs 16→16 tuple rule), l7-count-star (5 real aggregate cards + COUNT(*)/COUNT(shipped_at) hole strip); fixed 3 self-caught defects (garbage rect attr, kit Label has no italic prop, and the band-order bug: region ASC puts APAC first, not EU); kit Link has no label prop → explicit Labels
+- Blocks inserted at concept-matched positions in lessons 01–07 (after the schema table, after the derivation code, after the LIKE shorthand, after the IS NULL code, before "LIMIT & OFFSET", after the DISTINCT bullets, after the COUNT(*)/COUNT(column) tip)
+- QA: src tsc 0 errors, eslint clean on all touched files; 48/48 used figure ids registered (types+registry script, deleted); audit-ids 24 lessons · 164 MCQs · 135 problems · 299 unique ids · 0 dupes · 0 orphans; landing stat 25 → 48 diagrams; browser E2E: lessons 1/5/12/17/23 render both figures (aria-labels verified), screenshots scripts/shots/t16-{l1-schema-map,l12-where-vs-on,l23-pivot-build}.png, no page errors, console clean
+
+Stage Summary:
+- Curriculum now 3 modules · 24 lessons · 164 MCQs · 135 problems · 48 interactive diagrams — every lesson carries an intro figure + one mid-lesson concept-deep figure, all numbers seed-verified
+- Diagram system is now split: diagrams-kit.tsx (shared helpers) + diagrams.tsx (M1 + registry) + diagrams-m2/m3.tsx (module registries) — adding figures per module no longer risks merge conflicts
+- Key files: src/components/learn/{diagrams-kit,diagrams,diagrams-m2,diagrams-m3}.tsx, src/lib/curriculum/{types.ts,lessons/lesson-01..07,09..24}, src/components/landing.tsx, scripts/facts-viz.ts (kept)
