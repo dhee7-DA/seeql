@@ -66,6 +66,14 @@ export type FigureId =
   | "q6-correlated"
   | "q7-fanout-safe"
   | "q8-cte-chain"
+  | "t1-text-pipeline"
+  | "t2-calendar"
+  | "t3-ranked"
+  | "t4-window"
+  | "t5-null-coalesce"
+  | "t6-month-buckets"
+  | "t7-partition-rank"
+  | "t8-running-total"
 
 export type Block =
   | { kind: "p"; text: string }

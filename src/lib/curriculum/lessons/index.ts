@@ -1,7 +1,8 @@
 // SeeQL curriculum — Module 1 (SQL Foundations, lessons 1–8),
 // Module 2 (Joins & Relationships, lessons 9–16),
 // Module 3 (Set Operations & CASE, lessons 17–24) and
-// Module 4 (Subqueries & CTEs, lessons 25–28).
+// Module 4 (Subqueries & CTEs, lessons 25–28) and
+// Module 5 (Scalar & Window Toolkit, lessons 29–32).
 import type { Lesson } from "../types";
 import { lesson01 } from "./lesson-01";
 import { lesson02 } from "./lesson-02";
@@ -31,6 +32,10 @@ import { lesson25 } from "./lesson-25";
 import { lesson26 } from "./lesson-26";
 import { lesson27 } from "./lesson-27";
 import { lesson28 } from "./lesson-28";
+import { lesson29 } from "./lesson-29";
+import { lesson30 } from "./lesson-30";
+import { lesson31 } from "./lesson-31";
+import { lesson32 } from "./lesson-32";
 
 export const LESSONS: Lesson[] = [
   lesson01,
@@ -61,6 +66,10 @@ export const LESSONS: Lesson[] = [
   lesson26,
   lesson27,
   lesson28,
+  lesson29,
+  lesson30,
+  lesson31,
+  lesson32,
 ];
 
 export interface ModuleInfo {
@@ -107,6 +116,15 @@ export const MODULES: Array<ModuleInfo & { lessons: Lesson[] }> = [
     blurb:
       "Queries inside queries: scalar values and IN-lists in WHERE, the NULL-safe EXISTS probe, correlated subqueries that read the outer row, derived tables that stage the aggregation before the join, and WITH chains that read top-down — every shape practiced against the same storefront.",
     lessons: [lesson25, lesson26, lesson27, lesson28],
+  },
+  {
+    id: "toolkit",
+    num: 5,
+    title: "Scalar & Window Toolkit",
+    level: "Advanced",
+    blurb:
+      "The functions layer: reshaping text with SUBSTR/INSTR/CAST and the COALESCE promise kept, slicing dates into buckets with strftime and julianday, then the full window-function family — RANK and friends, LAG/LEAD offsets, running totals, frames and NTILE — on the same live storefront.",
+    lessons: [lesson29, lesson30, lesson31, lesson32],
   },
 ];
 
