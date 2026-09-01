@@ -11387,5 +11387,1091 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
         "open"
       ]
     ]
+  },
+  "l25-p1": {
+    "columns": [
+      "name",
+      "price"
+    ],
+    "rows": [
+      [
+        "Smart Watch S",
+        199.99
+      ],
+      [
+        "Noise-Canceling Headset",
+        149.99
+      ],
+      [
+        "4K Webcam Pro",
+        129
+      ],
+      [
+        "Studio Desktop Mic",
+        119
+      ],
+      [
+        "Mechanical Keyboard K1",
+        89.99
+      ],
+      [
+        "Fitness Band X2",
+        79
+      ]
+    ]
+  },
+  "l25-p2": {
+    "columns": [
+      "above_avg"
+    ],
+    "rows": [
+      [
+        42
+      ]
+    ]
+  },
+  "l25-p3": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Alice Chen"
+      ],
+      [
+        "Bruno Silva"
+      ],
+      [
+        "Chloe Dubois"
+      ],
+      [
+        "Dmitri Volkov"
+      ],
+      [
+        "Emma Wilson"
+      ],
+      [
+        "Farid Nasser"
+      ],
+      [
+        "Grace Kim"
+      ],
+      [
+        "Hiro Tanaka"
+      ],
+      [
+        "Keiko Sato"
+      ],
+      [
+        "Maya Patel"
+      ],
+      [
+        "Noah Meyer"
+      ],
+      [
+        "Pedro Alvarez"
+      ]
+    ]
+  },
+  "l25-p4": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Alice Chen"
+      ],
+      [
+        "Emma Wilson"
+      ],
+      [
+        "Keiko Sato"
+      ],
+      [
+        "Maya Patel"
+      ]
+    ]
+  },
+  "l25-p5": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Bruno Silva"
+      ],
+      [
+        "Chloe Dubois"
+      ],
+      [
+        "Dmitri Volkov"
+      ],
+      [
+        "Farid Nasser"
+      ],
+      [
+        "Grace Kim"
+      ],
+      [
+        "Hiro Tanaka"
+      ],
+      [
+        "Isabella Rossi"
+      ],
+      [
+        "Jamal Wright"
+      ],
+      [
+        "Liam O'Brien"
+      ],
+      [
+        "Noah Meyer"
+      ],
+      [
+        "Olivia Brown"
+      ],
+      [
+        "Pedro Alvarez"
+      ]
+    ]
+  },
+  "l25-p6": {
+    "columns": [
+      "name",
+      "price",
+      "catalog_avg"
+    ],
+    "rows": [
+      [
+        "Smart Watch S",
+        199.99,
+        71.78
+      ],
+      [
+        "Noise-Canceling Headset",
+        149.99,
+        71.78
+      ],
+      [
+        "4K Webcam Pro",
+        129,
+        71.78
+      ],
+      [
+        "Studio Desktop Mic",
+        119,
+        71.78
+      ],
+      [
+        "Mechanical Keyboard K1",
+        89.99,
+        71.78
+      ],
+      [
+        "Fitness Band X2",
+        79,
+        71.78
+      ],
+      [
+        "Cycling Jersey Pro",
+        65,
+        71.78
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        59.99,
+        71.78
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        49,
+        71.78
+      ],
+      [
+        "Laptop Stand Aluminum",
+        42.5,
+        71.78
+      ],
+      [
+        "Ring Light 14\"",
+        39.99,
+        71.78
+      ],
+      [
+        "Wireless Mouse M3",
+        34.5,
+        71.78
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        32,
+        71.78
+      ],
+      [
+        "Desk Mat Extended",
+        24.99,
+        71.78
+      ],
+      [
+        "Running Socks 3-pack",
+        18.5,
+        71.78
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        14.99,
+        71.78
+      ]
+    ]
+  },
+  "l25-p7": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Dmitri Volkov"
+      ]
+    ]
+  },
+  "l25-p8": {
+    "columns": [
+      "category",
+      "avg_price"
+    ],
+    "rows": [
+      [
+        "Wearables",
+        139.5
+      ],
+      [
+        "Audio",
+        109.66
+      ],
+      [
+        "Video",
+        84.5
+      ]
+    ]
+  },
+  "l26-p1": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Bruno Silva"
+      ],
+      [
+        "Chloe Dubois"
+      ],
+      [
+        "Dmitri Volkov"
+      ],
+      [
+        "Farid Nasser"
+      ],
+      [
+        "Keiko Sato"
+      ],
+      [
+        "Olivia Brown"
+      ]
+    ]
+  },
+  "l26-p2": {
+    "columns": [
+      "with_cancelled"
+    ],
+    "rows": [
+      [
+        4
+      ]
+    ]
+  },
+  "l26-p3": {
+    "columns": [
+      "order_id",
+      "total"
+    ],
+    "rows": [
+      [
+        74,
+        1088.44
+      ],
+      [
+        43,
+        945.21
+      ],
+      [
+        39,
+        845.92
+      ],
+      [
+        15,
+        826.03
+      ],
+      [
+        57,
+        785.79
+      ],
+      [
+        3,
+        767.64
+      ],
+      [
+        6,
+        752.96
+      ],
+      [
+        5,
+        725.34
+      ],
+      [
+        14,
+        705.23
+      ],
+      [
+        89,
+        684.53
+      ],
+      [
+        71,
+        668.45
+      ],
+      [
+        67,
+        659.7
+      ],
+      [
+        32,
+        645.91
+      ],
+      [
+        31,
+        633.91
+      ],
+      [
+        13,
+        632.29
+      ],
+      [
+        68,
+        625.14
+      ],
+      [
+        33,
+        624.66
+      ],
+      [
+        64,
+        611.87
+      ],
+      [
+        98,
+        608.06
+      ],
+      [
+        96,
+        590.2
+      ],
+      [
+        97,
+        585.79
+      ],
+      [
+        27,
+        577.19
+      ],
+      [
+        1,
+        576.54
+      ],
+      [
+        16,
+        507.24
+      ],
+      [
+        99,
+        489.33
+      ],
+      [
+        22,
+        450.12
+      ],
+      [
+        80,
+        435.09
+      ],
+      [
+        65,
+        425.08
+      ],
+      [
+        24,
+        419.37
+      ],
+      [
+        2,
+        416.81
+      ],
+      [
+        46,
+        412.88
+      ],
+      [
+        60,
+        403.72
+      ],
+      [
+        83,
+        397.99
+      ],
+      [
+        88,
+        397.91
+      ],
+      [
+        61,
+        388.61
+      ],
+      [
+        73,
+        375.93
+      ],
+      [
+        35,
+        373
+      ],
+      [
+        63,
+        334.66
+      ],
+      [
+        103,
+        324.16
+      ],
+      [
+        19,
+        317.49
+      ],
+      [
+        47,
+        306.92
+      ],
+      [
+        77,
+        303.26
+      ],
+      [
+        78,
+        295.66
+      ],
+      [
+        11,
+        283.12
+      ],
+      [
+        44,
+        282.51
+      ]
+    ]
+  },
+  "l26-p4": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Alice Chen"
+      ],
+      [
+        "Bruno Silva"
+      ],
+      [
+        "Chloe Dubois"
+      ],
+      [
+        "Dmitri Volkov"
+      ],
+      [
+        "Emma Wilson"
+      ],
+      [
+        "Farid Nasser"
+      ],
+      [
+        "Grace Kim"
+      ],
+      [
+        "Hiro Tanaka"
+      ],
+      [
+        "Keiko Sato"
+      ],
+      [
+        "Maya Patel"
+      ],
+      [
+        "Noah Meyer"
+      ],
+      [
+        "Pedro Alvarez"
+      ]
+    ]
+  },
+  "l26-p5": {
+    "columns": [],
+    "rows": []
+  },
+  "l26-p6": {
+    "columns": [
+      "name",
+      "avg_total"
+    ],
+    "rows": [
+      [
+        "Liam O'Brien",
+        705.39
+      ],
+      [
+        "Chloe Dubois",
+        533.59
+      ],
+      [
+        "Farid Nasser",
+        486.32
+      ],
+      [
+        "Olivia Brown",
+        444.8
+      ],
+      [
+        "Bruno Silva",
+        426.22
+      ],
+      [
+        "Pedro Alvarez",
+        421.54
+      ],
+      [
+        "Emma Wilson",
+        390.62
+      ],
+      [
+        "Grace Kim",
+        326.73
+      ],
+      [
+        "Jamal Wright",
+        322.8
+      ],
+      [
+        "Alice Chen",
+        302.6
+      ],
+      [
+        "Dmitri Volkov",
+        299.63
+      ],
+      [
+        "Maya Patel",
+        280.35
+      ],
+      [
+        "Hiro Tanaka",
+        276.36
+      ],
+      [
+        "Keiko Sato",
+        274.65
+      ],
+      [
+        "Isabella Rossi",
+        246.41
+      ],
+      [
+        "Noah Meyer",
+        184.42
+      ]
+    ]
+  },
+  "l26-p7": {
+    "columns": [
+      "name",
+      "spend"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        7262.35
+      ],
+      [
+        "Emma Wilson",
+        6640.56
+      ],
+      [
+        "Grace Kim",
+        4574.23
+      ],
+      [
+        "Maya Patel",
+        3644.56
+      ],
+      [
+        "Chloe Dubois",
+        2667.93
+      ],
+      [
+        "Pedro Alvarez",
+        1686.17
+      ],
+      [
+        "Farid Nasser",
+        1458.97
+      ],
+      [
+        "Keiko Sato",
+        1098.6
+      ],
+      [
+        "Isabella Rossi",
+        985.65
+      ]
+    ]
+  },
+  "l26-p8": {
+    "columns": [
+      "name",
+      "rating"
+    ],
+    "rows": [
+      [
+        "Alpine Audio GmbH",
+        4.8
+      ],
+      [
+        "Midwest Hardware Co",
+        4.4
+      ]
+    ]
+  },
+  "l27-p1": {
+    "columns": [
+      "name",
+      "spend"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        7262.35
+      ],
+      [
+        "Emma Wilson",
+        6640.56
+      ],
+      [
+        "Grace Kim",
+        4574.23
+      ],
+      [
+        "Maya Patel",
+        3644.56
+      ],
+      [
+        "Chloe Dubois",
+        2667.93
+      ],
+      [
+        "Pedro Alvarez",
+        1686.17
+      ],
+      [
+        "Farid Nasser",
+        1458.97
+      ],
+      [
+        "Keiko Sato",
+        1098.6
+      ]
+    ]
+  },
+  "l27-p2": {
+    "columns": [
+      "big_spenders"
+    ],
+    "rows": [
+      [
+        8
+      ]
+    ]
+  },
+  "l27-p3": {
+    "columns": [
+      "region",
+      "spend"
+    ],
+    "rows": [
+      [
+        "EU",
+        15089.23
+      ],
+      [
+        "APAC",
+        11605.45
+      ],
+      [
+        "US",
+        7286.16
+      ]
+    ]
+  },
+  "l27-p4": {
+    "columns": [
+      "name",
+      "orders"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        24
+      ],
+      [
+        "Emma Wilson",
+        17
+      ],
+      [
+        "Grace Kim",
+        14
+      ],
+      [
+        "Maya Patel",
+        13
+      ]
+    ]
+  },
+  "l27-p5": {
+    "columns": [
+      "name",
+      "price",
+      "category"
+    ],
+    "rows": [
+      [
+        "Smart Watch S",
+        199.99,
+        "Wearables"
+      ],
+      [
+        "Noise-Canceling Headset",
+        149.99,
+        "Audio"
+      ],
+      [
+        "4K Webcam Pro",
+        129,
+        "Video"
+      ],
+      [
+        "Studio Desktop Mic",
+        119,
+        "Audio"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        89.99,
+        "Electronics"
+      ],
+      [
+        "Cycling Jersey Pro",
+        65,
+        "Apparel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        42.5,
+        "Accessories"
+      ]
+    ]
+  },
+  "l27-p6": {
+    "columns": [
+      "mon",
+      "n"
+    ],
+    "rows": [
+      [
+        "2024-02",
+        9
+      ]
+    ]
+  },
+  "l27-p7": {
+    "columns": [
+      "name",
+      "avg_total"
+    ],
+    "rows": [
+      [
+        "Liam O'Brien",
+        705.39
+      ],
+      [
+        "Chloe Dubois",
+        533.59
+      ],
+      [
+        "Farid Nasser",
+        486.32
+      ],
+      [
+        "Olivia Brown",
+        444.8
+      ],
+      [
+        "Bruno Silva",
+        426.22
+      ],
+      [
+        "Pedro Alvarez",
+        421.54
+      ],
+      [
+        "Emma Wilson",
+        390.62
+      ]
+    ]
+  },
+  "l27-p8": {
+    "columns": [
+      "region",
+      "delivered_spend"
+    ],
+    "rows": [
+      [
+        "EU",
+        6656.18
+      ],
+      [
+        "APAC",
+        6617.68
+      ]
+    ]
+  },
+  "l28-p1": {
+    "columns": [
+      "region",
+      "spend"
+    ],
+    "rows": [
+      [
+        "EU",
+        15089.23
+      ],
+      [
+        "APAC",
+        11605.45
+      ],
+      [
+        "US",
+        7286.16
+      ],
+      [
+        "LATAM",
+        852.44
+      ]
+    ]
+  },
+  "l28-p2": {
+    "columns": [
+      "big_spenders"
+    ],
+    "rows": [
+      [
+        8
+      ]
+    ]
+  },
+  "l28-p3": {
+    "columns": [
+      "name",
+      "s"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        7262.35
+      ],
+      [
+        "Emma Wilson",
+        6640.56
+      ],
+      [
+        "Grace Kim",
+        4574.23
+      ],
+      [
+        "Maya Patel",
+        3644.56
+      ],
+      [
+        "Chloe Dubois",
+        2667.93
+      ]
+    ]
+  },
+  "l28-p4": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Alice Chen"
+      ],
+      [
+        "Bruno Silva"
+      ],
+      [
+        "Chloe Dubois"
+      ],
+      [
+        "Emma Wilson"
+      ],
+      [
+        "Farid Nasser"
+      ],
+      [
+        "Grace Kim"
+      ],
+      [
+        "Hiro Tanaka"
+      ],
+      [
+        "Keiko Sato"
+      ],
+      [
+        "Maya Patel"
+      ],
+      [
+        "Noah Meyer"
+      ],
+      [
+        "Pedro Alvarez"
+      ]
+    ]
+  },
+  "l28-p5": {
+    "columns": [
+      "mon",
+      "n"
+    ],
+    "rows": [
+      [
+        "2024-02",
+        9
+      ],
+      [
+        "2024-09",
+        9
+      ]
+    ]
+  },
+  "l28-p6": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Bruno Silva"
+      ],
+      [
+        "Chloe Dubois"
+      ],
+      [
+        "Dmitri Volkov"
+      ],
+      [
+        "Farid Nasser"
+      ],
+      [
+        "Keiko Sato"
+      ],
+      [
+        "Olivia Brown"
+      ]
+    ]
+  },
+  "l28-p7": {
+    "columns": [
+      "category",
+      "name",
+      "rev"
+    ],
+    "rows": [
+      [
+        "Audio",
+        "Noise-Canceling Headset",
+        6888.25
+      ],
+      [
+        "Wearables",
+        "Smart Watch S",
+        4582.02
+      ],
+      [
+        "Video",
+        "4K Webcam Pro",
+        3989.97
+      ],
+      [
+        "Electronics",
+        "Mechanical Keyboard K1",
+        2558.26
+      ],
+      [
+        "Accessories",
+        "Laptop Stand Aluminum",
+        1542.77
+      ],
+      [
+        "Apparel",
+        "Cycling Jersey Pro",
+        1384.15
+      ],
+      [
+        "Fitness",
+        "Yoga Mat Eco 6mm",
+        863.91
+      ]
+    ]
+  },
+  "l28-p8": {
+    "columns": [
+      "region",
+      "spend",
+      "share_pct"
+    ],
+    "rows": [
+      [
+        "EU",
+        15089.23,
+        43.3
+      ],
+      [
+        "APAC",
+        11605.45,
+        33.3
+      ],
+      [
+        "US",
+        7286.16,
+        20.9
+      ],
+      [
+        "LATAM",
+        852.44,
+        2.4
+      ]
+    ]
   }
 };

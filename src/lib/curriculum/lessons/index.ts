@@ -1,6 +1,7 @@
 // SeeQL curriculum — Module 1 (SQL Foundations, lessons 1–8),
-// Module 2 (Joins & Relationships, lessons 9–16) and
-// Module 3 (Set Operations & CASE, lessons 17–24).
+// Module 2 (Joins & Relationships, lessons 9–16),
+// Module 3 (Set Operations & CASE, lessons 17–24) and
+// Module 4 (Subqueries & CTEs, lessons 25–28).
 import type { Lesson } from "../types";
 import { lesson01 } from "./lesson-01";
 import { lesson02 } from "./lesson-02";
@@ -26,6 +27,10 @@ import { lesson21 } from "./lesson-21";
 import { lesson22 } from "./lesson-22";
 import { lesson23 } from "./lesson-23";
 import { lesson24 } from "./lesson-24";
+import { lesson25 } from "./lesson-25";
+import { lesson26 } from "./lesson-26";
+import { lesson27 } from "./lesson-27";
+import { lesson28 } from "./lesson-28";
 
 export const LESSONS: Lesson[] = [
   lesson01,
@@ -52,6 +57,10 @@ export const LESSONS: Lesson[] = [
   lesson22,
   lesson23,
   lesson24,
+  lesson25,
+  lesson26,
+  lesson27,
+  lesson28,
 ];
 
 export interface ModuleInfo {
@@ -89,6 +98,15 @@ export const MODULES: Array<ModuleInfo & { lessons: Lesson[] }> = [
     blurb:
       "Combine and branch: stacking result sets with UNION [ALL], the overlap and difference operators INTERSECT and EXCEPT, engine-precedence landmines proved live, and CASE as SQL's counting machine — counters, pivots and custom sorts, capped by a three-pattern report.",
     lessons: [lesson17, lesson18, lesson19, lesson20, lesson21, lesson22, lesson23, lesson24],
+  },
+  {
+    id: "subqueries",
+    num: 4,
+    title: "Subqueries & CTEs",
+    level: "Advanced",
+    blurb:
+      "Queries inside queries: scalar values and IN-lists in WHERE, the NULL-safe EXISTS probe, correlated subqueries that read the outer row, derived tables that stage the aggregation before the join, and WITH chains that read top-down — every shape practiced against the same storefront.",
+    lessons: [lesson25, lesson26, lesson27, lesson28],
   },
 ];
 

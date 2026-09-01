@@ -58,6 +58,14 @@ export type FigureId =
   | "s14-row-router"
   | "s15-pivot-build"
   | "s16-two-stage"
+  | "q1-nested"
+  | "q2-probe"
+  | "q3-two-stage"
+  | "q4-staging"
+  | "q5-in-pipeline"
+  | "q6-correlated"
+  | "q7-fanout-safe"
+  | "q8-cte-chain"
 
 export type Block =
   | { kind: "p"; text: string }
