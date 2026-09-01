@@ -295,3 +295,23 @@ Stage Summary:
 - Curriculum now 3 modules · 24 lessons · 199 problems · 228 MCQs · 48 figures — every lesson now carries 8 problems + 8 MCQs (M2/M3 doubled to M1 depth), all numbers seed-verified, all 199 grading targets regenerated from live solutions
 - Key files: src/lib/curriculum/lessons/lesson-09..24.ts (+4 problems/+4 MCQs each), src/lib/curriculum/expected.ts (regenerated 199 entries)
 - Note for future rounds: subagent parallelism is currently rate-limit-fragile — batches may land without reporting (check git diff + qa gates); SQLite accepts FROM-compounds and scalar EXCEPT wrappers but rejects double-parenthesized arms
+
+---
+Task ID: 18
+Agent: Super Z (main agent)
+Task: Learn-module toolbox round — Data Explorer (browse the live study database), Mixed quiz mode (cross-course rounds), progress dashboard (14-day XP strip + course mastery grid)
+
+Work Log:
+- Fact verification first (scripts/facts-task18.ts, kept): per-table facts for the explorer — customers 16 (all ordered, EU 8/APAC 5/US 2/LATAM 1, 14 active), suppliers 6 (2/2/1/1, ratings 3.9–4.8 avg 4.3), products 16 in 7 categories (Accessories/Audio/Electronics 3 each … Fitness 1, $14.99–$199.99, 2,845 in stock), orders 103 (statuses 52/30/14/7, 21 NULL shipped_at, $25.47–$1,088.44 avg $338.19), order_items 251 (qty 1–3 avg 1.98, 57 lines over $200)
+- Data Explorer (src/components/learn/data-explorer.tsx): 5 live table cards (row counts via /api/stats), per-table column chips from SCHEMA_TABLES with PK/FK badges, full-table SELECT cached client-side then paged 25/page, NULL cells dimmed, FK cells clickable → follows the relationship (jump to target table filtered on its PK, e.g. orders.customer_id 16 → customers id=16 Pedro Alvarez), per-table "Field notes" strip with the verified facts, "Query <table> in the playground" deep-link via the existing #playground?q= router
+- Mixed quiz (src/components/learn/mixed-quiz.tsx): 10-question rounds sampled from all 24 lessons with priority buckets (7 untouched / 2 previously-missed / 1 anything, refilled from the priority pool if short), per-question source line ("From Lesson 11 · Three-table chains"), progress bar + correct counter, reuses McqCard so XP stays idempotent (repeats never pay twice), verdict tiers (Perfect ≥10 / Sharp ≥7 / Solid ≥4 / another pass), New round + Review this round
+- Progress dashboard (src/components/learn/progress-cards.tsx + learn-app.tsx overview): "Last 14 days" XP strip scaled to the daily goal (dashed goal line, weekday ticks, hit-count header) and "Course mastery" grid — 24 lesson cells across 3 module bands, each with quiz/practice micro-bars and complete/started/untouched states, click-through to the lesson; replaced the stale getState().badges reads with a subscribed badgesMap
+- learn-app.tsx: view state generalized (overview | lesson | explorer | mixed); new "Toolbox" sidebar section (Course overview / Data explorer / Mixed quiz) — the overview item fixes the discovered dead-end where toolbox views had no way back
+- Caught & fixed along the way: react-hooks/set-state-in-effect lint error (loading now derived, error cleared in the pick handler); mastery grid hooks-in-deps smell (state passed as param); "Review this round" leaving answered=true over a fresh card; two test-harness selector bugs (sidebar buttons start with A–D; choice text concatenates "AAn error…") — both harness-side, app unaffected
+- QA: tsc 0 src errors; eslint clean on all 4 touched files; audit-ids 24 lessons · 228 MCQs · 199 problems · 427 unique ids · 0 dupes · 0 orphans; qa-coach ALL CHECKS PASSED (content untouched); browser E2E at 1440×900 + 390×844, Carbon + Gallery themes: explorer table switch, FK-follow (16 → Pedro Alvarez), pager (page 3 / 11), playground deep-link auto-run, full 10-question round (verdict + 0 XP on all-wrong picks — no false XP), new-round rebuild, overview return, mastery cells lighting up from attempts; screenshots in scripts/shots/t18-*.png; test localStorage cleared
+
+Stage Summary:
+- Learn module now has a Toolbox: Data Explorer (every lesson fact is now inspectable against live rows) and Mixed Quiz (spaced-repetition-flavored rounds across the whole course), plus a real progress dashboard on the overview (activity strip + mastery grid)
+- Curriculum untouched: still 24 lessons · 228 MCQs · 199 problems · 48 figures — this round was navigation, visualization and practice-mode surface area
+- Key files: src/components/learn/{data-explorer,mixed-quiz,progress-cards,learn-app}.tsx, scripts/facts-task18.ts
+- Next-round queue: M2/M3-style capstone blocks are already covered by l16/l24 problem sets; remaining ideas — daily-goal picker on the overview, streak/badge nudges, share-a-round results card

@@ -4,13 +4,18 @@
 // A watcher effect converts progress into badges and level-up celebrations.
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Flame, GraduationCap, RotateCcw } from "lucide-react";
+import { FlaskConical, Flame, GraduationCap, LayoutDashboard, RotateCcw, Table2 } from "lucide-react";
 import { LESSONS, MODULES } from "@/lib/curriculum/lessons";
 import { useProgress } from "@/lib/curriculum/progress";
 import { BADGES, currentStreak, levelFor, totalXp } from "@/lib/curriculum/gamification";
 import { cn } from "@/lib/utils";
 import { LessonView } from "./lesson-view";
+import { DataExplorer } from "./data-explorer";
+import { MixedQuiz } from "./mixed-quiz";
+import { ActivityStrip, MasteryGrid } from "./progress-cards";
 import { CelebrationHost, celebrate } from "./celebrate";
+
+type View = { kind: "overview" } | { kind: "lesson"; id: string } | { kind: "explorer" } | { kind: "mixed" };
 
 function useBadgeWatcher() {
   const xpEvents = useProgress((s) => s.xpEvents);
@@ -86,13 +91,16 @@ function titleAfter(index: number): string {
 }
 
 export function LearnApp() {
-  const [openId, setOpenId] = useState<string | null>(null);
+  const [view, setView] = useState<View>({ kind: "overview" });
   const { xp, level, streak, ctx } = useBadgeWatcher();
   const xpEvents = useProgress((s) => s.xpEvents);
+  const badgesMap = useProgress((s) => s.badges);
   const resetAll = useProgress((s) => s.resetAll);
   const [confirmReset, setConfirmReset] = useState(false);
 
-  const lesson = LESSONS.find((l) => l.id === openId) ?? null;
+  const openLesson = (id: string) => setView({ kind: "lesson", id });
+
+  const lesson = view.kind === "lesson" ? LESSONS.find((l) => l.id === view.id) ?? null : null;
   const doneCount = LESSONS.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
   const nextLesson = LESSONS.find((l) => xpEvents[`lesson:${l.id}`] === undefined) ?? LESSONS[LESSONS.length - 1];
   const totalProblems = LESSONS.reduce((a, l) => a + l.problems.length, 0);
@@ -136,11 +144,11 @@ export function LearnApp() {
                   <div className="flex flex-col gap-0.5">
                     {m.lessons.map((l) => {
                       const done = xpEvents[`lesson:${l.id}`] !== undefined;
-                      const active = l.id === openId;
+                      const active = view.kind === "lesson" && view.id === l.id;
                       return (
                         <button
                           key={l.id}
-                          onClick={() => setOpenId(l.id)}
+                          onClick={() => openLesson(l.id)}
                           className={cn(
                             "flex items-start gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors",
                             active ? "bg-zinc-800" : "hover:bg-zinc-900",
@@ -163,6 +171,48 @@ export function LearnApp() {
                 </nav>
               );
             })}
+          </div>
+
+          <div className="shrink-0 border-t border-zinc-800/60 p-3">
+            <p className="mb-1.5 px-1 font-mono text-[10px] uppercase tracking-wider text-zinc-500">Toolbox</p>
+            <div className="flex flex-col gap-0.5">
+              <button
+                onClick={() => setView({ kind: "overview" })}
+                className={cn(
+                  "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors",
+                  view.kind === "overview" ? "bg-zinc-800" : "hover:bg-zinc-900",
+                )}
+              >
+                <LayoutDashboard className={cn("h-4 w-4 shrink-0", view.kind === "overview" ? "text-emerald-300" : "text-zinc-500")} />
+                <span className="min-w-0">
+                  <span className={cn("block truncate text-xs font-medium", view.kind === "overview" ? "text-zinc-100" : "text-zinc-300")}>
+                    Course overview
+                  </span>
+                  <span className="block text-[10px] text-zinc-600">progress &amp; badges</span>
+                </span>
+              </button>
+              {[
+                { kind: "explorer" as const, icon: Table2, label: "Data explorer", note: "browse the live tables" },
+                { kind: "mixed" as const, icon: FlaskConical, label: "Mixed quiz", note: "10 from the whole course" },
+              ].map((t) => (
+                <button
+                  key={t.kind}
+                  onClick={() => setView({ kind: t.kind })}
+                  className={cn(
+                    "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors",
+                    view.kind === t.kind ? "bg-zinc-800" : "hover:bg-zinc-900",
+                  )}
+                >
+                  <t.icon className={cn("h-4 w-4 shrink-0", view.kind === t.kind ? "text-emerald-300" : "text-zinc-500")} />
+                  <span className="min-w-0">
+                    <span className={cn("block truncate text-xs font-medium", view.kind === t.kind ? "text-zinc-100" : "text-zinc-300")}>
+                      {t.label}
+                    </span>
+                    <span className="block text-[10px] text-zinc-600">{t.note}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="shrink-0 border-t border-zinc-800 p-3">
@@ -190,6 +240,10 @@ export function LearnApp() {
       <main className="min-w-0 flex-1 pb-16">
         {lesson ? (
           <LessonView key={lesson.id} lesson={lesson} />
+        ) : view.kind === "explorer" ? (
+          <DataExplorer />
+        ) : view.kind === "mixed" ? (
+          <MixedQuiz />
         ) : (
           <div className="max-w-3xl">
             <p className="font-mono text-xs text-zinc-500">{MODULES.length} MODULES · BEGINNER → ADVANCED</p>
@@ -221,7 +275,7 @@ export function LearnApp() {
                 ["Rank", level.title],
                 ["Total XP", xp.toLocaleString()],
                 ["Streak", streak > 0 ? `${streak} days` : "—"],
-                ["Badges", `${Object.keys(useProgress.getState().badges).length}/${BADGES.length}`],
+                ["Badges", `${Object.keys(badgesMap).length}/${BADGES.length}`],
               ].map(([k, v]) => (
                 <div key={k} className="rounded-lg border border-zinc-800 bg-zinc-950 px-3.5 py-3">
                   <p className="text-[11px] uppercase tracking-wider text-zinc-500">{k}</p>
@@ -230,11 +284,16 @@ export function LearnApp() {
               ))}
             </div>
 
+            <div className="mt-6 grid gap-3 lg:grid-cols-2">
+              <ActivityStrip />
+              <MasteryGrid onOpenLesson={openLesson} />
+            </div>
+
             <div className="mt-6 rounded-lg border border-zinc-800 bg-zinc-950 p-4">
               <h3 className="text-sm font-semibold text-zinc-100">Badges</h3>
               <div className="mt-3 flex flex-wrap gap-2">
                 {BADGES.map((b) => {
-                  const earned = useProgress.getState().badges[b.id] !== undefined;
+                  const earned = badgesMap[b.id] !== undefined;
                   return (
                     <span
                       key={b.id}
@@ -261,7 +320,7 @@ export function LearnApp() {
                 </p>
               </div>
               <button
-                onClick={() => setOpenId(nextLesson.id)}
+                onClick={() => openLesson(nextLesson.id)}
                 className="rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] hover:bg-emerald-300"
               >
                 {ctx.lessonsDone > 0 ? `Continue — lesson ${nextLesson.num} →` : "Start learning →"}
