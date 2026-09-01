@@ -14655,5 +14655,622 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
         263.91
       ]
     ]
+  },
+  "l33-p1": {
+    "columns": [
+      "name",
+      "statuses"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        "shipped,cancelled,delivered,pending"
+      ],
+      [
+        "Bruno Silva",
+        "delivered"
+      ],
+      [
+        "Chloe Dubois",
+        "pending,delivered"
+      ],
+      [
+        "Dmitri Volkov",
+        "delivered"
+      ],
+      [
+        "Emma Wilson",
+        "pending,shipped,delivered,cancelled"
+      ],
+      [
+        "Farid Nasser",
+        "delivered,pending"
+      ],
+      [
+        "Grace Kim",
+        "shipped,delivered,pending"
+      ],
+      [
+        "Hiro Tanaka",
+        "delivered,shipped"
+      ],
+      [
+        "Isabella Rossi",
+        "delivered,shipped"
+      ],
+      [
+        "Jamal Wright",
+        "delivered,shipped"
+      ],
+      [
+        "Keiko Sato",
+        "delivered,cancelled,pending"
+      ],
+      [
+        "Liam O'Brien",
+        "shipped"
+      ],
+      [
+        "Maya Patel",
+        "delivered,shipped,pending,cancelled"
+      ],
+      [
+        "Noah Meyer",
+        "shipped,delivered"
+      ],
+      [
+        "Olivia Brown",
+        "delivered"
+      ],
+      [
+        "Pedro Alvarez",
+        "pending,shipped,delivered"
+      ]
+    ]
+  },
+  "l33-p2": {
+    "columns": [
+      "full_cycle"
+    ],
+    "rows": [
+      [
+        3
+      ]
+    ]
+  },
+  "l33-p3": {
+    "columns": [
+      "name",
+      "cats"
+    ],
+    "rows": [
+      [
+        "Alpine Audio GmbH",
+        "Audio,Accessories"
+      ],
+      [
+        "Andes Naturals SA",
+        "Audio,Wearables"
+      ],
+      [
+        "Midwest Hardware Co",
+        "Audio,Accessories,Fitness"
+      ],
+      [
+        "Nordic Gadgets AB",
+        "Electronics,Video,Wearables"
+      ],
+      [
+        "Pacific Textiles",
+        "Electronics,Accessories,Apparel"
+      ],
+      [
+        "Shenzhen Electro",
+        "Electronics,Video,Apparel"
+      ]
+    ]
+  },
+  "l33-p4": {
+    "columns": [
+      "delivered",
+      "shipped",
+      "pending",
+      "cancelled",
+      "total"
+    ],
+    "rows": [
+      [
+        52,
+        30,
+        14,
+        7,
+        103
+      ]
+    ]
+  },
+  "l33-p5": {
+    "columns": [
+      "category",
+      "names"
+    ],
+    "rows": [
+      [
+        "Accessories",
+        "Desk Mat Extended, HDMI 2.1 Cable 2m, Laptop Stand Aluminum"
+      ],
+      [
+        "Apparel",
+        "Cycling Jersey Pro, Running Socks 3-pack"
+      ],
+      [
+        "Audio",
+        "Bluetooth Speaker Mini, Noise-Canceling Headset, Studio Desktop Mic"
+      ],
+      [
+        "Electronics",
+        "Mechanical Keyboard K1, USB-C Hub 7-in-1, Wireless Mouse M3"
+      ],
+      [
+        "Fitness",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Video",
+        "4K Webcam Pro, Ring Light 14\""
+      ],
+      [
+        "Wearables",
+        "Fitness Band X2, Smart Watch S"
+      ]
+    ]
+  },
+  "l33-p6": {
+    "columns": [
+      "region",
+      "spend"
+    ],
+    "rows": [
+      [
+        "EU",
+        15089.23
+      ],
+      [
+        "APAC",
+        11605.45
+      ],
+      [
+        "US",
+        7286.16
+      ],
+      [
+        "LATAM",
+        852.44
+      ],
+      [
+        "TOTAL",
+        34833.28
+      ]
+    ]
+  },
+  "l33-p7": {
+    "columns": [
+      "mon",
+      "rev"
+    ],
+    "rows": [
+      [
+        "2024-01",
+        3731.97
+      ],
+      [
+        "2024-02",
+        3609.64
+      ],
+      [
+        "2024-03",
+        2617.08
+      ],
+      [
+        "2024-04",
+        2468.91
+      ],
+      [
+        "2024-05",
+        2910.31
+      ],
+      [
+        "2024-06",
+        2047.43
+      ],
+      [
+        "2024-07",
+        1193.86
+      ],
+      [
+        "2024-08",
+        2352.07
+      ],
+      [
+        "2024-09",
+        3116.04
+      ],
+      [
+        "2024-10",
+        2975.67
+      ],
+      [
+        "2024-11",
+        1648.8
+      ],
+      [
+        "2024-12",
+        2101.47
+      ],
+      [
+        "2025-01",
+        1669.5
+      ],
+      [
+        "2025-02",
+        2390.53
+      ],
+      [
+        "TOTAL",
+        34833.28
+      ]
+    ]
+  },
+  "l33-p8": {
+    "columns": [
+      "region",
+      "delivered",
+      "shipped",
+      "pending",
+      "cancelled",
+      "total"
+    ],
+    "rows": [
+      [
+        "EU",
+        24,
+        12,
+        6,
+        3,
+        45
+      ],
+      [
+        "APAC",
+        21,
+        8,
+        5,
+        3,
+        37
+      ],
+      [
+        "US",
+        5,
+        10,
+        3,
+        1,
+        19
+      ],
+      [
+        "LATAM",
+        2,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        "TOTAL",
+        52,
+        30,
+        14,
+        7,
+        103
+      ]
+    ]
+  },
+  "l34-p1": {
+    "columns": [
+      "name",
+      "order_id"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        7
+      ],
+      [
+        "Alice Chen",
+        21
+      ],
+      [
+        "Alice Chen",
+        95
+      ],
+      [
+        "Bruno Silva",
+        null
+      ],
+      [
+        "Chloe Dubois",
+        null
+      ],
+      [
+        "Dmitri Volkov",
+        null
+      ],
+      [
+        "Emma Wilson",
+        82
+      ],
+      [
+        "Farid Nasser",
+        null
+      ],
+      [
+        "Grace Kim",
+        null
+      ],
+      [
+        "Hiro Tanaka",
+        null
+      ],
+      [
+        "Isabella Rossi",
+        null
+      ],
+      [
+        "Jamal Wright",
+        null
+      ],
+      [
+        "Keiko Sato",
+        83
+      ],
+      [
+        "Liam O'Brien",
+        null
+      ],
+      [
+        "Maya Patel",
+        50
+      ],
+      [
+        "Maya Patel",
+        51
+      ],
+      [
+        "Noah Meyer",
+        null
+      ],
+      [
+        "Olivia Brown",
+        null
+      ],
+      [
+        "Pedro Alvarez",
+        null
+      ]
+    ]
+  },
+  "l34-p2": {
+    "columns": [
+      "full_rows"
+    ],
+    "rows": [
+      [
+        115
+      ]
+    ]
+  },
+  "l34-p3": {
+    "columns": [
+      "name",
+      "order_id"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        7
+      ],
+      [
+        "Alice Chen",
+        21
+      ],
+      [
+        "Alice Chen",
+        95
+      ],
+      [
+        "Bruno Silva",
+        null
+      ],
+      [
+        "Chloe Dubois",
+        null
+      ],
+      [
+        "Dmitri Volkov",
+        null
+      ],
+      [
+        "Emma Wilson",
+        82
+      ],
+      [
+        "Farid Nasser",
+        null
+      ],
+      [
+        "Grace Kim",
+        null
+      ],
+      [
+        "Hiro Tanaka",
+        null
+      ],
+      [
+        "Isabella Rossi",
+        null
+      ],
+      [
+        "Jamal Wright",
+        null
+      ],
+      [
+        "Keiko Sato",
+        83
+      ],
+      [
+        "Liam O'Brien",
+        null
+      ],
+      [
+        "Maya Patel",
+        50
+      ],
+      [
+        "Maya Patel",
+        51
+      ],
+      [
+        "Noah Meyer",
+        null
+      ],
+      [
+        "Olivia Brown",
+        null
+      ],
+      [
+        "Pedro Alvarez",
+        null
+      ]
+    ]
+  },
+  "l34-p4": {
+    "columns": [
+      "pairings"
+    ],
+    "rows": [
+      [
+        96
+      ]
+    ]
+  },
+  "l34-p5": {
+    "columns": [
+      "label",
+      "n"
+    ],
+    "rows": [
+      [
+        "small",
+        8
+      ],
+      [
+        "medium",
+        30
+      ],
+      [
+        "large",
+        40
+      ],
+      [
+        "jumbo",
+        25
+      ]
+    ]
+  },
+  "l34-p6": {
+    "columns": [
+      "pricier",
+      "cheaper",
+      "gap"
+    ],
+    "rows": [
+      [
+        "Smart Watch S",
+        "Fitness Band X2",
+        120.99
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Bluetooth Speaker Mini",
+        90
+      ],
+      [
+        "4K Webcam Pro",
+        "Ring Light 14\"",
+        89.01
+      ],
+      [
+        "Studio Desktop Mic",
+        "Bluetooth Speaker Mini",
+        59.01
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Wireless Mouse M3",
+        55.49
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Running Socks 3-pack",
+        46.5
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "USB-C Hub 7-in-1",
+        40.99
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Studio Desktop Mic",
+        30.99
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "HDMI 2.1 Cable 2m",
+        27.51
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Desk Mat Extended",
+        17.51
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Wireless Mouse M3",
+        14.5
+      ],
+      [
+        "Desk Mat Extended",
+        "HDMI 2.1 Cable 2m",
+        10
+      ]
+    ]
+  },
+  "l34-p7": {
+    "columns": [
+      "emulated_full"
+    ],
+    "rows": [
+      [
+        115
+      ]
+    ]
+  },
+  "l34-p8": {
+    "columns": [
+      "campaign_rows"
+    ],
+    "rows": [
+      [
+        42
+      ]
+    ]
   }
 };

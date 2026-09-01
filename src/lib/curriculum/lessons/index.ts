@@ -2,7 +2,8 @@
 // Module 2 (Joins & Relationships, lessons 9–16),
 // Module 3 (Set Operations & CASE, lessons 17–24) and
 // Module 4 (Subqueries & CTEs, lessons 25–28) and
-// Module 5 (Scalar & Window Toolkit, lessons 29–32).
+// Module 5 (Scalar & Window Toolkit, lessons 29–32) and
+// Module 6 (Expert Clinic, lessons 33–34).
 import type { Lesson } from "../types";
 import { lesson01 } from "./lesson-01";
 import { lesson02 } from "./lesson-02";
@@ -36,6 +37,8 @@ import { lesson29 } from "./lesson-29";
 import { lesson30 } from "./lesson-30";
 import { lesson31 } from "./lesson-31";
 import { lesson32 } from "./lesson-32";
+import { lesson33 } from "./lesson-33";
+import { lesson34 } from "./lesson-34";
 
 export const LESSONS: Lesson[] = [
   lesson01,
@@ -70,6 +73,8 @@ export const LESSONS: Lesson[] = [
   lesson30,
   lesson31,
   lesson32,
+  lesson33,
+  lesson34,
 ];
 
 export interface ModuleInfo {
@@ -125,6 +130,15 @@ export const MODULES: Array<ModuleInfo & { lessons: Lesson[] }> = [
     blurb:
       "The functions layer: reshaping text with SUBSTR/INSTR/CAST and the COALESCE promise kept, slicing dates into buckets with strftime and julianday, then the full window-function family — RANK and friends, LAG/LEAD offsets, running totals, frames and NTILE — on the same live storefront.",
     lessons: [lesson29, lesson30, lesson31, lesson32],
+  },
+  {
+    id: "clinic",
+    num: 6,
+    title: "Expert Clinic",
+    level: "Expert",
+    blurb:
+      "The finishing school: string aggregation and the hand-built TOTAL stack SQLite's missing ROLLUP would give you, FILTER-clause censuses, and every join shape at last — RIGHT and FULL OUTER hands-on, the deliberate CROSS JOIN, and non-equi range joins with the bounds discipline that keeps fanout out.",
+    lessons: [lesson33, lesson34],
   },
 ];
 

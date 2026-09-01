@@ -74,6 +74,10 @@ export type FigureId =
   | "t6-month-buckets"
   | "t7-partition-rank"
   | "t8-running-total"
+  | "x1-string-agg"
+  | "x2-join-atlas"
+  | "x3-total-stack"
+  | "x4-range-join"
 
 export type Block =
   | { kind: "p"; text: string }
