@@ -100,6 +100,58 @@ LIMIT 5;`,
         { choice: 0, why: "A broken four-table blob hides one bad ON among four — adding one hop at a time pins each mistake to the join you just wrote." },
       ],
     },
+    {
+      id: "l11-q5",
+      prompt: "order_items → orders → customers, joined on the real foreign keys, no filters. How many rows?",
+      choices: ["16", "103", "251", "4016"],
+      answer: 2,
+      why: "Both hops are many-to-one: each line has exactly one order, each order exactly one customer. The row count survives every hop — 251 in, 251 out — only the columns widen.",
+      notes: [
+        { choice: 1, why: "103 counts DISTINCT orders — but 251 lines ride on them, and each line keeps its own output row through both hops." },
+        { choice: 3, why: "Multiplication needs one row matching MANY on the other side — these foreign keys point at exactly one partner each, so nothing multiplies." },
+      ],
+    },
+    {
+      id: "l11-q6",
+      prompt: "In a 4-table chain you write `JOIN products o ON o.id = oi.product_id` — reusing the alias `o`, which already names orders. What happens?",
+      choices: [
+        "It runs — the newest `o` (products) simply wins everywhere",
+        "It runs — `o` means orders in the first ON and products in the second",
+        "Error: with `o` bound twice, `o.id` is ambiguous — even the first ON's reference now has two candidates",
+        "Only the first three joins run; the fourth is skipped",
+      ],
+      answer: 2,
+      why: "SQLite accepts the duplicate alias, but it resolves names over the whole FROM at once: every reference to `o` — including the earlier ON o.id = oi.order_id — now has two candidate tables and fails with \"ambiguous column name\". Chains deserve fresh aliases (products p). PostgreSQL refuses the duplicate alias outright.",
+      notes: [
+        { choice: 0, why: "There's no newest-wins rebinding — the engine doesn't pick a winner between two bindings; it reports the ambiguity instead." },
+        { choice: 1, why: "ON clauses aren't resolved one at a time — the whole FROM is resolved together, so references written before the second binding become ambiguous too." },
+      ],
+    },
+    {
+      id: "l11-q7",
+      prompt: "The full receipt — order lines with product, buyer and city — reads from order_items, orders, customers and products. How many JOINs?",
+      choices: ["1", "2", "3", "4"],
+      answer: 2,
+      why: "JOIN count = tables − 1: FROM names the first table, and each JOIN adds exactly one more. Four tables → three JOIN … ON clauses.",
+      notes: [
+        { choice: 3, why: "Four is the number of TABLES — the FROM already contributes one, so three JOINs complete the chain." },
+      ],
+    },
+    {
+      id: "l11-q8",
+      prompt: "The four-table chain (items → orders → customers → products) is already written. You now also need to filter `c.city = 'Berlin'` and `o.status = 'shipped'`. Extra joins required?",
+      choices: [
+        "One — each filter needs its own fresh JOIN",
+        "Two — one extra JOIN per filtered table",
+        "None — customers and orders are already in the chain, so their columns come along for free",
+        "One — a subquery against customers",
+      ],
+      answer: 2,
+      why: "A JOIN brings the whole matched row along, every column included. Once customers and orders are in the FROM, c.city and o.status are ordinary filterable columns — no second join, no subquery.",
+      notes: [
+        { choice: 1, why: "Each table joins ONCE no matter how many of its columns you use — the row arrives complete, so city and status ride the joins that are already written." },
+      ],
+    },
   ],
   problems: [
     {
@@ -176,6 +228,82 @@ LIMIT 5;`,
         { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "Receipt lines print in item-id order — append ORDER BY oi.id." },
       ],
       expected: EXPECTED["l11-p4"],
+      ordered: true,
+    },
+    {
+      id: "l11-p5",
+      title: "The supplier trail",
+      brief: "Who supplies what we just sold? The first 15 lines (by item id) with product AND supplier names. Output: `id` (order_items id), `product` (alias p.name exactly), `supplier` (alias s.name exactly). Two hops: items → products → suppliers.",
+      hints: [
+        "order_items reaches products in one hop; products reaches suppliers in the next. One JOIN per hop, and both name columns need their exact alias.",
+        "Shape: SELECT oi.id, p.name AS product, s.name AS supplier FROM order_items oi JOIN products p ON … JOIN suppliers s ON … ORDER BY oi.id LIMIT <n>;",
+      ],
+      difficulty: "medium",
+      solution:
+        "SELECT oi.id, p.name AS product, s.name AS supplier\nFROM order_items oi\nJOIN products p  ON p.id = oi.product_id\nJOIN suppliers s ON s.id = p.supplier_id\nORDER BY oi.id\nLIMIT 15;",
+      mistakes: [
+        { test: "\\bjoin\\s+products\\b(?![^;]*\\bjoin\\s+suppliers\\b)", message: "The supplier's name is one more hop away — products.supplier_id → suppliers.id; without that JOIN, s.name has no source." },
+        { test: "\\b(?:p|s)\\.name\\b(?!\\s+as\\s+(?:product|supplier)\\b)", message: "Both output names need their exact headers — p.name AS product and s.name AS supplier (bare, both would be headed \"name\")." },
+        { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "\"First 15 by item id\" needs ORDER BY oi.id before the LIMIT 15 cap." },
+      ],
+      expected: EXPECTED["l11-p5"],
+      ordered: true,
+    },
+    {
+      id: "l11-p6",
+      title: "The four-table chain",
+      brief: "The lesson's flagship walk, now written by you: the first 12 lines (by item id) with the buyer's name, the buyer's city, and the product. Output: `id`, `customer` (alias), `city`, `product` (alias). Four tables, three joins — one hop at a time.",
+      hints: [
+        "Two threads leave order_items: order_id → orders → customers for buyer and city; product_id → products for the name. Add one JOIN at a time and sanity-check between hops.",
+        "Shape: SELECT oi.id, c.name AS customer, c.city, p.name AS product FROM order_items oi JOIN orders o ON … JOIN customers c ON … JOIN products p ON … ORDER BY oi.id LIMIT <n>;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT oi.id, c.name AS customer, c.city, p.name AS product\nFROM order_items oi\nJOIN orders o    ON o.id = oi.order_id\nJOIN customers c ON c.id = o.customer_id\nJOIN products p  ON p.id = oi.product_id\nORDER BY oi.id\nLIMIT 12;",
+      mistakes: [
+        { test: "\\bjoin\\s+orders\\b(?![^;]*\\bjoin\\s+customers\\b)", message: "The buyer's name and city live one more hop away — orders.customer_id → customers.id; without that JOIN, c.name has no source." },
+        { test: "\\bjoin\\s+customers\\b(?![^;]*\\bjoin\\s+products\\b)", message: "The product's name still needs its hop — order_items.product_id → products.id; without that JOIN, p.name has no source." },
+        { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "\"First 12 by item id\" needs ORDER BY oi.id before the LIMIT 12 cap." },
+      ],
+      expected: EXPECTED["l11-p6"],
+      ordered: true,
+    },
+    {
+      id: "l11-p7",
+      title: "Big Berlin baskets",
+      brief: "Which lines come from Berlin customers' big baskets? Lines whose order was placed by a Berlin customer AND totals over 500. Output: `id` (order_items id), `name` (customer), `total` (order total), ordered by item id. Six orders qualify — they spread across 18 lines.",
+      hints: [
+        "The chain carries both filter columns: the city rides on customers, the total on orders — two WHERE conditions on two different joined tables, then order by item id.",
+        "Shape: SELECT oi.id, c.name, o.total FROM order_items oi JOIN orders o ON … JOIN customers c ON … WHERE c.city = <city> AND o.total > <amount> ORDER BY oi.id;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT oi.id, c.name, o.total\nFROM order_items oi\nJOIN orders o    ON o.id = oi.order_id\nJOIN customers c ON c.id = o.customer_id\nWHERE c.city = 'Berlin'\n  AND o.total > 500\nORDER BY oi.id;",
+      mistakes: [
+        { test: "city\\s*=\\s*'(?!berlin')[^']*'", message: "These baskets come from Berlin — the city filter should read c.city = 'Berlin'." },
+        { test: "\\bo\\.total\\s*(?:<|<=)\\s*\\d+|\\bo\\.total\\s*>\\s*(?!500\\b)\\d+", message: "The brief pins the basket size: o.total > 500 — check both the comparison direction and the amount." },
+        { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "The lines are graded in item-id order — append ORDER BY oi.id." },
+      ],
+      expected: EXPECTED["l11-p7"],
+      ordered: true,
+    },
+    {
+      id: "l11-p8",
+      title: "Audio sourcing",
+      brief: "Which supplier regions ship our Audio gear? The distinct supplier regions across all Audio product lines. Output: `region`, ordered A→Z. Three regions make the list — one of the four is conspicuously absent.",
+      hints: [
+        "DISTINCT sits at the far end of a chain: items → products (filter the category) → suppliers (take the region), then collapse the repeats.",
+        "Shape: SELECT DISTINCT s.region FROM order_items oi JOIN products p ON … JOIN suppliers s ON … WHERE p.category = <category> ORDER BY <col>;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT DISTINCT s.region\nFROM order_items oi\nJOIN products p  ON p.id = oi.product_id\nJOIN suppliers s ON s.id = p.supplier_id\nWHERE p.category = 'Audio'\nORDER BY s.region;",
+      mistakes: [
+        { test: "category\\s*=\\s*'(?!audio')[^']*'", message: "This trail follows Audio gear only — the category filter should read p.category = 'Audio'." },
+        { test: "^select\\b(?![^;]*\\bdistinct\\b)(?=[^;]*\\bregion\\b)", message: "Without DISTINCT the same region repeats once per line — the ask is the distinct set, and DISTINCT is what collapses the repeats." },
+        { test: "\\bjoin\\s+products\\b(?![^;]*\\bjoin\\s+suppliers\\b)", message: "The region lives one more hop away — products.supplier_id → suppliers.id; without that JOIN, s.region has no source." },
+      ],
+      expected: EXPECTED["l11-p8"],
       ordered: true,
     },
   ],

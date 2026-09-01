@@ -148,6 +148,66 @@ ORDER BY c.region;`,
         { choice: 0, why: "MySQL is the holdout — it has no FILTER clause at all, so 'all three' overstates portability; SUM(CASE WHEN … THEN 1 ELSE 0 END) is the spelling that runs everywhere." },
       ],
     },
+    {
+      id: "l23-q5",
+      prompt: "Why do COUNT(CASE WHEN status = 'delivered' THEN 1 END) and SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) always agree?",
+      choices: [
+        "COUNT ignores NULLs; SUM ignores zeros — the CASE leaves exactly those",
+        "they don't — COUNT is always 1 higher",
+        "both round to integers",
+        "COUNT converts NULL to 0 first",
+      ],
+      answer: 0,
+      why: "Without ELSE the CASE yields NULL for non-matches, and COUNT skips NULLs; with ELSE 0 the CASE yields 0 for non-matches, and SUM adds nothing for zeros. Different mechanics, same tally — the flag design (1/0 vs 1/NULL) is what matters.",
+      notes: [
+        { choice: 1, why: "Both count exactly the matching rows — the difference is only in what the non-matching rows contribute: nothing (via NULL or via 0)." },
+      ],
+    },
+    {
+      id: "l23-q6",
+      prompt: "Your custom sort CASE says WHEN 'deliverd' THEN 0 — one letter off. Where do those rows land?",
+      choices: [
+        "they error out",
+        "they fall to the ELSE rank — silently sorted as if the branch didn't exist",
+        "SQLite corrects the typo",
+        "they appear twice",
+      ],
+      answer: 1,
+      why: "The WHEN compares literal strings; 'deliverd' matches no real status, so every delivered order drops to the ELSE branch's rank. No error, no warning — the queue is just quietly mis-sorted. Match the WHEN values to the data exactly.",
+      notes: [
+        { choice: 2, why: "Nothing corrects SQL typos — the comparison is byte-for-byte, and a miss falls through to the next branch or ELSE." },
+      ],
+    },
+    {
+      id: "l23-q7",
+      prompt: "The pivot groups by c.region, which arrives through the join. Is that legal?",
+      choices: [
+        "no — GROUP BY only accepts columns of the first table",
+        "yes — any column available after the joins can be the bucket key",
+        "only if you also SELECT c.id",
+        "only in SQLite",
+      ],
+      answer: 1,
+      why: "GROUP BY buckets by any expression visible at grouping time — joined columns included. The pivot is per customer-region precisely because the region rides in on the join; each of the 103 joined rows carries its region.",
+      notes: [
+        { choice: 2, why: "Adding c.id to the SELECT would change the grain to per-customer — the bucket key alone defines the groups." },
+      ],
+    },
+    {
+      id: "l23-q8",
+      prompt: "You compute the pending share: ROUND(SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) * 100 / COUNT(*), 1). SQLite answers 13.0. The true share is 13.6. Why?",
+      choices: [
+        "ROUND is broken in SQLite",
+        "100 is an integer, so the division is integer division — 14 * 100 / 103 floors to 13 before ROUND ever runs",
+        "the CASE miscounted the pending orders",
+        "COUNT(*) counts NULLs",
+      ],
+      answer: 1,
+      why: "14 × 100 / 103 evaluates left to right in integers: 1400 / 103 = 13 (floored), and ROUND(13, 1) is still 13. Write 100.0 (or multiply by 1.0) to force decimal division, and the share lands on 13.6.",
+      notes: [
+        { choice: 2, why: "The CASE counted the 14 pending orders correctly — the damage happens later, in the integer arithmetic." },
+      ],
+    },
   ],
   problems: [
     {
@@ -223,6 +283,80 @@ ORDER BY c.region;`,
         { test: "\\bend\\b\\s*(;|limit\\b)", message: "The CASE ranks the statuses but leaves ties unordered — append ', id' after the END so equal-rank rows order by id ascending." },
       ],
       expected: EXPECTED["l23-p4"],
+      ordered: true,
+    },
+    {
+      id: "l23-p5",
+      title: "Berlin pivot",
+      brief: "One city under the microscope: our Berlin customers' 24 orders, pivoted into ONE row — `delivered`, `shipped`, `pending`, `cancelled`, `total`.",
+      hints: [
+        "The KPI-row shape with a scope: join customers for the city, filter WHERE c.city = 'Berlin', and let the conditional SUMs build the columns — no GROUP BY, one row out.",
+        "Shape: SELECT SUM(CASE WHEN o.status = '<s1>' THEN 1 ELSE 0 END) AS delivered, …, COUNT(*) AS total FROM orders o JOIN customers c ON <join> WHERE c.city = '<city>';",
+      ],
+      difficulty: "medium",
+      solution:
+        "SELECT\n  SUM(CASE WHEN o.status = 'delivered' THEN 1 ELSE 0 END) AS delivered,\n  SUM(CASE WHEN o.status = 'shipped'   THEN 1 ELSE 0 END) AS shipped,\n  SUM(CASE WHEN o.status = 'pending'   THEN 1 ELSE 0 END) AS pending,\n  SUM(CASE WHEN o.status = 'cancelled' THEN 1 ELSE 0 END) AS cancelled,\n  COUNT(*) AS total\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nWHERE c.city = 'Berlin';",
+      mistakes: [
+        { test: "city\\s*=\\s*'(?!berlin')[^']*'", message: "The lens is Berlin — WHERE c.city = 'Berlin'." },
+        { test: "\\bgroup\\s+by\\b", message: "One city, one row — the pivot's buckets live inside the SUM(CASE …)s; GROUP BY would split the single Berlin row apart." },
+        { test: "^(?![^;]*\\bjoin\\b)", message: "The city lives on customers — join orders to customers (ON c.id = o.customer_id) before filtering on it." },
+      ],
+      expected: EXPECTED["l23-p5"],
+    },
+    {
+      id: "l23-p6",
+      title: "EU status row",
+      brief: "Same microscope, wider lens: the EU customers' orders in one row — `delivered`, `shipped`, `pending`, `cancelled`, `total`.",
+      hints: [
+        "Identical pivot, different scope: the WHERE swaps city for region — the conditional SUMs don't change at all.",
+        "Shape: SELECT SUM(CASE WHEN o.status = '<s>' THEN 1 ELSE 0 END) AS delivered, …, COUNT(*) AS total FROM orders o JOIN customers c ON <join> WHERE c.region = '<region>';",
+      ],
+      difficulty: "medium",
+      solution:
+        "SELECT\n  SUM(CASE WHEN o.status = 'delivered' THEN 1 ELSE 0 END) AS delivered,\n  SUM(CASE WHEN o.status = 'shipped'   THEN 1 ELSE 0 END) AS shipped,\n  SUM(CASE WHEN o.status = 'pending'   THEN 1 ELSE 0 END) AS pending,\n  SUM(CASE WHEN o.status = 'cancelled' THEN 1 ELSE 0 END) AS cancelled,\n  COUNT(*) AS total\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nWHERE c.region = 'EU';",
+      mistakes: [
+        { test: "region\\s*=\\s*'(?!eu')[^']*'", message: "The lens is the EU — WHERE c.region = 'EU'." },
+        { test: "city\\s*=", message: "The EU is a region, not a city — filter c.region = 'EU'." },
+        { test: "\\bgroup\\s+by\\b", message: "One region, one row — the buckets live inside the SUM(CASE …)s, not in a GROUP BY." },
+      ],
+      expected: EXPECTED["l23-p6"],
+    },
+    {
+      id: "l23-p7",
+      title: "Pending pressure points",
+      brief: "Which regions carry more OPEN work than LOST work? Per region: `region`, `pending`, `cancelled` — keeping only regions where pending outweighs cancelled. Output ordered by `region`.",
+      hints: [
+        "Build the two counting columns with conditional SUMs, then compare them per bucket — the comparison of aggregates is HAVING's job.",
+        "Shape: SELECT c.region, SUM(CASE WHEN o.status = 'pending' THEN 1 ELSE 0 END) AS pending, SUM(CASE WHEN o.status = 'cancelled' THEN 1 ELSE 0 END) AS cancelled FROM orders o JOIN customers c ON <join> GROUP BY c.region HAVING SUM(CASE … pending …) > SUM(CASE … cancelled …) ORDER BY c.region;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT c.region,\n  SUM(CASE WHEN o.status = 'pending'   THEN 1 ELSE 0 END) AS pending,\n  SUM(CASE WHEN o.status = 'cancelled' THEN 1 ELSE 0 END) AS cancelled\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nGROUP BY c.region\nHAVING SUM(CASE WHEN o.status = 'pending' THEN 1 ELSE 0 END) >\n       SUM(CASE WHEN o.status = 'cancelled' THEN 1 ELSE 0 END)\nORDER BY c.region;",
+      mistakes: [
+        { test: "\\bwhere\\b[^;]*\\bstatus\\b", message: "The comparison happens per GROUP, not per row — a WHERE would delete orders before they reach their buckets. Compare the two conditional SUMs in HAVING." },
+        { test: "having[^;]*>\\s*[0-9]", message: "The bar is relative — pending must EXCEED cancelled in the same region — compare the two conditional SUMs, not a fixed number." },
+        { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "The pressure points come out in region order — append ORDER BY c.region." },
+      ],
+      expected: EXPECTED["l23-p7"],
+      ordered: true,
+    },
+    {
+      id: "l23-p8",
+      title: "Big-order leaders",
+      brief: "Who keeps landing the big baskets? Per customer: `name`, `big` (orders with total > 500, via conditional SUM), `n` (all their orders) — the five biggest `big` counts first, ties by name.",
+      hints: [
+        "Two aggregates per bucket: the conditional SUM counts the big ones, COUNT(*) counts them all — then rank by the conditional one.",
+        "Shape: SELECT c.name, SUM(CASE WHEN o.total > <bar> THEN 1 ELSE 0 END) AS big, COUNT(*) AS n FROM orders o JOIN customers c ON <join> GROUP BY c.id ORDER BY big DESC, c.name LIMIT <n>;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT c.name,\n  SUM(CASE WHEN o.total > 500 THEN 1 ELSE 0 END) AS big,\n  COUNT(*) AS n\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nGROUP BY c.id\nORDER BY big DESC, c.name\nLIMIT 5;",
+      mistakes: [
+        { test: "total\\s*>=\\s*500", message: "The bar is strict — orders OVER 500: o.total > 500." },
+        { test: "^(?![^;]*\\bjoin\\b)", message: "The name lives on customers — join orders to customers (ON c.id = o.customer_id) before grouping by the buyer." },
+        { test: "^select\\b(?:(?!\\blimit\\b).)*$", message: "The brief wants the top five — append ORDER BY big DESC, c.name LIMIT 5." },
+      ],
+      expected: EXPECTED["l23-p8"],
       ordered: true,
     },
   ],

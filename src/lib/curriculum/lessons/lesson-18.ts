@@ -141,6 +141,66 @@ ORDER BY tag DESC, total DESC, id;`,
         { choice: 0, why: "Nothing errors — SQLite's dynamic typing stacks 1 and '1' side by side; only the typed engines force a common type." },
       ],
     },
+    {
+      id: "l18-q5",
+      prompt: "`SELECT name, 'customer' AS kind FROM customers UNION ALL SELECT name FROM suppliers` — what happens?",
+      choices: [
+        "Supplier rows come back with kind = NULL",
+        "Error — arm 1 produces two columns, arm 2 only one",
+        "The pile keeps two columns; supplier rows repeat the last kind",
+        "SQLite fills kind with the text 'supplier' for supplier rows",
+      ],
+      answer: 1,
+      why: "The label literal is a column like any other, so every arm must carry one at the same position. Arm 2 produces one column against arm 1's two — column count is law, and no engine pads.",
+      notes: [
+        { choice: 0, why: "Nothing fills missing columns — stacking has no NULL-padding pass. The shape mismatch is rejected before a single row is produced." },
+      ],
+    },
+    {
+      id: "l18-q6",
+      prompt: "In `SELECT name AS label FROM customers UNION ALL SELECT name AS tag FROM suppliers ORDER BY …`, which spelling is the guaranteed-portable one?",
+      choices: [
+        "ORDER BY label — headers come from the first arm",
+        "ORDER BY tag — the last arm's alias works too",
+        "ORDER BY suppliers.name — qualify with the source table",
+        "Both aliases resolve identically in every engine",
+      ],
+      answer: 0,
+      why: "A compound takes its output names from arm 1 — the pile's column is label, whatever arm 2 calls its own expression. SQLite tolerates the arm-2 alias (verified on this db), but only the arm-1 name is a contract.",
+      notes: [
+        { choice: 3, why: "SQLite happens to resolve tag here because both aliases sit on the same single column — Postgres would refuse the unknown output name. Portability lives in arm 1." },
+      ],
+    },
+    {
+      id: "l18-q7",
+      prompt: "`SELECT quantity FROM order_items UNION ALL SELECT rating FROM suppliers` stacks whole numbers on decimals. What does SQLite do?",
+      choices: [
+        "An error — arms must share one declared type",
+        "It stacks as-is — integers stay integers, decimals keep their fractions",
+        "Every rating is truncated to a whole number",
+        "Both columns are converted to text",
+      ],
+      answer: 1,
+      why: "SQLite's dynamic typing appends value-for-value with no coercion pass (verified on this db). Postgres instead resolves one common numeric type — INTEGER promotes — and hard-errors only on truly incompatible pairs like text-on-number.",
+      notes: [
+        { choice: 2, why: "No truncation pass exists — values cross the pile unchanged. The lesson's warning is about portability, not corruption." },
+      ],
+    },
+    {
+      id: "l18-q8",
+      prompt: "You need each supplier's name next to its average product price. Stack or join — and why?",
+      choices: [
+        "Stack: UNION ALL of suppliers and a per-supplier average — same shape",
+        "Join: the two facts belong on the same supplier row — set ops can't relate columns",
+        "INTERSECT the two lists on supplier name",
+        "EXCEPT the suppliers from the products",
+      ],
+      answer: 1,
+      why: "Stacking appends same-shape rows to a pile; it can never place a supplier beside a value computed about that supplier. Relating columns across tables is exactly what JOIN + GROUP BY are for.",
+      notes: [
+        { choice: 0, why: "Even pre-computing the averages per arm leaves you piling rows, not pairing them — the stack has no mechanism to align a supplier with its own number." },
+      ],
+    },
   ],
   problems: [
     {
@@ -217,6 +277,82 @@ ORDER BY tag DESC, total DESC, id;`,
         { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "The pile must come out ordered by kind, then name — one ORDER BY at the very end of the compound." },
       ],
       expected: EXPECTED["l18-p4"],
+      ordered: true,
+    },
+    {
+      id: "l18-p5",
+      title: "Open vs dead, one pile",
+      brief: "The ops queue as one pile: every pending order id tagged `'pending'`, every cancelled id tagged `'cancelled'`. Output: `id`, `kind` — ordered by `id`. 21 rows expected.",
+      hints: [
+        "Two same-shape lists — the waiting orders and the dead ones — each arm filters its own status and carries its own literal tag.",
+        "Shape: SELECT id, '<tag1>' AS kind FROM orders WHERE status = '<s1>' UNION ALL SELECT id, '<tag2>' FROM orders WHERE status = '<s2>' ORDER BY id;",
+      ],
+      difficulty: "medium",
+      solution:
+        "SELECT id, 'pending' AS kind FROM orders WHERE status = 'pending'\nUNION ALL\nSELECT id, 'cancelled' FROM orders WHERE status = 'cancelled'\nORDER BY id;",
+      mistakes: [
+        { test: "'(open|dead|live|lost)'", message: "Those tags aren't in the brief — the pile must read 'pending' and 'cancelled', the statuses as the data spells them." },
+        { test: "union\\s+(all\\s+)?select\\s+(id|order_id)\\s*,\\s*'[^']*'\\s+from\\s+orders(?!\\s+where)", message: "The stacked arm lost its status filter — without WHERE it tags all 103 orders. Push the filter into each arm so only that status enters." },
+        { test: "order\\s+by\\s+kind\\b|^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "The queue must come out ordered by id — one ORDER BY id at the very end of the compound (the kind tag is a label, not the sort key)." },
+      ],
+      expected: EXPECTED["l18-p5"],
+      ordered: true,
+    },
+    {
+      id: "l18-p6",
+      title: "Filtering the pile",
+      brief: "Person directory, Berlin office only: stack customers (name, city) with suppliers (name, region) AS `person`, `place` — then keep only rows where place = 'Berlin'. Output: `person`, `place` — ordered by `person`. Suppliers can't appear (they have no city), and the filter belongs on the combined pile, not inside an arm.",
+      hints: [
+        "place is a column of the finished pile, not of either table — wrap the labeled stack in a FROM subquery and filter the pile outside it.",
+        "Shape: SELECT person, place FROM (SELECT name AS person, city AS place FROM customers UNION ALL SELECT name, region FROM suppliers) WHERE place = '<p>' ORDER BY person;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT person, place FROM (\n  SELECT name AS person, city AS place FROM customers\n  UNION ALL\n  SELECT name, region FROM suppliers\n) WHERE place = 'Berlin'\nORDER BY person;",
+      mistakes: [
+        { test: "(?<!\\) )where\\s+place\\b", message: "There is no place column inside the arms — customers filters with city, suppliers with region. place exists only on the wrapped pile, so the WHERE belongs outside the subquery." },
+        { test: "\\bfrom\\s+suppliers\\s+where\\s+city\\b|\\bfrom\\s+customers\\s+where\\s+region\\s*=\\s*'berlin'", message: "Wrong geography for that arm — suppliers have region only (EU/APAC/US/LATAM, no cities), and no customer region reads 'Berlin'. The Berlin rows come from the customers' city column; filter the pile by place." },
+        { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "The directory must come out ordered by person — one ORDER BY person after the wrapped pile's WHERE." },
+      ],
+      expected: EXPECTED["l18-p6"],
+      ordered: true,
+    },
+    {
+      id: "l18-p7",
+      title: "The triple directory",
+      brief: "Summarize a three-source pile in one pass: stack labeled arms — 'customer', 'supplier', 'product' — inside a FROM subquery, then GROUP BY kind outside it. Output: `kind`, `n` — ordered by `kind` (16 · 6 · 16).",
+      hints: [
+        "The labels make the pile groupable — stack the three arms first, then run one GROUP BY kind with COUNT(*) over the wrapped pile.",
+        "Shape: SELECT kind, COUNT(*) AS n FROM (SELECT '<label1>' AS kind FROM <t1> UNION ALL SELECT '<label2>' FROM <t2> UNION ALL SELECT '<label3>' FROM <t3>) GROUP BY kind ORDER BY kind;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT kind, COUNT(*) AS n FROM (\n  SELECT 'customer' AS kind FROM customers\n  UNION ALL\n  SELECT 'supplier' FROM suppliers\n  UNION ALL\n  SELECT 'product' FROM products\n) GROUP BY kind\nORDER BY kind;",
+      mistakes: [
+        { test: "\\bunion\\b(?!\\s+all\\b)", message: "Plain UNION dedupes the pile before the GROUP BY — sixteen identical 'customer' rows collapse to one and every count reports 1. Keep UNION ALL so each source keeps its rows." },
+        { test: "count\\s*\\(\\s*\\*\\s*\\)\\s+from\\s+(customers|suppliers|products)\\b", message: "One COUNT per arm reports three separate one-row piles — the brief wants the stack summarized in a single pass: wrap the labeled arms in a FROM subquery, then GROUP BY kind outside." },
+        { test: "^select\\b(?:(?!\\bgroup\\s+by\\b).)*$|group\\s+by\\s+kind\\s*;", message: "Both clauses live outside the wrap: GROUP BY kind makes one row per source, then ORDER BY kind lines them up — customer, product, supplier." },
+      ],
+      expected: EXPECTED["l18-p7"],
+      ordered: true,
+    },
+    {
+      id: "l18-p8",
+      title: "Cross-shelf top 5",
+      brief: "One leaderboard across shelves: stack every order's customer name with its rounded total (`ROUND(total, 2)`) against every supplier name with its `rating`. Output: `entity`, `score` — ORDER BY score DESC, entity, then LIMIT 5.",
+      hints: [
+        "Same shape both arms — a name and a number — but arm 1's number is the order total (rounded) and its name must be joined in from customers; the ranking happens once, on the pile.",
+        "Shape: SELECT c.name AS entity, ROUND(o.total, 2) AS score FROM orders o JOIN customers c ON <join> UNION ALL SELECT name, rating FROM suppliers ORDER BY score DESC, entity LIMIT <n>;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT c.name AS entity, ROUND(o.total, 2) AS score\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nUNION ALL\nSELECT name, rating FROM suppliers\nORDER BY score DESC, entity\nLIMIT 5;",
+      mistakes: [
+        { test: "^select\\s+name\\s*,\\s*(?:round\\s*\\(\\s*)?total", message: "orders has no name column — arm 1 must JOIN customers on customer_id to pull each order's buyer (c.name AS entity)." },
+        { test: "order\\s+by\\s+score\\s*asc\\b|order\\s+by\\s+score\\s*,", message: "A top-5 needs the biggest first — ORDER BY score DESC (entity as tiebreaker); ascending would surface the 25.47 floor of the pile." },
+        { test: "^select\\b(?:(?!\\blimit\\b).)*$", message: "Five rows — the final ORDER BY score DESC, entity must be followed by LIMIT 5 at the very end of the compound." },
+      ],
+      expected: EXPECTED["l18-p8"],
       ordered: true,
     },
   ],

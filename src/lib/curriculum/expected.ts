@@ -5336,6 +5336,258 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
       ]
     ]
   },
+  "l9-p5": {
+    "columns": [
+      "id",
+      "name",
+      "active"
+    ],
+    "rows": [
+      [
+        10,
+        "Keiko Sato",
+        0
+      ],
+      [
+        73,
+        "Keiko Sato",
+        0
+      ],
+      [
+        80,
+        "Dmitri Volkov",
+        0
+      ],
+      [
+        81,
+        "Dmitri Volkov",
+        0
+      ],
+      [
+        83,
+        "Keiko Sato",
+        0
+      ],
+      [
+        94,
+        "Keiko Sato",
+        0
+      ]
+    ]
+  },
+  "l9-p6": {
+    "columns": [
+      "id",
+      "name",
+      "total"
+    ],
+    "rows": [
+      [
+        3,
+        "Alice Chen",
+        767.64
+      ],
+      [
+        14,
+        "Alice Chen",
+        705.23
+      ],
+      [
+        89,
+        "Alice Chen",
+        684.53
+      ],
+      [
+        32,
+        "Alice Chen",
+        645.91
+      ],
+      [
+        31,
+        "Alice Chen",
+        633.91
+      ],
+      [
+        13,
+        "Alice Chen",
+        632.29
+      ],
+      [
+        63,
+        "Alice Chen",
+        334.66
+      ],
+      [
+        19,
+        "Alice Chen",
+        317.49
+      ],
+      [
+        58,
+        "Alice Chen",
+        298.18
+      ],
+      [
+        42,
+        "Alice Chen",
+        259.31
+      ],
+      [
+        79,
+        "Alice Chen",
+        212.03
+      ],
+      [
+        95,
+        "Alice Chen",
+        206.19
+      ],
+      [
+        48,
+        "Alice Chen",
+        187.38
+      ],
+      [
+        84,
+        "Alice Chen",
+        153.51
+      ],
+      [
+        7,
+        "Alice Chen",
+        152.52
+      ],
+      [
+        101,
+        "Alice Chen",
+        142.25
+      ],
+      [
+        21,
+        "Alice Chen",
+        136.11
+      ],
+      [
+        40,
+        "Alice Chen",
+        135.24
+      ],
+      [
+        70,
+        "Alice Chen",
+        131.39
+      ],
+      [
+        100,
+        "Alice Chen",
+        125.88
+      ]
+    ]
+  },
+  "l9-p7": {
+    "columns": [
+      "name",
+      "supplier",
+      "price",
+      "sale_price"
+    ],
+    "rows": [
+      [
+        "Smart Watch S",
+        "Nordic Gadgets AB",
+        199.99,
+        179.99
+      ],
+      [
+        "4K Webcam Pro",
+        "Nordic Gadgets AB",
+        129,
+        116.1
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alpine Audio GmbH",
+        119,
+        107.1
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Nordic Gadgets AB",
+        89.99,
+        80.99
+      ],
+      [
+        "Desk Mat Extended",
+        "Alpine Audio GmbH",
+        24.99,
+        22.49
+      ]
+    ]
+  },
+  "l9-p8": {
+    "columns": [
+      "name",
+      "id"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        19
+      ],
+      [
+        "Alice Chen",
+        42
+      ],
+      [
+        "Alice Chen",
+        79
+      ],
+      [
+        "Chloe Dubois",
+        25
+      ],
+      [
+        "Chloe Dubois",
+        43
+      ],
+      [
+        "Emma Wilson",
+        5
+      ],
+      [
+        "Emma Wilson",
+        90
+      ],
+      [
+        "Emma Wilson",
+        97
+      ],
+      [
+        "Farid Nasser",
+        74
+      ],
+      [
+        "Grace Kim",
+        75
+      ],
+      [
+        "Keiko Sato",
+        94
+      ],
+      [
+        "Maya Patel",
+        12
+      ],
+      [
+        "Maya Patel",
+        47
+      ],
+      [
+        "Pedro Alvarez",
+        1
+      ]
+    ]
+  },
   "l10-p1": {
     "columns": [
       "id",
@@ -5694,6 +5946,460 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
         54,
         "Maya Patel",
         "shipped"
+      ]
+    ]
+  },
+  "l10-p5": {
+    "columns": [
+      "rows"
+    ],
+    "rows": [
+      [
+        251
+      ]
+    ]
+  },
+  "l10-p6": {
+    "columns": [
+      "id",
+      "name",
+      "line_total"
+    ],
+    "rows": [
+      [
+        79,
+        "Smart Watch S",
+        599.91
+      ],
+      [
+        53,
+        "Smart Watch S",
+        589.86
+      ],
+      [
+        180,
+        "Smart Watch S",
+        583.02
+      ],
+      [
+        9,
+        "Smart Watch S",
+        582.75
+      ],
+      [
+        181,
+        "Noise-Canceling Headset",
+        472.2
+      ],
+      [
+        37,
+        "Noise-Canceling Headset",
+        465.54
+      ],
+      [
+        34,
+        "Noise-Canceling Headset",
+        457.86
+      ],
+      [
+        239,
+        "Noise-Canceling Headset",
+        451.95
+      ],
+      [
+        164,
+        "Noise-Canceling Headset",
+        447.69
+      ],
+      [
+        32,
+        "Noise-Canceling Headset",
+        444.03
+      ]
+    ]
+  },
+  "l10-p7": {
+    "columns": [
+      "name",
+      "supplier",
+      "shelf_value"
+    ],
+    "rows": [
+      [
+        "Bluetooth Speaker Mini",
+        "Andes Naturals SA",
+        12597.9
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Nordic Gadgets AB",
+        10798.8
+      ],
+      [
+        "Wireless Mouse M3",
+        "Shenzhen Electro",
+        10350
+      ],
+      [
+        "4K Webcam Pro",
+        "Nordic Gadgets AB",
+        9030
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Midwest Hardware Co",
+        8999.4
+      ],
+      [
+        "Smart Watch S",
+        "Nordic Gadgets AB",
+        7999.6
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Midwest Hardware Co",
+        7650
+      ],
+      [
+        "Fitness Band X2",
+        "Andes Naturals SA",
+        7505
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Pacific Textiles",
+        7495
+      ],
+      [
+        "Running Socks 3-pack",
+        "Shenzhen Electro",
+        7400
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Pacific Textiles",
+        7150
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Midwest Hardware Co",
+        7040
+      ]
+    ]
+  },
+  "l10-p8": {
+    "columns": [
+      "id"
+    ],
+    "rows": [
+      [
+        1
+      ],
+      [
+        2
+      ],
+      [
+        3
+      ],
+      [
+        4
+      ],
+      [
+        5
+      ],
+      [
+        6
+      ],
+      [
+        7
+      ],
+      [
+        8
+      ],
+      [
+        9
+      ],
+      [
+        10
+      ],
+      [
+        11
+      ],
+      [
+        12
+      ],
+      [
+        13
+      ],
+      [
+        14
+      ],
+      [
+        15
+      ],
+      [
+        16
+      ],
+      [
+        17
+      ],
+      [
+        18
+      ],
+      [
+        19
+      ],
+      [
+        20
+      ],
+      [
+        21
+      ],
+      [
+        22
+      ],
+      [
+        23
+      ],
+      [
+        24
+      ],
+      [
+        25
+      ],
+      [
+        26
+      ],
+      [
+        27
+      ],
+      [
+        28
+      ],
+      [
+        29
+      ],
+      [
+        30
+      ],
+      [
+        31
+      ],
+      [
+        32
+      ],
+      [
+        33
+      ],
+      [
+        34
+      ],
+      [
+        35
+      ],
+      [
+        36
+      ],
+      [
+        37
+      ],
+      [
+        38
+      ],
+      [
+        39
+      ],
+      [
+        40
+      ],
+      [
+        41
+      ],
+      [
+        42
+      ],
+      [
+        43
+      ],
+      [
+        44
+      ],
+      [
+        45
+      ],
+      [
+        46
+      ],
+      [
+        47
+      ],
+      [
+        48
+      ],
+      [
+        49
+      ],
+      [
+        50
+      ],
+      [
+        51
+      ],
+      [
+        52
+      ],
+      [
+        53
+      ],
+      [
+        54
+      ],
+      [
+        55
+      ],
+      [
+        56
+      ],
+      [
+        57
+      ],
+      [
+        58
+      ],
+      [
+        59
+      ],
+      [
+        60
+      ],
+      [
+        61
+      ],
+      [
+        62
+      ],
+      [
+        63
+      ],
+      [
+        64
+      ],
+      [
+        65
+      ],
+      [
+        66
+      ],
+      [
+        67
+      ],
+      [
+        68
+      ],
+      [
+        69
+      ],
+      [
+        70
+      ],
+      [
+        71
+      ],
+      [
+        72
+      ],
+      [
+        73
+      ],
+      [
+        74
+      ],
+      [
+        75
+      ],
+      [
+        76
+      ],
+      [
+        77
+      ],
+      [
+        78
+      ],
+      [
+        79
+      ],
+      [
+        80
+      ],
+      [
+        81
+      ],
+      [
+        82
+      ],
+      [
+        83
+      ],
+      [
+        84
+      ],
+      [
+        85
+      ],
+      [
+        86
+      ],
+      [
+        87
+      ],
+      [
+        88
+      ],
+      [
+        89
+      ],
+      [
+        90
+      ],
+      [
+        91
+      ],
+      [
+        92
+      ],
+      [
+        93
+      ],
+      [
+        94
+      ],
+      [
+        95
+      ],
+      [
+        96
+      ],
+      [
+        97
+      ],
+      [
+        98
+      ],
+      [
+        99
+      ],
+      [
+        100
+      ],
+      [
+        101
+      ],
+      [
+        102
+      ],
+      [
+        103
       ]
     ]
   },
@@ -6085,6 +6791,287 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
         "Desk Mat Extended",
         1,
         24.38
+      ]
+    ]
+  },
+  "l11-p5": {
+    "columns": [
+      "id",
+      "product",
+      "supplier"
+    ],
+    "rows": [
+      [
+        1,
+        "Yoga Mat Eco 6mm",
+        "Midwest Hardware Co"
+      ],
+      [
+        2,
+        "HDMI 2.1 Cable 2m",
+        "Pacific Textiles"
+      ],
+      [
+        3,
+        "Desk Mat Extended",
+        "Alpine Audio GmbH"
+      ],
+      [
+        4,
+        "Noise-Canceling Headset",
+        "Midwest Hardware Co"
+      ],
+      [
+        5,
+        "Ring Light 14\"",
+        "Shenzhen Electro"
+      ],
+      [
+        6,
+        "Noise-Canceling Headset",
+        "Midwest Hardware Co"
+      ],
+      [
+        7,
+        "Mechanical Keyboard K1",
+        "Nordic Gadgets AB"
+      ],
+      [
+        8,
+        "Yoga Mat Eco 6mm",
+        "Midwest Hardware Co"
+      ],
+      [
+        9,
+        "Smart Watch S",
+        "Nordic Gadgets AB"
+      ],
+      [
+        10,
+        "Fitness Band X2",
+        "Andes Naturals SA"
+      ],
+      [
+        11,
+        "Noise-Canceling Headset",
+        "Midwest Hardware Co"
+      ],
+      [
+        12,
+        "HDMI 2.1 Cable 2m",
+        "Pacific Textiles"
+      ],
+      [
+        13,
+        "4K Webcam Pro",
+        "Nordic Gadgets AB"
+      ],
+      [
+        14,
+        "Studio Desktop Mic",
+        "Alpine Audio GmbH"
+      ],
+      [
+        15,
+        "Mechanical Keyboard K1",
+        "Nordic Gadgets AB"
+      ]
+    ]
+  },
+  "l11-p6": {
+    "columns": [
+      "id",
+      "customer",
+      "city",
+      "product"
+    ],
+    "rows": [
+      [
+        1,
+        "Pedro Alvarez",
+        "Madrid",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        2,
+        "Pedro Alvarez",
+        "Madrid",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        3,
+        "Pedro Alvarez",
+        "Madrid",
+        "Desk Mat Extended"
+      ],
+      [
+        4,
+        "Pedro Alvarez",
+        "Madrid",
+        "Noise-Canceling Headset"
+      ],
+      [
+        5,
+        "Maya Patel",
+        "Mumbai",
+        "Ring Light 14\""
+      ],
+      [
+        6,
+        "Maya Patel",
+        "Mumbai",
+        "Noise-Canceling Headset"
+      ],
+      [
+        7,
+        "Alice Chen",
+        "Berlin",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        8,
+        "Alice Chen",
+        "Berlin",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        9,
+        "Alice Chen",
+        "Berlin",
+        "Smart Watch S"
+      ],
+      [
+        10,
+        "Maya Patel",
+        "Mumbai",
+        "Fitness Band X2"
+      ],
+      [
+        11,
+        "Emma Wilson",
+        "Austin",
+        "Noise-Canceling Headset"
+      ],
+      [
+        12,
+        "Emma Wilson",
+        "Austin",
+        "HDMI 2.1 Cable 2m"
+      ]
+    ]
+  },
+  "l11-p7": {
+    "columns": [
+      "id",
+      "name",
+      "total"
+    ],
+    "rows": [
+      [
+        7,
+        "Alice Chen",
+        767.64
+      ],
+      [
+        8,
+        "Alice Chen",
+        767.64
+      ],
+      [
+        9,
+        "Alice Chen",
+        767.64
+      ],
+      [
+        31,
+        "Alice Chen",
+        632.29
+      ],
+      [
+        32,
+        "Alice Chen",
+        632.29
+      ],
+      [
+        33,
+        "Alice Chen",
+        705.23
+      ],
+      [
+        34,
+        "Alice Chen",
+        705.23
+      ],
+      [
+        35,
+        "Alice Chen",
+        705.23
+      ],
+      [
+        78,
+        "Alice Chen",
+        633.91
+      ],
+      [
+        79,
+        "Alice Chen",
+        633.91
+      ],
+      [
+        80,
+        "Alice Chen",
+        645.91
+      ],
+      [
+        81,
+        "Alice Chen",
+        645.91
+      ],
+      [
+        82,
+        "Alice Chen",
+        645.91
+      ],
+      [
+        83,
+        "Alice Chen",
+        645.91
+      ],
+      [
+        216,
+        "Alice Chen",
+        684.53
+      ],
+      [
+        217,
+        "Alice Chen",
+        684.53
+      ],
+      [
+        218,
+        "Alice Chen",
+        684.53
+      ],
+      [
+        219,
+        "Alice Chen",
+        684.53
+      ]
+    ]
+  },
+  "l11-p8": {
+    "columns": [
+      "region"
+    ],
+    "rows": [
+      [
+        "EU"
+      ],
+      [
+        "LATAM"
+      ],
+      [
+        "US"
       ]
     ]
   },
@@ -6835,6 +7822,355 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
       ]
     ]
   },
+  "l12-p5": {
+    "columns": [
+      "customer_gaps",
+      "item_gaps"
+    ],
+    "rows": [
+      [
+        0,
+        0
+      ]
+    ]
+  },
+  "l12-p6": {
+    "columns": [
+      "name",
+      "order_id"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        3
+      ],
+      [
+        "Alice Chen",
+        31
+      ],
+      [
+        "Alice Chen",
+        32
+      ],
+      [
+        "Alice Chen",
+        70
+      ],
+      [
+        "Alice Chen",
+        84
+      ],
+      [
+        "Alice Chen",
+        89
+      ],
+      [
+        "Bruno Silva",
+        null
+      ],
+      [
+        "Chloe Dubois",
+        null
+      ],
+      [
+        "Dmitri Volkov",
+        null
+      ],
+      [
+        "Emma Wilson",
+        8
+      ],
+      [
+        "Emma Wilson",
+        16
+      ],
+      [
+        "Emma Wilson",
+        37
+      ],
+      [
+        "Emma Wilson",
+        39
+      ],
+      [
+        "Emma Wilson",
+        41
+      ],
+      [
+        "Emma Wilson",
+        53
+      ],
+      [
+        "Emma Wilson",
+        57
+      ],
+      [
+        "Emma Wilson",
+        65
+      ],
+      [
+        "Emma Wilson",
+        96
+      ],
+      [
+        "Farid Nasser",
+        null
+      ],
+      [
+        "Grace Kim",
+        9
+      ],
+      [
+        "Grace Kim",
+        15
+      ],
+      [
+        "Grace Kim",
+        35
+      ],
+      [
+        "Hiro Tanaka",
+        26
+      ],
+      [
+        "Isabella Rossi",
+        49
+      ],
+      [
+        "Isabella Rossi",
+        98
+      ],
+      [
+        "Jamal Wright",
+        60
+      ],
+      [
+        "Keiko Sato",
+        null
+      ],
+      [
+        "Liam O'Brien",
+        20
+      ],
+      [
+        "Maya Patel",
+        4
+      ],
+      [
+        "Maya Patel",
+        11
+      ],
+      [
+        "Maya Patel",
+        44
+      ],
+      [
+        "Maya Patel",
+        54
+      ],
+      [
+        "Noah Meyer",
+        30
+      ],
+      [
+        "Noah Meyer",
+        99
+      ],
+      [
+        "Olivia Brown",
+        null
+      ],
+      [
+        "Pedro Alvarez",
+        36
+      ]
+    ]
+  },
+  "l12-p7": {
+    "columns": [
+      "name",
+      "order_id"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        19
+      ],
+      [
+        "Alice Chen",
+        42
+      ],
+      [
+        "Alice Chen",
+        79
+      ],
+      [
+        "Bruno Silva",
+        null
+      ],
+      [
+        "Chloe Dubois",
+        25
+      ],
+      [
+        "Chloe Dubois",
+        43
+      ],
+      [
+        "Dmitri Volkov",
+        null
+      ],
+      [
+        "Emma Wilson",
+        5
+      ],
+      [
+        "Emma Wilson",
+        90
+      ],
+      [
+        "Emma Wilson",
+        97
+      ],
+      [
+        "Farid Nasser",
+        74
+      ],
+      [
+        "Grace Kim",
+        75
+      ],
+      [
+        "Hiro Tanaka",
+        null
+      ],
+      [
+        "Isabella Rossi",
+        null
+      ],
+      [
+        "Jamal Wright",
+        null
+      ],
+      [
+        "Keiko Sato",
+        94
+      ],
+      [
+        "Liam O'Brien",
+        null
+      ],
+      [
+        "Maya Patel",
+        12
+      ],
+      [
+        "Maya Patel",
+        47
+      ],
+      [
+        "Noah Meyer",
+        null
+      ],
+      [
+        "Olivia Brown",
+        null
+      ],
+      [
+        "Pedro Alvarez",
+        1
+      ]
+    ]
+  },
+  "l12-p8": {
+    "columns": [
+      "name",
+      "order_id",
+      "total"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        null,
+        null
+      ],
+      [
+        "Bruno Silva",
+        null,
+        null
+      ],
+      [
+        "Chloe Dubois",
+        43,
+        945.21
+      ],
+      [
+        "Dmitri Volkov",
+        null,
+        null
+      ],
+      [
+        "Emma Wilson",
+        39,
+        845.92
+      ],
+      [
+        "Farid Nasser",
+        74,
+        1088.44
+      ],
+      [
+        "Grace Kim",
+        15,
+        826.03
+      ],
+      [
+        "Hiro Tanaka",
+        null,
+        null
+      ],
+      [
+        "Isabella Rossi",
+        null,
+        null
+      ],
+      [
+        "Jamal Wright",
+        null,
+        null
+      ],
+      [
+        "Keiko Sato",
+        null,
+        null
+      ],
+      [
+        "Liam O'Brien",
+        null,
+        null
+      ],
+      [
+        "Maya Patel",
+        null,
+        null
+      ],
+      [
+        "Noah Meyer",
+        null,
+        null
+      ],
+      [
+        "Olivia Brown",
+        null,
+        null
+      ],
+      [
+        "Pedro Alvarez",
+        null,
+        null
+      ]
+    ]
+  },
   "l13-p1": {
     "columns": [
       "name"
@@ -6932,6 +8268,86 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
       ],
       [
         "USB-C Hub 7-in-1"
+      ]
+    ]
+  },
+  "l13-p5": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Bruno Silva"
+      ],
+      [
+        "Chloe Dubois"
+      ],
+      [
+        "Farid Nasser"
+      ],
+      [
+        "Grace Kim"
+      ],
+      [
+        "Hiro Tanaka"
+      ],
+      [
+        "Isabella Rossi"
+      ],
+      [
+        "Jamal Wright"
+      ],
+      [
+        "Liam O'Brien"
+      ],
+      [
+        "Noah Meyer"
+      ],
+      [
+        "Olivia Brown"
+      ],
+      [
+        "Pedro Alvarez"
+      ]
+    ]
+  },
+  "l13-p6": {
+    "columns": [
+      "name",
+      "email",
+      "city"
+    ],
+    "rows": [
+      [
+        "Liam O'Brien",
+        "liam.obrien@example.com",
+        "Cork"
+      ]
+    ]
+  },
+  "l13-p7": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Bruno Silva"
+      ],
+      [
+        "Dmitri Volkov"
+      ],
+      [
+        "Olivia Brown"
+      ]
+    ]
+  },
+  "l13-p8": {
+    "columns": [
+      "clean_customers"
+    ],
+    "rows": [
+      [
+        3
       ]
     ]
   },
@@ -7232,6 +8648,353 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
       ]
     ]
   },
+  "l14-p5": {
+    "columns": [
+      "pair_a",
+      "pair_b",
+      "region"
+    ],
+    "rows": [
+      [
+        "Farid Nasser",
+        "Grace Kim",
+        "APAC"
+      ],
+      [
+        "Farid Nasser",
+        "Hiro Tanaka",
+        "APAC"
+      ],
+      [
+        "Farid Nasser",
+        "Maya Patel",
+        "APAC"
+      ],
+      [
+        "Grace Kim",
+        "Hiro Tanaka",
+        "APAC"
+      ],
+      [
+        "Grace Kim",
+        "Maya Patel",
+        "APAC"
+      ],
+      [
+        "Hiro Tanaka",
+        "Maya Patel",
+        "APAC"
+      ],
+      [
+        "Alice Chen",
+        "Chloe Dubois",
+        "EU"
+      ],
+      [
+        "Alice Chen",
+        "Isabella Rossi",
+        "EU"
+      ],
+      [
+        "Alice Chen",
+        "Liam O'Brien",
+        "EU"
+      ],
+      [
+        "Alice Chen",
+        "Noah Meyer",
+        "EU"
+      ],
+      [
+        "Alice Chen",
+        "Olivia Brown",
+        "EU"
+      ],
+      [
+        "Alice Chen",
+        "Pedro Alvarez",
+        "EU"
+      ],
+      [
+        "Chloe Dubois",
+        "Isabella Rossi",
+        "EU"
+      ],
+      [
+        "Chloe Dubois",
+        "Liam O'Brien",
+        "EU"
+      ],
+      [
+        "Chloe Dubois",
+        "Noah Meyer",
+        "EU"
+      ],
+      [
+        "Chloe Dubois",
+        "Olivia Brown",
+        "EU"
+      ],
+      [
+        "Chloe Dubois",
+        "Pedro Alvarez",
+        "EU"
+      ],
+      [
+        "Isabella Rossi",
+        "Liam O'Brien",
+        "EU"
+      ],
+      [
+        "Isabella Rossi",
+        "Noah Meyer",
+        "EU"
+      ],
+      [
+        "Isabella Rossi",
+        "Olivia Brown",
+        "EU"
+      ],
+      [
+        "Isabella Rossi",
+        "Pedro Alvarez",
+        "EU"
+      ],
+      [
+        "Liam O'Brien",
+        "Noah Meyer",
+        "EU"
+      ],
+      [
+        "Liam O'Brien",
+        "Olivia Brown",
+        "EU"
+      ],
+      [
+        "Liam O'Brien",
+        "Pedro Alvarez",
+        "EU"
+      ],
+      [
+        "Noah Meyer",
+        "Olivia Brown",
+        "EU"
+      ],
+      [
+        "Noah Meyer",
+        "Pedro Alvarez",
+        "EU"
+      ],
+      [
+        "Olivia Brown",
+        "Pedro Alvarez",
+        "EU"
+      ],
+      [
+        "Emma Wilson",
+        "Jamal Wright",
+        "US"
+      ]
+    ]
+  },
+  "l14-p6": {
+    "columns": [
+      "first_id",
+      "second_id",
+      "month"
+    ],
+    "rows": [
+      [
+        2,
+        4,
+        "2024-01"
+      ],
+      [
+        3,
+        7,
+        "2024-01"
+      ],
+      [
+        5,
+        8,
+        "2024-01"
+      ],
+      [
+        9,
+        15,
+        "2024-02"
+      ],
+      [
+        11,
+        12,
+        "2024-02"
+      ],
+      [
+        13,
+        14,
+        "2024-02"
+      ],
+      [
+        16,
+        17,
+        "2024-02"
+      ],
+      [
+        19,
+        21,
+        "2024-03"
+      ],
+      [
+        31,
+        32,
+        "2024-04"
+      ],
+      [
+        33,
+        37,
+        "2024-05"
+      ],
+      [
+        33,
+        39,
+        "2024-05"
+      ],
+      [
+        37,
+        39,
+        "2024-05"
+      ],
+      [
+        45,
+        46,
+        "2024-06"
+      ],
+      [
+        47,
+        50,
+        "2024-07"
+      ],
+      [
+        47,
+        51,
+        "2024-07"
+      ],
+      [
+        47,
+        54,
+        "2024-07"
+      ],
+      [
+        50,
+        51,
+        "2024-07"
+      ],
+      [
+        50,
+        54,
+        "2024-07"
+      ],
+      [
+        51,
+        54,
+        "2024-07"
+      ],
+      [
+        55,
+        58,
+        "2024-08"
+      ],
+      [
+        56,
+        61,
+        "2024-08"
+      ],
+      [
+        63,
+        66,
+        "2024-09"
+      ],
+      [
+        63,
+        70,
+        "2024-09"
+      ],
+      [
+        66,
+        70,
+        "2024-09"
+      ],
+      [
+        75,
+        76,
+        "2024-10"
+      ],
+      [
+        80,
+        81,
+        "2024-11"
+      ],
+      [
+        84,
+        86,
+        "2024-12"
+      ],
+      [
+        84,
+        89,
+        "2024-12"
+      ],
+      [
+        85,
+        90,
+        "2024-12"
+      ],
+      [
+        86,
+        89,
+        "2024-12"
+      ],
+      [
+        93,
+        95,
+        "2025-01"
+      ],
+      [
+        100,
+        101,
+        "2025-02"
+      ]
+    ]
+  },
+  "l14-p7": {
+    "columns": [
+      "twin_a",
+      "twin_b",
+      "region"
+    ],
+    "rows": [
+      [
+        "Shenzhen Electro",
+        "Pacific Textiles",
+        "APAC"
+      ],
+      [
+        "Nordic Gadgets AB",
+        "Alpine Audio GmbH",
+        "EU"
+      ]
+    ]
+  },
+  "l14-p8": {
+    "columns": [
+      "trios"
+    ],
+    "rows": [
+      [
+        66
+      ]
+    ]
+  },
   "l15-p1": {
     "columns": [
       "name",
@@ -7396,6 +9159,144 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
       ]
     ]
   },
+  "l15-p5": {
+    "columns": [
+      "name",
+      "avg_order"
+    ],
+    "rows": [
+      [
+        "Liam O'Brien",
+        705.39
+      ],
+      [
+        "Chloe Dubois",
+        533.59
+      ],
+      [
+        "Farid Nasser",
+        486.32
+      ],
+      [
+        "Olivia Brown",
+        444.8
+      ],
+      [
+        "Bruno Silva",
+        426.22
+      ]
+    ]
+  },
+  "l15-p6": {
+    "columns": [
+      "category",
+      "min_price",
+      "max_price"
+    ],
+    "rows": [
+      [
+        "Accessories",
+        14.99,
+        42.5
+      ],
+      [
+        "Apparel",
+        18.5,
+        65
+      ],
+      [
+        "Audio",
+        59.99,
+        149.99
+      ],
+      [
+        "Electronics",
+        34.5,
+        89.99
+      ],
+      [
+        "Fitness",
+        32,
+        32
+      ],
+      [
+        "Video",
+        39.99,
+        129
+      ],
+      [
+        "Wearables",
+        79,
+        199.99
+      ]
+    ]
+  },
+  "l15-p7": {
+    "columns": [
+      "name",
+      "avg_order"
+    ],
+    "rows": [
+      [
+        "Liam O'Brien",
+        705.39
+      ],
+      [
+        "Chloe Dubois",
+        533.59
+      ],
+      [
+        "Farid Nasser",
+        486.32
+      ],
+      [
+        "Olivia Brown",
+        444.8
+      ],
+      [
+        "Bruno Silva",
+        426.22
+      ],
+      [
+        "Pedro Alvarez",
+        421.54
+      ]
+    ]
+  },
+  "l15-p8": {
+    "columns": [
+      "name",
+      "products",
+      "total_stock",
+      "avg_price"
+    ],
+    "rows": [
+      [
+        "Shenzhen Electro",
+        3,
+        850,
+        31
+      ],
+      [
+        "Pacific Textiles",
+        3,
+        695,
+        43
+      ],
+      [
+        "Midwest Hardware Co",
+        3,
+        460,
+        74.83
+      ],
+      [
+        "Nordic Gadgets AB",
+        3,
+        230,
+        139.66
+      ]
+    ]
+  },
   "l16-p1": {
     "columns": [
       "revenue"
@@ -7503,6 +9404,56 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
       ]
     ]
   },
+  "l16-p5": {
+    "columns": [
+      "honest",
+      "inflated",
+      "ratio"
+    ],
+    "rows": [
+      [
+        34833.28,
+        103244.55,
+        2.96
+      ]
+    ]
+  },
+  "l16-p6": {
+    "columns": [
+      "rows_joined",
+      "orders_distinct",
+      "totals_distinct"
+    ],
+    "rows": [
+      [
+        251,
+        103,
+        103
+      ]
+    ]
+  },
+  "l16-p7": {
+    "columns": [
+      "honest_avg",
+      "inflated_avg"
+    ],
+    "rows": [
+      [
+        338.19,
+        411.33
+      ]
+    ]
+  },
+  "l16-p8": {
+    "columns": [
+      "mismatches"
+    ],
+    "rows": [
+      [
+        0
+      ]
+    ]
+  },
   "l17-p1": {
     "columns": [
       "status"
@@ -7584,6 +9535,210 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
     "rows": [
       [
         101
+      ]
+    ]
+  },
+  "l17-p5": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "4K Webcam Pro"
+      ],
+      [
+        "Alice Chen"
+      ],
+      [
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Bruno Silva"
+      ],
+      [
+        "Chloe Dubois"
+      ],
+      [
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Desk Mat Extended"
+      ],
+      [
+        "Dmitri Volkov"
+      ],
+      [
+        "Emma Wilson"
+      ],
+      [
+        "Farid Nasser"
+      ],
+      [
+        "Fitness Band X2"
+      ],
+      [
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Hiro Tanaka"
+      ],
+      [
+        "Isabella Rossi"
+      ],
+      [
+        "Jamal Wright"
+      ],
+      [
+        "Keiko Sato"
+      ],
+      [
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Liam O'Brien"
+      ],
+      [
+        "Maya Patel"
+      ],
+      [
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Noah Meyer"
+      ],
+      [
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Olivia Brown"
+      ],
+      [
+        "Pedro Alvarez"
+      ],
+      [
+        "Ring Light 14\""
+      ],
+      [
+        "Running Socks 3-pack"
+      ],
+      [
+        "Smart Watch S"
+      ],
+      [
+        "Studio Desktop Mic"
+      ],
+      [
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Wireless Mouse M3"
+      ],
+      [
+        "Yoga Mat Eco 6mm"
+      ]
+    ]
+  },
+  "l17-p6": {
+    "columns": [
+      "kind",
+      "n"
+    ],
+    "rows": [
+      [
+        "customers",
+        16
+      ],
+      [
+        "orders",
+        103
+      ],
+      [
+        "products",
+        16
+      ]
+    ]
+  },
+  "l17-p7": {
+    "columns": [
+      "place"
+    ],
+    "rows": [
+      [
+        "APAC"
+      ],
+      [
+        "Austin"
+      ],
+      [
+        "Berlin"
+      ],
+      [
+        "Chicago"
+      ],
+      [
+        "Cork"
+      ],
+      [
+        "Dubai"
+      ],
+      [
+        "EU"
+      ],
+      [
+        "Hamburg"
+      ],
+      [
+        "LATAM"
+      ],
+      [
+        "London"
+      ],
+      [
+        "Lyon"
+      ],
+      [
+        "Madrid"
+      ],
+      [
+        "Milan"
+      ],
+      [
+        "Mumbai"
+      ],
+      [
+        "Nagoya"
+      ],
+      [
+        "Osaka"
+      ],
+      [
+        "Seoul"
+      ],
+      [
+        "São Paulo"
+      ],
+      [
+        "Tallinn"
+      ],
+      [
+        "US"
+      ]
+    ]
+  },
+  "l17-p8": {
+    "columns": [
+      "all_rows",
+      "distinct_rows",
+      "delta"
+    ],
+    "rows": [
+      [
+        22,
+        4,
+        18
       ]
     ]
   },
@@ -7758,6 +9913,158 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
       ]
     ]
   },
+  "l18-p5": {
+    "columns": [
+      "id",
+      "kind"
+    ],
+    "rows": [
+      [
+        1,
+        "pending"
+      ],
+      [
+        5,
+        "pending"
+      ],
+      [
+        7,
+        "cancelled"
+      ],
+      [
+        12,
+        "pending"
+      ],
+      [
+        19,
+        "pending"
+      ],
+      [
+        21,
+        "cancelled"
+      ],
+      [
+        25,
+        "pending"
+      ],
+      [
+        42,
+        "pending"
+      ],
+      [
+        43,
+        "pending"
+      ],
+      [
+        47,
+        "pending"
+      ],
+      [
+        50,
+        "cancelled"
+      ],
+      [
+        51,
+        "cancelled"
+      ],
+      [
+        74,
+        "pending"
+      ],
+      [
+        75,
+        "pending"
+      ],
+      [
+        79,
+        "pending"
+      ],
+      [
+        82,
+        "cancelled"
+      ],
+      [
+        83,
+        "cancelled"
+      ],
+      [
+        90,
+        "pending"
+      ],
+      [
+        94,
+        "pending"
+      ],
+      [
+        95,
+        "cancelled"
+      ],
+      [
+        97,
+        "pending"
+      ]
+    ]
+  },
+  "l18-p6": {
+    "columns": [
+      "person",
+      "place"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        "Berlin"
+      ]
+    ]
+  },
+  "l18-p7": {
+    "columns": [
+      "kind",
+      "n"
+    ],
+    "rows": [
+      [
+        "customer",
+        16
+      ],
+      [
+        "product",
+        16
+      ],
+      [
+        "supplier",
+        6
+      ]
+    ]
+  },
+  "l18-p8": {
+    "columns": [
+      "entity",
+      "score"
+    ],
+    "rows": [
+      [
+        "Farid Nasser",
+        1088.44
+      ],
+      [
+        "Chloe Dubois",
+        945.21
+      ],
+      [
+        "Emma Wilson",
+        845.92
+      ],
+      [
+        "Grace Kim",
+        826.03
+      ],
+      [
+        "Emma Wilson",
+        785.79
+      ]
+    ]
+  },
   "l19-p1": {
     "columns": [
       "customer_id"
@@ -7822,6 +10129,81 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
     "rows": [
       [
         4
+      ]
+    ]
+  },
+  "l19-p5": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Alice Chen"
+      ],
+      [
+        "Chloe Dubois"
+      ],
+      [
+        "Emma Wilson"
+      ],
+      [
+        "Farid Nasser"
+      ],
+      [
+        "Grace Kim"
+      ],
+      [
+        "Keiko Sato"
+      ],
+      [
+        "Maya Patel"
+      ],
+      [
+        "Pedro Alvarez"
+      ]
+    ]
+  },
+  "l19-p6": {
+    "columns": [
+      "via_intersect",
+      "via_join"
+    ],
+    "rows": [
+      [
+        8,
+        8
+      ]
+    ]
+  },
+  "l19-p7": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Smart Watch S"
+      ],
+      [
+        "Studio Desktop Mic"
+      ]
+    ]
+  },
+  "l19-p8": {
+    "columns": [
+      "customer_id"
+    ],
+    "rows": [
+      [
+        1
+      ],
+      [
+        5
+      ],
+      [
+        11
+      ],
+      [
+        13
       ]
     ]
   },
@@ -7900,6 +10282,185 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
       ]
     ]
   },
+  "l20-p5": {
+    "columns": [
+      "id"
+    ],
+    "rows": [
+      [
+        3
+      ],
+      [
+        6
+      ],
+      [
+        7
+      ],
+      [
+        16
+      ]
+    ]
+  },
+  "l20-p6": {
+    "columns": [
+      "id"
+    ],
+    "rows": [
+      [
+        3
+      ],
+      [
+        6
+      ],
+      [
+        8
+      ],
+      [
+        11
+      ],
+      [
+        14
+      ],
+      [
+        15
+      ],
+      [
+        16
+      ],
+      [
+        17
+      ],
+      [
+        20
+      ],
+      [
+        24
+      ],
+      [
+        26
+      ],
+      [
+        27
+      ],
+      [
+        28
+      ],
+      [
+        32
+      ],
+      [
+        33
+      ],
+      [
+        36
+      ],
+      [
+        37
+      ],
+      [
+        39
+      ],
+      [
+        54
+      ],
+      [
+        56
+      ],
+      [
+        57
+      ],
+      [
+        58
+      ],
+      [
+        60
+      ],
+      [
+        61
+      ],
+      [
+        64
+      ],
+      [
+        65
+      ],
+      [
+        67
+      ],
+      [
+        68
+      ],
+      [
+        69
+      ],
+      [
+        71
+      ],
+      [
+        78
+      ],
+      [
+        80
+      ],
+      [
+        83
+      ],
+      [
+        85
+      ],
+      [
+        88
+      ],
+      [
+        89
+      ],
+      [
+        91
+      ],
+      [
+        92
+      ],
+      [
+        96
+      ],
+      [
+        98
+      ],
+      [
+        99
+      ]
+    ]
+  },
+  "l20-p7": {
+    "columns": [
+      "id"
+    ],
+    "rows": [
+      [
+        15
+      ],
+      [
+        11
+      ],
+      [
+        6
+      ]
+    ]
+  },
+  "l20-p8": {
+    "columns": [
+      "first_way",
+      "other_way",
+      "sym_diff"
+    ],
+    "rows": [
+      [
+        11,
+        0,
+        11
+      ]
+    ]
+  },
   "l21-p1": {
     "columns": [
       "customer_id"
@@ -7960,6 +10521,56 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
       [
         8,
         15
+      ]
+    ]
+  },
+  "l21-p5": {
+    "columns": [
+      "raw",
+      "pile"
+    ],
+    "rows": [
+      [
+        28,
+        4
+      ]
+    ]
+  },
+  "l21-p6": {
+    "columns": [
+      "sym"
+    ],
+    "rows": [
+      [
+        11
+      ]
+    ]
+  },
+  "l21-p7": {
+    "columns": [
+      "value"
+    ],
+    "rows": [
+      [
+        "APAC"
+      ],
+      [
+        "EU"
+      ],
+      [
+        "LATAM"
+      ]
+    ]
+  },
+  "l21-p8": {
+    "columns": [
+      "sqlite_way",
+      "standard_way"
+    ],
+    "rows": [
+      [
+        8,
+        4
       ]
     ]
   },
@@ -8029,6 +10640,257 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
         null,
         null,
         89
+      ]
+    ]
+  },
+  "l22-p5": {
+    "columns": [
+      "id",
+      "band"
+    ],
+    "rows": [
+      [
+        1,
+        "medium"
+      ],
+      [
+        2,
+        "medium"
+      ],
+      [
+        3,
+        "medium"
+      ],
+      [
+        4,
+        "small"
+      ],
+      [
+        5,
+        "medium"
+      ],
+      [
+        6,
+        "medium"
+      ],
+      [
+        7,
+        "small"
+      ],
+      [
+        8,
+        "small"
+      ],
+      [
+        9,
+        "small"
+      ],
+      [
+        10,
+        "small"
+      ],
+      [
+        11,
+        "small"
+      ],
+      [
+        12,
+        "small"
+      ],
+      [
+        13,
+        "medium"
+      ],
+      [
+        14,
+        "medium"
+      ],
+      [
+        15,
+        "big"
+      ],
+      [
+        16,
+        "medium"
+      ],
+      [
+        17,
+        "small"
+      ],
+      [
+        18,
+        "small"
+      ],
+      [
+        19,
+        "medium"
+      ],
+      [
+        20,
+        "medium"
+      ]
+    ]
+  },
+  "l22-p6": {
+    "columns": [
+      "id",
+      "total",
+      "fee"
+    ],
+    "rows": [
+      [
+        74,
+        1088.44,
+        21.77
+      ],
+      [
+        43,
+        945.21,
+        18.9
+      ],
+      [
+        5,
+        725.34,
+        14.51
+      ],
+      [
+        97,
+        585.79,
+        11.72
+      ],
+      [
+        1,
+        576.54,
+        11.53
+      ],
+      [
+        25,
+        364.71,
+        7.29
+      ],
+      [
+        19,
+        317.49,
+        6.35
+      ],
+      [
+        47,
+        306.92,
+        6.14
+      ],
+      [
+        75,
+        273.64,
+        5.47
+      ],
+      [
+        42,
+        259.31,
+        5.19
+      ]
+    ]
+  },
+  "l22-p7": {
+    "columns": [
+      "id",
+      "size_band",
+      "ship_band"
+    ],
+    "rows": [
+      [
+        1,
+        "medium",
+        "unshipped"
+      ],
+      [
+        2,
+        "medium",
+        "shipped"
+      ],
+      [
+        3,
+        "medium",
+        "shipped"
+      ],
+      [
+        4,
+        "small",
+        "shipped"
+      ],
+      [
+        5,
+        "medium",
+        "unshipped"
+      ],
+      [
+        6,
+        "medium",
+        "shipped"
+      ],
+      [
+        7,
+        "small",
+        "unshipped"
+      ],
+      [
+        8,
+        "small",
+        "shipped"
+      ],
+      [
+        9,
+        "small",
+        "shipped"
+      ],
+      [
+        10,
+        "small",
+        "shipped"
+      ],
+      [
+        11,
+        "small",
+        "shipped"
+      ],
+      [
+        12,
+        "small",
+        "unshipped"
+      ],
+      [
+        13,
+        "medium",
+        "shipped"
+      ],
+      [
+        14,
+        "medium",
+        "shipped"
+      ],
+      [
+        15,
+        "big",
+        "shipped"
+      ]
+    ]
+  },
+  "l22-p8": {
+    "columns": [
+      "band",
+      "n"
+    ],
+    "rows": [
+      [
+        "big",
+        4
+      ],
+      [
+        "medium",
+        45
+      ],
+      [
+        "small",
+        54
       ]
     ]
   },
@@ -8163,6 +11025,100 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
       ]
     ]
   },
+  "l23-p5": {
+    "columns": [
+      "delivered",
+      "shipped",
+      "pending",
+      "cancelled",
+      "total"
+    ],
+    "rows": [
+      [
+        12,
+        6,
+        3,
+        3,
+        24
+      ]
+    ]
+  },
+  "l23-p6": {
+    "columns": [
+      "delivered",
+      "shipped",
+      "pending",
+      "cancelled",
+      "total"
+    ],
+    "rows": [
+      [
+        24,
+        12,
+        6,
+        3,
+        45
+      ]
+    ]
+  },
+  "l23-p7": {
+    "columns": [
+      "region",
+      "pending",
+      "cancelled"
+    ],
+    "rows": [
+      [
+        "APAC",
+        5,
+        3
+      ],
+      [
+        "EU",
+        6,
+        3
+      ],
+      [
+        "US",
+        3,
+        1
+      ]
+    ]
+  },
+  "l23-p8": {
+    "columns": [
+      "name",
+      "big",
+      "n"
+    ],
+    "rows": [
+      [
+        "Emma Wilson",
+        7,
+        17
+      ],
+      [
+        "Alice Chen",
+        6,
+        24
+      ],
+      [
+        "Chloe Dubois",
+        3,
+        5
+      ],
+      [
+        "Grace Kim",
+        2,
+        14
+      ],
+      [
+        "Pedro Alvarez",
+        2,
+        4
+      ]
+    ]
+  },
   "l24-p1": {
     "columns": [
       "tier",
@@ -8248,6 +11204,187 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
         "TOTAL",
         103,
         34833.28
+      ]
+    ]
+  },
+  "l24-p5": {
+    "columns": [
+      "high_tiers",
+      "stacked_names",
+      "except_first"
+    ],
+    "rows": [
+      [
+        4,
+        22,
+        11
+      ]
+    ]
+  },
+  "l24-p6": {
+    "columns": [
+      "name",
+      "revenue",
+      "tier"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        7262.35,
+        "gold"
+      ],
+      [
+        "Emma Wilson",
+        6640.56,
+        "gold"
+      ],
+      [
+        "Grace Kim",
+        4574.23,
+        "gold"
+      ],
+      [
+        "Maya Patel",
+        3644.56,
+        "silver"
+      ],
+      [
+        "Chloe Dubois",
+        2667.93,
+        "silver"
+      ]
+    ]
+  },
+  "l24-p7": {
+    "columns": [
+      "region",
+      "open_orders",
+      "lost_orders",
+      "revenue",
+      "grade"
+    ],
+    "rows": [
+      [
+        "EU",
+        6,
+        3,
+        15089.23,
+        "flagship"
+      ],
+      [
+        "APAC",
+        5,
+        3,
+        11605.45,
+        "flagship"
+      ],
+      [
+        "US",
+        3,
+        1,
+        7286.16,
+        "standard"
+      ],
+      [
+        "LATAM",
+        0,
+        0,
+        852.44,
+        "standard"
+      ]
+    ]
+  },
+  "l24-p8": {
+    "columns": [
+      "id",
+      "total",
+      "kind"
+    ],
+    "rows": [
+      [
+        6,
+        752.96,
+        "done"
+      ],
+      [
+        14,
+        705.23,
+        "done"
+      ],
+      [
+        71,
+        668.45,
+        "done"
+      ],
+      [
+        74,
+        1088.44,
+        "open"
+      ],
+      [
+        43,
+        945.21,
+        "open"
+      ],
+      [
+        5,
+        725.34,
+        "open"
+      ],
+      [
+        97,
+        585.79,
+        "open"
+      ],
+      [
+        1,
+        576.54,
+        "open"
+      ],
+      [
+        25,
+        364.71,
+        "open"
+      ],
+      [
+        19,
+        317.49,
+        "open"
+      ],
+      [
+        47,
+        306.92,
+        "open"
+      ],
+      [
+        75,
+        273.64,
+        "open"
+      ],
+      [
+        42,
+        259.31,
+        "open"
+      ],
+      [
+        79,
+        212.03,
+        "open"
+      ],
+      [
+        90,
+        160.3,
+        "open"
+      ],
+      [
+        94,
+        149,
+        "open"
+      ],
+      [
+        12,
+        148.28,
+        "open"
       ]
     ]
   }

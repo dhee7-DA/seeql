@@ -116,6 +116,56 @@ ORDER BY spend DESC;`,
         { choice: 0, why: "No one is missing in this seed — all 16 customers have placed orders, so no ghost rows exist and both counts land on the full 103." },
       ],
     },
+    {
+      id: "l15-q5",
+      prompt: "`SELECT c.region, COUNT(*) FROM customers c JOIN orders o ON o.customer_id = c.id GROUP BY c.region` — how many rows?",
+      choices: ["1", "4", "16", "103"],
+      answer: 1,
+      why: "GROUP BY makes one bucket per distinct region — this store has 4 (APAC, EU, LATAM, US). The 103 orders collapse into 4 group rows, each carrying its count.",
+      notes: [
+        { choice: 2, why: "16 would be one row per customer — that's GROUP BY c.id. The bucket count equals the DISTINCT values of the grouped column." },
+      ],
+    },
+    {
+      id: "l15-q6",
+      prompt: "You want to exclude single orders under 500 BEFORE averaging per customer. Where does the filter go?",
+      choices: [
+        "HAVING o.total > 500 — that's what HAVING is for",
+        "WHERE o.total > 500 — row filters come before grouping",
+        "either — they are equivalent",
+        "neither — you need a subquery",
+      ],
+      answer: 1,
+      why: "o.total is a per-ORDER fact, and WHERE filters rows before groups form. HAVING exists for aggregate results (AVG(...), COUNT(*)) that only exist after grouping. Filtering raw rows with HAVING is a category error most engines reject outright.",
+      notes: [
+        { choice: 0, why: "HAVING evaluates after grouping against group-level values — o.total no longer exists there; only aggregates and grouped columns do." },
+      ],
+    },
+    {
+      id: "l15-q7",
+      prompt: "Under `customers LEFT JOIN orders`, a customer with zero orders forms one NULL-filled group. What does SUM(o.total) show for that group?",
+      choices: ["0 — sums of nothing are zero", "NULL — there was nothing to add", "the grand total — groups share the sum", "an error — SUM needs rows"],
+      answer: 1,
+      why: "SUM over a group whose only row has total = NULL is NULL, not 0 — the aggregate never sees a number. (COUNT(CASE…) tricks or COALESCE are the fixes; this seed happens to have no such customer, but the mechanism is worth knowing cold.)",
+      notes: [
+        { choice: 0, why: "NULL is 'unknown', not zero — and SUM refuses to guess. It returns NULL for an all-NULL group; only COUNT(*) counts the row itself." },
+      ],
+    },
+    {
+      id: "l15-q8",
+      prompt: "Which spelling correctly reports revenue per customer REGION?",
+      choices: [
+        "SELECT c.region, SUM(o.total) FROM orders o JOIN customers c ON c.id = o.customer_id GROUP BY c.region",
+        "SELECT c.region, SUM(o.total) FROM orders o JOIN customers c ON c.id = o.customer_id GROUP BY c.id",
+        "SELECT c.region, SUM(o.total) FROM customers c JOIN orders o ON c.id = o.customer_id GROUP BY o.id",
+        "SELECT region, SUM(total) FROM orders GROUP BY region",
+      ],
+      answer: 0,
+      why: "The bucket key is the joined column c.region — group by it and sum the order totals inside each bucket. GROUP BY c.id would give per-customer rows (region repeated), GROUP BY o.id one row per order, and orders has no region column at all.",
+      notes: [
+        { choice: 1, why: "Grouping by the id while displaying the region reports one row per CUSTOMER — 16 rows, regions repeated — not the 4-row regional summary." },
+      ],
+    },
   ],
   problems: [
     {
@@ -192,6 +242,82 @@ ORDER BY spend DESC;`,
         { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "The brief wants revenue descending — append ORDER BY revenue DESC." },
       ],
       expected: EXPECTED["l15-p4"],
+      ordered: true,
+    },
+    {
+      id: "l15-p5",
+      title: "Basket averages",
+      brief: "Who runs the biggest baskets? Per customer, average the order totals: output `name`, `avg_order` (alias of ROUND(AVG(o.total), 2)), the top 5 by average, biggest first — ties by name.",
+      hints: [
+        "Same bucket-per-customer shape as the spend leaderboard, but the measure inside the bucket is AVG, not SUM — and ROUND keeps the leaderboard readable.",
+        "Shape: SELECT c.name, ROUND(AVG(o.total), 2) AS avg_order FROM orders o JOIN customers c ON c.id = o.customer_id GROUP BY c.id ORDER BY avg_order DESC, c.name LIMIT <n>;",
+      ],
+      difficulty: "medium",
+      solution:
+        "SELECT c.name, ROUND(AVG(o.total), 2) AS avg_order\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nGROUP BY c.id\nORDER BY avg_order DESC, c.name\nLIMIT 5;",
+      mistakes: [
+        { test: "\\border\\s+by\\s+avg_order\\s+asc\\b", message: "\"Biggest first\" needs the DESC direction — a bare or ASC sort crowns the smallest basket." },
+        { test: "^select\\b(?:(?!\\bround\\b).)*$", message: "The leaderboard grades avg_order to two decimals — wrap the average: ROUND(AVG(o.total), 2)." },
+        { test: "^select\\b(?:(?!\\blimit\\b).)*$", message: "The brief caps the podium at five — append LIMIT 5." },
+      ],
+      expected: EXPECTED["l15-p5"],
+      ordered: true,
+    },
+    {
+      id: "l15-p6",
+      title: "Price bands",
+      brief: "Map each category's shelf: output `category`, `min_price`, `max_price` (aliases of the ROUNDed MIN/MAX of price), one row per category, alphabetical.",
+      hints: [
+        "No join needed — everything lives in products. One bucket per category, two aggregates inside: MIN and MAX.",
+        "Shape: SELECT category, ROUND(MIN(price), 2) AS min_price, ROUND(MAX(price), 2) AS max_price FROM products GROUP BY category ORDER BY <col>;",
+      ],
+      difficulty: "medium",
+      solution:
+        "SELECT category, ROUND(MIN(price), 2) AS min_price, ROUND(MAX(price), 2) AS max_price\nFROM products\nGROUP BY category\nORDER BY category;",
+      mistakes: [
+        { test: "^select\\b(?:(?!\\bmin\\s*\\().)*$", message: "The band has two ends — add the low end: ROUND(MIN(price), 2) AS min_price." },
+        { test: "^select\\b(?:(?!\\bmax\\s*\\().)*$", message: "The band has two ends — add the high end: ROUND(MAX(price), 2) AS max_price." },
+        { test: "^(?=.*\\bmin\\s*\\()(?!.*\\bgroup\\s+by\\b).*$", message: "MIN is an aggregate — it needs buckets: GROUP BY category makes one row per category." },
+      ],
+      expected: EXPECTED["l15-p6"],
+      ordered: true,
+    },
+    {
+      id: "l15-p7",
+      title: "The premium bracket",
+      brief: "Customers whose AVERAGE order tops 400 — quality over quantity. Output: `name`, `avg_order` (alias of ROUND(AVG(o.total), 2)), biggest average first. Six customers qualify.",
+      hints: [
+        "The filter applies to an aggregate (the average), so it lives in HAVING — WHERE can't see AVG at all.",
+        "Shape: SELECT c.name, ROUND(AVG(o.total), 2) AS avg_order FROM orders o JOIN customers c ON c.id = o.customer_id GROUP BY c.id HAVING AVG(o.total) > <threshold> ORDER BY avg_order DESC;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT c.name, ROUND(AVG(o.total), 2) AS avg_order\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nGROUP BY c.id\nHAVING AVG(o.total) > 400\nORDER BY avg_order DESC;",
+      mistakes: [
+        { test: "\\bwhere\\b[^;]*avg\\s*\\(\\s*o\\.total", message: "Aggregates don't exist yet at WHERE time — the average filter belongs in HAVING, evaluated after the buckets form." },
+        { test: "^(?=.*\\bavg\\s*\\()(?!.*\\bhaving\\b).*$", message: "Filtering ON the average is HAVING's whole job — add HAVING AVG(o.total) > 400 after GROUP BY." },
+        { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "The brief ranks by average — append ORDER BY avg_order DESC." },
+      ],
+      expected: EXPECTED["l15-p7"],
+      ordered: true,
+    },
+    {
+      id: "l15-p8",
+      title: "Stock health by supplier",
+      brief: "Which suppliers carry real weight? Per supplier with at least 3 products: output `name`, `products` (alias COUNT(*)), `total_stock` (alias SUM(p.stock)), `avg_price` (alias of ROUND(AVG(p.price), 2)) — ordered by total_stock descending, then name. Four suppliers qualify.",
+      hints: [
+        "Buckets per supplier (GROUP BY s.id), three aggregates inside, and the at-least-3 bar is a group filter — HAVING COUNT(*) >= 3.",
+        "Shape: SELECT s.name, COUNT(*) AS products, SUM(p.stock) AS total_stock, ROUND(AVG(p.price), 2) AS avg_price FROM products p JOIN suppliers s ON s.id = p.supplier_id GROUP BY s.id HAVING COUNT(*) >= <n> ORDER BY total_stock DESC, <col>;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT s.name, COUNT(*) AS products, SUM(p.stock) AS total_stock, ROUND(AVG(p.price), 2) AS avg_price\nFROM products p\nJOIN suppliers s ON s.id = p.supplier_id\nGROUP BY s.id\nHAVING COUNT(*) >= 3\nORDER BY total_stock DESC, s.name;",
+      mistakes: [
+        { test: "^(?=.*\\bcount\\s*\\(\\s*\\*\\s*\\))(?!.*\\bhaving\\b).*$", message: "The brief keeps only suppliers with 3+ products — that's a group-level filter: HAVING COUNT(*) >= 3." },
+        { test: "^(?!.*\\bsuppliers\\b).*$", message: "The scoreboard lands on suppliers — join products to suppliers via p.supplier_id before grouping." },
+        { test: "\\border\\s+by\\s+total_stock\\s+asc\\b", message: "\"Most weight first\" needs the DESC direction — a bare or ASC sort shows the lightest shelves on top." },
+      ],
+      expected: EXPECTED["l15-p8"],
       ordered: true,
     },
   ],

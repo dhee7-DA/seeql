@@ -118,6 +118,62 @@ ORDER BY c.name;`,
         { choice: 0, why: "Placement changes semantics here — WHERE runs on the NULL-filled rows too, they fail the status test and vanish, and the join silently degrades to an INNER JOIN." },
       ],
     },
+    {
+      id: "l12-q5",
+      prompt: "On THIS store's seed: `FROM customers c LEFT JOIN orders o ON o.customer_id = c.id` — how many rows?",
+      choices: ["16", "103", "119", "1648"],
+      answer: 1,
+      why: "LEFT JOIN returns one row per matching pair plus one NULL-filled row per unmatched customer. All 103 orders match, and on this seed every customer has placed at least one order — no gaps to preserve, so the result equals the INNER version: 103 rows.",
+      notes: [
+        { choice: 0, why: "Customers don't collapse to one row — each appears once per order they placed, LEFT or INNER alike. Preservation only ADDS rows for unmatched customers, and this seed has none." },
+        { choice: 2, why: "LEFT JOIN doesn't append spare rows — unmatched left rows are kept in place with NULL-filled columns; here there are none, so nothing is added to 103." },
+      ],
+    },
+    {
+      id: "l12-q6",
+      prompt: "After `customers LEFT JOIN orders ON … AND o.status = 'shipped'`, adding `WHERE o.id IS NULL` keeps…",
+      choices: [
+        "Every customer, matched or not",
+        "Only the customers who DO have shipped orders",
+        "Only the NULL-filled rows — customers with no shipped order at all (6 of them here)",
+        "Only the orders that are not shipped",
+      ],
+      answer: 2,
+      why: "o.id is the right table's primary key — never NULL on a matched row. So `o.id IS NULL` is true exactly for the gap rows the LEFT JOIN fabricated: the anti-join. Here that's the 6 customers with zero shipped orders.",
+      notes: [
+        { choice: 1, why: "Matched rows carry a real order id, so the IS NULL test is false for them — the filter keeps the opposite set, the gaps." },
+      ],
+    },
+    {
+      id: "l12-q7",
+      prompt: "Matching only shipped orders in ON yields 36 rows (30 matched pairs + 6 gap customers). Move `o.status = 'shipped'` to WHERE — how many rows now?",
+      choices: [
+        "36 — unchanged",
+        "30 — the gaps vanish and the join silently turns INNER",
+        "6 — only the gaps remain",
+        "46 — gaps plus shipped",
+      ],
+      answer: 1,
+      why: "WHERE runs after the join and sees the NULL-filled rows too — NULL fails the status test, so the 6 gap customers are deleted and the 30 matched pairs remain. That's the WHERE-turns-LEFT-into-INNER collapse.",
+      notes: [
+        { choice: 2, why: "6 is the anti-join count (the IS NULL spelling) — a status equality in WHERE doesn't select the gaps, it kills them: NULL = 'shipped' is not true." },
+      ],
+    },
+    {
+      id: "l12-q8",
+      prompt: "`FROM orders o LEFT JOIN customers c ON c.id = o.customer_id` — whose rows are guaranteed to survive?",
+      choices: [
+        "All 16 customers",
+        "All 103 orders",
+        "Only orders whose customer exists",
+        "All 1648 pairs",
+      ],
+      answer: 1,
+      why: "The protected side is whatever FROM names — here orders. Every order keeps its row even with no matching customer (customer columns NULL-filled). On this seed every order does have a buyer, so no NULLs appear — but the guarantee is about orders, not customers.",
+      notes: [
+        { choice: 0, why: "customers sits on the RIGHT side — right rows without a partner are dropped, not preserved. Protection follows position: FROM is the left, protected side." },
+      ],
+    },
   ],
   problems: [
     {
@@ -194,6 +250,81 @@ ORDER BY c.name;`,
         { test: "^select\\b(?=[^;]*\\bo\\.id\\b)(?![^;]*\\bo\\.id\\s+as\\s+order_id\\b)", message: "The order-id column must be headed `order_id` — alias it: o.id AS order_id." },
       ],
       expected: EXPECTED["l12-p4"],
+      ordered: true,
+    },
+    {
+      id: "l12-p5",
+      title: "The audit that found nothing",
+      brief: "Run the store's integrity audit: count customers pointing at no order at all (`customer_gaps`) and order lines pointing at no product (`item_gaps`) — two gap counters in ONE row. Output: `customer_gaps`, `item_gaps`. A zero is the finding: it certifies the seed has no orphans.",
+      hints: [
+        "Each counter is the anti-join pattern wrapped in COUNT(*): LEFT JOIN across the foreign key, keep only the unmatched rows with WHERE … IS NULL — one scalar subquery per counter.",
+        "Shape: SELECT (SELECT COUNT(*) FROM customers c LEFT JOIN orders o ON … WHERE o.id IS NULL) AS customer_gaps, (SELECT COUNT(*) FROM order_items oi LEFT JOIN products p ON … WHERE p.id IS NULL) AS item_gaps;",
+      ],
+      difficulty: "medium",
+      solution:
+        "SELECT\n  (SELECT COUNT(*) FROM customers c LEFT JOIN orders o ON o.customer_id = c.id WHERE o.id IS NULL) AS customer_gaps,\n  (SELECT COUNT(*) FROM order_items oi LEFT JOIN products p ON p.id = oi.product_id WHERE p.id IS NULL) AS item_gaps;",
+      mistakes: [
+        { test: "\\binner\\s+join\\b", message: "An INNER JOIN drops the very rows you're auditing for — it reports 0 even on a dirty database. LEFT JOIN keeps unmatched rows with NULL so the IS NULL test can count them." },
+        { test: "\\bleft\\s+join\\b(?![^;]*\\bis\\s+null\\b)", message: "A LEFT JOIN alone counts every customer (16), gaps or not — the `WHERE o.id IS NULL` test is what isolates the unmatched rows before counting." },
+        { test: "\\bon\\s+(?:c\\.id\\s*=\\s*o\\.id\\b|o\\.id\\s*=\\s*c\\.id\\b|p\\.id\\s*=\\s*oi\\.id\\b|oi\\.id\\s*=\\s*p\\.id\\b)", message: "That pairs primary keys against each other — audit the real foreign keys: orders.customer_id → customers.id and order_items.product_id → products.id." },
+      ],
+      expected: EXPECTED["l12-p5"],
+    },
+    {
+      id: "l12-p6",
+      title: "The shipped dossier",
+      brief: "Every customer with the ids of their **shipped** orders — and the customers with no shipped order still make the list, order_id NULL. The status condition belongs in ON; the gaps are part of the output. Output: `name`, `order_id` (alias o.id exactly), ordered by name, then order id. 36 rows: 30 shipped orders plus 6 NULL-filled names.",
+      hints: [
+        "Same skeleton as the clean-sheet problem: the status filter rides in ON (matching), not WHERE (survival) — customers with no shipped order stay as NULL rows.",
+        "Shape: SELECT c.name, o.id AS order_id FROM customers c LEFT JOIN orders o ON o.customer_id = c.id AND o.status = <status> ORDER BY c.name, o.id;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT c.name, o.id AS order_id\nFROM customers c\nLEFT JOIN orders o\n       ON o.customer_id = c.id\n      AND o.status = 'shipped'\nORDER BY c.name, o.id;",
+      mistakes: [
+        { test: "\\bleft\\s+join\\b[^;]*\\bwhere\\b[^;]*\\bo\\.status\\s*=", message: "The shipped filter in WHERE deletes every NULL-filled customer — the 6 names the brief wants kept. The status belongs inside ON." },
+        { test: "\\binner\\s+join\\b", message: "An INNER JOIN silently drops the customers with no shipped order — exactly the gaps the brief keeps with NULL." },
+        { test: "^select\\b(?=[^;]*\\bo\\.id\\b)(?![^;]*\\bo\\.id\\s+as\\s+order_id\\b)", message: "The order-id column must be headed `order_id` — alias it: o.id AS order_id." },
+      ],
+      expected: EXPECTED["l12-p6"],
+      ordered: true,
+    },
+    {
+      id: "l12-p7",
+      title: "Pending proof",
+      brief: "The pending edition: every customer with the ids of their **pending** orders, gaps kept — customers with nothing pending show NULL. Output: `name`, `order_id` (alias o.id exactly), ordered by name, then order id. 22 rows: 14 pending orders plus 8 names with nothing to chase.",
+      hints: [
+        "Identical skeleton to the shipped dossier — one literal changes. Status in ON, so the 8 no-pending customers survive as NULL rows.",
+        "Shape: SELECT c.name, o.id AS order_id FROM customers c LEFT JOIN orders o ON o.customer_id = c.id AND o.status = <status> ORDER BY c.name, o.id;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT c.name, o.id AS order_id\nFROM customers c\nLEFT JOIN orders o\n       ON o.customer_id = c.id\n      AND o.status = 'pending'\nORDER BY c.name, o.id;",
+      mistakes: [
+        { test: "\\bleft\\s+join\\b[^;]*\\bwhere\\b[^;]*\\bo\\.status\\s*=", message: "The pending filter in WHERE throws away every NULL-filled customer — the 8 names the brief keeps. The status belongs inside ON." },
+        { test: "status\\s*=\\s*'(?!pending')[^']*'", message: "This dossier tracks pending orders — the ON condition should read o.status = 'pending'." },
+        { test: "\\bwhere\\b[^;]*\\bis\\s+null\\b", message: "Careful — that's the anti-join, which keeps ONLY the gaps. Here every customer stays, pending ids attached and gaps NULL-filled: no IS NULL filter." },
+      ],
+      expected: EXPECTED["l12-p7"],
+      ordered: true,
+    },
+    {
+      id: "l12-p8",
+      title: "Two-key keeping",
+      brief: "Every customer with their big-basket orders — totals over 800 — gaps kept: customers with no such order show NULL in both order columns. Output: `name`, `order_id` (alias o.id exactly), `total`, ordered by name, then order id. 16 rows: 4 big orders plus 12 NULL-filled names. The >800 filter is on the right table — ON is where it keeps the gaps alive.",
+      hints: [
+        "Two matching conditions now: the foreign key AND the total filter, both inside ON — in WHERE the test would delete the 12 gap customers instead of preserving them.",
+        "Shape: SELECT c.name, o.id AS order_id, o.total FROM customers c LEFT JOIN orders o ON o.customer_id = c.id AND o.total > <amount> ORDER BY c.name, o.id;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT c.name, o.id AS order_id, o.total\nFROM customers c\nLEFT JOIN orders o\n       ON o.customer_id = c.id\n      AND o.total > 800\nORDER BY c.name, o.id;",
+      mistakes: [
+        { test: "\\bleft\\s+join\\b[^;]*\\bwhere\\b[^;]*\\bo\\.total\\s*>", message: "The >800 filter in WHERE deletes every NULL-filled customer — the 12 names the brief keeps. Conditions on the right table belong in ON." },
+        { test: "\\bo\\.total\\s*>\\s*(?!800\\b)\\d+", message: "The brief pins the basket size: o.total > 800." },
+        { test: "^select\\b(?=[^;]*\\bo\\.id\\b)(?![^;]*\\bo\\.id\\s+as\\s+order_id\\b)", message: "The order-id column must be headed `order_id` — alias it: o.id AS order_id." },
+      ],
+      expected: EXPECTED["l12-p8"],
       ordered: true,
     },
   ],

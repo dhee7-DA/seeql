@@ -127,6 +127,66 @@ LIMIT 10;`,
         { choice: 0, why: "\"It counts every row\" is precisely the bug — the NULL-filled ghost row of a zero-order customer is a row, so COUNT(*) reports an order that never happened." },
       ],
     },
+    {
+      id: "l16-q5",
+      prompt: "COUNT(DISTINCT o.id) rescues the fanout for counts. Why doesn't SUM(DISTINCT o.total) equally rescue revenue?",
+      choices: [
+        "DISTINCT only works on text columns",
+        "it dedupes VALUES, not rows — two orders sharing a total would contribute once",
+        "SUM ignores DISTINCT entirely",
+        "it only works inside HAVING",
+      ],
+      answer: 1,
+      why: "DISTINCT removes duplicate values, not duplicate rows. On this seed all 103 totals happen to be unique, so the trick accidentally works today — but one shared amount tomorrow and a whole order silently drops out of the sum. Identity-based dedupe (grouping by o.id) is the reliable fix.",
+      notes: [
+        { choice: 2, why: "SUM(DISTINCT x) is legal SQL — it's just semantically wrong here, because collapsing equal totals is not the same as collapsing fanout rows." },
+      ],
+    },
+    {
+      id: "l16-q6",
+      prompt: "Which measure CAN be computed directly on the rows of `orders JOIN order_items`?",
+      choices: [
+        "SUM(o.total) — total revenue",
+        "AVG(o.total) — average order value",
+        "SUM(oi.quantity * oi.unit_price) — line-item revenue",
+        "COUNT(*) — number of customers",
+      ],
+      answer: 2,
+      why: "Line-item revenue is defined per LINE, so repeating each line once per order match changes nothing — the join multiplies order-level facts, not item-level ones. o.total rides along once per line and is inflated; and COUNT(*) here counts 251 line rows, not customers.",
+      notes: [
+        { choice: 0, why: "That's the crime from p2: 103,244.55 instead of 34,833.28 — every total repeated once per line item." },
+      ],
+    },
+    {
+      id: "l16-q7",
+      prompt: "In the reconciliation query, why does GROUP BY o.id make the per-order comparison exact?",
+      choices: [
+        "o.id is numeric, so groups sort cleanly",
+        "each group contains exactly that order's own lines — and nothing else",
+        "GROUP BY sorts the rows so totals line up",
+        "it forces the database to use indexes",
+      ],
+      answer: 1,
+      why: "Grouping by the order's primary key partitions the 251 joined rows so every SUM(oi.quantity * oi.unit_price) sees precisely one order's lines. The rebuilt figure can then be compared to that order's stored total — row by row, no leakage between baskets.",
+      notes: [
+        { choice: 2, why: "Sorting is ORDER BY's job — GROUP BY partitions; the exactness comes from the partition, not the order." },
+      ],
+    },
+    {
+      id: "l16-q8",
+      prompt: "The capstone's core verification habit is…",
+      choices: [
+        "run the same query twice to make sure it's deterministic",
+        "compute the number two independent ways and reconcile the difference",
+        "add LIMIT so errors can't be too big",
+        "join more tables for cross-checks",
+      ],
+      answer: 1,
+      why: "Ground truth from orders, the joined computation, the per-order line-item rebuild — the capstone computed revenue three independent ways and explained every gap. Two derivations that agree beat one that merely looks plausible.",
+      notes: [
+        { choice: 0, why: "Re-running the same query re-runs the same assumptions — a real check needs a DIFFERENT derivation." },
+      ],
+    },
   ],
   problems: [
     {
@@ -201,6 +261,75 @@ LIMIT 10;`,
       ],
       expected: EXPECTED["l16-p4"],
       ordered: true,
+    },
+    {
+      id: "l16-p5",
+      title: "The damage report",
+      brief: "Quantify the crime in one row: `honest` (ROUND(SUM(total), 2) from a clean scan of orders), `inflated` (ROUND(SUM(o.total), 2) over orders JOIN order_items), and `ratio` (inflated divided by honest, ROUND 2). The honest number MUST come from its own subquery — inside the join it's already contaminated.",
+      hints: [
+        "Two sources, one row: a scalar subquery over plain orders for the truth, the joined SUM for the lie — then divide.",
+        "Shape: SELECT (SELECT ROUND(SUM(total), 2) FROM orders) AS honest, ROUND(SUM(o.total), 2) AS inflated, ROUND(SUM(o.total) / (SELECT SUM(total) FROM orders), 2) AS ratio FROM orders o JOIN order_items oi ON …;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT\n  (SELECT ROUND(SUM(total), 2) FROM orders) AS honest,\n  ROUND(SUM(o.total), 2) AS inflated,\n  ROUND(SUM(o.total) / (SELECT SUM(total) FROM orders), 2) AS ratio\nFROM orders o\nJOIN order_items oi ON oi.order_id = o.id;",
+      mistakes: [
+        { test: "sum\\s*\\(\\s*o\\.total\\s*\\)[^;]*as\\s+honest", message: "o.total inside the joined rows IS the inflated number — the honest figure must come from its own scan: (SELECT SUM(total) FROM orders)." },
+        { test: "^select\\b(?:(?!\\bratio\\b).)*$", message: "The damage report needs all three columns — honest, inflated, and the ratio dividing the two." },
+      ],
+      expected: EXPECTED["l16-p5"],
+    },
+    {
+      id: "l16-p6",
+      title: "The DISTINCT salvage audit",
+      brief: "How far does the DISTINCT bandage stretch? One row, three numbers: `rows_joined` (all pairs), `orders_distinct` (COUNT(DISTINCT o.id)), `totals_distinct` (COUNT(DISTINCT o.total)). Compare the last two — and remember why equal totals would make that rescue a lie.",
+      hints: [
+        "Three counts over the same joined rows: the raw pile, distinct order identities, distinct total values.",
+        "Shape: SELECT COUNT(*) AS rows_joined, COUNT(DISTINCT o.id) AS orders_distinct, COUNT(DISTINCT o.total) AS totals_distinct FROM orders o JOIN order_items oi ON …;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT\n  COUNT(*) AS rows_joined,\n  COUNT(DISTINCT o.id) AS orders_distinct,\n  COUNT(DISTINCT o.total) AS totals_distinct\nFROM orders o\nJOIN order_items oi ON oi.order_id = o.id;",
+      mistakes: [
+        { test: "count\\s*\\(\\s*distinct\\s*\\*\\s*\\)", message: "COUNT(DISTINCT *) isn't valid spelling — dedupe the key column: COUNT(DISTINCT o.id)." },
+        { test: "^select\\b(?:(?!totals_distinct).)*$", message: "The audit wants all three numbers — rows_joined, orders_distinct, and totals_distinct side by side." },
+      ],
+      expected: EXPECTED["l16-p6"],
+    },
+    {
+      id: "l16-p7",
+      title: "The average trap",
+      brief: "Averages inherit the same disease. One row: `honest_avg` (ROUND(AVG(total), 2) from plain orders) beside `inflated_avg` (ROUND(AVG(o.total), 2) over the join). Every line item drags its order's total into the average — watch the number drift.",
+      hints: [
+        "Same two-source pattern as the damage report: the clean average comes from a scalar subquery over orders, the contaminated one from the joined rows.",
+        "Shape: SELECT (SELECT ROUND(AVG(total), 2) FROM orders) AS honest_avg, ROUND(AVG(o.total), 2) AS inflated_avg FROM orders o JOIN order_items oi ON …;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT\n  (SELECT ROUND(AVG(total), 2) FROM orders) AS honest_avg,\n  ROUND(AVG(o.total), 2) AS inflated_avg\nFROM orders o\nJOIN order_items oi ON oi.order_id = o.id;",
+      mistakes: [
+        { test: "avg\\s*\\(\\s*o\\.total\\s*\\)[^;]*as\\s+honest_avg", message: "AVG(o.total) over the joined rows IS the inflated average — the honest one comes from a clean scan: (SELECT AVG(total) FROM orders)." },
+        { test: "^select\\b(?:(?!inflated_avg).)*$", message: "Both numbers belong in one row — honest_avg and inflated_avg side by side." },
+      ],
+      expected: EXPECTED["l16-p7"],
+    },
+    {
+      id: "l16-p8",
+      title: "The clean audit",
+      brief: "The final reconciliation: per order, compare the stored total against the revenue rebuilt from its own lines (GROUP BY o.id, HAVING on the ROUNDed figures). Count the orders that DON'T match: output one row, one column `mismatches`. Zero is a finding — the seed's arithmetic holds.",
+      hints: [
+        "Bucket the joined rows per order, rebuild each basket's revenue from its lines, keep only the buckets where rebuild ≠ stored total, then count what's left.",
+        "Shape: SELECT COUNT(*) AS mismatches FROM ( SELECT o.id FROM orders o JOIN order_items oi ON … GROUP BY o.id HAVING ROUND(SUM(oi.quantity * oi.unit_price), 2) <> ROUND(o.total, 2) );",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT COUNT(*) AS mismatches\nFROM (\n  SELECT o.id\n  FROM orders o\n  JOIN order_items oi ON oi.order_id = o.id\n  GROUP BY o.id\n  HAVING ROUND(SUM(oi.quantity * oi.unit_price), 2) <> ROUND(o.total, 2)\n);",
+      mistakes: [
+        { test: "having[^;]*round[^;]*\\)\\s*=\\s*round", message: "Equality finds the MATCHING orders — the audit hunts mismatches: HAVING … <> ROUND(o.total, 2)." },
+        { test: "^(?!.*order_items).*$", message: "The rebuildable revenue lives in the lines — join order_items, group by order, and compare against the stored total." },
+        { test: "^select\\s+o\\.", message: "The brief wants one number — wrap the per-order comparison in an outer COUNT(*) AS mismatches." },
+      ],
+      expected: EXPECTED["l16-p8"],
     },
   ],
   takeaway: "A one-to-many join replicates the one side's values, so aggregate the many side per key before summing one-side columns — and run the pre-flight checklist (keys, multiplication, unmatched rows, GROUP BY id, COUNT(column)) before any joined aggregate ships.",

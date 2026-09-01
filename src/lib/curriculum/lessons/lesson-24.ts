@@ -174,6 +174,66 @@ ORDER BY category;    -- exactly one row: Apparel`,
         { choice: 3, why: "EXCEPT's dedupe is beside the point — it dedupes result rows, not the underlying join. Safety comes from each arm grouping by category before the set operation compares them." },
       ],
     },
+    {
+      id: "l24-q5",
+      prompt: "When does a report deserve a stacked 'TOTAL' row rather than an extra column?",
+      choices: [
+        "never — columns are always better",
+        "when the total is a different GRAIN than the detail rows — a report-level fact under row-level facts",
+        "when the total is bigger than every row",
+        "when the engine supports only one query",
+      ],
+      answer: 1,
+      why: "A monthly ledger's rows are per-month facts; the TOTAL is a report-level fact — different grain, so it can't be a column without bending every row. UNION ALL stacks the two grains into one readable result.",
+      notes: [
+        { choice: 2, why: "Size is irrelevant — the driver is grain: a total that belongs to no single row goes underneath, not beside." },
+      ],
+    },
+    {
+      id: "l24-q6",
+      prompt: "In the stacked ledger, why does every column need a deliberate alias in arm 1?",
+      choices: [
+        "aliases make the query faster",
+        "the compound's column names come from arm 1 only — arm 2's aliases are invisible",
+        "SQLite requires aliases on all columns",
+        "aliases prevent NULLs",
+      ],
+      answer: 1,
+      why: "A compound SELECT takes its headers from the first arm; whatever arm 2 calls its columns is ignored. Name arm 1's columns exactly as the report should read — month, orders, revenue — and arm 2 just lines up positionally.",
+      notes: [
+        { choice: 2, why: "Aliases aren't mandatory — but without deliberate ones, arm 1's raw column names become the report's headers." },
+      ],
+    },
+    {
+      id: "l24-q7",
+      prompt: "\"Regions with customers but no suppliers\" — which pattern answers this?",
+      choices: [
+        "an INNER JOIN of the two region lists",
+        "an EXCEPT (or anti-join): customer regions EXCEPT supplier regions",
+        "a CASE expression",
+        "a UNION ALL of both lists",
+      ],
+      answer: 1,
+      why: "\"In the first, never in the second\" is set subtraction — EXCEPT (or the LEFT JOIN + IS NULL spelling). A join finds co-occurrence, UNION stacks, CASE branches per row; none of them express absence.",
+      notes: [
+        { choice: 0, why: "An inner join keeps regions that appear in BOTH — the opposite of the audit." },
+      ],
+    },
+    {
+      id: "l24-q8",
+      prompt: "The capstone verifies each answer by computing it twice. Which pair of patterns is a legitimate cross-check?",
+      choices: [
+        "INTERSECT spelling vs INNER JOIN spelling of the same overlap",
+        "the same query with different column aliases",
+        "two runs of the same query an hour apart",
+        "ORDER BY ASC vs DESC",
+      ],
+      answer: 0,
+      why: "INTERSECT and the join spelling take different routes to the same definition (rows present in both sets) — if they disagree, something is wrong in one of them. Aliases, timing, and sort direction never change the data.",
+      notes: [
+        { choice: 1, why: "Renaming columns can't catch a logic error — a real cross-check must re-derive the answer through a different mechanism." },
+      ],
+    },
   ],
   problems: [
     {
@@ -250,6 +310,81 @@ ORDER BY category;    -- exactly one row: Apparel`,
         { test: "^(?=[^;]*\\bcount\\s*\\()(?![^;]*\\bgroup by\\b)", message: "COUNT(*) without GROUP BY collapses everything into one row — label each order with the CASE first, then GROUP BY bucket." },
       ],
       expected: EXPECTED["l24-p4"],
+      ordered: true,
+    },
+    {
+      id: "l24-p5",
+      title: "Three patterns, one row",
+      brief: "The module's three tools, one KPI row: `high_tiers` = customers whose total spend reaches 3000 (aggregate + CASE threshold — count the tier bucket), `stacked_names` = customers' names UNION ALL suppliers' names (count the stack), `except_first` = delivered customers EXCEPT cancelled customers (count the difference).",
+      hints: [
+        "Three scalar subqueries side by side: one counts a per-customer HAVING bucket, one adds two table counts, one counts a wrapped EXCEPT.",
+        "Shape: SELECT (SELECT COUNT(*) FROM (<spend bucket>)) AS high_tiers, (SELECT COUNT(*) FROM customers) + (SELECT COUNT(*) FROM suppliers) AS stacked_names, (SELECT COUNT(*) FROM (<delivered EXCEPT cancelled>)) AS except_first;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT\n  (SELECT COUNT(*) FROM (\n     SELECT customer_id FROM orders GROUP BY customer_id HAVING SUM(total) >= 3000\n  )) AS high_tiers,\n  (SELECT COUNT(*) FROM customers) + (SELECT COUNT(*) FROM suppliers) AS stacked_names,\n  (SELECT COUNT(*) FROM (\n     SELECT DISTINCT customer_id FROM orders WHERE status = 'delivered'\n     EXCEPT\n     SELECT DISTINCT customer_id FROM orders WHERE status = 'cancelled'\n  )) AS except_first;",
+      mistakes: [
+        { test: "sum\\s*\\(\\s*total\\s*\\)\\s*>=\\s*30000|spend\\s*>=\\s*30000", message: "The tier bar is 3000 — HAVING SUM(total) >= 3000 buckets each customer's spend; 30000 would empty the bucket." },
+        { test: "\\bjoin\\b[^;]*\\bsuppliers\\b", message: "The stacked count is two independent scans added together — customers' names plus suppliers' — not a join between them." },
+        { test: "^(?![^;]*\\bexcept\\b)", message: "The third number is a set difference — delivered customers EXCEPT cancelled customers, wrapped in a FROM subquery and counted." },
+      ],
+      expected: EXPECTED["l24-p5"],
+    },
+    {
+      id: "l24-p6",
+      title: "Gold, silver, bronze",
+      brief: "The podium, tiered: top 5 customers by line-item revenue (quantity × unit_price across the three-table chain), each stamped with a tier — revenue ≥ 4000 `gold`, ≥ 2000 `silver`, else `bronze`. Output: `name`, `revenue` (ROUND 2), `tier`, biggest revenue first.",
+      hints: [
+        "Aggregate first, classify in the same pass: the tier CASE tests the SUM itself — aliases aren't visible to sibling SELECT expressions.",
+        "Shape: SELECT c.name, ROUND(SUM(oi.quantity * oi.unit_price), 2) AS revenue, CASE WHEN SUM(oi.quantity * oi.unit_price) >= <hi> THEN 'gold' WHEN … >= <lo> THEN 'silver' ELSE 'bronze' END AS tier FROM customers c JOIN orders o ON … JOIN order_items oi ON … GROUP BY c.id ORDER BY revenue DESC LIMIT <n>;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT c.name,\n  ROUND(SUM(oi.quantity * oi.unit_price), 2) AS revenue,\n  CASE WHEN SUM(oi.quantity * oi.unit_price) >= 4000 THEN 'gold'\n       WHEN SUM(oi.quantity * oi.unit_price) >= 2000 THEN 'silver'\n       ELSE 'bronze' END AS tier\nFROM customers c\nJOIN orders o      ON o.customer_id = c.id\nJOIN order_items oi ON oi.order_id = o.id\nGROUP BY c.id\nORDER BY revenue DESC\nLIMIT 5;",
+      mistakes: [
+        { test: "sum\\s*\\(\\s*o\\.total", message: "The line-item measure is fanout-proof: SUM(oi.quantity * oi.unit_price). SUM(o.total) re-creates the lesson-16 crime." },
+        { test: "case[^;]*(?:when\\s+)?(?:revenue|tier)\\s*(?:>=|>)", message: "The tier CASE must test the aggregate itself — SUM(oi.quantity * oi.unit_price) >= 4000 — not an alias; aliases aren't visible to sibling SELECT expressions." },
+        { test: "^select\\b(?:(?!\\blimit\\b).)*$", message: "The podium is five — append ORDER BY revenue DESC LIMIT 5." },
+      ],
+      expected: EXPECTED["l24-p6"],
+      ordered: true,
+    },
+    {
+      id: "l24-p7",
+      title: "Region report card",
+      brief: "One row per region: `region`, `open_orders` (pending), `lost_orders` (cancelled), `revenue` (ROUND(SUM(o.total), 2)), and a `grade` — revenue over 10000 is `flagship`, anything else `standard`. Ranked by revenue, biggest first.",
+      hints: [
+        "Pivot and grade in one pass: the conditional SUMs build the columns, and the grade CASE tests the same SUM(o.total) the revenue column rounds.",
+        "Shape: SELECT c.region, SUM(CASE WHEN o.status = 'pending' THEN 1 ELSE 0 END) AS open_orders, …, ROUND(SUM(o.total), 2) AS revenue, CASE WHEN SUM(o.total) > <bar> THEN 'flagship' ELSE 'standard' END AS grade FROM … GROUP BY c.region ORDER BY revenue DESC;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT c.region,\n  SUM(CASE WHEN o.status = 'pending'   THEN 1 ELSE 0 END) AS open_orders,\n  SUM(CASE WHEN o.status = 'cancelled' THEN 1 ELSE 0 END) AS lost_orders,\n  ROUND(SUM(o.total), 2) AS revenue,\n  CASE WHEN SUM(o.total) > 10000 THEN 'flagship' ELSE 'standard' END AS grade\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nGROUP BY c.region\nORDER BY revenue DESC;",
+      mistakes: [
+        { test: "case[^;]*(?:when\\s+)?(?:revenue|grade)\\s*(?:>|>=)", message: "The grade's CASE must test the aggregate itself — SUM(o.total) > 10000 — not the alias; aliases aren't visible to sibling SELECT expressions." },
+        { test: "\\bhaving\\b", message: "Every region makes the report card — no group filter is asked for; the grade CASE handles the split." },
+        { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "The card is ranked by revenue — append ORDER BY revenue DESC." },
+      ],
+      expected: EXPECTED["l24-p7"],
+      ordered: true,
+    },
+    {
+      id: "l24-p8",
+      title: "The stacked ledger",
+      brief: "One ledger, two grains: the top-3 delivered orders by total (ties by lowest id) tagged `'done'`, stacked over ALL pending orders tagged `'open'`. Output `id`, `total`, `kind` — ordered by `kind`, then total descending, then id.",
+      hints: [
+        "The top-3 pick needs its own ORDER BY … LIMIT, so it must be nested in a FROM subquery; UNION ALL stacks it over the pending arm, and one final ORDER BY sorts the whole ledger.",
+        "Shape: SELECT id, total, kind FROM ( SELECT id, total, 'done' AS kind FROM (SELECT * FROM orders WHERE status = 'delivered' ORDER BY total DESC, id LIMIT 3) UNION ALL SELECT id, total, 'open' AS kind FROM orders WHERE status = 'pending' ) ORDER BY kind, total DESC, id;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT id, total, kind FROM (\n  SELECT id, total, 'done' AS kind FROM (\n    SELECT * FROM orders WHERE status = 'delivered' ORDER BY total DESC, id ASC LIMIT 3\n  )\n  UNION ALL\n  SELECT id, total, 'open' AS kind FROM orders WHERE status = 'pending'\n)\nORDER BY kind, total DESC, id;",
+      mistakes: [
+        { test: "\\bunion\\b(?!\\s+all\\b)", message: "UNION would dedupe ledger rows that happen to share a total — a ledger keeps every entry: UNION ALL." },
+        { test: "^(?=.*\\blimit\\s+3\\b)(?![^;]*from\\s*\\()", message: "A LIMIT inside one arm only works wrapped in its own FROM subquery — parens around compound arms are banned; nest the top-3 pick, then stack." },
+        { test: "\\bwhere\\s+kind\\b|\\bhaving\\s+kind\\b", message: "Don't filter a computed label after the fact — each arm IS its status: the delivered arm tags 'done', the pending arm tags 'open'." },
+      ],
+      expected: EXPECTED["l24-p8"],
       ordered: true,
     },
   ],

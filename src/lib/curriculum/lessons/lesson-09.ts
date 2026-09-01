@@ -120,6 +120,68 @@ LIMIT 5;`,
         { choice: 3, why: "The extra JOIN is trivial to write — the real cost of copying names into orders is integrity: every rename would need to chase down duplicated copies, and one would be missed." },
       ],
     },
+    {
+      id: "l9-q5",
+      prompt: "`SELECT o.id, c.name FROM orders o JOIN customers c ON c.id = o.customer_id` — how many rows come back?",
+      choices: [
+        "16 — one per customer",
+        "103 — one per order",
+        "119 — the orders, plus one spare row per customer",
+        "1648 — every order paired with every customer",
+      ],
+      answer: 1,
+      why: "customer_id points at exactly one customer, so every order produces exactly one pair: 103 orders in, 103 rows out. A join over a many-to-one hop doesn't multiply rows — it widens them.",
+      notes: [
+        { choice: 3, why: "1648 (103 × 16) is the cartesian you get with NO ON clause. The match rule keeps only the pairs where the foreign key actually lands on its customer." },
+        { choice: 0, why: "Customers don't collapse the result — each one appears once per order they placed, and all 16 have placed at least one. Preservation of left rows is LEFT JOIN's job, not a join's default." },
+      ],
+    },
+    {
+      id: "l9-q6",
+      prompt: "You move `c.city = 'Berlin'` from WHERE into the ON clause of an INNER JOIN. What changes?",
+      choices: [
+        "Nothing — the same rows come back",
+        "The query now returns fewer rows",
+        "An error — filters can't reference joined columns inside ON",
+        "Rows with a NULL city start matching",
+      ],
+      answer: 0,
+      why: "For INNER JOIN, ON and WHERE keep exactly the pairs where the predicate is true: ON decides which pairs survive the join, WHERE filters the join's output — same test, same survivors. Placement only starts to matter with LEFT JOIN (lesson 12).",
+      notes: [
+        { choice: 2, why: "Any column of an already-joined table is legal inside ON — the clause evaluates per pair with both rows' columns in scope, so c.city is perfectly legal there." },
+      ],
+    },
+    {
+      id: "l9-q7",
+      prompt: "`SELECT name FROM orders o JOIN customers c ON c.id = o.customer_id` — what happens?",
+      choices: [
+        "It returns the customers' names",
+        "It returns the orders' names — the FROM table wins ties",
+        "Error: \"ambiguous column name\" — both tables have a name column",
+        "It runs, returning NULL for every row",
+      ],
+      answer: 2,
+      why: "orders and customers BOTH carry a column called name, so a bare reference has two candidate sources — and SQLite refuses to guess, erroring with \"ambiguous column name\". The fix is qualifying: c.name (or o.name, if you truly meant the order's).",
+      notes: [
+        { choice: 1, why: "There is no FROM-table-wins tiebreak — two candidate sources means an error, never a silent pick. Qualifying the column is how you say which one you meant." },
+      ],
+    },
+    {
+      id: "l9-q8",
+      prompt: "You need each product with its supplier's region. Which query is spelled correctly?",
+      choices: [
+        "SELECT p.name, s.region FROM products p JOIN suppliers s ON s.id = p.supplier_id;",
+        "SELECT p.name, s.region FROM products p JOIN suppliers s ON s.id = p.id;",
+        "SELECT p.name, s.region FROM products p JOIN suppliers s ON p.supplier_id = p.id;",
+        "SELECT p.name, s.region FROM suppliers s JOIN products p ON s.supplier_id = p.id;",
+      ],
+      answer: 0,
+      why: "The foreign-key thread is products.supplier_id → suppliers.id, so the match rule pairs s.id with p.supplier_id. (Listing the tables in the other FROM/JOIN order would be fine too for an INNER JOIN — the ON keys are what matter.)",
+      notes: [
+        { choice: 1, why: "s.id = p.id compares the two tables' primary keys against each other — unrelated counters that happen to collide. The thread is the foreign key, not the id." },
+        { choice: 3, why: "suppliers has no supplier_id column — that spelling errors out. Flipping which table sits in FROM is legal, but the ON must still pair p.supplier_id with s.id." },
+      ],
+    },
   ],
   problems: [
     {
@@ -196,6 +258,82 @@ LIMIT 5;`,
         { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "The supply line is graded in price order — append ORDER BY p.price DESC." },
       ],
       expected: EXPECTED["l9-p4"],
+      ordered: true,
+    },
+    {
+      id: "l9-p5",
+      title: "Sleepy accounts",
+      brief: "Marketing wants to wake the dormant accounts. List the **inactive** customers' orders: output `id` (order id), `name`, `active`, ordered by order id. Two of the 16 customers sleep — their 6 orders are your list.",
+      hints: [
+        "Whether an account is active is a fact about the customer, not the order — join customers on for the flag, then filter on the joined side's column exactly like the city filter earlier.",
+        "Shape: SELECT o.id, c.name, c.active FROM orders o JOIN customers c ON c.id = o.customer_id WHERE c.active = <value> ORDER BY o.id;",
+      ],
+      difficulty: "medium",
+      solution:
+        "SELECT o.id, c.name, c.active\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nWHERE c.active = 0\nORDER BY o.id;",
+      mistakes: [
+        { test: "\\bc\\.active\\s*=\\s*1\\b", message: "The brief targets the sleeping accounts — the flag reads c.active = 0 (0 = inactive, 1 = active)." },
+        { test: "\\bfrom\\s+orders\\b(?![^;]*\\bjoin\\b)", message: "The name and the active flag both live in customers — join it via orders.customer_id, otherwise c.name has no source." },
+        { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "The brief grades the list in order-id order — append ORDER BY o.id." },
+      ],
+      expected: EXPECTED["l9-p5"],
+      ordered: true,
+    },
+    {
+      id: "l9-p6",
+      title: "The alphabetical ledger",
+      brief: "Print the first 20 orders of the ledger: sorted by customer name A→Z, and within the same customer by total, biggest first. Output: `id` (order id), `name`, `total`. Fair warning: the top orderer has 24 orders, so all twenty rows belong to one name.",
+      hints: [
+        "A multi-key sort takes a comma list in ORDER BY: the customer name ascending decides first, the total descending breaks ties inside each name — only then does LIMIT cap the result.",
+        "Shape: SELECT o.id, c.name, o.total FROM orders o JOIN customers c ON c.id = o.customer_id ORDER BY c.name <direction>, o.total <direction> LIMIT <n>;",
+      ],
+      difficulty: "medium",
+      solution:
+        "SELECT o.id, c.name, o.total\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nORDER BY c.name ASC, o.total DESC\nLIMIT 20;",
+      mistakes: [
+        { test: "\\border\\s+by\\b[^;]*\\btotal\\b(?!\\s+desc\\b)", message: "\"Biggest first\" needs the DESC direction on the total — a bare or ASC sort puts the cheapest ticket on top inside every name." },
+        { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "The ledger is graded row by row — append ORDER BY c.name, o.total DESC before the LIMIT 20 cap." },
+        { test: "\\bjoin\\s+customers\\b(?![^;]*\\bon\\b)", message: "A JOIN with no ON pairs every order with every customer (103 × 16 rows) — the match rule `ON c.id = o.customer_id` picks each order's actual buyer." },
+      ],
+      expected: EXPECTED["l9-p6"],
+      ordered: true,
+    },
+    {
+      id: "l9-p7",
+      title: "EU sale tags",
+      brief: "15% off everything sourced from EU suppliers. For each EU-sourced product show `name`, `supplier`, `price`, and `sale_price` — computed as ROUND(price * 0.9, 2), aliased exactly — ordered by sale_price descending, ties by product name. Five products make the tag.",
+      hints: [
+        "The sale price is computed per row: build the expression from the price column, wrap it in ROUND(…, 2) so money keeps two decimals, alias it, and sort on the result.",
+        "Shape: SELECT p.name, s.name AS supplier, p.price, ROUND(p.price * <factor>, 2) AS sale_price FROM products p JOIN suppliers s ON s.id = p.supplier_id WHERE s.region = <region> ORDER BY sale_price DESC, p.name;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT p.name, s.name AS supplier, p.price, ROUND(p.price * 0.9, 2) AS sale_price\nFROM products p\nJOIN suppliers s ON s.id = p.supplier_id\nWHERE s.region = 'EU'\nORDER BY sale_price DESC, p.name ASC;",
+      mistakes: [
+        { test: "round\\(\\s*p\\.price\\s*\\*\\s*(?!0\\.9\\b)[\\d.]+", message: "A 15% cut means paying 90% of the price — multiply by 0.9 (subtracting 0.15 or multiplying by 1.15 marks the tag wrong)." },
+        { test: "region\\s*=\\s*'(?!eu')[^']*'", message: "The sale covers EU-sourced products only — the region filter should read s.region = 'EU'." },
+        { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "Tags are graded best-deal-first — append ORDER BY sale_price DESC, p.name." },
+      ],
+      expected: EXPECTED["l9-p7"],
+      ordered: true,
+    },
+    {
+      id: "l9-p8",
+      title: "From the customers side",
+      brief: "The pending-orders list, rewritten from the customer's side: `FROM customers`, joined to orders. Output: `name`, `id` (the order id), ordered by name, then id. For INNER JOINs the table order is readability, not semantics — the 14 rows match either way.",
+      hints: [
+        "Start the query at customers and join orders through the same foreign key — for an INNER JOIN the result is identical whichever table sits in FROM; write it the way that reads best.",
+        "Shape: SELECT c.name, o.id FROM customers c JOIN orders o ON o.customer_id = c.id WHERE o.status = <status> ORDER BY c.name, o.id;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT c.name, o.id\nFROM customers c\nJOIN orders o ON o.customer_id = c.id\nWHERE o.status = 'pending'\nORDER BY c.name, o.id;",
+      mistakes: [
+        { test: "\\bjoin\\s+orders\\b(?![^;]*\\bon\\b)", message: "A JOIN with no ON pairs every customer with every order (16 × 103 rows) — the match rule `ON o.customer_id = c.id` selects each customer's actual orders." },
+        { test: "status\\s*=\\s*'(?!pending')[^']*'", message: "This list tracks pending orders — the status filter should read o.status = 'pending'." },
+        { test: "\\bfrom\\s+orders\\b", message: "This one is written customers-first: start FROM customers c and JOIN orders o — same 14 rows, but the FROM side is the point of the exercise." },
+      ],
+      expected: EXPECTED["l9-p8"],
       ordered: true,
     },
   ],

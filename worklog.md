@@ -276,3 +276,22 @@ Stage Summary:
 - Curriculum now 3 modules · 24 lessons · 164 MCQs · 135 problems · 48 interactive diagrams — every lesson carries an intro figure + one mid-lesson concept-deep figure, all numbers seed-verified
 - Diagram system is now split: diagrams-kit.tsx (shared helpers) + diagrams.tsx (M1 + registry) + diagrams-m2/m3.tsx (module registries) — adding figures per module no longer risks merge conflicts
 - Key files: src/components/learn/{diagrams-kit,diagrams,diagrams-m2,diagrams-m3}.tsx, src/lib/curriculum/{types.ts,lessons/lesson-01..07,09..24}, src/components/landing.tsx, scripts/facts-viz.ts (kept)
+
+---
+Task ID: 17
+Agent: Super Z (main agent)
+Task: "yeah keep pushing content" — double M2/M3 practice depth: +4 problems (p5–p8) and +4 MCQs (q5–q8) in every lesson 09–24 (135→199 problems, 164→228 MCQs)
+
+Work Log:
+- Pre-flight: restarted dev server (old process held stale SQLite connection); fixed the lingering shipped_at runtime bug — db/custom.db's orders table predated the column; one resetDatabase() (DROP+CREATE) rebuilt it canonical: 16/6/16/103/251, shipped_at NULL = 21 (14 pending + 7 cancelled)
+- Content audit exposed the gap: M1 lessons carry 8–12 problems + 11–20 MCQs but M2/M3 sat at exactly 4 + 4 — designed +4/+4 for all 16 lessons with concept slots chosen to avoid overlap with existing p1–p4/q1–q4 (predict-row-count, spot-the-bug, pick-the-spelling, boundary-behavior MCQs; medium→hard difficulty curve p5–p8)
+- Fact verification BEFORE writing (scripts/facts-task17.ts, kept): boundary facts killed 3 planned designs (no zero-order customers, same-city pairs 0, same-day/same-total doubles 0, pending∖delivered 0) → pivoted to verified replacements (same-month doubles = 32, supplier region twins = 2, shipped∖delivered-style complements); verified inflated avg 411.33, ratio 2.96, totals_distinct = 103 (all totals unique — powers the q5 DISTINCT trap), region revenues, Berlin/EU pivots, HAVING-qualifier sets, compound-SQLite support forms (FROM-compound OK, double-paren banned)
+- Delegation attempt (4 parallel subagents) hit repeated rate-limit timeouts twice; batches A (l09–12) and C (l17–20) landed their edits before dying (verified centrally: 8/8 per lesson, qa-coach clean); batches B (l13–16) and D (l21–24) never wrote → main agent wrote all 8 lessons itself in the established house style (brief with exact aliases, hints[nudge, Shape:], 2–3 targeted mistake rules each, notes on tempting distractors, EXPECTED[] references)
+- Central QA: gen-expected 199/199 OK 0 failures (every new solution executes on the seed); qa-coach ALL CHECKS PASSED (199/199 hints[2], 0 self-matching rules, all notes target wrong choices); audit-ids 228 MCQs · 199 problems · 427 unique ids · 0 dupes · 0 orphans · 199 expected keys mapped; src tsc clean; eslint clean on the 8 hand-written files
+- Browser E2E (agent-browser): landing shows "199 graded queries · 228 quiz questions" and per-module 64/64; lesson 16 practice renders all 4 new problems; Coach panel fired correctly on a join-based attempt at p1; grader rejected right-query/wrong-problem with exact column mismatch, then l16-p5 "The damage report" graded 1/8 solved — full pipeline (editor → run on live seed → expected.ts compare → XP) verified
+- Cleanup: deleted 12 throwaway scripts + 6 nav screenshots; kept facts-task17.ts as the fact ledger
+
+Stage Summary:
+- Curriculum now 3 modules · 24 lessons · 199 problems · 228 MCQs · 48 figures — every lesson now carries 8 problems + 8 MCQs (M2/M3 doubled to M1 depth), all numbers seed-verified, all 199 grading targets regenerated from live solutions
+- Key files: src/lib/curriculum/lessons/lesson-09..24.ts (+4 problems/+4 MCQs each), src/lib/curriculum/expected.ts (regenerated 199 entries)
+- Note for future rounds: subagent parallelism is currently rate-limit-fragile — batches may land without reporting (check git diff + qa gates); SQLite accepts FROM-compounds and scalar EXCEPT wrappers but rejects double-parenthesized arms

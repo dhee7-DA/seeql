@@ -98,6 +98,67 @@ ORDER BY o.total DESC;`,
         { choice: 0, why: "INNER is optional padding — bare JOIN parses as an INNER JOIN in SQLite, PostgreSQL and MySQL alike; spelling it out is pure style." },
       ],
     },
+    {
+      id: "l10-q5",
+      prompt: "`SELECT * FROM order_items oi JOIN orders o ON oi.order_id = o.id` — how many rows?",
+      choices: [
+        "103 — one per order",
+        "251 — one per line",
+        "16 — one per product",
+        "4016 — every line paired with every product",
+      ],
+      answer: 1,
+      why: "Each line belongs to exactly one order, and every order_id finds its order — one output row per LINE: 251. On a many-to-one hop the row count survives; only the columns widen.",
+      notes: [
+        { choice: 0, why: "103 counts DISTINCT orders — the 251 lines ride on them, and each line keeps its own output row (251 lines spread over 103 orders)." },
+        { choice: 3, why: "A blow-up like that needs a missing or wrong ON — with the real foreign key in the match rule, each line pairs with exactly one order." },
+      ],
+    },
+    {
+      id: "l10-q6",
+      prompt: "A teammate writes `FROM orders o JOIN customers c ON o.id = c.id` and gets a plausible-looking result. What did they actually join on?",
+      choices: [
+        "The right key — both tables call it id",
+        "Nothing — SQLite refuses the query outright",
+        "Accidental id collisions: order 1 paired with customer 1, order 2 with customer 2 … 16 rows of wrong pairings",
+        "The foreign key, just written in reverse",
+      ],
+      answer: 2,
+      why: "Both tables number their rows from 1, so o.id = c.id matches wherever the counters collide — orders 1–16 hit customers 1–16 (16 rows), orders 17+ match nothing. Every pairing is semantically wrong: an order's buyer is o.customer_id, not whichever id happens to equal it.",
+      notes: [
+        { choice: 0, why: "Sharing a column NAME doesn't make it the same column — orders.id and customers.id are independent counters. The only real thread to customers is orders.customer_id." },
+      ],
+    },
+    {
+      id: "l10-q7",
+      prompt: "`SELECT name, price FROM products p JOIN suppliers s ON s.id = p.supplier_id` — spot the bug.",
+      choices: [
+        "price must be qualified too, or the query fails",
+        "Nothing — it runs and shows product names",
+        "name is ambiguous — products and suppliers both have one",
+        "The ON clause is written backwards",
+      ],
+      answer: 2,
+      why: "Both joined tables carry a name column, so the bare reference has two candidates and SQLite errors with \"ambiguous column name\". Qualify it: p.name for the product (s.name for the supplier).",
+      notes: [
+        { choice: 0, why: "price exists in only one of the two tables, so the bare reference resolves fine — ambiguity only bites when the column name exists in more than one joined table." },
+      ],
+    },
+    {
+      id: "l10-q8",
+      prompt: "orders ⋈ customers considers 103 × 16 = 1648 pairs — yet the proper join returns 103 rows. Why never 1648?",
+      choices: [
+        "ON discards every pair where the match rule is false, before anything is output",
+        "SQLite caps join results at the left table's size",
+        "1648 is what LEFT JOIN would return; INNER is smaller by design",
+        "The engine keeps the first match per order and drops the rest",
+      ],
+      answer: 0,
+      why: "The join considers all pairs, then ON tests each one: only pairs where c.id = o.customer_id survive — and each order has exactly one such customer. 1648 is what you get by deleting the ON entirely, not a step INNER JOIN quietly skips.",
+      notes: [
+        { choice: 3, why: "Nothing picks a \"first\" match — every pair satisfying ON emits its own row. Each order satisfies it exactly once, which is why the result is 103 rows, not 1648." },
+      ],
+    },
   ],
   problems: [
     {
@@ -174,6 +235,81 @@ ORDER BY o.total DESC;`,
         { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "\"First 20 by order id\" needs ORDER BY o.id before the LIMIT 20 cap." },
       ],
       expected: EXPECTED["l10-p4"],
+      ordered: true,
+    },
+    {
+      id: "l10-p5",
+      title: "The fanout census",
+      brief: "One row, one number: how many rows does the join of orders to order_items produce? Output: a single column headed `rows` (alias COUNT(*) exactly), a single row. Feel the multiplication on purpose — 251 is the whole point.",
+      hints: [
+        "The census IS the row count — COUNT(*) over the join, no WHERE, no GROUP BY. Alias the aggregate to the exact header the brief asks for.",
+        "Shape: SELECT COUNT(*) AS rows FROM orders o JOIN order_items oi ON oi.order_id = o.id;",
+      ],
+      difficulty: "medium",
+      solution:
+        "SELECT COUNT(*) AS rows\nFROM orders o\nJOIN order_items oi ON oi.order_id = o.id;",
+      mistakes: [
+        { test: "\\bfrom\\s+orders\\b(?![^;]*\\bjoin\\b)", message: "Counting orders alone gives 103 — the census counts PAIRS, so order_items has to join in via oi.order_id = o.id." },
+        { test: "\\bon\\s+(?:o\\.id\\s*=\\s*oi\\.id\\b|oi\\.id\\s*=\\s*o\\.id\\b)", message: "That pairs the two tables' primary keys against each other — the foreign key is order_items.order_id → orders.id." },
+        { test: "count\\(\\s*\\*\\s*\\)(?![^;]*\\bas\\s+rows\\b)", message: "The output column must be headed `rows` — alias it: COUNT(*) AS rows." },
+      ],
+      expected: EXPECTED["l10-p5"],
+    },
+    {
+      id: "l10-p6",
+      title: "Big lines, named",
+      brief: "The heavy hitters: every line with quantity >= 3 — 89 of them, and the store never ships more than 3 units — with product name and `line_total` = ROUND(quantity * unit_price, 2). Output: `id` (order_items id), `name`, `line_total`; biggest line_total first, ties broken by item id; first 10.",
+      hints: [
+        "The line's value is computed per row — multiply the two order_items columns inside ROUND(…, 2), alias it, and let ORDER BY … DESC plus LIMIT pick the top 10.",
+        "Shape: SELECT oi.id, p.name, ROUND(oi.quantity * oi.unit_price, 2) AS line_total FROM order_items oi JOIN products p ON p.id = oi.product_id WHERE oi.quantity >= <n> ORDER BY line_total DESC, oi.id LIMIT <n>;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT oi.id, p.name, ROUND(oi.quantity * oi.unit_price, 2) AS line_total\nFROM order_items oi\nJOIN products p ON p.id = oi.product_id\nWHERE oi.quantity >= 3\nORDER BY line_total DESC, oi.id ASC\nLIMIT 10;",
+      mistakes: [
+        { test: "\\bquantity\\s*>\\s*3\\b", message: "The threshold is >= 3, not strictly greater — a bare > drops every 3-unit line, and all 89 heavy lines are exactly 3 units." },
+        { test: "\\border\\s+by\\b[^;]*\\bline_total\\b(?!\\s+desc\\b)", message: "\"Biggest first\" needs DESC on line_total — a bare or ASC sort leads with the cheapest heavy line." },
+        { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "The top-10 needs a deliberate order — append ORDER BY line_total DESC, oi.id LIMIT 10." },
+      ],
+      expected: EXPECTED["l10-p6"],
+      ordered: true,
+    },
+    {
+      id: "l10-p7",
+      title: "Shelf value",
+      brief: "How much money sits on the shelf? For every product, `shelf_value` = ROUND(price * stock, 2), with the supplier's name alongside. Output: `name`, `supplier`, `shelf_value`; biggest value first, ties by product name; first 12.",
+      hints: [
+        "price and stock already live together in products — the join's only job is the supplier's name. Compute the value as an aliased expression and sort it biggest-first.",
+        "Shape: SELECT p.name, s.name AS supplier, ROUND(p.price * p.stock, 2) AS shelf_value FROM products p JOIN suppliers s ON s.id = p.supplier_id ORDER BY shelf_value DESC, p.name LIMIT <n>;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT p.name, s.name AS supplier, ROUND(p.price * p.stock, 2) AS shelf_value\nFROM products p\nJOIN suppliers s ON s.id = p.supplier_id\nORDER BY shelf_value DESC, p.name ASC\nLIMIT 12;",
+      mistakes: [
+        { test: "\\bs\\.name\\b(?!\\s+as\\s+supplier\\b)", message: "The supplier's name must be headed `supplier` — alias it: s.name AS supplier (otherwise the header reads \"name\" and collides with the product's)." },
+        { test: "\\bfrom\\s+products\\b(?![^;]*\\bjoin\\b)", message: "The supplier's name lives in suppliers — join it via products.supplier_id, otherwise s.name has no source." },
+        { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "Shelf value is graded biggest-first — append ORDER BY shelf_value DESC, p.name LIMIT 12." },
+      ],
+      expected: EXPECTED["l10-p7"],
+      ordered: true,
+    },
+    {
+      id: "l10-p8",
+      title: "Distinct orderers",
+      brief: "The census counted 251 joined rows — but how many distinct orders do those lines actually belong to? One row per order id, no duplicates: output `id` (alias oi.order_id exactly), ordered by id. Watch the fanout collapse back to 103.",
+      hints: [
+        "The same order id repeats once per line — DISTINCT keeps a single copy of each repeated value, collapsing the 251 lines to one row per order.",
+        "Shape: SELECT DISTINCT oi.order_id AS id FROM order_items oi ORDER BY <col>;",
+      ],
+      difficulty: "medium",
+      solution:
+        "SELECT DISTINCT oi.order_id AS id\nFROM order_items oi\nORDER BY id;",
+      mistakes: [
+        { test: "^select\\b(?![^;]*\\bdistinct\\b)(?=[^;]*\\border_id\\b)", message: "Without DISTINCT the 251 lines keep their duplicates — the ask is one row per order, and DISTINCT is what collapses the repeats." },
+        { test: "^select\\b(?:(?!\\bfrom\\b)[^;])*\\border_id\\b(?!\\s+as\\s+id\\b)", message: "The output column must be headed `id` — alias it: oi.order_id AS id." },
+        { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "The ids are graded in ascending order — append ORDER BY id." },
+      ],
+      expected: EXPECTED["l10-p8"],
       ordered: true,
     },
   ],

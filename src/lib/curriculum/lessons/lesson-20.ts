@@ -123,6 +123,56 @@ ORDER BY name;    -- 4K Webcam Pro, Smart Watch S`,
         { choice: 2, why: "6 counts customers with *no* shipped order (the anti-join); shipped EXCEPT delivered isolates the single customer whose order left the warehouse and never arrived." },
       ],
     },
+    {
+      id: "l20-q5",
+      prompt: "Arm A is `SELECT customer_id FROM orders` — 103 rows, customers repeated. Arm B is the 10 distinct customers with a shipped order. How many rows does `A EXCEPT B` return?",
+      choices: ["93", "16", "6", "103"],
+      answer: 2,
+      why: "EXCEPT works on distinct rows: the 16 ordering customers minus the 10 shipped ones = 6, each appearing once — arm A's repeats collapse before the subtraction (verified on this db).",
+      notes: [
+        { choice: 0, why: "93 would be 103 − 10 with duplicates kept — EXCEPT is distinct by definition, so repeated rows collapse before any subtraction." },
+      ],
+    },
+    {
+      id: "l20-q6",
+      prompt: "What does `SELECT status FROM orders EXCEPT SELECT status FROM orders` return?",
+      choices: ["103 rows", "4 rows", "0 rows — every row of A is also in A", "1 row"],
+      answer: 2,
+      why: "Subtracting a set from itself leaves nothing: every distinct status in the left arm is cancelled out by the same value in the right arm. A EXCEPT A is always empty, duplicates or not.",
+      notes: [
+        { choice: 1, why: "4 is the DISTINCT status count — but those are exactly the rows the right arm removes, leaving the empty set." },
+      ],
+    },
+    {
+      id: "l20-q7",
+      prompt: "Which is a REAL difference between `customers EXCEPT shipped-ids` and the lesson-14 `LEFT JOIN … WHERE o.id IS NULL` anti-join?",
+      choices: [
+        "EXCEPT compares whole rows; the LEFT JOIN matches only on the columns you join on",
+        "The LEFT JOIN spelling also dedupes its result",
+        "EXCEPT cannot take a subquery as its second arm",
+        "They can never return the same rows",
+      ],
+      answer: 0,
+      why: "EXCEPT diffs entire result rows; the anti-join's notion of 'match' is exactly the join keys. Project different columns and the two answers diverge — that's the whole design decision.",
+      notes: [
+        { choice: 1, why: "Backwards — LEFT JOIN + IS NULL preserves left-side duplicates; it's EXCEPT that collapses repeats." },
+      ],
+    },
+    {
+      id: "l20-q8",
+      prompt: "Your prod database is MySQL 8.0.30 and rejects `EXCEPT`. The portable anti-join spelling is…",
+      choices: [
+        "LEFT JOIN … WHERE right.key IS NULL",
+        "NOT IN (SELECT …) — safe on any version",
+        "UNION ALL with a negative flag column",
+        "CROSS JOIN plus a WHERE filter",
+      ],
+      answer: 0,
+      why: "MySQL only grew INTERSECT/EXCEPT in 8.0.31 (October 2022); before that the anti-join is spelled LEFT JOIN + IS NULL (or NOT EXISTS).",
+      notes: [
+        { choice: 1, why: "NOT IN runs on old MySQL but dies silently if the subquery yields a single NULL — the NULL-safe spellings are LEFT JOIN + IS NULL and NOT EXISTS." },
+      ],
+    },
   ],
   problems: [
     {
@@ -199,6 +249,81 @@ ORDER BY name;    -- 4K Webcam Pro, Smart Watch S`,
       ],
       expected: EXPECTED["l20-p4"],
       ordered: true,
+    },
+    {
+      id: "l20-p5",
+      title: "Waiting, never stung",
+      brief: "Customer ids that have a pending order but NO cancelled order at all: the pending-id set EXCEPT the cancelled-id set. Output one column `id`, ascending. Four ids expected.",
+      hints: [
+        "Two independent id sets — everyone waiting, everyone stung by a cancellation — and EXCEPT keeps the waiting ids the cancelled arm never returns.",
+        "Shape: SELECT DISTINCT customer_id AS id FROM orders WHERE status = '<left>' EXCEPT SELECT DISTINCT customer_id FROM orders WHERE status = '<right>' ORDER BY id;",
+      ],
+      difficulty: "medium",
+      solution:
+        "SELECT DISTINCT customer_id AS id FROM orders WHERE status = 'pending'\nEXCEPT\nSELECT DISTINCT customer_id FROM orders WHERE status = 'cancelled'\nORDER BY id;",
+      mistakes: [
+        { test: "\\bintersect\\b", message: "INTERSECT keeps ids in BOTH sets — the four cancelled veterans (1, 5, 11, 13). The brief wants the waiting ids with no cancellation: EXCEPT (3, 6, 7, 16)." },
+        { test: "\\bunion\\b", message: "UNION stacks both sets (8 ids) — the brief subtracts: EXCEPT keeps pending ids the cancelled arm never returns." },
+        { test: "status\\s*=\\s*'cancelled'[^;]*\\bexcept\\b", message: "The arms are swapped — cancelled EXCEPT pending drains to zero, because every cancelled customer is also waiting. The left arm must be the pending set." },
+      ],
+      expected: EXPECTED["l20-p5"],
+      ordered: true,
+    },
+    {
+      id: "l20-p6",
+      title: "Many-line orders, not waiting",
+      brief: "Fat orders, live ones only: ids of orders with 3 or more lines (GROUP BY order_id, HAVING COUNT(*) >= 3 over order_items) EXCEPT the ids currently pending. Output one column `id`, ascending. 41 rows expected.",
+      hints: [
+        "Build the fat-order id set first (GROUP BY order_id, HAVING COUNT(*) >= 3), then subtract the waiting ids with EXCEPT.",
+        "Shape: SELECT order_id AS id FROM order_items GROUP BY order_id HAVING COUNT(*) >= <n> EXCEPT SELECT id FROM orders WHERE status = '<s>' ORDER BY id;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT order_id AS id FROM order_items\nGROUP BY order_id\nHAVING COUNT(*) >= 3\nEXCEPT\nSELECT id FROM orders WHERE status = 'pending'\nORDER BY id;",
+      mistakes: [
+        { test: "\\bintersect\\b", message: "INTERSECT keeps the fat orders that are ALSO waiting (7 of them) — the brief wants fat orders that are NOT: EXCEPT (41)." },
+        { test: "having\\s+count\\s*\\(\\s*\\*\\s*\\)\\s*>\\s*3", message: "Boundary check — '3 or more lines' is HAVING COUNT(*) >= 3; a strict > 3 quietly drops every 3-line order." },
+        { test: "^select\\b(?:(?!\\bexcept\\b).)*$|^select\\b(?:(?!\\border\\s+by\\b).)*$|^select\\s+order_id\\s+from\\b", message: "Shape check — the first arm must read SELECT order_id AS id FROM order_items …, the pending ids follow EXCEPT (SELECT id FROM orders WHERE status = 'pending'), and the compound ends with ORDER BY id." },
+      ],
+      expected: EXPECTED["l20-p6"],
+      ordered: true,
+    },
+    {
+      id: "l20-p7",
+      title: "The last silent ids",
+      brief: "Quietest three: of the customers with no shipped order at all, the three HIGHEST ids. Start from `customers`, EXCEPT the shipped-customer set. Output one column `id`, descending, capped at 3 rows — six customers qualify in total.",
+      hints: [
+        "The six-quiet-customers set from the lesson's opener, then one ORDER BY id DESC and a LIMIT — clauses every compound takes at the very end.",
+        "Shape: SELECT id FROM customers EXCEPT SELECT DISTINCT customer_id FROM orders WHERE status = 'shipped' ORDER BY id DESC LIMIT <n>;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT id FROM customers\nEXCEPT\nSELECT DISTINCT customer_id FROM orders WHERE status = 'shipped'\nORDER BY id DESC\nLIMIT 3;",
+      mistakes: [
+        { test: "\\bintersect\\b", message: "INTERSECT returns the customers who DID ship (10 ids) — the brief wants the six who never did: EXCEPT." },
+        { test: "order\\s+by\\s+id\\s*(asc\\b)?\\s*(limit|;)", message: "The brief wants the LAST three — ORDER BY id DESC before LIMIT 3; an ascending cap would surface ids 2, 3, 4." },
+        { test: "^select\\b(?:(?!\\blimit\\b).)*$", message: "Cap the pile — LIMIT 3 after the final ORDER BY id DESC; without it all six quiet customers come out." },
+      ],
+      expected: EXPECTED["l20-p7"],
+      ordered: true,
+    },
+    {
+      id: "l20-p8",
+      title: "The symmetric difference",
+      brief: "One row, three truths about delivered vs cancelled: `first_way` = count of delivered EXCEPT cancelled, `other_way` = count of cancelled EXCEPT delivered, `sym_diff` = both survivor piles stacked (UNION ALL, each EXCEPT wrapped in a FROM subquery) and counted. Output: 11, 0, 11.",
+      hints: [
+        "Three scalar subqueries: count each direction's EXCEPT, then count the two survivor piles stacked with UNION ALL into one.",
+        "Shape: SELECT (SELECT COUNT(*) FROM (<d set> EXCEPT <c set>)) AS first_way, (SELECT COUNT(*) FROM (<c set> EXCEPT <d set>)) AS other_way, (SELECT COUNT(*) FROM (SELECT customer_id FROM (<d EXCEPT c>) UNION ALL SELECT customer_id FROM (<c EXCEPT d>))) AS sym_diff;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT\n  (SELECT COUNT(*) FROM (\n     SELECT DISTINCT customer_id FROM orders WHERE status = 'delivered'\n     EXCEPT\n     SELECT DISTINCT customer_id FROM orders WHERE status = 'cancelled'\n   )) AS first_way,\n  (SELECT COUNT(*) FROM (\n     SELECT DISTINCT customer_id FROM orders WHERE status = 'cancelled'\n     EXCEPT\n     SELECT DISTINCT customer_id FROM orders WHERE status = 'delivered'\n   )) AS other_way,\n  (SELECT COUNT(*) FROM (\n     SELECT customer_id FROM (\n        SELECT DISTINCT customer_id FROM orders WHERE status = 'delivered'\n        EXCEPT\n        SELECT DISTINCT customer_id FROM orders WHERE status = 'cancelled'\n      )\n     UNION ALL\n     SELECT customer_id FROM (\n        SELECT DISTINCT customer_id FROM orders WHERE status = 'cancelled'\n        EXCEPT\n        SELECT DISTINCT customer_id FROM orders WHERE status = 'delivered'\n      )\n   )) AS sym_diff;",
+      mistakes: [
+        { test: "\\bintersect\\b", message: "INTERSECT counts the overlap (4) — each column here is a SUBTRACTION: delivered-EXCEPT-cancelled (11) and its mirror (0)." },
+        { test: "\\)\\s*union\\s+all\\s*\\(\\s*select|\\bunion\\s+all\\s*\\(\\s*select", message: "SQLite rejects parenthesized compound arms (verified on this db) — wrap each directional EXCEPT in a FROM subquery: SELECT customer_id FROM (…EXCEPT…) UNION ALL SELECT customer_id FROM (…EXCEPT…)." },
+        { test: "^select\\b(?:(?!\\bsym_diff\\b).)*$", message: "Three numbers, one row — the third scalar subquery stacks both directional survivor piles with UNION ALL (each wrapped in a FROM subquery) and counts them AS sym_diff." },
+      ],
+      expected: EXPECTED["l20-p8"],
     },
   ],
   takeaway: "EXCEPT subtracts the second arm from the first — asymmetric, duplicate-collapsing, and NULL-safe where NOT IN silently fails — and the compound result takes a single ORDER BY, at the very end.",

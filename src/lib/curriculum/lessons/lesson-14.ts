@@ -103,6 +103,52 @@ ORDER BY c1.region, pair_a;`,
         { choice: 2, why: "The US is small but not pairless — its 2 customers form exactly 1 pair; LATAM is the region where a single customer (Bruno) has nobody to pair with." },
       ],
     },
+    {
+      id: "l14-q5",
+      prompt: "`FROM customers c1 JOIN customers c2` with NO ON condition — how many rows? (16 customers.)",
+      choices: ["16", "32", "256", "120"],
+      answer: 2,
+      why: "No ON means no match rule: every row pairs with every row, including itself — 16 × 16 = 256. The id guard is what turns this cartesian pile into pairs.",
+      notes: [
+        { choice: 3, why: "120 is C(16,2) — unordered pairs of DIFFERENT customers, which needs the c1.id < c2.id guard. Unguarded you also get self-pairs and mirrors: 256." },
+      ],
+    },
+    {
+      id: "l14-q6",
+      prompt: "Which join condition still lets a row appear paired with itself?",
+      choices: ["c1.id = c2.id", "c1.id <> c2.id", "c1.id < c2.id", "none of them do"],
+      answer: 0,
+      why: "Only equality matches a row against its own id — 16 degenerate self-pairs, plus every pair twice. <> drops self-pairs but keeps mirrors (a,b) and (b,a); < drops both — that is why it is the pair-counting guard.",
+      notes: [
+        { choice: 1, why: "A row's id never differs from itself, so <> already excludes self-pairs — its weakness is keeping the mirror copies." },
+      ],
+    },
+    {
+      id: "l14-q7",
+      prompt: "The US region has exactly 2 customers. How many same-region pairs does the guard `c1.id < c2.id` produce for it?",
+      choices: ["0 — a region needs at least 3 customers", "1", "2 — each customer pairs once", "4 — every ordered combination"],
+      answer: 1,
+      why: "Two customers make exactly one unordered pair: the smaller id takes c1, the larger c2, and C(2,2) = 1. Add a third customer and the count would jump to 3 — pairs grow quadratically.",
+      notes: [
+        { choice: 2, why: "The second 'pair' would be the same two names swapped — exactly what the < guard removes." },
+        { choice: 3, why: "4 = 2 × 2 is the unguarded ordered count, including both self-pairs." },
+      ],
+    },
+    {
+      id: "l14-q8",
+      prompt: "Which brief genuinely needs a SELF-join?",
+      choices: [
+        "orders beside their buyer's name",
+        "customer pairs from the same region",
+        "products beside their supplier's rating",
+        "orders per status",
+      ],
+      answer: 1,
+      why: "Pairing rows of one table with other rows of the SAME table is self-join territory — customers against customers. The others reach across tables (foreign-key joins) or collapse rows (aggregation).",
+      notes: [
+        { choice: 0, why: "orders→customers is a hop between two different tables along a foreign key — a regular join." },
+      ],
+    },
   ],
   problems: [
     {
@@ -179,6 +225,81 @@ ORDER BY c1.region, pair_a;`,
       ],
       expected: EXPECTED["l14-p4"],
       ordered: true,
+    },
+    {
+      id: "l14-p5",
+      title: "Same-region, both in",
+      brief: "The roll call, active accounts only: same-region customer pairs where BOTH customers are active (active = 1). Output: `pair_a` (alias c1.name), `pair_b` (alias c2.name), `region` — ordered by region, then pair_a.",
+      hints: [
+        "The pairing pattern is unchanged; the new condition is about the pair's MEMBERS, so it belongs in ON beside the id guard — both sides must pass the flag.",
+        "Shape: SELECT c1.name AS pair_a, c2.name AS pair_b, c1.region FROM customers c1 JOIN customers c2 ON c1.region = c2.region AND c1.id < c2.id AND c1.active = <flag> AND c2.active = <flag> ORDER BY <col>, <col>;",
+      ],
+      difficulty: "medium",
+      solution:
+        "SELECT c1.name AS pair_a, c2.name AS pair_b, c1.region\nFROM customers c1\nJOIN customers c2\n     ON  c1.region = c2.region\n     AND c1.id < c2.id\n     AND c1.active = 1\n     AND c2.active = 1\nORDER BY c1.region, pair_a;",
+      mistakes: [
+        { test: "\\bc1\\.active\\s*=\\s*1(?![^;]*c2\\.active)", message: "Both members must be active — the guard needs c1.active = 1 AND c2.active = 1, not just one side." },
+        { test: "c1\\.region\\s*=\\s*c2\\.region(?![^;]*\\.id\\s*<)", message: "Without the c1.id < c2.id guard every pair shows up twice and each customer pairs with itself." },
+        { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "This task is graded on row order — append ORDER BY c1.region, pair_a." },
+      ],
+      expected: EXPECTED["l14-p5"],
+      ordered: true,
+    },
+    {
+      id: "l14-p6",
+      title: "Same-month doubles",
+      brief: "Which customers placed two orders in the same calendar month? Pair each order with others from the same customer AND the same `SUBSTR(created_at, 1, 7)` month, guarded by `o1.id < o2.id`. Output: `first_id` (alias o1.id), `second_id` (alias o2.id), `month` — ordered by first_id, then second_id.",
+      hints: [
+        "The shared key is now two-part: same customer AND same month slice of created_at. Both equalities live in ON beside the id guard.",
+        "Shape: SELECT o1.id AS first_id, o2.id AS second_id, SUBSTR(o1.created_at, 1, 7) AS month FROM orders o1 JOIN orders o2 ON o1.customer_id = o2.customer_id AND o1.id < o2.id AND SUBSTR(o1.created_at, 1, 7) = SUBSTR(o2.created_at, 1, 7) ORDER BY <col>, <col>;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT o1.id AS first_id, o2.id AS second_id, SUBSTR(o1.created_at, 1, 7) AS month\nFROM orders o1\nJOIN orders o2\n     ON  o1.customer_id = o2.customer_id\n     AND o1.id < o2.id\n     AND SUBSTR(o1.created_at, 1, 7) = SUBSTR(o2.created_at, 1, 7)\nORDER BY first_id, second_id;",
+      mistakes: [
+        { test: "date\\s*\\(\\s*o1\\.created_at\\s*\\)\\s*=\\s*date\\s*\\(\\s*o2", message: "That tests the same DAY — the brief asks for the same MONTH: compare SUBSTR(created_at, 1, 7) on both sides." },
+        { test: "o1\\.customer_id\\s*=\\s*o2\\.customer_id(?![^;]*o1\\.id\\s*<)", message: "Without the o1.id < o2.id guard every double appears mirrored and each order pairs with itself." },
+        { test: "^(?!select.*substr)", message: "The month slice needs SUBSTR(created_at, 1, 7) — select it (aliased month) and compare it across the two orders in ON." },
+      ],
+      expected: EXPECTED["l14-p6"],
+      ordered: true,
+    },
+    {
+      id: "l14-p7",
+      title: "Supplier twins",
+      brief: "Switch tables: which SUPPLIERS share a region? Output: `twin_a` (alias s1.name), `twin_b` (alias s2.name), `region` — ordered by region, then twin_a. Six suppliers spread over four regions: expect a short list.",
+      hints: [
+        "The same three-line pattern, pointed at suppliers: region is the shared key, supplier ids the guard rail.",
+        "Shape: SELECT s1.name AS twin_a, s2.name AS twin_b, s1.region FROM suppliers s1 JOIN suppliers s2 ON s1.region = s2.region AND s1.id < s2.id ORDER BY <col>, <col>;",
+      ],
+      difficulty: "medium",
+      solution:
+        "SELECT s1.name AS twin_a, s2.name AS twin_b, s1.region\nFROM suppliers s1\nJOIN suppliers s2\n     ON  s1.region = s2.region\n     AND s1.id < s2.id\nORDER BY s1.region, twin_a;",
+      mistakes: [
+        { test: "\\bjoin\\s+(products|orders|customers)\\b", message: "No other table is needed — pairing suppliers by region means joining suppliers to a second copy of itself: suppliers s2." },
+        { test: "s1\\.region\\s*=\\s*s2\\.region(?![^;]*\\.id\\s*<)", message: "Same guard rail as every self-join: without s1.id < s2.id each pair shows up mirrored and each supplier pairs with itself." },
+        { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "This task is graded on row order — append ORDER BY s1.region, twin_a." },
+      ],
+      expected: EXPECTED["l14-p7"],
+      ordered: true,
+    },
+    {
+      id: "l14-p8",
+      title: "Regional trios",
+      brief: "Upsize the pattern: same-region customer TRIOS — c1, c2, c3 with c1.id < c2.id < c3.id, all sharing a region. How many exist? Output a single row, single column `trios`.",
+      hints: [
+        "A trio is a pair plus one more: chain a third copy of customers with its own guard (c2.id < c3.id) and the same region equality.",
+        "Shape: SELECT COUNT(*) AS trios FROM customers c1 JOIN customers c2 ON c1.region = c2.region AND c1.id < c2.id JOIN customers c3 ON c2.region = c3.region AND c2.id < c3.id;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT COUNT(*) AS trios\nFROM customers c1\nJOIN customers c2\n     ON  c1.region = c2.region\n     AND c1.id < c2.id\nJOIN customers c3\n     ON  c2.region = c3.region\n     AND c2.id < c3.id;",
+      mistakes: [
+        { test: "^(?!.*\\bc3\\b)", message: "A trio needs a third copy — JOIN customers c3 ON c2.region = c3.region AND c2.id < c3.id extends the chain." },
+        { test: "c2\\.region\\s*=\\s*c3\\.region(?![^;]*c2\\.id\\s*<\\s*c3)", message: "The third member needs its own guard — without c2.id < c3.id each trio is counted in every permutation." },
+        { test: "\\bcount\\s*\\(\\s*\\*\\s*\\)(?!\\s+as\\s+trios)", message: "The single column must be headed `trios` — alias it: COUNT(*) AS trios." },
+      ],
+      expected: EXPECTED["l14-p8"],
     },
   ],
   takeaway: "A self-join lists one table twice under two aliases; `c1.id < c2.id` removes self-pairs and mirror duplicates in a single comparison, and the same three lines pair any table that shares a key.",

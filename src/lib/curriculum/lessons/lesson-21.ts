@@ -143,6 +143,61 @@ SELECT COUNT(*) FROM (
         { choice: 0, why: "ALL only shields its own adjacent pair — the final plain UNION still sweeps the entire accumulated pile through the dedupe pass." },
       ],
     },
+    {
+      id: "l21-q5",
+      prompt: "Why do SQLite and the SQL standard disagree on `A UNION B INTERSECT C`?",
+      choices: [
+        "SQLite hasn't implemented INTERSECT yet",
+        "the standard binds INTERSECT above UNION/EXCEPT; SQLite reads strictly left to right",
+        "the standard reads left to right; SQLite binds INTERSECT first",
+        "they only disagree when the sets share rows",
+      ],
+      answer: 1,
+      why: "The standard's grammar ranks INTERSECT above the row-level operators, so B ∩ C evaluates first. SQLite's grammar keeps all set operators at one level and evaluates left to right. Same text, different parse, different rows.",
+      notes: [
+        { choice: 3, why: "Shared rows change the NUMBERS, not the disagreement — the two engines parse the query differently regardless of the data." },
+      ],
+    },
+    {
+      id: "l21-q6",
+      prompt: "In the standard's precedence, which operator binds tighter?",
+      choices: ["UNION", "EXCEPT", "INTERSECT", "they are all equal — order of appearance decides"],
+      answer: 2,
+      why: "INTERSECT sits above UNION and EXCEPT (which share one level, evaluated left to right). That's why A ∪ B ∩ C means A ∪ (B ∩ C) on a standard engine.",
+      notes: [
+        { choice: 3, why: "That's SQLite's reading — the standard deliberately elevates INTERSECT, mirroring how AND binds tighter than OR." },
+      ],
+    },
+    {
+      id: "l21-q7",
+      prompt: "Does `(SELECT …) UNION (SELECT …)` force the grouping you intended on SQLite?",
+      choices: [
+        "yes — parentheses always group",
+        "no — SQLite rejects parentheses around compound arms; wrap each side in a FROM subquery instead",
+        "yes, but only with UNION ALL",
+        "no — SQLite has no way to express grouping",
+      ],
+      answer: 1,
+      why: "SQLite's parser refuses parenthesized compound arms outright. The portable spelling for a custom grouping is a FROM subquery: SELECT * FROM (A UNION B) INTERSECT C states the left-to-right reading explicitly.",
+      notes: [
+        { choice: 3, why: "It can — just not with parentheses: FROM-subquery wrapping expresses any grouping portably." },
+      ],
+    },
+    {
+      id: "l21-q8",
+      prompt: "You must ship a mixed-operator compound that runs identically on SQLite and Postgres. The safest spelling is…",
+      choices: [
+        "one left-to-right chain — both engines agree on it",
+        "wrap every grouping in FROM subqueries so precedence is stated, not implied",
+        "rely on parentheses and hope",
+        "avoid set operators entirely",
+      ],
+      answer: 1,
+      why: "Stating the grouping explicitly with FROM subqueries removes the ambiguity: both engines see the same tree. Left-to-right chains depend on SQLite's quirk; parentheses don't even parse there.",
+      notes: [
+        { choice: 0, why: "They agree on a plain chain only when the data lets them — the PARSES still differ, so a different seed could split them." },
+      ],
+    },
   ],
   problems: [
     {
@@ -217,6 +272,77 @@ SELECT COUNT(*) FROM (
         { test: "^(?![^;]*\\bintersect\\b)[^;]*\\bunion\\b", message: "Both readings lean on INTERSECT — sqlite_way needs (A ∪ B) ∩ C and standard_way needs A ∪ (B ∩ C); neither appears yet." },
       ],
       expected: EXPECTED["l21-p4"],
+    },
+    {
+      id: "l21-p5",
+      title: "The collapse census",
+      brief: "Witness where the dedupe strikes. One row, two numbers: `raw` = the three arm counts added by hand (6 + 6 + 16, via scalar subqueries), `pile` = COUNT(*) of the wrapped chain `suppliers UNION ALL suppliers UNION customers`.",
+      hints: [
+        "The raw total is just arithmetic over three COUNTs; the pile is the same chain from the lesson wrapped in a FROM subquery and counted.",
+        "Shape: SELECT (SELECT COUNT(*) FROM suppliers) + (SELECT COUNT(*) FROM suppliers) + (SELECT COUNT(*) FROM customers) AS raw, (SELECT COUNT(*) FROM (<the chain>)) AS pile;",
+      ],
+      difficulty: "medium",
+      solution:
+        "SELECT\n  (SELECT COUNT(*) FROM suppliers) + (SELECT COUNT(*) FROM suppliers) + (SELECT COUNT(*) FROM customers) AS raw,\n  (SELECT COUNT(*) FROM (\n     SELECT region FROM suppliers\n     UNION ALL\n     SELECT region FROM suppliers\n     UNION\n     SELECT region FROM customers\n  )) AS pile;",
+      mistakes: [
+        { test: "union\\s+all[^;]*union\\s+all", message: "Two ALLs never dedupe — the final plain UNION is the pass that collapses the pile; keep the chain as the brief spells it." },
+        { test: "^select\\b(?:(?!\\bpile\\b).)*$", message: "The census wants both numbers in one row — raw (6 + 6 + 16) beside the wrapped chain's count as pile." },
+      ],
+      expected: EXPECTED["l21-p5"],
+    },
+    {
+      id: "l21-p6",
+      title: "Three operations, one audit",
+      brief: "The symmetric difference, done RIGHT: count the customers in the delivered set but not the cancelled one, plus those in cancelled but not delivered — each EXCEPT wrapped in its own FROM subquery, joined by UNION ALL. Output one column `sym`.",
+      hints: [
+        "Two wrapped differences, stacked: (delivered EXCEPT cancelled) UNION ALL (cancelled EXCEPT delivered) — each arm stated as SELECT customer_id FROM ( … ), then counted once.",
+        "Shape: SELECT COUNT(*) AS sym FROM ( SELECT customer_id FROM (<d EXCEPT c>) UNION ALL SELECT customer_id FROM (<c EXCEPT d>) );",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT COUNT(*) AS sym FROM (\n  SELECT customer_id FROM (\n    SELECT DISTINCT customer_id FROM orders WHERE status = 'delivered'\n    EXCEPT\n    SELECT DISTINCT customer_id FROM orders WHERE status = 'cancelled'\n  )\n  UNION ALL\n  SELECT customer_id FROM (\n    SELECT DISTINCT customer_id FROM orders WHERE status = 'cancelled'\n    EXCEPT\n    SELECT DISTINCT customer_id FROM orders WHERE status = 'delivered'\n  )\n);",
+      mistakes: [
+        { test: "\\bunion\\b(?!\\s+all\\b)", message: "Plain UNION would dedupe the two difference lists — the audit needs both sides kept: UNION ALL." },
+        { test: "\\bintersect\\b", message: "INTERSECT keeps rows in BOTH sets — an audit of differences wants EXCEPT in each direction." },
+        { test: "\\bnot\\s+in\\b", message: "NOT IN around NULLs is the landmine this module warns about — spell the differences with wrapped EXCEPT arms." },
+      ],
+      expected: EXPECTED["l21-p6"],
+    },
+    {
+      id: "l21-p7",
+      title: "Top of the pile",
+      brief: "Stack every order status on every customer and supplier region (plain UNION — one dedupe pass), then cut the alphabetical front: output one column `value`, ordered, LIMIT 3.",
+      hints: [
+        "One compound, one final sort: the ORDER BY and LIMIT ride at the very end of the compound and apply to the whole deduped pile.",
+        "Shape: SELECT status AS value FROM orders UNION SELECT region AS value FROM suppliers UNION SELECT region AS value FROM customers ORDER BY value LIMIT 3;",
+      ],
+      difficulty: "medium",
+      solution:
+        "SELECT status AS value FROM orders\nUNION\nSELECT region AS value FROM suppliers\nUNION\nSELECT region AS value FROM customers\nORDER BY value\nLIMIT 3;",
+      mistakes: [
+        { test: "\\bunion\\s+all\\b", message: "UNION ALL keeps every row — the pile must be deduped to the 8 distinct values before the top 3 are cut." },
+        { test: "\\blimit\\s+3\\s+order\\s+by\\b", message: "The cut must happen after the sort: … ORDER BY value LIMIT 3 — not the other way round." },
+        { test: "^select\\b(?:(?!\\blimit\\b).)*$", message: "The brief wants the alphabetical front of the pile — append ORDER BY value LIMIT 3." },
+      ],
+      expected: EXPECTED["l21-p7"],
+      ordered: true,
+    },
+    {
+      id: "l21-p8",
+      title: "The precedence-proof rewrite",
+      brief: "Set theory over three domains: A = customers' regions, B = suppliers' regions, C = order statuses. One row, two numbers: `sqlite_way` = count of the left-to-right chain A ∪ B ∪ C; `standard_way` = count of A ∪ (B ∩ C) with the intersection wrapped in its own FROM subquery. Watch the two readings part ways.",
+      hints: [
+        "Two scalar subqueries, two trees: the plain three-arm chain for sqlite_way; for standard_way, wrap B ∩ C in SELECT * FROM (…) and union A with it.",
+        "Shape: SELECT (SELECT COUNT(*) FROM (<A ∪ B ∪ C chain>)) AS sqlite_way, (SELECT COUNT(*) FROM (<A ∪ SELECT * FROM (B INTERSECT C)>)) AS standard_way;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT\n  (SELECT COUNT(*) FROM (\n     SELECT region FROM customers\n     UNION\n     SELECT region FROM suppliers\n     UNION\n     SELECT status FROM orders\n  )) AS sqlite_way,\n  (SELECT COUNT(*) FROM (\n     SELECT region FROM customers\n     UNION\n     SELECT * FROM (\n       SELECT region FROM suppliers\n       INTERSECT\n       SELECT status FROM orders\n     )\n  )) AS standard_way;",
+      mistakes: [
+        { test: "^\\(\\s*select|\\bunion\\s*\\(\\s*select|\\bintersect\\s*\\(\\s*select", message: "SQLite rejects parentheses around compound arms — state each grouping with a FROM subquery: SELECT * FROM (B INTERSECT C)." },
+        { test: "^(?![^;]*standard_way)[^;]*\\bcount\\b", message: "One row, two numbers — each reading needs its own scalar subquery: the raw chain, and A ∪ (B ∩ C) wrapped explicitly." },
+      ],
+      expected: EXPECTED["l21-p8"],
     },
   ],
   takeaway: "Mixed set-operator chains are ambiguous prose — SQLite reads left to right while the standard binds INTERSECT first, and since SQLite bans parenthesized arms, FROM-subquery wrapping is the portable way to state your grouping.",

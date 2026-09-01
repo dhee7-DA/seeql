@@ -127,6 +127,61 @@ ORDER BY region;   -- APAC 7 · EU 10 · LATAM 2 · US 3`,
         { choice: 0, why: "A bare ORDER BY after an intermediate arm is a syntax error — to sort just one slice, wrap that arm in a FROM subquery." },
       ],
     },
+    {
+      id: "l17-q5",
+      prompt: "`SELECT region FROM customers WHERE region = 'EU' UNION SELECT region FROM suppliers WHERE region = 'EU'` — how many rows? (Customers contribute 8 EU rows, suppliers 2.)",
+      choices: ["1", "2", "10", "16"],
+      answer: 0,
+      why: "UNION dedupes across and within arms. All ten raw rows hold the same text 'EU', so the whole pile collapses to a single row — UNION ALL would keep all 10.",
+      notes: [
+        { choice: 2, why: "10 is the raw UNION ALL pile (8 customer rows + 2 supplier rows). Plain UNION's dedupe pass compares whole rows — and every row here is identical." },
+      ],
+    },
+    {
+      id: "l17-q6",
+      prompt: "`SELECT name AS label FROM customers UNION ALL SELECT name AS tag FROM suppliers ORDER BY …` — which spelling is guaranteed in every engine?",
+      choices: [
+        "ORDER BY label — the output column is named by the first arm",
+        "ORDER BY tag — the last arm's alias names the result too",
+        "ORDER BY supplier.name — always qualify with the table",
+        "Either alias works identically everywhere",
+      ],
+      answer: 0,
+      why: "The pile has exactly one column and it is named by arm 1 (label). SQLite happens to tolerate the arm-2 alias (verified on this db), but the arm-1 output name is the only cross-engine contract.",
+      notes: [
+        { choice: 3, why: "SQLite lets ORDER BY tag slide because both aliases sit on the same single column — that leniency is not portable; typed engines reject the unknown name." },
+      ],
+    },
+    {
+      id: "l17-q7",
+      prompt: "`SELECT city FROM customers WHERE region = 'EU' UNION SELECT city FROM customers WHERE region = 'US'` returns 10 rows. Which single, non-compound query returns exactly the same 10?",
+      choices: [
+        "SELECT city FROM customers WHERE region = 'EU' AND region = 'US'",
+        "SELECT DISTINCT city FROM customers WHERE region = 'EU' OR region = 'US'",
+        "SELECT city FROM customers GROUP BY region",
+        "SELECT DISTINCT region FROM customers WHERE city IS NOT NULL",
+      ],
+      answer: 1,
+      why: "A two-arm UNION over the same column is an OR of the filters plus a dedupe pass — DISTINCT + OR is its exact non-compound twin (same 10 EU+US cities here, verified).",
+      notes: [
+        { choice: 0, why: "AND can never match — a region value cannot be two regions at once — so that query returns 0 rows, not 10." },
+      ],
+    },
+    {
+      id: "l17-q8",
+      prompt: "A report stacks two million-row arms. When is plain UNION the right choice over UNION ALL?",
+      choices: [
+        "Always — UNION is the safer default",
+        "Only when duplicate rows across or within arms would distort the result — the dedupe pass costs a sort or hash",
+        "Whenever the arms read from different tables",
+        "Whenever the result needs ORDER BY",
+      ],
+      answer: 1,
+      why: "UNION ALL is a pure append; UNION runs an extra dedupe pass (a sort or hash) over the whole pile. Reach for UNION ALL first and upgrade only when duplicates actually hurt.",
+      notes: [
+        { choice: 0, why: "\"Safer\" is backwards — plain UNION can silently collapse legitimate repeats (two identical rows in a pile become one). Dedupe only when duplicates distort the answer." },
+      ],
+    },
   ],
   problems: [
     {
@@ -202,6 +257,81 @@ ORDER BY region;   -- APAC 7 · EU 10 · LATAM 2 · US 3`,
         { test: "^select\\b(?![^;]*-)[^;]*\\bcount\\b[^;]*\\bunion\\b", message: "One count alone can't answer this — count the raw stack and the deduped stack in two scalar subqueries, then subtract them." },
       ],
       expected: EXPECTED["l17-p4"],
+    },
+    {
+      id: "l17-p5",
+      title: "Names across shelves",
+      brief: "One alphabetical directory of every name the store knows — every customer AND every product on the shelves, deduplicated. Output one column `name`, sorted alphabetically. 32 rows expected.",
+      hints: [
+        "Two independent lists of names pooled into one directory — and the single ORDER BY sorts the combined pile, after the last arm.",
+        "Shape: SELECT name FROM customers UNION SELECT name FROM products ORDER BY <column>;",
+      ],
+      difficulty: "medium",
+      solution:
+        "SELECT name FROM customers\nUNION\nSELECT name FROM products\nORDER BY name;",
+      mistakes: [
+        { test: "\\bintersect\\b|\\bexcept\\b", message: "INTERSECT/EXCEPT subtract or overlap the two lists — the brief wants everything on both shelves pooled into one directory: UNION." },
+        { test: "^select\\b(?:(?!\\bunion\\b).)*$", message: "One SELECT can't read two tables' names — write the customer arm and the product arm and stack them with UNION." },
+        { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "The directory must come out alphabetical — one ORDER BY name at the very end of the compound." },
+      ],
+      expected: EXPECTED["l17-p5"],
+      ordered: true,
+    },
+    {
+      id: "l17-p6",
+      title: "Three labeled totals",
+      brief: "A one-pile census of the store: stack three labeled count arms — 'customers', 'orders', 'products' — each reporting its table's row count. Output: `kind`, `n` — ordered by `kind` (16 · 103 · 16).",
+      hints: [
+        "Each arm is a one-row COUNT query carrying a literal label — the pile then reads kind, n three times over.",
+        "Shape: SELECT '<label1>' AS kind, COUNT(*) AS n FROM <table1> UNION ALL SELECT '<label2>', COUNT(*) FROM <table2> UNION ALL SELECT '<label3>', COUNT(*) FROM <table3> ORDER BY kind;",
+      ],
+      difficulty: "medium",
+      solution:
+        "SELECT 'customers' AS kind, COUNT(*) AS n FROM customers\nUNION ALL\nSELECT 'orders', COUNT(*) FROM orders\nUNION ALL\nSELECT 'products', COUNT(*) FROM products\nORDER BY kind;",
+      mistakes: [
+        { test: "\\bunion\\s+(all\\s+)?select\\s+count", message: "An arm starting straight at COUNT(*) lost its label — every arm must open with its literal ('customers' / 'orders' / 'products') so the pile keeps two columns end to end." },
+        { test: "^select\\b(?:(?!\\bunion\\b).)*$", message: "A single SELECT can't count three different tables as kind,n rows — three one-row arms, each labeled, stacked with UNION ALL." },
+        { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "The census must come out ordered by kind — one ORDER BY kind at the very end of the compound." },
+      ],
+      expected: EXPECTED["l17-p6"],
+      ordered: true,
+    },
+    {
+      id: "l17-p7",
+      title: "Places, deduped",
+      brief: "One mailing list of every place the company touches: the customer cities AND the region names they roll up to — deduplicated into one column. Output `place`, sorted alphabetically. 20 rows expected.",
+      hints: [
+        "City and region are different columns of the same table — stack the two single-column arms and let plain UNION collapse the repeats (regions repeat a lot: EU appears 8 times).",
+        "Shape: SELECT city AS place FROM customers UNION SELECT region FROM customers ORDER BY place;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT city AS place FROM customers\nUNION\nSELECT region FROM customers\nORDER BY place;",
+      mistakes: [
+        { test: "\\bunion\\s+all\\b", message: "UNION ALL keeps the pile raw — 16 city rows plus all 16 region rows (APAC five times, EU eight). The brief wants dedupe, which is plain UNION's job (20 rows)." },
+        { test: "\\bjoin\\b", message: "A self-join pairs each city with each region row-by-row — the brief wants ONE column holding both kinds of place, stacked and deduped: UNION." },
+        { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "The list must come out alphabetical — one ORDER BY place at the very end of the compound." },
+      ],
+      expected: EXPECTED["l17-p7"],
+      ordered: true,
+    },
+    {
+      id: "l17-p8",
+      title: "The dedupe delta",
+      brief: "Quantify what dedupe removed from the region pile in one row: `all_rows` = the raw customers+suppliers UNION ALL count, `distinct_rows` = the plain UNION count, `delta` = the difference. Output one row: 22, 4, 18.",
+      hints: [
+        "Count each pile in its own scalar subquery, then reuse both counts on the outside to subtract them — one outer SELECT over the two aliased counts keeps delta honest.",
+        "Shape: SELECT all_rows, distinct_rows, all_rows - distinct_rows AS delta FROM (SELECT (SELECT COUNT(*) FROM (<stack A> UNION ALL <stack B>)) AS all_rows, (SELECT COUNT(*) FROM (<stack A> UNION <stack B>)) AS distinct_rows);",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT all_rows, distinct_rows, all_rows - distinct_rows AS delta\nFROM (\n  SELECT\n    (SELECT COUNT(*) FROM (\n       SELECT region FROM customers\n       UNION ALL\n       SELECT region FROM suppliers\n     )) AS all_rows,\n    (SELECT COUNT(*) FROM (\n       SELECT region FROM customers\n       UNION\n       SELECT region FROM suppliers\n     )) AS distinct_rows\n);",
+      mistakes: [
+        { test: "\\bunion\\s+all\\b[^;]*\\bunion\\s+all\\b", message: "Both counts are raw piles now — they'd tie at 22 and the delta would be 0. The distinct_rows subquery must use plain UNION; the dedupe pass is exactly what you're measuring." },
+        { test: "\\bunion\\b(?!\\s+all\\b)[^;]*\\bunion\\b(?!\\s+all\\b)", message: "Two plain UNIONs dedupe twice — 4 − 4 = 0. The all_rows count needs the raw UNION ALL pile (16 + 6 = 22)." },
+        { test: "^select\\b(?:(?!\\bdelta\\b).)*$", message: "The brief wants the difference as its own column — reuse the two aliased counts and compute all_rows - distinct_rows AS delta." },
+      ],
+      expected: EXPECTED["l17-p8"],
     },
   ],
   takeaway: "UNION ALL appends and UNION appends-then-dedupes whole rows; arms must match in column count, the pile takes the first arm's names, and one ORDER BY — at the very end — sorts the combined result.",

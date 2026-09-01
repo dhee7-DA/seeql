@@ -129,6 +129,56 @@ WHERE a.status = 'delivered';   -- 4`,
         { choice: 0, why: "That's *comparison* semantics (NULL = NULL is unknown) — set operations use grouping semantics, where NULLs count as duplicates of each other." },
       ],
     },
+    {
+      id: "l19-q5",
+      prompt: "15 customers have a delivered order, 8 have a pending order, and the pending set sits entirely inside the delivered set. What do delivered INTERSECT pending and pending INTERSECT delivered each return?",
+      choices: ["7 and 8", "8 and 8", "8 and 0", "15 and 8"],
+      answer: 1,
+      why: "INTERSECT is symmetric — the overlap is the 8 shared customers, and swapping the arms cannot change it (verified on this store). Only EXCEPT cares about arm order.",
+      notes: [
+        { choice: 0, why: "7 is delivered EXCEPT pending — the subtraction of the 8 waiting customers from the 15 delivered ones. The overlap keeps the shared 8." },
+      ],
+    },
+    {
+      id: "l19-q6",
+      prompt: "You need the overlap with duplicate multiplicities preserved — standard SQL's INTERSECT ALL. What happens on this app's SQLite engine?",
+      choices: [
+        "Syntax error — SQLite has no INTERSECT ALL; only Postgres implements it",
+        "It silently behaves like plain INTERSECT",
+        "It works — multiplicities come out preserved",
+        "It returns twice as many rows",
+      ],
+      answer: 0,
+      why: "The standard defines INTERSECT ALL, but SQLite (and MySQL) reject the spelling outright — INTERSECT is always distinct there. Emulating multiplicities means hand-rolled GROUP BY counting.",
+      notes: [
+        { choice: 1, why: "No silent downgrade — the parser refuses the ALL variant (verified on this db), so you find out immediately rather than getting quietly deduped rows." },
+      ],
+    },
+    {
+      id: "l19-q7",
+      prompt: "On this store: 15 customers have a delivered order, 4 have a cancelled order. Which count is IMPOSSIBLE for delivered INTERSECT cancelled?",
+      choices: ["0", "3", "9", "4"],
+      answer: 2,
+      why: "An intersection can never exceed the smaller arm — min(15, 4) = 4 caps it, so 9 would require 9 cancelled customers. (The real answer is 4; 0 and 3 are legal overlaps in general.)",
+      notes: [
+        { choice: 0, why: "0 is possible in principle — two disjoint sets intersect to nothing. Here the cancelled customers all have delivered history, so the overlap is 4." },
+      ],
+    },
+    {
+      id: "l19-q8",
+      prompt: "Three tickets, in order: 'customers with BOTH a pending and a cancelled order', 'customers with a pending OR a cancelled order', 'customers with a pending order but never a cancelled one'. Which operator triple fits?",
+      choices: [
+        "INTERSECT, UNION, EXCEPT",
+        "UNION, INTERSECT, EXCEPT",
+        "EXCEPT, UNION, INTERSECT",
+        "INTERSECT, EXCEPT, UNION",
+      ],
+      answer: 0,
+      why: "'In both' is INTERSECT, 'either' is UNION, 'first minus second' is EXCEPT — the three set operators map one-to-one onto AND / OR / AND NOT.",
+      notes: [
+        { choice: 1, why: "Swapping the first two: UNION would merge the waiting and cancelled customers into one pile instead of isolating the double-trouble overlap." },
+      ],
+    },
   ],
   problems: [
     {
@@ -204,6 +254,81 @@ WHERE a.status = 'delivered';   -- 4`,
         { test: "^select\\b(?![^;]*'cancelled')[^;]*\\bjoin\\b", message: "One side lost its status — without b.status = 'cancelled' the b side matches any other order, and you'd count repeat customers, not the delivered-and-cancelled overlap." },
       ],
       expected: EXPECTED["l19-p4"],
+    },
+    {
+      id: "l19-p5",
+      title: "Both-listed names",
+      brief: "Service-review list: the NAMES of customers who have both a delivered order and a pending order right now. Output one column `name`, alphabetical. Eight names expected.",
+      hints: [
+        "Two independent name lists — everyone with completed history, everyone currently waiting — and the review list is the names appearing in both.",
+        "Shape: SELECT name FROM customers WHERE id IN (<delivered ids>) INTERSECT SELECT name FROM customers WHERE id IN (<pending ids>) ORDER BY name;",
+      ],
+      difficulty: "medium",
+      solution:
+        "SELECT name FROM customers WHERE id IN (SELECT customer_id FROM orders WHERE status = 'delivered')\nINTERSECT\nSELECT name FROM customers WHERE id IN (SELECT customer_id FROM orders WHERE status = 'pending')\nORDER BY name;",
+      mistakes: [
+        { test: "\\bunion\\b", message: "UNION pools both lists (15 names) — the brief wants customers on BOTH lists: the overlap is INTERSECT (8 names)." },
+        { test: "status\\s*=\\s*'(cancelled|shipped)'", message: "Wrong pair of sets — the review pairs delivered with pending; 'cancelled' and 'shipped' arms answer a different overlap (cancelled would give 4 names)." },
+        { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "The list must come out alphabetical — one ORDER BY name at the very end of the compound." },
+      ],
+      expected: EXPECTED["l19-p5"],
+      ordered: true,
+    },
+    {
+      id: "l19-p6",
+      title: "Two spellings, one truth",
+      brief: "Prove the equivalence in one row: `via_intersect` = count of the delivered∩pending customer-id overlap computed with INTERSECT; `via_join` = the same count via an INNER JOIN of the two DISTINCT id sets. Both columns must read 8.",
+      hints: [
+        "Each route lives in its own scalar subquery: count the INTERSECT of the two distinct id sets, then count the rows the same two sets produce when joined on the id.",
+        "Shape: SELECT (SELECT COUNT(*) FROM (<set d> INTERSECT <set p>)) AS via_intersect, (SELECT COUNT(*) FROM (<set d>) d JOIN (<set p>) p ON <id match>) AS via_join;",
+      ],
+      difficulty: "medium",
+      solution:
+        "SELECT\n  (SELECT COUNT(*) FROM (\n     SELECT DISTINCT customer_id FROM orders WHERE status = 'delivered'\n     INTERSECT\n     SELECT DISTINCT customer_id FROM orders WHERE status = 'pending'\n   )) AS via_intersect,\n  (SELECT COUNT(*) FROM\n     (SELECT DISTINCT customer_id FROM orders WHERE status = 'delivered') d\n     JOIN (SELECT DISTINCT customer_id FROM orders WHERE status = 'pending') p\n       ON p.customer_id = d.customer_id\n  ) AS via_join;",
+      mistakes: [
+        { test: "\\bunion\\b", message: "UNION counts the combined set (15) — the first scalar subquery must count the overlap: INTERSECT of the two distinct id sets (8)." },
+        { test: "\\(\\s*select\\s+customer_id\\b(?![^;]*\\bgroup\\s+by\\b)", message: "A derived set lost its DISTINCT — raw order rows pair up (52 delivered × 14 pending) and inflate the count far past 8. Both joined sets must be distinct first." },
+        { test: "^select\\b(?:(?!\\bvia_join\\b).)*$", message: "Two counts, one row — the second scalar subquery must reproduce the overlap via INNER JOIN of the two distinct sets, aliased AS via_join." },
+      ],
+      expected: EXPECTED["l19-p6"],
+    },
+    {
+      id: "l19-p7",
+      title: "Rich and scarce",
+      brief: "The premium-but-scarce shelf: product names priced over 100 AND stocked under 50 units — one INTERSECT. Output one column `name`, alphabetical. Two rows expected.",
+      hints: [
+        "Two independent shelves — the premium list and the low-stock list — and the scarce premium names are those on both.",
+        "Shape: SELECT name FROM products WHERE <cond1> INTERSECT SELECT name FROM products WHERE <cond2> ORDER BY name;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT name FROM products WHERE price > 100\nINTERSECT\nSELECT name FROM products WHERE stock < 50\nORDER BY name;",
+      mistakes: [
+        { test: "\\bunion\\b", message: "UNION lists everything over 100 PLUS everything under 50 — the brief wants products that are BOTH: INTERSECT." },
+        { test: "price\\s*>=\\s*100|stock\\s*<=\\s*50", message: "Boundary check — 'over 100' is price > 100 and 'under 50' is stock < 50; the equality edges change membership." },
+        { test: "^select\\b(?:(?!\\border\\s+by\\b).)*$", message: "The shelf must come out alphabetical — one ORDER BY name at the very end of the compound." },
+      ],
+      expected: EXPECTED["l19-p7"],
+      ordered: true,
+    },
+    {
+      id: "l19-p8",
+      title: "The triple overlap",
+      brief: "The deep-cut list: customer ids holding ALL THREE — a delivered, a pending AND a cancelled order. Chain two INTERSECTs over the three status sets. Output one column `customer_id`, ascending. Four ids expected.",
+      hints: [
+        "Three independent id sets, one after another: INTERSECT keeps what survives every arm — chain the third status set onto the pair.",
+        "Shape: SELECT DISTINCT customer_id FROM orders WHERE status = '<s1>' INTERSECT SELECT DISTINCT customer_id FROM orders WHERE status = '<s2>' INTERSECT SELECT DISTINCT customer_id FROM orders WHERE status = '<s3>' ORDER BY customer_id;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT DISTINCT customer_id FROM orders WHERE status = 'delivered'\nINTERSECT\nSELECT DISTINCT customer_id FROM orders WHERE status = 'pending'\nINTERSECT\nSELECT DISTINCT customer_id FROM orders WHERE status = 'cancelled'\nORDER BY customer_id;",
+      mistakes: [
+        { test: "^(?:(?!\\bintersect\\b).)*\\bintersect\\b(?:(?!\\bintersect\\b).)*$", message: "Two sets only so far — the brief wants ids present in all three statuses, so chain a second INTERSECT over the cancelled set." },
+        { test: "\\bunion\\b", message: "UNION pools the three lists (16 ids) — the brief wants ids present in ALL three: INTERSECT all the way down." },
+        { test: "status\\s*=\\s*'shipped'", message: "The triple is delivered + pending + cancelled — 'shipped' belongs to no arm here." },
+      ],
+      expected: EXPECTED["l19-p8"],
+      ordered: true,
     },
   ],
   takeaway: "INTERSECT keeps the rows present in both arms — distinct by definition, NULL-safe by grouping semantics, and equivalent to INNER JOIN + DISTINCT over the same output column.",
