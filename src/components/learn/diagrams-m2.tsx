@@ -1,7 +1,9 @@
 "use client";
 
-// Module 2 lesson figures (lessons 09–16) — second, concept-deep diagram per
-// lesson. Same drawing kit as diagrams.tsx; registry merged there.
+// Module 2 lesson figures (lessons 09–16) — concept-deep diagrams: the second
+// figure per lesson plus the Task 19 third wave (direction, multiply, fanmap,
+// gap anatomy, subquery flow, mirror matrix, ghost row, pre-flight gate).
+// Same drawing kit as diagrams.tsx; registry merged there.
 
 import { motion } from "framer-motion";
 import type { FigureId } from "@/lib/curriculum/types";
@@ -532,13 +534,427 @@ function J16AggFirst() {
   );
 }
 
+/* ---------- lesson 09 — widen, not multiply (Alice Chen: 24 orders, name on every row) ---------- */
+
+function J9Direction() {
+  return (
+    <svg viewBox="0 0 720 272" className="w-full" role="img" aria-label="Joining orders to customers is many-to-one: 103 orders in, 103 rows out, and the one side's columns repeat — Alice Chen's 24 orders stamp her name 24 times">
+      <motion.g {...fade(0)}>
+        <Label x={26} y={22} cls="fill-zinc-500" size={9}>SELECT o.id, c.name FROM orders o JOIN customers c ON c.id = o.customer_id</Label>
+        <Label x={26} y={36} cls="fill-zinc-400" size={9}>103 orders go in — 103 rows come out. A many-to-one hop widens rows; it never multiplies them.</Label>
+      </motion.g>
+      <motion.g {...fade(0.25)}>
+        <Panel x={26} y={58} w={300} h={150} />
+        <Label x={40} y={76} cls="fill-zinc-300" size={10}>the result — Alice's slice</Label>
+        <Label x={40} y={96} cls="fill-zinc-500" size={9}>o.id</Label>
+        <Label x={110} y={96} cls="fill-zinc-500" size={9}>c.name</Label>
+        <line x1={26} y1={103} x2={326} y2={103} className="stroke-zinc-800" />
+        {[[3, "Alice Chen"], [31, "Alice Chen"], [32, "Alice Chen"], [70, "Alice Chen"]].map(([id, name]) => (
+          <g key={id as number}>
+            <Label x={40} y={120 + (id === 3 ? 0 : id === 31 ? 20 : id === 32 ? 40 : 60)} cls="fill-teal-300" size={10}>{id}</Label>
+            <Label x={110} y={120 + (id === 3 ? 0 : id === 31 ? 20 : id === 32 ? 40 : 60)} cls="fill-zinc-200" size={10}>{name}</Label>
+          </g>
+        ))}
+        <Label x={40} y={198} cls="fill-zinc-600" size={9}>··· 20 more orders, same name</Label>
+      </motion.g>
+      <motion.g {...fade(0.45)}>
+        <Label x={340} y={132} cls="fill-emerald-300" size={9}>name repeats ↓</Label>
+        <Panel x={350} y={58} w={344} h={64} />
+        <Label x={414} y={95} anchor="middle" cls="fill-zinc-100" size={20}>103</Label>
+        <Label x={414} y={112} anchor="middle" cls="fill-zinc-500" size={8}>orders in</Label>
+        <Arrow x1={462} y1={89} x2={510} y2={89} cls="stroke-emerald-400" />
+        <Label x={486} y={80} anchor="middle" cls="fill-emerald-300" size={9}>JOIN</Label>
+        <Label x={566} y={95} anchor="middle" cls="fill-zinc-100" size={20}>103</Label>
+        <Label x={566} y={112} anchor="middle" cls="fill-zinc-500" size={8}>rows out</Label>
+        <Panel x={350} y={134} w={344} h={74} />
+        <Label x={364} y={152} cls="fill-zinc-300" size={10}>which column repeats? the one side's</Label>
+        <Label x={364} y={172} cls="fill-zinc-400" size={9}>Alice Chen — 24 orders → her name rides on 24 rows</Label>
+        <Label x={364} y={190} cls="fill-zinc-400" size={9}>Emma Wilson — 17 orders → on 17 rows</Label>
+        <Label x={364} y={203} cls="fill-zinc-600" size={8}>the many side (o.id) never repeats — it was already unique</Label>
+      </motion.g>
+      <motion.g {...fade(0.8)}>
+        <Label x={26} y={232} cls="fill-zinc-500" size={9}>direction decides which column repeats — FROM the many side: one row per order, the one side's columns repeat</Label>
+        <Label x={26} y={250} cls="fill-zinc-400" size={9}>flip it — FROM customers c JOIN orders o — and the same 103 rows come back with each customer repeated once per order</Label>
+        <Label x={26} y={264} cls="fill-zinc-600" size={9}>one output row per PAIR that satisfies ON — that is all a join ever does (and why 103 × 16 never happens once ON exists)</Label>
+      </motion.g>
+    </svg>
+  );
+}
+
+/* ---------- lesson 10 — rows multiply (Desk Mat Extended: 1 row → 24 copies) ---------- */
+
+function J10Multiply() {
+  const chips = Array.from({ length: 24 }, (_, i) => i);
+  return (
+    <svg viewBox="0 0 720 272" className="w-full" role="img" aria-label="One product row joined to its 24 order lines appears 24 times in the result: 16 products in, 251 rows out — the many side is where rows multiply">
+      <motion.g {...fade(0)}>
+        <Label x={26} y={22} cls="fill-zinc-500" size={9}>FROM products p JOIN order_items oi ON oi.product_id = p.id</Label>
+        <Label x={26} y={36} cls="fill-zinc-400" size={9}>one left row appears once per match — flip to a many-side table and rows multiply</Label>
+      </motion.g>
+      <motion.g {...fade(0.25)}>
+        <Panel x={26} y={64} w={196} h={76} cls="fill-zinc-900 stroke-zinc-700" />
+        <Label x={40} y={88} cls="fill-zinc-200" size={11}>Desk Mat Extended</Label>
+        <Label x={40} y={106} cls="fill-zinc-500" size={9}>one row in products</Label>
+        <Label x={40} y={124} cls="fill-teal-300" size={9}>id 11</Label>
+        <Arrow x1={230} y1={102} x2={256} y2={102} />
+        <Label x={243} y={93} anchor="middle" cls="fill-zinc-500" size={8}>JOIN</Label>
+      </motion.g>
+      <motion.g {...fade(0.45)}>
+        {chips.map((i) => (
+          <rect key={i} x={262 + (i % 6) * 28} y={68 + Math.floor(i / 6) * 20} width={22} height={14} rx={3} className="fill-zinc-800 stroke-zinc-700" />
+        ))}
+        <Label x={262} y={154} cls="fill-zinc-400" size={9}>24 order lines reference it — one chip each</Label>
+        <Arrow x1={434} y1={102} x2={460} y2={102} />
+        <rect x={464} y={64} width={230} height={76} rx={8} className="fill-emerald-400/10 stroke-emerald-400/60" />
+        <Label x={579} y={97} anchor="middle" cls="fill-emerald-200" size={16}>24 result rows</Label>
+        <Label x={579} y={117} anchor="middle" cls="fill-zinc-400" size={9}>the product row, copied once per line</Label>
+      </motion.g>
+      <motion.g {...fade(0.7)}>
+        <Panel x={26} y={164} w={668} h={64} />
+        <Label x={40} y={184} cls="fill-zinc-300" size={10}>the whole join, counted:</Label>
+        <Label x={40} y={210} cls="fill-zinc-100" size={13}>16 products</Label>
+        <Arrow x1={124} y1={205} x2={152} y2={205} cls="stroke-emerald-400" />
+        <Label x={160} y={210} cls="fill-emerald-200" size={13}>251 result rows</Label>
+        <Label x={330} y={200} cls="fill-zinc-400" size={9}>every product with 1 line appears once, Desk Mat Extended 24 times —</Label>
+        <Label x={330} y={215} cls="fill-zinc-400" size={9}>and the reverse hop never multiplies: orders → customers stayed 103 → 103</Label>
+      </motion.g>
+      <motion.g {...fade(0.9)}>
+        <Label x={26} y={248} cls="fill-zinc-500" size={9}>every copy is a fact — this product sold in that order. The duplicates are correct data, not a bug.</Label>
+        <Label x={26} y={264} cls="fill-zinc-600" size={9}>the danger only starts when you SUM a one-side column across the copies — lesson 16's 3× trap</Label>
+      </motion.g>
+    </svg>
+  );
+}
+
+/* ---------- lesson 11 — the whole map (16 ← 103 ← 251 → 16 → 6, every hop many-to-one) ---------- */
+
+function J11Fanmap() {
+  const cards: Array<[string, string, number]> = [
+    ["customers", "16 rows", 26],
+    ["orders", "103 rows", 170],
+    ["order_items", "251 lines", 314],
+    ["products", "16 rows", 458],
+    ["suppliers", "6 rows", 602],
+  ];
+  const arrows: Array<[number, number, string, string]> = [
+    [172, 140, "customer_id", "103 : 16"],
+    [316, 284, "order_id", "251 : 103"],
+    [428, 460, "product_id", "251 : 16"],
+    [572, 604, "supplier_id", "16 : 6"],
+  ];
+  return (
+    <svg viewBox="0 0 720 270" className="w-full" role="img" aria-label="The full referential map: customers 16, orders 103, order_items 251, products 16, suppliers 6 — four many-to-one hops, each widening the result without multiplying it">
+      <motion.g {...fade(0)}>
+        <Label x={26} y={22} cls="fill-zinc-500" size={9}>the whole storefront on one map — every arrow is a many-to-one foreign-key hop</Label>
+      </motion.g>
+      <motion.g {...fade(0.25)}>
+        {cards.map(([name, count, x]) => (
+          <g key={name}>
+            <Panel x={x} y={48} w={112} h={64} cls="fill-zinc-900 stroke-zinc-700" />
+            <Label x={x + 56} y={72} anchor="middle" cls="fill-zinc-200" size={10}>{name}</Label>
+            <Label x={x + 56} y={92} anchor="middle" cls="fill-teal-300" size={10}>{count}</Label>
+          </g>
+        ))}
+        {arrows.map(([x1, x2, fk, ratio]) => (
+          <g key={fk}>
+            <Arrow x1={x1} y1={80} x2={x2} y2={80} cls="stroke-emerald-400" />
+            <Label x={(x1 + x2) / 2} y={126} anchor="middle" cls="fill-zinc-400" size={8}>{fk}</Label>
+            <Label x={(x1 + x2) / 2} y={140} anchor="middle" cls="fill-emerald-300/80" size={8}>{ratio}</Label>
+          </g>
+        ))}
+        <Label x={370} y={156} anchor="middle" cls="fill-zinc-500" size={8}>order_items is the hinge — child of orders AND parent-lookup for products</Label>
+      </motion.g>
+      <motion.g {...fade(0.55)}>
+        <Panel x={26} y={168} w={668} h={52} />
+        <Label x={40} y={188} cls="fill-zinc-300" size={10}>hop planner — start at the table in FROM, one JOIN per hop:</Label>
+        <Label x={40} y={208} cls="fill-zinc-100" size={11}>orders → order_items → products → suppliers</Label>
+        <Label x={680} y={208} anchor="end" cls="fill-zinc-500" size={9}>3 hops = 3 JOINs = 3 ONs</Label>
+      </motion.g>
+      <motion.g {...fade(0.85)}>
+        <Label x={26} y={240} cls="fill-zinc-500" size={9}>16 ← 103 ← 251 → 16 → 6 — plan the path from the columns you need, then walk it one JOIN at a time</Label>
+        <Label x={26} y={256} cls="fill-zinc-600" size={9}>every arrow widens the result (adds the parent's columns); none multiplies — each child points at exactly one parent row</Label>
+      </motion.g>
+    </svg>
+  );
+}
+
+/* ---------- lesson 12 — anatomy of a gap (36 rows = 30 matched + 6 NULL-filled) ---------- */
+
+function J12GapAnatomy() {
+  // 16 customers: 10 with ≥1 shipped order (verified), 6 gaps; first two gap names verified alphabetically
+  const slots = Array.from({ length: 16 }, (_, i) => i);
+  const gapAt = new Set([10, 12, 13, 14, 15, 11]);
+  return (
+    <svg viewBox="0 0 720 286" className="w-full" role="img" aria-label="A LEFT JOIN restricted to shipped orders returns 36 rows: 30 matched pairs and 6 NULL-filled gap rows — WHERE o.id IS NULL keeps exactly the 6 gaps">
+      <motion.g {...fade(0)}>
+        <Label x={26} y={22} cls="fill-zinc-500" size={9}>customers c LEFT JOIN orders o ON o.customer_id = c.id AND o.status = 'shipped'</Label>
+        <Label x={26} y={36} cls="fill-zinc-400" size={9}>the result comes in two kinds of rows — and the gaps are the interesting ones</Label>
+      </motion.g>
+      <motion.g {...fade(0.25)}>
+        <Panel x={26} y={58} w={250} h={150} />
+        <Label x={40} y={78} cls="fill-zinc-300" size={10}>16 left rows — all kept</Label>
+        {slots.map((i) => {
+          const cx = 48 + (i % 2) * 44;
+          const cy = 96 + Math.floor(i / 2) * 15;
+          const gap = gapAt.has(i);
+          return gap ? (
+            <circle key={i} cx={cx} cy={cy} r={5} className="stroke-rose-400" fill="none" strokeWidth={1.2} strokeDasharray="2.5 2" />
+          ) : (
+            <circle key={i} cx={cx} cy={cy} r={5} className="fill-emerald-400/70" />
+          );
+        })}
+        <circle cx={122} cy={100} r={5} className="fill-emerald-400/70" />
+        <Label x={134} y={104} cls="fill-zinc-400" size={9}>has shipped orders (10)</Label>
+        <circle cx={122} cy={122} r={5} className="stroke-rose-400" fill="none" strokeWidth={1.2} strokeDasharray="2.5 2" />
+        <Label x={134} y={126} cls="fill-zinc-400" size={9}>gaps — nothing shipped (6)</Label>
+      </motion.g>
+      <motion.g {...fade(0.5)}>
+        <rect x={300} y={58} width={200} height={54} rx={8} className="fill-zinc-900 stroke-zinc-700" />
+        <Label x={314} y={80} cls="fill-zinc-200" size={10}>Alice Chen</Label>
+        <Label x={486} y={80} anchor="end" cls="fill-teal-300" size={10}>3</Label>
+        <Label x={314} y={100} cls="fill-emerald-300/80" size={8}>matched row — a real order id attached</Label>
+        <rect x={300} y={126} width={200} height={54} rx={8} className="fill-zinc-900 stroke-rose-400/60" strokeDasharray="4 3" />
+        <Label x={314} y={148} cls="fill-zinc-200" size={10}>Bruno Silva</Label>
+        <Label x={486} y={148} anchor="end" cls="fill-rose-300" size={10}>NULL</Label>
+        <Label x={314} y={168} cls="fill-rose-300/80" size={8}>gap row — no shipped order exists</Label>
+        <Label x={300} y={200} cls="fill-zinc-500" size={8}>Chloe Dubois and 4 more, same shape</Label>
+      </motion.g>
+      <motion.g {...fade(0.7)}>
+        <Panel x={520} y={58} w={174} h={150} />
+        <Label x={607} y={92} anchor="middle" cls="fill-zinc-100" size={22}>36</Label>
+        <Label x={607} y={110} anchor="middle" cls="fill-zinc-500" size={9}>result rows</Label>
+        <Label x={607} y={130} anchor="middle" cls="fill-zinc-400" size={9}>= 30 matched + 6 NULL-filled</Label>
+        <line x1={536} y1={144} x2={678} y2={144} className="stroke-zinc-800" />
+        <Label x={607} y={164} anchor="middle" cls="fill-zinc-300" size={9}>WHERE o.id IS NULL</Label>
+        <Label x={607} y={180} anchor="middle" cls="fill-emerald-300" size={9}>→ keeps exactly the 6</Label>
+        <Label x={607} y={196} anchor="middle" cls="fill-zinc-600" size={8}>the anti-join — next lesson</Label>
+      </motion.g>
+      <motion.g {...fade(0.9)}>
+        <Label x={26} y={236} cls="fill-zinc-500" size={9}>NULL in every order column means one thing: the left row found no partner under the ON rule</Label>
+        <Label x={26} y={252} cls="fill-zinc-400" size={9}>primary keys are never NULL — so o.id IS NULL is the airtight signature of a gap, never of a real order</Label>
+        <Label x={26} y={268} cls="fill-zinc-600" size={9}>the same 36-row shape powers lesson 13's anti-join toolkit and lesson 15's COUNT trap</Label>
+      </motion.g>
+    </svg>
+  );
+}
+
+/* ---------- lesson 13 — filter first, join second (251 → 36 → 11 → 5) ---------- */
+
+function J13SubqueryFlow() {
+  return (
+    <svg viewBox="0 0 720 286" className="w-full" role="img" aria-label="The subquery pipeline: 251 order lines filtered to 36 pending lines, collapsed to 11 distinct product ids, then a single-hop anti-join keeps the 5 products never pending">
+      <motion.g {...fade(0)}>
+        <Label x={26} y={22} cls="fill-zinc-500" size={9}>products p LEFT JOIN ( SELECT DISTINCT oi.product_id FROM order_items oi JOIN orders o … WHERE o.status = 'pending' ) pend</Label>
+        <Label x={26} y={36} cls="fill-zinc-400" size={9}>"filter first, join second" — build the list inside the parentheses, then the anti-join is one clean hop</Label>
+      </motion.g>
+      <motion.g {...fade(0.25)}>
+        <Panel x={26} y={58} w={200} h={120} />
+        <Label x={40} y={78} cls="fill-emerald-300" size={10}>① filter the many side</Label>
+        <Label x={40} y={98} cls="fill-zinc-400" size={9}>order_items — 251 lines</Label>
+        <Label x={40} y={114} cls="fill-zinc-400" size={9}>…keep status = 'pending'</Label>
+        <Label x={40} y={144} cls="fill-zinc-100" size={15}>→ 36 lines</Label>
+        <Label x={40} y={162} cls="fill-zinc-500" size={8}>spread across 30 pending orders</Label>
+        <Panel x={260} y={58} w={200} h={120} />
+        <Label x={274} y={78} cls="fill-emerald-300" size={10}>② collapse to distinct ids</Label>
+        <Label x={274} y={98} cls="fill-zinc-400" size={9}>SELECT DISTINCT product_id</Label>
+        <Label x={274} y={114} cls="fill-zinc-300" size={9}>= the virtual table pend</Label>
+        <Label x={274} y={144} cls="fill-zinc-100" size={15}>→ 11 rows</Label>
+        <Label x={274} y={162} cls="fill-zinc-500" size={8}>tidy: no dupes, no status noise</Label>
+        <Panel x={494} y={58} w={200} h={120} />
+        <Label x={508} y={78} cls="fill-emerald-300" size={10}>③ one-hop anti-join</Label>
+        <Label x={508} y={98} cls="fill-zinc-400" size={9}>16 products LEFT JOIN pend</Label>
+        <Label x={508} y={114} cls="fill-zinc-400" size={9}>keep pend.product_id IS NULL</Label>
+        <Label x={508} y={144} cls="fill-emerald-200" size={15}>→ 5 products</Label>
+        <Label x={508} y={162} cls="fill-zinc-500" size={8}>never once on a pending line</Label>
+        <Arrow x1={228} y1={118} x2={254} y2={118} cls="stroke-emerald-400" />
+        <Arrow x1={462} y1={118} x2={488} y2={118} cls="stroke-emerald-400" />
+      </motion.g>
+      <motion.g {...fade(0.6)}>
+        <Panel x={26} y={196} w={668} h={44} />
+        <Label x={40} y={222} cls="fill-zinc-400" size={9}>the pipeline:</Label>
+        <Label x={116} y={224} cls="fill-zinc-100" size={13}>251 → 36 → 11 → 5</Label>
+        <Label x={260} y={222} cls="fill-zinc-500" size={9}>each stage shrinks the problem until the question is one hop wide</Label>
+      </motion.g>
+      <motion.g {...fade(0.85)}>
+        <Label x={26} y={258} cls="fill-zinc-500" size={9}>the subquery is just a table with a nickname — it runs first, becomes a tidy virtual table, and no ON ever spans two hops</Label>
+        <Label x={26} y={274} cls="fill-zinc-600" size={9}>a two-hop "never" question, answered with lesson 12's two gates plus a list you built yourself</Label>
+      </motion.g>
+    </svg>
+  );
+}
+
+/* ---------- lesson 14 — the mirror matrix (25 → −5 self → −10 mirrors → 10) ---------- */
+
+function J14Mirror() {
+  const ids = [6, 7, 8, 11, 13];
+  const cell = 32;
+  const x0 = 64;
+  const y0 = 64;
+  return (
+    <svg viewBox="0 0 720 298" className="w-full" role="img" aria-label="The 5 by 5 pairing grid for the 5 APAC customers: 5 self-pairs on the diagonal, 10 mirrors below it, 10 honest pairs above — c1.id less-than c2.id keeps only the upper triangle">
+      <motion.g {...fade(0)}>
+        <Label x={26} y={22} cls="fill-zinc-500" size={9}>APAC: customers 6, 7, 8, 11, 13 — what the guard rail ON c1.region = c2.region AND c1.id &lt; c2.id is doing</Label>
+      </motion.g>
+      <motion.g {...fade(0.25)}>
+        {ids.map((id, j) => (
+          <Label key={`c${j}`} x={x0 + j * cell + cell / 2} y={y0 - 8} anchor="middle" cls="fill-teal-300" size={9}>{id}</Label>
+        ))}
+        {ids.map((id, i) => (
+          <Label key={`r${i}`} x={x0 - 10} y={y0 + i * cell + cell / 2 + 3} anchor="end" cls="fill-teal-300" size={9}>{id}</Label>
+        ))}
+        {ids.flatMap((_, i) =>
+          ids.map((__, j) => {
+            const kept = i < j;
+            const self = i === j;
+            return (
+              <rect key={`${i}-${j}`} x={x0 + j * cell} y={y0 + i * cell} width={cell} height={cell}
+                className={kept ? "fill-emerald-400/15 stroke-emerald-400/40" : self ? "fill-zinc-900 stroke-zinc-700" : "fill-zinc-900/40 stroke-zinc-800"} />
+            );
+          }),
+        )}
+        {ids.map((_, i) => (
+          <XMark key={`x${i}`} x={x0 + i * cell + cell / 2} y={y0 + i * cell + cell / 2} cls="stroke-zinc-500" s={4.5} />
+        ))}
+        {ids.flatMap((_, i) =>
+          ids.map((__, j) => {
+            if (i >= j) return null;
+            return <circle key={`k${i}-${j}`} cx={x0 + j * cell + cell / 2} cy={y0 + i * cell + cell / 2} r={2.4} className="fill-emerald-400" opacity={0.85} />;
+          }),
+        )}
+        <Label x={x0 + 80} y={y0 + 5 * cell + 16} anchor="middle" cls="fill-zinc-500" size={8}>rows = c1 · columns = c2</Label>
+      </motion.g>
+      <motion.g {...fade(0.5)}>
+        <XMark x={296} y={86} cls="stroke-zinc-500" s={4.5} />
+        <Label x={310} y={90} cls="fill-zinc-400" size={9}>self-pairs — same customer twice (5)</Label>
+        <rect x={286} y={110} width={22} height={14} rx={3} className="fill-emerald-400/15 stroke-emerald-400/40" />
+        <circle cx={297} cy={117} r={2.4} className="fill-emerald-400" />
+        <Label x={318} y={120} cls="fill-zinc-400" size={9}>kept — c1.id &lt; c2.id (10)</Label>
+        <rect x={286} y={140} width={22} height={14} rx={3} className="fill-zinc-900/40 stroke-zinc-800" />
+        <Label x={318} y={150} cls="fill-zinc-400" size={9}>mirrors — reversed ids (10)</Label>
+        <Label x={286} y={180} cls="fill-zinc-500" size={9}>"Farid &amp; Grace" and "Grace &amp; Farid"</Label>
+        <Label x={286} y={194} cls="fill-zinc-500" size={9}>say the same thing — one must go</Label>
+      </motion.g>
+      <motion.g {...fade(0.7)}>
+        <Panel x={536} y={64} w={158} h={150} />
+        <Label x={615} y={92} anchor="middle" cls="fill-zinc-100" size={15}>25 combinations</Label>
+        <Label x={615} y={116} anchor="middle" cls="fill-zinc-400" size={9}>− 5 self-pairs</Label>
+        <Label x={615} y={134} anchor="middle" cls="fill-zinc-400" size={9}>− 10 mirrors</Label>
+        <line x1={550} y1={146} x2={680} y2={146} className="stroke-zinc-800" />
+        <Label x={615} y={168} anchor="middle" cls="fill-emerald-200" size={13}>= 10 honest pairs</Label>
+        <Label x={615} y={190} anchor="middle" cls="fill-zinc-500" size={8}>39 in all: 10+28+1+0</Label>
+      </motion.g>
+      <motion.g {...fade(0.9)}>
+        <Label x={26} y={254} cls="fill-zinc-500" size={9}>C(5,2) = 5·4/2 = 10 — the strict &lt; removes self-pairs and mirrors in a single stroke</Label>
+        <Label x={26} y={270} cls="fill-zinc-400" size={9}>c1.id &lt;&gt; c2.id only kills the diagonal — the 10 mirrors would survive and double your result</Label>
+        <Label x={26} y={286} cls="fill-zinc-600" size={9}>every region contributes its own triangle: EU's 8 customers → 28 pairs, US's 2 → 1, LATAM's 1 → none</Label>
+      </motion.g>
+    </svg>
+  );
+}
+
+/* ---------- lesson 15 — the ghost row (COUNT(*) 36 vs COUNT(o.id) 30) ---------- */
+
+function J15GhostRow() {
+  return (
+    <svg viewBox="0 0 720 272" className="w-full" role="img" aria-label="After a LEFT JOIN, COUNT(*) counts the NULL-filled ghost row as 1 while COUNT(o.id) correctly reports 0 — across the store: 36 rows counted versus 30 real matches, the 6 ghosts are the true zeros">
+      <motion.g {...fade(0)}>
+        <Label x={26} y={22} cls="fill-zinc-500" size={9}>customers c LEFT JOIN orders o ON o.customer_id = c.id AND o.status = 'shipped' — GROUP BY c.id</Label>
+        <Label x={26} y={36} cls="fill-zinc-400" size={9}>COUNT(*) counts rows · COUNT(column) counts values — the difference is the ghost row</Label>
+      </motion.g>
+      <motion.g {...fade(0.25)}>
+        <Panel x={26} y={58} w={300} h={110} />
+        <Label x={40} y={78} cls="fill-zinc-300" size={10}>Alice Chen — 6 shipped orders</Label>
+        {[0, 1, 2].map((i) => (
+          <rect key={i} x={40} y={90 + i * 14} width={130} height={9} rx={2} className="fill-zinc-800" />
+        ))}
+        <Label x={40} y={134} cls="fill-zinc-500" size={8}>··· 3 more real rows</Label>
+        <Label x={200} y={100} cls="fill-zinc-200" size={11}>COUNT(*) = 6</Label>
+        <Label x={200} y={120} cls="fill-emerald-300" size={11}>COUNT(o.id) = 6</Label>
+        <Label x={40} y={156} cls="fill-zinc-500" size={8}>they agree — every row carries a real o.id</Label>
+      </motion.g>
+      <motion.g {...fade(0.5)}>
+        <Panel x={350} y={58} w={300} h={110} cls="fill-zinc-900 stroke-rose-400/50" />
+        <Label x={364} y={78} cls="fill-zinc-300" size={10}>Bruno Silva — 0 shipped orders</Label>
+        <rect x={364} y={90} width={130} height={9} rx={2} className="fill-zinc-800 stroke-rose-400/50" strokeDasharray="3 2" />
+        <Label x={502} y={98} cls="fill-rose-300" size={8}>the ghost row — NULL-filled</Label>
+        <XMark x={388} y={104} cls="stroke-rose-400" s={3} />
+        <Label x={364} y={134} cls="fill-rose-300" size={11}>COUNT(*) = 1</Label>
+        <Label x={364} y={152} cls="fill-emerald-300" size={11}>COUNT(o.id) = 0</Label>
+        <Label x={500} y={134} cls="fill-zinc-500" size={8}>COUNT(*) sees a row,</Label>
+        <Label x={500} y={148} cls="fill-zinc-500" size={8}>COUNT(o.id) sees NULL</Label>
+      </motion.g>
+      <motion.g {...fade(0.7)}>
+        <Panel x={26} y={180} w={668} h={52} />
+        <Label x={40} y={202} cls="fill-zinc-300" size={10}>across the whole store:</Label>
+        <Label x={200} y={203} cls="fill-rose-300" size={13}>COUNT(*) = 36</Label>
+        <Label x={330} y={203} cls="fill-emerald-200" size={13}>COUNT(o.id) = 30</Label>
+        <Label x={460} y={202} cls="fill-zinc-500" size={9}>the 6 ghosts are exactly the 6 true zeros</Label>
+      </motion.g>
+      <motion.g {...fade(0.9)}>
+        <Label x={26} y={248} cls="fill-zinc-500" size={9}>aggregate the right side's id, always: COUNT(o.id) sees NULL and reports 0 — COUNT(*) counts the ghost and lies by one per empty customer</Label>
+        <Label x={26} y={264} cls="fill-zinc-600" size={9}>the plain LEFT JOIN (no status filter) agrees both ways on this seed — the habit pays the day your data has a real zero</Label>
+      </motion.g>
+    </svg>
+  );
+}
+
+/* ---------- lesson 16 — the pre-flight gate (many side: safe · one side: collapse first) ---------- */
+
+function J16Preflight() {
+  return (
+    <svg viewBox="0 0 720 286" className="w-full" role="img" aria-label="The pre-flight gate before aggregating a join: a many-side column is safe to sum, a one-side column must be collapsed first, and skipping the gate inflates 34,833.28 to 103,244.55">
+      <motion.g {...fade(0)}>
+        <Label x={26} y={22} cls="fill-zinc-500" size={9}>the pre-flight gate — run it before any SUM over a join</Label>
+      </motion.g>
+      <motion.g {...fade(0.2)}>
+        <rect x={210} y={40} width={300} height={40} rx={8} className="fill-zinc-900 stroke-zinc-600" />
+        <Label x={360} y={64} anchor="middle" cls="fill-zinc-200" size={11}>about to aggregate a joined column?</Label>
+        <Pipe pts={[[360, 80], [360, 100], [191, 100], [191, 116]]} cls="stroke-zinc-600" arrowAng={Math.PI / 2} />
+        <Pipe pts={[[360, 80], [360, 100], [529, 100], [529, 116]]} cls="stroke-zinc-600" arrowAng={Math.PI / 2} />
+      </motion.g>
+      <motion.g {...fade(0.45)}>
+        <Panel x={26} y={120} w={330} h={88} cls="fill-emerald-400/5 stroke-emerald-400/40" />
+        <Label x={40} y={142} cls="fill-emerald-300" size={10}>does the column live on the MANY side?</Label>
+        <Label x={40} y={162} cls="fill-zinc-400" size={9}>each pair IS a fact — nothing is duplicated</Label>
+        <Label x={40} y={178} cls="fill-zinc-400" size={9}>SUM(oi.quantity * oi.unit_price) over 251 rows: honest</Label>
+        <Label x={40} y={198} cls="fill-emerald-200" size={10}>✓ safe — aggregate after the join</Label>
+        <Panel x={364} y={120} w={330} h={88} cls="fill-amber-400/5 stroke-amber-400/40" />
+        <Label x={378} y={142} cls="fill-amber-300" size={10}>does it live on the ONE side?</Label>
+        <Label x={378} y={162} cls="fill-zinc-400" size={9}>collapse first: GROUP BY o.id — 251 lines → 103 orders</Label>
+        <Label x={378} y={178} cls="fill-zinc-400" size={9}>then join 1:1 and sum: 34,833.28 — matches the raw table</Label>
+        <Label x={378} y={198} cls="fill-emerald-200" size={10}>✓ the aggregate-first fix (lesson 13's subquery move)</Label>
+      </motion.g>
+      <motion.g {...fade(0.7)}>
+        <rect x={26} y={222} width={668} height={44} rx={8} className="fill-rose-400/10 stroke-rose-400/60" />
+        <XMark x={46} y={244} cls="stroke-rose-400" s={5.5} />
+        <Label x={60} y={240} cls="fill-rose-300" size={10}>skip the gate and join first anyway:</Label>
+        <Label x={60} y={256} cls="fill-zinc-500" size={9}>SUM(o.total) rides the fan-out — 251 copies</Label>
+        <Label x={420} y={248} cls="fill-rose-200" size={14}>34,833.28 → 103,244.55</Label>
+        <Label x={694} y={248} anchor="end" cls="fill-zinc-500" size={8}>3× inflated,</Label>
+        <Label x={694} y={260} anchor="end" cls="fill-zinc-500" size={8}>no error, no warning</Label>
+      </motion.g>
+      <motion.g {...fade(0.9)}>
+        <Label x={26} y={280} cls="fill-zinc-500" size={9}>then the checklist: keys are real · multiplication handled · unmatched rows decided · GROUP BY the id · zeros via COUNT(column)</Label>
+      </motion.g>
+    </svg>
+  );
+}
+
 export const FIGURES_M2: Partial<Record<FigureId, () => React.JSX.Element>> = {
   "j9-mental-model": J9MentalModel,
+  "j9-direction": J9Direction,
   "j10-cartesian": J10Cartesian,
+  "j10-multiply": J10Multiply,
   "j11-hop-map": J11HopMap,
+  "j11-fanmap": J11Fanmap,
   "j12-where-vs-on": J12WhereVsOn,
+  "j12-gap-anatomy": J12GapAnatomy,
   "j13-three-spellings": J13ThreeSpellings,
+  "j13-subquery-flow": J13SubqueryFlow,
   "j14-two-aliases": J14TwoAliases,
+  "j14-mirror": J14Mirror,
   "j15-agg-pipeline": J15AggPipeline,
+  "j15-ghost-row": J15GhostRow,
   "j16-agg-first": J16AggFirst,
+  "j16-preflight": J16Preflight,
 };

@@ -60,6 +60,7 @@ LIMIT 10;`,
         "**Zeros** — `COUNT(column)`, not `COUNT(*)`, when zeros are possible.",
       ],
     },
+    { kind: "diagram", figure: "j16-preflight" },
     {
       kind: "dialect",
       db: "mysql",

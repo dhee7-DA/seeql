@@ -24,6 +24,7 @@ JOIN products p   ON p.id = oi.product_id
 ORDER BY oi.id
 LIMIT 5;`,
     },
+    { kind: "diagram", figure: "j11-fanmap" },
     { kind: "h", text: "Habits for chains" },
     { kind: "diagram", figure: "j11-hop-map" },
     {

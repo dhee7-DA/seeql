@@ -50,6 +50,7 @@ LEFT JOIN (
 WHERE pend.product_id IS NULL
 ORDER BY p.name;`,
     },
+    { kind: "diagram", figure: "j13-subquery-flow" },
     { kind: "diagram", figure: "j13-three-spellings" },
     {
       kind: "warn",

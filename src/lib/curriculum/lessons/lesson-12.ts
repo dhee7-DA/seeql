@@ -56,6 +56,7 @@ ORDER BY c.name;`,
       kind: "tip",
       text: "`o.id IS NULL` on the right table's primary key is the reliable signature of \"this left row never matched\" — primary keys are never NULL, so a NULL there can only mean no match. That pattern is big enough to get its own lesson (next up).",
     },
+    { kind: "diagram", figure: "j12-gap-anatomy" },
   ],
   mcqs: [
     {

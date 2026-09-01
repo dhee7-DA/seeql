@@ -315,3 +315,23 @@ Stage Summary:
 - Curriculum untouched: still 24 lessons · 228 MCQs · 199 problems · 48 figures — this round was navigation, visualization and practice-mode surface area
 - Key files: src/components/learn/{data-explorer,mixed-quiz,progress-cards,learn-app}.tsx, scripts/facts-task18.ts
 - Next-round queue: M2/M3-style capstone blocks are already covered by l16/l24 problem sets; remaining ideas — daily-goal picker on the overview, streak/badge nudges, share-a-round results card
+
+---
+Task ID: 19
+Agent: Super Z (main agent)
+Task: "i need more visuals in joins" — add a third concept-deep figure to every join-module lesson 09–16 (48 → 56 diagrams)
+
+Work Log:
+- Studied the diagram system end to end: diagrams-kit.tsx helpers (Label/Arrow/Pipe/Panel/XMark/fade), per-module registries (FIGURES_M2 merged into diagrams.tsx registry), FigureId union in types.ts, house style (720-wide viewBox, staged fade-ins, emerald=good / rose=trap / amber=caution, footer takeaway lines)
+- Surveyed all 8 join lessons' block structure and the 16 existing M2 figures to pick concepts with zero overlap; j13-three-spellings already owns the NOT-IN NULL trap, so L13's new figure covers the subquery data-flow instead
+- Fact verification BEFORE drawing (scripts/facts-viz-m2.ts, kept): top orderer Alice Chen 24 orders (Emma 17), Desk Mat Extended 24 lines/24 distinct orders (products 16 → 251 joined rows), pending lines 36 on 30 orders → 11 distinct products → 5 never pending, shipped 30 orders across 10 customers + 6 gap customers = 36 rows (gap names Bruno Silva/Chloe Dubois verified), APAC 5→10 / EU 8→28 / US 2→1 / LATAM 1→0 pairs, ghost-row math 36 vs 30, anchors 34,833.28 / 103,244.55, lines per order 1–4
+- Wrote 8 figures in diagrams-m2.tsx (one per lesson, each ~2 seed-verified numbers minimum): j9-direction (widen-not-multiply, name repeats), j10-multiply (1 product row → 24 copies), j11-fanmap (full referential map 16←103←251→16→6 with FK labels + hop planner), j12-gap-anatomy (36 = 30 matched + 6 NULL-filled, real gap names), j13-subquery-flow (251 → 36 → 11 → 5 pipeline), j14-mirror (5×5 pairing grid: 5 self + 10 mirrors + 10 kept), j15-ghost-row (COUNT(*) 36 vs COUNT(o.id) 30), j16-preflight (decision flow to dodge the 3× trap); extended FigureId union (+8) and FIGURES_M2 registry
+- Inserted diagram blocks at concept-matched positions via scripts/insert-viz-m2.py (assert-once anchors): L09 after the read-the-query steps, L10 after the rows-multiply bullets, L11 before "Habits for chains", L12 after the IS NULL tip, L13 between the pre-filtered-list code and three-spellings, L14 after the numbers-on-this-data bullets, L15 right after the COUNT-trap bullets, L16 after the pre-flight checklist
+- Browser E2E caught 3 layout bugs, all fixed and re-verified: j14-mirror legend clipped by the stat panel + grid caption colliding with footers (moved grid left, shortened legend, raised viewBox), j11-fanmap FK labels overlapping card fills (moved labels below cards; also fixed arrow semantics — order_items→products and products→suppliers now point right, child→parent), j12-gap-anatomy dot grid overflowing its panel + legend crossing into the next column (compacted grid, in-panel legend); j9-direction footer line trimmed after 733px overflow check
+- Landing page: hardcoded "48" stat replaced with TOTAL_FIGURES computed from lesson blocks — shows 56 now, cannot drift again
+- QA: src tsc 0 errors; eslint clean on all touched files; wiring 56 used = 56 registered = 56 union, 0 orphans; all 8 lessons render 3 figures each (aria-labels verified), no page errors; screenshots scripts/shots/t19-{l14-final,l16-preflight}.png
+
+Stage Summary:
+- Curriculum now 3 modules · 24 lessons · 228 MCQs · 199 problems · 56 interactive diagrams — every join lesson carries 3 figures (intro + concept-deep + mechanism-deep), all numbers seed-verified against scripts/facts-viz-m2.ts
+- The joins module now visually covers the concepts that were prose-only: many-to-one widening, fanout multiplication, the whole FK map, gap-row anatomy, subquery anti-join flow, the mirror matrix, the ghost row, and the aggregate-first decision gate
+- Key files: src/components/learn/diagrams-m2.tsx, src/lib/curriculum/types.ts, src/lib/curriculum/lessons/lesson-09..16.ts, src/components/landing.tsx, scripts/{facts-viz-m2.ts,insert-viz-m2.py}

@@ -29,6 +29,7 @@ const NAV = [
 
 const TOTAL_MCQ = LESSONS.reduce((a, l) => a + l.mcqs.length, 0);
 const TOTAL_PROBLEMS = LESSONS.reduce((a, l) => a + l.problems.length, 0);
+const TOTAL_FIGURES = LESSONS.reduce((a, l) => a + l.blocks.filter((b) => b.kind === "diagram").length, 0);
 
 function scrollTo(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -157,7 +158,7 @@ export function Landing({ onStart, onPlayground }: { onStart: () => void; onPlay
         <div className="mx-auto grid w-full max-w-6xl grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
           {[
             [String(LESSONS.length), "lessons, start to capstone"],
-            ["48", "interactive diagrams"],
+            [String(TOTAL_FIGURES), "interactive diagrams"],
             [String(TOTAL_MCQ), "quiz questions"],
             [String(TOTAL_PROBLEMS), "live-graded queries"],
             ["1", "real storefront database"],

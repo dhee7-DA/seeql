@@ -45,6 +45,7 @@ ORDER BY spend DESC;`,
         "In this store every customer has ordered, so both return 103 — but the moment your data has a true zero, `COUNT(*)` starts lying by one per empty customer. Aggregate the right side's id, always.",
       ],
     },
+    { kind: "diagram", figure: "j15-ghost-row" },
     {
       kind: "dialect",
       db: "sqlite",

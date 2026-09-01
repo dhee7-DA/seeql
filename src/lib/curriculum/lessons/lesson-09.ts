@@ -46,6 +46,7 @@ LIMIT 5;`,
         "`SELECT o.id, c.name, o.total` — after matching, columns can come from either side.",
       ],
     },
+    { kind: "diagram", figure: "j9-direction" },
     { kind: "h", text: "Two details worth noticing" },
     {
       kind: "bullets",

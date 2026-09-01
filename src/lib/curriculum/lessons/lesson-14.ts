@@ -46,6 +46,7 @@ ORDER BY c1.region, pair_a;`,
         "Swap `region` for `category` and the same query pairs products — that's the sign of a pattern worth memorizing.",
       ],
     },
+    { kind: "diagram", figure: "j14-mirror" },
   ],
   mcqs: [
     {

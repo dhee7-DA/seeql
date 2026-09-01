@@ -22,6 +22,7 @@ export const lesson10: Lesson = {
         "**Aliases stop being decoration.** Both tables tend to own columns called `id`, `name`, `created_at` — an unqualified column is ambiguous and SQLite refuses the query. Alias every table (`orders o`, `customers c`), qualify every column: six extra characters for queries that never lie about their sources.",
       ],
     },
+    { kind: "diagram", figure: "j10-multiply" },
     { kind: "diagram", figure: "j2-inner-match" },
     {
       kind: "code",
