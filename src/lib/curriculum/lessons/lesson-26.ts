@@ -182,6 +182,51 @@ ORDER BY o.total DESC;`,
         { choice: 0, why: "`GROUP BY status` with SUM is the lesson-8 bread and butter — one level, no comparison against another level. The 'above own average' shape is the two-level one." },
       ],
     },
+    {
+      id: "l26-q9",
+      prompt: "What exactly makes a subquery 'correlated'?",
+      choices: [
+        "It returns multiple rows",
+        "It references a column from the outer query — so it must be re-evaluated (conceptually) once per outer row",
+        "It uses an aggregate function",
+        "It sits in the SELECT list rather than WHERE",
+      ],
+      answer: 1,
+      why: "Correlation is about shared names: the moment the inner query reads an outer column (like o.customer_id), its answer depends on the outer row — one probe per row instead of one list up front.",
+      notes: [
+        { choice: 2, why: "Aggregates appear in uncorrelated subqueries constantly (the AVG-price probe). The tell is the outer reference, not the function." },
+      ],
+    },
+    {
+      id: "l26-q10",
+      prompt: "Why is `EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.id)` written with a 1?",
+      choices: [
+        "1 is faster than any other literal",
+        "EXISTS only asks 'did any row come back?' — the projected value is irrelevant, and SELECT 1 says so out loud",
+        "SELECT * is illegal inside EXISTS",
+        "1 is the lowest allowed id",
+      ],
+      answer: 1,
+      why: "The engine never materializes the subquery's columns for EXISTS — it stops at the first matching row. `SELECT 1` is the convention that tells readers nothing else was intended.",
+      notes: [
+        { choice: 2, why: "SELECT * works identically inside EXISTS. Either spelling is fine; the convention just makes the intent unmistakable." },
+      ],
+    },
+    {
+      id: "l26-q11",
+      prompt: "How many orders total more than their OWN customer's average order — and why isn't it the same count as 'above the storewide average'?",
+      choices: [
+        "42 — the two baselines coincide",
+        "45 — each customer is judged against their own mean (338.19 storewide is irrelevant), so different orders qualify",
+        "45 — storewide is the stricter bar",
+        "0 — an order can't exceed its own average",
+      ],
+      answer: 1,
+      why: "The correlated probe swaps the baseline per row: big spenders like Alice (24 orders, 7,262.35 total) set a high internal bar while small buyers set a low one. 45 orders clear their own household's bar; 42 clear the storewide 338.19.",
+      notes: [
+        { choice: 0, why: "42 is the uncorrelated answer — one bar for everyone. The correlated version re-asks 'average of WHO?' 103 times, and the answer shifts." },
+      ],
+    },
   ],
   problems: [
     {

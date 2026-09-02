@@ -224,6 +224,46 @@ export const lesson07: Lesson = {
         { choice: 0, why: "They only *look* identical because product_id is never NULL here — one NULL row would split the two counts, which is why they're different questions." },
       ],
     },
+    {
+      id: "l7-q13",
+      prompt: "`SELECT MIN(created_at), MAX(created_at) FROM orders` — what comes back?",
+      choices: [
+        "An error — MIN/MAX are for numbers",
+        "'2024-01-01' and '2025-02-27' — the first and latest order dates",
+        "The count of distinct dates",
+        "NULL — dates can't be compared",
+      ],
+      answer: 1,
+      why: "MIN/MAX work on any orderable type. ISO-8601 dates ('2024-01-01') sort chronologically as plain text, so the store's 423-day span pops out with no date functions at all.",
+      notes: [
+        { choice: 3, why: "Text dates compare perfectly well — that's the quiet superpower of the ISO format. Only weird formats like '03/05/2024' would mislead a text sort." },
+      ],
+    },
+    {
+      id: "l7-q14",
+      prompt: "`SELECT MAX(stock) FROM products` returns 500. Which product does that number belong to?",
+      choices: [
+        "The query already tells you — it's the first row",
+        "None — MAX returns a bare value, the owning row is anonymous until you ask differently",
+        "All products with stock ≥ 500",
+        "The product with the lowest id",
+      ],
+      answer: 1,
+      why: "Aggregates collapse the column to one value and drop the row identity. (It's the HDMI 2.1 Cable 2m — but you'd need `ORDER BY stock DESC LIMIT 1` or a subquery to make the query say so.)",
+      notes: [
+        { choice: 0, why: "There are no rows in an aggregate-only query — the value floats alone. 'Which row holds the max?' is a different question needing LIMIT 1 or a correlated probe." },
+      ],
+    },
+    {
+      id: "l7-q15",
+      prompt: "On the orders table, `COUNT(*)` is 103. What is `COUNT(shipped_at)`?",
+      choices: ["103", "82 — the rows where shipped_at is filled", "21", "0"],
+      answer: 1,
+      why: "COUNT(column) skips NULLs — 82 orders have a ship date, 21 don't. The gap between 103 and 82 is exactly the unshipped population.",
+      notes: [
+        { choice: 2, why: "21 is COUNT of the NULLs themselves — you'd get that with `COUNT(*) - COUNT(shipped_at)` or `SUM(shipped_at IS NULL)`." },
+      ],
+    },
   ],
   problems: [
     {

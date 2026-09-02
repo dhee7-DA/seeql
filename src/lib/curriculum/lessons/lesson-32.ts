@@ -216,6 +216,61 @@ FROM monthly ORDER BY mon;
         { choice: 3, why: "That's the running total — cumulative, not comparative. The delta needs a NEIGHBOR (LAG), not an accumulation." },
       ],
     },
+    {
+      id: "l32-q9",
+      prompt: "`LAG(total) OVER (ORDER BY created_at)` on the store's earliest order — what comes back?",
+      choices: ["0", "NULL — there's no earlier row to look at", "The earliest order's own total", "An error"],
+      answer: 1,
+      why: "LAG reaches one row back; the first row has nothing behind it, so it gets NULL. (Verified anchor: Alice's first order shows a NULL previous date, then 20-day, 29-day gaps as the sequence begins.)",
+      notes: [
+        { choice: 0, why: "Zero is a NUMBER you invented — LAG gives genuine NULL, which keeps 'no previous row' distinguishable from 'previous row worth zero'. COALESCE(..., 0) is there if you truly want zeros." },
+      ],
+    },
+    {
+      id: "l32-q10",
+      prompt: "LAG looks backward. What does LEAD(total) return on the LAST row of the ordering?",
+      choices: ["The first row's total — it wraps around", "NULL — nothing ahead of it", "The last row's own total", "It restarts the query"],
+      answer: 1,
+      why: "LEAD peers one row forward; the final row has no successor, so NULL. LAG and LEAD are mirror images with mirror-image NULL edges.",
+      notes: [
+        { choice: 0, why: "Window functions never wrap. If you want a circular sequence, that's a self-join or a CTE with row arithmetic — not a window's job." },
+      ],
+    },
+    {
+      id: "l32-q11",
+      prompt: "`SUM(total) OVER (ORDER BY created_at)` on monthly revenue — rows are 3,731.97 (Jan), 3,609.64 (Feb), 2,617.08 (Mar). What does the third row show?",
+      choices: ["2,617.08 — each row shows itself", "9,958.69 — the running total through March", "3,731.97 — the first month", "8,958.69"],
+      answer: 1,
+      why: "The default frame runs from the start of the partition through the current row: 3,731.97 + 3,609.64 + 2,617.08 = 9,958.69. Every row carries the cumulative sum — the running-total pattern in one expression.",
+      notes: [
+        { choice: 0, why: "That's plain SUM in disguise. The OVER clause is what changes SUM from 'total of my group' to 'total of everything up to me'." },
+      ],
+    },
+    {
+      id: "l32-q12",
+      prompt: "Frame: `SUM(x) OVER (ORDER BY id ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)` over values 10, 20, 30 — what does each row show?",
+      choices: ["60 on every row", "10 / 30 / 50 — current row plus its immediate predecessor", "10 / 20 / 30", "30 / 50 / 60"],
+      answer: 1,
+      why: "The frame is a two-row sliding window: row one has only itself (10), row two adds its predecessor (10+20=30), row three (20+30=50). Narrow frames = moving averages and rolling sums.",
+      notes: [
+        { choice: 0, why: "60 on every row would be the UNBOUNDED frame — the whole partition. BETWEEN 1 PRECEDING AND CURRENT ROW caps the window at two rows." },
+      ],
+    },
+    {
+      id: "l32-q13",
+      prompt: "`NTILE(4) OVER (ORDER BY total)` across 103 orders — how do the buckets size out?",
+      choices: [
+        "4 buckets of 25 with 3 NULLs",
+        "26 / 26 / 26 / 25 — as even as possible, extras dealt to the earliest buckets",
+        "25 / 25 / 25 / 28 — extras go to the last bucket",
+        "103 / 0 / 0 / 0",
+      ],
+      answer: 1,
+      why: "103 doesn't divide by 4: NTILE deals rows round-robin into buckets 1..4 until it runs out, so the front buckets take the remainder. First quartile ends up 26 orders deep.",
+      notes: [
+        { choice: 2, why: "The remainder lands on the EARLIEST buckets, not the last — bucket 1 is the one that grows. Quartile cuts (top 25% by spend) depend on this." },
+      ],
+    },
   ],
   problems: [
     {

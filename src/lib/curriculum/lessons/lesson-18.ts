@@ -201,6 +201,46 @@ ORDER BY tag DESC, total DESC, id;`,
         { choice: 0, why: "Even pre-computing the averages per arm leaves you piling rows, not pairing them — the stack has no mechanism to align a supplier with its own number." },
       ],
     },
+    {
+      id: "l18-q9",
+      prompt: "Arm one selects 3 columns, arm two selects 2. What happens when SQLite stacks them?",
+      choices: [
+        "The missing column fills with NULL",
+        "Error before any row is returned — SELECTs to the left and right of UNION must have the same number of result columns",
+        "The extra column is dropped from arm one",
+        "It works — column count is advisory",
+      ],
+      answer: 1,
+      why: "Compound SELECTs are validated up front: both arms must project the same column count. The error message even names the operators involved — alignment is checked, never improvised.",
+      notes: [
+        { choice: 0, why: "No auto-padding exists in SQL. If you want a trailing NULL column, add the literal NULL explicitly in the shorter arm." },
+      ],
+    },
+    {
+      id: "l18-q10",
+      prompt: "`SELECT name FROM customers UNION SELECT city FROM customers` — what is the result column called?",
+      choices: ["city — the last arm wins", "name — the first arm names the columns", "A generated name like 'column1'", "Both, split into two columns"],
+      answer: 1,
+      why: "Position binds the values, but naming comes from the first arm. The output column is `name`, full stop — rename it there (`AS label`) to control what the header says.",
+      notes: [
+        { choice: 2, why: "Unlike a bare expression, compound SELECTs take their header from arm one. The awkward names only appear when arm one's column is itself an unnamed expression." },
+      ],
+    },
+    {
+      id: "l18-q11",
+      prompt: "Arm one projects prices (numbers), arm two projects product names (text). SQLite stacks them anyway. What did you build?",
+      choices: [
+        "A clean numeric column — SQLite converts names to numbers",
+        "A single mixed-type column that sorts and aggregates unreliably — legal, and almost always a bug",
+        "An error on the second row",
+        "Two columns — types keep arms separate",
+      ],
+      answer: 1,
+      why: "SQLite's flexible typing permits the stack, but the shared column now holds both kinds of values: MAX() picks odd winners, joins mismatch, charts lie. Alignment means same count, same meaning, same type.",
+      notes: [
+        { choice: 0, why: "Nothing coerces on insert into the result column — 'Smart Watch S' stays text. Strict engines would refuse the stack outright; SQLite just trusts you." },
+      ],
+    },
   ],
   problems: [
     {

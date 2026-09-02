@@ -209,6 +209,56 @@ export const lesson04: Lesson = {
         { choice: 2, why: "It \"works\" in the sense that it runs — and deterministically returns nothing. Speed was never the problem." },
       ],
     },
+    {
+      id: "l4-q12",
+      prompt: "`SELECT COALESCE(shipped_at, created_at) FROM orders` — what comes out for the 21 orders that never shipped?",
+      choices: ["NULL — nothing to coalesce", "The order's created_at value", "Zero", "An error — types differ"],
+      answer: 1,
+      why: "COALESCE walks its arguments left to right and returns the first non-NULL one. shipped_at is NULL for those 21 rows, so the fallback created_at steps in.",
+      notes: [
+        { choice: 0, why: "NULL input doesn't poison COALESCE — fallbacks are its entire job. For the 82 orders that did ship, shipped_at wins instead." },
+      ],
+    },
+    {
+      id: "l4-q13",
+      prompt: "How do IFNULL and COALESCE relate?",
+      choices: [
+        "IFNULL takes many arguments, COALESCE only two",
+        "IFNULL is the two-argument special case of COALESCE",
+        "They differ on empty strings",
+        "IFNULL is faster because it caches",
+      ],
+      answer: 1,
+      why: "IFNULL(x, y) behaves exactly like COALESCE(x, y). COALESCE is the standard, N-argument general form — IFNULL is the SQLite/MySQL convenience spelling.",
+      notes: [
+        { choice: 2, why: "Neither treats empty strings specially — '' is a real value to both. That's NULLIF's territory." },
+      ],
+    },
+    {
+      id: "l4-q14",
+      prompt: "A line item has quantity = 1. What does `NULLIF(quantity, 1)` return for that row?",
+      choices: ["1", "NULL", "0", "An error"],
+      answer: 1,
+      why: "NULLIF(a, b) returns NULL when a equals b, otherwise returns a untouched. It's the 'turn this specific value into a missing value' tool.",
+      notes: [
+        { choice: 0, why: "The point was to remove the 1s from view — NULLIF delivers a NULL, which AVG and friends then skip. quantity = 2 would sail through unchanged." },
+      ],
+    },
+    {
+      id: "l4-q15",
+      prompt: "Why does `WHERE shipped_at = NULL` never return a row — even for the 21 unshipped orders?",
+      choices: [
+        "Because shipped_at is a date column",
+        "Because = NULL evaluates to unknown, and WHERE keeps only true rows",
+        "Because you must quote NULL",
+        "Because NULL equals zero",
+      ],
+      answer: 1,
+      why: "Any comparison with NULL — even NULL = NULL — yields unknown, the third truth value. WHERE drops both false and unknown, so only `IS NULL` can find them.",
+      notes: [
+        { choice: 2, why: "NULL is a keyword, not a string — quoting it would search for the four letters 'NULL'. The failure here is three-valued logic, not syntax." },
+      ],
+    },
   ],
   problems: [
     {

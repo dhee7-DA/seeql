@@ -215,6 +215,96 @@ GROUP BY b.label ORDER BY MIN(b.lo);   -- small 8 · medium 30 · large 40 · ju
         { choice: 0, why: "Too absolute — the team-comment point stands (LEFT reads forward), but chaining long derived tables is RIGHT's honest niche." },
       ],
     },
+    {
+      id: "l34-q9",
+      prompt: "`orders o RIGHT JOIN customers c ON c.id = o.customer_id AND o.status = 'cancelled'` — why 19 rows and not 7?",
+      choices: [
+        "RIGHT JOIN multiplies matches by region count",
+        "RIGHT keeps every customer: the 7 matched cancelled pairs plus 12 customers with no cancelled order, NULL-filled",
+        "The status filter failed and every order survived",
+        "7 was the INNER count — RIGHT doubles it",
+      ],
+      answer: 1,
+      why: "RIGHT JOIN preserves the right table exactly as LEFT preserves the left. All 16 customers survive: the 4 cancelled customers own 7 cancelled orders (7 matched pairs), and the other 12 customers ride along NULL-filled — 7 + 12 = 19.",
+      notes: [
+        { choice: 2, why: "The AND-in-ON filters only the order arm — customers never get filtered by it. Moving status to WHERE would kill the NULL rows and collapse the query to an INNER 7." },
+      ],
+    },
+    {
+      id: "l34-q10",
+      prompt: "`orders o FULL OUTER JOIN customers c ON c.id = o.customer_id AND o.status = 'cancelled'` = 115 rows. What's the decomposition?",
+      choices: [
+        "103 orders + 12 never-cancelled customers — every order survives unmatched included, every customer too",
+        "115 cancelled pairs",
+        "103 customers + 12 orders",
+        "7 INNER rows + 108 NULL rows",
+      ],
+      answer: 0,
+      why: "FULL = LEFT arm + reversed-anti arm. From the orders side all 103 survive (only 7 found a cancelled match); from the customers side the 12 with no cancelled order arrive NULL-filled. 103 + 12 = 115 — nothing discarded from either side.",
+      notes: [
+        { choice: 1, why: "Only 7 orders are cancelled — the other 96 order rows survive UNmatched (the AND-in-ON excluded them from matching, not from existing). That's the audit join's whole story." },
+      ],
+    },
+    {
+      id: "l34-q11",
+      prompt: "Why does NATURAL JOIN get flagged as a foot-gun even though it 'saves writing the ON'?",
+      choices: [
+        "It's deprecated syntax that errors in SQLite",
+        "It joins on EVERY identically named column pair — one stray shared name (like region, or created_at) silently changes which rows match",
+        "It only works on primary keys",
+        "It's slower — nothing more",
+      ],
+      answer: 1,
+      why: "NATURAL infers the join condition from column names. This store's customers and suppliers both have name and region — a natural join between them would pair on two meaningless matches. Explicit ON is the safety harness.",
+      notes: [
+        { choice: 3, why: "The danger isn't speed, it's semantics: the join condition changes the moment a column is added or renamed. 'Saved keystrokes' is a terrible trade for that." },
+      ],
+    },
+    {
+      id: "l34-q12",
+      prompt: "In the band ladder, `WITH bands(lo, hi, label) AS (VALUES (0, 50, 'small'), (50, 200, 'medium'), …)` — what IS `VALUES` here?",
+      choices: [
+        "A system table that must exist beforehand",
+        "An inline table constructor — rows you type directly in SQL, given names by the CTE header",
+        "A function that generates ranges",
+        "A placeholder for the orders table",
+      ],
+      answer: 1,
+      why: "VALUES (…),(…) builds a literal table on the fly; the CTE names it and its columns: bands(lo, hi, label). Four typed thresholds become a joinable table — no DDL, no temp table, one query.",
+      notes: [
+        { choice: 2, why: "No generation logic exists here — every row is hand-typed. That's the point: thresholds you can read and edit next to the query that uses them." },
+      ],
+    },
+    {
+      id: "l34-q13",
+      prompt: "The ladder joins `ON o.total >= b.lo AND o.total < b.hi` — bands 0/50, 50/200, 200/500, 500/9999. Why half-open `[lo, hi)` and what does 'medium' count?",
+      choices: [
+        "Half-open prevents double-counting at the seams — medium (50 ≤ total < 200) holds 30 orders",
+        "Half-open is a style choice; medium holds 30 either way",
+        "It drops boundary rows — 4 orders go missing",
+        "medium holds 50 — everything below 200",
+      ],
+      answer: 0,
+      why: "If both ranges were closed, an order totaling exactly 50.00 would match 'small' AND 'medium' — fan-out inflating the sum past 103. Half-open intervals tile the number line: 8 + 30 + 40 + 25 = 103, no orphans, no doubles.",
+      notes: [
+        { choice: 1, why: "Not a style choice — with closed bands the counts stop summing to 103 the moment an order sits exactly on a seam. The equation 8 + 30 + 40 + 25 = 103 is the proof that [lo, hi) tiles perfectly." },
+      ],
+    },
+    {
+      id: "l34-q14",
+      prompt: "NATURAL JOIN vs `USING (region)` — what's the precise relationship?",
+      choices: [
+        "They're identical spellings",
+        "NATURAL is USING-everything: it auto-detects ALL shared column names — USING (region) matches only the one column you name",
+        "USING is stricter about types only",
+        "NATURAL needs the columns to be primary keys",
+      ],
+      answer: 1,
+      why: "USING (region) pins the match to region alone; NATURAL infers the whole list from shared names — customers ⋈ suppliers share name AND region, so a natural join would silently match both. Naming the columns (ON or USING) keeps the semantics yours.",
+      notes: [
+        { choice: 0, why: "One stray shared column ('name' is everywhere) makes them diverge completely — that's exactly why NATURAL is a foot-gun while USING is merely terse." },
+      ],
+    },
   ],
   problems: [
     {

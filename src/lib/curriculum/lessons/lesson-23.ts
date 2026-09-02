@@ -208,6 +208,66 @@ ORDER BY c.region;`,
         { choice: 2, why: "The CASE counted the 14 pending orders correctly — the damage happens later, in the integer arithmetic." },
       ],
     },
+    {
+      id: "l23-q9",
+      prompt: "In a pivot, `SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END)` — what does the CASE contribute on each row?",
+      choices: [
+        "The status text — SUM joins texts together",
+        "1 when the row is pending, 0 otherwise — so the SUM becomes a counter",
+        "The row's id when pending",
+        "NULL on every non-pending row",
+      ],
+      answer: 1,
+      why: "CASE turns each order row into a 1/0 vote, and SUM counts the yes-votes. Four such expressions side by side turn the 103-row table into a four-column census.",
+      notes: [
+        { choice: 3, why: "Even `THEN 1 END` (no ELSE) works — the NULLs are skipped by SUM, same count. The explicit `ELSE 0` is the readable habit, not a correctness requirement." },
+      ],
+    },
+    {
+      id: "l23-q10",
+      prompt: "Turning the four status rows into four columns — how many CASE expressions does the pivot need, and where do they live?",
+      choices: [
+        "One CASE, in WHERE",
+        "Four CASEs — one per status, all in the SELECT list beside GROUP BY region",
+        "Four CASEs, one per output row",
+        "Zero — the engine pivots automatically with GROUP BY",
+      ],
+      answer: 1,
+      why: "A pivot is one aggregate per output column: `SUM(CASE WHEN status='pending' …)`, `…'shipped'…`, `…'delivered'…`, `…'cancelled'…` — all in SELECT, with GROUP BY producing one row per region.",
+      notes: [
+        { choice: 3, why: "GROUP BY always collapses down — the cross-tab shape is hand-built from CASE columns. (A crosstab extension exists elsewhere, but the CASE pivot is the portable spell.)" },
+      ],
+    },
+    {
+      id: "l23-q11",
+      prompt: "`ORDER BY CASE status WHEN 'pending' THEN 1 WHEN 'shipped' THEN 2 WHEN 'delivered' THEN 3 ELSE 4 END` — which sequence comes out?",
+      choices: [
+        "cancelled, delivered, pending, shipped — alphabetical wins",
+        "pending (14), shipped (30), delivered (52), cancelled (7) — the CASE's order",
+        "delivered first — biggest group first",
+        "Undefined — CASE can't drive ordering",
+      ],
+      answer: 1,
+      why: "The CASE rewrites each status into a rank number and ORDER BY sorts those: 1, 2, 3, 4. That's the workflow order pending → shipped → delivered → cancelled, with counts 14/30/52/7 riding along.",
+      notes: [
+        { choice: 0, why: "Alphabetical is what you'd get sorting the status text directly. The CASE is precisely the tool for when the data's natural order isn't the report's order." },
+      ],
+    },
+    {
+      id: "l23-q12",
+      prompt: "In that custom sort, what goes wrong for statuses you forget to list — if the CASE has no ELSE?",
+      choices: [
+        "They sort first — the missing branches produce NULL, and SQLite sorts NULLs first in ascending order",
+        "They sort last — NULL is the biggest value",
+        "They're dropped from the result",
+        "A compile error — CASE needs a full map",
+      ],
+      answer: 0,
+      why: "A branchless CASE yields NULL, and in SQLite's ascending sort NULL rows come first. Your 'everything else' bucket would jump to the top — the exact opposite of the intended ELSE 4.",
+      notes: [
+        { choice: 1, why: "Backwards in SQLite (ASC: NULLs first). If you do want them last: `ELSE 999999`, or the explicit `NULLS LAST` clause." },
+      ],
+    },
   ],
   problems: [
     {

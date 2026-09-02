@@ -1,9 +1,9 @@
-// SeeQL curriculum — Module 1 (SQL Foundations, lessons 1–8),
-// Module 2 (Joins & Relationships, lessons 9–16),
-// Module 3 (Set Operations & CASE, lessons 17–24) and
-// Module 4 (Subqueries & CTEs, lessons 25–28) and
-// Module 5 (Scalar & Window Toolkit, lessons 29–32) and
-// Module 6 (Expert Clinic, lessons 33–34).
+// SeeQL curriculum — Module 1 (SQL Foundations, lessons 1–8 + case study 35),
+// Module 2 (Joins & Relationships, lessons 9–16 + case study 36),
+// Module 3 (Set Operations & CASE, lessons 17–24 + case study 37),
+// Module 4 (Subqueries & CTEs, lessons 25–28 + case study 38),
+// Module 5 (Scalar & Window Toolkit, lessons 29–32 + case study 39) and
+// Module 6 (Expert Clinic, lessons 33–34 + case study 40).
 import type { Lesson } from "../types";
 import { lesson01 } from "./lesson-01";
 import { lesson02 } from "./lesson-02";
@@ -39,6 +39,12 @@ import { lesson31 } from "./lesson-31";
 import { lesson32 } from "./lesson-32";
 import { lesson33 } from "./lesson-33";
 import { lesson34 } from "./lesson-34";
+import { lesson35 } from "./lesson-35";
+import { lesson36 } from "./lesson-36";
+import { lesson37 } from "./lesson-37";
+import { lesson38 } from "./lesson-38";
+import { lesson39 } from "./lesson-39";
+import { lesson40 } from "./lesson-40";
 
 export const LESSONS: Lesson[] = [
   lesson01,
@@ -75,6 +81,12 @@ export const LESSONS: Lesson[] = [
   lesson32,
   lesson33,
   lesson34,
+  lesson35,
+  lesson36,
+  lesson37,
+  lesson38,
+  lesson39,
+  lesson40,
 ];
 
 export interface ModuleInfo {
@@ -93,7 +105,7 @@ export const MODULES: Array<ModuleInfo & { lessons: Lesson[] }> = [
     level: "Beginner",
     blurb:
       "From zero to confident single-table analysis: reading data, filtering, NULLs, sorting, deduplication, aggregates and the GROUP BY mental model — every concept practiced live on a real storefront database.",
-    lessons: [lesson01, lesson02, lesson03, lesson04, lesson05, lesson06, lesson07, lesson08],
+    lessons: [lesson01, lesson02, lesson03, lesson04, lesson05, lesson06, lesson07, lesson08, lesson35],
   },
   {
     id: "joins",
@@ -102,7 +114,7 @@ export const MODULES: Array<ModuleInfo & { lessons: Lesson[] }> = [
     level: "Intermediate",
     blurb:
       "The reason relational databases are relational: following foreign keys across tables with JOIN — inner mechanics, LEFT JOIN preservation, anti-joins, self-joins, aggregates across tables and the fan-out trap that inflates sums.",
-    lessons: [lesson09, lesson10, lesson11, lesson12, lesson13, lesson14, lesson15, lesson16],
+    lessons: [lesson09, lesson10, lesson11, lesson12, lesson13, lesson14, lesson15, lesson16, lesson36],
   },
   {
     id: "sets-case",
@@ -111,7 +123,7 @@ export const MODULES: Array<ModuleInfo & { lessons: Lesson[] }> = [
     level: "Advanced",
     blurb:
       "Combine and branch: stacking result sets with UNION [ALL], the overlap and difference operators INTERSECT and EXCEPT, engine-precedence landmines proved live, and CASE as SQL's counting machine — counters, pivots and custom sorts, capped by a three-pattern report.",
-    lessons: [lesson17, lesson18, lesson19, lesson20, lesson21, lesson22, lesson23, lesson24],
+    lessons: [lesson17, lesson18, lesson19, lesson20, lesson21, lesson22, lesson23, lesson24, lesson37],
   },
   {
     id: "subqueries",
@@ -120,7 +132,7 @@ export const MODULES: Array<ModuleInfo & { lessons: Lesson[] }> = [
     level: "Advanced",
     blurb:
       "Queries inside queries: scalar values and IN-lists in WHERE, the NULL-safe EXISTS probe, correlated subqueries that read the outer row, derived tables that stage the aggregation before the join, and WITH chains that read top-down — every shape practiced against the same storefront.",
-    lessons: [lesson25, lesson26, lesson27, lesson28],
+    lessons: [lesson25, lesson26, lesson27, lesson28, lesson38],
   },
   {
     id: "toolkit",
@@ -129,7 +141,7 @@ export const MODULES: Array<ModuleInfo & { lessons: Lesson[] }> = [
     level: "Advanced",
     blurb:
       "The functions layer: reshaping text with SUBSTR/INSTR/CAST and the COALESCE promise kept, slicing dates into buckets with strftime and julianday, then the full window-function family — RANK and friends, LAG/LEAD offsets, running totals, frames and NTILE — on the same live storefront.",
-    lessons: [lesson29, lesson30, lesson31, lesson32],
+    lessons: [lesson29, lesson30, lesson31, lesson32, lesson39],
   },
   {
     id: "clinic",
@@ -138,7 +150,7 @@ export const MODULES: Array<ModuleInfo & { lessons: Lesson[] }> = [
     level: "Expert",
     blurb:
       "The finishing school: string aggregation and the hand-built TOTAL stack SQLite's missing ROLLUP would give you, FILTER-clause censuses, and every join shape at last — RIGHT and FULL OUTER hands-on, the deliberate CROSS JOIN, and non-equi range joins with the bounds discipline that keeps fanout out.",
-    lessons: [lesson33, lesson34],
+    lessons: [lesson33, lesson34, lesson40],
   },
 ];
 

@@ -150,6 +150,61 @@ ORDER BY c1.region, pair_a;`,
         { choice: 0, why: "orders→customers is a hop between two different tables along a foreign key — a regular join." },
       ],
     },
+    {
+      id: "l14-q9",
+      prompt: "`customers c1 JOIN customers c2 ON c1.region = c2.region AND c1.id < c2.id` — how many pairs form on this data?",
+      choices: ["16", "39", "78", "94"],
+      answer: 1,
+      why: "The store's region crowds are EU 8, APAC 5, US 2, LATAM 1 — giving 28 + 10 + 1 + 0 = 39 pairs. `c1.id < c2.id` removes self-pairs and mirror duplicates in one stroke.",
+      notes: [
+        { choice: 3, why: "94 is 39 mirrors + 39 mirrors + 16 self-pairs — the raw shape before the inequality prunes it. That's what you get with `c1.id <> c2.id` plus DISTINCT... or nothing at all." },
+      ],
+    },
+    {
+      id: "l14-q10",
+      prompt: "`customers a JOIN customers b ON a.city = b.city AND a.id < b.id` — how many rows?",
+      choices: [
+        "8 — the EU half",
+        "0 — all 16 customers live in different cities, so no pair can form",
+        "16 — everyone pairs with themselves",
+        "256 — the full grid",
+      ],
+      answer: 1,
+      why: "A legal join with zero matches is still a legal result: the store's 16 customers occupy 16 distinct cities, so the same-city join is provably empty.",
+      notes: [
+        { choice: 2, why: "Self-pairs need a.id = b.id — the `<` forbids them. An empty result here is a verified fact about the data, not a broken query." },
+      ],
+    },
+    {
+      id: "l14-q11",
+      prompt: "What changes when a join's ON uses `<`, `>` or BETWEEN instead of `=`?",
+      choices: [
+        "Nothing — they're synonyms",
+        "One left row can now match MANY right rows by design — the result's size is chosen by the ranges, not by keys",
+        "It becomes an outer join",
+        "Only the first match survives",
+      ],
+      answer: 1,
+      why: "Equality joins pair keys one-to-one; non-equi conditions match whole intervals. That's the machinery behind range joins like band ladders — and behind accidental fan-out when the ranges overlap.",
+      notes: [
+        { choice: 3, why: "No implicit dedupe exists — every (left, right) pair that satisfies the condition lands in the result. Bounds discipline is the author's job." },
+      ],
+    },
+    {
+      id: "l14-q12",
+      prompt: "Why must a self-join alias the table twice (`c1`, `c2`)?",
+      choices: [
+        "For performance — two copies load faster",
+        "Because one FROM reference can't be mentioned twice unaliased — the two roles need their own names",
+        "Because SQL requires c1/c2 naming specifically",
+        "To avoid NULL rows",
+      ],
+      answer: 1,
+      why: "`FROM customers JOIN customers` is ambiguous — every column name refers to two tables. Aliases split the one table into two addressable roles: left scout and right scout.",
+      notes: [
+        { choice: 2, why: "c1/c2 is just a readable habit — a1/a2, lefty/righty, anything consistent works. What's mandatory is that the names exist and differ." },
+      ],
+    },
   ],
   problems: [
     {

@@ -215,6 +215,96 @@ ORDER BY (region = 'TOTAL'), spend DESC;
         { choice: 3, why: "SQL Server popularized ROLLUP, but it's ISO standard syntax now — the holdout is SQLite, not the standard." },
       ],
     },
+    {
+      id: "l33-q9",
+      prompt: "`SELECT GROUP_CONCAT(name) FROM customers` — what shape is the output?",
+      choices: [
+        "16 rows, one name each",
+        "One row, one column: all 16 names comma-joined in a single string",
+        "One row per letter",
+        "An error — GROUP_CONCAT needs GROUP BY",
+      ],
+      answer: 1,
+      why: "GROUP_CONCAT is an aggregate like SUM — it collapses the whole group (here: the entire table) into one value, a comma-separated string. It's a report's one-line summary spell.",
+      notes: [
+        { choice: 3, why: "Aggregates without GROUP BY legally cover the whole table — same as COUNT(*) ever did. GROUP BY only appears when you want one string PER group." },
+      ],
+    },
+    {
+      id: "l33-q10",
+      prompt: "What does the second argument in `GROUP_CONCAT(name, ' | ')` control?",
+      choices: [
+        "The maximum string length",
+        "The separator between values — a pipe-delimited list instead of the default comma",
+        "Which column to sort by",
+        "The number of values included",
+      ],
+      answer: 1,
+      why: "The custom separator replaces the default ','. NULL rows contribute nothing and no stray separators appear — values are skipped, not printed as 'NULL'.",
+      notes: [
+        { choice: 3, why: "No LIMIT exists in GROUP_CONCAT — every non-NULL value in the group joins the string. Cap it upstream with a subquery if the list must be short." },
+      ],
+    },
+    {
+      id: "l33-q11",
+      prompt: "`GROUP_CONCAT(DISTINCT status)` over one customer's orders returned 'shipped,cancelled,delivered,pending'. Is that order guaranteed?",
+      choices: [
+        "Yes — statuses sort alphabetically inside GROUP_CONCAT",
+        "No — without ORDER BY inside the aggregate, the order is arbitrary and may change between runs or engines",
+        "Yes — it follows the rows' insertion order by SQL law",
+        "Yes — DISTINCT forces alphabetical order",
+      ],
+      answer: 1,
+      why: "This exact string IS the proof: 'shipped,cancelled,delivered,pending' isn't alphabetical. GROUP_CONCAT concatenates in whatever order rows visit the aggregate — only the 3.44+ spelling with ORDER BY inside pins it down.",
+      notes: [
+        { choice: 0, why: "The observed string refutes that on this very data — 'cancelled' would come first alphabetically. Real observed order ≠ guaranteed order; that's the lesson." },
+      ],
+    },
+    {
+      id: "l33-q12",
+      prompt: "`GROUP_CONCAT(DISTINCT region ORDER BY region)` over suppliers returns what on this store?",
+      choices: [
+        "'EU,APAC,LATAM,US' — DISTINCT's discovery order",
+        "'APAC,EU,LATAM,US' — the ORDER BY inside the aggregate takes control",
+        "4 rows, one per region",
+        "An error — ORDER BY can't live inside an aggregate",
+      ],
+      answer: 1,
+      why: "SQLite 3.44+ allows ORDER BY inside GROUP_CONCAT, making the string deterministic: all four supplier regions, alphabetized. On older engines the same query errors — one more portability line to walk.",
+      notes: [
+        { choice: 2, why: "GROUP_CONCAT is an aggregate — it returns ONE row per group, by definition. The row count never changes; only the string's interior order does." },
+      ],
+    },
+    {
+      id: "l33-q13",
+      prompt: "`COUNT(*) FILTER (WHERE status = 'delivered')` — what does FILTER contribute to the census?",
+      choices: [
+        "It deletes non-delivered rows from the table",
+        "It restricts THIS aggregate to matching rows only — delivered's 52, while sibling aggregates on the same row count their own statuses",
+        "It sorts the result by delivered first",
+        "It's a spelling error — aggregates take no conditions",
+      ],
+      answer: 1,
+      why: "FILTER gives each aggregate its own private WHERE: one scan of orders yields delivered 52, shipped 30, pending 14, cancelled 7 side by side. It's the readable successor to SUM(CASE WHEN …) counters.",
+      notes: [
+        { choice: 3, why: "The FILTER clause is standard SQL (postgreSQL has it too) and SQLite 3.30+ runs it. The CASE form still works everywhere — FILTER is the clarity upgrade." },
+      ],
+    },
+    {
+      id: "l33-q14",
+      prompt: "`SELECT region, COUNT(*) FILTER (WHERE active = 0) AS dormant FROM customers GROUP BY region` — what lands in `dormant` for EU (8 customers, 7 active) and US (2, both active)?",
+      choices: [
+        "EU 8 · US 2 — FILTER ignores the condition inside GROUP BY",
+        "EU 1 · US 0 — the filter counts only the inactive rows within each region's bucket",
+        "EU 0 · US 0 — active = 0 matches nothing",
+        "One row total — FILTER collapses groups",
+      ],
+      answer: 1,
+      why: "FILTER works fine inside GROUP BY: each region bucket counts its own inactive members. EU's single dormant customer (8 − 7 active) shows as 1; the US has none, so 0 — a zero that's real, not missing.",
+      notes: [
+        { choice: 2, why: "The two dormant customers in the whole store (Dmitri, Keiko) live in EU and APAC — but the count is still a COUNT, producing honest zeros where nobody matches, not empty rows." },
+      ],
+    },
   ],
   problems: [
     {

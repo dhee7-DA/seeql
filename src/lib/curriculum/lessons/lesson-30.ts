@@ -200,6 +200,51 @@ FROM orders GROUP BY y ORDER BY y;
         { choice: 3, why: "WHERE handles computed per-row values fine — HAVING is for post-aggregation. The gap is a row-level expression." },
       ],
     },
+    {
+      id: "l30-q9",
+      prompt: "What does `strftime('%Y-%m', created_at)` return for a January 2024 order?",
+      choices: ["'Jan 2024' — a display string", "'2024-01' — a sortable year-month bucket", "24 — just the year number", "An error — %m is not a format code"],
+      answer: 1,
+      why: "%Y renders the 4-digit year, %m the zero-padded month — '2024-01'. The zero-padding is what makes the result sort correctly as text: '2024-01' < '2024-10' < '2025-02'.",
+      notes: [
+        { choice: 0, why: "strftime builds strings from format codes, not month names. %m is the number 01–12; nothing localizes it." },
+      ],
+    },
+    {
+      id: "l30-q10",
+      prompt: "`GROUP BY strftime('%Y-%m', created_at)` on the orders table — how many buckets form?",
+      choices: ["12 — one per calendar month name", "14 — Jan 2024 through Feb 2025, the store's full span", "103 — one per order", "1 — all dates group together"],
+      answer: 1,
+      why: "The orders run from 2024-01-01 to 2025-02-27 — 14 distinct year-month strings, hence 14 groups. Counts range from 6 to 9, with 2024-02 and 2024-09 tied at the top.",
+      notes: [
+        { choice: 0, why: "Calendar months repeat across years — the bucket key is the full '%Y-%m', so January 2024 and January 2025 are different groups." },
+      ],
+    },
+    {
+      id: "l30-q11",
+      prompt: "`julianday('2024-03-05') - julianday('2024-02-25')` — what number comes out?",
+      choices: ["8 — months shorten the count", "9 — straight day arithmetic on converted dates", "'2024-03-05' — dates subtract to dates", "An error — you can't subtract text"],
+      answer: 1,
+      why: "julianday converts each date to a floating day-count, and subtraction yields days: 9 here (Feb 25 → Mar 5, 2024 being a leap year). This is the store's whole date-arithmetic engine.",
+      notes: [
+        { choice: 2, why: "Subtracting the raw text strings does string arithmetic nonsense. julianday exists precisely to move dates into number-land first." },
+      ],
+    },
+    {
+      id: "l30-q12",
+      prompt: "`AVG(julianday(shipped_at) - julianday(created_at))` over all 103 orders — why is the answer 2.98 days and not polluted by the 21 unshipped orders?",
+      choices: [
+        "It isn't — the unshipped rows make the whole AVG NULL",
+        "julianday(NULL) is NULL, and AVG skips NULLs — the 21 drop out silently, leaving 82 rows to average",
+        "The unshipped rows count as zero days",
+        "SQLite substitutes today's date for NULL",
+      ],
+      answer: 1,
+      why: "NULL propagates through julianday, and aggregates ignore NULLs by law. The average ships at 2.98 days over the 82 shippable rows — no WHERE needed, though spelling it makes intent obvious.",
+      notes: [
+        { choice: 2, why: "NULL never coerces to 0 in aggregates — that would drag the average down. If you WANTED zero-day treatment you'd COALESCE it explicitly." },
+      ],
+    },
   ],
   problems: [
     {

@@ -183,6 +183,51 @@ LIMIT 5;`,
         { choice: 3, why: "suppliers has no supplier_id column — that spelling errors out. Flipping which table sits in FROM is legal, but the ON must still pair p.supplier_id with s.id." },
       ],
     },
+    {
+      id: "l9-q9",
+      prompt: "Why can't `orders JOIN customers USING (customer_id)` work on this schema?",
+      choices: [
+        "USING is PostgreSQL-only",
+        "USING requires identically named columns in both tables — customers has `id`, not `customer_id`",
+        "USING only works on numeric columns",
+        "It can — it's just slower than ON",
+      ],
+      answer: 1,
+      why: "USING(col) is the shorthand for 'match the same-named column on both sides'. Here the pair is orders.customer_id → customers.id: the names differ, so ON is the only spelling.",
+      notes: [
+        { choice: 3, why: "It isn't shorthand-with-a-discount — it's a syntax error when no shared column name exists. Name your FKs to match if you want USING to be available." },
+      ],
+    },
+    {
+      id: "l9-q10",
+      prompt: "Every join in this store's schema runs on a single column. When does a join legitimately need TWO columns (a composite key)?",
+      choices: [
+        "When both tables are large",
+        "When one row is identified by a pair — e.g. an order line keyed by (order_id, line_no)",
+        "When you join more than two tables",
+        "Never — multi-column joins are a myth",
+      ],
+      answer: 1,
+      why: "Some schemas identify rows by a combination — classic line-item tables keyed by order_id + line number. The join condition then lists both pairs in the ON.",
+      notes: [
+        { choice: 2, why: "A three-table chain is still three single-column hops. Composite keys are about how ONE table identifies its rows, not how many tables you visit." },
+      ],
+    },
+    {
+      id: "l9-q11",
+      prompt: "orders.customer_id points at customers.id. To widen orders with customer names, which way does the join flow?",
+      choices: [
+        "customers JOIN orders — parent first",
+        "orders JOIN customers — the many side reaches for its parent",
+        "Either, but the results differ",
+        "Neither — you need a subquery for names",
+      ],
+      answer: 1,
+      why: "The FK lives on the many side. Start from orders and pull each row's parent customer — that's the widening direction, and it never multiplies rows.",
+      notes: [
+        { choice: 0, why: "customers JOIN orders is also legal SQL — but it's the multiplying direction: each customer fans out once per order. Direction changes which table's rows survive, always." },
+      ],
+    },
   ],
   problems: [
     {

@@ -180,6 +180,206 @@ FROM products WHERE id IN (1, 2, 13);
         { choice: 0, why: "Postgres also keeps = case-sensitive, MySQL depends on collation — assuming = folds case is how 'temporarily missing rows' bugs are born." },
       ],
     },
+    {
+      id: "l29-q9",
+      prompt: "`SELECT UPPER(region) FROM customers` — how much does the output differ from the raw column?",
+      choices: [
+        "Nothing — all 16 region values are already stored uppercase",
+        "Every row changes — regions are stored lowercase",
+        "Only LATAM changes",
+        "UPPER fails on two-letter values",
+      ],
+      answer: 0,
+      why: "The store's regions were born uppercase ('EU', 'APAC'…), so UPPER is the identity function here — 16 rows in, 16 identical values out. Its real job is normalizing columns that AREN'T consistent.",
+      notes: [
+        { choice: 2, why: "LATAM is uppercase like the rest. When every value is already uniform, UPPER can't find work — the query is the *guard*, ready for messier data." },
+      ],
+    },
+    {
+      id: "l29-q10",
+      prompt: "`SELECT COUNT(DISTINCT LOWER(city)) FROM customers` — what number comes back, and what would it be on a messier dataset?",
+      choices: [
+        "16 here — and LOWER earns its keep when case variants like 'Berlin' and 'BERLIN' would otherwise count twice",
+        "8 — lowercase merges the EU cities",
+        "1 — everything lowercases to the same string",
+        "0 — LOWER can't appear inside COUNT",
+      ],
+      answer: 0,
+      why: "This store's 16 cities are distinct in any case, so LOWER changes nothing: still 16. On data mixing 'Berlin' with 'BERLIN', raw DISTINCT would double-count and LOWER would dedupe them.",
+      notes: [
+        { choice: 1, why: "Lowercasing doesn't merge different names — only case-variants of the same name. 'Berlin' and 'Lyon' stay two cities under any case." },
+      ],
+    },
+    {
+      id: "l29-q11",
+      prompt: "`SUBSTR('alice.chen@example.com', 1, 5)` — what comes back?",
+      choices: ["'alice' — positions are 1-based", "'lice.c' — positions are 0-based", "'a' — the third argument is a count of results", "'alice.chen' — the dot stops it"],
+      answer: 0,
+      why: "SUBSTR(text, start, length) is 1-based: start at the first character, take 5. The email-local part before the @ is exactly what you'd slice with SUBSTR(email, 1, INSTR(email, '@') - 1).",
+      notes: [
+        { choice: 1, why: "SQL strings are 1-based — unlike JavaScript's substring. Index 0 behaves oddly (it's treated as before-the-start), so never start there." },
+      ],
+    },
+    {
+      id: "l29-q12",
+      prompt: "`INSTR('alice.chen@example.com', '@')` returns 11. What does it return for Chloe Dubois's email 'chloe.dubois@example.com'?",
+      choices: ["11 — same domain, same position", "13 — her name is two characters longer", "9", "0 — the @ isn't found"],
+      answer: 1,
+      why: "INSTR reports the 1-based position of the FIRST occurrence. 'chloe.dubois' runs two characters longer than 'alice.chen', so the @ sits at 13. (Dmitri's compact 'dmitri.v' puts it at 9.)",
+      notes: [
+        { choice: 0, why: "The domain is identical, but INSTR measures where the @ LIVES — which depends on the length of everything before it. Per-row positions differ; that's the feature." },
+      ],
+    },
+    {
+      id: "l29-q13",
+      prompt: "`SELECT COUNT(*) FROM customers WHERE name != TRIM(name)` — what does it return on this dataset, and why ship it anyway?",
+      choices: [
+        "An error — != can't compare strings",
+        "0 — no name carries surrounding spaces; the query is the guard you run before trusting name-based joins",
+        "16 — TRIM always changes something",
+        "1 — one name has a trailing space",
+      ],
+      answer: 1,
+      why: "TRIM strips leading/trailing spaces, and this data has none — 0 rows differ. The query is cheap insurance: run it on import, because a single ' Alice Chen' would silently break every equality join and GROUP BY bucket.",
+      notes: [
+        { choice: 3, why: "Close to the right instinct — but verified clean: the seed contains no padded names. The point is the CHECK pattern, not a caught bug." },
+      ],
+    },
+    {
+      id: "l29-q14",
+      prompt: "`TRIM('xxHelloxx', 'x')` — what does the second argument change?",
+      choices: [
+        "Nothing — TRIM takes one argument",
+        "It trims the character 'x' from both ends instead of spaces — result 'Hello'",
+        "It appends 'x' to the result",
+        "It replaces interior x's — result 'Hello'",
+      ],
+      answer: 1,
+      why: "The optional second argument names the character(s) to strip from both ends — default is the space. Interior characters are never touched: only the edges get cleaned.",
+      notes: [
+        { choice: 3, why: "That would be REPLACE(). TRIM is edge-only by design — one-sided cleanups have their own spells: LTRIM and RTRIM." },
+      ],
+    },
+    {
+      id: "l29-q15",
+      prompt: "`SELECT MAX(LENGTH(name)) FROM products` — what number, and whose name?",
+      choices: [
+        "23 — Noise-Canceling Headset, the longest product name",
+        "16 — one per product",
+        "14 — Isabella Rossi",
+        "LENGTH can't nest inside MAX",
+      ],
+      answer: 0,
+      why: "LENGTH works per row (23 characters for the headset), MAX collapses the 16 results to one. Same shape works on customers — where the longest name is Isabella Rossi at 14.",
+      notes: [
+        { choice: 2, why: "14 is the customers' max. Products top out at 23 — functions compose, but mind WHICH table you're measuring." },
+      ],
+    },
+    {
+      id: "l29-q16",
+      prompt: "`name || ' — ' || city || ' (' || region || ')'` on Alice Chen produces what?",
+      choices: [
+        "'Alice ChenBerlin (EU)' — concatenation adds no spaces",
+        "'Alice Chen — Berlin (EU)' — the literal spacers you typed",
+        "An error — || can't mix text and parentheses",
+        "'Alice Chen — Berlin — EU'",
+      ],
+      answer: 1,
+      why: "|| glues strings exactly as given — the ' — ' and ' (' literals you typed ARE the formatting. Unlike some languages, SQL adds nothing between operands: every space in the output came from your SQL.",
+      notes: [
+        { choice: 0, why: "That's what bare `name || city` would yield. Spacing is your responsibility — the glue adds none." },
+      ],
+    },
+    {
+      id: "l29-q17",
+      prompt: "An order's shipped_at is NULL. What does `'Shipped: ' || shipped_at` produce for that row?",
+      choices: [
+        "'Shipped: ' — the NULL becomes empty",
+        "NULL — one NULL operand poisons the whole concatenation",
+        "'Shipped: NULL'",
+        "An error",
+      ],
+      answer: 1,
+      why: "|| follows NULL-in, NULL-out: any NULL operand makes the entire result NULL, not an empty string. Guard it: `'Shipped: ' || COALESCE(shipped_at, 'not yet')` keeps the label alive.",
+      notes: [
+        { choice: 2, why: "SQLite doesn't stringify NULL into 'NULL' for || — that's a display-layer habit. The concatenation itself yields true NULL." },
+      ],
+    },
+    {
+      id: "l29-q18",
+      prompt: "`CAST(199.99 AS INTEGER)` — 199 or 200?",
+      choices: ["200 — CAST rounds to nearest", "199 — CAST truncates toward zero", "199.99 — CAST is a no-op on numbers", "Error — 199.99 isn't an integer literal"],
+      answer: 1,
+      why: "CAST to INTEGER chops the decimal part — no rounding, ever. The store's priciest product (Smart Watch S, 199.99) becomes 199; the average price 71.78 becomes 71. For rounding, spell ROUND().",
+      notes: [
+        { choice: 0, why: "That's ROUND(199.99)'s answer. The two tools disagree by design — truncation for type-changing, ROUND for display." },
+      ],
+    },
+    {
+      id: "l29-q19",
+      prompt: "What does `COALESCE(NULLIF(region, ''), 'unknown')` accomplish on a region column?",
+      choices: [
+        "Uppercases the region",
+        "Maps empty strings to 'unknown' while passing real values through untouched",
+        "Deletes rows with empty regions",
+        "Nothing — NULLIF and COALESCE cancel out",
+      ],
+      answer: 1,
+      why: "The pair is a classic two-step: NULLIF turns the bad value ('') into NULL, then COALESCE replaces that NULL with 'unknown'. Real regions like 'EU' fail the NULLIF equality test and sail through unchanged.",
+      notes: [
+        { choice: 3, why: "They compose rather than cancel: NULLIF manufactures NULLs precisely so COALESCE has something to fill. Separate the steps and neither does the job." },
+      ],
+    },
+    {
+      id: "l29-q20",
+      prompt: "An import dumps padded emails and you only want to clean the TRAILING side. Which spell?",
+      choices: ["LTRIM", "RTRIM", "TRIM — one-sided is the default", "SUBSTR(email, 2)"],
+      answer: 1,
+      why: "RTRIM strips the right edge only (LTRIM mirrors it on the left). Full TRIM does both sides at once — overkill when you know which side is dirty.",
+      notes: [
+        { choice: 2, why: "TRIM cleans both edges — harmless here, but when the LEADING space is meaningful data, one-sided spells are the surgical choice." },
+      ],
+    },
+    {
+      id: "l29-q21",
+      prompt: "What does `LENGTH(NULL)` return?",
+      choices: ["0 — an empty string has no length", "NULL — NULL propagates through scalar functions", "1", "An error"],
+      answer: 1,
+      why: "NULL isn't a string, so it has no length — the function yields NULL. That's also the tell separating NULL from '' in messy data: LENGTH('') is 0, LENGTH(NULL) is NULL.",
+      notes: [
+        { choice: 0, why: "Zero belongs to the empty string, a REAL value. The distinction gives you a data-quality probe: IS NULL vs = '' vs LENGTH(...) = 0 find three different kinds of broken." },
+      ],
+    },
+    {
+      id: "l29-q22",
+      prompt: "`CAST('2024' AS INTEGER)` — what and why would you ever?",
+      choices: [
+        "An error — CAST only converts numbers",
+        "2024 — text becomes a number, unlocking arithmetic like year + 1 = 2025",
+        "'2024' unchanged — CAST is a no-op on digit strings",
+        "NULL — digits aren't numeric",
+      ],
+      answer: 1,
+      why: "CAST is the bridge between types: digit-text becomes a real integer you can do math on. The inverse matters too — CAST(2024 AS TEXT) makes numbers joinable to text keys.",
+      notes: [
+        { choice: 2, why: "SQLite's flexible typing would let '2024' + 1 slide by anyway — but CAST states the intent explicitly and behaves identically in strict engines. Portability again." },
+      ],
+    },
+    {
+      id: "l29-q23",
+      prompt: "Why write `WHERE UPPER(city) = 'BERLIN'` instead of `WHERE city = 'Berlin'`?",
+      choices: [
+        "UPPER makes the query faster",
+        "Upper-casing BOTH sides makes the match case-insensitive — 'berlin', 'Berlin' and 'BERLIN' all match",
+        "= can't compare text without UPPER",
+        "UPPER fixes the data in place",
+      ],
+      answer: 1,
+      why: "The raw = matches only the exact stored casing ('Berlin' — one customer). Folding both sides through UPPER widens the net to any casing, the standard convention for user-typed search terms.",
+      notes: [
+        { choice: 3, why: "UPPER in a WHERE never rewrites the table — it transforms values for comparison only. Fixing the data itself is an UPDATE, a different tool entirely." },
+      ],
+    },
   ],
   problems: [
     {

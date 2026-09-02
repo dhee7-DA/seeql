@@ -198,6 +198,46 @@ SELECT COUNT(*) FROM (
         { choice: 0, why: "They agree on a plain chain only when the data lets them — the PARSES still differ, so a different seed could split them." },
       ],
     },
+    {
+      id: "l21-q9",
+      prompt: "`A UNION B INTERSECT C` — which piece does SQLite evaluate first, and how do you force the other order?",
+      choices: [
+        "A UNION B first — strictly left to right; use parentheses for the rest",
+        "B INTERSECT C first — INTERSECT binds tighter; parentheses are the only override",
+        "C first — rightmost wins",
+        "The optimizer chooses whichever is fastest",
+      ],
+      answer: 1,
+      why: "INTERSECT outranks UNION and EXCEPT in every engine's precedence table, so B∩C forms first. The fix is explicit: `(A UNION B) INTERSECT C` says what you mean.",
+      notes: [
+        { choice: 3, why: "Set operators are evaluated by precedence and associativity, not cost — no optimizer may reorder across a precedence boundary." },
+      ],
+    },
+    {
+      id: "l21-q10",
+      prompt: "`A EXCEPT B UNION C` — no parentheses. Given equal precedence and left-to-right flow, what evaluates?",
+      choices: ["A EXCEPT (B UNION C)", "(A EXCEPT B) UNION C", "(A UNION C) EXCEPT B", "Error — two operators need parentheses"],
+      answer: 1,
+      why: "Same-precedence operators chain left to right: the EXCEPT completes before UNION touches the result. Reading right-to-left is how the wrong variant sneaks in — grouping differs by a whole subtraction.",
+      notes: [
+        { choice: 0, why: "That reading would need written parentheses. Unparenthesized, the left operator always finishes first." },
+      ],
+    },
+    {
+      id: "l21-q11",
+      prompt: "The logical clause order is FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY. Why can't WHERE use a SELECT alias like `AS spend`?",
+      choices: [
+        "Aliases are only decorative — WHERE needs uppercase",
+        "WHERE runs before SELECT exists — the alias hasn't been computed yet",
+        "It can, in every engine",
+        "Because spend is a reserved word",
+      ],
+      answer: 1,
+      why: "WHERE filters rows on the way in; SELECT names and computes its expressions on the way out. An alias is born in SELECT, so WHERE literally runs too early to see it.",
+      notes: [
+        { choice: 2, why: "ORDER BY can see aliases (it runs last) and SQLite quietly allows them in HAVING too — but portable SQL never bets on either. WHERE is the hard no." },
+      ],
+    },
   ],
   problems: [
     {

@@ -192,6 +192,81 @@ WHERE rn = 1 ORDER BY total DESC;   -- Farid #74 1088.44 … 16 rows`,
         { choice: 2, why: "Windows are core SQL:2003 standard features — SQL Server popularized them early, but every major engine implements them now." },
       ],
     },
+    {
+      id: "l31-q9",
+      prompt: "Two customers tie with the same order count. What does ROW_NUMBER do with the tie?",
+      choices: [
+        "Gives both the same number",
+        "Assigns distinct consecutive numbers anyway — the tie is broken arbitrarily (add your own tie-breaker to control it)",
+        "Skips the second row entirely",
+        "Errors on the tie",
+      ],
+      answer: 1,
+      why: "ROW_NUMBER's contract is uniqueness: 1, 2, 3, … with no repeats and no gaps, ties be damned. Which of the tied rows gets the lower number is unspecified — `ORDER BY orders DESC, name` would pin it down.",
+      notes: [
+        { choice: 0, why: "Same numbers is RANK's behavior. If the output must be unique (paging, deduping), ROW_NUMBER is the tool — at the price of an arbitrary tie order." },
+      ],
+    },
+    {
+      id: "l31-q10",
+      prompt: "In the APAC ranking, Farid and Hiro tie. Hiro is ROW_NUMBER 5. What is his RANK()?",
+      choices: ["5 — RANK equals ROW_NUMBER", "4 — RANK gives tied rows the same rank", "6 — RANK skips ahead after ties", "NULL — ties are unrankable"],
+      answer: 1,
+      why: "RANK counts rows strictly ahead plus one: Farid and Hiro both sit behind exactly 3 APAC customers, so both are rank 4. ROW_NUMBER kept them 4 and 5; RANK lets them share 4.",
+      notes: [
+        { choice: 2, why: "6 is what a row AFTER this tie would receive — RANK jumps from 4 to 6 (five rows at-or-ahead), DENSE_RANK would hand it 5. Hiro isn't after the tie; he's inside it, at 4." },
+      ],
+    },
+    {
+      id: "l31-q11",
+      prompt: "`ROW_NUMBER() OVER (PARTITION BY region ORDER BY total_spent DESC)` on customers — how many rows receive the number 1?",
+      choices: ["1 — one global number one", "4 — one per region (EU, APAC, US, LATAM)", "16 — every row is someone's number 1", "0 — PARTITION needs an aggregate"],
+      answer: 1,
+      why: "PARTITION BY restarts the numbering inside each region. Four regions means four independent sequences — four number-1s, each the top spender of their own region.",
+      notes: [
+        { choice: 0, why: "That's the no-PARTITION spelling: one global race across all 16 customers. The partition is what turns a leaderboard into per-group leaderboards." },
+      ],
+    },
+    {
+      id: "l31-q12",
+      prompt: "You computed `ROW_NUMBER() OVER (ORDER BY total DESC) AS rn` and now want only rn ≤ 3. Why does `WHERE rn <= 3` on the same query level fail?",
+      choices: [
+        "rn is a reserved name",
+        "Window functions evaluate after WHERE — the number doesn't exist yet when WHERE runs; wrap the query and filter outside",
+        "WHERE can't compare numbers",
+        "It works — rn is just another alias",
+      ],
+      answer: 1,
+      why: "Windows run in the SELECT stage, after FROM/WHERE/GROUP/HAVING have done their jobs. The standard move: put the ROW_NUMBER in a derived table or CTE, then filter `rn <= 3` in the outer query — the top-N-per-group pattern.",
+      notes: [
+        { choice: 3, why: "Other aliases from the SELECT list are also off-limits to WHERE (clause ordering). The difference here: even engines that resolve aliases won't materialize a window mid-WHERE." },
+      ],
+    },
+    {
+      id: "l31-q13",
+      prompt: "The top-1-product-per-category query (ROW_NUMBER partitioned by category, filtered rn = 1) returns how many rows for this store's 7 categories?",
+      choices: ["1 — one global top product", "7 — exactly one row per category", "16 — every product once", "It depends on ties"],
+      answer: 1,
+      why: "rn = 1 exists once per partition: seven categories, seven winners — Audio's Noise-Canceling Headset, Wearables' Smart Watch S, and five more. Partition + rn filter = per-group champion query.",
+      notes: [
+        { choice: 3, why: "ROW_NUMBER can't tie — the ORDER BY inside OVER decides the winner even when revenues are equal. (RANK would return two rows for a tied top spot.)" },
+      ],
+    },
+    {
+      id: "l31-q14",
+      prompt: "`ORDER BY total` with several NULL totals in SQLite — where do the NULL rows land by default?",
+      choices: [
+        "First — SQLite sorts NULLs before everything in ascending order",
+        "Last — NULL is treated as the biggest value",
+        "They're dropped from the sort",
+        "Randomly",
+      ],
+      answer: 0,
+      why: "SQLite's default (ascending) puts NULLs first. `NULLS LAST` — or sorting DESC where they naturally sink — is how you push the missing-data rows to the report's bottom.",
+      notes: [
+        { choice: 1, why: "That's PostgreSQL's default (NULLS LAST for ASC). Engines disagree — spell your intention with NULLS FIRST/LAST instead of relying on the house rule." },
+      ],
+    },
   ],
   problems: [
     {

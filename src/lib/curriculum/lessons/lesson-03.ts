@@ -244,6 +244,57 @@ export const lesson03: Lesson = {
         { choice: 0, why: "Anchored to the start would be 'Watch%' — the leading % is what makes 'Smart Watch S' match." },
       ],
     },
+    {
+      id: "l3-q13",
+      prompt: "`WHERE region IN ('EU', 'US')` — how many of the 16 customers pass?",
+      choices: ["8 — only the EU block", "10 — EU's 8 plus US's 2", "16 — IN matches everything", "2 — one per listed value"],
+      answer: 1,
+      why: "IN is a membership test against the listed values: 8 EU customers + 2 US customers = 10 rows keep their seats.",
+      notes: [
+        { choice: 0, why: "8 is EU alone. IN checks every value in the list — each of the two matches contributes its full fan of rows." },
+        { choice: 3, why: "The list has two values, but each value matches many customers. IN filters rows by membership, it doesn't limit the result size." },
+      ],
+    },
+    {
+      id: "l3-q14",
+      prompt: "A product costs exactly 50.00. Does it match `WHERE price BETWEEN 50 AND 100`?",
+      choices: ["No — BETWEEN excludes the lower edge", "Yes — both endpoints are included", "Only with the INCLUSIVE keyword", "SQLite decides randomly"],
+      answer: 1,
+      why: "BETWEEN is shorthand for `price >= 50 AND price <= 100` — both edges are inside the net. This store has 4 products in the 50–100 band, edges included.",
+      notes: [
+        { choice: 0, why: "That's the classic mix-up with half-open ranges. SQL's BETWEEN is closed on both sides: 50.00 and 100.00 both match." },
+      ],
+    },
+    {
+      id: "l3-q15",
+      prompt: "Which product does the pattern `name LIKE '_K%'` match?",
+      choices: [
+        "Any product containing a K anywhere",
+        "Products whose second character is K — like 4K Webcam Pro",
+        "Products starting with K",
+        "Nothing — patterns can't start with _",
+      ],
+      answer: 1,
+      why: "`_` eats exactly one character, `%` eats the rest. `_K%` means: one arbitrary character, then a literal K, then anything — 4K Webcam Pro fits (4, then K).",
+      notes: [
+        { choice: 0, why: "K-anywhere is the `%K%` pattern. The underscore is strict: exactly one position, no more." },
+      ],
+    },
+    {
+      id: "l3-q16",
+      prompt: "`region IN ('EU', 'US')` is exactly equivalent to which WHERE clause?",
+      choices: [
+        "`region = 'EU' AND region = 'US'`",
+        "`region = 'EU' OR region = 'US'`",
+        "`region = 'EU' OR 'US'`",
+        "`region CONTAINS 'EU' OR 'US'`",
+      ],
+      answer: 1,
+      why: "IN is an OR-chain over the list: a row passes if any single listed value matches. A region can't equal two values at once — the AND version matches nothing.",
+      notes: [
+        { choice: 2, why: "`region = 'EU' OR 'US'` looks tempting but `'US'` alone isn't a comparison — some engines error, SQLite treats it as a truthy string. Always write the full `region = 'US'`." },
+      ],
+    },
   ],
   problems: [
     {

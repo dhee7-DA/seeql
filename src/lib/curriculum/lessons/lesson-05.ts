@@ -350,6 +350,61 @@ export const lesson05: Lesson = {
         { choice: 0, why: "No direction means ASC — the *oldest* order tops that list." },
       ],
     },
+    {
+      id: "l5-q21",
+      prompt: "`SELECT strftime('%Y-%m', created_at) AS m, COUNT(*) AS n FROM orders GROUP BY m ORDER BY n DESC LIMIT 1` — which month comes back?",
+      choices: [
+        "2024-02 — always",
+        "Either 2024-02 or 2024-09 — both tie at 9 orders and the tie is unbroken",
+        "Both months, on two rows",
+        "No rows — you can't ORDER BY an aggregate",
+      ],
+      answer: 1,
+      why: "Two months tie at the top with 9 orders each. LIMIT 1 keeps one row of the tied pair — which one is an implementation detail. A deterministic tie-break (`ORDER BY n DESC, m`) pins it to 2024-02.",
+      notes: [
+        { choice: 0, why: "SQLite's current scan order may hand back 2024-02 every time you try it — but that's habit of the engine, not a promise. Ties + LIMIT 1 = undefined." },
+      ],
+    },
+    {
+      id: "l5-q22",
+      prompt: "`ORDER BY price DESC LIMIT 5 OFFSET 5` on products — which slice of the catalog is this?",
+      choices: [
+        "The 5 priciest, minus the first one",
+        "Rows 6–10: page 2 when paging 5 per page",
+        "The 5 cheapest",
+        "An error — OFFSET needs a page number",
+      ],
+      answer: 1,
+      why: "OFFSET skips the first 5 rows after sorting; LIMIT 5 then keeps the next 5. That's exactly page 2 of a 5-per-page pager over the 16 products.",
+      notes: [
+        { choice: 0, why: "Dropping just the top row would be LIMIT 5 OFFSET 1. OFFSET counts rows skipped, not positions removed from the result." },
+      ],
+    },
+    {
+      id: "l5-q23",
+      prompt: "Paging 16 products 5 per page — how many pages does the pager need, and how full is the last one?",
+      choices: ["3 pages, last full", "4 pages, last has 1 row", "4 pages, last has 4 rows", "5 pages, last empty"],
+      answer: 1,
+      why: "16 / 5 = 3.2, rounded up to 4 pages: 5 + 5 + 5 + 1. The last page carries the single remaining row.",
+      notes: [
+        { choice: 3, why: "A pager never emits an empty trailing page — the 16th row lands on page 4 with one row, not on a lonely page 5." },
+      ],
+    },
+    {
+      id: "l5-q24",
+      prompt: "Why is `SELECT name, city FROM customers ORDER BY city` already fully deterministic on this dataset?",
+      choices: [
+        "Because name is unique",
+        "Because all 16 customers live in 16 different cities — no ties exist to break",
+        "Because SQLite always appends id to every sort",
+        "It isn't — every ORDER BY needs a tie-breaker",
+      ],
+      answer: 1,
+      why: "The store's 16 customers are spread over 16 distinct cities, so a city sort can never tie. Contrast `ORDER BY region`: 8 EU customers tie and their relative order is undefined.",
+      notes: [
+        { choice: 2, why: "No such auto-tie-breaker exists — determinism here is a property of the DATA (zero duplicate cities), not of the engine." },
+      ],
+    },
   ],
   problems: [
     {

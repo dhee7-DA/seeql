@@ -180,6 +180,51 @@ ORDER BY name;   -- Alice, Emma, Keiko, Maya — 4 names`,
         { choice: 3, why: "The 6-above-average count belongs to the WHERE version. Without a WHERE, the subquery in SELECT annotates every row — it filters nothing." },
       ],
     },
+    {
+      id: "l25-q9",
+      prompt: "You're building `WHERE price > (SELECT AVG(price) FROM products)`. What's the disciplined first move?",
+      choices: [
+        "Write the whole thing in one pass and hope",
+        "Write and run the inner query alone — confirm it returns one number — then wrap it",
+        "Replace the subquery with a hardcoded number for speed",
+        "Add DISTINCT to the outer query for safety",
+      ],
+      why: "Two-stage thinking: the inner question ('what's the catalog average?') is a complete, runnable query. Prove it standalone — 71.78 here — and the outer comparison becomes trivial to reason about.",
+      answer: 1,
+      notes: [
+        { choice: 2, why: "Hardcoding 71.78 works today and rots tomorrow. The subquery recomputes on every run — that's the entire point." },
+      ],
+    },
+    {
+      id: "l25-q10",
+      prompt: "`IN (SELECT customer_id FROM orders WHERE status = 'pending')` versus `IN (3, 7, 12, …)` with the ids typed by hand — what's the real difference?",
+      choices: [
+        "No difference — both are frozen lists",
+        "Both are membership tests, but the subquery derives its list live from the data — new pending orders enter the list automatically",
+        "The literal list is faster because it skips parsing",
+        "The subquery only works with numeric ids",
+      ],
+      answer: 1,
+      why: "IN with literals tests membership against a list you froze at writing time. IN (SELECT …) tests membership against the answer to a question the database re-asks on every run — 8 customers hold pending orders right now, and the list updates itself.",
+      notes: [
+        { choice: 0, why: "The literal form IS frozen: typed once, stale the moment a new pending order appears. Same syntax, opposite relationship to time." },
+      ],
+    },
+    {
+      id: "l25-q11",
+      prompt: "The same scalar subquery `(SELECT AVG(price) FROM products)` appears in the SELECT list instead of WHERE. How does the query's output change?",
+      choices: [
+        "Six rows come out — the above-average ones",
+        "All 16 products come out, each annotated with the same 71.78 in a new column",
+        "One row comes out — just the average",
+        "An error — subqueries can't live in SELECT",
+      ],
+      answer: 1,
+      why: "In WHERE the subquery filters; in the SELECT list it annotates. Nothing is dropped — every row gains a side-by-side comparison column. WHERE and SELECT-list subqueries are different tools wearing the same syntax.",
+      notes: [
+        { choice: 0, why: "That's the WHERE version's output. Moving the subquery to the SELECT list removes the filter entirely — a very common copy-paste accident." },
+      ],
+    },
   ],
   problems: [
     {

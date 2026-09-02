@@ -182,6 +182,36 @@ ORDER BY region;   -- APAC 7 · EU 10 · LATAM 2 · US 3`,
         { choice: 0, why: "\"Safer\" is backwards — plain UNION can silently collapse legitimate repeats (two identical rows in a pile become one). Dedupe only when duplicates distort the answer." },
       ],
     },
+    {
+      id: "l17-q9",
+      prompt: "Arm one outputs the row `('pending', 14)`. Arm two — computed differently — also outputs `('pending', 14)`. What do UNION and UNION ALL return between them?",
+      choices: [
+        "UNION: 2 rows · UNION ALL: 2 rows",
+        "UNION: 1 row · UNION ALL: 2 rows",
+        "UNION: 0 rows — duplicates are dropped entirely",
+        "Both error — arms may not overlap",
+      ],
+      answer: 1,
+      why: "UNION compares whole rows and keeps one copy of each distinct row; UNION ALL keeps everything blindly. Same shape, different honesty — and only ALL's totals are guaranteed to add up.",
+      notes: [
+        { choice: 2, why: "De-duplicate means keep one — the row survives once. What never survives UNION is the *second* identical copy." },
+      ],
+    },
+    {
+      id: "l17-q10",
+      prompt: "Stacking four status counts (delivered 52, shipped 30, pending 14, cancelled 7) that must sum to 103 — which operator keeps the arithmetic honest?",
+      choices: [
+        "UNION — duplicates are impossible here anyway",
+        "UNION ALL — nothing gets silently subtracted",
+        "INTERSECT — it keeps the shared rows",
+        "Either — they're identical on counts",
+      ],
+      answer: 1,
+      why: "If two arms ever produced the same (status, count) row, UNION would quietly delete the second copy and the sum would fall below 103 without any error. ALL never edits your data.",
+      notes: [
+        { choice: 0, why: "'Can't overlap' is an assumption, not a guarantee. The moment a refactor makes two arms collide, UNION hides the bug in plain sight — ALL would surface it." },
+      ],
+    },
   ],
   problems: [
     {

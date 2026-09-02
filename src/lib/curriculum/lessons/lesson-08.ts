@@ -228,6 +228,52 @@ export const lesson08: Lesson = {
         { choice: 0, why: "APAC's 5 is the biggest count *after* EU — reading the ranking wrong puts the runner-up on top." },
       ],
     },
+    {
+      id: "l8-q12",
+      prompt: "`SELECT region, COUNT(*) AS n FROM customers GROUP BY region HAVING n > 3` — why does the coach advice still prefer `HAVING COUNT(*) > 3`?",
+      choices: [
+        "Aliases in HAVING are always an error",
+        "SQLite accepts the alias, but portable SQL repeats the expression — some engines refuse aliases in HAVING",
+        "n means something else inside HAVING",
+        "HAVING cannot compare to numbers",
+      ],
+      answer: 1,
+      why: "SQLite resolves SELECT aliases inside HAVING as a courtesy. The SQL standard evaluates HAVING before SELECT, so other engines reject `n` — repeating COUNT(*) runs everywhere.",
+      notes: [
+        { choice: 0, why: "It runs fine here — that's the trap. 'Works on my machine' SQL is the portable kind: spell the aggregate again." },
+      ],
+    },
+    {
+      id: "l8-q13",
+      prompt: "'Show customers with at least 5 orders.' After `GROUP BY customer_id`, which clause keeps only the qualifying groups — and how many of the 16 survive?",
+      choices: [
+        "WHERE COUNT(*) >= 5 — all 16",
+        "HAVING COUNT(*) >= 5 — exactly 5 customers",
+        "HAVING COUNT(*) >= 5 — exactly 11 customers",
+        "LIMIT 5 — the five busiest",
+      ],
+      answer: 1,
+      why: "Filtering groups happens in HAVING, after the buckets exist. Five customers have racked up 5+ orders; the other eleven fall below the bar.",
+      notes: [
+        { choice: 0, why: "WHERE runs before grouping and has never seen a COUNT — referencing an aggregate there is an error, not just a wrong answer." },
+        { choice: 3, why: "LIMIT 5 chops the biggest five groups off the top regardless of size — a different (and unordered) question entirely." },
+      ],
+    },
+    {
+      id: "l8-q14",
+      prompt: "`GROUP BY strftime('%Y-%m', created_at)` on orders — is grouping by an expression legal, and how many buckets form?",
+      choices: [
+        "Illegal — GROUP BY takes bare columns only",
+        "Legal — 14 month buckets from 2024-01 through 2025-02",
+        "Legal — but only 1 bucket, since every row has a date",
+        "Legal — 103 buckets, one per order",
+      ],
+      answer: 1,
+      why: "GROUP BY accepts any expression: each distinct computed value gets a bucket. The orders span 14 calendar months, so 14 groups — with 2024-02 and 2024-09 tied at 9 orders apiece.",
+      notes: [
+        { choice: 3, why: "GROUP BY collapses — it never makes one group per input row. That would be SELECT with no grouping at all." },
+      ],
+    },
   ],
   problems: [
     {

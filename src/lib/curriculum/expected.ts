@@ -15272,5 +15272,960 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
         42
       ]
     ]
+  },
+  "l35-p1": {
+    "columns": [
+      "name",
+      "city"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        "Berlin"
+      ],
+      [
+        "Chloe Dubois",
+        "Lyon"
+      ],
+      [
+        "Isabella Rossi",
+        "Milan"
+      ],
+      [
+        "Liam O'Brien",
+        "Cork"
+      ],
+      [
+        "Noah Meyer",
+        "Hamburg"
+      ],
+      [
+        "Olivia Brown",
+        "London"
+      ],
+      [
+        "Pedro Alvarez",
+        "Madrid"
+      ]
+    ]
+  },
+  "l35-p2": {
+    "columns": [
+      "budget_count"
+    ],
+    "rows": [
+      [
+        8
+      ]
+    ]
+  },
+  "l35-p3": {
+    "columns": [
+      "cities_served"
+    ],
+    "rows": [
+      [
+        16
+      ]
+    ]
+  },
+  "l35-p4": {
+    "columns": [
+      "total_stock"
+    ],
+    "rows": [
+      [
+        2845
+      ]
+    ]
+  },
+  "l35-p5": {
+    "columns": [
+      "name",
+      "price"
+    ],
+    "rows": [
+      [
+        "Smart Watch S",
+        199.99
+      ],
+      [
+        "Noise-Canceling Headset",
+        149.99
+      ],
+      [
+        "4K Webcam Pro",
+        129
+      ],
+      [
+        "Studio Desktop Mic",
+        119
+      ],
+      [
+        "Mechanical Keyboard K1",
+        89.99
+      ]
+    ]
+  },
+  "l35-p6": {
+    "columns": [
+      "category",
+      "product_count"
+    ],
+    "rows": [
+      [
+        "Accessories",
+        3
+      ],
+      [
+        "Audio",
+        3
+      ],
+      [
+        "Electronics",
+        3
+      ]
+    ]
+  },
+  "l36-p1": {
+    "columns": [
+      "name",
+      "order_count"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        24
+      ],
+      [
+        "Emma Wilson",
+        17
+      ],
+      [
+        "Grace Kim",
+        14
+      ],
+      [
+        "Maya Patel",
+        13
+      ],
+      [
+        "Chloe Dubois",
+        5
+      ]
+    ]
+  },
+  "l36-p2": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Bruno Silva"
+      ],
+      [
+        "Chloe Dubois"
+      ],
+      [
+        "Dmitri Volkov"
+      ],
+      [
+        "Farid Nasser"
+      ],
+      [
+        "Keiko Sato"
+      ],
+      [
+        "Olivia Brown"
+      ]
+    ]
+  },
+  "l36-p3": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Liam O'Brien"
+      ]
+    ]
+  },
+  "l36-p4": {
+    "columns": [
+      "category",
+      "revenue"
+    ],
+    "rows": [
+      [
+        "Audio",
+        11744.01
+      ],
+      [
+        "Wearables",
+        6929.12
+      ],
+      [
+        "Video",
+        5198.41
+      ],
+      [
+        "Electronics",
+        4818.61
+      ],
+      [
+        "Accessories",
+        3294.29
+      ],
+      [
+        "Apparel",
+        1984.93
+      ],
+      [
+        "Fitness",
+        863.91
+      ]
+    ]
+  },
+  "l36-p5": {
+    "columns": [
+      "true_revenue"
+    ],
+    "rows": [
+      [
+        34833.28
+      ]
+    ]
+  },
+  "l36-p6": {
+    "columns": [
+      "region_pairs"
+    ],
+    "rows": [
+      [
+        39
+      ]
+    ]
+  },
+  "l37-p1": {
+    "columns": [
+      "label",
+      "n"
+    ],
+    "rows": [
+      [
+        "in_flight",
+        44
+      ],
+      [
+        "complete",
+        52
+      ]
+    ]
+  },
+  "l37-p2": {
+    "columns": [
+      "category"
+    ],
+    "rows": [
+      [
+        "Accessories"
+      ],
+      [
+        "Apparel"
+      ],
+      [
+        "Audio"
+      ],
+      [
+        "Electronics"
+      ],
+      [
+        "Video"
+      ],
+      [
+        "Wearables"
+      ]
+    ]
+  },
+  "l37-p3": {
+    "columns": [
+      "category"
+    ],
+    "rows": [
+      [
+        "Fitness"
+      ]
+    ]
+  },
+  "l37-p4": {
+    "columns": [
+      "region",
+      "pending",
+      "shipped",
+      "delivered",
+      "cancelled"
+    ],
+    "rows": [
+      [
+        "APAC",
+        5,
+        8,
+        21,
+        3
+      ],
+      [
+        "EU",
+        6,
+        12,
+        24,
+        3
+      ],
+      [
+        "LATAM",
+        0,
+        0,
+        2,
+        0
+      ],
+      [
+        "US",
+        3,
+        10,
+        5,
+        1
+      ]
+    ]
+  },
+  "l37-p5": {
+    "columns": [
+      "delivered_value",
+      "shipped_value",
+      "pending_value",
+      "cancelled_value"
+    ],
+    "rows": [
+      [
+        15571.07,
+        11996.72,
+        6113,
+        1152.49
+      ]
+    ]
+  },
+  "l37-p6": {
+    "columns": [
+      "status",
+      "n"
+    ],
+    "rows": [
+      [
+        "pending",
+        14
+      ],
+      [
+        "shipped",
+        30
+      ],
+      [
+        "delivered",
+        52
+      ],
+      [
+        "cancelled",
+        7
+      ]
+    ]
+  },
+  "l38-p1": {
+    "columns": [
+      "name",
+      "stellar_orders"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        8
+      ],
+      [
+        "Emma Wilson",
+        8
+      ],
+      [
+        "Maya Patel",
+        8
+      ],
+      [
+        "Grace Kim",
+        6
+      ]
+    ]
+  },
+  "l38-p2": {
+    "columns": [
+      "name",
+      "spend"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        7262.35
+      ],
+      [
+        "Emma Wilson",
+        6640.56
+      ],
+      [
+        "Grace Kim",
+        4574.23
+      ],
+      [
+        "Maya Patel",
+        3644.56
+      ],
+      [
+        "Chloe Dubois",
+        2667.93
+      ]
+    ]
+  },
+  "l38-p3": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Alice Chen"
+      ],
+      [
+        "Chloe Dubois"
+      ],
+      [
+        "Emma Wilson"
+      ],
+      [
+        "Farid Nasser"
+      ],
+      [
+        "Grace Kim"
+      ],
+      [
+        "Keiko Sato"
+      ],
+      [
+        "Maya Patel"
+      ],
+      [
+        "Pedro Alvarez"
+      ]
+    ]
+  },
+  "l38-p4": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Alice Chen"
+      ],
+      [
+        "Emma Wilson"
+      ],
+      [
+        "Maya Patel"
+      ]
+    ]
+  },
+  "l38-p5": {
+    "columns": [
+      "name",
+      "spend"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        7262.35
+      ],
+      [
+        "Emma Wilson",
+        6640.56
+      ],
+      [
+        "Grace Kim",
+        4574.23
+      ]
+    ]
+  },
+  "l39-p1": {
+    "columns": [
+      "mon",
+      "n"
+    ],
+    "rows": [
+      [
+        "2024-01",
+        8
+      ],
+      [
+        "2024-02",
+        9
+      ],
+      [
+        "2024-03",
+        8
+      ],
+      [
+        "2024-04",
+        7
+      ],
+      [
+        "2024-05",
+        8
+      ],
+      [
+        "2024-06",
+        6
+      ],
+      [
+        "2024-07",
+        8
+      ],
+      [
+        "2024-08",
+        7
+      ],
+      [
+        "2024-09",
+        9
+      ],
+      [
+        "2024-10",
+        7
+      ],
+      [
+        "2024-11",
+        6
+      ],
+      [
+        "2024-12",
+        7
+      ],
+      [
+        "2025-01",
+        6
+      ],
+      [
+        "2025-02",
+        7
+      ]
+    ]
+  },
+  "l39-p2": {
+    "columns": [
+      "mon",
+      "revenue",
+      "running"
+    ],
+    "rows": [
+      [
+        "2024-01",
+        3731.97,
+        3731.97
+      ],
+      [
+        "2024-02",
+        3609.64,
+        7341.61
+      ],
+      [
+        "2024-03",
+        2617.08,
+        9958.69
+      ],
+      [
+        "2024-04",
+        2468.91,
+        12427.6
+      ],
+      [
+        "2024-05",
+        2910.31,
+        15337.91
+      ],
+      [
+        "2024-06",
+        2047.43,
+        17385.34
+      ],
+      [
+        "2024-07",
+        1193.86,
+        18579.2
+      ],
+      [
+        "2024-08",
+        2352.07,
+        20931.27
+      ],
+      [
+        "2024-09",
+        3116.04,
+        24047.31
+      ],
+      [
+        "2024-10",
+        2975.67,
+        27022.98
+      ],
+      [
+        "2024-11",
+        1648.8,
+        28671.78
+      ],
+      [
+        "2024-12",
+        2101.47,
+        30773.25
+      ],
+      [
+        "2025-01",
+        1669.5,
+        32442.75
+      ],
+      [
+        "2025-02",
+        2390.53,
+        34833.28
+      ]
+    ]
+  },
+  "l39-p3": {
+    "columns": [
+      "avg_ship_days",
+      "shipped_orders"
+    ],
+    "rows": [
+      [
+        2.98,
+        82
+      ]
+    ]
+  },
+  "l39-p4": {
+    "columns": [
+      "order_date",
+      "gap_days"
+    ],
+    "rows": [
+      [
+        "2024-01-02",
+        null
+      ],
+      [
+        "2024-01-22",
+        "20"
+      ],
+      [
+        "2024-02-20",
+        "29"
+      ],
+      [
+        "2024-02-25",
+        "5"
+      ],
+      [
+        "2024-03-05",
+        "9"
+      ],
+      [
+        "2024-03-18",
+        "13"
+      ],
+      [
+        "2024-04-05",
+        "18"
+      ],
+      [
+        "2024-04-17",
+        "12"
+      ],
+      [
+        "2024-05-12",
+        "25"
+      ],
+      [
+        "2024-06-17",
+        "36"
+      ],
+      [
+        "2024-07-21",
+        "34"
+      ],
+      [
+        "2024-08-02",
+        "12"
+      ],
+      [
+        "2024-08-24",
+        "22"
+      ],
+      [
+        "2024-09-06",
+        "13"
+      ],
+      [
+        "2024-09-07",
+        "1"
+      ],
+      [
+        "2024-09-21",
+        "14"
+      ],
+      [
+        "2024-11-11",
+        "51"
+      ],
+      [
+        "2024-12-02",
+        "21"
+      ],
+      [
+        "2024-12-13",
+        "11"
+      ],
+      [
+        "2024-12-16",
+        "3"
+      ],
+      [
+        "2025-01-05",
+        "20"
+      ],
+      [
+        "2025-01-26",
+        "21"
+      ],
+      [
+        "2025-02-12",
+        "17"
+      ],
+      [
+        "2025-02-19",
+        "7"
+      ]
+    ]
+  },
+  "l39-p5": {
+    "columns": [
+      "ntile",
+      "orders_in_tile"
+    ],
+    "rows": [
+      [
+        1,
+        26
+      ],
+      [
+        2,
+        26
+      ],
+      [
+        3,
+        26
+      ],
+      [
+        4,
+        25
+      ]
+    ]
+  },
+  "l40-p1": {
+    "columns": [
+      "delivered",
+      "shipped",
+      "pending",
+      "cancelled"
+    ],
+    "rows": [
+      [
+        52,
+        30,
+        14,
+        7
+      ]
+    ]
+  },
+  "l40-p2": {
+    "columns": [
+      "regions"
+    ],
+    "rows": [
+      [
+        "APAC,EU,LATAM,US"
+      ]
+    ]
+  },
+  "l40-p3": {
+    "columns": [
+      "category",
+      "revenue"
+    ],
+    "rows": [
+      [
+        "GRAND TOTAL",
+        34833.28
+      ],
+      [
+        "Audio",
+        11744.01
+      ],
+      [
+        "Wearables",
+        6929.12
+      ],
+      [
+        "Video",
+        5198.41
+      ],
+      [
+        "Electronics",
+        4818.61
+      ],
+      [
+        "Accessories",
+        3294.29
+      ],
+      [
+        "Apparel",
+        1984.93
+      ],
+      [
+        "Fitness",
+        863.91
+      ]
+    ]
+  },
+  "l40-p4": {
+    "columns": [
+      "label",
+      "n"
+    ],
+    "rows": [
+      [
+        "budget",
+        8
+      ],
+      [
+        "mid",
+        4
+      ],
+      [
+        "premium",
+        4
+      ]
+    ]
+  },
+  "l40-p5": {
+    "columns": [
+      "supplier",
+      "region"
+    ],
+    "rows": [
+      [
+        "Alpine Audio GmbH",
+        "APAC"
+      ],
+      [
+        "Alpine Audio GmbH",
+        "EU"
+      ],
+      [
+        "Alpine Audio GmbH",
+        "LATAM"
+      ],
+      [
+        "Alpine Audio GmbH",
+        "US"
+      ],
+      [
+        "Andes Naturals SA",
+        "APAC"
+      ],
+      [
+        "Andes Naturals SA",
+        "EU"
+      ],
+      [
+        "Andes Naturals SA",
+        "LATAM"
+      ],
+      [
+        "Andes Naturals SA",
+        "US"
+      ],
+      [
+        "Midwest Hardware Co",
+        "APAC"
+      ],
+      [
+        "Midwest Hardware Co",
+        "EU"
+      ],
+      [
+        "Midwest Hardware Co",
+        "LATAM"
+      ],
+      [
+        "Midwest Hardware Co",
+        "US"
+      ],
+      [
+        "Nordic Gadgets AB",
+        "APAC"
+      ],
+      [
+        "Nordic Gadgets AB",
+        "EU"
+      ],
+      [
+        "Nordic Gadgets AB",
+        "LATAM"
+      ],
+      [
+        "Nordic Gadgets AB",
+        "US"
+      ],
+      [
+        "Pacific Textiles",
+        "APAC"
+      ],
+      [
+        "Pacific Textiles",
+        "EU"
+      ],
+      [
+        "Pacific Textiles",
+        "LATAM"
+      ],
+      [
+        "Pacific Textiles",
+        "US"
+      ],
+      [
+        "Shenzhen Electro",
+        "APAC"
+      ],
+      [
+        "Shenzhen Electro",
+        "EU"
+      ],
+      [
+        "Shenzhen Electro",
+        "LATAM"
+      ],
+      [
+        "Shenzhen Electro",
+        "US"
+      ]
+    ]
   }
 };
