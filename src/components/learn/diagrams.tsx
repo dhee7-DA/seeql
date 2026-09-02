@@ -14,6 +14,8 @@ import { FIGURES_M3 } from "./diagrams-m3";
 import { FIGURES_M4 } from "./diagrams-m4";
 import { FIGURES_M5 } from "./diagrams-m5";
 import { FIGURES_M6 } from "./diagrams-m6";
+import { FIGURES_M7 } from "./diagrams-m7";
+import { FIGURES_M8 } from "./diagrams-m8";
 import { cn } from "@/lib/utils";
 
 /* ---------------- shared bits ---------------- */
@@ -1574,6 +1576,8 @@ const FIGURES: Partial<Record<FigureId, () => React.JSX.Element>> = {
   ...FIGURES_M4,
   ...FIGURES_M5,
   ...FIGURES_M6,
+  ...FIGURES_M7,
+  ...FIGURES_M8,
   "l1-anatomy": L1Anatomy,
   "l2-projection": L2Projection,
   "l3-where-gate": L3WhereGate,

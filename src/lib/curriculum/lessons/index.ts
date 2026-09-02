@@ -2,8 +2,10 @@
 // Module 2 (Joins & Relationships, lessons 9–16 + case study 36),
 // Module 3 (Set Operations & CASE, lessons 17–24 + case study 37),
 // Module 4 (Subqueries & CTEs, lessons 25–28 + case study 38),
-// Module 5 (Scalar & Window Toolkit, lessons 29–32 + case study 39) and
-// Module 6 (Expert Clinic, lessons 33–34 + case study 40).
+// Module 5 (Scalar & Window Toolkit, lessons 29–32 + case study 39),
+// Module 6 (Expert Clinic, lessons 33–34 + case study 40),
+// Module 7 (Data Modification, lessons 41–44 + case study 50) and
+// Module 8 (Schema, Views & Beyond, lessons 45–49 + case study 51).
 import type { Lesson } from "../types";
 import { lesson01 } from "./lesson-01";
 import { lesson02 } from "./lesson-02";
@@ -45,6 +47,17 @@ import { lesson37 } from "./lesson-37";
 import { lesson38 } from "./lesson-38";
 import { lesson39 } from "./lesson-39";
 import { lesson40 } from "./lesson-40";
+import { lesson41 } from "./lesson-41";
+import { lesson42 } from "./lesson-42";
+import { lesson43 } from "./lesson-43";
+import { lesson44 } from "./lesson-44";
+import { lesson45 } from "./lesson-45";
+import { lesson46 } from "./lesson-46";
+import { lesson47 } from "./lesson-47";
+import { lesson48 } from "./lesson-48";
+import { lesson49 } from "./lesson-49";
+import { lesson50 } from "./lesson-50";
+import { lesson51 } from "./lesson-51";
 
 export const LESSONS: Lesson[] = [
   lesson01,
@@ -87,6 +100,17 @@ export const LESSONS: Lesson[] = [
   lesson38,
   lesson39,
   lesson40,
+  lesson41,
+  lesson42,
+  lesson43,
+  lesson44,
+  lesson45,
+  lesson46,
+  lesson47,
+  lesson48,
+  lesson49,
+  lesson50,
+  lesson51,
 ];
 
 export interface ModuleInfo {
@@ -151,6 +175,24 @@ export const MODULES: Array<ModuleInfo & { lessons: Lesson[] }> = [
     blurb:
       "The finishing school: string aggregation and the hand-built TOTAL stack SQLite's missing ROLLUP would give you, FILTER-clause censuses, and every join shape at last — RIGHT and FULL OUTER hands-on, the deliberate CROSS JOIN, and non-equi range joins with the bounds discipline that keeps fanout out.",
     lessons: [lesson33, lesson34, lesson40],
+  },
+  {
+    id: "writes",
+    num: 7,
+    title: "Data Modification",
+    level: "Expert",
+    blurb:
+      "Six modules of reading, then the write verbs: INSERT with the column-list contract and RETURNING, UPDATE's WHERE discipline and self-reading expressions, DELETE and the foreign-key fence, UPSERT's ON CONFLICT fork and the transaction that powers this course's sandbox — every statement executed for real, then rolled back.",
+    lessons: [lesson41, lesson42, lesson43, lesson44, lesson50],
+  },
+  {
+    id: "schema",
+    num: 8,
+    title: "Schema, Views & Beyond",
+    level: "Expert",
+    blurb:
+      "Behind the tables: CREATE TABLE's constraint contract, ALTER and DROP for schema evolution, views that save a join under a name, indexes and EXPLAIN QUERY PLAN — the engine's own account of every query — and WITH RECURSIVE, the self-feeding query that generates sequences, month spines and org-chart walks.",
+    lessons: [lesson45, lesson46, lesson47, lesson48, lesson49, lesson51],
   },
 ];
 

@@ -121,10 +121,11 @@ export const lesson50: Lesson = {
       difficulty: "easy",
       solution: "INSERT INTO products (name, category, price, stock, supplier_id)\nVALUES ('Streaming Mic Arm', 'Audio', 29.99, 75, 5)\nRETURNING id, name;",
       mistakes: [
-        { test: "\\bid\\s*,", message: "Let the engine pick the id — the INTEGER PRIMARY KEY assigns 17 as max+1. Claiming ids by hand is how import scripts collide." },
+        { test: "\\(id\\s*,|,\\s*id\\s*,", message: "Let the engine pick the id — the INTEGER PRIMARY KEY assigns 17 as max+1. Claiming ids by hand is how import scripts collide." },
         { test: "supplier_id\\s*,\\s*1\\s*\\)|,\\s*1\\s*\\)\\s*returning", message: "Wrong supplier — the arm ships from Alpine Audio GmbH, supplier 5 (the EU's 4.8-rated shop)." },
         { test: "category\\s*,\\s*'.*arm'|'accessories'|'electronics'", message: "The arm is Audio hardware — it belongs beside the headsets and mics, the 3-product / 315-stock category." },
       ],
+      mutating: true,
       expected: EXPECTED["l50-p2"],
     },
     {
@@ -142,6 +143,7 @@ export const lesson50: Lesson = {
         { test: "where name", message: "Filter by the category — `WHERE category = 'Wearables'` — and let CASE pick the per-row price. Filtering by name twice doubles the statement for nothing." },
         { test: "else price end", message: "A harmless ELSE here, but the guard lives in the WHERE: only Wearables rows are candidates, and both are named in the CASE. Missing WHENs would NULL them — that's the lesson-23 trap." },
       ],
+      mutating: true,
       expected: EXPECTED["l50-p3"],
     },
     {
@@ -159,6 +161,7 @@ export const lesson50: Lesson = {
         { test: "\\bjoin\\b", message: "DELETE takes no JOIN — the cross-table scope rides on WHERE order_id IN (SELECT …). Same filter, legal grammar." },
         { test: "\\bupdate\\b", message: "The ticket says purge, not re-flag — these 12 lines are importer junk; UPDATE would leave them rotting in place." },
       ],
+      mutating: true,
       expected: EXPECTED["l50-p4"],
     },
     {
@@ -176,6 +179,7 @@ export const lesson50: Lesson = {
         { test: "do nothing", message: "DO NOTHING discards today's count — the feed's 40 units are real stock that must land, and the collision means merge, not skip." },
         { test: "values \\( 17 ,|values \\( 99 ,", message: "Don't dodge the collision with a fresh id — product 2 exists and that's the point: the upsert branch must fire, not a new row." },
       ],
+      mutating: true,
       expected: EXPECTED["l50-p5"],
     },
   ],

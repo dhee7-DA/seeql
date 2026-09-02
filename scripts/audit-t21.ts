@@ -4,6 +4,8 @@ import { LESSONS, MODULES } from "../src/lib/curriculum/lessons";
 import { FIGURES_M4 } from "../src/components/learn/diagrams-m4";
 import { FIGURES_M5 } from "../src/components/learn/diagrams-m5";
 import { FIGURES_M6 } from "../src/components/learn/diagrams-m6";
+import { FIGURES_M7 } from "../src/components/learn/diagrams-m7";
+import { FIGURES_M8 } from "../src/components/learn/diagrams-m8";
 import { FIGURES_M2 } from "../src/components/learn/diagrams-m2";
 import { FIGURES_M3 } from "../src/components/learn/diagrams-m3";
 import { readFileSync } from "node:fs";
@@ -18,6 +20,8 @@ const reg = new Set([
   ...Object.keys(FIGURES_M4),
   ...Object.keys(FIGURES_M5),
   ...Object.keys(FIGURES_M6),
+  ...Object.keys(FIGURES_M7),
+  ...Object.keys(FIGURES_M8),
 ]);
 
 const used = new Set<string>();
