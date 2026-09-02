@@ -421,3 +421,24 @@ Work Log:
 Stage Summary:
 - Root cause: dead dev server process. App restored and fully healthy.
 - User action if preview still 404s: wait ~1-2 min for gateway re-registration, or restart session.
+
+---
+Task ID: ui-1
+Agent: main
+Task: Premium UI polish — "sleek and premium" design-language pass (user directive; Module 9 (triggers/JSON/FTS) explicitly dropped as not analyst-relevant)
+
+Work Log:
+- Audited UI via agent-browser: landing, learn overview, lesson view, practice runner, playground; all 5 themes
+- Added Space Grotesk display font (next/font) wired as --font-display + .font-display utility
+- Added premium material layer to globals.css: .sheen (top hairline), .card-hover (lift+brighten), .bg-ambient (theme-adaptive radial glow), .grain (3% film grain), .btn-glow / .btn-quiet, .tnum, brand focus-visible ring, pulse-soft / bar-shimmer / flame-live keyframes, prefers-reduced-motion guard
+- landing.tsx: ambient hero, display headlines, CountUp stat numerals (framer-motion springs), icon chips, card hover lifts, curriculum module level-dots + row hover arrow slide, ambient CTA; FIXED stale "Three modules" copy -> "Eight modules" + duplicate className bug
+- learn-app.tsx: emerald active-lesson state with accent bar, shimmering progress bars, flame-live streak icon, display-font overview + module cards, sheen on panels; copy fixes (BEGINNER -> EXPERT, Eight modules)
+- lesson-view.tsx: display h1, segmented tab bar w/ sheen + emerald active icon, kicker hairline extension, sheen on tip/warn/takeaway/CTA
+- problem-runner.tsx: sheen cards, difficulty pills with colored dots, btn-glow Run & grade
+- QA: tsc clean in src/ (pre-existing errors only in examples/scripts/skills), eslint clean, dev.log no runtime errors; browser E2E: landing hero/stats/curriculum, learn overview, lesson learn+practice tabs, playground pipeline run — all verified; all 5 themes (carbon/paper/marine/oxblood/gallery) cycled and verified
+- Committed source changes (screenshots excluded)
+
+Stage Summary:
+- Design language: same flat solid-color system, now with premium finish (display type, sheen, ambient glow, grain, micro-interactions)
+- 6 files changed: layout.tsx, globals.css, landing.tsx, learn-app.tsx, lesson-view.tsx, problem-runner.tsx
+- All 51 lessons / 547 MCQs / 394 problems untouched and intact

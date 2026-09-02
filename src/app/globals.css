@@ -440,3 +440,163 @@
 .thin-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
+
+/* =====================================================================
+   PREMIUM MATERIAL LAYER
+   Same flat design language, executed with the finish of Linear/Vercel-
+   class products: a display face for headlines, hairline top "sheen" on
+   raised surfaces, one quiet ambient glow behind hero surfaces, fine
+   grain texture, glowing primary buttons and tabular numerals.
+   Everything stays theme-adaptive: chromatic effects derive from
+   --brand-accent, neutrals from white/black alphas.
+   ===================================================================== */
+
+/* Display voice — headlines, big numerals, module titles */
+.font-display {
+  font-family: var(--font-display), var(--font-geist-sans), system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Tabular numerals for stats and counters (no jitter while counting) */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Raised-surface finish: a 1px top inner highlight that catches the eye
+   the way milled aluminum does. Invisible on flat backgrounds, magic on
+   cards sitting on cards. */
+.sheen {
+  box-shadow: inset 0 1px 0 0 rgb(255 255 255 / 0.06);
+}
+
+/* Interactive card: quiet lift + border brighten on hover */
+.card-hover {
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  border-color: rgb(255 255 255 / 0.14);
+  box-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.07),
+    0 12px 32px -16px rgb(0 0 0 / 0.7);
+}
+
+/* Ambient brand glow — the single "atmosphere" effect. Sits behind hero
+   and CTA surfaces; adapts to every theme via --brand-accent. */
+.bg-ambient {
+  position: relative;
+}
+.bg-ambient::before {
+  content: "";
+  position: absolute;
+  inset: -20% 0 auto 0;
+  height: 140%;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 60% 55% at 50% 0%,
+    color-mix(in srgb, var(--brand-accent) 13%, transparent),
+    transparent 70%
+  );
+}
+
+/* Film grain — kills the "flat grey void" feeling on large dark surfaces.
+   3% opacity, fractal noise, blend into whatever is underneath. */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Primary button finish: brand-colored elevation that grounds the CTA */
+.btn-glow {
+  box-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.18),
+    0 8px 24px -10px color-mix(in srgb, var(--brand-accent) 55%, transparent);
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.15s ease,
+    background-color 0.15s ease;
+}
+.btn-glow:hover {
+  box-shadow:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.22),
+    0 10px 32px -10px color-mix(in srgb, var(--brand-accent) 70%, transparent);
+}
+.btn-glow:active {
+  transform: translateY(1px);
+}
+
+/* Secondary button: border wakes up on hover */
+.btn-quiet {
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+.btn-quiet:hover {
+  border-color: rgb(255 255 255 / 0.18);
+}
+
+/* Premium focus ring — brand accent, consistent everywhere */
+:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--brand-accent) 70%, transparent);
+  outline-offset: 2px;
+}
+
+/* Live dot — the "LIVE"/status pulse */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(0.8); }
+}
+.pulse-soft {
+  animation: pulse-soft 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Progress bar shimmer — a slow specular sweep across filled bars */
+@keyframes sheen-slide {
+  0% { transform: translateX(-100%); }
+  55%, 100% { transform: translateX(220%); }
+}
+.bar-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.bar-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 45%;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.35), transparent);
+  animation: sheen-slide 3.2s ease-in-out infinite;
+}
+
+/* Streak flame — gentle heat when the streak is alive */
+@keyframes flicker {
+  0%, 100% { transform: scale(1) rotate(-2deg); }
+  50% { transform: scale(1.12) rotate(3deg); }
+}
+.flame-live {
+  animation: flicker 1.6s ease-in-out infinite;
+  transform-origin: 50% 90%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-soft,
+  .bar-shimmer::after,
+  .flame-live {
+    animation: none;
+  }
+  .card-hover,
+  .btn-glow {
+    transition: none;
+  }
+  .card-hover:hover {
+    transform: none;
+  }
+}

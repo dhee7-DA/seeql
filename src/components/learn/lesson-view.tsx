@@ -153,22 +153,24 @@ export function LessonView({ lesson, onBonusChecked }: { lesson: Lesson; onBonus
           </span>
         )}
       </div>
-      <h1 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-100">{lesson.title}</h1>
+      <h1 className="font-display mt-2 text-[1.7rem] font-semibold tracking-[-0.02em] text-zinc-50 sm:text-3xl">{lesson.title}</h1>
       <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-zinc-400">{lesson.blurb}</p>
 
-      <div className="mt-5 flex gap-1 rounded-lg border border-zinc-800 bg-zinc-950 p-1">
+      <div className="sheen mt-5 flex gap-1 rounded-lg border border-zinc-800 bg-zinc-950 p-1">
         {tabs.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
             className={cn(
               "flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-2 text-xs font-medium transition-colors sm:flex-none sm:px-4",
-              tab === t.id ? "bg-zinc-800 text-zinc-100" : "text-zinc-500 hover:text-zinc-300",
+              tab === t.id
+                ? "bg-zinc-800 text-zinc-50 shadow-[inset_0_1px_0_0_rgb(255_255_255/0.06)]"
+                : "text-zinc-500 hover:text-zinc-300",
             )}
           >
-            <t.icon className="h-3.5 w-3.5" />
+            <t.icon className={cn("h-3.5 w-3.5", tab === t.id && "text-emerald-300")} />
             {t.label}
-            <span className="hidden text-[10px] text-zinc-500 sm:inline">· {t.note}</span>
+            <span className="tnum hidden text-[10px] text-zinc-500 sm:inline">· {t.note}</span>
           </button>
         ))}
       </div>
@@ -184,6 +186,7 @@ export function LessonView({ lesson, onBonusChecked }: { lesson: Lesson; onBonus
                   <div key={i} className="mb-3 mt-7 flex items-center gap-2.5">
                     <span className="h-3.5 w-1 rounded-full bg-emerald-400" />
                     <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-400">{b.text}</span>
+                    <span className="h-px flex-1 bg-zinc-800/70" />
                   </div>
                 );
               case "bullets":
@@ -269,18 +272,18 @@ export function LessonView({ lesson, onBonusChecked }: { lesson: Lesson; onBonus
             }
           })}
           {lesson.takeaway && (
-            <div className="mt-8 rounded-lg border border-violet-400/30 bg-violet-400/5 px-4 py-3">
+            <div className="sheen mt-8 rounded-lg border border-violet-400/30 bg-violet-400/5 px-4 py-3">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-violet-300">In one sentence</span>
               <p className="mt-1 text-[15px] font-medium leading-7 text-zinc-100">{lesson.takeaway}</p>
             </div>
           )}
-          <div className="mt-6 flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-3">
+          <div className="sheen mt-6 flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-3">
             <p className="text-sm text-zinc-400">
               Ready to prove it? Take the quiz, then solve the practice queries.
             </p>
             <button
               onClick={() => setTab("quiz")}
-              className="rounded-md bg-emerald-400 px-3.5 py-1.5 text-xs font-medium text-[#052e1c] hover:bg-emerald-300"
+              className="btn-glow rounded-md bg-emerald-400 px-3.5 py-1.5 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300"
             >
               Take the quiz →
             </button>

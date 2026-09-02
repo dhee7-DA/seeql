@@ -66,19 +66,22 @@ function useBadgeWatcher() {
 
 function RankBlock({ xp, level, streak }: { xp: number; level: ReturnType<typeof levelFor>; streak: number }) {
   return (
-    <div className="rounded-lg border border-zinc-800 bg-zinc-950 p-3.5">
+    <div className="sheen rounded-lg border border-zinc-800 bg-zinc-900/50 p-3.5">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-semibold text-zinc-100">{level.title}</span>
-        <span className="font-mono text-xs text-emerald-300">{xp.toLocaleString()} XP</span>
+        <span className="font-display text-sm font-semibold text-zinc-100">{level.title}</span>
+        <span className="tnum font-mono text-xs text-emerald-300">{xp.toLocaleString()} XP</span>
       </div>
-      <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-zinc-800">
-        <div className="h-full rounded-full bg-emerald-400" style={{ width: `${Math.round(level.pct * 100)}%` }} />
+      <div className="bar-shimmer mt-2.5 h-1.5 overflow-hidden rounded-full bg-zinc-800">
+        <div
+          className="h-full rounded-full bg-emerald-400 transition-[width] duration-700 ease-out"
+          style={{ width: `${Math.round(level.pct * 100)}%` }}
+        />
       </div>
       <p className="mt-1.5 text-[11px] text-zinc-500">
         {level.next === null ? "Top rank reached — Query Wizard" : `${(level.next - xp).toLocaleString()} XP to ${titleAfter(level.index)}`}
       </p>
       <div className="mt-2.5 flex items-center gap-1.5 border-t border-zinc-800 pt-2.5 text-[11px] text-zinc-400">
-        <Flame className={cn("h-3.5 w-3.5", streak > 0 ? "text-amber-400" : "text-zinc-600")} />
+        <Flame className={cn("h-3.5 w-3.5", streak > 0 ? "flame-live text-amber-400" : "text-zinc-600")} />
         {streak > 0 ? `${streak}-day streak — keep it alive` : "Hit your daily goal to start a streak"}
       </div>
     </div>
@@ -112,17 +115,20 @@ export function LearnApp() {
 
       {/* sidebar */}
       <aside className="w-full shrink-0 lg:sticky lg:top-[76px] lg:w-[300px] lg:max-h-[calc(100vh-96px)] lg:self-start">
-        <div className="flex max-h-full flex-col overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950">
+        <div className="sheen flex max-h-full flex-col overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950">
           <div className="shrink-0 border-b border-zinc-800 p-4">
             <div className="flex items-center gap-2">
               <GraduationCap className="h-4 w-4 text-emerald-400" />
-              <h2 className="text-sm font-semibold text-zinc-100">SeeQL Curriculum</h2>
+              <h2 className="font-display text-sm font-semibold text-zinc-100">SeeQL Curriculum</h2>
             </div>
             <p className="mt-1 text-[11px] text-zinc-500">
               {MODULES.length} modules · {LESSONS.length} lessons · {totalProblems} graded queries · {totalMcqs} quiz questions
             </p>
-            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-zinc-800">
-              <div className="h-full rounded-full bg-emerald-400 transition-all" style={{ width: `${(doneCount / LESSONS.length) * 100}%` }} />
+            <div className="bar-shimmer mt-3 h-1.5 overflow-hidden rounded-full bg-zinc-800">
+              <div
+                className="h-full rounded-full bg-emerald-400 transition-[width] duration-700 ease-out"
+                style={{ width: `${(doneCount / LESSONS.length) * 100}%` }}
+              />
             </div>
             <p className="mt-1.5 text-[11px] text-zinc-500">{doneCount}/{LESSONS.length} lessons complete</p>
           </div>
@@ -150,18 +156,23 @@ export function LearnApp() {
                           key={l.id}
                           onClick={() => openLesson(l.id)}
                           className={cn(
-                            "flex items-start gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors",
-                            active ? "bg-zinc-800" : "hover:bg-zinc-900",
+                            "relative flex items-start gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors",
+                            active ? "bg-emerald-400/[0.09]" : "hover:bg-zinc-900",
                           )}
                         >
+                          {active && <span className="absolute inset-y-1 left-0 w-0.5 rounded-full bg-emerald-400" />}
                           <span className={cn(
-                            "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-medium",
-                            done ? "bg-emerald-400 text-[#052e1c]" : active ? "border border-zinc-500 text-zinc-200" : "border border-zinc-700 text-zinc-500",
+                            "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-medium transition-colors",
+                            done
+                              ? "bg-emerald-400 text-[#052e1c]"
+                              : active
+                                ? "border border-emerald-400/60 text-emerald-200"
+                                : "border border-zinc-700 text-zinc-500",
                           )}>
                             {l.num}
                           </span>
                           <span className="min-w-0">
-                            <span className={cn("block truncate text-xs font-medium", active ? "text-zinc-100" : "text-zinc-300")}>{l.title}</span>
+                            <span className={cn("block truncate text-xs font-medium", active ? "text-zinc-50" : "text-zinc-300")}>{l.title}</span>
                             <span className="block text-[10px] text-zinc-600">{l.minutes} min · {l.problems.length} queries</span>
                           </span>
                         </button>
@@ -245,11 +256,11 @@ export function LearnApp() {
         ) : view.kind === "mixed" ? (
           <MixedQuiz />
         ) : (
-          <div className="max-w-3xl">
-            <p className="font-mono text-xs text-zinc-500">{MODULES.length} MODULES · BEGINNER → ADVANCED</p>
-            <h1 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-100">The SeeQL course</h1>
+          <div className="bg-ambient max-w-3xl">
+            <p className="font-mono text-xs text-zinc-500">{MODULES.length} MODULES · BEGINNER → EXPERT</p>
+            <h1 className="font-display mt-2 text-3xl font-semibold tracking-[-0.02em] text-zinc-50">The SeeQL course</h1>
             <p className="mt-3 text-[15px] leading-7 text-zinc-400">
-              Three modules, one real storefront database. Read a concept, prove it in a quiz, then solve
+              Eight modules, one real storefront database. Read a concept, prove it in a quiz, then solve
               graded live queries — {totalMcqs} quiz questions and {totalProblems} graded queries in total.
             </p>
 
@@ -257,12 +268,15 @@ export function LearnApp() {
               {MODULES.map((m) => {
                 const mDone = m.lessons.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
                 return (
-                  <div key={m.id} className="rounded-lg border border-zinc-800 bg-zinc-950 p-4">
+                  <div key={m.id} className="sheen card-hover rounded-lg border border-zinc-800 bg-zinc-950 p-4">
                     <p className="font-mono text-[10px] uppercase tracking-wider text-zinc-500">Module {m.num} · {m.level}</p>
-                    <h3 className="mt-1.5 text-sm font-semibold text-zinc-100">{m.title}</h3>
+                    <h3 className="font-display mt-1.5 text-sm font-semibold text-zinc-100">{m.title}</h3>
                     <p className="mt-2 text-xs leading-relaxed text-zinc-400">{m.blurb}</p>
                     <div className="mt-3 h-1 overflow-hidden rounded-full bg-zinc-800">
-                      <div className="h-full rounded-full bg-emerald-400" style={{ width: `${(mDone / m.lessons.length) * 100}%` }} />
+                      <div
+                        className="h-full rounded-full bg-emerald-400 transition-[width] duration-700 ease-out"
+                        style={{ width: `${(mDone / m.lessons.length) * 100}%` }}
+                      />
                     </div>
                     <p className="mt-1.5 text-[11px] text-zinc-500">{mDone}/{m.lessons.length} lessons · {m.lessons.reduce((a, l) => a + l.problems.length, 0)} graded queries</p>
                   </div>
@@ -277,9 +291,9 @@ export function LearnApp() {
                 ["Streak", streak > 0 ? `${streak} days` : "—"],
                 ["Badges", `${Object.keys(badgesMap).length}/${BADGES.length}`],
               ].map(([k, v]) => (
-                <div key={k} className="rounded-lg border border-zinc-800 bg-zinc-950 px-3.5 py-3">
+                <div key={k} className="sheen rounded-lg border border-zinc-800 bg-zinc-950 px-3.5 py-3">
                   <p className="text-[11px] uppercase tracking-wider text-zinc-500">{k}</p>
-                  <p className="mt-1 truncate text-sm font-medium text-zinc-100">{v}</p>
+                  <p className="tnum mt-1 truncate text-sm font-medium text-zinc-100">{v}</p>
                 </div>
               ))}
             </div>
@@ -289,8 +303,8 @@ export function LearnApp() {
               <MasteryGrid onOpenLesson={openLesson} />
             </div>
 
-            <div className="mt-6 rounded-lg border border-zinc-800 bg-zinc-950 p-4">
-              <h3 className="text-sm font-semibold text-zinc-100">Badges</h3>
+            <div className="sheen mt-6 rounded-lg border border-zinc-800 bg-zinc-950 p-4">
+              <h3 className="font-display text-sm font-semibold text-zinc-100">Badges</h3>
               <div className="mt-3 flex flex-wrap gap-2">
                 {BADGES.map((b) => {
                   const earned = badgesMap[b.id] !== undefined;
@@ -310,7 +324,7 @@ export function LearnApp() {
               </div>
             </div>
 
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-3.5">
+            <div className="sheen mt-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-3.5">
               <div>
                 <p className="text-sm font-medium text-zinc-100">
                   {ctx.lessonsDone > 0 ? "Welcome back." : "Start with lesson 1 — no setup, everything runs live."}
@@ -321,7 +335,7 @@ export function LearnApp() {
               </div>
               <button
                 onClick={() => openLesson(nextLesson.id)}
-                className="rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] hover:bg-emerald-300"
+                className="btn-glow rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300"
               >
                 {ctx.lessonsDone > 0 ? `Continue — lesson ${nextLesson.num} →` : "Start learning →"}
               </button>

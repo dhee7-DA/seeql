@@ -126,11 +126,11 @@ export function ProblemCard({ problem, index, onSolved }: { problem: Problem; in
   }
 
   return (
-    <div className="rounded-lg border border-zinc-800 bg-zinc-950">
+    <div className="sheen rounded-lg border border-zinc-800 bg-zinc-950">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-800 px-4 py-3">
         <div className="flex items-center gap-2.5">
           <span className={cn(
-            "flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-medium",
+            "flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-medium transition-colors",
             solved ? "bg-emerald-400 text-[#052e1c]" : "border border-zinc-700 text-zinc-400",
           )}>
             {solved ? <Check className="h-3.5 w-3.5" /> : index}
@@ -139,13 +139,21 @@ export function ProblemCard({ problem, index, onSolved }: { problem: Problem; in
         </div>
         <div className="flex items-center gap-2">
           <span className={cn(
-            "rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider",
+            "flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider",
             problem.difficulty === "easy"
               ? "border-emerald-400/40 text-emerald-300"
               : problem.difficulty === "medium"
                 ? "border-amber-400/40 text-amber-300"
                 : "border-rose-400/40 text-rose-300",
           )}>
+            <span className={cn(
+              "h-1 w-1 rounded-full",
+              problem.difficulty === "easy"
+                ? "bg-emerald-400"
+                : problem.difficulty === "medium"
+                  ? "bg-amber-400"
+                  : "bg-rose-400",
+            )} />
             {problem.difficulty} · {xpForDifficulty(problem.difficulty)} XP
           </span>
         </div>
@@ -167,7 +175,7 @@ export function ProblemCard({ problem, index, onSolved }: { problem: Problem; in
           <Button
             onClick={run}
             disabled={running || !sql.trim()}
-            className="h-8 gap-1.5 rounded-md bg-emerald-400 px-4 text-xs font-medium text-[#052e1c] hover:bg-emerald-300"
+            className="btn-glow h-8 gap-1.5 rounded-md bg-emerald-400 px-4 text-xs font-medium text-[#052e1c] hover:bg-emerald-300"
           >
             {running ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5" />}
             Run &amp; grade
