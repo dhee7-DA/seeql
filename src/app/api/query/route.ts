@@ -6,6 +6,11 @@ import type { CellValue, ExecResponse, ExecResult, PlanRow } from "@/lib/sql-typ
 const MAX_SQL_LENGTH = 20_000;
 const MAX_ROWS = 1_000;
 
+/** Sentinel thrown inside the sandboxed transaction to force a rollback. */
+class SandboxRollback extends Error {
+  constructor() { super("__sandbox_rollback__"); }
+}
+
 /** SQLite value → JSON-safe cell (Prisma returns BigInt for INTEGER on SQLite). */
 function normalizeCell(v: unknown): CellValue {
   if (v === null || v === undefined) return null;
@@ -100,20 +105,29 @@ function hasMultipleStatements(sql: string): boolean {
 
 export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json()) as { sql?: unknown };
+    const body = (await req.json()) as {
+      sql?: unknown;
+      sandbox?: unknown;
+      verify?: unknown;
+    };
     if (typeof body.sql !== "string" || body.sql.trim().length === 0) {
       return NextResponse.json({ ok: false, error: "Empty query." } satisfies ExecResponse, {
         status: 200,
       });
     }
     const sql = body.sql.trim().replace(/;+\s*$/, "");
+    const verify =
+      typeof body.verify === "string" && body.verify.trim().length > 0
+        ? body.verify.trim().replace(/;+\s*$/, "")
+        : null;
+    const sandbox = body.sandbox === true;
     if (sql.length > MAX_SQL_LENGTH) {
       return NextResponse.json(
         { ok: false, error: "Query too long (20k character limit)." } satisfies ExecResponse,
         { status: 200 },
       );
     }
-    if (hasMultipleStatements(sql)) {
+    if (hasMultipleStatements(sql) || (verify !== null && hasMultipleStatements(verify))) {
       return NextResponse.json(
         {
           ok: false,
@@ -134,7 +148,45 @@ export async function POST(req: NextRequest) {
     let rows: CellValue[][] = [];
     let changes: number | null = null;
 
-    if (isRead) {
+    if (sandbox) {
+      // Graded write/DDL runs execute inside a transaction that is ALWAYS
+      // rolled back — the storefront stays untouched, but the run is fully
+      // real: RETURNING rows, affected-row counts and a follow-up verify
+      // SELECT all see the statement's effect.
+      let captured: { columns: string[]; rows: CellValue[][]; changes: number } | null = null;
+      try {
+        await db.$transaction(
+          async (tx) => {
+            const before = (await tx.$queryRawUnsafe(
+              `SELECT total_changes() AS c`,
+            )) as Array<Record<string, unknown>>;
+            const res = (await tx.$queryRawUnsafe(sql)) as Array<Record<string, unknown>>;
+            const after = (await tx.$queryRawUnsafe(
+              `SELECT total_changes() AS c`,
+            )) as Array<Record<string, unknown>>;
+            const affected = Number(after[0].c) - Number(before[0].c);
+            let list = Array.isArray(res) ? res : [];
+            if (verify !== null) {
+              list = (await tx.$queryRawUnsafe(verify)) as Array<Record<string, unknown>>;
+            }
+            const cols = list.length > 0 ? Object.keys(list[0]) : [];
+            captured = {
+              columns: cols,
+              rows: list.map((r) => cols.map((c) => normalizeCell(r[c]))),
+              changes: affected,
+            };
+            throw new SandboxRollback();
+          },
+          { maxWait: 5000, timeout: 10_000 },
+        );
+      } catch (err) {
+        if (!(err instanceof SandboxRollback)) throw err;
+      }
+      const got = captured ?? { columns: [], rows: [], changes: 0 };
+      columns = got.columns;
+      rows = got.rows;
+      changes = isRead ? null : got.changes;
+    } else if (isRead) {
       const raw = (await db.$queryRawUnsafe(sql)) as Array<Record<string, unknown>>;
       const list = Array.isArray(raw) ? raw : [];
       if (list.length > 0) columns = Object.keys(list[0]);
@@ -149,7 +201,7 @@ export async function POST(req: NextRequest) {
 
     // EXPLAIN QUERY PLAN for read statements — best effort, never fails the run.
     let plan: PlanRow[] | null = null;
-    if (["SELECT", "WITH"].includes(statementType)) {
+    if (!sandbox && ["SELECT", "WITH"].includes(statementType)) {
       try {
         const rawPlan = (await db.$queryRawUnsafe(
           `EXPLAIN QUERY PLAN ${sql}`,

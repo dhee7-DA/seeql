@@ -27,29 +27,46 @@ function looksLikeRead(sql: string): boolean {
   return /^\s*(select|with)\b/i.test(sql.trim());
 }
 
-async function runInline(sql: string) {
+async function runInline(sql: string, sandbox: boolean) {
   const r = await fetch("/api/query", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ sql }),
+    body: JSON.stringify({ sql, sandbox }),
   });
-  return (await r.json()) as { ok: boolean; columns?: string[]; rows?: unknown[][]; error?: string };
+  return (await r.json()) as {
+    ok: boolean;
+    columns?: string[];
+    rows?: unknown[][];
+    changes?: number | null;
+    error?: string;
+  };
 }
 
 function CodeBlock({ sql, caption }: { sql: string; caption?: string }) {
-  const [result, setResult] = useState<{ ok: boolean; columns?: string[]; rows?: unknown[][]; error?: string } | null>(null);
+  const [result, setResult] = useState<{
+    ok: boolean;
+    columns?: string[];
+    rows?: unknown[][];
+    changes?: number | null;
+    error?: string;
+  } | null>(null);
   const [busy, setBusy] = useState(false);
-  const runnable = looksLikeRead(sql);
+  const isRead = looksLikeRead(sql);
+  const runnable = sql.trim().length > 0;
 
   async function run() {
     if (busy) return;
     setBusy(true);
     try {
-      setResult(await runInline(sql));
+      // Writes and DDL run sandboxed: the statement really executes,
+      // then the whole thing is rolled back — the store stays untouched.
+      setResult(await runInline(sql, !isRead));
     } finally {
       setBusy(false);
     }
   }
+
+  const affected = result?.ok && (result.rows ?? []).length === 0 && result.changes != null;
 
   return (
     <div className="my-4 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950">
@@ -62,7 +79,7 @@ function CodeBlock({ sql, caption }: { sql: string; caption?: string }) {
               disabled={busy}
               className="rounded border border-emerald-400/40 px-2 py-0.5 font-mono text-[11px] text-emerald-300 hover:bg-emerald-400/10 disabled:opacity-50"
             >
-              {busy ? "running…" : "Run here"}
+              {busy ? "running…" : isRead ? "Run here" : "Run sandboxed"}
             </button>
           )}
         </div>
@@ -71,7 +88,13 @@ function CodeBlock({ sql, caption }: { sql: string; caption?: string }) {
       {result && (
         <div className="border-t border-zinc-800 p-3">
           {result.ok ? (
-            <ResultGrid data={{ columns: result.columns ?? [], rows: (result.rows ?? []) as never[] }} maxHeight="max-h-56" />
+            affected ? (
+              <p className="font-mono text-xs text-zinc-400">
+                <span className="text-emerald-300">{result.changes}</span> row(s) affected — sandboxed run, rolled back.
+              </p>
+            ) : (
+              <ResultGrid data={{ columns: result.columns ?? [], rows: (result.rows ?? []) as never[] }} maxHeight="max-h-56" />
+            )
           ) : (
             <p className="font-mono text-xs text-rose-300">{result.error}</p>
           )}

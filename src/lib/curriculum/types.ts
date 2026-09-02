@@ -78,6 +78,15 @@ export type FigureId =
   | "x2-join-atlas"
   | "x3-total-stack"
   | "x4-range-join"
+  | "w1-insert-map"
+  | "w2-update-sweep"
+  | "w3-delete-scope"
+  | "w4-upsert-fork"
+  | "d1-table-anatomy"
+  | "d2-alter-paths"
+  | "d3-view-lens"
+  | "d4-index-lookup"
+  | "d5-recursive-unfold"
 
 export type Block =
   | { kind: "p"; text: string }
@@ -110,6 +119,8 @@ export interface Mcq {
 export interface ExpectedResult {
   columns: string[];
   rows: CellValue[][];
+  /** For write/DDL problems graded by affected-row count (rows empty). */
+  changes?: number | null;
 }
 
 /** Coaching rule: fires when a failed attempt matches `test` (case-insensitive
@@ -139,6 +150,11 @@ export interface Problem {
   relaxedColumns?: boolean;
   /** Targeted coaching for common wrong attempts, checked on failed runs. */
   mistakes?: ProblemMistake[];
+  /** Write/DDL statement — the grader runs it sandboxed (transaction + rollback). */
+  mutating?: boolean;
+  /** Optional read statement run after the write inside the same sandbox;
+   *  its rows become the grading target (used to verify writes/DDL). */
+  verify?: string;
 }
 
 export interface Lesson {

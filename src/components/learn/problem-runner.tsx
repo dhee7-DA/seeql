@@ -5,7 +5,7 @@
 // `ordered` problems require exact row order. Idempotent XP per problem.
 
 import { useRef, useState } from "react";
-import { Check, Eye, Lightbulb, Loader2, Play, X } from "lucide-react";
+import { Check, Eye, FlaskConical, Lightbulb, Loader2, Play, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SqlEditor } from "@/components/sql-editor";
 import { useProgress } from "@/lib/curriculum/progress";
@@ -28,6 +28,22 @@ function normRows(rows: unknown[][]): string[] {
 export function gradeResult(res: ExecResponse, p: Problem): { ok: boolean; reason?: string } {
   if (!res.ok) return { ok: false, reason: res.error };
   const result: ExecResult = res;
+  // Write/DDL problems: the affected-row count must match first.
+  if (p.expected.changes !== undefined && p.expected.changes !== null) {
+    if (result.changes == null) {
+      return {
+        ok: false,
+        reason: "This problem needs a write statement (INSERT / UPDATE / DELETE / CREATE …), but your query ran as a read. Re-check the brief.",
+      };
+    }
+    if (result.changes !== p.expected.changes) {
+      return {
+        ok: false,
+        reason: `Expected ${p.expected.changes} row(s) affected, but your statement touched ${result.changes}. Re-check the WHERE — it may be too wide or too narrow.`,
+      };
+    }
+    if (p.expected.rows.length === 0) return { ok: true };
+  }
   const expCols = p.expected.columns.map((c) => c.toLowerCase());
   const gotCols = result.columns.map((c) => c.toLowerCase());
   if (!p.relaxedColumns && expCols.join("|") !== gotCols.join("|")) {
@@ -83,7 +99,11 @@ export function ProblemCard({ problem, index, onSolved }: { problem: Problem; in
       const r = await fetch("/api/query", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sql }),
+        body: JSON.stringify({
+          sql,
+          sandbox: problem.mutating ?? false,
+          verify: problem.verify,
+        }),
       });
       const data = (await r.json()) as ExecResponse;
       setResult(data as ExecResult);
@@ -132,6 +152,12 @@ export function ProblemCard({ problem, index, onSolved }: { problem: Problem; in
       </div>
       <div className="px-4 py-3">
         <p className="text-sm leading-relaxed text-zinc-300">{problem.brief}</p>
+        {problem.mutating && (
+          <p className="mt-2 flex items-center gap-1.5 rounded-md border border-violet-400/30 bg-violet-400/5 px-2.5 py-1.5 text-[11px] leading-relaxed text-zinc-400">
+            <FlaskConical className="h-3 w-3 shrink-0 text-violet-300" />
+            Sandboxed write — your statement really executes, then the change is rolled back. The storefront stays untouched.
+          </p>
+        )}
 
         <div className="mt-3 overflow-hidden rounded-md border border-zinc-800">
           <SqlEditor value={sql} onChange={setSql} onVisualize={run} />
@@ -202,7 +228,9 @@ export function ProblemCard({ problem, index, onSolved }: { problem: Problem; in
               {verdict.ok ? (
                 <>
                   <span className="font-semibold">Matched — graded correct.</span>{" "}
-                  {problem.ordered ? "Columns, values and row order all line up." : "Columns and values line up (row order ignored)."}
+                  {problem.ordered
+                    ? "Columns, values and row order all line up."
+                    : "Columns and values line up (row order ignored)."}
                 </>
               ) : (
                 <span>{verdict.reason}</span>
@@ -211,9 +239,18 @@ export function ProblemCard({ problem, index, onSolved }: { problem: Problem; in
           </div>
         )}
 
-        {result?.ok && (
+        {result?.ok && result.rows.length > 0 && (
           <div className="mt-3">
             <ResultGrid data={{ columns: result.columns, rows: result.rows }} maxHeight="max-h-52" />
+          </div>
+        )}
+
+        {result?.ok && result.rows.length === 0 && result.changes != null && (
+          <div className="mt-3 rounded-md border border-zinc-800 bg-zinc-900 px-3 py-2.5 text-xs text-zinc-400">
+            <span className="font-mono text-emerald-300">{result.changes}</span>
+            {" "}
+            row{result.changes === 1 ? "" : "s"} affected
+            {problem.mutating ? " · change rolled back after grading" : ""}
           </div>
         )}
 
