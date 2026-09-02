@@ -405,3 +405,19 @@ Stage Summary:
 - SeeQL now 8 modules · 51 lessons · 394 graded problems · 547 MCQs · 85 interactive diagrams — the two new modules complete the SQL syllabus: writing data (INSERT/UPDATE/DELETE/UPSERT + transactions, all sandboxed) and the schema layer (CREATE TABLE constraints, ALTER/DROP, views, indexes + EXPLAIN QUERY PLAN, WITH RECURSIVE), each ending in a business-brief capstone (L50 data-fix ticket, L51 reporting layer).
 - Key files: src/components/learn/diagrams-m7.tsx, diagrams-m8.tsx, diagrams.tsx (registry), src/lib/curriculum/lessons/index.ts (8-module wiring), lesson-51.ts (new), lesson-41..50.ts (mutating flags + density backfill), expected.ts (regenerated 394), scripts/{facts-t22,audit-keywords,audit-t21}.ts.
 - Remaining wish-list (UI features, not SQL content): daily-goal picker, streak nudges, share-a-round card, lesson search, certificate view, median/percentile dialect note.
+
+---
+Task ID: ops-1
+Agent: main
+Task: Fix "cant load preview" report
+
+Work Log:
+- Found Next.js dev server process dead (killed at session boundary)
+- Restarted via official .zscripts/dev.sh (bun install -> db:push -> next dev -> health check)
+- Verified: localhost:3000 = 200, homepage renders SeeQL content, /api/query returns correct data (103 orders)
+- Verified Caddy proxy chain: local :81 with preview Host header = 200
+- External gateway preview-6a98301b-145d6674-cbf4a43676be.space-z.ai returned 404 for ~2 min after restart (edge route registration is platform-side)
+
+Stage Summary:
+- Root cause: dead dev server process. App restored and fully healthy.
+- User action if preview still 404s: wait ~1-2 min for gateway re-registration, or restart session.
