@@ -442,3 +442,24 @@ Stage Summary:
 - Design language: same flat solid-color system, now with premium finish (display type, sheen, ambient glow, grain, micro-interactions)
 - 6 files changed: layout.tsx, globals.css, landing.tsx, learn-app.tsx, lesson-view.tsx, problem-runner.tsx
 - All 51 lessons / 547 MCQs / 394 problems untouched and intact
+
+---
+Task ID: ui-2
+Agent: main
+Task: Premium UI pass 2 — extend the material language to every learner surface (continuation of user's "sleek and premium" directive)
+
+Work Log:
+- globals.css: fixed light-theme bug — card-hover/btn-quiet hover borders used white-alpha (invisible/wrong-direction on Paper/Gallery). Added theme-adaptive --hover-line (white 14% on dark via :root, ink 22% via html:not(.dark)) + light-theme card-hover shadow variant + .cell-lift micro-lift utility (reduced-motion guarded)
+- mcq.tsx (most-used surface): sheen card, accent-lit picked state (emerald ring + tinted chip before check), active:scale press feedback, animated verdict panel (framer-motion spring) with CheckCircle2/AlertCircle icons, btn-glow Check answer with disabled dim
+- celebrate.tsx: toasts now carry kind icons in tinted chips (Zap/xp emerald, Award/badge amber, TrendingUp/level teal, Info/info zinc), sheen, spring scale-in
+- mixed-quiz.tsx: uppercase tracking kicker + font-display heading, bar-shimmer progress, sheened next-question bar, btn-glow/btn-quiet buttons, display-font verdict card
+- progress-cards.tsx: sheen + font-display headers on ActivityStrip/MasteryGrid, cell-lift + border-brighten on mastery cells, tnum stats, tracking kickers
+- result-grid.tsx + data-explorer.tsx: uppercase tracked table headers, row hover, tnum cells, sheened explorer panel, cell-lift table pickers, kicker/display heading, btn-quiet playground button
+- sql-editor.tsx + hero-demo.tsx + theme-switcher.tsx: sheen chrome, pulse-soft live dot, tnum result numerals, btn-quiet trigger, sheened dropdown
+- QA: tsc 0 errors in src/, eslint clean on all 9 touched files; browser E2E at 1440x900 — landing, learn overview, lesson quiz (correct + wrong paths incl. About-your-pick), practice runner (solved l01-p1, XP 8->13, badge toast, matched panel), playground (sample run, pipeline tabs); Paper light theme verified across overview/lesson/quiz/explorer + --hover-line computed #18181b38; zero page errors
+- Committed (screenshots included as artifacts)
+
+Stage Summary:
+- Design language now consistent end-to-end: every learner surface (quiz, toasts, progress, tables, explorer, editor chrome) shares the pass-1 vocabulary (sheen/font-display/bar-shimmer/tnum/btn-glow) plus theme-adaptive hovers
+- 10 files changed: globals.css, mcq.tsx, celebrate.tsx, mixed-quiz.tsx, progress-cards.tsx, result-grid.tsx, data-explorer.tsx, sql-editor.tsx, hero-demo.tsx, theme-switcher.tsx
+- All 51 lessons / 547 MCQs / 394 problems + logic untouched; XP/idempotency flows verified live
