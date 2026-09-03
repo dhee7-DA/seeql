@@ -463,3 +463,24 @@ Stage Summary:
 - Design language now consistent end-to-end: every learner surface (quiz, toasts, progress, tables, explorer, editor chrome) shares the pass-1 vocabulary (sheen/font-display/bar-shimmer/tnum/btn-glow) plus theme-adaptive hovers
 - 10 files changed: globals.css, mcq.tsx, celebrate.tsx, mixed-quiz.tsx, progress-cards.tsx, result-grid.tsx, data-explorer.tsx, sql-editor.tsx, hero-demo.tsx, theme-switcher.tsx
 - All 51 lessons / 547 MCQs / 394 problems + logic untouched; XP/idempotency flows verified live
+
+---
+Task ID: ui-3
+Agent: main
+Task: Fix messy lesson arrangement — collapsible/expandable module system + semantic color coding for keywords/callouts/tips (user directive)
+
+Work Log:
+- New src/components/learn/sql-code.tsx: dependency-free SQL highlighter, one regex pass; keyword violet / function amber / string rose / number orange / comment muted; hues chosen to be theme-remapped by light themes (paper/gallery); exports SqlNodes (span-safe) + looksLikeSql heuristic
+- rich.tsx: exported span-safe RichNodes (no p-in-p); inline `code` chips now SQL-colorized; bold bumped to zinc-100
+- lesson-view.tsx: CodeBlock <pre> colorized; new Callout component (floating accent rail + tinted icon chip + uppercase label) unifying tip(emerald)/warn(amber)/dialect(teal, keeps engine pill)/takeaway(violet); DIALECT_META postgres sky→teal for light-theme contrast
+- mcq.tsx: prompt + why + notes render via RichNodes (raw backticks gone); choices auto-detect SQL fragments (mono + highlighted) vs prose (clean sans)
+- problem-runner.tsx: brief via RichNodes; hints pick mono-SQL vs sans-prose via looksLikeSql; reference solution colorized
+- learn-app.tsx: sidebar modules became animated accordions (framer-motion height reveal, rotating chevron, num chip w/ done check, per-module micro progress bar, done/total counter, tree rail on lessons, done lessons dimmed + checked); expansion persisted to localStorage (seeql.modules-open), defaults to continue-module, auto-reveals module of lesson being opened; expand-all/collapse-all icon buttons in header; overview module cards now expandable with lesson rows + Start/Continue module CTA
+- FIXED pre-existing data bug: stale dev db lacked orders.shipped_at (CREATE TABLE IF NOT EXISTS never migrates) → every "return every column" problem failed with column mismatch; ensureDatabase now PRAGMA-checks orders and reseeds when the column is missing (self-healing)
+- QA: tsc clean in src/, eslint clean, qa-coach ALL CHECKS PASSED, audit-ids 941 unique/0 dup/0 orphan; browser E2E: accordion expand/collapse + persistence across reload, auto-expand on lesson open, lesson code highlighting (17 kw/2 fn/6 str tokens on l03), callouts on dark+paper themes, MCQ prompt chip + mono-vs-sans choices, answer flow (+8 XP, badge toast), practice solve end-to-end (+5 XP, Matched verdict, shipped_at column visible), mobile 375px sanity
+- Committed dfee379 (7 files, +540/-109)
+
+Stage Summary:
+- Lesson arrangement: 51 lessons now live behind 8 collapsible modules (sidebar + overview), state persists, continue-point auto-expands
+- Text semantics: five consistent color roles (keyword/function/string/number/comment) + four callout tones (tip/warn/dialect/takeaway) across all 51 lessons, 547 MCQs, 394 problems
+- Bonus: stale-db grader bug root-caused and permanently fixed via self-healing seed
