@@ -484,3 +484,24 @@ Stage Summary:
 - Lesson arrangement: 51 lessons now live behind 8 collapsible modules (sidebar + overview), state persists, continue-point auto-expands
 - Text semantics: five consistent color roles (keyword/function/string/number/comment) + four callout tones (tip/warn/dialect/takeaway) across all 51 lessons, 547 MCQs, 394 problems
 - Bonus: stale-db grader bug root-caused and permanently fixed via self-healing seed
+
+---
+Task ID: audit-1
+Agent: main
+Task: "Keep all topics in the left menu" + in-depth content-consistency audit (user directive)
+
+Work Log:
+- Built scripts/deep-audit.ts — 9-section mechanical audit of all 51 lessons: id/sequence conventions, module-registry coverage/ordering/level-ladder/case-study-position, problem solutions re-run on fresh seed vs expected.ts, every lesson code block executed per statement, MCQ SQL choices executed + numeric-answer MCQs verified against live data, prose cross-references (lesson/module), figure-registry coverage, table arity/callout coverage/duplicate prompts
+- FOUND + FIXED root app bug: API hasMultipleStatements fell through on comment openers, so ANY query ending in a "-- comment" was falsely rejected as multi-statement; scanner (fixed) + new splitStatements now shared in src/lib/sql-statements.ts (API, CodeBlock, QA all import one implementation)
+- 58 blocks flagged multi-statement: 47 were the scanner bug; 11 genuinely multi -> new premium "Run all · N steps": /api/query batch mode (sqls[] runs sequentially inside ONE always-rolled-back transaction, per-statement results, errors don't abort) + CodeBlock stacked step results (chip: type · rows/affected, ResultGrid per step, inline errors)
+- Splitter refinement: comment runs after ";" attach to the statement they annotate (was bleeding into the next -> UNKNOWN chip); statementType skips leading comments (API both paths + lesson-view looksLikeRead)
+- Content fixes: lesson-44 BEGIN/COMMIT shape marked runnable:false (conceptual, non-storefront tables); lesson-32 b10 moving-average block made self-contained (monthly CTE inlined); l4-q9 duplicate prompt rewritten as store-fact question (103 orders / 21 NULL / 82 kept, notes for 21 and 0 traps); tips added to lesson-02 (projection playground), lesson-14 (guard-rail row-explosion warn, 39->94 rows math), lesson-16 (two-query sanity check tip) — every lesson now has callouts; lesson-45 self-reference rephrased
+- Audit hardening: rawErrMsg extracts real SQLite message from Prisma boilerplate; sandboxSequence mirrors app batch semantics (ALTER+SELECT, CREATE VIEW+SELECT verified in-tx); announced-error blocks supported (lesson-43 FK-fence demo: error expected and verified); prose/fragment/conceptual-table classifiers eliminate false FAILs
+- QA: tsc 0 errors in src, eslint clean, qa-coach ALL CHECKS PASSED, test-split 83 blocks/0 problems, deep-audit FAILS=0 REVIEWS=11 (all intentional: SELECT TOP trap, conceptual a/b/employees tables, DELETE ORDER BY trap...)
+- Browser E2E: left menu shows all 8 modules/51 topics (expand-all verified 51 lesson buttons), module accordion + counts (0/9,0/9,0/9,0/5,0/5,0/3,0/5,0/6); l17 Run-all stacked results (206 rows + 4 rows, chips SELECT/SELECT); l43 FK demo errors as announced; l4-q9 renders + answers correctly (+8 XP, verdict text); Paper light theme batch UI verified; mobile 375px sidebar stacks full-width; API verified live (batch + trailing-comment queries)
+- Committed (source + QA scripts; screenshots as artifacts)
+
+Stage Summary:
+- Content is now mechanically provably consistent: every id sequential/unique, all 394 grading targets match their solutions, all 93 runnable statements execute, all 4 numeric MCQ facts verified against live data, 125 cross-references valid, 85/85 figures registered
+- Every code block in the curriculum now runs (or is honestly marked static) — 58 previously-broken Run buttons fixed at the root
+- Left menu = full topic index: 8 collapsible modules, expand/collapse all, per-module progress, all 51 lessons reachable
