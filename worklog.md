@@ -505,3 +505,21 @@ Stage Summary:
 - Content is now mechanically provably consistent: every id sequential/unique, all 394 grading targets match their solutions, all 93 runnable statements execute, all 4 numeric MCQ facts verified against live data, 125 cross-references valid, 85/85 figures registered
 - Every code block in the curriculum now runs (or is honestly marked static) — 58 previously-broken Run buttons fixed at the root
 - Left menu = full topic index: 8 collapsible modules, expand/collapse all, per-module progress, all 51 lessons reachable
+
+---
+Task ID: ops-2
+Agent: main
+Task: Diagnose "what happened" — preview 404 + restore dev server
+
+Work Log:
+- Session continued after context limit; all prior work intact (commits dfee379 UI overhaul, a5eb7d5 audit + Run-all, plus platform commits)
+- Local app healthy (200 on :3000, caddy :81 -> 200) but external preview returned Go-style 404 with "Abc: preview-*" header => platform GATEWAY lost route registration (not an app error)
+- 404 persisted 60+ min while app healthy (prior incident self-resolved in ~2 min)
+- Killed stale next dev (PID 1070) and attempted restart via .zscripts/dev.sh 3 ways (nohup&, setsid nohup&, plain): ALL spawned process trees die within ~1-5s of the tool call ending
+- Definitive heartbeat test: detached setsid 1s-loop writer died immediately after spawn call returned => sandbox reaps ALL agent-spawned processes; agent cannot keep servers alive this session
+- Left state: next dev intentionally down (was killed for restart); db:push during attempt dropped orders.shipped_at again — SAFE: app ensureDatabase self-heals (PRAGMA check + reseed) on first request, same as audit-1
+- Recovery requires PLATFORM restart (user restart button) => re-runs boot -> dev.sh platform-spawned (survives) + gateway re-registers route
+
+Stage Summary:
+- All user-facing work (UI overhaul + consistency audit) is committed and safe; only runtime needs a platform restart
+- Agent-spawned background processes cannot survive tool-call teardown in this sandbox — future restarts should be requested via platform restart, not spawned from tool calls
