@@ -15,6 +15,8 @@ import type { Problem } from "@/lib/curriculum/types";
 import type { ExecResponse, ExecResult } from "@/lib/sql-types";
 import { cn } from "@/lib/utils";
 import { ResultGrid } from "./result-grid";
+import { RichNodes } from "./rich";
+import { looksLikeSql, SqlNodes } from "./sql-code";
 import { celebrate } from "./celebrate";
 
 function round2(v: unknown): unknown {
@@ -159,7 +161,7 @@ export function ProblemCard({ problem, index, onSolved }: { problem: Problem; in
         </div>
       </div>
       <div className="px-4 py-3">
-        <p className="text-sm leading-relaxed text-zinc-300">{problem.brief}</p>
+        <p className="text-sm leading-relaxed text-zinc-300"><RichNodes text={problem.brief} /></p>
         {problem.mutating && (
           <p className="mt-2 flex items-center gap-1.5 rounded-md border border-violet-400/30 bg-violet-400/5 px-2.5 py-1.5 text-[11px] leading-relaxed text-zinc-400">
             <FlaskConical className="h-3 w-3 shrink-0 text-violet-300" />
@@ -210,7 +212,11 @@ export function ProblemCard({ problem, index, onSolved }: { problem: Problem; in
             {hints.slice(0, hintLevel).map((h, hi) => (
               <p key={hi} className="rounded-md border border-zinc-800 bg-zinc-900 px-3 py-2 text-xs text-zinc-400">
                 <span className="font-medium text-zinc-300">{HINT_LABELS[hi] ?? `Hint ${hi + 1}`} · </span>
-                <span className="font-mono">{h}</span>
+                {looksLikeSql(h) ? (
+                  <span className="font-mono"><SqlNodes text={h} /></span>
+                ) : (
+                  <RichNodes text={h} />
+                )}
               </p>
             ))}
           </div>
@@ -265,7 +271,7 @@ export function ProblemCard({ problem, index, onSolved }: { problem: Problem; in
         {showSolution && (
           <div className="mt-3 rounded-md border border-zinc-800 bg-zinc-900 px-3 py-2.5">
             <p className="mb-1.5 text-[11px] font-medium uppercase tracking-wider text-zinc-500">Reference solution</p>
-            <pre className="overflow-x-auto font-mono text-xs leading-relaxed text-emerald-200">{problem.solution}</pre>
+            <pre className="overflow-x-auto font-mono text-xs leading-relaxed text-emerald-200"><SqlNodes text={problem.solution} /></pre>
           </div>
         )}
       </div>

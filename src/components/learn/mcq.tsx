@@ -12,6 +12,8 @@ import { useProgress } from "@/lib/curriculum/progress";
 import { XP } from "@/lib/curriculum/gamification";
 import type { Mcq } from "@/lib/curriculum/types";
 import { cn } from "@/lib/utils";
+import { RichNodes } from "./rich";
+import { looksLikeSql, SqlNodes } from "./sql-code";
 import { celebrate } from "./celebrate";
 
 export function McqCard({ mcq, onAnswered }: { mcq: Mcq; onAnswered?: (correct: boolean) => void }) {
@@ -41,7 +43,7 @@ export function McqCard({ mcq, onAnswered }: { mcq: Mcq; onAnswered?: (correct: 
 
   return (
     <div className="sheen rounded-lg border border-zinc-800 bg-zinc-950 p-4 sm:p-5">
-      <p className="text-sm font-medium leading-relaxed text-zinc-100">{mcq.prompt}</p>
+      <p className="text-sm font-medium leading-relaxed text-zinc-100"><RichNodes text={mcq.prompt} /></p>
       <div className="mt-3.5 grid gap-2">
         {mcq.choices.map((choice, i) => {
           const isPicked = picked === i;
@@ -84,7 +86,9 @@ export function McqCard({ mcq, onAnswered }: { mcq: Mcq; onAnswered?: (correct: 
                   String.fromCharCode(65 + i)
                 )}
               </span>
-              <span className="font-mono text-xs leading-relaxed">{choice}</span>
+              <span className={cn("text-xs leading-relaxed", looksLikeSql(choice) ? "font-mono text-zinc-200" : "text-zinc-300")}>
+                {looksLikeSql(choice) ? <SqlNodes text={choice} /> : <RichNodes text={choice} />}
+              </span>
             </button>
           );
         })}
@@ -105,21 +109,21 @@ export function McqCard({ mcq, onAnswered }: { mcq: Mcq; onAnswered?: (correct: 
             ) : (
               <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-400" />
             )}
-            <span>
-              <span className={cn("font-semibold", correct ? "text-emerald-300" : "text-amber-300")}>
-                {correct ? "Correct. " : "Not quite. "}
+              <span>
+                <span className={cn("font-semibold", correct ? "text-emerald-300" : "text-amber-300")}>
+                  {correct ? "Correct. " : "Not quite. "}
+                </span>
+                <RichNodes text={mcq.why} />
+                {!correct && picked !== null && (() => {
+                  const note = mcq.notes?.find((n) => n.choice === picked);
+                  return note ? (
+                    <span className="mt-1.5 block border-t border-amber-400/20 pt-1.5">
+                      <span className="font-medium text-amber-300">About your pick: </span>
+                      <RichNodes text={note.why} />
+                    </span>
+                  ) : null;
+                })()}
               </span>
-              {mcq.why}
-              {!correct && picked !== null && (() => {
-                const note = mcq.notes?.find((n) => n.choice === picked);
-                return note ? (
-                  <span className="mt-1.5 block border-t border-amber-400/20 pt-1.5">
-                    <span className="font-medium text-amber-300">About your pick: </span>
-                    {note.why}
-                  </span>
-                ) : null;
-              })()}
-            </span>
           </span>
         </motion.div>
       )}

@@ -222,9 +222,17 @@ async function insertSeed() {
   await db.$transaction(statements.map(([sql, args]) => db.$executeRawUnsafe(sql, ...args)));
 }
 
-/** Create tables if missing and seed when empty. Safe to call repeatedly. */
+/** Create tables if missing and seed when empty. Safe to call repeatedly.
+ *  Self-heals stale db files: `CREATE TABLE IF NOT EXISTS` cannot add columns
+ *  to an existing table, so if `orders` lacks a column the DDL expects
+ *  (shipped_at was added later), the sample dataset is dropped and reseeded. */
 export async function ensureDatabase(): Promise<void> {
   for (const stmt of DDL) await db.$executeRawUnsafe(stmt);
+  const cols = (await db.$queryRawUnsafe(`PRAGMA table_info(orders)`)) as Array<{ name: string }>;
+  if (!cols.some((c) => c.name === "shipped_at")) {
+    await resetDatabase();
+    return;
+  }
   const res = (await db.$queryRawUnsafe(`SELECT COUNT(*) AS n FROM customers`)) as Array<{
     n: number | bigint;
   }>;

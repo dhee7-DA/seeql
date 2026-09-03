@@ -4,11 +4,12 @@
 // Practice (graded problems). Keyed remount per lesson resets tab state.
 
 import { useMemo, useRef, useState } from "react";
-import { BookOpen, CircleHelp, TerminalSquare } from "lucide-react";
+import { BookOpen, CircleHelp, Database, Lightbulb, Sparkles, TerminalSquare, TriangleAlert } from "lucide-react";
 import type { Lesson } from "@/lib/curriculum/types";
 import { useProgress } from "@/lib/curriculum/progress";
 import { cn } from "@/lib/utils";
-import { Rich } from "./rich";
+import { Rich, RichNodes } from "./rich";
+import { SqlNodes } from "./sql-code";
 import { Figure } from "./diagrams";
 import { McqCard } from "./mcq";
 import { ProblemCard } from "./problem-runner";
@@ -18,13 +19,74 @@ import { celebrate } from "./celebrate";
 type Tab = "learn" | "quiz" | "practice";
 
 const DIALECT_META: Record<string, { label: string; pill: string }> = {
-  postgres: { label: "PostgreSQL", pill: "border-sky-400/40 bg-sky-400/10 text-sky-300" },
+  postgres: { label: "PostgreSQL", pill: "border-teal-400/40 bg-teal-400/10 text-teal-300" },
   mysql: { label: "MySQL", pill: "border-orange-400/40 bg-orange-400/10 text-orange-300" },
   sqlite: { label: "SQLite", pill: "border-violet-400/40 bg-violet-400/10 text-violet-300" },
 };
 
 function looksLikeRead(sql: string): boolean {
   return /^\s*(select|with)\b/i.test(sql.trim());
+}
+
+// Callout family — one shared anatomy (floating accent rail, icon chip,
+// uppercase label) with a distinct hue per semantic role:
+//   tip emerald · warn amber · dialect teal · takeaway violet.
+const CALLOUT_TONES = {
+  tip: {
+    box: "border-emerald-400/25 bg-emerald-400/[0.045]",
+    rail: "bg-emerald-400/80",
+    chip: "border-emerald-400/30 bg-emerald-400/10 text-emerald-300",
+    label: "text-emerald-300",
+  },
+  warn: {
+    box: "border-amber-400/25 bg-amber-400/[0.045]",
+    rail: "bg-amber-400/80",
+    chip: "border-amber-400/30 bg-amber-400/10 text-amber-300",
+    label: "text-amber-300",
+  },
+  dialect: {
+    box: "border-teal-400/25 bg-teal-400/[0.045]",
+    rail: "bg-teal-400/80",
+    chip: "border-teal-400/30 bg-teal-400/10 text-teal-300",
+    label: "text-teal-300",
+  },
+  takeaway: {
+    box: "border-violet-400/25 bg-violet-400/[0.045]",
+    rail: "bg-violet-400/80",
+    chip: "border-violet-400/30 bg-violet-400/10 text-violet-300",
+    label: "text-violet-300",
+  },
+} as const;
+
+type CalloutTone = keyof typeof CALLOUT_TONES;
+
+function Callout({
+  tone,
+  icon: Icon,
+  label,
+  children,
+  pill,
+}: {
+  tone: CalloutTone;
+  icon: typeof Lightbulb;
+  label: string;
+  children: React.ReactNode;
+  pill?: React.ReactNode;
+}) {
+  const t = CALLOUT_TONES[tone];
+  return (
+    <div className={cn("sheen relative my-4 overflow-hidden rounded-lg border px-4 py-3", t.box)}>
+      <span className={cn("absolute inset-y-2.5 left-0 w-[2.5px] rounded-full", t.rail)} />
+      <div className="flex items-center gap-2">
+        <span className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-md border", t.chip)}>
+          <Icon className="h-3.5 w-3.5" />
+        </span>
+        <span className={cn("text-[11px] font-semibold uppercase tracking-wider", t.label)}>{label}</span>
+        {pill}
+      </div>
+      <div className="mt-1.5">{children}</div>
+    </div>
+  );
 }
 
 async function runInline(sql: string, sandbox: boolean) {
@@ -84,7 +146,7 @@ function CodeBlock({ sql, caption }: { sql: string; caption?: string }) {
           )}
         </div>
       )}
-      <pre className="overflow-x-auto px-3.5 py-3 font-mono text-xs leading-relaxed text-zinc-300 thin-scrollbar">{sql}</pre>
+      <pre className="overflow-x-auto px-3.5 py-3 font-mono text-xs leading-relaxed text-zinc-300 thin-scrollbar"><SqlNodes text={sql} /></pre>
       {result && (
         <div className="border-t border-zinc-800 p-3">
           {result.ok ? (
@@ -219,28 +281,32 @@ export function LessonView({ lesson, onBonusChecked }: { lesson: Lesson; onBonus
                 return <Figure key={i} id={b.figure} />;
               case "tip":
                 return (
-                  <div key={i} className="my-4 rounded-lg border border-emerald-400/30 bg-emerald-400/5 px-4 py-3">
-                    <span className="text-[11px] font-semibold uppercase tracking-wider text-emerald-300">Tip</span>
-                    <Rich text={b.text} className="mt-1 text-sm leading-relaxed text-zinc-300" />
-                  </div>
+                  <Callout key={i} tone="tip" icon={Lightbulb} label="Tip">
+                    <Rich text={b.text} className="text-sm leading-relaxed text-zinc-300" />
+                  </Callout>
                 );
               case "warn":
                 return (
-                  <div key={i} className="my-4 rounded-lg border border-amber-400/30 bg-amber-400/5 px-4 py-3">
-                    <span className="text-[11px] font-semibold uppercase tracking-wider text-amber-300">Watch out</span>
-                    <Rich text={b.text} className="mt-1 text-sm leading-relaxed text-zinc-300" />
-                  </div>
+                  <Callout key={i} tone="warn" icon={TriangleAlert} label="Watch out">
+                    <Rich text={b.text} className="text-sm leading-relaxed text-zinc-300" />
+                  </Callout>
                 );
               case "dialect": {
                 const meta = DIALECT_META[b.db] ?? { label: b.db, pill: "border-zinc-700 text-zinc-300" };
                 return (
-                  <div key={i} className="my-4 rounded-lg border border-zinc-800 bg-zinc-900/40 px-4 py-3">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500">Dialect watch</span>
-                      <span className={cn("rounded-full border px-2 py-0.5 text-[10px] font-medium", meta.pill)}>{meta.label}</span>
-                    </div>
-                    <Rich text={b.text} className="mt-1.5 text-sm leading-relaxed text-zinc-300" />
-                  </div>
+                  <Callout
+                    key={i}
+                    tone="dialect"
+                    icon={Database}
+                    label="Dialect watch"
+                    pill={
+                      <span className={cn("rounded-full border px-2 py-0.5 text-[10px] font-medium", meta.pill)}>
+                        {meta.label}
+                      </span>
+                    }
+                  >
+                    <Rich text={b.text} className="text-sm leading-relaxed text-zinc-300" />
+                  </Callout>
                 );
               }
               case "table":
@@ -272,10 +338,11 @@ export function LessonView({ lesson, onBonusChecked }: { lesson: Lesson; onBonus
             }
           })}
           {lesson.takeaway && (
-            <div className="sheen mt-8 rounded-lg border border-violet-400/30 bg-violet-400/5 px-4 py-3">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-violet-300">In one sentence</span>
-              <p className="mt-1 text-[15px] font-medium leading-7 text-zinc-100">{lesson.takeaway}</p>
-            </div>
+            <Callout tone="takeaway" icon={Sparkles} label="In one sentence">
+              <p className="text-[15px] font-medium leading-7 text-zinc-100">
+                <RichNodes text={lesson.takeaway} />
+              </p>
+            </Callout>
           )}
           <div className="sheen mt-6 flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-3">
             <p className="text-sm text-zinc-400">

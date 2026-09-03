@@ -4,7 +4,20 @@
 // A watcher effect converts progress into badges and level-up celebrations.
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { FlaskConical, Flame, GraduationCap, LayoutDashboard, RotateCcw, Table2 } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  ArrowRight,
+  Check,
+  ChevronDown,
+  ChevronsDownUp,
+  ChevronsUpDown,
+  FlaskConical,
+  Flame,
+  GraduationCap,
+  LayoutDashboard,
+  RotateCcw,
+  Table2,
+} from "lucide-react";
 import { LESSONS, MODULES } from "@/lib/curriculum/lessons";
 import { useProgress } from "@/lib/curriculum/progress";
 import { BADGES, currentStreak, levelFor, totalXp } from "@/lib/curriculum/gamification";
@@ -16,6 +29,45 @@ import { ActivityStrip, MasteryGrid } from "./progress-cards";
 import { CelebrationHost, celebrate } from "./celebrate";
 
 type View = { kind: "overview" } | { kind: "lesson"; id: string } | { kind: "explorer" } | { kind: "mixed" };
+
+// ---- Collapsible module state (persisted) -------------------------------
+
+const MODULES_OPEN_KEY = "seeql.modules-open";
+
+function loadOpenModules(): number[] | null {
+  try {
+    const raw = localStorage.getItem(MODULES_OPEN_KEY);
+    if (!raw) return null;
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr.filter((n) => typeof n === "number") : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Smooth height-reveal wrapper for module lesson lists. */
+function Collapse({ open, children }: { open: boolean; children: React.ReactNode }) {
+  return (
+    <AnimatePresence initial={false}>
+      {open && (
+        <motion.div
+          key="body"
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: "auto", opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+          className="overflow-hidden"
+        >
+          {children}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+function moduleOf(lessonId: string) {
+  return MODULES.find((m) => m.lessons.some((l) => l.id === lessonId));
+}
 
 function useBadgeWatcher() {
   const xpEvents = useProgress((s) => s.xpEvents);
@@ -88,6 +140,102 @@ function RankBlock({ xp, level, streak }: { xp: number; level: ReturnType<typeof
   );
 }
 
+/** Overview card: module summary + expandable lesson list. */
+function OverviewModuleCard({
+  module,
+  open,
+  onToggle,
+  onOpenLesson,
+  xpEvents,
+}: {
+  module: (typeof MODULES)[number];
+  open: boolean;
+  onToggle: () => void;
+  onOpenLesson: (id: string) => void;
+  xpEvents: Record<string, unknown>;
+}) {
+  const mDone = module.lessons.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
+  const nextInModule = module.lessons.find((l) => xpEvents[`lesson:${l.id}`] === undefined);
+  const complete = mDone === module.lessons.length;
+
+  return (
+    <div className="sheen card-hover overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950">
+      <button onClick={onToggle} aria-expanded={open} className="block w-full p-4 text-left">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="font-mono text-[10px] uppercase tracking-wider text-zinc-500">
+              Module {module.num} · {module.level}
+            </p>
+            <h3 className="font-display mt-1.5 text-sm font-semibold text-zinc-100">{module.title}</h3>
+          </div>
+          <ChevronDown
+            className={cn(
+              "mt-0.5 h-4 w-4 shrink-0 text-zinc-600 transition-transform duration-200",
+              open && "rotate-180 text-zinc-400",
+            )}
+          />
+        </div>
+        <p className="mt-2 text-xs leading-relaxed text-zinc-400">{module.blurb}</p>
+        <div className="mt-3 flex items-center gap-2.5">
+          <div className="h-1 flex-1 overflow-hidden rounded-full bg-zinc-800">
+            <div
+              className="h-full rounded-full bg-emerald-400 transition-[width] duration-700 ease-out"
+              style={{ width: `${(mDone / module.lessons.length) * 100}%` }}
+            />
+          </div>
+          <span className="tnum shrink-0 font-mono text-[10px] text-zinc-500">
+            {mDone}/{module.lessons.length}
+          </span>
+        </div>
+        <p className="mt-1.5 text-[11px] text-zinc-500">
+          {complete ? "Module complete" : nextInModule ? `Up next · lesson ${nextInModule.num} — ${nextInModule.title}` : ""}
+          {" · "}
+          {module.lessons.reduce((a, l) => a + l.problems.length, 0)} graded queries
+        </p>
+      </button>
+
+      <Collapse open={open}>
+        <div className="border-t border-zinc-800/60 px-3 pb-3 pt-2">
+          <div className="flex flex-col gap-0.5">
+            {module.lessons.map((l) => {
+              const done = xpEvents[`lesson:${l.id}`] !== undefined;
+              return (
+                <button
+                  key={l.id}
+                  onClick={() => onOpenLesson(l.id)}
+                  className="group/lesson flex items-center gap-2.5 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-zinc-900"
+                >
+                  <span
+                    className={cn(
+                      "flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full text-[9px] font-medium",
+                      done ? "bg-emerald-400 text-[#052e1c]" : "border border-zinc-700 text-zinc-500",
+                    )}
+                  >
+                    {done ? <Check className="h-2.5 w-2.5" /> : l.num}
+                  </span>
+                  <span className={cn("min-w-0 flex-1 truncate text-xs", done ? "text-zinc-500" : "text-zinc-300")}>
+                    {l.title}
+                  </span>
+                  <span className="tnum shrink-0 font-mono text-[10px] text-zinc-600">{l.minutes}m</span>
+                  <ArrowRight className="h-3 w-3 shrink-0 text-zinc-700 opacity-0 transition-opacity group-hover/lesson:opacity-100" />
+                </button>
+              );
+            })}
+          </div>
+          {nextInModule && (
+            <button
+              onClick={() => onOpenLesson(nextInModule.id)}
+              className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-md border border-emerald-400/30 bg-emerald-400/[0.06] px-3 py-1.5 text-[11px] font-medium text-emerald-300 transition-colors hover:bg-emerald-400/[0.12]"
+            >
+              {mDone > 0 ? "Continue module" : "Start module"} — lesson {nextInModule.num} →
+            </button>
+          )}
+        </div>
+      </Collapse>
+    </div>
+  );
+}
+
 function titleAfter(index: number): string {
   const ladder = ["Query Apprentice", "Analyst I", "Analyst II", "Senior Analyst", "Query Wizard"];
   return ladder[Math.min(index, ladder.length - 1)];
@@ -101,13 +249,52 @@ export function LearnApp() {
   const resetAll = useProgress((s) => s.resetAll);
   const [confirmReset, setConfirmReset] = useState(false);
 
-  const openLesson = (id: string) => setView({ kind: "lesson", id });
+  // Collapsible modules — persisted; defaults to the "continue" module.
+  const nextLesson = LESSONS.find((l) => xpEvents[`lesson:${l.id}`] === undefined) ?? LESSONS[LESSONS.length - 1];
+  const continueModuleNum = moduleOf(nextLesson.id)?.num ?? 1;
+  const [openModules, setOpenModules] = useState<Set<number>>(() => {
+    const saved = loadOpenModules();
+    return new Set(saved ?? [continueModuleNum]);
+  });
+  const [openOverview, setOpenOverview] = useState<Set<number>>(() => new Set([continueModuleNum]));
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(MODULES_OPEN_KEY, JSON.stringify([...openModules]));
+    } catch {
+      /* private mode — ignore */
+    }
+  }, [openModules]);
+
+  const toggleModule = (num: number) =>
+    setOpenModules((s) => {
+      const n = new Set(s);
+      if (n.has(num)) n.delete(num);
+      else n.add(num);
+      return n;
+    });
+  const toggleOverviewModule = (num: number) =>
+    setOpenOverview((s) => {
+      const n = new Set(s);
+      if (n.has(num)) n.delete(num);
+      else n.add(num);
+      return n;
+    });
+
+  const openLesson = (id: string) => {
+    const mod = moduleOf(id);
+    if (mod) {
+      // Auto-reveal the module that owns the lesson being opened.
+      setOpenModules((s) => (s.has(mod.num) ? s : new Set(s).add(mod.num)));
+    }
+    setView({ kind: "lesson", id });
+  };
 
   const lesson = view.kind === "lesson" ? LESSONS.find((l) => l.id === view.id) ?? null : null;
   const doneCount = LESSONS.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
-  const nextLesson = LESSONS.find((l) => xpEvents[`lesson:${l.id}`] === undefined) ?? LESSONS[LESSONS.length - 1];
   const totalProblems = LESSONS.reduce((a, l) => a + l.problems.length, 0);
   const totalMcqs = LESSONS.reduce((a, l) => a + l.mcqs.length, 0);
+  const allOpen = openModules.size === MODULES.length;
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-6 lg:flex-row">
@@ -117,9 +304,29 @@ export function LearnApp() {
       <aside className="w-full shrink-0 lg:sticky lg:top-[76px] lg:w-[300px] lg:max-h-[calc(100vh-96px)] lg:self-start">
         <div className="sheen flex max-h-full flex-col overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950">
           <div className="shrink-0 border-b border-zinc-800 p-4">
-            <div className="flex items-center gap-2">
-              <GraduationCap className="h-4 w-4 text-emerald-400" />
-              <h2 className="font-display text-sm font-semibold text-zinc-100">SeeQL Curriculum</h2>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <GraduationCap className="h-4 w-4 text-emerald-400" />
+                <h2 className="font-display text-sm font-semibold text-zinc-100">SeeQL Curriculum</h2>
+              </div>
+              <div className="flex items-center gap-0.5">
+                <button
+                  onClick={() => setOpenModules(new Set(MODULES.map((m) => m.num)))}
+                  disabled={allOpen}
+                  title="Expand all modules"
+                  className="rounded-md p-1.5 text-zinc-500 transition-colors hover:bg-zinc-900 hover:text-zinc-300 disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  <ChevronsUpDown className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  onClick={() => setOpenModules(new Set())}
+                  disabled={!allOpen}
+                  title="Collapse all modules"
+                  className="rounded-md p-1.5 text-zinc-500 transition-colors hover:bg-zinc-900 hover:text-zinc-300 disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  <ChevronsDownUp className="h-3.5 w-3.5" />
+                </button>
+              </div>
             </div>
             <p className="mt-1 text-[11px] text-zinc-500">
               {MODULES.length} modules · {LESSONS.length} lessons · {totalProblems} graded queries · {totalMcqs} quiz questions
@@ -139,46 +346,97 @@ export function LearnApp() {
             </div>
             {MODULES.map((m) => {
               const mDone = m.lessons.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
+              const open = openModules.has(m.num);
+              const isContinue = m.num === continueModuleNum;
+              const containsActive = view.kind === "lesson" && moduleOf(view.id)?.num === m.num;
               return (
-                <nav key={m.id} className="border-b border-zinc-800/60 px-3 pb-3 pt-3 last:border-b-0">
-                  <div className="mb-1.5 flex items-baseline justify-between px-1">
-                    <span className="font-mono text-[10px] uppercase tracking-wider text-zinc-500">
-                      Module {m.num} · {m.title}
+                <nav key={m.id} className="border-b border-zinc-800/60 px-3 pb-1.5 pt-2 last:border-b-0">
+                  {/* module header — click to expand/collapse */}
+                  <button
+                    onClick={() => toggleModule(m.num)}
+                    aria-expanded={open}
+                    className="group flex w-full items-center gap-2.5 rounded-md px-1.5 py-2 text-left transition-colors hover:bg-zinc-900"
+                  >
+                    <span
+                      className={cn(
+                        "flex h-6 w-6 shrink-0 items-center justify-center rounded-md border font-mono text-[10px] font-medium transition-colors",
+                        mDone === m.lessons.length
+                          ? "border-emerald-400/50 bg-emerald-400/10 text-emerald-300"
+                          : containsActive
+                            ? "border-emerald-400/40 text-emerald-300"
+                            : isContinue
+                              ? "border-emerald-400/30 text-emerald-300/90"
+                              : "border-zinc-800 text-zinc-500",
+                      )}
+                    >
+                      {mDone === m.lessons.length ? <Check className="h-3 w-3" /> : m.num}
                     </span>
-                    <span className="font-mono text-[10px] text-zinc-600">{mDone}/{m.lessons.length}</span>
-                  </div>
-                  <div className="flex flex-col gap-0.5">
-                    {m.lessons.map((l) => {
-                      const done = xpEvents[`lesson:${l.id}`] !== undefined;
-                      const active = view.kind === "lesson" && view.id === l.id;
-                      return (
-                        <button
-                          key={l.id}
-                          onClick={() => openLesson(l.id)}
-                          className={cn(
-                            "relative flex items-start gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors",
-                            active ? "bg-emerald-400/[0.09]" : "hover:bg-zinc-900",
-                          )}
-                        >
-                          {active && <span className="absolute inset-y-1 left-0 w-0.5 rounded-full bg-emerald-400" />}
-                          <span className={cn(
-                            "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-medium transition-colors",
-                            done
-                              ? "bg-emerald-400 text-[#052e1c]"
-                              : active
-                                ? "border border-emerald-400/60 text-emerald-200"
-                                : "border border-zinc-700 text-zinc-500",
-                          )}>
-                            {l.num}
-                          </span>
-                          <span className="min-w-0">
-                            <span className={cn("block truncate text-xs font-medium", active ? "text-zinc-50" : "text-zinc-300")}>{l.title}</span>
-                            <span className="block text-[10px] text-zinc-600">{l.minutes} min · {l.problems.length} queries</span>
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
+                    <span className="min-w-0 flex-1">
+                      <span
+                        className={cn(
+                          "block truncate text-xs font-medium",
+                          containsActive || mDone === m.lessons.length ? "text-zinc-100" : "text-zinc-300 group-hover:text-zinc-100",
+                        )}
+                      >
+                        {m.title}
+                      </span>
+                      <span className="mt-1.5 block h-0.5 overflow-hidden rounded-full bg-zinc-800">
+                        <span
+                          className="block h-full rounded-full bg-emerald-400/80 transition-[width] duration-500 ease-out"
+                          style={{ width: `${(mDone / m.lessons.length) * 100}%` }}
+                        />
+                      </span>
+                    </span>
+                    <span className="tnum shrink-0 font-mono text-[10px] text-zinc-600">
+                      {mDone}/{m.lessons.length}
+                    </span>
+                    <ChevronDown
+                      className={cn(
+                        "h-3.5 w-3.5 shrink-0 text-zinc-600 transition-transform duration-200",
+                        open && "rotate-180 text-zinc-400",
+                      )}
+                    />
+                  </button>
+
+                  {/* lessons — revealed on expand, connected by a tree rail */}
+                  <Collapse open={open}>
+                    <div className="ml-[16px] mt-0.5 flex flex-col gap-0.5 border-l border-zinc-800/70 pl-2 pb-2">
+                      {m.lessons.map((l) => {
+                        const done = xpEvents[`lesson:${l.id}`] !== undefined;
+                        const active = view.kind === "lesson" && view.id === l.id;
+                        return (
+                          <button
+                            key={l.id}
+                            onClick={() => openLesson(l.id)}
+                            className={cn(
+                              "relative flex items-start gap-2.5 rounded-md px-2.5 py-1.5 text-left transition-colors",
+                              active ? "bg-emerald-400/[0.09]" : "hover:bg-zinc-900",
+                            )}
+                          >
+                            {active && <span className="absolute inset-y-1 left-0 w-0.5 rounded-full bg-emerald-400" />}
+                            <span
+                              className={cn(
+                                "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-medium transition-colors",
+                                done
+                                  ? "bg-emerald-400 text-[#052e1c]"
+                                  : active
+                                    ? "border border-emerald-400/60 text-emerald-200"
+                                    : "border border-zinc-700 text-zinc-500",
+                              )}
+                            >
+                              {done ? <Check className="h-2.5 w-2.5" /> : l.num}
+                            </span>
+                            <span className="min-w-0">
+                              <span className={cn("block truncate text-xs font-medium", active ? "text-zinc-50" : done ? "text-zinc-500" : "text-zinc-300")}>
+                                {l.title}
+                              </span>
+                              <span className="block text-[10px] text-zinc-600">{l.minutes} min · {l.problems.length} queries</span>
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </Collapse>
                 </nav>
               );
             })}
@@ -265,23 +523,16 @@ export function LearnApp() {
             </p>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {MODULES.map((m) => {
-                const mDone = m.lessons.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
-                return (
-                  <div key={m.id} className="sheen card-hover rounded-lg border border-zinc-800 bg-zinc-950 p-4">
-                    <p className="font-mono text-[10px] uppercase tracking-wider text-zinc-500">Module {m.num} · {m.level}</p>
-                    <h3 className="font-display mt-1.5 text-sm font-semibold text-zinc-100">{m.title}</h3>
-                    <p className="mt-2 text-xs leading-relaxed text-zinc-400">{m.blurb}</p>
-                    <div className="mt-3 h-1 overflow-hidden rounded-full bg-zinc-800">
-                      <div
-                        className="h-full rounded-full bg-emerald-400 transition-[width] duration-700 ease-out"
-                        style={{ width: `${(mDone / m.lessons.length) * 100}%` }}
-                      />
-                    </div>
-                    <p className="mt-1.5 text-[11px] text-zinc-500">{mDone}/{m.lessons.length} lessons · {m.lessons.reduce((a, l) => a + l.problems.length, 0)} graded queries</p>
-                  </div>
-                );
-              })}
+              {MODULES.map((m) => (
+                <OverviewModuleCard
+                  key={m.id}
+                  module={m}
+                  open={openOverview.has(m.num)}
+                  onToggle={() => toggleOverviewModule(m.num)}
+                  onOpenLesson={openLesson}
+                  xpEvents={xpEvents}
+                />
+              ))}
             </div>
 
             <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
