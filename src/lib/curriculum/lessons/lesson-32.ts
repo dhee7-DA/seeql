@@ -62,7 +62,11 @@ ORDER BY mon;   -- 3731.97 → 7341.61 → … → 34833.28`,
     {
       kind: "code",
       caption: "A 3-month moving average: the window shrinks to a sliding slice",
-      sql: `SELECT mon, n,
+      sql: `WITH monthly AS (
+  SELECT strftime('%Y-%m', created_at) AS mon, COUNT(*) AS n
+  FROM orders GROUP BY mon
+)
+SELECT mon, n,
        ROUND(AVG(n) OVER (ORDER BY mon
          ROWS BETWEEN 2 PRECEDING AND CURRENT ROW), 2) AS ma3
 FROM monthly ORDER BY mon;

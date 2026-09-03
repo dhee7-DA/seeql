@@ -269,7 +269,7 @@ SELECT name, type FROM sqlite_master WHERE name = 'coupons';   -- table | view |
       answer: 1,
       why: "A CHECK is a standing law, not a one-time gate: every write that would leave the row violating it fails, whether the bad value arrives via INSERT, UPDATE, or lesson 44's upsert DO UPDATE branch. That permanence is the difference between a constraint and a script.",
       notes: [
-        { choice: 2, why: "UPDATEs are checked too — lesson 45's coupon question hinged on exactly this: an UPDATE setting pct = 0 on an existing row hits the CHECK just like an insert would." },
+        { choice: 2, why: "UPDATEs are checked too — the coupon question above hinged on exactly this: an UPDATE setting pct = 0 on an existing row hits the CHECK just like an insert would." },
       ],
     },
     {

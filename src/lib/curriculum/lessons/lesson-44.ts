@@ -57,7 +57,8 @@ RETURNING id, name, stock;   -- stock: 0 — the old 120 went with the deleted r
     },
     {
       kind: "code",
-      caption: "The shape (multi-statement — read it here; the editor runs one statement at a time)",
+      caption: "The shape (multi-statement illustration)",
+      runnable: false,
       sql: `BEGIN;
 UPDATE accounts SET balance = balance - 100 WHERE id = 7;
 UPDATE accounts SET balance = balance + 100 WHERE id = 9;

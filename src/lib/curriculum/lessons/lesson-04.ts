@@ -166,17 +166,18 @@ export const lesson04: Lesson = {
     },
     {
       id: "l4-q9",
-      prompt: "Which condition finds orders that HAVE shipped?",
+      prompt: "This store has 103 orders and 21 of them have no ship date. How many rows does `WHERE shipped_at IS NOT NULL` keep?",
       choices: [
-        "WHERE shipped_at = 'yes'",
-        "WHERE shipped_at IS NOT NULL",
-        "WHERE shipped_at EXISTS",
-        "WHERE NOT shipped_at IS NULL AND shipped_at = shipped_at",
+        "21 — the ones the condition names",
+        "82 — every order with a ship date",
+        "103 — IS NOT NULL keeps everything",
+        "0 — the condition is always unknown",
       ],
       answer: 1,
-      why: "IS NOT NULL is the exact complement of IS NULL — the standard way to keep rows where the value exists.",
+      why: "IS NOT NULL keeps exactly the rows where the value exists: 103 − 21 = 82 — the same 82 the COUNT diagrams tally.",
       notes: [
-        { choice: 2, why: "EXISTS answers \"does any *row* exist?\" for subqueries — it doesn't test a column's value. IS NOT NULL is the tool." },
+        { choice: 0, why: "21 is the complement — that's what `IS NULL` keeps, not `IS NOT NULL`." },
+        { choice: 3, why: "It's the comparison `= NULL` that matches nothing. `IS NOT NULL` is a real test that returns true or false for every row." },
       ],
     },
     {

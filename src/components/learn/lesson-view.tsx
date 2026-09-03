@@ -7,6 +7,7 @@ import { useMemo, useRef, useState } from "react";
 import { BookOpen, CircleHelp, Database, Lightbulb, Sparkles, TerminalSquare, TriangleAlert } from "lucide-react";
 import type { Lesson } from "@/lib/curriculum/types";
 import { useProgress } from "@/lib/curriculum/progress";
+import { splitStatements } from "@/lib/sql-statements";
 import { cn } from "@/lib/utils";
 import { Rich, RichNodes } from "./rich";
 import { SqlNodes } from "./sql-code";
@@ -25,7 +26,12 @@ const DIALECT_META: Record<string, { label: string; pill: string }> = {
 };
 
 function looksLikeRead(sql: string): boolean {
-  return /^\s*(select|with)\b/i.test(sql.trim());
+  return /^\s*(select|with)\b/i.test(stripLeadingComments(sql));
+}
+
+/** Drop whitespace + comment lines before the first real token. */
+function stripLeadingComments(sql: string): string {
+  return sql.replace(/^(\s*(?:--[^\n]*\n|\/\*[\s\S]*?\*\/)+\s*)*/, "");
 }
 
 // Callout family — one shared anatomy (floating accent rail, icon chip,
@@ -89,59 +95,93 @@ function Callout({
   );
 }
 
-async function runInline(sql: string, sandbox: boolean) {
+interface SingleResult {
+  ok: boolean;
+  columns?: string[];
+  rows?: unknown[][];
+  changes?: number | null;
+  error?: string;
+}
+
+interface BatchItemResult {
+  ok: boolean;
+  statementType?: string;
+  columns?: string[];
+  rows?: unknown[][];
+  rowCount?: number;
+  changes?: number | null;
+  error?: string;
+}
+
+async function runInline(sql: string, sandbox: boolean): Promise<SingleResult> {
   const r = await fetch("/api/query", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ sql, sandbox }),
   });
-  return (await r.json()) as {
-    ok: boolean;
-    columns?: string[];
-    rows?: unknown[][];
-    changes?: number | null;
-    error?: string;
-  };
+  return (await r.json()) as SingleResult;
 }
 
-function CodeBlock({ sql, caption }: { sql: string; caption?: string }) {
-  const [result, setResult] = useState<{
-    ok: boolean;
-    columns?: string[];
-    rows?: unknown[][];
-    changes?: number | null;
-    error?: string;
-  } | null>(null);
+async function runBatch(sqls: string[]): Promise<{ ok: boolean; results?: BatchItemResult[]; error?: string }> {
+  const r = await fetch("/api/query", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ sqls }),
+  });
+  return (await r.json()) as { ok: boolean; results?: BatchItemResult[]; error?: string };
+}
+
+function CodeBlock({ sql, caption, runnable = true }: { sql: string; caption?: string; runnable?: boolean }) {
+  const [result, setResult] = useState<SingleResult | null>(null);
+  const [batch, setBatch] = useState<BatchItemResult[] | null>(null);
+  const [batchError, setBatchError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  // Multi-statement blocks run as one sandboxed sequence — the statements see
+  // each other's effects and nothing persists.
+  const statements = useMemo(() => splitStatements(sql), [sql]);
+  const isMulti = statements.length > 1;
   const isRead = looksLikeRead(sql);
-  const runnable = sql.trim().length > 0;
+  const canRun = runnable && sql.trim().length > 0;
 
   async function run() {
     if (busy) return;
     setBusy(true);
+    setBatchError(null);
     try {
-      // Writes and DDL run sandboxed: the statement really executes,
-      // then the whole thing is rolled back — the store stays untouched.
-      setResult(await runInline(sql, !isRead));
+      if (isMulti) {
+        setResult(null);
+        setBatch(null);
+        const r = await runBatch(statements);
+        if (r.ok && r.results) setBatch(r.results);
+        else setBatchError(r.error ?? "The sequence could not be run.");
+      } else {
+        setBatch(null);
+        // Writes and DDL run sandboxed: the statement really executes,
+        // then the whole thing is rolled back — the store stays untouched.
+        setResult(await runInline(sql, !isRead));
+      }
     } finally {
       setBusy(false);
     }
   }
 
   const affected = result?.ok && (result.rows ?? []).length === 0 && result.changes != null;
+  const label = isMulti
+    ? `Run all · ${statements.length} steps`
+    : isRead ? "Run here" : "Run sandboxed";
 
   return (
     <div className="my-4 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950">
-      {(caption || runnable) && (
+      {(caption || canRun) && (
         <div className="flex items-center justify-between border-b border-zinc-800 px-3.5 py-2">
           <span className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">{caption ?? "SQL"}</span>
-          {runnable && (
+          {canRun && (
             <button
               onClick={run}
               disabled={busy}
               className="rounded border border-emerald-400/40 px-2 py-0.5 font-mono text-[11px] text-emerald-300 hover:bg-emerald-400/10 disabled:opacity-50"
             >
-              {busy ? "running…" : isRead ? "Run here" : "Run sandboxed"}
+              {busy ? "running…" : label}
             </button>
           )}
         </div>
@@ -160,6 +200,47 @@ function CodeBlock({ sql, caption }: { sql: string; caption?: string }) {
           ) : (
             <p className="font-mono text-xs text-rose-300">{result.error}</p>
           )}
+        </div>
+      )}
+      {batch && (
+        <div className="divide-y divide-zinc-800/70 border-t border-zinc-800">
+          {batch.map((item, i) => (
+            <div key={i} className="p-3">
+              <div className="mb-2 flex items-center gap-2">
+                <span className="flex h-4.5 w-4.5 items-center justify-center rounded border border-zinc-700 bg-zinc-900 font-mono text-[10px] text-zinc-400">
+                  {i + 1}
+                </span>
+                <span className="font-mono text-[10px] uppercase tracking-wider text-zinc-500">
+                  {item.statementType ?? "SQL"}
+                </span>
+                {item.ok ? (
+                  <span className="font-mono text-[10px] text-emerald-300/90">
+                    {item.rows && item.rows.length > 0
+                      ? `${item.rows.length} row${item.rows.length === 1 ? "" : "s"}`
+                      : item.changes != null ? `${item.changes} affected` : "ok"}
+                  </span>
+                ) : (
+                  <span className="font-mono text-[10px] text-rose-300">error</span>
+                )}
+              </div>
+              {item.ok ? (
+                item.rows && item.rows.length > 0 ? (
+                  <ResultGrid data={{ columns: item.columns ?? [], rows: item.rows as never[] }} maxHeight="max-h-44" />
+                ) : (
+                  <p className="font-mono text-xs text-zinc-400">
+                    <span className="text-emerald-300">{item.changes}</span> row(s) affected — sandboxed run, rolled back.
+                  </p>
+                )
+              ) : (
+                <p className="font-mono text-xs text-rose-300">{item.error}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+      {batchError && (
+        <div className="border-t border-zinc-800 p-3">
+          <p className="font-mono text-xs text-rose-300">{batchError}</p>
         </div>
       )}
     </div>
@@ -276,7 +357,7 @@ export function LessonView({ lesson, onBonusChecked }: { lesson: Lesson; onBonus
                   </ol>
                 );
               case "code":
-                return <CodeBlock key={i} sql={b.sql} caption={b.caption} />;
+                return <CodeBlock key={i} sql={b.sql} caption={b.caption} runnable={b.runnable} />;
               case "diagram":
                 return <Figure key={i} id={b.figure} />;
               case "tip":

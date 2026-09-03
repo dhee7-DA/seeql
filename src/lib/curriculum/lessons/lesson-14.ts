@@ -38,6 +38,10 @@ ORDER BY c1.region, pair_a;`,
         "Feeling unsure whether you need `<` or `<>`? `c1.id <> c2.id` only removes self-pairs — mirrors survive, doubling your result. Strict `<` does both jobs at once (and only works cleanly when the id is unique, which primary keys are).",
       ],
     },
+    {
+      kind: "warn",
+      text: "Drop the `c1.id < c2.id` line and the same-region query doesn't error — it quietly returns every pairing twice, plus each customer paired with themselves: the 39 honest pairs swell to 94 rows. Self-joins are the easiest place to multiply rows without noticing, so count the result before you trust it.",
+    },
     { kind: "h", text: "The numbers on this data" },
     {
       kind: "bullets",

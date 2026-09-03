@@ -39,6 +39,10 @@ export const lesson02: Lesson = {
       runnable: true,
     },
     { kind: "diagram", figure: "l2-expr-math" },
+    {
+      kind: "tip",
+      text: "Projection is the safest playground in SQL — picking, reordering and deriving columns can't change a single stored row. Run each block above against the storefront, then try a variant: divide `price` by 2 and alias it `half_price`, or concatenate `name` and `category` into one label column.",
+    },
     { kind: "h", text: "Habits that scale" },
     {
       kind: "bullets",

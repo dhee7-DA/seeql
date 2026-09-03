@@ -62,6 +62,10 @@ LIMIT 10;`,
     },
     { kind: "diagram", figure: "j16-preflight" },
     {
+      kind: "tip",
+      text: "Make the two-query sanity check a lifelong habit: whenever a report sums across a join, run the same aggregate on the untouched table too. If the numbers diverge, fan-out got there first — fix the query, not the expectation.",
+    },
+    {
       kind: "dialect",
       db: "mysql",
       text: "MySQL's ONLY_FULL_GROUP_BY accepts `SELECT o.id, o.total … GROUP BY o.id` — o.total depends on the primary key. Group by `o.customer_id` instead and it rejects the query outright: with many orders per customer, no single total could be the right one to show.",

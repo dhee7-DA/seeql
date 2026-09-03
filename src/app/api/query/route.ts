@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureDatabase } from "@/lib/sample-db";
+import { hasMultipleStatements } from "@/lib/sql-statements";
 import type { CellValue, ExecResponse, ExecResult, PlanRow } from "@/lib/sql-types";
 
 const MAX_SQL_LENGTH = 20_000;
@@ -9,6 +10,36 @@ const MAX_ROWS = 1_000;
 /** Sentinel thrown inside the sandboxed transaction to force a rollback. */
 class SandboxRollback extends Error {
   constructor() { super("__sandbox_rollback__"); }
+}
+
+/** Prisma wraps raw errors in boilerplate — keep just the underlying message. */
+function cleanError(raw: string): string {
+  const m = raw.match(/Message: `([^`]+)`/);
+  if (m) return m[1].trim();
+  return raw.replace(/\s*Invalid `prisma\.\$query\w+`\(\) invocation:?\s*/g, "").trim();
+}
+
+/** Drop whitespace + comment lines before the first real token. */
+function stripLeadingComments(sql: string): string {
+  return sql.replace(/^(\s*(?:--[^\n]*\n|\/\*[\s\S]*?\*\/)+\s*)*/, "");
+}
+
+/** First keyword of a statement, skipping leading comments. */
+function statementTypeOf(sql: string): string {
+  return (stripLeadingComments(sql).match(/^[a-zA-Z]+/)?.[0] ?? "UNKNOWN").toUpperCase();
+}
+
+/** One statement's outcome inside a batch run (errors don't abort the rest). */
+interface BatchItem extends Omit<ExecResult, "ok"> {
+  ok: boolean;
+  error?: string;
+}
+
+interface BatchExecResponse {
+  ok: true;
+  batch: true;
+  results: BatchItem[];
+  durationMs: number;
 }
 
 /** SQLite value → JSON-safe cell (Prisma returns BigInt for INTEGER on SQLite). */
@@ -33,83 +64,99 @@ function normalizeCell(v: unknown): CellValue {
   return String(v);
 }
 
-/**
- * Reject multi-statement payloads with a small scanner that understands
- * strings, quoted identifiers and comments.
- */
-function hasMultipleStatements(sql: string): boolean {
-  let inSingle = false;
-  let inDouble = false;
-  let inBacktick = false;
-  let inBracket = false;
-  let inLineComment = false;
-  let inBlockComment = false;
-  let count = 0;
-  let seenChar = false;
-
-  for (let i = 0; i < sql.length; i++) {
-    const ch = sql[i];
-    const next = sql[i + 1];
-
-    if (inLineComment) {
-      if (ch === "\n") inLineComment = false;
-      continue;
-    }
-    if (inBlockComment) {
-      if (ch === "*" && next === "/") {
-        inBlockComment = false;
-        i++;
-      }
-      continue;
-    }
-    if (inSingle) {
-      if (ch === "'") {
-        if (next === "'") i++;
-        else inSingle = false;
-      }
-      continue;
-    }
-    if (inDouble) {
-      if (ch === '"') {
-        if (next === '"') i++;
-        else inDouble = false;
-      }
-      continue;
-    }
-    if (inBacktick) {
-      if (ch === "`") inBacktick = false;
-      continue;
-    }
-    if (inBracket) {
-      if (ch === "]") inBracket = false;
-      continue;
-    }
-    if (ch === "'" && !inDouble) inSingle = true;
-    else if (ch === '"' && !inSingle) inDouble = true;
-    else if (ch === "`") inBacktick = true;
-    else if (ch === "[") inBracket = true;
-    else if (ch === "-" && next === "-") inLineComment = true;
-    else if (ch === "/" && next === "*") inBlockComment = true;
-    else if (ch === ";") {
-      if (seenChar) {
-        count++;
-        seenChar = false;
-      }
-      continue;
-    }
-    if (!/\s/.test(ch)) seenChar = true;
-  }
-  if (seenChar) count++;
-  return count > 1;
-}
+// Statement scanning lives in @/lib/sql-statements — shared with the lesson
+// CodeBlock and QA scripts so client splitting and API validation agree.
 
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as {
       sql?: unknown;
+      sqls?: unknown;
       sandbox?: unknown;
       verify?: unknown;
     };
+
+    // Batch mode: run several statements sequentially inside ONE sandboxed
+    // transaction (always rolled back) — used by lesson blocks that show a
+    // short sequence of queries. Every statement sees the previous ones'
+    // effects; nothing persists.
+    if (Array.isArray(body.sqls)) {
+      const sqls = body.sqls.filter((s): s is string => typeof s === "string" && s.trim().length > 0);
+      if (sqls.length === 0) {
+        return NextResponse.json({ ok: false, error: "Empty query." } satisfies ExecResponse, { status: 200 });
+      }
+      if (sqls.length > 12) {
+        return NextResponse.json({ ok: false, error: "Too many statements (12 max)." } satisfies ExecResponse, { status: 200 });
+      }
+      if (sqls.reduce((n, s) => n + s.length, 0) > MAX_SQL_LENGTH) {
+        return NextResponse.json({ ok: false, error: "Query too long (20k character limit)." } satisfies ExecResponse, { status: 200 });
+      }
+      for (const s of sqls) {
+        if (hasMultipleStatements(s.trim().replace(/;+\s*$/, ""))) {
+          return NextResponse.json(
+            { ok: false, error: "Only one statement can be run at a time.", hint: "Remove the extra semicolon-separated statements and run them one by one." } satisfies ExecResponse,
+            { status: 200 },
+          );
+        }
+      }
+      await ensureDatabase();
+      const started = performance.now();
+      const results: BatchItem[] = [];
+      try {
+        await db.$transaction(
+          async (tx) => {
+            for (const raw of sqls) {
+              const sql = raw.trim().replace(/;+\s*$/, "");
+              const statementType = statementTypeOf(sql);
+              try {
+                const before = (await tx.$queryRawUnsafe(`SELECT total_changes() AS c`)) as Array<Record<string, unknown>>;
+                const res = (await tx.$queryRawUnsafe(sql)) as Array<Record<string, unknown>>;
+                const after = (await tx.$queryRawUnsafe(`SELECT total_changes() AS c`)) as Array<Record<string, unknown>>;
+                const affected = Number(after[0].c) - Number(before[0].c);
+                const list = Array.isArray(res) ? res : [];
+                const columns = list.length > 0 ? Object.keys(list[0]) : [];
+                results.push({
+                  ok: true,
+                  statementType,
+                  columns,
+                  rows: list.map((r) => columns.map((c) => normalizeCell(r[c]))).slice(0, MAX_ROWS),
+                  rowCount: Math.min(list.length, MAX_ROWS),
+                  durationMs: 0,
+                  changes: statementType === "SELECT" || statementType === "WITH" ? null : affected,
+                  truncated: list.length > MAX_ROWS,
+                  plan: null,
+                });
+              } catch (err) {
+                results.push({
+                  ok: false,
+                  statementType,
+                  columns: [],
+                  rows: [],
+                  rowCount: 0,
+                  durationMs: 0,
+                  changes: null,
+                  truncated: false,
+                  plan: null,
+                  error: err instanceof Error ? cleanError(err.message) : "Statement failed",
+                });
+              }
+            }
+            throw new SandboxRollback();
+          },
+          { maxWait: 5000, timeout: 20_000 },
+        );
+      } catch (err) {
+        if (!(err instanceof SandboxRollback)) throw err;
+      }
+      const payload: BatchExecResponse = {
+        ok: true,
+        batch: true,
+        results,
+        durationMs: Math.round((performance.now() - started) * 100) / 100,
+      };
+      return NextResponse.json(payload);
+    }
+
     if (typeof body.sql !== "string" || body.sql.trim().length === 0) {
       return NextResponse.json({ ok: false, error: "Empty query." } satisfies ExecResponse, {
         status: 200,
@@ -138,7 +185,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const statementType = (sql.match(/^[a-zA-Z]+/)?.[0] ?? "UNKNOWN").toUpperCase();
+    const statementType = statementTypeOf(sql);
     const isRead = ["SELECT", "WITH", "EXPLAIN", "PRAGMA", "VALUES"].includes(statementType);
 
     await ensureDatabase();
@@ -229,11 +276,7 @@ export async function POST(req: NextRequest) {
     };
     return NextResponse.json(payload);
   } catch (err) {
-    let message = err instanceof Error ? err.message : "Unexpected server error";
-    // Prisma wraps raw errors in boilerplate — keep just the underlying message
-    const m = message.match(/Message: `([^`]+)`/);
-    if (m) message = m[1].trim();
-    else message = message.replace(/\s*Invalid `prisma\.\$query\w+`\(\) invocation:?\s*/g, "").trim();
+    let message = cleanError(err instanceof Error ? err.message : "Unexpected server error");
     let hint: string | undefined;
     if (/no such table/i.test(message)) {
       hint = "This demo database only has: customers, suppliers, products, orders, order_items. Check the Schema tab, or press Reset database to restore the sample data.";
