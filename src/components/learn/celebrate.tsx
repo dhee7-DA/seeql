@@ -6,6 +6,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Award, Info, TrendingUp, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type ToastKind = "xp" | "badge" | "level" | "info";
@@ -42,32 +43,40 @@ export function CelebrationHost() {
     };
   }, []);
 
-  const tone: Record<ToastKind, string> = {
-    xp: "border-l-emerald-400",
-    badge: "border-l-amber-400",
-    level: "border-l-teal-400",
-    info: "border-l-zinc-500",
+  const tone: Record<ToastKind, { bar: string; chip: string; Icon: typeof Zap }> = {
+    xp: { bar: "border-l-emerald-400", chip: "bg-emerald-400/15 text-emerald-300", Icon: Zap },
+    badge: { bar: "border-l-amber-400", chip: "bg-amber-400/15 text-amber-300", Icon: Award },
+    level: { bar: "border-l-teal-400", chip: "bg-teal-400/15 text-teal-300", Icon: TrendingUp },
+    info: { bar: "border-l-zinc-500", chip: "bg-zinc-400/15 text-zinc-300", Icon: Info },
   };
 
   return (
     <div className="pointer-events-none fixed bottom-4 right-4 z-[60] flex w-[280px] flex-col gap-2" aria-live="polite">
       <AnimatePresence>
-        {stack.map((t) => (
-          <motion.div
-            key={t.id}
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 6 }}
-            transition={{ type: "spring", stiffness: 420, damping: 32 }}
-            className={cn(
-              "rounded-md border border-zinc-800 border-l-2 bg-zinc-950 px-3.5 py-2.5",
-              tone[t.kind],
-            )}
-          >
-            <p className="text-sm font-medium text-zinc-100">{t.title}</p>
-            {t.sub && <p className="mt-0.5 text-xs leading-snug text-zinc-500">{t.sub}</p>}
-          </motion.div>
-        ))}
+        {stack.map((t) => {
+          const { bar, chip, Icon } = tone[t.kind];
+          return (
+            <motion.div
+              key={t.id}
+              initial={{ opacity: 0, y: 14, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 6, scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 420, damping: 32 }}
+              className={cn(
+                "sheen flex items-start gap-2.5 rounded-md border border-zinc-800 border-l-2 bg-zinc-950 py-2.5 pl-3 pr-3.5",
+                bar,
+              )}
+            >
+              <span className={cn("mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md", chip)}>
+                <Icon className="h-3.5 w-3.5" />
+              </span>
+              <span className="min-w-0">
+                <p className="text-sm font-medium leading-snug text-zinc-100">{t.title}</p>
+                {t.sub && <p className="mt-0.5 text-xs leading-snug text-zinc-500">{t.sub}</p>}
+              </span>
+            </motion.div>
+          );
+        })}
       </AnimatePresence>
     </div>
   );

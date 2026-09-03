@@ -18,7 +18,10 @@ export function ResultGrid({ data, maxHeight = "max-h-64" }: { data: GridData; m
         <thead className="sticky top-0 z-10 bg-zinc-900">
           <tr>
             {data.columns.map((c) => (
-              <th key={c} className="whitespace-nowrap border-b border-zinc-800 px-3 py-2 font-mono text-[11px] font-medium text-zinc-300">
+              <th
+                key={c}
+                className="whitespace-nowrap border-b border-zinc-800 px-3 py-2 font-mono text-[10px] font-medium uppercase tracking-[0.1em] text-zinc-400"
+              >
                 {c}
               </th>
             ))}
@@ -26,9 +29,12 @@ export function ResultGrid({ data, maxHeight = "max-h-64" }: { data: GridData; m
         </thead>
         <tbody>
           {shown.map((row, ri) => (
-            <tr key={ri} className="odd:bg-zinc-950/40">
+            <tr key={ri} className="odd:bg-zinc-950/40 transition-colors hover:bg-zinc-900/50">
               {row.map((cell, ci) => (
-                <td key={ci} className="max-w-[240px] truncate whitespace-nowrap border-b border-zinc-900 px-3 py-1.5 font-mono text-zinc-300">
+                <td
+                  key={ci}
+                  className="tnum max-w-[240px] truncate whitespace-nowrap border-b border-zinc-900 px-3 py-1.5 font-mono text-zinc-300"
+                >
                   {cell === null ? <span className="italic text-zinc-600">NULL</span> : String(cell)}
                 </td>
               ))}
@@ -37,7 +43,7 @@ export function ResultGrid({ data, maxHeight = "max-h-64" }: { data: GridData; m
         </tbody>
       </table>
       {data.rows.length > 12 && (
-        <p className="bg-zinc-900 px-3 py-1.5 text-[11px] text-zinc-500">
+        <p className="tnum bg-zinc-900/60 px-3 py-1.5 font-mono text-[11px] text-zinc-500">
           + {data.rows.length - 12} more rows (of {data.rows.length})
         </p>
       )}

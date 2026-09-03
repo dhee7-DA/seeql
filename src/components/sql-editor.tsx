@@ -116,7 +116,7 @@ export function SqlEditor({ value, onChange, onVisualize, className }: SqlEditor
   return (
     <div
       className={cn(
-        "relative flex overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/60 focus-within:border-emerald-500/40 focus-within:ring-1 focus-within:ring-emerald-500/20",
+        "sheen relative flex overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/60 transition-colors focus-within:border-emerald-500/40 focus-within:ring-1 focus-within:ring-emerald-500/20",
         className,
       )}
     >

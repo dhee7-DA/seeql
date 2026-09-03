@@ -85,8 +85,8 @@ export function MixedQuiz() {
 
   return (
     <div className="max-w-3xl">
-      <p className="font-mono text-xs text-zinc-500">TOOLBOX</p>
-      <h1 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-100">Mixed quiz</h1>
+      <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-500">Toolbox</p>
+      <h1 className="font-display mt-2 text-2xl font-semibold tracking-tight text-zinc-50">Mixed quiz</h1>
       <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-400">
         {ROUND} questions pulled from all {LESSONS.length} lessons — the deck leans toward questions you
         haven&apos;t seen or missed before. First-try answers still earn XP; repeats never pay twice.
@@ -94,18 +94,18 @@ export function MixedQuiz() {
 
       {!finished && (
         <div className="mt-5 flex items-center gap-3">
-          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-zinc-800">
+          <div className="bar-shimmer h-1.5 flex-1 overflow-hidden rounded-full bg-zinc-800">
             <div
-              className="h-full rounded-full bg-emerald-400 transition-all"
+              className="h-full rounded-full bg-emerald-400 transition-all duration-500 ease-out"
               style={{ width: `${(idx / deck.length) * 100}%` }}
             />
           </div>
-          <span className="shrink-0 font-mono text-xs text-zinc-500">
+          <span className="tnum shrink-0 font-mono text-xs text-zinc-500">
             {Math.min(idx + 1, deck.length)} / {deck.length}
           </span>
           <span
             className={cn(
-              "shrink-0 rounded-full border px-2.5 py-0.5 font-mono text-[11px]",
+              "tnum shrink-0 rounded-full border px-2.5 py-0.5 font-mono text-[11px]",
               score > 0 ? "border-emerald-400/50 bg-emerald-400/10 text-emerald-300" : "border-zinc-700 text-zinc-500",
             )}
           >
@@ -119,14 +119,14 @@ export function MixedQuiz() {
           {(() => {
             const src = source.get(current.id);
             return src ? (
-              <p className="mb-2 font-mono text-[11px] text-zinc-600">
+              <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.14em] text-zinc-600">
                 From Lesson {String(src.num).padStart(2, "0")} · {src.title}
               </p>
             ) : null;
           })()}
           <McqCard key={current.id} mcq={current} onAnswered={onAnswered} />
           {answered && (
-            <div className="mt-4 flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-3">
+            <div className="sheen mt-4 flex items-center justify-between gap-3 rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-3">
               <p className="text-sm text-zinc-400">
                 {idx + 1 === deck.length ? "That was the last question." : "Locked in — on to the next one."}
               </p>
@@ -135,7 +135,7 @@ export function MixedQuiz() {
                   setIdx((i) => i + 1);
                   setAnswered(false);
                 }}
-                className="flex items-center gap-1.5 rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] hover:bg-emerald-300"
+                className="btn-glow flex shrink-0 items-center gap-1.5 rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300"
               >
                 {idx + 1 === deck.length ? "See the verdict" : "Next question"}
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -146,17 +146,17 @@ export function MixedQuiz() {
       )}
 
       {finished && (
-        <div className="mt-6 rounded-lg border border-zinc-800 bg-zinc-950 p-5">
+        <div className="sheen mt-6 rounded-lg border border-zinc-800 bg-zinc-950 p-5">
           {(() => {
             const v = verdictFor(score);
             return (
               <>
-                <p className={cn("text-lg font-semibold", score >= 7 ? "text-emerald-300" : "text-zinc-100")}>{v.title}</p>
+                <p className={cn("font-display text-lg font-semibold", score >= 7 ? "text-emerald-300" : "text-zinc-50")}>{v.title}</p>
                 <p className="mt-1 text-sm text-zinc-400">{v.sub}</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <button
                     onClick={restart}
-                    className="flex items-center gap-1.5 rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] hover:bg-emerald-300"
+                    className="btn-glow flex items-center gap-1.5 rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300"
                   >
                     <RefreshCcw className="h-3.5 w-3.5" />
                     New round
@@ -167,7 +167,7 @@ export function MixedQuiz() {
                       setScore(0);
                       setAnswered(false);
                     }}
-                    className="rounded-md border border-zinc-700 px-4 py-2 text-xs font-medium text-zinc-300 hover:bg-zinc-900"
+                    className="btn-quiet rounded-md border border-zinc-700 px-4 py-2 text-xs font-medium text-zinc-300 transition-colors hover:bg-zinc-900"
                   >
                     Review this round
                   </button>

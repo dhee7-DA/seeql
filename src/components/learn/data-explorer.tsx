@@ -109,8 +109,8 @@ export function DataExplorer() {
     <div className="max-w-4xl">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="font-mono text-xs text-zinc-500">TOOLBOX</p>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-100">Data explorer</h1>
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-500">Toolbox</p>
+          <h1 className="font-display mt-2 text-2xl font-semibold tracking-tight text-zinc-50">Data explorer</h1>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-400">
             Every lesson runs against this one storefront database — this is where the numbers live.
             Browse the real rows behind each fact, and click any highlighted id to follow a relationship.
@@ -118,7 +118,7 @@ export function DataExplorer() {
         </div>
         <button
           onClick={openInPlayground}
-          className="flex items-center gap-1.5 rounded-md border border-zinc-700 px-3 py-1.5 text-xs font-medium text-zinc-300 hover:bg-zinc-900"
+          className="btn-quiet flex items-center gap-1.5 rounded-md border border-zinc-700 px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:bg-zinc-900"
         >
           <ExternalLink className="h-3.5 w-3.5" />
           Query {table} in the playground
@@ -132,7 +132,7 @@ export function DataExplorer() {
             key={t.name}
             onClick={() => pickTable(t.name)}
             className={cn(
-              "rounded-lg border p-3 text-left transition-colors",
+              "cell-lift rounded-lg border p-3 text-left",
               t.name === table ? "border-emerald-400/60 bg-emerald-400/5" : "border-zinc-800 bg-zinc-950 hover:border-zinc-600",
             )}
           >
@@ -142,14 +142,14 @@ export function DataExplorer() {
             <p className="mt-1 truncate text-[10px] text-zinc-500" title={t.description}>
               {t.description}
             </p>
-            <p className="mt-1.5 font-mono text-sm text-zinc-100">{counts ? counts[t.name]?.toLocaleString() : "…"}</p>
+            <p className="tnum mt-1.5 font-mono text-sm text-zinc-100">{counts ? counts[t.name]?.toLocaleString() : "…"}</p>
             <p className="text-[10px] text-zinc-600">rows</p>
           </button>
         ))}
       </div>
 
       {/* selected table */}
-      <div className="mt-4 rounded-lg border border-zinc-800 bg-zinc-950">
+      <div className="sheen mt-4 rounded-lg border border-zinc-800 bg-zinc-950">
         {/* columns */}
         <div className="flex flex-wrap gap-1.5 border-b border-zinc-800 px-3.5 py-2.5">
           {meta.columns.map((c) => (
@@ -226,7 +226,10 @@ export function DataExplorer() {
               <thead>
                 <tr>
                   {rowsData.columns.map((c) => (
-                    <th key={c} className="whitespace-nowrap border-b border-zinc-800 px-3 py-2 font-mono text-[11px] font-medium text-zinc-300">
+                    <th
+                      key={c}
+                      className="whitespace-nowrap border-b border-zinc-800 px-3 py-2 font-mono text-[10px] font-medium uppercase tracking-[0.1em] text-zinc-400"
+                    >
                       {c}
                     </th>
                   ))}
@@ -234,13 +237,16 @@ export function DataExplorer() {
               </thead>
               <tbody>
                 {pageRows.map((row, ri) => (
-                  <tr key={ri} className="odd:bg-zinc-950/40">
+                  <tr key={ri} className="odd:bg-zinc-950/40 transition-colors hover:bg-zinc-900/50">
                     {row.map((cell, ci) => {
                       const colMeta = meta.columns.find((m) => m.name === rowsData.columns[ci]);
                       const isNull = cell === null;
                       const fk = !isNull ? colMeta?.fk : undefined;
                       return (
-                        <td key={ci} className="max-w-[240px] truncate whitespace-nowrap border-b border-zinc-900 px-3 py-1.5 font-mono text-zinc-300">
+                        <td
+                          key={ci}
+                          className="tnum max-w-[240px] truncate whitespace-nowrap border-b border-zinc-900 px-3 py-1.5 font-mono text-zinc-300"
+                        >
                           {fk && colMeta?.fk ? (
                             <button
                               onClick={() => {

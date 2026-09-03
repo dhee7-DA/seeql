@@ -47,10 +47,10 @@ export function ActivityStrip() {
   const hit = days.filter((d) => d.xp >= dailyGoal).length;
 
   return (
-    <div className="rounded-lg border border-zinc-800 bg-zinc-950 p-4">
+    <div className="sheen rounded-lg border border-zinc-800 bg-zinc-950 p-4">
       <div className="flex items-baseline justify-between">
-        <h3 className="text-sm font-semibold text-zinc-100">Last {STRIP_DAYS} days</h3>
-        <p className="text-[11px] text-zinc-500">
+        <h3 className="font-display text-sm font-semibold text-zinc-100">Last {STRIP_DAYS} days</h3>
+        <p className="tnum text-[11px] text-zinc-500">
           <span className="font-mono text-zinc-300">{weekXp.toLocaleString()} XP</span> · goal hit {hit}/{STRIP_DAYS} days
         </p>
       </div>
@@ -123,9 +123,9 @@ export function MasteryGrid({ onOpenLesson }: { onOpenLesson: (id: string) => vo
   );
 
   return (
-    <div className="rounded-lg border border-zinc-800 bg-zinc-950 p-4">
+    <div className="sheen rounded-lg border border-zinc-800 bg-zinc-950 p-4">
       <div className="flex items-baseline justify-between">
-        <h3 className="text-sm font-semibold text-zinc-100">Course mastery</h3>
+        <h3 className="font-display text-sm font-semibold text-zinc-100">Course mastery</h3>
         <div className="flex items-center gap-3 text-[10px] text-zinc-500">
           <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-[2px] bg-emerald-400" /> complete</span>
           <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-[2px] border border-zinc-600 bg-zinc-800" /> started</span>
@@ -135,7 +135,7 @@ export function MasteryGrid({ onOpenLesson }: { onOpenLesson: (id: string) => vo
       <div className="mt-3 space-y-3">
         {grid.map(({ module, cells }) => (
           <div key={module.id}>
-            <p className="mb-1 font-mono text-[10px] uppercase tracking-wider text-zinc-500">
+            <p className="mb-1 font-mono text-[10px] uppercase tracking-[0.14em] text-zinc-500">
               Module {module.num} · {module.title}
             </p>
             <div className="flex gap-1.5">
@@ -145,12 +145,12 @@ export function MasteryGrid({ onOpenLesson }: { onOpenLesson: (id: string) => vo
                   onClick={() => onOpenLesson(lesson.id)}
                   title={`Lesson ${lesson.num} · ${lesson.title}\nquiz ${m.quiz}/${lesson.mcqs.length} · practice ${m.practice}/${lesson.problems.length}`}
                   className={cn(
-                    "flex-1 rounded-md border px-1.5 pb-1.5 pt-1.5 text-center transition-colors",
+                    "cell-lift flex-1 rounded-md border px-1.5 pb-1.5 pt-1.5 text-center",
                     m.done
-                      ? "border-emerald-400/60 bg-emerald-400/10 hover:bg-emerald-400/20"
+                      ? "border-emerald-400/60 bg-emerald-400/10 hover:border-emerald-400/80 hover:bg-emerald-400/20"
                       : m.started
-                        ? "border-zinc-600 bg-zinc-900 hover:bg-zinc-800"
-                        : "border-zinc-800 bg-zinc-950 hover:bg-zinc-900",
+                        ? "border-zinc-600 bg-zinc-900 hover:border-zinc-500 hover:bg-zinc-800"
+                        : "border-zinc-800 bg-zinc-950 hover:border-zinc-700 hover:bg-zinc-900",
                   )}
                 >
                   <span

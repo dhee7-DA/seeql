@@ -41,7 +41,7 @@ export function HeroDemo() {
   const showResult = step >= STEPS.length - 1;
 
   return (
-    <div className="w-full max-w-[540px] overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950">
+    <div className="sheen w-full max-w-[540px] overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950">
       {/* window chrome */}
       <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-2.5">
         <div className="flex items-center gap-1.5">
@@ -51,7 +51,7 @@ export function HeroDemo() {
         </div>
         <span className="font-mono text-[11px] text-zinc-500">seeql — sandbox</span>
         <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-emerald-300">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> live
+          <span className="pulse-soft h-1.5 w-1.5 rounded-full bg-emerald-400" /> live
         </span>
       </div>
 
@@ -101,7 +101,7 @@ export function HeroDemo() {
                 RESULT.map(([s, n]) => (
                   <tr key={s} className="border-t border-zinc-900">
                     <td className="px-3 py-1.5 text-emerald-300">{s}</td>
-                    <td className="px-3 py-1.5 text-right text-zinc-300">{n}</td>
+                    <td className="tnum px-3 py-1.5 text-right text-zinc-300">{n}</td>
                   </tr>
                 ))
               ) : (

@@ -71,14 +71,17 @@ export function ThemeSwitcher({ className }: { className?: string }) {
         <Button
           variant="outline"
           size="icon"
-          className={cn("h-9 w-9 rounded-md border-zinc-800 bg-zinc-950 hover:bg-zinc-900", className)}
+          className={cn(
+            "btn-quiet h-9 w-9 rounded-md border-zinc-800 bg-zinc-950 hover:bg-zinc-900",
+            className,
+          )}
           aria-label={`Change theme — current: ${active.name}`}
           title="Theme"
         >
           <Swatch theme={current} size={16} />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-72 border-zinc-800 bg-zinc-950">
+      <DropdownMenuContent align="end" className="sheen w-72 border-zinc-800 bg-zinc-950">
         {THEMES.map((t) => (
           <DropdownMenuItem
             key={t.id}
