@@ -308,7 +308,10 @@ export function LearnApp() {
       <CelebrationHost />
 
       {/* sidebar */}
-      <aside className="w-full shrink-0 lg:sticky lg:top-[76px] lg:w-[300px] lg:max-h-[calc(100vh-96px)] lg:self-start">
+      {/* Definite height (not max-height): max-h-full on the inner panel is a
+          percentage, which only resolves against a definite parent height —
+          with max-height alone the panel overflows and buries the Toolbox. */}
+      <aside className="w-full shrink-0 lg:sticky lg:top-[76px] lg:h-[calc(100vh-96px)] lg:w-[300px] lg:self-start">
         <div className="sheen flex max-h-full flex-col overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950">
           <div className="shrink-0 border-b border-zinc-800 p-4">
             <div className="flex items-center justify-between">
