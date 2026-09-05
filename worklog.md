@@ -788,3 +788,18 @@ Stage Summary:
 - The case-file drawer now holds all 200 stakeholder memos: 15+25+30+20+25+20+30+30+5 across 9 topics, 20 per business universe, every case mechanically audited against the live seed db (single-table, number-figure honesty, distractor consequence, prose gates)
 - Engine verified live: chip placement, per-slot coaching, XP ledger (case:* keys), walkthrough gating, topic filters, paging
 - Key authoring patterns encoded in facts/ slices + exemplars: never slot alias text (audit compares values only), number formatting exact ("139.5" not "139.50"), thresholds need consequence-checked decoys
+
+---
+Task ID: cf-fix-1
+Agent: main
+Task: User reported "case problems tab i cant see" — locate and fix
+
+Work Log:
+- Reproduced headlessly (agent-browser, 1280x577): sidebar Toolbox buttons existed in the a11y tree but were invisible and click-blocked (clicks landed on the root container / sticky header)
+- Root cause: aside used lg:max-h-[calc(100vh-96px)] while the inner panel used max-h-full; percentage max-height does not resolve against a parent constrained only by max-height, so the panel rendered ~1420px, overflowed the 481px-capped aside, and buried the Toolbox
+- Fix: one line — aside gets a definite height at lg (lg:h-[calc(100vh-96px)]), making max-h-full resolve; module list scrolls internally (min-h-0 flex-1 overflow-y-auto was already in place), Toolbox pinned at panel bottom
+- E2E verified live: aside 481 == panel 481, Case files hit-testable, deck opens ("200 CASE FILES · MODULE 1 TOOLKIT"), CS-001 played end-to-end — wrong chip order triggered per-slot why-coaching, correct order (id, WHERE, 9) gave "Rebuilt correctly — case closed" + 10 XP (Data Novice 0 -> 10) + walkthrough reveal + Cases closed 1/200; Data explorer and Mixed quiz also verified switching
+- tsc clean in src; committed fix + E2E screenshot as 803e403; debug screenshots removed
+
+Stage Summary:
+- Toolbox visibility bug fixed and committed (803e403); all 200 case files now reachable via sidebar Toolbox -> Case files
