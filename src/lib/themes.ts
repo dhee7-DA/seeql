@@ -1,5 +1,6 @@
-// SeeQL theme registry — 5 hand-tuned themes. Flat by design: no gradients,
-// no glows — solid surfaces, hairline borders, one restrained accent each.
+// SeeQL theme registry — 4 hand-tuned themes (v2 set). Flat by design: no
+// gradients, no glows — solid surfaces, hairline borders, one restrained
+// accent each.
 //
 // How theming works (Tailwind 4): every palette color is a real CSS custom
 // property (--color-zinc-900 etc.) that utilities reference, including
@@ -16,11 +17,10 @@
 // layout.tsx (generated from this file).
 
 export type ThemeId =
-  | "carbon"
-  | "paper"
-  | "marine"
-  | "oxblood"
-  | "gallery";
+  | "jet"
+  | "plum"
+  | "noir"
+  | "pastel";
 
 export interface ThemeDef {
   id: ThemeId;
@@ -38,48 +38,40 @@ export interface ThemeDef {
 
 export const THEMES: ThemeDef[] = [
   {
-    id: "carbon",
-    name: "Carbon",
-    tag: "Sleek",
-    blurb: "Graphite, hairline borders, signal green",
+    id: "jet",
+    name: "Jet Black",
+    tag: "Mono",
+    blurb: "True black, silver hairlines, zero noise",
     dark: true,
-    swatch: ["#09090b", "#1b1b1f", "#3ecf8e"],
+    swatch: ["#050507", "#0c0c10", "#ededf0"],
   },
   {
-    id: "paper",
-    name: "Paper",
-    tag: "Classic",
-    blurb: "Warm paper, ink text, forest green",
+    id: "plum",
+    name: "Cream & Plum",
+    tag: "Warm",
+    blurb: "Cream paper, plum ink, soft luxe",
     dark: false,
-    swatch: ["#f6f5f0", "#fdfcf8", "#3f7d4e"],
+    swatch: ["#f3edde", "#f9f5ea", "#8a4d74"],
   },
   {
-    id: "marine",
-    name: "Marine",
-    tag: "Modern",
-    blurb: "Deep navy, steel cyan highlights",
+    id: "noir",
+    name: "Black & Pink",
+    tag: "Bold",
+    blurb: "Ink black with a rose-pink signal",
     dark: true,
-    swatch: ["#0a1120", "#131f36", "#62c1e5"],
+    swatch: ["#0c080f", "#140e18", "#f16fae"],
   },
   {
-    id: "oxblood",
-    name: "Oxblood",
-    tag: "Statement",
-    blurb: "Warm noir with a deep red accent",
-    dark: true,
-    swatch: ["#141010", "#231a19", "#d97b6c"],
-  },
-  {
-    id: "gallery",
-    name: "Gallery",
-    tag: "Minimal",
-    blurb: "White walls, black ink, persimmon",
+    id: "pastel",
+    name: "Matte Pastels",
+    tag: "Soft",
+    blurb: "Powdered sage on fog, muted all over",
     dark: false,
-    swatch: ["#ffffff", "#ffffff", "#d1532b"],
+    swatch: ["#ecf0e6", "#f3f6ef", "#7c9a68"],
   },
 ];
 
-export const DEFAULT_THEME: ThemeId = "carbon";
+export const DEFAULT_THEME: ThemeId = "jet";
 
 export const THEME_STORAGE_KEY = "seeql-theme-v1";
 

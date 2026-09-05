@@ -342,7 +342,7 @@ export function Landing({ onStart, onPlayground }: { onStart: () => void; onPlay
                 Start learning — free
                 <ArrowRight className="h-4 w-4" />
               </button>
-              <p className="mt-4 text-xs text-zinc-500">No account · 5 themes · everything on this device</p>
+              <p className="mt-4 text-xs text-zinc-500">No account · 4 themes · everything on this device</p>
             </div>
           </Reveal>
         </div>

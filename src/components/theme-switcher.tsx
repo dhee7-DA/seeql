@@ -1,7 +1,7 @@
 "use client";
 
-// Theme switcher — a flat swatch button that opens a menu of the five
-// SeeQL themes. Uses useSyncExternalStore over a tiny custom event bus so
+// Theme switcher — a flat swatch button that opens a menu of the SeeQL
+// themes. Uses useSyncExternalStore over a tiny custom event bus so
 // switching re-renders only this control, not the whole app tree.
 
 import { useSyncExternalStore } from "react";
@@ -13,7 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { THEMES, THEME_STORAGE_KEY, getTheme, isThemeId, type ThemeId } from "@/lib/themes";
+import { THEMES, DEFAULT_THEME, THEME_STORAGE_KEY, getTheme, isThemeId, type ThemeId } from "@/lib/themes";
 import { cn } from "@/lib/utils";
 
 /* ---- tiny event bus so every switcher instance stays in sync ---- */
@@ -21,9 +21,9 @@ import { cn } from "@/lib/utils";
 const EVENT = "seeql:theme-change";
 
 function readTheme(): ThemeId {
-  if (typeof window === "undefined") return "carbon";
+  if (typeof window === "undefined") return DEFAULT_THEME;
   const v = window.localStorage.getItem(THEME_STORAGE_KEY);
-  return isThemeId(v) ? v : "carbon";
+  return isThemeId(v) ? v : DEFAULT_THEME;
 }
 
 function subscribe(cb: () => void) {
@@ -62,7 +62,7 @@ function Swatch({ theme, size = 18 }: { theme: ThemeId; size?: number }) {
 }
 
 export function ThemeSwitcher({ className }: { className?: string }) {
-  const current = useSyncExternalStore(subscribe, readTheme, () => "carbon" as ThemeId);
+  const current = useSyncExternalStore(subscribe, readTheme, () => DEFAULT_THEME);
   const active = getTheme(current);
 
   return (
