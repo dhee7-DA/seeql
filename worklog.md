@@ -523,3 +523,18 @@ Work Log:
 Stage Summary:
 - All user-facing work (UI overhaul + consistency audit) is committed and safe; only runtime needs a platform restart
 - Agent-spawned background processes cannot survive tool-call teardown in this sandbox — future restarts should be requested via platform restart, not spawned from tool calls
+
+---
+Task ID: inv-1
+Agent: main
+Task: "before moving further for joins, make sure what's made and what's left" — full ground-truth inventory + rollback check
+
+Work Log:
+- Checked git history (32 commits), reflog, stash, branches: the summarized prior-session work (M1 500-MCQ expansion, 259 fills + fill-blank chip engine, 200 case-file scenarios, 8-theme registry incl. lemon & black, themes v2) is NOT present in this workspace snapshot; commits 0d4be0f/6e393d6/4dfab79 unknown to this repo's history
+- Confirmed via distinctive-string search (Rebuilt correctly / keyword bank / fill-blank / lemon / cream plum / jet black): zero hits in src/
+- Ran new scripts/inventory.ts (imports MODULES registry): exact per-module counts captured
+- Verified app health: localhost:3000 = 200; working tree clean except new scripts/inventory.ts
+
+Stage Summary:
+- Ground truth of current snapshot: 8 modules / 51 lessons / 547 MCQs / 394 problems (122 easy/160 medium/112 hard; all with 2-level hints + mistake coach; 60 sandboxed mutating) / 85 figures / 8 module-end case studies; 5 themes (carbon/paper/marine/oxblood/gallery); deep-audit 0 fails at a5eb7d5; platform commits since are artifacts-only
+- PRIOR-SESSION WORK LOST in snapshot rollback (same pattern as Task 11/15 incidents): case-file system, fills engine, M1 500-MCQ bank, theme rework v1/v2 all absent — user informed with full inventory; rebuild decision pending user choice (rebuild lost layers vs proceed to JOINs expansion)
