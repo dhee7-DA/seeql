@@ -538,3 +538,253 @@ Work Log:
 Stage Summary:
 - Ground truth of current snapshot: 8 modules / 51 lessons / 547 MCQs / 394 problems (122 easy/160 medium/112 hard; all with 2-level hints + mistake coach; 60 sandboxed mutating) / 85 figures / 8 module-end case studies; 5 themes (carbon/paper/marine/oxblood/gallery); deep-audit 0 fails at a5eb7d5; platform commits since are artifacts-only
 - PRIOR-SESSION WORK LOST in snapshot rollback (same pattern as Task 11/15 incidents): case-file system, fills engine, M1 500-MCQ bank, theme rework v1/v2 all absent — user informed with full inventory; rebuild decision pending user choice (rebuild lost layers vs proceed to JOINs expansion)
+---
+Task ID: 2-a
+Agent: batch-author B1
+Task: Author 15 l1 case files cs-001..015 (cases-b1.ts)
+
+Work Log:
+- Read types.ts, exemplars.ts, case-audit.ts and case-facts-out.json in full; matched exemplar voice/density and every mechanical rule.
+- Designed 15 l1 orientation queries (SELECT lists, *, COUNT(*), key lookups, equality filters, one bare LIMIT), each with 3-6 slots, distractor-consequence-checked by hand against the facts pool before writing.
+- Probed a throwaway copy (scripts/.probe-b1.db, since deleted) for figures not in the pool: full rows of orders 74 and 83, order 6's four order_items lines, customer 5's 17 bookings, EU-active count (7), plus negative checks (no pending order at 397.99; no product where price = stock; no pending/cancelled collisions among distractor values).
+- Wrote src/lib/curriculum/cases/cases-b1.ts (cs-001..cs-015, topic l1, exact id order with universes inventory/funnel/supplier/expense/catalog/growth/refund-audit/pricing/fraud/inventory/funnel/supplier/expense/catalog/month-close).
+- Audited: AUDIT_COPY=scripts/.audit-b1.db bun scripts/case-audit.ts src/lib/curriculum/cases/cases-b1.ts -> 15/15 PASS, fail: 0, first run.
+- Typechecked: npx tsc --noEmit | grep cases-b1 -> no output (clean). Removed probe/audit copies.
+
+Stage Summary:
+- cases-b1.ts: 15 cases, audit "cases: 15  pass: 15  fail: 0". Universes: 10 distinct; slot counts 3x4 (cs-001/006/013/015), 4x6 (002/008/009/010/012/014), 5x4 (003/005/007/011), 6x1 (004); number slots in 13/15 cases (ids 9/5/4/1/74/2/5/6/5, amounts 397.99/199.99), noVerify used only 3 times total (cs-002 "1", cs-006 "1", cs-014 "5"). All 15 filled SQLs distinct and absent from exemplar fills. Tables covered: products (5), customers (4), orders (3), suppliers (2), order_items (1). Key decision: kept l1 SQL shape to SELECT/FROM/COUNT(*)/WHERE =/LIMIT only - no ORDER BY, aliases, LIKE, IN or NULL tests; distractors use real neighbor ids and figures from elsewhere in the facts pool so every substitution either errors or returns a different result set.
+---
+Task ID: 2-d2
+Agent: batch-author B4b
+Task: Author 9 l4 case files cs-082..090 (cases-b4b.ts)
+
+Work Log:
+- Read types.ts, exemplars.ts (cs-071 l4 model), scripts/facts/l4.json, and scripts/case-audit.ts.
+- Probed scripts/.probe-b4b.db (copy, readonly, removed after) for the 5 unshipped-over-500 rows used in cs-082's walkthrough: ids 1/5/43/74/97 at 576.54 / 725.34 / 945.21 / 1,088.44 / 585.79, all pending.
+- Wrote cases-b4b.ts: 9 l4 cases, universes in required order (fraud, inventory, funnel, supplier, expense, catalog, month-close, growth, refund-audit).
+- Shapes: threshold review list (IS NULL + total > 500), count of NULL rows (21), COUNT(*) vs COUNT(col) one-row (103/82), NULL rows by status GROUP BY (7/14), SUM+AVG over NULL set (7,265.49 / 345.98), ORDER+LIMIT list of first 5, IS NOT NULL mirrored value (27,567.79), NULL backlog by month (10 buckets, 21 total), cancelled+never-dispatched count (7). No fill matches exemplar cs-071.
+- Slot counts 3/3/3/5/4/5/4/5/3; noVerify slots 1 each in cs-082 (500) and cs-087 (5); l4 staple decoys (=, NOT NULL, IS NOT NULL, wrong aggregates, wrong status strings, real-figure threshold decoys).
+- Audited: bun scripts/case-audit.ts on the file -> 9 pass / 0 fail. npx tsc --noEmit: no cases-b4b output.
+
+Stage Summary:
+- cases-b4b.ts complete: 9/9 audit passes (cases: 9 pass: 9 fail: 0), tsc clean; only files touched: cases-b4b.ts + worklog.md (probe copy cleaned up).
+---
+Task ID: 2-d1
+Agent: batch-author B4a
+Task: Author 10 l4 case files cs-072..081 (cases-b4a.ts)
+
+Work Log:
+- Read types.ts, exemplars.ts (cs-071 as l4 model), scripts/facts/l4.json, and scripts/case-audit.ts.
+- Authored 10 l4 cases in new file src/lib/curriculum/cases/cases-b4a.ts, universe order cs-072..081: fraud, inventory, funnel, supplier, expense, catalog, month-close, growth, refund-audit, pricing.
+- Shape variety: COUNT of IS NULL rows (cs-072), COUNT(*) vs COUNT(col) in one row (cs-073), IS NOT NULL dispatched book COUNT+SUM (cs-074), unshipped>500 COUNT+MAX threshold (cs-075), = NULL-trap rebuild with COUNT+SUM (cs-076), LIMIT-5 list of oldest unshipped (cs-077), GROUP BY status split 7/14 (cs-078), strftime month buckets (cs-079), cancelled+unshipped count (cs-080), dispatched AVG (cs-081).
+- Slot counts 3-5; number slots are noVerify constants (ROUND precision, thresholds, LIMIT) within the 3-per-case cap; l4 staple decoys (=, NOT NULL, 0, IS-flips, wrong aggregates, wrong status strings) all consequence-checked.
+- All figures copied from scripts/facts/l4.json: 21 unshipped, 82 shipped, 103 vs 82, 7265.49, 345.98, 1088.44, 27567.79, 336.19, 5 over 500, 7 cancelled-unshipped, 14 pending + 7 cancelled split, first5 rows, by-month buckets.
+- No db probes needed; facts pool covered every figure used.
+- Ran AUDIT_COPY=scripts/.audit-b4a.db bun scripts/case-audit.ts on the file: pass 10/10 first run; npx tsc --noEmit clean for cases-b4a.ts.
+
+Stage Summary:
+- cases-b4a.ts: cases 10, pass 10, fail 0 (case-audit summary: "cases: 10  pass: 10  fail: 0"); tsc --noEmit no output for cases-b4a; probe copies cleaned up (none created).
+---
+Task ID: 2-c2
+Agent: batch-author B3b
+Task: Author 15 l3 case files cs-056..070 (cases-b3b.ts)
+
+Work Log:
+- Read types.ts, exemplars.ts (cs-041 as l3 model), scripts/facts/l3.json.
+- One probe on a db copy (scripts/.probe-b3b.db, removed after) for figures missing from facts: cancelled-order totals (7 rows, max 397.99, 2 over 200), orders BETWEEN 500–1000 = 24 (BETWEEN 500–800 = 21), status != 'delivered' = 51, pending OR cancelled = 21, products LIKE '%USB%' = 1, Audio price > 100 = 2 rows, suppliers rating >= 4.4 = 3 rows (Midwest exactly 4.4), order_items quantity >= 3 = 89 of 251 (nothing above 3), customers active = 0 = 2 rows.
+- Wrote cases-b3b.ts: 15 cases cs-056..cs-070, universe order catalog/month-close/growth/refund-audit/pricing/fraud/inventory/funnel/supplier/expense/catalog/month-close/growth/refund-audit/pricing; slot counts 3/4/5 + one 6 (cs-069); payloads mix column lists and COUNT(*); skills span single comparison, multi-AND, OR, IN, LIKE, BETWEEN, month windows (strftime), negation !=, >= boundary.
+- Audit iteration 1: 14/15 — cs-060 floor decoy "90" was ambiguous (89.99 < 90, same 4 rows); replaced with "80" (BETWEEN 80 AND 300 = 5 rows) and fixed the slot why.
+- Audit iteration 2: 15/15 pass, fail: 0. npx tsc --noEmit reports no errors for cases-b3b.
+
+Stage Summary:
+- cases-b3b.ts: 15 cases (cs-056..cs-070, topic l3) — audit `cases: 15 pass: 15 fail: 0`; tsc clean; probe copies removed.
+---
+Task ID: 2-c1
+Agent: batch-author B3a
+Task: Author 14 l3 case files cs-042..055 (cases-b3a.ts)
+
+Work Log:
+- Read types.ts, exemplars.ts (cs-041 as l3 voice model), facts/l3.json.
+- Probed missing figures on a read-only copy (scripts/.probe-b3a.db, cleaned up): total BETWEEN 100-200 = 23 (100-150 = 15, 150-200 = 8, 100-250 = 29, 50-200 = 30; no orders at exactly 100/200); pending AND > 500 rows = orders 1/576.54, 5/725.34, 43/945.21, 74/1088.44, 97/585.79 (pending > 300 = 8, > 600 = 3, > 800 = 2, > 400 = 5 so 400 avoided as decoy); status != 'delivered' = 51; order_items quantity range 1-3, qty = 3 = 89 of 251 lines.
+- Wrote cases-b3a.ts: 14 cases, universe order inventory/funnel/supplier/expense/catalog/month-close/growth/refund-audit/pricing/fraud/inventory/funnel/supplier/expense; slot counts 3-5; skills cover single comparison (< > >=), AND, OR, IN, LIKE, BETWEEN, strftime month window, != negation; payloads alternate column list vs COUNT(*); thresholds marked noVerify (max 2 per case); number decoys chosen so substitution always changes the result set.
+- Audit: bun scripts/case-audit.ts src/lib/curriculum/cases/cases-b3a.ts -> iterate; passed first run, no fixes needed.
+- npx tsc --noEmit: no errors referencing cases-b3a.
+
+Stage Summary:
+- cases-b3a.ts: 14/14 PASS (cases: 14 pass: 14 fail: 0), tsc clean. Touching only cases-b3a.ts + worklog.md.
+---
+Task ID: 2-b2
+Agent: batch-author B2b
+Task: Author 12 l2 case files cs-029..040 (cases-b2b.ts)
+
+Work Log:
+- Read types.ts, exemplars.ts (cs-016 l2 model), scripts/facts/l2.json, and scripts/case-audit.ts for the enforced rules.
+- Probed a read-only copy of db/custom.db (scripts/.probe-b2b.db, removed after) to verify computed walkthrough figures: ROUND(price*1.05,2) samples (94.49, 36.23, 209.99), ROUND(price*stock,2) shelf values (10798.8, 7495, 7999.6), ROUND(rating*20,0) supplier scores (92/82/78/88/96/80), order_items count (251), goodwill ROUND(total*0.15,2) (86.48, 115.15, 22.88), promo price-10 samples (79.99, 189.99, 8.5, 4.99), booked totals (576.54, 845.92, 1088.44).
+- Wrote cases-b2b.ts with 12 l2 cases cs-029..cs-040 in the mandated universe order (pricing, fraud, inventory, funnel, supplier, expense, catalog, month-close, growth, refund-audit, pricing, fraud); slot counts 4,5,3,4,4,4,5,4,3,5,6,3; carrying skills rotated across column choice, SELECT *, AS aliases, per-row arithmetic, and ROUND; tables spread over products/customers/orders/order_items/suppliers; avoided the cs-016 fill shape (used 1.05 on products with dual alias, 0.15 slice on orders, price-10 flat cut, rating*20 rescale, constant review_cycle column).
+- Ran AUDIT_COPY=scripts/.audit-b2b.db bun scripts/case-audit.ts src/lib/curriculum/cases/cases-b2b.ts: 12/12 PASS on first run; removed the audit copy.
+- npx tsc --noEmit: no diagnostics mentioning cases-b2b.
+
+Stage Summary:
+- cases-b2b.ts authored: 12 cases, audit "cases: 12  pass: 12  fail: 0", tsc clean, probe copies cleaned up.
+---
+Task ID: 2-b1
+Agent: batch-author B2a
+Task: Author 12 l2 case files cs-017..028 (cases-b2a.ts)
+
+Work Log:
+- Read types.ts, exemplars.ts (cs-016 as l2 model), facts/l2.json, and scripts/case-audit.ts to pin exact enforcement rules.
+- Probed a read-only copy (scripts/.probe-b2a.db, deleted after) to confirm derived figures: promo 15%-off cells (76.49/169.99/12.74), total*100 cents (57654/41681/15252), shelf_value price*stock (10798.8/10350/7495/7999.6), supplier rating*10 scores (46/41/39/44/48/40), total±fee (579.04/755.46/575.04/151.02), order-1 line refunds (93.06/30.3/25.26/427.92 = order total 576.54), and orders' 6 columns.
+- Wrote cases-b2a.ts: 12 cases cs-017..cs-028, universes in prescribed order (growth, refund-audit, pricing, fraud, inventory, funnel, supplier, expense, catalog, month-close, growth, refund-audit); slot counts 3/4/5; skills spread across column choice, SELECT *, AS aliases, per-row arithmetic (+, -, ×) and ROUND; 1-2 noVerify number slots max per case.
+- Audit round 1 (6 fails) surfaced two engine realities: result comparison is value-only (alias-text slots are inherently ambiguous — any identifier distractor reproduces the same values), and one template double-slotted FROM. Fixed by hardcoding alias texts (keeping AS keyword slots), restructuring cs-018/019/021/022/024/025, and correcting the cs-022 template.
+- Audit round 2: 12/12 pass, fail: 0. tsc --noEmit clean for cases-b2a.
+
+Stage Summary:
+- bun scripts/case-audit.ts src/lib/curriculum/cases/cases-b2a.ts → cases: 12  pass: 12  fail: 0
+---
+Task ID: 2-e1
+Agent: batch-author B5a
+Task: Author 14 l5 case files cs-092..105 (cases-b5a.ts)
+
+Work Log:
+- Read types.ts, exemplars.ts (cs-091 as l5 model), scripts/facts/l5.json; read scripts/case-audit.ts for exact mechanical gates.
+- Probed a read-only copy (scripts/.probe-b5a.db, deleted after) for figures missing from the facts pool: order_items schema (id, order_id, product_id, quantity, unit_price), top-5 line items with unit_price >= 100 (209.68/205.81/205.31/204.19/200.07), bottom-6 orders by total (51/25.47, 72/30.24, 49/32.01, 53/39.39, 59/44.48, 93/45.36), oldest-3 and alphabetical-3 customers, multi-key category/price top-6, top-3 stock, APAC supplier ratings.
+- Wrote src/lib/curriculum/cases/cases-b5a.ts: 14 l5 cases cs-092..cs-105, universes in the mandated order (pricing, fraud, inventory, funnel, supplier, expense, catalog, month-close, growth, refund-audit, pricing, fraud, inventory, funnel); slot counts 3/4/5 with one 6 (cs-098 multi-key); shapes: top-N value, bottom-N, newest/oldest by date, biggest/deepest stock, alphabetical A-Z, OFFSET paging (LIMIT 5 OFFSET 5), two-key sort (category ASC, price DESC), threshold+rank on order_items; personas per universe, no SQL vocabulary in briefs, walkthroughs quote audited figures.
+- AUDIT_COPY=scripts/.audit-b5a.db bun scripts/case-audit.ts src/lib/curriculum/cases/cases-b5a.ts -> pass 14/14 on first run.
+- npx tsc --noEmit | grep cases-b5a -> clean.
+
+Stage Summary:
+- cases-b5a.ts: 14 cases (cs-092..cs-105, topic l5), audit "cases: 14  pass: 14  fail: 0", tsc clean; probe copies removed; touched only cases-b5a.ts + worklog.md.
+---
+Task ID: 2-g1
+Agent: batch-author B7a
+Task: Author 15 l7 case files cs-137..151 (cases-b7a.ts)
+
+Work Log:
+- Read types.ts, exemplars.ts (cs-136 l7 model), facts/l7.json; skimmed scripts/case-audit.ts for exact gates.
+- Planned 15 cases with mandated universe order (supplier, expense, catalog, month-close, growth, refund-audit, pricing, fraud, inventory, funnel, supplier, expense, catalog, month-close, growth) and shape variety: single/3-aggregate rows, aggregate+ROUND, filtered aggregates (status/threshold/date), MIN+MAX pair, COUNT-over-filter, SUM-of-boolean-flag, two-column SUM trap.
+- Probed scripts/.probe-b7a.db (read-only copy, removed after) for figures missing from facts: supplier-1 stock (3 SKUs, 230 units, max 120), Jan-2024 (8 orders, 3731.97), total>900 (2 orders, 2033.65), stock<50 (2/85), stock<100 (6/395), active=1 (14/14), supplier ratings (6, avg 4.3, min 3.9), orders<100 (15, avg 57.91, pool 868.66), products (2845 units, 1148.43 value), pending max 1088.44.
+- Wrote cases-b7a.ts: ids cs-137..cs-151, slot counts 3/4/5 (one 5: cs-142), 4-5 distractors each, noVerify only for thresholds/ROUND precision (≤1 per case), NULL-on-empty-set teach in cs-145 walkthrough, personas per universe map.
+- Audit: AUDIT_COPY=scripts/.audit-b7a.db bun scripts/case-audit.ts src/lib/curriculum/cases/cases-b7a.ts → 15/15 PASS on first run.
+- npx tsc --noEmit | grep cases-b7a → no output (clean).
+
+Stage Summary:
+- cases-b7a.ts authored: 15 l7 cases, audit "cases: 15 pass: 15 fail: 0", tsc clean, probe copies removed. Touched only cases-b7a.ts + worklog.md.
+---
+Task ID: 2-e2
+Agent: batch-author B5b
+Task: Author 10 l5 case files cs-106..115 (cases-b5b.ts)
+
+Work Log:
+- Read types.ts, exemplars.ts (cs-091 as l5 model), facts/l5.json.
+- Probed a readonly copy of db/custom.db for figures missing from the facts pool: order_items schema (quantity 1-3 only, unusable for ranking), 3 smallest orders (51/25.47, 72/30.24, 49/32.01), orders ranks 6-10 by total, suppliers rating ASC top-2, products name DESC top-3, customers region+name multi-key top-8, shipped_at-vs-created_at distractor divergence, price band LIMIT 5 OFFSET 3. All probe copies removed.
+- Wrote cases-b5b.ts: 10 cases, universes in order supplier/expense/catalog/month-close/growth/refund-audit/pricing/fraud/inventory/funnel; slot counts 3-6 (one 6-slot OFFSET case cs-112); shapes cover top-N, bottom-N, alphabetical ends, newest-by-date, multi-key region+name, OFFSET paging, smallest-tickets fraud sweep.
+- Designed distractors with GROUP-vs-ORDER same-result traps avoided (e.g. no GROUP decoy where bare-column GROUP BY would reproduce the fill); all keyword decoys checked for consequence by hand before audit.
+- Ran case-audit.ts on the new file: 10/10 pass on first run. tsc --noEmit: no cases-b5b errors.
+
+Stage Summary:
+- cases: 10  pass: 10  fail: 0 (cs-106..cs-115, all topic l5)
+---
+Task ID: 2-f2
+Agent: batch-author B6b
+Task: Author 7 l6 case files cs-129..135 (cases-b6b.ts)
+
+Work Log:
+- Read types.ts, exemplars.ts (voice models cs-041/cs-091), facts/l6.json.
+- Probed a read-only copy (scripts/.probe-b6b.db, removed after): status list = cancelled/delivered/pending/shipped; orders cols (no product_id), order_items cols (no total); distinct day-of-month = 25; COUNT(DISTINCT customer_id) WHERE total>500 = 10 buyers / 25 orders (vs 16 buyers at >300) — used for cs-133 and decoy-contrast checks.
+- Wrote cases-b6b.ts: 7 l6 cases covering distinct month list w/ strftime+ORDER (cs-129), COUNT(DISTINCT city) (cs-130), distinct status list (cs-131), COUNT(DISTINCT category) WHERE price>100 (cs-132), COUNT(DISTINCT customer_id) WHERE total>500 (cs-133), filtered DISTINCT supplier_id by category='Audio' (cs-134), COUNT(DISTINCT product_id) on order_items (cs-135). Slot counts 3/3/3/4/4/4/5; number slots noVerify only where figures absent from result cells (cs-132, cs-133).
+- Audit iteration: fixed cs-132 (distractor "stock" in threshold slot tied at 3 via price>stock → swapped to "id") and cs-134 (marker {2} reused in ORDER BY → hardcoded supplier_id).
+
+Stage Summary:
+- AUDIT_COPY=scripts/.audit-b6b.db bun scripts/case-audit.ts src/lib/curriculum/cases/cases-b6b.ts → cases: 7 pass: 7 fail: 0; npx tsc --noEmit → no cases-b6b diagnostics.
+---
+Task ID: 2-f1
+Agent: batch-author B6a
+Task: Author 13 l6 case files cs-116..128 (cases-b6a.ts)
+
+Work Log:
+- Read types.ts, exemplars.ts (voice models cs-041/cs-091), facts/l6.json; read scripts/case-audit.ts for exact enforcement rules.
+- Probed a copy of db/custom.db (scripts/.probe-b6a.db, removed after) for figures missing from the facts slice: order statuses (cancelled/delivered/pending/shipped — no 'refunded'), per-status distinct-account counts, COUNT(DISTINCT customer_id) WHERE total>300/150/500 (16/16/10), COUNT(DISTINCT product_id) WHERE quantity>=2 (16 — degenerate, all slices hit 16), unit_price>100 slice (4 products: ids 4,5,7,13; 68 lines), months with total>=500 (12 months; Jul + Nov 2024 missing), COUNT(DISTINCT strftime('%Y-%m')) over customers (9), plus tie checks (COUNT(ALL supplier_id)=16, COUNT(ALL quantity)=251, SUM decoys 74/30/29/136).
+- Wrote cases-b6a.ts: 13 l6 cases, universes in required order (supplier, expense, catalog, month-close, growth, refund-audit, pricing, fraud, inventory, funnel, supplier, expense, catalog); mix of shapes — 7 COUNT(DISTINCT) number asks (2 with WHERE filters, 1 strftime month-bucket) and 6 deduped list asks (alphabetized category list, EU city list, filtered premium-category list, plain region list, APAC supplier list, filtered heavy-spend month list); slot counts 3/4/5; 1–5 noVerify number slots per case (all thresholds); keyword decoys include ALL vs DISTINCT, COUNT vs SUM, wrong column/table, wrong status/region strings.
+- Audit iteration 1: cs-122 distractor "stock" tied with the correct fill at the threshold slot (price > stock happens to select the same 4 premium products) — swapped to "id". Iteration 2: fail: 0, 13/13 PASS.
+- npx tsc --noEmit: no output for cases-b6a (clean).
+
+Stage Summary:
+- AUDIT_COPY=scripts/.audit-b6a.db bun scripts/case-audit.ts src/lib/curriculum/cases/cases-b6a.ts → cases: 13  pass: 13  fail: 0; tsc clean; probe/audit copies cleaned up.
+---
+Task ID: 2-i
+Agent: batch-author B9
+Task: Author 5 capstone case files cs-196..200 (cases-b9.ts)
+
+Work Log:
+- Read types.ts, exemplars.ts (voice models cs-166/cs-136), scripts/facts/cap.json, and scripts/case-audit.ts (comparison semantics).
+- Probed a read-only copy of db/custom.db for missing figures: full monthly revenue ranking (2024-01 3731.97 top, 2024-02 3609.64 runner-up, 2024-07 1193.86 low), unshipped split (pending 14 / cancelled 7), suppliers by region (EU 2@4.7, APAC 2@4.0, US/LATAM single-source), order_items rates > 200 (5 distinct: 200.07, 204.19, 205.31, 205.81, 209.68; 199.97 near-miss), Audio shelf (3 SKUs, 328.98), Wearables (2, 278.99). Probe copies cleaned up.
+- Wrote cases-b9.ts: 5 capstones, one distinct shape each — cs-196 inventory best-month (strftime+SUM+GROUP BY+ORDER BY DESC+LIMIT 1), cs-197 funnel unshipped split (IS NULL+GROUP BY+COUNT+ORDER BY), cs-198 supplier HAVING COUNT(*)>=2 (EU/APAC survive), cs-199 expense DISTINCT+WHERE+ORDER BY (rates > 200), cs-200 catalog headline row (COUNT+SUM+ROUND, category='Audio'); 5-6 slots each, 1 noVerify each, 5-6 consequential distractors each; board-level briefs with per-universe personas.
+- Swapped planned 'ALL' decoy in cs-199 for 'GROUP' after probing showed each >200 rate appears on exactly one line (ALL would have tied).
+- Audited: fail: 0 on first and second run; tsc --noEmit reports no cases-b9 issues.
+
+Stage Summary:
+- bun scripts/case-audit.ts src/lib/curriculum/cases/cases-b9.ts -> cases: 5  pass: 5  fail: 0
+---
+Task ID: 2-h1
+Agent: batch-author B8a
+Task: Author 15 l8 case files cs-167..181 (cases-b8a.ts)
+
+Work Log:
+- Read types.ts, exemplars.ts (cs-166 as l8 model), facts/l8.json, case-audit.ts.
+- Probed figures missing from the facts pool on a throwaway copy (scripts/.probe-b8a.db, removed after): active customers per region (APAC 4, EU 7 after WHERE active=1), per-status MAX/MIN totals (pending 1088.44, shipped 845.92, delivered 752.96, cancelled 397.99), per-customer spend (7262.35/6640.56/4574.23/3644.56/2667.93/1686.17 >= 1500), per-status AVG tickets (299.44/399.89/436.64/164.64), premium-SKU suppliers over price 50 (supplier 1: 3, supplier 6: 2), stock sums per category (940/510/505 > 400).
+- Wrote cases-b8a.ts: 15 l8 cases, ids cs-167..cs-181, universes in required order (funnel, supplier, expense, catalog, month-close, growth, refund-audit, pricing, fraud, inventory, funnel, supplier, expense, catalog, month-close). Shapes: month buckets via strftime (count and revenue HAVING), supplier/customer/category/region/status dims, WHERE+GROUP+HAVING combo (cs-172, cs-178), HAVING on COUNT/SUM/AVG/MIN/MAX, ORDER BY aggregates as supporting cast; slot counts 3-5; keyword+number mixes; WHERE-vs-HAVING as the signature teach in every why/walkthrough.
+- Audit: AUDIT_COPY=scripts/.audit-b8a.db bun scripts/case-audit.ts src/lib/curriculum/cases/cases-b8a.ts -> 15/15 PASS on first run, fail: 0.
+- npx tsc --noEmit | grep cases-b8a -> no output (clean).
+
+Stage Summary:
+- cases-b8a.ts complete: 15/15 audit PASS (fail: 0), tsc clean, no probe copies left behind.
+---
+Task ID: 2-h2
+Agent: batch-author B8b
+Task: Author 14 l8 case files cs-182..195 (cases-b8b.ts)
+
+Work Log:
+- Read types.ts, exemplars.ts (cs-166 as l8 model), scripts/facts/l8.json, and scripts/case-audit.ts for exact mechanical rules.
+- Probed a read-only db copy (scripts/.probe-b8b.db, removed after) for figures missing from the facts pool: 23 orders with exactly 4 order_items lines (cs-189); per-customer spend sums (c1 7262.35 / c5 6640.56 / c7 4574.23, c13 3644.56 just under the 4000 bar — cs-195); per-status avg tickets 164.64/299.44/436.64/399.89 (cs-193); per-category stock sums incl. Wearables 135, Video/Fitness 220 (cs-186).
+- Authored src/lib/curriculum/cases/cases-b8b.ts: 14 l8 cases cs-182..cs-195, universes in required order (growth, refund-audit, pricing, fraud, inventory, funnel, supplier, expense, catalog, month-close, growth, refund-audit, pricing, fraud).
+- Shapes varied: count-only groups (status >20), SUM-per-bucket with < threshold, count+avg with < 50, HAVING-on-count + ORDER BY DESC (customer_id, supplier_id), 6-slot full stack with SUM(stock) < 250 + ORDER BY, strftime month buckets ('%Y-%m') with COUNT >= 8 and SUM >= 2000, exact-equality HAVING (= 4 lines), MIN(price) > 30 and MAX(price) >= 149.99 floors/ceilings, spend-per-account >= 4000. Slot counts 3/4/5/6; verified number slots (5, 8, 3, 4, 5, 149.99) plus noVerify thresholds (max 1 per case).
+- Every decoy checked for consequence: WHERE-substitution always hits an aggregate (misuse error), ORDER/keyword decoys error or return different row sets, threshold/figure decoys change surviving buckets; no distractor equals any slot answer.
+
+Stage Summary:
+- AUDIT_COPY=scripts/.audit-b8b.db bun scripts/case-audit.ts src/lib/curriculum/cases/cases-b8b.ts → cases: 14 pass: 14 fail: 0 (all PASS first run).
+- npx tsc --noEmit | grep cases-b8b → no output (clean).
+---
+Task ID: 2-g2
+Agent: batch-author B7b
+Task: Author 14 l7 case files cs-152..165 (cases-b7b.ts)
+
+Work Log:
+- Read types.ts, exemplars.ts (cs-136 as l7 model), scripts/facts/l7.json, scripts/case-audit.ts.
+- Probed a readonly copy of the seed db (scripts/.probe-b7b.db, removed after): month sums ('2024-02' = 3609.64, distinct from Jan 3731.97), order_items quantity distribution (qty 1/2/3 = 93/69/89 lines), supplier rating extremes (4.8/3.9/mean 4.3), price<50 (8 SKUs, avg 32.06), price>=100 (4 SKUs, max 199.99), total>100 (33964.62), total<500 (17453.85), total>5000 (0 rows).
+- Wrote src/lib/curriculum/cases/cases-b7b.ts: 14 cases, universes in required order (refund-audit, pricing, fraud, inventory, funnel, supplier, expense, catalog, month-close, growth, refund-audit, pricing, fraud, inventory); slot counts 3/4/5 plus one 6-slot (cs-155); shapes include multi-aggregate rows, filtered aggregates (status/threshold/date), MIN+MAX pair, SUM-over-empty-set -> NULL teach (cs-154), and a verified number slot (cs-165 "3" appears as MAX(quantity) cell); 4 cases carry exactly 1 noVerify slot each.
+- Audited with AUDIT_COPY=scripts/.audit-b7b.db bun scripts/case-audit.ts src/lib/curriculum/cases/cases-b7b.ts on first attempt: all 14 passed, no fixes needed; audit copy auto-removed.
+- npx tsc --noEmit: no cases-b7b errors.
+
+Stage Summary:
+- cases-b7b.ts: 14/14 cases pass (cases: 14 pass: 14 fail: 0), tsc clean, probe copies cleaned up.
+---
+Task ID: 1 (coordination) + 3 (integration)
+Agent: main
+Task: Rebuild the 200 case-file scenarios (user-approved scope) — engine verification, batch authoring via 15 subagents, integration, dedupe fixes, audit, E2E, commit
+
+Work Log:
+- Resumed after second context limit; found carried-over uncommitted work: case-files.tsx engine (463 lines), cases/types.ts + exemplars.ts (6 gold-standard cases), case-audit.ts + case-facts.ts tooling, learn-app wiring — all intact and green (6/6 exemplars audit pass, tsc clean, app 200)
+- Decoded the original plan's topic blocks from exemplar block-first ids: l1:15 l2:25 l3:30 l4:20 l5:25 l6:20 l7:30 l8:30 cap:5 = 200; computed balanced universe rotation (exactly 20 per universe incl. exemplars)
+- Patched case-audit.ts to honor AUDIT_COPY env (parallel agents share the fixed .audit.db path otherwise)
+- Sliced the 76K facts pool into scripts/facts/{l2..cap}.json after first wave (B2/B3/B4) died on agent context deadlines reading the full file; relaunched in <=15-case batches
+- 15 batch agents authored cs-001..cs-200 (B1, B2a/b, B3a/b, B4a/b, B5a/b, B6a/b, B7a/b, B8a/b, B9); every batch reached audit fail:0 before handoff
+- Integration: rebuilt cases/index.ts (17 batches, sorted by id); wrote scripts/case-coverage.ts (id coverage, filled-SQL dedupe, title dedupe, distribution report)
+- Coverage caught 5 cross-batch duplicate filled-SQL pairs (cs-049+061, 055+062, 077+087, 093+109, 094+114) + 1 semantic dupe (cs-101 vs cs-111, same result via ROUND wrapper) + 1 duplicate title (cs-042/cs-128) — fixed by rewriting 6 cases against fresh read-only probes (NOT IN corridors, qty>=2 bulk lines, COUNT+MAX stuck-pile, oldest-3 pending aging, >=500 escalation list, alphabetical count sheet) and retitling cs-128
+- Final state: 200/200 audit PASS, ids cs-001..cs-200 complete, all fills distinct, all titles distinct, per-topic + per-universe exactly on plan; tsc clean in src
+- Browser E2E: deck header "200 CASE FILES", progress 0/200 -> 1/200, topic chips show exact counts, cs-001 played end-to-end (chips -> check -> "Rebuilt correctly — case closed" + 10 XP toast -> walkthrough reveal), WHERE-filters filter -> CASE 1 OF 30; screenshot scripts/shots/case-e2e-solved.png
+- Committed source + QA scripts + screenshots + self-healed seed db
+
+Stage Summary:
+- The case-file drawer now holds all 200 stakeholder memos: 15+25+30+20+25+20+30+30+5 across 9 topics, 20 per business universe, every case mechanically audited against the live seed db (single-table, number-figure honesty, distractor consequence, prose gates)
+- Engine verified live: chip placement, per-slot coaching, XP ledger (case:* keys), walkthrough gating, topic filters, paging
+- Key authoring patterns encoded in facts/ slices + exemplars: never slot alias text (audit compares values only), number formatting exact ("139.5" not "139.50"), thresholds need consequence-checked decoys

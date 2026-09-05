@@ -1,0 +1,1066 @@
+{
+ "summary": {
+  "l3": 33
+ },
+ "facts": [
+  {
+   "id": "orders-by-status",
+   "topic": "l3",
+   "sql": "SELECT status, COUNT(*) AS n FROM orders GROUP BY status",
+   "cols": [
+    "status",
+    "n"
+   ],
+   "rows": [
+    [
+     "cancelled",
+     7
+    ],
+    [
+     "delivered",
+     52
+    ],
+    [
+     "pending",
+     14
+    ],
+    [
+     "shipped",
+     30
+    ]
+   ]
+  },
+  {
+   "id": "customers-by-region",
+   "topic": "l3",
+   "sql": "SELECT region, COUNT(*) AS n FROM customers GROUP BY region",
+   "cols": [
+    "region",
+    "n"
+   ],
+   "rows": [
+    [
+     "APAC",
+     5
+    ],
+    [
+     "EU",
+     8
+    ],
+    [
+     "LATAM",
+     1
+    ],
+    [
+     "US",
+     2
+    ]
+   ]
+  },
+  {
+   "id": "customers-by-city",
+   "topic": "l3",
+   "sql": "SELECT city, COUNT(*) AS n FROM customers GROUP BY city ORDER BY n DESC, city",
+   "cols": [
+    "city",
+    "n"
+   ],
+   "rows": [
+    [
+     "Austin",
+     1
+    ],
+    [
+     "Berlin",
+     1
+    ],
+    [
+     "Chicago",
+     1
+    ],
+    [
+     "Cork",
+     1
+    ],
+    [
+     "Dubai",
+     1
+    ],
+    [
+     "Hamburg",
+     1
+    ],
+    [
+     "London",
+     1
+    ],
+    [
+     "Lyon",
+     1
+    ],
+    [
+     "Madrid",
+     1
+    ],
+    [
+     "Milan",
+     1
+    ],
+    [
+     "Mumbai",
+     1
+    ],
+    [
+     "Nagoya",
+     1
+    ],
+    [
+     "Osaka",
+     1
+    ],
+    [
+     "Seoul",
+     1
+    ],
+    [
+     "S\u00e3o Paulo",
+     1
+    ],
+    [
+     "Tallinn",
+     1
+    ]
+   ]
+  },
+  {
+   "id": "products-by-category",
+   "topic": "l3",
+   "sql": "SELECT category, COUNT(*) AS n FROM products GROUP BY category",
+   "cols": [
+    "category",
+    "n"
+   ],
+   "rows": [
+    [
+     "Accessories",
+     3
+    ],
+    [
+     "Apparel",
+     2
+    ],
+    [
+     "Audio",
+     3
+    ],
+    [
+     "Electronics",
+     3
+    ],
+    [
+     "Fitness",
+     1
+    ],
+    [
+     "Video",
+     2
+    ],
+    [
+     "Wearables",
+     2
+    ]
+   ]
+  },
+  {
+   "id": "price-over-100",
+   "topic": "l3",
+   "sql": "SELECT COUNT(*) AS n FROM products WHERE price > 100",
+   "cols": [
+    "n"
+   ],
+   "rows": [
+    [
+     4
+    ]
+   ]
+  },
+  {
+   "id": "price-over-200",
+   "topic": "l3",
+   "sql": "SELECT COUNT(*) AS n FROM products WHERE price > 200",
+   "cols": [
+    "n"
+   ],
+   "rows": [
+    [
+     0
+    ]
+   ]
+  },
+  {
+   "id": "price-over-300",
+   "topic": "l3",
+   "sql": "SELECT COUNT(*) AS n FROM products WHERE price > 300",
+   "cols": [
+    "n"
+   ],
+   "rows": [
+    [
+     0
+    ]
+   ]
+  },
+  {
+   "id": "price-over-400",
+   "topic": "l3",
+   "sql": "SELECT COUNT(*) AS n FROM products WHERE price > 400",
+   "cols": [
+    "n"
+   ],
+   "rows": [
+    [
+     0
+    ]
+   ]
+  },
+  {
+   "id": "price-over-500",
+   "topic": "l3",
+   "sql": "SELECT COUNT(*) AS n FROM products WHERE price > 500",
+   "cols": [
+    "n"
+   ],
+   "rows": [
+    [
+     0
+    ]
+   ]
+  },
+  {
+   "id": "price-under-50",
+   "topic": "l3",
+   "sql": "SELECT COUNT(*) AS n FROM products WHERE price < 50",
+   "cols": [
+    "n"
+   ],
+   "rows": [
+    [
+     8
+    ]
+   ]
+  },
+  {
+   "id": "price-under-100",
+   "topic": "l3",
+   "sql": "SELECT COUNT(*) AS n FROM products WHERE price < 100",
+   "cols": [
+    "n"
+   ],
+   "rows": [
+    [
+     12
+    ]
+   ]
+  },
+  {
+   "id": "price-100-300",
+   "topic": "l3",
+   "sql": "SELECT COUNT(*) AS n FROM products WHERE price >= 100 AND price <= 300",
+   "cols": [
+    "n"
+   ],
+   "rows": [
+    [
+     4
+    ]
+   ]
+  },
+  {
+   "id": "orders-over-300",
+   "topic": "l3",
+   "sql": "SELECT COUNT(*) AS n FROM orders WHERE total > 300",
+   "cols": [
+    "n"
+   ],
+   "rows": [
+    [
+     49
+    ]
+   ]
+  },
+  {
+   "id": "orders-over-500",
+   "topic": "l3",
+   "sql": "SELECT COUNT(*) AS n FROM orders WHERE total > 500",
+   "cols": [
+    "n"
+   ],
+   "rows": [
+    [
+     25
+    ]
+   ]
+  },
+  {
+   "id": "orders-over-800",
+   "topic": "l3",
+   "sql": "SELECT COUNT(*) AS n FROM orders WHERE total > 800",
+   "cols": [
+    "n"
+   ],
+   "rows": [
+    [
+     4
+    ]
+   ]
+  },
+  {
+   "id": "orders-over-1000",
+   "topic": "l3",
+   "sql": "SELECT COUNT(*) AS n FROM orders WHERE total > 1000",
+   "cols": [
+    "n"
+   ],
+   "rows": [
+    [
+     1
+    ]
+   ]
+  },
+  {
+   "id": "orders-under-100",
+   "topic": "l3",
+   "sql": "SELECT COUNT(*) AS n FROM orders WHERE total < 100",
+   "cols": [
+    "n"
+   ],
+   "rows": [
+    [
+     15
+    ]
+   ]
+  },
+  {
+   "id": "eu-customers",
+   "topic": "l3",
+   "sql": "SELECT name, city FROM customers WHERE region = 'EU' ORDER BY name",
+   "cols": [
+    "name",
+    "city"
+   ],
+   "rows": [
+    [
+     "Alice Chen",
+     "Berlin"
+    ],
+    [
+     "Chloe Dubois",
+     "Lyon"
+    ],
+    [
+     "Dmitri Volkov",
+     "Tallinn"
+    ],
+    [
+     "Isabella Rossi",
+     "Milan"
+    ],
+    [
+     "Liam O'Brien",
+     "Cork"
+    ],
+    [
+     "Noah Meyer",
+     "Hamburg"
+    ],
+    [
+     "Olivia Brown",
+     "London"
+    ],
+    [
+     "Pedro Alvarez",
+     "Madrid"
+    ]
+   ]
+  },
+  {
+   "id": "apac-customers",
+   "topic": "l3",
+   "sql": "SELECT name, city FROM customers WHERE region = 'APAC' ORDER BY name",
+   "cols": [
+    "name",
+    "city"
+   ],
+   "rows": [
+    [
+     "Farid Nasser",
+     "Dubai"
+    ],
+    [
+     "Grace Kim",
+     "Seoul"
+    ],
+    [
+     "Hiro Tanaka",
+     "Osaka"
+    ],
+    [
+     "Keiko Sato",
+     "Nagoya"
+    ],
+    [
+     "Maya Patel",
+     "Mumbai"
+    ]
+   ]
+  },
+  {
+   "id": "us-latam-customers",
+   "topic": "l3",
+   "sql": "SELECT name, city, region FROM customers WHERE region IN ('US', 'LATAM') ORDER BY name",
+   "cols": [
+    "name",
+    "city",
+    "region"
+   ],
+   "rows": [
+    [
+     "Bruno Silva",
+     "S\u00e3o Paulo",
+     "LATAM"
+    ],
+    [
+     "Emma Wilson",
+     "Austin",
+     "US"
+    ],
+    [
+     "Jamal Wright",
+     "Chicago",
+     "US"
+    ]
+   ]
+  },
+  {
+   "id": "orders-by-month",
+   "topic": "l3",
+   "sql": "SELECT strftime('%Y-%m', created_at) AS month, COUNT(*) AS n FROM orders GROUP BY month ORDER BY month",
+   "cols": [
+    "month",
+    "n"
+   ],
+   "rows": [
+    [
+     "2024-01",
+     8
+    ],
+    [
+     "2024-02",
+     9
+    ],
+    [
+     "2024-03",
+     8
+    ],
+    [
+     "2024-04",
+     7
+    ],
+    [
+     "2024-05",
+     8
+    ],
+    [
+     "2024-06",
+     6
+    ],
+    [
+     "2024-07",
+     8
+    ],
+    [
+     "2024-08",
+     7
+    ],
+    [
+     "2024-09",
+     9
+    ],
+    [
+     "2024-10",
+     7
+    ],
+    [
+     "2024-11",
+     6
+    ],
+    [
+     "2024-12",
+     7
+    ],
+    [
+     "2025-01",
+     6
+    ],
+    [
+     "2025-02",
+     7
+    ]
+   ]
+  },
+  {
+   "id": "cancelled-2024-03",
+   "topic": "l3",
+   "sql": "SELECT COUNT(*) AS n FROM orders WHERE status = 'cancelled' AND strftime('%Y-%m', created_at) = '2024-03'",
+   "cols": [
+    "n"
+   ],
+   "rows": [
+    [
+     1
+    ]
+   ]
+  },
+  {
+   "id": "delivered-over-300",
+   "topic": "l3",
+   "sql": "SELECT COUNT(*) AS n FROM orders WHERE status = 'delivered' AND total > 300",
+   "cols": [
+    "n"
+   ],
+   "rows": [
+    [
+     23
+    ]
+   ]
+  },
+  {
+   "id": "stock-zero",
+   "topic": "l3",
+   "sql": "SELECT COUNT(*) AS n FROM products WHERE stock = 0",
+   "cols": [
+    "n"
+   ],
+   "rows": [
+    [
+     0
+    ]
+   ]
+  },
+  {
+   "id": "stock-under-10",
+   "topic": "l3",
+   "sql": "SELECT COUNT(*) AS n FROM products WHERE stock < 10",
+   "cols": [
+    "n"
+   ],
+   "rows": [
+    [
+     0
+    ]
+   ]
+  },
+  {
+   "id": "stock-under-25",
+   "topic": "l3",
+   "sql": "SELECT COUNT(*) AS n FROM products WHERE stock < 25",
+   "cols": [
+    "n"
+   ],
+   "rows": [
+    [
+     0
+    ]
+   ]
+  },
+  {
+   "id": "qty-ge-3",
+   "topic": "l3",
+   "sql": "SELECT COUNT(*) AS n FROM order_items WHERE quantity >= 3",
+   "cols": [
+    "n"
+   ],
+   "rows": [
+    [
+     89
+    ]
+   ]
+  },
+  {
+   "id": "qty-eq-5",
+   "topic": "l3",
+   "sql": "SELECT COUNT(*) AS n FROM order_items WHERE quantity = 5",
+   "cols": [
+    "n"
+   ],
+   "rows": [
+    [
+     0
+    ]
+   ]
+  },
+  {
+   "id": "pending-not-shipped-month",
+   "topic": "l3",
+   "sql": "SELECT strftime('%Y-%m', created_at) AS month, COUNT(*) AS n FROM orders WHERE status = 'pending' GROUP BY month ORDER BY month",
+   "cols": [
+    "month",
+    "n"
+   ],
+   "rows": [
+    [
+     "2024-01",
+     2
+    ],
+    [
+     "2024-02",
+     1
+    ],
+    [
+     "2024-03",
+     2
+    ],
+    [
+     "2024-06",
+     2
+    ],
+    [
+     "2024-07",
+     1
+    ],
+    [
+     "2024-10",
+     2
+    ],
+    [
+     "2024-11",
+     1
+    ],
+    [
+     "2024-12",
+     1
+    ],
+    [
+     "2025-01",
+     1
+    ],
+    [
+     "2025-02",
+     1
+    ]
+   ]
+  },
+  {
+   "id": "big-tickets-status",
+   "topic": "l3",
+   "sql": "SELECT status, COUNT(*) AS n FROM orders WHERE total > 500 GROUP BY status",
+   "cols": [
+    "status",
+    "n"
+   ],
+   "rows": [
+    [
+     "delivered",
+     9
+    ],
+    [
+     "pending",
+     5
+    ],
+    [
+     "shipped",
+     11
+    ]
+   ]
+  },
+  {
+   "id": "like-son",
+   "topic": "l3",
+   "sql": "SELECT name FROM customers WHERE name LIKE '%son%'",
+   "cols": [
+    "name"
+   ],
+   "rows": [
+    [
+     "Emma Wilson"
+    ]
+   ]
+  },
+  {
+   "id": "like-a-start",
+   "topic": "l3",
+   "sql": "SELECT name FROM customers WHERE name LIKE 'A%'",
+   "cols": [
+    "name"
+   ],
+   "rows": [
+    [
+     "Alice Chen"
+    ]
+   ]
+  },
+  {
+   "id": "category-electronics-accessories",
+   "topic": "l3",
+   "sql": "SELECT COUNT(*) AS n FROM products WHERE category IN ('Electronics', 'Accessories')",
+   "cols": [
+    "n"
+   ],
+   "rows": [
+    [
+     6
+    ]
+   ]
+  },
+  {
+   "id": "ref-customers",
+   "topic": "meta",
+   "sql": "SELECT id, name, city, region, active, created_at FROM customers ORDER BY id",
+   "cols": [
+    "id",
+    "name",
+    "city",
+    "region",
+    "active",
+    "created_at"
+   ],
+   "rows": [
+    [
+     1,
+     "Alice Chen",
+     "Berlin",
+     "EU",
+     1,
+     "2023-11-02"
+    ],
+    [
+     2,
+     "Bruno Silva",
+     "S\u00e3o Paulo",
+     "LATAM",
+     1,
+     "2023-11-17"
+    ],
+    [
+     3,
+     "Chloe Dubois",
+     "Lyon",
+     "EU",
+     1,
+     "2023-12-05"
+    ],
+    [
+     4,
+     "Dmitri Volkov",
+     "Tallinn",
+     "EU",
+     0,
+     "2023-12-19"
+    ],
+    [
+     5,
+     "Emma Wilson",
+     "Austin",
+     "US",
+     1,
+     "2024-01-08"
+    ],
+    [
+     6,
+     "Farid Nasser",
+     "Dubai",
+     "APAC",
+     1,
+     "2024-01-22"
+    ],
+    [
+     7,
+     "Grace Kim",
+     "Seoul",
+     "APAC",
+     1,
+     "2024-02-03"
+    ],
+    [
+     8,
+     "Hiro Tanaka",
+     "Osaka",
+     "APAC",
+     1,
+     "2024-02-14"
+    ],
+    [
+     9,
+     "Isabella Rossi",
+     "Milan",
+     "EU",
+     1,
+     "2024-03-01"
+    ],
+    [
+     10,
+     "Jamal Wright",
+     "Chicago",
+     "US",
+     1,
+     "2024-03-18"
+    ],
+    [
+     11,
+     "Keiko Sato",
+     "Nagoya",
+     "APAC",
+     0,
+     "2024-04-02"
+    ],
+    [
+     12,
+     "Liam O'Brien",
+     "Cork",
+     "EU",
+     1,
+     "2024-04-21"
+    ],
+    [
+     13,
+     "Maya Patel",
+     "Mumbai",
+     "APAC",
+     1,
+     "2024-05-09"
+    ],
+    [
+     14,
+     "Noah Meyer",
+     "Hamburg",
+     "EU",
+     1,
+     "2024-05-27"
+    ],
+    [
+     15,
+     "Olivia Brown",
+     "London",
+     "EU",
+     1,
+     "2024-06-11"
+    ],
+    [
+     16,
+     "Pedro Alvarez",
+     "Madrid",
+     "EU",
+     1,
+     "2024-07-03"
+    ]
+   ]
+  },
+  {
+   "id": "ref-products",
+   "topic": "meta",
+   "sql": "SELECT id, name, category, price, stock, supplier_id FROM products ORDER BY id",
+   "cols": [
+    "id",
+    "name",
+    "category",
+    "price",
+    "stock",
+    "supplier_id"
+   ],
+   "rows": [
+    [
+     1,
+     "Mechanical Keyboard K1",
+     "Electronics",
+     89.99,
+     120,
+     1
+    ],
+    [
+     2,
+     "Wireless Mouse M3",
+     "Electronics",
+     34.5,
+     300,
+     2
+    ],
+    [
+     3,
+     "USB-C Hub 7-in-1",
+     "Electronics",
+     49,
+     85,
+     3
+    ],
+    [
+     4,
+     "Noise-Canceling Headset",
+     "Audio",
+     149.99,
+     60,
+     4
+    ],
+    [
+     5,
+     "Studio Desktop Mic",
+     "Audio",
+     119,
+     45,
+     5
+    ],
+    [
+     6,
+     "Bluetooth Speaker Mini",
+     "Audio",
+     59.99,
+     210,
+     6
+    ],
+    [
+     7,
+     "4K Webcam Pro",
+     "Video",
+     129,
+     70,
+     1
+    ],
+    [
+     8,
+     "Ring Light 14\"",
+     "Video",
+     39.99,
+     150,
+     2
+    ],
+    [
+     9,
+     "HDMI 2.1 Cable 2m",
+     "Accessories",
+     14.99,
+     500,
+     3
+    ],
+    [
+     10,
+     "Laptop Stand Aluminum",
+     "Accessories",
+     42.5,
+     180,
+     4
+    ],
+    [
+     11,
+     "Desk Mat Extended",
+     "Accessories",
+     24.99,
+     260,
+     5
+    ],
+    [
+     12,
+     "Fitness Band X2",
+     "Wearables",
+     79,
+     95,
+     6
+    ],
+    [
+     13,
+     "Smart Watch S",
+     "Wearables",
+     199.99,
+     40,
+     1
+    ],
+    [
+     14,
+     "Running Socks 3-pack",
+     "Apparel",
+     18.5,
+     400,
+     2
+    ],
+    [
+     15,
+     "Cycling Jersey Pro",
+     "Apparel",
+     65,
+     110,
+     3
+    ],
+    [
+     16,
+     "Yoga Mat Eco 6mm",
+     "Fitness",
+     32,
+     220,
+     4
+    ]
+   ]
+  },
+  {
+   "id": "ref-suppliers",
+   "topic": "meta",
+   "sql": "SELECT id, name, region, rating FROM suppliers ORDER BY id",
+   "cols": [
+    "id",
+    "name",
+    "region",
+    "rating"
+   ],
+   "rows": [
+    [
+     1,
+     "Nordic Gadgets AB",
+     "EU",
+     4.6
+    ],
+    [
+     2,
+     "Shenzhen Electro",
+     "APAC",
+     4.1
+    ],
+    [
+     3,
+     "Pacific Textiles",
+     "APAC",
+     3.9
+    ],
+    [
+     4,
+     "Midwest Hardware Co",
+     "US",
+     4.4
+    ],
+    [
+     5,
+     "Alpine Audio GmbH",
+     "EU",
+     4.8
+    ],
+    [
+     6,
+     "Andes Naturals SA",
+     "LATAM",
+     4
+    ]
+   ]
+  },
+  {
+   "id": "ref-date-range",
+   "topic": "meta",
+   "sql": "SELECT MIN(created_at) AS first_order, MAX(created_at) AS last_order FROM orders",
+   "cols": [
+    "first_order",
+    "last_order"
+   ],
+   "rows": [
+    [
+     "2024-01-01",
+     "2025-02-27"
+    ]
+   ]
+  }
+ ]
+}

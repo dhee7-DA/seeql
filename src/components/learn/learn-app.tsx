@@ -11,6 +11,7 @@ import {
   ChevronDown,
   ChevronsDownUp,
   ChevronsUpDown,
+  FileStack,
   FlaskConical,
   Flame,
   GraduationCap,
@@ -25,10 +26,16 @@ import { cn } from "@/lib/utils";
 import { LessonView } from "./lesson-view";
 import { DataExplorer } from "./data-explorer";
 import { MixedQuiz } from "./mixed-quiz";
+import { CaseFiles } from "./case-files";
 import { ActivityStrip, MasteryGrid } from "./progress-cards";
 import { CelebrationHost, celebrate } from "./celebrate";
 
-type View = { kind: "overview" } | { kind: "lesson"; id: string } | { kind: "explorer" } | { kind: "mixed" };
+type View =
+  | { kind: "overview" }
+  | { kind: "lesson"; id: string }
+  | { kind: "explorer" }
+  | { kind: "mixed" }
+  | { kind: "cases" };
 
 // ---- Collapsible module state (persisted) -------------------------------
 
@@ -463,6 +470,7 @@ export function LearnApp() {
               {[
                 { kind: "explorer" as const, icon: Table2, label: "Data explorer", note: "browse the live tables" },
                 { kind: "mixed" as const, icon: FlaskConical, label: "Mixed quiz", note: "10 from the whole course" },
+                { kind: "cases" as const, icon: FileStack, label: "Case files", note: "rebuild real stakeholder queries" },
               ].map((t) => (
                 <button
                   key={t.kind}
@@ -513,6 +521,8 @@ export function LearnApp() {
           <DataExplorer />
         ) : view.kind === "mixed" ? (
           <MixedQuiz />
+        ) : view.kind === "cases" ? (
+          <CaseFiles />
         ) : (
           <div className="bg-ambient max-w-3xl">
             <p className="font-mono text-xs text-zinc-500">{MODULES.length} MODULES · BEGINNER → EXPERT</p>

@@ -1,0 +1,1029 @@
+{
+ "summary": {
+  "l8": 21
+ },
+ "facts": [
+  {
+   "id": "orders-by-status-gb",
+   "topic": "l8",
+   "sql": "SELECT status, COUNT(*) AS n FROM orders GROUP BY status ORDER BY n DESC",
+   "cols": [
+    "status",
+    "n"
+   ],
+   "rows": [
+    [
+     "delivered",
+     52
+    ],
+    [
+     "shipped",
+     30
+    ],
+    [
+     "pending",
+     14
+    ],
+    [
+     "cancelled",
+     7
+    ]
+   ]
+  },
+  {
+   "id": "customers-by-region-gb",
+   "topic": "l8",
+   "sql": "SELECT region, COUNT(*) AS n FROM customers GROUP BY region ORDER BY n DESC",
+   "cols": [
+    "region",
+    "n"
+   ],
+   "rows": [
+    [
+     "EU",
+     8
+    ],
+    [
+     "APAC",
+     5
+    ],
+    [
+     "US",
+     2
+    ],
+    [
+     "LATAM",
+     1
+    ]
+   ]
+  },
+  {
+   "id": "customers-by-active-gb",
+   "topic": "l8",
+   "sql": "SELECT active, COUNT(*) AS n FROM customers GROUP BY active",
+   "cols": [
+    "active",
+    "n"
+   ],
+   "rows": [
+    [
+     0,
+     2
+    ],
+    [
+     1,
+     14
+    ]
+   ]
+  },
+  {
+   "id": "products-by-category-gb",
+   "topic": "l8",
+   "sql": "SELECT category, COUNT(*) AS n, ROUND(AVG(price),2) AS avg_price, ROUND(MIN(price),2) AS min_price, ROUND(MAX(price),2) AS max_price FROM products GROUP BY category ORDER BY n DESC",
+   "cols": [
+    "category",
+    "n",
+    "avg_price",
+    "min_price",
+    "max_price"
+   ],
+   "rows": [
+    [
+     "Electronics",
+     3,
+     57.83,
+     34.5,
+     89.99
+    ],
+    [
+     "Audio",
+     3,
+     109.66,
+     59.99,
+     149.99
+    ],
+    [
+     "Accessories",
+     3,
+     27.49,
+     14.99,
+     42.5
+    ],
+    [
+     "Wearables",
+     2,
+     139.5,
+     79,
+     199.99
+    ],
+    [
+     "Video",
+     2,
+     84.5,
+     39.99,
+     129
+    ],
+    [
+     "Apparel",
+     2,
+     41.75,
+     18.5,
+     65
+    ],
+    [
+     "Fitness",
+     1,
+     32,
+     32,
+     32
+    ]
+   ]
+  },
+  {
+   "id": "products-by-supplier-gb",
+   "topic": "l8",
+   "sql": "SELECT supplier_id, COUNT(*) AS n FROM products GROUP BY supplier_id ORDER BY n DESC, supplier_id",
+   "cols": [
+    "supplier_id",
+    "n"
+   ],
+   "rows": [
+    [
+     1,
+     3
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     3,
+     3
+    ],
+    [
+     4,
+     3
+    ],
+    [
+     5,
+     2
+    ],
+    [
+     6,
+     2
+    ]
+   ]
+  },
+  {
+   "id": "orders-by-month-gb",
+   "topic": "l8",
+   "sql": "SELECT strftime('%Y-%m', created_at) AS month, COUNT(*) AS n FROM orders GROUP BY month ORDER BY month",
+   "cols": [
+    "month",
+    "n"
+   ],
+   "rows": [
+    [
+     "2024-01",
+     8
+    ],
+    [
+     "2024-02",
+     9
+    ],
+    [
+     "2024-03",
+     8
+    ],
+    [
+     "2024-04",
+     7
+    ],
+    [
+     "2024-05",
+     8
+    ],
+    [
+     "2024-06",
+     6
+    ],
+    [
+     "2024-07",
+     8
+    ],
+    [
+     "2024-08",
+     7
+    ],
+    [
+     "2024-09",
+     9
+    ],
+    [
+     "2024-10",
+     7
+    ],
+    [
+     "2024-11",
+     6
+    ],
+    [
+     "2024-12",
+     7
+    ],
+    [
+     "2025-01",
+     6
+    ],
+    [
+     "2025-02",
+     7
+    ]
+   ]
+  },
+  {
+   "id": "revenue-by-month-gb",
+   "topic": "l8",
+   "sql": "SELECT strftime('%Y-%m', created_at) AS month, ROUND(SUM(total),2) AS revenue FROM orders GROUP BY month ORDER BY month",
+   "cols": [
+    "month",
+    "revenue"
+   ],
+   "rows": [
+    [
+     "2024-01",
+     3731.97
+    ],
+    [
+     "2024-02",
+     3609.64
+    ],
+    [
+     "2024-03",
+     2617.08
+    ],
+    [
+     "2024-04",
+     2468.91
+    ],
+    [
+     "2024-05",
+     2910.31
+    ],
+    [
+     "2024-06",
+     2047.43
+    ],
+    [
+     "2024-07",
+     1193.86
+    ],
+    [
+     "2024-08",
+     2352.07
+    ],
+    [
+     "2024-09",
+     3116.04
+    ],
+    [
+     "2024-10",
+     2975.67
+    ],
+    [
+     "2024-11",
+     1648.8
+    ],
+    [
+     "2024-12",
+     2101.47
+    ],
+    [
+     "2025-01",
+     1669.5
+    ],
+    [
+     "2025-02",
+     2390.53
+    ]
+   ]
+  },
+  {
+   "id": "orders-by-customer-gb",
+   "topic": "l8",
+   "sql": "SELECT customer_id, COUNT(*) AS n FROM orders GROUP BY customer_id ORDER BY n DESC, customer_id",
+   "cols": [
+    "customer_id",
+    "n"
+   ],
+   "rows": [
+    [
+     1,
+     24
+    ],
+    [
+     5,
+     17
+    ],
+    [
+     7,
+     14
+    ],
+    [
+     13,
+     13
+    ],
+    [
+     3,
+     5
+    ],
+    [
+     9,
+     4
+    ],
+    [
+     11,
+     4
+    ],
+    [
+     14,
+     4
+    ],
+    [
+     16,
+     4
+    ],
+    [
+     6,
+     3
+    ],
+    [
+     8,
+     3
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     4,
+     2
+    ],
+    [
+     10,
+     2
+    ],
+    [
+     12,
+     1
+    ],
+    [
+     15,
+     1
+    ]
+   ]
+  },
+  {
+   "id": "items-by-product-gb",
+   "topic": "l8",
+   "sql": "SELECT product_id, COUNT(*) AS lines, SUM(quantity) AS units FROM order_items GROUP BY product_id ORDER BY lines DESC, product_id LIMIT 8",
+   "cols": [
+    "product_id",
+    "lines",
+    "units"
+   ],
+   "rows": [
+    [
+     4,
+     24,
+     46
+    ],
+    [
+     11,
+     24,
+     47
+    ],
+    [
+     9,
+     19,
+     38
+    ],
+    [
+     10,
+     19,
+     36
+    ],
+    [
+     2,
+     18,
+     36
+    ],
+    [
+     7,
+     17,
+     31
+    ],
+    [
+     5,
+     16,
+     30
+    ],
+    [
+     1,
+     15,
+     28
+    ]
+   ]
+  },
+  {
+   "id": "having-avg-price-200",
+   "topic": "l8",
+   "sql": "SELECT category, ROUND(AVG(price),2) AS avg_price FROM products GROUP BY category HAVING AVG(price) > 200",
+   "cols": [],
+   "rows": []
+  },
+  {
+   "id": "having-avg-price-150",
+   "topic": "l8",
+   "sql": "SELECT category, ROUND(AVG(price),2) AS avg_price FROM products GROUP BY category HAVING AVG(price) > 150",
+   "cols": [],
+   "rows": []
+  },
+  {
+   "id": "having-avg-price-100",
+   "topic": "l8",
+   "sql": "SELECT category, ROUND(AVG(price),2) AS avg_price FROM products GROUP BY category HAVING AVG(price) > 100",
+   "cols": [
+    "category",
+    "avg_price"
+   ],
+   "rows": [
+    [
+     "Audio",
+     109.66
+    ],
+    [
+     "Wearables",
+     139.5
+    ]
+   ]
+  },
+  {
+   "id": "having-cities-multi",
+   "topic": "l8",
+   "sql": "SELECT city, COUNT(*) AS n FROM customers GROUP BY city HAVING COUNT(*) > 1 ORDER BY n DESC, city",
+   "cols": [],
+   "rows": []
+  },
+  {
+   "id": "having-months-10plus",
+   "topic": "l8",
+   "sql": "SELECT strftime('%Y-%m', created_at) AS month, COUNT(*) AS n FROM orders GROUP BY month HAVING COUNT(*) >= 10 ORDER BY month",
+   "cols": [],
+   "rows": []
+  },
+  {
+   "id": "having-months-8plus",
+   "topic": "l8",
+   "sql": "SELECT strftime('%Y-%m', created_at) AS month, COUNT(*) AS n FROM orders GROUP BY month HAVING COUNT(*) >= 8 ORDER BY month",
+   "cols": [
+    "month",
+    "n"
+   ],
+   "rows": [
+    [
+     "2024-01",
+     8
+    ],
+    [
+     "2024-02",
+     9
+    ],
+    [
+     "2024-03",
+     8
+    ],
+    [
+     "2024-05",
+     8
+    ],
+    [
+     "2024-07",
+     8
+    ],
+    [
+     "2024-09",
+     9
+    ]
+   ]
+  },
+  {
+   "id": "having-suppliers-2plus",
+   "topic": "l8",
+   "sql": "SELECT supplier_id, COUNT(*) AS n FROM products GROUP BY supplier_id HAVING COUNT(*) >= 2 ORDER BY n DESC, supplier_id",
+   "cols": [
+    "supplier_id",
+    "n"
+   ],
+   "rows": [
+    [
+     1,
+     3
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     3,
+     3
+    ],
+    [
+     4,
+     3
+    ],
+    [
+     5,
+     2
+    ],
+    [
+     6,
+     2
+    ]
+   ]
+  },
+  {
+   "id": "having-suppliers-3plus",
+   "topic": "l8",
+   "sql": "SELECT supplier_id, COUNT(*) AS n FROM products GROUP BY supplier_id HAVING COUNT(*) >= 3 ORDER BY n DESC, supplier_id",
+   "cols": [
+    "supplier_id",
+    "n"
+   ],
+   "rows": [
+    [
+     1,
+     3
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     3,
+     3
+    ],
+    [
+     4,
+     3
+    ]
+   ]
+  },
+  {
+   "id": "having-status-20plus",
+   "topic": "l8",
+   "sql": "SELECT status, COUNT(*) AS n FROM orders GROUP BY status HAVING COUNT(*) > 20",
+   "cols": [
+    "status",
+    "n"
+   ],
+   "rows": [
+    [
+     "delivered",
+     52
+    ],
+    [
+     "shipped",
+     30
+    ]
+   ]
+  },
+  {
+   "id": "group-region-orders-single",
+   "topic": "l8",
+   "sql": "SELECT COUNT(*) AS n, ROUND(SUM(total),2) AS revenue FROM orders",
+   "cols": [
+    "n",
+    "revenue"
+   ],
+   "rows": [
+    [
+     103,
+     34833.28
+    ]
+   ]
+  },
+  {
+   "id": "items-lines-by-order-gb",
+   "topic": "l8",
+   "sql": "SELECT order_id, COUNT(*) AS lines FROM order_items GROUP BY order_id ORDER BY lines DESC, order_id LIMIT 6",
+   "cols": [
+    "order_id",
+    "lines"
+   ],
+   "rows": [
+    [
+     1,
+     4
+    ],
+    [
+     6,
+     4
+    ],
+    [
+     11,
+     4
+    ],
+    [
+     15,
+     4
+    ],
+    [
+     16,
+     4
+    ],
+    [
+     17,
+     4
+    ]
+   ]
+  },
+  {
+   "id": "revenue-by-status-desc",
+   "topic": "l8",
+   "sql": "SELECT status, ROUND(SUM(total),2) AS revenue FROM orders GROUP BY status ORDER BY revenue DESC",
+   "cols": [
+    "status",
+    "revenue"
+   ],
+   "rows": [
+    [
+     "delivered",
+     15571.07
+    ],
+    [
+     "shipped",
+     11996.72
+    ],
+    [
+     "pending",
+     6113
+    ],
+    [
+     "cancelled",
+     1152.49
+    ]
+   ]
+  },
+  {
+   "id": "ref-customers",
+   "topic": "meta",
+   "sql": "SELECT id, name, city, region, active, created_at FROM customers ORDER BY id",
+   "cols": [
+    "id",
+    "name",
+    "city",
+    "region",
+    "active",
+    "created_at"
+   ],
+   "rows": [
+    [
+     1,
+     "Alice Chen",
+     "Berlin",
+     "EU",
+     1,
+     "2023-11-02"
+    ],
+    [
+     2,
+     "Bruno Silva",
+     "S\u00e3o Paulo",
+     "LATAM",
+     1,
+     "2023-11-17"
+    ],
+    [
+     3,
+     "Chloe Dubois",
+     "Lyon",
+     "EU",
+     1,
+     "2023-12-05"
+    ],
+    [
+     4,
+     "Dmitri Volkov",
+     "Tallinn",
+     "EU",
+     0,
+     "2023-12-19"
+    ],
+    [
+     5,
+     "Emma Wilson",
+     "Austin",
+     "US",
+     1,
+     "2024-01-08"
+    ],
+    [
+     6,
+     "Farid Nasser",
+     "Dubai",
+     "APAC",
+     1,
+     "2024-01-22"
+    ],
+    [
+     7,
+     "Grace Kim",
+     "Seoul",
+     "APAC",
+     1,
+     "2024-02-03"
+    ],
+    [
+     8,
+     "Hiro Tanaka",
+     "Osaka",
+     "APAC",
+     1,
+     "2024-02-14"
+    ],
+    [
+     9,
+     "Isabella Rossi",
+     "Milan",
+     "EU",
+     1,
+     "2024-03-01"
+    ],
+    [
+     10,
+     "Jamal Wright",
+     "Chicago",
+     "US",
+     1,
+     "2024-03-18"
+    ],
+    [
+     11,
+     "Keiko Sato",
+     "Nagoya",
+     "APAC",
+     0,
+     "2024-04-02"
+    ],
+    [
+     12,
+     "Liam O'Brien",
+     "Cork",
+     "EU",
+     1,
+     "2024-04-21"
+    ],
+    [
+     13,
+     "Maya Patel",
+     "Mumbai",
+     "APAC",
+     1,
+     "2024-05-09"
+    ],
+    [
+     14,
+     "Noah Meyer",
+     "Hamburg",
+     "EU",
+     1,
+     "2024-05-27"
+    ],
+    [
+     15,
+     "Olivia Brown",
+     "London",
+     "EU",
+     1,
+     "2024-06-11"
+    ],
+    [
+     16,
+     "Pedro Alvarez",
+     "Madrid",
+     "EU",
+     1,
+     "2024-07-03"
+    ]
+   ]
+  },
+  {
+   "id": "ref-products",
+   "topic": "meta",
+   "sql": "SELECT id, name, category, price, stock, supplier_id FROM products ORDER BY id",
+   "cols": [
+    "id",
+    "name",
+    "category",
+    "price",
+    "stock",
+    "supplier_id"
+   ],
+   "rows": [
+    [
+     1,
+     "Mechanical Keyboard K1",
+     "Electronics",
+     89.99,
+     120,
+     1
+    ],
+    [
+     2,
+     "Wireless Mouse M3",
+     "Electronics",
+     34.5,
+     300,
+     2
+    ],
+    [
+     3,
+     "USB-C Hub 7-in-1",
+     "Electronics",
+     49,
+     85,
+     3
+    ],
+    [
+     4,
+     "Noise-Canceling Headset",
+     "Audio",
+     149.99,
+     60,
+     4
+    ],
+    [
+     5,
+     "Studio Desktop Mic",
+     "Audio",
+     119,
+     45,
+     5
+    ],
+    [
+     6,
+     "Bluetooth Speaker Mini",
+     "Audio",
+     59.99,
+     210,
+     6
+    ],
+    [
+     7,
+     "4K Webcam Pro",
+     "Video",
+     129,
+     70,
+     1
+    ],
+    [
+     8,
+     "Ring Light 14\"",
+     "Video",
+     39.99,
+     150,
+     2
+    ],
+    [
+     9,
+     "HDMI 2.1 Cable 2m",
+     "Accessories",
+     14.99,
+     500,
+     3
+    ],
+    [
+     10,
+     "Laptop Stand Aluminum",
+     "Accessories",
+     42.5,
+     180,
+     4
+    ],
+    [
+     11,
+     "Desk Mat Extended",
+     "Accessories",
+     24.99,
+     260,
+     5
+    ],
+    [
+     12,
+     "Fitness Band X2",
+     "Wearables",
+     79,
+     95,
+     6
+    ],
+    [
+     13,
+     "Smart Watch S",
+     "Wearables",
+     199.99,
+     40,
+     1
+    ],
+    [
+     14,
+     "Running Socks 3-pack",
+     "Apparel",
+     18.5,
+     400,
+     2
+    ],
+    [
+     15,
+     "Cycling Jersey Pro",
+     "Apparel",
+     65,
+     110,
+     3
+    ],
+    [
+     16,
+     "Yoga Mat Eco 6mm",
+     "Fitness",
+     32,
+     220,
+     4
+    ]
+   ]
+  },
+  {
+   "id": "ref-suppliers",
+   "topic": "meta",
+   "sql": "SELECT id, name, region, rating FROM suppliers ORDER BY id",
+   "cols": [
+    "id",
+    "name",
+    "region",
+    "rating"
+   ],
+   "rows": [
+    [
+     1,
+     "Nordic Gadgets AB",
+     "EU",
+     4.6
+    ],
+    [
+     2,
+     "Shenzhen Electro",
+     "APAC",
+     4.1
+    ],
+    [
+     3,
+     "Pacific Textiles",
+     "APAC",
+     3.9
+    ],
+    [
+     4,
+     "Midwest Hardware Co",
+     "US",
+     4.4
+    ],
+    [
+     5,
+     "Alpine Audio GmbH",
+     "EU",
+     4.8
+    ],
+    [
+     6,
+     "Andes Naturals SA",
+     "LATAM",
+     4
+    ]
+   ]
+  },
+  {
+   "id": "ref-date-range",
+   "topic": "meta",
+   "sql": "SELECT MIN(created_at) AS first_order, MAX(created_at) AS last_order FROM orders",
+   "cols": [
+    "first_order",
+    "last_order"
+   ],
+   "rows": [
+    [
+     "2024-01-01",
+     "2025-02-27"
+    ]
+   ]
+  }
+ ]
+}
