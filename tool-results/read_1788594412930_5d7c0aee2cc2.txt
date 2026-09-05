@@ -1,0 +1,2002 @@
+     1→{
+     2→  "summary": {
+     3→    "l1": 14,
+     4→    "l2": 10,
+     5→    "l3": 33,
+     6→    "l4": 15,
+     7→    "l5": 15,
+     8→    "l6": 17,
+     9→    "l7": 17,
+    10→    "l8": 21,
+    11→    "cap": 7,
+    12→    "meta": 4
+    13→  },
+    14→  "facts": [
+    15→    {
+    16→      "id": "counts-customers",
+    17→      "topic": "l1",
+    18→      "sql": "SELECT COUNT(*) AS customers FROM customers",
+    19→      "cols": [
+    20→        "customers"
+    21→      ],
+    22→      "rows": [
+    23→        [
+    24→          16
+    25→        ]
+    26→      ]
+    27→    },
+    28→    {
+    29→      "id": "counts-products",
+    30→      "topic": "l1",
+    31→      "sql": "SELECT COUNT(*) AS products FROM products",
+    32→      "cols": [
+    33→        "products"
+    34→      ],
+    35→      "rows": [
+    36→        [
+    37→          16
+    38→        ]
+    39→      ]
+    40→    },
+    41→    {
+    42→      "id": "counts-suppliers",
+    43→      "topic": "l1",
+    44→      "sql": "SELECT COUNT(*) AS suppliers FROM suppliers",
+    45→      "cols": [
+    46→        "suppliers"
+    47→      ],
+    48→      "rows": [
+    49→        [
+    50→          6
+    51→        ]
+    52→      ]
+    53→    },
+    54→    {
+    55→      "id": "counts-orders",
+    56→      "topic": "l1",
+    57→      "sql": "SELECT COUNT(*) AS orders FROM orders",
+    58→      "cols": [
+    59→        "orders"
+    60→      ],
+    61→      "rows": [
+    62→        [
+    63→          103
+    64→        ]
+    65→      ]
+    66→    },
+    67→    {
+    68→      "id": "counts-items",
+    69→      "topic": "l1",
+    70→      "sql": "SELECT COUNT(*) AS line_items FROM order_items",
+    71→      "cols": [
+    72→        "line_items"
+    73→      ],
+    74→      "rows": [
+    75→        [
+    76→          251
+    77→        ]
+    78→      ]
+    79→    },
+    80→    {
+    81→      "id": "max-ids",
+    82→      "topic": "l1",
+    83→      "sql": "SELECT (SELECT MAX(id) FROM customers) c, (SELECT MAX(id) FROM products) p, (SELECT MAX(id) FROM orders) o, (SELECT MAX(id) FROM suppliers) s",
+    84→      "cols": [
+    85→        "c",
+    86→        "p",
+    87→        "o",
+    88→        "s"
+    89→      ],
+    90→      "rows": [
+    91→        [
+    92→          16,
+    93→          16,
+    94→          103,
+    95→          6
+    96→        ]
+    97→      ]
+    98→    },
+    99→    {
+   100→      "id": "active-counts",
+   101→      "topic": "l1",
+   102→      "sql": "SELECT active, COUNT(*) AS n FROM customers GROUP BY active",
+   103→      "cols": [
+   104→        "active",
+   105→        "n"
+   106→      ],
+   107→      "rows": [
+   108→        [
+   109→          0,
+   110→          2
+   111→        ],
+   112→        [
+   113→          1,
+   114→          14
+   115→        ]
+   116→      ]
+   117→    },
+   118→    {
+   119→      "id": "inactive-names",
+   120→      "topic": "l1",
+   121→      "sql": "SELECT name, region, city FROM customers WHERE active = 0",
+   122→      "cols": [
+   123→        "name",
+   124→        "region",
+   125→        "city"
+   126→      ],
+   127→      "rows": [
+   128→        [
+   129→          "Dmitri Volkov",
+   130→          "EU",
+   131→          "Tallinn"
+   132→        ],
+   133→        [
+   134→          "Keiko Sato",
+   135→          "APAC",
+   136→          "Nagoya"
+   137→        ]
+   138→      ]
+   139→    },
+   140→    {
+   141→      "id": "suppliers-all",
+   142→      "topic": "l1",
+   143→      "sql": "SELECT name, region, rating FROM suppliers ORDER BY id",
+   144→      "cols": [
+   145→        "name",
+   146→        "region",
+   147→        "rating"
+   148→      ],
+   149→      "rows": [
+   150→        [
+   151→          "Nordic Gadgets AB",
+   152→          "EU",
+   153→          4.6
+   154→        ],
+   155→        [
+   156→          "Shenzhen Electro",
+   157→          "APAC",
+   158→          4.1
+   159→        ],
+   160→        [
+   161→          "Pacific Textiles",
+   162→          "APAC",
+   163→          3.9
+   164→        ],
+   165→        [
+   166→          "Midwest Hardware Co",
+   167→          "US",
+   168→          4.4
+   169→        ],
+   170→        [
+   171→          "Alpine Audio GmbH",
+   172→          "EU",
+   173→          4.8
+   174→        ],
+   175→        [
+   176→          "Andes Naturals SA",
+   177→          "LATAM",
+   178→          4
+   179→        ]
+   180→      ]
+   181→    },
+   182→    {
+   183→      "id": "products-per-supplier",
+   184→      "topic": "l1",
+   185→      "sql": "SELECT supplier_id, COUNT(*) AS n FROM products GROUP BY supplier_id ORDER BY supplier_id",
+   186→      "cols": [
+   187→        "supplier_id",
+   188→        "n"
+   189→      ],
+   190→      "rows": [
+   191→        [
+   192→          1,
+   193→          3
+   194→        ],
+   195→        [
+   196→          2,
+   197→          3
+   198→        ],
+   199→        [
+   200→          3,
+   201→          3
+   202→        ],
+   203→        [
+   204→          4,
+   205→          3
+   206→        ],
+   207→        [
+   208→          5,
+   209→          2
+   210→        ],
+   211→        [
+   212→          6,
+   213→          2
+   214→        ]
+   215→      ]
+   216→    },
+   217→    {
+   218→      "id": "first3-customers",
+   219→      "topic": "l1",
+   220→      "sql": "SELECT id, name, city, region FROM customers ORDER BY id LIMIT 3",
+   221→      "cols": [
+   222→        "id",
+   223→        "name",
+   224→        "city",
+   225→        "region"
+   226→      ],
+   227→      "rows": [
+   228→        [
+   229→          1,
+   230→          "Alice Chen",
+   231→          "Berlin",
+   232→          "EU"
+   233→        ],
+   234→        [
+   235→          2,
+   236→          "Bruno Silva",
+   237→          "São Paulo",
+   238→          "LATAM"
+   239→        ],
+   240→        [
+   241→          3,
+   242→          "Chloe Dubois",
+   243→          "Lyon",
+   244→          "EU"
+   245→        ]
+   246→      ]
+   247→    },
+   248→    {
+   249→      "id": "first3-products",
+   250→      "topic": "l1",
+   251→      "sql": "SELECT id, name, category, price FROM products ORDER BY id LIMIT 3",
+   252→      "cols": [
+   253→        "id",
+   254→        "name",
+   255→        "category",
+   256→        "price"
+   257→      ],
+   258→      "rows": [
+   259→        [
+   260→          1,
+   261→          "Mechanical Keyboard K1",
+   262→          "Electronics",
+   263→          89.99
+   264→        ],
+   265→        [
+   266→          2,
+   267→          "Wireless Mouse M3",
+   268→          "Electronics",
+   269→          34.5
+   270→        ],
+   271→        [
+   272→          3,
+   273→          "USB-C Hub 7-in-1",
+   274→          "Electronics",
+   275→          49
+   276→        ]
+   277→      ]
+   278→    },
+   279→    {
+   280→      "id": "first3-orders",
+   281→      "topic": "l1",
+   282→      "sql": "SELECT id, customer_id, status, total FROM orders ORDER BY id LIMIT 3",
+   283→      "cols": [
+   284→        "id",
+   285→        "customer_id",
+   286→        "status",
+   287→        "total"
+   288→      ],
+   289→      "rows": [
+   290→        [
+   291→          1,
+   292→          16,
+   293→          "pending",
+   294→          576.54
+   295→        ],
+   296→        [
+   297→          2,
+   298→          13,
+   299→          "delivered",
+   300→          416.81
+   301→        ],
+   302→        [
+   303→          3,
+   304→          1,
+   305→          "shipped",
+   306→          767.64
+   307→        ]
+   308→      ]
+   309→    },
+   310→    {
+   311→      "id": "fk-orphan-check",
+   312→      "topic": "l1",
+   313→      "sql": "SELECT COUNT(*) AS orphan_orders FROM orders WHERE customer_id NOT IN (SELECT id FROM customers)",
+   314→      "cols": [
+   315→        "orphan_orders"
+   316→      ],
+   317→      "rows": [
+   318→        [
+   319→          0
+   320→        ]
+   321→      ]
+   322→    },
+   323→    {
+   324→      "id": "all-customers",
+   325→      "topic": "l2",
+   326→      "sql": "SELECT id, name, city, region, active FROM customers ORDER BY id",
+   327→      "cols": [
+   328→        "id",
+   329→        "name",
+   330→        "city",
+   331→        "region",
+   332→        "active"
+   333→      ],
+   334→      "rows": [
+   335→        [
+   336→          1,
+   337→          "Alice Chen",
+   338→          "Berlin",
+   339→          "EU",
+   340→          1
+   341→        ],
+   342→        [
+   343→          2,
+   344→          "Bruno Silva",
+   345→          "São Paulo",
+   346→          "LATAM",
+   347→          1
+   348→        ],
+   349→        [
+   350→          3,
+   351→          "Chloe Dubois",
+   352→          "Lyon",
+   353→          "EU",
+   354→          1
+   355→        ],
+   356→        [
+   357→          4,
+   358→          "Dmitri Volkov",
+   359→          "Tallinn",
+   360→          "EU",
+   361→          0
+   362→        ],
+   363→        [
+   364→          5,
+   365→          "Emma Wilson",
+   366→          "Austin",
+   367→          "US",
+   368→          1
+   369→        ],
+   370→        [
+   371→          6,
+   372→          "Farid Nasser",
+   373→          "Dubai",
+   374→          "APAC",
+   375→          1
+   376→        ],
+   377→        [
+   378→          7,
+   379→          "Grace Kim",
+   380→          "Seoul",
+   381→          "APAC",
+   382→          1
+   383→        ],
+   384→        [
+   385→          8,
+   386→          "Hiro Tanaka",
+   387→          "Osaka",
+   388→          "APAC",
+   389→          1
+   390→        ],
+   391→        [
+   392→          9,
+   393→          "Isabella Rossi",
+   394→          "Milan",
+   395→          "EU",
+   396→          1
+   397→        ],
+   398→        [
+   399→          10,
+   400→          "Jamal Wright",
+   401→          "Chicago",
+   402→          "US",
+   403→          1
+   404→        ],
+   405→        [
+   406→          11,
+   407→          "Keiko Sato",
+   408→          "Nagoya",
+   409→          "APAC",
+   410→          0
+   411→        ],
+   412→        [
+   413→          12,
+   414→          "Liam O'Brien",
+   415→          "Cork",
+   416→          "EU",
+   417→          1
+   418→        ],
+   419→        [
+   420→          13,
+   421→          "Maya Patel",
+   422→          "Mumbai",
+   423→          "APAC",
+   424→          1
+   425→        ],
+   426→        [
+   427→          14,
+   428→          "Noah Meyer",
+   429→          "Hamburg",
+   430→          "EU",
+   431→          1
+   432→        ],
+   433→        [
+   434→          15,
+   435→          "Olivia Brown",
+   436→          "London",
+   437→          "EU",
+   438→          1
+   439→        ],
+   440→        [
+   441→          16,
+   442→          "Pedro Alvarez",
+   443→          "Madrid",
+   444→          "EU",
+   445→          1
+   446→        ]
+   447→      ]
+   448→    },
+   449→    {
+   450→      "id": "all-products",
+   451→      "topic": "l2",
+   452→      "sql": "SELECT id, name, category, price, stock FROM products ORDER BY id",
+   453→      "cols": [
+   454→        "id",
+   455→        "name",
+   456→        "category",
+   457→        "price",
+   458→        "stock"
+   459→      ],
+   460→      "rows": [
+   461→        [
+   462→          1,
+   463→          "Mechanical Keyboard K1",
+   464→          "Electronics",
+   465→          89.99,
+   466→          120
+   467→        ],
+   468→        [
+   469→          2,
+   470→          "Wireless Mouse M3",
+   471→          "Electronics",
+   472→          34.5,
+   473→          300
+   474→        ],
+   475→        [
+   476→          3,
+   477→          "USB-C Hub 7-in-1",
+   478→          "Electronics",
+   479→          49,
+   480→          85
+   481→        ],
+   482→        [
+   483→          4,
+   484→          "Noise-Canceling Headset",
+   485→          "Audio",
+   486→          149.99,
+   487→          60
+   488→        ],
+   489→        [
+   490→          5,
+   491→          "Studio Desktop Mic",
+   492→          "Audio",
+   493→          119,
+   494→          45
+   495→        ],
+   496→        [
+   497→          6,
+   498→          "Bluetooth Speaker Mini",
+   499→          "Audio",
+   500→          59.99,
+   501→          210
+   502→        ],
+   503→        [
+   504→          7,
+   505→          "4K Webcam Pro",
+   506→          "Video",
+   507→          129,
+   508→          70
+   509→        ],
+   510→        [
+   511→          8,
+   512→          "Ring Light 14\"",
+   513→          "Video",
+   514→          39.99,
+   515→          150
+   516→        ],
+   517→        [
+   518→          9,
+   519→          "HDMI 2.1 Cable 2m",
+   520→          "Accessories",
+   521→          14.99,
+   522→          500
+   523→        ],
+   524→        [
+   525→          10,
+   526→          "Laptop Stand Aluminum",
+   527→          "Accessories",
+   528→          42.5,
+   529→          180
+   530→        ],
+   531→        [
+   532→          11,
+   533→          "Desk Mat Extended",
+   534→          "Accessories",
+   535→          24.99,
+   536→          260
+   537→        ],
+   538→        [
+   539→          12,
+   540→          "Fitness Band X2",
+   541→          "Wearables",
+   542→          79,
+   543→          95
+   544→        ],
+   545→        [
+   546→          13,
+   547→          "Smart Watch S",
+   548→          "Wearables",
+   549→          199.99,
+   550→          40
+   551→        ],
+   552→        [
+   553→          14,
+   554→          "Running Socks 3-pack",
+   555→          "Apparel",
+   556→          18.5,
+   557→          400
+   558→        ],
+   559→        [
+   560→          15,
+   561→          "Cycling Jersey Pro",
+   562→          "Apparel",
+   563→          65,
+   564→          110
+   565→        ],
+   566→        [
+   567→          16,
+   568→          "Yoga Mat Eco 6mm",
+   569→          "Fitness",
+   570→          32,
+   571→          220
+   572→        ]
+   573→      ]
+   574→    },
+   575→    {
+   576→      "id": "all-suppliers",
+   577→      "topic": "l2",
+   578→      "sql": "SELECT id, name, region, rating FROM suppliers ORDER BY id",
+   579→      "cols": [
+   580→        "id",
+   581→        "name",
+   582→        "region",
+   583→        "rating"
+   584→      ],
+   585→      "rows": [
+   586→        [
+   587→          1,
+   588→          "Nordic Gadgets AB",
+   589→          "EU",
+   590→          4.6
+   591→        ],
+   592→        [
+   593→          2,
+   594→          "Shenzhen Electro",
+   595→          "APAC",
+   596→          4.1
+   597→        ],
+   598→        [
+   599→          3,
+   600→          "Pacific Textiles",
+   601→          "APAC",
+   602→          3.9
+   603→        ],
+   604→        [
+   605→          4,
+   606→          "Midwest Hardware Co",
+   607→          "US",
+   608→          4.4
+   609→        ],
+   610→        [
+   611→          5,
+   612→          "Alpine Audio GmbH",
+   613→          "EU",
+   614→          4.8
+   615→        ],
+   616→        [
+   617→          6,
+   618→          "Andes Naturals SA",
+   619→          "LATAM",
+   620→          4
+   621→        ]
+   622→      ]
+   623→    },
+   624→    {
+   625→      "id": "orders-head",
+   626→      "topic": "l2",
+   627→      "sql": "SELECT id, customer_id, status, ROUND(total,2) AS total, created_at FROM orders ORDER BY id LIMIT 8",
+   628→      "cols": [
+   629→        "id",
+   630→        "customer_id",
+   631→        "status",
+   632→        "total",
+   633→        "created_at"
+   634→      ],
+   635→      "rows": [
+   636→        [
+   637→          1,
+   638→          16,
+   639→          "pending",
+   640→          576.54,
+   641→          "2024-01-05"
+   642→        ],
+   643→        [
+   644→          2,
+   645→          13,
+   646→          "delivered",
+   647→          416.81,
+   648→          "2024-01-15"
+   649→        ],
+   650→        [
+   651→          3,
+   652→          1,
+   653→          "shipped",
+   654→          767.64,
+   655→          "2024-01-22"
+   656→        ],
+   657→        [
+   658→          4,
+   659→          13,
+   660→          "shipped",
+   661→          158.48,
+   662→          "2024-01-18"
+   663→        ],
+   664→        [
+   665→          5,
+   666→          5,
+   667→          "pending",
+   668→          725.34,
+   669→          "2024-01-02"
+   670→        ],
+   671→        [
+   672→          6,
+   673→          2,
+   674→          "delivered",
+   675→          752.96,
+   676→          "2024-01-01"
+   677→        ],
+   678→        [
+   679→          7,
+   680→          1,
+   681→          "cancelled",
+   682→          152.52,
+   683→          "2024-01-02"
+   684→        ],
+   685→        [
+   686→          8,
+   687→          5,
+   688→          "shipped",
+   689→          181.68,
+   690→          "2024-01-15"
+   691→        ]
+   692→      ]
+   693→    },
+   694→    {
+   695→      "id": "email-list",
+   696→      "topic": "l2",
+   697→      "sql": "SELECT name, email FROM customers ORDER BY id",
+   698→      "cols": [
+   699→        "name",
+   700→        "email"
+   701→      ],
+   702→      "rows": [
+   703→        [
+   704→          "Alice Chen",
+   705→          "alice.chen@example.com"
+   706→        ],
+   707→        [
+   708→          "Bruno Silva",
+   709→          "bruno.silva@example.com"
+   710→        ],
+   711→        [
+   712→          "Chloe Dubois",
+   713→          "chloe.dubois@example.com"
+   714→        ],
+   715→        [
+   716→          "Dmitri Volkov",
+   717→          "d.volkov@example.com"
+   718→        ],
+   719→        [
+   720→          "Emma Wilson",
+   721→          "emma.wilson@example.com"
+   722→        ],
+   723→        [
+   724→          "Farid Nasser",
+   725→          "farid.n@example.com"
+   726→        ],
+   727→        [
+   728→          "Grace Kim",
+   729→          "grace.kim@example.com"
+   730→        ],
+   731→        [
+   732→          "Hiro Tanaka",
+   733→          "hiro.tanaka@example.com"
+   734→        ],
+   735→        [
+   736→          "Isabella Rossi",
+   737→          "bella.rossi@example.com"
+   738→        ],
+   739→        [
+   740→          "Jamal Wright",
+   741→          "jamal.wright@example.com"
+   742→        ],
+   743→        [
+   744→          "Keiko Sato",
+   745→          "keiko.sato@example.com"
+   746→        ],
+   747→        [
+   748→          "Liam O'Brien",
+   749→          "liam.obrien@example.com"
+   750→        ],
+   751→        [
+   752→          "Maya Patel",
+   753→          "maya.patel@example.com"
+   754→        ],
+   755→        [
+   756→          "Noah Meyer",
+   757→          "noah.meyer@example.com"
+   758→        ],
+   759→        [
+   760→          "Olivia Brown",
+   761→          "olivia.brown@example.com"
+   762→        ],
+   763→        [
+   764→          "Pedro Alvarez",
+   765→          "pedro.alv@example.com"
+   766→        ]
+   767→      ]
+   768→    },
+   769→    {
+   770→      "id": "price-with-tax",
+   771→      "topic": "l2",
+   772→      "sql": "SELECT name, ROUND(price * 1.08, 2) AS with_tax FROM products ORDER BY id LIMIT 6",
+   773→      "cols": [
+   774→        "name",
+   775→        "with_tax"
+   776→      ],
+   777→      "rows": [
+   778→        [
+   779→          "Mechanical Keyboard K1",
+   780→          97.19
+   781→        ],
+   782→        [
+   783→          "Wireless Mouse M3",
+   784→          37.26
+   785→        ],
+   786→        [
+   787→          "USB-C Hub 7-in-1",
+   788→          52.92
+   789→        ],
+   790→        [
+   791→          "Noise-Canceling Headset",
+   792→          161.99
+   793→        ],
+   794→        [
+   795→          "Studio Desktop Mic",
+   796→          128.52
+   797→        ],
+   798→        [
+   799→          "Bluetooth Speaker Mini",
+   800→          64.79
+   801→        ]
+   802→      ]
+   803→    },
+   804→    {
+   805→      "id": "items-sample",
+   806→      "topic": "l2",
+   807→      "sql": "SELECT id, order_id, product_id, quantity, unit_price FROM order_items ORDER BY id LIMIT 6",
+   808→      "cols": [
+   809→        "id",
+   810→        "order_id",
+   811→        "product_id",
+   812→        "quantity",
+   813→        "unit_price"
+   814→      ],
+   815→      "rows": [
+   816→        [
+   817→          1,
+   818→          1,
+   819→          16,
+   820→          3,
+   821→          31.02
+   822→        ],
+   823→        [
+   824→          2,
+   825→          1,
+   826→          9,
+   827→          2,
+   828→          15.15
+   829→        ],
+   830→        [
+   831→          3,
+   832→          1,
+   833→          11,
+   834→          1,
+   835→          25.26
+   836→        ],
+   837→        [
+   838→          4,
+   839→          1,
+   840→          4,
+   841→          3,
+   842→          142.64
+   843→        ],
+   844→        [
+   845→          5,
+   846→          2,
+   847→          8,
+   848→          3,
+   849→          41.77
+   850→        ],
+   851→        [
+   852→          6,
+   853→          2,
+   854→          4,
+   855→          2,
+   856→          145.75
+   857→        ]
+   858→      ]
+   859→    },
+   860→    {
+   861→      "id": "line-revenue-sample",
+   862→      "topic": "l2",
+   863→      "sql": "SELECT id, quantity, unit_price, ROUND(quantity * unit_price, 2) AS line_revenue FROM order_items ORDER BY id LIMIT 6",
+   864→      "cols": [
+   865→        "id",
+   866→        "quantity",
+   867→        "unit_price",
+   868→        "line_revenue"
+   869→      ],
+   870→      "rows": [
+   871→        [
+   872→          1,
+   873→          3,
+   874→          31.02,
+   875→          93.06
+   876→        ],
+   877→        [
+   878→          2,
+   879→          2,
+   880→          15.15,
+   881→          30.3
+   882→        ],
+   883→        [
+   884→          3,
+   885→          1,
+   886→          25.26,
+   887→          25.26
+   888→        ],
+   889→        [
+   890→          4,
+   891→          3,
+   892→          142.64,
+   893→          427.92
+   894→        ],
+   895→        [
+   896→          5,
+   897→          3,
+   898→          41.77,
+   899→          125.31
+   900→        ],
+   901→        [
+   902→          6,
+   903→          2,
+   904→          145.75,
+   905→          291.5
+   906→        ]
+   907→      ]
+   908→    },
+   909→    {
+   910→      "id": "express-alias",
+   911→      "topic": "l2",
+   912→      "sql": "SELECT name AS product, price AS msrp FROM products ORDER BY id LIMIT 5",
+   913→      "cols": [
+   914→        "product",
+   915→        "msrp"
+   916→      ],
+   917→      "rows": [
+   918→        [
+   919→          "Mechanical Keyboard K1",
+   920→          89.99
+   921→        ],
+   922→        [
+   923→          "Wireless Mouse M3",
+   924→          34.5
+   925→        ],
+   926→        [
+   927→          "USB-C Hub 7-in-1",
+   928→          49
+   929→        ],
+   930→        [
+   931→          "Noise-Canceling Headset",
+   932→          149.99
+   933→        ],
+   934→        [
+   935→          "Studio Desktop Mic",
+   936→          119
+   937→        ]
+   938→      ]
+   939→    },
+   940→    {
+   941→      "id": "total-rows-orders",
+   942→      "topic": "l2",
+   943→      "sql": "SELECT COUNT(*) AS row_count FROM orders",
+   944→      "cols": [
+   945→        "row_count"
+   946→      ],
+   947→      "rows": [
+   948→        [
+   949→          103
+   950→        ]
+   951→      ]
+   952→    },
+   953→    {
+   954→      "id": "orders-by-status",
+   955→      "topic": "l3",
+   956→      "sql": "SELECT status, COUNT(*) AS n FROM orders GROUP BY status",
+   957→      "cols": [
+   958→        "status",
+   959→        "n"
+   960→      ],
+   961→      "rows": [
+   962→        [
+   963→          "cancelled",
+   964→          7
+   965→        ],
+   966→        [
+   967→          "delivered",
+   968→          52
+   969→        ],
+   970→        [
+   971→          "pending",
+   972→          14
+   973→        ],
+   974→        [
+   975→          "shipped",
+   976→          30
+   977→        ]
+   978→      ]
+   979→    },
+   980→    {
+   981→      "id": "customers-by-region",
+   982→      "topic": "l3",
+   983→      "sql": "SELECT region, COUNT(*) AS n FROM customers GROUP BY region",
+   984→      "cols": [
+   985→        "region",
+   986→        "n"
+   987→      ],
+   988→      "rows": [
+   989→        [
+   990→          "APAC",
+   991→          5
+   992→        ],
+   993→        [
+   994→          "EU",
+   995→          8
+   996→        ],
+   997→        [
+   998→          "LATAM",
+   999→          1
+  1000→        ],
+  1001→        [
+  1002→          "US",
+  1003→          2
+  1004→        ]
+  1005→      ]
+  1006→    },
+  1007→    {
+  1008→      "id": "customers-by-city",
+  1009→      "topic": "l3",
+  1010→      "sql": "SELECT city, COUNT(*) AS n FROM customers GROUP BY city ORDER BY n DESC, city",
+  1011→      "cols": [
+  1012→        "city",
+  1013→        "n"
+  1014→      ],
+  1015→      "rows": [
+  1016→        [
+  1017→          "Austin",
+  1018→          1
+  1019→        ],
+  1020→        [
+  1021→          "Berlin",
+  1022→          1
+  1023→        ],
+  1024→        [
+  1025→          "Chicago",
+  1026→          1
+  1027→        ],
+  1028→        [
+  1029→          "Cork",
+  1030→          1
+  1031→        ],
+  1032→        [
+  1033→          "Dubai",
+  1034→          1
+  1035→        ],
+  1036→        [
+  1037→          "Hamburg",
+  1038→          1
+  1039→        ],
+  1040→        [
+  1041→          "London",
+  1042→          1
+  1043→        ],
+  1044→        [
+  1045→          "Lyon",
+  1046→          1
+  1047→        ],
+  1048→        [
+  1049→          "Madrid",
+  1050→          1
+  1051→        ],
+  1052→        [
+  1053→          "Milan",
+  1054→          1
+  1055→        ],
+  1056→        [
+  1057→          "Mumbai",
+  1058→          1
+  1059→        ],
+  1060→        [
+  1061→          "Nagoya",
+  1062→          1
+  1063→        ],
+  1064→        [
+  1065→          "Osaka",
+  1066→          1
+  1067→        ],
+  1068→        [
+  1069→          "Seoul",
+  1070→          1
+  1071→        ],
+  1072→        [
+  1073→          "São Paulo",
+  1074→          1
+  1075→        ],
+  1076→        [
+  1077→          "Tallinn",
+  1078→          1
+  1079→        ]
+  1080→      ]
+  1081→    },
+  1082→    {
+  1083→      "id": "products-by-category",
+  1084→      "topic": "l3",
+  1085→      "sql": "SELECT category, COUNT(*) AS n FROM products GROUP BY category",
+  1086→      "cols": [
+  1087→        "category",
+  1088→        "n"
+  1089→      ],
+  1090→      "rows": [
+  1091→        [
+  1092→          "Accessories",
+  1093→          3
+  1094→        ],
+  1095→        [
+  1096→          "Apparel",
+  1097→          2
+  1098→        ],
+  1099→        [
+  1100→          "Audio",
+  1101→          3
+  1102→        ],
+  1103→        [
+  1104→          "Electronics",
+  1105→          3
+  1106→        ],
+  1107→        [
+  1108→          "Fitness",
+  1109→          1
+  1110→        ],
+  1111→        [
+  1112→          "Video",
+  1113→          2
+  1114→        ],
+  1115→        [
+  1116→          "Wearables",
+  1117→          2
+  1118→        ]
+  1119→      ]
+  1120→    },
+  1121→    {
+  1122→      "id": "price-over-100",
+  1123→      "topic": "l3",
+  1124→      "sql": "SELECT COUNT(*) AS n FROM products WHERE price > 100",
+  1125→      "cols": [
+  1126→        "n"
+  1127→      ],
+  1128→      "rows": [
+  1129→        [
+  1130→          4
+  1131→        ]
+  1132→      ]
+  1133→    },
+  1134→    {
+  1135→      "id": "price-over-200",
+  1136→      "topic": "l3",
+  1137→      "sql": "SELECT COUNT(*) AS n FROM products WHERE price > 200",
+  1138→      "cols": [
+  1139→        "n"
+  1140→      ],
+  1141→      "rows": [
+  1142→        [
+  1143→          0
+  1144→        ]
+  1145→      ]
+  1146→    },
+  1147→    {
+  1148→      "id": "price-over-300",
+  1149→      "topic": "l3",
+  1150→      "sql": "SELECT COUNT(*) AS n FROM products WHERE price > 300",
+  1151→      "cols": [
+  1152→        "n"
+  1153→      ],
+  1154→      "rows": [
+  1155→        [
+  1156→          0
+  1157→        ]
+  1158→      ]
+  1159→    },
+  1160→    {
+  1161→      "id": "price-over-400",
+  1162→      "topic": "l3",
+  1163→      "sql": "SELECT COUNT(*) AS n FROM products WHERE price > 400",
+  1164→      "cols": [
+  1165→        "n"
+  1166→      ],
+  1167→      "rows": [
+  1168→        [
+  1169→          0
+  1170→        ]
+  1171→      ]
+  1172→    },
+  1173→    {
+  1174→      "id": "price-over-500",
+  1175→      "topic": "l3",
+  1176→      "sql": "SELECT COUNT(*) AS n FROM products WHERE price > 500",
+  1177→      "cols": [
+  1178→        "n"
+  1179→      ],
+  1180→      "rows": [
+  1181→        [
+  1182→          0
+  1183→        ]
+  1184→      ]
+  1185→    },
+  1186→    {
+  1187→      "id": "price-under-50",
+  1188→      "topic": "l3",
+  1189→      "sql": "SELECT COUNT(*) AS n FROM products WHERE price < 50",
+  1190→      "cols": [
+  1191→        "n"
+  1192→      ],
+  1193→      "rows": [
+  1194→        [
+  1195→          8
+  1196→        ]
+  1197→      ]
+  1198→    },
+  1199→    {
+  1200→      "id": "price-under-100",
+  1201→      "topic": "l3",
+  1202→      "sql": "SELECT COUNT(*) AS n FROM products WHERE price < 100",
+  1203→      "cols": [
+  1204→        "n"
+  1205→      ],
+  1206→      "rows": [
+  1207→        [
+  1208→          12
+  1209→        ]
+  1210→      ]
+  1211→    },
+  1212→    {
+  1213→      "id": "price-100-300",
+  1214→      "topic": "l3",
+  1215→      "sql": "SELECT COUNT(*) AS n FROM products WHERE price >= 100 AND price <= 300",
+  1216→      "cols": [
+  1217→        "n"
+  1218→      ],
+  1219→      "rows": [
+  1220→        [
+  1221→          4
+  1222→        ]
+  1223→      ]
+  1224→    },
+  1225→    {
+  1226→      "id": "orders-over-300",
+  1227→      "topic": "l3",
+  1228→      "sql": "SELECT COUNT(*) AS n FROM orders WHERE total > 300",
+  1229→      "cols": [
+  1230→        "n"
+  1231→      ],
+  1232→      "rows": [
+  1233→        [
+  1234→          49
+  1235→        ]
+  1236→      ]
+  1237→    },
+  1238→    {
+  1239→      "id": "orders-over-500",
+  1240→      "topic": "l3",
+  1241→      "sql": "SELECT COUNT(*) AS n FROM orders WHERE total > 500",
+  1242→      "cols": [
+  1243→        "n"
+  1244→      ],
+  1245→      "rows": [
+  1246→        [
+  1247→          25
+  1248→        ]
+  1249→      ]
+  1250→    },
+  1251→    {
+  1252→      "id": "orders-over-800",
+  1253→      "topic": "l3",
+  1254→      "sql": "SELECT COUNT(*) AS n FROM orders WHERE total > 800",
+  1255→      "cols": [
+  1256→        "n"
+  1257→      ],
+  1258→      "rows": [
+  1259→        [
+  1260→          4
+  1261→        ]
+  1262→      ]
+  1263→    },
+  1264→    {
+  1265→      "id": "orders-over-1000",
+  1266→      "topic": "l3",
+  1267→      "sql": "SELECT COUNT(*) AS n FROM orders WHERE total > 1000",
+  1268→      "cols": [
+  1269→        "n"
+  1270→      ],
+  1271→      "rows": [
+  1272→        [
+  1273→          1
+  1274→        ]
+  1275→      ]
+  1276→    },
+  1277→    {
+  1278→      "id": "orders-under-100",
+  1279→      "topic": "l3",
+  1280→      "sql": "SELECT COUNT(*) AS n FROM orders WHERE total < 100",
+  1281→      "cols": [
+  1282→        "n"
+  1283→      ],
+  1284→      "rows": [
+  1285→        [
+  1286→          15
+  1287→        ]
+  1288→      ]
+  1289→    },
+  1290→    {
+  1291→      "id": "eu-customers",
+  1292→      "topic": "l3",
+  1293→      "sql": "SELECT name, city FROM customers WHERE region = 'EU' ORDER BY name",
+  1294→      "cols": [
+  1295→        "name",
+  1296→        "city"
+  1297→      ],
+  1298→      "rows": [
+  1299→        [
+  1300→          "Alice Chen",
+  1301→          "Berlin"
+  1302→        ],
+  1303→        [
+  1304→          "Chloe Dubois",
+  1305→          "Lyon"
+  1306→        ],
+  1307→        [
+  1308→          "Dmitri Volkov",
+  1309→          "Tallinn"
+  1310→        ],
+  1311→        [
+  1312→          "Isabella Rossi",
+  1313→          "Milan"
+  1314→        ],
+  1315→        [
+  1316→          "Liam O'Brien",
+  1317→          "Cork"
+  1318→        ],
+  1319→        [
+  1320→          "Noah Meyer",
+  1321→          "Hamburg"
+  1322→        ],
+  1323→        [
+  1324→          "Olivia Brown",
+  1325→          "London"
+  1326→        ],
+  1327→        [
+  1328→          "Pedro Alvarez",
+  1329→          "Madrid"
+  1330→        ]
+  1331→      ]
+  1332→    },
+  1333→    {
+  1334→      "id": "apac-customers",
+  1335→      "topic": "l3",
+  1336→      "sql": "SELECT name, city FROM customers WHERE region = 'APAC' ORDER BY name",
+  1337→      "cols": [
+  1338→        "name",
+  1339→        "city"
+  1340→      ],
+  1341→      "rows": [
+  1342→        [
+  1343→          "Farid Nasser",
+  1344→          "Dubai"
+  1345→        ],
+  1346→        [
+  1347→          "Grace Kim",
+  1348→          "Seoul"
+  1349→        ],
+  1350→        [
+  1351→          "Hiro Tanaka",
+  1352→          "Osaka"
+  1353→        ],
+  1354→        [
+  1355→          "Keiko Sato",
+  1356→          "Nagoya"
+  1357→        ],
+  1358→        [
+  1359→          "Maya Patel",
+  1360→          "Mumbai"
+  1361→        ]
+  1362→      ]
+  1363→    },
+  1364→    {
+  1365→      "id": "us-latam-customers",
+  1366→      "topic": "l3",
+  1367→      "sql": "SELECT name, city, region FROM customers WHERE region IN ('US', 'LATAM') ORDER BY name",
+  1368→      "cols": [
+  1369→        "name",
+  1370→        "city",
+  1371→        "region"
+  1372→      ],
+  1373→      "rows": [
+  1374→        [
+  1375→          "Bruno Silva",
+  1376→          "São Paulo",
+  1377→          "LATAM"
+  1378→        ],
+  1379→        [
+  1380→          "Emma Wilson",
+  1381→          "Austin",
+  1382→          "US"
+  1383→        ],
+  1384→        [
+  1385→          "Jamal Wright",
+  1386→          "Chicago",
+  1387→          "US"
+  1388→        ]
+  1389→      ]
+  1390→    },
+  1391→    {
+  1392→      "id": "orders-by-month",
+  1393→      "topic": "l3",
+  1394→      "sql": "SELECT strftime('%Y-%m', created_at) AS month, COUNT(*) AS n FROM orders GROUP BY month ORDER BY month",
+  1395→      "cols": [
+  1396→        "month",
+  1397→        "n"
+  1398→      ],
+  1399→      "rows": [
+  1400→        [
+  1401→          "2024-01",
+  1402→          8
+  1403→        ],
+  1404→        [
+  1405→          "2024-02",
+  1406→          9
+  1407→        ],
+  1408→        [
+  1409→          "2024-03",
+  1410→          8
+  1411→        ],
+  1412→        [
+  1413→          "2024-04",
+  1414→          7
+  1415→        ],
+  1416→        [
+  1417→          "2024-05",
+  1418→          8
+  1419→        ],
+  1420→        [
+  1421→          "2024-06",
+  1422→          6
+  1423→        ],
+  1424→        [
+  1425→          "2024-07",
+  1426→          8
+  1427→        ],
+  1428→        [
+  1429→          "2024-08",
+  1430→          7
+  1431→        ],
+  1432→        [
+  1433→          "2024-09",
+  1434→          9
+  1435→        ],
+  1436→        [
+  1437→          "2024-10",
+  1438→          7
+  1439→        ],
+  1440→        [
+  1441→          "2024-11",
+  1442→          6
+  1443→        ],
+  1444→        [
+  1445→          "2024-12",
+  1446→          7
+  1447→        ],
+  1448→        [
+  1449→          "2025-01",
+  1450→          6
+  1451→        ],
+  1452→        [
+  1453→          "2025-02",
+  1454→          7
+  1455→        ]
+  1456→      ]
+  1457→    },
+  1458→    {
+  1459→      "id": "cancelled-2024-03",
+  1460→      "topic": "l3",
+  1461→      "sql": "SELECT COUNT(*) AS n FROM orders WHERE status = 'cancelled' AND strftime('%Y-%m', created_at) = '2024-03'",
+  1462→      "cols": [
+  1463→        "n"
+  1464→      ],
+  1465→      "rows": [
+  1466→        [
+  1467→          1
+  1468→        ]
+  1469→      ]
+  1470→    },
+  1471→    {
+  1472→      "id": "delivered-over-300",
+  1473→      "topic": "l3",
+  1474→      "sql": "SELECT COUNT(*) AS n FROM orders WHERE status = 'delivered' AND total > 300",
+  1475→      "cols": [
+  1476→        "n"
+  1477→      ],
+  1478→      "rows": [
+  1479→        [
+  1480→          23
+  1481→        ]
+  1482→      ]
+  1483→    },
+  1484→    {
+  1485→      "id": "stock-zero",
+  1486→      "topic": "l3",
+  1487→      "sql": "SELECT COUNT(*) AS n FROM products WHERE stock = 0",
+  1488→      "cols": [
+  1489→        "n"
+  1490→      ],
+  1491→      "rows": [
+  1492→        [
+  1493→          0
+  1494→        ]
+  1495→      ]
+  1496→    },
+  1497→    {
+  1498→      "id": "stock-under-10",
+  1499→      "topic": "l3",
+  1500→      "sql": "SELECT COUNT(*) AS n FROM products WHERE stock < 10",
+  1501→      "cols": [
+  1502→        "n"
+  1503→      ],
+  1504→      "rows": [
+  1505→        [
+  1506→          0
+  1507→        ]
+  1508→      ]
+  1509→    },
+  1510→    {
+  1511→      "id": "stock-under-25",
+  1512→      "topic": "l3",
+  1513→      "sql": "SELECT COUNT(*) AS n FROM products WHERE stock < 25",
+  1514→      "cols": [
+  1515→        "n"
+  1516→      ],
+  1517→      "rows": [
+  1518→        [
+  1519→          0
+  1520→        ]
+  1521→      ]
+  1522→    },
+  1523→    {
+  1524→      "id": "qty-ge-3",
+  1525→      "topic": "l3",
+  1526→      "sql": "SELECT COUNT(*) AS n FROM order_items WHERE quantity >= 3",
+  1527→      "cols": [
+  1528→        "n"
+  1529→      ],
+  1530→      "rows": [
+  1531→        [
+  1532→          89
+  1533→        ]
+  1534→      ]
+  1535→    },
+  1536→    {
+  1537→      "id": "qty-eq-5",
+  1538→      "topic": "l3",
+  1539→      "sql": "SELECT COUNT(*) AS n FROM order_items WHERE quantity = 5",
+  1540→      "cols": [
+  1541→        "n"
+  1542→      ],
+  1543→      "rows": [
+  1544→        [
+  1545→          0
+  1546→        ]
+  1547→      ]
+  1548→    },
+  1549→    {
+  1550→      "id": "pending-not-shipped-month",
+  1551→      "topic": "l3",
+  1552→      "sql": "SELECT strftime('%Y-%m', created_at) AS month, COUNT(*) AS n FROM orders WHERE status = 'pending' GROUP BY month ORDER BY month",
+  1553→      "cols": [
+  1554→        "month",
+  1555→        "n"
+  1556→      ],
+  1557→      "rows": [
+  1558→        [
+  1559→          "2024-01",
+  1560→          2
+  1561→        ],
+  1562→        [
+  1563→          "2024-02",
+  1564→          1
+  1565→        ],
+  1566→        [
+  1567→          "2024-03",
+  1568→          2
+  1569→        ],
+  1570→        [
+  1571→          "2024-06",
+  1572→          2
+  1573→        ],
+  1574→        [
+  1575→          "2024-07",
+  1576→          1
+  1577→        ],
+  1578→        [
+  1579→          "2024-10",
+  1580→          2
+  1581→        ],
+  1582→        [
+  1583→          "2024-11",
+  1584→          1
+  1585→        ],
+  1586→        [
+  1587→          "2024-12",
+  1588→          1
+  1589→        ],
+  1590→        [
+  1591→          "2025-01",
+  1592→          1
+  1593→        ],
+  1594→        [
+  1595→          "2025-02",
+  1596→          1
+  1597→        ]
+  1598→      ]
+  1599→    },
+  1600→    {
+  1601→      "id": "big-tickets-status",
+  1602→      "topic": "l3",
+  1603→      "sql": "SELECT status, COUNT(*) AS n FROM orders WHERE total > 500 GROUP BY status",
+  1604→      "cols": [
+  1605→        "status",
+  1606→        "n"
+  1607→      ],
+  1608→      "rows": [
+  1609→        [
+  1610→          "delivered",
+  1611→          9
+  1612→        ],
+  1613→        [
+  1614→          "pending",
+  1615→          5
+  1616→        ],
+  1617→        [
+  1618→          "shipped",
+  1619→          11
+  1620→        ]
+  1621→      ]
+  1622→    },
+  1623→    {
+  1624→      "id": "like-son",
+  1625→      "topic": "l3",
+  1626→      "sql": "SELECT name FROM customers WHERE name LIKE '%son%'",
+  1627→      "cols": [
+  1628→        "name"
+  1629→      ],
+  1630→      "rows": [
+  1631→        [
+  1632→          "Emma Wilson"
+  1633→        ]
+  1634→      ]
+  1635→    },
+  1636→    {
+  1637→      "id": "like-a-start",
+  1638→      "topic": "l3",
+  1639→      "sql": "SELECT name FROM customers WHERE name LIKE 'A%'",
+  1640→      "cols": [
+  1641→        "name"
+  1642→      ],
+  1643→      "rows": [
+  1644→        [
+  1645→          "Alice Chen"
+  1646→        ]
+  1647→      ]
+  1648→    },
+  1649→    {
+  1650→      "id": "category-electronics-accessories",
+  1651→      "topic": "l3",
+  1652→      "sql": "SELECT COUNT(*) AS n FROM products WHERE category IN ('Electronics', 'Accessories')",
+  1653→      "cols": [
+  1654→        "n"
+  1655→      ],
+  1656→      "rows": [
+  1657→        [
+  1658→          6
+  1659→        ]
+  1660→      ]
+  1661→    },
+  1662→    {
+  1663→      "id": "unshipped-count",
+  1664→      "topic": "l4",
+  1665→      "sql": "SELECT COUNT(*) AS unshipped FROM orders WHERE shipped_at IS NULL",
+  1666→      "cols": [
+  1667→        "unshipped"
+  1668→      ],
+  1669→      "rows": [
+  1670→        [
+  1671→          21
+  1672→        ]
+  1673→      ]
+  1674→    },
+  1675→    {
+  1676→      "id": "shipped-count",
+  1677→      "topic": "l4",
+  1678→      "sql": "SELECT COUNT(*) AS shipped FROM orders WHERE shipped_at IS NOT NULL",
+  1679→      "cols": [
+  1680→        "shipped"
+  1681→      ],
+  1682→      "rows": [
+  1683→        [
+  1684→          82
+  1685→        ]
+  1686→      ]
+  1687→    },
+  1688→    {
+  1689→      "id": "count-star-vs-col",
+  1690→      "topic": "l4",
+  1691→      "sql": "SELECT COUNT(*) AS all_rows, COUNT(shipped_at) AS with_timestamp FROM orders",
+  1692→      "cols": [
+  1693→        "all_rows",
+  1694→        "with_timestamp"
+  1695→      ],
+  1696→      "rows": [
+  1697→        [
+  1698→          103,
+  1699→          82
+  1700→        ]
+  1701→      ]
+  1702→    },
+  1703→    {
+  1704→      "id": "unshipped-sum",
+  1705→      "topic": "l4",
+  1706→      "sql": "SELECT ROUND(SUM(total), 2) AS value_at_risk FROM orders WHERE shipped_at IS NULL",
+  1707→      "cols": [
+  1708→        "value_at_risk"
+  1709→      ],
+  1710→      "rows": [
+  1711→        [
+  1712→          7265.49
+  1713→        ]
+  1714→      ]
+  1715→    },
+  1716→    {
+  1717→      "id": "unshipped-avg",
+  1718→      "topic": "l4",
+  1719→      "sql": "SELECT ROUND(AVG(total), 2) AS avg_unshipped FROM orders WHERE shipped_at IS NULL",
+  1720→      "cols": [
+  1721→        "avg_unshipped"
+  1722→      ],
+  1723→      "rows": [
+  1724→        [
+  1725→          345.98
+  1726→        ]
+  1727→      ]
+  1728→    },
+  1729→    {
+  1730→      "id": "unshipped-max",
+  1731→      "topic": "l4",
+  1732→      "sql": "SELECT ROUND(MAX(total), 2) AS biggest_unshipped FROM orders WHERE shipped_at IS NULL",
+  1733→      "cols": [
+  1734→        "biggest_unshipped"
+  1735→      ],
+  1736→      "rows": [
+  1737→        [
+  1738→          1088.44
+  1739→        ]
+  1740→      ]
+  1741→    },
+  1742→    {
+  1743→      "id": "shipped-sum",
+  1744→      "topic": "l4",
+  1745→      "sql": "SELECT ROUND(SUM(total), 2) AS shipped_value FROM orders WHERE shipped_at IS NOT NULL",
+  1746→      "cols": [
+  1747→        "shipped_value"
+  1748→      ],
+  1749→      "rows": [
+  1750→        [
+  1751→          27567.79
+  1752→        ]
+  1753→      ]
+  1754→    },
+  1755→    {
+  1756→      "id": "shipped-avg",
+  1757→      "topic": "l4",
+  1758→      "sql": "SELECT ROUND(AVG(total), 2) AS avg_shipped FROM orders WHERE shipped_at IS NOT NULL",
+  1759→      "cols": [
+  1760→        "avg_shipped"
+  1761→      ],
+  1762→      "rows": [
+  1763→        [
+  1764→          336.19
+  1765→        ]
+  1766→      ]
+  1767→    },
+  1768→    {
+  1769→      "id": "unshipped-by-month",
+  1770→      "topic": "l4",
+  1771→      "sql": "SELECT strftime('%Y-%m', created_at) AS month, COUNT(*) AS n FROM orders WHERE shipped_at IS NULL GROUP BY month ORDER BY month",
+  1772→      "cols": [
+  1773→        "month",
+  1774→        "n"
+  1775→      ],
+  1776→      "rows": [
+  1777→        [
+  1778→          "2024-01",
+  1779→          3
+  1780→        ],
+  1781→        [
+  1782→          "2024-02",
+  1783→          1
+  1784→        ],
+  1785→        [
+  1786→          "2024-03",
+  1787→          3
+  1788→        ],
+  1789→        [
+  1790→          "2024-06",
+  1791→          2
+  1792→        ],
+  1793→        [
+  1794→          "2024-07",
+  1795→          3
+  1796→        ],
+  1797→        [
+  1798→          "2024-10",
+  1799→          2
+  1800→        ],
+  1801→        [
+  1802→          "2024-11",
+  1803→          3
+  1804→        ],
+  1805→        [
+  1806→          "2024-12",
+  1807→          1
+  1808→        ],
+  1809→        [
+  1810→          "2025-01",
+  1811→          2
+  1812→        ],
+  1813→        [
+  1814→          "2025-02",
+  1815→          1
+  1816→        ]
+  1817→      ]
+  1818→    },
+  1819→    {
+  1820→      "id": "unshipped-first5",
+  1821→      "topic": "l4",
+  1822→      "sql": "SELECT id, customer_id, ROUND(total,2) AS total, created_at FROM orders WHERE shipped_at IS NULL ORDER BY id LIMIT 5",
+  1823→      "cols": [
+  1824→        "id",
+  1825→        "customer_id",
+  1826→        "total",
+  1827→        "created_at"
+  1828→      ],
+  1829→      "rows": [
+  1830→        [
+  1831→          1,
+  1832→          16,
+  1833→          576.54,
+  1834→          "2024-01-05"
+  1835→        ],
+  1836→        [
+  1837→          5,
+  1838→          5,
+  1839→          725.34,
+  1840→          "2024-01-02"
+  1841→        ],
+  1842→        [
+  1843→          7,
+  1844→          1,
+  1845→          152.52,
+  1846→          "2024-01-02"
+  1847→        ],
+  1848→        [
+  1849→          12,
+  1850→          13,
+  1851→          148.28,
+  1852→          "2024-02-07"
+  1853→        ],
+  1854→        [
+  1855→          19,
+  1856→          1,
+  1857→          317.49,
+  1858→          "2024-03-05"
+  1859→        ]
+  1860→      ]
+  1861→    },
+  1862→    {
+  1863→      "id": "unshipped-over-500",
+  1864→      "topic": "l4",
+  1865→      "sql": "SELECT COUNT(*) AS n FROM orders WHERE shipped_at IS NULL AND total > 500",
+  1866→      "cols": [
+  1867→        "n"
+  1868→      ],
+  1869→      "rows": [
+  1870→        [
+  1871→          5
+  1872→        ]
+  1873→      ]
+  1874→    },
+  1875→    {
+  1876→      "id": "cancelled-unshipped",
+  1877→      "topic": "l4",
+  1878→      "sql": "SELECT COUNT(*) AS n FROM orders WHERE status = 'cancelled' AND shipped_at IS NULL",
+  1879→      "cols": [
+  1880→        "n"
+  1881→      ],
+  1882→      "rows": [
+  1883→        [
+  1884→          7
+  1885→        ]
+  1886→      ]
+  1887→    },
+  1888→    {
+  1889→      "id": "null-trap-eq",
+  1890→      "topic": "l4",
+  1891→      "sql": "SELECT COUNT(*) AS n FROM orders WHERE shipped_at = NULL",
+  1892→      "cols": [
+  1893→        "n"
+  1894→      ],
+  1895→      "rows": [
+  1896→        [
+  1897→          0
+  1898→        ]
+  1899→      ]
+  1900→    },
+  1901→    {
+  1902→      "id": "delivered-shipped-split",
+  1903→      "topic": "l4",
+  1904→      "sql": "SELECT status, COUNT(*) AS n, COUNT(shipped_at) AS with_ts FROM orders GROUP BY status",
+  1905→      "cols": [
+  1906→        "status",
+  1907→        "n",
+  1908→        "with_ts"
+  1909→      ],
+  1910→      "rows": [
+  1911→        [
+  1912→          "cancelled",
+  1913→          7,
+  1914→          0
+  1915→        ],
+  1916→        [
+  1917→          "delivered",
+  1918→          52,
+  1919→          52
+  1920→        ],
+  1921→        [
+  1922→          "pending",
+  1923→          14,
+  1924→          0
+  1925→        ],
+  1926→        [
+  1927→          "shipped",
+  1928→          30,
+  1929→          30
+  1930→        ]
+  1931→      ]
+  1932→    },
+  1933→    {
+  1934→      "id": "unshipped-cancelled-pending",
+  1935→      "topic": "l4",
+  1936→      "sql": "SELECT status, COUNT(*) AS n FROM orders WHERE shipped_at IS NULL GROUP BY status",
+  1937→      "cols": [
+  1938→        "status",
+  1939→        "n"
+  1940→      ],
+  1941→      "rows": [
+  1942→        [
+  1943→          "cancelled",
+  1944→          7
+  1945→        ],
+  1946→        [
+  1947→          "pending",
+  1948→          14
+  1949→        ]
+  1950→      ]
+  1951→    },
+  1952→    {
+  1953→      "id": "top5-price",
+  1954→      "topic": "l5",
+  1955→      "sql": "SELECT name, price FROM products ORDER BY price DESC LIMIT 5",
+  1956→      "cols": [
+  1957→        "name",
+  1958→        "price"
+  1959→      ],
+  1960→      "rows": [
+  1961→        [
+  1962→          "Smart Watch S",
+  1963→          199.99
+  1964→        ],
+  1965→        [
+  1966→          "Noise-Canceling Headset",
+  1967→          149.99
+  1968→        ],
+  1969→        [
+  1970→          "4K Webcam Pro",
+  1971→          129
+  1972→        ],
+  1973→        [
+  1974→          "Studio Desktop Mic",
+  1975→          119
+  1976→        ],
+  1977→        [
+  1978→          "Mechanical Keyboard K1",
+  1979→          89.99
+  1980→        ]
+  1981→      ]
+  1982→    },
+  1983→    {
+  1984→      "id": "top3-price",
+  1985→      "topic": "l5",
+  1986→      "sql": "SELECT name, price FROM products ORDER BY price DESC LIMIT 3",
+  1987→      "cols": [
+  1988→        "name",
+  1989→        "price"
+  1990→      ],
+  1991→      "rows": [
+  1992→        [
+  1993→          "Smart Watch S",
+  1994→          199.99
+  1995→        ],
+  1996→        [
+  1997→          "Noise-Canceling Headset",
+  1998→          149.99
+  1999→        ],
+  2000→        [
+
+[showing lines 1-2000 of 4182; use offset=2001 with limit to continue reading]
