@@ -803,3 +803,19 @@ Work Log:
 
 Stage Summary:
 - Toolbox visibility bug fixed and committed (803e403); all 200 case files now reachable via sidebar Toolbox -> Case files
+
+---
+Task ID: themes-v2
+Agent: main
+Task: Replace the theme set with the user-approved v2 directions (jet black, cream & plum, black & pink, matte pastels)
+
+Work Log:
+- Mapped the theme system: src/lib/themes.ts registry (ids/names/swatches/dark flags) -> globals.css .theme-* ramp blocks (zinc inversion for light, emerald/teal re-brand, shadcn tokens) -> boot script in layout.tsx auto-generated from the registry
+- Rewrote the registry to 4 themes: jet (dark, default), plum (light), noir (dark), pastel (light); replaced the 5 CSS blocks (carbon->jet, paper->plum, marine->noir, oxblood->pastel, gallery->deleted)
+- Updated hardcoded refs: <html> boot class theme-jet, both switcher "carbon" fallbacks -> DEFAULT_THEME, landing "5 themes" -> "4 themes"
+- Hit a stale Turbopack CSS artifact (compiled chunk kept serving 3 of 4 blocks, same content hash); a real content change to globals.css forced recompile and pastel appeared — verified all four .theme-* blocks in the served CSS
+- Browser E2E per theme: html class + dark toggle correct (jet/noir dark, plum/pastel light), computed body colors match tokens, landing + learn + 200-deck screenshots per theme, CS-001 solved under pastel light (rebuilt correctly + 10 XP), switcher menu lists exactly 4 themes; tsc clean in src
+- Committed b750bb7 (source + 11 screenshots)
+
+Stage Summary:
+- Theme set v2 shipped: Jet Black (default), Cream & Plum, Black & Pink, Matte Pastels; old stored theme ids migrate safely to the default; all 200 case files / learn app / landing / playground re-skin via the unchanged ramp mechanism
