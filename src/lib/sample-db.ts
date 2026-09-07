@@ -226,7 +226,25 @@ async function insertSeed() {
  *  Self-heals stale db files: `CREATE TABLE IF NOT EXISTS` cannot add columns
  *  to an existing table, so if `orders` lacks a column the DDL expects
  *  (shipped_at was added later), the sample dataset is dropped and reseeded. */
-export async function ensureDatabase(): Promise<void> {
+// Single-flight: the playground fires /api/query and /api/stats (and the
+// learn app can fire more) in parallel on cold start — without this lock
+// both callers see an empty database and both seed, and the loser dies on
+// "UNIQUE constraint failed: customers.id". The promise lives on globalThis
+// because Next bundles sample-db into EACH route separately — a module-level
+// variable would give every route its own lock and serialize nothing.
+const globalForSeed = globalThis as unknown as { __seeqlEnsure?: Promise<void> };
+
+export function ensureDatabase(): Promise<void> {
+  if (!globalForSeed.__seeqlEnsure) {
+    globalForSeed.__seeqlEnsure = runEnsure().catch((err) => {
+      globalForSeed.__seeqlEnsure = undefined; // failed — allow the next call to retry
+      throw err;
+    });
+  }
+  return globalForSeed.__seeqlEnsure;
+}
+
+async function runEnsure(): Promise<void> {
   for (const stmt of DDL) await db.$executeRawUnsafe(stmt);
   const cols = (await db.$queryRawUnsafe(`PRAGMA table_info(orders)`)) as Array<{ name: string }>;
   if (!cols.some((c) => c.name === "shipped_at")) {

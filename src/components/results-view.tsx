@@ -1,8 +1,10 @@
 "use client";
 
 // Query results grid: sticky header, zebra rows, NULL styling, CSV export.
+// Rows fade in with a short stagger — the lesson-figure feel.
 
 import { useMemo, useState } from "react";
+import { motion } from "framer-motion";
 import { ArrowDownToLine, Check, Copy, Rows3, Timer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { CellValue } from "@/lib/sql-types";
@@ -152,7 +154,13 @@ export function ResultsView({
           </thead>
           <tbody>
             {visible.map((row, ri) => (
-              <tr key={ri} className="group hover:bg-zinc-800/40">
+              <motion.tr
+                key={ri}
+                initial={{ opacity: 0, y: 3 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.22, delay: Math.min(ri * 0.018, 0.45), ease: "easeOut" }}
+                className="group hover:bg-zinc-800/40"
+              >
                 <td className="border-b border-zinc-800/50 px-3 py-1.5 text-right font-mono text-[11px] text-zinc-600 group-hover:text-zinc-500">
                   {ri + 1}
                 </td>
@@ -170,7 +178,7 @@ export function ResultsView({
                     {cell === null ? "NULL" : cellToString(cell)}
                   </td>
                 ))}
-              </tr>
+              </motion.tr>
             ))}
             {rows.length === 0 && (
               <tr>

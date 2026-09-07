@@ -5,6 +5,7 @@ import {
   AlertTriangle,
   ArrowLeft,
   Braces,
+  ChartColumn,
   Check,
   ClipboardList,
   Copy,
@@ -43,6 +44,8 @@ import { ResultsView, WriteResultView } from "@/components/results-view";
 import { PlanView } from "@/components/plan-view";
 import { ParseTreeView } from "@/components/parse-tree-view";
 import { SchemaView } from "@/components/schema-view";
+import { ChartView } from "@/components/chart-view";
+import { QueryFlowSvg } from "@/components/query-flow-svg";
 import { Landing } from "@/components/landing";
 import { LearnApp } from "@/components/learn/learn-app";
 import { LogoFull } from "@/components/brand";
@@ -151,6 +154,19 @@ function PlaygroundView({
   const [running, setRunning] = useState(false);
   const [history, setHistory] = useState<string[]>([]);
   const [resetting, setResetting] = useState(false);
+  const [tableCounts, setTableCounts] = useState<Record<string, number> | null>(null);
+
+  // live table row counts — powers the FROM dot-field in the query flow strip
+  useEffect(() => {
+    fetch("/api/stats")
+      .then((r) => r.json())
+      .then((j) => {
+        if (j?.ok) setTableCounts(j.counts as Record<string, number>);
+      })
+      .catch(() => {
+        /* flow strip simply shows no dot-field */
+      });
+  }, []);
 
   const loadHistory = useCallback(() => {
     try {
@@ -560,7 +576,15 @@ function PlaygroundView({
                       <Braces className="h-3.5 w-3.5" /> JSON
                     </TabsTrigger>
                   </TabsList>
-                  <TabsContent value="pipeline" className="mt-3">
+                  <TabsContent value="pipeline" className="mt-3 space-y-3">
+                    {plan.statementType === "SELECT" && (
+                      <QueryFlowSvg
+                        key={sql}
+                        plan={plan}
+                        resultRows={execOk ? (exec as ExecResult).rows.length : undefined}
+                        tableCounts={tableCounts}
+                      />
+                    )}
                     <PipelineView plan={plan} />
                   </TabsContent>
                   <TabsContent value="joins" className="mt-3">
@@ -675,6 +699,14 @@ function PlaygroundView({
                         </span>
                       </TabsTrigger>
                     )}
+                    {!isWrite && exec.columns.length > 0 && (
+                      <TabsTrigger
+                        value="chart"
+                        className="h-7 gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+                      >
+                        <ChartColumn className="h-3 w-3" /> Chart
+                      </TabsTrigger>
+                    )}
                   </TabsList>
                 </div>
                 <TabsContent value="results" className="mt-0">
@@ -694,6 +726,11 @@ function PlaygroundView({
                 {!isWrite && exec.plan && exec.plan.length > 0 && (
                   <TabsContent value="plan" className="p-3">
                     <PlanView rows={exec.plan} />
+                  </TabsContent>
+                )}
+                {!isWrite && exec.columns.length > 0 && (
+                  <TabsContent value="chart" className="mt-0">
+                    <ChartView columns={exec.columns} rows={exec.rows} />
                   </TabsContent>
                 )}
               </Tabs>

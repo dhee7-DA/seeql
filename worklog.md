@@ -819,3 +819,23 @@ Work Log:
 
 Stage Summary:
 - Theme set v2 shipped: Jet Black (default), Cream & Plum, Black & Pink, Matte Pastels; old stored theme ids migrate safely to the default; all 200 case files / learn app / landing / playground re-skin via the unchanged ramp mechanism
+
+---
+Task ID: pg-flow-1
+Agent: main
+Task: "how can we improve the playground??" — lesson-diagram aesthetic in the playground + rescue orphaned ChartView + seed race fix
+
+Work Log:
+- Recon: playground = PlaygroundView in src/app/page.tsx (editor + 6 viz tabs + results panel); found chart-view.tsx (full recharts component, ChartColumn icon, auto X/Y detection, SUM-by-category aggregation) was NEVER imported anywhere — orphaned
+- New src/components/query-flow-svg.tsx: QueryFlowSvg — compact lesson-style SVG strip (640 viewBox, diagrams-kit fade/drawIn/DotField) rendering the logical execution order: FROM node with real dot-field + row count from /api/stats, JOIN, WHERE/HAVING as dashed gates, GROUP BY/SELECT/ORDER+LIMIT nodes, emerald OUT node carrying the actual result row count; 4-per-row grid with straight arrows + rounded circuit wrap arrow into the next row; plain-English caption line under the figure
+- page.tsx: wired strip at top of Pipeline tab (SELECT only, key={sql} so each run replays the draw-in), added tableCounts via /api/stats on mount, wired ChartView as a "Chart" tab in the results panel (hidden for write statements), ChartColumn icon import
+- results-view.tsx: rows now motion.tr with 18ms/row stagger fade-in (capped 0.45s)
+- BUG FOUND + FIXED (src/lib/sample-db.ts): playground boot fires /api/query + /api/stats in parallel; ensureDatabase() had no single-flight guard so both calls could seed an empty db → loser died "UNIQUE constraint failed: customers.id". First fix (module-level promise lock) was insufficient: Next bundles sample-db into EACH route separately, so locks didn't share. Final fix: lock promise parked on globalThis.__seeqlEnsure
+- Ops incident during E2E: dev server originally launched by container start.sh died when I killed it for the db test; processes spawned from Bash tool calls get reaped between calls (setsid+nohup dies, double-fork node spawn detached:true survives). Server now relaunched via node double-fork and stable across calls; db file recreated cleanly on disk
+- E2E (fresh agent-browser session): default join+agg sample → strip renders FROM c (16-row dot-field) → JOIN → WHERE gate → GROUP BY → HAVING gate → SELECT → ORDER BY → OUT "4 rows"; CTE sample → WITH monthly + FROM m alias + OUT "67 rows" (wrap arrow, "rows flow in" fallback for non-physical CTE source); simple sample → 5 nodes single-wrap; Chart tab → recharts bars, SUM aggregation verified (Alice Chen 6+12=18 tallest bar); error path → 0 figures, parse+exec error cards shown; UPDATE → no strip, write banner, Chart tab absent; stagger opacities settle at 1; console clean; screenshots scripts/shots/pg-flow-{default,4rows,cte,simple,final,error-path,write-path}.png + pg-chart-tab.png
+- tsc clean (touched files), eslint clean
+
+Stage Summary:
+- Playground now speaks the same visual language as the lessons: every SELECT shows a picture-first flow strip (real row counts, dashed gates, animated arrows) above the step-by-step pipeline, and every result with a numeric column is one click from a chart
+- Cold-start seed race fixed at the framework level (globalThis single-flight) — the intermittent "UNIQUE constraint failed: customers.id" on first load is gone
+- ChartView rescued from orphan status; results grid got the lesson-feel stagger
