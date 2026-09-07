@@ -1,0 +1,834 @@
+     1→"use client";
+     2→
+     3→import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+     4→import {
+     5→  AlertTriangle,
+     6→  ArrowLeft,
+     7→  Braces,
+     8→  ChartColumn,
+     9→  Check,
+    10→  ClipboardList,
+    11→  Copy,
+    12→  Database,
+    13→  DatabaseZap,
+    14→  Eraser,
+    15→  Filter,
+    16→  GitMerge,
+    17→  GraduationCap,
+    18→  History,
+    19→  Link2,
+    20→  ListTree,
+    21→  Loader2,
+    22→  Network,
+    23→  Play,
+    24→  RotateCcw,
+    25→  Sigma,
+    26→  Table2,
+    27→  Timer,
+    28→  Workflow,
+    29→} from "lucide-react";
+    30→import { Button } from "@/components/ui/button";
+    31→import {
+    32→  Select,
+    33→  SelectContent,
+    34→  SelectItem,
+    35→  SelectTrigger,
+    36→  SelectValue,
+    37→} from "@/components/ui/select";
+    38→import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+    39→import { SqlEditor } from "@/components/sql-editor";
+    40→import { PipelineView } from "@/components/pipeline-view";
+    41→import { JoinsView } from "@/components/joins-view";
+    42→import { BreakdownView } from "@/components/breakdown-view";
+    43→import { ResultsView, WriteResultView } from "@/components/results-view";
+    44→import { PlanView } from "@/components/plan-view";
+    45→import { ParseTreeView } from "@/components/parse-tree-view";
+    46→import { SchemaView } from "@/components/schema-view";
+    47→import { ChartView } from "@/components/chart-view";
+    48→import { QueryFlowSvg } from "@/components/query-flow-svg";
+    49→import { Landing } from "@/components/landing";
+    50→import { LearnApp } from "@/components/learn/learn-app";
+    51→import { LogoFull } from "@/components/brand";
+    52→import { ThemeSwitcher } from "@/components/theme-switcher";
+    53→import { DEFAULT_SAMPLE, SAMPLE_QUERIES } from "@/lib/samples";
+    54→import { DIALECTS, type DialectName } from "@/lib/sql-types";
+    55→import type {
+    56→  ExecResponse,
+    57→  ExecResult,
+    58→  ParseResult,
+    59→  QueryPlan,
+    60→} from "@/lib/sql-types";
+    61→import { cn } from "@/lib/utils";
+    62→
+    63→const HISTORY_KEY = "sql-visualizer-history";
+    64→const HISTORY_MAX = 12;
+    65→
+    66→function StatChip({
+    67→  icon: Icon,
+    68→  label,
+    69→  value,
+    70→  tone = "zinc",
+    71→}: {
+    72→  icon: React.ComponentType<{ className?: string }>;
+    73→  label: string;
+    74→  value: string | number;
+    75→  tone?: "zinc" | "emerald" | "amber" | "rose" | "violet" | "teal";
+    76→}) {
+    77→  const tones: Record<string, string> = {
+    78→    zinc: "border-zinc-700/70 bg-zinc-800/50 text-zinc-300",
+    79→    emerald: "border-emerald-400/25 bg-emerald-400/10 text-emerald-200",
+    80→    amber: "border-amber-400/25 bg-amber-400/10 text-amber-200",
+    81→    rose: "border-rose-400/25 bg-rose-400/10 text-rose-200",
+    82→    violet: "border-violet-400/25 bg-violet-400/10 text-violet-200",
+    83→    teal: "border-teal-400/25 bg-teal-400/10 text-teal-200",
+    84→  };
+    85→  return (
+    86→    <span
+    87→      className={cn(
+    88→        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium",
+    89→        tones[tone],
+    90→      )}
+    91→    >
+    92→      <Icon className="h-3.5 w-3.5" />
+    93→      {label}
+    94→      <span className="font-mono font-bold">{value}</span>
+    95→    </span>
+    96→  );
+    97→}
+    98→
+    99→function JsonView({ plan }: { plan: QueryPlan }) {
+   100→  const [copied, setCopied] = useState(false);
+   101→  const json = JSON.stringify({ ...plan, tree: undefined }, null, 2);
+   102→
+   103→  const copy = async () => {
+   104→    try {
+   105→      await navigator.clipboard.writeText(json);
+   106→      setCopied(true);
+   107→      setTimeout(() => setCopied(false), 1600);
+   108→    } catch {
+   109→      // clipboard unavailable — ignore
+   110→    }
+   111→  };
+   112→
+   113→  return (
+   114→    <div className="space-y-3">
+   115→      <div className="flex items-center justify-between">
+   116→        <p className="text-xs text-zinc-400">
+   117→          The structured plan the visualizer derived from your query.
+   118→        </p>
+   119→        <Button
+   120→          variant="outline"
+   121→          size="sm"
+   122→          onClick={copy}
+   123→          className="h-7 gap-1.5 border-zinc-700 text-xs text-zinc-300 hover:bg-zinc-800"
+   124→        >
+   125→          {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+   126→          {copied ? "Copied" : "Copy JSON"}
+   127→        </Button>
+   128→      </div>
+   129→      <pre className="thin-scrollbar max-h-[520px] overflow-auto rounded-xl border border-zinc-800 bg-zinc-900/70 p-4 font-mono text-xs leading-relaxed text-zinc-300">
+   130→        {json}
+   131→      </pre>
+   132→    </div>
+   133→  );
+   134→}
+   135→
+   136→type Mode = "landing" | "playground" | "learn";
+   137→
+   138→function PlaygroundView({
+   139→  go,
+   140→  sharedSql,
+   141→  sharedDialect,
+   142→}: {
+   143→  go: (m: Mode) => void;
+   144→  /** SQL coming from a #playground?q=… share link — boots the editor with it. */
+   145→  sharedSql?: string | null;
+   146→  sharedDialect?: DialectName;
+   147→}) {
+   148→  const [sql, setSql] = useState(sharedSql ?? DEFAULT_SAMPLE.sql);
+   149→  const [dialect, setDialect] = useState<DialectName>(sharedDialect ?? DEFAULT_SAMPLE.dialect);
+   150→  const [sampleId, setSampleId] = useState<string>(sharedSql ? "" : DEFAULT_SAMPLE.id);
+   151→  const [copiedLink, setCopiedLink] = useState(false);
+   152→  const [plan, setPlan] = useState<ParseResult | null>(null);
+   153→  const [exec, setExec] = useState<ExecResponse | null>(null);
+   154→  const [running, setRunning] = useState(false);
+   155→  const istory, setHistory] = useState<string[]>([]);
+   156→  const [resetting, setResetting] = useState(false);
+   157→  const [tableCounts, setTableCounts] = useState<Record<string, number> | null>(null);
+   158→
+   159→  // live table row counts — powers the FROM dot-field in the query flow strip
+   160→  useEffect(() => {
+   161→    fetch("/api/stats")
+   162→      .then((r) => r.json())
+   163→      .then((j) => {
+   164→        if (j?.ok) setTableCounts(j.counts as Record<string, number>);
+   165→      })
+   166→      .catch(() => {
+   167→        /* flow strip simply shows no dot-field */
+   168→      });
+   169→  }, []);
+   170→
+   171→  const loadHistory = useCallback(() => {
+   172→    try {
+   173→      const raw = window.localStorage.getItem(HISTORY_KEY);
+   174→      if (raw) setHistory(JSON.parse(raw) as string[]);
+   175→    } catch {
+   176→      // ignore malformed history
+   177→    }
+   178→  }, []);
+   179→
+   180→  const pushHistory = useCallback((text: string) => {
+   181→    setHistory((prev) => {
+   182→      const next = [text, ...prev.filter((h) => h !== text)].slice(0, HISTORY_MAX);
+   183→      try {
+   184→        window.localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
+   185→      } catch {
+   186→        // storage unavailable
+   187→      }
+   188→      return next;
+   189→    });
+   190→  }, []);
+   191→
+   192→  /** Parse + execute in parallel; both panels update independently. */
+   193→  const runAll = useCallback(
+   194→    async (sqlText: string, dia: DialectName) => {
+   195→      const trimmed = sqlText.trim();
+   196→      if (!trimmed) return;
+   197→      setRunning(true);
+   198→      try {
+   199→        const [parseRes, execRes] = await Promise.all([
+   200→          fetch("/api/parse", {
+   201→            method: "POST",
+   202→            headers: { "Content-Type": "application/json" },
+   203→            body: JSON.stringify({ sql: trimmed, dialect: dia }),
+   204→          }).then((r) => r.json() as Promise<ParseResult>),
+   205→          fetch("/api/query", {
+   206→            method: "POST",
+   207→            headers: { "Content-Type": "application/json" },
+   208→            body: JSON.stringify({ sql: trimmed }),
+   209→          }).then((r) => r.json() as Promise<ExecResponse>),
+   210→        ]);
+   211→        setPlan(parseRes);
+   212→        setExec(execRes);
+   213→        pushHistory(trimmed);
+   214→      } catch {
+   215→        setPlan((p) => p ?? { ok: false, error: "Could not reach the server. Please try again." });
+   216→        setExec({ ok: false, error: "Could not reach the server. Please try again." });
+   217→      } finally {
+   218→        setRunning(false);
+   219→      }
+   220→    },
+   221→    [pushHistory],
+   222→  );
+   223→
+   224→  const parseOnly = useCallback(async (sqlText: string, dia: DialectName) => {
+   225→    try {
+   226→      const res = await fetch("/api/parse", {
+   227→        method: "POST",
+   228→        headers: { "Content-Type": "application/json" },
+   229→        body: JSON.stringify({ sql: sqlText, dialect: dia }),
+   230→      });
+   231→      setPlan((await res.json()) as ParseResult);
+   232→    } catch {
+   233→      setPlan({ ok: false, error: "Could not reach the parser. Please try again." });
+   234→    }
+   235→  }, []);
+   236→
+   237→  // run the initial query once on load — a #playground?q=… share link boots
+   238→  // its own SQL, otherwise the default sample runs so the page shows live
+   239→  // diagrams + data immediately
+   240→  const bootSql = sharedSql ?? DEFAULT_SAMPLE.sql;
+   241→  const bootDialect = sharedDialect ?? DEFAULT_SAMPLE.dialect;
+   242→  useEffect(() => {
+   243→    loadHistory();
+   244→    runAll(bootSql, bootDialect);
+   245→  }, [loadHistory, runAll, bootSql, bootDialect]);
+   246→
+   247→  /** Copy a link that reopens the playground with the current query loaded. */
+   248→  const shareLink = async () => {
+   249→    const params = new URLSearchParams({ q: sql });
+   250→    if (dialect !== DEFAULT_SAMPLE.dialect) params.set("d", dialect);
+   251→    const url = `${window.location.origin}${window.location.pathname}#playground?${params.toString()}`;
+   252→    let ok = false;
+   253→    try {
+   254→      await navigator.clipboard.writeText(url);
+   255→      ok = true;
+   256→    } catch {
+   257→      // clipboard API unavailable/denied — legacy fallback for restricted contexts
+   258→      try {
+   259→        const ta = document.createElement("textarea");
+   260→        ta.value = url;
+   261→        ta.style.position = "fixed";
+   262→        ta.style.opacity = "0";
+   263→        document.body.appendChild(ta);
+   264→        ta.select();
+   265→        ok = document.execCommand("copy");
+   266→        document.body.removeChild(ta);
+   267→      } catch {
+   268→        ok = false;
+   269→      }
+   270→    }
+   271→    if (ok) {
+   272→      setCopiedLink(true);
+   273→      setTimeout(() => setCopiedLink(false), 1600);
+   274→    }
+   275→  };
+   276→
+   277→  const onSampleChange = (id: string) => {
+   278→    const sample = SAMPLE_QUERIES.find((s) => s.id === id);
+   279→    if (!sample) return;
+   280→    setSampleId(id);
+   281→    setSql(sample.sql);
+   282→    setDialect(sample.dialect);
+   283→    runAll(sample.sql, sample.dialect);
+   284→  };
+   285→
+   286→  const onDialectChange = (d: string) => {
+   287→    const next = d as DialectName;
+   288→    setDialect(next);
+   289→    parseOnly(sql, next);
+   290→  };
+   291→
+   292→  const onHistoryPick = (text: string) => {
+   293→    setSampleId("");
+   294→    setSql(text);
+   295→    runAll(text, dialect);
+   296→  };
+   297→
+   298→  const onSchemaPickTable = (table: string) => {
+   299→    const text = `SELECT *\nFROM ${table}\nLIMIT 5;`;
+   300→    setSampleId("");
+   301→    setSql(text);
+   302→    runAll(text, dialect);
+   303→  };
+   304→
+   305→  const resetDatabase = async () => {
+   306→    if (!window.confirm("Restore the sample database to its original data?")) return;
+   307→    setResetting(true);
+   308→    try {
+   309→      await fetch("/api/reset", { method: "POST" });
+   310→      // re-run current query so the user sees fresh results
+   311→      await runAll(sql, dialect);
+   312→    } catch {
+   313→      // keep silent — the re-run will surface errors if any
+   314→    } finally {
+   315→      setResetting(false);
+   316→    }
+   317→  };
+   318→
+   319→  const good = plan !== null && plan.ok;
+   320→  const execOk = exec !== null && exec.ok;
+   321→  const planSteps = execOk ? (exec as ExecResult).plan?.length ?? 0 : 0;
+   322→  const isWrite = execOk && (exec as ExecResult).changes !== null;
+   323→
+   324→  return (
+   325→    <div className="flex min-h-screen flex-col bg-zinc-950 text-zinc-100">
+   326→      {/* header */}
+   327→      <header className="sticky top-0 z-40 border-b border-zinc-800/80 bg-zinc-950/85 backdrop-blur">
+   328→        <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center gap-x-4 gap-y-3 px-4 py-3">
+   329→          <div className="flex items-center gap-3">
+   330→            <button onClick={() => go("landing")} aria-label="SeeQL — back to home" className="transition-opacity hover:opacity-80">
+   331→              <LogoFull />
+   332→            </button>
+   333→            <div className="hidden border-l border-zinc-800 pl-3 sm:block">
+   334→              <p className="text-xs text-zinc-500">
+   335→                Write a query — see it parsed, executed and explained
+   336→              </p>
+   337→            </div>
+   338→          </div>
+   339→
+   340→          <div className="ml-auto flex flex-wrap items-center gap-2">
+   341→            <ThemeSwitcher />
+   342→            <button
+   343→              onClick={() => go("learn")}
+   344→              className="hidden items-center gap-1.5 rounded-md border border-zinc-800 px-3.5 py-2 text-sm text-zinc-300 transition-colors hover:bg-zinc-900 sm:flex"
+   345→            >
+   346→              <GraduationCap className="h-4 w-4 text-emerald-400" />
+   347→              Learn
+   348→            </button>
+   349→            <Select value={sampleId} onValueChange={onSampleChange}>
+   350→              <SelectTrigger
+   351→                size="sm"
+   352→                className="w-[190px] border-zinc-700 bg-zinc-900 text-xs sm:w-[220px]"
+   353→                aria-label="Load a sample query"
+   354→              >
+   355→                <SelectValue placeholder="Sample queries" />
+   356→              </SelectTrigger>
+   357→              <SelectContent>
+   358→                {SAMPLE_QUERIES.map((s) => (
+   359→                  <SelectItem key={s.id} value={s.id} className="text-xs">
+   360→                    <span className="font-medium">{s.name}</span>
+   361→                    <span className="ml-2 text-zinc-500">{s.description}</span>
+   362→                  </SelectItem>
+   363→                ))}
+   364→              </SelectContent>
+   365→            </Select>
+   366→
+   367→            <Select value={dialect} onValueChange={onDialectChange}>
+   368→              <SelectTrigger
+   369→                size="sm"
+   370→                className="w-[130px] border-zinc-700 bg-zinc-900 text-xs"
+   371→                aria-label="SQL dialect"
+   372→              >
+   373→                <SelectValue />
+   374→              </SelectTrigger>
+   375→              <SelectContent>
+   376→                {DIALECTS.map((d) => (
+   377→                  <SelectItem key={d} value={d} className="font-mono text-xs">
+   378→                    {d}
+   379→                  </SelectItem>
+   380→                ))}
+   381→              </SelectContent>
+   382→            </Select>
+   383→
+   384→            <Button
+   385→              variant="ghost"
+   386→              size="sm"
+   387→              onClick={shareLink}
+   388→              className="h-8 gap-1.5 px-2.5 text-xs text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
+   389→              aria-label="Copy a link to this query"
+   390→            >
+   391→              {copiedLink ? (
+   392→                <Check className="h-4 w-4 text-emerald-400" />
+   393→              ) : (
+   394→                <Link2 className="h-4 w-4" />
+   395→              )}
+   396→              {copiedLink ? "Copied" : "Share"}
+   397→            </Button>
+   398→
+   399→            <Button
+   400→              onClick={() => runAll(sql, dialect)}
+   401→              disabled={running}
+   402→              className="h-8 gap-1.5 bg-emerald-500 font-medium text-zinc-950 hover:bg-emerald-400"
+   403→            >
+   404→              {running ? (
+   405→                <Loader2 className="h-4 w-4 animate-spin" />
+   406→              ) : (
+   407→                <Play className="h-4 w-4" />
+   408→              )}
+   409→              Run
+   410→            </Button>
+   411→          </div>
+   412→        </div>
+   413→      </header>
+   414→
+   415→      {/* main */}
+   416→      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5">
+   417→        <div className="grid items-start gap-5 lg:grid-cols-inmax(360px,2fr)_minmax(0,3fr)]">
+   418→          {/* editor panel */}
+   419→          <section aria-label="SQL editor" className="flex flex-col gap-2">
+   420→            <div className="flex items-center justify-between px-1">
+   421→              <h2 className="text-xs font-semibold tracking-widest text-zinc-400 uppercase">
+   422→                Query
+   423→              </h2>
+   424→              <div className="flex items-center gap-1">
+   425→                {history.length > 0 && (
+   426→                  <Select onValueChange={onHistoryPick}>
+   427→                    <SelectTrigger
+   428→                      size="sm"
+   429→                      className="h-7 gap-1 border-none bg-transparent px-2 text-xs text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 focus:ring-0"
+   430→                      aria-label="Query history"
+   431→                    >
+   432→                      <span className="flex items-center gap-1.5">
+   433→                        <History className="h-3.5 w-3.5" />
+   434→                        History
+   435→                      </span>
+   436→                    </SelectTrigger>
+   437→                    <SelectContent>
+   438→                      {history.map((h, i) => (
+   439→                        <SelectItem key={i} value={h} className="max-w-[320px] font-mono text-xs">
+   440→                          <span className="block truncate">{h.split("\n")[0]}</span>
+   441→                        </SelectItem>
+   442→                      ))}
+   443→                    </SelectContent>
+   444→                  </Select>
+   445→                )}
+   446→                <Button
+   447→                  variant="ghost"
+   448→                  size="sm"
+   449→                  onClick={() => setSql("")}
+   450→                  className="h-7 gap-1 px-2 text-xs text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
+   451→                >
+   452→                  <Eraser className="h-3.5 w-3.5" />
+   453→                  Clear
+   454→                </Button>
+   455→              </div>
+   456→            </div>
+   457→            <SqlEditor
+   458→              value={sql}
+   459→              onChange={(v) => {
+   460→                setSql(v);
+   461→                setSampleId("");
+   462→              }}
+   463→              onVisualize={() => runAll(sql, dialect)}
+   464→              className="h-[300px] xl:h-[340px]"
+   465→            />
+   466→            <p className="px-1 text-[11px] text-zinc-600">
+   467→              Press{" "}
+   468→              <kbd className="rounded border border-zinc-700 bg-zinc-900 px-1 py-0.5 font-mono text-[10px] text-zinc-400">
+   469→                Ctrl / ⌘
+   470→              </kbd>{" "}
+   471→              +{" "}
+   472→              <kbd className="rounded border border-zinc-700 bg-zinc-900 px-1 py-0.5 font-mono text-[10px] text-zinc-400">
+   473→                Enter
+   474→              </kbd>{" "}
+   475→              to run · executes on the built-in{" "}
+   476→              <span className="text-zinc-500">SQLite sample DB</span>
+   477→            </p>
+   478→          </section>
+   479→
+   480→          {/* visualization panel */}
+   481→          <section aria-label="Query visualization" className="flex min-w-0 flex-col gap-3">
+   482→            {plan && !plan.ok && (
+   483→              <div className="rounded-xl border border-rose-500/30 bg-rose-500/5 p-4">
+   484→                <div className="flex items-center gap-2">
+   485→                  <AlertTriangle className="h-4 w-4 shrink-0 text-rose-400" />
+   486→                  <h2 className="text-sm font-semibold text-rose-200">
+   487→                    The query could not be parsed
+   488→                  </h2>
+   489→                </div>
+   490→                <pre className="thin-scrollbar mt-2.5 max-h-32 overflow-auto rounded-lg bg-zinc-950/70 p-3 font-mono text-xs break-words whitespace-pre-wrap text-rose-200/90">
+   491→                  {plan.error}
+   492→                </pre>
+   493→                {"hint" in plan && plan.hint && (
+   494→                  <p className="mt-2 text-xs leading-relaxed text-zinc-400">{plan.hint}</p>
+   495→                )}
+   496→              </div>
+   497→            )}
+   498→
+   499→            {good && plan && plan.ok && (
+   500→              <>
+   501→                {/* stats */}
+   502→                <div className="flex flex-wrap items-center gap-2">
+   503→                  <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-1 font-mono text-xs font-bold text-emerald-300">
+   504→                    {plan.statementType}
+   505→                  </span>
+   506→                  <StatChip icon={Table2} label="tables" value={plan.stats.tables} tone="emerald" />
+   507→                  <StatChip icon={GitMerge} label="joins" value={plan.stats.joins} tone="amber" />
+   508→                  <StatChip icon={Filter} label="filters" value={plan.stats.filters} tone="rose" />
+   509→                  <StatChip
+   510→                    icon={Sigma}
+   511→                    label="aggregates"
+   512→                    value={plan.stats.aggregations}
+   513→                    tone="teal"
+   514→                  />
+   515→                  {plan.stats.ctes > 0 && (
+   516→                    <StatChip icon={ListTree} label="ctes" value={plan.stats.ctes} tone="violet" />
+   517→                  )}
+   518→                  <span
+   519→                    className={cn(
+   520→                      "ml-auto rounded-full border px-2.5 py-1 text-xs font-semibold",
+   521→                      plan.stats.label === "Simple"
+   522→                        ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-300"
+   523→                        : plan.stats.label === "Moderate"
+   524→                          ? "border-amber-400/30 bg-amber-400/10 text-amber-300"
+   525→                          : "border-rose-400/30 bg-rose-400/10 text-rose-300",
+   526→                    )}
+   527→                  >
+   528→                    {plan.stats.label} · score {plan.stats.complexity}
+   529→                  </span>
+   530→                </div>
+   531→
+   532→                {plan.statementType !== "SELECT" && (
+   533→                  <p className="rounded-lg border border-amber-400/25 bg-amber-400/5 px-3 py-2 text-xs leading-relaxed text-amber-200/90">
+   534→                    This is a <span className="font-mono font-bold">{plan.statementType}</span>{" "}
+   535→                    statement — the pipeline below applies to SELECT queries, so only the tables
+   536→                    this statement touches are shown.
+   537→                  </p>
+   538→                )}
+   539→
+   540→                <Tabs defaultValue="pipeline" className="w-full">
+   541→                  <TabsList className="h-9 w-full justify-start overflow-x-auto bg-zinc-900 sm:w-auto">
+   542→                    <TabsTrigger
+   543→                      value="pipeline"
+   544→                      className="gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+   545→                    >
+   546→                      <Workflow className="h-3.5 w-3.5" /> Pipeline
+   547→                    </TabsTrigger>
+   548→                    <TabsTrigger
+   549→                      value="joins"
+   550→                      className="gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+   551→                    >
+   552→                      <Network className="h-3.5 w-3.5" /> Relationships
+   553→                    </TabsTrigger>
+   554→                    <TabsTrigger
+   555→                      value="breakdown"
+   556→                      className="gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+   557→                    >
+   558→                      <ListTree className="h-3.5 w-3.5" /> Breakdown
+   559→                    </TabsTrigger>
+   560→                    <TabsTrigger
+   561→                      value="tree"
+   562→                      className="gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+   563→                    >
+   564→                      <ClipboardList className="h-3.5 w-3.5" /> Parse Tree
+   565→                    </TabsTrigger>
+   566→                    <TabsTrigger
+   567→                      value="schema"
+   568→                      className="gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+   569→                    >
+   570→                      <DatabaseZap className="h-3.5 w-3.5" /> Schema
+   571→                    </TabsTrigger>
+   572→                    <TabsTrigger
+   573→                      value="json"
+   574→                      className="gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+   575→                    >
+   576→                      <Braces className="h-3.5 w-3.5" /> JSON
+   577→                    </TabsTrigger>
+   578→                  </TabsList>
+   579→                  <TabsContent value="pipeline" className="mt-3 space-y-3">
+   580→                    {plan.statementType === "SELECT" && (
+   581→                      <QueryFlowSvg
+   582→                        key={sql}
+   583→                        plan={plan}
+   584→                        resultRows={execOk ? (exec as ExecResult).rows.length : undefined}
+   585→                        tableCounts={tableCounts}
+   586→                      />
+   587→                    )}
+   588→                    <PipelineView plan={plan} />
+   589→                  </TabsContent>
+   590→                  <TabsContent value="joins" className="mt-3">
+   591→                    <JoinsView plan={plan} />
+   592→                  </TabsContent>
+   593→                  <TabsContent value="breakdown" className="mt-3">
+   594→                    <BreakdownView plan={plan} />
+   595→                  </TabsContent>
+   596→                  <TabsContent value="tree" className="mt-3">
+   597→                    {plan.tree ? (
+   598→                      <ParseTreeView tree={plan.tree} />
+   599→                    ) : (
+   600→                      <p className="rounded-lg border border-zinc-800 bg-zinc-900/60 px-4 py-6 text-center text-sm text-zinc-500">
+   601→                        No syntax tree for this statement.
+   602→                      </p>
+   603→                    )}
+   604→                  </TabsContent>
+   605→                  <TabsContent value="schema" className="mt-3">
+   606→                    <SchemaView onPickTable={onSchemaPickTable} />
+   607→                  </TabsContent>
+   608→                  <TabsContent value="json" className="mt-3">
+   609→                    <JsonView plan={plan} />
+   610→                  </TabsContent>
+   611→                </Tabs>
+   612→              </>
+   613→            )}
+   614→
+   615→            {!plan && (
+   616→              <div className="flex h-64 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900/50">
+   617→                <div className="flex items-center gap-2 text-sm text-zinc-400">
+   618→                  <Loader2 className="h-4 w-4 animate-spin" />
+   619→                  Parsing query…
+   620→                </div>
+   621→              </div>
+   622→            )}
+   623→          </section>
+   624→        </div>
+   625→
+   626→        {/* results panel — full width */}
+   627→        <section aria-label="Query results" className="mt-5">
+   628→          <div className="flex items-center justify-between px-1 pb-2">
+   629→            <h2 className="flex items-center gap-2 text-xs font-semibold tracking-widest text-zinc-400 uppercase">
+   630→              <DatabaseZap className="h-3.5 w-3.5 text-emerald-500" />
+   631→              Live results · SQLite
+   632→            </h2>
+   633→            <Button
+   634→              variant="ghost"
+   635→              size="sm"
+   636→              onClick={resetDatabase}
+   637→              disabled={resetting}
+   638→              className="h-7 gap-1.5 px-2 text-xs text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
+   639→            >
+   640→              {resetting ? (
+   641→                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+   642→              ) : (
+   643→                <RotateCcw className="h-3.5 w-3.5" />
+   644→              )}
+   645→              Reset database
+   646→            </Button>
+   647→          </div>
+   648→
+   649→          <div className="overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50">
+   650→            {exec === null && (
+   651→              <div className="flex h-40 items-center justify-center text-sm text-zinc-400">
+   652→                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+   653→                {running ? "Running on SQLite…" : "Press Run to execute a query"}
+   654→              </div>
+   655→            )}
+   656→
+   657→            {exec && !exec.ok && (
+   658→              <div className="p-4">
+   659→                <div className="flex items-center gap-2">
+   660→                  <AlertTriangle className="h-4 w-4 shrink-0 text-rose-400" />
+   661→                  <h3 className="text-sm font-semibold text-rose-200">
+   662→                    Execution failed
+   663→                  </h3>
+   664→                </div>
+   665→                <pre className="thin-scrollbar mt-2.5 max-h-32 overflow-auto rounded-lg bg-zinc-950/70 p-3 font-mono text-xs break-words whitespace-pre-wrap text-rose-200/90">
+   666→                  {exec.error}
+   667→                </pre>
+   668→                {exec.hint && (
+   669→                  <p className="mt-2 text-xs leading-relaxed text-zinc-400">{exec.hint}</p>
+   670→                )}
+   671→              </div>
+   672→            )}
+   673→
+   674→            {exec && exec.ok && (
+   675→              <Tabs defaultValue="results">
+   676→                <div className="flex flex-wrap items-center gap-2 border-b border-zinc-800/70 px-3 py-2">
+   677→                  <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-0.5 font-mono text-xs font-bold text-emerald-300">
+   678→                    {exec.statementType}
+   679→                  </span>
+   680→                  <span className="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-800/60 px-2.5 py-0.5 text-xs text-zinc-300">
+   681→                    <Timer className="h-3.5 w-3.5" />
+   682→                    {exec.durationMs} ms
+   683→                  </span>
+   684→                  <TabsList className="ml-auto h-7 bg-zinc-950/60">
+   685→                    <TabsTrigger
+   686→                      value="results"
+   687→                      className="h-7 gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+   688→                    >
+   689→                      <Table2 className="h-3 w-3" /> Results
+   690→                    </TabsTrigger>
+   691→                    {!isWrite && exec.plan && exec.plan.length > 0 && (
+   692→                      <TabsTrigger
+   693→                        value="plan"
+   694→                        className="h-7 gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+   695→                      >
+   696→                        <Workflow className="h-3 w-3" /> Plan
+   697→                        <span className="rounded-full bg-zinc-800 px-1.5 text-[10px] text-zinc-400">
+   698→                          {exec.plan.length}
+   699→                        </span>
+   700→                      </TabsTrigger>
+   701→                    )}
+   702→                    {!isWrite && exec.columns.length > 0 && (
+   703→                      <TabsTrigger
+   704→                        value="chart"
+   705→                        className="h-7 gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+   706→                      >
+   707→                        <ChartColumn className="h-3 w-3" /> Chart
+   708→                      </TabsTrigger>
+   709→                    )}
+   710→                  </TabsList>
+   711→                </div>
+   712→                <TabsContent value="results" className="mt-0">
+   713→                  {exec.columns.length > 0 ? (
+   714→                    <ResultsView
+   715→                      columns={exec.columns}
+   716→                      rows={exec.rows}
+   717→                      truncated={exec.truncated}
+   718→                    />
+   719→                  ) : (
+   720→                    <WriteResultView
+   721→                      statementType={exec.statementType}
+   722→                      changes={exec.changes ?? 0}
+   723→                    />
+   724→                  )}
+   725→                </TabsContent>
+   726→                {!isWrite && exec.plan && exec.plan.length > 0 && (
+   727→                  <TabsContent value="plan" className="p-3">
+   728→                    <PlanView rows={exec.plan} />
+   729→                  </TabsContent>
+   730→                )}
+   731→                {!isWrite && exec.columns.length > 0 && (
+   732→                  <TabsContent value="chart" className="mt-0">
+   733→                    <ChartView columns={exec.columns} rows={exec.rows} />
+   734→                  </TabsContent>
+   735→                )}
+   736→              </Tabs>
+   737→            )}
+   738→          </div>
+   739→        </section>
+   740→      </main>
+   741→
+   742→      {/* footer */}
+   743→      <footer className="mt-auto border-t border-zinc-800/80">
+   744→        <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-3 text-[11px] text-zinc-600">
+   745→          <span>
+   746→            SeeQL Playground · queries run against a sandboxed SQLite sample database · nothing is
+   747→            stored
+   748→          </span>
+   749→          <span className="font-mono">parse · execute · explain</span>
+   750→        </div>
+   751→      </footer>
+   752→    </div>
+   753→  );
+   754→}
+   755→
+   756→/**
+   757→ * App shell — single exposed route, three views:
+   758→ *   /            → landing
+   759→ *   /#playground → SQL playground (the original visualizer)
+   760→ *   /#learn      → the learning app
+   761→ * Hash syncs with browser history so back/forward work.
+   762→ */
+   763→function subscribeHash(cb: () => void) {
+   764→  window.addEventListener("hashchange", cb);
+   765→  return () => window.removeEventListener("hashchange", cb);
+   766→}
+   767→
+   768→export default function Home() {
+   769→  // The hash IS the router — subscribe to it as an external system.
+   770→  // useSyncExternalStore renders the server snapshot during hydration
+   771→  // (landing) and re-renders with the real hash right after — no
+   772→  // hydration mismatch, no setState-in-effect.
+   773→  const hash = useSyncExternalStore(
+   774→    subscribeHash,
+   775→    () => window.location.hash,
+   776→    () => "",
+   777→  );
+   778→  // The route is the part before "?" — a shared query rides along as
+   779→  // #playground?q=<encoded sql>&d=<dialect> and never breaks deep links.
+   780→  const qMark = hash.indexOf("?");
+   781→  const route = qMark === -1 ? hash : hash.slice(0, qMark);
+   782→  const mode: Mode =
+   783→    route === "#playground" ? "playground" : route === "#learn" ? "learn" : "landing";
+   784→
+   785→  let sharedSql: string | null = null;
+   786→  let sharedDialect: DialectName | undefined;
+   787→  if (mode === "playground" && qMark !== -1) {
+   788→    const params = new URLSearchParams(hash.slice(qMark + 1));
+   789→    const q = params.get("q");
+   790→    if (q && q.trim()) sharedSql = q;
+   791→    const d = params.get("d");
+   792→    if (d && (DIALECTS as readonly string[]).includes(d)) sharedDialect = d as DialectName;
+   793→  }
+   794→
+   795→  const go = useCallback((m: Mode) => {
+   796→    window.location.hash = m === "landing" ? "" : `#${m}`;
+   797→    window.scrollTo({ top: 0 });
+   798→  }, []);
+   799→
+   800→  if (mode === "landing") {
+   801→    return <Landing onStart={() => go("learn")} onPlayground={() => go("playground")} />;
+   802→  }
+   803→  if (mode === "learn") {
+   804→    return (
+   805→      <div className="flex min-h-screen flex-col bg-zinc-950 text-zinc-100">
+   806→        <header className="sticky top-0 z-40 border-b border-zinc-800/80 bg-zinc-950/85 backdrop-blur">
+   807→          <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+   808→            <button onClick={() => go("landing")} aria-label="SeeQL — back to home" className="transition-opacity hover:opacity-80">
+   809→              <LogoFull />
+   810→            </button>
+   811→            <div className="flex items-center gap-2">
+   812→              <ThemeSwitcher />
+   813→              <button
+   814→                onClick={() => go("playground")}
+   815→                className="hidden rounded-md border border-zinc-800 px-3.5 py-2 text-sm text-zinc-300 transition-colors hover:bg-zinc-900 sm:block"
+   816→              >
+   817→                Playground
+   818→              </button>
+   819→            </div>
+   820→          </div>
+   821→        </header>
+   822→        <LearnApp />
+   823→        <footer className="mt-auto border-t border-zinc-800/80">
+   824→          <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3 text-[11px] text-zinc-600 sm:px-6">
+   825→            <span>SeeQL Learn · progress saved on this device</span>
+   826→            <span className="font-mono">read · watch · prove</span>
+   827→          </div>
+   828→        </footer>
+   829→      </div>
+   830→    );
+   831→  }
+   832→  return <PlaygroundView key={sharedSql ?? ""} go={go} sharedSql={sharedSql} sharedDialect={sharedDialect} />;
+   833→}
+   834→
