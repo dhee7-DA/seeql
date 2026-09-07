@@ -6,6 +6,7 @@
 
 import { motion } from "framer-motion";
 import type { PipelineStep, QueryPlan } from "@/lib/sql-types";
+import type { ClauseKind } from "@/lib/sql-clauses";
 import { cn } from "@/lib/utils";
 
 interface Accent {
@@ -182,7 +183,28 @@ export function buildPipelineSteps(plan: QueryPlan): PipelineStep[] {
   return steps;
 }
 
-export function PipelineView({ plan }: { plan: QueryPlan }) {
+/** pipeline step → clause in the raw SQL text (for editor focusing) */
+const STEP_CLAUSE: Record<string, ClauseKind> = {
+  with: "with",
+  from: "from",
+  join: "from",
+  where: "where",
+  group: "group",
+  having: "having",
+  select: "select",
+  distinct: "select",
+  order: "order",
+  limit: "limit",
+};
+
+export function PipelineView({
+  plan,
+  onFocusClause,
+}: {
+  plan: QueryPlan;
+  /** click a step title → highlight that clause in the editor */
+  onFocusClause?: (kind: ClauseKind) => void;
+}) {
   const steps = buildPipelineSteps(plan);
   const used = steps.filter((s) => s.present).length;
 
@@ -224,14 +246,27 @@ export function PipelineView({ plan }: { plan: QueryPlan }) {
               </span>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
-                  <h3
-                    className={cn(
-                      "font-mono text-sm font-bold tracking-wide",
-                      step.present ? "text-zinc-100" : "text-zinc-500",
-                    )}
-                  >
-                    {step.title}
-                  </h3>
+                  {onFocusClause && step.present && STEP_CLAUSE[step.key] ? (
+                    <button
+                      type="button"
+                      onClick={() => onFocusClause(STEP_CLAUSE[step.key])}
+                      title="Show this clause in the editor"
+                      className={cn(
+                        "cursor-pointer rounded font-mono text-sm font-bold tracking-wide text-zinc-100 underline-offset-4 transition-colors hover:text-emerald-300 hover:underline",
+                      )}
+                    >
+                      {step.title}
+                    </button>
+                  ) : (
+                    <h3
+                      className={cn(
+                        "font-mono text-sm font-bold tracking-wide",
+                        step.present ? "text-zinc-100" : "text-zinc-500",
+                      )}
+                    >
+                      {step.title}
+                    </h3>
+                  )}
                   <span
                     className={cn(
                       "text-xs font-medium",

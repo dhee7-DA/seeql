@@ -655,7 +655,7 @@ function summarizeSelect(select: Record<string, unknown> | undefined): string {
 export function buildQueryPlan(
   sql: string,
   dialect: Dialect,
-): QueryPlan | { ok: false; error: string; hint?: string } {
+): QueryPlan | { ok: false; error: string; hint?: string; location?: { start: number; end: number } } {
   const trimmed = sql.trim();
   if (!trimmed) {
     return { ok: false, error: "Query is empty. Write or pick a SQL query first." };
@@ -663,13 +663,26 @@ export function buildQueryPlan(
 
   const parser = new Parser();
   let ast: unknown;
+  const lead = sql.length - sql.trimStart().length; // trim() shift for error offsets
   try {
     ast = parser.astify(trimmed, { database: dialect });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     const hint =
       "Check for missing commas, keywords or unbalanced parentheses. Some functions are dialect-specific — try switching the dialect.";
-    return { ok: false, error: message, hint };
+    // peggy SyntaxErrors carry a precise location — surface the offsets so the
+    // editor can draw a squiggle under the offending token
+    const loc = (err as { location?: { start?: { offset?: number }; end?: { offset?: number } } })
+      ?.location;
+    const location =
+      loc && typeof loc.start?.offset === "number" && typeof loc.end?.offset === "number"
+        ? // offsets are relative to `trimmed` — shift back into the raw text
+          {
+            start: loc.start.offset + lead,
+            end: loc.end.offset + lead,
+          }
+        : undefined;
+    return { ok: false, error: message, hint, location };
   }
 
   if (Array.isArray(ast)) ast = ast[0];

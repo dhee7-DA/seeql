@@ -839,3 +839,25 @@ Stage Summary:
 - Playground now speaks the same visual language as the lessons: every SELECT shows a picture-first flow strip (real row counts, dashed gates, animated arrows) above the step-by-step pipeline, and every result with a numeric column is one click from a chart
 - Cold-start seed race fixed at the framework level (globalThis single-flight) — the intermittent "UNIQUE constraint failed: customers.id" on first load is gone
 - ChartView rescued from orphan status; results grid got the lesson-feel stagger
+
+---
+Task ID: pg-viz-3
+Agent: main
+Task: "make the playground the perfect SQL query visual learning tool" — Phase 1+2 core: live flow strip, row funnel, text↔diagram linking, error coaching, lesson-grade results grid
+
+Work Log:
+- /api/parse + sql-parser.ts: buildQueryPlan now surfaces peggy error location as {start,end} offsets (shifted back into raw text by the trim lead) — powers editor squiggles
+- New src/lib/sql-clauses.ts: raw-text clause scanner (string/comment/paren-aware, top-level only) → ClauseSpan[]; clauseAtOffset/spanOf/stripClauses; buildStagePlan assembles REAL count queries per execution stage. Stage SQL built from clause spans, NOT the original SELECT list (aggregates in the list collapsed pre-GROUP stages to 1 row — found via live numbers); GROUP/HAVING stages keep the original list inside a subquery so aliases resolve; HAVING must filter INSIDE the subquery (outer HAVING saw a single ungrouped row → 37 instead of 4); newline-preserving clause strip (collapsing \n merges `--` comments into code)
+- SqlEditor: tokens carry offsets; new props highlight (emerald clause glow), errorRange (rose wavy underline), onCaretMove (select/click/keyup) — token-level splitting around highlight/error boundaries
+- QueryFlowSvg: every node maps to its ClauseKind; hover/leave/click handlers + emerald halo when the editor caret sits inside its clause; svg-root mouseleave safety
+- New src/components/row-funnel.tsx: "Where did the rows go?" — FROM → WHERE → GROUP BY → HAVING → OUT strip with proportional dot-fields, per-stage counts fetched via countWrapper queries to /api/query (parallel), −N delta labels, plain-English caption; plan derived via useMemo, only fetched counts in state (react-hooks/set-state-in-effect clean); OUT = full query wrapped in COUNT(*) so it is live and immune to the 1000-row payload cap; dataVersion prop re-counts after DB reset
+- page.tsx: debounced (400ms) live parse loop while typing — flow strip, funnel, stats chips and ALL parse-derived tabs now update live; last-good plan fallback when text is broken; ranSql/dataVersion tracking; editorInSync gate so highlights never misplace after edits; pin/hover cleared on text change; RowFunnel + strip gated to SELECT; error hint card under editor
+- ResultsView: low-cardinality string columns → colored chips (6-tone stable palette), non-id numeric columns → proportional in-cell teal bars, booleans → true/false chips
+- PipelineView: step titles clickable → pin that clause in the editor
+- Bug found during E2E: funnel counts went stale after Reset (effect keyed only on sql text; data changed underneath) → dataVersion bump on reset + tableCounts refetch
+- E2E (agent-browser): boot funnel 103→103→37−66→4−33→OUT 4 (matches hand-run SQL ground truth); typing `AND o.total > 200` live-updated funnel to 65/33/2/2 without Run; hover WHERE gate lit the exact clause text in the editor; caret inside WHERE lit exactly the WHERE node; SELEC typo → inline hint + wavy underline under the offending token while the right panel kept the last good plan; aggregate run → status chips (delivered/shipped/pending/cancelled) + 8 in-cell bars; CTE sample → WITH node + 77→67 funnel; UPDATE → strip+funnel hidden, write banner; reset → counts recompute pristine; pastel light theme legible (OUT number bumped to emerald-400 for light bg); tsc + eslint clean; console clean
+- Screenshots scripts/shots/pg-v3-{live-funnel,hover-link,error-coach,pastel-funnel,final-pristine}.png; QA scripts scripts/test-clauses.ts + scripts/test-funnel.ts
+
+Stage Summary:
+- The playground now teaches while you write: the query's picture (flow strip + row funnel with real intermediate counts) updates live as you type, the SQL and the diagram are bidirectionally linked (hover/click/caret), parse errors coach inline with a squiggle on the failing token, and the results grid speaks the lesson-diagram language
+- Row funnel semantics encoded: stage SQL from raw clause spans, aggregates neutralized pre-GROUP, HAVING inside the subquery, newline-safe stripping — all verified against live SQLite numbers

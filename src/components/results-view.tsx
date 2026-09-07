@@ -2,6 +2,11 @@
 
 // Query results grid: sticky header, zebra rows, NULL styling, CSV export.
 // Rows fade in with a short stagger — the lesson-figure feel.
+//
+// Visual-learning layer:
+//  - low-cardinality text columns render as colored chips (status vocab)
+//  - non-id numeric columns get a proportional in-cell bar
+//  - booleans render as true/false chips
 
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
@@ -11,6 +16,15 @@ import type { CellValue } from "@/lib/sql-types";
 import { cn } from "@/lib/utils";
 
 const RENDER_CAP = 300;
+
+const CHIP_TONES = [
+  "border-emerald-400/30 bg-emerald-400/10 text-emerald-300",
+  "border-amber-400/30 bg-amber-400/10 text-amber-300",
+  "border-violet-400/30 bg-violet-400/10 text-violet-300",
+  "border-teal-400/30 bg-teal-400/10 text-teal-300",
+  "border-rose-400/30 bg-rose-400/10 text-rose-300",
+  "border-orange-400/30 bg-orange-400/10 text-orange-300",
+];
 
 function cellToString(v: CellValue): string {
   if (v === null) return "";
@@ -59,6 +73,57 @@ export function ResultsView({
     return set;
   }, [columns, rows]);
 
+  // low-cardinality string columns → chip mode (status vocab, categories…)
+  const chipCols = useMemo(() => {
+    const map = new Map<number, Map<string, string>>();
+    for (let ci = 0; ci < columns.length; ci++) {
+      if (numericCols.has(ci)) continue;
+      const distinct = new Set<string>();
+      let ok = true;
+      for (const row of rows.slice(0, RENDER_CAP)) {
+        const v = row[ci];
+        if (v === null) continue;
+        if (typeof v !== "string") {
+          ok = false;
+          break;
+        }
+        distinct.add(v);
+        if (distinct.size > 6) {
+          ok = false;
+          break;
+        }
+      }
+      if (ok && distinct.size > 1) {
+        const tones = new Map<string, string>();
+        [...distinct].sort().forEach((v, i) => tones.set(v, CHIP_TONES[i % CHIP_TONES.length]));
+        map.set(ci, tones);
+      }
+    }
+    return map;
+  }, [columns, rows, numericCols]);
+
+  // non-id numeric columns → proportional in-cell bars
+  const barCols = useMemo(() => {
+    const map = new Map<number, { max: number }>();
+    for (let ci = 0; ci < columns.length; ci++) {
+      if (!numericCols.has(ci)) continue;
+      // id-like columns (id, customer_id…) just enumerate — bars mean nothing
+      if (/^(.*_)?id$/i.test(columns[ci])) continue;
+      let min = Number.POSITIVE_INFINITY;
+      let max = Number.NEGATIVE_INFINITY;
+      for (const row of rows.slice(0, RENDER_CAP)) {
+        const v = row[ci];
+        if (v === null) continue;
+        const n = Number(v);
+        if (!Number.isFinite(n)) continue;
+        min = Math.min(min, n);
+        max = Math.max(max, n);
+      }
+      if (Number.isFinite(min) && max > min && min >= 0) map.set(ci, { max });
+    }
+    return map;
+  }, [columns, rows, numericCols]);
+
   const copyCsv = async () => {
     try {
       await navigator.clipboard.writeText(toCsv(columns, rows));
@@ -77,6 +142,58 @@ export function ResultsView({
     a.download = "query-results.csv";
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const renderCell = (cell: CellValue, ci: number) => {
+    if (cell === null) {
+      return <span className="italic text-zinc-600">NULL</span>;
+    }
+    if (typeof cell === "boolean") {
+      return (
+        <span
+          className={cn(
+            "inline-flex rounded-full border px-1.5 py-px text-[11px] font-medium",
+            cell
+              ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-300"
+              : "border-zinc-600/60 bg-zinc-700/20 text-zinc-400",
+          )}
+        >
+          {cell ? "true" : "false"}
+        </span>
+      );
+    }
+    const tones = chipCols.get(ci);
+    if (tones && typeof cell === "string" && tones.has(cell)) {
+      return (
+        <span
+          className={cn(
+            "inline-flex max-w-[200px] items-center truncate rounded-full border px-1.5 py-px text-[11px] font-medium",
+            tones.get(cell),
+          )}
+          title={cell}
+        >
+          {cell}
+        </span>
+      );
+    }
+    const bar = barCols.get(ci);
+    if (bar) {
+      const n = Number(cell);
+      const pct = Number.isFinite(n) && n > 0 ? Math.max((n / bar.max) * 100, 1.5) : 0;
+      return (
+        <span className="relative inline-block min-w-[64px]">
+          {pct > 0 && (
+            <span
+              aria-hidden
+              className="absolute inset-y-[2px] left-0 rounded-[3px] bg-teal-400/15"
+              style={{ width: `${pct}%` }}
+            />
+          )}
+          <span className="relative">{cellToString(cell)}</span>
+        </span>
+      );
+    }
+    return cellToString(cell);
   };
 
   return (
@@ -170,12 +287,10 @@ export function ResultsView({
                     title={cell === null ? "NULL" : cellToString(cell)}
                     className={cn(
                       "max-w-[280px] truncate border-b border-zinc-800/50 px-3 py-1.5 font-mono text-xs",
-                      cell === null && "italic text-zinc-600",
                       cell !== null && (numericCols.has(ci) ? "text-right text-teal-300" : "text-zinc-300"),
-                      typeof cell === "boolean" && "text-violet-300",
                     )}
                   >
-                    {cell === null ? "NULL" : cellToString(cell)}
+                    {renderCell(cell, ci)}
                   </td>
                 ))}
               </motion.tr>

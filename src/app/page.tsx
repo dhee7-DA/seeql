@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import {
   AlertTriangle,
   ArrowLeft,
@@ -46,6 +46,8 @@ import { ParseTreeView } from "@/components/parse-tree-view";
 import { SchemaView } from "@/components/schema-view";
 import { ChartView } from "@/components/chart-view";
 import { QueryFlowSvg } from "@/components/query-flow-svg";
+import { RowFunnel } from "@/components/row-funnel";
+import { clauseAtOffset, findClauses, spanOf, type ClauseKind } from "@/lib/sql-clauses";
 import { Landing } from "@/components/landing";
 import { LearnApp } from "@/components/learn/learn-app";
 import { LogoFull } from "@/components/brand";
@@ -55,6 +57,7 @@ import { DIALECTS, type DialectName } from "@/lib/sql-types";
 import type {
   ExecResponse,
   ExecResult,
+  ParseError,
   ParseResult,
   QueryPlan,
 } from "@/lib/sql-types";
@@ -156,6 +159,16 @@ function PlaygroundView({
   const [resetting, setResetting] = useState(false);
   const [tableCounts, setTableCounts] = useState<Record<string, number> | null>(null);
 
+  // live layer — the picture follows the text while it is being written
+  const [livePlan, setLivePlan] = useState<ParseResult | null>(null);
+  const [liveSql, setLiveSql] = useState("");
+  const [liveError, setLiveError] = useState<ParseError | null>(null);
+  const [ranSql, setRanSql] = useState("");
+  const [caret, setCaret] = useState(0);
+  const [hoverKind, setHoverKind] = useState<ClauseKind | null>(null);
+  const [pinnedKind, setPinnedKind] = useState<ClauseKind | null>(null);
+  const [dataVersion, setDataVersion] = useState(0); // bumped on DB reset
+
   // live table row counts — powers the FROM dot-field in the query flow strip
   useEffect(() => {
     fetch("/api/stats")
@@ -167,6 +180,36 @@ function PlaygroundView({
         /* flow strip simply shows no dot-field */
       });
   }, []);
+
+  // live parse — debounced so the flow strip, pipeline and stats redraw while
+  // the query is being typed, without firing on every keystroke
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const trimmed = sql.trim();
+      if (!trimmed) {
+        setLivePlan(null);
+        setLiveSql("");
+        setLiveError(null);
+        return;
+      }
+      // raw text goes out so error offsets align with the editor content
+      fetch("/api/parse", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sql, dialect }),
+      })
+        .then((r) => r.json() as Promise<ParseResult>)
+        .then((res) => {
+          setLivePlan(res);
+          setLiveSql(sql);
+          setLiveError(res.ok ? null : res);
+        })
+        .catch(() => {
+          /* transient network hiccup — keep the previous live state */
+        });
+    }, 400);
+    return () => window.clearTimeout(timer);
+  }, [sql, dialect]);
 
   const loadHistory = useCallback(() => {
     try {
@@ -197,10 +240,11 @@ function PlaygroundView({
       setRunning(true);
       try {
         const [parseRes, execRes] = await Promise.all([
+          // raw text → parser shifts error offsets back into the editor text
           fetch("/api/parse", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ sql: trimmed, dialect: dia }),
+            body: JSON.stringify({ sql: sqlText, dialect: dia }),
           }).then((r) => r.json() as Promise<ParseResult>),
           fetch("/api/query", {
             method: "POST",
@@ -209,7 +253,11 @@ function PlaygroundView({
           }).then((r) => r.json() as Promise<ExecResponse>),
         ]);
         setPlan(parseRes);
+        setRanSql(sqlText);
         setExec(execRes);
+        setLivePlan(parseRes);
+        setLiveSql(sqlText);
+        setLiveError(parseRes.ok ? null : parseRes);
         pushHistory(trimmed);
       } catch {
         setPlan((p) => p ?? { ok: false, error: "Could not reach the server. Please try again." });
@@ -228,7 +276,10 @@ function PlaygroundView({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sql: sqlText, dialect: dia }),
       });
-      setPlan((await res.json()) as ParseResult);
+      const parsed = (await res.json()) as ParseResult;
+      setLivePlan(parsed);
+      setLiveSql(sqlText);
+      setLiveError(parsed.ok ? null : parsed);
     } catch {
       setPlan({ ok: false, error: "Could not reach the parser. Please try again." });
     }
@@ -307,6 +358,18 @@ function PlaygroundView({
     setResetting(true);
     try {
       await fetch("/api/reset", { method: "POST" });
+      // the data under the same SQL changed — bump so the row funnel and the
+      // FROM dot-field re-count against the fresh database
+      setDataVersion((v) => v + 1);
+      setTableCounts(null);
+      fetch("/api/stats")
+        .then((r) => r.json())
+        .then((j) => {
+          if (j?.ok) setTableCounts(j.counts as Record<string, number>);
+        })
+        .catch(() => {
+          /* dot-field simply skips counts */
+        });
       // re-run current query so the user sees fresh results
       await runAll(sql, dialect);
     } catch {
@@ -320,6 +383,35 @@ function PlaygroundView({
   const execOk = exec !== null && exec.ok;
   const planSteps = execOk ? (exec as ExecResult).plan?.length ?? 0 : 0;
   const isWrite = execOk && (exec as ExecResult).changes !== null;
+
+  // ---- text ↔ diagram linking ------------------------------------------
+  // The live (debounced) plan drives the picture; the last run's plan is the
+  // fallback while the current text is unparseable.
+  const viewPlan = livePlan?.ok ? livePlan : plan?.ok ? plan : null;
+  const viewPlanSql = livePlan?.ok ? liveSql : plan?.ok ? ranSql : "";
+  const clauseInfo = useMemo(
+    () => (viewPlanSql ? findClauses(viewPlanSql) : null),
+    [viewPlanSql],
+  );
+  const spanFor = (kind: ClauseKind | null) =>
+    kind && clauseInfo?.supported ? spanOf(clauseInfo.spans, kind) : null;
+  const hoverSpan = spanFor(hoverKind);
+  const pinnedSpan = spanFor(pinnedKind);
+  const caretKind = clauseInfo ? clauseAtOffset(clauseInfo.spans, caret) : null;
+  const activeKinds: ClauseKind[] | null = pinnedKind
+    ? [pinnedKind]
+    : caretKind
+      ? [caretKind]
+      : null;
+  const errorRange =
+    liveError && liveSql === sql ? liveError.location ?? null : null;
+  // editor marks only make sense while the editor text matches the diagram's
+  // text snapshot — otherwise offsets have drifted and marks would misplace
+  const editorInSync = viewPlanSql === sql;
+  const togglePinned = useCallback((kind: ClauseKind) => {
+    setPinnedKind((p) => (p === kind ? null : kind));
+    setHoverKind(null);
+  }, []);
 
   return (
     <div className="flex min-h-screen flex-col bg-zinc-950 text-zinc-100">
@@ -459,10 +551,34 @@ function PlaygroundView({
               onChange={(v) => {
                 setSql(v);
                 setSampleId("");
+                // clause spans moved — drop any pinned/hovered highlight
+                setPinnedKind(null);
+                setHoverKind(null);
               }}
               onVisualize={() => runAll(sql, dialect)}
               className="h-[300px] xl:h-[340px]"
+              highlight={editorInSync ? hoverSpan ?? pinnedSpan : null}
+              errorRange={errorRange}
+              onCaretMove={setCaret}
             />
+            {liveError && sql.trim() !== "" && (
+              <div
+                title={liveError.error}
+                className="flex items-start gap-2 rounded-lg border border-rose-500/30 bg-rose-500/5 px-3 py-2"
+              >
+                <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-rose-400" />
+                <div className="min-w-0">
+                  <p className="truncate font-mono text-[11px] text-rose-200/90">
+                    {liveError.error}
+                  </p>
+                  {liveError.hint && (
+                    <p className="mt-0.5 text-[11px] leading-relaxed text-zinc-500">
+                      {liveError.hint}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
             <p className="px-1 text-[11px] text-zinc-600">
               Press{" "}
               <kbd className="rounded border border-zinc-700 bg-zinc-900 px-1 py-0.5 font-mono text-[10px] text-zinc-400">
@@ -473,7 +589,8 @@ function PlaygroundView({
                 Enter
               </kbd>{" "}
               to run · executes on the built-in{" "}
-              <span className="text-zinc-500">SQLite sample DB</span>
+              <span className="text-zinc-500">SQLite sample DB</span> · hover the flow
+              diagram to light up its SQL
             </p>
           </section>
 
@@ -496,42 +613,42 @@ function PlaygroundView({
               </div>
             )}
 
-            {good && plan && plan.ok && (
+            {viewPlan && (
               <>
                 {/* stats */}
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-1 font-mono text-xs font-bold text-emerald-300">
-                    {plan.statementType}
+                    {viewPlan.statementType}
                   </span>
-                  <StatChip icon={Table2} label="tables" value={plan.stats.tables} tone="emerald" />
-                  <StatChip icon={GitMerge} label="joins" value={plan.stats.joins} tone="amber" />
-                  <StatChip icon={Filter} label="filters" value={plan.stats.filters} tone="rose" />
+                  <StatChip icon={Table2} label="tables" value={viewPlan.stats.tables} tone="emerald" />
+                  <StatChip icon={GitMerge} label="joins" value={viewPlan.stats.joins} tone="amber" />
+                  <StatChip icon={Filter} label="filters" value={viewPlan.stats.filters} tone="rose" />
                   <StatChip
                     icon={Sigma}
                     label="aggregates"
-                    value={plan.stats.aggregations}
+                    value={viewPlan.stats.aggregations}
                     tone="teal"
                   />
-                  {plan.stats.ctes > 0 && (
-                    <StatChip icon={ListTree} label="ctes" value={plan.stats.ctes} tone="violet" />
+                  {viewPlan.stats.ctes > 0 && (
+                    <StatChip icon={ListTree} label="ctes" value={viewPlan.stats.ctes} tone="violet" />
                   )}
                   <span
                     className={cn(
                       "ml-auto rounded-full border px-2.5 py-1 text-xs font-semibold",
-                      plan.stats.label === "Simple"
+                      viewPlan.stats.label === "Simple"
                         ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-300"
-                        : plan.stats.label === "Moderate"
+                        : viewPlan.stats.label === "Moderate"
                           ? "border-amber-400/30 bg-amber-400/10 text-amber-300"
                           : "border-rose-400/30 bg-rose-400/10 text-rose-300",
                     )}
                   >
-                    {plan.stats.label} · score {plan.stats.complexity}
+                    {viewPlan.stats.label} · score {viewPlan.stats.complexity}
                   </span>
                 </div>
 
-                {plan.statementType !== "SELECT" && (
+                {viewPlan.statementType !== "SELECT" && (
                   <p className="rounded-lg border border-amber-400/25 bg-amber-400/5 px-3 py-2 text-xs leading-relaxed text-amber-200/90">
-                    This is a <span className="font-mono font-bold">{plan.statementType}</span>{" "}
+                    This is a <span className="font-mono font-bold">{viewPlan.statementType}</span>{" "}
                     statement — the pipeline below applies to SELECT queries, so only the tables
                     this statement touches are shown.
                   </p>
@@ -577,25 +694,39 @@ function PlaygroundView({
                     </TabsTrigger>
                   </TabsList>
                   <TabsContent value="pipeline" className="mt-3 space-y-3">
-                    {plan.statementType === "SELECT" && (
-                      <QueryFlowSvg
-                        key={sql}
-                        plan={plan}
-                        resultRows={execOk ? (exec as ExecResult).rows.length : undefined}
-                        tableCounts={tableCounts}
-                      />
+                    {viewPlan.statementType === "SELECT" && (
+                      <>
+                        <QueryFlowSvg
+                          key={viewPlanSql}
+                          plan={viewPlan}
+                          resultRows={
+                            execOk && ranSql === viewPlanSql
+                              ? (exec as ExecResult).rows.length
+                              : undefined
+                          }
+                          tableCounts={tableCounts}
+                          activeKinds={activeKinds}
+                          onKindHover={setHoverKind}
+                          onKindClick={togglePinned}
+                        />
+                        <RowFunnel
+                          sql={viewPlanSql}
+                          dataVersion={dataVersion}
+                          finalRows={execOk ? (exec as ExecResult).rows.length : undefined}
+                        />
+                      </>
                     )}
-                    <PipelineView plan={plan} />
+                    <PipelineView plan={viewPlan} onFocusClause={togglePinned} />
                   </TabsContent>
                   <TabsContent value="joins" className="mt-3">
-                    <JoinsView plan={plan} />
+                    <JoinsView plan={viewPlan} />
                   </TabsContent>
                   <TabsContent value="breakdown" className="mt-3">
-                    <BreakdownView plan={plan} />
+                    <BreakdownView plan={viewPlan} />
                   </TabsContent>
                   <TabsContent value="tree" className="mt-3">
-                    {plan.tree ? (
-                      <ParseTreeView tree={plan.tree} />
+                    {viewPlan.tree ? (
+                      <ParseTreeView tree={viewPlan.tree} />
                     ) : (
                       <p className="rounded-lg border border-zinc-800 bg-zinc-900/60 px-4 py-6 text-center text-sm text-zinc-500">
                         No syntax tree for this statement.
@@ -606,7 +737,7 @@ function PlaygroundView({
                     <SchemaView onPickTable={onSchemaPickTable} />
                   </TabsContent>
                   <TabsContent value="json" className="mt-3">
-                    <JsonView plan={plan} />
+                    <JsonView plan={viewPlan} />
                   </TabsContent>
                 </Tabs>
               </>

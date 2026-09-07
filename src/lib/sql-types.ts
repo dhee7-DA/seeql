@@ -93,6 +93,8 @@ export interface ParseError {
   ok: false;
   error: string;
   hint?: string;
+  /** Character offsets into the SQL text where parsing failed (best effort) */
+  location?: { start: number; end: number };
 }
 
 export type ParseResult = QueryPlan | ParseError;

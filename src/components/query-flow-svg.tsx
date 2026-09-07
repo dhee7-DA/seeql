@@ -10,6 +10,7 @@
 import { motion } from "framer-motion";
 import { DotField, fade, drawIn } from "@/components/learn/diagrams-kit";
 import type { QueryPlan } from "@/lib/sql-types";
+import type { ClauseKind } from "@/lib/sql-clauses";
 
 type Accent = "zinc" | "violet" | "emerald" | "amber" | "rose" | "teal" | "orange" | "lime";
 
@@ -78,16 +79,40 @@ const CAPTION_PHRASE: Record<string, string> = {
   out: "result",
 };
 
+/** which clause each flow node corresponds to — the text ↔ diagram bridge */
+function nodeClause(node: FlowNode, plan: QueryPlan): ClauseKind | null {
+  switch (node.key) {
+    case "with": return "with";
+    case "from":
+    case "join": return "from";
+    case "where": return "where";
+    case "group": return "group";
+    case "having": return "having";
+    case "select": return "select";
+    case "top": return plan.orderBy.length > 0 ? "order" : "limit";
+    default: return null;
+  }
+}
+
 export function QueryFlowSvg({
   plan,
   resultRows,
   tableCounts,
+  activeKinds,
+  onKindHover,
+  onKindClick,
 }: {
   plan: QueryPlan;
   /** actual rows the run produced — powers the OUT node */
   resultRows?: number;
   /** live row counts per table (/api/stats) — powers the FROM dot-field */
   tableCounts?: Record<string, number> | null;
+  /** clause kinds to glow (the editor caret is inside them) */
+  activeKinds?: ClauseKind[] | null;
+  /** hovering a node → highlight its SQL in the editor */
+  onKindHover?: (kind: ClauseKind | null) => void;
+  /** clicking a node → pin the highlight in the editor */
+  onKindClick?: (kind: ClauseKind) => void;
 }) {
   const nodes: FlowNode[] = [];
 
@@ -187,7 +212,13 @@ export function QueryFlowSvg({
 
   return (
     <figure className="sheen rounded-xl border border-zinc-800 bg-zinc-950/60 p-3">
-      <svg viewBox={`0 0 640 ${H}`} className="w-full" role="img" aria-label="Query flow — the order SQLite actually runs this query">
+      <svg
+        viewBox={`0 0 640 ${H}`}
+        className="w-full"
+        role="img"
+        aria-label="Query flow — the order SQLite actually runs this query"
+        onMouseLeave={() => onKindHover?.(null)}
+      >
         {rows.map((row, r) => {
           const y = rowY(r);
           const cy = y + NODE_H / 2;
@@ -196,16 +227,42 @@ export function QueryFlowSvg({
               {row.map((node, i) => {
                 const x = XS[i];
                 const isFrom = node.key === "from";
+                const kind = nodeClause(node, plan);
+                const lit =
+                  !!kind &&
+                  !!activeKinds &&
+                  (activeKinds.includes(kind) ||
+                    (kind === "order" && activeKinds.includes("limit")) ||
+                    (kind === "limit" && activeKinds.includes("order")));
                 return (
-                  <motion.g key={node.key} {...fade(i * 0.07 + r * 0.1)}>
+                  <motion.g
+                    key={node.key}
+                    {...fade(i * 0.07 + r * 0.1)}
+                    className={kind ? "cursor-pointer" : undefined}
+                    onMouseEnter={kind ? () => onKindHover?.(kind) : undefined}
+                    onMouseLeave={kind ? () => onKindHover?.(null) : undefined}
+                    onClick={kind ? () => onKindClick?.(kind) : undefined}
+                  >
+                    {lit && (
+                      <rect
+                        x={x - 3}
+                        y={y - 3}
+                        width={NODE_W + 6}
+                        height={NODE_H + 6}
+                        rx={10}
+                        fill="none"
+                        strokeWidth={1.5}
+                        className="stroke-emerald-400/80"
+                      />
+                    )}
                     <rect
                       x={x}
                       y={y}
                       width={NODE_W}
                       height={NODE_H}
                       rx={8}
-                      strokeWidth={1}
-                      className={PANEL[node.accent]}
+                      strokeWidth={lit ? 1.5 : 1}
+                      className={lit ? "fill-emerald-400/10 stroke-emerald-400/60" : PANEL[node.accent]}
                       strokeDasharray={node.gate ? "5 4" : undefined}
                     />
                     <text
