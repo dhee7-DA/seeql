@@ -882,3 +882,22 @@ Work Log:
 
 Stage Summary:
 - The playground roadmap (3 phases, 9 features) is now fully shipped. Execution order is tangible: click any funnel stage and see the actual rows — including the ones each gate killed. Missions grade the SHAPE of your result (not your SQL) and pay XP into the same ledger as the lessons; the sample picker sells queries by their picture; the chart tab picks the right chart and explains why
+
+---
+Task ID: ops-preview-recovery
+Agent: main
+Task: Fix "preview not loading" - diagnose, recover, and make the failure mode impossible
+
+Work Log:
+- Symptom: preview dark; curl :3000 -> 000, no next/bun processes alive
+- Forensics: dev.log's last entries were healthy /api/stages + /api/query traffic; dmesg shows the root cause - at uptime 3374s (07:08) the kernel OOM killer killed next-server v1 at 2180MB RSS on the 4GB box; nothing supervised it, so it stayed dead
+- Proved empirically that processes spawned from tool-shell invocations are normally reaped between invocations (setsid sleep test died), so a manual foreground restart is not viable; the durable path is the boot flow (.zscripts/dev.sh, invoked by start.sh) plus a supervisor
+- New .zscripts/watchdog.sh: detached watchdog (boot-spawned orphan, same lifecycle as the dev server) - restarts the dev server after 2 consecutive dead 20s checks, recycles next-server when RSS > 1.6GB (OOM prevention; observed 1.3-1.4GB after a single compile, 2.18GB was fatal), restart-burst backoff (max 3 per 10min then 5min sleep), 5MB log cap, dev.pid re-bind if pid file goes stale
+- Hardened .zscripts/dev.sh: records dev.pid for the watchdog, starts the server with setsid + nohup + own log file (a detached child holding the caller's stdout pipe blocks pipeline EOF forever - found live when the test boot hung), cleanup trap now kills the whole process group (bun -> sh -> next dev | tee), idempotent watchdog launch guarded by watchdog.pid
+- Live-validated the full loop inside tool invocations: bash dev.sh brought the server up (Ready 772ms, GET / 200, warm compile 1.7s), then killed the server and watched the watchdog log 'streak 1 -> streak 2 -> start: dev server pid 5680' with the port back at HTTP 200 ~20s after the kill
+- Sanity after recovery: homepage 200; POST /api/query returns correct funnel ground truth (delivered 52 / shipped 30 / pending 14 / cancelled 7); next-server steady ~1.3GB (under the watchdog cap)
+- Committed as e37cd14 'ops: self-healing dev server watchdog (OOM-proof preview)'
+
+Stage Summary:
+- Preview restored without user action and, more importantly, the failure mode is now structurally fixed: any future OOM kill or crash of the dev server self-heals in ~20-40s via the watchdog, and if the box ever cold-starts again, dev.sh boots both the server and its watchdog automatically
+- Watchdog log lives at .zscripts/watchdog.log (grep 'recycle' to see OOM-prevention kicks, 'not found' for crash recoveries)
