@@ -25,6 +25,7 @@ import {
   Sigma,
   Table2,
   Timer,
+  Trophy,
   Workflow,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -45,11 +46,16 @@ import { PlanView } from "@/components/plan-view";
 import { ParseTreeView } from "@/components/parse-tree-view";
 import { SchemaView } from "@/components/schema-view";
 import { ChartView } from "@/components/chart-view";
+import { MissionBoard } from "@/components/mission-board";
 import { QueryFlowSvg } from "@/components/query-flow-svg";
 import { RowFunnel } from "@/components/row-funnel";
+import { StageInspector } from "@/components/stage-inspector";
+import { SampleGallery } from "@/components/sample-gallery";
 import { clauseAtOffset, findClauses, spanOf, type ClauseKind } from "@/lib/sql-clauses";
 import { Landing } from "@/components/landing";
 import { LearnApp } from "@/components/learn/learn-app";
+import { useProgress } from "@/lib/curriculum/progress";
+import { MISSIONS } from "@/lib/missions";
 import { LogoFull } from "@/components/brand";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { DEFAULT_SAMPLE, SAMPLE_QUERIES } from "@/lib/samples";
@@ -168,6 +174,10 @@ function PlaygroundView({
   const [hoverKind, setHoverKind] = useState<ClauseKind | null>(null);
   const [pinnedKind, setPinnedKind] = useState<ClauseKind | null>(null);
   const [dataVersion, setDataVersion] = useState(0); // bumped on DB reset
+  // step inspector — which funnel stage's rows are open (null = closed)
+  const [inspectKind, setInspectKind] = useState<ClauseKind | "out" | null>(null);
+  // shared XP ledger — the Missions badge counts earned missions live
+  const missionXp = useProgress((s) => s.xpEvents);
 
   // live table row counts — powers the FROM dot-field in the query flow strip
   useEffect(() => {
@@ -438,23 +448,7 @@ function PlaygroundView({
               <GraduationCap className="h-4 w-4 text-emerald-400" />
               Learn
             </button>
-            <Select value={sampleId} onValueChange={onSampleChange}>
-              <SelectTrigger
-                size="sm"
-                className="w-[190px] border-zinc-700 bg-zinc-900 text-xs sm:w-[220px]"
-                aria-label="Load a sample query"
-              >
-                <SelectValue placeholder="Sample queries" />
-              </SelectTrigger>
-              <SelectContent>
-                {SAMPLE_QUERIES.map((s) => (
-                  <SelectItem key={s.id} value={s.id} className="text-xs">
-                    <span className="font-medium">{s.name}</span>
-                    <span className="ml-2 text-zinc-500">{s.description}</span>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <SampleGallery currentId={sampleId} onPick={onSampleChange} />
 
             <Select value={dialect} onValueChange={onDialectChange}>
               <SelectTrigger
@@ -713,7 +707,17 @@ function PlaygroundView({
                           sql={viewPlanSql}
                           dataVersion={dataVersion}
                           finalRows={execOk ? (exec as ExecResult).rows.length : undefined}
+                          selected={inspectKind}
+                          onSelectStage={setInspectKind}
                         />
+                        {inspectKind && (
+                          <StageInspector
+                            sql={viewPlanSql}
+                            dataVersion={dataVersion}
+                            kind={inspectKind}
+                            onClose={() => setInspectKind(null)}
+                          />
+                        )}
                       </>
                     )}
                     <PipelineView plan={viewPlan} onFocusClause={togglePinned} />
@@ -830,6 +834,17 @@ function PlaygroundView({
                         </span>
                       </TabsTrigger>
                     )}
+                    {!isWrite && (
+                      <TabsTrigger
+                        value="missions"
+                        className="h-7 gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+                      >
+                        <Trophy className="h-3 w-3" /> Missions
+                        <span className="rounded-full bg-zinc-800 px-1.5 text-[10px] text-zinc-400">
+                          {MISSIONS.filter((m) => missionXp[`mission:${m.id}`] !== undefined).length}/{MISSIONS.length}
+                        </span>
+                      </TabsTrigger>
+                    )}
                     {!isWrite && exec.columns.length > 0 && (
                       <TabsTrigger
                         value="chart"
@@ -859,9 +874,27 @@ function PlaygroundView({
                     <PlanView rows={exec.plan} />
                   </TabsContent>
                 )}
+                {!isWrite && (
+                  <TabsContent value="missions" className="mt-0">
+                    <MissionBoard
+                      exec={execOk ? (exec as ExecResult) : null}
+                      ranSql={ranSql}
+                      onLoadSql={(text) => {
+                        setSampleId("");
+                        setSql(text);
+                      }}
+                    />
+                  </TabsContent>
+                )}
                 {!isWrite && exec.columns.length > 0 && (
                   <TabsContent value="chart" className="mt-0">
-                    <ChartView columns={exec.columns} rows={exec.rows} />
+                    {/* keyed per run so a new result re-suggests axes/type; a re-run of
+                        the SAME query keeps the user's chart customization */}
+                    <ChartView
+                      key={ranSql}
+                      columns={exec.columns}
+                      rows={exec.rows}
+                    />
                   </TabsContent>
                 )}
               </Tabs>

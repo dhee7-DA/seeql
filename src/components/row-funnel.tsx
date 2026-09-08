@@ -15,6 +15,7 @@ import { motion } from "framer-motion";
 import { DotField, fade, drawIn } from "@/components/learn/diagrams-kit";
 import { buildStagePlan, type ClauseKind } from "@/lib/sql-clauses";
 import type { ExecResponse } from "@/lib/sql-types";
+import { cn } from "@/lib/utils";
 
 type Accent = "zinc" | "rose" | "teal" | "orange" | "emerald";
 
@@ -64,12 +65,18 @@ export function RowFunnel({
   sql,
   dataVersion,
   finalRows,
+  selected,
+  onSelectStage,
 }: {
   sql: string;
   /** bumped when the sample DB is reset — counts are recomputed even for identical SQL */
   dataVersion?: number;
   /** exec-derived fallback for the OUT count when the final count query is unavailable */
   finalRows?: number;
+  /** stage currently opened in the step inspector (ring highlight) */
+  selected?: string | null;
+  /** click a stage → inspect the actual rows alive at that moment */
+  onSelectStage?: (kind: ClauseKind | "out") => void;
 }) {
   // stage shapes are pure text surgery — derive them, no state needed
   const plan = useMemo(() => buildStagePlan(sql), [sql]);
@@ -174,8 +181,18 @@ export function RowFunnel({
           const prev = nodes[i - 1];
           const dropped =
             prev && prev.count !== null && node.count !== null ? prev.count - node.count : null;
+          const isSelected = selected === node.kind;
+          const clickable = Boolean(onSelectStage);
           return (
-            <motion.g key={`${node.kind}-${i}`} {...fade(i * 0.09)}>
+            <motion.g
+              key={`${node.kind}-${i}`}
+              {...fade(i * 0.09)}
+              onClick={clickable ? () => onSelectStage?.(node.kind) : undefined}
+              className={clickable ? "cursor-pointer" : undefined}
+              role={clickable ? "button" : undefined}
+              aria-label={clickable ? `Inspect rows at ${isOut ? "OUT" : STAGE_TITLE[node.kind]}` : undefined}
+            >
+              <title>{clickable ? `Click to see the rows at ${isOut ? "OUT" : STAGE_TITLE[node.kind]}` : undefined}</title>
               <rect
                 x={x}
                 y={10}
@@ -183,9 +200,22 @@ export function RowFunnel({
                 height={STAGE_H}
                 rx={9}
                 strokeWidth={1}
-                className={PANEL[accent]}
+                className={cn(PANEL[accent], clickable && "transition-[filter] hover:brightness-125")}
                 strokeDasharray={isGate ? "5 4" : undefined}
               />
+              {isSelected && (
+                <rect
+                  x={x - 3}
+                  y={7}
+                  width={STAGE_W + 6}
+                  height={STAGE_H + 6}
+                  rx={11}
+                  fill="none"
+                  strokeWidth={1.5}
+                  strokeDasharray="3 3"
+                  className={isOut ? "stroke-emerald-400" : "stroke-zinc-300/70"}
+                />
+              )}
               <text
                 x={x + 9}
                 y={26}
@@ -258,6 +288,9 @@ export function RowFunnel({
       </svg>
       <p className="mt-1 px-1 font-mono text-[11px] leading-relaxed text-zinc-500">
         {clip(caption, 150)}
+        {onSelectStage && (
+          <span className="text-zinc-600"> · click a stage to see its rows</span>
+        )}
       </p>
     </figure>
   );

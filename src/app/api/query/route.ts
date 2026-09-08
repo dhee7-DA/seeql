@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureDatabase } from "@/lib/sample-db";
 import { hasMultipleStatements } from "@/lib/sql-statements";
+import { normalizeCell } from "@/lib/cell";
 import type { CellValue, ExecResponse, ExecResult, PlanRow } from "@/lib/sql-types";
 
 const MAX_SQL_LENGTH = 20_000;
@@ -29,6 +30,9 @@ function statementTypeOf(sql: string): string {
   return (stripLeadingComments(sql).match(/^[a-zA-Z]+/)?.[0] ?? "UNKNOWN").toUpperCase();
 }
 
+// Statement scanning lives in @/lib/sql-statements — shared with the lesson
+// CodeBlock and QA scripts so client splitting and API validation agree.
+
 /** One statement's outcome inside a batch run (errors don't abort the rest). */
 interface BatchItem extends Omit<ExecResult, "ok"> {
   ok: boolean;
@@ -41,31 +45,6 @@ interface BatchExecResponse {
   results: BatchItem[];
   durationMs: number;
 }
-
-/** SQLite value → JSON-safe cell (Prisma returns BigInt for INTEGER on SQLite). */
-function normalizeCell(v: unknown): CellValue {
-  if (v === null || v === undefined) return null;
-  const t = typeof v;
-  if (t === "string" || t === "boolean") return v as string | boolean;
-  if (t === "number") return v as number;
-  if (typeof BigInt !== "undefined" && typeof v === "bigint") {
-    return v >= BigInt(Number.MIN_SAFE_INTEGER) && v <= BigInt(Number.MAX_SAFE_INTEGER)
-      ? Number(v)
-      : v.toString();
-  }
-  if (v instanceof Date) return v.toISOString();
-  if (v instanceof Uint8Array) {
-    const hex = Array.from(v.slice(0, 12))
-      .map((b) => b.toString(16).padStart(2, "0"))
-      .join("");
-    return `0x${hex}${v.length > 12 ? "…" : ""} (${v.length} bytes)`;
-  }
-  if (typeof v === "object" && v !== null) return String(v);
-  return String(v);
-}
-
-// Statement scanning lives in @/lib/sql-statements — shared with the lesson
-// CodeBlock and QA scripts so client splitting and API validation agree.
 
 export async function POST(req: NextRequest) {
   try {

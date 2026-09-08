@@ -237,6 +237,22 @@ export interface StagePlan {
   stages: Array<{ kind: ClauseKind; sql: string }>;
   /** count query for the FULL query (the OUT number) */
   final: string;
+  /**
+   * Row-form query per stage — the same stage but returning the actual rows
+   * (used by the step inspector). Pre-GROUP stages project explicit columns
+   * (see projectFrom below) because `SELECT *` over a JOIN collapses
+   * duplicate column names into one. sql is null when the projection is
+   * unavailable (unknown tables, derived tables in FROM) — counts keep working.
+   */
+  rowStages: Array<{ kind: ClauseKind; sql: string | null }>;
+  /** Row-form of the FULL query, wrapped in a LIMIT to bound the payload. */
+  finalRowSql: string;
+  /**
+   * "Rows killed here" diffs for filter gates: an EXCEPT compound that
+   * returns rows present at the previous stage but filtered away by the
+   * gate (where → from, having → group). Absent when the gate is absent.
+   */
+  gates: Array<{ kind: "where" | "having"; sql: string }>;
 }
 
 /**
@@ -249,8 +265,18 @@ export interface StagePlan {
  * into every pre-GROUP stage and collapse those counts to 1. The GROUP and
  * HAVING stages DO keep the original SELECT list inside a subquery, so
  * GROUP BY/alias references resolve.
+ *
+ * `projectFrom` (server-side) maps the raw FROM clause to an explicit
+ * aliased column projection for the row-form stages. `SELECT *` cannot be
+ * used over a JOIN: duplicate column names collapse and earlier tables
+ * silently lose columns. When the projector returns null (unknown tables,
+ * derived tables in FROM), the affected row stages come back as null —
+ * counts keep working, the inspector just shows a note.
  */
-export function buildStagePlan(sql: string): StagePlan | null {
+export function buildStagePlan(
+  sql: string,
+  opts?: { projectFrom?: (fromText: string) => string | null },
+): StagePlan | null {
   const { spans, supported } = findClauses(sql);
   if (!supported) return null;
 
@@ -270,17 +296,35 @@ export function buildStagePlan(sql: string): StagePlan | null {
   const prefix = withText ? `${withText} ` : "";
   const present: ClauseKind[] = ["from"];
   const stages: StagePlan["stages"] = [];
+  const rowStages: StagePlan["rowStages"] = [];
 
   const base = `SELECT COUNT(*) AS row_count ${fromText}`;
   stages.push({ kind: "from", sql: `${prefix}${base}` });
+
+  // row form — projection depends on the server knowing the schema
+  const projection = opts?.projectFrom ? opts.projectFrom(fromText) : null;
+  const fromRowInner = projection
+    ? `SELECT ${projection} ${fromText}`
+    : fromText.split(/\s+/).length <= 2
+      ? `SELECT * ${fromText}` // single table, no name collisions possible
+      : null;
+  rowStages.push({
+    kind: "from",
+    sql: fromRowInner === null ? null : `${prefix}${fromRowInner}`,
+  });
 
   let whereSoFar = "";
   if (whereText) {
     present.push("where");
     whereSoFar = ` ${whereText}`;
     stages.push({ kind: "where", sql: `${prefix}${base}${whereSoFar}` });
+    rowStages.push({
+      kind: "where",
+      sql: fromRowInner === null ? null : `${prefix}${fromRowInner}${whereSoFar}`,
+    });
   }
 
+  let groupedInner: string | null = null;
   if (groupText) {
     // keep the original SELECT list so aliases inside GROUP BY still resolve;
     // HAVING filters groups INSIDE the subquery — on the outer query it
@@ -289,19 +333,38 @@ export function buildStagePlan(sql: string): StagePlan | null {
     const selectBody = selectSpan
       ? single.slice(selectSpan.start, selectSpan.end).replace(/\s+/g, " ").replace(/^\s*select\b/i, "").trim()
       : "1";
-    const groupedInner = `SELECT ${selectBody} ${fromText}${whereSoFar} ${groupText}`;
+    groupedInner = `SELECT ${selectBody} ${fromText}${whereSoFar} ${groupText}`;
     present.push("group");
     stages.push({ kind: "group", sql: `${prefix}SELECT COUNT(*) AS row_count FROM (${groupedInner})` });
+    rowStages.push({ kind: "group", sql: `${prefix}${groupedInner}` });
     if (havingText) {
       present.push("having");
       stages.push({
         kind: "having",
         sql: `${prefix}SELECT COUNT(*) AS row_count FROM (${groupedInner} ${havingText})`,
       });
+      rowStages.push({ kind: "having", sql: `${prefix}${groupedInner} ${havingText}` });
     }
+  }
+
+  // "rows killed here" — EXCEPT compounds for the filter gates. Both branches
+  // must project the SAME columns; the top-level WITH covers both branches.
+  const gates: StagePlan["gates"] = [];
+  if (whereText && fromRowInner !== null) {
+    gates.push({
+      kind: "where",
+      sql: `${prefix}${fromRowInner} EXCEPT ${fromRowInner}${whereSoFar} LIMIT 48`,
+    });
+  }
+  if (groupedInner !== null && havingText) {
+    gates.push({
+      kind: "having",
+      sql: `${prefix}${groupedInner} EXCEPT ${groupedInner} ${havingText} LIMIT 48`,
+    });
   }
 
   // final stage — the whole statement wrapped in COUNT(*) (immune to payload caps)
   const final = countWrapper(single);
-  return { present, stages, final };
+  const finalRowSql = `SELECT * FROM (\n${single.replace(/;\s*$/, "")}\n) LIMIT 400`;
+  return { present, stages, final, rowStages, finalRowSql, gates };
 }

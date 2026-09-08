@@ -38,9 +38,10 @@ type ColKind = "date" | "number" | "text";
 type ChartKind = "bar" | "line" | "area" | "scatter" | "pie";
 
 const DATE_RE = /^\d{4}-\d{2}(-\d{2})?([ T]\d{2}:\d{2})?/;
+// diagrams-kit palette — the lesson-figure colors (no blues: they don't ship in the kit)
 const PALETTE = [
   "#34d399", "#2dd4bf", "#a78bfa", "#fbbf24", "#fb7185",
-  "#60a5fa", "#f472b6", "#4ade80", "#f97316", "#94a3b8",
+  "#f97316", "#f472b6", "#4ade80", "#e879f9", "#94a3b8",
 ];
 
 function inferKind(col: number, rows: CellValue[][]): ColKind {
@@ -71,8 +72,31 @@ export function ChartView({ columns, rows }: { columns: string[]; rows: CellValu
   const suggested = useMemo(() => {
     const x = categoryCols[0] ?? numericCols[0] ?? -1;
     const y = numericCols.find((i) => i !== x) ?? -1;
-    const kind: ChartKind = x >= 0 && kinds[x] === "date" && y >= 0 ? "line" : x >= 0 && y >= 0 ? "bar" : "scatter";
-    return { x, y, kind };
+    if (x < 0 || y < 0) {
+      return { x, y, kind: "scatter" as ChartKind, why: "plotting the numeric columns against each other" };
+    }
+    const distinct = new Set(rows.slice(0, 1000).map((r) => r[x]).filter((v) => v !== null)).size;
+    let kind: ChartKind = "bar";
+    let why = "comparing categories — bars make the differences easy to read";
+    if (kinds[x] === "date" && kinds[y] !== "date") {
+      kind = "line";
+      why = "your X is a date — lines show how things move over time";
+    } else if (kinds[x] === "number" && kinds[y] === "number") {
+      kind = "scatter";
+      why = "two numeric columns — scatter reveals correlations";
+    } else if (kinds[x] !== "number" && distinct > 0 && distinct <= 6) {
+      const allNonNeg = rows
+        .slice(0, 1000)
+        .every((r) => {
+          const v = r[y];
+          return v === null || (typeof v === "number" ? v >= 0 : Number(v) >= 0);
+        });
+      if (allNonNeg) {
+        kind = "pie";
+        why = `${distinct} categories whose values add up — a pie shows each slice's share of the whole`;
+      }
+    }
+    return { x, y, kind, why };
   }, [columns, rows, kinds, numericCols, categoryCols]);
 
   const [xIdx, setXIdx] = useState<number>(suggested.x);
@@ -270,6 +294,10 @@ export function ChartView({ columns, rows }: { columns: string[]; rows: CellValu
           )}
         </ResponsiveContainer>
       </div>
+      <p className="text-[11px] leading-relaxed text-zinc-600">
+        <span className="text-zinc-500">Why this chart:</span> {suggested.why} — switch it any time
+        with the menus above.
+      </p>
       <p className="text-[11px] leading-relaxed text-zinc-600">
         Charts aggregate the payload in the browser — run narrower queries (GROUP BY, LIMIT) for
         exact values on big results.
