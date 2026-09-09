@@ -4,8 +4,9 @@
 // Module 4 (Subqueries & CTEs, lessons 25–28 + case study 38),
 // Module 5 (Scalar & Window Toolkit, lessons 29–32 + case study 39),
 // Module 6 (Expert Clinic, lessons 33–34 + case study 40),
-// Module 7 (Data Modification, lessons 41–44 + case study 50) and
-// Module 8 (Schema, Views & Beyond, lessons 45–49 + case study 51).
+// Module 7 (Data Modification, lessons 41–44 + case study 50),
+// Module 8 (Schema, Views & Beyond, lessons 45–49 + case study 51) and
+// Module 9 (SQL for Finance, lessons 52–57).
 import type { Lesson } from "../types";
 import { lesson01 } from "./lesson-01";
 import { lesson02 } from "./lesson-02";
@@ -58,6 +59,12 @@ import { lesson48 } from "./lesson-48";
 import { lesson49 } from "./lesson-49";
 import { lesson50 } from "./lesson-50";
 import { lesson51 } from "./lesson-51";
+import { lesson52 } from "./lesson-52";
+import { lesson53 } from "./lesson-53";
+import { lesson54 } from "./lesson-54";
+import { lesson55 } from "./lesson-55";
+import { lesson56 } from "./lesson-56";
+import { lesson57 } from "./lesson-57";
 
 export const LESSONS: Lesson[] = [
   lesson01,
@@ -111,6 +118,12 @@ export const LESSONS: Lesson[] = [
   lesson49,
   lesson50,
   lesson51,
+  lesson52,
+  lesson53,
+  lesson54,
+  lesson55,
+  lesson56,
+  lesson57,
 ];
 
 export interface ModuleInfo {
@@ -193,6 +206,15 @@ export const MODULES: Array<ModuleInfo & { lessons: Lesson[] }> = [
     blurb:
       "Behind the tables: CREATE TABLE's constraint contract, ALTER and DROP for schema evolution, views that save a join under a name, indexes and EXPLAIN QUERY PLAN — the engine's own account of every query — and WITH RECURSIVE, the self-feeding query that generates sequences, month spines and org-chart walks.",
     lessons: [lesson45, lesson46, lesson47, lesson48, lesson49, lesson51],
+  },
+  {
+    id: "finance",
+    num: 9,
+    title: "SQL for Finance",
+    level: "Advanced",
+    blurb:
+      "The store's own books, in integer cents: invoices and payments, running customer balances walked with window functions, the AR aging ladder that drives collections calls, month-over-month growth via LAG with its moving-average antidote, double-entry reconciliation that catches a ghost payment and a refund owed — and the advanced window tier (CUME_DIST, hand-rolled standard deviation, z-scores) that turns 'August looks big' into 'August is 3.3 sigma out'.",
+    lessons: [lesson52, lesson53, lesson54, lesson55, lesson56, lesson57],
   },
 ];
 

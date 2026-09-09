@@ -87,6 +87,12 @@ export type FigureId =
   | "d3-view-lens"
   | "d4-index-lookup"
   | "d5-recursive-unfold"
+  | "fin1-books-map"
+  | "fin2-statement-walk"
+  | "fin3-aging-ladder"
+  | "fin4-mom-bridge"
+  | "fin5-trial-balance"
+  | "fin6-frame-slide"
 
 export type Block =
   | { kind: "p"; text: string }
