@@ -114,6 +114,8 @@ function auditCase(c: CaseStudy, seen: Map<string, string>): string[] {
   else seen.set(c.id, "this audit set");
   if (!TOPIC_IDS.has(c.topic)) add(`unknown topic "${c.topic}"`);
   if (!UNIVERSE_IDS.has(c.universe)) add(`unknown universe "${c.universe}"`);
+  if (!c.tier || !("easy" === c.tier || "medium" === c.tier || "hard" === c.tier))
+    add(`missing/invalid tier "${(c as { tier?: string }).tier}" — must be easy | medium | hard`);
 
   // slots + markers
   const n = c.slots.length;
@@ -207,6 +209,9 @@ for (const c of cases) {
 
 console.log("\n==== SUMMARY ====");
 console.log(`cases: ${cases.length}  pass: ${passCount}  fail: ${cases.length - passCount}`);
+const tierDist = { easy: 0, medium: 0, hard: 0 } as Record<string, number>;
+for (const c of cases) if (c.tier) tierDist[c.tier]++;
+console.log(`tiers: easy=${tierDist.easy} medium=${tierDist.medium} hard=${tierDist.hard}`);
 if (failures.length) console.log(`failing: ${failures.join(", ")}`);
 
 db.close();

@@ -1,0 +1,653 @@
+     1→// Case files cs-182..cs-195 — topic l8 (GROUP BY & HAVING).
+     2→// Bucketing lesson: GROUP BY a dimension, per-bucket aggregates, HAVING as the
+     3→// bucket filter (the WHERE-vs-HAVING teach), ORDER BY on aggregates as support.
+     4→// All figures audited against the live seed db by scripts/case-audit.ts.
+     5→
+     6→import type { CaseStudy } from "./types";
+     7→
+     8→export const casesB8b: CaseStudy[] = [
+     9→  {
+    10→    id: "cs-182",
+    11→    tier: "hard",
+    12→    topic: "l8",
+    13→    universe: "growth",
+    14→    title: "Stages that carry the volume",
+    15→    brief:
+    16→      "From: Chief of Staff. Re: board deck, ops slide.\n\nThe deck needs a pipeline-health line and I refuse to put four stages on the slide when two of them are rounding errors. Show me only the fulfillment stages that carry real volume — more than 20 orders each — so the narrative stays on the buckets that matter. Stage name and order count, please.",
+    17→    ask: "Each fulfillment stage with more than 20 orders, showing the stage and its order count.",
+    18→    template: `SELECT status, {1}(*) AS orders
+    19→FROM orders
+    20→{2} BY status
+    21→{3} COUNT(*) > {4};`,
+    22→    slots: [
+    23→      {
+    24→        answer: "COUNT",
+    25→        kind: "keyword",
+    26→        label: "the counting aggregate",
+    27→        why: "The deliverable is how many orders sit in each stage, so COUNT(*) tallies rows per bucket — SUM would try to add up the '*' argument and fail outright.",
+    28→      },
+    29→      {
+    30→        answer: "GROUP",
+    31→        kind: "keyword",
+    32→        label: "the bucketing clause",
+    33→        why: "One row per stage requires GROUP BY status — it partitions the 103 orders into stage buckets so the count computes per bucket instead of one grand total.",
+    34→      },
+    35→      {
+    36→        answer: "HAVING",
+    37→        kind: "keyword",
+    38→        label: "the bucket filter",
+    39→        why: "The 20-order bar applies to a per-bucket count, and aggregates can't live in WHERE — WHERE runs before buckets exist, so filtering groups is HAVING's job.",
+    40→      },
+    41→      {
+    42→        answer: "20",
+    43→        kind: "number",
+    44→        label: "the volume bar",
+    45→        why: "The brief says more than 20, so the comparison is strict: a stage carrying exactly 20 orders would miss the cut.",
+    46→        noVerify: true,
+    47→      },
+    48→    ],
+    49→    distractors: ["SUM", "AVG", "ORDER", "WHERE", "30"],
+    50→    walkthrough:
+    51→      "The ask reads as 'per-stage headcount, big stages only' — a GROUP BY with a HAVING on the count. GROUP BY status builds one bucket per stage; COUNT(*) sizes each; HAVING keeps only the buckets over the bar. The bar lives in HAVING, not WHERE, because WHERE fires before any bucket exists and cannot see counts. Two stages survive: delivered with 52 orders and shipped with 30 — together 82 of the 103 orders on file. Pending (14) and cancelled (7) are the rounding errors we're hiding from the board. Watch the ORDER decoy: it would list all four stages, sorted but unfiltered — volume question unanswered.",
+    52→  },
+    53→  {
+    54→    id: "cs-183",
+    55→    tier: "hard",
+    56→    topic: "l8",
+    57→    universe: "refund-audit",
+    58→    title: "Small buckets the team can clear by hand",
+    59→    brief:
+    60→      "From: refunds@ internal ticket #4517.\n\nQuarter-end goodwill sweep. Before we schedule reviewers I want the exposure picture: the value sitting in each fulfillment bucket, and specifically which buckets are small enough — under 2,000 — for one person to clear manually in a day. Stage name plus its value, rounded.",
+    61→    ask: "Each fulfillment stage whose total order value is under 2000, showing the stage and that value rounded to 2 decimals.",
+    62→    template: `SELECT status, ROUND({1}(total), 2) AS value_at_risk
+    63→FROM orders
+    64→GROUP BY status
+    65→{2} SUM(total) < {3};`,
+    66→    slots: [
+    67→      {
+    68→        answer: "SUM",
+    69→        kind: "keyword",
+    70→        label: "the value aggregate",
+    71→        why: "The brief asks for value per bucket, so SUM adds the order totals inside each stage — COUNT would report how many orders, not how much money.",
+    72→      },
+    73→      {
+    74→        answer: "HAVING",
+    75→        kind: "keyword",
+    76→        label: "the bucket filter",
+    77→        why: "The under-2000 test applies to a per-bucket sum, and WHERE cannot see aggregates — it filters rows before buckets exist, so the bucket filter must be HAVING.",
+    78→      },
+    79→      {
+    80→        answer: "2000",
+    81→        kind: "number",
+    82→        label: "the manual-clear bar",
+    83→        why: "The ticket defines manually-clearable as under 2000 — strictly less, so a bucket worth exactly 2000.00 would go to the reviewer pool instead.",
+    84→        noVerify: true,
+    85→      },
+    86→    ],
+    87→    distractors: ["COUNT", "AVG", "WHERE", "'pending'", "1000"],
+    88→    walkthrough:
+    89→      "This one is 'value per bucket, small buckets only'. SUM(total) inside each stage bucket measures exposure; the under-2000 cut is a condition on that sum, so it belongs in HAVING — put it in WHERE and SQLite refuses: aggregates don't exist at row-filter time. Exactly one bucket survives: cancelled, worth 1152.49 across its 7 orders. Delivered (15,571.07), shipped (11,996.72) and pending (6,113) all clear the bar and stay with the normal queue. Net: the goodwill sweep is a one-person, one-day job. Watch the COUNT decoy — it would report order counts (7, 14, 30, 52) and every stage would look 'small' next to a 2000 money bar.",
+    90→  },
+    91→  {
+    92→    id: "cs-184",
+    93→    tier: "hard",
+    94→    topic: "l8",
+    95→    universe: "pricing",
+    96→    title: "Budget shelves for the entry-tier line",
+    97→    brief:
+    98→      "From: Head of Product. Re: entry-tier range planning.\n\nWe're building a sub-50 entry tier and I want to know which shelves already live in that world. For each category, tell me how many products it carries and its average price — but only the shelves whose average is genuinely below 50; a shelf averaging 57 isn't an entry-tier story no matter how you spin it.",
+    99→    ask: "Per category, the product count and average price (2 decimals), keeping only categories whose average price is under 50.",
+   100→    template: `SELECT category, {1}(*) AS items, ROUND({2}(price), 2) AS avg_price
+   101→FROM products
+   102→{3} BY category
+   103→{4} AVG(price) < {5};`,
+   104→    slots: [
+   105→      {
+   106→        answer: "COUNT",
+   107→        kind: "keyword",
+   108→        label: "the sku tally",
+   109→        why: "The first column is how many SKUs the shelf carries — COUNT(*) tallies rows per bucket; SUM or MAX would report sums and ceilings, not how many products sit there.",
+   110→      },
+   111→      {
+   112→        answer: "AVG",
+   113→        kind: "keyword",
+   114→        label: "the mean-price aggregate",
+   115→        why: "Average price per shelf is AVG(price) inside the rounding — SUM would add the prices together and wildly overstate every shelf.",
+   116→      },
+   117→      {
+   118→        answer: "GROUP",
+   119→        kind: "keyword",
+   120→        label: "the bucketing clause",
+   121→        why: "Per-shelf numbers require GROUP BY category — it buckets the 16 products so both aggregates compute per shelf.",
+   122→      },
+   123→      {
+   124→        answer: "HAVING",
+   125→        kind: "keyword",
+   126→        label: "the bucket filter",
+   127→        why: "The under-50 test is on the average, an aggregate — WHERE runs before buckets exist and can't see averages, so the filter is HAVING's job.",
+   128→      },
+   129→      {
+   130→        answer: "50",
+   131→        kind: "number",
+   132→        label: "the entry-tier ceiling",
+   133→        why: "Strictly under 50: a shelf averaging exactly 50.00 would be excluded from the entry tier.",
+   134→        noVerify: true,
+   135→      },
+   136→    ],
+   137→    distractors: ["SUM", "MAX", "ORDER", "WHERE", "100"],
+   138→    walkthrough:
+   139→      "Two metrics per bucket and a filter on one of them. GROUP BY category builds the shelves; COUNT(*) sizes them, AVG(price) prices them; HAVING keeps only shelves whose average is under 50. Three survive: Accessories (3 items, average 27.49), Apparel (2, 41.75) and Fitness (1, 32). Electronics misses at 57.83 — close, but the brief said genuinely below 50. The SUM decoy is seductive here because the query already shows a per-shelf aggregate: swap AVG for SUM and the same three shelves return with nonsense numbers (82.48, 83.5, 32) — sums dressed up as averages. And the 100 decoy would wave Electronics and Video into a tier they don't belong in.",
+   140→  },
+   141→  {
+   142→    id: "cs-185",
+   143→    tier: "hard",
+   144→    topic: "l8",
+   145→    universe: "fraud",
+   146→    title: "Accounts ordering like resellers",
+   147→    brief:
+   148→      "From: Risk team, spot-check rotation.\n\nConcentration flag from the anomalies dashboard: a handful of accounts order far more often than any retail pattern explains — classic reseller behavior. Pull the accounts with 5 or more orders, biggest first, with their order counts, so review can pull the full records on the heavy end first.",
+   149→    ask: "Each account with at least 5 orders, showing customer id and order count, sorted by count descending.",
+   150→    template: `SELECT customer_id, COUNT(*) AS orders
+   151→FROM orders
+   152→GROUP BY customer_id
+   153→{1} COUNT(*) >= {2}
+   154→{3} BY orders {4};`,
+   155→    slots: [
+   156→      {
+   157→        answer: "HAVING",
+   158→        kind: "keyword",
+   159→        label: "the bucket filter",
+   160→        why: "The 5-order floor tests a per-account count — an aggregate — so it lives in HAVING; WHERE would reject the query because aggregates don't exist at row-filter time.",
+   161→      },
+   162→      {
+   163→        answer: "5",
+   164→        kind: "number",
+   165→        label: "the frequency floor",
+   166→        why: "At least 5 means COUNT(*) >= 5 — inclusive, so an account with exactly 5 orders makes the list (and one does, sitting exactly on the bar in the results).",
+   167→      },
+   168→      {
+   169→        answer: "ORDER",
+   170→        kind: "keyword",
+   171→        label: "the ranking clause",
+   172→        why: "Biggest first is sorting, so ORDER BY orders — HAVING only filters buckets; it never sequences them.",
+   173→      },
+   174→      {
+   175→        answer: "DESC",
+   176→        kind: "keyword",
+   177→        label: "the sort direction",
+   178→        why: "Descending puts the heaviest accounts on top; the default ASC would surface the lightest suspect first — the opposite of triage.",
+   179→      },
+   180→    ],
+   181→    distractors: ["WHERE", "ASC", "LIMIT", "3"],
+   182→    walkthrough:
+   183→      "Per-account frequency with a floor and a ranking: GROUP BY customer_id makes one bucket per account, COUNT(*) sizes it, HAVING keeps buckets at or above 5, ORDER BY orders DESC ranks the survivors. Five accounts clear the bar: account 1 with 24 orders, then 17, 14, 13, and account 3 exactly on the bar at 5. That top account is 24 of 103 orders — nearly a quarter of all activity — which is exactly the reseller shape the dashboard flagged. Watch the LIMIT decoy: trimming to a fixed number of rows is not the same as filtering buckets — the policy is a frequency floor, not a top-N cut.",
+   184→  },
+   185→  {
+   186→    id: "cs-186",
+   187→    tier: "hard",
+   188→    topic: "l8",
+   189→    universe: "inventory",
+   190→    title: "Shelves running thin before the count",
+   191→    brief:
+   192→      "From: Warehouse ops manager. Re: cycle count staging.\n\nPhysical count starts Monday and I stage shelves thinnest first. Give me the picture per shelf: how many SKUs sit on it and total units on hand — then keep only the shelves holding fewer than 250 units total. Those are the ones I walk with the counter personally; the fat shelves can be spot-checked.",
+   193→    ask: "Per category, SKU count and total stock units, keeping only categories with fewer than 250 units on hand, thinnest first.",
+   194→    template: `SELECT category, {1}(*) AS skus, {2}(stock) AS units_on_hand
+   195→FROM products
+   196→{3} BY category
+   197→{4} SUM(stock) < {5}
+   198→{6} BY units_on_hand;`,
+   199→    slots: [
+   200→      {
+   201→        answer: "COUNT",
+   202→        kind: "keyword",
+   203→        label: "the sku tally",
+   204→        why: "SKU count per shelf is COUNT(*) — a row tally per bucket. The units column needs SUM; this one needs counting, and MAX or AVG would report the wrong kind of number.",
+   205→      },
+   206→      {
+   207→        answer: "SUM",
+   208→        kind: "keyword",
+   209→        label: "the stock aggregate",
+   210→        why: "Total units on hand adds stock across the shelf's products — SUM(stock). COUNT would count products (2 or 3), not units (135+), and the 250 bar is on units.",
+   211→      },
+   212→      {
+   213→        answer: "GROUP",
+   214→        kind: "keyword",
+   215→        label: "the bucketing clause",
+   216→        why: "Per-shelf numbers need GROUP BY category — without buckets, SUM(stock) would collapse the whole warehouse into one grand total.",
+   217→      },
+   218→      {
+   219→        answer: "HAVING",
+   220→        kind: "keyword",
+   221→        label: "the bucket filter",
+   222→        why: "The under-250 test applies to a per-shelf sum — an aggregate — so it goes in HAVING; WHERE cannot see bucket totals.",
+   223→      },
+   224→      {
+   225→        answer: "250",
+   226→        kind: "number",
+   227→        label: "the staging threshold",
+   228→        why: "The staging rule is fewer than 250 units — strictly less, so a shelf holding exactly 250 would not be staged first.",
+   229→        noVerify: true,
+   230→      },
+   231→      {
+   232→        answer: "ORDER",
+   233→        kind: "keyword",
+   234→        label: "the sequencing clause",
+   235→        why: "Thinnest first is sorting the surviving buckets by their unit total — ORDER BY units_on_hand; HAVING filters but never sequences.",
+   236→      },
+   237→    ],
+   238→    distractors: ["MAX", "AVG", "WHERE", "LIMIT", "ASC", "320"],
+   239→    walkthrough:
+   240→      "This is the full bucketing stack: bucket, two aggregates, filter on an aggregate, sort on an aggregate. GROUP BY category builds shelves; COUNT(*) tallies SKUs and SUM(stock) adds units; HAVING keeps shelves under 250 units; ORDER BY units_on_hand stages them thinnest first. Three shelves qualify: Wearables with 135 units across 2 SKUs, then Video and Fitness tied at 220 — Video on 2 SKUs, Fitness on 1. Everything else holds 315 or more. The 320 decoy is worth a beat: raise the bar to 320 and Audio (315 units) sneaks in, changing who gets walked Monday — the threshold is the whole answer here.",
+   241→  },
+   242→  {
+   243→    id: "cs-187",
+   244→    tier: "hard",
+   245→    topic: "l8",
+   246→    universe: "funnel",
+   247→    title: "Months that hit the campaign bar",
+   248→    brief:
+   249→      "From: Growth marketing lead. Re: campaign retro.\n\nBefore I write the retro I want the demand shape: which calendar months actually carried campaign-grade volume. For each month bucket, count the orders and keep only the months that hit at least 8 — anything under that is baseline noise, not a campaign effect. Month label plus order count, oldest first.",
+   250→    ask: "Per month (YYYY-MM), the order count, keeping only months with at least 8 orders, oldest first.",
+   251→    template: `SELECT strftime({1}, created_at) AS month, COUNT(*) AS orders
+   252→FROM orders
+   253→GROUP BY month
+   254→{2} COUNT(*) >= {3}
+   255→ORDER BY month;`,
+   256→    slots: [
+   257→      {
+   258→        answer: "'%Y-%m'",
+   259→        kind: "keyword",
+   260→        label: "the month slicer",
+   261→        why: "The deliverable is month buckets, so the format string must extract year and month — '%Y-%m'. '%Y' alone would collapse whole years into one bucket; '%d' would bucket by day-of-month.",
+   262→      },
+   263→      {
+   264→        answer: "HAVING",
+   265→        kind: "keyword",
+   266→        label: "the bucket filter",
+   267→        why: "The 8-order bar tests a per-month count — an aggregate — so it lives in HAVING; WHERE runs before buckets exist and can't see counts.",
+   268→      },
+   269→      {
+   270→        answer: "8",
+   271→        kind: "number",
+   272→        label: "the campaign bar",
+   273→        why: "At least 8 is inclusive (>= 8), so a month with exactly 8 orders counts as campaign-grade — and several months sit exactly on that bar in the results.",
+   274→      },
+   275→    ],
+   276→    distractors: ["'%Y'", "'%d'", "WHERE", "ORDER", "10"],
+   277→    walkthrough:
+   278→      "The trick here is making the bucket: created_at is a full timestamp, so strftime('%Y-%m', created_at) slices it into year-month labels — that chip is the bucket definition, not decoration. GROUP BY month assembles the buckets, HAVING keeps the ones with at least 8 orders. Six months clear the bar: 2024-01 (8), 2024-02 (9), 2024-03 (8), 2024-05 (8), 2024-07 (8) and 2024-09 (9). Note how many sit exactly on 8 — with an exclusive > those months would vanish, so the inclusive >= matters. One caveat for the retro: busy months aren't automatically big months — July hit the volume bar but posted the lowest monthly revenue on file (1,193.86).",
+   279→  },
+   280→  {
+   281→    id: "cs-188",
+   282→    tier: "hard",
+   283→    topic: "l8",
+   284→    universe: "supplier",
+   285→    title: "Suppliers carrying real catalog weight",
+   286→    brief:
+   287→      "From: Supply-chain lead. Re: dual-sourcing review.\n\nProcurement wants to consolidate vendors, so I need to know who actually carries weight in the catalog. For each supplier, count the products they supply and keep only the ones with 3 or more SKUs — anyone below that is a niche line we can dual-source casually. Supplier id plus product count, heaviest line first.",
+   288→    ask: "Each supplier with at least 3 products in the catalog, showing supplier id and product count, biggest count first.",
+   289→    template: `SELECT supplier_id, COUNT(*) AS lines
+   290→FROM products
+   291→{1} BY supplier_id
+   292→{2} COUNT(*) >= {3}
+   293→ORDER BY lines {4}, supplier_id;`,
+   294→    slots: [
+   295→      {
+   296→        answer: "GROUP",
+   297→        kind: "keyword",
+   298→        label: "the bucketing clause",
+   299→        why: "One bucket per supplier requires GROUP BY supplier_id — it partitions the 16 products across the 6 vendors so counts compute per vendor.",
+   300→      },
+   301→      {
+   302→        answer: "HAVING",
+   303→        kind: "keyword",
+   304→        label: "the bucket filter",
+   305→        why: "The 3-SKU floor tests a per-supplier count — an aggregate — so HAVING; WHERE filters rows before buckets exist and cannot see counts.",
+   306→      },
+   307→      {
+   308→        answer: "3",
+   309→        kind: "number",
+   310→        label: "the sourcing floor",
+   311→        why: "At least 3 is inclusive: suppliers sitting exactly on 3 make the list — and every surviving supplier does, which is why the 3s fill the result.",
+   312→      },
+   313→      {
+   314→        answer: "DESC",
+   315→        kind: "keyword",
+   316→        label: "the sort direction",
+   317→        why: "Heaviest first means descending on the count, with supplier id as the tiebreaker so the read stays stable.",
+   318→      },
+   319→    ],
+   320→    distractors: ["WHERE", "ORDER", "2", "SUM", "LIMIT"],
+   321→    walkthrough:
+   322→      "A sourcing-weight question is a per-supplier count with a floor. GROUP BY supplier_id builds six buckets; COUNT(*) sizes each; HAVING keeps the ones at 3 or more; ORDER BY lines DESC with supplier_id as tiebreaker stacks them heaviest first. Four suppliers qualify — ids 1 through 4, each carrying exactly 3 SKUs. Suppliers 5 and 6 hold 2 each and drop out; those are the niche lines procurement can treat casually. The 2 decoy is the one to respect: drop the floor to 2 and every supplier qualifies, which makes the review list useless — the threshold is the entire deliverable.",
+   323→  },
+   324→  {
+   325→    id: "cs-189",
+   326→    tier: "hard",
+   327→    topic: "l8",
+   328→    universe: "expense",
+   329→    title: "Parcels with four-line packing loads",
+   330→    brief:
+   331→      "From: Ops finance, spend review.\n\nFulfillment cost per parcel jumps once packing goes past three lines — extra picks, extra check time. Before I re-price the handling fee I need the population: which order parcels actually contain exactly 4 line items. Parcel id plus its line count, so I can sample a few for time studies.",
+   332→    ask: "Each order parcel with exactly 4 line items, showing the order id and its line count.",
+   333→    template: `SELECT order_id, {1}(*) AS lines
+   334→FROM order_items
+   335→{2} BY order_id
+   336→{3} COUNT(*) = {4};`,
+   337→    slots: [
+   338→      {
+   339→        answer: "COUNT",
+   340→        kind: "keyword",
+   341→        label: "the line tally",
+   342→        why: "Line count per parcel is COUNT(*) — a tally of rows in each bucket; SUM(quantity) would add units ordered, which is a different metric entirely.",
+   343→      },
+   344→      {
+   345→        answer: "GROUP",
+   346→        kind: "keyword",
+   347→        label: "the bucketing clause",
+   348→        why: "Per-parcel anything requires GROUP BY order_id — the order_items table is line-level, so bucketing by order is what assembles parcels.",
+   349→      },
+   350→      {
+   351→        answer: "HAVING",
+   352→        kind: "keyword",
+   353→        label: "the bucket filter",
+   354→        why: "The exactly-4 test applies to a per-parcel count — an aggregate — so it belongs in HAVING; WHERE would error out on the aggregate.",
+   355→      },
+   356→      {
+   357→        answer: "4",
+   358→        kind: "number",
+   359→        label: "the cost-tier size",
+   360→        why: "Exactly 4 means equality, not a floor: a parcel with 5 lines would belong to a different cost tier. The 4s in the results are the surviving counts themselves.",
+   361→      },
+   362→    ],
+   363→    distractors: ["SUM", "AVG", "MAX", "WHERE", "5"],
+   364→    walkthrough:
+   365→      "This one buckets a detail table: order_items is line-level, so GROUP BY order_id is what assembles parcels, and COUNT(*) counts each parcel's lines. The filter is exact — HAVING COUNT(*) = 4 — because the handling-fee tier changes at four lines, not at four-or-more. Twenty-three parcels come back, each reading exactly 4 in the result — orders 1, 6, 11, 15, 16 and 17 among them. Watch the SUM decoy: SUM(*) doesn't even parse, but the tempting mental swap is SUM(quantity), which would count units in the box — a completely different cost driver from picks and check time.",
+   366→  },
+   367→  {
+   368→    id: "cs-190",
+   369→    tier: "hard",
+   370→    topic: "l8",
+   371→    universe: "catalog",
+   372→    title: "Shelves where even the floor reads premium",
+   373→    brief:
+   374→      "From: Catalog content manager. Re: badge placement for the curated tag.\n\nWe're placing the 'curated' badge on shelves and it only fits where the whole shelf reads premium — not just the hero SKU. Rule: the cheapest product on the shelf must still price above 30. Show me each shelf's floor price and keep the shelves that clear the bar, best floor first.",
+   375→    ask: "Each category's minimum price, keeping only categories whose cheapest product costs more than 30, highest floor first.",
+   376→    template: `SELECT category, {1}(price) AS floor_price
+   377→FROM products
+   378→{2} BY category
+   379→{3} MIN(price) > {4}
+   380→ORDER BY floor_price DESC;`,
+   381→    slots: [
+   382→      {
+   383→        answer: "MIN",
+   384→        kind: "keyword",
+   385→        label: "the floor aggregate",
+   386→        why: "The floor of a shelf is MIN(price) — the cheapest SKU on it. MAX would report the ceiling and flatter every shelf; AVG would blur floor and ceiling together.",
+   387→      },
+   388→      {
+   389→        answer: "GROUP",
+   390→        kind: "keyword",
+   391→        label: "the bucketing clause",
+   392→        why: "Per-shelf floors require GROUP BY category — MIN(price) without buckets returns one cheapest product for the entire catalog.",
+   393→      },
+   394→      {
+   395→        answer: "HAVING",
+   396→        kind: "keyword",
+   397→        label: "the bucket filter",
+   398→        why: "The above-30 test applies to the per-shelf minimum — an aggregate — so it lives in HAVING; WHERE can't see bucket-level results.",
+   399→      },
+   400→      {
+   401→        answer: "30",
+   402→        kind: "number",
+   403→        label: "the badge floor",
+   404→        why: "The badge rule is strictly above 30, so a shelf whose cheapest SKU is exactly 30.00 would miss the tag.",
+   405→        noVerify: true,
+   406→      },
+   407→    ],
+   408→    distractors: ["MAX", "AVG", "ORDER", "WHERE", "40"],
+   409→    walkthrough:
+   410→      "The badge rule is about the weakest item on each shelf, which makes this a MIN question wearing a premium costume. GROUP BY category builds the shelves, MIN(price) finds each floor, HAVING keeps floors above 30, and ORDER BY floor_price DESC ranks the best foundations first. Five shelves clear the bar: Wearables (floor 79), Audio (59.99), Video (39.99), Electronics (34.5) and Fitness (32). Accessories (14.99) and Apparel (18.5) fail on a single cheap SKU each — exactly the knockoff risk the badge avoids. The 40 decoy shows how sharp the bar is: at 40, Electronics and Fitness drop out and only two shelves remain.",
+   411→  },
+   412→  {
+   413→    id: "cs-191",
+   414→    tier: "hard",
+   415→    topic: "l8",
+   416→    universe: "month-close",
+   417→    title: "Monthly revenue buckets for the close deck",
+   418→    brief:
+   419→      "From: Financial Controller. Re: revenue trend slide.\n\nThe close deck's trend slide shows revenue per month, but I refuse to chart months that are just noise — anything under 2,000 gets a footnote instead of a bar. Bucket the orders by month, total each bucket, and show me only the months that carry at least 2,000, in calendar order.",
+   420→    ask: "Per month (YYYY-MM), total order value rounded to 2 decimals, keeping only months with at least 2000, calendar order.",
+   421→    template: `SELECT strftime({1}, created_at) AS month,
+   422→       ROUND({2}(total), 2) AS revenue
+   423→FROM orders
+   424→{3} BY month
+   425→{4} SUM(total) >= {5}
+   426→ORDER BY month;`,
+   427→    slots: [
+   428→      {
+   429→        answer: "'%Y-%m'",
+   430→        kind: "keyword",
+   431→        label: "the month slicer",
+   432→        why: "Month buckets come from slicing the timestamp — strftime('%Y-%m', created_at). The '%Y' decoy would merge the whole dataset into two year-buckets and wreck the trend slide.",
+   433→      },
+   434→      {
+   435→        answer: "SUM",
+   436→        kind: "keyword",
+   437→        label: "the revenue aggregate",
+   438→        why: "Revenue per month is the sum of order totals in that bucket — AVG would report a mean ticket, not the revenue line the deck needs.",
+   439→      },
+   440→      {
+   441→        answer: "GROUP",
+   442→        kind: "keyword",
+   443→        label: "the bucketing clause",
+   444→        why: "Per-month totals require GROUP BY month — without it SUM(total) collapses all 14 months into one number.",
+   445→      },
+   446→      {
+   447→        answer: "HAVING",
+   448→        kind: "keyword",
+   449→        label: "the bucket filter",
+   450→        why: "The 2000 floor tests a per-month sum — an aggregate — so it goes in HAVING; WHERE filters rows before buckets exist.",
+   451→      },
+   452→      {
+   453→        answer: "2000",
+   454→        kind: "number",
+   455→        label: "the charting floor",
+   456→        why: "At least 2000 is inclusive: a month totaling exactly 2000.00 earns a bar, not a footnote.",
+   457→        noVerify: true,
+   458→      },
+   459→    ],
+   460→    distractors: ["COUNT", "AVG", "WHERE", "'%Y'", "1000"],
+   461→    walkthrough:
+   462→      "Same bucketing trick the funnel team uses, but the metric is money: strftime('%Y-%m') builds the month label, SUM(total) totals each bucket, HAVING keeps months at or above 2000. Eleven of the 14 months make the chart; the three footnotes are July 2024 (1,193.86), November 2024 (1,648.80) and January 2025 (1,669.50). The strongest bar is January 2024 at 3,731.97, with February close behind at 3,609.64. Worth saying out loud in the close: the >= matters — a month at exactly 2,000.00 would stay on the chart. And the '%Y' decoy would quietly turn fourteen months into two giant year-bars — a completely different slide.",
+   463→  },
+   464→  {
+   465→    id: "cs-192",
+   466→    tier: "hard",
+   467→    topic: "l8",
+   468→    universe: "growth",
+   469→    title: "Regions with a real member base",
+   470→    brief:
+   471→      "From: Chief of Staff. Re: international expansion memo.\n\nThe expansion memo needs an honest picture of where members actually are, not where we wish they were. Bucket customers by region, count each bucket, and keep only regions with at least 5 members — those are the ones with a real base to localize for. Region name plus member count.",
+   472→    ask: "Each region with at least 5 customers, showing the region and its member count.",
+   473→    template: `SELECT region, COUNT(*) AS members
+   474→FROM customers
+   475→{1} BY {2}
+   476→{3} COUNT(*) >= {4};`,
+   477→    slots: [
+   478→      {
+   479→        answer: "GROUP",
+   480→        kind: "keyword",
+   481→        label: "the bucketing clause",
+   482→        why: "Counting per region requires GROUP BY — it buckets the 16 customers so COUNT computes one total per region instead of a single 16.",
+   483→      },
+   484→      {
+   485→        answer: "region",
+   486→        kind: "keyword",
+   487→        label: "the bucket key",
+   488→        why: "The bucket key is region — the expansion memo thinks in markets. GROUP BY city would shatter the base into 16 one-customer buckets; region is the granularity the memo needs.",
+   489→      },
+   490→      {
+   491→        answer: "HAVING",
+   492→        kind: "keyword",
+   493→        label: "the bucket filter",
+   494→        why: "The 5-member floor tests a per-region count — an aggregate — so it lives in HAVING; WHERE cannot see bucket totals.",
+   495→      },
+   496→      {
+   497→        answer: "5",
+   498→        kind: "number",
+   499→        label: "the localization floor",
+   500→        why: "At least 5 is inclusive — a region with exactly 5 members qualifies, and one does in the results.",
+   501→      },
+   502→    ],
+   503→    distractors: ["city", "active", "'EU'", "WHERE", "10"],
+   504→    walkthrough:
+   505→      "A market-sizing question: GROUP BY region makes four buckets, COUNT(*) sizes them, HAVING keeps the ones with a real base. Two regions survive: EU with 8 members and APAC with 5 — exactly on the bar, which is why the inclusive >= matters. US (2) and LATAM (1) are not markets yet; they go in the watch paragraph, not the localization budget. The city decoy is the subtle one: it's a real column, and grouping by it executes — then every bucket holds one customer and the floor keeps nothing. Bucket-key choice is part of the answer, not a detail.",
+   506→  },
+   507→  {
+   508→    id: "cs-193",
+   509→    tier: "hard",
+   510→    topic: "l8",
+   511→    universe: "refund-audit",
+   512→    title: "Stages where the average ticket clears 300",
+   513→    brief:
+   514→      "From: refunds@ internal ticket #4538.\n\nWe staff goodwill reviewers by stage, budgeted per ticket handled. The cheap stages can absorb goodwill inline; the expensive ones need the dedicated queue. Show each stage's order count and its average ticket to 2 decimals — and keep only the stages where the average is genuinely above 300.",
+   515→    ask: "Per fulfillment stage, the order count and average ticket value (2 decimals), keeping only stages averaging above 300.",
+   516→    template: `SELECT status, {2}(*) AS n, ROUND({1}(total), 2) AS avg_ticket
+   517→FROM orders
+   518→{3} BY status
+   519→{4} AVG(total) > 300
+   520→ORDER BY avg_ticket {5};`,
+   521→    slots: [
+   522→      {
+   523→        answer: "AVG",
+   524→        kind: "keyword",
+   525→        label: "the ticket aggregate",
+   526→        why: "The deliverable is an average ticket, so AVG(total) inside the rounding — SUM would report the stage's whole value and COUNT its order volume.",
+   527→      },
+   528→      {
+   529→        answer: "COUNT",
+   530→        kind: "keyword",
+   531→        label: "the ticket tally",
+   532→        why: "Reviewer budget scales with tickets handled, so the count column is COUNT(*); the average column already carries the money math.",
+   533→      },
+   534→      {
+   535→        answer: "GROUP",
+   536→        kind: "keyword",
+   537→        label: "the bucketing clause",
+   538→        why: "Per-stage numbers require GROUP BY status — it buckets the orders so both aggregates compute per stage.",
+   539→      },
+   540→      {
+   541→        answer: "HAVING",
+   542→        kind: "keyword",
+   543→        label: "the bucket filter",
+   544→        why: "The above-300 test applies to the per-stage average — an aggregate — so it goes in HAVING; WHERE would reject aggregates outright.",
+   545→      },
+   546→      {
+   547→        answer: "DESC",
+   548→        kind: "keyword",
+   549→        label: "the sort direction",
+   550→        why: "Most expensive stage first is descending on the average — that's the queue that needs staffing attention at the top of the list.",
+   551→      },
+   552→    ],
+   553→    distractors: ["SUM", "MAX", "ORDER", "WHERE", "ASC"],
+   554→    walkthrough:
+   555→      "Two aggregates per bucket and a filter on one of them: GROUP BY status builds the stages, COUNT(*) counts tickets, AVG(total) prices them, HAVING keeps averages above 300, ORDER BY avg_ticket DESC puts the expensive queue on top. Two stages qualify: pending, averaging 436.64 across 14 orders, and shipped at 399.89 across 30. Delivered misses by 56 cents — 299.44 — which stings, but the brief said genuinely above 300, and HAVING compares the true unrounded average before the display rounding ever happens. Cancelled averages 164.64 and stays inline. The SUM decoy passes the same two stages but swaps in bucket totals (11,996.72 and 6,113) — stage totals dressed up as tickets.",
+   556→  },
+   557→  {
+   558→    id: "cs-194",
+   559→    tier: "hard",
+   560→    topic: "l8",
+   561→    universe: "pricing",
+   562→    title: "Shelves that can anchor the premium tier",
+   563→    brief:
+   564→      "From: Head of Product. Re: premium tier anchor.\n\nThe premium tier needs anchor shelves — categories where the ceiling is genuinely high, not shelves that merely average well. For each category show me its most expensive product, and keep only the shelves whose ceiling reaches 149.99 or more, highest ceiling first.",
+   565→    ask: "Each category's maximum price, keeping only categories whose priciest product is 149.99 or more, highest ceiling first.",
+   566→    template: `SELECT category, {1}(price) AS ceiling_price
+   567→FROM products
+   568→{2} BY category
+   569→{3} MAX(price) >= {4}
+   570→ORDER BY ceiling_price DESC;`,
+   571→    slots: [
+   572→      {
+   573→        answer: "MAX",
+   574→        kind: "keyword",
+   575→        label: "the ceiling aggregate",
+   576→        why: "An anchor shelf is defined by its ceiling — MAX(price) finds the priciest SKU per shelf; MIN would report the floor and AVG the middle, neither of which anchors a tier.",
+   577→      },
+   578→      {
+   579→        answer: "GROUP",
+   580→        kind: "keyword",
+   581→        label: "the bucketing clause",
+   582→        why: "Per-shelf ceilings require GROUP BY category — without buckets MAX(price) returns one price for the whole catalog.",
+   583→      },
+   584→      {
+   585→        answer: "HAVING",
+   586→        kind: "keyword",
+   587→        label: "the bucket filter",
+   588→        why: "The 149.99 bar tests a per-shelf maximum — an aggregate — so it lives in HAVING; WHERE runs before buckets exist.",
+   589→      },
+   590→      {
+   591→        answer: "149.99",
+   592→        kind: "number",
+   593→        label: "the anchor threshold",
+   594→        why: "At least means inclusive: a shelf whose ceiling is exactly 149.99 anchors the tier — and one does, which is why the figure shows up in the results.",
+   595→      },
+   596→    ],
+   597→    distractors: ["MIN", "AVG", "ORDER", "WHERE", "129", "199.99"],
+   598→    walkthrough:
+   599→      "Where the premium-by-average question looks at means, anchors are about ceilings: GROUP BY category builds the shelves, MAX(price) finds each top SKU, HAVING keeps ceilings at 149.99 or above. Two shelves anchor the tier: Wearables at 199.99 and Audio at exactly 149.99 — the inclusive >= is what keeps Audio on the list. Video misses at 129, Electronics at 89.99, and the rest never threaten the bar. The 129 decoy matters commercially: drop the bar to 129 and Video sneaks in as a third anchor, diluting the tier on its very first slide.",
+   600→  },
+   601→  {
+   602→    id: "cs-195",
+   603→    tier: "hard",
+   604→    topic: "l8",
+   605→    universe: "fraud",
+   606→    title: "Booked value piled in a few accounts",
+   607→    brief:
+   608→      "From: Risk team, concentration review.\n\nSame anomaly family as the frequency sweep, but on money this time: booked value piling up in a handful of accounts is our exposure if one of them turns out to be synthetic. Total each account's order value and keep the accounts holding 4,000 or more, biggest exposure first, so review starts at the top of the pile.",
+   609→    ask: "Each account whose total booked value is at least 4000, showing customer id and that value rounded to 2 decimals, biggest first.",
+   610→    template: `SELECT customer_id, ROUND({1}(total), 2) AS booked
+   611→FROM orders
+   612→GROUP BY {2}
+   613→{3} SUM(total) >= {4}
+   614→ORDER BY booked {5};`,
+   615→    slots: [
+   616→      {
+   617→        answer: "SUM",
+   618→        kind: "keyword",
+   619→        label: "the exposure aggregate",
+   620→        why: "Exposure is money, so SUM(total) adds each account's orders — COUNT would rank by frequency, which is the other fraud sweep, not this one.",
+   621→      },
+   622→      {
+   623→        answer: "customer_id",
+   624→        kind: "keyword",
+   625→        label: "the bucket key",
+   626→        why: "The bucket key is the account: GROUP BY customer_id assembles each customer's orders into one bucket. Grouping by anything else measures a different pile entirely.",
+   627→      },
+   628→      {
+   629→        answer: "HAVING",
+   630→        kind: "keyword",
+   631→        label: "the bucket filter",
+   632→        why: "The 4000 floor tests a per-account sum — an aggregate — so HAVING; WHERE cannot see bucket totals and would reject the query.",
+   633→      },
+   634→      {
+   635→        answer: "4000",
+   636→        kind: "number",
+   637→        label: "the exposure floor",
+   638→        why: "At least 4,000 is inclusive — an account worth exactly 4,000.00 belongs on the exposure list.",
+   639→        noVerify: true,
+   640→      },
+   641→      {
+   642→        answer: "DESC",
+   643→        kind: "keyword",
+   644→        label: "the sort direction",
+   645→        why: "Biggest exposure first is descending on booked value — the review queue should start at the top of the pile.",
+   646→      },
+   647→    ],
+   648→    distractors: ["COUNT", "AVG", "ORDER", "WHERE", "ASC", "6000"],
+   649→    walkthrough:
+   650→      "Money-weighted concentration: GROUP BY customer_id makes one bucket per account, SUM(total) totals each, HAVING keeps buckets at 4,000 or more, ORDER BY booked DESC stacks the pile. Three accounts survive: account 1 at 7,262.35 across 24 orders, account 5 at 6,640.56, account 7 at 4,574.23 — together 18,477.14, more than half of all booked value (34,833.28). Account 13 misses at 3,644.56; it goes on the watchlist, not the review queue. The 6000 decoy is the concentration test in miniature: raise the floor and only accounts 1 and 5 survive — which accounts you escalate depends entirely on where the bar sits.",
+   651→  },
+   652→];
+   653→

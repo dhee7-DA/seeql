@@ -1,0 +1,750 @@
+===== l3 (37) =====
+-- orders-by-status: SELECT status, COUNT(*) AS n FROM orders GROUP BY status
+   cols: status,n
+   ["cancelled",7]
+   ["delivered",52]
+   ["pending",14]
+   ["shipped",30]
+-- customers-by-region: SELECT region, COUNT(*) AS n FROM customers GROUP BY region
+   cols: region,n
+   ["APAC",5]
+   ["EU",8]
+   ["LATAM",1]
+   ["US",2]
+-- customers-by-city: SELECT city, COUNT(*) AS n FROM customers GROUP BY city ORDER BY n DESC, city
+   cols: city,n
+   ["Austin",1]
+   ["Berlin",1]
+   ["Chicago",1]
+   ["Cork",1]
+   ["Dubai",1]
+   ["Hamburg",1]
+   ["London",1]
+   ["Lyon",1]
+   ["Madrid",1]
+   ["Milan",1]
+   ["Mumbai",1]
+   ["Nagoya",1]
+   ["Osaka",1]
+   ["Seoul",1]
+   ["São Paulo",1]
+   ["Tallinn",1]
+-- products-by-category: SELECT category, COUNT(*) AS n FROM products GROUP BY category
+   cols: category,n
+   ["Accessories",3]
+   ["Apparel",2]
+   ["Audio",3]
+   ["Electronics",3]
+   ["Fitness",1]
+   ["Video",2]
+   ["Wearables",2]
+-- price-over-100: SELECT COUNT(*) AS n FROM products WHERE price > 100
+   cols: n
+   [4]
+-- price-over-200: SELECT COUNT(*) AS n FROM products WHERE price > 200
+   cols: n
+   [0]
+-- price-over-300: SELECT COUNT(*) AS n FROM products WHERE price > 300
+   cols: n
+   [0]
+-- price-over-400: SELECT COUNT(*) AS n FROM products WHERE price > 400
+   cols: n
+   [0]
+-- price-over-500: SELECT COUNT(*) AS n FROM products WHERE price > 500
+   cols: n
+   [0]
+-- price-under-50: SELECT COUNT(*) AS n FROM products WHERE price < 50
+   cols: n
+   [8]
+-- price-under-100: SELECT COUNT(*) AS n FROM products WHERE price < 100
+   cols: n
+   [12]
+-- price-100-300: SELECT COUNT(*) AS n FROM products WHERE price >= 100 AND price <= 300
+   cols: n
+   [4]
+-- orders-over-300: SELECT COUNT(*) AS n FROM orders WHERE total > 300
+   cols: n
+   [49]
+-- orders-over-500: SELECT COUNT(*) AS n FROM orders WHERE total > 500
+   cols: n
+   [25]
+-- orders-over-800: SELECT COUNT(*) AS n FROM orders WHERE total > 800
+   cols: n
+   [4]
+-- orders-over-1000: SELECT COUNT(*) AS n FROM orders WHERE total > 1000
+   cols: n
+   [1]
+-- orders-under-100: SELECT COUNT(*) AS n FROM orders WHERE total < 100
+   cols: n
+   [15]
+-- eu-customers: SELECT name, city FROM customers WHERE region = 'EU' ORDER BY name
+   cols: name,city
+   ["Alice Chen","Berlin"]
+   ["Chloe Dubois","Lyon"]
+   ["Dmitri Volkov","Tallinn"]
+   ["Isabella Rossi","Milan"]
+   ["Liam O'Brien","Cork"]
+   ["Noah Meyer","Hamburg"]
+   ["Olivia Brown","London"]
+   ["Pedro Alvarez","Madrid"]
+-- apac-customers: SELECT name, city FROM customers WHERE region = 'APAC' ORDER BY name
+   cols: name,city
+   ["Farid Nasser","Dubai"]
+   ["Grace Kim","Seoul"]
+   ["Hiro Tanaka","Osaka"]
+   ["Keiko Sato","Nagoya"]
+   ["Maya Patel","Mumbai"]
+-- us-latam-customers: SELECT name, city, region FROM customers WHERE region IN ('US', 'LATAM') ORDER BY name
+   cols: name,city,region
+   ["Bruno Silva","São Paulo","LATAM"]
+   ["Emma Wilson","Austin","US"]
+   ["Jamal Wright","Chicago","US"]
+-- orders-by-month: SELECT strftime('%Y-%m', created_at) AS month, COUNT(*) AS n FROM orders GROUP BY month ORDER BY month
+   cols: month,n
+   ["2024-01",8]
+   ["2024-02",9]
+   ["2024-03",8]
+   ["2024-04",7]
+   ["2024-05",8]
+   ["2024-06",6]
+   ["2024-07",8]
+   ["2024-08",7]
+   ["2024-09",9]
+   ["2024-10",7]
+   ["2024-11",6]
+   ["2024-12",7]
+   ["2025-01",6]
+   ["2025-02",7]
+-- cancelled-2024-03: SELECT COUNT(*) AS n FROM orders WHERE status = 'cancelled' AND strftime('%Y-%m', created_at) = '2024-03'
+   cols: n
+   [1]
+-- delivered-over-300: SELECT COUNT(*) AS n FROM orders WHERE status = 'delivered' AND total > 300
+   cols: n
+   [23]
+-- stock-zero: SELECT COUNT(*) AS n FROM products WHERE stock = 0
+   cols: n
+   [0]
+-- stock-under-10: SELECT COUNT(*) AS n FROM products WHERE stock < 10
+   cols: n
+   [0]
+-- stock-under-25: SELECT COUNT(*) AS n FROM products WHERE stock < 25
+   cols: n
+   [0]
+-- qty-ge-3: SELECT COUNT(*) AS n FROM order_items WHERE quantity >= 3
+   cols: n
+   [89]
+-- qty-eq-5: SELECT COUNT(*) AS n FROM order_items WHERE quantity = 5
+   cols: n
+   [0]
+-- pending-not-shipped-month: SELECT strftime('%Y-%m', created_at) AS month, COUNT(*) AS n FROM orders WHERE status = 'pending' GROUP BY month ORDER BY month
+   cols: month,n
+   ["2024-01",2]
+   ["2024-02",1]
+   ["2024-03",2]
+   ["2024-06",2]
+   ["2024-07",1]
+   ["2024-10",2]
+   ["2024-11",1]
+   ["2024-12",1]
+   ["2025-01",1]
+   ["2025-02",1]
+-- big-tickets-status: SELECT status, COUNT(*) AS n FROM orders WHERE total > 500 GROUP BY status
+   cols: status,n
+   ["delivered",9]
+   ["pending",5]
+   ["shipped",11]
+-- like-son: SELECT name FROM customers WHERE name LIKE '%son%'
+   cols: name
+   ["Emma Wilson"]
+-- like-a-start: SELECT name FROM customers WHERE name LIKE 'A%'
+   cols: name
+   ["Alice Chen"]
+-- category-electronics-accessories: SELECT COUNT(*) AS n FROM products WHERE category IN ('Electronics', 'Accessories')
+   cols: n
+   [6]
+-- ref-customers: SELECT id, name, city, region, active, created_at FROM customers ORDER BY id
+   cols: id,name,city,region,active,created_at
+   [1,"Alice Chen","Berlin","EU",1,"2023-11-02"]
+   [2,"Bruno Silva","São Paulo","LATAM",1,"2023-11-17"]
+   [3,"Chloe Dubois","Lyon","EU",1,"2023-12-05"]
+   [4,"Dmitri Volkov","Tallinn","EU",0,"2023-12-19"]
+   [5,"Emma Wilson","Austin","US",1,"2024-01-08"]
+   [6,"Farid Nasser","Dubai","APAC",1,"2024-01-22"]
+   [7,"Grace Kim","Seoul","APAC",1,"2024-02-03"]
+   [8,"Hiro Tanaka","Osaka","APAC",1,"2024-02-14"]
+   [9,"Isabella Rossi","Milan","EU",1,"2024-03-01"]
+   [10,"Jamal Wright","Chicago","US",1,"2024-03-18"]
+   [11,"Keiko Sato","Nagoya","APAC",0,"2024-04-02"]
+   [12,"Liam O'Brien","Cork","EU",1,"2024-04-21"]
+   [13,"Maya Patel","Mumbai","APAC",1,"2024-05-09"]
+   [14,"Noah Meyer","Hamburg","EU",1,"2024-05-27"]
+   [15,"Olivia Brown","London","EU",1,"2024-06-11"]
+   [16,"Pedro Alvarez","Madrid","EU",1,"2024-07-03"]
+-- ref-products: SELECT id, name, category, price, stock, supplier_id FROM products ORDER BY id
+   cols: id,name,category,price,stock,supplier_id
+   [1,"Mechanical Keyboard K1","Electronics",89.99,120,1]
+   [2,"Wireless Mouse M3","Electronics",34.5,300,2]
+   [3,"USB-C Hub 7-in-1","Electronics",49,85,3]
+   [4,"Noise-Canceling Headset","Audio",149.99,60,4]
+   [5,"Studio Desktop Mic","Audio",119,45,5]
+   [6,"Bluetooth Speaker Mini","Audio",59.99,210,6]
+   [7,"4K Webcam Pro","Video",129,70,1]
+   [8,"Ring Light 14\"","Video",39.99,150,2]
+   [9,"HDMI 2.1 Cable 2m","Accessories",14.99,500,3]
+   [10,"Laptop Stand Aluminum","Accessories",42.5,180,4]
+   [11,"Desk Mat Extended","Accessories",24.99,260,5]
+   [12,"Fitness Band X2","Wearables",79,95,6]
+   [13,"Smart Watch S","Wearables",199.99,40,1]
+   [14,"Running Socks 3-pack","Apparel",18.5,400,2]
+   [15,"Cycling Jersey Pro","Apparel",65,110,3]
+   [16,"Yoga Mat Eco 6mm","Fitness",32,220,4]
+-- ref-suppliers: SELECT id, name, region, rating FROM suppliers ORDER BY id
+   cols: id,name,region,rating
+   [1,"Nordic Gadgets AB","EU",4.6]
+   [2,"Shenzhen Electro","APAC",4.1]
+   [3,"Pacific Textiles","APAC",3.9]
+   [4,"Midwest Hardware Co","US",4.4]
+   [5,"Alpine Audio GmbH","EU",4.8]
+   [6,"Andes Naturals SA","LATAM",4]
+-- ref-date-range: SELECT MIN(created_at) AS first_order, MAX(created_at) AS last_order FROM orders
+   cols: first_order,last_order
+   ["2024-01-01","2025-02-27"]
+===== l4 (19) =====
+-- unshipped-count: SELECT COUNT(*) AS unshipped FROM orders WHERE shipped_at IS NULL
+   cols: unshipped
+   [21]
+-- shipped-count: SELECT COUNT(*) AS shipped FROM orders WHERE shipped_at IS NOT NULL
+   cols: shipped
+   [82]
+-- count-star-vs-col: SELECT COUNT(*) AS all_rows, COUNT(shipped_at) AS with_timestamp FROM orders
+   cols: all_rows,with_timestamp
+   [103,82]
+-- unshipped-sum: SELECT ROUND(SUM(total), 2) AS value_at_risk FROM orders WHERE shipped_at IS NULL
+   cols: value_at_risk
+   [7265.49]
+-- unshipped-avg: SELECT ROUND(AVG(total), 2) AS avg_unshipped FROM orders WHERE shipped_at IS NULL
+   cols: avg_unshipped
+   [345.98]
+-- unshipped-max: SELECT ROUND(MAX(total), 2) AS biggest_unshipped FROM orders WHERE shipped_at IS NULL
+   cols: biggest_unshipped
+   [1088.44]
+-- shipped-sum: SELECT ROUND(SUM(total), 2) AS shipped_value FROM orders WHERE shipped_at IS NOT NULL
+   cols: shipped_value
+   [27567.79]
+-- shipped-avg: SELECT ROUND(AVG(total), 2) AS avg_shipped FROM orders WHERE shipped_at IS NOT NULL
+   cols: avg_shipped
+   [336.19]
+-- unshipped-by-month: SELECT strftime('%Y-%m', created_at) AS month, COUNT(*) AS n FROM orders WHERE shipped_at IS NULL GROUP BY month ORDER BY month
+   cols: month,n
+   ["2024-01",3]
+   ["2024-02",1]
+   ["2024-03",3]
+   ["2024-06",2]
+   ["2024-07",3]
+   ["2024-10",2]
+   ["2024-11",3]
+   ["2024-12",1]
+   ["2025-01",2]
+   ["2025-02",1]
+-- unshipped-first5: SELECT id, customer_id, ROUND(total,2) AS total, created_at FROM orders WHERE shipped_at IS NULL ORDER BY id LIMIT 5
+   cols: id,customer_id,total,created_at
+   [1,16,576.54,"2024-01-05"]
+   [5,5,725.34,"2024-01-02"]
+   [7,1,152.52,"2024-01-02"]
+   [12,13,148.28,"2024-02-07"]
+   [19,1,317.49,"2024-03-05"]
+-- unshipped-over-500: SELECT COUNT(*) AS n FROM orders WHERE shipped_at IS NULL AND total > 500
+   cols: n
+   [5]
+-- cancelled-unshipped: SELECT COUNT(*) AS n FROM orders WHERE status = 'cancelled' AND shipped_at IS NULL
+   cols: n
+   [7]
+-- null-trap-eq: SELECT COUNT(*) AS n FROM orders WHERE shipped_at = NULL
+   cols: n
+   [0]
+-- delivered-shipped-split: SELECT status, COUNT(*) AS n, COUNT(shipped_at) AS with_ts FROM orders GROUP BY status
+   cols: status,n,with_ts
+   ["cancelled",7,0]
+   ["delivered",52,52]
+   ["pending",14,0]
+   ["shipped",30,30]
+-- unshipped-cancelled-pending: SELECT status, COUNT(*) AS n FROM orders WHERE shipped_at IS NULL GROUP BY status
+   cols: status,n
+   ["cancelled",7]
+   ["pending",14]
+-- ref-customers: SELECT id, name, city, region, active, created_at FROM customers ORDER BY id
+   cols: id,name,city,region,active,created_at
+   [1,"Alice Chen","Berlin","EU",1,"2023-11-02"]
+   [2,"Bruno Silva","São Paulo","LATAM",1,"2023-11-17"]
+   [3,"Chloe Dubois","Lyon","EU",1,"2023-12-05"]
+   [4,"Dmitri Volkov","Tallinn","EU",0,"2023-12-19"]
+   [5,"Emma Wilson","Austin","US",1,"2024-01-08"]
+   [6,"Farid Nasser","Dubai","APAC",1,"2024-01-22"]
+   [7,"Grace Kim","Seoul","APAC",1,"2024-02-03"]
+   [8,"Hiro Tanaka","Osaka","APAC",1,"2024-02-14"]
+   [9,"Isabella Rossi","Milan","EU",1,"2024-03-01"]
+   [10,"Jamal Wright","Chicago","US",1,"2024-03-18"]
+   [11,"Keiko Sato","Nagoya","APAC",0,"2024-04-02"]
+   [12,"Liam O'Brien","Cork","EU",1,"2024-04-21"]
+   [13,"Maya Patel","Mumbai","APAC",1,"2024-05-09"]
+   [14,"Noah Meyer","Hamburg","EU",1,"2024-05-27"]
+   [15,"Olivia Brown","London","EU",1,"2024-06-11"]
+   [16,"Pedro Alvarez","Madrid","EU",1,"2024-07-03"]
+-- ref-products: SELECT id, name, category, price, stock, supplier_id FROM products ORDER BY id
+   cols: id,name,category,price,stock,supplier_id
+   [1,"Mechanical Keyboard K1","Electronics",89.99,120,1]
+   [2,"Wireless Mouse M3","Electronics",34.5,300,2]
+   [3,"USB-C Hub 7-in-1","Electronics",49,85,3]
+   [4,"Noise-Canceling Headset","Audio",149.99,60,4]
+   [5,"Studio Desktop Mic","Audio",119,45,5]
+   [6,"Bluetooth Speaker Mini","Audio",59.99,210,6]
+   [7,"4K Webcam Pro","Video",129,70,1]
+   [8,"Ring Light 14\"","Video",39.99,150,2]
+   [9,"HDMI 2.1 Cable 2m","Accessories",14.99,500,3]
+   [10,"Laptop Stand Aluminum","Accessories",42.5,180,4]
+   [11,"Desk Mat Extended","Accessories",24.99,260,5]
+   [12,"Fitness Band X2","Wearables",79,95,6]
+   [13,"Smart Watch S","Wearables",199.99,40,1]
+   [14,"Running Socks 3-pack","Apparel",18.5,400,2]
+   [15,"Cycling Jersey Pro","Apparel",65,110,3]
+   [16,"Yoga Mat Eco 6mm","Fitness",32,220,4]
+-- ref-suppliers: SELECT id, name, region, rating FROM suppliers ORDER BY id
+   cols: id,name,region,rating
+   [1,"Nordic Gadgets AB","EU",4.6]
+   [2,"Shenzhen Electro","APAC",4.1]
+   [3,"Pacific Textiles","APAC",3.9]
+   [4,"Midwest Hardware Co","US",4.4]
+   [5,"Alpine Audio GmbH","EU",4.8]
+   [6,"Andes Naturals SA","LATAM",4]
+-- ref-date-range: SELECT MIN(created_at) AS first_order, MAX(created_at) AS last_order FROM orders
+   cols: first_order,last_order
+   ["2024-01-01","2025-02-27"]
+===== l5 (19) =====
+-- top5-price: SELECT name, price FROM products ORDER BY price DESC LIMIT 5
+   cols: name,price
+   ["Smart Watch S",199.99]
+   ["Noise-Canceling Headset",149.99]
+   ["4K Webcam Pro",129]
+   ["Studio Desktop Mic",119]
+   ["Mechanical Keyboard K1",89.99]
+-- top3-price: SELECT name, price FROM products ORDER BY price DESC LIMIT 3
+   cols: name,price
+   ["Smart Watch S",199.99]
+   ["Noise-Canceling Headset",149.99]
+   ["4K Webcam Pro",129]
+-- bottom3-price: SELECT name, price FROM products ORDER BY price ASC LIMIT 3
+   cols: name,price
+   ["HDMI 2.1 Cable 2m",14.99]
+   ["Running Socks 3-pack",18.5]
+   ["Desk Mat Extended",24.99]
+-- top3-orders: SELECT id, ROUND(total,2) AS total, status FROM orders ORDER BY total DESC LIMIT 3
+   cols: id,total,status
+   [74,1088.44,"pending"]
+   [43,945.21,"pending"]
+   [39,845.92,"shipped"]
+-- top5-orders: SELECT id, ROUND(total,2) AS total, status FROM orders ORDER BY total DESC LIMIT 5
+   cols: id,total,status
+   [74,1088.44,"pending"]
+   [43,945.21,"pending"]
+   [39,845.92,"shipped"]
+   [15,826.03,"shipped"]
+   [57,785.79,"shipped"]
+-- cheapest5-instock: SELECT name, price, stock FROM products WHERE stock > 0 ORDER BY price ASC LIMIT 5
+   cols: name,price,stock
+   ["HDMI 2.1 Cable 2m",14.99,500]
+   ["Running Socks 3-pack",18.5,400]
+   ["Desk Mat Extended",24.99,260]
+   ["Yoga Mat Eco 6mm",32,220]
+   ["Wireless Mouse M3",34.5,300]
+-- alpha-first-last: SELECT (SELECT name FROM customers ORDER BY name LIMIT 1) AS first_name, (SELECT name FROM customers ORDER BY name DESC LIMIT 1) AS last_name
+   cols: first_name,last_name
+   ["Alice Chen","Pedro Alvarez"]
+-- page2-products: SELECT name, price FROM products ORDER BY price DESC LIMIT 5 OFFSET 5
+   cols: name,price
+   ["Fitness Band X2",79]
+   ["Cycling Jersey Pro",65]
+   ["Bluetooth Speaker Mini",59.99]
+   ["USB-C Hub 7-in-1",49]
+   ["Laptop Stand Aluminum",42.5]
+-- top5-delivered: SELECT id, ROUND(total,2) AS total FROM orders WHERE status = 'delivered' ORDER BY total DESC LIMIT 5
+   cols: id,total
+   [6,752.96]
+   [14,705.23]
+   [71,668.45]
+   [67,659.7]
+   [13,632.29]
+-- max-stock-product: SELECT name, stock FROM products ORDER BY stock DESC LIMIT 1
+   cols: name,stock
+   ["HDMI 2.1 Cable 2m",500]
+-- latest3-orders: SELECT id, status, created_at FROM orders ORDER BY created_at DESC LIMIT 3
+   cols: id,status,created_at
+   [97,"pending","2025-02-27"]
+   [98,"shipped","2025-02-25"]
+   [100,"delivered","2025-02-19"]
+-- oldest-order: SELECT id, created_at, ROUND(total,2) AS total FROM orders ORDER BY created_at ASC LIMIT 1
+   cols: id,created_at,total
+   [6,"2024-01-01",752.96]
+-- top3-cancelled: SELECT id, ROUND(total,2) AS total FROM orders WHERE status = 'cancelled' ORDER BY total DESC LIMIT 3
+   cols: id,total
+   [83,397.99]
+   [95,206.19]
+   [7,152.52]
+-- bottom5-stock: SELECT name, stock FROM products ORDER BY stock ASC LIMIT 5
+   cols: name,stock
+   ["Smart Watch S",40]
+   ["Studio Desktop Mic",45]
+   ["Noise-Canceling Headset",60]
+   ["4K Webcam Pro",70]
+   ["USB-C Hub 7-in-1",85]
+-- top5-big-spenders-orders: SELECT customer_id, COUNT(*) AS orders FROM orders GROUP BY customer_id ORDER BY orders DESC, customer_id LIMIT 5
+   cols: customer_id,orders
+   [1,24]
+   [5,17]
+   [7,14]
+   [13,13]
+   [3,5]
+-- ref-customers: SELECT id, name, city, region, active, created_at FROM customers ORDER BY id
+   cols: id,name,city,region,active,created_at
+   [1,"Alice Chen","Berlin","EU",1,"2023-11-02"]
+   [2,"Bruno Silva","São Paulo","LATAM",1,"2023-11-17"]
+   [3,"Chloe Dubois","Lyon","EU",1,"2023-12-05"]
+   [4,"Dmitri Volkov","Tallinn","EU",0,"2023-12-19"]
+   [5,"Emma Wilson","Austin","US",1,"2024-01-08"]
+   [6,"Farid Nasser","Dubai","APAC",1,"2024-01-22"]
+   [7,"Grace Kim","Seoul","APAC",1,"2024-02-03"]
+   [8,"Hiro Tanaka","Osaka","APAC",1,"2024-02-14"]
+   [9,"Isabella Rossi","Milan","EU",1,"2024-03-01"]
+   [10,"Jamal Wright","Chicago","US",1,"2024-03-18"]
+   [11,"Keiko Sato","Nagoya","APAC",0,"2024-04-02"]
+   [12,"Liam O'Brien","Cork","EU",1,"2024-04-21"]
+   [13,"Maya Patel","Mumbai","APAC",1,"2024-05-09"]
+   [14,"Noah Meyer","Hamburg","EU",1,"2024-05-27"]
+   [15,"Olivia Brown","London","EU",1,"2024-06-11"]
+   [16,"Pedro Alvarez","Madrid","EU",1,"2024-07-03"]
+-- ref-products: SELECT id, name, category, price, stock, supplier_id FROM products ORDER BY id
+   cols: id,name,category,price,stock,supplier_id
+   [1,"Mechanical Keyboard K1","Electronics",89.99,120,1]
+   [2,"Wireless Mouse M3","Electronics",34.5,300,2]
+   [3,"USB-C Hub 7-in-1","Electronics",49,85,3]
+   [4,"Noise-Canceling Headset","Audio",149.99,60,4]
+   [5,"Studio Desktop Mic","Audio",119,45,5]
+   [6,"Bluetooth Speaker Mini","Audio",59.99,210,6]
+   [7,"4K Webcam Pro","Video",129,70,1]
+   [8,"Ring Light 14\"","Video",39.99,150,2]
+   [9,"HDMI 2.1 Cable 2m","Accessories",14.99,500,3]
+   [10,"Laptop Stand Aluminum","Accessories",42.5,180,4]
+   [11,"Desk Mat Extended","Accessories",24.99,260,5]
+   [12,"Fitness Band X2","Wearables",79,95,6]
+   [13,"Smart Watch S","Wearables",199.99,40,1]
+   [14,"Running Socks 3-pack","Apparel",18.5,400,2]
+   [15,"Cycling Jersey Pro","Apparel",65,110,3]
+   [16,"Yoga Mat Eco 6mm","Fitness",32,220,4]
+-- ref-suppliers: SELECT id, name, region, rating FROM suppliers ORDER BY id
+   cols: id,name,region,rating
+   [1,"Nordic Gadgets AB","EU",4.6]
+   [2,"Shenzhen Electro","APAC",4.1]
+   [3,"Pacific Textiles","APAC",3.9]
+   [4,"Midwest Hardware Co","US",4.4]
+   [5,"Alpine Audio GmbH","EU",4.8]
+   [6,"Andes Naturals SA","LATAM",4]
+-- ref-date-range: SELECT MIN(created_at) AS first_order, MAX(created_at) AS last_order FROM orders
+   cols: first_order,last_order
+   ["2024-01-01","2025-02-27"]
+===== l7 (21) =====
+-- grand-totals: SELECT ROUND(SUM(total),2) AS revenue, ROUND(AVG(total),2) AS avg_order, ROUND(MIN(total),2) AS smallest, ROUND(MAX(total),2) AS biggest, COUNT(*) AS orders FROM orders
+   cols: revenue,avg_order,smallest,biggest,orders
+   [34833.28,338.19,25.47,1088.44,103]
+-- totals-by-status: SELECT status, COUNT(*) AS n, ROUND(SUM(total),2) AS revenue, ROUND(AVG(total),2) AS avg_order FROM orders GROUP BY status
+   cols: status,n,revenue,avg_order
+   ["cancelled",7,1152.49,164.64]
+   ["delivered",52,15571.07,299.44]
+   ["pending",14,6113,436.64]
+   ["shipped",30,11996.72,399.89]
+-- price-aggregates: SELECT ROUND(AVG(price),2) AS avg_price, ROUND(MIN(price),2) AS min_price, ROUND(MAX(price),2) AS max_price, COUNT(*) AS n FROM products
+   cols: avg_price,min_price,max_price,n
+   [71.78,14.99,199.99,16]
+-- stock-aggregates: SELECT SUM(stock) AS units, ROUND(AVG(stock),1) AS avg_stock, MAX(stock) AS max_stock, MIN(stock) AS min_stock FROM products
+   cols: units,avg_stock,max_stock,min_stock
+   [2845,177.8,500,40]
+-- items-aggregates: SELECT SUM(quantity) AS units_sold, ROUND(AVG(quantity),2) AS avg_qty, MAX(quantity) AS max_qty, COUNT(*) AS lines FROM order_items
+   cols: units_sold,avg_qty,max_qty,lines
+   [498,1.98,3,251]
+-- items-revenue: SELECT ROUND(SUM(quantity * unit_price),2) AS line_revenue FROM order_items
+   cols: line_revenue
+   [34833.28]
+-- delivered-aggregates: SELECT COUNT(*) AS n, ROUND(SUM(total),2) AS revenue, ROUND(AVG(total),2) AS avg_order FROM orders WHERE status = 'delivered'
+   cols: n,revenue,avg_order
+   [52,15571.07,299.44]
+-- pending-aggregates: SELECT COUNT(*) AS n, ROUND(SUM(total),2) AS pipeline FROM orders WHERE status = 'pending'
+   cols: n,pipeline
+   [14,6113]
+-- cancelled-aggregates: SELECT COUNT(*) AS n, ROUND(SUM(total),2) AS lost_value, ROUND(MAX(total),2) AS biggest_loss FROM orders WHERE status = 'cancelled'
+   cols: n,lost_value,biggest_loss
+   [7,1152.49,397.99]
+-- sum-where-500: SELECT ROUND(SUM(total),2) AS big_money FROM orders WHERE total > 500
+   cols: big_money
+   [17379.43]
+-- avg-where-under-100: SELECT ROUND(AVG(total),2) AS avg_small FROM orders WHERE total < 100
+   cols: avg_small
+   [57.91]
+-- sum-empty-is-null: SELECT SUM(total) AS s FROM orders WHERE total > 99999
+   cols: s
+   [null]
+-- count-empty: SELECT COUNT(*) AS n FROM orders WHERE total > 99999
+   cols: n
+   [0]
+-- stock-by-zero-check: SELECT COUNT(*) AS zero_stock FROM products WHERE stock = 0
+   cols: zero_stock
+   [0]
+-- revenue-2024-01: SELECT ROUND(SUM(total),2) AS jan_revenue FROM orders WHERE strftime('%Y-%m', created_at) = '2024-01'
+   cols: jan_revenue
+   [3731.97]
+-- max-order-row: SELECT id, customer_id, ROUND(total,2) AS total, status FROM orders ORDER BY total DESC LIMIT 1
+   cols: id,customer_id,total,status
+   [74,6,1088.44,"pending"]
+-- min-order-row: SELECT id, customer_id, ROUND(total,2) AS total, status FROM orders ORDER BY total ASC LIMIT 1
+   cols: id,customer_id,total,status
+   [51,13,25.47,"cancelled"]
+-- ref-customers: SELECT id, name, city, region, active, created_at FROM customers ORDER BY id
+   cols: id,name,city,region,active,created_at
+   [1,"Alice Chen","Berlin","EU",1,"2023-11-02"]
+   [2,"Bruno Silva","São Paulo","LATAM",1,"2023-11-17"]
+   [3,"Chloe Dubois","Lyon","EU",1,"2023-12-05"]
+   [4,"Dmitri Volkov","Tallinn","EU",0,"2023-12-19"]
+   [5,"Emma Wilson","Austin","US",1,"2024-01-08"]
+   [6,"Farid Nasser","Dubai","APAC",1,"2024-01-22"]
+   [7,"Grace Kim","Seoul","APAC",1,"2024-02-03"]
+   [8,"Hiro Tanaka","Osaka","APAC",1,"2024-02-14"]
+   [9,"Isabella Rossi","Milan","EU",1,"2024-03-01"]
+   [10,"Jamal Wright","Chicago","US",1,"2024-03-18"]
+   [11,"Keiko Sato","Nagoya","APAC",0,"2024-04-02"]
+   [12,"Liam O'Brien","Cork","EU",1,"2024-04-21"]
+   [13,"Maya Patel","Mumbai","APAC",1,"2024-05-09"]
+   [14,"Noah Meyer","Hamburg","EU",1,"2024-05-27"]
+   [15,"Olivia Brown","London","EU",1,"2024-06-11"]
+   [16,"Pedro Alvarez","Madrid","EU",1,"2024-07-03"]
+-- ref-products: SELECT id, name, category, price, stock, supplier_id FROM products ORDER BY id
+   cols: id,name,category,price,stock,supplier_id
+   [1,"Mechanical Keyboard K1","Electronics",89.99,120,1]
+   [2,"Wireless Mouse M3","Electronics",34.5,300,2]
+   [3,"USB-C Hub 7-in-1","Electronics",49,85,3]
+   [4,"Noise-Canceling Headset","Audio",149.99,60,4]
+   [5,"Studio Desktop Mic","Audio",119,45,5]
+   [6,"Bluetooth Speaker Mini","Audio",59.99,210,6]
+   [7,"4K Webcam Pro","Video",129,70,1]
+   [8,"Ring Light 14\"","Video",39.99,150,2]
+   [9,"HDMI 2.1 Cable 2m","Accessories",14.99,500,3]
+   [10,"Laptop Stand Aluminum","Accessories",42.5,180,4]
+   [11,"Desk Mat Extended","Accessories",24.99,260,5]
+   [12,"Fitness Band X2","Wearables",79,95,6]
+   [13,"Smart Watch S","Wearables",199.99,40,1]
+   [14,"Running Socks 3-pack","Apparel",18.5,400,2]
+   [15,"Cycling Jersey Pro","Apparel",65,110,3]
+   [16,"Yoga Mat Eco 6mm","Fitness",32,220,4]
+-- ref-suppliers: SELECT id, name, region, rating FROM suppliers ORDER BY id
+   cols: id,name,region,rating
+   [1,"Nordic Gadgets AB","EU",4.6]
+   [2,"Shenzhen Electro","APAC",4.1]
+   [3,"Pacific Textiles","APAC",3.9]
+   [4,"Midwest Hardware Co","US",4.4]
+   [5,"Alpine Audio GmbH","EU",4.8]
+   [6,"Andes Naturals SA","LATAM",4]
+-- ref-date-range: SELECT MIN(created_at) AS first_order, MAX(created_at) AS last_order FROM orders
+   cols: first_order,last_order
+   ["2024-01-01","2025-02-27"]
+===== l8 (25) =====
+-- orders-by-status-gb: SELECT status, COUNT(*) AS n FROM orders GROUP BY status ORDER BY n DESC
+   cols: status,n
+   ["delivered",52]
+   ["shipped",30]
+   ["pending",14]
+   ["cancelled",7]
+-- customers-by-region-gb: SELECT region, COUNT(*) AS n FROM customers GROUP BY region ORDER BY n DESC
+   cols: region,n
+   ["EU",8]
+   ["APAC",5]
+   ["US",2]
+   ["LATAM",1]
+-- customers-by-active-gb: SELECT active, COUNT(*) AS n FROM customers GROUP BY active
+   cols: active,n
+   [0,2]
+   [1,14]
+-- products-by-category-gb: SELECT category, COUNT(*) AS n, ROUND(AVG(price),2) AS avg_price, ROUND(MIN(price),2) AS min_price, ROUND(MAX(price),2) AS max_price FROM products GROUP BY category ORDER BY n DESC
+   cols: category,n,avg_price,min_price,max_price
+   ["Electronics",3,57.83,34.5,89.99]
+   ["Audio",3,109.66,59.99,149.99]
+   ["Accessories",3,27.49,14.99,42.5]
+   ["Wearables",2,139.5,79,199.99]
+   ["Video",2,84.5,39.99,129]
+   ["Apparel",2,41.75,18.5,65]
+   ["Fitness",1,32,32,32]
+-- products-by-supplier-gb: SELECT supplier_id, COUNT(*) AS n FROM products GROUP BY supplier_id ORDER BY n DESC, supplier_id
+   cols: supplier_id,n
+   [1,3]
+   [2,3]
+   [3,3]
+   [4,3]
+   [5,2]
+   [6,2]
+-- orders-by-month-gb: SELECT strftime('%Y-%m', created_at) AS month, COUNT(*) AS n FROM orders GROUP BY month ORDER BY month
+   cols: month,n
+   ["2024-01",8]
+   ["2024-02",9]
+   ["2024-03",8]
+   ["2024-04",7]
+   ["2024-05",8]
+   ["2024-06",6]
+   ["2024-07",8]
+   ["2024-08",7]
+   ["2024-09",9]
+   ["2024-10",7]
+   ["2024-11",6]
+   ["2024-12",7]
+   ["2025-01",6]
+   ["2025-02",7]
+-- revenue-by-month-gb: SELECT strftime('%Y-%m', created_at) AS month, ROUND(SUM(total),2) AS revenue FROM orders GROUP BY month ORDER BY month
+   cols: month,revenue
+   ["2024-01",3731.97]
+   ["2024-02",3609.64]
+   ["2024-03",2617.08]
+   ["2024-04",2468.91]
+   ["2024-05",2910.31]
+   ["2024-06",2047.43]
+   ["2024-07",1193.86]
+   ["2024-08",2352.07]
+   ["2024-09",3116.04]
+   ["2024-10",2975.67]
+   ["2024-11",1648.8]
+   ["2024-12",2101.47]
+   ["2025-01",1669.5]
+   ["2025-02",2390.53]
+-- orders-by-customer-gb: SELECT customer_id, COUNT(*) AS n FROM orders GROUP BY customer_id ORDER BY n DESC, customer_id
+   cols: customer_id,n
+   [1,24]
+   [5,17]
+   [7,14]
+   [13,13]
+   [3,5]
+   [9,4]
+   [11,4]
+   [14,4]
+   [16,4]
+   [6,3]
+   [8,3]
+   [2,2]
+   [4,2]
+   [10,2]
+   [12,1]
+   [15,1]
+-- items-by-product-gb: SELECT product_id, COUNT(*) AS lines, SUM(quantity) AS units FROM order_items GROUP BY product_id ORDER BY lines DESC, product_id LIMIT 8
+   cols: product_id,lines,units
+   [4,24,46]
+   [11,24,47]
+   [9,19,38]
+   [10,19,36]
+   [2,18,36]
+   [7,17,31]
+   [5,16,30]
+   [1,15,28]
+-- having-avg-price-200: SELECT category, ROUND(AVG(price),2) AS avg_price FROM products GROUP BY category HAVING AVG(price) > 200
+   cols: 
+-- having-avg-price-150: SELECT category, ROUND(AVG(price),2) AS avg_price FROM products GROUP BY category HAVING AVG(price) > 150
+   cols: 
+-- having-avg-price-100: SELECT category, ROUND(AVG(price),2) AS avg_price FROM products GROUP BY category HAVING AVG(price) > 100
+   cols: category,avg_price
+   ["Audio",109.66]
+   ["Wearables",139.5]
+-- having-cities-multi: SELECT city, COUNT(*) AS n FROM customers GROUP BY city HAVING COUNT(*) > 1 ORDER BY n DESC, city
+   cols: 
+-- having-months-10plus: SELECT strftime('%Y-%m', created_at) AS month, COUNT(*) AS n FROM orders GROUP BY month HAVING COUNT(*) >= 10 ORDER BY month
+   cols: 
+-- having-months-8plus: SELECT strftime('%Y-%m', created_at) AS month, COUNT(*) AS n FROM orders GROUP BY month HAVING COUNT(*) >= 8 ORDER BY month
+   cols: month,n
+   ["2024-01",8]
+   ["2024-02",9]
+   ["2024-03",8]
+   ["2024-05",8]
+   ["2024-07",8]
+   ["2024-09",9]
+-- having-suppliers-2plus: SELECT supplier_id, COUNT(*) AS n FROM products GROUP BY supplier_id HAVING COUNT(*) >= 2 ORDER BY n DESC, supplier_id
+   cols: supplier_id,n
+   [1,3]
+   [2,3]
+   [3,3]
+   [4,3]
+   [5,2]
+   [6,2]
+-- having-suppliers-3plus: SELECT supplier_id, COUNT(*) AS n FROM products GROUP BY supplier_id HAVING COUNT(*) >= 3 ORDER BY n DESC, supplier_id
+   cols: supplier_id,n
+   [1,3]
+   [2,3]
+   [3,3]
+   [4,3]
+-- having-status-20plus: SELECT status, COUNT(*) AS n FROM orders GROUP BY status HAVING COUNT(*) > 20
+   cols: status,n
+   ["delivered",52]
+   ["shipped",30]
+-- group-region-orders-single: SELECT COUNT(*) AS n, ROUND(SUM(total),2) AS revenue FROM orders
+   cols: n,revenue
+   [103,34833.28]
+-- items-lines-by-order-gb: SELECT order_id, COUNT(*) AS lines FROM order_items GROUP BY order_id ORDER BY lines DESC, order_id LIMIT 6
+   cols: order_id,lines
+   [1,4]
+   [6,4]
+   [11,4]
+   [15,4]
+   [16,4]
+   [17,4]
+-- revenue-by-status-desc: SELECT status, ROUND(SUM(total),2) AS revenue FROM orders GROUP BY status ORDER BY revenue DESC
+   cols: status,revenue
+   ["delivered",15571.07]
+   ["shipped",11996.72]
+   ["pending",6113]
+   ["cancelled",1152.49]
+-- ref-customers: SELECT id, name, city, region, active, created_at FROM customers ORDER BY id
+   cols: id,name,city,region,active,created_at
+   [1,"Alice Chen","Berlin","EU",1,"2023-11-02"]
+   [2,"Bruno Silva","São Paulo","LATAM",1,"2023-11-17"]
+   [3,"Chloe Dubois","Lyon","EU",1,"2023-12-05"]
+   [4,"Dmitri Volkov","Tallinn","EU",0,"2023-12-19"]
+   [5,"Emma Wilson","Austin","US",1,"2024-01-08"]
+   [6,"Farid Nasser","Dubai","APAC",1,"2024-01-22"]
+   [7,"Grace Kim","Seoul","APAC",1,"2024-02-03"]
+   [8,"Hiro Tanaka","Osaka","APAC",1,"2024-02-14"]
+   [9,"Isabella Rossi","Milan","EU",1,"2024-03-01"]
+   [10,"Jamal Wright","Chicago","US",1,"2024-03-18"]
+   [11,"Keiko Sato","Nagoya","APAC",0,"2024-04-02"]
+   [12,"Liam O'Brien","Cork","EU",1,"2024-04-21"]
+   [13,"Maya Patel","Mumbai","APAC",1,"2024-05-09"]
+   [14,"Noah Meyer","Hamburg","EU",1,"2024-05-27"]
+   [15,"Olivia Brown","London","EU",1,"2024-06-11"]
+   [16,"Pedro Alvarez","Madrid","EU",1,"2024-07-03"]
+-- ref-products: SELECT id, name, category, price, stock, supplier_id FROM products ORDER BY id
+   cols: id,name,category,price,stock,supplier_id
+   [1,"Mechanical Keyboard K1","Electronics",89.99,120,1]
+   [2,"Wireless Mouse M3","Electronics",34.5,300,2]
+   [3,"USB-C Hub 7-in-1","Electronics",49,85,3]
+   [4,"Noise-Canceling Headset","Audio",149.99,60,4]
+   [5,"Studio Desktop Mic","Audio",119,45,5]
+   [6,"Bluetooth Speaker Mini","Audio",59.99,210,6]
+   [7,"4K Webcam Pro","Video",129,70,1]
+   [8,"Ring Light 14\"","Video",39.99,150,2]
+   [9,"HDMI 2.1 Cable 2m","Accessories",14.99,500,3]
+   [10,"Laptop Stand Aluminum","Accessories",42.5,180,4]
+   [11,"Desk Mat Extended","Accessories",24.99,260,5]
+   [12,"Fitness Band X2","Wearables",79,95,6]
+   [13,"Smart Watch S","Wearables",199.99,40,1]
+   [14,"Running Socks 3-pack","Apparel",18.5,400,2]
+   [15,"Cycling Jersey Pro","Apparel",65,110,3]
+   [16,"Yoga Mat Eco 6mm","Fitness",32,220,4]
+-- ref-suppliers: SELECT id, name, region, rating FROM suppliers ORDER BY id
+   cols: id,name,region,rating
+   [1,"Nordic Gadgets AB","EU",4.6]
+   [2,"Shenzhen Electro","APAC",4.1]
+   [3,"Pacific Textiles","APAC",3.9]
+   [4,"Midwest Hardware Co","US",4.4]
+   [5,"Alpine Audio GmbH","EU",4.8]
+   [6,"Andes Naturals SA","LATAM",4]
+-- ref-date-range: SELECT MIN(created_at) AS first_order, MAX(created_at) AS last_order FROM orders
+   cols: first_order,last_order
+   ["2024-01-01","2025-02-27"]
