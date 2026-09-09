@@ -30,6 +30,8 @@ const files = [
   "src/lib/curriculum/cases/cases-ceb.ts",
   "src/lib/curriculum/cases/cases-cha1.ts",
   "src/lib/curriculum/cases/cases-chb1.ts",
+  "src/lib/curriculum/cases/cases-cha2.ts",
+  "src/lib/curriculum/cases/cases-chb2.ts",
 ];
 
 // duplicate ids + titles + filled SQL across the whole deck

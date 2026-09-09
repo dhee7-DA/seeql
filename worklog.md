@@ -1033,3 +1033,22 @@ Work Log:
 
 Stage Summary:
 - M1 case deck now LIVE at 280 engine-audited cases with a two-axis (tier × topic) browser. Remaining for the M1 100/100/100 program: exactly 20 hard cases in the reserved ranges cs-270..279 and cs-291..300 — dispatching two parallel batch authors (HA2, HB2) next
+
+---
+Task ID: m1cases-ha2+hb2+register
+Agent: main (orchestrator)
+Task: Complete the final 20 hard cases (cs-270..279, cs-291..300), register both batches, full audit + E2E + commit — M1 100/100/100 program finished
+
+Work Log:
+- Context recovery: parallel dispatch of HA2/HB2 batch authors hit the tool-context deadline mid-flight. HB2 had written cases-chb2.ts (unregistered, unlogged, 8/10 audit); HA2 died before writing anything (only stale probes, removed). Orchestrator took over directly.
+- HB2 recovery: fixed cs-295 "duplicate slot answers: DESC" by flipping the tie-break house rule to earlier-booking-first (id ASC; brief/ask/why/walkthrough updated, same top-5 rows) and cs-299 "string distractors in dead IS NULL slot reproduce empty result" by swapping 'pending'/'cancelled' for NULLIF (prints NULL not 0) and UPPER (errors). Re-audit 10/10 first run.
+- HA2 authored by orchestrator: probed seed db in 2 rounds (schemas, per-category price/stock, supplier ratings, order_items unit-price variance — product 2's 18 lines average exactly its 34.5 sticker; APAC/LATAM region-rating tie at 4.0; deferred pot 14 pending/no-stamp = 6113). Wrote 10 hard cases across catalog/pricing/inventory/supplier/expense (2 each), topics l3x2 l4x1 l5x2 l6x1 l7x2 l8x2.
+- Audit iterations on cha2 (6/10 first run): learned (a) LIMIT makes looser-threshold distractors invisible — `stock >= 5`/`>= id` yield the same top-3, replaced with post-LIMIT-consequential chips; (b) a non-empty COALESCE fallback slot is a dead branch — ANY value distractor there is ambiguous, dropped 'shipped' from cs-273; (c) BETWEEN is literal in cs-271 template — removed redundant slot (marker/slot mismatch); (d) cs-275 result cells are category names so bound 220 needed noVerify; (e) `BETWEEN id AND 60` leaks HDMI but the stock cap neutralizes it — replaced id distractor with 180. Final 10/10.
+- Registered cases-cha2 + cases-chb2 in cases/index.ts; added both to deck-check.ts file list. deck-check: 300 cases, 0 dup ids/titles/filled-SQL, tiers easy=100 medium=100 hard=100.
+- Full-deck engine audit (all 22 batch files): 300/300 pass, 0 fail. tsc clean for both new files.
+- E2E (agent-browser): deck header "300 CASE FILES", tier chips 300/100/100/100, topic counts live; Hard filter -> CASE 1 OF 100 (CS-004 HARD badge); paged to CS-276, rebuilt it correctly (COUNT/AVG/region/DESC/ASC) -> CLOSED + walkthrough rendered. Console 0 errors, 0 page errors. Screenshots scripts/shots/m1cases-final-{1..4} (closed card, deck 300, hard-100, mobile 390x844).
+- E2E mechanics note for future runs: Case Files interaction is chip-first ("tap a chip, then its slot"); slot buttons carry aria-label="Slot N, ..." but textContent "N____" — match aria-label, not textContent; double-click a filled slot clears it; agent-browser eval .click() does drive React (Reset proof) but refs must be re-snapshotted after every re-render.
+
+Stage Summary:
+- MODULE 1 CASE DECK COMPLETE: 300/300 engine-audited cases live at the corrected 100 easy / 100 medium / 100 hard program; two-axis (tier x topic) browser verified. Both new batch files 10/10 on first post-fix audit; zero cross-batch collisions (dupcheck vs 290 before registration). Fresh figures planted for future batches: mouse register spread 32.79-35.93 avg 34.5, supplier regions EU 4.7 / US 4.4 / APAC-LATAM tie 4.0, deferred pot 14/6113, deep-stock aisle set {Accessories, Apparel, Electronics, Fitness}, expense big-ticket 34/2,495,600/168,000, vendor boards Atlas 14/1.68M vs AdWorks 14/457K.
+- Next per locked order: Module 1 is DONE (theory + 470 MCQs + 300 cases). Move to Module 2 (joins family): theory deep dives + SVGs first, then MCQs, then 100/100/100 case studies.
