@@ -11,6 +11,13 @@ import { ORDER_LIMIT } from "./m1/order-limit";
 import { AGGREGATES } from "./m1/aggregates";
 import { GROUPBY } from "./m1/groupby";
 import { HAVING } from "./m1/having";
+import { IN_DRILL } from "./m1/in";
+import { BETWEEN } from "./m1/between";
+import { LIKE } from "./m1/like";
+import { AND_OR_NOT } from "./m1/and-or-not";
+import { DISTINCT } from "./m1/distinct";
+import { COALESCE } from "./m1/coalesce";
+import { NULLIF_DRILL } from "./m1/nullif";
 
 function set(
   keyword: string, label: string, module: number, tier: DrillSet["tier"],
@@ -43,6 +50,28 @@ export const DRILL_SETS: DrillSet[] = [
   set("having", "HAVING", 1, "core",
     "The group gate — WHERE's post-collapse twin, boundary predicates, and global go/no-go checks.",
     HAVING),
+  // ---- Module 1 · secondary ----
+  set("in", "IN", 1, "secondary",
+    "Membership tests — the OR-chain twin, list traps, and the NOT IN NULL collapse.",
+    IN_DRILL),
+  set("between", "BETWEEN", 1, "secondary",
+    "Closed ranges — inclusive ends, swapped-bound silence, and the datetime boundary trap.",
+    BETWEEN),
+  set("like", "LIKE", 1, "secondary",
+    "Pattern matching — wildcards, case folding, and why leading % defeats indexes.",
+    LIKE),
+  set("and-or-not", "AND / OR / NOT", 1, "secondary",
+    "Boolean assembly — precedence receipts (12 vs 5), De Morgan, and three-valued AND/OR.",
+    AND_OR_NOT),
+  set("distinct", "DISTINCT", 1, "secondary",
+    "The uniqueness lens — tuple dedup, NULL collapsing, and the duplicate-hiding band-aid.",
+    DISTINCT),
+  set("coalesce", "COALESCE", 1, "secondary",
+    "Fallback chains — first non-NULL, display defaults, and the empty-string trap.",
+    COALESCE),
+  set("nullif", "NULLIF", 1, "secondary",
+    "Poison-value neutralizer — divide-by-zero guards and sentinel-to-hole mapping.",
+    NULLIF_DRILL),
 ];
 
 export type { DrillSet, DrillQ, DrillTier, DrillAspect } from "./types";

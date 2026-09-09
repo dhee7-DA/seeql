@@ -956,3 +956,19 @@ Work Log:
 
 Stage Summary:
 - Module 1 drill bank stage 1 shipped: 350 core MCQs across 7 keywords, six-aspect coverage per keyword, Drill Yard UI live in the sidebar, XP/badges fully wired. Stage 2 next: secondary wave (IN/BETWEEN/LIKE/AND-OR-NOT/DISTINCT/COALESCE/NULLIF ≈ 120 questions) then the fill-in-the-blank case studies (20/20/20 easy/medium/hard)
+
+---
+Task ID: m1-drills-2
+Agent: main
+Task: Module 1 MCQ bank stage 2 — secondary wave (7 keywords, 120 questions: IN 20, BETWEEN 15, LIKE 20, AND/OR/NOT 20, DISTINCT 20, COALESCE 15, NULLIF 10)
+
+Work Log:
+- New probes before writing: Jan-2024 orders BETWEEN dates = 8; '_e%' products = 2; NOT (delivered OR shipped) = 21 (De Morgan); NULLIF(NULL,NULL) → NULL; NULLIF('x',NULL) → 'x' (NULL poison = pass-through); NOT LIKE '%a%' products = exactly 5 names
+- CAUGHT + FIXED a wrong draft claim live: `WHERE status = 'pending' OR 'shipped'` — SQLite does NOT treat the bare string as TRUE; it casts to numeric 0 (FALSE) → returns 14 (pending only), silently. Question aon-16 rewritten around the verified behavior ("silently dead OR branch"), with the truthy-string intuition as the coached wrong pick
+- 7 secondary files in the six-aspect matrix, all predict numbers engine-verified; IDs dr1-{in,bt,lk,aon,ds,co,nf}-nn
+- Registry: 14 sets total (7 core + 7 secondary), picker auto-updates to "470 questions"
+- ID audit script: 470 questions, 470 unique ids, 0 duplicates; per-file counts 50×7 + 20/15/20/20/20/15/10
+- tsc + eslint clean; E2E: full-yard screenshot shows core+secondary tiers with per-card counts (470 total); IN drill session live-verified (semantics badge, subquery answer, first-try +8 XP, verdict panel); console + page errors clean; screenshots m1-drill-{9,10}*.png
+
+Stage Summary:
+- Module 1 drill bank COMPLETE: 470 MCQs (350 core + 120 secondary) covering every M1 keyword across six aspects, live in the Drill Yard. M1 pipeline status: theory ✓ (deep-dive wave), MCQs ✓ (this + prior commit). Next in M1: fill-in-the-blank case studies (100/100/100 program, ~20/20/20 easy/medium/hard for M1) on the shared grading engine
