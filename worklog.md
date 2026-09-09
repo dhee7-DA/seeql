@@ -937,3 +937,22 @@ Work Log:
 
 Stage Summary:
 - Module 1 theory-density wave shipped: every L1-8 lesson now has a 4-tab layout with a premium Deep dive layer (mental models, engine mechanics, myth-vs-reality, edge galleries, 8 new hand-drawn figures — every number engine-verified). Next in the M1 pipeline: tiered MCQ bank (core 50 / secondary 15-20 / utility 8-10) then fill-in-the-blank case studies on the shared grading engine
+
+---
+Task ID: m1-drills-1
+Agent: main
+Task: Module 1 MCQ bank — drill infrastructure + core wave (7 keywords x 50 = 350 aspect-matrix questions) + Drill Yard UI
+
+Work Log:
+- Probed 40+ facts live before writing a single question (scripts/m1-drill-facts.ts): all 103 order totals UNIQUE (0 tie groups); suppliers have ZERO NULL ratings (old m1-facts note wrong — caught by re-probe); LIMIT -1 → all 103 rows (negative = no cap); alias in WHERE WORKS in SQLite (WHERE oid > 100 → 101-103!) — reframed as portability question instead of false error claim; GROUP BY 1, alias in GROUP BY/HAVING all work; NOT IN over NULL-bearing subquery → 0 rows (classic trap confirmed live); empty-set twins [0,null,null,null,null]
+- Two subtle probes saved wrong answers: implicit global group EXISTS over empty set (WHERE 1=0 HAVING COUNT(*)=0 → 1 row [0]) vs grouped version (0 rows) — wrote hv-24 around the verified behavior; repeat buyers (>1 order) = 14 of 16; stacked gate (WHERE >400 GROUP BY status HAVING >=10) = 2 statuses
+- drills/types.ts: DrillAspect six-angle matrix (syntax/semantics/edge/errors/predict/judgment), DrillTier (core/secondary/utility), DrillQ (structurally compatible with Mcq — flows through McqCard + XP ledger unchanged), DrillSet, ASPECT_LABELS
+- 7 core files (50 questions each, aspect-matrix distributed 8/10/10/6/10/6): select-from, where, null (3VL), order-limit, aggregates, groupby, having — every predict question engine-verified; IDs dr1-<kw>-<nn>
+- drills/index.ts: DRILL_SETS registry with per-set metadata (labels/blurbs/tiers), drillTotal(), drillSetsForModule()
+- drill-yard.tsx: keyword picker (tier-grouped cards, per-set progress from mcqAttempts, "N of total attempted") + session runner (rounds of 10, unseen→missed→mastered deck order, aspect+tier badges, McqCard, verdict screen with mastery count)
+- learn-app.tsx: "Keyword drills" sidebar entry (Dumbbell icon, between explorer and mixed), drills view branch
+- tsc + eslint clean (pre-existing examples//skills/ errors only); E2E: picker renders 7 core cards (350 q), WHERE drill full 10-question round — first-try +8 XP toast + First Steps badge, wrong-answer amber coaching verdict (no XP), progress bar, "Solid round 6 of 10" + "WHERE · 6/50 mastered" verdict, New round / Pick another keyword; console clean; 8 screenshots scripts/shots/m1-drill-{1..8}*.png
+- E2E quirk noted: rapid scripted clicks during framer-motion verdict animation can hit detached nodes — manual pacing works; product unaffected
+
+Stage Summary:
+- Module 1 drill bank stage 1 shipped: 350 core MCQs across 7 keywords, six-aspect coverage per keyword, Drill Yard UI live in the sidebar, XP/badges fully wired. Stage 2 next: secondary wave (IN/BETWEEN/LIKE/AND-OR-NOT/DISTINCT/COALESCE/NULLIF ≈ 120 questions) then the fill-in-the-blank case studies (20/20/20 easy/medium/hard)

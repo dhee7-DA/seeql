@@ -1,0 +1,59 @@
+// Drill bank registry — aggregates every per-keyword set, grouped for the
+// DrillYard picker. Adding a wave = append its set here; the UI, counts,
+// and sessions pick it up automatically.
+
+import type { DrillSet, DrillQ } from "./types";
+
+import { SELECT_FROM } from "./m1/select-from";
+import { WHERE } from "./m1/where";
+import { NULL_DRILL } from "./m1/null";
+import { ORDER_LIMIT } from "./m1/order-limit";
+import { AGGREGATES } from "./m1/aggregates";
+import { GROUPBY } from "./m1/groupby";
+import { HAVING } from "./m1/having";
+
+function set(
+  keyword: string, label: string, module: number, tier: DrillSet["tier"],
+  blurb: string, questions: DrillQ[],
+): DrillSet {
+  return { keyword, label, module, tier, blurb, questions };
+}
+
+/** Every drill set in the bank, ordered module → tier → keyword. */
+export const DRILL_SETS: DrillSet[] = [
+  // ---- Module 1 · core ----
+  set("select", "SELECT + FROM", 1, "core",
+    "Projection and row sources — lists, aliases, literals, and the shapes output can take.",
+    SELECT_FROM),
+  set("where", "WHERE", 1, "core",
+    "The row gate — comparisons, precedence receipts, the silent NULL failure, and filters that belong elsewhere.",
+    WHERE),
+  set("null", "NULL / IS NULL", 1, "core",
+    "Three-valued logic — holes that are data, the = NULL trap, and the aggregates that skip them.",
+    NULL_DRILL),
+  set("order-limit", "ORDER BY + LIMIT", 1, "core",
+    "Output promises — sort keys, ties and tiebreaks, top-N slices, and the pagination edge.",
+    ORDER_LIMIT),
+  set("aggregates", "Aggregates", 1, "core",
+    "The collapse — COUNT variants, empty-set twins, AVG's moving denominator, and reading the five-stat row.",
+    AGGREGATES),
+  set("groupby", "GROUP BY", 1, "core",
+    "The bucket machine — grain, keys and combinations, group-count sanity checks.",
+    GROUPBY),
+  set("having", "HAVING", 1, "core",
+    "The group gate — WHERE's post-collapse twin, boundary predicates, and global go/no-go checks.",
+    HAVING),
+];
+
+export type { DrillSet, DrillQ, DrillTier, DrillAspect } from "./types";
+export { ASPECT_LABELS } from "./types";
+
+/** Total drill questions in the bank. */
+export function drillTotal(): number {
+  return DRILL_SETS.reduce((a, s) => a + s.questions.length, 0);
+}
+
+/** Drill questions for one module, tier-ordered. */
+export function drillSetsForModule(moduleNum: number): DrillSet[] {
+  return DRILL_SETS.filter((s) => s.module === moduleNum);
+}
