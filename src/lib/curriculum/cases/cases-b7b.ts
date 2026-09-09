@@ -6,6 +6,7 @@ import type { CaseStudy } from "./types";
 export const casesB7b: CaseStudy[] = [
   {
     id: "cs-152",
+    tier: "medium",
     topic: "l7",
     universe: "refund-audit",
     title: "The cancellation backlog in one row",
@@ -49,6 +50,7 @@ FROM orders
   },
   {
     id: "cs-153",
+    tier: "medium",
     topic: "l7",
     universe: "pricing",
     title: "The catalog's price floor and ceiling",
@@ -91,6 +93,7 @@ FROM {4};`,
   },
   {
     id: "cs-154",
+    tier: "easy",
     topic: "l7",
     universe: "fraud",
     title: "Exposure above a line never crossed",
@@ -127,6 +130,7 @@ WHERE total {2} {3};`,
   },
   {
     id: "cs-155",
+    tier: "hard",
     topic: "l7",
     universe: "inventory",
     title: "Units on the shelf, counted once",
@@ -183,6 +187,7 @@ FROM {6};`,
   },
   {
     id: "cs-156",
+    tier: "medium",
     topic: "l7",
     universe: "funnel",
     title: "The bottom of the funnel, priced",
@@ -232,6 +237,7 @@ FROM orders
   },
   {
     id: "cs-157",
+    tier: "easy",
     topic: "l7",
     universe: "supplier",
     title: "Supplier scorecard extremes",
@@ -268,6 +274,7 @@ FROM suppliers;`,
   },
   {
     id: "cs-158",
+    tier: "easy",
     topic: "l7",
     universe: "expense",
     title: "What the big tickets cost us",
@@ -304,6 +311,7 @@ FROM orders
   },
   {
     id: "cs-159",
+    tier: "medium",
     topic: "l7",
     universe: "catalog",
     title: "The affordable shelf, sized",
@@ -347,6 +355,7 @@ FROM products
   },
   {
     id: "cs-160",
+    tier: "easy",
     topic: "l7",
     universe: "month-close",
     title: "The January signature number",
@@ -382,6 +391,7 @@ FROM orders
   },
   {
     id: "cs-161",
+    tier: "medium",
     topic: "l7",
     universe: "growth",
     title: "The board deck's one-line business",
@@ -424,6 +434,7 @@ FROM {4};`,
   },
   {
     id: "cs-162",
+    tier: "medium",
     topic: "l7",
     universe: "refund-audit",
     title: "What a walk-away costs on average",
@@ -466,6 +477,7 @@ FROM orders
   },
   {
     id: "cs-163",
+    tier: "easy",
     topic: "l7",
     universe: "pricing",
     title: "Sizing the premium shelf",
@@ -503,6 +515,7 @@ WHERE price >= {3};`,
   },
   {
     id: "cs-164",
+    tier: "easy",
     topic: "l7",
     universe: "fraud",
     title: "The ticket range on file",
@@ -538,6 +551,7 @@ FROM {3};`,
   },
   {
     id: "cs-165",
+    tier: "easy",
     topic: "l7",
     universe: "inventory",
     title: "Pick lines at the cap, verified",

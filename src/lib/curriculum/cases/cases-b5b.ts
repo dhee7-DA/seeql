@@ -8,6 +8,7 @@ import type { CaseStudy } from "./types";
 export const casesB5b: CaseStudy[] = [
   {
     id: "cs-106",
+    tier: "medium",
     topic: "l5",
     universe: "supplier",
     title: "Suppliers on the improvement list",
@@ -51,6 +52,7 @@ FROM suppliers
   },
   {
     id: "cs-107",
+    tier: "medium",
     topic: "l5",
     universe: "expense",
     title: "Page two of the spend ledger",
@@ -94,6 +96,7 @@ LIMIT 5 {3} {4};`,
   },
   {
     id: "cs-108",
+    tier: "medium",
     topic: "l5",
     universe: "catalog",
     title: "The back of the catalog proof",
@@ -131,6 +134,7 @@ LIMIT {3};`,
   },
   {
     id: "cs-109",
+    tier: "medium",
     topic: "l5",
     universe: "month-close",
     title: "The three oldest open tickets",
@@ -175,6 +179,7 @@ ORDER BY created_at {2}
   },
   {
     id: "cs-110",
+    tier: "medium",
     topic: "l5",
     universe: "growth",
     title: "The rollout sheet, region by region",
@@ -218,6 +223,7 @@ LIMIT {4};`,
   },
   {
     id: "cs-111",
+    tier: "medium",
     topic: "l5",
     universe: "refund-audit",
     title: "Everything past the escalation bar",
@@ -261,6 +267,7 @@ ORDER BY total {4};`,
   },
   {
     id: "cs-112",
+    tier: "hard",
     topic: "l5",
     universe: "pricing",
     title: "The mid-shelf repricing band",
@@ -317,6 +324,7 @@ ORDER BY {1} {2}
   },
   {
     id: "cs-113",
+    tier: "medium",
     topic: "l5",
     universe: "fraud",
     title: "Card-testing sweep: the tiniest tickets",
@@ -360,6 +368,7 @@ ORDER BY {1} {2}
   },
   {
     id: "cs-114",
+    tier: "medium",
     topic: "l5",
     universe: "inventory",
     title: "The count sheet's opening lines",
@@ -397,6 +406,7 @@ ORDER BY name {1}
   },
   {
     id: "cs-115",
+    tier: "medium",
     topic: "l5",
     universe: "funnel",
     title: "The entry-price shelf for the landing page",

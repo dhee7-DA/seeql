@@ -8,6 +8,7 @@ import type { CaseStudy } from "./types";
 export const casesB4b: CaseStudy[] = [
   {
     id: "cs-082",
+    tier: "easy",
     topic: "l4",
     universe: "fraud",
     title: "Big tickets with no dispatch confirmation",
@@ -44,6 +45,7 @@ WHERE shipped_at {1} {2} AND total > {3};`,
   },
   {
     id: "cs-083",
+    tier: "easy",
     topic: "l4",
     universe: "inventory",
     title: "Open picks with no dispatch stamp",
@@ -79,6 +81,7 @@ WHERE shipped_at {2} {3};`,
   },
   {
     id: "cs-084",
+    tier: "easy",
     topic: "l4",
     universe: "funnel",
     title: "Dispatch-confirmed share of all orders",
@@ -114,6 +117,7 @@ WHERE shipped_at {2} {3};`,
   },
   {
     id: "cs-085",
+    tier: "hard",
     topic: "l4",
     universe: "supplier",
     title: "Unconfirmed orders split by status",
@@ -163,6 +167,7 @@ WHERE shipped_at {2} {3}
   },
   {
     id: "cs-086",
+    tier: "medium",
     topic: "l4",
     universe: "expense",
     title: "What the unconfirmed backlog is worth",
@@ -205,6 +210,7 @@ WHERE shipped_at {3} {4};`,
   },
   {
     id: "cs-087",
+    tier: "hard",
     topic: "l4",
     universe: "catalog",
     title: "First five records missing dispatch stamps",
@@ -255,6 +261,7 @@ WHERE shipped_at {1} {2}
   },
   {
     id: "cs-088",
+    tier: "medium",
     topic: "l4",
     universe: "month-close",
     title: "Value confirmed out the door",
@@ -296,6 +303,7 @@ WHERE shipped_at {2} {3} {4};`,
   },
   {
     id: "cs-089",
+    tier: "hard",
     topic: "l4",
     universe: "growth",
     title: "How old is the unconfirmed backlog",
@@ -346,6 +354,7 @@ WHERE shipped_at {2} {3}
   },
   {
     id: "cs-090",
+    tier: "medium",
     topic: "l4",
     universe: "refund-audit",
     title: "Cancelled and never dispatched",

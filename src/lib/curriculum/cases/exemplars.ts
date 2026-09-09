@@ -7,6 +7,7 @@ import type { CaseStudy } from "./types";
 export const casesExemplars: CaseStudy[] = [
   {
     id: "cs-016",
+    tier: "medium",
     topic: "l2",
     universe: "growth",
     title: "The board pack's catalog snapshot",
@@ -49,6 +50,7 @@ export const casesExemplars: CaseStudy[] = [
   },
   {
     id: "cs-041",
+    tier: "medium",
     topic: "l3",
     universe: "refund-audit",
     title: "Cancelled orders worth chasing",
@@ -91,6 +93,7 @@ FROM orders
   },
   {
     id: "cs-071",
+    tier: "easy",
     topic: "l4",
     universe: "month-close",
     title: "The hole in the shipment ledger",
@@ -126,6 +129,7 @@ WHERE shipped_at {2} {3};`,
   },
   {
     id: "cs-091",
+    tier: "medium",
     topic: "l5",
     universe: "fraud",
     title: "Three biggest tickets for manual review",
@@ -169,6 +173,7 @@ FROM orders
   },
   {
     id: "cs-136",
+    tier: "easy",
     topic: "l7",
     universe: "month-close",
     title: "Headline numbers for the close deck",
@@ -204,6 +209,7 @@ FROM {3};`,
   },
   {
     id: "cs-166",
+    tier: "hard",
     topic: "l8",
     universe: "pricing",
     title: "Categories carrying premium pricing",

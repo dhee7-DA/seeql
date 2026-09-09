@@ -9,6 +9,7 @@ import type { CaseStudy } from "./types";
 export const casesB2b: CaseStudy[] = [
   {
     id: "cs-029",
+    tier: "medium",
     topic: "l2",
     universe: "pricing",
     title: "The restock planning sheet",
@@ -51,6 +52,7 @@ export const casesB2b: CaseStudy[] = [
   },
   {
     id: "cs-030",
+    tier: "medium",
     topic: "l2",
     universe: "fraud",
     title: "The reviewer hand-off extract",
@@ -97,6 +99,7 @@ export const casesB2b: CaseStudy[] = [
   },
   {
     id: "cs-031",
+    tier: "easy",
     topic: "l2",
     universe: "inventory",
     title: "Everything on the shelf, valued",
@@ -131,6 +134,7 @@ export const casesB2b: CaseStudy[] = [
   },
   {
     id: "cs-032",
+    tier: "medium",
     topic: "l2",
     universe: "funnel",
     title: "The mailing-list import file",
@@ -171,6 +175,7 @@ export const casesB2b: CaseStudy[] = [
   },
   {
     id: "cs-033",
+    tier: "medium",
     topic: "l2",
     universe: "supplier",
     title: "Vendor scores on a 100-point scale",
@@ -213,6 +218,7 @@ export const casesB2b: CaseStudy[] = [
   },
   {
     id: "cs-034",
+    tier: "medium",
     topic: "l2",
     universe: "expense",
     title: "Rebuilding spend line by line",
@@ -254,6 +260,7 @@ export const casesB2b: CaseStudy[] = [
   },
   {
     id: "cs-035",
+    tier: "medium",
     topic: "l2",
     universe: "catalog",
     title: "The lean stock feed",
@@ -300,6 +307,7 @@ export const casesB2b: CaseStudy[] = [
   },
   {
     id: "cs-036",
+    tier: "medium",
     topic: "l2",
     universe: "month-close",
     title: "The reconciliation pull",
@@ -340,6 +348,7 @@ export const casesB2b: CaseStudy[] = [
   },
   {
     id: "cs-037",
+    tier: "easy",
     topic: "l2",
     universe: "growth",
     title: "The market map roster",
@@ -374,6 +383,7 @@ export const casesB2b: CaseStudy[] = [
   },
   {
     id: "cs-038",
+    tier: "medium",
     topic: "l2",
     universe: "refund-audit",
     title: "Goodwill credits, computed per order",
@@ -422,6 +432,7 @@ export const casesB2b: CaseStudy[] = [
   },
   {
     id: "cs-039",
+    tier: "hard",
     topic: "l2",
     universe: "pricing",
     title: "The flat-cut promo worksheet",
@@ -475,6 +486,7 @@ export const casesB2b: CaseStudy[] = [
   },
   {
     id: "cs-040",
+    tier: "easy",
     topic: "l2",
     universe: "fraud",
     title: "The velocity watchlist feed",

@@ -1,0 +1,576 @@
+// Case batch CH-A1 — hard wave A1 of the 300-case deck expansion: 11 hard
+// cases, ids cs-259…cs-269, canonical universe cycle (fraud → catalog →
+// month-close → refund-audit → pricing → inventory → funnel → supplier →
+// expense → growth → fraud). Topic quotas: l3×1, l4×2, l5×2, l7×3, l8×3.
+// Heavy-clause stacks throughout (WHERE+GROUP BY+HAVING+ORDER BY, multi-key
+// ORDER BY+LIMIT, multi-aggregate rows). Every figure probed read-only
+// against the seed db; every distractor consequence-probed.
+
+import type { CaseStudy } from "./types";
+
+export const casesCHa1: CaseStudy[] = [
+  {
+    id: "cs-259",
+    tier: "hard",
+    topic: "l3",
+    universe: "fraud",
+    title: "Three gates on the jumbo sweep",
+    brief:
+      "From: Risk team, spot-check rotation.\n\nMonthly sweep, tightened rules. This cycle the reviewers only want tickets that are big (800 up to 1100 inclusive), booked inside the 2024 cycles — anything stamped 2025 already went through last sweep — and we skip customer 5 entirely, that account was cleared by hand last quarter. Send the shortlist, biggest ticket first, with the account number so records can be pulled.",
+    ask: "Orders with totals between 800 and 1100, created in 2024, excluding customer 5 — biggest total first, showing id, customer, status and total.",
+    template: `SELECT id, customer_id, status, ROUND(total, 2) AS total
+FROM orders
+WHERE total {1} 800 AND 1100
+  AND created_at {2} {3}
+  AND {4} customer_id = {5}
+ORDER BY total {6};`,
+    slots: [
+      {
+        answer: "BETWEEN",
+        kind: "keyword",
+        label: "the band operator",
+        why: "800 up to 1100 inclusive is one contiguous band, so BETWEEN 800 AND 1100 says it in one predicate — the inclusive bounds are the policy's 'up to' made literal.",
+      },
+      {
+        answer: "LIKE",
+        kind: "keyword",
+        label: "the year pattern operator",
+        why: "created_at stores timestamps, and 'starts with 2024' is a prefix match — LIKE '2024%' keeps every 2024 booking and nothing else.",
+      },
+      {
+        answer: "'2024%'",
+        kind: "keyword",
+        label: "the year pattern",
+        why: "The % wildcard means 'anything after', so '2024%' matches every timestamp beginning with 2024 — the sweep's cycle anchor. '2025%' would match none of these tickets.",
+      },
+      {
+        answer: "NOT",
+        kind: "keyword",
+        label: "the exclusion operator",
+        why: "Customer 5 must be skipped, so the predicate is negated: NOT customer_id = 5. Dropping the NOT silently puts the cleared account back on the review list.",
+      },
+      {
+        answer: "5",
+        kind: "number",
+        label: "the cleared account",
+        why: "The one account exempted from this cycle — a policy constant, not a figure that shows up in the shortlist rows themselves.",
+        noVerify: true,
+      },
+      {
+        answer: "DESC",
+        kind: "keyword",
+        label: "the sort direction",
+        why: "Biggest ticket first means descending — 1088.44 leads. ASC would hand the reviewers the smallest ticket first, the opposite of the rotation's reading order.",
+      },
+    ],
+    distractors: ["IN", "OR", "'2025%'", "ASC", "SUM"],
+    walkthrough:
+      "Three gates, applied in order. Gate one, total BETWEEN 800 AND 1100, keeps four tickets: 74 at 1088.44, 43 at 945.21, 39 at 845.92 and 15 at 826.03. Gate two, created_at LIKE '2024%', is the cycle anchor — all four were booked in 2024, so it cuts nothing this time, but it is the guard that keeps the 2025 bookings (590.20, 608.06) from ever leaking into a future rerun. Gate three is the only gate that actually cuts: NOT customer_id = 5 drops order 39, the account cleared by hand last quarter, and the final shortlist reads — 74 (1088.44, pending, customer 6), 43 (945.21, pending, customer 3), 15 (826.03, shipped, customer 7). Note both surviving pending tickets are large and undelivered, which is exactly the profile the sweep exists for.",
+  },
+  {
+    id: "cs-260",
+    tier: "hard",
+    topic: "l5",
+    universe: "catalog",
+    title: "Cheapest lines first, ties settled",
+    brief:
+      "From: Catalog content manager. Re: replenishment pick list.\n\nThe floor team wants a pick list built from actual order lines: cheapest unit cost first, and when two lines share a price the bigger quantity leads. Line ids carry no meaning for the team, so where quantity can't split a tie either, the product id is the final guarantee that the list prints the same way every single run. First eight lines.",
+    ask: "The first 8 order lines sorted by unit price ascending, then quantity descending, then product id ascending.",
+    template: `SELECT id, order_id, product_id, {1}, unit_price
+FROM order_items
+ORDER BY unit_price ASC, quantity {2}, product_id {3}
+{4} {5};`,
+    slots: [
+      {
+        answer: "quantity",
+        kind: "keyword",
+        label: "the quantity column",
+        why: "The pick list shows how many units each line moves, so quantity sits in the projection between product_id and unit_price. No other order_items column carries the per-line pile size.",
+      },
+      {
+        answer: "DESC",
+        kind: "keyword",
+        label: "the quantity direction",
+        why: "'Bigger quantity leads' at equal prices is descending — quantity DESC. ASC would let the smaller pile jump ahead of the larger one at the same unit cost.",
+      },
+      {
+        answer: "ASC",
+        kind: "keyword",
+        label: "the product id direction",
+        why: "The final tiebreak must be stable and arbitrary-free, so product id runs ascending — the lower id always prints first when price and quantity both tie.",
+      },
+      {
+        answer: "LIMIT",
+        kind: "keyword",
+        label: "the row cap",
+        why: "The pick list is a slice, not the whole 251-line ledger — LIMIT trims the sorted result to its first rows. Without it the team gets every line on paper.",
+      },
+      {
+        answer: "8",
+        kind: "number",
+        label: "the list length",
+        why: "The floor team asked for the first eight lines — the cap constant, which steers the slice and never appears as a figure in the rows themselves.",
+        noVerify: true,
+      },
+    ],
+    distractors: ["SUM", "WHERE", "GROUP", "ORDER", "6", "status"],
+    walkthrough:
+      "Multi-key sorting reads left to right: unit_price ASC is the primary story (14.28 leads — three HDMI cables at the cheapest unit cost on file), quantity DESC splits equal prices with the bigger pile first, and product_id ASC is the deterministic guarantee for lines that tie on both. The mechanics get visible at the cut: lines 228 and 176 both cost 15.12, so the second key decides — line 228 (3 units) takes slot 8 and line 176 (2 units) misses the list. Flip that key to ASC and the pick list silently swaps its last row. And the third key isn't decoration: lines 47 and 127 share product 14, quantity 2 and price 18.14 — nothing but product_id can order them, which is why the list prints identically every run.",
+  },
+  {
+    id: "cs-261",
+    tier: "hard",
+    topic: "l7",
+    universe: "month-close",
+    title: "Quiet months, biggest tickets first",
+    brief:
+      "From: Financial Controller. Re: close review, run-rate misses.\n\nBefore I sign the quarterly numbers I want the soft spots surfaced, not the highlights. Slice the order book into calendar months and keep only the months that under-ran the seven-order bar. For each survivor show its order count and the average ticket, rounded to cents, ranked so the highest-value quiet month is on top — that's where the pricing conversation starts.",
+    ask: "Each calendar month with 7 or fewer orders, showing the month, its order count and average ticket to 2 decimals, highest average first.",
+    template: `SELECT strftime({1}, created_at) AS month, {2}(*) AS orders,
+       ROUND(AVG(total), 2) AS avg_ticket
+FROM orders
+GROUP BY month
+{3} COUNT(*) <= {4}
+ORDER BY avg_ticket {5};`,
+    slots: [
+      {
+        answer: "'%Y-%m'",
+        kind: "keyword",
+        label: "the month format",
+        why: "strftime needs a format token: '%Y-%m' renders each timestamp as a Year-Month label like 2024-06. '%Y' alone would collapse the whole ledger into two yearly buckets.",
+      },
+      {
+        answer: "COUNT",
+        kind: "keyword",
+        label: "the row counter",
+        why: "The run-rate bar judges how many orders landed per month, so COUNT(*) tallies rows per bucket. SUM would add money where a headcount belongs.",
+      },
+      {
+        answer: "HAVING",
+        kind: "keyword",
+        label: "the bucket filter",
+        why: "The seven-order bar judges a per-month count that only exists after grouping — WHERE runs before buckets exist and rejects aggregates outright. Filtering groups is HAVING's job.",
+      },
+      {
+        answer: "7",
+        kind: "number",
+        label: "the run-rate bar",
+        why: "The controller's run-rate line, and it shows up honestly in the output: the kept months print counts of 7, 7, 7, 6, 7, 7, 6 and 6.",
+      },
+      {
+        answer: "DESC",
+        kind: "keyword",
+        label: "the sort direction",
+        why: "Highest-value quiet month on top means descending average ticket — 425.10 leads the list. ASC would bury the pricing conversation at the bottom.",
+      },
+    ],
+    distractors: ["'%Y'", "SUM", "WHERE", "6", "ASC"],
+    walkthrough:
+      "Stage one: strftime('%Y-%m', created_at) buckets all 103 orders into 14 calendar months. Stage two: the HAVING gate judges each bucket's row count — COUNT(*) <= 7 keeps the eight quiet months (2024-06, 2024-08, 2024-10, 2024-11, 2024-12, 2025-01, 2025-02, 2024-04) and drops the six that hit 8 or 9 orders. Putting that bar in WHERE dies immediately: aggregates can't be evaluated before groups exist. Stage three sorts survivors by average ticket, descending: 2024-10 tops the list at 425.10 despite being quiet — seven orders but jumbo ones — while 2024-11 sits last at 274.80. That inversion (quiet yet high-value) is exactly the cell the controller wants highlighted for pricing.",
+  },
+  {
+    id: "cs-262",
+    tier: "hard",
+    topic: "l4",
+    universe: "refund-audit",
+    title: "Headcount versus dispatch stamps",
+    brief:
+      "From: refunds@ internal ticket #4701.\n\nQuarter-end reconciliation of the fulfillment ledger. For every status queue I need two honest columns side by side: how many orders sit in the queue, and how many of those actually carry a dispatch stamp. The gap between the two columns is the exposure we underwrite. Sort so the heaviest queue leads.",
+    ask: "Each order status with its total order count and its count of non-NULL shipped_at stamps, heaviest queue first.",
+    template: `SELECT status, COUNT(*) AS n,
+       {1}(shipped_at) AS stamped
+FROM orders
+{2} BY status
+{3} BY {4} {5};`,
+    slots: [
+      {
+        answer: "COUNT",
+        kind: "keyword",
+        label: "the stamp counter",
+        why: "COUNT(shipped_at) counts only non-NULL values — exactly the dispatch stamps. SUM or AVG would try arithmetic on timestamps and answer a different question entirely.",
+      },
+      {
+        answer: "GROUP",
+        kind: "keyword",
+        label: "the bucketing clause",
+        why: "One reconciliation row per queue requires GROUP BY status — it folds 103 orders into four buckets so both counts compute per status.",
+      },
+      {
+        answer: "ORDER",
+        kind: "keyword",
+        label: "the sort clause",
+        why: "'Heaviest queue leads' is a sort of the finished buckets, so ORDER BY. HAVING would filter buckets instead of ranking them.",
+      },
+      {
+        answer: "n",
+        kind: "keyword",
+        label: "the sort key",
+        why: "Queue weight is the row count, so the sort key is the n alias. Sorting by stamped instead ties pending and cancelled at zero stamps, and the reading order stops tracking queue size.",
+      },
+      {
+        answer: "DESC",
+        kind: "keyword",
+        label: "the sort direction",
+        why: "Heaviest first means descending: delivered (52) leads. ASC would open the report with the 7-order cancelled queue — the smallest exposure first.",
+      },
+    ],
+    distractors: ["SUM", "AVG", "WHERE", "status", "ASC"],
+    walkthrough:
+      "The whole case is the gap between two counting modes inside one grouped query. COUNT(*) tallies every row in the bucket; COUNT(shipped_at) skips NULLs, so it counts only real dispatch stamps. Grouped by status the ledger splits: delivered 52 orders, 52 stamped; shipped 30, 30 stamped; pending 14, 0 stamped; cancelled 7, 0 stamped. Those zeros are the audit finding — 21 orders carry no dispatch confirmation, and they're exactly the pending plus cancelled queues, because shipped_at is only ever written when a parcel actually leaves. Sorting by n DESC puts delivered on top so the report reads biggest exposure first. Sorting by stamped instead would tie pending and cancelled at zero and leave their order to the engine's mood — the report would stop reading in exposure order.",
+  },
+  {
+    id: "cs-263",
+    tier: "hard",
+    topic: "l8",
+    universe: "pricing",
+    title: "Shelves under the 60 average",
+    brief:
+      "From: Head of Product. Re: entry-tier range review.\n\nThe entry-tier story needs shelves where the average ticket is genuinely low — under 60, not 'has one cheap item'. Average price per category, rounded to cents, cheapest shelf first so the deck leads with the friendliest number. Anything averaging 60 or more stays out of this slide entirely.",
+    ask: "Each category whose average price is under 60, showing the category and its average price rounded to 2 decimals, cheapest average first.",
+    template: `SELECT category, ROUND({1}(price), 2) AS avg_price
+FROM products
+{2} BY category
+{3} AVG(price) < {4}
+ORDER BY avg_price {5};`,
+    slots: [
+      {
+        answer: "AVG",
+        kind: "keyword",
+        label: "the mean aggregate",
+        why: "The bar judges the shelf's average ticket, so AVG(price). MIN would let one cheap item carry a premium shelf into the slide — the exact mistake the brief rules out.",
+      },
+      {
+        answer: "GROUP",
+        kind: "keyword",
+        label: "the bucketing clause",
+        why: "One average per shelf requires GROUP BY category — it partitions the 16 products into seven shelf buckets so the mean computes per shelf.",
+      },
+      {
+        answer: "HAVING",
+        kind: "keyword",
+        label: "the group filter",
+        why: "The sub-60 rule judges a bucket average that doesn't exist until after grouping — WHERE can't evaluate AVG(price) and fails with a misuse error. Filtering buckets is what HAVING is for.",
+      },
+      {
+        answer: "60",
+        kind: "number",
+        label: "the average bar",
+        why: "The brief's entry-tier line — a comparison threshold. The survivors print 27.49, 32, 41.75 and 57.83, so the bar itself never appears in a result cell.",
+        noVerify: true,
+      },
+      {
+        answer: "ASC",
+        kind: "keyword",
+        label: "the sort direction",
+        why: "Cheapest shelf first means ascending — 27.49 leads the slide. DESC would open with the 57.83 shelf, the opposite of the 'friendliest number first' rule.",
+      },
+    ],
+    distractors: ["SUM", "COUNT", "WHERE", "30", "90", "DESC"],
+    walkthrough:
+      "Per-bucket mean, filtered on the mean: GROUP BY category builds the seven shelves, AVG(price) measures each, and HAVING keeps only the buckets under the 60 bar — WHERE would die trying to judge an average before any bucket exists. Four shelves survive, cheapest first: Accessories at 27.49, Fitness at 32, Apparel at 41.75 and Electronics at 57.83. Three drop: Video at 84.50, Audio at 109.66, Wearables at 139.50. The COUNT decoy still executes, which is what makes it dangerous — the slide would claim Electronics 'averages 3'. And the 30 chip quietly redefines the tier: Fitness (32) falls off and the entry story loses a shelf.",
+  },
+  {
+    id: "cs-264",
+    tier: "hard",
+    topic: "l7",
+    universe: "inventory",
+    title: "Depth read for every shelf",
+    brief:
+      "From: Ops lead. Re: cycle-count pack, shelf profiles.\n\nThe count pack needs one profile row per shelf category: how many SKUs sit on it, how many units that adds up to, and the average depth per SKU to one decimal. Rank the shelves by that average depth so the deepest shelf is the first row the counters read. No filtering — every shelf gets profiled, thin or thick.",
+    ask: "Each category with its SKU count, total stock units and average stock depth to 1 decimal, deepest shelf first.",
+    template: `SELECT category, {1}(*) AS skus, {2}(stock) AS units,
+       ROUND({3}(stock), 1) AS depth
+FROM products
+{4} BY category
+ORDER BY depth {5};`,
+    slots: [
+      {
+        answer: "COUNT",
+        kind: "keyword",
+        label: "the SKU counter",
+        why: "Shelf breadth is a row count, so COUNT(*) per category. SUM would add stock where a tally belongs and produce a nonsense 'SKU count'.",
+      },
+      {
+        answer: "SUM",
+        kind: "keyword",
+        label: "the units aggregate",
+        why: "Total units on the shelf means every stock figure added together — SUM(stock). COUNT would put a row tally where units belong.",
+      },
+      {
+        answer: "AVG",
+        kind: "keyword",
+        label: "the depth aggregate",
+        why: "Average depth per SKU is the mean of the stock column — AVG(stock), rounded to one decimal. MIN or MAX would quote the single thinnest or deepest bin as the shelf's depth.",
+      },
+      {
+        answer: "GROUP",
+        kind: "keyword",
+        label: "the bucketing clause",
+        why: "One profile row per shelf requires GROUP BY category — it gathers the 16 products into seven buckets so all three aggregates compute per shelf.",
+      },
+      {
+        answer: "DESC",
+        kind: "keyword",
+        label: "the sort direction",
+        why: "Deepest shelf first means descending depth — Accessories at 313.3 leads. ASC would make the counters start on the thinnest shelf, the opposite of the brief.",
+      },
+    ],
+    distractors: ["MIN", "MAX", "ORDER", "ASC", "WHERE"],
+    walkthrough:
+      "Three aggregates, one bucketing clause, zero filters — the brief explicitly profiles every shelf. GROUP BY category folds the 16 products into seven buckets; inside each bucket COUNT(*) tallies SKUs, SUM(stock) adds units, and AVG(stock) — wrapped in ROUND(...,1) — reads the depth. Ranked deepest first: Accessories 3 SKUs / 940 units / 313.3 deep, Apparel 2 / 510 / 255, Fitness 1 / 220 / 220, Electronics 3 / 505 / 168.3, Video 2 / 220 / 110, Audio 3 / 315 / 105, Wearables 2 / 135 / 67.5. Worth pausing on: Fitness and Video both hold 220 units, but depth separates them — one SKU at 220 deep versus two SKUs at 110 each. That's the difference the third column exists to show.",
+  },
+  {
+    id: "cs-265",
+    tier: "hard",
+    topic: "l5",
+    universe: "funnel",
+    title: "The spring cohort, newest four",
+    brief:
+      "From: Growth marketing lead. Re: pilot-campaign outreach list.\n\nThe pilot goes to the newest signups from the spring window onward — anyone who created an account on or after April 1st, 2024. Newest first, capped at four contacts, with signup dates visible so the scheduler can stagger the sends. Older accounts are already covered by the retention track, so don't let them leak in.",
+    ask: "The 4 newest customers who signed up on or after 2024-04-01, showing name, city and created_at, newest first.",
+    template: `SELECT name, city, {1}
+FROM customers
+WHERE created_at >= {2}
+ORDER BY created_at {3}
+{4} {5};`,
+    slots: [
+      {
+        answer: "created_at",
+        kind: "keyword",
+        label: "the date column",
+        why: "The scheduler needs signup dates on the list, so created_at joins name and city in the projection. No other customers column carries the signup moment.",
+      },
+      {
+        answer: "'2024-04-01'",
+        kind: "keyword",
+        label: "the window start",
+        why: "'On or after April 1st' is a quoted date literal compared with >= — the inclusive lower bound of the spring window. Bare 2024-04-01 without quotes would be read as arithmetic.",
+      },
+      {
+        answer: "DESC",
+        kind: "keyword",
+        label: "the sort direction",
+        why: "Newest first means descending dates — Pedro's July signup leads. ASC would hand the pilot to the oldest account in the window, the exact leak the brief forbids.",
+      },
+      {
+        answer: "LIMIT",
+        kind: "keyword",
+        label: "the row cap",
+        why: "The outreach is capped at four contacts, so LIMIT trims the sorted slice. OFFSET alone can't cap anything — it only skips rows.",
+      },
+      {
+        answer: "4",
+        kind: "number",
+        label: "the contact cap",
+        why: "The pilot's headcount cap — a slice constant that shapes the list and never appears in the returned rows themselves.",
+        noVerify: true,
+      },
+    ],
+    distractors: ["'2024-06-01'", "'2024-05-15'", "ASC", "OFFSET", "shipped_at", "region"],
+    walkthrough:
+      "A top-N over a filtered slice, staged exactly. WHERE created_at >= '2024-04-01' keeps five of the 16 accounts — Liam, Maya, Noah, Olivia and Pedro; everyone older stays on the retention track. ORDER BY created_at DESC lines the survivors up newest-first, and LIMIT 4 cuts the list: Pedro Alvarez (2024-07-03), Olivia Brown (2024-06-11), Noah Meyer (2024-05-27), Maya Patel (2024-05-09). Liam O'Brien misses the cut as the fifth-newest — the cap, not the filter, is what drops him, which is why the two clauses must run in this order. Push the window to '2024-06-01' and the pilot shrinks to two contacts; the date literal is doing real work.",
+  },
+  {
+    id: "cs-266",
+    tier: "hard",
+    topic: "l8",
+    universe: "supplier",
+    title: "Partners moving 450 units",
+    brief:
+      "From: Supply-chain lead. Re: Q3 vendor scorecard, volume tier.\n\nThe scorecard's top tier is volume-based: any partner whose combined on-hand stock across their SKUs reaches 450 units earns the volume conversation. Add up each supplier's shelf depth, keep only the partners that clear the line, and rank them so the biggest stock position leads. The rest go to the standard tier without a row on this list.",
+    ask: "Each supplier whose total stock is 450 or more units, showing the supplier id and its unit total, biggest first.",
+    template: `SELECT supplier_id, {1}(stock) AS units
+FROM products
+{2} BY supplier_id
+{3} SUM(stock) >= {4}
+ORDER BY units {5};`,
+    slots: [
+      {
+        answer: "SUM",
+        kind: "keyword",
+        label: "the volume aggregate",
+        why: "Combined on-hand stock means every unit added up per partner — SUM(stock). COUNT would report SKU counts where volume belongs, and AVG would dilute the position.",
+      },
+      {
+        answer: "GROUP",
+        kind: "keyword",
+        label: "the bucketing clause",
+        why: "One volume figure per partner requires GROUP BY supplier_id — it gathers the 16 products into six supplier buckets so the sum computes per partner.",
+      },
+      {
+        answer: "HAVING",
+        kind: "keyword",
+        label: "the volume gate",
+        why: "The 450-unit line judges a bucket sum that only exists after grouping — WHERE cannot evaluate SUM(stock) and errors out. Filtering buckets is HAVING's whole role.",
+      },
+      {
+        answer: "450",
+        kind: "number",
+        label: "the volume line",
+        why: "The scorecard's top-tier threshold — it steers the comparison and never prints in the result rows, which show 850, 695 and 460.",
+        noVerify: true,
+      },
+      {
+        answer: "DESC",
+        kind: "keyword",
+        label: "the sort direction",
+        why: "Biggest stock position leads means descending — supplier 2 at 850 units first. ASC would open the scorecard with the thinnest qualifying partner.",
+      },
+    ],
+    distractors: ["COUNT", "AVG", "MIN", "WHERE", "ORDER", "500"],
+    walkthrough:
+      "Volume per partner, gated on the volume: GROUP BY supplier_id builds six buckets, SUM(stock) weighs each, and the 450-unit line runs in HAVING because a bucket sum doesn't exist when WHERE evaluates. Three partners clear it, biggest first: supplier 2 at 850 units, supplier 3 at 695, supplier 4 at 460. Three miss: suppliers 5 and 6 sit at 305 each and supplier 1 at 230 — they go to the standard tier with no row here. The '500' chip is the near-miss that re-tiers the scorecard: it silently demotes supplier 4, whose 460-unit position is only 40 units over the real line. And the WHERE decoy dies outright — 'misuse of aggregate: SUM' — because you cannot judge a sum before the buckets exist.",
+  },
+  {
+    id: "cs-267",
+    tier: "hard",
+    topic: "l7",
+    universe: "expense",
+    title: "The sweep that found nothing",
+    brief:
+      "From: Ops finance, spend review.\n\nCompliance wants a standing flag line for outsized tooling spend: anything in the Tools category at 50000 cents or more should have been escalated, and the report prints a single flag row proving the sweep ran — but only when the sweep genuinely comes back empty. If matching lines exist, the row must stay silent and the escalations surface through the normal channel instead.",
+    ask: "One flag row over expenses in the Tools category at 50000+ cents that only prints when the sweep matches nothing: the matched line count and their summed cents.",
+    template: `SELECT {1}(*) AS flagged, {2}(amount_cents) AS flagged_cents
+FROM expenses
+{3} category = 'Tools' AND amount_cents >= {4}
+{5} COUNT(*) = 0;`,
+    slots: [
+      {
+        answer: "COUNT",
+        kind: "keyword",
+        label: "the matched-line counter",
+        why: "The flag row reports how many lines the sweep matched, so COUNT(*). It is the aggregate that answers 0 — never NULL — on an empty sweep.",
+      },
+      {
+        answer: "SUM",
+        kind: "keyword",
+        label: "the cents aggregate",
+        why: "The paired column adds the matched amounts — SUM(amount_cents). On an empty sweep it returns NULL, not 0: the empty-set behaviour the flag row exists to expose.",
+      },
+      {
+        answer: "WHERE",
+        kind: "keyword",
+        label: "the sweep filter",
+        why: "Both conditions describe individual expense rows before any aggregation, so the gate is WHERE. HAVING here would judge the already-collapsed group instead.",
+      },
+      {
+        answer: "50000",
+        kind: "number",
+        label: "the escalation line",
+        why: "Compliance's outsized-spend threshold in cents — the sweep's comparison constant, and no matched row ever exists to print it.",
+        noVerify: true,
+      },
+      {
+        answer: "HAVING",
+        kind: "keyword",
+        label: "the silence gate",
+        why: "The row must print only when the sweep is empty, and COUNT(*) = 0 judges the collapsed result — HAVING (over the implicit single group) is the clause that can do that. WHERE would also die judging COUNT.",
+      },
+    ],
+    distractors: ["GROUP", "ORDER", "LIMIT", "ASC", "DESC", "0"],
+    walkthrough:
+      "The sweep is a compound WHERE — category = 'Tools' AND amount_cents >= 50000 — and it matches nothing: the biggest Tools line on file is 32900 cents. That emptiness is the lesson. Over an empty set the two headline aggregates diverge: COUNT(*) answers 0, but SUM(amount_cents) answers NULL — there is nothing to add, and SQL refuses to invent a zero. The result row prints [0, NULL], the empty-set twins side by side. The closing HAVING COUNT(*) = 0 is the silence gate: because an aggregate query with no GROUP BY collapses everything into one implicit group, HAVING can judge that group and keep the flag row only when the sweep genuinely found nothing. Lower the threshold — 20000 matches five Tools lines — and the gate flips false, the row stays silent, and the escalations surface through the normal channel instead.",
+  },
+  {
+    id: "cs-268",
+    tier: "hard",
+    topic: "l8",
+    universe: "growth",
+    title: "The 2024 cohort, region by region",
+    brief:
+      "From: Chief of Staff. Re: board deck, go-to-market map, refreshed.\n\nThe regional slide needs a stricter cut this quarter: only accounts created in 2024 or later, and only live ones — dormant logos never counted as presence before and they don't start now. Show the regions holding at least three such accounts, biggest region first. This is the cohort the go-to-market map is actually built on.",
+    ask: "Each region with 3 or more active customers created in 2024 or later, showing the region and its account count, biggest first.",
+    template: `SELECT region, {1}(*) AS n
+FROM customers
+WHERE active = {2} AND created_at >= {3}
+{4} BY region
+{5} COUNT(*) >= 3
+ORDER BY n DESC;`,
+    slots: [
+      {
+        answer: "COUNT",
+        kind: "keyword",
+        label: "the account counter",
+        why: "Regional presence is a headcount of accounts, so COUNT(*) per region bucket. SUM would add flags and ids where a tally belongs.",
+      },
+      {
+        answer: "1",
+        kind: "number",
+        label: "the live flag",
+        why: "Only live accounts count as presence, so active = 1 filters rows before grouping. The surviving counts print 5 and 4 — the flag value itself never shows.",
+        noVerify: true,
+      },
+      {
+        answer: "'2024-01-01'",
+        kind: "keyword",
+        label: "the cohort start",
+        why: "'Created in 2024 or later' is the quoted lower bound of the cohort window — a row-level fact that must be filtered in WHERE, before any region bucket exists.",
+      },
+      {
+        answer: "GROUP",
+        kind: "keyword",
+        label: "the bucketing clause",
+        why: "Per-region counts require GROUP BY region — it folds the surviving cohort into regional buckets so the gate can judge each market.",
+      },
+      {
+        answer: "HAVING",
+        kind: "keyword",
+        label: "the presence gate",
+        why: "The three-account bar judges a bucket count that only exists after grouping — WHERE rejects aggregates outright. Filtering groups is HAVING's job.",
+      },
+    ],
+    distractors: ["SUM", "AVG", "WHERE", "ORDER", "0", "'2024-06-01'"],
+    walkthrough:
+      "Two row-level gates, then a bucket-level gate — and the WHERE/HAVING split is the entire lesson. WHERE runs first on raw rows: active = 1 keeps the live accounts, created_at >= '2024-01-01' keeps the 2024 cohort, and 11 accounts survive (5 EU, 4 APAC, 2 US — LATAM empties out entirely since its only account predates the window). GROUP BY region then builds the buckets, and HAVING COUNT(*) >= 3 judges them: EU (5) and APAC (4) make the slide, US (2) falls one short. Swap either filter into the wrong clause and the query errors — WHERE can't see a COUNT, and HAVING can't see row flags before grouping. The '0' chip flips the flag gate and the slide loses both regions: only one dormant account even falls in the window.",
+  },
+  {
+    id: "cs-269",
+    tier: "hard",
+    topic: "l4",
+    universe: "fraud",
+    title: "Stages without a dispatch trail",
+    brief:
+      "From: Risk team, spot-check rotation.\n\nNew angle for the sweep: instead of chasing single orders, audit the fulfillment stages themselves. One row per status with its ticket count and a readable dispatch column — the latest stamp on file, or the words 'no dispatch yet' where a stage has none, because a blank cell in a printed report reads as a data glitch and gets ignored. Sorted by stage name so the table is stable.",
+    ask: "Each order status with its ticket count and a display column showing the latest shipped_at stamp or 'no dispatch yet', sorted by status.",
+    template: `SELECT status, {1}(*) AS tickets,
+       COALESCE({2}(shipped_at), {3}) AS last_dispatch
+FROM orders
+{4} BY status
+{5} BY status;`,
+    slots: [
+      {
+        answer: "COUNT",
+        kind: "keyword",
+        label: "the ticket counter",
+        why: "Each stage row reports how many tickets sit in it, so COUNT(*) per status bucket. SUM or AVG would run arithmetic where a headcount belongs.",
+      },
+      {
+        answer: "MAX",
+        kind: "keyword",
+        label: "the latest-stamp aggregate",
+        why: "The latest stamp on file is MAX(shipped_at) per bucket. MIN would quote the oldest stamp as the freshest, and for the empty stages every aggregate over the stamps is NULL anyway.",
+      },
+      {
+        answer: "'no dispatch yet'",
+        kind: "keyword",
+        label: "the display fallback",
+        why: "COALESCE ladders to this label when the latest stamp is NULL — the quoted words that keep blank cells out of the printed audit table.",
+      },
+      {
+        answer: "GROUP",
+        kind: "keyword",
+        label: "the bucketing clause",
+        why: "One audit row per stage requires GROUP BY status — it folds 103 orders into four buckets so the stamp column and the count compute per stage.",
+      },
+      {
+        answer: "ORDER",
+        kind: "keyword",
+        label: "the sort clause",
+        why: "'Sorted by stage name so the table is stable' is a sort of finished rows — ORDER BY status. GROUP twice would be a syntax error, and WHERE can't rank anything.",
+      },
+    ],
+    distractors: ["SUM", "AVG", "MIN", "NULL", "WHERE", "'2024-01-01'"],
+    walkthrough:
+      "A display ladder over grouped NULLs. GROUP BY status builds the four stage buckets; MAX(shipped_at) reads each stage's freshest stamp; and COALESCE is the ladder — first rung the stamp, fallback rung the words 'no dispatch yet' whenever that stamp is NULL. Two stages have stamps: delivered's latest is 2025-02-21 and shipped's is 2025-03-01. Two don't: pending (14 tickets) and cancelled (7 tickets) print 'no dispatch yet', because shipped_at is only ever written when a parcel actually leaves. Without the ladder those cells print blank and the audit's key finding — two whole stages with zero dispatch proof — reads like missing data. The NULL chip strips the ladder entirely and blanks the cells again; a '2024-01-01' fallback would stamp the empty stages with a date that is real on the calendar but fake for those queues, misdating the audit.",
+  },
+];

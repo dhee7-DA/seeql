@@ -972,3 +972,64 @@ Work Log:
 
 Stage Summary:
 - Module 1 drill bank COMPLETE: 470 MCQs (350 core + 120 secondary) covering every M1 keyword across six aspects, live in the Drill Yard. M1 pipeline status: theory ✓ (deep-dive wave), MCQs ✓ (this + prior commit). Next in M1: fill-in-the-blank case studies (100/100/100 program, ~20/20/20 easy/medium/hard for M1) on the shared grading engine
+---
+Task ID: m1cases-ea
+Agent: batch-author EA
+Task: Author 29 easy case files cs-201..229 (cases-cea.ts)
+
+Work Log:
+- Read types.ts (tier field, distractor/noVerify rules), exemplars.ts (memo voice cs-016/041/071/091), case-audit.ts (exact enforcement), case-coverage.ts (dedupe mechanics), and calibration easy cases cs-018/cs-025/cs-026/cs-044; dumped all 200 existing filled SQLs + titles to temp files and checked every planned fill/title against them before writing (0 collisions).
+- Read facts slices l2/l3/l4/l5/l6/l7.json, then probed a read-only copy (scripts/.probe-ea.db, bun:sqlite, deleted after) for 20+ figures not in the slices: processor-fee cells (order 1 = 16.72, order 74 = 31.56), Alice Chen's 3 cancelled tickets (7/152.52, 21/136.11, 95/206.19), unit-cost at 0.6 (Keyboard 53.99, Smart Watch 119.99), A-item bar rows (HDMI 500, Socks 400 exactly-on-line so > vs >= is consequential), COALESCE sample rows, cancelled cancellations = 4 distinct accounts (1/13/5/11) behind 7 orders, all-in prices (94.98/39.49/53.99/154.98), order_items MIN/MAX unit_price (14.28/209.68), Electronics SUM(stock) = 505 (AVG 168.33/MAX 300/MIN 85 all distinct so agg distractors are consequential), earliest-3 orders (6 @ 2024-01-01, 5+7 @ 2024-01-02), AVG(rating) prints 4.3, expense page-2 (93/45.36 ... 41/67.25, page 1 ends 59/44.48), pending MAX 1088.44 vs shipped MAX 845.92, newest signup Pedro Alvarez 2024-07-03 (no tie), customer 11 = Keiko Sato Nagoya APAC.
+- Wrote cases-cea.ts: 29 easy cases in the mandated universe cycle (month-close 201/211/221 ... fraud 209/219/229, catalog 210/220), topic quotas exact (l2x6, l3x6, l4x3, l5x4, l6x4, l7x5, l1x1); one clause family each; 28x3 slots + cs-205 with 4 (4th = number chip); 7 number slots all noVerify (<=1 per case); 4-5 consequential distractors each; fresh teaches incl. first COALESCE case (cs-211), bare IS NOT NULL count (cs-219), bare DISTINCT list on order_items (cs-215), OFFSET pagination (cs-227).
+- Distractor consequence hand-verified per slot before auditing; caught two traps pre-audit: GROUP BY x DESC/ASC parses in SQLite (removed "GROUP" from cs-205 bank, "price"/"GROUP" from cs-214 where a secondary sort key or bare GROUP BY could tie), and single-row-group aggregates (Fitness SUM=AVG=MAX=MIN) avoided by choosing 3-SKU Electronics for cs-224.
+- AUDIT_COPY=scripts/.audit-ea.db bun scripts/case-audit.ts src/lib/curriculum/cases/cases-cea.ts -> cases: 29 pass: 29 fail: 0 on the FIRST run (no fixes needed). Cross-checked: all 29 filled SQLs + titles distinct vs the 200 existing via a temp dupe script.
+- npx tsc --noEmit | grep cases-cea -> empty (only pre-existing errors in examples/, scripts/content-audit.ts, skills/). Removed scripts/.probe-ea.db, audit copy, and all temp helper scripts.
+
+Stage Summary:
+- cases-cea.ts complete: 29/29 audit PASS (first-run green), tsc clean for the new file, fills+titles provably distinct from cs-001..200. Easy-tier contract held: 3-4 slots, <=1 noVerify, one clause family, memo persona per universe. Shape notes for sibling batches: two alias-rename projections (206/208), two ORDER BY+LIMIT top-1 forms (205), MIN+MAX pair (223), third OFFSET case in deck (227) — later easy batches should avoid those skeletons with the same columns.
+---
+Task ID: m1cases-eb
+Agent: batch-author EB
+Task: Author 29 easy case files cs-230..258 (cases-ceb.ts)
+
+Work Log:
+- Read worklog entries 1+3 (200-case playbook) and 2-f1/2-i (authoring pattern), types.ts (tier field), exemplars.ts (cs-016/041/071/091 voice), and calibrated against existing easy cases (cs-018/022/024/025/026 in b2a, cs-072/073 in b4a).
+- Dumped all 200 existing titles + filled SQL from cases/index.ts into a scratch file; planned 29 shapes against that set plus the facts slices (l2..l7).
+- Probed a read-only copy (scripts/.probe-eb.db, deleted after) for every figure: Feb 2024 revenue 3609.64 (9 orders), orders >300 = 49 (>500 = 25, >200 = 65), net-of-VAT samples 89.99/1.08 = 83.32, 149.99 = 138.88, 199.99 = 185.18, stock >= 150 = 8 shelves (Ring Light exactly 150 as the >=/> edge), COUNT(DISTINCT customer_id) = 16, rating < 4.2 = 3 vendors (Andes stored as bare 4), expenses = 36 lines / SUM 2541600 cents / avg 70600, categories under price 50 = 5, IS NOT NULL stamps = 82, cancelled 7 / 1152.49, price DESC LIMIT 3 anchors, price DESC LIMIT 3 OFFSET 5 = ranks 6-8 (79/65/59.99), deepest bin HDMI 500, newest customers Pedro/Olivia/Noah, shipped AVG 399.89, MIN/MAX price 14.99/199.99, Jan window BETWEEN 2024-01-01..31 = 8, thin-stock (<100) distinct suppliers = 5, active cities = 14, expenses < 30000 cents = 10.
+- Consequence-probed the risky distractors before committing: unquoted '2024-02' literal = 0 rows, status = status = 103, COALESCE(shipped_at, NULL) keeps 21 NULLs, OFFSET without LIMIT = syntax error, MIN(total, 2) = 2 per row, region-slot fill for the rating case still differs, stock >= price = 12. Caught and dodged two ambiguity traps found during planning: ">" would tie with ">=" at the stock-200 threshold (no product sits exactly at 200, so moved the line to 150 where Ring Light pins the edge), and "DISTINCT" as a distractor on unaliased projections would reproduce results — replaced with consequential chips.
+- Wrote cases-ceb.ts: 29 easy cases cs-230..258, topics l1×1 l2×6 l3×6 l4×3 l5×4 l6×4 l7×5, canonical universe cycle starting cs-230 = catalog; shapes: pure projection + alias (230/238), computed division (233 net-of-VAT, 237 cents extract), single-predicate counts/lists (232/234/236/239/251/257 — BETWEEN on dates, >= with a real edge, region/rating/total thresholds), COUNT(DISTINCT) unfiltered and filtered (235/254/255), COALESCE fill (249), IS NOT NULL / IS NULL count and list (241/252), ORDER BY + LIMIT top-N / OFFSET page (243/244/245/253), SUM/AVG/MIN+MAX/COUNT headline aggregates (231/242/247/248/250), id lookup (256).
+- Verified: my dupcheck script — all 29 filled SQLs and titles unique vs the 200-case deck AND vs the parallel batch cases-cea.ts (cs-201..229); audit first-run clean; tsc --noEmit grep cases-ceb empty; removed probe/audit/scratch files.
+
+Stage Summary:
+- cases-ceb.ts complete: AUDIT_COPY=scripts/.audit-eb.db bun scripts/case-audit.ts src/lib/curriculum/cases/cases-ceb.ts → cases: 29  pass: 29  fail: 0 (tiers: easy=29); tsc clean for cases-ceb; no leftover temp dbs/scripts; no other source files touched (worklog append only).
+---
+Task ID: m1cases-ha1
+Agent: batch-author HA1
+Task: Author 11 hard case files cs-259..269 (cases-cha1.ts)
+
+Work Log:
+- Read worklog tail (EA/EB playbook), types.ts, exemplars voice, b8a l8 hard cases for calibration; dumped all 258 existing cases (200 registry + parallel cea/ceb) to a scratch list of titles + filled SQL — note: index.ts does NOT yet include cea/ceb, so the dup check had to import them explicitly.
+- Probed a read-only copy (scripts/.probe-ha1.db, deleted after) for every figure plus finance-table schemas (expenses: category/vendor/spent_on/amount_cents, 36 lines, Tools max 32900 cents) and order_items tie structure (two full (quantity,unit_price) ties: 15.12 and 18.14 pairs) before authoring.
+- Caught and dodged four collisions/traps pre-audit: (1) my planned catalog multi-key sort was EXACTLY cs-098's filled SQL (ORDER BY category ASC, price DESC LIMIT 6) — redesigned to an order_items 3-key pick-list where the 15.12 pair makes the second key decide who survives LIMIT 8; (2) month bucket + HAVING SUM(total) is a crowded corner (cs-177/191) — rebuilt cs-261 as quiet months HAVING COUNT(*) <= 7 with AVG ticket, a threshold that itself appears in output cells (no noVerify needed); (3) supplier SUM(stock) >= 400 was one digit from cs-176's > 400 — moved the line to 450 (3 kept / 3 dropped); (4) empty-set cases tie trivially: any text distractor in the cents-threshold slot gives 0 rows and any numeric in a category-value slot matches nothing, so cs-267 hardcodes both and banks only clause keywords + "0"; likewise AVG/MIN/SUM tie as SUM-slot distractors over an empty set and were excluded.
+- Wrote cases-cha1.ts: 11 hard cases, topics l3×1 l4×2 l5×2 l7×3 l8×3, universe cycle fraud→catalog→month-close→refund-audit→pricing→inventory→funnel→supplier→expense→growth→fraud; 5-6 slots each, ≤2 noVerify per case, 4-6 distractors each, heavy stacks throughout (WHERE+GROUP BY+HAVING+ORDER BY ×3, multi-key ORDER BY+LIMIT, WHERE+HAVING-implicit-group, GROUP BY+COUNT/COUNT contrast, GROUP BY+COALESCE ladder).
+- Verified: dupcheck — 0 title/fill collisions vs all 258 (269 unique after); audit first run 10/11 — cs-265 distractor '2024-05-01' kept the same top-4 (Liam was already LIMIT-cut) → moved to '2024-05-15' (3 rows) → 11/11; tsc grep cases-cha1 empty; removed probe/audit/dump/dupcheck temp files.
+
+Stage Summary:
+- cases-cha1.ts complete: cases: 11 pass: 11 fail: 0 (tiers hard=11); tsc clean for the new file; titles+filled SQL distinct across the 269-case deck so far; no other source files touched (worklog append only). Shape notes for parallel batches: status-queue COUNT(*)/COUNT(shipped_at) GROUP BY is now used (cs-262) and per-status COALESCE(MAX(shipped_at)) display (cs-269) — avoid re-using those skeletons; fresh figures planted: supplier stock sums 850/695/460 vs 305/305/230, Tools expense max 32900 cents, per-category stock depth 313.3…67.5, 2024 cohort EU 5/APAC 4/US 2.
+
+---
+Task ID: m1cases-hb1+register
+Agent: main
+Task: Complete HB1 batch bookkeeping (worklog was never written — session died mid-flight), register all four new batches into the deck, wire the tier axis into the Case Files UI, E2E + commit
+
+Work Log:
+- Verified cases-chb1.ts (cs-280..290, 11 hard) was left complete but unlogged: ran AUDIT_COPY=scripts/.audit-now.db bun scripts/case-audit.ts → 11/11 pass, first run
+- Registered cases-cea/cases-ceb/cases-cha1/cases-chb1 in cases/index.ts → deck 200 → 280
+- New scripts/deck-check.ts (kept as a permanent tool): imports the assembled CASES registry, checks duplicate ids/titles/filled-SQL + tier distribution → 280 cases, 0 dups across all three axes; tiers easy=100 medium=100 hard=80
+- Tier math discovery: the tier-tagged original 200 were 42 easy / 100 medium / 58 hard; +58 new easy (cea+ceb) and +22 new hard (cha1+chb1) ⇒ easy 100 ✓, medium 100 ✓, hard 80/100 — exactly 20 hard cases short of the corrected 100/100/100 program (the dead session's reserved ranges cs-270..279 + cs-291..300)
+- case-files.tsx: added tier filter row (All tiers/Easy/Medium/Hard with live counts, combined AND with topic filter) + colored tier badge on every card (emerald/amber/rose); deck header already dynamic at 280
+- Full-deck audit over all 20 batch files: 280/280 pass, 0 fail
+- E2E (agent-browser): deck renders "280 CASE FILES", tier counts 280/100/100/80, Hard filter → CASE 1 OF 80 first card CS-004 with HARD badge, Easy → CASE 1 OF 100; console clean, no page errors; screenshots m1cases-{1..4}*.png (deck, hard filter, easy filter, mobile 390x844)
+
+Stage Summary:
+- M1 case deck now LIVE at 280 engine-audited cases with a two-axis (tier × topic) browser. Remaining for the M1 100/100/100 program: exactly 20 hard cases in the reserved ranges cs-270..279 and cs-291..300 — dispatching two parallel batch authors (HA2, HB2) next

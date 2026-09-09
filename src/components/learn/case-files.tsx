@@ -1,9 +1,10 @@
 "use client";
 
-// Case Files deck — 200 stakeholder memos where the learner rebuilds a real
+// Case Files deck — stakeholder memos where the learner rebuilds a real
 // query from a chip bank: figures and SQL keywords live in numbered slots,
 // decoys lurk in the bank, wrong placements get per-slot coaching, and a
 // correct rebuild opens the walkthrough and awards XP (idempotent `case:` keys).
+// Two filter axes: difficulty tier (easy / medium / hard) and lesson topic.
 
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
@@ -98,6 +99,21 @@ function parseTemplate(template: string): Segment[][] {
   });
 }
 
+// ---- tier styling -----------------------------------------------------------
+
+const CASE_TIERS: { id: "all" | "easy" | "medium" | "hard"; label: string }[] = [
+  { id: "all", label: "All tiers" },
+  { id: "easy", label: "Easy" },
+  { id: "medium", label: "Medium" },
+  { id: "hard", label: "Hard" },
+];
+
+const TIER_BADGE: Record<string, string> = {
+  easy: "border-emerald-400/40 bg-emerald-400/10 text-emerald-300",
+  medium: "border-amber-400/40 bg-amber-400/10 text-amber-300",
+  hard: "border-rose-400/40 bg-rose-400/10 text-rose-300",
+};
+
 // ---- one case card ----------------------------------------------------------
 
 function CaseFileCard({ cs, onSolved }: { cs: CaseStudy; onSolved?: () => void }) {
@@ -168,6 +184,9 @@ function CaseFileCard({ cs, onSolved }: { cs: CaseStudy; onSolved?: () => void }
           </span>
           <span className="rounded-full border border-zinc-800 bg-zinc-900/60 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-zinc-400">
             {caseTopicLabel(cs.topic)}
+          </span>
+          <span className={cn("rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider", TIER_BADGE[cs.tier])}>
+            {cs.tier}
           </span>
           <span className="text-[10px] uppercase tracking-wider text-zinc-600">{total} slots</span>
           {isClosed && (
@@ -342,11 +361,17 @@ function CaseFileCard({ cs, onSolved }: { cs: CaseStudy; onSolved?: () => void }
 export function CaseFiles() {
   const xpEvents = useProgress((s) => s.xpEvents);
   const [topic, setTopic] = useState<string>("all");
+  const [tier, setTier] = useState<string>("all");
   const [idx, setIdx] = useState(0);
 
   const filtered = useMemo(
-    () => (topic === "all" ? CASES : CASES.filter((c) => c.topic === topic)),
-    [topic],
+    () =>
+      CASES.filter(
+        (c) =>
+          (topic === "all" || c.topic === topic) &&
+          (tier === "all" || c.tier === tier),
+      ),
+    [topic, tier],
   );
   const solvedCount = useMemo(
     () => CASES.reduce((n, c) => n + (xpEvents[`case:${c.id}`] !== undefined ? 1 : 0), 0),
@@ -382,6 +407,38 @@ export function CaseFiles() {
             style={{ width: `${CASES.length ? (solvedCount / CASES.length) * 100 : 0}%` }}
           />
         </div>
+      </div>
+
+      {/* tier filter */}
+      <div className="mt-5 flex gap-1.5 overflow-x-auto pb-1">
+        {CASE_TIERS.map((t) => {
+          const count =
+            t.id === "all" ? CASES.length : CASES.filter((c) => c.tier === t.id).length;
+          const active = tier === t.id;
+          return (
+            <button
+              key={t.id}
+              onClick={() => {
+                setTier(t.id);
+                setIdx(0);
+              }}
+              className={cn(
+                "shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+                active
+                  ? t.id === "hard"
+                    ? "border-rose-400/60 bg-rose-400/10 text-rose-300"
+                    : t.id === "medium"
+                      ? "border-amber-400/60 bg-amber-400/10 text-amber-300"
+                      : t.id === "easy"
+                        ? "border-emerald-400/60 bg-emerald-400/10 text-emerald-300"
+                        : "border-zinc-500 bg-zinc-900 text-zinc-100"
+                  : "border-zinc-800 bg-zinc-950 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200",
+              )}
+            >
+              {t.label} <span className="tnum text-[10px] opacity-70">{count}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* topic filter */}

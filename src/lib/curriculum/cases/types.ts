@@ -8,6 +8,9 @@
 
 export type CaseSlotKind = "number" | "keyword";
 
+/** Difficulty tier — deck filter axis alongside topic. */
+export type CaseTier = "easy" | "medium" | "hard";
+
 export interface CaseSlot {
   /** The exact chip text that belongs here. */
   answer: string;
@@ -26,8 +29,10 @@ export interface CaseSlot {
 }
 
 export interface CaseStudy {
-  /** Stable id cs-001…cs-200 — XP ledger key `case:cs-001`. */
+  /** Stable id cs-001… — XP ledger key `case:cs-001`. */
   id: string;
+  /** Difficulty tier (easy = single-concept recall, medium = two-stage build, hard = full assembly + traps). */
+  tier: CaseTier;
   /** Foundations toolkit: "l1"…"l8", or "cap" for the capstone mix. */
   topic: string;
   /** Business universe id — see CASE_UNIVERSES. */

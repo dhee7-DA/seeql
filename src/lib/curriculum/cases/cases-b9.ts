@@ -8,6 +8,7 @@ import type { CaseStudy } from "./types";
 export const casesB9: CaseStudy[] = [
   {
     id: "cs-196",
+    tier: "hard",
     topic: "cap",
     universe: "inventory",
     title: "The month that carried the building",
@@ -65,6 +66,7 @@ ORDER BY revenue {4}
   },
   {
     id: "cs-197",
+    tier: "hard",
     topic: "cap",
     universe: "funnel",
     title: "Where orders stall before dispatch",
@@ -114,6 +116,7 @@ ORDER BY open_orders {5};`,
   },
   {
     id: "cs-198",
+    tier: "hard",
     topic: "cap",
     universe: "supplier",
     title: "Regions with a second source",
@@ -165,6 +168,7 @@ ORDER BY avg_rating {5};`,
   },
   {
     id: "cs-199",
+    tier: "hard",
     topic: "cap",
     universe: "expense",
     title: "Rates above the 200 line",
@@ -214,6 +218,7 @@ ORDER BY unit_price {5};`,
   },
   {
     id: "cs-200",
+    tier: "hard",
     topic: "cap",
     universe: "catalog",
     title: "Headline numbers for the audio shelf",

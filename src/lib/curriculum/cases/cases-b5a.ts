@@ -6,6 +6,7 @@ import type { CaseStudy } from "./types";
 export const casesB5a: CaseStudy[] = [
   {
     id: "cs-092",
+    tier: "hard",
     topic: "l5",
     universe: "pricing",
     title: "Five price anchors for the reset board",
@@ -55,6 +56,7 @@ FROM products
   },
   {
     id: "cs-093",
+    tier: "medium",
     topic: "l5",
     universe: "fraud",
     title: "Newest tickets on the fraud queue",
@@ -98,6 +100,7 @@ LIMIT {4};`,
   },
   {
     id: "cs-094",
+    tier: "medium",
     topic: "l5",
     universe: "inventory",
     title: "The restock queue, thinnest first",
@@ -141,6 +144,7 @@ FROM products
   },
   {
     id: "cs-095",
+    tier: "hard",
     topic: "l5",
     universe: "funnel",
     title: "A/B split group one, A to Z",
@@ -190,6 +194,7 @@ FROM customers
   },
   {
     id: "cs-096",
+    tier: "hard",
     topic: "l5",
     universe: "supplier",
     title: "Two APAC seats at the QBR",
@@ -240,6 +245,7 @@ ORDER BY rating {3}
   },
   {
     id: "cs-097",
+    tier: "hard",
     topic: "l5",
     universe: "expense",
     title: "Line items for the spend review",
@@ -291,6 +297,7 @@ ORDER BY unit_price {3}
   },
   {
     id: "cs-098",
+    tier: "hard",
     topic: "l5",
     universe: "catalog",
     title: "Shelf reset plan, first six rows",
@@ -346,6 +353,7 @@ FROM products
   },
   {
     id: "cs-099",
+    tier: "hard",
     topic: "l5",
     universe: "month-close",
     title: "Five invoices for the close binder",
@@ -396,6 +404,7 @@ ORDER BY total {3}
   },
   {
     id: "cs-100",
+    tier: "hard",
     topic: "l5",
     universe: "growth",
     title: "Founding cohort for the anniversary",
@@ -445,6 +454,7 @@ FROM customers
   },
   {
     id: "cs-101",
+    tier: "medium",
     topic: "l5",
     universe: "refund-audit",
     title: "Three cancellations worth goodwill",
@@ -489,6 +499,7 @@ ORDER BY total {2}
   },
   {
     id: "cs-102",
+    tier: "medium",
     topic: "l5",
     universe: "pricing",
     title: "The entry-level price ladder",
@@ -526,6 +537,7 @@ ORDER BY price {1}
   },
   {
     id: "cs-103",
+    tier: "medium",
     topic: "l5",
     universe: "fraud",
     title: "Card-testing probe: smallest tickets",
@@ -569,6 +581,7 @@ FROM orders
   },
   {
     id: "cs-104",
+    tier: "hard",
     topic: "l5",
     universe: "inventory",
     title: "Where the pallets pile up",
@@ -618,6 +631,7 @@ FROM products
   },
   {
     id: "cs-105",
+    tier: "medium",
     topic: "l5",
     universe: "funnel",
     title: "Page two of the storefront grid",

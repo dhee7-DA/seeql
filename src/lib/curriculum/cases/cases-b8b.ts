@@ -8,6 +8,7 @@ import type { CaseStudy } from "./types";
 export const casesB8b: CaseStudy[] = [
   {
     id: "cs-182",
+    tier: "hard",
     topic: "l8",
     universe: "growth",
     title: "Stages that carry the volume",
@@ -51,6 +52,7 @@ FROM orders
   },
   {
     id: "cs-183",
+    tier: "hard",
     topic: "l8",
     universe: "refund-audit",
     title: "Small buckets the team can clear by hand",
@@ -88,6 +90,7 @@ GROUP BY status
   },
   {
     id: "cs-184",
+    tier: "hard",
     topic: "l8",
     universe: "pricing",
     title: "Budget shelves for the entry-tier line",
@@ -137,6 +140,7 @@ FROM products
   },
   {
     id: "cs-185",
+    tier: "hard",
     topic: "l8",
     universe: "fraud",
     title: "Accounts ordering like resellers",
@@ -180,6 +184,7 @@ GROUP BY customer_id
   },
   {
     id: "cs-186",
+    tier: "hard",
     topic: "l8",
     universe: "inventory",
     title: "Shelves running thin before the count",
@@ -236,6 +241,7 @@ FROM products
   },
   {
     id: "cs-187",
+    tier: "hard",
     topic: "l8",
     universe: "funnel",
     title: "Months that hit the campaign bar",
@@ -273,6 +279,7 @@ ORDER BY month;`,
   },
   {
     id: "cs-188",
+    tier: "hard",
     topic: "l8",
     universe: "supplier",
     title: "Suppliers carrying real catalog weight",
@@ -316,6 +323,7 @@ ORDER BY lines {4}, supplier_id;`,
   },
   {
     id: "cs-189",
+    tier: "hard",
     topic: "l8",
     universe: "expense",
     title: "Parcels with four-line packing loads",
@@ -358,6 +366,7 @@ FROM order_items
   },
   {
     id: "cs-190",
+    tier: "hard",
     topic: "l8",
     universe: "catalog",
     title: "Shelves where even the floor reads premium",
@@ -402,6 +411,7 @@ ORDER BY floor_price DESC;`,
   },
   {
     id: "cs-191",
+    tier: "hard",
     topic: "l8",
     universe: "month-close",
     title: "Monthly revenue buckets for the close deck",
@@ -453,6 +463,7 @@ ORDER BY month;`,
   },
   {
     id: "cs-192",
+    tier: "hard",
     topic: "l8",
     universe: "growth",
     title: "Regions with a real member base",
@@ -495,6 +506,7 @@ FROM customers
   },
   {
     id: "cs-193",
+    tier: "hard",
     topic: "l8",
     universe: "refund-audit",
     title: "Stages where the average ticket clears 300",
@@ -544,6 +556,7 @@ ORDER BY avg_ticket {5};`,
   },
   {
     id: "cs-194",
+    tier: "hard",
     topic: "l8",
     universe: "pricing",
     title: "Shelves that can anchor the premium tier",
@@ -587,6 +600,7 @@ ORDER BY ceiling_price DESC;`,
   },
   {
     id: "cs-195",
+    tier: "hard",
     topic: "l8",
     universe: "fraud",
     title: "Booked value piled in a few accounts",

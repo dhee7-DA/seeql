@@ -8,6 +8,7 @@ import type { CaseStudy } from "./types";
 export const casesB3a: CaseStudy[] = [
   {
     id: "cs-042",
+    tier: "medium",
     topic: "l3",
     universe: "inventory",
     title: "Shelves running thin",
@@ -56,6 +57,7 @@ export const casesB3a: CaseStudy[] = [
   },
   {
     id: "cs-043",
+    tier: "medium",
     topic: "l3",
     universe: "funnel",
     title: "Two regions for the Q3 push",
@@ -97,6 +99,7 @@ FROM customers
   },
   {
     id: "cs-044",
+    tier: "easy",
     topic: "l3",
     universe: "supplier",
     title: "Rate-card review: the 4.5 bar",
@@ -133,6 +136,7 @@ FROM suppliers
   },
   {
     id: "cs-045",
+    tier: "hard",
     topic: "l3",
     universe: "expense",
     title: "The mid-band card pile",
@@ -176,6 +180,7 @@ FROM orders
   },
   {
     id: "cs-046",
+    tier: "medium",
     topic: "l3",
     universe: "catalog",
     title: "Two shelves for the hero-banner shoot",
@@ -217,6 +222,7 @@ FROM products
   },
   {
     id: "cs-047",
+    tier: "easy",
     topic: "l3",
     universe: "month-close",
     title: "September's booking count",
@@ -252,6 +258,7 @@ FROM orders
   },
   {
     id: "cs-048",
+    tier: "medium",
     topic: "l3",
     universe: "growth",
     title: "Personalization smoke test",
@@ -293,6 +300,7 @@ FROM customers
   },
   {
     id: "cs-049",
+    tier: "medium",
     topic: "l3",
     universe: "refund-audit",
     title: "Open-lane orders for the reserve",
@@ -334,6 +342,7 @@ FROM orders
   },
   {
     id: "cs-050",
+    tier: "easy",
     topic: "l3",
     universe: "pricing",
     title: "Above the 100 mark",
@@ -370,6 +379,7 @@ FROM products
   },
   {
     id: "cs-051",
+    tier: "medium",
     topic: "l3",
     universe: "fraud",
     title: "Pending tickets over 500",
@@ -418,6 +428,7 @@ FROM orders
   },
   {
     id: "cs-052",
+    tier: "medium",
     topic: "l3",
     universe: "inventory",
     title: "Bulk bins above the line",
@@ -460,6 +471,7 @@ FROM products
   },
   {
     id: "cs-053",
+    tier: "medium",
     topic: "l3",
     universe: "funnel",
     title: "Audience the agency inherits",
@@ -501,6 +513,7 @@ FROM customers
   },
   {
     id: "cs-054",
+    tier: "medium",
     topic: "l3",
     universe: "supplier",
     title: "The renegotiation shortlist",
@@ -543,6 +556,7 @@ FROM suppliers
   },
   {
     id: "cs-055",
+    tier: "medium",
     topic: "l3",
     universe: "expense",
     title: "Volume lines for renegotiation",
