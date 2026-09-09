@@ -364,5 +364,55 @@ export const lesson02: Lesson = {
       expected: EXPECTED["l2-p9"],
     },
   ],
+  deep: [
+    {
+      kind: "mind",
+      text: "Think of a query as a **small factory**: `FROM` is the loading dock — it brings in the 16 customer rows, whole and untouched. `SELECT` is the shaping station — a column shrink-ray that keeps only what you name, computes what you derive, and relabels whatever you like with `AS`. Nothing you do in SELECT can change the table itself; it only shapes what leaves the factory. Reports are shaped outputs, never edits.",
+    },
+    {
+      kind: "engine",
+      title: "you write SELECT name, city FROM customers — but the engine runs it backwards",
+      steps: [
+        "**FROM first** — the engine loads `customers` into a working set of 16 rows × 6 columns. The clause you typed *second* executes *first*.",
+        "**SELECT second** — the projector walks every loaded row and emits only `name` and `city`. Anything not named is dropped here, once, for every row.",
+        "**Aliases are born** — `AS zone` renames the *output column*, not the stored data. The alias simply does not exist before this stage.",
+        "**Result** — a brand-new table shape (16 × 2) that exists only in memory. The stored `customers` never knew it happened.",
+      ],
+    },
+    { kind: "diagram", figure: "v2-select-pipeline" },
+    {
+      kind: "h",
+      text: "Projection is where derivation begins",
+    },
+    {
+      kind: "p",
+      text: "The moment you can name columns, you can *combine* them. `price * 0.85` is a derived column — computed per row while projecting. `price * stock` turns the catalog into shelf value: 16 products worth **2,845 units** in stock, each line valued at its own price. This is the analyst's first superpower: the database does arithmetic over every row in one line of SQL, instead of you dragging a formula down 16 rows and hoping you covered them all. Whenever you catch yourself doing manual spreadsheet arithmetic, that is SELECT-with-an-expression asking to be written.",
+    },
+    { kind: "code", sql: "SELECT name, price, ROUND(price * 0.85, 2) AS sale_price\nFROM products LIMIT 5;", caption: "derived column — one formula, applied to every row" },
+    { kind: "code", sql: "SELECT 2 + 2 AS four, UPPER('hi') AS shout;", caption: "SQLite even allows SELECT without FROM — a calculator mode" },
+    {
+      kind: "myth",
+      myth: "\"SQL runs in the order I typed it — SELECT happens first because it's the first word.\"",
+      truth: "The engine evaluates `FROM` before `SELECT` — that's why a column alias created in SELECT can't be used in `WHERE` (lesson 3) or `HAVING` (lesson 8): those stages run *before or around* projection, so the alias isn't born yet. Written order and execution order are two different documents.",
+    },
+    {
+      kind: "myth",
+      myth: "\"`SELECT *` is fine everywhere — it's shorter.\"",
+      truth: "In exploratory poking, sure. In a report it silently changes shape when the schema changes, ships more bytes than needed, and hides *which* columns your numbers came from. Explicit columns are documentation that can't rot.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "SELECT name AS \"unit price\" FROM products LIMIT 2;", r: "Aliases with spaces need double quotes (or brackets/backticks elsewhere). Without quotes the parser sees two identifiers and errors out." },
+        { c: "SELECT 2 + 3 * 4;", r: "**14** — multiplication binds tighter than addition. SQL follows standard arithmetic precedence; parentheses when in doubt." },
+        { c: "SELECT id, id FROM customers LIMIT 1;", r: "Two output columns both named `id` — SQLite allows it, but downstream tools get ambiguous. Alias duplicates: `id, id AS id2`." },
+        { c: "SELECT name sale_price FROM products LIMIT 2;", r: "Even without `AS`, an adjacent identifier becomes an alias. Legal — and a classic way to *accidentally* hide a comma typo." },
+      ],
+    },
+    {
+      kind: "tip",
+      text: "Read a query the way the engine does: find `FROM` first and ask \"which rows am I working with?\", then read `SELECT` and ask \"what shape should they leave in?\". This two-step reading habit pays off the moment queries grow WHERE, GROUP BY and JOIN clauses around these two.",
+    },
+  ],
   takeaway: "SELECT shapes the output — projection picks columns and derivation computes new ones (alias anything computed) — while FROM names the source the rows come from.",
 };

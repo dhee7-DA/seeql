@@ -384,5 +384,53 @@ export const lesson04: Lesson = {
       expected: EXPECTED["l4-p8"],
     },
   ],
+  deep: [
+    {
+      kind: "mind",
+      text: "NULL is not a value — it is the **absence of a value**, a question mark wearing a column's clothing. Comparisons don't fail loudly around it; they return a third verdict, **UNKNOWN**, and `WHERE` only keeps TRUE. So a NULL row doesn't error, doesn't crash, doesn't show up — it just *silently vanishes* from reports. That silence is why NULL understanding separates analysts who reconcile from analysts who guess: the 21 orders with no `shipped_at` are not a bug in your query — they are a business fact (pending and cancelled work) that only `IS NULL` can see.",
+    },
+    {
+      kind: "engine",
+      title: "the engine meets a NULL",
+      steps: [
+        "**Comparison** — `NULL = anything` (even `NULL = NULL`) returns UNKNOWN, never TRUE. Three-valued logic: TRUE, FALSE, UNKNOWN — and WHERE filters out both FALSE and UNKNOWN.",
+        "**Arithmetic** — NULL propagates. `price * NULL` is NULL; one missing input poisons the whole expression rather than being treated as 0.",
+        "**Aggregation** — aggregates skip NULL *inputs*: `COUNT(*)` on orders counts **103** rows, `COUNT(shipped_at)` counts **82** values. SUM/AVG/MIN/MAX do the same.",
+        "**Sorting** — in SQLite, NULLs sort **first** ascending (so `ORDER BY shipped_at` shows the 21 unshipped orders at the top). PostgreSQL defaults the opposite way — NULLs last.",
+      ],
+    },
+    { kind: "diagram", figure: "v4-null-three-gates" },
+    {
+      kind: "h",
+      text: "Why 'is missing' and 'is zero' must never meet",
+    },
+    {
+      kind: "p",
+      text: "It is tempting to 'fix' NULLs by replacing them with zeros or empty strings — and it destroys information the moment you do. Zero is a measurement ('we sold 0 units'); NULL is *no measurement at all* ('we haven't looked / it doesn't apply / it hasn't happened yet'). The store's 21 NULL `shipped_at` rows mean *in the works* — write 0 over them and 'how many orders are still open?' becomes unanswerable, because the answer was stored in the absence. COALESCE (this lesson) has a legitimate job — presenting a fallback in the *output* — but the rule is: keep NULLs NULL in the data, resolve them at the edges, in SELECT, where display begins.",
+    },
+    {
+      kind: "myth",
+      myth: "\"NULL is the same as zero, or an empty string, or 'N/A' — missing is missing.\"",
+      truth: "They are different facts. 0 is a value you measured; '' is a string you stored; NULL is *no value at all*. Filters, aggregates and joins treat them differently: `WHERE col = ''` finds empty strings but never NULLs, and `COUNT(col)` counts the strings while skipping the NULLs.",
+    },
+    {
+      kind: "myth",
+      myth: "\"`NULL = NULL` must be TRUE — two missing things are equal.\"",
+      truth: "UNKNOWN. SQL reasons: 'I don't know what either value is, so I can't claim they're equal.' This is why `DISTINCT` and `GROUP BY` (which must bucket identical rows) make a special exception and treat NULLs as *one group* — and why joins never match NULL to NULL.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "SELECT COUNT(*) , COUNT(shipped_at) FROM orders;", r: "**103** vs **82** on one line. The star counts rows; the column counts values. Any report whose denominator silently assumes 103 while the data has 82 is wrong by construction." },
+        { c: "SELECT id FROM orders ORDER BY shipped_at LIMIT 3;", r: "The three lowest ids *and* all NULL `shipped_at` — SQLite sorts NULLs first ascending. Prepend `IS NULL` logic or add a second key when NULL placement matters." },
+        { c: "SELECT name, price * NULL FROM products LIMIT 2;", r: "The computed column comes back NULL for every row — one poisoned operand ruins the product. COALESCE the operand if a default truly makes sense." },
+        { c: "SELECT AVG(rating) FROM suppliers;", r: "A clean **mean of the 6 values** — all suppliers are rated here, so no NULL drama. If one rating were NULL, AVG would divide by 5, not 6. AVG skips, it does not zero-fill." },
+      ],
+    },
+    {
+      kind: "tip",
+      text: "New table in hand? Run the NULL census before any analysis: `SELECT COUNT(*), COUNT(col1), COUNT(col2) …` — the gaps between the numbers are your missing-data map, and it takes one line to draw.",
+    },
+  ],
   takeaway: "NULL means 'no value' — comparisons with it yield unknown, so IS NULL / IS NOT NULL are the only reliable tests, arithmetic propagates it, and aggregates quietly skip it.",
 };

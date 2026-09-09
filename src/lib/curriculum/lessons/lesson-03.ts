@@ -438,5 +438,55 @@ export const lesson03: Lesson = {
       expected: EXPECTED["l3-p9"],
     },
   ],
+  deep: [
+    {
+      kind: "mind",
+      text: "`WHERE` is a **bouncer at the door**: it holds the guest list (`total > 400`), stops every row, checks its ID, and only lets the matches through. Two things follow from the picture. First, the bouncer is *fast and dumb* — one predicate, one row, true or false, no memory of the previous row. Second, the bouncer works **before** the party is decorated: filtering happens before projection, sorting and aggregation, which is why your SELECT aliases mean nothing to it yet.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT name FROM products WHERE price BETWEEN 50 AND 100",
+      steps: [
+        "**FROM** — the 16 product rows are loaded, all columns present.",
+        "**WHERE** — each row walks through the gate. `BETWEEN 50 AND 100` is inclusive on *both* ends, and it evaluates per row: **4 products** survive this exact check on the live catalog.",
+        "**SELECT** — only now does projection run, keeping `name` from the 4 survivors. The filter never saw the projection; it worked on the raw row.",
+        "**No ORDER BY** — the 4 names arrive in no guaranteed order. If the report cares, the query must say so.",
+      ],
+    },
+    { kind: "diagram", figure: "v3-where-gate-ladder" },
+    {
+      kind: "h",
+      text: "The precedence trap, with real receipts",
+    },
+    {
+      kind: "p",
+      text: "`NOT` binds tightest, then `AND`, then `OR`. That ordering is not trivia — it silently changes headcounts. On the live orders table: `status = 'pending' AND total > 400 OR status = 'cancelled'` returns **12** rows, because the engine reads it as `(pending AND big) OR cancelled` — the cancelled orders barge in through the OR. Add parentheses — `pending AND (total > 400 OR cancelled)` — and the same words return **5**. Seven rows of difference, zero rows of typo. When a WHERE mixes AND and OR, parenthesize even when you're sure — *especially* when you're sure.",
+    },
+    { kind: "code", sql: "SELECT COUNT(*) AS without_parens\nFROM orders\nWHERE status = 'pending' AND total > 400 OR status = 'cancelled';", caption: "12 — AND merges first, cancelled joins via OR" },
+    { kind: "code", sql: "SELECT COUNT(*) AS with_parens\nFROM orders\nWHERE status = 'pending' AND (total > 400 OR status = 'cancelled');", caption: "5 — the intended question" },
+    {
+      kind: "myth",
+      myth: "\"`WHERE total > 400` and `WHERE total > 400 AND status = 'pending'` differ only by a stricter filter — combinable filters are interchangeable.\"",
+      truth: "Every added predicate redefines the **population** of the report. The store has 34 big orders; only **5** of them are also pending. Analysts who treat filters as cosmetic add-ons produce \"revenue\" numbers no two of which agree. Write the filter clause first and state the population it defines, then build the rest of the query on top.",
+    },
+    {
+      kind: "myth",
+      myth: "\"`LIKE` is case-sensitive — '%pro%' won't match 'Pro'.\"",
+      truth: "In **SQLite, `LIKE` is case-insensitive for ASCII letters**: `name LIKE '%pro%'` still finds the 2 'Pro' products. PostgreSQL is case-sensitive (use `ILIKE`), MySQL depends on column collation. Pattern-matching semantics are a dialect decision — never assume yours.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "WHERE shipped_at = NULL", r: "Returns **zero rows** — always. `= NULL` asks 'is no-value equal to no-value?' and gets UNKNOWN back. The only reliable test is `IS NULL` (lesson 4)."},
+        { c: "WHERE region IN ('US', 'LATAM')", r: "3 customers. `IN` is a compact OR-chain over exact matches — and it is easy to extend: add 'APAC' and the count becomes 8." },
+        { c: "WHERE name LIKE '%pro%' — lowercase", r: "Still 2 rows on SQLite (case-insensitive ASCII). The same query on PostgreSQL finds 0. A query that is 'portable' in syntax is not portable in behavior." },
+        { c: "WHERE total > 400 AND status = 'pending' OR status = 'shipped'", r: "A three-way version of the trap: you asked for 'big pending, plus everything shipped' — probably not what you meant. Parens first, headcount second." },
+      ],
+    },
+    {
+      kind: "tip",
+      text: "After writing any filter, run `SELECT COUNT(*)` with the same WHERE before trusting the report. A headcount of 34 vs an expected ~100 is a five-second catch; the same mistake in a quarterly deck is a reputational one.",
+    },
+  ],
   takeaway: "WHERE filters rows before anything else happens — comparisons combine with AND/OR (parenthesize when mixed), and IN, BETWEEN and LIKE are the three shorthands you'll use daily.",
 };

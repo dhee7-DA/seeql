@@ -419,5 +419,54 @@ export const lesson07: Lesson = {
       expected: EXPECTED["l7-p9"],
     },
   ],
+  deep: [
+    {
+      kind: "mind",
+      text: "Every aggregate is a **collapse**: feed it many rows, it hands back one number. `SUM(quantity * unit_price)` swallows all 251 order lines and returns **34,833.28**. The picture to keep: the output of an aggregate is a *different grain* than its input — 251 rows became 1 row. Almost every 'why does this query return one weird row?' mystery in early SQL is the collapse happening silently: the moment one aggregate appears in SELECT, the whole result collapses, unless GROUP BY (lesson 8) tells the engine to collapse *per bucket* instead.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT COUNT(*), COUNT(shipped_at), AVG(total) FROM orders",
+      steps: [
+        "**FROM + WHERE** — rows gathered first (all 103; a filter would shrink the population before any collapse).",
+        "**Collapse** — each aggregate scans the row stream once. `COUNT(*)` counts **rows**: 103. `COUNT(shipped_at)` counts **values**: 82 — the 21 NULLs are skipped, not zeroed.",
+        "**AVG's quiet division** — `AVG(total)` is SUM over *non-NULL count*, never over COUNT(*). A column with hidden NULLs shifts an average silently — the arithmetic never warns you.",
+        "**One row out** — the result table has exactly 1 row no matter how big the input was. Different grain, new table, only aggregates and bucket keys may appear in it.",
+      ],
+    },
+    { kind: "diagram", figure: "v7-aggregate-collapse" },
+    {
+      kind: "h",
+      text: "The empty set, and the quirk you must know about",
+    },
+    {
+      kind: "p",
+      text: "Aggregate over nothing and SQL splits into two camps: `COUNT` of zero rows is **0**, but `SUM`/`AVG`/`MIN`/`MAX` of zero rows are **NULL** — 'the sum of nothing' is not 0, it's no value. Filters that can eliminate every row (a date range with no sales) therefore turn SUM-based KPIs into NULLs that vanish in dashboards — wrap them in COALESCE when zero is the honest display. Then the quirk: SQLite *allows* mixing a bare column with an aggregate — `SELECT status, COUNT(*) FROM orders` runs and returns `pending, 103` — that status belongs to no bucket; the engine just picked a row. PostgreSQL rejects it outright. Tolerating the quirk trains a bug; write `GROUP BY` when you mean buckets, even though SQLite lets you not.",
+    },
+    { kind: "code", sql: "SELECT COUNT(*) AS n_rows,\n       SUM(total) AS sum_total,\n       ROUND(AVG(total), 2) AS avg_total\nFROM orders\nWHERE total > 99999;", caption: "the empty-set twins: COUNT says 0, SUM/AVG say NULL" },
+    {
+      kind: "myth",
+      myth: "\"AVG divides by the number of rows — 103 orders, so AVG counts everything.\"",
+      truth: "AVG divides by the count of *non-NULL values*. On `shipped_at`-style columns the difference is the whole story: 103 rows but 82 values. If 21 orders lacked `total`, AVG(total) would quietly describe only the 82 — check `COUNT(col)` next to `AVG(col)` whenever NULLs are possible.",
+    },
+    {
+      kind: "myth",
+      myth: "\"`SELECT status, COUNT(*) FROM orders` without GROUP BY gives me the count per status.\"",
+      truth: "It gives **one row** — 103 — next to an arbitrary status (we verified: `pending`). That's SQLite's leniency talking, not a per-status answer. PostgreSQL throws error 42803 for exactly this query. If you want per-bucket numbers, you want GROUP BY, and it deserves its own clause — next lesson.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "SELECT MIN(name), MAX(name) FROM products;", r: "Works on text — lexicographic order, so MIN/MAX are alphabet's ends, not price extremes. MIN/MAX are grain-agnostic; numbers and strings both collapse." },
+        { c: "SELECT ROUND(AVG(total), 2) FROM orders;", r: "AVG returns full floating precision; ROUND shapes the *display*. Round in SELECT, never store rounded — precision lost is precision gone." },
+        { c: "SELECT SUM(DISTINCT total) FROM orders;", r: "Legal and almost always a bug: it sums each distinct value once. Two orders both at 88.10 contribute 88.10, not 176.20. DISTINCT inside aggregates deserves suspicion by default." },
+        { c: "SELECT COUNT(*) FROM orders WHERE 1 = 0;", r: "**0** — the honest headcount of an impossible filter. Your sanity-check pattern: prove a report *can* return zero before you trust it returning non-zero." },
+      ],
+    },
+    {
+      kind: "tip",
+      text: "Make reconciliation a reflex: line-grain SUM(quantity * unit_price) = 34,833.28 and order-grain SUM(total) = 34,833.28 agree here. When two grains disagree in your company's data, that gap is not a SQL problem — it is a finding.",
+    },
+  ],
   takeaway: "Aggregates collapse many rows into one number — COUNT counts rows, COUNT(column) counts values, the rest skip NULLs and return NULL over empty sets — so alias every aggregate and ROUND for display.",
 };

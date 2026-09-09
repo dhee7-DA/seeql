@@ -1,11 +1,26 @@
 "use client";
 
-// Lesson view — three tabs: Learn (theory + diagrams), Quiz (all MCQs),
-// Practice (graded problems). Keyed remount per lesson resets tab state.
+// Lesson view — four tabs: Learn (theory + diagrams), Deep dive (premium
+// theory layer), Quiz (all MCQs), Practice (graded problems).
+// Keyed remount per lesson resets tab state.
 
 import { useMemo, useRef, useState } from "react";
-import { BookOpen, CircleHelp, Database, Lightbulb, Sparkles, TerminalSquare, TriangleAlert } from "lucide-react";
-import type { Lesson } from "@/lib/curriculum/types";
+import {
+  BookOpen,
+  Brain,
+  Check,
+  CircleHelp,
+  Cog,
+  Database,
+  Lightbulb,
+  Microscope,
+  Sparkles,
+  Split,
+  TerminalSquare,
+  TriangleAlert,
+  X,
+} from "lucide-react";
+import type { Block, DeepBlock, Lesson } from "@/lib/curriculum/types";
 import { useProgress } from "@/lib/curriculum/progress";
 import { splitStatements } from "@/lib/sql-statements";
 import { cn } from "@/lib/utils";
@@ -17,7 +32,7 @@ import { ProblemCard } from "./problem-runner";
 import { ResultGrid } from "./result-grid";
 import { celebrate } from "./celebrate";
 
-type Tab = "learn" | "quiz" | "practice";
+type Tab = "learn" | "deep" | "quiz" | "practice";
 
 const DIALECT_META: Record<string, { label: string; pill: string }> = {
   postgres: { label: "PostgreSQL", pill: "border-teal-400/40 bg-teal-400/10 text-teal-300" },
@@ -247,6 +262,171 @@ function CodeBlock({ sql, caption, runnable = true }: { sql: string; caption?: s
   );
 }
 
+/* ---------------- deep-dive block renderers ---------------- */
+
+function MindCard({ text }: { text: string }) {
+  return (
+    <div className="sheen relative my-4 overflow-hidden rounded-lg border border-violet-400/25 bg-violet-400/[0.05] px-4 py-3.5">
+      <span className="absolute inset-y-2.5 left-0 w-[2.5px] rounded-full bg-violet-400/80" />
+      <div className="flex items-center gap-2">
+        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-violet-400/30 bg-violet-400/10 text-violet-300">
+          <Brain className="h-3.5 w-3.5" />
+        </span>
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-violet-300">Mental model</span>
+      </div>
+      <Rich text={text} className="mt-1.5 text-[15px] font-medium leading-7 text-zinc-100" />
+    </div>
+  );
+}
+
+function EngineCard({ title, steps }: { title: string; steps: string[] }) {
+  return (
+    <div className="sheen relative my-4 overflow-hidden rounded-lg border border-teal-400/25 bg-teal-400/[0.04]">
+      <span className="absolute inset-y-2.5 left-0 w-[2.5px] rounded-full bg-teal-400/80" />
+      <div className="flex items-center gap-2 px-4 pt-3">
+        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-teal-400/30 bg-teal-400/10 text-teal-300">
+          <Cog className="h-3.5 w-3.5" />
+        </span>
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-teal-300">Inside the engine</span>
+        <span className="text-xs text-zinc-400">— {title}</span>
+      </div>
+      <ol className="space-y-0 px-4 pb-3.5 pt-2.5">
+        {steps.map((s, i) => (
+          <li key={i} className="relative flex gap-3 pb-2.5 last:pb-0">
+            {i < steps.length - 1 && <span className="absolute left-[9px] top-5 h-[calc(100%-14px)] w-px bg-teal-400/25" />}
+            <span className="mt-0.5 flex h-[19px] w-[19px] shrink-0 items-center justify-center rounded-full border border-teal-400/40 bg-zinc-950 font-mono text-[10px] text-teal-300">
+              {i + 1}
+            </span>
+            <Rich text={s} className="text-[13.5px] leading-6 text-zinc-300" />
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+function MythCard({ myth, truth }: { myth: string; truth: string }) {
+  return (
+    <div className="my-4 overflow-hidden rounded-lg border border-zinc-800">
+      <div className="grid grid-cols-[1fr_auto_1fr] items-stretch">
+        <div className="bg-rose-400/[0.05] px-4 py-3">
+          <div className="flex items-center gap-1.5">
+            <X className="h-3.5 w-3.5 text-rose-400" />
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-rose-300">Myth</span>
+          </div>
+          <Rich text={myth} className="mt-1.5 text-[13.5px] leading-6 text-zinc-300" />
+        </div>
+        <div className="flex items-center bg-zinc-900/60 px-1">
+          <Split className="h-3.5 w-3.5 rotate-180 text-zinc-600" />
+        </div>
+        <div className="bg-emerald-400/[0.05] px-4 py-3">
+          <div className="flex items-center gap-1.5">
+            <Check className="h-3.5 w-3.5 text-emerald-400" />
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-300">Reality</span>
+          </div>
+          <Rich text={truth} className="mt-1.5 text-[13.5px] leading-6 text-zinc-200" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EdgeCard({ items }: { items: Array<{ c: string; r: string }> }) {
+  return (
+    <div className="my-4 overflow-hidden rounded-lg border border-zinc-800">
+      <div className="border-b border-zinc-800 bg-zinc-900 px-4 py-2 text-[10px] font-semibold uppercase tracking-wider text-zinc-400">
+        Edge-case gallery
+      </div>
+      <div className="divide-y divide-zinc-800/70">
+        {items.map((e, i) => (
+          <div key={i} className="grid grid-cols-[minmax(140px,38%)_1fr] gap-3 px-4 py-2.5 odd:bg-zinc-950/40">
+            <code className="whitespace-pre-wrap font-mono text-xs leading-6 text-zinc-200">{e.c}</code>
+            <Rich text={e.r} className="text-[13px] leading-6 text-zinc-400" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Renders a shared Block inside the deep tab (mirrors the learn-tab arms). */
+function SharedBlock({ b }: { b: Block }) {
+  switch (b.kind) {
+    case "p":
+      return <Rich text={b.text} className="text-[15px] leading-7 text-zinc-300" />;
+    case "h":
+      return (
+        <div className="mb-3 mt-7 flex items-center gap-2.5">
+          <span className="h-3.5 w-1 rounded-full bg-violet-400" />
+          <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-400">{b.text}</span>
+          <span className="h-px flex-1 bg-zinc-800/70" />
+        </div>
+      );
+    case "bullets":
+      return (
+        <ul className="my-4 space-y-2.5">
+          {b.items.map((t, bi) => (
+            <li key={bi} className="flex gap-3">
+              <span className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-[2px] bg-violet-400/80" />
+              <Rich text={t} className="text-[14px] leading-6 text-zinc-300" />
+            </li>
+          ))}
+        </ul>
+      );
+    case "code":
+      return <CodeBlock sql={b.sql} caption={b.caption} runnable={b.runnable} />;
+    case "diagram":
+      return <Figure id={b.figure} />;
+    case "tip":
+      return (
+        <Callout tone="tip" icon={Lightbulb} label="Tip">
+          <Rich text={b.text} className="text-sm leading-relaxed text-zinc-300" />
+        </Callout>
+      );
+    case "table":
+      return (
+        <div className="my-4 overflow-hidden rounded-lg border border-zinc-800">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-zinc-900">
+              <tr>
+                {b.headers.map((h) => (
+                  <th key={h} className="border-b border-zinc-800 px-3.5 py-2 text-xs font-medium text-zinc-300">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {b.rows.map((row, ri) => (
+                <tr key={ri} className="odd:bg-zinc-950/40">
+                  {row.map((cell, ci) => (
+                    <td key={ci} className={cn("border-b border-zinc-900 px-3.5 py-2 text-zinc-400", ci === 0 && "font-mono text-xs text-zinc-200")}>{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {b.caption && <p className="bg-zinc-900 px-3.5 py-2 text-[11px] text-zinc-500">{b.caption}</p>}
+        </div>
+      );
+    default:
+      return null;
+  }
+}
+
+function DeepBlockView({ b }: { b: DeepBlock }) {
+  switch (b.kind) {
+    case "mind":
+      return <MindCard text={b.text} />;
+    case "engine":
+      return <EngineCard title={b.title} steps={b.steps} />;
+    case "myth":
+      return <MythCard myth={b.myth} truth={b.truth} />;
+    case "edge":
+      return <EdgeCard items={b.items} />;
+    default:
+      return <SharedBlock b={b as Block} />;
+  }
+}
+
 export function LessonView({ lesson, onBonusChecked }: { lesson: Lesson; onBonusChecked?: () => void }) {
   const [tab, setTab] = useState<Tab>("learn");
   const store = useProgress();
@@ -277,6 +457,9 @@ export function LessonView({ lesson, onBonusChecked }: { lesson: Lesson; onBonus
 
   const tabs: Array<{ id: Tab; label: string; icon: typeof BookOpen; note: string }> = [
     { id: "learn", label: "Learn", icon: BookOpen, note: `${lesson.minutes} min` },
+    ...(lesson.deep?.length
+      ? [{ id: "deep" as Tab, label: "Deep dive", icon: Microscope, note: "go further" }]
+      : []),
     { id: "quiz", label: "Quiz", icon: CircleHelp, note: `${lesson.mcqs.length} questions` },
     {
       id: "practice",
@@ -429,6 +612,27 @@ export function LessonView({ lesson, onBonusChecked }: { lesson: Lesson; onBonus
             <p className="text-sm text-zinc-400">
               Ready to prove it? Take the quiz, then solve the practice queries.
             </p>
+            <button
+              onClick={() => setTab("quiz")}
+              className="btn-glow rounded-md bg-emerald-400 px-3.5 py-1.5 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300"
+            >
+              Take the quiz →
+            </button>
+          </div>
+        </div>
+      )}
+
+      {tab === "deep" && lesson.deep && (
+        <div className="mt-5 max-w-3xl">
+          <p className="mb-1 text-sm text-zinc-500">
+            The engine's secrets, the mental models, the traps. This is the layer that separates
+            people who type SQL from people who read it.
+          </p>
+          {lesson.deep.map((b, i) => (
+            <DeepBlockView key={i} b={b} />
+          ))}
+          <div className="sheen mt-6 flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-3">
+            <p className="text-sm text-zinc-400">Depth banked. Now make it stick — take the quiz.</p>
             <button
               onClick={() => setTab("quiz")}
               className="btn-glow rounded-md bg-emerald-400 px-3.5 py-1.5 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300"

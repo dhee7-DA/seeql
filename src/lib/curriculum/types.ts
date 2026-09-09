@@ -93,6 +93,14 @@ export type FigureId =
   | "fin4-mom-bridge"
   | "fin5-trial-balance"
   | "fin6-frame-slide"
+  | "v1-grain-zoom"
+  | "v2-select-pipeline"
+  | "v3-where-gate-ladder"
+  | "v4-null-three-gates"
+  | "v5-sort-slice"
+  | "v6-distinct-sieve"
+  | "v7-aggregate-collapse"
+  | "v8-bucket-gate"
 
 export type Block =
   | { kind: "p"; text: string }
@@ -108,6 +116,23 @@ export type Block =
 
 /** Engine whose behavior differs from SQLite in the context of the note. */
 export type DbDialect = "postgres" | "mysql" | "sqlite";
+
+/** Blocks for the Deep dive tab — the premium theory layer. Reuses the
+ *  visual vocabulary of Block and adds four deep-dive-only kinds:
+ *  mind (mental model), engine (execution walkthrough), myth (misconception
+ *  pairs), edge (edge-case gallery). */
+export type DeepBlock =
+  | { kind: "p"; text: string }
+  | { kind: "h"; text: string }
+  | { kind: "bullets"; items: string[] }
+  | { kind: "code"; sql: string; caption?: string; runnable?: boolean }
+  | { kind: "diagram"; figure: FigureId }
+  | { kind: "table"; headers: string[]; rows: string[][]; caption?: string }
+  | { kind: "tip"; text: string }
+  | { kind: "mind"; text: string }
+  | { kind: "engine"; title: string; steps: string[] }
+  | { kind: "myth"; myth: string; truth: string }
+  | { kind: "edge"; items: Array<{ c: string; r: string }> };
 
 export interface Mcq {
   /** Stable id, e.g. "l3-q2" — referenced by the XP ledger. */
@@ -175,6 +200,9 @@ export interface Lesson {
   problems: Problem[];
   /** One-sentence closing takeaway, shown at the end of the theory tab. */
   takeaway?: string;
+  /** Deep dive — premium theory layer (engine mechanics, mental models,
+   *  misconceptions, edge cases). Rendered in its own tab when present. */
+  deep?: DeepBlock[];
 }
 
 /** Inline `code` and **bold** markers are rendered by the rich-text helper. */

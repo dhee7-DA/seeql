@@ -10,6 +10,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import type { FigureId } from "@/lib/curriculum/types";
 import { FIGURES_M2 } from "./diagrams-m2";
+import { FIGURES_M1X } from "./diagrams-m1x";
 import { FIGURES_M3 } from "./diagrams-m3";
 import { FIGURES_M4 } from "./diagrams-m4";
 import { FIGURES_M5 } from "./diagrams-m5";
@@ -1572,6 +1573,7 @@ function L7CountStar() {
 /* ---------------- registry ---------------- */
 
 const FIGURES: Partial<Record<FigureId, () => React.JSX.Element>> = {
+  ...FIGURES_M1X,
   ...FIGURES_M2,
   ...FIGURES_M3,
   ...FIGURES_M4,

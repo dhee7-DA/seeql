@@ -540,5 +540,53 @@ export const lesson05: Lesson = {
       ordered: true,
     },
   ],
+  deep: [
+    {
+      kind: "mind",
+      text: "`ORDER BY` is a **promise about the output, not the storage**. The table is never sorted, touched, or rearranged — the engine builds a fresh, ordered *view of the rows* and hands you that. Picture the result set as a strip of film: `ORDER BY` splices the frames into a deliberate sequence, and `LIMIT` is the guillotine that cuts a short clip off the top. Top-N reporting — 'best 3', 'latest 5', 'worst 10' — is always these two clauses working as one machine; you rarely meet one without the other.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT status, total FROM orders ORDER BY status, total DESC LIMIT 3",
+      steps: [
+        "**FROM + WHERE** — candidate rows are gathered (all 103 here; a filter would shrink the pool first).",
+        "**Sort** — the engine must materialize an ordering structure: `EXPLAIN QUERY PLAN` literally prints `USE TEMP B-TREE FOR ORDER BY`. Sorting is *real work* — the reason `ORDER BY` on huge tables costs and why indexes exist (Module 8).",
+        "**Two keys** — `status` ascending groups the film into acts; `total DESC` orders the frames *within* each act. Ties in key 1 are broken by key 2 — that is what multi-key sort means.",
+        "**LIMIT** — only after the full sort does the guillotine cut: the top 3 rows are `cancelled 397.99`, `cancelled 206.19`, `cancelled 152.52` — verified against the live table.",
+      ],
+    },
+    { kind: "diagram", figure: "v5-sort-slice" },
+    {
+      kind: "h",
+      text: "Ties, NULLs and the illusion of stability",
+    },
+    {
+      kind: "p",
+      text: "A sort key that ties is a sort key that *doesn't decide*. Order by `status` alone and the 52 delivered orders arrive in engine-whim order — run it twice on a different SQLite build and the sequence can differ. The professional fix is a decisive final key: add `id` (unique) so the output is *deterministic* — same query, same data, same order, every time. And remember the NULL wrinkle from last lesson: ascending sorts put NULLs first in SQLite, last in PostgreSQL. A 'top of the list' that is actually a pile of missing values is a classic surprise.",
+    },
+    {
+      kind: "myth",
+      myth: "\"`ORDER BY` sorts the table — after running it, the table is in that order.\"",
+      truth: "It sorts the *result set*, a fresh in-memory arrangement. Run `SELECT * FROM orders` right after and the table is exactly as unordered as before. The only way to get a reliably ordered read is to include `ORDER BY` in *every* query whose order you care about.",
+    },
+    {
+      kind: "myth",
+      myth: "\"SQLite returns rows in id order anyway, so I can skip ORDER BY when I want insertion order.\"",
+      truth: "It *usually* does — which is precisely the danger. The guarantee does not exist; the plan may change with row count, indexes, or version. 'It looks right on my machine' is how undeterministic exports ship. If order matters, order it.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "SELECT … ORDER BY price DESC LIMIT 3, 5;", r: "SQLite's comma form: skip 3, take 5 — `OFFSET 3 LIMIT 5` with different word order. Works, but read it twice every time." },
+        { c: "SELECT … ORDER BY shipped_at;", r: "NULLs first (SQLite, ascending) — your 'earliest shipments' report may lead with 21 unshipped orders. Use `ORDER BY shipped_at NULLS LAST` (Postgres) or `ORDER BY shipped_at IS NULL, shipped_at` (portable)." },
+        { c: "SELECT … LIMIT 0;", r: "Legal — returns the column headers, zero rows. A quiet way to test a query's shape without paying for data." },
+        { c: "SELECT … LIMIT 500;", r: "Table has 103 rows? Returns all 103, no error. `LIMIT` is a ceiling, not a quota — big ceilings make idle 'top-N' claims look authoritative." },
+      ],
+    },
+    {
+      kind: "tip",
+      text: "Every 'top-N' answer has a hidden population: the WHERE before the sort. 'Top 3 products' by revenue *including* cancelled orders and *excluding* them are different stories — decide the population, then sort, then cut.",
+    },
+  ],
   takeaway: "ORDER BY sorts (keys read left to right, ASC by default, each with its own direction), LIMIT caps the sorted result — that's top-N — and OFFSET skips ahead; together they turn an unordered table into a deliberate list.",
 };

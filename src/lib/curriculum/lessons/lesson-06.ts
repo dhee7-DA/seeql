@@ -357,5 +357,54 @@ export const lesson06: Lesson = {
       ordered: true,
     },
   ],
+  deep: [
+    {
+      kind: "mind",
+      text: "`DISTINCT` is a **sieve for values**: pour the result set in, and one copy of every distinct combination comes out. The mental picture that saves you: DISTINCT operates on the **whole output row** — the full tuple of selected columns — never on one column. `SELECT DISTINCT region, city` asks for unique *pairs*, which is why it can return many rows even though regions are few. The moment you add a column 'just to also see it', you change what 'duplicate' means.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT DISTINCT region FROM customers",
+      steps: [
+        "**FROM + WHERE** — 16 customer rows gathered (filters would run first as always).",
+        "**Project** — each row shrinks to its `region` value: a stream of 16 strings, duplicates included.",
+        "**Dedupe** — the engine holds a working set of seen values and drops repeats. NULL handling matters here: all NULLs collapse to **one** NULL row — DISTINCT treats NULLs as equal to each other (the famous exception to 'NULL never equals').",
+        "**Output** — 4 rows: EU, APAC, US, LATAM — in *no guaranteed order* until you ORDER BY. DISTINCT output is a set, not a sorted list.",
+      ],
+    },
+    { kind: "diagram", figure: "v6-distinct-sieve" },
+    {
+      kind: "h",
+      text: "The analyst's first data-quality instrument",
+    },
+    {
+      kind: "p",
+      text: "Row-count drops are where DISTINCT becomes diagnostic. This store's `customers` has 16 rows, 4 distinct regions — normal; regions *should* repeat. But it also has **16 distinct cities for 16 customers**: every single customer lives in a different city. That asymmetry (region repeats, city never does) is a fingerprint of how the data was generated — and in real datasets, the same technique finds the opposite problem: 4,000 rows with 4,000 distinct order-ids is healthy, but 4,000 rows with 3,997 distinct ids means three duplicates sneaked in. `COUNT(*)` vs `COUNT(DISTINCT id)` is the cheapest duplicate detector you own, and it needs no joins, no tools, no permissions.",
+    },
+    { kind: "code", sql: "SELECT COUNT(*) AS rows_total,\n       COUNT(DISTINCT id) AS distinct_ids\nFROM customers;", caption: "the two-number duplicate check — equal is healthy, a gap means dupes" },
+    {
+      kind: "myth",
+      myth: "\"`SELECT DISTINCT region, city` dedupes just the first column — regions.\"",
+      truth: "It dedupes the **pair**. Only 4 regions exist, but region+city pairs are unique 16 times over, so you get 16 rows back. Anyone burned by this wrote a 'deduplicated' report that wasn't. One tuple = one dedupe unit, always.",
+    },
+    {
+      kind: "myth",
+      myth: "\"DISTINCT removes NULLs too — they're not real values.\"",
+      truth: "It keeps exactly **one** NULL. Dedupe asks 'have I seen this value?' and NULL is treated as seen-after-first-sight. (COUNT(DISTINCT col) is the odd one out — it counts no NULL at all.)",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "SELECT COUNT(DISTINCT region) FROM customers;", r: "**4** — the aggregate form collapses inside COUNT. NULLs would be skipped here, unlike plain `SELECT DISTINCT` which keeps one." },
+        { c: "SELECT DISTINCT city FROM customers;", r: "16 rows for 16 customers — the all-unique fingerprint. This is how you discover a column is a natural key without any schema knowledge." },
+        { c: "SELECT DISTINCT region FROM customers ORDER BY region;", r: "APAC, EU, LATAM, US — sorted. DISTINCT without ORDER BY has undefined order; the two clauses compose fine (dedupe first, sort second)." },
+        { c: "SELECT DISTINCT status, customer_id FROM orders;", r: "Unique *pairs* — **37** rows here (vs 4 for DISTINCT status alone). One extra column changed what 'duplicate' means, nearly ninefold." },
+      ],
+    },
+    {
+      kind: "tip",
+      text: "DISTINCT is a smell as well as a tool: if your report needs DISTINCT to be correct, ask *why duplicates exist* — a missing filter (are you accidentally counting both test arms?) or a join fanout (Module 2's most famous lesson) is usually the true culprit. DISTINCT hides symptoms; great analysts cure causes.",
+    },
+  ],
   takeaway: "DISTINCT dedupes whole output rows — not the first column — after WHERE has filtered, every NULL counts as one value, and a surprising row-count drop is a bug signal to investigate, not a feature.",
 };

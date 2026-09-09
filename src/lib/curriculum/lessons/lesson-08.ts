@@ -489,5 +489,54 @@ export const lesson08: Lesson = {
       ordered: true,
     },
   ],
+  deep: [
+    {
+      kind: "mind",
+      text: "`GROUP BY` is a **bucket machine**: it stands between WHERE and SELECT, picks up every surviving row, reads the bucket key (`status`), and drops the row into its bucket. When the stream ends, each bucket collapses to one output row. The invariant that follows: **every column in SELECT must be either a bucket key or an aggregate** — a bucket has no single 'name' or 'total', only its key and its collapsed numbers. Break the invariant in SQLite and you get a random row's value; break it in PostgreSQL and you get an error. The invariant is the lesson.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT status, COUNT(*) FROM orders GROUP BY status",
+      steps: [
+        "**FROM + WHERE** — 103 order rows stream in (a WHERE here would filter *rows*, pre-bucket).",
+        "**Bucket** — the engine reads `status` per row and routes: delivered pile, shipped pile, pending pile, cancelled pile. Four piles form; the piles are the new grain.",
+        "**Collapse per bucket** — `COUNT(*)` runs *once per pile*: 52, 30, 14, 7. One aggregate call per bucket — not per row. This is why GROUP BY turns one aggregate into many answers for free.",
+        "**Output** — 4 rows, unordered until ORDER BY. The output table's grain is now 'one status', not 'one order' — every later clause sees buckets, not original rows.",
+      ],
+    },
+    { kind: "diagram", figure: "v8-bucket-gate" },
+    {
+      kind: "h",
+      text: "WHERE and HAVING: two gates at two stages",
+    },
+    {
+      kind: "p",
+      text: "They look interchangeable and they are not: `WHERE` filters **rows before buckets exist**; `HAVING` filters **buckets after they form**. The practical test: does the condition make sense for one row, or only for a collapsed group? 'Pending orders' — row-level, WHERE. 'Statuses with at least 30 orders' — a fact about a *bucket*, HAVING. On this store: `HAVING COUNT(*) >= 30` keeps delivered (52) and shipped (30) and drops pending (14) and cancelled (7) — you cannot even *ask* that question in WHERE, because no row knows how many siblings it has. Chain them and the pipeline reads like a sentence: WHERE picks the rows, GROUP BY forms the buckets, HAVING keeps the qualifying buckets, ORDER BY lines them up.",
+    },
+    { kind: "code", sql: "SELECT status, COUNT(*) AS n, ROUND(SUM(total), 2) AS revenue\nFROM orders\nGROUP BY status\nHAVING COUNT(*) >= 30\nORDER BY revenue DESC;", caption: "row gate → buckets → bucket gate → rank — the full M1 pipeline" },
+    {
+      kind: "myth",
+      myth: "\"HAVING is just WHERE with aggregates allowed — pick whichever reads nicer.\"",
+      truth: "They run at **different stages on different objects**: WHERE on rows (pre-collapse), HAVING on buckets (post-collapse). Filtering rows early with WHERE is also *cheaper* — fewer rows enter the bucket machine. Putting a row-level condition in HAVING is legal and wasteful; the engine builds buckets you were about to throw away.",
+    },
+    {
+      kind: "myth",
+      myth: "\"Only aggregate queries use GROUP BY — it's an advanced clause I can defer.\"",
+      truth: "GROUP BY is *the* reporting clause: every dashboard you have ever seen — revenue by month, orders by region, users by plan — is this lesson. Deferring it defers analytics itself. The good news: the whole concept is one machine (bucket, then collapse), and you already run both halves individually.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "GROUP BY shipped_at  —  with 21 NULLs present", r: "All NULLs land in **one bucket** (the dedupe exception again). You get a '+1 group' whose key prints NULL — often the 'not shipped yet' group, which is usually the *interesting* one." },
+        { c: "GROUP BY 1", r: "Ordinal form: bucket by the first SELECT column. SQLite and PostgreSQL accept it; it is compact in ad-hoc work and fragile in production — rename a column and the ordinal silently retargets." },
+        { c: "SELECT COUNT(*) FROM orders HAVING COUNT(*) > 100;", r: "HAVING **without** GROUP BY: the whole table is one implicit bucket. Returns zero rows when the check fails, one row when it passes — a slick existence check." },
+        { c: "SELECT status, COUNT(*) FROM orders  —  no GROUP BY", r: "SQLite returns `pending, 103` (arbitrary row's status); PostgreSQL errors. Lesson 7's quirk in the wild — the invariant (key or aggregate) is the portable habit." },
+      ],
+    },
+    {
+      kind: "tip",
+      text: "Read any GROUP BY query in pipeline order — FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY — and annotate each clause with what exists at that moment (rows? buckets?). Every confusion in this module dissolves once you can name what stage you are standing in.",
+    },
+  ],
   takeaway: "GROUP BY turns one aggregate into one-per-bucket — every SELECT column must be grouped or aggregated, WHERE filters rows in, HAVING filters buckets out, and ORDER BY/LIMIT rank the survivors.",
 };

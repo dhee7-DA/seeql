@@ -919,3 +919,21 @@ Work Log:
 
 Stage Summary:
 - Module 9 shipped: the storefront now has real books — integer-cent invoices/payments/expenses plus a balanced double-entry ledger — and 6 lessons teach finance analytics ON the engine (aging, balances, growth, reconciliation, outlier stats). Two audit catches are planted and discoverable. Remaining Phase 5: #15 data dial, #16 share/export; possible follow-up: finance case files on the chip-rebuild system
+
+---
+Task ID: m1-deep-1
+Agent: main
+Task: Module 1 theory-density wave — "Deep dive" premium layer (user approved: tiered MCQs, module-by-module pipeline M1 theory → M1 MCQs → M1 cases)
+
+Work Log:
+- Verified 30+ teaching numbers live before writing prose (scripts/m1-facts.ts): counts 16/16/6/103/251; status 52/30/14/7; NULL shipped_at 21; COUNT(*) vs COUNT(shipped_at) 103/82; precedence pair 12 vs 5; price ties NONE (all 16 unique); LIKE case-insensitivity '%pro%'=2; BETWEEN 50-100 → 4; region IN US+LATAM → 3; NULLs sort first ASC (SQLite); SUM reconciliation line-grain = order-grain = 34,833.28; DISTINCT(status,customer_id) pairs = 37; bare-column quirk returns pending,103; avg line 138.78, min 14.46, max 599.91
+- types.ts: new DeepBlock union (reuses p/h/bullets/code/diagram/table/tip + adds mind | engine | myth | edge) + Lesson.deep? field + 8 new FigureIds v1-grain-zoom … v8-bucket-gate
+- diagrams-m1x.tsx (new, ~520 lines): 8 premium SVG figures in the house style — v1 grain zoom (orders→order_items), v2 SELECT/FROM pipeline, v3 WHERE gate + operator ladder with 12-vs-5 receipts, v4 NULL three-valued gates (82/21), v5 multi-key sort + LIMIT slice (verified rows) + TEMP B-TREE engine note, v6 DISTINCT sieve (16→4 buckets + counting trio), v7 aggregate collapse (251→1, five verified readouts), v8 bucket machine (52/30/14/7) + HAVING >= 30 gate (kept 2 / dropped 2); registered via FIGURES_M1X spread in diagrams.tsx
+- lesson-view.tsx: 4th tab "Deep dive · go further" (Microscope icon, only when lesson.deep exists); new renderers MindCard (violet Brain callout), EngineCard (teal numbered pipeline with connector line), MythCard (rose Myth | emerald Reality split grid), EdgeCard (case/result gallery table); SharedBlock mirrors learn-tab arms with violet accents
+- Authored 8 dense deep-dives (lesson-01..08.ts), each ~10 blocks: mental model, engine walkthrough, premium figure, analytics-angle prose, 2 myth-vs-reality cards, 4-row edge-case gallery, tip; themes: L1 grain/ledger-not-screen + 34,833.28 reconciliation, L2 FROM-before-SELECT + alias birth, L3 bouncer + precedence receipts (12/5), L4 three-valued logic + NULL census, L5 sort output-promise + TEMP B-TREE + deterministic final key, L6 tuple dedupe + 16-distinct-cities fingerprint + dup detector, L7 collapse grain + empty-set twins (0 vs NULL) + SQLite bare-column quirk (pending,103), L8 bucket machine + WHERE/HAVING stage split + HAVING-without-GROUP BY trick
+- Layout bug fixes caught by screenshots: v3 right-edge clipping (34 rows pass + ladder receipts → anchor end x=688/706), v8 GROUP BY label buried under chip field (moved to caption under chips y=146), rail-text overflow in v6/v7/v8 (trimmed to fit 676px)
+- scripts/m1-probes.ts: all 20 runnable SQL probes embedded in deep-dives verified OK against live engine (empty-set twins [0,null,null], full pipeline [delivered,52,15571.07], etc.)
+- E2E (agent-browser): all 8 lessons show Deep dive tab; L1/L3/L8 deep-verified (mind/engine/myth/edge/figure all render, 1 svg each); async sweep confirmed L2/L4/L5/L6/L7 tab+figure+blocks; tsc + eslint clean (pre-existing content-audit errors only); console clean; 6 screenshots scripts/shots/m1deep-{1..6}*.png
+
+Stage Summary:
+- Module 1 theory-density wave shipped: every L1-8 lesson now has a 4-tab layout with a premium Deep dive layer (mental models, engine mechanics, myth-vs-reality, edge galleries, 8 new hand-drawn figures — every number engine-verified). Next in the M1 pipeline: tiered MCQ bank (core 50 / secondary 15-20 / utility 8-10) then fill-in-the-blank case studies on the shared grading engine

@@ -352,5 +352,53 @@ export const lesson01: Lesson = {
       expected: EXPECTED["l1-p8"],
     },
   ],
+  deep: [
+    {
+      kind: "mind",
+      text: "A table is a **ledger, not a screen**. A spreadsheet saves what you last looked at; a database saves what is *true*. Nothing in `orders` remembers which row you typed first, which one you colored yellow, or what order you scrolled them — it only stores facts. That austerity is the feature: every query re-derives the answer from the facts, so two people running the same query always get the same business reality.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT * FROM orders",
+      steps: [
+        "**Parse** — the text is checked against SQL grammar; a typo here fails before the database is even touched.",
+        "**Plan** — the engine decides *how* to read the table. `EXPLAIN QUERY PLAN` prints the decision: for this query it says `SCAN orders` — read every row.",
+        "**Scan** — each row is materialized in turn. SQLite actually stores a hidden `rowid` per row — the closest thing to a physical row number, and the reason small tables *appear* ordered.",
+        "**Ship** — surviving rows stream back to you in packets; the tool you use (this app, a CLI, a dashboard) renders them.",
+      ],
+    },
+    { kind: "diagram", figure: "v1-grain-zoom" },
+    {
+      kind: "h",
+      text: "Why grain is the first analytics decision",
+    },
+    {
+      kind: "p",
+      text: "Every number you will ever report has a grain hiding inside it. The average line in `order_items` is **138.78** — but nobody spends 138.78 on a *line*; they spend it across a *basket*. Sum line values and you get revenue: **34,833.28** across 251 lines. Now sum `orders.total` instead — different table, different grain — and you get **34,833.28** again. That agreement is not luck; it is the schema's promise that every line belongs to exactly one order. When two grains reconcile, your model is sound; when they don't, someone sold outside the ledger. Analysts who can't state the grain of their query produce numbers that *look* right and reconcile with nothing. Ask \"what is one row of my output?\" before you write SELECT, not after the CFO asks you.",
+    },
+    {
+      kind: "myth",
+      myth: "\"A table is basically a spreadsheet — rows stay where I put them, so row 3 is always row 3.\"",
+      truth: "A table is an unordered **set**. Without `ORDER BY`, SQL promises zero row order. SQLite often *shows* insertion order because of how its storage works — which is exactly why this bug ships to production and explodes on a different engine or a bigger table.",
+    },
+    {
+      kind: "myth",
+      myth: "\"Copying the customer's name into every order row is faster — why look it up?\"",
+      truth: "That duplication is how data **rots**: a customer renames, and 103 order rows still carry the old one. Keys + one fact in one place means a fact can never go stale. Joins (Module 2) reassemble the picture at query time — that trade is the whole relational idea.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "SELECT * FROM nosuchtable;", r: "Error: `no such table`. The parse and plan stages happen before any row is read — wrong names fail fast and cheap." },
+        { c: "SELECT * FROM orders;" , r: "Returns all 103 rows and every column — fine for looking, wasteful for reports. `SELECT *` in production code breaks the moment the schema grows a column." },
+        { c: "SELECT rowid FROM customers LIMIT 3;", r: "SQLite exposes the hidden `rowid` — proof that storage has a physical idea of position that SQL's *logical* model deliberately hides from you." },
+        { c: "SELECT COUNT(*) FROM order_items;", r: "**251** — the line table outgrows `orders` (103) because one order = one row *per product*. Grain, visible in a single number." },
+      ],
+    },
+    {
+      kind: "tip",
+      text: "Open the Playground's **Schema** tab and read the five tables' grain aloud: one row of `customers` is one person; one row of `order_items` is one product line. Saying the grain out loud before writing a query is the cheapest debugging habit you will ever learn.",
+    },
+  ],
   takeaway: "A table is an unordered grid of typed rows; primary and foreign keys glue tables together — and every SELECT you'll ever write is just a question asked over that structure.",
 };
