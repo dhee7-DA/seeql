@@ -1,0 +1,320 @@
+Task: Author 5 capstone case files cs-196..200 (cases-b9.ts)
+
+Work Log:
+- Read types.ts, exemplars.ts (voice models cs-166/cs-136), scripts/facts/cap.json, and scripts/case-audit.ts (comparison semantics).
+- Probed a read-only copy of db/custom.db for missing figures: full monthly revenue ranking (2024-01 3731.97 top, 2024-02 3609.64 runner-up, 2024-07 1193.86 low), unshipped split (pending 14 / cancelled 7), suppliers by region (EU 2@4.7, APAC 2@4.0, US/LATAM single-source), order_items rates > 200 (5 distinct: 200.07, 204.19, 205.31, 205.81, 209.68; 199.97 near-miss), Audio shelf (3 SKUs, 328.98), Wearables (2, 278.99). Probe copies cleaned up.
+- Wrote cases-b9.ts: 5 capstones, one distinct shape each — cs-196 inventory best-month (strftime+SUM+GROUP BY+ORDER BY DESC+LIMIT 1), cs-197 funnel unshipped split (IS NULL+GROUP BY+COUNT+ORDER BY), cs-198 supplier HAVING COUNT(*)>=2 (EU/APAC survive), cs-199 expense DISTINCT+WHERE+ORDER BY (rates > 200), cs-200 catalog headline row (COUNT+SUM+ROUND, category='Audio'); 5-6 slots each, 1 noVerify each, 5-6 consequential distractors each; board-level briefs with per-universe personas.
+- Swapped planned 'ALL' decoy in cs-199 for 'GROUP' after probing showed each >200 rate appears on exactly one line (ALL would have tied).
+- Audited: fail: 0 on first and second run; tsc --noEmit reports no cases-b9 issues.
+
+Stage Summary:
+- bun scripts/case-audit.ts src/lib/curriculum/cases/cases-b9.ts -> cases: 5  pass: 5  fail: 0
+---
+Task ID: 2-h1
+Agent: batch-author B8a
+Task: Author 15 l8 case files cs-167..181 (cases-b8a.ts)
+
+Work Log:
+- Read types.ts, exemplars.ts (cs-166 as l8 model), facts/l8.json, case-audit.ts.
+- Probed figures missing from the facts pool on a throwaway copy (scripts/.probe-b8a.db, removed after): active customers per region (APAC 4, EU 7 after WHERE active=1), per-status MAX/MIN totals (pending 1088.44, shipped 845.92, delivered 752.96, cancelled 397.99), per-customer spend (7262.35/6640.56/4574.23/3644.56/2667.93/1686.17 >= 1500), per-status AVG tickets (299.44/399.89/436.64/164.64), premium-SKU suppliers over price 50 (supplier 1: 3, supplier 6: 2), stock sums per category (940/510/505 > 400).
+- Wrote cases-b8a.ts: 15 l8 cases, ids cs-167..cs-181, universes in required order (funnel, supplier, expense, catalog, month-close, growth, refund-audit, pricing, fraud, inventory, funnel, supplier, expense, catalog, month-close). Shapes: month buckets via strftime (count and revenue HAVING), supplier/customer/category/region/status dims, WHERE+GROUP+HAVING combo (cs-172, cs-178), HAVING on COUNT/SUM/AVG/MIN/MAX, ORDER BY aggregates as supporting cast; slot counts 3-5; keyword+number mixes; WHERE-vs-HAVING as the signature teach in every why/walkthrough.
+- Audit: AUDIT_COPY=scripts/.audit-b8a.db bun scripts/case-audit.ts src/lib/curriculum/cases/cases-b8a.ts -> 15/15 PASS on first run, fail: 0.
+- npx tsc --noEmit | grep cases-b8a -> no output (clean).
+
+Stage Summary:
+- cases-b8a.ts complete: 15/15 audit PASS (fail: 0), tsc clean, no probe copies left behind.
+---
+Task ID: 2-h2
+Agent: batch-author B8b
+Task: Author 14 l8 case files cs-182..195 (cases-b8b.ts)
+
+Work Log:
+- Read types.ts, exemplars.ts (cs-166 as l8 model), scripts/facts/l8.json, and scripts/case-audit.ts for exact mechanical rules.
+- Probed a read-only db copy (scripts/.probe-b8b.db, removed after) for figures missing from the facts pool: 23 orders with exactly 4 order_items lines (cs-189); per-customer spend sums (c1 7262.35 / c5 6640.56 / c7 4574.23, c13 3644.56 just under the 4000 bar — cs-195); per-status avg tickets 164.64/299.44/436.64/399.89 (cs-193); per-category stock sums incl. Wearables 135, Video/Fitness 220 (cs-186).
+- Authored src/lib/curriculum/cases/cases-b8b.ts: 14 l8 cases cs-182..cs-195, universes in required order (growth, refund-audit, pricing, fraud, inventory, funnel, supplier, expense, catalog, month-close, growth, refund-audit, pricing, fraud).
+- Shapes varied: count-only groups (status >20), SUM-per-bucket with < threshold, count+avg with < 50, HAVING-on-count + ORDER BY DESC (customer_id, supplier_id), 6-slot full stack with SUM(stock) < 250 + ORDER BY, strftime month buckets ('%Y-%m') with COUNT >= 8 and SUM >= 2000, exact-equality HAVING (= 4 lines), MIN(price) > 30 and MAX(price) >= 149.99 floors/ceilings, spend-per-account >= 4000. Slot counts 3/4/5/6; verified number slots (5, 8, 3, 4, 5, 149.99) plus noVerify thresholds (max 1 per case).
+- Every decoy checked for consequence: WHERE-substitution always hits an aggregate (misuse error), ORDER/keyword decoys error or return different row sets, threshold/figure decoys change surviving buckets; no distractor equals any slot answer.
+
+Stage Summary:
+- AUDIT_COPY=scripts/.audit-b8b.db bun scripts/case-audit.ts src/lib/curriculum/cases/cases-b8b.ts → cases: 14 pass: 14 fail: 0 (all PASS first run).
+- npx tsc --noEmit | grep cases-b8b → no output (clean).
+---
+Task ID: 2-g2
+Agent: batch-author B7b
+Task: Author 14 l7 case files cs-152..165 (cases-b7b.ts)
+
+Work Log:
+- Read types.ts, exemplars.ts (cs-136 as l7 model), scripts/facts/l7.json, scripts/case-audit.ts.
+- Probed a readonly copy of the seed db (scripts/.probe-b7b.db, removed after): month sums ('2024-02' = 3609.64, distinct from Jan 3731.97), order_items quantity distribution (qty 1/2/3 = 93/69/89 lines), supplier rating extremes (4.8/3.9/mean 4.3), price<50 (8 SKUs, avg 32.06), price>=100 (4 SKUs, max 199.99), total>100 (33964.62), total<500 (17453.85), total>5000 (0 rows).
+- Wrote src/lib/curriculum/cases/cases-b7b.ts: 14 cases, universes in required order (refund-audit, pricing, fraud, inventory, funnel, supplier, expense, catalog, month-close, growth, refund-audit, pricing, fraud, inventory); slot counts 3/4/5 plus one 6-slot (cs-155); shapes include multi-aggregate rows, filtered aggregates (status/threshold/date), MIN+MAX pair, SUM-over-empty-set -> NULL teach (cs-154), and a verified number slot (cs-165 "3" appears as MAX(quantity) cell); 4 cases carry exactly 1 noVerify slot each.
+- Audited with AUDIT_COPY=scripts/.audit-b7b.db bun scripts/case-audit.ts src/lib/curriculum/cases/cases-b7b.ts on first attempt: all 14 passed, no fixes needed; audit copy auto-removed.
+- npx tsc --noEmit: no cases-b7b errors.
+
+Stage Summary:
+- cases-b7b.ts: 14/14 cases pass (cases: 14 pass: 14 fail: 0), tsc clean, probe copies cleaned up.
+---
+Task ID: 1 (coordination) + 3 (integration)
+Agent: main
+Task: Rebuild the 200 case-file scenarios (user-approved scope) — engine verification, batch authoring via 15 subagents, integration, dedupe fixes, audit, E2E, commit
+
+Work Log:
+- Resumed after second context limit; found carried-over uncommitted work: case-files.tsx engine (463 lines), cases/types.ts + exemplars.ts (6 gold-standard cases), case-audit.ts + case-facts.ts tooling, learn-app wiring — all intact and green (6/6 exemplars audit pass, tsc clean, app 200)
+- Decoded the original plan's topic blocks from exemplar block-first ids: l1:15 l2:25 l3:30 l4:20 l5:25 l6:20 l7:30 l8:30 cap:5 = 200; computed balanced universe rotation (exactly 20 per universe incl. exemplars)
+- Patched case-audit.ts to honor AUDIT_COPY env (parallel agents share the fixed .audit.db path otherwise)
+- Sliced the 76K facts pool into scripts/facts/{l2..cap}.json after first wave (B2/B3/B4) died on agent context deadlines reading the full file; relaunched in <=15-case batches
+- 15 batch agents authored cs-001..cs-200 (B1, B2a/b, B3a/b, B4a/b, B5a/b, B6a/b, B7a/b, B8a/b, B9); every batch reached audit fail:0 before handoff
+- Integration: rebuilt cases/index.ts (17 batches, sorted by id); wrote scripts/case-coverage.ts (id coverage, filled-SQL dedupe, title dedupe, distribution report)
+- Coverage caught 5 cross-batch duplicate filled-SQL pairs (cs-049+061, 055+062, 077+087, 093+109, 094+114) + 1 semantic dupe (cs-101 vs cs-111, same result via ROUND wrapper) + 1 duplicate title (cs-042/cs-128) — fixed by rewriting 6 cases against fresh read-only probes (NOT IN corridors, qty>=2 bulk lines, COUNT+MAX stuck-pile, oldest-3 pending aging, >=500 escalation list, alphabetical count sheet) and retitling cs-128
+- Final state: 200/200 audit PASS, ids cs-001..cs-200 complete, all fills distinct, all titles distinct, per-topic + per-universe exactly on plan; tsc clean in src
+- Browser E2E: deck header "200 CASE FILES", progress 0/200 -> 1/200, topic chips show exact counts, cs-001 played end-to-end (chips -> check -> "Rebuilt correctly — case closed" + 10 XP toast -> walkthrough reveal), WHERE-filters filter -> CASE 1 OF 30; screenshot scripts/shots/case-e2e-solved.png
+- Committed source + QA scripts + screenshots + self-healed seed db
+
+Stage Summary:
+- The case-file drawer now holds all 200 stakeholder memos: 15+25+30+20+25+20+30+30+5 across 9 topics, 20 per business universe, every case mechanically audited against the live seed db (single-table, number-figure honesty, distractor consequence, prose gates)
+- Engine verified live: chip placement, per-slot coaching, XP ledger (case:* keys), walkthrough gating, topic filters, paging
+- Key authoring patterns encoded in facts/ slices + exemplars: never slot alias text (audit compares values only), number formatting exact ("139.5" not "139.50"), thresholds need consequence-checked decoys
+
+---
+Task ID: cf-fix-1
+Agent: main
+Task: User reported "case problems tab i cant see" — locate and fix
+
+Work Log:
+- Reproduced headlessly (agent-browser, 1280x577): sidebar Toolbox buttons existed in the a11y tree but were invisible and click-blocked (clicks landed on the root container / sticky header)
+- Root cause: aside used lg:max-h-[calc(100vh-96px)] while the inner panel used max-h-full; percentage max-height does not resolve against a parent constrained only by max-height, so the panel rendered ~1420px, overflowed the 481px-capped aside, and buried the Toolbox
+- Fix: one line — aside gets a definite height at lg (lg:h-[calc(100vh-96px)]), making max-h-full resolve; module list scrolls internally (min-h-0 flex-1 overflow-y-auto was already in place), Toolbox pinned at panel bottom
+- E2E verified live: aside 481 == panel 481, Case files hit-testable, deck opens ("200 CASE FILES · MODULE 1 TOOLKIT"), CS-001 played end-to-end — wrong chip order triggered per-slot why-coaching, correct order (id, WHERE, 9) gave "Rebuilt correctly — case closed" + 10 XP (Data Novice 0 -> 10) + walkthrough reveal + Cases closed 1/200; Data explorer and Mixed quiz also verified switching
+- tsc clean in src; committed fix + E2E screenshot as 803e403; debug screenshots removed
+
+Stage Summary:
+- Toolbox visibility bug fixed and committed (803e403); all 200 case files now reachable via sidebar Toolbox -> Case files
+
+---
+Task ID: themes-v2
+Agent: main
+Task: Replace the theme set with the user-approved v2 directions (jet black, cream & plum, black & pink, matte pastels)
+
+Work Log:
+- Mapped the theme system: src/lib/themes.ts registry (ids/names/swatches/dark flags) -> globals.css .theme-* ramp blocks (zinc inversion for light, emerald/teal re-brand, shadcn tokens) -> boot script in layout.tsx auto-generated from the registry
+- Rewrote the registry to 4 themes: jet (dark, default), plum (light), noir (dark), pastel (light); replaced the 5 CSS blocks (carbon->jet, paper->plum, marine->noir, oxblood->pastel, gallery->deleted)
+- Updated hardcoded refs: <html> boot class theme-jet, both switcher "carbon" fallbacks -> DEFAULT_THEME, landing "5 themes" -> "4 themes"
+- Hit a stale Turbopack CSS artifact (compiled chunk kept serving 3 of 4 blocks, same content hash); a real content change to globals.css forced recompile and pastel appeared — verified all four .theme-* blocks in the served CSS
+- Browser E2E per theme: html class + dark toggle correct (jet/noir dark, plum/pastel light), computed body colors match tokens, landing + learn + 200-deck screenshots per theme, CS-001 solved under pastel light (rebuilt correctly + 10 XP), switcher menu lists exactly 4 themes; tsc clean in src
+- Committed b750bb7 (source + 11 screenshots)
+
+Stage Summary:
+- Theme set v2 shipped: Jet Black (default), Cream & Plum, Black & Pink, Matte Pastels; old stored theme ids migrate safely to the default; all 200 case files / learn app / landing / playground re-skin via the unchanged ramp mechanism
+
+---
+Task ID: pg-flow-1
+Agent: main
+Task: "how can we improve the playground??" — lesson-diagram aesthetic in the playground + rescue orphaned ChartView + seed race fix
+
+Work Log:
+- Recon: playground = PlaygroundView in src/app/page.tsx (editor + 6 viz tabs + results panel); found chart-view.tsx (full recharts component, ChartColumn icon, auto X/Y detection, SUM-by-category aggregation) was NEVER imported anywhere — orphaned
+- New src/components/query-flow-svg.tsx: QueryFlowSvg — compact lesson-style SVG strip (640 viewBox, diagrams-kit fade/drawIn/DotField) rendering the logical execution order: FROM node with real dot-field + row count from /api/stats, JOIN, WHERE/HAVING as dashed gates, GROUP BY/SELECT/ORDER+LIMIT nodes, emerald OUT node carrying the actual result row count; 4-per-row grid with straight arrows + rounded circuit wrap arrow into the next row; plain-English caption line under the figure
+- page.tsx: wired strip at top of Pipeline tab (SELECT only, key={sql} so each run replays the draw-in), added tableCounts via /api/stats on mount, wired ChartView as a "Chart" tab in the results panel (hidden for write statements), ChartColumn icon import
+- results-view.tsx: rows now motion.tr with 18ms/row stagger fade-in (capped 0.45s)
+- BUG FOUND + FIXED (src/lib/sample-db.ts): playground boot fires /api/query + /api/stats in parallel; ensureDatabase() had no single-flight guard so both calls could seed an empty db → loser died "UNIQUE constraint failed: customers.id". First fix (module-level promise lock) was insufficient: Next bundles sample-db into EACH route separately, so locks didn't share. Final fix: lock promise parked on globalThis.__seeqlEnsure
+- Ops incident during E2E: dev server originally launched by container start.sh died when I killed it for the db test; processes spawned from Bash tool calls get reaped between calls (setsid+nohup dies, double-fork node spawn detached:true survives). Server now relaunched via node double-fork and stable across calls; db file recreated cleanly on disk
+- E2E (fresh agent-browser session): default join+agg sample → strip renders FROM c (16-row dot-field) → JOIN → WHERE gate → GROUP BY → HAVING gate → SELECT → ORDER BY → OUT "4 rows"; CTE sample → WITH monthly + FROM m alias + OUT "67 rows" (wrap arrow, "rows flow in" fallback for non-physical CTE source); simple sample → 5 nodes single-wrap; Chart tab → recharts bars, SUM aggregation verified (Alice Chen 6+12=18 tallest bar); error path → 0 figures, parse+exec error cards shown; UPDATE → no strip, write banner, Chart tab absent; stagger opacities settle at 1; console clean; screenshots scripts/shots/pg-flow-{default,4rows,cte,simple,final,error-path,write-path}.png + pg-chart-tab.png
+- tsc clean (touched files), eslint clean
+
+Stage Summary:
+- Playground now speaks the same visual language as the lessons: every SELECT shows a picture-first flow strip (real row counts, dashed gates, animated arrows) above the step-by-step pipeline, and every result with a numeric column is one click from a chart
+- Cold-start seed race fixed at the framework level (globalThis single-flight) — the intermittent "UNIQUE constraint failed: customers.id" on first load is gone
+- ChartView rescued from orphan status; results grid got the lesson-feel stagger
+
+---
+Task ID: pg-viz-3
+Agent: main
+Task: "make the playground the perfect SQL query visual learning tool" — Phase 1+2 core: live flow strip, row funnel, text↔diagram linking, error coaching, lesson-grade results grid
+
+Work Log:
+- /api/parse + sql-parser.ts: buildQueryPlan now surfaces peggy error location as {start,end} offsets (shifted back into raw text by the trim lead) — powers editor squiggles
+- New src/lib/sql-clauses.ts: raw-text clause scanner (string/comment/paren-aware, top-level only) → ClauseSpan[]; clauseAtOffset/spanOf/stripClauses; buildStagePlan assembles REAL count queries per execution stage. Stage SQL built from clause spans, NOT the original SELECT list (aggregates in the list collapsed pre-GROUP stages to 1 row — found via live numbers); GROUP/HAVING stages keep the original list inside a subquery so aliases resolve; HAVING must filter INSIDE the subquery (outer HAVING saw a single ungrouped row → 37 instead of 4); newline-preserving clause strip (collapsing \n merges `--` comments into code)
+- SqlEditor: tokens carry offsets; new props highlight (emerald clause glow), errorRange (rose wavy underline), onCaretMove (select/click/keyup) — token-level splitting around highlight/error boundaries
+- QueryFlowSvg: every node maps to its ClauseKind; hover/leave/click handlers + emerald halo when the editor caret sits inside its clause; svg-root mouseleave safety
+- New src/components/row-funnel.tsx: "Where did the rows go?" — FROM → WHERE → GROUP BY → HAVING → OUT strip with proportional dot-fields, per-stage counts fetched via countWrapper queries to /api/query (parallel), −N delta labels, plain-English caption; plan derived via useMemo, only fetched counts in state (react-hooks/set-state-in-effect clean); OUT = full query wrapped in COUNT(*) so it is live and immune to the 1000-row payload cap; dataVersion prop re-counts after DB reset
+- page.tsx: debounced (400ms) live parse loop while typing — flow strip, funnel, stats chips and ALL parse-derived tabs now update live; last-good plan fallback when text is broken; ranSql/dataVersion tracking; editorInSync gate so highlights never misplace after edits; pin/hover cleared on text change; RowFunnel + strip gated to SELECT; error hint card under editor
+- ResultsView: low-cardinality string columns → colored chips (6-tone stable palette), non-id numeric columns → proportional in-cell teal bars, booleans → true/false chips
+- PipelineView: step titles clickable → pin that clause in the editor
+- Bug found during E2E: funnel counts went stale after Reset (effect keyed only on sql text; data changed underneath) → dataVersion bump on reset + tableCounts refetch
+- E2E (agent-browser): boot funnel 103→103→37−66→4−33→OUT 4 (matches hand-run SQL ground truth); typing `AND o.total > 200` live-updated funnel to 65/33/2/2 without Run; hover WHERE gate lit the exact clause text in the editor; caret inside WHERE lit exactly the WHERE node; SELEC typo → inline hint + wavy underline under the offending token while the right panel kept the last good plan; aggregate run → status chips (delivered/shipped/pending/cancelled) + 8 in-cell bars; CTE sample → WITH node + 77→67 funnel; UPDATE → strip+funnel hidden, write banner; reset → counts recompute pristine; pastel light theme legible (OUT number bumped to emerald-400 for light bg); tsc + eslint clean; console clean
+- Screenshots scripts/shots/pg-v3-{live-funnel,hover-link,error-coach,pastel-funnel,final-pristine}.png; QA scripts scripts/test-clauses.ts + scripts/test-funnel.ts
+
+Stage Summary:
+- The playground now teaches while you write: the query's picture (flow strip + row funnel with real intermediate counts) updates live as you type, the SQL and the diagram are bidirectionally linked (hover/click/caret), parse errors coach inline with a squiggle on the failing token, and the results grid speaks the lesson-diagram language
+- Row funnel semantics encoded: stage SQL from raw clause spans, aggregates neutralized pre-GROUP, HAVING inside the subquery, newline-safe stripping — all verified against live SQLite numbers
+---
+Task ID: pg-viz-4
+Agent: main
+Task: Playground Phase 2+3 finish — step inspector (#7), smarter charts (#6), try-it missions (#8), visual sample gallery (#9)
+
+Work Log:
+- Discovered hard constraint via live probe: Prisma SQLite rows are objects, so duplicate column names in a JOIN `SELECT *` silently COLLAPSE (c.id lost; ["id","name","total"] from a 4-column select). Row views therefore need explicit per-column aliasing
+- sql-clauses.ts: buildStagePlan now also emits rowStages (row-form SQL per stage), finalRowSql (LIMIT-capped full query), and gates (EXCEPT diffs "rows killed here" for where/having). Optional sync `projectFrom(fromText)` hook supplies an explicit aliased projection; null → row stage unavailable (counts keep working). Single-table FROM falls back to SELECT * (no collision possible)
+- New /api/stages route: one round trip runs stage COUNTs + row-form stages (cap 60) + gate EXCEPTs (cap 48→24). Parses (table, alias) pairs out of the raw FROM span (teaching-grade: comma joins, JOIN chains, ON/USING skipped; parentheses → bail), pre-fetches PRAGMA table_info per table, then builds `alias.col AS "col"` projections with `col·alias` collision suffixes. Reused /api/query's normalizeCell by extracting to lib/cell.ts (query route refactored to import it)
+- row-funnel.tsx: stages are now clickable (cursor, hover brightness, title tooltip, aria button, emerald dashed selection ring) + caption hint
+- New stage-inspector.tsx: "WHERE · rows that survived the filter" panel — plain-English stage story (N survived, M stopped here), lesson-grade MiniGrid (low-cardinality string chips, right-aligned numerics), ghosted rose "STOPPED HERE — N rows didn't make it" grid (6 shown + "+N more") for gates, graceful "can't be listed" note for CTE/subquery-FROM shapes, loading/error states
+- page.tsx: inspectKind state; funnel click toggles inspector under the funnel; ChartView keyed by ranSql (new query → fresh auto-suggestion; same query re-run keeps user's chart choices); results panel gains Missions tab with live done-count badge from the shared XP ledger
+- chart-view.tsx (#6): auto-rules upgraded — date X → line, two numeric cols → scatter, ≤6 non-negative categories → pie, else bar; diagrams-kit palette (blue #60a5fa dropped for fuchsia); "Why this chart: …" teacher caption under the chart
+- New lib/missions.ts (#8): 6 missions (pending pile / heavy orders / EU roster / revenue by status / big spenders / the regulars) checked against RESULT SHAPE only (row counts, column projection, value predicates, ordering) — never SQL text; per-difficulty XP 5/10/20
+- New mission-board.tsx: mission list (difficulty chips, XP, done checks) + detail card (shape-to-hit, hint toggle, one-click starter into editor); auto-checks against latest run; verdict banners coach in plain English; pass awards via useProgress.awardXp("mission:<id>") — same zustand localStorage ledger as Learn
+- New sample-gallery.tsx (#9): header dropdown replaced by Popover card grid; each card carries a MiniFlow schematic derived live from its SQL via findClauses (violet CTE → zinc FROM → dashed rose WHERE → teal GROUP → dashed orange HAVING → emerald OUT; UNION draws two converging sources) + clause chips
+- E2E (agent-browser): default sample WHERE inspector (103 rows, region chips, id·o collision-safe headers); total>400 → "34 survived / 69 stopped" + 6-row ghost grid; HAVING on default sample → 4 groups kept + 33 stopped ghost panel; CTE sample → FROM/WHERE stages degrade to counts-only note, OUT shows real 60 of 67 rows; missions: heavy orders pass → "+5 XP" + badge 1/6, wrong query → "Got 3 rows — brief says 10"; Learn app shows the 5 XP (ledger bridge closed); GROUP BY status chart auto-picks PIE with "4 categories whose values add up" caption; gallery renders all 7 mini flows incl. UNION converge; UPDATE → funnel/inspector/missions tab all hidden; Reset DB → inspector refetches fresh; broken SQL keeps last-good diagram + inline error; pastel theme reskins everything (CSS vars); tsc + eslint clean; console clean
+- Screenshots scripts/shots/pg4-{inspector-where,inspector-killed,mission-selected,chart-auto-pie,gallery,cte-inspector,pastel-inspector,final-having,having-killed}.png
+
+Stage Summary:
+- The playground roadmap (3 phases, 9 features) is now fully shipped. Execution order is tangible: click any funnel stage and see the actual rows — including the ones each gate killed. Missions grade the SHAPE of your result (not your SQL) and pay XP into the same ledger as the lessons; the sample picker sells queries by their picture; the chart tab picks the right chart and explains why
+
+---
+Task ID: ops-preview-recovery
+Agent: main
+Task: Fix "preview not loading" - diagnose, recover, and make the failure mode impossible
+
+Work Log:
+- Symptom: preview dark; curl :3000 -> 000, no next/bun processes alive
+- Forensics: dev.log's last entries were healthy /api/stages + /api/query traffic; dmesg shows the root cause - at uptime 3374s (07:08) the kernel OOM killer killed next-server v1 at 2180MB RSS on the 4GB box; nothing supervised it, so it stayed dead
+- Proved empirically that processes spawned from tool-shell invocations are normally reaped between invocations (setsid sleep test died), so a manual foreground restart is not viable; the durable path is the boot flow (.zscripts/dev.sh, invoked by start.sh) plus a supervisor
+- New .zscripts/watchdog.sh: detached watchdog (boot-spawned orphan, same lifecycle as the dev server) - restarts the dev server after 2 consecutive dead 20s checks, recycles next-server when RSS > 1.6GB (OOM prevention; observed 1.3-1.4GB after a single compile, 2.18GB was fatal), restart-burst backoff (max 3 per 10min then 5min sleep), 5MB log cap, dev.pid re-bind if pid file goes stale
+- Hardened .zscripts/dev.sh: records dev.pid for the watchdog, starts the server with setsid + nohup + own log file (a detached child holding the caller's stdout pipe blocks pipeline EOF forever - found live when the test boot hung), cleanup trap now kills the whole process group (bun -> sh -> next dev | tee), idempotent watchdog launch guarded by watchdog.pid
+- Live-validated the full loop inside tool invocations: bash dev.sh brought the server up (Ready 772ms, GET / 200, warm compile 1.7s), then killed the server and watched the watchdog log 'streak 1 -> streak 2 -> start: dev server pid 5680' with the port back at HTTP 200 ~20s after the kill
+- Sanity after recovery: homepage 200; POST /api/query returns correct funnel ground truth (delivered 52 / shipped 30 / pending 14 / cancelled 7); next-server steady ~1.3GB (under the watchdog cap)
+- Committed as e37cd14 'ops: self-healing dev server watchdog (OOM-proof preview)'
+
+Stage Summary:
+- Preview restored without user action and, more importantly, the failure mode is now structurally fixed: any future OOM kill or crash of the dev server self-heals in ~20-40s via the watchdog, and if the box ever cold-starts again, dev.sh boots both the server and its watchdog automatically
+- Watchdog log lives at .zscripts/watchdog.log (grep 'recycle' to see OOM-prevention kicks, 'not found' for crash recoveries)
+
+---
+Task ID: pg-viz-10-module9-finance
+Agent: main
+Task: Module 9 — SQL for Finance: new book tables on the live engine + 6 full lessons (52-57) + 6 hand-drawn figures, wired into the curriculum (user approved direction after "so what next" x2; #15/#16 stay queued)
+
+Work Log:
+- sample-db.ts: 4 new tables (invoices, payments, expenses, ledger_entries) — hand-authored deterministic books in INTEGER CENTS, 2024-01..2025-02, AS OF '2025-03-15'; ledger legs COMPUTED from the invoice/payment/expense arrays so debits always equal credits by construction (80 legs, $181,080 balanced); two planted reconciliation catches: invoice 28 'paid' with NO payment rows ($1,756) and invoice 11 VOID with a payment ($925 refund owed) — FK enforcement rejected the original orphan-payment idea (Prisma sets foreign_keys ON), which forced the better design; self-heal path seeds finance rows into pre-existing storefront DBs
+- scripts/finance-facts.ts + check-invoices.ts: every teaching number verified live (aging buckets current 2794 / 1-30 5710 / 31-60 4937 / 61-90 1295 / 90+ 873 = 15,609; trial balance 181,080 BALANCED; expense mean 1815.43 sd 423.12 Aug z 3.30; revenue series 13 months with MoM %; Alice statement walk ending 2148); caught + fixed a duplicated payment (invoice 10 paid twice) via the audit script
+- 6 lessons (52-57): The books (cents discipline, lifecycle, outstanding), Running balances (UNION ALL staging + SUM OVER walk, Alice's statement), AR aging (AS OF discipline, CASE ladder, tall+wide pivots, DSO 66 days), MoM growth (LAG, growth %, 3-mo moving average frame, small-n volatility), Reconciliation (trial balance, NOT EXISTS anti-joins, the two catches, AR gap ties to the cent: 17,365 economic = 16,440 ledger + 925), Windows III (CUME_DIST, LAST_VALUE frame trap, PERCENT_RANK vs CUME_DIST)
+- FOUND + SOLVED an engine limitation: this SQLite build has NO math functions (no SQRT, no POWER — gen-expected FAILed 3 problems) → lesson 57 now builds the square root from lesson 49's WITH RECURSIVE: Newton's method g←(g+var/g)/2, 30 fixed iterations, verified to reproduce sd 423.12 exactly; became the lesson's centerpiece ("build your own math library"); NOTE: SQLite recursive members cannot JOIN sibling tables — scalar subqueries (SELECT var FROM stats) work
+- diagrams-m9.tsx: 6 figures (fin1 books map, fin2 Alice staircase, fin3 aging ladder bars, fin4 raw-vs-ma3 lines, fin5 trial balance scale, fin6 sliding frame + August outlier) using diagrams-kit primitives; FigureId union extended; FIGURES_M9 spread into the registry; fixed title/annotation overlap in fin6 + missing diagram block in lesson 57 (E2E caught figures:0)
+- lessons/index.ts: module 9 registered (id 'finance', Advanced); header counts auto-updated to 9 modules · 57 lessons · 430 graded queries · 613 quiz questions; mixed quiz + review queue pick up the 66 new MCQs automatically
+- gen-expected: 430 results 0 failures (was 392); Emma walk brief fixed 8→7 rows; scoped tsc + eslint clean (content-audit.ts errors pre-existing, unrelated)
+- E2E (agent-browser, scripts/shots/m9-*.png): lesson 52 renders + fin1 figure; Practice problem 1 solved live -> +5 XP toast + First Steps + Problem Solver badges double-unlock (m9-2); finance MCQ -> +8 XP first-try bonus with verdict (m9-3); playground runs the aging pivot live with exact verified totals (m9-4); lesson 57 figures+prose verified (m9-5/6); console clean; fresh profile note: Fast Refresh wiped persisted progress (known dev-mode quirk, not product)
+
+Stage Summary:
+- Module 9 shipped: the storefront now has real books — integer-cent invoices/payments/expenses plus a balanced double-entry ledger — and 6 lessons teach finance analytics ON the engine (aging, balances, growth, reconciliation, outlier stats). Two audit catches are planted and discoverable. Remaining Phase 5: #15 data dial, #16 share/export; possible follow-up: finance case files on the chip-rebuild system
+
+---
+Task ID: m1-deep-1
+Agent: main
+Task: Module 1 theory-density wave — "Deep dive" premium layer (user approved: tiered MCQs, module-by-module pipeline M1 theory → M1 MCQs → M1 cases)
+
+Work Log:
+- Verified 30+ teaching numbers live before writing prose (scripts/m1-facts.ts): counts 16/16/6/103/251; status 52/30/14/7; NULL shipped_at 21; COUNT(*) vs COUNT(shipped_at) 103/82; precedence pair 12 vs 5; price ties NONE (all 16 unique); LIKE case-insensitivity '%pro%'=2; BETWEEN 50-100 → 4; region IN US+LATAM → 3; NULLs sort first ASC (SQLite); SUM reconciliation line-grain = order-grain = 34,833.28; DISTINCT(status,customer_id) pairs = 37; bare-column quirk returns pending,103; avg line 138.78, min 14.46, max 599.91
+- types.ts: new DeepBlock union (reuses p/h/bullets/code/diagram/table/tip + adds mind | engine | myth | edge) + Lesson.deep? field + 8 new FigureIds v1-grain-zoom … v8-bucket-gate
+- diagrams-m1x.tsx (new, ~520 lines): 8 premium SVG figures in the house style — v1 grain zoom (orders→order_items), v2 SELECT/FROM pipeline, v3 WHERE gate + operator ladder with 12-vs-5 receipts, v4 NULL three-valued gates (82/21), v5 multi-key sort + LIMIT slice (verified rows) + TEMP B-TREE engine note, v6 DISTINCT sieve (16→4 buckets + counting trio), v7 aggregate collapse (251→1, five verified readouts), v8 bucket machine (52/30/14/7) + HAVING >= 30 gate (kept 2 / dropped 2); registered via FIGURES_M1X spread in diagrams.tsx
+- lesson-view.tsx: 4th tab "Deep dive · go further" (Microscope icon, only when lesson.deep exists); new renderers MindCard (violet Brain callout), EngineCard (teal numbered pipeline with connector line), MythCard (rose Myth | emerald Reality split grid), EdgeCard (case/result gallery table); SharedBlock mirrors learn-tab arms with violet accents
+- Authored 8 dense deep-dives (lesson-01..08.ts), each ~10 blocks: mental model, engine walkthrough, premium figure, analytics-angle prose, 2 myth-vs-reality cards, 4-row edge-case gallery, tip; themes: L1 grain/ledger-not-screen + 34,833.28 reconciliation, L2 FROM-before-SELECT + alias birth, L3 bouncer + precedence receipts (12/5), L4 three-valued logic + NULL census, L5 sort output-promise + TEMP B-TREE + deterministic final key, L6 tuple dedupe + 16-distinct-cities fingerprint + dup detector, L7 collapse grain + empty-set twins (0 vs NULL) + SQLite bare-column quirk (pending,103), L8 bucket machine + WHERE/HAVING stage split + HAVING-without-GROUP BY trick
+- Layout bug fixes caught by screenshots: v3 right-edge clipping (34 rows pass + ladder receipts → anchor end x=688/706), v8 GROUP BY label buried under chip field (moved to caption under chips y=146), rail-text overflow in v6/v7/v8 (trimmed to fit 676px)
+- scripts/m1-probes.ts: all 20 runnable SQL probes embedded in deep-dives verified OK against live engine (empty-set twins [0,null,null], full pipeline [delivered,52,15571.07], etc.)
+- E2E (agent-browser): all 8 lessons show Deep dive tab; L1/L3/L8 deep-verified (mind/engine/myth/edge/figure all render, 1 svg each); async sweep confirmed L2/L4/L5/L6/L7 tab+figure+blocks; tsc + eslint clean (pre-existing content-audit errors only); console clean; 6 screenshots scripts/shots/m1deep-{1..6}*.png
+
+Stage Summary:
+- Module 1 theory-density wave shipped: every L1-8 lesson now has a 4-tab layout with a premium Deep dive layer (mental models, engine mechanics, myth-vs-reality, edge galleries, 8 new hand-drawn figures — every number engine-verified). Next in the M1 pipeline: tiered MCQ bank (core 50 / secondary 15-20 / utility 8-10) then fill-in-the-blank case studies on the shared grading engine
+
+---
+Task ID: m1-drills-1
+Agent: main
+Task: Module 1 MCQ bank — drill infrastructure + core wave (7 keywords x 50 = 350 aspect-matrix questions) + Drill Yard UI
+
+Work Log:
+- Probed 40+ facts live before writing a single question (scripts/m1-drill-facts.ts): all 103 order totals UNIQUE (0 tie groups); suppliers have ZERO NULL ratings (old m1-facts note wrong — caught by re-probe); LIMIT -1 → all 103 rows (negative = no cap); alias in WHERE WORKS in SQLite (WHERE oid > 100 → 101-103!) — reframed as portability question instead of false error claim; GROUP BY 1, alias in GROUP BY/HAVING all work; NOT IN over NULL-bearing subquery → 0 rows (classic trap confirmed live); empty-set twins [0,null,null,null,null]
+- Two subtle probes saved wrong answers: implicit global group EXISTS over empty set (WHERE 1=0 HAVING COUNT(*)=0 → 1 row [0]) vs grouped version (0 rows) — wrote hv-24 around the verified behavior; repeat buyers (>1 order) = 14 of 16; stacked gate (WHERE >400 GROUP BY status HAVING >=10) = 2 statuses
+- drills/types.ts: DrillAspect six-angle matrix (syntax/semantics/edge/errors/predict/judgment), DrillTier (core/secondary/utility), DrillQ (structurally compatible with Mcq — flows through McqCard + XP ledger unchanged), DrillSet, ASPECT_LABELS
+- 7 core files (50 questions each, aspect-matrix distributed 8/10/10/6/10/6): select-from, where, null (3VL), order-limit, aggregates, groupby, having — every predict question engine-verified; IDs dr1-<kw>-<nn>
+- drills/index.ts: DRILL_SETS registry with per-set metadata (labels/blurbs/tiers), drillTotal(), drillSetsForModule()
+- drill-yard.tsx: keyword picker (tier-grouped cards, per-set progress from mcqAttempts, "N of total attempted") + session runner (rounds of 10, unseen→missed→mastered deck order, aspect+tier badges, McqCard, verdict screen with mastery count)
+- learn-app.tsx: "Keyword drills" sidebar entry (Dumbbell icon, between explorer and mixed), drills view branch
+- tsc + eslint clean (pre-existing examples//skills/ errors only); E2E: picker renders 7 core cards (350 q), WHERE drill full 10-question round — first-try +8 XP toast + First Steps badge, wrong-answer amber coaching verdict (no XP), progress bar, "Solid round 6 of 10" + "WHERE · 6/50 mastered" verdict, New round / Pick another keyword; console clean; 8 screenshots scripts/shots/m1-drill-{1..8}*.png
+- E2E quirk noted: rapid scripted clicks during framer-motion verdict animation can hit detached nodes — manual pacing works; product unaffected
+
+Stage Summary:
+- Module 1 drill bank stage 1 shipped: 350 core MCQs across 7 keywords, six-aspect coverage per keyword, Drill Yard UI live in the sidebar, XP/badges fully wired. Stage 2 next: secondary wave (IN/BETWEEN/LIKE/AND-OR-NOT/DISTINCT/COALESCE/NULLIF ≈ 120 questions) then the fill-in-the-blank case studies (20/20/20 easy/medium/hard)
+
+---
+Task ID: m1-drills-2
+Agent: main
+Task: Module 1 MCQ bank stage 2 — secondary wave (7 keywords, 120 questions: IN 20, BETWEEN 15, LIKE 20, AND/OR/NOT 20, DISTINCT 20, COALESCE 15, NULLIF 10)
+
+Work Log:
+- New probes before writing: Jan-2024 orders BETWEEN dates = 8; '_e%' products = 2; NOT (delivered OR shipped) = 21 (De Morgan); NULLIF(NULL,NULL) → NULL; NULLIF('x',NULL) → 'x' (NULL poison = pass-through); NOT LIKE '%a%' products = exactly 5 names
+- CAUGHT + FIXED a wrong draft claim live: `WHERE status = 'pending' OR 'shipped'` — SQLite does NOT treat the bare string as TRUE; it casts to numeric 0 (FALSE) → returns 14 (pending only), silently. Question aon-16 rewritten around the verified behavior ("silently dead OR branch"), with the truthy-string intuition as the coached wrong pick
+- 7 secondary files in the six-aspect matrix, all predict numbers engine-verified; IDs dr1-{in,bt,lk,aon,ds,co,nf}-nn
+- Registry: 14 sets total (7 core + 7 secondary), picker auto-updates to "470 questions"
+- ID audit script: 470 questions, 470 unique ids, 0 duplicates; per-file counts 50×7 + 20/15/20/20/20/15/10
+- tsc + eslint clean; E2E: full-yard screenshot shows core+secondary tiers with per-card counts (470 total); IN drill session live-verified (semantics badge, subquery answer, first-try +8 XP, verdict panel); console + page errors clean; screenshots m1-drill-{9,10}*.png
+
+Stage Summary:
+- Module 1 drill bank COMPLETE: 470 MCQs (350 core + 120 secondary) covering every M1 keyword across six aspects, live in the Drill Yard. M1 pipeline status: theory ✓ (deep-dive wave), MCQs ✓ (this + prior commit). Next in M1: fill-in-the-blank case studies (100/100/100 program, ~20/20/20 easy/medium/hard for M1) on the shared grading engine
+---
+Task ID: m1cases-ea
+Agent: batch-author EA
+Task: Author 29 easy case files cs-201..229 (cases-cea.ts)
+
+Work Log:
+- Read types.ts (tier field, distractor/noVerify rules), exemplars.ts (memo voice cs-016/041/071/091), case-audit.ts (exact enforcement), case-coverage.ts (dedupe mechanics), and calibration easy cases cs-018/cs-025/cs-026/cs-044; dumped all 200 existing filled SQLs + titles to temp files and checked every planned fill/title against them before writing (0 collisions).
+- Read facts slices l2/l3/l4/l5/l6/l7.json, then probed a read-only copy (scripts/.probe-ea.db, bun:sqlite, deleted after) for 20+ figures not in the slices: processor-fee cells (order 1 = 16.72, order 74 = 31.56), Alice Chen's 3 cancelled tickets (7/152.52, 21/136.11, 95/206.19), unit-cost at 0.6 (Keyboard 53.99, Smart Watch 119.99), A-item bar rows (HDMI 500, Socks 400 exactly-on-line so > vs >= is consequential), COALESCE sample rows, cancelled cancellations = 4 distinct accounts (1/13/5/11) behind 7 orders, all-in prices (94.98/39.49/53.99/154.98), order_items MIN/MAX unit_price (14.28/209.68), Electronics SUM(stock) = 505 (AVG 168.33/MAX 300/MIN 85 all distinct so agg distractors are consequential), earliest-3 orders (6 @ 2024-01-01, 5+7 @ 2024-01-02), AVG(rating) prints 4.3, expense page-2 (93/45.36 ... 41/67.25, page 1 ends 59/44.48), pending MAX 1088.44 vs shipped MAX 845.92, newest signup Pedro Alvarez 2024-07-03 (no tie), customer 11 = Keiko Sato Nagoya APAC.
+- Wrote cases-cea.ts: 29 easy cases in the mandated universe cycle (month-close 201/211/221 ... fraud 209/219/229, catalog 210/220), topic quotas exact (l2x6, l3x6, l4x3, l5x4, l6x4, l7x5, l1x1); one clause family each; 28x3 slots + cs-205 with 4 (4th = number chip); 7 number slots all noVerify (<=1 per case); 4-5 consequential distractors each; fresh teaches incl. first COALESCE case (cs-211), bare IS NOT NULL count (cs-219), bare DISTINCT list on order_items (cs-215), OFFSET pagination (cs-227).
+- Distractor consequence hand-verified per slot before auditing; caught two traps pre-audit: GROUP BY x DESC/ASC parses in SQLite (removed "GROUP" from cs-205 bank, "price"/"GROUP" from cs-214 where a secondary sort key or bare GROUP BY could tie), and single-row-group aggregates (Fitness SUM=AVG=MAX=MIN) avoided by choosing 3-SKU Electronics for cs-224.
+- AUDIT_COPY=scripts/.audit-ea.db bun scripts/case-audit.ts src/lib/curriculum/cases/cases-cea.ts -> cases: 29 pass: 29 fail: 0 on the FIRST run (no fixes needed). Cross-checked: all 29 filled SQLs + titles distinct vs the 200 existing via a temp dupe script.
+- npx tsc --noEmit | grep cases-cea -> empty (only pre-existing errors in examples/, scripts/content-audit.ts, skills/). Removed scripts/.probe-ea.db, audit copy, and all temp helper scripts.
+
+Stage Summary:
+- cases-cea.ts complete: 29/29 audit PASS (first-run green), tsc clean for the new file, fills+titles provably distinct from cs-001..200. Easy-tier contract held: 3-4 slots, <=1 noVerify, one clause family, memo persona per universe. Shape notes for sibling batches: two alias-rename projections (206/208), two ORDER BY+LIMIT top-1 forms (205), MIN+MAX pair (223), third OFFSET case in deck (227) — later easy batches should avoid those skeletons with the same columns.
+---
+Task ID: m1cases-eb
+Agent: batch-author EB
+Task: Author 29 easy case files cs-230..258 (cases-ceb.ts)
+
+Work Log:
+- Read worklog entries 1+3 (200-case playbook) and 2-f1/2-i (authoring pattern), types.ts (tier field), exemplars.ts (cs-016/041/071/091 voice), and calibrated against existing easy cases (cs-018/022/024/025/026 in b2a, cs-072/073 in b4a).
+- Dumped all 200 existing titles + filled SQL from cases/index.ts into a scratch file; planned 29 shapes against that set plus the facts slices (l2..l7).
+- Probed a read-only copy (scripts/.probe-eb.db, deleted after) for every figure: Feb 2024 revenue 3609.64 (9 orders), orders >300 = 49 (>500 = 25, >200 = 65), net-of-VAT samples 89.99/1.08 = 83.32, 149.99 = 138.88, 199.99 = 185.18, stock >= 150 = 8 shelves (Ring Light exactly 150 as the >=/> edge), COUNT(DISTINCT customer_id) = 16, rating < 4.2 = 3 vendors (Andes stored as bare 4), expenses = 36 lines / SUM 2541600 cents / avg 70600, categories under price 50 = 5, IS NOT NULL stamps = 82, cancelled 7 / 1152.49, price DESC LIMIT 3 anchors, price DESC LIMIT 3 OFFSET 5 = ranks 6-8 (79/65/59.99), deepest bin HDMI 500, newest customers Pedro/Olivia/Noah, shipped AVG 399.89, MIN/MAX price 14.99/199.99, Jan window BETWEEN 2024-01-01..31 = 8, thin-stock (<100) distinct suppliers = 5, active cities = 14, expenses < 30000 cents = 10.
+- Consequence-probed the risky distractors before committing: unquoted '2024-02' literal = 0 rows, status = status = 103, COALESCE(shipped_at, NULL) keeps 21 NULLs, OFFSET without LIMIT = syntax error, MIN(total, 2) = 2 per row, region-slot fill for the rating case still differs, stock >= price = 12. Caught and dodged two ambiguity traps found during planning: ">" would tie with ">=" at the stock-200 threshold (no product sits exactly at 200, so moved the line to 150 where Ring Light pins the edge), and "DISTINCT" as a distractor on unaliased projections would reproduce results — replaced with consequential chips.
+- Wrote cases-ceb.ts: 29 easy cases cs-230..258, topics l1×1 l2×6 l3×6 l4×3 l5×4 l6×4 l7×5, canonical universe cycle starting cs-230 = catalog; shapes: pure projection + alias (230/238), computed division (233 net-of-VAT, 237 cents extract), single-predicate counts/lists (232/234/236/239/251/257 — BETWEEN on dates, >= with a real edge, region/rating/total thresholds), COUNT(DISTINCT) unfiltered and filtered (235/254/255), COALESCE fill (249), IS NOT NULL / IS NULL count and list (241/252), ORDER BY + LIMIT top-N / OFFSET page (243/244/245/253), SUM/AVG/MIN+MAX/COUNT headline aggregates (231/242/247/248/250), id lookup (256).
+- Verified: my dupcheck script — all 29 filled SQLs and titles unique vs the 200-case deck AND vs the parallel batch cases-cea.ts (cs-201..229); audit first-run clean; tsc --noEmit grep cases-ceb empty; removed probe/audit/scratch files.
+
+Stage Summary:
+- cases-ceb.ts complete: AUDIT_COPY=scripts/.audit-eb.db bun scripts/case-audit.ts src/lib/curriculum/cases/cases-ceb.ts → cases: 29  pass: 29  fail: 0 (tiers: easy=29); tsc clean for cases-ceb; no leftover temp dbs/scripts; no other source files touched (worklog append only).
+---
+Task ID: m1cases-ha1
+Agent: batch-author HA1
+Task: Author 11 hard case files cs-259..269 (cases-cha1.ts)
+
+Work Log:
+- Read worklog tail (EA/EB playbook), types.ts, exemplars voice, b8a l8 hard cases for calibration; dumped all 258 existing cases (200 registry + parallel cea/ceb) to a scratch list of titles + filled SQL — note: index.ts does NOT yet include cea/ceb, so the dup check had to import them explicitly.
+- Probed a read-only copy (scripts/.probe-ha1.db, deleted after) for every figure plus finance-table schemas (expenses: category/vendor/spent_on/amount_cents, 36 lines, Tools max 32900 cents) and order_items tie structure (two full (quantity,unit_price) ties: 15.12 and 18.14 pairs) before authoring.
+- Caught and dodged four collisions/traps pre-audit: (1) my planned catalog multi-key sort was EXACTLY cs-098's filled SQL (ORDER BY category ASC, price DESC LIMIT 6) — redesigned to an order_items 3-key pick-list where the 15.12 pair makes the second key decide who survives LIMIT 8; (2) month bucket + HAVING SUM(total) is a crowded corner (cs-177/191) — rebuilt cs-261 as quiet months HAVING COUNT(*) <= 7 with AVG ticket, a threshold that itself appears in output cells (no noVerify needed); (3) supplier SUM(stock) >= 400 was one digit from cs-176's > 400 — moved the line to 450 (3 kept / 3 dropped); (4) empty-set cases tie trivially: any text distractor in the cents-threshold slot gives 0 rows and any numeric in a category-value slot matches nothing, so cs-267 hardcodes both and banks only clause keywords + "0"; likewise AVG/MIN/SUM tie as SUM-slot distractors over an empty set and were excluded.
+- Wrote cases-cha1.ts: 11 hard cases, topics l3×1 l4×2 l5×2 l7×3 l8×3, universe cycle fraud→catalog→month-close→refund-audit→pricing→inventory→funnel→supplier→expense→growth→fraud; 5-6 slots each, ≤2 noVerify per case, 4-6 distractors each, heavy stacks throughout (WHERE+GROUP BY+HAVING+ORDER BY ×3, multi-key ORDER BY+LIMIT, WHERE+HAVING-implicit-group, GROUP BY+COUNT/COUNT contrast, GROUP BY+COALESCE ladder).
+- Verified: dupcheck — 0 title/fill collisions vs all 258 (269 unique after); audit first run 10/11 — cs-265 distractor '2024-05-01' kept the same top-4 (Liam was already LIMIT-cut) → moved to '2024-05-15' (3 rows) → 11/11; tsc grep cases-cha1 empty; removed probe/audit/dump/dupcheck temp files.
+
+Stage Summary:
+- cases-cha1.ts complete: cases: 11 pass: 11 fail: 0 (tiers hard=11); tsc clean for the new file; titles+filled SQL distinct across the 269-case deck so far; no other source files touched (worklog append only). Shape notes for parallel batches: status-queue COUNT(*)/COUNT(shipped_at) GROUP BY is now used (cs-262) and per-status COALESCE(MAX(shipped_at)) display (cs-269) — avoid re-using those skeletons; fresh figures planted: supplier stock sums 850/695/460 vs 305/305/230, Tools expense max 32900 cents, per-category stock depth 313.3…67.5, 2024 cohort EU 5/APAC 4/US 2.
+
+---
+Task ID: m1cases-hb1+register
+Agent: main
+Task: Complete HB1 batch bookkeeping (worklog was never written — session died mid-flight), register all four new batches into the deck, wire the tier axis into the Case Files UI, E2E + commit
+
+Work Log:
+- Verified cases-chb1.ts (cs-280..290, 11 hard) was left complete but unlogged: ran AUDIT_COPY=scripts/.audit-now.db bun scripts/case-audit.ts → 11/11 pass, first run
+- Registered cases-cea/cases-ceb/cases-cha1/cases-chb1 in cases/index.ts → deck 200 → 280
+- New scripts/deck-check.ts (kept as a permanent tool): imports the assembled CASES registry, checks duplicate ids/titles/filled-SQL + tier distribution → 280 cases, 0 dups across all three axes; tiers easy=100 medium=100 hard=80
+- Tier math discovery: the tier-tagged original 200 were 42 easy / 100 medium / 58 hard; +58 new easy (cea+ceb) and +22 new hard (cha1+chb1) ⇒ easy 100 ✓, medium 100 ✓, hard 80/100 — exactly 20 hard cases short of the corrected 100/100/100 program (the dead session's reserved ranges cs-270..279 + cs-291..300)
+- case-files.tsx: added tier filter row (All tiers/Easy/Medium/Hard with live counts, combined AND with topic filter) + colored tier badge on every card (emerald/amber/rose); deck header already dynamic at 280
+- Full-deck audit over all 20 batch files: 280/280 pass, 0 fail
+- E2E (agent-browser): deck renders "280 CASE FILES", tier counts 280/100/100/80, Hard filter → CASE 1 OF 80 first card CS-004 with HARD badge, Easy → CASE 1 OF 100; console clean, no page errors; screenshots m1cases-{1..4}*.png (deck, hard filter, easy filter, mobile 390x844)
+
+Stage Summary:
+- M1 case deck now LIVE at 280 engine-audited cases with a two-axis (tier × topic) browser. Remaining for the M1 100/100/100 program: exactly 20 hard cases in the reserved ranges cs-270..279 and cs-291..300 — dispatching two parallel batch authors (HA2, HB2) next
