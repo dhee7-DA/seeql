@@ -78,6 +78,15 @@ export const CASE_TOPICS: CaseTopicMeta[] = [
   { id: "j6", label: "Self-join", lessonNum: 14 },
   { id: "j7", label: "Joins + aggregates", lessonNum: 15 },
   { id: "j8", label: "Join capstone", lessonNum: 16 },
+  // Module 3 — Set Operations & CASE (lessons 17–24)
+  { id: "s1", label: "UNION stacks", lessonNum: 17 },
+  { id: "s2", label: "Stacked reports", lessonNum: 18 },
+  { id: "s3", label: "INTERSECT", lessonNum: 19 },
+  { id: "s4", label: "EXCEPT", lessonNum: 20 },
+  { id: "s5", label: "Set chains", lessonNum: 21 },
+  { id: "s6", label: "CASE WHEN", lessonNum: 22 },
+  { id: "s7", label: "CASE pivots", lessonNum: 23 },
+  { id: "s8", label: "Set+CASE capstone", lessonNum: 24 },
 ];
 
 export interface CaseUniverseMeta {

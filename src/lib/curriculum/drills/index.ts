@@ -28,6 +28,16 @@ import { ON_VS_WHERE } from "./m2/on-vs-where";
 import { JOIN_EDGES } from "./m2/join-edges";
 import { JOIN_SYNTAX } from "./m2/join-syntax";
 import { JOIN_JUDGMENT } from "./m2/join-judgment";
+import { UNION_DRILL } from "./m3/union";
+import { INTERSECT_DRILL } from "./m3/intersect";
+import { EXCEPT_DRILL } from "./m3/except";
+import { SET_PRECEDENCE } from "./m3/set-precedence";
+import { SET_ORDERING } from "./m3/set-ordering";
+import { SET_EDGES } from "./m3/set-edges";
+import { SET_JUDGMENT } from "./m3/set-judgment";
+import { CASE_WHEN } from "./m3/case-when";
+import { CASE_AGGREGATE } from "./m3/case-aggregate";
+import { CASE_SORTS } from "./m3/case-sorts";
 
 function set(
   keyword: string, label: string, module: number, tier: DrillSet["tier"],
@@ -114,6 +124,38 @@ export const DRILL_SETS: DrillSet[] = [
   set("join-judgment", "Choosing joins", 2, "secondary",
     "Choosing the join — anchors, alternatives, and reading a query's intent before writing it.",
     JOIN_JUDGMENT),
+  // ---- Module 3 · core ----
+  set("union", "UNION & UNION ALL", 3, "core",
+    "The stack — faithful appends, the dedup shredder, and arm shapes that must agree on count.",
+    UNION_DRILL),
+  set("intersect", "INTERSECT", 3, "core",
+    "The overlap — whole-row matching, distinct-by-definition output, and venn-diagram middles.",
+    INTERSECT_DRILL),
+  set("except", "EXCEPT", 3, "core",
+    "The subtraction — asymmetric difference, NULL-safe unlike NOT IN, and the audit instinct.",
+    EXCEPT_DRILL),
+  set("case-when", "CASE WHEN", 3, "core",
+    "The switch yard — first match wins, forgotten ELSE leaks, and expressions that go anywhere.",
+    CASE_WHEN),
+  set("case-aggregate", "CASE + aggregates", 3, "core",
+    "The voting machine — conditional counters, one-pass pivots, and honest zeros.",
+    CASE_AGGREGATE),
+  // ---- Module 3 · secondary ----
+  set("set-precedence", "Set precedence & parens", 3, "secondary",
+    "Chain ambiguity — SQLite's left-to-right law, the paren ban, and the subquery-wrap grouping.",
+    SET_PRECEDENCE),
+  set("set-ordering", "Ordering & shaping sets", 3, "secondary",
+    "One sort to rule the stack — trailing ORDER BY, per-arm wraps, and first-arm naming.",
+    SET_ORDERING),
+  set("set-edges", "Set op edge cases", 3, "secondary",
+    "Weird matching — NULL dedup, affinity across arms, self-stacks, and empty-arm annihilation.",
+    SET_EDGES),
+  set("set-judgment", "Choosing set ops", 3, "secondary",
+    "When to stack, overlap, subtract — and when a join, IN-list, or CASE is the honest tool.",
+    SET_JUDGMENT),
+  set("case-sorts", "CASE sorts & labels", 3, "secondary",
+    "Business order — rank CASEs in ORDER BY, label columns, and the closed-switch habit.",
+    CASE_SORTS),
 ];
 
 export type { DrillSet, DrillQ, DrillTier, DrillAspect } from "./types";
@@ -150,4 +192,13 @@ export const LESSON_DRILLS: Record<string, string[]> = {
   "lesson-14": ["self-join"],                    // table against itself
   "lesson-15": ["join-aggregate"],               // GROUP BY across joins + COUNT trap
   "lesson-16": ["on-vs-where", "join-judgment"], // capstone: predicate placement + choosing joins
+  // ---- Module 3 (set ops & CASE) ----
+  "lesson-17": ["union"],                        // UNION & UNION ALL: stacking, dedup
+  "lesson-18": ["union", "set-ordering"],        // stacking real data: labels, arm shapes
+  "lesson-19": ["intersect"],                    // overlap semantics, join contrast
+  "lesson-20": ["except"],                       // subtraction, NULL-safety vs NOT IN
+  "lesson-21": ["set-precedence"],               // chains, left-to-right law, subquery wrap
+  "lesson-22": ["case-when"],                    // CASE mechanics: first match, ELSE
+  "lesson-23": ["case-aggregate", "case-sorts"], // counters, pivots + custom sorts
+  "lesson-24": ["set-judgment", "set-edges"],    // capstone: three patterns + weird matching
 };

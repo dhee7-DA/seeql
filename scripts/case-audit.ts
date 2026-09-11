@@ -154,15 +154,27 @@ function auditCase(c: CaseStudy, seen: Map<string, string>): string[] {
   const noVerify = c.slots.filter((s) => s.noVerify).length;
   if (noVerify > 3) add(`${noVerify} noVerify slots — cap is 3`);
 
-  // single read-only statement
+  // single read-only statement (M1/M2) or compound/CASE-select (M3)
   const filledCorrect = fill(c.template, Object.fromEntries(c.slots.map((s, i) => [i + 1, s.answer])));
   if (/;/.test(filledCorrect.replace(/;\s*$/, ""))) add("template contains an internal statement separator");
   const selects = (filledCorrect.match(/\bSELECT\b/gi) ?? []).length;
-  if (selects !== 1) add(`${selects} SELECT keywords — subqueries not allowed in Module 1–2 cases`);
   const isM2 = c.topic.startsWith("j");
+  const isM3 = c.topic.startsWith("s");
   const hasJoin = /\bJOIN\b/i.test(filledCorrect);
+  const hasSetOp = /\bUNION\b|\bINTERSECT\b|\bEXCEPT\b/i.test(filledCorrect);
+  const hasCase = /\bCASE\b/i.test(filledCorrect);
+  if (isM3) {
+    if (["s1", "s2", "s3", "s4", "s5"].includes(c.topic) && !hasSetOp)
+      add("Module 3 set-op topic but no UNION/INTERSECT/EXCEPT — these cases must compare or combine result sets");
+    if (["s6", "s7", "s8"].includes(c.topic) && !hasCase)
+      add("Module 3 CASE topic but no CASE keyword — these cases must branch");
+    if (selects >= 2 && !hasSetOp && !hasCase)
+      add(`${selects} SELECT keywords with no set operator or CASE — only compounds (UNION/INTERSECT/EXCEPT) or CASE-driven segmentation may use multiple SELECTs`);
+  } else {
+    if (selects !== 1) add(`${selects} SELECT keywords — subqueries not allowed in Module 1–2 cases`);
+  }
   if (isM2 && !hasJoin) add("Module 2 topic but no JOIN keyword — join cases must join");
-  if (!isM2 && hasJoin) add("JOIN found — Module 1 cases are single-table");
+  if (!isM2 && !isM3 && hasJoin) add("JOIN found — Module 1 cases are single-table");
   if (!/^\s*SELECT\b/i.test(filledCorrect)) add("filled query does not start with SELECT");
 
   // execution + number verification

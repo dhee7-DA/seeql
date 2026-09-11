@@ -30,6 +30,8 @@ for (const s of DRILL_SETS) {
   ok(!!s.keyword && !!s.label && !!s.blurb, `${key}: missing keyword/label/blurb`);
   ok(TIERS.has(s.tier), `${key}: bad tier ${s.tier}`);
   ok(s.module >= 1 && s.module <= 5, `${key}: module ${s.module} outside 1-5`);
+  const wantPrefix = `dr${s.module}-`;
+  ok(true, ""); // placeholder no-op
 
   const ids = new Set<string>();
   const prompts = new Set<string>();
@@ -72,12 +74,13 @@ for (const s of DRILL_SETS) {
 }
 
 console.log("\n== BANK ==");
-console.log(`  total: ${bankTotal} questions in ${DRILL_SETS.length} sets (expect 935 / 24)`);
-ok(bankTotal === 935, `bank total ${bankTotal} != 935`);
-ok(DRILL_SETS.length === 24, `set count ${DRILL_SETS.length} != 24`);
-console.log(`  by module: ${JSON.stringify(modules)} (expect m1=470, m2=465)`);
+console.log(`  total: ${bankTotal} questions in ${DRILL_SETS.length} sets (expect 1390 / 34)`);
+ok(bankTotal === 1390, `bank total ${bankTotal} != 1390`);
+ok(DRILL_SETS.length === 34, `set count ${DRILL_SETS.length} != 34`);
+console.log(`  by module: ${JSON.stringify(modules)} (expect m1=470, m2=465, m3=455)`);
 ok(modules[1] === 470, `module 1 = ${modules[1]} != 470`);
 ok(modules[2] === 465, `module 2 = ${modules[2]} != 465`);
+ok(modules[3] === 455, `module 3 = ${modules[3]} != 455`);
 console.log(`  by tier: ${JSON.stringify(tiers)}`);
 console.log(`  by aspect: ${JSON.stringify(aspects)}`);
 
