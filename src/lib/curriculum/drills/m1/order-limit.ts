@@ -80,7 +80,7 @@ export const ORDER_LIMIT: DrillQ[] = [
     why: "Negating a numeric sort key reverses the order — expressions are fair game as sort keys. DESC says it better.",
   },
   { id: "dr1-ol-08", keyword: KW, tier: "core", aspect: "syntax",
-    prompt: "Which query is syntactically correct?",
+    prompt: "Which query writes SELECT → FROM → ORDER BY → LIMIT in the legal clause order?",
     choices: [
       "`SELECT name FROM products LIMIT 3 ORDER BY price;`",
       "`SELECT name FROM products ORDER BY price LIMIT 3;`",

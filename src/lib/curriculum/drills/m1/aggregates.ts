@@ -214,10 +214,10 @@ export const AGGREGATES: DrillQ[] = [
 
   // ---------- edge ----------
   { id: "dr1-ag-19", keyword: KW, tier: "core", aspect: "edge",
-    prompt: "`SELECT COUNT(*) AS a, COUNT(shipped_at) AS b FROM orders;` — the row reads…",
-    choices: ["103, 82", "82, 103", "103, 103", "82, 82"],
-    answer: 0,
-    why: "The free NULL census: rows vs non-NULL values. The 21 gap is the unshipped backlog.",
+    prompt: "`SELECT COUNT(DISTINCT customer_id) FROM orders;` — how many?",
+    choices: ["8", "16", "24", "103"],
+    answer: 1,
+    why: "DISTINCT inside COUNT dedups before counting: 103 orders collapse to the 16 customers behind them. COUNT(DISTINCT x) is the census-of-players move; plain COUNT(x) counts contacts. (The rows-vs-values NULL census lives in the NULL / IS NULL set.)",
   },
   { id: "dr1-ag-20", keyword: KW, tier: "core", aspect: "edge",
     prompt: "The empty-set twins: on `WHERE 1 = 0`, which pair comes back?",
