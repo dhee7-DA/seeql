@@ -387,7 +387,7 @@ export function CaseFiles() {
   return (
     <div className="bg-ambient mx-auto max-w-3xl px-4 py-8 sm:px-6">
       <p className="flex items-center gap-2 font-mono text-xs text-zinc-500">
-        <FileStack className="h-3.5 w-3.5" /> {CASES.length} CASE FILES · MODULES 1–2 TOOLKIT
+        <FileStack className="h-3.5 w-3.5" /> {CASES.length} CASE FILES · MODULES 1–3 TOOLKIT
       </p>
       <h1 className="font-display mt-2 text-3xl font-semibold tracking-[-0.02em] text-zinc-50">The case file drawer</h1>
       <p className="mt-3 text-[15px] leading-7 text-zinc-400">
