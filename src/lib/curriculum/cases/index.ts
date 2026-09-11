@@ -29,6 +29,7 @@ import { casesCHa2 } from "./cases-cha2";
 import { casesCHb2 } from "./cases-chb2";
 import { casesJ1 } from "./cases-j1";
 import { casesJ2 } from "./cases-j2";
+import { casesJ3 } from "./cases-j3";
 
 export const CASES: CaseStudy[] = [
   ...casesExemplars,
@@ -57,6 +58,7 @@ export const CASES: CaseStudy[] = [
   // Module 2 — Joins & Relationships (cs-301…cs-600)
   ...casesJ1,
   ...casesJ2,
+  ...casesJ3,
 ].sort((a, b) => a.id.localeCompare(b.id));
 
 export function caseById(id: string): CaseStudy | undefined {
