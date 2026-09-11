@@ -1215,3 +1215,21 @@ Stage Summary:
 - m3-w1b COMPLETE: 85 engine-verified MCQs (EXCEPT 45 core + Set precedence & parens 40 secondary) in src/lib/curriculum/drills/m3/, tsc clean, validator green, zero prompt/id collisions vs the 935-Q bank. Bank total stays 935 until orchestrator registers (would become 1020 / 26 sets).
 - Durable receipts for M3 peers (UNION/INTERSECT/CASE authors): direction pairs 4↔3, 87-vs-0 id accident, NULL groups cancel (pending∖cancelled shipped_at = 0), INTEGER∖TEXT-cast = 2, and the full SQLite left-assoc precedence table vs standard grammar (0/20/8/0/16/8 discriminators) — all re-runnable via bun scripts/m3-facts-ex.ts / scripts/m3-facts-sp.ts.
 - Unverified facts: none used — every number in both files was probed this session; nothing left out.
+
+---
+Task ID: m3-full
+Agent: Super Z (main agent)
+Task: Module 3 (Set Ops & CASE) full cycle — theory densification → probes → drill bank (455) → cases wave 1 (50/300)
+
+Work Log:
+- THEORY: added premium deep-dive layer (mind/engine/myth/edge blocks) to L17–L24 + L37 — 9 lessons × 4 blocks, engine-informed; committed 37a698e.
+- PROBES: scripts/m3-facts.ts — key receipts: SQLite set ops evaluate STRICTLY LEFT-TO-RIGHT (INTERSECT does NOT bind tighter, contra standard SQL: statuses∪regions∩cities = 0 not 4); parenthesized compound arms = syntax error (subquery wrap groups instead = 4); NULL dedups to one in UNION (shipped_at self-union = 76 = 75 distinct + 1); statuses(4)∪regions(4)=8, UNION ALL 119; EXCEPT asymmetric 4/3; CASE bands 65/27/11, first-match overlap 92/0/11; pivot EU 2675.29/6656.18 pending/delivered, LATAM 0.00 honest zero.
+- DRILLS: 455 MCQs / 10 sets (union 55, intersect 45, except 45, case-when 55, case-aggregate 50, set-precedence 40, set-ordering 45, set-edges 40, set-judgment 40, case-sorts 40), ids dr3-*-01..NN. 5 parallel author agents dispatched — 4 "failed" on context-deadline BUT 6/8 files landed verified; caught 3 dup prompts in orphaned files (is-18≡is-32, se-33≡un-39) via scripts/m3-validate-orphan.ts and fixed; set-ordering + case-sorts authored directly. Registered all 10, LESSON_DRILLS wired L17–L24, audit-bank extended → 1390/34 PASS. Committed 0f78ad7.
+- CASES: case-audit extended (M3 rules: s1–s5 require set op, s6–s8 require CASE, multi-SELECT needs set-op/CASE); CASE_TOPICS + s1–s8. Task-author attempts failed (2× context-deadline, one left 6 truncated cases) → authored cases-s1.ts (cs-601–650) DIRECTLY: 50/50 PASS, 17/17/16, learned+applied audit gates (3–7 slots/case, markers once each, walkthrough ≥220 chars, number slots in cells or noVerify, empty-result ambiguity traps). Deck 600→650 all PASS, header "MODULES 1–3 TOOLKIT". Committed 092ec1a.
+- INCIDENT: dev-server watchdog recreated db/custom.db mid-session with only 5 tables; restored via /api/stats → ensureDatabase self-heal path (finance rows re-inserted). All audits re-verified post-restore.
+- E2E: Case Files "650 CASE FILES · MODULES 1–3 / Easy 217 / Medium 217 / Hard 216 / UNION stacks 17"; Drill Yard "0 of 1390 attempted"; shots/m3-wave1.png.
+
+Stage Summary:
+- M3 status: theory ✅ deep-dive layer; drills ✅ 455/10 sets registered+wired; cases 50/300 (wave 1 done, waves 2–6 = cases-s2..s6.cs-651–900 REMAINING, ~50/file, tier quotas 17/17/16 each).
+- Durable new receipts: left-to-right set-op precedence table, paren-arm ban, NULL group-dedup, id-space overlap 87/0, ledger accounts ∩ methods = 0, expense categories Rent 16,800/Ads 4,570/Travel 2,521/Tools 1,525.
+- Next: author cases-s2..s6 (250 cases) directly or via resilient agents, register, final E2E; then M4 (Subqueries & CTEs) full cycle.
