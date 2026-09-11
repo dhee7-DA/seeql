@@ -18,6 +18,16 @@ import { AND_OR_NOT } from "./m1/and-or-not";
 import { DISTINCT } from "./m1/distinct";
 import { COALESCE } from "./m1/coalesce";
 import { NULLIF_DRILL } from "./m1/nullif";
+import { INNER_JOIN } from "./m2/inner-join";
+import { LEFT_JOIN } from "./m2/left-join";
+import { MULTI_JOIN } from "./m2/multi-join";
+import { JOIN_AGGREGATE } from "./m2/join-aggregate";
+import { ANTI_JOIN } from "./m2/anti-join";
+import { SELF_JOIN } from "./m2/self-join";
+import { ON_VS_WHERE } from "./m2/on-vs-where";
+import { JOIN_EDGES } from "./m2/join-edges";
+import { JOIN_SYNTAX } from "./m2/join-syntax";
+import { JOIN_JUDGMENT } from "./m2/join-judgment";
 
 function set(
   keyword: string, label: string, module: number, tier: DrillSet["tier"],
@@ -72,6 +82,38 @@ export const DRILL_SETS: DrillSet[] = [
   set("nullif", "NULLIF", 1, "secondary",
     "Poison-value neutralizer — divide-by-zero guards and sentinel-to-hole mapping.",
     NULLIF_DRILL),
+  // ---- Module 2 · core ----
+  set("inner-join", "JOIN · ON", 2, "core",
+    "The pairing machine — match rules, surviving pairs, and what an inner join keeps, drops, and multiplies.",
+    INNER_JOIN),
+  set("left-join", "LEFT JOIN", 2, "core",
+    "Keep the left side — NULL-filled gaps, the ON-vs-WHERE collapse, and counts that finally add up.",
+    LEFT_JOIN),
+  set("multi-join", "Multi-table joins", 2, "core",
+    "Three-table chains — hop-by-hop pairing through foreign keys without losing the grain.",
+    MULTI_JOIN),
+  set("join-aggregate", "JOIN + aggregates", 2, "core",
+    "Reports across tables — GROUP BY over joins, the fan-out trap, and the aggregate-first fix.",
+    JOIN_AGGREGATE),
+  // ---- Module 2 · secondary ----
+  set("anti-join", "Anti-join", 2, "secondary",
+    "Finding the holes — LEFT JOIN + IS NULL, the NOT IN collapse, and NOT EXISTS.",
+    ANTI_JOIN),
+  set("self-join", "Self-join", 2, "secondary",
+    "A table against itself — two aliases, mirror pairs, and the < guard.",
+    SELF_JOIN),
+  set("on-vs-where", "ON vs WHERE", 2, "secondary",
+    "Predicate placement — inner equivalence, outer divergence, and the anti-join turn.",
+    ON_VS_WHERE),
+  set("join-edges", "Join edge cases", 2, "secondary",
+    "When matching gets weird — NULL keys, duplicate keys, cross products, and type surprises.",
+    JOIN_EDGES),
+  set("join-syntax", "USING & aliases", 2, "secondary",
+    "Grammar of joining — USING, NATURAL, CROSS, aliases and the errors they invite.",
+    JOIN_SYNTAX),
+  set("join-judgment", "Choosing joins", 2, "secondary",
+    "Choosing the join — anchors, alternatives, and reading a query's intent before writing it.",
+    JOIN_JUDGMENT),
 ];
 
 export type { DrillSet, DrillQ, DrillTier, DrillAspect } from "./types";
@@ -99,4 +141,13 @@ export const LESSON_DRILLS: Record<string, string[]> = {
   "lesson-06": ["distinct"],                     // DISTINCT
   "lesson-07": ["aggregates"],                   // COUNT/SUM/AVG/MIN/MAX
   "lesson-08": ["groupby", "having"],            // GROUP BY & HAVING
+  // ---- Module 2 (joins) ----
+  "lesson-09": ["inner-join", "join-syntax"],    // first join: FKs, ON, aliases, USING
+  "lesson-10": ["inner-join", "join-edges"],     // INNER JOIN mechanics: pairing, dropping, fan-out
+  "lesson-11": ["multi-join"],                   // three-table chains
+  "lesson-12": ["left-join"],                    // LEFT JOIN preservation
+  "lesson-13": ["anti-join"],                    // LEFT JOIN + IS NULL pattern
+  "lesson-14": ["self-join"],                    // table against itself
+  "lesson-15": ["join-aggregate"],               // GROUP BY across joins + COUNT trap
+  "lesson-16": ["on-vs-where", "join-judgment"], // capstone: predicate placement + choosing joins
 };
