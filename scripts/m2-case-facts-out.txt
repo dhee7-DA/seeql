@@ -1,0 +1,345 @@
+=== M2 CASE FACTS (seed db, read-only) ===
+
+## customer x order count (all 16)
+   Alice Chen | 24
+   Emma Wilson | 17
+   Grace Kim | 14
+   Maya Patel | 13
+   Chloe Dubois | 5
+   Pedro Alvarez | 4
+   Noah Meyer | 4
+   Keiko Sato | 4
+   Isabella Rossi | 4
+   Hiro Tanaka | 3
+   Farid Nasser | 3
+   Jamal Wright | 2
+   Dmitri Volkov | 2
+   Bruno Silva | 2
+   Olivia Brown | 1
+   Liam O'Brien | 1
+## city x order count
+   Berlin | 24
+   Austin | 17
+   Seoul | 14
+   Mumbai | 13
+   Lyon | 5
+   Nagoya | 4
+   Milan | 4
+   Madrid | 4
+   Hamburg | 4
+   Osaka | 3
+   Dubai | 3
+   Tallinn | 2
+   São Paulo | 2
+   Chicago | 2
+   London | 1
+   Cork | 1
+## region x order count + revenue (order grain)
+   EU | 45 | 15089.23 | 335.32
+   APAC | 37 | 11605.45 | 313.66
+   US | 19 | 7286.16 | 383.48
+   LATAM | 2 | 852.44 | 426.22
+## status x count
+   cancelled | 7
+   delivered | 52
+   pending | 14
+   shipped | 30
+## pending orders value
+   14 | 6113
+## cancelled orders list
+   7 | 1 | 152.52
+   21 | 1 | 136.11
+   50 | 13 | 90.35
+   51 | 13 | 25.47
+   82 | 5 | 143.86
+   83 | 11 | 397.99
+   95 | 1 | 206.19
+## unshipped count
+   21 | 7265.49
+## customer x invoice count (LEFT, zero-bucket shows)
+   Alice Chen | 5
+   Emma Wilson | 4
+   Maya Patel | 4
+   Grace Kim | 3
+   Isabella Rossi | 3
+   Jamal Wright | 2
+   Liam O'Brien | 2
+   Olivia Brown | 2
+   Chloe Dubois | 1
+   Hiro Tanaka | 1
+   Pedro Alvarez | 1
+   Bruno Silva | 0
+   Dmitri Volkov | 0
+   Farid Nasser | 0
+   Keiko Sato | 0
+   Noah Meyer | 0
+## uninvoiced customers (anti-join)
+   Bruno Silva | LATAM
+   Dmitri Volkov | EU
+   Farid Nasser | APAC
+   Keiko Sato | APAC
+   Noah Meyer | EU
+## invoices by status
+   open | 6 | 19609
+   paid | 21 | 66443
+   void | 1 | 925
+## invoices total money
+   28 | 86977
+## customer x invoice money (top)
+   Alice Chen | 5 | 26629
+   Emma Wilson | 4 | 13384
+   Maya Patel | 4 | 11542
+   Grace Kim | 3 | 9071
+   Isabella Rossi | 3 | 9026
+   Olivia Brown | 2 | 5623
+   Liam O'Brien | 2 | 4487
+   Jamal Wright | 2 | 3291
+   Hiro Tanaka | 1 | 1756
+   Chloe Dubois | 1 | 1295
+   Pedro Alvarez | 1 | 873
+## LEFT JOIN invoices rows vs count(i.id)
+   33 | 28 | 16
+## invoices LEFT JOIN payments
+   33 | 27
+## multi-paid invoices
+   INV-2024-001 | 2 | 4860
+   INV-2024-005 | 2 | 5284
+   INV-2024-012 | 2 | 4723
+   INV-2024-019 | 2 | 5614
+   INV-2024-022 | 2 | 4459
+## unpaid invoices (anti payments)
+   INV-2024-018 | 873
+   INV-2024-021 | 1295
+   INV-2025-024 | 4937
+   INV-2025-026 | 3562
+   INV-2025-027 | 2794
+   INV-2025-028 | 1756
+## customers->invoices->payments chain
+   27 | 8
+## region x paid money (payments chain)
+   EU | 14 | 37261
+   APAC | 8 | 20613
+   US | 5 | 11738
+## lines count + money (line grain)
+   251 | 34833.28 | 103
+## orders x line count dist
+   1 | 26
+   2 | 29
+   3 | 25
+   4 | 23
+## customer x lines (top)
+   Alice Chen | 50 | 7262.35
+   Emma Wilson | 46 | 6640.56
+   Grace Kim | 34 | 4574.23
+   Maya Patel | 30 | 3644.56
+   Chloe Dubois | 14 | 2667.93
+   Pedro Alvarez | 13 | 1686.17
+   Keiko Sato | 10 | 1098.6
+   Noah Meyer | 8 | 737.68
+   Isabella Rossi | 8 | 985.65
+   Hiro Tanaka | 8 | 829.09
+   Jamal Wright | 7 | 645.6
+   Farid Nasser | 6 | 1458.97
+   Dmitri Volkov | 5 | 599.26
+   Bruno Silva | 5 | 852.44
+   Liam O'Brien | 4 | 705.39
+   Olivia Brown | 3 | 444.8
+## product x units + revenue (top)
+   Desk Mat Extended | 47 | 1176.02
+   Noise-Canceling Headset | 46 | 6888.25
+   HDMI 2.1 Cable 2m | 38 | 575.5
+   Laptop Stand Aluminum | 36 | 1542.77
+   Wireless Mouse M3 | 36 | 1239.85
+   Running Socks 3-pack | 33 | 600.78
+   4K Webcam Pro | 31 | 3989.97
+   Fitness Band X2 | 30 | 2347.1
+   Ring Light 14" | 30 | 1208.44
+   Studio Desktop Mic | 30 | 3589.61
+   Mechanical Keyboard K1 | 28 | 2558.26
+   Yoga Mat Eco 6mm | 27 | 863.91
+   Smart Watch S | 23 | 4582.02
+   Cycling Jersey Pro | 21 | 1384.15
+   Bluetooth Speaker Mini | 21 | 1266.15
+   USB-C Hub 7-in-1 | 21 | 1020.5
+## category x units + revenue
+   Audio | 3 | 97 | 11744.01
+   Wearables | 2 | 53 | 6929.12
+   Video | 2 | 61 | 5198.41
+   Electronics | 3 | 85 | 4818.61
+   Accessories | 3 | 121 | 3294.29
+   Apparel | 2 | 54 | 1984.93
+   Fitness | 1 | 27 | 863.91
+## supplier x units (via products)
+   Midwest Hardware Co | US | 109
+   Shenzhen Electro | APAC | 99
+   Nordic Gadgets AB | EU | 82
+   Pacific Textiles | APAC | 80
+   Alpine Audio GmbH | EU | 77
+   Andes Naturals SA | LATAM | 51
+## supplier region x units
+   APAC | 179 | 6
+   EU | 159 | 5
+   US | 109 | 3
+   LATAM | 51 | 2
+## suppliers x products
+   Nordic Gadgets AB | EU | 3
+   Shenzhen Electro | APAC | 3
+   Pacific Textiles | APAC | 3
+   Midwest Hardware Co | US | 3
+   Alpine Audio GmbH | EU | 2
+   Andes Naturals SA | LATAM | 2
+## products x suppliers (16 rows sample)
+   Mechanical Keyboard K1 | Nordic Gadgets AB | EU
+   Wireless Mouse M3 | Shenzhen Electro | APAC
+   USB-C Hub 7-in-1 | Pacific Textiles | APAC
+   Noise-Canceling Headset | Midwest Hardware Co | US
+   Studio Desktop Mic | Alpine Audio GmbH | EU
+   Bluetooth Speaker Mini | Andes Naturals SA | LATAM
+   4K Webcam Pro | Nordic Gadgets AB | EU
+   Ring Light 14" | Shenzhen Electro | APAC
+   HDMI 2.1 Cable 2m | Pacific Textiles | APAC
+   Laptop Stand Aluminum | Midwest Hardware Co | US
+   Desk Mat Extended | Alpine Audio GmbH | EU
+   Fitness Band X2 | Andes Naturals SA | LATAM
+   Smart Watch S | Nordic Gadgets AB | EU
+   Running Socks 3-pack | Shenzhen Electro | APAC
+   Cycling Jersey Pro | Pacific Textiles | APAC
+   Yoga Mat Eco 6mm | Midwest Hardware Co | US
+## same-region customer pairs (no guard)
+   94
+## same-region pairs a.id < b.id
+   39
+## same-region pairs a.id <= b.id
+   55
+## same-city pairs < 
+   0
+## same-region pairs sample EU
+   Chloe Dubois
+   Dmitri Volkov
+   Isabella Rossi
+   Liam O'Brien
+   Noah Meyer
+   Olivia Brown
+   Pedro Alvarez
+   Dmitri Volkov
+   Isabella Rossi
+   Liam O'Brien
+   Noah Meyer
+   Olivia Brown
+   Pedro Alvarez
+   Isabella Rossi
+   Liam O'Brien
+   Noah Meyer
+   Olivia Brown
+   Pedro Alvarez
+   Liam O'Brien
+   Noah Meyer
+   Olivia Brown
+   Pedro Alvarez
+   Noah Meyer
+   Olivia Brown
+   Pedro Alvarez
+   … 28 rows total
+## order pairs per customer max
+   Alice Chen | 276
+   Emma Wilson | 136
+   Grace Kim | 91
+   Maya Patel | 78
+   Chloe Dubois | 10
+   Pedro Alvarez | 6
+   Noah Meyer | 6
+   Keiko Sato | 6
+   Isabella Rossi | 6
+   Hiro Tanaka | 3
+   Farid Nasser | 3
+   Jamal Wright | 1
+   Dmitri Volkov | 1
+   Bruno Silva | 1
+## same-product line pairs
+   1983
+## pending in ON vs WHERE (LEFT)
+   22
+## pending in WHERE (collapses)
+   14
+## unshipped in ON
+   29
+## EU in ON (LEFT preserved)
+   53
+## EU in WHERE (collapses to inner)
+   45
+## cancelled in ON
+   19 | 16
+## zero-order buckets false? every customer has orders
+   0
+## USING(id) customers x orders
+   16
+## NATURAL customers x orders
+   0
+## NATURAL orders x products
+   16
+## CROSS JOIN + ON honored
+   103
+## comma join with WHERE
+   103
+## comma join no WHERE
+   1648
+## wrong FK join c.id=o.id
+   16
+## region case: ='eu' vs ='EU'
+   0 | 45
+## invoices x orders same customer (mesh)
+   314 | 102906.64
+## o.id='7' affinity join
+   1
+## orders x items row inflation
+   103 | 251 | 34833.28 | 103244.55
+## customer with orders+invoices full shape (Alice)
+   24 | 5 | 50
+## customer list for briefs (all 16)
+   1 | Alice Chen | Berlin | EU | 1
+   2 | Bruno Silva | São Paulo | LATAM | 1
+   3 | Chloe Dubois | Lyon | EU | 1
+   4 | Dmitri Volkov | Tallinn | EU | 0
+   5 | Emma Wilson | Austin | US | 1
+   6 | Farid Nasser | Dubai | APAC | 1
+   7 | Grace Kim | Seoul | APAC | 1
+   8 | Hiro Tanaka | Osaka | APAC | 1
+   9 | Isabella Rossi | Milan | EU | 1
+   10 | Jamal Wright | Chicago | US | 1
+   11 | Keiko Sato | Nagoya | APAC | 0
+   12 | Liam O'Brien | Cork | EU | 1
+   13 | Maya Patel | Mumbai | APAC | 1
+   14 | Noah Meyer | Hamburg | EU | 1
+   15 | Olivia Brown | London | EU | 1
+   16 | Pedro Alvarez | Madrid | EU | 1
+## supplier list
+   1 | Nordic Gadgets AB | EU | 4.6
+   2 | Shenzhen Electro | APAC | 4.1
+   3 | Pacific Textiles | APAC | 3.9
+   4 | Midwest Hardware Co | US | 4.4
+   5 | Alpine Audio GmbH | EU | 4.8
+   6 | Andes Naturals SA | LATAM | 4
+## product catalog
+   1 | Mechanical Keyboard K1 | Electronics | 89.99 | 120 | 1
+   2 | Wireless Mouse M3 | Electronics | 34.5 | 300 | 2
+   3 | USB-C Hub 7-in-1 | Electronics | 49 | 85 | 3
+   4 | Noise-Canceling Headset | Audio | 149.99 | 60 | 4
+   5 | Studio Desktop Mic | Audio | 119 | 45 | 5
+   6 | Bluetooth Speaker Mini | Audio | 59.99 | 210 | 6
+   7 | 4K Webcam Pro | Video | 129 | 70 | 1
+   8 | Ring Light 14" | Video | 39.99 | 150 | 2
+   9 | HDMI 2.1 Cable 2m | Accessories | 14.99 | 500 | 3
+   10 | Laptop Stand Aluminum | Accessories | 42.5 | 180 | 4
+   11 | Desk Mat Extended | Accessories | 24.99 | 260 | 5
+   12 | Fitness Band X2 | Wearables | 79 | 95 | 6
+   13 | Smart Watch S | Wearables | 199.99 | 40 | 1
+   14 | Running Socks 3-pack | Apparel | 18.5 | 400 | 2
+   15 | Cycling Jersey Pro | Apparel | 65 | 110 | 3
+   16 | Yoga Mat Eco 6mm | Fitness | 32 | 220 | 4
+## expenses by category
+   Rent | 14 | 16800
+   Ads | 14 | 4570
+   Travel | 3 | 2521
+   Tools | 5 | 1525
+## expenses x nothing joins — sanity
+   36

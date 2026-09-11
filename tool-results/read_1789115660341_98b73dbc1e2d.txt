@@ -1,0 +1,2002 @@
+     1→// Case batch J1 — Module 2 (joins) cases cs-301…cs-350.
+     2→// 50 cases: 17 easy / 17 medium / 16 hard across topics j1 (two tables),
+     3→// j2 (INNER JOIN), j3 (3-table chains), j4 (LEFT JOIN), j5 (anti-join),
+     4→// j6 (self-join), j7 (joins + aggregates). Every figure below was probed
+     5→// against the live seed db (scripts/m2-case-facts.ts + scripts/m2-j1-probes.ts)
+     6→// and is mechanically re-verified by scripts/case-audit.ts.
+     7→
+     8→import type { CaseStudy } from "./types";
+     9→
+    10→export const casesJ1: CaseStudy[] = [
+    11→  {
+    12→    id: "cs-301",
+    13→    tier: "easy",
+    14→    topic: "j1",
+    15→    universe: "month-close",
+    16→    title: "Pending money needs a name",
+    17→    brief:
+    18→      "From: Financial Controller. Re: month-end receivables review.\n\nBefore I can sign the close I need to know how many orders are still sitting in pending — and I want them tied to real accounts, not naked order rows. One number for the file: how many pending orders does the book hold right now?",
+    19→    ask: "Count the pending orders, joined to their customers so every row has a named buyer behind it.",
+    20→    template: `SELECT {1}(*) AS pending_orders
+    21→FROM orders o
+    22→{2} customers c ON c.id = o.{3}
+    23→WHERE o.status = {4};`,
+    24→    slots: [
+    25→      {
+    26→        answer: "COUNT",
+    27→        kind: "keyword",
+    28→        label: "the counting aggregate",
+    29→        why: "The deliverable is a headcount of pending orders, so COUNT(*) is the tool. SUM would try to add up the '*' placeholder and fail outright.",
+    30→      },
+    31→      {
+    32→        answer: "JOIN",
+    33→        kind: "keyword",
+    34→        label: "the join keyword",
+    35→        why: "The buyer's name lives in customers, not orders — JOIN reunites the two tables so the count runs over rows that carry an account.",
+    36→      },
+    37→      {
+    38→        answer: "customer_id",
+    39→        kind: "keyword",
+    40→        label: "the foreign key column",
+    41→        why: "orders.customer_id points at customers.id — that thread is the join key. Joining on o.id would pair order 7 with customer 7, a coincidence, not a relationship.",
+    42→      },
+    43→      {
+    44→        answer: "'pending'",
+    45→        kind: "keyword",
+    46→        label: "the status literal",
+    47→        why: "The gate targets pending orders, and status is text: SQL needs the quotes. A bare pending would be read as a column name and blow up.",
+    48→      },
+    49→    ],
+    50→    distractors: ["SUM", "UNION", "id", "'shipped'"],
+    51→    walkthrough:
+    52→      "The ask is a queue size, so COUNT(*) — and because the brief insists every row carry a buyer, the count runs over the joined rows, not bare orders. The join key is the foreign key thread orders.customer_id = customers.id; joining on the coincidence o.id = c.id would silently count a different (nonsense) population. The status filter is a text literal, so 'pending' wears quotes. Run it and the answer is 14 pending orders, worth 6,113.00 in total — spread across 8 customers, so no single account dominates the queue.",
+    53→  },
+    54→  {
+    55→    id: "cs-302",
+    56→    tier: "easy",
+    57→    topic: "j1",
+    58→    universe: "growth",
+    59→    title: "Where the orders live",
+    60→    brief:
+    61→      "From: Head of Growth. Re: board deck, slide 3.\n\nI want a simple geography story for the board: which cities actually generate our order volume? Not revenue yet — just raw order counts per city, biggest first, top three only. Keep it clean: one row per city with its order count.",
+    62→    ask: "The top 3 cities by number of orders, biggest first.",
+    63→    template: `SELECT c.city, {1}(*) AS orders
+    64→FROM customers c
+    65→{2} orders o ON {3}
+    66→GROUP BY c.city
+    67→ORDER BY orders {4};`,
+    68→    slots: [
+    69→      {
+    70→        answer: "COUNT",
+    71→        kind: "keyword",
+    72→        label: "the counting aggregate",
+    73→        why: "Order volume per city is a row count, so COUNT(*). SUM would try to add the '*' text and error out.",
+    74→      },
+    75→      {
+    76→        answer: "JOIN",
+    77→        kind: "keyword",
+    78→        label: "the join keyword",
+    79→        why: "City lives on customers, orders live in orders — JOIN reunites them per row so each order carries its city.",
+    80→      },
+    81→      {
+    82→        answer: "o.customer_id = c.id",
+    83→        kind: "keyword",
+    84→        label: "the join condition",
+    85→        why: "The foreign key is orders.customer_id pointing at customers.id. Any other pairing (like o.id = c.id) matches order numbers against customer numbers — meaningless coincidence rows.",
+    86→      },
+    87→      {
+    88→        answer: "DESC",
+    89→        kind: "keyword",
+    90→        label: "the sort direction",
+    91→        why: "'Biggest first' means descending: DESC. ASC would hand the board the three quietest cities.",
+    92→      },
+    93→    ],
+    94→    distractors: ["SUM", "UNION", "c.id = o.id", "ASC"],
+    95→    walkthrough:
+    96→      "Each order must inherit its city, so join orders to customers on the foreign key, bucket by city, count, sort descending, and trim to three. The join condition is the whole lesson: o.customer_id = c.id follows the real relationship, while c.id = o.id would match order 7 to customer 7 and fabricate a geography. Run it and the podium is Berlin 24, Austin 17, Seoul 14 — Berlin's lead is really one customer (Alice Chen) ordering 24 times. Sixteen cities hold all sixteen customers, one each, so city rankings here are customer rankings in disguise.",
+    97→  },
+    98→  {
+    99→    id: "cs-303",
+   100→    tier: "easy",
+   101→    topic: "j1",
+   102→    universe: "supplier",
+   103→    title: "Whose headset are we selling?",
+   104→    brief:
+   105→      "From: Procurement lead. Re: restock question.\n\nThe Noise-Canceling Headset keeps selling out and I want to know who actually makes the thing before I negotiate the next batch. Pull the product together with its supplier — and double-check by price too, so we're certain we're looking at the 149.99 unit and not some other gadget.",
+   106→    ask: "The headset's name, price and supplier name — matched by name AND the 149.99 price.",
+   107→    template: `SELECT p.name, p.price, s.name AS supplier
+   108→FROM products p
+   109→JOIN suppliers s ON {1}
+   110→WHERE p.name = {2} AND p.price = {3};`,
+   111→    slots: [
+   112→      {
+   113→        answer: "s.id = p.supplier_id",
+   114→        kind: "keyword",
+   115→        label: "the join condition",
+   116→        why: "products.supplier_id is the foreign key into suppliers.id. Matching p.id to s.id would pair product 4 with supplier 4 by coincidence, not by the real relationship.",
+   117→      },
+   118→      {
+   119→        answer: "'Noise-Canceling Headset'",
+   120→        kind: "keyword",
+   121→        label: "the product name literal",
+   122→        why: "The brief names the product, and names are text: quotes required. The bare words would be parsed as identifiers and the query dies.",
+   123→      },
+   124→      {
+   125→        answer: "149.99",
+   126→        kind: "number",
+   127→        label: "the price pin",
+   128→        why: "Pinning the price to 149.99 makes the match unambiguous — the result cell shows the price right next to the name, so both filters verify at a glance.",
+   129→      },
+   130→    ],
+   131→    distractors: ["s.region = p.category", "'4K Webcam Pro'", "129"],
+   132→    walkthrough:
+   133→      "This is the first-join pattern in miniature: one fact (the product) plus one lookup (its supplier), stitched on products.supplier_id = suppliers.id. The two WHERE pins — name and price — make the target unambiguous, and both appear in the returned row so you can eyeball-verify. Run it and you get exactly one row: Noise-Canceling Headset, 149.99, Midwest Hardware Co. A tempting wrong turn is joining on matching id numbers; here product id 4 and supplier id 4 both exist, so that accident would still return a row — just a relationship that means nothing.",
+   134→  },
+   135→  {
+   136→    id: "cs-304",
+   137→    tier: "easy",
+   138→    topic: "j1",
+   139→    universe: "funnel",
+   140→    title: "Region scoreboard",
+   141→    brief:
+   142→      "From: Marketing lead. Re: regional funnel review.\n\nI need the crudest possible split to open the funnel meeting: how many orders does each customer region place? Four rows maximum — one per region — ordered so the biggest book sits on top. This is the anchor chart everything else hangs off.",
+   143→    ask: "Order count per customer region, biggest region first.",
+   144→    template: `SELECT c.region, {1}(*) AS orders
+   145→FROM customers c
+   146→{2} orders o ON o.customer_id = c.id
+   147→GROUP BY {3}
+   148→ORDER BY orders {4};`,
+   149→    slots: [
+   150→      {
+   151→        answer: "COUNT",
+   152→        kind: "keyword",
+   153→        label: "the counting aggregate",
+   154→        why: "The scoreboard tracks order volume, so COUNT(*) per group. SUM(*) is not valid SQL and errors immediately.",
+   155→      },
+   156→      {
+   157→        answer: "JOIN",
+   158→        kind: "keyword",
+   159→        label: "the join keyword",
+   160→        why: "Region is a customer attribute; the rows being counted are orders. JOIN attaches the region to every order row before grouping.",
+   161→      },
+   162→      {
+   163→        answer: "c.region",
+   164→        kind: "keyword",
+   165→        label: "the group key",
+   166→        why: "The buckets are customer regions — GROUP BY c.region. There is no o.region column on orders; referencing one is an immediate 'no such column' error.",
+   167→      },
+   168→      {
+   169→        answer: "DESC",
+   170→        kind: "keyword",
+   171→        label: "the sort direction",
+   172→        why: "Biggest book on top means descending order. ASC would open the meeting with LATAM's two orders instead of EU's forty-five.",
+   173→      },
+   174→    ],
+   175→    distractors: ["SUM", "UNION", "o.region", "ASC"],
+   176→    walkthrough:
+   177→      "One region label per order, four buckets, count, sort down. The join rides the foreign key o.customer_id = c.id (already written for you), and the group key must be the customer-side region — orders has no region column at all, which is exactly why the join exists. Run it and the board reads EU 45, APAC 37, US 19, LATAM 2. The spread is the story: EU and APAC together carry 82 of the 103 orders, while LATAM is a two-order afterthought — Bruno Silva's account alone.",
+   178→  },
+   179→  {
+   180→    id: "cs-305",
+   181→    tier: "medium",
+   182→    topic: "j1",
+   183→    universe: "refund-audit",
+   184→    title: "The one cancellation worth chasing",
+   185→    brief:
+   186→      "From: refunds@ internal ticket #4412.\n\nQuarter-end goodwill review. We manually assess cancelled orders big enough to hurt — anything over 300 in value. I don't need the full cancellation log, just the painful one: which order, which customer, how much. Attach the customer name so the outreach email has a recipient.",
+   187→    ask: "Cancelled orders with total over 300 — order id, customer name and total, biggest first.",
+   188→    template: `SELECT o.id, c.name, o.total
+   189→FROM orders o
+   190→JOIN customers c ON {1}
+   191→WHERE o.status = {2} AND o.total > {3}
+   192→ORDER BY o.total {4};`,
+   193→    slots: [
+   194→      {
+   195→        answer: "o.customer_id = c.id",
+   196→        kind: "keyword",
+   197→        label: "the join condition",
+   198→        why: "The customer for an order is found through orders.customer_id — that's the real thread. o.id = c.id would match order numbers against customer numbers and return nothing useful here.",
+   199→      },
+   200→      {
+   201→        answer: "'cancelled'",
+   202→        kind: "keyword",
+   203→        label: "the status literal",
+   204→        why: "Cancellations live under the status value 'cancelled' — text, so it wears quotes. 'pending' would silently swap the audit to a different queue.",
+   205→      },
+   206→      {
+   207→        answer: "300",
+   208→        kind: "number",
+   209→        label: "the value threshold",
+   210→        why: "The ticket says 'over 300', so total > 300 — strictly greater. An order worth exactly 300.00 would not qualify, and none does.",
+   211→        noVerify: true,
+   212→      },
+   213→      {
+   214→        answer: "DESC",
+   215→        kind: "keyword",
+   216→        label: "the sort direction",
+   217→        why: "The painful one should sit on top: biggest total first is DESC. ASC would bury it under the small fry.",
+   218→      },
+   219→    ],
+   220→    distractors: ["o.id = c.id", "'pending'", "100", "400"],
+   221→    walkthrough:
+   222→      "Three gates stack before the sort: the join (real foreign key, not the id coincidence), the status literal 'cancelled' in quotes, and the money bar total > 300. Loosen the bar to 100 and a second cancellation (206.19) sneaks in — which is why the threshold is pinned in the ticket. Run it and exactly one row comes back: order 83, Maya Patel, 397.99 — the single largest cancellation on file, and the only one that clears the goodwill bar. One outreach email, not a temp staffing plan.",
+   223→  },
+   224→  {
+   225→    id: "cs-306",
+   226→    tier: "medium",
+   227→    topic: "j1",
+   228→    universe: "fraud",
+   229→    title: "Money in limbo, name by name",
+   230→    brief:
+   231→      "From: Fraud spot-check desk. Re: open exposure.\n\nPending orders are the window where money is committed but nothing has shipped — our favorite window for a spot-check. Give me the five biggest pending orders with the buyer's name attached, largest total first, so I can start at the top of the exposure stack.",
+   232→    ask: "The 5 largest pending orders — order id, buyer name, total — biggest first.",
+   233→    template: `SELECT o.id, c.name, o.total
+   234→FROM orders o
+   235→{1} customers c ON o.customer_id = c.id
+   236→WHERE o.status = {2}
+   237→ORDER BY {3} {4}
+   238→{5} 5;`,
+   239→    slots: [
+   240→      {
+   241→        answer: "JOIN",
+   242→        kind: "keyword",
+   243→        label: "the join keyword",
+   244→        why: "Buyer names live in customers; the fraud desk wants names on every row, so the order rows must be joined to their accounts.",
+   245→      },
+   246→      {
+   247→        answer: "'pending'",
+   248→        kind: "keyword",
+   249→        label: "the status literal",
+   250→        why: "The exposure window is pending orders — text literal, quotes required. 'shipped' would quietly audit a completely different 30-order population.",
+   251→      },
+   252→      {
+   253→        answer: "o.total",
+   254→        kind: "keyword",
+   255→        label: "the sort column",
+   256→        why: "'Biggest exposure first' sorts by the order total. Sorting by c.total is a typo that errors — customers have no total column.",
+   257→      },
+   258→      {
+   259→        answer: "DESC",
+   260→        kind: "keyword",
+   261→        label: "the sort direction",
+   262→        why: "Largest first is descending. ASC would start the spot-check at the smallest pending order and waste the desk's time.",
+   263→      },
+   264→      {
+   265→        answer: "LIMIT",
+   266→        kind: "keyword",
+   267→        label: "the row cap keyword",
+   268→        why: "'Give me five' is LIMIT 5 — the trim keyword. HAVING belongs after GROUP BY and is a syntax error here.",
+   269→        noVerify: true,
+   270→      },
+   271→    ],
+   272→    distractors: ["UNION", "'shipped'", "c.total", "HAVING", "c.name"],
+   273→    walkthrough:
+   274→      "The fraud desk's ask decomposes cleanly: join buyers onto their orders, keep only 'pending' rows, sort by total descending, cap at five. Every keyword slot fails loudly if swapped — UNION can't appear mid-FROM, HAVING has no GROUP BY to lean on, and c.total doesn't exist. Run it and the top of the exposure stack is five named rows out of 14 pending orders worth 6,113.00 overall; the desk works down from the biggest total. The remaining nine stay one LIMIT tweak away whenever the desk escalates.",
+   275→  },
+   276→  {
+   277→    id: "cs-307",
+   278→    tier: "medium",
+   279→    topic: "j1",
+   280→    universe: "inventory",
+   281→    title: "Stock backed by a rated supplier",
+   282→    brief:
+   283→      "From: Inventory control. Re: count week prep.\n\nBefore we physically count, I want the shelf list narrowed to products whose supplier we actually rate — 4.4 or better. Give me the product name, its stock, and the supplier's rating, heaviest stock on top, five rows. That's where miscounts hurt most.",
+   284→    ask: "5 products from suppliers rated 4.4+, showing stock and rating, heaviest stock first.",
+   285→    template: `SELECT p.name, p.stock, s.rating
+   286→FROM products p
+   287→JOIN suppliers s ON s.id = {1}
+   288→WHERE s.rating >= {2}
+   289→ORDER BY {3} {4}
+   290→LIMIT {5};`,
+   291→    slots: [
+   292→      {
+   293→        answer: "p.supplier_id",
+   294→        kind: "keyword",
+   295→        label: "the join key column",
+   296→        why: "The supplier for a product is products.supplier_id. p.id would compare the product's own id to suppliers.id — a coincidence match, not the relationship.",
+   297→      },
+   298→      {
+   299→        answer: "4.4",
+   300→        kind: "number",
+   301→        label: "the rating floor",
+   302→        why: "'4.4 or better' is rating >= 4.4 — inclusive. Dropping to 4.0 would let Andes Naturals (4.0) sneak in.",
+   303→        noVerify: true,
+   304→      },
+   305→      {
+   306→        answer: "p.stock",
+   307→        kind: "keyword",
+   308→        label: "the sort column",
+   309→        why: "'Heaviest stock on top' sorts by the stock count. Sorting by s.rating would reshuffle by supplier score instead.",
+   310→      },
+   311→      {
+   312→        answer: "DESC",
+   313→        kind: "keyword",
+   314→        label: "the sort direction",
+   315→        why: "Heaviest first is descending; ASC would lead with the 40-unit Smart Watch and misdirect the count crew.",
+   316→      },
+   317→      {
+   318→        answer: "5",
+   319→        kind: "number",
+   320→        label: "the row cap",
+   321→        why: "The brief asks for five rows: LIMIT 5. A cap of 3 would truncate the list before the Webcam appears.",
+   322→        noVerify: true,
+   323→      },
+   324→    ],
+   325→    distractors: ["p.id", "4.9", "s.rating", "ASC", "3"],
+   326→    walkthrough:
+   327→      "Two tables, one gate: join products to suppliers on the real foreign key, keep suppliers rated 4.4 and up, sort by stock descending, trim to five. The rating floor is doing heavy lifting — the catalog's biggest stock piles (500 HDMI cables, 400 sock packs, 300 mice) all belong to suppliers rated below 4.4 and vanish. What survives: Desk Mat Extended 260, Yoga Mat Eco 220, Laptop Stand 180, Mechanical Keyboard K1 120, 4K Webcam Pro 70 — eight products qualify in total, all from Alpine Audio (4.8), Nordic Gadgets (4.6) and Midwest Hardware (4.4).",
+   328→  },
+   329→  {
+   330→    id: "cs-308",
+   331→    tier: "medium",
+   332→    topic: "j1",
+   333→    universe: "pricing",
+   334→    title: "Regions that clear the revenue bar",
+   335→    brief:
+   336→      "From: Pricing committee. Re: regional price test shortlist.\n\nWe pilot the new price book where the revenue actually is. Rank the customer regions by joined order revenue, and keep only regions with at least 10 orders — a pilot region needs volume, not just a fat average. Biggest revenue on top.",
+   337→    ask: "Regions ranked by total order revenue, keeping only those with 10+ orders.",
+   338→    template: `SELECT c.region, ROUND({1}(o.total), 2) AS revenue, COUNT(*) AS orders
+   339→FROM customers c
+   340→JOIN orders o ON {2}
+   341→GROUP BY c.region
+   342→{3} COUNT(*) >= {4}
+   343→ORDER BY revenue {5};`,
+   344→    slots: [
+   345→      {
+   346→        answer: "SUM",
+   347→        kind: "keyword",
+   348→        label: "the revenue aggregate",
+   349→        why: "Revenue is money summed across orders: SUM(o.total). COUNT would report row counts where a currency belongs.",
+   350→      },
+   351→      {
+   352→        answer: "o.customer_id = c.id",
+   353→        kind: "keyword",
+   354→        label: "the join condition",
+   355→        why: "Revenue must ride the real relationship — orders.customer_id to customers.id. o.id = c.id would sum the totals of a random id-coincidence population.",
+   356→      },
+   357→      {
+   358→        answer: "HAVING",
+   359→        kind: "keyword",
+   360→        label: "the group filter",
+   361→        why: "The 10-order bar filters AGGREGATES, so it belongs in HAVING after GROUP BY. WHERE runs before grouping and errors on COUNT(*).",
+   362→      },
+   363→      {
+   364→        answer: "10",
+   365→        kind: "number",
+   366→        label: "the volume bar",
+   367→        why: "The committee's bar is 10 orders. At 1, LATAM's two orders would sneak back into the pilot list.",
+   368→        noVerify: true,
+   369→      },
+   370→      {
+   371→        answer: "DESC",
+   372→        kind: "keyword",
+   373→        label: "the sort direction",
+   374→        why: "'Where the revenue actually is' means biggest first: DESC. ASC would pilot the price book in the smallest market.",
+   375→      },
+   376→    ],
+   377→    distractors: ["COUNT", "o.id = c.id", "WHERE", "1", "ASC"],
+   378→    walkthrough:
+   379→      "Join orders to customers, sum totals per region, then filter the GROUPS with HAVING — that's the clause boundary this case teaches: WHERE filters rows before grouping (and chokes on COUNT), HAVING filters after. Run it and three regions clear both bars: EU 15,089.23 over 45 orders, APAC 11,605.45 over 37, US 7,286.16 over 19. LATAM drops — two orders, 852.44 — exactly the volume-the-committee-feared outcome. The HAVING bar and the revenue sort are independent axes; loosening the bar to 1 brings LATAM back without touching the ranking.",
+   380→  },
+   381→  {
+   382→    id: "cs-309",
+   383→    tier: "hard",
+   384→    topic: "j1",
+   385→    universe: "month-close",
+   386→    title: "Next quarter's planning prices",
+   387→    brief:
+   388→      "From: Financial Controller. Re: planning grid for the board pre-read.\n\nFinance plans next quarter at an 8% uplift on realized revenue. I need that planning view by region — but only regions that are material, say 5,000 or more in realized revenue. Show the inflated planning figure per region, biggest first, and keep the immaterial regions out of the grid entirely.",
+   389→    ask: "Per region: realized revenue scaled by 1.08, keeping only regions with at least 5,000 realized, biggest planned figure first.",
+   390→    template: `SELECT c.region, ROUND(SUM(o.total) * {1}, 2) AS planned_q
+   391→FROM orders o
+   392→JOIN customers c ON {2}
+   393→GROUP BY c.region
+   394→{3} SUM(o.total) >= {4}
+   395→ORDER BY planned_q {5};`,
+   396→    slots: [
+   397→      {
+   398→        answer: "1.08",
+   399→        kind: "number",
+   400→        label: "the uplift multiplier",
+   401→        why: "An 8% uplift means 108% of the base — multiply by 1.08. 0.08 would produce the 8% slice alone, not the planned total.",
+   402→        noVerify: true,
+   403→      },
+   404→      {
+   405→        answer: "o.customer_id = c.id",
+   406→        kind: "keyword",
+   407→        label: "the join condition",
+   408→        why: "Region arrives through the foreign key. Joining on o.id = c.id would plan next quarter on a fabricated population of sixteen orders.",
+   409→      },
+   410→      {
+   411→        answer: "HAVING",
+   412→        kind: "keyword",
+   413→        label: "the group gate",
+   414→        why: "The 5,000 bar applies to SUM(o.total), an aggregate — that's HAVING territory. WHERE can't see aggregates and errors.",
+   415→      },
+   416→      {
+   417→        answer: "5000",
+   418→        kind: "number",
+   419→        label: "the materiality bar",
+   420→        why: "The grid keeps regions from 5,000 realized upward. At 500 even LATAM's 852.44 would sneak into a board grid.",
+   421→        noVerify: true,
+   422→      },
+   423→      {
+   424→        answer: "DESC",
+   425→        kind: "keyword",
+   426→        label: "the sort direction",
+   427→        why: "The pre-read opens with the biggest planning number: DESC. ASC would lead with the region that just got filtered logic right.",
+   428→      },
+   429→    ],
+   430→    distractors: ["0.08", "o.id = c.id", "WHERE", "500", "ASC"],
+   431→    walkthrough:
+   432→      "The trap density is the point: a multiplier (1.08, not 0.08), a real join key, and an aggregate filter that must be HAVING. Run it and three regions make the grid: EU plans at 16,296.37 (from 15,089.23), APAC at 12,533.89 (from 11,605.45), US at 7,869.05 (from 7,286.16). LATAM's 852.44 misses the 5,000 materiality bar and stays off the board page. Note what the HAVING compares: the RAW realized sum, not the inflated figure — gating on planned_q would work numerically here but reads as an accident; gating on the realized number is the defensible habit.",
+   433→  },
+   434→  {
+   435→    id: "cs-310",
+   436→    tier: "hard",
+   437→    topic: "j1",
+   438→    universe: "expense",
+   439→    title: "Capital parked on shelves, by supplier",
+   440→    brief:
+   441→      "From: Spend analyst. Re: working-capital memo.\n\nEvery unit on a shelf is cash we spent. I want the exposure ranked by supplier: how many of their products we carry and the total shelf value — price times stock, summed, rounded to cents. Only suppliers carrying at least two products matter for the memo; single-product suppliers can't move the number.",
+   442→    ask: "Per supplier (2+ products): product count and total shelf value (price × stock), biggest value first.",
+   443→    template: `SELECT s.name, s.region, {1}(p.id) AS products, ROUND(SUM(p.price * p.stock), 2) AS stock_value
+   444→FROM suppliers s
+   445→{2} products p ON {3}
+   446→GROUP BY s.id
+   447→{4} COUNT(p.id) >= {5}
+   448→ORDER BY stock_value {6};`,
+   449→    slots: [
+   450→      {
+   451→        answer: "COUNT",
+   452→        kind: "keyword",
+   453→        label: "the product counter",
+   454→        why: "Products carried is a row count: COUNT(p.id). SUM(p.id) would add up id numbers — 1+7+13 — and produce a meaningless total.",
+   455→      },
+   456→      {
+   457→        answer: "JOIN",
+   458→        kind: "keyword",
+   459→        label: "the join keyword",
+   460→        why: "Shelf value lives per product; the memo needs it grouped under supplier names, so products must join to suppliers.",
+   461→      },
+   462→      {
+   463→        answer: "p.supplier_id = s.id",
+   464→        kind: "keyword",
+   465→        label: "the join condition",
+   466→        why: "products.supplier_id points at suppliers.id — the real thread. p.supplier_id = s.region compares a number to text like 'EU' and matches nothing.",
+   467→      },
+   468→      {
+   469→        answer: "HAVING",
+   470→        kind: "keyword",
+   471→        label: "the group filter",
+   472→        why: "The two-product floor filters a COUNT, so HAVING after GROUP BY. WHERE errors on aggregates.",
+   473→      },
+   474→      {
+   475→        answer: "2",
+   476→        kind: "number",
+   477→        label: "the product floor",
+   478→        why: "'At least two products' is COUNT >= 2 — inclusive. At 3, Alpine and Andes (two products each) would drop.",
+   479→        noVerify: true,
+   480→      },
+   481→      {
+   482→        answer: "DESC",
+   483→        kind: "keyword",
+   484→        label: "the sort direction",
+   485→        why: "The memo opens with the biggest parked capital: DESC on stock_value.",
+   486→      },
+   487→    ],
+   488→    distractors: ["SUM", "UNION", "p.supplier_id = s.region", "WHERE", "3", "ASC"],
+   489→    walkthrough:
+   490→      "The join fans products under their suppliers; two aggregates ride on top — COUNT for breadth, SUM(price × stock) for the cash view — and HAVING enforces the two-product floor on the count, not the value. Run it and six suppliers qualify (3/3/3/3/2/2 products), led by Nordic Gadgets AB at 27,828.40 parked (keyboard, webcam, smart watch) with Shenzhen Electro next at 23,748.50. Alpine Audio GmbH sits at the bottom of the qualifying list, 11,852.40 — fewest products among the majors. The DESC keeps the memo's eye on the top of the cash pile.",
+   491→  },
+   492→  {
+   493→    id: "cs-311",
+   494→    tier: "easy",
+   495→    topic: "j2",
+   496→    universe: "catalog",
+   497→    title: "Catalog snapshot with the maker",
+   498→    brief:
+   499→      "From: Catalog ops. Re: print proof for the warehouse binder.\n\nThe binder needs one clean page: every product with its category and the supplier's home region — in product id order so the page matches the shelf walk. Sixteen rows, nothing filtered, nothing fancy.",
+   500→    ask: "All 16 products with name, category and supplier region, in product id order.",
+   501→    template: `SELECT p.name, p.category, s.region
+   502→FROM products p
+   503→{1} suppliers s ON {2}
+   504→ORDER BY {3};`,
+   505→    slots: [
+   506→      {
+   507→        answer: "JOIN",
+   508→        kind: "keyword",
+   509→        label: "the join keyword",
+   510→        why: "The supplier's region lives in suppliers, so each product row must be joined to its maker. UNION cannot appear in FROM — it stacks result sets instead.",
+   511→      },
+   512→      {
+   513→        answer: "s.id = p.supplier_id",
+   514→        kind: "keyword",
+   515→        label: "the join condition",
+   516→        why: "products.supplier_id is the foreign key into suppliers.id — the only relationship that puts the right region on the right product.",
+   517→      },
+   518→      {
+   519→        answer: "p.id",
+   520→        kind: "keyword",
+   521→        label: "the sort key",
+   522→        why: "Shelf-walk order is product id order: ORDER BY p.id. Sorting by price would scramble the page against the physical aisle.",
+   523→      },
+   524→    ],
+   525→    distractors: ["UNION", "s.id = p.id", "p.price"],
+   526→    walkthrough:
+   527→      "A pure inner join over the whole catalog: every product has exactly one supplier, so nothing is lost or duplicated — sixteen rows in, sixteen rows out. The join key is s.id = p.supplier_id; the id-coincidence variant (s.id = p.id) would return only the six products whose id happens to equal some supplier's id, silently amputating the binder page. Ordered by p.id, the page leads with Mechanical Keyboard K1 (Nordic Gadgets, EU) and ends at Yoga Mat Eco 6mm (Midwest Hardware, US) — proof the binder matches the shelf.",
+   528→  },
+   529→  {
+   530→    id: "cs-312",
+   531→    tier: "easy",
+   532→    topic: "j2",
+   533→    universe: "growth",
+   534→    title: "Units out the door",
+   535→    brief:
+   536→      "From: Head of Growth. Re: fulfillment volume slide.\n\nOne number for the deck: total units across every order line we've ever taken. Not revenue — physical units, quantity summed over the joined line items. This is the volume story the revenue chart gets compared against.",
+   537→    ask: "Total units sold — the sum of quantity over all joined order lines.",
+   538→    template: `SELECT SUM(oi.{1}) AS units
+   539→FROM orders o
+   540→{2} order_items oi ON {3};`,
+   541→    slots: [
+   542→      {
+   543→        answer: "quantity",
+   544→        kind: "keyword",
+   545→        label: "the units column",
+   546→        why: "Units live in order_items.quantity. unit_price would sum to the line-price total — money, not units — and 'id' would add up row numbers.",
+   547→      },
+   548→      {
+   549→        answer: "JOIN",
+   550→        kind: "keyword",
+   551→        label: "the join keyword",
+   552→        why: "Lines live in order_items; orders provides the parent context. The join makes the line rows addressable through their order.",
+   553→      },
+   554→      {
+   555→        answer: "oi.order_id = o.id",
+   556→        kind: "keyword",
+   557→        label: "the join condition",
+   558→        why: "order_items.order_id points at orders.id — the real grain link. Matching oi.id to o.id pairs line numbers with order numbers and yields a coincidence population.",
+   559→      },
+   560→    ],
+   561→    distractors: ["unit_price", "id", "UNION", "oi.id = o.id"],
+   562→    walkthrough:
+   563→      "The whole case rides one discipline: sum the right column over the right join. quantity is units; unit_price is money wearing a unit costume; id is bookkeeping. The join key oi.order_id = o.id is the actual parent-child link — the oi.id = o.id variant silently keeps only the 103 lines whose id equals some order's id, and the sum lands somewhere meaningless. Run it: 498 units across 251 lines on 103 orders — roughly 4.8 units per order, the volume baseline for the deck.",
+   564→  },
+   565→  {
+   566→    id: "cs-313",
+   567→    tier: "easy",
+   568→    topic: "j2",
+   569→    universe: "expense",
+   570→    title: "Cash actually collected",
+   571→    brief:
+   572→      "From: Treasury. Re: cash reconciliation.\n\nForget invoiced amounts — I want the cash that actually landed. Sum every payment amount (in whole currency units) across the payments that are properly joined to their invoices. This is the reconciliation anchor: everything else we claim about cash has to tie to it.",
+   573→    ask: "Total cash collected — sum of payment amounts over invoice-joined payments, divided to whole units.",
+   574→    template: `SELECT {1}(p.amount_cents) / 100.0 AS collected
+   575→FROM invoices i
+   576→{2} payments p ON {3};`,
+   577→    slots: [
+   578→      {
+   579→        answer: "SUM",
+   580→        kind: "keyword",
+   581→        label: "the cash aggregate",
+   582→        why: "Collected cash is money summed: SUM(p.amount_cents). COUNT would return the number of payments — 27 — where a currency belongs.",
+   583→      },
+   584→      {
+   585→        answer: "JOIN",
+   586→        kind: "keyword",
+   587→        label: "the join keyword",
+   588→        why: "Payments reference invoices by foreign key; the join is what makes 'payment against a real invoice' the unit being summed.",
+   589→      },
+   590→      {
+   591→        answer: "p.invoice_id = i.id",
+   592→        kind: "keyword",
+   593→        label: "the join condition",
+   594→        why: "payments.invoice_id points at invoices.id — the ledger thread. Matching i.number (text) to the numeric id matches nothing.",
+   595→      },
+   596→    ],
+   597→    distractors: ["COUNT", "UNION", "p.invoice_id = i.number"],
+   598→    walkthrough:
+   599→      "Every payment carries amount_cents and an invoice_id — the join turns that id into a real invoice so the sum is 'cash against recognized invoices', not a stray total. Dividing by 100.0 converts cents to display units; the .0 matters because integer division would floor the pennies away. Run it and collected cash is 69,612.00 over 27 payments — which reconciles exactly with the regional cash split (EU 37,261 + APAC 20,613 + US 11,738). Any cash claim that doesn't tie to this number is a rounding story.",
+   600→  },
+   601→  {
+   602→    id: "cs-314",
+   603→    tier: "medium",
+   604→    topic: "j2",
+   605→    universe: "pricing",
+   606→    title: "Catalog value by supplier region",
+   607→    brief:
+   608→      "From: Pricing committee. Re: regional sourcing review.\n\nBefore we touch list prices we want to know where catalog value concentrates — sum of list price per supplier region, with a product count next to it so nobody mistakes a big total for a big catalog. Rank the regions by that value, richest first.",
+   609→    ask: "Per supplier region: total catalog price and product count, ranked by value descending.",
+   610→    template: `SELECT s.region, ROUND(SUM(p.price), 2) AS catalog_value, {1}(*) AS products
+   611→FROM products p
+   612→JOIN suppliers s ON {2}
+   613→GROUP BY {3}
+   614→ORDER BY catalog_value {4};`,
+   615→    slots: [
+   616→      {
+   617→        answer: "COUNT",
+   618→        kind: "keyword",
+   619→        label: "the product counter",
+   620→        why: "Catalog breadth is a row count: COUNT(*). SUM(*) isn't valid SQL and errors — the '*' is a placeholder, not a column.",
+   621→      },
+   622→      {
+   623→        answer: "s.id = p.supplier_id",
+   624→        kind: "keyword",
+   625→        label: "the join condition",
+   626→        why: "A product's region arrives through products.supplier_id → suppliers.id. Matching ids by coincidence (p.id = s.id) would value a phantom six-product catalog.",
+   627→      },
+   628→      {
+   629→        answer: "s.region",
+   630→        kind: "keyword",
+   631→        label: "the group key",
+   632→        why: "The buckets are supplier regions — GROUP BY s.region. Grouping by p.category would produce a per-category view instead of the requested map.",
+   633→      },
+   634→      {
+   635→        answer: "DESC",
+   636→        kind: "keyword",
+   637→        label: "the sort direction",
+   638→        why: "'Richest first' is descending on catalog_value. ASC would open the review with LATAM's two-product corner.",
+   639→      },
+   640→    ],
+   641→    distractors: ["SUM", "s.id = p.id", "p.category", "ASC"],
+   642→    walkthrough:
+   643→      "Join the catalog to its makers on the real foreign key, bucket by supplier region, then carry two aggregates: SUM(p.price) for value and COUNT(*) for breadth — the pairing that stops a big total being mistaken for a deep catalog. Run it and EU leads at 562.97 across 5 products (Nordic's premium trio plus Alpine's pair), then US 224.49/3, APAC 221.98/6, LATAM 138.99/2. The tell is APAC: six products, barely a fifth of EU's value — volume of SKUs, not depth of price. That's the sourcing story the committee opens with.",
+   644→  },
+   645→  {
+   646→    id: "cs-315",
+   647→    tier: "medium",
+   648→    topic: "j2",
+   649→    universe: "refund-audit",
+   650→    title: "Follow a payment back to its buyer",
+   651→    brief:
+   652→      "From: Refunds desk. Re: high-value payment trace.\n\nWe're tracing substantial cash movements for the audit file. Every payment of 100.00 or more needs its paper trail surfaced: payment id, invoice number, buyer name, amount. Sort by amount, biggest first. The chain is two joins long — payments to invoices to customers — and the file rejects rows with missing links.",
+   653→    ask: "Payments of 100.00+ with invoice number and buyer name attached, biggest amount first.",
+   654→    template: `SELECT p.id, i.number, c.name, p.amount_cents / 100.0 AS paid
+   655→FROM payments p
+   656→JOIN invoices i ON {1}
+   657→JOIN customers c ON {2}
+   658→WHERE p.amount_cents >= {3}
+   659→ORDER BY {4} {5};`,
+   660→    slots: [
+   661→      {
+   662→        answer: "p.invoice_id = i.id",
+   663→        kind: "keyword",
+   664→        label: "the first join (payment→invoice)",
+   665→        why: "payments.invoice_id is the ledger thread into invoices.id. Matching it to i.number compares a number to text like 'INV-2024-001' and matches nothing.",
+   666→      },
+   667→      {
+   668→        answer: "i.customer_id = c.id",
+   669→        kind: "keyword",
+   670→        label: "the second join (invoice→customer)",
+   671→        why: "The buyer's name hangs off the invoice, not the payment — invoices.customer_id → customers.id is hop two of the chain.",
+   672→      },
+   673→      {
+   674→        answer: "10000",
+   675→        kind: "number",
+   676→        label: "the amount floor (in cents)",
+   677→        why: "100.00 in display units is 10000 cents — the comparison runs in the stored unit. 0 would flood the file with every payment.",
+   678→        noVerify: true,
+   679→      },
+   680→      {
+   681→        answer: "p.amount_cents",
+   682→        kind: "keyword",
+   683→        label: "the sort column",
+   684→        why: "'Biggest first' sorts by the payment amount in its stored unit. Sorting by c.name would alphabetize the buyers instead.",
+   685→      },
+   686→      {
+   687→        answer: "DESC",
+   688→        kind: "keyword",
+   689→        label: "the sort direction",
+   690→        why: "Descending puts the largest movement on line one of the audit file; ASC would start at the smallest.",
+   691→      },
+   692→    ],
+   693→    distractors: ["p.invoice_id = i.number", "c.id = i.id", "5000000", "c.name", "ASC"],
+   694→    walkthrough:
+   695→      "Two joins, one direction of travel: payment → invoice → customer, each hop on the real foreign key. The audit's unit trap lives in the WHERE: amounts are stored in cents, so the 100.00 floor is 10000 — and the sort must run on the same stored column. Run it and every qualifying row carries all four fields; the biggest movements sit on top. The desk's working rule from this file: if a payment can't name its invoice and buyer in one query, the chain is broken somewhere — and on this book it never is (27 payments, all linked).",
+   696→  },
+   697→  {
+   698→    id: "cs-316",
+   699→    tier: "easy",
+   700→    topic: "j2",
+   701→    universe: "fraud",
+   702→    title: "Pull one order's paper trail",
+   703→    brief:
+   704→      "From: Fraud spot-check desk. Re: sample audit, order #1.\n\nWe're spot-checking a sample order end to end. For order 1, show each line's quantity next to the product it bought — joined through the catalog so the rows read as things, not ids. This is the reconciliation view the desk compares against the shipping manifest.",
+   705→    ask: "Order 1's lines: quantity and product name for each line.",
+   706→    template: `SELECT oi.{1}, p.name
+   707→FROM order_items oi
+   708→JOIN products p ON {2}
+   709→WHERE oi.order_id = {3};`,
+   710→    slots: [
+   711→      {
+   712→        answer: "quantity",
+   713→        kind: "keyword",
+   714→        label: "the per-line count column",
+   715→        why: "How many of each thing was bought lives in order_items.quantity. unit_price would show money instead of counts.",
+   716→      },
+   717→      {
+   718→        answer: "p.id = oi.product_id",
+   719→        kind: "keyword",
+   720→        label: "the join condition",
+   721→        why: "order_items.product_id points at products.id — the catalog thread. p.id = oi.order_id would compare product ids to order numbers.",
+   722→      },
+   723→      {
+   724→        answer: "1",
+   725→        kind: "number",
+   726→        label: "the sampled order id",
+   727→        why: "The desk sampled order 1 — the filter pins the 251-line book down to this order's lines. Order 2's basket is a different sample.",
+   728→      },
+   729→    ],
+   730→    distractors: ["unit_price", "id", "p.id = oi.order_id", "2"],
+   731→    walkthrough:
+   732→      "A single-order trace: pin order_items to order 1, join each line to its product via the catalog foreign key, and surface quantity next to name. Run it and the basket reads like a receipt — Yoga Mat Eco 6mm ×3, HDMI 2.1 Cable ×2, Desk Mat Extended ×1, Noise-Canceling Headset ×3: four lines, nine units. The distractor join (p.id = oi.order_id) is the classic grain error — it would compare the product's catalog id against the order number and return whatever coincidence allows. The manifest comparison works because every row is a real thing at a real count.",
+   733→  },
+   734→  {
+   735→    id: "cs-317",
+   736→    tier: "hard",
+   737→    topic: "j2",
+   738→    universe: "growth",
+   739→    title: "Lines and spend, biggest books first",
+   740→    brief:
+   741→      "From: Head of Growth. Re: account book sizes.\n\nFor the growth review I want our customers ranked by the money in their order book — but counted at the line grain, where spend means quantity times unit price summed over joined lines. Show the three biggest books with their line counts. Watch the joins: line grain only works if both hops are real.",
+   742→    ask: "Top 3 customers by line-grain spend (Σ quantity × unit_price), with line counts, biggest first.",
+   743→    template: `SELECT c.name, COUNT(oi.id) AS lines, ROUND(SUM(oi.quantity * oi.unit_price), 2) AS spend
+   744→FROM {1} c
+   745→JOIN orders o ON {2}
+   746→JOIN order_items oi ON {3}
+   747→GROUP BY c.id
+   748→ORDER BY spend {4}
+   749→LIMIT {5};`,
+   750→    slots: [
+   751→      {
+   752→        answer: "customers",
+   753→        kind: "keyword",
+   754→        label: "the base table",
+   755→        why: "The books belong to customers — the chain starts there. 'orders' as the base would alias an order table as c and dissolve the customer grain.",
+   756→      },
+   757→      {
+   758→        answer: "o.customer_id = c.id",
+   759→        kind: "keyword",
+   760→        label: "the first join",
+   761→        why: "Orders attach to accounts through orders.customer_id → customers.id. o.id = c.id matches order numbers to customer ids — a coincidence population.",
+   762→      },
+   763→      {
+   764→        answer: "oi.order_id = o.id",
+   765→        kind: "keyword",
+   766→        label: "the second join",
+   767→        why: "Lines attach to orders through order_items.order_id → orders.id. oi.id = o.id pairs line numbers with order numbers and corrupts every sum downstream.",
+   768→      },
+   769→      {
+   770→        answer: "DESC",
+   771→        kind: "keyword",
+   772→        label: "the sort direction",
+   773→        why: "'Biggest books first' is descending spend. ASC would rank the one-order accounts on top.",
+   774→      },
+   775→      {
+   776→        answer: "3",
+   777→        kind: "number",
+   778→        label: "the row cap",
+   779→        why: "The review wants the podium: LIMIT 3. A cap of 16 would list every customer including the one-order accounts.",
+   780→        noVerify: true,
+   781→      },
+   782→    ],
+   783→    distractors: ["orders", "o.id = c.id", "oi.id = o.id", "ASC", "16"],
+   784→    walkthrough:
+   785→      "Three tables in a chain, and every hop must be the real foreign key or the money silently reroutes. From customers down through orders to lines, spend is Σ(quantity × unit_price) — the line grain — while COUNT(oi.id) gives each book's depth. Run it and the podium is Alice Chen 50 lines / 7,262.35, Emma Wilson 46 / 6,640.56, Grace Kim 34 / 4,574.23. Note what the grain choice buys: summing order totals over these same joined rows would double-count every order once per line — the classic fan-out trap this query dodges by never touching o.total.",
+   786→  },
+   787→  {
+   788→    id: "cs-318",
+   789→    tier: "hard",
+   790→    topic: "j2",
+   791→    universe: "funnel",
+   792→    title: "Units by region, gated",
+   793→    brief:
+   794→      "From: Marketing lead. Re: regional capacity call.\n\nWhere does physical volume actually flow? Sum units (and count lines) per customer region through the full three-table chain, then keep only the regions moving more than 100 units — the call doesn't need the long tail. Biggest book on top.",
+   795→    ask: "Per region with over 100 units: units and line count, biggest first.",
+   796→    template: `SELECT c.region, SUM(oi.quantity) AS units, COUNT(oi.id) AS lines
+   797→FROM customers c
+   798→{1} orders o ON {2}
+   799→JOIN order_items oi ON {3}
+   800→GROUP BY c.region
+   801→{4} SUM(oi.quantity) > {5}
+   802→ORDER BY units DESC;`,
+   803→    slots: [
+   804→      {
+   805→        answer: "JOIN",
+   806→        kind: "keyword",
+   807→        label: "the first join keyword",
+   808→        why: "The chain from customers to their orders starts with a plain JOIN. UNION can't sit inside FROM.",
+   809→      },
+   810→      {
+   811→        answer: "o.customer_id = c.id",
+   812→        kind: "keyword",
+   813→        label: "the first join condition",
+   814→        why: "orders.customer_id → customers.id is the account thread. o.id = c.id would chain lines to a coincidence.",
+   815→      },
+   816→      {
+   817→        answer: "oi.order_id = o.id",
+   818→        kind: "keyword",
+   819→        label: "the second join condition",
+   820→        why: "order_items.order_id → orders.id extends the chain to line grain. oi.id = o.id is the number-coincidence trap.",
+   821→      },
+   822→      {
+   823→        answer: "HAVING",
+   824→        kind: "keyword",
+   825→        label: "the group gate",
+   826→        why: "Filtering on SUM(oi.quantity) — an aggregate — must happen in HAVING, after the groups exist. WHERE errors on aggregates.",
+   827→      },
+   828→      {
+   829→        answer: "100",
+   830→        kind: "number",
+   831→        label: "the unit floor",
+   832→        why: "The call keeps regions moving 100+ units. Raising to 150 would cut the US book and shrink the call to two markets.",
+   833→        noVerify: true,
+   834→      },
+   835→    ],
+   836→    distractors: ["UNION", "o.id = c.id", "oi.id = o.id", "WHERE", "150"],
+   837→    walkthrough:
+   838→      "The full chain — customers → orders → lines — with two aggregates riding the line grain: SUM(quantity) for units, COUNT(oi.id) for lines. The gate is HAVING precisely because the floor applies to a SUM computed per group. Run it and three regions clear 100 units: EU 199 (on 105 lines), APAC 174 (88), US 112 (53) — while LATAM's 13 units don't make the call. Raise the floor to 150 and the US book drops out: the gate is a one-number policy lever. Swap HAVING for WHERE and the query doesn't argue, it errors: 'misuse of aggregate' is SQLite telling you the clause boundary is real.",
+   839→  },
+   840→  {
+   841→    id: "cs-319",
+   842→    tier: "hard",
+   843→    topic: "j2",
+   844→    universe: "inventory",
+   845→    title: "Four-line baskets",
+   846→    brief:
+   847→      "From: Warehouse ops. Re: pick-path planning.\n\nOur biggest pick paths are the four-line orders — one stop per line, four stops per order. Isolate them: orders with exactly 4 lines, showing line count and total units, heaviest basket first, top five. These drive the cart layout.",
+   848→    ask: "The 5 four-line orders with the most units — order id, line count, total units.",
+   849→    template: `SELECT o.id, COUNT(oi.id) AS lines, SUM(oi.quantity) AS units
+   850→FROM orders o
+   851→{1} order_items oi ON {2}
+   852→GROUP BY o.id
+   853→{3} COUNT(oi.id) = {4}
+   854→ORDER BY units DESC
+   855→{5} 5;`,
+   856→    slots: [
+   857→      {
+   858→        answer: "JOIN",
+   859→        kind: "keyword",
+   860→        label: "the join keyword",
+   861→        why: "Line counts come from order_items, so each order row must join to its lines. UNION can't appear in FROM.",
+   862→      },
+   863→      {
+   864→        answer: "oi.order_id = o.id",
+   865→        kind: "keyword",
+   866→        label: "the join condition",
+   867→        why: "The parent-child thread is order_items.order_id → orders.id. oi.id = o.id would group by id coincidences and fabricate line counts.",
+   868→      },
+   869→      {
+   870→        answer: "HAVING",
+   871→        kind: "keyword",
+   872→        label: "the group filter",
+   873→        why: "'Exactly 4 lines' filters the COUNT per group — HAVING territory. WHERE can't see aggregates and errors with 'misuse of aggregate'.",
+   874→      },
+   875→      {
+   876→        answer: "4",
+   877→        kind: "number",
+   878→        label: "the basket size",
+   879→        why: "Four-line baskets: COUNT = 4 exactly, not >= — the pick path is defined by size. At 3, the twenty-five three-line orders flood the list.",
+   880→        noVerify: true,
+   881→      },
+   882→      {
+   883→        answer: "LIMIT",
+   884→        kind: "keyword",
+   885→        label: "the row cap keyword",
+   886→        why: "Top five is LIMIT 5 — the trim clause after ORDER BY. HAVING here is a syntax error.",
+   887→        noVerify: true,
+   888→      },
+   889→    ],
+   890→    distractors: ["UNION", "oi.id = o.id", "WHERE", "3", "23"],
+   891→    walkthrough:
+   892→      "Group orders with their lines, then HAVING picks the exact basket size — 4, not '4 or more', because the pick path is a physical constraint. The unit total rides the same groups: SUM(quantity). Run it and 23 orders carry exactly four lines (the catalog's basket distribution runs 1:26, 2:29, 3:25, 4:23 across 103 orders), with the five heaviest by units on the planning list — orders 1, 6 and 11, the known 4-line veterans, all in the set. Swap the HAVING for WHERE and SQLite refuses before it misleads: aggregates only exist after grouping.",
+   893→  },
+   894→  {
+   895→    id: "cs-320",
+   896→    tier: "easy",
+   897→    topic: "j3",
+   898→    universe: "catalog",
+   899→    title: "Name every line's product",
+   900→    brief:
+   901→      "From: Catalog ops. Re: line-level binder page.\n\nThe binder's line-level page needs the first ten lines with their product names readable — quantity and unit price next to a real product name, in name order. Ids are for joins, not for humans.",
+   902→    ask: "The first 10 lines (by product name) with product name, quantity and unit price.",
+   903→    template: `SELECT p.name, oi.quantity, oi.unit_price
+   904→FROM order_items oi
+   905→{1} products p ON {2}
+   906→ORDER BY {3}
+   907→LIMIT 10;`,
+   908→    slots: [
+   909→      {
+   910→        answer: "JOIN",
+   911→        kind: "keyword",
+   912→        label: "the join keyword",
+   913→        why: "Product names live in products; lines only carry product ids. JOIN translates ids into names row by row.",
+   914→      },
+   915→      {
+   916→        answer: "p.id = oi.product_id",
+   917→        kind: "keyword",
+   918→        label: "the join condition",
+   919→        why: "order_items.product_id → products.id is the catalog thread. p.id = oi.order_id would compare catalog ids to order numbers.",
+   920→      },
+   921→      {
+   922→        answer: "p.name",
+   923→        kind: "keyword",
+   924→        label: "the sort key",
+   925→        why: "'In name order' sorts by the product name — the human-readable key. Sorting by unit_price would order the page by money instead.",
+   926→      },
+   927→    ],
+   928→    distractors: ["UNION", "p.id = oi.order_id", "oi.unit_price"],
+   929→    walkthrough:
+   930→      "One join, one purpose: turn product ids into product names so a human can read the page. The join key is the real foreign key p.id = oi.product_id; the order_id variant is the grain error that would pair catalog entries with order numbers. Sorted by name, the page opens on Bluetooth Speaker Mini lines and cuts at ten — the full line book is 251 rows, but a binder page trims. Quantity and unit_price come straight off the line row; nothing here is aggregated, so every row is one physical line event.",
+   931→  },
+   932→  {
+   933→    id: "cs-321",
+   934→    tier: "easy",
+   935→    topic: "j3",
+   936→    universe: "funnel",
+   937→    title: "Units by customer region",
+   938→    brief:
+   939→      "From: Marketing lead. Re: regional volume split.\n\nExtend the regional story from orders to physical units: for each customer region, sum the quantity across every line of their orders. Four rows — one per region — so the meeting sees where the boxes actually go.",
+   940→    ask: "Total units (Σ quantity) per customer region, one row per region.",
+   941→    template: `SELECT c.region, SUM(oi.quantity) AS units
+   942→FROM customers c
+   943→JOIN orders o ON {1}
+   944→JOIN order_items oi ON {2}
+   945→GROUP BY c.region
+   946→ORDER BY units {3};`,
+   947→    slots: [
+   948→      {
+   949→        answer: "o.customer_id = c.id",
+   950→        kind: "keyword",
+   951→        label: "the first join (customer→order)",
+   952→        why: "orders.customer_id → customers.id attaches each order to its account. o.id = c.id matches order numbers to customer ids.",
+   953→      },
+   954→      {
+   955→        answer: "oi.order_id = o.id",
+   956→        kind: "keyword",
+   957→        label: "the second join (order→line)",
+   958→        why: "order_items.order_id → orders.id reaches the line grain where quantities live. oi.id = o.id is the coincidence trap.",
+   959→      },
+   960→      {
+   961→        answer: "DESC",
+   962→        kind: "keyword",
+   963→        label: "the sort direction",
+   964→        why: "The meeting reads biggest region first: DESC. ASC would lead with LATAM's handful of units.",
+   965→      },
+   966→    ],
+   967→    distractors: ["o.id = c.id", "oi.id = o.id", "ASC"],
+   968→    walkthrough:
+   969→      "Two hops, both on real foreign keys: customers to orders, orders to lines — then the quantity sums roll up per region. The chain discipline is the lesson: break either hop and the units reroute through id coincidences, and no error message will warn you. Four rows come back, one per region. The gap worth narrating: EU and APAC dominate the box count while LATAM's two-order book contributes a handful of units — a rounding error next to the leaders. For the line-count version of this same split, the ordering holds; the units story just weights heavy baskets more.",
+   970→  },
+   971→  {
+   972→    id: "cs-322",
+   973→    tier: "easy",
+   974→    topic: "j3",
+   975→    universe: "supplier",
+   976→    title: "Order 1's supplier spread",
+   977→    brief:
+   978→      "From: Procurement lead. Re: single-order supplier mix.\n\nFor the order-1 sample audit I want the supplier spread: each line's product name next to the supplier that made it. Two joins — catalog first, then supplier — and the filter pins everything to order 1. This shows whether one order quietly depends on one vendor.",
+   979→    ask: "Order 1's lines: product name and supplier name for each.",
+   980→    template: `SELECT p.name, s.name AS supplier
+   981→FROM order_items oi
+   982→JOIN products p ON {1}
+   983→JOIN suppliers s ON {2}
+   984→WHERE oi.order_id = {3};`,
+   985→    slots: [
+   986→      {
+   987→        answer: "p.id = oi.product_id",
+   988→        kind: "keyword",
+   989→        label: "the first join (line→product)",
+   990→        why: "order_items.product_id → products.id names the thing bought. p.id = oi.order_id compares catalog ids to order numbers.",
+   991→      },
+   992→      {
+   993→        answer: "s.id = p.supplier_id",
+   994→        kind: "keyword",
+   995→        label: "the second join (product→supplier)",
+   996→        why: "products.supplier_id → suppliers.id names the maker. Skipping this hop leaves the supplier column impossible.",
+   997→      },
+   998→      {
+   999→        answer: "1",
+  1000→        kind: "number",
+  1001→        label: "the sampled order",
+  1002→        why: "The audit pins the sample to order 1 — without it the query lists every line in the book, supplier and all.",
+  1003→        noVerify: true,
+  1004→      },
+  1005→    ],
+  1006→    distractors: ["p.id = oi.order_id", "s.region = p.category", "2"],
+  1007→    walkthrough:
+  1008→      "The chain reads right to left: line → product → supplier, each hop on the real key. Pin to order 1 and four rows come back — Yoga Mat Eco 6mm from Midwest Hardware, HDMI 2.1 Cable from Pacific Textiles, Desk Mat Extended from Alpine Audio, Noise-Canceling Headset from Midwest Hardware again. The procurement insight: even a four-line basket can concentrate — Midwest appears twice here, and the region=text distractor (s.region = p.category) is the reminder that 'EU' never equals 'Electronics'. Supplier spread per basket is exactly how vendor dependency gets spotted early.",
+  1009→  },
+  1010→  {
+  1011→    id: "cs-323",
+  1012→    tier: "medium",
+  1013→    topic: "j3",
+  1014→    universe: "supplier",
+  1015→    title: "Supplier volume leaderboard",
+  1016→    brief:
+  1017→      "From: Supplier audit. Re: who actually ships the goods.\n\nRank our suppliers by physical volume — units shipped through their products, summed over joined lines. One row per supplier, heaviest shipper on top. This is the leverage chart for the next negotiation round.",
+  1018→    ask: "Suppliers ranked by total units sold through their products, biggest first.",
+  1019→    template: `SELECT s.name, {1}(oi.quantity) AS units
+  1020→FROM order_items oi
+  1021→JOIN products p ON {2}
+  1022→JOIN suppliers s ON {3}
+  1023→GROUP BY s.id
+  1024→ORDER BY units {4};`,
+  1025→    slots: [
+  1026→      {
+  1027→        answer: "SUM",
+  1028→        kind: "keyword",
+  1029→        label: "the volume aggregate",
+  1030→        why: "Units shipped is quantity summed: SUM(oi.quantity). COUNT would count lines — a different (smaller) number where a weight belongs.",
+  1031→      },
+  1032→      {
+  1033→        answer: "p.id = oi.product_id",
+  1034→        kind: "keyword",
+  1035→        label: "the first join (line→product)",
+  1036→        why: "Lines reference the catalog through order_items.product_id → products.id — the hop that names what was sold.",
+  1037→      },
+  1038→      {
+  1039→        answer: "s.id = p.supplier_id",
+  1040→        kind: "keyword",
+  1041→        label: "the second join (product→supplier)",
+  1042→        why: "products.supplier_id → suppliers.id attaches each product to its maker — the hop that groups units under vendor names.",
+  1043→      },
+  1044→      {
+  1045→        answer: "DESC",
+  1046→        kind: "keyword",
+  1047→        label: "the sort direction",
+  1048→        why: "Heaviest shipper on top: DESC on units. ASC would open the negotiation with the smallest vendor.",
+  1049→      },
+  1050→    ],
+  1051→    distractors: ["COUNT", "p.id = oi.order_id", "s.region = p.category", "ASC"],
+  1052→    walkthrough:
+  1053→      "Volume flows line → product → supplier; two real joins and a SUM over quantity give each vendor its shipped weight. Run it and Midwest Hardware Co leads at 109 units on just three products, Shenzhen Electro follows at 99, then Nordic Gadgets 82, Pacific Textiles 80, Alpine Audio 77, Andes Naturals 51. Read regionally and the concentration is starker: APAC's two suppliers combined ship 179 units — more than any other region's total. That's the leverage chart: volume buys the meeting, per-vendor numbers set the agenda.",
+  1054→  },
+  1055→  {
+  1056→    id: "cs-324",
+  1057→    tier: "hard",
+  1058→    topic: "j3",
+  1059→    universe: "growth",
+  1060→    title: "Spend at the line grain, gated",
+  1061→    brief:
+  1062→      "From: Head of Growth. Re: whale watch.\n\nI want the customers whose order books are both deep and valuable: at least 30 order lines, ranked by line-grain spend — quantity times unit price summed over the joined chain. Names and line counts next to the spend, biggest spender on top. The floor keeps the one-order accounts out of the review.",
+  1063→    ask: "Customers with 30+ lines ranked by line-grain spend (Σ quantity × unit_price), biggest first.",
+  1064→    template: `SELECT c.name, COUNT(oi.id) AS lines, ROUND(SUM(oi.quantity * oi.unit_price), 2) AS spend
+  1065→FROM customers c
+  1066→JOIN orders o ON {1}
+  1067→JOIN order_items oi ON {2}
+  1068→GROUP BY c.id
+  1069→{3} COUNT(oi.id) >= {4}
+  1070→ORDER BY spend {5};`,
+  1071→    slots: [
+  1072→      {
+  1073→        answer: "o.customer_id = c.id",
+  1074→        kind: "keyword",
+  1075→        label: "the first join",
+  1076→        why: "The account thread is orders.customer_id → customers.id. o.id = c.id would chain spend through an id coincidence.",
+  1077→      },
+  1078→      {
+  1079→        answer: "oi.order_id = o.id",
+  1080→        kind: "keyword",
+  1081→        label: "the second join",
+  1082→        why: "The line grain arrives via order_items.order_id → orders.id. oi.id = o.id corrupts every count and sum downstream.",
+  1083→      },
+  1084→      {
+  1085→        answer: "HAVING",
+  1086→        kind: "keyword",
+  1087→        label: "the group gate",
+  1088→        why: "The 30-line floor filters COUNT(oi.id) per customer — HAVING after GROUP BY. WHERE errors on aggregates.",
+  1089→      },
+  1090→      {
+  1091→        answer: "30",
+  1092→        kind: "number",
+  1093→        label: "the depth floor",
+  1094→        why: "'Deep' means 30+ lines. At 40 only two books survive; at 14 the mid-tier floods the review.",
+  1095→        noVerify: true,
+  1096→      },
+  1097→      {
+  1098→        answer: "DESC",
+  1099→        kind: "keyword",
+  1100→        label: "the sort direction",
+  1101→        why: "'Biggest spender on top' is DESC on spend — the whale watch reads downward.",
+  1102→      },
+  1103→    ],
+  1104→    distractors: ["o.id = c.id", "oi.id = o.id", "WHERE", "40", "ASC"],
+  1105→    walkthrough:
+  1106→      "The full chain to line grain, two aggregates per customer — COUNT for depth, SUM(quantity × unit_price) for value — and HAVING enforces the depth floor before the ranking. Run it and four books clear 30 lines: Alice Chen 50 / 7,262.35, Emma Wilson 46 / 6,640.56, Grace Kim 34 / 4,574.23, Maya Patel 30 / 3,644.56. Chloe Dubois misses at 14 lines — the floor doing its job. The spend figure is honest precisely because it never touches o.total: summing order totals over 30+ joined lines would inflate every book by its own line count.",
+  1107→  },
+  1108→  {
+  1109→    id: "cs-325",
+  1110→    tier: "medium",
+  1111→    topic: "j3",
+  1112→    universe: "refund-audit",
+  1113→    title: "Where the cash came from",
+  1114→    brief:
+  1115→      "From: Refunds desk. Re: regional cash exposure.\n\nBefore we approve refund budgets we map where collected cash actually originates: payments joined through invoices to the paying customer's region. Payments count and cash total per region, biggest total first. Expect fewer regions than the map has — that absence is itself a finding.",
+  1116→    ask: "Per region: payment count and total cash (Σ payments ÷ 100), biggest cash first.",
+  1117→    template: `SELECT c.region, COUNT(p.id) AS payments, ROUND(SUM(p.amount_cents) / 100.0, 2) AS paid
+  1118→FROM payments p
+  1119→JOIN invoices i ON {1}
+  1120→JOIN customers c ON {2}
+  1121→GROUP BY {3}
+  1122→ORDER BY paid {4};`,
+  1123→    slots: [
+  1124→      {
+  1125→        answer: "p.invoice_id = i.id",
+  1126→        kind: "keyword",
+  1127→        label: "the first join (payment→invoice)",
+  1128→        why: "payments.invoice_id → invoices.id is the only real link from cash to paper. Matching i.number to the id compares text to a number.",
+  1129→      },
+  1130→      {
+  1131→        answer: "i.customer_id = c.id",
+  1132→        kind: "keyword",
+  1133→        label: "the second join (invoice→customer)",
+  1134→        why: "The payer's region hangs off the invoice — invoices.customer_id → customers.id is hop two.",
+  1135→      },
+  1136→      {
+  1137→        answer: "c.region",
+  1138→        kind: "keyword",
+  1139→        label: "the group key",
+  1140→        why: "The buckets are customer regions: GROUP BY c.region. Grouping by i.status would split cash by invoice state instead of geography.",
+  1141→      },
+  1142→      {
+  1143→        answer: "DESC",
+  1144→        kind: "keyword",
+  1145→        label: "the sort direction",
+  1146→        why: "'Biggest total first' is DESC on paid. ASC would open with the smallest cash pool.",
+  1147→      },
+  1148→    ],
+  1149→    distractors: ["p.invoice_id = i.number", "c.id = i.id", "i.status", "ASC"],
+  1150→    walkthrough:
+  1151→      "Cash → paper → payer: two joins on real foreign keys, then region buckets with a count and a sum. Run it and three rows come back — EU 14 payments / 37,261.00, APAC 8 / 20,613.00, US 5 / 11,738.00 — and that's all of them. LATAM is absent because its only customer, Bruno Silva, has no invoices at all, hence no payments; the desk should read the missing fourth row as 'no cash exposure', not 'query bug'. The three totals reconcile to 69,612.00, the full collected cash — a closed map with a deliberate hole.",
+  1152→  },
+  1153→  {
+  1154→    id: "cs-326",
+  1155→    tier: "medium",
+  1156→    topic: "j3",
+  1157→    universe: "pricing",
+  1158→    title: "What a line really costs",
+  1159→    brief:
+  1160→      "From: Pricing committee. Re: realized price points.\n\nCatalog list prices are one thing; what lines actually transact at is another. For each category, give me the average realized unit price over joined lines and the line count, ranked by that average. This is where premium positioning survives or dies.",
+  1161→    ask: "Per category: average line unit price and line count, highest average first.",
+  1162→    template: `SELECT p.category, ROUND(AVG(oi.unit_price), 2) AS avg_line, COUNT(*) AS lines
+  1163→FROM order_items oi
+  1164→{1} products p ON {2}
+  1165→GROUP BY {3}
+  1166→ORDER BY {4} DESC;`,
+  1167→    slots: [
+  1168→      {
+  1169→        answer: "JOIN",
+  1170→        kind: "keyword",
+  1171→        label: "the join keyword",
+  1172→        why: "Categories live in products; the join brings each line's category alongside its transacted price.",
+  1173→      },
+  1174→      {
+  1175→        answer: "p.id = oi.product_id",
+  1176→        kind: "keyword",
+  1177→        label: "the join condition",
+  1178→        why: "order_items.product_id → products.id is the catalog thread. p.id = oi.order_id would pair products with order numbers.",
+  1179→      },
+  1180→      {
+  1181→        answer: "p.category",
+  1182→        kind: "keyword",
+  1183→        label: "the group key",
+  1184→        why: "The buckets are product categories — GROUP BY p.category. Grouping by p.supplier_id would average prices per vendor instead.",
+  1185→      },
+  1186→      {
+  1187→        answer: "avg_line",
+  1188→        kind: "keyword",
+  1189→        label: "the sort column",
+  1190→        why: "'Highest average first' sorts by the computed alias — SQLite resolves avg_line to the AVG expression. Sorting by lines would rank by volume instead.",
+  1191→      },
+  1192→    ],
+  1193→    distractors: ["UNION", "p.id = oi.order_id", "p.supplier_id", "lines"],
+  1194→    walkthrough:
+  1195→      "Realized pricing is a join-then-average: lines joined to their products, AVG(unit_price) per category, COUNT for weight. Run it and Wearables tops the realized ladder at 131.81 across 25 lines — the Smart Watch's 199.99 list doing exactly what premium positioning should — with Audio next at 120.77 over a deep 51 lines. Accessories anchor the bottom: 27.39 average across a volume-heavy 62 lines. The committee's takeaway writes itself: high average with low count (Wearables) is a margin story; low average with high count (Accessories) is a traffic story — different price books for each.",
+  1196→  },
+  1197→  {
+  1198→    id: "cs-327",
+  1199→    tier: "hard",
+  1200→    topic: "j3",
+  1201→    universe: "supplier",
+  1202→    title: "Where the money ships from",
+  1203→    brief:
+  1204→      "From: Supplier audit. Re: regional revenue exposure.\n\nUnits are one thing; revenue is another. Through the line→product→supplier chain, sum the realized revenue (quantity × unit price) per supplier region, keep only regions clearing 5,000, and rank them. The memo needs to know where our revenue physically originates.",
+  1205→    ask: "Supplier regions with 5,000+ realized revenue: Σ quantity × unit_price per region, biggest first.",
+  1206→    template: `SELECT s.region, ROUND(SUM(oi.quantity * oi.unit_price), 2) AS revenue
+  1207→FROM order_items oi
+  1208→JOIN products p ON {1}
+  1209→JOIN suppliers s ON {2}
+  1210→GROUP BY s.region
+  1211→{3} SUM(oi.quantity * oi.unit_price) >= {4}
+  1212→ORDER BY revenue {5};`,
+  1213→    slots: [
+  1214→      {
+  1215→        answer: "p.id = oi.product_id",
+  1216→        kind: "keyword",
+  1217→        label: "the first join (line→product)",
+  1218→        why: "order_items.product_id → products.id attaches the catalog to each line — the hop that eventually names the maker.",
+  1219→      },
+  1220→      {
+  1221→        answer: "s.id = p.supplier_id",
+  1222→        kind: "keyword",
+  1223→        label: "the second join (product→supplier)",
+  1224→        why: "products.supplier_id → suppliers.id carries each product to its vendor, whose region buckets the revenue.",
+  1225→      },
+  1226→      {
+  1227→        answer: "HAVING",
+  1228→        kind: "keyword",
+  1229→        label: "the group gate",
+  1230→        why: "The 5,000 bar applies to a per-group SUM — HAVING after GROUP BY. WHERE cannot see aggregates.",
+  1231→      },
+  1232→      {
+  1233→        answer: "5000",
+  1234→        kind: "number",
+  1235→        label: "the revenue floor",
+  1236→        why: "The memo's bar is 5,000. Dropping to 3,500 readsmits LATAM's 3,613.25 and dilutes the exposure list.",
+  1237→        noVerify: true,
+  1238→      },
+  1239→      {
+  1240→        answer: "DESC",
+  1241→        kind: "keyword",
+  1242→        label: "the sort direction",
+  1243→        why: "The memo opens with the biggest revenue region: DESC.",
+  1244→      },
+  1245→    ],
+  1246→    distractors: ["20000", "s.region = p.category", "WHERE", "3500", "ASC"],
+  1247→    walkthrough:
+  1248→      "Revenue flows line → product → supplier, and the region buckets sum quantity × unit_price — realized money, not list-price arithmetic. HAVING applies the 5,000 floor to the group sums. Run it and three regions make the memo: EU 15,895.88, US 9,294.93, APAC 6,029.22 — while LATAM's 3,613.25 misses the bar. The unit-economics are the story: APAC ships the most units of any region (179) but converts at just 33.7 per unit, while LATAM realizes 70.9 per unit on only 51 units — the highest rate in the book, on too little volume to matter to this memo. Volume ships from APAC; per-unit value ships from LATAM; the headline money ships from EU.",
+  1249→  },
+  1250→  {
+  1251→    id: "cs-328",
+  1252→    tier: "hard",
+  1253→    topic: "j3",
+  1254→    universe: "month-close",
+  1255→    title: "Cash by city",
+  1256→    brief:
+  1257→      "From: Financial Controller. Re: close binder, cash geography.\n\nThe close binder wants collected cash mapped to cities — payments joined through invoices to the payer's city. Top three cities by cash, with payment counts. Berlin's dominance should be visible, not assumed.",
+  1258→    ask: "Top 3 cities by collected cash: payment count and cash total (Σ ÷ 100), biggest first.",
+  1259→    template: `SELECT c.city, COUNT(p.id) AS payments, ROUND(SUM(p.amount_cents) / 100.0, 2) AS cash
+  1260→FROM payments p
+  1261→{1} invoices i ON {2}
+  1262→JOIN customers c ON {3}
+  1263→GROUP BY c.city
+  1264→ORDER BY cash {4}
+  1265→LIMIT {5};`,
+  1266→    slots: [
+  1267→      {
+  1268→        answer: "JOIN",
+  1269→        kind: "keyword",
+  1270→        label: "the first join keyword",
+  1271→        why: "The chain starts payment → invoice; a plain JOIN on the real key. UNION cannot sit in FROM.",
+  1272→      },
+  1273→      {
+  1274→        answer: "p.invoice_id = i.id",
+  1275→        kind: "keyword",
+  1276→        label: "the first join condition",
+  1277→        why: "payments.invoice_id → invoices.id is the ledger thread. i.number is text — matching it to the numeric id matches nothing.",
+  1278→      },
+  1279→      {
+  1280→        answer: "i.customer_id = c.id",
+  1281→        kind: "keyword",
+  1282→        label: "the second join condition",
+  1283→        why: "The payer's city hangs off the invoice's customer: invoices.customer_id → customers.id completes the chain.",
+  1284→      },
+  1285→      {
+  1286→        answer: "DESC",
+  1287→        kind: "keyword",
+  1288→        label: "the sort direction",
+  1289→        why: "'Top by cash' means descending. ASC would put the smallest cash pool on the binder's first line.",
+  1290→      },
+  1291→      {
+  1292→        answer: "3",
+  1293→        kind: "number",
+  1294→        label: "the city cap",
+  1295→        why: "The binder page carries three cities. A cap of 5 would readmit Austin and Milan and crowd the page.",
+  1296→        noVerify: true,
+  1297→      },
+  1298→    ],
+  1299→    distractors: ["UNION", "p.invoice_id = i.number", "c.id = i.id", "ASC", "5"],
+  1300→    walkthrough:
+  1301→      "The two-hop chain payment → invoice → customer puts a city on every cash movement; group by city, count and sum, sort down, trim to three. Run it and Berlin leads at 24,481.00 over 9 payments — that's Alice Chen's five invoices plus her installments, since every city hosts exactly one customer on this book. Mumbai follows at 11,542.00 (5 payments), Seoul at 9,071.00 (3). The binder takeaway: cash geography is customer geography — one heavy payer can own a city's line, which is exactly why the payment count sits next to the total.",
+  1302→  },
+  1303→  {
+  1304→    id: "cs-329",
+  1305→    tier: "easy",
+  1306→    topic: "j4",
+  1307→    universe: "month-close",
+  1308→    title: "Nobody off the books",
+  1309→    brief:
+  1310→      "From: Financial Controller. Re: account coverage check.\n\nFor the close I want every customer on the receivables view — including the ones we've never invoiced, shown with a zero rather than silently dropped. Invoice count per customer, zeros first. If someone falls off this list, the close is wrong.",
+  1311→    ask: "Invoice count per customer INCLUDING never-invoiced accounts, zeros first, then by name.",
+  1312→    template: `SELECT c.name, COUNT(i.id) AS invoices
+  1313→FROM customers c
+  1314→{1} invoices i ON {2}
+  1315→GROUP BY c.id
+  1316→ORDER BY invoices {3}, c.name;`,
+  1317→    slots: [
+  1318→      {
+  1319→        answer: "LEFT JOIN",
+  1320→        kind: "keyword",
+  1321→        label: "the preserving join",
+  1322→        why: "LEFT JOIN keeps every customer row even when no invoice matches — the never-invoiced appear with count 0. A plain JOIN would silently drop them.",
+  1323→      },
+  1324→      {
+  1325→        answer: "i.customer_id = c.id",
+  1326→        kind: "keyword",
+  1327→        label: "the join condition",
+  1328→        why: "invoices.customer_id → customers.id is the real thread. Matching i.number to c.name compares text to text but means nothing.",
+  1329→      },
+  1330→      {
+  1331→        answer: "ASC",
+  1332→        kind: "keyword",
+  1333→        label: "the sort direction",
+  1334→        why: "'Zeros first' is ascending on the count — ASC puts the never-invoiced at the top of the page where the controller looks first.",
+  1335→      },
+  1336→    ],
+  1337→    distractors: ["JOIN", "UNION", "i.customer_id = c.name", "DESC"],
+  1338→    walkthrough:
+  1339→      "The whole case is one keyword: LEFT JOIN preserves the left table — every customer — and fills unmatched invoice columns with NULL, which COUNT(i.id) reads as 0. Run it and sixteen customers appear, five of them at zero (Bruno Silva, Dmitri Volkov, Farid Nasser, Keiko Sato, Noah Meyer), with Alice Chen's five invoices at the far end. Swap LEFT JOIN for JOIN and the five zeros vanish from the close — eleven accounts where sixteen belong. The ASC keeps the holes at the top of the page, which is exactly where a controller wants them.",
+  1340→  },
+  1341→  {
+  1342→    id: "cs-330",
+  1343→    tier: "easy",
+  1344→    topic: "j4",
+  1345→    universe: "refund-audit",
+  1346→    title: "The 33-vs-28 tell",
+  1347→    brief:
+  1348→      "From: Refunds desk. Re: reconciliation sanity drill.\n\nTeach the new analyst the oldest LEFT JOIN tell in the book: count two ways over the customer-invoice join — all joined rows, and rows with a real invoice — and read the gap. The two numbers in one row say everything about who got preserved.",
+  1349→    ask: "One row: total joined rows vs rows with a matched invoice (customer→invoices, LEFT JOIN).",
+  1350→    template: `SELECT {1}(*) AS all_rows, COUNT(i.id) AS with_invoice
+  1351→FROM customers c
+  1352→{2} invoices i ON {3};`,
+  1353→    slots: [
+  1354→      {
+  1355→        answer: "COUNT",
+  1356→        kind: "keyword",
+  1357→        label: "the counting aggregate",
+  1358→        why: "Both figures are counts — COUNT(*) over the joined rows and COUNT(i.id) over matched ones. SUM(*) errors immediately.",
+  1359→      },
+  1360→      {
+  1361→        answer: "LEFT JOIN",
+  1362→        kind: "keyword",
+  1363→        label: "the preserving join",
+  1364→        why: "LEFT JOIN keeps the five never-invoiced customers as NULL-filled rows — that's what makes 33 ≠ 28. A plain JOIN collapses both counts to 28.",
+  1365→      },
+  1366→      {
+  1367→        answer: "i.customer_id = c.id",
+  1368→        kind: "keyword",
+  1369→        label: "the join condition",
+  1370→        why: "The real foreign key: invoices.customer_id → customers.id. Anything else populates the two counts with coincidence rows.",
+  1371→      },
+  1372→    ],
+  1373→    distractors: ["SUM", "JOIN", "i.customer_id = c.name"],
+  1374→    walkthrough:
+  1375→      "One query, two counts, one diagnosis. COUNT(*) counts every row the LEFT JOIN produced — 33, because 28 matched invoices plus 5 NULL-filled rows for the never-invoiced customers. COUNT(i.id) counts only rows where an invoice actually matched — 28. The gap of 5 IS the finding: five accounts on the books with zero invoices. Run the same counts over a plain JOIN and both read 28, the gap gone and the holes hidden. Every reconciliation drill starts here: when all_rows ≠ with_invoice, the left table has unmatched members, and you should be able to name them.",
+  1376→  },
+  1377→  {
+  1378→    id: "cs-331",
+  1379→    tier: "easy",
+  1380→    topic: "j4",
+  1381→    universe: "expense",
+  1382→    title: "Six invoices nobody touched",
+  1383→    brief:
+  1384→      "From: Treasury. Re: collections list.\n\nFor the collections call I need the invoices with no payment at all — number, status, and amount owed, biggest amount first. These are the rows where the paper says we're owed and the cash table says nothing arrived.",
+  1385→    ask: "Invoices with zero payments: number, status, amount owed — biggest amount first.",
+  1386→    template: `SELECT i.number, i.status, ROUND(i.amount_cents / 100.0, 2) AS owed
+  1387→FROM invoices i
+  1388→{1} payments p ON {2}
+  1389→WHERE p.id IS {3}
+  1390→ORDER BY owed {4};`,
+  1391→    slots: [
+  1392→      {
+  1393→        answer: "LEFT JOIN",
+  1394→        kind: "keyword",
+  1395→        label: "the preserving join",
+  1396→        why: "LEFT JOIN keeps unpaid invoices as NULL-filled rows; a plain JOIN would erase exactly the rows the collections call needs.",
+  1397→      },
+  1398→      {
+  1399→        answer: "p.invoice_id = i.id",
+  1400→        kind: "keyword",
+  1401→        label: "the join condition",
+  1402→        why: "payments.invoice_id → invoices.id is the cash-to-paper thread. Matching p.invoice_id to i.number compares number to text.",
+  1403→      },
+  1404→      {
+  1405→        answer: "NULL",
+  1406→        kind: "keyword",
+  1407→        label: "the emptiness test",
+  1408→        why: "'No payment' is p.id IS NULL — the only test that sees NULL. IS NOT would flip the query to the 21 paid invoices.",
+  1409→      },
+  1410→      {
+  1411→        answer: "DESC",
+  1412→        kind: "keyword",
+  1413→        label: "the sort direction",
+  1414→        why: "Collections works biggest exposure first: DESC on owed. ASC would start the call at the smallest balance.",
+  1415→      },
+  1416→    ],
+  1417→    distractors: ["JOIN", "p.invoice_id = i.number", "NOT", "ASC"],
+  1418→    walkthrough:
+  1419→      "The anti-payment pattern: LEFT JOIN payments onto invoices, then IS NULL to keep only the unmatched — six invoices come back, 15,217.00 of exposure, biggest first: 4,937.00, 3,562.00, 2,794.00, 1,756.00, 1,295.00, 873.00. The wrinkle worth a raised eyebrow: five sit at status 'open' as expected, but one is marked 'paid' — the ledger says settled, the cash table disagrees, and that invoice is Monday's first phone call. Swap LEFT for INNER JOIN and the list doesn't shrink, it disappears — the collection call would go ahead with nothing on screen and everything still owed.",
+  1420→  },
+  1421→  {
+  1422→    id: "cs-332",
+  1423→    tier: "medium",
+  1424→    topic: "j4",
+  1425→    universe: "fraud",
+  1426→    title: "Prove nobody is order-less",
+  1427→    brief:
+  1428→      "From: Fraud spot-check desk. Re: coverage assertion.\n\nThe assertion to test: every customer on the books has placed at least one order — no dormant zero-order accounts that fraudsters love. Build the zero-bucket query honestly and run it. An empty result here isn't failure; it's the assertion passing.",
+  1429→    ask: "Customers with zero orders (expect: an empty result that PROVES the assertion).",
+  1430→    template: `SELECT c.name, COUNT(o.id) AS orders
+  1431→FROM customers c
+  1432→{1} orders o ON {2}
+  1433→GROUP BY c.id
+  1434→{3} COUNT(o.id) = 0;`,
+  1435→    slots: [
+  1436→      {
+  1437→        answer: "LEFT JOIN",
+  1438→        kind: "keyword",
+  1439→        label: "the preserving join",
+  1440→        why: "Zero-hunting requires LEFT JOIN — unmatched customers must survive as NULL-filled rows for the HAVING to see. A plain JOIN deletes the very rows being hunted.",
+  1441→      },
+  1442→      {
+  1443→        answer: "o.customer_id = c.id",
+  1444→        kind: "keyword",
+  1445→        label: "the join condition",
+  1446→        why: "The real thread: orders.customer_id → customers.id. Comparing o.customer_id to c.name matches numbers to names — zero matches everywhere.",
+  1447→      },
+  1448→      {
+  1449→        answer: "HAVING",
+  1450→        kind: "keyword",
+  1451→        label: "the zero-bucket filter",
+  1452→        why: "COUNT(o.id) = 0 filters grouped aggregates — HAVING territory. WHERE errors on aggregates before grouping even happens.",
+  1453→      },
+  1454→    ],
+  1455→    distractors: ["UNION", "o.customer_id = c.name", "WHERE"],
+  1456→    walkthrough:
+  1457→      "The zero-bucket pattern, run as an assertion: LEFT JOIN keeps all 16 customers, COUNT(o.id) counts real matches (NULL reads as 0), HAVING keeps only the zero-buckets. Run it and the result is EMPTY — and that empty grid is the proof: all sixteen customers have ordered at least once, so no dormant accounts exist to exploit. The desk's discipline is reading emptiness correctly: 'no rows' here means the assertion passed, not that the query broke. Distractor-by-error is deliberate: WHERE COUNT(o.id) doesn't debate you, it refuses — aggregates only exist after GROUP BY.",
+  1458→  },
+  1459→  {
+  1460→    id: "cs-333",
+  1461→    tier: "hard",
+  1462→    topic: "j4",
+  1463→    universe: "month-close",
+  1464→    title: "Keep the pipeline visible",
+  1465→    brief:
+  1466→      "From: Financial Controller. Re: pending-order coverage view.\n\nI want a coverage view where every customer appears, and — for those with pending orders — their pending order totals. The filter must live INSIDE the join so customers without pending business still show up as a NULL row I can eyeball. Sorted by customer name, then total. If a WHERE sneaks in, the coverage silently dies.",
+  1467→    ask: "Every customer with their pending-order totals attached (NULL row when none) — filter inside the ON.",
+  1468→    template: `SELECT c.name, o.total
+  1469→FROM customers c
+  1470→{1} orders o ON {2} {3} o.status = {4}
+  1471→ORDER BY c.name, o.{5};`,
+  1472→    slots: [
+  1473→      {
+  1474→        answer: "LEFT JOIN",
+  1475→        kind: "keyword",
+  1476→        label: "the preserving join",
+  1477→        why: "Coverage for every customer requires LEFT JOIN. A plain JOIN would return only the pending rows and drop eight customers who have none.",
+  1478→      },
+  1479→      {
+  1480→        answer: "o.customer_id = c.id",
+  1481→        kind: "keyword",
+  1482→        label: "the join condition",
+  1483→        why: "The real account thread: orders.customer_id → customers.id. o.id = c.id would pair orders 1–16 with customers 1–16 by coincidence.",
+  1484→      },
+  1485→      {
+  1486→        answer: "AND",
+  1487→        kind: "keyword",
+  1488→        label: "the ON-combinator",
+  1489→        why: "Inside ON, AND attaches the status filter to the match condition — unmatched customers survive as NULL rows. WHERE in that position moves the filter out of the join and kills the preservation.",
+  1490→      },
+  1491→      {
+  1492→        answer: "'pending'",
+  1493→        kind: "keyword",
+  1494→        label: "the status literal",
+  1495→        why: "The pipeline is pending orders — text, quoted. 'delivered' would cover the 52-order history instead of the live pipeline.",
+  1496→      },
+  1497→      {
+  1498→        answer: "total",
+  1499→        kind: "keyword",
+  1500→        label: "the secondary sort",
+  1501→        why: "Within one customer, orders sort by their total: o.total. Sorting by o.id would order by creation sequence instead of size.",
+  1502→      },
+  1503→    ],
+  1504→    distractors: ["JOIN", "o.id = c.id", "WHERE", "'delivered'", "id"],
+  1505→    walkthrough:
+  1506→      "The ON-placement lesson in one query. With the status filter inside the ON (joined with AND), a LEFT JOIN keeps every customer: the eight with pending orders show their rows, the other eight appear once with a NULL total — 22 rows total, coverage intact. Move the filter to WHERE and the NULL rows fail the test, so the eight no-pending customers vanish: 14 rows, and the controller's 'who has no pipeline?' question becomes unanswerable. Run it and the named pending book is Alice Chen ×3, Emma Wilson ×3, Chloe Dubois ×2, Maya Patel ×2, plus four single-order accounts — 14 orders across exactly 8 customers.",
+  1507→  },
+  1508→  {
+  1509→    id: "cs-334",
+  1510→    tier: "medium",
+  1511→    topic: "j4",
+  1512→    universe: "refund-audit",
+  1513→    title: "Name the unpaid six",
+  1514→    brief:
+  1515→      "From: Refunds desk. Re: receivables hygiene list.\n\nWe need the named list behind the collections number: every invoice with no payment against it — number, status, amount owed — sorted so the biggest problems lead. And we want status visible, because last quarter an invoice marked paid turned up with no cash behind it.",
+  1516→    ask: "Invoices with zero payments: number, status, amount owed — status first in the sort, then biggest owed.",
+  1517→    template: `SELECT i.number, i.status, ROUND(i.amount_cents / 100.0, 2) AS owed
+  1518→FROM invoices i
+  1519→{1} payments p ON {2}
+  1520→WHERE p.id IS {3}
+  1521→ORDER BY {4}, owed DESC;`,
+  1522→    slots: [
+  1523→      {
+  1524→        answer: "LEFT JOIN",
+  1525→        kind: "keyword",
+  1526→        label: "the preserving join",
+  1527→        why: "Unpaid invoices survive only under LEFT JOIN — as NULL-filled rows the IS NULL test can catch. INNER JOIN deletes them outright.",
+  1528→      },
+  1529→      {
+  1530→        answer: "p.invoice_id = i.id",
+  1531→        kind: "keyword",
+  1532→        label: "the join condition",
+  1533→        why: "payments.invoice_id → invoices.id is the cash thread. Matching p.invoice_id to i.number compares a number to text like 'INV-2024-001'.",
+  1534→      },
+  1535→      {
+  1536→        answer: "NULL",
+  1537→        kind: "keyword",
+  1538→        label: "the emptiness test",
+  1539→        why: "'No payment' is p.id IS NULL. IS NOT NULL would return the 21 matched invoices — the exact complement.",
+  1540→      },
+  1541→      {
+  1542→        answer: "i.status",
+  1543→        kind: "keyword",
+  1544→        label: "the primary sort",
+  1545→        why: "Status leads the sort so anomalies group together — an invoice reading 'paid' with no payments jumps out. Sorting by i.number would bury it alphabetically.",
+  1546→      },
+  1547→    ],
+  1548→    distractors: ["JOIN", "p.invoice_id = i.number", "NOT", "i.number"],
+  1549→    walkthrough:
+  1550→      "The anti-payment pattern with an audit twist: LEFT JOIN payments, keep IS NULL survivors, and sort by status FIRST so the ledger's claims group together. Six invoices come back worth 15,217.00 — five at status 'open', behaving exactly as a receivables list should. The sixth reads 'paid'. That's the audit hook: the status column and the payments table disagree, and only this query shape — preserve, test for emptiness, sort by claim — surfaces it. The desk's rule: an unpaid list is a hygiene chore; an unpaid list sorted by status is an audit.",
+  1551→  },
+  1552→  {
+  1553→    id: "cs-335",
+  1554→    tier: "hard",
+  1555→    topic: "j4",
+  1556→    universe: "growth",
+  1557→    title: "Coverage with the empties kept",
+  1558→    brief:
+  1559→      "From: Head of Growth. Re: regional coverage grid.\n\nThe board grid needs every region present with two honest counts: joined rows and rows with a real order, plus revenue. If the two counts ever diverge, a region has an order-less account and the grid must show it. Build it so it WOULD show that — even though today it won't.",
+  1560→    ask: "Per region: joined row count, matched-order count, and revenue — built to expose any divergence.",
+  1561→    template: `SELECT c.region, COUNT(*) AS rows_, COUNT({1}) AS with_orders, ROUND(SUM(o.total), 2) AS revenue
+  1562→FROM customers c
+  1563→{2} orders o ON {3}
+  1564→GROUP BY c.region
+  1565→ORDER BY revenue {4};`,
+  1566→    slots: [
+  1567→      {
+  1568→        answer: "o.id",
+  1569→        kind: "keyword",
+  1570→        label: "the matched-row counter",
+  1571→        why: "COUNT(o.id) counts rows where an order actually matched — NULL ids from preserved non-orders read as zero. COUNT(*) would blur the two counts into one.",
+  1572→      },
+  1573→      {
+  1574→        answer: "LEFT JOIN",
+  1575→        kind: "keyword",
+  1576→        label: "the preserving join",
+  1577→        why: "The grid's promise — divergence visible — only holds if order-less customers survive the join. LEFT JOIN preserves them; INNER JOIN deletes the evidence.",
+  1578→      },
+  1579→      {
+  1580→        answer: "o.customer_id = c.id",
+  1581→        kind: "keyword",
+  1582→        label: "the join condition",
+  1583→        why: "The real thread: orders.customer_id → customers.id. o.id = c.id would fabricate a sixteen-order population.",
+  1584→      },
+  1585→      {
+  1586→        answer: "DESC",
+  1587→        kind: "keyword",
+  1588→        label: "the sort direction",
+  1589→        why: "The board reads biggest revenue first: DESC on revenue.",
+  1590→      },
+  1591→    ],
+  1592→    distractors: ["UNION", "i.id", "o.region", "ASC"],
+  1593→    walkthrough:
+  1594→      "The discipline here is building a control panel that works before you need it: COUNT(*) against COUNT(o.id) — the pair that diverges the day an account stops ordering — riding on a LEFT JOIN so the evidence can't be deleted at the join step. Run it today and the counts agree everywhere: EU 45/45/15,089.23, APAC 37/37/11,605.45, US 19/19/7,286.16, LATAM 2/2/852.44. Every customer has ordered; the grid is clean. But two accounts (Dmitri Volkov, Keiko Sato) carry an inactive flag — the day they lapse with no orders, rows_ stays and with_orders drops, and this exact query is the alarm.",
+  1595→  },
+  1596→  {
+  1597→    id: "cs-336",
+  1598→    tier: "hard",
+  1599→    topic: "j4",
+  1600→    universe: "month-close",
+  1601→    title: "Two-hop holes",
+  1602→    brief:
+  1603→      "From: Financial Controller. Re: receivables dead-end audit.\n\nThe dead-end pattern: customers with no invoices at all — which also means no payments, since cash references invoices. Build the chain customer → invoice → payment with BOTH hops preserving, keep only the zero-invoice buckets, and name them. If the second hop hardens to an inner join, watch the holes vanish.",
+  1604→    ask: "Customers with zero invoices (hence zero payments) — names, with both chain hops preserving.",
+  1605→    template: `SELECT c.name, COUNT(i.id) AS invoices, COUNT(p.id) AS payments
+  1606→FROM customers c
+  1607→LEFT JOIN invoices i ON {1}
+  1608→{2} JOIN payments p ON p.invoice_id = i.id
+  1609→GROUP BY c.id
+  1610→{3} COUNT(i.id) = 0
+  1611→ORDER BY {4}
+  1612→LIMIT {5};`,
+  1613→    slots: [
+  1614→      {
+  1615→        answer: "i.customer_id = c.id",
+  1616→        kind: "keyword",
+  1617→        label: "the first join condition",
+  1618→        why: "invoices.customer_id → customers.id is hop one. Matching i.number to the customer name compares invoice codes to people.",
+  1619→      },
+  1620→      {
+  1621→        answer: "LEFT",
+  1622→        kind: "keyword",
+  1623→        label: "the second hop's join type",
+  1624→        why: "The second hop must also preserve: a LEFT-then-INNER chain kills the NULL-invoice rows at the payments step, erasing the five customers being hunted.",
+  1625→      },
+  1626→      {
+  1627→        answer: "HAVING",
+  1628→        kind: "keyword",
+  1629→        label: "the zero-bucket filter",
+  1630→        why: "COUNT(i.id) = 0 filters a per-group aggregate — HAVING after GROUP BY. WHERE errors on aggregates.",
+  1631→      },
+  1632→      {
+  1633→        answer: "c.name",
+  1634→        kind: "keyword",
+  1635→        label: "the sort key",
+  1636→        why: "Names make the audit list readable: ORDER BY c.name. Sorting by the all-zero counts would be a no-op that leaves db order.",
+  1637→      },
+  1638→      {
+  1639→        answer: "5",
+  1640→        kind: "number",
+  1641→        label: "the expected row count",
+  1642→        why: "Exactly five never-invoiced customers exist; LIMIT 5 is the assertion. At 3 the list would truncate and hide two holes.",
+  1643→        noVerify: true,
+  1644→      },
+  1645→    ],
+  1646→    distractors: ["INNER", "WHERE", "c.city"],
+  1647→    walkthrough:
+  1648→      "A two-hop preservation chain: customer LEFT JOIN invoice LEFT JOIN payment. The chain totals 38 rows — 33 with invoices (27 carrying payments), 5 NULL-filled for the never-invoiced. HAVING COUNT(i.id) = 0 isolates those five, and COUNT(p.id) confirms the corollary: no invoices, no payments — zeros across both columns for Bruno Silva, Dmitri Volkov, Farid Nasser, Keiko Sato and Noah Meyer. Harden hop two to INNER JOIN and the result is EMPTY: the inner join discards the NULL invoice rows before HAVING ever sees them. Preservation is per-hop; one hard link breaks the whole safety net.",
+  1649→  },
+  1650→  {
+  1651→    id: "cs-337",
+  1652→    tier: "easy",
+  1653→    topic: "j5",
+  1654→    universe: "fraud",
+  1655→    title: "The unbilled five",
+  1656→    brief:
+  1657→      "From: Fraud spot-check desk. Re: billing coverage sweep.\n\nFraud loves the gaps, and the biggest gap is an account we've never billed. List every customer with no invoice on file — name and region, alphabetical. Five rows expected; if you see sixteen, your join isn't hunting.",
+  1658→    ask: "Customers with zero invoices: name and region, alphabetical by name.",
+  1659→    template: `SELECT c.name, c.region
+  1660→FROM customers c
+  1661→LEFT JOIN invoices i ON {1}
+  1662→WHERE i.id IS {2}
+  1663→ORDER BY {3};`,
+  1664→    slots: [
+  1665→      {
+  1666→        answer: "i.customer_id = c.id",
+  1667→        kind: "keyword",
+  1668→        label: "the join condition",
+  1669→        why: "invoices.customer_id → customers.id is the real thread. Matching i.number (text) against the customer name produces no meaningful pairs.",
+  1670→      },
+  1671→      {
+  1672→        answer: "NULL",
+  1673→        kind: "keyword",
+  1674→        label: "the emptiness test",
+  1675→        why: "'Never invoiced' is i.id IS NULL — the anti-join signature. IS NOT NULL flips the query to the 11 invoiced customers.",
+  1676→      },
+  1677→      {
+  1678→        answer: "c.name",
+  1679→        kind: "keyword",
+  1680→        label: "the sort key",
+  1681→        why: "'Alphabetical by name' sorts on c.name. Sorting by c.city would organize people by geography instead.",
+  1682→      },
+  1683→    ],
+  1684→    distractors: ["NOT", "c.city"],
+  1685→    walkthrough:
+  1686→      "The anti-join pattern in its purest form: LEFT JOIN leaves the never-invoiced as NULL rows, and IS NULL keeps exactly those. Run it and five names surface — Bruno Silva (LATAM), Dmitri Volkov (EU), Farid Nasser (APAC), Keiko Sato (APAC), Noah Meyer (EU). Note the two EU members: 'region with no billing' would be the wrong summary — Europe is on this list twice AND fully billed eight times elsewhere. Sixteen minus five is eleven: the invoiced complement the NOT distractor would have returned. The desk files the five, then checks their order histories separately — unbilled doesn't mean inactive.",
+  1687→  },
+  1688→  {
+  1689→    id: "cs-338",
+  1690→    tier: "easy",
+  1691→    topic: "j5",
+  1692→    universe: "expense",
+  1693→    title: "Count the unbilled",
+  1694→    brief:
+  1695→      "From: Spend analyst. Re: billing gap count.\n\nCompanion to the named list: I just want the size of the billing gap as ONE number — how many customers have never received an invoice. The count must run over the preserved join, or the gap counts as zero and the memo lies.",
+  1696→    ask: "One number: customers with no invoice on file.",
+  1697→    template: `SELECT {1}(*) AS never_invoiced
+  1698→FROM customers c
+  1699→{2} invoices i ON i.customer_id = c.id
+  1700→WHERE i.id IS {3};`,
+  1701→    slots: [
+  1702→      {
+  1703→        answer: "COUNT",
+  1704→        kind: "keyword",
+  1705→        label: "the counting aggregate",
+  1706→        why: "The deliverable is a headcount: COUNT(*). SUM(*) and AVG(*) are invalid SQL over a placeholder and error immediately.",
+  1707→      },
+  1708→      {
+  1709→        answer: "LEFT JOIN",
+  1710→        kind: "keyword",
+  1711→        label: "the preserving join",
+  1712→        why: "The gap exists only if unmatched customers survive the join. A plain JOIN returns zero matched-then-unmatched rows — the count would report 0 and hide the gap.",
+  1713→      },
+  1714→      {
+  1715→        answer: "NULL",
+  1716→        kind: "keyword",
+  1717→        label: "the emptiness test",
+  1718→        why: "i.id IS NULL marks the never-invoiced. IS NOT NULL would count the 11 billed customers instead.",
+  1719→      },
+  1720→    ],
+  1721→    distractors: ["SUM", "AVG", "JOIN", "NOT"],
+  1722→    walkthrough:
+  1723→      "Counting a gap is a three-part discipline: preserve the left table (LEFT JOIN), mark the unmatched (IS NULL), count what remains (COUNT(*) → 5). Break any part and the number inverts or vanishes — a plain JOIN here counts rows that matched and then didn't, which is nothing, so the memo would print '0 unbilled accounts' while five real ones sit off the books. The number ties out with the named list: Bruno Silva, Dmitri Volkov, Farid Nasser, Keiko Sato, Noah Meyer. Same population, one row, five members — the memo's single stat and the audit's named list must always agree.",
+  1724→  },
+  1725→  {
+  1726→    id: "cs-339",
+  1727→    tier: "medium",
+  1728→    topic: "j5",
+  1729→    universe: "inventory",
+  1730→    title: "Zero dead stock, proven",
+  1731→    brief:
+  1732→      "From: Inventory control. Re: dead-stock assertion.\n\nThe assertion from the last count meeting: every product in the catalog has sold at least once — no dead stock on the shelves. Prove it with data: join products to sold lines and isolate products with zero sales. The expected result is empty, and empty is the proof.",
+  1733→    ask: "Products with zero sales lines (expect: empty result = assertion passes).",
+  1734→    template: `SELECT p.name, p.category
+  1735→FROM products p
+  1736→LEFT JOIN order_items oi ON {1}
+  1737→WHERE oi.{2} IS {3};`,
+  1738→    slots: [
+  1739→      {
+  1740→        answer: "p.id = oi.product_id",
+  1741→        kind: "keyword",
+  1742→        label: "the join condition",
+  1743→        why: "order_items.product_id → products.id is the sales thread. Matching p.supplier_id to oi.product_id would join products to the wrong table's key entirely.",
+  1744→      },
+  1745→      {
+  1746→        answer: "id",
+  1747→        kind: "keyword",
+  1748→        label: "the line existence column",
+  1749→        why: "oi.id IS NULL means no line matched — the row-existence test. There is no oi.p.name; qualifying the wrong table errors out.",
+  1750→      },
+  1751→      {
+  1752→        answer: "NULL",
+  1753→        kind: "keyword",
+  1754→        label: "the emptiness test",
+  1755→        why: "'Never sold' is IS NULL. IS NOT NULL returns the 251 matched lines — the entire sales book, the opposite of dead stock.",
+  1756→      },
+  1757→    ],
+  1758→    distractors: ["NOT", "p.supplier"],
+  1759→    walkthrough:
+  1760→      "Assertion queries and fraud queries share one shape: preserve everything (LEFT JOIN), test for the absence (IS NULL), read the survivors. Run it and the result is EMPTY — all sixteen products have at least one sales line, so dead stock is zero and the meeting's assertion stands. The discipline is trusting emptiness: the same grid that looks like a broken query in the fraud module is, here, a clean bill of health. And the distractors here are deliberately merciless: on an assertion query, a near-miss key or a flipped IS NOT doesn't argue with you — it either errors out or silently inverts the verdict, which is exactly the failure mode the assertion shape exists to expose.",
+  1761→  },
+  1762→  {
+  1763→    id: "cs-340",
+  1764→    tier: "hard",
+  1765→    topic: "j5",
+  1766→    universe: "fraud",
+  1767→    title: "The no-pending eight",
+  1768→    brief:
+  1769→      "From: Fraud spot-check desk. Re: pipeline-quiet accounts.\n\nThe counterpart to the exposure list: customers with NO pending order right now — accounts with nothing in limbo. The status filter must ride INSIDE the join so the never-pending survive as NULL rows for the emptiness test. Name them with their cities, alphabetical. Expect eight.",
+  1770→    ask: "Customers with zero pending orders (filter inside ON, emptiness test outside): name and city.",
+  1771→    template: `SELECT c.name, c.city
+  1772→FROM customers c
+  1773→{1} orders o ON {2} {3} o.status = {4}
+  1774→WHERE o.{5} IS NULL
+  1775→ORDER BY c.name;`,
+  1776→    slots: [
+  1777→      {
+  1778→        answer: "LEFT JOIN",
+  1779→        kind: "keyword",
+  1780→        label: "the preserving join",
+  1781→        why: "Only LEFT JOIN lets customers without pending orders survive as NULL rows. A plain JOIN returns just the 14 pending rows and the anti-join finds nothing.",
+  1782→      },
+  1783→      {
+  1784→        answer: "o.customer_id = c.id",
+  1785→        kind: "keyword",
+  1786→        label: "the join condition",
+  1787→        why: "orders.customer_id → customers.id is the real thread. o.id = c.id would match pending order ids 1–16 against customer ids and fabricate survivors.",
+  1788→      },
+  1789→      {
+  1790→        answer: "AND",
+  1791→        kind: "keyword",
+  1792→        label: "the ON-combinator",
+  1793→        why: "AND keeps the status filter inside the match condition — customers with no PENDING match survive as NULL rows. WHERE in that slot moves the filter out and destroys the anti-join.",
+  1794→      },
+  1795→      {
+  1796→        answer: "'pending'",
+  1797→        kind: "keyword",
+  1798→        label: "the status literal",
+  1799→        why: "The hunted state is 'pending' — quoted text. 'shipped' would hunt customers with no shipped order: a different, larger population.",
+  1800→      },
+  1801→      {
+  1802→        answer: "id",
+  1803→        kind: "keyword",
+  1804→        label: "the existence column",
+  1805→        why: "o.id IS NULL certifies no pending row matched. o.total IS NULL is equivalent here but o.customer_id can't be — testing a never-null column finds zero rows.",
+  1806→      },
+  1807→    ],
+  1808→    distractors: ["JOIN", "o.id = c.id", "WHERE", "'shipped'", "c.id"],
+  1809→    walkthrough:
+  1810→      "Anti-join with a twist — the filter must live in the ON clause. LEFT JOIN with AND o.status = 'pending' preserves every customer: 14 pending rows for the eight accounts that have them, NULL rows for everyone else; IS NULL then keeps exactly the never-pending eight — Bruno Silva, Dmitri Volkov, Hiro Tanaka, Isabella Rossi, Jamal Wright, Liam O'Brien, Noah Meyer, Olivia Brown. Put the filter in WHERE instead and the NULL rows fail the status test before the emptiness check ever runs: zero rows, assertion dead. One keyword of placement (AND vs WHERE) is the difference between a working control and a silent one.",
+  1811→  },
+  1812→  {
+  1813→    id: "cs-341",
+  1814→    tier: "hard",
+  1815→    topic: "j5",
+  1816→    universe: "expense",
+  1817→    title: "Unbilled exposure",
+  1818→    brief:
+  1819→      "From: Spend analyst. Re: the receivables gap, in money.\n\nOne number for the working-capital memo: how much invoiced money has no cash behind it — count of unpaid invoices and their total value. The anti-join must preserve the unpaid side, and the money math must run on the INVOICE amounts, not the (absent) payments.",
+  1820→    ask: "Count of invoices with zero payments, and their total amount in whole units.",
+  1821→    template: `SELECT {1}(*) AS unpaid, ROUND(SUM({2}) / {3}, 2) AS exposure
+  1822→FROM invoices i
+  1823→{4} payments p ON p.invoice_id = i.id
+  1824→WHERE p.id IS {5};`,
+  1825→    slots: [
+  1826→      {
+  1827→        answer: "COUNT",
+  1828→        kind: "keyword",
+  1829→        label: "the counting aggregate",
+  1830→        why: "The headcount of unpaid invoices: COUNT(*). SUM(*) is invalid SQL over a placeholder.",
+  1831→      },
+  1832→      {
+  1833→        answer: "i.amount_cents",
+  1834→        kind: "keyword",
+  1835→        label: "the money column",
+  1836→        why: "Owed money lives on the INVOICE. p.amount_cents is NULL on every preserved row here — the anti-join's whole point — so summing it returns NULL, not the exposure.",
+  1837→      },
+  1838→      {
+  1839→        answer: "100.0",
+  1840→        kind: "number",
+  1841→        label: "the unit divisor",
+  1842→        why: "Cents to units needs 100.0 — the decimal keeps the division float so pennies survive rounding.",
+  1843→        noVerify: true,
+  1844→      },
+  1845→      {
+  1846→        answer: "LEFT JOIN",
+  1847→        kind: "keyword",
+  1848→        label: "the preserving join",
+  1849→        why: "LEFT JOIN keeps unpaid invoices as NULL rows for IS NULL to catch. A plain JOIN returns only paid invoices — the unpaid set would be empty and the memo would print zeros.",
+  1850→      },
+  1851→      {
+  1852→        answer: "NULL",
+  1853→        kind: "keyword",
+  1854→        label: "the emptiness test",
+  1855→        why: "'No payment' is p.id IS NULL. IS NOT NULL counts the 21 paid invoices — the complement of the gap.",
+  1856→      },
+  1857→    ],
+  1858→    distractors: ["SUM", "i.number", "10.0", "JOIN", "NOT"],
+  1859→    walkthrough:
+  1860→      "The anti-join goes financial: LEFT JOIN payments, keep IS NULL survivors, then aggregate over the SURVIVING side — invoice amounts. Run it and the memo gets both numbers: 6 unpaid invoices worth 15,217.00. The classic corruption is summing p.amount_cents — every one of those is NULL on the preserved rows, so the 'exposure' prints as NULL and the memo goes out blank. The divisor trap is quieter: the wrong scale (10.0 instead of 100.0) misprints the memo by an order of magnitude, and an integer divisor floors the pennies away — 100.0 keeps cents exact until ROUND cleans up. Count and value in one row, both honest to the same preserved population.",
+  1861→  },
+  1862→  {
+  1863→    id: "cs-342",
+  1864→    tier: "easy",
+  1865→    topic: "j6",
+  1866→    universe: "funnel",
+  1867→    title: "Same-region teammates",
+  1868→    brief:
+  1869→      "From: Marketing lead. Re: regional clustering stat.\n\nFor the regional narrative I want a pairing stat: how many distinct customer pairs share a region? Each pair counted once — no self-pairs, no double-counting. One number for the slide.",
+  1870→    ask: "Count of distinct customer pairs (a.id < b.id) sharing the same region.",
+  1871→    template: `SELECT {1}(*) AS pairs
+  1872→FROM customers a
+  1873→JOIN customers b ON {2} AND a.id {3} b.id;`,
+  1874→    slots: [
+  1875→      {
+  1876→        answer: "COUNT",
+  1877→        kind: "keyword",
+  1878→        label: "the counting aggregate",
+  1879→        why: "A pair total is a row count: COUNT(*). SUM(*) errors — the placeholder isn't a column.",
+  1880→      },
+  1881→      {
+  1882→        answer: "a.region = b.region",
+  1883→        kind: "keyword",
+  1884→        label: "the pairing condition",
+  1885→        why: "Teammates share a region: a.region = b.region. a.name = b.name would pair a customer with themselves — every name is unique here.",
+  1886→      },
+  1887→      {
+  1888→        answer: "<",
+  1889→        kind: "keyword",
+  1890→        label: "the guard operator",
+  1891→        why: "a.id < b.id counts each pair once and never pairs a row with itself. <= would include 16 self-pairs; = would count only the 16 self-matches.",
+  1892→      },
+  1893→    ],
+  1894→    distractors: ["SUM", "a.name = b.name", "<=", "="],
+  1895→    walkthrough:
+  1896→      "A self-join is one table wearing two aliases: a and b are both customers, and the ON clause defines what 'paired' means. a.region = b.region finds same-region rows; the guard a.id < b.id is what turns a cross-match into a pair list — strictly less-than kills self-pairs (a row can't be less than itself) and the direction kills mirror duplicates (Alice–Bruno counted once, not twice). Run it and the slide gets 39: EU's eight customers pair 28 ways, APAC's five pair 10, US's two pair 1 — LATAM's lone customer pairs with nobody. One number, three stories.",
+  1897→  },
+  1898→  {
+  1899→    id: "cs-343",
+  1900→    tier: "medium",
+  1901→    topic: "j6",
+  1902→    universe: "fraud",
+  1903→    title: "Order twins",
+  1904→    brief:
+  1905→      "From: Fraud spot-check desk. Re: repeat-order pattern baseline.\n\nBefore we flag anything, we need the baseline: how many distinct order pairs exist within the same customer's book? Same customer, two different orders, each pair once. This number is the denominator every 'suspicious clustering' claim gets divided by.",
+  1906→    ask: "Count of distinct order pairs (o1.id < o2.id) belonging to the same customer.",
+  1907→    template: `SELECT {1}(*) AS pairs
+  1908→FROM orders o1
+  1909→{4} orders o2 ON {2} AND o1.id {3} o2.id;`,
+  1910→    slots: [
+  1911→      {
+  1912→        answer: "COUNT",
+  1913→        kind: "keyword",
+  1914→        label: "the counting aggregate",
+  1915→        why: "The deliverable is a pair count: COUNT(*). SUM(*) is invalid over the placeholder token.",
+  1916→      },
+  1917→      {
+  1918→        answer: "o1.customer_id = o2.customer_id",
+  1919→        kind: "keyword",
+  1920→        label: "the same-customer condition",
+  1921→        why: "'Within one customer's book' is matching customer ids across the aliases. o1.id = o2.id with a less-than guard can never both hold — zero rows forever.",
+  1922→      },
+  1923→      {
+  1924→        answer: "<",
+  1925→        kind: "keyword",
+  1926→        label: "the guard operator",
+  1927→        why: "o1.id < o2.id counts each pair once, self-pairs impossible. <= would add every order's self-match; != would count both directions.",
+  1928→      },
+  1929→      {
+  1930→        answer: "JOIN",
+  1931→        kind: "keyword",
+  1932→        label: "the join keyword",
+  1933→        why: "Pair-matching is an inner self-join: rows survive only when a partner exists. A LEFT JOIN would pad in 16 unmatched rows — the biggest-order-per-customer leftovers.",
+  1934→      },
+  1935→    ],
+  1936→    distractors: ["o1.id = o2.id", "<=", "!=", "LEFT JOIN"],
+  1937→    walkthrough:
+  1938→      "Orders paired with orders, same customer, counted once: the guard o1.id < o2.id does the hygiene — no self-pairs, no mirrors. Run it and the baseline is 624 pairs across the book, and the distribution is the real story: Alice Chen's 24 orders alone contribute 276 pairs (24 choose 2), Emma's 17 contribute 136 — two customers own over half the pairing universe, so 'many pairs' usually means 'one heavy account', not collusion. Swap the guard to <= and self-pairs inflate the count by 103 (every order paired with itself) — a baseline quietly wrong in exactly the direction that creates false positives.",
+  1939→  },
+  1940→  {
+  1941→    id: "cs-344",
+  1942→    tier: "hard",
+  1943→    topic: "j6",
+  1944→    universe: "growth",
+  1945→    title: "Alice's order twins",
+  1946→    brief:
+  1947→      "From: Head of Growth. Re: the Alice deep-dive.\n\nFor the Alice Chen case study I need her repeat-activity footprint: how many distinct pairs of orders sit inside her 24-order book? Pin the pairing to her account, keep the once-only guard, and report the single number her case study hangs on.",
+  1948→    ask: "Count of same-customer order pairs (o1.id < o2.id) for customer 1 only.",
+  1949→    template: `SELECT {1}(*) AS pairs
+  1950→FROM orders o1
+  1951→JOIN orders o2 ON {2} AND o1.id {3} o2.id
+  1952→WHERE o1.customer_id = {4};`,
+  1953→    slots: [
+  1954→      {
+  1955→        answer: "COUNT",
+  1956→        kind: "keyword",
+  1957→        label: "the counting aggregate",
+  1958→        why: "One number requested: COUNT(*). SUM(*) errors on the placeholder.",
+  1959→      },
+  1960→      {
+  1961→        answer: "o1.customer_id = o2.customer_id",
+  1962→        kind: "keyword",
+  1963→        label: "the same-customer condition",
+  1964→        why: "Pairs must live inside one account — matching the two aliases' customer ids. Matching order ids contradicts the guard and returns nothing.",
+  1965→      },
+  1966→      {
+  1967→        answer: "<",
+  1968→        kind: "keyword",
+  1969→        label: "the guard operator",
+  1970→        why: "Strict less-than: each pair once, no self-pairs. <= would count her 24 self-matches too — 300 instead of 276.",
+  1971→      },
+  1972→      {
+  1973→        answer: "1",
+  1974→        kind: "number",
+  1975→        label: "the pinned customer id",
+  1976→        why: "Alice Chen is customer 1 — the WHERE pin narrows 624 book-wide pairs to her footprint. Customer 2 (Emma) would give her own, smaller number.",
+  1977→        noVerify: true,
+  1978→      },
+  1979→    ],
+  1980→    distractors: ["o1.id = o2.id", "<=", "=", "2"],
+  1981→    walkthrough:
+  1982→      "The book-wide pairing query (624 pairs) narrowed to one account by the WHERE pin. Alice Chen is customer 1; her 24 orders pair among themselves — 24 choose 2, which is 24×23÷2 = 276. The guard operator is the audit trail: strict < means every pair appears once with the smaller id first, and self-pairs are arithmetically impossible. Watch the near-misses: <= returns 300 (her 276 real pairs plus 24 self-matches), = returns 24 (only the self-matches), and pinning customer 2 gives Emma's 136. Same query, four numbers — the guard and the pin are where the meaning lives.",
+  1983→  },
+  1984→  {
+  1985→    id: "cs-345",
+  1986→    tier: "hard",
+  1987→    topic: "j6",
+  1988→    universe: "funnel",
+  1989→    title: "One city, one customer",
+  1990→    brief:
+  1991→      "From: Marketing lead. Re: the city-pairing hypothesis.\n\nSomeone hypothesized 'customers in the same city order alike' — step one is testing whether same-city PAIRS even exist. Build the guarded city self-join and run it. If the result is zero, the hypothesis isn't weak — it's vacuous, and you'll have proven it with the same query shape that found 39 region pairs.",
+  1992→    ask: "Count of distinct same-city customer pairs (a.id < b.id) — expect zero, and understand why.",
+  1993→    template: `SELECT {1}(*) AS same_city_pairs
+  1994→FROM customers a
+  1995→{4} customers b ON {2} AND a.id {3} b.id;`,
+  1996→    slots: [
+  1997→      {
+  1998→        answer: "COUNT",
+  1999→        kind: "keyword",
+  2000→        label: "the counting aggregate",
+
+[showing lines 1-2000 of 2262; use offset=2001 with limit to continue reading]

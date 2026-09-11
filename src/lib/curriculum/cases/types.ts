@@ -1,9 +1,11 @@
-// Case Files — rebuild-the-query scenarios for Module 1 (Foundations).
-// A case is a memo from a stakeholder plus a broken-down query: figures and
-// SQL keywords have been pulled out into numbered slots. The learner rebuilds
-// the query from a chip bank (correct answers + distractors), gets per-slot
-// coaching on wrong placements, and a full walkthrough when the query is
-// restored. Every case is mechanically audited against the live seed db by
+// Case Files — rebuild-the-query scenarios (Modules 1–2).
+// Module 1 topics (l1…l8, cap) stay single-table; Module 2 topics (j1…j8,
+// lessons 9–16) are join queries over the same storefront db. A case is a
+// memo from a stakeholder plus a broken-down query: figures and SQL keywords
+// have been pulled out into numbered slots. The learner rebuilds the query
+// from a chip bank (correct answers + distractors), gets per-slot coaching on
+// wrong placements, and a full walkthrough when the query is restored. Every
+// case is mechanically audited against the live seed db by
 // scripts/case-audit.ts.
 
 export type CaseSlotKind = "number" | "keyword";
@@ -67,6 +69,15 @@ export const CASE_TOPICS: CaseTopicMeta[] = [
   { id: "l7", label: "Aggregates", lessonNum: 7 },
   { id: "l8", label: "GROUP BY & HAVING", lessonNum: 8 },
   { id: "cap", label: "Capstone mix", lessonNum: null },
+  // Module 2 — Joins & Relationships (lessons 9–16)
+  { id: "j1", label: "Two tables", lessonNum: 9 },
+  { id: "j2", label: "INNER JOIN", lessonNum: 10 },
+  { id: "j3", label: "3-table chains", lessonNum: 11 },
+  { id: "j4", label: "LEFT JOIN", lessonNum: 12 },
+  { id: "j5", label: "Anti-join", lessonNum: 13 },
+  { id: "j6", label: "Self-join", lessonNum: 14 },
+  { id: "j7", label: "Joins + aggregates", lessonNum: 15 },
+  { id: "j8", label: "Join capstone", lessonNum: 16 },
 ];
 
 export interface CaseUniverseMeta {

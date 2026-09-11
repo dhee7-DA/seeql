@@ -6,8 +6,10 @@
  *  1. Structure: id format/uniqueness, topic/universe validity, slot count,
  *     template markers used exactly once and matching slots, distractor rules,
  *     prose-quality gates (brief/ask/walkthrough/slot-why lengths).
- *  2. Query honesty: filled SQL is a single read-only statement (no JOIN, no
- *     subquery), and executes without error on a READ-ONLY COPY of db/custom.db.
+ *  2. Query honesty: filled SQL is a single read-only statement (Module 1
+ *     topics [l-topics and cap]: no JOIN; Module 2 topics [j-topics]: JOIN
+ *     required; neither allows subqueries), and executes without error on a
+ *     READ-ONLY COPY of db/custom.db.
  *  3. Number slots: the claimed figure must appear in the query's result cells
  *     (unless slot.noVerify — capped at 3 per case).
  *  4. Ambiguity: every distractor substituted into every slot must either fail
@@ -156,8 +158,11 @@ function auditCase(c: CaseStudy, seen: Map<string, string>): string[] {
   const filledCorrect = fill(c.template, Object.fromEntries(c.slots.map((s, i) => [i + 1, s.answer])));
   if (/;/.test(filledCorrect.replace(/;\s*$/, ""))) add("template contains an internal statement separator");
   const selects = (filledCorrect.match(/\bSELECT\b/gi) ?? []).length;
-  if (selects !== 1) add(`${selects} SELECT keywords — subqueries not allowed in Module 1 cases`);
-  if (/\bJOIN\b/i.test(filledCorrect)) add("JOIN found — Module 1 cases are single-table");
+  if (selects !== 1) add(`${selects} SELECT keywords — subqueries not allowed in Module 1–2 cases`);
+  const isM2 = c.topic.startsWith("j");
+  const hasJoin = /\bJOIN\b/i.test(filledCorrect);
+  if (isM2 && !hasJoin) add("Module 2 topic but no JOIN keyword — join cases must join");
+  if (!isM2 && hasJoin) add("JOIN found — Module 1 cases are single-table");
   if (!/^\s*SELECT\b/i.test(filledCorrect)) add("filled query does not start with SELECT");
 
   // execution + number verification
