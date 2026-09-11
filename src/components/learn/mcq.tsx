@@ -5,7 +5,7 @@
 // Finish matches the app's material layer: sheen on the raised card,
 // accent-lit selection state, animated verdict panel, glowing check CTA.
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { AlertCircle, Check, CheckCircle2, X } from "lucide-react";
 import { useProgress } from "@/lib/curriculum/progress";
@@ -19,7 +19,15 @@ import { celebrate } from "./celebrate";
 export function McqCard({ mcq, onAnswered }: { mcq: Mcq; onAnswered?: (correct: boolean) => void }) {
   const [picked, setPicked] = useState<number | null>(null);
   const [checked, setChecked] = useState(false);
+  const [flutter, setFlutter] = useState<{ gained: number; seq: number } | null>(null);
   const awardRef = useRef(false);
+
+  // the flutter chip is transient — retire it 1.7s after it lands
+  useEffect(() => {
+    if (!flutter) return;
+    const t = window.setTimeout(() => setFlutter(null), 1700);
+    return () => window.clearTimeout(t);
+  }, [flutter]);
 
   const correct = checked && picked === mcq.answer;
 
@@ -30,19 +38,26 @@ export function McqCard({ mcq, onAnswered }: { mcq: Mcq; onAnswered?: (correct: 
     const store = useProgress.getState();
     const isFirst = store.recordMcqCheck(mcq.id, picked === mcq.answer);
     if (picked === mcq.answer) {
-      store.awardXp(`mcq:${mcq.id}`, XP.mcq);
-      if (isFirst) store.awardXp(`mcqfirst:${mcq.id}`, XP.mcqFirstBonus);
+      // XP truth comes from the ledger: awardXp returns whether it paid.
+      // Repeats never pay twice, so "gained" is honest — the chip and
+      // toast can never claim XP the ledger didn't bank.
+      const paidMcq = store.awardXp(`mcq:${mcq.id}`, XP.mcq);
+      const paidFirst = isFirst ? store.awardXp(`mcqfirst:${mcq.id}`, XP.mcqFirstBonus) : false;
+      const gained = (paidMcq ? XP.mcq : 0) + (paidFirst ? XP.mcqFirstBonus : 0);
+      setFlutter({ gained, seq: Date.now() });
       celebrate({
         kind: "xp",
-        title: `+${XP.mcq + (isFirst ? XP.mcqFirstBonus : 0)} XP`,
-        sub: isFirst ? "Correct on the first try — bonus included" : "Correct",
+        title: gained > 0 ? `+${gained} XP` : "Correct",
+        sub: gained > 0
+          ? isFirst ? "Correct on the first try — bonus included" : "Correct"
+          : "XP already banked for this one",
       });
     }
     onAnswered?.(picked === mcq.answer);
   }
 
   return (
-    <div className="sheen rounded-lg border border-zinc-800 bg-zinc-950 p-4 sm:p-5">
+    <div className="sheen relative rounded-lg border border-zinc-800 bg-zinc-950 p-4 sm:p-5">
       <p className="text-sm font-medium leading-relaxed text-zinc-100"><RichNodes text={mcq.prompt} /></p>
       <div className="mt-3.5 grid gap-2">
         {mcq.choices.map((choice, i) => {
@@ -138,6 +153,27 @@ export function McqCard({ mcq, onAnswered }: { mcq: Mcq; onAnswered?: (correct: 
         >
           Check answer
         </button>
+      )}
+      {flutter && (
+        <motion.span
+          key={flutter.seq}
+          initial={{ opacity: 0, y: 10, scale: 0.7, rotate: -6 }}
+          animate={{
+            opacity: [0, 1, 1, 0],
+            y: [10, 0, -6, -18],
+            scale: [0.7, 1.08, 1, 0.96],
+            rotate: [-6, 2, -1, 3],
+          }}
+          transition={{ duration: 1.6, times: [0, 0.18, 0.75, 1], ease: "easeOut" }}
+          className={cn(
+            "pointer-events-none absolute bottom-5 right-5 z-10 rounded-full border px-3 py-1 font-mono text-xs font-semibold shadow-lg",
+            flutter.gained > 0
+              ? "border-emerald-300/60 bg-emerald-400/15 text-emerald-200 shadow-emerald-400/20"
+              : "border-zinc-600 bg-zinc-800/90 text-zinc-400",
+          )}
+        >
+          {flutter.gained > 0 ? `+${flutter.gained} XP` : "already banked"}
+        </motion.span>
       )}
     </div>
   );

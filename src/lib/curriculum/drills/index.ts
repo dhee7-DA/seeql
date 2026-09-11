@@ -86,3 +86,17 @@ export function drillTotal(): number {
 export function drillSetsForModule(moduleNum: number): DrillSet[] {
   return DRILL_SETS.filter((s) => s.module === moduleNum);
 }
+
+/** Which drill keywords belong inside which lesson's Drills tab.
+ *  Concept lessons map to the keyword(s) they teach; case-study lessons
+ *  and intros without a query focus have no entry (no tab rendered). */
+export const LESSON_DRILLS: Record<string, string[]> = {
+  "lesson-01": ["select"],                       // reading a table for the first time
+  "lesson-02": ["select"],                       // SELECT & FROM
+  "lesson-03": ["where", "and-or-not"],          // WHERE + boolean assembly
+  "lesson-04": ["null"],                         // NULL
+  "lesson-05": ["order-limit"],                  // ORDER BY & LIMIT
+  "lesson-06": ["distinct"],                     // DISTINCT
+  "lesson-07": ["aggregates"],                   // COUNT/SUM/AVG/MIN/MAX
+  "lesson-08": ["groupby", "having"],            // GROUP BY & HAVING
+};

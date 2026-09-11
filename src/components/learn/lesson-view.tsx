@@ -12,6 +12,7 @@ import {
   CircleHelp,
   Cog,
   Database,
+  Dumbbell,
   Lightbulb,
   Microscope,
   Sparkles,
@@ -22,6 +23,7 @@ import {
 } from "lucide-react";
 import type { Block, DeepBlock, Lesson } from "@/lib/curriculum/types";
 import { useProgress } from "@/lib/curriculum/progress";
+import { LESSON_DRILLS } from "@/lib/curriculum/drills";
 import { splitStatements } from "@/lib/sql-statements";
 import { cn } from "@/lib/utils";
 import { Rich, RichNodes } from "./rich";
@@ -30,9 +32,10 @@ import { Figure } from "./diagrams";
 import { McqCard } from "./mcq";
 import { ProblemCard } from "./problem-runner";
 import { ResultGrid } from "./result-grid";
+import { DrillYard } from "./drill-yard";
 import { celebrate } from "./celebrate";
 
-type Tab = "learn" | "deep" | "quiz" | "practice";
+type Tab = "learn" | "deep" | "quiz" | "practice" | "drills";
 
 const DIALECT_META: Record<string, { label: string; pill: string }> = {
   postgres: { label: "PostgreSQL", pill: "border-teal-400/40 bg-teal-400/10 text-teal-300" },
@@ -441,6 +444,9 @@ export function LessonView({ lesson, onBonusChecked }: { lesson: Lesson; onBonus
   const solvedCount = lesson.problems.filter((p) => store.xpEvents[`solve:${p.id}`] !== undefined).length;
   const complete = quizStats.allCorrect && solvedCount === lesson.problems.length;
 
+  // lesson-scoped drills — only lessons with a keyword mapping get the tab
+  const drillKeywords = LESSON_DRILLS[lesson.id];
+
   // lesson completion bonus — checked after quiz/practice events
   function checkBonus() {
     if (bonusRef.current) return;
@@ -461,6 +467,9 @@ export function LessonView({ lesson, onBonusChecked }: { lesson: Lesson; onBonus
       ? [{ id: "deep" as Tab, label: "Deep dive", icon: Microscope, note: "go further" }]
       : []),
     { id: "quiz", label: "Quiz", icon: CircleHelp, note: `${lesson.mcqs.length} questions` },
+    ...(drillKeywords
+      ? [{ id: "drills" as Tab, label: "Drills", icon: Dumbbell, note: `${drillKeywords.length} keyword${drillKeywords.length > 1 ? "s" : ""}` }]
+      : []),
     {
       id: "practice",
       label: "Practice",
@@ -655,6 +664,12 @@ export function LessonView({ lesson, onBonusChecked }: { lesson: Lesson; onBonus
           {lesson.mcqs.map((m) => (
             <McqCard key={m.id} mcq={m} onAnswered={checkBonus} />
           ))}
+        </div>
+      )}
+
+      {tab === "drills" && drillKeywords && (
+        <div className="mt-5">
+          <DrillYard scopeId={lesson.id} keywords={drillKeywords} />
         </div>
       )}
 

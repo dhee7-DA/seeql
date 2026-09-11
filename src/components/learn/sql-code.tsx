@@ -1,34 +1,72 @@
 "use client";
 
 // Tiny SQL semantic highlighter shared by inline code chips, lesson code
-// blocks and hint/solution snippets. One regex pass, zero dependencies.
+// blocks, quiz prompts/choices, hint/solution snippets and case-study
+// query builders. One regex pass, zero dependencies.
 //
-// Color roles (deliberately theme-safe — every hue is remapped by the
-// light themes Paper/Gallery so contrast holds everywhere):
-//   keyword   → violet   (SELECT, WHERE, JOIN …)
-//   function  → amber    (COUNT, ROUND, COALESCE …)
-//   string    → rose     ('Berlin', '%stand%')
-//   number    → orange   (200, 0.15)
-//   comment   → muted    (-- notes)
-//   identifiers inherit the base color of the surrounding surface
-//   (emerald inside inline chips, zinc inside code blocks).
+// Pastel keyword system — every clause FAMILY owns a pastel hue, so a
+// learner can see query structure at a glance (the same pipeline the
+// playground teaches: WITH → FROM/JOIN → WHERE → GROUP BY → SELECT →
+// ORDER BY/LIMIT). Families map to the order of operations, not the
+// written order:
+//
+//   projection  SELECT DISTINCT AS                    → violet   (what you get)
+//   sources     FROM JOIN INNER LEFT … ON USING       → blue     (where rows come from)
+//   row gate    WHERE AND OR NOT IN LIKE BETWEEN …    → rose     (which rows survive)
+//   collapse    GROUP BY HAVING + all functions       → amber    (rows become numbers)
+//   output      ORDER BY LIMIT OFFSET ASC DESC …      → orange   (shape of the result)
+//   compose     WITH RECURSIVE UNION EXCEPT INTERSECT → fuchsia  (stacking result sets)
+//   branching   CASE WHEN THEN ELSE END               → lime     (per-row decisions)
+//   window      OVER PARTITION ROWS/RANGE frames      → sky      (peers, not collapse)
+//   write verbs INSERT UPDATE DELETE CREATE …         → red      (the danger verbs)
+//   string      'Berlin', '%stand%'                   → pink
+//   number      200, 0.15                             → orange (quantities, with LIMIT)
+//   BY          grammatical glue                      → inherits the surface color
+//   comment     -- notes                              → muted italic
+//
+// Every hue used is remapped by the light themes (plum/pastel darken the
+// 300 steps; blue/sky/pink overrides live in globals.css), so contrast
+// holds across all four themes. Identifiers inherit the base color of
+// the surrounding surface (emerald inside inline chips, zinc inside code
+// blocks).
 
 import { Fragment, type ReactNode } from "react";
 
-const KEYWORDS = new Set(
-  (
-    "SELECT FROM WHERE GROUP BY HAVING ORDER LIMIT OFFSET DISTINCT ALL AS " +
-    "AND OR NOT NULL IS IN LIKE GLOB BETWEEN EXISTS CAST JOIN INNER LEFT " +
-    "RIGHT FULL OUTER CROSS ON USING UNION EXCEPT INTERSECT WITH RECURSIVE " +
-    "CASE WHEN THEN ELSE END INSERT INTO VALUES UPDATE SET DELETE CREATE " +
-    "TABLE VIEW INDEX ALTER ADD COLUMN DROP RENAME TO PRIMARY KEY FOREIGN " +
-    "REFERENCES UNIQUE CHECK DEFAULT COLLATE ASC DESC NULLS FIRST LAST OVER " +
-    "PARTITION ROWS RANGE PRECEDING FOLLOWING CURRENT ROW UNBOUNDED FILTER " +
-    "WITHIN CONSTRAINT AUTOINCREMENT TEMP TEMPORARY GENERATED ALWAYS STORED " +
-    "RETURNING CONFLICT REPLACE IGNORE ABORT FAIL CASCADE RESTRICT ACTION " +
-    "BEGIN COMMIT ROLLBACK TRANSACTION SAVEPOINT RELEASE PRAGMA EXPLAIN VACUUM ANALYZE"
-  ).split(" "),
+const C_PROJECTION = "font-medium text-violet-300";
+const C_SOURCES = "font-medium text-blue-300";
+const C_GATE = "font-medium text-rose-300";
+const C_COLLAPSE = "font-medium text-amber-300";
+const C_OUTPUT = "font-medium text-orange-300";
+const C_COMPOSE = "font-medium text-fuchsia-300";
+const C_BRANCH = "font-medium text-lime-300";
+const C_WINDOW = "font-medium text-sky-300";
+const C_WRITE = "font-medium text-red-300";
+
+/** token (uppercased) → pastel class for its clause family */
+const KEY_CLASS = new Map<string, string>();
+function family(cls: string, words: string) {
+  for (const w of words.split(" ")) KEY_CLASS.set(w, cls);
+}
+family(C_PROJECTION, "SELECT DISTINCT AS");
+family(C_SOURCES, "FROM JOIN INNER LEFT RIGHT FULL OUTER CROSS ON USING");
+family(C_GATE, "WHERE AND OR NOT IN LIKE GLOB BETWEEN EXISTS IS NULL");
+family(C_COLLAPSE, "GROUP HAVING");
+family(C_OUTPUT, "ORDER LIMIT OFFSET ASC DESC NULLS FIRST LAST");
+family(C_COMPOSE, "WITH RECURSIVE UNION EXCEPT INTERSECT ALL");
+family(C_BRANCH, "CASE WHEN THEN ELSE END");
+family(
+  C_WINDOW,
+  "OVER PARTITION ROWS RANGE GROUPS PRECEDING FOLLOWING CURRENT ROW UNBOUNDED EXCLUDE TIES OTHERS",
 );
+family(
+  C_WRITE,
+  "INSERT INTO VALUES UPDATE SET DELETE CREATE TABLE VIEW INDEX ALTER ADD COLUMN DROP RENAME " +
+    "TO PRIMARY KEY FOREIGN REFERENCES UNIQUE CHECK DEFAULT COLLATE CONSTRAINT AUTOINCREMENT " +
+    "TEMP TEMPORARY GENERATED ALWAYS STORED RETURNING CONFLICT REPLACE IGNORE ABORT FAIL " +
+    "CASCADE RESTRICT ACTION BEGIN COMMIT ROLLBACK TRANSACTION SAVEPOINT RELEASE PRAGMA " +
+    "EXPLAIN VACUUM ANALYZE",
+);
+family(C_COLLAPSE, "CAST");
 
 const FUNCTIONS = new Set(
   (
@@ -62,17 +100,20 @@ export function SqlNodes({ text }: { text: string }) {
     if (comment) {
       nodes.push(<span key={key++} className="italic text-zinc-500">{tok}</span>);
     } else if (str) {
-      nodes.push(<span key={key++} className="text-rose-300">{tok}</span>);
+      nodes.push(<span key={key++} className="text-pink-300">{tok}</span>);
     } else if (num) {
       nodes.push(<span key={key++} className="tnum text-orange-300">{tok}</span>);
     } else if (word) {
       const up = word.toUpperCase();
-      if (KEYWORDS.has(up)) {
-        nodes.push(<span key={key++} className="font-medium text-violet-300">{tok}</span>);
-      } else if (FUNCTIONS.has(up)) {
+      if (FUNCTIONS.has(up)) {
         nodes.push(<span key={key++} className="font-medium text-amber-300">{tok}</span>);
       } else {
-        nodes.push(<Fragment key={key++}>{tok}</Fragment>);
+        const cls = KEY_CLASS.get(up);
+        if (cls) {
+          nodes.push(<span key={key++} className={cls}>{tok}</span>);
+        } else {
+          nodes.push(<Fragment key={key++}>{tok}</Fragment>);
+        }
       }
     }
     last = start + tok.length;
