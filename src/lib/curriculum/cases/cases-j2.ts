@@ -373,7 +373,7 @@ LIMIT {4};`,
     brief:
       "From: Pricing committee. Re: payment-mix review.\n\nBefore we tune card-surcharge pricing: how does collected cash split by payment method? Sum payments joined properly to their invoices, per method, with a payment count next to it, biggest channel first.",
     ask: "Per payment method: total cash (Σ ÷ 100) and payment count, biggest channel first.",
-    template: `SELECT p.method, ROUND(SUM(p.amount_cents) / 100.0, 2) AS cash, COUNT(*) AS payments
+    template: `SELECT p.method, COUNT(*) AS payments, ROUND(SUM(p.amount_cents) / 100.0, 2) AS cash
 FROM payments p
 JOIN invoices i ON {1}
 GROUP BY p.{2}

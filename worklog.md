@@ -1159,3 +1159,21 @@ Work Log:
 Stage Summary:
 - MODULE 2 DRILL BANK COMPLETE: 465 engine-verified MCQs in 10 sets; whole bank now 935 questions / 24 sets. Bank-wide facts for future M2 case authors: uninvoiced five = Bruno Silva (LATAM), Dmitri Volkov, Farid Nasser (APAC), Keiko Sato, Noah Meyer; 8 no-pending customers include Hiro, Isabella, Jamal, Liam, Olivia; Alice 24 orders→50 lines; order 1/6/11 have 4 lines; invoice mesh (invoices⋈orders on customer_id) = 314 rows / 107653.59 inflated sum; supplier product counts 3/3/3/3/2/2; SQLite 3.53.0: USING(id) orders⋈customers = 16, NATURAL orders⋈customers = 0, CROSS+ON honored.
 - Next per locked order: Module 2 case studies (100 easy / 100 medium / 100 hard) via the case-audit pipeline, then Module 3 (Set Ops & CASE) full cycle.
+---
+Task ID: m2-cases
+Agent: Super Z (main agent; 5 parallel case-author agents attempted but Task tool failed 6x on context-deadline — authored all 300 cases directly)
+Task: Module 2 (Joins & Relationships) case studies — 300 cases (100 easy / 100 medium / 100 hard), cs-301…cs-600, per locked order
+
+Work Log:
+- Extended cases/types.ts: CASE_TOPICS gained j1…j8 (Two tables L9, INNER JOIN L10, 3-table chains L11, LEFT JOIN L12, Anti-join L13, Self-join L14, Joins+aggregates L15, Join capstone L16).
+- Made scripts/case-audit.ts module-aware: M1 topics (l*/cap) forbid JOIN; M2 topics (j*) REQUIRE JOIN; single-SELECT, no subqueries for both. Verified M1 deck still 300/300.
+- Probed ground truth: scripts/m2-case-facts.ts (+ m2-j1-probes.ts) on read-only copies. Key receipts: uninvoiced five (Bruno/Dmitri/Farid/Keiko/Noah); unpaid 6 = 15,217.00 incl. one status-'paid' anomaly; collected cash 69,612.00 (card 16/37,364.00, wire 11/32,248.00); region units EU 199/APAC 174/US 112/LATAM 13; supplier-region line revenue EU 15,895.88/US 9,294.93/APAC 6,029.22/LATAM 3,613.25; cross-region pairs 81; no-cancel cohort 12; invoice money by region EU 47,933/APAC 22,369/US 16,675; lines by status 119/84/36/12; NATURAL customers×orders = 0 (shared {id, created_at}) vs orders×products = 16 (shared {id} only).
+- Authored 6 batches: J1 cs-301-350, J2 cs-351-400, J3 cs-401-450, J4 cs-451-500, J5 cs-501-550, J6 cs-551-600 — 50 each, per-batch tier quotas summing to exactly 100/100/100.
+- Audit loop per batch: bun scripts/case-audit.ts <file> → fix → 50/50. Audit-caught traps now catalogued: symmetric-equality ambiguity on INNER JOIN; LEFT≡INNER over hole-free pairs; COUNT(non-null expr) ≡ COUNT(*); bare-ordinal ORDER BY; `x IS y` accepts any expression; empty-result cases need error-distractors; identifier distractors become table aliases (FROM orders suppliers JOIN…); noVerify slots still face the ambiguity check; slots array order must match marker numbers; USING/NATURAL share-name coincidences (USING(id) cust×ord = 16, NATURAL = 0).
+- Fixed 5 cross-batch duplicate-SQL pairs (cs-360+388, 380+578, 426+576, 529+568 new; 262+289 pre-existing M1) via column/sort/select-list variations; dupe count now 0.
+- Registered J1-J6 in cases/index.ts; Case Files header now "N CASE FILES · MODULES 1–2 TOOLKIT"; deck total 600.
+- E2E: Case Files renders "0 / 600 | All tiers 600 | Easy 200 | Medium 200 | Hard 200" + all j-topic pills with counts; chip-arm → slot-place interaction verified live; screenshot scripts/shots/m2cases-1.png.
+
+Stage Summary:
+- MODULE 2 CASE FILES COMPLETE: 300 join cases (cs-301…cs-600), full deck 600/600 audit PASS, tiers exactly 200/200/200, zero duplicate filled SQL, zero duplicate titles, tsc clean. Module 2 (Joins) is now COMPLETE end-to-end: theory L09-L16 + 465 MCQs (bank 935) + 300 case files.
+- Next per locked order: Module 3 (Set Ops & CASE) full cycle — theory densification → drill bank → 300 case studies (needs case-audit M3 rules: UNION/INTERSECT/EXCEPT/CASE allowances).

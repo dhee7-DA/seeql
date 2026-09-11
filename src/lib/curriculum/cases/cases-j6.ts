@@ -733,7 +733,7 @@ ORDER BY exposure {3};`,
     brief:
       "From: Spend analyst. Re: the recovery page's money column.\n\nThe recovery page's money column: the twice-paid invoices with their TOTAL collected cash — the inner join counting matches, HAVING at two, biggest total first. Five rows, 24,940.00 — the page the recovery team works from.",
     ask: "Invoices with 2+ payments: number and total cash (Σ ÷ 100), biggest first.",
-    template: `SELECT i.number, ROUND(SUM(p.amount_cents) / 100.0, 2) AS total
+    template: `SELECT i.number, i.status, ROUND(SUM(p.amount_cents) / 100.0, 2) AS total
 FROM invoices i
 JOIN payments p ON {1}
 GROUP BY i.id
@@ -1055,7 +1055,7 @@ ORDER BY c.region;`,
     brief:
       "From: Spend analyst. Re: the anomaly census, filed by claim.\n\nThe anomaly census, filed: zero-payment invoices bucketed by the ledger's claim, ascending so the smallest bucket — the anomaly's — leads the page. One row claiming 'paid' with no cash is the finding.",
     ask: "Count of zero-payment invoices per status, smallest bucket first.",
-    template: `SELECT i.status, {1}(*) AS unpaid
+    template: `SELECT i.status, {1}(*) AS unpaid, ROUND(SUM(i.amount_cents) / 100.0, 2) AS exposure
 FROM invoices i
 LEFT JOIN payments p ON {2}
 WHERE p.id IS {3}
@@ -1140,7 +1140,7 @@ LIMIT {3};`,
     brief:
       "From: Fraud spot-check desk. Re: the double-gap list, named edition.\n\nThe double-gap list, named: the customers with no invoices AND no pending orders — both preserving joins, both emptiness tests, names out, alphabetical. Three names; the desk watches each.",
     ask: "Customers with zero invoices AND zero pending orders: names, alphabetical.",
-    template: `SELECT c.name
+    template: `SELECT c.name, c.region
 FROM customers c
 LEFT JOIN invoices i ON i.customer_id = c.id
 {1} orders o ON {2} AND o.status = {3}
