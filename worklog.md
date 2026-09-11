@@ -1177,3 +1177,23 @@ Work Log:
 Stage Summary:
 - MODULE 2 CASE FILES COMPLETE: 300 join cases (cs-301…cs-600), full deck 600/600 audit PASS, tiers exactly 200/200/200, zero duplicate filled SQL, zero duplicate titles, tsc clean. Module 2 (Joins) is now COMPLETE end-to-end: theory L09-L16 + 465 MCQs (bank 935) + 300 case files.
 - Next per locked order: Module 3 (Set Ops & CASE) full cycle — theory densification → drill bank → 300 case studies (needs case-audit M3 rules: UNION/INTERSECT/EXCEPT/CASE allowances).
+
+---
+Task ID: audit-1
+Agent: Super Z (main agent)
+Task: Full-project audit — code health, registration integrity, drill bank, case deck, live E2E
+
+Work Log:
+- git tree clean at start; bunx tsc --noEmit: src/ zero errors (only stray probe/skills scripts error, app untouched).
+- Registration: all 57 lessons registered in lessons/index.ts (0 orphans); all 24 drill sets in drills/index.ts; all 28 case batches + exemplars in cases/index.ts.
+- Wrote scripts/audit-bank.ts — whole-bank validator over DRILL_SETS: per-set counts, dup ids/prompts (set + bank-wide), 4 choices, answer range, duplicate choice text, thin why/notes, aspect/tier/module validity, id-prefix-vs-module, sequential numbering continuity, LESSON_DRILLS wiring. First run: 9 flags.
+- 4 flags were false positives (intentional micro-prompts: "ORDER BY 2 means…", "LIKE only works on…", "NOT applies to…", "NULLIF's contract:") — threshold relaxed 20→15 chars.
+- 5 flags were REAL M1 defects — cross-set duplicate prompts (M2 clean): dr1-ag-19 ≡ dr1-nl-37 (COUNT(*)/COUNT(shipped_at)); dr1-wh-40 ≡ between (price BETWEEN 50-100); dr1-wh-41 ≡ like ('%Pro%' count); dr1-wh-42 ≡ between (total BETWEEN); dr1-ol-08 ≡ dr1-in-01 (generic "syntactically correct" stem).
+- Fixed on freshly probed numbers (scripts/auditfix-facts.ts, bun:sqlite readonly): dr1-ag-19 → COUNT(DISTINCT customer_id)=16; dr1-wh-40 → price NOT BETWEEN=12; dr1-wh-41 → NOT LIKE '%Pro%'=14; dr1-wh-42 → total NOT BETWEEN=96; dr1-ol-08 → legal-clause-order stem. Re-audit: ✅ BANK AUDIT PASS (935/24, m1=470 m2=465, core 565 / secondary 370).
+- Case deck: bun scripts/case-audit.ts → 600/600 PASS, tiers easy=200 medium=200 hard=200.
+- E2E (agent-browser): Learn renders 9 modules + 57 lessons; Drill Yard header "0 of 935 attempted"; JOIN · ON round: correct answer → +8 XP (+5 first-try, +3 bonus), chain "round 1 · bank 1/55 mastered · 54 to go"; leaving to picker and returning restores the in-progress round (persistence fix holding); Case Files "600 CASE FILES · MODULES 1–2 TOOLKIT / All tiers 600 / Easy 200 / Medium 200 / Hard 200"; Playground row funnel live (103 → 37 buckets → HAVING keeps 4 → 4 rows out); console 0 errors / 0 warnings.
+- Screenshots: scripts/shots/audit-{learn,drillyard,casefiles,playground}.png. Committed f10e21d.
+
+Stage Summary:
+- Project state: ALL AXES GREEN after 5 M1 content fixes. Bank 935 Qs / 24 sets, deck 600 cases (200/200/200), src/ type-clean, all registries complete, E2E surfaces verified, console clean. Probe tools kept: scripts/audit-bank.ts (rerunnable gate), scripts/auditfix-facts.ts.
+- Next per locked order: Module 3 (Set Ops & CASE) full cycle — case-audit M3 rules (UNION/INTERSECT/EXCEPT/CASE allowances) → theory densification → ~470 MCQs → 300 cases.
