@@ -346,5 +346,35 @@ ORDER BY closed;    -- 0 → 21 (pending + cancelled), 1 → 82`,
       ordered: true,
     },
   ],
+  deep: [
+    {
+      kind: "mind",
+      text: "`CASE` is a **railway switch inside a row**: the train (the row) arrives, the switches (WHENs) are checked top to bottom, and the first green light routes the row onto exactly one track (one result value). Two consequences people miss. It's an **expression**, not a statement — it produces a *value* for *this row*, which is why it can sit anywhere an expression can: in SELECT, in WHERE, inside an aggregate, in ORDER BY. And it's **short-circuit**: the moment a WHEN matches, later WHENs are never evaluated — dead branches are dead, not wrong.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT CASE WHEN total >= 200 THEN 'big' WHEN total >= 80 THEN 'mid' ELSE 'small' END AS size FROM orders",
+      steps: [
+        "**Row arrives** — each of the 103 order rows enters the switch yard one at a time.",
+        "**First WHEN** — `total >= 200`? 65 orders say yes and leave as `'big'` — the `>= 80` branch is never even consulted for them.",
+        "**Second WHEN** — the 38 remaining rows test `total >= 80`: 27 leave as `'mid'`.",
+        "**ELSE** — the 11 leftovers have no ELSE miss: `'small'`. Omit the ELSE and they'd leave as NULL instead — a hole that looks like missing data.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"CASE branches are evaluated in whatever order is fastest — the engine may reorder them.\"",
+      truth: "**First match wins, in written order** — this is guaranteed semantics, not an optimization detail. Probed with overlapping bands: `WHEN total >= 80 THEN 'a-80plus' WHEN total >= 200 THEN 'b-200plus'` puts all 92 orders ≥ 80 into `'a-80plus'`; the 200+ branch receives **zero** rows. Swap the branch order and the split becomes 65/27. Same query text, different population — branch order *is* the logic.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Forgotten ELSE", r: "No match and no ELSE → **NULL**, silently. `SUM(CASE WHEN status='pending' THEN 1 END)` still works (SUM skips NULLs → 14), but a `CASE ... END * 2` on an unmatched row poisons the arithmetic. Close the switch: add ELSE 0 unless NULL is truly what you mean." },
+        { c: "= NULL inside WHEN", r: "`CASE WHEN shipped_at = NULL THEN ...` fires **0 times** — UNKNOWN never passes a WHEN. The correct branch is `WHEN shipped_at IS NULL`. Probed on the 21 unshipped orders: `= NULL` scores 0, `IS NULL` catches all 21." },
+        { c: "simple vs searched CASE", r: "`CASE status WHEN 'pending' THEN ...` compares with `=` only — no NULLs, no ranges. The searched form (`CASE WHEN status = ...`) is strictly more powerful; the simple form is just terser equality." },
+        { c: "Mixed branch types", r: "`CASE WHEN id=1 THEN 'text' ELSE 42 END` returns without error — one column, mixed storage (affinity). It's legal but it will bite any downstream typing; keep branches type-honest." },
+      ],
+    },
+  ],
   takeaway: "CASE is a per-row expression — first matching WHEN wins, a forgotten ELSE leaks NULL — and because it is an expression it can live anywhere an expression goes: SELECT, WHERE, ORDER BY, even inside an aggregate.",
 };

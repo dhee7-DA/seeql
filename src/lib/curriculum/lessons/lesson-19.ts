@@ -331,5 +331,35 @@ WHERE a.status = 'delivered';   -- 4`,
       ordered: true,
     },
   ],
+  deep: [
+    {
+      kind: "mind",
+      text: "`INTERSECT` is a **venn-diagram middle**: only values that appear in *both* arms survive, and they appear **once** no matter how many times each arm held them. The honest first question is always *'do my arms actually overlap?'* — stack order statuses against invoice statuses and the middle is empty (orders say pending/shipped/delivered/cancelled; invoices say open/paid/void — two vocabularies for two lifecycles). INTERSECT on non-overlapping populations isn't a bug; it's a *measurement* that the vocabularies are disjoint.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT customer_id FROM orders INTERSECT SELECT id FROM customers",
+      steps: [
+        "**Arm 1** — the 103 order customer_ids stream out (with repeats — customers order many times).",
+        "**Arm 2** — the 16 customer ids stream out.",
+        "**Grouping pass** — both arms are grouped; only keys present on both sides survive, each emitted once. Result: **16 rows** — every customer has ≥1 order (the storefront has no orphan orders).",
+        "**Contrast** — swap arm 1 for invoices' customer_ids and the intersection is smaller: only invoiced customers survive, and the count itself becomes a business fact (how much of the book is invoiced).",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"INTERSECT is just an INNER JOIN with a different keyword.\"",
+      truth: "The overlap *idea* matches, the machine doesn't. A join **pairs** rows — customers × orders fans out to 103 rows because Alice's 24 orders produce 24 matched rows. An INTERSECT **groups** — the same comparison over customer_ids returns 16, one row per surviving value, duplicates destroyed by definition. To mimic INTERSECT with a join you'd need `SELECT DISTINCT` over the join output. And the join needs an `ON` that states the relationship; INTERSECT compares whole rows positionally, no keys mentioned.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "NULL vs NULL", r: "Two NULL rows **do** intersect — INTERSECT works on grouping semantics where NULLs are keys of their own group, not on `= NULL` comparisons. Probed: `SELECT shipped_at FROM orders WHERE id <= 10 INTERSECT SELECT shipped_at FROM orders WHERE id <= 10` returns 7 rows including the NULL." },
+        { c: "Duplicates in one arm only", r: "`1,2,2 INTERSECT 2` → one row (`2`). Duplication in an arm buys nothing; the output is distinct by definition." },
+        { c: "Whole-row comparison", r: "INTERSECT compares *entire rows*, not a chosen key. `SELECT status, total FROM orders INTERSECT SELECT ...` only matches when *both* columns agree — a different question from intersecting status alone." },
+        { c: "Zero-row arm", r: "`X INTERSECT (empty)` → empty. One empty arm annihilates the result — useful as a feature (period filters), dangerous as an accident (a WHERE typo silently blanking the report)." },
+      ],
+    },
+  ],
   takeaway: "INTERSECT keeps the rows present in both arms — distinct by definition, NULL-safe by grouping semantics, and equivalent to INNER JOIN + DISTINCT over the same output column.",
 };

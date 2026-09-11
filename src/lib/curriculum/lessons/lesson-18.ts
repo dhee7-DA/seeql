@@ -396,5 +396,35 @@ ORDER BY tag DESC, total DESC, id;`,
       ordered: true,
     },
   ],
+  deep: [
+    {
+      kind: "mind",
+      text: "A stacked report without labels is **a pile of unmarked receipts**: six months from now nobody — including you — can say which arm produced which row. The fix is a literal column: every arm ends with `SELECT ..., 'orders' AS src`, and the pile becomes self-documenting. Second mental shift: the arms are **complete SELECT statements**, not just column lists — each arm can filter, aggregate, even sort and trim *itself*, as long as it hands the compound the same number of columns as its siblings.",
+    },
+    {
+      kind: "engine",
+      title: "you stack a per-status arm and a per-region arm with labels",
+      steps: [
+        "**Arm 1** — `SELECT status AS v, COUNT(*) AS n, 'orders' AS src FROM orders GROUP BY status` → 4 rows; the literal becomes a real column in the output.",
+        "**Arm 2** — the same shape over `customers` regions → 4 rows, with `'customers'` as its label. Column count matches (3), so the compound is legal.",
+        "**Naming** — the pile takes arm 1's names: `v`, `n`, `src`. Arm 2's internal names are thrown away at parse time.",
+        "**Tail clauses** — `ORDER BY n DESC` at the end sorts the combined 8 rows; a per-arm `LIMIT` inside the arm would need the arm wrapped in a FROM subquery.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"The two arms must have compatible column types, or the UNION fails.\"",
+      truth: "SQLite barely cares. `SELECT CAST(active AS TEXT) AS v FROM customers UNION SELECT status FROM invoices` happily returns `0`, `1`, `open`, `paid`, `void` in one column — integers and text coexist via affinity. The only hard shape law is **column count**. Real engines differ (PostgreSQL is stricter about types), so for portability keep arm shapes truly homogeneous — but the error you'll actually hit in SQLite is the count mismatch, not the type.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Label literals with matching text", r: "If two arms share a literal label, bare `UNION` will collapse their rows when every other column also matches. Distinct labels keep arms identifiable — that's the whole point of the column." },
+        { c: "Literal vs bare keyword quoting", r: "`'orders' AS src` is a text literal; `orders AS src` would try to reference a table's column and fail. The quotes are doing real work." },
+        { c: "Empty arm", r: "An arm returning zero rows is fine — `UNION ALL` just contributes nothing. A report built from three sources still works when one source is empty for the period; that's a feature, not a bug to defend against." },
+        { c: "Mixed aggregates and raw rows", r: "`SELECT MAX(total) FROM orders UNION ALL SELECT MIN(total) FROM orders UNION ALL SELECT ROUND(AVG(total),2) FROM orders` → 3 rows (1088.44, 25.47, 338.19). Each arm is its own full query; the stack doesn't care that none of them has a GROUP BY." },
+      ],
+    },
+  ],
   takeaway: "A literal label column keeps a stack's origins queryable, arms are full SELECTs (wrap per-arm ORDER BY/LIMIT in FROM subqueries), and column count is law while types are only manners.",
 };

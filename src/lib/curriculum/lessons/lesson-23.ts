@@ -420,5 +420,35 @@ ORDER BY c.region;`,
       ordered: true,
     },
   ],
+  deep: [
+    {
+      kind: "mind",
+      text: "`SUM(CASE WHEN rule THEN 1 ELSE 0 END)` is a **counter built from arithmetic**: the CASE turns every row into a 1-or-0 vote, SUM adds the votes, and one table scan answers *several* questions at once — total 103, of which 73 big and 30 small. The pivot is the same machine pointed sideways: group by region, and each `SUM(CASE ...)` column becomes a **statistic of its own** — pending money for EU is just the votes where region=EU *and* status=pending, weighted by total. Once you see CASE-in-aggregate as a voting machine, conditional reports stop being puzzles.",
+    },
+    {
+      kind: "engine",
+      title: "you run the region × status pivot on the storefront",
+      steps: [
+        "**FROM + JOIN** — 103 orders pick up their customers' regions (EU 45, APAC 37, US 19, LATAM 2).",
+        "**Per-row votes** — for every order, each SUM(CASE) column votes 1-or-0 (or the order's total vs 0) against *its* rule: `status='pending'`, `status='delivered'`, …",
+        "**Collapse** — GROUP BY region folds each region's rows; every column sums its own votes independently: EU lands 2,675.29 pending / 6,656.18 delivered; LATAM — 2 delivered orders, 852.44, and **zero** pending money without any special-casing.",
+        "**Read it back** — 4 rows, one per region, 4+ facts per row. The whole dashboard is one scan; no self-joins, no per-status subqueries.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"To count pending and cancelled orders side by side you need two subqueries (or two GROUP BYs) merged together.\"",
+      truth: "That's the pre-CASE reflex — and set-op stacks of subqueries are brittle and three times the text. One pass does it: `SELECT COUNT(*) AS total, SUM(CASE WHEN status='pending' THEN 1 ELSE 0 END) AS pending, SUM(CASE WHEN status='cancelled' THEN 1 ELSE 0 END) AS cancelled FROM orders` → 103 / 14 / 7 on one row. The COUNT-no-ELSE twin (`COUNT(CASE WHEN ... THEN 1 END)`) gives the same number by skipping NULLs — two idioms, one machine; pick one and stay consistent.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "SUM-of-booleans reflex", r: "`SUM(status='pending')` works in SQLite (booleans are 0/1 integers) but is non-portable and unreadable. The CASE spells out the vote — write it." },
+        { c: "CASE vs IIF", r: "`IIF(total >= 150, 1, 0)` ≡ the two-branch CASE (both count 73 big orders). IIF is a SQLite/MySQL shorthand for *two*-way switches only; anything with three or more outcomes wants CASE." },
+        { c: "The no-ELSE leak inside SUM", r: "`SUM(CASE WHEN status='pending' THEN 1 END)` returns 14 here because SUM ignores NULLs — but the same shape inside arithmetic (`... END * 100`) or as a displayed column leaks NULL into the report. Close the ELSE." },
+        { c: "Zero buckets are data", r: "LATAM's pending_money = 0.00 is a finding, not an artifact — no ELSE-0 would have printed NULL instead, and a dashboard that renders NULL as 'no data' misreports a real zero. The ELSE 0 is what makes zero honest." },
+      ],
+    },
+  ],
   takeaway: "SUM(CASE WHEN rule THEN 1 ELSE 0 END) turns one table scan into a counting machine — KPI rows, per-group shares, full pivots — and a CASE in ORDER BY sorts by business meaning instead of the alphabet.",
 };

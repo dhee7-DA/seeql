@@ -388,5 +388,35 @@ ORDER BY category;    -- exactly one row: Apparel`,
       ordered: true,
     },
   ],
+  deep: [
+    {
+      kind: "mind",
+      text: "The capstone patterns are **three moves, not thirty**: (1) *segment* — wrap an inner aggregation in a FROM subquery and classify its outputs with CASE (`CASE WHEN n >= 5 THEN 'heavy' ...`); (2) *stack* — bolt a TOTAL row on with `UNION ALL` and a literal label; (3) *audit* — prove two reports agree (or disagree) with an `EXCEPT` between their output shapes. Notice what they share: **the inner query stays a plain aggregate**, and each move adds a *frame* around it. Analysts who struggle here are usually trying to make one hero query do everything; the craft is composing small, verifiable layers.",
+    },
+    {
+      kind: "engine",
+      title: "you run the three moves on the storefront",
+      steps: [
+        "**Segment** — `SELECT CASE WHEN n >= 10 THEN 'loyal' ELSE 'light' END AS cohort, COUNT(*) FROM (SELECT customer_id, COUNT(*) AS n FROM orders GROUP BY customer_id) GROUP BY cohort` — the inner query is lesson-8 material; CASE merely labels its results.",
+        "**Stack** — the segment result `UNION ALL SELECT 'TOTAL', COUNT(*) FROM orders` → the grand row; the literal keeps the stack's provenance honest (lesson 18's label habit).",
+        "**Audit** — run the pivot's money column and the arm-level SUM through `EXCEPT`; zero rows back means the two reports are *the same population*, not just the same total.",
+        "**Cross-check** — EXCEPT here returned 0 rows on the live db, and every product name EXCEPT the sold names returned 0 (all 16 products have sold). Empty is a *pass*, not a disappointment.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"The TOTAL row from a UNION ALL stack participates in the same aggregation as the grouped rows above it.\"",
+      truth: "It's **pasted on, not computed with**: the stack is two separate queries sharing a column shape — the TOTAL's COUNT(*) never met the GROUP BY. That's exactly why `ORDER BY` on the compound needs care and why the total can't be referenced by the segments. If you need totals *interacting* with groups (shares of total, ROLLUP-style), that's window functions (module 5) — not a bigger UNION.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Label/arm drift", r: "A stack whose arms disagree in column *meaning* (arm 1 col 2 is a count, arm 2 col 2 is a name) compiles fine and reads like nonsense. Column count is law; meaning is your job — keep a shape contract in the comments." },
+        { c: "CASE over an alias in the same SELECT", r: "`SELECT CASE WHEN n >= 5 ...` fails if `n` is defined in the *same* select list — the alias doesn't exist yet. Segmentation needs the inner query (or repeat the expression)." },
+        { c: "EXCEPT with float money", r: "Two paths to 'the same' money can differ in the last decimal (REAL rounding). Compare with ROUND on both arms, or the audit reports a 0.005 difference as a phantom row." },
+        { c: "Empty segment buckets", r: "`CASE WHEN n >= 50 THEN 'mega' ELSE ...` with no mega customers just doesn't emit the bucket — absence, not zero. If the report must show every bucket, ELSE 0 is in the pivot column, not the segment row." },
+      ],
+    },
+  ],
   takeaway: "Segment with CASE over an inner aggregation, stack a TOTAL with UNION ALL, audit with EXCEPT — three composable patterns that cover most reports analysts are asked for.",
 };

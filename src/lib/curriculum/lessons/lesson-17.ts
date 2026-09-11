@@ -364,5 +364,35 @@ ORDER BY region;   -- APAC 7 · EU 10 · LATAM 2 · US 3`,
       expected: EXPECTED["l17-p8"],
     },
   ],
+  deep: [
+    {
+      kind: "mind",
+      text: "Think of `UNION ALL` as **taping two printouts together**: nothing is checked, nothing is removed, the stack just gets taller — 103 order rows plus 16 customer rows make a 119-row pile. `UNION` instead runs the pile through a **paper shredder for duplicates**: after taping, whole identical rows collapse to one. That check is not free — the engine must compare every row against the ones it has kept — which is exactly why `UNION ALL` is the default habit and `UNION` is a deliberate claim: *'I know my arms can overlap, and I want each distinct value once.'*",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT status FROM orders UNION SELECT region FROM customers",
+      steps: [
+        "**Arm 1** — the 103 order rows stream out as one column; the result column is named from this arm (`status`, or your alias if you give one).",
+        "**Arm 2** — the 16 customer rows stream into the same chute; column *names* of arm 2 are discarded, only its *values* matter.",
+        "**Dedup pass** — the 119-value pile collapses to the 8 distinct strings: `delivered`, `shipped`, `pending`, `cancelled`, `EU`, `APAC`, `US`, `LATAM`. Zero overlap between arms means UNION here ≡ a DISTINCT over the stacked pile.",
+        "**Sort?** — only if you wrote one. A bare UNION arrives in whatever order the dedup pass leaves behind; append `ORDER BY 1` at the very end to sort the *combined* result.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"UNION removes duplicates — so I should always use it, it's the safer choice.\"",
+      truth: "`UNION` silently rewrites your population. Stack 103 orders onto 103 orders and you get 103 rows, not 206 — every order that shares status, total, and dates with another collapses away. The honest default is `UNION ALL` (fast, faithful); reach for bare `UNION` only when the report literally asks for *the distinct set of…*. If you can't say what a duplicate would even look like, you didn't want `UNION`.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "NULLs in a UNION arm", r: "Two NULL-filled rows collapse to **one** NULL — the dedup treats them as equal (grouping semantics, not `= NULL` logic). Probed: `SELECT shipped_at FROM orders UNION SELECT shipped_at FROM orders` returns 76 rows — the 75 distinct timestamps plus exactly one NULL." },
+        { c: "Arms with different column counts", r: "Hard error on the spot: *SELECTs to the left and right of UNION do not have the same number of result columns*. The check happens at prepare time — nothing runs, not even arm 1." },
+        { c: "Arms with different types", r: "Soft landing: `SELECT id FROM orders UNION SELECT id FROM customers` returns 103 rows — SQLite's column affinity coerces, it doesn't complain. Type mismatches are *manners*, column counts are *law*." },
+        { c: "ORDER BY written between arms", r: "Syntax error — the compound allows exactly one ORDER BY, at the very end, and it sorts the whole stack. Per-arm sorting needs the arm wrapped in a FROM subquery first (lesson 18)." },
+      ],
+    },
+  ],
   takeaway: "UNION ALL appends and UNION appends-then-dedupes whole rows; arms must match in column count, the pile takes the first arm's names, and one ORDER BY — at the very end — sorts the combined result.",
 };

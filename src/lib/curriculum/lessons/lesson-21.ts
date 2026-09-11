@@ -385,5 +385,35 @@ SELECT COUNT(*) FROM (
       expected: EXPECTED["l21-p8"],
     },
   ],
+  deep: [
+    {
+      kind: "mind",
+      text: "A mixed chain like `a UNION b INTERSECT c EXCEPT d` is **ambiguous prose** — different engines are entitled to different groupings, and the numbers differ. Your defense is not memorizing precedence tables; it's *stating the grouping*. SQLite's twist: it reads the chain **strictly left to right** (probed: `statuses UNION regions INTERSECT cities` = (8 values) ∩ cities = 0, not statuses ∪ (regions ∩ cities) = 4), and it **bans parentheses around arms** — so the portable way to force grouping is a FROM-subquery wrap, not brackets.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT status FROM orders UNION SELECT region FROM customers INTERSECT SELECT city FROM customers",
+      steps: [
+        "**Standard-SQL reading (wrong here)** — INTERSECT binds tighter: statuses ∪ (regions ∩ cities) = statuses ∪ ∅ = 4 rows.",
+        "**SQLite's actual reading** — pure left-to-right: (statuses ∪ regions) = 8 values, then ∩ cities → cities never collide with status or region names → **0 rows**.",
+        "**Same law, other pair** — `statuses EXCEPT regions UNION cities` = ((4 − 0) + 16) = 20 rows; equal precedence, associating left.",
+        "**Portable fix** — wrap the inner chain in a FROM subquery and let the outer query intersect it: the arms move inside the parentheses, the operators stay outside. Parenthesized compound arms are a parse error in SQLite (*near '(': syntax error*).",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"INTERSECT binds tighter than UNION — that's SQL, everywhere.\"",
+      truth: "That's the **standard**, not SQLite. Many textbook precedence receipts (and PostgreSQL's grammar) put INTERSECT above UNION/EXCEPT; SQLite 3.x evaluates the four operators with **equal precedence, left to right**. A query that reads one way on Postgres and another on SQLite silently returns different populations — the classic 'works on my machine' of set ops. Group explicitly with subquery wraps whenever arms mix operators.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Parenthesized arm", r: "`... EXCEPT (SELECT region FROM customers UNION SELECT city FROM customers)` → *near '(': syntax error*. SQLite refuses compound operands in brackets entirely — the error fires at prepare time." },
+        { c: "The subquery-wrap pattern", r: "`SELECT status FROM orders EXCEPT SELECT v FROM (SELECT region AS v FROM customers UNION SELECT city AS v FROM customers)` → 4 rows: the wrap groups the UNION first, then subtracts. This is the portable grouping idiom." },
+        { c: "Silent divergence", r: "Because precedence differs across engines, a mixed chain can be *valid and wrong* — no error, just a different population. The audit habit: count both groupings when you inherit a mixed chain." },
+        { c: "Associativity of same operators", r: "Chains of one operator (UNION ∪ UNION) are safe left-to-right or any grouping — the results agree. Ambiguity only enters when operators *mix*." },
+      ],
+    },
+  ],
   takeaway: "Mixed set-operator chains are ambiguous prose — SQLite reads left to right while the standard binds INTERSECT first, and since SQLite bans parenthesized arms, FROM-subquery wrapping is the portable way to state your grouping.",
 };

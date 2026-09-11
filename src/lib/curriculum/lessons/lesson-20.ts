@@ -326,5 +326,35 @@ ORDER BY name;    -- 4K Webcam Pro, Smart Watch S`,
       expected: EXPECTED["l20-p8"],
     },
   ],
+  deep: [
+    {
+      kind: "mind",
+      text: "`EXCEPT` is **subtraction with whole rows**: everything in arm 1 that also appears in arm 2 is removed; what remains is the answer. The operator is *asymmetric* — `A EXCEPT B` and `B EXCEPT A` are different reports, and with overlapping populations each direction tells its own story, so the first thing to state (even just to yourself) is which population is being subtracted from. The second habit: EXCEPT is a **NULL-safe** difference — it does over a NULL-bearing column what `NOT IN` silently refuses to do.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT email FROM customers EXCEPT SELECT email FROM blacklist",
+      steps: [
+        "**Arm 1** — all 16 customer emails stream out as candidates.",
+        "**Arm 2** — the blacklist streams out as the removal set.",
+        "**Grouping pass** — candidates are grouped; every group whose key also exists in arm 2 is deleted; survivors emit once each.",
+        "**The NULL win** — if arm 2 held a NULL, a `NOT IN` over it would collapse to zero rows (the lesson-13 trap). EXCEPT's grouping just treats NULL as a value: it removes the NULL *row* and keeps the rest — the subtraction you actually meant.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"EXCEPT ALL keeps duplicates from the left arm, like UNION ALL keeps them from both.\"",
+      truth: "**SQLite has no EXCEPT ALL.** The grammar ends at EXCEPT — duplicates from arm 1 collapse even when arm 2 never contained them. The multiset version needs arithmetic: count occurrences in arm 1, subtract counts from arm 2 in a GROUP BY, and re-expand — or accept the distinct result. PostgreSQL offers EXCEPT ALL; writing it in SQLite is a *parse error*, caught immediately, not a silent wrong number.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Direction mistakes", r: "`A EXCEPT B` ≠ `B EXCEPT A`. Probed both ways on this db: regions appear in both customers and suppliers, so `customers∖suppliers` and `suppliers∖customers` are both empty — but statuses vs invoice statuses differ in vocabulary, and only one direction says anything meaningful (all 4 order statuses survive; the reverse gives 4 minus 0 the other way). State which population you're subtracting from." },
+        { c: "EXCEPT as anti-join", r: "`SELECT name FROM products EXCEPT SELECT p.name FROM order_items oi JOIN products p ON p.id=oi.product_id` → 0 rows here (every product sold at least once) — and it agrees with the NOT EXISTS anti-join, which is exactly how you audit one against the other." },
+        { c: "Bare EXCEPT vs NOT IN", r: "NOT IN dies on NULLs in the sub-list; EXCEPT shrugs. The cost: EXCEPT is whole-row and distinct. When you need per-key, non-distinct difference, that's an anti-join's job (LEFT JOIN ... IS NULL)." },
+        { c: "ORDER BY placement", r: "Same law as UNION: one ORDER BY, at the very end, sorting the subtraction result. An ORDER BY inside arm 1 is a syntax error." },
+      ],
+    },
+  ],
   takeaway: "EXCEPT subtracts the second arm from the first — asymmetric, duplicate-collapsing, and NULL-safe where NOT IN silently fails — and the compound result takes a single ORDER BY, at the very end.",
 };

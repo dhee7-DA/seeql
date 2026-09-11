@@ -201,5 +201,35 @@ export const lesson37: Lesson = {
       ordered: true,
     },
   ],
+  deep: [
+    {
+      kind: "mind",
+      text: "Quarter-end is where modules **collide on one page**: the comparison section wants set operators (this region's products minus last quarter's — EXCEPT; the overlap — INTERSECT), the summary table wants a CASE pivot (one row per region, one column per status), and the printed order wants a CASE sort (pending first, because that's the workflow, not the alphabet). The mental model is a **report pipeline**: population moves → shape moves → presentation moves. Writing them in that order, as separate verifiable layers, is what makes a quarter-end query auditable at all.",
+    },
+    {
+      kind: "engine",
+      title: "you assemble the quarter-end page",
+      steps: [
+        "**Populations** — the region censuses come straight from GROUP BY: EU 45 orders / APAC 37 / US 19 / LATAM 2; the pending-money pivot lands 2,675.29 / 1,966.28 / 1,471.43 / 0.00 — LATAM's zero is a *finding* (both its orders delivered).",
+        "**Comparisons** — `order statuses EXCEPT invoice statuses` returns 4 rows (two disjoint lifecycles: pending/shipped/delivered/cancelled vs open/paid/void) — a vocabulary check, run in one line.",
+        "**Ordering** — the closed CASE in ORDER BY (`pending→0, shipped→1, delivered→2, cancelled→3`) prints the pipeline in workflow order — probed: pending, shipped, delivered, cancelled, exactly.",
+        "**Verify each layer** — every number above traces to a COUNT/SUM with the same WHERE; the quarter-end habit is *layers first, decoration last*.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"A quarter-end query is one big query — assembling it from layers means the parts can drift apart.\"",
+      truth: "The opposite: **layers are what keep it honest**. A monolith can't be partially verified — you check the final grid and hope. Layered, each stage has its own headcount: the population WHERE, the pivot's ELSE 0 columns, the stack's literal labels, the sort's closed CASE. Drift becomes a per-layer diff (EXCEPT the two layers and see), not a mystery. The composite is only as trustworthy as its cheapest checkpoint — give it several.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Open CASE in a printed sort", r: "`ORDER BY CASE status WHEN 'pending' THEN 0 ...` without the final ELSE sends any unexpected status (a new lifecycle value) to NULL — sorting before or after everything, engine-dependent. Close the switch (`ELSE 3`) so surprises sort predictably." },
+        { c: "EXCEPT over REAL money", r: "Region sums built two ways can differ at the 3rd decimal; ROUND both arms before the EXCEPT or the audit screams over phantom cents." },
+        { c: "Pivot columns that never fire", r: "A status column for a status the quarter never saw prints all zeros — correct, not dead code. Column set is part of the report's *contract*; keep it stable quarter over quarter." },
+        { c: "Stack label collisions", r: "If the TOTAL row's literal collides with a real region name, downstream filters can't tell frame from data — label literals should be names no arm can produce ('—— TOTAL ——')." },
+      ],
+    },
+  ],
   takeaway: "Quarter-end reporting is Module 3 in miniature: set operators compare populations, CASE builds pivots and value censuses in one pass, and a closed-CASE custom sort keeps the report in workflow order.",
 };
