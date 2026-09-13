@@ -1569,16 +1569,16 @@ ORDER BY 1;`,
     brief:
       "From: Finance partner. Re: the calendar gap, verbatim.\n\nThe gap check found exactly one month where spend moved before billing started. Print it verbatim for the audit trail — the month bucket, nothing else.",
     ask: "List the expense months absent from the invoice calendar.",
-    template: `SELECT substr({1}, 1, 7) AS m FROM expenses
+    template: `SELECT strftime('%Y-%m', {1}) AS m FROM expenses
 {2}
-SELECT substr(issued_on, 1, 7) FROM {3}
+SELECT strftime('%Y-%m', issued_on) FROM {3}
 ORDER BY 1;`,
     slots: [
       {
         answer: "spent_on",
         kind: "keyword",
         label: "arm 1's date column",
-        why: "Expenses date bookings in spent_on; substr truncates to the YYYY-MM bucket.",
+        why: "Expenses date bookings in spent_on; strftime buckets it to the YYYY-MM month.",
       },
       {
         answer: "EXCEPT",
@@ -1595,7 +1595,7 @@ ORDER BY 1;`,
     ],
     distractors: ["created_at", "INTERSECT", "payments"],
     walkthrough:
-      "One row prints: 2024-01 — the month the audit trail records as pre-billing spend. Every later month appears on both calendars, so the subtraction keeps exactly one bucket. expenses has no created_at column, INTERSECT would print the 13 aligned months instead of the gap, and payments has no issued_on to subtract. One row, one month, one clean audit line.",
+      "One row prints: 2024-01 — the month the audit trail records as pre-billing spend, bucketed this time by strftime instead of substr. Every later month appears on both calendars, so the subtraction keeps exactly one bucket. expenses has no created_at column, INTERSECT would print the 13 aligned months instead of the gap, and payments has no issued_on to subtract. One row, one month, one clean audit line.",
   },
   {
     id: "cs-743",
