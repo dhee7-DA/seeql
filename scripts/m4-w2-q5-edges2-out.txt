@@ -1,0 +1,21 @@
+F01 shipped-only stage >2000: [{"n":2}]
+F02 cancelled stage >2000: [{"n":0}]
+F03 premium sum: [{"s":795.47}]
+F04 premium avg: [{"s":113.64}]
+F05 HAVING count>2 cats: [{"n":3}]
+F06 suppliers beat-region count: [{"n":2}]
+F07 cs952 broken stitch: [{"n":256}]
+F08 distinct vendors: [{"n":4}]
+F09 COUNT(total) per-customer min: [{"MIN(spend)":1}]
+F10 COUNT-total stage >1000: [{"n":0}]
+F11 cs963 per-customer rows: [{"n":1},{"n":1},{"n":1},{"n":1},{"n":1},{"n":1},{"n":1},{"n":1},{"n":1},{"n":1},{"n":1},{"n":1},{"n":1},{"n":1},{"n":1},{"n":1}]
+F12 cs963 city version error: ERROR no such column: region
+F13 invoices COUNT per cust top2: [{"name":"Alice Chen","paid":4},{"name":"Maya Patel","paid":4}]
+F14 spend != 3000 count: [{"n":16}]
+F15 spend < 500 count: [{"n":1}]
+F16 spend between 500 and 1000: [{"n":7}]
+F17 shipped stage where-clause order err: ERROR near "WHERE": syntax error
+F18 inner name instead of category err: ERROR no such column: ca.category
+F19 AVG per customer stage avg: [{"ROUND(AVG(spend),2)":370.15}]
+F20 COUNT as outer over stage: [{"COUNT(spend)":16}]
+--- 20 probes done

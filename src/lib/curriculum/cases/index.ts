@@ -40,6 +40,7 @@ import { casesS4 } from "./cases-s4";
 import { casesS5 } from "./cases-s5";
 import { casesS6 } from "./cases-s6";
 import { casesQ1 } from "./cases-q1";
+import { casesQ2 } from "./cases-q2";
 
 export const CASES: CaseStudy[] = [
   ...casesExemplars,
@@ -80,6 +81,7 @@ export const CASES: CaseStudy[] = [
   ...casesS6,
   // Module 4 — Subqueries & CTEs (cs-901…cs-1200)
   ...casesQ1,
+  ...casesQ2,
 ].sort((a, b) => Number(a.id.slice(3)) - Number(b.id.slice(3)));
 
 export function caseById(id: string): CaseStudy | undefined {
