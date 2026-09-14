@@ -38,6 +38,16 @@ import { SET_JUDGMENT } from "./m3/set-judgment";
 import { CASE_WHEN } from "./m3/case-when";
 import { CASE_AGGREGATE } from "./m3/case-aggregate";
 import { CASE_SORTS } from "./m3/case-sorts";
+import { IN_SUBQUERY } from "./m4/in-subquery";
+import { SCALAR_SUB } from "./m4/scalar-sub";
+import { EXISTS_DRILL } from "./m4/exists";
+import { CORRELATED } from "./m4/correlated";
+import { DERIVED } from "./m4/derived";
+import { CTE_DRILL } from "./m4/cte";
+import { CTE_RECURSIVE } from "./m4/cte-recursive";
+import { SUB_EDGES } from "./m4/sub-edges";
+import { SUB_ERRORS } from "./m4/sub-errors";
+import { SUB_JUDGMENT } from "./m4/sub-judgment";
 
 function set(
   keyword: string, label: string, module: number, tier: DrillSet["tier"],
@@ -156,6 +166,38 @@ export const DRILL_SETS: DrillSet[] = [
   set("case-sorts", "CASE sorts & labels", 3, "secondary",
     "Business order — rank CASEs in ORDER BY, label columns, and the closed-switch habit.",
     CASE_SORTS),
+  // ---- Module 4 · core ----
+  set("in-subquery", "IN + subquery", 4, "core",
+    "Ask in two steps — the computed list, IN against it, and the NULL collapse NOT IN hides.",
+    IN_SUBQUERY),
+  set("scalar-sub", "Scalar subquery", 4, "core",
+    "One value, one cell — scalars in WHERE, SELECT, and HAVING, and the zero-row vs multi-row traps.",
+    SCALAR_SUB),
+  set("exists", "EXISTS / NOT EXISTS", 4, "core",
+    "The per-row probe — boolean semantics, the select-list that doesn't matter, and the NULL-safe anti-join.",
+    EXISTS_DRILL),
+  set("correlated", "Correlated subquery", 4, "core",
+    "The per-row phone call — outer references, own-average comparisons, and the cost of re-running.",
+    CORRELATED),
+  set("derived", "Derived tables", 4, "core",
+    "A query in FROM — staging stages, ghost column names, CO-ROUTINE streaming, and LIMIT-in-stage top-N.",
+    DERIVED),
+  set("cte", "CTE / WITH", 4, "core",
+    "WITH, the readable subquery — named stages, double references, shadowing, and materialization receipts.",
+    CTE_DRILL),
+  // ---- Module 4 · secondary ----
+  set("cte-recursive", "WITH RECURSIVE", 4, "secondary",
+    "The self-feeding stage — anchor + step, termination, infinite-loop hazards, and honest non-use.",
+    CTE_RECURSIVE),
+  set("sub-edges", "Subquery edge cases", 4, "secondary",
+    "Weird matching — NULL collapse, empty lists, silent first-row scalars, ghost rows, and one-row crowds.",
+    SUB_EDGES),
+  set("sub-errors", "Subquery errors", 4, "secondary",
+    "Read the failure — misplaced aggregates, missing aliases, circular CTEs, and the bugs that never error.",
+    SUB_ERRORS),
+  set("sub-judgment", "Choosing subqueries", 4, "secondary",
+    "Which shape when — IN vs EXISTS vs JOIN vs staged CTE, and the honest tool for each brief.",
+    SUB_JUDGMENT),
 ];
 
 export type { DrillSet, DrillQ, DrillTier, DrillAspect } from "./types";
@@ -201,4 +243,10 @@ export const LESSON_DRILLS: Record<string, string[]> = {
   "lesson-22": ["case-when"],                    // CASE mechanics: first match, ELSE
   "lesson-23": ["case-aggregate", "case-sorts"], // counters, pivots + custom sorts
   "lesson-24": ["set-judgment", "set-edges"],    // capstone: three patterns + weird matching
+  // ---- Module 4 (subqueries & CTEs) ----
+  "lesson-25": ["in-subquery", "scalar-sub"],    // IN + subquery, scalar forms
+  "lesson-26": ["exists", "correlated"],         // EXISTS probe + correlation
+  "lesson-27": ["derived"],                      // query in FROM
+  "lesson-28": ["cte", "cte-recursive"],         // WITH stages + RECURSIVE
+  "lesson-38": ["sub-judgment", "sub-edges", "sub-errors"], // capstone: choosing shapes + traps
 };

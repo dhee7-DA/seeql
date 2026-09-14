@@ -1,4 +1,4 @@
-// WHOLE-BANK AUDIT — all sets in DRILL_SETS (M1+M2), not just M2.
+// WHOLE-BANK AUDIT — all sets in DRILL_SETS (M1–M4), not just M2.
 // Checks: counts, dup ids/prompts (set + bank-wide), 4 choices, answer range,
 // why thickness, notes!=answer, aspect/tier/module validity, id prefix ↔ module,
 // sequential numbering continuity within each set, keyword/label/blurb presence,
@@ -74,13 +74,14 @@ for (const s of DRILL_SETS) {
 }
 
 console.log("\n== BANK ==");
-console.log(`  total: ${bankTotal} questions in ${DRILL_SETS.length} sets (expect 1390 / 34)`);
-ok(bankTotal === 1390, `bank total ${bankTotal} != 1390`);
-ok(DRILL_SETS.length === 34, `set count ${DRILL_SETS.length} != 34`);
-console.log(`  by module: ${JSON.stringify(modules)} (expect m1=470, m2=465, m3=455)`);
+console.log(`  total: ${bankTotal} questions in ${DRILL_SETS.length} sets (expect 1835 / 44)`);
+ok(bankTotal === 1835, `bank total ${bankTotal} != 1835`);
+ok(DRILL_SETS.length === 44, `set count ${DRILL_SETS.length} != 44`);
+console.log(`  by module: ${JSON.stringify(modules)} (expect m1=470, m2=465, m3=455, m4=445)`);
 ok(modules[1] === 470, `module 1 = ${modules[1]} != 470`);
 ok(modules[2] === 465, `module 2 = ${modules[2]} != 465`);
 ok(modules[3] === 455, `module 3 = ${modules[3]} != 455`);
+ok(modules[4] === 445, `module 4 = ${modules[4]} != 445`);
 console.log(`  by tier: ${JSON.stringify(tiers)}`);
 console.log(`  by aspect: ${JSON.stringify(aspects)}`);
 

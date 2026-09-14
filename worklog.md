@@ -1292,3 +1292,106 @@ Stage Summary:
 - Durable receipts rerunnable via bun scripts/m4-facts.ts (kept as wave receipts).
 - Next per locked order: M4 drill bank (~450 MCQs, 10 keyword sets over in-subquery/scalar/exists/correlated/derived/cte/edges/judgment), wired into LESSON_DRILLS L25–28+38, audit-bank extended; THEN CASE_TOPICS q-extension + case-audit M4 rules + M4 case waves (cs-901+, 6 waves of 50).
 - Parked: P4 micro-fixes (learn-app.tsx / landing.tsx hardcodes — landing now shows dynamic "9 modules · 57 lessons"; verify at P4).
+---
+Task ID: m4-bank-a2
+Agent: general-purpose
+Task: Draft m4 drill set scalar-sub (45)
+
+Work Log:
+- Read types.ts (DrillQ shape, aspect/tier unions), m3/union.ts (gold-standard voice), scripts/m4-facts-out.txt (P01–P56), sibling m4/in-subquery.ts + m4/derived.ts (id/abbr conventions, no touching), audit-bank.ts (mechanical rules), drills/index.ts (m4 not yet wired — left alone).
+- Reused existing receipts: ran `bun scripts/m4-bank-a-probes.ts` to regenerate the B01–B33 scalar receipts (silent first row = 16 via order 1/Pedro Alvarez 576.54; stamp 16 rows/1 distinct; zero-row → NULL; COUNT-over-empty → 0 vs MAX → NULL; NULL bar → 0 rows; errors "row value misused" / "sub-select returns 2 columns - expected 1" / "misuse of aggregate: AVG()" / "no such column: totl" / near ")": syntax error; 42 above storewide avg; VIP ids 1,3,5,7,13 at bar SUM(total)/16 = 2177.08; correlated counts Alice 24 / Emma 17 / Grace 14; status avgs 164.64/299.44/436.64/399.89).
+- Wrote + ran scripts/m4-bank-a2-probes.ts (C01–C30, readonly bun:sqlite) for extra scalar receipts, exact SQL: product roster/cheapest (HDMI 14.99, product 1 = Mechanical Keyboard K1 89.99), customer 16 = Pedro Alvarez, natural-order first customer = Alice Chen, supplier ratings (4.6/4.1/3.9/4.4/4.8/4.0, avg 4.30, above = Alpine 4.8/Nordic 4.6/Midwest 4.4), min/max lifetime spend (Olivia Brown 444.80 / Alice Chen 7262.35), 10 at-or-below + 0 ties at 71.78, 61 below + 42 above 338.19, 49 above delivered-only 299.44, 4 above Audio avg 109.66, 11 under VIP bar, 16 pass correlated SUM > avg-order bar, invoices 12 / expenses 15 above own avg, product range 14.99–199.99, IS NULL detects empty scalar on all 103 orders, scalar-in-ORDER-BY runs (constant key keeps table order), aliased gap in ORDER BY legal (HDMI −56.786875 → raw avg 71.776875), max gap Smart Watch S +128.21, nested scalar MAX-below-avg = 65.00, 1 product at MAX price, LIMIT-1 pending scalar deterministic 16, stamp over GROUP BY = 4×338.19, HAVING club full list, pending club per-customer tallies (8 customers / 14 orders).
+- Ran ad-hoc probes (bun -e, readonly): orders > NULL bar → 0 (backs scl-38); exactly 1 pending order at total 576.54.
+- Wrote src/lib/curriculum/drills/m4/scalar-sub.ts: 45 questions, dense receipt header, sections syntax→semantics→edge→errors→predict→judgment, ids dr4-scl-01..45.
+- Self-audit script (bun): ids sequential, 45 count, tier core ×45, 4 distinct choices each, answer 0..3, why ≥30, notes never on answer index, no prompt collisions vs wired bank (1390) + both m4 siblings; `bunx tsc -p` strict typecheck over drills tree → exit 0.
+
+Stage Summary:
+- File: src/lib/curriculum/drills/m4/scalar-sub.ts — 45 questions (SCALAR_SUB, keyword "Scalar subquery", abbr dr4-scl-NN, tier core ×45).
+- Aspect histogram: syntax 7, semantics 12, edge 7, errors 5, predict 9, judgment 5 (on target). Answer spread 0×11 / 1×11 / 2×12 / 3×11.
+- Numbers verified via receipts/probes: catalog bar 71.78 (raw 71.776875), 6 above / 10 below / 0 ties, club Fitness Band X2 79.00 cheapest-in + 65.00 best-out; HAVING Wearables 139.50 / Audio 109.66 / Video 84.50; storewide 338.19 → 42 above / 61 below; delivered-only 299.44 → 49; VIP bar 2177.08 → 5 (ids 1,3,5,7,13), 11 under; min spend Olivia Brown 444.80 → all 16 pass avg-order bar; stamp 16/1 and 4×338.19; silent first row 16 = order 1 / Pedro Alvarez / 576.54; zero-row → NULL, COUNT → 0, NULL bar → 0, IS NULL → 103; >=/> MAX = 1/0 (order 74, 1088.44); suppliers avg 4.30 → 3 above; correlated counts 24/17/14; max gap +128.21 (Smart Watch S).
+- Probe files kept: scripts/m4-bank-a2-probes.ts (C01–C30); B-series from scripts/m4-bank-a-probes.ts; P-series scripts/m4-facts.ts.
+---
+Task ID: m4-bank-b2
+Agent: general-purpose
+Task: Draft m4 drill set correlated (45)
+Work Log:
+- Read types.ts + m3/union.ts (gold style); receipts P18–P38, P50–P56 from scripts/m4-facts-out.txt.
+- 1 probe (readonly bun:sqlite): per-customer id/name/n/avg/spend map — pinned c1..c4 (Alice 24/302.60, Bruno 2/426.22, Chloe 5/533.59, Dmitri 2/299.63), solo pair Liam/Olivia, VIP ids.
+- Wrote src/lib/curriculum/drills/m4/correlated.ts in one Write; scoped syntax→semantics→edge→errors→predict→judgment; o vs o2 discipline, 45/42/37/8/5 cross-bars, EQP "CORRELATED SCALAR SUBQUERY 1"+SCAN o2, aggregate-in-EXISTS always-true trap.
+- Verification bun import check: ids sequential, 4 distinct choices, answers 11/11/11/12, why≥30, notes≠answer, zero prompt dups vs 1535 bank prompts.
+Stage Summary:
+- correlated.ts: 45 questions (syntax 7, semantics 12, edge 7, errors 4, predict 10, judgment 5), tier core, 1 probe used.
+---
+Task ID: m4-bank-d1
+Agent: general-purpose
+Task: Draft m4 drill set cte-recursive (40)
+Work Log:
+- 3 readonly probes: counters 1..5 & 1..10, RECURSIVE-on-plain-CTE legal (returns 42), date ladder 424d vs 84 order dates (340 orderless), id ladder 16, pow2 n<1000 → 11 rows ending 1024.
+- Verified error msgs: near "b": syntax error (2nd RECURSIVE mid-list); "multiple references to recursive table: t"; "circular reference: t" (subquery ref); "table t has 2 values for 1 columns".
+- One Write of src/lib/curriculum/drills/m4/cte-recursive.ts; inline self-check + bank-wide prompt/id clash scan all clean.
+Stage Summary:
+- m4/cte-recursive.ts: 40 questions dr4-rec-01..40, tier secondary, answers 10/10/10/10; aspects: syntax 7, semantics 10, edge 6, errors 4, predict 6, judgment 7.
+---
+Task ID: m4-bank-b1
+Agent: general-purpose
+Task: Draft m4 drill set exists (50)
+Work Log:
+- Read types.ts, m3/union.ts style, and the 56 receipts in m4-facts-out.txt; ran 1 readonly probe batch verifying: EXISTS without parens / EXISTS NOT → near "SELECT"/"NOT" syntax errors, EXISTS(…)=1 and =TRUE identical (16), aggregate 1-row trap (16), SELECT NULL rows still count (16), LIMIT 0 → 0, unqualified `id` binds inner (16 pass), EXISTS(<> 'shipped') → 15
+- Wrote src/lib/curriculum/drills/m4/exists.ts (one Write): receipt-anchored 10 shipped / 6 not-shipped, 0/16 impossible partition, 8 pending / 4-cancelled flag, veterans 3 + COUNT=4 false positives, bloom-filter EQP, NOT IN 0-vs-12 NULL collapse
+- Self-check via bun -e (no db): sequential ids dr4-exi-01..50, 4 distinct choices each, why ≥30, notes never on answer, answers 12/13/13/12
+Stage Summary:
+- src/lib/curriculum/drills/m4/exists.ts — 50 questions: syntax 8, semantics 14, edge 7, errors 4, predict 11, judgment 6 (export EXISTS_DRILL, KW "EXISTS / NOT EXISTS", all core)
+---
+Task ID: m4-bank-e2
+Agent: general-purpose
+Task: Draft m4 drill set sub-judgment (40)
+Work Log:
+- Read types.ts + m3/union.ts (style) + 56 receipts (scripts/m4-facts-out.txt); 2 readonly probes: confirmed "misuse of aggregate function AVG()" error, runs-and-lies HAVING MAX(total)>AVG(total)=14/16 (storewide bar clears all 16), naive COUNT(*)=4 returns exactly the 4 impostors, CTE over-1000/2000=8/5.
+- Wrote src/lib/curriculum/drills/m4/sub-judgment.ts (40 Qs, dr4-jud-01..40 sequential, KW "Choosing subqueries", tier secondary); bun import check: 4 distinct choices each, answers 10/10/10/10 across 0-3, why>=30, notes never point at answer.
+Stage Summary:
+- m4/sub-judgment.ts — 40 questions: syntax 3, semantics 6, edge 4, errors 3, predict 4, judgment 20.
+---
+Task ID: m4-bank-c4 | Agent: general-purpose | Task: Draft m4 drill set cte (45)
+Work Log:
+- Read types.ts + m3/union.ts style + m4-facts-out receipts (P01-P56); wrote src/lib/curriculum/drills/m4/cte.ts in one Write, no RECURSIVE overlap with cte-recursive.ts.
+- 2 readonly bun -e probes: trailing comma -> near "SELECT" (not ","), dup name -> "duplicate WITH table name: s", forward-ref within WITH list RESOLVES, WITH-in-scalar = 338.187, nested-IN order-id trap = 0, case-insensitive ids, un-aliased literal column named "1".
+- Sections syntax->semantics->edge->errors->predict->judgment; ids dr4-cte-01..45 sequential; receipts anchored (ghost row, MATERIALIZE s, EU 15089.23, VIP five, bar 2177.08).
+Stage Summary:
+- cte.ts: 45 questions — aspects syntax 7 / semantics 12 / edge 6 / errors 4 / predict 10 / judgment 6; answers 0:12 1:13 2:10 3:10.
+---
+Task ID: m4-bank-e1 | Agent: general-purpose | Task: Draft m4 drill set sub-errors (40)
+Work Log:
+- Read types.ts + m3/union.ts (style) + m4-facts-out.txt (P01-P56); drafted 40 Qs in m4/sub-errors.ts.
+- Probe 1 (16 stmts, readonly): WHERE-agg → "misuse of aggregate function AVG()"; HAVING lie → 14 rows; unused CTE, forward-ref CTE, no-RECURSIVE counter all LEGAL (briefing corrected); missing comma → near "b", stacked WITH → near "WITH", semicolons → near ";".
+- Probe 2 (9 stmts): derived alias invisible in inner FROM → "no such table: d"; qualify w/o alias → "no such column: d.spend"; bars >3000 → 4, >338.19 → 16, >2177.08 (CTE) → 5; typo → "no such column: customers_id"; stamps 16 rows/1 distinct.
+- Self-check: ids sequential dr4-err-01..40, 4 distinct choices, answers 10/10/10/10, why ≥30, notes ≠ answer, no bank-wide id/prompt collisions.
+Stage Summary:
+- src/lib/curriculum/drills/m4/sub-errors.ts — 40 Qs, tier secondary; aspects: errors 18, syntax 6, judgment 5, semantics 4, edge 4, predict 3.
+Task ID: m4-bank-d2
+Agent: general-purpose
+Task: Draft m4 drill set sub-edges (40)
+Work Log:
+- Read types.ts, m3/union.ts (gold style), 56 receipts P01–P56; 2 readonly bun:sqlite probes: scalar-over-empty → NULL (cancelled-MAX stamps NULL on 12/16, total > NULL-bar → 0/103, MAX-of-nothing prints NULL), NOT IN (1, NULL) → 0/16, inner-alias shadow of outer alias → 0/16, plus error msgs "sub-select returns 2 columns - expected 1" / "no such column: oops.id" / "circular reference: customers".
+- One Write of src/lib/curriculum/drills/m4/sub-edges.ts (dr4-edg-01..40, sections syntax→semantics→edge→errors→predict→judgment); verification import check: sequential ids, 4 distinct choices, answers 10/10/10/10, why ≥30, notes ≠ answer, 0 prompt collisions vs 1835 bank prompts.
+Stage Summary:
+- sub-edges.ts: 40 questions (syntax 4, semantics 8, edge 14, errors 4, predict 6, judgment 4), tier secondary, 2 probes used.
+
+---
+Task ID: m4-bank
+Agent: Super Z (main agent)
+Task: M4 drill bank — 10 keyword sets, 445 questions, wired L25–28+38, audit-bank extended
+
+Work Log:
+- STALE-HANDOFF CORRECTION (fourth occurrence): resumed summary claimed "M4 wave 2 (cases-q2) in progress, wave 1 committed 56a2429" — ALL FALSE again; git truth: M4 frontier = drill bank (no cases-q1/q2, no CASE_TOPICS q*). Real next chunk per m4-deep-dives entry: M4 drill bank.
+- Re-ran scripts/m4-facts.ts → receipts preserved at scripts/m4-facts-out.txt (P01–P56).
+- Drafted 10 m4 sets via subagents (M3 playbook; batched into single-set tasks after 2-set tasks hit the runner deadline; resized cte 55→45 for the same reason): in-subquery 55, scalar-sub 45, exists 50, correlated 45, derived 45, cte 45, cte-recursive 40, sub-edges 40, sub-errors 40, sub-judgment 40 = 445 (m4 core 285 / secondary 160).
+- Probe-verified corrections baked in by drafters: alias-less derived stage PARSES in SQLite (fails later via qualifiers); missing RECURSIVE keyword does NOT error; unreferenced CTE + forward refs legal; row-value IN (customer_id,status) IN (…) = 1 order (#74); recursive date ladder 424 days vs 84 order dates; powers-of-2 overshoot 1024.
+- Wired registry: index.ts imports + 10 DRILL_SETS entries + LESSON_DRILLS lesson-25 [in-subquery, scalar-sub], 26 [exists, correlated], 27 [derived], 28 [cte, cte-recursive], 38 [sub-judgment, sub-edges, sub-errors].
+- audit-bank.ts expectations updated: 1835 / 44 sets, m1=470 m2=465 m3=455 m4=445.
+- Gates: audit-bank PASS (1835/44, 0 dup ids/prompts bank-wide, aspects 268/397/355/244/345/226); tsc src/ 0 errors; case-audit regression 900/900.
+- E2E: L25 Drills tab "2 keywords" (55 q + 45 q), live m4 question rendered + db-verified answer +10/+8 XP with badge; global DrillYard shows 44 cards, "1 of 1835 attempted"; L38 Drills "3 keywords"; console clean (HMR/Fast Refresh only), 0 page errors; shot scripts/shots/m4-bank-l38-drills.png.
+
+Stage Summary:
+- M4 DRILL BANK DONE: bank 1390 → 1835 (+445, 34 → 44 sets); LESSON_DRILLS covers all 5 M4 query lessons.
+- Probes kept as receipts: m4-facts-out.txt + m4-bank-*.ts + probe-d*.ts (rerunnable).
+- Next per locked order: M4 CASE_TOPICS q1–q8 extension + case-audit M4 rules, then M4 case waves (cs-901+, ~6 waves of 50) → M5 (window, forced OVER()) → P4 micro-fixes (learn-app.tsx/landing.tsx "Eight modules" hardcode).
