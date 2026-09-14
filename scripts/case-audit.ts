@@ -111,7 +111,7 @@ function auditCase(c: CaseStudy, seen: Map<string, string>): string[] {
   const add = (m: string) => errs.push(m);
 
   // ids
-  if (!/^cs-\d{3}$/.test(c.id)) add(`id "${c.id}" does not match cs-###`);
+  if (!/^cs-\d{3,4}$/.test(c.id)) add(`id "${c.id}" does not match cs-###`);
   if (seen.has(c.id)) add(`duplicate id — also defined in ${seen.get(c.id)}`);
   else seen.set(c.id, "this audit set");
   if (!TOPIC_IDS.has(c.topic)) add(`unknown topic "${c.topic}"`);
@@ -154,15 +154,20 @@ function auditCase(c: CaseStudy, seen: Map<string, string>): string[] {
   const noVerify = c.slots.filter((s) => s.noVerify).length;
   if (noVerify > 3) add(`${noVerify} noVerify slots — cap is 3`);
 
-  // single read-only statement (M1/M2) or compound/CASE-select (M3)
+  // single read-only statement (M1/M2), compound/CASE-select (M3), or
+  // subquery/CTE-driven (M4) — M4 queries legitimately carry several SELECTs
+  // (outer + nested) and may start with WITH.
   const filledCorrect = fill(c.template, Object.fromEntries(c.slots.map((s, i) => [i + 1, s.answer])));
   if (/;/.test(filledCorrect.replace(/;\s*$/, ""))) add("template contains an internal statement separator");
   const selects = (filledCorrect.match(/\bSELECT\b/gi) ?? []).length;
   const isM2 = c.topic.startsWith("j");
   const isM3 = c.topic.startsWith("s");
+  const isM4 = c.topic.startsWith("q");
   const hasJoin = /\bJOIN\b/i.test(filledCorrect);
   const hasSetOp = /\bUNION\b|\bINTERSECT\b|\bEXCEPT\b/i.test(filledCorrect);
   const hasCase = /\bCASE\b/i.test(filledCorrect);
+  const hasSubquery = /\(\s*SELECT\b/i.test(filledCorrect);
+  const hasWith = /\bWITH\b/i.test(filledCorrect);
   if (isM3) {
     if (["s1", "s2", "s3", "s4", "s5"].includes(c.topic) && !hasSetOp)
       add("Module 3 set-op topic but no UNION/INTERSECT/EXCEPT — these cases must compare or combine result sets");
@@ -170,12 +175,21 @@ function auditCase(c: CaseStudy, seen: Map<string, string>): string[] {
       add("Module 3 CASE topic but no CASE keyword — these cases must branch");
     if (selects >= 2 && !hasSetOp && !hasCase)
       add(`${selects} SELECT keywords with no set operator or CASE — only compounds (UNION/INTERSECT/EXCEPT) or CASE-driven segmentation may use multiple SELECTs`);
+  } else if (isM4) {
+    if (["q1", "q2", "q3", "q4", "q5"].includes(c.topic) && !hasSubquery)
+      add("Module 4 subquery topic but no nested (SELECT …) — these cases must embed a subquery");
+    if (["q6", "q7"].includes(c.topic) && !hasWith)
+      add("Module 4 CTE topic but no WITH clause — these cases must stage a CTE");
+    if (c.topic === "q7" && !/\bRECURSIVE\b/i.test(filledCorrect))
+      add("q7 cases must use WITH RECURSIVE");
+    if (c.topic === "q8" && !hasSubquery && !hasWith)
+      add("q8 capstone must embed a subquery or stage a CTE");
   } else {
     if (selects !== 1) add(`${selects} SELECT keywords — subqueries not allowed in Module 1–2 cases`);
   }
   if (isM2 && !hasJoin) add("Module 2 topic but no JOIN keyword — join cases must join");
-  if (!isM2 && !isM3 && hasJoin) add("JOIN found — Module 1 cases are single-table");
-  if (!/^\s*SELECT\b/i.test(filledCorrect)) add("filled query does not start with SELECT");
+  if (!isM2 && !isM3 && !isM4 && hasJoin) add("JOIN found — Module 1 cases are single-table");
+  if (!/^\s*(SELECT|WITH)\b/i.test(filledCorrect)) add("filled query does not start with SELECT or WITH");
 
   // execution + number verification
   const res = runSql(filledCorrect);

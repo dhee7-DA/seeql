@@ -87,6 +87,15 @@ export const CASE_TOPICS: CaseTopicMeta[] = [
   { id: "s6", label: "CASE WHEN", lessonNum: 22 },
   { id: "s7", label: "CASE pivots", lessonNum: 23 },
   { id: "s8", label: "Set+CASE capstone", lessonNum: 24 },
+  // Module 4 — Subqueries & CTEs (lessons 25–28 + 38)
+  { id: "q1", label: "IN subqueries", lessonNum: 25 },
+  { id: "q2", label: "Scalar subqueries", lessonNum: 25 },
+  { id: "q3", label: "EXISTS tests", lessonNum: 26 },
+  { id: "q4", label: "Correlated", lessonNum: 26 },
+  { id: "q5", label: "Derived tables", lessonNum: 27 },
+  { id: "q6", label: "CTEs", lessonNum: 28 },
+  { id: "q7", label: "Recursive CTEs", lessonNum: 28 },
+  { id: "q8", label: "Subquery capstone", lessonNum: 38 },
 ];
 
 export interface CaseUniverseMeta {

@@ -39,6 +39,7 @@ import { casesS3 } from "./cases-s3";
 import { casesS4 } from "./cases-s4";
 import { casesS5 } from "./cases-s5";
 import { casesS6 } from "./cases-s6";
+import { casesQ1 } from "./cases-q1";
 
 export const CASES: CaseStudy[] = [
   ...casesExemplars,
@@ -77,7 +78,9 @@ export const CASES: CaseStudy[] = [
   ...casesS4,
   ...casesS5,
   ...casesS6,
-].sort((a, b) => a.id.localeCompare(b.id));
+  // Module 4 — Subqueries & CTEs (cs-901…cs-1200)
+  ...casesQ1,
+].sort((a, b) => Number(a.id.slice(3)) - Number(b.id.slice(3)));
 
 export function caseById(id: string): CaseStudy | undefined {
   return CASES.find((c) => c.id === id);
