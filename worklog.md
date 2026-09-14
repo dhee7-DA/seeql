@@ -1395,3 +1395,23 @@ Stage Summary:
 - M4 DRILL BANK DONE: bank 1390 → 1835 (+445, 34 → 44 sets); LESSON_DRILLS covers all 5 M4 query lessons.
 - Probes kept as receipts: m4-facts-out.txt + m4-bank-*.ts + probe-d*.ts (rerunnable).
 - Next per locked order: M4 CASE_TOPICS q1–q8 extension + case-audit M4 rules, then M4 case waves (cs-901+, ~6 waves of 50) → M5 (window, forced OVER()) → P4 micro-fixes (learn-app.tsx/landing.tsx "Eight modules" hardcode).
+
+---
+Task ID: m4-cases-w2
+Agent: Super Z (main agent)
+Task: M4 case library wave 2 — cases-q2.ts (cs-951–1000, q5 derived / q6 CTEs / q7 recursive / q8 capstone)
+
+Work Log:
+- Subagent launch hit the runner deadline (context deadline exceeded) — switched to main-agent block drafting: probe → write 15 → audit → fix → next block.
+- Grounding: scripts/m4-cases-w2-facts.ts (63 probes W01–W63, tee'd to m4-cases-w2-out.txt; W31 excluded as probe artifact — bad OR logic), plus edge batches m4-w2-q5-edges(.2).ts (E01–E20, F01–F20), m4-w2-q6-edges.ts (G01–G18), m4-w2-q7-edges.ts (H01–H15). Wave-1 receipts regenerated to m4-cases-w1-out.txt (C01–C85).
+- Date-ladder probe hang fixed: created_at is TEXT, so `d + 1` never exceeds the string max — rewritten with date(d,'+1 day') (W44 424 days vs 84 distinct order dates W45/W52/W53).
+- Drafted cases-q2.ts in 4 blocks: q5 cs-951–965 (5e/5m/5h), q6 cs-966–980 (5e/5m/5h), q7 cs-981–990 (3e/4m/3h), q8 cs-991–1000 (4e/2m/4h after re-tiering cs-995/cs-999 to hard). All number slots noVerify constants (wave-1 convention); all figures receipt-cited.
+- Audit-caught fixes (each verified by probe before fix): cs-951/cs-959 `total(x)` is a SQLite builtin ≡ sum(x) — "total" forbidden as distractor in aggregate slots; cs-956 name-fold ≡ region-fold (unique keys) and vendor↔category 1:1 map — replaced with error-distractors; cs-963 missing {1} marker + c.city ambiguous (every customer 1:1 with a city → GROUP BY city ≡ GROUP BY region) + o.status fold figures 3054.89/3016.89/852.44/3822.38; cs-964 slot/marker misorder (2000/>) swapped; cs-974 missing {3} WITH slot; cs-976 1001-bar ambiguous (Keiko 1098.60 clears both) → 1500; cs-984 n*1 stride = INFINITE ARM (audit hung, killed at 590s; "*" removed — with fixed operand 1 only "+" is monotone; distractors now || (text leaves number line) + DIV (syntax error)); cs-988 bare `d` resolves through outer scope (≡ days.d) — replaced with created_at tautology (424 hot days); cs-991 {3} used twice → outer-aggregate slot AVG; cs-994 2 slots → added "=" equality slot (>= forbidden: same peak row); cs-998 mean receipt corrected to 706.00 (25416/36).
+- Recursion termination discipline (q7): never slot the arm's bound with wider-distractors; only forward date ticks; countdown bounds safe (decreasing step always falls to floor); all q7 distractor swaps terminate or error — verified by full audit passing in one pass after cs-984 fix.
+- Wired casesQ2 into index.ts. Gates: case-audit file 50/50 (17e/17m/16h); full deck 1000/1000 PASS; check-dup-q2.ts: 0 title dups, 0 filled-SQL dups across 1000, topics q5:15 q6:15 q7:10 q8:10, ids sequential; tsc app src/ 0 errors.
+- E2E (agent-browser): Case Files drawer "1000 CASE FILES · MODULES 1–4 TOOLKIT"; tier buttons All 1000/Easy 334/Medium 334/Hard 332; topic chips Derived tables 15, CTEs 15, Recursive CTEs 10, Subquery capstone 10; live cs-951 solved (chip→slot interaction: tap chip then slot; slots auto-disable "Check" until 3/3) → CLOSED +10 XP, walkthrough rendered; 0 page errors, console clean (HMR only); shot scripts/shots/m4-w2-cs951-closed.png.
+
+Stage Summary:
+- M4 CASES: 100/300 (waves 1–2 done, cs-901–1000). Deck total 1000/44 drill sets + 1000 cases.
+- Wave-2 lesson (fifth stale-handoff-adjacent process note): subagent drafting for 50-case waves is dead — runner deadline; main-agent block drafting (probe→write→audit→fix) is the reliable path.
+- Next per locked order: M4 cases waves 3–6 (cs-1001–1200, deepening q1–q8 per M3 playbook) → M5 (window functions, forced OVER()) → P4 micro-fixes ("Eight modules" hardcode at learn-app.tsx:540 + landing.tsx:282).
