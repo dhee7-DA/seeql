@@ -381,5 +381,35 @@ ORDER BY o.total DESC;`,
       ordered: true,
     },
   ],
+  deep: [
+    {
+      kind: "mind",
+      text: "EXISTS is a **per-row phone call**: for every outer row, dial the inner query with that row's key and listen for a single bit — *anyone home?* The inner query never ships data back; the projection (`SELECT 1`) is a placeholder the engine ignores, because the only product of the call is true or false. That reframing explains every EXISTS quirk at once: why `SELECT 1` is enough, why the call stops early, and why a NULL in some other column can't poison it the way it poisons NOT IN — a verdict about row *existence* has no NULL value to trip over.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT c.name FROM customers c WHERE EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.id AND o.status = 'shipped')",
+      steps: [
+        "**Outer scan** — EXPLAIN QUERY PLAN leads with `SCAN c`: the 16 customers stream past, one probe each.",
+        "**The probe gets an index** — the plan continues `BLOOM FILTER ON o (customer_id=?, status=?)` then `SEARCH o EXISTS USING AUTOMATIC PARTIAL COVERING INDEX`: SQLite builds a transient index so every phone call is a seek, not a scan.",
+        "**Short-circuit** — the seek stops at the first matching row. Customer 2 holds two orders, neither shipped — their call ends after two misses; nobody ever walks all 103 orders per customer.",
+        "**Tally** — 10 customers hear yes (Alice through Pedro), 6 hear no, and NOT EXISTS flips the tally without re-running anything. The projection was never read — `SELECT 1`, `SELECT *`, even `SELECT NULL` all return the same 10 names.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"Correlated subqueries re-run the whole inner query for every row — they're inherently slow.\"",
+      truth: "The inner query re-*fires* per row but doesn't re-*do* the work: with the correlation key indexed (here, automatically), each firing is one seek that stops at the first hit. The 45-of-103 'above their own bar' query compares each order against its own household — a job a storewide average literally cannot express — and the plan labels it `CORRELATED SCALAR SUBQUERY`, one indexed pass per outer row. Slow correlated SQL is a missing-index smell, not a verdict on the shape.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Probing for a status that never occurs", r: "`EXISTS (… status = 'refunded')` returns **0** customers — every call comes back false. Flip to NOT EXISTS and all 16 pass. A vacuum probe is the cleanest way to check which side of EXISTS you're reading." },
+        { c: "A one-row crowd can never clear its own bar", r: "2 customers own exactly one order; that order IS their own average, and `total > own-average` is false for it. Both contribute **0** to the 45 stellar orders — correlated self-comparisons need a crowd of at least two rows to fire." },
+        { c: "The two bars are not nested sets", r: "37 orders clear both their household bar and the storewide 338.19; 8 more clear their own but not the storewide; 5 clear the storewide but not their own. 37 + 8 = 45 (household), 37 + 5 = 42 (storewide) — neither list contains the other." },
+        { c: "NOT EXISTS is the NULL-proof anti-join", r: "`id NOT IN (SELECT shipped_at FROM orders)` collapses to 0 rows (NULLs poison it), while `NOT EXISTS (…)` on the same nullable column answers happily — existence verdicts have no NULL to trip on. Lesson 13's LEFT JOIN … IS NULL is the third spelling of the same question." },
+      ],
+    },
+  ],
   takeaway: "EXISTS asks a yes/no question per outer row and stops at the first match; correlate it and the inner query reads the outer row — the only clean way to compare each row against its own crowd's summary.",
 };

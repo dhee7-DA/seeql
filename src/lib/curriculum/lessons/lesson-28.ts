@@ -352,5 +352,35 @@ ORDER BY b.s DESC;   -- Alice, Emma, Grace, Maya, Chloe`,
       ordered: true,
     },
   ],
+  deep: [
+    {
+      kind: "mind",
+      text: "A CTE is a **recipe card pinned above the bench**: `WITH spend AS (…)`, `big AS (…)` reads top-down like steps a colleague can follow — stage, stage, final plate. Nothing new is computed that lesson 27's derived table couldn't compute; what changes is the *reading order* (definitions first, use after) and the *naming*: each stage gets a name you can mention twice, riff on, or test alone by pasting its line into its own query. When a query grows its second join or its second aggregation, nesting stops being clever and starts being a hazard — WITH is the pressure valve.",
+    },
+    {
+      kind: "engine",
+      title: "you run WITH s AS (…) once — but read s twice (spend over 1000? over 2000?)",
+      steps: [
+        "**Single reference streams** — a CTE read exactly once behaves like lesson 27's co-routine: computed on demand, nothing stored.",
+        "**Double reference materializes** — read `s` from two scalar subqueries and the plan changes: `MATERIALIZE s` — SQLite computes the 16-row summary ONCE into an ephemeral table, then `SCAN s` twice against that copy.",
+        "**One computation, two answers** — the counts come back 8 (over 1,000) and 5 (over 2,000) from a single GROUP BY pass. The engine, not you, decided to cache — and the receipt is right there in EXPLAIN QUERY PLAN.",
+        "**Visibility is forward-only** — `big` may read `spend` because it's declared later; the final SELECT may read both. A CTE only sees stages declared above it — the recipe reads top-down for the engine too.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"WITH creates a temp table that persists — I can query spend again next statement.\"",
+      truth: "A CTE lives exactly as long as its one statement: the moment the final SELECT finishes, `spend` is gone — nothing enters sqlite_master, and a second SELECT naming it is a *no such table* error. Persistence is the VIEW's job (module 8); the CTE's job is readability inside a single query. Need the stage across statements? Make it a real table or a view.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "A CTE shadows a real table", r: "`WITH customers AS (SELECT 'ghost row' AS name) SELECT name FROM customers` returns **ghost row** — inside this statement the CTE wins over the actual table. Harmless in a demo, a genuinely confusing bug when stage names collide with table names; name stages after roles (`spend`, `big`), not after tables." },
+        { c: "Self-reference demands WITH RECURSIVE", r: "A CTE that mentions its own name is a syntax error unless the keyword is present: `WITH RECURSIVE cnt(x) AS (SELECT 1 UNION ALL SELECT x+1 FROM cnt WHERE x < 5)` yields 1,2,3,4,5. Recursion is how SQL walks org charts and generates calendars — module 6 territory." },
+        { c: "Comma chains, not nested WITHs", r: "Stages are comma-separated under one WITH, and each may read every earlier one: `big` reads `spend`, the final SELECT reads `big` and joins customers. Writing WITH inside WITH is a syntax error — the recipe is one flat list plus one final plate." },
+        { c: "CTE vs derived table — same machinery", r: "Refactor any lesson-27 bench into a CTE and the rows don't move; the plan differs only when the CTE is read more than once (then it materializes). The upgrade is purely organizational: names instead of mid-query parenthesis archaeology." },
+      ],
+    },
+  ],
   takeaway: "WITH names each staging query, chains them top-down, and lets the final SELECT read like the question it always was — same rows as the derived table, half the parenthesis archaeology.",
 };

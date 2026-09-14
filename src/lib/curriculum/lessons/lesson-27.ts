@@ -343,5 +343,35 @@ ORDER BY d.spend DESC;   -- EU 15089.23, APAC 11605.45, US 7286.16`,
       ordered: true,
     },
   ],
+  deep: [
+    {
+      kind: "mind",
+      text: "A derived table is a **staging bench you build and demolish inside one statement**: write the summary you wish existed — 103 orders collapsed into 16 per-customer rows — then query it as if it had always been there. The outer query never sees the raw orders; it sees a tidy 16-row table with a column named `spend`. That's the whole trick behind two-level questions: *make the level you need, then ask it questions.* And the discipline that keeps it sane is free: the bench is a complete SELECT you can run alone — if the 16-row stage looks right, only the outer five lines remain to blame.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT c.name, d.spend FROM customers c JOIN (SELECT customer_id, SUM(total) AS spend FROM orders GROUP BY customer_id) d ON d.customer_id = c.id WHERE d.spend > 1000",
+      steps: [
+        "**No temp table** — EXPLAIN QUERY PLAN shows `CO-ROUTINE d`: SQLite turns the derived table into a co-routine that emits rows on demand, not a materialized copy.",
+        "**The bench streams** — inside the co-routine: `SCAN orders` then `USE TEMP B-TREE FOR GROUP BY` — 103 rows collapse into 16 summary rows exactly as the join asks for them.",
+        "**Join and filter** — `SCAN d` feeds `SEARCH c USING INTEGER PRIMARY KEY`: each summary row picks up its name by primary-key lookup, and the `> 1000` gate keeps 8 of the 16.",
+        "**Run the stage alone first** — `SELECT customer_id, SUM(total) FROM orders GROUP BY customer_id` by itself returns the same 16 rows, Alice 7,262.35 on top. If that's right, the outer lines are the only suspects.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"Derived tables get materialized into temp tables — they're inherently slower than a hand-written join.\"",
+      truth: "This plan materializes nothing: `CO-ROUTINE d` streams the summary straight into the join — one pass over orders, no intermediate storage. The machinery is essentially what you'd get from the 'optimized' flat join-and-GROUP-BY, which is precisely the query that produces the fan-out double-count on multi-order customers (lesson 15). The derived table doesn't cost machinery; it buys the freedom to aggregate FIRST and join AFTER.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "The alias you skipped", r: "SQLite shrugs at `SELECT * FROM (SELECT 1)` — the output column is literally named `1`. PostgreSQL refuses to run an unaliased derived table at all. Name every stage (`) AS d`) even where the engine tolerates the omission — the outer query's columns depend on it." },
+        { c: "Filter inside or outside the bench", r: "`HAVING SUM(total) > 1000` inside the stage and `WHERE d.spend > 1000` outside return the same 8 customers. Push the filter inward when you can: the bench arrives at the join already slim, and the outer query stays a pure read." },
+        { c: "The bench may sort and cap", r: "A stage with `ORDER BY total DESC LIMIT 3` yields the top orders — 1,088.44 (Farid), 945.21 (Chloe), 845.92 (Emma) — and the outer join appends their names. This two-layer form is also the legal workaround for MySQL's LIMIT-in-IN ban (lesson 25)." },
+        { c: "The outer query can aggregate the bench", r: "`SELECT AVG(spend) FROM (…the 16-row stage…)` returns 2,177.08 — the average CUSTOMER spend, with a 444.80 floor and a 7,262.35 ceiling. Lesson 38's VIP bar is born exactly here: aggregate the stage once more and you have a bar the raw orders table could never produce." },
+      ],
+    },
+  ],
   takeaway: "A derived table stages the aggregation as a real table — alias it, name its columns, and the outer query joins and filters clean one-row-per-group results that fanout can never touch.",
 };

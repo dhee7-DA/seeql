@@ -379,5 +379,47 @@ ORDER BY name;   -- Alice, Emma, Keiko, Maya — 4 names`,
       ordered: true,
     },
   ],
+  deep: [
+    {
+      kind: "mind",
+      text: "Think of the subquery as **asking the database a small question before the big one**. *Which products beat average?* is really two questions — *what's the average?* (71.78) and then *who beats it?* — and the subquery lets you write both in one statement while the engine asks them in the right order. The two shapes are two kinds of answers: a **scalar** hands back one number, like a filled-in blank; a **column** hands back a checklist of values, like a guest list for `IN` to work through. Say which shape your inner question returns and you already know where it's allowed to sit.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT name FROM customers WHERE id IN (SELECT customer_id FROM orders WHERE status = 'cancelled')",
+      steps: [
+        "**Inner pass, exactly once** — the cancelled scan returns 7 rows: customer_ids `1, 1, 13, 13, 5, 11, 1`. No outer column appears inside, so nothing from customers is needed yet.",
+        "**List materialization** — EXPLAIN QUERY PLAN shows `LIST SUBQUERY 1`: SQLite packs the 7 values into an ephemeral list structure once, before the outer loop starts. There is no re-running per customer.",
+        "**Outer membership loop** — the 16 customer rows are checked against the list one by one. Alice (id 1) appears in it three times — membership is a yes/no, so she is output once. Four names survive: Alice, Emma, Keiko, Maya.",
+        "**The NOT IN mirror** — the same list flipped returns 16 − 4 = 12 customers. Safe today only because `customer_id` is declared NOT NULL: the list physically cannot contain the NULL that poisons NOT IN.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"The inner query runs once per outer row — 16 products means 16 executions.\"",
+      truth: "That's the **correlated** pattern, and it requires the inner query to mention an outer column. This one doesn't — EXPLAIN QUERY PLAN shows a single `LIST SUBQUERY` built up front, then a plain scan of customers. The per-row re-run belongs to lesson 26, where the inner query genuinely reads an outer column — and there the plan says `CORRELATED SCALAR SUBQUERY` in so many words.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "One NULL in a NOT IN list", r: "Live on this db: `SELECT COUNT(*) FROM customers WHERE id NOT IN (SELECT shipped_at FROM orders)` returns **0** — 21 orders carry a NULL `shipped_at`, and `id NOT IN (…, NULL)` can never be true, so every row fails. Swap the probe to NOT EXISTS (lesson 26) or add `WHERE customer_id IS NOT NULL`, and the answer becomes usable again." },
+        { c: "The empty list is the honest list", r: "`IN (SELECT … WHERE status = 'refunded')` matches nobody — 0 customers. But `NOT IN` over that same empty list returns **all 16**: there is nothing to be excluded from. An empty membership set is the one case where NOT IN is fully trustworthy." },
+        { c: "A scalar subquery that returns several rows", r: "`(SELECT customer_id FROM orders WHERE status = 'pending')` produces 14 rows — SQLite silently hands the comparison the **first** one (16) and carries on; PostgreSQL throws *more than one row returned by a subquery*. Aggregate-guaranteed scalars (AVG/COUNT) can't hit this." },
+        { c: "The same scalar stamped in the SELECT list", r: "Move `(SELECT AVG(price) FROM products)` out of WHERE and into the column list: all 16 product rows survive, each carrying the identical 71.78 — `COUNT(DISTINCT …)` over that column returns 1. WHERE filters with the value; SELECT annotates with it." },
+        { c: "A scalar subquery inside HAVING", r: "Group prices by category, then `HAVING AVG(price) > (scalar)`: 3 of the 7 categories clear 71.78 — Wearables (139.50), Audio (109.66), Video (84.50). The storewide average is computed once and reused as every group's bar." },
+      ],
+    },
+    {
+      kind: "table",
+      headers: ["Placement", "Shape", "This db, concretely"],
+      rows: [
+        ["WHERE  col > (subquery)", "scalar", "6 products above the 71.78 catalog average"],
+        ["WHERE  id IN (subquery)", "column", "4 customers on the cancelled list (7 rows, dupes harmless)"],
+        ["SELECT (subquery) AS x", "scalar", "16 rows, each stamped with the same 71.78"],
+        ["HAVING AVG(x) > (subquery)", "scalar", "3 categories above 71.78: Wearables, Audio, Video"],
+      ],
+      caption: "One inner query, four seats at the table — the shape never changes, the seat decides the effect.",
+    },
+  ],
   takeaway: "A subquery answers the inner question first — one value for a scalar comparison, one column for IN — and the NOT IN landmine means: never trust it on a nullable column.",
 };

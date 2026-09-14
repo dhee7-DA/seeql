@@ -184,5 +184,35 @@ export const lesson38: Lesson = {
       ordered: true,
     },
   ],
+  deep: [
+    {
+      kind: "mind",
+      text: "Every two-level question hides a **denominator choice**: the same 34,833.28 of lifetime revenue divides by 103 orders (338.19, the average ORDER) or by 16 customers (2,177.08, the average CUSTOMER) — and 'beats average' is a different shortlist under each bar. Staging isn't bureaucracy; it's how you *declare* the denominator: build `spends` (one row per customer) and the AVG over that stage can only mean the customer bar. The stage is where units become unambiguous — which is why every VIP-list bug trace ends at the same question: *which average did you actually compute?*",
+    },
+    {
+      kind: "engine",
+      title: "the VIP pipeline, end to end",
+      steps: [
+        "**Stage** — `spends`: 103 orders GROUP BY customer → 16 rows summing to 34,833.28. Run it alone; eyeball Alice 7,262.35 on top and a 444.80 floor before trusting anything downstream.",
+        "**Bar** — `AVG(spend)` over the stage = 2,177.08. This is the number the brief meant — and it can only exist AFTER the stage, as an aggregate of aggregates.",
+        "**Filter** — `spend > 2,177.08` keeps five: Alice 7,262.35 (EU), Emma 6,640.56 (US), Grace 4,574.23, Maya 3,644.56, Chloe 2,667.93.",
+        "**Sanity check** — the bar lands in the wide gap between rank 5 (2,667.93) and rank 6 (1,686.17), so 'five VIPs' is robust, not a knife-edge. If tomorrow's orders shift the count, re-run the stage — nothing was hardcoded.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"`SUM(o.total) > AVG(o.total)` in one level errors out — so I'd notice immediately.\"",
+      truth: "Depends where you put it, and the silent variant is the dangerous one. In WHERE, aggregates are banned outright — *misuse of aggregate function AVG()*, the query refuses to run. In HAVING it **runs and lies**: SQLite compares each customer's lifetime SUM against their own average ORDER (income measured against typical-transaction — different units), and 14 of 16 customers 'pass'. The error teaches; the lie ships. The honest form stages the spends and compares against the staged 2,177.08.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Aggregate of aggregates", r: "`AVG` over per-customer `SUM`s is structurally impossible in one level — a single SELECT can't nest aggregations. That constraint, not style, is why the stage exists: the inner SUM must finish before the outer AVG may begin, whether you spell the stage as a derived table or a CTE." },
+        { c: "Breadth vs volume", r: "Four customers own exactly 4 orders (Isabella, Keiko, Noah, Pedro) — `COUNT(o.status) = 4` would celebrate them. `COUNT(DISTINCT o.status) = 4` keeps only Alice, Emma, Maya, the three who've lived every status. One keyword separates *busy* from *complete*." },
+        { c: "The household bar is harsher to loners", r: "All 16 customers clear the storewide 338.19 at least once, but only 14 clear their own bar — the 2 one-order customers can't beat a crowd of themselves. The 45 stellar orders spread across 14 customers, with Alice, Emma and Maya owning 8 apiece." },
+        { c: "EXISTS vs IN, settled in one brief", r: "*Pending right now*: both spellings return the same 8 customers here, because `customer_id` is NOT NULL. The choice matters on nullable columns — lesson 25's shipped_at receipt shows NOT IN collapsing to 0 while NOT EXISTS keeps answering. When in doubt, probe existence." },
+      ],
+    },
+  ],
   takeaway: "Two-level questions die in one level: stage the summary (spends), compare against the staged average, probe existence with EXISTS, test breadth with COUNT(DISTINCT) — and let the CTE names document the recipe.",
 };
