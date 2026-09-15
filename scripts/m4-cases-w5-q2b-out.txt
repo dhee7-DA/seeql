@@ -1,0 +1,101 @@
+I2 band bounds: [
+  {
+    lo: 57.42150000000001,
+    hi: 78.95456250000001,
+  }
+]
+I3 band members: [
+  {
+    name: "Bluetooth Speaker Mini",
+    price: 59.99,
+  }, {
+    name: "Cycling Jersey Pro",
+    price: 65,
+  }
+]
+J1 pay>avg: [
+  {
+    n: 12,
+  }
+]
+J2 pay avg/n: [
+  {
+    v: 257822.22222222222,
+    n: 27,
+  }
+]
+K1 open>paid-avg: [
+  {
+    n: 3,
+  }
+]
+K2 open>overall-avg: [
+  {
+    n: 3,
+  }
+]
+L1 above-runner-up: [
+  {
+    n: 1,
+  }
+]
+L2 runner-up value: [
+  {
+    v: 945.21,
+  }
+]
+M1 exp>max/2: [
+  {
+    n: 15,
+  }
+]
+N1 prod<max/2: [
+  {
+    n: 12,
+  }
+]
+N2 max price: [
+  {
+    v: 199.99,
+  }
+]
+O1 inv>void: [
+  {
+    n: 26,
+  }
+]
+O2 inv<void: [
+  {
+    n: 1,
+  }
+]
+O3 void amount: [
+  {
+    v: 92500,
+  }
+]
+P1 vendors>ledger-avg: [
+  {
+    n: 2,
+  }
+]
+P2 vendor avgs: [
+  {
+    vendor: "AdWorks Media",
+    a: 32642.85714285714,
+  }, {
+    vendor: "Atlas Property GmbH",
+    a: 120000,
+  }, {
+    vendor: "DevTools Inc",
+    a: 30500,
+  }, {
+    vendor: "Skyline Travel",
+    a: 84033.33333333333,
+  }
+]
+P3 ledger avg: [
+  {
+    v: 70600,
+  }
+]

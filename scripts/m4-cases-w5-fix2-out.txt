@@ -1,0 +1,86 @@
+Q1 invoiced by city: [
+  {
+    city: "Austin",
+    n: 1,
+  }, {
+    city: "Berlin",
+    n: 1,
+  }, {
+    city: "Chicago",
+    n: 1,
+  }, {
+    city: "Cork",
+    n: 1,
+  }, {
+    city: "London",
+    n: 1,
+  }, {
+    city: "Lyon",
+    n: 1,
+  }, {
+    city: "Madrid",
+    n: 1,
+  }, {
+    city: "Milan",
+    n: 1,
+  }, {
+    city: "Mumbai",
+    n: 1,
+  }, {
+    city: "Osaka",
+    n: 1,
+  }, {
+    city: "Seoul",
+    n: 1,
+  }
+]
+Q2 cs-1109 Fitness fill: [
+  {
+    n: 7,
+  }
+]
+Q3 cs-1109 Apparel fill: [
+  {
+    n: 10,
+  }
+]
+Q4 expense duplicate vendor+amount rows: [
+  {
+    n: 18,
+  }
+]
+Q5 duplicate amount_pairs: [
+  {
+    vendor: "Atlas Property GmbH",
+    amount_cents: 120000,
+    n: 14,
+  }, {
+    vendor: "DevTools Inc",
+    amount_cents: 29900,
+    n: 4,
+  }
+]
+Q6 duplicate amounts vendor-free: [
+  {
+    amount_cents: 29900,
+    n: 4,
+  }, {
+    amount_cents: 120000,
+    n: 14,
+  }
+]
+Q7 invoices id-projection misfill (cs-1102): [
+  {
+    n: 2,
+  }
+]
+Q8 cs-1102 correct fill: [
+  {
+    n: 2,
+  }
+]
+Q9 amount_cents projection misfill: [
+  {
+    n: 0,
+  }
+]

@@ -1,0 +1,17 @@
+R1 spent_on+amount dup pairs: []
+R2 vendor+spent_on dup pairs: []
+R3 id+amount groups>1: [
+  {
+    n: 0,
+  }
+]
+R4 vendor+id groups>1: [
+  {
+    n: 0,
+  }
+]
+R5 category+amount bare-vendor resolve: [
+  {
+    n: 18,
+  }
+]

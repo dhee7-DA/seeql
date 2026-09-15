@@ -1,0 +1,85 @@
+A1 orders>delivered-avg: [
+  {
+    n: 49,
+  }
+]
+A2 delivered avg: [
+  {
+    v: 299.44365384615384,
+  }
+]
+B1 min above avg: [
+  {
+    m: 79,
+  }
+]
+C1 invoices>avg: [
+  {
+    n: 12,
+  }
+]
+C2 invoices<avg: [
+  {
+    n: 16,
+  }
+]
+D1 exp>2xmin: [
+  {
+    n: 17,
+  }
+]
+D2 exp=min: [
+  {
+    n: 1,
+  }
+]
+E1 sup>avg-rating: [
+  {
+    n: 3,
+  }
+]
+E2 sup avg rating: [
+  {
+    v: 4.3,
+  }
+]
+E3 sup<avg: [
+  {
+    n: 3,
+  }
+]
+F1 pending>shipped-avg: [
+  {
+    n: 5,
+  }
+]
+G1 orders<shipped-avg: [
+  {
+    n: 69,
+  }
+]
+H1 invoices=avg: [
+  {
+    n: 0,
+  }
+]
+I1 band .8-1.1: [
+  {
+    n: 2,
+  }
+]
+1 | // Wave-5 q2 (scalar subquery) block probes — cs-1116..1130 figures.
+2 | import { Database } from "bun:sqlite";
+3 | const db = new Database("db/custom.db", { readonly: true });
+4 | const q = (sql: string) => db.query(sql).all();
+                                  ^
+SQLiteError: no such column: price
+      errno: 1,
+ byteOffset: 19,
+
+      at prepare (bun:sqlite:345:37)
+      at query (bun:sqlite:367:28)
+      at q (/home/z/my-project/scripts/m4-cases-w5-q2-probes.ts:4:31)
+      at /home/z/my-project/scripts/m4-cases-w5-q2-probes.ts:29:32
+
+Bun v1.3.14 (Linux x64 baseline)
