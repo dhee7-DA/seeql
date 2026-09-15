@@ -1,0 +1,8 @@
+Z01 Electronics US: [{"n":1}]
+Z02 Electronics LATAM: [{"n":1}]
+Z03 open-club customers: [{"n":6}]
+Z04 pending min: [{"id":12,"total":148.28}]
+Z05 orders > avg: [{"n":42}]
+Z06 lines at vendors with row >100000: [{"n":17}]
+Z07 invoice counts cust 3/8/16: [{"customer_id":3,"n":1},{"customer_id":8,"n":1},{"customer_id":16,"n":1}]
+Z08 delivered-club total: [{"n":15}]
