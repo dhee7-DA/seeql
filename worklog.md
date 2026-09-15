@@ -1456,3 +1456,42 @@ Stage Summary:
 - M4 CASES: 200/300 (waves 1–4, cs-901–1100). Deck 1100.
 - Committed 8b3bef6.
 - Next: wave 5 (cs-1101–1150, q1–q4 deepening, wave-3 split) → wave 6 (cs-1151–1200, q5–q8) → M5 (window) → P4.
+
+---
+Task ID: m4-cases-w5
+Agent: Super Z (main agent)
+Task: M4 case library wave 5 — cases-q5.ts (cs-1101–1150, q1 IN / q2 scalar / q3 EXISTS / q4 correlated deepening)
+
+Work Log:
+- STALE-HANDOFF note: resumed summary claimed wave 2 in progress — git truth: waves 1–4 committed (through 8b3bef6, cs-901–1100); checkpoint commit f45681e held a TRUNCATED cases-q5.ts (15 q1 cases, missing array closer). Actual frontier on resume = finish wave 5.
+- Repaired truncation; file-audited the inherited q1 block: 7 fails (4× no nested SELECT, 5× 2-slot minimum). Redesigned all via probe batches (m4-cases-w5-fix{,2,3}.ts): invoice-gated clubs, two-stage vendor card, row-value recurring-billing sweep, table-swap slot for the zero-result collision case.
+- Status truth re-verified (memory said pending 52 — WRONG): cancelled 7 / delivered 52 / pending 14 / shipped 30; shipped SUM 11996.72/30 = 399.89 cross-check.
+- Structural findings: every city holds ≤1 resident → city-list slots cannot discriminate (cs-1102 rebuilt around one city slot + invoice-key slot); no doubled order tickets exist → cs-1112 rebuilt as recurring-billing row-value sweep (Atlas rent ×14 + DevTools seats ×4 = 18); 'category' grouping ≡ vendor grouping for distractor purposes (R5 = 18 SAME) — excluded.
+- Drafted q2 (cs-1116–1130) via 3 probe batches: bar cases off delivered/shipped/paid/storewide averages, OFFSET runner-up scalar, half-ceiling screens, void yardstick; q3 (cs-1131–1140): double-gate NOT EXISTS, outward-resolution trap (unqualified amount_cents tautology → 36), honest everyone-beats-average (16; NOT EXISTS 0), open-and-void overlap 1; q4 (cs-1141–1150): supplier-bench 8, per-account flags (11/45/9), invoice-ledger unit test ×100, wide benches, Maya leaderboard, personal-best ceilings (>= incl. self).
+- Audit-caught fixes: marker-order (cs-1111), wrong prose figures purged (16→12 wearables, 200000-bar 17→31, SUM-bar → 25416, ASC-fill → 101, AVG/2 → 22, vendor-MIN → 16), duplicate slot answers forbidden (cs-1147/1148 restructured), invalid 'billing' universe → month-close ×3 + refund-audit, cs-1122 under-count distractor (MAX 845.92 and SUM 11996.72 both keep all 7 cancelled under → MIN 32.01), cs-1146 left-agg insensitivity (single-invoice qualifiers → slotted right-side agg + factor; SUM-right 6, ×200 9, ×500 6), cs-1120 filled-SQL dup vs cs-1017 → two-column grade projection.
+- Wired casesQ5 into index.ts; check-dup-q5.ts created (ids sequential, topics q1 15/q2 15/q3 10/q4 10).
+- Gates: file audit 50/50 (17e/16m/17h); full deck 1150/1150 PASS 0 dups; tsc src/ 0 errors.
+- E2E (agent-browser): drawer "1150 CASE FILES · MODULES 1–4 TOOLKIT", tiers 385/383/382, chips q1 45/q2 45/q3 30/q4 30; eval-loop advanced 1100 Next-steps to cs-1101; solved chip→slot → CLOSED +10 XP (ledger case:cs-1101:10), walkthrough rendered, 0 page errors; shot scripts/shots/m4-w5-cs1101-closed.png.
+
+Stage Summary:
+- M4 CASES: 250/300 (waves 1–5, cs-901–1150). Deck 1150. Committed b442767.
+- Next: wave 6 (cs-1151–1200, q5 15 / q6 15 / q7 10 / q8 10 deepening) → M5 (window functions, forced OVER()) → P4 micro-fixes ("Eight modules" hardcode at learn-app.tsx:540 + landing.tsx:282).
+
+---
+Task ID: m4-cases-w6
+Agent: Super Z (main agent)
+Task: M4 case library wave 6 — cases-q6.ts (cs-1151–1200, q5 derived / q6 CTEs / q7 recursive / q8 capstone deepening) — FINAL M4 WAVE
+
+Work Log:
+- Receipts: scripts/m4-cases-w6-probes{,2}.ts (V/W/R/Z/X series, tee'd to m4-cases-w6-out.txt + w6b). New figures: month buckets 14 (top 2024-02 n=9), region spend EU 15089.23/APAC 11605.45/US 7286.16/LATAM 852.44, region shipped EU 5262.94/US 4226.10/APAC 2507.68, category baskets Accessories 54…Fitness 13, category avg prices Wearables 139.5…Accessories 27.49, supplier maxes 199.99…39.99, bench avgs 72/69.5/74.83/139.66/43/31, method avgs card 2335.25 n16 / wire 2931.64 n11, invoice months 13, VIP>1000 over orders = 8 members pot 29033.37, paid pot 6644300 / open pot 1960900, paid-vs-open gap 4683400, paid-above-blended 4 / open 0, delivered-above-staged 5, repeat-billing 8 (>2 → 5), split settlements 5, US delivered 5 / US shipped 10 / APAC delivered 21, APAC whales 4 (EU 3, >2000 → 2), products >2x bench 1 (>3x → 0), region order counts EU 45/APAC 37/US 19/LATAM 2, region avgs LATAM 426.22 top.
+- Recursive ladders (probe-verified): countdown 20/-3/>3 → 7; doubling <100 → 8 (overshoot 128); halving 5000 → 13; weekly Q1 → 10 (Mar 3 overshoot); monthly 2024-01-15<2025-01-15 → 13; triangle accumulator → 55; overshoot <=500 → peak 512; countdown 30/-4 → 8; yearly → 7; 900//3/>100 → 3; cross-ladder 6 days → reach 32. RECURSIVE-HANG DISCIPLINE held: arm slots operator-form only (no ascending-step distractors anywhere), guards numeric → all distractor fills terminate.
+- Drafted 50 cases in 8 blocks. Notable shapes: derived two-deep shipped map, staged-census bars, squeeze bands on vendor ceilings and supplier maxes, staged-mean-of-staged-totals pyramids (delivered 5, paid-vs-blended 4), ledger-line tier with multiplier slot; CTE chains incl. twice-read pots (open (6, 1960900)), settlement gap p−o = 4683400, 3-link whale tier (×2 par → 3), named-bench census with tiebreak, settlement-spread channel note, shadow-CTE lesson skipped (wave-2 owns it); recursive ladders incl. handshake accumulator 55 and cross-column reach drill; capstones: paid-billing podium (Alice 20481), staged sweep (3rd telling of zero-collision via CTE+EXISTS), whale cohort census (8, 29033.37), open premium exposure (3).
+- Audit-caught fixes: 'billing' universe used AGAIN 5× → month-close (recurring lesson!); cs-1173 join-key slot degenerate (o.id and 2 fills produced identical region sums → SUM slot + literal join, distractor AVG flips crown to LATAM 426.22, COUNT excluded as EU-top too); cs-1175 ceiling distractor 75 ≡ correct (74.83 ≤ 75) → 74; cs-1188 MAX(d) step-independent (monthly arm same peak) → COUNT slot; cs-1197 distractor quoting trap (quoted 'amount_cents' → text literal → 0 ≡ correct) → unquoted forms; cs-1193/1195 walkthroughs below 220-char floor → padded; SIX recursive walkthrough arithmetic errors fixed pre-audit (countdown -1 arm = 18 not 8, guard 10 = 5 not 4, June horizon = 6 not 5, fortnightly = 6 not 5, mid-Feb guard = 8 not 7, monthly year-arm = 73 not 72, five-year = 3 not 2) + cs-1187 seed-3 → 50 (not 53), +2 arm → 31 (not 21); cs-1189 seed distractor 600 ≡ 3 rungs → 1200.
+- Wired casesQ6 into index.ts; check-dup-q6.ts created.
+- Gates: file audit 50/50 (17e/16m/17h); FULL DECK 1200/1200 PASS 0 dups (0 title, 0 filled-SQL); topics cumulative q1–q4 45/45/30/30 + q5 45/q6 45/q7 30/q8 30; ids 1151–1200 sequential (no missing/extra); tsc src/ 0 errors.
+- E2E (agent-browser): drawer "1200 CASE FILES · MODULES 1–4 TOOLKIT", tiers 402/399/399, chips Derived 45/CTEs 45/Recursive 30/Capstone 30; eval-loop advanced 1150 Next-steps to cs-1151; solved COUNT/status/7 → CLOSED +10 XP (ledger case:cs-1151:10), walkthrough rendered, 0 page errors; shot scripts/shots/m4-w6-cs1151-closed.png.
+
+Stage Summary:
+- M4 CASE LIBRARY COMPLETE: 300/300 (cs-901–1200 across 6 waves). Deck 1200 cases + 1835 drill questions.
+- Sidebar totals now read "9 modules · 57 lessons · 430 graded queries" live.
+- Next per locked order: M5 (window-function cases, all forced OVER()) → P4 micro-fixes ("Eight modules" hardcode at learn-app.tsx:540 + landing.tsx:282 — note sidebar already dynamic; P4 targets the two hardcoded strings).

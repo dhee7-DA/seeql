@@ -1,0 +1,196 @@
+V1 status stage >7: [
+  {
+    n: 3,
+  }
+]
+V2 status stage =7: [
+  {
+    n: 1,
+  }
+]
+V3 region spend stage: [
+  {
+    region: "EU",
+    s: 15089.23,
+  }, {
+    region: "APAC",
+    s: 11605.45,
+  }, {
+    region: "US",
+    s: 7286.16,
+  }, {
+    region: "LATAM",
+    s: 852.44,
+  }
+]
+V4 month stage count: [
+  {
+    n: 14,
+  }
+]
+V5 month stage top: [
+  {
+    m: "2024-02",
+    n: 9,
+  }
+]
+V6 month stage >10: [
+  {
+    n: 0,
+  }
+]
+V7 avg-ticket >400: [
+  {
+    n: 6,
+  }
+]
+V8 avg-ticket >400 busy: [
+  {
+    n: 4,
+  }
+]
+V9 invoice-sum stage >10000: [
+  {
+    n: 3,
+  }
+]
+V10 invoice-sum top: [
+  {
+    customer_id: 1,
+    s: 2662900,
+  }
+]
+V11 vendor-avg stage >400: [
+  {
+    n: 2,
+  }
+]
+V12 product-stage per supplier max: [
+  {
+    n: 3,
+  }
+]
+V13 category basket stage min: [
+  {
+    category: "Fitness",
+    n: 13,
+  }
+]
+V14 two-deep region gate EU: [
+  {
+    v: 5262.94,
+  }
+]
+V15 stage-with-having: [
+  {
+    n: 4,
+  }
+]
+W1 statuses >20 via CTE: [
+  {
+    n: 2,
+  }
+]
+W2 top month via CTE: [
+  {
+    mo: "2024-02",
+    n: 9,
+  }
+]
+W3 chain above-avg spenders: [
+  {
+    n: 5,
+  }
+]
+W4 twice-referenced vip: [
+  {
+    n: 29041.37,
+  }
+]
+W5 region podium via CTE: [
+  {
+    region: "EU",
+    v: 15089.23,
+  }
+]
+W6 shadow-error: [
+  {
+    n: 28,
+  }
+]
+R1 countdown 20 step 3: [
+  {
+    n: 7,
+  }
+]
+R2 doubling <100: [
+  {
+    n: 8,
+  }
+]
+R3 halving 5000 to 1: [
+  {
+    n: 13,
+  }
+]
+R4 week ladder Q1: [
+  {
+    n: 10,
+  }
+]
+R5 month ticks 13: [
+  {
+    n: 13,
+  }
+]
+R6 triangle 10: [
+  {
+    s: 55,
+  }
+]
+R7 overshoot 512: [
+  {
+    m: 512,
+  }
+]
+R8 countdown rungs >8: [
+  {
+    n: 8,
+  }
+]
+R9 year ticks: [
+  {
+    n: 7,
+  }
+]
+R10 halving bound 100: [
+  {
+    n: 3,
+  }
+]
+Z1 paid-billing podium top: [
+  {
+    name: "Alice Chen",
+    v: 20481,
+  }
+]
+Z2 payments per invoice stage: [
+  {
+    n: 5,
+  }
+]
+Z3 whale-in-cohort Farid check: [
+  {
+    n: 4,
+  }
+]
+Z4 expense-vs-invoice overlap vendors: [
+  {
+    n: 1,
+  }
+]
+Z5 US delivered sample: [
+  {
+    n: 5,
+  }
+]
