@@ -687,7 +687,7 @@ WHERE total {2} (
     ],
     distractors: ["'delivered'", "MAX", "<"],
     walkthrough:
-      "The inner scalar averages only the 30 shipped orders — a bar of about 399.89, higher than the storewide 338.19 because shipped baskets skew big. The outer comparison keeps the 34 orders that clear it. Rebuilding the bar from delivered orders drops it to about 299.44 and widens the queue to 49, MAX would raise the bar to the 1088.44 ceiling and queue nobody, and < would count the 69 orders below the bar — the complement the checklist did not ask for.",
+      "The inner scalar averages only the 30 shipped orders — a bar of about 399.89, higher than the storewide 338.19 because shipped baskets skew big. The outer comparison keeps the 34 orders that clear it. Rebuilding the bar from delivered orders drops it to about 299.44 and widens the queue to 49, MAX would raise the bar to the shipped ceiling of 845.92 — the store's biggest tickets are still pending — and queue just the two whales above it, while < would count the 69 orders below the bar — the complement the checklist did not ask for.",
   },
   {
     id: "cs-1017",
@@ -1983,7 +1983,7 @@ LIMIT 1;`,
     ],
     distractors: ["MAX", "'shipped'", "ASC"],
     walkthrough:
-      "The correlated scalar sums delivered totals per account, and the descending sort crowns Grace Kim at 3054.89 — NOT Alice Chen, whose 2961.81 delivered falls short of her cancelled-heavy 7262.35 lifetime figure. The delivered ledger reshuffles the throne. MAX would crown the biggest single delivered ticket (Farid's 1088.44) instead of the biggest delivered total, summing shipped would crown Emma Wilson's in-transit 3822.38, and ASC would lead the annex with Liam's NULL — no delivered orders at all.",
+      "The correlated scalar sums delivered totals per account, and the descending sort crowns Grace Kim at 3054.89 — NOT Alice Chen, whose 2961.81 delivered falls short of her cancelled-heavy 7262.35 lifetime figure. The delivered ledger reshuffles the throne. MAX would crown the biggest single delivered ticket (Bruno's 752.96) instead of the biggest delivered total, summing shipped would crown Emma Wilson's in-transit 3822.38, and ASC would lead the annex with Liam's NULL — no delivered orders at all.",
   },
   {
     id: "cs-1049",

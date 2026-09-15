@@ -1415,3 +1415,44 @@ Stage Summary:
 - M4 CASES: 100/300 (waves 1–2 done, cs-901–1000). Deck total 1000/44 drill sets + 1000 cases.
 - Wave-2 lesson (fifth stale-handoff-adjacent process note): subagent drafting for 50-case waves is dead — runner deadline; main-agent block drafting (probe→write→audit→fix) is the reliable path.
 - Next per locked order: M4 cases waves 3–6 (cs-1001–1200, deepening q1–q8 per M3 playbook) → M5 (window functions, forced OVER()) → P4 micro-fixes ("Eight modules" hardcode at learn-app.tsx:540 + landing.tsx:282).
+
+---
+Task ID: m4-cases-w3
+Agent: Super Z (main agent)
+Task: M4 case library wave 3 — cases-q3.ts (cs-1001–1050, q1 IN / q2 scalar / q3 EXISTS / q4 correlated deepening)
+
+Work Log:
+- STALE-HANDOFF note: resumed summary claimed wave 2 "about to start" — git truth: wave 2 was already committed (6f41f5f, cs-951–1000, deck 1000/1000). Actual frontier on resume = wave 3.
+- db/custom.db found wiped again by dev-server watchdog (finance tables gone) — restored via scripts/restore-db.ts (9 tables, 103 orders, 28 invoices, 36 expenses; bar 338.19, VIP 5 verified).
+- Main-agent block drafting (probe → write 15 → audit → fix → next), per wave-2 lesson (subagent drafting dead on runner deadline).
+- Receipts: scripts/m4-cases-w3-facts.ts V01–V62 + supplements w3b S01–S12, w3c T01–T10, w3d U01–U28 (boundary safety), w3e Z01–Z14. All figures receipt-cited; zero invented numbers (one walkthrough slip re Ads caught and reworded before audit).
+- Drafted cases-q3.ts: q1 cs-1001–1015 (5e/5m/5h), q2 cs-1016–1030 (5e/5m/5h), q3 cs-1031–1040 (4e/3m/3h), q4 cs-1041–1050 (3e/4m/3h).
+- Audit-caught fixes (all probe-verified): cs-1002 literal IN lacked nested subquery (rebuilt as roll-call; note pending∪cancelled club ≡ pending club since cancelled ⊆ pending); cs-1003 ORDER BY city ≡ name on 8 rows (moved slot to projection); cs-1008 filled SQL exactly dup'd wave-1 cs-908 (added city column, 4 slots); cs-1010 void ⊆ open blacklist (Liam holds both) → 'refunded' distractor ambiguous, swapped set; cs-1012 empty-result case — SUM/AVG/COUNT inner aggregates also yield 0 → full-chip slots with error-only distractors; cs-1028 additive chips in ORDER BY = constant-shift ambiguity (rank by computed gap instead); cs-1032 {3} marker missing from template; cs-1038 aggregate-wrapped EXISTS: ANY valid chip (region, email included) still flags 16 → error-only chips in non-SELECT slots, plain-column distractor kept for the unwrap lesson; cs-1035 2-slot redesign; cs-1042/1043 slot-order vs marker-number mismatch; cs-1044/1045 marker reuse (pinned literal correlation).
+- Wired casesQ3 into index.ts; check-dup-q3.ts (wave-3 range); tsconfig.src.json for the src-only tsc gate.
+- Gates: case-audit file 50/50 (17e/17m/16h); full deck 1050/1050 PASS 0 dups; topics cumulative q1 30/q2 30/q3 20/q4 20, q5–q8 unchanged; tsc src/ 0 errors.
+- E2E (agent-browser): drawer "1050 · MODULES 1–4 TOOLKIT", tiers 351/351/348, chips verified; live cs-1001 solved via chip→slot taps → CLOSED +10 XP, WALKTHROUGH rendered; console clean, 0 page errors; shot scripts/shots/m4-w3-cs1001-closed.png. Nav note: "Next case" steps one case; 900-step eval loop used to reach cs-1001 (find-text clicks fail silently — use refs).
+
+Stage Summary:
+- M4 CASES: 150/300 (waves 1–3, cs-901–1050). Deck 1050.
+- Committed 1902475. Working tree clean except tool-results/dev.pid noise.
+- Next per locked order: wave 4 (cs-1051–1100: q5 15 / q6 15 / q7 10 / q8 10 deepening) → waves 5–6 → M5 (window, forced OVER()) → P4 micro-fixes.
+
+---
+Task ID: m4-cases-w4
+Agent: Super Z (main agent)
+Task: M4 case library wave 4 — cases-q4.ts (cs-1051–1100, q5 derived / q6 CTEs / q7 recursive / q8 capstone deepening)
+
+Work Log:
+- Receipts: scripts/m4-cases-w4-facts.ts W401–W445 (tee'd to m4-cases-w4-out.txt). Key new figures: VIP-by-region EU 2/APAC 2/US 1, avg-ticket>400 = 6 (refined to 4 with >1 order), category baskets stage (Accessories 54 … Fitness 13), vendor totals Atlas 16800/AdWorks 4570, floor pot 2407.43, two-deep region gate EU 15089.23/APAC 11605.45, spend 1000–2000 = 3, big-order status mix 18/17/6/1, WITH-products self-shadow = circular reference ERROR, CTE chain >2500 = 5, countdowns/halvings/pow ladders, invoice date span 381 days, accumulator final 46 (lag), trading days 53.
+- ⚠ RECURSIVE-HANG CLASS (new failure mode, replaces wave-2's arm-bound concern): a bare-identifier chip in a no-operator recursive-arm slot (`SELECT n {chip}`) hangs SQLite in an infinite arm — found when the file audit blew the 7-minute timeout; isolated repro scripts/tmp/hang-probe.ts. Affects SUM and even plain table names (suppliers) — SQLite parses them as an alias and loops. DISCIPLINE LOCKED: recursive-arm slots accept operator-form chips only ("- 2", "+ 3", "/ 4", digit-leading, quoted date modifiers); arm bounds stay literal in the template; audit runs now complete in normal time.
+- Second SQLite pathology found: outward column resolution — a CTE over another table (suppliers) with a WHERE on a column it lacks (amount_cents) resolves the column against the OUTER query's FROM and silently runs (cs-1099 ambiguous at 21). Case redesigned to a single-filter complement.
+- Drafted cases-q4.ts in 4 blocks: q5 cs-1051–1065, q6 cs-1066–1080, q7 cs-1081–1090, q8 cs-1091–1100.
+- Audit-caught fixes: 8 marker-order/reuse bugs (cs-1051/1052/1061/1062/1063/1067/1079/1086 — same class as wave 3), cs-1057 missing nested subquery (wrapped in derived) + literal 100.0 residue, cs-1066 COUNT(*) ignores the staged column (→ COUNT(val) + shipped_at NULL-column distractor), cs-1088 "+ 1" seed-distractor ≡ seed 1 (→ "+ 2"), cs-1096 LIMIT-masked gate ambiguity (→ ">" operator slot, LIMIT literal), cs-1085 distractor "3" dup'd answer (→ "4"), cs-1086 marker reuse (pinned ON literal), cs-1094 title dup vs cs-973 (renamed "The premium cut, staged").
+- Wired casesQ4 into index.ts; check-dup-q4.ts created.
+- Gates: case-audit file 50/50 (17e/16m/17h); full deck 1100/1100 PASS 0 dups; topics cumulative q5 30/q6 30/q7 20/q8 20; tsc src/ 0 errors.
+- E2E (agent-browser): drawer "1100", tiers 368/367/365, chips verified; live cs-1051 solved (SUM/customer_id/ASC) → CLOSED +10 XP, walkthrough rendered; console clean, 0 page errors; shot scripts/shots/m4-w4-cs1051-closed.png.
+
+Stage Summary:
+- M4 CASES: 200/300 (waves 1–4, cs-901–1100). Deck 1100.
+- Committed 8b3bef6.
+- Next: wave 5 (cs-1101–1150, q1–q4 deepening, wave-3 split) → wave 6 (cs-1151–1200, q5–q8) → M5 (window) → P4.

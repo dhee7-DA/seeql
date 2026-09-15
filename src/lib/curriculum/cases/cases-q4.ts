@@ -325,7 +325,7 @@ ORDER BY n DESC;`,
     ],
     distractors: ["SUM", "MAX", "customer_id"],
     walkthrough:
-      "The stage keeps the 42 orders above the storewide average of about 338.19; grouped by status they read: 18 delivered, 17 shipped, 6 pending — and exactly 1 cancelled, order 74 itself, killed after being the biggest ticket in the book. SUM would produce a dollar mix, MAX would empty the stage entirely, and grouping by customer would dissolve the status story into one row per account.",
+      "The stage keeps the 42 orders above the storewide average of about 338.19; grouped by status they read: 18 delivered, 17 shipped, 6 pending — and exactly 1 cancelled — order 83, a 397.99 ticket that still cleared the bar. SUM would produce a dollar mix, MAX would empty the stage entirely, and grouping by customer would dissolve the status story into one row per account.",
   },
   {
     id: "cs-1059",
