@@ -163,11 +163,13 @@ function auditCase(c: CaseStudy, seen: Map<string, string>): string[] {
   const isM2 = c.topic.startsWith("j");
   const isM3 = c.topic.startsWith("s");
   const isM4 = c.topic.startsWith("q");
+  const isM5 = c.topic.startsWith("t");
   const hasJoin = /\bJOIN\b/i.test(filledCorrect);
   const hasSetOp = /\bUNION\b|\bINTERSECT\b|\bEXCEPT\b/i.test(filledCorrect);
   const hasCase = /\bCASE\b/i.test(filledCorrect);
   const hasSubquery = /\(\s*SELECT\b/i.test(filledCorrect);
   const hasWith = /\bWITH\b/i.test(filledCorrect);
+  const hasOver = /\bOVER\s*\(/i.test(filledCorrect);
   if (isM3) {
     if (["s1", "s2", "s3", "s4", "s5"].includes(c.topic) && !hasSetOp)
       add("Module 3 set-op topic but no UNION/INTERSECT/EXCEPT — these cases must compare or combine result sets");
@@ -184,11 +186,28 @@ function auditCase(c: CaseStudy, seen: Map<string, string>): string[] {
       add("q7 cases must use WITH RECURSIVE");
     if (c.topic === "q8" && !hasSubquery && !hasWith)
       add("q8 capstone must embed a subquery or stage a CTE");
+  } else if (isM5) {
+    if (["t1"].includes(c.topic) && !/\b(SUBSTR|SUBSTRING|INSTR|UPPER|LOWER|LENGTH|TRIM|REPLACE|CAST)\b/i.test(filledCorrect))
+      add("t1 text topic but no SUBSTR/INSTR/UPPER/LOWER/LENGTH/TRIM/REPLACE/CAST — these cases must reshape values");
+    if (c.topic === "t2" && !/\b(COALESCE|IFNULL|NULLIF)\b/i.test(filledCorrect))
+      add("t2 fallback topic but no COALESCE/IFNULL/NULLIF — these cases must guard NULLs");
+    if (["t3", "t4"].includes(c.topic) && !/\b(STRFTIME|JULIANDAY|DATE|DATETIME)\s*\(/i.test(filledCorrect))
+      add("Module 5 date topic but no date function — t3/t4 cases must slice the calendar");
+    if (["t5", "t6", "t7", "t8"].includes(c.topic) && !hasOver)
+      add("Module 5 window topic but no OVER() — window cases must keep every row (forced OVER())");
+    if (c.topic === "t5" && !/\b(ROW_NUMBER|RANK|DENSE_RANK)\s*\(/i.test(filledCorrect))
+      add("t5 cases must use ROW_NUMBER/RANK/DENSE_RANK");
+    if (c.topic === "t6" && !/\bPARTITION\s+BY\b/i.test(filledCorrect))
+      add("t6 cases must use PARTITION BY");
+    if (c.topic === "t7" && !/\b(LAG|LEAD)\s*\(/i.test(filledCorrect))
+      add("t7 cases must use LAG or LEAD");
+    if (selects >= 2 && !hasSubquery && !hasWith)
+      add(`${selects} SELECT keywords with no subquery or WITH — M5 window queries stage via derived tables or CTEs, not bare compounds`);
   } else {
     if (selects !== 1) add(`${selects} SELECT keywords — subqueries not allowed in Module 1–2 cases`);
   }
   if (isM2 && !hasJoin) add("Module 2 topic but no JOIN keyword — join cases must join");
-  if (!isM2 && !isM3 && !isM4 && hasJoin) add("JOIN found — Module 1 cases are single-table");
+  if (!isM2 && !isM3 && !isM4 && !isM5 && hasJoin) add("JOIN found — Module 1 cases are single-table");
   if (!/^\s*(SELECT|WITH)\b/i.test(filledCorrect)) add("filled query does not start with SELECT or WITH");
 
   // execution + number verification

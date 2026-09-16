@@ -1,0 +1,20 @@
+T186 ghost customers detail
+   2 | Bruno Silva | LATAM | 1 | 2023-11-17 | 23  ;;  4 | Dmitri Volkov | EU | 0 | 2023-12-19 | 20  ;;  6 | Farid Nasser | APAC | 1 | 2024-01-22 | 19  ;;  11 | Keiko Sato | APAC | 0 | 2024-04-02 | 22  ;;  14 | Noah Meyer | EU | 1 | 2024-05-27 | 22
+T187 ghosts active=0
+   2
+T188 ghosts min created
+   2023-11-17
+T189 payments-table ghost count
+   16
+T190 delivered weekday census
+   0 | 10  ;;  5 | 9  ;;  3 | 9  ;;  1 | 9  ;;  2 | 6  ;;  6 | 5  ;;  4 | 4
+T191 shipped weekday census
+   2 | 6  ;;  1 | 6  ;;  5 | 5  ;;  3 | 5  ;;  4 | 3  ;;  0 | 3  ;;  6 | 2
+T192 pace via shipped months
+   8
+T193 unpaid numbers+ids
+   18 | INV-2024-018  ;;  21 | INV-2024-021  ;;  24 | INV-2025-024  ;;  26 | INV-2025-026  ;;  27 | INV-2025-027  ;;  28 | INV-2025-028
+T194 customers name-length avg
+   11.38
+T195 lag2 total over 300
+   10

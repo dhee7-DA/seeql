@@ -1,0 +1,100 @@
+T136 ledger credit-zero count
+   40
+T137 ledger debit-zero count
+   40
+T138 ledger both-zero count
+   0
+T139 ledger date span
+   2024-01-31 | 2025-02-28 | 80
+T140 ledger cash credit-zero
+   13
+T141 EU o-names
+   7
+T142 non-EU o-names
+   4
+T143 email length spread
+   19 | 24
+T144 emails longer than 30
+   0
+T145 void invoice detail
+   INV-2024-011 | 92500 | 2024-07-24 | 2024-08-23
+T146 late payments (paid>due)
+   4
+T147 never-invoiced customers
+   5
+T148 unpaid invoice ids
+   18  ;;  21  ;;  24  ;;  26  ;;  27  ;;  28
+T149 unpaid ids over 25
+   3
+T150 first-pay-never ids over 25
+   3
+T151 never-shipped totals over 300
+   9
+T152 never-shipped totals over 400
+   5
+T153 zero-fill ids over 25
+   3
+T154 split ids over 25
+   0
+T155 single-pay ids over 25
+   0
+T156 active o-names
+   9
+T157 names starting with o
+   1
+T158 month with 8 orders count
+   4
+T159 month with 7 orders count
+   5
+T160 months with delivered
+   14
+T161 months rev over 3000
+   3
+T162 2024-02 delivered rev
+   1798.3
+T163 expenses Rent pot
+   1680000
+T164 expenses Ads pot
+   457000
+T165 expenses months with rent
+   14
+T166 payments methods
+   card | 16  ;;  wire | 11
+T167 orders total over 300 count
+   49
+T168 delivered lag exactly 3
+   18
+T169 delivered lag exactly 2
+   19
+T170 shipped-status lag 4
+   10
+T171 orders 2024-02 not delivered
+   5
+T172 pending by month
+   2024-01 | 2  ;;  2024-02 | 1  ;;  2024-03 | 2  ;;  2024-06 | 2  ;;  2024-07 | 1  ;;  2024-10 | 2  ;;  2024-11 | 1  ;;  2024-12 | 1  ;;  2025-01 | 1  ;;  2025-02 | 1
+T173 2025 delivered rev
+   1431.46
+T174 2025-01 rev
+   1669.5
+T175 2025-02 rev
+   2390.53
+T176 months rev over 2500
+   6
+T177 signup 2024 count
+   12
+T178 day-2 orders
+   7
+T179 lastnames ending s
+   1
+T180 products starting with digit
+   1
+T181 pending totals pot
+   6113
+T182 suppliers EU count
+   2
+T183 o-city customers
+   8
+T184 invoice 2024 count
+   23
+T185 invoice 2025 count
+   5

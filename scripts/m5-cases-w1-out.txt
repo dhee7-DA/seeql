@@ -1,0 +1,150 @@
+T01 customers all
+   1 | Alice Chen | alice.chen@example.com | Berlin | EU | 1 | 2023-11-02  ;;  2 | Bruno Silva | bruno.silva@example.com | São Paulo | LATAM | 1 | 2023-11-17  ;;  3 | Chloe Dubois | chloe.dubois@example.com | Lyon | EU | 1 | 2023-12-05  ;;  4 | Dmitri Volkov | d.volkov@example.com | Tallinn | EU | 0 | 2023-12-19  ;;  5 | Emma Wilson | emma.wilson@example.com | Austin | US | 1 | 2024-01-08  ;;  6 | Farid Nasser | farid.n@example.com | Dubai | APAC | 1 | 2024-01-22  ;;  7 | Grace Kim | grace.kim@example.com | Seoul | APAC | 1 | 2024-02-03  ;;  8 | Hiro Tanaka | hiro.tanaka@example.com | Osaka | APAC | 1 | 2024-02-14  ;;  9 | Isabella Rossi | bella.rossi@example.com | Milan | EU | 1 | 2024-03-01  ;;  10 | Jamal Wright | jamal.wright@example.com | Chicago | US | 1 | 2024-03-18  ;;  11 | Keiko Sato | keiko.sato@example.com | Nagoya | APAC | 0 | 2024-04-02  ;;  12 | Liam O'Brien | liam.obrien@example.com | Cork | EU | 1 | 2024-04-21  ;;  13 | Maya Patel | maya.patel@example.com | Mumbai | APAC | 1 | 2024-05-09  ;;  14 | Noah Meyer | noah.meyer@example.com | Hamburg | EU | 1 | 2024-05-27  ;;  15 | Olivia Brown | olivia.brown@example.com | London | EU | 1 | 2024-06-11  ;;  16 | Pedro Alvarez | pedro.alv@example.com | Madrid | EU | 1 | 2024-07-03
+T02 products all
+   1 | Mechanical Keyboard K1 | Electronics | 89.99 | 120 | 1  ;;  2 | Wireless Mouse M3 | Electronics | 34.5 | 300 | 2  ;;  3 | USB-C Hub 7-in-1 | Electronics | 49 | 85 | 3  ;;  4 | Noise-Canceling Headset | Audio | 149.99 | 60 | 4  ;;  5 | Studio Desktop Mic | Audio | 119 | 45 | 5  ;;  6 | Bluetooth Speaker Mini | Audio | 59.99 | 210 | 6  ;;  7 | 4K Webcam Pro | Video | 129 | 70 | 1  ;;  8 | Ring Light 14" | Video | 39.99 | 150 | 2  ;;  9 | HDMI 2.1 Cable 2m | Accessories | 14.99 | 500 | 3  ;;  10 | Laptop Stand Aluminum | Accessories | 42.5 | 180 | 4  ;;  11 | Desk Mat Extended | Accessories | 24.99 | 260 | 5  ;;  12 | Fitness Band X2 | Wearables | 79 | 95 | 6  ;;  13 | Smart Watch S | Wearables | 199.99 | 40 | 1  ;;  14 | Running Socks 3-pack | Apparel | 18.5 | 400 | 2  ;;  15 | Cycling Jersey Pro | Apparel | 65 | 110 | 3  ;;  16 | Yoga Mat Eco 6mm | Fitness | 32 | 220 | 4
+T03 suppliers all
+   1 | Nordic Gadgets AB | EU | 4.6  ;;  2 | Shenzhen Electro | APAC | 4.1  ;;  3 | Pacific Textiles | APAC | 3.9  ;;  4 | Midwest Hardware Co | US | 4.4  ;;  5 | Alpine Audio GmbH | EU | 4.8  ;;  6 | Andes Naturals SA | LATAM | 4
+T04 status census
+   delivered | 52  ;;  shipped | 30  ;;  pending | 14  ;;  cancelled | 7
+T05 orders date span
+   2024-01-01 | 2025-02-27 | 103
+T06 customers date span
+   2023-11-02 | 2024-07-03 | 16
+T07 shipped_at NULL census
+   cancelled | 7  ;;  pending | 14
+T08 shipped_at present census
+   delivered | 52  ;;  shipped | 30
+T09 name length spread
+   9 | 1  ;;  10 | 4  ;;  11 | 3  ;;  12 | 5  ;;  13 | 2  ;;  14 | 1
+T10 longest names
+   Isabella Rossi | 14  ;;  Dmitri Volkov | 13  ;;  Pedro Alvarez | 13  ;;  Chloe Dubois | 12  ;;  Farid Nasser | 12
+T11 shortest names
+   Grace Kim | 9  ;;  Alice Chen | 10  ;;  Keiko Sato | 10  ;;  Maya Patel | 10  ;;  Noah Meyer | 10
+T12 email domain census
+   example.com | 16
+T13 city length spread
+   São Paulo | 9  ;;  Chicago | 7  ;;  Hamburg | 7  ;;  Tallinn | 7  ;;  Austin | 6  ;;  Berlin | 6  ;;  London | 6  ;;  Madrid | 6  ;;  Mumbai | 6  ;;  Nagoya | 6  ;;  Dubai | 5  ;;  Milan | 5  ;;  Osaka | 5  ;;  Seoul | 5  ;;  Cork | 4  ;;  Lyon | 4
+T14 upper city distinct
+   AUSTIN  ;;  BERLIN  ;;  CHICAGO  ;;  CORK  ;;  DUBAI  ;;  HAMBURG  ;;  LONDON  ;;  LYON  ;;  MADRID  ;;  MILAN  ;;  MUMBAI  ;;  NAGOYA  ;;  OSAKA  ;;  SEOUL  ;;  SãO PAULO  ;;  TALLINN
+T15 product name lengths
+   Noise-Canceling Headset | 23  ;;  Mechanical Keyboard K1 | 22  ;;  Bluetooth Speaker Mini | 22  ;;  Laptop Stand Aluminum | 21  ;;  Running Socks 3-pack | 20  ;;  Studio Desktop Mic | 18
+T16 product name shortest
+   4K Webcam Pro | 13  ;;  Smart Watch S | 13  ;;  Ring Light 14" | 14  ;;  Fitness Band X2 | 15
+T17 product name length avg
+   17.63
+T18 status upper census
+   DELIVERED | 52  ;;  SHIPPED | 30  ;;  PENDING | 14  ;;  CANCELLED | 7
+T19 region lower
+   apac  ;;  eu  ;;  latam  ;;  us
+T20 cast price int distinct
+   14  ;;  18  ;;  24  ;;  32  ;;  34  ;;  39  ;;  42  ;;  49  ;;  59  ;;  65  ;;  79  ;;  89  ;;  119  ;;  129  ;;  149  ;;  199
+T21 name first initial census
+   A | 1  ;;  B | 1  ;;  C | 1  ;;  D | 1  ;;  E | 1  ;;  F | 1  ;;  G | 1  ;;  H | 1  ;;  I | 1  ;;  J | 1  ;;  K | 1  ;;  L | 1  ;;  M | 1  ;;  N | 1  ;;  O | 1  ;;  P | 1
+T22 name space position
+   Alice Chen | 6  ;;  Bruno Silva | 6  ;;  Chloe Dubois | 6  ;;  Dmitri Volkov | 7  ;;  Emma Wilson | 5  ;;  Farid Nasser | 6  ;;  Grace Kim | 6  ;;  Hiro Tanaka | 5
+T23 lastname extract
+   Pedro Alvarez | Alvarez  ;;  Olivia Brown | Brown  ;;  Alice Chen | Chen  ;;  Chloe Dubois | Dubois  ;;  Grace Kim | Kim  ;;  Noah Meyer | Meyer  ;;  Farid Nasser | Nasser  ;;  Liam O'Brien | O'Brien  ;;  Maya Patel | Patel  ;;  Isabella Rossi | Rossi
+T24 city 3-char code
+   AUS | 1  ;;  BER | 1  ;;  CHI | 1  ;;  COR | 1  ;;  DUB | 1  ;;  HAM | 1  ;;  LON | 1  ;;  LYO | 1  ;;  MAD | 1  ;;  MIL | 1  ;;  MUM | 1  ;;  NAG | 1  ;;  OSA | 1  ;;  SEO | 1  ;;  SãO | 1  ;;  TAL | 1
+T25 email before-at length
+   10.25
+T26 product names with space
+   16
+T27 product single-word names
+   (0 rows)
+T28 replace region label
+   EU  ;;  LATAM  ;;  US  ;;  APAC
+T29 trim probe padded
+   0
+T30 stock cast text len
+   HDMI 2.1 Cable 2m | 3  ;;  Running Socks 3-pack | 3  ;;  Wireless Mouse M3 | 3  ;;  Desk Mat Extended | 3  ;;  Yoga Mat Eco 6mm | 3
+T31 supplier name lengths
+   Midwest Hardware Co | 19 | 4.4  ;;  Nordic Gadgets AB | 17 | 4.6  ;;  Alpine Audio GmbH | 17 | 4.8  ;;  Andes Naturals SA | 17 | 4  ;;  Shenzhen Electro | 16 | 4.1  ;;  Pacific Textiles | 16 | 3.9
+T32 cities census
+   Austin | 1  ;;  Berlin | 1  ;;  Chicago | 1  ;;  Cork | 1  ;;  Dubai | 1  ;;  Hamburg | 1  ;;  London | 1  ;;  Lyon | 1  ;;  Madrid | 1  ;;  Milan | 1  ;;  Mumbai | 1  ;;  Nagoya | 1  ;;  Osaka | 1  ;;  Seoul | 1  ;;  São Paulo | 1  ;;  Tallinn | 1
+T33 longest product name
+   Noise-Canceling Headset
+T34 orders never shipped count
+   21
+T35 never-shipped by status
+   pending | 14  ;;  cancelled | 7
+T36 customers without orders
+   0
+T37 customers-without-orders names
+   (0 rows)
+T38 coalesce zero-fill spend
+   Olivia Brown | 444.8  ;;  Dmitri Volkov | 599.26  ;;  Jamal Wright | 645.6  ;;  Liam O'Brien | 705.39  ;;  Noah Meyer | 737.68  ;;  Hiro Tanaka | 829.09
+T39 zero-spend members
+   0
+T40 ifnull shipped flag census
+   21 | 82
+T41 nullif zero orders
+   0
+T42 nullif totals zero count
+   0
+T43 min order total
+   25.47 | 338.19
+T44 distinct totals zero or neg
+   0
+T45 inactive customers
+   2
+T46 zero-stock products
+   (0 rows)
+T47 products never ordered
+   (0 rows)
+T48 coalesce ship-or-pending label
+   not shipped | 21  ;;  2025-02-14 | 2  ;;  2024-12-13 | 2  ;;  2024-10-15 | 2  ;;  2024-07-23 | 2  ;;  2024-05-14 | 2
+T49 customers per city zero-fill
+   0
+T50 ship lag avg days
+   2.98
+T51 ship lag min max
+   2 | 4
+T52 same-day ships
+   0
+T53 lag over 5 days
+   0
+T54 weekday census of order days
+   1 | 20  ;;  5 | 18  ;;  3 | 16  ;;  2 | 16  ;;  0 | 16  ;;  4 | 9  ;;  6 | 8
+T55 Sunday orders (w=0)
+   16
+T56 weekend orders
+   24
+T57 date-only distinct days
+   84
+T58 signup day-of-month spread
+   1 | 1  ;;  2 | 2  ;;  3 | 2  ;;  5 | 1  ;;  8 | 1  ;;  9 | 1  ;;  11 | 1  ;;  14 | 1  ;;  17 | 1  ;;  18 | 1  ;;  19 | 1  ;;  21 | 1  ;;  22 | 1  ;;  27 | 1
+T59 signup month census
+   2023-11 | 2  ;;  2023-12 | 2  ;;  2024-01 | 2  ;;  2024-02 | 2  ;;  2024-03 | 2  ;;  2024-04 | 2  ;;  2024-05 | 2  ;;  2024-06 | 1  ;;  2024-07 | 1
+T60 orders in Jan 2024
+   8
+T61 invoice due span
+   2024-03-06 | 2025-03-21 | 28
+T62 payments span
+   2024-02-20 | 2025-02-10 | 27
+T63 orders on 2024-01-15
+   2
+T64 shipped-at same-as-created count
+   0
+T65 customers created 2023
+   4
+T66 newest customers
+   Pedro Alvarez | 2024-07-03  ;;  Olivia Brown | 2024-06-11  ;;  Noah Meyer | 2024-05-27  ;;  Maya Patel | 2024-05-09
+T67 order month buckets
+   2024-01 | 8  ;;  2024-02 | 9  ;;  2024-03 | 8  ;;  2024-04 | 7  ;;  2024-05 | 8  ;;  2024-06 | 6  ;;  2024-07 | 8  ;;  2024-08 | 7  ;;  2024-09 | 9  ;;  2024-10 | 7  ;;  2024-11 | 6  ;;  2024-12 | 7  ;;  2025-01 | 6  ;;  2025-02 | 7
+T68 bucket count
+   14
+T69 revenue per month
+   2024-01 | 3731.97  ;;  2024-02 | 3609.64  ;;  2024-09 | 3116.04  ;;  2024-10 | 2975.67  ;;  2024-05 | 2910.31  ;;  2024-03 | 2617.08
+T70 orders 2024-02 detail
+   9 | 3609.64
+T71 month-by-status delivered rev
+   2024-01 | 1169.77  ;;  2024-02 | 1798.3  ;;  2024-03 | 1093.38  ;;  2024-04 | 868.99  ;;  2024-05 | 956.49  ;;  2024-06 | 493.15
+T72 invoice issue months
+   13
+T73 payment months
+   13
+T74 expenses months
+   14
+T75 signup quarters
+   1 | 6  ;;  2 | 5  ;;  3 | 1  ;;  4 | 4

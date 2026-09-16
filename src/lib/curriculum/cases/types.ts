@@ -96,6 +96,15 @@ export const CASE_TOPICS: CaseTopicMeta[] = [
   { id: "q6", label: "CTEs", lessonNum: 28 },
   { id: "q7", label: "Recursive CTEs", lessonNum: 28 },
   { id: "q8", label: "Subquery capstone", lessonNum: 38 },
+  // Module 5 — Scalar & Window Toolkit (lessons 29–32 + 39)
+  { id: "t1", label: "Text & type", lessonNum: 29 },
+  { id: "t2", label: "COALESCE & NULLs", lessonNum: 29 },
+  { id: "t3", label: "Dates & calendars", lessonNum: 30 },
+  { id: "t4", label: "Month buckets", lessonNum: 30 },
+  { id: "t5", label: "RANK & friends", lessonNum: 31 },
+  { id: "t6", label: "Partition windows", lessonNum: 31 },
+  { id: "t7", label: "LAG & LEAD", lessonNum: 32 },
+  { id: "t8", label: "Window capstone", lessonNum: 39 },
 ];
 
 export interface CaseUniverseMeta {

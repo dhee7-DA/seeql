@@ -1495,3 +1495,25 @@ Stage Summary:
 - M4 CASE LIBRARY COMPLETE: 300/300 (cs-901–1200 across 6 waves). Deck 1200 cases + 1835 drill questions.
 - Sidebar totals now read "9 modules · 57 lessons · 430 graded queries" live.
 - Next per locked order: M5 (window-function cases, all forced OVER()) → P4 micro-fixes ("Eight modules" hardcode at learn-app.tsx:540 + landing.tsx:282 — note sidebar already dynamic; P4 targets the two hardcoded strings).
+
+---
+Task ID: m5-cases-w1
+Agent: Super Z (main agent)
+Task: M5 case library wave 1 — cases-t1.ts (cs-1201–1250, t1 text 15 / t2 coalesce 15 / t3 dates 10 / t4 buckets 10)
+
+Work Log:
+- STALE-HANDOFF note: resumed summary claimed M4 wave 2 pending — git truth: M4 COMPLETE 300/300 at e93d5f8. Started M5 per locked order.
+- Restored finance tables via restore-db.ts (dev-server watchdog had wiped them — M4 live-solve would break without this).
+- Registered CASE_TOPICS t1–t8 (types.ts): Text & type 29 / COALESCE & NULLs 29 / Dates & calendars 30 / Month buckets 30 / RANK & friends 31 / Partition windows 31 / LAG & LEAD 32 / Window capstone 39.
+- Extended case-audit.ts with M5 rules: t1 requires text/type fn; t2 requires COALESCE/IFNULL/NULLIF; t3/t4 require date fn; t5–t8 forced OVER() (+ t5 ranker, t6 PARTITION BY, t7 LAG/LEAD); M5 exempt from single-SELECT/join bans; multi-SELECT needs subquery/WITH.
+- Receipts T01–T195 (scripts/m5-cases-w1{,b,c,d}-facts.ts → out.txt). Notable: every email domain identical, initials+cities all-unique (degenerate GROUP BY keys — avoid), busiest-month TIE at 9 (2024-02 & 2024-09), ship-lag histogram 27/30/25, ledger 40/40 debit/credit split, 6 unpaid invoices (1 paid-labeled phantom INV-2025-028), payments-per-invoice 0/1/2 = 6/17/5, delivered weekday crown = SUNDAY 10 (not Monday), month revs, 14 buckets, below-avg months 8, avg month rev 2488.09.
+- NEW AUDIT MINEFIELD CLASS — SQLite type/affinity traps in distractor cross-product: (a) numeric column vs numeric-look text ('1') gets affinity-converted → keep-all ambiguity; (b) text column vs number: = false, != /> true → keep-all when answer was keep-all; (c) COALESCE ≡ IFNULL on NOT NULL columns → equivalent fills; (d) honest-zero cases: any distractor filter on empty result = same empty; (e) id-collision self-joins (orders.id 1..103 vs customer_id 1..16) produce identical aggregates; (f) ROUND(x, per-row-len) with clean 2-decimal avg → any precision ≥2 same. Fixed via: tautology keyword guards (TRIM/LOWER), non-keep-all filters only, BETWEEN bounds, join-key slots, census-key slots, method-IN slots.
+- Drafted 50 cases in 9 chunks; audit loop 23→48→50 PASS. Fixes: 4 universes ('crm'/'finance' don't exist → growth/expense), 4 duplicate-answer chips (>, 0, 6, '1900-01-01'), cs-1244 crown re-based to delivered (2024-02 1798.30), cs-1239 campaign day = Sunday 10 delivered, cs-1229 ghosts = 3 active (+2 inactive), cs-1232 fast lane re-based to delivered lag-2 = 19, cs-1222 renamed "The two-receipt settlements" (title dup vs cs-1165).
+- Wired casesT1 into cases/index.ts; check-dup-t1.ts created (1250 total, 0 dups, ids sequential).
+- P4-adjacent fix: case-files.tsx drawer header "MODULES 1–4" hardcode → dynamic module count via moduleOfLesson (now reads 1–5).
+- Gates: file audit 50/50 (16e/18m/16h); FULL DECK 1250/1250 PASS 0 dups; tsc src/ 0 errors.
+- E2E (agent-browser): drawer "1250 CASE FILES · MODULES 1–5 TOOLKIT", tiers 418/417/415, chips Text & type 15 / COALESCE & NULLs 15 / Dates & calendars 10 / Month buckets 10; topic-filter → cs-1201; solved chip→slot → CLOSED +10 XP (ledger "case:cs-1201":10), walkthrough rendered, 0 page errors; shot scripts/shots/m5-w1-cs1201-closed.png.
+
+Stage Summary:
+- M5 CASES: 50/300 (wave 1, cs-1201–1250). Deck 1250. Sidebar totals unchanged (lessons/drills untouched).
+- Next: wave 2 (cs-1251–1300, t5 15 / t6 15 / t7 10 / t8 10 — FIRST WINDOW CASES, forced OVER()) → waves 3–6 → P4 (landing.tsx "Eight modules" hardcode; learn-app overview "Eight modules" hardcode spotted at line ~545).
