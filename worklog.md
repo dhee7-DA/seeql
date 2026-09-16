@@ -1634,3 +1634,18 @@ Stage Summary:
 - M5 CASES: 300/300 COMPLETE (cs-1201–1500 across 6 waves). Full deck 1500 cases PASS.
 - M4 (300) + M5 (300) both complete; P4 dynamic module count shipped earlier.
 - Next candidates: M6+ module case expansion (Expert Clinic / Finance modules currently 0 case coverage), or content polish passes.
+
+---
+Task ID: m6-cases-w1
+Agent: Super Z (main agent)
+Task: M6 wave 1 (Expert Clinic, cs-1501–1550, x1 folds 20 / x2 FILTER censuses 15 / x3 grand-total stacks 15) — verify gates, E2E, commit
+
+Work Log:
+- Resumed after context handoff. Found wave-1 files already committed as WIP snapshot 2428854 (cases-x1/x2/x3.ts, check-dup-x1.ts, case-audit.ts x-laws for topics x1–x8, index.ts wiring, W1 probe rounds 1–3) with no worklog entry — re-ran every gate before trusting it.
+- Gates re-verified: file/deck audit 1550/1550 PASS (tiers easy=519/medium=521/hard=510); check-dup-x1: wave-1 range 50 sequential, topics x1:20/x2:15/x3:15, tiers 15e/18m/17h, 0 title dups, 0 SQL dups across 1550; tsc on src/lib/curriculum/cases/index.ts clean (exit 0).
+- E2E (agent-browser): dev server up, restore-db.ts re-run pre-E2E. Drawer "1550 CASE FILES · MODULES 1–6"; tiers All 1550/Easy 519/Medium 521/Hard 510; new M6 chips GROUP_CONCAT folds 20 / FILTER censuses 15 / Grand-total stacks 15 / Clinic capstone 0. Filtered GROUP_CONCAT folds → landed CS-1501 (SUPPLIER AUDIT, 3 slots, chips incl '; ' quote-flip distractor), solved live chip-first-then-slot (GROUP_CONCAT / ', ' / name) → CLOSED, sidebar 0→10 XP, walkthrough rendered (six suppliers folded alphabetical, in-aggregate ORDER BY rationale), 0 page errors. Shot scripts/shots/m6-w1-cs1501-closed.png.
+
+Stage Summary:
+- M6 CASES: 50 done (x1/x2/x3). Deck 1550 PASS.
+- Remaining M6 topics: x4 RIGHT JOIN, x5 FULL OUTER JOIN, x6 CROSS JOIN, x7 range join, x8 capstone (chips already reserved in drawer).
+- Next: wave 2 (x4+x5), wave 3 (x6+x7), wave 4 (x8) → M6 complete.
