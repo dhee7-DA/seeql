@@ -105,6 +105,15 @@ export const CASE_TOPICS: CaseTopicMeta[] = [
   { id: "t6", label: "Partition windows", lessonNum: 31 },
   { id: "t7", label: "LAG & LEAD", lessonNum: 32 },
   { id: "t8", label: "Window capstone", lessonNum: 39 },
+  // Module 6 — Expert Clinic (lessons 33, 34, 40)
+  { id: "x1", label: "GROUP_CONCAT folds", lessonNum: 33 },
+  { id: "x2", label: "FILTER censuses", lessonNum: 33 },
+  { id: "x3", label: "Grand-total stacks", lessonNum: 33 },
+  { id: "x4", label: "RIGHT JOIN", lessonNum: 34 },
+  { id: "x5", label: "FULL OUTER", lessonNum: 34 },
+  { id: "x6", label: "CROSS JOIN", lessonNum: 34 },
+  { id: "x7", label: "Non-equi joins", lessonNum: 34 },
+  { id: "x8", label: "Clinic capstone", lessonNum: 40 },
 ];
 
 export interface CaseUniverseMeta {

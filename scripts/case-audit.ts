@@ -164,6 +164,7 @@ function auditCase(c: CaseStudy, seen: Map<string, string>): string[] {
   const isM3 = c.topic.startsWith("s");
   const isM4 = c.topic.startsWith("q");
   const isM5 = c.topic.startsWith("t");
+  const isM6 = c.topic.startsWith("x");
   const hasJoin = /\bJOIN\b/i.test(filledCorrect);
   const hasSetOp = /\bUNION\b|\bINTERSECT\b|\bEXCEPT\b/i.test(filledCorrect);
   const hasCase = /\bCASE\b/i.test(filledCorrect);
@@ -203,11 +204,32 @@ function auditCase(c: CaseStudy, seen: Map<string, string>): string[] {
       add("t7 cases must use LAG or LEAD");
     if (selects >= 2 && !hasSubquery && !hasWith)
       add(`${selects} SELECT keywords with no subquery or WITH — M5 window queries stage via derived tables or CTEs, not bare compounds`);
+  } else if (isM6) {
+    if (c.topic === "x1" && !/\bGROUP_CONCAT\s*\(/i.test(filledCorrect))
+      add("x1 fold topic but no GROUP_CONCAT — these cases must fold rows into a string cell");
+    if (c.topic === "x2" && !/\bFILTER\s*\(\s*WHERE\b/i.test(filledCorrect))
+      add("x2 census topic but no FILTER (WHERE …) — these cases must count in one pass");
+    if (c.topic === "x3") {
+      if (!/\bUNION\s+ALL\b/i.test(filledCorrect))
+        add("x3 stack topic but no UNION ALL — these cases must append a grand-total row");
+      if (!/\bTOTAL\b/i.test(filledCorrect))
+        add("x3 stack topic but no TOTAL literal — the grand row must be labelled");
+    }
+    if (c.topic === "x4" && !/\bRIGHT\s+(OUTER\s+)?JOIN\b/i.test(filledCorrect))
+      add("x4 topic but no RIGHT JOIN");
+    if (c.topic === "x5" && !/\bFULL\s+(OUTER\s+)?JOIN\b/i.test(filledCorrect))
+      add("x5 topic but no FULL OUTER JOIN");
+    if (c.topic === "x6" && !/\bCROSS\s+JOIN\b/i.test(filledCorrect))
+      add("x6 topic but no CROSS JOIN — these cases must pair deliberately");
+    if (c.topic === "x7" && (!hasJoin || !/[<>]|\bBETWEEN\b/i.test(filledCorrect)))
+      add("x7 topic must join on a range (JOIN + </>/BETWEEN), not equality");
+    if (c.topic === "x8" && !hasSubquery && !hasWith && !hasSetOp && !hasOver)
+      add("x8 capstone must stack a clinic move (subquery/WITH/set-op/window)");
   } else {
     if (selects !== 1) add(`${selects} SELECT keywords — subqueries not allowed in Module 1–2 cases`);
   }
   if (isM2 && !hasJoin) add("Module 2 topic but no JOIN keyword — join cases must join");
-  if (!isM2 && !isM3 && !isM4 && !isM5 && hasJoin) add("JOIN found — Module 1 cases are single-table");
+  if (!isM2 && !isM3 && !isM4 && !isM5 && !isM6 && hasJoin) add("JOIN found — Module 1 cases are single-table");
   if (!/^\s*(SELECT|WITH)\b/i.test(filledCorrect)) add("filled query does not start with SELECT or WITH");
 
   // execution + number verification
