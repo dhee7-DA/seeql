@@ -1,0 +1,126 @@
+Auditing 1 file(s): 50 cases
+FAIL cs-1401  The dash-stripped tags
+     - 1 slots — must be 3..7
+     - 1 distractors — must be 2..6
+FAIL cs-1402  The longest address on file
+     - 2 slots — must be 3..7
+FAIL cs-1403  The GmbH suffix census
+     - ambiguous: distractor "-3" in slot 3 (the never-true region) produces the SAME result as the correct fill
+FAIL cs-1404  The shouted order lanes
+     - ambiguous: distractor "LOWER" in slot 1 (the shout fold) produces the SAME result as the correct fill
+     - ambiguous: distractor "5" in slot 3 (the label floor) produces the SAME result as the correct fill
+FAIL cs-1405  The consonant-led roster
+     - unknown universe "crm"
+     - 2 slots — must be 3..7
+FAIL cs-1406  The space-free rename
+     - ambiguous: distractor "20" in slot 4 (the open width floor) produces the SAME result as the correct fill
+FAIL cs-1407  The lowercased import
+     - unknown universe "crm"
+     - ambiguous: distractor "UPPER" in slot 1 (the import fold) produces the SAME result as the correct fill
+     - ambiguous: distractor "'a'" in slot 2 (the at needle) produces the SAME result as the correct fill
+FAIL cs-1408  The double-letter probe
+     - ambiguous: distractor "<" in slot 2 (the length gate direction) produces the SAME result as the correct fill
+     - ambiguous: distractor "12" in slot 3 (the length floor) produces the SAME result as the correct fill
+PASS cs-1409  The vendor initial census
+FAIL cs-1410  The integer-ish price tags
+     - ambiguous: distractor "100" in slot 3 (the open stock floor) produces the SAME result as the correct fill
+FAIL cs-1411  The region code census
+     - ambiguous: distractor "UPPER" in slot 1 (the clean read) produces the SAME result as the correct fill
+FAIL cs-1412  The surname-start check
+     - unknown universe "crm"
+     - ambiguous: distractor "!=" in slot 2 (the name gate direction) produces the SAME result as the correct fill
+FAIL cs-1413  The shortest supplier name
+     - ambiguous: distractor "4" in slot 4 (the open rating floor) produces the SAME result as the correct fill
+FAIL cs-1414  The vowel-tail census
+     - 2 slots — must be 3..7
+     - ambiguous: distractor "UPPER" in slot 2 (the storage check) produces the SAME result as the correct fill
+PASS cs-1415  The category code census
+PASS cs-1416  The shipped sentinel re-check
+FAIL cs-1417  The settlement shortfall
+     - ambiguous: distractor "100000" in slot 4 (the touched floor) produces the SAME result as the correct fill
+FAIL cs-1418  The NULL-safe lane overlay
+     - duplicate slot answers: 0
+     - ambiguous: distractor "'x'" in slot 2 (the sentinel fallback) produces the SAME result as the correct fill
+     - ambiguous: distractor "400" in slot 2 (the sentinel fallback) produces the SAME result as the correct fill
+PASS cs-1419  The refund-target census
+FAIL cs-1420  The ledger balance proof
+     - ambiguous: distractor "2025-01-01" in slot 1 (the second-side test) produces the SAME result as the correct fill
+     - ambiguous: distractor "2025-01-01" in slot 3 (the open window edge) produces the SAME result as the correct fill
+FAIL cs-1421  The year-boundary settlements
+     - ambiguous: distractor "COALESCE" in slot 1 (the date fallback) produces the SAME result as the correct fill
+FAIL cs-1422  The single-receipt pot
+     - duplicate slot answers: >
+FAIL cs-1423  The ads calendar
+     - t2 fallback topic but no COALESCE/IFNULL/NULLIF — these cases must guard NULLs
+     - ambiguous: distractor "'Rent'" in slot 1 (the ads gate) produces the SAME result as the correct fill
+FAIL cs-1424  The pending-priority queue
+     - duplicate slot answers: 'x'
+FAIL cs-1425  The over-face settlement
+     - duplicate slot answers: >, 0
+     - 1 distractors — must be 2..6
+     - ambiguous: distractor "100000" in slot 3 (the touched floor) produces the SAME result as the correct fill
+     - ambiguous: distractor "100000" in slot 5 (the open id floor) produces the SAME result as the correct fill
+PASS cs-1426  The first-quarter order count
+FAIL cs-1427  The Friday orders
+     - ambiguous: distractor "'4'" in slot 3 (the open total floor) produces the SAME result as the correct fill
+FAIL cs-1428  The delivered-only speed floor
+     - ambiguous: distractor "'shipped'" in slot 2 (the completed gate) produces the SAME result as the correct fill
+FAIL cs-1429  The card-only settlement span
+     - unknown universe "finance"
+     - ambiguous: distractor "200000" in slot 5 (the open amount floor) produces the SAME result as the correct fill
+FAIL cs-1430  The same-week pairs
+     - filled SQL fails to execute: near "(": syntax error
+PASS cs-1431  The invoice calendar footprint
+FAIL cs-1432  The mid-week signup check
+     - filled SQL fails to execute: near ",": syntax error
+FAIL cs-1433  The year-end shipment read
+     - duplicate slot answers: shipped_at
+     - ambiguous: distractor "created_at" in slot 1 (the ship month source) produces the SAME result as the correct fill
+     - ambiguous: distractor "created_at" in slot 3 (the ship year source) produces the SAME result as the correct fill
+FAIL cs-1434  The 2025 card settlements
+     - unknown universe "finance"
+     - ambiguous: distractor "'2024'" in slot 4 (the open date floor) produces the SAME result as the correct fill
+     - ambiguous: distractor "'2025-01-01'" in slot 4 (the open date floor) produces the SAME result as the correct fill
+FAIL cs-1435  The stuck-order age
+     - duplicate slot answers: 'x'
+     - 1 distractors — must be 2..6
+PASS cs-1436  The weekend signup check
+PASS cs-1437  The Thursday gap read
+FAIL cs-1438  The wire settlement count
+     - unknown universe "finance"
+     - duplicate slot answers: >
+     - Module 5 date topic but no date function — t3/t4 cases must slice the calendar
+     - ambiguous: distractor "200000" in slot 5 (the open date floor) produces the SAME result as the correct fill
+PASS cs-1439  The order-month span check
+FAIL cs-1440  The two-year order split
+     - ambiguous: distractor "2460500" in slot 3 (the open day floor) produces the SAME result as the correct fill
+PASS cs-1441  The first-month stack
+FAIL cs-1442  The quiet-month revenue
+     - unknown universe "finance"
+     - 2 slots — must be 3..7
+PASS cs-1443  The sign-up month count
+PASS cs-1444  The pair-month revenue
+FAIL cs-1445  The spend-vs-revenue gap
+     - slot 2 label missing/too short
+     - slot 2 why too thin (0 chars, need 40+)
+     - duplicate slot answers: SUM
+     - Module 5 date topic but no date function — t3/t4 cases must slice the calendar
+     - filled SQL fails to execute: unrecognized token: ":"
+FAIL cs-1446  The stuck-order month count
+     - duplicate slot answers: 'x'
+FAIL cs-1447  The active-member spend
+     - Module 5 date topic but no date function — t3/t4 cases must slice the calendar
+FAIL cs-1448  The payment-method split
+     - unknown universe "finance"
+     - duplicate slot answers: >
+     - Module 5 date topic but no date function — t3/t4 cases must slice the calendar
+     - ambiguous: distractor "'2025-01-01'" in slot 2 (the open date floor) produces the SAME result as the correct fill
+     - ambiguous: distractor "300000" in slot 4 (the open amount floor) produces the SAME result as the correct fill
+PASS cs-1449  The cancelled-order month read
+FAIL cs-1450  The closing capstone stack
+     - filled SQL fails to execute: no such column: created_at
+
+==== SUMMARY ====
+cases: 50  pass: 13  fail: 37
+tiers: easy=15 medium=21 hard=14
+failing: cs-1401, cs-1402, cs-1403, cs-1404, cs-1405, cs-1406, cs-1407, cs-1408, cs-1410, cs-1411, cs-1412, cs-1413, cs-1414, cs-1417, cs-1418, cs-1420, cs-1421, cs-1422, cs-1423, cs-1424, cs-1425, cs-1427, cs-1428, cs-1429, cs-1430, cs-1432, cs-1433, cs-1434, cs-1435, cs-1438, cs-1440, cs-1442, cs-1445, cs-1446, cs-1447, cs-1448, cs-1450

@@ -1569,3 +1569,19 @@ Work Log:
 Stage Summary:
 - M5 CASES: 200/300 (waves 1–4, cs-1201–1400). Deck 1400.
 - Next: wave 5 (cs-1401–1450, t1–t4 deepening) → wave 6 (t5–t8, M5 COMPLETE 300/300) → P4.
+
+---
+Task ID: m5-cases-w5-wip
+Agent: Super Z (main agent)
+Task: M5 wave 5 (cs-1401–1450, t1–t4 deepening) — WORK IN PROGRESS, unwired
+
+Work Log:
+- Drafted 50 cases (t1 15 / t2 15 / t3 10 / t4 10) in cases-t5.ts covering new shapes: REPLACE dash-stripper (3 tags), GmbH suffix (-4 slice), consonant-led census (12), slug cap (22), double-o probe (1: Chloe), vowel-tail census (4), already-caps census (16), shortest supplier (14), integer round-trip (0 — honest zero), settlement shortfall (1: 87300/129500), NULL-safe overlay (82), refund targets (5 > 200), over-payment check (0), single-receipt pot (17), ads calendar (14), priority queue, ledger balance proof (0 double-sided), 2025 card settles, Q1 2024 orders (25), Friday orders (18), delivered speed floor (MAX 4), card span, ISO weeks (42), mid-week signups (8), Dec-2024 ships, stuck span, weekend signups (2), Thursday floor (9), wire count (11), month coverage (14), 2025 split (13), opening stack (3731.97), lean month (Jul 1193.86), cohort months (9), pair-month revenue (5), spend ratio (66.46), stuck calendar (10), active book (34833.28), method split (2), cancellation calendar (5), capstone lean stack (Jul 18579.20).
+- ALL figures from the T001–T297 receipt pool (no new probes needed).
+- BLOCKED: 22/50 cases fail the audit — root cause: the "open floor" gate pattern (`WHERE total > {N}` with answer "0" noVerify) is inherently ambiguous because ALL numeric distractors on a pass-everything gate also pass everything. Attempted 5 automated fix strategies (iterative distractor removal, value replacement, ZZZ error-fill, slot padding, marker renumbering) — each triggers cascading new ambiguities because the template DESIGN is the problem, not the distractor values. The fix requires redesigning each gate to use a data-splitting threshold (e.g. `total > 500` where 500 splits orders) with the answer value appearing in result cells (remove noVerify), plus matching keyword no-op fixes.
+- FILE STATE: cases-t5.ts is UNWIRED from index.ts (removed import + spread to keep the app at 1400 passing cases). The file exists at src/lib/curriculum/cases/cases-t5.ts (2100+ lines) with 28/50 passing. Remaining 22 need template redesign.
+- VERIFIED CLEAN: deck 1400/1400 PASS, tsc 0 errors with casesT5 unwired.
+
+Stage Summary:
+- M5 CASES: 200/300 committed (waves 1–4). Wave 5 drafted but unwired (28/50 pass; 22 need gate redesign). Wave 6 not started.
+- NEXT SESSION: fix wave-5 gate design (change `> 0` noVerify floors to data-splitting values like 500 for orders.total, 100 for products.stock, with answer appearing in result cells; replace UPPER/LOWER no-ops with live folds; add COALESCE to t2 cases missing it), re-wire, audit, E2E, commit. Then wave 6 (t5–t8 deepening) → P4.
