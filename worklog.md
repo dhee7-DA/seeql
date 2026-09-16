@@ -1667,3 +1667,21 @@ Stage Summary:
 - M6 CASES: 100/150-ish done (x1–x5). Deck 1600 PASS.
 - Remaining M6 topics: x6 CROSS JOIN, x7 Non-equi joins, x8 Clinic capstone (chips reserved at 0).
 - Next: wave 3 (x6+x7), wave 4 (x8) → M6 complete.
+
+---
+Task ID: m6-cases-w4
+Agent: Super Z (main agent)
+Task: M6 wave 4 (x8 Clinic capstone, cs-1651–1675, 25 cases 5e/8m/12h) — probe, write, audit, E2E, commit → M6 COMPLETE
+
+Work Log:
+- Probe round W4 (scripts/m6-cases-w4-facts.ts): per-region lane FILTER census (APAC 21/8/5/3, EU 24/12/6/3), global spend ranks (Alice 7262.35 / Emma 6640.56 / Grace 4574.23), avg price 127.83 with 6 above, quartile pots 22121.70/6911.67/3404.86/2395.05, lane shares 44.7/34.44/17.55/3.31, ghost global ranks Farid 1..Dmitri 5, region halves APAC 2/EU 4/US 1, month jumps Jul +2, source stack 103/28/27, card wall 2024-12-16 @ 30640.50, region crowns, ghost CTE fold, busy months 11 at >=7, MA2 Jul 1620.64.
+- NEW AUDIT LAWS (w4): (1) NOT NULL is a valid postfix boolean in ORDER BY (constant-true sort → ambiguous); (2) NTILE tile SIZES are order-invariant (5 rows/2 tiles = 3+2 either direction) — direction distractors only bite via membership-count asymmetry; (3) scalar MAX(x, 2) returns per-row max — same result when all values exceed the constant; (4) x8 law enforcement: FILTER+join alone has NO clinic move — cases wrapped in derived tables to carry the subquery; (5) '<=' collapsed where no cross-year equal amounts exist; (6) units-lesson case cs-1641 counts 314 (not 170 — no date anchor); (7) two more dup restructures: cs-1659 gains a printed bar column (vs cs-997), cs-1653 becomes the lane COUNT stack (vs cs-1536 revenue stack).
+- Fixes during audit loop: cs-1654 third slot (fold order ASC; NOT NULL dropped — ORDER BY postfix), cs-1655/1657 third slots (LIMIT 1 / projection spend), cs-1659 missing SELECT keyword in subquery, cs-1661 inverted anchor trim (answer NOT NULL), cs-1662/1672 swapped {1}/{2} markers, cs-1664 marker realignment (ROUND precision slotted), cs-1663/1670/1671 bank rebuilds.
+- Wired casesX8 into index.ts; created scripts/check-dup-x4.ts (range 1651–1675).
+- Gates: file audit 25/25; check-dup-x4: 1675 cases 0 title dups 0 SQL dups, wave-4 sequential, topics x8:25, tiers 5e/8m/12h; FULL DECK AUDIT 1675/1675 PASS (tiers 549/557/544 → wait: easy 549+5=554? final printed below); tsc cases entry clean.
+- INCIDENT: dev-server restart re-ran db:push which dropped finance tables + shipped_at again — restored via scripts/restore-db.ts before E2E.
+- E2E (agent-browser): drawer "1675 CASE FILES · MODULES 1–6"; All tiers 1675; new chip Clinic capstone 25; filtered capstone → landed CS-1651 (Four crowns), solved live chip-first-then-slot (c.region / DESC / 1) → CLOSED, +10 XP, walkthrough rendered (partition restarts per region), 0 page errors. Shot scripts/shots/m6-w4-cs1651-closed.png.
+
+Stage Summary:
+- M6 COMPLETE: 8/8 topics covered (x1 20 / x2 15 / x3 15 / x4 25 / x5 25 / x6 25 / x7 25 / x8 25 = 175 cases). Full deck 1675 PASS.
+- M1–M6 all complete. Remaining curriculum modules without case coverage: M7 Data Modification (writes), M8 Schema/Views, M9 SQL for Finance — writes would need a new sandbox paradigm (INSERT/UPDATE/DELETE cases).
