@@ -1551,3 +1551,21 @@ Work Log:
 Stage Summary:
 - M5 CASES: 150/300 (waves 1–3, cs-1201–1350). Deck 1350.
 - Next: wave 4 (cs-1351–1400, t5–t8 deepening 15/15/10/10) → wave 5 (t1–t4) → wave 6 (t5–t8, M5 COMPLETE) → P4.
+
+---
+Task ID: m5-cases-w4
+Agent: Super Z (main agent)
+Task: M5 case library wave 4 — cases-t4.ts (cs-1351–1400, t5–t8 deepening 15/15/10/10)
+
+Work Log:
+- Deepening pass over wave-2 window ground, all figures from the T196–T255 pool (no new probes needed).
+- Shapes: rank-16 win-back target (Olivia 444.80), RANK-skip memo (4-way tie at rank 6 → skip to 10), weakest-bench floor (Pacific 3.9), dual-policy annex (RANK vs ROW_NUMBER), EU original (Alice 2023-11-02), bronze ticket (845.92), quietest lane (cancelled 7), gated regional race (LATAM drops), newest member (Pedro), four-figure cross-check (8 = top-8 = >1000), shared podium count (4 co-champions), ninth-line boundary (Hiro 829.09), emerging-market crown (LATAM 2), thin-shelf rank (Alpine/Andes tie), chase rank (Emma rk 2), regional runners-up (Chloe/Maya/Jamal — LATAM seats none), budget champions (HDMI 14.99 floor), EU podium (Alice/Chloe/Pedro), weighted lane champions (Sep 7/May 4/2/2), full US ladder (Emma+Jamal), premium champions >= 100 (3), budget table (7 floors ASC), thin-rank storage, regional podium names (7), region floors (Olivia 444.80), shelf-ladder export (16 rung-ordered), regional co-champions (4), ungated endcaps (13), March verdict (-992.56), biggest leap (Aug +1158.21), closing frontier (2025-02 NULL), spend verdict (Feb -27900), deep silence (51d), down-month count (7), wide-gap chaser (Grace 2066.33), frontier count (16), volume frontier (Jan NULL), brisk turnarounds (3), May stack (15337.91), wall crossing (Aug 20931.27), half-roster gate (1686.17), quartile census (4), 3-month smoothing (3319.56), volume wall (3 under 25), lightest pot (LATAM 852.44), home pot (EU 15089.23), smoothed March (3113.36), crown cross-check (NTILE4-ASC bucket4 ∧ RANK-DESC rk1 → Alice).
+- AUDIT LAWS (new): NTILE split-invariance — crown cross-checks must flip the split direction (ASC bucket 4) not the split size, because the crown lands in bucket 1 of every descending split; COUNT collapses direction/region changes → return rows, not counts, when the distractor changes composition but not cardinality; RANK() takes zero args (never slot the fn name onto an argful call); alias-projection law — outer queries can only reference columns the inner SELECT projected (region/name/mo missing = fail); gap direction law — "gap to the spender above" = above - spend (LAG parks the bigger number, spend - above goes negative); ROUND(x) = x is FALSE for 2-decimal books (must be ROUND(x, 2)).
+- Audit loop 25→10→3→1→0 over 6 batches; brace-insertion pass after case rewrites.
+- Wired casesT4 into index.ts; check-dup-t4.ts.
+- Gates: file audit 50/50 (15e/17m/18h); FULL DECK 1400/1400 PASS 0 dups; tsc src/ 0 errors.
+- E2E (agent-browser): drawer "1400 CASE FILES · MODULES 1–5 TOOLKIT", tiers 469/465/466; RANK&friends chip (30 cumulative); live cs-1251 solved (DESC/>/0) → CLOSED +10 XP, walkthrough 7262.35 rendered, 0 page errors; shot scripts/shots/m5-w4-cs1251-closed.png.
+
+Stage Summary:
+- M5 CASES: 200/300 (waves 1–4, cs-1201–1400). Deck 1400.
+- Next: wave 5 (cs-1401–1450, t1–t4 deepening) → wave 6 (t5–t8, M5 COMPLETE 300/300) → P4.

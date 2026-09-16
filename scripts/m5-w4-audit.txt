@@ -1,0 +1,91 @@
+Auditing 1 file(s): 50 cases
+PASS cs-1351  The sixteenth rank
+PASS cs-1352  The pace rank, both policies
+PASS cs-1353  The weakest bench link
+FAIL cs-1354  The pace memo, both columns
+     - 2 slots — must be 3..7
+PASS cs-1355  The EU original
+FAIL cs-1356  The bronze ticket
+     - ambiguous: distractor "2" in slot 2 (the open gate) produces the SAME result as the correct fill
+PASS cs-1357  The quietest lane, ranked
+PASS cs-1358  The regional race, gated
+PASS cs-1359  The newest member
+FAIL cs-1360  The four-figure headcount
+     - ambiguous: distractor "7" in slot 4 (the four-figure line) produces the SAME result as the correct fill
+     - ambiguous: distractor "3000" in slot 2 (the tier depth) produces the SAME result as the correct fill
+FAIL cs-1361  The shared podium count
+     - filled SQL fails to execute: wrong number of arguments to function RANK()
+PASS cs-1362  The ninth line
+PASS cs-1363  The quiet-market crown
+FAIL cs-1364  The light-shelf rank
+     - 2 slots — must be 3..7
+PASS cs-1365  The chase rank
+FAIL cs-1366  The regional runners-up
+     - ambiguous: distractor "1" in slot 5 (the solo region) produces the SAME result as the correct fill
+PASS cs-1367  The budget shelf champions
+FAIL cs-1368  The EU podium count
+     - ambiguous: distractor "ASC" in slot 1 (the podium direction) produces the SAME result as the correct fill
+     - ambiguous: distractor "'APAC'" in slot 2 (the home gate) produces the SAME result as the correct fill
+FAIL cs-1369  The weighted lane champions
+     - ambiguous: distractor "ASC" in slot 1 (the champion direction) produces the SAME result as the correct fill
+     - ambiguous: distractor "2" in slot 4 (the champion row) produces the SAME result as the correct fill
+FAIL cs-1370  The full US ladder
+     - ambiguous: distractor "'EU'" in slot 4 (the ladder depth) produces the SAME result as the correct fill
+PASS cs-1371  The premium champions, gated
+PASS cs-1372  The budget champions table
+PASS cs-1373  The EU thousand-euro rungs
+PASS cs-1374  The pending calendar crown
+FAIL cs-1375  The jersey's shelf rank
+     - filled SQL fails to execute: no such column: category
+PASS cs-1376  The regional podium names
+FAIL cs-1377  The region floors
+     - 2 slots — must be 3..7
+FAIL cs-1378  The full shelf ladder
+     - duplicate slot answers: ASC
+FAIL cs-1379  The regional co-champion count
+     - ambiguous: distractor "ASC" in slot 1 (the podium direction) produces the SAME result as the correct fill
+FAIL cs-1380  The full endcap count
+     - ambiguous: distractor "ASC" in slot 2 (the endcap direction) produces the SAME result as the correct fill
+FAIL cs-1381  The March verdict
+     - ambiguous: distractor "'2024-04'" in slot 2 (the timeline order) produces the SAME result as the correct fill
+FAIL cs-1382  The biggest leap
+     - ambiguous: distractor "3" in slot 2 (the calendar order) produces the SAME result as the correct fill
+PASS cs-1383  The closing frontier
+FAIL cs-1384  The spend-side verdict
+     - ambiguous: distractor "'2024-03'" in slot 2 (the ledger order) produces the SAME result as the correct fill
+FAIL cs-1385  The deep silence filter
+     - ambiguous: distractor "40" in slot 3 (the depth line) produces the SAME result as the correct fill
+PASS cs-1386  The down-month count
+FAIL cs-1387  The wide-gap chasers
+     - 2 slots — must be 3..7
+     - 1 distractors — must be 2..6
+PASS cs-1388  The first-order frontier count
+PASS cs-1389  The volume frontier
+PASS cs-1390  The brisk turnaround count
+FAIL cs-1391  The stack at May
+     - 2 slots — must be 3..7
+PASS cs-1392  The wall-crossing month
+PASS cs-1393  The half-roster gate
+FAIL cs-1394  The quartile headcount
+     - ambiguous: distractor "2" in slot 3 (the tier read) produces the SAME result as the correct fill
+     - ambiguous: distractor "2" in slot 5 (the open sanity floor) produces the SAME result as the correct fill
+     - ambiguous: distractor "ASC" in slot 2 (the tier direction) produces the SAME result as the correct fill
+     - ambiguous: distractor "3000" in slot 5 (the open sanity floor) produces the SAME result as the correct fill
+PASS cs-1395  The three-month smoothing
+FAIL cs-1396  The volume wall
+     - 2 slots — must be 3..7
+     - ambiguous: distractor "20" in slot 2 (the milestone wall) produces the SAME result as the correct fill
+PASS cs-1397  The lightest pot
+FAIL cs-1398  The home-region pot
+     - ambiguous: distractor "'APAC'" in slot 5 (the sanity ceiling) produces the SAME result as the correct fill
+     - ambiguous: distractor "20000" in slot 5 (the sanity ceiling) produces the SAME result as the correct fill
+     - ambiguous: distractor "10000" in slot 3 (the open sanity floor) produces the SAME result as the correct fill
+FAIL cs-1399  The smoothed frontier
+     - ambiguous: distractor "3" in slot 1 (the frame depth) produces the SAME result as the correct fill
+FAIL cs-1400  The crown, cross-checked
+     - ambiguous: distractor "2" in slot 1 (the quartile split) produces the SAME result as the correct fill
+
+==== SUMMARY ====
+cases: 50  pass: 25  fail: 25
+tiers: easy=15 medium=17 hard=18
+failing: cs-1354, cs-1356, cs-1360, cs-1361, cs-1364, cs-1366, cs-1368, cs-1369, cs-1370, cs-1375, cs-1377, cs-1378, cs-1379, cs-1380, cs-1381, cs-1382, cs-1384, cs-1385, cs-1387, cs-1391, cs-1394, cs-1396, cs-1398, cs-1399, cs-1400
