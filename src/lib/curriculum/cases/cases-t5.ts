@@ -459,7 +459,7 @@ AND LENGTH(name) {2} {3};`,
         answer: "=",
         kind: "keyword",
         label: "the caps test",
-        why: "A capital surname-start equals its own uppercase fold, so the test is =. Flipping to != would count the lowercase starts — of which the roster carries none.",
+        why: "A capital surname-start equals its own uppercase fold, so the test is =. Flipping to < would demand starts sorting below their own fold — digits and marks, never letters — of which the roster carries none.",
       },
       {
         answer: ">",
@@ -475,9 +475,9 @@ AND LENGTH(name) {2} {3};`,
         why: "A floor of 0 admits every member. A 12-floor would keep only the long names — three of them — and starve the audit.",
       },
     ],
-    distractors: ["!=", "12"],
+    distractors: ["<", "12"],
     walkthrough:
-      "The surname slice lifts each tail's first character, and the caps test compares it to its own uppercase fold — every stored surname opens with a capital, so the audit counts sixteen clean caps with zero exceptions. The != flip would hunt lowercase starts and return an empty ledger. The 12-floor would trim the census to the three longest names. The two-column split is safe to ship.",
+      "The surname slice lifts each tail's first character, and the caps test compares it to its own uppercase fold — every stored surname opens with a capital, so the audit counts sixteen clean caps with zero exceptions. The < flip would hunt starts below their own fold and return an empty ledger. The 12-floor would trim the census to the three longest names. The two-column split is safe to ship.",
   },
   {
     id: "cs-1413",
@@ -709,7 +709,7 @@ AND price {3} {4};`,
     brief:
       "From: Month-end close. Re: the buyer roll.\n\nThe close opens with the buyer roll: how many members actually placed an order. The roll folds each customer reference through COALESCE before the distinct count, so a NULL reference could never sneak into the tally.",
     ask: "How many distinct members carry at least one order?",
-    template: `SELECT {1}(DISTINCT {2}(customer_id)) AS buyers
+    template: `SELECT {1}(DISTINCT {2}(customer_id, 0)) AS buyers
 FROM orders
 WHERE total {3} {4};`,
     slots: [
@@ -814,7 +814,7 @@ AND {4}(created_at) = created_at;`,
         kind: "number",
         noVerify: true,
         label: "the quiet bar",
-        why: "The bar sits at 100 — nothing pending hides below it. A 300-bar would catch fourteen tickets and destroy the negative proof.",
+        why: "The bar sits at 100 — nothing pending hides below it, so the honest zero holds. The 'shipped' fill would count five small in-transit tickets, and the > flip would read the fourteen-ticket queue instead.",
       },
       {
         answer: "'pending'",
@@ -829,9 +829,9 @@ AND {4}(created_at) = created_at;`,
         why: "DATE(created_at) = created_at proves the stamps are date-clean — true for the book, so the audit reads real rows. JULIANDAY would compare a number to text and count nothing.",
       },
     ],
-    distractors: [">", "300", "'cancelled'"],
+    distractors: [">", "'shipped'", "'cancelled'"],
     walkthrough:
-      "The < direction scopes under the bar, and the pending lane answers with the honest zero: nothing waits below 100 euros — the lane's smallest ticket already clears the line. Every distractor finds company: the > flip reads the fourteen-ticket queue, the 300-bar catches the whole lane, and the cancelled fill counts two small write-offs. The quiet lane: zero, proven.",
+      "The < direction scopes under the bar, and the pending lane answers with the honest zero: nothing waits below 100 euros — the lane's smallest ticket already clears the line. Every distractor finds company: the > flip reads the fourteen-ticket queue, the shipped fill counts five small in-transit tickets on the wrong lane, and the cancelled fill counts two small write-offs. The quiet lane: zero, proven.",
   },
   {
     id: "cs-1421",
@@ -939,24 +939,32 @@ AND total {4} {5};`,
     universe: "month-close",
     title: "The pending cadence",
     brief:
-      "From: Month-end close. Re: the at-risk cadence.\n\nPending work is the close's open exposure, and the cadence read counts the distinct months that carry a pending order. Guard the lane fold with COALESCE, scope to the at-risk status, and read the spread.",
+      "From: Month-end close. Re: the at-risk cadence.\n\nPending work is the close's open exposure, and the cadence read counts the distinct months that carry a pending order. Gate the at-risk lane, guard the total fold with COALESCE, and read the spread.",
     ask: "How many distinct months carry a pending order?",
     template: `SELECT COUNT(DISTINCT strftime('%Y-%m', created_at)) AS live_months
 FROM orders
-WHERE COALESCE(status, {1}) = {2}
-AND {3}(created_at) = created_at;`,
+WHERE status = {1}
+AND COALESCE(total, 0) {2} {3}
+AND {4}(created_at) = created_at;`,
     slots: [
-      {
-        answer: "'none'",
-        kind: "keyword",
-        label: "the lane fallback",
-        why: "COALESCE folds a missing status to 'none' — a lane no order carries — so the fold is a pure guard. A bare column would break the pattern the close expects.",
-      },
       {
         answer: "'pending'",
         kind: "keyword",
         label: "the at-risk lane",
         why: "The cadence tracks pending work, so the gate is status = 'pending'. A 'shipped' fill would read the in-transit calendar instead — twelve months.",
+      },
+      {
+        answer: ">",
+        kind: "keyword",
+        label: "the total gate direction",
+        why: "The gate keeps real orders, so the test is > 0. Flipping to < would demand negative totals, which cannot exist.",
+      },
+      {
+        answer: "0",
+        kind: "number",
+        noVerify: true,
+        label: "the open total floor",
+        why: "A floor of 0 admits every pending order. A 500-floor would trim the cadence to four months and hide the true spread.",
       },
       {
         answer: "DATE",
@@ -965,9 +973,9 @@ AND {3}(created_at) = created_at;`,
         why: "DATE(created_at) = created_at proves the stamps are date-clean — true for the book, so the cadence reads real rows. JULIANDAY would compare a number to text and count nothing.",
       },
     ],
-    distractors: ["'shipped'", "MAX", "JULIANDAY"],
+    distractors: ["'shipped'", "500", "JULIANDAY"],
     walkthrough:
-      "The COALESCE guard folds nothing on this clean book — every status is present — and the pending gate scopes the cadence: ten distinct months carry at-risk work, out of the fourteen the order calendar spans. The shipped flip would read twelve months of in-transit history, and the MAX misuse would break the gate outright. The pending cadence: ten months.",
+      "The pending gate scopes the at-risk lane and the guarded total keeps every real order in scope: ten distinct months carry pending work, out of the fourteen the order calendar spans. The shipped flip would read twelve months of in-transit history, and the 500-floor would trim the cadence to four. The pending cadence: ten months.",
   },
   {
     id: "cs-1424",
@@ -981,7 +989,7 @@ AND {3}(created_at) = created_at;`,
     template: `SELECT COUNT(*) AS towers
 FROM orders
 WHERE COALESCE(total, {1}) {2} {3}
-AND {4}(status) = status;`,
+AND {4}(status, 'x') = status;`,
     slots: [
       {
         answer: "0",
@@ -1007,7 +1015,7 @@ AND {4}(status) = status;`,
         answer: "IFNULL",
         kind: "keyword",
         label: "the status fold",
-        why: "IFNULL(status, 'x') = status proves the lane labels are present — the fold returns each status untouched. UPPER would demand shouting lanes and match nothing.",
+        why: "IFNULL(status, 'x') = status proves the lane labels are present — the fold returns each status untouched. UPPER takes a single argument and errors on the two-arg call, and MAX would return the 'x' sentinel instead of the stored lane.",
       },
     ],
     distractors: ["UPPER", "<", "MAX"],
@@ -1025,7 +1033,7 @@ AND {4}(status) = status;`,
     ask: "How many orders show a raw drift between the line pot and the booked total?",
     template: `SELECT COUNT(*) AS drifted
 FROM (
-  SELECT o.id, o.total, o.created_at, COALESCE({1}(i.pot), 0) AS pot
+  SELECT o.id, o.total, o.created_at, COALESCE({1}(i.pot, 0), 0) AS pot
   FROM orders o
   LEFT JOIN (
     SELECT order_id, SUM(quantity * unit_price) AS pot
@@ -1193,36 +1201,43 @@ AND o.total {3} {4};`,
     tier: "medium",
     topic: "t3",
     universe: "month-close",
-    title: "The full-calendar span",
+    title: "The year-page span",
     brief:
-      "From: Month-end close. Re: the billing footprint.\n\nThe order book's footprint is the span from the first order to the last. Fold the stamps to day numbers, take the extremes, and read the span — the calendar the close reports against every period.",
-    ask: "The number of days from the first to the last order.",
+      "From: Month-end close. Re: the 2024 page.\n\nThe close books the 2024 calendar as its own page, and the page has a footprint of its own: the span from the year's first order to its last. Gate the year, fold the stamps to day numbers, take the extremes, and read the page's span.",
+    ask: "The number of days from the first to the last 2024 order.",
     template: `SELECT ROUND(julianday({1}(created_at)) - julianday({2}(created_at)), 0) AS span_days
 FROM orders
-WHERE {3}(created_at) = created_at;`,
+WHERE strftime('%Y', created_at) = {3}
+AND {4}(created_at) = created_at;`,
     slots: [
       {
         answer: "MAX",
         kind: "keyword",
         label: "the late extreme",
-        why: "The span ends at the last order, so the leading fold is MAX. MIN there would flip the span negative — the book would appear to run backwards.",
+        why: "The span ends at the year's last order, so the leading fold is MAX. MIN there would flip the span negative — the page would appear to run backwards.",
       },
       {
         answer: "MIN",
         kind: "keyword",
         label: "the early extreme",
-        why: "The span starts at the first order, so the subtrahend is MIN. MAX would duplicate the leading fold and zero the span.",
+        why: "The span starts at the year's first order, so the subtrahend is MIN. MAX would duplicate the leading fold and zero the span.",
+      },
+      {
+        answer: "'2024'",
+        kind: "keyword",
+        label: "the year gate",
+        why: "The page is the 2024 calendar, so the year chop carries '2024'. A '2025' fill would read the new year's partial page — a 57-day stub instead of the full year.",
       },
       {
         answer: "DATE",
         kind: "keyword",
         label: "the grain check",
-        why: "DATE(created_at) = created_at proves the stamps are date-clean — true for the book, so the span reads real rows. JULIANDAY would compare a number to text and void the read.",
+        why: "DATE(created_at) = created_at proves the stamps are date-clean — true for the page, so the span reads real rows. ROUND would fold each stamp to a number no calendar can read, and JULIANDAY would compare a number to text.",
       },
     ],
-    distractors: ["JULIANDAY", "ROUND"],
+    distractors: ["'2025'", "JULIANDAY", "ROUND"],
     walkthrough:
-      "The extremes fold to day numbers and the subtraction spans the book's calendar: 2024-01-01 to 2025-02-27 — 423 days, the footprint every period report leans on. Swapping either extreme for the other would zero the span, and ROUND would fold each stamp to a number no calendar can read. JULIANDAY in the grain gate would void the read to an empty set. The billing footprint: 423 days.",
+      "The year gate scopes the read to the 2024 page, and the extremes fold to day numbers: the year opened with its first order on 2024-01-01 and closed on 2024-12-27 — 361 days, four short of the full calendar. The '2025' fill would read the new year's 57-day stub, swapping either extreme would invert or zero the span, and the ROUND fold would collapse every stamp into an unreadable number. The 2024 page: 361 days.",
   },
   {
     id: "cs-1430",
@@ -1368,7 +1383,7 @@ AND total {4} {5};`,
         answer: "'12'",
         kind: "keyword",
         label: "the month code",
-        why: "strftime renders December as '12', so the month chop carries '12'. An '11' fill would count the November page — six orders.",
+        why: "strftime renders December as '12', so the month chop carries '12'. A word fill like 'dec' matches no month code — the codes run '01' through '12'.",
       },
       {
         answer: "'2024'",
@@ -1396,7 +1411,7 @@ AND total {4} {5};`,
         why: "A floor of 0 admits every December order. A 300-floor would keep only the three heavyweight tickets.",
       },
     ],
-    distractors: ["'11'", "'2025'", "JULIANDAY", "300"],
+    distractors: ["'dec'", "'2025'", "JULIANDAY", "300"],
     walkthrough:
       "The month and year chops scope the read to the holiday page, and the stack counts seven December 2024 orders — the year-end burst the close books apart from the six-order November and the January restart. The '2025' fill would find an empty December, and the 300-floor would keep only three tickets on the page. The December stack: seven.",
   },
@@ -1807,14 +1822,15 @@ AND active = {3};`,
     tier: "medium",
     topic: "t4",
     universe: "growth",
-    title: "The pair-month revenue",
+    title: "The shipped pair census",
     brief:
-      "From: Growth lead. Re: the pair-month pots.\n\nThe pair months — two signups each — cluster in 2024, and the read counts how many of those months carry revenue. Stage the signup census and count the pair months scoped to the new year.",
-    ask: "How many 2024 months saw exactly two signups?",
+      "From: Growth lead. Re: the shipped rhythm.\n\nThe shipped lane found its pairing rhythm in the back half of the book: months where exactly two orders sit in transit. Stage the shipped monthly census, keep the pairs, and count the months from July 2024 on.",
+    ask: "How many months from July 2024 onward carry exactly two shipped orders?",
     template: `SELECT COUNT(*) AS pair_months
 FROM (
   SELECT strftime('%Y-%m', created_at) AS mo, COUNT(*) AS n
-  FROM customers
+  FROM orders
+  WHERE status = 'shipped'
   GROUP BY mo
 )
 WHERE n = {1}
@@ -1825,25 +1841,25 @@ AND mo {2} {3};`,
         kind: "number",
         noVerify: true,
         label: "the pair bar",
-        why: "A pair month carries exactly two signups, so the bar is 2. A 1-bar would count the two singleton months instead.",
+        why: "A pair month carries exactly two shipped orders, so the bar is 2. A 1-bar would count the lone-July singleton instead.",
       },
       {
         answer: ">=",
         kind: "keyword",
-        label: "the year floor direction",
-        why: "The read scopes to 2024, so the month gate runs >= '2024-01'. Flipping to < would read the 2023 cohorts instead.",
+        label: "the back-half floor direction",
+        why: "The read opens at July 2024, so the month gate runs >= '2024-07'. Flipping to < would read everything before the rhythm resumed.",
       },
       {
-        answer: "'2024-01'",
+        answer: "'2024-07'",
         kind: "keyword",
         noVerify: true,
-        label: "the year floor value",
-        why: "The floor value opens the 2024 window — five pair months live there. A '2024-06' floor would slice the window mid-story.",
+        label: "the back-half floor value",
+        why: "The floor value opens the back-half window — four pair months live from July on. A '2024-06' floor would sweep June's pair into the count and break the rhythm's frame.",
       },
     ],
-    distractors: ["1", "2024-06"],
+    distractors: ["1", "'2024-06'"],
     walkthrough:
-      "The signup census stages nine months, and the = 2 bar scoped to 2024 counts five pair months — January through May joined in pairs. The 1-bar would count June and July instead. The '2024-06' floor would slice the window mid-story. The 2024 pair months: five.",
+      "The shipped census stages its monthly buckets, and the = 2 bar from July 2024 on counts four pair months — August, September and December 2024, plus February 2025, while June's pair sits just before the floor. The 1-bar would find July's singleton, and the '2024-06' floor would sweep June into the read. The shipped pairing rhythm: four months.",
   },
   {
     id: "cs-1445",
@@ -2110,10 +2126,10 @@ AND run {4} {5};`,
         kind: "number",
         noVerify: true,
         label: "the wall height",
-        why: "The wall sits at 15000 — September's 24047.31 stack breaks through, while January and February hide below. A 10000-wall would keep January alone.",
+        why: "The wall sits at 15000 — September's 24047.31 stack breaks through, while January and February hide below. A 6000-wall would keep January alone.",
       },
     ],
-    distractors: ["COUNT", "DESC", "10000", "25000"],
+    distractors: ["COUNT", "DESC", "6000", "25000"],
     walkthrough:
       "Two windows, one stage: the ascending quartile hands the lean bucket to January, February and September, and the running stack tells the close where the year began — January at 3731.97, February at 7341.61, both safely under the 15000 wall, while September's 24047.31 breaks through and leaves the read. The COUNT fold would turn the stack into a row tally and let everything pass. The capstone keeps the two early months.",
   },

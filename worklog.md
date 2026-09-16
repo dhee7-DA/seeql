@@ -1599,3 +1599,21 @@ Work Log:
 
 Stage Summary:
 - P4 COMPLETE. Sidebar totals, drawer header, and both prose strings now read module counts dynamically from MODULES.length (currently 9).
+
+---
+Task ID: m5-cases-w5
+Agent: Super Z (main agent)
+Task: M5 wave 5 (cs-1401–1450, t1–t4 deepening) — fix, wire, audit, E2E, commit
+
+Work Log:
+- Resumed from commit c80bf7e (wave-5 rewrite WIP, 42/50 passing after codemod pass). 8 cases still failing: 3 execution errors (cs-1418 COALESCE 1-arg, cs-1424/cs-1425 IFNULL 1-arg) + 5 ambiguous distractors (cs-1412 '!=' pass-all on gate, cs-1420 '300'→status=300 empty-vs-honest-zero, cs-1423 'shipped' invisible in decorative status fold, cs-1433 '11' numeric-affinity coercion in total floor, cs-1450 10000 wall non-biting).
+- NEW AUDIT LAWS (t5): (1) argh-count — slotted fold fns need the 2nd arg IN THE TEMPLATE ({2}(x, 0)); (2) numeric-affinity coercion — digit-string distractors ('11') coerce in numeric-column compares, only non-numeric words ('dec') bite; (3) honest-zero cases must ban every empty-result distractor (status=300); (4) decorative fallback folds make ALL string distractors invisible — restructure so the fold sits on a live column (total) instead; (5) wall heights must be probe-checked against the actual run values (10000 kept Jan+Feb = same as 15000).
+- Fixed all 8 (pre-verified via scripts/t5-fix-verify.ts probes); restructured cs-1423 (status gate slotted, COALESCE moved to total); file audit 50/50 PASS (16e/22m/12h).
+- Dup check caught 2 template-shape dups vs wave 3: cs-1429 ≡ cs-1331 (order span) and cs-1444 ≡ cs-1347 (pair-month census). Rebuilt: cs-1429 → "The year-page span" (2024-scoped span, 361d vs 57d '2025' flip, 4 slots); cs-1444 → "The shipped pair census" (status='shipped' inside derived table, bar 2, floor '2024-07' bites: 4 vs 5). Probes: scripts/t5-rebuild-probe{,2}.ts.
+- INCIDENT: full-deck audit initially showed 435 FAILs — dev-server had wiped db/custom.db finance tables + orders.shipped_at AGAIN (known incident). Restored via scripts/restore-db.ts (9 tables: customers 16, expenses 36, invoices 28, ledger_entries 80, order_items 251, orders 103, payments 27, products 16, suppliers 6). Re-verified ALL wave-5 fixes on restored DB — every figure identical.
+- Wired casesT5 into index.ts. Gates: file audit 50/50; FULL DECK 1450/1450 PASS 0 dups (0 title, 0 SQL); check-dup-t5 range sequential 1401–1450, topics t1 15/t2 10/t3 15/t4 10; tsc src/ 0 errors.
+- E2E (agent-browser): dev server restarted via .zscripts/dev.sh + restore-db again after db:push; drawer "1450 CASE FILES · MODULES 1–5 TOOLKIT"; tiers 485/487/478; M5 chips Text & type 45 / COALESCE & NULLs 40 / Dates & calendars 35 / Month buckets 30; filtered Text & type → paged to CS-1401, solved live (TRIM / > / 0) → CLOSED +10 XP (sidebar 0→10 XP), walkthrough rendered, 0 page errors; shot scripts/shots/m5-w5-cs1401-closed.png.
+
+Stage Summary:
+- M5 CASES: 250/300 (waves 1–5, cs-1201–1450). Deck 1450.
+- Next: wave 6 (cs-1451–1500, t5–t8 deepening 15/15/10/10 → M5 COMPLETE 300/300).
