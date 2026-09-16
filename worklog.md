@@ -1649,3 +1649,21 @@ Stage Summary:
 - M6 CASES: 50 done (x1/x2/x3). Deck 1550 PASS.
 - Remaining M6 topics: x4 RIGHT JOIN, x5 FULL OUTER JOIN, x6 CROSS JOIN, x7 range join, x8 capstone (chips already reserved in drawer).
 - Next: wave 2 (x4+x5), wave 3 (x6+x7), wave 4 (x8) → M6 complete.
+
+---
+Task ID: m6-cases-w2
+Agent: Super Z (main agent)
+Task: M6 wave 2 (cs-1551–1600, x4 RIGHT JOIN 25 / x5 FULL OUTER 25) — probe, write, audit, E2E, commit
+
+Work Log:
+- Probe rounds 1–5 (scripts/m6-cases-w2-facts{,2,3,4,5}.ts) + micro-probe round 6. Grounds: SQLite 3.53 supports RIGHT/FULL OUTER; every customer has orders and every product/supplier is matched — the real orphan grounds are invoices (5 invoice-free members: Bruno/Dmitri/Farid/Keiko/Noah, 15 orders worth 4746.95, avg 316.46) and payments→invoices (6 unpaid worth 15217.00, open lane 13461.00, paid-ghost ticket INV-2025-028, partial payer INV-2025-025 400000/614800, 23 invoices with ≤1 payment, 7 behind). Two-sided FULL OUTER pairs found: open-vs-paid 11 (3/5/3), 2024-vs-2025 11 (6/1/4), shipped-vs-pending 13 (5/3/5), order-months 14 vs invoice-months 13 (2024-01 hole worth 3731.97), card-vs-wire 8 (4/0/4).
+- NEW AUDIT LAWS (w2): (1) RIGHT JOIN orphan test reads the SPARSE (left) table's key — payments RIGHT JOIN invoices unmatched rows have p.* NULL, not i.* (cs-1554 first draft inverted it and returned 0); (2) subset key-sets make directional joins collapse to FULL — LEFT≡FULL when left side ⊇ right orphans; x5 cases scoped-set pairs with both-side exclusives, or omit the collapsing distractor from the bank; (3) SQLite IS is null-safe equality — `i.mo IS billed` still matches the hole row (NULL IS NULL), so 'billed' can't distractor a NULL-test slot (cs-1598); (4) flag-direction trap: only25 must flag o4 IS NULL, not IS NOT NULL (cs-1593 first draft made LEFT≡FULL); (5) numeric waterline distractors on threshold slots must fall outside (runner-up, anchor]区间 or they reproduce the row (cs-1571 uses 489.33/1200 around 752.96/1088.44); (6) global-extreme collisions: Farid's 1088.44 is BOTH shadow-top and store-top — NOT NULL can't distractor cs-1572; Olivia 444.80 (not Dmitri) is store-min, keeping cs-1575 safe; (7) both-side counts are join-invariant (survive every join type) — never make them the answer (cs-1595 uses single-year OR-NULL filter instead; cs-1576 counts the union).
+- Fixed during audit loop: cs-1554 (orphan side p not i), cs-1585 (region lens US=1; APAC/EU collided with broken-year side counts), cs-1589 (missing {3} marker; ask/brief realigned to clear-pipeline semantics; shipped side pinned AND s IS NOT NULL so NOT NULL flips to both-state EU 2≠3), cs-1593 (only25 flag IS NULL), cs-1596 ({1}/{2} markers swapped — NOT IN + FULL OUTER JOIN), cs-1598 (dropped 'billed' distractor). cs-1554 title renamed "The untouched six" (dup vs cs-1005).
+- Wired casesX4 + casesX5 into index.ts; created scripts/check-dup-x2.ts (range 1551–1600).
+- Gates: file audits 25/25 + 25/25 (x4 8e/9m/8h, x5 7e/9m/9h); check-dup-x2: 1600 cases 0 title dups 0 SQL dups, wave-2 ids sequential, topics x4:25/x5:25, tiers 15e/18m/17h; FULL DECK AUDIT 1600/1600 PASS (tiers 534/539/527); tsc cases entry clean (exit 0).
+- E2E (agent-browser): restore-db.ts re-run pre-E2E. Drawer "1600 CASE FILES · MODULES 1–6"; tiers 534/539/527; new M6 chips RIGHT JOIN 25 / FULL OUTER 25 (CROSS JOIN 0, Non-equi joins 0 still reserved). Filtered RIGHT JOIN → landed CS-1551 (REFUND AUDIT, 3 slots, chips incl LEFT JOIN/INNER JOIN/i.id/c.region/JOIN distractors), solved live chip-first-then-slot (RIGHT JOIN / c.id / NULL) → CLOSED, +10 XP, walkthrough rendered ("the roster lives on the right"), 0 page errors. Shot scripts/shots/m6-w2-cs1551-closed.png.
+
+Stage Summary:
+- M6 CASES: 100/150-ish done (x1–x5). Deck 1600 PASS.
+- Remaining M6 topics: x6 CROSS JOIN, x7 Non-equi joins, x8 Clinic capstone (chips reserved at 0).
+- Next: wave 3 (x6+x7), wave 4 (x8) → M6 complete.
