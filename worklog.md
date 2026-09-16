@@ -1517,3 +1517,20 @@ Work Log:
 Stage Summary:
 - M5 CASES: 50/300 (wave 1, cs-1201–1250). Deck 1250. Sidebar totals unchanged (lessons/drills untouched).
 - Next: wave 2 (cs-1251–1300, t5 15 / t6 15 / t7 10 / t8 10 — FIRST WINDOW CASES, forced OVER()) → waves 3–6 → P4 (landing.tsx "Eight modules" hardcode; learn-app overview "Eight modules" hardcode spotted at line ~545).
+
+---
+Task ID: m5-cases-w2
+Agent: Super Z (main agent)
+Task: M5 case library wave 2 — cases-t2.ts (cs-1251–1300, t5 rank 15 / t6 partition 15 / t7 offsets 10 / t8 running+frames+NTILE 10) — FIRST WINDOW WAVE
+
+Work Log:
+- Receipts T196–T255 (scripts/m5-cases-w2{,b}-facts.ts): leaderboard Alice 7262.35 #1 … Olivia 444.80 #16 (NO ties in spend/order-totals/prices — rankers indistinguishable there!), supplier product counts 3/3/3/3/2/2 (4-way tie: RANK skips to 5, DENSE_RANK→2, ROW_NUMBER 1-6), region toppers (EU Alice / US Emma / APAC Grace / LATAM Bruno 852.44), category toppers 7, region podium seats 7, delivered crown Grace 3054.89, LAG deltas (Feb -122.33 … Nov cliff -1326.87, gains 5 / drops 8), Alice gaps (max 51 before 2024-11-11; Bruno 81), gaps>30d = 35, running revenue (final 34833.28 = grand total; crosses 20000 after Jul, 25000 at Oct 27022.98), NTILE(4) edges (top-q min 3644.56, bottom-q max 705.39), 2-mo MA (Feb 3670.81, Mar 3113.36 / 3-mo 3319.56), region pots EU 15089.23 / APAC 11605.45 / US 7286.16 / LATAM 852.44.
+- NEW WINDOW-SPECIFIC AUDIT LAWS (all hit in this wave): (1) SQLite evaluates WHERE before window fns — single-row filters (mo = '2024-02') NULL out LAG and LEAD alike → month filters MUST wrap in outer subquery; (2) SELECT aliases invisible inside same-level OVER() (ORDER BY spend fails → ORDER BY SUM(o.total)); (3) RANK ≡ ROW_NUMBER ≡ DENSE_RANK without ties → ranker slots only where ties exist (supplier counts, order counts) or keep ranker fixed; (4) cumulative windows (SUM/COUNT/MIN/AVG OVER) agree with rankers on LIMIT-1 outputs → never pair a window-fn slot with a LIMIT-1 answer; (5) LAG ≡ LEAD as gap multiset over full partitions (cs-1290) — never slot both; (6) float-equality: WHERE delta = -1326.87 fails on raw SUM floats → ROUND in the inner stage before comparing; (7) GROUP BY 2 = positional ref (same grouping as day) → numeric distractors in group-key slots are alias-equivalent; (8) frame depth invisible at the frontier row (Jan) → depth cases must read March+.
+- Audit loop 19→23→28→41→44→48→49→50 PASS over 8 batches. Fixes: 'finance' universe → expense (14×); 14 two-slot cases rebuilt with third slots (partition keys, count fns, read orders, sanity gates); alias-in-OVER fixes (1261/1262/1268); region projection (1275/1279); WHERE-before-window restructures (1281/1282/1283/1284/1287/1288/1289/1296); duplicate-answer chips (1260 COUNT×2); float-rounding (1283); NTILE/group-key bank conflicts (1270).
+- Wired casesT2 into index.ts; check-dup-t2.ts (1300 total, 0 dups, ids sequential).
+- Gates: file audit 50/50 (17e/16m/17h); FULL DECK 1300/1300 PASS 0 dups; tsc src/ 0 errors.
+- E2E (agent-browser): drawer "1300 CASE FILES · MODULES 1–5 TOOLKIT", tiers 435/433/432, chips RANK & friends 15 / Partition windows 15 / LAG & LEAD 10 / Window capstone 10; Window-capstone filter → CS-1291; solved (mo/<=/'2024-03') → CLOSED +10 XP (ledger "case:cs-1291":10), walkthrough rendered, 0 page errors; shot scripts/shots/m5-w2-cs1291-closed.png.
+
+Stage Summary:
+- M5 CASES: 100/300 (waves 1–2, cs-1201–1300). Deck 1300.
+- Next: wave 3 (cs-1301–1350, t1–t4 deepening 15/15/10/10) → wave 4 (t5–t8 deepening) → waves 5–6 → P4 (landing.tsx + learn-app "Eight modules" hardcodes).
