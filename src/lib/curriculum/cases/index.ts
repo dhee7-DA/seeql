@@ -50,6 +50,7 @@ import { casesT2 } from "./cases-t2";
 import { casesT3 } from "./cases-t3";
 import { casesT4 } from "./cases-t4";
 import { casesT5 } from "./cases-t5";
+import { casesT6 } from "./cases-t6";
 
 export const CASES: CaseStudy[] = [
   ...casesExemplars,
@@ -101,6 +102,7 @@ export const CASES: CaseStudy[] = [
   ...casesT3,
   ...casesT4,
   ...casesT5,
+  ...casesT6,
 ].sort((a, b) => Number(a.id.slice(3)) - Number(b.id.slice(3)));
 
 export function caseById(id: string): CaseStudy | undefined {

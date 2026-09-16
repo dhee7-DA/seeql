@@ -1617,3 +1617,20 @@ Work Log:
 Stage Summary:
 - M5 CASES: 250/300 (waves 1–5, cs-1201–1450). Deck 1450.
 - Next: wave 6 (cs-1451–1500, t5–t8 deepening 15/15/10/10 → M5 COMPLETE 300/300).
+
+---
+Task ID: m5-cases-w6
+Agent: Super Z (main agent)
+Task: M5 wave 6 (cs-1451–1500, t5–t8 deepening 15/15/10/10) — write, audit, E2E, commit → M5 COMPLETE 300/300
+
+Work Log:
+- Resumed from commit 456ec40 (wave-6 receipt probes 1–2 already committed). Ran probe rounds 3–4 (scripts/m5-cases-w6-facts3.ts, m5-cases-w6-facts4.ts) for fixed-shape grounds: regional ladders via GROUP BY region,id (A1: APAC Grace 4574.23/EU Alice 7262.35/LATAM Bruno 852.44/US Emma 6640.56 rk1s), invoice-count ladder (Alice 5 rk1, 2-way tie rk2, 2-way rk4, 3-way rk6, 3-way rk9; 5 members invoice-free), order-gaps (16 >60d / 35 >30d / 87 total, 11 distinct customers), per-customer max silences (Hiro 299, Keiko 241, Noah 155), LAG offsets (zero-pad opening 3731.97; offset-2 swings Jul -1716.45), LEAD pins (Oct→1648.80), lane tickets (cancelled crown Keiko 397.99 unique, delivered floor 30.24, delivered rn2 Alice 705.23, shipped rn3 Emma 785.79), running series (30000 wall Dec 30773.25, MA2 Jul 1620.64, running-min floor 1193.86, LATAM Jan run 752.96), payment rails (wire 25000 crossing 26018.50 @2024-12-05, card final 37364.00), NTILE (month q1-ASC max 2047.43 / q4-ASC min 3116.04, customer q4 pot 22121.70, halves DESC q2 max 2390.53), ledger/expense deltas (Feb +915400, Aug expense +141600), order-count jumps (Jul +2), invoice issue gaps (13 >90d, max Liam 196).
+- NEW AUDIT LAW (w6): window PARTITION BY a column absent from GROUP BY + GROUP BY id returns garbage in SQLite (T6.2/T6.3 probes: Pedro "spend" 34833.28 = store total) — all partition cases use GROUP BY region,id (or filter moved to the OUTER query so the partition runs over the full set); constant-string distractors in partition slots are ambiguous when the scope filter sits inside the derived table (single partition ≡ scope partition) — fixed by outer-filter restructure on cs-1466/1467/1468/1469/1470/1471/1472/1474/1477/1480 + identifier distractor swaps (o.created_at).
+- Also fixed during audit loop: string-literal answers must carry their own quotes ('EU', '2024-01', 'Hiro Tanaka' — 31 tokens quoted via scripted pass); rank columns must be PROJECTED for number-slot verification (cs-1475/1476/1477/1478 select rk/rn/q); scope-slot score 3-slot minimums (cs-1454 +>= slot); waterline distractors must exceed the answer row value (cs-1458 12→800); comparison-target distractors must exclude the pinned row (cs-1483 restructured to LAG-depth slot with distractors '2024-05'/2/>).
+- Wired casesT6 into index.ts. Gates: file audit 50/50 PASS (19e/16m/15h); check-dup-t6: 0 title dups (cs-1485 renamed "The silent-stretch census" after collision with cs-1290), 0 SQL dups, ids sequential 1451–1500, topics t5 15/t6 15/t7 10/t8 10; FULL DECK AUDIT 1500/1500 PASS 0 dups; tsc src/ 0 errors.
+- E2E (agent-browser): dev server already up; restore-db.ts re-run pre-E2E (DB verified 16/103/28/27/36/80/16/6/251, Alice 7262.35, shipped_at 82). Drawer "1500 CASE FILES · MODULES 1–5 TOOLKIT"; tiers 504/503/493; M5 chips Text & type 45 / COALESCE & NULLs 40 / Dates & calendars 35 / Month buckets 30 / RANK & friends 45 / Partition windows 45 / LAG & LEAD 30 / Window capstone 30. Filtered RANK & friends → paged to CS-1451, solved live (RANK / DESC / 2 — chip-first-then-slot interaction) → CLOSED, sidebar 0→10 XP, walkthrough rendered ("the two-order club sits on rank line 12"), 0 page errors. Shot scripts/shots/m5-w6-cs1451-closed.png.
+
+Stage Summary:
+- M5 CASES: 300/300 COMPLETE (cs-1201–1500 across 6 waves). Full deck 1500 cases PASS.
+- M4 (300) + M5 (300) both complete; P4 dynamic module count shipped earlier.
+- Next candidates: M6+ module case expansion (Expert Clinic / Finance modules currently 0 case coverage), or content polish passes.
