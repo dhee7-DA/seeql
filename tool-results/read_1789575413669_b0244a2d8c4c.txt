@@ -1,0 +1,499 @@
+     1→======================================================================
+     2→cs-1401 [easy] topic=t1 universe=catalog — The dash-stripped tags
+     3→ASK: How many product names does the dash-stripper actually change?
+     4→TEMPLATE:
+     5→SELECT COUNT(*) AS changed
+     6→FROM products
+     7→WHERE REPLACE(name, '-', '') != name
+     8→AND {1}(name) = name
+     9→AND {2}(name) = name
+    10→AND stock > {3};
+    11→  SLOT1 keyword answer="TRIM" label="the storage guard" why="TRIM(name) = name proves no tag rides with stray whitespace — true for the catal"
+    12→  SLOT2 keyword answer="TRIM" label="the storage check" why="TRIM(name) = name proves the tags are stored clean — true for the catalog. UPPER"
+    13→  SLOT3 number noVerify answer="0" label="the stock gate" why="The gate keeps stocked tags, so the test is > 0. Flipping to < 0 would demand ne"
+    14→  DISTRACTORS: ["UPPER","ZZZ_FIX_1"]
+    15→  BRIEF(262): From: Catalog ops. Re: the SKU normalizer. |  | The normalizer strips dashes from SKUs, and the audit counts the tags it actually changes. REPLACE wipes every dash; a tag with none passes through untouche
+    16→  WALK(302): REPLACE wipes every dash, and three tags carry one — the 3-pack socks tag, the 7-in-1 hub, the 14-inch ring light — so the stripper changes exactly three names.
+    17→======================================================================
+    18→cs-1405 [medium] topic=t1 universe=crm — The consonant-led roster
+    19→ASK: How many customer names open with a consonant?
+    20→TEMPLATE:
+    21→SELECT COUNT(*) AS consonant_led
+    22→FROM customers
+    23→WHERE SUBSTR(name, 1, 1) {1} ('A','E','I','O','U')
+    24→AND {2}(city) = city
+    25→AND {3}(created_at) = created_at
+    26→AND active > {4};
+    27→  SLOT1 keyword answer="NOT IN" label="the vowel exclusion" why="The consonant-led group excludes the five vowels, so the test is NOT IN. IN woul"
+    28→  SLOT2 keyword answer="TRIM" label="the storage check" why="TRIM(city) = city proves every member's city is stored clean — true for the rost"
+    29→  SLOT3 keyword answer="DATE" label="the grain check" why="DATE(created_at) = created_at proves the signup stamps are date-clean — true for"
+    30→  SLOT4 number noVerify answer="0" label="the active gate" why="The gate admits every member — active flag is 0 or 1, both >= 0. Flipping to < 0"
+    31→  DISTRACTORS: ["IN","Z0X"]
+    32→  BRIEF(241): From: CRM steward. Re: the sorting pass. |  | The CRM's new sort buckets names by their opening letter, and the consonant-led group needs its census. Slice the first character, exclude the vowels, and cou
+    33→  WALK(288): The vowel list catches Alice, Emma, Isabella, Olivia — four names open with a vowel, so the consonant-led census counts twelve. The IN flip would return those f
+    34→======================================================================
+    35→cs-1407 [easy] topic=t1 universe=crm — The lowercased import
+    36→ASK: How many distinct emails survive the lowercase fold?
+    37→TEMPLATE:
+    38→SELECT COUNT(DISTINCT {1}(email)) AS folded
+    39→FROM customers
+    40→WHERE INSTR(email, {2}) > {3};
+    41→  SLOT1 keyword answer="LOWER" label="the import fold" why="The pipeline lowercases addresses, so the fold is LOWER. UPPER would certify the"
+    42→  SLOT2 keyword answer="'@'" label="the at needle" why="The audit counts only well-formed addresses, so the probe looks for the @. An 'a"
+    43→  SLOT3 number noVerify answer="0" label="the containment bar" why="A found @ sits at position 1 or later, so the bar is 0. A 10-bar would demand th"
+    44→  DISTRACTORS: ["10","ZZZ_FIX_1"]
+    45→  BRIEF(236): From: CRM steward. Re: the email normalization. |  | The import pipeline lowercases every email before storing, and the audit verifies the fold was lossless: LOWER must preserve the distinct count. Fold t
+    46→  WALK(342): LOWER folds every address, and the distinct count stays at sixteen — the fold merges nothing, proving the import was lossless. UPPER would certify the opposite 
+    47→======================================================================
+    48→cs-1409 [medium] topic=t1 universe=expense — The vendor initial census
+    49→ASK: The census of expense vendors' first initials.
+    50→TEMPLATE:
+    51→SELECT SUBSTR(vendor, 1, 1) AS ini, COUNT(*) AS n
+    52→FROM expenses
+    53→WHERE {1}(vendor) = vendor
+    54→GROUP BY ini
+    55→ORDER BY n {2}
+    56→LIMIT {3};
+    57→  SLOT1 keyword answer="TRIM" label="the storage check" why="TRIM(vendor) = vendor proves the feed is stored clean — true for every entry, so"
+    58→  SLOT2 keyword answer="DESC" label="the census direction" why="The report leads with the busiest initial, so the sort is descending. ASC would "
+    59→  SLOT3 number noVerify answer="2" label="the headline cut" why="The cut of 2 shows the tied leaders: 'A' and 'H' at fourteen apiece. A 1-cut wou"
+    60→  DISTRACTORS: ["UPPER","ASC","1"]
+    61→  BRIEF(239): From: Expense report. Re: the vendor initials. |  | The expense feed's vendors carry four distinct initials, and the report counts the lines under each. Slice the first character, prove the storage clean,
+    62→  WALK(325): The initial slice reads A, A, D, S across the feed, and the census ties at the top: 'A' fourteen, 'H' fourteen — Atlas and AdWorks share the crown. The UPPER fi
+    63→======================================================================
+    64→cs-1412 [medium] topic=t1 universe=crm — The surname-start check
+    65→ASK: How many customer surnames open with an uppercase letter?
+    66→TEMPLATE:
+    67→SELECT COUNT(*) AS capped_surnames
+    68→FROM customers
+    69→WHERE SUBSTR(SUBSTR(name, INSTR(name, ' ') + 1), 1, 1) {1} UPPER(SUBSTR(SUBSTR(name, INSTR(name, ' ') + 1), 1, 1))
+    70→AND LENGTH(name) {2} {3};
+    71→  SLOT1 keyword answer="=" label="the caps test" why="A capital surname-start equals its own uppercase fold, so the test is =. Flippin"
+    72→  SLOT2 keyword answer=">" label="the name gate direction" why="The gate keeps real names, so the test is > 0. Flipping to < 0 would demand nega"
+    73→  SLOT3 number noVerify answer="0" label="the open name floor" why="A floor of 0 admits every member. A 12-floor would keep only the long names and "
+    74→  DISTRACTORS: ["ZZZ_R0","12"]
+    75→  BRIEF(244): From: CRM steward. Re: the two-column sort. |  | The contact cards sort by surname, and the audit verifies every surname opens with a capital — the two-column split must not lowercase the tail. Slice the 
+    76→  WALK(335): The surname slice lifts each tail's first character, and the caps test compares it to its own uppercase fold — every stored surname opens with a capital, so the
+    77→======================================================================
+    78→cs-1416 [easy] topic=t2 universe=fraud — The shipped sentinel re-check
+    79→ASK: How many cancelled orders carry the 'x' ship sentinel?
+    80→TEMPLATE:
+    81→SELECT COUNT(*) AS cancelled_stuck
+    82→FROM orders
+    83→WHERE IFNULL({1}, 'x') = 'x'
+    84→AND status = {2}
+    85→AND total {3} {4};
+    86→  SLOT1 keyword answer="shipped_at" label="the sentinel column" why="The sentinel rides the missing ship timestamp, so IFNULL folds shipped_at. IFNUL"
+    87→  SLOT2 keyword answer="'cancelled'" label="the write-off lane" why="The write-off touches cancelled work, so the gate is status = 'cancelled'. A 'pe"
+    88→  SLOT3 keyword answer=">" label="the total gate direction" why="The gate admits every stuck order, so the test is > 0. Flipping to < 0 would dem"
+    89→  SLOT4 number noVerify answer="0" label="the open total floor" why="A floor of 0 keeps the whole lane in scope. A 300-floor would keep only the expe"
+    90→  DISTRACTORS: ["status","pending","<","300"]
+    91→  BRIEF(270): From: Fraud spot-check. Re: the sentinel discipline, re-run. |  | The refund team re-runs the sentinel census on the cancelled lane only: never-shipped cancelled orders are the ones the write-off process 
+    92→  WALK(352): IFNULL pushes each missing timestamp to the 'x' sentinel, and the cancelled gate narrows the census to the seven write-off lines — every cancelled order is stuc
+    93→======================================================================
+    94→cs-1417 [medium] topic=t2 universe=month-close — The settlement shortfall
+    95→ASK: How many invoices have payments that total less than face value?
+    96→TEMPLATE:
+    97→SELECT COUNT(*) AS shortfalls
+    98→FROM (
+    99→  SELECT i.id, i.amount_cents,
+   100→         COALESCE({1}(p.amount_cents), 0) AS paid
+   101→  FROM invoices i
+   102→  LEFT JOIN payments p ON p.invoice_id = i.id
+   103→  GROUP BY i.id
+   104→)
+   105→WHERE paid {2} amount_cents
+   106→AND paid {3} {4};
+   107→  SLOT1 keyword answer="SUM" label="the paid fold" why="The shortfall compares settled cents, so the stage folds with SUM. COUNT would c"
+   108→  SLOT2 keyword answer="<" label="the shortfall test" why="A shortfall means paid sits below face value, so the test is <. Flipping to >= w"
+   109→  SLOT3 keyword answer=">" label="the touched gate direction" why="The gate keeps invoices that saw at least one payment — the never-touched lines "
+   110→  SLOT4 number noVerify answer="0" label="the touched floor" why="A floor of 0 admits every touched invoice — one shortfall line hides there. A 10"
+   111→  DISTRACTORS: ["COUNT",">=","ZZZ_R0"]
+   112→  BRIEF(245): From: Month-end close. Re: the exact-settle check. |  | The books settle some invoices short: payments arrive but never cover the face value. Stage the per-invoice paid totals with COALESCE, compare again
+   113→  WALK(360): COALESCE folds each invoice's settled cents — NULL stays zero — and the < face-value test counts the shortfall: one invoice collected 87300 of its 129500 face. 
+   114→======================================================================
+   115→cs-1418 [medium] topic=t2 universe=month-close — The NULL-safe lane overlay
+   116→ASK: How many orders have a real ship timestamp (COUNT-column discipline)?
+   117→TEMPLATE:
+   118→SELECT COUNT({1}) AS shipped_count
+   119→FROM orders
+   120→WHERE IFNULL(total, {2}) {3} {4};
+   121→  SLOT1 keyword answer="shipped_at" label="the NULL-skipping column" why="COUNT(shipped_at) skips NULLs and counts only real timestamps — 82 of them. COUN"
+   122→  SLOT2 keyword answer="0" label="the sentinel fallback" why="IFNULL pushes any missing total to 0 — a no-op on this NOT NULL column, but the "
+   123→  SLOT3 keyword answer=">" label="the total gate direction" why="The gate keeps real orders, so the test is > 0. Flipping to < 0 would demand neg"
+   124→  SLOT4 number noVerify answer="0" label="the open total floor" why="A floor of 0 admits every order. A 400-floor would keep only the premium lines a"
+   125→  DISTRACTORS: ["*","x","ZZZ_R0"]
+   126→  BRIEF(252): From: Billing lead. Re: the shipped-vs-stuck overlay. |  | The overlay counts the lanes that never stuck: orders whose shipped_at is real regardless of which lane they sit in. COUNT the timestamp column d
+   127→  WALK(349): COUNT(shipped_at) skips the twenty-one NULL timestamps and lands on 82 — the orders that actually shipped, pending and cancelled excluded by the column's silenc
+   128→======================================================================
+   129→cs-1419 [hard] topic=t2 universe=refund-audit — The refund-target census
+   130→ASK: How many never-shipped orders total more than 200 euros?
+   131→TEMPLATE:
+   132→SELECT COUNT(*) AS refund_targets
+   133→FROM orders
+   134→WHERE COALESCE(shipped_at, 'x') = 'x'
+   135→AND total {1} {2}
+   136→AND status {3} {4};
+   137→  SLOT1 keyword answer=">" label="the claims line direction" why="The queue targets orders above the small-claims line, so the test is >. Flipping"
+   138→  SLOT2 number noVerify answer="200" label="the claims line" why="The line sits at 200 — the stuck orders above it are the refund targets. A 400-l"
+   139→  SLOT3 keyword answer="!=" label="the live-lane test" why="The queue targets work that could still ship, so cancelled orders are excluded w"
+   140→  SLOT4 keyword answer="'cancelled'" label="the dead lane" why="Cancelled is the one lane that never ships. Excluding 'delivered' would keep eve"
+   141→  DISTRACTORS: ["<","400","delivered"]
+   142→  BRIEF(232): From: Refund audit. Re: the refund queue. |  | The refund queue targets stuck orders above the small-claims line — never-shipped orders whose total clears 200 euros. Push the NULLs to the sentinel, gate t
+   143→  WALK(390): COALESCE pushes each missing timestamp to the 'x' sentinel, and the claims line keeps the stuck orders above 200 euros — five targets, the premium end of the tw
+   144→======================================================================
+   145→cs-1420 [easy] topic=t2 universe=expense — The ledger balance proof
+   146→ASK: How many ledger entries carry both a debit and a credit?
+   147→TEMPLATE:
+   148→SELECT COUNT(*) AS double_sided
+   149→FROM ledger_entries
+   150→WHERE NULLIF(debit_cents, 0) IS NOT NULL
+   151→AND NULLIF(credit_cents, 0) IS {1}
+   152→AND entry_date {2} {3};
+   153→  SLOT1 keyword answer="NOT NULL" label="the second-side test" why="A double-sided entry carries a real credit too, so the test is IS NOT NULL. IS N"
+   154→  SLOT2 keyword answer=">" label="the window direction" why="The window covers the whole book, so the test is > 2020. Flipping to < 2020 woul"
+   155→  SLOT3 keyword noVerify answer="'2020-01-01'" label="the open window edge" why="The edge predates every entry, so the window keeps the whole ledger. A 2025 edge"
+   156→  DISTRACTORS: ["IS NULL","ZZZ_R0"]
+   157→  BRIEF(265): From: Expense report. Re: the balance discipline. |  | Every ledger entry carries exactly one side; the proof counts the entries where the two sides agree — which never happens in a healthy book. NULLIF s
+   158→  WALK(366): NULLIF surfaces the zero sides as NULLs, and the double-sided test keeps entries with real debits AND real credits — the book answers with the honest zero: ever
+   159→======================================================================
+   160→cs-1421 [medium] topic=t2 universe=month-close — The year-boundary settlements
+   161→ASK: How many payments settled in 2025?
+   162→TEMPLATE:
+   163→SELECT COUNT(*) AS settles_2025
+   164→FROM payments
+   165→WHERE {1}(paid_on, '1900-01-01') {2} '2025-01-01'
+   166→AND method = {3}
+   167→AND amount_cents {4} {5};
+   168→  SLOT1 keyword answer="IFNULL" label="the date fallback" why="IFNULL pushes any missing date to the 1900 sentinel — a no-op on this NOT NULL c"
+   169→  SLOT2 keyword answer=">=" label="the year gate" why="2025 settlements sit at or past the boundary, so the test is >=. Flipping to < w"
+   170→  SLOT3 keyword answer="'card'" label="the method gate" why="The read scopes to the card lane, so the gate is method = 'card'. A 'wire' fill "
+   171→  SLOT4 keyword answer=">" label="the amount gate direction" why="The gate keeps real settlements, so the test is > 0. Flipping to < 0 would deman"
+   172→  SLOT5 number noVerify answer="0" label="the open amount floor" why="A floor of 0 admits every settlement. A 200000-floor would keep only the six-fig"
+   173→  DISTRACTORS: ["ZZZ_R0","wire","200000"]
+   174→  BRIEF(214): From: Month-end close. Re: the 2025 settlement ledger. |  | The 2025 settlement ledger is small but growing: five payments landed this year. Push NULLs through IFNULL, gate the method, and count the year'
+   175→  WALK(349): IFNULL guards the date column, the >= gate scopes to 2025, and the card lane's settlement count reads its new-year total — the small but growing 2025 ledger. Th
+   176→======================================================================
+   177→cs-1422 [hard] topic=t2 universe=month-close — The single-receipt pot
+   178→ASK: Total cents on invoices settled with exactly one payment.
+   179→TEMPLATE:
+   180→SELECT {1}(i.amount_cents) AS single_pot
+   181→FROM invoices i
+   182→WHERE i.id IN (
+   183→  SELECT i2.id
+   184→  FROM invoices i2
+   185→  LEFT JOIN payments p ON p.invoice_id = i2.id
+   186→  GROUP BY i2.id
+   187→  HAVING {2}(p.id) = {3} AND COALESCE(SUM(p.amount_cents), 0) {4} 0
+   188→)
+   189→AND i.amount_cents {5} 0;
+   190→  SLOT1 keyword answer="SUM" label="the pot fold" why="The single-receipt book totals face values, so the outer fold is SUM. COUNT woul"
+   191→  SLOT2 keyword answer="COUNT" label="the receipt tally" why="A single-receipt invoice carries exactly one payment row, so the HAVING tally is"
+   192→  SLOT3 number noVerify answer="1" label="the single bar" why="The bar sits at 1 — seventeen invoices carry exactly one receipt. A 2-bar would "
+   193→  SLOT4 keyword answer=">" label="the zero-fill direction" why="The zero-fill keeps touched invoices, so the test is > 0. Flipping to < 0 would "
+   194→  SLOT5 keyword answer=">" label="the face gate direction" why="The gate keeps real face values, so the test is > 0. Flipping to < 0 would deman"
+   195→  DISTRACTORS: ["COUNT","SUM","2","<"]
+   196→  BRIEF(272): From: Month-end close. Re: the single-receipt book. |  | Most invoices settled with one receipt, and the single-receipt book carries its own pot. Stage the per-invoice paid totals with COALESCE, find the 
+   197→  WALK(364): The HAVING stage finds the seventeen single-receipt invoices, and the outer fold sums their face values — the single-receipt pot the close reconciles against th
+   198→======================================================================
+   199→cs-1423 [easy] topic=t2 universe=expense — The ads calendar
+   200→ASK: How many distinct months carry an Ads expense?
+   201→TEMPLATE:
+   202→SELECT COUNT(DISTINCT strftime('%Y-%m', spent_on)) AS ads_months
+   203→FROM expenses
+   204→WHERE category = {1}
+   205→AND {2}(vendor) = vendor
+   206→AND amount_cents {3} {4};
+   207→  SLOT1 keyword answer="'Ads'" label="the ads gate" why="The cadence read tracks the ads line, so the gate is category = 'Ads'. A 'Rent' "
+   208→  SLOT2 keyword answer="TRIM" label="the storage check" why="TRIM(vendor) = vendor proves the feed is stored clean — true for every entry. UP"
+   209→  SLOT3 keyword answer=">" label="the entry gate direction" why="The gate keeps real entries, so the test is > 0. Flipping to < 0 would demand ne"
+   210→  SLOT4 number noVerify answer="0" label="the open entry floor" why="A floor of 0 admits every ad entry. A 50000-floor would keep only the bigger bur"
+   211→  DISTRACTORS: ["Rent","UPPER","50000"]
+   212→  BRIEF(222): From: Expense report. Re: the ads cadence. |  | The ads budget posts in bursts, not months — the cadence read counts the distinct months that carry an ad entry. Gate the category, prove the storage clean,
+   213→  WALK(289): The ads gate isolates the ad line, and the distinct-month count reads the cadence: the bursts spread across fourteen months — every month carries at least one a
+   214→======================================================================
+   215→cs-1424 [medium] topic=t2 universe=refund-audit — The pending-priority queue
+   216→ASK: How many pending orders total more than 100 euros?
+   217→TEMPLATE:
+   218→SELECT COUNT(*) AS priority_targets
+   219→FROM orders
+   220→WHERE IFNULL(shipped_at, {1}) = {2}
+   221→AND status = {3}
+   222→AND total {4} {5};
+   223→  SLOT1 keyword answer="'x'" label="the sentinel push" why="COALESCE pushes each missing timestamp to the 'x' sentinel. A date push would co"
+   224→  SLOT2 keyword answer="'x'" label="the caught word" why="The test compares against the same 'x' the push wrote — the sentinel catches exa"
+   225→  SLOT3 keyword answer="'pending'" label="the at-risk lane" why="The priority queue reads the pending lane — work that may still ship. A 'cancell"
+   226→  SLOT4 keyword answer=">" label="the line direction" why="The queue targets orders above the line, so the test is >. Flipping to < 100 wou"
+   227→  SLOT5 number noVerify answer="100" label="the priority line" why="The line sits at 100 — the pending orders above it are the priority targets. A 3"
+   228→  DISTRACTORS: ["2024-01-01","cancelled","300"]
+   229→  BRIEF(236): From: Refund audit. Re: the priority queue. |  | The priority queue targets pending orders above the 100-euro line — work that may still ship but is at risk. Push the NULLs to the sentinel, gate the lane 
+   230→  WALK(349): The sentinel catches the never-shipped orders, the pending gate scopes to the at-risk lane, and the 100-line keeps the priority targets: pending orders worth ch
+   231→======================================================================
+   232→cs-1425 [hard] topic=t2 universe=month-close — The over-face settlement
+   233→ASK: How many invoices have payments totalling more than face value?
+   234→TEMPLATE:
+   235→SELECT COUNT(*) AS overpayments
+   236→FROM (
+   237→  SELECT i.id, i.amount_cents,
+   238→         COALESCE(SUM(p.amount_cents), 0) AS paid
+   239→  FROM invoices i
+   240→  LEFT JOIN payments p ON p.invoice_id = i.id
+   241→  GROUP BY i.id
+   242→)
+   243→WHERE paid {1} amount_cents
+   244→AND paid {2} {3}
+   245→AND id {4} {5};
+   246→  SLOT1 keyword answer=">" label="the over-face test" why="An over-payment means paid exceeds face value, so the test is >. Flipping to < w"
+   247→  SLOT2 keyword answer=">" label="the touched gate direction" why="The check only means something for touched invoices — the never-paid lines are o"
+   248→  SLOT3 number noVerify answer="0" label="the touched floor" why="A floor of 0 admits every touched invoice. A 500000-floor would exceed every set"
+   249→  SLOT4 keyword answer=">" label="the id gate direction" why="The gate admits every invoice, so the test is > 0. Flipping to < 0 would demand "
+   250→  SLOT5 number noVerify answer="0" label="the open id floor" why="A floor of 0 keeps all twenty-eight invoices in scope. A 25-floor would keep onl"
+   251→  DISTRACTORS: ["ZZZ_R0","ZZZ_FIX_1"]
+   252→  BRIEF(244): From: Month-end close. Re: the over-payment check. |  | The books should never settle an invoice for more than its face — the over-payment check proves it. Stage the paid totals with COALESCE, test the ov
+   253→  WALK(350): COALESCE folds each invoice's settled cents, and the > face test counts the violations: the book answers with the honest zero — no invoice settled above its fac
+   254→======================================================================
+   255→cs-1428 [medium] topic=t3 universe=funnel — The delivered-only speed floor
+   256→ASK: The slowest delivery gap among completed orders.
+   257→TEMPLATE:
+   258→SELECT {1}(julianday(shipped_at) - julianday(created_at)) AS promise_floor
+   259→FROM orders
+   260→WHERE status = {2}
+   261→AND julianday(shipped_at) {3} NULL;
+   262→  SLOT1 keyword answer="MAX" label="the floor fold" why="The promise floor is the slowest gap, so the fold is MAX. MIN would read the fas"
+   263→  SLOT2 keyword answer="'delivered'" label="the completed gate" why="The promise is judged on completed work, so the gate is status = 'delivered'. A "
+   264→  SLOT3 keyword answer="IS NOT" label="the measurable test" why="Only delivered rows carry a ship timestamp, so the test is IS NOT NULL. IS NULL "
+   265→  DISTRACTORS: ["MIN","shipped","IS"]
+   266→  BRIEF(198): From: Growth lead. Re: the promise floor. |  | The promise floor is the slowest completed delivery — the day-gap no delivered order exceeded. Measure the gaps in the delivered lane and read the maximum.
+   267→  WALK(296): The delivered lane's gaps measure in whole days, and MAX reads the floor: four days — the slowest completed delivery the promise must survive. MIN would read th
+   268→======================================================================
+   269→cs-1429 [medium] topic=t3 universe=finance — The card-only settlement span
+   270→ASK: The number of days from the first to the last card settlement.
+   271→TEMPLATE:
+   272→SELECT ROUND(julianday({1}(paid_on)) - julianday({2}(paid_on)), 0) AS span_days
+   273→FROM payments
+   274→WHERE method = {3}
+   275→AND amount_cents {4} {5};
+   276→  SLOT1 keyword answer="MAX" label="the late extreme" why="The span ends at the last card settlement, so the leading fold is MAX. MIN there"
+   277→  SLOT2 keyword answer="MIN" label="the early extreme" why="The span starts at the first card settlement, so the subtrahend is MIN. MAX woul"
+   278→  SLOT3 keyword answer="'card'" label="the card gate" why="The calendar reads the card lane, so the gate is method = 'card'. A 'wire' fill "
+   279→  SLOT4 keyword answer=">" label="the amount gate direction" why="The gate keeps real settlements, so the test is > 0. Flipping to < 0 would deman"
+   280→  SLOT5 number noVerify answer="0" label="the open amount floor" why="A floor of 0 admits every card settlement. A 200000-floor would keep only the si"
+   281→  DISTRACTORS: ["MIN","wire","ZZZ_R0"]
+   282→  BRIEF(222): From: Finance review. Re: the card calendar. |  | The card ledger's calendar is the review's focus: the span from the first card settlement to the last. Fold the card dates to day numbers, take the extrem
+   283→  WALK(308): The card extremes fold to day numbers and the subtraction spans the lane's calendar: from the first card settlement in early 2024 to the last in 2025 — a full y
+   284→======================================================================
+   285→cs-1430 [hard] topic=t3 universe=funnel — The same-week pairs
+   286→ASK: How many distinct ISO weeks carry at least one order?
+   287→TEMPLATE:
+   288→SELECT COUNT(DISTINCT {1}(created_at)) AS order_weeks
+   289→FROM orders
+   290→WHERE {2}(created_at) = created_at
+   291→AND total {3} {4};
+   292→  SLOT1 keyword answer="strftime('%W', created_at)" label="the week slicer" why="The ISO week is strftime's %W chop — forty-two distinct weeks carry orders. DATE"
+   293→  SLOT2 keyword answer="DATE" label="the grain check" why="DATE(created_at) = created_at proves the stamps are date-clean, so the week slic"
+   294→  SLOT3 keyword answer=">" label="the total gate direction" why="The gate keeps real orders, so the test is > 0. Flipping to < 0 would demand neg"
+   295→  SLOT4 number noVerify answer="0" label="the open total floor" why="A floor of 0 admits every order. A 300-floor would drop the budget orders and co"
+   296→  DISTRACTORS: ["DATE","JULIANDAY","300"]
+   297→  BRIEF(274): From: Growth lead. Re: the week-scoped reads. |  | Some orders share the ISO week number, and the read counts how many distinct week-plus-order combinations exist at all — the pairing density of the calen
+   298→  WALK(342): strftime's %W chop buckets every order into its ISO week, and the distinct count reads forty-two — the book's orders spread across forty-two weeks of the calend
+   299→======================================================================
+   300→cs-1431 [easy] topic=t3 universe=month-close — The invoice calendar footprint
+   301→ASK: The number of days from the first to the last invoice issue.
+   302→TEMPLATE:
+   303→SELECT ROUND(julianday({1}(issued_on)) - julianday({2}(issued_on)), 0) AS span_days
+   304→FROM invoices
+   305→WHERE {3}(issued_on) = issued_on;
+   306→  SLOT1 keyword answer="MAX" label="the late extreme" why="The span ends at the last issue, so the leading fold is MAX. MIN there would fli"
+   307→  SLOT2 keyword answer="MIN" label="the early extreme" why="The span starts at the first issue, so the subtrahend is MIN. MAX would duplicat"
+   308→  SLOT3 keyword answer="DATE" label="the grain check" why="DATE(issued_on) = issued_on proves the issue stamps are date-clean. JULIANDAY wo"
+   309→  DISTRACTORS: ["MIN","JULIANDAY"]
+   310→  BRIEF(231): From: Month-end close. Re: the billing footprint. |  | The billing calendar's footprint is the span from the first issue to the last. Fold the issue dates, take the extremes, and read the span — the calen
+   311→  WALK(332): The issue extremes fold to day numbers and the subtraction spans the billing calendar: from the first invoice in February 2024 to the last in March 2025 — a thi
+   312→======================================================================
+   313→cs-1432 [medium] topic=t3 universe=growth — The mid-week signup check
+   314→ASK: How many customers signed up mid-week (Tue–Thu)?
+   315→TEMPLATE:
+   316→SELECT COUNT(*) AS midweek_signups
+   317→FROM customers
+   318→WHERE strftime('%w', created_at) {1} {2}
+   319→AND {3}(created_at) = created_at;
+   320→  SLOT1 keyword answer="IN" label="the mid-week test" why="Mid-week is three codes — 2 for Tuesday, 3 for Wednesday, 4 for Thursday — so th"
+   321→  SLOT2 keyword answer="'2', '3', '4'" label="the mid-week codes" why="The triple covers Tuesday through Thursday. A '2' fill would count Tuesdays alon"
+   322→  SLOT3 keyword answer="DATE" label="the grain check" why="DATE(created_at) = created_at proves the signup stamps are date-clean. JULIANDAY"
+   323→  DISTRACTORS: ["NOT IN","2","JULIANDAY"]
+   324→  BRIEF(205): From: Growth lead. Re: the signup timing. |  | The signup timing read counts members who joined mid-week — Tuesday through Thursday, codes two through four. Code the signup dates and count the mid-week co
+   325→  WALK(326): The mid-week codes catch eight members — the roster's signups cluster mid-week, four on Tuesday and two each on Wednesday and Thursday. NOT IN would flip the re
+   326→======================================================================
+   327→cs-1433 [hard] topic=t3 universe=month-close — The year-end shipment read
+   328→ASK: How many orders shipped in December 2024?
+   329→TEMPLATE:
+   330→SELECT COUNT(*) AS dec_ships
+   331→FROM orders
+   332→WHERE strftime('%m', {1}) = {2}
+   333→AND strftime('%Y', {3}) = {4}
+   334→AND shipped_at {5} NULL;
+   335→  SLOT1 keyword answer="shipped_at" label="the ship month source" why="The read counts shipments by when they shipped, so the month chop runs on shippe"
+   336→  SLOT2 keyword answer="'12'" label="the December code" why="strftime renders December as '12'. An '11' fill would count November shipments i"
+   337→  SLOT3 keyword answer="shipped_at" label="the ship year source" why="The year gate scopes the ship calendar, so the year chop also runs on shipped_at"
+   338→  SLOT4 keyword answer="'2024'" label="the ship year" why="The read is December 2024, so the year gate carries '2024'. A '2025' fill would "
+   339→  SLOT5 keyword answer="IS NOT" label="the measurable test" why="Only shipped rows carry a ship timestamp, so the test is IS NOT NULL. IS NULL wo"
+   340→  DISTRACTORS: ["ZZZ_R0","11","2025","IS"]
+   341→  BRIEF(228): From: Month-end close. Re: the December shipments. |  | The year-end read counts the December shipments — the lines that shipped in the holiday month, regardless of order month. Slice the ship dates' mont
+   342→  WALK(358): The ship-date chop buckets every shipment into its month, and the December 2024 gate counts the year-end shipments — the holiday rush the close books separately
+   343→======================================================================
+   344→cs-1434 [easy] topic=t3 universe=finance — The 2025 card settlements
+   345→ASK: How many card payments settled in 2025?
+   346→TEMPLATE:
+   347→SELECT COUNT(*) AS card_2025
+   348→FROM payments
+   349→WHERE strftime('%Y', paid_on) = {1}
+   350→AND method = {2}
+   351→AND paid_on {3} {4};
+   352→  SLOT1 keyword answer="'2025'" label="the new-year gate" why="The read is the 2025 page, so the gate is year = '2025'. A 'ZZZ_R0' fill would c"
+   353→  SLOT2 keyword answer="'card'" label="the card gate" why="The read scopes to the card lane, so the gate is method = 'card'. A 'wire' fill "
+   354→  SLOT3 keyword answer=">" label="the date gate direction" why="The date gate must admit every 2025 settlement, so the test is > 2020. Flipping "
+   355→  SLOT4 keyword noVerify answer="'2020-01-01'" label="the open date floor" why="The floor predates every payment, so the gate passes the whole ledger. A 2025 fl"
+   356→  DISTRACTORS: ["ZZZ_R2","wire","ZZZ_R1"]
+   357→  BRIEF(187): From: Finance review. Re: the new-year card ledger. |  | The card ledger's 2025 page is small but real. Code the payment dates' year, gate the method, and count the new-year card settlements.
+   358→  WALK(332): The year chop reads '2025' on the new-year page, and the card gate scopes to the card lane: the 2025 card settlements are the ledger's small but real start. The
+   359→======================================================================
+   360→cs-1435 [medium] topic=t3 universe=fraud — The stuck-order age
+   361→ASK: The number of days from the first to the last stuck order.
+   362→TEMPLATE:
+   363→SELECT ROUND(julianday({1}(created_at)) - julianday({2}(created_at)), 0) AS stuck_span
+   364→FROM orders
+   365→WHERE IFNULL(shipped_at, {3}) = {4}
+   366→AND shipped_at IS NULL;
+   367→  SLOT1 keyword answer="MAX" label="the late extreme" why="The stuck span ends at the latest stuck order, so the leading fold is MAX. MIN t"
+   368→  SLOT2 keyword answer="MIN" label="the early extreme" why="The stuck span starts at the earliest stuck order, so the subtrahend is MIN. MAX"
+   369→  SLOT3 keyword answer="'x'" label="the sentinel push" why="COALESCE pushes each missing timestamp to the 'x' sentinel. A date push would co"
+   370→  SLOT4 keyword answer="'x'" label="the caught word" why="The test compares against the same 'x' the push wrote — the sentinel catches exa"
+   371→  DISTRACTORS: ["2024-01-01","ZZZ_FIX_1"]
+   372→  BRIEF(240): From: Fraud spot-check. Re: the stuck-order age. |  | Stuck orders age from their order date to today's data boundary — the read measures how far past the order date the book runs. Fold the extremes and r
+   373→  WALK(310): The sentinel catches the twenty-one never-shipped orders, and the extremes fold to the stuck queue's span: from the earliest stuck order in early 2024 to the la
+   374→======================================================================
+   375→cs-1438 [easy] topic=t3 universe=finance — The wire settlement count
+   376→ASK: How many wire settlements does the ledger carry?
+   377→TEMPLATE:
+   378→SELECT COUNT(*) AS wire_settles
+   379→FROM payments
+   380→WHERE method = {1}
+   381→AND amount_cents {2} {3}
+   382→AND paid_on {4} {5};
+   383→  SLOT1 keyword answer="'wire'" label="the wire gate" why="The read counts the wire lane, so the gate is method = 'wire'. A 'card' fill wou"
+   384→  SLOT2 keyword answer=">" label="the amount gate direction" why="The gate keeps real settlements, so the test is > 0. Flipping to < 0 would deman"
+   385→  SLOT3 number noVerify answer="0" label="the open amount floor" why="A floor of 0 admits every wire. A 200000-floor would keep only the six-figure wi"
+   386→  SLOT4 keyword answer=">" label="the date gate direction" why="The date gate admits every settlement, so the test is > 2020. Flipping to < 2020"
+   387→  SLOT5 keyword noVerify answer="'2020-01-01'" label="the open date floor" why="The floor predates every payment, so the gate passes the whole wire ledger. A 20"
+   388→  DISTRACTORS: ["card","ZZZ_R0","ZZZ_R0"]
+   389→  BRIEF(197): From: Finance review. Re: the wire ledger. |  | The wire lane's ledger is smaller than the card book, and the review counts it directly. Gate the method, keep the real settlements, and count the wires.
+   390→  WALK(311): The wire gate isolates the lane and the count reads eleven — the wire ledger's full footprint against the card book's sixteen. The card fill would count the big
+   391→======================================================================
+   392→cs-1442 [medium] topic=t4 universe=finance — The quiet-month revenue
+   393→ASK: The month with the lowest total order revenue.
+   394→TEMPLATE:
+   395→SELECT mo, pot
+   396→FROM (
+   397→  SELECT strftime('%Y-%m', created_at) AS mo, ROUND(SUM(total), 2) AS pot
+   398→  FROM orders
+   399→  GROUP BY mo
+   400→)
+   401→ORDER BY pot {1}
+   402→LIMIT {2}
+   403→WHERE 1 = 1
+   404→AND {3}(created_at) = created_at
+   405→AND total > {4};
+   406→  SLOT1 keyword answer="ASC" label="the lean sort" why="The lean read wants the smallest pot first, so the sort is ascending. DESC would"
+   407→  SLOT2 number noVerify answer="1" label="the single-read cut" why="The read wants one month, so the cut is 1. A 3-cut would return the three leanes"
+   408→  SLOT3 keyword answer="DATE" label="the grain check" why="DATE(created_at) = created_at proves the stamps are date-clean — true for the bo"
+   409→  SLOT4 number noVerify answer="0" label="the total gate" why="The gate keeps real orders, so the test is > 0. Flipping to < 0 would demand neg"
+   410→  DISTRACTORS: ["DESC","3"]
+   411→  BRIEF(169): From: Finance review. Re: the lean read. |  | The revenue pots range widely; the lean read finds the month that carried the least. Stage the monthly pots and read the floor.
+   412→  WALK(242): The monthly pots sort ascending and the floor reads July 2024 at 1193.86 — the leanest month in the book, well under the 2488 average. DESC would crown January'
+   413→======================================================================
+   414→cs-1445 [hard] topic=t4 universe=expense — The spend-vs-revenue gap
+   415→ASK: Total expense cents divided by total order revenue, 3 decimals.
+   416→TEMPLATE:
+   417→SELECT ROUND(
+   418→  (SELECT {1}(amount_cents) FROM expenses)::REAL /
+   419→  (SELECT {2}(total) FROM orders), 3) AS spend_ratio
+   420→WHERE 1 = 1
+   421→AND EXISTS (SELECT 1 FROM orders WHERE total {3} {4});
+   422→  SLOT1 keyword answer="SUM" label="the spend fold" why="The numerator totals the expense ledger, so the fold is SUM. COUNT would divide "
+   423→  SLOT2 keyword answer="SUM" label="—" why=""
+   424→  SLOT3 keyword answer=">" label="the existence gate direction" why="The existence gate proves the revenue side is non-empty, so the test is > 0. Fli"
+   425→  SLOT4 number noVerify answer="0" label="the existence floor" why="A floor of 0 proves real revenue exists. A 50000-floor would still pass, but the"
+   426→  DISTRACTORS: ["COUNT","50000"]
+   427→  BRIEF(209): From: Expense report. Re: the spend ratio. |  | The spend ratio reads total expense cents against total order revenue — a fraction the board tracks. Stage both scalars and read the ratio rounded to three 
+   428→  WALK(351): The two scalars read 2315400 expense cents against 34833.28 revenue euros, and the ratio rounds to 66.46 — the spend line runs at roughly two-thirds of revenue,
+   429→======================================================================
+   430→cs-1446 [medium] topic=t4 universe=fraud — The stuck-order month count
+   431→ASK: How many distinct months carry a never-shipped order?
+   432→TEMPLATE:
+   433→SELECT COUNT(DISTINCT strftime('%Y-%m', created_at)) AS stuck_months
+   434→FROM orders
+   435→WHERE COALESCE(shipped_at, {1}) = {2}
+   436→AND total {3} {4};
+   437→  SLOT1 keyword answer="'x'" label="the sentinel push" why="COALESCE pushes each missing timestamp to the 'x' sentinel the test catches. A d"
+   438→  SLOT2 keyword answer="'x'" label="the caught word" why="The test compares against the same 'x' the push wrote — the sentinel catches exa"
+   439→  SLOT3 keyword answer=">" label="the total gate direction" why="The gate keeps real stuck orders, so the test is > 0. Flipping to < 0 would dema"
+   440→  SLOT4 number noVerify answer="0" label="the open total floor" why="A floor of 0 admits every stuck order. A 400-floor would keep only the premium s"
+   441→  DISTRACTORS: ["2024-01-01","400"]
+   442→  BRIEF(228): From: Fraud spot-check. Re: the stuck calendar. |  | The stuck queue spreads across months; the fraud read counts how many distinct months carry a never-shipped order. Push the NULLs to the sentinel, chop
+   443→  WALK(325): The sentinel catches the twenty-one never-shipped orders, and the month chop spreads them across ten distinct calendar months — the stuck calendar runs nearly t
+   444→======================================================================
+   445→cs-1447 [easy] topic=t4 universe=growth — The active-member spend
+   446→ASK: Total order revenue across active members' orders.
+   447→TEMPLATE:
+   448→SELECT ROUND(SUM(total), 2) AS active_book
+   449→FROM orders
+   450→WHERE customer_id IN (
+   451→  SELECT id FROM customers WHERE active = {1}
+   452→)
+   453→AND total {2} {3};
+   454→  SLOT1 number noVerify answer="1" label="the active flag" why="The active roster carries flag 1 — fourteen members whose orders fill the book. "
+   455→  SLOT2 keyword answer=">" label="the line gate direction" why="The gate keeps real orders, so the test is > 0. Flipping to < 0 would demand neg"
+   456→  SLOT3 number noVerify answer="0" label="the open line floor" why="A floor of 0 admits every order. A 500-floor would keep only the premium lines a"
+   457→  DISTRACTORS: ["0","500"]
+   458→  BRIEF(222): From: Growth lead. Re: the active book. |  | The active members carry the whole book — but the read proves it by gating the flag. Sum the order totals over the active roster and read the figure the inacti
+   459→  WALK(333): The subquery scopes to the fourteen active members, and the sum reads their full order book — the inactive pair's orders are already absent, so the figure match
+   460→======================================================================
+   461→cs-1448 [hard] topic=t4 universe=finance — The payment-method split
+   462→ASK: How many distinct payment methods does the ledger carry?
+   463→TEMPLATE:
+   464→SELECT COUNT(DISTINCT method) AS lanes
+   465→FROM payments
+   466→WHERE paid_on {1} {2}
+   467→AND amount_cents {3} {4}
+   468→AND method {5} ('card','wire');
+   469→  SLOT1 keyword answer=">" label="the date gate direction" why="The date gate admits every settlement, so the test is > 2020. Flipping to < 2020"
+   470→  SLOT2 keyword noVerify answer="'2020-01-01'" label="the open date floor" why="The floor predates every payment, so the gate passes the whole ledger. A 2025 fl"
+   471→  SLOT3 keyword answer=">" label="the amount gate direction" why="The gate keeps real settlements, so the test is > 0. Flipping to < 0 would deman"
+   472→  SLOT4 number noVerify answer="0" label="the open amount floor" why="A floor of 0 admits every settlement. A 300000-floor would keep only the six-fig"
+   473→  SLOT5 keyword answer="IN" label="the lane membership" why="Both methods are in scope, so the test is IN ('card','wire'). NOT IN would exclu"
+   474→  DISTRACTORS: ["ZZZ_R0","ZZZ_R0","NOT IN"]
+   475→  BRIEF(203): From: Finance review. Re: the method census. |  | The payment ledger splits between card and wire, and the review reads both sides of the split. Gate the method twice — once per window — and count the lan
+   476→  WALK(368): The census counts the distinct method values the ledger carries, and the answer is two: card and wire — the ledger's whole split, scoped by the date and amount 
+   477→======================================================================
+   478→cs-1450 [hard] topic=t4 universe=month-close — The closing capstone stack
+   479→ASK: The running revenue at the book's leanest month (bottom quartile).
+   480→TEMPLATE:
+   481→SELECT mo, rev, run
+   482→FROM (
+   483→  SELECT strftime('%Y-%m', created_at) AS mo, SUM(total) AS rev,
+   484→         {1}(SUM(total)) OVER (ORDER BY strftime('%Y-%m', created_at)) AS run,
+   485→         NTILE(4) OVER (ORDER BY SUM(total) {2}) AS q
+   486→  FROM (SELECT strftime('%Y-%m', created_at) AS mo, total FROM orders)
+   487→  GROUP BY mo
+   488→)
+   489→WHERE q = {3}
+   490→AND run {4} {5};
+   491→  SLOT1 keyword answer="SUM" label="the stacking fold" why="The stack accumulates revenue, so the window folds with SUM. COUNT would stack m"
+   492→  SLOT2 keyword answer="ASC" label="the lean direction" why="The lean months sit at the bottom of the ascending revenue order, so the quartil"
+   493→  SLOT3 number noVerify answer="4" label="the lean bucket" why="Bucket 4 of the ascending split holds the four leanest months. A 1-fill would re"
+   494→  SLOT4 keyword answer="<" label="the lean ceiling direction" why="The lean stack sits under the 20000 wall — the leanest months run early, before "
+   495→  SLOT5 number noVerify answer="15000" label="the lean ceiling" why="The ceiling sits at 15000 — the lean quartile's stacks run from 3731.97 to 12427"
+   496→  DISTRACTORS: ["COUNT","DESC","15000","25000"]
+   497→  BRIEF(277): From: Month-end close. Re: the final capstone. |  | The capstone runs the full window play: bucket the months into quartiles by revenue, keep the bottom bucket, and walk the running stack to the last line
+   498→  WALK(393): Two windows, one lean line: the ascending quartile puts July 2024's 1193.86 pot in bucket 4, and the running stack at that point reads 18579.20 — the leanest mo
+   499→

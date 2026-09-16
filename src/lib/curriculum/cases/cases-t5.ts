@@ -10,38 +10,37 @@ export const casesT5: CaseStudy[] = [
     universe: "catalog",
     title: "The dash-stripped tags",
     brief:
-      "From: Catalog ops. Re: the SKU normalizer.\n\nThe normalizer strips dashes from SKUs, and the audit counts the tags it actually changes. REPLACE wipes every dash; a tag with none passes through untouched. Count the changed tags with the storage guard riding along.",
+      "From: Catalog ops. Re: the SKU normalizer.\n\nThe normalizer strips dashes from SKUs, and the audit counts the tags it actually changes. REPLACE wipes every dash; a tag with none passes through untouched. Count the changed tags with the storage guards riding along.",
     ask: "How many product names does the dash-stripper actually change?",
     template: `SELECT COUNT(*) AS changed
 FROM products
 WHERE REPLACE(name, '-', '') != name
 AND {1}(name) = name
-AND {2}(name) = name
-AND stock > {3};`,
+AND stock {2} {3};`,
     slots: [
       {
         answer: "TRIM",
         kind: "keyword",
-        label: "the storage guard",
+        label: "the name guard",
         why: "TRIM(name) = name proves no tag rides with stray whitespace — true for the catalog, so the count sees real changes only. UPPER would demand shouting tags and match nothing.",
       },
       {
-        answer: "TRIM",
+        answer: ">",
         kind: "keyword",
-        label: "the storage check",
-        why: "TRIM(name) = name proves the tags are stored clean — true for the catalog. UPPER would demand shouting names and match nothing.",
+        label: "the stock gate direction",
+        why: "The gate keeps stocked tags, so the test is > 0. Flipping to < would demand negative stock, which cannot exist.",
       },
       {
         answer: "0",
         kind: "number",
         noVerify: true,
-        label: "the stock gate",
-        why: "The gate keeps stocked tags, so the test is > 0. Flipping to < 0 would demand negative stock.",
+        label: "the stock floor",
+        why: "A floor of 0 keeps every stocked tag in scope — the shelf holds 40 to 500 pieces. A 300-floor would keep only the deep shelves.",
       },
     ],
-    distractors: ["UPPER", "ZZZ_FIX_1"],
+    distractors: ["UPPER", "<", "LOWER"],
     walkthrough:
-      "REPLACE wipes every dash, and three tags carry one — the 3-pack socks tag, the 7-in-1 hub, the 14-inch ring light — so the stripper changes exactly three names. A tag with no dash compares equal and passes. UPPER would fail every stored name and zero the audit. The normalizer's true reach: three tags.",
+      "REPLACE wipes every dash, and three tags carry one — the 3-pack socks tag, the 7-in-1 hub, the 14-inch ring light — so the stripper changes exactly three names. A tag with no dash compares equal and passes. UPPER or LOWER would fail every stored name and zero the audit, and the < flip would demand negative stock. The normalizer's true reach: three tags.",
   },
   {
     id: "cs-1402",
@@ -166,11 +165,11 @@ WHERE LENGTH(status) {2} {3};`,
     id: "cs-1405",
     tier: "medium",
     topic: "t1",
-    universe: "crm",
+    universe: "growth",
     title: "The consonant-led roster",
     brief:
-      "From: CRM steward. Re: the sorting pass.\n\nThe CRM's new sort buckets names by their opening letter, and the consonant-led group needs its census. Slice the first character, exclude the vowels, and count the members whose name opens with one.",
-    ask: "How many customer names open with a consonant?",
+      "From: Growth desk. Re: the sorting pass.\n\nThe desk's new sort buckets names by their opening letter, and the consonant-led group needs its census. Slice the first character, exclude the vowels, keep the active roster only, and count what the sort will actually bucket.",
+    ask: "How many active members' names open with a consonant?",
     template: `SELECT COUNT(*) AS consonant_led
 FROM customers
 WHERE SUBSTR(name, 1, 1) {1} ('A','E','I','O','U')
@@ -182,31 +181,31 @@ AND active > {4};`,
         answer: "NOT IN",
         kind: "keyword",
         label: "the vowel exclusion",
-        why: "The consonant-led group excludes the five vowels, so the test is NOT IN. IN would census the vowel-led members instead — the exact opposite bucket.",
+        why: "The consonant-led group excludes the five vowels, so the test is NOT IN. IN would return the vowel-led members instead and flip the census.",
       },
       {
         answer: "TRIM",
         kind: "keyword",
-        label: "the storage check",
-        why: "TRIM(city) = city proves every member's city is stored clean — true for the roster. UPPER would demand shouting cities and match nothing.",
+        label: "the city check",
+        why: "TRIM(city) = city proves every member's city is stored clean — true for the roster, so the count reads real rows. UPPER would demand shouting cities and match nothing.",
       },
       {
         answer: "DATE",
         kind: "keyword",
         label: "the grain check",
-        why: "DATE(created_at) = created_at proves the signup stamps are date-clean — true for the roster. JULIANDAY would compare a number to text.",
+        why: "DATE(created_at) = created_at proves the signup stamps are date-clean — true for the roster. JULIANDAY would compare a number to text and empty the count.",
       },
       {
         answer: "0",
         kind: "number",
         noVerify: true,
         label: "the active gate",
-        why: "The gate admits every member — active flag is 0 or 1, both >= 0. Flipping to < 0 would demand negative flags.",
+        why: "The gate admits every active member — the flag is 0 or 1, so the bar sits at 0. Flipping to < 0 would demand negative flags.",
       },
     ],
-    distractors: ["IN", "Z0X"],
+    distractors: ["IN", "JULIANDAY"],
     walkthrough:
-      "The vowel list catches Alice, Emma, Isabella, Olivia — four names open with a vowel, so the consonant-led census counts twelve. The IN flip would return those four, the opposite bucket. UPPER would fail every stored city and zero the count. The sorting pass: twelve consonant-led members.",
+      "The vowel list catches Alice, Emma, Isabella, Olivia — four names open with a vowel. The active gate trims the inactive pair, and both of them sit consonant-led, so the gated census reads ten: twelve consonant-led names on the full roster, two parked in the inactive lane. The IN flip would return those four vowel-led members instead. The sorting pass buckets ten names.",
   },
   {
     id: "cs-1406",
@@ -256,10 +255,10 @@ AND LENGTH(name) {3} {4};`,
     id: "cs-1407",
     tier: "easy",
     topic: "t1",
-    universe: "crm",
+    universe: "growth",
     title: "The lowercased import",
     brief:
-      "From: CRM steward. Re: the email normalization.\n\nThe import pipeline lowercases every email before storing, and the audit verifies the fold was lossless: LOWER must preserve the distinct count. Fold the addresses and compare the census.",
+      "From: Growth desk. Re: the email normalization.\n\nThe import pipeline lowercases every email before storing, and the audit verifies the fold was lossless: LOWER must preserve the distinct count. Fold the roster's addresses and count the distinct survivors.",
     ask: "How many distinct emails survive the lowercase fold?",
     template: `SELECT COUNT(DISTINCT {1}(email)) AS folded
 FROM customers
@@ -269,25 +268,25 @@ WHERE INSTR(email, {2}) > {3};`,
         answer: "LOWER",
         kind: "keyword",
         label: "the import fold",
-        why: "The pipeline lowercases addresses, so the fold is LOWER. UPPER would certify the opposite normalization.",
+        why: "The pipeline lowercases addresses, so the fold is LOWER. LENGTH would collapse each address to a number and count distinct lengths instead of distinct addresses.",
       },
       {
         answer: "'@'",
         kind: "keyword",
         label: "the at needle",
-        why: "The audit counts only well-formed addresses, so the probe looks for the @. An 'a' needle would count addresses with the letter instead.",
+        why: "The audit counts only well-formed addresses, so the probe looks for the @. An 'a' needle would still catch every address here but reads as sloppiness, not proof.",
       },
       {
         answer: "0",
         kind: "number",
         noVerify: true,
         label: "the containment bar",
-        why: "A found @ sits at position 1 or later, so the bar is 0. A 10-bar would demand the @ deep in the address and drop most records.",
+        why: "A found @ sits at position 1 or later, so the bar is 0. A 10-bar would demand the @ sit past column ten and drop the short handles.",
       },
     ],
-    distractors: ["10", "ZZZ_FIX_1"],
+    distractors: ["10", "LENGTH"],
     walkthrough:
-      "LOWER folds every address, and the distinct count stays at sixteen — the fold merges nothing, proving the import was lossless. UPPER would certify the opposite pipeline. The 'a' needle would count addresses containing the letter, and the 10-bar would demand the @ past position ten. The normalization audit: sixteen distinct folded addresses.",
+      "LOWER folds every address, and the distinct count stays at sixteen — the fold merges nothing, proving the import was lossless. LENGTH would collapse the addresses to their six distinct lengths and certify nothing about the fold. The 10-bar would drop the short handles and undercount the roster. The normalization audit: sixteen distinct survivors.",
   },
   {
     id: "cs-1408",
@@ -331,14 +330,14 @@ AND LENGTH(name) {2} {3};`,
     id: "cs-1409",
     tier: "medium",
     topic: "t1",
-    universe: "expense",
-    title: "The vendor initial census",
+    universe: "supplier",
+    title: "The bench initial roll",
     brief:
-      "From: Expense report. Re: the vendor initials.\n\nThe expense feed's vendors carry four distinct initials, and the report counts the lines under each. Slice the first character, prove the storage clean, and census the initials busiest-first.",
-    ask: "The census of expense vendors' first initials.",
-    template: `SELECT SUBSTR(vendor, 1, 1) AS ini, COUNT(*) AS n
-FROM expenses
-WHERE {1}(vendor) = vendor
+      "From: Supplier desk. Re: the nameplate roll.\n\nThe bench carries six vendors, and the desk rolls up their nameplate initials for the catalog index. Slice each name's first character, prove the storage clean, and read the initial that leads the roll.",
+    ask: "Which initial leads the supplier bench, and how many vendors share it?",
+    template: `SELECT SUBSTR(name, 1, 1) AS ini, COUNT(*) AS n
+FROM suppliers
+WHERE {1}(name) = name
 GROUP BY ini
 ORDER BY n {2}
 LIMIT {3};`,
@@ -347,25 +346,25 @@ LIMIT {3};`,
         answer: "TRIM",
         kind: "keyword",
         label: "the storage check",
-        why: "TRIM(vendor) = vendor proves the feed is stored clean — true for every entry, so the census counts real vendors. UPPER would demand shouting vendors and match nothing.",
+        why: "TRIM(name) = name proves the nameplates are stored clean — true for every vendor, so the roll reads real initials. UPPER would demand shouting names and empty the roll.",
       },
       {
         answer: "DESC",
         kind: "keyword",
-        label: "the census direction",
-        why: "The report leads with the busiest initial, so the sort is descending. ASC would lead with the lightest.",
+        label: "the roll direction",
+        why: "The report leads with the busiest initial, so the sort is descending. ASC would surface a single-vendor initial instead of the shared leader.",
       },
       {
-        answer: "2",
+        answer: "1",
         kind: "number",
         noVerify: true,
         label: "the headline cut",
-        why: "The cut of 2 shows the tied leaders: 'A' and 'H' at fourteen apiece. A 1-cut would show one of the tie arbitrarily.",
+        why: "The cut of 1 shows the leader alone: 'A' at two vendors — Alpine Audio and Andes Naturals. A 2-cut would drag a tied singleton into the headline.",
       },
     ],
-    distractors: ["UPPER", "ASC", "1"],
+    distractors: ["UPPER", "ASC", "2"],
     walkthrough:
-      "The initial slice reads A, A, D, S across the feed, and the census ties at the top: 'A' fourteen, 'H' fourteen — Atlas and AdWorks share the crown. The UPPER fill would fail every stored vendor. ASC would lead with the lightest initial. The cut of 2 shows both tied leaders. The vendor initials: 'A' and 'H', fourteen apiece.",
+      "The first-character slice reads N, S, P, M, A, A across the bench, and the descending roll puts 'A' on top: Alpine Audio GmbH and Andes Naturals SA share the initial — two vendors against every singleton. UPPER would demand shouting nameplates and return nothing. The ASC flip would crown a lone vendor instead. The catalog index leads with A.",
   },
   {
     id: "cs-1410",
@@ -446,10 +445,10 @@ WHERE LENGTH(region) {2} {3};`,
     id: "cs-1412",
     tier: "medium",
     topic: "t1",
-    universe: "crm",
+    universe: "growth",
     title: "The surname-start check",
     brief:
-      "From: CRM steward. Re: the two-column sort.\n\nThe contact cards sort by surname, and the audit verifies every surname opens with a capital — the two-column split must not lowercase the tail. Slice the surname's first character and test its fold.",
+      "From: Growth desk. Re: the two-column sort.\n\nThe contact cards sort by surname, and the audit verifies every surname opens with a capital — the two-column split must not lowercase the tail. Slice each surname's first character, compare it to its own uppercase fold, and count the clean caps.",
     ask: "How many customer surnames open with an uppercase letter?",
     template: `SELECT COUNT(*) AS capped_surnames
 FROM customers
@@ -460,25 +459,25 @@ AND LENGTH(name) {2} {3};`,
         answer: "=",
         kind: "keyword",
         label: "the caps test",
-        why: "A capital surname-start equals its own uppercase fold, so the test is =. Flipping to != would census the lowercased tails — the broken ones.",
+        why: "A capital surname-start equals its own uppercase fold, so the test is =. Flipping to != would count the lowercase starts — of which the roster carries none.",
       },
       {
         answer: ">",
         kind: "keyword",
         label: "the name gate direction",
-        why: "The gate keeps real names, so the test is > 0. Flipping to < 0 would demand negative lengths and match nothing.",
+        why: "The gate keeps real names, so the test is > 0. Flipping to < 0 would demand negative-length names, which cannot exist.",
       },
       {
         answer: "0",
         kind: "number",
         noVerify: true,
         label: "the open name floor",
-        why: "A floor of 0 admits every member. A 12-floor would keep only the long names and shrink the audit.",
+        why: "A floor of 0 admits every member. A 12-floor would keep only the long names — three of them — and starve the audit.",
       },
     ],
-    distractors: ["ZZZ_R0", "12"],
+    distractors: ["!=", "12"],
     walkthrough:
-      "The surname slice lifts each tail's first character, and the caps test compares it to its own uppercase fold — every stored surname opens with a capital, so the audit counts all sixteen. The != flip would census the broken tails, of which there are none. The 12-floor would keep only the long names. The sort audit: 16 capped surnames.",
+      "The surname slice lifts each tail's first character, and the caps test compares it to its own uppercase fold — every stored surname opens with a capital, so the audit counts sixteen clean caps with zero exceptions. The != flip would hunt lowercase starts and return an empty ledger. The 12-floor would trim the census to the three longest names. The two-column split is safe to ship.",
   },
   {
     id: "cs-1413",
@@ -613,483 +612,460 @@ AND {3}(category) = category;`,
     tier: "easy",
     topic: "t2",
     universe: "fraud",
-    title: "The shipped sentinel re-check",
+    title: "The write-off census",
     brief:
-      "From: Fraud spot-check. Re: the sentinel discipline, re-run.\n\nThe refund team re-runs the sentinel census on the cancelled lane only: never-shipped cancelled orders are the ones the write-off process touches. Push the NULLs to the sentinel and count the cancelled lines.",
-    ask: "How many cancelled orders carry the 'x' ship sentinel?",
-    template: `SELECT COUNT(*) AS cancelled_stuck
+      "From: Fraud spot-check. Re: the write-off lane.\n\nThe write-off process touches the cancelled lane only, and the spot-check counts it with a NULLIF probe: fold each status against 'cancelled' and let the collapse speak. A NULL means the row matched the write-off lane.",
+    ask: "How many orders sit in the cancelled write-off lane?",
+    template: `SELECT COUNT(*) AS writeoffs
 FROM orders
-WHERE IFNULL({1}, 'x') = 'x'
-AND status = {2}
+WHERE NULLIF(status, {1}) IS NULL
+AND {2}(created_at) = created_at
 AND total {3} {4};`,
     slots: [
-      {
-        answer: "shipped_at",
-        kind: "keyword",
-        label: "the sentinel column",
-        why: "The sentinel rides the missing ship timestamp, so IFNULL folds shipped_at. IFNULL(status, 'x') would push nothing — status is NOT NULL — and count zero.",
-      },
       {
         answer: "'cancelled'",
         kind: "keyword",
         label: "the write-off lane",
-        why: "The write-off touches cancelled work, so the gate is status = 'cancelled'. A 'pending' fill would count the still-hopeful queue instead.",
+        why: "NULLIF collapses a status equal to the lane into NULL, so the probe carries 'cancelled'. A 'pending' fill would count the at-risk lane instead — fourteen rows.",
+      },
+      {
+        answer: "DATE",
+        kind: "keyword",
+        label: "the grain check",
+        why: "DATE(created_at) = created_at proves the stamps are date-clean — true for the book, so the census reads real rows. JULIANDAY would compare a number to text and count nothing.",
       },
       {
         answer: ">",
         kind: "keyword",
         label: "the total gate direction",
-        why: "The gate admits every stuck order, so the test is > 0. Flipping to < 0 would demand negative totals and empty the census.",
+        why: "The gate keeps real orders, so the test is > 0. Flipping to < 0 would demand negative totals, which cannot exist.",
       },
       {
         answer: "0",
         kind: "number",
         noVerify: true,
         label: "the open total floor",
-        why: "A floor of 0 keeps the whole lane in scope. A 300-floor would keep only the expensive stuck orders.",
+        why: "A floor of 0 keeps the whole lane in scope. A 500-floor would empty the census — the write-offs top out below five hundred euros.",
       },
     ],
-    distractors: ["status", "pending", "<", "300"],
+    distractors: ["'pending'", "JULIANDAY", "500"],
     walkthrough:
-      "IFNULL pushes each missing timestamp to the 'x' sentinel, and the cancelled gate narrows the census to the seven write-off lines — every cancelled order is stuck, so the count reads seven. The status-column fill would push nothing and count zero. The pending fill would census the hopeful queue instead. The write-off census: seven cancelled sentinels.",
+      "NULLIF collapses every 'cancelled' status to NULL, and the IS NULL test counts the collapses: seven write-off lines, none of them above five hundred euros — the lane's biggest ticket is 397.99. The 'pending' fill would count fourteen at-risk orders instead, and the 500-floor would empty the census entirely. The write-off lane holds seven.",
   },
   {
     id: "cs-1417",
     tier: "medium",
     topic: "t2",
-    universe: "month-close",
-    title: "The settlement shortfall",
+    universe: "inventory",
+    title: "The triple-unit census",
     brief:
-      "From: Month-end close. Re: the exact-settle check.\n\nThe books settle some invoices short: payments arrive but never cover the face value. Stage the per-invoice paid totals with COALESCE, compare against face value, and count the shortfall lines.",
-    ask: "How many invoices have payments that total less than face value?",
-    template: `SELECT COUNT(*) AS shortfalls
+      "From: Warehouse ops. Re: the pick-face layout.\n\nThe pick-face reserves a bin width for triple picks, and the census counts the lines that ship three units in one go. NULLIF collapses each quantity against the triple and the IS NULL test keeps the matches, with a guarded price stage underneath.",
+    ask: "How many order lines ship exactly three units?",
+    template: `SELECT COUNT(*) AS tripling
 FROM (
-  SELECT i.id, i.amount_cents,
-         COALESCE({1}(p.amount_cents), 0) AS paid
-  FROM invoices i
-  LEFT JOIN payments p ON p.invoice_id = i.id
-  GROUP BY i.id
+  SELECT order_id, quantity, COALESCE(unit_price, 0) AS price
+  FROM order_items
 )
-WHERE paid {2} amount_cents
-AND paid {3} {4};`,
+WHERE {1}(quantity, {2}) IS NULL
+AND price {3} {4};`,
     slots: [
       {
-        answer: "SUM",
+        answer: "NULLIF",
         kind: "keyword",
-        label: "the paid fold",
-        why: "The shortfall compares settled cents, so the stage folds with SUM. COUNT would compare receipt tallies and the shortfall would vanish.",
+        label: "the triple collapse",
+        why: "NULLIF(quantity, 3) collapses triple picks to NULL, so IS NULL keeps them. IFNULL(quantity, 3) returns the quantity itself — never NULL — and the census reads zero.",
       },
       {
-        answer: "<",
-        kind: "keyword",
-        label: "the shortfall test",
-        why: "A shortfall means paid sits below face value, so the test is <. Flipping to >= would count the fully settled lines instead.",
+        answer: "3",
+        kind: "number",
+        noVerify: true,
+        label: "the triple bar",
+        why: "The bin is cut for triple picks, so the collapse compares against 3. A '2' fill would count the double-unit lines — sixty-nine of them.",
       },
       {
         answer: ">",
         kind: "keyword",
-        label: "the touched gate direction",
-        why: "The gate keeps invoices that saw at least one payment — the never-touched lines are a different bucket — so the test is > 0. Flipping to < 0 would demand negative paid totals.",
+        label: "the price gate direction",
+        why: "The guarded price stage keeps real lines, so the test is > 0. Flipping to < 0 would demand negative prices, which cannot exist.",
       },
       {
         answer: "0",
         kind: "number",
         noVerify: true,
-        label: "the touched floor",
-        why: "A floor of 0 admits every touched invoice — one shortfall line hides there. A 100000-floor would drop it.",
+        label: "the open price floor",
+        why: "A floor of 0 admits every line. A 50-floor would keep only the budget end and skew the pick-face count.",
       },
     ],
-    distractors: ["COUNT", ">=", "ZZZ_R0"],
+    distractors: ["IFNULL", "'2'", "<"],
     walkthrough:
-      "COALESCE folds each invoice's settled cents — NULL stays zero — and the < face-value test counts the shortfall: one invoice collected 87300 of its 129500 face. The COUNT fill would compare tallies and find no shortfall. The >= flip would count the twenty-one exact settles. And the 100000 floor would drop the lone shortfall. The shortfall census: one invoice.",
+      "NULLIF collapses every quantity 3 to NULL, and the IS NULL test counts the collapses: eighty-nine lines ship exactly three units — the triples sit between the ninety-three singles and the sixty-nine doubles. IFNULL would return the quantity untouched and zero the census; the text '2' fill would silently compare a number to text and collapse nothing. The pick-face reserves eighty-nine triple bins.",
   },
   {
     id: "cs-1418",
-    tier: "medium",
+    tier: "easy",
     topic: "t2",
     universe: "month-close",
-    title: "The NULL-safe lane overlay",
+    title: "The buyer roll",
     brief:
-      "From: Billing lead. Re: the shipped-vs-stuck overlay.\n\nThe overlay counts the lanes that never stuck: orders whose shipped_at is real regardless of which lane they sit in. COUNT the timestamp column directly — COUNT skips NULLs where COUNT(*) does not.",
-    ask: "How many orders have a real ship timestamp (COUNT-column discipline)?",
-    template: `SELECT COUNT({1}) AS shipped_count
+      "From: Month-end close. Re: the buyer roll.\n\nThe close opens with the buyer roll: how many members actually placed an order. The roll folds each customer reference through COALESCE before the distinct count, so a NULL reference could never sneak into the tally.",
+    ask: "How many distinct members carry at least one order?",
+    template: `SELECT {1}(DISTINCT {2}(customer_id)) AS buyers
 FROM orders
-WHERE IFNULL(total, {2}) {3} {4};`,
+WHERE total {3} {4};`,
     slots: [
       {
-        answer: "shipped_at",
+        answer: "COUNT",
         kind: "keyword",
-        label: "the NULL-skipping column",
-        why: "COUNT(shipped_at) skips NULLs and counts only real timestamps — 82 of them. COUNT(*) would count every row and blur the overlay.",
+        label: "the roll fold",
+        why: "The roll counts distinct members, so the fold is COUNT. SUM would add the member ids together and read a nonsensical 136; AVG would read the midpoint of the id ladder.",
       },
       {
-        answer: "0",
+        answer: "COALESCE",
         kind: "keyword",
-        label: "the sentinel fallback",
-        why: "IFNULL pushes any missing total to 0 — a no-op on this NOT NULL column, but the guard documents the discipline. A 'x' fill would type-break the gate.",
+        label: "the reference guard",
+        why: "COALESCE folds any missing reference to 0 before the distinct count — a guard the close keeps on every roll. A missing id would otherwise spawn a phantom member.",
       },
       {
         answer: ">",
         kind: "keyword",
         label: "the total gate direction",
-        why: "The gate keeps real orders, so the test is > 0. Flipping to < 0 would demand negative totals and empty the overlay.",
+        why: "The gate keeps real orders, so the test is > 0. Flipping to < 0 would demand negative totals and empty the roll.",
       },
       {
         answer: "0",
         kind: "number",
         noVerify: true,
         label: "the open total floor",
-        why: "A floor of 0 admits every order. A 400-floor would keep only the premium lines and shrink the count.",
+        why: "A floor of 0 admits every order. A 500-floor would keep only the premium tickets — ten members — and understate the roll.",
       },
     ],
-    distractors: ["*", "x", "ZZZ_R0"],
+    distractors: ["SUM", "AVG", "500"],
     walkthrough:
-      "COUNT(shipped_at) skips the twenty-one NULL timestamps and lands on 82 — the orders that actually shipped, pending and cancelled excluded by the column's silence. The * fill would count 103 and blur the overlay. The 'x' fallback would type-break the numeric gate. And the 400-floor would keep only the premium lines. The overlay: 82 real timestamps.",
+      "COUNT(DISTINCT ...) walks the folded references and the roll reads sixteen: every member on the roster has placed at least one order — no phantom ids, no silent lurkers. SUM would melt the ids into 136, AVG would read the ladder's midpoint, and the 500-floor would trim the roll to the ten premium buyers. The buyer roll: sixteen of sixteen.",
   },
   {
     id: "cs-1419",
-    tier: "hard",
-    topic: "t2",
-    universe: "refund-audit",
-    title: "The refund-target census",
-    brief:
-      "From: Refund audit. Re: the refund queue.\n\nThe refund queue targets stuck orders above the small-claims line — never-shipped orders whose total clears 200 euros. Push the NULLs to the sentinel, gate the total, and count the targets.",
-    ask: "How many never-shipped orders total more than 200 euros?",
-    template: `SELECT COUNT(*) AS refund_targets
-FROM orders
-WHERE COALESCE(shipped_at, 'x') = 'x'
-AND total {1} {2}
-AND status {3} {4};`,
-    slots: [
-      {
-        answer: ">",
-        kind: "keyword",
-        label: "the claims line direction",
-        why: "The queue targets orders above the small-claims line, so the test is >. Flipping to < 200 would census the small claims instead.",
-      },
-      {
-        answer: "200",
-        kind: "number",
-        noVerify: true,
-        label: "the claims line",
-        why: "The line sits at 200 — the stuck orders above it are the refund targets. A 400-line would halve the queue.",
-      },
-      {
-        answer: "!=",
-        kind: "keyword",
-        label: "the live-lane test",
-        why: "The queue targets work that could still ship, so cancelled orders are excluded with !=. Flipping to = would census the dead lane only.",
-      },
-      {
-        answer: "'cancelled'",
-        kind: "keyword",
-        label: "the dead lane",
-        why: "Cancelled is the one lane that never ships. Excluding 'delivered' would keep everything — delivered orders carry real timestamps.",
-      },
-    ],
-    distractors: ["<", "400", "delivered"],
-    walkthrough:
-      "COALESCE pushes each missing timestamp to the 'x' sentinel, and the claims line keeps the stuck orders above 200 euros — five targets, the premium end of the twenty-one-order stuck queue. The < flip would census the small claims. The 400-line would halve the queue. And the delivered exclusion changes nothing — delivered orders carry real timestamps. The refund targets: five stuck orders.",
-  },
-  {
-    id: "cs-1420",
-    tier: "easy",
-    topic: "t2",
-    universe: "expense",
-    title: "The ledger balance proof",
-    brief:
-      "From: Expense report. Re: the balance discipline.\n\nEvery ledger entry carries exactly one side; the proof counts the entries where the two sides agree — which never happens in a healthy book. NULLIF surfaces the zeros and the IS NULL test counts the balanced pairs.",
-    ask: "How many ledger entries carry both a debit and a credit?",
-    template: `SELECT COUNT(*) AS double_sided
-FROM ledger_entries
-WHERE NULLIF(debit_cents, 0) IS NOT NULL
-AND NULLIF(credit_cents, 0) IS {1}
-AND entry_date {2} {3};`,
-    slots: [
-      {
-        answer: "NOT NULL",
-        kind: "keyword",
-        label: "the second-side test",
-        why: "A double-sided entry carries a real credit too, so the test is IS NOT NULL. IS NULL would census the one-sided discipline — every entry.",
-      },
-      {
-        answer: ">",
-        kind: "keyword",
-        label: "the window direction",
-        why: "The window covers the whole book, so the test is > 2020. Flipping to < 2020 would demand entries from before the book opened.",
-      },
-      {
-        answer: "'2020-01-01'",
-        kind: "keyword",
-        noVerify: true,
-        label: "the open window edge",
-        why: "The edge predates every entry, so the window keeps the whole ledger. A 2025 edge would slice it to the final weeks.",
-      },
-    ],
-    distractors: ["IS NULL", "ZZZ_R0"],
-    walkthrough:
-      "NULLIF surfaces the zero sides as NULLs, and the double-sided test keeps entries with real debits AND real credits — the book answers with the honest zero: every entry is strictly one-sided. The IS NULL flip would count all eighty entries, the healthy discipline mislabeled as a fault. The 2025 window would slice the book. The balance proof: 0 double-sided entries.",
-  },
-  {
-    id: "cs-1421",
-    tier: "medium",
-    topic: "t2",
-    universe: "month-close",
-    title: "The year-boundary settlements",
-    brief:
-      "From: Month-end close. Re: the 2025 settlement ledger.\n\nThe 2025 settlement ledger is small but growing: five payments landed this year. Push NULLs through IFNULL, gate the method, and count the year's settlements.",
-    ask: "How many payments settled in 2025?",
-    template: `SELECT COUNT(*) AS settles_2025
-FROM payments
-WHERE {1}(paid_on, '1900-01-01') {2} '2025-01-01'
-AND method = {3}
-AND amount_cents {4} {5};`,
-    slots: [
-      {
-        answer: "IFNULL",
-        kind: "keyword",
-        label: "the date fallback",
-        why: "IFNULL pushes any missing date to the 1900 sentinel — a no-op on this NOT NULL column, but the guard documents the discipline. COALESCE would work identically; the audit accepts either.",
-      },
-      {
-        answer: ">=",
-        kind: "keyword",
-        label: "the year gate",
-        why: "2025 settlements sit at or past the boundary, so the test is >=. Flipping to < would census the 2024 ledger instead.",
-      },
-      {
-        answer: "'card'",
-        kind: "keyword",
-        label: "the method gate",
-        why: "The read scopes to the card lane, so the gate is method = 'card'. A 'wire' fill would count the wire settlements instead.",
-      },
-      {
-        answer: ">",
-        kind: "keyword",
-        label: "the amount gate direction",
-        why: "The gate keeps real settlements, so the test is > 0. Flipping to < 0 would demand negative amounts and empty the count.",
-      },
-      {
-        answer: "0",
-        kind: "number",
-        noVerify: true,
-        label: "the open amount floor",
-        why: "A floor of 0 admits every settlement. A 200000-floor would keep only the six-figure lines.",
-      },
-    ],
-    distractors: ["ZZZ_R0", "wire", "200000"],
-    walkthrough:
-      "IFNULL guards the date column, the >= gate scopes to 2025, and the card lane's settlement count reads its new-year total — the small but growing 2025 ledger. The COALESCE fill would work identically, which is the lesson: the two folds are interchangeable on this column. The wire fill would read the other method. The 2025 card settlements: counted.",
-  },
-  {
-    id: "cs-1422",
-    tier: "hard",
-    topic: "t2",
-    universe: "month-close",
-    title: "The single-receipt pot",
-    brief:
-      "From: Month-end close. Re: the single-receipt book.\n\nMost invoices settled with one receipt, and the single-receipt book carries its own pot. Stage the per-invoice paid totals with COALESCE, find the lines where the payment count is exactly one, and sum their face values.",
-    ask: "Total cents on invoices settled with exactly one payment.",
-    template: `SELECT {1}(i.amount_cents) AS single_pot
-FROM invoices i
-WHERE i.id IN (
-  SELECT i2.id
-  FROM invoices i2
-  LEFT JOIN payments p ON p.invoice_id = i2.id
-  GROUP BY i2.id
-  HAVING {2}(p.id) = {3} AND COALESCE(SUM(p.amount_cents), 0) {4} 0
-)
-AND i.amount_cents {5} 0;`,
-    slots: [
-      {
-        answer: "SUM",
-        kind: "keyword",
-        label: "the pot fold",
-        why: "The single-receipt book totals face values, so the outer fold is SUM. COUNT would report seventeen invoices where the close asked for cents.",
-      },
-      {
-        answer: "COUNT",
-        kind: "keyword",
-        label: "the receipt tally",
-        why: "A single-receipt invoice carries exactly one payment row, so the HAVING tally is COUNT = 1. SUM would compare receipt cents against the tally and misfire.",
-      },
-      {
-        answer: "1",
-        kind: "number",
-        noVerify: true,
-        label: "the single bar",
-        why: "The bar sits at 1 — seventeen invoices carry exactly one receipt. A 2-bar would census the five split settlements instead.",
-      },
-      {
-        answer: ">",
-        kind: "keyword",
-        label: "the zero-fill direction",
-        why: "The zero-fill keeps touched invoices, so the test is > 0. Flipping to < 0 would demand negative paid totals.",
-      },
-      {
-        answer: ">",
-        kind: "keyword",
-        label: "the face gate direction",
-        why: "The gate keeps real face values, so the test is > 0. Flipping to < 0 would demand negative invoices and empty the pot.",
-      },
-    ],
-    distractors: ["COUNT", "SUM", "2", "<"],
-    walkthrough:
-      "The HAVING stage finds the seventeen single-receipt invoices, and the outer fold sums their face values — the single-receipt pot the close reconciles against the split book and the silent six. The COUNT fold would answer seventeen invoices where the close asked for cents. The 2-bar would census the five splits. The single-receipt pot: seventeen invoices, summed.",
-  },
-  {
-    id: "cs-1423",
-    tier: "easy",
-    topic: "t2",
-    universe: "expense",
-    title: "The ads calendar",
-    brief:
-      "From: Expense report. Re: the ads cadence.\n\nThe ads budget posts in bursts, not months — the cadence read counts the distinct months that carry an ad entry. Gate the category, prove the storage clean, and count the months.",
-    ask: "How many distinct months carry an Ads expense?",
-    template: `SELECT COUNT(DISTINCT strftime('%Y-%m', spent_on)) AS ads_months
-FROM expenses
-WHERE category = {1}
-AND {2}(vendor) = vendor
-AND amount_cents {3} {4};`,
-    slots: [
-      {
-        answer: "'Ads'",
-        kind: "keyword",
-        label: "the ads gate",
-        why: "The cadence read tracks the ads line, so the gate is category = 'Ads'. A 'Rent' fill would count the monthly rent calendar instead.",
-      },
-      {
-        answer: "TRIM",
-        kind: "keyword",
-        label: "the storage check",
-        why: "TRIM(vendor) = vendor proves the feed is stored clean — true for every entry. UPPER would demand shouting vendors and match nothing.",
-      },
-      {
-        answer: ">",
-        kind: "keyword",
-        label: "the entry gate direction",
-        why: "The gate keeps real entries, so the test is > 0. Flipping to < 0 would demand negative amounts and empty the calendar.",
-      },
-      {
-        answer: "0",
-        kind: "number",
-        noVerify: true,
-        label: "the open entry floor",
-        why: "A floor of 0 admits every ad entry. A 50000-floor would keep only the bigger bursts.",
-      },
-    ],
-    distractors: ["Rent", "UPPER", "50000"],
-    walkthrough:
-      "The ads gate isolates the ad line, and the distinct-month count reads the cadence: the bursts spread across fourteen months — every month carries at least one ad entry. The Rent fill would count the property calendar. UPPER would fail every stored vendor. The ads cadence: fourteen months.",
-  },
-  {
-    id: "cs-1424",
     tier: "medium",
     topic: "t2",
     universe: "refund-audit",
-    title: "The pending-priority queue",
+    title: "The priority queue",
     brief:
-      "From: Refund audit. Re: the priority queue.\n\nThe priority queue targets pending orders above the 100-euro line — work that may still ship but is at risk. Push the NULLs to the sentinel, gate the lane and the line, and count the targets.",
+      "From: Refund audit. Re: the priority queue.\n\nThe priority queue targets pending orders above the 100-euro line — work that may still ship but is at risk. Guard the total with COALESCE so a missing figure can never dodge the queue, gate the lane, and count the targets.",
     ask: "How many pending orders total more than 100 euros?",
-    template: `SELECT COUNT(*) AS priority_targets
+    template: `SELECT COUNT(*) AS queue
 FROM orders
-WHERE IFNULL(shipped_at, {1}) = {2}
+WHERE COALESCE(total, 0) {1} {2}
 AND status = {3}
-AND total {4} {5};`,
+AND {4}(created_at) = created_at;`,
     slots: [
-      {
-        answer: "'x'",
-        kind: "keyword",
-        label: "the sentinel push",
-        why: "COALESCE pushes each missing timestamp to the 'x' sentinel. A date push would collide with real ship dates.",
-      },
-      {
-        answer: "'x'",
-        kind: "keyword",
-        label: "the caught word",
-        why: "The test compares against the same 'x' the push wrote — the sentinel catches exactly the rows it renamed. A 'y' fill would test against a word nothing was pushed to.",
-      },
-      {
-        answer: "'pending'",
-        kind: "keyword",
-        label: "the at-risk lane",
-        why: "The priority queue reads the pending lane — work that may still ship. A 'cancelled' fill would count the write-off lane instead.",
-      },
       {
         answer: ">",
         kind: "keyword",
         label: "the line direction",
-        why: "The queue targets orders above the line, so the test is >. Flipping to < 100 would census the small pending orders.",
+        why: "The queue targets orders above the line, so the test is >. Flipping to < would count the quiet lane below the line instead — which holds nothing.",
       },
       {
         answer: "100",
         kind: "number",
         noVerify: true,
         label: "the priority line",
-        why: "The line sits at 100 — the pending orders above it are the priority targets. A 300-line would shrink the queue to nine.",
+        why: "The line sits at 100 — every pending order clears it, so the queue holds the whole lane. A 300-line would keep only the eight heavyweight tickets.",
+      },
+      {
+        answer: "'pending'",
+        kind: "keyword",
+        label: "the at-risk lane",
+        why: "The priority queue reads the pending lane — work that may still ship. A 'shipped' fill would count the in-transit lane instead: thirty orders.",
+      },
+      {
+        answer: "DATE",
+        kind: "keyword",
+        label: "the grain check",
+        why: "DATE(created_at) = created_at proves the stamps are date-clean — true for the book, so the queue reads real rows. JULIANDAY would compare a number to text and empty the queue.",
       },
     ],
-    distractors: ["2024-01-01", "cancelled", "300"],
+    distractors: ["<", "300", "'shipped'"],
     walkthrough:
-      "The sentinel catches the never-shipped orders, the pending gate scopes to the at-risk lane, and the 100-line keeps the priority targets: pending orders worth chasing. The date push would collide with real timestamps. The cancelled fill would count the write-off lane. The 300-line would shrink the queue. The priority queue: pending orders over 100.",
+      "The COALESCE guard pushes any missing total to 0 — where it would rightly miss the line — and the 100-euro bar scopes the queue: every one of the fourteen pending orders clears the line, the lane's smallest ticket already sitting above it. The < flip would find nothing, and the 300-line would keep only eight heavyweights. The priority queue holds fourteen.",
+  },
+  {
+    id: "cs-1420",
+    tier: "easy",
+    topic: "t2",
+    universe: "refund-audit",
+    title: "The quiet-lane floor",
+    brief:
+      "From: Refund audit. Re: the small-ticket floor.\n\nThe audit proves a negative: no pending order sits below the 100-euro line — the quiet lane under the bar is empty. Guard the total with COALESCE, flip the queue's direction, and let the honest zero speak.",
+    ask: "How many pending orders total less than 100 euros?",
+    template: `SELECT COUNT(*) AS quiet_lane
+FROM orders
+WHERE COALESCE(total, 0) {1} {2}
+AND status = {3}
+AND {4}(created_at) = created_at;`,
+    slots: [
+      {
+        answer: "<",
+        kind: "keyword",
+        label: "the floor direction",
+        why: "The quiet lane sits below the 100-euro bar, so the test is <. Flipping to > would count the priority queue instead — the whole pending lane, fourteen orders.",
+      },
+      {
+        answer: "100",
+        kind: "number",
+        noVerify: true,
+        label: "the quiet bar",
+        why: "The bar sits at 100 — nothing pending hides below it. A 300-bar would catch fourteen tickets and destroy the negative proof.",
+      },
+      {
+        answer: "'pending'",
+        kind: "keyword",
+        label: "the audited lane",
+        why: "The floor audit reads the pending lane. A 'cancelled' fill would find two small write-offs — 90.35 and 25.47 — and break the honest zero.",
+      },
+      {
+        answer: "DATE",
+        kind: "keyword",
+        label: "the grain check",
+        why: "DATE(created_at) = created_at proves the stamps are date-clean — true for the book, so the audit reads real rows. JULIANDAY would compare a number to text and count nothing.",
+      },
+    ],
+    distractors: [">", "300", "'cancelled'"],
+    walkthrough:
+      "The < direction scopes under the bar, and the pending lane answers with the honest zero: nothing waits below 100 euros — the lane's smallest ticket already clears the line. Every distractor finds company: the > flip reads the fourteen-ticket queue, the 300-bar catches the whole lane, and the cancelled fill counts two small write-offs. The quiet lane: zero, proven.",
+  },
+  {
+    id: "cs-1421",
+    tier: "medium",
+    topic: "t2",
+    universe: "month-close",
+    title: "The back-book delivered",
+    brief:
+      "From: Month-end close. Re: the back-book page.\n\nThe close reads the back book: delivered orders logged before the 2025 boundary. IFNULL guards the stamp against a missing date — the sentinel 1900 push keeps the window honest — then the delivered gate scopes the lane.",
+    ask: "How many delivered orders were logged before 2025?",
+    template: `SELECT COUNT(*) AS back_book
+FROM orders
+WHERE IFNULL(created_at, '1900-01-01') {1} {2}
+AND status = {3}
+AND {4}(created_at) = created_at;`,
+    slots: [
+      {
+        answer: "<",
+        kind: "keyword",
+        label: "the boundary direction",
+        why: "The back book sits before the 2025 boundary, so the test is <. Flipping to > would read the new-year page instead — seven delivered tickets.",
+      },
+      {
+        answer: "'2025-01-01'",
+        kind: "keyword",
+        label: "the boundary stamp",
+        why: "The window ends at the 2025 boundary, so the edge carries '2025-01-01'. A '2024-06-01' fill would cut the window at mid-year and keep only seventeen.",
+      },
+      {
+        answer: "'delivered'",
+        kind: "keyword",
+        label: "the closed lane",
+        why: "The back book counts closed work, so the gate is status = 'delivered'. A 'shipped' fill would read the in-transit page — twenty-seven orders.",
+      },
+      {
+        answer: "DATE",
+        kind: "keyword",
+        label: "the grain check",
+        why: "DATE(created_at) = created_at proves the stamps are date-clean — true for the book, so the window reads real rows. JULIANDAY would compare a number to text and count nothing.",
+      },
+    ],
+    distractors: [">", "'2024-06-01'", "'shipped'", "JULIANDAY"],
+    walkthrough:
+      "IFNULL pushes any missing stamp to the 1900 sentinel — where it would rightly miss the window — and the < '2025-01-01' edge scopes the back book: forty-five delivered orders closed out the old pages, with the new year opening on seven more. The mid-year cut would keep seventeen, and the shipped flip reads the in-transit lane. The back book: forty-five delivered.",
+  },
+  {
+    id: "cs-1422",
+    tier: "hard",
+    topic: "t2",
+    universe: "month-close",
+    title: "The solo-receipt pot",
+    brief:
+      "From: Month-end close. Re: the solo-receipt book.\n\nTwenty-six orders carry exactly one line each, and the solo book carries its own pot. Stage the single-line orders through a HAVING tally, fold their totals with a guarded SUM, and read the pot the close reconciles against the ledger.",
+    ask: "The total revenue booked by orders with exactly one line.",
+    template: `SELECT ROUND(COALESCE({1}(total), 0), 2) AS solo_pot
+FROM orders
+WHERE id IN (
+  SELECT order_id FROM order_items
+  GROUP BY order_id
+  HAVING {2}(*) = {3}
+)
+AND total {4} {5};`,
+    slots: [
+      {
+        answer: "SUM",
+        kind: "keyword",
+        label: "the pot fold",
+        why: "The solo book totals face values, so the fold is SUM. AVG would read the average solo ticket — about 110 — and not the pot.",
+      },
+      {
+        answer: "COUNT",
+        kind: "keyword",
+        label: "the line tally",
+        why: "A solo order carries exactly one line, so the HAVING tally is COUNT. AVG would demand an average line count no order can have.",
+      },
+      {
+        answer: "1",
+        kind: "number",
+        noVerify: true,
+        label: "the solo bar",
+        why: "The bar sits at 1 — twenty-six orders carry exactly one line. A 500-bar would empty the stage and the pot would fall back to zero.",
+      },
+      {
+        answer: ">",
+        kind: "keyword",
+        label: "the face gate direction",
+        why: "The gate keeps real orders, so the test is > 0. Flipping to < would demand negative totals and return no orders at all.",
+      },
+      {
+        answer: "0",
+        kind: "number",
+        noVerify: true,
+        label: "the open face floor",
+        why: "A floor of 0 admits every solo order. A 500-floor would empty the book — no solo ticket reaches five hundred euros.",
+      },
+    ],
+    distractors: ["AVG", "<", "500"],
+    walkthrough:
+      "The HAVING stage finds the twenty-six single-line orders, and the guarded SUM folds their totals into the solo pot: 2879.53 — the close reconciles it against the ledger line for one-line tickets. AVG would read the 110-euro average ticket instead of the pot, and the 500-floor would empty the book and fall back to the zero guard. The solo-receipt pot: 2879.53.",
+  },
+  {
+    id: "cs-1423",
+    tier: "easy",
+    topic: "t2",
+    universe: "month-close",
+    title: "The pending cadence",
+    brief:
+      "From: Month-end close. Re: the at-risk cadence.\n\nPending work is the close's open exposure, and the cadence read counts the distinct months that carry a pending order. Guard the lane fold with COALESCE, scope to the at-risk status, and read the spread.",
+    ask: "How many distinct months carry a pending order?",
+    template: `SELECT COUNT(DISTINCT strftime('%Y-%m', created_at)) AS live_months
+FROM orders
+WHERE COALESCE(status, {1}) = {2}
+AND {3}(created_at) = created_at;`,
+    slots: [
+      {
+        answer: "'none'",
+        kind: "keyword",
+        label: "the lane fallback",
+        why: "COALESCE folds a missing status to 'none' — a lane no order carries — so the fold is a pure guard. A bare column would break the pattern the close expects.",
+      },
+      {
+        answer: "'pending'",
+        kind: "keyword",
+        label: "the at-risk lane",
+        why: "The cadence tracks pending work, so the gate is status = 'pending'. A 'shipped' fill would read the in-transit calendar instead — twelve months.",
+      },
+      {
+        answer: "DATE",
+        kind: "keyword",
+        label: "the grain check",
+        why: "DATE(created_at) = created_at proves the stamps are date-clean — true for the book, so the cadence reads real rows. JULIANDAY would compare a number to text and count nothing.",
+      },
+    ],
+    distractors: ["'shipped'", "MAX", "JULIANDAY"],
+    walkthrough:
+      "The COALESCE guard folds nothing on this clean book — every status is present — and the pending gate scopes the cadence: ten distinct months carry at-risk work, out of the fourteen the order calendar spans. The shipped flip would read twelve months of in-transit history, and the MAX misuse would break the gate outright. The pending cadence: ten months.",
+  },
+  {
+    id: "cs-1424",
+    tier: "medium",
+    topic: "t2",
+    universe: "fraud",
+    title: "The premium towers",
+    brief:
+      "From: Fraud spot-check. Re: the premium watchlist.\n\nThe watchlist flags the premium towers — orders whose total climbs past 800 euros. Guard the total with COALESCE so a missing figure never slips the net, keep the status fold honest, and count the towers.",
+    ask: "How many orders total more than 800 euros?",
+    template: `SELECT COUNT(*) AS towers
+FROM orders
+WHERE COALESCE(total, {1}) {2} {3}
+AND {4}(status) = status;`,
+    slots: [
+      {
+        answer: "0",
+        kind: "number",
+        noVerify: true,
+        label: "the missing-total push",
+        why: "A missing total falls to 0 and rightly misses the 800 bar. The book carries no missing totals, so the push never fires — pure guard discipline.",
+      },
+      {
+        answer: ">",
+        kind: "keyword",
+        label: "the tower bar direction",
+        why: "Towers clear the bar, so the test is >. Flipping to < would count the ninety-nine ordinary orders instead of the four towers.",
+      },
+      {
+        answer: "800",
+        kind: "number",
+        noVerify: true,
+        label: "the tower bar",
+        why: "The bar sits at 800 — four orders clear it. A 500-bar would flag twenty-five orders and flood the watchlist.",
+      },
+      {
+        answer: "IFNULL",
+        kind: "keyword",
+        label: "the status fold",
+        why: "IFNULL(status, 'x') = status proves the lane labels are present — the fold returns each status untouched. UPPER would demand shouting lanes and match nothing.",
+      },
+    ],
+    distractors: ["UPPER", "<", "MAX"],
+    walkthrough:
+      "The COALESCE guard pushes a missing total to 0 — safely below the bar — and the 800 watchlist bar counts the towers: four orders climb past it, with ticket 1088.44 at the top. The < flip would read the ninety-nine ordinary orders, and the 500-bar would flood the list with twenty-five flags. The premium watchlist holds four towers.",
   },
   {
     id: "cs-1425",
     tier: "hard",
     topic: "t2",
     universe: "month-close",
-    title: "The over-face settlement",
+    title: "The float-dust drift",
     brief:
-      "From: Month-end close. Re: the over-payment check.\n\nThe books should never settle an invoice for more than its face — the over-payment check proves it. Stage the paid totals with COALESCE, test the over-face condition, and count the violations.",
-    ask: "How many invoices have payments totalling more than face value?",
-    template: `SELECT COUNT(*) AS overpayments
+      "From: Month-end close. Re: the reconciliation.\n\nThe books reconcile at cents precision, yet the raw floats disagree: twelve orders show a drift between the line pot and the booked total — floating-point dust from the pot fold. Stage the pots with a guarded fold, compare raw, and count the drifters.",
+    ask: "How many orders show a raw drift between the line pot and the booked total?",
+    template: `SELECT COUNT(*) AS drifted
 FROM (
-  SELECT i.id, i.amount_cents,
-         COALESCE(SUM(p.amount_cents), 0) AS paid
-  FROM invoices i
-  LEFT JOIN payments p ON p.invoice_id = i.id
-  GROUP BY i.id
+  SELECT o.id, o.total, o.created_at, COALESCE({1}(i.pot), 0) AS pot
+  FROM orders o
+  LEFT JOIN (
+    SELECT order_id, SUM(quantity * unit_price) AS pot
+    FROM order_items
+    GROUP BY order_id
+  ) i ON i.order_id = o.id
 )
-WHERE paid {1} amount_cents
-AND paid {2} {3}
-AND id {4} {5};`,
+WHERE pot != total
+AND {2}(created_at) = created_at
+AND pot {3} {4};`,
     slots: [
       {
-        answer: ">",
+        answer: "IFNULL",
         kind: "keyword",
-        label: "the over-face test",
-        why: "An over-payment means paid exceeds face value, so the test is >. Flipping to < would count the shortfall lines instead.",
+        label: "the pot guard",
+        why: "IFNULL folds any missing pot to 0 — the guard a LEFT JOIN stage demands. ROUND would fold each pot to whole euros and explode the drift to 101 orders.",
+      },
+      {
+        answer: "DATE",
+        kind: "keyword",
+        label: "the grain check",
+        why: "DATE(created_at) = created_at proves the stamps are date-clean — true for the book, so the read covers every order. JULIANDAY would compare a number to text and cover none.",
       },
       {
         answer: ">",
         kind: "keyword",
-        label: "the touched gate direction",
-        why: "The check only means something for touched invoices — the never-paid lines are open balances, not overpayments — so the test is > 0. Flipping to < 0 would demand negative paid totals.",
+        label: "the pot gate direction",
+        why: "The gate keeps real pots, so the test is > 0. Flipping to < would demand negative pots, which cannot exist.",
       },
       {
         answer: "0",
         kind: "number",
         noVerify: true,
-        label: "the touched floor",
-        why: "A floor of 0 admits every touched invoice. A 500000-floor would exceed every settlement and empty the check.",
-      },
-      {
-        answer: ">",
-        kind: "keyword",
-        label: "the id gate direction",
-        why: "The gate admits every invoice, so the test is > 0. Flipping to < 0 would demand negative ids.",
-      },
-      {
-        answer: "0",
-        kind: "number",
-        noVerify: true,
-        label: "the open id floor",
-        why: "A floor of 0 keeps all twenty-eight invoices in scope. A 25-floor would keep only the last four.",
+        label: "the open pot floor",
+        why: "A floor of 0 admits every order. A 500-floor would keep only the heavyweight pots — three drifters — and hide the true count.",
       },
     ],
-    distractors: ["ZZZ_R0", "ZZZ_FIX_1"],
+    distractors: ["ROUND", "JULIANDAY", "500"],
     walkthrough:
-      "COALESCE folds each invoice's settled cents, and the > face test counts the violations: the book answers with the honest zero — no invoice settled above its face. The books carry exact settles and one shortfall, never an over-payment. The 100000-floor would keep only the six-figure lines and still find nothing. The over-payment check: 0 violations.",
+      "The guarded pot fold keeps every order in scope, and the raw != comparison counts the drifters: twelve orders where SUM(quantity * unit_price) misses the booked total by floating-point dust — dust the cents-rounded books absorb. Folding the pots to whole euros first would explode the count to 101, and the 500-floor would keep only three heavyweights. The drift census: twelve, all dust.",
   },
   {
     id: "cs-1426",
@@ -1169,101 +1145,95 @@ AND total {2} {3};`,
   },
   {
     id: "cs-1428",
-    tier: "medium",
+    tier: "hard",
     topic: "t3",
     universe: "funnel",
-    title: "The delivered-only speed floor",
+    title: "The pre-order anomaly",
     brief:
-      "From: Growth lead. Re: the promise floor.\n\nThe promise floor is the slowest completed delivery — the day-gap no delivered order exceeded. Measure the gaps in the delivered lane and read the maximum.",
-    ask: "The slowest delivery gap among completed orders.",
-    template: `SELECT {1}(julianday(shipped_at) - julianday(created_at)) AS promise_floor
-FROM orders
-WHERE status = {2}
-AND julianday(shipped_at) {3} NULL;`,
+      "From: Growth desk. Re: the activation scan.\n\nThe funnel's first metric — signup to first order — hides an anomaly: the fastest activation on file is negative. Some orders were logged before their buyer ever signed up. Measure every order-to-signup gap in days and read the floor.",
+    ask: "The fastest order-to-signup gap on the book, in days.",
+    template: `SELECT ROUND({1}(julianday(o.created_at) - julianday(c.created_at)), 0) AS activation_days
+FROM orders o
+JOIN customers c ON c.id = o.customer_id
+WHERE {2}(c.created_at) = c.created_at
+AND o.total {3} {4};`,
     slots: [
-      {
-        answer: "MAX",
-        kind: "keyword",
-        label: "the floor fold",
-        why: "The promise floor is the slowest gap, so the fold is MAX. MIN would read the fastest turnaround and mistake it for the floor.",
-      },
-      {
-        answer: "'delivered'",
-        kind: "keyword",
-        label: "the completed gate",
-        why: "The promise is judged on completed work, so the gate is status = 'delivered'. A 'shipped' fill would read the in-flight lane.",
-      },
-      {
-        answer: "IS NOT",
-        kind: "keyword",
-        label: "the measurable test",
-        why: "Only delivered rows carry a ship timestamp, so the test is IS NOT NULL. IS NULL would keep the never-shipped rows, whose gaps are NULL.",
-      },
-    ],
-    distractors: ["MIN", "shipped", "IS"],
-    walkthrough:
-      "The delivered lane's gaps measure in whole days, and MAX reads the floor: four days — the slowest completed delivery the promise must survive. MIN would read the two-day sprint and mistake speed for the floor. The shipped fill would read the in-flight lane's spread. The promise floor: four days.",
-  },
-  {
-    id: "cs-1429",
-    tier: "medium",
-    topic: "t3",
-    universe: "finance",
-    title: "The card-only settlement span",
-    brief:
-      "From: Finance review. Re: the card calendar.\n\nThe card ledger's calendar is the review's focus: the span from the first card settlement to the last. Fold the card dates to day numbers, take the extremes, and read the span.",
-    ask: "The number of days from the first to the last card settlement.",
-    template: `SELECT ROUND(julianday({1}(paid_on)) - julianday({2}(paid_on)), 0) AS span_days
-FROM payments
-WHERE method = {3}
-AND amount_cents {4} {5};`,
-    slots: [
-      {
-        answer: "MAX",
-        kind: "keyword",
-        label: "the late extreme",
-        why: "The span ends at the last card settlement, so the leading fold is MAX. MIN there would flip the calendar negative.",
-      },
       {
         answer: "MIN",
         kind: "keyword",
-        label: "the early extreme",
-        why: "The span starts at the first card settlement, so the subtrahend is MIN. MAX would duplicate the late extreme.",
+        label: "the floor fold",
+        why: "The anomaly scan reads the fastest gap, so the fold is MIN. MAX would read the slowest activation — 475 days — and miss the pre-order entirely.",
       },
       {
-        answer: "'card'",
+        answer: "DATE",
         kind: "keyword",
-        label: "the card gate",
-        why: "The calendar reads the card lane, so the gate is method = 'card'. A 'wire' fill would span the wire settlements instead.",
+        label: "the grain check",
+        why: "DATE(c.created_at) = c.created_at proves the signup stamps are date-clean — true for the roster, so the gaps read real rows. JULIANDAY would compare a number to text and void the scan.",
       },
       {
         answer: ">",
         kind: "keyword",
-        label: "the amount gate direction",
-        why: "The gate keeps real settlements, so the test is > 0. Flipping to < 0 would demand negative amounts and empty the span.",
+        label: "the ticket gate direction",
+        why: "The scan covers real tickets, so the test is > 0. Flipping to < would demand negative totals, which cannot exist.",
       },
       {
         answer: "0",
         kind: "number",
         noVerify: true,
-        label: "the open amount floor",
-        why: "A floor of 0 admits every card settlement. A 200000-floor would keep only the six-figure lines and shrink the span.",
+        label: "the open ticket floor",
+        why: "A floor of 0 admits every order. A 600-floor would drop the 576.54 anomaly ticket and soften the floor to -46.",
       },
     ],
-    distractors: ["MIN", "wire", "ZZZ_R0"],
+    distractors: ["MAX", "JULIANDAY", "600"],
     walkthrough:
-      "The card extremes fold to day numbers and the subtraction spans the lane's calendar: from the first card settlement in early 2024 to the last in 2025 — a full year of card activity. MIN in the leading fold would flip the calendar. The wire fill would span the other lane. The card calendar: a full-year span.",
+      "Julianday folds each pair of stamps to day numbers, and MIN reads the floor: -180 — the 576.54 order of 2024-01-05 was logged 180 days before its buyer's signup, an impossible activation the funnel must flag. MAX would read the 475-day slowpoke instead, and the 600-floor would soften the anomaly to -46. The scan's verdict: the fastest activation is a pre-order.",
+  },
+  {
+    id: "cs-1429",
+    tier: "medium",
+    topic: "t3",
+    universe: "month-close",
+    title: "The full-calendar span",
+    brief:
+      "From: Month-end close. Re: the billing footprint.\n\nThe order book's footprint is the span from the first order to the last. Fold the stamps to day numbers, take the extremes, and read the span — the calendar the close reports against every period.",
+    ask: "The number of days from the first to the last order.",
+    template: `SELECT ROUND(julianday({1}(created_at)) - julianday({2}(created_at)), 0) AS span_days
+FROM orders
+WHERE {3}(created_at) = created_at;`,
+    slots: [
+      {
+        answer: "MAX",
+        kind: "keyword",
+        label: "the late extreme",
+        why: "The span ends at the last order, so the leading fold is MAX. MIN there would flip the span negative — the book would appear to run backwards.",
+      },
+      {
+        answer: "MIN",
+        kind: "keyword",
+        label: "the early extreme",
+        why: "The span starts at the first order, so the subtrahend is MIN. MAX would duplicate the leading fold and zero the span.",
+      },
+      {
+        answer: "DATE",
+        kind: "keyword",
+        label: "the grain check",
+        why: "DATE(created_at) = created_at proves the stamps are date-clean — true for the book, so the span reads real rows. JULIANDAY would compare a number to text and void the read.",
+      },
+    ],
+    distractors: ["JULIANDAY", "ROUND"],
+    walkthrough:
+      "The extremes fold to day numbers and the subtraction spans the book's calendar: 2024-01-01 to 2025-02-27 — 423 days, the footprint every period report leans on. Swapping either extreme for the other would zero the span, and ROUND would fold each stamp to a number no calendar can read. JULIANDAY in the grain gate would void the read to an empty set. The billing footprint: 423 days.",
   },
   {
     id: "cs-1430",
     tier: "hard",
     topic: "t3",
     universe: "funnel",
-    title: "The same-week pairs",
+    title: "The week-scoped read",
     brief:
-      "From: Growth lead. Re: the week-scoped reads.\n\nSome orders share the ISO week number, and the read counts how many distinct week-plus-order combinations exist at all — the pairing density of the calendar. Slice the week numbers and count the distinct days each week carries.",
-    ask: "How many distinct ISO weeks carry at least one order?",
-    template: `SELECT COUNT(DISTINCT {1}(created_at)) AS order_weeks
+      "From: Growth desk. Re: the week cadence.\n\nThe desk buckets orders into ISO weeks, and the cadence read counts how many distinct weeks the book actually touches — the pairing density of the calendar. Chop the stamps with strftime's %W code and count the buckets.",
+    ask: "How many distinct weeks carry at least one order?",
+    template: `SELECT COUNT(DISTINCT {1}) AS order_weeks
 FROM orders
 WHERE {2}(created_at) = created_at
 AND total {3} {4};`,
@@ -1272,67 +1242,74 @@ AND total {3} {4};`,
         answer: "strftime('%W', created_at)",
         kind: "keyword",
         label: "the week slicer",
-        why: "The ISO week is strftime's %W chop — forty-two distinct weeks carry orders. DATE would slice calendar days and count 84.",
+        why: "The ISO week is strftime's %W chop — forty-two distinct weeks carry orders. DATE would slice whole days and count 103 of them, one per row.",
       },
       {
         answer: "DATE",
         kind: "keyword",
         label: "the grain check",
-        why: "DATE(created_at) = created_at proves the stamps are date-clean, so the week slice reads whole days. JULIANDAY would compare a number to text.",
+        why: "DATE(created_at) = created_at proves the stamps are date-clean, so the week slicer reads real rows. JULIANDAY would compare a number to text and count nothing.",
       },
       {
         answer: ">",
         kind: "keyword",
         label: "the total gate direction",
-        why: "The gate keeps real orders, so the test is > 0. Flipping to < 0 would demand negative totals and empty the read.",
+        why: "The gate keeps real orders, so the test is > 0. Flipping to < would demand negative totals and empty the calendar.",
       },
       {
         answer: "0",
         kind: "number",
         noVerify: true,
         label: "the open total floor",
-        why: "A floor of 0 admits every order. A 300-floor would drop the budget orders and could shrink the week count.",
+        why: "A floor of 0 admits every order. A 300-floor would keep only the premium tickets — thirty-one weeks — and thin the cadence.",
       },
     ],
-    distractors: ["DATE", "JULIANDAY", "300"],
+    distractors: ["'%d'", "JULIANDAY", "300"],
     walkthrough:
-      "strftime's %W chop buckets every order into its ISO week, and the distinct count reads forty-two — the book's orders spread across forty-two weeks of the calendar. DATE would slice calendar days and count eighty-four. JULIANDAY would compare a number to text. And the 300-floor would drop the budget orders. The week density: forty-two weeks.",
+      "strftime's %W chop buckets every order into its ISO week, and the distinct count reads forty-two — the book's 103 orders spread across forty-two weeks of the calendar, some weeks crowded, some carrying a single ticket. DATE would slice to 103 distinct days instead, and the 300-floor would thin the cadence to thirty-one premium weeks. The week cadence: forty-two.",
   },
   {
     id: "cs-1431",
     tier: "easy",
     topic: "t3",
     universe: "month-close",
-    title: "The invoice calendar footprint",
+    title: "The new-year footprint",
     brief:
-      "From: Month-end close. Re: the billing footprint.\n\nThe billing calendar's footprint is the span from the first issue to the last. Fold the issue dates, take the extremes, and read the span — the calendar the collections team works.",
-    ask: "The number of days from the first to the last invoice issue.",
-    template: `SELECT ROUND(julianday({1}(issued_on)) - julianday({2}(issued_on)), 0) AS span_days
-FROM invoices
-WHERE {3}(issued_on) = issued_on;`,
+      "From: Month-end close. Re: the new-year page.\n\nThe 2025 page is short but real, and its footprint is the span from the first to the last new-year order. Chop the year, fold the stamps to day numbers, and read the span the close reports on.",
+    ask: "The number of days from the first to the last 2025 order.",
+    template: `SELECT ROUND(julianday({1}(created_at)) - julianday({2}(created_at)), 0) AS span_days
+FROM orders
+WHERE strftime('%Y', created_at) = {3}
+AND {4}(created_at) = created_at;`,
     slots: [
       {
         answer: "MAX",
         kind: "keyword",
         label: "the late extreme",
-        why: "The span ends at the last issue, so the leading fold is MAX. MIN there would flip the calendar negative.",
+        why: "The span ends at the last new-year order, so the leading fold is MAX. MIN there would flip the span negative and run the page backwards.",
       },
       {
         answer: "MIN",
         kind: "keyword",
         label: "the early extreme",
-        why: "The span starts at the first issue, so the subtrahend is MIN. MAX would duplicate the late extreme.",
+        why: "The span starts at the first new-year order, so the subtrahend is MIN. MAX would duplicate the leading fold and zero the span.",
+      },
+      {
+        answer: "'2025'",
+        kind: "keyword",
+        label: "the year gate",
+        why: "The read is the 2025 page, so the gate carries '2025'. A '2024' fill would span the whole back book — 365 days.",
       },
       {
         answer: "DATE",
         kind: "keyword",
         label: "the grain check",
-        why: "DATE(issued_on) = issued_on proves the issue stamps are date-clean. JULIANDAY would compare a number to text and match nothing.",
+        why: "DATE(created_at) = created_at proves the stamps are date-clean — true for the page, so the span reads real rows. JULIANDAY would compare a number to text and void the read.",
       },
     ],
-    distractors: ["MIN", "JULIANDAY"],
+    distractors: ["ROUND", "'2024'", "JULIANDAY"],
     walkthrough:
-      "The issue extremes fold to day numbers and the subtraction spans the billing calendar: from the first invoice in February 2024 to the last in March 2025 — a thirteen-month footprint. MIN in the leading fold would flip the calendar. The JULIANDAY fill would compare a number to text. The billing footprint: thirteen months of issues.",
+      "The year gate scopes to the 2025 page, the extremes fold to day numbers, and the subtraction spans the new-year footprint: 2025-01-01 to 2025-02-27 — 57 days and counting. The '2024' fill would span the 365-day back book instead, and ROUND would fold each stamp into a number no calendar reads. The new-year footprint: 57 days.",
   },
   {
     id: "cs-1432",
@@ -1341,7 +1318,7 @@ WHERE {3}(issued_on) = issued_on;`,
     universe: "growth",
     title: "The mid-week signup check",
     brief:
-      "From: Growth lead. Re: the signup timing.\n\nThe signup timing read counts members who joined mid-week — Tuesday through Thursday, codes two through four. Code the signup dates and count the mid-week cohort.",
+      "From: Growth desk. Re: the signup timing.\n\nThe signup timing read counts members who joined mid-week — Tuesday through Thursday, weekday codes two through four. Code the signup dates with strftime's %w chop and count the mid-week cohort.",
     ask: "How many customers signed up mid-week (Tue–Thu)?",
     template: `SELECT COUNT(*) AS midweek_signups
 FROM customers
@@ -1352,162 +1329,164 @@ AND {3}(created_at) = created_at;`,
         answer: "IN",
         kind: "keyword",
         label: "the mid-week test",
-        why: "Mid-week is three codes — 2 for Tuesday, 3 for Wednesday, 4 for Thursday — so the test is IN. NOT IN would census the weekend-and-Monday joiners.",
+        why: "Mid-week is three codes — 2 for Tuesday, 3 for Wednesday, 4 for Thursday — so the test is IN. NOT IN would flip the read to the edges and count the other eight.",
       },
       {
-        answer: "'2', '3', '4'",
+        answer: "('2','3','4')",
         kind: "keyword",
         label: "the mid-week codes",
-        why: "The triple covers Tuesday through Thursday. A '2' fill would count Tuesdays alone.",
+        why: "The triple covers Tuesday through Thursday. A bare '2' fill breaks the IN grammar outright — the list must be parenthesized.",
       },
       {
         answer: "DATE",
         kind: "keyword",
         label: "the grain check",
-        why: "DATE(created_at) = created_at proves the signup stamps are date-clean. JULIANDAY would compare a number to text and match nothing.",
+        why: "DATE(created_at) = created_at proves the signup stamps are date-clean. JULIANDAY would compare a number to text and count nobody.",
       },
     ],
-    distractors: ["NOT IN", "2", "JULIANDAY"],
+    distractors: ["4", "JULIANDAY", "'2'"],
     walkthrough:
-      "The mid-week codes catch eight members — the roster's signups cluster mid-week, four on Tuesday and two each on Wednesday and Thursday. NOT IN would flip the read to the eight weekend-and-Monday joiners. The '2' fill would count Tuesdays alone. The grain check passes every date-only stamp. The mid-week cohort: eight members.",
+      "The %w chop codes every signup 0 through 6, and the mid-week triple catches eight members — four on Tuesday, two each on Wednesday and Thursday. The edges hold the rest: four Monday joiners, two Friday, and a weekend pair. The bare '2' fill would break the IN grammar before the read even runs. The mid-week cohort: eight.",
   },
   {
     id: "cs-1433",
-    tier: "hard",
+    tier: "medium",
     topic: "t3",
     universe: "month-close",
-    title: "The year-end shipment read",
+    title: "The December stack",
     brief:
-      "From: Month-end close. Re: the December shipments.\n\nThe year-end read counts the December shipments — the lines that shipped in the holiday month, regardless of order month. Slice the ship dates' month, gate the year, and count.",
-    ask: "How many orders shipped in December 2024?",
-    template: `SELECT COUNT(*) AS dec_ships
+      "From: Month-end close. Re: the year-end page.\n\nThe close books the December page separately — the holiday stack the year ends on. Chop the stamps' month and year, keep the grain honest, and count the December 2024 orders the page carries.",
+    ask: "How many orders were logged in December 2024?",
+    template: `SELECT COUNT(*) AS december_stack
 FROM orders
-WHERE strftime('%m', {1}) = {2}
-AND strftime('%Y', {3}) = {4}
-AND shipped_at {5} NULL;`,
+WHERE strftime('%m', created_at) = {1}
+AND strftime('%Y', created_at) = {2}
+AND {3}(created_at) = created_at
+AND total {4} {5};`,
     slots: [
-      {
-        answer: "shipped_at",
-        kind: "keyword",
-        label: "the ship month source",
-        why: "The read counts shipments by when they shipped, so the month chop runs on shipped_at. Chopping created_at would count December orders, not shipments.",
-      },
       {
         answer: "'12'",
         kind: "keyword",
-        label: "the December code",
-        why: "strftime renders December as '12'. An '11' fill would count November shipments instead.",
-      },
-      {
-        answer: "shipped_at",
-        kind: "keyword",
-        label: "the ship year source",
-        why: "The year gate scopes the ship calendar, so the year chop also runs on shipped_at. Chopping created_at would mix order years with ship months.",
+        label: "the month code",
+        why: "strftime renders December as '12', so the month chop carries '12'. An '11' fill would count the November page — six orders.",
       },
       {
         answer: "'2024'",
         kind: "keyword",
-        label: "the ship year",
-        why: "The read is December 2024, so the year gate carries '2024'. A '2025' fill would count the new year's shipments.",
+        label: "the year code",
+        why: "The read is the 2024 year-end page, so the year chop carries '2024'. A '2025' fill would find no December at all — the new year opens in January.",
       },
       {
-        answer: "IS NOT",
+        answer: "DATE",
         kind: "keyword",
-        label: "the measurable test",
-        why: "Only shipped rows carry a ship timestamp, so the test is IS NOT NULL. IS NULL would keep the never-shipped rows.",
+        label: "the grain check",
+        why: "DATE(created_at) = created_at proves the stamps are date-clean — true for the page, so the stack reads real rows. JULIANDAY would compare a number to text and count nothing.",
+      },
+      {
+        answer: ">",
+        kind: "keyword",
+        label: "the total gate direction",
+        why: "The gate keeps real orders, so the test is > 0. Flipping to < would demand negative totals, which cannot exist.",
+      },
+      {
+        answer: "0",
+        kind: "number",
+        noVerify: true,
+        label: "the open total floor",
+        why: "A floor of 0 admits every December order. A 300-floor would keep only the three heavyweight tickets.",
       },
     ],
-    distractors: ["ZZZ_R0", "11", "2025", "IS"],
+    distractors: ["'11'", "'2025'", "JULIANDAY", "300"],
     walkthrough:
-      "The ship-date chop buckets every shipment into its month, and the December 2024 gate counts the year-end shipments — the holiday rush the close books separately. Chopping created_at would count December orders, a different set. The '11' fill would read November. And the IS NULL flip would keep the never-shipped rows. The December read: shipped-and-counted.",
+      "The month and year chops scope the read to the holiday page, and the stack counts seven December 2024 orders — the year-end burst the close books apart from the six-order November and the January restart. The '2025' fill would find an empty December, and the 300-floor would keep only three tickets on the page. The December stack: seven.",
   },
   {
     id: "cs-1434",
     tier: "easy",
     topic: "t3",
-    universe: "finance",
-    title: "The 2025 card settlements",
+    universe: "growth",
+    title: "The new-year page",
     brief:
-      "From: Finance review. Re: the new-year card ledger.\n\nThe card ledger's 2025 page is small but real. Code the payment dates' year, gate the method, and count the new-year card settlements.",
-    ask: "How many card payments settled in 2025?",
-    template: `SELECT COUNT(*) AS card_2025
-FROM payments
-WHERE strftime('%Y', paid_on) = {1}
-AND method = {2}
-AND paid_on {3} {4};`,
+      "From: Growth desk. Re: the new-year census.\n\nThe new-year page opens the second year of the book, and the desk counts the orders it already carries. Chop the stamps' year, keep the grain honest, and read the census.",
+    ask: "How many orders were logged in 2025?",
+    template: `SELECT COUNT(*) AS new_year
+FROM orders
+WHERE strftime('%Y', created_at) = {1}
+AND {2}(created_at) = created_at
+AND total {3} {4};`,
     slots: [
       {
         answer: "'2025'",
         kind: "keyword",
-        label: "the new-year gate",
-        why: "The read is the 2025 page, so the gate is year = '2025'. A 'ZZZ_R0' fill would count the old year's card settlements.",
+        label: "the year gate",
+        why: "The read is the 2025 page, so the gate carries '2025'. A '2024' fill would count the whole back book — ninety orders.",
       },
       {
-        answer: "'card'",
+        answer: "DATE",
         kind: "keyword",
-        label: "the card gate",
-        why: "The read scopes to the card lane, so the gate is method = 'card'. A 'wire' fill would count the wires instead.",
+        label: "the grain check",
+        why: "DATE(created_at) = created_at proves the stamps are date-clean — true for the page, so the census reads real rows. JULIANDAY would compare a number to text and count nothing.",
       },
       {
         answer: ">",
         kind: "keyword",
-        label: "the date gate direction",
-        why: "The date gate must admit every 2025 settlement, so the test is > 2020. Flipping to < 2020 would demand pre-launch dates.",
+        label: "the total gate direction",
+        why: "The gate keeps real orders, so the test is > 0. Flipping to < would demand negative totals, which cannot exist.",
       },
       {
-        answer: "'2020-01-01'",
-        kind: "keyword",
+        answer: "0",
+        kind: "number",
         noVerify: true,
-        label: "the open date floor",
-        why: "The floor predates every payment, so the gate passes the whole ledger. A 2025 floor would duplicate the year gate.",
+        label: "the open total floor",
+        why: "A floor of 0 admits every new-year order. A 500-floor would keep only the three heavyweight tickets.",
       },
     ],
-    distractors: ["ZZZ_R2", "wire", "ZZZ_R1"],
+    distractors: ["'2024'", "JULIANDAY", "500"],
     walkthrough:
-      "The year chop reads '2025' on the new-year page, and the card gate scopes to the card lane: the 2025 card settlements are the ledger's small but real start. The 'ZZZ_R1' fill would count the old year. The wire fill would read the other method. And the 'ZZZ_R0' floor would duplicate the year gate. The new-year card ledger: counted.",
+      "The year chop scopes the read to the 2025 page, and the census counts thirteen orders in the new year's first stretch — against the ninety the back book logged across its twelve months. The '2024' fill would read the back book outright, and the 500-floor would trim the page to three premium tickets. The new-year census: thirteen.",
   },
   {
     id: "cs-1435",
     tier: "medium",
     topic: "t3",
     universe: "fraud",
-    title: "The stuck-order age",
+    title: "The write-off calendar span",
     brief:
-      "From: Fraud spot-check. Re: the stuck-order age.\n\nStuck orders age from their order date to today's data boundary — the read measures how far past the order date the book runs. Fold the extremes and read the stuck queue's maximum age proxy.",
-    ask: "The number of days from the first to the last stuck order.",
-    template: `SELECT ROUND(julianday({1}(created_at)) - julianday({2}(created_at)), 0) AS stuck_span
+      "From: Fraud spot-check. Re: the write-off calendar.\n\nWrite-offs are rare, but they span the book — the read measures how far the cancelled lane stretches, from its first ticket to its last. Fold the lane's stamps to day numbers, take the extremes, and read the span.",
+    ask: "The number of days from the first to the last cancelled order.",
+    template: `SELECT ROUND(julianday({1}(created_at)) - julianday({2}(created_at)), 0) AS fraud_span
 FROM orders
-WHERE IFNULL(shipped_at, {3}) = {4}
-AND shipped_at IS NULL;`,
+WHERE status = {3}
+AND {4}(created_at) = created_at;`,
     slots: [
       {
         answer: "MAX",
         kind: "keyword",
         label: "the late extreme",
-        why: "The stuck span ends at the latest stuck order, so the leading fold is MAX. MIN there would flip the span negative.",
+        why: "The span ends at the last write-off, so the leading fold is MAX. ROUND would fold each stamp into a number no calendar can read and void the span.",
       },
       {
         answer: "MIN",
         kind: "keyword",
         label: "the early extreme",
-        why: "The stuck span starts at the earliest stuck order, so the subtrahend is MIN. MAX would duplicate the late extreme.",
+        why: "The span starts at the first write-off, so the subtrahend is MIN. Swapping the folds would zero the span entirely.",
       },
       {
-        answer: "'x'",
+        answer: "'cancelled'",
         kind: "keyword",
-        label: "the sentinel push",
-        why: "COALESCE pushes each missing timestamp to the 'x' sentinel. A date push would collide with real timestamps.",
+        label: "the write-off lane",
+        why: "The read scopes to the cancelled lane, so the gate carries 'cancelled'. A 'shipped' fill would span the in-transit lane instead — 407 days.",
       },
       {
-        answer: "'x'",
+        answer: "DATE",
         kind: "keyword",
-        label: "the caught word",
-        why: "The test compares against the same 'x' the push wrote — the sentinel catches exactly the stuck rows.",
+        label: "the grain check",
+        why: "DATE(created_at) = created_at proves the stamps are date-clean — true for the lane, so the span reads real rows. JULIANDAY would compare a number to text and void the read.",
       },
     ],
-    distractors: ["2024-01-01", "ZZZ_FIX_1"],
+    distractors: ["ROUND", "'shipped'", "JULIANDAY"],
     walkthrough:
-      "The sentinel catches the twenty-one never-shipped orders, and the extremes fold to the stuck queue's span: from the earliest stuck order in early 2024 to the latest in 2025 — the queue stretches across the whole book. The date push would collide with real timestamps. The stuck span: the full calendar's width.",
+      "The lane gate scopes to the seven write-offs, the extremes fold to day numbers, and the subtraction spans the fraud calendar: 2024-01-02 to 2025-01-05 — 369 days, nearly the full book. The shipped flip would span the in-transit lane's 407 days instead, and ROUND would void the read before the extremes ever meet. The write-off calendar: 369 days.",
   },
   {
     id: "cs-1436",
@@ -1591,53 +1570,39 @@ FROM (
     id: "cs-1438",
     tier: "easy",
     topic: "t3",
-    universe: "finance",
-    title: "The wire settlement count",
+    universe: "growth",
+    title: "The thin new-year lane",
     brief:
-      "From: Finance review. Re: the wire ledger.\n\nThe wire lane's ledger is smaller than the card book, and the review counts it directly. Gate the method, keep the real settlements, and count the wires.",
-    ask: "How many wire settlements does the ledger carry?",
-    template: `SELECT COUNT(*) AS wire_settles
-FROM payments
-WHERE method = {1}
-AND amount_cents {2} {3}
-AND paid_on {4} {5};`,
+      "From: Growth desk. Re: the fulfillment page.\n\nThe new year's fulfillment lane is thin so far, and the desk counts it directly: orders logged in 2025 that have already shipped. Chop the year, gate the lane, keep the grain honest, and read the count.",
+    ask: "How many 2025 orders have shipped?",
+    template: `SELECT COUNT(*) AS shipped_2025
+FROM orders
+WHERE strftime('%Y', created_at) = {1}
+AND status = {2}
+AND {3}(created_at) = created_at;`,
     slots: [
       {
-        answer: "'wire'",
+        answer: "'2025'",
         kind: "keyword",
-        label: "the wire gate",
-        why: "The read counts the wire lane, so the gate is method = 'wire'. A 'card' fill would count the bigger card book instead.",
+        label: "the year gate",
+        why: "The read is the new-year page, so the gate carries '2025'. A '2024' fill would count the back book's shipped lane — twenty-seven orders.",
       },
       {
-        answer: ">",
+        answer: "'shipped'",
         kind: "keyword",
-        label: "the amount gate direction",
-        why: "The gate keeps real settlements, so the test is > 0. Flipping to < 0 would demand negative amounts and empty the count.",
+        label: "the fulfillment lane",
+        why: "The page counts work already in transit, so the gate is status = 'shipped'. A 'pending' fill would count the at-risk new-year lane — two orders.",
       },
       {
-        answer: "0",
-        kind: "number",
-        noVerify: true,
-        label: "the open amount floor",
-        why: "A floor of 0 admits every wire. A 200000-floor would keep only the six-figure wires.",
-      },
-      {
-        answer: ">",
+        answer: "DATE",
         kind: "keyword",
-        label: "the date gate direction",
-        why: "The date gate admits every settlement, so the test is > 2020. Flipping to < 2020 would demand pre-launch dates.",
-      },
-      {
-        answer: "'2020-01-01'",
-        kind: "keyword",
-        noVerify: true,
-        label: "the open date floor",
-        why: "The floor predates every payment, so the gate passes the whole wire ledger. A 2025 floor would count only the new year.",
+        label: "the grain check",
+        why: "DATE(created_at) = created_at proves the stamps are date-clean — true for the page, so the count reads real rows. JULIANDAY would compare a number to text and count nothing.",
       },
     ],
-    distractors: ["card", "ZZZ_R0", "ZZZ_R0"],
+    distractors: ["'pending'", "'2024'", "JULIANDAY"],
     walkthrough:
-      "The wire gate isolates the lane and the count reads eleven — the wire ledger's full footprint against the card book's sixteen. The card fill would count the bigger book. The 200000-floor would keep only the six-figure wires. And the 2025 floor would count only the new year. The wire ledger: eleven settlements.",
+      "The year and lane gates scope the read to 2025's in-transit page, and the count reads three — the thin start against the twenty-seven the back book's shipped lane carries. The 'pending' fill would count two at-risk tickets instead, and the '2024' fill would jump back to the full back book. The new-year fulfillment page: three.",
   },
   {
     id: "cs-1439",
@@ -1760,53 +1725,44 @@ WHERE mo = {3};`,
     id: "cs-1442",
     tier: "medium",
     topic: "t4",
-    universe: "finance",
+    universe: "month-close",
     title: "The quiet-month revenue",
     brief:
-      "From: Finance review. Re: the lean read.\n\nThe revenue pots range widely; the lean read finds the month that carried the least. Stage the monthly pots and read the floor.",
-    ask: "The month with the lowest total order revenue.",
+      "From: Month-end close. Re: the lean read.\n\nThe revenue pots range widely, and the lean read finds the month that carried the least. Stage the monthly pots through a derived table with a grain guard, sort them ascending, and read the floor line.",
+    ask: "The month with the lowest total order revenue, and its pot.",
     template: `SELECT mo, pot
 FROM (
   SELECT strftime('%Y-%m', created_at) AS mo, ROUND(SUM(total), 2) AS pot
   FROM orders
+  WHERE {3}(created_at) = created_at
   GROUP BY mo
 )
 ORDER BY pot {1}
-LIMIT {2}
-WHERE 1 = 1
-AND {3}(created_at) = created_at
-AND total > {4};`,
+LIMIT {2};`,
     slots: [
       {
         answer: "ASC",
         kind: "keyword",
         label: "the lean sort",
-        why: "The lean read wants the smallest pot first, so the sort is ascending. DESC would crown the biggest month.",
+        why: "The lean read wants the smallest pot first, so the sort is ascending. DESC would crown January's 3731.97 stack instead of July's lean one.",
       },
       {
         answer: "1",
         kind: "number",
         noVerify: true,
         label: "the single-read cut",
-        why: "The read wants one month, so the cut is 1. A 3-cut would return the three leanest months.",
+        why: "The read wants one month, so the cut is 1. A 3-cut would return the three leanest months and blur the floor line.",
       },
       {
         answer: "DATE",
         kind: "keyword",
         label: "the grain check",
-        why: "DATE(created_at) = created_at proves the stamps are date-clean — true for the book. JULIANDAY would compare a number to text.",
-      },
-      {
-        answer: "0",
-        kind: "number",
-        noVerify: true,
-        label: "the total gate",
-        why: "The gate keeps real orders, so the test is > 0. Flipping to < 0 would demand negative totals and empty the read.",
+        why: "DATE(created_at) = created_at proves the stamps are date-clean — true for the book, so the pots stage from real rows. JULIANDAY would compare a number to text and stage nothing.",
       },
     ],
-    distractors: ["DESC", "3"],
+    distractors: ["DESC", "3", "JULIANDAY"],
     walkthrough:
-      "The monthly pots sort ascending and the floor reads July 2024 at 1193.86 — the leanest month in the book, well under the 2488 average. DESC would crown January's 3731.97. The 3-cut would return the three leanest. The lean read: July, 1193.86.",
+      "The monthly pots stage through the derived table — fourteen months, each stamped by its '%Y-%m' key — and the ascending sort reads the floor: July 2024 at 1193.86, the leanest month in the book, well under the 338-average order flow the pot absorbs. The DESC flip would crown January's 3731.97 stack instead, and the 3-cut would blur the floor with runners-up. The lean read: July 2024, 1193.86.",
   },
   {
     id: "cs-1443",
@@ -1894,182 +1850,170 @@ AND mo {2} {3};`,
     tier: "hard",
     topic: "t4",
     universe: "expense",
-    title: "The spend-vs-revenue gap",
+    title: "The burn-ratio read",
     brief:
-      "From: Expense report. Re: the spend ratio.\n\nThe spend ratio reads total expense cents against total order revenue — a fraction the board tracks. Stage both scalars and read the ratio rounded to three decimals.",
-    ask: "Total expense cents divided by total order revenue, 3 decimals.",
+      "From: Expense desk. Re: the burn share.\n\nThe burn ratio reads cancelled spend against delivered revenue — the share of the book that went out the door as write-offs. Stage both scalars, prove the revenue side exists through a guarded EXISTS, and read the ratio to three decimals.",
+    ask: "Cancelled-order spend as a share of delivered revenue, 3 decimals.",
     template: `SELECT ROUND(
-  (SELECT {1}(amount_cents) FROM expenses)::REAL /
-  (SELECT {2}(total) FROM orders), 3) AS spend_ratio
-WHERE 1 = 1
-AND EXISTS (SELECT 1 FROM orders WHERE total {3} {4});`,
+  (SELECT SUM(total) FROM orders WHERE status = {1}) * 1.0 /
+  (SELECT SUM(total) FROM orders WHERE status = {2}), 3) AS burn_ratio
+WHERE EXISTS (
+  SELECT 1 FROM orders
+  WHERE {3}(created_at) = created_at
+);`,
     slots: [
       {
-        answer: "SUM",
+        answer: "'cancelled'",
         kind: "keyword",
-        label: "the spend fold",
-        why: "The numerator totals the expense ledger, so the fold is SUM. COUNT would divide a tally by revenue — a ratio that means nothing.",
+        label: "the burn numerator",
+        why: "The burn side sums the write-off lane, so the numerator gate carries 'cancelled'. A 'pending' fill would burn the at-risk lane into the ratio — a 0.393 share.",
       },
       {
-        answer: "SUM",
+        answer: "'delivered'",
         kind: "keyword",
-        label: "—",
-        why: "",
+        label: "the revenue denominator",
+        why: "The revenue side sums the closed lane, so the denominator gate carries 'delivered'. A 'shipped' fill would shrink the denominator to the in-transit pot and swell the ratio to 0.096.",
       },
       {
-        answer: ">",
+        answer: "DATE",
         kind: "keyword",
-        label: "the existence gate direction",
-        why: "The existence gate proves the revenue side is non-empty, so the test is > 0. Flipping to < 0 would demand negative revenue.",
-      },
-      {
-        answer: "0",
-        kind: "number",
-        noVerify: true,
-        label: "the existence floor",
-        why: "A floor of 0 proves real revenue exists. A 50000-floor would still pass, but the gate's purpose is existence, not size.",
+        label: "the existence grain",
+        why: "The EXISTS proof demands date-clean stamps — true for the book — so the gate folds with DATE. JULIANDAY would compare a number to text and void the proof, returning no row at all.",
       },
     ],
-    distractors: ["COUNT", "50000"],
+    distractors: ["'pending'", "'shipped'", "JULIANDAY"],
     walkthrough:
-      "The two scalars read 2315400 expense cents against 34833.28 revenue euros, and the ratio rounds to 66.46 — the spend line runs at roughly two-thirds of revenue, the fraction the board tracks. The COUNT fills would divide a tally by revenue and produce noise. The existence gate proves the denominator is real. The spend ratio: 66.46 at three decimals.",
+      "The two scalars stage to 1152.49 of cancelled spend against 15571.07 of delivered revenue, and the ratio rounds to 0.074 — the book burns about one euro in thirteen, a write-off share the close tracks quarter over quarter. The pending fill would read 0.393, and the shipped denominator would read 0.096. The guarded EXISTS keeps the read honest when the book runs dry. The burn share: 0.074.",
   },
   {
     id: "cs-1446",
     tier: "medium",
     topic: "t4",
     universe: "fraud",
-    title: "The stuck-order month count",
+    title: "The write-off month census",
     brief:
-      "From: Fraud spot-check. Re: the stuck calendar.\n\nThe stuck queue spreads across months; the fraud read counts how many distinct months carry a never-shipped order. Push the NULLs to the sentinel, chop the order dates, and count.",
-    ask: "How many distinct months carry a never-shipped order?",
-    template: `SELECT COUNT(DISTINCT strftime('%Y-%m', created_at)) AS stuck_months
+      "From: Fraud desk. Re: the write-off calendar.\n\nThe fraud read counts how many distinct months carry a cancelled order — the write-off calendar's footprint. Stage the collapse with NULLIF, guard the total, and count the months the lane touches.",
+    ask: "How many distinct months carry a cancelled order?",
+    template: `SELECT COUNT(DISTINCT strftime('%Y-%m', created_at)) AS fraud_months
 FROM orders
-WHERE COALESCE(shipped_at, {1}) = {2}
+WHERE {1}(status, {2}) IS NULL
 AND total {3} {4};`,
     slots: [
       {
-        answer: "'x'",
+        answer: "NULLIF",
         kind: "keyword",
-        label: "the sentinel push",
-        why: "COALESCE pushes each missing timestamp to the 'x' sentinel the test catches. A date push would collide with real timestamps.",
+        label: "the lane collapse",
+        why: "NULLIF(status, 'cancelled') collapses the write-off lane to NULL, so IS NULL keeps it. IFNULL(status, 'cancelled') returns the status untouched — never NULL — and the census reads zero.",
       },
       {
-        answer: "'x'",
+        answer: "'cancelled'",
         kind: "keyword",
-        label: "the caught word",
-        why: "The test compares against the same 'x' the push wrote — the sentinel catches exactly the stuck rows.",
+        label: "the audited lane",
+        why: "The census tracks write-offs, so the collapse compares against 'cancelled'. A 'pending' fill would map the at-risk calendar instead — ten months.",
       },
       {
         answer: ">",
         kind: "keyword",
         label: "the total gate direction",
-        why: "The gate keeps real stuck orders, so the test is > 0. Flipping to < 0 would demand negative totals and empty the read.",
+        why: "The gate keeps real orders, so the test is > 0. Flipping to < would demand negative totals, which cannot exist.",
       },
       {
         answer: "0",
         kind: "number",
         noVerify: true,
         label: "the open total floor",
-        why: "A floor of 0 admits every stuck order. A 400-floor would keep only the premium stuck orders and shrink the calendar.",
+        why: "A floor of 0 admits every write-off. An 800-floor would empty the census — no write-off climbs that high.",
       },
     ],
-    distractors: ["2024-01-01", "400"],
+    distractors: ["IFNULL", "'pending'", "800"],
     walkthrough:
-      "The sentinel catches the twenty-one never-shipped orders, and the month chop spreads them across ten distinct calendar months — the stuck calendar runs nearly the whole book. The date push would collide with real timestamps. The 400-floor would shrink the calendar to the premium stuck orders. The stuck calendar: ten months.",
+      "NULLIF collapses every cancelled status to NULL, and the distinct-month count reads the write-off calendar: five months carry a cancelled order, out of the fourteen the book spans. IFNULL would return the status untouched and zero the census — the classic fold swap the fraud desk watches for — and the 'pending' fill would map ten months of at-risk work. The write-off calendar: five months.",
   },
   {
     id: "cs-1447",
     tier: "easy",
     topic: "t4",
     universe: "growth",
-    title: "The active-member spend",
+    title: "The active-member book",
     brief:
-      "From: Growth lead. Re: the active book.\n\nThe active members carry the whole book — but the read proves it by gating the flag. Sum the order totals over the active roster and read the figure the inactive gate cannot change.",
+      "From: Growth desk. Re: the active book.\n\nThe active roster carries most of the book — and the read proves it by gating the flag. Stage the active members through a subquery with a grain guard, sum their order totals, and read the figure the inactive pair never touches.",
     ask: "Total order revenue across active members' orders.",
     template: `SELECT ROUND(SUM(total), 2) AS active_book
 FROM orders
 WHERE customer_id IN (
-  SELECT id FROM customers WHERE active = {1}
+  SELECT id FROM customers
+  WHERE active = {1}
+  AND {2}(created_at) = created_at
 )
-AND total {2} {3};`,
+AND total {3} {4};`,
     slots: [
       {
         answer: "1",
         kind: "number",
         noVerify: true,
         label: "the active flag",
-        why: "The active roster carries flag 1 — fourteen members whose orders fill the book. A 0-fill would read the two deactivated members' orders instead.",
+        why: "The active roster carries flag 1 — fourteen members whose orders fill the book. A 0 fill would read the inactive pair's orders instead.",
+      },
+      {
+        answer: "DATE",
+        kind: "keyword",
+        label: "the grain check",
+        why: "DATE(created_at) = created_at proves the signup stamps are date-clean — true for the roster, so the subquery returns real members. JULIANDAY would compare a number to text and return nobody.",
       },
       {
         answer: ">",
         kind: "keyword",
-        label: "the line gate direction",
-        why: "The gate keeps real orders, so the test is > 0. Flipping to < 0 would demand negative totals and empty the read.",
+        label: "the total gate direction",
+        why: "The gate keeps real orders, so the test is > 0. Flipping to < would demand negative totals and empty the book.",
       },
       {
         answer: "0",
         kind: "number",
         noVerify: true,
-        label: "the open line floor",
-        why: "A floor of 0 admits every order. A 500-floor would keep only the premium lines and shrink the book.",
+        label: "the open total floor",
+        why: "A floor of 0 admits every order. A 500-floor would keep only the premium tickets and halve the book.",
       },
     ],
-    distractors: ["0", "500"],
+    distractors: ["0", "JULIANDAY", "500"],
     walkthrough:
-      "The subquery scopes to the fourteen active members, and the sum reads their full order book — the inactive pair's orders are already absent, so the figure matches the whole-book total. The 0-fill would read only the deactivated pair. The 500-floor would keep the premium lines and shrink the book. The active book: the full 34833.28.",
+      "The subquery scopes to the fourteen active members, and the sum reads their full order book: 33135.42 — the inactive pair carries only 1697.86, so the active roster owns ninety-five percent of the flow. The 0 fill would flip the read to the pair's small book, and the 500-floor would trim the read to the 17379.43 premium core. The active book: 33135.42.",
   },
   {
     id: "cs-1448",
-    tier: "hard",
+    tier: "medium",
     topic: "t4",
-    universe: "finance",
-    title: "The payment-method split",
+    universe: "month-close",
+    title: "The live-month census",
     brief:
-      "From: Finance review. Re: the method census.\n\nThe payment ledger splits between card and wire, and the review reads both sides of the split. Gate the method twice — once per window — and count the lanes.",
-    ask: "How many distinct payment methods does the ledger carry?",
-    template: `SELECT COUNT(DISTINCT method) AS lanes
-FROM payments
-WHERE paid_on {1} {2}
-AND amount_cents {3} {4}
-AND method {5} ('card','wire');`,
+      "From: Month-end close. Re: the live book.\n\nThe close proves a structural fact: no month in the book runs on cancellations alone. The census counts the months that carry live (non-cancelled) work, chopping the stamps to their month keys.",
+    ask: "How many distinct months carry at least one non-cancelled order?",
+    template: `SELECT COUNT(DISTINCT strftime('%Y-%m', created_at)) AS live_months
+FROM orders
+WHERE status {1} {2}
+AND {3}(created_at) = created_at;`,
     slots: [
       {
-        answer: ">",
+        answer: "NOT IN",
         kind: "keyword",
-        label: "the date gate direction",
-        why: "The date gate admits every settlement, so the test is > 2020. Flipping to < 2020 would demand pre-launch dates.",
+        label: "the live test",
+        why: "Live work excludes the write-off lane, so the test is NOT IN ('cancelled'). IN would read the dead months — the five the write-off calendar touches.",
       },
       {
-        answer: "'2020-01-01'",
+        answer: "('cancelled')",
         kind: "keyword",
-        noVerify: true,
-        label: "the open date floor",
-        why: "The floor predates every payment, so the gate passes the whole ledger. A 2025 floor would count only the new year.",
+        label: "the dead lane",
+        why: "Cancelled is the one lane that never ships, so the exclusion list carries it alone. A bare 'cancelled' fill would break the NOT IN grammar outright.",
       },
       {
-        answer: ">",
+        answer: "DATE",
         kind: "keyword",
-        label: "the amount gate direction",
-        why: "The gate keeps real settlements, so the test is > 0. Flipping to < 0 would demand negative amounts and empty the census.",
-      },
-      {
-        answer: "0",
-        kind: "number",
-        noVerify: true,
-        label: "the open amount floor",
-        why: "A floor of 0 admits every settlement. A 300000-floor would keep only the six-figure lines.",
-      },
-      {
-        answer: "IN",
-        kind: "keyword",
-        label: "the lane membership",
-        why: "Both methods are in scope, so the test is IN ('card','wire'). NOT IN would exclude everything the ledger carries.",
+        label: "the grain check",
+        why: "DATE(created_at) = created_at proves the stamps are date-clean — true for the book, so the census reads real rows. JULIANDAY would compare a number to text and count nothing.",
       },
     ],
-    distractors: ["ZZZ_R0", "ZZZ_R0", "NOT IN"],
+    distractors: ["IN", "JULIANDAY"],
     walkthrough:
-      "The census counts the distinct method values the ledger carries, and the answer is two: card and wire — the ledger's whole split, scoped by the date and amount gates that pass everything. The 2025 floor would count only the new year's methods. The 300000-floor would keep the six-figure lines. And the NOT IN flip would exclude both lanes. The method split: two lanes.",
+      "The NOT IN test scopes out the write-off lane, and the distinct-month census reads fourteen: every month in the book carries live work — no period closes on cancellations alone. The IN flip would read the five months the write-off calendar touches, a fifth of the book. The grain guard keeps the chop honest. The live-month census: fourteen.",
   },
   {
     id: "cs-1449",
@@ -2123,14 +2067,14 @@ AND {4}(created_at) = created_at;`,
     universe: "month-close",
     title: "The closing capstone stack",
     brief:
-      "From: Month-end close. Re: the final capstone.\n\nThe capstone runs the full window play: bucket the months into quartiles by revenue, keep the bottom bucket, and walk the running stack to the last line of it — the leanest month's cumulative position. Two windows, one lean line.",
-    ask: "The running revenue at the book's leanest month (bottom quartile).",
+      "From: Month-end close. Re: the final capstone.\n\nThe capstone runs the full window play: bucket the months into quartiles by revenue, keep the lean bucket, and walk the running stack to see where it stands. Two windows, one stage — and the lean months tell the close where the year really began.",
+    ask: "The running stack at each month of the leanest revenue quartile, under the 15000 wall.",
     template: `SELECT mo, rev, run
 FROM (
   SELECT strftime('%Y-%m', created_at) AS mo, SUM(total) AS rev,
          {1}(SUM(total)) OVER (ORDER BY strftime('%Y-%m', created_at)) AS run,
          NTILE(4) OVER (ORDER BY SUM(total) {2}) AS q
-  FROM (SELECT strftime('%Y-%m', created_at) AS mo, total FROM orders)
+  FROM (SELECT created_at, total FROM orders)
   GROUP BY mo
 )
 WHERE q = {3}
@@ -2140,37 +2084,37 @@ AND run {4} {5};`,
         answer: "SUM",
         kind: "keyword",
         label: "the stacking fold",
-        why: "The stack accumulates revenue, so the window folds with SUM. COUNT would stack month tallies — a census wearing a revenue label.",
+        why: "The stack accumulates revenue, so the window folds with SUM. COUNT would stack row counts — 1, 2, 3 — and every month would pass the wall.",
       },
       {
         answer: "ASC",
         kind: "keyword",
         label: "the lean direction",
-        why: "The lean months sit at the bottom of the ascending revenue order, so the quartile runs ASC. DESC would put the big months in bucket 1 and empty the read.",
+        why: "The lean months sit at the bottom of the ascending revenue order, so the quartile splits ASC. DESC would flip the split and hand the lean bucket the loudest months' rivals.",
       },
       {
         answer: "4",
         kind: "number",
         noVerify: true,
         label: "the lean bucket",
-        why: "Bucket 4 of the ascending split holds the four leanest months. A 1-fill would read the big months' bucket instead.",
+        why: "Bucket 4 of the ascending split holds the three leanest months. A 1-fill would return the loudest quartile instead.",
       },
       {
         answer: "<",
         kind: "keyword",
-        label: "the lean ceiling direction",
-        why: "The lean stack sits under the 20000 wall — the leanest months run early, before the book grows. Flipping to > 15000 would push the read past the lean stretch.",
+        label: "the wall direction",
+        why: "The capstone reads the early stack under the wall, so the test is <. Flipping to > would keep only September's late surge.",
       },
       {
         answer: "15000",
         kind: "number",
         noVerify: true,
-        label: "the lean ceiling",
-        why: "The ceiling sits at 15000 — the lean quartile's stacks run from 3731.97 to 12427.60. A 10000-ceiling would keep only the first two.",
+        label: "the wall height",
+        why: "The wall sits at 15000 — September's 24047.31 stack breaks through, while January and February hide below. A 10000-wall would keep January alone.",
       },
     ],
-    distractors: ["COUNT", "DESC", "15000", "25000"],
+    distractors: ["COUNT", "DESC", "10000", "25000"],
     walkthrough:
-      "Two windows, one lean line: the ascending quartile puts July 2024's 1193.86 pot in bucket 4, and the running stack at that point reads 18579.20 — the leanest month's cumulative position. The COUNT fill would stack tallies. The DESC split would move the lean months to bucket 1 and empty the read. And the 25000 ceiling would exceed every lean stack. The capstone line: July 2024, run 18579.20.",
+      "Two windows, one stage: the ascending quartile hands the lean bucket to January, February and September, and the running stack tells the close where the year began — January at 3731.97, February at 7341.61, both safely under the 15000 wall, while September's 24047.31 breaks through and leaves the read. The COUNT fold would turn the stack into a row tally and let everything pass. The capstone keeps the two early months.",
   },
 ];
