@@ -1,0 +1,10 @@
+import { Database } from "bun:sqlite";
+const db = new Database("db/custom.db", { readonly: true });
+const q = (l: string, s: string) => console.log(l, "::", (db.query(s).all() as any[]).map(r => Object.values(r).join("|")).join(" ;; "));
+q("open-issue-months", `SELECT COUNT(*) FROM (SELECT DISTINCT strftime('%Y-%m', issued_on) FROM invoices WHERE status = 'open')`);
+q("day-20 orders", `SELECT COUNT(*) FROM orders WHERE CAST(strftime('%d', created_at) AS INTEGER) = 20`);
+q("monday-card count", `SELECT COUNT(*) FROM payments WHERE strftime('%w', paid_on) = '1' AND method = 'card'`);
+q("member peak days min", `SELECT MIN(peak) FROM (SELECT customer_id, MAX(daily) peak FROM (SELECT customer_id, DATE(created_at) day, SUM(total) daily FROM orders GROUP BY customer_id, day) GROUP BY customer_id)`);
+q("delivered 1346 sep lanes", `SELECT status, COUNT(*) FROM orders WHERE strftime('%Y-%m', created_at) = '2024-09' GROUP BY status ORDER BY 2 DESC`);
+q("second-half debit by account", `SELECT account, COUNT(*) FROM ledger_entries WHERE NULLIF(credit_cents,0) IS NULL AND entry_date > '2024-06-30' GROUP BY account`);
+q("open number chop", `SELECT COUNT(*) FROM (SELECT DISTINCT strftime('%Y-%m', number) FROM invoices WHERE status='open')`);

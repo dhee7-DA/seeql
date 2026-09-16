@@ -1,0 +1,84 @@
+T256 at-position census
+   8 | 1  ;;  9 | 1  ;;  10 | 2  ;;  11 | 4  ;;  12 | 5  ;;  13 | 3
+T257 names over 12 chars
+   3
+T258 name len by region avg
+   EU | 12  ;;  US | 11.5  ;;  LATAM | 11  ;;  APAC | 10.4
+T259 product len by category max
+   Audio | 23  ;;  Electronics | 22  ;;  Accessories | 21  ;;  Apparel | 20  ;;  Fitness | 16  ;;  Wearables | 15  ;;  Video | 14
+T260 vendor last char census
+   a | 14  ;;  H | 14  ;;  c | 5  ;;  l | 3
+T261 city 2-prefix census
+   (0 rows)
+T262 cast stock int census
+   40  ;;  45  ;;  60  ;;  70  ;;  85  ;;  95  ;;  110  ;;  120
+T263 rating text fold
+   1
+T264 region upper lower diff
+   0
+T265 name-contains-census letters
+   14
+T266 product-hyphen count
+   3
+T267 email local min max
+   7 | 12
+T268 ledger debit lines by account
+   operating_expenses | 14  ;;  cash | 13  ;;  accounts_receivable | 13
+T269 unpaid by issue year
+   2024 | 2  ;;  2025 | 4
+T270 void amount
+   92500
+T271 expense rent months count
+   14
+T272 nullif stock zero
+   0
+T273 coalesce ship label delivered
+   0
+T274 ifnull ship sentry all
+   21
+T275 unpaid open ids over 20
+   4
+T276 payments pot cents
+   6961200
+T277 invoice pot cents
+   8697700
+T278 order span days
+   423
+T279 signup span days
+   244
+T280 distinct ship dates
+   75
+T281 invoice paid weekday
+   1 | 15  ;;  2 | 5  ;;  4 | 3  ;;  0 | 2  ;;  5 | 1  ;;  3 | 1
+T282 lag 2 delivered count
+   19
+T283 lag histogram delivered
+   2 | 19  ;;  3 | 18  ;;  4 | 15
+T284 orders on weekends 2024
+   22
+T285 signup weekend count
+   2
+T286 day-15 orders
+   3
+T287 first-order days late month
+   7
+T288 expense months census
+   2024-01 | 171900  ;;  2024-02 | 144000  ;;  2024-03 | 191700  ;;  2024-04 | 174900
+T289 expense month count
+   14
+T290 expense top month
+   2024-08 | 321000
+T291 invoice month pots count
+   13
+T292 payments month count
+   13
+T293 signup q1 members
+   6
+T294 2024-09 revenue
+   3116.04
+T295 2024-09 delivered count
+   7
+T296 months with pending
+   10
+T297 avg signup per month
+   1.78

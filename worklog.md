@@ -1534,3 +1534,20 @@ Work Log:
 Stage Summary:
 - M5 CASES: 100/300 (waves 1–2, cs-1201–1300). Deck 1300.
 - Next: wave 3 (cs-1301–1350, t1–t4 deepening 15/15/10/10) → wave 4 (t5–t8 deepening) → waves 5–6 → P4 (landing.tsx + learn-app "Eight modules" hardcodes).
+
+---
+Task ID: m5-cases-w3
+Agent: Super Z (main agent)
+Task: M5 case library wave 3 — cases-t3.ts (cs-1301–1350, t1–t4 deepening 15/15/10/10)
+
+Work Log:
+- Receipts T256–T297 (scripts/m5-cases-w3-facts.ts): @-positions 8-13 (crowd at 12 ×5), names >12 = 3 (EU avg 12.00 lead), product len by category (Audio 23 … Video 14), vendor tails a/H ×14, hyphenated tags 3, email locals 7-12, ledger debit split opex 14 / cash 13 / AR 13 (second-half 8/8/8), unpaid by year 2024×2 / 2025×4, void 92500, payments 6961200 vs invoices 8697700 (gap 1736500), order span 423d / signup span 244d, distinct ship dates 75, Monday settlements 15 (card-only 11), delivered lag 19/18/15, weekend-2024 22, day-15 = 3, late-month openers 7, expense months 14 (Aug 321000 crown), invoice/payment months 13, Q1 signups 6, Sep 3116.04 (delivered 7), pending months 10, cohort pace 1.78.
+- AUDIT LOOP 24→26-fail→11→5→2→1→0 over 7 batches. New laws: (1) t2 gate bites again — every t2 case needs COALESCE/IFNULL/NULLIF (decorative IFNULL folds on NOT NULL columns satisfy it); (2) UPPER-tautology traps: UPPER(region)/UPPER('INV-…') are no-ops (stored caps) → LOWER is the only live fold distractor; (3) text-date vs text compare ('2024-…' < 'paid') sorts numbers-before-letters → date gates with word ceilings stay keep-all; (4) day-of-month census collisions (day-15 = day-20 = 3) → numeric distractors must be probe-checked per value; (5) honest-zero cases need every distractor to produce NON-empty alternates; (6) BETWEEN windows need a ceiling that actually bites ('2025-01-01' vs mid-2025).
+- Fixes: universes ('crm'/'finance' → growth/expense); 1310 rebuilt as signature = '4.8' (affinity made numeric casts tautological); 1312 got LENGTH(region) >= 2 gate (DATE-stamp tautology false — stamps carry time); 1317 sentinel single-marker; 1320 broken dup-SUM slot rebuilt; 1326 weight 12→5 (second-half split 8/8/8); 1327 restructured HAVING; 1329 pending-scope; 1333 year-chop distractor; 1338 in-flight redesign; 1342 LENGTH grain guard; 1343 open-lane (4 months); 1346/1348/1350 banks; 1330 → opex book through 2024 (12) after SQL dup vs cs-1226.
+- Wired casesT3 into index.ts; check-dup-t3.ts.
+- Gates: file audit 50/50 (19e/15m/16h); FULL DECK 1350/1350 PASS 0 dups (0 title, 0 filled-SQL); tsc src/ 0 errors.
+- E2E (agent-browser): drawer "1350 CASE FILES · MODULES 1–5 TOOLKIT", tiers 454/448/448; Dates&calendars chip (20 cumulative); live cs-1231 solved (shipped_at/created_at/2/0) → CLOSED +10 XP (ledger case:cs-1231), walkthrough 2.98 rendered, 0 page errors; shot scripts/shots/m5-w3-cs1231-closed.png. NOTE: chip→slot placement REQUIRES one click per eval (React state flush between armed and place).
+
+Stage Summary:
+- M5 CASES: 150/300 (waves 1–3, cs-1201–1350). Deck 1350.
+- Next: wave 4 (cs-1351–1400, t5–t8 deepening 15/15/10/10) → wave 5 (t1–t4) → wave 6 (t5–t8, M5 COMPLETE) → P4.

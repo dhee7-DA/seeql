@@ -47,6 +47,7 @@ import { casesQ5 } from "./cases-q5";
 import { casesQ6 } from "./cases-q6";
 import { casesT1 } from "./cases-t1";
 import { casesT2 } from "./cases-t2";
+import { casesT3 } from "./cases-t3";
 
 export const CASES: CaseStudy[] = [
   ...casesExemplars,
@@ -95,6 +96,7 @@ export const CASES: CaseStudy[] = [
   // Module 5 — Scalar & Window Toolkit (cs-1201…cs-1500)
   ...casesT1,
   ...casesT2,
+  ...casesT3,
 ].sort((a, b) => Number(a.id.slice(3)) - Number(b.id.slice(3)));
 
 export function caseById(id: string): CaseStudy | undefined {
