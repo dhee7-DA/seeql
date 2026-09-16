@@ -1585,3 +1585,17 @@ Work Log:
 Stage Summary:
 - M5 CASES: 200/300 committed (waves 1–4). Wave 5 drafted but unwired (28/50 pass; 22 need gate redesign). Wave 6 not started.
 - NEXT SESSION: fix wave-5 gate design (change `> 0` noVerify floors to data-splitting values like 500 for orders.total, 100 for products.stock, with answer appearing in result cells; replace UPPER/LOWER no-ops with live folds; add COALESCE to t2 cases missing it), re-wire, audit, E2E, commit. Then wave 6 (t5–t8 deepening) → P4.
+
+---
+Task ID: p4-fix
+Agent: Super Z (main agent)
+Task: P4 — dynamic module-count fix
+
+Work Log:
+- Fixed learn-app.tsx:540: "Eight modules" → "{MODULES.length} modules" (dynamic).
+- Fixed landing.tsx:282: "Eight modules" → "{MODULES.length} modules" (dynamic).
+- Both files already import MODULES from curriculum/lessons.
+- tsc: 0 errors.
+
+Stage Summary:
+- P4 COMPLETE. Sidebar totals, drawer header, and both prose strings now read module counts dynamically from MODULES.length (currently 9).

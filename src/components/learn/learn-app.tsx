@@ -537,7 +537,7 @@ export function LearnApp() {
             <p className="font-mono text-xs text-zinc-500">{MODULES.length} MODULES · BEGINNER → EXPERT</p>
             <h1 className="font-display mt-2 text-3xl font-semibold tracking-[-0.02em] text-zinc-50">The SeeQL course</h1>
             <p className="mt-3 text-[15px] leading-7 text-zinc-400">
-              Eight modules, one real storefront database. Read a concept, prove it in a quiz, then solve
+              {MODULES.length} modules, one real storefront database. Read a concept, prove it in a quiz, then solve
               graded live queries — {totalMcqs} quiz questions and {totalProblems} graded queries in total.
             </p>
 

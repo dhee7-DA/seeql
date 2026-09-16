@@ -279,7 +279,7 @@ export function Landing({ onStart, onPlayground }: { onStart: () => void; onPlay
               <div>
                 <h2 className="font-display text-3xl font-semibold tracking-[-0.02em] text-zinc-50">The SeeQL curriculum</h2>
                 <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-400">
-                  Eight modules on one real storefront database — single-table foundations, the full join toolkit,
+                  {MODULES.length} modules on one real storefront database — single-table foundations, the full join toolkit,
                   set operations and CASE, subqueries and window functions, then writes, schema and the expert
                   clinic. {TOTAL_MCQ} quiz questions, {TOTAL_PROBLEMS} graded live queries, every one executed and graded in your browser.
                 </p>
