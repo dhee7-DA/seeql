@@ -1815,3 +1815,20 @@ Work Log:
 Stage Summary:
 - FIN-FAMILY: 6/6 audited, 3 defects fixed (1 value bug). ALL 99 curriculum figures now audited: s16+l16+v8+q8+t8+x4+w4+d5+fin6+j24 = 99. ~57 fixes total, 4 value bugs (v1 fabricated lines, v5 wrong strip, q6 wrong count, fin6 wrong ma3).
 - Remaining: playground surfaces (QueryFlowSvg, RowFunnel, SchemaView, SampleGallery) + brand.
+
+---
+Task ID: svg-audit-playground
+Agent: Super Z (main agent)
+Task: Audit playground surfaces (QueryFlowSvg, RowFunnel, SchemaView, SampleGallery, Relationships) + brand — closes the 99-figure visual sweep
+
+Work Log:
+- Opened Playground view (landing → Playground). 0 page errors throughout tab switches.
+- QueryFlowSvg (pipeline stages) + RowFunnel ("WHERE DID THE ROWS GO?" 103 → 103 → 37 → 4): funnel OUT verified via /api/query — join+aggregation sample's HAVING COUNT(*) > 5 yields exactly 4 rows. Both clean.
+- SchemaView: 5-table map with columns/types/PK/FK links renders clean. Relationships tab: draggable cards + INNER JOIN edge clean (already polished in earlier thread).
+- SampleGallery + brand: pass. Transient "Running on SQLite/Compiling" states are normal dev behavior, not defects.
+- No code changes needed for this batch.
+
+Stage Summary:
+- VISUAL SWEEP COMPLETE: 99/99 curriculum figures + all playground surfaces audited across 9 family passes (svg-audit-s1, l1, v1, q1, t1, x1, w1, d1, fin1) + harness rebuilt (32cb9bc). ~57 defects fixed, incl. 4 data-truth bugs (v1 fabricated order lines, v5 wrong sort strip, q6 wrong order count, fin6 wrong ma3) and 1 entity-rendering bug (w1 &apos;).
+- Reusable QA kit: /figure-audit?ids=&theme= harness, __FIG_STATIC__ static mode, scripts/fig-edge-probe.js, /api/query truth probes.
+- Known follow-ups (need user): rebuild 3D join ribbon (lost with workspace restore), M7/M8/M9 case coverage, ~72-figure coverage gaps.
