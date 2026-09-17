@@ -53,7 +53,7 @@ function D1TableAnatomy() {
       <motion.g {...fade(0.7)}>
         <Panel x={26} y={238} w={668} h={44} cls="fill-zinc-900 stroke-zinc-700" />
         <Label x={42} y={256} cls="fill-zinc-300" size={8}>verify what you built:  pragma_table_info(&apos;tasks&apos;) → name, type, &quot;notnull&quot;, dflt_value  ·  sqlite_master lists every object your schema owns</Label>
-        <Label x={42} y={272} cls="fill-zinc-400" size={8}>UNIQUE(email) makes duplicate sign-ups impossible — this store&apos;s 16 customer emails are already distinct, exactly what UNIQUE would have guaranteed.</Label>
+        <Label x={42} y={272} cls="fill-zinc-400" size={8}>UNIQUE(email) makes duplicate sign-ups impossible — all 16 store emails are already distinct, exactly what UNIQUE guarantees.</Label>
       </motion.g>
     </svg>
   );
@@ -257,7 +257,7 @@ function D5RecursiveUnfold() {
         <Panel x={26} y={214} w={668} h={56} cls="fill-zinc-900 stroke-zinc-700" />
         <Label x={42} y={234} cls="fill-zinc-300" size={8}>the grown-up use — a zero-gap month spine for reports: seed 2024-01, step the month counter, guard at 14 buckets</Label>
         <Label x={42} y={252} cls="fill-zinc-200" size={9}>2024-01 · 2024-02 · 2024-03 · … · 2025-01 · 2025-02</Label>
-        <Label x={420} y={252} cls="fill-zinc-500" size={8}>LEFT JOIN revenue onto it and quiet months still show a 0</Label>
+        <Label x={420} y={252} cls="fill-zinc-500" size={8}>LEFT JOIN revenue on — quiet months still show a 0</Label>
       </motion.g>
       <motion.g {...fade(1)}>
         <Label x={26} y={290} cls="fill-zinc-400" size={9}>Same shape as lesson 28&apos;s CTEs — plus permission to call itself.</Label>
