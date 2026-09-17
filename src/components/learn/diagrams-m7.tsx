@@ -29,14 +29,13 @@ function W1InsertMap() {
             <circle cx={46} cy={98 + i * 20} r={2.5} className="fill-teal-400" />
           </g>
         ))}
-        <Label x={42} y={228} cls="fill-zinc-500" size={8}>order is yours to choose —</Label>
-        <Label x={42} y={242} cls="fill-zinc-500" size={8}>just keep VALUES in step</Label>
+        <Label x={42} y={216} cls="fill-zinc-500" size={8}>order is yours — keep VALUES in step</Label>
       </motion.g>
       {/* value list card */}
       <motion.g {...fade(0.35)}>
         <Panel x={476} y={58} w={218} h={168} cls="fill-zinc-900 stroke-zinc-700" />
         <Label x={492} y={80} cls="fill-zinc-400" size={10}>value list — position decides</Label>
-        {["&apos;Tara Singh&apos;", "&apos;tara.singh@…&apos;", "&apos;Mumbai&apos;", "&apos;APAC&apos;", "1", "&apos;2026-01-05&apos;"].map((v, i) => (
+        {["'Tara Singh'", "'tara.singh@…'", "'Mumbai'", "'APAC'", "1", "'2026-01-05'"].map((v, i) => (
           <g key={i}>
             <circle cx={678} cy={98 + i * 20} r={2.5} className="fill-teal-400" />
             <Label x={492} y={102 + i * 20} cls="fill-zinc-200" size={9}>{v}</Label>
@@ -142,7 +141,7 @@ function W3DeleteScope() {
             ? <g key={i}><circle cx={cx} cy={cy} r={6} className="fill-rose-400/80" /><XMark x={cx} y={cy} cls="stroke-rose-200" s={3.4} delay={0.6} /></g>
             : <circle key={i} cx={cx} cy={cy} r={6} className="fill-zinc-700" />;
         })}
-        <Label x={42} y={180} cls="fill-rose-300" size={9}>52 delivered · 30 shipped · 14 pending stay — 7 cancelled go</Label>
+        <Label x={42} y={180} cls="fill-rose-300" size={9}>52 delivered · 30 shipped · 14 pending stay — 7 go</Label>
       </motion.g>
       {/* whole-row semantics */}
       <motion.g {...fade(0.45)}>
@@ -161,7 +160,7 @@ function W3DeleteScope() {
         <Label x={42} y={230} cls="fill-rose-300" size={9}>the foreign-key fence (error 787)</Label>
         <Label x={42} y={248} cls="fill-zinc-300" size={8}>order_items still points at 12 lines across those 7 orders —</Label>
         <Label x={42} y={264} cls="fill-zinc-300" size={8}>deleting a referenced parent fails until the children go first</Label>
-        <Label x={42} y={278} cls="fill-zinc-500" size={8}>DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE status = &apos;cancelled&apos;)</Label>
+        <Label x={42} y={278} cls="fill-zinc-500" size={7.5}>DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE status = &apos;cancelled&apos;)</Label>
       </motion.g>
       <motion.g {...fade(0.85)}>
         <Panel x={486} y={208} w={208} h={76} cls="fill-zinc-900 stroke-zinc-700" />
@@ -223,7 +222,7 @@ function W4UpsertFork() {
       <motion.g {...fade(0.9)}>
         <Panel x={26} y={244} w={668} h={40} cls="fill-zinc-900 stroke-violet-400/50" />
         <Label x={42} y={262} cls="fill-violet-300" size={9}>the transaction wrapper — BEGIN → work → COMMIT, or ROLLBACK and it never happened</Label>
-        <Label x={42} y={276} cls="fill-zinc-400" size={8}>this course&apos;s grader wraps every write you run in one — real effect, then rollback. Also beware INSERT OR REPLACE: it DELETES the old row (id 1&apos;s other columns gone) rather than updating it.</Label>
+        <Label x={42} y={276} cls="fill-zinc-400" size={8}>the course grader wraps every write in one — real effect, then rollback. INSERT OR REPLACE DELETES the old row rather than updating it.</Label>
       </motion.g>
     </svg>
   );
