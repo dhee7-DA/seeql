@@ -219,7 +219,7 @@ function X4RangeJoin() {
             <Label x={70 + i * 170} y={256} cls="fill-emerald-300" size={10}>{n} orders</Label>
           </g>
         ))}
-        <Label x={600} y={248} cls="fill-zinc-500" size={9}>8+30+40+25 = 103 ✓</Label>
+        <Label x={680} y={248} anchor="end" cls="fill-zinc-500" size={9}>= 103 ✓</Label>
       </motion.g>
       <motion.g {...fade(0.9)}>
         <line x1={26} y1={276} x2={694} y2={276} className="stroke-zinc-800" />
