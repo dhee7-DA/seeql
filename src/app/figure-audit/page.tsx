@@ -54,6 +54,7 @@ function AuditInner() {
       if (isThemeId(v)) t = v;
     }
     applyTheme(t);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- QA harness: ?theme/?static are URL-driven and unknowable during SSR, so state must sync post-mount (client-only figure mount is what prevents hydration mismatch).
     setThemeState(t);
     setReady(true);
   }, [themeParam]);

@@ -879,14 +879,14 @@ function S1Union() {
         <Label x={318} y={90} cls="fill-zinc-400" size={10}>nothing inspected, nothing removed → every row kept</Label>
       </motion.g>
       <motion.g {...fade(0.75)}>
-        <rect x={302} y={132} width={392} height={110} rx={8} className="fill-zinc-900 stroke-amber-400/60" />
+        <rect x={302} y={132} width={392} height={100} rx={8} className="fill-zinc-900 stroke-amber-400/60" />
         <Label x={318} y={154} cls="fill-amber-300" size={11}>UNION — dedupe pass</Label>
         {["cancelled", "delivered", "pending", "shipped"].map((s, i) => (
           <Chip key={s} x={318 + (i % 2) * 186} y={166 + Math.floor(i / 2) * 32} w={172} text={s} cls="fill-zinc-950 stroke-zinc-700" />
         ))}
-        <XMark x={308} y={124} cls="stroke-amber-400/70" s={4} delay={1.05} />
-        <XMark x={308} y={140} cls="stroke-amber-400/70" s={4} delay={1.15} />
-        <XMark x={308} y={156} cls="stroke-amber-400/70" s={4} delay={1.25} />
+        <XMark x={560} y={150} cls="stroke-amber-400/70" s={4} delay={1.05} />
+        <XMark x={576} y={150} cls="stroke-amber-400/70" s={4} delay={1.15} />
+        <XMark x={592} y={150} cls="stroke-amber-400/70" s={4} delay={1.25} />
       </motion.g>
       <motion.g {...fade(1)}>
         <Label x={30} y={240} cls="fill-zinc-500" size={10}>
@@ -920,7 +920,7 @@ function S2StackLabels() {
       <motion.g {...fade(0.7)}>
         <rect x={300} y={52} width={394} height={140} rx={8} className="fill-zinc-900 stroke-zinc-700" />
         <Label x={314} y={72} cls="fill-zinc-500" size={9}>name</Label>
-        <Label x={560} y={72} cls="fill-emerald-300" size={9}>kind ← from the label column</Label>
+        <Label x={560} y={72} cls="fill-emerald-300" size={9}>kind ← from label</Label>
         <line x1={300} y1={80} x2={694} y2={80} className="stroke-zinc-800" />
         {[
           ["Alice Chen", "customer"],
@@ -936,7 +936,7 @@ function S2StackLabels() {
         <Label x={314} y={186} cls="fill-zinc-500" size={9}>22 rows in the pile — every row remembers its source</Label>
       </motion.g>
       <motion.g {...fade(1)}>
-        <Label x={30} y={236} cls="fill-zinc-500" size={10}>
+        <Label x={30} y={244} cls="fill-zinc-500" size={10}>
           stack first, summarize outside: wrap the pile in FROM, then GROUP BY kind
         </Label>
       </motion.g>
@@ -998,7 +998,7 @@ function S4Except() {
         <Label x={70} y={238} cls="fill-zinc-500" size={9}>completed history, never a cancellation</Label>
         <rect x={374} y={200} width={292} height={50} rx={8} className="fill-zinc-900 stroke-zinc-800" />
         <Label x={390} y={220} cls="fill-zinc-300" size={10}>cancelled EXCEPT delivered → 0</Label>
-        <Label x={390} y={238} cls="fill-zinc-500" size={9}>every cancelled-order customer also delivered — order matters</Label>
+        <Label x={390} y={238} cls="fill-zinc-500" size={9}>all 4 also delivered — order matters</Label>
       </motion.g>
     </svg>
   );

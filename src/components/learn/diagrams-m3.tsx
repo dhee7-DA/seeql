@@ -206,13 +206,13 @@ function S11BothSides() {
         <Label x={76} y={76} cls="fill-zinc-400" size={9}>arm A · delivered — 15</Label>
         <Label x={76} y={110} cls="fill-zinc-200" size={20}>11</Label>
         <Label x={76} y={128} cls="fill-zinc-500" size={8}>delivered only — never cancelled</Label>
-        <Label x={76} y={152} cls="fill-zinc-600" size={8}>an arm that repeats a row still counts once</Label>
+        <Label x={76} y={152} cls="fill-zinc-600" size={8}>a repeated row still counts once</Label>
         <Label x={76} y={166} cls="fill-zinc-600" size={8}>DISTINCT semantics, on both sides</Label>
         <Label x={76} y={188} cls="fill-zinc-500" size={8}>15 − 4 in both = 11 alone</Label>
         <Label x={644} y={76} anchor="end" cls="fill-zinc-400" size={9}>arm B · cancelled — 4</Label>
         <Label x={644} y={110} anchor="end" cls="fill-zinc-200" size={20}>0</Label>
         <Label x={644} y={128} anchor="end" cls="fill-zinc-500" size={8}>cancelled only — B sits fully inside A</Label>
-        <Label x={644} y={152} anchor="end" cls="fill-zinc-600" size={8}>in both = identical on ALL output columns</Label>
+        <Label x={644} y={152} anchor="end" cls="fill-zinc-600" size={8}>in both = identical on all columns</Label>
       </motion.g>
       <motion.g {...fade(0.6)}>
         <rect x={280} y={52} width={160} height={180} rx={10} className="fill-emerald-400/15 stroke-emerald-400/70" />
@@ -280,7 +280,7 @@ function S12ExceptAudit() {
               <Chip x={cx} y={cy} w={72} h={20} text={`${id} · ${name}`} size={8}
                 cls={inB ? "fill-zinc-900 stroke-zinc-800" : "fill-emerald-400/10 stroke-emerald-400/60"}
                 textCls={inB ? "fill-zinc-600" : "fill-emerald-200"} />
-              {inB && <XMark x={cx + 36} y={cy + 10} cls="stroke-rose-400/80" s={5} delay={0.8 + i * 0.05} />}
+              {inB && <line x1={cx + 8} y1={cy + 10} x2={cx + 64} y2={cy + 10} className="stroke-rose-400/70" strokeWidth={1.1} strokeDasharray="3 2" />}
             </g>
           );
         })}
@@ -408,7 +408,7 @@ function S14RowRouter() {
       </motion.g>
       <motion.g {...fade(0.5)}>
         <Arrow x1={128} y1={124} x2={172} y2={124} />
-        <Label x={150} y={112} anchor="middle" cls="fill-zinc-500" size={8}>one CASE per row</Label>
+        <Label x={148} y={140} anchor="middle" cls="fill-zinc-500" size={8}>CASE ×103</Label>
         <rect x={176} y={62} width={190} height={140} rx={10} className="fill-zinc-900 stroke-emerald-400/60" />
         <Label x={271} y={84} anchor="middle" cls="fill-emerald-300" size={10}>CASE status</Label>
         <Label x={271} y={104} anchor="middle" cls="fill-zinc-400" size={8}>WHEN &apos;delivered&apos; THEN …</Label>
