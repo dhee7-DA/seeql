@@ -1735,3 +1735,19 @@ Work Log:
 Stage Summary:
 - Q-FAMILY: 8/8 audited, 11 defects fixed (1 wrong-count data fix + real-name upgrade). Cumulative: s+l+v+q = 48/99 audited, ~37 defects fixed.
 - Next: t-family (8, L29-32) -> x (4) -> w (4) -> d (5) -> fin (6) -> playground.
+
+---
+Task ID: svg-audit-t1
+Agent: Super Z (main agent)
+Task: Audit t-family (8 text/date/window figures t1-t8, L29-32, diagrams-m5.tsx)
+
+Work Log:
+- Edge probe: t2 takeaway +60px, t3 header +17px. Screenshots all 8.
+- Fixes: t2 strftime pipe label truncated under panel (-> "%Y-%m" in gap), bucket-count note collision (-> panel top-right, text corrected 6-11 -> 6-9 per probe), takeaway shortened; t3 header split; t6 floating "July dip" label overlapped bars (value right, position wrong -> merged into caption); t8 ledger skipped 2024-06 so the running column jumped (18579.20 unrecomputable) -> June 2047.43/17385.34 inserted, row step 20, note 7 more.
+- False alarms caught by reading source: t3 "Pedro 1688.17" was a screenshot misread (source 1686.17 = real); t2 note said 7 more not 8.
+- Probes: full month ledger (14 buckets, counts 6-9, 2024 90/30773.25, 2025 13/4060.03, Aug 20931.27 + Oct 27022.98 match known walls), name lengths 9-14, product lengths 13-23, t7 regions (APAC 5-way tie Farid/Grace/Hiro/Keiko/Maya; EU 8) — all exact.
+- Gates: probe [], tsc 0, 0 errors. Commit + worklog.
+
+Stage Summary:
+- T-FAMILY: 8/8 audited, 8 defects fixed (1 structural: t8 discontinuous ledger). Cumulative 56/99 audited, ~45 fixes.
+- Next: x (4) -> w (4) -> d (5) -> fin (6) -> playground.
