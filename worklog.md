@@ -1751,3 +1751,19 @@ Work Log:
 Stage Summary:
 - T-FAMILY: 8/8 audited, 8 defects fixed (1 structural: t8 discontinuous ledger). Cumulative 56/99 audited, ~45 fixes.
 - Next: x (4) -> w (4) -> d (5) -> fin (6) -> playground.
+
+---
+Task ID: svg-audit-x1
+Agent: Super Z (main agent)
+Task: Audit x-family (4 Expert Clinic figures x1-x4, L33-34, diagrams-m6.tsx)
+
+Work Log:
+- Edge probe clean; screenshots all 4; "2 Issues" dev-badge investigated -> 0 real page errors (dev-overlay noise).
+- One layout fix: x4 tally sum-note "8+30+40+25 = 103" started at x=600 and interleaved with the jumbo cell's "25 orders" -> right-anchored "= 103 ✓" at x=680.
+- Suspected data bug (order #12 "140.28") disproven by reading source: 148.28 correct (screenshot misread at small size — recurring lesson: always confirm against source before editing).
+- Data verified via /api/query: x1 fold "shipped,cancelled,delivered,pending" exact + all-four-statuses club {Alice, Emma, Maya}; x2 LEFT 16 / RIGHT 19 (7 pairs + 12 NULL) / FULL 115 (103+12) with cancelled club = ids 1,5,11,13; x3 region pots EU 15089.23 / APAC 11605.45 / US 7286.16 / LATAM 852.44 + TOTAL 34833.28; x4 bands small 8 / medium 30 / large 40 / jumbo 25 = 103.
+- Gates: probe [], tsc 0. Commit 1238bdd.
+
+Stage Summary:
+- X-FAMILY: 4/4 audited, 1 minor fix, all clinic data claims exact. Cumulative 60/99 audited.
+- Next: w (4) -> d (5) -> fin (6) -> playground surfaces.
