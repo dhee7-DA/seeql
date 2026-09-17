@@ -1799,3 +1799,19 @@ Work Log:
 Stage Summary:
 - D-FAMILY: 5/5 audited, 2 fixes. Cumulative 69/99 audited, ~52 fixes.
 - Next: fin (6) -> playground surfaces (QueryFlowSvg, RowFunnel, SchemaView, SampleGallery) + brand.
+
+---
+Task ID: svg-audit-fin1
+Agent: Super Z (main agent)
+Task: Audit fin-family (6 finance figures fin1-fin6, L52-57, diagrams-m9.tsx)
+
+Work Log:
+- Edge probe: fin5 +41px. Screenshots all 6.
+- fin6 VALUE BUG: amber window highlights Jun-Aug but the label quoted ma3 1594.67 = July's (May-Jun-Jul) ma3; real Aug trailing-3 = 2171.33. Also "1.5x breached" is true vs the MEAN (2723 < 3210) but false vs the ma3 (3257 > 3210) — label + aria now say "1.5x mean". Window box no longer grazes the header.
+- fin5: pill "181000" was a screenshot misread — source + probe agree 181080 (181,080,000 cents... rather 18,108,000 cents = 181,080). Note overflow shortened.
+- Data verified: fin1 INV-2024-001 @ 486000; fin2 Alice 14-event walk -> balance 2148.00; fin3 AR aging @2025-03-15 nets the 4000 partial payment (6148 -> 2148 residual, which equals fin2's balance — cross-figure consistency); fin4 Jan 11085 peak / Jul 2968 trough / Jan ma3 9404; fin5 four accounts dr/cr exact; fin6 14 monthly expenses + mean 1815.43.
+- Gates: probe [], tsc 0. Commit + worklog.
+
+Stage Summary:
+- FIN-FAMILY: 6/6 audited, 3 defects fixed (1 value bug). ALL 99 curriculum figures now audited: s16+l16+v8+q8+t8+x4+w4+d5+fin6+j24 = 99. ~57 fixes total, 4 value bugs (v1 fabricated lines, v5 wrong strip, q6 wrong count, fin6 wrong ma3).
+- Remaining: playground surfaces (QueryFlowSvg, RowFunnel, SchemaView, SampleGallery) + brand.
