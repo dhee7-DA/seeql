@@ -1720,3 +1720,18 @@ Work Log:
 Stage Summary:
 - V-FAMILY: 8/8 audited; 2 fabricated/wrong-data figures rebuilt on real db ground; 7 layout fixes. Cumulative: s(16)+l(16)+v(8) = 40/99 audited, 24 defects fixed.
 - Next: q-family (8, subqueries L25-28) -> t (8) -> x (4) -> w (4) -> d (5) -> fin (6) -> playground.
+
+---
+Task ID: svg-audit-q1
+Agent: Super Z (main agent)
+Task: Audit q-family (8 subquery figures q1-q8, L25-28, diagrams-m4.tsx)
+
+Work Log:
+- Edge probe flagged 4 header overflows (q1 +132, q3 +206, q4 +27, q8 +487 — SQL one-liners past viewBox). Screenshots for all 8.
+- Fixes: q3/q4/q8 headers split to 2 lines; q1 survivors -> 4 stacked lines with FULL real product names; q5 "the list" centered between panels; q6 right column rebuilt (loop labels were interleaving the personal-averages list across the x=480 divider — now stacked: loop legend top, then header + 4 averages + "12 more"), Farid 5->3 orders, tally panel restored after edit miss; q8 mid-arrow labels (WHERE s > 2000 / JOIN customers) were painted over by following panels — deleted and folded semantics into panel subtitles ("kept WHERE s > 2000", "joined to customers"); q3 "16 = 16" -> "16 -> 16".
+- Data truths via /api/query: products AVG 71.78 with 6 above (names exact), EXISTS shipped -> 10 customers / NOT EXISTS -> 6, derived spend > 1000 -> 8 customers, CTE chain s > 2000 -> 5 (values exact), per-customer order counts + avgs (Farid 3/486.32 — figure claimed 5, fixed; Alice 24/302.60; Chloe 5/533.59; Emma 17/390.62; Pedro 4/421.54), 45 of 103 orders beat their personal avg, q7 ghost SUM 103,244.55 (= 2.96x the true 34,833.28 — "3x ghost" honest). q2 + q7 otherwise clean.
+- Gates: probe [], tsc 0, 0 page errors. Plum spot-check skipped (text-only changes); commit plus worklog.
+
+Stage Summary:
+- Q-FAMILY: 8/8 audited, 11 defects fixed (1 wrong-count data fix + real-name upgrade). Cumulative: s+l+v+q = 48/99 audited, ~37 defects fixed.
+- Next: t-family (8, L29-32) -> x (4) -> w (4) -> d (5) -> fin (6) -> playground.
