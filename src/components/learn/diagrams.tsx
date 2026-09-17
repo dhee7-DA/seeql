@@ -1616,6 +1616,10 @@ const FIGURES: Partial<Record<FigureId, () => React.JSX.Element>> = {
   "l7-count-star": L7CountStar,
 };
 
+export function hasFigure(id: FigureId): boolean {
+  return id in FIGURES;
+}
+
 export function Figure({ id }: { id: FigureId }) {
   const Cmp = FIGURES[id];
   if (!Cmp) return null;

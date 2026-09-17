@@ -59,6 +59,13 @@ export function Arrow({ x1, y1, x2, y2, cls = "stroke-zinc-600" }: { x1: number;
 
 /** Animated reveal for connection paths (framer-motion draws the stroke). */
 export function drawIn(delay = 0) {
+  if (isStatic()) {
+    return {
+      initial: { pathLength: 1, opacity: 1 },
+      animate: { pathLength: 1, opacity: 1 },
+      transition: { duration: 0 },
+    };
+  }
   return {
     initial: { pathLength: 0.0001, opacity: 1 },
     whileInView: { pathLength: 1, opacity: 1 },
@@ -166,7 +173,22 @@ export function Panel({ x, y, w, h, cls = "fill-zinc-900 stroke-zinc-800" }: { x
   return <rect x={x} y={y} width={w} height={h} rx={8} className={cls} strokeWidth={1} />;
 }
 
+/** Static mode for the /figure-audit harness — when window.__FIG_STATIC__ is
+ *  set, scroll reveals short-circuit to their final state so screenshots and
+ *  layout probes see exactly what a learner sees after scrolling, without
+ *  waiting on IntersectionObserver triggers. */
+function isStatic() {
+  return typeof window !== "undefined" && (window as any).__FIG_STATIC__ === true;
+}
+
 export function fade(delay = 0) {
+  if (isStatic()) {
+    return {
+      initial: { opacity: 1, y: 0 },
+      animate: { opacity: 1, y: 0 },
+      transition: { duration: 0 },
+    };
+  }
   return {
     initial: { opacity: 0, y: 8 },
     whileInView: { opacity: 1, y: 0 },
