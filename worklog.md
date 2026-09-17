@@ -1685,3 +1685,21 @@ Work Log:
 Stage Summary:
 - M6 COMPLETE: 8/8 topics covered (x1 20 / x2 15 / x3 15 / x4 25 / x5 25 / x6 25 / x7 25 / x8 25 = 175 cases). Full deck 1675 PASS.
 - M1–M6 all complete. Remaining curriculum modules without case coverage: M7 Data Modification (writes), M8 Schema/Views, M9 SQL for Finance — writes would need a new sandbox paradigm (INSERT/UPDATE/DELETE cases).
+
+---
+Task ID: svg-audit-s1
+Agent: Super Z (main agent)
+Task: Rebuild figure-audit QA harness (lost to workspace restore) + audit s-family (16 set-op figures, L17-24)
+
+Work Log:
+- Forensic pass first: previous session's visual thread (/figure-audit route, 3D join ribbon, join-audit commits e853a45/b6db172) absent from git history AND dangling objects — workspace was restored from an older snapshot. 99-figure inventory itself intact (union vs registry 1:1, tsc green).
+- Rebuilt harness: src/app/figure-audit/page.tsx (?ids= batch at lesson width max-w-3xl, 4-theme rail via classList-only, client-only figure mount after __FIG_STATIC__ set → zero hydration mismatch), exported hasFigure() from diagrams.tsx, static mode in diagrams-kit (fade/drawIn short-circuit to final state when ?static≠0), scripts/fig-edge-probe.js (getBBox text-overflow vs viewBox edges). Committed 32cb9bc.
+- s-family audit loop: loaded all 16 ids, edge probe (1 hit: s4 caption flush right), 16 viewport screenshots + s5 steps 2-3 via Next-step clicks + plum-theme spot check (s8, s12).
+- Defects found & fixed (7 across 6 figures): s1 caption collided with UNION panel bottom (panel h 110→100) + ×-marks crowded panel corner (moved beside header); s2 right-column header overflowed panel ("kind ← from label") + caption crowding (y236→244); s4 callout flush with panel edge (shortened to "all 4 also delivered — order matters"); s11 center panel clipped arm annotations (both sides shortened); s12 red ×-marks obscured struck names (→ dashed rose strike-through lines through chips); s14 truncated label fragment under CASE panel ("one CASE per row" → "CASE ×103" below arrow, clear of dotfield and panel).
+- Data truths verified via scripts/s-family-facts.ts: UNION ALL 206 / UNION 4; INTERSECT arms 15/4/both 4; B∩C={1,5,11,13}; EXCEPT 6 survive / 10 struck / 0 NULL customer_ids in shipped subquery (NOT-IN panel is conditional caution, not data claim — kept); s8 7 delivered cats, 6 pending, Apparel delivered-only, "6 of 7 both" correct (jet-theme glyph misread, plum shot confirmed); s13 8 vs 15 ground consistent. False alarm logged: s8 "8 of 7" was a rendering misread, source always said 6.
+- Gates: edge probe [] on all 16; tsc 0 errors; lint back to pre-existing baseline (cleaned my additions: dropped triple-slash in probe, eslint-disable with justification for URL-driven theme state in harness); agent-browser errors 0; plum inversion spot check pass.
+- Commit 8e268b9.
+
+Stage Summary:
+- S-FAMILY: 16/16 audited, 7 defects fixed, all data claims db-verified. Harness restored + hardened (static mode + theme rail + edge probe reusable for remaining families).
+- Next: l-family (16, L1-8) → v (8) → q (8) → t (8) → x (4) → w (4) → d (5) → fin (6) → playground surfaces.
