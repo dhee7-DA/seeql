@@ -37,7 +37,7 @@ function V1GrainZoom() {
       {/* left: orders, many rows */}
       <motion.g {...fade(0)}>
         <Panel x={24} y={56} w={252} h={150} />
-        <Label x={150} y={48} anchor="middle" cls="fill-zinc-300">orders · 103 rows · grain = one purchase event</Label>
+        <Label x={150} y={48} anchor="middle" cls="fill-zinc-300" size={10}>orders · 103 rows · grain = one purchase event</Label>
         {dots}
         <Label x={150} y={232} anchor="middle" cls="fill-zinc-500" size={10}>id · customer_id · status · total · shipped_at</Label>
       </motion.g>
@@ -55,9 +55,9 @@ function V1GrainZoom() {
         <Panel x={278} y={56} w={394} h={150} />
         <Label x={475} y={48} anchor="middle" cls="fill-zinc-300">order_items · 251 rows · grain = one product line</Label>
         {[
-          ["16", "Wireless Keyboard", "1", "89.90"],
-          ["16", "Gaming Mouse", "2", "39.50"],
-          ["16", "USB-C Hub", "1", "34.00"],
+          ["16", "Wireless Mouse M3", "2", "32.93"],
+          ["16", "Cycling Jersey Pro", "3", "67.34"],
+          ["16", "Mechanical Keyboard K1", "2", "90.18"],
         ].map((r, ri) => (
           <g key={ri}>
             <motion.rect {...fade(0.85 + ri * 0.12)} x={292} y={70 + ri * 42} width={366} height={34} rx={7} className={ri === 0 ? "fill-emerald-400/10 stroke-emerald-400/60" : "fill-zinc-900 stroke-zinc-800"} />
@@ -96,11 +96,11 @@ function V2SelectPipeline() {
     <svg viewBox="0 0 720 300" className="w-full" role="img" aria-label="FROM loads rows, SELECT projects columns — the pipeline runs FROM first">
       {/* input table */}
       <motion.g {...fade(0)}>
-        <Stage x={20} y={64} w={170} h={168} label="customers · 16 rows × 6 cols" />
-        {["id", "name", "city", "region", "active", "created_at"].map((h, ri) => (
+        <Stage x={20} y={64} w={170} h={168} label="customers · 16 rows × 7 cols" />
+        {["id", "name", "email", "city", "region", "active", "created_at"].map((h, ri) => (
           <g key={h}>
-            <rect x={30} y={74 + ri * 26} width={150} height={22} rx={4} className={ri === 1 || ri === 2 ? "fill-emerald-400/15 stroke-emerald-400/70" : "fill-zinc-950 stroke-zinc-800"} />
-            <Label x={105} y={89 + ri * 26} anchor="middle" cls={ri === 1 || ri === 2 ? "fill-emerald-300" : "fill-zinc-500"} size={10}>
+            <rect x={30} y={72 + ri * 22} width={150} height={19} rx={4} className={ri === 1 || ri === 3 ? "fill-emerald-400/15 stroke-emerald-400/70" : "fill-zinc-950 stroke-zinc-800"} />
+            <Label x={105} y={85 + ri * 22} anchor="middle" cls={ri === 1 || ri === 3 ? "fill-emerald-300" : "fill-zinc-500"} size={10}>
               {h}
             </Label>
           </g>
@@ -116,9 +116,9 @@ function V2SelectPipeline() {
         <Stage x={244} y={64} w={216} h={168} label="SELECT — the column shrink ray" cls="fill-zinc-900 stroke-emerald-400/40" />
         <Label x={352} y={102} anchor="middle" cls="fill-zinc-400" size={11}>keep only what you name</Label>
         <rect x={258} y={118} width={188} height={26} rx={6} className="fill-zinc-950 stroke-zinc-800" />
-        <Label x={352} y={135} anchor="middle" cls="fill-zinc-500" size={10}>name, city — 4 columns dropped</Label>
+        <Label x={352} y={135} anchor="middle" cls="fill-zinc-500" size={10}>name, city — 5 columns dropped</Label>
         <rect x={258} y={152} width={188} height={26} rx={6} className="fill-teal-400/10 stroke-teal-400/60" />
-        <Label x={352} y={169} anchor="middle" cls="fill-teal-300" size={10}>region AS zone — rename on the way out</Label>
+        <Label x={352} y={169} anchor="middle" cls="fill-teal-300" size={9}>region AS zone — rename on the way out</Label>
         <Label x={352} y={204} anchor="middle" cls="fill-zinc-500" size={10}>aliases shape the output, not the table</Label>
       </motion.g>
       {/* arrow */}
@@ -234,8 +234,8 @@ function V4NullThreeGates() {
             <Label x={344} y={101 + i * 44} anchor="end" cls={tone === "emerald" ? "fill-emerald-300" : "fill-amber-300"} size={10}>{verdict}</Label>
           </g>
         ))}
-        <Label x={28} y={222} cls="fill-zinc-500" size={10}>WHERE keeps TRUE only — UNKNOWN rows silently vanish in both directions</Label>
-        <Label x={28} y={240} cls="fill-zinc-500" size={10}>of the = / != pair. That is why NOT IN + NULL is a famous trap (M4).</Label>
+        <Label x={28} y={236} cls="fill-zinc-500" size={10}>WHERE keeps TRUE only — UNKNOWN rows silently vanish</Label>
+        <Label x={28} y={248} cls="fill-zinc-500" size={10}>in both directions of = / != — the NOT IN + NULL trap (M4).</Label>
       </motion.g>
       {/* right: funnel over real rows */}
       <motion.g {...fade(0.5)}>
@@ -269,40 +269,31 @@ function V5SortSlice() {
     <svg viewBox="0 0 720 300" className="w-full" role="img" aria-label="Multi-key sort then LIMIT slice, with real sorted rows">
       {/* left: unsorted */}
       <motion.g {...fade(0)}>
-        <Label x={30} y={44} cls="fill-zinc-300" size={11}>as stored — no order guaranteed</Label>
-        {["pending · 88.10", "cancelled · 397.99", "delivered · 752.96", "shipped · 143.86", "pending · 25.47", "cancelled · 90.35"].map((t, i) => (
+        <Label x={30} y={44} cls="fill-zinc-300" size={11}>as stored — id order 1→7</Label>
+        {["1 · pending · 576.54", "2 · delivered · 416.81", "3 · shipped · 767.64", "4 · shipped · 158.48", "5 · pending · 725.34", "6 · delivered · 752.96"].map((t, i) => (
           <rect key={i} x={30} y={58 + i * 30} width={190} height={24} rx={5} className="fill-zinc-900 stroke-zinc-800" opacity={0.85} />
         ))}
-        {["pending · 88.10", "cancelled · 397.99", "delivered · 752.96", "shipped · 143.86", "pending · 25.47", "cancelled · 90.35"].map((t, i) => (
+        {["1 · pending · 576.54", "2 · delivered · 416.81", "3 · shipped · 767.64", "4 · shipped · 158.48", "5 · pending · 725.34", "6 · delivered · 752.96"].map((t, i) => (
           <Label key={i} x={125} y={74 + i * 30} anchor="middle" cls="fill-zinc-500" size={9}>{t}</Label>
         ))}
       </motion.g>
-      {/* middle: sorted strip, two keys */}
+      {/* middle: sorted strip, two keys — the true top of the full sort */}
       <motion.g {...fade(0.4)}>
         <Label x={286} y={44} cls="fill-zinc-300" size={11}>ORDER BY status ASC, total DESC</Label>
         <Label x={286} y={62} cls="fill-zinc-500" size={9}>key 1: status A→Z · key 2: money high→low inside each tie</Label>
-        {[
-          ["cancelled", "397.99", true],
-          ["cancelled", "206.19", true],
-          ["cancelled", "152.52", true],
-          ["cancelled", "143.86", false],
-          ["delivered", "752.96", false],
-          ["delivered", "522.10", false],
-          ["pending", "88.10", false],
-          ["pending", "25.47", false],
-        ].map(([s, v, hot], i) => (
+        {["397.99", "206.19", "152.52", "143.86", "136.11", "90.35", "25.47"].map((v, i) => (
           <g key={i}>
-            <rect x={286} y={74 + i * 26} width={200} height={21} rx={4} className={hot ? "fill-emerald-400/15 stroke-emerald-400/70" : "fill-zinc-900 stroke-zinc-800"} />
-            <Label x={300} y={88 + i * 26} cls={hot ? "fill-emerald-300" : "fill-zinc-400"} size={9}>{s as string}</Label>
-            <Label x={472} y={88 + i * 26} anchor="end" cls={hot ? "fill-emerald-300" : "fill-zinc-400"} size={9}>{v as string}</Label>
+            <rect x={286} y={72 + i * 25} width={200} height={21} rx={4} className={i < 3 ? "fill-emerald-400/15 stroke-emerald-400/70" : "fill-zinc-900 stroke-zinc-800"} />
+            <Label x={300} y={86 + i * 25} cls={i < 3 ? "fill-emerald-300" : "fill-zinc-400"} size={9}>cancelled</Label>
+            <Label x={472} y={86 + i * 25} anchor="end" cls={i < 3 ? "fill-emerald-300" : "fill-zinc-400"} size={9}>{v}</Label>
           </g>
         ))}
         {/* LIMIT bracket */}
         <motion.g {...fade(0.8)}>
-          <Pipe pts={[[496, 74], [516, 74], [516, 145], [496, 145]]} cls="stroke-teal-400/80" w={1.6} delay={0.8} />
-          <Label x={548} y={104} cls="fill-teal-300" size={10}>LIMIT 3</Label>
-          <Label x={548} y={120} cls="fill-zinc-500" size={9}>slice the</Label>
-          <Label x={548} y={132} cls="fill-zinc-500" size={9}>sorted strip</Label>
+          <Pipe pts={[[496, 72], [516, 72], [516, 138], [496, 138]]} cls="stroke-teal-400/80" w={1.6} delay={0.8} />
+          <Label x={548} y={100} cls="fill-teal-300" size={10}>LIMIT 3</Label>
+          <Label x={548} y={116} cls="fill-zinc-500" size={9}>slice the</Label>
+          <Label x={548} y={128} cls="fill-zinc-500" size={9}>sorted strip</Label>
         </motion.g>
       </motion.g>
       {/* right: engine note */}
@@ -317,7 +308,7 @@ function V5SortSlice() {
       {/* bottom */}
       <motion.g {...fade(1.1)}>
         <rect x={20} y={252} width={676} height={30} rx={7} className="fill-violet-400/10 stroke-violet-400/40" />
-        <Label x={358} y={271} anchor="middle" cls="fill-violet-300">Ties are broken by the second key; without LIMIT, \"top 3\" is just a sorted list nobody finished reading</Label>
+        <Label x={358} y={271} anchor="middle" cls="fill-violet-300">status A→Z puts all 7 cancelled orders on top; LIMIT 3 slices that podium</Label>
       </motion.g>
     </svg>
   );
@@ -404,7 +395,7 @@ function V7AggregateCollapse() {
       </motion.g>
       <motion.g {...fade(0.35)}>
         <Pipe pts={[[160, 108], [220, 108], [268, 108]]} cls="stroke-zinc-500" w={1.6} arrowAng={0} arrowCls="stroke-zinc-400" delay={0.35} />
-        <Label x={214} y={96} anchor="middle" cls="fill-zinc-500" size={9}>collapse</Label>
+        <Label x={214} y={80} anchor="middle" cls="fill-zinc-500" size={9}>collapse</Label>
       </motion.g>
       {/* collapse dial */}
       <motion.g {...fade(0.5)}>
@@ -417,7 +408,7 @@ function V7AggregateCollapse() {
       {/* five readouts */}
       <motion.g {...fade(0.7)}>
         <Arrow x1={452} y1={118} x2={492} y2={118} cls="stroke-zinc-500" />
-        <Label x={472} y={106} anchor="middle" cls="fill-zinc-500" size={9}>pick a function</Label>
+        <Label x={472} y={106} anchor="middle" cls="fill-zinc-500" size={9}>pick one</Label>
         {[
           ["COUNT", "251 lines", "fill-zinc-300"],
           ["SUM", "34,833.28", "fill-emerald-300"],
