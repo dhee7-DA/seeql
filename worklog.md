@@ -1703,3 +1703,20 @@ Work Log:
 Stage Summary:
 - S-FAMILY: 16/16 audited, 7 defects fixed, all data claims db-verified. Harness restored + hardened (static mode + theme rail + edge probe reusable for remaining families).
 - Next: l-family (16, L1-8) → v (8) → q (8) → t (8) → x (4) → w (4) → d (5) → fin (6) → playground surfaces.
+
+---
+Task ID: svg-audit-v1
+Agent: Super Z (main agent)
+Task: Audit v-family (8 pipeline figures: v1-v8, L1-8 second wave)
+
+Work Log:
+- Loaded all 8 via /figure-audit, edge probe (1 hit: v1 header overL), 8 screenshots.
+- DATA-TRUTH rebuilds: v1 order-16 lines fabricated vs db (real: Wireless Mouse M3 x2 @32.93 / Cycling Jersey Pro x3 @67.34 / Mechanical Keyboard K1 x2 @90.18); v5 sorted strip was not a true slice (143.86 mislabeled shipped — it's cancelled order #82; delivered 522.10 not in top; true top-7 of status ASC,total DESC = all 7 cancelled 397.99/206.19/152.52/143.86/136.11/90.35/25.47) + stored column now shows real ids 1-6.
+- Layout fixes: v1 header size 10 (was clipped at viewBox left); v2 6->7 cols (+email chip), "5 columns dropped", rename line size 9 inside stage; v4 caption pair moved below right panel (was painted over mid-word); v5 strip step 25px clears takeaway pill; v7 "collapse" above dots, "pick a function"->"pick one" (was truncated under readout rects). v3 (34/12/5 verified) and v6 (16 cities, regions) and v8 pass clean.
+- INFRA: dev-server chunk errors (ChunkLoadError) traced to watchdog RSS recycle at 17:46 swapping chunk hashes under long-lived browser session; fresh browser session + server restart = 0 errors; db heal verified post-restart via restore-db.ts (9 tables, orders 103 / order_items 251 / customers 16 etc).
+- Probes via /api/query (sample-db): gate400 34, pending-AND-big-OR-cancelled 12 vs parenthesized 5, distinct cities 16, order_items COUNT/SUM/AVG/MIN/MAX 251/34833.28/138.78/14.46/599.91 — all exact.
+- Gates: probe [], tsc 0, lint baseline, 0 page errors. Commit dbeed40.
+
+Stage Summary:
+- V-FAMILY: 8/8 audited; 2 fabricated/wrong-data figures rebuilt on real db ground; 7 layout fixes. Cumulative: s(16)+l(16)+v(8) = 40/99 audited, 24 defects fixed.
+- Next: q-family (8, subqueries L25-28) -> t (8) -> x (4) -> w (4) -> d (5) -> fin (6) -> playground.
