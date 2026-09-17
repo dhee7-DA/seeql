@@ -1767,3 +1767,20 @@ Work Log:
 Stage Summary:
 - X-FAMILY: 4/4 audited, 1 minor fix, all clinic data claims exact. Cumulative 60/99 audited.
 - Next: w (4) -> d (5) -> fin (6) -> playground surfaces.
+
+---
+Task ID: svg-audit-w1
+Agent: Super Z (main agent)
+Task: Audit w-family (4 write figures w1-w4, L41-44, diagrams-m7.tsx)
+
+Work Log:
+- Edge probe: w4 takeaway +237px. Screenshots all 4.
+- w1 rendering bug: value strings contained literal &apos; entities inside JS string expressions (JSX decodes entities only in text children, not {expr}) -> displayed raw. Replaced with real quotes. Also second note line was invisible (painted over by the id-omitted panel drawn later) -> single line inside the column card.
+- w3: stay/go caption clipped at dot-panel edge (shortened); FK-fence SQL overflowed rose panel by ~22px (size 8 -> 7.5, fits 42..461 in panel ending 466).
+- w4: takeaway line 179 chars -> shortened to fit (grader-rollback + INSERT OR REPLACE deletes-the-old-row warning kept).
+- w2 clean; wearables prices verified (79 -> 86.90; 199.99 -> 219.99 displayed rounded); w3 fence = 12 child order_items exact; w4 120+50=170 with real Keyboard K1 stock 120.
+- Gates: probe [], tsc 0. Commit + worklog.
+
+Stage Summary:
+- W-FAMILY: 4/4 audited, 5 defects fixed (1 entity-rendering bug). Cumulative 64/99 audited.
+- Next: d (5) -> fin (6) -> playground surfaces + brand.
