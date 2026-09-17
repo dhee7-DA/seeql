@@ -237,7 +237,7 @@ function Fin5TrialBalance() {
           <text x={390} y={253} textAnchor="middle" fontSize={11} fontFamily={MONO} className="fill-[#052e1c]">
             181080 = 181080 ✓
           </text>
-          <Label x={494} y={253} cls="fill-zinc-400" size={10}>balanced — but is it TRUE? lesson 56 decides</Label>
+          <Label x={494} y={253} cls="fill-zinc-400" size={10}>is it TRUE? lesson 56 decides</Label>
         </motion.g>
       </motion.g>
     </svg>
@@ -253,7 +253,7 @@ function Fin6FrameSlide() {
   const py = (v: number) => y0 + h - (v / maxV) * h;
   const augI = 7;
   return (
-    <svg viewBox="0 0 720 300" className="w-full" role="img" aria-label="Monthly expenses with a sliding 3-row window; August spikes to 3210, 1.5 times its trailing average">
+    <svg viewBox="0 0 720 300" className="w-full" role="img" aria-label="Monthly expenses with a sliding 3-row window; August spikes to 3210, breaching 1.5 times the mean">
       <motion.g {...fade(0)}>
         <Panel x={30} y={20} w={660} h={244} />
         <Label x={44} y={38} cls="fill-zinc-300">expenses by month · mean 1815.43 · sd 423.12</Label>
@@ -269,8 +269,8 @@ function Fin6FrameSlide() {
         <line x1={x0} y1={py(1815.43)} x2={x0 + w} y2={py(1815.43)} className="stroke-zinc-500" strokeDasharray="4 4" strokeWidth={1.2} />
         <Label x={x0 + w} y={py(1815.43) - 6} anchor="end" cls="fill-zinc-400" size={10}>mean</Label>
         {/* sliding frame highlight around Aug's trailing 3 */}
-        <motion.rect {...fade(0.7)} x={px(augI - 2) - 14} y={y0 - 6} width={px(augI) - px(augI - 2) + 28} height={h + 12} rx={8} className="fill-amber-400/10 stroke-amber-400/60" strokeWidth={1.2} />
-        <Label x={44} y={y0 + h + 32} cls="fill-amber-300" size={10}>trailing 3 → ma3 1594.67 · 1.5× breached at 3210 (z 3.30)</Label>
+        <motion.rect {...fade(0.7)} x={px(augI - 2) - 14} y={y0 + 2} width={px(augI) - px(augI - 2) + 28} height={h + 6} rx={8} className="fill-amber-400/10 stroke-amber-400/60" strokeWidth={1.2} />
+        <Label x={44} y={y0 + h + 32} cls="fill-amber-300" size={10}>trailing 3 → Aug ma3 2171.33 · 1.5× mean breached at 3210 (z 3.30)</Label>
         {mons.map((m, i) => (
           <Label key={i} x={px(i)} y={y0 + h + 16} anchor="middle" cls={i === augI ? "fill-rose-300" : "fill-zinc-500"} size={9}>{m}</Label>
         ))}
