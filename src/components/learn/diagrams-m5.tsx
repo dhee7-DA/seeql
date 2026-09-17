@@ -136,7 +136,7 @@ function T2Calendar() {
       </motion.g>
       <motion.g {...fade(0.4)}>
         <Pipe pts={[[246, 104], [292, 104]]} cls="stroke-teal-400" arrowAng={0} arrowCls="stroke-teal-400" />
-        <Label x={236} y={92} cls="fill-teal-300" size={9}>strftime(&apos;%Y-%m&apos;)</Label>
+        <Label x={271} y={92} anchor="middle" cls="fill-teal-300" size={9}>%Y-%m</Label>
       </motion.g>
       {/* buckets */}
       <motion.g {...fade(0.55)}>
@@ -152,12 +152,12 @@ function T2Calendar() {
             <Label x={321 + i * 54} y={156} anchor="middle" cls="fill-zinc-300" size={8}>{n}</Label>
           </g>
         ))}
-        <Label x={312} y={158} cls="fill-zinc-500" size={7}>… 7 more months, 6–9 each</Label>
+        <Label x={680} y={66} anchor="end" cls="fill-zinc-500" size={7}>… 7 more · 6–9 each</Label>
       </motion.g>
       {/* takeaway strip */}
       <motion.g {...fade(0.8)}>
         <Panel x={26} y={182} w={668} h={56} cls="fill-zinc-900 stroke-zinc-700" />
-        <Label x={42} y={204} cls="fill-zinc-300" size={9}>The alias trick: GROUP BY mon works in SQLite — but the portable spelling repeats the expression: GROUP BY strftime(&apos;%Y-%m&apos;, created_at)</Label>
+        <Label x={42} y={204} cls="fill-zinc-300" size={9}>Alias trick: GROUP BY mon works in SQLite; the portable spelling repeats the whole strftime expression</Label>
         <Label x={42} y={224} cls="fill-zinc-500" size={8}>buckets + COUNT is the skeleton of every time-series report; the next two lessons add ranks and deltas on top</Label>
       </motion.g>
       <motion.g {...fade(0.95)}>
@@ -194,8 +194,7 @@ function T6MonthBuckets() {
       <motion.g {...fade(0.6)}>
         <line x1={26} y1={176} x2={590} y2={176} className="stroke-zinc-700" />
         <Label x={34} y={54} cls="fill-zinc-500" size={8}>peak 3731.97</Label>
-        <Label x={200} y={166} cls="fill-amber-300" size={8}>July dip: 1193.86</Label>
-        <Label x={26} y={212} cls="fill-zinc-500" size={8}>2024 months only — 2025 continues on the next shelf</Label>
+        <Label x={26} y={212} cls="fill-zinc-500" size={8}>2024 months only — 2025 continues on the next shelf · July dips to 1193.86</Label>
       </motion.g>
       {/* year split panel */}
       <motion.g {...fade(0.75)}>
@@ -212,7 +211,6 @@ function T6MonthBuckets() {
       </motion.g>
       <motion.g {...fade(1)}>
         <line x1={26} y1={292} x2={694} y2={292} className="stroke-zinc-800" />
-        <Label x={26} y={296} cls="fill-zinc-400" size={9}> </Label>
       </motion.g>
     </svg>
   );
@@ -224,7 +222,8 @@ function T3Ranked() {
   return (
     <svg viewBox="0 0 720 300" className="w-full" role="img" aria-label="RANK() OVER orders customers by spend but keeps every row: Alice 7262.35 is rank 1, Olivia 444.80 is rank 16 — 16 rows in, 16 rows out">
       <motion.g {...fade(0)}>
-        <Label x={26} y={22} cls="fill-zinc-500" size={9}>SELECT c.name, SUM(o.total) AS spend, RANK() OVER (ORDER BY SUM(o.total) DESC) AS rk FROM customers c JOIN orders o … GROUP BY c.id</Label>
+        <Label x={26} y={18} cls="fill-zinc-500" size={9}>SELECT c.name, SUM(o.total) AS spend, RANK() OVER (ORDER BY SUM(o.total) DESC) AS rk</Label>
+        <Label x={26} y={32} cls="fill-zinc-500" size={9}>FROM customers c JOIN orders o … GROUP BY c.id</Label>
       </motion.g>
       {/* leaderboard */}
       <motion.g {...fade(0.2)}>
@@ -395,15 +394,16 @@ function T8RunningTotal() {
           ["2024-03", "2617.08", "9958.69"],
           ["2024-04", "2468.91", "12427.60"],
           ["2024-05", "2910.31", "15337.91"],
+          ["2024-06", "2047.43", "17385.34"],
           ["2024-07", "1193.86", "18579.20"],
         ].map(([mon, rev, run], i) => (
           <g key={mon}>
-            <Label x={42} y={90 + i * 22} cls="fill-zinc-300" size={9}>{mon}</Label>
-            <Label x={140} y={90 + i * 22} cls="fill-zinc-200" size={9}>{rev}</Label>
-            <Label x={260} y={90 + i * 22} cls="fill-emerald-300" size={9}>{run}</Label>
+            <Label x={42} y={90 + i * 20} cls="fill-zinc-300" size={9}>{mon}</Label>
+            <Label x={140} y={90 + i * 20} cls="fill-zinc-200" size={9}>{rev}</Label>
+            <Label x={260} y={90 + i * 20} cls="fill-emerald-300" size={9}>{run}</Label>
           </g>
         ))}
-        <Label x={42} y={222} cls="fill-zinc-600" size={8}>… 8 more months, each row adding its own rev to the pile</Label>
+        <Label x={42} y={218} cls="fill-zinc-600" size={8}>… 7 more months, each row adding its own rev to the pile</Label>
       </motion.g>
       {/* final tally */}
       <motion.g {...fade(0.6)}>
