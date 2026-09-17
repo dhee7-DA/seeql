@@ -1784,3 +1784,18 @@ Work Log:
 Stage Summary:
 - W-FAMILY: 4/4 audited, 5 defects fixed (1 entity-rendering bug). Cumulative 64/99 audited.
 - Next: d (5) -> fin (6) -> playground surfaces + brand.
+
+---
+Task ID: svg-audit-d1
+Agent: Super Z (main agent)
+Task: Audit d-family (5 schema figures d1-d5, L45-49, diagrams-m8.tsx)
+
+Work Log:
+- Edge probe: d1 +36px. Screenshots all 5.
+- Fixes: d1 UNIQUE(email) introspection line shortened (fits 42..642 in 694 panel; claim 16/16 distinct emails probe-verified); d5 recursive strip tail clipped at panel edge (shortened LEFT JOIN note).
+- d2 (suppliers 4 cols, ALTER chain), d3 (eu_customers view = 8 rows, matches EU count), d4 (SCAN 103 vs SEARCH via idx, composite index phone-book rule) all pass clean.
+- Gates: probe [], tsc 0. Commit + worklog.
+
+Stage Summary:
+- D-FAMILY: 5/5 audited, 2 fixes. Cumulative 69/99 audited, ~52 fixes.
+- Next: fin (6) -> playground surfaces (QueryFlowSvg, RowFunnel, SchemaView, SampleGallery) + brand.
