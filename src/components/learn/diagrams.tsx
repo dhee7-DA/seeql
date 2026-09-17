@@ -63,7 +63,7 @@ function L1Anatomy() {
         )}
         {/* row band */}
         <motion.rect {...fade(0.3)} x={134} y={98} width={492} height={30} rx={6} className="fill-emerald-400/10 stroke-emerald-400/60" />
-        <Label x={126} y={117} anchor="end" cls="fill-emerald-300">a row = one customer</Label>
+        <Label x={126} y={117} anchor="end" cls="fill-emerald-300" size={10}>a row = one customer</Label>
         {/* column band */}
         <motion.rect {...fade(0.5)} x={434} y={62} width={72} height={184} rx={6} className="fill-teal-400/10 stroke-teal-400/60" />
         <Label x={470} y={270} anchor="middle" cls="fill-teal-300">a column — one attribute</Label>
@@ -99,8 +99,8 @@ function L2Projection() {
         <Label x={28} y={28} cls="fill-zinc-500">products · 5 columns</Label>
         {before.map((r, ri) =>
           r.map((c, ci) => (
-            <Label key={`${ri}-${ci}`} x={ci === 1 ? 40 : 28 + [0, 0, 150, 212, 252][ci] + (ci > 1 ? 0 : 0)} y={66 + ri * 34} cls={ci === 1 ? "fill-zinc-300" : "fill-zinc-500"} size={10}>
-              {ci === 1 && c.length > 22 ? c.slice(0, 21) + "…" : c}
+            <Label key={`${ri}-${ci}`} x={ci === 1 ? 40 : 28 + [0, 0, 136, 206, 246][ci]} y={66 + ri * 34} cls={ci === 1 ? "fill-zinc-300" : "fill-zinc-500"} size={10}>
+              {ci === 1 && c.length > 19 ? c.slice(0, 19) + "…" : c}
             </Label>
           )),
         )}
@@ -408,7 +408,7 @@ function L8WhereHaving() {
               <line x1={556} y1={168} x2={520} y2={120} className="stroke-rose-400" strokeWidth={2} />
               <rect x={608} y={128} width={100} height={54} rx={7} className="fill-emerald-400/10 stroke-emerald-400/60" />
               <Label x={658} y={150} anchor="middle" cls="fill-emerald-300" size={11}>3 rows out</Label>
-              <Label x={658} y={168} anchor="middle" cls="fill-zinc-500" size={9}>delivered · shipped · pending</Label>
+              <Label x={658} y={168} anchor="middle" cls="fill-zinc-500" size={9}>all but cancelled</Label>
             </g>
           )}
         </g>
@@ -1330,7 +1330,7 @@ function L2ExprMath() {
             <Label x={666} y={104 + i * 34} anchor="end" cls="fill-sky-300">{r.out}</Label>
           </g>
         ))}
-        <Label x={490} y={222} cls="fill-zinc-500" size={9}>AS line_total gives the computed column a real heading</Label>
+        <Label x={490} y={222} cls="fill-zinc-500" size={9}>AS names the computed column</Label>
       </motion.g>
       <motion.g {...fade(0.8)}>
         <Label x={30} y={236} cls="fill-zinc-500" size={9.5}>quantity * unit_price AS line_total — one output value per row; the stored table is never touched</Label>
@@ -1370,8 +1370,8 @@ function L3LikeMatch() {
           );
         })}
         <g>
-          <Label x={122} y={82} cls="fill-amber-300" size={9}>% = anything</Label>
-          <Label x={196} y={82} cls="fill-amber-300" size={9}>anything = %</Label>
+          <Label x={122} y={76} cls="fill-amber-300" size={9}>% = anything</Label>
+          <Label x={196} y={76} cls="fill-amber-300" size={9}>anything = %</Label>
           <line x1={130} y1={99} x2={186} y2={99} className="stroke-emerald-400" strokeWidth={2} strokeLinecap="round" />
         </g>
       </motion.g>
@@ -1472,7 +1472,8 @@ function L5MultiKeySort() {
       {band(30, "APAC — first band (A before E)", "fill-sky-300", apac, 0.3)}
       {band(390, "EU — second band", "fill-violet-300", eu, 0.5)}
       <motion.g {...fade(0.8)}>
-        <Label x={30} y={272} cls="fill-zinc-500" size={9.5}>top 3 of each region shown — Grace Kim appears twice because she placed two APAC orders; region sorts once, total re-sorts every band</Label>
+        <Label x={30} y={266} cls="fill-zinc-500" size={9.5}>top 3 of each region shown — Grace Kim appears twice: she placed two APAC orders</Label>
+        <Label x={30} y={282} cls="fill-zinc-600" size={9}>region sorts once, total re-sorts inside every band</Label>
       </motion.g>
     </svg>
   );
@@ -1503,7 +1504,7 @@ function L6DistinctMech() {
             </g>
           );
         })}
-        <Label x={30 + 7 * 84 + 78} y={64} cls="fill-zinc-600" size={10}>+8 more</Label>
+        <Label x={30} y={92} cls="fill-zinc-600" size={9}>+8 more regions in the table</Label>
         <Arrow x1={360} y1={106} x2={360} y2={128} cls="stroke-emerald-400" />
         <Label x={374} y={120} cls="fill-zinc-500" size={9}>equal rows merge</Label>
       </motion.g>
@@ -1564,7 +1565,8 @@ function L7CountStar() {
         <Label x={690} y={198} anchor="end" cls="fill-amber-300/90" size={9}>■ shipped_at IS NULL (21)</Label>
       </motion.g>
       <motion.g {...fade(0.7)}>
-        <Label x={30} y={236} cls="fill-zinc-500" size={9.5}>COUNT(*) counts rows; COUNT(column) counts values — the 21 holes are the pending + cancelled orders, and MIN/MAX ignore them too</Label>
+        <Label x={30} y={230} cls="fill-zinc-500" size={9.5}>COUNT(*) counts rows; COUNT(column) counts values — the 21 holes are pending + cancelled</Label>
+        <Label x={30} y={246} cls="fill-zinc-600" size={9}>MIN and MAX ignore the holes too</Label>
       </motion.g>
     </svg>
   );
