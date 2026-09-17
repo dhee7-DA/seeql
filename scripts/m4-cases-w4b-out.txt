@@ -1,0 +1,67 @@
+V01 payment stage by method [2 rows] method:card c:16 s:3736400 | method:wire c:11 s:3224800
+V02 payment stage by invoice fold count [1 rows] c:22
+V03 payment stage by id fold count [1 rows] c:27
+V04 invoice stage by status [3 rows] status:open c:6 s:1960900 | status:paid c:21 s:6644300 | status:void c:1 s:92500
+V05 invoice stage by customer fold count [1 rows] c:11
+V06 products above own-supplier avg [1 rows] c:8
+V07 products above own-category avg [1 rows] c:7
+V08 expense categories over 400000 [1 rows] c:2 tot:2137000
+V09 expense categories over 500000 [1 rows] c:1
+V10 expense categories over 250000 [1 rows] c:3
+V11 avg-order-stage vs store avg (AVG stage) [1 rows] c:7
+V12 sum-stage vs store avg order (SUM stage distractor) [1 rows] c:16
+V13 min-stage vs store avg order (MIN stage distractor) [1 rows] c:2
+V14 order status stage [4 rows] status:cancelled c:7 s:1152.49 | status:delivered c:52 s:15571.07 | status:pending c:14 s:6113 | status:shipped c:30 s:11996.72
+V15 order stage by shipped_at fold count [1 rows] c:76 mx:7265.49
+V16 big invoices over 200000 min/avg [1 rows] mn:214300 a:376330 mx:614800
+V17 big invoices over 300000 min/avg [1 rows] mn:307600 a:442353.85
+V18 orders of open-invoice customers [1 rows] c:55
+V19 orders of paid-invoice customers [1 rows] c:78
+V20 orders of void-invoice customer [1 rows] c:1
+V21 orders NOT in open set [1 rows] c:48
+V22 hot expense months over 150000 [1 rows] c:12 mn:151000 mx:321000 tot:2249600 av:187466.67
+V23 VIP invoice count + min + max [1 rows] c:17 mn:129500 mx:614800
+V24 countdown 10 [1 rows] c:10 s:55
+V25 countdown 10 floor 3 [1 rows] c:8
+V26 countdown 10 floor 0 [1 rows] c:11
+V27 countdown 40 step1 [1 rows] c:40
+V28 countdown 40 step3 [1 rows] c:14 s:287
+V29 countdown 40 step5 [1 rows] c:9 s:180
+V30 countdown 40 s2 floor0 [1 rows] c:21
+V31 countdown 40 s2 floor2 [1 rows] c:20
+V32 order-date ladder +1 day [1 rows] c:424
+V33 order-date ladder +2 days [1 rows] c:213
+V34 order-date ladder +7 days [1 rows] c:62
+V35 order-date ladder MAX->MIN [1 rows] c:1
+V36 invoice ids contiguous? [1 rows] mn:1 mx:28 c:28
+V37 walk 1..40 join invoices ERROR no such column: invoice_id
+V38 walk 1..20 join invoices ERROR no such column: invoice_id
+V39 walk 1..25 join invoices ERROR no such column: invoice_id
+V40 powers k=4 bound 1000 [1 rows] c:6 mx:1024
+V41 powers k=3 bound 100 [1 rows] c:6 mx:243
+V42 powers k=3 bound 10000 [1 rows] c:10 mx:19683
+V43 halve 1000 floor1 sum [1 rows] c:10 s:1994 mn:1
+V44 halve seed 500 [1 rows] c:9
+V45 countdown 120 s5 f5 [1 rows] c:24 s:1500
+V46 countdown 100 s5 f4 [1 rows] c:21
+V47 countdown 100 s5 f20 [1 rows] c:17
+V48 countdown 100 s5 f5 sum [1 rows] c:20 s:1050 mx:100 mn:5
+V49 payments ladder +1 day [1 rows] c:357
+V50 payments ladder +30 day [1 rows] c:13
+V51 shipped-rev over 500 customers [1 rows] c:7
+V52 cancelled-rev over 500 customers [1 rows] c:0
+V53 delivered-rev over 500 customers [1 rows] c:10
+V54 invoices MIN payment vs amount underpaid [1 rows] c:16
+V55 invoices AVG payment >= amount [1 rows] c:16
+V56 peak order days by status fold [1 rows] c:1
+V57 peak order days by customer fold [1 rows] c:1
+V58 peak order days strictly under max [1 rows] c:82
+V59 VIP sku coverage bar 300 [1 rows] c:16
+V60 VIP sku coverage bar 100 [1 rows] c:16
+V61 Alice-only sku coverage [1 rows] c:15
+V62 Liam order sku coverage [1 rows] c:4
+V63 VIP avg lifetime stage check [1 rows] a:4957.93
+V64 VIP avg via status fold [1 rows] a:6197.41 c:4
+V65 VIP avg via name fold (should error or 1 row) [1 rows] a:339.58
+V66 pending share digits 0 [1 rows] s0:18
+V67 cash net check [1 rows] n:4419600

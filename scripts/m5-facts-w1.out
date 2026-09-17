@@ -1,0 +1,200 @@
+sqlite {
+  v: "3.53.0",
+}
+
+== cs-1203 filled
+[{"name":"Noise-Canceling Headset","shout":"NOISE-CANCELING HEADSET","len":23}]
+
+== cs-1204 filled
+[{"yr":"2023","signups":4},{"yr":"2024","signups":12}]
+
+== cs-1205 filled
+[{"number":"INV-2024-011","readable":"INV/2024/011"}]
+
+== cs-1206 filled
+[{"id":83,"name":"Keiko Sato","total":397.99,"flag":"CANCELLED"},{"id":95,"name":"Alice Chen","total":206.19,"flag":"CANCELLED"},{"id":7,"name":"Alice Chen","total":152.52,"flag":"CANCELLED"}]
+
+== cs-1207 filled
+[{"name":"Alice Chen","at_pos":11,"elen":22}]
+
+== cs-1208 filled
+[{"name":"Smart Watch S","price":199.99,"shelf":"199.99"}]
+
+== cs-1209 filled
+[{"slug":"Atlas-Property-GmbH","n":14}]
+
+== cs-1210 filled
+[{"name":"4K Webcam Pro","len":13},{"name":"Smart Watch S","len":13}]
+
+== cs-1210 len14 twin
+[{"name":"Ring Light 14\"","len":14}]
+
+== cs-1211 filled
+[{"ln":12,"n":5}]
+
+== cs-1211 eleven
+[{"ln":11,"n":3}]
+
+== cs-1212 filled
+[{"id":74,"line":"Farid Nasser — PENDING","total":1088.44}]
+
+== cs-1213 filled
+[{"name":"Alpine Audio GmbH","region":"EU","plate":"4.80"}]
+
+== cs-1214 filled
+[{"name":"Farid Nasser","tag":"dubai","cl":5},{"name":"Maya Patel","tag":"mumbai","cl":6},{"name":"Keiko Sato","tag":"nagoya","cl":6},{"name":"Hiro Tanaka","tag":"osaka","cl":5},{"name":"Grace Kim","tag":"seoul","cl":5}]
+
+== cs-1215 filled
+[{"who":"BRUNO SILVA","elen":23},{"who":"EMMA WILSON","elen":23},{"who":"HIRO TANAKA","elen":23},{"who":"ISABELLA ROSSI","elen":23},{"who":"LIAM O'BRIEN","elen":23}]
+
+== cs-1216 filled
+[{"name":"Alpine Audio GmbH","product":"Desk Mat Extended","ln":17},{"name":"Alpine Audio GmbH","product":"Studio Desktop Mic","ln":17}]
+
+== cs-1217 filled
+[{"yr":"2025","n":5,"cents":1919700}]
+
+== cs-1217 2024 twin
+[{"yr":"2024","n":23,"cents":6778000}]
+
+== cs-1218 filled
+[{"name":"Liam O'Brien","spaces":1}]
+
+== cs-1219 filled
+[{"category":"Travel","n":3,"spend":"2521.00"}]
+
+== cs-1220 filled
+[{"contact":"Alice Chen — alice.chen@example.com","n":24}]
+
+== cs-1221 filled
+[{"id":7,"sku":"4K -07"}]
+
+== cs-1222 filled
+[{"ref":"ORD-007","name":"Alice Chen","total":152.52},{"ref":"ORD-021","name":"Alice Chen","total":136.11},{"ref":"ORD-050","name":"Maya Patel","total":90.35},{"ref":"ORD-051","name":"Maya Patel","total":25.47},{"ref":"ORD-082","name":"Emma Wilson","total":143.86},{"ref":"ORD-083","name":"Keiko Sato","total":397.99},{"ref":"ORD-095","name":"Alice Chen","total":206.19}]
+
+== cs-1223 filled
+[{"ln":17,"n":3}]
+
+== cs-1223 who
+[{"name":"Desk Mat Extended","ln":17},{"name":"HDMI 2.1 Cable 2m","ln":17},{"name":"Wireless Mouse M3","ln":17}]
+
+== cs-1224 filled
+[{"cohort":"2023-intake","n":4}]
+
+== cs-1225 filled
+[{"tag":"Smart Watch S — $199.99"},{"tag":"Noise-Canceling Headset — $149.99"},{"tag":"4K Webcam Pro — $129.00"}]
+
+== cs-1226 filled
+[{"name":"Alice Chen","at_pos":11,"broken":22}]
+
+== cs-1227 filled
+[{"partner":"ALPINE AUDIO GMBH","ln":17,"items":2},{"partner":"ANDES NATURALS SA","ln":17,"items":2},{"partner":"NORDIC GADGETS AB","ln":17,"items":3}]
+
+== cs-1228 filled
+[{"acct":"CASH","entries":27,"net":"44196.00"}]
+
+== cs-1229 filled
+[{"number":"INV-2024-011","seq":"011","amt":"925.00","ln":12}]
+
+== cs-1230 filled
+[{"name":"Maya Patel","n":2,"pool":115.82,"biggest":"90.35"}]
+
+== cs-1230 pending twin
+[{"name":"Chloe Dubois","n":2,"pool":1309.92,"biggest":"945.21"},{"name":"Maya Patel","n":2,"pool":455.20000000000005,"biggest":"306.92"}]
+
+== cs-1231 filled
+[{"cat":"ACCESSORIES","cl":11,"n":3},{"cat":"ELECTRONICS","cl":11,"n":3}]
+
+== cs-1232 filled
+[{"slug":"Skyline-Travel","ch":"S","n":3,"spend":"2521.00"}]
+
+== cs-1233 filled
+[{"name":"Alice Chen","at_pos":11,"broken":22,"fixed":1}]
+
+== cs-1234 filled
+[{"name":"Isabella Rossi","handle":"bella.rossi","guess":"isabella.rossi"},{"name":"Dmitri Volkov","handle":"d.volkov","guess":"dmitri.volkov"},{"name":"Farid Nasser","handle":"farid.n","guess":"farid.nasser"},{"name":"Liam O'Brien","handle":"liam.obrien","guess":"liam.o'brien"},{"name":"Pedro Alvarez","handle":"pedro.alv","guess":"pedro.alvarez"}]
+
+== cs-1235 filled
+[{"tag":"Fitness Band X2 x95","ln":15},{"tag":"USB-C Hub 7-in-1 x85","ln":16},{"tag":"4K Webcam Pro x70","ln":13},{"tag":"Noise-Canceling Headset x60","ln":23},{"tag":"Studio Desktop Mic x45","ln":18},{"tag":"Smart Watch S x40","ln":13}]
+
+== cs-1236 filled
+[{"ch":"R","with_cents":2,"avg_price":"29.25"}]
+
+== cs-1236 S twin
+[{"ch":"S","with_cents":1,"avg_price":"199.99"}]
+
+== cs-1237 filled
+[{"name":"Shenzhen Electro","ln":16,"items":3,"plate":"4.10"},{"name":"Pacific Textiles","ln":16,"items":3,"plate":"3.90"}]
+
+== cs-1238 filled
+[{"mon":"2025-01","entries":6,"debits":"18921.00"}]
+
+== cs-1238 2024-01 twin
+[{"mon":"2024-01","entries":2,"debits":"1719.00"}]
+
+== cs-1239 filled
+[{"base":"Farid Nasser — Dubai","cl":5,"cohort":"2024 cohort"},{"base":"Grace Kim — Seoul","cl":5,"cohort":"2024 cohort"},{"base":"Hiro Tanaka — Osaka","cl":5,"cohort":"2024 cohort"},{"base":"Isabella Rossi — Milan","cl":5,"cohort":"2024 cohort"}]
+
+== cs-1239 len6 twin
+[{"base":"Emma Wilson — Austin","cl":6},{"base":"Keiko Sato — Nagoya","cl":6},{"base":"Maya Patel — Mumbai","cl":6},{"base":"Olivia Brown — London","cl":6},{"base":"Pedro Alvarez — Madrid","cl":6}]
+
+== cs-1240 filled
+[{"number":"INV-2024-001","bare":"2024-001","head":"INV"},{"number":"INV-2024-002","bare":"2024-002","head":"INV"},{"number":"INV-2024-003","bare":"2024-003","head":"INV"},{"number":"INV-2024-004","bare":"2024-004","head":"INV"},{"number":"INV-2024-005","bare":"2024-005","head":"INV"},{"number":"INV-2024-006","bare":"2024-006","head":"INV"},{"number":"INV-2024-007","bare":"2024-007","head":"INV"},{"number":"INV-2024-008","bare":"2024-008","head":"INV"},{"number":"INV-2024-009","bare":"2024-009","head":"INV"},{"number":"INV-2024-010","bare":"2024-010","head":"INV"},{"number":"INV-2024-011","bare":"2024-011","head":"INV"},{"number":"INV-2024-012","bare":"2024-012","head":"INV"},{"number":"INV-2024-013","bare":"2024-013","head":"INV"},{"number":"INV-2024-014","bare":"2024-014","head":"INV"},{"number":"INV-2024-015","bare":"2024-015","head":"INV"},{"number":"INV-2024-016","bare":"2024-016","head":"INV"},{"number":"INV-2024-017","bare":"2024-017","head":"INV"},{"number":"INV-2024-018","bare":"2024-018","head":"INV"},{"number":"INV-2024-019","bare":"2024-019","head":"INV"},{"number":"INV-2024-020","bare":"2024-020","head":"INV"},{"number":"INV-2024-021","bare":"2024-021","head":"INV"},{"number":"INV-2024-022","bare":"2024-022","head":"INV"},{"number":"INV-2024-023","bare":"2024-023","head":"INV"},{"number":"INV-2025-024","bare":"2025-024","head":"INV"},{"number":"INV-2025-025","bare":"2025-025","head":"INV"},{"number":"INV-2025-026","bare":"2025-026","head":"INV"},{"number":"INV-2025-027","bare":"2025-027","head":"INV"},{"number":"INV-2025-028","bare":"2025-028","head":"INV"}]
+
+== cs-1240 census
+[{"pre":"INV","ln":12,"n":28}]
+
+== REPLACE empty pattern
+[{"a":"Atlas Property GmbH","b":"Atlas Property GmbH"}]
+
+== TRIM 3 args
+ERROR: wrong number of arguments to function TRIM()
+
+== SUBSTR 1 arg
+ERROR: wrong number of arguments to function SUBSTR()
+
+== SUBSTR email 2-arg @
+[{"a":"alice.chen@example.com"}]
+
+== ROUND format-first
+[{"a":0,"b":0,"c":0}]
+
+== printf 199.99 trio
+[{"a":"199.99","b":"200","c":"199"}]
+
+== printf 7 trio
+[{"a":"007","b":"07","c":"7"}]
+
+== printf avg R raw
+[{"raw":29.245}]
+
+== MAX 2-arg scalar
+[{"a":"Noise-Canceling Headset"}]
+
+== UPPER 2 args
+ERROR: wrong number of arguments to function UPPER()
+
+== maya cancelled exact
+[{"pool":115.82,"mx":90.35}]
+
+== emma pending exact
+[{"pool":1471.43,"mx":725.34,"n":3}]
+
+== order 74 by total
+[{"id":74,"status":"pending","total":1088.44}]
+
+== order 43 by total
+[{"id":43,"name":"Chloe Dubois","status":"pending","total":945.21}]
+
+== alice cancelled pool
+[{"pool":494.82000000000005}]
+
+== 2023 cohort who
+[{"name":"Alice Chen"},{"name":"Bruno Silva"},{"name":"Chloe Dubois"},{"name":"Dmitri Volkov"}]
+
+== 2024 len5 who
+[{"name":"Farid Nasser","city":"Dubai"},{"name":"Grace Kim","city":"Seoul"},{"name":"Hiro Tanaka","city":"Osaka"},{"name":"Isabella Rossi","city":"Milan"}]
+
+== 2023 cities
+[{"name":"Alice Chen","city":"Berlin","cl":6},{"name":"Bruno Silva","city":"São Paulo","cl":9},{"name":"Chloe Dubois","city":"Lyon","cl":4},{"name":"Dmitri Volkov","city":"Tallinn","cl":7}]
+
+probe done, copy removed

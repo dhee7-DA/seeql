@@ -1,0 +1,147 @@
+// Problem bank for Lesson 2 — SELECT expressions, aliases, computed columns.
+// Existing: l2-p1 (easy), l2-p2 (medium). New items l2-p3..p15.
+
+import type { QueryProblem } from "../types";
+
+export const problems02: QueryProblem[] = [
+  {
+    id: "l2-p3",
+    prompt: "Directory: `full_name` and `email` for every customer — in that column order.",
+    tables: ["customers"],
+    difficulty: "easy",
+    hints: ["Two columns, comma-separated.", "No filtering — every one of the 40 rows."],
+    solution: "SELECT full_name, email\nFROM customers;",
+  },
+  {
+    id: "l2-p4",
+    prompt: "Stockroom: `product_name` and `stock_quantity` for all products.",
+    tables: ["products"],
+    difficulty: "easy",
+    hints: ["Simple two-column projection.", "FROM products."],
+    solution: "SELECT product_name, stock_quantity\nFROM products;",
+  },
+  {
+    id: "l2-p5",
+    prompt: "Feedback log: `rating` and `review_date` for every review.",
+    tables: ["reviews"],
+    difficulty: "easy",
+    hints: ["Two columns from reviews.", "NULL ratings appear as empty slots — fine, show them."],
+    solution: "SELECT rating, review_date\nFROM reviews;",
+  },
+  {
+    id: "l2-p6",
+    prompt: "Line values: for the first 5 order_items by id, show `id`, `unit_price`, `quantity`, and `line_total` = unit_price × quantity.",
+    tables: ["order_items"],
+    difficulty: "easy",
+    hints: [
+      "The computed column is an expression: unit_price * quantity.",
+      "Alias it: AS line_total.",
+      "Borrow ORDER BY id LIMIT 5.",
+    ],
+    solution: "SELECT id, unit_price, quantity, unit_price * quantity AS line_total\nFROM order_items\nORDER BY id\nLIMIT 5;",
+    orderMatters: true,
+  },
+  {
+    id: "l2-p7",
+    prompt: "Value in thousands: for the first 10 customers by id, show `full_name` and `ltv_k` = lifetime_value ÷ 1000, rounded to 2 decimals.",
+    tables: ["customers"],
+    difficulty: "medium",
+    hints: [
+      "Division: lifetime_value / 1000.",
+      "Wrap it: ROUND(lifetime_value / 1000, 2).",
+      "NULL values stay NULL after the math — that's honest.",
+    ],
+    solution: "SELECT full_name, ROUND(lifetime_value / 1000, 2) AS ltv_k\nFROM customers\nORDER BY id\nLIMIT 10;",
+    orderMatters: true,
+  },
+  {
+    id: "l2-p8",
+    prompt: "Shelf value: every product's `product_name` and `stock_value` = price × stock_quantity, rounded to 2.",
+    tables: ["products"],
+    difficulty: "medium",
+    hints: [
+      "Expression: ROUND(price * stock_quantity, 2).",
+      "Rows with NULL price or NULL stock produce NULL — arithmetic with NULL is NULL.",
+    ],
+    solution: "SELECT product_name, ROUND(price * stock_quantity, 2) AS stock_value\nFROM products;",
+  },
+  {
+    id: "l2-p9",
+    prompt: "With shipping: for the first 10 orders by id, show `id`, `total_amount`, and `with_shipping` = total_amount + 9.99, rounded to 2.",
+    tables: ["orders"],
+    difficulty: "medium",
+    hints: ["total_amount + 9.99 inside ROUND.", "Alias AS with_shipping.", "NULL totals produce NULL — correct behavior."],
+    solution: "SELECT id, total_amount, ROUND(total_amount + 9.99, 2) AS with_shipping\nFROM orders\nORDER BY id\nLIMIT 10;",
+    orderMatters: true,
+  },
+  {
+    id: "l2-p10",
+    prompt: "Margins: for the first 5 products by id, show `product_name`, `price`, `cost`, and `margin` = price − cost.",
+    tables: ["products"],
+    difficulty: "medium",
+    hints: ["Expression: price - cost.", "One product has a NULL price — its margin is NULL, not 0."],
+    solution: "SELECT product_name, price, cost, price - cost AS margin\nFROM products\nORDER BY id\nLIMIT 5;",
+    orderMatters: true,
+  },
+  {
+    id: "l2-p11",
+    prompt: "Margin health: for the first 10 products by id, show `product_name`, `margin` = price − cost, and `margin_pct` = margin ÷ cost × 100 rounded to 1 decimal.",
+    tables: ["products"],
+    difficulty: "hard",
+    hints: [
+      "Two expressions over the same inputs: price - cost and (price - cost) / cost * 100.",
+      "ROUND(..., 1) for the percentage.",
+      "NULL inputs cascade — leave them NULL.",
+    ],
+    solution: "SELECT product_name,\n       price - cost AS margin,\n       ROUND((price - cost) / cost * 100, 1) AS margin_pct\nFROM products\nORDER BY id\nLIMIT 10;",
+    orderMatters: true,
+  },
+  {
+    id: "l2-p12",
+    prompt: "Sale chain: for the first 8 products by id, show `price`, `sale_price` = price × 0.9 (2 decimals), and `flash_price` = sale price × 0.9 again (2 decimals).",
+    tables: ["products"],
+    difficulty: "hard",
+    hints: [
+      "You can't reference the alias sale_price in another SELECT expression — repeat the math: ROUND(price * 0.9 * 0.9, 2).",
+      "Two ROUNDs, two aliases.",
+    ],
+    solution: "SELECT price,\n       ROUND(price * 0.9, 2) AS sale_price,\n       ROUND(price * 0.9 * 0.9, 2) AS flash_price\nFROM products\nORDER BY id\nLIMIT 8;",
+    orderMatters: true,
+  },
+  {
+    id: "l2-p13",
+    prompt: "Invoice view: for the first 8 orders by id, show `id`, `total_amount`, `with_vat` = total × 1.19 (2 decimals), and a constant column `currency` = 'EUR' on every row.",
+    tables: ["orders"],
+    difficulty: "hard",
+    hints: [
+      "ROUND(total_amount * 1.19, 2).",
+      "A literal in SELECT: 'EUR' AS currency — repeated on every row.",
+      "NULL totals stay NULL throughout.",
+    ],
+    solution: "SELECT id, total_amount, ROUND(total_amount * 1.19, 2) AS with_vat, 'EUR' AS currency\nFROM orders\nORDER BY id\nLIMIT 8;",
+    orderMatters: true,
+  },
+  {
+    id: "l2-p14",
+    prompt: "Expand the star: for product id 1, write the **full 8-column projection explicitly** (id, product_name, category, price, cost, stock_quantity, supplier, listed_at — exact order). Result must match SELECT *.",
+    tables: ["products"],
+    difficulty: "hard",
+    hints: [
+      "SELECT * hides the real column list — write all 8 names by hand, comma-separated.",
+      "Same shape as SELECT * FROM products WHERE id = 1 — but no star allowed.",
+    ],
+    solution: "SELECT id, product_name, category, price, cost, stock_quantity, supplier, listed_at\nFROM products\nWHERE id = 1;",
+  },
+  {
+    id: "l2-p15",
+    prompt: "Double bookkeeping: for the first 5 order_items by id, show `id`, `quantity`, `unit_price`, `gross` = unit_price × quantity (2 dp), and `net` = gross × 0.95 (2 dp).",
+    tables: ["order_items"],
+    difficulty: "hard",
+    hints: [
+      "gross: ROUND(unit_price * quantity, 2).",
+      "net must repeat the expression — aliases aren't reusable in the same SELECT: ROUND(unit_price * quantity * 0.95, 2).",
+    ],
+    solution: "SELECT id, quantity, unit_price,\n       ROUND(unit_price * quantity, 2) AS gross,\n       ROUND(unit_price * quantity * 0.95, 2) AS net\nFROM order_items\nORDER BY id\nLIMIT 5;",
+    orderMatters: true,
+  },
+];

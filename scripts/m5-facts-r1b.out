@@ -1,0 +1,173 @@
+sqlite {
+  v: "3.53.0",
+}
+
+== handle length distribution
+[{"hl":7,"n":1},{"hl":8,"n":1},{"hl":9,"n":2},{"hl":10,"n":4},{"hl":11,"n":5},{"hl":12,"n":3}]
+
+== handle length 12 rows
+[{"h":"chloe.dubois"},{"h":"jamal.wright"},{"h":"olivia.brown"}]
+
+== handle length top8
+[{"h":"chloe.dubois","hl":12},{"h":"jamal.wright","hl":12},{"h":"olivia.brown","hl":12},{"h":"bella.rossi","hl":11},{"h":"bruno.silva","hl":11},{"h":"emma.wilson","hl":11},{"h":"hiro.tanaka","hl":11},{"h":"liam.obrien","hl":11}]
+
+== handle length bottom4
+[{"h":"farid.n","hl":7},{"h":"d.volkov","hl":8},{"h":"grace.kim","hl":9},{"h":"pedro.alv","hl":9}]
+
+== city first-letter census
+[{"ch":"A","n":1},{"ch":"B","n":1},{"ch":"C","n":2},{"ch":"D","n":1},{"ch":"H","n":1},{"ch":"L","n":2},{"ch":"M","n":3},{"ch":"N","n":1},{"ch":"O","n":1},{"ch":"S","n":2},{"ch":"T","n":1}]
+
+== city 2-letter tags
+[{"tag":"Au","n":1},{"tag":"Be","n":1},{"tag":"Ch","n":1},{"tag":"Co","n":1},{"tag":"Du","n":1},{"tag":"Ha","n":1},{"tag":"Lo","n":1},{"tag":"Ly","n":1},{"tag":"Ma","n":1},{"tag":"Mi","n":1},{"tag":"Mu","n":1},{"tag":"Na","n":1},{"tag":"Os","n":1},{"tag":"Se","n":1},{"tag":"Sã","n":1},{"tag":"Ta","n":1}]
+
+== city length census
+[{"cl":4,"n":2},{"cl":5,"n":4},{"cl":6,"n":6},{"cl":7,"n":3},{"cl":9,"n":1}]
+
+== city length 6 towns
+[{"towns":"Berlin,Austin,Nagoya,Mumbai,London,Madrid"}]
+
+== customer cohort year
+[{"yr":"2023","n":4},{"yr":"2024","n":12}]
+
+== handle vs name mismatch
+[{"name":"Isabella Rossi","h":"bella.rossi"},{"name":"Dmitri Volkov","h":"d.volkov"},{"name":"Farid Nasser","h":"farid.n"},{"name":"Liam O'Brien","h":"liam.obrien"},{"name":"Pedro Alvarez","h":"pedro.alv"}]
+
+== emails <= 20
+[{"name":"Farid Nasser","email":"farid.n@example.com","elen":19},{"name":"Dmitri Volkov","email":"d.volkov@example.com","elen":20}]
+
+== email length 23 who
+[{"who":"Bruno Silva,Emma Wilson,Hiro Tanaka,Isabella Rossi,Liam O'Brien"}]
+
+== name len 12 who
+[{"who":"Chloe Dubois,Farid Nasser,Jamal Wright,Liam O'Brien,Olivia Brown"}]
+
+== name len 11 who
+[{"who":"Bruno Silva,Emma Wilson,Hiro Tanaka"}]
+
+== region census desc
+[{"block":"EU","n":8},{"block":"APAC","n":5},{"block":"US","n":2},{"block":"LATAM","n":1}]
+
+== domain census
+[{"dom":"example.com","n":16}]
+
+== orders per customer full
+[{"name":"Alice Chen","n":24},{"name":"Emma Wilson","n":17},{"name":"Grace Kim","n":14},{"name":"Maya Patel","n":13},{"name":"Chloe Dubois","n":5},{"name":"Isabella Rossi","n":4},{"name":"Keiko Sato","n":4},{"name":"Noah Meyer","n":4},{"name":"Pedro Alvarez","n":4},{"name":"Farid Nasser","n":3},{"name":"Hiro Tanaka","n":3},{"name":"Bruno Silva","n":2},{"name":"Dmitri Volkov","n":2},{"name":"Jamal Wright","n":2},{"name":"Liam O'Brien","n":1},{"name":"Olivia Brown","n":1}]
+
+== customers without orders
+[{"n":0}]
+
+== cancelled ordered
+[{"id":83,"name":"Keiko Sato","t":397.99},{"id":95,"name":"Alice Chen","t":206.19},{"id":7,"name":"Alice Chen","t":152.52},{"id":82,"name":"Emma Wilson","t":143.86},{"id":21,"name":"Alice Chen","t":136.11},{"id":50,"name":"Maya Patel","t":90.35},{"id":51,"name":"Maya Patel","t":25.47}]
+
+== pending top5 named
+[{"id":74,"name":"Farid Nasser","total":1088.44},{"id":43,"name":"Chloe Dubois","total":945.21},{"id":5,"name":"Emma Wilson","total":725.34},{"id":97,"name":"Emma Wilson","total":585.79},{"id":1,"name":"Pedro Alvarez","total":576.54}]
+
+== invoice year census
+[{"yr":"024-","n":23},{"yr":"025-","n":5}]
+
+== invoice open by year
+[{"yr":"024-","n":2},{"yr":"025-","n":4}]
+
+== invoice open top3
+[{"number":"INV-2025-025","customer_id":1,"amount_cents":614800},{"number":"INV-2025-024","customer_id":5,"amount_cents":493700},{"number":"INV-2025-026","customer_id":12,"amount_cents":356200}]
+
+== invoice void row
+[{"number":"INV-2024-011","seq":"011","slash":"INV/2024/011","amt":"925.00"}]
+
+== invoice distinct customers
+[{"n":11}]
+
+== product first-letter census
+[{"ch":"4","n":1},{"ch":"B","n":1},{"ch":"C","n":1},{"ch":"D","n":1},{"ch":"F","n":1},{"ch":"H","n":1},{"ch":"L","n":1},{"ch":"M","n":1},{"ch":"N","n":1},{"ch":"R","n":2},{"ch":"S","n":2},{"ch":"U","n":1},{"ch":"W","n":1},{"ch":"Y","n":1}]
+
+== product cents initial census
+[{"ini":"B","n":1},{"ini":"D","n":1},{"ini":"H","n":1},{"ini":"L","n":1},{"ini":"M","n":1},{"ini":"N","n":1},{"ini":"R","n":2},{"ini":"S","n":1},{"ini":"W","n":1}]
+
+== product cents by category
+[{"category":"Accessories","n":3},{"category":"Apparel","n":1},{"category":"Audio","n":2},{"category":"Electronics","n":2},{"category":"Video","n":1},{"category":"Wearables","n":1}]
+
+== product cents by cat-length
+[{"cl":5,"n":3},{"cl":7,"n":1},{"cl":9,"n":1},{"cl":11,"n":5}]
+
+== products per supplier
+[{"name":"Midwest Hardware Co","n":3},{"name":"Nordic Gadgets AB","n":3},{"name":"Pacific Textiles","n":3},{"name":"Shenzhen Electro","n":3},{"name":"Alpine Audio GmbH","n":2},{"name":"Andes Naturals SA","n":2}]
+
+== supplier region product rollup
+[{"block":"APAC","n":6,"partners":"Shenzhen Electro,Pacific Textiles,Shenzhen Electro,Pacific Textiles,Shenzhen Electro,Pacific Textiles"},{"block":"EU","n":5,"partners":"Nordic Gadgets AB,Alpine Audio GmbH,Nordic Gadgets AB,Alpine Audio GmbH,Nordic Gadgets AB"},{"block":"US","n":3,"partners":"Midwest Hardware Co,Midwest Hardware Co,Midwest Hardware Co"},{"block":"LATAM","n":2,"partners":"Andes Naturals SA,Andes Naturals SA"}]
+
+== gmbh join
+[{"line":"Alpine Audio GmbH · Desk Mat Extended"},{"line":"Alpine Audio GmbH · Studio Desktop Mic"}]
+
+== supplier tails
+[{"name":"Alpine Audio GmbH","tail":"GmbH"},{"name":"Andes Naturals SA","tail":"s SA"},{"name":"Midwest Hardware Co","tail":"e Co"},{"name":"Nordic Gadgets AB","tail":"s AB"},{"name":"Pacific Textiles","tail":"iles"},{"name":"Shenzhen Electro","tail":"ctro"}]
+
+== low stock
+[{"name":"Smart Watch S","stock":40},{"name":"Studio Desktop Mic","stock":45},{"name":"Noise-Canceling Headset","stock":60},{"name":"4K Webcam Pro","stock":70},{"name":"USB-C Hub 7-in-1","stock":85},{"name":"Fitness Band X2","stock":95}]
+
+== stock top5
+[{"name":"HDMI 2.1 Cable 2m","stock":500},{"name":"Running Socks 3-pack","stock":400},{"name":"Wireless Mouse M3","stock":300},{"name":"Desk Mat Extended","stock":260},{"name":"Yoga Mat Eco 6mm","stock":220}]
+
+== audio tags
+[{"tag":"Bluetooth Speaker Mini x210"},{"tag":"Noise-Canceling Headset x60"},{"tag":"Studio Desktop Mic x45"}]
+
+== longest5
+[{"name":"Noise-Canceling Headset","len":23},{"name":"Bluetooth Speaker Mini","len":22},{"name":"Mechanical Keyboard K1","len":22},{"name":"Laptop Stand Aluminum","len":21},{"name":"Running Socks 3-pack","len":20}]
+
+== shortest5
+[{"name":"4K Webcam Pro","len":13},{"name":"Smart Watch S","len":13},{"name":"Ring Light 14\"","len":14},{"name":"Fitness Band X2","len":15},{"name":"USB-C Hub 7-in-1","len":16}]
+
+== sku sample
+[{"sku":"4K -07"},{"sku":"BLU-06"},{"sku":"CYC-15"},{"sku":"DES-11"},{"sku":"FIT-12"},{"sku":"HDM-09"},{"sku":"LAP-10"},{"sku":"MEC-01"}]
+
+== price tag sample
+[{"tag":"4K Webcam Pro — $129.00"},{"tag":"Bluetooth Speaker Mini — $59.99"},{"tag":"Cycling Jersey Pro — $65.00"},{"tag":"Desk Mat Extended — $24.99"},{"tag":"Fitness Band X2 — $79.00"},{"tag":"HDMI 2.1 Cable 2m — $14.99"}]
+
+== cast text compare
+[{"n":16}]
+
+== cast real compare
+[{"n":16}]
+
+== cast boolean compare
+[{"n":16}]
+
+== printf edges
+[{"a":"89","b":"90.0","c":"90","dd":"452","e":"07","f":"001","g":"32"}]
+
+== top price
+[{"name":"Smart Watch S","price":199.99,"head":"SMA"}]
+
+== expense vendor slug census
+[{"slug":"AdWorks-Media","n":14},{"slug":"Atlas-Property-GmbH","n":14},{"slug":"DevTools-Inc","n":5},{"slug":"Skyline-Travel","n":3}]
+
+== expense vendor initial census
+[{"ch":"A","n":28,"s":2137000},{"ch":"D","n":5,"s":152500},{"ch":"S","n":3,"s":252100}]
+
+== expense per vendor printf
+[{"vendor":"AdWorks Media","n":14,"spend":"4570.00"},{"vendor":"Atlas Property GmbH","n":14,"spend":"16800.00"},{"vendor":"DevTools Inc","n":5,"spend":"1525.00"},{"vendor":"Skyline Travel","n":3,"spend":"2521.00"}]
+
+== ads vendor row
+[{"vendor":"AdWorks Media","n":14,"spend":"4570.00"}]
+
+== travel max row
+[{"category":"Travel","vendor":"Skyline Travel","spent_on":"2024-08-16","amount_cents":168000}]
+
+== ledger month census
+[{"mon":"2024-01","n":2,"deb":171900},{"mon":"2024-02","n":6,"deb":1087300},{"mon":"2024-03","n":6,"deb":1491900},{"mon":"2024-04","n":6,"deb":1126400},{"mon":"2024-05","n":6,"deb":1077600},{"mon":"2024-06","n":6,"deb":938000},{"mon":"2024-07","n":6,"deb":1065000},{"mon":"2024-08","n":6,"deb":1673450},{"mon":"2024-09","n":6,"deb":1576650},{"mon":"2024-10","n":6,"deb":1423100},{"mon":"2024-11","n":6,"deb":1307800},{"mon":"2024-12","n":6,"deb":1593000},{"mon":"2025-01","n":6,"deb":1892100},{"mon":"2025-02","n":6,"deb":1683800}]
+
+== ledger memo length census
+[{"ml":25,"n":13},{"ml":30,"n":13},{"ml":34,"n":13},{"ml":35,"n":13},{"ml":37,"n":14},{"ml":43,"n":14}]
+
+== ledger cash row
+[{"acct":"CASH","n":27,"deb":6961200,"net":"44196.00"}]
+
+== ledger AR row
+[{"acct":"ACCOUNTS_RECEIVABLE","deb":8605200,"cred":6961200,"net":"16440.00"}]
+
+== ledger AR upper census
+[{"acct":"ACCOUNTS_RECEIVABLE","n":26,"deb":8605200},{"acct":"CASH","n":27,"deb":6961200},{"acct":"OPERATING_EXPENSES","n":14,"deb":2541600},{"acct":"SALES_REVENUE","n":13,"deb":0}]
+
+== payments per method
+[{"method":"card","n":16,"s":3736400},{"method":"wire","n":11,"s":3224800}]
+
+probe done, copy removed

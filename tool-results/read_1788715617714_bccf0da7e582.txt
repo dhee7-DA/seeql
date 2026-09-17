@@ -1,0 +1,891 @@
+     1→"use client";
+     2→
+     3→// Landing "Try it live" — a real read-only SQL sandbox on the storefront
+     4→// database. Type a query (or tap a starter): it runs on live SQLite after a
+     5→// short debounce, and an animated clause-stage pipeline shows how the row
+     6→// count changes at every step — FROM+JOINs → WHERE → GROUP BY buckets →
+     7→// HAVING → the final result. Read-only by contract (SELECT/WITH/VALUES),
+     8→// executed inside an always-rolled-back transaction server-side.
+     9→
+    10→import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+    11→import { AnimatePresence, motion } from "framer-motion";
+    12→import { HelpCircle, Loader2, RotateCw } from "lucide-react";
+    13→import { SqlEditor, type ClauseId } from "@/components/sql-editor";
+    14→import { QueryPlayback, type StageSamples } from "@/components/landing/query-playback";
+    15→import { SchemaPanel, type SandboxTable } from "@/components/landing/schema-panel";
+    16→import { ComparePanel, type CompareSnapshot } from "@/components/landing/compare-panel";
+    17→import { buildTree, PlanLegend, PlanTreeNode } from "@/components/plan-view";
+    18→import type { PuzzleVerdict } from "@/lib/landing-puzzles";
+    19→import type { PlanRow } from "@/lib/sql-types";
+    20→import { cn } from "@/lib/utils";
+    21→
+    22→interface Stage {
+    23→  id: "base" | "where" | "group" | "having";
+    24→  rows: number;
+    25→}
+    26→
+    27→interface SandboxSource {
+    28→  name: string;
+    29→  rows: number;
+    30→}
+    31→
+    32→interface SandboxResult {
+    33→  ok: boolean;
+    34→  error?: string;
+    35→  hint?: string;
+    36→  columns?: string[];
+    37→  rows?: unknown[][];
+    38→  rowCount?: number;
+    39→  truncated?: boolean;
+    40→  durationMs?: number;
+    41→  stages?: Stage[];
+    42→  samples?: StageSamples;
+    43→  tables?: SandboxTable[];
+    44→  sources?: SandboxSource[];
+    45→  /** SQLite's own execution recipe — how the engine will run this query. */
+    46→  plan?: PlanRow[];
+    47→  /** fix-the-query verdict — present while a puzzle is active and the run succeeded. */
+    48→  puzzle?: PuzzleVerdict;
+    49→}
+    50→
+    51→/** The public puzzle shape served by /api/landing-puzzles — no answers. */
+    52→interface PublicPuzzle {
+    53→  id: string;
+    54→  emoji: string;
+    55→  title: string;
+    56→  question: string;
+    57→  broken: string;
+    58→  hints: string[];
+    59→}
+    60→
+    61→/** Every clause keyword with its position, sorted by where it appears —
+    62→ *  the bridge between caret, editor keyword glow, playback frames and the
+    63→ *  schema map. A clause OWNS the whole region from its keyword to the next
+    64→ *  clause's keyword, so "caret inside WHERE …" lights up WHERE, not just
+    65→ *  the exact letters W-H-E-R-E. */
+    66→const CLAUSE_RES: Array<[ClauseId, RegExp]> = [
+    67→  ["base", /\b(?:from|join|inner|left|right|full|outer|cross|on|using)\b/gi],
+    68→  ["where", /\bwhere\b/gi],
+    69→  ["group", /\bgroup\s+by\b/gi],
+    70→  ["having", /\bhaving\b/gi],
+    71→  ["result", /\b(?:select|distinct|order\s+by|limit|offset)\b/gi],
+    72→];
+    73→
+    74→function clauseAt(sql: string, pos: number): ClauseId | null {
+    75→  const marks: Array<{ index: number; id: ClauseId }> = [];
+    76→  for (const [id, re] of CLAUSE_RES) {
+    77→    re.lastIndex = 0;
+    78→    let m: RegExpExecArray | null;
+    79→    while ((m = re.exec(sql)) !== null) marks.push({ index: m.index, id });
+    80→  }
+    81→  marks.sort((a, b) => a.index - b.index);
+    82→  // The clause whose keyword appears last at-or-before the caret owns it —
+    83→  // SELECT's region starts at its keyword, so a caret in the projection
+    84→  // list lands on "result" (SELECT shapes the output, it filters nothing).
+    85→  let owner: ClauseId | null = null;
+    86→  for (const mk of marks) {
+    87→    if (mk.index <= pos) owner = mk.id;
+    88→    else break;
+    89→  }
+    90→  return owner;
+    91→}
+    92→
+    93→// Starter questions — each chip is phrased as the business question it
+    94→// answers; tapping it loads the real query that answers it.
+    95→const QUESTIONS: Array<{ q: string; emoji: string; sql: string }> = [
+    96→  {
+    97→    q: "Which order status is most common?",
+    98→    emoji: "🧾",
+    99→    sql: "SELECT status, COUNT(*) AS orders\nFROM orders\nGROUP BY status\nORDER BY orders DESC;",
+   100→  },
+   101→  {
+   102→    q: "Who spends the most?",
+   103→    emoji: "🏆",
+   104→    sql: "SELECT c.name, COUNT(o.id) AS orders, ROUND(SUM(o.total), 2) AS spent\nFROM customers c\nJOIN orders o ON o.customer_id = c.id\nGROUP BY c.id\nORDER BY spent DESC\nLIMIT 5;",
+   105→  },
+   106→  {
+   107→    q: "What sits on the premium shelf?",
+   108→    emoji: "💎",
+   109→    sql: "SELECT name, price, category\nFROM products\nWHERE price >= 100\nORDER BY price DESC;",
+   110→  },
+   111→  {
+   112→    q: "Who has never been refunded?",
+   113→    emoji: "🛡️",
+   114→    sql: "SELECT c.name\nFROM customers c\nLEFT JOIN orders o ON o.customer_id = c.id\nLEFT JOIN refunds r ON r.order_id = o.id\nGROUP BY c.id\nHAVING COUNT(r.id) = 0;",
+   115→  },
+   116→  {
+   117→    q: "Which product shelf earns the most?",
+   118→    emoji: "💰",
+   119→    sql: "SELECT p.category, ROUND(SUM(oi.unit_price * oi.quantity), 2) AS revenue\nFROM order_items oi\nJOIN products p ON p.id = oi.product_id\nGROUP BY p.category\nORDER BY revenue DESC;",
+   120→  },
+   121→];
+   122→
+   123→/** The guide — what's on screen and how to drive it. Every interactive
+   124→ *  element of the sandbox gets one plain-words line. Collapsible so it
+   125→ *  never traps a returning user, open by default so a first-timer is
+   126→ *  never lost. */
+   127→const GUIDE_ITEMS: Array<{ icon: string; title: string; body: string }> = [
+   128→  {
+   129→    icon: "⌨️",
+   130→    title: "It runs as you type",
+   131→    body: "Real SQLite executes your query ½s after you stop typing (or hit ⌘/Ctrl+Enter). Read-only — nothing can break.",
+   132→  },
+   133→  {
+   134→    icon: "🧾",
+   135→    title: "Starter questions",
+   136→    body: "Tap a chip to load a real query that answers it — then bend it: change a number, a column, a condition.",
+   137→  },
+   138→  {
+   139→    icon: "🎬",
+   140→    title: "The playback strip",
+   141→    body: "Each frame is one stage of YOUR query, measured live. Dots are rows, hollow falling dots were filtered away, and the chips are actual sampled rows.",
+   142→  },
+   143→  {
+   144→    icon: "🖱️",
+   145→    title: "Caret spotlight",
+   146→    body: "Click inside any clause — WHERE, JOIN, GROUP BY — and its keywords, stage frame and map tables all light up. Hover a frame for a plain-words explainer.",
+   147→  },
+   148→  {
+   149→    icon: "⚖️",
+   150→    title: "Pin & compare",
+   151→    body: "📌 Pin a result as A, change the query, and the diff shows exactly which rows appeared (green) or vanished (red). Classic move: flip JOIN ↔ LEFT JOIN.",
+   152→  },
+   153→  {
+   154→    icon: "🗺️",
+   155→    title: "The living map",
+   156→    body: "Arrows are real foreign keys, glowing tables are the ones your query reads. Click any table or column to drop it into your query at the cursor.",
+   157→  },
+   158→  {
+   159→    icon: "🌳",
+   160→    title: "The plan tree",
+   161→    body: "Under the playback: how SQLite will actually run your query — which tables it scans, which indexes it jumps through. Watch it reshape as you edit.",
+   162→  },
+   163→];
+   164→
+   165→function SandboxGuide({
+   166→  open,
+   167→  onToggle,
+   168→}: {
+   169→  open: boolean;
+   170→  onToggle: () => void;
+   171→}) {
+   172→  return (
+   173→    <div className="mt-5 rounded-xl border border-zinc-800 bg-zinc-950/60">
+   174→      <button
+   175→        onClick={onToggle}
+   176→        aria-expanded={open}
+   177→        className="flex w-full items-center justify-between gap-2 px-3.5 py-2.5 text-left"
+   178→      >
+   179→        <span className="flex items-center gap-2 font-mono text-[11px] text-zinc-300">
+   180→          <span aria-hidden className="emoji-bob">
+   181→            🗺️
+   182→          </span>
+   183→          how this sandbox works — seven things worth knowing
+   184→        </span>
+   185→        <span className="rounded-full border border-zinc-800 px-2 py-0.5 font-mono text-[10px] text-zinc-500 transition-colors hover:border-zinc-600 hover:text-zinc-300">
+   186→          {open ? "hide ↑" : "show ↓"}
+   187→        </span>
+   188→      </button>
+   189→      {open && (
+   190→        <div className="grid gap-2 border-t border-zinc-800/80 p-3 sm:grid-cols-2 lg:grid-cols-3">
+   191→          {GUIDE_ITEMS.map((g, i) => (
+   192→            <motion.div
+   193→              key={g.title}
+   194→              initial={{ opacity: 0, y: 6 }}
+   195→              animate={{ opacity: 1, y: 0 }}
+   196→              transition={{ delay: i * 0.05 }}
+   197→              className="rounded-lg border border-zinc-800/70 bg-zinc-900/40 p-2.5"
+   198→            >
+   199→              <p className="flex items-center gap-1.5 font-mono text-[11px] text-zinc-200">
+   200→                <span aria-hidden>{g.icon}</span>
+   201→                {g.title}
+   202→              </p>
+   203→              <p className="mt-1 text-[11px] leading-4.5 text-zinc-500">{g.body}</p>
+   204→            </motion.div>
+   205→          ))}
+   206→        </div>
+   207→      )}
+   208→    </div>
+   209→  );
+   210→}
+   211→
+   212→/** The plan tree, sandbox edition — compact nodes, short explainer, collapsible.
+   213→ *  The full guided tour lives in the Playground's Plan tab. */
+   214→function SandboxPlan({ rows }: { rows: PlanRow[] }) {
+   215→  const [open, setOpen] = useState(true);
+   216→  const tree = useMemo(() => buildTree(rows), [rows]);
+   217→  return (
+   218→    <div className="rounded-xl border border-zinc-800 bg-zinc-950/60">
+   219→      <button
+   220→        onClick={() => setOpen((o) => !o)}
+   221→        aria-expanded={open}
+   222→        title="EXPLAIN QUERY PLAN — the moves SQLite will make to run your query"
+   223→        className="flex w-full items-center justify-between gap-2 px-3.5 py-2.5 text-left"
+   224→      >
+   225→        <span className="flex items-center gap-2 font-mono text-[11px] text-zinc-300">
+   226→          <span aria-hidden className="emoji-bob">
+   227→            🌳
+   228→          </span>
+   229→          how SQLite runs it — the plan tree, live for your query
+   230→        </span>
+   231→        <span className="rounded-full border border-zinc-800 px-2 py-0.5 font-mono text-[10px] text-zinc-500 transition-colors hover:border-zinc-600 hover:text-zinc-300">
+   232→          {open ? "hide ↑" : "show ↓"}
+   233→        </span>
+   234→      </button>
+   235→      {open && (
+   236→        <div className="border-t border-zinc-800/80 p-3">
+   237→          <p className="text-[11px] leading-4.5 text-zinc-500">
+   238→            Each node is one move the engine will make — leaves are reads, parents consume their
+   239→            children&apos;s output.{" "}
+   240→            <span className="text-amber-400/90">amber SCAN</span> reads a whole table (watch for it
+   241→            on big tables),{" "}
+   242→            <span className="text-emerald-400/90">green SEARCH</span> uses an index.
+   243→          </p>
+   244→          <div className="mt-2">
+   245→            <PlanLegend compact />
+   246→          </div>
+   247→          <div className="mt-2.5 space-y-1.5">
+   248→            {tree.map((r) => (
+   249→              <PlanTreeNode key={r.id} node={r} depth={0} compact />
+   250→            ))}
+   251→          </div>
+   252→        </div>
+   253→      )}
+   254→    </div>
+   255→  );
+   256→}
+   257→
+   258→/** One-shot emoji burst — the solve moment. Keyed by mount, animates once. */
+   259→function PuzzleBurst() {
+   260→  const bits = ["🎉", "✨", "🧩", "💫", "✨", "🎉"];
+   261→  return (
+   262→    <span aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+   263→      {bits.map((b, i) => (
+   264→        <motion.span
+   265→          key={i}
+   266→          initial={{ opacity: 0, x: 0, y: 0, scale: 0.4 }}
+   267→          animate={{
+   268→            opacity: [0, 1, 0],
+   269→            x: `${(i - 2.5) * 26}px`,
+   270→            y: `${-14 - (i % 3) * 12}px`,
+   271→            scale: 1 + (i % 2) * 0.35,
+   272→            rotate: (i - 2.5) * 14,
+   273→          }}
+   274→          transition={{ duration: 1.1, delay: i * 0.06, ease: "easeOut" }}
+   275→          className="absolute left-1/2 top-1/2 text-sm"
+   276→        >
+   277→          {b}
+   278→        </motion.span>
+   279→      ))}
+   280→    </span>
+   281→  );
+   282→}
+   283→
+   284→function isNumeric(v: unknown): boolean {
+   285→  return typeof v === "number" && Number.isFinite(v);
+   286→}
+   287→
+   288→export function LiveSandbox() {
+   289→  const [sql, setSql] = useState(QUESTIONS[0].sql);
+   290→  const [res, setRes] = useState<SandboxResult | null>(null);
+   291→  const [pending, setPending] = useState(false);
+   292→  const [runId, setRunId] = useState(0);
+   293→  const [knownTables, setKnownTables] = useState<SandboxTable[]>([]);
+   294→  // last successful run's sources — drives the "tables your query touches"
+   295→  // glow in the schema map. Kept across failed runs (that's when you need
+   296→  // the map most) just like knownTables.
+   297→  const [lastSources, setLastSources] = useState<SandboxSource[]>([]);
+   298→  // clause focus — hover (playback frames) wins over caret position
+   299→  const [hoverClause, setHoverClause] = useState<ClauseId | null>(null);
+   300→  const [caretPos, setCaretPos] = useState<number | null>(null);
+   301→  // A/B compare — the pinned "A" snapshot
+   302→  const [pinned, setPinned] = useState<CompareSnapshot | null>(null);
+   303→  // the on-screen guide — open for first-timers, collapsible forever after
+   304→  const [guideOpen, setGuideOpen] = useState(true);
+   305→  // fix-the-query puzzles — public list, active one, progressive hints, solved set
+   306→  const [puzzles, setPuzzles] = useState<PublicPuzzle[]>([]);
+   307→  const [activePuzzleId, setActivePuzzleId] = useState<string | null>(null);
+   308→  const [revealedHints, setRevealedHints] = useState<Record<string, number>>({});
+   309→  const [solvedIds, setSolvedIds] = useState<string[]>([]);
+   310→  const activePuzzleRef = useRef<string | null>(null);
+   311→  const editorTaRef = useRef<HTMLTextAreaElement | null>(null);
+   312→  const seqRef = useRef(0);
+   313→  const abortRef = useRef<AbortController | null>(null);
+   314→
+   315→  // puzzles + past solves — answers stay server-side; badges persist locally
+   316→  useEffect(() => {
+   317→    fetch("/api/landing-puzzles")
+   318→      .then((r) => r.json())
+   319→      .then((d: { puzzles?: PublicPuzzle[] }) => {
+   320→        if (Array.isArray(d.puzzles)) setPuzzles(d.puzzles);
+   321→      })
+   322→      .catch(() => {});
+   323→    try {
+   324→      const raw = localStorage.getItem("seeql-puzzles-solved");
+   325→      if (raw) setSolvedIds(JSON.parse(raw) as string[]);
+   326→    } catch {
+   327→      /* fresh start */
+   328→    }
+   329→  }, []);
+   330→
+   331→  useEffect(() => {
+   332→    activePuzzleRef.current = activePuzzleId;
+   333→  }, [activePuzzleId]);
+   334→
+   335→  const markSolved = useCallback((id: string) => {
+   336→    setSolvedIds((prev) => {
+   337→      if (prev.includes(id)) return prev;
+   338→      const next = [...prev, id];
+   339→      try {
+   340→        localStorage.setItem("seeql-puzzles-solved", JSON.stringify(next));
+   341→      } catch {
+   342→        /* private mode — badge just won't persist */
+   343→      }
+   344→      return next;
+   345→    });
+   346→  }, []);
+   347→
+   348→  const run = useCallback(async (q: string) => {
+   349→    const seq = ++seqRef.current;
+   350→    abortRef.current?.abort();
+   351→    const ac = new AbortController();
+   352→    abortRef.current = ac;
+   353→    setPending(true);
+   354→    try {
+   355→      const r = await fetch("/api/landing-sandbox", {
+   356→        method: "POST",
+   357→        headers: { "content-type": "application/json" },
+   358→        body: JSON.stringify({
+   359→          sql: q,
+   360→          ...(activePuzzleRef.current ? { puzzleId: activePuzzleRef.current } : {}),
+   361→        }),
+   362→        signal: ac.signal,
+   363→      });
+   364→      const j = (await r.json()) as SandboxResult;
+   365→      if (seq === seqRef.current) {
+   366→        setRes(j);
+   367→        // Cache the schema — error responses don't carry tables, and the
+   368→        // schema panel must survive (it's exactly what you need then).
+   369→        if (j.tables && j.tables.length > 0) setKnownTables(j.tables);
+   370→        if (j.ok) {
+   371→          setRunId((n) => n + 1);
+   372→          // A successful run OWNS the glow — even when it touches no known
+   373→          // tables (VALUES, scalar only): stale glow would read as "the map
+   374→          // doesn't follow my query". Only error responses keep the old map.
+   375→          setLastSources(j.sources ?? []);
+   376→        }
+   377→      }
+   378→    } catch (e) {
+   379→      if ((e as Error | undefined)?.name !== "AbortError" && seq === seqRef.current) {
+   380→        setRes({ ok: false, error: "Could not reach the sandbox." });
+   381→      }
+   382→    } finally {
+   383→      if (seq === seqRef.current) setPending(false);
+   384→    }
+   385→  }, []);
+   386→
+   387→  // debounced auto-run — the sandbox is live, no button needed
+   388→  useEffect(() => {
+   389→    const t = window.setTimeout(() => void run(sql), 500);
+   390→    return () => window.clearTimeout(t);
+   391→  }, [sql, run]);
+   392→
+   393→  // a solved verdict earns its badge (once)
+   394→  const verdict = res?.ok && res.puzzle && res.puzzle.id === activePuzzleId ? res.puzzle : null;
+   395→  useEffect(() => {
+   396→    if (verdict?.solved) markSolved(verdict.id);
+   397→  }, [verdict?.solved, verdict?.id, markSolved]);
+   398→
+   399→  const stages = res?.ok ? (res.stages ?? []) : [];
+   400→  const tables = knownTables;
+   401→
+   402→  const caretClause = useMemo(
+   403→    () => (caretPos === null ? null : clauseAt(sql, caretPos)),
+   404→    [sql, caretPos],
+   405→  );
+   406→  const focusClause = hoverClause ?? caretClause;
+   407→
+   408→  const currentSnapshot: CompareSnapshot | null =
+   409→    res?.ok && res.columns
+   410→      ? { sql, columns: res.columns, rows: res.rows ?? [], rowCount: res.rowCount ?? 0 }
+   411→      : null;
+   412→
+   413→  const hasLeftJoin = /\bleft\s+join\b/i.test(sql);
+   414→  const hasJoin = /\bjoin\b/i.test(sql);
+   415→  const flipLabel = hasLeftJoin
+   416→    ? "⚖️ flip LEFT JOIN → INNER"
+   417→    : hasJoin
+   418→      ? "⚖️ flip JOIN → LEFT JOIN"
+   419→      : null;
+   420→  const flipJoin = () => {
+   421→    if (currentSnapshot) setPinned(currentSnapshot);
+   422→    setSql(
+   423→      hasLeftJoin
+   424→        ? sql.replace(/\bleft\s+join\b/i, "INNER JOIN")
+   425→        : sql.replace(/\bjoin\b/i, "LEFT JOIN"),
+   426→    );
+   427→  };
+   428→  const pinCurrent = () => {
+   429→    if (currentSnapshot) setPinned(currentSnapshot);
+   430→  };
+   431→
+   432→  // fix-the-query — load the broken query, checker verifies every run
+   433→  const loadPuzzle = (p: PublicPuzzle) => {
+   434→    setActivePuzzleId(p.id);
+   435→    setSql(p.broken);
+   436→  };
+   437→  const leavePuzzle = () => setActivePuzzleId(null);
+   438→  const revealHint = (id: string, n: number) =>
+   439→    setRevealedHints((prev) => ({ ...prev, [id]: Math.max(prev[id] ?? 0, n) }));
+   440→
+   441→  /** Drop a token (table/column name) at the caret — from the schema strip. */
+   442→  const insertToken = useCallback(
+   443→    (token: string) => {
+   444→      const ta = editorTaRef.current;
+   445→      if (!ta) {
+   446→        setSql((prev) => `${prev}${/[\s(]$/.test(prev) || prev === "" ? "" : " "}${token}`);
+   447→        return;
+   448→      }
+   449→      setSql((prev) => {
+   450→        const start = ta.selectionStart ?? prev.length;
+   451→        const end = ta.selectionEnd ?? start;
+   452→        const before = prev.slice(0, start);
+   453→        const sep = before === "" || /[\s(,.\n]$/.test(before) ? "" : " ";
+   454→        const next = `${before}${sep}${token}${prev.slice(end)}`;
+   455→        const caret = before.length + sep.length + token.length;
+   456→        requestAnimationFrame(() => {
+   457→          ta.focus();
+   458→          ta.selectionStart = ta.selectionEnd = caret;
+   459→        });
+   460→        return next;
+   461→      });
+   462→    },
+   463→    [],
+   464→  );
+   465→
+   466→  return (
+   467→    <div className="mx-auto w-full max-w-6xl px-4 py-20 sm:px-6">
+   468→      <div className="flex flex-wrap items-end justify-between gap-3">
+   469→        <div>
+   470→          <p className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-300">
+   471→            <span className="pulse-soft h-1.5 w-1.5 rounded-full bg-emerald-400" />
+   472→            Live sandbox
+   473→          </p>
+   474→          <h2 className="font-display mt-4 text-3xl font-semibold tracking-[-0.02em] text-zinc-50">
+   475→            Don&apos;t take our word for it. Query it.
+   476→          </h2>
+   477→          <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-400">
+   478→            This is the real storefront database — the same one every lesson grades against. Pick a
+   479→            question below or write your own SELECT: it runs on live SQLite as you type, and the
+   480→            playback replays how each clause moves your rows — tables glow on the map, arrows carry
+   481→            the counts. Click any table or column to insert it at your cursor. Read-only, nothing to
+   482→            break.
+   483→          </p>
+   484→        </div>
+   485→        <span className="sheen hidden rounded-full border border-zinc-800 bg-zinc-900/50 px-3 py-1 font-mono text-[11px] text-zinc-500 sm:block">
+   486→          ⌘/Ctrl + Enter to run · auto-runs as you type
+   487→        </span>
+   488→      </div>
+   489→
+   490→      {/* the guide — every interactive element, explained in plain words */}
+   491→      <SandboxGuide open={guideOpen} onToggle={() => setGuideOpen((o) => !o)} />
+   492→
+   493→      {/* guided questions — tap to load the query that answers it */}
+   494→      <div className="mt-6 flex flex-wrap items-center gap-1.5">
+   495→        <span className="mr-1 inline-flex items-center gap-1.5 font-mono text-[11px] text-zinc-600">
+   496→          <HelpCircle className="h-3 w-3" /> try answering:
+   497→        </span>
+   498→        {QUESTIONS.map((s) => (
+   499→          <button
+   500→            key={s.q}
+   501→            onClick={() => {
+   502→              setActivePuzzleId(null);
+   503→              setSql(s.sql);
+   504→            }}
+   505→            title="loads the query that answers this"
+   506→            className={cn(
+   507→              "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+   508→              sql === s.sql
+   509→                ? "border-emerald-400/60 bg-emerald-400/10 text-emerald-300"
+   510→                : "border-zinc-800 bg-zinc-950 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200",
+   511→            )}
+   512→          >
+   513→            <span aria-hidden className="mr-1">
+   514→              {s.emoji}
+   515→            </span>
+   516→            {s.q}
+   517→          </button>
+   518→        ))}
+   519→      </div>
+   520→
+   521→      {/* fix-the-query puzzles — a broken query, a question, a live checker */}
+   522→      {puzzles.length > 0 && (
+   523→        <div className="mt-4 rounded-xl border border-zinc-800 bg-zinc-950/60 p-3">
+   524→          <div className="flex flex-wrap items-center justify-between gap-2">
+   525→            <p className="flex items-center gap-1.5 font-mono text-[11px] text-zinc-400">
+   526→              <span aria-hidden className="emoji-wiggle">
+   527→                🧩
+   528→              </span>
+   529→              fix the query — three little bugs to squash
+   530→            </p>
+   531→            <span className="tnum font-mono text-[10px] text-zinc-600">
+   532→              {solvedIds.length}/{puzzles.length} solved
+   533→            </span>
+   534→          </div>
+   535→          <div className="mt-2.5 grid gap-2 sm:grid-cols-3">
+   536→            {puzzles.map((p) => {
+   537→              const active = activePuzzleId === p.id;
+   538→              const solved = solvedIds.includes(p.id);
+   539→              return (
+   540→                <button
+   541→                  key={p.id}
+   542→                  onClick={() => loadPuzzle(p)}
+   543→                  title="loads the broken query — fix it until the checker agrees"
+   544→                  className={cn(
+   545→                    "rounded-lg border p-2.5 text-left transition-colors",
+   546→                    active
+   547→                      ? "border-amber-400/60 bg-amber-400/[0.07]"
+   548→                      : solved
+   549→                        ? "border-emerald-400/40 bg-emerald-400/[0.05] hover:border-emerald-400/70"
+   550→                        : "border-zinc-800 bg-zinc-900/40 hover:border-zinc-600",
+   551→                  )}
+   552→                >
+   553→                  <span className="flex items-center justify-between gap-2">
+   554→                    <span className={cn("font-mono text-[11px]", solved ? "text-emerald-300" : "text-zinc-200")}>
+   555→                      <span aria-hidden className="mr-1">
+   556→                        {p.emoji}
+   557→                      </span>
+   558→                      {p.title}
+   559→                    </span>
+   560→                    {solved && (
+   561→                      <span aria-hidden className="emoji-bob text-[11px]" title="solved — the badge persists">
+   562→                        ✓
+   563→                      </span>
+   564→                    )}
+   565→                  </span>
+   566→                  <span className="mt-1 block text-[11px] leading-4.5 text-zinc-500">{p.question}</span>
+   567→                  <span
+   568→                    className={cn(
+   569→                      "mt-1.5 block font-mono text-[10px]",
+   570→                      solved ? "text-emerald-400/80" : "text-amber-300/80",
+   571→                    )}
+   572→                  >
+   573→                    {solved ? "✓ solved — play it again" : "load the broken query →"}
+   574→                  </span>
+   575→                </button>
+   576→              );
+   577→            })}
+   578→          </div>
+   579→        </div>
+   580→      )}
+   581→
+   582→      <div className="mt-4 grid gap-4 lg:grid-cols-5">
+   583→        {/* editor */}
+   584→        <div className="lg:col-span-2">
+   585→          <SqlEditor
+   586→            value={sql}
+   587→            onChange={setSql}
+   588→            onVisualize={() => void run(sql)}
+   589→            editorRef={editorTaRef}
+   590→            className="h-[260px]"
+   591→            activeClause={focusClause}
+   592→            onCaret={setCaretPos}
+   593→          />
+   594→          {/* clause-focus hint — the editor, frames and map are one organism */}
+   595→          <p className="mt-1.5 hidden font-mono text-[10px] text-zinc-600 sm:block">
+   596→            🖱️ put your caret inside a clause — its stage, keywords and tables light up
+   597→          </p>
+   598→          {/* pending hint while the first run is in flight (playback lives below the grid) */}
+   599→          <div className="mt-3 flex min-h-[34px] items-center">
+   600→            {pending && !res?.ok && (
+   601→              <span className="inline-flex items-center gap-1.5 rounded-md border border-zinc-800 bg-zinc-950 px-2.5 py-1.5 font-mono text-[11px] text-zinc-500">
+   602→                <Loader2 className="h-3 w-3 animate-spin" /> running…
+   603→              </span>
+   604→            )}
+   605→          </div>
+   606→
+   607→          {/* error banner */}
+   608→          <AnimatePresence>
+   609→            {res && !res.ok && res.error && (
+   610→              <motion.div
+   611→                initial={{ opacity: 0, y: 6 }}
+   612→                animate={{ opacity: 1, y: 0 }}
+   613→                exit={{ opacity: 0 }}
+   614→                className="mt-3 rounded-lg border border-rose-500/30 bg-rose-500/10 p-3"
+   615→              >
+   616→                <p className="font-mono text-xs text-rose-300">
+   617→                  <span aria-hidden className="emoji-wiggle mr-1.5">
+   618→                    🙃
+   619→                  </span>
+   620→                  {res.error}
+   621→                </p>
+   622→                {res.hint && (
+   623→                  <p className="mt-1 text-xs text-rose-200/60">
+   624→                    <span aria-hidden className="mr-1">
+   625→                      💡
+   626→                    </span>
+   627→                    {res.hint}
+   628→                  </p>
+   629→                )}
+   630→              </motion.div>
+   631→            )}
+   632→          </AnimatePresence>
+   633→
+   634→          {/* fix-the-query status — question, live verdict, progressive hints */}
+   635→          {activePuzzleId &&
+   636→            (() => {
+   637→              const p = puzzles.find((x) => x.id === activePuzzleId);
+   638→              if (!p) return null;
+   639→              const solved = solvedIds.includes(p.id);
+   640→              const shown = revealedHints[p.id] ?? 0;
+   641→              return (
+   642→                <div
+   643→                  className={cn(
+   644→                    "relative mt-3 overflow-hidden rounded-xl border p-3",
+   645→                    verdict?.solved
+   646→                      ? "border-emerald-400/50 bg-emerald-400/[0.06]"
+   647→                      : "border-amber-400/30 bg-amber-400/[0.04]",
+   648→                  )}
+   649→                >
+   650→                  {verdict?.solved && <PuzzleBurst />}
+   651→                  <div className="flex items-start justify-between gap-2">
+   652→                    <p className="font-mono text-[11px] text-zinc-300">
+   653→                      <span aria-hidden className="emoji-wiggle mr-1.5">
+   654→                        🧩
+   655→                      </span>
+   656→                      {p.title}
+   657→                      {solved && !verdict?.solved && (
+   658→                        <span className="ml-1.5 text-emerald-400/80">· solved before ✓</span>
+   659→                      )}
+   660→                    </p>
+   661→                    <button
+   662→                      onClick={leavePuzzle}
+   663→                      title="leave the puzzle — back to free exploring"
+   664→                      className="rounded-full border border-zinc-800 px-2 py-0.5 font-mono text-[10px] text-zinc-500 transition-colors hover:border-zinc-600 hover:text-zinc-300"
+   665→                    >
+   666→                      ✕ leave
+   667→                    </button>
+   668→                  </div>
+   669→                  <p className="mt-1.5 text-xs leading-5 text-zinc-400">{p.question}</p>
+   670→
+   671→                  {/* live verdict — updates with every run */}
+   672→                  <div aria-live="polite">
+   673→                    {verdict?.solved ? (
+   674→                      <motion.div
+   675→                        initial={{ opacity: 0, y: 4 }}
+   676→                        animate={{ opacity: 1, y: 0 }}
+   677→                        className="mt-2.5 rounded-lg border border-emerald-400/40 bg-emerald-400/10 p-2.5"
+   678→                      >
+   679→                        <p className="font-mono text-[11px] font-medium text-emerald-300">
+   680→                          🎉 solved — that&apos;s the answer
+   681→                        </p>
+   682→                        <p className="mt-1 text-[11px] leading-4.5 text-emerald-100/70">
+   683→                          {verdict.lesson}
+   684→                        </p>
+   685→                      </motion.div>
+   686→                    ) : verdict && !verdict.solved ? (
+   687→                      <p className="mt-2.5 rounded-lg border border-amber-400/30 bg-amber-400/[0.06] p-2.5 font-mono text-[11px] leading-4.5 text-amber-200/90">
+   688→                        <span aria-hidden className="mr-1.5">
+   689→                          🔍
+   690→                        </span>
+   691→                        {verdict.feedback}
+   692→                      </p>
+   693→                    ) : (
+   694→                      <p className="mt-2.5 font-mono text-[10px] text-zinc-600">
+   695→                        🔍 checker is on — it verifies your result after every run
+   696→                      </p>
+   697→                    )}
+   698→                  </div>
+   699→
+   700→                  {/* hints — progressive, tap to reveal */}
+   701→                  <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+   702→                    {p.hints.map((h, i) => {
+   703→                      const open = shown > i;
+   704→                      return (
+   705→                        <span key={i} className="inline-flex max-w-full flex-col gap-1">
+   706→                          {!open ? (
+   707→                            <button
+   708→                              onClick={() => revealHint(p.id, i + 1)}
+   709→                              className="rounded-full border border-zinc-800 px-2 py-0.5 font-mono text-[10px] text-zinc-400 transition-colors hover:border-amber-400/50 hover:text-amber-200"
+   710→                            >
+   711→                              💡 hint {i + 1}
+   712→                            </button>
+   713→                          ) : (
+   714→                            <span className="rounded-lg border border-zinc-800 bg-zinc-900/50 px-2 py-1 text-[11px] leading-4.5 text-zinc-300">
+   715→                              <span aria-hidden className="mr-1">
+   716→                                💡
+   717→                              </span>
+   718→                              {h}
+   719→                            </span>
+   720→                          )}
+   721→                        </span>
+   722→                      );
+   723→                    })}
+   724→                  </div>
+   725→                </div>
+   726→              );
+   727→            })()}
+   728→        </div>
+   729→
+   730→        {/* results */}
+   731→        <div className="sheen overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950 lg:col-span-3">
+   732→          {/* result toolbar — pin + flip feed the A/B compare */}
+   733→          <div className="flex items-center justify-between gap-2 border-b border-zinc-800 px-3.5 py-2">
+   734→            <p className="font-mono text-[10px] uppercase tracking-wider text-zinc-500">
+   735→              result
+   736→              {res?.ok ? (
+   737→                <span className="tnum ml-1.5 normal-case text-zinc-600">
+   738→                  {(res.rowCount ?? 0).toLocaleString()} rows
+   739→                </span>
+   740→              ) : null}
+   741→            </p>
+   742→            <div className="flex items-center gap-1.5">
+   743→              {flipLabel && (
+   744→                <button
+   745→                  onClick={flipJoin}
+   746→                  title={hasLeftJoin ? "swap back to INNER JOIN (pins A first)" : "pin this result, then swap to LEFT JOIN"}
+   747→                  className="rounded-full border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 font-mono text-[10px] text-amber-300 transition-colors hover:border-amber-400/60"
+   748→                >
+   749→                  {flipLabel}
+   750→                </button>
+   751→              )}
+   752→              {currentSnapshot && (
+   753→                <button
+   754→                  onClick={pinCurrent}
+   755→                  title="pin this result as A — the next runs diff against it"
+   756→                  className={cn(
+   757→                    "rounded-full border px-2 py-0.5 font-mono text-[10px] transition-colors",
+   758→                    pinned?.sql === currentSnapshot.sql
+   759→                      ? "border-amber-400/60 bg-amber-400/15 text-amber-200"
+   760→                      : "border-zinc-800 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200",
+   761→                  )}
+   762→                >
+   763→                  {pinned?.sql === currentSnapshot.sql ? "📌 A pinned" : "📌 pin as A"}
+   764→                </button>
+   765→              )}
+   766→            </div>
+   767→          </div>
+   768→          {res?.ok && res.columns && res.columns.length > 0 ? (
+   769→            <div className="max-h-[340px] overflow-auto">
+   770→              <table className="w-full border-collapse text-left text-[13px]">
+   771→                <thead className="sticky top-0 z-10 bg-zinc-900">
+   772→                  <tr>
+   773→                    {res.columns.map((c) => (
+   774→                      <th
+   775→                        key={c}
+   776→                        className="border-b border-zinc-800 px-3.5 py-2.5 font-mono text-[11px] font-medium uppercase tracking-wider text-zinc-400"
+   777→                      >
+   778→                        {c}
+   779→                      </th>
+   780→                    ))}
+   781→                  </tr>
+   782→                </thead>
+   783→                <tbody>
+   784→                  {(res.rows ?? []).map((row, i) => (
+   785→                    <tr key={i} className={i % 2 === 0 ? "bg-zinc-950" : "bg-zinc-900/40"}>
+   786→                      {row.map((cell, j) => (
+   787→                        <td
+   788→                          key={j}
+   789→                          className={cn(
+   790→                            "border-t border-zinc-800/60 px-3.5 py-2 font-mono text-zinc-200",
+   791→                            isNumeric(cell) && "tnum text-right",
+   792→                            cell === null && "text-zinc-600 italic",
+   793→                          )}
+   794→                        >
+   795→                          {cell === null ? "NULL" : String(cell)}
+   796→                        </td>
+   797→                      ))}
+   798→                    </tr>
+   799→                  ))}
+   800→                  {(res.rows ?? []).length === 0 && (
+   801→                    <tr>
+   802→                      <td
+   803→                        colSpan={res.columns.length}
+   804→                        className="px-3.5 py-8 text-center text-sm text-zinc-500"
+   805→                      >
+   806→                        <span aria-hidden className="mr-1.5">
+   807→                          🫥
+   808→                        </span>
+   809→                        The query ran fine — it just matched nothing.
+   810→                      </td>
+   811→                    </tr>
+   812→                  )}
+   813→                </tbody>
+   814→              </table>
+   815→            </div>
+   816→          ) : (
+   817→            <div className="flex h-[340px] items-center justify-center px-6 text-center">
+   818→              {res?.ok ? (
+   819→                <p className="text-sm text-zinc-500">No columns returned.</p>
+   820→              ) : res && !res.ok ? (
+   821→                <p className="text-sm text-zinc-500">Fix the query to see results here.</p>
+   822→              ) : (
+   823→                <p className="flex items-center gap-2 text-sm text-zinc-500">
+   824→                  <RotateCw className="h-3.5 w-3.5 animate-spin" /> waiting for the first run…
+   825→                </p>
+   826→              )}
+   827→            </div>
+   828→          )}
+   829→          {res?.ok && res.truncated && (
+   830→            <p className="border-t border-zinc-800 px-3.5 py-2 font-mono text-[11px] text-zinc-500">
+   831→              showing first {(res.rows ?? []).length.toLocaleString()} of{" "}
+   832→              {(res.rowCount ?? 0).toLocaleString()} rows — the Playground shows all
+   833→            </p>
+   834→          )}
+   835→        </div>
+   836→      </div>
+   837→
+   838→      {/* query playback — how each clause moves the data, measured live */}
+   839→      <div className="mt-4">
+   840→        {res?.ok ? (
+   841→          <QueryPlayback
+   842→            stages={stages}
+   843→            sources={res.sources ?? []}
+   844→            columns={res.columns ?? []}
+   845→            rowCount={res.rowCount ?? 0}
+   846→            durationMs={res.durationMs}
+   847→            runId={runId}
+   848→            samples={res.samples}
+   849→            resultRows={(res.rows ?? []).slice(0, 4)}
+   850→            focusClause={focusClause}
+   851→            onFocusClause={setHoverClause}
+   852→          />
+   853→        ) : res && !res.ok ? (
+   854→          <p className="rounded-lg border border-dashed border-zinc-800 px-3 py-3 font-mono text-[11px] text-zinc-600">
+   855→            fix the query and the playback returns — it shows every stage your data just flowed
+   856→            through
+   857→          </p>
+   858→        ) : null}
+   859→      </div>
+   860→
+   861→      {/* plan tree — how SQLite will actually run this query */}
+   862→      {res?.ok && res.plan && res.plan.length > 0 && (
+   863→        <div className="mt-4">
+   864→          <SandboxPlan rows={res.plan} />
+   865→        </div>
+   866→      )}
+   867→
+   868→      {/* A/B compare — pinned result vs the current run */}
+   869→      {pinned && (
+   870→        <div className="mt-4">
+   871→          <ComparePanel
+   872→            pinned={pinned}
+   873→            current={currentSnapshot}
+   874→            onUnpin={() => setPinned(null)}
+   875→          />
+   876→        </div>
+   877→      )}
+   878→
+   879→      {/* schema panel — live ER map + grouped tables, click to insert */}
+   880→      <div className="mt-4">
+   881→        <SchemaPanel
+   882→          tables={tables}
+   883→          onInsert={insertToken}
+   884→          activeTables={lastSources.map((s) => s.name)}
+   885→          focusTables={focusClause && focusClause !== "result" ? lastSources.map((s) => s.name) : []}
+   886→        />
+   887→      </div>
+   888→    </div>
+   889→  );
+   890→}
+   891→

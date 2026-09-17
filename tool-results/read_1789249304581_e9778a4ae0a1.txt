@@ -1,0 +1,1601 @@
+     1→// Case batch Q7 — Module 4 cases cs-1115…cs-1157.
+     2→// 43 cases: 14 easy / 15 medium / 14 hard across topics q7 (CTE chains —
+     3→// final 34) and q8 (Subquery capstone — 9). Every figure was probed against
+     4→// the live seed db (scripts/m4-facts-q3*.ts, m4-facts-d3/d4/d5 series) and
+     5→// is mechanically re-verified by scripts/case-audit.ts. Batch Q8 (cs-1158…)
+     6→// closes the Module 4 deck.
+     7→
+     8→import type { CaseStudy } from "./types";
+     9→
+    10→export const casesQ7: CaseStudy[] = [
+    11→  {
+    12→    id: "cs-1115",
+    13→    tier: "easy",
+    14→    topic: "q7",
+    15→    universe: "growth",
+    16→    title: "The heavy roster, chained",
+    17→    brief:
+    18→      "From: Growth lead. Re: the heavy roster with names.\n\nper folds the counts, big keeps thirteen-plus, and the main query joins back for names. The full three-layer read: counts become names.",
+    19→    ask: "One query: names and counts of the customers in the big CTE, joined back from per.",
+    20→    template: `WITH per AS (SELECT customer_id, COUNT(*) AS n FROM orders
+    21→GROUP BY customer_id), big AS (SELECT customer_id, n FROM per WHERE n >= {3})
+    22→SELECT c.name, big.n FROM big JOIN customers c ON c.id = big.{1}
+    23→ORDER BY big.n {2};`,
+    24→    slots: [
+    25→      {
+    26→        answer: "customer_id",
+    27→        kind: "keyword",
+    28→        label: "the join-back column",
+    29→        why: "big carries customer_id forward; the join matches it to c.id to attach names.",
+    30→      },
+    31→      {
+    32→        answer: "DESC",
+    33→        kind: "keyword",
+    34→        label: "the biggest-first read",
+    35→        why: "DESC reads Alice 24, Emma 17, Grace 14, Maya 13 — top-down.",
+    36→      },
+    37→      {
+    38→        answer: "13",
+    39→        kind: "number",
+    40→        noVerify: true,
+    41→        label: "the heavy line",
+    42→        why: "Thirteen is the chain's line, not a result figure. Probed: four accounts clear it.",
+    43→      },
+    44→    ],
+    45→    distractors: ["id", "ASC", "status"],
+    46→    walkthrough:
+    47→      "Three layers: per folds 103 orders to sixteen counts, big keeps the four at thirteen-plus, and the join back attaches names — Alice 24, Emma 17, Grace 14, Maya 13. Join on big.id and the engine refuses: the stage projected customer_id, not id. ASC inverts the read, leading with the boundary account. Group by status upstream and the chain never produces these rows. This is the canonical count-to-name report: fold, cut, join — every roster in the deck is this chain with a different line.",
+    48→  },
+    49→  {
+    50→    id: "cs-1116",
+    51→    tier: "easy",
+    52→    topic: "q7",
+    53→    universe: "expense",
+    54→    title: "The 2k roster, priced",
+    55→    brief:
+    56→      "From: Finance partner. Re: the 2k list with figures.\n\nspend prices accounts, big keeps past-2k, join back for names and figures. Five rows out — the retention shortlist with prices attached.",
+    57→    ask: "One query: names and spends of the customers in the big CTE (past 2,000), joined back.",
+    58→    template: `WITH spend AS (SELECT customer_id, SUM(total) AS s FROM orders
+    59→GROUP BY customer_id), big AS (SELECT customer_id, s FROM spend WHERE s > {3})
+    60→SELECT c.name, big.s FROM big JOIN customers c ON c.id = big.{1}
+    61→ORDER BY big.s {2};`,
+    62→    slots: [
+    63→      {
+    64→        answer: "customer_id",
+    65→        kind: "keyword",
+    66→        label: "the join-back column",
+    67→        why: "big carries customer_id; the join attaches each price to its name.",
+    68→      },
+    69→      {
+    70→        answer: "DESC",
+    71→        kind: "keyword",
+    72→        label: "the biggest-first read",
+    73→        why: "DESC leads with 7262.35 — the heaviest account first.",
+    74→      },
+    75→      {
+    76→        answer: "2000",
+    77→        kind: "number",
+    78→        noVerify: true,
+    79→        label: "the spend line",
+    80→        why: "Two thousand is the chain's line, not a result figure. Probed: five accounts clear it.",
+    81→      },
+    82→    ],
+    83→    distractors: ["id", "ASC", "total"],
+    84→    walkthrough:
+    85→      "The spend stage prices sixteen accounts; big keeps the five past 2,000; the join back attaches names sorted biggest-first — 7262.35 down to the line. Join on big.id and the engine refuses: the stage's projection is its schema. ASC leads with the cheapest qualifier — the list's floor, not its headline. The roster with prices is the retention team's working document, and the chain is what keeps it reproducible: same fold, same cut, same order every week.",
+    86→  },
+    87→  {
+    88→    id: "cs-1117",
+    89→    tier: "easy",
+    90→    topic: "q7",
+    91→    universe: "month-close",
+    92→    title: "The waiting roster, named",
+    93→    brief:
+    94→      "From: Ops controller. Re: the waiting list with names.\n\nhold gathers the pending ids, cold folds them per account, join back for names. Eight accounts are waiting — put names on the list.",
+    95→    ask: "One query: names and pending counts of the customers in the cold CTE, joined back.",
+    96→    template: `WITH hold AS (SELECT customer_id FROM orders WHERE status = {3}),
+    97→cold AS (SELECT customer_id, COUNT(*) AS pn FROM hold GROUP BY customer_id)
+    98→SELECT c.name, cold.pn FROM cold JOIN customers c ON c.id = cold.{1}
+    99→ORDER BY cold.pn {2}, c.name;`,
+   100→    slots: [
+   101→      {
+   102→        answer: "customer_id",
+   103→        kind: "keyword",
+   104→        label: "the join-back column",
+   105→        why: "cold carries customer_id; the join attaches each waiting count to its name.",
+   106→      },
+   107→      {
+   108→        answer: "DESC",
+   109→        kind: "keyword",
+   110→        label: "the longest-wait-first read",
+   111→        why: "DESC reads the three-time waiters before the two-time ones.",
+   112→      },
+   113→      {
+   114→        answer: "'pending'",
+   115→        kind: "keyword",
+   116→        label: "the register's filter",
+   117→        why: "hold gathers exactly the fourteen pending rows' customer ids.",
+   118→      },
+   119→    ],
+   120→    distractors: ["id", "ASC", "region"],
+   121→    walkthrough:
+   122→      "The hold register gathers fourteen pending ids; cold folds them to eight waiting accounts; the join back attaches names — Alice and Emma at three, Chloe and Maya at two, four more at one. Join on cold.id and the engine refuses: the fold projected customer_id. ASC reads the single-waiters first — a gentler triage than the memo asked for. The waiting roster is the ops standup's first slide, and the chain is why its counts reconcile: fourteen rows in, eight accounts out, sums matching.",
+   123→  },
+   124→  {
+   125→    id: "cs-1118",
+   126→    tier: "easy",
+   127→    topic: "q7",
+   128→    universe: "refund-audit",
+   129→    title: "The scarred roster, named",
+   130→    brief:
+   131→      "From: Support lead. Re: the apology list with counts.\n\ngone gathers the cancelled ids, burnt folds them per account, join back for names. Four accounts behind seven cancellations — name them.",
+   132→    ask: "One query: names and cancellation counts of the customers in the burnt CTE, joined back.",
+   133→    template: `WITH gone AS (SELECT customer_id FROM orders WHERE status = {3}),
+   134→burnt AS (SELECT customer_id, COUNT(*) AS cn FROM gone GROUP BY customer_id)
+   135→SELECT c.name, burnt.cn FROM burnt JOIN customers c ON c.id = burnt.{1}
+   136→ORDER BY burnt.cn {2}, c.name;`,
+   137→    slots: [
+   138→      {
+   139→        answer: "customer_id",
+   140→        kind: "keyword",
+   141→        label: "the join-back column",
+   142→        why: "burnt carries customer_id; the join attaches each scar count to its name.",
+   143→      },
+   144→      {
+   145→        answer: "DESC",
+   146→        kind: "keyword",
+   147→        label: "the worst-first read",
+   148→        why: "DESC leads with the most-cancelled account — the apology list's headline.",
+   149→      },
+   150→      {
+   151→        answer: "'cancelled'",
+   152→        kind: "keyword",
+   153→        label: "the register's filter",
+   154→        why: "gone gathers exactly the seven cancelled rows' customer ids.",
+   155→      },
+   156→    ],
+   157→    distractors: ["id", "ASC", "product_id"],
+   158→    walkthrough:
+   159→      "The gone register holds seven cancelled ids; burnt folds them to four scarred accounts; the join back attaches names, worst-first. Join on burnt.id and the engine refuses — the fold's projection rules. ASC reads the single-scar accounts first; the memo said worst-first. Four names from seven rows: the fold is where rows became accounts, and the roster is the outreach list the support lead sends today.",
+   160→  },
+   161→  {
+   162→    id: "cs-1119",
+   163→    tier: "easy",
+   164→    topic: "q7",
+   165→    universe: "growth",
+   166→    title: "The duo's combined load",
+   167→    brief:
+   168→      "From: Growth lead. Re: the head-to-head total.\n\nper folds the counts, top2 sorts and trims to the biggest pair, and the main query sums them — the two heavyweights' combined order load.",
+   169→    ask: "One query: the summed counts in the top2 CTE, chained off per.",
+   170→    template: `WITH per AS (SELECT customer_id, COUNT(*) AS n FROM orders
+   171→GROUP BY customer_id), top2 AS (SELECT n FROM per ORDER BY n {1}
+   172→LIMIT {3}) SELECT {2}(n) FROM top2;`,
+   173→    slots: [
+   174→      {
+   175→        answer: "DESC",
+   176→        kind: "keyword",
+   177→        label: "the biggest-first sort",
+   178→        why: "DESC ranks the fold so the trim keeps 24 and 17 — the heavyweights.",
+   179→      },
+   180→      {
+   181→        answer: "SUM",
+   182→        kind: "keyword",
+   183→        label: "the duo aggregator",
+   184→        why: "SUM(n) over the trimmed pair: 24 + 17 = 41 combined orders.",
+   185→      },
+   186→      {
+   187→        answer: "2",
+   188→        kind: "number",
+   189→        noVerify: true,
+   190→        label: "the duo trim",
+   191→        why: "Two is the trim, not a result figure — the chain keeps the biggest pair.",
+   192→      },
+   193→    ],
+   194→    distractors: ["ASC", "COUNT", "status"],
+   195→    walkthrough:
+   196→      "The fold builds sixteen counts; top2 trims the biggest pair — 24 and 17; the main query sums them: 41. ASC trims the quiet pair instead — 1 and 1, sum 2. COUNT over the pair reads 2, its size. Stage the fold by status and the duo becomes bucket sizes — a different metric. Forty-one is nearly forty percent of the book in two accounts, and the chain makes the figure reproducible: same fold, same trim, same sum every run.",
+   197→  },
+   198→  {
+   199→    id: "cs-1120",
+   200→    tier: "easy",
+   201→    topic: "q7",
+   202→    universe: "refund-audit",
+   203→    title: "The heavy scars, by region",
+   204→    brief:
+   205→      "From: Support lead. Re: the worst-scarred regions.\n\ngone gathers the cancelled rows, reg folds them by region, and the main query keeps the regions carrying three or more scars. Count the heavy-scar regions.",
+   206→    ask: "One query: the count of regions in reg with 3 or more cancellations.",
+   207→    template: `WITH gone AS (SELECT customer_id FROM orders WHERE status = 'cancelled'),
+   208→reg AS (SELECT c.region, COUNT(*) AS n FROM gone JOIN customers c
+   209→ON c.id = gone.customer_id GROUP BY c.{3}) SELECT {1}(*) FROM reg
+   210→WHERE n >= {2};`,
+   211→    slots: [
+   212→      {
+   213→        answer: "COUNT",
+   214→        kind: "keyword",
+   215→        label: "the chained counter",
+   216→        why: "COUNT(*) over the cut regional stage: 2 regions carry three or more scars.",
+   217→      },
+   218→      {
+   219→        answer: "3",
+   220→        kind: "number",
+   221→        noVerify: true,
+   222→        label: "the heavy-scar line",
+   223→        why: "Three is the line, not a result figure. Probed: APAC and EU sit at 3 each; US at 1.",
+   224→      },
+   225→      {
+   226→        answer: "region",
+   227→        kind: "keyword",
+   228→        label: "the placeholder key",
+   229→        why: "The regional stage groups the joined scars by the roster's region column.",
+   230→      },
+   231→    ],
+   232→    distractors: ["SUM", "4", "name"],
+   233→    walkthrough:
+   234→      "The gone register holds seven cancelled ids; reg distributes them by region — APAC 3, EU 3, US 1; the cut at three keeps 2 heavy-scar regions. Raise the line to four and the map empties — no region carries four scars. SUM over the cut totals 6 — the heavy regions' combined scars. Name in place of region and the grouping becomes per-account names — a different map. Two regions carry six of seven scars; the regional cut tells the outreach team where the refunds cluster.",
+   235→  },
+   236→  {
+   237→    id: "cs-1121",
+   238→    tier: "easy",
+   239→    topic: "q7",
+   240→    universe: "month-close",
+   241→    title: "The small buckets' weight",
+   242→    brief:
+   243→      "From: Ops controller. Re: the small buckets' total.\n\nst folds the status census, small keeps buckets under fifteen, and the main query sums their orders — the weight outside the big states.",
+   244→    ask: "One query: the summed order counts in the small CTE (buckets under 15).",
+   245→    template: `WITH st AS (SELECT status, COUNT(*) AS n FROM orders
+   246→GROUP BY {2}), small AS (SELECT status, n FROM st WHERE n < {3})
+   247→SELECT {1}(n) FROM small;`,
+   248→    slots: [
+   249→      {
+   250→        answer: "SUM",
+   251→        kind: "keyword",
+   252→        label: "the small-bucket total",
+   253→        why: "SUM(n) over the chain: 14 + 7 = 21 orders outside the big states.",
+   254→      },
+   255→      {
+   256→        answer: "status",
+   257→        kind: "keyword",
+   258→        label: "the staging key",
+   259→        why: "The first stage folds orders by status into four buckets.",
+   260→      },
+   261→      {
+   262→        answer: "15",
+   263→        kind: "number",
+   264→        noVerify: true,
+   265→        label: "the small-bucket line",
+   266→        why: "Fifteen is the line, not a result figure. Probed: pending (14) and cancelled (7) fall below it.",
+   267→      },
+   268→    ],
+   269→    distractors: ["COUNT", "region", "s"],
+   270→    walkthrough:
+   271→      "The census folds 103 orders into four buckets; small keeps pending (14) and cancelled (7); the sum reads 21 — one in five orders sits in a small state. COUNT over the chain reads 2 — buckets, not orders. Re-project s and the engine refuses: the census named its column n. Twenty-one is the exception report's size: everything the two big states do not explain, staged and summed in one chain.",
+   272→  },
+   273→  {
+   274→    id: "cs-1122",
+   275→    tier: "easy",
+   276→    topic: "q7",
+   277→    universe: "growth",
+   278→    title: "The thin markets, counted",
+   279→    brief:
+   280→      "From: Growth lead. Re: the thin-market count.\n\nby_region folds the census, thin keeps buckets under five, and the main query counts them — the map's thin dots.",
+   281→    ask: "One query: the count of regions in the thin CTE (fewer than 5 customers).",
+   282→    template: `WITH by_region AS (SELECT region, COUNT(*) AS n FROM customers
+   283→GROUP BY {3}), thin AS (SELECT region, n FROM by_region WHERE n < {2})
+   284→SELECT {1}(*) FROM thin;`,
+   285→    slots: [
+   286→      {
+   287→        answer: "COUNT",
+   288→        kind: "keyword",
+   289→        label: "the chained counter",
+   290→        why: "COUNT(*) over the chained stage: 2 thin markets.",
+   291→      },
+   292→      {
+   293→        answer: "5",
+   294→        kind: "number",
+   295→        noVerify: true,
+   296→        label: "the thin line",
+   297→        why: "Five is the line, not a result figure. Probed: US (2) and LATAM (1) fall below it.",
+   298→      },
+   299→      {
+   300→        answer: "region",
+   301→        kind: "keyword",
+   302→        label: "the staging key",
+   303→        why: "The first stage folds the roster by region into four buckets.",
+   304→      },
+   305→    ],
+   306→    distractors: ["SUM", "status", "customers"],
+   307→    walkthrough:
+   308→      "The census folds sixteen customers into four region buckets; thin keeps US (2) and LATAM (1); the count reads 2 — two thin markets on the map. SUM over the chain reads 3 — their population. Stage the census by status and the chain asks which status buckets are thin — none. The thin-market count is the expansion deck's opening figure: two dots worth growing, two regions that already carry fourteen of the sixteen customers.",
+   309→  },
+   310→  {
+   311→    id: "cs-1123",
+   312→    tier: "easy",
+   313→    topic: "q7",
+   314→    universe: "expense",
+   315→    title: "The 5k club's combined bill",
+   316→    brief:
+   317→      "From: Finance partner. Re: the club's total.\n\nspend prices accounts, big keeps past-5k, and the main query sums the club's spending — the two heavyweights' combined weight.",
+   318→    ask: "One query: the summed spends in the big CTE (past 5,000).",
+   319→    template: `WITH spend AS (SELECT customer_id, SUM(total) AS s FROM orders
+   320→GROUP BY {2}), big AS (SELECT customer_id, s FROM spend WHERE s > 5000)
+   321→SELECT {1}({3}) FROM big;`,
+   322→    slots: [
+   323→      {
+   324→        answer: "SUM",
+   325→        kind: "keyword",
+   326→        label: "the club aggregator",
+   327→        why: "SUM(s) over the chain: 7262.35 + 6640.56 = 13902.91.",
+   328→      },
+   329→      {
+   330→        answer: "customer_id",
+   331→        kind: "keyword",
+   332→        label: "the fold's key",
+   333→        why: "The spend stage folds orders per customer into one price each.",
+   334→      },
+   335→      {
+   336→        answer: "s",
+   337→        kind: "keyword",
+   338→        label: "the staged spend column",
+   339→        why: "Both stages carry the price as s — the column the sum reads.",
+   340→      },
+   341→    ],
+   342→    distractors: ["COUNT", "AVG", "region"],
+   343→    walkthrough:
+   344→      "The spend stage prices sixteen accounts; big keeps the two past 5,000; the sum reads 13,902.91 — two accounts, forty percent of the store's book. COUNT over the chain reads 2 — members, not money. AVG reads 6,951.46, the club's mean — a different headline. Ask the chain for region and the engine refuses: the stages named their column s. The club's combined bill is the board's concentration figure, and the chain is how it stays honest.",
+   345→  },
+   346→  {
+   347→    id: "cs-1124",
+   348→    tier: "easy",
+   349→    topic: "q7",
+   350→    universe: "growth",
+   351→    title: "The regulars, chained",
+   352→    brief:
+   353→      "From: Growth lead. Re: the regulars' census, chained.\n\nper folds the counts, big cuts at five, and the main query counts — the regulars' roster through a two-stage chain.",
+   354→    ask: "One query: the count of rows in the big CTE, chained off per at 5+.",
+   355→    template: `WITH per AS (SELECT customer_id, COUNT(*) AS n FROM orders
+   356→GROUP BY {2}), big AS (SELECT customer_id, n FROM per WHERE n >= {3})
+   357→SELECT {1}(*) FROM big;`,
+   358→    slots: [
+   359→      {
+   360→        answer: "COUNT",
+   361→        kind: "keyword",
+   362→        label: "the chained counter",
+   363→        why: "COUNT(*) over the second stage: 5 regulars.",
+   364→      },
+   365→      {
+   366→        answer: "customer_id",
+   367→        kind: "keyword",
+   368→        label: "the fold's key",
+   369→        why: "The first stage folds orders per customer into counts.",
+   370→      },
+   371→      {
+   372→        answer: "5",
+   373→        kind: "number",
+   374→        noVerify: true,
+   375→        label: "the regulars' line",
+   376→        why: "Five is the chain's line, not a result figure. Probed: five accounts clear it.",
+   377→      },
+   378→    ],
+   379→    distractors: ["SUM", "status", "id"],
+   380→    walkthrough:
+   381→      "The fold builds sixteen counts; big keeps the five at five-plus — the four heavyweights plus the steady regular. Stage the fold by status and the chain counts buckets past five — two. SUM over the chain totals 73 — the regulars' combined orders. The chained build is the roster the loyalty program imports: one fold, one cut, one count, and the same five accounts every week unless the data moves.",
+   382→  },
+   383→  {
+   384→    id: "cs-1125",
+   385→    tier: "easy",
+   386→    topic: "q7",
+   387→    universe: "month-close",
+   388→    title: "The repeat waiters, named",
+   389→    brief:
+   390→      "From: Ops controller. Re: the escalation list with names.\n\nhold gathers pending ids, cold folds per account, and the cut keeps the double-waiters. Join back and name the escalation list.",
+   391→    ask: "One query: names and pending counts of customers in cold with 2 or more pending orders.",
+   392→    template: `WITH hold AS (SELECT customer_id FROM orders WHERE status = 'pending'),
+   393→cold AS (SELECT customer_id, COUNT(*) AS pn FROM hold GROUP BY customer_id),
+   394→repeat AS (SELECT customer_id, pn FROM cold WHERE pn >= {3})
+   395→SELECT c.name, repeat.pn FROM repeat JOIN customers c ON c.id = repeat.{1}
+   396→ORDER BY repeat.pn {2}, c.name;`,
+   397→    slots: [
+   398→      {
+   399→        answer: "customer_id",
+   400→        kind: "keyword",
+   401→        label: "the join-back column",
+   402→        why: "repeat carries customer_id; the join attaches each escalation to its name.",
+   403→      },
+   404→      {
+   405→        answer: "DESC",
+   406→        kind: "keyword",
+   407→        label: "the worst-first read",
+   408→        why: "DESC leads with the three-time waiters — the meeting's first agenda item.",
+   409→      },
+   410→      {
+   411→        answer: "2",
+   412→        kind: "number",
+   413→        noVerify: true,
+   414→        label: "the repeat line",
+   415→        why: "Two is the escalation line, not a result figure. Probed: four accounts wait twice or more.",
+   416→      },
+   417→    ],
+   418→    distractors: ["id", "ASC", "email"],
+   419→    walkthrough:
+   420→      "The chain: hold gathers fourteen pending ids, cold folds them to eight waiting accounts, repeat keeps the four at two-plus; the join back names them — Alice and Emma at three, Chloe and Maya at two. Join on repeat.id and the engine refuses: the stage's projection rules. ASC reads the two-time waiters first — softer triage than the memo wants. The escalation list with names is the ops meeting's opening row, and the chain is what makes it reproducible every Monday.",
+   421→  },
+   422→  {
+   423→    id: "cs-1126",
+   424→    tier: "medium",
+   425→    topic: "q7",
+   426→    universe: "expense",
+   427→    title: "The map's total weight",
+   428→    brief:
+   429→      "From: Finance partner. Re: the regional map, totalled.\n\nThe three-stage spend map ends in regional buckets. Sum the buckets and reconcile: every heavy spender must land in exactly one region — five in all.",
+   430→    ask: "One query: the summed spender counts across the by_region CTE (past-2k spenders).",
+   431→    template: `WITH spend AS (SELECT customer_id, SUM(total) AS s FROM orders
+   432→GROUP BY customer_id), big AS (SELECT customer_id, s FROM spend WHERE s > 2000),
+   433→by_region AS (SELECT c.region, COUNT(*) AS n FROM big JOIN customers c
+   434→ON c.id = big.{2} GROUP BY c.{3}) SELECT {1}(n) FROM by_region;`,
+   435→    slots: [
+   436→      {
+   437→        answer: "SUM",
+   438→        kind: "keyword",
+   439→        label: "the map's reconciler",
+   440→        why: "SUM(n) over the regional buckets: 2 + 2 + 1 = 5 heavy spenders.",
+   441→      },
+   442→      {
+   443→        answer: "customer_id",
+   444→        kind: "keyword",
+   445→        label: "the join-back column",
+   446→        why: "big carries customer_id; the join back is where regions enter the chain.",
+   447→      },
+   448→      {
+   449→        answer: "region",
+   450→        kind: "keyword",
+   451→        label: "the map's grouping key",
+   452→        why: "The final stage folds the survivors by region into three buckets.",
+   453→      },
+   454→    ],
+   455→    distractors: ["COUNT", "AVG", "s"],
+   456→    walkthrough:
+   457→      "Three stages price, cut and fold: five heavy spenders land in three regional buckets — APAC 2, EU 2, US 1; the sum reassembles the total: 5, reconciling with the big stage's own count. COUNT(n) reads 3 — the map's dots, not its weight. AVG reads 1.67 — spenders per region, a density. Read s in the final stage and the engine refuses: by_region projected region and n only. Reconciliation is the chain's audit trail: fold, sum, compare — and the figures agree.",
+   458→  },
+   459→  {
+   460→    id: "cs-1127",
+   461→    tier: "medium",
+   462→    topic: "q7",
+   463→    universe: "growth",
+   464→    title: "Europe's heavyweight, totalled",
+   465→    brief:
+   466→      "From: Growth lead. Re: the EU heavy cut, totalled.\n\nThe chained heavy register filtered to Europe holds one account. Sum its orders — Europe's entire heavy-tier load in one figure.",
+   467→    ask: "One query: the summed counts in the EU-cut big CTE (13+ orders, Europe).",
+   468→    template: `WITH per AS (SELECT customer_id, COUNT(*) AS n FROM orders
+   469→GROUP BY customer_id), big AS (SELECT customer_id, n FROM per WHERE n >= 13),
+   470→eu_big AS (SELECT b.customer_id, b.n FROM big b JOIN customers c
+   471→ON c.id = b.{3} WHERE c.region = {2}) SELECT {1}(n) FROM eu_big;`,
+   472→    slots: [
+   473→      {
+   474→        answer: "SUM",
+   475→        kind: "keyword",
+   476→        label: "the regional aggregator",
+   477→        why: "SUM(n) over the EU-cut register: 24 — Alice Chen's whole heavy load.",
+   478→      },
+   479→      {
+   480→        answer: "'EU'",
+   481→        kind: "keyword",
+   482→        label: "the regional filter",
+   483→        why: "The final stage scopes the heavy register to Europe — one account qualifies.",
+   484→      },
+   485→      {
+   486→        answer: "customer_id",
+   487→        kind: "keyword",
+   488→        label: "the join-back column",
+   489→        why: "big carries customer_id; the join back is where the region filter becomes possible.",
+   490→      },
+   491→    ],
+   492→    distractors: ["COUNT", "region", "s"],
+   493→    walkthrough:
+   494→      "Three stages: per folds to counts, big keeps the four heavies, eu_big scopes to Europe — one row, Alice Chen. SUM reads her 24 orders: the continent's entire heavy-tier load. COUNT reads 1 — the roster's size. AVG and MIN over a single row all read 24 — the degenerate case where every aggregate agrees. When a regional cut holds one account, the sum, the count and the mean tell the same story — and the chain is what proves the roster really is that thin.",
+   495→  },
+   496→  {
+   497→    id: "cs-1128",
+   498→    tier: "medium",
+   499→    topic: "q7",
+   500→    universe: "expense",
+   501→    title: "Asia-Pacific's heavy pair",
+   502→    brief:
+   503→      "From: Finance partner. Re: the APAC cut.\n\nThe chained spend register scoped to APAC: two of the five heavy spenders live there. Count them through the three-stage chain.",
+   504→    ask: "One query: the count of APAC customers in the big CTE (past-2k spenders).",
+   505→    template: `WITH spend AS (SELECT customer_id, SUM(total) AS s FROM orders
+   506→GROUP BY customer_id), big AS (SELECT customer_id, s FROM spend WHERE s > 2000),
+   507→apac_big AS (SELECT b.customer_id, b.s FROM big b JOIN customers c
+   508→ON c.id = b.{3} WHERE c.region = {1}) SELECT {2}(*) FROM apac_big;`,
+   509→    slots: [
+   510→      {
+   511→        answer: "'APAC'",
+   512→        kind: "keyword",
+   513→        label: "the regional filter",
+   514→        why: "The final stage scopes the heavy register to Asia-Pacific — two accounts qualify.",
+   515→      },
+   516→      {
+   517→        answer: "COUNT",
+   518→        kind: "keyword",
+   519→        label: "the chained counter",
+   520→        why: "COUNT(*) over the scoped stage: 2 APAC heavy spenders.",
+   521→      },
+   522→      {
+   523→        answer: "customer_id",
+   524→        kind: "keyword",
+   525→        label: "the join-back column",
+   526→        why: "big carries customer_id; the join back attaches each price to its region.",
+   527→      },
+   528→    ],
+   529→    distractors: ["SUM", "region", "WHERE"],
+   530→    walkthrough:
+   531→      "Three stages: spend prices sixteen accounts, big keeps the five past 2,000, apac_big scopes to Asia-Pacific — two rows. Point the filter at 'EU' and the count stays 2 — Europe's own pair; the regions tie. SUM over the scoped stage totals the pair's combined weight. WHERE cannot replace the JOIN — the region lives on the roster. The regional cuts are one-line edits to the same chain, which is why the map stays consistent: every region reads the same priced stage.",
+   532→  },
+   533→  {
+   534→    id: "cs-1129",
+   535→    tier: "medium",
+   536→    topic: "q7",
+   537→    universe: "month-close",
+   538→    title: "The longest waiter",
+   539→    brief:
+   540→      "From: Ops controller. Re: the head of the queue.\n\nThe chained pending fold, sorted worst-first and trimmed to one — the account with the most open orders, however many that is.",
+   541→    ask: "One query: the pending count of the worst waiter, from the chained cold CTE.",
+   542→    template: `WITH hold AS (SELECT customer_id FROM orders WHERE status = 'pending'),
+   543→cold AS (SELECT customer_id, COUNT(*) AS pn FROM hold GROUP BY {3})
+   544→SELECT pn FROM cold ORDER BY pn {1} LIMIT {2};`,
+   545→    slots: [
+   546→      {
+   547→        answer: "DESC",
+   548→        kind: "keyword",
+   549→        label: "the worst-first sort",
+   550→        why: "DESC ranks the fold so the trim keeps the deepest backlog: 3 pending orders.",
+   551→      },
+   552→      {
+   553→        answer: "1",
+   554→        kind: "number",
+   555→        noVerify: true,
+   556→        label: "the head-of-queue trim",
+   557→        why: "One is the trim, not a result figure — the query wants the queue's head alone.",
+   558→      },
+   559→      {
+   560→        answer: "customer_id",
+   561→        kind: "keyword",
+   562→        label: "the register's column",
+   563→        why: "hold gathers customer ids from the pending rows; cold folds them per account.",
+   564→      },
+   565→    ],
+   566→    distractors: ["ASC", "2", "status"],
+   567→    walkthrough:
+   568→      "The chain gathers fourteen pending rows and folds them to eight waiting accounts; the DESC sort leads with the deepest backlog — 3 pending orders — and the trim keeps it. ASC keeps the shallowest: 1. Widen the trim to 2 and the second three-time waiter rides along — the tie at the top means the head of the queue is two accounts deep. The figure is the escalation trigger: when the queue's head hits three, the ops meeting calls the account.",
+   569→  },
+   570→  {
+   571→    id: "cs-1130",
+   572→    tier: "medium",
+   573→    topic: "q7",
+   574→    universe: "growth",
+   575→    title: "The champion, chained and trimmed",
+   576→    brief:
+   577→      "From: Growth lead. Re: the top row, full chain.\n\nper folds the counts, big cuts at the heavy line, and the final stage sorts and trims to one — the champion's figure through three named stages.",
+   578→    ask: "One query: the biggest count in the big CTE, chained off per at 13+.",
+   579→    template: `WITH per AS (SELECT customer_id, COUNT(*) AS n FROM orders
+   580→GROUP BY {3}), big AS (SELECT customer_id, n FROM per WHERE n >= 13)
+   581→SELECT n FROM big ORDER BY n {1} LIMIT {2};`,
+   582→    slots: [
+   583→      {
+   584→        answer: "DESC",
+   585→        kind: "keyword",
+   586→        label: "the biggest-first sort",
+   587→        why: "DESC ranks the heavy register so the trim keeps the top: 24 orders.",
+   588→      },
+   589→      {
+   590→        answer: "1",
+   591→        kind: "number",
+   592→        noVerify: true,
+   593→        label: "the champion trim",
+   594→        why: "One is the trim, not a result figure — the chain keeps the single biggest row.",
+   595→      },
+   596→      {
+   597→        answer: "customer_id",
+   598→        kind: "keyword",
+   599→        label: "the fold's key",
+   600→        why: "The first stage folds orders per customer; big reads that fold.",
+   601→      },
+   602→    ],
+   603→    distractors: ["ASC", "id", "status"],
+   604→    walkthrough:
+   605→      "Three stages: per folds to sixteen counts, big keeps the four heavies, and the final sort-and-trim keeps the top: 24. ASC keeps the heavy tier's floor instead — 13, the boundary account. Widen the trim to 2 and the runner-up rides along. The champion through the chain costs one more stage than reading per directly — and buys a named intermediate the deck can re-cut: the same big stage feeds the roster, the sum, and this headline.",
+   606→  },
+   607→  {
+   608→    id: "cs-1131",
+   609→    tier: "medium",
+   610→    topic: "q7",
+   611→    universe: "expense",
+   612→    title: "The top price tag, chained",
+   613→    brief:
+   614→      "From: Finance partner. Re: the peak, chained.\n\nspend prices accounts, big keeps past-2k, and the final stage sorts and trims to one — the biggest price tag behind the 2k line.",
+   615→    ask: "One query: the highest spend in the big CTE, chained off spend at 2,000+.",
+   616→    template: `WITH spend AS (SELECT customer_id, SUM(total) AS s FROM orders
+   617→GROUP BY {3}), big AS (SELECT customer_id, s FROM spend WHERE s > 2000)
+   618→SELECT s FROM big ORDER BY s {1} LIMIT {2};`,
+   619→    slots: [
+   620→      {
+   621→        answer: "DESC",
+   622→        kind: "keyword",
+   623→        label: "the biggest-first sort",
+   624→        why: "DESC ranks the club so the trim keeps the top: 7262.35.",
+   625→      },
+   626→      {
+   627→        answer: "1",
+   628→        kind: "number",
+   629→        noVerify: true,
+   630→        label: "the peak trim",
+   631→        why: "One is the trim, not a result figure — the chain keeps the single biggest price.",
+   632→      },
+   633→      {
+   634→        answer: "customer_id",
+   635→        kind: "keyword",
+   636→        label: "the fold's key",
+   637→        why: "The spend stage folds orders per customer into one price each.",
+   638→      },
+   639→    ],
+   640→    distractors: ["ASC", "id", "status"],
+   641→    walkthrough:
+   642→      "Three stages: spend prices sixteen accounts, big keeps the five past 2,000, and the final sort-and-trim keeps the peak: 7262.35. ASC keeps the club's floor instead — the cheapest qualifier above the line. Widen the trim to 2 and the runner-up's 6,640.56 rides along. The chained peak costs nothing extra to run — the stages were already built for the roster — and the figure reconciles with the MAX-over-stage read: same fold, same answer, different road.",
+   643→  },
+   644→  {
+   645→    id: "cs-1132",
+   646→    tier: "medium",
+   647→    topic: "q7",
+   648→    universe: "growth",
+   649→    title: "Europe's order book, chained",
+   650→    brief:
+   651→      "From: Growth lead. Re: the register's breadth.\n\nTwo registers chained: eu holds the European ids, eu_orders holds their orders. Count the distinct accounts inside the book — every European customer ordered at least once.",
+   652→    ask: "One query: the distinct customer count inside the eu_orders CTE.",
+   653→    template: `WITH eu AS (SELECT id FROM customers WHERE region = {3}),
+   654→eu_orders AS (SELECT * FROM orders WHERE customer_id IN (SELECT id FROM eu))
+   655→SELECT {1}(DISTINCT {2}) FROM eu_orders;`,
+   656→    slots: [
+   657→      {
+   658→        answer: "COUNT",
+   659→        kind: "keyword",
+   660→        label: "the breadth counter",
+   661→        why: "COUNT(DISTINCT customer_id) over the book: 8 accounts — every EU customer ordered.",
+   662→      },
+   663→      {
+   664→        answer: "customer_id",
+   665→        kind: "keyword",
+   666→        label: "the distinct column",
+   667→        why: "The book carries customer_id per order; DISTINCT collapses 45 rows to the accounts behind them.",
+   668→      },
+   669→      {
+   670→        answer: "'EU'",
+   671→        kind: "keyword",
+   672→        label: "the register's filter",
+   673→        why: "The eu register gathers the eight European ids the book is built from.",
+   674→      },
+   675→    ],
+   676→    distractors: ["SUM", "id", "'APAC'"],
+   677→    walkthrough:
+   678→      "The eu register holds eight ids; eu_orders holds their 45 orders; the distinct count collapses the book to its accounts: 8 — nobody in Europe has zero orders. Count the rows instead and the read is 45 — the book's weight, not its breadth. Distinct over id would count 45 again — every order has its own id. SUM cannot count a distinct. Breadth and weight are the register's two reads: 8 accounts wide, 45 orders deep — and the chain names both.",
+   679→  },
+   680→  {
+   681→    id: "cs-1133",
+   682→    tier: "medium",
+   683→    topic: "q7",
+   684→    universe: "month-close",
+   685→    title: "The small buckets, listed",
+   686→    brief:
+   687→      "From: Ops controller. Re: the small-bucket extract.\n\nst folds the census, small keeps buckets under fifteen, and the main query lists them with figures — the exception report's two rows.",
+   688→    ask: "One query: the statuses and counts in the small CTE (buckets under 15).",
+   689→    template: `WITH st AS (SELECT status, COUNT(*) AS n FROM orders
+   690→GROUP BY status), small AS (SELECT status, n FROM st WHERE n < {3})
+   691→SELECT {1}, {2} FROM small ORDER BY n DESC;`,
+   692→    slots: [
+   693→      {
+   694→        answer: "status",
+   695→        kind: "keyword",
+   696→        label: "the bucket's name",
+   697→        why: "The extract lists the small buckets by name: pending and cancelled.",
+   698→      },
+   699→      {
+   700→        answer: "n",
+   701→        kind: "keyword",
+   702→        label: "the staged count column",
+   703→        why: "Both stages carry the count as n; the extract reads it beside each name.",
+   704→      },
+   705→      {
+   706→        answer: "15",
+   707→        kind: "number",
+   708→        noVerify: true,
+   709→        label: "the small-bucket line",
+   710→        why: "Fifteen is the line, not a result figure. Probed: pending (14) and cancelled (7) fall below it.",
+   711→      },
+   712→    ],
+   713→    distractors: ["s", "id", "region"],
+   714→    walkthrough:
+   715→      "The census folds 103 orders into four buckets; small keeps pending (14) and cancelled (7); the extract lists both with figures, biggest first. Ask for s and the engine refuses: the stages named their column n. The DESC sort leads with the holding pen — the larger exception first. The two-row extract is the close's exception appendix, and the chain is what keeps it two rows: the line at fifteen sits between the small buckets and the book's big states.",
+   716→  },
+   717→  {
+   718→    id: "cs-1134",
+   719→    tier: "medium",
+   720→    topic: "q7",
+   721→    universe: "expense",
+   722→    title: "The map's breadth",
+   723→    brief:
+   724→      "From: Finance partner. Re: the map's spread.\n\nThe three-stage spend map ends in regional buckets. Count the DISTINCT regions the heavy spenders spread across — the map's width.",
+   725→    ask: "One query: the distinct region count in the chained heavy-spender build (past 2,000).",
+   726→    template: `WITH spend AS (SELECT customer_id, SUM(total) AS s FROM orders
+   727→GROUP BY customer_id), big AS (SELECT customer_id, s FROM spend WHERE s > {3})
+   728→SELECT {1}(DISTINCT c.{2}) FROM big JOIN customers c ON c.id = big.customer_id;`,
+   729→    slots: [
+   730→      {
+   731→        answer: "COUNT",
+   732→        kind: "keyword",
+   733→        label: "the breadth counter",
+   734→        why: "COUNT(DISTINCT region) over the joined club: 3 regions — APAC, EU and US.",
+   735→      },
+   736→      {
+   737→        answer: "region",
+   738→        kind: "keyword",
+   739→        label: "the spread column",
+   740→        why: "The join back attaches each spender's region; DISTINCT collapses five spenders to three regions.",
+   741→      },
+   742→      {
+   743→        answer: "2000",
+   744→        kind: "number",
+   745→        noVerify: true,
+   746→        label: "the spend line",
+   747→        why: "Two thousand is the chain's line, not a result figure. Probed: five accounts clear it.",
+   748→      },
+   749→    ],
+   750→    distractors: ["SUM", "name", "region_id"],
+   751→    walkthrough:
+   752→      "The priced stage cuts to five heavy spenders; the join back attaches regions; the distinct count collapses them to 3 — the map's width. Count the rows instead and the read is 5 — spenders, not regions. Distinct over name would read 5 again — every spender is a different person. SUM cannot count a distinct. Width and weight: five spenders across three regions — and LATAM's absence is the map's quietest fact.",
+   753→  },
+   754→  {
+   755→    id: "cs-1135",
+   756→    tier: "medium",
+   757→    topic: "q7",
+   758→    universe: "growth",
+   759→    title: "Past five, chained",
+   760→    brief:
+   761→      "From: Growth lead. Re: the strict cut.\n\nThe chained heavy cut with a twist: past five, strictly — the regular at exactly five stays out. Count the chain's survivors.",
+   762→    ask: "One query: the count of rows in the big CTE, chained off per at more than 5.",
+   763→    template: `WITH per AS (SELECT customer_id, COUNT(*) AS n FROM orders
+   764→GROUP BY {3}), big AS (SELECT customer_id, n FROM per WHERE n > {1})
+   765→SELECT {2}(*) FROM big;`,
+   766→    slots: [
+   767→      {
+   768→        answer: "5",
+   769→        kind: "number",
+   770→        noVerify: true,
+   771→        label: "the strict line",
+   772→        why: "Five is the line, not a result figure — the strict > drops its own occupant.",
+   773→      },
+   774→      {
+   775→        answer: "COUNT",
+   776→        kind: "keyword",
+   777→        label: "the chained counter",
+   778→        why: "COUNT(*) over the filtered stage: 4 accounts live strictly past five.",
+   779→      },
+   780→      {
+   781→        answer: "customer_id",
+   782→        kind: "keyword",
+   783→        label: "the fold's key",
+   784→        why: "The first stage folds orders per customer into counts.",
+   785→      },
+   786→    ],
+   787→    distractors: ["SUM", "4", "region"],
+   788→    walkthrough:
+   789→      "The fold builds sixteen counts; the strict cut past five keeps the four heavyweights — the five-order regular sits exactly on the line and the > excludes her. Widen to >= and she returns: 5. Raise the line to six and the answer is identical — the histogram's gap means nothing lives at six through twelve. Stage the fold by status and two buckets clear the line. Boundary discipline in a chain: the cut's operator decides the roster before the main query ever runs.",
+   790→  },
+   791→  {
+   792→    id: "cs-1136",
+   793→    tier: "medium",
+   794→    topic: "q7",
+   795→    universe: "month-close",
+   796→    title: "The queue's total weight",
+   797→    brief:
+   798→      "From: Ops controller. Re: the fold's reconciliation.\n\nhold gathers the pending rows, cold folds them per account. Sum the fold and reconcile: the queue's weight must equal the raw pending count — fourteen.",
+   799→    ask: "One query: the summed pending counts across the cold CTE.",
+   800→    template: `WITH hold AS (SELECT customer_id FROM orders WHERE status = 'pending'),
+   801→cold AS (SELECT customer_id, COUNT(*) AS pn FROM hold GROUP BY {2})
+   802→SELECT {1}({3}) FROM cold;`,
+   803→    slots: [
+   804→      {
+   805→        answer: "SUM",
+   806→        kind: "keyword",
+   807→        label: "the reconciliation aggregator",
+   808→        why: "SUM(pn) over the fold: 3 + 3 + 2 + 2 + ... = 14 — every pending row accounted for.",
+   809→      },
+   810→      {
+   811→        answer: "customer_id",
+   812→        kind: "keyword",
+   813→        label: "the register's column",
+   814→        why: "hold gathers customer ids from the pending rows; cold folds them per account.",
+   815→      },
+   816→      {
+   817→        answer: "pn",
+   818→        kind: "keyword",
+   819→        label: "the staged count column",
+   820→        why: "The fold projects the per-account pending count as pn; the sum reads it.",
+   821→      },
+   822→    ],
+   823→    distractors: ["COUNT", "AVG", "n"],
+   824→    walkthrough:
+   825→      "The register holds fourteen pending ids; the fold collapses them to eight waiting accounts; the sum reassembles the queue: 14, reconciling with the raw count. COUNT(pn) reads 8 — the roster's size, not the queue's weight. AVG reads 1.75 — the average waiter's backlog. Read n and the engine refuses: the fold named its column pn. The reconciliation is the fold's receipt: whatever the GROUP BY splits, the SUM must put back together.",
+   826→  },
+   827→  {
+   828→    id: "cs-1137",
+   829→    tier: "medium",
+   830→    topic: "q7",
+   831→    universe: "growth",
+   832→    title: "The heavy tier's mean",
+   833→    brief:
+   834→      "From: Growth lead. Re: the heavy mean, chained.\n\nper folds the counts, big keeps thirteen-plus, and the main query averages the heavy tier — the chase pack's centre of gravity.",
+   835→    ask: "One query: the average count in the big CTE, chained off per at 13+.",
+   836→    template: `WITH per AS (SELECT customer_id, COUNT(*) AS n FROM orders
+   837→GROUP BY {2}), big AS (SELECT customer_id, n FROM per WHERE n >= 13)
+   838→SELECT ROUND({1}({3}), 1) FROM big;`,
+   839→    slots: [
+   840→      {
+   841→        answer: "AVG",
+   842→        kind: "keyword",
+   843→        label: "the heavy mean",
+   844→        why: "AVG(n) over the heavy tier: (24+17+14+13)/4 = 17 — the chase pack's centre.",
+   845→      },
+   846→      {
+   847→        answer: "customer_id",
+   848→        kind: "keyword",
+   849→        label: "the fold's key",
+   850→        why: "The first stage folds orders per customer into counts.",
+   851→      },
+   852→      {
+   853→        answer: "n",
+   854→        kind: "keyword",
+   855→        label: "the staged count column",
+   856→        why: "Both stages carry the count as n — the column the mean reads.",
+   857→      },
+   858→    ],
+   859→    distractors: ["SUM", "COUNT", "MIN"],
+   860→    walkthrough:
+   861→      "The fold builds sixteen counts; big keeps the four heavies; the mean reads 17 — half the champion, triple the regular. SUM over the tier reads 68, its combined load. COUNT reads 4, its size. MIN reads 13, its floor. Four figures from one chain, each answering a different board question — and the mean is the one the deck quotes, because seventeen is the number a good year looks like.",
+   862→  },
+   863→  {
+   864→    id: "cs-1138",
+   865→    tier: "hard",
+   866→    topic: "q7",
+   867→    universe: "growth",
+   868→    title: "The heavy tier's floor",
+   869→    brief:
+   870→      "From: Growth lead. Re: the tier's entry point.\n\nThe heavy chain's floor: the SMALLEST count still inside the thirteen-plus register. Read it — the tier's entry point is the boundary account's own figure.",
+   871→    ask: "One query: the minimum count in the big CTE, chained off per at 13+.",
+   872→    template: `WITH per AS (SELECT customer_id, COUNT(*) AS n FROM orders
+   873→GROUP BY {2}), big AS (SELECT customer_id, n FROM per WHERE n >= 13)
+   874→SELECT {1}({3}) FROM big;`,
+   875→    slots: [
+   876→      {
+   877→        answer: "MIN",
+   878→        kind: "keyword",
+   879→        label: "the floor reader",
+   880→        why: "MIN(n) over the heavy register: 13 — the boundary account is the tier's floor.",
+   881→      },
+   882→      {
+   883→        answer: "customer_id",
+   884→        kind: "keyword",
+   885→        label: "the fold's key",
+   886→        why: "The first stage folds orders per customer into counts.",
+   887→      },
+   888→      {
+   889→        answer: "n",
+   890→        kind: "keyword",
+   891→        label: "the staged count column",
+   892→        why: "Both stages carry the count as n — the column the floor reads.",
+   893→      },
+   894→    ],
+   895→    distractors: ["MAX", "COUNT", "status"],
+   896→    walkthrough:
+   897→      "The fold builds sixteen counts; big keeps the four heavies — 24, 17, 14, 13; the floor reads the smallest: 13, the boundary account's own figure. MAX reads the ceiling: 24. COUNT reads 4, the tier's size. Stage the fold by status and the floor becomes 7 — the smallest bucket, a different building entirely. The tier's entry point is defined by its last member: thirteen is both the line and the name of the account standing on it, and the chain reads the two as one figure.",
+   898→  },
+   899→  {
+   900→    id: "cs-1139",
+   901→    tier: "hard",
+   902→    topic: "q7",
+   903→    universe: "month-close",
+   904→    title: "The escalation list's backlog",
+   905→    brief:
+   906→      "From: Ops controller. Re: the list's combined weight.\n\nThe three-stage escalation chain ends with four repeat waiters. Sum their open orders — the list's combined backlog, the figure the standup sizes the follow-up by.",
+   907→    ask: "One query: the summed pending counts in the repeat CTE (2+ pending).",
+   908→    template: `WITH hold AS (SELECT customer_id FROM orders WHERE status = 'pending'),
+   909→cold AS (SELECT customer_id, COUNT(*) AS pn FROM hold GROUP BY {2}),
+   910→repeat AS (SELECT customer_id, pn FROM cold WHERE pn >= 2)
+   911→SELECT {1}({3}) FROM repeat;`,
+   912→    slots: [
+   913→      {
+   914→        answer: "SUM",
+   915→        kind: "keyword",
+   916→        label: "the backlog aggregator",
+   917→        why: "SUM(pn) over the escalation list: 3 + 3 + 2 + 2 = 10 open orders.",
+   918→      },
+   919→      {
+   920→        answer: "customer_id",
+   921→        kind: "keyword",
+   922→        label: "the register's column",
+   923→        why: "hold gathers customer ids from the pending rows; the chain follows that thread.",
+   924→      },
+   925→      {
+   926→        answer: "pn",
+   927→        kind: "keyword",
+   928→        label: "the staged count column",
+   929→        why: "The fold projects the per-account pending count as pn; the sum reads it.",
+   930→      },
+   931→    ],
+   932→    distractors: ["COUNT", "AVG", "MAX"],
+   933→    walkthrough:
+   934→      "Three stages: hold gathers fourteen pending ids, cold folds them to eight accounts, repeat keeps the four at two-plus; the sum reads their combined backlog: 10 — most of the queue held by half the waiters. COUNT reads 4 — the list's size. AVG reads 2.5 — the average escalation. MAX reads 3 — the worst single case. Ten of fourteen pending orders sit on the escalation list; the chain is how the standup knows the follow-up is worth it.",
+   935→  },
+   936→  {
+   937→    id: "cs-1140",
+   938→    tier: "hard",
+   939→    topic: "q7",
+   940→    universe: "growth",
+   941→    title: "The chain inside the chain",
+   942→    brief:
+   943→      "From: Growth lead. Re: the nested cut.\n\nTwo cuts stacked: big keeps thirteen-plus, big2 keeps twenty-plus inside that. A chain of chains — count the innermost stage.",
+   944→    ask: "One query: the count of rows in big2, chained off big off per (13+, then 20+).",
+   945→    template: `WITH per AS (SELECT customer_id, COUNT(*) AS n FROM orders
+   946→GROUP BY {3}), big AS (SELECT customer_id, n FROM per WHERE n >= 13),
+   947→big2 AS (SELECT customer_id, n FROM big WHERE n >= {1}) SELECT {2}(*) FROM big2;`,
+   948→    slots: [
+   949→      {
+   950→        answer: "20",
+   951→        kind: "number",
+   952→        noVerify: true,
+   953→        label: "the inner cut",
+   954→        why: "Twenty is the inner line, not a result figure. Probed: the innermost stage holds 1 row.",
+   955→      },
+   956→      {
+   957→        answer: "COUNT",
+   958→        kind: "keyword",
+   959→        label: "the innermost counter",
+   960→        why: "COUNT(*) over the second cut: 1 account — Alice Chen, twice over.",
+   961→      },
+   962→      {
+   963→        answer: "customer_id",
+   964→        kind: "keyword",
+   965→        label: "the chain's thread",
+   966→        why: "Every stage carries customer_id and n forward — the thread the cuts follow.",
+   967→      },
+   968→    ],
+   969→    distractors: ["SUM", "17", "status"],
+   970→    walkthrough:
+   971→      "Three stages, two cuts: per folds sixteen counts, big keeps the four heavies, big2 re-cuts at twenty — one survivor, Alice Chen's 24. Lower the inner line to seventeen and Emma joins: 2. Raise it to twenty-five and the innermost stage empties — nobody, an honest zero. SUM over the innermost stage reads 24, the survivor's whole load. Stacked cuts are how tiers nest: the outer line defines the tier, the inner line defines its elite, and both live in the same chain.",
+   972→  },
+   973→  {
+   974→    id: "cs-1141",
+   975→    tier: "hard",
+   976→    topic: "q7",
+   977→    universe: "expense",
+   978→    title: "The club inside the list",
+   979→    brief:
+   980→      "From: Finance partner. Re: the nested spend cut.\n\nTwo spend cuts stacked: big keeps past-2k, big2 keeps past-5k inside that. Count the innermost stage — the club within the list.",
+   981→    ask: "One query: the count of rows in big2, chained off big off spend (2k+, then 5k+).",
+   982→    template: `WITH spend AS (SELECT customer_id, SUM(total) AS s FROM orders
+   983→GROUP BY {3}), big AS (SELECT customer_id, s FROM spend WHERE s > 2000),
+   984→big2 AS (SELECT customer_id, s FROM big WHERE s > {1}) SELECT {2}(*) FROM big2;`,
+   985→    slots: [
+   986→      {
+   987→        answer: "5000",
+   988→        kind: "number",
+   989→        noVerify: true,
+   990→        label: "the inner cut",
+   991→        why: "Five thousand is the inner line, not a result figure. Probed: the innermost stage holds 2 rows.",
+   992→      },
+   993→      {
+   994→        answer: "COUNT",
+   995→        kind: "keyword",
+   996→        label: "the innermost counter",
+   997→        why: "COUNT(*) over the second cut: 2 heavyweights.",
+   998→      },
+   999→      {
+  1000→        answer: "customer_id",
+  1001→        kind: "keyword",
+  1002→        label: "the chain's thread",
+  1003→        why: "Every stage carries customer_id and s forward — the thread the cuts follow.",
+  1004→      },
+  1005→    ],
+  1006→    distractors: ["SUM", "7000", "status"],
+  1007→    walkthrough:
+  1008→      "Three stages, two cuts: spend prices sixteen accounts, big keeps the five past 2,000, big2 re-cuts at 5,000 — two heavyweights survive. Raise the inner line to 7,000 and the club thins to one — Emma's 6,640.56 drops under the strict >. Lower it to 4,000 and Grace's 4,574.23 enters: 3. SUM over the innermost stage reads 13,902.91, the club's combined weight. The nested cuts are the retention program's two lists — the shortlist and the white-glove list — built from one priced stage.",
+  1009→  },
+  1010→  {
+  1011→    id: "cs-1142",
+  1012→    tier: "hard",
+  1013→    topic: "q7",
+  1014→    universe: "month-close",
+  1015→    title: "The biggest small bucket",
+  1016→    brief:
+  1017→      "From: Ops controller. Re: the exception's head.\n\nThe chained census cut keeps buckets under fifteen; sort them and trim to one — the biggest of the small buckets, the exception report's headline row.",
+  1018→    ask: "One query: the largest count in the small CTE (buckets under 15).",
+  1019→    template: `WITH st AS (SELECT status, COUNT(*) AS n FROM orders
+  1020→GROUP BY {3}), small AS (SELECT status, n FROM st WHERE n < 15)
+  1021→SELECT n FROM small ORDER BY n {1} LIMIT {2};`,
+  1022→    slots: [
+  1023→      {
+  1024→        answer: "DESC",
+  1025→        kind: "keyword",
+  1026→        label: "the biggest-first sort",
+  1027→        why: "DESC ranks the small buckets so the trim keeps the top: pending, at 14.",
+  1028→      },
+  1029→      {
+  1030→        answer: "1",
+  1031→        kind: "number",
+  1032→        noVerify: true,
+  1033→        label: "the headline trim",
+  1034→        why: "One is the trim, not a result figure — the report wants the headline row alone.",
+  1035→      },
+  1036→      {
+  1037→        answer: "status",
+  1038→        kind: "keyword",
+  1039→        label: "the staging key",
+  1040→        why: "The first stage folds orders by status into four buckets.",
+  1041→      },
+  1042→    ],
+  1043→    distractors: ["ASC", "id", "region"],
+  1044→    walkthrough:
+  1045→      "The census folds to four buckets; small keeps pending (14) and cancelled (7); the DESC sort leads with the holding pen and the trim keeps it — the exception report's headline: fourteen orders waiting. ASC keeps the graveyard instead — 7, the sadder headline. Widen the trim to 2 and both small buckets print. Group the census by id and every bucket holds one order — the headline collapses to 1. The headline is one row, but the chain behind it is what makes the row trustworthy.",
+  1046→  },
+  1047→  {
+  1048→    id: "cs-1143",
+  1049→    tier: "hard",
+  1050→    topic: "q7",
+  1051→    universe: "growth",
+  1052→    title: "The thinnest market, chained",
+  1053→    brief:
+  1054→      "From: Growth lead. Re: the thin edge, chained.\n\nThe chained census cut keeps buckets under five; sort rising and trim to one — the thinnest market on the map, through three named stages.",
+  1055→    ask: "One query: the smallest count in the thin CTE (buckets under 5).",
+  1056→    template: `WITH by_region AS (SELECT region, COUNT(*) AS n FROM customers
+  1057→GROUP BY {3}), thin AS (SELECT region, n FROM by_region WHERE n < 5)
+  1058→SELECT n FROM thin ORDER BY n {1} LIMIT {2};`,
+  1059→    slots: [
+  1060→      {
+  1061→        answer: "ASC",
+  1062→        kind: "keyword",
+  1063→        label: "the smallest-first sort",
+  1064→        why: "ASC ranks the thin buckets so the trim keeps the bottom: LATAM, at 1 customer.",
+  1065→      },
+  1066→      {
+  1067→        answer: "1",
+  1068→        kind: "number",
+  1069→        noVerify: true,
+  1070→        label: "the thin-edge trim",
+  1071→        why: "One is the trim, not a result figure — the query wants the thinnest market alone.",
+  1072→      },
+  1073→      {
+  1074→        answer: "region",
+  1075→        kind: "keyword",
+  1076→        label: "the staging key",
+  1077→        why: "The first stage folds the roster by region into four buckets.",
+  1078→      },
+  1079→    ],
+  1080→    distractors: ["DESC", "status", "customers"],
+  1081→    walkthrough:
+  1082→      "The census folds sixteen customers into four buckets; thin keeps US (2) and LATAM (1); the ASC sort leads with the thinnest and the trim keeps it — LATAM, one customer strong. DESC keeps the US instead — the larger of the thin markets. Widen the trim to 2 and both thin markets print. Group the census by status and the chain reads a different map. The thinnest market is the expansion deck's opening slide, and the chain is what finds it without hard-coding a name.",
+  1083→  },
+  1084→  {
+  1085→    id: "cs-1144",
+  1086→    tier: "hard",
+  1087→    topic: "q7",
+  1088→    universe: "growth",
+  1089→    title: "Europe's heavyweight, named",
+  1090→    brief:
+  1091→      "From: Growth lead. Re: the regional cut with names.\n\nThree stages: per folds counts, big keeps thirteen-plus, eu_big scopes to Europe and joins back for names. Read the roster — one name, one figure.",
+  1092→    ask: "One query: the name and count of the customer in the eu_big CTE.",
+  1093→    template: `WITH per AS (SELECT customer_id, COUNT(*) AS n FROM orders
+  1094→GROUP BY customer_id), big AS (SELECT customer_id, n FROM per WHERE n >= {3}),
+  1095→eu_big AS (SELECT c.name, b.n FROM big b JOIN customers c
+  1096→ON c.id = b.{1} WHERE c.region = 'EU') SELECT name, {2} FROM eu_big;`,
+  1097→    slots: [
+  1098→      {
+  1099→        answer: "customer_id",
+  1100→        kind: "keyword",
+  1101→        label: "the join-back column",
+  1102→        why: "big carries customer_id; the join attaches Europe's heavyweight to her name.",
+  1103→      },
+  1104→      {
+  1105→        answer: "n",
+  1106→        kind: "keyword",
+  1107→        label: "the staged count column",
+  1108→        why: "The final stage re-projects the count as n — the figure beside the name: 24.",
+  1109→      },
+  1110→      {
+  1111→        answer: "13",
+  1112→        kind: "number",
+  1113→        noVerify: true,
+  1114→        label: "the heavy line",
+  1115→        why: "Thirteen is the chain's line, not a result figure. Probed: the register holds one European.",
+  1116→      },
+  1117→    ],
+  1118→    distractors: ["id", "s", "big"],
+  1119→    walkthrough:
+  1120→      "Three stages: per folds to counts, big keeps the four heavies, eu_big scopes to Europe and joins back — one row: Alice Chen, 24 orders. Join on b.id and the engine refuses: the stage's projection rules. Re-project s and it refuses again — big never named a column s; that was the spend chain. Read the stage by its own name — big — and the main query has no such table. One name, one figure, three stages: the regional heavy roster is small because the data says so, not because the query hid anything.",
+  1121→  },
+  1122→  {
+  1123→    id: "cs-1145",
+  1124→    tier: "hard",
+  1125→    topic: "q7",
+  1126→    universe: "expense",
+  1127→    title: "The map's leading region",
+  1128→    brief:
+  1129→      "From: Finance partner. Re: the map's headline.\n\nThe three-stage spend map ends in regional buckets. Sort by count and break ties by name — the map's leading region, deterministically.",
+  1130→    ask: "One query: the top region by heavy-spender count from the by_region CTE, ties broken by name.",
+  1131→    template: `WITH spend AS (SELECT customer_id, SUM(total) AS s FROM orders
+  1132→GROUP BY {3}), big AS (SELECT customer_id, s FROM spend WHERE s > 2000),
+  1133→by_region AS (SELECT c.region, COUNT(*) AS n FROM big JOIN customers c
+  1134→ON c.id = big.customer_id GROUP BY c.region)
+  1135→SELECT region, n FROM by_region ORDER BY n {1}, region LIMIT {2};`,
+  1136→    slots: [
+  1137→      {
+  1138→        answer: "DESC",
+  1139→        kind: "keyword",
+  1140→        label: "the biggest-first sort",
+  1141→        why: "DESC ranks the buckets so the trim keeps the top: APAC, at 2 (alphabetically ahead of EU's tie).",
+  1142→      },
+  1143→      {
+  1144→        answer: "1",
+  1145→        kind: "number",
+  1146→        noVerify: true,
+  1147→        label: "the headline trim",
+  1148→        why: "One is the trim, not a result figure — the map's headline is one row.",
+  1149→      },
+  1150→      {
+  1151→        answer: "customer_id",
+  1152→        kind: "keyword",
+  1153→        label: "the fold's key",
+  1154→        why: "The spend stage folds orders per customer into one price each — the key the whole chain follows.",
+  1155→      },
+  1156→    ],
+  1157→    distractors: ["ASC", "s", "name"],
+  1158→    walkthrough:
+  1159→      "Three stages: spend prices, big cuts to five, by_region folds to three buckets — APAC 2, EU 2, US 1. The DESC sort ties APAC and EU at two; the second key, region, breaks the tie alphabetically: APAC leads. ASC keeps the US — the map's thinnest dot as its headline. Drop the tie-break and the leader depends on the engine's mood — deterministic reports need deterministic sorts. The headline row is one line, but the tie-break is what makes it the same line every Monday.",
+  1160→  },
+  1161→  {
+  1162→    id: "cs-1146",
+  1163→    tier: "hard",
+  1164→    topic: "q7",
+  1165→    universe: "month-close",
+  1166→    title: "The triple-waiters' backlog",
+  1167→    brief:
+  1168→      "From: Ops controller. Re: the deep escalations.\n\nThe chained pending fold cut at three: the accounts waiting three times or more. Sum their open orders — the deep backlog the standup escalates today.",
+  1169→    ask: "One query: the summed pending counts in cold for accounts with 3 or more pending orders.",
+  1170→    template: `WITH hold AS (SELECT customer_id FROM orders WHERE status = 'pending'),
+  1171→cold AS (SELECT customer_id, COUNT(*) AS pn FROM hold GROUP BY {3})
+  1172→SELECT {1}(pn) FROM cold WHERE pn >= {2};`,
+  1173→    slots: [
+  1174→      {
+  1175→        answer: "SUM",
+  1176→        kind: "keyword",
+  1177→        label: "the deep-backlog aggregator",
+  1178→        why: "SUM(pn) over the deep escalations: 3 + 3 = 6 open orders.",
+  1179→      },
+  1180→      {
+  1181→        answer: "3",
+  1182→        kind: "number",
+  1183→        noVerify: true,
+  1184→        label: "the deep line",
+  1185→        why: "Three is the line, not a result figure. Probed: two accounts sit at exactly 3 pending.",
+  1186→      },
+  1187→      {
+  1188→        answer: "customer_id",
+  1189→        kind: "keyword",
+  1190→        label: "the register's column",
+  1191→        why: "hold gathers customer ids from the pending rows; cold folds them per account.",
+  1192→      },
+  1193→    ],
+  1194→    distractors: ["COUNT", "AVG", "2"],
+  1195→    walkthrough:
+  1196→      "The register holds fourteen pending ids; the fold collapses them to eight waiting accounts; the cut at three keeps two — Alice and Emma; the sum reads their combined backlog: 6. COUNT over the cut reads 2 — accounts, not orders. Lower the line to two and the backlog grows to 10 — the full escalation list. AVG over the cut reads 3 — the degenerate mean where every survivor sits on the line. Six of fourteen pending orders belong to two accounts; the chain is how the standup finds them without naming anyone.",
+  1197→  },
+  1198→  {
+  1199→    id: "cs-1147",
+  1200→    tier: "hard",
+  1201→    topic: "q7",
+  1202→    universe: "growth",
+  1203→    title: "Europe's ceiling, chained",
+  1204→    brief:
+  1205→      "From: Growth lead. Re: the regional peak.\n\nThe chained heavy register scoped to Europe holds one account. Read its ceiling — Europe's best, through three named stages.",
+  1206→    ask: "One query: the maximum count in the EU-cut big CTE (13+ orders, Europe).",
+  1207→    template: `WITH per AS (SELECT customer_id, COUNT(*) AS n FROM orders
+  1208→GROUP BY customer_id), big AS (SELECT customer_id, n FROM per WHERE n >= 13),
+  1209→eu_big AS (SELECT b.n FROM big b JOIN customers c
+  1210→ON c.id = b.{2} WHERE c.region = 'EU') SELECT {1}({3}) FROM eu_big;`,
+  1211→    slots: [
+  1212→      {
+  1213→        answer: "MAX",
+  1214→        kind: "keyword",
+  1215→        label: "the regional peak reader",
+  1216→        why: "MAX(n) over the EU cut: 24 — Alice Chen's ceiling is Europe's ceiling.",
+  1217→      },
+  1218→      {
+  1219→        answer: "customer_id",
+  1220→        kind: "keyword",
+  1221→        label: "the join-back column",
+  1222→        why: "big carries customer_id; the join back is where the region filter becomes possible.",
+  1223→      },
+  1224→      {
+  1225→        answer: "n",
+  1226→        kind: "keyword",
+  1227→        label: "the staged count column",
+  1228→        why: "The final stage re-projects the count as n — the column the peak reads.",
+  1229→      },
+  1230→    ],
+  1231→    distractors: ["s", "COUNT", "region"],
+  1232→    walkthrough:
+  1233→      "Three stages: per folds to counts, big keeps the four heavies, eu_big scopes to Europe — one row; the peak reads 24. MIN, COUNT and SUM over a single-row stage all read 24 too — the degenerate case where every aggregate agrees. The interesting fact is the roster's size, not the aggregate: Europe's heavy tier is one account deep. Stage the fold by region and the chain never forms — orders has no region column at the fold. The peak is the figure; the chain is the proof it belongs to Europe.",
+  1234→  },
+  1235→  {
+  1236→    id: "cs-1148",
+  1237→    tier: "hard",
+  1238→    topic: "q7",
+  1239→    universe: "expense",
+  1240→    title: "The map's dense regions",
+  1241→    brief:
+  1242→      "From: Finance partner. Re: the map's cut.\n\nThe three-stage spend map ends in regional buckets. Keep the regions carrying two or more heavy spenders — the dense dots — and count them.",
+  1243→    ask: "One query: the count of regions in by_region with 2 or more heavy spenders.",
+  1244→    template: `WITH spend AS (SELECT customer_id, SUM(total) AS s FROM orders
+  1245→GROUP BY customer_id), big AS (SELECT customer_id, s FROM spend WHERE s > 2000),
+  1246→by_region AS (SELECT c.region, COUNT(*) AS n FROM big JOIN customers c
+  1247→ON c.id = big.customer_id GROUP BY c.{3}) SELECT {1}(*) FROM by_region
+  1248→WHERE n >= {2};`,
+  1249→    slots: [
+  1250→      {
+  1251→        answer: "COUNT",
+  1252→        kind: "keyword",
+  1253→        label: "the chained counter",
+  1254→        why: "COUNT(*) over the cut map: 2 dense regions.",
+  1255→      },
+  1256→      {
+  1257→        answer: "2",
+  1258→        kind: "number",
+  1259→        noVerify: true,
+  1260→        label: "the density line",
+  1261→        why: "Two is the density line, not a result figure. Probed: APAC and EU sit at 2; US at 1.",
+  1262→      },
+  1263→      {
+  1264→        answer: "region",
+  1265→        kind: "keyword",
+  1266→        label: "the map's grouping key",
+  1267→        why: "The third stage folds the survivors by region into three buckets.",
+  1268→      },
+  1269→    ],
+  1270→    distractors: ["SUM", "3", "s"],
+  1271→    walkthrough:
+  1272→      "Three stages: spend prices, big cuts to five, by_region folds to three buckets — APAC 2, EU 2, US 1; the density line at two keeps 2 dense regions. Lower the line to one and the US joins: 3 — the whole map. Raise it to three and the map empties: no region carries three heavy spenders. SUM over the cut totals 4 — the dense regions' combined spenders. The density cut is the board's expansion filter: two regions justify a field team; the third waits.",
+  1273→  },
+  1274→  {
+  1275→    id: "cs-1149",
+  1276→    tier: "hard",
+  1277→    topic: "q7",
+  1278→    universe: "month-close",
+  1279→    title: "The queue's worst, trimmed",
+  1280→    brief:
+  1281→      "From: Ops controller. Re: the escalation head, chained.\n\nThree stages: hold gathers pending rows, cold folds per account, repeat keeps double-waiters. Sort and trim to one — the worst waiter on the escalation list.",
+  1282→    ask: "One query: the highest pending count in the repeat CTE (2+ pending).",
+  1283→    template: `WITH hold AS (SELECT customer_id FROM orders WHERE status = 'pending'),
+  1284→cold AS (SELECT customer_id, COUNT(*) AS pn FROM hold GROUP BY {3}),
+  1285→repeat AS (SELECT customer_id, pn FROM cold WHERE pn >= 2)
+  1286→SELECT pn FROM repeat ORDER BY pn {1} LIMIT {2};`,
+  1287→    slots: [
+  1288→      {
+  1289→        answer: "DESC",
+  1290→        kind: "keyword",
+  1291→        label: "the worst-first sort",
+  1292→        why: "DESC ranks the escalation list so the trim keeps the head: 3 pending orders.",
+  1293→      },
+  1294→      {
+  1295→        answer: "1",
+  1296→        kind: "number",
+  1297→        noVerify: true,
+  1298→        label: "the head trim",
+  1299→        why: "One is the trim, not a result figure — the query wants the list's worst row.",
+  1300→      },
+  1301→      {
+  1302→        answer: "customer_id",
+  1303→        kind: "keyword",
+  1304→        label: "the register's column",
+  1305→        why: "hold gathers customer ids from the pending rows; the chain follows that thread.",
+  1306→      },
+  1307→    ],
+  1308→    distractors: ["ASC", "id", "region"],
+  1309→    walkthrough:
+  1310→      "Three stages: hold gathers fourteen ids, cold folds to eight accounts, repeat keeps the four at two-plus; the DESC sort leads with the deepest backlog — 3 — and the trim keeps it. ASC keeps the list's floor instead: 2, the shallowest escalation. Widen the trim to 2 and the second three-time waiter rides along — the tie means the head is two names deep. Fold by id instead of customer and every waiter holds one pending order — the head drops to 1. The chained worst is the same figure the direct read finds — 3 — but the chain guarantees the row came from the escalation list, not the whole queue.",
+  1311→  },
+  1312→  {
+  1313→    id: "cs-1150",
+  1314→    tier: "hard",
+  1315→    topic: "q7",
+  1316→    universe: "growth",
+  1317→    title: "The tier's first name",
+  1318→    brief:
+  1319→      "From: Growth lead. Re: the boundary account, chained.\n\nThe chained heavy register sorted rising, trimmed to one: the tier's lightest member — the account the heavy line was drawn around.",
+  1320→    ask: "One query: the smallest count in the big CTE, chained off per at 13+, sorted rising.",
+  1321→    template: `WITH per AS (SELECT customer_id, COUNT(*) AS n FROM orders
+  1322→GROUP BY {3}), big AS (SELECT customer_id, n FROM per WHERE n >= 13)
+  1323→SELECT n FROM big ORDER BY n {1} LIMIT {2};`,
+  1324→    slots: [
+  1325→      {
+  1326→        answer: "ASC",
+  1327→        kind: "keyword",
+  1328→        label: "the smallest-first sort",
+  1329→        why: "ASC ranks the heavy register so the trim keeps the floor: 13 orders.",
+  1330→      },
+  1331→      {
+  1332→        answer: "1",
+  1333→        kind: "number",
+  1334→        noVerify: true,
+  1335→        label: "the boundary trim",
+  1336→        why: "One is the trim, not a result figure — the query wants the tier's lightest member.",
+  1337→      },
+  1338→      {
+  1339→        answer: "customer_id",
+  1340→        kind: "keyword",
+  1341→        label: "the fold's key",
+  1342→        why: "The first stage folds orders per customer into counts.",
+  1343→      },
+  1344→    ],
+  1345→    distractors: ["DESC", "id", "status"],
+  1346→    walkthrough:
+  1347→      "Three stages: per folds to sixteen counts, big keeps the four heavies, and the ASC sort leads with the floor — 13, Maya Patel's boundary count. DESC keeps the ceiling instead: 24, the champion. Widen the trim to 2 and Grace's 14 rides along. The boundary account is the tier's definition: the line at thirteen exists because her count does, and the chain reads the two as one row. Change the line and this query is how you find the account the new line catches or drops.",
+  1348→  },
+  1349→  {
+  1350→    id: "cs-1151",
+  1351→    tier: "easy",
+  1352→    topic: "q8",
+  1353→    universe: "growth",
+  1354→    title: "The champion's book, by name",
+  1355→    brief:
+  1356→      "From: Growth lead. Re: the capstone warm-up.\n\nThe capstone recipe's first station: resolve a name to an id with a scalar, then count that account's orders. The champion's book, no joins.",
+  1357→    ask: "One query: the count of orders belonging to the customer named Alice Chen.",
+  1358→    template: `SELECT {1}(*) FROM orders WHERE {2} = (SELECT id FROM customers
+  1359→WHERE name = {3});`,
+  1360→    slots: [
+  1361→      {
+  1362→        answer: "COUNT",
+  1363→        kind: "keyword",
+  1364→        label: "the counting aggregate",
+  1365→        why: "One number out: 24 orders — the store's heaviest single account.",
+  1366→      },
+  1367→      {
+  1368→        answer: "customer_id",
+  1369→        kind: "keyword",
+  1370→        label: "the matched column",
+  1371→        why: "orders.customer_id is compared to the looked-up id — the outer side of the scalar test.",
+  1372→      },
+  1373→      {
+  1374→        answer: "'Alice Chen'",
+  1375→        kind: "keyword",
+  1376→        label: "the name key",
+  1377→        why: "The inner scalar translates the name to an id — names live on customers, orders carry ids.",
+  1378→      },
+  1379→    ],
+  1380→    distractors: ["SUM", "id", "'Emma Wilson'"],
+  1381→    walkthrough:
+  1382→      "Station one of the capstone: the inner scalar resolves the name to an id; the outer WHERE keeps the matching orders — 24 of them, a lifetime spend of 7,262.35 if the next station needs it. Match on orders.id and the test compares an order id to a customer id — one accidental row. Re-aim the name and the book changes owner: Emma's count is different. SUM(*) is invalid syntax. Name-to-id-to-rows is the capstone's first beat, and every later station builds on the id it produces.",
+  1383→  },
+  1384→  {
+  1385→    id: "cs-1152",
+  1386→    tier: "easy",
+  1387→    topic: "q8",
+  1388→    universe: "growth",
+  1389→    title: "Europe's book, the WITH way",
+  1390→    brief:
+  1391→      "From: Growth lead. Re: the capstone's second station.\n\nThe register pattern under WITH: eu names the European ids, the main query counts the orders inside that register. Forty-five orders, built in two named steps.",
+  1392→    ask: "One query: the count of orders whose customer is in the eu CTE.",
+  1393→    template: `WITH eu AS (SELECT id FROM customers WHERE region = {1})
+  1394→SELECT {2}(*) FROM orders WHERE customer_id IN (SELECT {3} FROM eu);`,
+  1395→    slots: [
+  1396→      {
+  1397→        answer: "'EU'",
+  1398→        kind: "keyword",
+  1399→        label: "the register's filter",
+  1400→        why: "The eu register gathers the eight European ids the main query consumes.",
+  1401→      },
+  1402→      {
+  1403→        answer: "COUNT",
+  1404→        kind: "keyword",
+  1405→        label: "the book counter",
+  1406→        why: "COUNT(*) over the filtered orders: 45 European orders.",
+  1407→      },
+  1408→      {
+  1409→        answer: "id",
+  1410→        kind: "keyword",
+  1411→        label: "the register's column",
+  1412→        why: "The register projects id — the column the membership test matches against.",
+  1413→      },
+  1414→    ],
+  1415→    distractors: ["'APAC'", "SUM", "name"],
+  1416→    walkthrough:
+  1417→      "Station two: the register holds eight ids; the main query counts the orders whose customer is in it — 45, Europe's whole book. Point the register at 'APAC' and the book reads 37. SUM(*) is invalid syntax; the deliverable is a count. Flip IN to NOT IN and the book becomes the complement — 58 orders from non-EU customers. The register pattern is the capstone's reusable brick: name a set once, consume it anywhere — and the 45 reconciles with every staged build of the same question.",
+  1418→  },
+  1419→  {
+  1420→    id: "cs-1153",
+  1421→    tier: "easy",
+  1422→    topic: "q8",
+  1423→    universe: "expense",
+  1424→    title: "The premium lane, counted",
+  1425→    brief:
+  1426→      "From: Ops controller. Re: the premium lane.\n\nThe capstone's threshold station: orders of 700 or more. Count them — the lane's volume, straight from the orders table.",
+  1427→    ask: "One query: the count of orders with a total of at least 700.",
+  1428→    template: `WITH lane AS (SELECT * FROM {3} WHERE total >= {2})
+  1429→SELECT {1}(*) FROM lane;`,
+  1430→    slots: [
+  1431→      {
+  1432→        answer: "COUNT",
+  1433→        kind: "keyword",
+  1434→        label: "the counting aggregate",
+  1435→        why: "One number out: 10 orders ride the premium lane.",
+  1436→      },
+  1437→      {
+  1438→        answer: "700",
+  1439→        kind: "number",
+  1440→        noVerify: true,
+  1441→        label: "the premium line",
+  1442→        why: "Seven hundred is the lane's definition, not a result figure. Probed: 10 orders clear it.",
+  1443→      },
+  1444→      {
+  1445→        answer: "orders",
+  1446→        kind: "keyword",
+  1447→        label: "the lane's table",
+  1448→        why: "The lane reads the orders table directly — the capstone's simplest station.",
+  1449→      },
+  1450→    ],
+  1451→    distractors: ["SUM", "600", "customers"],
+  1452→    walkthrough:
+  1453→      "Ten orders total 700 or more — the premium lane's volume. Lower the line to 600 and the lane widens; raise it to 1,088.44 — the store record — and only the champion's biggest order remains. SUM(total) would read the lane's combined value, a spend figure rather than a volume. This station looks simple because it is: every capstone recipe needs one honest threshold, and this is the one the next stations will scale per-account.",
+  1454→  },
+  1455→  {
+  1456→    id: "cs-1154",
+  1457→    tier: "medium",
+  1458→    topic: "q8",
+  1459→    universe: "fraud",
+  1460→    title: "The full-journey accounts",
+  1461→    brief:
+  1462→      "From: Fraud analyst. Re: the four-state accounts.\n\nThe capstone's pattern station: accounts that have seen ALL four states — delivered, shipped, pending and cancelled. Four correlated probes, one AND chain.",
+  1463→    ask: "One query: the count of customers with at least one order in each of the four statuses.",
+  1464→    template: `SELECT {1}(*) FROM customers c
+  1465→WHERE EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.id AND o.status = 'delivered')
+  1466→AND EXISTS (SELECT 1 FROM orders o2 WHERE o2.customer_id = c.id AND o2.status = 'shipped')
+  1467→AND {2} (SELECT 1 FROM orders o3 WHERE o3.customer_id = c.id AND o3.status = 'pending')
+  1468→AND EXISTS (SELECT 1 FROM orders o4 WHERE o4.customer_id = c.id AND o4.status = {3});`,
+  1469→    slots: [
+  1470→      {
+  1471→        answer: "COUNT",
+  1472→        kind: "keyword",
+  1473→        label: "the counting aggregate",
+  1474→        why: "One number out: 3 accounts have ridden every state.",
+  1475→      },
+  1476→      {
+  1477→        answer: "EXISTS",
+  1478→        kind: "keyword",
+  1479→        label: "the third doorbell",
+  1480→        why: "Each state needs its own correlated probe — four doorbells, all must ring.",
+  1481→      },
+  1482→      {
+  1483→        answer: "'cancelled'",
+  1484→        kind: "keyword",
+  1485→        label: "the fourth state",
+  1486→        why: "cancelled completes the journey — the scar that proves the account tried and failed once.",
+  1487→      },
+  1488→    ],
+  1489→    distractors: ["SUM", "NOT EXISTS", "'shipped'"],
+  1490→    walkthrough:
+  1491→      "Four correlated probes, four ANDs: three accounts — Alice Chen, Emma Wilson, Maya Patel — have delivered, shipped, waited and cancelled. Negate the third probe and the pattern inverts: accounts that never waited — a different cohort entirely. Re-aim the fourth at 'shipped' and it duplicates the second: three probes wearing four masks, and the count shifts. SUM cannot ring a doorbell. The full-journey account is the storefront's most experienced customer — and its most expensive to lose.",
+  1492→  },
+  1493→  {
+  1494→    id: "cs-1155",
+  1495→    tier: "medium",
+  1496→    topic: "q8",
+  1497→    universe: "expense",
+  1498→    title: "Above the spend line, staged",
+  1499→    brief:
+  1500→      "From: Finance partner. Re: the above-average spenders.\n\nThe capstone's staging station: price every account, average the prices, keep the accounts above their own store's mean. Five accounts beat 2,177.08.",
+  1501→    ask: "One query: the count of accounts whose staged spend exceeds the average staged spend.",
+  1502→    template: `WITH spend AS (SELECT customer_id, SUM(total) AS s FROM orders
+  1503→GROUP BY {3}) SELECT {1}(*) FROM spend
+  1504→WHERE s > (SELECT {2}(s) FROM spend);`,
+  1505→    slots: [
+  1506→      {
+  1507→        answer: "COUNT",
+  1508→        kind: "keyword",
+  1509→        label: "the counting aggregate",
+  1510→        why: "One number out: 5 accounts spend above the 2,177.08 baseline.",
+  1511→      },
+  1512→      {
+  1513→        answer: "AVG",
+  1514→        kind: "keyword",
+  1515→        label: "the baseline aggregator",
+  1516→        why: "AVG(s) over the stage computes the mean the survivors must beat.",
+  1517→      },
+  1518→      {
+  1519→        answer: "customer_id",
+  1520→        kind: "keyword",
+  1521→        label: "the staging key",
+  1522→        why: "GROUP BY customer_id prices one account per stage row.",
+  1523→      },
+  1524→    ],
+  1525→    distractors: ["SUM", "MIN", "total"],
+  1526→    walkthrough:
+  1527→      "The stage prices sixteen accounts; the uncorrelated AVG computes the 2,177.08 baseline; five accounts clear it — the heavy half of a skewed distribution. SUM(s) inside the comparison sets the bar at the whole book — nothing clears it. MIN sets it at the cheapest lifetime — everyone clears. Stage the fold by status and the baseline becomes a bucket mean — a different denominator. Above-own-mean is the honest 'above average': the average is computed from the same stage it judges.",
+  1528→  },
+  1529→  {
+  1530→    id: "cs-1156",
+  1531→    tier: "medium",
+  1532→    topic: "q8",
+  1533→    universe: "expense",
+  1534→    title: "The premium lane's breadth",
+  1535→    brief:
+  1536→      "From: Ops controller. Re: the lane's reach.\n\nThe premium lane counts ten orders — but how many accounts does it touch? Count the distinct customers behind the 700-plus orders.",
+  1537→    ask: "One query: the count of distinct customers with at least one order of 700 or more.",
+  1538→    template: `WITH lane AS (SELECT customer_id FROM orders WHERE total >= {3})
+  1539→SELECT {1}(DISTINCT {2}) FROM lane;`,
+  1540→    slots: [
+  1541→      {
+  1542→        answer: "COUNT",
+  1543→        kind: "keyword",
+  1544→        label: "the breadth counter",
+  1545→        why: "COUNT(DISTINCT customer_id) over the lane: 7 accounts ride it.",
+  1546→      },
+  1547→      {
+  1548→        answer: "customer_id",
+  1549→        kind: "keyword",
+  1550→        label: "the collapsed column",
+  1551→        why: "DISTINCT collapses the lane's ten orders to the accounts behind them.",
+  1552→      },
+  1553→      {
+  1554→        answer: "700",
+  1555→        kind: "number",
+  1556→        noVerify: true,
+  1557→        label: "the premium line",
+  1558→        why: "Seven hundred is the lane's definition, not a result figure. Probed: 7 distinct customers.",
+  1559→      },
+  1560→    ],
+  1561→    distractors: ["SUM", "id", "500"],
+  1562→    walkthrough:
+  1563→      "Ten orders clear 700; the distinct count collapses them to 7 accounts — some heavyweights ride the lane twice. Distinct over id would read 10 — every order is its own id, the collapse never happens. Lower the line to 500 and the lane widens; more orders, and likely more accounts. SUM cannot count a distinct. Volume and breadth are the lane's two figures — 10 orders wide, 7 accounts deep — and the capstone reads both before deciding who the lane belongs to.",
+  1564→  },
+  1565→  {
+  1566→    id: "cs-1157",
+  1567→    tier: "hard",
+  1568→    topic: "q8",
+  1569→    universe: "expense",
+  1570→    title: "The champion's bill, two stations deep",
+  1571→    brief:
+  1572→      "From: Finance partner. Re: the capstone's money shot.\n\nTwo scalar stations chained: resolve the champion's name to an id, then price that id's orders. The figure the whole deck leads with — 7,262.35.",
+  1573→    ask: "One query: the total order value for the customer named Alice Chen.",
+  1574→    template: `SELECT {1}(total) FROM orders WHERE {3} =
+  1575→(SELECT id FROM customers WHERE name = {2});`,
+  1576→    slots: [
+  1577→      {
+  1578→        answer: "SUM",
+  1579→        kind: "keyword",
+  1580→        label: "the lifetime aggregator",
+  1581→        why: "SUM(total) over the champion's 24 orders: 7262.35 — the deck's headline figure.",
+  1582→      },
+  1583→      {
+  1584→        answer: "'Alice Chen'",
+  1585→        kind: "keyword",
+  1586→        label: "the name key",
+  1587→        why: "The inner scalar resolves the name to an id — the first of the two stations.",
+  1588→      },
+  1589→      {
+  1590→        answer: "customer_id",
+  1591→        kind: "keyword",
+  1592→        label: "the placeholder key",
+  1593→        why: "The outer WHERE matches orders.customer_id to the resolved id.",
+  1594→      },
+  1595→    ],
+  1596→    distractors: ["COUNT", "'Emma Wilson'", "AVG"],
+  1597→    walkthrough:
+  1598→      "Two stations, no join: the scalar resolves 'Alice Chen' to her id; SUM prices her 24 orders at 7,262.35 — the deck's opening figure and the benchmark every spend threshold is drawn against. COUNT would read 24 — the book's size, not its value. Re-aim the name and the figure becomes Emma's 6,640.56 — the runner-up's bill. AVG would read the champion's average order, about 302 — a rate, not a lifetime. The capstone's money shot is two stations and one aggregate: name to id, id to total.",
+  1599→  },
+  1600→];
+  1601→

@@ -1,0 +1,286 @@
+prisma:query CREATE TABLE IF NOT EXISTS customers (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    city TEXT NOT NULL,
+    region TEXT NOT NULL,
+    active INTEGER NOT NULL DEFAULT 1,
+    created_at TEXT NOT NULL
+  )
+prisma:query CREATE TABLE IF NOT EXISTS suppliers (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    region TEXT NOT NULL,
+    rating REAL NOT NULL
+  )
+prisma:query CREATE TABLE IF NOT EXISTS products (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    category TEXT NOT NULL,
+    price REAL NOT NULL,
+    stock INTEGER NOT NULL DEFAULT 0,
+    supplier_id INTEGER NOT NULL REFERENCES suppliers(id)
+  )
+prisma:query CREATE TABLE IF NOT EXISTS orders (
+    id INTEGER PRIMARY KEY,
+    customer_id INTEGER NOT NULL REFERENCES customers(id),
+    status TEXT NOT NULL,
+    total REAL NOT NULL,
+    created_at TEXT NOT NULL,
+    shipped_at TEXT
+  )
+prisma:query CREATE TABLE IF NOT EXISTS order_items (
+    id INTEGER PRIMARY KEY,
+    order_id INTEGER NOT NULL REFERENCES orders(id),
+    product_id INTEGER NOT NULL REFERENCES products(id),
+    quantity INTEGER NOT NULL,
+    unit_price REAL NOT NULL
+  )
+prisma:query PRAGMA table_info(orders)
+prisma:query SELECT COUNT(*) AS n FROM customers
+prisma:query SELECT COUNT(*) n FROM orders WHERE created_at LIKE '2024-02%'
+## feb2024 orders
+[{"n":9}]
+prisma:query SELECT COUNT(*) n FROM orders WHERE created_at BETWEEN '2024-01-01' AND '2024-03-31'
+## q1 2024 orders
+[{"n":25}]
+prisma:query SELECT COUNT(*) n FROM orders WHERE status = 'pending' AND total > 500
+## pending and >500
+[{"n":5}]
+prisma:query SELECT COUNT(*) n FROM orders WHERE status = 'pending' AND total >= 500
+## pending and >=500
+[{"n":5}]
+prisma:query SELECT COUNT(*) n FROM orders WHERE total >= 1000
+## total >= 1000
+[{"n":1}]
+prisma:query SELECT COUNT(*) n FROM orders WHERE total > 1000
+## total > 1000
+[{"n":1}]
+prisma:query SELECT COUNT(*) n FROM orders WHERE total >= 800
+## total >= 800
+[{"n":4}]
+prisma:query SELECT COUNT(*) n FROM orders WHERE total NOT BETWEEN 50 AND 200
+## total NOT BETWEEN 50 AND 200
+[{"n":73}]
+prisma:query SELECT COUNT(*) n FROM orders WHERE created_at >= '2025-01-01'
+## orders 2025 window
+[{"n":13}]
+prisma:query SELECT COUNT(*) n FROM orders WHERE status = 'DELIVERED'
+## DELIVERED case trap
+[{"n":0}]
+prisma:query SELECT COUNT(*) n FROM orders WHERE status = 'delivered' AND created_at LIKE '2024%'
+## delivered and 2024
+[{"n":45}]
+prisma:query SELECT COUNT(*) n FROM orders WHERE status = 'cancelled' AND created_at >= '2025-01-01'
+## cancelled 2025
+[{"n":1}]
+prisma:query SELECT COUNT(*) n FROM orders WHERE status IN ('delivered','shipped') AND shipped_at IS NOT NULL
+## status in list not null
+[{"n":82}]
+prisma:query SELECT COUNT(*) n FROM customers WHERE city = 'Austin' OR city = 'Chicago'
+## austin or chicago
+[{"n":2}]
+prisma:query SELECT COUNT(*) n FROM customers WHERE region IN ('US','LATAM')
+## region US LATAM
+[{"n":3}]
+prisma:query SELECT COUNT(*) n FROM customers WHERE region NOT IN ('EU','APAC')
+## region NOT IN EU APAC
+[{"n":3}]
+prisma:query SELECT COUNT(*) n FROM customers WHERE email LIKE '%@example.com'
+## email domain sweep
+[{"n":16}]
+prisma:query SELECT id, total FROM orders ORDER BY total ASC LIMIT 3
+## cheapest 3 orders
+[{"id":51,"total":25.47},{"id":72,"total":30.24},{"id":49,"total":32.01}]
+prisma:query SELECT id, created_at, total FROM orders ORDER BY created_at DESC LIMIT 1
+## latest order
+[{"id":97,"created_at":"2025-02-27","total":585.79}]
+prisma:query SELECT id, created_at, total FROM orders ORDER BY created_at ASC LIMIT 1
+## earliest order
+[{"id":6,"created_at":"2024-01-01","total":752.96}]
+prisma:query SELECT id, name, price FROM products ORDER BY price DESC LIMIT 1
+## priciest product
+[{"id":13,"name":"Smart Watch S","price":199.99}]
+prisma:query SELECT id, name, price FROM products ORDER BY price ASC LIMIT 1
+## cheapest product
+[{"id":9,"name":"HDMI 2.1 Cable 2m","price":14.99}]
+prisma:query SELECT id, name FROM products ORDER BY name ASC LIMIT 2
+## first name alpha
+[{"id":7,"name":"4K Webcam Pro"},{"id":6,"name":"Bluetooth Speaker Mini"}]
+prisma:query SELECT id, name, rating FROM suppliers ORDER BY rating DESC LIMIT 2
+## top rated supplier
+[{"id":5,"name":"Alpine Audio GmbH","rating":4.8},{"id":1,"name":"Nordic Gadgets AB","rating":4.6}]
+prisma:query SELECT id, status, shipped_at FROM orders ORDER BY shipped_at ASC LIMIT 2
+## nulls first on shipped_at asc
+[{"id":1,"status":"pending","shipped_at":null},{"id":5,"status":"pending","shipped_at":null}]
+prisma:query SELECT id, total FROM orders ORDER BY total DESC LIMIT 3
+## top 3 orders desc
+[{"id":74,"total":1088.44},{"id":43,"total":945.21},{"id":39,"total":845.92}]
+prisma:query SELECT id, total FROM orders ORDER BY total LIMIT 3
+## orders by total asc top3 (bottom-N)
+[{"id":51,"total":25.47},{"id":72,"total":30.24},{"id":49,"total":32.01}]
+prisma:query SELECT DISTINCT status FROM orders ORDER BY status
+## distinct status orders
+[{"status":"cancelled"},{"status":"delivered"},{"status":"pending"},{"status":"shipped"}]
+prisma:query SELECT DISTINCT region FROM customers ORDER BY region
+## distinct region customers
+[{"region":"APAC"},{"region":"EU"},{"region":"LATAM"},{"region":"US"}]
+prisma:query SELECT DISTINCT category FROM products ORDER BY category
+## distinct category products
+[{"category":"Accessories"},{"category":"Apparel"},{"category":"Audio"},{"category":"Electronics"},{"category":"Fitness"},{"category":"Video"},{"category":"Wearables"}]
+prisma:query SELECT DISTINCT quantity FROM order_items ORDER BY quantity
+## distinct quantity items
+[{"quantity":1},{"quantity":2},{"quantity":3}]
+prisma:query SELECT COUNT(*) n FROM (SELECT DISTINCT city FROM customers)
+## distinct city count
+[{"n":16}]
+prisma:query SELECT COUNT(*) n FROM (SELECT DISTINCT customer_id FROM orders)
+## distinct customer in orders
+[{"n":16}]
+prisma:query SELECT COUNT(*) n FROM (SELECT DISTINCT region, active FROM customers)
+## distinct region active pairs
+[{"n":6}]
+prisma:query SELECT COUNT(*) n FROM (SELECT id FROM orders ORDER BY id LIMIT 5 OFFSET 100)
+## page 21 (offset 100)
+[{"n":3}]
+prisma:query SELECT COUNT(*) n FROM (SELECT id FROM orders ORDER BY id LIMIT 5 OFFSET 0)
+## page 1 (limit 5)
+[{"n":5}]
+prisma:query SELECT CAST((COUNT(*) + 4) / 5 AS INT) pages FROM orders
+## pages for 103 at 5
+[{"pages":21}]
+prisma:query SELECT COUNT(*) n, ROUND(SUM(total),2) s, ROUND(AVG(total),2) a, MIN(total) mn, MAX(total) mx FROM orders
+## aggregates orders
+[{"n":103,"s":34833.28,"a":338.19,"mn":25.47,"mx":1088.44}]
+prisma:query SELECT COUNT(*) n_all, COUNT(shipped_at) n_ship, COUNT(DISTINCT status) n_status, COUNT(DISTINCT customer_id) n_cust FROM orders
+## count variants
+[{"n_all":103,"n_ship":82,"n_status":4,"n_cust":16}]
+prisma:query SELECT COUNT(*) n, ROUND(SUM(price),2) s, ROUND(AVG(price),2) a, MIN(price) mn, MAX(price) mx, SUM(stock) stock_sum FROM products
+## aggregates products
+[{"n":16,"s":1148.43,"a":71.78,"mn":14.99,"mx":199.99,"stock_sum":2845}]
+prisma:query SELECT COUNT(*) n, ROUND(AVG(rating),2) a, MIN(rating) mn, MAX(rating) mx FROM suppliers
+## aggregates suppliers
+[{"n":6,"a":4.3,"mn":3.9,"mx":4.8}]
+prisma:query SELECT COUNT(*) n, SUM(quantity) q, ROUND(AVG(quantity),2) a, MIN(unit_price) mn, MAX(unit_price) mx FROM order_items
+## aggregates items
+[{"n":251,"q":498,"a":1.98,"mn":14.28,"mx":209.68}]
+prisma:query SELECT COUNT(DISTINCT region) n FROM customers
+## distinct region customers n
+[{"n":4}]
+prisma:query SELECT ROUND(AVG(total),2) a FROM orders WHERE status = 'delivered'
+## avg delivered only
+[{"a":299.44}]
+prisma:query SELECT ROUND(SUM(total),2) s FROM orders WHERE created_at LIKE '2024%'
+## sum 2024
+[{"s":30773.25}]
+prisma:query SELECT ROUND(AVG(total),2) a FROM orders WHERE status = 'pending'
+## avg pending
+[{"a":436.64}]
+prisma:query SELECT MIN(shipped_at) mn, MAX(shipped_at) mx FROM orders
+## min max shipped
+[{"mn":"2024-01-04","mx":"2025-03-01"}]
+prisma:query SELECT status, COUNT(*) n FROM orders GROUP BY status ORDER BY n DESC
+## group status
+[{"status":"delivered","n":52},{"status":"shipped","n":30},{"status":"pending","n":14},{"status":"cancelled","n":7}]
+prisma:query SELECT region, COUNT(*) n FROM customers GROUP BY region ORDER BY n DESC
+## group region customers
+[{"region":"EU","n":8},{"region":"APAC","n":5},{"region":"US","n":2},{"region":"LATAM","n":1}]
+prisma:query SELECT category, COUNT(*) n FROM products GROUP BY category ORDER BY n DESC
+## group category products
+[{"category":"Electronics","n":3},{"category":"Audio","n":3},{"category":"Accessories","n":3},{"category":"Wearables","n":2},{"category":"Video","n":2},{"category":"Apparel","n":2},{"category":"Fitness","n":1}]
+prisma:query SELECT supplier_id, COUNT(*) n FROM products GROUP BY supplier_id ORDER BY supplier_id
+## group supplier products
+[{"supplier_id":1,"n":3},{"supplier_id":2,"n":3},{"supplier_id":3,"n":3},{"supplier_id":4,"n":3},{"supplier_id":5,"n":2},{"supplier_id":6,"n":2}]
+prisma:query SELECT customer_id, COUNT(*) n FROM orders GROUP BY customer_id ORDER BY n DESC LIMIT 5
+## top customers by orders
+[{"customer_id":1,"n":24},{"customer_id":5,"n":17},{"customer_id":7,"n":14},{"customer_id":13,"n":13},{"customer_id":3,"n":5}]
+prisma:query SELECT substr(created_at,1,4) y, COUNT(*) n FROM orders GROUP BY substr(created_at,1,4) ORDER BY y
+## group year
+[{"y":"2024","n":90},{"y":"2025","n":13}]
+prisma:query SELECT quantity, COUNT(*) n FROM order_items GROUP BY quantity ORDER BY quantity
+## group quantity items
+[{"quantity":1,"n":93},{"quantity":2,"n":69},{"quantity":3,"n":89}]
+prisma:query SELECT substr(created_at,1,7) m, COUNT(*) n FROM orders WHERE created_at >= '2025-01-01' GROUP BY substr(created_at,1,7) ORDER BY m
+## group month 2025
+[{"m":"2025-01","n":6},{"m":"2025-02","n":7}]
+prisma:query SELECT status, ROUND(AVG(total),2) a FROM orders GROUP BY status ORDER BY a DESC
+## avg total per status
+[{"status":"pending","a":436.64},{"status":"shipped","a":399.89},{"status":"delivered","a":299.44},{"status":"cancelled","a":164.64}]
+prisma:query SELECT status, ROUND(SUM(total),2) s FROM orders GROUP BY status ORDER BY s DESC
+## sum total per status
+[{"status":"delivered","s":15571.07},{"status":"shipped","s":11996.72},{"status":"pending","s":6113},{"status":"cancelled","s":1152.49}]
+prisma:query SELECT status, COUNT(*) n FROM orders GROUP BY status HAVING COUNT(*) >= 20 ORDER BY n DESC
+## having count >= 20 (status)
+[{"status":"delivered","n":52},{"status":"shipped","n":30}]
+prisma:query SELECT status, COUNT(*) n FROM orders GROUP BY status HAVING COUNT(*) >= 14 ORDER BY n DESC
+## having count >= 14 (status)
+[{"status":"delivered","n":52},{"status":"shipped","n":30},{"status":"pending","n":14}]
+prisma:query SELECT category, COUNT(*) n FROM products GROUP BY category HAVING COUNT(*) >= 3 ORDER BY n DESC
+## having count >= 3 (category)
+[{"category":"Electronics","n":3},{"category":"Audio","n":3},{"category":"Accessories","n":3}]
+prisma:query SELECT region, COUNT(*) n FROM customers GROUP BY region HAVING COUNT(*) >= 5 ORDER BY n DESC
+## having count >= 5 (region)
+[{"region":"EU","n":8},{"region":"APAC","n":5}]
+prisma:query SELECT status, ROUND(SUM(total),2) s FROM orders GROUP BY status HAVING SUM(total) > 5000 ORDER BY s DESC
+## having sum > 5000 (status)
+[{"status":"delivered","s":15571.07},{"status":"shipped","s":11996.72},{"status":"pending","s":6113}]
+prisma:query SELECT status, ROUND(AVG(total),2) a FROM orders GROUP BY status HAVING AVG(total) > 350 ORDER BY a DESC
+## having avg > 350 (status)
+[{"status":"pending","a":436.64},{"status":"shipped","a":399.89}]
+prisma:query SELECT customer_id, COUNT(*) n FROM orders GROUP BY customer_id HAVING COUNT(*) >= 13 ORDER BY n DESC
+## having count >= 13 (customer)
+[{"customer_id":1,"n":24},{"customer_id":5,"n":17},{"customer_id":7,"n":14},{"customer_id":13,"n":13}]
+prisma:query SELECT quantity, COUNT(*) n FROM order_items GROUP BY quantity HAVING COUNT(*) >= 2 ORDER BY quantity
+## having count >= 2 (quantity)
+[{"quantity":1,"n":93},{"quantity":2,"n":69},{"quantity":3,"n":89}]
+prisma:query SELECT COUNT(*) n FROM (SELECT order_id FROM order_items GROUP BY order_id HAVING COUNT(*) >= 3)
+## lines per order >= 3 groups
+[{"n":48}]
+prisma:query SELECT COUNT(*) n FROM (SELECT order_id FROM order_items GROUP BY order_id HAVING COUNT(*) = 1)
+## lines per order = 1 groups
+[{"n":26}]
+prisma:query SELECT supplier_id, ROUND(AVG(price),2) a, COUNT(*) n FROM products GROUP BY supplier_id HAVING AVG(price) > 100 ORDER BY a DESC
+## having avg > 4.3 (supplier products)
+[{"supplier_id":1,"a":139.66,"n":3}]
+prisma:query SELECT COUNT(*) n FROM products WHERE stock > 200
+## products stock > 200
+[{"n":6}]
+prisma:query SELECT COUNT(*) n FROM products WHERE stock > 200 AND price < 50
+## products stock > 200 price < 50
+[{"n":5}]
+prisma:query SELECT COUNT(*) n FROM suppliers WHERE rating >= 4.4
+## suppliers rating >= 4.4
+[{"n":3}]
+prisma:query SELECT COUNT(*) n FROM products WHERE price >= 100
+## products price >= 100
+[{"n":4}]
+prisma:query SELECT COUNT(*) n FROM products WHERE category = 'Audio' AND stock > 100
+## audio and stock > 100
+[{"n":1}]
+prisma:query SELECT COUNT(*) n FROM products WHERE (category = 'Audio' OR category = 'Video') AND stock < 100
+## av cheap stock < 100 (parens)
+[{"n":3}]
+prisma:query SELECT COUNT(*) n FROM products WHERE category = 'Audio' OR category = 'Video' AND stock < 100
+## audio or video-and-cheap (no parens)
+[{"n":4}]
+prisma:query SELECT COUNT(*) n FROM products WHERE category = 'Electronics' AND price > 50 AND stock > 100
+## electronics pricey stocked
+[{"n":1}]
+prisma:query SELECT COUNT(*) n FROM products WHERE price BETWEEN 30 AND 80
+## price between 30 80
+[{"n":8}]
+prisma:query SELECT COUNT(*) n FROM products WHERE supplier_id IN (1, 2)
+## supplier in 1 2
+[{"n":6}]
+prisma:query SELECT COUNT(*) n FROM products WHERE name LIKE 'S%'
+## name S%
+[{"n":2}]
+prisma:query SELECT COUNT(*) n FROM products WHERE name LIKE '%USB%'
+## name %USB%
+[{"n":1}]
+prisma:query SELECT COUNT(*) n FROM products WHERE name LIKE '%Pro'
+## name %Pro
+[{"n":2}]
+prisma:query SELECT COUNT(*) n FROM products WHERE NOT category = 'Audio'
+## not audio
+[{"n":13}]

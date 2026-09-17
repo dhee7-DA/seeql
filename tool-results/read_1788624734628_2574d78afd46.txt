@@ -1,0 +1,367 @@
+     1→     1→// Joins-deck batch j2c — LEFT JOIN semantics & WHERE-vs-ON placement (cs-243..cs-250).
+     2→     2→// The slot battle moves to preservation: keep-the-left-side, NULL-filled right arms,
+     3→     3→// COUNT(right.id) honesty over ghost rows, real NULLs vs join-ghost NULLs, and the
+     4→     4→// placement rule — a right-table filter in ON thins the arm, the same filter in WHERE
+     5→     5→// deletes the preserved rows. Anti-joins here are LEFT JOIN + IS NULL only (no NOT
+     6→     6→// EXISTS; that's batch 3). Every figure quoted in prose was probed live against the
+     7→     7→// seed db before being written down.
+     8→     8→
+     9→     9→import type { CaseStudy } from "../types";
+    10→    10→
+    11→    11→export const casesJ2c: CaseStudy[] = [
+    12→    12→  {
+    13→    13→    id: "cs-243",
+    14→    14→    deck: 2,
+    15→    15→    topic: "j2",
+    16→    16→    universe: "logistics",
+    17→    17→    title: "Tickets that never left the building",
+    18→    18→    brief:
+    19→    19→      "From: Logistics desk. Re: the undispatched pile.\n\nCarrier billing reconciled clean, which leaves the opposite question: which orders have we promised but never handed to any carrier? I want the full undispatched list with the buyer attached so account management can call each one before the week closes — and I want it built so a ticket with no shipment row still shows up, not silently deleted.",
+    20→    20→    ask: "Every order with no shipment row, showing order id, buyer name and order status, ordered by order id.",
+    21→    21→    template: `SELECT o.id, c.name, o.status
+    22→    22→FROM orders o
+    23→    23→JOIN customers c ON c.id = o.customer_id
+    24→    24→{1} JOIN shipments s ON {2} = o.id
+    25→    25→WHERE {3} {4} {5}
+    26→    26→ORDER BY o.id;`,
+    27→    27→    slots: [
+    28→    28→      {
+    29→    29→        answer: "LEFT",
+    30→    30→        kind: "keyword",
+    31→    31→        label: "the preserving join",
+    32→    32→        why: "The brief asks for orders with no shipment, so the join must preserve: LEFT keeps all 103 orders and fills the missing shipment side with NULL. An INNER join would delete every undispatched ticket before the WHERE ever ran — an empty report instead of a call list.",
+    33→    33→      },
+    34→    34→      {
+    35→    35→        answer: "s.order_id",
+    36→    36→        kind: "keyword",
+    37→    37→        label: "the shipment-side foreign key",
+    38→    38→        why: "Shipments point back at the order they moved through s.order_id, so the pairing is s.order_id = o.id. s.id = o.id looks interchangeable — both counters start at 1 — but it pairs order #N with shipment #N: the ghost list still comes back with 21 rows, only now they're the wrong tickets.",
+    39→    39→      },
+    40→    40→      {
+    41→    41→        answer: "s.id",
+    42→    42→        kind: "keyword",
+    43→    43→        label: "the canary column",
+    44→    44→        why: "The ghost test reads a shipments column that can only be NULL when the arm never matched, and the primary key is the cleanest canary: s.id IS NULL means no shipment row existed at all. Any matched row carries a real shipment id, so the test fires on true ghosts and nothing else.",
+    45→    45→      },
+    46→    46→      {
+    47→    47→        answer: "IS",
+    48→    48→        kind: "keyword",
+    49→    49→        label: "the absence test",
+    50→    50→        why: "Testing for absence is the IS operator: s.id IS NULL. The tempting chip is = — but s.id = NULL is never true, not even for the ghosts, because NULL compares as unknown. The list would come back empty and the desk would file 'nothing undispatched'.",
+    51→    51→      },
+    52→    52→      {
+    53→    53→        answer: "NULL",
+    54→    54→        kind: "keyword",
+    55→    55→        label: "the absence value",
+    56→    56→        why: "An unfilled arm reads NULL, so the test ends with NULL. NOT NULL is the instructive flip: it returns the 82 orders that did ship — a complete, confident answer to a question nobody asked.",
+    57→    57→      },
+    58→    58→    ],
+    59→    59→    distractors: ["INNER", "CROSS", "o.id", "c.id", "=", "NOT NULL"],
+    60→    60→    walkthrough:
+    61→    61→      "Run it and 21 orders come back — and the status column tells the whole story: 14 pending and 7 cancelled, i.e. every open or dead ticket in the book, none of them ever handed to a carrier. The heaviest is order 74, Farid Nasser's 1,088.44 pending ticket; Alice Chen alone owns six of the twenty-one. The mechanics deserve a beat: the customers join is INNER because every order has a buyer, but the shipments join must be LEFT — 21 orders have no matching arm, and INNER would have deleted exactly those, leaving a report that says all clear. WHERE s.id IS NULL is the anti-join pattern: keep the rows the join couldn't fill. One near-miss to file away: ON s.id = o.id executes and even returns 21 rows, but they're the wrong 21 — shipment 84 pairs with order 84, so a shipped ticket and a run of delivered ones (orders 84 through 88) crowd a list that should only hold open ones. Counters that share a number range are not a join key.",
+    62→    62→  },
+    63→    63→  {
+    64→    64→    id: "cs-244",
+    65→    65→    deck: 2,
+    66→    66→    topic: "j2",
+    67→    67→    universe: "receivables",
+    68→    68→    title: "Delivered, but the money never settled",
+    69→    69→    brief:
+    70→    70→      "From: Receivables. Re: pre-close chase list.\n\nThe close wants proof that delivered tickets actually settled. Most did — but the ledger has a habit of marking a delivery done while the payment sits in pending. Build me the delivered orders that have no settled payment at all: the join arm may only attach settlements, and the survivors must be tickets whose money never cleared. Chase figures on every row.",
+    71→    71→    ask: "Delivered orders with no settled payment, showing order id, ticket total and the missing payment id, ordered by order id.",
+    72→    72→    template: `SELECT o.id, o.total, p.id AS payment_id
+    73→    73→FROM orders o
+    74→    74→{1} JOIN payments p ON p.order_id = o.id AND {2} = {3}
+    75→    75→WHERE o.status = {4} AND p.id IS {5}
+    76→    76→ORDER BY o.id;`,
+    77→    77→    slots: [
+    78→    78→      {
+    79→    79→        answer: "LEFT",
+    80→    80→        kind: "keyword",
+    81→    81→        label: "the preserving join",
+    82→    82→        why: "The list exists to catch orders whose settlement never arrived, so the join must preserve orders with no settled arm: LEFT keeps the ticket and fills the payment side with NULL. INNER would erase exactly the rows the memo is chasing and return an empty ledger.",
+    83→    83→      },
+    84→    84→      {
+    85→    85→        answer: "p.status",
+    86→    86→        kind: "keyword",
+    87→    87→        label: "the arm-side status column",
+    88→    88→        why: "Settlement is a property of the payment, so the ON arm filters p.status. Slotting o.status is the subtle killer: an order status is never 'settled', the arm matches nothing, and every delivered ticket comes back as a false ghost — 52 rows of chase list instead of the true two.",
+    89→    89→      },
+    90→    90→      {
+    91→    91→        answer: "'settled'",
+    92→    92→        kind: "keyword",
+    93→    93→        label: "the arm filter value",
+    94→    94→        why: "Only settled money proves the ticket closed clean, so the arm reads 'settled' — quoted, it's a value of payment status. 'pending' is the plausible swap: it runs and returns 50 delivered orders, every one of them a ticket whose money is fine.",
+    95→    95→      },
+    96→    96→      {
+    97→    97→        answer: "'delivered'",
+    98→    98→        kind: "keyword",
+    99→    99→        label: "the ticket status filter",
+   100→   100→        why: "The chase targets delivered tickets, so the WHERE reads o.status = 'delivered'. 'shipped' executes and hands back 6 tickets that are still in flight — not late money, just early worry.",
+   101→   101→      },
+   102→   102→      {
+   103→   103→        answer: "NULL",
+   104→   104→        kind: "keyword",
+   105→   105→        label: "the ghost keep-test",
+   106→   106→        why: "The keep-test is p.id IS NULL: a NULL payment id means the settled arm never matched, which is the definition of the chase. NOT NULL inverts the desk's own question and returns the settled side of the house — 53 rows, fifty tickets properly settled, three of them printed twice for two installments.",
+   107→   107→      },
+   108→   108→    ],
+   109→   109→    distractors: ["INNER", "o.status", "'pending'", "'shipped'", "NOT NULL", "="],
+   110→   110→    walkthrough:
+   111→   111→      "Two rows come back, and both are genuine pre-close chases: order 10 at 175.68 and order 52 at 238.38 — each holds exactly one payment, still pending, for the full ticket (a wallet try and a bank transfer). The structure is the lesson: p.status = 'settled' lives in the ON clause, not the WHERE. Move it to WHERE and the predicate collides with p.id IS NULL — a row can't carry a settled payment and a NULL payment id at once — and the list collapses to zero rows, the close signs off, and both tickets stay unpaid. In the ON, the filter only thins the arm: non-settled payments stop matching, the order row survives as a ghost, and IS NULL reads the ghost honestly. For scale: 15 orders have no payment row at all, but every one of them is pending (9) or cancelled (6) — this query deliberately ignores those; it hunts the ticket that says delivered while the money says otherwise.",
+   112→   112→  },
+   113→   113→  {
+   114→   114→    id: "cs-245",
+   115→   115→    deck: 2,
+   116→   116→    topic: "j2",
+   117→   117→    universe: "month-close",
+   118→   118→    title: "Freight still floating at the close",
+   119→   119→    brief:
+   120→   120→      "From: Month-end close. Re: open freight exposure.\n\nBefore I can sign the logistics accrual I need the parcels still in the carrier's hands: shipments with no delivery timestamp. Attach each open leg to its order ticket so the accrual can see what value is riding on it. Mind the NULLs — a missing delivery date on a live leg is real information, not an artifact of the join.",
+   121→   121→    ask: "Open DHL legs: shipment id, carrier, freight cost and order total for every shipment with no delivery timestamp, heaviest freight first.",
+   122→   122→    template: `SELECT s.id, s.carrier, s.cost, o.total
+   123→   123→FROM shipments s
+   124→   124→LEFT JOIN orders o ON o.id = s.order_id
+   125→   125→WHERE {1} IS {2} AND s.carrier = {3}
+   126→   126→ORDER BY {4} DESC;`,
+   127→   127→    slots: [
+   128→   128→      {
+   129→   129→        answer: "s.delivered_at",
+   130→   130→        kind: "keyword",
+   131→   131→        label: "the delivery timestamp",
+   132→   132→        why: "'In transit' is stored as a missing delivery timestamp, so the test lands on s.delivered_at — a shipments column. o.total IS NULL would test the ticket value instead, which is never missing, and the exposure list would come back empty.",
+   133→   133→      },
+   134→   134→      {
+   135→   135→        answer: "NULL",
+   136→   136→        kind: "keyword",
+   137→   137→        label: "the open-leg test",
+   138→   138→        why: "Open legs are the NULL arms of delivered_at. NOT NULL flips the query to the 18 DHL legs that did land — a closed-shipment report for an accrual that exists to book the open ones.",
+   139→   139→      },
+   140→   140→      {
+   141→   141→        answer: "'DHL'",
+   142→   142→        kind: "keyword",
+   143→   143→        label: "the carrier filter",
+   144→   144→        why: "The accrual scopes to DHL this cycle, so the carrier filter reads 'DHL' — quoted, it's a value. 'FedEx' runs clean and returns 6 open legs from a different carrier account.",
+   145→   145→      },
+   146→   146→      {
+   147→   147→        answer: "s.cost",
+   148→   148→        kind: "keyword",
+   149→   149→        label: "the exposure sort",
+   150→   150→        why: "Freight is what the accrual reserves against, so the sort is s.cost. Sorting by o.total would rank legs by what the parcels were worth and bury the 15.79 freight bill behind every big ticket on the list.",
+   151→   151→      },
+   152→   152→    ],
+   153→   153→    distractors: ["o.total", "o.id", "o.status", "NOT NULL", "'UPS'", "'FedEx'"],
+   154→   154→    walkthrough:
+   155→   155→      "23 legs are in transit across the book — DHL 11, FedEx 6, LocalPost 4, UPS 2 — and DHL's slice carries 102.93 of open freight, running 5.32 to 15.79 a parcel, heaviest being shipment 23 on Noah Meyer's 56.19 ticket. The NULL-hygiene point is the case's real payload: after a LEFT JOIN, a NULL in a right-table column usually means 'no match' — but this query tests a LEFT-side column, s.delivered_at, so the NULLs are the carrier's own missing timestamps: real in-transit freight, not join ghosts. Confusing the two is how desks write off live freight. And note what the LEFT JOIN is doing here: every one of the 82 shipments sits on a real order, so LEFT and INNER return identical rows today — the query is written LEFT anyway, because the day a shipment loses its order, this report should show the leg with a blank ticket, not lose the parcel.",
+   156→   156→  },
+   157→   157→  {
+   158→   158→    id: "cs-246",
+   159→   159→    deck: 2,
+   160→   160→    topic: "j2",
+   161→   161→    universe: "people-ops",
+   162→   162→    title: "The bosses who report to no one",
+   163→   163→    brief:
+   164→   164→      "From: People-ops. Re: the org chart export.\n\nThe HR toolchain keeps chewing the org chart because the export joins staff to their managers and the department heads come out missing — the chart tool reads their blank manager references as terminations. Rebuild the export so every employee appears with their manager's name attached, managers included, blank manager cell and all. The board pack needs the full ten-person roster, not seven survivors.",
+   165→   165→    ask: "Every employee with name, role and manager's name, ordered by employee id — managers show a blank manager name.",
+   166→   166→    template: `SELECT e.name, e.role, {1} AS manager_name
+   167→   167→FROM employees e
+   168→   168→{2} JOIN employees m ON {3} = m.id
+   169→   169→ORDER BY e.id;`,
+   170→   170→    slots: [
+   171→   171→      {
+   172→   172→        answer: "m.name",
+   173→   173→        kind: "keyword",
+   174→   174→        label: "the manager's name",
+   175→   175→        why: "The manager's name lives on the manager's own employee row, reached through the m alias: m.name. e.name would label every boss with their own name — Sofia Marin managing Sofia Marin — the kind of quiet corruption the chart tool chokes on.",
+   176→   176→      },
+   177→   177→      {
+   178→   178→        answer: "LEFT",
+   179→   179→        kind: "keyword",
+   180→   180→        label: "the preserving self-join",
+   181→   181→        why: "Managers have no row above them, so their arm never matches and the join must preserve them: LEFT keeps all ten employees and fills the three bosses' manager cells with NULL. INNER would quietly fire the entire management layer — seven rows, no managers.",
+   182→   182→      },
+   183→   183→      {
+   184→   184→        answer: "e.manager_id",
+   185→   185→        kind: "keyword",
+   186→   186→        label: "the report-to key",
+   187→   187→        why: "The self-join pairs each employee's manager reference with the manager's primary key: e.manager_id = m.id. e.id = m.id compares the employee to themselves and makes everyone their own boss; m.manager_id = m.id asks a manager to be their own manager, matches nobody, and blanks every cell.",
+   188→   188→      },
+   189→   189→    ],
+   190→   190→    distractors: ["INNER", "CROSS", "e.name", "e.id", "m.id", "m.manager_id"],
+   191→   191→    walkthrough:
+   192→   192→      "Ten rows come back, three of them with a NULL manager cell: Sofia Marin (EU), Daniel Okoye (APAC) and Petra Novak (US) — the department heads, whose manager_id is genuinely empty because nobody manages them. Everyone else threads through the self-join: Marcus Hale and Aiko Yamada lead under Sofia and Daniel, and the reps fan out beneath — including Tomas Ruiz, the LATAM rep who reports to Daniel Okoye in APAC, the one deliberate cross-region edge on the chart. The teaching beat is the same ghost logic as orders-without-shipments, pointed at your own table: the left side (employees) is preserved, the right arm (managers) fills with NULL where the reference is empty. INNER returns 7 rows and the org chart silently loses its leadership — which is precisely the failure the HR export shipped with. Self-joins look exotic but they're the ordinary LEFT JOIN contract with both sides pointing at employees; the only new discipline is that every column needs its alias, or the query can't tell the person from the boss.",
+   193→   193→  },
+   194→   194→  {
+   195→   195→    id: "cs-247",
+   196→   196→    deck: 2,
+   197→   197→    topic: "j2",
+   198→   198→    universe: "growth",
+   199→   199→    title: "Every name on the referral list",
+   200→   200→    brief:
+   201→   201→      "From: Growth lead. Re: referral program review.\n\nThe board deck shows referral arrivals next to the full customer base, so I need one list with both: every customer, with their referral spend where one exists and an honest blank where it doesn't. Filter the acquisition arm to referrals only — but do not lose the customers the filter doesn't match; the blanks are the story the board asked for. Biggest referral spend first.",
+   202→   202→    ask: "All 16 customers with referral channel and spend where they arrived via referral, blank otherwise, biggest referral spend first.",
+   203→   203→    template: `SELECT c.name, a.channel, a.spend
+   204→   204→FROM customers c
+   205→   205→{1} JOIN acquisitions a ON {2} = c.id AND a.channel = {3}
+   206→   206→ORDER BY {4} {5};`,
+   207→   207→    slots: [
+   208→   208→      {
+   209→   209→        answer: "LEFT",
+   210→   210→        kind: "keyword",
+   211→   211→        label: "the preserving join",
+   212→   212→        why: "The brief wants all sixteen customers, blanks included, so the join must preserve: LEFT keeps every customer and fills the unmatched acquisition side with NULL. INNER would shrink the list to the four referral arrivals and delete the twelve blanks that are the board's actual story.",
+   213→   213→      },
+   214→   214→      {
+   215→   215→        answer: "a.customer_id",
+   216→   216→        kind: "keyword",
+   217→   217→        label: "the acquisition-side foreign key",
+   218→   218→        why: "Acquisitions point at the buyer they touch through a.customer_id, so the pairing is a.customer_id = c.id. a.id = c.id is the near-miss that bites: acquisition ids 1 through 13 coincide with customer ids, so the referral four still match perfectly — the query runs, the slide looks right, and the join rule underneath is wrong.",
+   219→   219→      },
+   220→   220→      {
+   221→   221→        answer: "'referral'",
+   222→   222→        kind: "keyword",
+   223→   223→        label: "the arm filter value",
+   224→   224→        why: "The arm filters to referral touches, so the value reads 'referral' — quoted, it's a channel value. 'social' executes and returns a different campaign's arrivals (Alice Chen at 21.17, Jamal Wright at 33.71) wearing referral's clothes.",
+   225→   225→      },
+   226→   226→      {
+   227→   227→        answer: "a.spend",
+   228→   228→        kind: "keyword",
+   229→   229→        label: "the spend sort",
+   230→   230→        why: "Ranking by what the referral cost is the point of the slide: ORDER BY a.spend. c.name would alphabetize the deck — Alice Chen's blank row first, the 35.81 Bruno Silva referral buried mid-list.",
+   231→   231→      },
+   232→   232→      {
+   233→   233→        answer: "DESC",
+   234→   234→        kind: "keyword",
+   235→   235→        label: "the sort direction",
+   236→   236→        why: "Biggest referral spend first, so DESC. ASC is not wrong SQL — it's the wrong slide: the twelve blanks would lead the list and the 9.22 Emma Wilson touch would be the first number anyone reads.",
+   237→   237→      },
+   238→   238→    ],
+   239→   239→    distractors: ["INNER", "c.id", "'social'", "'email'", "c.name", "c.region"],
+   240→   240→    walkthrough:
+   241→   241→      "Sixteen rows come back — four with referral data, twelve blank. The referral four: Bruno Silva 35.81, Hiro Tanaka 28.77, Maya Patel 15.22, Emma Wilson 9.22 — 89.02 of acquisition spend against 366.19 spent across every channel. The blanks are not noise: they include the two organic walk-ins, Noah Meyer and Pedro Alvarez, who have no acquisition row at all, plus ten customers acquired through other channels whose arms the referral filter NULLs out. And here is the placement battle this case exists for: the channel filter sits in the ON clause, so it only thins the acquisition arm and the twelve blanks survive. Drag the same predicate into WHERE and it turns on the joined rows — a blank row can't equal 'referral' — and twelve of your sixteen customers evaporate, leaving the four arrivals. INNER versus LEFT tells the same story in join-keyword form: 4 rows versus 16. The board asked who the program hasn't touched; both mistakes answer a different question.",
+   242→   242→  },
+   243→   243→  {
+   244→   244→    id: "cs-248",
+   245→   245→    deck: 2,
+   246→   246→    topic: "j2",
+   247→   247→    universe: "cash",
+   248→   248→    title: "Tickets with no money attached",
+   249→   249→    brief:
+   250→   250→      "From: Cash desk. Re: settlement coverage.\n\nThe processor's file and our orders table disagree on coverage, and I want our own number: how many tickets carry no payment attempt at all — not failed, not pending, nothing. Count payment rows per order and keep only the zeros, and make sure the counting column is one that can actually be NULL, or the zeros will lie to you. The zeros list is the deliverable.",
+   251→   251→    ask: "Every order with zero payment rows, showing order id, ticket total and the payment-row count, ordered by order id.",
+   252→   252→    template: `SELECT o.id, o.total, COUNT(p.id) AS payment_rows
+   253→   253→FROM orders o
+   254→   254→LEFT JOIN payments p ON {1} = o.id
+   255→   255→GROUP BY o.id
+   256→   256→HAVING COUNT({2}) = {3}
+   257→   257→ORDER BY o.id;`,
+   258→   258→    slots: [
+   259→   259→      {
+   260→   260→        answer: "p.order_id",
+   261→   261→        kind: "keyword",
+   262→   262→        label: "the payment-side foreign key",
+   263→   263→        why: "Payments point at their ticket through p.order_id, so the arm pairs p.order_id = o.id. p.id = o.id is the classic collision — both counters run 1 through 91 — and it re-cuts the list to twelve phantom tickets: orders 92 through 103, most of them delivered or shipped.",
+   264→   264→      },
+   265→   265→      {
+   266→   266→        answer: "p.id",
+   267→   267→        kind: "keyword",
+   268→   268→        label: "the honest counting column",
+   269→   269→        why: "The zero must count payment rows, and COUNT(p.id) is the honest column: on a ghost row the payment id is NULL and COUNT sees nothing, reporting 0. COUNT(*) counts the ghost row itself — every order shows at least 1 — and COUNT(o.id) counts the never-missing order key with the same effect. The zeros would never appear.",
+   270→   270→      },
+   271→   271→      {
+   272→   272→        answer: "0",
+   273→   273→        kind: "number",
+   274→   274→        label: "the zero threshold",
+   275→   275→        why: "The memo wants empty tickets, so the group filter is COUNT(p.id) = 0 — the 0 shows up in the result's own payment_rows column. = 1 returns the 85 orders with a single payment attempt; = 2 finds the three installment tickets instead.",
+   276→   276→      },
+   277→   277→    ],
+   278→   278→    distractors: ["*", "o.id", "SUM", "1", "2", "o.customer_id"],
+   279→   279→    walkthrough:
+   280→   280→      "Fifteen orders have never attracted a payment row — 4,865.61 of ticket value with nothing banked, nothing pending, nothing failed against it. Nine are pending tickets and six are cancelled; the biggest is order 74, Farid Nasser's 1,088.44. The whole case turns on one column choice: after the LEFT JOIN, an order with no payment still produces a joined row — ghost-carried, every payment column NULL — and COUNT(p.id) is the only counting chip in the bank that reads that ghost as zero. COUNT(*) counts the joined row itself and reports 1, so the HAVING = 0 filter would return nothing at all; COUNT(o.id) counts the never-null order key with the same effect. That's the deck's counting rule in its purest form: count the right table's primary key, never the star, whenever preservation is in play. The '= 1' variant is worth a glance too — 85 orders with exactly one payment attempt — the same query is the full coverage report with the threshold slid.",
+   281→   281→  },
+   282→   282→  {
+   283→   283→    id: "cs-249",
+   284→   284→    deck: 2,
+   285→   285→    topic: "j2",
+   286→   286→    universe: "refund-audit",
+   287→   287→    title: "The tickets that refunded twice",
+   288→   288→    brief:
+   289→   289→      "From: Refund audit. Re: duplicate payouts.\n\nFinance flagged that our refund total looks heavy for the order count, and the obvious suspect is tickets that attracted more than one refund. Pull every order sitting on exactly two refunds, with the buyer's name and the actual refunded money summed from the refund rows themselves. If the total column starts printing ticket prices instead, the audit number is wrong and so is the meeting.",
+   290→   290→    ask: "Every order with exactly two refunds, showing order id, buyer name, refund count and the summed refund amount, ordered by order id.",
+   291→   291→    template: `SELECT o.id, c.name, COUNT(r.id) AS refund_rows, ROUND(SUM({1}), 2) AS refunded_total
+   292→   292→FROM orders o
+   293→   293→JOIN customers c ON c.id = o.customer_id
+   294→   294→LEFT JOIN refunds r ON {2} = o.id
+   295→   295→GROUP BY o.id
+   296→   296→HAVING COUNT(r.id) = {3}
+   297→   297→ORDER BY o.id;`,
+   298→   298→    slots: [
+   299→   299→      {
+   300→   300→        answer: "r.amount",
+   301→   301→        kind: "keyword",
+   302→   302→        label: "the refunded money",
+   303→   303→        why: "The money that actually went out lives on the refund rows: SUM(r.amount). SUM(o.total) is the fan-out trap — the ticket joins once per refund, so a double-refunded order prints its full price twice and order 6 inflates from 401.62 refunded to 1,505.92 of phantom exposure.",
+   304→   304→      },
+   305→   305→      {
+   306→   306→        answer: "r.order_id",
+   307→   307→        kind: "keyword",
+   308→   308→        label: "the refund-side foreign key",
+   309→   309→        why: "Refunds point back at their ticket through r.order_id, so the arm is r.order_id = o.id. r.id = o.id compares a refund's row number to an order's — two unrelated id spaces — the pairing never fires, and the audit comes back empty.",
+   310→   310→      },
+   311→   311→      {
+   312→   312→        answer: "2",
+   313→   313→        kind: "number",
+   314→   314→        label: "the duplicate threshold",
+   315→   315→        why: "The suspect population is exactly-two, so the group filter reads COUNT(r.id) = 2 — and the 2 shows up in the result's own refund_rows column. = 1 returns the nineteen singly-refunded orders, the innocent majority; = 3 finds nobody, which is itself reassuring.",
+   316→   316→      },
+   317→   317→    ],
+   318→   318→    distractors: ["r.id", "o.total", "c.id", "1", "3"],
+   319→   319→    walkthrough:
+   320→   320→      "Three orders sit on double refunds, all delivered: order 6, Bruno Silva, 401.62 back on a 752.96 ticket; order 55, Alice Chen, 61.52 on 113.66; order 86, Alice Chen again, 74.22 on 116.28. Alice Chen appearing twice is exactly the pattern the fraud desk flags before the refund desk does. The aggregate discipline rhymes with the count-honesty cases: the LEFT JOIN keeps all 103 orders in the tally — 81 of them ghost-carried at zero refunds — and HAVING COUNT(r.id) = 2 picks the doubles out of that honest tally (the =2 filter would forgive an INNER here, but the zeros list this audit also maintains would not). Sum the wrong column and the fan-out bites: o.total repeats once per joined refund row, so the three doubles would report 1,505.92, 227.32 and 232.56 — overstating payouts by more than double. SUM(r.amount) walks the refund rows themselves: 537.36 across the three suspects. Count what matched, sum the column that lives on the many side.",
+   321→   321→  },
+   322→   322→  {
+   323→   323→    id: "cs-250",
+   324→   324→    deck: 2,
+   325→   325→    topic: "j2",
+   326→   326→    universe: "fraud",
+   327→   327→    title: "Delivered in the carrier's world, shipped in ours",
+   328→   328→    brief:
+   329→   329→      "From: Risk team. Re: status contradictions.\n\nThe carrier feeds say parcels landed; our order tickets still say shipped. That mismatch is either a stale fulfillment pipeline or someone hiding late deliveries behind live statuses — either way, risk wants the exact list. Find every shipment the carrier marked delivered while its order ticket still reads 'shipped', and name the buyer behind each contradiction.",
+   330→   330→    ask: "Shipments with a delivery timestamp on an order whose status is still 'shipped', showing shipment id, carrier, order id and order status.",
+   331→   331→    template: `SELECT s.id, s.carrier, o.id AS order_id, o.status
+   332→   332→FROM shipments s
+   333→   333→LEFT JOIN orders o ON {1} = s.order_id
+   334→   334→WHERE {2} IS NOT NULL AND {3} = {4}
+   335→   335→ORDER BY s.id;`,
+   336→   336→    slots: [
+   337→   337→      {
+   338→   338→        answer: "o.id",
+   339→   339→        kind: "keyword",
+   340→   340→        label: "the order-side key",
+   341→   341→        why: "The pairing is o.id = s.order_id — the order's primary key meets the shipment's foreign key. s.id = s.order_id compares the shipment's own row number to the order it moved and matches nothing, so every ticket arrives blank and the WHERE empties the hunt.",
+   342→   342→      },
+   343→   343→      {
+   344→   344→        answer: "s.delivered_at",
+   345→   345→        kind: "keyword",
+   346→   346→        label: "the carrier's arrival stamp",
+   347→   347→        why: "'The carrier marked it delivered' is a non-null delivery timestamp, so the test lands on s.delivered_at. o.shipped_at is the trap: it's set on all 30 shipped-status orders, so the filter passes everything and the contradiction hunt returns thirty boring rows.",
+   348→   348→      },
+   349→   349→      {
+   350→   350→        answer: "o.status",
+   351→   351→        kind: "keyword",
+   352→   352→        label: "the ticket's side of the contradiction",
+   353→   353→        why: "The contradiction is between two systems, and the ticket's side of it is o.status. s.carrier = 'shipped' looks structurally identical and can never be true — carriers are DHL, FedEx, UPS and LocalPost — so the hunt returns zero and risk signs off on a lie.",
+   354→   354→      },
+   355→   355→      {
+   356→   356→        answer: "'shipped'",
+   357→   357→        kind: "keyword",
+   358→   358→        label: "the stale status value",
+   359→   359→        why: "The stale value is 'shipped' — quoted, it's an order status. 'delivered' is the easy slip: it finds the 52 tickets where both systems agree, which is precisely the population this hunt exists to contrast against.",
+   360→   360→      },
+   361→   361→    ],
+   362→   362→    distractors: ["s.id", "o.shipped_at", "s.carrier", "'delivered'", "'cancelled'", "o.total"],
+   363→   363→    walkthrough:
+   364→   364→      "Seven rows come back, and they span the whole year, which kills the one-bad-batch theory: shipment 25 (UPS) on Alice Chen's order 32, delivered 2024-04-23 with the ticket still reading shipped, through to shipment 77 (FedEx) on Isabella Rossi's order 98, landed 2025-03-02 and never flipped. In between: order 35 (Grace Kim, 373.00), order 36 (Pedro Alvarez, 355.07), order 37 (Emma Wilson, 379.83), order 60 (Jamal Wright, 403.72) and order 89 — Alice Chen again, 684.53, the biggest stuck ticket. A buyer repeats, and 684.53 sat on the books as in-flight while the parcel was provably delivered — that's the revenue-recognition question the controller asks next. The LEFT JOIN is the right shape even though every shipment finds its order: the query asks which matched rows contradict, and a narrower join would hide any shipment that ever lost its order — the one row that would turn this data-quality chore into a fraud case.",
+   365→   365→  },
+   366→   366→];
+   367→   367→

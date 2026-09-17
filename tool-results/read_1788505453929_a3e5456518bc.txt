@@ -1,0 +1,463 @@
+     1→     1→import type { Lesson } from "../types";
+     2→     2→import { EXPECTED } from "../expected";
+     3→     3→
+     4→     4→export const lesson33: Lesson = {
+     5→     5→  id: "lesson-33",
+     6→     6→  num: 33,
+     7→     7→  title: "String aggregation & grand totals",
+     8→     8→  blurb: "GROUP_CONCAT folds rows into one cell, FILTER splits counts in one pass, and the UNION-ALL stack writes the TOTAL row SQLite won't",
+     9→     9→  minutes: 13,
+    10→    10→  blocks: [
+    11→    11→    {
+    12→    12→      kind: "p",
+    13→    13→      text: "Two closing moves for the aggregation toolbox. First: the aggregate that returns **text** — `GROUP_CONCAT` folds every row in a group into one comma-joined cell, turning 'list everything' questions into one row each. Second: the **grand-total row** — the `TOTAL` line every finance report ends with. SQLite has no `ROLLUP` to write it for you, so you'll build the stack by hand with `UNION ALL` — and the hand-built version is exactly what the ROLLUP engines do under the hood.",
+    14→    14→    },
+    15→    15→    { kind: "diagram", figure: "x1-string-agg" },
+    16→    16→    {
+    17→    17→      kind: "code",
+    18→    18→      caption: "Who shops the full lifecycle? Fold each customer's statuses, keep the complete ones",
+    19→    19→      sql: `SELECT c.name, GROUP_CONCAT(DISTINCT o.status) AS statuses
+    20→    20→FROM customers c
+    21→    21→JOIN orders o ON o.customer_id = c.id
+    22→    22→GROUP BY c.id
+    23→    23→HAVING COUNT(DISTINCT o.status) = 4;   -- Alice, Emma, Maya — the trio`,
+    24→    24→    },
+    25→    25→    { kind: "h", text: "The knobs" },
+    26→    26→    {
+    27→    27→      kind: "bullets",
+    28→    28→      items: [
+    29→    29→        "`GROUP_CONCAT(x)` — comma by default; `GROUP_CONCAT(x, ' | ')` picks the separator. The result is TEXT: one cell per group, however many rows went in.",
+    30→    30→        "`GROUP_CONCAT(x ORDER BY x)` sorts the folded values (SQLite 3.44+). Without it the order is *whatever the scan produced* — Alice's came out `shipped,cancelled,delivered,pending`, no alphabet anywhere.",
+    31→    31→        "`DISTINCT` works — `GROUP_CONCAT(DISTINCT o.status)` — but **not with a custom separator**: SQLite rejects `GROUP_CONCAT(DISTINCT x, ' | ')` outright. The workaround stages it: dedupe in a subquery, then concat the derived column.",
+    32→    32→        "Watch the length: MySQL defaults `group_concat_max_len` to **1024 bytes** and silently truncates — a hundred folded names will lose their tails on MySQL and nowhere else.",
+    33→    33→      ],
+    34→    34→    },
+    35→    35→    { kind: "h", text: "FILTER — many counts, one pass" },
+    36→    36→    {
+    37→    37→      kind: "code",
+    38→    38→      caption: "The status census: four aggregates, one table scan",
+    39→    39→      sql: `SELECT
+    40→    40→  COUNT(*) FILTER (WHERE status = 'delivered')  AS delivered,
+    41→    41→  COUNT(*) FILTER (WHERE status = 'shipped')    AS shipped,
+    42→    42→  COUNT(*) FILTER (WHERE status = 'pending')    AS pending,
+    43→    43→  COUNT(*) FILTER (WHERE status = 'cancelled')  AS cancelled,
+    44→    44→  COUNT(*)                                      AS total
+    45→    45→FROM orders;   -- 52 · 30 · 14 · 7 · 103`,
+    46→    46→    },
+    47→    47→    {
+    48→    48→      kind: "bullets",
+    49→    49→      items: [
+    50→    50→        "The FILTER clause hangs a WHERE on one aggregate only — the same query as four separate filtered subqueries, one pass cheaper and far easier to read.",
+    51→    51→        "You already know the portable spelling: `SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END)` — module 3's pivot machine. FILTER is SQLite 3.30+/Postgres; MySQL has neither, so CASE remains the lingua franca.",
+    52→    52→      ],
+    53→    53→    },
+    54→    54→    { kind: "diagram", figure: "x3-total-stack" },
+    55→    55→    { kind: "h", text: "The grand-total stack" },
+    56→    56→    {
+    57→    57→      kind: "code",
+    58→    58→      caption: "Detail rows, then the TOTAL row — one ledger, by hand",
+    59→    59→      sql: `SELECT region, spend FROM (
+    60→    60→  SELECT c.region AS region, ROUND(SUM(o.total), 2) AS spend
+    61→    61→  FROM orders o JOIN customers c ON c.id = o.customer_id
+    62→    62→  GROUP BY c.region
+    63→    63→  UNION ALL
+    64→    64→  SELECT 'TOTAL', ROUND(SUM(total), 2) FROM orders
+    65→    65→)
+    66→    66→ORDER BY (region = 'TOTAL'), spend DESC;
+    67→    67→-- EU · APAC · US · LATAM, then TOTAL 34833.28`,
+    68→    68→    },
+    69→    69→    {
+    70→    70→      kind: "bullets",
+    71→    71→      items: [
+    72→    72→        "Arm one groups into detail rows; arm two has **no GROUP BY** — an aggregate with none yields exactly one row: the total. `UNION ALL` stacks them (ALL keeps it one pass, no dedupe).",
+    73→    73→        "`ORDER BY (region = 'TOTAL'), spend DESC` sinks the total row to the bottom while details rank by spend — and note the wrapper: a UNION compound can only ORDER BY its output columns, so the boolean trick lives one level out. A tiny trick, endlessly reusable.",
+    74→    74→        "Why not `ROLLUP`? SQLite simply doesn't have it. Postgres and MySQL 8 write `GROUP BY ROLLUP(region)` and get the same stack — the UNION-ALL spelling is the portable one, and reading it teaches what ROLLUP actually computes.",
+    75→    75→      ],
+    76→    76→    },
+    77→    77→    {
+    78→    78→      kind: "dialect",
+    79→    79→      db: "sqlite",
+    80→    80→      text: "GROUP_CONCAT is the only string aggregate; ORDER BY inside it since 3.44. No ROLLUP, no GROUPING SETS, no STRING_AGG — the stack pattern above is the native idiom.",
+    81→    81→    },
+    82→    82→    {
+    83→    83→      kind: "dialect",
+    84→    84→      db: "postgres",
+    85→    85→      text: "Postgres calls it `STRING_AGG(x, sep ORDER BY x)` and adds ARRAY_AGG for real arrays; `GROUP BY ROLLUP(region)`, `CUBE` and `GROUPING SETS` are all first-class.",
+    86→    86→    },
+    87→    87→    {
+    88→    88→      kind: "dialect",
+    89→    89→      db: "mysql",
+    90→    90→      text: "MySQL: GROUP_CONCAT with ORDER BY and custom separators both supported inside — but mind the 1024-byte default cap, raised per-session via group_concat_max_len. ROLLUP arrived with 8.0.",
+    91→    91→    },
+    92→    92→    {
+    93→    93→      kind: "tip",
+    94→    94→      text: "The fold is only as trustworthy as its inputs: fold DISTINCT ids when duplicates would repeat names, ORDER BY inside when the string is user-facing, and remember the whole cell is TEXT — you can't SUM your way back out of it.",
+    95→    95→    },
+    96→    96→  ],
+    97→    97→  mcqs: [
+    98→    98→    {
+    99→    99→      id: "l33-q1",
+   100→   100→      prompt: "GROUP_CONCAT(status) over a customer with 24 orders produces…",
+   101→   101→      choices: [
+   102→   102→        "24 comma-separated cells",
+   103→   103→        "One TEXT cell containing 24 comma-joined statuses",
+   104→   104→        "A number — like COUNT",
+   105→   105→        "An error — aggregates can't return text",
+   106→   106→      ],
+   107→   107→      answer: 1,
+   108→   108→      why: "It's still an aggregate: the group collapses to one row, but the folded VALUE is the joined string. COUNT counts the group; GROUP_CONCAT recites it.",
+   109→   109→      notes: [
+   110→   110→        { choice: 2, why: "Aggregates return whatever type they compute — AVG gives numbers, GROUP_CONCAT gives TEXT. The type follows the job." },
+   111→   111→      ],
+   112→   112→    },
+   113→   113→    {
+   114→   114→      id: "l33-q2",
+   115→   115→      prompt: "Which spelling folds products into a pipe-separated list?",
+   116→   116→      choices: [
+   117→   117→        "GROUP_CONCAT(name, ' | ')",
+   118→   118→        "GROUP_CONCAT(name SEPARATOR ' | ') — the only syntax",
+   119→   119→        "CONCAT(name) GROUPED BY ' | '",
+   120→   120→        "GROUP_CONCAT(name) || ' | '",
+   121→   121→      ],
+   122→   122→      answer: 0,
+   123→   123→      why: "SQLite takes the separator as the optional second argument. MySQL additionally accepts the SEPARATOR keyword; the two-argument form is the common denominator.",
+   124→   124→      notes: [
+   125→   125→        { choice: 3, why: "That concatenates ONE pipe onto the end of the whole folded string — the separator belongs INSIDE the aggregate." },
+   126→   126→      ],
+   127→   127→    },
+   128→   128→    {
+   129→   129→      id: "l33-q3",
+   130→   130→      prompt: "`GROUP_CONCAT(DISTINCT status, ' | ')` — what happens on SQLite?",
+   131→   131→      choices: [
+   132→   132→        "Works — distinct values, pipe-joined",
+   133→   133→        "Rejected — DISTINCT allows no custom separator",
+   134→   134→        "Silently ignores the separator",
+   135→   135→        "Returns NULL",
+   136→   136→      ],
+   137→   137→      answer: 1,
+   138→   138→      why: "Verified live on this engine: DISTINCT restricts GROUP_CONCAT to a single argument. Dedupe in a subquery first, then concat the derived column with any separator.",
+   139→   139→      notes: [
+   140→   140→        { choice: 0, why: "That's Postgres/MySQL behavior (STRING_AGG/GROUP_CONCAT with DISTINCT plus separator) — SQLite's parser refuses the combination." },
+   141→   141→      ],
+   142→   142→    },
+   143→   143→    {
+   144→   144→      id: "l33-q4",
+   145→   145→      prompt: "Without ORDER BY inside the aggregate, what order does GROUP_CONCAT emit values in?",
+   146→   146→      choices: [
+   147→   147→        "Alphabetical",
+   148→   148→        "Insertion order — the table's physical order",
+   149→   149→        "Unspecified — whatever the scan produced",
+   150→   150→        "Reverse of arrival",
+   151→   151→      ],
+   152→   152→      answer: 2,
+   153→   153→      why: "SQL tables have no order, so the fold has none either — Alice's statuses arrived as shipped,cancelled,delivered,pending. User-facing strings get ORDER BY inside the aggregate (SQLite 3.44+).",
+   154→   154→      notes: [
+   155→   155→        { choice: 1, why: "Insertion order feels real on tiny tables — then a plan change reshuffles it in production. Unspecified means exactly that." },
+   156→   156→      ],
+   157→   157→    },
+   158→   158→    {
+   159→   159→      id: "l33-q5",
+   160→   160→      prompt: "The FILTER clause's portable fallback — same four counts on MySQL — is…",
+   161→   161→      choices: [
+   162→   162→        "Four separate queries",
+   163→   163→        "SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) per column",
+   164→   164→        "WHERE status = 'delivered' four times",
+   165→   165→        "GROUP_CONCAT with numbers",
+   166→   166→      ],
+   167→   167→      answer: 1,
+   168→   168→      why: "CASE routes each row to 1-or-0 per status; SUM totals the flags — module 3's pivot machine doing the same census. FILTER is just terser where it exists (SQLite 3.30+, Postgres).",
+   169→   169→      notes: [
+   170→   170→        { choice: 2, why: "WHERE filters the WHOLE query — four WHEREs would need four subqueries. CASE-per-aggregate keeps it one pass." },
+   171→   171→      ],
+   172→   172→    },
+   173→   173→    {
+   174→   174→      id: "l33-q6",
+   175→   175→      prompt: "Why does the grand-total stack use UNION ALL rather than UNION?",
+   176→   176→      choices: [
+   177→   177→        "UNION would sort the stack",
+   178→   178→        "Detail rows and the TOTAL row can't collide — dedupe would be wasted work (and risky if a detail matched)",
+   179→   179→        "UNION can't mix aggregates",
+   180→   180→        "They're identical here",
+   181→   181→      ],
+   182→   182→      answer: 1,
+   183→   183→      why: "UNION dedupes across arms — if a region's row ever looked exactly like the total (one-region edge case), UNION would swallow it. ALL keeps both arms verbatim and skips the dedupe pass.",
+   184→   184→      notes: [
+   185→   185→        { choice: 0, why: "Neither UNION nor UNION ALL guarantees a sort — the ORDER BY after the stack does that. The ALL choice is about correctness and cost." },
+   186→   186→      ],
+   187→   187→    },
+   188→   188→    {
+   189→   189→      id: "l33-q7",
+   190→   190→      prompt: "Arm two — `SELECT 'TOTAL', SUM(total) FROM orders` — has no GROUP BY. How many rows does it produce?",
+   191→   191→      choices: [
+   192→   192→        "103 — one per order",
+   193→   193→        "One — an aggregate with no GROUP BY collapses the whole table",
+   194→   194→        "Zero — GROUP BY is mandatory with aggregates",
+   195→   195→        "Four — one per region",
+   196→   196→      ],
+   197→   197→      answer: 1,
+   198→   198→      why: "That's the lesson-7 empty-set rule's twin: with aggregates and no GROUP BY, the entire table is one group — one row, even for zero input rows.",
+   199→   199→      notes: [
+   200→   200→        { choice: 0, why: "Without the aggregate that would be true — the SUM is what collapses 103 rows into the single TOTAL cell." },
+   201→   201→      ],
+   202→   202→    },
+   203→   203→    {
+   204→   204→      id: "l33-q8",
+   205→   205→      prompt: "Which engines can spell this lesson's stack as GROUP BY ROLLUP(region) instead?",
+   206→   206→      choices: [
+   207→   207→        "All three — SQLite included",
+   208→   208→        "Postgres and MySQL 8; SQLite has no ROLLUP",
+   209→   209→        "Only SQLite",
+   210→   210→        "None — ROLLUP is SQL Server-only",
+   211→   211→      ],
+   212→   212→      answer: 1,
+   213→   213→      why: "ROLLUP is standard SQL that Postgres and MySQL 8 implement; SQLite never has. The UNION-ALL stack is the spelling that runs everywhere — including right here.",
+   214→   214→      notes: [
+   215→   215→        { choice: 3, why: "SQL Server popularized ROLLUP, but it's ISO standard syntax now — the holdout is SQLite, not the standard." },
+   216→   216→      ],
+   217→   217→    },
+   218→   218→    {
+   219→   219→      id: "l33-q9",
+   220→   220→      prompt: "`SELECT GROUP_CONCAT(name) FROM customers` — what shape is the output?",
+   221→   221→      choices: [
+   222→   222→        "16 rows, one name each",
+   223→   223→        "One row, one column: all 16 names comma-joined in a single string",
+   224→   224→        "One row per letter",
+   225→   225→        "An error — GROUP_CONCAT needs GROUP BY",
+   226→   226→      ],
+   227→   227→      answer: 1,
+   228→   228→      why: "GROUP_CONCAT is an aggregate like SUM — it collapses the whole group (here: the entire table) into one value, a comma-separated string. It's a report's one-line summary spell.",
+   229→   229→      notes: [
+   230→   230→        { choice: 3, why: "Aggregates without GROUP BY legally cover the whole table — same as COUNT(*) ever did. GROUP BY only appears when you want one string PER group." },
+   231→   231→      ],
+   232→   232→    },
+   233→   233→    {
+   234→   234→      id: "l33-q10",
+   235→   235→      prompt: "What does the second argument in `GROUP_CONCAT(name, ' | ')` control?",
+   236→   236→      choices: [
+   237→   237→        "The maximum string length",
+   238→   238→        "The separator between values — a pipe-delimited list instead of the default comma",
+   239→   239→        "Which column to sort by",
+   240→   240→        "The number of values included",
+   241→   241→      ],
+   242→   242→      answer: 1,
+   243→   243→      why: "The custom separator replaces the default ','. NULL rows contribute nothing and no stray separators appear — values are skipped, not printed as 'NULL'.",
+   244→   244→      notes: [
+   245→   245→        { choice: 3, why: "No LIMIT exists in GROUP_CONCAT — every non-NULL value in the group joins the string. Cap it upstream with a subquery if the list must be short." },
+   246→   246→      ],
+   247→   247→    },
+   248→   248→    {
+   249→   249→      id: "l33-q11",
+   250→   250→      prompt: "`GROUP_CONCAT(DISTINCT status)` over one customer's orders returned 'shipped,cancelled,delivered,pending'. Is that order guaranteed?",
+   251→   251→      choices: [
+   252→   252→        "Yes — statuses sort alphabetically inside GROUP_CONCAT",
+   253→   253→        "No — without ORDER BY inside the aggregate, the order is arbitrary and may change between runs or engines",
+   254→   254→        "Yes — it follows the rows' insertion order by SQL law",
+   255→   255→        "Yes — DISTINCT forces alphabetical order",
+   256→   256→      ],
+   257→   257→      answer: 1,
+   258→   258→      why: "This exact string IS the proof: 'shipped,cancelled,delivered,pending' isn't alphabetical. GROUP_CONCAT concatenates in whatever order rows visit the aggregate — only the 3.44+ spelling with ORDER BY inside pins it down.",
+   259→   259→      notes: [
+   260→   260→        { choice: 0, why: "The observed string refutes that on this very data — 'cancelled' would come first alphabetically. Real observed order ≠ guaranteed order; that's the lesson." },
+   261→   261→      ],
+   262→   262→    },
+   263→   263→    {
+   264→   264→      id: "l33-q12",
+   265→   265→      prompt: "`GROUP_CONCAT(DISTINCT region ORDER BY region)` over suppliers returns what on this store?",
+   266→   266→      choices: [
+   267→   267→        "'EU,APAC,LATAM,US' — DISTINCT's discovery order",
+   268→   268→        "'APAC,EU,LATAM,US' — the ORDER BY inside the aggregate takes control",
+   269→   269→        "4 rows, one per region",
+   270→   270→        "An error — ORDER BY can't live inside an aggregate",
+   271→   271→      ],
+   272→   272→      answer: 1,
+   273→   273→      why: "SQLite 3.44+ allows ORDER BY inside GROUP_CONCAT, making the string deterministic: all four supplier regions, alphabetized. On older engines the same query errors — one more portability line to walk.",
+   274→   274→      notes: [
+   275→   275→        { choice: 2, why: "GROUP_CONCAT is an aggregate — it returns ONE row per group, by definition. The row count never changes; only the string's interior order does." },
+   276→   276→      ],
+   277→   277→    },
+   278→   278→    {
+   279→   279→      id: "l33-q13",
+   280→   280→      prompt: "`COUNT(*) FILTER (WHERE status = 'delivered')` — what does FILTER contribute to the census?",
+   281→   281→      choices: [
+   282→   282→        "It deletes non-delivered rows from the table",
+   283→   283→        "It restricts THIS aggregate to matching rows only — delivered's 52, while sibling aggregates on the same row count their own statuses",
+   284→   284→        "It sorts the result by delivered first",
+   285→   285→        "It's a spelling error — aggregates take no conditions",
+   286→   286→      ],
+   287→   287→      answer: 1,
+   288→   288→      why: "FILTER gives each aggregate its own private WHERE: one scan of orders yields delivered 52, shipped 30, pending 14, cancelled 7 side by side. It's the readable successor to SUM(CASE WHEN …) counters.",
+   289→   289→      notes: [
+   290→   290→        { choice: 3, why: "The FILTER clause is standard SQL (postgreSQL has it too) and SQLite 3.30+ runs it. The CASE form still works everywhere — FILTER is the clarity upgrade." },
+   291→   291→      ],
+   292→   292→    },
+   293→   293→    {
+   294→   294→      id: "l33-q14",
+   295→   295→      prompt: "`SELECT region, COUNT(*) FILTER (WHERE active = 0) AS dormant FROM customers GROUP BY region` — what lands in `dormant` for EU (8 customers, 7 active) and US (2, both active)?",
+   296→   296→      choices: [
+   297→   297→        "EU 8 · US 2 — FILTER ignores the condition inside GROUP BY",
+   298→   298→        "EU 1 · US 0 — the filter counts only the inactive rows within each region's bucket",
+   299→   299→        "EU 0 · US 0 — active = 0 matches nothing",
+   300→   300→        "One row total — FILTER collapses groups",
+   301→   301→      ],
+   302→   302→      answer: 1,
+   303→   303→      why: "FILTER works fine inside GROUP BY: each region bucket counts its own inactive members. EU's single dormant customer (8 − 7 active) shows as 1; the US has none, so 0 — a zero that's real, not missing.",
+   304→   304→      notes: [
+   305→   305→        { choice: 2, why: "The two dormant customers in the whole store (Dmitri, Keiko) live in EU and APAC — but the count is still a COUNT, producing honest zeros where nobody matches, not empty rows." },
+   306→   306→      ],
+   307→   307→    },
+   308→   308→  ],
+   309→   309→  problems: [
+   310→   310→    {
+   311→   311→      id: "l33-p1",
+   312→   312→      title: "The status recital",
+   313→   313→      brief: "Every customer's statuses folded into one cell: output `name` and `statuses` = GROUP_CONCAT(DISTINCT status), alphabetical by name.",
+   314→   314→      hints: [
+   315→   315→        "Fold with DISTINCT so repeat statuses don't repeat in the string; the join feeds it all their orders.",
+   316→   316→        "Shape: SELECT c.name, GROUP_CONCAT(DISTINCT o.status) AS statuses FROM customers c JOIN orders o ON … GROUP BY c.id ORDER BY c.name;",
+   317→   317→      ],
+   318→   318→      difficulty: "easy",
+   319→   319→      solution:
+   320→   320→        "SELECT c.name, GROUP_CONCAT(DISTINCT o.status) AS statuses\nFROM customers c\nJOIN orders o ON o.customer_id = c.id\nGROUP BY c.id\nORDER BY c.name;",
+   321→   321→      mistakes: [
+   322→   322→        { test: "group_concat\\s*\\(\\s*distinct\\s+o?\\.?status\\s*,", message: "SQLite rejects DISTINCT with a custom separator — verify live on this engine. Keep GROUP_CONCAT(DISTINCT o.status) with the default comma, or dedupe in a subquery first." },
+   323→   323→        { test: "\\bcount\\s*\\(\\s*distinct", message: "COUNT(DISTINCT status) gives the NUMBER of statuses (1–4) — the brief wants the recital itself: GROUP_CONCAT." },
+   324→   324→        { test: "\\bgroup_concat\\s*\\(\\s*o\\.?status\\s*\\)", message: "Without DISTINCT the fold repeats — Alice's 24 orders would recite delivered 12 times. Fold the distinct set." },
+   325→   325→      ],
+   326→   326→      expected: EXPECTED["l33-p1"],
+   327→   327→      ordered: true,
+   328→   328→    },
+   329→   329→    {
+   330→   330→      id: "l33-p2",
+   331→   331→      title: "The full-lifecycle count",
+   332→   332→      brief: "How many customers hold all four statuses? Reuse the fold, wrap it in a count. Output one column `full_cycle`.",
+   333→   333→      hints: [
+   334→   334→        "The HAVING COUNT(DISTINCT status) = 4 crowd, counted from outside — subquery or CTE around the lesson's example.",
+   335→   335→        "Shape: SELECT COUNT(*) AS full_cycle FROM (SELECT customer_id FROM orders GROUP BY customer_id HAVING COUNT(DISTINCT status) = 4);",
+   336→   336→      ],
+   337→   337→      difficulty: "easy",
+   338→   338→      solution:
+   339→   339→        "SELECT COUNT(*) AS full_cycle\nFROM (\n  SELECT customer_id FROM orders\n  GROUP BY customer_id\n  HAVING COUNT(DISTINCT status) = 4\n);",
+   340→   340→      mistakes: [
+   341→   341→        { test: "\\bgroup_concat\\b", message: "The fold identifies the trio beautifully — but the answer is a NUMBER: count the groups that pass the HAVING bar." },
+   342→   342→        { test: "=\\s*3\\s*;", message: "Hardcoding 3 reads the answer off the brief — the count must be computed: groups whose distinct-status tally reaches 4." },
+   343→   343→        { test: "having\\s+count\\s*\\(\\s*\\*\\s*\\)", message: "COUNT(*) counts ORDERS (Alice alone has 24) — the lifecycle bar is COUNT(DISTINCT status) = 4." },
+   344→   344→      ],
+   345→   345→      expected: EXPECTED["l33-p2"],
+   346→   346→    },
+   347→   347→    {
+   348→   348→      id: "l33-p3",
+   349→   349→      title: "Supplier shelves",
+   350→   350→      brief: "Each supplier's categories folded into one cell: output `name` and `cats` = GROUP_CONCAT(DISTINCT category) over suppliers joined to their products, alphabetical by supplier name.",
+   351→   351→      hints: [
+   352→   352→        "Join suppliers → products (products carries supplier_id), group by supplier, fold the distinct categories.",
+   353→   353→        "Shape: SELECT s.name, GROUP_CONCAT(DISTINCT p.category) AS cats FROM suppliers s JOIN products p ON p.supplier_id = s.id GROUP BY s.id ORDER BY s.name;",
+   354→   354→      ],
+   355→   355→      difficulty: "medium",
+   356→   356→      solution:
+   357→   357→        "SELECT s.name, GROUP_CONCAT(DISTINCT p.category) AS cats\nFROM suppliers s\nJOIN products p ON p.supplier_id = s.id\nGROUP BY s.id\nORDER BY s.name;",
+   358→   358→      mistakes: [
+   359→   359→        { test: "\\bfrom\\s+products\\s+join\\s+suppliers", message: "That works too — but group by the SUPPLIER id either way; grouping by product id would fold one category per row." },
+   360→   360→        { test: "\\bgroup\\s+by\\s+p\\.category", message: "Grouping by category folds product names — the brief folds CATEGORIES per supplier: group by s.id." },
+   361→   361→        { test: "\\bcount\\s*\\(", message: "Counting categories gives 2–3 per supplier — the brief wants the fold: the actual names in one cell." },
+   362→   362→      ],
+   363→   363→      expected: EXPECTED["l33-p3"],
+   364→   364→      ordered: true,
+   365→   365→    },
+   366→   366→    {
+   367→   367→      id: "l33-p4",
+   368→   368→      title: "One-pass census",
+   369→   369→      brief: "The status census with FILTER: one row, five columns — `delivered`, `shipped`, `pending`, `cancelled`, `total` — each a COUNT, the first four with FILTER (WHERE status = …).",
+   370→   370→      hints: [
+   371→   371→        "Five aggregates over one scan; four of them carry their own private WHERE via FILTER.",
+   372→   372→        "Shape: SELECT COUNT(*) FILTER (WHERE status = '<s1>') AS delivered, … , COUNT(*) AS total FROM orders;",
+   373→   373→      ],
+   374→   374→      difficulty: "medium",
+   375→   375→      solution:
+   376→   376→        "SELECT\n  COUNT(*) FILTER (WHERE status = 'delivered') AS delivered,\n  COUNT(*) FILTER (WHERE status = 'shipped') AS shipped,\n  COUNT(*) FILTER (WHERE status = 'pending') AS pending,\n  COUNT(*) FILTER (WHERE status = 'cancelled') AS cancelled,\n  COUNT(*) AS total\nFROM orders;",
+   377→   377→      mistakes: [
+   378→   378→        { test: "\\bgroup\\s+by\\s+status", message: "Grouping gives four ROWS — the census is one row with five columns; FILTER conditions each aggregate instead." },
+   379→   379→        { test: "\\bcase\\s+when", message: "The CASE pivot works identically — this drill spells it with FILTER, SQLite 3.30+'s native clause." },
+   380→   380→        { test: "filter\\s*\\(\\s*status\\s*=", message: "FILTER wraps a full WHERE predicate: FILTER (WHERE status = 'delivered') — the WHERE keyword is part of the syntax." },
+   381→   381→      ],
+   382→   382→      expected: EXPECTED["l33-p4"],
+   383→   383→    },
+   384→   384→    {
+   385→   385→      id: "l33-p5",
+   386→   386→      title: "Category shopping lists",
+   387→   387→      brief: "Per category, all product names comma-joined and ALPHABETICAL inside the cell: stage the sort in a subquery, then fold with a ', ' separator. Output `category` and `names`, category order.",
+   388→   388→      hints: [
+   389→   389→        "The inner query sorts (category, name); the outer folds — GROUP_CONCAT(name, ', ') with a custom separator (no DISTINCT, so it's legal).",
+   390→   390→        "Shape: SELECT category, GROUP_CONCAT(name, ', ') AS names FROM (SELECT category, name FROM products ORDER BY category, name) GROUP BY category ORDER BY category;",
+   391→   391→      ],
+   392→   392→      difficulty: "medium",
+   393→   393→      solution:
+   394→   394→        "SELECT category, GROUP_CONCAT(name, ', ') AS names\nFROM (\n  SELECT category, name FROM products ORDER BY category, name\n)\nGROUP BY category\nORDER BY category;",
+   395→   395→      mistakes: [
+   396→   396→        { test: "group_concat\\s*\\(\\s*distinct\\s+name\\s*,", message: "The DISTINCT-plus-separator combo is rejected on SQLite — sort in the staging subquery instead; the fold then emits in scan order." },
+   397→   397→        { test: "group_concat\\s*\\(\\s*name\\s*\\)", message: "That works but with the default comma and no space — the brief wants ', ' as the separator: GROUP_CONCAT(name, ', ')." },
+   398→   398→        { test: "order\\s+by\\s+name\\s*;", message: "An outer ORDER BY name can't sort INSIDE the folded cell — the staging subquery's ORDER BY sets the fold order." },
+   399→   399→      ],
+   400→   400→      expected: EXPECTED["l33-p5"],
+   401→   401→      ordered: true,
+   402→   402→    },
+   403→   403→    {
+   404→   404→      id: "l33-p6",
+   405→   405→      title: "The region ledger",
+   406→   406→      brief: "Region spend WITH its grand-total row: detail rows per region, then a 'TOTAL' row via the second UNION ALL arm. Output `region` and `spend` (2 decimals) — TOTAL last, details by spend descending.",
+   407→   407→      hints: [
+   408→   408→        "Arm one: the grouped regions. Arm two: no GROUP BY, one row, literal 'TOTAL'. Wrap the stack in a subquery, then ORDER BY (region = 'TOTAL'), spend DESC — compounds can only ORDER BY output columns.",
+   409→   409→        "Shape: SELECT region, spend FROM (<grouped arm> UNION ALL SELECT 'TOTAL', ROUND(SUM(total), 2) FROM orders) ORDER BY (region = 'TOTAL'), spend DESC;",
+   410→   410→      ],
+   411→   411→      difficulty: "hard",
+   412→   412→      solution:
+   413→   413→        "SELECT region, spend FROM (\n  SELECT c.region AS region, ROUND(SUM(o.total), 2) AS spend\n  FROM orders o JOIN customers c ON c.id = o.customer_id\n  GROUP BY c.region\n  UNION ALL\n  SELECT 'TOTAL', ROUND(SUM(total), 2) FROM orders\n)\nORDER BY (region = 'TOTAL'), spend DESC;",
+   414→   414→      mistakes: [
+   415→   415→        { test: "\\bunion\\b(?!\\s+all\\b)", message: "Bare UNION dedupes the stack — if a detail row ever equaled the total it would vanish. UNION ALL keeps both arms verbatim." },
+   416→   416→        { test: "\\brollup\\b", message: "SQLite has no ROLLUP — this engine rejects it. The UNION ALL stack IS the native spelling (and what ROLLUP computes elsewhere)." },
+   417→   417→        { test: "order\\s+by\\s+spend\\s+desc\\s*;", message: "That interleaves TOTAL with the details by value — the boolean key (region = 'TOTAL') pins the total row last." },
+   418→   418→      ],
+   419→   419→      expected: EXPECTED["l33-p6"],
+   420→   420→      ordered: true,
+   421→   421→    },
+   422→   422→    {
+   423→   423→      id: "l33-p7",
+   424→   424→      title: "The monthly ledger",
+   425→   425→      brief: "Same stack over time: month-bucketed revenue, then the TOTAL row. Output `mon` and `rev` (2 decimals) — calendar order with TOTAL last. Fifteen rows.",
+   426→   426→      hints: [
+   427→   427→        "Arm one: the strftime bucket report. Arm two: the literal 'TOTAL' row. Wrap the stack and sort outside it — calendar first, 'TOTAL' pinned last.",
+   428→   428→        "Shape: SELECT mon, rev FROM (<bucket arm> UNION ALL SELECT 'TOTAL', ROUND(SUM(total), 2) FROM orders) ORDER BY (mon = 'TOTAL'), mon;",
+   429→   429→      ],
+   430→   430→      difficulty: "hard",
+   431→   431→      solution:
+   432→   432→        "SELECT mon, rev FROM (\n  SELECT strftime('%Y-%m', created_at) AS mon, ROUND(SUM(total), 2) AS rev\n  FROM orders\n  GROUP BY mon\n  UNION ALL\n  SELECT 'TOTAL', ROUND(SUM(total), 2) FROM orders\n)\nORDER BY (mon = 'TOTAL'), mon;",
+   433→   433→      mistakes: [
+   434→   434→        { test: "order\\s+by\\s+\\(\\s*mon\\s*=\\s*'total'\\s*\\)\\s*,\\s*rev", message: "The second sort key is the CALENDAR (mon), not revenue — TOTAL pinned last, then months in date order." },
+   435→   435→        { test: "\\brunning\\b|over\\s*\\(", message: "A running total annotates every row — the ledger ADDS one total row at the end. Two different reports; the brief wants the stack." },
+   436→   436→        { test: "\\brollup\\b", message: "Not on SQLite — hand-stack the arms: grouped months, then the no-GROUP-BY total arm, glued with UNION ALL." },
+   437→   437→      ],
+   438→   438→      expected: EXPECTED["l33-p7"],
+   439→   439→      ordered: true,
+   440→   440→    },
+   441→   441→    {
+   442→   442→      id: "l33-p8",
+   443→   443→      title: "The operations matrix",
+   444→   444→      brief: "The full report: per region, counts of delivered / shipped / pending / cancelled orders plus the row total — then the grand-total row. Output `region`, `delivered`, `shipped`, `pending`, `cancelled`, `total`; TOTAL last, regions by total descending.",
+   445→   445→      hints: [
+   446→   446→        "Arm one: GROUP BY region with four SUM(CASE WHEN …) counters plus COUNT(*). Arm two: the same five aggregates over the whole table with 'TOTAL' as region. Wrap the stack; sort outside.",
+   447→   447→        "Shape: SELECT region, delivered, … FROM (<grouped arm> UNION ALL SELECT 'TOTAL', <same five aggregates> FROM orders) ORDER BY (region = 'TOTAL'), total DESC;",
+   448→   448→      ],
+   449→   449→      difficulty: "hard",
+   450→   450→      solution:
+   451→   451→        "SELECT region, delivered, shipped, pending, cancelled, total FROM (\n  SELECT c.region AS region,\n    SUM(CASE WHEN o.status = 'delivered' THEN 1 ELSE 0 END) AS delivered,\n    SUM(CASE WHEN o.status = 'shipped' THEN 1 ELSE 0 END) AS shipped,\n    SUM(CASE WHEN o.status = 'pending' THEN 1 ELSE 0 END) AS pending,\n    SUM(CASE WHEN o.status = 'cancelled' THEN 1 ELSE 0 END) AS cancelled,\n    COUNT(*) AS total\n  FROM orders o JOIN customers c ON c.id = o.customer_id\n  GROUP BY c.region\n  UNION ALL\n  SELECT 'TOTAL',\n    SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END),\n    SUM(CASE WHEN status = 'shipped' THEN 1 ELSE 0 END),\n    SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END),\n    SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END),\n    COUNT(*)\n  FROM orders\n)\nORDER BY (region = 'TOTAL'), total DESC;",
+   452→   452→      mistakes: [
+   453→   453→        { test: "count\\s*\\(\\s*\\*\\s*\\)\\s+filter", message: "FILTER works for the counts — but the drill is the pivot spelling: SUM(CASE WHEN … THEN 1 ELSE 0 END), the form every engine shares." },
+   454→   454→        { test: "\\bgroup\\s+by\\s+region\\b[^;]*union", message: "Arm two must have NO GROUP BY — that's what collapses it to the single TOTAL row. Check both arms." },
+   455→   455→        { test: "order\\s+by\\s+total\\s+desc\\s*;", message: "Without the boolean key (region = 'TOTAL') first, the total row sorts among the regions by size — pin it last." },
+   456→   456→      ],
+   457→   457→      expected: EXPECTED["l33-p8"],
+   458→   458→      ordered: true,
+   459→   459→    },
+   460→   460→  ],
+   461→   461→  takeaway: "GROUP_CONCAT folds a group into one TEXT cell (mind DISTINCT's no-separator rule and the unspecified order), FILTER splits counts in one pass, and the UNION ALL stack hand-builds the TOTAL row SQLite's missing ROLLUP would give you.",
+   462→   462→};
+   463→   463→

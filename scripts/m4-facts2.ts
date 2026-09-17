@@ -1,0 +1,17 @@
+import { Database } from "bun:sqlite";
+import { copyFileSync, rmSync, existsSync } from "node:fs";
+const SRC = "db/custom.db", COPY = ".m4f2.db";
+if (existsSync(COPY)) rmSync(COPY);
+copyFileSync(SRC, COPY);
+const db = new Database(COPY, { readonly: true });
+const L = (l: string, v: any) => console.log(l.padEnd(40), JSON.stringify(v));
+L("bare FROM (SELECT 1 AS x)", db.query(`SELECT COUNT(*) AS c FROM (SELECT 1 AS x)`).get());
+L("cte referenced twice", db.query(`WITH per AS (SELECT customer_id, COUNT(*) n FROM orders GROUP BY customer_id) SELECT (SELECT COUNT(*) FROM per) a, (SELECT MAX(n) FROM per) m`).get());
+L("recursive group_concat", db.query(`WITH RECURSIVE seq(x) AS (SELECT 1 UNION ALL SELECT x+1 FROM seq WHERE x<5) SELECT GROUP_CONCAT(x) AS g FROM seq`).get());
+L("recursive 1..10 sum", db.query(`WITH RECURSIVE seq(x) AS (SELECT 1 UNION ALL SELECT x+1 FROM seq WHERE x<10) SELECT SUM(x) AS s FROM seq`).get());
+L("no-alias derived (SQLite ok)", db.query(`SELECT COUNT(*) AS c FROM (SELECT customer_id, COUNT(*) n FROM orders GROUP BY customer_id) WHERE n > 10`).get());
+L("ERROR: derived no-alias in MySQL-style", db.query(`SELECT * FROM (SELECT 1 AS x) `).get());
+L("scalar in SELECT list row1", db.query(`SELECT name, (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id) AS n FROM customers c WHERE c.id = 1`).get());
+L("who lacks delivered", db.query(`SELECT name FROM customers c WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.id AND o.status='delivered')`).all());
+L("region of id=1 (multi-row scalar takes first)", db.query(`SELECT region FROM customers ORDER BY id LIMIT 2`).all());
+db.close();

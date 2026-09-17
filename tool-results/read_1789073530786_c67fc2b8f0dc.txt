@@ -1,0 +1,452 @@
+     1→// Case batch M2-Cap2a — topic cap2 (Joins capstone), ids cs-567…cs-583.
+     2→// Module-final mix: first joins + lookups, wrong-key traps, multi-table chains,
+     3→// ghost buckets, anti-join hole lists, self-join pair ladders, join aggregates
+     4→// and fan-out discipline. Every figure is audited against the live seed db by
+     5→// scripts/case-audit.ts.
+     6→
+     7→import type { CaseStudy } from "./types";
+     8→
+     9→export const casesM2Cap2a: CaseStudy[] = [
+    10→  {
+    11→    id: "cs-567",
+    12→    tier: "easy",
+    13→    topic: "cap2",
+    14→    universe: "expense",
+    15→    title: "Madrid's four tickets, states attached",
+    16→    brief:
+    17→      "From: Ops finance, spend review. Re: regional account profile.\n\nThe spend review profiles one mid-size account per region this cycle, and Madrid's is up first. I want the account's full ticket history off the ledger — ticket number, amount, and where each sits in fulfillment — so the profile quotes stored figures instead of someone's recollection.",
+    18→    ask: "Ticket id, total and status for every booking on Pedro Alvarez's account.",
+    19→    template: `SELECT o.id, o.total, o.status
+    20→FROM orders o
+    21→JOIN customers c ON {1} = {2}
+    22→WHERE c.name = {3};`,
+    23→    slots: [
+    24→      {
+    25→        answer: "o.customer_id",
+    26→        kind: "keyword",
+    27→        label: "the ticket's account pointer",
+    28→        why: "The profile gathers one account's tickets, and customer_id is the pointer from each ticket to the account register. The ticket's own id would match ticket numbers against account numbers and fabricate sixteen fake pairs.",
+    29→      },
+    30→      {
+    31→        answer: "c.id",
+    32→        kind: "keyword",
+    33→        label: "the account's own number",
+    34→        why: "The register numbers accounts in id — the pointer's landing column. The register has no customer_id of its own, so that spelling errors out before the profile has a single row.",
+    35→      },
+    36→      {
+    37→        answer: "'Pedro Alvarez'",
+    38→        kind: "keyword",
+    39→        label: "the account name",
+    40→        why: "The profile names the account — the exact quoted text 'Pedro Alvarez'. A near-miss like 'Pedro Alvarado' matches nobody and the review would profile an empty file.",
+    41→      },
+    42→    ],
+    43→    distractors: ["o.id", "c.customer_id", "'Pedro Alvarado'", "c.city"],
+    44→    walkthrough:
+    45→      "An account profile is a name filter on a reunion: Pedro Alvarez's tickets, pulled through customer_id = c.id. Four rows come back: ticket 1 at 576.54 still pending, ticket 36 at 355.07 shipped, and two completed lines — ticket 62 at 86.11 and ticket 71 at 668.45. Add them up and Madrid's account holds 1,686.17 of lifetime spend, exactly matching the leaderboard. The shape worth flagging in the review: Pedro's largest ticket is also his oldest-numbered one and it has never shipped, so a fifth of his value is live exposure rather than history. A mid-size account, four tickets, one stuck at the top — that's the whole profile, and every figure on it traces to the record.",
+    46→  },
+    47→  {
+    48→    id: "cs-568",
+    49→    tier: "easy",
+    50→    topic: "cap2",
+    51→    universe: "growth",
+    52→    title: "Osaka's booking history, ticket by ticket",
+    53→    brief:
+    54→      "From: Chief of Staff. Re: board deck, city spotlight appendix.\n\nThe appendix gives one line per notable city, and Osaka needs its booking history quoted exactly — ticket numbers, amounts, fulfillment states. If the city's story is three tickets and not thirty, the appendix should say three and let the deck argue from there.",
+    55→    ask: "Ticket id, total and status for every booking from the city of Osaka, in ticket order.",
+    56→    template: `SELECT o.id, o.total, o.status
+    57→FROM orders o
+    58→JOIN customers c ON {1} = {2}
+    59→WHERE c.city = {3}
+    60→ORDER BY o.id;`,
+    61→    slots: [
+    62→      {
+    63→        answer: "o.customer_id",
+    64→        kind: "keyword",
+    65→        label: "the ticket's account pointer",
+    66→        why: "City lives on the account register, so each ticket reaches it only through customer_id. Matching ticket ids against account ids would invent sixteen phantom pairs and poison the city's history.",
+    67→      },
+    68→      {
+    69→        answer: "c.id",
+    70→        kind: "keyword",
+    71→        label: "the account's own number",
+    72→        why: "The register's rows are numbered in id — where the pointer lands. There is no customer_id on the register itself, so that guess breaks the query before the appendix has rows.",
+    73→      },
+    74→      {
+    75→        answer: "'Osaka'",
+    76→        kind: "keyword",
+    77→        label: "the city value",
+    78→        why: "The spotlight is the quoted text 'Osaka', exact and case-sensitive. 'Kyoto' is nobody on the file — the appendix line would print empty and the deck would quote a city that never ordered.",
+    79→      },
+    80→    ],
+    81→    distractors: ["o.id", "c.customer_id", "'Kyoto'", "c.region"],
+    82→    walkthrough:
+    83→      "A city history is one filter on the account side of a reunion: c.city = 'Osaka', joined through customer_id = c.id, ordered by ticket number. Three rows come back — ticket 22 at 450.12 delivered, ticket 26 at 263.91 shipped, ticket 102 at 115.06 delivered. That's Osaka's entire book: 829.09 across three tickets, all attached to Hiro Tanaka, the city's only account. Two of the three have already completed, which is a decent track record for the deck, and the one in-flight ticket is mid-sized. The appendix can now say something precise: Osaka is a single-account city with a short, healthy history — not a growth market, a customer. That distinction is exactly what a city-level rollup would have buried.",
+    84→  },
+    85→  {
+    86→    id: "cs-569",
+    87→    tier: "easy",
+    88→    topic: "cap2",
+    89→    universe: "fraud",
+    90→    title: "The cancellation queue, named",
+    91→    brief:
+    92→      "From: Risk team, spot-check rotation. Re: quarterly pattern scan.\n\nThe rotation opens each quarter with the cancellation queue — every killed ticket with the account behind it named, amounts as stored. Patterns live in the names, not the counts: if one account keeps appearing, that's the file we pull first.",
+    93→    ask: "Ticket id, account name and total for every cancelled booking.",
+    94→    template: `SELECT o.id, c.name, o.total
+    95→FROM orders o
+    96→JOIN customers c ON {1} = {2}
+    97→WHERE o.status = {3};`,
+    98→    slots: [
+    99→      {
+   100→        answer: "o.customer_id",
+   101→        kind: "keyword",
+   102→        label: "the ticket's account pointer",
+   103→        why: "The scan needs the person behind each killed ticket, and customer_id is the only thread from the ledger to the register. The ticket's own id against account ids would fabricate matches and invent cancellers.",
+   104→      },
+   105→      {
+   106→        answer: "c.id",
+   107→        kind: "keyword",
+   108→        label: "the account's own number",
+   109→        why: "The register numbers accounts in id — the pointer's landing column. The register carries no customer_id of its own, so that spelling fails before the queue prints.",
+   110→      },
+   111→      {
+   112→        answer: "'cancelled'",
+   113→        kind: "keyword",
+   114→        label: "the queue's status",
+   115→        why: "The queue is defined by the exact text 'cancelled', quoted and lowercase. 'Cancelled' capitalized matches nothing — text matching doesn't forgive case — and the scan would report an empty quarter.",
+   116→      },
+   117→    ],
+   118→    distractors: ["o.id", "c.customer_id", "'Cancelled'", "'pending'"],
+   119→    walkthrough:
+   120→      "The pattern scan is a status slice on a reunion: 'cancelled' tickets, names attached through customer_id = c.id. Seven rows come back, and the names do the talking: Keiko Sato's 397.99 leads, then Alice Chen three times at 206.19, 152.52 and 136.11, Emma Wilson's 143.86, and Maya Patel twice at 90.35 and 25.47. So the quarter's cancellations concentrate in three accounts — one Nagoya ticket that dwarfs the rest, one Berlin account with a repeat pattern, one Mumbai account dithering in small amounts. That's the pull-first list the rotation wanted, and it only exists because the register rides along on every row: counts alone would have shown a flat seven and hidden Alice entirely.",
+   121→  },
+   122→  {
+   123→    id: "cs-570",
+   124→    tier: "easy",
+   125→    topic: "cap2",
+   126→    universe: "pricing",
+   127→    title: "The Video shelf, vendor-attached",
+   128→    brief:
+   129→      "From: Head of Product. Re: pricing review, shelf provenance.\n\nBefore the Video section of the review opens I want its shelf with the vendor behind each item: product name, vendor name, list price. If both video items ride on one vendor, the review hears a concentration risk; if they split, it hears redundancy. Either way it hears it from the record.",
+   130→    ask: "Product name, vendor name and list price for every product in the Video category.",
+   131→    template: `SELECT p.name, s.name, p.price
+   132→FROM products p
+   133→JOIN suppliers s ON {1} = {2}
+   134→WHERE p.category = {3};`,
+   135→    slots: [
+   136→      {
+   137→        answer: "p.supplier_id",
+   138→        kind: "keyword",
+   139→        label: "the catalog's vendor pointer",
+   140→        why: "Provenance comes from the catalog's supplier_id pointer to the vendor file. The product's own id would try to match product numbers against vendor numbers and fabricate six fake pairs.",
+   141→      },
+   142→      {
+   143→        answer: "s.id",
+   144→        kind: "keyword",
+   145→        label: "the vendor's own number",
+   146→        why: "The vendor file numbers its rows in id, and the pointer must land there. Vendors have no supplier_id column of their own, so guessing it breaks the query before the shelf lists.",
+   147→      },
+   148→      {
+   149→        answer: "'Video'",
+   150→        kind: "keyword",
+   151→        label: "the shelf label",
+   152→        why: "The section is the quoted text 'Video', matched exactly. 'video' in lowercase matches nothing and the review would open on an empty shelf.",
+   153→      },
+   154→    ],
+   155→    distractors: ["s.supplier_id", "s.stock", "'Audio'", "'video'"],
+   156→    walkthrough:
+   157→      "Shelf provenance is a reunion plus one filter: supplier_id = s.id joins catalog to vendor file, category 'Video' keeps the section honest. Two rows come back: 4K Webcam Pro at 129 from Nordic Gadgets AB, and Ring Light 14-inch at 39.99 from Shenzhen Electro. So the Video story is redundancy, not concentration — two vendors in two regions, a 90-dollar spread between a premium anchor and an entry line. The anchor detail matters for the review: Nordic holds the catalog's single most expensive item at 199.99 on another shelf, so the webcam extends an existing premium relationship rather than betting on a new one. That's the sentence the section opens with, and both rows on it are vendor-verified.",
+   158→  },
+   159→  {
+   160→    id: "cs-571",
+   161→    tier: "easy",
+   162→    topic: "cap2",
+   163→    universe: "month-close",
+   164→    title: "Bookings with no shipment date",
+   165→    brief:
+   166→      "From: Controller. Re: month-end close, unshipped schedule.\n\nThe close binder's unshipped schedule needs every booking that has no shipment date on file — the whole live pile, pending and otherwise, with account names attached. Nothing computed, nothing estimated: if the ledger shows no shipment, the booking belongs on this schedule.",
+   167→    ask: "Ticket id, account name and total for every booking whose shipped_at is empty.",
+   168→    template: `SELECT o.id, c.name, o.total
+   169→FROM orders o
+   170→JOIN customers c ON {1} = {2}
+   171→WHERE o.shipped_at {3} NULL;`,
+   172→    slots: [
+   173→      {
+   174→        answer: "o.customer_id",
+   175→        kind: "keyword",
+   176→        label: "the ticket's account pointer",
+   177→        why: "The schedule names accounts, and tickets reach the register only through customer_id. The ticket's own id against account ids would fabricate sixteen fake lines on a schedule that has to reconcile.",
+   178→      },
+   179→      {
+   180→        answer: "c.id",
+   181→        kind: "keyword",
+   182→        label: "the account's own number",
+   183→        why: "The register's rows are numbered in id — the pointer's landing column. There is no customer_id on the register itself, so that guess errors before the schedule exists.",
+   184→      },
+   185→      {
+   186→        answer: "IS",
+   187→        kind: "keyword",
+   188→        label: "the empty-date test",
+   189→        why: "An empty date is tested with IS NULL — equality never finds it, because nothing equals empty. Writing = NULL matches zero rows and the close binder would report a clean sheet while twenty-one tickets sit unshipped.",
+   190→      },
+   191→    ],
+   192→    distractors: ["o.id", "c.customer_id", "IS NOT", "= NULL"],
+   193→    walkthrough:
+   194→      "The unshipped schedule is an emptiness test on a reunion: shipped_at IS NULL, names attached through customer_id = c.id. Twenty-one rows come back — every ticket still waiting for a truck, which reconciles exactly to the fourteen pending plus the seven cancelled tickets on the ledger. That's the schedule's whole story in one count: a fifth of the book has no shipment date, and the pile splits into tickets that will ship and tickets that never will. The classic trap sits in the test itself: writing = NULL would have returned nothing, because empty doesn't equal anything, not even itself. IS is the only honest question to ask an empty field, and the close binder now carries all twenty-one names.",
+   195→  },
+   196→  {
+   197→    id: "cs-572",
+   198→    tier: "easy",
+   199→    topic: "cap2",
+   200→    universe: "refund-audit",
+   201→    title: "The dormant Tallinn file",
+   202→    brief:
+   203→      "From: refunds@ — quarterly hygiene sweep. Re: closed accounts with history.\n\nThe sweep lists closed accounts that still carry booking history, and Tallinn is on it. Pull the file's full ticket record — numbers, amounts, states as stored — so hygiene can confirm nothing on a closed account is still moving before the quarter closes.",
+   204→    ask: "Ticket id, total and status for every booking on Dmitri Volkov's account.",
+   205→    template: `SELECT o.id, o.total, o.status
+   206→FROM orders o
+   207→JOIN customers c ON {1} = {2}
+   208→WHERE c.name = {3};`,
+   209→    slots: [
+   210→      {
+   211→        answer: "o.customer_id",
+   212→        kind: "keyword",
+   213→        label: "the ticket's account pointer",
+   214→        why: "The sweep gathers one account's history, and customer_id is the pointer from each ticket to its account. The ticket's own id against account ids would invent a sixteen-ticket file that belongs to nobody.",
+   215→      },
+   216→      {
+   217→        answer: "c.id",
+   218→        kind: "keyword",
+   219→        label: "the account's own number",
+   220→        why: "The register numbers accounts in id — where the pointer lands. The register has no customer_id of its own, so that spelling fails before the sweep starts.",
+   221→      },
+   222→      {
+   223→        answer: "'Dmitri Volkov'",
+   224→        kind: "keyword",
+   225→        label: "the account name",
+   226→        why: "The sweep names the account — the exact quoted text 'Dmitri Volkov'. A shortened 'Dmitri Volkof' matches nobody and hygiene would wave through a file it never examined.",
+   227→      },
+   228→    ],
+   229→    distractors: ["o.id", "c.customer_id", "'Dmitri Volkof'", "'Keiko Sato'"],
+   230→    walkthrough:
+   231→      "The dormant-file check is a name slice on a reunion: Dmitri Volkov's tickets through customer_id = c.id. Two rows come back — ticket 80 at 435.09 delivered and ticket 81 at 164.17 delivered — a 599.26 lifetime total, and both tickets completed before the account was flagged inactive. That's the clean answer hygiene wants: nothing on the Tallinn file is moving, no open tickets, no stragglers. The near-miss trap is worth a line in the sweep notes: 'Dmitri Volkof' matches zero accounts, and a zero-row result looks identical to a clean file — the one failure mode a hygiene sweep can't catch from its own output. Exact names, exactly as registered, or the sweep proves nothing.",
+   232→  },
+   233→  {
+   234→    id: "cs-573",
+   235→    tier: "medium",
+   236→    topic: "cap2",
+   237→    universe: "pricing",
+   238→    title: "Who buys the Running Socks",
+   239→    brief:
+   240→      "From: Head of Product. Re: pricing review, accessory attach rate.\n\nThe Running Socks line is our cheapest add-on and I want its buyer list — the distinct accounts that have actually purchased it, not how many times. If the sock is riding on a handful of repeat accounts instead of broad attach, the review should know before we reprice it.",
+   241→    ask: "The distinct account names that have bought catalog item 14, with the item number on each row.",
+   242→    template: `SELECT DISTINCT c.name, oi.product_id
+   243→FROM order_items oi
+   244→JOIN orders o ON {1} = o.id
+   245→JOIN customers c ON o.customer_id = {2}
+   246→WHERE oi.product_id = {3}
+   247→ORDER BY c.name;`,
+   248→    slots: [
+   249→      {
+   250→        answer: "oi.order_id",
+   251→        kind: "keyword",
+   252→        label: "the line's ticket pointer",
+   253→        why: "Line items travel on tickets through order_id — that's the first hop of the chain. The line's own id would match line numbers against ticket numbers and fabricate a buyer list from thin air.",
+   254→      },
+   255→      {
+   256→        answer: "c.id",
+   257→        kind: "keyword",
+   258→        label: "the account's own number",
+   259→        why: "The second hop lands the ticket on its account: the ticket's customer_id against the register's id. The register has no customer_id of its own, so that guess errors before the list forms.",
+   260→      },
+   261→      {
+   262→        answer: "14",
+   263→        kind: "number",
+   264→        label: "the catalog item number",
+   265→        why: "The Running Socks 3-pack is item 14 on the catalog — the number shows on every row of the answer. Item 24 doesn't exist and item 7 is the 4K Webcam, a different buyer set at a different price point entirely.",
+   266→      },
+   267→    ],
+   268→    distractors: ["oi.id", "c.customer_id", "c.region", "24", "7"],
+   269→    walkthrough:
+   270→      "The buyer list is a two-hop chain with a dedupe: lines to tickets on order_id, tickets to accounts on customer_id = c.id, filtered to item 14, DISTINCT to collapse repeat purchases. Eight accounts come back — Alice Chen, Dmitri Volkov, Emma Wilson, Grace Kim, Hiro Tanaka, Jamal Wright, Maya Patel, Noah Meyer — across 14 purchase lines, so the sock attaches broadly rather than riding one whale. Two findings for the review. First, breadth: half the customer base has bought the cheapest item, which is exactly what an attach-rate story wants. Second, a wrinkle: Dmitri Volkov's name is on the list, and his account is flagged inactive — the entry-level item reached even a dormant account. That's the kind of detail a bare sales count would never surface.",
+   271→  },
+   272→  {
+   273→    id: "cs-574",
+   274→    tier: "medium",
+   275→    topic: "cap2",
+   276→    universe: "inventory",
+   277→    title: "Vendors above five thousand in line revenue",
+   278→    brief:
+   279→      "From: Warehouse operations, cycle-count desk. Re: vendor concentration brief.\n\nBefore the count schedule is signed off I want the vendor side of the story: which vendors' goods have run up more than five thousand in lifetime line revenue through our shelves. Those relationships are too deep to count casually, and the brief should say so with figures.",
+   280→    ask: "Vendor name and line revenue for every supplier whose sold line revenue exceeds 5000.",
+   281→    template: `SELECT s.name, ROUND(SUM(oi.quantity * oi.unit_price), 2) AS revenue
+   282→FROM order_items oi
+   283→JOIN products p ON {1} = {2}
+   284→JOIN suppliers s ON {3} = {4}
+   285→GROUP BY s.name
+   286→HAVING SUM(oi.quantity * oi.unit_price) > {5}
+   287→ORDER BY revenue DESC;`,
+   288→    slots: [
+   289→      {
+   290→        answer: "oi.product_id",
+   291→        kind: "keyword",
+   292→        label: "the line's catalog pointer",
+   293→        why: "Revenue is earned line by line, and each line points at its catalog item through product_id. The line's own id would match line numbers against item numbers and misattribute every sale.",
+   294→      },
+   295→      {
+   296→        answer: "p.id",
+   297→        kind: "keyword",
+   298→        label: "the catalog's own number",
+   299→        why: "The pointer lands on the catalog's id column. There is no product_id on the catalog itself — that guess errors out and the brief has no figures at all.",
+   300→      },
+   301→      {
+   302→        answer: "p.supplier_id",
+   303→        kind: "keyword",
+   304→        label: "the catalog's vendor pointer",
+   305→        why: "The second hop carries each item to its vendor through supplier_id. The line's own id here would pair line numbers with item numbers and corrupt the revenue before it's grouped.",
+   306→      },
+   307→      {
+   308→        answer: "s.id",
+   309→        kind: "keyword",
+   310→        label: "the vendor's own number",
+   311→        why: "The vendor file numbers its rows in id — the pointer's landing column. Vendors carry no supplier_id of their own, so that spelling breaks the query outright.",
+   312→      },
+   313→      {
+   314→        answer: "5000",
+   315→        kind: "number",
+   316→        noVerify: true,
+   317→        label: "the concentration bar",
+   318→        why: "The brief defines deep relationships as above 5,000 in line revenue — the desk's own bar. Lowering it to 4,000 would pull a third vendor into a story about two, and the concentration claim dissolves.",
+   319→      },
+   320→    ],
+   321→    distractors: ["oi.id", "s.supplier_id", "s.stock", "9500", "4000"],
+   322→    walkthrough:
+   323→      "Vendor concentration is a three-file chain with a bar on it: lines to catalog on product_id = p.id, catalog to vendor file on p.supplier_id = s.id, revenue summed per vendor and filtered at 5,000. Two vendors clear it: Nordic Gadgets AB at 11,130.25 and Midwest Hardware Co at 9,294.93. Together they carry roughly two-thirds of the building's 34,833.28 in lifetime line revenue — that's the concentration sentence. The next vendor down, Alpine Audio GmbH at 4,765.63, misses the bar by a rounding-error margin, which is exactly why the bar lives in the filter and not in the narrative: move it to 4,000 and a two-vendor story quietly becomes a three-vendor story. The count schedule can now say which bins are too deep to count casually, with both figures attached.",
+   324→  },
+   325→  {
+   326→    id: "cs-575",
+   327→    tier: "medium",
+   328→    topic: "cap2",
+   329→    universe: "funnel",
+   330→    title: "Same-region account pairs for co-marketing",
+   331→    brief:
+   332→      "From: Growth marketing lead. Re: co-marketing pilot, pairing list.\n\nThe pilot pairs nearby accounts for joint campaigns, and pairing by region is the cheapest proxy we have. I want the pair counts per region so budget follows density — and if a region turns out to be a lone account, the pilot should know it has nothing to pair there.",
+   333→    ask: "Each region with its count of same-region account pairs, densest region first.",
+   334→    template: `SELECT a.region, COUNT(*) AS pairs
+   335→FROM customers a
+   336→JOIN customers b ON {1} = {2} AND a.id {3} b.id
+   337→GROUP BY a.region
+   338→ORDER BY pairs DESC;`,
+   339→    slots: [
+   340→      {
+   341→        answer: "a.region",
+   342→        kind: "keyword",
+   343→        label: "the first account's region",
+   344→        why: "Pairing means matching each account against the others on shared region — the left copy's region column. City would pair only exact-city matches, and no two accounts on this file share a city, so the pilot would get zero pairs everywhere.",
+   345→      },
+   346→      {
+   347→        answer: "b.region",
+   348→        kind: "keyword",
+   349→        label: "the second account's region",
+   350→        why: "The right copy of the register supplies the other side of the handshake. Pointing both sides at the same copy's columns compares an account against itself and the pairing collapses.",
+   351→      },
+   352→      {
+   353→        answer: "<",
+   354→        kind: "keyword",
+   355→        label: "the mirror killer",
+   356→        why: "The less-than guard keeps each pair once, in one direction. Without it every pairing shows up twice — and worse, an equality test would pair every account with itself, since any region trivially matches its own.",
+   357→      },
+   358→    ],
+   359→    distractors: ["a.city", "b.city", "<>", "="],
+   360→    walkthrough:
+   361→      "The pairing list is the register shaken hands with itself: same region on both sides, a.id < b.id so each pair survives exactly once, then a count per region. Three rows come back: EU with 28 pairs, APAC with 10, US with 1 — and LATAM nowhere, because Bruno Silva is the region's only account and has nobody to pair with. The ladder behind those numbers is the part worth telling: loosen the guard to not-equals and every mirror pair returns, doubling the count to 78; drop the filter entirely and self-pairs flood in, 94 rows of accounts shaking hands with themselves. Only the strict less-than gives the pilot's true 39 partnerships. Budget follows the density — Berlin's eight EU accounts dominate — and the lone-American problem is now on the record.",
+   362→  },
+   363→  {
+   364→    id: "cs-576",
+   365→    tier: "medium",
+   366→    topic: "cap2",
+   367→    universe: "supplier",
+   368→    title: "Shelves that double up: same-category pairs",
+   369→    brief:
+   370→      "From: Supply-chain lead. Re: QBR pack, vendor breadth page.\n\nThe QBR's breadth page asks a simple question of the catalog: which items sit two-deep on the same shelf, item against item. If whole shelves are single-sourced, the page says so — single-sourced shelves are the negotiation risk, and I want the count before the meeting.",
+   371→    ask: "Every pair of distinct catalog items that share a category, one row per pair.",
+   372→    template: `SELECT a.name, b.name
+   373→FROM products a
+   374→JOIN products b ON {1} = {2} AND a.id {3} b.id;`,
+   375→    slots: [
+   376→      {
+   377→        answer: "a.category",
+   378→        kind: "keyword",
+   379→        label: "the first item's shelf",
+   380→        why: "Pairing means matching the catalog against itself on shared category — the left copy's shelf column. Matching on id would compare item numbers and produce nothing, since no two items share a number.",
+   381→      },
+   382→      {
+   383→        answer: "b.category",
+   384→        kind: "keyword",
+   385→        label: "the second item's shelf",
+   386→        why: "The right copy of the catalog supplies the other side of the shelf comparison. Comparing a category to an id or a price matches text against numbers and the page prints empty.",
+   387→      },
+   388→      {
+   389→        answer: "<",
+   390→        kind: "keyword",
+   391→        label: "the mirror killer",
+   392→        why: "Less-than keeps each pair once, one direction only. Swap it for equality and every item pairs with itself; drop to not-equals and the same twelve pairs come back doubled, twenty-four rows of mirrors.",
+   393→      },
+   394→    ],
+   395→    distractors: ["a.id", "b.id", "<>", "="],
+   396→    walkthrough:
+   397→      "The breadth page is the catalog folded on itself: same category on both copies, a.id < b.id so each pair appears once, twelve rows come back. The shelf breakdown is the finding: Electronics pairs three ways, Audio three, Accessories three, then Wearables, Video and Apparel one each — and Fitness nowhere, because the Yoga Mat is that shelf's only item. So the negotiation risk sits on the Fitness shelf: single-sourced with no backup item, while Electronics runs three-deep with redundancy. The guard deserves its slot on the page: equality would have paired every item with itself, and not-equals would have printed all twelve pairs twice. Twelve honest pairs, one naked shelf — that's the breadth story the QBR opens with.",
+   398→  },
+   399→  {
+   400→    id: "cs-577",
+   401→    tier: "medium",
+   402→    topic: "cap2",
+   403→    universe: "expense",
+   404→    title: "The spend leaderboard, top five",
+   405→    brief:
+   406→      "From: Ops finance, spend review. Re: headline concentration table.\n\nThe review opens on the leaderboard: the five accounts carrying the most lifetime booked value, biggest first, figures as stored. If the top five hold most of the book, the concentration argument writes itself — but it has to be the true five, off the ledger, not the five we remember.",
+   407→    ask: "The 5 accounts with the highest lifetime booked totals, biggest first, with the amounts.",
+   408→    template: `SELECT c.name, ROUND({3}, 2) AS spend
+   409→FROM orders o
+   410→JOIN customers c ON {1} = {2}
+   411→GROUP BY c.name
+   412→ORDER BY spend {4}
+   413→LIMIT {5};`,
+   414→    slots: [
+   415→      {
+   416→        answer: "o.customer_id",
+   417→        kind: "keyword",
+   418→        label: "the ticket's account pointer",
+   419→        why: "Spend attaches to accounts through customer_id — the thread that reunites every ticket with its owner. The ticket's own id would match ticket numbers against account numbers and invent sixteen phantom accounts.",
+   420→      },
+   421→      {
+   422→        answer: "c.id",
+   423→        kind: "keyword",
+   424→        label: "the account's own number",
+   425→        why: "The register's rows are numbered in id — the pointer's landing column. There is no customer_id on the register itself, so that guess errors before the leaderboard exists.",
+   426→      },
+   427→      {
+   428→        answer: "SUM(o.total)",
+   429→        kind: "keyword",
+   430→        label: "the lifetime booked total",
+   431→        why: "The leaderboard ranks booked value, so the ledger's own totals are summed per account. An average would rank by ticket size instead of volume and put one-big-ticket accounts over steady heavy spenders.",
+   432→      },
+   433→      {
+   434→        answer: "DESC",
+   435→        kind: "keyword",
+   436→        label: "the sort direction",
+   437→        why: "Biggest first is descending — the table opens on the headline spender. Ascending would lead the review with the smallest account and bury the concentration story under the floor.",
+   438→      },
+   439→      {
+   440→        answer: "5",
+   441→        kind: "number",
+   442→        noVerify: true,
+   443→        label: "the table's row count",
+   444→        why: "The headline table carries exactly five names, so the cut is 5. Three is a podium without depth; ten is a ledger reprint, and the review's format has five slots.",
+   445→      },
+   446→    ],
+   447→    distractors: ["o.id", "c.customer_id", "AVG(o.total)", "ASC", "3"],
+   448→    walkthrough:
+   449→      "The leaderboard is a per-account total with a ranked cut: tickets reunited with accounts on customer_id = c.id, the ledger's totals summed per account, ordered descending, sliced at five. The five that land: Alice Chen 7,262.35, Emma Wilson 6,640.56, Grace Kim 4,574.23, Maya Patel 3,644.56, Chloe Dubois 2,667.93. Together that's 24,789.63 of the book's 34,833.28 — roughly seven dollars in every ten sit with five accounts, which is the concentration argument in one line. The quiet trap in this build is the wrong aggregate: ranking by average ticket would crown single-big-order accounts over steady volume and reshuffle the entire table. Booked value means the sum, and the sum says Berlin and Austin own this file.",
+   450→  },
+
+[showing lines 1-450 of 705; use offset=451 with limit to continue reading]

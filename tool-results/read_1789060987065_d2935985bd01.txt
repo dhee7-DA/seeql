@@ -1,0 +1,472 @@
+     1→   331→    slots: [
+     2→   332→      {
+     3→   333→        answer: "o.customer_id",
+     4→   334→        kind: "keyword",
+     5→   335→        label: "the booking's account pointer",
+     6→   336→        why: "The exposure list needs the account's bookings, and customer_id is the pointer from each booking to its account. The booking's own id against account ids would invent a sixteen-row exposure that doesn't exist.",
+     7→   337→      },
+     8→   338→      {
+     9→   339→        answer: "c.id",
+    10→   340→        kind: "keyword",
+    11→   341→        label: "the account's own number",
+    12→   342→        why: "The register numbers accounts in id — the pointer's landing column. The register has no customer_id of its own, so that spelling fails before the exposure count exists.",
+    13→   343→      },
+    14→   344→      {
+    15→   345→        answer: "'Grace Kim'",
+    16→   346→        kind: "keyword",
+    17→   347→        label: "the account name",
+    18→   348→        why: "The rotation sheet names the account — the exact text 'Grace Kim', quoted. 'Keiko Sato' would audit a different person's file and put the wrong region's exposure on the sheet.",
+    19→   349→      },
+    20→   350→      {
+    21→   351→        answer: "'pending'",
+    22→   352→        kind: "keyword",
+    23→   353→        label: "the live-ticket status",
+    24→   354→        why: "Open exposure means 'pending' — quoted, lowercase. 'shipped' would list tickets already in transit and overstate the live risk the rotation is staffing for.",
+    25→   355→      },
+    26→   356→    ],
+    27→   357→    distractors: ["o.id", "c.customer_id", "'Keiko Sato'", "'shipped'"],
+    28→   358→    walkthrough:
+    29→   359→      "Open exposure is a status filter on an account slice: 'pending' bookings where the account is 'Grace Kim', reunited through customer_id = c.id. Exactly one row comes back: booking 75, pending, 273.64. That's the whole live exposure on Seoul's biggest account — one ticket, under 300, nothing aging. The context that matters for the rotation sheet: Grace's file holds 14 bookings worth 4,574.23, so 273.64 pending means roughly 94% of her history has already closed. A heavy account with a single small live ticket is the definition of a clean stop on the list — the reviewer signs it off in one line and moves to the next region.",
+    30→   360→  },
+    31→   361→  {
+    32→   362→    id: "cs-310",
+    33→   363→    tier: "medium",
+    34→   364→    topic: "l9",
+    35→   365→    universe: "catalog",
+    36→   366→    title: "Electronics sourced from APAC vendors",
+    37→   367→    brief:
+    38→   368→      "From: Catalog content manager. Re: sourcing labels, electronics shelf.\n\nCompliance wants sourcing labels on the electronics shelf, and the first pass is APAC-sourced items only: product name, vendor name, and the stock figure so the label run can prioritize by shelf depth. Nothing computed — the labels must quote the registers exactly.",
+    39→   369→    ask: "Product name, vendor name and stock for every Electronics product sourced from an APAC-region vendor.",
+    40→   370→    template: `SELECT p.name, s.name, p.stock
+    41→   371→FROM products p
+    42→   372→JOIN suppliers s ON {1} = {2}
+    43→   373→WHERE s.region = {3} AND p.category = {4};`,
+    44→   374→    slots: [
+    45→   375→      {
+    46→   376→        answer: "p.supplier_id",
+    47→   377→        kind: "keyword",
+    48→   378→        label: "the catalog's vendor pointer",
+    49→   379→        why: "Sourcing comes from the catalog's supplier_id pointer to the vendor file. The product's own id against vendor ids would fabricate pairs and put the wrong region on compliance labels.",
+    50→   380→      },
+    51→   381→      {
+    52→   382→        answer: "s.id",
+    53→   383→        kind: "keyword",
+    54→   384→        label: "the vendor's own number",
+    55→   385→        why: "The vendor file's rows are numbered in id — where the pointer lands. Vendors carry no supplier_id column, so that guess breaks the query before a single label prints.",
+    56→   386→      },
+    57→   387→      {
+    58→   388→        answer: "'APAC'",
+    59→   389→        kind: "keyword",
+    60→   390→        label: "the vendor region",
+    61→   391→        why: "The label pass is APAC-sourced only: the quoted text 'APAC' on the vendor's region. 'EU' would run labels for European-sourced gear and fail the compliance pass.",
+    62→   392→      },
+    63→   393→      {
+    64→   394→        answer: "'Electronics'",
+    65→   395→        kind: "keyword",
+    66→   396→        label: "the shelf label",
+    67→   397→        why: "The shelf is the quoted text 'Electronics', matched exactly. 'Audio' would label headphones and mics as electronics sourcing — a different shelf entirely.",
+    68→   398→      },
+    69→   399→    ],
+    70→   400→    distractors: ["s.supplier_id", "'EU'", "'Audio'"],
+    71→   401→    walkthrough:
+    72→   402→      "Sourcing labels need both registers: the catalog's supplier_id joined to the vendor file's id, then two exact-match filters — vendor region 'APAC', shelf 'Electronics'. Two rows come back: Wireless Mouse M3 from Shenzhen Electro with 300 on the shelf, and USB-C Hub 7-in-1 from Pacific Textiles with 85. So the electronics shelf's APAC story is two vendors, two items, and a 300-versus-85 split in shelf depth. That split sets the label priority: the Mouse bin is the deep one, the Hub bin is thin enough that a stock-out would outlive the label run. Compliance gets a two-line answer with named vendors — exactly what the sourcing label audit asks for.",
+    73→   403→  },
+    74→   404→  {
+    75→   405→    id: "cs-311",
+    76→   406→    tier: "medium",
+    77→   407→    topic: "l9",
+    78→   408→    universe: "month-close",
+    79→   409→    title: "Pending bookings worth real money",
+    80→   410→    brief:
+    81→   411→      "From: Controller. Re: month-end close, receivables memo.\n\nThe receivables memo ignores small pending tickets — under 500 they're noise. I want the pending lines that actually matter: booking number, account name, amount. If the meaningful pending book is a handful of lines, the memo says so with the names attached.",
+    82→   412→    ask: "Booking id, account name and total for every pending booking with a total above 500.",
+    83→   413→    template: `SELECT o.id, c.name, o.total
+    84→   414→FROM orders o
+    85→   415→JOIN customers c ON {1} = {2}
+    86→   416→WHERE o.status = {3} AND o.total > {4};`,
+    87→   417→    slots: [
+    88→   418→      {
+    89→   419→        answer: "o.customer_id",
+    90→   420→        kind: "keyword",
+    91→   421→        label: "the booking's account pointer",
+    92→   422→        why: "The memo attaches names to bookings, and customer_id is the pointer that does it. The booking's own id against account ids would fabricate pairs and invent receivables that don't exist.",
+    93→   423→      },
+    94→   424→      {
+    95→   425→        answer: "c.id",
+    96→   426→        kind: "keyword",
+    97→   427→        label: "the account's own number",
+    98→   428→        why: "The register's rows are numbered in id — the pointer's landing column. There is no customer_id on the register itself, so that spelling errors before the memo has numbers.",
+    99→   429→      },
+   100→   430→      {
+   101→   431→        answer: "'pending'",
+   102→   432→        kind: "keyword",
+   103→   433→        label: "the open status",
+   104→   434→        why: "Receivables in flight means the quoted text 'pending'. 'shipped' would count tickets already in transit as receivables and overstate the open book.",
+   105→   435→      },
+   106→   436→      {
+   107→   437→        answer: "500",
+   108→   438→        kind: "number",
+   109→   439→        noVerify: true,
+   110→   440→        label: "the materiality line",
+   111→   441→        why: "The memo's materiality line is 500 — under that, pending tickets are noise. A line at 600 would drop real receivables off the memo; the threshold belongs in the filter, not the narrative.",
+   112→   442→      },
+   113→   443→    ],
+   114→   444→    distractors: ["o.id", "c.customer_id", "'shipped'", "600"],
+   115→   445→    walkthrough:
+   116→   446→      "The receivables memo is a materiality filter on an open pile: 'pending', above 500, names attached through customer_id = c.id. Five rows clear the bar. The top of the book is no surprise — booking 74, Farid Nasser, 1,088.44 — and behind it Chloe Dubois's 945.21, Emma Wilson's 725.34, her 585.79, and one more line just over the line. So the meaningful pending book is five tickets, two of them Emma's, led by a booking worth more than the next two combined. That's the memo's whole argument: the close's open exposure is concentrated in a handful of named lines, and 'pending' here means awaiting fulfillment, not awaiting payment — the cash conversation follows the shipment, so these five dates are the ones to chase.",
+   117→   447→  },
+   118→   448→  {
+   119→   449→    id: "cs-312",
+   120→   450→    tier: "medium",
+   121→   451→    topic: "l9",
+   122→   452→    universe: "refund-audit",
+   123→   453→    title: "The cancellation queue over 100, with cities",
+   124→   454→    brief:
+   125→   455→      "From: refunds@ — weekly queue review. Re: city breakdown for the escalation call.\n\nThe escalation call wants the cancellation queue's meaningful lines — cancelled bookings above 100 — with the account's city attached so support can see which metros keep cancelling. Booking id, account name, city, amount. The small stuff stays off the call.",
+   126→   456→    ask: "Booking id, account name, city and total for every cancelled booking with a total above 100.",
+   127→   457→    template: `SELECT o.id, c.name, {1}, o.total
+   128→   458→FROM orders o
+   129→   459→JOIN customers c ON {2} = {3}
+   130→   460→WHERE o.status = {4} AND o.total > 100;`,
+   131→   461→    slots: [
+   132→   462→      {
+   133→   463→        answer: "c.city",
+   134→   464→        kind: "keyword",
+   135→   465→        label: "the city column",
+   136→   466→        why: "The call wants metros, and city lives on the account register — region would collapse Lyon, Milan and Cork into one blob and hide the metro pattern entirely.",
+   137→   467→      },
+   138→   468→      {
+   139→   469→        answer: "o.customer_id",
+   140→   470→        kind: "keyword",
+   141→   471→        label: "the booking's account pointer",
+   142→   472→        why: "Cities live on accounts, so each booking must be reunited through customer_id. The booking's own id against account ids would fabricate pairs and invent cancellations nobody made.",
+   143→   473→      },
+   144→   474→      {
+   145→   475→        answer: "c.id",
+   146→   476→        kind: "keyword",
+   147→   477→        label: "the account's own number",
+   148→   478→        why: "The pointer lands on the register's id column. The register has no customer_id of its own — that spelling errors out and the call runs on nothing.",
+   149→   479→      },
+   150→   480→      {
+   151→   481→        answer: "'cancelled'",
+   152→   482→        kind: "keyword",
+   153→   483→        label: "the queue's status",
+   154→   484→        why: "The queue is defined by the exact text 'cancelled', quoted and lowercase. 'pending' would read the open pile instead of the cancellation queue and derail the call.",
+   155→   485→      },
+   156→   486→    ],
+   157→   487→    distractors: ["c.region", "o.id", "c.customer_id", "'pending'"],
+   158→   488→    walkthrough:
+   159→   489→      "The escalation slice: 'cancelled' bookings above 100, cities attached through customer_id = c.id. Five lines make the call. Keiko Sato's 397.99 leads it, then Alice Chen's 206.19, Alice again at 152.52, Emma Wilson's 143.86, and Alice a third time at 136.11. Two metros, one name three times. So the story for the escalation call isn't geographic at all — it's one Cork account cancelling repeatedly in the low hundreds, plus the single big Nagoya cancellation the goodwill ledger already knows. Below the line sit Maya Patel's two small cancellations at 90.35 and 25.47, which is why the 100 cutoff exists: it keeps the call on patterns, not noise.",
+   160→   490→  },
+   161→   491→  {
+   162→   492→    id: "cs-313",
+   163→   493→    tier: "hard",
+   164→   494→    topic: "l9",
+   165→   495→    universe: "pricing",
+   166→   496→    title: "The audio shelf's premium end, vendor-attached",
+   167→   497→    brief:
+   168→   498→      "From: Head of Product. Re: pricing reset, audio section.\n\nThe audio section of the reset opens with the premium end: the two priciest items on the audio shelf, priciest first, with the vendor behind each one. Two slots only on the slide — if the cut is wrong the whole section misfires, so the ranking has to come off the record.",
+   169→   499→    ask: "Product name, vendor name and price for the 2 most expensive Audio products, priciest first.",
+   170→   500→    template: `SELECT p.name, s.name, p.price
+   171→   501→FROM products p
+   172→   502→JOIN suppliers s ON {1} = {2}
+   173→   503→WHERE p.category = {3}
+   174→   504→ORDER BY p.price {4}
+   175→   505→LIMIT {5};`,
+   176→   506→    slots: [
+   177→   507→      {
+   178→   508→        answer: "p.supplier_id",
+   179→   509→        kind: "keyword",
+   180→   510→        label: "the catalog's vendor pointer",
+   181→   511→        why: "Vendors join through the catalog's supplier_id pointer to the vendor file's id. The product's own id would pair product numbers with vendor numbers and put a fiction on the slide.",
+   182→   512→      },
+   183→   513→      {
+   184→   514→        answer: "s.id",
+   185→   515→        kind: "keyword",
+   186→   516→        label: "the vendor's own number",
+   187→   517→        why: "The pointer lands on the vendor file's id column. Vendors have no supplier_id of their own — that guess errors before the section exists.",
+   188→   518→      },
+   189→   519→      {
+   190→   520→        answer: "'Audio'",
+   191→   521→        kind: "keyword",
+   192→   522→        label: "the shelf label",
+   193→   523→        why: "The section is the quoted text 'Audio', exact and case-sensitive. 'Video' would put a webcam where a headset belongs and the premium story breaks.",
+   194→   524→      },
+   195→   525→      {
+   196→   526→        answer: "DESC",
+   197→   527→        kind: "keyword",
+   198→   528→        label: "the sort direction",
+   199→   529→        why: "Priciest first is descending. ASC would open the slide with the 59.99 Bluetooth Speaker — the bargain bin — and flip the section's whole narrative.",
+   200→   530→      },
+   201→   531→      {
+   202→   532→        answer: "2",
+   203→   533→        kind: "number",
+   204→   534→        noVerify: true,
+   205→   535→        label: "the slide's slot count",
+   206→   536→        why: "The slide holds exactly two anchor slots, so the cut is 2 — one more and the third item dilutes the premium story; one fewer and the section is a single data point.",
+   207→   537→      },
+   208→   538→    ],
+   209→   539→    distractors: ["s.supplier_id", "'Video'", "ASC", "3"],
+   210→   540→    walkthrough:
+   211→   541→      "The premium cut is a sort and a slice on a reunion: audio shelf, ranked by price descending, cut at two. The rows that land: Noise-Canceling Headset at 149.99 from Midwest Hardware Co, then Studio Desktop Mic at 119 from Alpine Audio GmbH. Both are US-and-EU sourced, both are the top of their vendor's range, and the third audio item — the Bluetooth Speaker Mini at 59.99 — falls off the slide by ninety dollars, so the cut is clean, not a coin flip. That's the section: two vendors, two price points, a 30-dollar gap between them. The direction is the whole ballgame — ascending would have anchored the section on the speaker and told the room audio is a budget shelf, which the record flatly contradicts.",
+   212→   542→  },
+   213→   543→  {
+   214→   544→    id: "cs-314",
+   215→   545→    tier: "hard",
+   216→   546→    topic: "l9",
+   217→   547→    universe: "inventory",
+   218→   548→    title: "The thinnest APAC shelves",
+   219→   549→    brief:
+   220→   550→      "From: Warehouse operations, cycle-count desk. Re: replenishment focus list.\n\nThe Friday run needs a focus list: among items sourced from APAC vendors, the three thinnest shelves, thinnest first, with the vendor named so purchasing knows who the buy order goes to. Three lines only — the run can't absorb more.",
+   221→   551→    ask: "Product name, stock and vendor name for the 3 lowest-stock products from APAC-region vendors, thinnest first.",
+   222→   552→    template: `SELECT p.name, p.stock, s.name
+   223→   553→FROM products p
+   224→   554→JOIN suppliers s ON {1} = {2}
+   225→   555→WHERE s.region = {3}
+   226→   556→ORDER BY p.stock {4}
+   227→   557→LIMIT {5};`,
+   228→   558→    slots: [
+   229→   559→      {
+   230→   560→        answer: "p.supplier_id",
+   231→   561→        kind: "keyword",
+   232→   562→        label: "the catalog's vendor pointer",
+   233→   563→        why: "The focus list names vendors, and the catalog reaches them through supplier_id. The product's own id against vendor ids would invent pairs and put the wrong vendor on a buy order.",
+   234→   564→      },
+   235→   565→      {
+   236→   566→        answer: "s.id",
+   237→   567→        kind: "keyword",
+   238→   568→        label: "the vendor's own number",
+   239→   569→        why: "Vendor rows are numbered in id — the pointer's landing column. There is no supplier_id on the vendor file itself, so that guess errors before the list prints.",
+   240→   570→      },
+   241→   571→      {
+   242→   572→        answer: "'APAC'",
+   243→   573→        kind: "keyword",
+   244→   574→        label: "the vendor region",
+   245→   575→        why: "The run is scoped to APAC-sourced items: the quoted text 'APAC' on the vendor's region. 'EU' would build the focus list from European shelves and send the buy orders to the wrong vendors.",
+   246→   576→      },
+   247→   577→      {
+   248→   578→        answer: "ASC",
+   249→   579→        kind: "keyword",
+   250→   580→        label: "the sort direction",
+   251→   581→        why: "Thinnest first is ascending — smallest stock on top. DESC would lead the list with the 500-unit HDMI cable, the fullest shelf in the building, as the top replenishment need.",
+   252→   582→      },
+   253→   583→      {
+   254→   584→        answer: "3",
+   255→   585→        kind: "number",
+   256→   586→        noVerify: true,
+   257→   587→        label: "the focus-list size",
+   258→   588→        why: "The run absorbs three focus lines, so the cut is 3 — five would flood the run, two would leave a thin APAC shelf off the buy list for another week.",
+   259→   589→      },
+   260→   590→    ],
+   261→   591→    distractors: ["p.id", "s.supplier_id", "'EU'", "DESC", "5"],
+   262→   592→    walkthrough:
+   263→   593→      "A focus list is a filter, a sort, and a slice: APAC vendors only, ranked thinnest first, cut at three. The lines that land: USB-C Hub 7-in-1 at 85 units from Pacific Textiles, Cycling Jersey Pro at 110 from Pacific Textiles, Ring Light 14-inch at 150 from Shenzhen Electro. Both APAC vendors appear, Pacific twice — so Friday's buy orders concentrate on one vendor relationship. The direction flip is the trap worth naming: descending would have topped the list with the HDMI cable's 500 units, the single deepest shelf in the catalog, and purchasing would have bought hardest where stock is safest. The slice matters too — the fourth APAC shelf (Wireless Mouse at 300) is healthy, so the cut at three is where the run stops making sense.",
+   264→   594→  },
+   265→   595→  {
+   266→   596→    id: "cs-315",
+   267→   597→    tier: "hard",
+   268→   598→    topic: "l9",
+   269→   599→    universe: "funnel",
+   270→   600→    title: "EU's in-transit big five",
+   271→   601→    brief:
+   272→   602→      "From: Growth marketing lead. Re: EU win-back targeting.\n\nThe win-back pilot targets accounts with money currently in flight — EU accounts with shipped bookings, five biggest tickets first. Booking id, account name, amount. Five names on the target sheet, no more: the pilot's budget is fixed and the sheet must match it.",
+   273→   603→    ask: "Booking id, account name and total for the 5 largest shipped bookings from EU-region accounts, biggest first.",
+   274→   604→    template: `SELECT o.id, c.name, o.total
+   275→   605→FROM orders o
+   276→   606→JOIN customers c ON {1} = {2}
+   277→   607→WHERE c.region = {3} AND o.status = {4}
+   278→   608→ORDER BY o.total {5}
+   279→   609→LIMIT {6};`,
+   280→   610→    slots: [
+   281→   611→      {
+   282→   612→        answer: "o.customer_id",
+   283→   613→        kind: "keyword",
+   284→   614→        label: "the booking's account pointer",
+   285→   615→        why: "The target sheet needs names, and bookings reach accounts only through customer_id. The booking's own id against account ids would fabricate sixteen pairs and put fictional targets on the sheet.",
+   286→   616→      },
+   287→   617→      {
+   288→   618→        answer: "c.id",
+   289→   619→        kind: "keyword",
+   290→   620→        label: "the account's own number",
+   291→   621→        why: "The register's rows are numbered in id — where the pointer lands. There is no customer_id on the register itself, so that spelling errors before the sheet exists.",
+   292→   622→      },
+   293→   623→      {
+   294→   624→        answer: "'EU'",
+   295→   625→        kind: "keyword",
+   296→   626→        label: "the region value",
+   297→   627→        why: "The pilot is EU-only: the quoted text 'EU' on the account's region. 'APAC' would seed the pilot with Dubai-to-Seoul accounts the budget never covered.",
+   298→   628→      },
+   299→   629→      {
+   300→   630→        answer: "'shipped'",
+   301→   631→        kind: "keyword",
+   302→   632→        label: "the in-flight status",
+   303→   633→        why: "Money in flight means the quoted text 'shipped'. 'delivered' would target bookings that already landed — the win-back would call people about parcels they already have.",
+   304→   634→      },
+   305→   635→      {
+   306→   636→        answer: "DESC",
+   307→   637→        kind: "keyword",
+   308→   638→        label: "the sort direction",
+   309→   639→        why: "Biggest tickets first is descending. ASC would seed the pilot with the five smallest EU shipments — maximum names, minimum money in flight.",
+   310→   640→      },
+   311→   641→      {
+   312→   642→        answer: "5",
+   313→   643→        kind: "number",
+   314→   644→        noVerify: true,
+   315→   645→        label: "the target-sheet size",
+   316→   646→        why: "The pilot's budget fixes the sheet at five targets, so the cut is 5. Three underfills the budget; eight breaks it and the sheet stops matching finance's number.",
+   317→   647→      },
+   318→   648→    ],
+   319→   649→    distractors: ["o.id", "c.customer_id", "'APAC'", "'delivered'", "ASC", "3"],
+   320→   650→    walkthrough:
+   321→   651→      "The target sheet is a two-filter reunion with a ranked cut: EU accounts, shipped status, ordered biggest-first, sliced at five. The five that land: booking 3, Alice Chen, 767.64; booking 20, Liam O'Brien, 705.39; then Alice again at 684.53, 645.91 and 633.91. Read that back before the pilot launches: four of the five in-flight targets are one Berlin account. The EU win-back isn't a five-person campaign — it's Alice Chen's in-flight book plus one Cork ticket. That's exactly the kind of discovery the ranked slice exists to force: an unranked list of twelve EU shipments would have hidden the concentration, and the pilot would have been budgeted as a broad campaign when it's really an account plan.",
+   322→   652→  },
+   323→   653→  {
+   324→   654→    id: "cs-316",
+   325→   655→    tier: "hard",
+   326→   656→    topic: "l9",
+   327→   657→    universe: "supplier",
+   328→   658→    title: "Nordic's premium lines, ranked",
+   329→   659→    brief:
+   330→   660→      "From: Supply-chain lead. Re: QBR pack, Nordic Gadgets section.\n\nThe Nordic Gadgets page leads with their premium lines: the items we buy at over 100 list price, priciest first, with their vendor scorecard rating beside each. The rating has to sit on the same row so the page argues quality and spend together.",
+   331→   661→    ask: "Product name, price and vendor rating for Nordic Gadgets AB products priced above 100, priciest first.",
+   332→   662→    template: `SELECT p.name, p.price, s.rating
+   333→   663→FROM products p
+   334→   664→JOIN suppliers s ON {1} = {2}
+   335→   665→WHERE s.name = {3} AND p.price > {4}
+   336→   666→ORDER BY p.price {5};`,
+   337→   667→    slots: [
+   338→   668→      {
+   339→   669→        answer: "p.supplier_id",
+   340→   670→        kind: "keyword",
+   341→   671→        label: "the catalog's vendor pointer",
+   342→   672→        why: "The QBR page needs the vendor's rating beside each product, and the catalog reaches the vendor file only through supplier_id. The product's own id would pair with vendor numbers and print invented rows.",
+   343→   673→      },
+   344→   674→      {
+   345→   675→        answer: "s.id",
+   346→   676→        kind: "keyword",
+   347→   677→        label: "the vendor's own number",
+   348→   678→        why: "The pointer lands on the vendor file's id column. Vendors carry no supplier_id of their own — that guess breaks the query and the page stays empty.",
+   349→   679→      },
+   350→   680→      {
+   351→   681→        answer: "'Nordic Gadgets AB'",
+   352→   682→        kind: "keyword",
+   353→   683→        label: "the registered vendor name",
+   354→   684→        why: "The section is the exact registered text 'Nordic Gadgets AB', quoted. A truncated 'Nordic Gadgets' matches nothing and the QBR page prints blank.",
+   355→   685→      },
+   356→   686→      {
+   357→   687→        answer: "100",
+   358→   688→        kind: "number",
+   359→   689→        noVerify: true,
+   360→   690→        label: "the premium price line",
+   361→   691→        why: "The section's definition of premium is above 100 — items at or under that line belong on a different page. The threshold is the filter's job, not a figure the page prints.",
+   362→   692→      },
+   363→   693→      {
+   364→   694→        answer: "DESC",
+   365→   695→        kind: "keyword",
+   366→   696→        label: "the sort direction",
+   367→   697→        why: "Priciest first is descending, leading the page with the strongest line. ASC would open the QBR section with the cheaper item and bury the headline.",
+   368→   698→      },
+   369→   699→    ],
+   370→   700→    distractors: ["p.id", "s.supplier_id", "'Nordic Gadgets'", "ASC", "50"],
+   371→   701→    walkthrough:
+   372→   702→      "The QBR page is a vendor slice with a price bar and a rank: Nordic Gadgets AB, above 100, priciest first, rating attached. Two rows clear the bar: Smart Watch S at 199.99 and 4K Webcam Pro at 129, both carrying Nordic's 4.6 scorecard rating. So Nordic's premium story is two lines spanning a 70-dollar gap, and the vendor's rating sits beside both — quality and spend on one row, exactly how the page argues. Below the bar sits the Mechanical Keyboard K1 at 89.99: a solid line, but the section's definition puts it on the volume page instead. The direction flip is the quiet trap — ascending would lead with the webcam and let the 199.99 anchor, the single most expensive item in the whole catalog, arrive as an afterthought.",
+   373→   703→  },
+   374→   704→  {
+   375→   705→    id: "cs-317",
+   376→   706→    tier: "hard",
+   377→   707→    topic: "l9",
+   378→   708→    universe: "expense",
+   379→   709→    title: "Emma Wilson's three biggest tickets",
+   380→   710→    brief:
+   381→   711→      "From: Ops finance, spend review. Re: account concentration memo.\n\nThe concentration memo profiles the file's second-biggest spender: Emma Wilson's three largest bookings, biggest first, with each ticket's fulfillment state beside it. Three lines only — the memo quotes the podium and moves on.",
+   382→   712→    ask: "Booking id, total and status for Emma Wilson's 3 largest bookings, biggest first.",
+   383→   713→    template: `SELECT o.id, o.total, o.status
+   384→   714→FROM orders o
+   385→   715→JOIN customers c ON {1} = {2}
+   386→   716→WHERE c.name = {3}
+   387→   717→ORDER BY o.total {4}
+   388→   718→LIMIT {5};`,
+   389→   719→    slots: [
+   390→   720→      {
+   391→   721→        answer: "o.customer_id",
+   392→   722→        kind: "keyword",
+   393→   723→        label: "the booking's account pointer",
+   394→   724→        why: "The profile gathers one account's bookings, and customer_id is the pointer from each booking to its account. The booking's own id against account ids would fabricate sixteen fake bookings for the memo.",
+   395→   725→      },
+   396→   726→      {
+   397→   727→        answer: "c.id",
+   398→   728→        kind: "keyword",
+   399→   729→        label: "the account's own number",
+   400→   730→        why: "The register numbers accounts in id — the pointer's landing column. The register has no customer_id of its own, so that spelling fails before the podium exists.",
+   401→   731→      },
+   402→   732→      {
+   403→   733→        answer: "'Emma Wilson'",
+   404→   734→        kind: "keyword",
+   405→   735→        label: "the account name",
+   406→   736→        why: "The memo profiles the exact registered text 'Emma Wilson', quoted. 'Emily Wilson' is nobody on the file — the query would return an empty memo.",
+   407→   737→      },
+   408→   738→      {
+   409→   739→        answer: "DESC",
+   410→   740→        kind: "keyword",
+   411→   741→        label: "the sort direction",
+   412→   742→        why: "Biggest first is descending. ASC would profile her three smallest tickets and the concentration memo would understate her weight on the file.",
+   413→   743→      },
+   414→   744→      {
+   415→   745→        answer: "3",
+   416→   746→        kind: "number",
+   417→   747→        noVerify: true,
+   418→   748→        label: "the podium size",
+   419→   749→        why: "The memo quotes a podium of three, so the cut is 3. Ten lines is a ledger, not a profile — and the memo's format has exactly three slots.",
+   420→   750→      },
+   421→   751→    ],
+   422→   752→    distractors: ["o.id", "c.customer_id", "'Emily Wilson'", "ASC", "10"],
+   423→   753→    walkthrough:
+   424→   754→      "The profile is a name filter with a ranked cut: Emma Wilson's bookings, ordered biggest-first, sliced at three. The podium: booking 39 at 845.92 (shipped), booking 57 at 785.79 (shipped), booking 5 at 725.34 (pending). Three tickets, all over 700, stacked within 120 dollars of each other — that's a consistent high-value buyer, not one lucky order. The status column earns its place: two of the three are in flight, so Emma's concentration isn't just historical, it's live exposure right now. Context for the memo's framing line: her file totals 6,640.56 across 17 bookings, second only to Alice Chen, and these three tickets alone are about a third of it. The direction flip is the failure mode — ascending would profile three small tickets and miss the concentration entirely.",
+   425→   755→  },
+   426→   756→  {
+   427→   757→    id: "cs-318",
+   428→   758→    tier: "hard",
+   429→   759→    topic: "l9",
+   430→   760→    universe: "growth",
+   431→   761→    title: "The Dubai account, ranked",
+   432→   762→    brief:
+   433→   763→      "From: Chief of Staff. Re: board deck, account spotlight.\n\nThe deck spotlights the Dubai account — the one behind the ledger's single biggest ticket. Pull its full booking history ranked by value, biggest first: booking id, amount, and where each sits in fulfillment. Three lines expected; the spotlight's narrative depends on the shape of that list.",
+   434→   764→    ask: "Booking id, total and status for every booking from the city of Dubai, biggest total first.",
+   435→   765→    template: `SELECT o.id, o.total, o.status
+   436→   766→FROM orders o
+   437→   767→JOIN customers c ON {1} = {2}
+   438→   768→WHERE c.city = {3}
+   439→   769→ORDER BY o.total {4};`,
+   440→   770→    slots: [
+   441→   771→      {
+   442→   772→        answer: "o.customer_id",
+   443→   773→        kind: "keyword",
+   444→   774→        label: "the booking's account pointer",
+   445→   775→        why: "The spotlight gathers one city's bookings, and bookings reach the account register only through customer_id. The booking's own id against account ids would invent sixteen fake pairs and corrupt the history.",
+   446→   776→      },
+   447→   777→      {
+   448→   778→        answer: "c.id",
+   449→   779→        kind: "keyword",
+   450→   780→        label: "the account's own number",
+   451→   781→        why: "The register's rows are numbered in id — the pointer's landing column. There is no customer_id on the register itself, so that guess errors before the spotlight has rows.",
+   452→   782→      },
+   453→   783→      {
+   454→   784→        answer: "'Dubai'",
+   455→   785→        kind: "keyword",
+   456→   786→        label: "the city value",
+   457→   787→        why: "The spotlight is the quoted text 'Dubai', exact and case-sensitive. 'Osaka' would profile a different city's account and the deck's narrative collapses.",
+   458→   788→      },
+   459→   789→      {
+   460→   790→        answer: "DESC",
+   461→   791→        kind: "keyword",
+   462→   792→        label: "the sort direction",
+   463→   793→        why: "Biggest first is descending — the spotlight opens on the headline ticket. ASC would lead with the 44.48 line and let the deck's biggest number arrive last.",
+   464→   794→      },
+   465→   795→    ],
+   466→   796→    distractors: ["o.id", "c.customer_id", "'Osaka'", "ASC"],
+   467→   797→    walkthrough:
+   468→   798→      "The spotlight is a city filter with a value rank: Dubai, ordered biggest-first, joined through customer_id = c.id. Three rows come back: booking 74 at 1,088.44 (pending), booking 87 at 326.05 (delivered), booking 59 at 44.48 (delivered). That shape is the narrative: one headline ticket that dwarfs the rest — the ledger's largest booking, still awaiting fulfillment — sitting on top of two modest completed lines. So the Dubai account is Farid Nasser, three bookings total, 1,458.97 lifetime, and more than two-thirds of it rides on one pending ticket. The direction flip would ruin the story: ascending leads with the 44.48 line and the deck opens its spotlight on the smallest number in the file. Ranking isn't decoration here — it is the argument.",
+   469→   799→  },
+   470→   800→];
+   471→
+   472→[showing lines 331-800 of 801; use offset=801 with limit to continue reading]

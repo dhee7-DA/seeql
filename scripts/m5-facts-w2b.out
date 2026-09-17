@@ -1,0 +1,63 @@
+sqlite {
+  v: "3.53.0",
+}
+
+== october per-day census
+[{"d":"2024-10-04","n":2},{"d":"2024-10-09","n":1},{"d":"2024-10-13","n":3},{"d":"2024-10-16","n":1}]
+
+== october SUM(DISTINCT created_at)
+[{"s":8096}]
+october SUM(created_at) no distinct OK [{"s":14168}]
+
+== november per-day census
+[{"days":5,"n":6}]
+
+== %j distinct buckets + counts
+[{"buckets":80,"mn":1,"mx":3}]
+
+== %j census
+[{"j":"287","n":3},{"j":"133","n":3},{"j":"002","n":3},{"j":"309","n":2},{"j":"278","n":2},{"j":"265","n":2}]
+
+== %d '04' bucket dates
+[{"d":"2024-03-04","n":1},{"d":"2024-10-04","n":2},{"d":"2024-11-04","n":2},{"d":"2024-12-04","n":1}]
+
+== %d '13' bucket dates
+[{"d":"2024-02-13","n":2},{"d":"2024-10-13","n":3},{"d":"2024-12-13","n":1}]
+
+== %d '19' bucket dates
+[{"d":"2024-04-19","n":1},{"d":"2024-05-19","n":2},{"d":"2024-07-19","n":2},{"d":"2025-02-19","n":1}]
+
+== %d 04/13/19 weekday codes
+[{"d":"04","dow":"1","n":3},{"d":"04","dow":"3","n":1},{"d":"04","dow":"5","n":2},{"d":"13","dow":"0","n":3},{"d":"13","dow":"2","n":2},{"d":"13","dow":"5","n":1},{"d":"19","dow":"0","n":2},{"d":"19","dow":"3","n":1},{"d":"19","dow":"5","n":3}]
+
+== shenzhen storewide rows vs orders
+[{"rows_pulled":47,"orders":41}]
+
+== shenzhen distinct line ids
+[{"lines":47}]
+
+== customers %d-quarter census
+[{"q":1,"yr":"2023","n":1},{"q":2,"yr":"2023","n":1},{"q":6,"yr":"2023","n":1},{"q":7,"yr":"2023","n":1},{"q":1,"yr":"2024","n":4},{"q":3,"yr":"2024","n":2},{"q":4,"yr":"2024","n":1},{"q":5,"yr":"2024","n":1},{"q":6,"yr":"2024","n":1},{"q":7,"yr":"2024","n":1},{"q":8,"yr":"2024","n":1},{"q":9,"yr":"2024","n":1}]
+
+== customers %d-quarter group count
+[{"groups":12,"mn":1,"mx":4}]
+
+== customers 2023-Q4 SUM(id)
+[{"s":10}]
+
+== customers H1-2024 SUM(id)
+[{"s":110}]
+
+== julianday pinned day
+[{"j12":2460442.5,"j1":2460310.5,"mn":"2024-01-01"}]
+
+== weekday of 2024-10-04
+[{"dow":"5"}]
+date('%H') probe OK [{"hh":null,"n":103}]
+snap chain distractor weekday 1 OK [{"e":"2024-03-04"}]
+snap chain distractor +2 months OK [{"e":"2024-05-01"}]
+snap chain distractor -2 day OK [{"e":"2024-02-28"}]
+cs-1254 CTE shape OK [{"n":9,"first_day":"2024-02-05","last_day":"2024-02-26"}]
+cs-1264 CTE shape OK [{"anchor":"2024-02-01","month_end":"2024-02-29"}]
+
+(copy removed)

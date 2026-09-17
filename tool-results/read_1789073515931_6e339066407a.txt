@@ -1,0 +1,452 @@
+    35→      {
+    36→        answer: "74",
+    37→        kind: "number",
+    38→        label: "the booking number",
+    39→        why: "The open-items schedule cites booking 74 — the ledger's largest ticket at 1,088.44. Booking 75 is a different account's line entirely and would put the wrong booking in front of the auditors.",
+    40→      },
+    41→    ],
+    42→    distractors: ["o.id", "c.customer_id", "75", "c.name"],
+    43→    walkthrough:
+    44→      "The close binder wants the biggest open item with a name on it. Two registers hold the pieces: the booking ledger has the amount, the account register has the name, and customer_id is the thread between them — so the reunion condition is o.customer_id = c.id, filtered to booking 74. The line that comes back: booking 74, Farid Nasser, 1,088.44. That's the largest single booking on the entire ledger, and it's still pending — which is exactly why it leads the open-items schedule rather than the collected-revenue section. When the close is challenged, the name attached to the number is what turns 'a big pending ticket' into 'Farid Nasser's 1,088.44, awaiting fulfillment'.",
+    45→  },
+    46→  {
+    47→    id: "cs-302",
+    48→    tier: "easy",
+    49→    topic: "l9",
+    50→    universe: "refund-audit",
+    51→    title: "Whose name goes on the 397.99 refund",
+    52→    brief:
+    53→      "From: refunds@ — internal ticket #4419. Re: goodwill ledger sign-off.\n\nFinance signed off the cancellation queue and the wrap-up thread keeps quoting one figure: a cancelled booking worth 397.99. Before the ledger note goes out I need the account holder's name attached to that booking, exactly as the register spells it — the note gets countersigned against this record.",
+    54→    ask: "The account holder's name, plus the booking id and total, for booking 83.",
+    55→    template: `SELECT o.id, {1}, o.total
+    56→FROM orders o
+    57→JOIN customers {2} ON o.customer_id = c.id
+    58→WHERE o.id = {3};`,
+    59→    slots: [
+    60→      {
+    61→        answer: "c.name",
+    62→        kind: "keyword",
+    63→        label: "the account holder column",
+    64→        why: "The refund note needs a person, and names live in the name column of the account register — pulling city instead would put 'Nagoya' where the countersignature belongs.",
+    65→      },
+    66→      {
+    67→        answer: "c",
+    68→        kind: "keyword",
+    69→        label: "the register's alias",
+    70→        why: "The register is aliased c in this reunion, so its columns are reached as c.name. Writing s.name would reach for an alias that was never declared and the query dies before it prints anything.",
+    71→      },
+    72→      {
+    73→        answer: "83",
+    74→        kind: "number",
+    75→        label: "the booking number",
+    76→        why: "The thread quotes the cancelled booking at 397.99 — that's booking 83. Booking 82 is Emma Wilson's 143.86 ticket and would attach the wrong account to the ledger note.",
+    77→      },
+    78→    ],
+    79→    distractors: ["c.city", "s", "82", "o.name"],
+    80→    walkthrough:
+    81→      "A refund note needs three facts tied together: the booking, the amount, and above all the name. The booking ledger and the account register are separate files, so the query reunites them on customer_id = c.id under the alias c, then narrows to booking 83. What comes back: booking 83, Keiko Sato, 397.99, cancelled. Two things worth flagging when the note is countersigned. First, Keiko's account is flagged inactive — the refund still goes out, but it closes the last open ticket on a closed account. Second, her file shows four bookings totalling 1,098.60, and this 397.99 is the largest of them: the goodwill sign-off is writing off the single biggest line on a dormant account, which is precisely the kind of line auditors re-read.",
+    82→  },
+    83→  {
+    84→    id: "cs-303",
+    85→    tier: "easy",
+    86→    topic: "l9",
+    87→    universe: "pricing",
+    88→    title: "The Wearables shelf, with vendors attached",
+    89→    brief:
+    90→      "From: Head of Product. Re: pricing review, vendor concentration.\n\nBefore we talk increases I want the Wearables shelf with the vendor behind each item: product name, vendor name, and the list price as registered. If both wearables trace back to the same vendor, that's a concentration risk the review needs to hear about — and I'd rather see it on the record than hear it as an anecdote.",
+    91→    ask: "Product name, vendor name and list price for every product in the Wearables category.",
+    92→    template: `SELECT p.name, s.name, p.price
+    93→FROM products p
+    94→JOIN suppliers s ON {1} = {2}
+    95→WHERE {3} = 'Wearables';`,
+    96→    slots: [
+    97→      {
+    98→        answer: "p.supplier_id",
+    99→        kind: "keyword",
+   100→        label: "the catalog's vendor pointer",
+   101→        why: "Every catalog row carries a supplier_id pointing at the vendor file — that's the join thread. The product's own id would try to match product numbers against vendor numbers and fabricate six pairs.",
+   102→      },
+   103→      {
+   104→        answer: "s.id",
+   105→        kind: "keyword",
+   106→        label: "the vendor's own number",
+   107→        why: "The vendor file numbers its rows in id, and the pointer must land there. Vendors have no supplier_id column of their own, so writing that name breaks the query before it lists anything.",
+   108→      },
+   109→      {
+   110→        answer: "p.category",
+   111→        kind: "keyword",
+   112→        label: "the shelf column",
+   113→        why: "Shelves are labeled in the category column of the catalog — filtering on the vendor file's columns here would hunt for a shelf label that lives in the wrong register entirely.",
+   114→      },
+   115→    ],
+   116→    distractors: ["p.id", "s.supplier_id", "'Wearables'", "s.category"],
+   117→    walkthrough:
+   118→      "The ask is a shelf list with provenance: two files, one thread. The catalog's supplier_id lands on the vendor file's id, the shelf filter keeps Wearables, and two rows come back: Fitness Band X2 at 79 from Andes Naturals SA, and Smart Watch S at 199.99 from Nordic Gadgets AB. Two different vendors — so no concentration risk on this shelf, and the review can say so on the record. The second row carries extra weight: 199.99 is the highest list price in the whole catalog, so the premium anchor we open the pricing story with is sourced from the EU's Nordic Gadgets. Knowing which vendor owns the ceiling price is exactly the kind of fact that redirects a pricing conversation.",
+   119→  },
+   120→  {
+   121→    id: "cs-304",
+   122→    tier: "easy",
+   123→    topic: "l9",
+   124→    universe: "inventory",
+   125→    title: "Headset shelf card, vendor included",
+   126→    brief:
+   127→      "From: Warehouse operations, cycle-count desk. Re: aisle recount pack.\n\nThe headset bin is on tomorrow's recount list and the pack wants the system's card with the vendor attached — the crew needs to know who to call when a count comes up short. Catalog item 4, please: name, on-hand figure, and the vendor we source it from.",
+   128→    ask: "Product name, stock and vendor name for catalog item 4 — one shelf card.",
+   129→    template: `SELECT p.name, p.stock, s.name
+   130→FROM products p
+   131→JOIN suppliers s ON {1} = {2}
+   132→WHERE p.id = {3};`,
+   133→    slots: [
+   134→      {
+   135→        answer: "p.supplier_id",
+   136→        kind: "keyword",
+   137→        label: "the catalog's vendor pointer",
+   138→        why: "The card needs the vendor, and the catalog points at the vendor file through supplier_id. Matching the product's own id against vendor numbers would invent pairs and put the wrong vendor on the card.",
+   139→      },
+   140→      {
+   141→        answer: "s.id",
+   142→        kind: "keyword",
+   143→        label: "the vendor's own number",
+   144→        why: "The vendor file's rows are numbered in id — that's where the pointer lands. There is no stock column on the vendor file at all, so joining on stock fails before the card prints.",
+   145→      },
+   146→      {
+   147→        answer: "4",
+   148→        kind: "number",
+   149→        noVerify: true,
+   150→        label: "the catalog item number",
+   151→        why: "The recount pack cites item 4 — the Noise-Canceling Headset at 60 on hand. Item 5 is the Studio Desktop Mic, a different bin, and the crew would count the wrong shelf.",
+   152→      },
+   153→    ],
+   154→    distractors: ["s.supplier_id", "s.stock", "5", "'Audio'"],
+   155→    walkthrough:
+   156→      "One shelf card, three fields, two files. The catalog holds the item and its count; the vendor file holds who to call; supplier_id = s.id is the thread. Filter to item 4 and the card reads: Noise-Canceling Headset, 60 on hand, Midwest Hardware Co. Two facts the crew should hear with it. First, 60 units is the third-thinnest shelf in the whole building — only the Smart Watch (40) and the Studio Mic (45) sit lower — so if the recount lands under 60 this bin jumps the restock queue. Second, the vendor is the US's Midwest Hardware Co at a 4.4 rating, so a shortfall is a domestic reorder, not an overseas lead time. That distinction changes who gets the phone call the morning the count comes up short.",
+   157→  },
+   158→  {
+   159→    id: "cs-305",
+   160→    tier: "easy",
+   161→    topic: "l9",
+   162→    universe: "funnel",
+   163→    title: "Everything Berlin has ever booked",
+   164→    brief:
+   165→      "From: Growth marketing lead. Re: city-level account review.\n\nWe're weighting the next campaign by city and Berlin keeps coming up in the room. Before anyone commits budget I want the full booking history out of that city — every booking number and amount the Berlin accounts have ever placed — so the spend conversation starts from the record instead of a hunch.",
+   166→    ask: "Every booking id and total from accounts in the city of Berlin.",
+   167→    template: `SELECT o.id, o.total
+   168→FROM orders o
+   169→JOIN customers c ON {1} = {2}
+   170→WHERE {3} = 'Berlin';`,
+   171→    slots: [
+   172→      {
+   173→        answer: "o.customer_id",
+   174→        kind: "keyword",
+   175→        label: "the booking's account pointer",
+   176→        why: "Bookings point at accounts through customer_id — that's the reunion thread. Matching booking ids against account ids would fabricate sixteen fake pairs and pollute the city's history.",
+   177→      },
+   178→      {
+   179→        answer: "c.id",
+   180→        kind: "keyword",
+   181→        label: "the account's own number",
+   182→        why: "The account register numbers its rows in id, and the pointer lands there. The register has no customer_id column of its own, so that guess errors out before any rows return.",
+   183→      },
+   184→      {
+   185→        answer: "c.city",
+   186→        kind: "keyword",
+   187→        label: "the city column",
+   188→        why: "The ask is city-level, and city lives on the account register — filtering there is what keeps the list to Berlin. Region would cast a continent-wide net and drag in eight cities' worth of bookings.",
+   189→      },
+   190→    ],
+   191→    distractors: ["o.id", "'Hamburg'", "c.region", "c.customer_id"],
+   192→    walkthrough:
+   193→      "City-level history means one filter on the account side and a reunion to the booking ledger: c.city = 'Berlin', joined through customer_id = c.id. Twenty-four rows come back — every one of them Alice Chen, because Berlin has exactly one account and she uses it heavily. That single name reframes the budget conversation: Berlin's entire history is one power user with 24 bookings worth 7,262.35, the second-highest spend on the whole file, rather than a broad base of small accounts. If she churns, the 'Berlin number' goes to zero overnight. Worth saying plainly in the room: a city that looks like a market can actually be a person, and the reunion query is how you catch that before the budget does.",
+   194→  },
+   195→  {
+   196→    id: "cs-306",
+   197→    tier: "easy",
+   198→    topic: "l9",
+   199→    universe: "supplier",
+   200→    title: "What Alpine Audio actually sells us",
+   201→    brief:
+   202→      "From: Supply-chain lead. Re: QBR pack, vendor section.\n\nThe Alpine Audio page of the QBR pack is thin — I want the items we actually buy from them, with list prices, straight off the catalog. Exact vendor name as registered, no paraphrasing: if the pack shows their full catalog footprint, procurement can argue volume from it.",
+   203→    ask: "Product name and list price for every product sourced from Alpine Audio GmbH.",
+   204→    template: `SELECT p.name, p.price
+   205→FROM products p
+   206→JOIN suppliers s ON {1} = {2}
+   207→WHERE s.name = {3};`,
+   208→    slots: [
+   209→      {
+   210→        answer: "p.supplier_id",
+   211→        kind: "keyword",
+   212→        label: "the catalog's vendor pointer",
+   213→        why: "The catalog records who sells each item in supplier_id — the thread to the vendor file. The product's own id would match product numbers against vendor numbers and invent six pairs.",
+   214→      },
+   215→      {
+   216→        answer: "s.id",
+   217→        kind: "keyword",
+   218→        label: "the vendor's own number",
+   219→        why: "Vendor rows are numbered in id, and the pointer must land there. The vendor file carries no supplier_id column, so that spelling errors out before the QBR page fills.",
+   220→      },
+   221→      {
+   222→        answer: "'Alpine Audio GmbH'",
+   223→        kind: "keyword",
+   224→        label: "the registered vendor name",
+   225→        why: "The vendor is registered as the exact text 'Alpine Audio GmbH', quotes included — a truncated 'Alpine Audio' matches nothing and the QBR page would print empty.",
+   226→      },
+   227→    ],
+   228→    distractors: ["p.id", "s.rating", "'Alpine Audio'", "'Midwest Hardware Co'"],
+   229→    walkthrough:
+   230→      "Vendor pages need the vendor's own words: s.name = 'Alpine Audio GmbH', matched character for character, with the catalog joined through supplier_id = s.id. Two items come back: Studio Desktop Mic at 119 and Desk Mat Extended at 24.99. So Alpine's footprint with us is one premium audio line and one desk accessory — two SKUs, spread across price tiers. Context that strengthens the volume argument: Alpine holds the best vendor rating on the file at 4.8, and their Studio Mic has run up 3,589.61 in lifetime line revenue across 16 sales lines. A two-item vendor with that scorecard is exactly the kind procurement wants to grow — the QBR page now shows both the footprint and the headroom.",
+   231→  },
+   232→  {
+   233→    id: "cs-307",
+   234→    tier: "medium",
+   235→    topic: "l9",
+   236→    universe: "expense",
+   237→    title: "US bookings that have left the building",
+   238→    brief:
+   239→      "From: Ops finance, spend review. Re: regional fulfillment audit.\n\nThe US line of the fulfillment audit needs its in-transit slice: every booking from a US account that has shipped but not yet landed. Names attached, amounts attached — I want to see which account is carrying the most in-flight value before we book next month's estimates.",
+   240→    ask: "Booking id, account name and total for every shipped booking belonging to US-region accounts.",
+   241→    template: `SELECT o.id, c.name, o.total
+   242→FROM orders o
+   243→JOIN customers c ON {1} = {2}
+   244→WHERE {3} = 'US' AND o.status = {4};`,
+   245→    slots: [
+   246→      {
+   247→        answer: "o.customer_id",
+   248→        kind: "keyword",
+   249→        label: "the booking's account pointer",
+   250→        why: "The audit reunites bookings with accounts through customer_id — anything else pairs the wrong rows. The booking's own id would match against account numbers and fake up sixteen phantom pairs.",
+   251→      },
+   252→      {
+   253→        answer: "c.id",
+   254→        kind: "keyword",
+   255→        label: "the account's own number",
+   256→        why: "The account register's rows are numbered in id, and the pointer lands there. Guessing customer_id on the register side errors immediately — that column exists on the booking ledger, not here.",
+   257→      },
+   258→      {
+   259→        answer: "c.region",
+   260→        kind: "keyword",
+   261→        label: "the region column",
+   262→        why: "US is a region value on the account register, so the filter is c.region = 'US'. City would hunt for a city literally named US and return nothing but an empty audit line.",
+   263→      },
+   264→      {
+   265→        answer: "'shipped'",
+   266→        kind: "keyword",
+   267→        label: "the in-transit status",
+   268→        why: "In-transit means the exact text 'shipped' — lowercase, quoted. 'delivered' would report bookings that already landed and double-count them as in-flight.",
+   269→      },
+   270→    ],
+   271→    distractors: ["o.id", "c.customer_id", "'EU'", "'delivered'"],
+   272→    walkthrough:
+   273→      "The in-flight slice is two filters stacked on a reunion: region on the account side, status on the booking side, joined through customer_id = c.id. Ten rows come back — the whole US in-transit book. Reading down it, Emma Wilson carries most of the weight: her 845.92 and 785.79 bookings are both shipped, and Jamal Wright's 403.72 is the other name on the list. That's the shape the audit line needs: a region of two accounts where one account dominates the in-flight value. For the estimates memo it means US next-month revenue is effectively a bet on Emma's tickets landing — worth one sentence of risk language the region's bare count would never justify.",
+   274→  },
+   275→  {
+   276→    id: "cs-308",
+   277→    tier: "medium",
+   278→    topic: "l9",
+   279→    universe: "growth",
+   280→    title: "APAC's delivered track record",
+   281→    brief:
+   282→      "From: Chief of Staff. Re: board deck, regional slide.\n\nThe regional slide needs APAC's proven track record, not its pipeline: bookings from APAC accounts that actually completed — delivered, money landed. Booking ids, account names, amounts. If the region's completed base is thin, I want to know before the deck says otherwise.",
+   283→    ask: "Booking id, account name and total for every delivered booking from APAC-region accounts.",
+   284→    template: `SELECT o.id, c.name, o.total
+   285→FROM orders o
+   286→JOIN customers c ON {1} = {2}
+   287→WHERE {3} = 'APAC' AND o.status = {4};`,
+   288→    slots: [
+   289→      {
+   290→        answer: "o.customer_id",
+   291→        kind: "keyword",
+   292→        label: "the booking's account pointer",
+   293→        why: "Region lives on the account register, bookings live on the ledger, and customer_id is the only thread between them. The booking's own id would fabricate sixteen fake pairs and poison the slide's count.",
+   294→      },
+   295→      {
+   296→        answer: "c.id",
+   297→        kind: "keyword",
+   298→        label: "the account's own number",
+   299→        why: "The pointer lands on the register's id column. There is no customer_id on the register itself — writing it breaks the query before the slide's numbers exist.",
+   300→      },
+   301→      {
+   302→        answer: "'APAC'",
+   303→        kind: "keyword",
+   304→        label: "the region value",
+   305→        why: "The region is the quoted text 'APAC' — case-sensitive and exact. 'EU' would build the regional slide out of the wrong continent and the deck would misstate the base.",
+   306→      },
+   307→      {
+   308→        answer: "'delivered'",
+   309→        kind: "keyword",
+   310→        label: "the completed status",
+   311→        why: "Proven track record means 'delivered' only — quoted and lowercase. 'pending' would pad the slide with bookings that haven't closed and flatter a region the numbers don't support.",
+   312→      },
+   313→    ],
+   314→    distractors: ["o.id", "c.customer_id", "'EU'", "'pending'"],
+   315→    walkthrough:
+   316→      "The board slide wants the completed base: 'delivered' on the booking side, 'APAC' on the account side, one reunion through customer_id = c.id. Twenty-one rows come back out of the region's 37 total bookings — so more than half the APAC book has actually closed, which is a defensible track-record line. The top of the completed pile: Grace Kim's 625.14 and Maya Patel's 611.87, with Hiro Tanaka's 450.12 behind them. That's the sentence for the deck: APAC's delivered base is 21 completed bookings across five accounts, led by Seoul and Mumbai. What the slide should not claim is depth — two accounts carry the top of the pile, and the next tier drops fast.",
+   317→  },
+   318→  {
+   319→    id: "cs-309",
+   320→    tier: "medium",
+   321→    topic: "l9",
+   322→    universe: "fraud",
+   323→    title: "The one live ticket on Grace Kim's file",
+   324→    brief:
+   325→      "From: Risk team, spot-check rotation. Re: open-exposure list.\n\nThe rotation works down the open-exposure list account by account, and Seoul is next. I need Grace Kim's bookings that are still pending — booking number, status, amount, exactly as stored. If there's exactly one live ticket, say so with the record to prove it.",
+   326→    ask: "Booking id, status and total for every pending booking on Grace Kim's account.",
+   327→    template: `SELECT o.id, o.status, o.total
+   328→FROM orders o
+   329→JOIN customers c ON {1} = {2}
+   330→WHERE c.name = {3} AND o.status = {4};`,
+   331→    slots: [
+   332→      {
+   333→        answer: "o.customer_id",
+   334→        kind: "keyword",
+   335→        label: "the booking's account pointer",
+   336→        why: "The exposure list needs the account's bookings, and customer_id is the pointer from each booking to its account. The booking's own id against account ids would invent a sixteen-row exposure that doesn't exist.",
+   337→      },
+   338→      {
+   339→        answer: "c.id",
+   340→        kind: "keyword",
+   341→        label: "the account's own number",
+   342→        why: "The register numbers accounts in id — the pointer's landing column. The register has no customer_id of its own, so that spelling fails before the exposure count exists.",
+   343→      },
+   344→      {
+   345→        answer: "'Grace Kim'",
+   346→        kind: "keyword",
+   347→        label: "the account name",
+   348→        why: "The rotation sheet names the account — the exact text 'Grace Kim', quoted. 'Keiko Sato' would audit a different person's file and put the wrong region's exposure on the sheet.",
+   349→      },
+   350→      {
+   351→        answer: "'pending'",
+   352→        kind: "keyword",
+   353→        label: "the live-ticket status",
+   354→        why: "Open exposure means 'pending' — quoted, lowercase. 'shipped' would list tickets already in transit and overstate the live risk the rotation is staffing for.",
+   355→      },
+   356→    ],
+   357→    distractors: ["o.id", "c.customer_id", "'Keiko Sato'", "'shipped'"],
+   358→    walkthrough:
+   359→      "Open exposure is a status filter on an account slice: 'pending' bookings where the account is 'Grace Kim', reunited through customer_id = c.id. Exactly one row comes back: booking 75, pending, 273.64. That's the whole live exposure on Seoul's biggest account — one ticket, under 300, nothing aging. The context that matters for the rotation sheet: Grace's file holds 14 bookings worth 4,574.23, so 273.64 pending means roughly 94% of her history has already closed. A heavy account with a single small live ticket is the definition of a clean stop on the list — the reviewer signs it off in one line and moves to the next region.",
+   360→  },
+   361→  {
+   362→    id: "cs-310",
+   363→    tier: "medium",
+   364→    topic: "l9",
+   365→    universe: "catalog",
+   366→    title: "Electronics sourced from APAC vendors",
+   367→    brief:
+   368→      "From: Catalog content manager. Re: sourcing labels, electronics shelf.\n\nCompliance wants sourcing labels on the electronics shelf, and the first pass is APAC-sourced items only: product name, vendor name, and the stock figure so the label run can prioritize by shelf depth. Nothing computed — the labels must quote the registers exactly.",
+   369→    ask: "Product name, vendor name and stock for every Electronics product sourced from an APAC-region vendor.",
+   370→    template: `SELECT p.name, s.name, p.stock
+   371→FROM products p
+   372→JOIN suppliers s ON {1} = {2}
+   373→WHERE s.region = {3} AND p.category = {4};`,
+   374→    slots: [
+   375→      {
+   376→        answer: "p.supplier_id",
+   377→        kind: "keyword",
+   378→        label: "the catalog's vendor pointer",
+   379→        why: "Sourcing comes from the catalog's supplier_id pointer to the vendor file. The product's own id against vendor ids would fabricate pairs and put the wrong region on compliance labels.",
+   380→      },
+   381→      {
+   382→        answer: "s.id",
+   383→        kind: "keyword",
+   384→        label: "the vendor's own number",
+   385→        why: "The vendor file's rows are numbered in id — where the pointer lands. Vendors carry no supplier_id column, so that guess breaks the query before a single label prints.",
+   386→      },
+   387→      {
+   388→        answer: "'APAC'",
+   389→        kind: "keyword",
+   390→        label: "the vendor region",
+   391→        why: "The label pass is APAC-sourced only: the quoted text 'APAC' on the vendor's region. 'EU' would run labels for European-sourced gear and fail the compliance pass.",
+   392→      },
+   393→      {
+   394→        answer: "'Electronics'",
+   395→        kind: "keyword",
+   396→        label: "the shelf label",
+   397→        why: "The shelf is the quoted text 'Electronics', matched exactly. 'Audio' would label headphones and mics as electronics sourcing — a different shelf entirely.",
+   398→      },
+   399→    ],
+   400→    distractors: ["s.supplier_id", "'EU'", "'Audio'"],
+   401→    walkthrough:
+   402→      "Sourcing labels need both registers: the catalog's supplier_id joined to the vendor file's id, then two exact-match filters — vendor region 'APAC', shelf 'Electronics'. Two rows come back: Wireless Mouse M3 from Shenzhen Electro with 300 on the shelf, and USB-C Hub 7-in-1 from Pacific Textiles with 85. So the electronics shelf's APAC story is two vendors, two items, and a 300-versus-85 split in shelf depth. That split sets the label priority: the Mouse bin is the deep one, the Hub bin is thin enough that a stock-out would outlive the label run. Compliance gets a two-line answer with named vendors — exactly what the sourcing label audit asks for.",
+   403→  },
+   404→  {
+   405→    id: "cs-311",
+   406→    tier: "medium",
+   407→    topic: "l9",
+   408→    universe: "month-close",
+   409→    title: "Pending bookings worth real money",
+   410→    brief:
+   411→      "From: Controller. Re: month-end close, receivables memo.\n\nThe receivables memo ignores small pending tickets — under 500 they're noise. I want the pending lines that actually matter: booking number, account name, amount. If the meaningful pending book is a handful of lines, the memo says so with the names attached.",
+   412→    ask: "Booking id, account name and total for every pending booking with a total above 500.",
+   413→    template: `SELECT o.id, c.name, o.total
+   414→FROM orders o
+   415→JOIN customers c ON {1} = {2}
+   416→WHERE o.status = {3} AND o.total > {4};`,
+   417→    slots: [
+   418→      {
+   419→        answer: "o.customer_id",
+   420→        kind: "keyword",
+   421→        label: "the booking's account pointer",
+   422→        why: "The memo attaches names to bookings, and customer_id is the pointer that does it. The booking's own id against account ids would fabricate pairs and invent receivables that don't exist.",
+   423→      },
+   424→      {
+   425→        answer: "c.id",
+   426→        kind: "keyword",
+   427→        label: "the account's own number",
+   428→        why: "The register's rows are numbered in id — the pointer's landing column. There is no customer_id on the register itself, so that spelling errors before the memo has numbers.",
+   429→      },
+   430→      {
+   431→        answer: "'pending'",
+   432→        kind: "keyword",
+   433→        label: "the open status",
+   434→        why: "Receivables in flight means the quoted text 'pending'. 'shipped' would count tickets already in transit as receivables and overstate the open book.",
+   435→      },
+   436→      {
+   437→        answer: "500",
+   438→        kind: "number",
+   439→        noVerify: true,
+   440→        label: "the materiality line",
+   441→        why: "The memo's materiality line is 500 — under that, pending tickets are noise. A line at 600 would drop real receivables off the memo; the threshold belongs in the filter, not the narrative.",
+   442→      },
+   443→    ],
+   444→    distractors: ["o.id", "c.customer_id", "'shipped'", "600"],
+   445→    walkthrough:
+   446→      "The receivables memo is a materiality filter on an open pile: 'pending', above 500, names attached through customer_id = c.id. Five rows clear the bar. The top of the book is no surprise — booking 74, Farid Nasser, 1,088.44 — and behind it Chloe Dubois's 945.21, Emma Wilson's 725.34, her 585.79, and one more line just over the line. So the meaningful pending book is five tickets, two of them Emma's, led by a booking worth more than the next two combined. That's the memo's whole argument: the close's open exposure is concentrated in a handful of named lines, and 'pending' here means awaiting fulfillment, not awaiting payment — the cash conversation follows the shipment, so these five dates are the ones to chase.",
+   447→  },
+   448→  {
+   449→    id: "cs-312",
+   450→    tier: "medium",
+   451→    topic: "l9",
+   452→    universe: "refund-audit",
+   453→    title: "The cancellation queue over 100, with cities",
+   454→    brief:
+   455→      "From: refunds@ — weekly queue review. Re: city breakdown for the escalation call.\n\nThe escalation call wants the cancellation queue's meaningful lines — cancelled bookings above 100 — with the account's city attached so support can see which metros keep cancelling. Booking id, account name, city, amount. The small stuff stays off the call.",
+   456→    ask: "Booking id, account name, city and total for every cancelled booking with a total above 100.",
+   457→    template: `SELECT o.id, c.name, {1}, o.total
+   458→FROM orders o
+   459→JOIN customers c ON {2} = {3}
+   460→WHERE o.status = {4} AND o.total > 100;`,
+   461→    slots: [
+   462→      {
+   463→        answer: "c.city",
+   464→        kind: "keyword",
+   465→        label: "the city column",
+   466→        why: "The call wants metros, and city lives on the account register — region would collapse Lyon, Milan and Cork into one blob and hide the metro pattern entirely.",
+   467→      },
+   468→      {
+   469→        answer: "o.customer_id",
+   470→        kind: "keyword",
+   471→        label: "the booking's account pointer",
+   472→        why: "Cities live on accounts, so each booking must be reunited through customer_id. The booking's own id against account ids would fabricate pairs and invent cancellations nobody made.",
+   473→      },
+   474→      {
+   475→        answer: "c.id",
+   476→        kind: "keyword",
+   477→        label: "the account's own number",
+   478→        why: "The pointer lands on the register's id column. The register has no customer_id of its own — that spelling errors out and the call runs on nothing.",
+   479→      },
+   480→      {
+   481→        answer: "'cancelled'",
+   482→        kind: "keyword",
+   483→        label: "the queue's status",
+   484→        why: "The queue is defined by the exact text 'cancelled', quoted and lowercase. 'pending' would read the open pile instead of the cancellation queue and derail the call.",
+
+[showing lines 35-484 of 801; use offset=485 with limit to continue reading]

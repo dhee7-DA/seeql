@@ -1,0 +1,204 @@
+
+== schema customers ==
+[{"cid":0,"name":"id","type":"INTEGER","notnull":0,"dflt_value":null,"pk":1},{"cid":1,"name":"name","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":2,"name":"email","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":3,"name":"city","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":4,"name":"region","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":5,"name":"active","type":"INTEGER","notnull":1,"dflt_value":"1","pk":0},{"cid":6,"name":"created_at","type":"TEXT","notnull":1,"dflt_value":null,"pk":0}]
+
+== schema products ==
+[{"cid":0,"name":"id","type":"INTEGER","notnull":0,"dflt_value":null,"pk":1},{"cid":1,"name":"name","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":2,"name":"category","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":3,"name":"price","type":"REAL","notnull":1,"dflt_value":null,"pk":0},{"cid":4,"name":"stock","type":"INTEGER","notnull":1,"dflt_value":"0","pk":0},{"cid":5,"name":"supplier_id","type":"INTEGER","notnull":1,"dflt_value":null,"pk":0}]
+
+== schema suppliers ==
+[{"cid":0,"name":"id","type":"INTEGER","notnull":0,"dflt_value":null,"pk":1},{"cid":1,"name":"name","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":2,"name":"region","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":3,"name":"rating","type":"REAL","notnull":1,"dflt_value":null,"pk":0}]
+
+== schema orders ==
+[{"cid":0,"name":"id","type":"INTEGER","notnull":0,"dflt_value":null,"pk":1},{"cid":1,"name":"customer_id","type":"INTEGER","notnull":1,"dflt_value":null,"pk":0},{"cid":2,"name":"status","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":3,"name":"total","type":"REAL","notnull":1,"dflt_value":null,"pk":0},{"cid":4,"name":"created_at","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":5,"name":"shipped_at","type":"TEXT","notnull":0,"dflt_value":null,"pk":0}]
+
+== schema order_items ==
+[{"cid":0,"name":"id","type":"INTEGER","notnull":0,"dflt_value":null,"pk":1},{"cid":1,"name":"order_id","type":"INTEGER","notnull":1,"dflt_value":null,"pk":0},{"cid":2,"name":"product_id","type":"INTEGER","notnull":1,"dflt_value":null,"pk":0},{"cid":3,"name":"quantity","type":"INTEGER","notnull":1,"dflt_value":null,"pk":0},{"cid":4,"name":"unit_price","type":"REAL","notnull":1,"dflt_value":null,"pk":0}]
+
+== schema payments ==
+[{"cid":0,"name":"id","type":"INTEGER","notnull":0,"dflt_value":null,"pk":1},{"cid":1,"name":"order_id","type":"INTEGER","notnull":1,"dflt_value":null,"pk":0},{"cid":2,"name":"amount","type":"REAL","notnull":1,"dflt_value":null,"pk":0},{"cid":3,"name":"method","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":4,"name":"status","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":5,"name":"paid_at","type":"TEXT","notnull":0,"dflt_value":null,"pk":0}]
+
+== schema refunds ==
+[{"cid":0,"name":"id","type":"INTEGER","notnull":0,"dflt_value":null,"pk":1},{"cid":1,"name":"order_id","type":"INTEGER","notnull":1,"dflt_value":null,"pk":0},{"cid":2,"name":"amount","type":"REAL","notnull":1,"dflt_value":null,"pk":0},{"cid":3,"name":"reason","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":4,"name":"refunded_at","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":5,"name":"processed_by","type":"INTEGER","notnull":1,"dflt_value":null,"pk":0}]
+
+== schema shipments ==
+[{"cid":0,"name":"id","type":"INTEGER","notnull":0,"dflt_value":null,"pk":1},{"cid":1,"name":"order_id","type":"INTEGER","notnull":1,"dflt_value":null,"pk":0},{"cid":2,"name":"carrier","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":3,"name":"cost","type":"REAL","notnull":1,"dflt_value":null,"pk":0},{"cid":4,"name":"shipped_at","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":5,"name":"delivered_at","type":"TEXT","notnull":0,"dflt_value":null,"pk":0}]
+
+== schema acquisitions ==
+[{"cid":0,"name":"id","type":"INTEGER","notnull":0,"dflt_value":null,"pk":1},{"cid":1,"name":"customer_id","type":"INTEGER","notnull":1,"dflt_value":null,"pk":0},{"cid":2,"name":"channel","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":3,"name":"spend","type":"REAL","notnull":1,"dflt_value":null,"pk":0},{"cid":4,"name":"acquired_at","type":"TEXT","notnull":1,"dflt_value":null,"pk":0}]
+
+== schema employees ==
+[{"cid":0,"name":"id","type":"INTEGER","notnull":0,"dflt_value":null,"pk":1},{"cid":1,"name":"name","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":2,"name":"role","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":3,"name":"manager_id","type":"INTEGER","notnull":0,"dflt_value":null,"pk":0},{"cid":4,"name":"region","type":"TEXT","notnull":1,"dflt_value":null,"pk":0},{"cid":5,"name":"hired_at","type":"TEXT","notnull":1,"dflt_value":null,"pk":0}]
+
+== 275 RAW arm-filter >=100 (who ghosts?) ==
+[{"name":"Aiko Yamada","id":null,"amount":null},{"name":"Carla Dominguez","id":null,"amount":null},{"name":"Daniel Okoye","id":null,"amount":null},{"name":"Petra Novak","id":null,"amount":null},{"name":"Sofia Marin","id":null,"amount":null}]
+
+== 275 arm-filter >=100 DISTINCT ==
+[{"name":"Aiko Yamada","role":"lead"},{"name":"Carla Dominguez","role":"rep"},{"name":"Daniel Okoye","role":"manager"},{"name":"Petra Novak","role":"manager"},{"name":"Sofia Marin","role":"manager"}]
+
+== 275 rollup >=100 ==
+[{"name":"Aiko Yamada","role":"lead"},{"name":"Carla Dominguez","role":"rep"},{"name":"Daniel Okoye","role":"manager"},{"name":"Petra Novak","role":"manager"},{"name":"Sofia Marin","role":"manager"}]
+
+== Marcus refunds detail ==
+[{"id":20,"order_id":86,"amount":15.83,"reason":"wrong_item","processed_by":4},{"id":19,"order_id":86,"amount":58.39,"reason":"damaged","processed_by":4},{"id":3,"order_id":6,"amount":76.72,"reason":"damaged","processed_by":4},{"id":14,"order_id":68,"amount":190.53,"reason":"wrong_item","processed_by":4},{"id":16,"order_id":76,"amount":203.91,"reason":"damaged","processed_by":4},{"id":15,"order_id":73,"amount":258.05,"reason":"changed_mind","processed_by":4},{"id":2,"order_id":6,"amount":324.9,"reason":"damaged","processed_by":4}]
+
+== 267 FILL suppliers never cancelled (DISTINCT) ==
+[{"name":"Alpine Audio GmbH","region":"EU"},{"name":"Andes Naturals SA","region":"LATAM"},{"name":"Midwest Hardware Co","region":"US"},{"name":"Nordic Gadgets AB","region":"EU"},{"name":"Pacific Textiles","region":"APAC"},{"name":"Shenzhen Electro","region":"APAC"}]
+
+== 267 variant INNER keyword ==
+[]
+
+== 267 {2}=oi.id == ERROR: ON clause references tables to its right
+
+== 267 {2}=o.id == ERROR: ON clause references tables to its right
+
+== 267 {3}='pending' ==
+[{"name":"Alpine Audio GmbH"},{"name":"Andes Naturals SA"},{"name":"Midwest Hardware Co"},{"name":"Nordic Gadgets AB"},{"name":"Pacific Textiles"},{"name":"Shenzhen Electro"}]
+
+== 267 {3}='delivered' ==
+[{"n":132}]
+
+== 268 FILL products never US (DISTINCT) ==
+[{"name":"4K Webcam Pro","category":"Video"},{"name":"Bluetooth Speaker Mini","category":"Audio"},{"name":"Cycling Jersey Pro","category":"Apparel"},{"name":"Desk Mat Extended","category":"Accessories"},{"name":"Fitness Band X2","category":"Wearables"},{"name":"HDMI 2.1 Cable 2m","category":"Accessories"},{"name":"Laptop Stand Aluminum","category":"Accessories"},{"name":"Mechanical Keyboard K1","category":"Electronics"},{"name":"Noise-Canceling Headset","category":"Audio"},{"name":"Ring Light 14\"","category":"Video"},{"name":"Running Socks 3-pack","category":"Apparel"},{"name":"Smart Watch S","category":"Wearables"},{"name":"Studio Desktop Mic","category":"Audio"},{"name":"USB-C Hub 7-in-1","category":"Electronics"},{"name":"Wireless Mouse M3","category":"Electronics"},{"name":"Yoga Mat Eco 6mm","category":"Fitness"}]
+
+== 268 {1}=oi.id ==
+[{"n":13}]
+
+== 268 {1}=o.id == ERROR: ON clause references tables to its right
+
+== 268 {2}='LATAM' ==
+[{"n":16}]
+
+== 268 {3}=p.id ==
+[{"n":0}]
+
+== 269 FILL products never UPS (DISTINCT) ==
+[{"name":"4K Webcam Pro","category":"Video"},{"name":"Bluetooth Speaker Mini","category":"Audio"},{"name":"Cycling Jersey Pro","category":"Apparel"},{"name":"Desk Mat Extended","category":"Accessories"},{"name":"Fitness Band X2","category":"Wearables"},{"name":"HDMI 2.1 Cable 2m","category":"Accessories"},{"name":"Laptop Stand Aluminum","category":"Accessories"},{"name":"Mechanical Keyboard K1","category":"Electronics"},{"name":"Noise-Canceling Headset","category":"Audio"},{"name":"Ring Light 14\"","category":"Video"},{"name":"Running Socks 3-pack","category":"Apparel"},{"name":"Smart Watch S","category":"Wearables"},{"name":"Studio Desktop Mic","category":"Audio"},{"name":"USB-C Hub 7-in-1","category":"Electronics"},{"name":"Wireless Mouse M3","category":"Electronics"},{"name":"Yoga Mat Eco 6mm","category":"Fitness"}]
+
+== 269 {2}=o.id ==
+[{"n":0}]
+
+== 269 {1}='DHL' ==
+[{"n":180}]
+
+== 270 FILL churned rollup ==
+[{"name":"Bluetooth Speaker Mini","category":"Audio"},{"name":"HDMI 2.1 Cable 2m","category":"Accessories"},{"name":"Noise-Canceling Headset","category":"Audio"},{"name":"Wireless Mouse M3","category":"Electronics"}]
+
+== 270 {2}=1 (active arm) ==
+[{"n":0}]
+
+== 270 {2}=2 ==
+[{"n":16}]
+
+== 270 {1}=INNER ==
+[{"n":0}]
+
+== 270 {3}=p.id ==
+[{"n":0}]
+
+== 270 churned buyers + order counts ==
+[{"name":"Dmitri Volkov","orders":2},{"name":"Keiko Sato","orders":4}]
+
+== 271 FILL suppliers no LATAM (DISTINCT) ==
+[{"name":"Alpine Audio GmbH","region":"EU"},{"name":"Andes Naturals SA","region":"LATAM"},{"name":"Midwest Hardware Co","region":"US"},{"name":"Nordic Gadgets AB","region":"EU"},{"name":"Pacific Textiles","region":"APAC"},{"name":"Shenzhen Electro","region":"APAC"}]
+
+== 271 {1}=oi.id == ERROR: ON clause references tables to its right
+
+== 271 {1}=o.id == ERROR: ON clause references tables to its right
+
+== 271 {2}='US' ==
+[{"n":198}]
+
+== 271 {3}=s.id ==
+[{"n":0}]
+
+== 271 {3}=p.id ==
+[{"n":0}]
+
+== 272 FILL products never email (DISTINCT) ==
+[{"name":"4K Webcam Pro","category":"Video"},{"name":"Bluetooth Speaker Mini","category":"Audio"},{"name":"Cycling Jersey Pro","category":"Apparel"},{"name":"Desk Mat Extended","category":"Accessories"},{"name":"Fitness Band X2","category":"Wearables"},{"name":"HDMI 2.1 Cable 2m","category":"Accessories"},{"name":"Laptop Stand Aluminum","category":"Accessories"},{"name":"Mechanical Keyboard K1","category":"Electronics"},{"name":"Noise-Canceling Headset","category":"Audio"},{"name":"Ring Light 14\"","category":"Video"},{"name":"Running Socks 3-pack","category":"Apparel"},{"name":"Smart Watch S","category":"Wearables"},{"name":"Studio Desktop Mic","category":"Audio"},{"name":"USB-C Hub 7-in-1","category":"Electronics"},{"name":"Wireless Mouse M3","category":"Electronics"},{"name":"Yoga Mat Eco 6mm","category":"Fitness"}]
+
+== 272 {1}='search' ==
+[{"n":231}]
+
+== 272 {1}='referral' ==
+[{"n":162}]
+
+== 272 {1}='social' ==
+[{"n":189}]
+
+== 272 {2}=c.id ==
+[{"n":0}]
+
+== 272 {2}=p.id ==
+[{"n":0}]
+
+== 272 email buyers detail ==
+[{"name":"Isabella Rossi","id":9,"spend":41.4,"acquired_at":"2024-03-01"},{"name":"Liam O'Brien","id":12,"spend":40.53,"acquired_at":"2024-04-21"}]
+
+== 273 FILL never late_delivery (DISTINCT) ==
+[{"name":"Aiko Yamada","role":"lead"},{"name":"Daniel Okoye","role":"manager"},{"name":"Elena Petrova","role":"rep"},{"name":"Marcus Hale","role":"lead"},{"name":"Petra Novak","role":"manager"},{"name":"Sofia Marin","role":"manager"},{"name":"Tomas Ruiz","role":"rep"}]
+
+== 273 {2}='wrong_item' ==
+[{"n":8}]
+
+== 273 {2}='changed_mind' ==
+[{"n":6}]
+
+== 273 {2}='damaged' ==
+[{"n":5}]
+
+== 273 {3}=e.id ==
+[{"n":0}]
+
+== 273 {1}=INNER ==
+[{"n":0}]
+
+== late_delivery rows ==
+[{"id":1,"amount":339.43,"name":"Ravi Menon"},{"id":10,"amount":49.48,"name":"Ingrid Larsen"},{"id":13,"amount":73.38,"name":"Ingrid Larsen"},{"id":23,"amount":83.84,"name":"Carla Dominguez"}]
+
+== 274 FILL never EU claim (DISTINCT) ==
+[{"name":"Aiko Yamada","role":"lead"},{"name":"Carla Dominguez","role":"rep"},{"name":"Daniel Okoye","role":"manager"},{"name":"Elena Petrova","role":"rep"},{"name":"Marcus Hale","role":"lead"},{"name":"Petra Novak","role":"manager"},{"name":"Ravi Menon","role":"rep"},{"name":"Sofia Marin","role":"manager"},{"name":"Tomas Ruiz","role":"rep"}]
+
+== 274 {2}='US' ==
+[{"n":10}]
+
+== 274 {2}='APAC' ==
+[{"name":"Aiko Yamada"},{"name":"Daniel Okoye"},{"name":"Elena Petrova"},{"name":"Ingrid Larsen"},{"name":"Marcus Hale"},{"name":"Petra Novak"},{"name":"Ravi Menon"},{"name":"Sofia Marin"},{"name":"Tomas Ruiz"}]
+
+== 274 {2}='LATAM' ==
+[{"n":10}]
+
+== 274 {3}=e.id ==
+[{"n":0}]
+
+== 274 {3}=o.id ==
+[{"n":4}]
+
+== 274 EU claim rows ==
+[{"id":6,"amount":42.48,"name":"Ingrid Larsen","buyer":"Isabella Rossi"},{"id":7,"amount":75.29,"name":"Ingrid Larsen","buyer":"Chloe Dubois"},{"id":8,"amount":62.77,"name":"Ingrid Larsen","buyer":"Noah Meyer"},{"id":10,"amount":49.48,"name":"Ingrid Larsen","buyer":"Alice Chen"},{"id":11,"amount":12.04,"name":"Ingrid Larsen","buyer":"Alice Chen"},{"id":13,"amount":73.38,"name":"Ingrid Larsen","buyer":"Pedro Alvarez"},{"id":18,"amount":364.14,"name":"Ingrid Larsen","buyer":"Dmitri Volkov"},{"id":19,"amount":58.39,"name":"Marcus Hale","buyer":"Alice Chen"},{"id":20,"amount":15.83,"name":"Marcus Hale","buyer":"Alice Chen"},{"id":22,"amount":365.98,"name":"Elena Petrova","buyer":"Olivia Brown"},{"id":24,"amount":31.6,"name":"Ravi Menon","buyer":"Alice Chen"},{"id":25,"amount":49.04,"name":"Elena Petrova","buyer":"Alice Chen"}]
+
+== collisions oi.id=o.id ==
+[{"n":103}]
+
+== collisions o.id=c.id ==
+[{"n":16}]
+
+== collisions oi.id=p.id ==
+[{"n":16}]
+
+== collisions s.id=o.id ==
+[{"n":82}]
+
+== collisions a.id=c.id ==
+[{"n":15}]
+
+== collisions r.id=e.id ==
+[{"n":10}]
+
+== collisions o.id=s.id reversed ==
+[{"n":6}]
+
+== collisions p.id=o.id ==
+[{"n":16}]
+
+probe-j7c6 done

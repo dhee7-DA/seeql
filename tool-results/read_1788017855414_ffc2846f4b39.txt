@@ -1,0 +1,677 @@
+     1→    56→    problemIds.length === 0 || problemIds.every((id) => problemSolved(progress, id));
+     2→    57→  return allMcq && allProblems;
+     3→    58→}
+     4→    59→
+     5→    60→export function LearnApp({
+     6→    61→  onTryInPlayground,
+     7→    62→}: {
+     8→    63→  onTryInPlayground: (sql: string) => void;
+     9→    64→}) {
+    10→    65→  const progress = useProgress();
+    11→    66→  const [selection, setSelection] = useState<Selection>({ type: "overview" });
+    12→    67→
+    13→    68→  /** per-lesson completion map (memo on the slices the calc needs) */
+    14→    69→  const doneMap = useMemo(() => {
+    15→    70→    const map: Record<string, boolean> = {};
+    16→    71→    for (const l of MOD.lessons) {
+    17→    72→      map[l.id] = lessonDone(
+    18→    73→        progress,
+    19→    74→        l.id,
+    20→    75→        l.mcqs.map((m) => m.id),
+    21→    76→        l.problems.map((p) => p.id),
+    22→    77→      );
+    23→    78→    }
+    24→    79→    for (const c of MOD.caseStudies) {
+    25→    80→      map[c.id] = c.parts.every((p) => problemSolved(progress, p.id));
+    26→    81→    }
+    27→    82→    return map;
+    28→    83→  }, [progress]);
+    29→    84→
+    30→    85→  const items: PracticeRef[] = useMemo(
+    31→    86→    () => [
+    32→    87→      ...MOD.lessons.map((l) => ({ type: "lesson" as const, id: l.id })),
+    33→    88→      ...MOD.caseStudies.map((c) => ({ type: "case" as const, id: c.id })),
+    34→    89→    ],
+    35→    90→    [],
+    36→    91→  );
+    37→    92→  const doneCount = items.filter((i) => doneMap[i.id]).length;
+    38→    93→  const pct = Math.round((doneCount / items.length) * 100);
+    39→    94→  const firstIncomplete = items.find((i) => !doneMap[i.id]) ?? items[0];
+    40→    95→
+    41→    96→  const openItem = (ref: PracticeRef) =>
+    42→    97→    setSelection(
+    43→    98→      ref.type === "lesson"
+    44→    99→        ? { type: "lesson", id: ref.id }
+    45→   100→        : { type: "case", id: ref.id },
+    46→   101→    );
+    47→   102→
+    48→   103→  const navIndex = items.findIndex((i) =>
+    49→   104→    selection.type === "overview"
+    50→   105→      ? false
+    51→   106→      : i.id === (selection as { id: string }).id &&
+    52→   107→        i.type === (selection.type as string),
+    53→   108→  );
+    54→   109→  const prev = navIndex > 0 ? items[navIndex - 1] : null;
+    55→   110→  const next = navIndex >= 0 && navIndex < items.length - 1 ? items[navIndex + 1] : null;
+    56→   111→
+    57→   112→  const activeLesson =
+    58→   113→    selection.type === "lesson"
+    59→   114→      ? MOD.lessons.find((l) => l.id === selection.id)
+    60→   115→      : undefined;
+    61→   116→  const activeCase =
+    62→   117→    selection.type === "case"
+    63→   118→      ? MOD.caseStudies.find((c) => c.id === selection.id)
+    64→   119→      : undefined;
+    65→   120→
+    66→   121→  const resetProgress = () => {
+    67→   122→    if (
+    68→   123→      window.confirm(
+    69→   124→        "Clear all Learn progress (lessons, quizzes, solved problems)? This cannot be undone.",
+    70→   125→      )
+    71→   126→    ) {
+    72→   127→      progress.resetAll();
+    73→   128→      setSelection({ type: "overview" });
+    74→   129→    }
+    75→   130→  };
+    76→   131→
+    77→   132→  return (
+    78→   133→    <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-5 lg:grid-cols-[290px_minmax(0,1fr)]">
+    79→   134→      {/* ---------------- sidebar ---------------- */}
+    80→   135→      <aside className="min-w-0 lg:sticky lg:top-[68px]" aria-label="Curriculum contents">
+    81→   136→        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
+    82→   137→          <div className="flex items-center gap-2">
+    83→   138→            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-400/15 ring-1 ring-emerald-400/30">
+    84→   139→              <GraduationCap className="h-4 w-4 text-emerald-400" />
+    85→   140→            </span>
+    86→   141→            <div className="min-w-0">
+    87→   142→              <h2 className="truncate text-sm font-semibold text-zinc-100">
+    88→   143→                {MOD.title}
+    89→   144→              </h2>
+    90→   145→              <p className="truncate text-[11px] text-zinc-500">
+    91→   146→                {MOD.level} · {MOD.lessons.length} lessons + {MOD.caseStudies.length} case studies
+    92→   147→              </p>
+    93→   148→            </div>
+    94→   149→          </div>
+    95→   150→
+    96→   151→          {/* progress */}
+    97→   152→          <div className="mt-3.5">
+    98→   153→            <div className="flex items-center justify-between text-[11px] text-zinc-400">
+    99→   154→              <span>Progress</span>
+   100→   155→              <span className="font-mono font-bold text-emerald-300">{pct}%</span>
+   101→   156→            </div>
+   102→   157→            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-zinc-800">
+   103→   158→              <motion.div
+   104→   159→                className="relative h-full rounded-full bg-gradient-to-r from-emerald-500 to-emerald-300"
+   105→   160→                initial={false}
+   106→   161→                animate={{ width: `${pct}%` }}
+   107→   162→                transition={{ type: "spring", stiffness: 120, damping: 20 }}
+   108→   163→              >
+   109→   164→                <motion.span
+   110→   165→                  className="absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/25 to-transparent"
+   111→   166→                  animate={{ x: ["-140%", "280%"] }}
+   112→   167→                  transition={{
+   113→   168→                    duration: 2.4,
+   114→   169→                    repeat: Infinity,
+   115→   170→                    ease: "easeInOut",
+   116→   171→                    repeatDelay: 1.6,
+   117→   172→                  }}
+   118→   173→                />
+   119→   174→              </motion.div>
+   120→   175→            </div>
+   121→   176→          </div>
+   122→   177→
+   123→   178→          {/* lesson list — vertical on desktop, horizontal chips on mobile */}
+   124→   179→          <nav className="mt-4 hidden space-y-1 lg:block" aria-label="Lessons">
+   125→   180→            {MOD.lessons.map((l, i) => {
+   126→   181→              const done = doneMap[l.id];
+   127→   182→              const active = selection.type === "lesson" && selection.id === l.id;
+   128→   183→              return (
+   129→   184→                <button
+   130→   185→                  key={l.id}
+   131→   186→                  type="button"
+   132→   187→                  onClick={() => setSelection({ type: "lesson", id: l.id })}
+   133→   188→                  className={cn(
+   134→   189→                    "flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors",
+   135→   190→                    active
+   136→   191→                      ? "bg-zinc-800 ring-1 ring-zinc-700"
+   137→   192→                      : "hover:bg-zinc-800/60",
+   138→   193→                  )}
+   139→   194→                  aria-current={active ? "page" : undefined}
+   140→   195→                >
+   141→   196→                  {done ? (
+   142→   197→                    <DrawCheck size={15} ring={false} className="shrink-0" />
+   143→   198→                  ) : (
+   144→   199→                    <span className="flex h-4 w-4 shrink-0 items-center justify-center font-mono text-[10px] text-zinc-500">
+   145→   200→                      {i + 1}
+   146→   201→                    </span>
+   147→   202→                  )}
+   148→   203→                  <span
+   149→   204→                    className={cn(
+   150→   205→                      "truncate text-xs",
+   151→   206→                      active ? "font-medium text-zinc-100" : "text-zinc-400",
+   152→   207→                    )}
+   153→   208→                  >
+   154→   209→                    {l.title}
+   155→   210→                  </span>
+   156→   211→                  <span className="ml-auto shrink-0 font-mono text-[10px] text-zinc-600">
+   157→   212→                    {l.minutes}m
+   158→   213→                  </span>
+   159→   214→                </button>
+   160→   215→              );
+   161→   216→            })}
+   162→   217→            <div className="flex items-center justify-between px-2.5 pb-1 pt-3 text-[10px] font-semibold tracking-widest text-zinc-500 uppercase">
+   163→   218→              <span>Case studies</span>
+   164→   219→              <span className="rounded bg-zinc-800 px-1.5 py-0.5 font-mono text-[10px] tracking-normal text-violet-300">
+   165→   220→                {MOD.caseStudies.length}
+   166→   221→              </span>
+   167→   222→            </div>
+   168→   223→            {MOD.caseStudies.map((c) => {
+   169→   224→              const done = doneMap[c.id];
+   170→   225→              const active = selection.type === "case" && selection.id === c.id;
+   171→   226→              return (
+   172→   227→                <button
+   173→   228→                  key={c.id}
+   174→   229→                  type="button"
+   175→   230→                  onClick={() => setSelection({ type: "case", id: c.id })}
+   176→   231→                  className={cn(
+   177→   232→                    "flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors",
+   178→   233→                    active
+   179→   234→                      ? "bg-zinc-800 ring-1 ring-zinc-700"
+   180→   235→                      : "hover:bg-zinc-800/60",
+   181→   236→                  )}
+   182→   237→                >
+   183→   238→                  {done ? (
+   184→   239→                    <DrawCheck size={15} ring={false} className="shrink-0" />
+   185→   240→                  ) : (
+   186→   241→                    <BookOpen className="h-4 w-4 shrink-0 text-violet-400/80" />
+   187→   242→                  )}
+   188→   243→                  <span
+   189→   244→                    className={cn(
+   190→   245→                      "truncate text-xs",
+   191→   246→                      active ? "font-medium text-zinc-100" : "text-zinc-400",
+   192→   247→                    )}
+   193→   248→                  >
+   194→   249→                    {c.title.replace("Case study — ", "")}
+   195→   250→                  </span>
+   196→   251→                </button>
+   197→   252→              );
+   198→   253→            })}
+   199→   254→          </nav>
+   200→   255→
+   201→   256→          {/* mobile nav — two labelled chip rows so case studies are never buried */}
+   202→   257→          <div className="mt-4 space-y-3 lg:hidden">
+   203→   258→            <div>
+   204→   259→              <p className="px-1 text-[10px] font-semibold tracking-widest text-zinc-500 uppercase">
+   205→   260→                Lessons · {MOD.lessons.length}
+   206→   261→              </p>
+   207→   262→              <div className="thin-scrollbar -mx-1 mt-1.5 flex gap-1.5 overflow-x-auto px-1 pb-1">
+   208→   263→                {MOD.lessons.map((l, i) => {
+   209→   264→                  const active =
+   210→   265→                    selection.type === "lesson" && selection.id === l.id;
+   211→   266→                  const done = doneMap[l.id];
+   212→   267→                  return (
+   213→   268→                    <button
+   214→   269→                      key={l.id}
+   215→   270→                      type="button"
+   216→   271→                      onClick={() => setSelection({ type: "lesson", id: l.id })}
+   217→   272→                      className={cn(
+   218→   273→                        "flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs",
+   219→   274→                        active
+   220→   275→                          ? "border-emerald-400/40 bg-emerald-400/10 text-emerald-200"
+   221→   276→                          : "border-zinc-700 bg-zinc-900 text-zinc-400",
+   222→   277→                      )}
+   223→   278→                    >
+   224→   279→                      {done ? (
+   225→   280→                        <Check className="h-3 w-3 text-emerald-400" />
+   226→   281→                      ) : (
+   227→   282→                        <span className="font-mono text-[10px]">{i + 1}</span>
+   228→   283→                      )}
+   229→   284→                      {l.title.split("—")[0].trim()}
+   230→   285→                    </button>
+   231→   286→                  );
+   232→   287→                })}
+   233→   288→              </div>
+   234→   289→            </div>
+   235→   290→            <div>
+   236→   291→              <p className="px-1 text-[10px] font-semibold tracking-widest text-violet-300/90 uppercase">
+   237→   292→                Case studies · {MOD.caseStudies.length}
+   238→   293→              </p>
+   239→   294→              <div className="thin-scrollbar -mx-1 mt-1.5 flex gap-1.5 overflow-x-auto px-1 pb-1">
+   240→   295→                {MOD.caseStudies.map((c) => {
+   241→   296→                  const active =
+   242→   297→                    selection.type === "case" && selection.id === c.id;
+   243→   298→                  const done = doneMap[c.id];
+   244→   299→                  return (
+   245→   300→                    <button
+   246→   301→                      key={c.id}
+   247→   302→                      type="button"
+   248→   303→                      onClick={() => setSelection({ type: "case", id: c.id })}
+   249→   304→                      className={cn(
+   250→   305→                        "flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs",
+   251→   306→                        active
+   252→   307→                          ? "border-violet-400/50 bg-violet-400/10 text-violet-200"
+   253→   308→                          : "border-violet-400/20 bg-zinc-900 text-zinc-400",
+   254→   309→                      )}
+   255→   310→                    >
+   256→   311→                      {done ? (
+   257→   312→                        <Check className="h-3 w-3 text-emerald-400" />
+   258→   313→                      ) : (
+   259→   314→                        <BookOpen className="h-3 w-3 text-violet-300/80" />
+   260→   315→                      )}
+   261→   316→                      {c.title.replace("Case study — ", "").split("—")[0].trim()}
+   262→   317→                    </button>
+   263→   318→                  );
+   264→   319→                })}
+   265→   320→              </div>
+   266→   321→            </div>
+   267→   322→          </div>
+   268→   323→
+   269→   324→          <div className="mt-4 flex items-center justify-between border-t border-zinc-800/70 pt-3">
+   270→   325→            <Button
+   271→   326→              size="sm"
+   272→   327→              onClick={() => openItem(firstIncomplete)}
+   273→   328→              className="h-7 gap-1.5 bg-emerald-500 px-3 text-xs font-semibold text-zinc-950 hover:bg-emerald-400"
+   274→   329→            >
+   275→   330→              <PlayCircle className="h-3.5 w-3.5" />
+   276→   331→              {doneCount === 0 ? "Start learning" : doneCount === items.length ? "Review" : "Continue"}
+   277→   332→            </Button>
+   278→   333→            <Button
+   279→   334→              size="sm"
+   280→   335→              variant="ghost"
+   281→   336→              onClick={resetProgress}
+   282→   337→              className="h-7 gap-1 px-2 text-[11px] text-zinc-500 hover:bg-zinc-800 hover:text-zinc-300"
+   283→   338→            >
+   284→   339→              <RotateCcw className="h-3 w-3" />
+   285→   340→              Reset
+   286→   341→            </Button>
+   287→   342→          </div>
+   288→   343→        </div>
+   289→   344→      </aside>
+   290→   345→
+   291→   346→      {/* ---------------- main pane ---------------- */}
+   292→   347→      <div className="min-w-0">
+   293→   348→        {selection.type === "overview" && (
+   294→   349→          <Overview doneMap={doneMap} onOpen={openItem} onTryInPlayground={onTryInPlayground} />
+   295→   350→        )}
+   296→   351→
+   297→   352→        {activeLesson && (
+   298→   353→          <article className="space-y-6">
+   299→   354→            {/* lesson header */}
+   300→   355→            <header>
+   301→   356→              <button
+   302→   357→                type="button"
+   303→   358→                onClick={() => setSelection({ type: "overview" })}
+   304→   359→                className="inline-flex items-center gap-1 text-xs text-zinc-500 transition-colors hover:text-zinc-300"
+   305→   360→              >
+   306→   361→                <ArrowLeft className="h-3 w-3" />
+   307→   362→                {MOD.title}
+   308→   363→              </button>
+   309→   364→              <h1 className="mt-2 text-xl font-bold tracking-tight text-zinc-50 sm:text-2xl">
+   310→   365→                <span className="mr-2 font-mono text-sm text-emerald-400">
+   311→   366→                  {String(MOD.lessons.indexOf(activeLesson) + 1).padStart(2, "0")}
+   312→   367→                </span>
+   313→   368→                {activeLesson.title}
+   314→   369→              </h1>
+   315→   370→              <p className="mt-1 text-sm text-zinc-400">{activeLesson.subtitle}</p>
+   316→   371→              <p className="mt-2 inline-flex items-center gap-1 text-[11px] text-zinc-500">
+   317→   372→                <Clock className="h-3 w-3" />
+   318→   373→                ~{activeLesson.minutes} min · theory → quiz → practice
+   319→   374→              </p>
+   320→   375→            </header>
+   321→   376→
+   322→   377→            {/* theory */}
+   323→   378→            <section aria-label="Lesson theory">
+   324→   379→              <TheoryBlocks blocks={activeLesson.theory} onTry={onTryInPlayground} />
+   325→   380→            </section>
+   326→   381→
+   327→   382→            {/* takeaways */}
+   328→   383→            <section
+   329→   384→              aria-label="Key takeaways"
+   330→   385→              className="rounded-xl border border-emerald-400/20 bg-emerald-400/5 p-4"
+   331→   386→            >
+   332→   387→              <h2 className="flex items-center gap-2 text-sm font-semibold text-zinc-100">
+   333→   388→                <Sparkles className="h-4 w-4 text-emerald-400" />
+   334→   389→                Key takeaways
+   335→   390→              </h2>
+   336→   391→              <ul className="mt-2.5 space-y-1.5">
+   337→   392→                {activeLesson.takeaways.map((t, i) => (
+   338→   393→                  <li key={i} className="flex gap-2 text-xs leading-relaxed text-zinc-300">
+   339→   394→                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-400" />
+   340→   395→                    {t}
+   341→   396→                  </li>
+   342→   397→                ))}
+   343→   398→              </ul>
+   344→   399→            </section>
+   345→   400→
+   346→   401→            {/* knowledge check */}
+   347→   402→            <section aria-label="Knowledge check">
+   348→   403→              <h2 className="flex items-center gap-2 text-sm font-semibold tracking-wide text-zinc-100">
+   349→   404→                <ListChecks className="h-4 w-4 text-violet-400" />
+   350→   405→                Knowledge check
+   351→   406→                <span className="font-mono text-[11px] font-normal text-zinc-500">
+   352→   407→                  {activeLesson.mcqs.filter((m) => mcqPassed(progress, m.id)).length}/
+   353→   408→                  {activeLesson.mcqs.length} correct
+   354→   409→                </span>
+   355→   410→              </h2>
+   356→   411→              <div className="mt-3 space-y-3">
+   357→   412→                {activeLesson.mcqs.map((m, i) => (
+   358→   413→                  <McqCard key={m.id} mcq={m} index={i + 1} />
+   359→   414→                ))}
+   360→   415→              </div>
+   361→   416→            </section>
+   362→   417→
+   363→   418→            {/* practice */}
+   364→   419→            <section aria-label="Practice problems">
+   365→   420→              <h2 className="flex items-center gap-2 text-sm font-semibold tracking-wide text-zinc-100">
+   366→   421→                <PlayCircle className="h-4 w-4 text-amber-400" />
+   367→   422→                Practice — write real SQL
+   368→   423→                <span className="font-mono text-[11px] font-normal text-zinc-500">
+   369→   424→                  {activeLesson.problems.filter((p) => problemSolved(progress, p.id)).length}/
+   370→   425→                  {activeLesson.problems.length} solved
+   371→   426→                </span>
+   372→   427→              </h2>
+   373→   428→              <p className="mt-1 text-xs text-zinc-500">
+   374→   429→                Graded live against the sandbox database — any query producing the
+   375→   430→                expected result passes.
+   376→   431→              </p>
+   377→   432→              {(["easy", "medium", "hard"] as const).map((diff) => {
+   378→   433→                const group = activeLesson.problems.filter(
+   379→   434→                  (p) => (p.difficulty ?? "medium") === diff,
+   380→   435→                );
+   381→   436→                if (group.length === 0) return null;
+   382→   437→                return (
+   383→   438→                  <div key={diff} className="mt-4 space-y-3">
+   384→   439→                    <h3 className="flex items-center gap-2 pt-1 text-[11px] font-semibold tracking-widest text-zinc-500 uppercase">
+   385→   440→                      <DiffBadge difficulty={diff} />
+   386→   441→                      {group.length} problem{group.length > 1 ? "s" : ""}
+   387→   442→                    </h3>
+   388→   443→                    {group.map((p) => (
+   389→   444→                      <ProblemRunner
+   390→   445→                        key={p.id}
+   391→   446→                        problem={p}
+   392→   447→                        onTryInPlayground={onTryInPlayground}
+   393→   448→                      />
+   394→   449→                    ))}
+   395→   450→                  </div>
+   396→   451→                );
+   397→   452→              })}
+   398→   453→            </section>
+   399→   454→
+   400→   455→            {/* completion + nav */}
+   401→   456→            <footer className="flex flex-wrap items-center gap-2 border-t border-zinc-800 pt-4">
+   402→   457→              <Button
+   403→   458→                size="sm"
+   404→   459→                variant="outline"
+   405→   460→                disabled={!prev}
+   406→   461→                onClick={() => prev && openItem(prev)}
+   407→   462→                className="h-8 gap-1.5 border-zinc-700 text-xs text-zinc-300 hover:bg-zinc-800"
+   408→   463→              >
+   409→   464→                <ArrowLeft className="h-3.5 w-3.5" />
+   410→   465→                Previous
+   411→   466→              </Button>
+   412→   467→              <Button
+   413→   468→                size="sm"
+   414→   469→                variant="outline"
+   415→   470→                disabled={!next}
+   416→   471→                onClick={() => next && openItem(next)}
+   417→   472→                className="ml-auto h-8 gap-1.5 border-zinc-700 text-xs text-zinc-300 hover:bg-zinc-800"
+   418→   473→              >
+   419→   474→                Next
+   420→   475→                <ArrowRight className="h-3.5 w-3.5" />
+   421→   476→              </Button>
+   422→   477→            </footer>
+   423→   478→          </article>
+   424→   479→        )}
+   425→   480→
+   426→   481→        {activeCase && (
+   427→   482→          <article className="space-y-6">
+   428→   483→            <header>
+   429→   484→              <button
+   430→   485→                type="button"
+   431→   486→                onClick={() => setSelection({ type: "overview" })}
+   432→   487→                className="inline-flex items-center gap-1 text-xs text-zinc-500 transition-colors hover:text-zinc-300"
+   433→   488→              >
+   434→   489→                <ArrowLeft className="h-3 w-3" />
+   435→   490→                {MOD.title}
+   436→   491→              </button>
+   437→   492→              <h1 className="mt-2 text-xl font-bold tracking-tight text-zinc-50 sm:text-2xl">
+   438→   493→                {activeCase.title.replace("Case study — ", "Case study · ")}
+   439→   494→              </h1>
+   440→   495→              <p className="mt-1 text-sm text-zinc-400">{activeCase.subtitle}</p>
+   441→   496→              <p className="mt-2 inline-flex items-center gap-1 text-[11px] text-zinc-500">
+   442→   497→                <Clock className="h-3 w-3" />
+   443→   498→                ~{activeCase.minutes} min · {activeCase.parts.length} auto-checked
+   444→   499→                queries
+   445→   500→              </p>
+   446→   501→            </header>
+   447→   502→
+   448→   503→            <CaseStudyView
+   449→   504→              caseStudy={activeCase}
+   450→   505→              onTryInPlayground={onTryInPlayground}
+   451→   506→            />
+   452→   507→
+   453→   508→            <footer className="flex flex-wrap items-center gap-2 border-t border-zinc-800 pt-4">
+   454→   509→              <Button
+   455→   510→                size="sm"
+   456→   511→                variant="outline"
+   457→   512→                disabled={!prev}
+   458→   513→                onClick={() => prev && openItem(prev)}
+   459→   514→                className="h-8 gap-1.5 border-zinc-700 text-xs text-zinc-300 hover:bg-zinc-800"
+   460→   515→              >
+   461→   516→                <ArrowLeft className="h-3.5 w-3.5" />
+   462→   517→                Previous
+   463→   518→              </Button>
+   464→   519→              <Button
+   465→   520→                size="sm"
+   466→   521→                variant="outline"
+   467→   522→                disabled={!next}
+   468→   523→                onClick={() => next && openItem(next)}
+   469→   524→                className="ml-auto h-8 gap-1.5 border-zinc-700 text-xs text-zinc-300 hover:bg-zinc-800"
+   470→   525→              >
+   471→   526→                Next
+   472→   527→                <ArrowRight className="h-3.5 w-3.5" />
+   473→   528→              </Button>
+   474→   529→            </footer>
+   475→   530→          </article>
+   476→   531→        )}
+   477→   532→      </div>
+   478→   533→    </div>
+   479→   534→  );
+   480→   535→}
+   481→   536→
+   482→   537→/* ---------------- overview (module home) ---------------- */
+   483→   538→
+   484→   539→function Overview({
+   485→   540→  doneMap,
+   486→   541→  onOpen,
+   487→   542→}: {
+   488→   543→  doneMap: Record<string, boolean>;
+   489→   544→  onOpen: (ref: PracticeRef) => void;
+   490→   545→  onTryInPlayground: (sql: string) => void;
+   491→   546→}) {
+   492→   547→  const lessonCount = MOD.lessons.length;
+   493→   548→  const mcqCount = MOD.lessons.reduce((n, l) => n + l.mcqs.length, 0);
+   494→   549→  const diagramCount = MOD.lessons.reduce(
+   495→   550→    (n, l) => n + l.theory.filter((b) => b.kind === "diagram").length,
+   496→   551→    0,
+   497→   552→  );
+   498→   553→  const problemCount =
+   499→   554→    MOD.lessons.reduce((n, l) => n + l.problems.length, 0) +
+   500→   555→    MOD.caseStudies.reduce((n, c) => n + c.parts.length, 0);
+   501→   556→
+   502→   557→  return (
+   503→   558→    <div className="space-y-5">
+   504→   559→      {/* hero */}
+   505→   560→      <section className="overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-zinc-900/80 to-emerald-950/30 p-6">
+   506→   561→        <div className="flex items-center gap-2 text-[11px] font-semibold tracking-widest text-emerald-400 uppercase">
+   507→   562→          <GraduationCap className="h-4 w-4" />
+   508→   563→          Module 1 · {MOD.level}
+   509→   564→        </div>
+   510→   565→        <h1 className="mt-2.5 text-2xl font-bold tracking-tight text-zinc-50 sm:text-3xl">
+   511→   566→          {MOD.title}
+   512→   567→        </h1>
+   513→   568→        <p className="mt-1 text-sm text-zinc-400">{MOD.tagline}</p>
+   514→   569→        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-zinc-300">
+   515→   570→          {MOD.description}
+   516→   571→        </p>
+   517→   572→        <div className="mt-4 flex flex-wrap items-center gap-2">
+   518→   573→          <Rise delay={0.05}>
+   519→   574→            <span className="rounded-full border border-zinc-700 bg-zinc-900/70 px-3 py-1 text-xs text-zinc-300">
+   520→   575→              {lessonCount} lessons
+   521→   576→            </span>
+   522→   577→          </Rise>
+   523→   578→          <Rise delay={0.1}>
+   524→   579→            <span className="rounded-full border border-violet-400/25 bg-violet-400/10 px-3 py-1 text-xs font-medium text-violet-300">
+   525→   580→              {MOD.caseStudies.length} case studies
+   526→   581→            </span>
+   527→   582→          </Rise>
+   528→   583→          <Rise delay={0.15}>
+   529→   584→            <span className="rounded-full border border-zinc-700 bg-zinc-900/70 px-3 py-1 text-xs text-zinc-300">
+   530→   585→              {mcqCount} quiz questions
+   531→   586→            </span>
+   532→   587→          </Rise>
+   533→   588→          <Rise delay={0.2}>
+   534→   589→            <span className="rounded-full border border-zinc-700 bg-zinc-900/70 px-3 py-1 text-xs text-zinc-300">
+   535→   590→              {problemCount} auto-graded queries
+   536→   591→            </span>
+   537→   592→          </Rise>
+   538→   593→          <Rise delay={0.25}>
+   539→   594→            <span className="rounded-full border border-violet-400/25 bg-violet-400/10 px-3 py-1 text-xs text-violet-300">
+   540→   595→              {diagramCount} visual diagrams
+   541→   596→            </span>
+   542→   597→          </Rise>
+   543→   598→          <Rise delay={0.3}>
+   544→   599→            <span className="inline-flex items-center gap-1.5 rounded-full border border-teal-400/25 bg-teal-400/10 px-3 py-1 text-xs text-teal-300">
+   545→   600→              <PulseDot />
+   546→   601→              live sandbox database
+   547→   602→            </span>
+   548→   603→          </Rise>
+   549→   604→        </div>
+   550→   605→      </section>
+   551→   606→
+   552→   607→      {/* how it works */}
+   553→   608→      <section
+   554→   609→        className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
+   555→   610→        aria-label="How the course works"
+   556→   611→      >
+   557→   612→        {[
+   558→   613→          {
+   559→   614→            icon: BookOpen,
+   560→   615→            title: "Learn the theory",
+   561→   616→            text: "Every concept explained to the smallest detail — with interactive diagrams and runnable examples on the storefront data.",
+   562→   617→          },
+   563→   618→          {
+   564→   619→            icon: ListChecks,
+   565→   620→            title: "Prove it with quizzes",
+   566→   621→            text: "MCQs with instant feedback and explanations — wrong answers teach as much as right ones.",
+   567→   622→          },
+   568→   623→          {
+   569→   624→            icon: PlayCircle,
+   570→   625→            title: "Write real SQL",
+   571→   626→            text: "Auto-graded query problems: your result is compared with the expected answer, live on the database.",
+   572→   627→          },
+   573→   628→          {
+   574→   629→            icon: BookOpenCheck,
+   575→   630→            title: "Apply it — case studies",
+   576→   631→            text: "Real business scenarios — audits, scorecards, a 10 AM meeting — solved with everything you learned.",
+   577→   632→          },
+   578→   633→        ].map((card, i) => (
+   579→   634→          <motion.div
+   580→   635→            key={card.title}
+   581→   636→            initial={{ opacity: 0, y: 10 }}
+   582→   637→            animate={{ opacity: 1, y: 0 }}
+   583→   638→            transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 + i * 0.06 }}
+   584→   639→            whileHover={{ y: -3 }}
+   585→   640→            className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-4"
+   586→   641→          >
+   587→   642→            <card.icon className="h-4.5 w-4.5 text-emerald-400" />
+   588→   643→            <h3 className="mt-2 text-sm font-semibold text-zinc-100">{card.title}</h3>
+   589→   644→            <p className="mt-1 text-xs leading-relaxed text-zinc-400">{card.text}</p>
+   590→   645→          </motion.div>
+   591→   646→        ))}
+   592→   647→      </section>
+   593→   648→
+   594→   649→      {/* lesson cards */}
+   595→   650→      <section aria-label="Lessons" className="space-y-2.5">
+   596→   651→        {MOD.lessons.map((l, i) => {
+   597→   652→          const done = doneMap[l.id];
+   598→   653→          return (
+   599→   654→            <button
+   600→   655→              key={l.id}
+   601→   656→              type="button"
+   602→   657→              onClick={() => onOpen({ type: "lesson", id: l.id })}
+   603→   658→              className="flex w-full items-center gap-3.5 rounded-xl border border-zinc-800 bg-zinc-900/40 p-4 text-left transition-colors hover:border-zinc-600 hover:bg-zinc-900/70"
+   604→   659→            >
+   605→   660→              {done ? (
+   606→   661→                <DrawCheck size={19} className="shrink-0" />
+   607→   662→              ) : (
+   608→   663→                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-zinc-800 font-mono text-xs font-bold text-zinc-400">
+   609→   664→                  {i + 1}
+   610→   665→                </span>
+   611→   666→              )}
+   612→   667→              <div className="min-w-0 flex-1">
+   613→   668→                <h3 className="truncate text-sm font-semibold text-zinc-100">
+   614→   669→                  {l.title}
+   615→   670→                </h3>
+   616→   671→                <p className="truncate text-xs text-zinc-500">{l.subtitle}</p>
+   617→   672→              </div>
+   618→   673→              <div className="hidden shrink-0 items-center gap-3 text-[11px] text-zinc-500 sm:flex">
+   619→   674→                <span>{l.mcqs.length} quiz</span>
+   620→   675→                <span>{l.problems.length} practice</span>
+   621→   676→                <span className="font-mono">{l.minutes}m</span>
+   622→   677→              </div>
+   623→   678→              {done ? (
+   624→   679→                <CircleDot className="h-4 w-4 shrink-0 text-emerald-400" />
+   625→   680→              ) : (
+   626→   681→                <Circle className="h-4 w-4 shrink-0 text-zinc-700" />
+   627→   682→              )}
+   628→   683→            </button>
+   629→   684→          );
+   630→   685→        })}
+   631→   686→      </section>
+   632→   687→
+   633→   688→      {/* case study cards */}
+   634→   689→      <section aria-label="Case studies" className="space-y-2.5">
+   635→   690→        <div className="flex flex-wrap items-center gap-2 px-1">
+   636→   691→          <BookOpenCheck className="h-4 w-4 text-violet-300" />
+   637→   692→          <h2 className="text-sm font-semibold text-zinc-100">
+   638→   693→            Apply it — {MOD.caseStudies.length} case studies
+   639→   694→          </h2>
+   640→   695→          <span className="rounded-full border border-violet-400/25 bg-violet-400/10 px-2.5 py-0.5 text-[11px] text-violet-300">
+   641→   696→            {
+   642→   697→              MOD.caseStudies.reduce((n, c) => n + c.parts.length, 0)
+   643→   698→            }&nbsp;live-graded queries in real business scenarios
+   644→   699→          </span>
+   645→   700→        </div>
+   646→   701→        {MOD.caseStudies.map((c) => {
+   647→   702→          const done = doneMap[c.id];
+   648→   703→          return (
+   649→   704→            <button
+   650→   705→              key={c.id}
+   651→   706→              type="button"
+   652→   707→              onClick={() => onOpen({ type: "case", id: c.id })}
+   653→   708→              className="flex w-full items-center gap-3.5 rounded-xl border border-violet-400/20 bg-violet-400/5 p-4 text-left transition-colors hover:border-violet-400/40 hover:bg-violet-400/10"
+   654→   709→            >
+   655→   710→              {done ? (
+   656→   711→                <DrawCheck size={19} className="shrink-0" />
+   657→   712→              ) : (
+   658→   713→                <BookOpen className="h-5 w-5 shrink-0 text-violet-300" />
+   659→   714→              )}
+   660→   715→              <div className="min-w-0 flex-1">
+   661→   716→                <h3 className="truncate text-sm font-semibold text-zinc-100">
+   662→   717→                  {c.title.replace("Case study — ", "")}
+   663→   718→                </h3>
+   664→   719→                <p className="truncate text-xs text-zinc-500">{c.subtitle}</p>
+   665→   720→              </div>
+   666→   721→              <div className="hidden shrink-0 items-center gap-3 text-[11px] text-zinc-500 sm:flex">
+   667→   722→                <span>{c.parts.length} queries</span>
+   668→   723→                <span className="font-mono">{c.minutes}m</span>
+   669→   724→              </div>
+   670→   725→            </button>
+   671→   726→          );
+   672→   727→        })}
+   673→   728→      </section>
+   674→   729→    </div>
+   675→   730→  );
+   676→   731→}
+   677→   732→

@@ -1,0 +1,116 @@
+U01 U01 distinct customers invoice > 200000 [1 rows] {"c":7}
+U02 U02 distinct customers invoice > 50000 [1 rows] {"c":11}
+U03 U03 invoices > 150000 [1 rows] {"c":24}
+U04 U04 paid-invoice distinct customers [1 rows] {"c":8}
+U05 U05 open-invoice distinct customers [1 rows] {"c":6}
+U06 U06 orders of paid-invoice customers [1 rows] {"c":78}
+U07 U07 orders of open-invoice customers [1 rows] {"c":55}
+U08 U08 orders of void-invoice customer [1 rows] {"c":1}
+U09 U09 distinct products with qty>=3 line [1 rows] {"c":16}
+U10 U10 distinct products with qty=1 line [1 rows] {"c":16}
+U11 U11 products with qty>=2 [1 rows] {"c":16}
+U12 U12 items qty=2 count [1 rows] {"c":69}
+U13 U13 invoices > avg invoice [1 rows] {"c":12}
+U14 U14 invoices < avg [1 rows] {"c":16}
+U15 U15 invoices = avg-check [1 rows] {"c":0}
+U16 U16 expenses > avg [1 rows] {"c":15}
+U17 U17 expenses < avg [1 rows] {"c":21}
+U18 U18 expenses > 70000 [1 rows] {"c":15}
+U19 U19 expenses > 120000 [1 rows] {"c":1}
+U20 U20 lag distribution [3 rows] {"lag":2,"c":27} | {"lag":3,"c":30} | {"lag":4,"c":25}
+U21 U21 orders with lag > avg-lag [1 rows] {"c":55}
+U22 U22 orders lag >= 3 [1 rows] {"c":55}
+U23 U23 avg product price [1 rows] {"a":71.78}
+U24 U24 products > avg price [1 rows] {"c":6}
+U25 U25 products > 100 names [4 rows] {"name":"Smart Watch S","price":199.99} | {"name":"Noise-Canceling Headset","price":149.99} | {"name":"4K Webcam Pro","price":129} | {"name":"Studio Desktop Mic","price":119}
+U26 U26 products > 150 [1 rows] {"c":1,"GROUP_CONCAT(name)":"Smart Watch S"}
+U27 U27 suppliers of >150 products [1 rows] {"c":1}
+U28 U28 products < avg price [1 rows] {"c":10}
+U29 U29 void invoice customer name [1 rows] {"name":"Liam O'Brien","id":12}
+U30 U30 customers with open invoice [1 rows] {"c":6}
+U31 U31 customers with paid invoice [1 rows] {"c":8}
+U32 U32 products in >300 lines [1 rows] {"c":4}
+U33 U33 products NOT in >300 lines [1 rows] {"c":12}
+U34 U34 products in >500 lines [1 rows] {"c":1}
+U35 U35 products NOT in >500 lines [1 rows] {"c":15}
+U36 U36 customers with 800+ order [1 rows] {"c":4}
+U37 U37 customers with 800+ order names [4 rows] {"name":"Grace Kim"} | {"name":"Emma Wilson"} | {"name":"Chloe Dubois"} | {"name":"Farid Nasser"}
+U38 U38 customers with 500+ order [1 rows] {"c":10}
+U39 U39 800+ order count [1 rows] {"c":4}
+U40 U40 orders without items [1 rows] {"c":0}
+U41 U41 void invoice payments [1 rows] {"c":1}
+U42 U42 open invoices with a payment [1 rows] {"c":1}
+U43 U43 per-customer avg order [16 rows] {"name":"Liam O'Brien","a":705.39,"n":1} | {"name":"Chloe Dubois","a":533.59,"n":5} | {"name":"Farid Nasser","a":486.32,"n":3} | {"name":"Olivia Brown","a":444.8,"n":1} | {"name":"Bruno Silva","a":426.22,"n":2} | {"name":"Pedro Alvarez","a":421.54,"n":4} | {"name":"Emma Wilson","a":390.62,"n":17} | {"name":"Grace Kim","a":326.73,"n":14} | {"name":"Jamal Wright","a":322.8,"n":2} | {"name":"Alice Chen","a":302.6,"n":24} | {"name":"Dmitri Volkov","a":299.63,"n":2} | {"name":"Maya Patel","a":280.35,"n":13} | {"name":"Hiro Tanaka","a":276.36,"n":3} | {"name":"Keiko Sato","a":274.65,"n":4} | {"name":"Isabella Rossi","a":246.41,"n":4} | {"name":"Noah Meyer","a":184.42,"n":4}
+U44 U44 customers avg-order > store avg (nested-avg) [1 rows] {"c":7}
+U45 U45 customers avg-order > 300 [1 rows] {"c":10}
+U46 U46 customers avg-order > 350 [1 rows] {"c":7}
+U47 U47 invoices > own-customer avg [1 rows] {"c":11}
+U48 U48 invoices < own-customer avg [1 rows] {"c":14}
+U49 U49 invoices = own-customer avg [1 rows] {"c":3}
+U50 U50 per-product avg line total [16 rows] {"name":"Smart Watch S","price":199.99,"a":416.55} | {"name":"Noise-Canceling Headset","price":149.99,"a":287.01} | {"name":"4K Webcam Pro","price":129,"a":234.7} | {"name":"Studio Desktop Mic","price":119,"a":224.35} | {"name":"Mechanical Keyboard K1","price":89.99,"a":170.55} | {"name":"Fitness Band X2","price":79,"a":167.65} | {"name":"Cycling Jersey Pro","price":65,"a":138.41} | {"name":"Bluetooth Speaker Mini","price":59.99,"a":115.1} | {"name":"USB-C Hub 7-in-1","price":49,"a":92.77} | {"name":"Laptop Stand Aluminum","price":42.5,"a":81.2} | {"name":"Ring Light 14\"","price":39.99,"a":80.56} | {"name":"Wireless Mouse M3","price":34.5,"a":68.88} | {"name":"Yoga Mat Eco 6mm","price":32,"a":66.45} | {"name":"Desk Mat Extended","price":24.99,"a":49} | {"name":"Running Socks 3-pack","price":18.5,"a":42.91} | {"name":"HDMI 2.1 Cable 2m","price":14.99,"a":30.29}
+U51 U51 products avg-line > price [1 rows] {"c":16}
+U52 U52 products avg-line < price [1 rows] {"c":0}
+U53 U53 per-category avg expense [4 rows] {"category":"Ads","a":32642.86,"c":14} | {"category":"Rent","a":120000,"c":14} | {"category":"Tools","a":30500,"c":5} | {"category":"Travel","a":84033.33,"c":3}
+U54 U54 expenses > own-category avg [1 rows] {"c":9}
+U55 U55 expenses > own-vendor avg [1 rows] {"c":9}
+U56 U56 Rent rows [1 rows] {"c":14,"above":0}
+U57 U57 per-category avg price [7 rows] {"category":"Accessories","a":27.49} | {"category":"Apparel","a":41.75} | {"category":"Audio","a":109.66} | {"category":"Electronics","a":57.83} | {"category":"Fitness","a":32} | {"category":"Video","a":84.5} | {"category":"Wearables","a":139.5}
+U58 U58 products > own-category avg price [1 rows] {"c":7}
+U59 U59 products > own-supplier avg price [1 rows] {"c":8}
+U60 U60 products > own-supplier avg stock [1 rows] {"c":8}
+U61 U61 per-customer pending counts [8 rows] {"name":"Emma Wilson","n":3} | {"name":"Alice Chen","n":3} | {"name":"Maya Patel","n":2} | {"name":"Chloe Dubois","n":2} | {"name":"Pedro Alvarez","n":1} | {"name":"Keiko Sato","n":1} | {"name":"Grace Kim","n":1} | {"name":"Farid Nasser","n":1}
+U62 U62 customers pending >= 3 [1 rows] {"c":2}
+U63 U63 customers pending > 3 [1 rows] {"c":0}
+U64 U64 customers cancelled >= 2 [1 rows] {"c":2}
+U65 U65 per-customer cancelled counts [4 rows] {"name":"Alice Chen","n":3} | {"name":"Maya Patel","n":2} | {"name":"Keiko Sato","n":1} | {"name":"Emma Wilson","n":1}
+U66 U66 fully paid strict > [1 rows] {"c":0}
+U67 U67 fully paid exact = [1 rows] {"c":21}
+U68 U68 fully paid >= sum dollars [1 rows] {"dollars":65612}
+U69 U69 underpaid (< amount) [1 rows] {"c":1}
+U70 U70 per-customer order counts all [16 rows] {"name":"Alice Chen","n":24} | {"name":"Emma Wilson","n":17} | {"name":"Grace Kim","n":14} | {"name":"Maya Patel","n":13} | {"name":"Chloe Dubois","n":5} | {"name":"Pedro Alvarez","n":4} | {"name":"Noah Meyer","n":4} | {"name":"Keiko Sato","n":4} | {"name":"Isabella Rossi","n":4} | {"name":"Hiro Tanaka","n":3} | {"name":"Farid Nasser","n":3} | {"name":"Jamal Wright","n":2} | {"name":"Dmitri Volkov","n":2} | {"name":"Bruno Silva","n":2} | {"name":"Olivia Brown","n":1} | {"name":"Liam O'Brien","n":1}
+U71 U71 customers >= 10 orders [1 rows] {"c":4}
+U72 U72 customers > 5 orders [1 rows] {"c":4}
+U73 U73 customers >= 15 orders [1 rows] {"c":2}
+U74 U74 categories > 200000 [1 rows] {"c":3}
+U75 U75 categories > 100000 [1 rows] {"c":4}
+U76 U76 categories > 300000 [1 rows] {"c":2}
+U77 U77 distinct order dates [1 rows] {"c":84}
+U78 U78 days with >= 2 orders [1 rows] {"c":17}
+U79 U79 days with >= 3 orders [1 rows] {"c":2}
+U80 U80 days with exactly 3 [1 rows] {"c":2}
+U81 U81 per-supplier product counts [6 rows] {"name":"Midwest Hardware Co","n":3} | {"name":"Pacific Textiles","n":3} | {"name":"Shenzhen Electro","n":3} | {"name":"Nordic Gadgets AB","n":3} | {"name":"Andes Naturals SA","n":2} | {"name":"Alpine Audio GmbH","n":2}
+U82 U82 suppliers >= 3 products [1 rows] {"c":4}
+U83 U83 suppliers >= 2 products [1 rows] {"c":6}
+U84 U84 suppliers > 3 products [1 rows] {"c":0}
+U85 U85 ledger per-account net [4 rows] {"account":"accounts_receivable","dr":86052,"cr":69612} | {"account":"cash","dr":69612,"cr":25416} | {"account":"operating_expenses","dr":25416,"cr":0} | {"account":"sales_revenue","dr":0,"cr":86052}
+U86 U86 accounts dr > cr [1 rows] {"c":3}
+U87 U87 accounts cr > dr [1 rows] {"c":1}
+U88 U88 AR net [1 rows] {"net":16440}
+U89 U89 month ladder 2024 [1 rows] {"c":13}
+U90 U90 month ladder +2mo [1 rows] {"c":7}
+U91 U91 week ladder 2024 [1 rows] {"c":54}
+U92 U92 VIP ids [5 rows] {"id":1,"name":"Alice Chen"} | {"id":3,"name":"Chloe Dubois"} | {"id":5,"name":"Emma Wilson"} | {"id":7,"name":"Grace Kim"} | {"id":13,"name":"Maya Patel"}
+U93 U93 VIPs with big invoice [1 rows] {"c":5}
+U94 U94 pending share [1 rows] {"pct":17.5}
+U95 U95 fully-paid amount sum exact [1 rows] {"d":65612}
+U96 U96 card total dollars [1 rows] {"d":37364,"c":16}
+U97 U97 wire total dollars [1 rows] {"d":32248,"c":11}
+U98 U98 card count exact [1 rows] {"c":16}
+U99 U99 stock sum price>100 [1 rows] {"s":215}
+U100 U100 per-customer pending revenue [8 rows] {"name":"Emma Wilson","s":1471.43} | {"name":"Chloe Dubois","s":1309.92} | {"name":"Farid Nasser","s":1088.44} | {"name":"Alice Chen","s":788.83} | {"name":"Pedro Alvarez","s":576.54} | {"name":"Maya Patel","s":455.2} | {"name":"Grace Kim","s":273.64} | {"name":"Keiko Sato","s":149}
+U101 U101 customers pending-rev > 500 [1 rows] {"c":5}
+U102 U102 peak expense month [5 rows] {"m":"2024-08","s":3210,"n":3} | {"m":"2024-11","s":1974,"n":3} | {"m":"2025-01","s":1959,"n":3} | {"m":"2024-03","s":1917,"n":3} | {"m":"2024-10","s":1859,"n":3}
+U103 U103 peak month value [1 rows] {"ROUND(MAX(s)/100.0,2)":3210}
+U104 U104 months with spend > 2000 [1 rows] {"c":1}
+U105 U105 months with spend > 1500 [1 rows] {"c":12}
+U106 U106 avg lifetime > store avg lifetime customers [1 rows] {"c":16}
+U107 U107 customers 2x avg lifetime [1 rows] {"c":13}
+U108 U108 open invoice dollars [1 rows] {"d":19609}
+U109 U109 open invoice count [1 rows] {"c":6}
+U110 U110 stock > avg stock [1 rows] {"c":7}
+U111 U111 avg stock [1 rows] {"a":177.81}
+U112 U112 customers with 2+ invoices [1 rows] {"c":8}
+U113 U113 per-customer invoice counts [11 rows] {"customer_id":1,"n":5} | {"customer_id":13,"n":4} | {"customer_id":5,"n":4} | {"customer_id":9,"n":3} | {"customer_id":7,"n":3} | {"customer_id":15,"n":2} | {"customer_id":12,"n":2} | {"customer_id":10,"n":2} | {"customer_id":16,"n":1} | {"customer_id":8,"n":1} | {"customer_id":3,"n":1}
+U114 U114 invoices due 2025 [1 rows] {"c":8}
+U115 U115 customers single invoice [1 rows] {"c":3}
+done: 115 probes

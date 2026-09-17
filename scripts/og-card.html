@@ -1,0 +1,115 @@
+<!doctype html>
+<!-- OG share card for SeeQL — rendered headlessly at exactly 1200x630,
+     screenshot becomes src/app/opengraph-image.png (+ twitter-image.png). -->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    font-family: "Geist Mono", ui-monospace, monospace;
+    background: #09090b;
+    color: #d4d4d8;
+    position: relative;
+  }
+  .glow-a { position: absolute; top: -220px; right: -160px; width: 780px; height: 620px;
+    background: radial-gradient(closest-side, rgba(52,211,153,0.16), rgba(52,211,153,0)); }
+  .glow-b { position: absolute; bottom: -260px; left: -200px; width: 640px; height: 520px;
+    background: radial-gradient(closest-side, rgba(52,211,153,0.07), rgba(52,211,153,0)); }
+  .wrap { position: relative; height: 100%; display: flex; align-items: center; gap: 56px; padding: 0 64px; }
+  .left { flex: 1; min-width: 0; }
+  .mark { display: flex; align-items: center; gap: 10px; margin-bottom: 34px; }
+  .mark .dot { width: 14px; height: 14px; border-radius: 4px; background: #34d399; }
+  .mark .name { font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 30px;
+    letter-spacing: -0.02em; color: #fafafa; }
+  h1 { font-family: "Space Grotesk", sans-serif; font-weight: 600; font-size: 68px;
+    line-height: 1.06; letter-spacing: -0.03em; color: #fafafa; }
+  h1 .accent { color: #34d399; }
+  .sub { margin-top: 26px; font-size: 19px; line-height: 1.55; color: #a1a1aa; max-width: 470px; }
+  .chips { margin-top: 30px; display: flex; gap: 10px; }
+  .chip { border: 1px solid #27272a; background: rgba(24,24,27,0.6); border-radius: 999px;
+    padding: 7px 14px; font-size: 13px; color: #a1a1aa; }
+
+  /* right: the sandbox window mock */
+  .win { width: 470px; flex-shrink: 0; border: 1px solid #27272a; border-radius: 14px;
+    background: #0c0c0e; box-shadow: 0 30px 80px rgba(0,0,0,0.55); overflow: hidden; }
+  .bar { display: flex; align-items: center; justify-content: space-between;
+    padding: 11px 16px; border-bottom: 1px solid #27272a; }
+  .dots { display: flex; gap: 6px; }
+  .dots span { width: 10px; height: 10px; border-radius: 50%; border: 1px solid #3f3f46; }
+  .bar .t { font-size: 11px; color: #71717a; }
+  .live { display: flex; align-items: center; gap: 6px; font-size: 10px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: #6ee7b7; }
+  .live i { width: 6px; height: 6px; border-radius: 50%; background: #34d399; }
+  .body { padding: 16px; }
+  .code { border: 1px solid #27272a; background: rgba(24,24,27,0.55); border-radius: 10px;
+    padding: 13px 14px; font-size: 13px; line-height: 1.85; white-space: pre; color: #e4e4e7; }
+  .kw { color: #34d399; font-weight: 600; }
+  .fn { color: #c4b5fd; }
+  .num { color: #fdba74; }
+  .pipes { margin-top: 12px; display: flex; gap: 8px; min-height: 26px; }
+  .pipe { border: 1px solid #3f3f46; background: #18181b; border-radius: 7px;
+    padding: 4px 9px; font-size: 11px; color: #d4d4d8; }
+  table { margin-top: 12px; width: 100%; border-collapse: collapse; font-size: 12.5px;
+    border: 1px solid #27272a; border-radius: 10px; overflow: hidden; }
+  th { text-align: left; background: #18181b; color: #d4d4d8; font-weight: 600;
+    padding: 8px 12px; border-bottom: 1px solid #27272a; }
+  th.r, td.r { text-align: right; }
+  td { padding: 7px 12px; border-bottom: 1px solid #1c1c1f; color: #d4d4d8; }
+  td.ok { color: #6ee7b7; }
+  td.r { color: #5eead4; }
+  .status { margin-top: 11px; display: flex; align-items: center; gap: 14px;
+    font-size: 11.5px; color: #71717a; }
+  .status b { color: #6ee7b7; font-weight: 600; }
+</style>
+</head>
+<body>
+  <div class="glow-a"></div>
+  <div class="glow-b"></div>
+  <div class="wrap">
+    <div class="left">
+      <div class="mark"><span class="dot"></span><span class="name">seeql</span></div>
+      <h1>Stop memorizing SQL.<br /><span class="accent">Start seeing it.</span></h1>
+      <p class="sub">Animated diagrams for every hard idea, live-graded queries on a real
+        SQLite storefront, and XP that turns practice into a habit.</p>
+      <div class="chips">
+        <span class="chip">no account</span>
+        <span class="chip">free</span>
+        <span class="chip">runs in your browser</span>
+      </div>
+    </div>
+    <div class="win">
+      <div class="bar">
+        <span class="dots"><span></span><span></span><span></span></span>
+        <span class="t">seeql — sandbox</span>
+        <span class="live"><i></i>live</span>
+      </div>
+      <div class="body">
+        <div class="code"><span class="kw">SELECT</span> status, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> orders
+<span class="kw">FROM</span> orders
+<span class="kw">GROUP BY</span> status
+<span class="kw">ORDER BY</span> orders <span class="kw">DESC</span>;</div>
+        <div class="pipes">
+          <span class="pipe">FROM orders</span>
+          <span class="pipe">GROUP BY</span>
+          <span class="pipe">ORDER BY</span>
+          <span class="pipe">LIMIT</span>
+        </div>
+        <table>
+          <thead><tr><th>status</th><th class="r">orders</th></tr></thead>
+          <tbody>
+            <tr><td class="ok">delivered</td><td class="r">52</td></tr>
+            <tr><td class="ok">shipped</td><td class="r">30</td></tr>
+            <tr><td class="ok">pending</td><td class="r">14</td></tr>
+          </tbody>
+        </table>
+        <div class="status"><span><b>4 rows</b> · live sqlite</span><span>rolled back</span></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

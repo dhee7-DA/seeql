@@ -1,0 +1,123 @@
+
+== invoice status census ==
+[{"status":"paid","n":21,"money":66443},{"status":"open","n":6,"money":19609},{"status":"void","n":1,"money":925}]
+
+== ledger account census ==
+[{"account":"cash","n":27,"debits":69612,"credits":25416},{"account":"accounts_receivable","n":26,"debits":86052,"credits":69612},{"account":"operating_expenses","n":14,"debits":25416,"credits":0},{"account":"sales_revenue","n":13,"debits":0,"credits":86052}]
+
+== s6 status buckets row ==
+[{"delivered":52,"shipped":30,"pending":14,"cancelled":7}]
+
+== s6 size bands counts ==
+[{"band":"mid","n":63},{"band":"large","n":25},{"band":"small","n":15}]
+
+== s6 price bands products ==
+[{"band":"standard","n":8},{"band":"budget","n":8}]
+
+== s6 status labels ==
+[{"status":"delivered","bucket":"moving","n":52},{"status":"shipped","bucket":"moving","n":30},{"status":"pending","bucket":"waiting","n":14},{"status":"cancelled","bucket":"dead","n":7}]
+
+== s6 stock bands ==
+[{"band":"healthy","n":16}]
+
+== s6 delivered vs rest ==
+[{"is_done":0,"n":51},{"is_done":1,"n":52}]
+
+== s6 big orders ==
+[{"flag":"flag","n":25,"money":17379.43},{"flag":"ok","n":78,"money":17453.85}]
+
+== s6 invoice band ==
+[{"paid":0,"n":7,"money":20534},{"paid":1,"n":21,"money":66443}]
+
+== s6 supplier rating bands ==
+[{"band":"solid","n":3},{"band":"star","n":2},{"band":"watch","n":1}]
+
+== s6 expense size bands ==
+[{"band":"normal","n":21},{"band":"major","n":15}]
+
+== s6 case in order by top5 ==
+[{"id":6,"status":"delivered","total":752.96},{"id":14,"status":"delivered","total":705.23},{"id":71,"status":"delivered","total":668.45},{"id":67,"status":"delivered","total":659.7},{"id":13,"status":"delivered","total":632.29}]
+
+== s6 null-ish shipped ==
+[{"unshipped":0,"n":82},{"unshipped":1,"n":21}]
+
+== s6 first-match band order ==
+[{"band":"A","n":1,"money":1088.44},{"band":"B","n":33,"money":20188.19},{"band":"C","n":54,"money":12687.99},{"band":"D","n":15,"money":868.66}]
+
+== s6 active flag ==
+[{"state":"churned","n":2},{"state":"live","n":14}]
+
+== s6 cancelled money ==
+[{"cancelled_money":1152.49,"all_money":34833.28}]
+
+== s7 status pivot one row ==
+[{"delivered":52,"shipped":30,"pending":14}]
+
+== s7 region x status pivot ==
+[{"region":"APAC","done":29,"waiting":5},{"region":"EU","done":36,"waiting":6},{"region":"LATAM","done":2,"waiting":0},{"region":"US","done":15,"waiting":3}]
+
+== s7 region money pivot ==
+[{"region":"APAC","delivered_money":6617.68,"lost_money":513.81},{"region":"EU","delivered_money":6656.18,"lost_money":494.82},{"region":"LATAM","delivered_money":852.44,"lost_money":0},{"region":"US","delivered_money":1444.77,"lost_money":143.86}]
+
+== s7 category stock pivot ==
+[{"category":"Accessories","out_n":0,"low_n":0,"healthy_n":3},{"category":"Apparel","out_n":0,"low_n":0,"healthy_n":2},{"category":"Audio","out_n":0,"low_n":0,"healthy_n":3},{"category":"Electronics","out_n":0,"low_n":0,"healthy_n":3},{"category":"Fitness","out_n":0,"low_n":0,"healthy_n":1},{"category":"Video","out_n":0,"low_n":0,"healthy_n":2},{"category":"Wearables","out_n":0,"low_n":0,"healthy_n":2}]
+
+== s7 expense month pivot ==
+[{"m":"2024-01","rent":1200,"ads":220},{"m":"2024-02","rent":1200,"ads":240},{"m":"2024-03","rent":1200,"ads":265},{"m":"2024-04","rent":1200,"ads":250},{"m":"2024-05","rent":1200,"ads":280},{"m":"2024-06","rent":1200,"ads":310},{"m":"2024-07","rent":1200,"ads":295},{"m":"2024-08","rent":1200,"ads":330},{"m":"2024-09","rent":1200,"ads":345},{"m":"2024-10","rent":1200,"ads":360},{"m":"2024-11","rent":1200,"ads":385},{"m":"2024-12","rent":1200,"ads":410},{"m":"2025-01","rent":1200,"ads":430},{"m":"2025-02","rent":1200,"ads":450}]
+
+== s7 payment method pivot ==
+[{"m":"2024-02","card":2430,"wire":0},{"m":"2024-03","card":2143,"wire":5850},{"m":"2024-04","card":4231,"wire":0},{"m":"2024-05","card":2336,"wire":2642},{"m":"2024-06","card":0,"wire":1982},{"m":"2024-07","card":5888,"wire":0},{"m":"2024-08","card":3286.5,"wire":2968},{"m":"2024-09","card":2547,"wire":5873.5},{"m":"2024-10","card":2289,"wire":3896},{"m":"2024-11","card":2807,"wire":0},{"m":"2024-12","card":2683,"wire":2807},{"m":"2025-01","card":3647.5,"wire":2229.5},{"m":"2025-02","card":3076,"wire":4000}]
+
+== s7 invoice status pivot by month ==
+[{"m":"2024-02","paid_n":2,"open_n":0},{"m":"2024-03","paid_n":2,"open_n":0},{"m":"2024-04","paid_n":1,"open_n":0},{"m":"2024-05","paid_n":2,"open_n":0},{"m":"2024-06","paid_n":2,"open_n":0},{"m":"2024-07","paid_n":1,"open_n":1},{"m":"2024-08","paid_n":2,"open_n":0},{"m":"2024-09","paid_n":2,"open_n":0},{"m":"2024-10","paid_n":2,"open_n":1},{"m":"2024-11","paid_n":2,"open_n":0},{"m":"2024-12","paid_n":2,"open_n":1},{"m":"2025-01","paid_n":0,"open_n":2},{"m":"2025-02","paid_n":1,"open_n":2}]
+
+== s7 pivot band x status ==
+[{"band":"large","delivered":9,"cancelled":0},{"band":"mid","delivered":35,"cancelled":5},{"band":"small","delivered":8,"cancelled":2}]
+
+== s7 supplier join pivot ==
+[{"region":"APAC","products":6,"out_n":0},{"region":"EU","products":5,"out_n":0},{"region":"LATAM","products":2,"out_n":0},{"region":"US","products":3,"out_n":0}]
+
+== s7 items qty bands ==
+[{"band":"single","n":93},{"band":"bulk","n":89},{"band":"pair","n":69}]
+
+== s7 ledger side pivot ==
+[{"account":"accounts_receivable","debits":86052,"credits":69612},{"account":"cash","debits":69612,"credits":25416},{"account":"operating_expenses","debits":25416,"credits":0},{"account":"sales_revenue","debits":0,"credits":86052}]
+
+== s7 pivot price bands x category ==
+[{"category":"Accessories","under100":3,"over100":0},{"category":"Apparel","under100":2,"over100":0},{"category":"Audio","under100":1,"over100":2},{"category":"Electronics","under100":3,"over100":0},{"category":"Fitness","under100":1,"over100":0},{"category":"Video","under100":1,"over100":1},{"category":"Wearables","under100":1,"over100":1}]
+
+== s8 union labeled money ==
+[{"src":"orders","money":34833.28},{"src":"expenses","money":25416}]
+
+== s8 case label union ==
+[{"bucket":"gone","n":82},{"bucket":"held","n":21},{"bucket":"expenses","n":36}]
+
+== s8 union invoices payments ==
+[{"src":"invoiced","money":86977},{"src":"paid","money":69612}]
+
+== s8 except big products ==
+[]
+
+== s8 intersect cheap sold ==
+[{"id":1},{"id":2},{"id":3},{"id":6},{"id":8},{"id":9},{"id":10},{"id":11},{"id":12},{"id":14},{"id":15},{"id":16}]
+
+== s8 union counts stack ==
+[{"what":"customers","n":16},{"what":"products","n":16},{"what":"orders","n":103},{"what":"suppliers","n":6}]
+
+== s8 case pivot union arms ==
+[{"src":"storefront","good_money":15571.07},{"src":"bills","good_money":66443}]
+
+== s8 region union stack ==
+[{"region":"EU","n":8},{"region":"products:Audio","n":3},{"region":"products:Video","n":2}]
+
+== s8 except delivered big ==
+[{"id":1},{"id":2},{"id":3},{"id":5},{"id":6},{"id":13},{"id":14},{"id":15},{"id":16},{"id":20},{"id":22},{"id":24},{"id":27},{"id":31},{"id":32},{"id":33},{"id":39},{"id":43},{"id":46},{"id":57},{"id":60},{"id":64},{"id":65},{"id":67},{"id":68},{"id":71},{"id":74},{"id":80},{"id":89},{"id":91},{"id":96},{"id":97},{"id":98},{"id":99}]
+
+== s8 intersect pending premium ==
+[{"customer_id":1},{"customer_id":3},{"customer_id":5},{"customer_id":6},{"customer_id":7},{"customer_id":13},{"customer_id":16}]
+
+== s8 union band rows ==
+[{"k":"band:budget","n":8},{"k":"band:standard","n":8},{"k":"cat:Audio","n":3}]
+
+== s8 money compare rows ==
+[{"k":"delivered","money":15571.07},{"k":"cancelled","money":1152.49},{"k":"open","money":18109.72}]

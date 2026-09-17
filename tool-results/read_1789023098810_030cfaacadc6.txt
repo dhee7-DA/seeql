@@ -1,0 +1,691 @@
+     1→     1→"use client";
+     2→     2→
+     3→     3→// Learn shell — app-style left navigation: chapters (modules → lessons),
+     4→     4→// a Practice deck pinned near the top (keyword drills, case files, mixed
+     5→     5→// quiz, data explorer) so the MCQ bank and case studies are unmissable,
+     6→     6→// and a decluttered main stage. Below lg the nav becomes a drawer with a
+     7→     7→// compact top bar — it used to stack above the content and bury everything.
+     8→     8→
+     9→     9→import { useEffect, useMemo, useRef, useState } from "react";
+    10→    10→import { AnimatePresence, motion } from "framer-motion";
+    11→    11→import {
+    12→    12→  ArrowRight,
+    13→    13→  Check,
+    14→    14→  ChevronDown,
+    15→    15→  ChevronsDownUp,
+    16→    16→  ChevronsUpDown,
+    17→    17→  Dumbbell,
+    18→    18→  FileStack,
+    19→    19→  FlaskConical,
+    20→    20→  Flame,
+    21→    21→  GraduationCap,
+    22→    22→  LayoutDashboard,
+    23→    23→  Menu,
+    24→    24→  RotateCcw,
+    25→    25→  Table2,
+    26→    26→  X,
+    27→    27→} from "lucide-react";
+    28→    28→import { LESSONS, MODULES } from "@/lib/curriculum/lessons";
+    29→    29→import { useProgress } from "@/lib/curriculum/progress";
+    30→    30→import { BADGES, currentStreak, levelFor, totalXp } from "@/lib/curriculum/gamification";
+    31→    31→import { drillTotal } from "@/lib/curriculum/drills";
+    32→    32→import { CASES } from "@/lib/curriculum/cases";
+    33→    33→import { cn } from "@/lib/utils";
+    34→    34→import { LessonView } from "./lesson-view";
+    35→    35→import { DataExplorer } from "./data-explorer";
+    36→    36→import { MixedQuiz } from "./mixed-quiz";
+    37→    37→import { CaseFiles } from "./case-files";
+    38→    38→import { DrillYard } from "./drill-yard";
+    39→    39→import { ActivityStrip, MasteryGrid } from "./progress-cards";
+    40→    40→import { CelebrationHost, celebrate } from "./celebrate";
+    41→    41→
+    42→    42→type View =
+    43→    43→  | { kind: "overview" }
+    44→    44→  | { kind: "lesson"; id: string }
+    45→    45→  | { kind: "explorer" }
+    46→    46→  | { kind: "mixed" }
+    47→    47→  | { kind: "cases" }
+    48→    48→  | { kind: "drills" };
+    49→    49→
+    50→    50→type NavKind = Exclude<View["kind"], "lesson">;
+    51→    51→
+    52→    52→interface PracticeItem {
+    53→    53→  kind: NavKind;
+    54→    54→  icon: React.ComponentType<{ className?: string }>;
+    55→    55→  label: string;
+    56→    56→  note: string;
+    57→    57→  count: number | null;
+    58→    58→}
+    59→    59→
+    60→    60→const DRILL_N = drillTotal();
+    61→    61→const CASE_N = CASES.length;
+    62→    62→
+    63→    63→/** Practice surfaces — one registry drives both the sidebar deck and the overview cards. */
+    64→    64→const PRACTICE: PracticeItem[] = [
+    65→    65→  { kind: "drills", icon: Dumbbell, label: "Keyword drills", note: `${DRILL_N} MCQs · six angles per keyword`, count: DRILL_N },
+    66→    66→  { kind: "cases", icon: FileStack, label: "Case files", note: `${CASE_N} real stakeholder queries to rebuild`, count: CASE_N },
+    67→    67→  { kind: "mixed", icon: FlaskConical, label: "Mixed quiz", note: "10 questions drawn from the whole course", count: null },
+    68→    68→  { kind: "explorer", icon: Table2, label: "Data explorer", note: "browse the five live storefront tables", count: 5 },
+    69→    69→];
+    70→    70→
+    71→    71→// ---- Collapsible module state (persisted) -------------------------------
+    72→    72→
+    73→    73→const MODULES_OPEN_KEY = "seeql.modules-open";
+    74→    74→
+    75→    75→function loadOpenModules(): number[] | null {
+    76→    76→  try {
+    77→    77→    const raw = localStorage.getItem(MODULES_OPEN_KEY);
+    78→    78→    if (!raw) return null;
+    79→    79→    const arr = JSON.parse(raw);
+    80→    80→    return Array.isArray(arr) ? arr.filter((n) => typeof n === "number") : null;
+    81→    81→  } catch {
+    82→    82→    return null;
+    83→    83→  }
+    84→    84→}
+    85→    85→
+    86→    86→/** Smooth height-reveal wrapper for module lesson lists. */
+    87→    87→function Collapse({ open, children }: { open: boolean; children: React.ReactNode }) {
+    88→    88→  return (
+    89→    89→    <AnimatePresence initial={false}>
+    90→    90→      {open && (
+    91→    91→        <motion.div
+    92→    92→          key="body"
+    93→    93→          initial={{ height: 0, opacity: 0 }}
+    94→    94→          animate={{ height: "auto", opacity: 1 }}
+    95→    95→          exit={{ height: 0, opacity: 0 }}
+    96→    96→          transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+    97→    97→          className="overflow-hidden"
+    98→    98→        >
+    99→    99→          {children}
+   100→   100→        </motion.div>
+   101→   101→      )}
+   102→   102→    </AnimatePresence>
+   103→   103→  );
+   104→   104→}
+   105→   105→
+   106→   106→function moduleOf(lessonId: string) {
+   107→   107→  return MODULES.find((m) => m.lessons.some((l) => l.id === lessonId));
+   108→   108→}
+   109→   109→
+   110→   110→function useBadgeWatcher() {
+   111→   111→  const xpEvents = useProgress((s) => s.xpEvents);
+   112→   112→  const mcqAttempts = useProgress((s) => s.mcqAttempts);
+   113→   113→  const badges = useProgress((s) => s.badges);
+   114→   114→  const xpByDay = useProgress((s) => s.xpByDay);
+   115→   115→  const dailyGoal = useProgress((s) => s.dailyGoal);
+   116→   116→  const prevLevel = useRef(-1);
+   117→   117→  const ready = useRef(false);
+   118→   118→
+   119→   119→  const xp = useMemo(() => totalXp({ xpEvents }), [xpEvents]);
+   120→   120→  const level = levelFor(xp);
+   121→   121→
+   122→   122→  const ctx = useMemo(() => {
+   123→   123→    const problemsSolved = Object.keys(xpEvents).filter((k) => k.startsWith("solve:")).length;
+   124→   124→    const mcqsCorrect = Object.values(mcqAttempts).filter((a) => a.correct).length;
+   125→   125→    const lessonsDone = Object.keys(xpEvents).filter((k) => k.startsWith("lesson:")).length;
+   126→   126→    const perfectQuizzes = LESSONS.filter((l) =>
+   127→   127→      l.mcqs.every((m) => mcqAttempts[m.id]?.firstTry),
+   128→   128→    ).length;
+   129→   129→    return { lessonsDone, problemsSolved, mcqsCorrect, perfectQuizzes };
+   130→   130→  }, [xpEvents, mcqAttempts]);
+   131→   131→
+   132→   132→  const streak = useMemo(() => currentStreak({ xpByDay, dailyGoal }), [xpByDay, dailyGoal]);
+   133→   133→
+   134→   134→  useEffect(() => {
+   135→   135→    if (!ready.current) {
+   136→   136→      ready.current = true;
+   137→   137→      prevLevel.current = level.index;
+   138→   138→      return;
+   139→   139→    }
+   140→   140→    const store = useProgress.getState();
+   141→   141→    for (const b of BADGES) {
+   142→   142→      if (store.badges[b.id] === undefined && b.test(ctx, xp, streak)) {
+   143→   143→        if (store.unlockBadge(b.id)) {
+   144→   144→          celebrate({ kind: "badge", title: `Badge · ${b.title}`, sub: b.desc });
+   145→   145→        }
+   146→   146→      }
+   147→   147→    }
+   148→   148→    if (level.index > prevLevel.current) {
+   149→   149→      celebrate({ kind: "level", title: `Level up — ${level.title}`, sub: `Rank ${level.index + 1} of 6` });
+   150→   150→      prevLevel.current = level.index;
+   151→   151→    }
+   152→   152→  }, [ctx, xp, streak, level]);
+   153→   153→
+   154→   154→  return { xp, level, streak, ctx };
+   155→   155→}
+   156→   156→
+   157→   157→function RankBlock({ xp, level, streak }: { xp: number; level: ReturnType<typeof levelFor>; streak: number }) {
+   158→   158→  return (
+   159→   159→    <div className="sheen rounded-lg border border-zinc-800 bg-zinc-900/50 p-3.5">
+   160→   160→      <div className="flex items-center justify-between">
+   161→   161→        <span className="font-display text-sm font-semibold text-zinc-100">{level.title}</span>
+   162→   162→        <span className="tnum font-mono text-xs text-emerald-300">{xp.toLocaleString()} XP</span>
+   163→   163→      </div>
+   164→   164→      <div className="bar-shimmer mt-2.5 h-1.5 overflow-hidden rounded-full bg-zinc-800">
+   165→   165→        <div
+   166→   166→          className="h-full rounded-full bg-emerald-400 transition-[width] duration-700 ease-out"
+   167→   167→          style={{ width: `${Math.round(level.pct * 100)}%` }}
+   168→   168→        />
+   169→   169→      </div>
+   170→   170→      <p className="mt-1.5 text-[11px] text-zinc-500">
+   171→   171→        {level.next === null ? "Top rank reached — Query Wizard" : `${(level.next - xp).toLocaleString()} XP to ${titleAfter(level.index)}`}
+   172→   172→      </p>
+   173→   173→      <div className="mt-2.5 flex items-center gap-1.5 border-t border-zinc-800 pt-2.5 text-[11px] text-zinc-400">
+   174→   174→        <Flame className={cn("h-3.5 w-3.5", streak > 0 ? "flame-live text-amber-400" : "text-zinc-600")} />
+   175→   175→        {streak > 0 ? `${streak}-day streak — keep it alive` : "Hit your daily goal to start a streak"}
+   176→   176→      </div>
+   177→   177→    </div>
+   178→   178→  );
+   179→   179→}
+   180→   180→
+   181→   181→function titleAfter(index: number): string {
+   182→   182→  const ladder = ["Query Apprentice", "Analyst I", "Analyst II", "Senior Analyst", "Query Wizard"];
+   183→   183→  return ladder[Math.min(index, ladder.length - 1)];
+   184→   184→}
+   185→   185→
+   186→   186→export function LearnApp() {
+   187→   187→  const [view, setView] = useState<View>({ kind: "overview" });
+   188→   188→  const [navOpen, setNavOpen] = useState(false);
+   189→   189→  const { xp, level, streak, ctx } = useBadgeWatcher();
+   190→   190→  const xpEvents = useProgress((s) => s.xpEvents);
+   191→   191→  const badgesMap = useProgress((s) => s.badges);
+   192→   192→  const resetAll = useProgress((s) => s.resetAll);
+   193→   193→  const [confirmReset, setConfirmReset] = useState(false);
+   194→   194→
+   195→   195→  // Collapsible modules — persisted; defaults to the "continue" module.
+   196→   196→  const nextLesson = LESSONS.find((l) => xpEvents[`lesson:${l.id}`] === undefined) ?? LESSONS[LESSONS.length - 1];
+   197→   197→  const continueModuleNum = moduleOf(nextLesson.id)?.num ?? 1;
+   198→   198→  const [openModules, setOpenModules] = useState<Set<number>>(() => {
+   199→   199→    const saved = loadOpenModules();
+   200→   200→    return new Set(saved ?? [continueModuleNum]);
+   201→   201→  });
+   202→   202→
+   203→   203→  useEffect(() => {
+   204→   204→    try {
+   205→   205→      localStorage.setItem(MODULES_OPEN_KEY, JSON.stringify([...openModules]));
+   206→   206→    } catch {
+   207→   207→      /* private mode — ignore */
+   208→   208→    }
+   209→   209→  }, [openModules]);
+   210→   210→
+   211→   211→  const toggleModule = (num: number) =>
+   212→   212→    setOpenModules((s) => {
+   213→   213→      const n = new Set(s);
+   214→   214→      if (n.has(num)) n.delete(num);
+   215→   215→      else n.add(num);
+   216→   216→      return n;
+   217→   217→    });
+   218→   218→
+   219→   219→  const go = (v: View) => {
+   220→   220→    setView(v);
+   221→   221→    setNavOpen(false);
+   222→   222→    window.scrollTo({ top: 0 });
+   223→   223→  };
+   224→   224→
+   225→   225→  const openLesson = (id: string) => {
+   226→   226→    const mod = moduleOf(id);
+   227→   227→    if (mod) {
+   228→   228→      // Auto-reveal the module that owns the lesson being opened.
+   229→   229→      setOpenModules((s) => (s.has(mod.num) ? s : new Set(s).add(mod.num)));
+   230→   230→    }
+   231→   231→    go({ kind: "lesson", id });
+   232→   232→  };
+   233→   233→
+   234→   234→  const lesson = view.kind === "lesson" ? LESSONS.find((l) => l.id === view.id) ?? null : null;
+   235→   235→  const doneCount = LESSONS.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
+   236→   236→  const totalProblems = LESSONS.reduce((a, l) => a + l.problems.length, 0);
+   237→   237→  const totalMcqs = LESSONS.reduce((a, l) => a + l.mcqs.length, 0);
+   238→   238→  const allOpen = openModules.size === MODULES.length;
+   239→   239→
+   240→   240→  // ---- shared navigation body (desktop sidebar + mobile drawer) ----------
+   241→   241→  const navBody = (inDrawer: boolean) => (
+   242→   242→    <>
+   243→   243→      <div className="shrink-0 border-b border-zinc-800 p-4">
+   244→   244→        <div className="flex items-center justify-between">
+   245→   245→          <div className="flex items-center gap-2">
+   246→   246→            <GraduationCap className="h-4 w-4 text-emerald-400" />
+   247→   247→            <h2 className="font-display text-sm font-semibold text-zinc-100">SeeQL Learn</h2>
+   248→   248→          </div>
+   249→   249→          {inDrawer ? (
+   250→   250→            <button
+   251→   251→              onClick={() => setNavOpen(false)}
+   252→   252→              aria-label="Close menu"
+   253→   253→              className="rounded-md p-1.5 text-zinc-500 transition-colors hover:bg-zinc-900 hover:text-zinc-300"
+   254→   254→            >
+   255→   255→              <X className="h-4 w-4" />
+   256→   256→            </button>
+   257→   257→          ) : (
+   258→   258→            <div className="flex items-center gap-0.5">
+   259→   259→              <button
+   260→   260→                onClick={() => setOpenModules(new Set(MODULES.map((m) => m.num)))}
+   261→   261→                disabled={allOpen}
+   262→   262→                title="Expand all chapters"
+   263→   263→                className="rounded-md p-1.5 text-zinc-500 transition-colors hover:bg-zinc-900 hover:text-zinc-300 disabled:cursor-not-allowed disabled:opacity-30"
+   264→   264→              >
+   265→   265→                <ChevronsUpDown className="h-3.5 w-3.5" />
+   266→   266→              </button>
+   267→   267→              <button
+   268→   268→                onClick={() => setOpenModules(new Set())}
+   269→   269→                disabled={!allOpen}
+   270→   270→                title="Collapse all chapters"
+   271→   271→                className="rounded-md p-1.5 text-zinc-500 transition-colors hover:bg-zinc-900 hover:text-zinc-300 disabled:cursor-not-allowed disabled:opacity-30"
+   272→   272→              >
+   273→   273→                <ChevronsDownUp className="h-3.5 w-3.5" />
+   274→   274→              </button>
+   275→   275→            </div>
+   276→   276→          )}
+   277→   277→        </div>
+   278→   278→        <p className="mt-1 text-[11px] text-zinc-500">
+   279→   279→          {MODULES.length} chapters · {doneCount}/{LESSONS.length} lessons · {totalProblems} graded queries
+   280→   280→        </p>
+   281→   281→        <div className="bar-shimmer mt-3 h-1.5 overflow-hidden rounded-full bg-zinc-800">
+   282→   282→          <div
+   283→   283→            className="h-full rounded-full bg-emerald-400 transition-[width] duration-700 ease-out"
+   284→   284→            style={{ width: `${(doneCount / LESSONS.length) * 100}%` }}
+   285→   285→          />
+   286→   286→        </div>
+   287→   287→      </div>
+   288→   288→
+   289→   289→      <div className="min-h-0 flex-1 overflow-y-auto thin-scrollbar">
+   290→   290→        <div className="shrink-0 p-3 pb-1.5">
+   291→   291→          <RankBlock xp={xp} level={level} streak={streak} />
+   292→   292→        </div>
+   293→   293→
+   294→   294→        {/* course overview row */}
+   295→   295→        <div className="px-3 pb-1">
+   296→   296→          <button
+   297→   297→            onClick={() => go({ kind: "overview" })}
+   298→   298→            className={cn(
+   299→   299→              "flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors",
+   300→   300→              view.kind === "overview" ? "bg-zinc-800" : "hover:bg-zinc-900",
+   301→   301→            )}
+   302→   302→          >
+   303→   303→            <LayoutDashboard className={cn("h-4 w-4 shrink-0", view.kind === "overview" ? "text-emerald-300" : "text-zinc-500")} />
+   304→   304→            <span className="min-w-0">
+   305→   305→              <span className={cn("block truncate text-xs font-medium", view.kind === "overview" ? "text-zinc-100" : "text-zinc-300")}>
+   306→   306→                Course overview
+   307→   307→              </span>
+   308→   308→              <span className="block text-[10px] text-zinc-600">progress, badges &amp; chapters</span>
+   309→   309→            </span>
+   310→   310→          </button>
+   311→   311→        </div>
+   312→   312→
+   313→   313→        {/* PRACTICE — pinned high so the MCQ bank and case studies are unmissable */}
+   314→   314→        <div className="px-3 pb-2 pt-1.5">
+   315→   315→          <p className="mb-1.5 px-1 font-mono text-[10px] uppercase tracking-wider text-zinc-500">Practice</p>
+   316→   316→          <div className="flex flex-col gap-0.5">
+   317→   317→            {PRACTICE.map((t) => (
+   318→   318→              <button
+   319→   319→                key={t.kind}
+   320→   320→                onClick={() => go({ kind: t.kind })}
+   321→   321→                className={cn(
+   322→   322→                  "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors",
+   323→   323→                  view.kind === t.kind ? "bg-zinc-800" : "hover:bg-zinc-900",
+   324→   324→                )}
+   325→   325→              >
+   326→   326→                <t.icon className={cn("h-4 w-4 shrink-0", view.kind === t.kind ? "text-emerald-300" : "text-zinc-500")} />
+   327→   327→                <span className="min-w-0 flex-1">
+   328→   328→                  <span className={cn("block truncate text-xs font-medium", view.kind === t.kind ? "text-zinc-100" : "text-zinc-300")}>
+   329→   329→                    {t.label}
+   330→   330→                  </span>
+   331→   331→                  <span className="block truncate text-[10px] text-zinc-600">{t.note}</span>
+   332→   332→                </span>
+   333→   333→                {t.count !== null && (
+   334→   334→                  <span className="tnum shrink-0 rounded-full border border-emerald-400/30 bg-emerald-400/[0.08] px-1.5 py-0.5 font-mono text-[10px] text-emerald-300">
+   335→   335→                    {t.count}
+   336→   336→                  </span>
+   337→   337→                )}
+   338→   338→              </button>
+   339→   339→            ))}
+   340→   340→          </div>
+   341→   341→        </div>
+   342→   342→
+   343→   343→        {/* CHAPTERS — the course tree */}
+   344→   344→        <div className="px-3 pb-0 pt-1">
+   345→   345→          <p className="mb-1 px-1 font-mono text-[10px] uppercase tracking-wider text-zinc-500">Chapters</p>
+   346→   346→        </div>
+   347→   347→        {MODULES.map((m) => {
+   348→   348→          const mDone = m.lessons.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
+   349→   349→          const open = openModules.has(m.num);
+   350→   350→          const isContinue = m.num === continueModuleNum;
+   351→   351→          const containsActive = view.kind === "lesson" && moduleOf(view.id)?.num === m.num;
+   352→   352→          return (
+   353→   353→            <nav key={m.id} className="border-b border-zinc-800/60 px-3 pb-1.5 pt-2 last:border-b-0">
+   354→   354→              <button
+   355→   355→                onClick={() => toggleModule(m.num)}
+   356→   356→                aria-expanded={open}
+   357→   357→                className="group flex w-full items-center gap-2.5 rounded-md px-1.5 py-2 text-left transition-colors hover:bg-zinc-900"
+   358→   358→              >
+   359→   359→                <span
+   360→   360→                  className={cn(
+   361→   361→                    "flex h-6 w-6 shrink-0 items-center justify-center rounded-md border font-mono text-[10px] font-medium transition-colors",
+   362→   362→                    mDone === m.lessons.length
+   363→   363→                      ? "border-emerald-400/50 bg-emerald-400/10 text-emerald-300"
+   364→   364→                      : containsActive
+   365→   365→                        ? "border-emerald-400/40 text-emerald-300"
+   366→   366→                        : isContinue
+   367→   367→                          ? "border-emerald-400/30 text-emerald-300/90"
+   368→   368→                          : "border-zinc-800 text-zinc-500",
+   369→   369→                  )}
+   370→   370→                >
+   371→   371→                  {mDone === m.lessons.length ? <Check className="h-3 w-3" /> : m.num}
+   372→   372→                </span>
+   373→   373→                <span className="min-w-0 flex-1">
+   374→   374→                  <span
+   375→   375→                    className={cn(
+   376→   376→                      "block truncate text-xs font-medium",
+   377→   377→                      containsActive || mDone === m.lessons.length ? "text-zinc-100" : "text-zinc-300 group-hover:text-zinc-100",
+   378→   378→                    )}
+   379→   379→                  >
+   380→   380→                    {m.title}
+   381→   381→                  </span>
+   382→   382→                  <span className="mt-1.5 block h-0.5 overflow-hidden rounded-full bg-zinc-800">
+   383→   383→                    <span
+   384→   384→                      className="block h-full rounded-full bg-emerald-400/80 transition-[width] duration-500 ease-out"
+   385→   385→                      style={{ width: `${(mDone / m.lessons.length) * 100}%` }}
+   386→   386→                    />
+   387→   387→                  </span>
+   388→   388→                </span>
+   389→   389→                <span className="tnum shrink-0 font-mono text-[10px] text-zinc-600">
+   390→   390→                  {mDone}/{m.lessons.length}
+   391→   391→                </span>
+   392→   392→                <ChevronDown
+   393→   393→                  className={cn(
+   394→   394→                    "h-3.5 w-3.5 shrink-0 text-zinc-600 transition-transform duration-200",
+   395→   395→                    open && "rotate-180 text-zinc-400",
+   396→   396→                  )}
+   397→   397→                />
+   398→   398→              </button>
+   399→   399→
+   400→   400→              <Collapse open={open}>
+   401→   401→                <div className="ml-[16px] mt-0.5 flex flex-col gap-0.5 border-l border-zinc-800/70 pl-2 pb-2">
+   402→   402→                  {m.lessons.map((l) => {
+   403→   403→                    const done = xpEvents[`lesson:${l.id}`] !== undefined;
+   404→   404→                    const active = view.kind === "lesson" && view.id === l.id;
+   405→   405→                    return (
+   406→   406→                      <button
+   407→   407→                        key={l.id}
+   408→   408→                        onClick={() => openLesson(l.id)}
+   409→   409→                        className={cn(
+   410→   410→                          "relative flex items-start gap-2.5 rounded-md px-2.5 py-1.5 text-left transition-colors",
+   411→   411→                          active ? "bg-emerald-400/[0.09]" : "hover:bg-zinc-900",
+   412→   412→                        )}
+   413→   413→                      >
+   414→   414→                        {active && <span className="absolute inset-y-1 left-0 w-0.5 rounded-full bg-emerald-400" />}
+   415→   415→                        <span
+   416→   416→                          className={cn(
+   417→   417→                            "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-medium transition-colors",
+   418→   418→                            done
+   419→   419→                              ? "bg-emerald-400 text-[#052e1c]"
+   420→   420→                              : active
+   421→   421→                                ? "border border-emerald-400/60 text-emerald-200"
+   422→   422→                                : "border border-zinc-700 text-zinc-500",
+   423→   423→                          )}
+   424→   424→                        >
+   425→   425→                          {done ? <Check className="h-2.5 w-2.5" /> : l.num}
+   426→   426→                        </span>
+   427→   427→                        <span className="min-w-0">
+   428→   428→                          <span className={cn("block truncate text-xs font-medium", active ? "text-zinc-50" : done ? "text-zinc-500" : "text-zinc-300")}>
+   429→   429→                            {l.title}
+   430→   430→                          </span>
+   431→   431→                          <span className="block text-[10px] text-zinc-600">{l.minutes} min · {l.problems.length} queries</span>
+   432→   432→                        </span>
+   433→   433→                      </button>
+   434→   434→                    );
+   435→   435→                  })}
+   436→   436→                </div>
+   437→   437→              </Collapse>
+   438→   438→            </nav>
+   439→   439→          );
+   440→   440→        })}
+   441→   441→        <div className="h-2" />
+   442→   442→      </div>
+   443→   443→
+   444→   444→      <div className="shrink-0 border-t border-zinc-800 p-3">
+   445→   445→        {confirmReset ? (
+   446→   446→          <div className="flex items-center justify-between gap-2 text-[11px]">
+   447→   447→            <span className="text-zinc-400">Erase all progress?</span>
+   448→   448→            <span className="flex gap-1.5">
+   449→   449→              <button onClick={() => { resetAll(); setConfirmReset(false); }} className="rounded border border-rose-400/50 px-2 py-1 text-rose-300 hover:bg-rose-400/10">Erase</button>
+   450→   450→              <button onClick={() => setConfirmReset(false)} className="rounded border border-zinc-700 px-2 py-1 text-zinc-400 hover:bg-zinc-900">Keep</button>
+   451→   451→            </span>
+   452→   452→          </div>
+   453→   453→        ) : (
+   454→   454→          <button
+   455→   455→            onClick={() => setConfirmReset(true)}
+   456→   456→            className="flex items-center gap-1.5 text-[11px] text-zinc-600 transition-colors hover:text-zinc-400"
+   457→   457→          >
+   458→   458→            <RotateCcw className="h-3 w-3" /> Reset progress
+   459→   459→          </button>
+   460→   460→        )}
+   461→   461→      </div>
+   462→   462→    </>
+   463→   463→  );
+   464→   464→
+   465→   465→  return (
+   466→   466→    <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-6">
+   467→   467→      <CelebrationHost />
+   468→   468→
+   469→   469→      {/* mobile nav bar — chapters & practice live in the drawer below lg */}
+   470→   470→      <div className="mb-4 flex items-center justify-between gap-3 rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2.5 lg:hidden">
+   471→   471→        <button
+   472→   472→          onClick={() => setNavOpen(true)}
+   473→   473→          aria-label="Open course menu"
+   474→   474→          className="flex items-center gap-2 rounded-md border border-zinc-800 px-2.5 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:bg-zinc-900"
+   475→   475→        >
+   476→   476→          <Menu className="h-4 w-4" /> Menu
+   477→   477→        </button>
+   478→   478→        <div className="flex min-w-0 items-center gap-2">
+   479→   479→          <span className="hidden truncate text-[11px] text-zinc-500 sm:block">SeeQL Learn</span>
+   480→   480→          <div className="h-1 w-20 overflow-hidden rounded-full bg-zinc-800">
+   481→   481→            <div className="h-full rounded-full bg-emerald-400" style={{ width: `${(doneCount / LESSONS.length) * 100}%` }} />
+   482→   482→          </div>
+   483→   483→          <span className="tnum shrink-0 font-mono text-[10px] text-zinc-500">{doneCount}/{LESSONS.length}</span>
+   484→   484→        </div>
+   485→   485→      </div>
+   486→   486→
+   487→   487→      <div className="flex flex-col gap-6 lg:flex-row">
+   488→   488→        {/* desktop sidebar */}
+   489→   489→        {/* Definite height (not max-height): max-h-full on the inner panel is a
+   490→   490→            percentage, which only resolves against a definite parent height —
+   491→   491→            with max-height alone the panel overflows and buries the footer. */}
+   492→   492→        <aside className="hidden w-full shrink-0 lg:sticky lg:top-[76px] lg:block lg:h-[calc(100vh-96px)] lg:w-[300px] lg:self-start">
+   493→   493→          <div className="sheen flex h-full max-h-full flex-col overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950">
+   494→   494→            {navBody(false)}
+   495→   495→          </div>
+   496→   496→        </aside>
+   497→   497→
+   498→   498→        {/* mobile drawer */}
+   499→   499→        <AnimatePresence>
+   500→   500→          {navOpen && (
+   501→   501→            <>
+   502→   502→              <motion.div
+   503→   503→                key="scrim"
+   504→   504→                initial={{ opacity: 0 }}
+   505→   505→                animate={{ opacity: 1 }}
+   506→   506→                exit={{ opacity: 0 }}
+   507→   507→                transition={{ duration: 0.2 }}
+   508→   508→                onClick={() => setNavOpen(false)}
+   509→   509→                className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm lg:hidden"
+   510→   510→                aria-hidden
+   511→   511→              />
+   512→   512→              <motion.aside
+   513→   513→                key="drawer"
+   514→   514→                initial={{ x: "-94%" }}
+   515→   515→                animate={{ x: 0 }}
+   516→   516→                exit={{ x: "-94%" }}
+   517→   517→                transition={{ duration: 0.26, ease: [0.22, 1, 0.36, 1] }}
+   518→   518→                className="fixed inset-y-2 left-2 z-50 w-[312px] max-w-[88vw] lg:hidden"
+   519→   519→                role="dialog"
+   520→   520→                aria-label="Course navigation"
+   521→   521→              >
+   522→   522→                <div className="sheen flex h-full flex-col overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950">
+   523→   523→                  {navBody(true)}
+   524→   524→                </div>
+   525→   525→              </motion.aside>
+   526→   526→            </>
+   527→   527→          )}
+   528→   528→        </AnimatePresence>
+   529→   529→
+   530→   530→        {/* content */}
+   531→   531→        <main className="min-w-0 flex-1 pb-16">
+   532→   532→          {lesson ? (
+   533→   533→            <LessonView key={lesson.id} lesson={lesson} />
+   534→   534→          ) : view.kind === "explorer" ? (
+   535→   535→            <DataExplorer />
+   536→   536→          ) : view.kind === "drills" ? (
+   537→   537→            <DrillYard />
+   538→   538→          ) : view.kind === "mixed" ? (
+   539→   539→            <MixedQuiz />
+   540→   540→          ) : view.kind === "cases" ? (
+   541→   541→            <CaseFiles />
+   542→   542→          ) : (
+   543→   543→            <div className="bg-ambient max-w-3xl">
+   544→   544→              {/* hero */}
+   545→   545→              <div className="flex flex-wrap items-end justify-between gap-4">
+   546→   546→                <div className="min-w-0">
+   547→   547→                  <p className="font-mono text-xs text-zinc-500">{MODULES.length} CHAPTERS · BEGINNER → EXPERT</p>
+   548→   548→                  <h1 className="font-display mt-2 text-3xl font-semibold tracking-[-0.02em] text-zinc-50">The SeeQL course</h1>
+   549→   549→                  <p className="mt-3 max-w-xl text-[15px] leading-7 text-zinc-400">
+   550→   550→                    One real storefront database, three ways to learn it: read the {MODULES.length} chapters, drill{" "}
+   551→   551→                    {DRILL_N} keyword MCQs, then rebuild {CASE_N} real stakeholder queries — plus {totalMcqs} in-lesson
+   552→   552→                    quiz questions and {totalProblems} graded live queries.
+   553→   553→                  </p>
+   554→   554→                </div>
+   555→   555→                <button
+   556→   556→                  onClick={() => openLesson(nextLesson.id)}
+   557→   557→                  className="btn-glow shrink-0 rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300"
+   558→   558→                >
+   559→   559→                  {ctx.lessonsDone > 0 ? `Continue — lesson ${nextLesson.num} →` : "Start learning →"}
+   560→   560→                </button>
+   561→   561→              </div>
+   562→   562→
+   563→   563→              {/* stats */}
+   564→   564→              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+   565→   565→                {[
+   566→   566→                  ["Rank", level.title],
+   567→   567→                  ["Total XP", xp.toLocaleString()],
+   568→   568→                  ["Streak", streak > 0 ? `${streak} days` : "—"],
+   569→   569→                  ["Badges", `${Object.keys(badgesMap).length}/${BADGES.length}`],
+   570→   570→                ].map(([k, v]) => (
+   571→   571→                  <div key={k} className="sheen rounded-lg border border-zinc-800 bg-zinc-950 px-3.5 py-3">
+   572→   572→                    <p className="text-[11px] uppercase tracking-wider text-zinc-500">{k}</p>
+   573→   573→                    <p className="tnum mt-1 truncate text-sm font-medium text-zinc-100">{v}</p>
+   574→   574→                  </div>
+   575→   575→                ))}
+   576→   576→              </div>
+   577→   577→
+   578→   578→              {/* practice — first-class citizens on the dashboard */}
+   579→   579→              <h2 className="font-display mt-8 text-sm font-semibold uppercase tracking-wider text-zinc-400">Practice</h2>
+   580→   580→              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+   581→   581→                {PRACTICE.map((t) => (
+   582→   582→                  <button
+   583→   583→                    key={t.kind}
+   584→   584→                    onClick={() => go({ kind: t.kind })}
+   585→   585→                    className="sheen card-hover group flex items-start gap-3.5 rounded-lg border border-zinc-800 bg-zinc-950 p-4 text-left"
+   586→   586→                  >
+   587→   587→                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900">
+   588→   588→                      <t.icon className="h-4.5 w-4.5 text-emerald-300" />
+   589→   589→                    </span>
+   590→   590→                    <span className="min-w-0 flex-1">
+   591→   591→                      <span className="flex items-center justify-between gap-2">
+   592→   592→                        <span className="font-display text-sm font-semibold text-zinc-100">{t.label}</span>
+   593→   593→                        {t.count !== null && (
+   594→   594→                          <span className="tnum shrink-0 rounded-full border border-emerald-400/30 bg-emerald-400/[0.08] px-2 py-0.5 font-mono text-[11px] text-emerald-300">
+   595→   595→                            {t.count}
+   596→   596→                          </span>
+   597→   597→                        )}
+   598→   598→                      </span>
+   599→   599→                      <span className="mt-1 block text-xs leading-relaxed text-zinc-500">{t.note}</span>
+   600→   600→                    </span>
+   601→   601→                    <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-zinc-700 transition-all group-hover:translate-x-0.5 group-hover:text-emerald-300" />
+   602→   602→                  </button>
+   603→   603→                ))}
+   604→   604→              </div>
+   605→   605→
+   606→   606→              {/* chapters — compact rows; the full tree lives in the left menu */}
+   607→   607→              <h2 className="font-display mt-8 text-sm font-semibold uppercase tracking-wider text-zinc-400">Chapters</h2>
+   608→   608→              <div className="mt-3 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950">
+   609→   609→                {MODULES.map((m, i) => {
+   610→   610→                  const mDone = m.lessons.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
+   611→   611→                  const nextInModule = m.lessons.find((l) => xpEvents[`lesson:${l.id}`] === undefined);
+   612→   612→                  const complete = mDone === m.lessons.length;
+   613→   613→                  return (
+   614→   614→                    <button
+   615→   615→                      key={m.id}
+   616→   616→                      onClick={() => openLesson(nextInModule?.id ?? m.lessons[0].id)}
+   617→   617→                      className={cn(
+   618→   618→                        "flex w-full items-center gap-3.5 px-4 py-3 text-left transition-colors hover:bg-zinc-900/60",
+   619→   619→                        i > 0 && "border-t border-zinc-800/60",
+   620→   620→                      )}
+   621→   621→                    >
+   622→   622→                      <span
+   623→   623→                        className={cn(
+   624→   624→                          "flex h-7 w-7 shrink-0 items-center justify-center rounded-md border font-mono text-[11px]",
+   625→   625→                          complete ? "border-emerald-400/50 bg-emerald-400/10 text-emerald-300" : "border-zinc-800 text-zinc-400",
+   626→   626→                        )}
+   627→   627→                      >
+   628→   628→                        {complete ? <Check className="h-3.5 w-3.5" /> : m.num}
+   629→   629→                      </span>
+   630→   630→                      <span className="min-w-0 flex-1">
+   631→   631→                        <span className="block truncate text-sm font-medium text-zinc-100">{m.title}</span>
+   632→   632→                        <span className="mt-0.5 block text-[11px] text-zinc-500">
+   633→   633→                          {m.level} · {m.lessons.length} lessons · {m.lessons.reduce((a, l) => a + l.problems.length, 0)} graded queries
+   634→   634→                        </span>
+   635→   635→                      </span>
+   636→   636→                      <span className="hidden w-24 shrink-0 sm:block">
+   637→   637→                        <span className="block h-1 overflow-hidden rounded-full bg-zinc-800">
+   638→   638→                          <span
+   639→   639→                            className="block h-full rounded-full bg-emerald-400/80 transition-[width] duration-500 ease-out"
+   640→   640→                            style={{ width: `${(mDone / m.lessons.length) * 100}%` }}
+   641→   641→                          />
+   642→   642→                        </span>
+   643→   643→                      </span>
+   644→   644→                      <span className="tnum w-9 shrink-0 text-right font-mono text-[10px] text-zinc-500">
+   645→   645→                        {mDone}/{m.lessons.length}
+   646→   646→                      </span>
+   647→   647→                      {complete ? (
+   648→   648→                        <span className="shrink-0 text-[10px] font-medium uppercase tracking-wider text-emerald-400">done</span>
+   649→   649→                      ) : (
+   650→   650→                        <ArrowRight className="h-3.5 w-3.5 shrink-0 text-zinc-700" />
+   651→   651→                      )}
+   652→   652→                    </button>
+   653→   653→                  );
+   654→   654→                })}
+   655→   655→              </div>
+   656→   656→
+   657→   657→              {/* activity + mastery */}
+   658→   658→              <div className="mt-6 grid gap-3 lg:grid-cols-2">
+   659→   659→                <ActivityStrip />
+   660→   660→                <MasteryGrid onOpenLesson={openLesson} />
+   661→   661→              </div>
+   662→   662→
+   663→   663→              {/* badges */}
+   664→   664→              <div className="sheen mt-6 rounded-lg border border-zinc-800 bg-zinc-950 p-4">
+   665→   665→                <h3 className="font-display text-sm font-semibold text-zinc-100">Badges</h3>
+   666→   666→                <div className="mt-3 flex flex-wrap gap-2">
+   667→   667→                  {BADGES.map((b) => {
+   668→   668→                    const earned = badgesMap[b.id] !== undefined;
+   669→   669→                    return (
+   670→   670→                      <span
+   671→   671→                        key={b.id}
+   672→   672→                        title={b.desc}
+   673→   673→                        className={cn(
+   674→   674→                          "rounded-md border px-2.5 py-1 text-[11px]",
+   675→   675→                          earned ? "border-amber-400/50 bg-amber-400/10 text-amber-200" : "border-zinc-800 text-zinc-600",
+   676→   676→                        )}
+   677→   677→                      >
+   678→   678→                        {earned ? b.title : "· · ·"}
+   679→   679→                      </span>
+   680→   680→                    );
+   681→   681→                  })}
+   682→   682→                </div>
+   683→   683→              </div>
+   684→   684→            </div>
+   685→   685→          )}
+   686→   686→        </main>
+   687→   687→      </div>
+   688→   688→    </div>
+   689→   689→  );
+   690→   690→}
+   691→   691→

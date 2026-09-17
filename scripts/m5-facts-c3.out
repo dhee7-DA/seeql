@@ -1,0 +1,80 @@
+sqlite {
+  v: "3.53.0",
+}
+
+== supplier rating rank + ties
+[{"name":"Alpine Audio GmbH","rating":4.8,"rk":1},{"name":"Nordic Gadgets AB","rating":4.6,"rk":2},{"name":"Midwest Hardware Co","rating":4.4,"rk":3},{"name":"Shenzhen Electro","rating":4.1,"rk":4},{"name":"Andes Naturals SA","rating":4,"rk":5},{"name":"Pacific Textiles","rating":3.9,"rk":6}]
+
+== supplier rating tie census
+[]
+
+== ntile4 orders spans
+[{"tile":1,"n":26,"mn":489.33,"mx":1088.44},{"tile":2,"n":26,"mn":285.1,"mx":450.12},{"tile":3,"n":26,"mn":136.11,"mx":283.12},{"tile":4,"n":25,"mn":25.47,"mx":135.24}]
+
+== spend league top3 + bottom
+[{"name":"Alice Chen","spend":7262.35,"rk":1},{"name":"Emma Wilson","spend":6640.56,"rk":2},{"name":"Olivia Brown","spend":444.8,"rk":16}]
+
+== month spend ranked top3+bottom
+[{"mon":"2024-01","spend":3731.97,"rk":1},{"mon":"2024-02","spend":3609.64,"rk":2},{"mon":"2024-09","spend":3116.04,"rk":3},{"mon":"2024-07","spend":1193.86,"rk":14}]
+
+== region spend winners
+[{"region":"APAC","name":"Grace Kim","s":4574.23,"rk":1},{"region":"EU","name":"Alice Chen","s":7262.35,"rk":1},{"region":"LATAM","name":"Bruno Silva","s":852.44,"rk":1},{"region":"US","name":"Emma Wilson","s":6640.56,"rk":1}]
+
+== region spend rk2
+[{"region":"APAC","name":"Maya Patel","s":3644.56},{"region":"EU","name":"Chloe Dubois","s":2667.93},{"region":"US","name":"Jamal Wright","s":645.6}]
+
+== ntile2 EU spenders tile2
+[{"name":"Noah Meyer","s":737.68,"tile":2},{"name":"Liam O'Brien","s":705.39,"tile":2},{"name":"Dmitri Volkov","s":599.26,"tile":2},{"name":"Olivia Brown","s":444.8,"tile":2}]
+
+== top-2 orders per region
+[{"region":"APAC","id":74,"total":1088.44,"rn":1},{"region":"APAC","id":15,"total":826.03,"rn":2},{"region":"EU","id":43,"total":945.21,"rn":1},{"region":"EU","id":3,"total":767.64,"rn":2},{"region":"LATAM","id":6,"total":752.96,"rn":1},{"region":"LATAM","id":23,"total":99.48,"rn":2},{"region":"US","id":39,"total":845.92,"rn":1},{"region":"US","id":57,"total":785.79,"rn":2}]
+
+== invoice top3
+[{"id":25,"number":"INV-2025-025","amount":6148,"rk":1},{"id":19,"number":"INV-2024-019","amount":5614,"rk":2},{"id":5,"number":"INV-2024-005","amount":5284,"rk":3}]
+
+== ledger account nets ranked
+[{"account":"sales_revenue","net":-86052,"rk":1},{"account":"cash","net":44196,"rk":2},{"account":"operating_expenses","net":25416,"rk":3},{"account":"accounts_receivable","net":16440,"rk":4}]
+
+== customers oldest 3
+[{"name":"Alice Chen","created_at":"2023-11-02","rk":1},{"name":"Bruno Silva","created_at":"2023-11-17","rk":2},{"name":"Chloe Dubois","created_at":"2023-12-05","rk":3}]
+
+== pending top2
+[{"id":74,"total":1088.44,"rk":1},{"id":43,"total":945.21,"rk":2}]
+
+== cheapest 5 orders
+[{"id":51,"total":25.47,"rn":1},{"id":72,"total":30.24,"rn":2},{"id":49,"total":32.01,"rn":3},{"id":53,"total":39.39,"rn":4},{"id":59,"total":44.48,"rn":5}]
+
+== supplier product counts
+[{"name":"Midwest Hardware Co","n":3,"rk":1,"drk":1},{"name":"Nordic Gadgets AB","n":3,"rk":1,"drk":1},{"name":"Pacific Textiles","n":3,"rk":1,"drk":1},{"name":"Shenzhen Electro","n":3,"rk":1,"drk":1},{"name":"Alpine Audio GmbH","n":2,"rk":5,"drk":2},{"name":"Andes Naturals SA","n":2,"rk":5,"drk":2}]
+
+== order-count ladder compact
+[{"n":24,"ties":1},{"n":17,"ties":1},{"n":14,"ties":1},{"n":13,"ties":1},{"n":5,"ties":1},{"n":4,"ties":4},{"n":3,"ties":2},{"n":2,"ties":3},{"n":1,"ties":2}]
+
+== invoice count ladder
+[{"name":"Alice Chen","n":5,"rk":1,"drk":1},{"name":"Emma Wilson","n":4,"rk":2,"drk":2},{"name":"Maya Patel","n":4,"rk":2,"drk":2},{"name":"Grace Kim","n":3,"rk":4,"drk":3},{"name":"Isabella Rossi","n":3,"rk":4,"drk":3},{"name":"Jamal Wright","n":2,"rk":6,"drk":4},{"name":"Liam O'Brien","n":2,"rk":6,"drk":4},{"name":"Olivia Brown","n":2,"rk":6,"drk":4},{"name":"Chloe Dubois","n":1,"rk":9,"drk":5},{"name":"Hiro Tanaka","n":1,"rk":9,"drk":5},{"name":"Pedro Alvarez","n":1,"rk":9,"drk":5}]
+
+== ntile4 products price spans
+[{"tile":1,"n":4,"mn":119,"mx":199.99},{"tile":2,"n":4,"mn":59.99,"mx":89.99},{"tile":3,"n":4,"mn":34.5,"mx":49},{"tile":4,"n":4,"mn":14.99,"mx":32}]
+
+== ntile4 stock spans
+[{"tile":1,"n":4,"mn":260,"mx":500},{"tile":2,"n":4,"mn":150,"mx":220},{"tile":3,"n":4,"mn":85,"mx":120},{"tile":4,"n":4,"mn":40,"mx":70}]
+
+== ntile4 expense months
+ 8 | const COPY = ".m5c3.db";
+ 9 | rmSync(COPY, { force: true });
+10 | copyFileSync("db/custom.db", COPY);
+11 | const db = new Database(COPY, { readonly: true });
+12 | 
+13 | const q = (sql: string) => db.query(sql).all();
+                                   ^
+SQLiteError: no such column: mon
+      errno: 1,
+ byteOffset: 7,
+
+      at prepare (bun:sqlite:345:37)
+      at query (bun:sqlite:367:28)
+      at q (/home/z/my-project/scripts/m5-facts-c3.ts:13:31)
+      at show (/home/z/my-project/scripts/m5-facts-c3.ts:16:30)
+      at /home/z/my-project/scripts/m5-facts-c3.ts:41:1
+
+Bun v1.3.14 (Linux x64 baseline)

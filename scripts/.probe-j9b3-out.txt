@@ -1,0 +1,102 @@
+--- cs-309 substitutions (correct = 3 rows) ---
+309 correct -> 3 rows [{"ticket":33,"buyer":"Emma Wilson","pair_paid":624.66,"total":624.66},{"ticket":81,"buyer":"Dmitri Volkov","pair_paid":164.17,"total":164.17},{"ticket":100,"buyer":"Alice Chen","pair_paid":125.88,"total":125.88}]
+309 {2}=p2.amount -> 0 rows []
+309 {2}=p1.id <= p2.id -> 0 rows []
+309 {2}=p1.id <> p2.id -> 0 rows []
+309 {3}=p2.amount -> 97 rows 
+309 {3}=p1.id -> 97 rows 
+309 {3}=p2.order_id -> 97 rows 
+309 {1}=p1.id <= p2.id -> 3 rows [{"ticket":33,"buyer":"Emma Wilson","pair_paid":1,"total":624.66},{"ticket":81,"buyer":"Dmitri Volkov","pair_paid":1,"total":164.17},{"ticket":100,"buyer":"Alice Chen","pair_paid":1,"total":125.88}]
+309 {1}=p1.id <> p2.id -> 3 rows [{"ticket":33,"buyer":"Emma Wilson","pair_paid":1,"total":624.66},{"ticket":81,"buyer":"Dmitri Volkov","pair_paid":1,"total":164.17},{"ticket":100,"buyer":"Alice Chen","pair_paid":1,"total":125.88}]
+309 payments where amount = order_id -> 1 rows [{"COUNT(*)":0}]
+--- cs-310 substitutions (correct = 1 row Alice 27.17) ---
+310 correct -> 1 rows [{"account":"Alice Chen","first_touch":"social","first_spend":21.17,"second_touch":"retargeting","second_spend":6,"double_spend":27.17}]
+310 {2}=a1.id <= a2.id (AMBIG RISK) -> 1 rows [{"account":"Alice Chen","first_touch":"social","first_spend":21.17,"second_touch":"retargeting","second_spend":6,"double_spend":27.17}]
+310 {2}=a1.id <> a2.id -> 2 rows [{"account":"Alice Chen","first_touch":"social","first_spend":21.17,"second_touch":"retargeting","second_spend":6,"double_spend":27.17},{"account":"Alice Chen","first_touch":"retargeting","first_spend":6,"second_touch":"social","second_spend":21.17,"double_spend":27.17}]
+310 {2}=a1.id = a2.id -> 0 rows []
+310 {2}=a1.spend (truthy) -> 2 rows [{"account":"Alice Chen","first_touch":"social","first_spend":21.17,"second_touch":"retargeting","second_spend":6,"double_spend":27.17},{"account":"Alice Chen","first_touch":"retargeting","first_spend":6,"second_touch":"social","second_spend":21.17,"double_spend":27.17}]
+310 {2}=a2.channel (falsy text) -> 0 rows []
+310 no-where bare -> 1 rows [{"account":"Alice Chen","first_touch":"social","first_spend":21.17,"second_touch":"retargeting","second_spend":6,"double_spend":27.17}]
+--- cs-311 substitutions (correct = 2 rows: Alice 276, Emma 136) ---
+311 correct -> 2 rows [{"account":"Alice Chen","repeat_pairs":276,"first_order":3,"latest_order":101},{"account":"Emma Wilson","repeat_pairs":136,"first_order":5,"latest_order":97}]
+311 {3}=MAX(o1.id) -> 4 rows [{"account":"Alice Chen","repeat_pairs":276,"first_order":3,"latest_order":101},{"account":"Emma Wilson","repeat_pairs":136,"first_order":5,"latest_order":97},{"account":"Grace Kim","repeat_pairs":91,"first_order":9,"latest_order":92},{"account":"Maya Patel","repeat_pairs":78,"first_order":2,"latest_order":103}]
+311 {3}=MIN(o2.id) -> 4 rows [{"account":"Alice Chen","repeat_pairs":276,"first_order":3,"latest_order":101},{"account":"Emma Wilson","repeat_pairs":136,"first_order":5,"latest_order":97},{"account":"Grace Kim","repeat_pairs":91,"first_order":9,"latest_order":92},{"account":"Maya Patel","repeat_pairs":78,"first_order":2,"latest_order":103}]
+311 {3}=COUNT(o2.id) -> 14 rows 
+311 {3}=o1.id <= o2.id (weird) -> 14 rows 
+311 {3}=10 -> 5 rows 
+311 {3}=276 -> 1 rows [{"account":"Alice Chen","repeat_pairs":276,"first_order":3,"latest_order":101}]
+311 {2}=o1.id <= o2.id -> 3 rows [{"account":"Alice Chen","repeat_pairs":300,"first_order":3,"latest_order":101},{"account":"Emma Wilson","repeat_pairs":153,"first_order":5,"latest_order":97},{"account":"Grace Kim","repeat_pairs":105,"first_order":9,"latest_order":92}]
+311 {2}=o1.id <> o2.id -> 4 rows [{"account":"Alice Chen","repeat_pairs":552,"first_order":3,"latest_order":101},{"account":"Emma Wilson","repeat_pairs":272,"first_order":5,"latest_order":97},{"account":"Grace Kim","repeat_pairs":182,"first_order":9,"latest_order":92},{"account":"Maya Patel","repeat_pairs":156,"first_order":2,"latest_order":103}]
+311 {2}=o1.id > o2.id -> 2 rows [{"account":"Alice Chen","repeat_pairs":276,"first_order":7,"latest_order":100},{"account":"Emma Wilson","repeat_pairs":136,"first_order":8,"latest_order":96}]
+311 {1}=MAX(o1.id) -> 2 rows [{"account":"Alice Chen","repeat_pairs":276,"first_order":100,"latest_order":101},{"account":"Emma Wilson","repeat_pairs":136,"first_order":96,"latest_order":97}]
+311 {1}=MIN(o2.id) -> 2 rows [{"account":"Alice Chen","repeat_pairs":276,"first_order":7,"latest_order":101},{"account":"Emma Wilson","repeat_pairs":136,"first_order":8,"latest_order":97}]
+311 {1}=COUNT(o2.id) -> 2 rows [{"account":"Alice Chen","repeat_pairs":276,"first_order":276,"latest_order":101},{"account":"Emma Wilson","repeat_pairs":136,"first_order":136,"latest_order":97}]
+311 {1}=10 -> 2 rows [{"account":"Alice Chen","repeat_pairs":276,"first_order":10,"latest_order":101},{"account":"Emma Wilson","repeat_pairs":136,"first_order":10,"latest_order":97}]
+311 {2}=MIN(o1.id) agg in ON (error?) -> ERROR: misuse of aggregate: MIN()
+--- cs-312 substitutions (correct = 2 rows: Liam 20, Olivia 91) ---
+312 correct -> 2 rows [{"account":"Liam O'Brien","only_ticket":20,"ticket_total":705.39},{"account":"Olivia Brown","only_ticket":91,"ticket_total":444.8}]
+312 {2}=RIGHT -> 0 rows []
+312 {2}=CROSS -> 0 rows []
+312 {2}=INNER -> 0 rows []
+312 {3}=o2.id > o1.id -> 16 rows 
+312 {3}=o2.id = o1.id -> 0 rows []
+312 {3}=o2.id < o1.id -> 16 rows 
+312 {3}=o1.total (truthy) -> 0 rows []
+312 {4}=o1.id -> 0 rows []
+312 {4}=o1.total -> 0 rows []
+312 {4}=c.id -> 0 rows []
+312 {4}=o2.id > o1.id (parse risk) -> 2 rows [{"account":"Liam O'Brien","only_ticket":20,"ticket_total":705.39},{"account":"Olivia Brown","only_ticket":91,"ticket_total":444.8}]
+312 {1}=o2.id -> 2 rows [{"account":"Liam O'Brien","only_ticket":null,"ticket_total":705.39},{"account":"Olivia Brown","only_ticket":null,"ticket_total":444.8}]
+312 {1}=c.id -> 2 rows [{"account":"Liam O'Brien","only_ticket":12,"ticket_total":705.39},{"account":"Olivia Brown","only_ticket":15,"ticket_total":444.8}]
+312 {1}=o2.customer_id -> 2 rows [{"account":"Liam O'Brien","only_ticket":null,"ticket_total":705.39},{"account":"Olivia Brown","only_ticket":null,"ticket_total":444.8}]
+--- cs-313 substitutions (correct = 3 rows) ---
+313 correct -> 3 rows [{"ticket":6,"buyer":"Bruno Silva","claim_one":324.9,"claim_two":76.72,"pair_paid":401.62,"total":752.96},{"ticket":55,"buyer":"Alice Chen","claim_one":49.48,"claim_two":12.04,"pair_paid":61.52,"total":113.66},{"ticket":86,"buyer":"Alice Chen","claim_one":58.39,"claim_two":15.83,"pair_paid":74.22,"total":116.28}]
+313 {3}=r1.id -> 0 rows []
+313 {3}=r2.amount -> 0 rows []
+313 {3}=r1.id + r2.id -> 0 rows []
+313 {3}=r1.reason -> 0 rows []
+313 {3}=r2.order_id -> 300 rows 
+313 {1}=r2.amount -> 3 rows [{"ticket":6,"buyer":"Bruno Silva","claim_one":76.72,"claim_two":76.72,"pair_paid":401.62,"total":752.96},{"ticket":55,"buyer":"Alice Chen","claim_one":12.04,"claim_two":12.04,"pair_paid":61.52,"total":113.66},{"ticket":86,"buyer":"Alice Chen","claim_one":15.83,"claim_two":15.83,"pair_paid":74.22,"total":116.28}]
+313 {1}=o.total -> 3 rows [{"ticket":6,"buyer":"Bruno Silva","claim_one":752.96,"claim_two":76.72,"pair_paid":401.62,"total":752.96},{"ticket":55,"buyer":"Alice Chen","claim_one":113.66,"claim_two":12.04,"pair_paid":61.52,"total":113.66},{"ticket":86,"buyer":"Alice Chen","claim_one":116.28,"claim_two":15.83,"pair_paid":74.22,"total":116.28}]
+313 {1}=r1.reason -> 3 rows [{"ticket":6,"buyer":"Bruno Silva","claim_one":"damaged","claim_two":76.72,"pair_paid":401.62,"total":752.96},{"ticket":55,"buyer":"Alice Chen","claim_one":"late_delivery","claim_two":12.04,"pair_paid":61.52,"total":113.66},{"ticket":86,"buyer":"Alice Chen","claim_one":"damaged","claim_two":15.83,"pair_paid":74.22,"total":116.28}]
+313 {2}=o.total -> 3 rows [{"ticket":6,"buyer":"Bruno Silva","claim_one":324.9,"claim_two":76.72,"pair_paid":752.96,"total":752.96},{"ticket":55,"buyer":"Alice Chen","claim_one":49.48,"claim_two":12.04,"pair_paid":113.66,"total":113.66},{"ticket":86,"buyer":"Alice Chen","claim_one":58.39,"claim_two":15.83,"pair_paid":116.28,"total":116.28}]
+313 {2}=r2.amount - r1.amount -> 3 rows [{"ticket":6,"buyer":"Bruno Silva","claim_one":324.9,"claim_two":76.72,"pair_paid":-248.18,"total":752.96},{"ticket":55,"buyer":"Alice Chen","claim_one":49.48,"claim_two":12.04,"pair_paid":-37.44,"total":113.66},{"ticket":86,"buyer":"Alice Chen","claim_one":58.39,"claim_two":15.83,"pair_paid":-42.56,"total":116.28}]
+313 {2}=r1.id + r2.id -> 3 rows [{"ticket":6,"buyer":"Bruno Silva","claim_one":324.9,"claim_two":76.72,"pair_paid":5,"total":752.96},{"ticket":55,"buyer":"Alice Chen","claim_one":49.48,"claim_two":12.04,"pair_paid":21,"total":113.66},{"ticket":86,"buyer":"Alice Chen","claim_one":58.39,"claim_two":15.83,"pair_paid":39,"total":116.28}]
+--- cs-314 substitutions (correct = 14 rows) ---
+314 correct -> 14 rows 
+314 {2}=p1.id -> 10 rows 
+314 {2}=p2.id -> 15 rows 
+314 {2}=p2.price -> 0 rows []
+314 {2}=p1.price - p2.price -> 0 rows []
+314 {2}=p1.category -> 0 rows []
+314 {2}=p2.price - p1.price -> 0 rows []
+314 {1}=p2.price -> 14 rows 
+314 {1}=p1.id -> 14 rows 
+314 {1}=p2.id -> 14 rows 
+314 {1}=p1.price - p2.price -> 14 rows 
+314 {1}=p2.price - p1.price -> 14 rows 
+--- cs-315 substitutions (correct = 5 rows) ---
+315 correct -> 5 rows 
+315 {2}=e.id -> 5 rows 
+315 {2}=m.id -> 50 rows 
+315 {2}=m.manager_id -> 0 rows []
+315 {2}='lead' -> 2 rows [{"manager":"Sofia Marin","manager_role":"manager","report":"Marcus Hale","report_role":"lead"},{"manager":"Daniel Okoye","manager_role":"manager","report":"Aiko Yamada","report_role":"lead"}]
+315 {2}=rep unquoted in {3} -> ERROR: no such column: rep
+315 {3}='manager' -> 0 rows []
+315 {3}=e.name -> 0 rows []
+315 {3}=e.id -> 0 rows []
+315 {3}=m.id -> 0 rows []
+315 {3}=m.manager_id -> 0 rows []
+315 {1}=e.name -> 5 rows 
+315 {1}=m.id -> 5 rows 
+315 {1}=m.manager_id -> 5 rows 
+--- cs-316 substitutions (correct = 8 rows) ---
+316 correct -> 8 rows 
+316 {2}=o1.status -> 212 rows 
+316 {2}=o1.total -> 0 rows []
+316 {2}=pending unquoted -> ERROR: no such column: pending
+316 {1}=o1.status -> 8 rows 
+316 {1}=o2.status -> 8 rows 
+316 {1}=o1.id + o2.id -> 8 rows 
+
+(probe copy deleted)

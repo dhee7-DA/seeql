@@ -1,0 +1,746 @@
+     1→# Worklog
+     2→
+     3→---
+     4→Task ID: 1
+     5→Agent: Super Z (main agent)
+     6→Task: Build a SQL query visualizer webapp (Type 3 — Interactive Web Development)
+     7→
+     8→Work Log:
+     9→- Initialized fullstack environment via init script (Next.js 16 + TypeScript + Tailwind 4 + shadcn/ui)
+    10→- Installed node-sql-parser@5.4.0; repaired corrupted @prisma/get-platform with `bun install --force` after postinstall failure
+    11→- Probed real AST node shapes of node-sql-parser v5.4.0 via scripts/inspect-ast.ts (column_ref nested objects, groupby:{columns}, object-form CTE names, window_func, limit {seperator:'offset'}, {tableList,columnList,ast} subquery wrappers)
+    12→- Built src/lib/sql-parser.ts — defensive AST walker: exprToString (columns, aggr/window/scalar funcs, CASE, CAST, IN lists, INTERVAL, subqueries), condition flattening, table/join extraction with alias resolution, CTE summarization, DISTINCT/set-op/limit/offset handling, complexity scoring
+    13→- Validated engine with scripts/test-parser.ts against 8 cases (joins, star schema, CTE+window, UNION, correlated subquery, UPDATE, syntax error)
+    14→- Built src/app/api/parse/route.ts (POST {sql, dialect} → QueryPlan | error, dialect whitelist)
+    15→- Built src/lib/sql-types.ts (client-safe types + DIALECTS const), src/lib/samples.ts (6 samples)
+    16→- Built src/components/sql-editor.tsx — overlay technique editor (transparent textarea over highlighted pre), line-number gutter, scroll sync, Tab→spaces, Ctrl/⌘+Enter
+    17→- Built src/components/pipeline-view.tsx — 10-step logical execution timeline (WITH→FROM→JOIN→WHERE→GROUP BY→HAVING→SELECT→DISTINCT→ORDER BY→LIMIT) with framer-motion stagger, "not used" states, content chips
+    18→- Built src/components/joins-view.tsx — SVG entity diagram: draggable table/CTE/derived cards with selected columns, bezier join edges colored by join type with label chips, hover dim/highlight, hub-spoke / side-by-side auto-layout, legend
+    19→- Built src/components/breakdown-view.tsx — clause cards (SELECT w/ AGG+table badges, FROM & JOINS w/ ON conditions, WHERE/GROUP BY/HAVING, ORDER BY direction, LIMIT/OFFSET, CTEs, set ops, flags)
+    20→- Rewrote src/app/page.tsx — header (sample select, dialect select, Visualize), stats chip row, 4 tabs, error card with hint, loading/empty states, sticky footer
+    21→- Set html.dark in layout.tsx, new metadata; added scrollbar CSS to globals.css
+    22→- Browser-verified with agent-browser: desktop/mobile render, all 4 tabs, sample loading, error state, node dragging, hover highlighting; fixed 2 bugs found (framer-motion scale clobbering SVG transform → wrapped positioning g outside motion.g; unqualified columns not attributed to single-table scope)
+    23→
+    24→Stage Summary:
+    25→- Deliverable: SQL Visualizer at / (single route) + /api/parse
+    26→- Key files: src/lib/sql-parser.ts, src/app/api/parse/route.ts, src/components/{sql-editor,pipeline-view,joins-view,breakdown-view}.tsx, src/app/page.tsx
+    27→- Lint clean; dev server 200; browser console clean; all samples parse correctly
+    28→
+    29→---
+    30→Task ID: 2
+    31→Agent: Super Z (main agent)
+    32→Task: Extend SQL Visualizer with real query execution, results, EXPLAIN plan, parse tree and schema ERD
+    33→
+    34→Work Log:
+    35→- Redesigned prisma/schema.prisma with 5 mapped models (customers, suppliers, products, orders, order_items) and pushed via db:push
+    36→- Built src/lib/sample-db.ts: raw DDL + deterministic LCG-seeded dataset (16 customers, 6 suppliers, 16 products, ~103 orders, ~250 order_items, power-buyer weighting), ensureDatabase()/resetDatabase() lifecycle
+    37→- Built /api/query route: single-statement scanner (quote/comment aware), $queryRawUnsafe for reads / $executeRawUnsafe for writes, BigInt/Date/Buffer cell normalization, 1000-row payload cap, EXPLAIN QUERY PLAN capture, friendly SQLite error hints (Prisma boilerplate stripped)
+    38→- Built /api/reset (drop+recreate+reseed) and /api/stats (live row counts)
+    39→- Built src/lib/ast-tree.ts: defensive AST→TreeNode converter with dedicated handling for select clauses, sqlite {expr,as} column items (no type wrapper!), FROM/JOIN entries with ON text, CTEs, window functions, CASE, set ops, subquery wrapper unwrap, node/depth budget caps; wired into /api/parse response as tree
+    40→- Built components: results-view (sticky header, zebra rows, NULL styling, numeric right-align, CSV copy/download, render cap + show-all, write-statement success banner), plan-view (id/parent tree build, SCAN/SEARCH/SUBQUERY icons), parse-tree-view (collapsible branches, type-colored badges, legend), schema-view (SVG bezier FK edges with 1—N labels, hover highlight/dim, live row counts, click table → SELECT * query)
+    41→- Rewrote page.tsx: Run button fires parse+execute in parallel, results section with Results/Plan sub-tabs, Reset database action, localStorage query history dropdown, Schema tab click-through, updated footer/metadata; all 7 samples rewritten to runnable SQLite (DATE_TRUNC→strftime, users→customers)
+    42→- Fixed 3 bugs found in browser verification: lowercase <icon> JSX tag treated as DOM element; sqlite column items rendering as generic "node" in parse tree; sparse join-agg seed data returning 0 rows for HAVING > 5
+    43→- Verified via agent-browser: desktop + mobile render, all 6 tabs, sample switching, Ctrl+Enter, UPDATE statement, error states (parse + execution), history persistence, reset; zero console errors; lint clean
+    44→
+    45→Stage Summary:
+    46→- App now parses AND executes: structure visualizations + live SQLite results + engine plan + AST tree + ERD
+    47→- Key new files: src/lib/{sample-db,ast-tree,schema-meta}.ts, src/app/api/{query,reset,stats}/route.ts, src/components/{results-view,plan-view,parse-tree-view,schema-view}.tsx
+    48→- All 7 samples parse and execute successfully; verified screenshots in scripts/verify-*.png
+    49→
+    50→---
+    51→Task ID: 11
+    52→Agent: Super Z (main agent)
+    53→Task: INCIDENT RECOVERY + "no AI slop" redesign — workspace had been reset to the Aug 28 snapshot (learn module, landing, themes all lost); rebuilt the product on the surviving playground/db foundation with a flat design language
+    54→
+    55→Work Log:
+    56→- Diagnosed the reset: git history + .next cache only contained the old Task-1/2-era source; nothing recoverable. sample-db.ts, /api/query, sql-parser and the 4-tab playground survived.
+    57→- Design pivot per user feedback ("dislike gradient ai slop"): zero gradients/glows/confetti anywhere — solid surfaces, hairline 1px borders, one accent per theme, flat toasts.
+    58→- Theme system v2: src/lib/themes.ts registry (5 themes: Carbon/sleek dark default, Paper/classic light, Marine/modern navy dark, Oxblood/statement warm dark, Gallery/minimal white+persimmon light) + globals.css engine redefining zinc/emerald/teal ramps + shadcn tokens per theme class. Light themes INVERT the zinc ramp by role — including zinc-50/100 which are bright-TEXT roles on dark and therefore invert to near-ink (first attempt mapped them light and headings vanished; caught in browser QA and fixed).
+    59→- brand.tsx: solid flat mark (accent rounded square, ink lens + data rows — no gradient); Wordmark pinned to text-zinc-100 so it reads on all themes; icon.svg favicon.
+    60→- theme-switcher.tsx: flat 3-cell solid swatches, useSyncExternalStore over seeql:theme-change event bus, persists seeql-theme-v1; layout.tsx boot script applies theme class + dark toggle pre-paint (no FOUC).
+    61→- Curriculum engine: types.ts (Lesson/Block/Mcq/Problem/ExpectedResult), gamification.ts (XP economy, 6-rank ladder 0/400/1000/1800/2800/4000, DAILY_GOALS, 8 badges, currentStreak), progress.ts zustand persist under the SAME key sql-visualizer-learn-v1 (returning users keep XP), idempotent xpEvents ledger + xpByDay buckets.
+    62→- DB: added nullable orders.shipped_at (pending/cancelled stay NULL) so the NULL lesson teaches on real holes; LCG seed otherwise unchanged (103 orders / 251 items / 16 customers / 16 products / 6 suppliers).
+    63→- Content: 8 lessons (tables&keys, SELECT/FROM, WHERE, NULL, ORDER BY/LIMIT, DISTINCT, aggregates, GROUP BY/HAVING) — prose + runnable code + diagrams + 32 MCQs + 28 graded problems. scripts/gen-expected.ts resets db, runs every solution, writes src/lib/curriculum/expected.ts (28/28 OK, 0 failures) and prints facts used to keep diagrams/prose honest (103 orders, 65 over 200, 21 unshipped, statuses 52/30/14/7, top order #74 1088.44…).
+    64→- Learn UI: learn-app.tsx (sidebar: module progress, rank block, streak, lesson nav, reset; overview: stats, badge wall, resume CTA; badge/level watcher), lesson-view.tsx (Learn/Quiz/Practice tabs, inline "Run here" code blocks, lesson-complete +50 XP), mcq.tsx (+5 XP, +3 first-try), problem-runner.tsx (SqlEditor + /api/query + order-aware grading, hints, solution unlock after 3 runs), result-grid.tsx, celebrate.tsx (FLAT toasts, no confetti), rich.tsx (**bold**/`code`), diagrams.tsx (9 flat animated figures incl. l8 two-gate HAVING relay with stepper).
+    65→- Landing v2: flat editorial page — sticky nav, hero with solid accent word + looping flat hero-demo (clause highlighting, pipeline chips, real counts), stats strip, 6 features, Read/Watch/Prove method, curriculum lesson list, flat CTA, minimal footer. page.tsx: hash routing via useSyncExternalStore (landing / #playground #learn; no setState-in-effect), rebranded headers/footers, ThemeSwitcher + Learn/Playground cross-links.
+    66→- Fixed along the way: stale Turbopack CSS after the reset (dev server restart required — theme blocks absent from served CSS), diagrams dots type, gradeResult ExecResponse typing, sample-db nullable SeedRow, pre-existing plan-view children + sql-parser Dialect type errors, demo card showing results before SELECT stage, diagram label clipping.
+    67→- Verified: tsc src 0 errors, eslint clean, 28/28 solutions OK, browser QA at 1440×900 + 390×844 across all 5 themes (landing, learn overview, lesson, quiz, practice grading E2E: +8 XP first-try MCQ → First Steps badge; +5 XP graded solve → Problem Solver badge; XP ledger persists across reload with idempotent keys), console clean, theme persists (seeql-theme-v1), default Carbon.
+    68→
+    69→Stage Summary:
+    70→- Product restored AND redesigned flat: 5 premium non-gradient themes, SeeQL identity, landing page, working learn module (8 lessons / 9 diagrams / 32 MCQs / 28 graded queries / XP-ladder-badges-streaks) on the real storefront db.
+    71→- Known deltas vs the lost build (restore roadmap): question bank was 240 MCQs/186 queries → now 32/28; diagrams 35 → 9; case studies (13) + quiz pager + daily-goal picker not yet rebuilt; Module 2 Joins pending. Architecture is the same shape, so content can be appended lesson-by-lesson without refactors.
+    72→- Key files: src/lib/themes.ts, src/app/globals.css, src/lib/curriculum/*, src/components/learn/*, src/components/landing.tsx, src/components/landing/hero-demo.tsx, src/components/{brand,theme-switcher}.tsx, src/app/page.tsx, src/lib/sample-db.ts (shipped_at), scripts/gen-expected.ts
+    73→
+    74→---
+    75→Task ID: 12
+    76→Agent: Super Z (main agent)
+    77→Task: Module 2 "Joins & Relationships" (8 lessons), question-bank growth (+100 MCQs / +72 problems vs. Task 11), shareable playground query links
+    78→
+    79→Work Log:
+    80→- Collected join facts first (scripts/facts-m2.ts, facts-m2b.ts, facts-orders123.ts) so every prose/diagram number is real: seed is fully connected (every customer ordered, every product sold), so anti-joins need a conditional right side — customers with no delivered order = 1 (Liam O'Brien), no shipped order = 6; region self-join pairs = 39 (EU 28 / APAC 10 / US 1 / LATAM 0); category product pairs = 12; fan-out inflation SUM(o.total) over orders⋈items = 103,244.55 vs true 34,833.28; top spend Alice 7,262.35 (24 orders); real order rows 1→Pedro 576.54, 2→Maya 416.81, 3→Alice 767.64.
+    81→- Module 2 curriculum: lessons 09–16 (why joins/fk lookup, INNER JOIN mechanics + aliases, three-table chains, LEFT JOIN, anti-join incl. filter-first subquery pattern, self-join with c1.id<c2.id guard, joins+aggregates with COUNT(*) vs COUNT(col) zero trap, capstone fan-out trap + aggregate-before-join). Each: prose + runnable code + 4 MCQs + 4 graded problems (32/32). All problems verified by gen-expected.
+    82→- types.ts FigureId extended with j1–j8; diagrams.tsx gained RowCard helper + 8 flat join figures (fk-lookup, inner-match, chain, left-join, anti-join, self-join, fanout, join-aggregate) in the no-gradient design language.
+    83→- lessons/index.ts: LESSONS now 16; added MODULES registry (id/num/title/level/blurb/lessons) + lessonsOf/moduleOfLesson helpers; MODULE kept as back-compat alias.
+    84→- learn-app.tsx: sidebar now groups lessons under per-module headers with per-module progress counters; overview shows two module cards + aggregate stats; resume button targets first unfinished lesson.
+    85→- landing.tsx: curriculum section rewritten — two module bands, 16 lesson rows, live totals (132 quiz · 100 graded); removed the stale "Module 2 in the works" note; hero copy now says "foundations and joins".
+    86→- Share links: page.tsx hash router parses "#playground?q=<urlencoded sql>&d=<dialect>" (route = part before "?"), PlaygroundView boots shared SQL and auto-runs it (keyed remount on sharedSql change); header "Share" button builds the URL and copies it, with execCommand fallback when the async clipboard API is denied.
+    87→- Bank growth M1: +60 MCQs / +40 problems across lessons 01–08 appended with stable new ids (l1-q5…l8-q11, l1-p4…l8-p9).
+    88→- Caught + fixed during build: lesson-05 already had 12 MCQs so my q5–q12 duplicates were renumbered to q13–q20 (global audit: 232 unique ids, 0 dups); unescaped straight quotes in two l3 strings; J1/J2 RowCard colX passed absolute instead of relative offsets (customers card rendered empty — caught in browser QA); J1 ON label overlapped table rows (moved below cards); J4 invalid stroke-dasharray-4 Tailwind class → strokeDasharray prop; J7 right-edge caption clipping; Share button silent failure without clipboard permission → fallback.
+    89→- gen-expected.ts: added M2 join facts to the FACTS dump; regenerated expected.ts — 100/100 problems OK, 0 failures (68 M1 + 32 M2).
+    90→- Verified: tsc src 0 errors, eslint clean, browser QA (1440×900 + 390×844): landing curriculum 2 modules/16 rows, sidebar module grouping, lesson 9 learn/quiz/practice E2E (l9-q1 +8 XP first-try, l9-p1 graded solved +5, ledger keys mcq:l9-q1/mcqfirst:l9-q1/solve:l9-p1 persisted), inline Run here works, share URL round-trip auto-loads + auto-runs (5 rows), diagrams j1/j5/j7 verified in Carbon + Gallery (light), no horizontal overflow on mobile, console clean, all api/query 200s. Screenshots in scripts/shots/m2-*.png.
+    91→
+    92→Stage Summary:
+    93→- Curriculum doubled: 2 modules · 16 lessons · 132 MCQs · 100 graded problems · 17 diagrams, all facts real, all solutions verified against the seed db. XP/badge machinery untouched and idempotent (sql-visualizer-learn-v1 key unchanged; only new id namespaces added).
+    94→- Share links: any playground query is now a URL (#playground?q=…&d=…) that opens pre-loaded and auto-run; deep links unaffected.
+    95→- Key files: src/lib/curriculum/lessons/lesson-09..16.ts, lessons/index.ts, lessons/lesson-01..08.ts (growth), src/lib/curriculum/types.ts, src/components/learn/diagrams.tsx, src/components/learn/learn-app.tsx, src/components/landing.tsx, src/app/page.tsx, scripts/gen-expected.ts, src/lib/curriculum/expected.ts (regenerated).
+    96→
+    97→---
+    98→Task ID: 13
+    99→Agent: Super Z (main agent)
+   100→Task: Diagram arrow/pathing overhaul + lesson theory streamlined into bullets/steps (user feedback: "arrows and their pathing can be better; theory in bullet points / more streamlined")
+   101→
+   102→Work Log:
+   103→- diagrams.tsx: replaced ad-hoc hand-drawn bezier paths with proper connection primitives — ArrowHead (explicit travel angle), Link (smooth S-curve with horizontal tangents, animated pathLength draw-in via framer-motion, optional start dot/arrowhead/dash, control offset capped at half the run so short hops stay straight), Pipe (rounded orthogonal polyline for routes that travel around elements), XMark (dead-end cross for dropped rows). Arrow gained round linecaps.
+   104→- Re-routed join figures: J1 shows all 3 FK lookups (order 1→Pedro, 2→Maya, 3→Alice) as anchored row-to-row links with dots + arrowheads (previously 2 guessed curves from mid-card); J2 matched row now flows THROUGH the ON gate to Dmitri while the 2 unmatched rows run flat and dead-end at X marks before the gate (gate label moved above the box so nothing overlaps); J3's giant products swoop replaced with a rounded down-across-up Pipe under the chain; J4's keep-row arrow anchored to Liam's actual row; J6 self-join web turned into bowed quadratic arcs with endpoint dots (C(5,2) caption moved below the sag bundle); J7 fan-out redrawn as 4 staggered amber S-links from the order row (diagonal spokes removed); L3 WHERE gate exits are now S-curves that stop short of the dot clouds; fixed pre-existing clipped label "38 rows dropped…" (x 560→470, overflowed the 720 viewBox).
+   105→- Curriculum theory streamline: types.ts gained Block kinds "h" (section label), "bullets" (rich-text bullet list), "steps" (numbered walkthrough); lesson-view.tsx renders them (emerald-bar mono section headers, square-marker bullets, numbered chips). All 16 lessons rewritten: dense paragraph walls → short lead + labeled sections + bold-led bullets + numbered steps; every code/diagram/tip/warn/table block and every real fact kept (103/65/38, 21 NULLs, 52/30/14/7, 34,833.28 vs 103,244.55, 39 pairs EU 28/APAC 10/US 1/LATAM 0, order rows 1→Pedro 576.54 / 2→Maya 416.81 / 3→Alice 767.64, Alice top spender 7,262.35/24). Removed paragraphs that the new bullets made redundant (l2 projection para, l3 comparisons para, l4 mechanics para, l13 walkthrough para, l14 dup tip, l15 dup para). MCQs/problems/ids untouched — XP ledger safe.
+   106→- rich.tsx upgraded: *italic* now renders (was literal asterisks) with a two-level tokenizer — top split on **bold*/*italic*, code spans handled innermost, so bold-across-code like **`COUNT(*)` …** and italics containing `code` render correctly; asterisks inside backticks protected.
+   107→- QA: tsc (src) 0 errors, eslint clean; browser E2E in Carbon + Gallery (light): J1/J2/J3/J4/J5/J6/J7 + L3 + L8 stepper screenshot-verified, lesson 9 learn (lead→bullets→steps→diagram) verified desktop + mobile 390×844 (no overflow), quiz tab interaction intact (choice select renders, no XP mutation — check not pressed), console clean, theme re-skin automatic (persimmon links in Gallery). Screenshots in scripts/shots/ar-*.png.
+   108→
+   109→Stage Summary:
+   110→- Diagrams now have a real connection vocabulary (Link/Pipe/ArrowHead/XMark) instead of guessed curves: FK lookups, gate drops, chains, fan-outs and pair-webs all route cleanly with animated draw-in; all 17 figures re-skinned per theme as before.
+   111→- Learn tab is scannable: section labels + bullets + numbered steps across all 16 lessons with zero fact loss; italics finally render.
+   112→- Key files: src/components/learn/diagrams.tsx, src/components/learn/lesson-view.tsx, src/components/learn/rich.tsx, src/lib/curriculum/types.ts, src/lib/curriculum/lessons/lesson-01..16.ts.
+   113→
+   114→---
+   115→Task ID: 14
+   116→Agent: Super Z (main agent)
+   117→Task: Module 3 "Set Operations & CASE" (8 lessons 17–24, planned with user via AskUserQuestion: focus M3, topic Set+CASE, scope all-in M3, visual-led theory, dialect extras, "theory in depth, include everything")
+   118→
+   119→Work Log:
+   120→- Planning round locked the scope with the user before any code: this round = Module 3 only (Dashboard/Explorer/Quiz mode queued next), visual-led lessons (diagram first) with in-depth coverage + Postgres/MySQL/SQLite dialect callouts.
+   121→- Facts first (scripts/facts-m3.ts): every number in lessons/diagrams/MCQs computed live — statusUnionAll 103 vs UNION 4; region pile 22 (EU 10/APAC 7/US 3/LATAM 2) vs 4; membership sets delivered 15/shipped 10/pending 8/cancelled 4; delivered∩cancelled = ids {1,5,11,13} (Alice, Emma, Keiko, Maya), ∩pending 8; delivered EXCEPT cancelled 11 vs reversed 0; shipped EXCEPT delivered 1 (Liam); customers EXCEPT shipped 6 (matches M2 anti-join); price>100 EXCEPT Audio = Webcam + Watch; pivot region×status (APAC 21/8/5/3/37, EU 24/12/6/3/45, LATAM 2/0/0/0/2, US 5/10/3/1/19); delivered share LATAM 100/APAC 56.8/EU 53.3/US 26.3; tiers ≥3000/≥1000 = high 4 (Alice 7,262.35, Emma 6,640.56, Grace 4,574.23, Maya 3,644.56)/mid 4/low 8; monthly delivered + TOTAL row (52 orders, 15,571.07); category delivered-only = Apparel.
+   122→- Precedence landmine PROVED empirically: SQLite evaluates A UNION B INTERSECT C left-to-right → 8 ids {1,3,5,6,7,11,13,16}; standard/Postgres/MySQL reading (INTERSECT first) → 15. Also: SQLite rejects parentheses around compound arms ((A UNION B) INTERSECT C and A UNION (B INTERSECT C) both syntax-error) — the portable spelling is FROM-subquery arms (verified parsing).
+   123→- Curriculum: lessons 17–24 written (union mechanics + ORDER BY placement; labels/arms/alignment; INTERSECT + join equivalence; EXCEPT + NULL-safety vs NOT IN + asymmetry; precedence + portable wrapping; CASE forms + first-match + ELSE-NULL (96) + simple-CASE NULL trap; conditional aggregation + pivot + custom ORDER BY; capstone tiers/ledger-TOTAL/EXCEPT-audit). Each: visual-led blocks (lead → s-figure → runnable code → labeled bullet sections incl. "Dialect watch"), 4 MCQs + 4 graded problems (32/32, ids l17-q1…l24-p4).
+   124→- diagrams.tsx: +Chip helper, +8 flat figures (s1-union dot-pile→two gates; s2-stack-labels Pipes merging tagged sources; s3-intersect overlap panels; s4-except dashed subtract panel; s5-precedence 3-step stepper: chain→SQLite 8→standard 15; s6-case-switch 4 lanes with real counts; s7-case-agg pivot matrix; s8-capstone three-pattern composition). Registry entries wired; FigureId extended s1–s8.
+   125→- Caught + fixed in QA: s5 stepper layers shared coordinates so inactive steps ghosted through the active one → conditional rendering per step; step-2 annotation collided with its heading → moved below the bracket; s8 two panel captions overflowed their panels → shortened.
+   126→- Registry/UI: lessons/index.ts imports + LESSONS 24 + MODULES entry (sets-case · Advanced); landing hero copy + curriculum section now 3 bands/24 rows + stats strip "25 interactive diagrams"; learn-app overview 3 module cards (lg:grid-cols-3) + "BEGINNER → ADVANCED" + sidebar auto-groups module 3 with 0/8 counter; totals auto-derive (164 quiz · 132 graded · 320 min).
+   127→- gen-expected.ts regenerated: 132/132 problems OK, 0 failures (100 prior + 32 M3). scripts/audit-ids-m3.ts: 296 unique ids, 0 duplicates, 132 expected keys, 0 orphans.
+   128→- Verified: tsc (src) 0 errors, eslint clean; browser E2E — landing curriculum 3 bands/24 rows, learn overview 3 cards, lesson 17 learn/quiz/practice (l17-q1 first-try +8 → ledger mcq:l17-q1/mcqfirst:l17-q1; l17-p1 graded "Matched — graded correct" → solve:l17-p1), lesson 21 stepper all 3 steps, lesson 24 l24-p1 solved through the live /api/query path, all 8 new figures screenshot-verified in Carbon, s3 re-verified in Gallery (auto re-skin), mobile 390×844 no horizontal overflow, console clean, playground UNION smoke returns 4 rows. Screenshots in scripts/shots/m3-*.png.
+   129→
+   130→Stage Summary:
+   131→- Curriculum now 3 modules · 24 lessons · 164 MCQs · 132 graded problems · 25 diagrams, all facts real, all solutions verified against the seed db; XP/badge machinery untouched (new id namespaces l17…l24 only).
+   132→- Module 3 delivers the user's picks: Set+CASE topic, visual-led diagrams-first lessons, in-depth bullets, per-lesson dialect watch (incl. the empirically proven SQLite-vs-standard precedence difference and SQLite's paren-arm syntax error), MySQL <8.0.31 caveats, Postgres FILTER/EXCEPT ALL notes.
+   133→- Key files: src/lib/curriculum/lessons/lesson-17..24.ts (new), lessons/index.ts, types.ts, src/components/learn/diagrams.tsx (+8 figures, Chip helper, stepper fix), src/components/landing.tsx, src/components/learn/learn-app.tsx, src/lib/curriculum/expected.ts (regenerated), scripts/facts-m3.ts, scripts/audit-ids-m3.ts.
+   134→- Next-round queue (user-selected): Progress dashboard, Data Explorer, mixed quiz mode.
+   135→
+   136→---
+   137→Task ID: 15-recovery
+   138→Agent: Super Z (main agent)
+   139→Task: Recover project tree after environment rollback wiped everything after Task 2
+   140→
+   141→Work Log:
+   142→- Mid-session the working tree was rolled back to post-Task-2 state (git history rebuilt, Module 1-3 + learn app gone, HEAD moved from the Module 3 commit to a rebuilt 4-commit history)
+   143→- Exhausted recovery paths: git fsck (no dangling objects), no remotes/stash, .next dev cache empty of curriculum
+   144→- Broad filesystem sweep found the intact tree at /tmp/my-project (24 lessons, 13 learn components incl. theory-blocks/quiz-runner/case-study-view/fx, diagrams, mcqs/ + problems/ + case-studies* dirs, facts/audit scripts, worklog through Task 14)
+   145→- Verified integrity: audit-ids-m3.ts -> 24 lessons, 164 MCQs, 132 problems, 296 unique ids, 0 dupes, 0 orphans; deps identical (no reinstall); landing 200; /api/stats correct
+   146→- rsync restored everything except platform mounts (upload/ handled separately); kept current node_modules/.git; committed as 54847da
+   147→
+   148→Stage Summary:
+   149→- Tree fully restored to post-Task-14 state; backup of the interim post-Task-2 state kept at /home/z/backup-rolledback-task2.tar.gz
+   150→- Resume Task 15 (content quality upgrade A-E) on top of the restored tree
+   151→
+   152→---
+   153→Task ID: 15-c
+   154→Agent: general-purpose subagent (15-c)
+   155→Task: Convert lessons 13-16 to top-notch format (hints/mistakes/notes/dialect/takeaway)
+   156→
+   157→Work Log:
+   158→- Read worklog + types.ts + coach.ts, then reference conversions lesson-01/03/05; pulled ground truth for every problem from expected.ts (l13: 1/6/12/5 rows, l14: 39/39/1/12, l15: 16/7/4/6, l16: 34,833.28 / 103,244.55 / 10 / 5) so hints, mistakes and dialect facts stay seed-accurate.
+   159→- lesson-13 (anti-join): legacy flat hints → 2-entry hints (nudge + "Shape: …") on all 4 problems; 3 coaching rules each — INNER JOIN misuse, right-table status filter in WHERE (anchored `\bleft join\b…\bwhere\b…o\.status=` so NOT EXISTS spellings never false-positive), LEFT JOIN without IS NULL, carry-over status literals, NOT IN NULL-trap, missing "( select" subquery, missing ORDER BY. +2 dialect blocks (MySQL lacks FULL OUTER JOIN → emulate via LEFT JOIN + IS NULL + UNION ALL; Postgres plans NOT EXISTS as "Hash Anti Join"). 4 MCQ notes; takeaway.
+   160→- lesson-14 (self-join): 4× hints + 3 rules each (missing c1.id<c2.id guard via lookahead that tolerates equivalent >/>= spellings, <>-instead-of-< mirror trap, wrong region literal, off-table join, COUNT(DISTINCT) vs COUNT(*), spurious GROUP BY, missing ORDER BY). +1 dialect block (SQLite/PG/MySQL: self-joins need no special syntax, only distinct aliases). 4 MCQ notes; takeaway.
+   161→- lesson-15 (joins+aggregates): 4× hints + 3 rules each (bare-column+SUM without GROUP BY via tempered lookahead, customers/suppliers table missing, aggregate in WHERE `(where|and)\s+count\(`, HAVING >= 10 vs > 10, HAVING missing, o.total vs line-item measure, missing ORDER BY). +3 dialect blocks (MySQL ONLY_FULL_GROUP_BY + functional dependence on PK; COUNT(col) NULL-skipping is standard SQL; Postgres FILTER (WHERE …) in aggregates, SQLite 3.30+ has it too, MySQL spells CASE WHEN). 4 MCQ notes; takeaway.
+   162→- lesson-16 (capstone): 4× hints + 3 rules each (GROUP BY present in the crime query, honest-measure SUM in the crime, join missing, SUM(o.total) reuse in p3/p4, missing GROUP BY / ORDER BY / LIMIT, join or wrong aggregate in ground truth). +2 dialect blocks (SQLite bare-column rule + arbitrary-row caveat; MySQL ONLY_FULL_GROUP_BY accepts GROUP BY o.id + o.total via PK dependence, rejects GROUP BY customer_id). 4 MCQ notes; takeaway.
+   163→- Regex hygiene: all patterns authored against normalizeSql semantics (lowercase, whitespace-collapsed, (),; hugged), no case-based rules, ordered specific→general, each ≤3 per problem; deliberately dropped a "missing DISTINCT" rule for l13-p4 after proving DISTINCT is a no-op for the anti-join result (would have coached a falsehood), and a "unrounded SUM" rule after seeing gradeResult round2s both sides.
+   164→- Runtime QA (bun scripts, since removed): (a) no mistake rule matches its own problem's reference solution across all 16 problems; (b) every problem has exactly 2 hints with "Shape:" prefix on [1]; (c) every MCQ has ≥1 note never pointing at the correct answer index; (d) takeaway + dialect count per lesson; (e) 26 simulated wrong attempts (inner joins, WHERE-aggregates, carry-over statuses, >= boundary, GROUP BY in the crime, SUM(o.total) reuse, missing guard rails) each fired exactly the intended coaching message.
+   165→- Per-file verification: bunx tsc --noEmit filtered to curriculum/lessons/lesson-13..16 → empty; bunx eslint on each of the four files → clean. No dev server started, nothing committed; solutions/expected/briefs/titles/difficulties/ids untouched (XP ledger safe).
+   166→
+   167→Stage Summary:
+   168→- 16/16 problems converted to hints[2] (+48 mistake rules total: 12 per lesson); 16/16 MCQs given notes (4 per lesson); 8 dialect blocks added (13:2, 14:1, 15:3, 16:2); takeaway added to all four lessons.
+   169→- Content bugs: none blocking. (1) l15 bullet "PostgreSQL would demand the id" is slightly imprecise — PG accepts GROUP BY c.id + SELECT c.name via functional dependence (and GROUP BY name alone is legal there); left untouched per no-restructure rule, with the precise rule stated in the new ONLY_FULL_GROUP_BY dialect block. (2) l15-q2 and l16-q4 are near-duplicates across lessons (capstone recap of the COUNT trap) — intentional recap, not a within-lesson duplicate. (3) All marked MCQ answers and every stated number cross-checked against expected.ts and the seed counts (16/6/16/103/248) — consistent.
+   170→- Key files: src/lib/curriculum/lessons/lesson-13.ts, lesson-14.ts, lesson-15.ts, lesson-16.ts.
+   171→
+   172→---
+   173→Task ID: 15-f
+   174→Agent: general-purpose subagent (15-f)
+   175→Task: Convert lessons 09-12 to top-notch format (hints/mistakes/notes/dialect/takeaway)
+   176→
+   177→Work Log:
+   178→- Read worklog + types.ts + coach.ts, then reference conversions lesson-01/05 (and peer's lesson-13 for join-topic rule style); pulled ground truth from expected.ts (l9: 12/10/12/5 rows, l10: 25/15/4/20, l11: 15/25/27/4, l12: 103/6/19/21) and re-verified key seed facts live against db/custom.db before authoring.
+   179→- lesson-09 (two tables, one answer): 4 legacy flat hints → 2-entry hints (nudge + "Shape: …"); 3 rules per problem — join-without-ON cartesian (lookahead-guarded so ON-bearing spellings stay silent), PK-vs-PK mispairing (c.id=o.id / p.id=s.id, but never the real FK), missing ORDER BY templates, wrong city/status/region literals (negative-lookahead literal checks that never fire on the solution), missing supplier alias, ASC-vs-DESC direction. +1 dialect block (postgres: JOIN … USING needs same-named columns; this schema's FKs all have their own names). 4 MCQ notes; takeaway.
+   180→- lesson-10 (INNER JOIN mechanics): 4× hints + 3 rules each — direction trap (order by X(?! desc)), missing-ORDER-BY template, missing join (c.name unreachable), join-without-ON, wrong item↔product FK pairing, missing supplier alias, missing s.rating. +1 dialect block (sqlite, verified live: bare JOIN with no ON runs as a 1648-row cartesian in SQLite/MySQL; PostgreSQL refuses — CROSS JOIN or ON TRUE). 4 MCQ notes; takeaway.
+   181→- lesson-11 (three-table chains): 4× hints + 3 rules each — missing customers hop (join orders without a later join customers), missing customer/product aliases (combined c|p.name lookahead rule), missing category filter at all (fires on name-LIKE attempts), wrong status/category literals (combined alternation rule), missing order_id alias (anchored ^select lookahead form so ORDER BY's bare o.id never self-matches), missing join, wrong receipt order id (= 88 with (?!88\b) guard), missing ORDER BY. +1 dialect block (mysql: comma operator binds weaker than JOIN, documented "Unknown column" failure; explicit JOIN … ON per hop). 4 MCQ notes; takeaway.
+   182→- lesson-12 (LEFT JOIN): 4× hints + 3 rules each — RIGHT JOIN wrong protected side, INNER JOIN misuse, right-table status filter in WHERE (left join…where…o.status= shape), LEFT JOIN without the IS NULL test, spurious IS NULL (anti-join over-application on p3), status IN placed inside ON (guarded \bon\b(?![^;]*\bwhere\b) so the p4 solution's WHERE-IN never self-matches), single-status equality instead of IN, missing order_id alias, missing ORDER BY. +2 dialect blocks (sqlite: RIGHT/FULL OUTER JOIN only since 3.39; mysql: no FULL OUTER JOIN — LEFT + reversed LEFT JOIN + IS NULL via UNION ALL). 4 MCQ notes; takeaway.
+   183→- Regex hygiene: all patterns authored against normalizeSql semantics (lowercase, whitespace-collapsed, (),; hugged), no case-based rules, specific→general order, ≤3 per problem; dropped a >= 500 boundary rule for l10-p1 after verifying no order totals exactly 500 (it could never be the failing cause — replaced with a missing-join rule).
+   184→- Runtime QA: bun scripts/qa-coach.ts → lesson-09..12 all hints 4/4, rules=12 each, notes=4/4, dialect 1/1/1/2, takeaway present, 0 ✗ issues (remaining script issues are lessons 17–24, another agent's scope). 59 simulated wrong attempts (missing ON, PK-vs-PK pairings, wrong literals, alias/header misses, direction traps, RIGHT JOIN misuse, IN-in-ON, spurious IS NULL) each fired the intended message; valid variants (reversed join order, extra tiebreaker, INNER JOIN where results coincide) correctly stay silent. Per-file: bunx tsc --noEmit filtered to lesson-09..12 → empty; bunx eslint each → clean. No dev server, nothing committed; solutions/expected/briefs/titles/difficulties/ids untouched.
+   185→
+   186→Stage Summary:
+   187→- 16/16 problems converted to hints[2] (48 mistake rules total: 12 per lesson); 16/16 MCQs given notes (4 per lesson); 5 dialect blocks (9:1, 10:1, 11:1, 12:2); takeaway added to all four lessons.
+   188→- Content bugs: none blocking. (1) l12-p4 brief says "nothing shipped yet" for the 21 pending+cancelled orders — verified 21 in seed (14 pending + 7 cancelled) ✓. (2) l12-q3's "all 16 customers have ordered" verified: 0 customers without orders, LEFT JOIN = 103 rows ✓. (3) l9-q2's 103-rows, l11-q3's 248/103/16 numbers, Berlin-delivered=12, order 88 = 4 lines — all seed-verified ✓. No duplicate MCQs within any of the four lessons; all marked answers consistent with the data.
+   189→- Key files: src/lib/curriculum/lessons/lesson-09.ts, lesson-10.ts, lesson-11.ts, lesson-12.ts.
+   190→
+   191→---
+   192→Task ID: 15-h
+   193→Agent: general-purpose subagent (15-h)
+   194→Task: Convert lessons 22-24 to top-notch format (hints/mistakes/notes/dialect-conversion/takeaway)
+   195→
+   196→Work Log:
+   197→- Read worklog + types.ts + coach.ts + qa-coach.ts, then reference conversions lesson-01/05 (hints/mistakes style) and lesson-20 (dialect-block conversion style); pulled ground truth for every problem from expected.ts and re-verified key seed facts live against the freshly reset seed DB (resetDatabase + $queryRawUnsafe): statuses delivered 52 / shipped 30 / pending 14 / cancelled 7, KPI 103·52·14, pivot APAC 21/37 · EU 24/45 · LATAM 2/2 · US 5/19, tiers low 8 / high 4 / mid 4, no customer total exactly 3000/1000, top-3 delivered months 2024-12 1103.13 / 2025-01 724.11 / 2025-02 707.35, ops-queue first 8 rows all pending (tiebreaker matters).
+   198→- Dialect-watch conversion, bullets → dialect blocks in place, order kept, wording preserved: lesson-22 (sqlite CASE-portability · mysql IF/IFNULL/IIF shortcuts · sqlite COALESCE), lesson-23 (sqlite SUM(CASE) portability · mysql boolean-SUM shortcut + FILTER note · postgres PIVOT/crosstab tooling), lesson-24 (mysql EXCEPT needing 8.0.31 · postgres GROUPING SETS/ROLLUP · sqlite substr spelling).
+   199→- lesson-22 (CASE branching): legacy flat hints → 2-entry hints (nudge + "Shape: …") on all 4 problems; 3 rules each — CASE missing END; missing DISTINCT/GROUP BY row-explosion (anchored lookaheads so GROUP BY and 4-WHEN-covering spellings stay silent); missing default bucket guarded on 'cancelled' (a full 4-WHEN solution never fires); COUNT(tag) NULL-skipping; unfiltered COUNT(*) on the tagging CASE; IS NOT NULL direction flip (excludes "( select" spellings so the correct 103−7 complement never fires); ELSE present where the brief demands fall-through. 4 MCQ notes; takeaway.
+   200→- lesson-23 (counters/pivots/custom sorts): 4× hints + 3 rules each — WHERE-status leak on the KPI row (excludes "( select" so the scalar-subquery spelling never fires), spurious GROUP BY on the single-row KPI, missing region join (anchored ^(?=region)(?!join) form), missing GROUP BY on count/avg pivots, missing ×100 percentage, ORDER BY status alphabetical-sort trap, missing `, id` tiebreaker via \bend\b\s*(;|limit) (never fires on "end, id limit"). 4 MCQ notes; takeaway.
+   201→- lesson-24 (capstone): 4× hints + 3 rules each — exactly-one-GROUP-BY detector for the two-stage tiering shape, count-sorted-without-DESC, delivered filter missing from either ledger arm (needs 2 occurrences), bare-UNION-arm ORDER BY via order by[^;)]*union (paren-safe: the solution's wrapped inner ORDER BY never matches), GROUP BY created_at vs month, missing second arm / UNION-vs-EXCEPT / missing 'pending' filter on the audit (NOT IN / NOT EXISTS / LEFT JOIN correct spellings excluded from the no-EXCEPT rule), missing TOTAL arm, BIG bucket forgetting 'shipped' (guarded on 'cancelled' so the ELSE-'BIG' inversion stays silent), missing GROUP BY bucket. 4 MCQ notes; takeaway.
+   202→- Regex hygiene: all patterns authored against normalizeSql semantics (lowercased, whitespace collapsed, (),; hugged — e.g. COUNT(*) → "count( *)"), no case-based rules, ≤3 per problem, anchored ^(?=…)(?!…) forms wherever a pattern could otherwise match a late token of the reference query (qa-coach initially caught 3 such self-matches — region-without-join and COUNT-without-GROUP-BY — fixed by global anchoring). Deliberately dropped: UNION-not-ALL rules for l24-p2/p4 (plain UNION returns identical rows there, so it is a correct solution and can never be a failing cause), THEN-1-vs-1.0 rule for l23-p3 (SQLite AVG never floors; the porting tip covers it), ≥3000/≥1000 boundary rule (no customer total hits exactly 3000/1000).
+   203→- Runtime QA: 31 simulated wrong attempts (missing END/ELSE/DISTINCT/GROUP BY/join, WHERE leaks, COUNT(tag), IS-NOT-NULL flip, alphabetical ORDER BY, missing tiebreakers, one-stage tiering, unfiltered ledger arms, bare-arm ORDER BY, UNION audits, BIG-forgetting-shipped) each fired the intended coaching message; 14 correct alternative spellings (GROUP BY instead of DISTINCT, 4-WHEN coverage, scalar subqueries, SUM/COUNT share, CTE tiers, ELSE-'BIG' inversion, NOT IN audit) all stayed silent. scripts/qa-coach.ts → lesson-22/23/24 all hints 4/4, rules=12 each, notes=4/4, dialect=3, takeaway present, 0 ✗ issues, ALL CHECKS PASSED. Per-file: bunx tsc --noEmit filtered to lesson-22..24 → empty; bunx eslint each → clean. No dev server started, nothing committed; solutions/expected/briefs/titles/difficulties/ids untouched (XP ledger safe). Temp verification scripts removed after use.
+   204→
+   205→Stage Summary:
+   206→- 12/12 problems converted to hints[2] (+36 mistake rules total: 12 per lesson); 12/12 MCQs given notes (4 per lesson); 9 dialect blocks converted from the "Dialect watch" sections (3 per lesson); takeaway added to all three lessons.
+   207→- Content bugs found: (1) l23-q4's marked answer "Postgres only" is factually wrong — SQLite has supported COUNT(*) FILTER (WHERE …) since 3.30 and it runs on this app's engine (verified live), so no offered choice is correct; question/choices left untouched per no-rewrite rule, but the why-string was corrected and the lesson-23 FILTER dialect block now states the truth (it previously contradicted lesson-06/15's own correct FILTER blocks). (2) l23 tip "AVG over integers can floor to 0 or 1 in typed engines" is imprecise — AVG returns float/numeric in all three engines; the real floor risk is integer division (SUM/COUNT); left as-is (outside conversion scope), noted here. (3) l24 "MySQL says SUBSTRING" lightly adapted to "documents SUBSTRING (and accepts SUBSTR as a synonym)" — MySQL accepts substr too. (4) GLOBAL: the seed DB's deterministic seeder generates 251 order_items rows (verified via resetDatabase + COUNT(*)), not the 248 quoted across lessons 1/6/7/10/11/16 — none of lessons 22-24 state that figure, so nothing changed in my files, but the discrepancy deserves a cross-module pass. No duplicate MCQs within any of the three lessons; all other stated numbers (52/30/14/7, 96, 21/82, 89, 50.5%, region shares 100/56.8/53.3/26.3, pivot matrix, tiers, ledger 1103.13/724.11/707.35/TOTAL 52·15571.07, Apparel, BIG 82·27567.79 / LOST 7·1152.49 / OPEN 14·6113 / TOTAL 103·34833.28) verified against the seed.
+   208→- Key files: src/lib/curriculum/lessons/lesson-22.ts, lesson-23.ts, lesson-24.ts.
+   209→
+   210→---
+   211→Task ID: 15
+   212→Agent: Super Z (main agent)
+   213→Task: Content quality upgrade "top notch" — packages A–E (user picked all): mistake coach + progressive hints, dialect parity for M1/M2, M1 capstone, MCQ distractor explanations, lesson takeaways
+   214→
+   215→Work Log:
+   216→- Recovery first: mid-session environment rollback (see Task 15-recovery); also removed foreign-lineage files that came mixed in the /tmp snapshot (mcqs/, problems/, case-studies*, check.ts, theory-blocks/quiz-runner/case-study-view/fx, flow/lineage/quality views, sql-funnel/quality-audit, api/quality, api/funnel) — src tsc back to 0 errors
+   217→- Engine: types.ts +Problem.hints[two levels]/mistakes/Mcq.notes/Lesson.takeaway + Block dialect (db: postgres|mysql|sqlite); new src/lib/curriculum/coach.ts (normalizeSql + firstMistake, problem rules before 8 high-precision GLOBAL rules); problem-runner.tsx progressive hint ladder (Nudge → The shape) + sky-blue Coach card on failed runs; mcq.tsx "About your pick" distractor debrief; lesson-view.tsx dialect block renderer (engine pills) + violet "In one sentence" takeaway card
+   218→- Content: all 24 lessons converted — 132→135 problems with hints[2] (0 legacy hints left), 331 mistake rules, 164/164 MCQs with distractor notes, 44 dialect blocks (M1/M2 authored; M3 "Dialect watch" bullet sections converted to blocks), 24 takeaways. Lessons 1–5 + capstone by main agent; 6–8, 13–16, 20, 9–12, 17–19+21, 22–24 via five verified subagent batches (network flaked twice; every batch's edits landed and were QA'd centrally)
+   219→- Content bugs found & fixed along the way: lesson-05 had 8 duplicate MCQs (q13–q20) → replaced with 8 new distinct questions (alias-in-ORDER-BY, ASC-vs-DEFAULT, tiebreakers, bare OFFSET dialect, multi-key direction, positional fragility, FETCH FIRST, latest-first) and fixed q7's wrong marked answer (LIMIT 15 OFFSET 10 → LIMIT 5 OFFSET 10)
+   220→- Database incident: live db/custom.db was a stale pre-shipped_at file (reset initially "readonly"; permissions + stale server connection) → chmod, dev server restart, /api/reset — canonical seed confirmed: orders 103, order_items 251 (the "248" in the recovered file was the anomaly) → reverted my earlier 251→248 edits in lessons 01/07/11/16 + diagrams, verified fresh DB matches every lesson claim (pending 14, cancelled 7, unshipped 21, COUNT(shipped_at)=82)
+   221→- gen-expected.ts regenerated against canonical seed: 132/132 OK → 135/135 after capstone
+   222→- M1 capstone added to lesson-08 (l8-p10 "Delivered revenue, ranked", l8-p11 "The quiet backlog" NULL-aware, l8-p12 "Status scorecard" two-aggregate+HAVING) — all hard, all verified against live DB, all ordered
+   223→- New QA tool: scripts/qa-coach.ts (hints[2] coverage, legacy-hint absence, mistake rules compile + never match own solution, MCQ notes target wrong in-range choices, takeaway/dialect presence) — caught 3 real regex bugs (incl. one in the global HAVING rule; anchored patterns now); ALL CHECKS PASSED
+   224→- Browser E2E: landing + learn sidebar derive 135 graded · 164 quiz; lesson-01 dialect block, takeaway, hint ladder (Nudge+Shape), Coach card (fires on SELECT * suppliers with targeted fix above the raw syntax error), MCQ "About your pick" note — all screenshot-verified in scripts/shots/t15-*.png; tsc 0 src errors, eslint clean, audit-ids 299 unique ids 0 dupes 0 orphans; test localStorage cleared
+   225→
+   226→Stage Summary:
+   227→- Curriculum: 3 modules · 24 lessons · 164 MCQs (all with distractor debriefs) · 135 graded problems (all with 2-level hints + coach rules) · 44 dialect blocks · 24 takeaways — every solution re-verified against the canonical seed
+   228→- Coach engine is data-driven: per-problem mistakes + globals in coach.ts; regexes run on lowercased normalized SQL, first match wins, QA-enforced precision
+   229→- Key files: src/lib/curriculum/{types,coach}.ts, lessons/lesson-01..24.ts, expected.ts (regen), src/components/learn/{problem-runner,mcq,lesson-view}.tsx, scripts/{qa-coach,gen-expected}.ts
+   230→- Next-round queue unchanged: Progress dashboard, Data Explorer, mixed quiz mode
+   231→
+   232→---
+   233→Task ID: 16-b
+   234→Agent: general-purpose subagent (16-b)
+   235→Task: Add one new concept-deep SVG figure to each of lessons 17–24 (s9–s16, 8 figures in diagrams-m3.tsx) + block insertion
+   236→Work Log:
+   237→- Read worklog, diagrams-kit API, style-absorbed from diagrams.tsx (L7GroupBy/S1Union/S6CaseSwitch/S8Capstone), all 8 lesson files, types.ts FigureId/Block unions.
+   238→- Verified every rendered number live via throwaway scripts/tmp-16b.ts (SELECT-only, no reset; deleted after): UNION ALL statuses 206 vs UNION 4 (distinct: cancelled/delivered/pending/shipped); arm1 delivered 52/shipped 30/pending 14/cancelled 7, arm2 suppliers EU 2/APAC 2/US 1/LATAM 1; delivered∩cancelled = 15∩4 → ids 1·5·11·13 (Alice Chen, Emma Wilson, Keiko Sato, Maya Patel), delivered-only 11, cancelled-only 0; customers 16 − shipped-customer set 10 → EXCEPT = 6 (ids 2 Bruno Silva, 3 Chloe Dubois, 4 Dmitri Volkov, 6 Farid Nasser, 11 Keiko Sato, 15 Olivia Brown); customers-with-order EXCEPT delivered = 1 (Liam O'Brien, id 12); A∪B∩C: A {1..11,13,14,15,16}, B {1,5,11,13}, C {1,3,5,6,7,11,13,16}, SQLite reading (A∪B)∩C = 8 ids 1·3·5·6·7·11·13·16, standard reading A∪(B∩C) = 15; CASE router streams 52/30/14/7 (ELSE = cancelled 7), Σ 103; pivot APAC 21/8/37 · EU 24/12/45 · LATAM 2/0/2 · US 5/10/19; tiers high 4 (Σ 22,121.70: Alice 7,262.35 · Emma 6,640.56 · Grace 4,574.23 · Maya 3,644.56), mid 4 (Σ 6,911.67: Chloe 2,667.93 · Pedro 1,686.17 · Farid 1,458.97 · Keiko 1,098.60), low 8 (Σ 5,799.91, Olivia 444.80 last).
+   239→- diagrams-m3.tsx: local Chip helper + 8 components (S9UnionVsAll 62 ln, S10PositionBinding 76, S11BothSides 59, S12ExceptAudit 67, S13EvalOrder 70, S14RowRouter 66, S15PivotBuild 88, S16TwoStage 78; file 620 ln), all 720-wide viewBoxes H 300–330, kit helpers only (Label/Panel/Arrow/Link/XMark/DotField/fade/drawIn), motion.g fade stages + drawIn tree edges, mono SQL fragment caption inside every figure.
+   240→- Figures: s9 two-panel ALL-vs-UNION dot piles 206→4 with repeat-struck chip; s10 two arms (orders/suppliers) feeding one pile whose headers are arm 1's, arm-2 rows sky-highlighted "bound by position"; s11 venn overlap with the 4 real names + 15∩4=4 equation strip; s12 16-customer grid with the 10 shipped ids X-struck rose, 6 emerald survivors + rose "NOT IN dies on NULL" card; s13 side-by-side parse trees (∩-root vs ∪-root) with dashed grouping boxes and 8 vs 15 result strips; s14 103-dot field → simple-CASE router → 4 sized exit streams; s15 3-stage pivot build (long rows → 1/0 flag grid → matrix); s16 3-panel derived-table pipeline (16 dots → per-customer CASE tiers → tier counts with Σ).
+   241→- Block insertion: one `{ kind: "diagram", figure: "sX-…" }` per lesson inside the specified section (L17 after "Dedupe is the whole difference" bullets; L18 after "Alignment: count is law…" bullets; L19 after "What counts as "in both"" bullets; L20 after "EXCEPT is an anti-join with DISTINCT" bullets; L21 after "The standard says INTERSECT first" bullets; L22 after "An expression, not a statement" bullets; L23 after the region×status code block in "Rows into columns — the pivot"; L24 after "Pattern 1 — segment, then count" bullets). No other blocks touched; intro figures untouched.
+   242→- QA: bunx tsc --noEmit | grep ^src/ → empty; bunx eslint on diagrams-m3 + lessons 17–24 → clean; throwaway check script (deleted): every lesson exactly 2 diagram blocks, ids ∈ FigureId, all 8 registered in FIGURES_M3 → ALL CHECKS PASSED; bunx tsx scripts/facts-viz.ts → db-ok; extra static render audit (deleted): all 8 figures render server-side, viewBoxes within contract, no estimated text overflow (caught + fixed 2 long captions in s12/s16 before finishing).
+   243→Stage Summary:
+   244→- Lessons 17–24 now have 2 diagrams each (25 → 33 figures total); all new numbers re-verified against db/custom.db seed; FIGURES_M3 merged into diagrams.tsx registry via existing spread — no registry/wiring changes needed.
+   245→- No content bugs in lesson prose found; one nuance noted: the task brief offered "customers with an order EXCEPT customers with a delivered order = 1" (Liam O'Brien, id 12) — verified true, but the figure uses the lesson's own worked example (customers EXCEPT shipped = 6) per preference for the lesson's example.
+   246→- Key files: src/components/learn/diagrams-m3.tsx (rewritten from stub), src/lib/curriculum/lessons/lesson-17..24.ts (+1 block each). Nothing else modified; no dev server, no commit, no resetDatabase from my own scripts.
+   247→
+   248→---
+   249→Task ID: 16-a
+   250→Agent: general-purpose subagent (16-a) — report stage timed out; edits landed and were verified centrally by main agent
+   251→Task: Add one new concept-deep SVG figure to each of lessons 09–16 (j9–j16, 8 figures in diagrams-m2.tsx) + block insertion
+   252→
+   253→Work Log:
+   254→- All 8 figures landed in src/components/learn/diagrams-m2.tsx (544 lines), all registered in FIGURES_M2; one { kind: "diagram" } block added per lesson 09–16 (now 2 each), placements at the requested sections (j9 after "Read the query", j10 after "Three things to internalize", j11 near "Habits for chains", j12 inside "The subtle part: WHERE vs ON", j13 after the first anti-join code, j14 near "The two guard rails", j15 near the GROUP BY section, j16 inside "The fix: aggregate before you join")
+   255→- Spot-verified figures against canonical seed: j9 order 1 → customer 16 Pedro Alvarez (Madrid), total 576.54; j10 cartesian 103 × 16 = 1648 vs 103 matched pairs; j12 in-ON 103 (58 NULL-filled) vs in-WHERE 45 (= INNER); j14 same-region pairs 39 total / 10 in APAC (5 APAC customers); j16 honest SUM 34833.28 vs fanout-inflated 103244.55; j11 funnel 16 → 103 → 251
+   256→- Central QA by main agent: bunx tsc --noEmit | grep ^src/ → empty; bunx eslint diagrams-m2.tsx + lessons 09–16 → clean; 48/48 lesson figure ids resolve to registered components; browser render of l12 confirmed both figures
+   257→
+   258→Stage Summary:
+   259→- Lessons 09–16 now carry 2 diagrams each; all rendered numbers match the canonical seed; no other blocks touched
+   260→- Key files: src/components/learn/diagrams-m2.tsx, src/lib/curriculum/lessons/lesson-09..16.ts
+   261→
+   262→---
+   263→Task ID: 16
+   264→Agent: Super Z (main agent)
+   265→Task: "Add more visualizations to the current study materials" — second, concept-deep diagram per lesson (25 → 48 figures)
+   266→
+   267→Work Log:
+   268→- Designed 23 new figures (one per lesson; l08 already had two), each illustrating a LATER, different concept than the lesson's intro figure; verified every number against the live seed first via scripts/facts-viz.ts (kept for reuse) + throwaway queries (deleted): counts customers 16 / suppliers 6 / products 16 / orders 103 / order_items 251, line_total rows 93.06/30.30/25.26, LIKE %Keyboard% 1-of-16 + %KEYBOARD% 1 + %Desk% 2, NULL 103 vs 82 (21 = 14 pending + 7 cancelled), APAC/EU two-key sort samples, DISTINCT region 16→4 (APAC 5/EU 8/LATAM 1/US 2) vs (region, city) 16→16, aggregates 103 · 34833.28 · 338.19 · 25.47 · 1088.44
+   269→- Architecture for conflict-free parallelism: extracted the shared SVG helpers verbatim into src/components/learn/diagrams-kit.tsx (Label/Arrow/ArrowHead/Link/Pipe/Panel/XMark/DotField/fade/drawIn/rng/MONO); diagrams.tsx now imports from the kit; FIGURES typed Partial<Record<FigureId, FC>> and merged via ...FIGURES_M2 / ...FIGURES_M3; extended types.ts FigureId with all 23 ids upfront; stub registries created before spawning agents; deleted the orphaned foreign-lineage src/components/learn/diagrams/ folder + 5 stale foreign scripts (test-funnel/test-quality/test-samples-api/verify-curriculum/inspect-ast); scaffold committed separately (729d723)
+   270→- M2 (lessons 09–16) + M3 (lessons 17–24) delegated to subagents 16-a/16-b with per-figure specs, verified facts, style contract and QA gates; 16-b reported clean, 16-a timed out at report stage but all edits landed (verified centrally, see 16-a section)
+   271→- M1 (lessons 01–07) built by main agent in diagrams.tsx: l1-schema-map (5 cards, 4 FK links, real counts), l2-expr-math (per-row quantity*unit_price → 93.06/30.30/25.26), l3-like-match (%Keyboard% windows + case-insensitivity + %Desk% 2), l4-null-spread (103 vs 82 slot strip + contagion rule), l5-multikey-sort (APAC band first — A before E! — then EU, total DESC inside), l6-distinct-mech (16 real region·city chips, 16→4 vs 16→16 tuple rule), l7-count-star (5 real aggregate cards + COUNT(*)/COUNT(shipped_at) hole strip); fixed 3 self-caught defects (garbage rect attr, kit Label has no italic prop, and the band-order bug: region ASC puts APAC first, not EU); kit Link has no label prop → explicit Labels
+   272→- Blocks inserted at concept-matched positions in lessons 01–07 (after the schema table, after the derivation code, after the LIKE shorthand, after the IS NULL code, before "LIMIT & OFFSET", after the DISTINCT bullets, after the COUNT(*)/COUNT(column) tip)
+   273→- QA: src tsc 0 errors, eslint clean on all touched files; 48/48 used figure ids registered (types+registry script, deleted); audit-ids 24 lessons · 164 MCQs · 135 problems · 299 unique ids · 0 dupes · 0 orphans; landing stat 25 → 48 diagrams; browser E2E: lessons 1/5/12/17/23 render both figures (aria-labels verified), screenshots scripts/shots/t16-{l1-schema-map,l12-where-vs-on,l23-pivot-build}.png, no page errors, console clean
+   274→
+   275→Stage Summary:
+   276→- Curriculum now 3 modules · 24 lessons · 164 MCQs · 135 problems · 48 interactive diagrams — every lesson carries an intro figure + one mid-lesson concept-deep figure, all numbers seed-verified
+   277→- Diagram system is now split: diagrams-kit.tsx (shared helpers) + diagrams.tsx (M1 + registry) + diagrams-m2/m3.tsx (module registries) — adding figures per module no longer risks merge conflicts
+   278→- Key files: src/components/learn/{diagrams-kit,diagrams,diagrams-m2,diagrams-m3}.tsx, src/lib/curriculum/{types.ts,lessons/lesson-01..07,09..24}, src/components/landing.tsx, scripts/facts-viz.ts (kept)
+   279→
+   280→---
+   281→Task ID: 17
+   282→Agent: Super Z (main agent)
+   283→Task: "yeah keep pushing content" — double M2/M3 practice depth: +4 problems (p5–p8) and +4 MCQs (q5–q8) in every lesson 09–24 (135→199 problems, 164→228 MCQs)
+   284→
+   285→Work Log:
+   286→- Pre-flight: restarted dev server (old process held stale SQLite connection); fixed the lingering shipped_at runtime bug — db/custom.db's orders table predated the column; one resetDatabase() (DROP+CREATE) rebuilt it canonical: 16/6/16/103/251, shipped_at NULL = 21 (14 pending + 7 cancelled)
+   287→- Content audit exposed the gap: M1 lessons carry 8–12 problems + 11–20 MCQs but M2/M3 sat at exactly 4 + 4 — designed +4/+4 for all 16 lessons with concept slots chosen to avoid overlap with existing p1–p4/q1–q4 (predict-row-count, spot-the-bug, pick-the-spelling, boundary-behavior MCQs; medium→hard difficulty curve p5–p8)
+   288→- Fact verification BEFORE writing (scripts/facts-task17.ts, kept): boundary facts killed 3 planned designs (no zero-order customers, same-city pairs 0, same-day/same-total doubles 0, pending∖delivered 0) → pivoted to verified replacements (same-month doubles = 32, supplier region twins = 2, shipped∖delivered-style complements); verified inflated avg 411.33, ratio 2.96, totals_distinct = 103 (all totals unique — powers the q5 DISTINCT trap), region revenues, Berlin/EU pivots, HAVING-qualifier sets, compound-SQLite support forms (FROM-compound OK, double-paren banned)
+   289→- Delegation attempt (4 parallel subagents) hit repeated rate-limit timeouts twice; batches A (l09–12) and C (l17–20) landed their edits before dying (verified centrally: 8/8 per lesson, qa-coach clean); batches B (l13–16) and D (l21–24) never wrote → main agent wrote all 8 lessons itself in the established house style (brief with exact aliases, hints[nudge, Shape:], 2–3 targeted mistake rules each, notes on tempting distractors, EXPECTED[] references)
+   290→- Central QA: gen-expected 199/199 OK 0 failures (every new solution executes on the seed); qa-coach ALL CHECKS PASSED (199/199 hints[2], 0 self-matching rules, all notes target wrong choices); audit-ids 228 MCQs · 199 problems · 427 unique ids · 0 dupes · 0 orphans · 199 expected keys mapped; src tsc clean; eslint clean on the 8 hand-written files
+   291→- Browser E2E (agent-browser): landing shows "199 graded queries · 228 quiz questions" and per-module 64/64; lesson 16 practice renders all 4 new problems; Coach panel fired correctly on a join-based attempt at p1; grader rejected right-query/wrong-problem with exact column mismatch, then l16-p5 "The damage report" graded 1/8 solved — full pipeline (editor → run on live seed → expected.ts compare → XP) verified
+   292→- Cleanup: deleted 12 throwaway scripts + 6 nav screenshots; kept facts-task17.ts as the fact ledger
+   293→
+   294→Stage Summary:
+   295→- Curriculum now 3 modules · 24 lessons · 199 problems · 228 MCQs · 48 figures — every lesson now carries 8 problems + 8 MCQs (M2/M3 doubled to M1 depth), all numbers seed-verified, all 199 grading targets regenerated from live solutions
+   296→- Key files: src/lib/curriculum/lessons/lesson-09..24.ts (+4 problems/+4 MCQs each), src/lib/curriculum/expected.ts (regenerated 199 entries)
+   297→- Note for future rounds: subagent parallelism is currently rate-limit-fragile — batches may land without reporting (check git diff + qa gates); SQLite accepts FROM-compounds and scalar EXCEPT wrappers but rejects double-parenthesized arms
+   298→
+   299→---
+   300→Task ID: 18
+   301→Agent: Super Z (main agent)
+   302→Task: Learn-module toolbox round — Data Explorer (browse the live study database), Mixed quiz mode (cross-course rounds), progress dashboard (14-day XP strip + course mastery grid)
+   303→
+   304→Work Log:
+   305→- Fact verification first (scripts/facts-task18.ts, kept): per-table facts for the explorer — customers 16 (all ordered, EU 8/APAC 5/US 2/LATAM 1, 14 active), suppliers 6 (2/2/1/1, ratings 3.9–4.8 avg 4.3), products 16 in 7 categories (Accessories/Audio/Electronics 3 each … Fitness 1, $14.99–$199.99, 2,845 in stock), orders 103 (statuses 52/30/14/7, 21 NULL shipped_at, $25.47–$1,088.44 avg $338.19), order_items 251 (qty 1–3 avg 1.98, 57 lines over $200)
+   306→- Data Explorer (src/components/learn/data-explorer.tsx): 5 live table cards (row counts via /api/stats), per-table column chips from SCHEMA_TABLES with PK/FK badges, full-table SELECT cached client-side then paged 25/page, NULL cells dimmed, FK cells clickable → follows the relationship (jump to target table filtered on its PK, e.g. orders.customer_id 16 → customers id=16 Pedro Alvarez), per-table "Field notes" strip with the verified facts, "Query <table> in the playground" deep-link via the existing #playground?q= router
+   307→- Mixed quiz (src/components/learn/mixed-quiz.tsx): 10-question rounds sampled from all 24 lessons with priority buckets (7 untouched / 2 previously-missed / 1 anything, refilled from the priority pool if short), per-question source line ("From Lesson 11 · Three-table chains"), progress bar + correct counter, reuses McqCard so XP stays idempotent (repeats never pay twice), verdict tiers (Perfect ≥10 / Sharp ≥7 / Solid ≥4 / another pass), New round + Review this round
+   308→- Progress dashboard (src/components/learn/progress-cards.tsx + learn-app.tsx overview): "Last 14 days" XP strip scaled to the daily goal (dashed goal line, weekday ticks, hit-count header) and "Course mastery" grid — 24 lesson cells across 3 module bands, each with quiz/practice micro-bars and complete/started/untouched states, click-through to the lesson; replaced the stale getState().badges reads with a subscribed badgesMap
+   309→- learn-app.tsx: view state generalized (overview | lesson | explorer | mixed); new "Toolbox" sidebar section (Course overview / Data explorer / Mixed quiz) — the overview item fixes the discovered dead-end where toolbox views had no way back
+   310→- Caught & fixed along the way: react-hooks/set-state-in-effect lint error (loading now derived, error cleared in the pick handler); mastery grid hooks-in-deps smell (state passed as param); "Review this round" leaving answered=true over a fresh card; two test-harness selector bugs (sidebar buttons start with A–D; choice text concatenates "AAn error…") — both harness-side, app unaffected
+   311→- QA: tsc 0 src errors; eslint clean on all 4 touched files; audit-ids 24 lessons · 228 MCQs · 199 problems · 427 unique ids · 0 dupes · 0 orphans; qa-coach ALL CHECKS PASSED (content untouched); browser E2E at 1440×900 + 390×844, Carbon + Gallery themes: explorer table switch, FK-follow (16 → Pedro Alvarez), pager (page 3 / 11), playground deep-link auto-run, full 10-question round (verdict + 0 XP on all-wrong picks — no false XP), new-round rebuild, overview return, mastery cells lighting up from attempts; screenshots in scripts/shots/t18-*.png; test localStorage cleared
+   312→
+   313→Stage Summary:
+   314→- Learn module now has a Toolbox: Data Explorer (every lesson fact is now inspectable against live rows) and Mixed Quiz (spaced-repetition-flavored rounds across the whole course), plus a real progress dashboard on the overview (activity strip + mastery grid)
+   315→- Curriculum untouched: still 24 lessons · 228 MCQs · 199 problems · 48 figures — this round was navigation, visualization and practice-mode surface area
+   316→- Key files: src/components/learn/{data-explorer,mixed-quiz,progress-cards,learn-app}.tsx, scripts/facts-task18.ts
+   317→- Next-round queue: M2/M3-style capstone blocks are already covered by l16/l24 problem sets; remaining ideas — daily-goal picker on the overview, streak/badge nudges, share-a-round results card
+   318→
+   319→---
+   320→Task ID: 19
+   321→Agent: Super Z (main agent)
+   322→Task: "i need more visuals in joins" — add a third concept-deep figure to every join-module lesson 09–16 (48 → 56 diagrams)
+   323→
+   324→Work Log:
+   325→- Studied the diagram system end to end: diagrams-kit.tsx helpers (Label/Arrow/Pipe/Panel/XMark/fade), per-module registries (FIGURES_M2 merged into diagrams.tsx registry), FigureId union in types.ts, house style (720-wide viewBox, staged fade-ins, emerald=good / rose=trap / amber=caution, footer takeaway lines)
+   326→- Surveyed all 8 join lessons' block structure and the 16 existing M2 figures to pick concepts with zero overlap; j13-three-spellings already owns the NOT-IN NULL trap, so L13's new figure covers the subquery data-flow instead
+   327→- Fact verification BEFORE drawing (scripts/facts-viz-m2.ts, kept): top orderer Alice Chen 24 orders (Emma 17), Desk Mat Extended 24 lines/24 distinct orders (products 16 → 251 joined rows), pending lines 36 on 30 orders → 11 distinct products → 5 never pending, shipped 30 orders across 10 customers + 6 gap customers = 36 rows (gap names Bruno Silva/Chloe Dubois verified), APAC 5→10 / EU 8→28 / US 2→1 / LATAM 1→0 pairs, ghost-row math 36 vs 30, anchors 34,833.28 / 103,244.55, lines per order 1–4
+   328→- Wrote 8 figures in diagrams-m2.tsx (one per lesson, each ~2 seed-verified numbers minimum): j9-direction (widen-not-multiply, name repeats), j10-multiply (1 product row → 24 copies), j11-fanmap (full referential map 16←103←251→16→6 with FK labels + hop planner), j12-gap-anatomy (36 = 30 matched + 6 NULL-filled, real gap names), j13-subquery-flow (251 → 36 → 11 → 5 pipeline), j14-mirror (5×5 pairing grid: 5 self + 10 mirrors + 10 kept), j15-ghost-row (COUNT(*) 36 vs COUNT(o.id) 30), j16-preflight (decision flow to dodge the 3× trap); extended FigureId union (+8) and FIGURES_M2 registry
+   329→- Inserted diagram blocks at concept-matched positions via scripts/insert-viz-m2.py (assert-once anchors): L09 after the read-the-query steps, L10 after the rows-multiply bullets, L11 before "Habits for chains", L12 after the IS NULL tip, L13 between the pre-filtered-list code and three-spellings, L14 after the numbers-on-this-data bullets, L15 right after the COUNT-trap bullets, L16 after the pre-flight checklist
+   330→- Browser E2E caught 3 layout bugs, all fixed and re-verified: j14-mirror legend clipped by the stat panel + grid caption colliding with footers (moved grid left, shortened legend, raised viewBox), j11-fanmap FK labels overlapping card fills (moved labels below cards; also fixed arrow semantics — order_items→products and products→suppliers now point right, child→parent), j12-gap-anatomy dot grid overflowing its panel + legend crossing into the next column (compacted grid, in-panel legend); j9-direction footer line trimmed after 733px overflow check
+   331→- Landing page: hardcoded "48" stat replaced with TOTAL_FIGURES computed from lesson blocks — shows 56 now, cannot drift again
+   332→- QA: src tsc 0 errors; eslint clean on all touched files; wiring 56 used = 56 registered = 56 union, 0 orphans; all 8 lessons render 3 figures each (aria-labels verified), no page errors; screenshots scripts/shots/t19-{l14-final,l16-preflight}.png
+   333→
+   334→Stage Summary:
+   335→- Curriculum now 3 modules · 24 lessons · 228 MCQs · 199 problems · 56 interactive diagrams — every join lesson carries 3 figures (intro + concept-deep + mechanism-deep), all numbers seed-verified against scripts/facts-viz-m2.ts
+   336→- The joins module now visually covers the concepts that were prose-only: many-to-one widening, fanout multiplication, the whole FK map, gap-row anatomy, subquery anti-join flow, the mirror matrix, the ghost row, and the aggregate-first decision gate
+   337→- Key files: src/components/learn/diagrams-m2.tsx, src/lib/curriculum/types.ts, src/lib/curriculum/lessons/lesson-09..16.ts, src/components/landing.tsx, scripts/{facts-viz-m2.ts,insert-viz-m2.py}
+   338→
+   339→---
+   340→Task ID: 20
+   341→Agent: Super Z (main agent)
+   342→Task: "go with whatever is left, start with subqueries" — close every coverage gap: Module 4 Subqueries & CTEs, Module 5 Scalar & Window Toolkit, Module 6 Expert Clinic (24 → 34 lessons; 199 → 279 problems; 228 → 308 MCQs; 56 → 76 figures)
+   343→
+   344→Work Log:
+   345→- Gap audit first (rg over all lesson files, taught-vs-mentioned distinction): unowned topics were subqueries/CTEs (beyond L13 cameos), string/date functions + CAST, COALESCE (named 3×, drilled nowhere — the broken L04 promise), window functions, GROUP_CONCAT/ROLLUP hands-on, RIGHT/FULL/CROSS/non-equi joins. Task 19 had already delivered the 3rd join figure per M2 lesson, so visuals were not in scope.
+   346→- Capability probe + fact harvest BEFORE writing (scripts/facts-m456.ts, kept): Prisma SQLite = modern engine — windows, CTEs, RIGHT/FULL JOIN, GROUP_CONCAT with ORDER BY (3.44+), FILTER, strftime/julianday, VALUES-in-CTE, NULLS LAST all OK; GROUP_CONCAT(DISTINCT x, sep) rejected (became an MCQ + lesson fact). Facts used across content: avg price 71.78 (6 above), avg order 338.19 (42 above), 12 electronics buyers, 11 ele∩audio, cancelled 4 / no-shipped 6 / no-delivered 1, 45 orders above own-customer avg, spends Alice 7262.35 … Olivia 444.80 (16, no ties), region ties APAC 5 → RANK 6 vs DENSE 2, month buckets 14 (2024-02 & 2024-09 tie at 9), running 34833.28, lead 2.98d, gcc trio Alice/Emma/Maya own all 4 statuses, filterRow 52/30/14/7, region×status matrix, RIGHT cancelled 19 vs FULL 115, cross 96, bands 8/30/40/25, non-equi pairs 12; verified orders #1 576.54 / #12 148.28 / #9 46.67 for the x4 figure (caught 2 invented numbers pre-ship, replaced with real ones).
+   347→- Module 4 — Subqueries & CTEs (L25 scalar+IN & the NOT IN NULL landmine, L26 EXISTS & correlated, L27 derived tables & fanout-safe staging, L28 CTE chains): figures q1-nested/q2-probe/q3-two-stage/q4-staging + q5-in-pipeline/q6-correlated/q7-fanout-safe/q8-cte-chain (diagrams-m4.tsx); 32 problems, 32 MCQs.
+   348→- Module 5 — Scalar & Window Toolkit (L29 text+CAST+COALESCE, L30 strftime buckets + julianday, L31 ROW_NUMBER/RANK/DENSE_RANK + PARTITION + top-N-per-group, L32 LAG/LEAD + running totals + frames + NTILE): figures t1–t8 (diagrams-m5.tsx); 32 problems, 32 MCQs; RANK-vs-DENSE tie lab runs on real region data, month ranks tie at 9 on real counts.
+   349→- Module 6 — Expert Clinic (L33 GROUP_CONCAT + FILTER + the UNION ALL grand-total stack; L34 RIGHT/FULL hands-on (19 vs 115 with the AND-in-ON caveat), deliberate CROSS JOIN, non-equi band ladder via VALUES CTE, composite-key/NATURAL warned honestly): figures x1–x4 (diagrams-m6.tsx); 16 problems, 16 MCQs.
+   350→- Caught & fixed along the way: 10 mistake-regex self-matches (case-insensitive %y-%m vs %Y, limit-anchored rules, >= containing =; fixed with tighter shapes + one JS lookbehind); SQLite compound-SELECT ORDER BY limitation broke the three grand-total stack solutions (l33-p6/7/8 gen-expected FAIL) → wrapped stacks in a subquery so the boolean ORDER BY lives outside the compound, lesson body code updated to the runnable form; l30-p7 brief corrected 8→9 buckets after expected values said so; JSX typo (unclosed cls quote) and a stray object-literal property caught pre-commit.
+   351→- Wiring: types.ts FigureId union +20 (q1-8/t1-8/x1-4); lessons/index.ts imports + LESSONS + 3 new MODULES entries (subqueries / toolkit / clinic); diagrams.tsx merges FIGURES_M4/M5/M6; landing + learn-app stats stay computed (now 6 modules · 34 lessons · 279 · 308).
+   352→- QA: gen-expected 279/279, 0 failures (every solution executed on the live seed); qa-coach ALL CHECKS PASSED (hints 2/2, notes on every MCQ, takeaway, no self-matching rules); tsc clean in src/; eslint clean on all touched files; figure audit 76 used = 76 registered = 76 union, 0 orphans, 0 dup ids (587 total).
+   353→- Browser E2E at 1440×900: learn app reports "6 modules · 34 lessons · 279 graded queries · 308 quiz questions"; all 10 new lessons open with 2 animated figures each; live-graded l25-p1 typed into the editor → Run & grade → solved + XP + badge fired; zero console errors; screenshot scripts/shots/t20-lesson25.png.
+   354→
+   355→Stage Summary:
+   356→- SeeQL is now 6 modules · 34 lessons · 279 graded problems · 308 MCQs · 76 interactive diagrams — the audit's "unowned families" are all owned: subqueries/CTEs (M4), scalar text/date/type/NULL toolkit (L29-30), window functions (L31-32), string aggregation + FILTER + TOTAL stack (L33), RIGHT/FULL/CROSS/non-equi joins (L34).
+   357→- Every number in prose, figures and problem briefs is seed-verified via scripts/facts-m456.ts + gen-expected; consistency machine (one schema, generated expected values, coach rules per problem) extended unchanged.
+   358→- Key files: src/lib/curriculum/lessons/lesson-25..34.ts, src/lib/curriculum/{types,expected}.ts, lessons/index.ts, src/components/learn/diagrams-m{4,5,6}.tsx, diagrams.tsx, scripts/{facts-m456.ts,audit-figs-m456.ts,check-fig-orders*.ts}
+   359→
+   360→---
+   361→Task ID: 21
+   362→Agent: Super Z (main agent)
+   363→Task: "make sure whatever is done is finished — MCQs for every keyword, case studies, query problems" — completeness pass over Modules 1-6, then case-study capstones (34 → 40 lessons; 279 → 312 problems; 308 → 417 MCQs)
+   364→
+   365→Work Log:
+   366→- Keyword-coverage audit built first (scripts/audit-keywords.ts, kept): 88 taught keywords × (MCQ hits / problem hits / lessons touched), computed from the real lesson data, not prose parsing. Verdict: 27 keywords thin (<4 MCQ hits) — concentrated in M5 text/dates/windows, M6 clinic, join variants (RIGHT/FULL/USING/non-equi), set-operator mechanics (alignment, precedence), CASE pivot/custom-sort.
+   367→- Fact harvest BEFORE writing (scripts/facts-t21.ts + facts-t21b.ts, kept): TRIM changes nothing on this data (0 padded names), all 16 cities distinct (same-city self-join provably empty), region pairs 39 (EU 28/APAC 10/US 1/LATAM 0), email @ positions 11/12/13/9 (all example.com), CAST(199.99)=199 vs ROUND, avg price CAST 71 vs 71.78, orders span 2024-01-01→2025-02-27 (423 days, 14 month buckets, Feb-24 & Sep-24 tie at 9), ship delay 2.98d over 82 (21 NULL), status values delivered 52/$15,571.07 · shipped 30/$11,996.72 · pending 14/$6,113 · cancelled 7/$1,152.49, category revenue Audio 11,744.01 … Fitness 863.91 (sums to 34,833.28), spends Alice 7,262.35 / Emma 6,640.56 / Grace 4,574.23 / bottom Olivia 444.80, avg CUSTOMER spend 2,177.08 (5 above), 45 orders above own-customer avg (14 of 16 customers own ≥1; Alice/Emma/Maya 8 each), all-4-status trio Alice/Emma/Maya, NTILE(4) 26/26/26/25, APAC ranks Grace/Maya/Keiko then Farid+Hiro tied rk4/rk4 drk4, GROUP_CONCAT observed order 'shipped,cancelled,delivered,pending' (NOT alphabetical — proof MCQ), GCC(DISTINCT region ORDER BY region)='APAC,EU,LATAM,US', top product per category (7 names), monthly revenue Jan 3,731.97 → running 9,958.69 by Mar, in-flight 44, LAG gaps 20/29/5/9/13, supplier regions ×4 = 24, EU active 7/8, under-$50 = 8, Alice∩Emma 6 categories / Alice−Emma 1 (Fitness), 8 pending-order customers.
+   368→- +85 keyword-gap MCQs across 19 lessons: L03 +4 (IN-literal, BETWEEN edges, LIKE _, IN≡OR), L04 +4 (COALESCE, IFNULL, NULLIF, 3VL), L05 +4 (OFFSET/paging, tie-break with the real Feb/Sep tie), L07 +3 (MIN/MAX on ISO dates, MAX-returns-value-not-row, COUNT(shipped_at)=82), L08 +3 (HAVING alias portability, HAVING≥5 → 5 customers, expression GROUP BY → 14 buckets), L09 +3 (USING name-mismatch, composite keys, FK direction), L14 +4 (39 pairs, same-city=0, non-equi cardinality, alias necessity), L17 +2 (UNION vs ALL on identical rows, honest stack), L18 +3 (column-count error, first-arm naming, mixed-type column), L21 +3 (INTERSECT precedence, left-to-right, WHERE-vs-SELECT timing), L23 +4 (pivot CASE mechanics, 4 columns, workflow order 14/30/52/7, missing-ELSE NULL-first trap), L25 +3 (two-stage discipline, live list vs frozen literals, SELECT-list vs WHERE), L26 +3 (correlation definition, SELECT 1 convention, 45-vs-42 baselines), L29 +15 (UPPER/LOWER identity on clean data, SUBSTR 1-based, INSTR per-row positions, TRIM guard + RTRIM, LENGTH + LENGTH(NULL), || spacing + NULL poison, CAST truncate, NULLIF→COALESCE pair, UPPER-case-insensitive compare), L30 +4 (%Y-%m key, 14 buckets, julianday 9-day diff, NULL-skipped AVG), L31 +6 (ROW_NUMBER tie contract, Hiro RANK 4, PARTITION ×4, WHERE-rn two-stage, 7 per-category winners, NULLS-first default), L32 +5 (LAG/LEAD NULL edges, running total 9,958.69, 2-row frame 10/30/50, NTILE 26/26/26/25), L33 +6 (GROUP_CONCAT shape, separator, observed-order-not-guaranteed proof, deterministic ORDER BY-inside, FILTER census, FILTER-in-GROUP-BY dormant 1/0), L34 +6 (RIGHT 19 decomposition, FULL 115 = 103+12, NATURAL shared-name foot-gun, VALUES constructor, half-open seams, NATURAL-vs-USING).
+   369→- 6 module-end case studies (L35–40, appended to their modules' lesson arrays — modules now end with a capstone):
+   370→  L35 "The new analyst's first week" (M1): 6 problems — EU-active 7, budget count 8, distinct cities 16, total stock 2,845, top-5 premium, HAVING>2 categories.
+   371→  L36 "Who's still buying?" (M2): 6 problems — top-5 order counts, no-shipped anti-join (6), no-delivered (Liam O'Brien), category revenue 7 rows, honest total 34,833.28 (fanout warned: 103,244.55), region pairs 39.
+   372→  L37 "The quarterly merchandising review" (M3): 6 problems — labeled UNION ALL stack (44/52), Alice∩Emma 6 categories, Alice−Emma Fitness, region×status pivot 4 rows, one-pass value census, workflow-ordered status report.
+   373→  L38 "The VIP shortlist" (M4): 5 problems — above-own-average top-4 (8/8/8/6), staged big spenders vs 2,177.08 (5 rows), EXISTS pending probe (8), all-status veterans (3), CTE-chain top-3 pipeline.
+   374→  L39 "The ops calendar" (M5): 5 problems — 14 month buckets, staged running-revenue line, shipping speed 2.98d/82, Alice's LAG rhythm (24 rows), NTILE quartiles 26/26/26/25.
+   375→  L40 "The executive one-pager" (M6): 5 problems — FILTER census 52/30/14/7 one row, folded region string, grand-total stack (8 rows, 34,833.28 tops), VALUES price ladder 8/4/4, deliberate CROSS JOIN 24 grid.
+   376→  Each case study: scenario prose + brief table + tips/warns, 4 seed-verified MCQs, takeaway; no new figures needed (76 unchanged).
+   377→- Caught & fixed along the way: 4 MCQ notes accidentally targeting the correct choice with empty text (l36-q4/l37-q1/l40-q1 pattern + l34-q13), l34-q13 answer index was 1 → corrected to 0 (half-open IS the tiling proof), 2 mistake rules matching their own solutions (l39-p3 COUNT(*)-as-shipped rule re-anchored to the no-WHERE shape; l40-p1 shared-WHERE rule re-anchored to `count(*) as delivered from orders where`), facts script bug (UNION ALL arm column mismatch) replaced with the taught L34 query shapes.
+   378→- Wiring: lessons/index.ts imports lesson35–40, LESSONS array, and each module's lessons array extended (module sizes now 9/9/9/5/5/3). Landing stats stay computed; learn-app reports the new totals automatically.
+   379→- QA: gen-expected 312/312, 0 failures (every reference solution executed on the live seed; row counts match briefs — 7/6/1/7/1/1, 2/6/1/7/1/1, 6/1/4/1/4, 4/5/8/3/3, 14/14/1/24/4, 1/1/8/3/24); qa-coach ALL CHECKS PASSED (hints 2/2 everywhere, notes on all 417 MCQs, takeaways, 0 self-matching rules); tsc clean in src/; eslint exit 0; audit-t21: 76 used = 76 registered, 0 orphans, 0 dup ids (729 total); keyword audit after fill: 88 keywords, thin (<4 regex hits) down from 27 → 9, all 9 either niche syntaxes (RTRIM/VALUES/NATURAL), deliberately-discouraged shapes (RIGHT JOIN) or regex-count artifacts — every one now has dedicated MCQs + problem coverage.
+   380→- Browser E2E (agent-browser): landing curriculum grid shows case studies inline with updated per-lesson counts; learn app reports "6 modules · 40 lessons · 312 graded queries · 417 quiz questions"; L35 opens with Learn tab (scenario table renders) + Practice (SQL editor) + Quiz (4 questions); typed l35-p1 solution → Run & grade → solved, XP fired (400→395 to next level), tab shows 1/6 solved; MCQ answered → "Correct." + why-text; zero console errors; test localStorage cleared; screenshot scripts/shots/t21-case-study.png.
+   381→
+   382→Stage Summary:
+   383→- SeeQL now 6 modules · 40 lessons · 312 graded problems · 417 MCQs · 76 interactive diagrams — every module ends in a business-brief case study, and the keyword-coverage matrix is filled: every taught keyword has dedicated MCQs and problem coverage, every number seed-verified.
+   384→- Key files: src/lib/curriculum/lessons/lesson-35..40.ts (new), lesson-03/04/05/07/08/09/14/17/18/21/23/25/26/29/30/31/32/33/34.ts (+85+6 MCQs), lessons/index.ts, expected.ts (regenerated), scripts/{audit-keywords,facts-t21,facts-t21b,audit-t21}.ts (kept as reusable QA).
+   385→- Next-round queue (user asked for "whatever modules are left" AFTER this pass): Module 7 candidates — data modification (INSERT/UPDATE/DELETE/UPSERT, sandboxed), schema & views (CREATE TABLE/constraints/ALTER/CREATE VIEW/indexes/EXPLAIN QUERY PLAN), transactions (BEGIN/COMMIT/ROLLBACK), set-ops deep dive & recursive CTEs; plus older wish-list: daily-goal picker, streak nudges, share-a-round card, lesson search, certificate view.
+   386→
+   387→---
+   388→Task ID: 22
+   389→Agent: Super Z (main agent)
+   390→Task: Finish the interrupted Modules 7–8 session — build the missing figures, wire lessons 41–50 into the curriculum, add the M8 capstone case study (L51), backfill content density to the course norm (+7 MCQs +4 problems per lesson L41–49), add 35 missing `mutating` flags, regenerate expected results, full QA, commit.
+   391→
+   392→Work Log:
+   393→- Diagnosed the interrupted session's committed-but-unfinished state (6ea11dc): lessons 41–50 + sandbox write infrastructure (/api/query sandbox, gen-expected sandboxRun, problem-runner sandbox grading, types mutating/verify/changes) were committed, but (a) the 9 referenced figures w1–w4/d1–d5 were never built, (b) index.ts never imported lesson41–50, (c) zero `mutating: true` flags existed on the 35 write/DDL problems, (d) expected.ts had no entries for the new lessons, (e) MCQ/problem density was 5/4 per lesson vs the course norm 12/8, (f) M8 had no capstone.
+   394→- Fact harvest first: ran committed facts-m78.ts/facts-m78b.ts + wrote scripts/facts-t22.ts (kept) verifying every number used in the backfill — next ids 17/104, inactive customers {4 Dmitri, 11 Keiko}, pending 14 (12 pre-2025), order_items splits (unit_price>80: 86, quantity=1: 93, quantity>=3: 89 → 162 remain), active=14, price<20 = 2 products, upsert 3-row mixed probe changes=3 & K1 120+5=125, pragma counts (products 6 cols/5 notnull, customers 7, suppliers 4), pristine index counts 0, dup-email groups 0, EQP SCAN orders, top-3 months 2024-01/2024-02/2024-09 (3,731.97/3,609.64/3,116.04). Live-probed SQLite semantics first: INSERT INTO a view is REFUSED (fixed the wrong claim in l47-p1's mistake note), ADD COLUMN with UNIQUE is REFUSED (used as new MCQ fact).
+   395→- Built 9 flat figures in the kit language: diagrams-m7.tsx (w1-insert-map positional contract + id 17 + RETURNING echo; w2-update-sweep 16 dots/2 wearables 79→86.90 & 199.99→219.99; w3-delete-scope 103/7 cancelled + FK fence error 787 + 12-children-first; w4-upsert-fork DO NOTHING/DO UPDATE fork with excluded + K1 120→170 + transaction wrapper band) and diagrams-m8.tsx (d1-table-anatomy constraint lines + introspection; d2-alter-paths 4 operations off the suppliers card; d3-view-lens 16→8 EU rows + pushdown + stacking; d4-index-lookup SCAN vs SEARCH b-tree + covering/composite/write-cost; d5-recursive-unfold anchor/step/guard loop + 1..5 fold + 14-month spine). Registered FIGURES_M7/FIGURES_M8 in diagrams.tsx.
+   396→- Wired lessons 41–51 into index.ts: Module 7 "Data Modification" (writes, Expert, L41–44 + L50 capstone) and Module 8 "Schema, Views & Beyond" (schema, Expert, L45–49 + L51 capstone) with blurbs; wrote lesson-51.ts "Case study — building the reporting layer" (month_revenue view CREATE VIEW 14 rows; worst-month spine+LEFT JOIN audit → 2024-07 1,193.86; month_targets staging table with PK/CHECK; idx_orders_created; sqlite_master inventory of the storefront's 5 tables) — 4 MCQs + 5 problems, case-study norm.
+   397→- Added the missing `mutating: true` to all 35 write/DDL problems (L41–47 all, L48 p2–p4, L50 p2–p5; L48-p1 EXPLAIN and L49 recursive reads correctly excluded).
+   398→- Density backfill +63 MCQs +36 problems: every lesson L41–49 now 12 MCQs / 8 problems. New problem shapes: supplier insert, win-back INSERT…SELECT over inactive customers, expression VALUES (19.99*2 → 39.98), scalar-subquery next-id preview; Ring Light ROUND markup 41.99, fleet shipment 14 rows, IN-subquery freeze 6 orders, preview-COUNT read; premium-line purge 86, no-op zero-stock delete, single-unit sweep 93, leaf-vs-parent drills; 3-row mixed upsert (changes=3, K1→125), supplier rating refresh, never-raise mouse price-match 34.5→29.5, before-picture read; CTAS suppliers_backup (6), notnull census (5), status ledger with DEFAULT, orders contract read-back (6); notes ADD (7→8), RENAME to orders_archive, DROP rating (4→3), customers contract (7); active_customers (14), budget_catalog (2), customer_order_counts (16), pushdown proof (7); EQP pre-index SCAN, order_items index, composite (customer_id, status), duplicate-email census 0; countdown 5→1, powers of two 7 rows, top-3 months podium, January 2024 day spine (31 rows). Every number facts-verified; every MCQ has why + at least one distractor note; every problem has hints[2] + 3 mistake rules that don't match their own solutions.
+   399→- Keyword audit extended with M7/M8 sections (scripts/audit-keywords.ts, +28 keywords: INSERT/RETURNING/UPDATE/DELETE/UPSERT/transactions/CREATE TABLE/constraints/ALTER/RENAME/DROP/views/sqlite_master/pragma/index/EQP/recursive…) and +10 targeted MCQs to lift every new keyword ≥4 hits (CHECK evaluates per write / row-local, pragma_table_info one row per column, dflt_value, RENAME cascades to FKs+views, rename preserves data, anchor/step set operator, CTE column list, UPDATE FROM join-in-WHERE + portable correlated-SET spelling, preview/rehearsal discipline, preview-vs-affected mismatch fire alarm, RETURNING-after-vs-preview-before).
+   400→- Caught & fixed during QA: l41-p2 + l50-p2 mistake rule /\bid\s*,/ matched its own "RETURNING id, name" → re-anchored to \(id\s*,|,\s*id\s*,; l41-q11/l43-q8/l46-q9 notes targeted the CORRECT choice → retargeted to real distractors with rewritten text; l47-p7 rule matched own "LEFT JOIN orders o" → (?<!left\s)join\s+orders lookbehind; l51-p5 originally inventoried objects from sibling problems (sandbox resets between runs → 0 rows) → redesigned to inventory the storefront's own 5 tables; stray CJK "现状" artifact in l48-p5 brief → rewritten; normalized stray "message": string-keys to bare message:.
+   401→- QA: gen-expected 394/394 results, 0 failures (all 46+41 write/DDL problems sandbox-verified with per-problem row/changes counts matching briefs); tsc 0 errors in src/; eslint clean on all touched files; qa-coach ALL CHECKS PASSED (hints 2/2, notes on all 547 MCQs, 0 self-matching rules); audit: 85 figures registered = 85 used, 0 orphans, 0 dup ids (941 total ids: 394 problems + 547 MCQs), 51 lessons / 8 modules; keyword audit 116 keywords, 7 thin = Task 21's accepted pre-existing set (RIGHT JOIN discouraged-shape, TRIM no-data, NATURAL foot-gun, regex-count artifacts), all M7/M8 keywords green.
+   402→- Browser E2E (agent-browser): learn app reports "8 modules · 51 lessons · 394 graded queries · 547 quiz questions"; sidebar shows modules 7 & 8 with per-module progress; L41 opens with Learn tab (w1 figure renders) + Quiz (12 questions, select→check→"Correct." +8 XP first-try flow verified) + Practice; E2E solved l41-p1 sandboxed INSERT (Run & grade → expected row Tara/id 17 shown, sandbox banner visible, 1/8 solved, XP 400→387 across runs, ledger persisted); L48 figure verified (SCAN/SEARCH + idx_orders_customer); landing shows 8 module bands + updated totals; zero console errors; screenshots scripts/shots/t22-*.png.
+   403→
+   404→Stage Summary:
+   405→- SeeQL now 8 modules · 51 lessons · 394 graded problems · 547 MCQs · 85 interactive diagrams — the two new modules complete the SQL syllabus: writing data (INSERT/UPDATE/DELETE/UPSERT + transactions, all sandboxed) and the schema layer (CREATE TABLE constraints, ALTER/DROP, views, indexes + EXPLAIN QUERY PLAN, WITH RECURSIVE), each ending in a business-brief capstone (L50 data-fix ticket, L51 reporting layer).
+   406→- Key files: src/components/learn/diagrams-m7.tsx, diagrams-m8.tsx, diagrams.tsx (registry), src/lib/curriculum/lessons/index.ts (8-module wiring), lesson-51.ts (new), lesson-41..50.ts (mutating flags + density backfill), expected.ts (regenerated 394), scripts/{facts-t22,audit-keywords,audit-t21}.ts.
+   407→- Remaining wish-list (UI features, not SQL content): daily-goal picker, streak nudges, share-a-round card, lesson search, certificate view, median/percentile dialect note.
+   408→
+   409→---
+   410→Task ID: ops-1
+   411→Agent: main
+   412→Task: Fix "cant load preview" report
+   413→
+   414→Work Log:
+   415→- Found Next.js dev server process dead (killed at session boundary)
+   416→- Restarted via official .zscripts/dev.sh (bun install -> db:push -> next dev -> health check)
+   417→- Verified: localhost:3000 = 200, homepage renders SeeQL content, /api/query returns correct data (103 orders)
+   418→- Verified Caddy proxy chain: local :81 with preview Host header = 200
+   419→- External gateway preview-6a98301b-145d6674-cbf4a43676be.space-z.ai returned 404 for ~2 min after restart (edge route registration is platform-side)
+   420→
+   421→Stage Summary:
+   422→- Root cause: dead dev server process. App restored and fully healthy.
+   423→- User action if preview still 404s: wait ~1-2 min for gateway re-registration, or restart session.
+   424→
+   425→---
+   426→Task ID: ui-1
+   427→Agent: main
+   428→Task: Premium UI polish — "sleek and premium" design-language pass (user directive; Module 9 (triggers/JSON/FTS) explicitly dropped as not analyst-relevant)
+   429→
+   430→Work Log:
+   431→- Audited UI via agent-browser: landing, learn overview, lesson view, practice runner, playground; all 5 themes
+   432→- Added Space Grotesk display font (next/font) wired as --font-display + .font-display utility
+   433→- Added premium material layer to globals.css: .sheen (top hairline), .card-hover (lift+brighten), .bg-ambient (theme-adaptive radial glow), .grain (3% film grain), .btn-glow / .btn-quiet, .tnum, brand focus-visible ring, pulse-soft / bar-shimmer / flame-live keyframes, prefers-reduced-motion guard
+   434→- landing.tsx: ambient hero, display headlines, CountUp stat numerals (framer-motion springs), icon chips, card hover lifts, curriculum module level-dots + row hover arrow slide, ambient CTA; FIXED stale "Three modules" copy -> "Eight modules" + duplicate className bug
+   435→- learn-app.tsx: emerald active-lesson state with accent bar, shimmering progress bars, flame-live streak icon, display-font overview + module cards, sheen on panels; copy fixes (BEGINNER -> EXPERT, Eight modules)
+   436→- lesson-view.tsx: display h1, segmented tab bar w/ sheen + emerald active icon, kicker hairline extension, sheen on tip/warn/takeaway/CTA
+   437→- problem-runner.tsx: sheen cards, difficulty pills with colored dots, btn-glow Run & grade
+   438→- QA: tsc clean in src/ (pre-existing errors only in examples/scripts/skills), eslint clean, dev.log no runtime errors; browser E2E: landing hero/stats/curriculum, learn overview, lesson learn+practice tabs, playground pipeline run — all verified; all 5 themes (carbon/paper/marine/oxblood/gallery) cycled and verified
+   439→- Committed source changes (screenshots excluded)
+   440→
+   441→Stage Summary:
+   442→- Design language: same flat solid-color system, now with premium finish (display type, sheen, ambient glow, grain, micro-interactions)
+   443→- 6 files changed: layout.tsx, globals.css, landing.tsx, learn-app.tsx, lesson-view.tsx, problem-runner.tsx
+   444→- All 51 lessons / 547 MCQs / 394 problems untouched and intact
+   445→
+   446→---
+   447→Task ID: ui-2
+   448→Agent: main
+   449→Task: Premium UI pass 2 — extend the material language to every learner surface (continuation of user's "sleek and premium" directive)
+   450→
+   451→Work Log:
+   452→- globals.css: fixed light-theme bug — card-hover/btn-quiet hover borders used white-alpha (invisible/wrong-direction on Paper/Gallery). Added theme-adaptive --hover-line (white 14% on dark via :root, ink 22% via html:not(.dark)) + light-theme card-hover shadow variant + .cell-lift micro-lift utility (reduced-motion guarded)
+   453→- mcq.tsx (most-used surface): sheen card, accent-lit picked state (emerald ring + tinted chip before check), active:scale press feedback, animated verdict panel (framer-motion spring) with CheckCircle2/AlertCircle icons, btn-glow Check answer with disabled dim
+   454→- celebrate.tsx: toasts now carry kind icons in tinted chips (Zap/xp emerald, Award/badge amber, TrendingUp/level teal, Info/info zinc), sheen, spring scale-in
+   455→- mixed-quiz.tsx: uppercase tracking kicker + font-display heading, bar-shimmer progress, sheened next-question bar, btn-glow/btn-quiet buttons, display-font verdict card
+   456→- progress-cards.tsx: sheen + font-display headers on ActivityStrip/MasteryGrid, cell-lift + border-brighten on mastery cells, tnum stats, tracking kickers
+   457→- result-grid.tsx + data-explorer.tsx: uppercase tracked table headers, row hover, tnum cells, sheened explorer panel, cell-lift table pickers, kicker/display heading, btn-quiet playground button
+   458→- sql-editor.tsx + hero-demo.tsx + theme-switcher.tsx: sheen chrome, pulse-soft live dot, tnum result numerals, btn-quiet trigger, sheened dropdown
+   459→- QA: tsc 0 errors in src/, eslint clean on all 9 touched files; browser E2E at 1440x900 — landing, learn overview, lesson quiz (correct + wrong paths incl. About-your-pick), practice runner (solved l01-p1, XP 8->13, badge toast, matched panel), playground (sample run, pipeline tabs); Paper light theme verified across overview/lesson/quiz/explorer + --hover-line computed #18181b38; zero page errors
+   460→- Committed (screenshots included as artifacts)
+   461→
+   462→Stage Summary:
+   463→- Design language now consistent end-to-end: every learner surface (quiz, toasts, progress, tables, explorer, editor chrome) shares the pass-1 vocabulary (sheen/font-display/bar-shimmer/tnum/btn-glow) plus theme-adaptive hovers
+   464→- 10 files changed: globals.css, mcq.tsx, celebrate.tsx, mixed-quiz.tsx, progress-cards.tsx, result-grid.tsx, data-explorer.tsx, sql-editor.tsx, hero-demo.tsx, theme-switcher.tsx
+   465→- All 51 lessons / 547 MCQs / 394 problems + logic untouched; XP/idempotency flows verified live
+   466→
+   467→---
+   468→Task ID: ui-3
+   469→Agent: main
+   470→Task: Fix messy lesson arrangement — collapsible/expandable module system + semantic color coding for keywords/callouts/tips (user directive)
+   471→
+   472→Work Log:
+   473→- New src/components/learn/sql-code.tsx: dependency-free SQL highlighter, one regex pass; keyword violet / function amber / string rose / number orange / comment muted; hues chosen to be theme-remapped by light themes (paper/gallery); exports SqlNodes (span-safe) + looksLikeSql heuristic
+   474→- rich.tsx: exported span-safe RichNodes (no p-in-p); inline `code` chips now SQL-colorized; bold bumped to zinc-100
+   475→- lesson-view.tsx: CodeBlock <pre> colorized; new Callout component (floating accent rail + tinted icon chip + uppercase label) unifying tip(emerald)/warn(amber)/dialect(teal, keeps engine pill)/takeaway(violet); DIALECT_META postgres sky→teal for light-theme contrast
+   476→- mcq.tsx: prompt + why + notes render via RichNodes (raw backticks gone); choices auto-detect SQL fragments (mono + highlighted) vs prose (clean sans)
+   477→- problem-runner.tsx: brief via RichNodes; hints pick mono-SQL vs sans-prose via looksLikeSql; reference solution colorized
+   478→- learn-app.tsx: sidebar modules became animated accordions (framer-motion height reveal, rotating chevron, num chip w/ done check, per-module micro progress bar, done/total counter, tree rail on lessons, done lessons dimmed + checked); expansion persisted to localStorage (seeql.modules-open), defaults to continue-module, auto-reveals module of lesson being opened; expand-all/collapse-all icon buttons in header; overview module cards now expandable with lesson rows + Start/Continue module CTA
+   479→- FIXED pre-existing data bug: stale dev db lacked orders.shipped_at (CREATE TABLE IF NOT EXISTS never migrates) → every "return every column" problem failed with column mismatch; ensureDatabase now PRAGMA-checks orders and reseeds when the column is missing (self-healing)
+   480→- QA: tsc clean in src/, eslint clean, qa-coach ALL CHECKS PASSED, audit-ids 941 unique/0 dup/0 orphan; browser E2E: accordion expand/collapse + persistence across reload, auto-expand on lesson open, lesson code highlighting (17 kw/2 fn/6 str tokens on l03), callouts on dark+paper themes, MCQ prompt chip + mono-vs-sans choices, answer flow (+8 XP, badge toast), practice solve end-to-end (+5 XP, Matched verdict, shipped_at column visible), mobile 375px sanity
+   481→- Committed dfee379 (7 files, +540/-109)
+   482→
+   483→Stage Summary:
+   484→- Lesson arrangement: 51 lessons now live behind 8 collapsible modules (sidebar + overview), state persists, continue-point auto-expands
+   485→- Text semantics: five consistent color roles (keyword/function/string/number/comment) + four callout tones (tip/warn/dialect/takeaway) across all 51 lessons, 547 MCQs, 394 problems
+   486→- Bonus: stale-db grader bug root-caused and permanently fixed via self-healing seed
+   487→
+   488→---
+   489→Task ID: audit-1
+   490→Agent: main
+   491→Task: "Keep all topics in the left menu" + in-depth content-consistency audit (user directive)
+   492→
+   493→Work Log:
+   494→- Built scripts/deep-audit.ts — 9-section mechanical audit of all 51 lessons: id/sequence conventions, module-registry coverage/ordering/level-ladder/case-study-position, problem solutions re-run on fresh seed vs expected.ts, every lesson code block executed per statement, MCQ SQL choices executed + numeric-answer MCQs verified against live data, prose cross-references (lesson/module), figure-registry coverage, table arity/callout coverage/duplicate prompts
+   495→- FOUND + FIXED root app bug: API hasMultipleStatements fell through on comment openers, so ANY query ending in a "-- comment" was falsely rejected as multi-statement; scanner (fixed) + new splitStatements now shared in src/lib/sql-statements.ts (API, CodeBlock, QA all import one implementation)
+   496→- 58 blocks flagged multi-statement: 47 were the scanner bug; 11 genuinely multi -> new premium "Run all · N steps": /api/query batch mode (sqls[] runs sequentially inside ONE always-rolled-back transaction, per-statement results, errors don't abort) + CodeBlock stacked step results (chip: type · rows/affected, ResultGrid per step, inline errors)
+   497→- Splitter refinement: comment runs after ";" attach to the statement they annotate (was bleeding into the next -> UNKNOWN chip); statementType skips leading comments (API both paths + lesson-view looksLikeRead)
+   498→- Content fixes: lesson-44 BEGIN/COMMIT shape marked runnable:false (conceptual, non-storefront tables); lesson-32 b10 moving-average block made self-contained (monthly CTE inlined); l4-q9 duplicate prompt rewritten as store-fact question (103 orders / 21 NULL / 82 kept, notes for 21 and 0 traps); tips added to lesson-02 (projection playground), lesson-14 (guard-rail row-explosion warn, 39->94 rows math), lesson-16 (two-query sanity check tip) — every lesson now has callouts; lesson-45 self-reference rephrased
+   499→- Audit hardening: rawErrMsg extracts real SQLite message from Prisma boilerplate; sandboxSequence mirrors app batch semantics (ALTER+SELECT, CREATE VIEW+SELECT verified in-tx); announced-error blocks supported (lesson-43 FK-fence demo: error expected and verified); prose/fragment/conceptual-table classifiers eliminate false FAILs
+   500→- QA: tsc 0 errors in src, eslint clean, qa-coach ALL CHECKS PASSED, test-split 83 blocks/0 problems, deep-audit FAILS=0 REVIEWS=11 (all intentional: SELECT TOP trap, conceptual a/b/employees tables, DELETE ORDER BY trap...)
+   501→- Browser E2E: left menu shows all 8 modules/51 topics (expand-all verified 51 lesson buttons), module accordion + counts (0/9,0/9,0/9,0/5,0/5,0/3,0/5,0/6); l17 Run-all stacked results (206 rows + 4 rows, chips SELECT/SELECT); l43 FK demo errors as announced; l4-q9 renders + answers correctly (+8 XP, verdict text); Paper light theme batch UI verified; mobile 375px sidebar stacks full-width; API verified live (batch + trailing-comment queries)
+   502→- Committed (source + QA scripts; screenshots as artifacts)
+   503→
+   504→Stage Summary:
+   505→- Content is now mechanically provably consistent: every id sequential/unique, all 394 grading targets match their solutions, all 93 runnable statements execute, all 4 numeric MCQ facts verified against live data, 125 cross-references valid, 85/85 figures registered
+   506→- Every code block in the curriculum now runs (or is honestly marked static) — 58 previously-broken Run buttons fixed at the root
+   507→- Left menu = full topic index: 8 collapsible modules, expand/collapse all, per-module progress, all 51 lessons reachable
+   508→
+   509→---
+   510→Task ID: ops-2
+   511→Agent: main
+   512→Task: Diagnose "what happened" — preview 404 + restore dev server
+   513→
+   514→Work Log:
+   515→- Session continued after context limit; all prior work intact (commits dfee379 UI overhaul, a5eb7d5 audit + Run-all, plus platform commits)
+   516→- Local app healthy (200 on :3000, caddy :81 -> 200) but external preview returned Go-style 404 with "Abc: preview-*" header => platform GATEWAY lost route registration (not an app error)
+   517→- 404 persisted 60+ min while app healthy (prior incident self-resolved in ~2 min)
+   518→- Killed stale next dev (PID 1070) and attempted restart via .zscripts/dev.sh 3 ways (nohup&, setsid nohup&, plain): ALL spawned process trees die within ~1-5s of the tool call ending
+   519→- Definitive heartbeat test: detached setsid 1s-loop writer died immediately after spawn call returned => sandbox reaps ALL agent-spawned processes; agent cannot keep servers alive this session
+   520→- Left state: next dev intentionally down (was killed for restart); db:push during attempt dropped orders.shipped_at again — SAFE: app ensureDatabase self-heals (PRAGMA check + reseed) on first request, same as audit-1
+   521→- Recovery requires PLATFORM restart (user restart button) => re-runs boot -> dev.sh platform-spawned (survives) + gateway re-registers route
+   522→
+   523→Stage Summary:
+   524→- All user-facing work (UI overhaul + consistency audit) is committed and safe; only runtime needs a platform restart
+   525→- Agent-spawned background processes cannot survive tool-call teardown in this sandbox — future restarts should be requested via platform restart, not spawned from tool calls
+   526→
+   527→---
+   528→Task ID: 4 (incident + rebuild kickoff)
+   529→Agent: Super Z (main agent)
+   530→Task: Diagnose workspace rollback; plan rebuild of lost features + approved upgrades
+   531→
+   532→Work Log:
+   533→- Mid-session the platform replaced the workspace with an older snapshot (likely tied to user-side restart): git history now ends at a5eb7d5-era auto-commits; commits b47c527 (fills), 5d45a81 (review+capstones) MISSING from object store entirely
+   534→- Forensics: git fsck found only ancient dangling commits; no backups; .next cache clean; tool-results rolled back — lost work is unrecoverable
+   535→- Survived: 51 lessons / 547 MCQs / 394 problems, full UI, XP system, coach, expected.ts, all pre-fills scripts
+   536→- Decision: rebuild fills DIRECTLY at 4-6/lesson (~250) merging restore with approved "do all" upgrades (fills expansion, callouts, tiering, exams)
+   537→
+   538→Stage Summary:
+   539→- Rebuild underway; foundation (Fill type, fill-blank UI, Leitner store, review deck) first, then parallel per-module content subagents
+   540→
+   541→---
+   542→Task ID: 5-a
+   543→Agent: fills-m01
+   544→Task: Author fills for m01 lessons 4-8 + 35
+   545→
+   546→Work Log:
+   547→- Read worklog tail, m01.ts golden examples (lessons 1-3, 16 fills), types.ts (Fill/FillNote), schema.prisma, and the full mcqs/blocks/problems of lesson-04..08 and lesson-35 (capstone)
+   548→- Inspected scripts/fill-audit.ts to mirror the enforced contract (slot shape, distinct answers/chips, 4-6 chips, read-only SQL executed on fresh seed)
+   549→- Verified seed facts with two scratch query scripts before writing any why-text: orders has shipped_at (103 rows / 82 shipped / 21 NULL = 14 pending + 7 cancelled); statuses delivered 52, shipped 30, pending 14, cancelled 7; customers 16 (regions APAC 5, EU 8 w/ 7 active, LATAM 1, US 2; 16 distinct cities); products 16 (7 categories, Accessories/Audio/Electronics 3 each; price envelope 14.99-199.99; SUM(stock) 2845; 8 products under $50); order_items AVG(quantity) 1.98; supplier regions 4; SUM(total) 34833.28; MIN(created_at) 2024-01-01; top pending order 1088.44; delivered-spend >2000 → customers 7/1/13 (3054.89, 2961.81, 2075.47); customer 1 leads spend 7262.35 over 24 orders
+   550→- Authored 30 fills in m01.ts under new keys 4, 5, 6, 7, 8, 35 (ids l{N}-f1..f5; lessons 1-3 untouched)
+   551→- Fixed one audit failure during iteration: l6-f2 "ORDER BY {2}" with answer ASC produced invalid "ORDER BY ASC" — retemplated so the sort column is fixed and the slot picks the deduped column + direction
+   552→- Honesty spot-check: ran the exact completed SQL of l4-f5, l5-f5, l6-f5, l7-f4, l8-f4, l35-f1 via a scratch script — returned 21 unshipped; top pending 1088.44; 14 active cities; 82 shipped; 3 customers at 3054.89/2961.81/2075.47; 7 EU-active rows — all match the why-texts
+   553→- Removed scratch scripts; ran fill-audit and tsc
+   554→
+   555→Stage Summary:
+   556→- 30 fills added to src/lib/curriculum/fills/m01.ts: lessons 4, 5, 6, 7, 8 and 35 × 5 each (46 in m01 total with the 16 golden examples)
+   557→- Every fill has 4-6 distinct chips, notes on the most tempting slot(s), and 1-2+ multi-slot drills per lesson (2-slot: l4-f1/f4/f5, l5-f1/f2/f5, l6-f2/f3/f5, l7-f1/f2/f4/f5, l8-f1/f2/f3/f5, l35-f1..f5; 3-slot: l8-f4, l35-f1, l35-f5)
+   558→- Fix-the-broken variants: l4-f1 (=NULL zero rows), l5-f1 (wrong sort direction), l5-f4 (no such column: discount_price → alias), l6-f4 (Postgres DISTINCT/ORDER BY error), l7-f4 (literal COUNT(*) heading), l8-f3 (misuse of aggregate in WHERE), l35-f2 (no such column: units_in_stock)
+   559→- Lesson 35 fills synthesize the module: WHERE+AND filter, SUM after an error fix, COUNT(DISTINCT), top-N with tiebreaker, GROUP BY+HAVING
+   560→- fill-audit: "fill-audit: 86 fills checked, 0 failing"; tsc --noEmit filtered for fills/m01: no output (clean)
+   561→- Notable decisions: avoided IFNULL as a chip (lesson teaches it as equivalent to COALESCE — would be an unfair wrong answer); avoided claiming the 248/251 order_items count in why-texts (lessons disagree) by wording l7-f2 without a row count
+   562→
+   563→---
+   564→Task ID: 5-c
+   565→Agent: fills-m03
+   566→Task: Author fills for m03 lessons 17-24 + 37
+   567→
+   568→Work Log:
+   569→- Read worklog, types.ts (Fill/FillNote), m01.ts golden examples, fill-audit.ts, schema.prisma, and lessons 17-24 + 37 in full (mcqs + blocks + problems) to lock onto each lesson's exact teaching points and verified numbers
+   570→- Authored src/lib/curriculum/fills/m03.ts replacing the stub: 45 fills — 5 per lesson for lessons 17, 18, 19, 20, 21, 22, 23, 24 and 37 (ids l{N}-f1..f5 per lesson)
+   571→- Coverage per lesson: l17 UNION/UNION ALL choice, position binding, raw-pile count, ORDER BY-between-arms crash fix, column-count-law fix · l18 label literals (3-slot), GROUP BY the pile, SQLite paren-arm crash fix (FROM-wrap), triple-tag stack, WHERE-on-pile slice · l19 INTERSECT overlap count, strict-threshold 2-slot, wrong-operator fix (UNION->INTERSECT), NULL-safe probe, triple-overlap chain · l20 EXCEPT anti-join, >100 EXCEPT Audio, swapped-arms fix (0 rows), A EXCEPT A probe, DESC/LIMIT cap · l21 FROM-subquery grouping ((A∪B)∩C), ALL-binds-neighbor, paren-arm fix, EXCEPT-then-UNION chain, 8-value top-3 · l22 WHEN/THEN/ELSE/END 3-slot, missing-ELSE fix, searched-CASE ladder 3-slot, two-CASEs side by side (IS NULL), count-the-NULLs · l23 SUM(CASE) KPI 3-slot, pivot column 3-slot, misspelled-WHEN typo fix, AVG share, SUM-vs-COUNT with ELSE 0 · l37 capstone: labeled count stack, Alice∩Emma INTERSECT, value census, NULL-sorts-first cliff fix, two-stage tier query 3-slot
+   572→- Honesty pass: wrote scripts/scratch-verify-m03-fills.ts + scripts/scratch-spot-check.ts and ran every number cited in why/notes against the live seed db (11/119 dedupe delta, 22/38 pile sizes, 16/6 kind counts, 4 ids 1,5,11,13; 8-name overlap; 6 quiet ids 2,3,4,6,11,15 -> top3 15,11,6; 11 vs 0 asymmetry; 8 vs 15 precedence split; 19 chain count; 96 NULL labels; 21/82 buckets; 50.5% / 13.6%; 44/52; 6 shared shelves; 15571.07/11996.72/34833.28; low 8/high 4/mid 4) — caught and corrected one wrong claim pre-audit (statuses+regions top-3 is APAC/EU/LATAM, not APAC/cancelled/delivered: SQLite sorts uppercase first)
+   573→- Verified: fill-audit "86 fills checked, 0 failing" (first run showed a transient l6-f2 failure from concurrent DB access; SQL re-run clean, next audit 0 failing); tsc --noEmit reports zero errors in fills/m03 (6 pre-existing errors elsewhere: examples/, content-audit, skills/)
+   574→- Scratch scripts kept under scripts/ for reviewer reruns
+   575→
+   576→Stage Summary:
+   577→- m03.ts: 45 fills (l17-l24: 5 each, l37: 5) — every lesson has a fix-the-broken variant and 1-4 multi-slot fills (3-slot: l18-f1, l22-f1, l22-f3, l23-f1, l23-f2, l37-f5); chips 4-6 distinct with targeted distractors (UNION vs UNION ALL, INTERSECT vs EXCEPT, THEN/ELSE/END pairing, IS vs = NULL, DESC/ASC, LIMIT vs TOP)
+   578→- Audit: "fill-audit: 86 fills checked, 0 failing" · tsc clean for fills/m03 · all cited numbers verified against the seeded db
+   579→
+   580→---
+   581→Task ID: 5-d
+   582→Agent: fills-m04
+   583→Task: Author fills for m04 lessons 25-28 + 38
+   584→
+   585→Work Log:
+   586→- Read worklog, m01 golden examples, types.ts (Fill/FillNote), prisma schema, and all five lesson files (25-28 + 38 capstone) to extract the exact concepts each fill must drill
+   587→- Wrote scratch scripts/scratch-fills-m04-verify.ts: 40+ fact-check queries + error-message probes against the fresh seed (removed after passing). Verified: catalog avg 71.78 / 6 above, 7 cancelled orders / 4 customers, 12 Electronics buyers, 10 shipped / 6 without, 45 orders above own household bar (top: Alice/Emma/Maya 8 each, Grace 6), avg customer spend 2177.08 vs avg order 338.19 / 5 VIPs (Alice 7262.35, Emma 6640.56, Grace 4574.23), 3 veterans, 8 pending holders, 8 spenders > 1000, region spends EU 15089.23 / APAC 11605.45 / US 7286.16 / LATAM 852.44, delivered-only EU 6656.18 / APAC 6617.68, 7 above-category products, 5 big spenders > 2000, months 2024-02 & 2024-09 tie at 9, exact SQLite error strings (`misuse of aggregate: AVG()`, `misuse of aggregate function AVG()`, `no such column: d.big_spend`, `near ";": syntax error`, `no such column: pending`, `ambiguous column name: category`, `no such column: c.customer_id`)
+   588→- NOTABLE: SQLite ACCEPTS SELECT-list aliases in WHERE and tolerates forward CTE references (both probed) — so fix-the-broken prompts quote only errors that actually fire on this engine; also avoided GROUP BY c.name vs c.id as a distractor (identical result here = two-correct trap)
+   589→- Authored src/lib/curriculum/fills/m04.ts — 25 fills, 5 per lesson (l{N}-f1..f5), m01 voice; every lesson has 1 fix-the-broken + 3-4 multi-slot fills; chips 4-6 with paired distractors (IN vs EXISTS, = vs IN, NOT IN vs NOT EXISTS, missing correlation, alias-name mismatch, LIMIT 3 vs 5, HAVING vs WHERE), notes per slot on the most tempting wrong chip
+   590→- One self-caught contract bug before audit: l28-f4 originally had the same chip ("region_spend") as two answers — reworked to 2 slots (answers must be pairwise distinct since a placed chip is removed)
+   591→- QA: fill-audit 156 fills checked / 0 failing (all 25 new completed SQLs execute on the seed db); tsc --noEmit has zero errors mentioning fills/m04 (remaining 6 repo errors pre-exist in examples/, skills/, scripts/content-audit.ts — none in src/)
+   592→
+   593→Stage Summary:
+   594→- m04 fills complete: 5/5/5/5/5 for lessons 25/26/27/28/38 (25 fills), ids l25-f1..l38-f5 unique, audit "0 failing", tsc clean for the file
+   595→- Coverage: scalar + IN/NOT-IN + HAVING subqueries (l25), EXISTS/correlated scalar/NULL-safe NOT EXISTS (l26), derived-table staging + alias discipline + push-down filters (l27), WITH chains + comma-vs-semicolon + CTE-referenced-twice (l28), capstone synthesis: VIP pipeline chain, COUNT(DISTINCT) veterans, pending probe, staged-bar fix-broken, household-bar probe (l38)
+   596→- All numbers in why-texts seed-verified; lesson-26 mcq garble ("Alice 302.60") ignored — real top household average is Liam O'Brien 705.39, used honestly in l26-f4
+   597→
+   598→---
+   599→Task ID: 5-b
+   600→Agent: fills-m02
+   601→Task: Author fills for m02 lessons 9-16 + 36
+   602→
+   603→Work Log:
+   604→- Read worklog, types.ts (Fill/FillNote), m01.ts golden examples, prisma schema, scripts/fill-audit.ts (contract enforcer), and lessons 09-16 + 36 in full (mcqs + problems + blocks) to pin each lesson's drilled concepts
+   605→- Wrote scratch scripts/fill-scratch-5b*.ts — ran ~50 verification queries against the fresh deterministic seed to ground every numeric claim: 103 orders / 251 lines / 16+16+6 tables; statuses 52 delivered/30 shipped/14 pending/7 cancelled; revenue 34,833.28 honest vs 103,244.55 inflated (ratio 2.96); 39 region pairs (EU 28, APAC 10, US 1, LATAM 0, n²=94 raw, 78 with <>, 16 self, 43 LEFT-ghost); anti-joins 6 never-shipped / 1 never-delivered (Liam O'Brien) / 12 no-cancelled / 11 active-spotless / 3 clean-customers; 12 Berlin deliveries; 6 inactive-account orders; 25 Wearables lines; 18 Berlin-big lines; 5 never-pending products; 12 category siblings; 32 same-month doubles; Audio leads category revenue 11,744.01; EU leads region revenue 15,089.23; Alice Chen 7,262.35 spend and 24 orders; >10-order club 24/17/14/13
+   606→- Caught a lesson-agnostic trap during verification: bare `name` in orders⋈customers does NOT error (orders has no name column) — kept ambiguity claims to the real collisions (products⋈suppliers, self-joins)
+   607→- Authored src/lib/curriculum/fills/m02.ts — 45 fills, 5 per lesson: l9 FK lookup + ON-as-match-rule fix-broken; l10 fanout census/ambiguity fix-broken/DISTINCT collapse; l11 three-table chain (3-slot) + duplicate-alias fix-broken; l12 LEFT protection + WHERE-collapses-LEFT fix-broken (2-slot); l13 anti-join 3-piece (3-slot) + never-pending subquery fix-broken + <> complement; l14 self-join guards (3-slot) + 94→39 fix-broken + same-month doubles; l15 join-then-group (3-slot) + ghost-row COUNT fix-broken + HAVING; l16 fanout crime + GROUP BY o.id fix-broken + damage-report subqueries + DISTINCT-salvage; l36 capstone synthesis — widening/anti-join/honest-measure/self-join fills (3-slot on l36-f1, l36-f2)
+   608→- Every lesson: 1 fix-the-broken variant quoting a realistic failure (cartesian 1,648, ambiguous column name, empty anti-join, 94-pair mirror count, ghost-row 1s, triple-counted revenue), 3+ multi-slot fills, notes coaching the most tempting wrong chip per slot
+   609→- Verified with scripts/fill-spotcheck-5b.ts: ran 8 completed fill SQLs (audit-style substitution) and confirmed outputs back the why texts (251, 36, 1, 39, 24/17/14/13, 34833.28/103244.55/2.96, 39)
+   610→
+   611→Stage Summary:
+   612→- m02.ts: 45 fills (l9-l16 + l36: 5 each, ids f1-f5 sequential) — every lesson has a fix-the-broken variant and 2-4 multi-slot fills (3-slot: l11-f1, l13-f1, l14-f1, l14-f5, l15-f1, l36-f1, l36-f2); chips 4-6 distinct with targeted distractors (o.id=c.id key collisions, WHERE-vs-ON placement, RIGHT/NATURAL/CROSS misprotections, <>-keeps-mirrors, COUNT(*)-ghost, SUM-vs-COUNT, reversed FK directions)
+   613→- Audit: "fill-audit: 156 fills checked, 0 failing" (transient l28-f4 duplicate-answers failure in sibling m04 self-resolved by its author mid-run; zero failures originate from m02) · tsc clean for fills/m02 (project's 6 remaining errors are pre-existing, unrelated: examples/, skills/, scripts/content-audit.ts) · all cited numbers verified against the seeded db
+   614→---
+   615→Task ID: 5-g
+   616→Agent: fills-m07
+   617→Task: Author fills for m07 lessons 41-44 + 50
+   618→
+   619→Work Log:
+   620→- Read worklog tail, m01.ts golden examples (voice + structure), types.ts (Fill/FillNote), scripts/fill-audit.ts (enforced contract incl. read-only rule: completed SQL must start SELECT/WITH/EXPLAIN), prisma schema, and lessons 41-44 + 50 in full (mcqs, blocks, problems) to pin each lesson's drilled concepts
+   621→- Honored the module's read-only constraint by drilling the read-side of writes: blast-radius previews mirroring the write's exact WHERE, CASE/expression mirrors of SET assignments, conflict-target probes and delta math mirrors for upserts, an sqlite_master catalog probe for the "DELETE vs DROP" lesson point, and a ROLLBACK census for transactions — write keywords (VALUES, RETURNING, ON CONFLICT, excluded., DELETE) live in prompts, chips and distractors only
+   622→- Verified every number before writing: ran scripts/scratch-verify-5g-m07.ts (~30 queries) + a follow-up script against the fresh seed. Key facts: Apparel clones = 2; inactive customers {4 Dmitri, 11 Keiko} → 6 orders; next ids customers 17 / orders 104; gadget names absent 0; pending 14 / shipped 30 / cancelled 7 / delivered 52 (values 6113 / 11996.72 / 1152.49 / 15571.07); shipped_at IS NULL 21; thin shelves Studio Mic 45→85, Smart Watch S 40→80; Wearables Fitness Band X2 79→86.90 and Smart Watch S 199.99→219.99 under ×1.1 (NOT 209.99 — lesson-50's 84.00/209.99 are the feed's intended targets, so the fill's why calls them that instead of markup math); cancelled fence pins 12 on 7 orders; quantity >= 3 → 89 while > 3 → 0 (all bulk lines are exactly 3 — perfect boundary-drift fix story); product 9 HDMI 2.1 Cable 2m → 19 lines; sqlite_master probe returns 1; K1 stock 120 (+25 → 145), mouse 300 (+40 → 340, price 34.5 vs candidate 29.5 → adopt); ids 900/901 absent, id 1/2 present; EU-supplier mirror = 5 products, K1 89.99 → 82.79, Studio Mic 119 → 114.24; supplier 6 Andes Naturals SA exists (rating 4 → 4.4 bump)
+   623→- Authored src/lib/curriculum/fills/m07.ts replacing the stub: 25 fills, 5 per lesson for 41, 42, 43, 44, 50 (ids l{N}-f1..f5), m01 voice
+   624→- Honesty spot-check: ran exact completed SQL of l42-f4 (blast_radius 6), l50-f3 (84 / 209.99), l41-f4 (17 / 104), l43-f4 (one 'table' row) — all support the why texts; removed all three scratch scripts
+   625→- Verified: fill-audit "0 failing" (first run 181 fills with siblings mid-flight; final run 206 fills as m05/m06/m08 landed — zero failures in m07); tsc --noEmit filtered for fills/m07: no output (clean)
+   626→
+   627→Stage Summary:
+   628→- m07.ts: 25 fills (lessons 41/42/43/44/50 × 5), ids l41-f1..l50-f5 unique; every completed SQL is a SELECT (read-only rule honored)
+   629→- Multi-slot: l41 f1/f2/f5, l42 f2 (3-slot)/f3/f5, l43 f1/f2/f4, l44 f1/f3/f5, l50 f1 (3-slot)/f3/f4 — 2-3 slots each
+   630→- Fix-the-broken per lesson: l41-f2 (no such column: inactive), l42-f1 (preview 21 vs sweep 14 mismatch), l43-f2 (quantity > 3 → 0 vs >= 3 → 89), l44-f4 (inverted upsert guard excluded.price > price), l50-f5 (reconciliation mirror minus vs plus, 260 vs 340)
+   631→- Chips 4-6 distinct with module-specific distractors (excluded.stock in a plain SELECT, ON CONFLICT forks, 'pending' vs shipped_at IS NULL blast radius, >= vs >, s.id = p.id key collision, || vs +); notes coach the most tempting wrong chip per slot
+   632→- Audit: "fill-audit: 206 fills checked, 0 failing" · tsc clean for fills/m07 · all cited numbers seed-verified
+   633→
+   634→---
+   635→Task ID: 5-e
+   636→Agent: fills-m05
+   637→Task: Author fills for m05 lessons 29-32 + 39
+   638→
+   639→Work Log:
+   640→- Read worklog, m01 golden fills, types.ts (Fill/FillNote), fill-audit.ts, prisma schema, sample-db.ts (confirmed orders carries nullable shipped_at beyond the prisma map), and lessons 29/30/31/32/39 in full (mcqs + problems) to match drills to what each lesson teaches
+   641→- Replaced the m05.ts stub with 25 fills (5 per lesson: l29-f1..f5, l30-f1..f5, l31-f1..f5, l32-f1..f5, l39-f1..f5)
+   642→- Verified every quoted fact against the real seed db via scratch scripts (scripts/5e-verify*.ts, since removed): 14 month buckets 2024-01:8 … 2025-02:7; Monday 20 / Saturday 8; avg lead 2.98 over 82; year split 90/30773.25 + 13/4060.03; Alice Chen 7262.35 rank 1; best-order-per-customer 16 rows topped by #74/1088.44; APAC 5-way region tie with EU at RANK 6 / DENSE_RANK 2; Feb+Sep 2024 tie at 9 (next rank 3); running total 3731.97→34833.28; ma3 8.00/8.50/8.33; top spend quartile Alice/Emma/Grace/Maya; Alice's gaps NULL,20,29,5,9,13; NTILE(4) over 103 orders = 26/26/26/25 with tile 4 priciest; 43 streak-breaker drops; Berlin matches 1 customer; CAST(199.99)=199; SUBSTR without -1 keeps the @; + on text yields 0 (SQLite 3.46 also ships CONCAT, so the CONCAT-crash premise was avoided in favor of the verified + → 0 bug)
+   643→- Ran fill-audit (0 failing) and tsc --noEmit (no fills/m05 errors); deleted scratch scripts
+   644→
+   645→Stage Summary:
+   646→- 5 fills per lesson × 5 lessons (29, 30, 31, 32, 39) = 25 fills; ids l{N}-f1..f5, unique
+   647→- Slot mix: every lesson has 2-3 fills with 2-3 slots (l29-f1 has 3); fix-the-broken variants in every lesson (l29-f2 stray-@ off-by-one, l29-f5 + → 0 concat bug, l30-f2 %d-vs-%w wrong output, l30-f5 `no such column: created` crash, l31-f2 misuse-of-window crash, l32-f3 never-sliding frame, l32-f5 misuse-of-window crash, l39-f5 NTILE(103) wrong output)
+   648→- Distractor pairs drill the classic slips: RANK/DENSE_RANK/ROW_NUMBER/NTILE, LAG/LEAD, wrong PARTITION/GROUP column, strftime format slips ('%d'/'%W'/'%j'/'%M', '%m-%Y'), ASC/DESC, frame spellings, alias-visibility traps
+   649→- fill-audit: "fill-audit: 206 fills checked, 0 failing" (includes concurrent m06-m08 work); tsc clean for fills/m05
+   650→
+   651→---
+   652→Task ID: 5-h
+   653→Agent: fills-m08
+   654→Task: Author fills for m08 lessons 45-49 + 51
+   655→
+   656→Work Log:
+   657→- Read worklog tail, m01.ts golden examples, types.ts (Fill/FillNote), fill-audit.ts (contract enforcer), prisma schema, and lessons 45-49 + 51 in full (blocks + all mcqs/problems) to pin each lesson's drilled concepts
+   658→- Verified the live seed schema first: orders actually has 6 columns (shipped_at nullable) despite schema.prisma showing 5; the fresh catalog has 5 base tables, ZERO explicit indexes, and a stray leftover view "v" (`CREATE VIEW v AS SELECT id, name FROM customers WHERE region='EU'`) that survives resetDatabase (reset drops/recreates tables but never views) — so all view-census why-texts avoid row-count claims and l51's inventory filters type='table' (stable 5)
+   659→- Scratch-verified every claim before/while writing: pragma censuses (products notnull&no-default = 4; customers' one dflt_value = active; orders pk = 1; suppliers 4 columns); EQP outputs (SCAN orders for customer_id/status/created_at-LIKE filters; SEARCH … USING INTEGER PRIMARY KEY for rowid lookups; two-row join plan SCAN o + SEARCH c); data (pending 14, EU 8/active 7, shipped 30, Audio 11744.01, product 1 stock 120, 90 of 103 orders 2024-dated); generators (1..10 = 10 rows, `<=10` = 11 off-by-one, powers-of-two = 7, month spine 14 rows 2024-01…2025-02, wrong seed/bound = 12 rows 2024-02…2024-12, worst month 2024-07 at 1193.86 / best 2024-01 at 3731.97)
+   660→- CAUGHT a lesson bug while verifying: lesson-49 p3's split-walk with seed 'delivered,shipped,pending,cancelled' + guard `rest LIKE '%,%'` yields 3 tokens, not 4 (the final token is never peeled); with guard `rest != ''` it loops forever (INSTR=0 → rest unchanged). My l49-f5 seeds a TRAILING comma so the canonical guard yields exactly 4 tokens — verified — and distractor chips avoid any guard that could hang
+   661→- Verified the real DDL refusal message "Cannot add a NOT NULL column with default value NULL" by running the ALTER — quoted verbatim in l46-f3's fix-the-broken prompt
+   662→- Authored src/lib/curriculum/fills/m08.ts replacing the stub: 30 fills, 5 per lesson (ids l45-f1…l51-f5); completed SQL is read-only throughout (SELECT / WITH RECURSIVE / EXPLAIN QUERY PLAN) — DDL appears only in prompts, why-texts and distractor chips
+   663→- Coverage: l45 introspection mirrors (sqlite_master sql read-back, notnull/dflt/pk pragmas, wrong-'columns'-type fix, full contract census) · l46 the verify loop (column census, dflt_value pairing, 'standard' backfill proof, DROP-refusal pk flag, NOT LIKE inventory) · l47 views read-side (type='view' listing, lens-as-SQL pending count, pushdown EU∧active, no-such-table fix, inlined category_revenue Audio 11744.01) · l48 EQP (QUERY PLAN prefix, free PK descent, opcode-wall fix, zero-index census, join plan SCAN+SEARCH) · l49 recursive CTEs (UNION ALL+guard, anchor+guard powers of two, spine seed/bound fix, zero-gap LEFT JOIN on 7-char prefix, string-walk guard) · l51 capstone synthesis (month_revenue inlined 3-slot, spine-driven worst month 3-slot → 2024-07/1193.86, pre-migration type-census fix, calendar-filter EXPLAIN, month-grain DISTINCT census)
+   664→- Honesty spot-check: ran ALL 30 completed SQLs via audit-style substitution; every why/notes number matched (fixed one pre-audit: l46-f5 why no longer claims a total row count, since the stray view "v" would make the unfiltered catalog read 6 rows) — scratch scripts removed after passing
+   665→- Verified: fill-audit "236 fills checked, 0 failing"; tsc --noEmit has zero errors mentioning fills/m08
+   666→
+   667→Stage Summary:
+   668→- m08.ts: 30 fills — lessons 45, 46, 47, 48, 49, 51 × 5 each; every lesson has a fix-the-broken variant and 2+ multi-slot fills (3-slot: l51-f1, l51-f2; 2-slot elsewhere per plan), chips 4-6 distinct with module-targeted distractors (sqlite_master type values, QUERY PLAN/ANALYZE/PLAN, SCAN-vs-SEARCH context, UNION ALL vs UNION, anchor-vs-guard values, LEFT vs INNER, LIKE vs NOT LIKE, quoted-vs-bare literals)
+   669→- Module constraint honored: no completed SQL mutates; all introspection/generator reads run on the fresh seed; the audit's read-only regex passes mechanically
+   670→- fill-audit: "fill-audit: 236 fills checked, 0 failing" · tsc clean for fills/m08 · all cited numbers verified against the seeded db
+   671→- Notable: documented the seed's stray view "v" (survives resetDatabase) and the lesson-49 p3 off-by-one/loop bug for future maintainers; l49-f5's trailing-comma seed sidesteps it honestly
+   672→
+   673→---
+   674→Task ID: 5-f
+   675→Agent: fills-m06
+   676→Task: Author fills for m06 lessons 33-34 + 40
+   677→
+   678→Work Log:
+   679→- Read worklog tail, types.ts (Fill/FillNote), m01.ts golden examples, prisma schema, scripts/fill-audit.ts (contract enforcer), and lessons 33/34/40 in full (blocks + mcqs + problems) to pin each lesson's drilled concepts: GROUP_CONCAT separators/DISTINCT rule/ORDER BY-inside, FILTER census, UNION-ALL grand-total stack (l33); RIGHT JOIN probe, FULL OUTER audit (115), MySQL LEFT-arm emulation, deliberate CROSS JOIN, VALUES band ladder with half-open [lo,hi) non-equi bounds, self non-equi price pairs (l34); capstone synthesis of all five artifacts (l40)
+   680→- Wrote scratch probe scripts (scripts/fill-scratch-5f*.ts, fill-spotcheck-5f.ts — all removed after passing) — ~45 seed-db probes to ground every claim: census 52/30/14/7/103; region spend EU 15089.23 / APAC 11605.45 / US 7286.16 / LATAM 852.44 / TOTAL 34833.28; monthly buckets 14 (2024-01→2025-02, +TOTAL = 15 rows); Alice 24 orders / 12 delivered; statuses sorted fold 'cancelled,delivered,pending,shipped'; supplier footprint 'APAC,EU,LATAM,US' (raw fold 'APAC,APAC,EU,EU,LATAM,US' proves DISTINCT matters); RIGHT probe 19 = 7 pairs + 12 gap customers; FULL OUTER 115; FULL-OR-in-ON 208; campaign 14×3=42; order ladder 8/30/40/25; product ladder 8/4/4 (no products at 50/100 seams); self non-equi 12 pairs, tautology category 120, price ties only 16 self-pairs; regional census EU 45(24 delivered)/APAC 37/US 19/LATAM 2; items revenue 251 lines → 7 categories, Audio 11744.01, grand 34833.28
+   681→- Captured exact SQLite error texts for fix-the-broken prompts (via bun:sqlite, prisma swallows the message): `DISTINCT aggregates must have exactly one argument`, `table bands has 3 values for 2 columns` (NOT the old "has 2 columns but 3 values" wording), `SELECTs to the left and right of UNION ALL do not have the same number of result columns`, `1st ORDER BY term does not match any column in the result set` (wrapperless compound sort really does error on this engine), `no such column: cancelled/delivered/GRAND`, `ambiguous column name: category`, `no such column: b.label`
+   682→- Trap-hunting before authoring: Keyboard category is EMPTY (0 products — m01's l3-f2 predicate matches nothing), so l33-f2 folds the real Audio shelf (3 verified names); SUM(total) over orders is EXACTLY 34833.28 unrounded, so ROUND(SUM(total),2) vs SUM(total) would be a two-correct trap (chip replaced with ROUND(AVG(total),2)=338.19); product-ladder ORDER BY b.label AND b.hi both coincidentally equal MIN(b.lo) order (b<m<p alphabetically) — replaced with MAX(b.lo)/n; constraint-less INNER/LEFT JOIN degenerates to CROSS on SQLite (256 rows → same 42 after WHERE), so l34-f3 distractors use NATURAL JOIN (0 rows) and fake-FK ONs (3 rows) instead; CROSS JOIN+ON is accepted by SQLite (= inner, 7 rows) — noted honestly; "ON x WHERE y" parses (WHERE is the query-level filter → 7), so l34-f2's WHERE note coaches collapse-to-7 rather than a syntax error
+   683→- Authored src/lib/curriculum/fills/m06.ts — 18 fills, 6 per lesson (l33-f1..f6, l34-f1..f6, l40-f1..f6): 12 two-slot + 2 three-slot + 2 one-slot (the fix-broken pair) + 2 more 2-slot... net: every lesson ≥5 multi-slot; fix-the-broken per lesson quoting the verified error strings (l33-f4 UNION arm columns, l34-f5 CTE header, l40-f2 DISTINCT+separator); chips 4-6 with paired distractors (RIGHT vs LEFT vs INNER vs CROSS, AND vs OR-in-range (412-row fanout), UNION vs UNION ALL, WHERE-vs-ON-in-FULL, IS the GROUP BY key, <= vs < seam discipline, NATURAL/fake-FK traps, GRAND TOTAL quoted vs bare)
+   684→- One self-caught audit failure before passing: l40-f2 reused marker {1} twice ("ORDER BY {1}") — audit demands {1}..{n} with no repeats; reworked to hardcode ORDER BY region
+   685→- QA: fill-audit 254 fills checked / 0 failing; tsc --noEmit has zero errors mentioning fills/m06; spot-check script ran 6 completed fill SQLs (audit-style substitution) and outputs back every why-text number (115; 8/30/40/25; APAC,EU,LATAM,US; GRAND TOTAL 34833.28 topping 7 categories; EU 45 first)
+   686→
+   687→Stage Summary:
+   688→- m06 fills complete: 6/6/6 for lessons 33/34/40 (18 fills, ids l33-f1..l40-f6 unique, slots 1-3, audit "0 failing", tsc clean for the file)
+   689→- Coverage: l33 = fold+group keys, custom separator, FILTER/CASE double census + total alias, UNION-arm-column-count fix-broken, monthly TOTAL stack, ORDER BY-inside-GROUP_CONCAT; l34 = RIGHT probe, FULL OUTER count with AND-in-ON, deliberate CROSS campaign matrix, half-open band ladder, VALUES-header fix-broken, self non-equi price pairs; l40 = FILTER census, DISTINCT-rule fix-broken footprint, 3-slot grand-total stack over order_items, product band ladder, CROSS coverage grid over DISTINCT regions, 3-slot regional FILTER synthesis
+   690→- All numbers and all quoted error strings verified against the seeded db; honest notes where a distractor merely runs differently on this data (e.g. <= bands identical until a seam product exists, spend='TOTAL' sort "works" only because the total is largest)
+   691→---
+   692→Task ID: 6-a
+   693→Agent: capstone-l35-l36
+   694→Task: Upgrade capstones lesson-35 and lesson-36 to full depth
+   695→
+   696→Work Log:
+   697→- Read worklog tail, types.ts (Lesson/Mcq/Problem/Block/ExpectedResult), prisma schema, both lesson files IN FULL, plus sibling MCQs (l04/l06/l07/l08/l09-l16) to dodge duplication; confirmed orders.shipped_at (TEXT, nullable) exists on the live seed beyond schema.prisma
+   698→- Scratch-verified every number first (scripts/cap35-verify.ts, cap35-verify2.ts, cap35-final.ts — all deleted after passing; ~30 probes on the fresh seed): per-status ledger delivered 52/$15,571.07 · shipped 30/$11,996.72 · pending 14/$6,113 · cancelled 7/$1,152.49; shipped_at census per status 52/30/0/0 → unscanned backlog = pending 14, cancelled 7; category avg prices Audio 109.66 / Electronics 57.83 / Accessories 27.49 (HAVING COUNT(*)>2 AND AVG(price)>60 → Audio only); crowded three-way tie Accessories=Audio=Electronics=3; shelf value SUM(price*stock)=126,031.60 vs SUM(price)*SUM(stock)=3,267,283.35 (~26×), SUM(price)=1,148.43, SUM(stock)=2,845, 16×MAX(price)=3,199.84; price ladder top6 (Smart Watch S 199.99 → Fitness Band X2 79), no product at exactly 50.00 (under50=8=at_or_under50); city<>'Berlin' = 15 today (Alice the only Berliner)
+   699→- l36 probes: Alice honest 7,262.35 vs joined-fanout 18,784.19 (24 orders, 50 line rows); supplier-region revenue via oi→p→s chain EU 15,895.88 / US 9,294.93 / APAC 6,029.22 / LATAM 3,613.25 (251 lines through both hops); pending placement pair LEFT-join-ON 22 rows (14 matches + 8 ghosts) vs in-WHERE 14; pending customers 8 / pending orders 14; line-sum over the join = 34,833.28 = honest total (per-order reconciliation mismatches 0 — seed books totals as line sums) while SUM(o.total) over the same join = 103,244.55; pairs census region 39 / city 0 / all 120 / cross 81 (reversed > guard also 81); no-shipped 6 named, no-delivered Liam O'Brien, no-cancelled 12 (Alice 3, Emma 1, Keiko 1, Maya 2 own all 7 cancellations); SQLite LIMIT 2,3 ≡ LIMIT 3 OFFSET 2 (verified — dialect block claims comma form on MySQL AND SQLite, offset-first)
+   700→- Caught one redesign mid-flight: "customers whose every order is still pending" returns 0 rows on this seed (no all-pending customer exists) — replaced l36-p8 with "Cross-region pairs" (COUNT over self-join a.region != b.region AND a.id < b.id → 81, the complement of the 39 same-region mates)
+   701→- lesson-35 (+3 → 18 min): blocks 3→10 (debrief h + 2 narrative p + bullets + steps + near-miss table + postgres dialect block on FETCH FIRST / LIMIT-comma porting); MCQs q5-q8 (shelf value 126,031.60 vs 3,267,283.35; HAVING two-gate → Audio only; GROUP-BY+LIMIT-1 three-way tie nondeterminism; 3VL city<>'Berlin' with a NULL row → 14), q5/q6 medium, q7/q8 hard, each with why + 2 distractor notes; problems p7 "The orders ledger" (per-status count + ROUND(SUM), busiest first, 4 rows) and p8 "The unscanned backlog" (HAVING COUNT(shipped_at)=0 → pending 14, cancelled 7) — both single-table SELECT, hints[2], 3 mistake rules each, expected left as { columns: [], rows: [], changes: null } placeholder
+   702→- lesson-36 (+4 → 20 min): blocks 4→10 (debrief h + 2 narrative p + join pre-flight bullets + memo-numbers table + postgres dialect block on NOT EXISTS-as-anti-join); MCQs q5-q8 (Alice 7,262.35 → 18,784.19 fan-out; two-hop chain to supplier region = 2 JOINs; pending placement 22-vs-14 pair; the line-sum "fix" that returns the honest 34,833.28 and why the habit still explodes), q5/q6 medium, q7/q8 hard, each with why + 1-2 notes; problems p7 "Supplier exposure" (region revenue via the 2-hop chain, 4 rows, ordered) and p8 "Cross-region pairs" (81, one value) — read-only joins, hints[2], 3 mistake rules each (region=region / <>-mirrors / LEFT-JOIN-wrong-instrument), same expected placeholder
+   703→- Verified per problem: ran the ACTUAL in-file solution strings against resetDatabase() (columns + rows printed): l35-p7 4 rows (52/30/14/7 with ledger values), l35-p8 2 rows, l36-p7 4 rows, l36-p8 1 row [81]; every new mistake rule regex-checked against its own whitespace-normalized solution (0 self-matches); all solutions start with SELECT (module read-only constraint)
+   704→- QA: bunx tsc --noEmit | grep "lesson-3[56]" → zero output (remaining project errors pre-existing: examples/, skills/, content-audit.ts, plus an in-flight lesson-37.ts from a sibling agent); qa-coach.ts → ALL CHECKS PASSED (l35: 8 problems, hints 8/8, notes 8/8; l36 same); scratch scripts deleted
+   705→
+   706→Stage Summary:
+   707→- lesson-35: 8 MCQs (q5-q8 added; medium/medium/hard/hard), 8 problems (p7 medium ledger, p8 hard backlog), prose ~770 words (debrief narrative + bullets + steps + near-miss table + postgres dialect block), minutes 15 → 18 — all solutions verified executing on the seed, mistake rules non-self-matching, expected placeholders in place
+   708→- lesson-36: 8 MCQs (q5-q8 added; medium/medium/hard/hard), 8 problems (p7 medium supplier chain, p8 hard cross-region pairs), prose ~724 words (debrief narrative + pre-flight bullets + memo table + postgres dialect block), minutes 16 → 20 — all solutions verified (incl. 81 cross pairs, 22-vs-14 placement pair), expected placeholders in place
+   709→- Numbers ground-truthed via scratch scripts (deleted); no mcqs/problems/fills touched beyond appends; ids continue the sequence (l35-p7/p8, l36-p7/p8)
+   710→
+   711→---
+   712→Task ID: 6-b
+   713→Agent: capstone-l37-l38
+   714→Task: Upgrade capstones lesson-37 and lesson-38 to full depth
+   715→
+   716→Work Log:
+   717→- Read worklog tail, types.ts (Lesson/Mcq/Problem/Block/ExpectedResult), prisma schema, both lesson files IN FULL; confirmed orders.shipped_at (TEXT, nullable) on the live seed (visible in resetDatabase's CREATE TABLE log) beyond schema.prisma
+   718→- Found lesson-37/38 already carrying an uncommitted, un-worklogged upgrade draft from an interrupted earlier run of this task (append-only, +307 lines; git diff deletions = the two minutes lines only). Completed the run to contract instead of re-authoring: audited every new block/MCQ/problem against the seed, and fixed the one real defect — the 5 new problems referenced `EXPECTED["l37-p7"/"l37-p8"/"l38-p6"/"l38-p7"/"l38-p8"]` while those keys DO NOT exist in expected.ts (runtime `p.expected` would be undefined and crash the problem runner). Converted all five to the prescribed inline `{ columns: [], rows: [], changes: null }` placeholders (same pattern as sibling 6-a's l35/l36 p7/p8); deleted the abandoned scripts/cap37-splice.ts that would have hand-spliced keys into the auto-generated expected.ts; left expected.ts untouched
+   719→- Scratch-verified everything via scripts/cap37-verify.ts (deleted after passing) which imports the lesson objects and executes the ACTUAL in-file solution strings against resetDatabase(): l37-p6 4 rows (pending 14/shipped 30/delivered 52/cancelled 7), l37-p7 "The LATAM gap" 4 rows (Apparel, Fitness, Video, Wearables), l37-p8 "The money march" 4 rows (6,113 → 11,996.72 → 15,571.07 → 1,152.49, re-sums to the honest 34,833.28), l38-p6 "The clean register" 8 rows (Bruno…Olivia, order counts 1..4), l38-p7 "The hand-rolled rank" 5 rows (ranks 1-5: Alice 7,262.35 / Emma 6,640.56 / Grace 4,574.23 / Maya 3,644.56 / Chloe 2,667.93), l38-p8 "The pipeline receipt" 5 rows (orders 24/17/14/13/5) — every brief's promise (row counts, order, shapes) matches the printed output
+   720→- Ground-truthed every cited number (~25 probes on the fresh seed): pivot matrix APAC 5/8/21/3=37 · EU 6/12/24/3=45 · LATAM 0/0/2/0=2 · US 3/10/5/1=19, totals 14/30/52/7=103; 44+52=96=103−7; Alice 7 cats vs Emma 6 (Fitness the only difference), UNION=7 / UNION ALL=13 raw / INTERSECT=6; catalog 7 categories, EU+APAC bought all 7, US misses only Fitness, LATAM misses exactly 4; branchless SUM(CASE) → LATAM pending cell NULL vs ELSE-0 → 0, ROUND(NULL,2)=NULL; chained `EXCEPT … INTERSECT …` left-to-right → 0 rows, parenthesized arms refused with `near "(": syntax error`; l38 staged bar 2,177.08 with exactly 5 customers over (avg ORDER 338.19 over 103), register 8 names each holding 1-4 orders (8+8=16), dormant zero-order customers today 0 (q5's hypothetical honestly framed), vacuous `NOT IN (empty)` → 16 vs NOT EXISTS twin → 16, one NULL in the NOT IN list → 0
+   721→- Mistake-regex self-check: all 3 rules on each new problem (plus every pre-existing rule in both lessons, 48 total) tested against their own whitespace-normalized solutions — 0 self-matches; all new solutions start with SELECT/EXCEPT/WITH (module read-only)
+   722→- QA: `bunx tsc --noEmit | grep "lesson-3[78]"` → zero output (project's 6 remaining errors pre-existing: examples/, skills/, content-audit.ts); qa-coach.ts → ALL CHECKS PASSED (l37/l38: problems=8, hints 8/8, rules=24, notes 8/8); both scratch scripts deleted (a sibling's cap39-verify.ts left alone)
+   723→
+   724→Stage Summary:
+   725→- lesson-37: 8 MCQs (q5 UNION-vs-INTERSECT arithmetic medium, q6 compound-header position binding medium, q7 branchless-SUM NULL hard, q8 set-operator precedence chain hard; each with why + notes), 8 problems (p7 hard LATAM gap, p8 medium money march — both verified verbatim), prose 775 words across 11 blocks (debrief h + 2 narrative p + pivot table + steps + postgres dialect block), minutes 17 → 20 — expected placeholders for p7/p8
+   726→- lesson-38: 8 MCQs (q5 COUNT-vs-SUM-on-empty medium, q6 correlated-probe evaluation medium, q7 NOT-IN NULL poisoning hard, q8 vacuous NOT-IN flood hard), 8 problems (p6 medium clean register, p7 hard hand-rolled rank, p8 hard pipeline receipt — all verified verbatim), prose 754 words across 11 blocks (debrief h + 2 narrative p + VIP-receipt table + steps + mysql dialect block), minutes 16 → 19 — expected placeholders for p6/p7/p8
+   727→- Solutions verified (all 6 new p6-p8 executed on the seed with matching results), mistake rules non-self-matching, expected.ts untouched (regeneration script owns it), append-only respected, ids continue the sequence (l37-p7/p8, l38-p6/p7/p8)
+   728→
+   729→---
+   730→Task ID: 6-c
+   731→Agent: capstone-l39-l40
+   732→Task: Upgrade capstones lesson-39 and lesson-40 to full depth
+   733→
+   734→Work Log:
+   735→- Read worklog tail, types.ts (Lesson/Mcq/Problem/Block/ExpectedResult), prisma schema, both lesson files IN FULL, plus the 6-a/6-b capstone upgrades (l35-l38) for voice/structure; confirmed orders.shipped_at (TEXT, nullable) on the live seed beyond schema.prisma
+   736→- Scratch-verified every number first (scripts/cap39-verify.ts + cap39-final.ts, both deleted after passing; ~25 probes on the fresh seed): month buckets 8/9/8/7/8/6/8/7/9/7/6/7/6/7 (Feb+Sep 2024 tie at 9; next rank 3, dense 2); ma3 glide 8.00/8.50/8.33 … 6.33/6.67; NO tied order totals exist in the seed, so the frame-default MCQ uses status peers instead — SUM(total) OVER (ORDER BY status) shows every cancelled order the full 1,152.49 subtotal while ROWS accumulates 152.52/288.63/378.98…; window-in-WHERE crash quoted verbatim ("misuse of aliased window function gap_days"); best-per-customer ROW_NUMBER=16 = RANK=16 with 0 tied per-customer maximums (top #74/1088.44 Farid Nasser); per-customer spend tile 4 = Alice 7262.35/Emma/Grace/Maya; running line 3,731.97 → 34,833.28 re-verified; l40: region status folds APAC/EU/US 'cancelled,delivered,pending,shipped' vs LATAM 'delivered' (2 orders, both delivered); order ladder (0,50)(50,100)(100,200)(200,99999) → 8/7/23/65 = 103 with 0 seam orders (closed-ends BETWEEN also 103 — honest "agrees until a seam lands" note); cancelled owners Alice 3/Emma 1/Keiko 1/Maya 2 → LEFT arm 19, gap customers 12, honest FULL emulation 115 vs forgetful 103; GROUP_CONCAT crash "DISTINCT aggregates must have exactly one argument", deduped-subquery fix 'APAC | EU | LATAM | US'; empty fold NULL vs COUNT 0; FILTER-vs-CASE census 14/14/14/103/0.136/1
+   737→- lesson-39 (17 → 21 min): blocks 4 → 10 (debrief h + 2 narrative p + steps + margin-notes table + postgres dialect block on julianday→::date/to_char/DATEDIFF porting); MCQs q5-q8 (RANK-vs-DENSE_RANK on the Feb/Sep 9-order tie medium; window-in-WHERE crash medium; RANGE-default frame with peer-drag demo hard; ROW_NUMBER-vs-RANK best-per-customer contract hard), each 4 choices + answer + why + 2 distractor notes; problems p6 "month leaderboard" (RANK ties 1/1/3, 14 rows), p7 "three-month glide" (ROWS BETWEEN 2 PRECEDING, 14 rows), p8 "each customer's peak order" (PARTITION BY + wrapper filter, 16 rows) — all SELECT/WITH-only, hints[2], 3 mistake rules each (rank()/missing-PARTITION/MAX; frame-less OVER/centered-window/PARTITION; dense_rank/row_number/ntile), expected left as { columns: [], rows: [], changes: null }
+   738→- lesson-40 (17 → 21 min): blocks 4 → 10 (debrief h + 2 narrative p + rehearsal bullets + rehearsal-bugs table + mysql dialect block on no-FILTER/no-FULL JOIN); MCQs q5-q8 (DISTINCT+separator crash fix medium; FILTER ≡ CASE with the COUNT+ELSE-0 = 103 trap medium; forgetful LEFT-arm emulation 103-vs-115 hard; empty-input fold NULL-vs-'' hard), each with why + notes; problems p6 "statuses by region, folded" (GROUP_CONCAT DISTINCT+ORDER BY inside, 4 rows, LATAM diverges), p7 "order ladder" (VALUES bands over order totals, 8/7/23/65), p8 "the missing arm" (RIGHT→LEFT flip, 12 gap customers) — read-only, hints[2], 3 mistake rules each (distinct-comma/group-by-status/ORDER-BY-less fold; BETWEEN/order-by-label/SUM; right-join/where-status/IS-NOT-NULL), expected placeholders in place
+   739→- Verified per problem: ran the ACTUAL in-file solution strings against resetDatabase() — l39-p6 14 rows (2024-02 rnk 1 … 2025-01 rnk 12), l39-p7 14 rows (8 → 6.67), l39-p8 16 rows (Farid Nasser 74/1088.44 top), l40-p6 4 rows, l40-p7 4 rows (8/7/23/65), l40-p8 12 names (Bruno Silva … Pedro Alvarez); all solutions start SELECT/WITH (read-only modules honored); mistake regexes mechanically non-self-matching via qa-coach's normalizeSql
+   740→- QA: bunx tsc --noEmit | grep "lesson-(39|40)" → zero output (remaining project errors pre-existing: examples/, skills/, content-audit.ts + my scratch, now deleted); qa-coach.ts → ALL CHECKS PASSED (l39: 8 problems, hints 8/8, rules 24, notes 8/8; l40 same); scratch scripts deleted; append-only respected — no fills touched, mcqs/problems only extended (q5-q8, p6-p8), ids continue the sequence
+   741→
+   742→Stage Summary:
+   743→- lesson-39: 8 MCQs (q5-q8: medium/medium/hard/hard), 8 problems (p6 medium leaderboard, p7 hard glide, p8 hard peak order), prose 760 words across 10 blocks (debrief narrative + steps + margin-notes table + postgres dialect block), minutes 17 → 21 — all 3 new solutions verified executing on the seed with expected results, expected placeholders in place
+   744→- lesson-40: 8 MCQs (q5-q8: medium/medium/hard/hard), 8 problems (p6 medium regional fold, p7 medium order ladder, p8 hard missing arm), prose 750 words across 10 blocks (debrief narrative + bullets + rehearsal table + mysql dialect block), minutes 17 → 21 — all 3 new solutions verified (incl. 8/7/23/65 ladder summing to 103 and the 12-name gap list), expected placeholders in place
+   745→- Numbers ground-truthed via scratch scripts (deleted); tsc clean for lesson-39/40; qa-coach ALL CHECKS PASSED
+   746→

@@ -1,0 +1,647 @@
+SQLite 3.53.0
+
+## unshipped status census
+   SELECT status, COUNT(*) n, ROUND(SUM(total),2) pot FROM orders WHERE shipped_at IS NULL GROUP BY status ORDER BY n DESC
+   [{"status":"pending","n":14,"pot":6113},{"status":"cancelled","n":7,"pot":1152.49}]
+
+## unshipped pot grand
+   SELECT COUNT(*) n, ROUND(SUM(total),2) pot FROM orders WHERE shipped_at IS NULL
+   [{"n":21,"pot":7265.49}]
+
+## oldest unshipped
+   SELECT MIN(created_at) oldest, COUNT(*) n FROM orders WHERE shipped_at IS NULL
+   [{"oldest":"2024-01-02","n":21}]
+
+## unshipped before 2024-03
+   SELECT COUNT(*) n FROM orders WHERE shipped_at IS NULL AND created_at < '2024-03-01'
+   [{"n":4}]
+
+## invoice number prefix buckets
+   SELECT SUBSTR(number,1,8) k, COUNT(*) n FROM invoices GROUP BY k ORDER BY k
+   [{"k":"INV-2024","n":23},{"k":"INV-2025","n":5}]
+
+## invoice year via CAST substr
+   SELECT CAST(SUBSTR(number,5,4) AS INTEGER) yr, COUNT(*) n FROM invoices GROUP BY yr ORDER BY yr
+   [{"yr":2024,"n":23},{"yr":2025,"n":5}]
+
+## invoice amount census (dollars)
+   SELECT COUNT(*) n, ROUND(MIN(amount_cents)/100.0,2) lo, ROUND(MAX(amount_cents)/100.0,2) hi, ROUND(SUM(amount_cents)/100.0,2) total FROM invoices
+   [{"n":28,"lo":873,"hi":6148,"total":86977}]
+
+## invoice top by amount
+   SELECT number, ROUND(amount_cents/100.0,2) amt FROM invoices ORDER BY amount_cents DESC LIMIT 1
+   [{"number":"INV-2025-025","amt":6148}]
+
+## product name length census
+   SELECT name, LENGTH(name) len FROM products ORDER BY len DESC LIMIT 3
+   [{"name":"Noise-Canceling Headset","len":23},{"name":"Mechanical Keyboard K1","len":22},{"name":"Bluetooth Speaker Mini","len":22}]
+
+## product name length min
+   SELECT MIN(LENGTH(name)) mn, MAX(LENGTH(name)) mx FROM products
+   [{"mn":13,"mx":23}]
+
+## names 15+ chars
+   SELECT COUNT(*) n FROM products WHERE LENGTH(name) >= 15
+   [{"n":13}]
+
+## names 13+ chars
+   SELECT COUNT(*) n FROM products WHERE LENGTH(name) >= 13
+   [{"n":16}]
+
+## single-row aggregate + window mix
+   SELECT COUNT(*) n, MAX(total) OVER () biggest FROM orders WHERE status='cancelled'
+   [{"n":7,"biggest":152.52}]
+
+## HAVING on SELECT alias (exposure)
+   SELECT c.name, ROUND(SUM(o.total),2) AS exposure FROM orders o JOIN customers c ON c.id = o.customer_id WHERE o.status IN ('pending','cancelled') GROUP BY c.id HAVING exposure = 1615.29
+   [{"name":"Emma Wilson","exposure":1615.29}]
+
+## ERR·WHERE on alias of aggregate
+   SELECT c.name, SUM(o.total) AS exposure FROM orders o JOIN customers c ON c.id = o.customer_id WHERE o.status IN ('pending','cancelled') GROUP BY c.id HAVING 1=1 AND exposure IS NOT NULL AND 0=1 OR exposure IS NULL
+   []
+
+## ERR·WHERE alias aggregates (plain)
+   SELECT customer_id, SUM(total) AS exposure FROM orders WHERE exposure > 1000 GROUP BY customer_id
+   ERROR: misuse of aggregate: SUM()
+
+## pending crowd paint 1dp top
+   SELECT id, ROUND(100.0*total / SUM(total) OVER (),1) AS share FROM orders WHERE status='pending' ORDER BY share DESC LIMIT 1
+   [{"id":74,"share":17.8}]
+
+## pending crowd paint 2dp top
+   SELECT id, ROUND(100.0*total / SUM(total) OVER (),2) AS share FROM orders WHERE status='pending' ORDER BY share DESC LIMIT 1
+   [{"id":74,"share":17.81}]
+
+## exposure ladder full
+   WITH e AS (SELECT c.name name, ROUND(SUM(o.total),2) exposure FROM orders o JOIN customers c ON c.id = o.customer_id WHERE o.status IN ('pending','cancelled') GROUP BY c.id) SELECT name, exposure, RANK() OVER (ORDER BY exposure DESC) rk FROM e ORDER BY rk
+   [{"name":"Emma Wilson","exposure":1615.29,"rk":1},{"name":"Chloe Dubois","exposure":1309.92,"rk":2},{"name":"Alice Chen","exposure":1283.65,"rk":3},{"name":"Farid Nasser","exposure":1088.44,"rk":4},{"name":"Pedro Alvarez","exposure":576.54,"rk":5},{"name":"Maya Patel","exposure":571.02,"rk":6},{"name":"Keiko Sato","exposure":546.99,"rk":7},{"name":"Grace Kim","exposure":273.64,"rk":8}]
+
+## exposure customer count + pot
+   SELECT COUNT(DISTINCT customer_id) custs, ROUND(SUM(total),2) pot FROM orders WHERE status IN ('pending','cancelled')
+   [{"custs":8,"pot":7265.49}]
+
+## region funnel (orders, rev, share 1dp, rank)
+   SELECT c.region, COUNT(*) n, ROUND(SUM(o.total),2) rev, ROUND(100.0*SUM(o.total)/SUM(SUM(o.total)) OVER (),1) pct, RANK() OVER (ORDER BY SUM(o.total) DESC) rk FROM orders o JOIN customers c ON c.id = o.customer_id GROUP BY c.region ORDER BY rev DESC
+   [{"region":"EU","n":45,"rev":15089.23,"pct":43.3,"rk":1},{"region":"APAC","n":37,"rev":11605.45,"pct":33.3,"rk":2},{"region":"US","n":19,"rev":7286.16,"pct":20.9,"rk":3},{"region":"LATAM","n":2,"rev":852.44,"pct":2.4,"rk":4}]
+
+## leaderboard with LAG prev_spend
+   WITH s AS (SELECT c.name name, ROUND(SUM(o.total),2) spend FROM orders o JOIN customers c ON c.id = o.customer_id GROUP BY c.id) SELECT name, spend, LAG(spend) OVER (ORDER BY spend DESC) prev_spend FROM s ORDER BY spend DESC LIMIT 3
+   [{"name":"Alice Chen","spend":7262.35,"prev_spend":null},{"name":"Emma Wilson","spend":6640.56,"prev_spend":7262.35},{"name":"Grace Kim","spend":4574.23,"prev_spend":6640.56}]
+
+## share of grand 1dp top2
+   WITH s AS (SELECT c.name name, SUM(o.total) spend FROM orders o JOIN customers c ON c.id = o.customer_id GROUP BY c.id) SELECT name, ROUND(100.0*spend/SUM(spend) OVER (),1) pct FROM s ORDER BY spend DESC LIMIT 2
+   [{"name":"Alice Chen","pct":20.8},{"name":"Emma Wilson","pct":19.1}]
+
+## customer spend tiles NTILE(4) + tile spend
+   WITH s AS (SELECT c.id cid, SUM(o.total) spend FROM orders o JOIN customers c ON c.id = o.customer_id GROUP BY c.id), t AS (SELECT spend, NTILE(4) OVER (ORDER BY spend DESC) tile FROM s) SELECT tile, COUNT(*) n, ROUND(SUM(spend),2) tile_spend, ROUND(100.0*SUM(spend)/(SELECT SUM(total) FROM orders),1) pct FROM t GROUP BY tile ORDER BY tile
+   [{"tile":1,"n":4,"tile_spend":22121.7,"pct":63.5},{"tile":2,"n":4,"tile_spend":6911.67,"pct":19.8},{"tile":3,"n":4,"tile_spend":3404.86,"pct":9.8},{"tile":4,"n":4,"tile_spend":2395.05,"pct":6.9}]
+
+## same-day repeat count (LAG exact)
+   WITH w AS (SELECT id, created_at, LAG(created_at) OVER (ORDER BY created_at, id) prev FROM orders) SELECT COUNT(*) n FROM w WHERE prev = created_at
+   [{"n":19}]
+
+## jump watchlist > 500 (ASC id)
+   WITH w AS (SELECT id, total, total - LAG(total) OVER (ORDER BY id) jump FROM orders) SELECT id, ROUND(total,2) total, ROUND(jump,2) jump FROM w WHERE jump > 500 ORDER BY jump DESC
+   [{"id":39,"total":845.92,"jump":770.45},{"id":74,"total":1088.44,"jump":712.51},{"id":43,"total":945.21,"jump":685.9},{"id":31,"total":633.91,"jump":577.72},{"id":5,"total":725.34,"jump":566.86},{"id":71,"total":668.45,"jump":537.06},{"id":67,"total":659.7,"jump":534.3}]
+
+## jump census
+   WITH w AS (SELECT total - LAG(total) OVER (ORDER BY id) jump FROM orders) SELECT (SELECT COUNT(*) FROM w WHERE jump > 500) gt500, (SELECT COUNT(*) FROM w WHERE jump > 400) gt400, (SELECT COUNT(*) FROM w WHERE jump > 600) gt600
+   [{"gt500":7,"gt400":9,"gt600":3}]
+
+## cancelled single-row paint
+   SELECT COUNT(*) n, ROUND(MAX(total) OVER (),2) biggest FROM orders WHERE status='cancelled'
+   [{"n":7,"biggest":152.52}]
+
+## supplier NTILE(3) rating bands
+   SELECT band, COUNT(*) n, MIN(rating) lo, MAX(rating) hi FROM (SELECT rating, NTILE(3) OVER (ORDER BY rating DESC) band FROM suppliers) GROUP BY band ORDER BY band
+   [{"band":1,"n":2,"lo":4.6,"hi":4.8},{"band":2,"n":2,"lo":4.1,"hi":4.4},{"band":3,"n":2,"lo":3.9,"hi":4}]
+
+## supplier rating gap to leader
+   SELECT name, rating, ROUND(rating - MAX(rating) OVER (),1) gap FROM suppliers ORDER BY rating DESC
+   [{"name":"Alpine Audio GmbH","rating":4.8,"gap":0},{"name":"Nordic Gadgets AB","rating":4.6,"gap":-0.2},{"name":"Midwest Hardware Co","rating":4.4,"gap":-0.4},{"name":"Shenzhen Electro","rating":4.1,"gap":-0.7},{"name":"Andes Naturals SA","rating":4,"gap":-0.8},{"name":"Pacific Textiles","rating":3.9,"gap":-0.9}]
+
+## supplier product counts ladder
+   SELECT s.name name, COUNT(*) n, RANK() OVER (ORDER BY COUNT(*) DESC) rk FROM products p JOIN suppliers s ON s.id = p.supplier_id GROUP BY s.id ORDER BY rk, name
+   [{"name":"Midwest Hardware Co","n":3,"rk":1},{"name":"Nordic Gadgets AB","n":3,"rk":1},{"name":"Pacific Textiles","n":3,"rk":1},{"name":"Shenzhen Electro","n":3,"rk":1},{"name":"Alpine Audio GmbH","n":2,"rk":5},{"name":"Andes Naturals SA","n":2,"rk":5}]
+
+## supplier catalog value + share 1dp
+   WITH v AS (SELECT s.name name, ROUND(SUM(p.price),2) value FROM products p JOIN suppliers s ON s.id = p.supplier_id GROUP BY s.id) SELECT name, value, ROUND(100.0*value/SUM(value) OVER (),1) pct, RANK() OVER (ORDER BY value DESC) rk FROM v ORDER BY rk
+   [{"name":"Nordic Gadgets AB","value":418.98,"pct":36.5,"rk":1},{"name":"Midwest Hardware Co","value":224.49,"pct":19.5,"rk":2},{"name":"Alpine Audio GmbH","value":143.99,"pct":12.5,"rk":3},{"name":"Andes Naturals SA","value":138.99,"pct":12.1,"rk":4},{"name":"Pacific Textiles","value":128.99,"pct":11.2,"rk":5},{"name":"Shenzhen Electro","value":92.99,"pct":8.1,"rk":6}]
+
+## stock below average census
+   WITH k AS (SELECT name, stock, AVG(stock) OVER () avg_stock FROM products) SELECT COUNT(*) below FROM k WHERE stock < avg_stock
+   [{"below":9}]
+
+## stock avg paint
+   SELECT name, stock, ROUND(AVG(stock) OVER (),1) avg_stock FROM products LIMIT 2
+   [{"name":"Mechanical Keyboard K1","stock":120,"avg_stock":177.8},{"name":"Wireless Mouse M3","stock":300,"avg_stock":177.8}]
+
+## stock NTILE(4) census
+   SELECT tile, COUNT(*) n, MAX(stock) hi FROM (SELECT stock, NTILE(4) OVER (ORDER BY stock DESC) tile FROM products) GROUP BY tile ORDER BY tile
+   [{"tile":1,"n":4,"hi":500},{"tile":2,"n":4,"hi":220},{"tile":3,"n":4,"hi":120},{"tile":4,"n":4,"hi":70}]
+
+## stock rank top1
+   SELECT name, stock, RANK() OVER (ORDER BY stock DESC) rk FROM products ORDER BY rk LIMIT 1
+   [{"name":"HDMI 2.1 Cable 2m","stock":500,"rk":1}]
+
+## price ladder running row4
+   SELECT name, price, ROUND(SUM(price) OVER (ORDER BY price),2) running FROM products ORDER BY price LIMIT 4
+   [{"name":"HDMI 2.1 Cable 2m","price":14.99,"running":14.99},{"name":"Running Socks 3-pack","price":18.5,"running":33.49},{"name":"Desk Mat Extended","price":24.99,"running":58.48},{"name":"Yoga Mat Eco 6mm","price":32,"running":90.48}]
+
+## price ladder grand
+   SELECT ROUND(SUM(price),2) total FROM products
+   [{"total":1148.43}]
+
+## above-mean product count
+   WITH k AS (SELECT price, price - AVG(price) OVER () gap FROM products) SELECT COUNT(*) above FROM k WHERE gap > 0
+   [{"above":6}]
+
+## category census rank+share
+   WITH f AS (SELECT category, COUNT(*) n, ROUND(SUM(price),2) value FROM products GROUP BY category) SELECT category, n, value, ROUND(100.0*value/SUM(value) OVER (),1) pct, RANK() OVER (ORDER BY value DESC) rk FROM f ORDER BY rk
+   [{"category":"Audio","n":3,"value":328.98,"pct":28.6,"rk":1},{"category":"Wearables","n":2,"value":278.99,"pct":24.3,"rk":2},{"category":"Electronics","n":3,"value":173.49,"pct":15.1,"rk":3},{"category":"Video","n":2,"value":168.99,"pct":14.7,"rk":4},{"category":"Apparel","n":2,"value":83.5,"pct":7.3,"rk":5},{"category":"Accessories","n":3,"value":82.48,"pct":7.2,"rk":6},{"category":"Fitness","n":1,"value":32,"pct":2.8,"rk":7}]
+
+## price NTILE(3) census
+   SELECT band, COUNT(*) n, MIN(price) lo, MAX(price) hi FROM (SELECT price, NTILE(3) OVER (ORDER BY price DESC) band FROM products) GROUP BY band ORDER BY band
+   [{"band":1,"n":6,"lo":79,"hi":199.99},{"band":2,"n":5,"lo":39.99,"hi":65},{"band":3,"n":5,"lo":14.99,"hi":34.5}]
+
+## price NTILE(4) census
+   SELECT band, COUNT(*) n, MIN(price) lo, MAX(price) hi FROM (SELECT price, NTILE(4) OVER (ORDER BY price DESC) band FROM products) GROUP BY band ORDER BY band
+   [{"band":1,"n":4,"lo":119,"hi":199.99},{"band":2,"n":4,"lo":59.99,"hi":89.99},{"band":3,"n":4,"lo":34.5,"hi":49},{"band":4,"n":4,"lo":14.99,"hi":32}]
+
+## cohort (first-order month) + cumulative
+   WITH f AS (SELECT customer_id, MIN(created_at) first_order FROM orders GROUP BY customer_id), c AS (SELECT strftime('%Y-%m', first_order) cohort, COUNT(*) n FROM f GROUP BY cohort) SELECT cohort, n, SUM(n) OVER (ORDER BY cohort) cum FROM c ORDER BY cohort
+   [{"cohort":"2024-01","n":5,"cum":5},{"cohort":"2024-02","n":2,"cum":7},{"cohort":"2024-03","n":3,"cum":10},{"cohort":"2024-04","n":3,"cum":13},{"cohort":"2024-08","n":1,"cum":14},{"cohort":"2024-11","n":1,"cum":15},{"cohort":"2025-01","n":1,"cum":16}]
+
+## signup month census (rerun A14)
+   SELECT strftime('%Y-%m', created_at) mon, COUNT(*) n FROM customers GROUP BY mon ORDER BY mon
+   [{"mon":"2023-11","n":2},{"mon":"2023-12","n":2},{"mon":"2024-01","n":2},{"mon":"2024-02","n":2},{"mon":"2024-03","n":2},{"mon":"2024-04","n":2},{"mon":"2024-05","n":2},{"mon":"2024-06","n":1},{"mon":"2024-07","n":1}]
+
+## order-count board top3
+   WITH b AS (SELECT c.name name, COUNT(*) n FROM orders o JOIN customers c ON c.id = o.customer_id GROUP BY c.id) SELECT name, n, ROUND(100.0*n/SUM(n) OVER (),1) pct, RANK() OVER (ORDER BY n DESC) rk FROM b ORDER BY rk LIMIT 3
+   [{"name":"Alice Chen","n":24,"pct":23.3,"rk":1},{"name":"Emma Wilson","n":17,"pct":16.5,"rk":2},{"name":"Grace Kim","n":14,"pct":13.6,"rk":3}]
+
+## expense monthly running (rerun)
+   WITH e AS (SELECT strftime('%Y-%m', spent_on) mon, SUM(amount_cents) spent FROM expenses GROUP BY mon) SELECT mon, ROUND(SUM(spent) OVER (ORDER BY mon)/100.0,2) running FROM e ORDER BY mon
+   [{"mon":"2024-01","running":1719},{"mon":"2024-02","running":3159},{"mon":"2024-03","running":5076},{"mon":"2024-04","running":6825},{"mon":"2024-05","running":8305},{"mon":"2024-06","running":9815},{"mon":"2024-07","running":11609},{"mon":"2024-08","running":14819},{"mon":"2024-09","running":16364},{"mon":"2024-10","running":18223},{"mon":"2024-11","running":20197},{"mon":"2024-12","running":21807},{"mon":"2025-01","running":23766},{"mon":"2025-02","running":25416}]
+
+## expense MoM delta line
+   WITH e AS (SELECT strftime('%Y-%m', spent_on) mon, SUM(amount_cents)/100.0 spent FROM expenses GROUP BY mon), d AS (SELECT mon, ROUND(spent,2) spend, ROUND(spent - LAG(spent) OVER (ORDER BY mon),2) delta FROM e) SELECT mon, spend, delta FROM d ORDER BY mon
+   [{"mon":"2024-01","spend":1719,"delta":null},{"mon":"2024-02","spend":1440,"delta":-279},{"mon":"2024-03","spend":1917,"delta":477},{"mon":"2024-04","spend":1749,"delta":-168},{"mon":"2024-05","spend":1480,"delta":-269},{"mon":"2024-06","spend":1510,"delta":30},{"mon":"2024-07","spend":1794,"delta":284},{"mon":"2024-08","spend":3210,"delta":1416},{"mon":"2024-09","spend":1545,"delta":-1665},{"mon":"2024-10","spend":1859,"delta":314},{"mon":"2024-11","spend":1974,"delta":115},{"mon":"2024-12","spend":1610,"delta":-364},{"mon":"2025-01","spend":1959,"delta":349},{"mon":"2025-02","spend":1650,"delta":-309}]
+
+## expense spike row
+   WITH e AS (SELECT strftime('%Y-%m', spent_on) mon, SUM(amount_cents)/100.0 spent FROM expenses GROUP BY mon), d AS (SELECT mon, ROUND(spent,2) spend, ROUND(spent - LAG(spent) OVER (ORDER BY mon),2) delta FROM e) SELECT * FROM d WHERE mon='2024-08'
+   [{"mon":"2024-08","spend":3210,"delta":1416}]
+
+## expense deltas > 200 count
+   WITH e AS (SELECT strftime('%Y-%m', spent_on) mon, SUM(amount_cents)/100.0 spent FROM expenses GROUP BY mon), d AS (SELECT mon, ROUND(spent,2) spend, ROUND(spent - LAG(spent) OVER (ORDER BY mon),2) delta FROM e) SELECT COUNT(*) n FROM d WHERE delta > 200
+   [{"n":5}]
+
+## travel vendor walk
+   SELECT id, spent_on, amount_cents/100.0 amt, ROUND(amount_cents/100.0 - LAG(amount_cents)/100.0 OVER (ORDER BY spent_on),2) delta FROM expenses WHERE category='Travel' ORDER BY spent_on
+   ERROR: near "OVER": syntax error
+
+## expense category census
+   SELECT category, COUNT(*) n, ROUND(SUM(amount_cents)/100.0,2) total FROM expenses GROUP BY category ORDER BY total DESC
+   [{"category":"Rent","n":14,"total":16800},{"category":"Ads","n":14,"total":4570},{"category":"Travel","n":3,"total":2521},{"category":"Tools","n":5,"total":1525}]
+
+## expense rows 2024-08 detail
+   SELECT category, vendor, amount_cents/100.0 amt FROM expenses WHERE strftime('%Y-%m', spent_on)='2024-08' ORDER BY amount_cents DESC
+   [{"category":"Travel","vendor":"Skyline Travel","amt":1680},{"category":"Rent","vendor":"Atlas Property GmbH","amt":1200},{"category":"Ads","vendor":"AdWorks Media","amt":330}]
+
+## running revenue line last row (rerun)
+   WITH m AS (SELECT strftime('%Y-%m', created_at) mon, SUM(total) rev FROM orders GROUP BY mon), r AS (SELECT mon, ROUND(SUM(rev) OVER (ORDER BY mon),2) running FROM m) SELECT * FROM r ORDER BY mon DESC LIMIT 2
+   [{"mon":"2025-02","running":34833.28},{"mon":"2025-01","running":32442.75}]
+
+## NTILE(4) over 14 buckets (rerun)
+   WITH m AS (SELECT strftime('%Y-%m', created_at) mon, SUM(total) rev FROM orders GROUP BY mon) SELECT band, COUNT(*) n FROM (SELECT NTILE(4) OVER (ORDER BY mon) band FROM m) GROUP BY band ORDER BY band
+   [{"band":1,"n":4},{"band":2,"n":4},{"band":3,"n":3},{"band":4,"n":3}]
+
+## full-ledger running tail (rerun)
+   WITH r AS (SELECT entry_date, id, ROUND(SUM(debit_cents-credit_cents) OVER (ORDER BY entry_date, id)/100.0,2) bal FROM ledger_entries) SELECT * FROM r ORDER BY entry_date DESC, id DESC LIMIT 4
+   [{"entry_date":"2025-02-28","id":80,"bal":0},{"entry_date":"2025-02-28","id":79,"bal":7076},{"entry_date":"2025-02-28","id":78,"bal":0},{"entry_date":"2025-02-28","id":77,"bal":8112}]
+
+## ledger id-79 row
+   WITH r AS (SELECT entry_date, id, ROUND(SUM(debit_cents-credit_cents) OVER (ORDER BY entry_date, id)/100.0,2) bal FROM ledger_entries) SELECT * FROM r WHERE id=79
+   [{"entry_date":"2025-02-28","id":79,"bal":7076}]
+
+## opex running Jan-May (rerun)
+   WITH e AS (SELECT strftime('%Y-%m', entry_date) mon, SUM(debit_cents) spent FROM ledger_entries WHERE account='operating_expenses' GROUP BY mon) SELECT mon, ROUND(SUM(spent) OVER (ORDER BY mon)/100.0,2) running FROM e ORDER BY mon LIMIT 5
+   [{"mon":"2024-01","running":1719},{"mon":"2024-02","running":3159},{"mon":"2024-03","running":5076},{"mon":"2024-04","running":6825},{"mon":"2024-05","running":8305}]
+
+## ledger account census
+   SELECT account, COUNT(*) n FROM ledger_entries GROUP BY account ORDER BY n DESC
+   [{"account":"cash","n":27},{"account":"accounts_receivable","n":26},{"account":"operating_expenses","n":14},{"account":"sales_revenue","n":13}]
+
+## ledger AR debit total
+   SELECT ROUND(SUM(debit_cents)/100.0,2) deb, COUNT(*) n FROM ledger_entries WHERE account='accounts_receivable' AND debit_cents > 0
+   [{"deb":86052,"n":13}]
+
+## printf pad order ids
+   SELECT PRINTF('%04d', id) padded, total FROM orders ORDER BY total DESC LIMIT 1
+   [{"padded":"0074","total":1088.44}]
+
+## alice handle (rerun)
+   SELECT SUBSTR(email,1,INSTR(email,'@')-1) handle, LENGTH(email) len FROM customers WHERE id=1
+   [{"handle":"alice.chen","len":22}]
+
+## product name lengths ranked DESC
+   SELECT name, LENGTH(name) len, RANK() OVER (ORDER BY LENGTH(name) DESC) rk FROM products ORDER BY rk, name
+   [{"name":"Noise-Canceling Headset","len":23,"rk":1},{"name":"Bluetooth Speaker Mini","len":22,"rk":2},{"name":"Mechanical Keyboard K1","len":22,"rk":2},{"name":"Laptop Stand Aluminum","len":21,"rk":4},{"name":"Running Socks 3-pack","len":20,"rk":5},{"name":"Cycling Jersey Pro","len":18,"rk":6},{"name":"Studio Desktop Mic","len":18,"rk":6},{"name":"Desk Mat Extended","len":17,"rk":8},{"name":"HDMI 2.1 Cable 2m","len":17,"rk":8},{"name":"Wireless Mouse M3","len":17,"rk":8},{"name":"USB-C Hub 7-in-1","len":16,"rk":11},{"name":"Yoga Mat Eco 6mm","len":16,"rk":11},{"name":"Fitness Band X2","len":15,"rk":13},{"name":"Ring Light 14\"","len":14,"rk":14},{"name":"4K Webcam Pro","len":13,"rk":15},{"name":"Smart Watch S","len":13,"rk":15}]
+
+## FIRST_VALUE opener on expense stage
+   WITH e AS (SELECT strftime('%Y-%m', spent_on) mon, SUM(amount_cents) spent FROM expenses GROUP BY mon) SELECT ROUND(FIRST_VALUE(spent) OVER (ORDER BY mon)/100.0,2) opener FROM e ORDER BY mon LIMIT 1
+   [{"opener":1719}]
+
+## unshipped split rows (HAVING OR)
+   SELECT status, COUNT(*) n, ROUND(SUM(SUM(total)) OVER (), 2) unshipped_pot FROM orders WHERE shipped_at IS NULL GROUP BY status HAVING COUNT(*) = 7 OR COUNT(*) = 14
+   [{"status":"cancelled","n":7,"unshipped_pot":7265.49},{"status":"pending","n":14,"unshipped_pot":7265.49}]
+
+## thin-stock running line
+   SELECT name, stock, ROUND(SUM(stock) OVER (ORDER BY stock ASC), 2) thin_run FROM products WHERE stock <= 70 ORDER BY stock
+   [{"name":"Smart Watch S","stock":40,"thin_run":40},{"name":"Studio Desktop Mic","stock":45,"thin_run":85},{"name":"Noise-Canceling Headset","stock":60,"thin_run":145},{"name":"4K Webcam Pro","stock":70,"thin_run":215}]
+
+## signup final bucket
+   SELECT strftime('%Y-%m', created_at) mon, COUNT(*) n, SUM(COUNT(*)) OVER () roster FROM customers GROUP BY mon HAVING mon = '2024-07'
+   [{"mon":"2024-07","n":1,"roster":1}]
+
+## shipped rows at cancelled flag prices
+   SELECT COUNT(*) n FROM orders WHERE status='shipped' AND total IN (397.99, 206.19)
+   [{"n":0}]
+
+## expense category fold paint
+   SELECT category, COUNT(*) n, ROUND(SUM(amount_cents)/100.0, 2) total, SUM(COUNT(*)) OVER () receipts FROM expenses GROUP BY category HAVING total = 16800
+   [{"category":"Rent","n":14,"total":16800,"receipts":14}]
+
+## price-pool of above-mean products
+   WITH g AS (SELECT price, ROUND(price - AVG(price) OVER (), 2) gap FROM products) SELECT COUNT(*) above, ROUND(MAX(gap),2) biggest_gap, ROUND(SUM(price),2) price_pool FROM g WHERE gap > 0
+   [{"above":6,"biggest_gap":128.21,"price_pool":766.97}]
+
+## nordic value vs stock ranks
+   WITH v AS (SELECT s.name name, ROUND(SUM(p.price),2) value, SUM(p.stock) units FROM products p JOIN suppliers s ON s.id = p.supplier_id GROUP BY s.id), r AS (SELECT name, value, units, RANK() OVER (ORDER BY value DESC) vrk, RANK() OVER (ORDER BY units ASC) srk FROM v) SELECT * FROM r WHERE name = 'Nordic Gadgets AB'
+   [{"name":"Nordic Gadgets AB","value":418.98,"units":230,"vrk":1,"srk":1}]
+
+## invoice top share 1dp
+   SELECT number, ROUND(amount_cents/100.0, 2) amt, ROUND(100.0 * amount_cents / SUM(amount_cents) OVER (), 1) share FROM invoices WHERE amount_cents = (SELECT MAX(amount_cents) FROM invoices)
+   [{"number":"INV-2025-025","amt":6148,"share":100}]
+
+## invoice prefix bucket row
+   SELECT SUBSTR(number, 1, 8) prefix, COUNT(*) n, SUM(COUNT(*)) OVER () all_invoices FROM invoices GROUP BY prefix HAVING prefix LIKE 'INV-2025%'
+   [{"prefix":"INV-2025","n":5,"all_invoices":5}]
+
+## ERR·NTILE(0) in template shape
+   SELECT NTILE(0) OVER (ORDER BY total) band FROM orders LIMIT 1
+   ERROR: argument of ntile must be a positive integer
+
+## ERR·LAG no OVER
+   SELECT LAG(total) FROM orders LIMIT 1
+   ERROR: misuse of window function LAG()
+
+## ERR·window in WHERE
+   SELECT id FROM orders WHERE RANK() OVER (ORDER BY total) = 1
+   ERROR: misuse of window function RANK()
+
+## ERR·alias of window in WHERE
+   SELECT id, RANK() OVER (ORDER BY total) rk FROM orders WHERE rk = 1
+   ERROR: misuse of aliased window function rk
+
+## ERR·no such column outside stage
+   SELECT SUM(rev) OVER (ORDER BY mon) FROM orders
+   ERROR: no such column: rev
+
+## ERR·ORDER before PARTITION
+   SELECT SUM(total) OVER (ORDER BY id PARTITION BY customer_id) FROM orders LIMIT 1
+   ERROR: near "PARTITION": syntax error
+
+## ERR·strftime bad code
+   SELECT strftime('%K', created_at) FROM orders LIMIT 1
+   [{"strftime('%K', created_at)":null}]
+
+## calendar landing fill
+   WITH m AS (SELECT strftime('%Y-%m', created_at) AS mon, SUM(total) AS rev FROM orders GROUP BY mon), r AS (SELECT mon, rev, SUM(rev) OVER (ORDER BY mon) AS running FROM m) SELECT mon, ROUND(rev,2) rev, ROUND(running,2) running FROM r WHERE mon = '2025-02' AND running = 34833.28
+   [{"mon":"2025-02","rev":2390.53,"running":34833.28}]
+
+## unshipped fold MAX paint
+   SELECT status, COUNT(*) n, ROUND(SUM(SUM(total)) OVER (),2) unshipped_pot FROM orders WHERE shipped_at IS NULL GROUP BY status HAVING COUNT(*) = 7 OR COUNT(*) = 14
+   [{"status":"cancelled","n":7,"unshipped_pot":7265.49},{"status":"pending","n":14,"unshipped_pot":7265.49}]
+
+## unshipped fold AVG paint
+   SELECT status, COUNT(*) n, ROUND(AVG(SUM(total)) OVER (),2) p FROM orders WHERE shipped_at IS NULL GROUP BY status HAVING COUNT(*) = 7 OR COUNT(*) = 14
+   [{"status":"cancelled","n":7,"p":3632.74},{"status":"pending","n":14,"p":3632.74}]
+
+## cheap ladder AVG rung at yoga mat
+   WITH ladder AS (SELECT name, price, AVG(price) OVER (ORDER BY price, id) AS running FROM products) SELECT name, ROUND(running,4) running FROM ladder WHERE name = 'Yoga Mat Eco 6mm'
+   [{"name":"Yoga Mat Eco 6mm","running":22.62}]
+
+## cheap ladder smart watch rung
+   WITH ladder AS (SELECT name, price, SUM(price) OVER (ORDER BY price, id) AS running FROM products) SELECT name, ROUND(running,2) running FROM ladder WHERE name = 'Smart Watch S'
+   [{"name":"Smart Watch S","running":1148.43}]
+
+## supplier value league rank+lag
+   WITH v AS (SELECT s.name name, ROUND(SUM(p.price),2) value FROM products p JOIN suppliers s ON s.id = p.supplier_id GROUP BY s.id), l AS (SELECT name, value, RANK() OVER (ORDER BY value DESC) rk, LAG(value) OVER (ORDER BY value DESC) prev FROM v) SELECT name, value, rk, prev FROM l ORDER BY rk
+   [{"name":"Nordic Gadgets AB","value":418.98,"rk":1,"prev":null},{"name":"Midwest Hardware Co","value":224.49,"rk":2,"prev":418.98},{"name":"Alpine Audio GmbH","value":143.99,"rk":3,"prev":224.49},{"name":"Andes Naturals SA","value":138.99,"rk":4,"prev":143.99},{"name":"Pacific Textiles","value":128.99,"rk":5,"prev":138.99},{"name":"Shenzhen Electro","value":92.99,"rk":6,"prev":128.99}]
+
+## region mix APAC row
+   WITH f AS (SELECT c.region region, COUNT(*) n, ROUND(SUM(o.total),2) rev FROM orders o JOIN customers c ON c.id = o.customer_id GROUP BY c.region), x AS (SELECT region, n, rev, ROUND(100.0*rev/SUM(rev) OVER (),1) pct, RANK() OVER (ORDER BY rev DESC) rk FROM f) SELECT region, n, rev, pct, rk FROM x WHERE region = 'APAC' AND rev = 11605.45 AND pct = 33.3
+   [{"region":"APAC","n":37,"rev":11605.45,"pct":33.3,"rk":2}]
+
+## above-own-mean fill
+   WITH s AS (SELECT c.name name, ROUND(SUM(o.total),2) spend, ROUND(AVG(SUM(o.total)) OVER (),2) mean FROM orders o JOIN customers c ON c.id = o.customer_id GROUP BY c.id), k AS (SELECT name, spend, spend - mean AS headroom FROM s WHERE spend > mean) SELECT COUNT(*) above, ROUND(MAX(headroom),2) top_headroom FROM k HAVING COUNT(*) = 5
+   [{"above":5,"top_headroom":5085.27}]
+
+## thin-stock tail fill
+   WITH tail AS (SELECT name, stock, SUM(stock) OVER (ORDER BY stock, id) AS running FROM products WHERE stock <= 70) SELECT name, stock, running FROM tail WHERE name = 'Noise-Canceling Headset' AND running = 145
+   [{"name":"Noise-Canceling Headset","stock":60,"running":145}]
+
+## thin-stock tail avg rung
+   WITH tail AS (SELECT name, stock, AVG(stock) OVER (ORDER BY stock, id) AS running FROM products WHERE stock <= 70) SELECT name, ROUND(running,4) running FROM tail WHERE name = 'Noise-Canceling Headset'
+   [{"name":"Noise-Canceling Headset","running":48.3333}]
+
+## invoice year split fill
+   WITH years AS (SELECT CAST(SUBSTR(number, 5, 4) AS INTEGER) AS yr FROM invoices), y AS (SELECT yr, COUNT(*) AS n, SUM(COUNT(*)) OVER () AS stack FROM years GROUP BY yr) SELECT yr, n, stack FROM y WHERE yr = 2025 AND stack = 28
+   [{"yr":2025,"n":5,"stack":28}]
+
+## invoice year substr start 6
+   SELECT CAST(SUBSTR(number, 6, 4) AS INTEGER) yr, COUNT(*) n FROM invoices GROUP BY yr
+   [{"yr":24,"n":23},{"yr":25,"n":5}]
+
+## invoice year substr start 23
+   SELECT CAST(SUBSTR(number, 23, 4) AS INTEGER) yr, COUNT(*) n FROM invoices GROUP BY yr
+   [{"yr":0,"n":28}]
+
+## ledger zero fill
+   WITH r AS (SELECT entry_date, id, ROUND(SUM(debit_cents - credit_cents) OVER (ORDER BY entry_date, id) / 100.0, 2) AS bal FROM ledger_entries) SELECT id, entry_date, bal FROM r WHERE id = 80 AND bal = 0
+   [{"id":80,"entry_date":"2025-02-28","bal":0}]
+
+## ledger MAX paint at id 80
+   WITH r AS (SELECT entry_date, id, ROUND(MAX(debit_cents - credit_cents) OVER (ORDER BY entry_date, id) / 100.0, 2) AS bal FROM ledger_entries) SELECT id, bal FROM r WHERE id = 80
+   [{"id":80,"bal":11085}]
+
+## burn anchor fill
+   WITH e AS (SELECT strftime('%Y-%m', spent_on) AS mon, SUM(amount_cents) AS spent FROM expenses GROUP BY mon), a AS (SELECT mon, spent, FIRST_VALUE(spent) OVER (ORDER BY mon) AS anchor FROM e) SELECT mon, spent/100.0 spend, anchor/100.0 anchor FROM a WHERE mon = '2025-02' AND anchor/100.0 = 1719
+   [{"mon":"2025-02","spend":1650,"anchor":1719}]
+
+## burn anchor LAST_VALUE variant
+   WITH e AS (SELECT strftime('%Y-%m', spent_on) AS mon, SUM(amount_cents) AS spent FROM expenses GROUP BY mon), a AS (SELECT mon, spent, LAST_VALUE(spent) OVER (ORDER BY mon) AS anchor FROM e) SELECT mon, anchor/100.0 anchor FROM a WHERE mon = '2025-02'
+   [{"mon":"2025-02","anchor":1650}]
+
+## jump watchlist fill
+   WITH w AS (SELECT id, total, total - LAG(total) OVER (ORDER BY id) AS jump FROM orders), k AS (SELECT id, ROUND(total,2) total, ROUND(jump,2) jump, RANK() OVER (ORDER BY jump DESC) rk FROM w WHERE jump > 500) SELECT id, total, jump, rk FROM k WHERE rk = 1 AND jump = 770.45
+   [{"id":39,"total":845.92,"jump":770.45,"rk":1}]
+
+## jump watchlist rk2
+   WITH w AS (SELECT id, total, total - LAG(total) OVER (ORDER BY id) AS jump FROM orders), k AS (SELECT id, ROUND(jump,2) jump, RANK() OVER (ORDER BY jump DESC) rk FROM w WHERE jump > 500) SELECT id, jump, rk FROM k WHERE rk = 2
+   [{"id":74,"jump":712.51,"rk":2}]
+
+## jump > 852.44 count
+   WITH w AS (SELECT total - LAG(total) OVER (ORDER BY id) AS jump FROM orders) SELECT COUNT(*) n FROM w WHERE jump > 852.44
+   [{"n":0}]
+
+## calendar tiles ASC band spends
+   WITH m AS (SELECT strftime('%Y-%m', created_at) AS mon, SUM(total) AS rev FROM orders GROUP BY mon), t AS (SELECT mon, rev, NTILE(4) OVER (ORDER BY mon ASC) AS band FROM m) SELECT band, ROUND(SUM(rev),2) band_spend FROM t GROUP BY band ORDER BY band
+   [{"band":1,"band_spend":12427.6},{"band":2,"band_spend":8503.67},{"band":3,"band_spend":7740.51},{"band":4,"band_spend":6161.5}]
+
+## calendar tiles DESC band spends
+   WITH m AS (SELECT strftime('%Y-%m', created_at) AS mon, SUM(total) AS rev FROM orders GROUP BY mon), t AS (SELECT mon, rev, NTILE(4) OVER (ORDER BY mon DESC) AS band FROM m) SELECT band, ROUND(SUM(rev),2) band_spend FROM t GROUP BY band ORDER BY band
+   [{"band":1,"band_spend":7810.3},{"band":2,"band_spend":9637.64},{"band":3,"band_spend":7426.65},{"band":4,"band_spend":9958.69}]
+
+## leaderboard runner-up fill
+   WITH s AS (SELECT c.name name, ROUND(SUM(o.total),2) spend FROM orders o JOIN customers c ON c.id = o.customer_id GROUP BY c.id), l AS (SELECT name, spend, RANK() OVER (ORDER BY spend DESC) rk, LAG(spend) OVER (ORDER BY spend DESC) prev FROM s) SELECT name, spend, rk, prev FROM l WHERE name = 'Emma Wilson' AND prev = 7262.35 AND rk = 2
+   [{"name":"Emma Wilson","spend":6640.56,"rk":2,"prev":7262.35}]
+
+## pending queue gap ladder
+   WITH q AS (SELECT id, strftime('%Y-%m-%d', created_at) d, CAST(julianday(created_at) - LAG(julianday(created_at)) OVER (ORDER BY created_at, id) AS INTEGER) gap FROM orders WHERE status = 'pending') SELECT id, d, gap FROM q ORDER BY d, id
+   [{"id":5,"d":"2024-01-02","gap":null},{"id":1,"d":"2024-01-05","gap":3},{"id":12,"d":"2024-02-07","gap":33},{"id":19,"d":"2024-03-05","gap":27},{"id":25,"d":"2024-03-25","gap":20},{"id":43,"d":"2024-06-16","gap":83},{"id":42,"d":"2024-06-17","gap":1},{"id":47,"d":"2024-07-06","gap":19},{"id":74,"d":"2024-10-04","gap":90},{"id":75,"d":"2024-10-04","gap":0},{"id":79,"d":"2024-11-11","gap":38},{"id":90,"d":"2024-12-27","gap":46},{"id":94,"d":"2025-01-01","gap":5},{"id":97,"d":"2025-02-27","gap":57}]
+
+## shipped queue max gap
+   WITH q AS (SELECT CAST(julianday(created_at) - LAG(julianday(created_at)) OVER (ORDER BY created_at, id) AS INTEGER) gap FROM orders WHERE status = 'shipped') SELECT MAX(gap) max_gap FROM q
+   [{"max_gap":92}]
+
+## price tiles fill
+   WITH t AS (SELECT price, NTILE(4) OVER (ORDER BY price DESC) AS band FROM products), s AS (SELECT band, ROUND(SUM(price),2) tile_price, ROUND(100.0*SUM(price)/SUM(SUM(price)) OVER (),1) pct FROM t GROUP BY band) SELECT band, tile_price, pct FROM s WHERE band = 1 AND tile_price = 597.98 AND pct = 52.1
+   [{"band":1,"tile_price":597.98,"pct":52.1}]
+
+## twins id-order fill
+   WITH w AS (SELECT id, created_at, LAG(created_at) OVER (ORDER BY created_at, id) AS prev FROM orders), k AS (SELECT id, created_at, prev FROM w WHERE created_at = prev) SELECT COUNT(*) twins, MAX(id) last_twin FROM k HAVING COUNT(*) = 19
+   [{"twins":19,"last_twin":102}]
+
+## twins total-order variant
+   WITH w AS (SELECT id, created_at, LAG(created_at) OVER (ORDER BY created_at, total) AS prev FROM orders), k AS (SELECT id, created_at, prev FROM w WHERE created_at = prev) SELECT COUNT(*) twins, MAX(id) last_twin FROM k
+   [{"twins":19,"last_twin":101}]
+
+## account nets fill
+   WITH nets AS (SELECT account, ROUND(SUM(debit_cents - credit_cents) / 100.0, 2) AS net FROM ledger_entries GROUP BY account), p AS (SELECT account, net, ROUND(SUM(net) OVER (), 2) AS books FROM nets) SELECT account, net, books FROM p WHERE account = 'sales_revenue' AND net = -86052 AND books = 0
+   [{"account":"sales_revenue","net":-86052,"books":0}]
+
+## account nets MAX paint books
+   WITH nets AS (SELECT account, ROUND(SUM(debit_cents - credit_cents) / 100.0, 2) AS net FROM ledger_entries GROUP BY account), p AS (SELECT account, net, ROUND(MAX(net) OVER (), 2) AS books FROM nets) SELECT account, books FROM p WHERE account = 'sales_revenue'
+   [{"account":"sales_revenue","books":44196}]
+
+## rating gap fill
+   WITH g AS (SELECT name, rating, ROUND(rating - MAX(rating) OVER (), 1) AS gap FROM suppliers) SELECT name, rating, gap FROM g WHERE name = 'Pacific Textiles' AND gap = -0.9
+   [{"name":"Pacific Textiles","rating":3.9,"gap":-0.9}]
+
+## prefix fold fill
+   WITH p AS (SELECT SUBSTR(number, 1, 8) AS prefix, COUNT(*) AS n, SUM(COUNT(*)) OVER () AS stack FROM invoices GROUP BY prefix) SELECT prefix, n, stack FROM p WHERE prefix = 'INV-2025' AND n = 5 AND stack = 28
+   [{"prefix":"INV-2025","n":5,"stack":28}]
+
+## cohort staircase fill
+   WITH f AS (SELECT customer_id, MIN(created_at) AS first_order FROM orders GROUP BY customer_id), c AS (SELECT strftime('%Y-%m', first_order) AS cohort, COUNT(*) AS n FROM f GROUP BY cohort), s AS (SELECT cohort, n, SUM(n) OVER (ORDER BY cohort) AS cum FROM c) SELECT cohort, n, cum FROM s WHERE cohort = '2025-01' AND cum = 16
+   [{"cohort":"2025-01","n":1,"cum":16}]
+
+## cohort staircase MAX paint
+   WITH f AS (SELECT customer_id, MIN(created_at) AS first_order FROM orders GROUP BY customer_id), c AS (SELECT strftime('%Y-%m', first_order) AS cohort, COUNT(*) AS n FROM f GROUP BY cohort), s AS (SELECT cohort, n, MAX(n) OVER (ORDER BY cohort) AS cum FROM c) SELECT cohort, cum FROM s WHERE cohort = '2025-01'
+   [{"cohort":"2025-01","cum":5}]
+
+## stock bands DESC fill
+   WITH t AS (SELECT name, stock, NTILE(4) OVER (ORDER BY stock DESC) AS band FROM products) SELECT band, COUNT(*) n, MAX(stock) hi FROM t GROUP BY band HAVING band = 2 AND hi = 220
+   [{"band":2,"n":4,"hi":220}]
+
+## stock bands ASC band2 hi
+   WITH t AS (SELECT stock, NTILE(4) OVER (ORDER BY stock ASC) AS band FROM products) SELECT band, MAX(stock) hi FROM t GROUP BY band ORDER BY band
+   [{"band":1,"hi":70},{"band":2,"hi":120},{"band":3,"hi":220},{"band":4,"hi":500}]
+
+## spend tiles fill
+   WITH s AS (SELECT c.id cid, SUM(o.total) spend FROM orders o JOIN customers c ON c.id = o.customer_id GROUP BY c.id), t AS (SELECT spend, NTILE(4) OVER (ORDER BY spend DESC) AS band FROM s), x AS (SELECT band, COUNT(*) n, ROUND(SUM(spend),2) tile_spend, ROUND(100.0*SUM(spend)/SUM(SUM(spend)) OVER (),1) pct FROM t GROUP BY band) SELECT band, n, tile_spend, pct FROM x WHERE band = 1 AND pct = 63.5
+   [{"band":1,"n":4,"tile_spend":22121.7,"pct":63.5}]
+
+## spend tiles MAX paint pct
+   WITH s AS (SELECT c.id cid, SUM(o.total) spend FROM orders o JOIN customers c ON c.id = o.customer_id GROUP BY c.id), t AS (SELECT spend, NTILE(4) OVER (ORDER BY spend DESC) AS band FROM s), x AS (SELECT band, ROUND(100.0*SUM(spend)/MAX(SUM(spend)) OVER (),1) pct FROM t GROUP BY band) SELECT band, pct FROM x WHERE band = 1
+   [{"band":1,"pct":100}]
+
+## one-line close fill
+   WITH m AS (SELECT strftime('%Y-%m', created_at) AS mon, ROUND(SUM(SUM(total)) OVER (ORDER BY strftime('%Y-%m', created_at)), 2) AS running FROM orders GROUP BY mon) SELECT mon, running FROM m WHERE mon = '2025-02' AND running = 34833.28
+   [{"mon":"2025-02","running":34833.28}]
+
+## one-line close COUNT painter
+   WITH m AS (SELECT strftime('%Y-%m', created_at) AS mon, COUNT(SUM(total)) OVER (ORDER BY strftime('%Y-%m', created_at)) AS running FROM orders GROUP BY mon) SELECT mon, running FROM m WHERE mon = '2025-02'
+   [{"mon":"2025-02","running":14}]
+
+## one-line close ROUND painter
+   WITH m AS (SELECT strftime('%Y-%m', created_at) AS mon, ROUND(ROUND(SUM(total)) OVER (ORDER BY strftime('%Y-%m', created_at)), 2) AS running FROM orders GROUP BY mon) SELECT mon, running FROM m WHERE mon = '2025-02'
+   ERROR: ROUND() may not be used as a window function
+
+## ERR·one-line close alias inside OVER
+   WITH m AS (SELECT strftime('%Y-%m', created_at) AS mon, ROUND(SUM(SUM(total)) OVER (ORDER BY mon), 2) AS running FROM orders GROUP BY mon) SELECT mon, running FROM m WHERE mon = '2025-02'
+   ERROR: no such column: mon
+
+## ERR·one-line close ORDER BY COUNT
+   WITH m AS (SELECT strftime('%Y-%m', created_at) AS mon, ROUND(SUM(SUM(total)) OVER (ORDER BY COUNT), 2) AS running FROM orders GROUP BY mon) SELECT mon, running FROM m WHERE mon = '2025-02'
+   ERROR: no such column: COUNT
+
+## rent fold COUNT paint
+   WITH f AS (SELECT category, COUNT(*) AS n, ROUND(SUM(amount_cents)/100.0, 2) AS total, COUNT(COUNT(*)) OVER () AS receipts FROM expenses GROUP BY category) SELECT category, n, total, receipts FROM f WHERE category = 'Rent' AND total = 16800
+   [{"category":"Rent","n":14,"total":16800,"receipts":4}]
+
+## exposure rank+pot fill
+   WITH e AS (SELECT c.name name, ROUND(SUM(o.total),2) exposure FROM orders o JOIN customers c ON c.id = o.customer_id WHERE o.status IN ('pending','cancelled') GROUP BY c.id), p AS (SELECT name, exposure, RANK() OVER (ORDER BY exposure DESC) rk, SUM(exposure) OVER () AS pot FROM e) SELECT name, exposure, rk, ROUND(pot,2) pot FROM p WHERE name = 'Farid Nasser' AND rk = 4 AND pot = 7265.49
+   [{"name":"Farid Nasser","exposure":1088.44,"rk":4,"pot":7265.49}]
+
+## exposure MAX paint
+   WITH e AS (SELECT c.name name, ROUND(SUM(o.total),2) exposure FROM orders o JOIN customers c ON c.id = o.customer_id WHERE o.status IN ('pending','cancelled') GROUP BY c.id), p AS (SELECT name, MAX(exposure) OVER () AS pot FROM e) SELECT name, pot FROM p WHERE name = 'Farid Nasser'
+   [{"name":"Farid Nasser","pot":1615.29}]
+
+## below-mean gap extremes
+   WITH k AS (SELECT name, stock, ROUND(AVG(stock) OVER (), 1) AS avg_stock FROM products), f AS (SELECT name, stock, avg_stock, ROUND(stock - avg_stock, 1) AS gap FROM k WHERE stock < avg_stock) SELECT COUNT(*) below, MIN(gap) worst, MAX(gap) shallowest FROM f
+   [{"below":9,"worst":-137.8,"shallowest":-27.8}]
+
+## below-mean fill
+   WITH k AS (SELECT name, stock, ROUND(AVG(stock) OVER (), 1) AS avg_stock FROM products), f AS (SELECT name, stock, avg_stock, ROUND(stock - avg_stock, 1) AS gap FROM k WHERE stock < avg_stock) SELECT COUNT(*) below, MIN(gap) worst FROM f HAVING COUNT(*) = 9 AND MIN(gap) = -137.8
+   [{"below":9,"worst":-137.8}]
+
+## step down fill
+   WITH w AS (SELECT id, total, total - LAG(total) OVER (ORDER BY id) AS jump FROM orders), k AS (SELECT id, ROUND(total,2) total, ROUND(jump,2) jump FROM w) SELECT id, total, jump FROM k WHERE jump = -814.8 AND id = 75
+   [{"id":75,"total":273.64,"jump":-814.8}]
+
+## step down LEAD variant
+   WITH w AS (SELECT id, total, total - LEAD(total) OVER (ORDER BY id) AS jump FROM orders), k AS (SELECT id, ROUND(jump,2) jump FROM w) SELECT COUNT(*) n FROM k WHERE jump = -814.8
+   [{"n":0}]
+
+## dual crown fill
+   WITH v AS (SELECT s.name name, ROUND(SUM(p.price),2) value, SUM(p.stock) units FROM products p JOIN suppliers s ON s.id = p.supplier_id GROUP BY s.id), r AS (SELECT name, value, units, RANK() OVER (ORDER BY value DESC) vrk, RANK() OVER (ORDER BY units ASC) srk FROM v) SELECT name, value, units, vrk, srk FROM r WHERE name = 'Nordic Gadgets AB' AND value = 418.98 AND srk = 1
+   [{"name":"Nordic Gadgets AB","value":418.98,"units":230,"vrk":1,"srk":1}]
+
+## dual crown DESC srk
+   WITH v AS (SELECT s.name name, SUM(p.stock) units FROM products p JOIN suppliers s ON s.id = p.supplier_id GROUP BY s.id), r AS (SELECT name, units, RANK() OVER (ORDER BY units DESC) srk FROM v) SELECT name, srk FROM r WHERE name = 'Nordic Gadgets AB'
+   [{"name":"Nordic Gadgets AB","srk":6}]
+
+## ERR·dual crown string in OVER ORDER BY
+   WITH v AS (SELECT s.name name, SUM(p.stock) units FROM products p JOIN suppliers s ON s.id = p.supplier_id GROUP BY s.id), r AS (SELECT name, units, RANK() OVER (ORDER BY units 'Alpine Audio GmbH') srk FROM v) SELECT name, srk FROM r
+   ERROR: near "'Alpine Audio GmbH'": syntax error
+
+## billing monthly running
+   WITH m AS (SELECT strftime('%Y-%m', issued_on) AS mon, SUM(amount_cents)/100.0 AS billed FROM invoices GROUP BY mon), r AS (SELECT mon, billed, SUM(billed) OVER (ORDER BY mon) AS running FROM m) SELECT mon, ROUND(billed,2) billed, ROUND(running,2) running FROM r ORDER BY mon
+   [{"mon":"2024-02","billed":7003,"running":7003},{"mon":"2024-03","billed":5009,"running":12012},{"mon":"2024-04","billed":5284,"running":17296},{"mon":"2024-05","billed":4318,"running":21614},{"mon":"2024-06","billed":5888,"running":27502},{"mon":"2024-07","billed":3893,"running":31395},{"mon":"2024-08","billed":7270,"running":38665},{"mon":"2024-09","billed":5801,"running":44466},{"mon":"2024-10","billed":6187,"running":50653},{"mon":"2024-11","billed":8297,"running":58950},{"mon":"2024-12","billed":8830,"running":67780},{"mon":"2025-01","billed":11085,"running":78865},{"mon":"2025-02","billed":8112,"running":86977}]
+
+## billing AVG running at 2025-02
+   WITH m AS (SELECT strftime('%Y-%m', issued_on) AS mon, SUM(amount_cents)/100.0 AS billed FROM invoices GROUP BY mon), r AS (SELECT mon, billed, AVG(billed) OVER (ORDER BY mon) AS running FROM m) SELECT mon, ROUND(running,2) running FROM r WHERE mon = '2025-02'
+   [{"mon":"2025-02","running":6690.54}]
+
+## opex spike share fill
+   WITH e AS (SELECT strftime('%Y-%m', entry_date) AS mon, SUM(debit_cents)/100.0 AS spend FROM ledger_entries WHERE account = 'operating_expenses' GROUP BY mon), p AS (SELECT mon, spend, ROUND(100.0*spend/SUM(spend) OVER (),1) pct FROM e) SELECT mon, ROUND(spend,2) spend, pct FROM p WHERE mon = '2024-08' AND spend = 3210 AND pct = 12.6
+   [{"mon":"2024-08","spend":3210,"pct":12.6}]
+
+## opex spike sales_revenue variant
+   WITH e AS (SELECT strftime('%Y-%m', entry_date) AS mon, SUM(debit_cents)/100.0 AS spend FROM ledger_entries WHERE account = 'sales_revenue' GROUP BY mon) SELECT mon, spend FROM e WHERE mon = '2024-08'
+   [{"mon":"2024-08","spend":0}]
+
+## opex spike MAX paint pct
+   WITH e AS (SELECT strftime('%Y-%m', entry_date) AS mon, SUM(debit_cents)/100.0 AS spend FROM ledger_entries WHERE account = 'operating_expenses' GROUP BY mon), p AS (SELECT mon, spend, ROUND(100.0*spend/MAX(spend) OVER (),1) pct FROM e) SELECT mon, pct FROM p WHERE mon = '2024-08'
+   [{"mon":"2024-08","pct":100}]
+
+## modal ship day fill
+   WITH d AS (SELECT CAST(julianday(shipped_at) - julianday(created_at) AS INTEGER) AS days, COUNT(*) AS n, SUM(COUNT(*)) OVER () AS shipped_total FROM orders WHERE shipped_at IS NOT NULL GROUP BY days) SELECT days, n, shipped_total FROM d WHERE days = 3 AND n = 30
+   [{"days":3,"n":30,"shipped_total":82}]
+
+## modal ship day MAX paint
+   WITH d AS (SELECT CAST(julianday(shipped_at) - julianday(created_at) AS INTEGER) AS days, COUNT(*) AS n, MAX(COUNT(*)) OVER () AS shipped_total FROM orders WHERE shipped_at IS NOT NULL GROUP BY days) SELECT days, n, shipped_total FROM d WHERE days = 3 AND n = 30
+   [{"days":3,"n":30,"shipped_total":30}]
+
+## modal ship day constant WHERE
+   WITH d AS (SELECT CAST(julianday(shipped_at) - julianday(created_at) AS INTEGER) AS days, COUNT(*) AS n, SUM(COUNT(*)) OVER () AS shipped_total FROM orders WHERE 25 GROUP BY days) SELECT days, n, shipped_total FROM d WHERE days = 3 AND n = 30
+   [{"days":3,"n":30,"shipped_total":103}]
+
+## activity board fill
+   WITH b AS (SELECT c.name name, COUNT(*) AS n FROM orders o JOIN customers c ON c.id = o.customer_id GROUP BY c.id), x AS (SELECT name, n, ROUND(100.0*n/SUM(n) OVER (),1) pct, RANK() OVER (ORDER BY n DESC) rk FROM b) SELECT name, n, pct, rk FROM x WHERE name = 'Grace Kim' AND n = 14 AND pct = 13.6
+   [{"name":"Grace Kim","n":14,"pct":13.6,"rk":3}]
+
+## year split fill
+   WITH y AS (SELECT strftime('%Y', created_at) AS yr, COUNT(*) AS n, SUM(total) AS spend FROM orders GROUP BY yr), p AS (SELECT yr, n, ROUND(spend,2) spend, ROUND(100.0*spend/SUM(spend) OVER (),1) pct, COUNT(n) OVER () AS buckets FROM y) SELECT yr, n, spend, pct, buckets FROM p WHERE yr = '2025' AND spend = 4060.03
+   [{"yr":"2025","n":13,"spend":4060.03,"pct":11.7,"buckets":2}]
+
+## year split MAX paint pct
+   WITH y AS (SELECT strftime('%Y', created_at) AS yr, COUNT(*) AS n, SUM(total) AS spend FROM orders GROUP BY yr), p AS (SELECT yr, ROUND(100.0*spend/MAX(spend) OVER (),1) pct FROM y) SELECT yr, pct FROM p WHERE yr = '2025'
+   [{"yr":"2025","pct":13.2}]
+
+## waiting pile fill
+   WITH c AS (SELECT status, COUNT(*) AS n, SUM(shipped_at IS NULL) AS waiting, SUM(COUNT(*)) OVER () AS fleet FROM orders GROUP BY status) SELECT status, n, waiting, fleet FROM c WHERE status = 'pending' AND waiting = 14 AND fleet = 103
+   [{"status":"pending","n":14,"waiting":14,"fleet":103}]
+
+## waiting pile MAX paint
+   WITH c AS (SELECT status, COUNT(*) AS n, SUM(shipped_at IS NULL) AS waiting, MAX(COUNT(*)) OVER () AS fleet FROM orders GROUP BY status) SELECT status, n, waiting, fleet FROM c WHERE status = 'pending' AND waiting = 14
+   [{"status":"pending","n":14,"waiting":14,"fleet":52}]
+
+## unshipped aging walk
+   WITH u AS (SELECT strftime('%Y-%m', created_at) AS mon, COUNT(*) AS n FROM orders WHERE shipped_at IS NULL GROUP BY mon), r AS (SELECT mon, n, SUM(n) OVER (ORDER BY mon) AS aging FROM u) SELECT mon, n, aging FROM r ORDER BY mon
+   [{"mon":"2024-01","n":3,"aging":3},{"mon":"2024-02","n":1,"aging":4},{"mon":"2024-03","n":3,"aging":7},{"mon":"2024-06","n":2,"aging":9},{"mon":"2024-07","n":3,"aging":12},{"mon":"2024-10","n":2,"aging":14},{"mon":"2024-11","n":3,"aging":17},{"mon":"2024-12","n":1,"aging":18},{"mon":"2025-01","n":2,"aging":20},{"mon":"2025-02","n":1,"aging":21}]
+
+## unshipped aging COUNT painter
+   WITH u AS (SELECT strftime('%Y-%m', created_at) AS mon, COUNT(*) AS n FROM orders WHERE shipped_at IS NULL GROUP BY mon), r AS (SELECT mon, n, COUNT(n) OVER (ORDER BY mon) AS aging FROM u) SELECT mon, aging FROM r WHERE mon = '2024-11'
+   [{"mon":"2024-11","aging":7}]
+
+## unshipped aging all-orders variant
+   WITH u AS (SELECT strftime('%Y-%m', created_at) AS mon, COUNT(*) AS n FROM orders WHERE 14 GROUP BY mon), r AS (SELECT mon, n, SUM(n) OVER (ORDER BY mon) AS aging FROM u) SELECT mon, n, aging FROM r WHERE mon = '2024-11'
+   [{"mon":"2024-11","n":6,"aging":83}]
+
+## unshipped aging 2024-10 rung
+   WITH u AS (SELECT strftime('%Y-%m', created_at) AS mon, COUNT(*) AS n FROM orders WHERE shipped_at IS NULL GROUP BY mon), r AS (SELECT mon, n, SUM(n) OVER (ORDER BY mon) AS aging FROM u) SELECT mon, n, aging FROM r WHERE mon = '2024-10'
+   [{"mon":"2024-10","n":2,"aging":14}]
+
+## shipped aging at 2024-11
+   WITH u AS (SELECT strftime('%Y-%m', created_at) AS mon, COUNT(*) AS n FROM orders WHERE shipped_at IS NOT NULL GROUP BY mon), r AS (SELECT mon, n, SUM(n) OVER (ORDER BY mon) AS aging FROM u) SELECT mon, n, aging FROM r WHERE mon = '2024-11'
+   [{"mon":"2024-11","n":3,"aging":66}]
+
+## mean-gap fill
+   WITH g AS (SELECT name, price, ROUND(price - AVG(price) OVER (), 2) AS gap FROM products) SELECT name, price, gap FROM g WHERE gap = 128.21 AND price = 199.99
+   [{"name":"Smart Watch S","price":199.99,"gap":128.21}]
+
+## mean-gap MAX variant
+   WITH g AS (SELECT name, price, ROUND(price - MAX(price) OVER (), 2) AS gap FROM products) SELECT COUNT(*) n FROM g WHERE gap = 128.21
+   [{"n":0}]
+
+## mean-gap 71.78 pin
+   WITH g AS (SELECT name, price, ROUND(price - AVG(price) OVER (), 2) AS gap FROM products) SELECT COUNT(*) n FROM g WHERE gap = 71.78
+   [{"n":0}]
+
+## invoice year walk fill
+   WITH y AS (SELECT CAST(SUBSTR(number, 5, 4) AS INTEGER) AS yr FROM invoices), f AS (SELECT yr, COUNT(*) AS n, SUM(COUNT(*)) OVER (ORDER BY yr) AS running, SUM(COUNT(*)) OVER () AS stack FROM y GROUP BY yr) SELECT yr, n, running, stack FROM f WHERE yr = 2025 AND n = 5
+   [{"yr":2025,"n":5,"running":28,"stack":28}]
+
+## invoice year walk COUNT paint
+   WITH y AS (SELECT CAST(SUBSTR(number, 5, 4) AS INTEGER) AS yr FROM invoices), f AS (SELECT yr, COUNT(*) AS n, COUNT(COUNT(*)) OVER (ORDER BY yr) AS running FROM y GROUP BY yr) SELECT yr, n, running FROM f WHERE yr = 2025
+   [{"yr":2025,"n":5,"running":2}]
+
+## rating bands fill
+   WITH b AS (SELECT rating, NTILE(3) OVER (ORDER BY rating DESC) AS band FROM suppliers) SELECT band, COUNT(*) AS n, MIN(rating) AS lo, MAX(rating) AS hi FROM b GROUP BY band HAVING band = 1 AND MIN(rating) = 4.6 AND COUNT(*) = 2
+   [{"band":1,"n":2,"lo":4.6,"hi":4.8}]
+
+## rating bands band3
+   WITH b AS (SELECT rating, NTILE(3) OVER (ORDER BY rating DESC) AS band FROM suppliers) SELECT band, MIN(rating) lo FROM b GROUP BY band ORDER BY band
+   [{"band":1,"lo":4.6},{"band":2,"lo":4.1},{"band":3,"lo":3.9}]
+
+## pending silence fill
+   WITH q AS (SELECT id, created_at, CAST(julianday(created_at) - LAG(julianday(created_at)) OVER (ORDER BY created_at, id) AS INTEGER) AS gap FROM orders WHERE status = 'pending') SELECT id, created_at, gap FROM q WHERE gap = 90 AND id = 74
+   [{"id":74,"created_at":"2024-10-04","gap":90}]
+
+## pending gap 43 census
+   WITH q AS (SELECT id, CAST(julianday(created_at) - LAG(julianday(created_at)) OVER (ORDER BY created_at, id) AS INTEGER) AS gap FROM orders WHERE status = 'pending') SELECT COUNT(*) n FROM q WHERE gap = 43
+   [{"n":0}]
+
+## region wall fill
+   WITH w AS (SELECT c.name name, c.region region, o.total, LAG(o.total) OVER (PARTITION BY c.region ORDER BY o.created_at, o.id) AS prev FROM orders o JOIN customers c ON c.id = o.customer_id) SELECT region, name, ROUND(total,2) total, ROUND(prev,2) prev FROM w WHERE region = 'US' AND total = 725.34 AND prev IS NULL
+   [{"region":"US","name":"Emma Wilson","total":725.34,"prev":null}]
+
+## region wall US not-null variant
+   WITH w AS (SELECT c.name name, c.region region, o.total, LAG(o.total) OVER (PARTITION BY c.region ORDER BY o.created_at, o.id) AS prev FROM orders o JOIN customers c ON c.id = o.customer_id) SELECT COUNT(*) n FROM w WHERE region = 'US' AND total = 725.34 AND prev IS NOT NULL
+   [{"n":0}]
+
+(done — temp db removed)

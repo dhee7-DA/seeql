@@ -1,0 +1,791 @@
+     1→     1→"use client";
+     2→     2→
+     3→     3→import { useCallback, useEffect, useState } from "react";
+     4→     4→import {
+     5→     5→  AlertTriangle,
+     6→     6→  Braces,
+     7→     7→  ChartColumn,
+     8→     8→  Check,
+     9→     9→  ClipboardList,
+    10→    10→  Copy,
+    11→    11→  Database,
+    12→    12→  DatabaseZap,
+    13→    13→  Eraser,
+    14→    14→  Filter,
+    15→    15→  GitMerge,
+    16→    16→  History,
+    17→    17→  GraduationCap,
+    18→    18→  SquareTerminal,
+    19→    19→  ListTree,
+    20→    20→  Loader2,
+    21→    21→  Network,
+    22→    22→  Play,
+    23→    23→  RotateCcw,
+    24→    24→  Route,
+    25→    25→  ShieldCheck,
+    26→    26→  Sigma,
+    27→    27→  Table2,
+    28→    28→  Timer,
+    29→    29→  Waypoints,
+    30→    30→  Workflow,
+    31→    31→} from "lucide-react";
+    32→    32→import { Button } from "@/components/ui/button";
+    33→    33→import {
+    34→    34→  Select,
+    35→    35→  SelectContent,
+    36→    36→  SelectItem,
+    37→    37→  SelectTrigger,
+    38→    38→  SelectValue,
+    39→    39→} from "@/components/ui/select";
+    40→    40→import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+    41→    41→import { SqlEditor } from "@/components/sql-editor";
+    42→    42→import { PipelineView } from "@/components/pipeline-view";
+    43→    43→import { JoinsView } from "@/components/joins-view";
+    44→    44→import { BreakdownView } from "@/components/breakdown-view";
+    45→    45→import { FlowView } from "@/components/flow-view";
+    46→    46→import { LineageView } from "@/components/lineage-view";
+    47→    47→import { QualityView } from "@/components/quality-view";
+    48→    48→import { ChartView } from "@/components/chart-view";
+    49→    49→import { ResultsView, WriteResultView } from "@/components/results-view";
+    50→    50→import { PlanView } from "@/components/plan-view";
+    51→    51→import { ParseTreeView } from "@/components/parse-tree-view";
+    52→    52→import { SchemaView } from "@/components/schema-view";
+    53→    53→import { DEFAULT_SAMPLE, SAMPLE_QUERIES } from "@/lib/samples";
+    54→    54→import { DIALECTS, type DialectName } from "@/lib/sql-types";
+    55→    55→import type {
+    56→    56→  ExecResponse,
+    57→    57→  ExecResult,
+    58→    58→  ParseResult,
+    59→    59→  QueryPlan,
+    60→    60→} from "@/lib/sql-types";
+    61→    61→import { cn } from "@/lib/utils";
+    62→    62→import { LearnApp } from "@/components/learn/learn-app";
+    63→    63→
+    64→    64→const HISTORY_KEY = "sql-visualizer-history";
+    65→    65→const HISTORY_MAX = 12;
+    66→    66→
+    67→    67→function StatChip({
+    68→    68→  icon: Icon,
+    69→    69→  label,
+    70→    70→  value,
+    71→    71→  tone = "zinc",
+    72→    72→}: {
+    73→    73→  icon: React.ComponentType<{ className?: string }>;
+    74→    74→  label: string;
+    75→    75→  value: string | number;
+    76→    76→  tone?: "zinc" | "emerald" | "amber" | "rose" | "violet" | "teal";
+    77→    77→}) {
+    78→    78→  const tones: Record<string, string> = {
+    79→    79→    zinc: "border-zinc-700/70 bg-zinc-800/50 text-zinc-300",
+    80→    80→    emerald: "border-emerald-400/25 bg-emerald-400/10 text-emerald-200",
+    81→    81→    amber: "border-amber-400/25 bg-amber-400/10 text-amber-200",
+    82→    82→    rose: "border-rose-400/25 bg-rose-400/10 text-rose-200",
+    83→    83→    violet: "border-violet-400/25 bg-violet-400/10 text-violet-200",
+    84→    84→    teal: "border-teal-400/25 bg-teal-400/10 text-teal-200",
+    85→    85→  };
+    86→    86→  return (
+    87→    87→    <span
+    88→    88→      className={cn(
+    89→    89→        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium",
+    90→    90→        tones[tone],
+    91→    91→      )}
+    92→    92→    >
+    93→    93→      <Icon className="h-3.5 w-3.5" />
+    94→    94→      {label}
+    95→    95→      <span className="font-mono font-bold">{value}</span>
+    96→    96→    </span>
+    97→    97→  );
+    98→    98→}
+    99→    99→
+   100→   100→function JsonView({ plan }: { plan: QueryPlan }) {
+   101→   101→  const [copied, setCopied] = useState(false);
+   102→   102→  const json = JSON.stringify({ ...plan, tree: undefined }, null, 2);
+   103→   103→
+   104→   104→  const copy = async () => {
+   105→   105→    try {
+   106→   106→      await navigator.clipboard.writeText(json);
+   107→   107→      setCopied(true);
+   108→   108→      setTimeout(() => setCopied(false), 1600);
+   109→   109→    } catch {
+   110→   110→      // clipboard unavailable — ignore
+   111→   111→    }
+   112→   112→  };
+   113→   113→
+   114→   114→  return (
+   115→   115→    <div className="space-y-3">
+   116→   116→      <div className="flex items-center justify-between">
+   117→   117→        <p className="text-xs text-zinc-400">
+   118→   118→          The structured plan the visualizer derived from your query.
+   119→   119→        </p>
+   120→   120→        <Button
+   121→   121→          variant="outline"
+   122→   122→          size="sm"
+   123→   123→          onClick={copy}
+   124→   124→          className="h-7 gap-1.5 border-zinc-700 text-xs text-zinc-300 hover:bg-zinc-800"
+   125→   125→        >
+   126→   126→          {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+   127→   127→          {copied ? "Copied" : "Copy JSON"}
+   128→   128→        </Button>
+   129→   129→      </div>
+   130→   130→      <pre className="thin-scrollbar max-h-[520px] overflow-auto rounded-xl border border-zinc-800 bg-zinc-900/70 p-4 font-mono text-xs leading-relaxed text-zinc-300">
+   131→   131→        {json}
+   132→   132→      </pre>
+   133→   133→    </div>
+   134→   134→  );
+   135→   135→}
+   136→   136→
+   137→   137→export default function Home() {
+   138→   138→  const [mode, setMode] = useState<"playground" | "learn">("playground");
+   139→   139→  const [sql, setSql] = useState(DEFAULT_SAMPLE.sql);
+   140→   140→  const [dialect, setDialect] = useState<DialectName>(DEFAULT_SAMPLE.dialect);
+   141→   141→  const [sampleId, setSampleId] = useState<string>(DEFAULT_SAMPLE.id);
+   142→   142→  const [plan, setPlan] = useState<ParseResult | null>(null);
+   143→   143→  const [exec, setExec] = useState<ExecResponse | null>(null);
+   144→   144→  const [running, setRunning] = useState(false);
+   145→   145→  const [history, setHistory] = useState<string[]>([]);
+   146→   146→  const [resetting, setResetting] = useState(false);
+   147→   147→  const [runKey, setRunKey] = useState(0);
+   148→   148→
+   149→   149→  const loadHistory = useCallback(() => {
+   150→   150→    try {
+   151→   151→      const raw = window.localStorage.getItem(HISTORY_KEY);
+   152→   152→      if (raw) setHistory(JSON.parse(raw) as string[]);
+   153→   153→    } catch {
+   154→   154→      // ignore malformed history
+   155→   155→    }
+   156→   156→  }, []);
+   157→   157→
+   158→   158→  const pushHistory = useCallback((text: string) => {
+   159→   159→    setHistory((prev) => {
+   160→   160→      const next = [text, ...prev.filter((h) => h !== text)].slice(0, HISTORY_MAX);
+   161→   161→      try {
+   162→   162→        window.localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
+   163→   163→      } catch {
+   164→   164→        // storage unavailable
+   165→   165→      }
+   166→   166→      return next;
+   167→   167→    });
+   168→   168→  }, []);
+   169→   169→
+   170→   170→  /** Parse + execute in parallel; both panels update independently. */
+   171→   171→  const runAll = useCallback(
+   172→   172→    async (sqlText: string, dia: DialectName) => {
+   173→   173→      const trimmed = sqlText.trim();
+   174→   174→      if (!trimmed) return;
+   175→   175→      setRunning(true);
+   176→   176→      try {
+   177→   177→        const [parseRes, execRes] = await Promise.all([
+   178→   178→          fetch("/api/parse", {
+   179→   179→            method: "POST",
+   180→   180→            headers: { "Content-Type": "application/json" },
+   181→   181→            body: JSON.stringify({ sql: trimmed, dialect: dia }),
+   182→   182→          }).then((r) => r.json() as Promise<ParseResult>),
+   183→   183→          fetch("/api/query", {
+   184→   184→            method: "POST",
+   185→   185→            headers: { "Content-Type": "application/json" },
+   186→   186→            body: JSON.stringify({ sql: trimmed }),
+   187→   187→          }).then((r) => r.json() as Promise<ExecResponse>),
+   188→   188→        ]);
+   189→   189→        setPlan(parseRes);
+   190→   190→        setExec(execRes);
+   191→   191→        pushHistory(trimmed);
+   192→   192→        setRunKey((k) => k + 1);
+   193→   193→      } catch {
+   194→   194→        setPlan((p) => p ?? { ok: false, error: "Could not reach the server. Please try again." });
+   195→   195→        setExec({ ok: false, error: "Could not reach the server. Please try again." });
+   196→   196→      } finally {
+   197→   197→        setRunning(false);
+   198→   198→      }
+   199→   199→    },
+   200→   200→    [pushHistory],
+   201→   201→  );
+   202→   202→
+   203→   203→  /** Learn mode → open a query in the playground and run it. */
+   204→   204→  const tryInPlayground = useCallback(
+   205→   205→    (queryText: string) => {
+   206→   206→      setMode("playground");
+   207→   207→      setSampleId("");
+   208→   208→      setSql(queryText);
+   209→   209→      runAll(queryText, dialect);
+   210→   210→    },
+   211→   211→    [runAll, dialect],
+   212→   212→  );
+   213→   213→
+   214→   214→  const parseOnly = useCallback(async (sqlText: string, dia: DialectName) => {
+   215→   215→    try {
+   216→   216→      const res = await fetch("/api/parse", {
+   217→   217→        method: "POST",
+   218→   218→        headers: { "Content-Type": "application/json" },
+   219→   219→        body: JSON.stringify({ sql: sqlText, dialect: dia }),
+   220→   220→      });
+   221→   221→      setPlan((await res.json()) as ParseResult);
+   222→   222→    } catch {
+   223→   223→      setPlan({ ok: false, error: "Could not reach the parser. Please try again." });
+   224→   224→    }
+   225→   225→  }, []);
+   226→   226→
+   227→   227→  // run the default sample once on load so the page shows live diagrams + data
+   228→   228→  useEffect(() => {
+   229→   229→    loadHistory();
+   230→   230→    runAll(DEFAULT_SAMPLE.sql, DEFAULT_SAMPLE.dialect);
+   231→   231→  }, [loadHistory, runAll]);
+   232→   232→
+   233→   233→  const onSampleChange = (id: string) => {
+   234→   234→    const sample = SAMPLE_QUERIES.find((s) => s.id === id);
+   235→   235→    if (!sample) return;
+   236→   236→    setSampleId(id);
+   237→   237→    setSql(sample.sql);
+   238→   238→    setDialect(sample.dialect);
+   239→   239→    runAll(sample.sql, sample.dialect);
+   240→   240→  };
+   241→   241→
+   242→   242→  const onDialectChange = (d: string) => {
+   243→   243→    const next = d as DialectName;
+   244→   244→    setDialect(next);
+   245→   245→    parseOnly(sql, next);
+   246→   246→  };
+   247→   247→
+   248→   248→  const onHistoryPick = (text: string) => {
+   249→   249→    setSampleId("");
+   250→   250→    setSql(text);
+   251→   251→    runAll(text, dialect);
+   252→   252→  };
+   253→   253→
+   254→   254→  const onSchemaPickTable = (table: string) => {
+   255→   255→    const text = `SELECT *\nFROM ${table}\nLIMIT 5;`;
+   256→   256→    setSampleId("");
+   257→   257→    setSql(text);
+   258→   258→    runAll(text, dialect);
+   259→   259→  };
+   260→   260→
+   261→   261→  const resetDatabase = async () => {
+   262→   262→    if (!window.confirm("Restore the sample database to its original data?")) return;
+   263→   263→    setResetting(true);
+   264→   264→    try {
+   265→   265→      await fetch("/api/reset", { method: "POST" });
+   266→   266→      // re-run current query so the user sees fresh results
+   267→   267→      await runAll(sql, dialect);
+   268→   268→    } catch {
+   269→   269→      // keep silent — the re-run will surface errors if any
+   270→   270→    } finally {
+   271→   271→      setResetting(false);
+   272→   272→    }
+   273→   273→  };
+   274→   274→
+   275→   275→  const good = plan !== null && plan.ok;
+   276→   276→  const execOk = exec !== null && exec.ok;
+   277→   277→  const planSteps = execOk ? (exec as ExecResult).plan?.length ?? 0 : 0;
+   278→   278→  const isWrite = execOk && (exec as ExecResult).changes !== null;
+   279→   279→
+   280→   280→  // physical tables + FK-style edges the current query touches (for the ERD)
+   281→   281→  const usedTableNames =
+   282→   282→    plan && plan.ok
+   283→   283→      ? Array.from(
+   284→   284→          new Set(
+   285→   285→            plan.tables
+   286→   286→              .filter((t) => t.kind === "table")
+   287→   287→              .map((t) => t.name.split(".").pop() ?? t.name)
+   288→   288→              .map((n) => n.toLowerCase()),
+   289→   289→          ),
+   290→   290→        )
+   291→   291→      : [];
+   292→   292→  const usedEdges =
+   293→   293→    plan && plan.ok
+   294→   294→      ? plan.joins
+   295→   295→          .map((j) => {
+   296→   296→            const l = plan.tables.find((t) => t.id === j.left);
+   297→   297→            const r = plan.tables.find((t) => t.id === j.right);
+   298→   298→            if (!l || !r || l.kind !== "table" || r.kind !== "table") return null;
+   299→   299→            return {
+   300→   300→              from: (l.name.split(".").pop() ?? l.name).toLowerCase(),
+   301→   301→              to: (r.name.split(".").pop() ?? r.name).toLowerCase(),
+   302→   302→            };
+   303→   303→          })
+   304→   304→          .filter((e): e is { from: string; to: string } => e !== null)
+   305→   305→      : [];
+   306→   306→
+   307→   307→  return (
+   308→   308→    <div className="flex min-h-screen flex-col bg-zinc-950 text-zinc-100">
+   309→   309→      {/* header */}
+   310→   310→      <header className="sticky top-0 z-40 border-b border-zinc-800/80 bg-zinc-950/85 backdrop-blur">
+   311→   311→        <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center gap-x-4 gap-y-3 px-4 py-3">
+   312→   312→          <div className="flex items-center gap-3">
+   313→   313→            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-400/15 ring-1 ring-emerald-400/30">
+   314→   314→              <Database className="h-4.5 w-4.5 text-emerald-400" />
+   315→   315→            </div>
+   316→   316→            <div>
+   317→   317→              <h1 className="text-sm font-semibold tracking-tight sm:text-base">SQL Visualizer</h1>
+   318→   318→              <p className="hidden text-xs text-zinc-500 sm:block">
+   319→   319→                Write a query — see it parsed, executed and explained
+   320→   320→              </p>
+   321→   321→            </div>
+   322→   322→          </div>
+   323→   323→
+   324→   324→          <div className="ml-auto flex flex-wrap items-center gap-2">
+   325→   325→            {/* mode switch */}
+   326→   326→            <div
+   327→   327→              className="flex items-center rounded-lg border border-zinc-700 bg-zinc-900 p-0.5"
+   328→   328→              role="tablist"
+   329→   329→              aria-label="App mode"
+   330→   330→            >
+   331→   331→              <button
+   332→   332→                type="button"
+   333→   333→                role="tab"
+   334→   334→                aria-selected={mode === "playground"}
+   335→   335→                onClick={() => setMode("playground")}
+   336→   336→                className={cn(
+   337→   337→                  "inline-flex h-7 items-center gap-1.5 rounded-md px-2.5 text-xs font-medium transition-colors",
+   338→   338→                  mode === "playground"
+   339→   339→                    ? "bg-zinc-800 text-zinc-100"
+   340→   340→                    : "text-zinc-500 hover:text-zinc-300",
+   341→   341→                )}
+   342→   342→              >
+   343→   343→                <SquareTerminal className="h-3.5 w-3.5" />
+   344→   344→                Playground
+   345→   345→              </button>
+   346→   346→              <button
+   347→   347→                type="button"
+   348→   348→                role="tab"
+   349→   349→                aria-selected={mode === "learn"}
+   350→   350→                onClick={() => setMode("learn")}
+   351→   351→                className={cn(
+   352→   352→                  "inline-flex h-7 items-center gap-1.5 rounded-md px-2.5 text-xs font-medium transition-colors",
+   353→   353→                  mode === "learn"
+   354→   354→                    ? "bg-emerald-400/15 text-emerald-300"
+   355→   355→                    : "text-zinc-500 hover:text-zinc-300",
+   356→   356→                )}
+   357→   357→              >
+   358→   358→                <GraduationCap className="h-3.5 w-3.5" />
+   359→   359→                Learn
+   360→   360→              </button>
+   361→   361→            </div>
+   362→   362→
+   363→   363→            {mode === "playground" && (
+   364→   364→              <>
+   365→   365→            <Select value={sampleId} onValueChange={onSampleChange}>
+   366→   366→              <SelectTrigger
+   367→   367→                size="sm"
+   368→   368→                className="w-[190px] border-zinc-700 bg-zinc-900 text-xs sm:w-[220px]"
+   369→   369→                aria-label="Load a sample query"
+   370→   370→              >
+   371→   371→                <SelectValue placeholder="Sample queries" />
+   372→   372→              </SelectTrigger>
+   373→   373→              <SelectContent>
+   374→   374→                {SAMPLE_QUERIES.map((s) => (
+   375→   375→                  <SelectItem key={s.id} value={s.id} className="text-xs">
+   376→   376→                    <span className="font-medium">{s.name}</span>
+   377→   377→                    <span className="ml-2 text-zinc-500">{s.description}</span>
+   378→   378→                  </SelectItem>
+   379→   379→                ))}
+   380→   380→              </SelectContent>
+   381→   381→            </Select>
+   382→   382→
+   383→   383→            <Select value={dialect} onValueChange={onDialectChange}>
+   384→   384→              <SelectTrigger
+   385→   385→                size="sm"
+   386→   386→                className="w-[130px] border-zinc-700 bg-zinc-900 text-xs"
+   387→   387→                aria-label="SQL dialect"
+   388→   388→              >
+   389→   389→                <SelectValue />
+   390→   390→              </SelectTrigger>
+   391→   391→              <SelectContent>
+   392→   392→                {DIALECTS.map((d) => (
+   393→   393→                  <SelectItem key={d} value={d} className="font-mono text-xs">
+   394→   394→                    {d}
+   395→   395→                  </SelectItem>
+   396→   396→                ))}
+   397→   397→              </SelectContent>
+   398→   398→            </Select>
+   399→   399→
+   400→   400→            <Button
+   401→   401→              onClick={() => runAll(sql, dialect)}
+   402→   402→              disabled={running}
+   403→   403→              className="h-8 gap-1.5 bg-emerald-500 font-medium text-zinc-950 hover:bg-emerald-400"
+   404→   404→            >
+   405→   405→              {running ? (
+   406→   406→                <Loader2 className="h-4 w-4 animate-spin" />
+   407→   407→              ) : (
+   408→   408→                <Play className="h-4 w-4" />
+   409→   409→              )}
+   410→   410→              Run
+   411→   411→            </Button>
+   412→   412→              </>
+   413→   413→            )}
+   414→   414→          </div>
+   415→   415→        </div>
+   416→   416→      </header>
+   417→   417→
+   418→   418→      {/* main */}
+   419→   419→      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5">
+   420→   420→        {mode === "learn" ? (
+   421→   421→          <LearnApp onTryInPlayground={tryInPlayground} />
+   422→   422→        ) : (
+   423→   423→          <>
+   424→   424→        <div className="grid items-start gap-5 lg:grid-cols-[minmax(360px,2fr)_minmax(0,3fr)]">
+   425→   425→          {/* editor panel */}
+   426→   426→          <section aria-label="SQL editor" className="flex flex-col gap-2">
+   427→   427→            <div className="flex items-center justify-between px-1">
+   428→   428→              <h2 className="text-xs font-semibold tracking-widest text-zinc-400 uppercase">
+   429→   429→                Query
+   430→   430→              </h2>
+   431→   431→              <div className="flex items-center gap-1">
+   432→   432→                {history.length > 0 && (
+   433→   433→                  <Select onValueChange={onHistoryPick}>
+   434→   434→                    <SelectTrigger
+   435→   435→                      size="sm"
+   436→   436→                      className="h-7 gap-1 border-none bg-transparent px-2 text-xs text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 focus:ring-0"
+   437→   437→                      aria-label="Query history"
+   438→   438→                    >
+   439→   439→                      <span className="flex items-center gap-1.5">
+   440→   440→                        <History className="h-3.5 w-3.5" />
+   441→   441→                        History
+   442→   442→                      </span>
+   443→   443→                    </SelectTrigger>
+   444→   444→                    <SelectContent>
+   445→   445→                      {history.map((h, i) => (
+   446→   446→                        <SelectItem key={i} value={h} className="max-w-[320px] font-mono text-xs">
+   447→   447→                          <span className="block truncate">{h.split("\n")[0]}</span>
+   448→   448→                        </SelectItem>
+   449→   449→                      ))}
+   450→   450→                    </SelectContent>
+   451→   451→                  </Select>
+   452→   452→                )}
+   453→   453→                <Button
+   454→   454→                  variant="ghost"
+   455→   455→                  size="sm"
+   456→   456→                  onClick={() => setSql("")}
+   457→   457→                  className="h-7 gap-1 px-2 text-xs text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
+   458→   458→                >
+   459→   459→                  <Eraser className="h-3.5 w-3.5" />
+   460→   460→                  Clear
+   461→   461→                </Button>
+   462→   462→              </div>
+   463→   463→            </div>
+   464→   464→            <SqlEditor
+   465→   465→              value={sql}
+   466→   466→              onChange={(v) => {
+   467→   467→                setSql(v);
+   468→   468→                setSampleId("");
+   469→   469→              }}
+   470→   470→              onVisualize={() => runAll(sql, dialect)}
+   471→   471→              className="h-[300px] xl:h-[340px]"
+   472→   472→            />
+   473→   473→            <p className="px-1 text-[11px] text-zinc-600">
+   474→   474→              Press{" "}
+   475→   475→              <kbd className="rounded border border-zinc-700 bg-zinc-900 px-1 py-0.5 font-mono text-[10px] text-zinc-400">
+   476→   476→                Ctrl / ⌘
+   477→   477→              </kbd>{" "}
+   478→   478→              +{" "}
+   479→   479→              <kbd className="rounded border border-zinc-700 bg-zinc-900 px-1 py-0.5 font-mono text-[10px] text-zinc-400">
+   480→   480→                Enter
+   481→   481→              </kbd>{" "}
+   482→   482→              to run · executes on the built-in{" "}
+   483→   483→              <span className="text-zinc-500">SQLite sample DB</span>
+   484→   484→            </p>
+   485→   485→          </section>
+   486→   486→
+   487→   487→          {/* visualization panel */}
+   488→   488→          <section aria-label="Query visualization" className="flex min-w-0 flex-col gap-3">
+   489→   489→            {plan && !plan.ok && (
+   490→   490→              <div className="rounded-xl border border-rose-500/30 bg-rose-500/5 p-4">
+   491→   491→                <div className="flex items-center gap-2">
+   492→   492→                  <AlertTriangle className="h-4 w-4 shrink-0 text-rose-400" />
+   493→   493→                  <h2 className="text-sm font-semibold text-rose-200">
+   494→   494→                    The query could not be parsed
+   495→   495→                  </h2>
+   496→   496→                </div>
+   497→   497→                <pre className="thin-scrollbar mt-2.5 max-h-32 overflow-auto rounded-lg bg-zinc-950/70 p-3 font-mono text-xs break-words whitespace-pre-wrap text-rose-200/90">
+   498→   498→                  {plan.error}
+   499→   499→                </pre>
+   500→   500→                {"hint" in plan && plan.hint && (
+   501→   501→                  <p className="mt-2 text-xs leading-relaxed text-zinc-400">{plan.hint}</p>
+   502→   502→                )}
+   503→   503→              </div>
+   504→   504→            )}
+   505→   505→
+   506→   506→            {good && plan && plan.ok && (
+   507→   507→              <>
+   508→   508→                {/* stats */}
+   509→   509→                <div className="flex flex-wrap items-center gap-2">
+   510→   510→                  <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-1 font-mono text-xs font-bold text-emerald-300">
+   511→   511→                    {plan.statementType}
+   512→   512→                  </span>
+   513→   513→                  <StatChip icon={Table2} label="tables" value={plan.stats.tables} tone="emerald" />
+   514→   514→                  <StatChip icon={GitMerge} label="joins" value={plan.stats.joins} tone="amber" />
+   515→   515→                  <StatChip icon={Filter} label="filters" value={plan.stats.filters} tone="rose" />
+   516→   516→                  <StatChip
+   517→   517→                    icon={Sigma}
+   518→   518→                    label="aggregates"
+   519→   519→                    value={plan.stats.aggregations}
+   520→   520→                    tone="teal"
+   521→   521→                  />
+   522→   522→                  {plan.stats.ctes > 0 && (
+   523→   523→                    <StatChip icon={ListTree} label="ctes" value={plan.stats.ctes} tone="violet" />
+   524→   524→                  )}
+   525→   525→                  <span
+   526→   526→                    className={cn(
+   527→   527→                      "ml-auto rounded-full border px-2.5 py-1 text-xs font-semibold",
+   528→   528→                      plan.stats.label === "Simple"
+   529→   529→                        ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-300"
+   530→   530→                        : plan.stats.label === "Moderate"
+   531→   531→                          ? "border-amber-400/30 bg-amber-400/10 text-amber-300"
+   532→   532→                          : "border-rose-400/30 bg-rose-400/10 text-rose-300",
+   533→   533→                    )}
+   534→   534→                  >
+   535→   535→                    {plan.stats.label} · score {plan.stats.complexity}
+   536→   536→                  </span>
+   537→   537→                </div>
+   538→   538→
+   539→   539→                {plan.statementType !== "SELECT" && (
+   540→   540→                  <p className="rounded-lg border border-amber-400/25 bg-amber-400/5 px-3 py-2 text-xs leading-relaxed text-amber-200/90">
+   541→   541→                    This is a <span className="font-mono font-bold">{plan.statementType}</span>{" "}
+   542→   542→                    statement — the pipeline below applies to SELECT queries, so only the tables
+   543→   543→                    this statement touches are shown.
+   544→   544→                  </p>
+   545→   545→                )}
+   546→   546→
+   547→   547→                <Tabs defaultValue="pipeline" className="w-full">
+   548→   548→                  <TabsList className="h-9 w-full justify-start overflow-x-auto bg-zinc-900 sm:w-auto">
+   549→   549→                    <TabsTrigger
+   550→   550→                      value="pipeline"
+   551→   551→                      className="gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+   552→   552→                    >
+   553→   553→                      <Workflow className="h-3.5 w-3.5" /> Pipeline
+   554→   554→                    </TabsTrigger>
+   555→   555→                    <TabsTrigger
+   556→   556→                      value="flow"
+   557→   557→                      className="gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+   558→   558→                    >
+   559→   559→                      <Waypoints className="h-3.5 w-3.5" /> Flow
+   560→   560→                    </TabsTrigger>
+   561→   561→                    <TabsTrigger
+   562→   562→                      value="joins"
+   563→   563→                      className="gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+   564→   564→                    >
+   565→   565→                      <Network className="h-3.5 w-3.5" /> Relationships
+   566→   566→                    </TabsTrigger>
+   567→   567→                    <TabsTrigger
+   568→   568→                      value="breakdown"
+   569→   569→                      className="gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+   570→   570→                    >
+   571→   571→                      <ListTree className="h-3.5 w-3.5" /> Breakdown
+   572→   572→                    </TabsTrigger>
+   573→   573→                    <TabsTrigger
+   574→   574→                      value="lineage"
+   575→   575→                      className="gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+   576→   576→                    >
+   577→   577→                      <Route className="h-3.5 w-3.5" /> Lineage
+   578→   578→                    </TabsTrigger>
+   579→   579→                    <TabsTrigger
+   580→   580→                      value="tree"
+   581→   581→                      className="gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+   582→   582→                    >
+   583→   583→                      <ClipboardList className="h-3.5 w-3.5" /> Parse Tree
+   584→   584→                    </TabsTrigger>
+   585→   585→                    <TabsTrigger
+   586→   586→                      value="schema"
+   587→   587→                      className="gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+   588→   588→                    >
+   589→   589→                      <DatabaseZap className="h-3.5 w-3.5" /> Schema
+   590→   590→                    </TabsTrigger>
+   591→   591→                    <TabsTrigger
+   592→   592→                      value="quality"
+   593→   593→                      className="gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+   594→   594→                    >
+   595→   595→                      <ShieldCheck className="h-3.5 w-3.5" /> Quality
+   596→   596→                    </TabsTrigger>
+   597→   597→                    <TabsTrigger
+   598→   598→                      value="json"
+   599→   599→                      className="gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+   600→   600→                    >
+   601→   601→                      <Braces className="h-3.5 w-3.5" /> JSON
+   602→   602→                    </TabsTrigger>
+   603→   603→                  </TabsList>
+   604→   604→                  <TabsContent value="pipeline" className="mt-3">
+   605→   605→                    <PipelineView plan={plan} />
+   606→   606→                  </TabsContent>
+   607→   607→                  <TabsContent value="flow" className="mt-3">
+   608→   608→                    <FlowView sql={sql} dialect={dialect} runKey={runKey} />
+   609→   609→                  </TabsContent>
+   610→   610→                  <TabsContent value="joins" className="mt-3">
+   611→   611→                    <JoinsView plan={plan} />
+   612→   612→                  </TabsContent>
+   613→   613→                  <TabsContent value="breakdown" className="mt-3">
+   614→   614→                    <BreakdownView plan={plan} />
+   615→   615→                  </TabsContent>
+   616→   616→                  <TabsContent value="lineage" className="mt-3">
+   617→   617→                    <LineageView plan={plan} />
+   618→   618→                  </TabsContent>
+   619→   619→                  <TabsContent value="tree" className="mt-3">
+   620→   620→                    {plan.tree ? (
+   621→   621→                      <ParseTreeView tree={plan.tree} />
+   622→   622→                    ) : (
+   623→   623→                      <p className="rounded-lg border border-zinc-800 bg-zinc-900/60 px-4 py-6 text-center text-sm text-zinc-500">
+   624→   624→                        No syntax tree for this statement.
+   625→   625→                      </p>
+   626→   626→                    )}
+   627→   627→                  </TabsContent>
+   628→   628→                  <TabsContent value="schema" className="mt-3">
+   629→   629→                    <SchemaView
+   630→   630→                      onPickTable={onSchemaPickTable}
+   631→   631→                      highlightTables={usedTableNames}
+   632→   632→                      highlightEdges={usedEdges}
+   633→   633→                    />
+   634→   634→                  </TabsContent>
+   635→   635→                  <TabsContent value="quality" className="mt-3">
+   636→   636→                    <QualityView />
+   637→   637→                  </TabsContent>
+   638→   638→                  <TabsContent value="json" className="mt-3">
+   639→   639→                    <JsonView plan={plan} />
+   640→   640→                  </TabsContent>
+   641→   641→                </Tabs>
+   642→   642→              </>
+   643→   643→            )}
+   644→   644→
+   645→   645→            {!plan && (
+   646→   646→              <div className="flex h-64 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900/50">
+   647→   647→                <div className="flex items-center gap-2 text-sm text-zinc-400">
+   648→   648→                  <Loader2 className="h-4 w-4 animate-spin" />
+   649→   649→                  Parsing query…
+   650→   650→                </div>
+   651→   651→              </div>
+   652→   652→            )}
+   653→   653→          </section>
+   654→   654→        </div>
+   655→   655→
+   656→   656→        {/* results panel — full width */}
+   657→   657→        <section aria-label="Query results" className="mt-5">
+   658→   658→          <div className="flex items-center justify-between px-1 pb-2">
+   659→   659→            <h2 className="flex items-center gap-2 text-xs font-semibold tracking-widest text-zinc-400 uppercase">
+   660→   660→              <DatabaseZap className="h-3.5 w-3.5 text-emerald-500" />
+   661→   661→              Live results · SQLite
+   662→   662→            </h2>
+   663→   663→            <Button
+   664→   664→              variant="ghost"
+   665→   665→              size="sm"
+   666→   666→              onClick={resetDatabase}
+   667→   667→              disabled={resetting}
+   668→   668→              className="h-7 gap-1.5 px-2 text-xs text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200"
+   669→   669→            >
+   670→   670→              {resetting ? (
+   671→   671→                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+   672→   672→              ) : (
+   673→   673→                <RotateCcw className="h-3.5 w-3.5" />
+   674→   674→              )}
+   675→   675→              Reset database
+   676→   676→            </Button>
+   677→   677→          </div>
+   678→   678→
+   679→   679→          <div className="overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/50">
+   680→   680→            {exec === null && (
+   681→   681→              <div className="flex h-40 items-center justify-center text-sm text-zinc-400">
+   682→   682→                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+   683→   683→                {running ? "Running on SQLite…" : "Press Run to execute a query"}
+   684→   684→              </div>
+   685→   685→            )}
+   686→   686→
+   687→   687→            {exec && !exec.ok && (
+   688→   688→              <div className="p-4">
+   689→   689→                <div className="flex items-center gap-2">
+   690→   690→                  <AlertTriangle className="h-4 w-4 shrink-0 text-rose-400" />
+   691→   691→                  <h3 className="text-sm font-semibold text-rose-200">
+   692→   692→                    Execution failed
+   693→   693→                  </h3>
+   694→   694→                </div>
+   695→   695→                <pre className="thin-scrollbar mt-2.5 max-h-32 overflow-auto rounded-lg bg-zinc-950/70 p-3 font-mono text-xs break-words whitespace-pre-wrap text-rose-200/90">
+   696→   696→                  {exec.error}
+   697→   697→                </pre>
+   698→   698→                {exec.hint && (
+   699→   699→                  <p className="mt-2 text-xs leading-relaxed text-zinc-400">{exec.hint}</p>
+   700→   700→                )}
+   701→   701→              </div>
+   702→   702→            )}
+   703→   703→
+   704→   704→            {exec && exec.ok && (
+   705→   705→              <Tabs defaultValue="results">
+   706→   706→                <div className="flex flex-wrap items-center gap-2 border-b border-zinc-800/70 px-3 py-2">
+   707→   707→                  <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-0.5 font-mono text-xs font-bold text-emerald-300">
+   708→   708→                    {exec.statementType}
+   709→   709→                  </span>
+   710→   710→                  <span className="inline-flex items-center gap-1.5 rounded-full border border-zinc-700 bg-zinc-800/60 px-2.5 py-0.5 text-xs text-zinc-300">
+   711→   711→                    <Timer className="h-3.5 w-3.5" />
+   712→   712→                    {exec.durationMs} ms
+   713→   713→                  </span>
+   714→   714→                  <TabsList className="ml-auto h-7 bg-zinc-950/60">
+   715→   715→                    <TabsTrigger
+   716→   716→                      value="results"
+   717→   717→                      className="h-7 gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+   718→   718→                    >
+   719→   719→                      <Table2 className="h-3 w-3" /> Results
+   720→   720→                    </TabsTrigger>
+   721→   721→                    {!isWrite && exec.columns.length > 0 && exec.rows.length > 0 && (
+   722→   722→                      <TabsTrigger
+   723→   723→                        value="chart"
+   724→   724→                        className="h-7 gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+   725→   725→                      >
+   726→   726→                        <ChartColumn className="h-3 w-3" /> Chart
+   727→   727→                      </TabsTrigger>
+   728→   728→                    )}
+   729→   729→                    {!isWrite && exec.plan && exec.plan.length > 0 && (
+   730→   730→                      <TabsTrigger
+   731→   731→                        value="plan"
+   732→   732→                        className="h-7 gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+   733→   733→                      >
+   734→   734→                        <Workflow className="h-3 w-3" /> Plan
+   735→   735→                        <span className="rounded-full bg-zinc-800 px-1.5 text-[10px] text-zinc-400">
+   736→   736→                          {exec.plan.length}
+   737→   737→                        </span>
+   738→   738→                      </TabsTrigger>
+   739→   739→                    )}
+   740→   740→                  </TabsList>
+   741→   741→                </div>
+   742→   742→                <TabsContent value="results" className="mt-0">
+   743→   743→                  {exec.columns.length > 0 ? (
+   744→   744→                    <ResultsView
+   745→   745→                      columns={exec.columns}
+   746→   746→                      rows={exec.rows}
+   747→   747→                      truncated={exec.truncated}
+   748→   748→                    />
+   749→   749→                  ) : (
+   750→   750→                    <WriteResultView
+   751→   751→                      statementType={exec.statementType}
+   752→   752→                      changes={exec.changes ?? 0}
+   753→   753→                    />
+   754→   754→                  )}
+   755→   755→                </TabsContent>
+   756→   756→                {!isWrite && exec.columns.length > 0 && exec.rows.length > 0 && (
+   757→   757→                  <TabsContent value="chart" className="mt-0">
+   758→   758→                    <ChartView
+   759→   759→                      key={`chart-${runKey}`}
+   760→   760→                      columns={exec.columns}
+   761→   761→                      rows={exec.rows}
+   762→   762→                    />
+   763→   763→                  </TabsContent>
+   764→   764→                )}
+   765→   765→                {!isWrite && exec.plan && exec.plan.length > 0 && (
+   766→   766→                  <TabsContent value="plan" className="p-3">
+   767→   767→                    <PlanView rows={exec.plan} />
+   768→   768→                  </TabsContent>
+   769→   769→                )}
+   770→   770→              </Tabs>
+   771→   771→            )}
+   772→   772→          </div>
+   773→   773→        </section>
+   774→   774→          </>
+   775→   775→        )}
+   776→   776→      </main>
+   777→   777→
+   778→   778→      {/* footer */}
+   779→   779→      <footer className="mt-auto border-t border-zinc-800/80">
+   780→   780→        <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-3 text-[11px] text-zinc-600">
+   781→   781→          <span>
+   782→   782→            SQL Visualizer · queries run against a sandboxed SQLite sample database · nothing is
+   783→   783→            stored
+   784→   784→          </span>
+   785→   785→          <span className="font-mono">parse · execute · explain</span>
+   786→   786→        </div>
+   787→   787→      </footer>
+   788→   788→    </div>
+   789→   789→  );
+   790→   790→}
+   791→   791→

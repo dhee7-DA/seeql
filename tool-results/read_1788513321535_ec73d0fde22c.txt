@@ -1,0 +1,359 @@
+     1→     1→import type { Lesson } from "../types";
+     2→     2→import { EXPECTED } from "../expected";
+     3→     3→
+     4→     4→export const lesson50: Lesson = {
+     5→     5→  id: "lesson-50",
+     6→     6→  num: 50,
+     7→     7→  title: "Case study — the data-fix ticket",
+     8→     8→  blurb: "Module 7's write toolkit under one incident: assess the damage, insert the missing product, repair the price feed, purge the test lines and reconcile stock — all sandboxed",
+     9→     9→  minutes: 18,
+    10→    10→  blocks: [
+    11→    11→    {
+    12→    12→      kind: "p",
+    13→    13→      text: "Tuesday, 08:14. The overnight importer had a bad night: it skipped one new product, wrote **wrong prices** into the Wearables category from a stale feed, and its retry loop logged a batch of **test orders as cancelled** — their line items still cluttering the tables. The ticket lands in your queue with five line items and one rule: *read before you write, write before you report.* Every step below runs sandboxed — execute with confidence, the store resets after each run.",
+    14→    14→    },
+    15→    15→    {
+    16→    16→      kind: "table",
+    17→    17→      headers: ["The ticket line", "The verb"],
+    18→    18→      rows: [
+    19→    19→        ["Assess the damage: order census by status", "SELECT (read first, always)"],
+    20→    20→        ["Add the missing Streaming Mic Arm", "INSERT + RETURNING"],
+    21→    21→        ["Repair the Wearables price feed", "UPDATE with CASE"],
+    22→    22→        ["Purge the cancelled orders' line items", "DELETE via subquery"],
+    23→    23→        ["Reconcile the mouse stock from the feed", "UPSERT with excluded"],
+    24→    24→      ],
+    25→    25→      caption: "One incident, all four write verbs — plus the read that proves you understood the problem before touching anything",
+    26→    26→    },
+    27→    27→    {
+    28→    28→      kind: "tip",
+    29→    29→      text: "Incident discipline is the real syllabus here: the census (task 1) is not filler — it's how you'll KNOW the fix worked. The numbers it prints (52 delivered, 30 shipped, 14 pending, 7 cancelled) are the 'before' picture; the write steps change it on purpose. In production you'd re-run the census after committing, inside one transaction.",
+    30→    30→    },
+    31→    31→    {
+    32→    32→      kind: "h",
+    33→    33→      text: "Debrief — the ticket closes",
+    34→    34→    },
+    35→    35→    {
+    36→    36→      kind: "p",
+    37→    37→      text: "Wednesday's after-picture, receipt by receipt: the skipped arm landed as **id 17** (RETURNING echoed the id the engine dealt), the Wearables shelf reads **84.00 / 209.99** from the one-statement CASE sweep, **12** junk line items are gone — an affected count, not a promise — and the mouse shelf sits at **340** after the delta merged. The census that opened the ticket closes it: 52 / 30 / 14 / 7, untouched, because no step moved an order. The follow-up batch went the same way — the retry's two SKUs answered with engine-assigned ids **17 and 18** in their own run, the corrected feed's replay saw **both Wearables rows collide and both answer** (84.00/90, 209.99/45), and the finance recall purged **25** sales lines with a re-count that reads zero. Every sandbox run is its own timeline over the same seed — that's why the arm and the headset can both audition for id 17.",
+    38→    38→    },
+    39→    39→    {
+    40→    40→      kind: "p",
+    41→    41→      text: "What the incident taught is a vocabulary, not five statements. A merge names its two rows — bare `stock` reads the shelf, `excluded.stock` reads the candidate — and reading them in the wrong order lands **−260** instead of 260. A sweep's blast radius IS its WHERE: the WHERE-less hotfix would have moved all 16 shelves when the plan said 2. RETURNING prints the **post-image** — 79.00 comes back as 82.95 — which makes it a receipt; and statement atomicity makes the receipt honest, because the two-row batch that tripped id 2's uniqueness left the count at 16. No half-batches, no partial echoes. And the fence still decides the order of operations: children delete freely, parents die with `FOREIGN KEY constraint failed` while any child points at them.",
+    42→    42→    },
+    43→    43→    {
+    44→    44→      kind: "bullets",
+    45→    45→      items: [
+    46→    46→        "**RETURNING is the receipt**: it echoes rows as the statement LEFT them — post-image, one row per affected row — so an UPDATE echo shows the new price, never the old.",
+    47→    47→        "**`excluded.` is the candidate**: in DO UPDATE, bare names read the existing row, `excluded.` reads the row that failed to insert. Swap them and the arithmetic flips sign.",
+    48→    48→        "**The WHERE is the blast radius**: 16 rows swept vs 2 planned is the alarm — read the affected count against the prediction before celebrating.",
+    49→    49→        "**Statements are atomic**: one multi-row INSERT is all-or-nothing — a colliding id aborts the batch, RETURNING never emits a partial.",
+    50→    50→        "**The fence orders operations**: order_items deletes freely; orders don't, while children reference them. Children first — or never.",
+    51→    51→      ],
+    52→    52→    },
+    53→    53→    {
+    54→    54→      kind: "steps",
+    55→    55→      items: [
+    56→    56→        "Run the census first and write the baseline down — 52 / 30 / 14 / 7 — before any verb moves.",
+    57→    57→        "Predict the affected count out loud: 'the CASE sweep touches 2 rows, the recall touches 25 lines.' A surprise means stop.",
+    58→    58→        "Scope the write to the narrowest WHERE that states the intent; let CASE, IN (SELECT …) or ON CONFLICT do the per-row thinking.",
+    59→    59→        "Collect the receipt in the same breath — RETURNING for the rows that landed, a re-count for the sweep that didn't echo.",
+    60→    60→        "Report both pictures: what the baseline said, what the receipts say now. The delta between them IS the report.",
+    61→    61→      ],
+    62→    62→    },
+    63→    63→    {
+    64→    64→      kind: "table",
+    65→    65→      headers: ["The write reflex", "How it bites", "The save"],
+    66→    66→      rows: [
+    67→    67→        ["`UPDATE … SET stock = stock + 50;` — no WHERE", "All 16 shelves take the delta; the intent was 2", "Affected count vs predicted count — 16 ≠ 2 stops the ship"],
+    68→    68→        ["Trusting RETURNING to echo old values", "It prints the post-image — 79.00 comes back as 82.95", "Read RETURNING as what LANDED, not a preview"],
+    69→    69→        ["`SET stock = excluded.stock - stock`", "Payload minus shelf: 40 − 300 = −260, written silently", "Name each side out loud: bare = shelf, excluded = candidate"],
+    70→    70→        ["Deleting parent orders before their lines", "`FOREIGN KEY constraint failed` — 12 children still point", "Children first; parents only where no child remains"],
+    71→    71→        ["`ON CONFLICT (name)` as the target", "Refused — no UNIQUE constraint lives on name", "Collide on the PK, or add a UNIQUE constraint first"],
+    72→    72→      ],
+    73→    73→      caption: "Five write reflexes from one incident — every save is a scoping decision",
+    74→    74→    },
+    75→    75→    {
+    76→    76→      kind: "dialect",
+    77→    77→      db: "mysql",
+    78→    78→      text: "The write verbs don't port verbatim. MySQL has no RETURNING at all (SQLite and PostgreSQL do; MariaDB added it) — the MySQL receipt is a follow-up SELECT or `LAST_INSERT_ID()`. The upsert grammar splits too: PostgreSQL matches SQLite's `ON CONFLICT (id) DO UPDATE SET stock = excluded.stock`, while MySQL speaks `INSERT … ON DUPLICATE KEY UPDATE stock = stock + VALUES(stock)` (or the 8.0.19+ row-alias form). The merge semantics — old row plus candidate — translate; the spelling doesn't.",
+    79→    79→    },
+    80→    80→  ],
+    81→    81→  mcqs: [
+    82→    82→    {
+    83→    83→      id: "l50-q1",
+    84→    84→      prompt: "Why does the ticket start with a read (the census) instead of jumping straight to the fixes?",
+    85→    85→      choices: [
+    86→    86→        "Reads are faster than writes",
+    87→    87→        "You need the 'before' picture — scope the damage and have a baseline to verify the fixes against",
+    88→    88→        "SQLite refuses writes before a SELECT",
+    89→    89→        "The census generates the fix SQL automatically",
+    90→    90→      ],
+    91→    91→      answer: 1,
+    92→    92→      why: "Write discipline begins with a SELECT: the census sizes the damage (7 cancelled orders, their line items) and becomes the verification baseline. Fix-first-by-accident is how incidents grow a second incident.",
+    93→    93→      notes: [
+    94→    94→        { choice: 2, why: "Nothing stops a write-first session — that's exactly the danger. The read-first rule is professional habit, not engine law." },
+    95→    95→      ],
+    96→    96→    },
+    97→    97→    {
+    98→    98→      id: "l50-q2",
+    99→    99→      prompt: "Purging the cancelled orders' line items (task 4) — why delete the ITEMS and leave the orders for a later ticket?",
+   100→   100→      choices: [
+   101→   101→        "order_items rows are smaller, so deleting them is faster",
+   102→   102→        "The FK fence: order_items references orders — the child rows can go anytime, the parent orders can't while children exist",
+   103→   103→        "Cancelled orders must never be deleted by policy AND structure — items first is the only single-statement move",
+   104→   104→        "It doesn't matter — both tables delete the same",
+   105→   105→      ],
+   106→   106→      answer: 2,
+   107→   107→      why: "Lesson 43's fence, live: order_items is a leaf (nothing references it), so its rows delete freely. Deleting the orders themselves would fail while 12 line items still point at them — children before parents.",
+   108→   108→      notes: [
+   109→   109→        { choice: 3, why: "Try `DELETE FROM orders WHERE status = 'cancelled'` in the sandbox and read the error — FOREIGN KEY constraint failed. The fence decides the order of operations." },
+   110→   110→      ],
+   111→   111→    },
+   112→   112→    {
+   113→   113→      id: "l50-q3",
+   114→   114→      prompt: "Task 3 must set Fitness Band X2 to 84.00 and Smart Watch S to 209.99 — different values, one statement. Which shape is right?",
+   115→   115→      choices: [
+   116→   116→        "Two UPDATE statements — CASE can't assign different values",
+   117→   117→        "CASE inside SET: SET price = CASE name WHEN 'Fitness Band X2' THEN 84.0 WHEN 'Smart Watch S' THEN 209.99 END",
+   118→   118→        "One UPDATE with price = 84.0, then trust the engine",
+   119→   119→        "INSERT the two prices as new rows",
+   120→   120→      ],
+   121→   121→      answer: 1,
+   122→   122→      why: "Lesson 42's CASE-in-SET: each row takes its own branch of the same assignment. One statement, one scan, per-row values — and a WHERE pinning it to the Wearables category.",
+   123→   123→      notes: [
+   124→   124→        { choice: 0, why: "Two statements work but double the blast radius — if the second fails you've half-fixed the feed. One statement is one unit of reasoning (and in production, one transaction by default)." },
+   125→   125→      ],
+   126→   126→    },
+   127→   127→    {
+   128→   128→      id: "l50-q4",
+   129→   129→      prompt: "Task 5's UPSERT uses `SET stock = stock + excluded.stock`. What does the run land on if the feed payload says 40 and the shelf currently holds 300?",
+   130→   130→      choices: [
+   131→   131→        "40 — excluded replaces the shelf",
+   132→   132→        "300 — the collision means ignore",
+   133→   133→        "340 — old stock plus the payload's delta",
+   134→   134→        "An error — you can't mix both sides",
+   135→   135→      ],
+   136→   136→      answer: 2,
+   137→   137→      why: "That's the feed-replay contract from lesson 44: bare `stock` reads the existing row (300), `excluded.stock` is the candidate payload (40), the sum 340 lands. The two names are the whole vocabulary of upsert arithmetic.",
+   138→   138→      notes: [
+   139→   139→        { choice: 0, why: "Replacement is `SET stock = excluded.stock` — a different contract. This ticket's reconciliation ADDS the feed delta, it doesn't trust it wholesale." },
+   140→   140→      ],
+   141→   141→    },
+   142→   142→    {
+   143→   143→      id: "l50-q5",
+   144→   144→      difficulty: "medium",
+   145→   145→      prompt: "The importer's hotfix has a bad night of its own: `UPDATE products SET stock = stock + 50;` — the WHERE clause never made it in. What's the blast radius?",
+   146→   146→      choices: [
+   147→   147→        "2 rows — only the Wearables pair takes the delta",
+   148→   148→        "16 rows — every product in the catalog takes +50",
+   149→   149→        "0 rows — without WHERE, UPDATE changes nothing",
+   150→   150→        "An error — UPDATE refuses to run without WHERE",
+   151→   151→      ],
+   152→   152→      answer: 1,
+   153→   153→      why: "A WHERE-less UPDATE sweeps the whole table: all 16 products take the delta, not the 2 Wearables rows the operator meant. Nothing refuses to run — the sweep is silent until the affected count (16, when the plan said 2) or the next census exposes it. The ticket's sandbox rolls it back; production counts on that affected count being the alarm.",
+   154→   154→      notes: [
+   155→   155→        { choice: 0, why: "The scope you MEANT is not the scope you WROTE — without a WHERE there is no scope at all. The baseline census is what makes a 16-row surprise visible in seconds." },
+   156→   156→        { choice: 2, why: "SQLite accepts the statement happily; the danger is precisely that it doesn't complain." },
+   157→   157→      ],
+   158→   158→    },
+   159→   159→    {
+   160→   160→      id: "l50-q6",
+   161→   161→      difficulty: "medium",
+   162→   162→      prompt: "Task 4 runs `DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE status = 'cancelled')`. Of the store's 251 line items, how many does it remove?",
+   163→   163→      choices: [
+   164→   164→        "All 251 — the subquery is decoration",
+   165→   165→        "The 12 line items whose parent orders are cancelled — 231 stay",
+   166→   166→        "The 7 cancelled orders themselves",
+   167→   167→        "0 — DELETE can't take a subquery in WHERE",
+   168→   168→      ],
+   169→   169→      answer: 1,
+   170→   170→      why: "The IN-subquery IS the scope: it selects the ids of the 7 cancelled orders, and the delete removes the 12 child lines pointing at them. 231 lines stay, and the orders themselves stay parked for finance — deleting those parents would hit the FK fence with children still attached.",
+   171→   171→      notes: [
+   172→   172→        { choice: 0, why: "The subquery is the entire blast radius — a bare `DELETE FROM order_items` is what removes all 251." },
+   173→   173→        { choice: 2, why: "Parents can't go while children reference them; this ticket's single-statement move is the child-side delete." },
+   174→   174→      ],
+   175→   175→    },
+   176→   176→    {
+   177→   177→      id: "l50-q7",
+   178→   178→      difficulty: "hard",
+   179→   179→      prompt: "Task 5's payload for product 2 says stock **40**; the shelf holds **300**. A teammate 'simplifies' the merge to `ON CONFLICT (id) DO UPDATE SET stock = excluded.stock - stock`. What does the shelf land on?",
+   180→   180→      choices: [
+   181→   181→        "260 — shelf minus payload, as intended",
+   182→   182→        "−260 — payload minus shelf: `excluded.stock` is 40 and bare `stock` reads the OLD row's 300",
+   183→   183→        "340 — the engine still adds",
+   184→   184→        "40 — excluded wins",
+   185→   185→      ],
+   186→   186→      answer: 1,
+   187→   187→      why: "Inside DO UPDATE the two names read two different rows: bare `stock` is the existing shelf (300), `excluded.stock` is the candidate payload (40) — and the expression evaluates literally left to right, 40 − 300 = −260. SQLite writes the negative without complaint (nothing CHECKs products.stock), so the sign flip lands silently. When one statement reads two rows, name each side before you order the operands.",
+   188→   188→      notes: [
+   189→   189→        { choice: 0, why: "The subtraction order in the SQL is literal — excluded first, shelf second. Swapping the intent doesn't swap the operands." },
+   190→   190→      ],
+   191→   191→    },
+   192→   192→    {
+   193→   193→      id: "l50-q8",
+   194→   194→      difficulty: "hard",
+   195→   195→      prompt: "A teammate resends the retry batch as ONE multi-row INSERT claiming explicit ids — `(50, 'Probe A', …)`, then `(2, 'Probe B', …)` — and id 2 already exists. What does the run leave behind, and what does RETURNING echo?",
+   196→   196→      choices: [
+   197→   197→        "Probe A (id 50) lands; the error hits Probe B; RETURNING echoes Probe A on the way down",
+   198→   198→        "Nothing lands — the whole statement fails with `UNIQUE constraint failed: products.id`, and RETURNING never emits a partial batch",
+   199→   199→        "Both land — Probe B falls back to the next free id, 17",
+   200→   200→        "Probe B is skipped quietly and RETURNING echoes only Probe A",
+   201→   201→      ],
+   202→   202→      answer: 1,
+   203→   203→      why: "A multi-row INSERT is ONE statement in one implicit transaction: SQLite's default conflict resolution aborts the whole statement, and the sandbox check proved it — after the UNIQUE failure the products count was still 16. No half-batches, and RETURNING fires only for rows the statement actually wrote. The fix is upsert discipline — ON CONFLICT (id) DO UPDATE — not a claimed id.",
+   204→   204→      notes: [
+   205→   205→        { choice: 0, why: "Row-level partial commits belong to the INSERT OR IGNORE / OR REPLACE world — and even those don't echo the ignored rows. The default ABORT resolution doesn't split rows." },
+   206→   206→        { choice: 2, why: "Explicit ids are contracts, not suggestions — a colliding id raises instead of redirecting." },
+   207→   207→      ],
+   208→   208→    },
+   209→   209→  ],
+   210→   210→  problems: [
+   211→   211→    {
+   212→   212→      id: "l50-p1",
+   213→   213→      title: "Assess the damage",
+   214→   214→      brief: "The census, verbatim: per order status, `COUNT(*) AS n` and `ROUND(SUM(total), 2) AS value`, most common first. Four rows — this is the baseline every later step answers to.",
+   215→   215→      hints: [
+   216→   216→        "GROUP BY status, ORDER BY the count descending — the read that earns the right to write.",
+   217→   217→        "Shape: SELECT status, COUNT(*) AS n, ROUND(SUM(total), 2) AS value FROM orders GROUP BY status ORDER BY n DESC;",
+   218→   218→      ],
+   219→   219→      difficulty: "easy",
+   220→   220→      solution: "SELECT status,\n       COUNT(*) AS n,\n       ROUND(SUM(total), 2) AS value\nFROM orders\nGROUP BY status\nORDER BY n DESC;",
+   221→   221→      mistakes: [
+   222→   222→        { test: "order by n asc|order by value desc", message: "The census reads most-common-first — n DESC. The 'before' picture is a fixed artifact; keep its shape so the after-picture compares cleanly." },
+   223→   223→        { test: "\\bsum\\(n\\)|sum\\(count", message: "Aggregate once — n is already the count; SUM of counts is a different (and wrong) census. status, COUNT(*), SUM(total): three expressions, one group each." },
+   224→   224→        { test: "\\bwhere\\b.*'cancelled'", message: "No filter yet — the census covers ALL four statuses; the cancelled slice matters because you can see it next to the healthy 82." },
+   225→   225→      ],
+   226→   226→      expected: EXPECTED["l50-p1"],
+   227→   227→      ordered: true,
+   228→   228→    },
+   229→   229→    {
+   230→   230→      id: "l50-p2",
+   231→   231→      title: "Insert the missing product",
+   232→   232→      brief: "The skipped launch: **Streaming Mic Arm**, category **Audio**, price **29.99**, stock **75**, supplier **5** (Alpine Audio). Insert it and echo `id`, `name` — the engine assigns the id.",
+   233→   233→      hints: [
+   234→   234→        "Every column except id, exactly like lesson 41's contract; RETURNING echoes the new row.",
+   235→   235→        "Shape: INSERT INTO products (name, category, price, stock, supplier_id) VALUES ('Streaming Mic Arm', 'Audio', 29.99, 75, 5) RETURNING id, name;",
+   236→   236→      ],
+   237→   237→      difficulty: "easy",
+   238→   238→      solution: "INSERT INTO products (name, category, price, stock, supplier_id)\nVALUES ('Streaming Mic Arm', 'Audio', 29.99, 75, 5)\nRETURNING id, name;",
+   239→   239→      mistakes: [
+   240→   240→        { test: "\\(id\\s*,|,\\s*id\\s*,", message: "Let the engine pick the id — the INTEGER PRIMARY KEY assigns 17 as max+1. Claiming ids by hand is how import scripts collide." },
+   241→   241→        { test: "supplier_id\\s*,\\s*1\\s*\\)|,\\s*1\\s*\\)\\s*returning", message: "Wrong supplier — the arm ships from Alpine Audio GmbH, supplier 5 (the EU's 4.8-rated shop)." },
+   242→   242→        { test: "category\\s*,\\s*'.*arm'|'accessories'|'electronics'", message: "The arm is Audio hardware — it belongs beside the headsets and mics, the 3-product / 315-stock category." },
+   243→   243→      ],
+   244→   244→      mutating: true,
+   245→   245→      expected: EXPECTED["l50-p2"],
+   246→   246→    },
+   247→   247→    {
+   248→   248→      id: "l50-p3",
+   249→   249→      title: "Repair the Wearables feed",
+   250→   250→      brief: "The stale feed underpriced the category. Set **Fitness Band X2 → 84.00** and **Smart Watch S → 209.99** in ONE statement — CASE inside SET, scoped to `category = 'Wearables'`. Echo `id`, `price`.",
+   251→   251→      hints: [
+   252→   252→        "SET price = CASE name WHEN … THEN … WHEN … THEN … END WHERE category = 'Wearables'.",
+   253→   253→        "Shape: UPDATE products SET price = CASE name WHEN 'Fitness Band X2' THEN 84.0 WHEN 'Smart Watch S' THEN 209.99 END WHERE category = 'Wearables' RETURNING id, price;",
+   254→   254→      ],
+   255→   255→      difficulty: "medium",
+   256→   256→      solution: "UPDATE products\nSET price = CASE name\n              WHEN 'Fitness Band X2' THEN 84.0\n              WHEN 'Smart Watch S'   THEN 209.99\n            END\nWHERE category = 'Wearables'\nRETURNING id, price;",
+   257→   257→      mistakes: [
+   258→   258→        { test: "when 'fitness band x2' then 79|then 86\\.9|\\* 1\\.1", message: "Those are the OLD prices (or the old hike's result) — the ticket restores the feed's intended 84.00 / 209.99, not the pre-incident state." },
+   259→   259→        { test: "where name", message: "Filter by the category — `WHERE category = 'Wearables'` — and let CASE pick the per-row price. Filtering by name twice doubles the statement for nothing." },
+   260→   260→        { test: "else price end", message: "A harmless ELSE here, but the guard lives in the WHERE: only Wearables rows are candidates, and both are named in the CASE. Missing WHENs would NULL them — that's the lesson-23 trap." },
+   261→   261→      ],
+   262→   262→      mutating: true,
+   263→   263→      expected: EXPECTED["l50-p3"],
+   264→   264→    },
+   265→   265→    {
+   266→   266→      id: "l50-p4",
+   267→   267→      title: "Purge the test line items",
+   268→   268→      brief: "Clear every **order_items** row whose order is cancelled — no RETURNING this time; the affected count (12) is the deliverable. The orders themselves stay parked for finance.",
+   269→   269→      hints: [
+   270→   270→        "The child-table delete from lesson 43, verbatim minus the RETURNING.",
+   271→   271→        "Shape: DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE status = 'cancelled');",
+   272→   272→      ],
+   273→   273→      difficulty: "medium",
+   274→   274→      solution: "DELETE FROM order_items\nWHERE order_id IN (SELECT id FROM orders WHERE status = 'cancelled');",
+   275→   275→      mistakes: [
+   276→   276→        { test: "delete from orders", message: "The fence again — 12 line items still reference those orders; the parent delete fails until the children go. This ticket clears the children only." },
+   277→   277→        { test: "\\bjoin\\b", message: "DELETE takes no JOIN — the cross-table scope rides on WHERE order_id IN (SELECT …). Same filter, legal grammar." },
+   278→   278→        { test: "\\bupdate\\b", message: "The ticket says purge, not re-flag — these 12 lines are importer junk; UPDATE would leave them rotting in place." },
+   279→   279→      ],
+   280→   280→      mutating: true,
+   281→   281→      expected: EXPECTED["l50-p4"],
+   282→   282→    },
+   283→   283→    {
+   284→   284→      id: "l50-p5",
+   285→   285→      title: "Reconcile the mouse stock",
+   286→   286→      brief: "The warehouse counter says the feed is behind: apply today's delta for product **2 (Wireless Mouse M3)** as an upsert — payload `(2, 'Wireless Mouse M3', 'Electronics', 34.5, stock 40, supplier 2)`, and on conflict **add** the payload's stock to the shelf. Echo `id`, `stock` (expect 340).",
+   287→   287→      hints: [
+   288→   288→        "ON CONFLICT (id) DO UPDATE SET stock = stock + excluded.stock — the lesson-44 delta contract.",
+   289→   289→        "Shape: INSERT INTO products (id, name, category, price, stock, supplier_id) VALUES (2, …, 40, 2) ON CONFLICT (id) DO UPDATE SET stock = stock + excluded.stock RETURNING id, stock;",
+   290→   290→      ],
+   291→   291→      difficulty: "hard",
+   292→   292→      solution: "INSERT INTO products (id, name, category, price, stock, supplier_id)\nVALUES (2, 'Wireless Mouse M3', 'Electronics', 34.5, 40, 2)\nON CONFLICT (id) DO UPDATE SET stock = stock + excluded.stock\nRETURNING id, stock;",
+   293→   293→      mistakes: [
+   294→   294→        { test: "set stock = excluded\\.stock(?!\\s*\\+)", message: "Replacement would DROP the shelf to 40 — reconciliation adds the delta: 300 + 40 = 340. Bare stock reads the old row, excluded reads the payload." },
+   295→   295→        { test: "do nothing", message: "DO NOTHING discards today's count — the feed's 40 units are real stock that must land, and the collision means merge, not skip." },
+   296→   296→        { test: "values \\( 17 ,|values \\( 99 ,", message: "Don't dodge the collision with a fresh id — product 2 exists and that's the point: the upsert branch must fire, not a new row." },
+   297→   297→      ],
+   298→   298→      mutating: true,
+   299→   299→      expected: EXPECTED["l50-p5"],
+   300→   300→    },
+   301→   301→    {
+   302→   302→      id: "l50-p6",
+   303→   303→      title: "The retry batch lands",
+   304→   304→      brief: "The importer's retry finally caught up — two more SKUs were skipped that first night. Insert both in ONE multi-row statement: **Gaming Headset XL** (Audio, **89.99**, stock **55**, supplier **5** — Alpine Audio) and **Webcam Privacy Cover 3-pack** (Accessories, **9.99**, stock **300**, supplier **4** — Midwest Hardware). Echo `id`, `name` — expect the engine-assigned **17** and **18**.",
+   305→   305→      hints: [
+   306→   306→        "Two VALUES groups separated by a comma, one column list, one RETURNING for both rows.",
+   307→   307→        "Shape: INSERT INTO products (name, category, price, stock, supplier_id) VALUES ('Gaming Headset XL', 'Audio', 89.99, 55, 5), ('Webcam Privacy Cover 3-pack', 'Accessories', 9.99, 300, 4) RETURNING id, name;",
+   308→   308→      ],
+   309→   309→      difficulty: "medium",
+   310→   310→      solution: "INSERT INTO products (name, category, price, stock, supplier_id)\nVALUES ('Gaming Headset XL', 'Audio', 89.99, 55, 5),\n       ('Webcam Privacy Cover 3-pack', 'Accessories', 9.99, 300, 4)\nRETURNING id, name;",
+   311→   311→      mistakes: [
+   312→   312→        { test: "insert into products \\( id ,", message: "Let the engine deal the ids — INTEGER PRIMARY KEY assigns max+1 (17, then 18). Claiming ids by hand is how retry loops collide with the rows they're retrying." },
+   313→   313→        { test: ";\\s*insert into products", message: "One statement, two VALUES groups — the grader takes a single statement, and one INSERT is also one atomic unit: both SKUs land together or neither does." },
+   314→   314→        { test: "'electronics' , 89\\.99|headset xl' , 'electronics'", message: "The headset is Audio hardware — the 3-product shelf beside the mic and speaker — not Electronics. Category drives every later roll-up; feed it truth." },
+   315→   315→      ],
+   316→   316→      mutating: true,
+   317→   317→      expected: { columns: [], rows: [], changes: null },
+   318→   318→    },
+   319→   319→    {
+   320→   320→      id: "l50-p7",
+   321→   321→      title: "The corrected feed replays Wearables",
+   322→   322→      brief: "The vendor sent the CORRECTED Wearables file and it replays both SKUs verbatim, explicit ids included: `(12, 'Fitness Band X2', 'Wearables', 84.0, stock 90, supplier 6)` and `(13, 'Smart Watch S', 'Wearables', 209.99, stock 45, supplier 1)`. Both collide with the shelf — merge them in one upsert that, on conflict, **replaces** `price` and `stock` with the payload's values. Echo `id`, `price`, `stock` — both rows must answer (84/90 and 209.99/45).",
+   323→   323→      hints: [
+   324→   324→        "Both rows collide, so both take the DO UPDATE branch — RETURNING answers for updated rows too.",
+   325→   325→        "Shape: INSERT INTO products (id, name, category, price, stock, supplier_id) VALUES (12, …), (13, …) ON CONFLICT (id) DO UPDATE SET price = excluded.price, stock = excluded.stock RETURNING id, price, stock;",
+   326→   326→      ],
+   327→   327→      difficulty: "hard",
+   328→   328→      solution: "INSERT INTO products (id, name, category, price, stock, supplier_id)\nVALUES (12, 'Fitness Band X2', 'Wearables', 84.0, 90, 6),\n       (13, 'Smart Watch S', 'Wearables', 209.99, 45, 1)\nON CONFLICT (id) DO UPDATE SET price = excluded.price,\n                               stock = excluded.stock\nRETURNING id, price, stock;",
+   329→   329→      mistakes: [
+   330→   330→        { test: "stock = stock \\+ excluded\\.stock", message: "That's the DELTA contract from the mouse task — this replay carries corrected wholesale values, not an increment. Replacement is the point: 90 and 45 land as-is (the shelf's 95/40 are yesterday's wrong counts)." },
+   331→   331→        { test: "on conflict \\( name \\)", message: "`ON CONFLICT clause does not match any PRIMARY KEY or UNIQUE constraint` — name has no uniqueness contract. Collide on the id these explicit payloads claim." },
+   332→   332→        { test: "set price = 84\\.0|set price = 209\\.99", message: "One SET clause serves BOTH rows — a hardcoded price stamps 84.00 onto Smart Watch S too. `excluded.price` reads each colliding row's own payload." },
+   333→   333→      ],
+   334→   334→      mutating: true,
+   335→   335→      expected: { columns: [], rows: [], changes: null },
+   336→   336→    },
+   337→   337→    {
+   338→   338→      id: "l50-p8",
+   339→   339→      title: "The Wearables recall",
+   340→   340→      brief: "Epilogue: the vendor recalls the two Wearables SKUs' booked SALES — finance re-books them manually. Purge every **order_items** line whose product is Wearables (25 lines go), then prove the sweep is complete: the grader re-counts through the same subquery and expects a single **0**. The catalog rows themselves must survive — the recall touches sales, not the shelf.",
+   341→   341→      hints: [
+   342→   342→        "Same child-side delete as the cancelled-lines purge, scoped by product instead of by order.",
+   343→   343→        "Shape: DELETE FROM order_items WHERE product_id IN (SELECT id FROM products WHERE category = 'Wearables'); — the verify re-count should read 0.",
+   344→   344→      ],
+   345→   345→      difficulty: "medium",
+   346→   346→      solution: "DELETE FROM order_items\nWHERE product_id IN (SELECT id FROM products WHERE category = 'Wearables');",
+   347→   347→      verify: "SELECT COUNT(*) AS n FROM order_items WHERE product_id IN (SELECT id FROM products WHERE category = 'Wearables');",
+   348→   348→      mistakes: [
+   349→   349→        { test: "delete from orders", message: "The fence — orders are parents of the lines you're clearing; a parent-side delete dies with `FOREIGN KEY constraint failed`. The recall clears the CHILD table only." },
+   350→   350→        { test: "delete from products where category", message: "The shelf must survive — 25 order_items lines still reference the Wearables products, so even that delete hits the fence. Purge the sales lines, keep the catalog." },
+   351→   351→        { test: "delete from order_items ;", message: "That's all 251 lines — the subquery IS the scope. Without it the sweep takes every product's sales history with it." },
+   352→   352→      ],
+   353→   353→      mutating: true,
+   354→   354→      expected: { columns: [], rows: [], changes: null },
+   355→   355→    },
+   356→   356→  ],
+   357→   357→  takeaway: "An incident runs read → insert → update → delete → upsert in that order — baseline first, children before parents, deltas merged not trusted — and every write here was real, verified, and rolled back, which is the sandbox's whole gift.",
+   358→   358→};
+   359→   359→

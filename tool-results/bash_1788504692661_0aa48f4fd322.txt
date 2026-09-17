@@ -1,0 +1,543 @@
+prisma:query DROP TABLE IF EXISTS order_items
+prisma:query DROP TABLE IF EXISTS orders
+prisma:query DROP TABLE IF EXISTS products
+prisma:query DROP TABLE IF EXISTS suppliers
+prisma:query DROP TABLE IF EXISTS customers
+prisma:query CREATE TABLE IF NOT EXISTS customers (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    city TEXT NOT NULL,
+    region TEXT NOT NULL,
+    active INTEGER NOT NULL DEFAULT 1,
+    created_at TEXT NOT NULL
+  )
+prisma:query CREATE TABLE IF NOT EXISTS suppliers (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    region TEXT NOT NULL,
+    rating REAL NOT NULL
+  )
+prisma:query CREATE TABLE IF NOT EXISTS products (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    category TEXT NOT NULL,
+    price REAL NOT NULL,
+    stock INTEGER NOT NULL DEFAULT 0,
+    supplier_id INTEGER NOT NULL REFERENCES suppliers(id)
+  )
+prisma:query CREATE TABLE IF NOT EXISTS orders (
+    id INTEGER PRIMARY KEY,
+    customer_id INTEGER NOT NULL REFERENCES customers(id),
+    status TEXT NOT NULL,
+    total REAL NOT NULL,
+    created_at TEXT NOT NULL,
+    shipped_at TEXT
+  )
+prisma:query CREATE TABLE IF NOT EXISTS order_items (
+    id INTEGER PRIMARY KEY,
+    order_id INTEGER NOT NULL REFERENCES orders(id),
+    product_id INTEGER NOT NULL REFERENCES products(id),
+    quantity INTEGER NOT NULL,
+    unit_price REAL NOT NULL
+  )
+prisma:query BEGIN IMMEDIATE
+prisma:query INSERT INTO customers (id, name, email, city, region, active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO customers (id, name, email, city, region, active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO customers (id, name, email, city, region, active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO customers (id, name, email, city, region, active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO customers (id, name, email, city, region, active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO customers (id, name, email, city, region, active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO customers (id, name, email, city, region, active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO customers (id, name, email, city, region, active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO customers (id, name, email, city, region, active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO customers (id, name, email, city, region, active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO customers (id, name, email, city, region, active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO customers (id, name, email, city, region, active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO customers (id, name, email, city, region, active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO customers (id, name, email, city, region, active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO customers (id, name, email, city, region, active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO customers (id, name, email, city, region, active, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO suppliers (id, name, region, rating) VALUES (?, ?, ?, ?)
+prisma:query INSERT INTO suppliers (id, name, region, rating) VALUES (?, ?, ?, ?)
+prisma:query INSERT INTO suppliers (id, name, region, rating) VALUES (?, ?, ?, ?)
+prisma:query INSERT INTO suppliers (id, name, region, rating) VALUES (?, ?, ?, ?)
+prisma:query INSERT INTO suppliers (id, name, region, rating) VALUES (?, ?, ?, ?)
+prisma:query INSERT INTO suppliers (id, name, region, rating) VALUES (?, ?, ?, ?)
+prisma:query INSERT INTO products (id, name, category, price, stock, supplier_id) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO products (id, name, category, price, stock, supplier_id) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO products (id, name, category, price, stock, supplier_id) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO products (id, name, category, price, stock, supplier_id) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO products (id, name, category, price, stock, supplier_id) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO products (id, name, category, price, stock, supplier_id) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO products (id, name, category, price, stock, supplier_id) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO products (id, name, category, price, stock, supplier_id) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO products (id, name, category, price, stock, supplier_id) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO products (id, name, category, price, stock, supplier_id) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO products (id, name, category, price, stock, supplier_id) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO products (id, name, category, price, stock, supplier_id) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO products (id, name, category, price, stock, supplier_id) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO products (id, name, category, price, stock, supplier_id) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO products (id, name, category, price, stock, supplier_id) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO products (id, name, category, price, stock, supplier_id) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO orders (id, customer_id, status, total, created_at, shipped_at) VALUES (?, ?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query INSERT INTO order_items (id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)
+prisma:query COMMIT
+prisma:query SELECT ROUND(AVG(price),2) AS avg_p, ROUND(SUM(price),2) AS sum_p, MAX(price) AS max_p, COUNT(*) AS n FROM products
+-- A1 avg/sum/max/count price
+[{"avg_p":71.78,"sum_p":1148.43,"max_p":199.99,"n":16}]
+prisma:query SELECT COUNT(*) FROM products WHERE price > (SELECT AVG(price) FROM products)
+-- A2 products above avg
+[{"COUNT(*)":6}]
+prisma:query SELECT COUNT(*) FROM products WHERE price > (SELECT SUM(price) FROM products)
+-- A3 price>SUM(price) rows
+[{"COUNT(*)":0}]
+prisma:query SELECT name, price FROM products WHERE price > (SELECT AVG(price) FROM orders)
+-- A4 inner query wrong table
+    ERROR: Invalid `prisma.$queryRawUnsafe()` invocation: || Raw query failed. Code: `1`. Message: `misuse of aggregate: AVG()`
+prisma:query SELECT COUNT(*) FROM orders WHERE status='cancelled'
+-- B1 cancelled orders
+[{"COUNT(*)":7}]
+prisma:query SELECT COUNT(DISTINCT customer_id) FROM orders WHERE status='cancelled'
+-- B2 distinct cancelled customers
+[{"COUNT(DISTINCT customer_id)":4}]
+prisma:query SELECT COUNT(*) FROM customers WHERE id IN (SELECT customer_id FROM orders WHERE status='cancelled')
+-- B3 IN count
+[{"COUNT(*)":4}]
+prisma:query SELECT COUNT(*) FROM customers WHERE id IN (SELECT o.customer_id FROM orders o JOIN order_items oi ON oi.order_id=o.id JOIN products p ON p.id=oi.product_id WHERE p.category='Electronics')
+-- C1 electronics buyers
+[{"COUNT(*)":12}]
+prisma:query SELECT COUNT(*) FROM customers c WHERE EXISTS (SELECT 1 FROM orders o WHERE o.customer_id=c.id AND o.status='shipped')
+-- E1 exists shipped
+[{"COUNT(*)":10}]
+prisma:query SELECT COUNT(*) FROM customers c WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.customer_id=c.id AND o.status='shipped')
+-- E2 not exists shipped
+[{"COUNT(*)":6}]
+prisma:query SELECT COUNT(*) FROM orders o WHERE o.total > (SELECT AVG(o2.total) FROM orders o2 WHERE o2.customer_id=o.customer_id)
+-- F1 above own customer avg
+[{"COUNT(*)":45}]
+prisma:query SELECT COUNT(*) AS with_cancelled FROM customers c WHERE EXISTS (SELECT 1 FROM orders o WHERE o.customer_id=c.id AND o.status='cancelled')
+-- H1 with_cancelled
+[{"with_cancelled":4}]
+prisma:query SELECT c.name FROM customers c JOIN orders o ON o.customer_id=c.id WHERE SUM(o.total) > AVG(o.total)
+-- M2 aggregate misuse
+    ERROR: Invalid `prisma.$queryRawUnsafe()` invocation: || Raw query failed. Code: `1`. Message: `misuse of aggregate function AVG()`
+prisma:query SELECT c.name, d.big_spend FROM customers c JOIN (SELECT customer_id, SUM(total) AS spend FROM orders GROUP BY customer_id) d ON d.customer_id=c.id WHERE d.big_spend > 1000
+-- M3 wrong inner AS name
+    ERROR: Invalid `prisma.$queryRawUnsafe()` invocation: || Raw query failed. Code: `1`. Message: `no such column: d.big_spend`
+prisma:query SELECT p.name FROM products p JOIN (SELECT category, AVG(price) AS avg_price FROM products GROUP BY category) a ON a.category = category WHERE p.price > a.avg_price
+-- M4 ambiguous category
+    ERROR: Invalid `prisma.$queryRawUnsafe()` invocation: || Raw query failed. Code: `1`. Message: `ambiguous column name: category`
+prisma:query WITH a AS (SELECT * FROM b), b AS (SELECT 1 AS x) SELECT * FROM a
+-- M5 forward CTE ref
+[{"x":1}]
+prisma:query WITH a AS (SELECT * FROM b), b AS (SELECT 1 AS x) SELECT * FROM a LIMIT 1
+-- M5b forward CTE ref rows
+[{"x":1}]
+prisma:query WITH spend AS (SELECT 1 AS x) ; SELECT * FROM spend
+-- M6 semicolon after CTE
+    ERROR: Invalid `prisma.$queryRawUnsafe()` invocation: || Raw query failed. Code: `1`. Message: `near ";": syntax error`
+prisma:query WITH spend AS (SELECT customer_id, SUM(total) AS s FROM orders GROUP BY customer_id);
+-- M6b WITH alone
+    ERROR: Invalid `prisma.$queryRawUnsafe()` invocation: || Raw query failed. Code: `1`. Message: `near ";": syntax error`
+prisma:query SELECT COUNT(*) FROM orders o WHERE o.total > (SELECT AVG(o2.total) FROM orders o2 WHERE o2.customer_id=o2.id)
+-- M7 avg of o2 tied to o2.id
+[{"COUNT(*)":7}]
+prisma:query SELECT COUNT(*) FROM orders o WHERE o.total > (SELECT MAX(o2.total) FROM orders o2 WHERE o2.customer_id=o.customer_id)
+-- M8 MAX own-customer bar
+[{"COUNT(*)":0}]
+prisma:query SELECT COUNT(*) FROM (SELECT customer_id, SUM(total) AS spend FROM orders GROUP BY customer_id) WHERE spend > (SELECT COUNT(spend) FROM (SELECT customer_id, SUM(total) AS spend FROM orders GROUP BY customer_id))
+-- M9 SUM-as-bar customers
+[{"COUNT(*)":16}]
+prisma:query SELECT COUNT(*) FROM customers c WHERE EXISTS (SELECT 1 FROM orders o WHERE o.customer_id=c.id AND o.status=pending)
+-- M10 unquoted status
+    ERROR: Invalid `prisma.$queryRawUnsafe()` invocation: || Raw query failed. Code: `1`. Message: `no such column: pending`
+prisma:query SELECT c.name FROM customers c WHERE EXISTS (SELECT 1 FROM orders o WHERE c.customer_id = c.id AND o.status='shipped')
+-- M11 c.customer_id
+    ERROR: Invalid `prisma.$queryRawUnsafe()` invocation: || Raw query failed. Code: `1`. Message: `no such column: c.customer_id`
+prisma:query SELECT COUNT(*) FROM orders o WHERE o.total > (SELECT AVG(o2.total) FROM orders o2 WHERE o2.customer_id = o2.customer_id)
+-- M12 o2.customer_id = o2.customer_id
+[{"COUNT(*)":42}]
+prisma:query SELECT d.region, d.spend FROM (SELECT c.region AS region, SUM(o.total) AS spend FROM orders o JOIN customers c ON c.id=o.customer_id GROUP BY c.region) x WHERE d.spend > 5000
+-- M13 WHERE d.spend wrong alias name region
+    ERROR: Invalid `prisma.$queryRawUnsafe()` invocation: || Raw query failed. Code: `1`. Message: `no such column: d.region`
+prisma:query SELECT strftime('%Y-%m', created_at) AS mon, COUNT(*) AS n FROM orders GROUP BY mon ORDER BY mon
+-- N4 monthly histogram
+[{"mon":"2024-01","n":8},{"mon":"2024-02","n":9},{"mon":"2024-03","n":8},{"mon":"2024-04","n":7},{"mon":"2024-05","n":8},{"mon":"2024-06","n":6},{"mon":"2024-07","n":8},{"mon":"2024-08","n":7},{"mon":"2024-09","n":9},{"mon":"2024-10","n":7},{"mon":"2024-11","n":6},{"mon":"2024-12","n":7}]
+    … (14 rows total)
+prisma:query WITH monthly AS (SELECT strftime('%Y-%m', created_at) AS mon, COUNT(*) AS n FROM orders GROUP BY mon) SELECT mon, n FROM monthly WHERE n > 8 ORDER BY mon
+-- N5 monthly >8
+[{"mon":"2024-02","n":9},{"mon":"2024-09","n":9}]
+prisma:query SELECT COUNT(*) AS null_shipped, COUNT(*) - SUM(shipped_at IS NULL) AS have_shipped FROM orders
+-- N6 shipped_at NULL count
+[{"null_shipped":103,"have_shipped":82}]
+prisma:query SELECT COUNT(*) FROM (SELECT customer_id, SUM(total) AS spend FROM orders GROUP BY customer_id) WHERE spend > (SELECT AVG(spend) FROM (SELECT customer_id, SUM(total) AS spend FROM orders GROUP BY customer_id))
+-- O2 vips count
+[{"COUNT(*)":5}]
+prisma:query SELECT COUNT(*) FROM customers c WHERE EXISTS (SELECT 1 FROM orders o WHERE o.customer_id=c.id AND o.status='pending')
+-- O5 pending customers
+[{"COUNT(*)":8}]
+prisma:query SELECT c.name, COUNT(*) AS stellar_orders FROM orders o JOIN customers c ON c.id=o.customer_id WHERE o.total > (SELECT AVG(o2.total) FROM orders o2 WHERE o2.customer_id=o.customer_id) GROUP BY c.id ORDER BY stellar_orders DESC, c.name LIMIT 6
+-- O6 stellar per customer
+[{"name":"Alice Chen","stellar_orders":8},{"name":"Emma Wilson","stellar_orders":8},{"name":"Maya Patel","stellar_orders":8},{"name":"Grace Kim","stellar_orders":6},{"name":"Chloe Dubois","stellar_orders":3},{"name":"Isabella Rossi","stellar_orders":2}]
+prisma:query SELECT COUNT(*) FROM orders o WHERE o.total > (SELECT AVG(o2.total) FROM orders o2 WHERE o2.customer_id=o.customer_id)
+-- O7 stellar total
+[{"COUNT(*)":45}]
+prisma:query WITH spends AS (SELECT c.id, c.name, SUM(o.total) AS spend FROM customers c JOIN orders o ON o.customer_id=c.id GROUP BY o.id), vips AS (SELECT * FROM spends WHERE spend > (SELECT AVG(spend) FROM spends)) SELECT COUNT(*) AS n FROM vips
+-- O8 pipeline GROUP BY o.id trap
+[{"n":42}]
+prisma:query SELECT COUNT(*) FROM (SELECT c.id, c.name, SUM(o.total) AS spend FROM customers c JOIN orders o ON o.customer_id=c.id GROUP BY c.name)
+-- O9 GROUP BY c.name same as c.id?
+[{"COUNT(*)":16}]

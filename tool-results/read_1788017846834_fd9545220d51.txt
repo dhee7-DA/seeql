@@ -1,0 +1,677 @@
+    56→    problemIds.length === 0 || problemIds.every((id) => problemSolved(progress, id));
+    57→  return allMcq && allProblems;
+    58→}
+    59→
+    60→export function LearnApp({
+    61→  onTryInPlayground,
+    62→}: {
+    63→  onTryInPlayground: (sql: string) => void;
+    64→}) {
+    65→  const progress = useProgress();
+    66→  const [selection, setSelection] = useState<Selection>({ type: "overview" });
+    67→
+    68→  /** per-lesson completion map (memo on the slices the calc needs) */
+    69→  const doneMap = useMemo(() => {
+    70→    const map: Record<string, boolean> = {};
+    71→    for (const l of MOD.lessons) {
+    72→      map[l.id] = lessonDone(
+    73→        progress,
+    74→        l.id,
+    75→        l.mcqs.map((m) => m.id),
+    76→        l.problems.map((p) => p.id),
+    77→      );
+    78→    }
+    79→    for (const c of MOD.caseStudies) {
+    80→      map[c.id] = c.parts.every((p) => problemSolved(progress, p.id));
+    81→    }
+    82→    return map;
+    83→  }, [progress]);
+    84→
+    85→  const items: PracticeRef[] = useMemo(
+    86→    () => [
+    87→      ...MOD.lessons.map((l) => ({ type: "lesson" as const, id: l.id })),
+    88→      ...MOD.caseStudies.map((c) => ({ type: "case" as const, id: c.id })),
+    89→    ],
+    90→    [],
+    91→  );
+    92→  const doneCount = items.filter((i) => doneMap[i.id]).length;
+    93→  const pct = Math.round((doneCount / items.length) * 100);
+    94→  const firstIncomplete = items.find((i) => !doneMap[i.id]) ?? items[0];
+    95→
+    96→  const openItem = (ref: PracticeRef) =>
+    97→    setSelection(
+    98→      ref.type === "lesson"
+    99→        ? { type: "lesson", id: ref.id }
+   100→        : { type: "case", id: ref.id },
+   101→    );
+   102→
+   103→  const navIndex = items.findIndex((i) =>
+   104→    selection.type === "overview"
+   105→      ? false
+   106→      : i.id === (selection as { id: string }).id &&
+   107→        i.type === (selection.type as string),
+   108→  );
+   109→  const prev = navIndex > 0 ? items[navIndex - 1] : null;
+   110→  const next = navIndex >= 0 && navIndex < items.length - 1 ? items[navIndex + 1] : null;
+   111→
+   112→  const activeLesson =
+   113→    selection.type === "lesson"
+   114→      ? MOD.lessons.find((l) => l.id === selection.id)
+   115→      : undefined;
+   116→  const activeCase =
+   117→    selection.type === "case"
+   118→      ? MOD.caseStudies.find((c) => c.id === selection.id)
+   119→      : undefined;
+   120→
+   121→  const resetProgress = () => {
+   122→    if (
+   123→      window.confirm(
+   124→        "Clear all Learn progress (lessons, quizzes, solved problems)? This cannot be undone.",
+   125→      )
+   126→    ) {
+   127→      progress.resetAll();
+   128→      setSelection({ type: "overview" });
+   129→    }
+   130→  };
+   131→
+   132→  return (
+   133→    <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-5 lg:grid-cols-[290px_minmax(0,1fr)]">
+   134→      {/* ---------------- sidebar ---------------- */}
+   135→      <aside className="min-w-0 lg:sticky lg:top-[68px]" aria-label="Curriculum contents">
+   136→        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4">
+   137→          <div className="flex items-center gap-2">
+   138→            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-400/15 ring-1 ring-emerald-400/30">
+   139→              <GraduationCap className="h-4 w-4 text-emerald-400" />
+   140→            </span>
+   141→            <div className="min-w-0">
+   142→              <h2 className="truncate text-sm font-semibold text-zinc-100">
+   143→                {MOD.title}
+   144→              </h2>
+   145→              <p className="truncate text-[11px] text-zinc-500">
+   146→                {MOD.level} · {MOD.lessons.length} lessons + {MOD.caseStudies.length} case studies
+   147→              </p>
+   148→            </div>
+   149→          </div>
+   150→
+   151→          {/* progress */}
+   152→          <div className="mt-3.5">
+   153→            <div className="flex items-center justify-between text-[11px] text-zinc-400">
+   154→              <span>Progress</span>
+   155→              <span className="font-mono font-bold text-emerald-300">{pct}%</span>
+   156→            </div>
+   157→            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-zinc-800">
+   158→              <motion.div
+   159→                className="relative h-full rounded-full bg-gradient-to-r from-emerald-500 to-emerald-300"
+   160→                initial={false}
+   161→                animate={{ width: `${pct}%` }}
+   162→                transition={{ type: "spring", stiffness: 120, damping: 20 }}
+   163→              >
+   164→                <motion.span
+   165→                  className="absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/25 to-transparent"
+   166→                  animate={{ x: ["-140%", "280%"] }}
+   167→                  transition={{
+   168→                    duration: 2.4,
+   169→                    repeat: Infinity,
+   170→                    ease: "easeInOut",
+   171→                    repeatDelay: 1.6,
+   172→                  }}
+   173→                />
+   174→              </motion.div>
+   175→            </div>
+   176→          </div>
+   177→
+   178→          {/* lesson list — vertical on desktop, horizontal chips on mobile */}
+   179→          <nav className="mt-4 hidden space-y-1 lg:block" aria-label="Lessons">
+   180→            {MOD.lessons.map((l, i) => {
+   181→              const done = doneMap[l.id];
+   182→              const active = selection.type === "lesson" && selection.id === l.id;
+   183→              return (
+   184→                <button
+   185→                  key={l.id}
+   186→                  type="button"
+   187→                  onClick={() => setSelection({ type: "lesson", id: l.id })}
+   188→                  className={cn(
+   189→                    "flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors",
+   190→                    active
+   191→                      ? "bg-zinc-800 ring-1 ring-zinc-700"
+   192→                      : "hover:bg-zinc-800/60",
+   193→                  )}
+   194→                  aria-current={active ? "page" : undefined}
+   195→                >
+   196→                  {done ? (
+   197→                    <DrawCheck size={15} ring={false} className="shrink-0" />
+   198→                  ) : (
+   199→                    <span className="flex h-4 w-4 shrink-0 items-center justify-center font-mono text-[10px] text-zinc-500">
+   200→                      {i + 1}
+   201→                    </span>
+   202→                  )}
+   203→                  <span
+   204→                    className={cn(
+   205→                      "truncate text-xs",
+   206→                      active ? "font-medium text-zinc-100" : "text-zinc-400",
+   207→                    )}
+   208→                  >
+   209→                    {l.title}
+   210→                  </span>
+   211→                  <span className="ml-auto shrink-0 font-mono text-[10px] text-zinc-600">
+   212→                    {l.minutes}m
+   213→                  </span>
+   214→                </button>
+   215→              );
+   216→            })}
+   217→            <div className="flex items-center justify-between px-2.5 pb-1 pt-3 text-[10px] font-semibold tracking-widest text-zinc-500 uppercase">
+   218→              <span>Case studies</span>
+   219→              <span className="rounded bg-zinc-800 px-1.5 py-0.5 font-mono text-[10px] tracking-normal text-violet-300">
+   220→                {MOD.caseStudies.length}
+   221→              </span>
+   222→            </div>
+   223→            {MOD.caseStudies.map((c) => {
+   224→              const done = doneMap[c.id];
+   225→              const active = selection.type === "case" && selection.id === c.id;
+   226→              return (
+   227→                <button
+   228→                  key={c.id}
+   229→                  type="button"
+   230→                  onClick={() => setSelection({ type: "case", id: c.id })}
+   231→                  className={cn(
+   232→                    "flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors",
+   233→                    active
+   234→                      ? "bg-zinc-800 ring-1 ring-zinc-700"
+   235→                      : "hover:bg-zinc-800/60",
+   236→                  )}
+   237→                >
+   238→                  {done ? (
+   239→                    <DrawCheck size={15} ring={false} className="shrink-0" />
+   240→                  ) : (
+   241→                    <BookOpen className="h-4 w-4 shrink-0 text-violet-400/80" />
+   242→                  )}
+   243→                  <span
+   244→                    className={cn(
+   245→                      "truncate text-xs",
+   246→                      active ? "font-medium text-zinc-100" : "text-zinc-400",
+   247→                    )}
+   248→                  >
+   249→                    {c.title.replace("Case study — ", "")}
+   250→                  </span>
+   251→                </button>
+   252→              );
+   253→            })}
+   254→          </nav>
+   255→
+   256→          {/* mobile nav — two labelled chip rows so case studies are never buried */}
+   257→          <div className="mt-4 space-y-3 lg:hidden">
+   258→            <div>
+   259→              <p className="px-1 text-[10px] font-semibold tracking-widest text-zinc-500 uppercase">
+   260→                Lessons · {MOD.lessons.length}
+   261→              </p>
+   262→              <div className="thin-scrollbar -mx-1 mt-1.5 flex gap-1.5 overflow-x-auto px-1 pb-1">
+   263→                {MOD.lessons.map((l, i) => {
+   264→                  const active =
+   265→                    selection.type === "lesson" && selection.id === l.id;
+   266→                  const done = doneMap[l.id];
+   267→                  return (
+   268→                    <button
+   269→                      key={l.id}
+   270→                      type="button"
+   271→                      onClick={() => setSelection({ type: "lesson", id: l.id })}
+   272→                      className={cn(
+   273→                        "flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs",
+   274→                        active
+   275→                          ? "border-emerald-400/40 bg-emerald-400/10 text-emerald-200"
+   276→                          : "border-zinc-700 bg-zinc-900 text-zinc-400",
+   277→                      )}
+   278→                    >
+   279→                      {done ? (
+   280→                        <Check className="h-3 w-3 text-emerald-400" />
+   281→                      ) : (
+   282→                        <span className="font-mono text-[10px]">{i + 1}</span>
+   283→                      )}
+   284→                      {l.title.split("—")[0].trim()}
+   285→                    </button>
+   286→                  );
+   287→                })}
+   288→              </div>
+   289→            </div>
+   290→            <div>
+   291→              <p className="px-1 text-[10px] font-semibold tracking-widest text-violet-300/90 uppercase">
+   292→                Case studies · {MOD.caseStudies.length}
+   293→              </p>
+   294→              <div className="thin-scrollbar -mx-1 mt-1.5 flex gap-1.5 overflow-x-auto px-1 pb-1">
+   295→                {MOD.caseStudies.map((c) => {
+   296→                  const active =
+   297→                    selection.type === "case" && selection.id === c.id;
+   298→                  const done = doneMap[c.id];
+   299→                  return (
+   300→                    <button
+   301→                      key={c.id}
+   302→                      type="button"
+   303→                      onClick={() => setSelection({ type: "case", id: c.id })}
+   304→                      className={cn(
+   305→                        "flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs",
+   306→                        active
+   307→                          ? "border-violet-400/50 bg-violet-400/10 text-violet-200"
+   308→                          : "border-violet-400/20 bg-zinc-900 text-zinc-400",
+   309→                      )}
+   310→                    >
+   311→                      {done ? (
+   312→                        <Check className="h-3 w-3 text-emerald-400" />
+   313→                      ) : (
+   314→                        <BookOpen className="h-3 w-3 text-violet-300/80" />
+   315→                      )}
+   316→                      {c.title.replace("Case study — ", "").split("—")[0].trim()}
+   317→                    </button>
+   318→                  );
+   319→                })}
+   320→              </div>
+   321→            </div>
+   322→          </div>
+   323→
+   324→          <div className="mt-4 flex items-center justify-between border-t border-zinc-800/70 pt-3">
+   325→            <Button
+   326→              size="sm"
+   327→              onClick={() => openItem(firstIncomplete)}
+   328→              className="h-7 gap-1.5 bg-emerald-500 px-3 text-xs font-semibold text-zinc-950 hover:bg-emerald-400"
+   329→            >
+   330→              <PlayCircle className="h-3.5 w-3.5" />
+   331→              {doneCount === 0 ? "Start learning" : doneCount === items.length ? "Review" : "Continue"}
+   332→            </Button>
+   333→            <Button
+   334→              size="sm"
+   335→              variant="ghost"
+   336→              onClick={resetProgress}
+   337→              className="h-7 gap-1 px-2 text-[11px] text-zinc-500 hover:bg-zinc-800 hover:text-zinc-300"
+   338→            >
+   339→              <RotateCcw className="h-3 w-3" />
+   340→              Reset
+   341→            </Button>
+   342→          </div>
+   343→        </div>
+   344→      </aside>
+   345→
+   346→      {/* ---------------- main pane ---------------- */}
+   347→      <div className="min-w-0">
+   348→        {selection.type === "overview" && (
+   349→          <Overview doneMap={doneMap} onOpen={openItem} onTryInPlayground={onTryInPlayground} />
+   350→        )}
+   351→
+   352→        {activeLesson && (
+   353→          <article className="space-y-6">
+   354→            {/* lesson header */}
+   355→            <header>
+   356→              <button
+   357→                type="button"
+   358→                onClick={() => setSelection({ type: "overview" })}
+   359→                className="inline-flex items-center gap-1 text-xs text-zinc-500 transition-colors hover:text-zinc-300"
+   360→              >
+   361→                <ArrowLeft className="h-3 w-3" />
+   362→                {MOD.title}
+   363→              </button>
+   364→              <h1 className="mt-2 text-xl font-bold tracking-tight text-zinc-50 sm:text-2xl">
+   365→                <span className="mr-2 font-mono text-sm text-emerald-400">
+   366→                  {String(MOD.lessons.indexOf(activeLesson) + 1).padStart(2, "0")}
+   367→                </span>
+   368→                {activeLesson.title}
+   369→              </h1>
+   370→              <p className="mt-1 text-sm text-zinc-400">{activeLesson.subtitle}</p>
+   371→              <p className="mt-2 inline-flex items-center gap-1 text-[11px] text-zinc-500">
+   372→                <Clock className="h-3 w-3" />
+   373→                ~{activeLesson.minutes} min · theory → quiz → practice
+   374→              </p>
+   375→            </header>
+   376→
+   377→            {/* theory */}
+   378→            <section aria-label="Lesson theory">
+   379→              <TheoryBlocks blocks={activeLesson.theory} onTry={onTryInPlayground} />
+   380→            </section>
+   381→
+   382→            {/* takeaways */}
+   383→            <section
+   384→              aria-label="Key takeaways"
+   385→              className="rounded-xl border border-emerald-400/20 bg-emerald-400/5 p-4"
+   386→            >
+   387→              <h2 className="flex items-center gap-2 text-sm font-semibold text-zinc-100">
+   388→                <Sparkles className="h-4 w-4 text-emerald-400" />
+   389→                Key takeaways
+   390→              </h2>
+   391→              <ul className="mt-2.5 space-y-1.5">
+   392→                {activeLesson.takeaways.map((t, i) => (
+   393→                  <li key={i} className="flex gap-2 text-xs leading-relaxed text-zinc-300">
+   394→                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-400" />
+   395→                    {t}
+   396→                  </li>
+   397→                ))}
+   398→              </ul>
+   399→            </section>
+   400→
+   401→            {/* knowledge check */}
+   402→            <section aria-label="Knowledge check">
+   403→              <h2 className="flex items-center gap-2 text-sm font-semibold tracking-wide text-zinc-100">
+   404→                <ListChecks className="h-4 w-4 text-violet-400" />
+   405→                Knowledge check
+   406→                <span className="font-mono text-[11px] font-normal text-zinc-500">
+   407→                  {activeLesson.mcqs.filter((m) => mcqPassed(progress, m.id)).length}/
+   408→                  {activeLesson.mcqs.length} correct
+   409→                </span>
+   410→              </h2>
+   411→              <div className="mt-3 space-y-3">
+   412→                {activeLesson.mcqs.map((m, i) => (
+   413→                  <McqCard key={m.id} mcq={m} index={i + 1} />
+   414→                ))}
+   415→              </div>
+   416→            </section>
+   417→
+   418→            {/* practice */}
+   419→            <section aria-label="Practice problems">
+   420→              <h2 className="flex items-center gap-2 text-sm font-semibold tracking-wide text-zinc-100">
+   421→                <PlayCircle className="h-4 w-4 text-amber-400" />
+   422→                Practice — write real SQL
+   423→                <span className="font-mono text-[11px] font-normal text-zinc-500">
+   424→                  {activeLesson.problems.filter((p) => problemSolved(progress, p.id)).length}/
+   425→                  {activeLesson.problems.length} solved
+   426→                </span>
+   427→              </h2>
+   428→              <p className="mt-1 text-xs text-zinc-500">
+   429→                Graded live against the sandbox database — any query producing the
+   430→                expected result passes.
+   431→              </p>
+   432→              {(["easy", "medium", "hard"] as const).map((diff) => {
+   433→                const group = activeLesson.problems.filter(
+   434→                  (p) => (p.difficulty ?? "medium") === diff,
+   435→                );
+   436→                if (group.length === 0) return null;
+   437→                return (
+   438→                  <div key={diff} className="mt-4 space-y-3">
+   439→                    <h3 className="flex items-center gap-2 pt-1 text-[11px] font-semibold tracking-widest text-zinc-500 uppercase">
+   440→                      <DiffBadge difficulty={diff} />
+   441→                      {group.length} problem{group.length > 1 ? "s" : ""}
+   442→                    </h3>
+   443→                    {group.map((p) => (
+   444→                      <ProblemRunner
+   445→                        key={p.id}
+   446→                        problem={p}
+   447→                        onTryInPlayground={onTryInPlayground}
+   448→                      />
+   449→                    ))}
+   450→                  </div>
+   451→                );
+   452→              })}
+   453→            </section>
+   454→
+   455→            {/* completion + nav */}
+   456→            <footer className="flex flex-wrap items-center gap-2 border-t border-zinc-800 pt-4">
+   457→              <Button
+   458→                size="sm"
+   459→                variant="outline"
+   460→                disabled={!prev}
+   461→                onClick={() => prev && openItem(prev)}
+   462→                className="h-8 gap-1.5 border-zinc-700 text-xs text-zinc-300 hover:bg-zinc-800"
+   463→              >
+   464→                <ArrowLeft className="h-3.5 w-3.5" />
+   465→                Previous
+   466→              </Button>
+   467→              <Button
+   468→                size="sm"
+   469→                variant="outline"
+   470→                disabled={!next}
+   471→                onClick={() => next && openItem(next)}
+   472→                className="ml-auto h-8 gap-1.5 border-zinc-700 text-xs text-zinc-300 hover:bg-zinc-800"
+   473→              >
+   474→                Next
+   475→                <ArrowRight className="h-3.5 w-3.5" />
+   476→              </Button>
+   477→            </footer>
+   478→          </article>
+   479→        )}
+   480→
+   481→        {activeCase && (
+   482→          <article className="space-y-6">
+   483→            <header>
+   484→              <button
+   485→                type="button"
+   486→                onClick={() => setSelection({ type: "overview" })}
+   487→                className="inline-flex items-center gap-1 text-xs text-zinc-500 transition-colors hover:text-zinc-300"
+   488→              >
+   489→                <ArrowLeft className="h-3 w-3" />
+   490→                {MOD.title}
+   491→              </button>
+   492→              <h1 className="mt-2 text-xl font-bold tracking-tight text-zinc-50 sm:text-2xl">
+   493→                {activeCase.title.replace("Case study — ", "Case study · ")}
+   494→              </h1>
+   495→              <p className="mt-1 text-sm text-zinc-400">{activeCase.subtitle}</p>
+   496→              <p className="mt-2 inline-flex items-center gap-1 text-[11px] text-zinc-500">
+   497→                <Clock className="h-3 w-3" />
+   498→                ~{activeCase.minutes} min · {activeCase.parts.length} auto-checked
+   499→                queries
+   500→              </p>
+   501→            </header>
+   502→
+   503→            <CaseStudyView
+   504→              caseStudy={activeCase}
+   505→              onTryInPlayground={onTryInPlayground}
+   506→            />
+   507→
+   508→            <footer className="flex flex-wrap items-center gap-2 border-t border-zinc-800 pt-4">
+   509→              <Button
+   510→                size="sm"
+   511→                variant="outline"
+   512→                disabled={!prev}
+   513→                onClick={() => prev && openItem(prev)}
+   514→                className="h-8 gap-1.5 border-zinc-700 text-xs text-zinc-300 hover:bg-zinc-800"
+   515→              >
+   516→                <ArrowLeft className="h-3.5 w-3.5" />
+   517→                Previous
+   518→              </Button>
+   519→              <Button
+   520→                size="sm"
+   521→                variant="outline"
+   522→                disabled={!next}
+   523→                onClick={() => next && openItem(next)}
+   524→                className="ml-auto h-8 gap-1.5 border-zinc-700 text-xs text-zinc-300 hover:bg-zinc-800"
+   525→              >
+   526→                Next
+   527→                <ArrowRight className="h-3.5 w-3.5" />
+   528→              </Button>
+   529→            </footer>
+   530→          </article>
+   531→        )}
+   532→      </div>
+   533→    </div>
+   534→  );
+   535→}
+   536→
+   537→/* ---------------- overview (module home) ---------------- */
+   538→
+   539→function Overview({
+   540→  doneMap,
+   541→  onOpen,
+   542→}: {
+   543→  doneMap: Record<string, boolean>;
+   544→  onOpen: (ref: PracticeRef) => void;
+   545→  onTryInPlayground: (sql: string) => void;
+   546→}) {
+   547→  const lessonCount = MOD.lessons.length;
+   548→  const mcqCount = MOD.lessons.reduce((n, l) => n + l.mcqs.length, 0);
+   549→  const diagramCount = MOD.lessons.reduce(
+   550→    (n, l) => n + l.theory.filter((b) => b.kind === "diagram").length,
+   551→    0,
+   552→  );
+   553→  const problemCount =
+   554→    MOD.lessons.reduce((n, l) => n + l.problems.length, 0) +
+   555→    MOD.caseStudies.reduce((n, c) => n + c.parts.length, 0);
+   556→
+   557→  return (
+   558→    <div className="space-y-5">
+   559→      {/* hero */}
+   560→      <section className="overflow-hidden rounded-2xl border border-zinc-800 bg-gradient-to-br from-zinc-900 via-zinc-900/80 to-emerald-950/30 p-6">
+   561→        <div className="flex items-center gap-2 text-[11px] font-semibold tracking-widest text-emerald-400 uppercase">
+   562→          <GraduationCap className="h-4 w-4" />
+   563→          Module 1 · {MOD.level}
+   564→        </div>
+   565→        <h1 className="mt-2.5 text-2xl font-bold tracking-tight text-zinc-50 sm:text-3xl">
+   566→          {MOD.title}
+   567→        </h1>
+   568→        <p className="mt-1 text-sm text-zinc-400">{MOD.tagline}</p>
+   569→        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-zinc-300">
+   570→          {MOD.description}
+   571→        </p>
+   572→        <div className="mt-4 flex flex-wrap items-center gap-2">
+   573→          <Rise delay={0.05}>
+   574→            <span className="rounded-full border border-zinc-700 bg-zinc-900/70 px-3 py-1 text-xs text-zinc-300">
+   575→              {lessonCount} lessons
+   576→            </span>
+   577→          </Rise>
+   578→          <Rise delay={0.1}>
+   579→            <span className="rounded-full border border-violet-400/25 bg-violet-400/10 px-3 py-1 text-xs font-medium text-violet-300">
+   580→              {MOD.caseStudies.length} case studies
+   581→            </span>
+   582→          </Rise>
+   583→          <Rise delay={0.15}>
+   584→            <span className="rounded-full border border-zinc-700 bg-zinc-900/70 px-3 py-1 text-xs text-zinc-300">
+   585→              {mcqCount} quiz questions
+   586→            </span>
+   587→          </Rise>
+   588→          <Rise delay={0.2}>
+   589→            <span className="rounded-full border border-zinc-700 bg-zinc-900/70 px-3 py-1 text-xs text-zinc-300">
+   590→              {problemCount} auto-graded queries
+   591→            </span>
+   592→          </Rise>
+   593→          <Rise delay={0.25}>
+   594→            <span className="rounded-full border border-violet-400/25 bg-violet-400/10 px-3 py-1 text-xs text-violet-300">
+   595→              {diagramCount} visual diagrams
+   596→            </span>
+   597→          </Rise>
+   598→          <Rise delay={0.3}>
+   599→            <span className="inline-flex items-center gap-1.5 rounded-full border border-teal-400/25 bg-teal-400/10 px-3 py-1 text-xs text-teal-300">
+   600→              <PulseDot />
+   601→              live sandbox database
+   602→            </span>
+   603→          </Rise>
+   604→        </div>
+   605→      </section>
+   606→
+   607→      {/* how it works */}
+   608→      <section
+   609→        className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
+   610→        aria-label="How the course works"
+   611→      >
+   612→        {[
+   613→          {
+   614→            icon: BookOpen,
+   615→            title: "Learn the theory",
+   616→            text: "Every concept explained to the smallest detail — with interactive diagrams and runnable examples on the storefront data.",
+   617→          },
+   618→          {
+   619→            icon: ListChecks,
+   620→            title: "Prove it with quizzes",
+   621→            text: "MCQs with instant feedback and explanations — wrong answers teach as much as right ones.",
+   622→          },
+   623→          {
+   624→            icon: PlayCircle,
+   625→            title: "Write real SQL",
+   626→            text: "Auto-graded query problems: your result is compared with the expected answer, live on the database.",
+   627→          },
+   628→          {
+   629→            icon: BookOpenCheck,
+   630→            title: "Apply it — case studies",
+   631→            text: "Real business scenarios — audits, scorecards, a 10 AM meeting — solved with everything you learned.",
+   632→          },
+   633→        ].map((card, i) => (
+   634→          <motion.div
+   635→            key={card.title}
+   636→            initial={{ opacity: 0, y: 10 }}
+   637→            animate={{ opacity: 1, y: 0 }}
+   638→            transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 + i * 0.06 }}
+   639→            whileHover={{ y: -3 }}
+   640→            className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-4"
+   641→          >
+   642→            <card.icon className="h-4.5 w-4.5 text-emerald-400" />
+   643→            <h3 className="mt-2 text-sm font-semibold text-zinc-100">{card.title}</h3>
+   644→            <p className="mt-1 text-xs leading-relaxed text-zinc-400">{card.text}</p>
+   645→          </motion.div>
+   646→        ))}
+   647→      </section>
+   648→
+   649→      {/* lesson cards */}
+   650→      <section aria-label="Lessons" className="space-y-2.5">
+   651→        {MOD.lessons.map((l, i) => {
+   652→          const done = doneMap[l.id];
+   653→          return (
+   654→            <button
+   655→              key={l.id}
+   656→              type="button"
+   657→              onClick={() => onOpen({ type: "lesson", id: l.id })}
+   658→              className="flex w-full items-center gap-3.5 rounded-xl border border-zinc-800 bg-zinc-900/40 p-4 text-left transition-colors hover:border-zinc-600 hover:bg-zinc-900/70"
+   659→            >
+   660→              {done ? (
+   661→                <DrawCheck size={19} className="shrink-0" />
+   662→              ) : (
+   663→                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-zinc-800 font-mono text-xs font-bold text-zinc-400">
+   664→                  {i + 1}
+   665→                </span>
+   666→              )}
+   667→              <div className="min-w-0 flex-1">
+   668→                <h3 className="truncate text-sm font-semibold text-zinc-100">
+   669→                  {l.title}
+   670→                </h3>
+   671→                <p className="truncate text-xs text-zinc-500">{l.subtitle}</p>
+   672→              </div>
+   673→              <div className="hidden shrink-0 items-center gap-3 text-[11px] text-zinc-500 sm:flex">
+   674→                <span>{l.mcqs.length} quiz</span>
+   675→                <span>{l.problems.length} practice</span>
+   676→                <span className="font-mono">{l.minutes}m</span>
+   677→              </div>
+   678→              {done ? (
+   679→                <CircleDot className="h-4 w-4 shrink-0 text-emerald-400" />
+   680→              ) : (
+   681→                <Circle className="h-4 w-4 shrink-0 text-zinc-700" />
+   682→              )}
+   683→            </button>
+   684→          );
+   685→        })}
+   686→      </section>
+   687→
+   688→      {/* case study cards */}
+   689→      <section aria-label="Case studies" className="space-y-2.5">
+   690→        <div className="flex flex-wrap items-center gap-2 px-1">
+   691→          <BookOpenCheck className="h-4 w-4 text-violet-300" />
+   692→          <h2 className="text-sm font-semibold text-zinc-100">
+   693→            Apply it — {MOD.caseStudies.length} case studies
+   694→          </h2>
+   695→          <span className="rounded-full border border-violet-400/25 bg-violet-400/10 px-2.5 py-0.5 text-[11px] text-violet-300">
+   696→            {
+   697→              MOD.caseStudies.reduce((n, c) => n + c.parts.length, 0)
+   698→            }&nbsp;live-graded queries in real business scenarios
+   699→          </span>
+   700→        </div>
+   701→        {MOD.caseStudies.map((c) => {
+   702→          const done = doneMap[c.id];
+   703→          return (
+   704→            <button
+   705→              key={c.id}
+   706→              type="button"
+   707→              onClick={() => onOpen({ type: "case", id: c.id })}
+   708→              className="flex w-full items-center gap-3.5 rounded-xl border border-violet-400/20 bg-violet-400/5 p-4 text-left transition-colors hover:border-violet-400/40 hover:bg-violet-400/10"
+   709→            >
+   710→              {done ? (
+   711→                <DrawCheck size={19} className="shrink-0" />
+   712→              ) : (
+   713→                <BookOpen className="h-5 w-5 shrink-0 text-violet-300" />
+   714→              )}
+   715→              <div className="min-w-0 flex-1">
+   716→                <h3 className="truncate text-sm font-semibold text-zinc-100">
+   717→                  {c.title.replace("Case study — ", "")}
+   718→                </h3>
+   719→                <p className="truncate text-xs text-zinc-500">{c.subtitle}</p>
+   720→              </div>
+   721→              <div className="hidden shrink-0 items-center gap-3 text-[11px] text-zinc-500 sm:flex">
+   722→                <span>{c.parts.length} queries</span>
+   723→                <span className="font-mono">{c.minutes}m</span>
+   724→              </div>
+   725→            </button>
+   726→          );
+   727→        })}
+   728→      </section>
+   729→    </div>
+   730→  );
+   731→}
+   732→

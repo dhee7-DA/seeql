@@ -1,0 +1,455 @@
+     1→     1→import type { Lesson } from "../types";
+     2→     2→import { EXPECTED } from "../expected";
+     3→     3→
+     4→     4→export const lesson42: Lesson = {
+     5→     5→  id: "lesson-42",
+     6→     6→  num: 42,
+     7→     7→  title: "UPDATE — changing rows in place",
+     8→     8→  blurb: "SET assignments, the WHERE discipline, expressions that read their own old value, CASE branching inside SET and UPDATE … FROM — with RETURNING showing the after-state",
+     9→     9→  minutes: 12,
+    10→    10→  blocks: [
+    11→    11→    {
+    12→    12→      kind: "p",
+    13→    13→      text: "Rows don't sit still. Stock arrives and drains, prices get marked up, a pending order ships. **UPDATE** rewrites existing rows in place — same ids, same row count, new values. It's also the most quietly dangerous statement you'll use daily: reading is reversible (run it again), but an update over the wrong rows must be undone, not re-read. Sandboxed as always here — in production the discipline below is the safety net.",
+    14→    14→    },
+    15→    15→    { kind: "diagram", figure: "w2-update-sweep" },
+    16→    16→    { kind: "h", text: "SET is an assignment list" },
+    17→    17→    {
+    18→    18→      kind: "bullets",
+    19→    19→      items: [
+    20→    20→        "`UPDATE table SET col = expr, col2 = expr2 WHERE …` — every listed assignment applies to **every row the WHERE keeps**; rows the WHERE drops are untouched.",
+    21→    21→        "The right side is an expression evaluated against the row's **current** values: `stock = stock + 30` reads the old stock and writes the new one — no two-statement dance needed.",
+    22→    22→        "`RETURNING …` echoes the rows after the change; without it you get only the affected count — which is itself a useful check: *I meant to touch 2 rows and the engine says 16* is a one-second save.",
+    23→    23→      ],
+    24→    24→    },
+    25→    25→    {
+    26→    26→      kind: "code",
+    27→    27→      caption: "Restock by expression — the old value feeds the new one",
+    28→    28→      sql: `UPDATE products SET stock = stock + 30
+    29→    29→WHERE id = 1
+    30→    30→RETURNING id, stock;   -- Mechanical Keyboard K1: 120 → 150`,
+    31→    31→    },
+    32→    32→    { kind: "h", text: "Branch on data — CASE inside SET" },
+    33→    33→    {
+    34→    34→      kind: "code",
+    35→    35→      caption: "One scan, two fates: thin shelves get the delivery",
+    36→    36→      sql: `UPDATE products
+    37→    37→SET stock = stock + CASE WHEN stock < 50 THEN 40 ELSE 0 END
+    38→    38→WHERE stock < 50
+    39→    39→RETURNING id, stock;   -- Studio Desktop Mic 45 → 85 · Smart Watch S 40 → 80`,
+    40→    40→    },
+    41→    41→    {
+    42→    42→      kind: "bullets",
+    43→    43→      items: [
+    44→    44→        "Lesson 23's CASE now sits on the write side: each row takes its own branch, so one statement replaces a hand-run list of per-product updates.",
+    45→    45→        "The `ELSE 0` guard is what makes this safe to widen later — a future row that slips past the WHERE adds nothing instead of NULL-poisoning its stock.",
+    46→    46→      ],
+    47→    47→    },
+    48→    48→    { kind: "h", text: "UPDATE … FROM — targets from another table" },
+    49→    49→    {
+    50→    50→      kind: "code",
+    51→    51→      caption: "Align EU supplier prices by their rating factor — a join that writes",
+    52→    52→      sql: `UPDATE products
+    53→    53→SET price = ROUND(price * s.factor, 2)
+    54→    54→FROM (SELECT id AS sid, rating / 5.0 AS factor
+    55→    55→      FROM suppliers WHERE region = 'EU') AS s
+    56→    56→WHERE supplier_id = s.sid
+    57→    57→RETURNING id, price;   -- 5 products re-priced: K1 82.79, Studio Mic 114.24, …`,
+    58→    58→    },
+    59→    59→    {
+    60→    60→      kind: "bullets",
+    61→    61→      items: [
+    62→    62→        "The FROM clause works like the FROM you know — subquery, join and all — and the WHERE links each target row to its source row. It's lesson 11's join mechanics wearing a write hat.",
+    63→    63→        "SQLite has had this spelling since 3.33. Older code rolls it by hand: a correlated subquery in SET (`SET price = ROUND(price * (SELECT rating …), 2)`) — lesson 26's shape, slower but portable.",
+    64→    64→      ],
+    65→    65→    },
+    66→    66→    {
+    67→    67→      kind: "warn",
+    68→    68→      text: "Run the SELECT before the UPDATE: `SELECT id, stock FROM products WHERE stock < 50` shows exactly the rows the WHERE will keep. Ten seconds of reading beats ten minutes of restoring — and production has no rollback button unless you opened a transaction first (lesson 44).",
+    69→    69→    },
+    70→    70→    {
+    71→    71→      kind: "dialect",
+    72→    72→      db: "postgres",
+    73→    73→      text: "PostgreSQL's `UPDATE … FROM` takes the same shape — SET stays assignment-style and the FROM carries joins. MySQL instead joins in the UPDATE header: `UPDATE products p JOIN suppliers s ON … SET p.price = …`.",
+    74→    74→    },
+    75→    75→    {
+    76→    76→      kind: "dialect",
+    77→    77→      db: "sqlite",
+    78→    78→      text: "SQLite accepts both self-referencing assignments and UPDATE … FROM (3.33+), plus RETURNING on every write — the exact toolkit this lesson runs.",
+    79→    79→    },
+    80→    80→  ],
+    81→    81→  mcqs: [
+    82→    82→    {
+    83→    83→      id: "l42-q1",
+    84→    84→      prompt: "`UPDATE products SET stock = 0` — no WHERE. What happens?",
+    85→    85→      choices: [
+    86→    86→        "An error — WHERE is required",
+    87→    87→        "Nothing — without WHERE the engine waits",
+    88→    88→        "Every row's stock becomes 0",
+    89→    89→        "Only the first row changes",
+    90→    90→      ],
+    91→    91→      answer: 2,
+    92→    92→      why: "UPDATE applies its SET to every row the WHERE keeps — no WHERE means every row. This is the single most expensive typo in SQL; run the SELECT first, or rely on a transaction to undo it.",
+    93→    93→      notes: [
+    94→    94→        { choice: 0, why: "Legally valid, deliberately — the standard assumes you sometimes do mean all rows. The guard is procedural: SELECT first, transaction around it." },
+    95→    95→      ],
+    96→    96→    },
+    97→    97→    {
+    98→    98→      id: "l42-q2",
+    99→    99→      prompt: "In `SET stock = stock + 30`, which value does the right-hand `stock` read?",
+   100→   100→      choices: [
+   101→   101→        "The new value — updates happen left to right",
+   102→   102→        "The old value — assignments evaluate against the row's current state",
+   103→   103→        "The average stock — expressions see the whole table",
+   104→   104→        "It's an error — a column can't reference itself",
+   105→   105→      ],
+   106→   106→      answer: 1,
+   107→   107→      why: "All right-hand expressions are evaluated against the row as it was before the update, then the results are written. Self-reference is the standard increment/decrement pattern, not a bug.",
+   108→   108→      notes: [
+   109→   109→        { choice: 0, why: "There's no left-to-right cascade — SET is one atomic snapshot per row, which is why swapping two columns needs a temp variable in some engines but `SET a = b, b = a` works in SQLite." },
+   110→   110→      ],
+   111→   111→    },
+   112→   112→    {
+   113→   113→      id: "l42-q3",
+   114→   114→      prompt: "After `UPDATE products SET price = 10 WHERE stock = 0 RETURNING price;` — RETURNING shows…",
+   115→   115→      choices: [
+   116→   116→        "The prices as they were before",
+   117→   117→        "The prices after the update",
+   118→   118→        "An error — RETURNING can't be used on UPDATE",
+   119→   119→        "Only the count of changed rows",
+   120→   120→      ],
+   121→   121→      answer: 1,
+   122→   122→      why: "RETURNING computes its expressions after the change, so you see the new state — 10 for every row the WHERE kept. It's the write-side twin of a SELECT, including expressions and aliases.",
+   123→   123→      notes: [
+   124→   124→        { choice: 3, why: "The affected count arrives even without RETURNING — RETURNING is for the rows themselves. Both together are the post-flight checklist." },
+   125→   125→      ],
+   126→   126→    },
+   127→   127→    {
+   128→   128→      id: "l42-q4",
+   129→   129→      prompt: "What does `UPDATE … FROM (SELECT …) s WHERE …` add over a plain UPDATE?",
+   130→   130→      choices: [
+   131→   131→        "Faster writes — SQLite reorders the table",
+   132→   132→        "The ability to compute each row's new value from other tables, joined per row",
+   133→   133→        "It makes the update transactional",
+   134→   134→        "It bypasses the WHERE clause",
+   135→   135→      ],
+   136→   136→      answer: 1,
+   137→   137→      why: "FROM supplies per-row companion data — a rating, a lookup, an aggregate from a derived table — that the SET expression can reference. The write is still one statement and still obeys its WHERE.",
+   138→   138→      notes: [
+   139→   139→        { choice: 2, why: "Transactions come from BEGIN/COMMIT (lesson 44), never from a clause inside one statement. FROM only adds data to reason with." },
+   140→   140→      ],
+   141→   141→    },
+   142→   142→    {
+   143→   143→      id: "l42-q5",
+   144→   144→      prompt: "The engine reports *3 rows affected* for an UPDATE you expected to touch 1 row. What's the most likely cause?",
+   145→   145→      choices: [
+   146→   146→        "The WHERE matched 3 rows — its condition is wider than you think",
+   147→   147→        "SQLite repeats updates on retry",
+   148→   148→        "RETURNING inflated the count",
+   149→   149→        "The SET listed 3 columns",
+   150→   150→      ],
+   151→   151→      answer: 0,
+   152→   152→      why: "The affected count is exactly the number of rows the WHERE kept. Three instead of one means the condition matched neighbors too — id vs name vs a range boundary are the usual suspects.",
+   153→   153→      notes: [
+   154→   154→        { choice: 3, why: "Three assignments on one row still count as one affected row — the count is rows, not column changes." },
+   155→   155→      ],
+   156→   156→    },
+   157→   157→    {
+   158→   158→      id: "l42-q6",
+   159→   159→      prompt: "`UPDATE orders SET status = 'shipped', shipped_at = '2026-01-06' WHERE status = 'pending'` — how does one statement carry two changes?",
+   160→   160→      choices: [
+   161→   161→        "SET accepts one assignment; the second needs a second statement",
+   162→   162→        "Assignments comma-separate — both apply to every row the WHERE selects",
+   163→   163→        "The last assignment wins, shipped_at is ignored",
+   164→   164→        "Two assignments require two WHERE clauses",
+   165→   165→      ],
+   166→   166→      answer: 1,
+   167→   167→      why: "SET is a comma-separated list of column = expression pairs, and every matched row gets ALL of them in one pass — status and shipped_at change together, which is exactly what a shipment event means. One statement, one consistent after-state.",
+   168→   168→      notes: [
+   169→   169→        { choice: 0, why: "One assignment per statement would make status/date pairs drift apart mid-flight — the comma list exists precisely so related fields move atomically." },
+   170→   170→      ],
+   171→   171→    },
+   172→   172→    {
+   173→   173→      id: "l42-q7",
+   174→   174→      prompt: "After `UPDATE products SET price = ROUND(price * 1.05, 2)` — why is ROUND part of the expression instead of a separate step?",
+   175→   175→      choices: [
+   176→   176→        "SQLite refuses arithmetic on REAL columns",
+   177→   177→        "Floating-point math leaves artifacts like 41.989500000000004 — ROUND snaps money to 2 decimals as the value is written",
+   178→   178→        "ROUND makes the UPDATE faster",
+   179→   179→        "ROUND is required syntax after any multiplication",
+   180→   180→      ],
+   181→   181→      answer: 1,
+   182→   182→      why: "39.99 × 1.05 evaluates to 41.9895… in binary floating point. Rounding inside the SET means every written price lands at exactly 2 decimals — the after-state is clean money, and RETURNING shows 41.99, not the artifact.",
+   183→   183→      notes: [
+   184→   184→        { choice: 2, why: "ROUND costs a function call per row — negligible. The reason is correctness of stored values, not speed." },
+   185→   185→      ],
+   186→   186→    },
+   187→   187→    {
+   188→   188→      id: "l42-q8",
+   189→   189→      prompt: "`UPDATE orders SET shipped_at = NULL WHERE status = 'cancelled'` — what lands in shipped_at?",
+   190→   190→      choices: [
+   191→   191→        "The four-letter string 'NULL'",
+   192→   192→        "An error — UPDATE can't write NULL",
+   193→   193→        "Bare NULL — the missing marker, unquoted",
+   194→   194→        "The current timestamp",
+   195→   195→      ],
+   196→   196→      answer: 2,
+   197→   197→      why: "NULL is written exactly like it's read: bare, no quotes. Quoted 'NULL' is a four-character string that then pollutes every IS NULL check and COALESCE chain downstream — the same trap as lesson 4's quoted-NULL insert.",
+   198→   198→      notes: [
+   199→   199→        { choice: 0, why: "The string 'NULL' is truthy, sortable, and 4 characters long — nothing about it is missing. Only the bare keyword is the marker." },
+   200→   200→      ],
+   201→   201→    },
+   202→   202→    {
+   203→   203→      id: "l42-q9",
+   204→   204→      prompt: "`UPDATE products SET stock = 0` runs on the 16-product table. What does the affected count report?",
+   205→   205→      choices: [
+   206→   206→        "0 — no rows were deleted",
+   207→   207→        "1 — an UPDATE is one statement",
+   208→   208→        "16 — every row the WHERE matched (no WHERE means all)",
+   209→   209→        "Only rows whose stock actually changed value",
+   210→   210→      ],
+   211→   211→      answer: 2,
+   212→   212→      why: "The counter follows the WHERE: no WHERE, all 16 rows matched, changes = 16. SQLite counts matched-and-written rows — it doesn't diff old versus new values to decide what 'counts'. That's why a table-wide no-op guard (ELSE 0) still reports a full sweep.",
+   213→   213→      notes: [
+   214→   214→        { choice: 3, why: "Value-diffing would be a nice courtesy but isn't the contract — the engine reports the sweep width, and your WHERE is what keeps the sweep honest." },
+   215→   215→      ],
+   216→   216→    },
+   217→   217→    {
+   218→   218→      id: "l42-q10",
+   219→   219→      prompt: "Two products sit at stock 300 and stock 40. After `UPDATE products SET stock = stock + 30`, what are their stocks?",
+   220→   220→      choices: [
+   221→   221→        "Both 330 — the expression computed once from the first row",
+   222→   222→        "330 and 70 — the expression evaluates per row against each row's own old value",
+   223→   223→        "30 and 30 — SET replaced the values",
+   224→   224→        "Both 70 — rows share one buffer",
+   225→   225→      ],
+   226→   226→      answer: 1,
+   227→   227→      why: "The right-hand `stock` reads the current row's own value: 300 + 30 for one, 40 + 30 for the other. UPDATE is a per-row sweep, each row independently reading its old state and writing its new — that's what makes stock = stock + delta the universal inventory move.",
+   228→   228→      notes: [
+   229→   229→        { choice: 0, why: "There's no single shared evaluation — the SET expression is the row's own recipe. Shared constants go in literals; per-row values come from column names." },
+   230→   230→      ],
+   231→   231→    },
+   232→   232→    {
+   233→   233→      id: "l42-q11",
+   234→   234→      prompt: "`UPDATE orders SET status = 'cancelled' WHERE customer_id IN (SELECT id FROM customers WHERE active = 0)` — how wide is this sweep?",
+   235→   235→      choices: [
+   236→   236→        "All 103 orders — the subquery is decorative",
+   237→   237→        "0 — IN can't be used in UPDATE",
+   238→   238→        "6 — the orders of the two inactive customers (Dmitri's 2, Keiko's 4)",
+   239→   239→        "16 — one per customer",
+   240→   240→      ],
+   241→   241→      answer: 2,
+   242→   242→      why: "The subquery freezes to {4, 11} first, then the sweep matches exactly their orders: Dmitri Volkov's 2 and Keiko Sato's 4 — six rows cancelled. It's the anti-join lesson's set logic, now driving a write, and the affected count is how you verify the width before trusting it.",
+   243→   243→      notes: [
+   244→   244→        { choice: 1, why: "IN subqueries work in any WHERE — reads, UPDATEs, DELETEs alike. The write verbs get the full filtering toolkit." },
+   245→   245→      ],
+   246→   246→    },
+   247→   247→    {
+   248→   248→      id: "l42-q12",
+   249→   249→      prompt: "A colleague ran an UPDATE and now the products table shows 18 rows where there were 16. What actually happened?",
+   250→   250→      choices: [
+   251→   251→        "UPDATE can insert rows when the WHERE is wide enough",
+   252→   252→        "Nothing about UPDATE changed the count — two INSERTs must have run too",
+   253→   253→        "SQLite auto-inserts on overflow",
+   254→   254→        "The count is wrong; UPDATE never touches row counts",
+   255→   255→      ],
+   256→   256→      answer: 1,
+   257→   257→      why: "UPDATE rewrites values in place — row count and ids are structurally untouchable by it. If the count moved, an INSERT (or two) also ran. That separation of powers is the write verbs' whole design: each verb owns exactly one kind of change.",
+   258→   258→      notes: [
+   259→   259→        { choice: 3, why: "UPDATE does touch rows — their VALUES. The count of ROWS is what it can't change; INSERT adds and DELETE removes, always." },
+   260→   260→      ],
+   261→   261→    },
+   262→   262→    {
+   263→   263→      id: "l42-q13",
+   264→   264→      prompt: "In `UPDATE products SET price = ROUND(price * s.factor, 2) FROM (SELECT id, 1.1 AS factor …) s WHERE supplier_id = s.id` — when does the derived table compute?",
+   265→   265→      choices: [
+   266→   266→        "Once per updated row, like a correlated subquery",
+   267→   267→        "Once, before the sweep — it freezes into a temp list the WHERE then matches against",
+   268→   268→        "After all rows are updated",
+   269→   269→        "Only if the optimizer fails",
+   270→   270→      ],
+   271→   271→      answer: 1,
+   272→   272→      why: "The FROM derived table evaluates exactly once — a frozen companion list of (id, factor) pairs. The sweep then pairs each candidate row against that list. That's the two-stage discipline from Module 4 wearing a write statement: stage one computes, stage two applies.",
+   273→   273→      notes: [
+   274→   274→        { choice: 0, why: "Correlation would re-run the subquery per row — the derived table form is precisely the NON-correlated spelling, evaluated once. That's its whole efficiency argument." },
+   275→   275→      ],
+   276→   276→    },
+   277→   277→    {
+   278→   278→      id: "l42-q14",
+   279→   279→      prompt: "What glues the derived table to the rows being updated in `UPDATE products SET … FROM (…) s WHERE …`?",
+   280→   280→      choices: [
+   281→   281→        "Nothing — every product pairs with every derived row",
+   282→   282→        "The WHERE linking the tables' keys — e.g. `supplier_id = s.sid` — without it the pairing goes cartesian",
+   283→   283→        "The SET clause does the joining",
+   284→   284→        "Column order — first derived column matches the first target row",
+   285→   285→      ],
+   286→   286→      answer: 1,
+   287→   287→      why: "UPDATE … FROM has no ON clause — the join lives in the WHERE. One equality between the target's key and the derived table's key turns the cartesian soup into one match per row; forget it and every candidate pairs with every companion row (lesson 14's fan-out, now writing values).",
+   288→   288→      notes: [
+   289→   289→        { choice: 0, why: "Cartesian pairing is exactly the BUG this shape produces when the WHERE is missing — prices churn once per pair instead of once per row. The key equality is the fix." },
+   290→   290→      ],
+   291→   291→    },
+   292→   292→    {
+   293→   293→      id: "l42-q15",
+   294→   294→      prompt: "`UPDATE … FROM (SELECT …) s WHERE …` is SQLite (and PostgreSQL/SQL Server) flavor. What's the standard-SQL spelling for the same job?",
+   295→   295→      choices: [
+   296→   296→        "A correlated subquery inside SET — `SET price = ROUND(price * (SELECT factor FROM rates r WHERE r.supplier_id = products.supplier_id), 2)`",
+   297→   297→        "UPDATE … JOIN — the universal form",
+   298→   298→        "MERGE — always available in SQLite",
+   299→   299→        "There is none — portability means doing it in app code",
+   300→   300→      ],
+   301→   301→      answer: 0,
+   302→   302→      why: "The portable spelling puts a correlated subquery in the SET expression: it reads the companion table per row, keyed on the outer row's own columns. Same result, different engine budget — and a great dialect-watch example of one job wearing three syntactic coats.",
+   303→   303→      notes: [
+   304→   304→        { choice: 1, why: "UPDATE … JOIN is MySQL's flavor — the third coat on the same job, and just as non-portable. Standard SQL has only the subquery spelling." },
+   305→   305→      ],
+   306→   306→    },
+   307→   307→  ],
+   308→   308→  problems: [
+   309→   309→    {
+   310→   310→      id: "l42-p1",
+   311→   311→      title: "K1 restock",
+   312→   312→      brief: "Thirty keyboards landed for the **Mechanical Keyboard K1** (product **id 1**). Raise its stock from 120 to 150 **by expression** — no hardcoding the result — and echo `id`, `stock`.",
+   313→   313→      hints: [
+   314→   314→        "The right side of an assignment can read the column it's writing.",
+   315→   315→        "Shape: UPDATE products SET stock = stock + 30 WHERE id = 1 RETURNING id, stock;",
+   316→   316→      ],
+   317→   317→      difficulty: "easy",
+   318→   318→      solution: "UPDATE products SET stock = stock + 30\nWHERE id = 1\nRETURNING id, stock;",
+   319→   319→      mistakes: [
+   320→   320→        { test: "set stock = 150", message: "Hardcoding 150 works today and breaks the next time the shelf starts at a different level — write the delta: stock = stock + 30." },
+   321→   321→        { test: "stock = stock - 30|stock - 30 where", message: "Wrong direction — the delivery ADDS thirty units; subtraction is what a shipment out would do." },
+   322→   322→        { test: "where name", message: "Filtering by name matches text exactly and is slower to reason about than the stable id — the brief names product id 1; key on it." },
+   323→   323→      ],
+   324→   324→      mutating: true,
+   325→   325→      expected: EXPECTED["l42-p1"],
+   326→   326→    },
+   327→   327→    {
+   328→   328→      id: "l42-p2",
+   329→   329→      title: "The Wearables price hike",
+   330→   330→      brief: "A 10% markup goes live on the whole **Wearables** category (2 products: Fitness Band X2, Smart Watch S). Write the update so prices are **rounded to 2 decimals**, and echo `id`, `name`, `price`.",
+   331→   331→      hints: [
+   332→   332→        "Multiply by 1.1 and wrap the expression in ROUND(…, 2) — money columns never keep stray thirds.",
+   333→   333→        "Shape: UPDATE products SET price = ROUND(price * 1.1, 2) WHERE category = 'Wearables' RETURNING id, name, price;",
+   334→   334→      ],
+   335→   335→      difficulty: "medium",
+   336→   336→      solution: "UPDATE products\nSET price = ROUND(price * 1.1, 2)\nWHERE category = 'Wearables'\nRETURNING id, name, price;",
+   337→   337→      mistakes: [
+   338→   338→        { test: "price = price \\* 1\\.1(?!,)", message: "No rounding — 79 × 1.1 lands at 86.90000000000001 in floating point. Money gets ROUND(expr, 2), always." },
+   339→   339→        { test: "\\*\\s*0\\.9|\\*\\s*1\\.01\\b", message: "Wrong factor — a 10% markup multiplies by 1.10. Times 0.9 is a discount; 1.01 is one percent." },
+   340→   340→        { test: "category = 'electronics'|category = 'audio'", message: "Wrong shelf — the brief targets Wearables, the two-product category with Fitness Band X2 and Smart Watch S." },
+   341→   341→      ],
+   342→   342→      mutating: true,
+   343→   343→      expected: EXPECTED["l42-p2"],
+   344→   344→    },
+   345→   345→    {
+   346→   346→      id: "l42-p3",
+   347→   347→      title: "Thin shelves get first delivery",
+   348→   348→      brief: "The delivery rule: every product with **stock below 50** receives **40 more units** — in one statement, using CASE inside SET so the logic lives in the SQL. Echo `id`, `stock` (expect the Studio Desktop Mic at 45 → 85 and Smart Watch S at 40 → 80).",
+   349→   349→      hints: [
+   350→   350→        "CASE WHEN stock < 50 THEN 40 ELSE 0 END inside the assignment; keep a WHERE so untouched rows aren't scanned for nothing.",
+   351→   351→        "Shape: UPDATE products SET stock = stock + CASE WHEN stock < 50 THEN 40 ELSE 0 END WHERE stock < 50 RETURNING id, stock;",
+   352→   352→      ],
+   353→   353→      difficulty: "medium",
+   354→   354→      solution: "UPDATE products\nSET stock = stock + CASE WHEN stock < 50 THEN 40 ELSE 0 END\nWHERE stock < 50\nRETURNING id, stock;",
+   355→   355→      mistakes: [
+   356→   356→        { test: "case when stock < 100", message: "Wrong threshold — the brief says below 50. At < 100 the Webcam (70) and Headset (60) would wrongly take a delivery too." },
+   357→   357→        { test: "end returning|else 0 end returning", message: "The CASE landed but the WHERE disappeared — without it every row is a candidate, and while the ELSE 0 guard keeps numbers right, the affected count (16) will scream that you did a table-wide pass." },
+   358→   358→        { test: "when stock = 50|when stock <= 50", message: "Boundary drift — the rule is *below* 50, strictly. On today's data no product sits exactly at 50, but the query you ship should still say what the ticket said." },
+   359→   359→      ],
+   360→   360→      mutating: true,
+   361→   361→      expected: EXPECTED["l42-p3"],
+   362→   362→    },
+   363→   363→    {
+   364→   364→      id: "l42-p4",
+   365→   365→      title: "EU supplier price alignment",
+   366→   366→      brief: "Purchasing policy: every product's price should track its supplier's quality. For products of **EU suppliers only**, set `price = ROUND(price * rating / 5.0, 2)` — pull the rating through **UPDATE … FROM**. Echo `id`, `price` (5 rows: two Nordic Gadgets / Alpine Audio ratings at work).",
+   367→   367→      hints: [
+   368→   368→        "FROM holds a derived table producing (sid, factor); the WHERE glues each product to its supplier row.",
+   369→   369→        "Shape: UPDATE products SET price = ROUND(price * s.factor, 2) FROM (SELECT id AS sid, rating / 5.0 AS factor FROM suppliers WHERE region = 'EU') AS s WHERE supplier_id = s.sid RETURNING id, price;",
+   370→   370→      ],
+   371→   371→      difficulty: "hard",
+   372→   372→      solution: "UPDATE products\nSET price = ROUND(price * s.factor, 2)\nFROM (SELECT id AS sid, rating / 5.0 AS factor\n      FROM suppliers WHERE region = 'EU') AS s\nWHERE supplier_id = s.sid\nRETURNING id, price;",
+   373→   373→      mistakes: [
+   374→   374→        { test: "\\)\\s*returning", message: "The derived table is there but the link is missing — without WHERE supplier_id = s.sid every product row pairs with every EU supplier row and prices churn five times over." },
+   375→   375→        { test: "products\\.id\\s*=\\s*s\\.sid", message: "Joining on the wrong key — the derived table's sid is a SUPPLIER id, so the match is products.supplier_id = s.sid, not products.id." },
+   376→   376→        { test: "where region = 'apac'|where region = 'us'", message: "Wrong region — the policy names EU suppliers (Nordic Gadgets AB 4.6 and Alpine Audio GmbH 4.8), which reaches exactly 5 products." },
+   377→   377→      ],
+   378→   378→      mutating: true,
+   379→   379→      expected: EXPECTED["l42-p4"],
+   380→   380→    },
+   381→   381→    {
+   382→   382→      id: "l42-p5",
+   383→   383→      title: "The Ring Light markup",
+   384→   384→      brief: "The 14-inch **Ring Light** (product **id 8**, 39.99) gets a **5% markup**. Write it as `ROUND(price * 1.05, 2)` — money stays money — and echo `name`, `price`.",
+   385→   385→      hints: [
+   386→   386→        "Key on id 8, not the name — names are for humans, ids are for queries.",
+   387→   387→        "Shape: UPDATE products SET price = ROUND(price * 1.05, 2) WHERE id = 8 RETURNING name, price;",
+   388→   388→      ],
+   389→   389→      difficulty: "easy",
+   390→   390→      solution: "UPDATE products\nSET price = ROUND(price * 1.05, 2)\nWHERE id = 8\nRETURNING name, price;",
+   391→   391→      mistakes: [
+   392→   392→        { test: "price\\s*\\*\\s*1\\.05(?!,\\s*2\\s*\\))", message: "Missing ROUND — 39.99 × 1.05 lands at 41.9895… in floating point, and the grader's expected price is the clean 41.99. Wrap the arithmetic in ROUND(expr, 2)." },
+   393→   393→        { test: "0\\.95|\\*\\s*5\\b", message: "Wrong arithmetic — a 5% markup multiplies by 1.05. Times 0.95 is a discount; times 5 is a quintuple." },
+   394→   394→        { test: "where\\s+name", message: "The name has a quote in it — Ring Light 14\" — which makes it fragile match text. Product id 8 is the stable key." },
+   395→   395→      ],
+   396→   396→      mutating: true,
+   397→   397→      expected: EXPECTED["l42-p5"],
+   398→   398→    },
+   399→   399→    {
+   400→   400→      id: "l42-p6",
+   401→   401→      title: "Fleet shipment day",
+   402→   402→      brief: "The courier arrives: every **pending** order ships today (**2026-01-06**). Move all of them in one statement — `status` to **'shipped'**, `shipped_at` to the date — echoing `id` for each. Fourteen orders should answer.",
+   403→   403→      hints: [
+   404→   404→        "Two comma-separated assignments; one WHERE that names the status to move.",
+   405→   405→        "Shape: UPDATE orders SET status = 'shipped', shipped_at = '2026-01-06' WHERE status = 'pending' RETURNING id;",
+   406→   406→      ],
+   407→   407→      difficulty: "medium",
+   408→   408→      solution: "UPDATE orders\nSET status = 'shipped',\n    shipped_at = '2026-01-06'\nWHERE status = 'pending'\nRETURNING id;",
+   409→   409→      mistakes: [
+   410→   410→        { test: "set\\s+status\\s*=\\s*'shipped'\\s*;", message: "The sweep ran but shipped_at never moved — a shipped order without a ship date is exactly the hole lesson 4's COALESCE was papering over. Assign both fields in the comma list." },
+   411→   411→        { test: "status\\s*=\\s*'pending'\\s*;|set\\s+status\\s*=\\s*'pending'", message: "Backwards — pending is the BEFORE state. The SET writes the new value ('shipped'); the WHERE selects the old one." },
+   412→   412→        { test: "where\\s+shipped_at\\s+is\\s+null", message: "Too wide — cancelled orders also have NULL shipped_at, and they must not 'ship'. The pending status is the courier's actual manifest." },
+   413→   413→      ],
+   414→   414→      mutating: true,
+   415→   415→      expected: EXPECTED["l42-p6"],
+   416→   416→    },
+   417→   417→    {
+   418→   418→      id: "l42-p7",
+   419→   419→      title: "Freeze the dormant accounts",
+   420→   420→      brief: "Risk policy: every order belonging to an **inactive** customer moves to **'cancelled'**. Use `WHERE customer_id IN (SELECT …)` over the customers table — six orders should feel it. Echo `id`.",
+   421→   421→      hints: [
+   422→   422→        "The subquery freezes first: SELECT id FROM customers WHERE active = 0 → {4, 11}.",
+   423→   423→        "Shape: UPDATE orders SET status = 'cancelled' WHERE customer_id IN (SELECT id FROM customers WHERE active = 0) RETURNING id;",
+   424→   424→      ],
+   425→   425→      difficulty: "medium",
+   426→   426→      solution: "UPDATE orders\nSET status = 'cancelled'\nWHERE customer_id IN (SELECT id FROM customers WHERE active = 0)\nRETURNING id;",
+   427→   427→      mistakes: [
+   428→   428→        { test: "active\\s*=\\s*1", message: "Inverted flag — active customers are the living business; the freeze targets active = 0, Dmitri Volkov and Keiko Sato." },
+   429→   429→        { test: "\\bjoin\\b", message: "UPDATE takes no JOIN — the subquery in the WHERE is how a write reaches across tables. Same set logic as the lesson-13 anti-join, now as a filter." },
+   430→   430→        { test: "\\bdelete\\b", message: "The ticket freezes, not purges — cancelled is the storefront's own soft-delete status (lesson 43's whole story). DELETE would hit the FK fence anyway." },
+   431→   431→      ],
+   432→   432→      mutating: true,
+   433→   433→      expected: EXPECTED["l42-p7"],
+   434→   434→    },
+   435→   435→    {
+   436→   436→      id: "l42-p8",
+   437→   437→      title: "Measure the sweep before it runs",
+   438→   438→      brief: "Before the fleet shipment (problem 6), a careful operator previews its width with a read: count the orders whose status is **'pending'** as `n`. The number that comes back is the affected count the UPDATE will report.",
+   439→   439→      hints: [
+   440→   440→        "A plain SELECT COUNT(*) with the same WHERE the UPDATE will use — that symmetry IS the read-before-write discipline.",
+   441→   441→        "Shape: SELECT COUNT(*) AS n FROM orders WHERE status = 'pending';",
+   442→   442→      ],
+   443→   443→      difficulty: "easy",
+   444→   444→      solution: "SELECT COUNT(*) AS n\nFROM orders\nWHERE status = 'pending';",
+   445→   445→      mistakes: [
+   446→   446→        { test: "status\\s*=\\s*'shipped'", message: "That counts yesterday's shipments (30) — the preview must mirror the UPDATE's exact WHERE: status = 'pending', the rows about to move." },
+   447→   447→        { test: "update\\s+orders", message: "The preview is a read — SELECT only. Running the write to 'see what happens' is the anti-pattern this lesson exists to retire." },
+   448→   448→        { test: "sum\\s*\\(\\s*total", message: "Width, not value — the count of rows (14), not their dollar sum. The affected count is row-based." },
+   449→   449→      ],
+   450→   450→      expected: EXPECTED["l42-p8"],
+   451→   451→    },
+   452→   452→  ],
+   453→   453→  takeaway: "UPDATE = assignments over a filtered scan: expressions read the row's old values, CASE branches per row, UPDATE … FROM pulls companion data from other tables — and the affected count is your first line of defense.",
+   454→   454→};
+   455→   455→

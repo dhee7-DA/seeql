@@ -1,0 +1,398 @@
+    38→    38→    {
+    39→    39→      kind: "bullets",
+    40→    40→      items: [
+    41→    41→        "`%w` is the C-strftime convention: **0 = Sunday** through 6 = Saturday. On this store Monday (`1`) leads with 20 orders and Saturday (`6`) is quietest at 8.",
+    42→    42→        "`GROUP BY mon` (the alias) works in SQLite and MySQL; PostgreSQL wants the expression repeated — `GROUP BY strftime('%Y-%m', created_at)`. Write the portable form when in doubt.",
+    43→    43→        "Buckets only exist for data that's IN them — a zero-order month won't appear unless you manufacture its row (a calendar table cross-joined in; a module-6 trick).",
+    44→    44→      ],
+    45→    45→    },
+    46→    46→    { kind: "h", text: "Arithmetic on days" },
+    47→    47→    {
+    48→    48→      kind: "code",
+    49→    49→      caption: "How long does fulfillment take? julianday turns dates into numbers",
+    50→    50→      sql: `SELECT ROUND(AVG(julianday(shipped_at) - julianday(created_at)), 2) AS avg_lead_days
+    51→    51→FROM orders
+    52→    52→WHERE shipped_at IS NOT NULL;   -- 2.98 days (min 2, max 4)`,
+    53→    53→    },
+    54→    54→    {
+    55→    55→      kind: "bullets",
+    56→    56→      items: [
+    57→    57→        "`julianday(x)` converts a date to a fractional day count — subtracting two of them yields the gap in days, decimals included.",
+    58→    58→        "`date('2024-05-09', '+2 days')`, `'+1 month'`, `'-1 year'`, `'weekday 1'` — modifiers chain: `date(d, '+1 month', '-1 day')` is the classic *end of month* recipe.",
+    59→    59→        "Need whole days for a report column? Wrap the difference: `CAST(julianday(a) - julianday(b) AS INTEGER)`.",
+    60→    60→      ],
+    61→    61→    },
+    62→    62→    { kind: "diagram", figure: "t6-month-buckets" },
+    63→    63→    { kind: "h", text: "The year in two rows" },
+    64→    64→    {
+    65→    65→      kind: "code",
+    66→    66→      caption: "One bucket per year — the same skeleton, coarser slice",
+    67→    67→      sql: `SELECT strftime('%Y', created_at) AS y,
+    68→    68→       COUNT(*) AS n, ROUND(SUM(total), 2) AS rev
+    69→    69→FROM orders GROUP BY y ORDER BY y;
+    70→    70→-- 2024: 90 orders · 30773.25
+    71→    71→-- 2025: 13 orders ·  4060.03`,
+    72→    72→    },
+    73→    73→    {
+    74→    74→      kind: "dialect",
+    75→    75→      db: "sqlite",
+    76→    76→      text: "Date functions are built in and operate on ISO-8601 TEXT, real numbers (julian days), or integers (unix epochs). There is no dedicated DATE type — the zero-padded ISO convention IS the type system.",
+    77→    77→    },
+    78→    78→    {
+    79→    79→      kind: "dialect",
+    80→    80→      db: "postgres",
+    81→    81→      text: "Postgres has a true DATE/TIMESTAMP type: `date_trunc('month', ts)`, `EXTRACT(year FROM ts)`, `ts + INTERVAL '2 days'`, and `AGE(a, b)` — richer, stricter, and pickier about input format.",
+    82→    82→    },
+    83→    83→    {
+    84→    84→      kind: "dialect",
+    85→    85→      db: "mysql",
+    86→    86→      text: "MySQL: `DATE_FORMAT(created_at, '%Y-%m')` plays the strftime role, `DATE_ADD(d, INTERVAL 2 DAY)` does arithmetic, `DATEDIFF(a, b)` the gap. The % codes are near-twins — but named functions, not one swiss-army knife.",
+    87→    87→    },
+    88→    88→    {
+    89→    89→      kind: "warn",
+    90→    90→      text: "ISO discipline is load-bearing: `'2024-3-1'` (no zero-padding) sorts AFTER `'2024-10-12'` as text and can return NULL from date functions. Store zero-padded ISO or a real date type — anything else is a time bomb.",
+    91→    91→    },
+    92→    92→    {
+    93→    93→      kind: "tip",
+    94→    94→      text: "Bucket, count, then sort by bucket — three lines that answer a third of all business questions ('how are we trending?'). The next two lessons bolt ranking and month-over-month deltas onto exactly this skeleton.",
+    95→    95→    },
+    96→    96→  ],
+    97→    97→  mcqs: [
+    98→    98→    {
+    99→    99→      id: "l30-q1",
+   100→   100→      prompt: "What does `strftime('%Y-%m', '2024-05-09')` return?",
+   101→   101→      choices: ["'2024-05'", "'2024-05-09'", "'05-2024'", "2024.05"],
+   102→   102→      answer: 0,
+   103→   103→      why: "The format string keeps exactly what it names: 4-digit year, dash, zero-padded month — the canonical bucket key for time series.",
+   104→   104→      notes: [
+   105→   105→        { choice: 1, why: "That's the input, not the output — strftime reformats, and '%Y-%m' asks for year and month only." },
+   106→   106→      ],
+   107→   107→    },
+   108→   108→    {
+   109→   109→      id: "l30-q2",
+   110→   110→      prompt: "`strftime('%w', d)` returns 4. Which weekday is that?",
+   111→   111→      choices: ["Wednesday — 1-based from Monday", "Thursday — 0 is Sunday", "Friday", "It's the week number, not a weekday"],
+   112→   112→      answer: 1,
+   113→   113→      why: "%w follows the C convention: 0 = Sunday … 6 = Saturday. 4 is Thursday. (Week number is %j's cousin territory — %W — not %w.)",
+   114→   114→      notes: [
+   115→   115→        { choice: 0, why: "Monday-first intuition is ISO's; C strftime is Sunday-first. On this store Monday leads at 20 orders — as '1', not '0'." },
+   116→   116→      ],
+   117→   117→    },
+   118→   118→    {
+   119→   119→      id: "l30-q3",
+   120→   120→      prompt: "Why does TEXT-ISO `ORDER BY created_at` already sort chronologically?",
+   121→   121→      choices: [
+   122→   122→        "SQLite detects date strings and special-cases them",
+   123→   123→        "Zero-padded ISO orders identically as text and as time — biggest unit first",
+   124→   124→        "TEXT always sorts numerically in SQLite",
+   125→   125→        "It doesn't — you must always wrap in date()",
+   126→   126→      ],
+   127→   127→      answer: 1,
+   128→   128→      why: "'2024-05-09' vs '2024-10-12': text comparison compares year, then month, then day — exactly the chronological order, provided every field is zero-padded to fixed width.",
+   129→   129→      notes: [
+   130→   130→        { choice: 0, why: "No detection happens — plain string comparison. The magic is in the FORMAT's discipline, which is why '2024-3-1' breaks it." },
+   131→   131→      ],
+   132→   132→    },
+   133→   133→    {
+   134→   134→      id: "l30-q4",
+   135→   135→      prompt: "`julianday(shipped_at) - julianday(created_at)` gives 2.5. What does that number mean?",
+   136→   136→      choices: [
+   137→   137→        "An error — dates can't subtract",
+   138→   138→        "Two and a half days between the two dates",
+   139→   139→        "February 5th minus something",
+   140→   140→        "2.5 weeks",
+   141→   141→      ],
+   142→   142→      answer: 1,
+   143→   143→      why: "julianday maps a date to a fractional day count — the difference is the gap in days, decimals and all. CAST to INTEGER for whole-day reporting.",
+   144→   144→      notes: [
+   145→   145→        { choice: 0, why: "Dates-as-TEXT can't subtract, but julianday has already converted both sides into numbers — that's its entire job." },
+   146→   146→      ],
+   147→   147→    },
+   148→   148→    {
+   149→   149→      id: "l30-q5",
+   150→   150→      prompt: "`date('2024-01-31', '+1 month')` returns…",
+   151→   151→      choices: ["'2024-02-29' — clamped to month end", "'2024-03-02' — overflow spills", "'2024-02-31' — literal", "NULL — invalid date"],
+   152→   152→      answer: 1,
+   153→   153→      why: "SQLite computes Feb 31, which doesn't exist, and normalizes the overflow: 2024 is a leap year (Feb 29), so the extra 2 days land on March 2. Month arithmetic has edges — test them.",
+   154→   154→      notes: [
+   155→   155→        { choice: 0, why: "Clamping to month-end is what many application libraries do — SQLite spills instead. Neither is wrong; they differ, and reports differ with them." },
+   156→   156→      ],
+   157→   157→    },
+   158→   158→    {
+   159→   159→      id: "l30-q6",
+   160→   160→      prompt: "Which GROUP BY is portable across SQLite, Postgres and MySQL?",
+   161→   161→      choices: [
+   162→   162→        "GROUP BY mon — the alias",
+   163→   163→        "GROUP BY strftime('%Y-%m', created_at) — the expression",
+   164→   164→        "GROUP BY 1 — the position",
+   165→   165→        "All three, everywhere",
+   166→   166→      ],
+   167→   167→      answer: 1,
+   168→   168→      why: "Postgres rejects alias-based and (historically) position-based grouping references in this context; repeating the expression works on all three engines, always.",
+   169→   169→      notes: [
+   170→   170→        { choice: 0, why: "SQLite and MySQL accept the alias — which is exactly why the habit spreads and then breaks on Postgres. Expression in GROUP BY, alias in ORDER BY." },
+   171→   171→      ],
+   172→   172→    },
+   173→   173→    {
+   174→   174→      id: "l30-q7",
+   175→   175→      prompt: "The month bucket report shows 14 rows for this store. Why never 15 — with a zero-order month at 0?",
+   176→   176→      choices: [
+   177→   177→        "SQLite caps GROUP BY at 14 groups",
+   178→   178→        "Buckets materialize from data — a month with no rows leaves no group",
+   179→   179→        "Zero-counts are filtered automatically by COUNT",
+   180→   180→        "There are only 14 months with orders possible",
+   181→   181→      ],
+   182→   182→      answer: 1,
+   183→   183→      why: "GROUP BY divides EXISTING rows — nothing produces a 0 bucket. Manufacturing empty months needs a calendar table joined in (a cross-join move from module 6).",
+   184→   184→      notes: [
+   185→   185→        { choice: 2, why: "COUNT doesn't filter — there's simply no row for it to count. The empty bucket must be supplied from outside the data." },
+   186→   186→      ],
+   187→   187→    },
+   188→   188→    {
+   189→   189→      id: "l30-q8",
+   190→   190→      prompt: "Fulfillment: avg lead 2.98 days, min 2, max 4. The report wants ONLY orders that took MORE than 3 days. What's the WHERE clause?",
+   191→   191→      choices: [
+   192→   192→        "WHERE julianday(shipped_at) - julianday(created_at) > 3",
+   193→   193→        "WHERE shipped_at - created_at > 3",
+   194→   194→        "WHERE julianday(shipped_at) > 3",
+   195→   195→        "HAVING lead > 3 — no WHERE allowed on computed values",
+   196→   196→      ],
+   197→   197→      answer: 0,
+   198→   198→      why: "Compute the gap per row in WHERE and compare to 3. Subtracting raw TEXT dates gives string nonsense; julianday(one date) alone compares a date to 3 days — meaningless without the anchor.",
+   199→   199→      notes: [
+   200→   200→        { choice: 3, why: "WHERE handles computed per-row values fine — HAVING is for post-aggregation. The gap is a row-level expression." },
+   201→   201→      ],
+   202→   202→    },
+   203→   203→    {
+   204→   204→      id: "l30-q9",
+   205→   205→      prompt: "What does `strftime('%Y-%m', created_at)` return for a January 2024 order?",
+   206→   206→      choices: ["'Jan 2024' — a display string", "'2024-01' — a sortable year-month bucket", "24 — just the year number", "An error — %m is not a format code"],
+   207→   207→      answer: 1,
+   208→   208→      why: "%Y renders the 4-digit year, %m the zero-padded month — '2024-01'. The zero-padding is what makes the result sort correctly as text: '2024-01' < '2024-10' < '2025-02'.",
+   209→   209→      notes: [
+   210→   210→        { choice: 0, why: "strftime builds strings from format codes, not month names. %m is the number 01–12; nothing localizes it." },
+   211→   211→      ],
+   212→   212→    },
+   213→   213→    {
+   214→   214→      id: "l30-q10",
+   215→   215→      prompt: "`GROUP BY strftime('%Y-%m', created_at)` on the orders table — how many buckets form?",
+   216→   216→      choices: ["12 — one per calendar month name", "14 — Jan 2024 through Feb 2025, the store's full span", "103 — one per order", "1 — all dates group together"],
+   217→   217→      answer: 1,
+   218→   218→      why: "The orders run from 2024-01-01 to 2025-02-27 — 14 distinct year-month strings, hence 14 groups. Counts range from 6 to 9, with 2024-02 and 2024-09 tied at the top.",
+   219→   219→      notes: [
+   220→   220→        { choice: 0, why: "Calendar months repeat across years — the bucket key is the full '%Y-%m', so January 2024 and January 2025 are different groups." },
+   221→   221→      ],
+   222→   222→    },
+   223→   223→    {
+   224→   224→      id: "l30-q11",
+   225→   225→      prompt: "`julianday('2024-03-05') - julianday('2024-02-25')` — what number comes out?",
+   226→   226→      choices: ["8 — months shorten the count", "9 — straight day arithmetic on converted dates", "'2024-03-05' — dates subtract to dates", "An error — you can't subtract text"],
+   227→   227→      answer: 1,
+   228→   228→      why: "julianday converts each date to a floating day-count, and subtraction yields days: 9 here (Feb 25 → Mar 5, 2024 being a leap year). This is the store's whole date-arithmetic engine.",
+   229→   229→      notes: [
+   230→   230→        { choice: 2, why: "Subtracting the raw text strings does string arithmetic nonsense. julianday exists precisely to move dates into number-land first." },
+   231→   231→      ],
+   232→   232→    },
+   233→   233→    {
+   234→   234→      id: "l30-q12",
+   235→   235→      prompt: "`AVG(julianday(shipped_at) - julianday(created_at))` over all 103 orders — why is the answer 2.98 days and not polluted by the 21 unshipped orders?",
+   236→   236→      choices: [
+   237→   237→        "It isn't — the unshipped rows make the whole AVG NULL",
+   238→   238→        "julianday(NULL) is NULL, and AVG skips NULLs — the 21 drop out silently, leaving 82 rows to average",
+   239→   239→        "The unshipped rows count as zero days",
+   240→   240→        "SQLite substitutes today's date for NULL",
+   241→   241→      ],
+   242→   242→      answer: 1,
+   243→   243→      why: "NULL propagates through julianday, and aggregates ignore NULLs by law. The average ships at 2.98 days over the 82 shippable rows — no WHERE needed, though spelling it makes intent obvious.",
+   244→   244→      notes: [
+   245→   245→        { choice: 2, why: "NULL never coerces to 0 in aggregates — that would drag the average down. If you WANTED zero-day treatment you'd COALESCE it explicitly." },
+   246→   246→      ],
+   247→   247→    },
+   248→   248→  ],
+   249→   249→  problems: [
+   250→   250→    {
+   251→   251→      id: "l30-p1",
+   252→   252→      title: "Orders per month",
+   253→   253→      brief: "The trend line, bucket by month: output `mon` (like `2024-01`) and `n`, calendar order.",
+   254→   254→      hints: [
+   255→   255→        "strftime slices the bucket, COUNT fills it, ORDER BY the bucket key walks the calendar.",
+   256→   256→        "Shape: SELECT strftime('%Y-%m', created_at) AS mon, COUNT(*) AS n FROM orders GROUP BY mon ORDER BY mon;",
+   257→   257→      ],
+   258→   258→      difficulty: "easy",
+   259→   259→      solution:
+   260→   260→        "SELECT strftime('%Y-%m', created_at) AS mon, COUNT(*) AS n\nFROM orders\nGROUP BY mon\nORDER BY mon;",
+   261→   261→      mistakes: [
+   262→   262→        { test: "\\bgroup\\s+by\\s+created_at\\b", message: "Grouping by the raw timestamp creates a bucket per instant — slice with strftime('%Y-%m', created_at) first so all of a month's orders land in one bucket." },
+   263→   263→        { test: "order\\s+by\\s+n\\s+desc", message: "Sorting by count answers 'busiest months' — the brief wants the calendar walk: ORDER BY mon." },
+   264→   264→        { test: "\\bshipped_at\\b", message: "created_at is the order date — shipped_at is 21 NULLs away from covering the same 103 orders." },
+   265→   265→      ],
+   266→   266→      expected: EXPECTED["l30-p1"],
+   267→   267→      ordered: true,
+   268→   268→    },
+   269→   269→    {
+   270→   270→      id: "l30-p2",
+   271→   271→      title: "The year split",
+   272→   272→      brief: "Two buckets, one per year: output `y`, `n`, and `rev` = ROUND(SUM(total), 2), chronological.",
+   273→   273→      hints: [
+   274→   274→        "Same skeleton, '%Y' format — and the bucket can carry several aggregates at once.",
+   275→   275→        "Shape: SELECT strftime('%Y', created_at) AS y, COUNT(*) AS n, ROUND(SUM(total), 2) AS rev FROM orders GROUP BY y ORDER BY y;",
+   276→   276→      ],
+   277→   277→      difficulty: "easy",
+   278→   278→      solution:
+   279→   279→        "SELECT strftime('%Y', created_at) AS y,\n  COUNT(*) AS n, ROUND(SUM(total), 2) AS rev\nFROM orders\nGROUP BY y\nORDER BY y;",
+   280→   280→      mistakes: [
+   281→   281→        { test: "%m", message: "%m slices months — the brief wants years: '%Y' alone." },
+   282→   282→        { test: "\\bavg\\s*\\(", message: "The brief wants order count AND revenue — COUNT plus SUM, not averages." },
+   283→   283→        { test: "round\\s*\\(\\s*sum\\s*\\(\\s*total\\s*\\)\\s*\\)\\s+as\\s+rev\\s+from", message: "ROUND needs the 2-decimal argument: ROUND(SUM(total), 2)." },
+   284→   284→      ],
+   285→   285→      expected: EXPECTED["l30-p2"],
+   286→   286→      ordered: true,
+   287→   287→    },
+   288→   288→    {
+   289→   289→      id: "l30-p3",
+   290→   290→      title: "The weekday ledger",
+   291→   291→      brief: "Which days do orders land on? Output `dow` (strftime '%w', as text) and `n`, ordered by dow — Sunday first, C-style.",
+   292→   292→      hints: [
+   293→   293→        "'%w' yields '0'..'6' with 0 = Sunday; group and count, sort by the code.",
+   294→   294→        "Shape: SELECT strftime('%w', created_at) AS dow, COUNT(*) AS n FROM orders GROUP BY dow ORDER BY dow;",
+   295→   295→      ],
+   296→   296→      difficulty: "medium",
+   297→   297→      solution:
+   298→   298→        "SELECT strftime('%w', created_at) AS dow, COUNT(*) AS n\nFROM orders\nGROUP BY dow\nORDER BY dow;",
+   299→   299→      mistakes: [
+   300→   300→        { test: "%w[^;]*order\\s+by\\s+n\\s+desc", message: "Two questions — the brief sorts by dow (Sunday-first walk), not by busiest day." },
+   301→   301→        { test: "case\\s+when", message: "No relabeling asked — the raw '%w' codes '0'..'6' are the output contract." },
+   302→   302→        { test: "'%d'", message: "%d is the day-of-MONTH — 30 buckets that repeat every month. The weekday code is %w: '0'..'6' with 0 = Sunday." },
+   303→   303→      ],
+   304→   304→      expected: EXPECTED["l30-p3"],
+   305→   305→      ordered: true,
+   306→   306→    },
+   307→   307→    {
+   308→   308→      id: "l30-p4",
+   309→   309→      title: "Fulfillment speed",
+   310→   310→      brief: "Average days from order to shipment: output one column `avg_lead_days` — the rounded (2 decimals) mean of julianday(shipped_at) − julianday(created_at) over shipped orders.",
+   311→   311→      hints: [
+   312→   312→        "julianday converts both dates to numbers; the difference is the gap. Skip the 21 never-shipped orders with IS NOT NULL.",
+   313→   313→        "Shape: SELECT ROUND(AVG(julianday(shipped_at) - julianday(created_at)), 2) AS avg_lead_days FROM orders WHERE shipped_at IS NOT NULL;",
+   314→   314→      ],
+   315→   315→      difficulty: "medium",
+   316→   316→      solution:
+   317→   317→        "SELECT ROUND(AVG(julianday(shipped_at) - julianday(created_at)), 2) AS avg_lead_days\nFROM orders\nWHERE shipped_at IS NOT NULL;",
+   318→   318→      mistakes: [
+   319→   319→        { test: "shipped_at\\s*-\\s*created_at", message: "TEXT dates can't subtract — julianday() converts each side first, then the difference is days." },
+   320→   320→        { test: "\\bis\\s+null\\s*;", message: "IS NULL selects the never-shipped orders — their julianday is NULL and would poison the average. Filter them OUT with IS NOT NULL." },
+   321→   321→        { test: "coalesce\\s*\\(\\s*shipped_at\\s*,", message: "COALESCE would substitute a fake ship date and silently drag the average toward zero — exclusion, not invention, is honest here." },
+   322→   322→      ],
+   323→   323→      expected: EXPECTED["l30-p4"],
+   324→   324→    },
+   325→   325→    {
+   326→   326→      id: "l30-p5",
+   327→   327→      title: "Revenue by month",
+   328→   328→      brief: "Money per month: output `mon` and `rev` = ROUND(SUM(total), 2), calendar order. Fourteen rows.",
+   329→   329→      hints: [
+   330→   330→        "The bucket skeleton again — the aggregate swapped from COUNT to SUM.",
+   331→   331→        "Shape: SELECT strftime('%Y-%m', created_at) AS mon, ROUND(SUM(total), 2) AS rev FROM orders GROUP BY mon ORDER BY mon;",
+   332→   332→      ],
+   333→   333→      difficulty: "medium",
+   334→   334→      solution:
+   335→   335→        "SELECT strftime('%Y-%m', created_at) AS mon, ROUND(SUM(total), 2) AS rev\nFROM orders\nGROUP BY mon\nORDER BY mon;",
+   336→   336→      mistakes: [
+   337→   337→        { test: "\\bcount\\s*\\(", message: "Counts answer 'how many orders' — the brief wants money: SUM(total), rounded to the cent." },
+   338→   338→        { test: "\\bsum\\s*\\(\\s*quantity\\b", message: "That's units sold — the ledger figure is SUM(o.total), the order-level total." },
+   339→   339→        { test: "order\\s+by\\s+rev\\s+desc", message: "Biggest-first answers 'best months' — the brief walks the calendar: ORDER BY mon." },
+   340→   340→      ],
+   341→   341→      expected: EXPECTED["l30-p5"],
+   342→   342→      ordered: true,
+   343→   343→    },
+   344→   344→    {
+   345→   345→      id: "l30-p6",
+   346→   346→      title: "The golden month",
+   347→   347→      brief: "Which month earned the most? Output `mon` and `rev` (2 decimals) — the single top row, ties broken by earlier month.",
+   348→   348→      hints: [
+   349→   349→        "Bucket revenue as before, then ORDER BY rev DESC, mon ASC with LIMIT 1.",
+   350→   350→        "Shape: SELECT mon, rev FROM (<bucket query>) d ORDER BY rev DESC, mon LIMIT 1; — or the direct GROUP BY form with the same ORDER BY and LIMIT.",
+   351→   351→      ],
+   352→   352→      difficulty: "hard",
+   353→   353→      solution:
+   354→   354→        "SELECT strftime('%Y-%m', created_at) AS mon, ROUND(SUM(total), 2) AS rev\nFROM orders\nGROUP BY mon\nORDER BY rev DESC, mon\nLIMIT 1;",
+   355→   355→      mistakes: [
+   356→   356→        { test: "\\bmax\\s*\\(\\s*sum", message: "Nested aggregates (MAX(SUM(…))) don't parse — bucket first, then sort and take the top row." },
+   357→   357→        { test: "limit\\s+1[^;]*\\bfrom\\b", message: "LIMIT belongs at the very END of the query, after the ORDER BY — placing it earlier truncates before the sort." },
+   358→   358→        { test: "order\\s+by\\s+rev\\s+asc", message: "Ascending finds the WORST month (July, 1193.86) — the brief wants the biggest: DESC." },
+   359→   359→      ],
+   360→   360→      expected: EXPECTED["l30-p6"],
+   361→   361→      ordered: true,
+   362→   362→    },
+   363→   363→    {
+   364→   364→      id: "l30-p7",
+   365→   365→      title: "Signup cohorts",
+   366→   366→      brief: "Customer acquisition by month: bucket `customers.created_at` by month. Output `mon` and `n`, chronological. Nine buckets from 2023-11 through 2024-07.",
+   367→   367→      hints: [
+   368→   368→        "Same strftime skeleton — but FROM customers. The first buckets are 2023-11 and 2023-12.",
+   369→   369→        "Shape: SELECT strftime('%Y-%m', created_at) AS mon, COUNT(*) AS n FROM customers GROUP BY mon ORDER BY mon;",
+   370→   370→      ],
+   371→   371→      difficulty: "hard",
+   372→   372→      solution:
+   373→   373→        "SELECT strftime('%Y-%m', created_at) AS mon, COUNT(*) AS n\nFROM customers\nGROUP BY mon\nORDER BY mon;",
+   374→   374→      mistakes: [
+   375→   375→        { test: "\\bfrom\\s+orders\\b", message: "Acquisition counts CUSTOMERS — the orders table would count purchases, not signups." },
+   376→   376→        { test: "\\bsubstr\\s*\\(\\s*created_at", message: "SUBSTR slicing is lesson 29's string tool — dates deserve the date-aware slice: strftime('%Y-%m', created_at) reads the calendar, not character offsets." },
+   377→   377→        { test: "\\bregion\\b|\\bgroup\\s+by\\s+region", message: "No regional split asked — one global acquisition line, bucketed by signup month." },
+   378→   378→      ],
+   379→   379→      expected: EXPECTED["l30-p7"],
+   380→   380→      ordered: true,
+   381→   381→    },
+   382→   382→    {
+   383→   383→      id: "l30-p8",
+   384→   384→      title: "Slow boats",
+   385→   385→      brief: "The slow shipments: orders that took **more than 3 days** from order to ship. Output `id` and `lead_days` = the CAST-to-INTEGER gap, ordered by id.",
+   386→   386→      hints: [
+   387→   387→        "Compute the gap per row in WHERE, guard against NULLs, and reuse the same expression (cast to INTEGER) as the output column.",
+   388→   388→        "Shape: SELECT id, CAST(julianday(shipped_at) - julianday(created_at) AS INTEGER) AS lead_days FROM orders WHERE shipped_at IS NOT NULL AND julianday(shipped_at) - julianday(created_at) > <bar> ORDER BY id;",
+   389→   389→      ],
+   390→   390→      difficulty: "hard",
+   391→   391→      solution:
+   392→   392→        "SELECT id,\n  CAST(julianday(shipped_at) - julianday(created_at) AS INTEGER) AS lead_days\nFROM orders\nWHERE shipped_at IS NOT NULL\n  AND julianday(shipped_at) - julianday(created_at) > 3\nORDER BY id;",
+   393→   393→      mistakes: [
+   394→   394→        { test: ">\\s*=\\s*3", message: "Boundary — 'more than 3' excludes exactly-3-day shipments; >= would keep them." },
+   395→   395→        { test: "^select\\b(?:(?!\\bis\\s+not\\s+null\\b).)*\\bis\\s+null\\b", message: "IS NULL keeps the never-shipped orders — julianday(NULL) is NULL and they'd vanish or poison the comparison. Filter them out with IS NOT NULL." },
+   396→   396→        { test: "\\bround\\s*\\(", message: "No rounding — the brief wants the CAST to INTEGER for whole days (2.98-average territory stays out of the ledger)." },
+   397→   397→      ],
+   398→   398→      expected: EXPECTED["l30-p8"],
+   399→   399→      ordered: true,
+   400→   400→    },
+   401→   401→  ],
+   402→   402→  deep: [
+   403→   403→    {
+   404→   404→      kind: "mind",
+   405→   405→      text: "A timestamp in SQLite is just **text wearing a strict costume**: `2024-01-15` sorts like a number precisely because the costume is ISO-8601 — biggest unit first. Once you see dates as text, everything in this lesson is familiar machinery: `strftime('%Y-%m', …)` is a **label maker** that slices the text into a bucket; `julianday(…)` is a **ruler** that converts the text into a day-count so gaps become subtraction. Bucket reports don't need a calendar table or a stored month column — the bucket is manufactured at query time, and `GROUP BY` does the folding you already know. Probed on the storefront: 103 orders slice into exactly **14 monthly buckets** (2024-01 … 2025-02), 90 in 2024 and 13 in 2025.",
+   406→   406→    },
+   407→   407→    {
+   408→   408→      kind: "engine",
+   409→   409→      title: "you run SELECT strftime('%Y-%m', created_at) AS mo, COUNT(*), SUM(total) FROM orders GROUP BY mo",
+   410→   410→      steps: [
+   411→   411→        "**strftime walks row by row.** Order 1's `2024-01-05` → the format string keeps `%Y` (4-digit year), a literal dash, `%m` (2-digit month) → `2024-01`. Order 2's `2024-01-15` → same label. The raw dates are untouched on disk — this is a computed column.",
+   412→   412→        "**GROUP BY folds the labels.** 103 rows collapse into 14 label groups. Same trick with `DATE(created_at, 'start of month')` gives identical counts (probed: 8, 9, 8, 7 …) — two spellings, one bucket.",
+   413→   413→        "**The aggregates are ordinary.** `COUNT(*)` per bucket (2024-01 → 8 …) and `SUM(total)` (2024-01 → 3731.97 … 2025-02 → 2390.53) — no date-specific arithmetic needed.",
+   414→   414→        "**ORDER BY mo sorts chronologically for free** — text comparison on `YYYY-MM` IS time order. That's the ISO payoff: no month-name parsing, no custom comparator, the alphabet is the calendar.",
+   415→   415→      ],
+   416→   416→    },
+   417→   417→    {
+   418→   418→      kind: "myth",
+   419→   419→      myth: "\"strftime('%w', …) numbers the week from Monday — 1 is Monday.\"",
+   420→   420→      truth: "In SQLite `%w` is **0 = Sunday through 6 = Saturday**. Probed: order 1, placed `2024-01-05` (a Friday), returns **5**. The storefront's weekday census reads 0:16, 1:20, 2:16, 3:16, 4:9, 5:18, 6:8 — 'quietest day' means hunting the smallest count (weekday 4 = Wednesday, 9 orders), and 20 Mondays is the busiest shelf. Misreading the map flips your whole report: the '1' bucket is Monday's crowd only if you remember Sunday owns the zero.",
+   421→   421→    },
+   422→   422→    {
+   423→   423→      kind: "edge",
+   424→   424→      items: [
+   425→   425→        { c: "julianday over a NULL timestamp", r: "21 orders have `shipped_at IS NULL` (probed). `julianday(shipped_at) - julianday(created_at)` for those rows is NULL — they neither error nor count as zero; they **evaporate from AVG silently**. The shipped-only average is 2.98 days (min 2, max 4) computed over 82 rows, not 103. Filter `IS NOT NULL` first when the denominator matters." },
+   426→   426→        { c: "julianday needs a full date", r: "`JULIANDAY('2024-01-01')` → 2460310.5, but `JULIANDAY('2024-01')` → **NULL** (probed) — the ruler refuses month-only text. Bucket labels are for grouping and sorting; do the gap math on the original timestamps, then bucket." },
+   427→   427→        { c: "CAST floors the day-count", r: "`julianday(shipped_at) - julianday(created_at)` returns a float like 2.98; `CAST(… AS INTEGER)` truncates to 2. That's correct for whole-day filters ('more than 3 days' → compare the raw diff > 3, probed boundary: exactly-3 shipments excluded) — but never CAST first and THEN average; you'd average the floors." },
+   428→   428→        { c: "Two bucket spellings", r: "`SUBSTR(created_at, 1, 7)` produces byte-identical buckets to `strftime('%Y-%m', …)` here (probed: 8, 9, 8 …) — substring slicing works because the format is fixed-width. strftime is self-documenting and locale-safe; SUBSTR is the shortcut that breaks the day someone logs `2024-1-5`." },
+   429→   429→        { c: "Date arithmetic is string surgery", r: "`DATE(created_at, '+7 days')` shifts the timestamp (probed: 2024-01-05 → 2024-01-12). The invoices table ships with a 30-day terms gap (`due_on` averages exactly 30 days after `issued_on`) — aging reports are just `JULIANDAY(due_on) - JULIANDAY(issued_on) > 30` filters away from existing." },
+   430→   430→      ],
+   431→   431→    },
+   432→   432→  ],
+   433→   433→  takeaway: "ISO-TEXT dates sort themselves; strftime slices them into buckets, julianday measures the gaps, and bucket-plus-count is the skeleton every trend report grows from.",
+   434→   434→};
+   435→   435→

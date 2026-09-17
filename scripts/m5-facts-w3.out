@@ -1,0 +1,107 @@
+sqlite {
+  v: "3.53.0",
+}
+
+== status rank blocks
+[{"status":"cancelled","n":7,"start_rk":1,"end_rk":1},{"status":"delivered","n":52,"start_rk":8,"end_rk":8},{"status":"pending","n":14,"start_rk":60,"end_rk":60},{"status":"shipped","n":30,"start_rk":74,"end_rk":74}]
+
+== status dense blocks
+[{"status":"cancelled","drk":1},{"status":"delivered","drk":2},{"status":"pending","drk":3},{"status":"shipped","drk":4}]
+
+== month count ladder
+[{"n":9,"months":2,"rk":1,"drk":1},{"n":8,"months":4,"rk":3,"drk":2},{"n":7,"months":5,"rk":7,"drk":3},{"n":6,"months":3,"rk":12,"drk":4}]
+
+== months at rk 1 and 3
+[{"mon":"2024-02","n":9,"rk":1},{"mon":"2024-09","n":9,"rk":1},{"mon":"2024-01","n":8,"rk":3},{"mon":"2024-03","n":8,"rk":3},{"mon":"2024-05","n":8,"rk":3},{"mon":"2024-07","n":8,"rk":3}]
+
+== expense amount blocks top8
+[{"amount_cents":168000,"n":1,"rk":1,"drk":1},{"amount_cents":120000,"n":14,"rk":2,"drk":2},{"amount_cents":45200,"n":1,"rk":16,"drk":3},{"amount_cents":45000,"n":1,"rk":17,"drk":4},{"amount_cents":43000,"n":1,"rk":18,"drk":5},{"amount_cents":41000,"n":1,"rk":19,"drk":6},{"amount_cents":38900,"n":1,"rk":20,"drk":7},{"amount_cents":38500,"n":1,"rk":21,"drk":8}]
+
+== cheapest expense
+[{"id":2,"category":"Ads","vendor":"AdWorks Media","amount_cents":22000}]
+
+== payments rank top8
+[{"id":10,"invoice_id":8,"amount":4015,"method":"card","rk":1},{"id":27,"invoice_id":25,"amount":4000,"method":"wire","rk":2},{"id":18,"invoice_id":16,"amount":3896,"method":"wire","rk":3},{"id":16,"invoice_id":14,"amount":3512,"method":"wire","rk":4},{"id":4,"invoice_id":3,"amount":3420,"method":"wire","rk":5},{"id":26,"invoice_id":23,"amount":3076,"method":"card","rk":6},{"id":12,"invoice_id":10,"amount":2968,"method":"wire","rk":7},{"id":19,"invoice_id":19,"amount":2807,"method":"card","rk":8}]
+
+== payments tie census
+[{"amount_cents":280700,"n":2},{"amount_cents":264200,"n":2},{"amount_cents":243000,"n":2},{"amount_cents":236150,"n":2},{"amount_cents":222950,"n":2}]
+
+== quantity rank blocks
+[{"quantity":1,"n":93,"start_rk":1,"drk":1},{"quantity":2,"n":69,"start_rk":94,"drk":2},{"quantity":3,"n":89,"start_rk":163,"drk":3}]
+
+== percent+cd spend league
+[{"name":"Alice Chen","spend":7262.35,"pct":0,"cd":0.0625},{"name":"Emma Wilson","spend":6640.56,"pct":0.0667,"cd":0.125},{"name":"Dmitri Volkov","spend":599.26,"pct":0.9333,"cd":0.9375},{"name":"Olivia Brown","spend":444.8,"pct":1,"cd":1}]
+
+== ledger nets ranked desc
+[{"account":"cash","net":44196,"rk":1},{"account":"operating_expenses","net":25416,"rk":2},{"account":"accounts_receivable","net":16440,"rk":3},{"account":"sales_revenue","net":-86052,"rk":4}]
+
+== ledger rows per account
+[{"account":"accounts_receivable","n":26},{"account":"cash","n":27},{"account":"operating_expenses","n":14},{"account":"sales_revenue","n":13}]
+
+== ntile4 month spend census
+[{"tile":1,"n":4,"cut":2975.67},{"tile":2,"n":4,"cut":2390.53},{"tile":3,"n":3,"cut":2047.43},{"tile":4,"n":3,"cut":1193.86}]
+
+== ntile4 month spend tile1
+[{"mon":"2024-01","spend":3731.97,"tile":1},{"mon":"2024-02","spend":3609.64,"tile":1},{"mon":"2024-09","spend":3116.04,"tile":1},{"mon":"2024-10","spend":2975.67,"tile":1}]
+
+== rn=2 per customer
+[{"n":14,"mx":785.79}]
+
+== rn=1 ASC (biggest per-customer minimum)
+[{"n":16,"mx":705.39}]
+
+== rn<=3 per customer
+[{"n":41,"mx":3}]
+
+== rn<=3 per region
+[{"n":9}]
+
+== region-name ranker blocks
+[{"region":"APAC","n":5,"rk_lo":1,"rk_hi":1,"drk_lo":1,"drk_hi":1,"rn_lo":1,"rn_hi":5},{"region":"EU","n":8,"rk_lo":6,"rk_hi":6,"drk_lo":2,"drk_hi":2,"rn_lo":6,"rn_hi":13},{"region":"LATAM","n":1,"rk_lo":14,"rk_hi":14,"drk_lo":3,"drk_hi":3,"rn_lo":14,"rn_hi":14},{"region":"US","n":2,"rk_lo":15,"rk_hi":15,"drk_lo":4,"drk_hi":4,"rn_lo":15,"rn_hi":16}]
+
+== EU roster at rk 6
+[{"name":"Alice Chen","rk":6,"drk":2},{"name":"Chloe Dubois","rk":6,"drk":2},{"name":"Dmitri Volkov","rk":6,"drk":2},{"name":"Isabella Rossi","rk":6,"drk":2},{"name":"Liam O'Brien","rk":6,"drk":2},{"name":"Noah Meyer","rk":6,"drk":2},{"name":"Olivia Brown","rk":6,"drk":2},{"name":"Pedro Alvarez","rk":6,"drk":2}]
+
+== cancelled ladder
+[{"id":83,"total":397.99,"customer_id":11,"rk":1},{"id":95,"total":206.19,"customer_id":1,"rk":2},{"id":7,"total":152.52,"customer_id":1,"rk":3},{"id":82,"total":143.86,"customer_id":5,"rk":4},{"id":21,"total":136.11,"customer_id":1,"rk":5},{"id":50,"total":90.35,"customer_id":13,"rk":6},{"id":51,"total":25.47,"customer_id":13,"rk":7}]
+
+== cancelled totals tie check
+[]
+
+== max total per status
+[{"status":"cancelled","mx":397.99},{"status":"delivered","mx":752.96},{"status":"pending","mx":1088.44},{"status":"shipped","mx":845.92}]
+
+== ntile3 spenders census
+[{"tile":1,"n":6},{"tile":2,"n":5},{"tile":3,"n":5}]
+
+== ntile3 spenders wave1
+[{"name":"Alice Chen","spend":7262.35,"wave":1},{"name":"Emma Wilson","spend":6640.56,"wave":1},{"name":"Grace Kim","spend":4574.23,"wave":1},{"name":"Maya Patel","spend":3644.56,"wave":1},{"name":"Chloe Dubois","spend":2667.93,"wave":1},{"name":"Pedro Alvarez","spend":1686.17,"wave":1}]
+
+== unit_price tie pairs
+[{"unit_price":41.38,"n":2,"rk":149,"drk":149},{"unit_price":24.94,"n":2,"rk":207,"drk":206},{"unit_price":18.14,"n":2,"rk":224,"drk":222},{"unit_price":15.12,"n":2,"rk":243,"drk":240}]
+
+== unit_price pair rows at 41.38
+[{"id":24,"order_id":10,"unit_price":41.38,"rk":149,"twins":2},{"id":150,"order_id":62,"unit_price":41.38,"rk":149,"twins":2}]
+
+== stock >= 100 count
+[{"n":10}]
+
+== price >= 42.5 dual rank
+[{"name":"Smart Watch S","price":199.99,"overall":1,"shelf":1},{"name":"Noise-Canceling Headset","price":149.99,"overall":2,"shelf":1},{"name":"4K Webcam Pro","price":129,"overall":3,"shelf":1},{"name":"Studio Desktop Mic","price":119,"overall":4,"shelf":2},{"name":"Mechanical Keyboard K1","price":89.99,"overall":5,"shelf":1},{"name":"Fitness Band X2","price":79,"overall":6,"shelf":2},{"name":"Cycling Jersey Pro","price":65,"overall":7,"shelf":1},{"name":"Bluetooth Speaker Mini","price":59.99,"overall":8,"shelf":3},{"name":"USB-C Hub 7-in-1","price":49,"overall":9,"shelf":2},{"name":"Laptop Stand Aluminum","price":42.5,"overall":10,"shelf":1}]
+
+== ntile2 suppliers
+[{"name":"Alpine Audio GmbH","rating":4.8,"half":1},{"name":"Nordic Gadgets AB","rating":4.6,"half":1},{"name":"Midwest Hardware Co","rating":4.4,"half":1},{"name":"Shenzhen Electro","rating":4.1,"half":2},{"name":"Andes Naturals SA","rating":4,"half":2},{"name":"Pacific Textiles","rating":3.9,"half":2}]
+
+== group-by alias ok
+[{"mon":"2024-01","n":8},{"mon":"2024-02","n":9}]
+
+== upper-name vs numeric compare
+[{"n":0}]
+
+== products columns
+[{"name":"id"},{"name":"name"},{"name":"category"},{"name":"price"},{"name":"stock"},{"name":"supplier_id"}]
+
+== biggest single-date expense
+[{"spent_on":"2024-08-16","s":1680},{"spent_on":"2025-02-01","s":1200}]
+
+probe done, copy removed

@@ -1,0 +1,44 @@
+
+== same-day pairs per buyer ==
+(0 rows)
+
+== same-day pairs total ==
+{"n":0}
+
+== same-day bursts rows ==
+(0 rows)
+
+== same-day + combined exposure over 1000 ==
+(0 rows)
+
+== created_at time component check ==
+{"n":103}
+
+== shipped same-day pairs per buyer ==
+(0 rows)
+
+== shipped same-day total ==
+{"n":0}
+
+== never-shipped census ==
+{"status":"cancelled","n":7}
+{"status":"pending","n":14}
+
+== cross-status shipped x delivered pairs ==
+{"n":112}
+
+== method contrast pairs (same buyer, different methods) ==
+{"name":"Alice Chen","pairs":92}
+{"name":"Emma Wilson","pairs":61}
+{"name":"Grace Kim","pairs":39}
+{"name":"Maya Patel","pairs":17}
+{"name":"Noah Meyer","pairs":5}
+{"name":"Isabella Rossi","pairs":4}
+{"name":"Chloe Dubois","pairs":4}
+{"name":"Dmitri Volkov","pairs":3}
+{"name":"Pedro Alvarez","pairs":2}
+{"name":"Hiro Tanaka","pairs":2}
+{"name":"Keiko Sato","pairs":1}
+{"name":"Bruno Silva","pairs":1}
+
+probe-j9c4 done (copy cleaned)

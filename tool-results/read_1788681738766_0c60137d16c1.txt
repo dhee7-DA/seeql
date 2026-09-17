@@ -1,0 +1,341 @@
+     1→// Module 2 · deck 2 · topic "j5" — SELF-JOINS, batch j5b (cs-309…cs-316).
+     2→// The pair-finding half of batch 5: every case hunts DOUBLES — two payment
+     3→// rows on one ticket, two acquisition touches on one account, two orders on
+     4→// one buyer, two refund claims on one ticket, two SKUs under one roof, two
+     5→// open tickets on one account — plus the org-chart pair list that reads the
+     6→// reporting line as a join. The lessons this batch drills: alias discipline
+     7→// under two copies of one table, the strict `a.id < b.id` guard that kills
+     8→// self-pairs AND mirrors at once, the operator battle (< vs <= vs <> measured
+     9→// in row deltas), pair-count ≠ entity-count, pair-money arithmetic
+    10→// (p1.amount + p2.amount), repeat-touch drift (a1.channel <> a2.channel),
+    11→// LEFT self-join to catch singles, and cross-alias column confusion.
+    12→// Sibling batch j5a (cs-301…308) covered the region/shelf/org-comparison
+    13→// angles — none of its fills, universes pairings or angles are reused here.
+    14→//
+    15→// Every figure below was probed against a read-only COPY of db/custom.db
+    16→// (scripts/.tmp-j9b.db, self-cleaned) via scripts/probe-j9b1..4.ts. Probe 4
+    17→// pre-verified the full distractor×slot consequence matrix for all eight
+    18→// templates. NEVER probe the live db.
+    19→
+    20→import type { CaseStudy } from "../types";
+    21→
+    22→interface Deck2Case extends CaseStudy {
+    23→  /** Deck 2 — joins deck. */
+    24→  deck: 2;
+    25→}
+    26→
+    27→export const casesJ5b: Deck2Case[] = [
+    28→  {
+    29→    id: "cs-309",
+    30→    deck: 2,
+    31→    topic: "j5",
+    32→    universe: "cash",
+    33→    title: "Two charges, one ticket",
+    34→    brief:
+    35→      "From: Cash desk, daily reconciliation.\n\nThe processor's file keeps showing tickets that arrived as two separate card-network charges, and I want one query that finds every such ticket and proves the two charges add back to what the order says we billed — not just order 33, which the desk already knows by heart. Pair up the payments ledger rows that share a ticket, lower payment id first, so each split shows exactly once with its pair total beside the ticket. No self-pairs, no mirrored doubles, no second row for the same split.",
+    36→    ask: "Every ticket paid in two installments, with the buyer and the pair total beside the ticket total.",
+    37→    template: `SELECT o.id AS ticket, c.name AS buyer, ROUND({1} + p2.amount, 2) AS pair_paid, o.total
+    38→FROM payments p1 JOIN payments p2 ON {2} = p2.order_id AND {3}
+    39→JOIN orders o ON o.id = p1.order_id
+    40→JOIN customers c ON c.id = o.customer_id
+    41→ORDER BY o.id;`,
+    42→    slots: [
+    43→      {
+    44→        answer: "p1.amount",
+    45→        kind: "keyword",
+    46→        label: "the first installment",
+    47→        why: "The pair total is the two charges summed: ROUND(p1.amount + p2.amount, 2). Dropping in p2.amount instead adds the second charge to itself — ticket 33 would read 518.26 — and p1.id <= p2.id sums a boolean, printing a serene 1.00 on every row while the money disappears.",
+    48→      },
+    49→      {
+    50→        answer: "p1.order_id",
+    51→        kind: "keyword",
+    52→        label: "the shared ticket key",
+    53→        why: "Both payment copies must point at the same ticket: p1.order_id = p2.order_id. p2.amount = p2.order_id compares money against row numbers and matches nothing on this ledger; p1.id = p2.order_id crosses payment row numbers into ticket numbers — two unrelated id spaces — and also comes back empty.",
+    54→      },
+    55→      {
+    56→        answer: "p1.id < p2.id",
+    57→        kind: "keyword",
+    58→        label: "the pair guard",
+    59→        why: "The strict guard does two jobs: a payment can't pair with itself, and only the lower id takes the left seat so no split prints twice in mirror order. Loosen to <= and the ledger shows 94 pairings — 91 of them payments facing themselves; <> still counts both directions of each split (6); drop the guard entirely and every payment pairs with its ticket-mates 97 times.",
+    60→      },
+    61→    ],
+    62→    distractors: ["p2.amount", "p2.order_id", "p1.id", "p1.id <= p2.id", "p1.id <> p2.id"],
+    63→    walkthrough:
+    64→      "Three tickets on the whole ledger arrived as two charges, and the self-join finds them without knowing a single ticket number: p1 and p2 are two copies of payments, the ON clause keeps only rows sharing a ticket (p1.order_id = p2.order_id), and p1.id < p2.id makes each split appear exactly once, lower payment id left. The board: ticket 33, Emma Wilson, 365.53 by card plus 259.13 by wallet — 624.66, the ticket to the cent; ticket 81, Dmitri Volkov, 81.07 card plus 83.10 wallet — 164.17; ticket 100, Alice Chen, 65.97 card plus 59.91 card — 125.88, the only split paid in one method. All six installments are settled, and across the book no pair sum ever exceeds its ticket — the desk can sign the tie-out. The operator ledger is worth memorizing: bare ticket-matching yields 97 rows, <= yields 94 (91 self-pairings survive), <> yields 6 (every split in both directions), strict < yields the 3 real splits. Two id-space traps sit nearby: p1.id = p2.order_id joins payment numbers to ticket numbers and returns zero rows on this data — right-looking, quietly wrong — and the desk's older single-order query already proved ticket 33 by hand; this query proves all three splits at once.",
+    65→  },
+    66→  {
+    67→    id: "cs-310",
+    68→    deck: 2,
+    69→    topic: "j5",
+    70→    universe: "funnel",
+    71→    title: "The account marketing touched twice",
+    72→    brief:
+    73→      "From: Marketing ops. Re: acquisition ledger hygiene.\n\nOur acquisition ledger should hold one touch per account, but the spend totals don't reconcile and I suspect somebody got acquired twice — once on the original channel and once on a follow-up. Sit the ledger beside itself, keep the accounts with two touches, and show me the channel each touch came through with both spend figures and the combined cost. I only care about the ones where the channel actually changed between touches — a same-channel re-touch is a different problem.",
+    74→    ask: "Accounts with two acquisition touches on different channels, with both channels, both spends and the combined spend.",
+    75→    template: `SELECT c.name AS account, a1.channel AS first_touch, a1.spend AS first_spend,
+    76→       a2.channel AS second_touch, a2.spend AS second_spend, ROUND({1}, 2) AS double_spend
+    77→FROM acquisitions a1
+    78→JOIN acquisitions a2 ON a1.customer_id = a2.customer_id AND a1.id {2} a2.id
+    79→JOIN customers c ON c.id = a1.customer_id
+    80→WHERE {3}
+    81→ORDER BY c.name;`,
+    82→    slots: [
+    83→      {
+    84→        answer: "a1.spend + a2.spend",
+    85→        kind: "keyword",
+    86→        label: "the combined touch spend",
+    87→        why: "The account was bought twice, so the true acquisition cost is a1.spend + a2.spend — 21.17 plus 6.00. a1.spend alone reports only the first touch and quietly undercounts every double-bought account; a2.spend - a1.spend computes a delta between touches, not a cost.",
+    88→      },
+    89→      {
+    90→        answer: "<",
+    91→        kind: "keyword",
+    92→        label: "the earlier-later guard",
+    93→        why: "Strict < keeps the two touches as one earlier→later pair. <> admits the mirror too — the same two touches printed back-to-front, 2 rows; = pairs each touch with itself, and since a touch always shares its own channel the drift test erases those self-pairs and the result goes empty; > looks backwards and finds nothing.",
+    94→      },
+    95→      {
+    96→        answer: "a1.channel <> a2.channel",
+    97→        kind: "keyword",
+    98→        label: "the channel-drift test",
+    99→        why: "The brief hunts channel changes: a1.channel <> a2.channel. Flip it to = and you demand both touches came through the same channel — Alice's didn't, so the list empties. a1.spend <> a2.spend happens to keep the same row today (her spends differ too) but it tests money, not channel, and goes blind the day a re-touch costs the same as the first.",
+   100→      },
+   101→    ],
+   102→    distractors: ["<>", "=", ">", "a1.channel = a2.channel", "a1.spend = a2.spend", "a1.id = a2.id"],
+   103→    walkthrough:
+   104→      "The acquisition ledger holds 15 touches over 14 accounts — thirteen accounts were touched once, and exactly one account appears twice. The self-join sits a1 and a2 side by side on the shared customer key, and a1.id < a2.id keeps the pair single-counted and time-ordered. One row comes back: Alice Chen — touch 1, social, 21.17, acquired 2023-11-02; touch 15, retargeting, 6.00, acquired 2024-02-14; combined acquisition cost 27.17. That second touch is also why every acquisitions→orders chain in this course prints her tickets twice — the pairing join and the chain join are looking at the same duplicate. The operator battle on a one-pair table is instructive: <> prints the pair twice (2 rows), = and > print none, and <= happens to agree with < here — the self-pairs it admits die against the drift test, because no touch drifts from its own channel. That last coincidence is exactly why the drift filter belongs in the query even when the pair count doesn't change: without it the query reads 'double-touch', with it the query reads 'double-touch on a different channel' — the difference between a ledger quirk and a retargeting story.",
+   105→  },
+   106→  {
+   107→    id: "cs-311",
+   108→    deck: 2,
+   109→    topic: "j5",
+   110→    universe: "growth",
+   111→    title: "The pair-count board",
+   112→    brief:
+   113→      "From: Growth lead. Re: engagement board for the deck.\n\nI want the repeat-engagement board built the pairing way — sit every account's orders beside their siblings and count the earlier-later pairs — because the raw pair count is the honest weight of an account's history and the deck compares accounts on it. Keep only the accounts whose pair count clears 100, and show each one's first and latest ticket numbers so the board doubles as a timeline. Biggest pair count first; I expect the board to be short.",
+   114→    ask: "Accounts whose earlier-later order pairs exceed 100, with pair count and first/latest ticket numbers.",
+   115→    template: `SELECT c.name AS account, COUNT(*) AS repeat_pairs, {1} AS first_order, MAX(o2.id) AS latest_order
+   116→FROM orders o1 JOIN orders o2 ON o1.customer_id = o2.customer_id AND {2}
+   117→JOIN customers c ON c.id = o1.customer_id
+   118→GROUP BY c.id HAVING COUNT(*) >= {3} ORDER BY repeat_pairs DESC;`,
+   119→    slots: [
+   120→      {
+   121→        answer: "MIN(o1.id)",
+   122→        kind: "keyword",
+   123→        label: "the first ticket",
+   124→        why: "The guard puts the lower id on the left seat, so the account's earliest ticket is MIN(o1.id) — 3 for Alice. MAX(o1.id) reports her second-newest ticket (100) and MIN(o2.id) her second-earliest (7); COUNT(o2.id) just re-prints the pair count as a ticket number. The aliases decide which edge you're reading.",
+   125→      },
+   126→      {
+   127→        answer: "o1.id < o2.id",
+   128→        kind: "keyword",
+   129→        label: "the pairing guard",
+   130→        why: "The strict guard makes each pair a genuinely different order pair, counted once. <= lets an order pair with itself — Alice inflates from 276 to 300; <> keeps both directions of every pair — Alice doubles to 552 and Grace and Maya crash the board too (4 rows). The guard is the difference between pairs and noise.",
+   131→      },
+   132→      {
+   133→        answer: "100",
+   134→        kind: "number",
+   135→        label: "the board cut",
+   136→        noVerify: true,
+   137→        why: "The brief sets the board at a pair count of at least 100, so the HAVING gate reads >= 100. It's a group-level figure — it filters accounts, not rows — so it lives in HAVING beside COUNT(*), after the pairing join has built the pairs. At 90 the board admits a third account; at Alice's own 276 it narrows to her alone.",
+   138→      },
+   139→    ],
+   140→    distractors: ["MAX(o1.id)", "MIN(o2.id)", "COUNT(o2.id)", "SUM(o1.id)", "o1.id <= o2.id", "o1.id <> o2.id"],
+   141→    walkthrough:
+   142→      "Pair-count is not entity-count — that is the number this board exists to teach. The pairing join builds every earlier-later order pair within an account: 624 pairs across the book, from Alice Chen's 276 (24 orders choose 2 = 276) down to the single pair each of Bruno, Dmitri and Jamal own. COUNT(*) counts PAIRS: the board keeps the two accounts over 100 — Alice Chen, 276 pairs, tickets 3 through 101, and Emma Wilson, 136 pairs (17 orders), tickets 5 through 97. Grace Kim misses the cut at 91 pairs from 14 orders — at a 90 bar she'd join the board, which is how thin the margin is. Read the two columns correctly: 276 is not 276 orders and not 276 purchases, it is 276 ways to pick two of Alice's 24 tickets; her first ticket is 3 and her latest 101. The guard battle, measured: <= turns 624 into 727 (103 self-pairings admitted), <> turns it into 1,248 (every pair printed twice), and on this board both would also wave Grace and Maya through. MIN(o1.id) is the first ticket because the strict guard guarantees the left seat holds the lower id — swap the aggregate to MAX(o1.id) and 'first order' silently becomes 'second-newest', 100 instead of 3.",
+   143→  },
+   144→  {
+   145→    id: "cs-312",
+   146→    deck: 2,
+   147→    topic: "j5",
+   148→    universe: "fraud",
+   149→    title: "The one-and-done files",
+   150→    brief:
+   151→      "From: Risk team, spot-check rotation.\n\nChargeback exposure concentrates in accounts that bought exactly once — a single ticket, no history, nothing to compare against. The orders table has no 'order count' column, and a GROUP BY census can't show me the ticket itself. Sit each account's orders beside their siblings and keep the rows where the second seat never fills: those are the accounts whose only ticket I want listed, with its number and value. Every account with any other order must drop off the list.",
+   152→    ask: "Accounts whose only order is a single ticket, showing that ticket's number and total.",
+   153→    template: `SELECT c.name AS account, {1} AS only_ticket, ROUND(o1.total, 2) AS ticket_total
+   154→FROM orders o1
+   155→{2} JOIN orders o2 ON o2.customer_id = o1.customer_id AND {3}
+   156→JOIN customers c ON c.id = o1.customer_id
+   157→WHERE {4} IS NULL ORDER BY o1.id;`,
+   158→    slots: [
+   159→      {
+   160→        answer: "o1.id",
+   161→        kind: "keyword",
+   162→        label: "the lone ticket",
+   163→        why: "The surviving row belongs to the left seat, so its ticket number is o1.id — 20 and 91. c.id prints the account numbers 12 and 15, which look equally plausible in a spot-check list and are quietly the wrong identifier; o2.id prints NULL on the very rows this query exists to show.",
+   164→      },
+   165→      {
+   166→        answer: "LEFT",
+   167→        kind: "keyword",
+   168→        label: "the ghost-keeping join",
+   169→        why: "A one-and-done account has no second order to match, so its row survives only as a LEFT JOIN ghost. INNER deletes exactly the rows the brief asks to keep — the file comes back 0 rows and reads as 'no exposure'. RIGHT and CROSS preserve the other side, not this one, and empty the list just the same.",
+   170→      },
+   171→      {
+   172→        answer: "o2.id <> o1.id",
+   173→        kind: "keyword",
+   174→        label: "the different-order test",
+   175→        why: "The second seat must hold a DIFFERENT order: o2.id <> o1.id. With = every order pairs with itself, every account looks matched, and no ghost survives (0 rows). > narrows the hunt to 'no later order' — that returns 16 rows, the newest ticket of every account, a completely different census wearing the same clothes.",
+   176→      },
+   177→      {
+   178→        answer: "o2.id",
+   179→        kind: "keyword",
+   180→        label: "the empty-partner probe",
+   181→        why: "After a LEFT self-join, o2.id IS NULL is the signature that no second order exists — the empty chair IS the answer. Testing o1.total or o1.customer_id for NULL finds nothing: those columns are never empty on a real order, so the file silently reports zero accounts and the spot-check ships clean.",
+   182→      },
+   183→    ],
+   184→    distractors: ["INNER", "CROSS", "RIGHT", "c.id", "o1.total", "o1.customer_id"],
+   185→    walkthrough:
+   186→      "Two of sixteen accounts ever ordered just once, and this query is the only honest way to name them: the LEFT self-join offers every order a sibling on the same account (o2.customer_id = o1.customer_id AND o2.id <> o1.id), and the ones left holding NULL — o2.id IS NULL — are precisely the accounts with no second ticket. Liam O'Brien, account 12, single ticket 20, shipped, 705.39; Olivia Brown, account 15, single ticket 91, delivered, 444.80. Everything else in the file has company: 14 accounts placed two or more orders. The failure modes are each instructive — INNER returns zero rows because an inner join cannot keep unmatched rows, and unmatched is the entire answer; the guard flipped to o2.id > o1.id silently becomes a 'latest ticket per account' census (16 rows, one per account) instead of a singles list; and probing the wrong column for NULL (o1.total, c.id) empties the file without an error. The pairing lesson underneath: <> on the guard is what turns 'matched to something' into 'matched to a different order' — the one word separating a singles list from a per-account census.",
+   187→  },
+   188→  {
+   189→    id: "cs-313",
+   190→    deck: 2,
+   191→    topic: "j5",
+   192→    universe: "refund-audit",
+   193→    title: "The tickets the desk paid twice",
+   194→    brief:
+   195→      "From: Refund desk supervisor. Re: double-claim review.\n\nA ticket should attract one refund claim, but the quarter's ledger has tickets with two claims on them and I need the pair list for the review: both claim amounts side by side, the money the desk paid out on the pair, and the ticket total so the reviewer can see the claims against the ticket at a glance. Pair the claims that share a ticket, lower claim id left, one row per ticket — and order by ticket so the review walks the ledger in sequence.",
+   196→    ask: "Tickets carrying two refund claims, with both claim amounts, the pair payout and the ticket total.",
+   197→    template: `SELECT o.id AS ticket, c.name AS buyer, {1} AS claim_one, r2.amount AS claim_two,
+   198→       ROUND({2}, 2) AS pair_paid, o.total
+   199→FROM refunds r1 JOIN refunds r2 ON {3} = r2.order_id AND r1.id < r2.id
+   200→JOIN orders o ON o.id = r1.order_id
+   201→JOIN customers c ON c.id = o.customer_id
+   202→ORDER BY o.id;`,
+   203→    slots: [
+   204→      {
+   205→        answer: "r1.amount",
+   206→        kind: "keyword",
+   207→        label: "the first claim",
+   208→        why: "The lower claim id sits in r1, so claim_one is r1.amount — 324.90, 49.48, 58.39. r2.amount would print the SECOND claim in the first column and duplicate it into claim_two; o.total prints the ticket total as if it were a claim, making ticket 6 read 752.96 twice.",
+   209→      },
+   210→      {
+   211→        answer: "r1.amount + r2.amount",
+   212→        kind: "keyword",
+   213→        label: "the pair payout",
+   214→        why: "The desk paid both claims, so the pair payout is r1.amount + r2.amount: 401.62, 61.52, 74.22. o.total makes pair_paid a copy of the ticket — 752.96 beside 752.96 — and r2.amount - r1.amount computes the gap between claims (-248.18 on ticket 6), a delta wearing a payout's name. r1.id + r2.id adds claim row numbers: 5, 21, 39.",
+   215→      },
+   216→      {
+   217→        answer: "r1.order_id",
+   218→        kind: "keyword",
+   219→        label: "the shared ticket key",
+   220→        why: "Two claims pair when they point at the same ticket: r1.order_id = r2.order_id. r2.order_id = r2.order_id compares the column with itself — always true — and pairs every two claims in the book, 300 rows; r1.id = r2.order_id crosses claim numbers into ticket numbers and matches nothing on this ledger.",
+   221→      },
+   222→    ],
+   223→    distractors: ["r2.order_id", "r1.id", "r2.amount", "o.total", "r1.id + r2.id", "r2.amount - r1.amount"],
+   224→    walkthrough:
+   225→      "Twenty-five refund claims cover 22 tickets — nineteen tickets carry one claim, three carry two, and the self-join names those three. r1 and r2 are two copies of refunds paired on the shared ticket key with the strict guard r1.id < r2.id (each pair once, lower claim left, and the operator ledger agrees: 3 pairs strict, 6 with mirrors, 28 with self-pairings). Ticket 6, Bruno Silva: claims 324.90 and 76.72, both damaged, both signed by Marcus Hale — pair payout 401.62 against a 752.96 ticket. Ticket 55, Alice Chen: 49.48 late_delivery and 12.04 damaged through Ingrid Larsen — 61.52 against 113.66. Ticket 86, Alice Chen again: 58.39 damaged and 15.83 wrong_item through Marcus Hale — 74.22 against 116.28. No pair payout reaches its ticket total, so nothing was fully refunded twice, but Alice's two double-claimed tickets make her the review's first interview. The reviewer's margin notes: the two claims share a reason only on ticket 6 (same_reason 1 of 3), all three pairs were processed by one person each — the same-processor count is 3 of 3 — and no pair ever paid identical amounts, so the '=' claim-amount test would find nothing. The tautology trap: writing r2.order_id = r2.order_id pairs all 25 claims with each other — 300 rows of fiction that runs without a whisper.",
+   226→  },
+   227→  {
+   228→    id: "cs-314",
+   229→    deck: 2,
+   230→    topic: "j5",
+   231→    universe: "supplier",
+   232→    title: "Houses that ship two of our SKUs",
+   233→    brief:
+   234→      "From: Sourcing review. Re: supplier concentration on the catalog.\n\nBefore the next sourcing round I want the supplier-mate panel: every pair of our products that come from the same house, listed once with the lower product id on the left, both list prices shown, and the cheaper-to-dearer order so the biggest positive spread leads the panel. The spread column is what the review sorts on — a house whose two SKUs sit far apart in price tells a different story than one shipping near-twins. Both products' names and the house on every row, please.",
+   235→    ask: "Each same-supplier product pair once, both prices shown, ordered by the price spread from widest to narrowest.",
+   236→    template: `SELECT s.name AS house, p1.name AS first_item, {1} AS first_price,
+   237→       p2.name AS second_item, p2.price AS second_price
+   238→FROM products p1 JOIN products p2 ON {2} = p2.supplier_id AND p1.id < p2.id
+   239→JOIN suppliers s ON s.id = p1.supplier_id
+   240→ORDER BY {3} DESC;`,
+   241→    slots: [
+   242→      {
+   243→        answer: "p1.price",
+   244→        kind: "keyword",
+   245→        label: "the left seat's price",
+   246→        why: "The lower product id sits in p1, so first_price is p1.price — 89.99, 129, 14.99 down the panel. p2.price would print the RIGHT seat's price in the first column (199.99, 199.99, 65) and the panel reads as if the dearer item came first; p1.price - p2.price flips every spread negative before the sort ever runs.",
+   247→      },
+   248→      {
+   249→        answer: "p1.supplier_id",
+   250→        kind: "keyword",
+   251→        label: "the shared-house key",
+   252→        why: "Two products share a house when both point at it: p1.supplier_id = p2.supplier_id. p1.id = p2.supplier_id crosses product numbers into supplier numbers — 10 fabricated pairs on this catalog; p2.id = p2.supplier_id compares a row to its own foreign key and builds 15 rows of noise; p1.category is text, not a key into suppliers.",
+   253→      },
+   254→      {
+   255→        answer: "p2.price - p1.price",
+   256→        kind: "keyword",
+   257→        label: "the spread the panel sorts on",
+   258→        why: "Spread is dearer minus cheaper — p2.price - p1.price, positive when the right seat costs more, and DESC puts the widest spread first. p1.price - p2.price reverses the sign and the board: the Headset/Yoga pair at -117.99 would lead a panel that should open at +110. p1.id sorts by row number and buries the story in catalog order.",
+   259→      },
+   260→    ],
+   261→    distractors: ["p2.price", "p1.id", "p2.id", "p1.category", "p1.price - p2.price", "p2.id < p1.id"],
+   262→    walkthrough:
+   263→      "Four houses ship three of our SKUs and two ship two, so the pairing join builds 14 supplier-mate pairs — 14 with the strict guard, 28 with mirrors under <>, 30 with self-pairings under <=. The panel as the review will read it, spread first: Nordic Gadgets AB, Mechanical Keyboard K1 at 89.99 beside Smart Watch S at 199.99 — a 110 spread on one house's shelves; Nordic again, 4K Webcam Pro 129 beside the same Smart Watch S, 70.99; Pacific Textiles, HDMI 2.1 Cable 2m at 14.99 beside Cycling Jersey Pro at 65, 50.01; then the narrowing middle — Nordic's K1/Webcam pair at 39.01, Andes Naturals' Speaker Mini/Fitness Band at 19.01, Pacific's Hub/Jersey at 16, Shenzhen Electro's Mouse/Ring Light at 5.49 — and finally the inverted pairs where the left seat is the dearer one: Midwest's Laptop Stand over Yoga Mat at -10.5, Shenzhen's Mouse and Ring Light over Running Socks, Pacific's Hub over HDMI at -34.01, Alpine Audio's Studio Desktop Mic 119 over Desk Mat Extended 24.99 at -94.01, and Midwest's Noise-Canceling Headset 149.99 over Yoga Mat at -117.99 at the foot. One structural fact for the review: not one of the 14 pairs shares a category — every house straddles shelves, so supplier concentration never shows up in a per-category view. And the id-space trap that fits this batch: p1.id = p2.supplier_id looks like a pairing and returns 10 lucky coincidences, none of them a shared house.",
+   264→  },
+   265→  {
+   266→    id: "cs-315",
+   267→    deck: 2,
+   268→    topic: "j5",
+   269→    universe: "people-ops",
+   270→    title: "Every rep and the boss they answer to",
+   271→    brief:
+   272→      "From: Support org lead. Re: frontline roster for the coverage review.\n\nFor the coverage review I need the reporting line printed as a roster: every frontline rep with the person they directly answer to, the manager's role shown beside the rep's so the review can see which tier each pair sits in. The org table holds managers, leads and reps in one list — the reporting link is each person's manager reference — and the roster must show only the reps, one row per rep, ordered so each manager's pair of reports reads together.",
+   273→    ask: "Each frontline rep paired with their direct manager, both roles shown, ordered by manager then rep.",
+   274→    template: `SELECT {1} AS manager, m.role AS manager_role, e.name AS report, e.role AS report_role
+   275→FROM employees e JOIN employees m ON {2} = m.id
+   276→WHERE e.role = {3} ORDER BY m.id, e.id;`,
+   277→    slots: [
+   278→      {
+   279→        answer: "m.name",
+   280→        kind: "keyword",
+   281→        label: "the manager's name",
+   282→        why: "The manager lives in the m alias, so the roster prints m.name — Daniel, Petra, Marcus twice, Aiko. e.name re-prints each rep as their own boss, and m.id prints row numbers where names belong; both run clean and both produce a roster nobody can call by name.",
+   283→      },
+   284→      {
+   285→        answer: "e.manager_id",
+   286→        kind: "keyword",
+   287→        label: "the org-chart key",
+   288→        why: "Reports point UP: e.manager_id = m.id pairs each person with the row they actually answer to. e.id = m.id makes everyone their own manager — five self-boss rows wearing perfectly plausible names; m.id = m.id matches everyone to everyone (50 rows after the rep filter); m.manager_id = m.id asks 'is my boss me?' and is true for nobody — 0 rows.",
+   289→      },
+   290→      {
+   291→        answer: "'rep'",
+   292→        kind: "keyword",
+   293→        label: "the frontline filter",
+   294→        why: "The roster wants frontline reps: e.role = 'rep', quoted — it's a value. 'manager' returns 0 rows because the three managers report to nobody and the inner join has no row for them; 'lead' returns the two lead links instead — Sofia Marin over Marcus Hale, Daniel Okoye over Aiko Yamada. Unquoted rep hunts for a column and errors.",
+   295→      },
+   296→    ],
+   297→    distractors: ["e.id", "m.id", "m.manager_id", "'lead'", "'manager'", "e.name"],
+   298→    walkthrough:
+   299→      "The org table is ten people in three tiers — three managers with no manager of their own, two leads, five reps — and the self-join reads it as seven reporting links: e is the report side, m the manager side, and the pairing e.manager_id = m.id is the whole join. Filtered to the frontline, five rows come back: Daniel Okoye over Tomas Ruiz, Petra Novak over Carla Dominguez, Marcus Hale over both Elena Petrova and Ingrid Larsen (the only manager with two reps on the roster, which is why his name prints twice), and Aiko Yamada over Ravi Menon. The two links the filter cuts are the leads' own reporting lines — Sofia Marin over Marcus Hale and Daniel Okoye over Aiko Yamada — visible by running the same query with 'lead'. The near-misses are the org-chart classics: e.id = m.id is the self-boss join, ten people each reporting to themselves, and after the rep filter it still returns five rows whose names all look right; m.manager_id = m.id is true for nobody and empties the roster; and the manager tier itself can only be seen by relaxing to a LEFT join and catching the three NULL-manager ghosts. One table, two aliases, one upward pointer — the org chart is just a self-join with job titles.",
+   300→  },
+   301→  {
+   302→    id: "cs-316",
+   303→    deck: 2,
+   304→    topic: "j5",
+   305→    universe: "receivables",
+   306→    title: "Paired exposure on open tickets",
+   307→    brief:
+   308→      "From: Collections lead. Re: the open-ticket exposure list.\n\nChasing a buyer with one open ticket is routine; a buyer with TWO open tickets is where the exposure compounds, and that's the list I want. Sit every buyer's tickets beside their siblings, keep the pairs where both tickets are still pending, and show the combined open amount — biggest combined exposure first, because we call down the list. Lower ticket id takes the older column so each pair prints once, older first.",
+   309→    ask: "Each pair of pending tickets on one account, with both ticket numbers and the combined open amount, biggest first.",
+   310→    template: `SELECT c.name AS account, o1.id AS older_ticket, o2.id AS newer_ticket,
+   311→       ROUND({1}, 2) AS open_exposure
+   312→FROM orders o1 JOIN orders o2 ON o1.customer_id = o2.customer_id AND {2}
+   313→JOIN customers c ON c.id = o1.customer_id
+   314→WHERE o1.status = {3} AND o2.status = o1.status
+   315→ORDER BY open_exposure DESC;`,
+   316→    slots: [
+   317→      {
+   318→        answer: "o1.total + o2.total",
+   319→        kind: "keyword",
+   320→        label: "the combined open amount",
+   321→        why: "Exposure is BOTH open tickets: o1.total + o2.total — 1,311.13 at the top of the call list. o1.total alone prices only the older ticket and understates every pair; COUNT(*) is a row tally forced into a money column and errors outright outside a GROUP BY.",
+   322→      },
+   323→      {
+   324→        answer: "o1.id < o2.id",
+   325→        kind: "keyword",
+   326→        label: "the pair guard",
+   327→        why: "The strict guard keeps each pair once with the older ticket left. <= admits the 14 self-pairings — a ticket paired with itself, 22 rows; <> prints both directions of every pair, 24 rows; o2.id < o1.id keeps the same 8 pairs but swaps the columns, so the 'older' ticket is the newer one all the way down the list.",
+   328→      },
+   329→      {
+   330→        answer: "'pending'",
+   331→        kind: "keyword",
+   332→        label: "the open-status literal",
+   333→        why: "Both seats must be open: o1.status = 'pending' and the second seat inherits it through o2.status = o1.status. The literal needs quotes — unquoted pending hunts for a column and errors. 'shipped' turns the same query into a 62-pair in-transit census and 'delivered' into a 138-pair history lesson; neither is exposure.",
+   334→      },
+   335→    ],
+   336→    distractors: ["o1.id <= o2.id", "o1.id <> o2.id", "o2.id < o1.id", "'shipped'", "'delivered'", "COUNT(*)"],
+   337→    walkthrough:
+   338→      "Fourteen tickets are pending, spread over four buyers, and the pairing math tells you what the list must hold before you run it: Emma Wilson and Alice Chen each hold 3 pending tickets (3 pairs each), Chloe Dubois and Maya Patel hold 2 (1 pair each) — 8 pairs, and 8 is what comes back. The board, biggest exposure first: Emma's tickets 5 and 97, 725.34 plus 585.79 — 1,311.13 open; Chloe's 25 and 43, 364.71 plus 945.21 — 1,309.92, half a dollar behind; then Emma's 5-and-90 pairing at 885.64, Emma's 90-and-97 at 746.09, Alice's three pairs at 576.80, 529.52 and 471.34, and Maya's 12-and-47 at 455.20. Emma appears three times because three pending tickets make three pairs — pair-count ≠ buyer-count, the same lesson the engagement board teaches with orders. The status spread on same-status pairs bookends the list: delivered pairs number 138 and shipped 62 — history and pipeline — while cancelled pairs number just 4; pending's 8 is the only list that still costs money. And the guard battle lands here too: <= inflates the list with 14 tickets answering themselves, <> doubles every pair to 16 mirrors, and the inverted guard prints every exposure with its tickets back-to-front — same money, unreadable list.",
+   339→  },
+   340→];
+   341→

@@ -1,0 +1,619 @@
+     1→     1→"use client";
+     2→     2→
+     3→     3→// Learn shell — sidebar (module, rank, streak, lessons) + lesson content.
+     4→     4→// A watcher effect converts progress into badges and level-up celebrations.
+     5→     5→
+     6→     6→import { useEffect, useMemo, useRef, useState } from "react";
+     7→     7→import { AnimatePresence, motion } from "framer-motion";
+     8→     8→import {
+     9→     9→  ArrowRight,
+    10→    10→  Check,
+    11→    11→  ChevronDown,
+    12→    12→  ChevronsDownUp,
+    13→    13→  ChevronsUpDown,
+    14→    14→  Dumbbell,
+    15→    15→  FileStack,
+    16→    16→  FlaskConical,
+    17→    17→  Flame,
+    18→    18→  GraduationCap,
+    19→    19→  LayoutDashboard,
+    20→    20→  RotateCcw,
+    21→    21→  Table2,
+    22→    22→} from "lucide-react";
+    23→    23→import { LESSONS, MODULES } from "@/lib/curriculum/lessons";
+    24→    24→import { useProgress } from "@/lib/curriculum/progress";
+    25→    25→import { BADGES, currentStreak, levelFor, totalXp } from "@/lib/curriculum/gamification";
+    26→    26→import { cn } from "@/lib/utils";
+    27→    27→import { LessonView } from "./lesson-view";
+    28→    28→import { DataExplorer } from "./data-explorer";
+    29→    29→import { MixedQuiz } from "./mixed-quiz";
+    30→    30→import { CaseFiles } from "./case-files";
+    31→    31→import { DrillYard } from "./drill-yard";
+    32→    32→import { ActivityStrip, MasteryGrid } from "./progress-cards";
+    33→    33→import { CelebrationHost, celebrate } from "./celebrate";
+    34→    34→
+    35→    35→type View =
+    36→    36→  | { kind: "overview" }
+    37→    37→  | { kind: "lesson"; id: string }
+    38→    38→  | { kind: "explorer" }
+    39→    39→  | { kind: "mixed" }
+    40→    40→  | { kind: "cases" }
+    41→    41→  | { kind: "drills" };
+    42→    42→
+    43→    43→// ---- Collapsible module state (persisted) -------------------------------
+    44→    44→
+    45→    45→const MODULES_OPEN_KEY = "seeql.modules-open";
+    46→    46→
+    47→    47→function loadOpenModules(): number[] | null {
+    48→    48→  try {
+    49→    49→    const raw = localStorage.getItem(MODULES_OPEN_KEY);
+    50→    50→    if (!raw) return null;
+    51→    51→    const arr = JSON.parse(raw);
+    52→    52→    return Array.isArray(arr) ? arr.filter((n) => typeof n === "number") : null;
+    53→    53→  } catch {
+    54→    54→    return null;
+    55→    55→  }
+    56→    56→}
+    57→    57→
+    58→    58→/** Smooth height-reveal wrapper for module lesson lists. */
+    59→    59→function Collapse({ open, children }: { open: boolean; children: React.ReactNode }) {
+    60→    60→  return (
+    61→    61→    <AnimatePresence initial={false}>
+    62→    62→      {open && (
+    63→    63→        <motion.div
+    64→    64→          key="body"
+    65→    65→          initial={{ height: 0, opacity: 0 }}
+    66→    66→          animate={{ height: "auto", opacity: 1 }}
+    67→    67→          exit={{ height: 0, opacity: 0 }}
+    68→    68→          transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+    69→    69→          className="overflow-hidden"
+    70→    70→        >
+    71→    71→          {children}
+    72→    72→        </motion.div>
+    73→    73→      )}
+    74→    74→    </AnimatePresence>
+    75→    75→  );
+    76→    76→}
+    77→    77→
+    78→    78→function moduleOf(lessonId: string) {
+    79→    79→  return MODULES.find((m) => m.lessons.some((l) => l.id === lessonId));
+    80→    80→}
+    81→    81→
+    82→    82→function useBadgeWatcher() {
+    83→    83→  const xpEvents = useProgress((s) => s.xpEvents);
+    84→    84→  const mcqAttempts = useProgress((s) => s.mcqAttempts);
+    85→    85→  const badges = useProgress((s) => s.badges);
+    86→    86→  const xpByDay = useProgress((s) => s.xpByDay);
+    87→    87→  const dailyGoal = useProgress((s) => s.dailyGoal);
+    88→    88→  const prevLevel = useRef(-1);
+    89→    89→  const ready = useRef(false);
+    90→    90→
+    91→    91→  const xp = useMemo(() => totalXp({ xpEvents }), [xpEvents]);
+    92→    92→  const level = levelFor(xp);
+    93→    93→
+    94→    94→  const ctx = useMemo(() => {
+    95→    95→    const problemsSolved = Object.keys(xpEvents).filter((k) => k.startsWith("solve:")).length;
+    96→    96→    const mcqsCorrect = Object.values(mcqAttempts).filter((a) => a.correct).length;
+    97→    97→    const lessonsDone = Object.keys(xpEvents).filter((k) => k.startsWith("lesson:")).length;
+    98→    98→    const perfectQuizzes = LESSONS.filter((l) =>
+    99→    99→      l.mcqs.every((m) => mcqAttempts[m.id]?.firstTry),
+   100→   100→    ).length;
+   101→   101→    return { lessonsDone, problemsSolved, mcqsCorrect, perfectQuizzes };
+   102→   102→  }, [xpEvents, mcqAttempts]);
+   103→   103→
+   104→   104→  const streak = useMemo(() => currentStreak({ xpByDay, dailyGoal }), [xpByDay, dailyGoal]);
+   105→   105→
+   106→   106→  useEffect(() => {
+   107→   107→    if (!ready.current) {
+   108→   108→      ready.current = true;
+   109→   109→      prevLevel.current = level.index;
+   110→   110→      return;
+   111→   111→    }
+   112→   112→    const store = useProgress.getState();
+   113→   113→    for (const b of BADGES) {
+   114→   114→      if (store.badges[b.id] === undefined && b.test(ctx, xp, streak)) {
+   115→   115→        if (store.unlockBadge(b.id)) {
+   116→   116→          celebrate({ kind: "badge", title: `Badge · ${b.title}`, sub: b.desc });
+   117→   117→        }
+   118→   118→      }
+   119→   119→    }
+   120→   120→    if (level.index > prevLevel.current) {
+   121→   121→      celebrate({ kind: "level", title: `Level up — ${level.title}`, sub: `Rank ${level.index + 1} of 6` });
+   122→   122→      prevLevel.current = level.index;
+   123→   123→    }
+   124→   124→  }, [ctx, xp, streak, level]);
+   125→   125→
+   126→   126→  return { xp, level, streak, ctx };
+   127→   127→}
+   128→   128→
+   129→   129→function RankBlock({ xp, level, streak }: { xp: number; level: ReturnType<typeof levelFor>; streak: number }) {
+   130→   130→  return (
+   131→   131→    <div className="sheen rounded-lg border border-zinc-800 bg-zinc-900/50 p-3.5">
+   132→   132→      <div className="flex items-center justify-between">
+   133→   133→        <span className="font-display text-sm font-semibold text-zinc-100">{level.title}</span>
+   134→   134→        <span className="tnum font-mono text-xs text-emerald-300">{xp.toLocaleString()} XP</span>
+   135→   135→      </div>
+   136→   136→      <div className="bar-shimmer mt-2.5 h-1.5 overflow-hidden rounded-full bg-zinc-800">
+   137→   137→        <div
+   138→   138→          className="h-full rounded-full bg-emerald-400 transition-[width] duration-700 ease-out"
+   139→   139→          style={{ width: `${Math.round(level.pct * 100)}%` }}
+   140→   140→        />
+   141→   141→      </div>
+   142→   142→      <p className="mt-1.5 text-[11px] text-zinc-500">
+   143→   143→        {level.next === null ? "Top rank reached — Query Wizard" : `${(level.next - xp).toLocaleString()} XP to ${titleAfter(level.index)}`}
+   144→   144→      </p>
+   145→   145→      <div className="mt-2.5 flex items-center gap-1.5 border-t border-zinc-800 pt-2.5 text-[11px] text-zinc-400">
+   146→   146→        <Flame className={cn("h-3.5 w-3.5", streak > 0 ? "flame-live text-amber-400" : "text-zinc-600")} />
+   147→   147→        {streak > 0 ? `${streak}-day streak — keep it alive` : "Hit your daily goal to start a streak"}
+   148→   148→      </div>
+   149→   149→    </div>
+   150→   150→  );
+   151→   151→}
+   152→   152→
+   153→   153→/** Overview card: module summary + expandable lesson list. */
+   154→   154→function OverviewModuleCard({
+   155→   155→  module,
+   156→   156→  open,
+   157→   157→  onToggle,
+   158→   158→  onOpenLesson,
+   159→   159→  xpEvents,
+   160→   160→}: {
+   161→   161→  module: (typeof MODULES)[number];
+   162→   162→  open: boolean;
+   163→   163→  onToggle: () => void;
+   164→   164→  onOpenLesson: (id: string) => void;
+   165→   165→  xpEvents: Record<string, unknown>;
+   166→   166→}) {
+   167→   167→  const mDone = module.lessons.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
+   168→   168→  const nextInModule = module.lessons.find((l) => xpEvents[`lesson:${l.id}`] === undefined);
+   169→   169→  const complete = mDone === module.lessons.length;
+   170→   170→
+   171→   171→  return (
+   172→   172→    <div className="sheen card-hover overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950">
+   173→   173→      <button onClick={onToggle} aria-expanded={open} className="block w-full p-4 text-left">
+   174→   174→        <div className="flex items-start justify-between gap-3">
+   175→   175→          <div className="min-w-0">
+   176→   176→            <p className="font-mono text-[10px] uppercase tracking-wider text-zinc-500">
+   177→   177→              Module {module.num} · {module.level}
+   178→   178→            </p>
+   179→   179→            <h3 className="font-display mt-1.5 text-sm font-semibold text-zinc-100">{module.title}</h3>
+   180→   180→          </div>
+   181→   181→          <ChevronDown
+   182→   182→            className={cn(
+   183→   183→              "mt-0.5 h-4 w-4 shrink-0 text-zinc-600 transition-transform duration-200",
+   184→   184→              open && "rotate-180 text-zinc-400",
+   185→   185→            )}
+   186→   186→          />
+   187→   187→        </div>
+   188→   188→        <p className="mt-2 text-xs leading-relaxed text-zinc-400">{module.blurb}</p>
+   189→   189→        <div className="mt-3 flex items-center gap-2.5">
+   190→   190→          <div className="h-1 flex-1 overflow-hidden rounded-full bg-zinc-800">
+   191→   191→            <div
+   192→   192→              className="h-full rounded-full bg-emerald-400 transition-[width] duration-700 ease-out"
+   193→   193→              style={{ width: `${(mDone / module.lessons.length) * 100}%` }}
+   194→   194→            />
+   195→   195→          </div>
+   196→   196→          <span className="tnum shrink-0 font-mono text-[10px] text-zinc-500">
+   197→   197→            {mDone}/{module.lessons.length}
+   198→   198→          </span>
+   199→   199→        </div>
+   200→   200→        <p className="mt-1.5 text-[11px] text-zinc-500">
+   201→   201→          {complete ? "Module complete" : nextInModule ? `Up next · lesson ${nextInModule.num} — ${nextInModule.title}` : ""}
+   202→   202→          {" · "}
+   203→   203→          {module.lessons.reduce((a, l) => a + l.problems.length, 0)} graded queries
+   204→   204→        </p>
+   205→   205→      </button>
+   206→   206→
+   207→   207→      <Collapse open={open}>
+   208→   208→        <div className="border-t border-zinc-800/60 px-3 pb-3 pt-2">
+   209→   209→          <div className="flex flex-col gap-0.5">
+   210→   210→            {module.lessons.map((l) => {
+   211→   211→              const done = xpEvents[`lesson:${l.id}`] !== undefined;
+   212→   212→              return (
+   213→   213→                <button
+   214→   214→                  key={l.id}
+   215→   215→                  onClick={() => onOpenLesson(l.id)}
+   216→   216→                  className="group/lesson flex items-center gap-2.5 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-zinc-900"
+   217→   217→                >
+   218→   218→                  <span
+   219→   219→                    className={cn(
+   220→   220→                      "flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full text-[9px] font-medium",
+   221→   221→                      done ? "bg-emerald-400 text-[#052e1c]" : "border border-zinc-700 text-zinc-500",
+   222→   222→                    )}
+   223→   223→                  >
+   224→   224→                    {done ? <Check className="h-2.5 w-2.5" /> : l.num}
+   225→   225→                  </span>
+   226→   226→                  <span className={cn("min-w-0 flex-1 truncate text-xs", done ? "text-zinc-500" : "text-zinc-300")}>
+   227→   227→                    {l.title}
+   228→   228→                  </span>
+   229→   229→                  <span className="tnum shrink-0 font-mono text-[10px] text-zinc-600">{l.minutes}m</span>
+   230→   230→                  <ArrowRight className="h-3 w-3 shrink-0 text-zinc-700 opacity-0 transition-opacity group-hover/lesson:opacity-100" />
+   231→   231→                </button>
+   232→   232→              );
+   233→   233→            })}
+   234→   234→          </div>
+   235→   235→          {nextInModule && (
+   236→   236→            <button
+   237→   237→              onClick={() => onOpenLesson(nextInModule.id)}
+   238→   238→              className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-md border border-emerald-400/30 bg-emerald-400/[0.06] px-3 py-1.5 text-[11px] font-medium text-emerald-300 transition-colors hover:bg-emerald-400/[0.12]"
+   239→   239→            >
+   240→   240→              {mDone > 0 ? "Continue module" : "Start module"} — lesson {nextInModule.num} →
+   241→   241→            </button>
+   242→   242→          )}
+   243→   243→        </div>
+   244→   244→      </Collapse>
+   245→   245→    </div>
+   246→   246→  );
+   247→   247→}
+   248→   248→
+   249→   249→function titleAfter(index: number): string {
+   250→   250→  const ladder = ["Query Apprentice", "Analyst I", "Analyst II", "Senior Analyst", "Query Wizard"];
+   251→   251→  return ladder[Math.min(index, ladder.length - 1)];
+   252→   252→}
+   253→   253→
+   254→   254→export function LearnApp() {
+   255→   255→  const [view, setView] = useState<View>({ kind: "overview" });
+   256→   256→  const { xp, level, streak, ctx } = useBadgeWatcher();
+   257→   257→  const xpEvents = useProgress((s) => s.xpEvents);
+   258→   258→  const badgesMap = useProgress((s) => s.badges);
+   259→   259→  const resetAll = useProgress((s) => s.resetAll);
+   260→   260→  const [confirmReset, setConfirmReset] = useState(false);
+   261→   261→
+   262→   262→  // Collapsible modules — persisted; defaults to the "continue" module.
+   263→   263→  const nextLesson = LESSONS.find((l) => xpEvents[`lesson:${l.id}`] === undefined) ?? LESSONS[LESSONS.length - 1];
+   264→   264→  const continueModuleNum = moduleOf(nextLesson.id)?.num ?? 1;
+   265→   265→  const [openModules, setOpenModules] = useState<Set<number>>(() => {
+   266→   266→    const saved = loadOpenModules();
+   267→   267→    return new Set(saved ?? [continueModuleNum]);
+   268→   268→  });
+   269→   269→  const [openOverview, setOpenOverview] = useState<Set<number>>(() => new Set([continueModuleNum]));
+   270→   270→
+   271→   271→  useEffect(() => {
+   272→   272→    try {
+   273→   273→      localStorage.setItem(MODULES_OPEN_KEY, JSON.stringify([...openModules]));
+   274→   274→    } catch {
+   275→   275→      /* private mode — ignore */
+   276→   276→    }
+   277→   277→  }, [openModules]);
+   278→   278→
+   279→   279→  const toggleModule = (num: number) =>
+   280→   280→    setOpenModules((s) => {
+   281→   281→      const n = new Set(s);
+   282→   282→      if (n.has(num)) n.delete(num);
+   283→   283→      else n.add(num);
+   284→   284→      return n;
+   285→   285→    });
+   286→   286→  const toggleOverviewModule = (num: number) =>
+   287→   287→    setOpenOverview((s) => {
+   288→   288→      const n = new Set(s);
+   289→   289→      if (n.has(num)) n.delete(num);
+   290→   290→      else n.add(num);
+   291→   291→      return n;
+   292→   292→    });
+   293→   293→
+   294→   294→  const openLesson = (id: string) => {
+   295→   295→    const mod = moduleOf(id);
+   296→   296→    if (mod) {
+   297→   297→      // Auto-reveal the module that owns the lesson being opened.
+   298→   298→      setOpenModules((s) => (s.has(mod.num) ? s : new Set(s).add(mod.num)));
+   299→   299→    }
+   300→   300→    setView({ kind: "lesson", id });
+   301→   301→  };
+   302→   302→
+   303→   303→  const lesson = view.kind === "lesson" ? LESSONS.find((l) => l.id === view.id) ?? null : null;
+   304→   304→  const doneCount = LESSONS.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
+   305→   305→  const totalProblems = LESSONS.reduce((a, l) => a + l.problems.length, 0);
+   306→   306→  const totalMcqs = LESSONS.reduce((a, l) => a + l.mcqs.length, 0);
+   307→   307→  const allOpen = openModules.size === MODULES.length;
+   308→   308→
+   309→   309→  return (
+   310→   310→    <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-6 lg:flex-row">
+   311→   311→      <CelebrationHost />
+   312→   312→
+   313→   313→      {/* sidebar */}
+   314→   314→      {/* Definite height (not max-height): max-h-full on the inner panel is a
+   315→   315→          percentage, which only resolves against a definite parent height —
+   316→   316→          with max-height alone the panel overflows and buries the Toolbox. */}
+   317→   317→      <aside className="w-full shrink-0 lg:sticky lg:top-[76px] lg:h-[calc(100vh-96px)] lg:w-[300px] lg:self-start">
+   318→   318→        <div className="sheen flex max-h-full flex-col overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950">
+   319→   319→          <div className="shrink-0 border-b border-zinc-800 p-4">
+   320→   320→            <div className="flex items-center justify-between">
+   321→   321→              <div className="flex items-center gap-2">
+   322→   322→                <GraduationCap className="h-4 w-4 text-emerald-400" />
+   323→   323→                <h2 className="font-display text-sm font-semibold text-zinc-100">SeeQL Curriculum</h2>
+   324→   324→              </div>
+   325→   325→              <div className="flex items-center gap-0.5">
+   326→   326→                <button
+   327→   327→                  onClick={() => setOpenModules(new Set(MODULES.map((m) => m.num)))}
+   328→   328→                  disabled={allOpen}
+   329→   329→                  title="Expand all modules"
+   330→   330→                  className="rounded-md p-1.5 text-zinc-500 transition-colors hover:bg-zinc-900 hover:text-zinc-300 disabled:cursor-not-allowed disabled:opacity-30"
+   331→   331→                >
+   332→   332→                  <ChevronsUpDown className="h-3.5 w-3.5" />
+   333→   333→                </button>
+   334→   334→                <button
+   335→   335→                  onClick={() => setOpenModules(new Set())}
+   336→   336→                  disabled={!allOpen}
+   337→   337→                  title="Collapse all modules"
+   338→   338→                  className="rounded-md p-1.5 text-zinc-500 transition-colors hover:bg-zinc-900 hover:text-zinc-300 disabled:cursor-not-allowed disabled:opacity-30"
+   339→   339→                >
+   340→   340→                  <ChevronsDownUp className="h-3.5 w-3.5" />
+   341→   341→                </button>
+   342→   342→              </div>
+   343→   343→            </div>
+   344→   344→            <p className="mt-1 text-[11px] text-zinc-500">
+   345→   345→              {MODULES.length} modules · {LESSONS.length} lessons · {totalProblems} graded queries · {totalMcqs} quiz questions
+   346→   346→            </p>
+   347→   347→            <div className="bar-shimmer mt-3 h-1.5 overflow-hidden rounded-full bg-zinc-800">
+   348→   348→              <div
+   349→   349→                className="h-full rounded-full bg-emerald-400 transition-[width] duration-700 ease-out"
+   350→   350→                style={{ width: `${(doneCount / LESSONS.length) * 100}%` }}
+   351→   351→              />
+   352→   352→            </div>
+   353→   353→            <p className="mt-1.5 text-[11px] text-zinc-500">{doneCount}/{LESSONS.length} lessons complete</p>
+   354→   354→          </div>
+   355→   355→
+   356→   356→          <div className="min-h-0 flex-1 overflow-y-auto thin-scrollbar">
+   357→   357→            <div className="shrink-0 p-3">
+   358→   358→              <RankBlock xp={xp} level={level} streak={streak} />
+   359→   359→            </div>
+   360→   360→            {MODULES.map((m) => {
+   361→   361→              const mDone = m.lessons.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
+   362→   362→              const open = openModules.has(m.num);
+   363→   363→              const isContinue = m.num === continueModuleNum;
+   364→   364→              const containsActive = view.kind === "lesson" && moduleOf(view.id)?.num === m.num;
+   365→   365→              return (
+   366→   366→                <nav key={m.id} className="border-b border-zinc-800/60 px-3 pb-1.5 pt-2 last:border-b-0">
+   367→   367→                  {/* module header — click to expand/collapse */}
+   368→   368→                  <button
+   369→   369→                    onClick={() => toggleModule(m.num)}
+   370→   370→                    aria-expanded={open}
+   371→   371→                    className="group flex w-full items-center gap-2.5 rounded-md px-1.5 py-2 text-left transition-colors hover:bg-zinc-900"
+   372→   372→                  >
+   373→   373→                    <span
+   374→   374→                      className={cn(
+   375→   375→                        "flex h-6 w-6 shrink-0 items-center justify-center rounded-md border font-mono text-[10px] font-medium transition-colors",
+   376→   376→                        mDone === m.lessons.length
+   377→   377→                          ? "border-emerald-400/50 bg-emerald-400/10 text-emerald-300"
+   378→   378→                          : containsActive
+   379→   379→                            ? "border-emerald-400/40 text-emerald-300"
+   380→   380→                            : isContinue
+   381→   381→                              ? "border-emerald-400/30 text-emerald-300/90"
+   382→   382→                              : "border-zinc-800 text-zinc-500",
+   383→   383→                      )}
+   384→   384→                    >
+   385→   385→                      {mDone === m.lessons.length ? <Check className="h-3 w-3" /> : m.num}
+   386→   386→                    </span>
+   387→   387→                    <span className="min-w-0 flex-1">
+   388→   388→                      <span
+   389→   389→                        className={cn(
+   390→   390→                          "block truncate text-xs font-medium",
+   391→   391→                          containsActive || mDone === m.lessons.length ? "text-zinc-100" : "text-zinc-300 group-hover:text-zinc-100",
+   392→   392→                        )}
+   393→   393→                      >
+   394→   394→                        {m.title}
+   395→   395→                      </span>
+   396→   396→                      <span className="mt-1.5 block h-0.5 overflow-hidden rounded-full bg-zinc-800">
+   397→   397→                        <span
+   398→   398→                          className="block h-full rounded-full bg-emerald-400/80 transition-[width] duration-500 ease-out"
+   399→   399→                          style={{ width: `${(mDone / m.lessons.length) * 100}%` }}
+   400→   400→                        />
+   401→   401→                      </span>
+   402→   402→                    </span>
+   403→   403→                    <span className="tnum shrink-0 font-mono text-[10px] text-zinc-600">
+   404→   404→                      {mDone}/{m.lessons.length}
+   405→   405→                    </span>
+   406→   406→                    <ChevronDown
+   407→   407→                      className={cn(
+   408→   408→                        "h-3.5 w-3.5 shrink-0 text-zinc-600 transition-transform duration-200",
+   409→   409→                        open && "rotate-180 text-zinc-400",
+   410→   410→                      )}
+   411→   411→                    />
+   412→   412→                  </button>
+   413→   413→
+   414→   414→                  {/* lessons — revealed on expand, connected by a tree rail */}
+   415→   415→                  <Collapse open={open}>
+   416→   416→                    <div className="ml-[16px] mt-0.5 flex flex-col gap-0.5 border-l border-zinc-800/70 pl-2 pb-2">
+   417→   417→                      {m.lessons.map((l) => {
+   418→   418→                        const done = xpEvents[`lesson:${l.id}`] !== undefined;
+   419→   419→                        const active = view.kind === "lesson" && view.id === l.id;
+   420→   420→                        return (
+   421→   421→                          <button
+   422→   422→                            key={l.id}
+   423→   423→                            onClick={() => openLesson(l.id)}
+   424→   424→                            className={cn(
+   425→   425→                              "relative flex items-start gap-2.5 rounded-md px-2.5 py-1.5 text-left transition-colors",
+   426→   426→                              active ? "bg-emerald-400/[0.09]" : "hover:bg-zinc-900",
+   427→   427→                            )}
+   428→   428→                          >
+   429→   429→                            {active && <span className="absolute inset-y-1 left-0 w-0.5 rounded-full bg-emerald-400" />}
+   430→   430→                            <span
+   431→   431→                              className={cn(
+   432→   432→                                "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-medium transition-colors",
+   433→   433→                                done
+   434→   434→                                  ? "bg-emerald-400 text-[#052e1c]"
+   435→   435→                                  : active
+   436→   436→                                    ? "border border-emerald-400/60 text-emerald-200"
+   437→   437→                                    : "border border-zinc-700 text-zinc-500",
+   438→   438→                              )}
+   439→   439→                            >
+   440→   440→                              {done ? <Check className="h-2.5 w-2.5" /> : l.num}
+   441→   441→                            </span>
+   442→   442→                            <span className="min-w-0">
+   443→   443→                              <span className={cn("block truncate text-xs font-medium", active ? "text-zinc-50" : done ? "text-zinc-500" : "text-zinc-300")}>
+   444→   444→                                {l.title}
+   445→   445→                              </span>
+   446→   446→                              <span className="block text-[10px] text-zinc-600">{l.minutes} min · {l.problems.length} queries</span>
+   447→   447→                            </span>
+   448→   448→                          </button>
+   449→   449→                        );
+   450→   450→                      })}
+   451→   451→                    </div>
+   452→   452→                  </Collapse>
+   453→   453→                </nav>
+   454→   454→              );
+   455→   455→            })}
+   456→   456→          </div>
+   457→   457→
+   458→   458→          <div className="shrink-0 border-t border-zinc-800/60 p-3">
+   459→   459→            <p className="mb-1.5 px-1 font-mono text-[10px] uppercase tracking-wider text-zinc-500">Toolbox</p>
+   460→   460→            <div className="flex flex-col gap-0.5">
+   461→   461→              <button
+   462→   462→                onClick={() => setView({ kind: "overview" })}
+   463→   463→                className={cn(
+   464→   464→                  "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors",
+   465→   465→                  view.kind === "overview" ? "bg-zinc-800" : "hover:bg-zinc-900",
+   466→   466→                )}
+   467→   467→              >
+   468→   468→                <LayoutDashboard className={cn("h-4 w-4 shrink-0", view.kind === "overview" ? "text-emerald-300" : "text-zinc-500")} />
+   469→   469→                <span className="min-w-0">
+   470→   470→                  <span className={cn("block truncate text-xs font-medium", view.kind === "overview" ? "text-zinc-100" : "text-zinc-300")}>
+   471→   471→                    Course overview
+   472→   472→                  </span>
+   473→   473→                  <span className="block text-[10px] text-zinc-600">progress &amp; badges</span>
+   474→   474→                </span>
+   475→   475→              </button>
+   476→   476→              {[
+   477→   477→                { kind: "explorer" as const, icon: Table2, label: "Data explorer", note: "browse the live tables" },
+   478→   478→                { kind: "drills" as const, icon: Dumbbell, label: "Keyword drills", note: "every keyword, six angles" },
+   479→   479→                { kind: "mixed" as const, icon: FlaskConical, label: "Mixed quiz", note: "10 from the whole course" },
+   480→   480→                { kind: "cases" as const, icon: FileStack, label: "Case files", note: "rebuild real stakeholder queries" },
+   481→   481→              ].map((t) => (
+   482→   482→                <button
+   483→   483→                  key={t.kind}
+   484→   484→                  onClick={() => setView({ kind: t.kind })}
+   485→   485→                  className={cn(
+   486→   486→                    "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors",
+   487→   487→                    view.kind === t.kind ? "bg-zinc-800" : "hover:bg-zinc-900",
+   488→   488→                  )}
+   489→   489→                >
+   490→   490→                  <t.icon className={cn("h-4 w-4 shrink-0", view.kind === t.kind ? "text-emerald-300" : "text-zinc-500")} />
+   491→   491→                  <span className="min-w-0">
+   492→   492→                    <span className={cn("block truncate text-xs font-medium", view.kind === t.kind ? "text-zinc-100" : "text-zinc-300")}>
+   493→   493→                      {t.label}
+   494→   494→                    </span>
+   495→   495→                    <span className="block text-[10px] text-zinc-600">{t.note}</span>
+   496→   496→                  </span>
+   497→   497→                </button>
+   498→   498→              ))}
+   499→   499→            </div>
+   500→   500→          </div>
+   501→   501→
+   502→   502→          <div className="shrink-0 border-t border-zinc-800 p-3">
+   503→   503→            {confirmReset ? (
+   504→   504→              <div className="flex items-center justify-between gap-2 text-[11px]">
+   505→   505→                <span className="text-zinc-400">Erase all progress?</span>
+   506→   506→                <span className="flex gap-1.5">
+   507→   507→                  <button onClick={() => { resetAll(); setConfirmReset(false); }} className="rounded border border-rose-400/50 px-2 py-1 text-rose-300 hover:bg-rose-400/10">Erase</button>
+   508→   508→                  <button onClick={() => setConfirmReset(false)} className="rounded border border-zinc-700 px-2 py-1 text-zinc-400 hover:bg-zinc-900">Keep</button>
+   509→   509→                </span>
+   510→   510→              </div>
+   511→   511→            ) : (
+   512→   512→              <button
+   513→   513→                onClick={() => setConfirmReset(true)}
+   514→   514→                className="flex items-center gap-1.5 text-[11px] text-zinc-600 transition-colors hover:text-zinc-400"
+   515→   515→              >
+   516→   516→                <RotateCcw className="h-3 w-3" /> Reset progress
+   517→   517→              </button>
+   518→   518→            )}
+   519→   519→          </div>
+   520→   520→        </div>
+   521→   521→      </aside>
+   522→   522→
+   523→   523→      {/* content */}
+   524→   524→      <main className="min-w-0 flex-1 pb-16">
+   525→   525→        {lesson ? (
+   526→   526→          <LessonView key={lesson.id} lesson={lesson} />
+   527→   527→        ) : view.kind === "explorer" ? (
+   528→   528→          <DataExplorer />
+   529→   529→        ) : view.kind === "drills" ? (
+   530→   530→          <DrillYard />
+   531→   531→        ) : view.kind === "mixed" ? (
+   532→   532→          <MixedQuiz />
+   533→   533→        ) : view.kind === "cases" ? (
+   534→   534→          <CaseFiles />
+   535→   535→        ) : (
+   536→   536→          <div className="bg-ambient max-w-3xl">
+   537→   537→            <p className="font-mono text-xs text-zinc-500">{MODULES.length} MODULES · BEGINNER → EXPERT</p>
+   538→   538→            <h1 className="font-display mt-2 text-3xl font-semibold tracking-[-0.02em] text-zinc-50">The SeeQL course</h1>
+   539→   539→            <p className="mt-3 text-[15px] leading-7 text-zinc-400">
+   540→   540→              Eight modules, one real storefront database. Read a concept, prove it in a quiz, then solve
+   541→   541→              graded live queries — {totalMcqs} quiz questions and {totalProblems} graded queries in total.
+   542→   542→            </p>
+   543→   543→
+   544→   544→            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+   545→   545→              {MODULES.map((m) => (
+   546→   546→                <OverviewModuleCard
+   547→   547→                  key={m.id}
+   548→   548→                  module={m}
+   549→   549→                  open={openOverview.has(m.num)}
+   550→   550→                  onToggle={() => toggleOverviewModule(m.num)}
+   551→   551→                  onOpenLesson={openLesson}
+   552→   552→                  xpEvents={xpEvents}
+   553→   553→                />
+   554→   554→              ))}
+   555→   555→            </div>
+   556→   556→
+   557→   557→            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+   558→   558→              {[
+   559→   559→                ["Rank", level.title],
+   560→   560→                ["Total XP", xp.toLocaleString()],
+   561→   561→                ["Streak", streak > 0 ? `${streak} days` : "—"],
+   562→   562→                ["Badges", `${Object.keys(badgesMap).length}/${BADGES.length}`],
+   563→   563→              ].map(([k, v]) => (
+   564→   564→                <div key={k} className="sheen rounded-lg border border-zinc-800 bg-zinc-950 px-3.5 py-3">
+   565→   565→                  <p className="text-[11px] uppercase tracking-wider text-zinc-500">{k}</p>
+   566→   566→                  <p className="tnum mt-1 truncate text-sm font-medium text-zinc-100">{v}</p>
+   567→   567→                </div>
+   568→   568→              ))}
+   569→   569→            </div>
+   570→   570→
+   571→   571→            <div className="mt-6 grid gap-3 lg:grid-cols-2">
+   572→   572→              <ActivityStrip />
+   573→   573→              <MasteryGrid onOpenLesson={openLesson} />
+   574→   574→            </div>
+   575→   575→
+   576→   576→            <div className="sheen mt-6 rounded-lg border border-zinc-800 bg-zinc-950 p-4">
+   577→   577→              <h3 className="font-display text-sm font-semibold text-zinc-100">Badges</h3>
+   578→   578→              <div className="mt-3 flex flex-wrap gap-2">
+   579→   579→                {BADGES.map((b) => {
+   580→   580→                  const earned = badgesMap[b.id] !== undefined;
+   581→   581→                  return (
+   582→   582→                    <span
+   583→   583→                      key={b.id}
+   584→   584→                      title={b.desc}
+   585→   585→                      className={cn(
+   586→   586→                        "rounded-md border px-2.5 py-1 text-[11px]",
+   587→   587→                        earned ? "border-amber-400/50 bg-amber-400/10 text-amber-200" : "border-zinc-800 text-zinc-600",
+   588→   588→                      )}
+   589→   589→                    >
+   590→   590→                      {earned ? b.title : "· · ·"}
+   591→   591→                    </span>
+   592→   592→                  );
+   593→   593→                })}
+   594→   594→              </div>
+   595→   595→            </div>
+   596→   596→
+   597→   597→            <div className="sheen mt-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-3.5">
+   598→   598→              <div>
+   599→   599→                <p className="text-sm font-medium text-zinc-100">
+   600→   600→                  {ctx.lessonsDone > 0 ? "Welcome back." : "Start with lesson 1 — no setup, everything runs live."}
+   601→   601→                </p>
+   602→   602→                <p className="mt-0.5 text-xs text-zinc-500">
+   603→   603→                  {ctx.problemsSolved} queries solved · {ctx.mcqsCorrect} quiz questions answered
+   604→   604→                </p>
+   605→   605→              </div>
+   606→   606→              <button
+   607→   607→                onClick={() => openLesson(nextLesson.id)}
+   608→   608→                className="btn-glow rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300"
+   609→   609→              >
+   610→   610→                {ctx.lessonsDone > 0 ? `Continue — lesson ${nextLesson.num} →` : "Start learning →"}
+   611→   611→              </button>
+   612→   612→            </div>
+   613→   613→          </div>
+   614→   614→        )}
+   615→   615→      </main>
+   616→   616→    </div>
+   617→   617→  );
+   618→   618→}
+   619→   619→

@@ -1,0 +1,150 @@
+
+[P1 FIRST_VALUE(price) DESC/ASC at ids 1,16]  (2 rows)
+  1 | Mechanical Keyboard K1 | 89.99 | 32 | 89.99
+  16 | Yoga Mat Eco 6mm | 32 | 32 | 89.99
+
+[P2 prior stock frame ids 1,2,3,16]  (4 rows)
+  1 | Mechanical Keyboard K1 | 120 | NULL
+  2 | Wireless Mouse M3 | 300 | 120
+  3 | USB-C Hub 7-in-1 | 85 | 420
+  16 | Yoga Mat Eco 6mm | 220 | 2625
+
+[P3a prior with 2 PRECEDING at id3]  (1 rows)
+  3 | 120
+
+[P3b prior with 0 PRECEDING at id3 (legality+value)]  (1 rows)
+  3 | 505
+
+[P3c prior COUNT variant at ids 1,3]  (2 rows)
+  1 | 0
+  3 | 2
+
+[P4 region runs containing 852.44]  (4 rows)
+  APAC | 37 | 0 | 416.81 | 11605.45
+  EU | 45 | 0 | 576.54 | 15089.23
+  LATAM | 2 | 1 | 752.96 | 852.44
+  US | 19 | 0 | 725.34 | 7286.16
+
+[P5 ma3 alt frames at 2024-03]  (1 rows)
+  2024-03 | 7.67 | 8.5
+
+[P6 products 1 PRECEDING AND UNBOUNDED FOLLOWING at id16]  (1 rows)
+  16 | 330
+
+[P7a band CURRENT ROW AND 1 FOLLOWING at id3]  (1 rows)
+  3 | 463.06
+
+[ERR P7b UNBOUNDED FOLLOWING as start bound]  near "FOLLOWING": syntax error
+
+[P7c band UNBOUNDED PRECEDING AND 1 FOLLOWING at id3]  (1 rows)
+  3 | 479.87
+
+[P7d band at ids 2,4 (CTE-wrapped 1P/1F)]  (2 rows)
+  2 | 587
+  4 | 550.49
+
+[P8 expenses frame variants at 2024-02]  (1 rows)
+  2024-02 | 22257 | 25416 | 25416
+
+[P9 month roll UNBOUNDED PRECEDING line head+June]  (2 rows)
+  2024-01 | 8 | 8
+  2024-06 | 6 | 46
+
+[P10 signup cum ORDER BY n, cum=16 row]  (7 rows)
+  2023-11 | 2 | 16
+  2023-12 | 2 | 16
+  2024-01 | 2 | 16
+  2024-02 | 2 | 16
+  2024-03 | 2 | 16
+  2024-04 | 2 | 16
+  2024-05 | 2 | 16
+
+[P11 share with COUNT(total) OVER () denominator]  (3 rows)
+  3 | 767.64 | 745.28
+  1 | 576.54 | 559.75
+  2 | 416.81 | 404.67
+
+[P12a price share MAX paint at id16]  (1 rows)
+  16 | 16
+
+[P12b stock share MAX paint at id9]  (1 rows)
+  9 | 100
+
+[P13 region census folded by c.id, top by n]  (1 rows)
+  EU | 24 | 103
+
+[P14 SUM(695) OVER () as all_stock]  (1 rows)
+  2 | 850 | 4170
+
+[P15 delivered walk: any rung 1977.74 under AVG?]  (1 rows)
+  0
+
+[P16a shipped walk at 1977.74]  (1 rows)
+  0
+
+[P16b shipped top-3 by total]  (3 rows)
+  39 | 845.92
+  15 | 826.03
+  57 | 785.79
+
+[P17 ROWS running by created_at at ids 5,7]  (2 rows)
+  5 | 725.34 | 1478.3
+  7 | 152.52 | 1630.82
+
+[P20 walked rungs at ids 100,101,103]  (3 rows)
+  100 | 1 | 23
+  101 | 1 | 24
+  103 | 13 | 13
+
+[P21 running COUNT at id 102]  (1 rows)
+  102 | 102
+
+[ERR P25 ORDER BY SUM inside OVER]  no such column: SUM
+
+[ERR P26 MAX(*) invalid]  wrong number of arguments to function MAX()
+
+[P28 Alice AVG-partition last rung]  (1 rows)
+  101 | 302.6
+
+[P30 shipped crowd/pot]  (1 rows)
+  30 | 767.64
+
+[P31 stock walk MAX/COUNT at id16]  (1 rows)
+  16 | 500 | 16
+
+[P32 month walk MAX/AVG at 2024-02]  (1 rows)
+  2024-02 | 3731.97 | 3670.8
+
+[P33 expense walk MAX at 2024-05]  (1 rows)
+  2024-05 | 1917
+
+[P34 cancelled crowd/pot]  (1 rows)
+  7 | 152.52
+
+[P35 LAST_VALUE frames at id 103]  (1 rows)
+  103 | 324.16 | 324.16
+
+[P36 partition run tails for customers 2,5]  (2 rows)
+  2 | 23 | 852.44
+  5 | 97 | 6640.56
+
+[P37 expense unwind line (CURRENT ROW AND UNBOUNDED FOLLOWING)]  (14 rows)
+  2024-01 | 1719 | 25416
+  2024-02 | 1440 | 23697
+  2024-03 | 1917 | 22257
+  2024-04 | 1749 | 20340
+  2024-05 | 1480 | 18591
+  2024-06 | 1510 | 17111
+  2024-07 | 1794 | 15601
+  2024-08 | 3210 | 13807
+  2024-09 | 1545 | 10597
+  2024-10 | 1859 | 9052
+  2024-11 | 1974 | 7193
+  2024-12 | 1610 | 5219
+  2025-01 | 1959 | 3609
+  2025-02 | 1650 | 1650
+
+[P38 expense unwind 1 FOLLOWING end at Feb]  (1 rows)
+  2024-02 | 3357
+
+probe w5b done, copy removed

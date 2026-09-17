@@ -1,0 +1,276 @@
+     1→sqlite {
+     2→  v: "3.53.0",
+     3→}
+     4→
+     5→== status census
+     6→[{"status":"delivered","n":52},{"status":"shipped","n":30},{"status":"pending","n":14},{"status":"cancelled","n":7}]
+     7→
+     8→== region order counts
+     9→[{"region":"EU","n":45},{"region":"APAC","n":37},{"region":"US","n":19},{"region":"LATAM","n":2}]
+    10→
+    11→== suppliers dump
+    12→[{"id":1,"name":"Nordic Gadgets AB","region":"EU","rating":4.6},{"id":2,"name":"Shenzhen Electro","region":"APAC","rating":4.1},{"id":3,"name":"Pacific Textiles","region":"APAC","rating":3.9},{"id":4,"name":"Midwest Hardware Co","region":"US","rating":4.4},{"id":5,"name":"Alpine Audio GmbH","region":"EU","rating":4.8},{"id":6,"name":"Andes Naturals SA","region":"LATAM","rating":4}]
+    13→
+    14→== supplier rating rank
+    15→[{"name":"Alpine Audio GmbH","rating":4.8,"rk":1},{"name":"Nordic Gadgets AB","rating":4.6,"rk":2},{"name":"Midwest Hardware Co","rating":4.4,"rk":3},{"name":"Shenzhen Electro","rating":4.1,"rk":4},{"name":"Andes Naturals SA","rating":4,"rk":5},{"name":"Pacific Textiles","rating":3.9,"rk":6}]
+    16→
+    17→== supplier rating ties
+    18→[]
+    19→
+    20→== products price rank full
+    21→[{"name":"Smart Watch S","price":199.99,"rk":1},{"name":"Noise-Canceling Headset","price":149.99,"rk":2},{"name":"4K Webcam Pro","price":129,"rk":3},{"name":"Studio Desktop Mic","price":119,"rk":4},{"name":"Mechanical Keyboard K1","price":89.99,"rk":5},{"name":"Fitness Band X2","price":79,"rk":6},{"name":"Cycling Jersey Pro","price":65,"rk":7},{"name":"Bluetooth Speaker Mini","price":59.99,"rk":8},{"name":"USB-C Hub 7-in-1","price":49,"rk":9},{"name":"Laptop Stand Aluminum","price":42.5,"rk":10},{"name":"Ring Light 14\"","price":39.99,"rk":11},{"name":"Wireless Mouse M3","price":34.5,"rk":12},{"name":"Yoga Mat Eco 6mm","price":32,"rk":13},{"name":"Desk Mat Extended","price":24.99,"rk":14},{"name":"Running Socks 3-pack","price":18.5,"rk":15},{"name":"HDMI 2.1 Cable 2m","price":14.99,"rk":16}]
+    22→
+    23→== products stock rank full
+    24→[{"name":"HDMI 2.1 Cable 2m","stock":500,"rk":1},{"name":"Running Socks 3-pack","stock":400,"rk":2},{"name":"Wireless Mouse M3","stock":300,"rk":3},{"name":"Desk Mat Extended","stock":260,"rk":4},{"name":"Yoga Mat Eco 6mm","stock":220,"rk":5},{"name":"Bluetooth Speaker Mini","stock":210,"rk":6},{"name":"Laptop Stand Aluminum","stock":180,"rk":7},{"name":"Ring Light 14\"","stock":150,"rk":8},{"name":"Mechanical Keyboard K1","stock":120,"rk":9},{"name":"Cycling Jersey Pro","stock":110,"rk":10},{"name":"Fitness Band X2","stock":95,"rk":11},{"name":"USB-C Hub 7-in-1","stock":85,"rk":12},{"name":"4K Webcam Pro","stock":70,"rk":13},{"name":"Noise-Canceling Headset","stock":60,"rk":14},{"name":"Studio Desktop Mic","stock":45,"rk":15},{"name":"Smart Watch S","stock":40,"rk":16}]
+    25→
+    26→== products stock ties
+    27→[]
+    28→
+    29→== pending ranked by total
+    30→[{"id":74,"total":1088.44,"rk":1},{"id":43,"total":945.21,"rk":2},{"id":5,"total":725.34,"rk":3},{"id":97,"total":585.79,"rk":4},{"id":1,"total":576.54,"rk":5},{"id":25,"total":364.71,"rk":6},{"id":19,"total":317.49,"rk":7},{"id":47,"total":306.92,"rk":8},{"id":75,"total":273.64,"rk":9},{"id":42,"total":259.31,"rk":10},{"id":79,"total":212.03,"rk":11},{"id":90,"total":160.3,"rk":12},{"id":94,"total":149,"rk":13},{"id":12,"total":148.28,"rk":14}]
+    31→
+    32→== invoices amount rank top6
+    33→[{"id":25,"number":"INV-2025-025","amount_cents":614800,"rk":1},{"id":19,"number":"INV-2024-019","amount_cents":561400,"rk":2},{"id":5,"number":"INV-2024-005","amount_cents":528400,"rk":3},{"id":24,"number":"INV-2025-024","amount_cents":493700,"rk":4},{"id":1,"number":"INV-2024-001","amount_cents":486000,"rk":5},{"id":12,"number":"INV-2024-012","amount_cents":472300,"rk":6}]
+    34→
+    35→== invoice amount ties
+    36→[]
+    37→
+    38→== payments dump
+    39→[{"id":1,"invoice_id":1,"amount_cents":243000,"method":"card"},{"id":2,"invoice_id":1,"amount_cents":243000,"method":"wire"},{"id":3,"invoice_id":2,"amount_cents":214300,"method":"card"},{"id":4,"invoice_id":3,"amount_cents":342000,"method":"wire"},{"id":5,"invoice_id":4,"amount_cents":158900,"method":"card"},{"id":6,"invoice_id":5,"amount_cents":264200,"method":"card"},{"id":7,"invoice_id":5,"amount_cents":264200,"method":"wire"},{"id":8,"invoice_id":6,"amount_cents":233600,"method":"card"},{"id":9,"invoice_id":7,"amount_cents":198200,"method":"wire"},{"id":10,"invoice_id":8,"amount_cents":401500,"method":"card"},{"id":11,"invoice_id":9,"amount_cents":187300,"method":"card"},{"id":12,"invoice_id":10,"amount_cents":296800,"method":"wire"}]
+    40→
+    41→== payments count
+    42→[{"n":27,"mx":401500}]
+    43→
+    44→== expenses amount rank top6
+    45→[{"id":21,"category":"Travel","vendor":"Skyline Travel","amount_cents":168000,"rk":1},{"id":1,"category":"Rent","vendor":"Atlas Property GmbH","amount_cents":120000,"rk":2},{"id":4,"category":"Rent","vendor":"Atlas Property GmbH","amount_cents":120000,"rk":2},{"id":6,"category":"Rent","vendor":"Atlas Property GmbH","amount_cents":120000,"rk":2},{"id":9,"category":"Rent","vendor":"Atlas Property GmbH","amount_cents":120000,"rk":2},{"id":12,"category":"Rent","vendor":"Atlas Property GmbH","amount_cents":120000,"rk":2}]
+    46→
+    47→== expense spent_on ties
+    48→[]
+    49→
+    50→== ledger debit rank top5
+    51→[{"id":71,"account":"accounts_receivable","entry_date":"2025-01-31","debit_cents":1108500,"rk":1},{"id":65,"account":"accounts_receivable","entry_date":"2024-12-31","debit_cents":883000,"rk":2},{"id":49,"account":"cash","entry_date":"2024-09-30","debit_cents":842050,"rk":3},{"id":59,"account":"accounts_receivable","entry_date":"2024-11-30","debit_cents":829700,"rk":4},{"id":77,"account":"accounts_receivable","entry_date":"2025-02-28","debit_cents":811200,"rk":5}]
+    52→
+    53→== customer name-length rank
+    54→[{"name":"Isabella Rossi","len":14,"rk":1,"drk":1},{"name":"Dmitri Volkov","len":13,"rk":2,"drk":2},{"name":"Pedro Alvarez","len":13,"rk":2,"drk":2},{"name":"Chloe Dubois","len":12,"rk":4,"drk":3},{"name":"Farid Nasser","len":12,"rk":4,"drk":3},{"name":"Jamal Wright","len":12,"rk":4,"drk":3},{"name":"Liam O'Brien","len":12,"rk":4,"drk":3},{"name":"Olivia Brown","len":12,"rk":4,"drk":3},{"name":"Bruno Silva","len":11,"rk":9,"drk":4},{"name":"Emma Wilson","len":11,"rk":9,"drk":4},{"name":"Hiro Tanaka","len":11,"rk":9,"drk":4},{"name":"Alice Chen","len":10,"rk":12,"drk":5},{"name":"Keiko Sato","len":10,"rk":12,"drk":5},{"name":"Maya Patel","len":10,"rk":12,"drk":5},{"name":"Noah Meyer","len":10,"rk":12,"drk":5},{"name":"Grace Kim","len":9,"rk":16,"drk":6}]
+    55→
+    56→== order_items unit_price rank top6
+    57→[{"id":244,"unit_price":209.68,"quantity":1,"rk":1},{"id":219,"unit_price":205.81,"quantity":2,"rk":2},{"id":100,"unit_price":205.31,"quantity":2,"rk":3},{"id":85,"unit_price":204.19,"quantity":2,"rk":4},{"id":223,"unit_price":200.07,"quantity":1,"rk":5},{"id":79,"unit_price":199.97,"quantity":3,"rk":6}]
+    58→
+    59→== order_items quantity ties
+    60→[{"quantity":1,"n":93},{"quantity":2,"n":69},{"quantity":3,"n":89}]
+    61→
+    62→== invoice issued_on ties
+    63→[]
+    64→
+    65→== customer spend league full
+    66→[{"name":"Alice Chen","spend":7262.35,"rk":1},{"name":"Emma Wilson","spend":6640.56,"rk":2},{"name":"Grace Kim","spend":4574.23,"rk":3},{"name":"Maya Patel","spend":3644.56,"rk":4},{"name":"Chloe Dubois","spend":2667.93,"rk":5},{"name":"Pedro Alvarez","spend":1686.17,"rk":6},{"name":"Farid Nasser","spend":1458.97,"rk":7},{"name":"Keiko Sato","spend":1098.6,"rk":8},{"name":"Isabella Rossi","spend":985.65,"rk":9},{"name":"Bruno Silva","spend":852.44,"rk":10},{"name":"Hiro Tanaka","spend":829.09,"rk":11},{"name":"Noah Meyer","spend":737.68,"rk":12},{"name":"Liam O'Brien","spend":705.39,"rk":13},{"name":"Jamal Wright","spend":645.6,"rk":14},{"name":"Dmitri Volkov","spend":599.26,"rk":15},{"name":"Olivia Brown","spend":444.8,"rk":16}]
+    67→
+    68→== spend league HAVING > 1000
+    69→[{"name":"Alice Chen","spend":7262.35,"rk":1},{"name":"Emma Wilson","spend":6640.56,"rk":2},{"name":"Grace Kim","spend":4574.23,"rk":3},{"name":"Maya Patel","spend":3644.56,"rk":4},{"name":"Chloe Dubois","spend":2667.93,"rk":5},{"name":"Pedro Alvarez","spend":1686.17,"rk":6},{"name":"Farid Nasser","spend":1458.97,"rk":7},{"name":"Keiko Sato","spend":1098.6,"rk":8}]
+    70→
+    71→== month spend ranked
+    72→[{"mon":"2024-01","spend":3731.97,"rk":1},{"mon":"2024-02","spend":3609.64,"rk":2},{"mon":"2024-09","spend":3116.04,"rk":3},{"mon":"2024-10","spend":2975.67,"rk":4},{"mon":"2024-05","spend":2910.31,"rk":5},{"mon":"2024-03","spend":2617.08,"rk":6},{"mon":"2024-04","spend":2468.91,"rk":7},{"mon":"2025-02","spend":2390.53,"rk":8},{"mon":"2024-08","spend":2352.07,"rk":9},{"mon":"2024-12","spend":2101.47,"rk":10},{"mon":"2024-06","spend":2047.43,"rk":11},{"mon":"2025-01","spend":1669.5,"rk":12},{"mon":"2024-11","spend":1648.8,"rk":13},{"mon":"2024-07","spend":1193.86,"rk":14}]
+    73→
+    74→== region order-count ranked
+    75→[{"region":"EU","n":45,"rk":1},{"region":"APAC","n":37,"rk":2},{"region":"US","n":19,"rk":3},{"region":"LATAM","n":2,"rk":4}]
+    76→
+    77→== category product-count ranked
+    78→[{"category":"Electronics","n":3,"rk":1},{"category":"Audio","n":3,"rk":1},{"category":"Accessories","n":3,"rk":1},{"category":"Wearables","n":2,"rk":4},{"category":"Video","n":2,"rk":4},{"category":"Apparel","n":2,"rk":4},{"category":"Fitness","n":1,"rk":7}]
+    79→
+    80→== supplier product-count ranked
+    81→[{"name":"Midwest Hardware Co","n":3,"rk":1},{"name":"Nordic Gadgets AB","n":3,"rk":1},{"name":"Pacific Textiles","n":3,"rk":1},{"name":"Shenzhen Electro","n":3,"rk":1},{"name":"Alpine Audio GmbH","n":2,"rk":5},{"name":"Andes Naturals SA","n":2,"rk":5}]
+    82→
+    83→== customer order-count ladder full
+    84→[{"name":"Alice Chen","n":24,"rk":1,"drk":1,"rn":1},{"name":"Emma Wilson","n":17,"rk":2,"drk":2,"rn":2},{"name":"Grace Kim","n":14,"rk":3,"drk":3,"rn":3},{"name":"Maya Patel","n":13,"rk":4,"drk":4,"rn":4},{"name":"Chloe Dubois","n":5,"rk":5,"drk":5,"rn":5},{"name":"Isabella Rossi","n":4,"rk":6,"drk":6,"rn":6},{"name":"Keiko Sato","n":4,"rk":6,"drk":6,"rn":7},{"name":"Noah Meyer","n":4,"rk":6,"drk":6,"rn":8},{"name":"Pedro Alvarez","n":4,"rk":6,"drk":6,"rn":9},{"name":"Farid Nasser","n":3,"rk":10,"drk":7,"rn":10},{"name":"Hiro Tanaka","n":3,"rk":10,"drk":7,"rn":11},{"name":"Bruno Silva","n":2,"rk":12,"drk":8,"rn":12},{"name":"Dmitri Volkov","n":2,"rk":12,"drk":8,"rn":13},{"name":"Jamal Wright","n":2,"rk":12,"drk":8,"rn":14},{"name":"Liam O'Brien","n":1,"rk":15,"drk":9,"rn":15},{"name":"Olivia Brown","n":1,"rk":15,"drk":9,"rn":16}]
+    85→
+    86→== customer order-count census
+    87→[{"n":24,"c":24},{"n":2,"c":2},{"n":5,"c":5},{"n":2,"c":2},{"n":17,"c":17},{"n":3,"c":3},{"n":14,"c":14},{"n":3,"c":3},{"n":4,"c":4},{"n":2,"c":2},{"n":4,"c":4},{"n":1,"c":1},{"n":13,"c":13},{"n":4,"c":4},{"n":1,"c":1},{"n":4,"c":4}]
+    88→
+    89→== expense month ranked
+    90→[{"mon":"2024-08","spend":3210,"rk":1},{"mon":"2024-11","spend":1974,"rk":2},{"mon":"2025-01","spend":1959,"rk":3},{"mon":"2024-03","spend":1917,"rk":4},{"mon":"2024-10","spend":1859,"rk":5},{"mon":"2024-07","spend":1794,"rk":6},{"mon":"2024-04","spend":1749,"rk":7},{"mon":"2024-01","spend":1719,"rk":8},{"mon":"2025-02","spend":1650,"rk":9},{"mon":"2024-12","spend":1610,"rk":10},{"mon":"2024-09","spend":1545,"rk":11},{"mon":"2024-06","spend":1510,"rk":12},{"mon":"2024-05","spend":1480,"rk":13},{"mon":"2024-02","spend":1440,"rk":14}]
+    91→
+    92→== expense category ranked
+    93→[{"category":"Rent","spend":16800,"n":14,"rk":1},{"category":"Ads","spend":4570,"n":14,"rk":2},{"category":"Travel","spend":2521,"n":3,"rk":3},{"category":"Tools","spend":1525,"n":5,"rk":4}]
+    94→
+    95→== status value ranked
+    96→[{"status":"delivered","value":15571.07,"n":52,"rk":1},{"status":"shipped","value":11996.72,"n":30,"rk":2},{"status":"pending","value":6113,"n":14,"rk":3},{"status":"cancelled","value":1152.49,"n":7,"rk":4}]
+    97→
+    98→== invoice count per customer ranked
+    99→[{"name":"Alice Chen","n":5,"rk":1},{"name":"Emma Wilson","n":4,"rk":2},{"name":"Maya Patel","n":4,"rk":2},{"name":"Grace Kim","n":3,"rk":4},{"name":"Isabella Rossi","n":3,"rk":4},{"name":"Jamal Wright","n":2,"rk":6},{"name":"Liam O'Brien","n":2,"rk":6},{"name":"Olivia Brown","n":2,"rk":6},{"name":"Chloe Dubois","n":1,"rk":9},{"name":"Hiro Tanaka","n":1,"rk":9},{"name":"Pedro Alvarez","n":1,"rk":9}]
+   100→
+   101→== per-customer max order ranked
+   102→[{"name":"Farid Nasser","mx":1088.44,"rk":1},{"name":"Chloe Dubois","mx":945.21,"rk":2},{"name":"Emma Wilson","mx":845.92,"rk":3},{"name":"Grace Kim","mx":826.03,"rk":4},{"name":"Alice Chen","mx":767.64,"rk":5},{"name":"Bruno Silva","mx":752.96,"rk":6}]
+   103→
+   104→== max-order ties
+   105→[]
+   106→
+   107→== per-customer avg order ranked
+   108→[{"name":"Liam O'Brien","avg_order":705.39,"rk":1},{"name":"Chloe Dubois","avg_order":533.59,"rk":2},{"name":"Farid Nasser","avg_order":486.32,"rk":3},{"name":"Olivia Brown","avg_order":444.8,"rk":4},{"name":"Bruno Silva","avg_order":426.22,"rk":5},{"name":"Pedro Alvarez","avg_order":421.54,"rk":6}]
+   109→
+   110→== per-product order-items count ranked
+   111→[{"name":"Desk Mat Extended","n":24,"rk":1},{"name":"Noise-Canceling Headset","n":24,"rk":1},{"name":"HDMI 2.1 Cable 2m","n":19,"rk":3},{"name":"Laptop Stand Aluminum","n":19,"rk":3},{"name":"Wireless Mouse M3","n":18,"rk":5},{"name":"4K Webcam Pro","n":17,"rk":6},{"name":"Studio Desktop Mic","n":16,"rk":7},{"name":"Mechanical Keyboard K1","n":15,"rk":8},{"name":"Ring Light 14\"","n":15,"rk":8},{"name":"Fitness Band X2","n":14,"rk":10}]
+   112→
+   113→== per-product revenue ranked
+   114→[{"name":"Noise-Canceling Headset","rev":6888.25,"rk":1},{"name":"Smart Watch S","rev":4582.02,"rk":2},{"name":"4K Webcam Pro","rev":3989.97,"rk":3},{"name":"Studio Desktop Mic","rev":3589.61,"rk":4},{"name":"Mechanical Keyboard K1","rev":2558.26,"rk":5},{"name":"Fitness Band X2","rev":2347.1,"rk":6}]
+   115→
+   116→== revenue ties
+   117→[{"rev":2558.26,"c":15},{"rev":1239.85,"c":18},{"rev":1020.5,"c":11},{"rev":6888.25,"c":24},{"rev":3589.61,"c":16},{"rev":1266.15,"c":11},{"rev":3989.97,"c":17},{"rev":1208.44,"c":15},{"rev":575.5,"c":19},{"rev":1542.77,"c":19},{"rev":1176.02,"c":24},{"rev":2347.1,"c":14},{"rev":4582.02,"c":11},{"rev":600.78,"c":14},{"rev":1384.15,"c":10},{"rev":863.91,"c":13}]
+   118→
+   119→== customer spend rank within region
+   120→[{"name":"Grace Kim","region":"APAC","spend":4574.23,"rk":1},{"name":"Maya Patel","region":"APAC","spend":3644.56,"rk":2},{"name":"Farid Nasser","region":"APAC","spend":1458.97,"rk":3},{"name":"Keiko Sato","region":"APAC","spend":1098.6,"rk":4},{"name":"Hiro Tanaka","region":"APAC","spend":829.09,"rk":5},{"name":"Alice Chen","region":"EU","spend":7262.35,"rk":1},{"name":"Chloe Dubois","region":"EU","spend":2667.93,"rk":2},{"name":"Pedro Alvarez","region":"EU","spend":1686.17,"rk":3},{"name":"Isabella Rossi","region":"EU","spend":985.65,"rk":4},{"name":"Noah Meyer","region":"EU","spend":737.68,"rk":5},{"name":"Liam O'Brien","region":"EU","spend":705.39,"rk":6},{"name":"Dmitri Volkov","region":"EU","spend":599.26,"rk":7},{"name":"Olivia Brown","region":"EU","spend":444.8,"rk":8},{"name":"Bruno Silva","region":"LATAM","spend":852.44,"rk":1},{"name":"Emma Wilson","region":"US","spend":6640.56,"rk":1},{"name":"Jamal Wright","region":"US","spend":645.6,"rk":2}]
+   121→
+   122→== order total rank within status
+   123→[{"status":"pending","id":74,"total":1088.44,"rk":1},{"status":"pending","id":43,"total":945.21,"rk":2}]
+   124→
+   125→== order rn within customer top6
+   126→[{"customer_id":1,"id":3,"total":767.64,"rn":1},{"customer_id":1,"id":14,"total":705.23,"rn":2},{"customer_id":1,"id":89,"total":684.53,"rn":3},{"customer_id":1,"id":32,"total":645.91,"rn":4},{"customer_id":1,"id":31,"total":633.91,"rn":5},{"customer_id":1,"id":13,"total":632.29,"rn":6},{"customer_id":1,"id":63,"total":334.66,"rn":7},{"customer_id":1,"id":19,"total":317.49,"rn":8},{"customer_id":1,"id":58,"total":298.18,"rn":9},{"customer_id":1,"id":42,"total":259.31,"rn":10},{"customer_id":1,"id":79,"total":212.03,"rn":11},{"customer_id":1,"id":95,"total":206.19,"rn":12},{"customer_id":1,"id":48,"total":187.38,"rn":13},{"customer_id":1,"id":84,"total":153.51,"rn":14},{"customer_id":1,"id":7,"total":152.52,"rn":15},{"customer_id":1,"id":101,"total":142.25,"rn":16},{"customer_id":1,"id":21,"total":136.11,"rn":17},{"customer_id":1,"id":40,"total":135.24,"rn":18},{"customer_id":1,"id":70,"total":131.39,"rn":19},{"customer_id":1,"id":100,"total":125.88,"rn":20},{"customer_id":1,"id":66,"total":125.4,"rn":21},{"customer_id":1,"id":86,"total":116.28,"rn":22},{"customer_id":1,"id":55,"total":113.66,"rn":23},{"customer_id":1,"id":93,"total":45.36,"rn":24},{"customer_id":5,"id":39,"total":845.92,"rn":1},{"customer_id":5,"id":57,"total":785.79,"rn":2},{"customer_id":5,"id":5,"total":725.34,"rn":3},{"customer_id":5,"id":33,"total":624.66,"rn":4},{"customer_id":5,"id":96,"total":590.2,"rn":5},{"customer_id":5,"id":97,"total":585.79,"rn":6},{"customer_id":5,"id":16,"total":507.24,"rn":7},{"customer_id":5,"id":65,"total":425.08,"rn":8},{"customer_id":5,"id":37,"total":379.83,"rn":9},{"customer_id":5,"id":17,"total":285.1,"rn":10},{"customer_id":5,"id":85,"total":262.89,"rn":11},{"customer_id":5,"id":8,"total":181.68,"rn":12},{"customer_id":5,"id":90,"total":160.3,"rn":13},{"customer_id":5,"id":82,"total":143.86,"rn":14},{"customer_id":5,"id":41,"total":67.25,"rn":15},{"customer_id":5,"id":53,"total":39.39,"rn":16},{"customer_id":5,"id":72,"total":30.24,"rn":17}]
+   127→
+   128→== product price rank within category
+   129→[{"category":"Accessories","name":"Laptop Stand Aluminum","price":42.5,"rk":1},{"category":"Accessories","name":"Desk Mat Extended","price":24.99,"rk":2},{"category":"Accessories","name":"HDMI 2.1 Cable 2m","price":14.99,"rk":3},{"category":"Apparel","name":"Cycling Jersey Pro","price":65,"rk":1},{"category":"Apparel","name":"Running Socks 3-pack","price":18.5,"rk":2},{"category":"Audio","name":"Noise-Canceling Headset","price":149.99,"rk":1},{"category":"Audio","name":"Studio Desktop Mic","price":119,"rk":2},{"category":"Audio","name":"Bluetooth Speaker Mini","price":59.99,"rk":3},{"category":"Electronics","name":"Mechanical Keyboard K1","price":89.99,"rk":1},{"category":"Electronics","name":"USB-C Hub 7-in-1","price":49,"rk":2},{"category":"Electronics","name":"Wireless Mouse M3","price":34.5,"rk":3},{"category":"Fitness","name":"Yoga Mat Eco 6mm","price":32,"rk":1},{"category":"Video","name":"4K Webcam Pro","price":129,"rk":1},{"category":"Video","name":"Ring Light 14\"","price":39.99,"rk":2},{"category":"Wearables","name":"Smart Watch S","price":199.99,"rk":1},{"category":"Wearables","name":"Fitness Band X2","price":79,"rk":2}]
+   130→
+   131→== supplier rating rank within region
+   132→[{"region":"APAC","name":"Shenzhen Electro","rating":4.1,"rk":1},{"region":"APAC","name":"Pacific Textiles","rating":3.9,"rk":2},{"region":"EU","name":"Alpine Audio GmbH","rating":4.8,"rk":1},{"region":"EU","name":"Nordic Gadgets AB","rating":4.6,"rk":2},{"region":"LATAM","name":"Andes Naturals SA","rating":4,"rk":1},{"region":"US","name":"Midwest Hardware Co","rating":4.4,"rk":1}]
+   133→
+   134→== supplier regions
+   135→[{"region":"APAC","n":2},{"region":"EU","n":2},{"region":"LATAM","n":1},{"region":"US","n":1}]
+   136→
+   137→== ntile4 customers by spend
+   138→[{"name":"Alice Chen","spend":7262.35,"tile":1},{"name":"Emma Wilson","spend":6640.56,"tile":1},{"name":"Grace Kim","spend":4574.23,"tile":1},{"name":"Maya Patel","spend":3644.56,"tile":1},{"name":"Chloe Dubois","spend":2667.93,"tile":2},{"name":"Pedro Alvarez","spend":1686.17,"tile":2},{"name":"Farid Nasser","spend":1458.97,"tile":2},{"name":"Keiko Sato","spend":1098.6,"tile":2},{"name":"Isabella Rossi","spend":985.65,"tile":3},{"name":"Bruno Silva","spend":852.44,"tile":3},{"name":"Hiro Tanaka","spend":829.09,"tile":3},{"name":"Noah Meyer","spend":737.68,"tile":3},{"name":"Liam O'Brien","spend":705.39,"tile":4},{"name":"Jamal Wright","spend":645.6,"tile":4},{"name":"Dmitri Volkov","spend":599.26,"tile":4},{"name":"Olivia Brown","spend":444.8,"tile":4}]
+   139→
+   140→== ntile4 census + spans
+   141→[{"tile":1,"n":26,"mn":489.33,"mx":1088.44},{"tile":2,"n":26,"mn":285.1,"mx":450.12},{"tile":3,"n":26,"mn":136.11,"mx":283.12},{"tile":4,"n":25,"mn":25.47,"mx":135.24}]
+   142→
+   143→== ntile5 census
+   144→[{"tile":1,"n":21},{"tile":2,"n":21},{"tile":3,"n":21},{"tile":4,"n":20},{"tile":5,"n":20}]
+   145→
+   146→== ntile2 census
+   147→[{"tile":1,"n":52},{"tile":2,"n":51}]
+   148→
+   149→== ntile4 products by price
+   150→[{"name":"Smart Watch S","price":199.99,"tile":1},{"name":"Noise-Canceling Headset","price":149.99,"tile":1},{"name":"4K Webcam Pro","price":129,"tile":1},{"name":"Studio Desktop Mic","price":119,"tile":1},{"name":"Mechanical Keyboard K1","price":89.99,"tile":2},{"name":"Fitness Band X2","price":79,"tile":2},{"name":"Cycling Jersey Pro","price":65,"tile":2},{"name":"Bluetooth Speaker Mini","price":59.99,"tile":2},{"name":"USB-C Hub 7-in-1","price":49,"tile":3},{"name":"Laptop Stand Aluminum","price":42.5,"tile":3},{"name":"Ring Light 14\"","price":39.99,"tile":3},{"name":"Wireless Mouse M3","price":34.5,"tile":3},{"name":"Yoga Mat Eco 6mm","price":32,"tile":4},{"name":"Desk Mat Extended","price":24.99,"tile":4},{"name":"Running Socks 3-pack","price":18.5,"tile":4},{"name":"HDMI 2.1 Cable 2m","price":14.99,"tile":4}]
+   151→
+   152→== ntile4 expense months
+   153→[{"mon":"2024-08","spend":3210,"tile":1},{"mon":"2024-11","spend":1974,"tile":1},{"mon":"2025-01","spend":1959,"tile":1},{"mon":"2024-03","spend":1917,"tile":1},{"mon":"2024-10","spend":1859,"tile":2},{"mon":"2024-07","spend":1794,"tile":2},{"mon":"2024-04","spend":1749,"tile":2},{"mon":"2024-01","spend":1719,"tile":2},{"mon":"2025-02","spend":1650,"tile":3},{"mon":"2024-12","spend":1610,"tile":3},{"mon":"2024-09","spend":1545,"tile":3},{"mon":"2024-06","spend":1510,"tile":4},{"mon":"2024-05","spend":1480,"tile":4},{"mon":"2024-02","spend":1440,"tile":4}]
+   154→
+   155→== ntile4 invoices by amount
+   156→[{"tile":1,"n":7,"mn":445900,"mx":614800},{"tile":2,"n":7,"mn":296800,"mx":401500},{"tile":3,"n":7,"mn":198200,"mx":279400},{"tile":4,"n":7,"mn":87300,"mx":187300}]
+   157→
+   158→== orders >= 489.33 count
+   159→[{"n":26,"mn":489.33,"mx":1088.44}]
+   160→
+   161→== totals near 489 boundary
+   162→[{"id":99,"total":489.33},{"id":22,"total":450.12},{"id":91,"total":444.8}]
+   163→
+   164→== top-3 orders per region
+   165→[{"region":"APAC","name":"Farid Nasser","id":74,"total":1088.44,"rn":1},{"region":"APAC","name":"Grace Kim","id":15,"total":826.03,"rn":2},{"region":"APAC","name":"Grace Kim","id":68,"total":625.14,"rn":3},{"region":"EU","name":"Chloe Dubois","id":43,"total":945.21,"rn":1},{"region":"EU","name":"Alice Chen","id":3,"total":767.64,"rn":2},{"region":"EU","name":"Liam O'Brien","id":20,"total":705.39,"rn":3},{"region":"LATAM","name":"Bruno Silva","id":6,"total":752.96,"rn":1},{"region":"LATAM","name":"Bruno Silva","id":23,"total":99.48,"rn":2},{"region":"US","name":"Emma Wilson","id":39,"total":845.92,"rn":1},{"region":"US","name":"Emma Wilson","id":57,"total":785.79,"rn":2},{"region":"US","name":"Emma Wilson","id":5,"total":725.34,"rn":3}]
+   166→
+   167→== top-1 order per customer full
+   168→[{"name":"Farid Nasser","id":74,"total":1088.44,"rn":1},{"name":"Chloe Dubois","id":43,"total":945.21,"rn":1},{"name":"Emma Wilson","id":39,"total":845.92,"rn":1},{"name":"Grace Kim","id":15,"total":826.03,"rn":1},{"name":"Alice Chen","id":3,"total":767.64,"rn":1},{"name":"Bruno Silva","id":6,"total":752.96,"rn":1},{"name":"Liam O'Brien","id":20,"total":705.39,"rn":1},{"name":"Pedro Alvarez","id":71,"total":668.45,"rn":1},{"name":"Maya Patel","id":64,"total":611.87,"rn":1},{"name":"Isabella Rossi","id":98,"total":608.06,"rn":1},{"name":"Noah Meyer","id":99,"total":489.33,"rn":1},{"name":"Hiro Tanaka","id":22,"total":450.12,"rn":1},{"name":"Olivia Brown","id":91,"total":444.8,"rn":1},{"name":"Dmitri Volkov","id":80,"total":435.09,"rn":1},{"name":"Jamal Wright","id":60,"total":403.72,"rn":1},{"name":"Keiko Sato","id":83,"total":397.99,"rn":1}]
+   169→
+   170→== top-2 per customer count
+   171→[{"n":30}]
+   172→
+   173→== top-2 orders per region
+   174→[{"region":"APAC","id":74,"total":1088.44,"rn":1},{"region":"APAC","id":15,"total":826.03,"rn":2},{"region":"EU","id":43,"total":945.21,"rn":1},{"region":"EU","id":3,"total":767.64,"rn":2},{"region":"LATAM","id":6,"total":752.96,"rn":1},{"region":"LATAM","id":23,"total":99.48,"rn":2},{"region":"US","id":39,"total":845.92,"rn":1},{"region":"US","id":57,"total":785.79,"rn":2}]
+   175→
+   176→== top product per category
+   177→[{"category":"Accessories","name":"Laptop Stand Aluminum","price":42.5,"rk":1},{"category":"Apparel","name":"Cycling Jersey Pro","price":65,"rk":1},{"category":"Audio","name":"Noise-Canceling Headset","price":149.99,"rk":1},{"category":"Electronics","name":"Mechanical Keyboard K1","price":89.99,"rk":1},{"category":"Fitness","name":"Yoga Mat Eco 6mm","price":32,"rk":1},{"category":"Video","name":"4K Webcam Pro","price":129,"rk":1},{"category":"Wearables","name":"Smart Watch S","price":199.99,"rk":1}]
+   178→
+   179→== top-1 customer per region (W05 check)
+   180→[{"region":"APAC","name":"Grace Kim","ROUND(spend,2)":4574.23,"rk":1},{"region":"EU","name":"Alice Chen","ROUND(spend,2)":7262.35,"rk":1},{"region":"LATAM","name":"Bruno Silva","ROUND(spend,2)":852.44,"rk":1},{"region":"US","name":"Emma Wilson","ROUND(spend,2)":6640.56,"rk":1}]
+   181→
+   182→== top-1 per status by total
+   183→[{"status":"pending","id":74,"total":1088.44},{"status":"shipped","id":39,"total":845.92},{"status":"delivered","id":6,"total":752.96},{"status":"cancelled","id":83,"total":397.99}]
+   184→
+   185→== cheapest 5 orders
+   186→[{"id":51,"total":25.47,"rn":1},{"id":72,"total":30.24,"rn":2},{"id":49,"total":32.01,"rn":3},{"id":53,"total":39.39,"rn":4},{"id":59,"total":44.48,"rn":5}]
+   187→
+   188→== shared-date census
+   189→[{"created_at":"2024-01-02","n":2,"ids":"5,7"},{"created_at":"2024-01-15","n":2,"ids":"2,8"},{"created_at":"2024-02-13","n":2,"ids":"11,15"},{"created_at":"2024-03-06","n":2,"ids":"20,24"},{"created_at":"2024-04-26","n":2,"ids":"27,29"},{"created_at":"2024-05-12","n":3,"ids":"35,39,40"},{"created_at":"2024-05-14","n":2,"ids":"36,38"},{"created_at":"2024-05-19","n":2,"ids":"33,34"},{"created_at":"2024-07-19","n":2,"ids":"52,54"},{"created_at":"2024-08-23","n":2,"ids":"60,61"},{"created_at":"2024-09-07","n":2,"ids":"64,70"},{"created_at":"2024-09-09","n":2,"ids":"67,69"},{"created_at":"2024-09-21","n":2,"ids":"62,63"},{"created_at":"2024-10-04","n":2,"ids":"74,75"},{"created_at":"2024-10-13","n":3,"ids":"73,76,77"},{"created_at":"2024-11-04","n":2,"ids":"81,83"},{"created_at":"2025-02-12","n":2,"ids":"101,102"}]
+   190→
+   191→== rank blocks on shared dates
+   192→[{"created_at":"2024-01-02","n":2,"mn":2,"mx":2},{"created_at":"2024-01-15","n":2,"mn":5,"mx":5},{"created_at":"2024-02-13","n":2,"mn":11,"mx":11},{"created_at":"2024-03-06","n":2,"mn":20,"mx":20},{"created_at":"2024-04-26","n":2,"mn":31,"mx":31},{"created_at":"2024-05-12","n":3,"mn":33,"mx":33},{"created_at":"2024-05-14","n":2,"mn":36,"mx":36},{"created_at":"2024-05-19","n":2,"mn":38,"mx":38},{"created_at":"2024-07-19","n":2,"mn":50,"mx":50},{"created_at":"2024-08-23","n":2,"mn":59,"mx":59},{"created_at":"2024-09-07","n":2,"mn":63,"mx":63},{"created_at":"2024-09-09","n":2,"mn":65,"mx":65},{"created_at":"2024-09-21","n":2,"mn":68,"mx":68},{"created_at":"2024-10-04","n":2,"mn":71,"mx":71},{"created_at":"2024-10-13","n":3,"mn":74,"mx":74},{"created_at":"2024-11-04","n":2,"mn":78,"mx":78},{"created_at":"2025-02-12","n":2,"mn":99,"mx":99}]
+   193→
+   194→== 2024-05-12 detail
+   195→[{"id":35,"customer_id":7,"total":373,"created_at":"2024-05-12"},{"id":39,"customer_id":5,"total":845.92,"created_at":"2024-05-12"},{"id":40,"customer_id":1,"total":135.24,"created_at":"2024-05-12"}]
+   196→
+   197→== 2024-10-13 detail
+   198→[{"id":73,"customer_id":11,"total":375.93,"created_at":"2024-10-13"},{"id":76,"customer_id":7,"total":235.71,"created_at":"2024-10-13"},{"id":77,"customer_id":13,"total":303.26,"created_at":"2024-10-13"}]
+   199→
+   200→== rankers on created_at top6
+   201→[{"id":6,"created_at":"2024-01-01","rk":1,"drk":1,"rn":1},{"id":5,"created_at":"2024-01-02","rk":2,"drk":2,"rn":2},{"id":7,"created_at":"2024-01-02","rk":2,"drk":2,"rn":3},{"id":1,"created_at":"2024-01-05","rk":4,"drk":3,"rn":4},{"id":2,"created_at":"2024-01-15","rk":5,"drk":4,"rn":5},{"id":8,"created_at":"2024-01-15","rk":5,"drk":4,"rn":6},{"id":4,"created_at":"2024-01-18","rk":7,"drk":5,"rn":7},{"id":3,"created_at":"2024-01-22","rk":8,"drk":6,"rn":8}]
+   202→
+   203→== rn by created_at,id on 05-12
+   204→[{"id":35,"total":373,"rn":1},{"id":39,"total":845.92,"rn":2},{"id":40,"total":135.24,"rn":3}]
+   205→
+   206→== rn by created_at,id on 10-13
+   207→[{"id":73,"total":375.93,"rn":1},{"id":76,"total":235.71,"rn":2},{"id":77,"total":303.26,"rn":3}]
+   208→
+   209→== rn by created_at,total on 05-12
+   210→[{"id":39,"total":845.92,"rn":1},{"id":35,"total":373,"rn":2},{"id":40,"total":135.24,"rn":3}]
+   211→
+   212→== total ties recheck
+   213→[]
+   214→
+   215→== order count distinct
+   216→[{"dates":84,"rows":103}]
+   217→
+   218→== ledger account nets ranked
+   219→[{"account":"sales_revenue","net":-86052,"rk":1},{"account":"cash","net":44196,"rk":2},{"account":"operating_expenses","net":25416,"rk":3},{"account":"accounts_receivable","net":16440,"rk":4}]
+   220→
+   221→== customers city census
+   222→[{"city":"Austin","n":1},{"city":"Berlin","n":1},{"city":"Chicago","n":1},{"city":"Cork","n":1},{"city":"Dubai","n":1},{"city":"Hamburg","n":1},{"city":"London","n":1},{"city":"Lyon","n":1},{"city":"Madrid","n":1},{"city":"Milan","n":1},{"city":"Mumbai","n":1},{"city":"Nagoya","n":1},{"city":"Osaka","n":1},{"city":"Seoul","n":1},{"city":"São Paulo","n":1},{"city":"Tallinn","n":1}]
+   223→
+   224→== customers tenure list
+   225→[{"id":1,"name":"Alice Chen","created_at":"2023-11-02"},{"id":2,"name":"Bruno Silva","created_at":"2023-11-17"},{"id":3,"name":"Chloe Dubois","created_at":"2023-12-05"},{"id":4,"name":"Dmitri Volkov","created_at":"2023-12-19"},{"id":5,"name":"Emma Wilson","created_at":"2024-01-08"},{"id":6,"name":"Farid Nasser","created_at":"2024-01-22"}]
+   226→
+   227→== customers newest
+   228→[{"id":16,"name":"Pedro Alvarez","created_at":"2024-07-03"},{"id":15,"name":"Olivia Brown","created_at":"2024-06-11"},{"id":14,"name":"Noah Meyer","created_at":"2024-05-27"},{"id":13,"name":"Maya Patel","created_at":"2024-05-09"}]
+   229→
+   230→== customers created_at ties
+   231→[]
+   232→
+   233→== expenses recent 4
+   234→[{"id":36,"category":"Ads","vendor":"AdWorks Media","spent_on":"2025-02-14","amount_cents":45000},{"id":35,"category":"Rent","vendor":"Atlas Property GmbH","spent_on":"2025-02-01","amount_cents":120000},{"id":34,"category":"Tools","vendor":"DevTools Inc","spent_on":"2025-01-15","amount_cents":32900},{"id":33,"category":"Ads","vendor":"AdWorks Media","spent_on":"2025-01-10","amount_cents":43000}]
+   235→
+   236→== order_items unit_price ties
+   237→[{"unit_price":15.12,"n":2},{"unit_price":18.14,"n":2},{"unit_price":24.94,"n":2},{"unit_price":41.38,"n":2}]
+   238→
+   239→== ledger debit ties
+   240→[{"debit_cents":0,"n":40},{"debit_cents":588800,"n":2}]
+   241→
+   242→== stock >= 150 rows
+   243→[{"category":"Accessories","name":"HDMI 2.1 Cable 2m","stock":500,"tile":1},{"category":"Apparel","name":"Running Socks 3-pack","stock":400,"tile":1},{"category":"Electronics","name":"Wireless Mouse M3","stock":300,"tile":2},{"category":"Accessories","name":"Desk Mat Extended","stock":260,"tile":2},{"category":"Fitness","name":"Yoga Mat Eco 6mm","stock":220,"tile":3},{"category":"Audio","name":"Bluetooth Speaker Mini","stock":210,"tile":3},{"category":"Accessories","name":"Laptop Stand Aluminum","stock":180,"tile":4},{"category":"Video","name":"Ring Light 14\"","stock":150,"tile":4}]
+   244→
+   245→== top product per supplier
+   246→[{"supplier":"Alpine Audio GmbH","name":"Studio Desktop Mic","price":119},{"supplier":"Andes Naturals SA","name":"Fitness Band X2","price":79},{"supplier":"Midwest Hardware Co","name":"Noise-Canceling Headset","price":149.99},{"supplier":"Nordic Gadgets AB","name":"Smart Watch S","price":199.99},{"supplier":"Pacific Textiles","name":"Cycling Jersey Pro","price":65},{"supplier":"Shenzhen Electro","name":"Ring Light 14\"","price":39.99}]
+   247→
+   248→== top vendor per category
+   249→[{"category":"Travel","vendor":"Skyline Travel","amount_cents":168000,"rk":1},{"category":"Rent","vendor":"Atlas Property GmbH","amount_cents":120000,"rk":1},{"category":"Rent","vendor":"Atlas Property GmbH","amount_cents":120000,"rk":1},{"category":"Rent","vendor":"Atlas Property GmbH","amount_cents":120000,"rk":1},{"category":"Rent","vendor":"Atlas Property GmbH","amount_cents":120000,"rk":1},{"category":"Rent","vendor":"Atlas Property GmbH","amount_cents":120000,"rk":1},{"category":"Rent","vendor":"Atlas Property GmbH","amount_cents":120000,"rk":1},{"category":"Rent","vendor":"Atlas Property GmbH","amount_cents":120000,"rk":1},{"category":"Rent","vendor":"Atlas Property GmbH","amount_cents":120000,"rk":1},{"category":"Rent","vendor":"Atlas Property GmbH","amount_cents":120000,"rk":1},{"category":"Rent","vendor":"Atlas Property GmbH","amount_cents":120000,"rk":1},{"category":"Rent","vendor":"Atlas Property GmbH","amount_cents":120000,"rk":1},{"category":"Rent","vendor":"Atlas Property GmbH","amount_cents":120000,"rk":1},{"category":"Rent","vendor":"Atlas Property GmbH","amount_cents":120000,"rk":1},{"category":"Rent","vendor":"Atlas Property GmbH","amount_cents":120000,"rk":1},{"category":"Ads","vendor":"AdWorks Media","amount_cents":45000,"rk":1},{"category":"Tools","vendor":"DevTools Inc","amount_cents":32900,"rk":1}]
+   250→
+   251→== vendor census
+   252→[{"n":4}]
+   253→
+   254→== top-2 products per category
+   255→[{"category":"Accessories","name":"Laptop Stand Aluminum","price":42.5,"rn":1},{"category":"Accessories","name":"Desk Mat Extended","price":24.99,"rn":2},{"category":"Apparel","name":"Cycling Jersey Pro","price":65,"rn":1},{"category":"Apparel","name":"Running Socks 3-pack","price":18.5,"rn":2},{"category":"Audio","name":"Noise-Canceling Headset","price":149.99,"rn":1},{"category":"Audio","name":"Studio Desktop Mic","price":119,"rn":2},{"category":"Electronics","name":"Mechanical Keyboard K1","price":89.99,"rn":1},{"category":"Electronics","name":"USB-C Hub 7-in-1","price":49,"rn":2},{"category":"Fitness","name":"Yoga Mat Eco 6mm","price":32,"rn":1},{"category":"Video","name":"4K Webcam Pro","price":129,"rn":1},{"category":"Video","name":"Ring Light 14\"","price":39.99,"rn":2},{"category":"Wearables","name":"Smart Watch S","price":199.99,"rn":1},{"category":"Wearables","name":"Fitness Band X2","price":79,"rn":2}]
+   256→
+   257→== spend league > 500 count
+   258→[{"n":15}]
+   259→
+   260→== ntile4 orders asc tile1 span
+   261→[{"mn":25.47,"mx":136.11,"n":26}]
+   262→
+   263→== ntile2 stock150
+   264→[{"tile":1,"n":4},{"tile":2,"n":4}]
+   265→
+   266→== pending cheapest
+   267→[{"id":12,"total":148.28},{"id":94,"total":149}]
+   268→ERRPROBE NTILE(0): argument of ntile must be a positive integer
+   269→ERRPROBE NTILE in WHERE: misuse of window function NTILE()
+   270→ERRPROBE bare RANK(): misuse of window function RANK()
+   271→ERRPROBE alias inside OVER: no such column: t
+   272→ERRPROBE window fn wrapped by aggregate: misuse of window function RANK()
+   273→ERRPROBE RANK vs DENSE vs ROW on total: no error
+   274→
+   275→probe done, copy removed
+   276→

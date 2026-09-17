@@ -1,0 +1,168 @@
+prisma:query CREATE TABLE IF NOT EXISTS customers (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    city TEXT NOT NULL,
+    region TEXT NOT NULL,
+    active INTEGER NOT NULL DEFAULT 1,
+    created_at TEXT NOT NULL
+  )
+prisma:query CREATE TABLE IF NOT EXISTS suppliers (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    region TEXT NOT NULL,
+    rating REAL NOT NULL
+  )
+prisma:query CREATE TABLE IF NOT EXISTS products (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    category TEXT NOT NULL,
+    price REAL NOT NULL,
+    stock INTEGER NOT NULL DEFAULT 0,
+    supplier_id INTEGER NOT NULL REFERENCES suppliers(id)
+  )
+prisma:query CREATE TABLE IF NOT EXISTS orders (
+    id INTEGER PRIMARY KEY,
+    customer_id INTEGER NOT NULL REFERENCES customers(id),
+    status TEXT NOT NULL,
+    total REAL NOT NULL,
+    created_at TEXT NOT NULL,
+    shipped_at TEXT
+  )
+prisma:query CREATE TABLE IF NOT EXISTS order_items (
+    id INTEGER PRIMARY KEY,
+    order_id INTEGER NOT NULL REFERENCES orders(id),
+    product_id INTEGER NOT NULL REFERENCES products(id),
+    quantity INTEGER NOT NULL,
+    unit_price REAL NOT NULL
+  )
+prisma:query PRAGMA table_info(orders)
+prisma:query SELECT COUNT(*) AS n FROM customers
+prisma:query SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name NOT LIKE '_prisma%' ORDER BY name
+
+## tables
+[{"name":"customers"},{"name":"order_items"},{"name":"orders"},{"name":"products"},{"name":"suppliers"}]
+prisma:query SELECT COUNT(*) n, SUM(active=1) active, SUM(active=0) inactive, MIN(created_at) min_created, MAX(created_at) max_created FROM customers
+
+## customers overview
+[{"n":16,"active":14,"inactive":2,"min_created":"2023-11-02","max_created":"2024-07-03"}]
+prisma:query SELECT region, COUNT(*) n FROM customers GROUP BY region ORDER BY n DESC, region
+
+## region dist
+[{"region":"EU","n":8},{"region":"APAC","n":5},{"region":"US","n":2},{"region":"LATAM","n":1}]
+prisma:query SELECT city, COUNT(*) n FROM customers GROUP BY city ORDER BY n DESC, city
+
+## city dist
+[{"city":"Austin","n":1},{"city":"Berlin","n":1},{"city":"Chicago","n":1},{"city":"Cork","n":1},{"city":"Dubai","n":1},{"city":"Hamburg","n":1},{"city":"London","n":1},{"city":"Lyon","n":1},{"city":"Madrid","n":1},{"city":"Milan","n":1},{"city":"Mumbai","n":1},{"city":"Nagoya","n":1},{"city":"Osaka","n":1},{"city":"Seoul","n":1},{"city":"São Paulo","n":1},{"city":"Tallinn","n":1}]
+prisma:query SELECT region, active, COUNT(*) n FROM customers GROUP BY region, active ORDER BY region, active
+
+## active x region
+[{"region":"APAC","active":0,"n":1},{"region":"APAC","active":1,"n":4},{"region":"EU","active":0,"n":1},{"region":"EU","active":1,"n":7},{"region":"LATAM","active":1,"n":1},{"region":"US","active":1,"n":2}]
+prisma:query SELECT id, name, city, region, active, created_at FROM customers ORDER BY id
+
+## customer rows
+[{"id":1,"name":"Alice Chen","city":"Berlin","region":"EU","active":1,"created_at":"2023-11-02"},{"id":2,"name":"Bruno Silva","city":"São Paulo","region":"LATAM","active":1,"created_at":"2023-11-17"},{"id":3,"name":"Chloe Dubois","city":"Lyon","region":"EU","active":1,"created_at":"2023-12-05"},{"id":4,"name":"Dmitri Volkov","city":"Tallinn","region":"EU","active":0,"created_at":"2023-12-19"},{"id":5,"name":"Emma Wilson","city":"Austin","region":"US","active":1,"created_at":"2024-01-08"},{"id":6,"name":"Farid Nasser","city":"Dubai","region":"APAC","active":1,"created_at":"2024-01-22"},{"id":7,"name":"Grace Kim","city":"Seoul","region":"APAC","active":1,"created_at":"2024-02-03"},{"id":8,"name":"Hiro Tanaka","city":"Osaka","region":"APAC","active":1,"created_at":"2024-02-14"},{"id":9,"name":"Isabella Rossi","city":"Milan","region":"EU","active":1,"created_at":"2024-03-01"},{"id":10,"name":"Jamal Wright","city":"Chicago","region":"US","active":1,"created_at":"2024-03-18"},{"id":11,"name":"Keiko Sato","city":"Nagoya","region":"APAC","active":0,"created_at":"2024-04-02"},{"id":12,"name":"Liam O'Brien","city":"Cork","region":"EU","active":1,"created_at":"2024-04-21"},{"id":13,"name":"Maya Patel","city":"Mumbai","region":"APAC","active":1,"created_at":"2024-05-09"},{"id":14,"name":"Noah Meyer","city":"Hamburg","region":"EU","active":1,"created_at":"2024-05-27"},{"id":15,"name":"Olivia Brown","city":"London","region":"EU","active":1,"created_at":"2024-06-11"},{"id":16,"name":"Pedro Alvarez","city":"Madrid","region":"EU","active":1,"created_at":"2024-07-03"}]
+prisma:query SELECT * FROM suppliers ORDER BY id
+
+## suppliers rows
+[{"id":1,"name":"Nordic Gadgets AB","region":"EU","rating":4.6},{"id":2,"name":"Shenzhen Electro","region":"APAC","rating":4.1},{"id":3,"name":"Pacific Textiles","region":"APAC","rating":3.9},{"id":4,"name":"Midwest Hardware Co","region":"US","rating":4.4},{"id":5,"name":"Alpine Audio GmbH","region":"EU","rating":4.8},{"id":6,"name":"Andes Naturals SA","region":"LATAM","rating":4}]
+prisma:query SELECT COUNT(*) n, MIN(price) min_p, MAX(price) max_p, ROUND(AVG(price),2) avg_p, SUM(stock=0) zero_stock, SUM(stock<10) stock_lt10, MIN(stock) min_s, MAX(stock) max_s, SUM(price>100) price_gt100 FROM products
+
+## products overview
+[{"n":16,"min_p":14.99,"max_p":199.99,"avg_p":71.78,"zero_stock":0,"stock_lt10":0,"min_s":40,"max_s":500,"price_gt100":4}]
+prisma:query SELECT category, COUNT(*) n FROM products GROUP BY category ORDER BY n DESC, category
+
+## category dist
+[{"category":"Accessories","n":3},{"category":"Audio","n":3},{"category":"Electronics","n":3},{"category":"Apparel","n":2},{"category":"Video","n":2},{"category":"Wearables","n":2},{"category":"Fitness","n":1}]
+prisma:query SELECT id, name, price FROM products ORDER BY price DESC LIMIT 6
+
+## top priced
+[{"id":13,"name":"Smart Watch S","price":199.99},{"id":4,"name":"Noise-Canceling Headset","price":149.99},{"id":7,"name":"4K Webcam Pro","price":129},{"id":5,"name":"Studio Desktop Mic","price":119},{"id":1,"name":"Mechanical Keyboard K1","price":89.99},{"id":12,"name":"Fitness Band X2","price":79}]
+prisma:query SELECT id, name, category, price, stock, supplier_id FROM products ORDER BY id
+
+## product rows
+[{"id":1,"name":"Mechanical Keyboard K1","category":"Electronics","price":89.99,"stock":120,"supplier_id":1},{"id":2,"name":"Wireless Mouse M3","category":"Electronics","price":34.5,"stock":300,"supplier_id":2},{"id":3,"name":"USB-C Hub 7-in-1","category":"Electronics","price":49,"stock":85,"supplier_id":3},{"id":4,"name":"Noise-Canceling Headset","category":"Audio","price":149.99,"stock":60,"supplier_id":4},{"id":5,"name":"Studio Desktop Mic","category":"Audio","price":119,"stock":45,"supplier_id":5},{"id":6,"name":"Bluetooth Speaker Mini","category":"Audio","price":59.99,"stock":210,"supplier_id":6},{"id":7,"name":"4K Webcam Pro","category":"Video","price":129,"stock":70,"supplier_id":1},{"id":8,"name":"Ring Light 14\"","category":"Video","price":39.99,"stock":150,"supplier_id":2},{"id":9,"name":"HDMI 2.1 Cable 2m","category":"Accessories","price":14.99,"stock":500,"supplier_id":3},{"id":10,"name":"Laptop Stand Aluminum","category":"Accessories","price":42.5,"stock":180,"supplier_id":4},{"id":11,"name":"Desk Mat Extended","category":"Accessories","price":24.99,"stock":260,"supplier_id":5},{"id":12,"name":"Fitness Band X2","category":"Wearables","price":79,"stock":95,"supplier_id":6},{"id":13,"name":"Smart Watch S","category":"Wearables","price":199.99,"stock":40,"supplier_id":1},{"id":14,"name":"Running Socks 3-pack","category":"Apparel","price":18.5,"stock":400,"supplier_id":2},{"id":15,"name":"Cycling Jersey Pro","category":"Apparel","price":65,"stock":110,"supplier_id":3},{"id":16,"name":"Yoga Mat Eco 6mm","category":"Fitness","price":32,"stock":220,"supplier_id":4}]
+prisma:query SELECT COUNT(*) n, MIN(created_at) min_d, MAX(created_at) max_d, ROUND(AVG(total),2) avg_t, MIN(total) min_t, MAX(total) max_t, ROUND(SUM(total),2) sum_t FROM orders
+
+## orders overview
+[{"n":103,"min_d":"2024-01-01","max_d":"2025-02-27","avg_t":338.19,"min_t":25.47,"max_t":1088.44,"sum_t":34833.28}]
+prisma:query SELECT status, COUNT(*) n FROM orders GROUP BY status ORDER BY n DESC, status
+
+## status dist
+[{"status":"delivered","n":52},{"status":"shipped","n":30},{"status":"pending","n":14},{"status":"cancelled","n":7}]
+prisma:query SELECT status, COUNT(*) n, ROUND(SUM(total),2) sum_t, ROUND(AVG(total),2) avg_t, MIN(total) min_t, MAX(total) max_t FROM orders GROUP BY status ORDER BY status
+
+## status rollup
+[{"status":"cancelled","n":7,"sum_t":1152.49,"avg_t":164.64,"min_t":25.47,"max_t":397.99},{"status":"delivered","n":52,"sum_t":15571.07,"avg_t":299.44,"min_t":30.24,"max_t":752.96},{"status":"pending","n":14,"sum_t":6113,"avg_t":436.64,"min_t":148.28,"max_t":1088.44},{"status":"shipped","n":30,"sum_t":11996.72,"avg_t":399.89,"min_t":32.01,"max_t":845.92}]
+prisma:query SELECT n, COUNT(*) custs FROM (SELECT customer_id, COUNT(*) n FROM orders GROUP BY customer_id) GROUP BY n ORDER BY n
+
+## orders per customer dist
+[{"n":1,"custs":2},{"n":2,"custs":3},{"n":3,"custs":2},{"n":4,"custs":4},{"n":5,"custs":1},{"n":13,"custs":1},{"n":14,"custs":1},{"n":17,"custs":1},{"n":24,"custs":1}]
+prisma:query SELECT id, customer_id, status, total, created_at FROM orders ORDER BY total DESC LIMIT 6
+
+## top totals
+[{"id":74,"customer_id":6,"status":"pending","total":1088.44,"created_at":"2024-10-04"},{"id":43,"customer_id":3,"status":"pending","total":945.21,"created_at":"2024-06-16"},{"id":39,"customer_id":5,"status":"shipped","total":845.92,"created_at":"2024-05-12"},{"id":15,"customer_id":7,"status":"shipped","total":826.03,"created_at":"2024-02-13"},{"id":57,"customer_id":5,"status":"shipped","total":785.79,"created_at":"2024-08-06"},{"id":3,"customer_id":1,"status":"shipped","total":767.64,"created_at":"2024-01-22"}]
+prisma:query SELECT COUNT(*) n FROM orders WHERE created_at LIKE '2024%'
+
+## orders 2024
+[{"n":90}]
+prisma:query SELECT COUNT(*) n FROM orders WHERE created_at LIKE '2025%'
+
+## orders 2025
+[{"n":13}]
+prisma:query SELECT COUNT(*) n FROM orders WHERE total < 50
+
+## total lt 50
+[{"n":8}]
+prisma:query SELECT COUNT(*) n FROM orders WHERE total BETWEEN 50 AND 200
+
+## total 50-200
+[{"n":30}]
+prisma:query SELECT COUNT(*) n FROM orders WHERE total > 200
+
+## total gt 200
+[{"n":65}]
+prisma:query SELECT COUNT(*) n, MIN(quantity) min_q, MAX(quantity) max_q, ROUND(AVG(quantity),2) avg_q, SUM(quantity>=3) qty_ge3, MIN(unit_price) min_up, MAX(unit_price) max_up FROM order_items
+
+## items overview
+[{"n":251,"min_q":1,"max_q":3,"avg_q":1.98,"qty_ge3":89,"min_up":14.28,"max_up":209.68}]
+prisma:query SELECT quantity, COUNT(*) n FROM order_items GROUP BY quantity ORDER BY quantity
+
+## qty dist
+[{"quantity":1,"n":93},{"quantity":2,"n":69},{"quantity":3,"n":89}]
+prisma:query SELECT n, COUNT(*) orders FROM (SELECT order_id, COUNT(*) n FROM order_items GROUP BY order_id) GROUP BY n ORDER BY n
+
+## lines per order dist
+[{"n":1,"orders":26},{"n":2,"orders":29},{"n":3,"orders":25},{"n":4,"orders":23}]
+prisma:query SELECT product_id, COUNT(*) n FROM order_items GROUP BY product_id ORDER BY n DESC LIMIT 6
+
+## top products by lines
+[{"product_id":11,"n":24},{"product_id":4,"n":24},{"product_id":10,"n":19},{"product_id":9,"n":19},{"product_id":2,"n":18},{"product_id":7,"n":17}]
+prisma:query SELECT COUNT(*) n FROM customers c WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.customer_id=c.id)
+
+## cust without orders
+[{"n":0}]
+prisma:query SELECT COUNT(*) n FROM products p WHERE NOT EXISTS (SELECT 1 FROM order_items oi WHERE oi.product_id=p.id)
+
+## products never ordered
+[{"n":0}]
+prisma:query SELECT p.category, ROUND(SUM(oi.quantity*oi.unit_price),2) rev FROM order_items oi JOIN products p ON p.id=oi.product_id GROUP BY p.category ORDER BY rev DESC
+
+## revenue by category
+[{"category":"Audio","rev":11744.01},{"category":"Wearables","rev":6929.12},{"category":"Video","rev":5198.41},{"category":"Electronics","rev":4818.61},{"category":"Accessories","rev":3294.29},{"category":"Apparel","rev":1984.93},{"category":"Fitness","rev":863.91}]
+prisma:query SELECT c.region, COUNT(*) n FROM orders o JOIN customers c ON c.id=o.customer_id GROUP BY c.region ORDER BY n DESC
+
+## orders by region
+[{"region":"EU","n":45},{"region":"APAC","n":37},{"region":"US","n":19},{"region":"LATAM","n":2}]
+prisma:query SELECT COUNT(*) n FROM customers WHERE email LIKE '%@gmail.com'
+
+## gmail users
+[{"n":0}]
+prisma:query SELECT COUNT(*) n_all, COUNT(total) n_total, COUNT(customer_id) n_cust, COUNT(DISTINCT customer_id) n_dist_cust, ROUND(AVG(total),2) avg_all FROM orders
+
+## count variants on orders
+[{"n_all":103,"n_total":103,"n_cust":103,"n_dist_cust":16,"avg_all":338.19}]
+prisma:query SELECT status, ROUND(AVG(total),2) avg_t FROM orders WHERE status IN ('shipped','delivered') GROUP BY status
+
+## shipped avg vs delivered avg
+[{"status":"delivered","avg_t":299.44},{"status":"shipped","avg_t":399.89}]

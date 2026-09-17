@@ -1,0 +1,1522 @@
+version: {
+  v: "3.53.0",
+}
+
+[A1 table list]  (10 rows)
+  customers
+  expenses
+  invoices
+  ledger_entries
+  order_items
+  orders
+  payments
+  products
+  sqlite_sequence
+  suppliers
+
+[A2 ledger count + span]  (1 rows)
+  80 | 2024-01-31 | 2025-02-28
+
+[A3 products count]  (1 rows)
+  16 | 1148.43 | 2845
+
+[A4 order_items cols]  (3 rows)
+  1 | 1 | 16 | 3 | 31.02
+  2 | 1 | 9 | 2 | 15.15
+  3 | 1 | 11 | 1 | 25.26
+
+[A5 invoices count]  (1 rows)
+  28 | 2024-02-05 | 2025-02-19
+
+[A6 payments count]  (1 rows)
+  27 | 2024-02-20 | 2025-02-10
+
+[A7 ledger accounts]  (4 rows)
+  accounts_receivable | 26 | 8605200 | 6961200
+  cash | 27 | 6961200 | 2541600
+  operating_expenses | 14 | 2541600 | 0
+  sales_revenue | 13 | 0 | 8605200
+
+[A8 ledger id vs date order]  (1 rows)
+  0
+
+[A9 ledger entry_date ties]  (8 rows)
+  2025-02-28 | 6
+  2025-01-31 | 6
+  2024-12-31 | 6
+  2024-11-30 | 6
+  2024-10-31 | 6
+  2024-09-30 | 6
+  2024-08-31 | 6
+  2024-07-31 | 6
+
+[A10 ledger date-tie census]  (1 rows)
+  14 | 80
+
+[B1 full-ledger running net head 8]  (8 rows)
+  1 | 2024-01-31 | 1719
+  2 | 2024-01-31 | 0
+  3 | 2024-02-29 | 1440
+  4 | 2024-02-29 | 0
+  5 | 2024-02-29 | 7003
+  6 | 2024-02-29 | 0
+  7 | 2024-02-29 | 2430
+  8 | 2024-02-29 | 0
+
+[B2 running bal = 7076 rows]  (80 rows)
+  1 | 2024-01-31 | 1719
+  2 | 2024-01-31 | 0
+  3 | 2024-02-29 | 1440
+  4 | 2024-02-29 | 0
+  5 | 2024-02-29 | 7003
+  6 | 2024-02-29 | 0
+  7 | 2024-02-29 | 2430
+  8 | 2024-02-29 | 0
+  9 | 2024-03-31 | 1917
+  10 | 2024-03-31 | 0
+  11 | 2024-03-31 | 5009
+  12 | 2024-03-31 | 0
+  13 | 2024-03-31 | 7993
+  14 | 2024-03-31 | 0
+  15 | 2024-04-30 | 1749
+  16 | 2024-04-30 | 0
+  17 | 2024-04-30 | 5284
+  18 | 2024-04-30 | 0
+  19 | 2024-04-30 | 4231
+  20 | 2024-04-30 | 0
+  21 | 2024-05-31 | 1480
+  22 | 2024-05-31 | 0
+  23 | 2024-05-31 | 4318
+  24 | 2024-05-31 | 0
+  25 | 2024-05-31 | 4978
+  26 | 2024-05-31 | 0
+  27 | 2024-06-30 | 1510
+  28 | 2024-06-30 | 0
+  29 | 2024-06-30 | 5888
+  30 | 2024-06-30 | 0
+  31 | 2024-06-30 | 1982
+  32 | 2024-06-30 | 0
+  33 | 2024-07-31 | 1794
+  34 | 2024-07-31 | 0
+  35 | 2024-07-31 | 2968
+  36 | 2024-07-31 | 0
+  37 | 2024-07-31 | 5888
+  38 | 2024-07-31 | 0
+  39 | 2024-08-31 | 3210
+  40 | 2024-08-31 | 0
+  41 | 2024-08-31 | 7270
+  42 | 2024-08-31 | 0
+  43 | 2024-08-31 | 6254.5
+  44 | 2024-08-31 | 0
+  45 | 2024-09-30 | 1545
+  46 | 2024-09-30 | 0
+  47 | 2024-09-30 | 5801
+  48 | 2024-09-30 | 0
+  49 | 2024-09-30 | 8420.5
+  50 | 2024-09-30 | 0
+  51 | 2024-10-31 | 1859
+  52 | 2024-10-31 | 0
+  53 | 2024-10-31 | 6187
+  54 | 2024-10-31 | 0
+  55 | 2024-10-31 | 6185
+  56 | 2024-10-31 | 0
+  57 | 2024-11-30 | 1974
+  58 | 2024-11-30 | 0
+  59 | 2024-11-30 | 8297
+  60 | 2024-11-30 | 0
+  61 | 2024-11-30 | 2807
+  62 | 2024-11-30 | 0
+  63 | 2024-12-31 | 1610
+  64 | 2024-12-31 | 0
+  65 | 2024-12-31 | 8830
+  66 | 2024-12-31 | 0
+  67 | 2024-12-31 | 5490
+  68 | 2024-12-31 | 0
+  69 | 2025-01-31 | 1959
+  70 | 2025-01-31 | 0
+  71 | 2025-01-31 | 11085
+  72 | 2025-01-31 | 0
+  73 | 2025-01-31 | 5877
+  74 | 2025-01-31 | 0
+  75 | 2025-02-28 | 1650
+  76 | 2025-02-28 | 0
+  77 | 2025-02-28 | 8112
+  78 | 2025-02-28 | 0
+  79 | 2025-02-28 | 7076
+  80 | 2025-02-28 | 0
+
+[B3 final row]  (2 rows)
+  80 | 2025-02-28 | 0
+  79 | 2025-02-28 | 7076
+
+[B4 ORDER BY id only — differs from date order?]  (8 rows)
+  1 | 1719
+  2 | 0
+  3 | 1440
+  4 | 0
+  5 | 7003
+  6 | 0
+  7 | 2430
+  8 | 0
+
+[B5 /100 integer-division head]  (8 rows)
+  1 | 1719
+  2 | 0
+  3 | 1440
+  4 | 0
+  5 | 7003
+  6 | 0
+  7 | 2430
+  8 | 0
+
+[B6 opex-only rows]  (1 rows)
+  14 | 2541600 | 0 | 2024-01-31 | 2025-02-28
+
+[B7 opex running head 6]  (6 rows)
+  1 | 2024-01-31 | 1719
+  3 | 2024-02-29 | 3159
+  9 | 2024-03-31 | 5076
+  15 | 2024-04-30 | 6825
+  21 | 2024-05-31 | 8305
+  27 | 2024-06-30 | 9815
+
+[B8 opex running tail]  (3 rows)
+  75 | 2025-02-28 | 25416
+  69 | 2025-01-31 | 23766
+  63 | 2024-12-31 | 21807
+
+[B9 per-account partition nets]  (4 rows)
+  accounts_receivable | 16440
+  cash | 44196
+  operating_expenses | 25416
+  sales_revenue | -86052
+
+[B10 opex staged months]  (14 rows)
+  2024-01 | 1719 | 1719
+  2024-02 | 1440 | 3159
+  2024-03 | 1917 | 5076
+  2024-04 | 1749 | 6825
+  2024-05 | 1480 | 8305
+  2024-06 | 1510 | 9815
+  2024-07 | 1794 | 11609
+  2024-08 | 3210 | 14819
+  2024-09 | 1545 | 16364
+  2024-10 | 1859 | 18223
+  2024-11 | 1974 | 20197
+  2024-12 | 1610 | 21807
+  2025-01 | 1959 | 23766
+  2025-02 | 1650 | 25416
+
+[B11 ledger head raw (no round)]  (4 rows)
+  1 | 1719
+  2 | 0
+  3 | 1440
+  4 | 0
+
+[B12 credit running head 6]  (6 rows)
+  1 | 2024-01-31 | 0
+  2 | 2024-01-31 | 1719
+  3 | 2024-02-29 | 1719
+  4 | 2024-02-29 | 3159
+  5 | 2024-02-29 | 3159
+  6 | 2024-02-29 | 10162
+
+[C1 running by id head 8 (reconfirm)]  (8 rows)
+  1 | 576.54 | 576.54
+  2 | 416.81 | 993.35
+  3 | 767.64 | 1760.99
+  4 | 158.48 | 1919.47
+  5 | 725.34 | 2644.81
+  6 | 752.96 | 3397.77
+  7 | 152.52 | 3550.29
+  8 | 181.68 | 3731.97
+
+[C2 running by date,id — first 12 by id]  (12 rows)
+  1 | 2024-01-05 | 2207.36
+  2 | 2024-01-15 | 2624.17
+  3 | 2024-01-22 | 3731.97
+  4 | 2024-01-18 | 2964.33
+  5 | 2024-01-02 | 1478.3
+  6 | 2024-01-01 | 752.96
+  7 | 2024-01-02 | 1630.82
+  8 | 2024-01-15 | 2805.85
+  9 | 2024-02-05 | 3778.64
+  10 | 2024-02-15 | 5211.75
+  11 | 2024-02-13 | 4210.04
+  12 | 2024-02-07 | 3926.92
+
+[C3 day staged running head 10]  (10 rows)
+  2024-01-01 | 752.96
+  2024-01-02 | 1630.82
+  2024-01-05 | 2207.36
+  2024-01-15 | 2805.85
+  2024-01-18 | 2964.33
+  2024-01-22 | 3731.97
+  2024-02-05 | 3778.64
+  2024-02-07 | 3926.92
+  2024-02-13 | 5036.07
+  2024-02-15 | 5211.75
+
+[C4 day count]  (1 rows)
+  84
+
+[C5 month staged sums + running (all)]  (14 rows)
+  2024-01 | 3731.97 | 3731.97
+  2024-02 | 3609.64 | 7341.61
+  2024-03 | 2617.08 | 9958.69
+  2024-04 | 2468.91 | 12427.6
+  2024-05 | 2910.31 | 15337.91
+  2024-06 | 2047.43 | 17385.34
+  2024-07 | 1193.86 | 18579.2
+  2024-08 | 2352.07 | 20931.27
+  2024-09 | 3116.04 | 24047.31
+  2024-10 | 2975.67 | 27022.98
+  2024-11 | 1648.8 | 28671.78
+  2024-12 | 2101.47 | 30773.25
+  2025-01 | 1669.5 | 32442.75
+  2025-02 | 2390.53 | 34833.28
+
+[C6 month counts + cumulative (all)]  (14 rows)
+  2024-01 | 8 | 8
+  2024-02 | 9 | 17
+  2024-03 | 8 | 25
+  2024-04 | 7 | 32
+  2024-05 | 8 | 40
+  2024-06 | 6 | 46
+  2024-07 | 8 | 54
+  2024-08 | 7 | 61
+  2024-09 | 9 | 70
+  2024-10 | 7 | 77
+  2024-11 | 6 | 83
+  2024-12 | 7 | 90
+  2025-01 | 6 | 96
+  2025-02 | 7 | 103
+
+[C7 created_at tie groups]  (17 rows)
+  2024-01-02 | 2 | 5,7 | 877.86
+  2024-01-15 | 2 | 2,8 | 598.49
+  2024-02-13 | 2 | 11,15 | 1109.15
+  2024-03-06 | 2 | 20,24 | 1124.76
+  2024-04-26 | 2 | 27,29 | 627.11
+  2024-05-12 | 3 | 35,39,40 | 1354.16
+  2024-05-14 | 2 | 36,38 | 430.54
+  2024-05-19 | 2 | 33,34 | 745.78
+  2024-07-19 | 2 | 52,54 | 512.34
+  2024-08-23 | 2 | 60,61 | 792.33
+  2024-09-07 | 2 | 64,70 | 743.26
+  2024-09-09 | 2 | 67,69 | 776.39
+  2024-09-21 | 2 | 62,63 | 420.77
+  2024-10-04 | 2 | 74,75 | 1362.08
+  2024-10-13 | 3 | 73,76,77 | 914.9
+  2024-11-04 | 2 | 81,83 | 562.16
+  2025-02-12 | 2 | 101,102 | 257.31
+
+[C8 RANGE vs ROWS deterministic (ids 1..12)]  (12 rows)
+  1 | 2024-01-05 | 2207.36 | 2207.36
+  2 | 2024-01-15 | 2624.17 | 2624.17
+  3 | 2024-01-22 | 3731.97 | 3731.97
+  4 | 2024-01-18 | 2964.33 | 2964.33
+  5 | 2024-01-02 | 1478.3 | 1478.3
+  6 | 2024-01-01 | 752.96 | 752.96
+  7 | 2024-01-02 | 1630.82 | 1630.82
+  8 | 2024-01-15 | 2805.85 | 2805.85
+  9 | 2024-02-05 | 3778.64 | 3778.64
+  10 | 2024-02-15 | 5211.75 | 5211.75
+  11 | 2024-02-13 | 4210.04 | 4210.04
+  12 | 2024-02-07 | 3926.92 | 3926.92
+
+[C9 3-order days detail]  (6 rows)
+  35 | 2024-05-12 | 373
+  39 | 2024-05-12 | 845.92
+  40 | 2024-05-12 | 135.24
+  73 | 2024-10-13 | 375.93
+  76 | 2024-10-13 | 235.71
+  77 | 2024-10-13 | 303.26
+
+[C10 RANGE vs ROWS at 3-order days (rows_run col)]  (10 rows)
+  6 | 2024-01-01 | 752.96 | 752.96
+  5 | 2024-01-02 | 1478.3 | 1478.3
+  7 | 2024-01-02 | 1630.82 | 1630.82
+  1 | 2024-01-05 | 2207.36 | 2207.36
+  35 | 2024-05-12 | 2580.36 | 2580.36
+  39 | 2024-05-12 | 3426.28 | 3426.28
+  40 | 2024-05-12 | 3561.52 | 3561.52
+  73 | 2024-10-13 | 3937.45 | 3937.45
+  76 | 2024-10-13 | 4173.16 | 4173.16
+  77 | 2024-10-13 | 4476.42 | 4476.42
+
+[C11 moving 2 PRECEDING sum head 6]  (6 rows)
+  1 | 576.54 | 576.54
+  2 | 416.81 | 993.35
+  3 | 767.64 | 1760.99
+  4 | 158.48 | 1342.93
+  5 | 725.34 | 1651.46
+  6 | 752.96 | 1636.78
+
+[C12 moving 1 PRECEDING sum head 6]  (6 rows)
+  1 | 576.54 | 576.54
+  2 | 416.81 | 993.35
+  3 | 767.64 | 1184.45
+  4 | 158.48 | 926.12
+  5 | 725.34 | 883.82
+  6 | 752.96 | 1478.3
+
+[C13 moving 1 PRECEDING avg head 6]  (6 rows)
+  1 | 576.54 | 576.54
+  2 | 416.81 | 496.67
+  3 | 767.64 | 592.23
+  4 | 158.48 | 463.06
+  5 | 725.34 | 441.91
+  6 | 752.96 | 739.15
+
+[C14 moving avg ROUND digits differ?]  (6 rows)
+  1 | 576.5 | 576.54
+  2 | 496.7 | 496.675
+  3 | 592.2 | 592.225
+  4 | 463.1 | 463.06
+  5 | 441.9 | 441.91
+  6 | 739.2 | 739.15
+
+[C15 before-frame SUM head 5 (reconfirm)]  (5 rows)
+  1 | NULL
+  2 | 576.54
+  3 | 993.35
+  4 | 1760.99
+  5 | 1919.47
+
+[C16 tail frame head 4 (reconfirm)]  (4 rows)
+  1 | 34833.28
+  2 | 34256.74
+  3 | 33839.93
+  4 | 33072.29
+
+[C17 CURRENT ROW AND 2 FOLLOWING head+tail]  (4 rows)
+  1 | 1760.99
+  2 | 1342.93
+  3 | 1651.46
+  4 | 1636.78
+
+[C18 same tail 3]  (3 rows)
+  103 | 324.16
+  102 | 439.22
+  101 | 581.47
+
+[C19 running MAX head 8]  (8 rows)
+  1 | 576.54 | 576.54
+  2 | 416.81 | 576.54
+  3 | 767.64 | 767.64
+  4 | 158.48 | 767.64
+  5 | 725.34 | 767.64
+  6 | 752.96 | 767.64
+  7 | 152.52 | 767.64
+  8 | 181.68 | 767.64
+
+[C20 new-peak rows]  (6 rows)
+  1 | 576.54 | 576.54
+  3 | 767.64 | 767.64
+  15 | 826.03 | 826.03
+  39 | 845.92 | 845.92
+  43 | 945.21 | 945.21
+  74 | 1088.44 | 1088.44
+
+[C21 Alice running head 6 + tail]  (6 rows)
+  3 | 767.64 | 767.64
+  7 | 152.52 | 920.16
+  13 | 632.29 | 1552.45
+  14 | 705.23 | 2257.68
+  19 | 317.49 | 2575.17
+  21 | 136.11 | 2711.28
+
+[C22 Alice running tail]  (2 rows)
+  101 | 7262.35
+  100 | 7120.1
+
+[C23 Alice count + region]  (1 rows)
+  24
+
+[C24 region partition sums]  (4 rows)
+  APAC | 11605.45
+  EU | 15089.23
+  LATAM | 852.44
+  US | 7286.16
+
+[C25 status partition counts painted]  (4 rows)
+  cancelled | 7
+  delivered | 52
+  pending | 14
+  shipped | 30
+
+[C26 pending ids/totals]  (14 rows)
+  1 | 576.54 | 2024-01-05
+  5 | 725.34 | 2024-01-02
+  12 | 148.28 | 2024-02-07
+  19 | 317.49 | 2024-03-05
+  25 | 364.71 | 2024-03-25
+  42 | 259.31 | 2024-06-17
+  43 | 945.21 | 2024-06-16
+  47 | 306.92 | 2024-07-06
+  74 | 1088.44 | 2024-10-04
+  75 | 273.64 | 2024-10-04
+  79 | 212.03 | 2024-11-11
+  90 | 160.3 | 2024-12-27
+  94 | 149 | 2025-01-01
+  97 | 585.79 | 2025-02-27
+
+[C27 pending crowd + mv 2 PRECEDING head]  (6 rows)
+  1 | 576.54 | 14 | 576.54
+  5 | 725.34 | 14 | 650.94
+  12 | 148.28 | 14 | 483.39
+  19 | 317.49 | 14 | 397.04
+  25 | 364.71 | 14 | 276.83
+  42 | 259.31 | 14 | 313.84
+
+[C28 cancelled rows]  (7 rows)
+  7 | 152.52 | 2024-01-02
+  21 | 136.11 | 2024-03-18
+  50 | 90.35 | 2024-07-02
+  51 | 25.47 | 2024-07-25
+  82 | 143.86 | 2024-11-24
+  83 | 397.99 | 2024-11-04
+  95 | 206.19 | 2025-01-05
+
+[C29 cancelled sum + share head]  (4 rows)
+  83 | 397.99 | 1152.49 | 34.53
+  95 | 206.19 | 1152.49 | 17.89
+  7 | 152.52 | 1152.49 | 13.23
+  82 | 143.86 | 1152.49 | 12.48
+
+[C30 cancelled running]  (7 rows)
+  7 | 152.52 | 152.52
+  21 | 136.11 | 288.63
+  50 | 90.35 | 378.98
+  51 | 25.47 | 404.45
+  82 | 143.86 | 548.31
+  83 | 397.99 | 946.3
+  95 | 206.19 | 1152.49
+
+[C31 shipped running top 5 by run]  (5 rows)
+  99 | 489.33 | 11996.72
+  98 | 608.06 | 11507.39
+  96 | 590.2 | 10899.33
+  89 | 684.53 | 10309.13
+  84 | 153.51 | 9624.6
+
+[C32 shipped count]  (1 rows)
+  30 | 11996.72
+
+[C33 share of grand head 4 (reconfirm)]  (4 rows)
+  1 | 1.66
+  2 | 1.2
+  3 | 2.2
+  4 | 0.45
+
+[C34 LAST_VALUE repaired by date,id]  (1 rows)
+  585.79
+
+[C35 running count by date,id head 10]  (10 rows)
+  1 | 2024-01-05 | 4
+  2 | 2024-01-15 | 5
+  3 | 2024-01-22 | 8
+  4 | 2024-01-18 | 7
+  5 | 2024-01-02 | 2
+  6 | 2024-01-01 | 1
+  7 | 2024-01-02 | 3
+  8 | 2024-01-15 | 6
+  9 | 2024-02-05 | 9
+  10 | 2024-02-15 | 13
+
+[C36 pending created_at ties?]  (1 rows)
+  2024-10-04 | 2
+
+[C37 cancelled created_at ties?]  (0 rows)
+
+[D1 products dump]  (16 rows)
+  1 | Mechanical Keyboard K1 | Electronics | 89.99 | 120 | 1
+  2 | Wireless Mouse M3 | Electronics | 34.5 | 300 | 2
+  3 | USB-C Hub 7-in-1 | Electronics | 49 | 85 | 3
+  4 | Noise-Canceling Headset | Audio | 149.99 | 60 | 4
+  5 | Studio Desktop Mic | Audio | 119 | 45 | 5
+  6 | Bluetooth Speaker Mini | Audio | 59.99 | 210 | 6
+  7 | 4K Webcam Pro | Video | 129 | 70 | 1
+  8 | Ring Light 14" | Video | 39.99 | 150 | 2
+  9 | HDMI 2.1 Cable 2m | Accessories | 14.99 | 500 | 3
+  10 | Laptop Stand Aluminum | Accessories | 42.5 | 180 | 4
+  11 | Desk Mat Extended | Accessories | 24.99 | 260 | 5
+  12 | Fitness Band X2 | Wearables | 79 | 95 | 6
+  13 | Smart Watch S | Wearables | 199.99 | 40 | 1
+  14 | Running Socks 3-pack | Apparel | 18.5 | 400 | 2
+  15 | Cycling Jersey Pro | Apparel | 65 | 110 | 3
+  16 | Yoga Mat Eco 6mm | Fitness | 32 | 220 | 4
+
+[D2 price running head 8]  (8 rows)
+  1 | Mechanical Keyboard K1 | 89.99 | 89.99
+  2 | Wireless Mouse M3 | 34.5 | 124.49
+  3 | USB-C Hub 7-in-1 | 49 | 173.49
+  4 | Noise-Canceling Headset | 149.99 | 323.48
+  5 | Studio Desktop Mic | 119 | 442.48
+  6 | Bluetooth Speaker Mini | 59.99 | 502.47
+  7 | 4K Webcam Pro | 129 | 631.47
+  8 | Ring Light 14" | 39.99 | 671.46
+
+[D3 price ties?]  (0 rows)
+
+[D4 stock ties?]  (0 rows)
+
+[D5 stock running head 8]  (8 rows)
+  1 | Mechanical Keyboard K1 | 120 | 120
+  2 | Wireless Mouse M3 | 300 | 420
+  3 | USB-C Hub 7-in-1 | 85 | 505
+  4 | Noise-Canceling Headset | 60 | 565
+  5 | Studio Desktop Mic | 45 | 610
+  6 | Bluetooth Speaker Mini | 210 | 820
+  7 | 4K Webcam Pro | 70 | 890
+  8 | Ring Light 14" | 150 | 1040
+
+[D6 pair sum 1 PRECEDING head 6]  (6 rows)
+  1 | 120 | 120
+  2 | 300 | 420
+  3 | 85 | 385
+  4 | 60 | 145
+  5 | 45 | 105
+  6 | 210 | 255
+
+[D7 moving avg stock 2 PRECEDING]  (8 rows)
+  1 | 120 | 120
+  2 | 300 | 210
+  3 | 85 | 168.3
+  4 | 60 | 148.3
+  5 | 45 | 63.3
+  6 | 210 | 105
+  7 | 70 | 108.3
+  8 | 150 | 143.3
+
+[D8 per-supplier sku counts painted]  (16 rows)
+  1 | Mechanical Keyboard K1 | 1 | 3
+  2 | Wireless Mouse M3 | 2 | 3
+  3 | USB-C Hub 7-in-1 | 3 | 3
+  4 | Noise-Canceling Headset | 4 | 3
+  5 | Studio Desktop Mic | 5 | 2
+  6 | Bluetooth Speaker Mini | 6 | 2
+  7 | 4K Webcam Pro | 1 | 3
+  8 | Ring Light 14" | 2 | 3
+  9 | HDMI 2.1 Cable 2m | 3 | 3
+  10 | Laptop Stand Aluminum | 4 | 3
+  11 | Desk Mat Extended | 5 | 2
+  12 | Fitness Band X2 | 6 | 2
+  13 | Smart Watch S | 1 | 3
+  14 | Running Socks 3-pack | 2 | 3
+  15 | Cycling Jersey Pro | 3 | 3
+  16 | Yoga Mat Eco 6mm | 4 | 3
+
+[D9 per-supplier stock painted]  (16 rows)
+  1 | Mechanical Keyboard K1 | 1 | 120 | 230
+  2 | Wireless Mouse M3 | 2 | 300 | 850
+  3 | USB-C Hub 7-in-1 | 3 | 85 | 695
+  4 | Noise-Canceling Headset | 4 | 60 | 460
+  5 | Studio Desktop Mic | 5 | 45 | 305
+  6 | Bluetooth Speaker Mini | 6 | 210 | 305
+  7 | 4K Webcam Pro | 1 | 70 | 230
+  8 | Ring Light 14" | 2 | 150 | 850
+  9 | HDMI 2.1 Cable 2m | 3 | 500 | 695
+  10 | Laptop Stand Aluminum | 4 | 180 | 460
+  11 | Desk Mat Extended | 5 | 260 | 305
+  12 | Fitness Band X2 | 6 | 95 | 305
+  13 | Smart Watch S | 1 | 40 | 230
+  14 | Running Socks 3-pack | 2 | 400 | 850
+  15 | Cycling Jersey Pro | 3 | 110 | 695
+  16 | Yoga Mat Eco 6mm | 4 | 220 | 460
+
+[D10 supplier roster]  (6 rows)
+  1 | Nordic Gadgets AB | EU | 4.6
+  2 | Shenzhen Electro | APAC | 4.1
+  3 | Pacific Textiles | APAC | 3.9
+  4 | Midwest Hardware Co | US | 4.4
+  5 | Alpine Audio GmbH | EU | 4.8
+  6 | Andes Naturals SA | LATAM | 4
+
+[D11 catalog value constant]  (1 rows)
+  1148.43
+
+[D12 category partition price sums]  (7 rows)
+  Accessories | 82.48
+  Apparel | 83.5
+  Audio | 328.98
+  Electronics | 173.49
+  Fitness | 32
+  Video | 168.99
+  Wearables | 278.99
+
+[D13 share of catalog staged]  (6 rows)
+  13 | Smart Watch S | 199.99 | 17.41
+  4 | Noise-Canceling Headset | 149.99 | 13.06
+  7 | 4K Webcam Pro | 129 | 11.23
+  5 | Studio Desktop Mic | 119 | 10.36
+  1 | Mechanical Keyboard K1 | 89.99 | 7.84
+  12 | Fitness Band X2 | 79 | 6.88
+
+[D14 share threshold census]  (1 rows)
+  6
+
+[D15 cat share Audio]  (3 rows)
+  4 | Noise-Canceling Headset | 149.99 | 45.59
+  5 | Studio Desktop Mic | 119 | 36.17
+  6 | Bluetooth Speaker Mini | 59.99 | 18.24
+
+[D16 categories census]  (7 rows)
+  Accessories | 3
+  Apparel | 2
+  Audio | 3
+  Electronics | 3
+  Fitness | 1
+  Video | 2
+  Wearables | 2
+
+[D17 FIRST_VALUE floor by price]  (1 rows)
+  14.99
+
+[D18 FIRST_VALUE by id]  (1 rows)
+  89.99
+
+[D19 LAST_VALUE by price full frame]  (1 rows)
+  Smart Watch S
+
+[D20 LAST_VALUE default frame degenerate sample]  (4 rows)
+  9 | HDMI 2.1 Cable 2m | HDMI 2.1 Cable 2m
+  14 | Running Socks 3-pack | Running Socks 3-pack
+  11 | Desk Mat Extended | Desk Mat Extended
+  16 | Yoga Mat Eco 6mm | Yoga Mat Eco 6mm
+
+[D21 RANGE vs ROWS by category (products)]  (16 rows)
+  1 | Electronics | 89.99 | 668.45 | 584.95
+  2 | Electronics | 34.5 | 668.45 | 619.45
+  3 | Electronics | 49 | 668.45 | 668.45
+  4 | Audio | 149.99 | 494.96 | 315.97
+  5 | Audio | 119 | 494.96 | 434.97
+  6 | Audio | 59.99 | 494.96 | 494.96
+  7 | Video | 129 | 869.44 | 829.45
+  8 | Video | 39.99 | 869.44 | 869.44
+  9 | Accessories | 14.99 | 82.48 | 14.99
+  10 | Accessories | 42.5 | 82.48 | 57.49
+  11 | Accessories | 24.99 | 82.48 | 82.48
+  12 | Wearables | 79 | 1148.43 | 948.44
+  13 | Wearables | 199.99 | 1148.43 | 1148.43
+  14 | Apparel | 18.5 | 165.98 | 100.98
+  15 | Apparel | 65 | 165.98 | 165.98
+  16 | Fitness | 32 | 700.45 | 700.45
+
+[D22 products by price head 6]  (6 rows)
+  9 | HDMI 2.1 Cable 2m | 14.99
+  14 | Running Socks 3-pack | 18.5
+  11 | Desk Mat Extended | 24.99
+  16 | Yoga Mat Eco 6mm | 32
+  2 | Wireless Mouse M3 | 34.5
+  8 | Ring Light 14" | 39.99
+
+[D23 cheapest 5 cumulative]  (5 rows)
+  9 | 14.99 | 14.99
+  14 | 18.5 | 33.49
+  11 | 24.99 | 58.48
+  16 | 32 | 90.48
+  2 | 34.5 | 124.98
+
+[D24 running count products head 6]  (6 rows)
+  1 | Mechanical Keyboard K1 | 1
+  2 | Wireless Mouse M3 | 2
+  3 | USB-C Hub 7-in-1 | 3
+  4 | Noise-Canceling Headset | 4
+  5 | Studio Desktop Mic | 5
+  6 | Bluetooth Speaker Mini | 6
+
+[E1 expenses dump head 8]  (8 rows)
+  1 | Rent | Atlas Property GmbH | 2024-01-01 | 120000
+  2 | Ads | AdWorks Media | 2024-01-12 | 22000
+  3 | Tools | DevTools Inc | 2024-01-15 | 29900
+  4 | Rent | Atlas Property GmbH | 2024-02-01 | 120000
+  5 | Ads | AdWorks Media | 2024-02-09 | 24000
+  6 | Rent | Atlas Property GmbH | 2024-03-01 | 120000
+  7 | Ads | AdWorks Media | 2024-03-08 | 26500
+  8 | Travel | Skyline Travel | 2024-03-14 | 45200
+
+[E2 expense month staged running (reconfirm)]  (14 rows)
+  2024-01 | 1719 | 1719
+  2024-02 | 1440 | 3159
+  2024-03 | 1917 | 5076
+  2024-04 | 1749 | 6825
+  2024-05 | 1480 | 8305
+  2024-06 | 1510 | 9815
+  2024-07 | 1794 | 11609
+  2024-08 | 3210 | 14819
+  2024-09 | 1545 | 16364
+  2024-10 | 1859 | 18223
+  2024-11 | 1974 | 20197
+  2024-12 | 1610 | 21807
+  2025-01 | 1959 | 23766
+  2025-02 | 1650 | 25416
+
+[E3 cents running head 6]  (6 rows)
+  1 | 2024-01-01 | 120000
+  2 | 2024-01-12 | 142000
+  3 | 2024-01-15 | 171900
+  4 | 2024-02-01 | 291900
+  5 | 2024-02-09 | 315900
+  6 | 2024-03-01 | 435900
+
+[E4 Rent rows]  (14 rows)
+  1 | Atlas Property GmbH | 2024-01-01 | 120000
+  4 | Atlas Property GmbH | 2024-02-01 | 120000
+  6 | Atlas Property GmbH | 2024-03-01 | 120000
+  9 | Atlas Property GmbH | 2024-04-01 | 120000
+  12 | Atlas Property GmbH | 2024-05-01 | 120000
+  14 | Atlas Property GmbH | 2024-06-01 | 120000
+  16 | Atlas Property GmbH | 2024-07-01 | 120000
+  19 | Atlas Property GmbH | 2024-08-01 | 120000
+  22 | Atlas Property GmbH | 2024-09-01 | 120000
+  24 | Atlas Property GmbH | 2024-10-01 | 120000
+  27 | Atlas Property GmbH | 2024-11-01 | 120000
+  30 | Atlas Property GmbH | 2024-12-01 | 120000
+  32 | Atlas Property GmbH | 2025-01-01 | 120000
+  35 | Atlas Property GmbH | 2025-02-01 | 120000
+
+[E5 Rent running]  (14 rows)
+  1 | Atlas Property GmbH | 1200
+  4 | Atlas Property GmbH | 2400
+  6 | Atlas Property GmbH | 3600
+  9 | Atlas Property GmbH | 4800
+  12 | Atlas Property GmbH | 6000
+  14 | Atlas Property GmbH | 7200
+  16 | Atlas Property GmbH | 8400
+  19 | Atlas Property GmbH | 9600
+  22 | Atlas Property GmbH | 10800
+  24 | Atlas Property GmbH | 12000
+  27 | Atlas Property GmbH | 13200
+  30 | Atlas Property GmbH | 14400
+  32 | Atlas Property GmbH | 15600
+  35 | Atlas Property GmbH | 16800
+
+[E6 category partition sums painted]  (4 rows)
+  Ads | 4570
+  Rent | 16800
+  Tools | 1525
+  Travel | 2521
+
+[E7 expense count running head 8]  (8 rows)
+  1 | 2024-01-01 | Rent | 1
+  2 | 2024-01-12 | Ads | 2
+  3 | 2024-01-15 | Tools | 3
+  4 | 2024-02-01 | Rent | 4
+  5 | 2024-02-09 | Ads | 5
+  6 | 2024-03-01 | Rent | 6
+  7 | 2024-03-08 | Ads | 7
+  8 | 2024-03-14 | Travel | 8
+
+[E8 expense row count]  (1 rows)
+  36
+
+[F1 invoices dump]  (28 rows)
+  1 | 1 | INV-2024-001 | 2024-02-05 | 2024-03-06 | 486000 | paid
+  2 | 5 | INV-2024-002 | 2024-02-18 | 2024-03-19 | 214300 | paid
+  3 | 7 | INV-2024-003 | 2024-03-04 | 2024-04-03 | 342000 | paid
+  4 | 13 | INV-2024-004 | 2024-03-21 | 2024-04-20 | 158900 | paid
+  5 | 1 | INV-2024-005 | 2024-04-09 | 2024-05-09 | 528400 | paid
+  6 | 9 | INV-2024-006 | 2024-05-02 | 2024-06-01 | 233600 | paid
+  7 | 13 | INV-2024-007 | 2024-05-15 | 2024-06-14 | 198200 | paid
+  8 | 5 | INV-2024-008 | 2024-06-06 | 2024-07-06 | 401500 | paid
+  9 | 10 | INV-2024-009 | 2024-06-19 | 2024-07-19 | 187300 | paid
+  10 | 7 | INV-2024-010 | 2024-07-08 | 2024-08-07 | 296800 | paid
+  11 | 12 | INV-2024-011 | 2024-07-24 | 2024-08-23 | 92500 | void
+  12 | 1 | INV-2024-012 | 2024-08-07 | 2024-09-06 | 472300 | paid
+  13 | 15 | INV-2024-013 | 2024-08-21 | 2024-09-20 | 254700 | paid
+  14 | 13 | INV-2024-014 | 2024-09-05 | 2024-10-05 | 351200 | paid
+  15 | 5 | INV-2024-015 | 2024-09-18 | 2024-10-18 | 228900 | paid
+  16 | 9 | INV-2024-016 | 2024-10-03 | 2024-11-02 | 389600 | paid
+  17 | 10 | INV-2024-017 | 2024-10-17 | 2024-11-16 | 141800 | paid
+  18 | 16 | INV-2024-018 | 2024-10-29 | 2024-11-28 | 87300 | open
+  19 | 1 | INV-2024-019 | 2024-11-06 | 2024-12-06 | 561400 | paid
+  20 | 7 | INV-2024-020 | 2024-11-20 | 2024-12-20 | 268300 | paid
+  21 | 3 | INV-2024-021 | 2024-12-11 | 2025-01-10 | 129500 | open
+  22 | 13 | INV-2024-022 | 2024-12-04 | 2025-01-03 | 445900 | paid
+  23 | 15 | INV-2024-023 | 2024-12-17 | 2025-01-16 | 307600 | paid
+  24 | 5 | INV-2025-024 | 2025-01-08 | 2025-02-07 | 493700 | open
+  25 | 1 | INV-2025-025 | 2025-01-22 | 2025-02-21 | 614800 | open
+  26 | 12 | INV-2025-026 | 2025-02-05 | 2025-03-07 | 356200 | open
+  27 | 9 | INV-2025-027 | 2025-02-19 | 2025-03-21 | 279400 | open
+  28 | 8 | INV-2025-028 | 2025-02-12 | 2025-03-14 | 175600 | paid
+
+[F2 invoice issued_on ties?]  (0 rows)
+
+[F3 invoice running head 8]  (8 rows)
+  1 | 2024-02-05 | 4860
+  2 | 2024-02-18 | 7003
+  3 | 2024-03-04 | 10423
+  4 | 2024-03-21 | 12012
+  5 | 2024-04-09 | 17296
+  6 | 2024-05-02 | 19632
+  7 | 2024-05-15 | 21614
+  8 | 2024-06-06 | 25629
+
+[F4 invoice running tail]  (2 rows)
+  28 | 2025-02-12 | 84183
+  27 | 2025-02-19 | 86977
+
+[F5 RANGE vs ROWS invoices (if ties)]  (28 rows)
+  1 | 2024-02-05 | 4860 | 4860
+  2 | 2024-02-18 | 7003 | 7003
+  3 | 2024-03-04 | 10423 | 10423
+  4 | 2024-03-21 | 12012 | 12012
+  5 | 2024-04-09 | 17296 | 17296
+  6 | 2024-05-02 | 19632 | 19632
+  7 | 2024-05-15 | 21614 | 21614
+  8 | 2024-06-06 | 25629 | 25629
+  9 | 2024-06-19 | 27502 | 27502
+  10 | 2024-07-08 | 30470 | 30470
+  11 | 2024-07-24 | 31395 | 31395
+  12 | 2024-08-07 | 36118 | 36118
+  13 | 2024-08-21 | 38665 | 38665
+  14 | 2024-09-05 | 42177 | 42177
+  15 | 2024-09-18 | 44466 | 44466
+  16 | 2024-10-03 | 48362 | 48362
+  17 | 2024-10-17 | 49780 | 49780
+  18 | 2024-10-29 | 50653 | 50653
+  19 | 2024-11-06 | 56267 | 56267
+  20 | 2024-11-20 | 58950 | 58950
+  21 | 2024-12-11 | 64704 | 64704
+  22 | 2024-12-04 | 63409 | 63409
+  23 | 2024-12-17 | 67780 | 67780
+  24 | 2025-01-08 | 72717 | 72717
+  25 | 2025-01-22 | 78865 | 78865
+  26 | 2025-02-05 | 82427 | 82427
+  27 | 2025-02-19 | 86977 | 86977
+  28 | 2025-02-12 | 84183 | 84183
+
+[F6 invoice sum]  (1 rows)
+  8697700
+
+[ERR G1 ROWS BETWEEN UNBOUNDED FOLLOWING AND CURRENT ROW]  near "FOLLOWING": syntax error
+
+[ERR G2 ROWS BETWEEN 2 FOLLOWING AND CURRENT ROW]  unsupported frame specification
+
+[ERR G3 ROWS BETWEEN CURRENT ROW AND UNBOUNDED PRECEDING]  near "PRECEDING": syntax error
+
+[ERR G4 missing ROWS keyword]  near "PRECEDING": syntax error
+
+[ERR G5 SUM(*) illegal]  wrong number of arguments to function SUM()
+
+[ERR G6 AVG(*) illegal]  wrong number of arguments to function AVG()
+
+[ERR G7 MIN(*) illegal]  MIN() may not be used as a window function
+
+[ERR G8 COUNT(*) vs COUNT(total) same here?]  no error
+
+[G9 ROUND 2 vs 3 on running SUM differ?]  (1 rows)
+  0
+
+[G10 ROUND 2 vs 4 on running SUM differ?]  (1 rows)
+  0
+
+[G11 ROUND 2 vs 1 on running SUM differ?]  (1 rows)
+  95
+
+[G12 ROUND 2 vs 0 on running SUM differ?]  (1 rows)
+  100
+
+[G13 /100 vs /100.0 on opex running differ?]  (1 rows)
+  0
+
+[G14 /100 vs /100.0 on full ledger running differ?]  (1 rows)
+  2
+
+[G15 opex credit_cents all zero?]  (1 rows)
+  0
+
+[G16 Rent amounts whole dollars?]  (1 rows)
+  0
+
+[G17 ledger credit running /100 vs /100.0]  (1 rows)
+  6
+
+[G18 strftime single-arg (now-month) GROUP BY shape]  (1 rows)
+  2026-09 | 103
+
+[G19 created_at text == date(created_at)?]  (1 rows)
+  0
+
+[G20 RANGE BETWEEN UP AND UF vs default differ (orders by date,id)?]  (1 rows)
+  102
+
+[G21 ROWS vs RANGE chip swap differs (orders)?]  (1 rows)
+  0
+
+[G22 ROWS vs RANGE swap differs (products by category)?]  (1 rows)
+  9
+
+[G23 ORDER BY id vs entry_date,id ledger running differ?]  (1 rows)
+  0
+
+[G24 ORDER BY id vs entry_date,id — same sequence?]  (1 rows)
+  0
+
+[G25 ORDER BY total inside OVER differs (products)?]  (1 rows)
+  16
+
+[G26 SUM(s) vs SUM(mo) staged differ (expenses)?]  (1 rows)
+  14
+
+[ERR G27 COUNT(raw, 2) wrong args]  wrong number of arguments to function COUNT()
+
+[ERR G28 AVG(raw, 2) wrong args]  wrong number of arguments to function AVG()
+
+[G29 MAX(raw, 2) scalar runs]  (3 rows)
+  576.54
+  993.3499999999999
+  1760.99
+
+[G30 SUM(x) vs TOTAL(x) identical?]  (1 rows)
+  0
+
+[G31 status chip swap differs (partition counts)?]  (1 rows)
+  102
+
+[G32 category vs supplier_id partition differs (products)?]  (1 rows)
+  9
+
+[G33 1 vs 2 PRECEDING pair-sum differ (products)?]  (1 rows)
+  14
+
+[G34 UNBOUNDED vs 1 PRECEDING differ (orders)?]  (1 rows)
+  101
+
+[G35 LAST_VALUE CURRENT ROW end vs UNBOUNDED FOLLOWING differ?]  (1 rows)
+  15
+
+[G36 1 FOLLOWING end differs (orders before-frame)?]  (1 rows)
+  102
+
+[G37 OVER (ORDER BY id) vs OVER (ORDER BY created_at) running differ?]  (1 rows)
+  100
+
+[G38 DESC vs ASC month running differ?]  (1 rows)
+  14
+
+[G39 customer 1 vs 2 filter differs?]  (1 rows)
+  24 | 2
+
+[G40 'Audio' category exists / products]  (1 rows)
+  3
+
+[G41 LIMIT 5 vs 8 differ trivially (orders head)?]  (1 rows)
+  5 | 8
+
+[G42 ROUND(SUM,2) head for 1375/1385 (verify noVerify need)]  (1 rows)
+  1
+
+[G43 pending stage_share head]  (5 rows)
+  74 | 1088.44 | 14 | 17.81
+  43 | 945.21 | 14 | 15.46
+  5 | 725.34 | 14 | 11.87
+  97 | 585.79 | 14 | 9.58
+  1 | 576.54 | 14 | 9.43
+
+[G44 pending sum]  (1 rows)
+  6113
+
+[G45 product share threshold 6 census]  (6 rows)
+  13 | Smart Watch S | 199.99 | 17.41
+  4 | Noise-Canceling Headset | 149.99 | 13.06
+  7 | 4K Webcam Pro | 129 | 11.23
+  5 | Studio Desktop Mic | 119 | 10.36
+  1 | Mechanical Keyboard K1 | 89.99 | 7.84
+  12 | Fitness Band X2 | 79 | 6.88
+
+[G46 shipped+pending staged top]  (4 rows)
+  99 | 489.33 | shipped | 11996.72
+  98 | 608.06 | shipped | 11507.39
+  96 | 590.2 | shipped | 10899.33
+  89 | 684.53 | shipped | 10309.13
+
+[G47 supplier JOIN painted counts sample]  (8 rows)
+  1 | Mechanical Keyboard K1 | Nordic Gadgets AB | 3
+  2 | Wireless Mouse M3 | Shenzhen Electro | 3
+  3 | USB-C Hub 7-in-1 | Pacific Textiles | 3
+  4 | Noise-Canceling Headset | Midwest Hardware Co | 3
+  5 | Studio Desktop Mic | Alpine Audio GmbH | 2
+  6 | Bluetooth Speaker Mini | Andes Naturals SA | 2
+  7 | 4K Webcam Pro | Nordic Gadgets AB | 3
+  8 | Ring Light 14" | Shenzhen Electro | 3
+
+[G48 funnel stage paint first 10 ids]  (10 rows)
+  1 | Pedro Alvarez | pending | 14
+  2 | Maya Patel | delivered | 52
+  3 | Alice Chen | shipped | 30
+  4 | Maya Patel | shipped | 30
+  5 | Emma Wilson | pending | 14
+  6 | Bruno Silva | delivered | 52
+  7 | Alice Chen | cancelled | 7
+  8 | Emma Wilson | shipped | 30
+  9 | Grace Kim | shipped | 30
+  10 | Keiko Sato | delivered | 52
+
+[G49 Alice named running head]  (4 rows)
+  3 | Alice Chen | 767.64 | 767.64
+  7 | Alice Chen | 152.52 | 920.16
+  13 | Alice Chen | 632.29 | 1552.45
+  14 | Alice Chen | 705.23 | 2257.68
+
+[G50 cancelled named running]  (7 rows)
+  7 | Alice Chen | 152.52 | 152.52
+  21 | Alice Chen | 136.11 | 288.63
+  50 | Maya Patel | 90.35 | 378.98
+  51 | Maya Patel | 25.47 | 404.45
+  82 | Emma Wilson | 143.86 | 548.31
+  83 | Keiko Sato | 397.99 | 946.3
+  95 | Alice Chen | 206.19 | 1152.49
+
+[G51 inventory supplier stock first 6]  (6 rows)
+  1 | Mechanical Keyboard K1 | 120 | 230
+  2 | Wireless Mouse M3 | 300 | 850
+  3 | USB-C Hub 7-in-1 | 85 | 695
+  4 | Noise-Canceling Headset | 60 | 460
+  5 | Studio Desktop Mic | 45 | 305
+  6 | Bluetooth Speaker Mini | 210 | 305
+
+[G52 products by price tail (LAST_VALUE target)]  (3 rows)
+  13 | Smart Watch S | 199.99
+  4 | Noise-Canceling Headset | 149.99
+  7 | 4K Webcam Pro | 129
+
+===== ROUND 2 =====
+
+[P1a movavg price head 8]  (8 rows)
+  1 | 89.99 | 89.99
+  2 | 34.5 | 62.24
+  3 | 49 | 41.75
+  4 | 149.99 | 99.5
+  5 | 119 | 134.5
+  6 | 59.99 | 89.5
+  7 | 129 | 94.5
+  8 | 39.99 | 84.5
+
+[P1b movavg price ROUND mismatches (vs 2)]  (1 rows)
+  16 | 9 | 11
+
+[P2a orders tie LIMIT 12]  (12 rows)
+  1 | 2024-01-05 | 2207.36 | 2207.36
+  2 | 2024-01-15 | 2805.85 | 2624.17
+  3 | 2024-01-22 | 3731.97 | 3731.97
+  4 | 2024-01-18 | 2964.33 | 2964.33
+  5 | 2024-01-02 | 1630.82 | 1478.3
+  6 | 2024-01-01 | 752.96 | 752.96
+  7 | 2024-01-02 | 1630.82 | 1630.82
+  8 | 2024-01-15 | 2805.85 | 2805.85
+  9 | 2024-02-05 | 3778.64 | 3778.64
+  10 | 2024-02-15 | 5211.75 | 5211.75
+  11 | 2024-02-13 | 5036.07 | 4210.04
+  12 | 2024-02-07 | 3926.92 | 3926.92
+
+[P2b orders tie mismatch counts]  (1 rows)
+  19 | 101 | 100 | 103
+[STAB P2c orders tie]  STABLE x3
+
+[P3a pending tie all 14]  (14 rows)
+  1 | Pedro Alvarez | 2024-01-05 | 576.54 | 1301.88 | 1301.88
+  5 | Emma Wilson | 2024-01-02 | 725.34 | 725.34 | 725.34
+  12 | Maya Patel | 2024-02-07 | 148.28 | 1450.16 | 1450.16
+  19 | Alice Chen | 2024-03-05 | 317.49 | 1767.65 | 1767.65
+  25 | Chloe Dubois | 2024-03-25 | 364.71 | 2132.36 | 2132.36
+  42 | Alice Chen | 2024-06-17 | 259.31 | 3336.88 | 3336.88
+  43 | Chloe Dubois | 2024-06-16 | 945.21 | 3077.57 | 3077.57
+  47 | Maya Patel | 2024-07-06 | 306.92 | 3643.8 | 3643.8
+  74 | Farid Nasser | 2024-10-04 | 1088.44 | 5005.88 | 4732.24
+  75 | Grace Kim | 2024-10-04 | 273.64 | 5005.88 | 5005.88
+  79 | Alice Chen | 2024-11-11 | 212.03 | 5217.91 | 5217.91
+  90 | Emma Wilson | 2024-12-27 | 160.3 | 5378.21 | 5378.21
+  94 | Keiko Sato | 2025-01-01 | 149 | 5527.21 | 5527.21
+  97 | Emma Wilson | 2025-02-27 | 585.79 | 6113 | 6113
+[STAB P3b pending tie]  STABLE x3
+
+[P4a ledger posting-day tie LIMIT 12]  (12 rows)
+  1 | 2024-01-31 | 0 | 1719
+  2 | 2024-01-31 | 0 | 0
+  3 | 2024-02-29 | 0 | 1440
+  4 | 2024-02-29 | 0 | 0
+  5 | 2024-02-29 | 0 | 7003
+  6 | 2024-02-29 | 0 | 0
+  7 | 2024-02-29 | 0 | 2430
+  8 | 2024-02-29 | 0 | 0
+  9 | 2024-03-31 | 0 | 1917
+  10 | 2024-03-31 | 0 | 0
+  11 | 2024-03-31 | 0 | 5009
+  12 | 2024-03-31 | 0 | 0
+
+[P4b ledger tie mismatches]  (1 rows)
+  40 | 40 | 39
+[STAB P4c ledger tie]  STABLE x3
+
+[P5a products category tie all 16]  (16 rows)
+  1 | Electronics | 89.99 | 668.45 | 584.95
+  2 | Electronics | 34.5 | 668.45 | 619.45
+  3 | Electronics | 49 | 668.45 | 668.45
+  4 | Audio | 149.99 | 494.96 | 315.97
+  5 | Audio | 119 | 494.96 | 434.97
+  6 | Audio | 59.99 | 494.96 | 494.96
+  7 | Video | 129 | 869.44 | 829.45
+  8 | Video | 39.99 | 869.44 | 869.44
+  9 | Accessories | 14.99 | 82.48 | 14.99
+  10 | Accessories | 42.5 | 82.48 | 57.49
+  11 | Accessories | 24.99 | 82.48 | 82.48
+  12 | Wearables | 79 | 1148.43 | 948.44
+  13 | Wearables | 199.99 | 1148.43 | 1148.43
+  14 | Apparel | 18.5 | 165.98 | 100.98
+  15 | Apparel | 65 | 165.98 | 165.98
+  16 | Fitness | 32 | 700.45 | 700.45
+
+[P5b products tie mismatches]  (1 rows)
+  14 | 15
+[STAB P5c products tie]  STABLE x3
+
+[P6 ledger COUNT(*) OVER () distinct]  (1 rows)
+  80
+
+[P7 stock shares top 5]  (5 rows)
+  9 | HDMI 2.1 Cable 2m | 500 | 17.57
+  14 | Running Socks 3-pack | 400 | 14.06
+  2 | Wireless Mouse M3 | 300 | 10.54
+  11 | Desk Mat Extended | 260 | 9.14
+  16 | Yoga Mat Eco 6mm | 220 | 7.73
+
+[P8 growth dual running]  (14 rows)
+  2024-01 | 8 | 8 | 3731.97
+  2024-02 | 9 | 17 | 7341.61
+  2024-03 | 8 | 25 | 9958.69
+  2024-04 | 7 | 32 | 12427.6
+  2024-05 | 8 | 40 | 15337.91
+  2024-06 | 6 | 46 | 17385.34
+  2024-07 | 8 | 54 | 18579.2
+  2024-08 | 7 | 61 | 20931.27
+  2024-09 | 9 | 70 | 24047.31
+  2024-10 | 7 | 77 | 27022.98
+  2024-11 | 6 | 83 | 28671.78
+  2024-12 | 7 | 90 | 30773.25
+  2025-01 | 6 | 96 | 32442.75
+  2025-02 | 7 | 103 | 34833.28
+
+[P9 supplier running full]  (16 rows)
+  1 | Mechanical Keyboard K1 | Nordic Gadgets AB | 120 | 3
+  2 | Wireless Mouse M3 | Shenzhen Electro | 300 | 3
+  3 | USB-C Hub 7-in-1 | Pacific Textiles | 85 | 3
+  4 | Noise-Canceling Headset | Midwest Hardware Co | 60 | 3
+  5 | Studio Desktop Mic | Alpine Audio GmbH | 45 | 2
+  6 | Bluetooth Speaker Mini | Andes Naturals SA | 210 | 2
+  7 | 4K Webcam Pro | Nordic Gadgets AB | 190 | 3
+  8 | Ring Light 14" | Shenzhen Electro | 450 | 3
+  9 | HDMI 2.1 Cable 2m | Pacific Textiles | 585 | 3
+  10 | Laptop Stand Aluminum | Midwest Hardware Co | 240 | 3
+  11 | Desk Mat Extended | Alpine Audio GmbH | 305 | 2
+  12 | Fitness Band X2 | Andes Naturals SA | 305 | 2
+  13 | Smart Watch S | Nordic Gadgets AB | 230 | 3
+  14 | Running Socks 3-pack | Shenzhen Electro | 850 | 3
+  15 | Cycling Jersey Pro | Pacific Textiles | 695 | 3
+  16 | Yoga Mat Eco 6mm | Midwest Hardware Co | 460 | 3
+
+[P9b join-key distractor]  (1 rows)
+  6
+
+[P10 spent_on buckets]  (1 rows)
+  36
+
+[P11 cash months]  (14 rows)
+  2024-01 | -1719 | -1719
+  2024-02 | 990 | -729
+  2024-03 | 6076 | 5347
+  2024-04 | 2482 | 7829
+  2024-05 | 3498 | 11327
+  2024-06 | 472 | 11799
+  2024-07 | 4094 | 15893
+  2024-08 | 3044.5 | 18937.5
+  2024-09 | 6875.5 | 25813
+  2024-10 | 4326 | 30139
+  2024-11 | 833 | 30972
+  2024-12 | 3880 | 34852
+  2025-01 | 3918 | 38770
+  2025-02 | 5426 | 44196
+
+[P12 so_far distractor mismatches]  (1 rows)
+  100 | 103 | 102
+
+[P14 cheap build ROUND mismatches]  (1 rows)
+  16 | 16 | 16
+
+[P15 AVG(price) OVER () distinct]  (1 rows)
+  71.78
+
+[P16 pair end mismatches]  (1 rows)
+  15 | 15 | 14
+
+[P17 stock movavg ROUND mismatches (correct 1)]  (1 rows)
+  12 | 12
+
+[P18 orders movavg ROUND mismatches (correct 2)]  (1 rows)
+  102 | 93 | 48
+
+[P19 bucket shapes]  (1 rows)
+  84 | 2 | 14
+
+[P20 cancelled share 100 vs 100.0]  (1 rows)
+  0
+
+[P21 Apparel cat shares]  (2 rows)
+  15 | Cycling Jersey Pro | 65 | 77.84
+  14 | Running Socks 3-pack | 18.5 | 22.16
+
+[P22 MIN trough rows]  (1 rows)
+  7
+
+[P25 SUM=total rows (ORDER BY id)]  (1 rows)
+  1
+
+[P25b peak rows ORDER BY total inside OVER]  (1 rows)
+  103
+
+[P23 LAST_VALUE by id full frame]  (1 rows)
+  Yoga Mat Eco 6mm
+
+[ERR P24a BETWEEN 1 PRECEDING AND 1 PRECEDING]  no error
+
+[P24b prior AVG head 4]  (4 rows)
+  1 | NULL
+  2 | 576.54
+  3 | 496.67
+  4 | 587
+
+[P32 pending mv ROUND mismatches]  (1 rows)
+  14 | 13 | 11
+
+[P33 cancelled running ROUND mismatches]  (1 rows)
+  6 | 7
+
+[P34 Alice running ROUND mismatches]  (1 rows)
+  22 | 24
+
+[P36 opex memo-order mismatch]  (1 rows)
+  0
+
+[P37 floor by name]  (1 rows)
+  129
+
+[P47a opex staged (exact template)]  (14 rows)
+  2024-01 | 1719 | 1719
+  2024-02 | 1440 | 3159
+  2024-03 | 1917 | 5076
+  2024-04 | 1749 | 6825
+  2024-05 | 1480 | 8305
+  2024-06 | 1510 | 9815
+  2024-07 | 1794 | 11609
+  2024-08 | 3210 | 14819
+  2024-09 | 1545 | 16364
+  2024-10 | 1859 | 18223
+  2024-11 | 1974 | 20197
+  2024-12 | 1610 | 21807
+  2025-01 | 1959 | 23766
+  2025-02 | 1650 | 25416
+
+[P47b opex amt-order mismatch]  (1 rows)
+  14
+
+[P47c strftime-on-memo bucket]  (1 rows)
+  1
+
+[P55 peaks exact]  (6 rows)
+  1 | 576.54 | 576.54
+  3 | 767.64 | 767.64
+  15 | 826.03 | 826.03
+  39 | 845.92 | 845.92
+  43 | 945.21 | 945.21
+  74 | 1088.44 | 1088.44
+
+[P56 shipped_at key head 4]  (4 rows)
+  1 | 2024-01-05 | 7265.49
+  2 | 2024-01-15 | 8616.94
+  3 | 2024-01-22 | 9543.06
+  4 | 2024-01-18 | 8775.42
+
+[P57 cancelled named ROUND r1/r0]  (1 rows)
+  6 | 7
+
+[P58 funnel staged exact]  (5 rows)
+  74 | 1088.44 | 14 | 17.81
+  43 | 945.21 | 14 | 15.46
+  5 | 725.34 | 14 | 11.87
+  97 | 585.79 | 14 | 9.58
+  1 | 576.54 | 14 | 9.43
+
+[P59a growth dual exact]  (14 rows)
+  2024-01 | 8 | 8 | 3731.97
+  2024-02 | 9 | 17 | 7341.61
+  2024-03 | 8 | 25 | 9958.69
+  2024-04 | 7 | 32 | 12427.6
+  2024-05 | 8 | 40 | 15337.91
+  2024-06 | 6 | 46 | 17385.34
+  2024-07 | 8 | 54 | 18579.2
+  2024-08 | 7 | 61 | 20931.27
+  2024-09 | 9 | 70 | 24047.31
+  2024-10 | 7 | 77 | 27022.98
+  2024-11 | 6 | 83 | 28671.78
+  2024-12 | 7 | 90 | 30773.25
+  2025-01 | 6 | 96 | 32442.75
+  2025-02 | 7 | 103 | 34833.28
+
+[P59b growth n-order mismatch]  (1 rows)
+  14
+
+[P60 products tie outer-order mismatch]  (1 rows)
+  16
+
+[P61 products by name head 3]  (3 rows)
+  7 | 4K Webcam Pro | 7
+  6 | Bluetooth Speaker Mini | 6
+  15 | Cycling Jersey Pro | 15
+
+[P62 pricing share exact]  (6 rows)
+  13 | Smart Watch S | 199.99 | 17.41
+  4 | Noise-Canceling Headset | 149.99 | 13.06
+  7 | 4K Webcam Pro | 129 | 11.23
+  5 | Studio Desktop Mic | 119 | 10.36
+  1 | Mechanical Keyboard K1 | 89.99 | 7.84
+  12 | Fitness Band X2 | 79 | 6.88
+
+[P63 refund share exact]  (4 rows)
+  83 | 397.99 | 34.53
+  95 | 206.19 | 17.89
+  7 | 152.52 | 13.23
+  82 | 143.86 | 12.48
+
+[P64 stock share exact]  (5 rows)
+  9 | HDMI 2.1 Cable 2m | 500 | 17.57
+  14 | Running Socks 3-pack | 400 | 14.06
+  2 | Wireless Mouse M3 | 300 | 10.54
+  11 | Desk Mat Extended | 260 | 9.14
+  16 | Yoga Mat Eco 6mm | 220 | 7.73
+
+[P65a Rent running exact]  (6 rows)
+  1 | Atlas Property GmbH | 1200
+  4 | Atlas Property GmbH | 2400
+  6 | Atlas Property GmbH | 3600
+  9 | Atlas Property GmbH | 4800
+  12 | Atlas Property GmbH | 6000
+  14 | Atlas Property GmbH | 7200
+
+[P65b Rent id-sum mismatch]  (1 rows)
+  14
+
+[P66a expense month staged exact]  (6 rows)
+  2024-01 | 1719 | 1719
+  2024-02 | 1440 | 3159
+  2024-03 | 1917 | 5076
+  2024-04 | 1749 | 6825
+  2024-05 | 1480 | 8305
+  2024-06 | 1510 | 9815
+
+[P66b expense spent_on-key mismatch]  (1 rows)
+  14
+
+[P67a ledger net running exact]  (8 rows)
+  1 | 2024-01-31 | 1719
+  2 | 2024-01-31 | 0
+  3 | 2024-02-29 | 1440
+  4 | 2024-02-29 | 0
+  5 | 2024-02-29 | 7003
+  6 | 2024-02-29 | 0
+  7 | 2024-02-29 | 2430
+  8 | 2024-02-29 | 0
+
+[P67b ledger distractor mismatches]  (1 rows)
+  79 | 40 | 26 | 0
+
+[P68a opex running exact]  (14 rows)
+  1 | 2024-01-31 | 1719
+  3 | 2024-02-29 | 3159
+  9 | 2024-03-31 | 5076
+  15 | 2024-04-30 | 6825
+  21 | 2024-05-31 | 8305
+  27 | 2024-06-30 | 9815
+  33 | 2024-07-31 | 11609
+  39 | 2024-08-31 | 14819
+  45 | 2024-09-30 | 16364
+  51 | 2024-10-31 | 18223
+  57 | 2024-11-30 | 20197
+  63 | 2024-12-31 | 21807
+  69 | 2025-01-31 | 23766
+  75 | 2025-02-28 | 25416
+
+[P68b opex MAX-running head 3]  (3 rows)
+  1 | 171900
+  3 | 171900
+  9 | 191700
+
+[P69 running count by date exact]  (10 rows)
+  1 | 2024-01-05 | 4
+  2 | 2024-01-15 | 5
+  3 | 2024-01-22 | 8
+  4 | 2024-01-18 | 7
+  5 | 2024-01-02 | 2
+  6 | 2024-01-01 | 1
+  7 | 2024-01-02 | 3
+  8 | 2024-01-15 | 6
+  9 | 2024-02-05 | 9
+  10 | 2024-02-15 | 13
+
+[P70 supplier exact]  (16 rows)
+  1 | Mechanical Keyboard K1 | Nordic Gadgets AB | 120 | 3
+  2 | Wireless Mouse M3 | Shenzhen Electro | 300 | 3
+  3 | USB-C Hub 7-in-1 | Pacific Textiles | 85 | 3
+  4 | Noise-Canceling Headset | Midwest Hardware Co | 60 | 3
+  5 | Studio Desktop Mic | Alpine Audio GmbH | 45 | 2
+  6 | Bluetooth Speaker Mini | Andes Naturals SA | 210 | 2
+  7 | 4K Webcam Pro | Nordic Gadgets AB | 190 | 3
+  8 | Ring Light 14" | Shenzhen Electro | 450 | 3
+  9 | HDMI 2.1 Cable 2m | Pacific Textiles | 585 | 3
+  10 | Laptop Stand Aluminum | Midwest Hardware Co | 240 | 3
+  11 | Desk Mat Extended | Alpine Audio GmbH | 305 | 2
+  12 | Fitness Band X2 | Andes Naturals SA | 305 | 2
+  13 | Smart Watch S | Nordic Gadgets AB | 230 | 3
+  14 | Running Socks 3-pack | Shenzhen Electro | 850 | 3
+  15 | Cycling Jersey Pro | Pacific Textiles | 695 | 3
+  16 | Yoga Mat Eco 6mm | Midwest Hardware Co | 460 | 3
+
+[P71a LAST_VALUE repair exact]  (16 rows)
+  9 | HDMI 2.1 Cable 2m | 14.99 | Smart Watch S
+  14 | Running Socks 3-pack | 18.5 | Smart Watch S
+  11 | Desk Mat Extended | 24.99 | Smart Watch S
+  16 | Yoga Mat Eco 6mm | 32 | Smart Watch S
+  2 | Wireless Mouse M3 | 34.5 | Smart Watch S
+  8 | Ring Light 14" | 39.99 | Smart Watch S
+  10 | Laptop Stand Aluminum | 42.5 | Smart Watch S
+  3 | USB-C Hub 7-in-1 | 49 | Smart Watch S
+  6 | Bluetooth Speaker Mini | 59.99 | Smart Watch S
+  15 | Cycling Jersey Pro | 65 | Smart Watch S
+  12 | Fitness Band X2 | 79 | Smart Watch S
+  1 | Mechanical Keyboard K1 | 89.99 | Smart Watch S
+  5 | Studio Desktop Mic | 119 | Smart Watch S
+  7 | 4K Webcam Pro | 129 | Smart Watch S
+  4 | Noise-Canceling Headset | 149.99 | Smart Watch S
+  13 | Smart Watch S | 199.99 | Smart Watch S
+
+[P71b LAST_VALUE by id key]  (1 rows)
+  Yoga Mat Eco 6mm
+
+[P72 month staged exact]  (14 rows)
+  2024-01 | 3731.97
+  2024-02 | 7341.61
+  2024-03 | 9958.69
+  2024-04 | 12427.6
+  2024-05 | 15337.91
+  2024-06 | 17385.34
+  2024-07 | 18579.2
+  2024-08 | 20931.27
+  2024-09 | 24047.31
+  2024-10 | 27022.98
+  2024-11 | 28671.78
+  2024-12 | 30773.25
+  2025-01 | 32442.75
+  2025-02 | 34833.28
+
+probe done, copy removed

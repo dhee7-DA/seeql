@@ -1,0 +1,508 @@
+version: {"v":"3.53.0"}
+
+[cs-1353 fill]  (1 rows)
+  103 | 324.16 | 34833.28
+
+[cs-1354 fill]  (3 rows)
+  74 | 1088.44 | 14 | 6113
+  43 | 945.21 | 14 | 6113
+  5 | 725.34 | 14 | 6113
+
+[cs-1355 fill]  (3 rows)
+  3 | 767.64 | 43.59
+  1 | 576.54 | 32.74
+  2 | 416.81 | 23.67
+
+[cs-1356 fill]  (1 rows)
+  2024-08 | 3210 | 25416
+
+[cs-1357 fill]  (1 rows)
+  16 | Yoga Mat Eco 6mm | 100
+
+[cs-1358 fill]  (1 rows)
+  16 | Yoga Mat Eco 6mm | 220 | 2845
+
+[cs-1359 fill]  (1 rows)
+  Nordic Gadgets AB | 4.6 | 3 | 16
+
+[cs-1360 fill]  (1 rows)
+  9 | HDMI 2.1 Cable 2m | 100
+
+[cs-1361 fill]  (1 rows)
+  2024-07 | 1 | 16
+
+[cs-1362 fill]  (1 rows)
+  103 | 324.16 | 103
+
+[cs-1363 fill]  (1 rows)
+  83 | 397.99 | 34.5
+
+[cs-1364 fill]  (1 rows)
+  EU | 45 | 103
+
+[cs-1365 fill]  (1 rows)
+  2024-02 | 3609.64 | 7341.61
+
+[cs-1366 fill]  (1 rows)
+  2024-03 | 8 | 8.33
+
+[cs-1367 fill]  (1 rows)
+  Emma Wilson | 1615.29 | 22.2
+
+[cs-1368 fill]  (1 rows)
+  Alice Chen | 7262.35 | 20.85
+
+[cs-1369 fill]  (3 rows)
+  1 | 576.54 | 576.54
+  2 | 416.81 | 993.3499999999999
+  3 | 767.64 | 1760.99
+
+[cs-1370 fill]  (1 rows)
+  2 | 850 | 2845
+
+[cs-1371 fill]  (1 rows)
+  Audio | 328.98 | 28.6
+
+[cs-1372 fill]  (1 rows)
+  103 | 324.16 | 324.16
+
+[cs-1373 fill]  (1 rows)
+  16 | Yoga Mat Eco 6mm | 220 | 220
+
+[cs-1374 fill]  (1 rows)
+  2024-05 | 1480 | 8305
+
+[cs-1375 fill]  (1 rows)
+  EU | 45 | 43.7
+
+[cs-1376 fill]  (1 rows)
+  13 | 632.29 | 1977.74
+
+[cs-1377 fill]  (1 rows)
+  5 | 725.34 | 1630.82
+
+[cs-1378 fill]  (1 rows)
+  1 | 576.54 | 324.16
+
+[cs-1379 fill]  (1 rows)
+  2024-03 | 2617.08 | 9958.69
+
+[cs-1380 fill]  (1 rows)
+  3 | 767.64 | 447.64
+
+[cs-1381 fill]  (3 rows)
+  1 | pending | 14 | 6113
+  5 | pending | 14 | 6113
+  12 | pending | 14 | 6113
+
+[cs-1382 fill]  (1 rows)
+  Alice Chen | 7262.35 | 20.85 | 1
+
+[cs-1383 fill]  (1 rows)
+  1 | 101 | 142.25 | 7262.35
+
+[cs-1384 fill]  (1 rows)
+  23 | LATAM | 99.48 | 852.44
+
+[cs-1385 fill]  (1 rows)
+  2024-06 | 6 | 14
+
+[cs-1386 fill]  (1 rows)
+  2024-02 | 3609.64 | 31101.31
+
+[cs-1387 fill]  (0 rows)
+
+[cs-1388 fill]  (1 rows)
+  1 | 576.54 | NULL
+
+[B1 signup cum line (cs-1361)]  (9 rows)
+  2023-11 | 2 | 2
+  2023-12 | 2 | 4
+  2024-01 | 2 | 6
+  2024-02 | 2 | 8
+  2024-03 | 2 | 10
+  2024-04 | 2 | 12
+  2024-05 | 2 | 14
+  2024-06 | 1 | 15
+  2024-07 | 1 | 16
+
+[B2 signup cum=n rows (cs-1361 distractor n)]  (0 rows)
+
+[B3 ma3 line head (cs-1366)]  (5 rows)
+  2024-01 | 8 | 8
+  2024-02 | 9 | 8.5
+  2024-03 | 8 | 8.33
+  2024-04 | 7 | 8
+  2024-05 | 8 | 7.67
+
+[B4 ma3 March under 1P/3P frames (cs-1366 distractors)]  (1 rows)
+  2024-03 | 8 | 8
+
+[B5 month roll 1P line (cs-1385)]  (14 rows)
+  2024-01 | 8 | 8
+  2024-02 | 9 | 17
+  2024-03 | 8 | 17
+  2024-04 | 7 | 15
+  2024-05 | 8 | 15
+  2024-06 | 6 | 14
+  2024-07 | 8 | 14
+  2024-08 | 7 | 15
+  2024-09 | 9 | 16
+  2024-10 | 7 | 16
+  2024-11 | 6 | 13
+  2024-12 | 7 | 13
+  2025-01 | 6 | 13
+  2025-02 | 7 | 13
+
+[B6 month roll 2P at June (cs-1385 distractor)]  (1 rows)
+  2024-06 | 6
+
+[B7 month unwind line (cs-1386)]  (14 rows)
+  2024-01 | 3731.97 | 34833.28
+  2024-02 | 3609.64 | 31101.31
+  2024-03 | 2617.08 | 27491.67
+  2024-04 | 2468.91 | 24874.59
+  2024-05 | 2910.31 | 22405.68
+  2024-06 | 2047.43 | 19495.37
+  2024-07 | 1193.86 | 17447.94
+  2024-08 | 2352.07 | 16254.08
+  2024-09 | 3116.04 | 13902.01
+  2024-10 | 2975.67 | 10785.97
+  2024-11 | 1648.8 | 7810.3
+  2024-12 | 2101.47 | 6161.5
+  2025-01 | 1669.5 | 4060.03
+  2025-02 | 2390.53 | 2390.53
+
+[B8 unwind Feb under default frame (cs-1386 distractor)]  (1 rows)
+  2024-02 | 3609.64
+
+[B9 stock walk head/tail + total (cs-1358)]  (3 rows)
+  1 | Mechanical Keyboard K1 | 120 | 120
+  2 | Wireless Mouse M3 | 300 | 420
+  3 | USB-C Hub 7-in-1 | 85 | 505
+
+[B10 stock reverse remaining head (cs-1373)]  (3 rows)
+  1 | Mechanical Keyboard K1 | 120 | 2845
+  2 | Wireless Mouse M3 | 300 | 2725
+  3 | USB-C Hub 7-in-1 | 85 | 2425
+
+[B11 stock remaining id16 default-frame (cs-1373 distractor)]  (1 rows)
+  16 | 220 | 220
+
+[B12 product price total + shares (cs-1357/1360)]  (3 rows)
+  1 | Mechanical Keyboard K1 | 89.99 | 65.7
+  9 | HDMI 2.1 Cable 2m | 14.99 | 10.94
+  16 | Yoga Mat Eco 6mm | 32 | 23.36
+
+[B13 supplier stock piles (cs-1370)]  (6 rows)
+  2 | 850 | 2845
+  3 | 695 | 2845
+  4 | 460 | 2845
+  5 | 305 | 2845
+  6 | 305 | 2845
+  1 | 230 | 2845
+
+[B14 supplier piles under category fold (cs-1370 distractor)]  (1 rows)
+  Accessories | 940 | 2845
+
+[B15 supplier SKU counts (cs-1359)]  (6 rows)
+  Nordic Gadgets AB | 4.6 | 3 | 16 | 6
+  Shenzhen Electro | 4.1 | 3 | 16 | 6
+  Pacific Textiles | 3.9 | 3 | 16 | 6
+  Midwest Hardware Co | 4.4 | 3 | 16 | 6
+  Alpine Audio GmbH | 4.8 | 2 | 16 | 6
+  Andes Naturals SA | 4 | 2 | 16 | 6
+
+[B16 category price census (cs-1371)]  (7 rows)
+  Audio | 328.98 | 28.6
+  Wearables | 278.99 | 24.3
+  Electronics | 173.49 | 15.1
+  Video | 168.99 | 14.7
+  Apparel | 83.5 | 7.3
+  Accessories | 82.48 | 7.2
+  Fitness | 32 | 2.8
+
+[B17 supplier-fold pcts (cs-1371 distractor)]  (6 rows)
+  1 | 36.5
+  2 | 8.1
+  3 | 11.2
+  4 | 19.5
+  5 | 12.5
+  6 | 12.1
+
+[B18 cancelled book + shares (cs-1363)]  (7 rows)
+  83 | 397.99 | 34.5
+  95 | 206.19 | 17.9
+  7 | 152.52 | 13.2
+  82 | 143.86 | 12.5
+  21 | 136.11 | 11.8
+  50 | 90.35 | 7.8
+  51 | 25.47 | 2.2
+
+[B19 cancelled under 'pending' (cs-1363 distractor)]  (1 rows)
+  0
+
+[B20 exposure book + top slices (cs-1367)]  (6 rows)
+  Emma Wilson | 1615.29 | 22.2
+  Chloe Dubois | 1309.92 | 18
+  Alice Chen | 1283.65 | 17.7
+  Farid Nasser | 1088.44 | 15
+  Pedro Alvarez | 576.54 | 7.9
+  Maya Patel | 571.02 | 7.9
+
+[B21 pending-only re-based Emma pct (cs-1367 distractor 17.7)]  (1 rows)
+  Emma Wilson | 1471.43 | 100
+
+[B22 delivered run head (cs-1376)]  (5 rows)
+  2 | 416.81 | 416.81
+  6 | 752.96 | 1169.77
+  10 | 175.68 | 1345.45
+  13 | 632.29 | 1977.74
+  14 | 705.23 | 2682.97
+
+[B23 Alice partition rungs + tail (cs-1383)]  (24 rows)
+  1 | 3 | 767.64 | 767.64
+  1 | 7 | 152.52 | 920.16
+  1 | 13 | 632.29 | 1552.45
+  1 | 14 | 705.23 | 2257.68
+  1 | 19 | 317.49 | 2575.17
+  1 | 21 | 136.11 | 2711.28
+  1 | 31 | 633.91 | 3345.19
+  1 | 32 | 645.91 | 3991.1
+  1 | 40 | 135.24 | 4126.34
+  1 | 42 | 259.31 | 4385.65
+  1 | 48 | 187.38 | 4573.03
+  1 | 55 | 113.66 | 4686.69
+  1 | 58 | 298.18 | 4984.87
+  1 | 63 | 334.66 | 5319.53
+  1 | 66 | 125.4 | 5444.93
+  1 | 70 | 131.39 | 5576.32
+  1 | 79 | 212.03 | 5788.35
+  1 | 84 | 153.51 | 5941.86
+  1 | 86 | 116.28 | 6058.14
+  1 | 89 | 684.53 | 6742.67
+  1 | 93 | 45.36 | 6788.03
+  1 | 95 | 206.19 | 6994.22
+  1 | 100 | 125.88 | 7120.1
+  1 | 101 | 142.25 | 7262.35
+
+[B24 Alice mean (cs-1383 why)]  (1 rows)
+  302.6 | 24
+
+[B25 Alice rungs under AVG (cs-1383 distractor AVG)]  (1 rows)
+  101 | 302.6
+
+[B26 LATAM orders detail (cs-1384)]  (2 rows)
+  6 | LATAM | 752.96 | 752.96
+  23 | LATAM | 99.48 | 852.44
+
+[B27 LATAM first rung figure (cs-1384 why)]  (1 rows)
+  752.96
+
+[B28 band line head (cs-1380)]  (5 rows)
+  1 | 496.67
+  2 | 587
+  3 | 447.64
+  4 | 550.49
+  5 | 545.59
+
+[B29 band id3 under 1P-only frame (cs-1380 distractor)]  (1 rows)
+  3 | 767.64
+
+[B30 prior-frame line head (cs-1388)]  (4 rows)
+  1 | 576.54 | NULL
+  2 | 416.81 | 576.54
+  3 | 767.64 | 993.3499999999999
+  4 | 158.48 | 1760.99
+
+[B31 prior-frame under CURRENT ROW end (cs-1388 distractor)]  (1 rows)
+  1 | 576.54
+
+[B32 tie-day receipts id5/id7 (cs-1377)]  (2 rows)
+  5 | 2024-01-02 | 725.34
+  7 | 2024-01-02 | 152.52
+
+[B33 running by created_at RANGE at id5/id7 (cs-1377)]  (2 rows)
+  5 | 2024-01-02 | 877.86
+  7 | 2024-01-02 | 877.86
+
+[B34 running by created_at ROWS at id5/id7 (cs-1377 distractor)]  (2 rows)
+  5 | 725.34
+  7 | 877.86
+
+[B35 running by created_at RANGE all-day sums (cs-1377 why)]  (2 rows)
+  2024-01-01 | 752.96
+  2024-01-02 | 877.86
+
+[B36 LAST_VALUE full frame vs default (cs-1378)]  (2 rows)
+  1 | 324.16 | 576.54
+  103 | 324.16 | 324.16
+
+[B37 expense ladder head (cs-1374/1356)]  ERROR: no such column: mon
+
+[B38 expense strftime int-literal probe (cs-1356 distractor 1719)]  (0 rows)
+
+[B39 month ladder Feb/Mar (cs-1365/1379)]  (3 rows)
+  2024-01 | 3731.97 | 3731.97
+  2024-02 | 3609.64 | 7341.61
+  2024-03 | 2617.08 | 9958.69
+
+[B40 full-frame month paint at March (cs-1379 distractor)]  (1 rows)
+  2024-03 | 34833.28
+
+[B41 pending pot/avg (cs-1354/1381)]  (1 rows)
+  14 | 576.54 | 576.54
+
+[B42 cancelled pot (cs-1363)]  (1 rows)
+  7 | 152.52
+
+[B43 dust walk raw (cs-1369)]  (3 rows)
+  1 | 576.54 | 576.54
+  2 | 416.81 | 993.3499999999999
+  3 | 767.64 | 1760.99
+
+[B44 per-id partition echo (cs-1369 distractor PARTITION BY)]  (3 rows)
+  1 | 576.54 | 576.54
+  2 | 416.81 | 416.81
+  3 | 767.64 | 767.64
+
+[B45 region census paint (cs-1364)]  (4 rows)
+  EU | 45 | 103 | 2 | 25.75
+  APAC | 37 | 103 | 2 | 25.75
+  US | 19 | 103 | 2 | 25.75
+  LATAM | 2 | 103 | 2 | 25.75
+
+[B46 region share census (cs-1375)]  (4 rows)
+  EU | 45 | 43.7
+  APAC | 37 | 35.9
+  US | 19 | 18.4
+  LATAM | 2 | 1.9
+
+[B47 board shares 2dp (cs-1368/1382)]  (3 rows)
+  Alice Chen | 7262.35 | 20.85
+  Emma Wilson | 6640.56 | 19.06
+  Grace Kim | 4574.23 | 13.13
+
+[B48 exposure check: count per status (cs-1367 why)]  (2 rows)
+  cancelled | 7 | 1152.49
+  pending | 14 | 6113
+
+[ERR C1 unsupported frame (cs-1380 distractor)]  unsupported frame specification
+
+[ERR C2 ORDER-before-PARTITION (cs-1387 distractor)]  near "PARTITION": syntax error
+
+[ERR C3 double ORDER BY in OVER (cs-1383 distractor)]  near "ORDER": syntax error
+
+[ERR C4 WHERE id <= MAX (cs-1355 distractor)]  no such column: MAX
+
+[ERR C5 ORDER BY 5 out of range (cs-1358 distractor)]  no error
+
+[ERR C6 ORDER BY 9 out of range, 2 cols (cs-1361 distractor)]  1st ORDER BY term out of range - should be between 1 and 2
+
+[ERR C7 strftime over COUNT (cs-1361 distractor)]  no error
+
+[ERR C8 SUM(*) invalid (cs-1375 distractor)]  wrong number of arguments to function SUM()
+
+[ERR C9 SUM(MIN(*)) invalid (cs-1364 distractor path)]  wrong number of arguments to function MIN()
+
+[ERR C10 NTILE() no args (cs-1382 distractor)]  wrong number of arguments to function NTILE()
+
+[ERR C11 LAG() no args (cs-1382 distractor)]  wrong number of arguments to function LAG()
+
+[ERR C12 misuse of aggregate: COUNT in ORDER BY (cs-1361 distractor)]  no such column: COUNT
+
+[ERR C13 expenses has no created_at (cs-1356 distractor)]  no such column: created_at
+
+[ERR C14 'no such function: n' path (cs-1361 distractor)]  no such column: n
+
+probe done, copy removed
+
+[D1 cs-1355 fixed fill]  (3 rows)
+  3 | 767.64 | 2.2
+  1 | 576.54 | 1.66
+  2 | 416.81 | 1.2
+
+[D2 cs-1355 MAX-distractor fill]  (3 rows)
+  3 | 767.64 | 70.53
+  1 | 576.54 | 52.97
+  2 | 416.81 | 38.29
+
+[ERR D3 cs-1355 'share 10' order probe]  near "10": syntax error
+
+[D4 cs-1357 fixed fill]  (0 rows)
+
+[D5 cs-1357 share line 1/16 (distractor rows)]  (2 rows)
+  1 | Mechanical Keyboard K1 | 7.84
+  16 | Yoga Mat Eco 6mm | 2.79
+
+[D6 cs-1360 fixed fill]  (1 rows)
+  9 | HDMI 2.1 Cable 2m | 17.57
+
+[D7 cs-1360 share line 1/9/16]  (3 rows)
+  1 | Mechanical Keyboard K1 | 4.22
+  9 | HDMI 2.1 Cable 2m | 17.57
+  16 | Yoga Mat Eco 6mm | 7.73
+
+[D8 cs-1366 ma2/ma4 at March (CTE-wrapped)]  (1 rows)
+  2024-03 | 8.5 | 8.33
+
+[D9 cs-1377 ROWS-distractor fill (CTE-wrapped)]  (0 rows)
+
+[D10 cs-1380 1P-band at id3 (CTE-wrapped)]  (1 rows)
+  3 | 592.23
+
+[D11 cs-1385 2P roll at June (CTE-wrapped)]  (1 rows)
+  2024-06 | 21
+
+[D12 cs-1387 fixed fill (id 101)]  (1 rows)
+  101 | 1 | 24
+
+[D13 cs-1381 fill without limit]  (14 rows)
+  1 | pending | 14 | 6113
+  5 | pending | 14 | 6113
+  12 | pending | 14 | 6113
+  19 | pending | 14 | 6113
+  25 | pending | 14 | 6113
+  42 | pending | 14 | 6113
+  43 | pending | 14 | 6113
+  47 | pending | 14 | 6113
+  74 | pending | 14 | 6113
+  75 | pending | 14 | 6113
+  79 | pending | 14 | 6113
+  90 | pending | 14 | 6113
+  94 | pending | 14 | 6113
+  97 | pending | 14 | 6113
+
+[D14 expense ladder (alias fixed)]  (6 rows)
+  2024-01 | 1719 | 1719
+  2024-02 | 1440 | 3159
+  2024-03 | 1917 | 5076
+  2024-04 | 1749 | 6825
+  2024-05 | 1480 | 8305
+  2024-06 | 1510 | 9815
+
+[D15 cs-1383 AVG-distractor last rung]  (1 rows)
+  101 | 302.6
+
+[D16 cs-1358 stock-ORDER walk at id16 (distractor check)]  (1 rows)
+  16 | 1385
+
+[D17 pending-only re-based exposure pcts (cs-1367 distractor check)]  (0 rows)
+
+[D18 cs-1369 PARTITION-distractor fill rows]  (3 rows)
+  1 | 576.54 | 576.54
+  2 | 416.81 | 416.81
+  3 | 767.64 | 767.64
+
+[D19 cs-1373 frame-distractor fill at id16]  (1 rows)
+  16 | Yoga Mat Eco 6mm | 220 | 2845
+
+[D20 cs-1388 COUNT-distractor fill at id1]  (0 rows)
+
+[D21 cs-1378 default-frame-distractor fill at id1]  (0 rows)
+
+[D22 cs-1384 US-distractor sanity (region runs)]  (3 rows)
+  US | 725.34
+  US | 907.02
+  US | 1414.26
+round 2 done, copy removed

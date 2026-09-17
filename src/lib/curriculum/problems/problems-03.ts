@@ -1,0 +1,116 @@
+// Problem bank for Lesson 3 — WHERE operators and logic.
+// Existing: l3-p1..p3 (all easy). New items l3-p4..p15.
+
+import type { QueryProblem } from "../types";
+
+export const problems03: QueryProblem[] = [
+  {
+    id: "l3-p4",
+    prompt: "In transit: `id`, `status`, `total_amount` for orders whose status is exactly 'shipped'.",
+    tables: ["orders"],
+    difficulty: "easy",
+    hints: ["WHERE status = 'shipped' — case- and space-exact.", "36 rows expected."],
+    solution: "SELECT id, status, total_amount\nFROM orders\nWHERE status = 'shipped';",
+  },
+  {
+    id: "l3-p5",
+    prompt: "Premium shelf: `product_name` and `price` for products priced **above 100**.",
+    tables: ["products"],
+    difficulty: "medium",
+    hints: ["Strictly greater: price > 100.", "The 1790 outlier will head the unsorted list."],
+    solution: "SELECT product_name, price\nFROM products\nWHERE price > 100;",
+  },
+  {
+    id: "l3-p6",
+    prompt: "Mid-range orders: `id` and `total_amount` for orders with totals **between 100 and 500 inclusive**.",
+    tables: ["orders"],
+    difficulty: "medium",
+    hints: ["BETWEEN is inclusive on both ends.", "70 rows expected."],
+    solution: "SELECT id, total_amount\nFROM orders\nWHERE total_amount BETWEEN 100 AND 500;",
+  },
+  {
+    id: "l3-p7",
+    prompt: "American shoppers: `full_name` and `city` of customers whose country is stored as 'United States'.",
+    tables: ["customers"],
+    difficulty: "easy",
+    hints: ["The stored value is the full words — not 'US'.", "Exactly 2 rows."],
+    solution: "SELECT full_name, city\nFROM customers\nWHERE country = 'United States';",
+  },
+  {
+    id: "l3-p8",
+    prompt: "Problem orders: `id` and `status` for orders that are 'returned' **or** 'cancelled' (exact spellings).",
+    tables: ["orders"],
+    difficulty: "medium",
+    hints: ["Two equalities joined with OR — or one IN list.", "IN ('returned','cancelled') is the tidy form.", "16 rows."],
+    solution: "SELECT id, status\nFROM orders\nWHERE status IN ('returned', 'cancelled');",
+  },
+  {
+    id: "l3-p9",
+    prompt: "USB gear: `product_name` and `price` of products whose name **starts with** 'USB'.",
+    tables: ["products"],
+    difficulty: "medium",
+    hints: ["Prefix pattern: LIKE 'USB%'.", "Two products match."],
+    solution: "SELECT product_name, price\nFROM products\nWHERE product_name LIKE 'USB%';",
+  },
+  {
+    id: "l3-p10",
+    prompt: "International base: `full_name` and `country` for customers whose country is **not** 'DE'.",
+    tables: ["customers"],
+    difficulty: "medium",
+    hints: ["!= excludes only the exact spelling 'DE'.", "35 rows — note how many 'Germany-ish' spellings remain."],
+    solution: "SELECT full_name, country\nFROM customers\nWHERE country != 'DE';",
+  },
+  {
+    id: "l3-p11",
+    prompt: "Happy customers: `id` and `rating` for reviews rated **4 or 5**.",
+    tables: ["reviews"],
+    difficulty: "hard",
+    hints: ["rating BETWEEN 4 AND 5 — inclusive.", "52 rows; the impossible 6/7/99 ratings stay out."],
+    solution: "SELECT id, rating\nFROM reviews\nWHERE rating BETWEEN 4 AND 5;",
+  },
+  {
+    id: "l3-p12",
+    prompt: "Card payments: `id` and `payment_method` for orders paid by **any card-like method** — credit, debit, any casing.",
+    tables: ["orders"],
+    difficulty: "hard",
+    hints: ["Pattern: LIKE '%card%'.", "SQLite's LIKE is case-insensitive for ASCII — 'Credit Card' and 'CREDITCARD' match too.", "70 rows."],
+    solution: "SELECT id, payment_method\nFROM orders\nWHERE payment_method LIKE '%card%';",
+  },
+  {
+    id: "l3-p13",
+    prompt: "Active gold members: `full_name` and `loyalty_tier` of customers who are active **and** whose tier is exactly 'gold' (lowercase, no spaces).",
+    tables: ["customers"],
+    difficulty: "hard",
+    hints: [
+      "Two conditions, AND: is_active = 1 AND loyalty_tier = 'gold'.",
+      "Exact spelling matters — 'GOLD' and 'gold ' are different groups.",
+      "3 rows.",
+    ],
+    solution: "SELECT full_name, loyalty_tier\nFROM customers\nWHERE is_active = 1 AND loyalty_tier = 'gold';",
+  },
+  {
+    id: "l3-p14",
+    prompt: "Priority queue: orders that are **expensive (total > 900) or gifts (is_gift = 1)** — show `id`, `total_amount`, `is_gift`. Notice how OR unions the two groups.",
+    tables: ["orders"],
+    difficulty: "hard",
+    hints: [
+      "WHERE total_amount > 900 OR is_gift = 1.",
+      "AND would demand both; OR keeps the union — 34 rows here.",
+      "NULL totals fail the > test silently (they're UNKNOWN).",
+    ],
+    solution: "SELECT id, total_amount, is_gift\nFROM orders\nWHERE total_amount > 900 OR is_gift = 1;",
+  },
+  {
+    id: "l3-p15",
+    prompt: "Impossible ratings: `id`, `rating`, `review_date` for reviews whose rating is **below 1 or above 5** — the data-quality catch list.",
+    tables: ["reviews"],
+    difficulty: "hard",
+    hints: [
+      "rating < 1 OR rating > 5.",
+      "Equivalent: NOT rating BETWEEN 1 AND 5 — but the explicit OR reads clearer.",
+      "NULL ratings fail BOTH tests (UNKNOWN) and drop out — they're a separate defect (Lesson 4).",
+      "9 rows: zeros, a 6, some 7s, and a 99.",
+    ],
+    solution: "SELECT id, rating, review_date\nFROM reviews\nWHERE rating < 1 OR rating > 5;",
+  },
+];

@@ -1,0 +1,179 @@
+
+== counts ==
+[{"customers":16,"suppliers":6,"products":16,"orders":103,"order_items":251,"employees":10,"payments":91,"refunds":25,"shipments":82,"acquisitions":15}]
+
+== B Emma Wilson identity ==
+[{"id":5,"name":"Emma Wilson","city":"Austin","region":"US"}]
+
+== B Emma orders ==
+[{"n":17,"v":6640.56}]
+
+== B Emma lines ==
+[{"n":46}]
+
+== B Emma supplier bench (FILL draft) ==
+[{"name":"Alpine Audio GmbH","region":"EU"},{"name":"Andes Naturals SA","region":"LATAM"},{"name":"Midwest Hardware Co","region":"US"},{"name":"Nordic Gadgets AB","region":"EU"},{"name":"Pacific Textiles","region":"APAC"},{"name":"Shenzhen Electro","region":"APAC"}]
+
+== B Emma full-join row count (fan-out) ==
+[{"n":46}]
+
+== B Emma per-supplier line counts ==
+[{"name":"Alpine Audio GmbH","lines":4,"tickets":3},{"name":"Andes Naturals SA","lines":4,"tickets":4},{"name":"Midwest Hardware Co","lines":6,"tickets":5},{"name":"Nordic Gadgets AB","lines":10,"tickets":9},{"name":"Pacific Textiles","lines":8,"tickets":7},{"name":"Shenzhen Electro","lines":14,"tickets":12}]
+
+== B Emma bench by c.id filter ==
+[{"n":6}]
+
+== B far-link s.id = p.id ==
+[{"n":6}]
+
+== B far-link s.id = oi.id ==
+[{"n":0}]
+
+== B line-link oi.id = o.id (collision) ==
+[{"n":17}]
+
+== B prod-link p.id = oi.id (collision) ==
+[{"n":3}]
+
+== B cust-link o.id = c.id (collision) ==
+[{"n":3}]
+
+== B which suppliers does each region-16 customer touch (for walkthrough) ==
+[{"name":"Alice Chen","suppliers":6,"tickets":24,"lines":50},{"name":"Bruno Silva","suppliers":3,"tickets":2,"lines":5},{"name":"Chloe Dubois","suppliers":6,"tickets":5,"lines":14},{"name":"Dmitri Volkov","suppliers":3,"tickets":2,"lines":5},{"name":"Emma Wilson","suppliers":6,"tickets":17,"lines":46},{"name":"Farid Nasser","suppliers":2,"tickets":3,"lines":6},{"name":"Grace Kim","suppliers":6,"tickets":14,"lines":34},{"name":"Hiro Tanaka","suppliers":5,"tickets":3,"lines":8},{"name":"Isabella Rossi","suppliers":3,"tickets":4,"lines":8},{"name":"Jamal Wright","suppliers":4,"tickets":2,"lines":7},{"name":"Keiko Sato","suppliers":5,"tickets":4,"lines":10},{"name":"Liam O'Brien","suppliers":4,"tickets":1,"lines":4},{"name":"Maya Patel","suppliers":6,"tickets":13,"lines":30},{"name":"Noah Meyer","suppliers":5,"tickets":4,"lines":8},{"name":"Olivia Brown","suppliers":2,"tickets":1,"lines":3},{"name":"Pedro Alvarez","suppliers":6,"tickets":4,"lines":13}]
+
+== C per-supplier EU lines vs tickets ==
+[{"name":"Alpine Audio GmbH","lines":13,"tickets":12},{"name":"Andes Naturals SA","lines":13,"tickets":13},{"name":"Midwest Hardware Co","lines":24,"tickets":20},{"name":"Nordic Gadgets AB","lines":22,"tickets":18},{"name":"Pacific Textiles","lines":17,"tickets":16},{"name":"Shenzhen Electro","lines":16,"tickets":14}]
+
+== C per-supplier ALL-region lines vs tickets ==
+[{"name":"Alpine Audio GmbH","lines":40,"tickets":34},{"name":"Andes Naturals SA","lines":25,"tickets":25},{"name":"Midwest Hardware Co","lines":56,"tickets":45},{"name":"Nordic Gadgets AB","lines":43,"tickets":38},{"name":"Pacific Textiles","lines":40,"tickets":35},{"name":"Shenzhen Electro","lines":47,"tickets":41}]
+
+== C EU value per supplier ==
+[{"name":"Alpine Audio GmbH","v":1441.8},{"name":"Andes Naturals SA","v":1822.76},{"name":"Midwest Hardware Co","v":4133.96},{"name":"Nordic Gadgets AB","v":5501.86},{"name":"Pacific Textiles","v":1116.63},{"name":"Shenzhen Electro","v":1072.22}]
+
+== C region variants (tickets per supplier) ==
+[{"region":"APAC","suppliers_touched":6},{"region":"EU","suppliers_touched":6},{"region":"LATAM","suppliers_touched":3},{"region":"US","suppliers_touched":6}]
+
+== C EU buyers ==
+[{"name":"Alice Chen","lines":50},{"name":"Chloe Dubois","lines":14},{"name":"Dmitri Volkov","lines":5},{"name":"Isabella Rossi","lines":8},{"name":"Liam O'Brien","lines":4},{"name":"Noah Meyer","lines":8},{"name":"Olivia Brown","lines":3},{"name":"Pedro Alvarez","lines":13}]
+
+== C EU distractor 'US' per-supplier tickets ==
+[{"name":"Alpine Audio GmbH","tickets":5},{"name":"Andes Naturals SA","tickets":5},{"name":"Midwest Hardware Co","tickets":5},{"name":"Nordic Gadgets AB","tickets":10},{"name":"Pacific Textiles","tickets":7},{"name":"Shenzhen Electro","tickets":14}]
+
+== C 'LATAM' variant ==
+[{"name":"Alpine Audio GmbH","tickets":1},{"name":"Nordic Gadgets AB","tickets":1},{"name":"Shenzhen Electro","tickets":2}]
+
+== D employees roster ==
+[{"id":1,"name":"Sofia Marin","role":"manager"},{"id":2,"name":"Daniel Okoye","role":"manager"},{"id":3,"name":"Petra Novak","role":"manager"},{"id":4,"name":"Marcus Hale","role":"lead"},{"id":5,"name":"Aiko Yamada","role":"lead"},{"id":6,"name":"Elena Petrova","role":"rep"},{"id":7,"name":"Ingrid Larsen","role":"rep"},{"id":8,"name":"Ravi Menon","role":"rep"},{"id":9,"name":"Tomas Ruiz","role":"rep"},{"id":10,"name":"Carla Dominguez","role":"rep"}]
+
+== D Ingrid refunds ==
+[{"id":6,"order_id":29,"amount":42.48,"reason":"damaged"},{"id":7,"order_id":34,"amount":75.29,"reason":"wrong_item"},{"id":8,"order_id":38,"amount":62.77,"reason":"changed_mind"},{"id":10,"order_id":55,"amount":49.48,"reason":"late_delivery"},{"id":11,"order_id":55,"amount":12.04,"reason":"damaged"},{"id":13,"order_id":62,"amount":73.38,"reason":"late_delivery"},{"id":18,"order_id":80,"amount":364.14,"reason":"damaged"}]
+
+== D Ingrid claimed customers (FILL draft) ==
+[{"name":"Alice Chen","region":"EU"},{"name":"Chloe Dubois","region":"EU"},{"name":"Dmitri Volkov","region":"EU"},{"name":"Isabella Rossi","region":"EU"},{"name":"Noah Meyer","region":"EU"},{"name":"Pedro Alvarez","region":"EU"}]
+
+== D Ingrid raw rows (fan-out) ==
+[{"n":7}]
+
+== D collision r.id = e.id chain ==
+[{"name":"Maya Patel"},{"name":"Bruno Silva"},{"name":"Bruno Silva"},{"name":"Emma Wilson"},{"name":"Jamal Wright"},{"name":"Isabella Rossi"},{"name":"Chloe Dubois"},{"name":"Noah Meyer"},{"name":"Grace Kim"},{"name":"Alice Chen"}]
+
+== D collision r.order_id = e.id ==
+[{"n":3}]
+
+== D collision o.customer_id = e.id mid-chain ==
+[{"n":146}]
+
+== D per-processor claimed customers ==
+[{"name":"Carla Dominguez","customers":1,"claims":1},{"name":"Elena Petrova","customers":3,"claims":3},{"name":"Ingrid Larsen","customers":6,"claims":7},{"name":"Marcus Hale","customers":4,"claims":7},{"name":"Ravi Menon","customers":4,"claims":5},{"name":"Tomas Ruiz","customers":2,"claims":2}]
+
+== D rep-arm (role='rep') claimed customers ==
+[{"name":"Carla Dominguez","customers":1},{"name":"Elena Petrova","customers":3},{"name":"Ingrid Larsen","customers":6},{"name":"Ravi Menon","customers":4},{"name":"Tomas Ruiz","customers":2}]
+
+== E channel settled cash (FILL draft) ==
+[{"channel":"affiliate","cash":4882.94},{"channel":"email","cash":1659.03},{"channel":"referral","cash":8682.9},{"channel":"retargeting","cash":4660.26},{"channel":"search","cash":1728.54},{"channel":"social","cash":5905.12}]
+
+== E channel settled cash + ticket count ==
+[{"channel":"affiliate","cash":4882.94,"pay_rows":14},{"channel":"email","cash":1659.03,"pay_rows":4},{"channel":"referral","cash":8682.9,"pay_rows":26},{"channel":"retargeting","cash":4660.26,"pay_rows":17},{"channel":"search","cash":1728.54,"pay_rows":5},{"channel":"social","cash":5905.12,"pay_rows":22}]
+
+== E organics settled cash ==
+[{"name":"Noah Meyer","cash":248.35},{"name":"Pedro Alvarez","cash":1109.63}]
+
+== E all-channel total ==
+[{"v":24216.51}]
+
+== E 'pending' arm variant ==
+[{"channel":"affiliate","cash":414.06},{"channel":"email","cash":32.01},{"channel":"referral","cash":1831.51},{"channel":"retargeting","cash":1530.47},{"channel":"search","cash":1309.92},{"channel":"social","cash":1530.47}]
+
+== E collision a.id = c.id ==
+[{"channel":"affiliate","cash":4686.49},{"channel":"email","cash":1659.03},{"channel":"referral","cash":8682.9},{"channel":"retargeting","cash":444.8},{"channel":"search","cash":1728.54},{"channel":"social","cash":5905.12}]
+
+== E collision a.customer_id = o.customer_id without customers ==
+[{"n":88}]
+
+== E collision o.customer_id = c.id becomes o.id = c.id ==
+[{"channel":"affiliate","cash":1109.15},{"channel":"email","cash":46.67},{"channel":"referral","cash":1230.78},{"channel":"search","cash":1520.6},{"channel":"social","cash":158.48}]
+
+== E collision p.order_id = o.id becomes p.id = o.id ==
+[{"channel":"affiliate","cash":4206.63},{"channel":"email","cash":1442.83},{"channel":"referral","cash":9670.22},{"channel":"retargeting","cash":4381.77},{"channel":"search","cash":1960.01},{"channel":"social","cash":6051.19}]
+
+== E SUM(o.total) variant per channel ==
+[{"channel":"affiliate","v":4882.94},{"channel":"email","v":1659.03},{"channel":"referral","v":9307.56},{"channel":"retargeting","v":4786.14},{"channel":"search","v":1728.54},{"channel":"social","v":6195.17}]
+
+== E acquisitions detail ==
+[{"id":1,"name":"Alice Chen","channel":"social","spend":21.17},{"id":2,"name":"Bruno Silva","channel":"referral","spend":35.81},{"id":3,"name":"Chloe Dubois","channel":"search","spend":24.12},{"id":4,"name":"Dmitri Volkov","channel":"social","spend":11.17},{"id":5,"name":"Emma Wilson","channel":"referral","spend":9.22},{"id":6,"name":"Farid Nasser","channel":"search","spend":41.22},{"id":7,"name":"Grace Kim","channel":"affiliate","spend":12.71},{"id":8,"name":"Hiro Tanaka","channel":"referral","spend":28.77},{"id":9,"name":"Isabella Rossi","channel":"email","spend":41.4},{"id":10,"name":"Jamal Wright","channel":"social","spend":33.71},{"id":11,"name":"Keiko Sato","channel":"affiliate","spend":33.46},{"id":12,"name":"Liam O'Brien","channel":"email","spend":40.53},{"id":13,"name":"Maya Patel","channel":"referral","spend":15.22},{"id":14,"name":"Olivia Brown","channel":"affiliate","spend":11.68},{"id":15,"name":"Alice Chen","channel":"retargeting","spend":6}]
+
+== F wrong_item claims ==
+[{"id":7,"order_id":34,"amount":75.29,"buyer":"Chloe Dubois"},{"id":14,"order_id":68,"amount":190.53,"buyer":"Grace Kim"},{"id":20,"order_id":86,"amount":15.83,"buyer":"Alice Chen"}]
+
+== F lines on wrong_item orders (FILL draft) ==
+[{"claim":7,"ticket":34,"product":"Laptop Stand Aluminum","quantity":1,"unit_price":44.3},{"claim":7,"ticket":34,"product":"Ring Light 14\"","quantity":2,"unit_price":38.41},{"claim":14,"ticket":68,"product":"Studio Desktop Mic","quantity":2,"unit_price":113.94},{"claim":14,"ticket":68,"product":"Noise-Canceling Headset","quantity":2,"unit_price":143.11},{"claim":14,"ticket":68,"product":"Bluetooth Speaker Mini","quantity":1,"unit_price":57.31},{"claim":14,"ticket":68,"product":"Running Socks 3-pack","quantity":3,"unit_price":17.91},{"claim":20,"ticket":86,"product":"Ring Light 14\"","quantity":3,"unit_price":38.76}]
+
+== F collision oi.id = o.id ==
+[{"n":3}]
+
+== F collision oi.id = o.id listing ==
+[{"claim":7,"ticket":34,"product":"Noise-Canceling Headset"},{"claim":14,"ticket":68,"product":"Running Socks 3-pack"},{"claim":20,"ticket":86,"product":"Running Socks 3-pack"}]
+
+== F collision p.id = oi.id ==
+[{"n":0}]
+
+== F collision r.id = o.id ==
+[{"n":8}]
+
+== F collision r.order_id = oi.order_id (wrong rule) ==
+[{"n":7}]
+
+== F 'damaged' arm listing count ==
+[{"n":34}]
+
+== F 'late_delivery' arm listing count ==
+[{"n":10}]
+
+== F changed_mind arm listing count ==
+[{"n":6}]
+
+== G cancelled lines listing (FILL draft) ==
+[{"ticket":7,"line":18,"product":"USB-C Hub 7-in-1","supplier":"Pacific Textiles","quantity":3,"unit_price":50.84},{"ticket":21,"line":57,"product":"HDMI 2.1 Cable 2m","supplier":"Pacific Textiles","quantity":1,"unit_price":14.46},{"ticket":21,"line":58,"product":"Studio Desktop Mic","supplier":"Alpine Audio GmbH","quantity":1,"unit_price":121.65},{"ticket":50,"line":122,"product":"Mechanical Keyboard K1","supplier":"Nordic Gadgets AB","quantity":1,"unit_price":90.35},{"ticket":51,"line":123,"product":"Desk Mat Extended","supplier":"Alpine Audio GmbH","quantity":1,"unit_price":25.47},{"ticket":82,"line":199,"product":"Noise-Canceling Headset","supplier":"Midwest Hardware Co","quantity":1,"unit_price":143.86},{"ticket":83,"line":200,"product":"Cycling Jersey Pro","supplier":"Pacific Textiles","quantity":2,"unit_price":62.56},{"ticket":83,"line":201,"product":"Laptop Stand Aluminum","supplier":"Midwest Hardware Co","quantity":2,"unit_price":41.81},{"ticket":83,"line":202,"product":"Yoga Mat Eco 6mm","supplier":"Midwest Hardware Co","quantity":2,"unit_price":32.49},{"ticket":83,"line":203,"product":"Studio Desktop Mic","supplier":"Alpine Audio GmbH","quantity":1,"unit_price":124.27},{"ticket":95,"line":231,"product":"USB-C Hub 7-in-1","supplier":"Pacific Textiles","quantity":3,"unit_price":46.63},{"ticket":95,"line":232,"product":"Yoga Mat Eco 6mm","supplier":"Midwest Hardware Co","quantity":2,"unit_price":33.15}]
+
+== G cancelled counts ==
+[{"lines":12,"tickets":7,"suppliers":4,"value":1152.49}]
+
+== G 'pending' variant ==
+[{"n":36}]
+
+== G 'delivered' variant ==
+[{"n":119}]
+
+== G collision p.id = oi.id listing ==
+[{"n":0}]
+
+== G collision s.id = p.id ==
+[{"n":6}]
+
+== G collision o.id = oi.order_id flip (same) ==
+[{"n":12}]
+
+== G collision oi.product_id = p.supplier_id (skip a table) ==
+[{"n":6}]
+
+probe-j8a done
