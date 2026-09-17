@@ -49,7 +49,10 @@ function Q1Nested() {
             <g key={i}><XMark x={cx} y={cy} cls="stroke-zinc-600" s={5} delay={0.9 + i * 0.02} /></g>
           );
         })}
-        <Label x={504} y={122} cls="fill-emerald-300" size={9}>Smart Watch S · Headset · Webcam · Mic · Keyboard · Fitness Band</Label>
+        <Label x={496} y={116} cls="fill-emerald-300" size={9}>Smart Watch S · Fitness Band X2</Label>
+        <Label x={496} y={131} cls="fill-emerald-300" size={9}>4K Webcam Pro · Studio Desktop Mic</Label>
+        <Label x={496} y={146} cls="fill-emerald-300" size={9}>Mechanical Keyboard K1</Label>
+        <Label x={496} y={161} cls="fill-emerald-300" size={9}>Noise-Canceling Headset</Label>
       </motion.g>
       {/* footer */}
       <motion.g {...fade(1.1)}>
@@ -82,7 +85,7 @@ function Q5InPipeline() {
       </motion.g>
       <motion.g {...fade(0.45)}>
         <Pipe pts={[[216, 106], [266, 106]]} cls="stroke-teal-400" arrowAng={0} arrowCls="stroke-teal-400" />
-        <Label x={216} y={94} cls="fill-teal-300" size={9}>the list</Label>
+        <Label x={241} y={94} anchor="middle" cls="fill-teal-300" size={9}>the list</Label>
       </motion.g>
       {/* stage 2: outer rows checked against list */}
       <motion.g {...fade(0.6)}>
@@ -171,7 +174,7 @@ function Q6Correlated() {
         <Label x={26} y={48} cls="fill-zinc-400" size={10}>outer row → recompute that customer&apos;s average → compare</Label>
         <Panel x={26} y={58} w={400} h={70} cls="fill-zinc-900 stroke-teal-400/60" />
         <Label x={42} y={80} cls="fill-zinc-200" size={10}>order #74 · Farid Nasser · 1088.44</Label>
-        <Label x={42} y={102} cls="fill-teal-300" size={10}>inner: AVG of Farid&apos;s 5 orders → 486.32</Label>
+        <Label x={42} y={102} cls="fill-teal-300" size={10}>inner: AVG of Farid&apos;s 3 orders → 486.32</Label>
         <Label x={300} y={102} cls="fill-emerald-300" size={11}>1088.44 &gt; 486.32 ✓</Label>
       </motion.g>
       <motion.g {...fade(0.45)}>
@@ -186,27 +189,26 @@ function Q6Correlated() {
         <Label x={42} y={258} cls="fill-zinc-500" size={9}>inner: AVG of Emma&apos;s 17 orders → 390.62 → 785.79 &gt; 390.62 ✓</Label>
       </motion.g>
       {/* loop arrow */}
+      <motion.g {...fade(1.1)}>
+        <line x1={480} y1={48} x2={480} y2={210} className="stroke-zinc-800" />
+        <Label x={496} y={58} cls="fill-amber-300" size={9}>the loop: inner re-runs</Label>
+        <Label x={496} y={74} cls="fill-amber-300" size={9}>for EVERY row</Label>
+        <Label x={496} y={98} cls="fill-zinc-500" size={9}>not one average — 16 personal ones:</Label>
+        <Label x={496} y={118} cls="fill-zinc-300" size={9}>Alice 302.60</Label>
+        <Label x={496} y={134} cls="fill-zinc-300" size={9}>Emma 390.62</Label>
+        <Label x={496} y={150} cls="fill-zinc-300" size={9}>Chloe 533.59</Label>
+        <Label x={496} y={166} cls="fill-zinc-300" size={9}>Pedro 421.54</Label>
+        <Label x={496} y={182} cls="fill-zinc-500" size={9}>… 12 more</Label>
+      </motion.g>
+      {/* loop arrow */}
       <motion.g {...fade(0.8)}>
         <Pipe pts={[[440, 93], [466, 93], [466, 173], [440, 173]]} cls="stroke-amber-400" dash="4 3" arrowAng={Math.PI} arrowCls="stroke-amber-400" />
-        <Label x={478} y={130} cls="fill-amber-300" size={9}>the loop:</Label>
-        <Label x={478} y={146} cls="fill-amber-300" size={9}>inner re-runs</Label>
-        <Label x={478} y={162} cls="fill-amber-300" size={9}>for EVERY row</Label>
       </motion.g>
       {/* tally */}
       <motion.g {...fade(1)}>
         <Panel x={480} y={218} w={214} h={52} cls="fill-zinc-900 stroke-emerald-400/50" />
         <Label x={496} y={238} cls="fill-zinc-400" size={9}>103 outer rows probed</Label>
         <Label x={496} y={258} cls="fill-emerald-300" size={11}>45 beat their own average</Label>
-      </motion.g>
-      <motion.g {...fade(1.1)}>
-        <line x1={480} y1={48} x2={480} y2={210} className="stroke-zinc-800" />
-        <Label x={496} y={62} cls="fill-zinc-500" size={9}>not one average —</Label>
-        <Label x={496} y={78} cls="fill-zinc-500" size={9}>16 personal ones:</Label>
-        <Label x={496} y={102} cls="fill-zinc-300" size={9}>Alice 302.60</Label>
-        <Label x={496} y={118} cls="fill-zinc-300" size={9}>Emma 390.62</Label>
-        <Label x={496} y={134} cls="fill-zinc-300" size={9}>Chloe 533.59</Label>
-        <Label x={496} y={150} cls="fill-zinc-300" size={9}>Pedro 421.54</Label>
-        <Label x={496} y={166} cls="fill-zinc-500" size={9}>… 12 more</Label>
       </motion.g>
       {/* footer */}
       <motion.g {...fade(1.2)}>
@@ -223,7 +225,8 @@ function Q3TwoStage() {
   return (
     <svg viewBox="0 0 720 300" className="w-full" role="img" aria-label="Stage one aggregates 103 orders into 16 per-customer spend rows; stage two joins that 1:1 to customers and filters spend above 1000, keeping 8">
       <motion.g {...fade(0)}>
-        <Label x={26} y={22} cls="fill-zinc-500" size={9}>SELECT c.name, d.spend FROM customers c JOIN (SELECT customer_id, SUM(total) AS spend FROM orders GROUP BY customer_id) d ON d.customer_id = c.id WHERE d.spend &gt; 1000</Label>
+        <Label x={26} y={18} cls="fill-zinc-500" size={9}>SELECT c.name, d.spend FROM customers c JOIN (SELECT customer_id, SUM(total) AS spend</Label>
+        <Label x={26} y={32} cls="fill-zinc-500" size={9}>FROM orders GROUP BY customer_id) d ON d.customer_id = c.id WHERE d.spend &gt; 1000</Label>
       </motion.g>
       {/* stage 1 */}
       <motion.g {...fade(0.2)}>
@@ -245,7 +248,7 @@ function Q3TwoStage() {
       </motion.g>
       <motion.g {...fade(0.5)}>
         <Pipe pts={[[306, 123], [356, 123]]} cls="stroke-teal-400" arrowAng={0} arrowCls="stroke-teal-400" />
-        <Label x={300} y={112} cls="fill-teal-300" size={9}>16 = 16</Label>
+        <Label x={300} y={112} cls="fill-teal-300" size={9}>16 → 16</Label>
         <Label x={296} y={140} cls="fill-zinc-500" size={8}>1:1, no fanout</Label>
       </motion.g>
       {/* stage 2 */}
@@ -318,7 +321,8 @@ function Q4Staging() {
   return (
     <svg viewBox="0 0 720 290" className="w-full" role="img" aria-label="WITH names the inner query region_spend, builds it top-down, and the main query reads it like a table">
       <motion.g {...fade(0)}>
-        <Label x={26} y={22} cls="fill-zinc-500" size={9}>WITH region_spend AS (SELECT c.region, SUM(o.total) AS spend FROM … GROUP BY c.region) SELECT * FROM region_spend ORDER BY spend DESC</Label>
+        <Label x={26} y={18} cls="fill-zinc-500" size={9}>WITH region_spend AS (SELECT c.region, SUM(o.total) AS spend</Label>
+        <Label x={26} y={32} cls="fill-zinc-500" size={9}>FROM … GROUP BY c.region) SELECT * FROM region_spend ORDER BY spend DESC</Label>
       </motion.g>
       {/* named box */}
       <motion.g {...fade(0.2)}>
@@ -372,7 +376,8 @@ function Q8CteChain() {
   return (
     <svg viewBox="0 0 720 300" className="w-full" role="img" aria-label="A chain of two CTEs: spend per customer 16 rows, big spenders above 2000 leaves 5, then join to names for the final answer">
       <motion.g {...fade(0)}>
-        <Label x={26} y={20} cls="fill-zinc-500" size={9}>WITH spend AS (SELECT customer_id, SUM(total) AS s FROM orders GROUP BY customer_id), big AS (SELECT * FROM spend WHERE s &gt; 2000) SELECT c.name, b.s FROM big b JOIN customers c ON c.id = b.customer_id ORDER BY b.s DESC</Label>
+        <Label x={26} y={16} cls="fill-zinc-500" size={8.5}>WITH spend AS (SELECT customer_id, SUM(total) AS s FROM orders GROUP BY customer_id), big AS (SELECT * FROM spend WHERE s &gt; 2000)</Label>
+        <Label x={26} y={31} cls="fill-zinc-500" size={9}>SELECT c.name, b.s FROM big b JOIN customers c ON c.id = b.customer_id ORDER BY b.s DESC</Label>
       </motion.g>
       {/* stage boxes */}
       <motion.g {...fade(0.2)}>
@@ -387,12 +392,11 @@ function Q8CteChain() {
       </motion.g>
       <motion.g {...fade(0.4)}>
         <Arrow x1={226} y1={114} x2={252} y2={114} cls="stroke-teal-400" />
-        <Label x={216} y={104} cls="fill-zinc-500" size={8}>WHERE s &gt; 2000</Label>
       </motion.g>
       <motion.g {...fade(0.55)}>
         <Panel x={256} y={44} w={200} h={140} cls="fill-zinc-900 stroke-amber-400/60" />
         <Label x={272} y={66} cls="fill-amber-300" size={10}>big</Label>
-        <Label x={272} y={86} cls="fill-zinc-400" size={9}>5 customers</Label>
+        <Label x={272} y={86} cls="fill-zinc-400" size={9}>5 customers · kept WHERE s &gt; 2000</Label>
         <Label x={272} y={106} cls="fill-zinc-300" size={9}>Alice 7262.35</Label>
         <Label x={272} y={122} cls="fill-zinc-300" size={9}>Emma 6640.56</Label>
         <Label x={272} y={138} cls="fill-zinc-300" size={9}>Grace 4574.23</Label>
@@ -401,12 +405,11 @@ function Q8CteChain() {
       </motion.g>
       <motion.g {...fade(0.7)}>
         <Arrow x1={456} y1={114} x2={482} y2={114} cls="stroke-teal-400" />
-        <Label x={446} y={104} cls="fill-zinc-500" size={8}>JOIN customers</Label>
       </motion.g>
       <motion.g {...fade(0.85)}>
         <Panel x={486} y={44} w={208} h={140} cls="fill-zinc-900 stroke-emerald-400/60" />
         <Label x={502} y={66} cls="fill-emerald-300" size={10}>final answer</Label>
-        <Label x={502} y={86} cls="fill-zinc-400" size={9}>5 names, biggest first</Label>
+        <Label x={502} y={86} cls="fill-zinc-400" size={9}>5 names, joined to customers</Label>
         <Label x={502} y={106} cls="fill-zinc-200" size={9}>Alice Chen</Label>
         <Label x={502} y={122} cls="fill-zinc-200" size={9}>Emma Wilson</Label>
         <Label x={502} y={138} cls="fill-zinc-200" size={9}>Grace Kim</Label>
