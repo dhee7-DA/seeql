@@ -179,7 +179,7 @@ function RankBlock({ xp, level, streak }: { xp: number; level: ReturnType<typeof
   );
 }
 
-/** Overview card: module summary + expandable lesson list. */
+/** Overview card: compact module chip with a progress ring — lessons reveal on demand. */
 function OverviewModuleCard({
   module,
   open,
@@ -196,45 +196,52 @@ function OverviewModuleCard({
   const mDone = module.lessons.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
   const nextInModule = module.lessons.find((l) => xpEvents[`lesson:${l.id}`] === undefined);
   const complete = mDone === module.lessons.length;
+  const pct = Math.round((mDone / module.lessons.length) * 100);
 
   return (
     <div className="sheen card-hover overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950">
-      <button onClick={onToggle} aria-expanded={open} className="block w-full p-4 text-left">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p className="font-mono text-[10px] uppercase tracking-wider text-zinc-500">
+      <button onClick={onToggle} aria-expanded={open} className="block w-full p-3.5 text-left">
+        <div className="flex items-center gap-3">
+          <span
+            aria-hidden
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+            style={{ background: `conic-gradient(#34d399 ${pct}%, #27272a ${pct}%)` }}
+          >
+            <span
+              className={cn(
+                "flex h-[26px] w-[26px] items-center justify-center rounded-full bg-zinc-950 font-mono text-[10px] font-medium",
+                complete ? "text-emerald-300" : "text-zinc-300",
+              )}
+            >
+              {complete ? <Check className="h-3 w-3" /> : module.num}
+            </span>
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-xs font-semibold text-zinc-100">{module.title}</span>
+            <span className="mt-0.5 block truncate font-mono text-[10px] uppercase tracking-wider text-zinc-500">
               Module {module.num} · {module.level}
-            </p>
-            <h3 className="font-display mt-1.5 text-sm font-semibold text-zinc-100">{module.title}</h3>
-          </div>
+            </span>
+          </span>
+          <span className="tnum shrink-0 font-mono text-[10px] text-zinc-500">
+            {mDone}/{module.lessons.length}
+          </span>
           <ChevronDown
             className={cn(
-              "mt-0.5 h-4 w-4 shrink-0 text-zinc-600 transition-transform duration-200",
+              "h-4 w-4 shrink-0 text-zinc-600 transition-transform duration-200",
               open && "rotate-180 text-zinc-400",
             )}
           />
         </div>
-        <p className="mt-2 text-xs leading-relaxed text-zinc-400">{module.blurb}</p>
-        <div className="mt-3 flex items-center gap-2.5">
-          <div className="h-1 flex-1 overflow-hidden rounded-full bg-zinc-800">
-            <div
-              className="h-full rounded-full bg-emerald-400 transition-[width] duration-700 ease-out"
-              style={{ width: `${(mDone / module.lessons.length) * 100}%` }}
-            />
-          </div>
-          <span className="tnum shrink-0 font-mono text-[10px] text-zinc-500">
-            {mDone}/{module.lessons.length}
-          </span>
-        </div>
-        <p className="mt-1.5 text-[11px] text-zinc-500">
-          {complete ? "Module complete" : nextInModule ? `Up next · lesson ${nextInModule.num} — ${nextInModule.title}` : ""}
-          {" · "}
-          {module.lessons.reduce((a, l) => a + l.problems.length, 0)} graded queries
-        </p>
+        {!open && nextInModule && (
+          <p className="mt-2.5 truncate text-[11px] text-zinc-500">
+            Up next · lesson {nextInModule.num} — {nextInModule.title}
+          </p>
+        )}
       </button>
 
       <Collapse open={open}>
         <div className="border-t border-zinc-800/60 px-3 pb-3 pt-2">
+          <p className="px-1 pb-2 text-[11px] leading-relaxed text-zinc-500">{module.blurb}</p>
           <div className="flex flex-col gap-0.5">
             {module.lessons.map((l) => {
               const done = xpEvents[`lesson:${l.id}`] !== undefined;
@@ -275,6 +282,48 @@ function OverviewModuleCard({
   );
 }
 
+/** Mobile-only quick nav — the sidebar toolbox as one horizontal thumb-scroll. */
+function ToolRail({ view, setView }: { view: View; setView: (v: View) => void }) {
+  const tools: { kind: View["kind"]; icon: React.ComponentType<{ className?: string }>; label: string }[] = [
+    { kind: "overview", icon: LayoutDashboard, label: "Overview" },
+    { kind: "explorer", icon: Table2, label: "Data" },
+    { kind: "library", icon: Shapes, label: "Diagrams" },
+    { kind: "drills", icon: Dumbbell, label: "Drills" },
+    { kind: "mixed", icon: FlaskConical, label: "Quiz" },
+    { kind: "cases", icon: FileStack, label: "Cases" },
+    { kind: "predict", icon: Eye, label: "Predict" },
+    { kind: "clinic", icon: Bug, label: "Clinic" },
+    { kind: "golf", icon: Flag, label: "Golf" },
+    { kind: "interview", icon: Briefcase, label: "Interview" },
+    { kind: "studio", icon: Network, label: "Schema" },
+    { kind: "explain", icon: MessagesSquare, label: "Explain" },
+    { kind: "mastery", icon: Activity, label: "Mastery" },
+    { kind: "sheet", icon: Printer, label: "Sheet" },
+  ];
+  return (
+    <nav
+      aria-label="Quick tools"
+      className="mb-4 flex gap-1.5 overflow-x-auto pb-1 thin-scrollbar lg:hidden"
+    >
+      {tools.map((t) => (
+        <button
+          key={t.kind}
+          onClick={() => setView({ kind: t.kind } as View)}
+          className={cn(
+            "flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-medium transition-colors",
+            view.kind === t.kind
+              ? "border-emerald-400/40 bg-emerald-400/[0.08] text-emerald-300"
+              : "border-zinc-800 bg-zinc-950 text-zinc-400 hover:border-zinc-700 hover:text-zinc-200",
+          )}
+        >
+          <t.icon className="h-3 w-3 shrink-0" />
+          {t.label}
+        </button>
+      ))}
+    </nav>
+  );
+}
+
 function titleAfter(index: number): string {
   const ladder = ["Query Apprentice", "Analyst I", "Analyst II", "Senior Analyst", "Query Wizard"];
   return ladder[Math.min(index, ladder.length - 1)];
@@ -288,14 +337,15 @@ export function LearnApp() {
   const resetAll = useProgress((s) => s.resetAll);
   const [confirmReset, setConfirmReset] = useState(false);
 
-  // Collapsible modules — persisted; defaults to the "continue" module.
+  // Collapsible modules — persisted; the sidebar defaults to the "continue"
+  // module, the overview course map starts fully collapsed (hero handles "where was I").
   const nextLesson = LESSONS.find((l) => xpEvents[`lesson:${l.id}`] === undefined) ?? LESSONS[LESSONS.length - 1];
   const continueModuleNum = moduleOf(nextLesson.id)?.num ?? 1;
   const [openModules, setOpenModules] = useState<Set<number>>(() => {
     const saved = loadOpenModules();
     return new Set(saved ?? [continueModuleNum]);
   });
-  const [openOverview, setOpenOverview] = useState<Set<number>>(() => new Set([continueModuleNum]));
+  const [openOverview, setOpenOverview] = useState<Set<number>>(() => new Set());
 
   useEffect(() => {
     try {
@@ -339,11 +389,11 @@ export function LearnApp() {
     <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-6 lg:flex-row">
       <CelebrationHost />
 
-      {/* sidebar */}
+      {/* sidebar — below the content on mobile, sticky rail on desktop */}
       {/* Definite height (not max-height): max-h-full on the inner panel is a
           percentage, which only resolves against a definite parent height —
           with max-height alone the panel overflows and buries the Toolbox. */}
-      <aside className="w-full shrink-0 lg:sticky lg:top-[76px] lg:h-[calc(100vh-96px)] lg:w-[300px] lg:self-start">
+      <aside className="order-2 w-full shrink-0 lg:order-1 lg:sticky lg:top-[76px] lg:h-[calc(100vh-96px)] lg:w-[300px] lg:self-start">
         <div className="sheen flex max-h-full flex-col overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950">
           <div className="shrink-0 border-b border-zinc-800 p-4">
             <div className="flex items-center justify-between">
@@ -578,8 +628,9 @@ export function LearnApp() {
         </div>
       </aside>
 
-      {/* content */}
-      <main className="min-w-0 flex-1 pb-16">
+      {/* content — first on mobile so the course starts at the top of the page */}
+      <main className="order-1 min-w-0 flex-1 pb-16 lg:order-2">
+        <ToolRail view={view} setView={setView} />
         {lesson ? (
           <LessonView key={lesson.id} lesson={lesson} />
         ) : view.kind === "explorer" ? (
@@ -609,42 +660,79 @@ export function LearnApp() {
         ) : view.kind === "sheet" ? (
           <CheatSheet />
         ) : (
-          <div className="bg-ambient max-w-3xl">
-            <p className="font-mono text-xs text-zinc-500">{MODULES.length} MODULES · BEGINNER → EXPERT</p>
-            <h1 className="font-display mt-2 text-3xl font-semibold tracking-[-0.02em] text-zinc-50">The SeeQL course</h1>
-            <p className="mt-3 text-[15px] leading-7 text-zinc-400">
-              {MODULES.length} modules, one real storefront database. Read a concept, prove it in a quiz, then solve
-              graded live queries — {totalMcqs} quiz questions and {totalProblems} graded queries in total.
-            </p>
-
-            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {MODULES.map((m) => (
-                <OverviewModuleCard
-                  key={m.id}
-                  module={m}
-                  open={openOverview.has(m.num)}
-                  onToggle={() => toggleOverviewModule(m.num)}
-                  onOpenLesson={openLesson}
-                  xpEvents={xpEvents}
-                />
-              ))}
-            </div>
-
-            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {[
-                ["Rank", level.title],
-                ["Total XP", xp.toLocaleString()],
-                ["Streak", streak > 0 ? `${streak} days` : "—"],
-                ["Badges", `${Object.keys(badgesMap).length}/${BADGES.length}`],
-              ].map(([k, v]) => (
-                <div key={k} className="sheen rounded-lg border border-zinc-800 bg-zinc-950 px-3.5 py-3">
-                  <p className="text-[11px] uppercase tracking-wider text-zinc-500">{k}</p>
-                  <p className="tnum mt-1 truncate text-sm font-medium text-zinc-100">{v}</p>
+          <div className="bg-ambient max-w-4xl">
+            {/* Hero — "where was I" + the one tap that matters, before any scrolling */}
+            <section className="sheen rounded-xl border border-zinc-800 bg-zinc-950 p-5">
+              <p className="font-mono text-xs text-zinc-500">{MODULES.length} MODULES · BEGINNER → EXPERT</p>
+              <div className="mt-2 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+                <h1 className="font-display text-3xl font-semibold tracking-[-0.02em] text-zinc-50">The SeeQL course</h1>
+                <div className="flex flex-wrap items-center gap-2">
+                  {[
+                    ["Rank", level.title],
+                    ["Total XP", xp.toLocaleString()],
+                    ["Streak", streak > 0 ? `${streak}d` : "—"],
+                    ["Badges", `${Object.keys(badgesMap).length}/${BADGES.length}`],
+                  ].map(([k, v]) => (
+                    <span key={k} className="rounded-md border border-zinc-800 bg-zinc-900/60 px-2.5 py-1.5 text-[11px]">
+                      <span className="text-zinc-500">{k} </span>
+                      <span className="tnum font-medium text-zinc-200">{v}</span>
+                    </span>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+              <p className="mt-3 max-w-2xl text-[15px] leading-7 text-zinc-400">
+                {MODULES.length} modules, one real storefront database. Read a concept, prove it in a quiz, then solve
+                graded live queries — {totalMcqs} quiz questions and {totalProblems} graded queries in total.
+              </p>
 
-            <div className="mt-6 grid gap-3 lg:grid-cols-2">
+              <div className="mt-5 flex flex-wrap items-center gap-2.5">
+                <button
+                  onClick={() => openLesson(nextLesson.id)}
+                  className="btn-glow rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300"
+                >
+                  {ctx.lessonsDone > 0 ? `Continue — lesson ${nextLesson.num} · ${nextLesson.title} →` : "Start learning →"}
+                </button>
+                <span className="tnum text-[11px] text-zinc-500">
+                  {ctx.problemsSolved} queries solved · {ctx.mcqsCorrect} quiz answers
+                </span>
+              </div>
+
+              <div className="mt-4">
+                <div className="bar-shimmer h-1.5 overflow-hidden rounded-full bg-zinc-800">
+                  <div
+                    className="h-full rounded-full bg-emerald-400 transition-[width] duration-700 ease-out"
+                    style={{ width: `${(doneCount / LESSONS.length) * 100}%` }}
+                  />
+                </div>
+                <p className="mt-1.5 text-[11px] text-zinc-500">
+                  {ctx.lessonsDone > 0
+                    ? `Welcome back — ${doneCount}/${LESSONS.length} lessons complete.`
+                    : "Start with lesson 1 — no setup, everything runs live."}
+                </p>
+              </div>
+            </section>
+
+            {/* Course map — all modules scannable in one screenful, lessons reveal on demand */}
+            <section className="mt-7">
+              <div className="flex items-baseline justify-between">
+                <h2 className="font-display text-sm font-semibold text-zinc-200">Course map</h2>
+                <span className="text-[11px] text-zinc-500">tap a module to reveal its lessons</span>
+              </div>
+              <div className="mt-3 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+                {MODULES.map((m) => (
+                  <OverviewModuleCard
+                    key={m.id}
+                    module={m}
+                    open={openOverview.has(m.num)}
+                    onToggle={() => toggleOverviewModule(m.num)}
+                    onOpenLesson={openLesson}
+                    xpEvents={xpEvents}
+                  />
+                ))}
+              </div>
+            </section>
+
+            <div className="mt-7 grid gap-3 lg:grid-cols-2">
               <ActivityStrip />
               <MasteryGrid onOpenLesson={openLesson} />
             </div>
@@ -668,23 +756,6 @@ export function LearnApp() {
                   );
                 })}
               </div>
-            </div>
-
-            <div className="sheen mt-6 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-zinc-800 bg-zinc-900/50 px-4 py-3.5">
-              <div>
-                <p className="text-sm font-medium text-zinc-100">
-                  {ctx.lessonsDone > 0 ? "Welcome back." : "Start with lesson 1 — no setup, everything runs live."}
-                </p>
-                <p className="mt-0.5 text-xs text-zinc-500">
-                  {ctx.problemsSolved} queries solved · {ctx.mcqsCorrect} quiz questions answered
-                </p>
-              </div>
-              <button
-                onClick={() => openLesson(nextLesson.id)}
-                className="btn-glow rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300"
-              >
-                {ctx.lessonsDone > 0 ? `Continue — lesson ${nextLesson.num} →` : "Start learning →"}
-              </button>
             </div>
           </div>
         )}
