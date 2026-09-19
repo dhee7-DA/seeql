@@ -1933,3 +1933,20 @@ Work Log:
 Stage Summary:
 - The visual layer is now a first-class revision surface: all 96 animated diagrams browsable/searchable in-app, each jumping back to its lesson; 43 registered-but-unslotted figures remain library-only by design.
 - App toolbelt: Course overview · Data explorer · Diagram library · Keyword drills · Mixed quiz · Case files.
+
+---
+Task ID: atomic-tx-1
+Agent: Super Z (main agent)
+Task: Sixth 3D scene — the transaction as an all-or-nothing bubble for lesson-44 (w44-atomic-space-3d), per the user's standing "go on / whatever you recommend".
+
+Work Log:
+- Probed facts via scripts/tx3d-facts.ts on a throwaway COPY of custom.db (real file never opened for write): the lesson's transfer — acct 7 = 1000.00, acct 9 = 500.00, move 100.00; COMMIT path 900/500 → 900/600 → COMMIT 900/600; crash path debit 900/500 → credit never runs → ROLLBACK 1000/500; autocommit contrast verified (bare UPDATE is instantly permanent). Sandbox tie-in on the real schema: products K1 stock 120 → 125 inside BEGIN → 120 after ROLLBACK, counts unchanged (16 / 103). Confirmed in code: src/app/api/query/route.ts wraps graded writes in $transaction + SandboxRollback — the bubble is not a metaphor.
+- Built W44AtomicScene in figures3d.tsx: two coin-stack pedestals (10 × 100.00 vs 5 × 100.00) inside a translucent teal cylinder "transaction bubble". Act 1: BEGIN forms the bubble → the amber 100.00 coin lifts off acct 7 (chip flips to 900.00 · uncommitted) → arcs and lands on acct 9 (600.00 · uncommitted) → COMMIT dissolves the bubble with a teal flash and both chips settle. Act 2: reset, bubble re-forms, debit lifts again, the crash strikes before the credit (rose flash ring, coin freezes mid-air jittering with rose emissive) → ROLLBACK collapses the bubble rose and the coin rewinds along its lift path onto acct 7, chip snaps to 1000.00 · restored. Verdict slab "all of it, or none of it — a crash between two writes strands nothing". Legend carries the sandbox tie-in line (K1 120 → 125 → 120).
+- Wired: "w44-atomic-space-3d" in the FigureId union (after w4-upsert-fork), FIG3D_IDS, FIGURES_3D registry, lesson-44 slot directly after the BEGIN…COMMIT code block.
+- Browser QA initially flaky: the sidebar lesson row is permanently covered by a div.shrink-0.border-t panel (clicks rejected), and module persistence varies between runs. Hardened scripts/qa-lesson44.sh with the proven path: open #learn → expand the MODULE 7 card in the course grid → click the LAST '44 UPSERT' ref (grid row, never the sidebar row) → require canvas≥1 with retries.
+- Fixed two layout defects found by screenshot: the 3D title at y=2.82 was hidden under the Html HUD pill (moved to y=-2.15 above the replay button) and the COMMIT/ROLLBACK stamps + verdict slab sat flush against the HUD (moved 2.62 → 2.42).
+- QA triple gate: tsc 640 = stashed baseline 640 (0 diff lines); lint unchanged (4 pre-existing scripts/*.ts triple-slash errors, 0 in touched files); agent-browser 0 page errors — canvases:1, aria label present, done HUD ("nothing stranded") + restored chip ("1000.00 · restored") both asserted, act-1 mid-arc and done screenshots saved (scripts/qa-l44-act1.png / qa-l44-done.png). Figure census after wiring: union 105 / used 105 / 0 orphans / 0 missing.
+
+Stage Summary:
+- App now has 6 DB-verified 3D scenes: INNER JOIN (l10), LEFT JOIN (l12), GROUP BY + HAVING (l08), window running total (l32), index B-tree (l48), transaction atomicity (l44) — the write module now closes its loop with the same visual language as the read modules.
+- w44-atomic-space-3d committed as atomic-tx-1; reusable one-shot QA harness scripts/qa-lesson44.sh documents the covered-sidebar-row pitfall for future lesson QA.
