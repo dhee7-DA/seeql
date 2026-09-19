@@ -1900,3 +1900,36 @@ Work Log:
 Stage Summary:
 - App now has 4 DB-verified 3D scenes: INNER JOIN (l10), LEFT JOIN (l12), GROUP BY + HAVING (l08), window running total (l32).
 - t32-running-space-3d committed as 781cc63.
+
+---
+Task ID: index-tree-1
+Agent: Super Z (main agent)
+Task: Fifth 3D scene — the index B-tree cost visualizer for lesson-48 (d48-index-space-3d), per user's "whatever you recommend".
+
+Work Log:
+- Probed fresh facts via scripts/indextree3d-facts.ts (seed opened READONLY; CREATE INDEX demo on a throwaway copy): orders 103 · customers 16 · customer_id=1 = Alice Chen owns 24 orders occupying rowid positions 1-24 (contiguous — seed inserts her orders first) · sqlite_master holds ZERO indexes on orders pre-lesson · EQP prints exactly "SCAN orders" pre-index and "SEARCH orders USING INDEX idx_orders_customer (customer_id=?)" post-index · per-key counts 1·24 2·2 3·5 4·2 5·17 6·3 7·14 8·3 9·4 10·2 11·4 12·1 13·13 14·4 15·1 16·4 (sum 103).
+- Built IndexTreeScene in figures3d.tsx (D48_ prefix): phase A a column-major SCAN sweep — amber scanner bar + translucent swept panel cross the 103-chip rowid grid, matches (i<24) light teal, misses dim rose, HUD ticks "N / 103 rows read · 24 matched"; phase B the tree rises — root (separators 4·7·10·13·16) + 6 staggered leaf panels holding the 16 sorted keys with per-key row counts; phase C the SEARCH — amber probe drops onto the root, a teal beam draws root→leaf-1, and 24 teal pointer ribbons fly from the leaf back to exactly the same 24 rows, chips re-flashing on arrival; amber punchline slab "SCAN reads 103 · SEARCH reads 24 — writes pay rent on the tree". Legend (amber=scan/probe, teal=match/pointer, rose=read-discarded), 6-stage HUD, replay + IntersectionObserver auto-replay, full aria description.
+- Fixed a HUD clipping defect found by screenshot: the done/fetch narrations ran past the 560px max-width with whitespace-nowrap; shortened all six stage texts to fit the canvas.
+- Wired: "d48-index-space-3d" in the FigureId union (after d4-index-lookup), FIG3D_IDS, FIGURES_3D registry, lesson-48 slot between the CREATE INDEX bullets and the warn block.
+- QA triple gate: tsc 640 = stashed baseline 640 (0 diff lines; the 633→640 drift predates this task — verified via git stash comparison, not introduced here); lint unchanged (4 pre-existing scripts/*.ts triple-slash errors); agent-browser 0 page errors, canvas mounts, mid-scan screenshot shows the sweep at 56/103 with the amber bar mid-grid, done screenshot shows the full pointer fan + slab; scripts/qa-l48-3d-scan.png + qa-l48-3d-done.png.
+- Repaired scripts/figure-census.ts (stale tool): it parsed only diagrams.tsx for the registry, so ALL 3D ids and every diagrams-m*.tsx entry reported as "missing from registry"; now parses diagrams.tsx + figures3d.tsx + every diagrams-m*.tsx → union 104 / used 104 / used-but-missing 0 / in-union-never-used 0 (43 registered-but-unslotted = the pre-existing diagram-library pool).
+
+Stage Summary:
+- Lesson-48 now closes its SCAN→CREATE INDEX→SEARCH loop with a 3D scene whose every number is probe-verified; the app has 5 DB-anchored 3D scenes (INNER JOIN l10, LEFT JOIN l12, GROUP BY+HAVING l08, window running total l32, index B-tree l48).
+- d48-index-space-3d committed as index-tree-1; QA harness scripts/qa-lesson48.sh added; figure census tooling now reconciles the full registry.
+
+---
+Task ID: figlib-route-1
+Agent: Super Z (main agent)
+Task: Route the built-but-unmounted DiagramLibrary into the LearnApp shell (the worklog's standing "candidate for later").
+
+Work Log:
+- Confirmed diagram-library.tsx had zero importers: search + module-filter chips + FigureBare grid + lightbox with jump-to-lesson, all complete but unreachable.
+- Wired into learn-app.tsx: View union += { kind: "library" }, Toolbox entry "Diagram library — every visual, one wall" (Shapes icon) between Data explorer and Keyword drills, content branch <DiagramLibrary onOpenLesson={openLesson} /> — the openLesson bridge auto-reveals the owning module when jumping from the lightbox into a lesson.
+- WebGL budget guard: FigureBare routes 3D ids to live canvases, and the grid renders all 96 figures at once — 5 simultaneous WebGL contexts would be wasteful. Exported is3DFigure() from diagrams.tsx; 3D cards render a teal "Interactive 3D scene — open to orbit & replay" placeholder in the grid, while the lightbox mounts exactly one canvas (verified: canvases:1 in the open lightbox).
+- Fixed a real pre-existing React bug the library surfaced (it renders every figure at once, so all warnings appear): diagrams-m6.tsx X1StringAgg keyed a status list containing "delivered"/"shipped" twice by the raw string — duplicate-key warning on every render; key is now `${s}-${i}`. Fresh-browser console shows 0 same-key warnings with the library mounted.
+- QA: tsc 640 = baseline 640 (0 new); lint unchanged (4 pre-existing scripts errors); agent-browser 0 page errors — library mounts ("The course, drawn", "96 diagrams · all modules"), module chips per module, search "join" filters to 28 of 96, 3D card opens the M8·L48 Index Space 3d lightbox with the scene playing and lesson footer; screenshots scripts/qa-lib-grid.png + qa-lib-3d.png; one-shot harness scripts/qa-library.sh.
+
+Stage Summary:
+- The visual layer is now a first-class revision surface: all 96 animated diagrams browsable/searchable in-app, each jumping back to its lesson; 43 registered-but-unslotted figures remain library-only by design.
+- App toolbelt: Course overview · Data explorer · Diagram library · Keyword drills · Mixed quiz · Case files.
