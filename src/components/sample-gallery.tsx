@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 // ---- mini schematic -------------------------------------------------------
 
 interface MiniNode {
-  kind: ClauseKind | "out" | "cte" | "setop";
+  kind: ClauseKind | "out" | "cte" | "setop" | "join";
   x: number;
   w: number;
 }
@@ -25,16 +25,13 @@ interface MiniNode {
 const NODE_STYLE: Record<string, { cls: string; dash?: string }> = {
   cte: { cls: "fill-violet-400/10 stroke-violet-400/50" },
   from: { cls: "fill-zinc-800/80 stroke-zinc-600" },
+  join: { cls: "fill-amber-400/10 stroke-amber-400/50" },
   where: { cls: "fill-rose-500/5 stroke-rose-400/50", dash: "3 2.5" },
   group: { cls: "fill-teal-500/10 stroke-teal-400/50" },
   having: { cls: "fill-orange-500/5 stroke-orange-400/50", dash: "3 2.5" },
   setop: { cls: "fill-zinc-700/50 stroke-zinc-500", dash: "2 2" },
   out: { cls: "fill-emerald-400/15 stroke-emerald-400/60" },
 };
-
-const NODE_ORDER: Array<ClauseKind | "out" | "cte" | "setop"> = [
-  "cte", "from", "where", "group", "having", "setop", "out",
-];
 
 /**
  * Tiny left-to-right schematic of the query's shape. 150×44 viewBox;
@@ -45,9 +42,10 @@ function MiniFlow({ sql }: { sql: string }) {
   const { nodes, setop } = useMemo(() => {
     const { spans, supported } = findClauses(sql);
     const present = new Set(spans.map((s) => s.kind));
-    const kinds: Array<ClauseKind | "out" | "cte" | "setop"> = [];
+    const kinds: Array<MiniNode["kind"]> = [];
     if (present.has("with")) kinds.push("cte");
     kinds.push("from");
+    if (/\bjoin\b/i.test(sql)) kinds.push("join");
     if (present.has("where")) kinds.push("where");
     if (present.has("group")) kinds.push("group");
     if (present.has("having")) kinds.push("having");
@@ -78,7 +76,6 @@ function MiniFlow({ sql }: { sql: string }) {
         const h = n.kind === "out" ? 14 : 16;
         const y = cy - h / 2;
         const prev = nodes[i - 1];
-        const next = nodes[i + 1];
         return (
           <g key={`${n.kind}-${i}`}>
             {prev && (
@@ -120,17 +117,6 @@ function MiniFlow({ sql }: { sql: string }) {
                 strokeWidth={1.1}
                 strokeDasharray={style.dash}
                 className={style.cls}
-              />
-            )}
-            {next && (
-              <line
-                x1={n.x + n.w}
-                y1={cy}
-                x2={next.x}
-                y2={cy}
-                className="stroke-zinc-600"
-                strokeWidth={1.2}
-                strokeLinecap="round"
               />
             )}
           </g>

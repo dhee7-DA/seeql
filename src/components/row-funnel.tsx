@@ -191,6 +191,17 @@ export function RowFunnel({
               className={clickable ? "cursor-pointer" : undefined}
               role={clickable ? "button" : undefined}
               aria-label={clickable ? `Inspect rows at ${isOut ? "OUT" : STAGE_TITLE[node.kind]}` : undefined}
+              tabIndex={clickable ? 0 : undefined}
+              onKeyDown={
+                clickable
+                  ? (ev) => {
+                      if (ev.key === "Enter" || ev.key === " ") {
+                        ev.preventDefault();
+                        onSelectStage?.(node.kind);
+                      }
+                    }
+                  : undefined
+              }
             >
               <title>{clickable ? `Click to see the rows at ${isOut ? "OUT" : STAGE_TITLE[node.kind]}` : undefined}</title>
               <rect
@@ -238,7 +249,7 @@ export function RowFunnel({
                 x={x + STAGE_W - 8}
                 y={STAGE_H + 2}
                 textAnchor="end"
-                fontSize={12}
+                fontSize={isOut ? 14 : 12}
                 fontWeight={700}
                 fontFamily={MONO}
                 className={NUM_CLS[accent]}
@@ -268,17 +279,33 @@ export function RowFunnel({
                     <line x1={x - 3} y1={cy} x2={x - 8} y2={cy + 3.2} />
                   </motion.g>
                   {dropped !== null && dropped > 0 && (
-                    <motion.text
-                      {...fade(i * 0.09 + 0.55)}
-                      x={x - GAP / 2}
-                      y={cy + 15}
-                      textAnchor="middle"
-                      fontSize={8.5}
-                      fontFamily={MONO}
-                      className={isOut ? "fill-zinc-500" : "fill-rose-400/80"}
-                    >
-                      {isOut ? "" : `−${dropped}`}
-                    </motion.text>
+                    <>
+                      <motion.text
+                        {...fade(i * 0.09 + 0.55)}
+                        x={x - GAP / 2}
+                        y={cy + 12}
+                        textAnchor="middle"
+                        fontSize={8.5}
+                        fontFamily={MONO}
+                        className={isOut ? "fill-zinc-500" : "fill-rose-400/80"}
+                      >
+                        {isOut ? "" : `−${dropped}`}
+                      </motion.text>
+                      {/* share of the previous stage the gate removed */}
+                      {!isOut && prev.count !== null && prev.count > 0 && (
+                        <motion.text
+                          {...fade(i * 0.09 + 0.65)}
+                          x={x - GAP / 2}
+                          y={cy + 21}
+                          textAnchor="middle"
+                          fontSize={7.5}
+                          fontFamily={MONO}
+                          className="fill-zinc-600"
+                        >
+                          {`−${Math.round((dropped / prev.count) * 100)}%`}
+                        </motion.text>
+                      )}
+                    </>
                   )}
                 </>
               )}

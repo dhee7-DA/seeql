@@ -82,6 +82,27 @@ export function SchemaView({
         </Button>
       </div>
 
+      {/* key + edge legend — decode the card and edge vocabulary at a glance */}
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 px-1 text-[10px] text-zinc-500">
+        <span className="inline-flex items-center gap-1">
+          <KeyRound className="h-2.5 w-2.5 text-amber-400" /> primary key
+        </span>
+        <span className="inline-flex items-center gap-1">
+          <KeyRound className="h-2.5 w-2.5 text-zinc-500" /> foreign key
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <svg width="18" height="6" aria-hidden>
+            <line x1="0" y1="3" x2="18" y2="3" stroke="var(--color-zinc-500)" strokeWidth="1.4" strokeDasharray="4 3" />
+          </svg>
+          relationship (1 → many)
+        </span>
+        {counts !== null && (
+          <span className="ml-auto font-mono text-zinc-600">
+            {Object.values(counts).reduce((a, b) => a + b, 0).toLocaleString()} rows live
+          </span>
+        )}
+      </div>
+
       <div className="thin-scrollbar overflow-x-auto rounded-xl border border-zinc-800 bg-zinc-900/40">
         <div
           className="relative"

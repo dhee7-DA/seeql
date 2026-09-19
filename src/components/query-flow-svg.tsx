@@ -120,7 +120,7 @@ export function QueryFlowSvg({
     nodes.push({
       key: "with",
       title: "WITH",
-      note: clip(plan.ctes.map((c) => c.name).join(", "), 19),
+      note: clip(plan.ctes.map((c) => c.name).join(", "), 17),
       accent: "violet",
     });
   }
@@ -130,7 +130,7 @@ export function QueryFlowSvg({
   const mainCount = main ? tableCounts?.[main.name] : undefined;
   nodes.push({
     key: "from",
-    title: clip(`FROM ${mainName}`, 14),
+    title: clip(`FROM ${mainName}`, 13),
     dots: mainCount,
     accent: "zinc",
   });
@@ -141,7 +141,7 @@ export function QueryFlowSvg({
       title: "JOIN",
       note:
         plan.joins.length === 1
-          ? clip(`${plan.joins[0].type.toLowerCase()} …`, 19)
+          ? clip(`${plan.joins[0].type.toLowerCase()} …`, 17)
           : plural(plan.joins.length, "join"),
       accent: "amber",
     });
@@ -161,7 +161,7 @@ export function QueryFlowSvg({
     nodes.push({
       key: "group",
       title: "GROUP BY",
-      note: clip(`by ${plan.groupBy.join(", ")}`, 19),
+      note: clip(`by ${plan.groupBy.join(", ")}`, 17),
       accent: "teal",
     });
   }
@@ -170,7 +170,7 @@ export function QueryFlowSvg({
     nodes.push({
       key: "having",
       title: "HAVING",
-      note: clip(plan.having.join(" "), 19),
+      note: clip(plan.having.join(" "), 17),
       gate: true,
       accent: "orange",
     });
@@ -336,8 +336,8 @@ export function QueryFlowSvg({
                 <WrapArrow
                   fromX={XS[row.length - 1] + NODE_W / 2}
                   fromY={y + NODE_H}
-                  toX={XS[0] - 2}
-                  toY={rowY(r + 1) + NODE_H / 2}
+                  toX={XS[0] + NODE_W / 2}
+                  toY={rowY(r + 1)}
                   midY={y + NODE_H + ROW_GAP / 2}
                 />
               )}
@@ -352,7 +352,9 @@ export function QueryFlowSvg({
   );
 }
 
-/** Down → across → into the first node of the next row (rounded pipe). */
+/** Down → across → down into the TOP of the next row's first node (rounded
+ * pipe). Both vertical legs stay inside the viewBox — the previous left-edge
+ * entry routed at x = toX − 14 = −6 and was clipped off-canvas. */
 function WrapArrow({
   fromX,
   fromY,
@@ -368,12 +370,9 @@ function WrapArrow({
 }) {
   const d = [
     `M ${fromX} ${fromY}`,
-    `L ${fromX} ${midY - 10} Q ${fromX} ${midY}, ${fromX - 10} ${midY}`,
-    `L ${toX - 14 + 10} ${midY}`,
-    `Q ${toX - 14} ${midY}, ${toX - 14} ${midY + 10}`,
-    `L ${toX - 14} ${toY - 10}`,
-    `Q ${toX - 14} ${toY}, ${toX - 14 + 10} ${toY}`,
-    `L ${toX} ${toY}`,
+    `L ${fromX} ${midY - 8} Q ${fromX} ${midY}, ${fromX - 8} ${midY}`,
+    `L ${toX + 8} ${midY} Q ${toX} ${midY}, ${toX} ${midY + 8}`,
+    `L ${toX} ${toY - 6}`,
   ].join(" ");
   return (
     <g>
@@ -386,8 +385,8 @@ function WrapArrow({
         fill="none"
       />
       <motion.g {...fade(0.75)} className="stroke-zinc-600" strokeWidth={1.5} strokeLinecap="round" fill="none">
-        <line x1={toX} y1={toY} x2={toX - 6} y2={toY - 3.2} />
-        <line x1={toX} y1={toY} x2={toX - 6} y2={toY + 3.2} />
+        <line x1={toX} y1={toY - 1} x2={toX - 3.2} y2={toY - 6} />
+        <line x1={toX} y1={toY - 1} x2={toX + 3.2} y2={toY - 6} />
       </motion.g>
     </g>
   );
