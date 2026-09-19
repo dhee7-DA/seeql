@@ -1883,3 +1883,20 @@ Work Log:
 Stage Summary:
 - App now has 3 DB-verified 3D scenes: INNER JOIN space (lesson-10), LEFT JOIN space (lesson-12), GROUP BY buckets & gates (lesson-08).
 - l8-bins-space-3d committed as 69153c3; reusable one-shot QA script saved at scripts/qa-lesson08.sh.
+
+---
+Task ID: window-frame-1
+Agent: Super Z (main agent)
+Task: Fourth 3D scene — window running total in space for lesson-32 (t32-running-space-3d), per user's "whatever you recommend".
+
+Work Log:
+- Probed facts via scripts/window3d-facts.ts: 14 month buckets (2024-01 → 2025-02 — not 12, the seed spans into 2025); monthly rev 3731.97 / 3609.64 / … / 2390.53; SUM(rev) OVER (ORDER BY mon) → 3731.97, 7341.61, 9958.69, …, 34833.28; lifetime SUM = 34833.28 (matches the lesson's inline claim).
+- Built RunningTotalScene in figures3d.tsx: the default window frame drawn literally — translucent teal panel whose trailing edge stays pinned at 2024-01 (UNBOUNDED PRECEDING) while an amber leading edge sweeps right at 0.5s/month; violet monthly bars rise (popEase) as the edge passes; a teal CatmullRom tube (drawRange reveal) draws the running-total line; per-month Html chips fade in with exact running values; lifetime slab "last running = plain SUM → 34833.28" pops at the end; phased HUD + auto-replay on scroll-into-view.
+- Found + fixed an off-by-one via browser screenshot: coveredF capped at N-1 stalled the sweep at the last bar's center, leaving 2025-02 half-risen and the HUD stuck at "after 2025-01" (coveredF now overshoots to N, min() cap removed from leadX).
+- Wired: "t32-running-space-3d" in FigureId union (after t8-running-total), FIG3D_IDS, FIGURES_3D registry, lesson-32 slot after the running-total code block.
+- QA triple gate: tsc 633 = baseline 633 (0 diff); lint unchanged (4 pre-existing scripts/ errors, 0 mentions of touched files); agent-browser 0 page errors, done state verified by screenshot (all 14 bars risen, final chip 34833.28, slab popped).
+- Hardened scripts/qa-lesson32.sh: the course-grid module toggle shares its label with the left sidebar nav, so the script now clicks every matching ref until the lesson row appears.
+
+Stage Summary:
+- App now has 4 DB-verified 3D scenes: INNER JOIN (l10), LEFT JOIN (l12), GROUP BY + HAVING (l08), window running total (l32).
+- t32-running-space-3d committed as 781cc63.
