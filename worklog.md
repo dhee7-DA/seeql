@@ -1851,3 +1851,19 @@ Stage Summary:
 - Lesson-12 now teaches WHERE-vs-ON with a 3D scene whose every number is DB-verified; the 3D pipeline is fully generic again (new scene = union id + FIG3D_IDS entry + component + slot)
 - FigureBare restored unblocking diagram-library/lightbox/figure-frame/landing-showcase compile
 - Next: Task 2 playground chart polishing (QueryFlowSvg / RowFunnel / SchemaView / SampleGallery); diagram-library component exists but is not yet routed into any view (candidate for later)
+
+---
+Task ID: playground-polish-1
+Agent: Super Z (main agent)
+Task: Playground chart polishing — QueryFlowSvg / RowFunnel / SchemaView / SampleGallery
+
+Work Log:
+- QueryFlowSvg: fixed a real layout bug — the multi-row wrap arrow routed its return leg at x = toX−14 = −6, clipped off-canvas; redesigned the pipe to enter the next row's first node from the TOP (both vertical legs inside the viewBox), arrowhead re-aimed downward; tightened note clips 19→17 and FROM title 14→13 so mono note text can no longer touch the box edge
+- RowFunnel: gate deltas now carry a second line with the removed share (−66 → −64% style, guard prev>0), OUT count bumped 12→14px as the punchline, stage inspect gained keyboard access (tabIndex + Enter/Space on the SVG row group, role=button already present)
+- SchemaView: added a decode legend (amber key = primary key, zinc key = foreign key, dashed line = relationship 1→many) plus a live total-row badge (sum of /api/stats counts) so the card vocabulary reads at a glance
+- SampleGallery: mini schematics now draw an amber JOIN node when the SQL joins (regex, matching the chip helper), removed dead NODE_ORDER const and the double-drawn connector lines (each segment rendered twice via prev+next)
+- Verified in-browser: pipeline tab flow strip wraps on-canvas with top entry, funnel deltas+percentages render, schema legend + 392 rows live visible, gallery cards show JOIN nodes and the UNION merge shape; 0 page errors; tsc 633 (0 new vs repaired baseline), lint unchanged (4 pre-existing scripts/*.ts)
+
+Stage Summary:
+- All four playground visuals now carry more information at the same footprint, with one genuine clipping bug fixed; approved two-item queue complete
+- Candidate next: GROUP BY city skyline (3D), routing the built-but-unmounted DiagramLibrary into a view, query timeline scrubber
