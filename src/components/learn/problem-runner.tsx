@@ -11,6 +11,7 @@ import { SqlEditor } from "@/components/sql-editor";
 import { useProgress } from "@/lib/curriculum/progress";
 import { xpForDifficulty } from "@/lib/curriculum/gamification";
 import { firstMistake } from "@/lib/curriculum/coach";
+import { reportMentorFailure } from "@/lib/mentor-context";
 import type { Problem } from "@/lib/curriculum/types";
 import type { ExecResponse, ExecResult } from "@/lib/sql-types";
 import { cn } from "@/lib/utils";
@@ -112,6 +113,15 @@ export function ProblemCard({ problem, index, onSolved }: { problem: Problem; in
       const v = gradeResult(data, problem);
       setVerdict(v);
       setCoachMsg(v.ok ? null : firstMistake(sql, problem.mistakes));
+      if (!v.ok) {
+        // Drop the attempt on the mentor's desk — the AI Mentor chat picks it up.
+        reportMentorFailure({
+          sql: sql.slice(0, 2000),
+          error: data.ok ? null : (data.error ?? null),
+          note: data.ok ? (v.reason ?? null) : null,
+          source: problem.title ? `Lesson problem · ${problem.title}` : "Lesson problem",
+        });
+      }
       setRuns((n) => n + 1);
       if (v.ok && !solvedRef.current) {
         solvedRef.current = true;

@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   Activity,
   ArrowRight,
+  Bot,
   Briefcase,
   Bug,
   Check,
@@ -49,6 +50,7 @@ import { InterviewTrack } from "./interview-track";
 import { SchemaStudio } from "./schema-studio";
 import { ExplainBack } from "./explain-back";
 import { CheatSheet } from "./cheat-sheet";
+import { MentorChat } from "./mentor-chat";
 import { ActivityStrip, MasteryGrid } from "./progress-cards";
 import { CelebrationHost, celebrate } from "./celebrate";
 
@@ -67,7 +69,8 @@ type View =
   | { kind: "interview" }
   | { kind: "studio" }
   | { kind: "explain" }
-  | { kind: "sheet" };
+  | { kind: "sheet" }
+  | { kind: "mentor" };
 
 // ---- Collapsible module state (persisted) -------------------------------
 
@@ -286,6 +289,7 @@ function OverviewModuleCard({
 function ToolRail({ view, setView }: { view: View; setView: (v: View) => void }) {
   const tools: { kind: View["kind"]; icon: React.ComponentType<{ className?: string }>; label: string }[] = [
     { kind: "overview", icon: LayoutDashboard, label: "Overview" },
+    { kind: "mentor", icon: Bot, label: "Mentor" },
     { kind: "explorer", icon: Table2, label: "Data" },
     { kind: "library", icon: Shapes, label: "Diagrams" },
     { kind: "drills", icon: Dumbbell, label: "Drills" },
@@ -580,6 +584,7 @@ export function LearnApp() {
               {[
                 { kind: "predict" as const, icon: Eye, label: "Predict the output", note: "freeze the grid before it runs" },
                 { kind: "clinic" as const, icon: Bug, label: "Error clinic", note: "diagnose real bugs, loud & silent" },
+                { kind: "mentor" as const, icon: Bot, label: "AI Mentor", note: "tiered hints on your live data" },
                 { kind: "golf" as const, icon: Flag, label: "Query golf", note: "same rows, fewer strokes" },
                 { kind: "interview" as const, icon: Briefcase, label: "Interview prep", note: "the screening classics, graded" },
                 { kind: "studio" as const, icon: Network, label: "Schema studio", note: "spot the design smell" },
@@ -659,6 +664,8 @@ export function LearnApp() {
           <MasteryMap onOpenLesson={openLesson} />
         ) : view.kind === "sheet" ? (
           <CheatSheet />
+        ) : view.kind === "mentor" ? (
+          <MentorChat />
         ) : (
           <div className="bg-ambient max-w-4xl">
             {/* Hero — "where was I" + the one tap that matters, before any scrolling */}

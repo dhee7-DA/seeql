@@ -22,6 +22,7 @@ import {
   X,
 } from "lucide-react";
 import type { Block, DeepBlock, Lesson } from "@/lib/curriculum/types";
+import { reportMentorFailure } from "@/lib/mentor-context";
 import { useProgress } from "@/lib/curriculum/progress";
 import { LESSON_DRILLS } from "@/lib/curriculum/drills";
 import { splitStatements } from "@/lib/sql-statements";
@@ -137,7 +138,12 @@ async function runInline(sql: string, sandbox: boolean): Promise<SingleResult> {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ sql, sandbox }),
   });
-  return (await r.json()) as SingleResult;
+  const out = (await r.json()) as SingleResult;
+  if (out.error) {
+    // Land the attempt on the mentor's desk — the AI Mentor chat picks it up.
+    reportMentorFailure({ sql: sql.slice(0, 2000), error: out.error, note: null, source: "Lesson console" });
+  }
+  return out;
 }
 
 async function runBatch(sqls: string[]): Promise<{ ok: boolean; results?: BatchItemResult[]; error?: string }> {

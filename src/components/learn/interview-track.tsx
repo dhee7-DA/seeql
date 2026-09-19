@@ -13,6 +13,7 @@ import { INTERVIEW_RUNGS, INTERVIEW_XP, type InterviewRung } from "@/lib/curricu
 import type { ExecResponse } from "@/lib/sql-types";
 import { cn } from "@/lib/utils";
 import { awardPracticeXp, MiniGrid, recordPracticeAttempt, rowsMatch } from "./practice-kit";
+import { reportMentorFailure } from "@/lib/mentor-context";
 import { SqlEditor } from "../sql-editor";
 import { SqlNodes } from "./sql-code";
 
@@ -43,6 +44,15 @@ function RungCard({ rung, open, onToggle }: { rung: InterviewRung; open: boolean
       res.ok &&
       rowsMatch(res.rows ?? [], rung.rows, rung.ordered) &&
       (res.columns?.length ?? 0) === rung.columns.length;
+    if (!ok) {
+      // Land the attempt on the mentor's desk — the AI Mentor chat picks it up.
+      reportMentorFailure({
+        sql: sql.slice(0, 2000),
+        error: res.ok ? null : (res.error ?? null),
+        note: res.ok ? "Rows don't match the expected answer for this rung." : null,
+        source: `Interview prep · ${rung.title}`,
+      });
+    }
     setResult(res);
     setPassed(ok);
     setRunning(false);

@@ -16,6 +16,7 @@ import { countStrokes, golfVerdict } from "@/lib/curriculum/golf-score";
 import type { ExecResponse } from "@/lib/sql-types";
 import { cn } from "@/lib/utils";
 import { awardPracticeXp, MiniGrid, recordPracticeAttempt, rowsMatch } from "./practice-kit";
+import { reportMentorFailure } from "@/lib/mentor-context";
 import { SqlEditor } from "../sql-editor";
 import { SqlNodes } from "./sql-code";
 
@@ -74,6 +75,22 @@ function GolfHoleCard({ hole }: { hole: GolfHole }) {
         ? rowsMatch(result.rows, target.rows, hole.ordered)
         : false;
     setRun({ running: false, result, target, starterPlan: run.starterPlan, match });
+    if (!result.ok) {
+      // Land the attempt on the mentor's desk — the AI Mentor chat picks it up.
+      reportMentorFailure({
+        sql: sql.slice(0, 2000),
+        error: result.error ?? null,
+        note: null,
+        source: `Query golf · hole ${hole.id}`,
+      });
+    } else if (!match) {
+      reportMentorFailure({
+        sql: sql.slice(0, 2000),
+        error: null,
+        note: "Runs clean, but the rows don't match the hole's target result.",
+        source: `Query golf · hole ${hole.id}`,
+      });
+    }
     if (match) {
       setSolved(true);
       setShowLesson(true);

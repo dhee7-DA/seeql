@@ -7,17 +7,27 @@
 
 import type { CellValue, ExecResponse } from "@/lib/sql-types";
 import { useProgress } from "@/lib/curriculum/progress";
+import { reportMentorFailure } from "@/lib/mentor-context";
 import { celebrate } from "./celebrate";
 import { cn } from "@/lib/utils";
 
-/** POST a statement to the sandbox API. */
+/** POST a statement to the sandbox API. Hard failures land in the mentor context. */
 export async function execSql(sql: string): Promise<ExecResponse> {
   const res = await fetch("/api/query", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ sql }),
   });
-  return (await res.json()) as ExecResponse;
+  const data = (await res.json()) as ExecResponse;
+  if (!data.ok) {
+    reportMentorFailure({
+      sql: sql.slice(0, 2000),
+      error: data.error ?? null,
+      note: null,
+      source: "Practice lab",
+    });
+  }
+  return data;
 }
 
 /** Compact result grid — the practice lab's answer sheet. */
