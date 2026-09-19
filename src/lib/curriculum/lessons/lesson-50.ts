@@ -24,6 +24,7 @@ export const lesson50: Lesson = {
       ],
       caption: "One incident, all four write verbs — plus the read that proves you understood the problem before touching anything",
     },
+    { kind: "diagram", figure: "d50-fix-ticket" },
     {
       kind: "tip",
       text: "Incident discipline is the real syllabus here: the census (task 1) is not filler — it's how you'll KNOW the fix worked. The numbers it prints (52 delivered, 30 shipped, 14 pending, 7 cancelled) are the 'before' picture; the write steps change it on purpose. In production you'd re-run the census after committing, inside one transaction.",

@@ -22,6 +22,7 @@ export const lesson36: Lesson = {
         "**Region mates** are a self-join — the customers table pairing with itself.",
       ],
     },
+    { kind: "diagram", figure: "l36-join-instruments" },
     {
       kind: "warn",
       text: "The fan-out trap in numbers: orders joined to order_items repeats every order's total once per line item — the store's 34,833.28 becomes 103,244.55. Three times the truth, zero errors thrown. When a total must match reality, sum the table that owns the column.",

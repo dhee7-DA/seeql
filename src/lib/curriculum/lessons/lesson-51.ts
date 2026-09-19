@@ -24,6 +24,7 @@ export const lesson51: Lesson = {
       ],
       caption: "One brief, the full reporting-layer toolkit — read the schema, extend it, prove it exists",
     },
+    { kind: "diagram", figure: "d51-reporting-layer" },
     {
       kind: "tip",
       text: "The order here is the analytics-engineer's habit: build the VIEW first so every later task can reference one definition of 'monthly revenue'; audit with a READ before promising targets; add the INDEX for the filter you know the dashboard runs. In production each statement would live in a checked-in migration file — the sandbox's rollback is the rehearsal, the migration is the opening night.",

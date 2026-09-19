@@ -25,10 +25,13 @@ export const lesson35: Lesson = {
       ],
       caption: "Six asks, six different spells — the brief's real lesson is matching tool to question",
     },
+    { kind: "diagram", figure: "l35-report-anatomy" },
     {
       kind: "tip",
       text: "Work like an analyst, not a student: for each ask, say the shape out loud first — 'that's a filter', 'that's a collapse', 'that's a bucket' — then write the SQL. Every number below is live-graded against the real store, so a wrong shape is a wrong number.",
     },
+    { kind: "diagram", figure: "l35-question-to-sql" },
+    { kind: "diagram", figure: "l35-clause-order" },
   ],
   mcqs: [
     {

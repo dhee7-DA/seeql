@@ -24,6 +24,7 @@ export const lesson40: Lesson = {
       ],
       caption: "The one-pager's bill of materials — every number seed-verified",
     },
+    { kind: "diagram", figure: "l40-exec-onepager" },
     {
       kind: "warn",
       text: "The grand-total stack's sort rule: ORDER BY after a compound SELECT needs the outer wrapper — and sort by the VALUE, not the label, or 'GRAND TOTAL' files alphabetically between Fitness and Accessories.",

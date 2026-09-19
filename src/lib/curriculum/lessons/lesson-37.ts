@@ -21,6 +21,7 @@ export const lesson37: Lesson = {
         "**The value census** — SUM(CASE …) per status in one pass: 15,571.07 delivered, 11,996.72 shipped, 6,113.00 pending, 1,152.49 cancelled — they sum to the honest 34,833.28.",
       ],
     },
+    { kind: "diagram", figure: "l37-setop-pivot" },
     {
       kind: "warn",
       text: "The custom sort's hidden cliff: `ORDER BY CASE status WHEN 'pending' THEN 1 … ` — forget the ELSE and every unmapped status becomes NULL, which SQLite sorts FIRST in ascending order. Your cancelled bucket would leap to the top of the report. Always close the CASE.",

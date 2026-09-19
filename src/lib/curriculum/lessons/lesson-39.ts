@@ -22,6 +22,7 @@ export const lesson39: Lesson = {
         "**Quartiles** — NTILE(4) deals 103 orders into 26/26/26/25; the priciest quarter is bucket 4.",
       ],
     },
+    { kind: "diagram", figure: "l39-ops-calendar" },
     {
       kind: "warn",
       text: "Window over aggregate, in one line, is where typo bugs breed: `SUM(SUM(total)) OVER (…)`. It works — the inner SUM is the GROUP BY aggregate, the outer SUM is the window — but the readable form stages the monthly sums first, then windows over the stage. Same numbers, reviewable SQL.",

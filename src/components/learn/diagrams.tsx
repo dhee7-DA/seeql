@@ -11,6 +11,11 @@ import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import type { FigureId } from "@/lib/curriculum/types";
 import { FIGURES_M2 } from "./diagrams-m2";
+import { FIGURES_M1A } from "./diagrams-m1a";
+import { FIGURES_M1B } from "./diagrams-m1b";
+import { FIGURES_M1C } from "./diagrams-m1c";
+import { FIGURES_M1D } from "./diagrams-m1d";
+import { FIGURES_M1E } from "./diagrams-m1e";
 import { FIGURES_M1X } from "./diagrams-m1x";
 import { FIGURES_M3 } from "./diagrams-m3";
 import { FIGURES_M4 } from "./diagrams-m4";
@@ -19,6 +24,7 @@ import { FIGURES_M6 } from "./diagrams-m6";
 import { FIGURES_M7 } from "./diagrams-m7";
 import { FIGURES_M8 } from "./diagrams-m8";
 import { FIGURES_M9 } from "./diagrams-m9";
+import { FIGURES_CASE } from "./diagrams-mcase";
 import { cn } from "@/lib/utils";
 
 /* ---------------- shared bits ---------------- */
@@ -1598,6 +1604,11 @@ const FIG3D_IDS = new Set<FigureId>([
 /* ---------------- registry ---------------- */
 
 const FIGURES: Partial<Record<FigureId, () => React.JSX.Element>> = {
+  ...FIGURES_M1A,
+  ...FIGURES_M1B,
+  ...FIGURES_M1C,
+  ...FIGURES_M1D,
+  ...FIGURES_M1E,
   ...FIGURES_M1X,
   ...FIGURES_M2,
   ...FIGURES_M3,
@@ -1607,6 +1618,7 @@ const FIGURES: Partial<Record<FigureId, () => React.JSX.Element>> = {
   ...FIGURES_M7,
   ...FIGURES_M8,
   ...FIGURES_M9,
+  ...FIGURES_CASE,
   "l1-anatomy": L1Anatomy,
   "l2-projection": L2Projection,
   "l3-where-gate": L3WhereGate,

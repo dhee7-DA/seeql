@@ -21,6 +21,7 @@ export const lesson38: Lesson = {
         "**Status veterans** — three customers have experienced all four statuses: Alice, Emma, Maya.",
       ],
     },
+    { kind: "diagram", figure: "l38-nested-asks" },
     {
       kind: "warn",
       text: "The classic VIP-list bug: `WHERE SUM(o.total) > AVG(o.total)` in one level — aggregates can't compare against aggregates in a single SELECT. The average customer spend needs the per-customer spends STAGED first (derived table or CTE), then compared.",
