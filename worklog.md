@@ -2028,3 +2028,19 @@ Work Log:
 Stage Summary:
 - The app has a real tutor: 15 toolbox surfaces now, with the mentor one tap from Overview, the sidebar, and the mobile rail; any failed run anywhere in the app lands on its desk pre-attached.
 - Committed mentor-1. Next: enhancement #2 — EXPLAIN visualizer / performance lab (SCAN vs SEARCH pipeline + slow-query detective puzzles).
+
+---
+Task ID: ops-preview-restore
+Agent: Super Z (main agent)
+Task: User reported "i cant preview the current change" — preview dark after session recycle.
+
+Work Log:
+- Diagnosed: nothing listening on :3000 (dev server + watchdog reaped between sessions); a stale private QA server from mentor-1 QA was still alive on :3101 eating 1.73GB of the 4GB box.
+- Killed the stale 3101 tree (freed ~1.7GB), booted the canonical stack via .zscripts/dev.sh (bun install no-op, db:push, server pid recorded, health check, watchdog started).
+- Found the REAL killer: watchdog recycle-loop — app dev-mode boot RSS alone is ~1.9-2.1GB > the 1.6GB RSS_CAP_KB, so next-server was killed and restarted every ~20s ("recycle: RSS 1895924KB/1995776KB > 1600000KB" x2 in the log within a minute). Preview flapped dark — this is what the user hit.
+- Fix (permanent this time): watchdog.sh RSS_CAP_KB 1600000 -> 2000000 with history comment (boot RSS ~1.9-2.1GB; box OOM happened at ~2.2GB so 2.0GB keeps margin). Restarted watchdog (pid file updated, log confirms "rss cap 2000000KB").
+- Verified across tool calls (processes survive between calls when started via dev.sh/setsid): HTTP 200 on :3000, homepage SSR renders, Learn app loads (9 modules · 57 lessons), AI Mentor view opens with grounded greeting + chat input, 0 page errors. Screenshot scripts/qa-preview-restore.png.
+
+Stage Summary:
+- Preview restored and stable: dev server pid-stable at ~1.89GB RSS under the 2.0GB cap, watchdog armed against both death and OOM modes.
+- Root cause pair documented: session recycle killed the server; the stale 1.6GB cap kept it from staying up. Both closed.
