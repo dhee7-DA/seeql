@@ -1867,3 +1867,19 @@ Work Log:
 Stage Summary:
 - All four playground visuals now carry more information at the same footprint, with one genuine clipping bug fixed; approved two-item queue complete
 - Candidate next: GROUP BY city skyline (3D), routing the built-but-unmounted DiagramLibrary into a view, query timeline scrubber
+
+---
+Task ID: groupby-bins-1
+Agent: Super Z (main agent)
+Task: Third 3D scene — GROUP BY buckets & HAVING gate for lesson-08 (l8-bins-space-3d), per user's "whatever you recommend".
+
+Work Log:
+- Probed fresh facts via scripts/groupby3d-facts.ts: orders 103; GROUP BY status → delivered 52 / shipped 30 / pending 14 / cancelled 7; HAVING COUNT(*) > 10 keeps 3 buckets, drops cancelled (7); GROUP BY customer_id → 16 buckets (flavor fact).
+- Built BinsScene in figures3d.tsx: all 103 order rows drawn in an unordered stream (round-robin bucket assignment + deterministic LCG scatter); phase A arcs every row into its status bin (6×2×5 landing grid, counter chips flush at ~8Hz to avoid jank); phase B pops one result row per bucket (reused easeOutBack, renamed l12Pop → popEase for sharing); phase C sweeps an amber HAVING scanner across the result — cancelled (7 ≤ 10) sinks, dims, bin walls go dark.
+- Wired: "l8-bins-space-3d" added to FigureId union (types.ts), FIG3D_IDS (diagrams.tsx), FIGURES_3D registry, and lesson-08 slot after the first runnable GROUP BY code block. figure-3d.tsx host needed no changes (generic registry dispatch).
+- QA triple gate: tsc 633 = baseline 633 with 0 diff lines; lint unchanged (4 pre-existing scripts/ errors only); agent-browser 0 page errors — canvas mounts, HUD reaches done state, counters land 52/30/14/7 exact, cancelled card visibly sunk.
+- Discovered sandbox reaps background dev servers between Bash calls; built scripts/qa-lesson08.sh one-shot pattern (server + navigation + assertions inside a single call) for future browser QA.
+
+Stage Summary:
+- App now has 3 DB-verified 3D scenes: INNER JOIN space (lesson-10), LEFT JOIN space (lesson-12), GROUP BY buckets & gates (lesson-08).
+- l8-bins-space-3d committed as 69153c3; reusable one-shot QA script saved at scripts/qa-lesson08.sh.
