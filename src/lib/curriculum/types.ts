@@ -86,6 +86,7 @@ export type FigureId =
   | "w2-update-sweep"
   | "w3-delete-scope"
   | "w4-upsert-fork"
+  | "w44-atomic-space-3d"
   | "d1-table-anatomy"
   | "d2-alter-paths"
   | "d3-view-lens"

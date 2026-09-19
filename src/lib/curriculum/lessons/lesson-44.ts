@@ -64,6 +64,7 @@ UPDATE accounts SET balance = balance - 100 WHERE id = 7;
 UPDATE accounts SET balance = balance + 100 WHERE id = 9;
 COMMIT;   -- both happened, or (on error / ROLLBACK) neither`,
     },
+    { kind: "diagram", figure: "w44-atomic-space-3d" },
     {
       kind: "dialect",
       db: "postgres",

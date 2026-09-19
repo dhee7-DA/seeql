@@ -1592,6 +1592,7 @@ const FIG3D_IDS = new Set<FigureId>([
   "l8-bins-space-3d",
   "t32-running-space-3d",
   "d48-index-space-3d",
+  "w44-atomic-space-3d",
 ]);
 
 /* ---------------- registry ---------------- */

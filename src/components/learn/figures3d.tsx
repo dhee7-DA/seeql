@@ -2177,6 +2177,514 @@ function D48IndexSpace() {
   );
 }
 
+/* ================= w44-atomic-space-3d — the transaction, in space ============
+ * Real facts (probed via scripts/tx3d-facts.ts on a throwaway copy of custom.db):
+ *   the lesson's transfer: acct 7 = 1000.00, acct 9 = 500.00, move 100.00 —
+ *   COMMIT path:  debit 900/500 → credit 900/600 → COMMIT 900/600 (both landed)
+ *   crash path:   debit 900/500 → credit never runs → ROLLBACK 1000/500
+ *   sandbox tie-in: products K1 stock 120 → 125 inside the txn → 120 after
+ *   ROLLBACK; store counts unchanged (16 products / 103 orders). The course's
+ *   own grader wraps every graded write in $transaction + SandboxRollback
+ *   (src/app/api/query/route.ts) — the bubble is not a metaphor here.
+ * Two pedestals of 100.00 coins sit inside a translucent "transaction bubble":
+ * act 1 flies one coin debit→credit and COMMIT dissolves the bubble; act 2
+ * crashes before the credit and ROLLBACK rewinds the coin. The bubble IS the
+ * transaction — nothing inside is real until it dissolves.                      */
+
+const W44_TEAL = "#2dd4bf";
+const W44_AMBER = "#fbbf24";
+const W44_ROSE = "#fb7185";
+const W44_COIN = "#eab308"; // settled coin gold
+
+const W44_A7_X = -3.2;
+const W44_A9_X = 3.2;
+const W44_COIN_R = 0.42;
+const W44_COIN_H = 0.16;
+const W44_COIN_PITCH = 0.19;
+const W44_PED_TOP = -1.1;
+const W44_COIN_Y = (i: number) => W44_PED_TOP + 0.09 + i * W44_COIN_PITCH;
+
+const W44_HOVER_Y = 1.85; // where a debited coin waits inside the bubble
+const w44Clamp01 = (p: number) => Math.min(1, Math.max(0, p));
+
+// ---- timeline (seconds) ----
+const W44_T0 = 0.4; // BEGIN — the bubble forms
+const W44_BUBBLE = 0.6;
+const W44_T1 = 1.6; // debit — the coin lifts off acct 7
+const W44_LIFT = 0.9;
+const W44_T2 = 3.4; // credit — the coin arcs to acct 9
+const W44_ARC = 1.1;
+const W44_T3 = 5.2; // COMMIT — the bubble dissolves
+const W44_COMMIT_FX = 0.9;
+const W44_T4 = 7.4; // reset — act 2 begins, bubble re-forms
+const W44_T5 = 8.8; // debit 2
+const W44_T6 = 10.4; // the crash
+const W44_T7 = 11.2; // ROLLBACK — bubble collapses, coin rewinds
+const W44_REWIND = 0.9;
+const W44_T8 = 13.0; // verdict slab
+
+// flight paths (shared by both acts): lift 7 → hover, arc hover → 9
+const W44_LIFT_CURVE = new THREE.QuadraticBezierCurve3(
+  new THREE.Vector3(W44_A7_X, W44_COIN_Y(9), 0),
+  new THREE.Vector3(W44_A7_X - 0.45, W44_HOVER_Y + 0.6, 0),
+  new THREE.Vector3(W44_A7_X, W44_HOVER_Y, 0),
+);
+const W44_ARC_CURVE = new THREE.QuadraticBezierCurve3(
+  new THREE.Vector3(W44_A7_X, W44_HOVER_Y, 0),
+  new THREE.Vector3(0, W44_HOVER_Y + 1.05, 0),
+  new THREE.Vector3(W44_A9_X, W44_HOVER_Y, 0),
+);
+
+type W44Stage =
+  | "idle" | "begin" | "debit" | "credit" | "commit"
+  | "begin2" | "debit2" | "crash" | "rollback" | "done";
+
+function W44AtomicScene({ replayRef }: { replayRef?: { current: (() => void) | null } }) {
+  const [stage, setStage] = useState<W44Stage>("idle");
+  const stageRef = useRef<W44Stage>("idle");
+  const startRef = useRef(0);
+  const clockRef = useRef(0);
+  const groupRef = useRef<THREE.Group>(null);
+  const bubbleRef = useRef<THREE.Group>(null);
+  const bubbleMats = useRef<Array<THREE.MeshBasicMaterial | null>>([]);
+  const fly1Ref = useRef<THREE.Mesh>(null);
+  const fly2Ref = useRef<THREE.Mesh>(null);
+  const fly2Mat = useRef<THREE.MeshStandardMaterial>(null);
+  const stack7Refs = useRef<Array<THREE.Mesh | null>>(new Array(10).fill(null));
+  const stack9Refs = useRef<Array<THREE.Mesh | null>>(new Array(5).fill(null));
+  const landedRef = useRef<THREE.Mesh>(null);
+  const crashRingRef = useRef<THREE.Mesh>(null);
+  const crashRingMat = useRef<THREE.MeshBasicMaterial>(null);
+  const stampCommitRef = useRef<THREE.Group>(null);
+  const stampRollRef = useRef<THREE.Group>(null);
+  const verdictRef = useRef<THREE.Group>(null);
+  const doneAtRef = useRef(-1);
+
+  const setStageSafe = (s: W44Stage) => {
+    if (stageRef.current !== s) {
+      stageRef.current = s;
+      setStage(s);
+    }
+  };
+
+  useFrame((state, dt) => {
+    clockRef.current = state.clock.elapsedTime;
+    const e = clockRef.current - startRef.current;
+
+    if (groupRef.current) {
+      groupRef.current.rotation.y = Math.sin(e * 0.14) * 0.035;
+      groupRef.current.position.y = Math.sin(e * 0.5) * 0.03;
+    }
+
+    setStageSafe(
+      e < W44_T0 ? "idle"
+        : e < W44_T1 ? "begin"
+        : e < W44_T2 ? "debit"
+        : e < W44_T3 ? "credit"
+        : e < W44_T4 ? "commit"
+        : e < W44_T5 ? "begin2"
+        : e < W44_T6 ? "debit2"
+        : e < W44_T7 ? "crash"
+        : e < W44_T8 ? "rollback"
+        : "done",
+    );
+
+    // ---- the transaction bubble: form / hold / dissolve / re-form / collapse ----
+    if (bubbleRef.current) {
+      const b = bubbleRef.current;
+      const setBubble = (color: string, op: number, scale: number) => {
+        b.visible = scale > 0.011 && op > 0.004;
+        b.scale.setScalar(scale);
+        bubbleMats.current.forEach((m) => {
+          if (!m) return;
+          m.color.set(color);
+          m.opacity = op;
+        });
+      };
+      if (e < W44_T0) setBubble(W44_TEAL, 0, 0.001);
+      else if (e < W44_T0 + W44_BUBBLE) {
+        const t = popEase(w44Clamp01((e - W44_T0) / W44_BUBBLE));
+        setBubble(W44_TEAL, 0.07, 0.001 + t);
+      } else if (e < W44_T3) setBubble(W44_TEAL, 0.07, 1);
+      else if (e < W44_T3 + W44_COMMIT_FX) {
+        const t = w44Clamp01((e - W44_T3) / W44_COMMIT_FX);
+        const flash = t < 0.22 ? 0.07 + 0.16 * (1 - t / 0.22) : 0.07 * (1 - (t - 0.22) / 0.78);
+        setBubble(W44_TEAL, flash, 1 + t * 0.09);
+      } else if (e < W44_T4) setBubble(W44_TEAL, 0, 0.001);
+      else if (e < W44_T4 + W44_BUBBLE) {
+        const t = popEase(w44Clamp01((e - W44_T4) / W44_BUBBLE));
+        setBubble(W44_TEAL, 0.07, 0.001 + t);
+      } else if (e < W44_T7) setBubble(W44_TEAL, 0.07, 1);
+      else if (e < W44_T7 + 0.5) {
+        const t = w44Clamp01((e - W44_T7) / 0.5);
+        setBubble(W44_ROSE, 0.07 + t * 0.14, Math.max(0.001, 1 - t));
+      } else setBubble(W44_ROSE, 0, 0.001);
+    }
+
+    // ---- the coins: who is off their stack right now ----
+    const inFlight1 = e >= W44_T1 && e < W44_T2 + W44_ARC;
+    const landed1 = e >= W44_T2 + W44_ARC && e < W44_T4;
+    const inFlight2 = e >= W44_T5 && e < W44_T7 + W44_REWIND;
+    stack7Refs.current.forEach((m, i) => {
+      if (!m) return;
+      m.visible = i !== 9 || !(inFlight1 || inFlight2);
+    });
+    stack9Refs.current.forEach((m) => {
+      if (m) m.visible = true;
+    });
+    if (landedRef.current) landedRef.current.visible = landed1;
+
+    if (fly1Ref.current) {
+      const f = fly1Ref.current;
+      if (!inFlight1) f.visible = false;
+      else {
+        f.visible = true;
+        if (e < W44_T1 + W44_LIFT) {
+          W44_LIFT_CURVE.getPointAt(w44Clamp01((e - W44_T1) / W44_LIFT), f.position);
+        } else {
+          W44_ARC_CURVE.getPointAt(w44Clamp01((e - W44_T2) / W44_ARC), f.position);
+        }
+      }
+    }
+    if (fly2Ref.current) {
+      const f = fly2Ref.current;
+      if (!inFlight2) f.visible = false;
+      else {
+        f.visible = true;
+        if (e < W44_T5 + W44_LIFT) {
+          W44_LIFT_CURVE.getPointAt(w44Clamp01((e - W44_T5) / W44_LIFT), f.position);
+        } else if (e < W44_T7) {
+          // frozen promise — the debit hovers, jittering, still uncommitted
+          f.position.set(
+            W44_A7_X + Math.sin(e * 21) * 0.02,
+            W44_HOVER_Y + Math.sin(e * 17) * 0.015,
+            0,
+          );
+        } else {
+          W44_LIFT_CURVE.getPointAt(1 - w44Clamp01((e - W44_T7) / W44_REWIND), f.position);
+        }
+      }
+    }
+    if (fly2Mat.current) {
+      const crashed = e >= W44_T6 && e < W44_T7 + W44_REWIND;
+      fly2Mat.current.emissive.set(crashed ? W44_ROSE : W44_AMBER);
+      fly2Mat.current.emissiveIntensity = crashed ? 1.2 : 0.8;
+    }
+
+    // ---- crash ring at the point the credit should have been ----
+    if (crashRingRef.current && crashRingMat.current) {
+      const t = w44Clamp01((e - W44_T6) / 0.7);
+      const on = e >= W44_T6 && t < 1;
+      crashRingRef.current.visible = on;
+      if (on) {
+        crashRingRef.current.scale.setScalar(0.3 + t * 1.5);
+        crashRingMat.current.opacity = 0.85 * (1 - t);
+      }
+    }
+
+    // ---- stamps + verdict ----
+    if (stampCommitRef.current) {
+      const on = e >= W44_T3 && e < W44_T4;
+      stampCommitRef.current.visible = on;
+      if (on) {
+        stampCommitRef.current.scale.setScalar(popEase(w44Clamp01((e - W44_T3) / 0.35)));
+      }
+    }
+    if (stampRollRef.current) {
+      const on = e >= W44_T7 && e < W44_T8;
+      stampRollRef.current.visible = on;
+      if (on) {
+        stampRollRef.current.scale.setScalar(popEase(w44Clamp01((e - W44_T7) / 0.35)));
+      }
+    }
+    if (e >= W44_T8 && doneAtRef.current < 0) doneAtRef.current = e;
+    if (verdictRef.current) {
+      const age = doneAtRef.current < 0 ? 0 : e - doneAtRef.current;
+      verdictRef.current.visible = age > 0;
+      if (age > 0) verdictRef.current.scale.setScalar(popEase(Math.min(1, age / 0.35)));
+    }
+  });
+
+  const replay = () => {
+    startRef.current = clockRef.current;
+    stageRef.current = "idle";
+    doneAtRef.current = -1;
+    setStage("idle");
+    if (bubbleRef.current) bubbleRef.current.visible = false;
+    if (fly1Ref.current) fly1Ref.current.visible = false;
+    if (fly2Ref.current) fly2Ref.current.visible = false;
+    if (landedRef.current) landedRef.current.visible = false;
+    if (crashRingRef.current) crashRingRef.current.visible = false;
+    if (stampCommitRef.current) stampCommitRef.current.visible = false;
+    if (stampRollRef.current) stampRollRef.current.visible = false;
+    if (verdictRef.current) verdictRef.current.visible = false;
+  };
+
+  useEffect(() => {
+    if (replayRef) replayRef.current = replay;
+  });
+
+  const hud =
+    stage === "done"
+      ? "all of it, or none of it — 1000.00 / 500.00, nothing stranded. The sandbox runs every graded write this way."
+      : stage === "rollback"
+        ? "ROLLBACK; — the promise rewinds: acct 7 snaps back to 1000.00"
+        : stage === "crash"
+          ? "crash — the credit never runs. The debit is still only a promise"
+          : stage === "debit2"
+            ? "the debit lands first — acct 7 reads 900.00, uncommitted"
+            : stage === "begin2"
+              ? "again, from the top — BEGIN; balances 1000.00 / 500.00"
+              : stage === "commit"
+                ? "COMMIT; — the bubble dissolves: 900.00 / 600.00, both landed"
+                : stage === "credit"
+                  ? "UPDATE … +100 → acct 9 reads 600.00 — still inside the bubble"
+                  : stage === "debit"
+                    ? "UPDATE … −100 → acct 7 reads 900.00 — inside the bubble, not yet real"
+                    : stage === "begin"
+                      ? "BEGIN; — both writes now live inside one transaction bubble"
+                      : "BEGIN; … COMMIT; — debit acct 7, credit acct 9: one unit of work";
+
+  const chipCls = (kind: string) =>
+    kind === "pending"
+      ? "border-amber-400/60 bg-amber-950/70 text-amber-200"
+      : kind === "restored"
+        ? "border-teal-400/60 bg-teal-950/70 text-teal-200"
+        : "border-zinc-700 bg-zinc-950/85 text-zinc-300";
+  const chipTxt = (v: number, kind: string) =>
+    `${v.toFixed(2)}${kind === "pending" ? " · uncommitted" : kind === "restored" ? " · restored" : ""}`;
+  const a7 =
+    stage === "debit" || stage === "credit" || stage === "debit2" || stage === "crash"
+      ? { v: 900, kind: "pending" }
+      : stage === "rollback" || stage === "done"
+        ? { v: 1000, kind: "restored" }
+        : { v: 1000, kind: "settled" };
+  const a9 =
+    stage === "credit"
+      ? { v: 600, kind: "pending" }
+      : stage === "commit"
+        ? { v: 600, kind: "settled" }
+        : { v: 500, kind: "settled" };
+
+  return (
+    <>
+      <ambientLight intensity={0.55} />
+      <directionalLight position={[4, 8, 6]} intensity={1.15} />
+      <fog attach="fog" args={["#09090b", 15, 32]} />
+
+      <group ref={groupRef}>
+        <Text font={FONT} fontSize={0.17} color="#a1a1aa" position={[0, -2.15, 0]} anchorX="center">
+          the transfer — two writes, one unit of work
+        </Text>
+
+        {/* ---- the transaction bubble ---- */}
+        <group ref={bubbleRef} visible={false} scale={0.001}>
+          <mesh position={[0, 0.45, 0]}>
+            <cylinderGeometry args={[4.9, 4.9, 3.5, 48, 1, true]} />
+            <meshBasicMaterial
+              ref={(m) => { bubbleMats.current[0] = m; }}
+              color={W44_TEAL}
+              transparent
+              opacity={0.07}
+              side={THREE.DoubleSide}
+              depthWrite={false}
+            />
+          </mesh>
+          <mesh position={[0, 2.2, 0]} rotation={[Math.PI / 2, 0, 0]}>
+            <torusGeometry args={[4.9, 0.03, 8, 64]} />
+            <meshBasicMaterial ref={(m) => { bubbleMats.current[1] = m; }} color={W44_TEAL} transparent opacity={0.3} />
+          </mesh>
+          <mesh position={[0, -1.3, 0]} rotation={[Math.PI / 2, 0, 0]}>
+            <torusGeometry args={[4.9, 0.03, 8, 64]} />
+            <meshBasicMaterial ref={(m) => { bubbleMats.current[2] = m; }} color={W44_TEAL} transparent opacity={0.3} />
+          </mesh>
+        </group>
+
+        {/* ---- the two accounts ---- */}
+        {([
+          { x: W44_A7_X, label: "account 7", n: 10 },
+          { x: W44_A9_X, label: "account 9", n: 5 },
+        ] as const).map((acct, ai) => (
+          <group key={ai} position={[acct.x, 0, 0]}>
+            <RoundedBox args={[2.1, 0.5, 1.7]} radius={0.07} smoothness={3} position={[0, -1.35, 0]}>
+              <meshStandardMaterial color="#27272a" roughness={0.55} />
+            </RoundedBox>
+            <Text font={FONT} fontSize={0.15} color="#a1a1aa" position={[0, -1.8, 0]} anchorX="center">
+              {acct.label}
+            </Text>
+            {Array.from({ length: acct.n }, (_, i) => (
+              <mesh
+                key={i}
+                position={[0, W44_COIN_Y(i), 0]}
+                ref={(m) => {
+                  if (ai === 0) stack7Refs.current[i] = m;
+                  else stack9Refs.current[i] = m;
+                }}
+              >
+                <cylinderGeometry args={[W44_COIN_R, W44_COIN_R, W44_COIN_H, 24]} />
+                <meshStandardMaterial
+                  color={ai === 0 && i === 9 ? W44_AMBER : W44_COIN}
+                  emissive={ai === 0 && i === 9 ? W44_AMBER : "#000000"}
+                  emissiveIntensity={ai === 0 && i === 9 ? 0.4 : 0.12}
+                  roughness={0.35}
+                  metalness={0.5}
+                />
+              </mesh>
+            ))}
+            {ai === 1 && (
+              <mesh ref={landedRef} visible={false} position={[0, W44_COIN_Y(5), 0]}>
+                <cylinderGeometry args={[W44_COIN_R, W44_COIN_R, W44_COIN_H, 24]} />
+                <meshStandardMaterial color={W44_AMBER} emissive={W44_AMBER} emissiveIntensity={0.4} roughness={0.35} metalness={0.5} />
+              </mesh>
+            )}
+          </group>
+        ))}
+
+        {/* ---- the flying 100.00 (act 1 + act 2) ---- */}
+        <mesh ref={fly1Ref} visible={false}>
+          <cylinderGeometry args={[W44_COIN_R, W44_COIN_R, W44_COIN_H, 24]} />
+          <meshStandardMaterial color={W44_AMBER} emissive={W44_AMBER} emissiveIntensity={0.8} roughness={0.3} metalness={0.5} />
+        </mesh>
+        <mesh ref={fly2Ref} visible={false}>
+          <cylinderGeometry args={[W44_COIN_R, W44_COIN_R, W44_COIN_H, 24]} />
+          <meshStandardMaterial ref={fly2Mat} color={W44_AMBER} emissive={W44_AMBER} emissiveIntensity={0.8} roughness={0.3} metalness={0.5} />
+        </mesh>
+
+        {/* ---- crash ring ---- */}
+        <mesh ref={crashRingRef} visible={false} position={[0, W44_HOVER_Y, 0]} rotation={[Math.PI / 2, 0, 0]}>
+          <torusGeometry args={[0.5, 0.05, 8, 48]} />
+          <meshBasicMaterial ref={crashRingMat} color={W44_ROSE} transparent opacity={0.85} />
+        </mesh>
+
+        {/* ---- COMMIT stamp ---- */}
+        <group ref={stampCommitRef} visible={false} position={[0, 2.42, 0]}>
+          <RoundedBox args={[4.6, 0.42, 0.2]} radius={0.07} smoothness={3}>
+            <meshStandardMaterial color="#052e2b" emissive={W44_TEAL} emissiveIntensity={0.35} roughness={0.4} />
+          </RoundedBox>
+          <Text font={FONT} fontSize={0.16} color={W44_TEAL} position={[0, 0, 0.12]} anchorX="center" anchorY="middle">
+            COMMIT — both landed: 900.00 / 600.00
+          </Text>
+        </group>
+
+        {/* ---- ROLLBACK stamp ---- */}
+        <group ref={stampRollRef} visible={false} position={[0, 2.42, 0]}>
+          <RoundedBox args={[4.6, 0.42, 0.2]} radius={0.07} smoothness={3}>
+            <meshStandardMaterial color="#450a0a" emissive={W44_ROSE} emissiveIntensity={0.3} roughness={0.4} />
+          </RoundedBox>
+          <Text font={FONT} fontSize={0.16} color={W44_ROSE} position={[0, 0, 0.12]} anchorX="center" anchorY="middle">
+            ROLLBACK — acct 7 restored: 1000.00
+          </Text>
+        </group>
+
+        {/* ---- verdict slab ---- */}
+        <group ref={verdictRef} visible={false} position={[0, 2.42, 0]}>
+          <RoundedBox args={[5.9, 0.5, 0.34]} radius={0.08} smoothness={3}>
+            <meshStandardMaterial color="#18181b" emissive={W44_AMBER} emissiveIntensity={0.14} roughness={0.5} />
+          </RoundedBox>
+          <Text font={FONT} fontSize={0.145} color={W44_AMBER} position={[0, 0, 0.2]} anchorX="center" anchorY="middle">
+            all of it, or none of it — a crash between two writes strands nothing
+          </Text>
+        </group>
+      </group>
+
+      {/* ---- HUD + chips + legend ---- */}
+      <Html position={[0, 3.4, 0]} center>
+        <div className="pointer-events-none max-w-[560px] whitespace-nowrap rounded-md border border-zinc-700 bg-zinc-950/90 px-3 py-1.5 text-[11px] text-zinc-300 shadow-lg">
+          {hud}
+        </div>
+      </Html>
+      <Html position={[W44_A7_X, 1.28, 0]} center>
+        <div className={`pointer-events-none whitespace-nowrap rounded-md border px-2 py-1 text-[10px] shadow ${chipCls(a7.kind)}`}>
+          {`acct 7 · ${chipTxt(a7.v, a7.kind)}`}
+        </div>
+      </Html>
+      <Html position={[W44_A9_X, 1.28, 0]} center>
+        <div className={`pointer-events-none whitespace-nowrap rounded-md border px-2 py-1 text-[10px] shadow ${chipCls(a9.kind)}`}>
+          {`acct 9 · ${chipTxt(a9.v, a9.kind)}`}
+        </div>
+      </Html>
+      <Html position={[-4.7, -2.2, 0]} center>
+        <div className="pointer-events-none flex flex-col items-start gap-1">
+          <div className="flex items-center gap-2 rounded-md border border-zinc-800 bg-zinc-950/80 px-2 py-1 text-[9px] text-zinc-400">
+            <span className="inline-block size-2 rounded-full" style={{ background: W44_AMBER }} /> the 100.00 in flight
+            <span className="inline-block size-2 rounded-full" style={{ background: W44_TEAL }} /> the transaction
+            <span className="inline-block size-2 rounded-full" style={{ background: W44_ROSE }} /> the crash
+          </div>
+          <div className="max-w-[300px] rounded-md border border-zinc-800 bg-zinc-950/80 px-2 py-1 text-left text-[9px] leading-snug text-zinc-400">
+            this sandbox: every graded write runs inside BEGIN … ROLLBACK — K1 stock 120 → 125 inside the txn → 120 after
+          </div>
+        </div>
+      </Html>
+      <Html position={[0, -2.7, 0]} center>
+        <button
+          onClick={replay}
+          className="pointer-events-auto whitespace-nowrap rounded-md border border-zinc-700 bg-zinc-900/90 px-2.5 py-1 text-[11px] text-zinc-300 shadow transition-colors hover:bg-zinc-800"
+        >
+          ↻ replay the transfer
+        </button>
+      </Html>
+
+      <gridHelper args={[30, 30, "#27272a", "#18181b"]} position={[0, -3.1, 0]} />
+      <OrbitControls
+        target={[0, 0.3, 0]}
+        enablePan={false}
+        minDistance={8}
+        maxDistance={18}
+        maxPolarAngle={1.5}
+        enableDamping
+        dampingFactor={0.08}
+      />
+    </>
+  );
+}
+
+function W44AtomicSpace() {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const replayRef = useRef<(() => void) | null>(null);
+  const lastAutoRef = useRef(0);
+
+  // Auto-replay on scroll-into-view, same contract as the other 3D scenes.
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const en of entries) {
+          if (en.isIntersecting && en.intersectionRatio >= 0.55) {
+            const now = performance.now();
+            if (now - lastAutoRef.current > 7000) {
+              lastAutoRef.current = now;
+              replayRef.current?.();
+            }
+          }
+        }
+      },
+      { threshold: [0.55] },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={wrapRef}
+      className="relative h-[400px] w-full"
+      role="img"
+      aria-label="Interactive 3D scene of a transaction as an all-or-nothing unit. Two pedestals of 100.00 coins — account 7 with ten coins (1000.00) and account 9 with five (500.00) — sit inside a translucent teal bubble that forms when BEGIN runs. Act one: an amber coin lifts off account 7 (debit, acct 7 reads 900.00 uncommitted), arcs across, and lands on account 9 (credit, 600.00 uncommitted); COMMIT dissolves the bubble and both balances become real: 900.00 and 600.00. Act two replays from the top, but the crash strikes before the credit — the debited coin freezes mid-air glowing rose, ROLLBACK collapses the bubble and the coin rewinds onto account 7, restoring 1000.00 and 500.00. Punchline: all of it, or none of it — a crash between two writes strands nothing. This course's sandbox really wraps every graded write in BEGIN and ROLLBACK: K1 stock reads 120, 125 inside the transaction, 120 after. Drag to orbit."
+    >
+      <Canvas
+        dpr={[1, 1.75]}
+        gl={{ antialias: true, alpha: true }}
+        camera={{ position: [0, 0.6, 13.4], fov: 40 }}
+      >
+        <SuspenseBoundary>
+          <W44AtomicScene replayRef={replayRef} />
+        </SuspenseBoundary>
+      </Canvas>
+    </div>
+  );
+}
+
 /* ================= registry ================= */
 
 export const FIGURES_3D: Partial<Record<FigureId, () => JSX.Element>> = {
@@ -2185,4 +2693,5 @@ export const FIGURES_3D: Partial<Record<FigureId, () => JSX.Element>> = {
   "l8-bins-space-3d": L8BinsSpace,
   "t32-running-space-3d": T32RunningSpace,
   "d48-index-space-3d": D48IndexSpace,
+  "w44-atomic-space-3d": W44AtomicSpace,
 };
