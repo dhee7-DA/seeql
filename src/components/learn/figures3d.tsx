@@ -1360,10 +1360,303 @@ function L8BinsSpace() {
   );
 }
 
+/* ================= t32-running-space-3d — the running total, in space ======
+ * Real seed facts (db/custom.db, verified via scripts/window3d-facts.ts):
+ *   14 month buckets 2024-01 → 2025-02 · monthly rev 3731.97 / 3609.64 / … /
+ *   2390.53 · SUM(rev) OVER (ORDER BY mon) walks 3731.97 → 7341.61 → … →
+ *   34833.28, and the last running value equals the plain SUM (34833.28).
+ * The default frame (everything from the first row to the current row) is
+ * drawn literally: a translucent panel pinned at 2024-01 whose leading edge
+ * sweeps right; monthly bars rise and the teal running line reveals as the
+ * edge passes each month. The pinned trailing edge IS UNBOUNDED PRECEDING. */
+
+const T32_MONS = [
+  "2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06", "2024-07",
+  "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02",
+] as const;
+const T32_REV = [3731.97, 3609.64, 2617.08, 2468.91, 2910.31, 2047.43, 1193.86, 2352.07, 3116.04, 2975.67, 1648.8, 2101.47, 1669.5, 2390.53];
+const T32_RUNNING = [3731.97, 7341.61, 9958.69, 12427.6, 15337.91, 17385.34, 18579.2, 20931.27, 24047.31, 27022.98, 28671.78, 30773.25, 32442.75, 34833.28];
+const T32_N = 14;
+const T32_LIFETIME = 34833.28;
+
+const T32_X0 = -6.1;
+const T32_PITCH = 0.94;
+const T32_BASE = -0.9;
+const T32_REV_H = 2.2; // tallest bar (3731.97)
+const T32_LINE_H = 3.1; // running line scale (34833.28)
+const T32_BAR_W = 0.5;
+const T32_SWEEP = 0.5; // seconds per month
+const T32_TUBE_SEGS = 120;
+const T32_VIOLET = "#a78bfa";
+const T32_TEAL = "#2dd4bf";
+const T32_AMBER = "#fbbf24";
+
+const t32X = (m: number) => T32_X0 + m * T32_PITCH;
+const t32RevH = (m: number) => (T32_REV[m] / 3731.97) * T32_REV_H;
+const t32LineY = (m: number) => T32_BASE + (T32_RUNNING[m] / T32_LIFETIME) * T32_LINE_H;
+const t32Clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+
+const T32_LINE_PTS = T32_MONS.map((_, m) => new THREE.Vector3(t32X(m), t32LineY(m), 0.45));
+const T32_LINE_CURVE = new THREE.CatmullRomCurve3(T32_LINE_PTS, false, "catmullrom", 0.2);
+
+function RunningTotalScene({ replayRef }: { replayRef?: { current: (() => void) | null } }) {
+  const [covered, setCovered] = useState(0);
+  const coveredRef = useRef(0);
+  const startRef = useRef(0);
+  const clockRef = useRef(0);
+  const doneAtRef = useRef(-1);
+  const groupRef = useRef<THREE.Group>(null);
+  const barRefs = useRef<Array<THREE.Mesh | null>>([]);
+  const edgeRef = useRef<THREE.Mesh>(null);
+  const panelRef = useRef<THREE.Mesh>(null);
+  const tubeRef = useRef<THREE.Mesh>(null);
+  const slabRef = useRef<THREE.Group>(null);
+
+  const tubeGeom = useMemo(
+    () => new THREE.TubeGeometry(T32_LINE_CURVE, T32_TUBE_SEGS, 0.022, 6, false),
+    [],
+  );
+  useEffect(() => () => tubeGeom.dispose(), [tubeGeom]);
+
+  useFrame((state, dt) => {
+    clockRef.current = state.clock.elapsedTime;
+    const e = clockRef.current - startRef.current;
+
+    if (groupRef.current) {
+      groupRef.current.rotation.y = Math.sin(e * 0.14) * 0.035;
+      groupRef.current.position.y = Math.sin(e * 0.5) * 0.03;
+    }
+
+    // the default frame's leading edge sweeps right, one month per step —
+    // overshoot to N so the edge clears the LAST bar instead of stalling at
+    // its center (coveredF capped at N-1 left 2025-02 half-risen forever)
+    const coveredF = t32Clamp01((e - 0.6) / T32_SWEEP) * T32_N;
+    const leadX = T32_X0 - 0.45 + (coveredF + 1) * T32_PITCH - T32_PITCH * 0.45;
+
+    // monthly bars rise as the edge passes them
+    let cov = 0;
+    T32_MONS.forEach((_, m) => {
+      const mesh = barRefs.current[m];
+      if (!mesh) return;
+      const t = t32Clamp01((leadX - (t32X(m) - T32_BAR_W / 2)) / 0.7);
+      const s = t >= 1 ? 1 : popEase(t);
+      mesh.scale.y = Math.max(0.001, s);
+      mesh.position.y = T32_BASE + (t32RevH(m) * s) / 2;
+      if (t >= 1) cov += 1;
+    });
+    if (cov !== coveredRef.current) {
+      coveredRef.current = cov;
+      setCovered(cov);
+    }
+
+    // frame panel + leading edge follow the sweep
+    const leftX = T32_X0 - 0.45;
+    const width = Math.max(0.2, leadX - leftX);
+    if (panelRef.current) {
+      panelRef.current.scale.x = width;
+      panelRef.current.position.x = leftX + width / 2;
+    }
+    if (edgeRef.current) edgeRef.current.position.x = leadX;
+
+    // the running line reveals behind the edge
+    if (tubeRef.current) {
+      const p = t32Clamp01((leadX - t32X(0)) / (t32X(T32_N - 1) - t32X(0)));
+      tubeRef.current.visible = p > 0.02;
+      tubeRef.current.geometry.setDrawRange(0, Math.max(1, Math.floor(p * T32_TUBE_SEGS)) * 42);
+    }
+
+    // lifetime slab pops once every month is covered
+    if (cov >= T32_N && doneAtRef.current < 0) doneAtRef.current = e + 0.4;
+    if (slabRef.current) {
+      const age = doneAtRef.current < 0 ? 0 : e - doneAtRef.current;
+      slabRef.current.visible = age > 0;
+      if (age > 0) slabRef.current.scale.setScalar(popEase(Math.min(1, age / 0.35)));
+    }
+  });
+
+  const replay = () => {
+    startRef.current = clockRef.current;
+    coveredRef.current = 0;
+    doneAtRef.current = -1;
+    barRefs.current.forEach((mesh, m) => {
+      if (!mesh) return;
+      mesh.scale.y = 0.001;
+      mesh.position.y = T32_BASE;
+    });
+    if (tubeRef.current) tubeRef.current.visible = false;
+    if (slabRef.current) slabRef.current.visible = false;
+    setCovered(0);
+  };
+
+  useEffect(() => {
+    if (replayRef) replayRef.current = replay;
+  });
+
+  const done = covered >= T32_N;
+
+  return (
+    <>
+      <ambientLight intensity={0.55} />
+      <directionalLight position={[4, 8, 6]} intensity={1.15} />
+      <fog attach="fog" args={["#09090b", 15, 32]} />
+
+      <group ref={groupRef}>
+        <Text font={FONT} fontSize={0.2} color="#a1a1aa" position={[-4.6, 3.05, 0]} anchorX="center">
+          monthly revenue
+        </Text>
+        <Text font={FONT} fontSize={0.2} color="#5eead4" position={[4.35, 3.05, 0]} anchorX="center">
+          running total
+        </Text>
+        <Text font={FONT} fontSize={0.115} color="#52525b" position={[0, 2.78, 0]} anchorX="center">
+          SUM(rev) OVER (ORDER BY mon) · default frame: first row → current row
+        </Text>
+
+        {/* the default frame: trailing edge pinned at 2024-01, edge sweeps right */}
+        <mesh ref={panelRef} position={[0, 0.75, 0]}>
+          <boxGeometry args={[1, 3.5, 0.5]} />
+          <meshBasicMaterial color={T32_TEAL} transparent opacity={0.09} side={THREE.DoubleSide} depthWrite={false} />
+        </mesh>
+        <mesh position={[T32_X0 - 0.45, 0.75, 0.2]}>
+          <boxGeometry args={[0.045, 3.5, 0.045]} />
+          <meshBasicMaterial color={T32_TEAL} transparent opacity={0.75} />
+        </mesh>
+        <mesh ref={edgeRef} position={[T32_X0 - 0.45, 0.75, 0.2]}>
+          <boxGeometry args={[0.06, 3.5, 0.06]} />
+          <meshBasicMaterial color={T32_AMBER} />
+        </mesh>
+
+        {/* monthly revenue bars */}
+        {T32_MONS.map((mon, m) => (
+          <group key={mon}>
+            <mesh
+              ref={(mesh) => {
+                barRefs.current[m] = mesh as THREE.Mesh | null;
+              }}
+              position={[t32X(m), T32_BASE, -0.55]}
+              scale={[1, 0.001, 1]}
+            >
+              <boxGeometry args={[T32_BAR_W, t32RevH(m), 0.5]} />
+              <meshStandardMaterial color={T32_VIOLET} emissive={T32_VIOLET} emissiveIntensity={0.35} roughness={0.45} />
+            </mesh>
+            <Text font={FONT} fontSize={0.072} color="#a1a1aa" position={[t32X(m), T32_BASE + t32RevH(m) + 0.14, -0.55]} anchorX="center">
+              {T32_REV[m].toFixed(2)}
+            </Text>
+            <Text font={FONT} fontSize={0.088} color="#71717a" position={[t32X(m), T32_BASE - 0.26, 0]} anchorX="center">
+              {mon}
+            </Text>
+            {/* running chip pops once the edge has passed this month */}
+            <Html position={[t32X(m), t32LineY(m) + 0.26, 0.45]} center>
+              <div
+                className="pointer-events-none whitespace-nowrap rounded border border-teal-800 bg-zinc-950/90 px-1 py-0.5 text-[9px] text-teal-300 transition-opacity duration-300"
+                style={{ opacity: m < covered ? 1 : 0 }}
+              >
+                {T32_RUNNING[m].toFixed(2)}
+              </div>
+            </Html>
+          </group>
+        ))}
+
+        {/* the running line — revealed behind the sweeping edge */}
+        <mesh ref={tubeRef} visible={false} geometry={tubeGeom}>
+          <meshBasicMaterial color={T32_TEAL} transparent opacity={0.85} blending={THREE.AdditiveBlending} depthWrite={false} />
+        </mesh>
+
+        {/* lifetime slab — last running = plain SUM */}
+        <group ref={slabRef} visible={false} position={[0, -1.95, 0]}>
+          <RoundedBox args={[6.2, 0.5, 0.36]} radius={0.08} smoothness={3}>
+            <meshStandardMaterial color="#18181b" emissive={T32_TEAL} emissiveIntensity={0.16} roughness={0.5} />
+          </RoundedBox>
+          <Text font={FONT} fontSize={0.16} color="#5eead4" position={[0, 0, 0.2]} anchorX="center" anchorY="middle">
+            last running = plain SUM → 34833.28
+          </Text>
+        </group>
+      </group>
+
+      {/* ---- HUD ---- */}
+      <Html position={[0, 3.55, 0]} center>
+        <div className="pointer-events-none whitespace-nowrap rounded-md border border-zinc-700 bg-zinc-950/90 px-3 py-1.5 text-[11px] text-zinc-300 shadow-lg">
+          {done
+            ? "The frame kept everything from 2024-01 — the last step equals the plain SUM: 34833.28."
+            : covered === 0
+              ? "The window frame is pinned at 2024-01 (UNBOUNDED PRECEDING)…"
+              : `Running total after ${T32_MONS[Math.min(covered, T32_N) - 1]}: ${T32_RUNNING[Math.min(covered, T32_N) - 1].toFixed(2)} — every step preserved.`}
+        </div>
+      </Html>
+      <Html position={[0, -2.55, 0]} center>
+        <button
+          onClick={replay}
+          className="pointer-events-auto whitespace-nowrap rounded-md border border-zinc-700 bg-zinc-900/90 px-2.5 py-1 text-[11px] text-zinc-300 shadow transition-colors hover:bg-zinc-800"
+        >
+          ↻ replay the running total
+        </button>
+      </Html>
+
+      <gridHelper args={[30, 30, "#27272a", "#18181b"]} position={[0, -2.9, 0]} />
+      <OrbitControls
+        target={[0, 0.4, 0]}
+        enablePan={false}
+        minDistance={8}
+        maxDistance={18}
+        maxPolarAngle={1.5}
+        enableDamping
+        dampingFactor={0.08}
+      />
+    </>
+  );
+}
+
+function T32RunningSpace() {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const replayRef = useRef<(() => void) | null>(null);
+  const lastAutoRef = useRef(0);
+
+  // Auto-replay on scroll-into-view, same contract as the other 3D scenes.
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const en of entries) {
+          if (en.isIntersecting && en.intersectionRatio >= 0.55) {
+            const now = performance.now();
+            if (now - lastAutoRef.current > 7000) {
+              lastAutoRef.current = now;
+              replayRef.current?.();
+            }
+          }
+        }
+      },
+      { threshold: [0.55] },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={wrapRef}
+      className="relative h-[400px] w-full"
+      role="img"
+      aria-label="Interactive 3D scene of a window-function running total. Fourteen violet monthly revenue bars (2024-01 to 2025-02) rise as an amber window edge sweeps right, with the teal frame panel pinned at 2024-01 — the default frame UNBOUNDED PRECEDING to CURRENT ROW. A teal running-total line reveals behind the edge, walking 3731.97, 7341.61, 9958.69 up to 34833.28, and the final slab reminds that the last running value equals the plain SUM of 34833.28. Drag to orbit."
+    >
+      <Canvas
+        dpr={[1, 1.75]}
+        gl={{ antialias: true, alpha: true }}
+        camera={{ position: [0, 0.8, 12.6], fov: 40 }}
+      >
+        <SuspenseBoundary>
+          <RunningTotalScene replayRef={replayRef} />
+        </SuspenseBoundary>
+      </Canvas>
+    </div>
+  );
+}
+
 /* ================= registry ================= */
 
 export const FIGURES_3D: Partial<Record<FigureId, () => JSX.Element>> = {
   "j2-join-space-3d": J2JoinSpace,
   "j12-left-space-3d": L12LeftJoinSpace,
   "l8-bins-space-3d": L8BinsSpace,
+  "t32-running-space-3d": T32RunningSpace,
 };

@@ -50,6 +50,7 @@ SELECT mon, rev,
 FROM monthly
 ORDER BY mon;   -- 3731.97 → 7341.61 → … → 34833.28`,
     },
+    { kind: "diagram", figure: "t32-running-space-3d" },
     {
       kind: "bullets",
       items: [

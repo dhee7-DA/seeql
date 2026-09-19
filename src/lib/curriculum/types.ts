@@ -77,6 +77,7 @@ export type FigureId =
   | "t6-month-buckets"
   | "t7-partition-rank"
   | "t8-running-total"
+  | "t32-running-space-3d"
   | "x1-string-agg"
   | "x2-join-atlas"
   | "x3-total-stack"
