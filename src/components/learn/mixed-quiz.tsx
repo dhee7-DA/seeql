@@ -9,7 +9,7 @@
 import { useMemo, useState } from "react";
 import { ArrowRight, RefreshCcw } from "lucide-react";
 import { LESSONS } from "@/lib/curriculum/lessons";
-import { useProgress } from "@/lib/curriculum/progress";
+import { useProgress, dueReviews } from "@/lib/curriculum/progress";
 import type { Mcq } from "@/lib/curriculum/types";
 import { cn } from "@/lib/utils";
 import { McqCard } from "./mcq";
@@ -27,10 +27,15 @@ function shuffle<T>(arr: T[]): T[] {
 
 function buildDeck(): Mcq[] {
   const all = LESSONS.flatMap((l) => l.mcqs);
-  const att = useProgress.getState().mcqAttempts;
-  const untouched = shuffle(all.filter((m) => att[m.id] === undefined));
-  const missed = shuffle(all.filter((m) => att[m.id] && !att[m.id].correct));
-  const rest = shuffle(all.filter((m) => att[m.id]?.correct));
+  const state = useProgress.getState();
+  const att = state.mcqAttempts;
+  // spaced-repetition cards coming due lead the deck — the ladder decided
+  // it's time to see them again (1d → 3d → 7d → 14d since the last answer)
+  const dueIds = new Set(dueReviews(state.reviewSchedule).filter((c) => c.key.startsWith("mcq:")).map((c) => c.key.slice(4)));
+  const due = shuffle(all.filter((m) => dueIds.has(m.id)));
+  const untouched = shuffle(all.filter((m) => att[m.id] === undefined && !dueIds.has(m.id)));
+  const missed = shuffle(all.filter((m) => att[m.id] && !att[m.id].correct && !dueIds.has(m.id)));
+  const rest = shuffle(all.filter((m) => att[m.id]?.correct && !dueIds.has(m.id)));
   const picked: Mcq[] = [];
   const take = (pool: Mcq[], k: number) => {
     for (const m of pool) {
@@ -39,10 +44,12 @@ function buildDeck(): Mcq[] {
       k--;
     }
   };
-  take(untouched, 7);
-  take(missed, 2);
+  take(due, 4);
+  take(untouched, 4);
+  take(missed, 1);
   take(rest, 1);
   // top up from whatever is left, still in priority order
+  take(due, ROUND);
   take(untouched, ROUND);
   take(missed, ROUND);
   take(rest, ROUND);

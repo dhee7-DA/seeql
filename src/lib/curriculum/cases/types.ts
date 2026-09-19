@@ -114,6 +114,26 @@ export const CASE_TOPICS: CaseTopicMeta[] = [
   { id: "x6", label: "CROSS JOIN", lessonNum: 34 },
   { id: "x7", label: "Non-equi joins", lessonNum: 34 },
   { id: "x8", label: "Clinic capstone", lessonNum: 40 },
+  // Module 7 — Data Modification (lessons 41–44, 50)
+  { id: "w1", label: "INSERT", lessonNum: 41 },
+  { id: "w2", label: "UPDATE", lessonNum: 42 },
+  { id: "w3", label: "DELETE", lessonNum: 43 },
+  { id: "w4", label: "Transactions", lessonNum: 44 },
+  { id: "wcap", label: "Write capstone", lessonNum: 50 },
+  // Module 8 — Schema, Views & Beyond (lessons 45–49, 51)
+  { id: "d1", label: "CREATE TABLE", lessonNum: 45 },
+  { id: "d2", label: "ALTER & DROP", lessonNum: 46 },
+  { id: "d3", label: "Views", lessonNum: 47 },
+  { id: "d4", label: "Indexes & EXPLAIN", lessonNum: 48 },
+  { id: "d5", label: "Recursive CTEs", lessonNum: 49 },
+  { id: "dcap", label: "Reporting layer", lessonNum: 51 },
+  // Module 9 — SQL for Finance (lessons 52–57)
+  { id: "f1", label: "Invoices & payments", lessonNum: 52 },
+  { id: "f2", label: "Balance walks", lessonNum: 53 },
+  { id: "f3", label: "AR aging", lessonNum: 54 },
+  { id: "f4", label: "Month-over-month", lessonNum: 55 },
+  { id: "f5", label: "Reconciliation", lessonNum: 56 },
+  { id: "fcap", label: "Advanced windows", lessonNum: 57 },
 ];
 
 export interface CaseUniverseMeta {

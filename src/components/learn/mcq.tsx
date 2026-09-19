@@ -37,6 +37,9 @@ export function McqCard({ mcq, onAnswered }: { mcq: Mcq; onAnswered?: (correct: 
     setChecked(true);
     const store = useProgress.getState();
     const isFirst = store.recordMcqCheck(mcq.id, picked === mcq.answer);
+    // spaced repetition: every answer schedules the card's return —
+    // 1d/3d/7d/14d ladder after corrects, back to tomorrow after a miss
+    store.scheduleReview(`mcq:${mcq.id}`, picked === mcq.answer);
     if (picked === mcq.answer) {
       // XP truth comes from the ledger: awardXp returns whether it paid.
       // Repeats never pay twice, so "gained" is honest — the chip and

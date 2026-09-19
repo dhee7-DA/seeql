@@ -1,0 +1,167 @@
+=== PREDICT ===
+
+[p1] SELECT COUNT(*) FROM customers WHERE region = 'north'
+COUNT(*)
+0
+
+[p2] SELECT city, COUNT(*) AS n FROM customers GROUP BY city ORDER BY n DESC, city LIMIT 3
+city | n
+Austin | 1
+Berlin | 1
+Chicago | 1
+
+[p3] SELECT COUNT(*) AS with_email_like FROM customers WHERE email LIKE '%@example.com'
+with_email_like
+16
+
+[p4] SELECT status, COUNT(*) AS n, ROUND(SUM(total), 2) AS value FROM orders GROUP BY status ORDER BY status
+status | n | value
+cancelled | 7 | 1152.49
+delivered | 52 | 15571.07
+pending | 14 | 6113
+shipped | 30 | 11996.72
+
+[p5] SELECT COUNT(*) AS shipped_null FROM orders WHERE shipped_at IS NULL
+shipped_null
+21
+
+[p6] SELECT COUNT(*) AS big_orders FROM orders WHERE total >= 500
+big_orders
+25
+
+[p7] SELECT DISTINCT region FROM customers ORDER BY region
+region
+APAC
+EU
+LATAM
+US
+
+[p8] SELECT COUNT(*) AS pairs FROM order_items oi JOIN orders o ON o.id = oi.order_id WHERE o.status = 'returned'
+pairs
+0
+
+
+=== ERRORS ===
+
+[e1] SELECT name FROM customers WHERE city = 'Springfield
+  → unrecognized token: "'Springfield"
+
+[e2] SELECT name FROM custumers WHERE region = 'north'
+  → no such table: custumers
+
+[e3] SELECT name, region FROM customers WHERE region = 'north' AND
+  → incomplete input
+
+[e4] SELECT COUNT(*), city FROM customers
+  → RAN OK (needs rethink!)
+
+[e5] SELECT name FROM customers WHERE active = 'yes' LIMIT 5
+  → RAN OK (needs rethink!)
+
+[e6] SELECT orders.id, customers.name FROM orders INNER JOIN customers
+  → RAN OK (needs rethink!)
+
+[e7] SELECT AVG(price) AS average FROM products ORDER BY average DESC HAVING average > 10
+  → near "HAVING": syntax error
+
+[e8] SELECT region COUNT(*) FROM customers GROUP BY region
+  → near "(": syntax error
+
+[e9] SELECT name FROM customers LIMIT 'five'
+  → datatype mismatch
+
+[e10] SELECT * FROM orders WHERE shipped_at = NULL
+  → RAN OK (needs rethink!)
+
+[e11] INSERT INTO products (name) VALUES ('Test widget')
+  → NOT NULL constraint failed: products.category
+
+[e12] SELECT customer_id, SUM(total) FROM orders GROUP BY status
+  → RAN OK (needs rethink!)
+
+
+=== GOLF ===
+
+[g1] starter rows=0 par rows=0 → identical-ordered · par plan steps=2
+  par: SELECT id, name FROM customers WHERE region = 'north' ORDER BY name LIMIT 5
+  starter: SELECT * FROM customers WHERE region = 'north' ORDER BY name LIMIT 10
+
+[g2] starter rows=14 par rows=14 → same-unordered · par plan steps=2
+  par: SELECT DISTINCT city FROM customers WHERE active = 1
+  starter: SELECT city FROM customers WHERE active = 1 GROUP BY city
+
+[g3] starter rows=3 par rows=3 → identical-ordered · par plan steps=3
+  par: SELECT region, COUNT(*) n FROM customers GROUP BY region HAVING COUNT(*) >= 2 ORDER BY 2 DESC
+  starter: SELECT region, COUNT(*) AS n FROM customers GROUP BY region HAVING n >= 2 ORDER BY n DESC
+
+[g4] starter rows=8 par rows=8 → same-unordered · par plan steps=3
+  par: SELECT c.name, SUM(o.total) spent FROM customers c JOIN orders o ON o.customer_id = c.id GROUP BY c.id HAVING SUM(o.total) > 1000
+  starter: SELECT c.name, SUM(o.total) AS spent FROM customers c JOIN orders o ON o.customer_id = c.id GROUP BY c.name HAVING SUM(o.total) > 1000 ORDER BY spent DESC
+
+[g5] starter rows=4 par rows=4 → same-unordered · par plan steps=3
+  par: SELECT DISTINCT c.name FROM customers c JOIN orders o ON o.customer_id = c.id WHERE o.total > 800
+  starter: SELECT name FROM customers WHERE id IN (SELECT customer_id FROM orders WHERE total > 800)
+
+[g6] starter rows=4 par rows=3 → DIFFERENT · par plan steps=2
+  par: SELECT name FROM products WHERE price > 100 AND stock > 0 ORDER BY price DESC LIMIT 3
+  starter: SELECT products.name FROM products WHERE price > 100 AND stock > 0 ORDER BY price DESC
+
+
+=== INTERVIEW ===
+
+[i1] SELECT name, price FROM products p WHERE price = (SELECT MAX(price) FROM products)
+name | price
+Smart Watch S | 199.99
+
+[i2] SELECT MAX(price) AS second_price FROM products WHERE price < (SELECT MAX(price) FROM products)
+second_price
+149.99
+
+[i3] SELECT city, COUNT(*) AS members FROM customers GROUP BY city HAVING COUNT(*) > 1 ORDER BY members DESC, city
+
+
+[i4] SELECT c.name, c.email FROM customers c WHERE c.id NOT IN (SELECT customer_id FROM orders) ORDER BY c.name
+
+
+[i5] SELECT p.name, SUM(oi.quantity) AS units FROM order_items oi JOIN products p ON p.id = oi.product_id GROUP BY p.id ORDER BY units DESC, p.name LIMIT 3
+name | units
+Desk Mat Extended | 47
+Noise-Canceling Headset | 46
+HDMI 2.1 Cable 2m | 38
+
+[i6] SELECT customer_id, total, created_at, ROUND(AVG(total) OVER (PARTITION BY customer_id), 2) AS cust_avg FROM orders WHERE customer_id = 1 ORDER BY created_at
+customer_id | total | created_at | cust_avg
+1 | 152.52 | 2024-01-02 | 302.6
+1 | 767.64 | 2024-01-22 | 302.6
+1 | 705.23 | 2024-02-20 | 302.6
+1 | 632.29 | 2024-02-25 | 302.6
+1 | 317.49 | 2024-03-05 | 302.6
+1 | 136.11 | 2024-03-18 | 302.6
+1 | 633.91 | 2024-04-05 | 302.6
+1 | 645.91 | 2024-04-17 | 302.6
+1 | 135.24 | 2024-05-12 | 302.6
+1 | 259.31 | 2024-06-17 | 302.6
+1 | 187.38 | 2024-07-21 | 302.6
+1 | 113.66 | 2024-08-02 | 302.6
+1 | 298.18 | 2024-08-24 | 302.6
+1 | 125.4 | 2024-09-06 | 302.6
+1 | 131.39 | 2024-09-07 | 302.6
+1 | 334.66 | 2024-09-21 | 302.6
+1 | 212.03 | 2024-11-11 | 302.6
+1 | 116.28 | 2024-12-02 | 302.6
+1 | 684.53 | 2024-12-13 | 302.6
+1 | 153.51 | 2024-12-16 | 302.6
+1 | 206.19 | 2025-01-05 | 302.6
+1 | 45.36 | 2025-01-26 | 302.6
+1 | 142.25 | 2025-02-12 | 302.6
+1 | 125.88 | 2025-02-19 | 302.6
+
+[i7] SELECT status, COUNT(*) AS n FROM orders WHERE status = 'returned' GROUP BY status
+
+
+[i8] SELECT ROUND(AVG(days), 2) AS avg_days FROM (SELECT JULIANDAY(shipped_at) - JULIANDAY(created_at) AS days FROM orders WHERE shipped_at IS NOT NULL)
+avg_days
+2.98
+
+
+facts saved → tool-results/practice-banks-facts.json

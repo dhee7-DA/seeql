@@ -59,6 +59,10 @@ import { casesX5 } from "./cases-x5";
 import { casesX6 } from "./cases-x6";
 import { casesX7 } from "./cases-x7";
 import { casesX8 } from "./cases-x8";
+// Modules 7-9 — writes, schema, finance (cs-1601…cs-1617)
+import { casesM7 } from "./cases-m7";
+import { casesM8 } from "./cases-m8";
+import { casesM9 } from "./cases-m9";
 
 export const CASES: CaseStudy[] = [
   ...casesExemplars,
@@ -119,6 +123,10 @@ export const CASES: CaseStudy[] = [
   ...casesX6,
   ...casesX7,
   ...casesX8,
+  // Modules 7-9 — Data Modification, Schema & Views, Finance (cs-1601…cs-1617)
+  ...casesM7,
+  ...casesM8,
+  ...casesM9,
 ].sort((a, b) => Number(a.id.slice(3)) - Number(b.id.slice(3)));
 
 export function caseById(id: string): CaseStudy | undefined {

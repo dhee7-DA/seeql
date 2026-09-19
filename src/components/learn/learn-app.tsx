@@ -6,20 +6,30 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
+  Activity,
   ArrowRight,
+  Briefcase,
+  Bug,
   Check,
   ChevronDown,
   ChevronsDownUp,
   ChevronsUpDown,
   Dumbbell,
+  Eye,
   FileStack,
   FlaskConical,
+  Flag,
   Flame,
   GraduationCap,
   LayoutDashboard,
+  MessagesSquare,
+  Network,
+  Printer,
   RotateCcw,
   Shapes,
+  Stethoscope,
   Table2,
+  Target,
 } from "lucide-react";
 import { LESSONS, MODULES } from "@/lib/curriculum/lessons";
 import { useProgress } from "@/lib/curriculum/progress";
@@ -31,6 +41,14 @@ import { MixedQuiz } from "./mixed-quiz";
 import { CaseFiles } from "./case-files";
 import { DiagramLibrary } from "./diagram-library";
 import { DrillYard } from "./drill-yard";
+import { PredictView } from "./predict-view";
+import { ErrorClinic } from "./error-clinic";
+import { QueryGolf } from "./query-golf";
+import { MasteryMap } from "./mastery-map";
+import { InterviewTrack } from "./interview-track";
+import { SchemaStudio } from "./schema-studio";
+import { ExplainBack } from "./explain-back";
+import { CheatSheet } from "./cheat-sheet";
 import { ActivityStrip, MasteryGrid } from "./progress-cards";
 import { CelebrationHost, celebrate } from "./celebrate";
 
@@ -41,7 +59,15 @@ type View =
   | { kind: "mixed" }
   | { kind: "cases" }
   | { kind: "drills" }
-  | { kind: "library" };
+  | { kind: "library" }
+  | { kind: "predict" }
+  | { kind: "clinic" }
+  | { kind: "golf" }
+  | { kind: "mastery" }
+  | { kind: "interview" }
+  | { kind: "studio" }
+  | { kind: "explain" }
+  | { kind: "sheet" };
 
 // ---- Collapsible module state (persisted) -------------------------------
 
@@ -500,6 +526,34 @@ export function LearnApp() {
                   </span>
                 </button>
               ))}
+              <p className="mb-1 mt-2 px-1 font-mono text-[10px] uppercase tracking-wider text-zinc-500">Practice lab</p>
+              {[
+                { kind: "predict" as const, icon: Eye, label: "Predict the output", note: "freeze the grid before it runs" },
+                { kind: "clinic" as const, icon: Bug, label: "Error clinic", note: "diagnose real bugs, loud & silent" },
+                { kind: "golf" as const, icon: Flag, label: "Query golf", note: "same rows, fewer strokes" },
+                { kind: "interview" as const, icon: Briefcase, label: "Interview prep", note: "the screening classics, graded" },
+                { kind: "studio" as const, icon: Network, label: "Schema studio", note: "spot the design smell" },
+                { kind: "explain" as const, icon: MessagesSquare, label: "Explain back", note: "say what the query does" },
+                { kind: "mastery" as const, icon: Activity, label: "Mastery map", note: "your skills, your daily quest" },
+                { kind: "sheet" as const, icon: Printer, label: "Cheat sheet", note: "personal revision, prints to PDF" },
+              ].map((t) => (
+                <button
+                  key={t.kind}
+                  onClick={() => setView({ kind: t.kind })}
+                  className={cn(
+                    "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors",
+                    view.kind === t.kind ? "bg-zinc-800" : "hover:bg-zinc-900",
+                  )}
+                >
+                  <t.icon className={cn("h-4 w-4 shrink-0", view.kind === t.kind ? "text-emerald-300" : "text-zinc-500")} />
+                  <span className="min-w-0">
+                    <span className={cn("block truncate text-xs font-medium", view.kind === t.kind ? "text-zinc-100" : "text-zinc-300")}>
+                      {t.label}
+                    </span>
+                    <span className="block text-[10px] text-zinc-600">{t.note}</span>
+                  </span>
+                </button>
+              ))}
             </div>
           </div>
 
@@ -538,6 +592,22 @@ export function LearnApp() {
           <MixedQuiz />
         ) : view.kind === "cases" ? (
           <CaseFiles />
+        ) : view.kind === "predict" ? (
+          <PredictView />
+        ) : view.kind === "clinic" ? (
+          <ErrorClinic />
+        ) : view.kind === "golf" ? (
+          <QueryGolf />
+        ) : view.kind === "interview" ? (
+          <InterviewTrack />
+        ) : view.kind === "studio" ? (
+          <SchemaStudio />
+        ) : view.kind === "explain" ? (
+          <ExplainBack />
+        ) : view.kind === "mastery" ? (
+          <MasteryMap onOpenLesson={openLesson} />
+        ) : view.kind === "sheet" ? (
+          <CheatSheet />
         ) : (
           <div className="bg-ambient max-w-3xl">
             <p className="font-mono text-xs text-zinc-500">{MODULES.length} MODULES · BEGINNER → EXPERT</p>
