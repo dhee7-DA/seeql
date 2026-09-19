@@ -1586,7 +1586,7 @@ const Figure3DHost = dynamic(() => import("./figure-3d"), {
   ),
 });
 
-const FIG3D_IDS = new Set<FigureId>(["j2-join-space-3d", "j12-left-space-3d"]);
+const FIG3D_IDS = new Set<FigureId>(["j2-join-space-3d", "j12-left-space-3d", "l8-bins-space-3d"]);
 
 /* ---------------- registry ---------------- */
 

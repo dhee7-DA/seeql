@@ -11,6 +11,7 @@ export type FigureId =
   | "l6-aggregate"
   | "l7-groupby"
   | "l8-where-having"
+  | "l8-bins-space-3d"
   | "j1-fk-lookup"
   | "j2-inner-match"
   | "j2-join-space-3d"

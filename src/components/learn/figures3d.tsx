@@ -485,8 +485,8 @@ const L12_TUBE_SEGS = 44;
 const L12_TRAIL_R = 0.021;
 const L12_GAP_NAMES = L12_CUSTOMERS.filter((c) => c.shipped === 0).map((c) => c.name);
 
-// easeOutBack — the plaque pops slightly past 1 then settles
-const l12Pop = (p: number) => {
+// easeOutBack — pops slightly past 1 then settles (shared by the 3D scenes)
+const popEase = (p: number) => {
   const c1 = 1.70158;
   const c3 = c1 + 1;
   const q = Math.min(1, Math.max(0, p)) - 1;
@@ -603,7 +603,7 @@ function LeftJoinScene({ replayRef }: { replayRef?: { current: (() => void) | nu
           }
           plaque.visible = true;
           const p = age / 0.28;
-          const s = l12Pop(p);
+          const s = popEase(p);
           plaque.scale.setScalar(s);
           plaque.traverse((o) => {
             const m = (o as THREE.Mesh).material as THREE.MeshBasicMaterial | undefined;
@@ -882,9 +882,488 @@ function L12LeftJoinSpace() {
   );
 }
 
+/* ================= l8-bins-space-3d — GROUP BY: buckets and gates ==========
+ * Real seed facts (db/custom.db, verified via scripts/groupby3d-facts.ts):
+ *   orders 103 · GROUP BY status → 4 buckets: delivered 52 / shipped 30 /
+ *   pending 14 / cancelled 7 · HAVING COUNT(*) > 10 keeps 3 buckets and
+ *   drops cancelled (7 ≤ 10) · GROUP BY customer_id would make 16 buckets.
+ * All 103 rows are drawn. Phase A — every row lifts out of the unordered
+ * stream and arcs into its status bucket while counters tick. Phase B —
+ * each bucket pops its result row: one row per bucket. Phase C — the HAVING
+ * gate scans the result and cancelled sinks below the line. */
+
+type G8Bucket = { key: string; color: string; n: number };
+
+const G8_BUCKETS: G8Bucket[] = [
+  { key: "delivered", color: "#2dd4bf", n: 52 },
+  { key: "shipped", color: "#a78bfa", n: 30 },
+  { key: "pending", color: "#fbbf24", n: 14 },
+  { key: "cancelled", color: "#fb7185", n: 7 },
+];
+
+const G8_BIN_X = [-5.55, -1.85, 1.85, 5.55] as const;
+const G8_STREAM_COLS = 14;
+const G8_STREAM_TOP = 3.3;
+const G8_STREAM_PITCH = 0.92;
+const G8_STREAM_ROW_PITCH = 0.34;
+const G8_BIN_FLOOR = -1.55;
+const G8_GATE_Y = -2.45;
+const G8_CARD_Y = -3.05;
+const G8_DUR = 1.15;
+const G8_STEP = 0.042;
+const G8_SLOTS_PER_LAYER = 12; // 6 across × 2 deep inside each bin
+const G8_TOTAL = 103;
+
+type G8Bar = {
+  b: number;
+  delay: number;
+  tilt: number;
+  from: THREE.Vector3;
+  ctrl: THREE.Vector3;
+  to: THREE.Vector3;
+};
+
+// Bucket assignment round-robins across the four statuses so every bin fills
+// layer by layer, then a deterministic LCG shuffle scatters the waiting
+// stream — the raw table should look unordered, because that is exactly the
+// problem GROUP BY solves.
+const G8_BARS: G8Bar[] = (() => {
+  const seq: number[] = [];
+  const left = G8_BUCKETS.map((bk) => bk.n);
+  let remaining = G8_TOTAL;
+  while (remaining > 0) {
+    for (let b = 0; b < 4; b++) {
+      if (left[b] > 0) {
+        seq.push(b);
+        left[b] -= 1;
+        remaining -= 1;
+      }
+    }
+  }
+  let seed = 42;
+  const rnd = () => {
+    seed = (seed * 1103515245 + 12345) % 2147483648;
+    return seed / 2147483648;
+  };
+  for (let i = seq.length - 1; i > 0; i--) {
+    const j = Math.floor(rnd() * (i + 1));
+    [seq[i], seq[j]] = [seq[j], seq[i]];
+  }
+  const landedPerBucket = [0, 0, 0, 0];
+  return seq.map((b, g) => {
+    const col = g % G8_STREAM_COLS;
+    const row = Math.floor(g / G8_STREAM_COLS);
+    const from = new THREE.Vector3(
+      (col - (G8_STREAM_COLS - 1) / 2) * G8_STREAM_PITCH,
+      G8_STREAM_TOP - row * G8_STREAM_ROW_PITCH,
+      col % 2 === 0 ? -0.18 : 0.18,
+    );
+    const i = landedPerBucket[b]++;
+    const layer = Math.floor(i / G8_SLOTS_PER_LAYER);
+    const inLayer = i % G8_SLOTS_PER_LAYER;
+    const to = new THREE.Vector3(
+      G8_BIN_X[b] + ((inLayer % 6) - 2.5) * 0.46,
+      G8_BIN_FLOOR + 0.09 + layer * 0.14,
+      (Math.floor(inLayer / 6) - 0.5) * 0.3,
+    );
+    const ctrl = new THREE.Vector3(
+      (from.x + to.x) / 2,
+      (from.y + to.y) / 2 + 0.55 + (g % 5) * 0.07,
+      (from.z + to.z) / 2 + 0.5,
+    );
+    return { b, delay: g * G8_STEP, tilt: ((g % 3) - 1) * 0.07, from, ctrl, to };
+  });
+})();
+
+const G8_CURVES = G8_BARS.map((f) => new THREE.QuadraticBezierCurve3(f.from, f.ctrl, f.to));
+
+function BinsScene({ replayRef }: { replayRef?: { current: (() => void) | null } }) {
+  const [counts, setCounts] = useState<[number, number, number, number]>([0, 0, 0, 0]);
+  const [gated, setGated] = useState(0);
+  const landedRef = useRef(0);
+  const countsRef = useRef([0, 0, 0, 0]);
+  const arrivedRef = useRef<boolean[]>(new Array(G8_TOTAL).fill(false));
+  const startRef = useRef(0);
+  const clockRef = useRef(0);
+  const flashRef = useRef<number[]>([0, 0, 0, 0]);
+  const cardsAtRef = useRef(-1);
+  const gateAtRef = useRef(-1);
+  const gatedRef = useRef<boolean[]>([false, false, false, false]);
+  const gatedCountRef = useRef(0);
+  const sinkAtRef = useRef<number[]>([-1, -1, -1, -1]);
+  const flushAtRef = useRef(0);
+  const groupRef = useRef<THREE.Group>(null);
+  const barRefs = useRef<Array<THREE.Mesh | null>>([]);
+  const cardRefs = useRef<Array<THREE.Group | null>>([]);
+  const cardMats = useRef<Array<THREE.MeshStandardMaterial | null>>([]);
+  const wallMats = useRef<Array<THREE.MeshStandardMaterial | null>>([]);
+  const scannerRef = useRef<THREE.Mesh>(null);
+
+  useFrame((state, dt) => {
+    clockRef.current = state.clock.elapsedTime;
+    const e = clockRef.current - startRef.current;
+
+    if (groupRef.current) {
+      groupRef.current.rotation.y = Math.sin(e * 0.15) * 0.04;
+      groupRef.current.position.y = Math.sin(e * 0.55) * 0.035;
+    }
+
+    // phase A — rows lift from the stream and arc into their bucket
+    let dirty = false;
+    G8_BARS.forEach((bar, i) => {
+      const mesh = barRefs.current[i];
+      if (!mesh) return;
+      const t = (e - bar.delay) / G8_DUR;
+      if (t <= 0) {
+        mesh.position.copy(bar.from);
+        mesh.rotation.z = bar.tilt;
+        return;
+      }
+      if (t >= 1) {
+        mesh.position.copy(bar.to);
+        mesh.rotation.z = bar.tilt * 0.4;
+        if (!arrivedRef.current[i]) {
+          arrivedRef.current[i] = true;
+          countsRef.current[bar.b] += 1;
+          landedRef.current += 1;
+          flashRef.current[bar.b] = 1;
+          dirty = true;
+        }
+        return;
+      }
+      const p = t * t * (3 - 2 * t);
+      G8_CURVES[i].getPointAt(p, mesh.position);
+      mesh.rotation.z = Math.sin(p * Math.PI) * 0.35 * (i % 2 ? 1 : -1);
+    });
+    // flush counter chips at ~8Hz — 103 per-arrival re-renders would jank
+    if (dirty) {
+      const now = state.clock.elapsedTime;
+      if (now - flushAtRef.current > 0.12 || landedRef.current >= G8_TOTAL) {
+        flushAtRef.current = now;
+        setCounts([...countsRef.current] as [number, number, number, number]);
+      }
+    }
+
+    // phase B — one row per bucket: result rows pop once the split completes
+    const allLanded = landedRef.current >= G8_TOTAL;
+    if (allLanded && cardsAtRef.current < 0) cardsAtRef.current = e + 0.5;
+    if (allLanded && gateAtRef.current < 0) gateAtRef.current = cardsAtRef.current + 1.5;
+
+    G8_BUCKETS.forEach((bk, b) => {
+      const card = cardRefs.current[b];
+      if (!card) return;
+      if (cardsAtRef.current < 0) {
+        card.visible = false;
+        return;
+      }
+      const age = e - cardsAtRef.current - b * 0.16;
+      if (age <= 0) {
+        card.visible = false;
+        return;
+      }
+      card.visible = true;
+      card.scale.setScalar(popEase(Math.min(1, age / 0.3)));
+      const mat = cardMats.current[b];
+      const sunk = sinkAtRef.current[b] >= 0;
+      if (mat) {
+        mat.emissiveIntensity = sunk ? 0.02 : 0.16 + (flashRef.current[b] ?? 0) * 1.5;
+        mat.opacity = sunk
+          ? Math.max(0.45, 0.95 * Math.exp(-(e - sinkAtRef.current[b]) * 0.9))
+          : Math.min(1, age * 4);
+      }
+      if (sunk) {
+        card.position.y = G8_CARD_Y - Math.min(0.55, (e - sinkAtRef.current[b]) * 1.3);
+      }
+    });
+
+    // phase C — the HAVING gate scans the result row, left to right
+    if (scannerRef.current) {
+      const ge = gateAtRef.current >= 0 ? e - gateAtRef.current : -1;
+      if (ge >= 0 && ge <= 1.7) {
+        scannerRef.current.visible = true;
+        const x = -7.4 + (ge / 1.7) * 14.8;
+        scannerRef.current.position.x = x;
+        G8_BUCKETS.forEach((bk, b) => {
+          if (!gatedRef.current[b] && x >= G8_BIN_X[b]) {
+            gatedRef.current[b] = true;
+            gatedCountRef.current += 1;
+            flashRef.current[b] = 1;
+            if (bk.n <= 10) sinkAtRef.current[b] = e;
+            setGated(gatedCountRef.current);
+          }
+        });
+      } else {
+        scannerRef.current.visible = false;
+      }
+    }
+
+    // glow decay + bin wall pulse
+    flashRef.current = flashRef.current.map((f) => f * Math.exp(-dt * 2.2));
+    wallMats.current.forEach((mat, b) => {
+      if (!mat) return;
+      mat.emissiveIntensity =
+        sinkAtRef.current[b] >= 0 ? 0.02 : 0.05 + (flashRef.current[b] ?? 0) * 1.1;
+    });
+  });
+
+  const replay = () => {
+    startRef.current = clockRef.current;
+    arrivedRef.current = new Array(G8_TOTAL).fill(false);
+    countsRef.current = [0, 0, 0, 0];
+    landedRef.current = 0;
+    flashRef.current = [0, 0, 0, 0];
+    cardsAtRef.current = -1;
+    gateAtRef.current = -1;
+    gatedRef.current = [false, false, false, false];
+    gatedCountRef.current = 0;
+    sinkAtRef.current = [-1, -1, -1, -1];
+    G8_BARS.forEach((bar, i) => {
+      const mesh = barRefs.current[i];
+      if (mesh) {
+        mesh.position.copy(bar.from);
+        mesh.rotation.z = bar.tilt;
+      }
+    });
+    cardRefs.current.forEach((c) => {
+      if (c) {
+        c.visible = false;
+        c.position.y = G8_CARD_Y;
+        c.scale.setScalar(1);
+      }
+    });
+    setCounts([0, 0, 0, 0]);
+    setGated(0);
+  };
+
+  useEffect(() => {
+    if (replayRef) replayRef.current = replay;
+  });
+
+  const landed = counts[0] + counts[1] + counts[2] + counts[3];
+  const done = gated >= 4;
+
+  return (
+    <>
+      <ambientLight intensity={0.55} />
+      <directionalLight position={[4, 8, 6]} intensity={1.15} />
+      <fog attach="fog" args={["#09090b", 15, 32]} />
+
+      <group ref={groupRef}>
+        {/* ---- the raw table: 103 unordered rows ---- */}
+        <Text font={FONT} fontSize={0.22} color="#a1a1aa" position={[0, 3.85, 0]} anchorX="center">
+          orders
+        </Text>
+        <Text font={FONT} fontSize={0.13} color="#52525b" position={[0, 3.62, 0]} anchorX="center">
+          103 rows · every row drawn
+        </Text>
+        {G8_BARS.map((bar, i) => (
+          <mesh
+            key={i}
+            ref={(m) => {
+              barRefs.current[i] = m as THREE.Mesh | null;
+            }}
+            position={bar.from}
+            rotation={[0, 0, bar.tilt]}
+          >
+            <boxGeometry args={[0.4, 0.12, 0.22]} />
+            <meshStandardMaterial
+              color={G8_BUCKETS[bar.b].color}
+              emissive={G8_BUCKETS[bar.b].color}
+              emissiveIntensity={0.4}
+              roughness={0.45}
+            />
+          </mesh>
+        ))}
+
+        <Text font={FONT} fontSize={0.2} color="#a1a1aa" position={[0, 0.45, 0]} anchorX="center">
+          GROUP BY status
+        </Text>
+
+        {/* ---- the four buckets ---- */}
+        {G8_BUCKETS.map((bk, b) => (
+          <group key={bk.key} position={[G8_BIN_X[b], 0, 0]}>
+            <RoundedBox args={[3.0, 0.08, 0.95]} radius={0.03} smoothness={2} position={[0, G8_BIN_FLOOR - 0.04, 0]}>
+              <meshStandardMaterial color="#27272a" roughness={0.6} />
+            </RoundedBox>
+            <RoundedBox args={[3.0, 0.85, 0.07]} radius={0.03} smoothness={2} position={[0, G8_BIN_FLOOR + 0.38, -0.44]}>
+              <meshStandardMaterial
+                ref={(m) => {
+                  wallMats.current[b] = m as THREE.MeshStandardMaterial | null;
+                }}
+                color="#27272a"
+                emissive={bk.color}
+                emissiveIntensity={0.05}
+                roughness={0.6}
+              />
+            </RoundedBox>
+            <RoundedBox args={[0.07, 0.85, 0.95]} radius={0.03} smoothness={2} position={[-1.5, G8_BIN_FLOOR + 0.38, 0]}>
+              <meshStandardMaterial color="#27272a" roughness={0.6} />
+            </RoundedBox>
+            <RoundedBox args={[0.07, 0.85, 0.95]} radius={0.03} smoothness={2} position={[1.5, G8_BIN_FLOOR + 0.38, 0]}>
+              <meshStandardMaterial color="#27272a" roughness={0.6} />
+            </RoundedBox>
+            <Text font={FONT} fontSize={0.19} color={bk.color} position={[0, G8_BIN_FLOOR + 1.02, 0]} anchorX="center">
+              {bk.key}
+            </Text>
+            <Html position={[0, G8_BIN_FLOOR + 1.3, 0]} center>
+              <div className="pointer-events-none whitespace-nowrap rounded border border-zinc-700 bg-zinc-950/90 px-1.5 py-0.5 text-[10px] text-zinc-200">
+                {counts[b]} / {bk.n}
+              </div>
+            </Html>
+          </group>
+        ))}
+
+        {/* ---- the HAVING gate ---- */}
+        <mesh position={[0, G8_GATE_Y, 0.3]}>
+          <boxGeometry args={[13.8, 0.035, 0.035]} />
+          <meshBasicMaterial color="#fbbf24" transparent opacity={0.55} />
+        </mesh>
+        <Text font={FONT} fontSize={0.15} color="#fbbf24" position={[0, G8_GATE_Y + 0.22, 0.3]} anchorX="center">
+          HAVING COUNT(*) &gt; 10
+        </Text>
+        <mesh ref={scannerRef} visible={false} position={[0, G8_GATE_Y, 0.3]}>
+          <boxGeometry args={[0.07, 0.55, 0.07]} />
+          <meshBasicMaterial color="#fbbf24" />
+        </mesh>
+
+        {/* ---- result rows: one per bucket, popped after the split ---- */}
+        {G8_BUCKETS.map((bk, b) => (
+          <group
+            key={`card-${bk.key}`}
+            ref={(g) => {
+              cardRefs.current[b] = g;
+            }}
+            visible={false}
+            position={[G8_BIN_X[b], G8_CARD_Y, 0.35]}
+          >
+            <RoundedBox args={[2.35, 0.46, 0.12]} radius={0.05} smoothness={2}>
+              <meshStandardMaterial
+                ref={(m) => {
+                  cardMats.current[b] = m as THREE.MeshStandardMaterial | null;
+                }}
+                color="#18181b"
+                emissive={bk.color}
+                emissiveIntensity={0.16}
+                roughness={0.5}
+                transparent
+              />
+            </RoundedBox>
+            <Text font={FONT} fontSize={0.17} color={bk.color} position={[0, 0, 0.09]} anchorX="center" anchorY="middle">
+              {`${bk.key} · ${bk.n}`}
+            </Text>
+          </group>
+        ))}
+
+        {/* ---- result slab ---- */}
+        <RoundedBox args={[5.6, 0.5, 0.36]} radius={0.08} smoothness={3} position={[0, -4.2, 0]}>
+          <meshStandardMaterial color="#18181b" emissive="#2dd4bf" emissiveIntensity={0.14} roughness={0.5} />
+        </RoundedBox>
+        <Text font={FONT} fontSize={0.16} color="#5eead4" position={[0, -4.2, 0.2]} anchorX="center" anchorY="middle">
+          GROUP BY → 4 rows · after HAVING → 3 rows
+        </Text>
+      </group>
+
+      {/* ---- legend ---- */}
+      <Html position={[-5.4, -4.2, 0]} center>
+        <div className="pointer-events-none flex items-center gap-2 whitespace-nowrap text-[10px] text-zinc-400">
+          {G8_BUCKETS.map((bk) => (
+            <span key={bk.key} className="inline-flex items-center gap-1">
+              <span
+                className="h-1.5 w-1.5 rounded-full"
+                style={{ backgroundColor: bk.color }}
+              />
+              {bk.key}
+            </span>
+          ))}
+        </div>
+      </Html>
+
+      {/* ---- HUD ---- */}
+      <Html position={[0, 4.3, 0]} center>
+        <div className="pointer-events-none whitespace-nowrap rounded-md border border-zinc-700 bg-zinc-950/90 px-3 py-1.5 text-[11px] text-zinc-300 shadow-lg">
+          {done
+            ? "3 of 4 buckets pass HAVING COUNT(*) > 10 — cancelled (7) is filtered out."
+            : gated > 0
+              ? `HAVING gate checked ${gated} of 4 buckets…`
+              : landed >= G8_TOTAL
+                ? "One row per bucket — GROUP BY returns 4 result rows."
+                : `${landed} / ${G8_TOTAL} rows bucketed — split by status, counted per bucket.`}
+        </div>
+      </Html>
+      <Html position={[0, -4.95, 0]} center>
+        <button
+          onClick={replay}
+          className="pointer-events-auto whitespace-nowrap rounded-md border border-zinc-700 bg-zinc-900/90 px-2.5 py-1 text-[11px] text-zinc-300 shadow transition-colors hover:bg-zinc-800"
+        >
+          ↻ replay the buckets
+        </button>
+      </Html>
+
+      <gridHelper args={[30, 30, "#27272a", "#18181b"]} position={[0, -5.25, 0]} />
+      <OrbitControls
+        target={[0, 0.2, 0]}
+        enablePan={false}
+        minDistance={8}
+        maxDistance={20}
+        maxPolarAngle={1.5}
+        enableDamping
+        dampingFactor={0.08}
+      />
+    </>
+  );
+}
+
+function L8BinsSpace() {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const replayRef = useRef<(() => void) | null>(null);
+  const lastAutoRef = useRef(0);
+
+  // Auto-replay on scroll-into-view, same contract as the join scenes.
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const en of entries) {
+          if (en.isIntersecting && en.intersectionRatio >= 0.55) {
+            const now = performance.now();
+            if (now - lastAutoRef.current > 7000) {
+              lastAutoRef.current = now;
+              replayRef.current?.();
+            }
+          }
+        }
+      },
+      { threshold: [0.55] },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={wrapRef}
+      className="relative h-[400px] w-full"
+      role="img"
+      aria-label="Interactive 3D scene of GROUP BY and HAVING. All 103 order rows wait in an unordered stream, then fly one by one into four status buckets — delivered fills to 52, shipped to 30, pending to 14, cancelled to 7 — while counters tick. Each bucket then pops its result row: one row per bucket. Finally the HAVING COUNT(*) > 10 gate scans the result and the cancelled bucket (7, below the gate) sinks out, leaving 3 of 4 rows. Drag to orbit."
+    >
+      <Canvas
+        dpr={[1, 1.75]}
+        gl={{ antialias: true, alpha: true }}
+        camera={{ position: [0, 0.9, 14.2], fov: 38 }}
+      >
+        <SuspenseBoundary>
+          <BinsScene replayRef={replayRef} />
+        </SuspenseBoundary>
+      </Canvas>
+    </div>
+  );
+}
+
 /* ================= registry ================= */
 
 export const FIGURES_3D: Partial<Record<FigureId, () => JSX.Element>> = {
   "j2-join-space-3d": J2JoinSpace,
   "j12-left-space-3d": L12LeftJoinSpace,
+  "l8-bins-space-3d": L8BinsSpace,
 };

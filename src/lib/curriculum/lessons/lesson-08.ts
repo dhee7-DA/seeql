@@ -19,6 +19,7 @@ export const lesson08: Lesson = {
       sql: "SELECT status, COUNT(*) AS n FROM orders GROUP BY status;",
       runnable: true,
     },
+    { kind: "diagram", figure: "l8-bins-space-3d" },
     { kind: "h", text: "The strictest rule in SELECT-land" },
     {
       kind: "bullets",
