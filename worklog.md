@@ -2010,3 +2010,21 @@ Work Log:
 Stage Summary:
 - The course now opens on "where was I + one tap to continue" with all 9 modules scannable in a single screenful; lessons reveal on demand. Mobile starts on content with a thumb-scroll tool rail.
 - Committed 1f01547 as menu-compact-1. Next per user approval: the 8-enhancement wave in order, starting with #1 AI Mentor chat (schema-grounded, tiered hints).
+
+---
+Task ID: mentor-1
+Agent: Super Z (main agent)
+Task: Enhancement #1 of the approved next-wave: AI Mentor chat — schema-grounded, tiered hints (nudge -> direction -> solution), sees the learner's last failed query.
+
+Work Log:
+- New src/app/api/mentor/route.ts: z-ai-web-dev-sdk (backend-only) chat endpoint. System prompt = persona + SCHEMA_DIGEST of the real 9-table storefront (column types, cents-columns, region enum, verified gotchas: no 'north' region / no 'returned' status / active is 1-0) + attached failure context + hint-rung policy (1 nudge: no SQL at all; 2 direction: tables/clauses, skeleton max; 3 full solution + walkthrough). History clamped to last 12 msgs x 4k chars, SQL 2k, error 300; 2-attempt retry; thinking disabled.
+- New src/lib/mentor-context.ts: zustand bulletin board (reportMentorFailure/clearFailure) where graded surfaces drop the learner's last failure {sql, error, note, source, at}.
+- Failure hooks wired into ALL five learner query paths: practice-kit.execSql (practice lab, hard errors), problem-runner.run (lesson problems, error or wrong-verdict with grader reason), interview-track.run (rung fails: error or rows-mismatch note), query-golf.play (error or clean-but-wrong note), lesson-view.runInline (lesson console errors). Landing-page toys deliberately excluded.
+- New src/components/learn/mentor-chat.tsx: chat surface with attached-failure card (source + timestamp, SQL pre, rose error chip / amber grader-note chip, detach x), quick actions ("Explain this error" / "Why is it wrong?"), 3-rung hint ladder buttons, mentor text rendered by a fence-splitting MentorRich (```sql blocks via SqlNodes, prose via RichNodes), localStorage-persisted conversation (last 30, hydration-safe), autoscroll, retry banner, 4k char cap + counter. Enter=send, Shift+Enter=newline.
+- learn-app.tsx: View kind "mentor", MentorChat branch, sidebar Practice-lab entry (Bot icon, "tiered hints on your live data"), ToolRail chip "Mentor" next to Overview.
+- OPS: dev server + watchdog were DOWN (sandbox recycle) — watchdog.sh restarted standalone (pid log confirmed, rss cap 1600000KB); learned that tool-call sandboxing reaps even setsid'd background processes between calls, so all QA ran on a private 3101 server inside one call (scripts/qa-mentor.sh pattern, log scripts/tmp/qa-dev-mentor.log).
+- QA: tsc 829 = 829 stash-verified baseline (0 new; ProblemRunner TS2305 pre-existing); lint unchanged (4 pre-existing scripts triple-slash). E2E all green: API smoke reply correctly grounded ("invoices ... via customer_id"); chat round-trip OK; failing interview run attached (sqlAttached/sourceChip/errorShown all true); rung-1 nudge explains "nope" column-missing concept with ZERO SQL dumped; screenshots qa-mentor-{chat,context,hint}.png; 0 page errors.
+
+Stage Summary:
+- The app has a real tutor: 15 toolbox surfaces now, with the mentor one tap from Overview, the sidebar, and the mobile rail; any failed run anywhere in the app lands on its desk pre-attached.
+- Committed mentor-1. Next: enhancement #2 — EXPLAIN visualizer / performance lab (SCAN vs SEARCH pipeline + slow-query detective puzzles).
