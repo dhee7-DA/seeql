@@ -6,11 +6,11 @@
 // layer becomes a first-class revision tool instead of page decoration.
 
 import { useMemo, useState } from "react";
-import { Maximize2, Search, Shapes, X } from "lucide-react";
+import { Maximize2, Orbit, Search, Shapes, X } from "lucide-react";
 import type { FigureId } from "@/lib/curriculum/types";
 import { MODULES } from "@/lib/curriculum/lessons";
 import { FIGURE_META, figureChip, prettyFigureLabel } from "@/lib/curriculum/figure-meta";
-import { FigureBare } from "./diagrams";
+import { FigureBare, is3DFigure } from "./diagrams";
 import { FigureLightbox } from "./figure-lightbox";
 import { cn } from "@/lib/utils";
 
@@ -147,11 +147,21 @@ export function DiagramLibrary({ onOpenLesson }: { onOpenLesson: (lessonId: stri
               aria-label={`Open the ${prettyFigureLabel(f.figure)} diagram from lesson ${f.lessonNum}`}
               className="group sheen cursor-pointer overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950 text-left transition-colors hover:border-emerald-400/40 focus-visible:border-emerald-400/60 focus-visible:outline-none"
             >
-              {/* thumbnail — top-cropped full-width render of the real figure */}
+              {/* thumbnail — top-cropped full-width render of the real figure;
+                  3D scenes stay placeholders here (5 live WebGL canvases in a
+                  grid is wasteful) — the lightbox mounts one at a time */}
               <div className="cv-auto relative h-[136px] overflow-hidden border-b border-zinc-800/70 p-2">
-                <div className="pointer-events-none" inert>
-                  <FigureBare id={f.figure} />
-                </div>
+                {is3DFigure(f.figure) ? (
+                  <div className="flex h-full flex-col items-center justify-center rounded border border-teal-900/50 bg-teal-950/20 text-center">
+                    <Orbit className="h-5 w-5 text-teal-400" />
+                    <p className="mt-1.5 text-xs font-medium text-teal-300">Interactive 3D scene</p>
+                    <p className="text-[10px] text-zinc-500">open to orbit &amp; replay</p>
+                  </div>
+                ) : (
+                  <div className="pointer-events-none" inert>
+                    <FigureBare id={f.figure} />
+                  </div>
+                )}
                 <span className="absolute right-2.5 top-2.5 flex h-6 w-6 items-center justify-center rounded border border-zinc-800 bg-zinc-950/80 text-zinc-500 opacity-0 transition-opacity group-hover:opacity-100">
                   <Maximize2 className="h-3 w-3" />
                 </span>

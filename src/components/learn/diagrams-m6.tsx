@@ -22,7 +22,7 @@ function X1StringAgg() {
         <Panel x={26} y={44} w={230} h={170} cls="fill-zinc-900 stroke-zinc-700" />
         <Label x={42} y={66} cls="fill-zinc-400" size={9}>Alice&apos;s order statuses (24 rows)</Label>
         {["delivered", "shipped", "pending", "cancelled", "delivered", "shipped", "… 18 more"].map((s, i) => (
-          <Label key={s} x={42} y={88 + i * 20} cls={i === 6 ? "fill-zinc-600" : "fill-zinc-300"} size={9}>{s}</Label>
+          <Label key={`${s}-${i}`} x={42} y={88 + i * 20} cls={i === 6 ? "fill-zinc-600" : "fill-zinc-300"} size={9}>{s}</Label>
         ))}
       </motion.g>
       <motion.g {...fade(0.4)}>

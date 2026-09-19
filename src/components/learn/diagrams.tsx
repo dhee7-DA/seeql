@@ -1644,6 +1644,13 @@ export function hasFigure(id: FigureId): boolean {
   return id in FIGURES || FIG3D_IDS.has(id);
 }
 
+/** True for the 3D scene ids — callers that batch-render many figures
+ * (library grid) use this to mount a cheap placeholder instead of one
+ * live WebGL canvas per card. */
+export function is3DFigure(id: FigureId): boolean {
+  return FIG3D_IDS.has(id);
+}
+
 /** Diagram content without lesson chrome — used by the library grid, the
  * lightbox, the landing showcase and FigureFrame, which bring their own
  * frames/replay controls. 3D ids route to the dynamically-loaded host. */

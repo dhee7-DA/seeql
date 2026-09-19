@@ -18,6 +18,7 @@ import {
   GraduationCap,
   LayoutDashboard,
   RotateCcw,
+  Shapes,
   Table2,
 } from "lucide-react";
 import { LESSONS, MODULES } from "@/lib/curriculum/lessons";
@@ -28,6 +29,7 @@ import { LessonView } from "./lesson-view";
 import { DataExplorer } from "./data-explorer";
 import { MixedQuiz } from "./mixed-quiz";
 import { CaseFiles } from "./case-files";
+import { DiagramLibrary } from "./diagram-library";
 import { DrillYard } from "./drill-yard";
 import { ActivityStrip, MasteryGrid } from "./progress-cards";
 import { CelebrationHost, celebrate } from "./celebrate";
@@ -38,7 +40,8 @@ type View =
   | { kind: "explorer" }
   | { kind: "mixed" }
   | { kind: "cases" }
-  | { kind: "drills" };
+  | { kind: "drills" }
+  | { kind: "library" };
 
 // ---- Collapsible module state (persisted) -------------------------------
 
@@ -475,6 +478,7 @@ export function LearnApp() {
               </button>
               {[
                 { kind: "explorer" as const, icon: Table2, label: "Data explorer", note: "browse the live tables" },
+                { kind: "library" as const, icon: Shapes, label: "Diagram library", note: "every visual, one wall" },
                 { kind: "drills" as const, icon: Dumbbell, label: "Keyword drills", note: "every keyword, six angles" },
                 { kind: "mixed" as const, icon: FlaskConical, label: "Mixed quiz", note: "10 from the whole course" },
                 { kind: "cases" as const, icon: FileStack, label: "Case files", note: "rebuild real stakeholder queries" },
@@ -526,6 +530,8 @@ export function LearnApp() {
           <LessonView key={lesson.id} lesson={lesson} />
         ) : view.kind === "explorer" ? (
           <DataExplorer />
+        ) : view.kind === "library" ? (
+          <DiagramLibrary onOpenLesson={openLesson} />
         ) : view.kind === "drills" ? (
           <DrillYard />
         ) : view.kind === "mixed" ? (
