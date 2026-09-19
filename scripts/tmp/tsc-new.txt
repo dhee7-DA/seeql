@@ -1,0 +1,640 @@
+src/app/api/funnel/route.ts(4,15): error TS2305: Module '"@/lib/sql-types"' has no exported member 'FunnelResponse'.
+src/app/api/quality/route.ts(3,15): error TS2305: Module '"@/lib/sql-types"' has no exported member 'QualityError'.
+src/app/api/quality/route.ts(3,29): error TS2305: Module '"@/lib/sql-types"' has no exported member 'QualityResponse'.
+src/components/flow-view.tsx(20,15): error TS2305: Module '"@/lib/sql-types"' has no exported member 'FunnelResponse'.
+src/components/landing/live-sandbox.tsx(13,26): error TS2305: Module '"@/components/sql-editor"' has no exported member 'ClauseId'.
+src/components/landing/live-sandbox.tsx(19,10): error TS2459: Module '"@/components/plan-view"' declares 'buildTree' locally, but it is not exported.
+src/components/landing/live-sandbox.tsx(19,21): error TS2305: Module '"@/components/plan-view"' has no exported member 'PlanLegend'.
+src/components/landing/live-sandbox.tsx(19,33): error TS2305: Module '"@/components/plan-view"' has no exported member 'PlanTreeNode'.
+src/components/landing/live-sandbox.tsx(1054,15): error TS2322: Type '{ value: string; onChange: Dispatch<SetStateAction<string>>; onVisualize: () => undefined; editorRef: RefObject<HTMLTextAreaElement | null>; className: string; activeClause: any; onCaret: Dispatch<...>; }' is not assignable to type 'IntrinsicAttributes & SqlEditorProps'.
+  Property 'editorRef' does not exist on type 'IntrinsicAttributes & SqlEditorProps'.
+src/components/landing/live-sandbox.tsx(1145,13): error TS2322: Type '{ value: string; onChange: Dispatch<SetStateAction<string>>; onVisualize: () => undefined; editorRef: RefObject<HTMLTextAreaElement | null>; className: string; activeClause: any; onCaret: Dispatch<...>; }' is not assignable to type 'IntrinsicAttributes & SqlEditorProps'.
+  Property 'editorRef' does not exist on type 'IntrinsicAttributes & SqlEditorProps'.
+src/components/landing/query-flow-svg.tsx(237,70): error TS2322: Type '{ x: number; y: number; w: number; h: number; cls: string; dash: string | undefined; }' is not assignable to type 'IntrinsicAttributes & { x: number; y: number; w: number; h: number; cls?: string | undefined; }'.
+  Property 'dash' does not exist on type 'IntrinsicAttributes & { x: number; y: number; w: number; h: number; cls?: string | undefined; }'.
+src/components/landing/query-playback.tsx(15,15): error TS2305: Module '"@/components/sql-editor"' has no exported member 'ClauseId'.
+src/components/learn/badge-case.tsx(22,18): error TS2305: Module '"@/lib/curriculum/gamification"' has no exported member 'bestStreak'.
+src/components/learn/case-study-view.tsx(9,10): error TS2305: Module '"@/components/learn/problem-runner"' has no exported member 'ProblemRunner'.
+src/components/learn/case-study-view.tsx(11,15): error TS2305: Module '"@/lib/curriculum/types"' has no exported member 'CaseStudy'.
+src/components/learn/case-study-view.tsx(24,39): error TS2339: Property 'solved' does not exist on type 'ProgressState'.
+src/components/learn/diagrams-m1a.tsx(279,3): error TS2353: Object literal may only specify known properties, and '"l1-data-types"' does not exist in type 'Partial<Record<FigureId, () => Element>>'.
+src/components/learn/diagrams-m1b.tsx(354,3): error TS2353: Object literal may only specify known properties, and '"l4-3vl-table"' does not exist in type 'Partial<Record<FigureId, () => Element>>'.
+src/components/learn/diagrams-m1c.tsx(234,3): error TS2353: Object literal may only specify known properties, and '"l7-agg-collapse"' does not exist in type 'Partial<Record<FigureId, () => Element>>'.
+src/components/learn/diagrams-m1d.tsx(385,3): error TS2353: Object literal may only specify known properties, and '"l1-why-db"' does not exist in type 'Partial<Record<FigureId, () => Element>>'.
+src/components/learn/diagrams-m1e.tsx(434,3): error TS2353: Object literal may only specify known properties, and '"l5-sort-directions"' does not exist in type 'Partial<Record<FigureId, () => Element>>'.
+src/components/learn/diagrams-m2x.tsx(425,3): error TS2353: Object literal may only specify known properties, and '"v9-pair-factory"' does not exist in type 'Partial<Record<FigureId, () => Element>>'.
+src/components/learn/exam-view.tsx(37,38): error TS2339: Property 'exams' does not exist on type 'ProgressState'.
+src/components/learn/exam-view.tsx(91,11): error TS2339: Property 'recordExam' does not exist on type 'ProgressState'.
+src/components/learn/exam-view.tsx(94,48): error TS2339: Property 'examPass' does not exist on type '{ readonly mcq: 5; readonly mcqFirstBonus: 3; readonly lessonBonus: 50; }'.
+src/components/learn/exam-view.tsx(95,47): error TS2339: Property 'examPass' does not exist on type '{ readonly mcq: 5; readonly mcqFirstBonus: 3; readonly lessonBonus: 50; }'.
+src/components/learn/exam-view.tsx(141,35): error TS2339: Property 'examPass' does not exist on type '{ readonly mcq: 5; readonly mcqFirstBonus: 3; readonly lessonBonus: 50; }'.
+src/components/learn/exam-view.tsx(212,13): error TS2322: Type '{ key: any; mcq: Mcq; examMode: true; onAnswered: (ok: boolean) => void; }' is not assignable to type 'IntrinsicAttributes & { mcq: Mcq; onAnswered?: ((correct: boolean) => void) | undefined; }'.
+  Property 'examMode' does not exist on type 'IntrinsicAttributes & { mcq: Mcq; onAnswered?: ((correct: boolean) => void) | undefined; }'.
+src/components/learn/exam-view.tsx(266,107): error TS2339: Property 'examPass' does not exist on type '{ readonly mcq: 5; readonly mcqFirstBonus: 3; readonly lessonBonus: 50; }'.
+src/components/learn/fill-blank.tsx(18,14): error TS2724: '"@/lib/curriculum/gamification"' has no exported member named 'caseDifficulty'. Did you mean 'Difficulty'?
+src/components/learn/fill-blank.tsx(18,30): error TS2305: Module '"@/lib/curriculum/gamification"' has no exported member 'starsFor'.
+src/components/learn/fill-blank.tsx(19,15): error TS2305: Module '"@/lib/curriculum/types"' has no exported member 'CaseStudy'.
+src/components/learn/fill-blank.tsx(19,26): error TS2305: Module '"@/lib/curriculum/types"' has no exported member 'Fill'.
+src/components/learn/fill-blank.tsx(99,22): error TS2339: Property 'recordMiss' does not exist on type 'ProgressState'.
+src/components/learn/fill-blank.tsx(108,21): error TS2339: Property 'recordRecall' does not exist on type 'ProgressState'.
+src/components/learn/fill-blank.tsx(109,18): error TS2339: Property 'recordMiss' does not exist on type 'ProgressState'.
+src/components/learn/fill-blank.tsx(122,47): error TS2339: Property 'case' does not exist on type '{ readonly mcq: 5; readonly mcqFirstBonus: 3; readonly lessonBonus: 50; }'.
+src/components/learn/fill-blank.tsx(123,63): error TS2551: Property 'caseFirstBonus' does not exist on type '{ readonly mcq: 5; readonly mcqFirstBonus: 3; readonly lessonBonus: 50; }'. Did you mean 'mcqFirstBonus'?
+src/components/learn/fill-blank.tsx(126,27): error TS2339: Property 'case' does not exist on type '{ readonly mcq: 5; readonly mcqFirstBonus: 3; readonly lessonBonus: 50; }'.
+src/components/learn/fill-blank.tsx(126,46): error TS2551: Property 'caseFirstBonus' does not exist on type '{ readonly mcq: 5; readonly mcqFirstBonus: 3; readonly lessonBonus: 50; }'. Did you mean 'mcqFirstBonus'?
+src/components/learn/fill-blank.tsx(130,47): error TS2339: Property 'fill' does not exist on type '{ readonly mcq: 5; readonly mcqFirstBonus: 3; readonly lessonBonus: 50; }'.
+src/components/learn/fill-blank.tsx(131,63): error TS2339: Property 'fillFirstBonus' does not exist on type '{ readonly mcq: 5; readonly mcqFirstBonus: 3; readonly lessonBonus: 50; }'.
+src/components/learn/fill-blank.tsx(134,27): error TS2339: Property 'fill' does not exist on type '{ readonly mcq: 5; readonly mcqFirstBonus: 3; readonly lessonBonus: 50; }'.
+src/components/learn/fill-blank.tsx(134,46): error TS2339: Property 'fillFirstBonus' does not exist on type '{ readonly mcq: 5; readonly mcqFirstBonus: 3; readonly lessonBonus: 50; }'.
+src/components/learn/fill-blank.tsx(140,13): error TS2339: Property 'recordMiss' does not exist on type 'ProgressState'.
+src/components/learn/quiz-runner.tsx(14,10): error TS2305: Module '"@/lib/curriculum/progress"' has no exported member 'mcqPassed'.
+src/components/learn/quiz-runner.tsx(15,15): error TS2724: '"@/lib/curriculum/types"' has no exported member named 'MCQ'. Did you mean 'Mcq'?
+src/components/learn/quiz-runner.tsx(47,40): error TS2339: Property 'mcqBest' does not exist on type 'ProgressState'.
+src/components/learn/quiz-runner.tsx(133,39): error TS2322: Type '{ key: any; mcq: MCQ; index: number; }' is not assignable to type 'IntrinsicAttributes & { mcq: Mcq; onAnswered?: ((correct: boolean) => void) | undefined; }'.
+  Property 'index' does not exist on type 'IntrinsicAttributes & { mcq: Mcq; onAnswered?: ((correct: boolean) => void) | undefined; }'.
+src/components/learn/review.tsx(16,10): error TS2305: Module '"@/lib/curriculum/progress"' has no exported member 'MAX_BOX'.
+src/components/learn/review.tsx(17,15): error TS2305: Module '"@/lib/curriculum/types"' has no exported member 'Fill'.
+src/components/learn/review.tsx(55,39): error TS2339: Property 'review' does not exist on type 'ProgressState'.
+src/components/learn/review.tsx(56,46): error TS2339: Property 'reviewCorrect' does not exist on type 'ProgressState'.
+src/components/learn/review.tsx(57,44): error TS2339: Property 'reviewWrong' does not exist on type 'ProgressState'.
+src/components/learn/review.tsx(69,34): error TS2698: Spread types may only be created from object types.
+src/components/learn/review.tsx(169,64): error TS2322: Type '{ key: any; mcq: any; reviewMode: true; onAnswered: (correct: boolean) => void; }' is not assignable to type 'IntrinsicAttributes & { mcq: Mcq; onAnswered?: ((correct: boolean) => void) | undefined; }'.
+  Property 'reviewMode' does not exist on type 'IntrinsicAttributes & { mcq: Mcq; onAnswered?: ((correct: boolean) => void) | undefined; }'.
+src/components/learn/review.tsx(242,39): error TS2339: Property 'review' does not exist on type 'ProgressState'.
+src/components/learn/review.tsx(249,60): error TS18046: 'e' is of type 'unknown'.
+src/components/learn/theory-blocks.tsx(16,10): error TS2305: Module '"@/components/sql-editor"' has no exported member 'tokenizeSql'.
+src/components/learn/theory-blocks.tsx(21,15): error TS2305: Module '"@/lib/curriculum/types"' has no exported member 'TheoryBlock'.
+src/components/learn/theory-blocks.tsx(139,15): error TS2322: Type '{ columns: string[]; rows: CellValue[][]; maxHeight: string; }' is not assignable to type 'IntrinsicAttributes & { data: GridData; maxHeight?: string | undefined; }'.
+  Property 'columns' does not exist on type 'IntrinsicAttributes & { data: GridData; maxHeight?: string | undefined; }'.
+src/components/lineage-view.tsx(43,51): error TS2339: Property 'depth' does not exist on type 'ColumnInfo'.
+src/components/lineage-view.tsx(52,11): error TS2339: Property 'sourceTables' does not exist on type 'ColumnInfo'.
+src/components/lineage-view.tsx(52,29): error TS2339: Property 'sourceTables' does not exist on type 'ColumnInfo'.
+src/components/lineage-view.tsx(53,15): error TS2339: Property 'sourceTables' does not exist on type 'ColumnInfo'.
+src/components/quality-view.tsx(21,15): error TS2305: Module '"@/lib/sql-types"' has no exported member 'QualityResponse'.
+src/components/quality-view.tsx(274,41): error TS18046: 'points' is of type 'unknown'.
+src/components/quality-view.tsx(279,24): error TS18046: 'points' is of type 'unknown'.
+src/components/quality-view.tsx(298,30): error TS18046: 'points' is of type 'unknown'.
+src/components/quality-view.tsx(299,30): error TS18046: 'points' is of type 'unknown'.
+src/components/quality-view.tsx(299,37): error TS18046: 'points' is of type 'unknown'.
+src/components/quality-view.tsx(340,121): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string | number | boolean | null'.
+src/components/quality-view.tsx(341,85): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string | number | boolean | null'.
+src/components/query-race.tsx(78,45): error TS2339: Property 'opcodeCount' does not exist on type 'ExecResult'.
+src/components/query-race.tsx(78,72): error TS2339: Property 'opcodeCount' does not exist on type 'ExecResult'.
+src/lib/curriculum/case-studies-b.ts(4,15): error TS2305: Module '"./types"' has no exported member 'CaseStudy'.
+src/lib/curriculum/case-studies-c.ts(3,15): error TS2305: Module '"./types"' has no exported member 'CaseStudy'.
+src/lib/curriculum/case-studies.ts(1,15): error TS2305: Module '"./types"' has no exported member 'CaseStudy'.
+src/lib/curriculum/case-studies/index.ts(14,15): error TS2305: Module '"../types"' has no exported member 'CaseStudy'.
+src/lib/curriculum/case-studies/l01.ts(6,15): error TS2305: Module '"../types"' has no exported member 'CaseStudy'.
+src/lib/curriculum/case-studies/l02.ts(6,15): error TS2305: Module '"../types"' has no exported member 'CaseStudy'.
+src/lib/curriculum/case-studies/l03.ts(5,15): error TS2305: Module '"../types"' has no exported member 'CaseStudy'.
+src/lib/curriculum/case-studies/l04.ts(6,15): error TS2305: Module '"../types"' has no exported member 'CaseStudy'.
+src/lib/curriculum/case-studies/l05.ts(6,15): error TS2305: Module '"../types"' has no exported member 'CaseStudy'.
+src/lib/curriculum/case-studies/l06.ts(6,15): error TS2305: Module '"../types"' has no exported member 'CaseStudy'.
+src/lib/curriculum/case-studies/l07.ts(7,15): error TS2305: Module '"../types"' has no exported member 'CaseStudy'.
+src/lib/curriculum/case-studies/l08.ts(6,15): error TS2305: Module '"../types"' has no exported member 'CaseStudy'.
+src/lib/curriculum/case-studies/l09.ts(7,15): error TS2305: Module '"../types"' has no exported member 'CaseStudy'.
+src/lib/curriculum/case-studies/l10.ts(5,15): error TS2305: Module '"../types"' has no exported member 'CaseStudy'.
+src/lib/curriculum/case-studies/l11.ts(8,15): error TS2305: Module '"../types"' has no exported member 'CaseStudy'.
+src/lib/curriculum/case-studies/l35.ts(5,15): error TS2305: Module '"../types"' has no exported member 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j1a.ts(14,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j1a.ts(59,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j1a.ts(110,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j1a.ts(155,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j1a.ts(199,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j1a.ts(244,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j1a.ts(290,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j1a.ts(336,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j1b.ts(13,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j1b.ts(63,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j1b.ts(113,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j1b.ts(171,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j1b.ts(222,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j1b.ts(273,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j1b.ts(324,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j1b.ts(374,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j1c.ts(14,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j1c.ts(59,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j1c.ts(97,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j1c.ts(135,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j1c.ts(178,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j1c.ts(221,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j1c.ts(265,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j1c.ts(310,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j2a.ts(14,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j2a.ts(59,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j2a.ts(103,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j2a.ts(147,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j2a.ts(192,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j2a.ts(229,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j2a.ts(276,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j2a.ts(313,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j2b.ts(14,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j2b.ts(58,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j2b.ts(103,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j2b.ts(147,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j2b.ts(193,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j2b.ts(237,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j2b.ts(282,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j2b.ts(325,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j2c.ts(14,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j2c.ts(65,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j2c.ts(115,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j2c.ts(159,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j2c.ts(196,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j2c.ts(245,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j2c.ts(284,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j2c.ts(324,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3a.ts(17,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3a.ts(56,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3a.ts(100,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3a.ts(144,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3a.ts(183,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3a.ts(227,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3a.ts(271,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3a.ts(316,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3b.ts(19,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3b.ts(63,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3b.ts(108,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3b.ts(147,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3b.ts(192,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3b.ts(238,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3b.ts(285,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3b.ts(330,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3c.ts(17,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3c.ts(66,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3c.ts(115,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3c.ts(164,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3c.ts(213,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3c.ts(263,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3c.ts(313,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3c.ts(357,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j3c.ts(406,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4a.ts(17,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4a.ts(65,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4a.ts(113,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4a.ts(160,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4a.ts(207,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4a.ts(253,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4a.ts(299,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4a.ts(347,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4b.ts(18,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4b.ts(64,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4b.ts(110,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4b.ts(157,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4b.ts(197,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4b.ts(244,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4b.ts(291,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4b.ts(338,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4c.ts(16,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4c.ts(63,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4c.ts(102,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4c.ts(150,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4c.ts(198,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4c.ts(243,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4c.ts(289,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4c.ts(329,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j4c.ts(375,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/cases-j5a.ts(29,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: { answer: string; kind: "keyword"; label: string; why: string; }[]; distractors: string[]; walkthrough: string; }' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/cases-j5a.ts(68,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: { answer: string; kind: "keyword"; label: string; why: string; }[]; distractors: string[]; walkthrough: string; }' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/cases-j5a.ts(107,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: { answer: string; kind: "keyword"; label: string; why: string; }[]; distractors: string[]; walkthrough: string; }' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/cases-j5a.ts(146,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: { answer: string; kind: "keyword"; label: string; why: string; }[]; distractors: string[]; walkthrough: string; }' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/cases-j5a.ts(184,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: { answer: string; kind: "keyword"; label: string; why: string; }[]; distractors: string[]; walkthrough: string; }' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/cases-j5a.ts(225,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: ({ answer: string; kind: "number"; label: string; why: string; noVerify: true; } | { ...; })[]; distractors: string[]; walkthrough: string; }' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/cases-j5a.ts(266,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: { answer: string; kind: "keyword"; label: string; why: string; }[]; distractors: string[]; walkthrough: string; }' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/cases-j5a.ts(306,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: { answer: string; kind: "keyword"; label: string; why: string; }[]; distractors: string[]; walkthrough: string; }' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/cases-j5b.ts(28,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: { answer: string; kind: "keyword"; label: string; why: string; }[]; distractors: string[]; walkthrough: string; }' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/cases-j5b.ts(66,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: { answer: string; kind: "keyword"; label: string; why: string; }[]; distractors: string[]; walkthrough: string; }' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/cases-j5b.ts(106,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: ({ answer: string; kind: "keyword"; label: string; why: string; } | { answer: string; kind: "number"; label: string; noVerify: true; why: string; })[]; distractors: string[]; walkthrough: strin...' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/cases-j5b.ts(144,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: { answer: string; kind: "keyword"; label: string; why: string; }[]; distractors: string[]; walkthrough: string; }' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/cases-j5b.ts(188,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: { answer: string; kind: "keyword"; label: string; why: string; }[]; distractors: string[]; walkthrough: string; }' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/cases-j5b.ts(227,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: { answer: string; kind: "keyword"; label: string; why: string; }[]; distractors: string[]; walkthrough: string; }' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/cases-j5b.ts(265,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: { answer: string; kind: "keyword"; label: string; why: string; }[]; distractors: string[]; walkthrough: string; }' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/cases-j5b.ts(301,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: { answer: string; kind: "keyword"; label: string; why: string; }[]; distractors: string[]; walkthrough: string; }' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/cases-j5c.ts(32,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: { answer: string; kind: "keyword"; label: string; why: string; }[]; distractors: string[]; walkthrough: string; }' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/cases-j5c.ts(70,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: { answer: string; kind: "keyword"; label: string; why: string; }[]; distractors: string[]; walkthrough: string; }' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/cases-j5c.ts(110,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: { answer: string; kind: "keyword"; label: string; why: string; }[]; distractors: string[]; walkthrough: string; }' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/cases-j5c.ts(150,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: { answer: string; kind: "keyword"; label: string; why: string; }[]; distractors: string[]; walkthrough: string; }' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/cases-j5c.ts(190,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: { answer: string; kind: "keyword"; label: string; why: string; }[]; distractors: string[]; walkthrough: string; }' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/cases-j5c.ts(232,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: { answer: string; kind: "keyword"; label: string; why: string; }[]; distractors: string[]; walkthrough: string; }' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/cases-j5c.ts(269,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: ({ answer: string; kind: "keyword"; label: string; why: string; } | { answer: string; kind: "number"; noVerify: true; label: string; why: string; })[]; distractors: string[]; walkthrough: strin...' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/cases-j5c.ts(317,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: { answer: string; kind: "keyword"; label: string; why: string; }[]; distractors: string[]; walkthrough: string; }' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/cases-j5c.ts(359,3): error TS2741: Property 'tier' is missing in type '{ id: string; deck: 2; topic: string; universe: string; title: string; brief: string; ask: string; template: string; slots: ({ answer: string; kind: "keyword"; label: string; why: string; } | { answer: string; kind: "number"; noVerify: true; label: string; why: string; })[]; distractors: string[]; walkthrough: strin...' but required in type 'Deck2Case'.
+src/lib/curriculum/cases/m2/exemplars-m2.ts(12,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/exemplars-m2.ts(63,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/cases/m2/exemplars-m2.ts(108,5): error TS2353: Object literal may only specify known properties, and 'deck' does not exist in type 'CaseStudy'.
+src/lib/curriculum/exams.ts(6,15): error TS2305: Module '"./types"' has no exported member 'Fill'.
+src/lib/curriculum/fills/index.ts(9,15): error TS2305: Module '"../types"' has no exported member 'Fill'.
+src/lib/curriculum/fills/m01.ts(11,15): error TS2305: Module '"../types"' has no exported member 'Fill'.
+src/lib/curriculum/fills/m02.ts(15,15): error TS2305: Module '"../types"' has no exported member 'Fill'.
+src/lib/curriculum/fills/m03.ts(4,15): error TS2305: Module '"../types"' has no exported member 'Fill'.
+src/lib/curriculum/fills/m04.ts(10,15): error TS2305: Module '"../types"' has no exported member 'Fill'.
+src/lib/curriculum/fills/m05.ts(14,15): error TS2305: Module '"../types"' has no exported member 'Fill'.
+src/lib/curriculum/fills/m06.ts(9,15): error TS2305: Module '"../types"' has no exported member 'Fill'.
+src/lib/curriculum/fills/m07.ts(10,15): error TS2305: Module '"../types"' has no exported member 'Fill'.
+src/lib/curriculum/fills/m08.ts(19,15): error TS2305: Module '"../types"' has no exported member 'Fill'.
+src/lib/curriculum/index.ts(4,15): error TS2305: Module '"./types"' has no exported member 'CourseModule'.
+src/lib/curriculum/index.ts(4,29): error TS2724: '"./types"' has no exported member named 'MCQ'. Did you mean 'Mcq'?
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(20,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(36,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(52,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(68,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(84,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(100,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(116,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(132,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(148,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(164,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(181,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(197,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(213,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(224,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(240,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(256,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(272,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(283,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(295,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(307,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(318,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(329,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(340,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(356,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(372,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(388,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(404,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(420,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(437,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(448,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(464,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(475,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(491,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(508,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(520,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(536,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(552,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(568,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(585,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(601,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(612,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(623,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(640,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(656,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(673,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l01-extra.ts(684,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(20,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(36,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(52,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(68,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(79,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(90,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(106,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(122,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(138,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(154,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(170,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(187,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(204,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(220,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(236,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(252,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(269,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(285,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(301,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(317,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(333,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(349,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(365,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(381,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(397,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(413,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(429,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(440,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(456,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(473,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(489,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(505,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(516,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(528,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(544,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(561,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(577,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(588,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(604,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(621,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(637,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(653,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(670,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(686,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(698,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(715,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l02-extra.ts(731,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(16,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(27,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(38,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(55,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(67,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(78,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(90,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(102,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(113,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(130,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(147,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(158,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(170,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(187,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(198,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(215,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(232,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(248,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(265,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(281,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(298,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(314,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(325,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(341,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(352,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(363,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(375,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(392,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(404,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(421,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(432,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(448,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(460,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(472,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(483,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(500,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(511,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(522,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(533,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(549,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(560,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(571,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(583,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(594,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(610,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l03-extra.ts(621,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(20,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(36,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(52,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(68,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(84,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(100,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(111,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(127,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(143,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(159,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(170,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(181,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(192,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(203,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(220,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(236,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(252,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(263,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(279,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(290,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(306,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(322,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(334,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(346,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(358,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(374,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(390,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(406,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(422,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(433,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(449,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(465,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(481,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(497,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(513,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(529,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(546,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(557,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(573,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(589,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(605,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(621,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l04-extra.ts(637,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(20,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(36,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(52,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(68,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(84,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(100,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(116,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(132,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(148,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(165,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(181,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(197,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(213,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(229,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(246,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(262,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(279,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(295,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(311,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(327,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(343,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(359,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(375,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(391,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(407,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(423,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(439,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(455,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(471,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(488,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(504,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(520,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(536,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(553,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(569,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l05-extra.ts(585,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(20,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(36,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(52,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(68,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(84,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(100,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(116,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(132,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(148,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(164,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(180,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(196,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(212,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(228,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(244,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(260,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(276,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(292,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(308,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(325,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(341,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(357,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(373,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(389,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(405,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(421,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(437,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(453,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(469,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(485,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(501,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(517,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(533,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(549,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(565,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(581,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(597,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(613,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(629,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(645,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(661,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(677,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(693,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(709,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(725,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(741,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(757,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(773,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l06-extra.ts(789,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(15,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(26,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(38,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(49,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(60,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(71,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(83,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(94,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(105,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(116,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(127,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(139,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(150,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(161,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(172,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(183,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(195,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(206,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(217,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(228,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(239,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(250,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(261,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(272,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(283,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(294,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(305,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(316,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(327,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(338,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(349,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(360,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(372,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(383,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(394,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(405,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(416,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(427,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(438,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(449,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(460,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(471,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(482,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(493,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l07-extra.ts(504,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(15,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(26,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(37,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(48,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(60,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(71,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(82,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(93,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(104,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(115,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(126,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(137,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(148,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(159,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(170,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(181,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(192,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(203,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(214,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(225,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(236,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(247,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(258,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(269,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(280,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(291,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(302,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(313,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(324,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(335,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(346,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(357,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(368,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(379,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(390,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(401,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(412,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(423,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(434,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(445,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(456,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(467,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(478,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l08-extra.ts(489,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l35-extra.ts(21,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l35-extra.ts(37,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l35-extra.ts(54,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l35-extra.ts(71,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l35-extra.ts(88,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l35-extra.ts(105,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l35-extra.ts(122,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l35-extra.ts(139,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l35-extra.ts(156,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l35-extra.ts(173,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l35-extra.ts(190,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l35-extra.ts(206,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l35-extra.ts(222,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l35-extra.ts(239,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l35-extra.ts(256,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l35-extra.ts(273,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l35-extra.ts(290,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/lessons/mcq-banks/l35-extra.ts(307,5): error TS2353: Object literal may only specify known properties, and 'difficulty' does not exist in type 'Mcq'.
+src/lib/curriculum/mcqs/mcqs-01.ts(4,15): error TS2724: '"../types"' has no exported member named 'MCQ'. Did you mean 'Mcq'?
+src/lib/curriculum/mcqs/mcqs-02.ts(4,15): error TS2724: '"../types"' has no exported member named 'MCQ'. Did you mean 'Mcq'?
+src/lib/curriculum/mcqs/mcqs-03.ts(4,15): error TS2724: '"../types"' has no exported member named 'MCQ'. Did you mean 'Mcq'?
+src/lib/curriculum/mcqs/mcqs-04.ts(4,15): error TS2724: '"../types"' has no exported member named 'MCQ'. Did you mean 'Mcq'?
+src/lib/curriculum/mcqs/mcqs-05.ts(4,15): error TS2724: '"../types"' has no exported member named 'MCQ'. Did you mean 'Mcq'?
+src/lib/curriculum/mcqs/mcqs-06.ts(4,15): error TS2724: '"../types"' has no exported member named 'MCQ'. Did you mean 'Mcq'?
+src/lib/curriculum/mcqs/mcqs-07.ts(4,15): error TS2724: '"../types"' has no exported member named 'MCQ'. Did you mean 'Mcq'?
+src/lib/curriculum/mcqs/mcqs-08.ts(4,15): error TS2724: '"../types"' has no exported member named 'MCQ'. Did you mean 'Mcq'?
+src/lib/curriculum/problems/problems-01.ts(4,15): error TS2305: Module '"../types"' has no exported member 'QueryProblem'.
+src/lib/curriculum/problems/problems-02.ts(4,15): error TS2305: Module '"../types"' has no exported member 'QueryProblem'.
+src/lib/curriculum/problems/problems-03.ts(4,15): error TS2305: Module '"../types"' has no exported member 'QueryProblem'.
+src/lib/curriculum/problems/problems-04.ts(4,15): error TS2305: Module '"../types"' has no exported member 'QueryProblem'.
+src/lib/curriculum/problems/problems-05.ts(4,15): error TS2305: Module '"../types"' has no exported member 'QueryProblem'.
+src/lib/curriculum/problems/problems-06.ts(4,15): error TS2305: Module '"../types"' has no exported member 'QueryProblem'.
+src/lib/curriculum/problems/problems-07.ts(4,15): error TS2305: Module '"../types"' has no exported member 'QueryProblem'.
+src/lib/curriculum/problems/problems-08.ts(4,15): error TS2305: Module '"../types"' has no exported member 'QueryProblem'.
+src/lib/quality-audit.ts(10,3): error TS2305: Module '"./schema-meta"' has no exported member 'QUALITY_ANOMALIES'.
+src/lib/quality-audit.ts(11,3): error TS2305: Module '"./schema-meta"' has no exported member 'QUALITY_COLUMN_RULES'.
+src/lib/quality-audit.ts(12,3): error TS2305: Module '"./schema-meta"' has no exported member 'QUALITY_ENUM_COLUMNS'.
+src/lib/quality-audit.ts(17,3): error TS2305: Module '"./sql-types"' has no exported member 'QualityAnomalyReport'.
+src/lib/quality-audit.ts(18,3): error TS2305: Module '"./sql-types"' has no exported member 'QualityEnumReport'.
+src/lib/quality-audit.ts(19,3): error TS2305: Module '"./sql-types"' has no exported member 'QualityFkReport'.
+src/lib/quality-audit.ts(20,3): error TS2305: Module '"./sql-types"' has no exported member 'QualityResponse'.
+src/lib/quality-audit.ts(21,3): error TS2305: Module '"./sql-types"' has no exported member 'QualityTableReport'.
+src/lib/quality-audit.ts(22,3): error TS2305: Module '"./sql-types"' has no exported member 'QualityTimelinePoint'.
+src/lib/sql-funnel.ts(15,3): error TS2305: Module '"./sql-types"' has no exported member 'FilterProbe'.
+src/lib/sql-funnel.ts(16,3): error TS2305: Module '"./sql-types"' has no exported member 'FunnelResponse'.
+src/lib/sql-funnel.ts(17,3): error TS2305: Module '"./sql-types"' has no exported member 'FunnelResult'.
+src/lib/sql-funnel.ts(18,3): error TS2305: Module '"./sql-types"' has no exported member 'FunnelStage'.
+src/lib/sql-funnel.ts(19,3): error TS2305: Module '"./sql-types"' has no exported member 'JoinProbe'.
