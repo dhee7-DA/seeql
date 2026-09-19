@@ -90,6 +90,7 @@ export type FigureId =
   | "d2-alter-paths"
   | "d3-view-lens"
   | "d4-index-lookup"
+  | "d48-index-space-3d"
   | "d5-recursive-unfold"
   | "fin1-books-map"
   | "fin2-statement-walk"

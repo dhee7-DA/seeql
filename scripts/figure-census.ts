@@ -24,10 +24,16 @@ for (const f of files) {
   lessonFigCount.push({ n, title: titleMatch ? titleMatch[1] : "?", figs });
 }
 
-// Registry entries from diagrams.tsx
-const diagramsSrc = fs.readFileSync("/home/z/my-project/src/components/learn/diagrams.tsx", "utf8");
+// Registry entries from diagrams.tsx + figures3d.tsx + every diagrams-m*.tsx
+const learnDir = "/home/z/my-project/src/components/learn";
+const regFiles = [`${learnDir}/diagrams.tsx`, `${learnDir}/figures3d.tsx`].concat(
+  fs.readdirSync(learnDir).filter((f) => /^diagrams-.+\.tsx$/.test(f)).map((f) => `${learnDir}/${f}`),
+);
 const registry = new Set<string>();
-for (const m of diagramsSrc.matchAll(/"([a-z0-9-]+)":\s*[A-Z][A-Za-z0-9]*,/g)) registry.add(m[1]);
+for (const rf of regFiles) {
+  const src = fs.readFileSync(rf, "utf8");
+  for (const m of src.matchAll(/"([a-z0-9-]+)":\s*[A-Z][A-Za-z0-9]*,/g)) registry.add(m[1]);
+}
 
 // FigureId union from types.ts
 const typesSrc = fs.readFileSync("/home/z/my-project/src/lib/curriculum/types.ts", "utf8");

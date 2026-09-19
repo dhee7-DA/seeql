@@ -46,6 +46,7 @@ SELECT * FROM orders WHERE customer_id = 1;
         "**CREATE UNIQUE INDEX** — the constraint from lesson 45 as a standalone statement: the index enforces uniqueness on the spot. `CREATE UNIQUE INDEX idx_customers_email ON customers(email)` succeeds here because all 16 emails are distinct — a single duplicate would reject the whole statement.",
       ],
     },
+    { kind: "diagram", figure: "d48-index-space-3d" },
     {
       kind: "warn",
       text: "Don't index everything. Every index taxes every write, and there are already several in play (each PRIMARY KEY and UNIQUE constraint is one). Index the columns you FILTER and JOIN on in hot queries — customer_id, created_at, status — not the columns you merely SELECT. On a 16-row table it's all theater; the habit is what transfers.",

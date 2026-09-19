@@ -1652,6 +1652,531 @@ function T32RunningSpace() {
   );
 }
 
+/* ================= d48-index-space-3d — the index descent, in space ========
+ * Real seed facts (db/custom.db, verified via scripts/indextree3d-facts.ts):
+ *   orders 103 rows · customers 16 · customer_id=1 (Alice Chen) owns 24 of
+ *   them, occupying rowid positions 1–24 (contiguous — the seed inserts her
+ *   orders first) · sqlite_master holds ZERO indexes on orders before this
+ *   lesson · EQP pre-index prints exactly "SCAN orders"; after
+ *   CREATE INDEX idx_orders_customer it prints exactly
+ *   "SEARCH orders USING INDEX idx_orders_customer (customer_id=?)".
+ *   Per-key leaf counts 1·24 2·2 3·5 4·2 5·17 6·3 7·14 8·3 9·4 10·2 11·4
+ *   12·1 13·13 14·4 15·1 16·4 (sum = 103).
+ * The scene plays the lesson's whole arc: a full SCAN sweep (every row read,
+ * the 24 matches found early, 79 reads wasted), the CREATE INDEX build (16
+ * sorted keys settle into a stylized B-tree — root + 6 leaves), then the
+ * SEARCH descent (probe drops to the root, one beam to leaf 1, 24 row
+ * pointers fly back to the same 24 rows they found before). */
+
+const D48_COLS = 14;
+const D48_ROWS = 8;
+const D48_N = 103;
+const D48_MATCH_N = 24; // customer_id = 1 → rowid positions 1..24 (0-based 0..23)
+const D48_KEYS = [
+  { k: 1, n: 24 }, { k: 2, n: 2 }, { k: 3, n: 5 }, { k: 4, n: 2 },
+  { k: 5, n: 17 }, { k: 6, n: 3 }, { k: 7, n: 14 }, { k: 8, n: 3 },
+  { k: 9, n: 4 }, { k: 10, n: 2 }, { k: 11, n: 4 }, { k: 12, n: 1 },
+  { k: 13, n: 13 }, { k: 14, n: 4 }, { k: 15, n: 1 }, { k: 16, n: 4 },
+] as const;
+// leaves hold 3 keys each; root separators are the first key of leaves 2..6
+const D48_LEAVES: Array<Array<{ k: number; n: number }>> = [
+  D48_KEYS.slice(0, 3), D48_KEYS.slice(3, 6), D48_KEYS.slice(6, 9),
+  D48_KEYS.slice(9, 12), D48_KEYS.slice(12, 15), D48_KEYS.slice(15, 16),
+];
+const D48_ROOT_SEPS = "4 · 7 · 10 · 13 · 16";
+
+const D48_PITCH = 0.31;
+const D48_TABLE_X = -2.6; // grid center x
+const D48_TABLE_Y = 1.5;  // top row y
+const D48_TABLE_Z = -1.0;
+const D48_LEAF_Y = 0.55;
+const D48_LEAF_X0 = 0.55;
+const D48_LEAF_PITCH = 0.92;
+const D48_ROOT_X = 2.85;
+const D48_ROOT_Y = 2.05;
+const D48_TREE_Z = 0.3;
+
+const D48_TEAL = "#2dd4bf";
+const D48_AMBER = "#fbbf24";
+const D48_ROSE = "#fb7185";
+const D48_IDLE = "#27272a";
+const D48_READ = "#4c2a35";
+const D48_MATCH_FILL = "#0f3d38";
+
+const D48_T0 = 0.8;                  // scan start
+const D48_SCAN = 6.2;                // full sweep duration
+const D48_T1 = D48_T0 + D48_SCAN + 0.35;   // build start (7.35)
+const D48_BUILD = 1.5;
+const D48_T2 = D48_T1 + D48_BUILD + 0.45;  // search start (9.3)
+const D48_DROP = 0.55;               // probe falls onto the root
+const D48_BEAM = 0.55;               // root → leaf beam
+const D48_T3 = D48_T2 + D48_DROP + D48_BEAM + 0.25; // pointers start (10.65)
+const D48_RIB_DUR = 0.95;
+const D48_RIB_STEP = 0.055;
+const D48_T4 = D48_T3 + D48_MATCH_N * D48_RIB_STEP + D48_RIB_DUR + 0.35;
+
+const d48ChipX = (i: number) => D48_TABLE_X + (i % D48_COLS - (D48_COLS - 1) / 2) * D48_PITCH;
+const d48ChipY = (i: number) => D48_TABLE_Y - Math.floor(i / D48_COLS) * D48_PITCH;
+const d48Clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+
+// 24 pointer ribbons: leaf 1's front face → each matched table chip
+type D48Pointer = { delay: number; from: THREE.Vector3; ctrl: THREE.Vector3; to: THREE.Vector3 };
+const D48_POINTERS: D48Pointer[] = (() => {
+  const from = new THREE.Vector3(D48_LEAF_X0, D48_LEAF_Y, D48_TREE_Z + 0.25);
+  const out: D48Pointer[] = [];
+  for (let i = 0; i < D48_MATCH_N; i++) {
+    const to = new THREE.Vector3(d48ChipX(i), d48ChipY(i), D48_TABLE_Z + 0.1);
+    const ctrl = new THREE.Vector3((from.x + to.x) / 2, (from.y + to.y) / 2 + 0.5, 0.45);
+    out.push({ delay: i * D48_RIB_STEP, from, ctrl, to });
+  }
+  return out;
+})();
+
+function IndexTreeScene({ replayRef }: { replayRef?: { current: (() => void) | null } }) {
+  const [read, setRead] = useState(0);
+  const [stage, setStage] = useState<"idle" | "scan" | "build" | "descend" | "fetch" | "done">("idle");
+  const startRef = useRef(0);
+  const clockRef = useRef(0);
+  const stageRef = useRef<string>("idle");
+  const sweptRef = useRef(0); // fully swept columns so far
+  const doneAtRef = useRef(-1);
+  const groupRef = useRef<THREE.Group>(null);
+  const chipRefs = useRef<Array<THREE.Mesh | null>>(new Array(D48_N).fill(null));
+  const scanBarRef = useRef<THREE.Mesh>(null);
+  const scanPanelRef = useRef<THREE.Mesh>(null);
+  const treeRef = useRef<THREE.Group>(null);
+  const leafRefs = useRef<Array<THREE.Group | null>>(new Array(6).fill(null));
+  const rootRef = useRef<THREE.Group>(null);
+  const probeRef = useRef<THREE.Mesh>(null);
+  const beamRef = useRef<THREE.Mesh>(null);
+  const ribRefs = useRef<Array<THREE.Mesh | null>>([]);
+  const ribMatRefs = useRef<Array<THREE.MeshBasicMaterial | null>>([]);
+  const arrivedRef = useRef<boolean[]>(new Array(D48_MATCH_N).fill(false));
+  const flashRef = useRef<number[]>(new Array(D48_MATCH_N).fill(0));
+  const slabRef = useRef<THREE.Group>(null);
+
+  const setStageSafe = (s: typeof stage) => {
+    if (stageRef.current !== s) {
+      stageRef.current = s;
+      setStage(s);
+    }
+  };
+
+  const ribCurves = useMemo(
+    () => D48_POINTERS.map((p) => new THREE.QuadraticBezierCurve3(p.from, p.ctrl, p.to)),
+    [],
+  );
+  const ribGeoms = useMemo(
+    () => ribCurves.map((c) => new THREE.TubeGeometry(c, 36, 0.016, 5, false)),
+    [ribCurves],
+  );
+  useEffect(() => () => ribGeoms.forEach((g) => g.dispose()), [ribGeoms]);
+
+  // root → leaf-1 beam (2-point curve → tube)
+  const beamCurve = useMemo(
+    () =>
+      new THREE.CatmullRomCurve3([
+        new THREE.Vector3(D48_ROOT_X, D48_ROOT_Y - 0.22, D48_TREE_Z),
+        new THREE.Vector3(D48_LEAF_X0, D48_LEAF_Y + 0.26, D48_TREE_Z),
+      ]),
+    [],
+  );
+  const beamGeom = useMemo(() => new THREE.TubeGeometry(beamCurve, 16, 0.02, 5, false), [beamCurve]);
+  useEffect(() => () => beamGeom.dispose(), [beamGeom]);
+
+  // paint one chip's three states
+  const paintChip = (i: number, mode: "idle" | "read" | "match") => {
+    const mesh = chipRefs.current[i];
+    if (!mesh) return;
+    const mat = mesh.material as THREE.MeshStandardMaterial;
+    if (mode === "idle") {
+      mat.color.set(D48_IDLE);
+      mat.emissive.set("#000000");
+      mat.emissiveIntensity = 0;
+    } else if (mode === "read") {
+      mat.color.set(D48_READ);
+      mat.emissive.set(D48_ROSE);
+      mat.emissiveIntensity = 0.08;
+    } else {
+      mat.color.set(D48_MATCH_FILL);
+      mat.emissive.set(D48_TEAL);
+      mat.emissiveIntensity = 0.5;
+    }
+  };
+
+  useFrame((state, dt) => {
+    clockRef.current = state.clock.elapsedTime;
+    const e = clockRef.current - startRef.current;
+
+    if (groupRef.current) {
+      groupRef.current.rotation.y = Math.sin(e * 0.13) * 0.03;
+      groupRef.current.position.y = Math.sin(e * 0.5) * 0.03;
+    }
+
+    // ---- phase A: SCAN sweep, column-major ----
+    const colF = d48Clamp01((e - D48_T0) / D48_SCAN) * D48_COLS;
+    const swept = Math.min(D48_COLS, Math.floor(colF));
+    if (swept > sweptRef.current && e >= D48_T0) {
+      for (let c = sweptRef.current; c < swept; c++) {
+        for (let r = 0; r < D48_ROWS; r++) {
+          const i = r * D48_COLS + c;
+          if (i >= D48_N) break;
+          paintChip(i, i < D48_MATCH_N ? "match" : "read");
+        }
+      }
+      sweptRef.current = swept;
+      setRead(Math.min(D48_N, swept * D48_ROWS));
+    }
+    // scanner bar + swept panel
+    const scanActive = e >= D48_T0 && colF < D48_COLS;
+    if (scanBarRef.current) {
+      scanBarRef.current.visible = scanActive;
+      const c = Math.min(D48_COLS, colF);
+      scanBarRef.current.position.x =
+        D48_TABLE_X + (c - (D48_COLS - 1) / 2) * D48_PITCH - D48_PITCH / 2;
+    }
+    if (scanPanelRef.current) {
+      scanPanelRef.current.visible = e >= D48_T0;
+      const w = Math.max(0.05, Math.min(D48_COLS, colF) * D48_PITCH);
+      const rightX = D48_TABLE_X + (Math.min(D48_COLS, colF) - (D48_COLS - 1) / 2) * D48_PITCH - D48_PITCH / 2;
+      scanPanelRef.current.scale.x = w;
+      scanPanelRef.current.position.x = rightX - w / 2;
+    }
+    if (scanActive) setStageSafe("scan");
+    else if (e >= D48_T2 + D48_DROP + D48_BEAM) setStageSafe(e >= D48_T4 ? "done" : "fetch");
+    else if (e >= D48_T2) setStageSafe("descend");
+    else if (e >= D48_T1) setStageSafe("build");
+
+    // ---- phase B: the tree rises, leaves staggered ----
+    if (treeRef.current) {
+      const buildT = d48Clamp01((e - D48_T1) / D48_BUILD);
+      treeRef.current.visible = buildT > 0;
+    }
+    leafRefs.current.forEach((leaf, li) => {
+      if (!leaf) return;
+      const t = d48Clamp01((e - D48_T1 - li * 0.13) / 0.45);
+      leaf.scale.setScalar(t >= 1 ? 1 : t <= 0 ? 0.001 : popEase(t));
+    });
+    if (rootRef.current) {
+      const t = d48Clamp01((e - D48_T1 - 0.85) / 0.45);
+      rootRef.current.scale.setScalar(t >= 1 ? 1 : t <= 0 ? 0.001 : popEase(t));
+    }
+
+    // ---- phase C: probe drop → beam → 24 pointers ----
+    if (probeRef.current) {
+      if (e < D48_T2) probeRef.current.visible = false;
+      else if (e < D48_T2 + D48_DROP) {
+        probeRef.current.visible = true;
+        const t = (e - D48_T2) / D48_DROP;
+        probeRef.current.position.set(D48_ROOT_X, 3.3 + (D48_ROOT_Y + 0.15 - 3.3) * t, D48_TREE_Z);
+      } else if (e < D48_T2 + D48_DROP + D48_BEAM) {
+        probeRef.current.visible = true;
+        beamCurve.getPointAt((e - D48_T2 - D48_DROP) / D48_BEAM, probeRef.current.position);
+      } else if (e < D48_T3 + 0.6) {
+        probeRef.current.visible = true;
+        beamCurve.getPointAt(1, probeRef.current.position);
+      } else probeRef.current.visible = false;
+    }
+    if (beamRef.current) {
+      const t = d48Clamp01((e - D48_T2 - D48_DROP) / D48_BEAM);
+      beamRef.current.visible = t > 0 && e < D48_T3 + 1.2;
+      beamRef.current.geometry.setDrawRange(0, Math.max(1, Math.floor(t * 16)) * 30);
+    }
+
+    D48_POINTERS.forEach((_, i) => {
+      const rib = ribRefs.current[i];
+      const mat = ribMatRefs.current[i];
+      if (!rib || !mat) return;
+      const t = (e - D48_T3 - D48_POINTERS[i].delay) / D48_RIB_DUR;
+      if (t <= 0) {
+        rib.visible = false;
+        return;
+      }
+      if (t >= 1) {
+        if (!arrivedRef.current[i]) {
+          arrivedRef.current[i] = true;
+          flashRef.current[i] = 1;
+        }
+        rib.visible = true;
+        rib.geometry.setDrawRange(0, Infinity);
+        mat.opacity = 0.55;
+        return;
+      }
+      const p = t * t * (3 - 2 * t);
+      rib.visible = true;
+      mat.opacity = 0.15 + p * 0.45;
+      rib.geometry.setDrawRange(0, Math.max(1, Math.floor(p * 36)) * 30);
+    });
+    flashRef.current = flashRef.current.map((f) => f * Math.exp(-dt * 2.6));
+    arrivedRef.current.forEach((a, i) => {
+      if (!a) return;
+      const mesh = chipRefs.current[i];
+      if (!mesh) return;
+      (mesh.material as THREE.MeshStandardMaterial).emissiveIntensity = 0.5 + flashRef.current[i] * 1.4;
+    });
+
+    // punchline slab
+    if (e >= D48_T4 && doneAtRef.current < 0) doneAtRef.current = e;
+    if (slabRef.current) {
+      const age = doneAtRef.current < 0 ? 0 : e - doneAtRef.current;
+      slabRef.current.visible = age > 0;
+      if (age > 0) slabRef.current.scale.setScalar(popEase(Math.min(1, age / 0.35)));
+    }
+  });
+
+  const replay = () => {
+    startRef.current = clockRef.current;
+    stageRef.current = "idle";
+    sweptRef.current = 0;
+    doneAtRef.current = -1;
+    arrivedRef.current = new Array(D48_MATCH_N).fill(false);
+    flashRef.current = new Array(D48_MATCH_N).fill(0);
+    for (let i = 0; i < D48_N; i++) paintChip(i, "idle");
+    if (treeRef.current) treeRef.current.visible = false;
+    leafRefs.current.forEach((leaf) => leaf?.scale.setScalar(0.001));
+    rootRef.current?.scale.setScalar(0.001);
+    if (probeRef.current) probeRef.current.visible = false;
+    if (beamRef.current) beamRef.current.visible = false;
+    ribRefs.current.forEach((rib) => {
+      if (rib) rib.visible = false;
+    });
+    if (slabRef.current) slabRef.current.visible = false;
+    setRead(0);
+    setStage("idle");
+  };
+
+  useEffect(() => {
+    if (replayRef) replayRef.current = replay;
+  });
+
+  const hud =
+    stage === "done"
+      ? "SCAN read 103 · SEARCH visited 2 nodes and fetched the same 24 — writes pay rent on the tree."
+      : stage === "fetch"
+        ? "SEARCH USING INDEX — 24 row pointers fly to their rows; the other 79 are never touched."
+        : stage === "descend"
+          ? "CREATE INDEX — 16 keys sort into a B-tree; the probe descends root → leaf."
+          : stage === "build"
+            ? "CREATE INDEX idx_orders_customer — 16 keys sort into a B-tree…"
+            : stage === "scan"
+              ? `SCAN orders — ${Math.min(read, D48_N)} / 103 rows read · 24 matched (customer_id = 1)`
+              : "SELECT * FROM orders WHERE customer_id = 1 — orders has 0 indexes…";
+
+  return (
+    <>
+      <ambientLight intensity={0.55} />
+      <directionalLight position={[4, 8, 6]} intensity={1.15} />
+      <fog attach="fog" args={["#09090b", 15, 32]} />
+
+      <group ref={groupRef}>
+        {/* ---- the orders table: 103 chips in rowid order ---- */}
+        <Text font={FONT} fontSize={0.16} color="#a1a1aa" position={[D48_TABLE_X, 1.98, D48_TABLE_Z]} anchorX="center">
+          orders — 103 rows · 0 indexes
+        </Text>
+        <Text font={FONT} fontSize={0.1} color="#52525b" position={[D48_TABLE_X, 1.78, D48_TABLE_Z]} anchorX="center">
+          WHERE customer_id = 1 → 24 rows
+        </Text>
+        {Array.from({ length: D48_N }, (_, i) => (
+          <mesh
+            key={i}
+            ref={(mesh) => {
+              chipRefs.current[i] = mesh as THREE.Mesh | null;
+            }}
+            position={[d48ChipX(i), d48ChipY(i), D48_TABLE_Z]}
+          >
+            <boxGeometry args={[0.22, 0.17, 0.14]} />
+            <meshStandardMaterial color={D48_IDLE} roughness={0.6} />
+          </mesh>
+        ))}
+
+        {/* scanner: amber leading bar + translucent swept panel */}
+        <mesh ref={scanPanelRef} position={[D48_TABLE_X, 0.45, D48_TABLE_Z + 0.18]} visible={false}>
+          <boxGeometry args={[1, 2.85, 0.04]} />
+          <meshBasicMaterial color={D48_ROSE} transparent opacity={0.07} side={THREE.DoubleSide} depthWrite={false} />
+        </mesh>
+        <mesh ref={scanBarRef} position={[D48_TABLE_X, 0.45, D48_TABLE_Z + 0.2]} visible={false}>
+          <boxGeometry args={[0.05, 2.85, 0.05]} />
+          <meshBasicMaterial color={D48_AMBER} />
+        </mesh>
+
+        {/* ---- idx_orders_customer: root + 6 leaves ---- */}
+        <group ref={treeRef} visible={false}>
+          <Text font={FONT} fontSize={0.16} color="#5eead4" position={[D48_ROOT_X, 2.62, D48_TREE_Z]} anchorX="center">
+            idx_orders_customer
+          </Text>
+          <Text font={FONT} fontSize={0.1} color="#52525b" position={[D48_ROOT_X, 2.44, D48_TREE_Z]} anchorX="center">
+            16 keys · sorted for descent
+          </Text>
+          <group ref={rootRef} position={[D48_ROOT_X, D48_ROOT_Y, D48_TREE_Z]} scale={0.001}>
+            <RoundedBox args={[2.5, 0.4, 0.24]} radius={0.05} smoothness={3}>
+              <meshStandardMaterial color="#18181b" emissive={D48_TEAL} emissiveIntensity={0.22} roughness={0.5} />
+            </RoundedBox>
+            <Text font={FONT} fontSize={0.105} color="#5eead4" position={[0, 0, 0.14]} anchorX="center" anchorY="middle">
+              root {D48_ROOT_SEPS}
+            </Text>
+          </group>
+          {D48_LEAVES.map((leaf, li) => (
+            <group
+              key={li}
+              ref={(g) => {
+                leafRefs.current[li] = g as THREE.Group | null;
+              }}
+              position={[D48_LEAF_X0 + li * D48_LEAF_PITCH, D48_LEAF_Y, D48_TREE_Z]}
+              scale={0.001}
+            >
+              <RoundedBox args={[0.84, 0.44, 0.22]} radius={0.05} smoothness={3}>
+                <meshStandardMaterial color="#18181b" emissive={D48_TEAL} emissiveIntensity={0.1} roughness={0.55} />
+              </RoundedBox>
+              {leaf.map((entry, ki) => (
+                <Text
+                  key={entry.k}
+                  font={FONT}
+                  fontSize={0.078}
+                  color={entry.k === 1 ? "#5eead4" : "#a1a1aa"}
+                  position={[(ki - (leaf.length - 1) / 2) * 0.27, 0, 0.13]}
+                  anchorX="center"
+                  anchorY="middle"
+                >
+                  {`${entry.k}·${entry.n}`}
+                </Text>
+              ))}
+              <Text
+                font={FONT}
+                fontSize={0.07}
+                color="#52525b"
+                position={[0, -0.32, 0]}
+                anchorX="center"
+              >
+                {`keys ${leaf[0].k}-${leaf[leaf.length - 1].k}`}
+              </Text>
+            </group>
+          ))}
+          <Text font={FONT} fontSize={0.09} color="#3f3f46" position={[D48_ROOT_X, -0.12, D48_TREE_Z]} anchorX="center">
+            leaves hold sorted keys + row pointers — real trees add levels, not width
+          </Text>
+        </group>
+
+        {/* probe sphere + root→leaf beam */}
+        <mesh ref={probeRef} visible={false}>
+          <sphereGeometry args={[0.1, 16, 16]} />
+          <meshStandardMaterial color={D48_AMBER} emissive={D48_AMBER} emissiveIntensity={0.9} roughness={0.3} />
+        </mesh>
+        <mesh ref={beamRef} visible={false} geometry={beamGeom}>
+          <meshBasicMaterial color={D48_TEAL} transparent opacity={0.85} blending={THREE.AdditiveBlending} depthWrite={false} />
+        </mesh>
+
+        {/* 24 row pointers */}
+        {D48_POINTERS.map((_, i) => (
+          <mesh key={i} visible={false} geometry={ribGeoms[i]} ref={(mesh) => {
+            ribRefs.current[i] = mesh as THREE.Mesh | null;
+          }}>
+            <meshBasicMaterial
+              ref={(mat) => {
+                ribMatRefs.current[i] = mat as THREE.MeshBasicMaterial | null;
+              }}
+              color={D48_TEAL}
+              transparent
+              opacity={0.5}
+              blending={THREE.AdditiveBlending}
+              depthWrite={false}
+            />
+          </mesh>
+        ))}
+
+        {/* punchline slab */}
+        <group ref={slabRef} visible={false} position={[D48_ROOT_X, -1.35, 0.3]}>
+          <RoundedBox args={[5.9, 0.5, 0.34]} radius={0.08} smoothness={3}>
+            <meshStandardMaterial color="#18181b" emissive={D48_AMBER} emissiveIntensity={0.14} roughness={0.5} />
+          </RoundedBox>
+          <Text font={FONT} fontSize={0.145} color="#fbbf24" position={[0, 0, 0.2]} anchorX="center" anchorY="middle">
+            SCAN reads 103 · SEARCH reads 24 — writes pay rent on the tree
+          </Text>
+        </group>
+      </group>
+
+      {/* ---- HUD ---- */}
+      <Html position={[0, 3.35, 0]} center>
+        <div className="pointer-events-none max-w-[560px] whitespace-nowrap rounded-md border border-zinc-700 bg-zinc-950/90 px-3 py-1.5 text-[11px] text-zinc-300 shadow-lg">
+          {hud}
+        </div>
+      </Html>
+      <Html position={[-4.6, -1.9, 0]} center>
+        <div className="pointer-events-none flex items-center gap-2 rounded-md border border-zinc-800 bg-zinc-950/80 px-2 py-1 text-[9px] text-zinc-400">
+          <span className="inline-block size-2 rounded-sm" style={{ background: D48_AMBER }} /> scan / probe
+          <span className="inline-block size-2 rounded-sm" style={{ background: D48_TEAL }} /> match · pointer
+          <span className="inline-block size-2 rounded-sm" style={{ background: D48_ROSE }} /> read, discarded
+        </div>
+      </Html>
+      <Html position={[0, -2.55, 0]} center>
+        <button
+          onClick={replay}
+          className="pointer-events-auto whitespace-nowrap rounded-md border border-zinc-700 bg-zinc-900/90 px-2.5 py-1 text-[11px] text-zinc-300 shadow transition-colors hover:bg-zinc-800"
+        >
+          ↻ replay SCAN vs SEARCH
+        </button>
+      </Html>
+
+      <gridHelper args={[30, 30, "#27272a", "#18181b"]} position={[0, -2.9, 0]} />
+      <OrbitControls
+        target={[0, 0.4, 0]}
+        enablePan={false}
+        minDistance={8}
+        maxDistance={18}
+        maxPolarAngle={1.5}
+        enableDamping
+        dampingFactor={0.08}
+      />
+    </>
+  );
+}
+
+function D48IndexSpace() {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const replayRef = useRef<(() => void) | null>(null);
+  const lastAutoRef = useRef(0);
+
+  // Auto-replay on scroll-into-view, same contract as the other 3D scenes.
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const en of entries) {
+          if (en.isIntersecting && en.intersectionRatio >= 0.55) {
+            const now = performance.now();
+            if (now - lastAutoRef.current > 7000) {
+              lastAutoRef.current = now;
+              replayRef.current?.();
+            }
+          }
+        }
+      },
+      { threshold: [0.55] },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={wrapRef}
+      className="relative h-[400px] w-full"
+      role="img"
+      aria-label="Interactive 3D scene of how an index changes a query plan. All 103 order rows sit as a grid of chips; an amber scanner sweeps every column — SCAN orders — reading all 103 rows, the 24 rows for customer_id = 1 lighting teal early and 79 reads landing rose as wasted. The tree idx_orders_customer then rises: a root holding separators 4, 7, 10, 13, 16 over six leaves of sorted keys with row pointers (key 1 carries 24 rows). An amber probe descends root to leaf — SEARCH orders USING INDEX — and 24 teal pointer ribbons fly back to exactly the same 24 rows, leaving the other 79 untouched. Punchline: SCAN reads 103, SEARCH reads 24, and every write pays rent on the tree. Drag to orbit."
+    >
+      <Canvas
+        dpr={[1, 1.75]}
+        gl={{ antialias: true, alpha: true }}
+        camera={{ position: [0.3, 0.5, 12.9], fov: 40 }}
+      >
+        <SuspenseBoundary>
+          <IndexTreeScene replayRef={replayRef} />
+        </SuspenseBoundary>
+      </Canvas>
+    </div>
+  );
+}
+
 /* ================= registry ================= */
 
 export const FIGURES_3D: Partial<Record<FigureId, () => JSX.Element>> = {
@@ -1659,4 +2184,5 @@ export const FIGURES_3D: Partial<Record<FigureId, () => JSX.Element>> = {
   "j12-left-space-3d": L12LeftJoinSpace,
   "l8-bins-space-3d": L8BinsSpace,
   "t32-running-space-3d": T32RunningSpace,
+  "d48-index-space-3d": D48IndexSpace,
 };
