@@ -1950,3 +1950,23 @@ Work Log:
 Stage Summary:
 - App now has 6 DB-verified 3D scenes: INNER JOIN (l10), LEFT JOIN (l12), GROUP BY + HAVING (l08), window running total (l32), index B-tree (l48), transaction atomicity (l44) — the write module now closes its loop with the same visual language as the read modules.
 - w44-atomic-space-3d committed as atomic-tx-1; reusable one-shot QA harness scripts/qa-lesson44.sh documents the covered-sidebar-row pitfall for future lesson QA.
+
+---
+Task ID: caselesson-figs-1
+Agent: Super Z (main agent)
+Task: Full audit follow-up — investigate wiring the drafted w1-w8 write-case bank, then give the 8 figure-less case-study lessons (L35-40, L50-51) their first figures.
+
+Work Log:
+- Audit request produced a live-verified inventory (149 commits, 113 worklog entries, 244,556 LoC, 9 modules/57 lessons, 1675-case deck, QA gates at baseline).
+- W-bank investigation: cases-w1..w8 (298 cases) and cases-m2-l9..l16+cap2 (300 cases) exist on disk unwired — id-collision check proved 598/598 collide with the wired deck (cs-1203..1500 reused by t-family; cs-301..583 by j-family). They are superseded draft generations, NOT wireable work; real gap is zero case coverage for M7/M8/M9.
+- Pivoted to the visual-density queue: 7 bespoke case-study figures in new src/components/learn/diagrams-mcase.tsx — l36-join-instruments (5 asks → 5 join shapes, honest 34,833.28 vs 103,244.55), l37-setop-pivot (set arms + region×status CASE pivot + value census), l38-nested-asks (4 nested-subquery cards, bar 2,177.08, 45-vs-42), l39-ops-calendar (14 probed monthly bars + running line to 34,833.28 + 2.98d/NTILE 26-26-26-25/LAG gaps chips), l40-exec-onepager (FILTER census 52/30/14/7 + grand-total stack + [lo,hi) bands 8/4/4 + cross join 24 + GROUP_CONCAT), d50-fix-ticket (5 write verbs: census → id 17 Streaming Mic Arm → ids 12/13 84.00/209.99 → purge → id 2 stock 340), d51-reporting-layer (9 tables → VIEW month_revenue → month_targets → idx_orders_created + worst-month probe 2024-07 1,193.86).
+- All numbers from EXPECTED result sets (scripts/caselesson-facts.ts receipt) + fresh /api/query probe of the 14 month buckets.
+- DISCOVERED + FIXED a real wiring defect: FIGURES_M1A..M1E (35 library figures incl. the 3 L35 figures) were defined but never imported into diagrams.tsx — dead in the live app. Merged all five families + FIGURES_CASE into the registry; duplicate-key audit across all 16 registries: 147 keys, 0 collisions.
+- Completed the FigureId union with the 32 m1-family ids + l35-question-to-sql + l35-clause-order (they were registry keys but missing from the union — the source of 5 pre-existing tsc errors).
+- Slotted: L35 ×3 (report-anatomy after the ask→tool table; question-to-sql + clause-order after tip), L36-L40 ×1 after bullets/table, L50 ×1, L51 ×1.
+- QA: tsc 628 = 5 BELOW the 633 baseline (fixed those 5 pre-existing errors, 0 new); lint unchanged (4 pre-existing scripts-only errors); edge probe clean after splitting L36 row-1 answer (was +14px right overflow); figure-audit harness 7/7 rendered, screenshots committed; in-lesson render verified L35 (3 svgs) + L39 (1 svg) via /#learn grid (ref-staleness worked around with immediate-click + JS dispatch; qa-casefigs.sh saved); 0 page errors everywhere; census: union 147, registry 155, used-in-lessons 115, 0 orphans, 0 missing.
+
+Stage Summary:
+- Every one of the 57 lessons now carries at least one figure — the "figure-less lessons" gap is closed.
+- The Diagram Library's catalog is now fully live (35 previously-dead figures wired into the wall source).
+- Known follow-ups: M7/M8/M9 case coverage needs NEW authoring (no draft exists; writes need the sandbox $transaction paradigm); library wall virtualization prevented an exhaustive headless count (39 svgs mounted on first paint, growing lazily).
