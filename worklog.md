@@ -1832,3 +1832,22 @@ Stage Summary:
 - VISUAL SWEEP COMPLETE: 99/99 curriculum figures + all playground surfaces audited across 9 family passes (svg-audit-s1, l1, v1, q1, t1, x1, w1, d1, fin1) + harness rebuilt (32cb9bc). ~57 defects fixed, incl. 4 data-truth bugs (v1 fabricated order lines, v5 wrong sort strip, q6 wrong order count, fin6 wrong ma3) and 1 entity-rendering bug (w1 &apos;).
 - Reusable QA kit: /figure-audit?ids=&theme= harness, __FIG_STATIC__ static mode, scripts/fig-edge-probe.js, /api/query truth probes.
 - Known follow-ups (need user): rebuild 3D join ribbon (lost with workspace restore), M7/M8/M9 case coverage, ~72-figure coverage gaps.
+
+---
+Task ID: leftjoin-space-1
+Agent: Super Z (main agent)
+Task: LEFT JOIN in space — second 3D scene for lesson-12, plus repair of the unfinished 3D dispatch pipeline
+
+Work Log:
+- Probed lesson-12 ground truth fresh via scripts/leftjoin3d-facts.ts: customers 16, orders 103 (52 delivered / 30 shipped / 14 pending / 7 cancelled); shipped-arm LEFT JOIN = 36 rows = 30 matched + 6 NULL gaps (Bruno, Chloe, Dmitri, Farid, Keiko, Olivia — 0 shipped each); WHERE-collapse variant = 30 rows; pending arm 22=14+8, cancelled 19=7+12, big-basket 16=4+12; anti-join audit 0/0 — all lesson-12 claims verified true
+- Discovered the 3D pipeline was half-wired from the interrupted session: figures3d.tsx + figure-3d.tsx existed but diagrams.tsx had no 3D dispatch, FigureId union lacked both 3d ids, no lesson slot referenced them, and FigureBare (imported by 4 files) was never implemented — 671 tsc errors vs 644 baseline
+- Reinstalled three@0.186.0 + @react-three/fiber@9.7.0 + @react-three/drei@10.7.8 + @types/three (dep install had never persisted)
+- Implemented L12LeftJoinSpace scene: all 16 customer rows drawn, 30 teal ribbons fly from the shipped-orders stack, then 6 amber NULL plaques pop (easeOutBack, staggered) beside the gap customers; teal=matched / amber=NULL semantics; dual result slabs (36 rows vs WHERE-collapse 30); legend, HUD phases, replay + IntersectionObserver auto-replay, full aria description
+- Wired dispatch: types.ts += j2-join-space-3d, j12-left-space-3d; diagrams.tsx got next/dynamic Figure3DHost (ssr:false, pulse loading), FIG3D_IDS set, FigureBare export (bare renderer for library/lightbox/showcase/frame), hasFigure includes 3d ids, Figure renders 3D branch with orbit caption
+- Slotted j2-join-space-3d into lesson-10 (INNER JOIN mechanics, before flat j2-inner-match) and j12-left-space-3d into lesson-12 (after flat j4-left-join)
+- Triple gate: tsc 633 (11 BELOW the 644 baseline, 0 new); lint 4 pre-existing scripts-only errors; agent-browser 0 page errors on home, lesson-10, lesson-12, figure-audit?ids=... (2 canvases, no MISSING COMPONENT); screenshots scripts/qa-l10-3d.png, qa-l12-3d-v2.png — plaques land on exactly the probe-verified 6 gap customers
+
+Stage Summary:
+- Lesson-12 now teaches WHERE-vs-ON with a 3D scene whose every number is DB-verified; the 3D pipeline is fully generic again (new scene = union id + FIG3D_IDS entry + component + slot)
+- FigureBare restored unblocking diagram-library/lightbox/figure-frame/landing-showcase compile
+- Next: Task 2 playground chart polishing (QueryFlowSvg / RowFunnel / SchemaView / SampleGallery); diagram-library component exists but is not yet routed into any view (candidate for later)
