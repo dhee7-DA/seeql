@@ -1993,3 +1993,20 @@ Stage Summary:
 - The M7/M8/M9 case-coverage gap from the audit is closed: 17 write/schema/finance chip cases (cs-1601..1617); deck now 1701 cases total.
 - Adaptive loop is live: every graded attempt feeds skillAttempts -> mastery heatmap -> daily quest + weakest-5, and every answer (MCQ or practice lab) schedules its SR return on the 1d/3d/7d/14d ladder; Mixed quiz prioritizes due cards.
 - Known follow-ups: scripts/case-audit.ts does not yet audit write-topic chip cases (they are chip-graded only; numbers are noVerify flavor); mastery map's quest is MCQ-only - could later pull practice-lab items too.
+
+---
+Task ID: menu-compact-1
+Agent: Super Z (main agent)
+Task: User approved the next 8 enhancements but FIRST flagged the main menu: topics stack vertically, scroll all the way down. Redesign the course overview.
+
+Work Log:
+- Diagnosed the old overview: 9 tall module cards (blurb + progress bar + graded-queries line baked in), stats row, activity/mastery, badges, and the Continue CTA at the very BOTTOM of the page; on mobile the entire sidebar (rank + module tree + 13 tools) stacked ABOVE the content.
+- learn-app.tsx OverviewModuleCard rewritten as a compact chip (~90px collapsed): conic-gradient progress ring around the module number, title + module·level line, done/total, "Up next · lesson N" hint; blurb + lesson rows + start button now live ONLY inside the expansion. openOverview defaults to all-collapsed.
+- Overview branch reordered into: Hero section (title, Rank/XP/Streak/Badges chips inline, Continue/Start button, overall progress bar, welcome-back line) -> "Course map" compact 3-col grid -> ActivityStrip + MasteryGrid -> Badges. Removed the bottom welcome-back card and the 4-card stats row (now hero chips).
+- Mobile: main content is now FIRST (aside order-2 lg:order-1, main order-1 lg:order-2) and a new ToolRail (lg:hidden) renders all 14 destinations as horizontally scrollable pill chips at the top of main on every view.
+- QA gate note: bunx tsc now reports 829 errors at HEAD (env TS drift from the recorded 628 baseline); stash-verified 829 before = 829 after (0 new), 0 in learn-app.tsx. Lint unchanged (4 pre-existing scripts triple-slash errors).
+- Browser QA (scripts/qa-menu.sh + manual desktop pass): desktop 1440x900 — hero y=132, Continue y=256, Course map y=382 (all above fold), rail hidden (lg:hidden), 9 cards, main scrollHeight 1826; expand Module 1 -> lesson rows -> click opens "Databases, tables & your storefront"; toolbox back works. Mobile 390x844 — Continue y=470 (above fold), rail visible + "Golf" chip opens Query golf, mainFirst true; 0 page errors everywhere. Screenshots scripts/qa-menu-{desktop,mobile,lesson}.png. Gotcha: agent-browser `open` to the same URL does NOT reload (view state persisted mid-QA — use a cache-busting query); `agent-browser set viewport W H` is the working viewport command.
+
+Stage Summary:
+- The course now opens on "where was I + one tap to continue" with all 9 modules scannable in a single screenful; lessons reveal on demand. Mobile starts on content with a thumb-scroll tool rail.
+- Committed 1f01547 as menu-compact-1. Next per user approval: the 8-enhancement wave in order, starting with #1 AI Mentor chat (schema-grounded, tiered hints).
