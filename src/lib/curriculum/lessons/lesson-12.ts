@@ -41,6 +41,7 @@ export const lesson12: Lesson = {
       ],
     },
     { kind: "diagram", figure: "j4-left-join" },
+    { kind: "diagram", figure: "j12-left-space-3d" },
     {
       kind: "code",
       caption: "Who is still waiting for a delivery?",

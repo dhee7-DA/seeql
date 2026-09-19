@@ -23,6 +23,7 @@ export const lesson10: Lesson = {
       ],
     },
     { kind: "diagram", figure: "j10-multiply" },
+    { kind: "diagram", figure: "j2-join-space-3d" },
     { kind: "diagram", figure: "j2-inner-match" },
     {
       kind: "code",

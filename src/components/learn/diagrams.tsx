@@ -7,6 +7,7 @@
 // palette utilities (which the theme engine redefines per theme).
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import type { FigureId } from "@/lib/curriculum/types";
 import { FIGURES_M2 } from "./diagrams-m2";
@@ -1572,6 +1573,21 @@ function L7CountStar() {
   );
 }
 
+/* ---------------- 3D figures ----------------
+ * The three.js/fiber/drei chunk is only pulled when a lesson actually renders
+ * one of these ids — figure-3d.tsx (and through it figures3d.tsx) is loaded
+ * via next/dynamic with ssr:false, so the main lesson bundle stays light.
+ * Devices without WebGL fall back to a note inside the host's boundary. */
+
+const Figure3DHost = dynamic(() => import("./figure-3d"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[400px] w-full animate-pulse rounded-lg bg-zinc-900/60" aria-hidden />
+  ),
+});
+
+const FIG3D_IDS = new Set<FigureId>(["j2-join-space-3d", "j12-left-space-3d"]);
+
 /* ---------------- registry ---------------- */
 
 const FIGURES: Partial<Record<FigureId, () => React.JSX.Element>> = {
@@ -1619,17 +1635,30 @@ const FIGURES: Partial<Record<FigureId, () => React.JSX.Element>> = {
 };
 
 export function hasFigure(id: FigureId): boolean {
-  return id in FIGURES;
+  return id in FIGURES || FIG3D_IDS.has(id);
+}
+
+/** Diagram content without lesson chrome — used by the library grid, the
+ * lightbox, the landing showcase and FigureFrame, which bring their own
+ * frames/replay controls. 3D ids route to the dynamically-loaded host. */
+export function FigureBare({ id }: { id: FigureId }) {
+  if (FIG3D_IDS.has(id)) return <Figure3DHost id={id} />;
+  const Cmp = FIGURES[id];
+  if (!Cmp) return null;
+  return <Cmp />;
 }
 
 export function Figure({ id }: { id: FigureId }) {
-  const Cmp = FIGURES[id];
-  if (!Cmp) return null;
+  const is3D = FIG3D_IDS.has(id);
+  const Cmp = is3D ? null : FIGURES[id];
+  if (!is3D && !Cmp) return null;
   return (
     <figure className="my-5 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950 p-3">
-      <Cmp />
+      {is3D ? <Figure3DHost id={id} /> : Cmp ? <Cmp /> : null}
       <figcaption className="mt-2 border-t border-zinc-800 pt-2 text-[11px] text-zinc-500">
-        Interactive diagram — real numbers from the storefront database.
+        {is3D
+          ? "Interactive 3D scene — real numbers from the storefront database. Drag to orbit, scroll to zoom."
+          : "Interactive diagram — real numbers from the storefront database."}
       </figcaption>
     </figure>
   );

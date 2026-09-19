@@ -406,8 +406,485 @@ function SuspenseBoundary({ children }: { children: ReactNode }) {
   return <Suspense fallback={null}>{children}</Suspense>;
 }
 
+/* ================= j12-left-space-3d — the LEFT JOIN, in space =================
+ * Real seed facts (db/custom.db, verified via scripts/leftjoin3d-facts.ts):
+ *   customers 16 · orders 103 (52 delivered / 30 shipped / 14 pending / 7 cancelled)
+ *   shipped arm: LEFT JOIN … AND o.status='shipped' → 36 rows = 30 matches + 6
+ *   NULL-filled gaps (Bruno, Chloe, Dmitri, Farid, Keiko, Olivia — 0 shipped).
+ *   Moving the status filter into WHERE collapses the result to 30 rows.
+ * All 16 customer rows are drawn: 30 teal ribbons carry shipped orders to their
+ * buyers, then 6 amber NULL plaques pop beside the customers nothing arrived
+ * for — the preserved rows ARE the lesson. Teal = matched, amber = NULL fill. */
+
+type L12Cust = { id: number; name: string; shipped: number };
+
+const L12_CUSTOMERS: L12Cust[] = [
+  { id: 1, name: "Alice Chen", shipped: 6 },
+  { id: 2, name: "Bruno Silva", shipped: 0 },
+  { id: 3, name: "Chloe Dubois", shipped: 0 },
+  { id: 4, name: "Dmitri Volkov", shipped: 0 },
+  { id: 5, name: "Emma Wilson", shipped: 9 },
+  { id: 6, name: "Farid Nasser", shipped: 0 },
+  { id: 7, name: "Grace Kim", shipped: 3 },
+  { id: 8, name: "Hiro Tanaka", shipped: 1 },
+  { id: 9, name: "Isabella Rossi", shipped: 2 },
+  { id: 10, name: "Jamal Wright", shipped: 1 },
+  { id: 11, name: "Keiko Sato", shipped: 0 },
+  { id: 12, name: "Liam O'Brien", shipped: 1 },
+  { id: 13, name: "Maya Patel", shipped: 4 },
+  { id: 14, name: "Noah Meyer", shipped: 2 },
+  { id: 15, name: "Olivia Brown", shipped: 0 },
+  { id: 16, name: "Pedro Alvarez", shipped: 1 },
+];
+
+const L12_TEAL = "#2dd4bf";
+const L12_AMBER = "#fbbf24";
+
+const L12_CUST_X = -4.7;
+const L12_PITCH = 0.42;
+const L12_TOP = 2.55;
+const L12_STACK_X = 4.9;
+const L12_STACK_BASE = -0.6;
+const L12_BAR_PITCH = 0.14;
+
+const l12RowY = (ci: number) => L12_TOP - ci * L12_PITCH;
+
+type L12Flight = {
+  ci: number;
+  delay: number;
+  from: THREE.Vector3;
+  ctrl: THREE.Vector3;
+  to: THREE.Vector3;
+};
+
+// Launch order round-robins across customers so arrivals interleave; each
+// flight drains the shipped-orders stack bottom-up (bar j launches j-th).
+const L12_FLIGHTS: L12Flight[] = (() => {
+  const out: L12Flight[] = [];
+  const maxS = Math.max(...L12_CUSTOMERS.map((c) => c.shipped));
+  for (let i = 0; i < maxS; i++) {
+    L12_CUSTOMERS.forEach((c, ci) => {
+      if (i >= c.shipped) return;
+      const j = out.length;
+      const from = new THREE.Vector3(L12_STACK_X - 0.55, L12_STACK_BASE + j * L12_BAR_PITCH + 0.05, 0);
+      const k = i % 4;
+      const to = new THREE.Vector3(L12_CUST_X + 1.52, l12RowY(ci) + (k - 1.5) * 0.055, 0.3);
+      const ctrl = new THREE.Vector3(
+        (from.x + to.x) / 2,
+        (from.y + to.y) / 2 + 0.9 + (ci % 4) * 0.22,
+        0.18,
+      );
+      out.push({ ci, delay: j * 0.085, from, ctrl, to });
+    });
+  }
+  return out;
+})();
+
+const L12_DUR = 1.5;
+const L12_TUBE_SEGS = 44;
+const L12_TRAIL_R = 0.021;
+const L12_GAP_NAMES = L12_CUSTOMERS.filter((c) => c.shipped === 0).map((c) => c.name);
+
+// easeOutBack — the plaque pops slightly past 1 then settles
+const l12Pop = (p: number) => {
+  const c1 = 1.70158;
+  const c3 = c1 + 1;
+  const q = Math.min(1, Math.max(0, p)) - 1;
+  return 1 + c3 * q * q * q + c1 * q * q;
+};
+
+function LeftJoinScene({ replayRef }: { replayRef?: { current: (() => void) | null } }) {
+  const [matched, setMatched] = useState(0);
+  const [gaps, setGaps] = useState(0);
+  const countRef = useRef(0);
+  const gapsRef = useRef(0);
+  const arrivedRef = useRef<boolean[]>(new Array(L12_FLIGHTS.length).fill(false));
+  const arrivalAtRef = useRef<number[]>(new Array(L12_FLIGHTS.length).fill(-1));
+  const gapsStartRef = useRef(-1);
+  const poppedRef = useRef<boolean[]>(new Array(L12_CUSTOMERS.length).fill(false));
+  const startRef = useRef(0);
+  const clockRef = useRef(0);
+  const flashRef = useRef<number[]>(new Array(L12_CUSTOMERS.length).fill(0));
+  const groupRef = useRef<THREE.Group>(null);
+  const trailRefs = useRef<Array<THREE.Mesh | null>>([]);
+  const headRefs = useRef<Array<THREE.Mesh | null>>([]);
+  const plaqueRefs = useRef<Array<THREE.Group | null>>([]);
+  const rowMats = useRef<Array<THREE.MeshStandardMaterial | null>>([]);
+
+  const flights = useMemo(() => L12_FLIGHTS, []);
+  const curves = useMemo(
+    () => flights.map((f) => new THREE.QuadraticBezierCurve3(f.from, f.ctrl, f.to)),
+    [flights],
+  );
+  const tubeGeoms = useMemo(
+    () => curves.map((c) => new THREE.TubeGeometry(c, L12_TUBE_SEGS, L12_TRAIL_R, 6, false)),
+    [curves],
+  );
+  useEffect(() => () => tubeGeoms.forEach((g) => g.dispose()), [tubeGeoms]);
+
+  useFrame((state, dt) => {
+    clockRef.current = state.clock.elapsedTime;
+    const e = clockRef.current - startRef.current;
+
+    if (groupRef.current) {
+      groupRef.current.rotation.y = Math.sin(e * 0.16) * 0.045;
+      groupRef.current.position.y = Math.sin(e * 0.55) * 0.035;
+    }
+
+    // phase A — projection ribbons for the 30 matched pairs
+    let count = countRef.current;
+    flights.forEach((f, i) => {
+      const trail = trailRefs.current[i];
+      const head = headRefs.current[i];
+      if (!trail || !head) return;
+      const t = (e - f.delay) / L12_DUR;
+
+      if (t < 0) {
+        trail.visible = false;
+        head.visible = false;
+        return;
+      }
+
+      if (t >= 1) {
+        if (!arrivedRef.current[i]) {
+          arrivedRef.current[i] = true;
+          arrivalAtRef.current[i] = e;
+          flashRef.current[f.ci] = 1;
+          count += 1;
+        }
+        head.visible = false;
+        const age = e - arrivalAtRef.current[i];
+        const mat = trail.material as THREE.MeshBasicMaterial;
+        const op = 0.5 * Math.exp(-age * 2.4);
+        if (op < 0.02) {
+          trail.visible = false;
+        } else {
+          trail.visible = true;
+          mat.opacity = op;
+        }
+        return;
+      }
+
+      const p = t * t * (3 - 2 * t);
+      const mat = trail.material as THREE.MeshBasicMaterial;
+      trail.visible = true;
+      mat.opacity = Math.min(1, 0.25 + p * 10) * 0.5;
+      trail.geometry.setDrawRange(0, Math.max(1, Math.floor(p * L12_TUBE_SEGS)) * 36);
+      head.visible = true;
+      curves[i].getPointAt(p, head.position);
+      head.scale.setScalar(1 + 0.22 * Math.sin(p * Math.PI));
+    });
+    if (count !== countRef.current) {
+      countRef.current = count;
+      setMatched(count);
+    }
+
+    // phase B — after every order landed, the 6 gap customers get their
+    // NULL plaques: the rows a WHERE clause would have deleted
+    if (countRef.current >= flights.length) {
+      if (gapsStartRef.current < 0) gapsStartRef.current = e + 0.45;
+      const ge = e - gapsStartRef.current;
+      if (ge >= 0) {
+        L12_CUSTOMERS.forEach((c, ci) => {
+          if (c.shipped > 0) return;
+          const gi = L12_GAP_NAMES.indexOf(c.name);
+          const age = ge - 0.35 - gi * 0.22;
+          const plaque = plaqueRefs.current[ci];
+          if (!plaque) return;
+          if (age <= 0) {
+            plaque.visible = false;
+            return;
+          }
+          if (!poppedRef.current[ci]) {
+            poppedRef.current[ci] = true;
+            flashRef.current[ci] = 1;
+            gapsRef.current += 1;
+            setGaps(gapsRef.current);
+          }
+          plaque.visible = true;
+          const p = age / 0.28;
+          const s = l12Pop(p);
+          plaque.scale.setScalar(s);
+          plaque.traverse((o) => {
+            const m = (o as THREE.Mesh).material as THREE.MeshBasicMaterial | undefined;
+            if (m && "opacity" in m) m.opacity = Math.min(1, p * 1.6);
+          });
+        });
+      }
+    }
+
+    // arrival / pop glow decay
+    flashRef.current = flashRef.current.map((f) => f * Math.exp(-dt * 2.2));
+    rowMats.current.forEach((mat, i) => {
+      if (mat) mat.emissiveIntensity = 0.07 + (flashRef.current[i] ?? 0) * 1.6;
+    });
+  });
+
+  const replay = () => {
+    startRef.current = clockRef.current;
+    arrivedRef.current = new Array(L12_FLIGHTS.length).fill(false);
+    arrivalAtRef.current = new Array(L12_FLIGHTS.length).fill(-1);
+    gapsStartRef.current = -1;
+    poppedRef.current = new Array(L12_CUSTOMERS.length).fill(false);
+    countRef.current = 0;
+    gapsRef.current = 0;
+    flashRef.current = new Array(L12_CUSTOMERS.length).fill(0);
+    plaqueRefs.current.forEach((p) => {
+      if (p) p.visible = false;
+    });
+    setMatched(0);
+    setGaps(0);
+  };
+
+  useEffect(() => {
+    if (replayRef) replayRef.current = replay;
+  });
+
+  const done = gaps >= L12_GAP_NAMES.length;
+  const allMatched = matched >= flights.length;
+
+  return (
+    <>
+      <ambientLight intensity={0.55} />
+      <directionalLight position={[4, 8, 6]} intensity={1.15} />
+      <fog attach="fog" args={["#09090b", 15, 32]} />
+
+      <group ref={groupRef}>
+        {/* ---- customers table (left, every row survives) ---- */}
+        <Text font={FONT} fontSize={0.22} color="#a1a1aa" position={[L12_CUST_X, 3.0, 0]} anchorX="center">
+          customers
+        </Text>
+        <Text font={FONT} fontSize={0.13} color="#52525b" position={[L12_CUST_X, 2.78, 0]} anchorX="center">
+          16 rows · all preserved
+        </Text>
+        {L12_CUSTOMERS.map((c, ci) => (
+          <group key={c.id} position={[L12_CUST_X, l12RowY(ci), 0]}>
+            <RoundedBox args={[2.9, 0.36, 0.3]} radius={0.05} smoothness={3}>
+              <meshStandardMaterial
+                ref={(m) => {
+                  rowMats.current[ci] = m as THREE.MeshStandardMaterial | null;
+                }}
+                color="#27272a"
+                emissive={c.shipped === 0 ? L12_AMBER : L12_TEAL}
+                emissiveIntensity={0.07}
+                roughness={0.55}
+              />
+            </RoundedBox>
+            <RoundedBox args={[0.3, 0.28, 0.28]} radius={0.04} smoothness={2} position={[-1.16, 0, 0.05]}>
+              <meshStandardMaterial color="#3f3f46" roughness={0.5} />
+            </RoundedBox>
+            <Text font={FONT} fontSize={0.13} color="#d4d4d8" position={[-1.16, 0, 0.22]} anchorX="center" anchorY="middle">
+              {String(c.id)}
+            </Text>
+            <Text font={FONT} fontSize={0.145} color="#e4e4e7" position={[-0.88, 0, 0.2]} anchorX="left" anchorY="middle">
+              {c.name}
+            </Text>
+            <Text
+              font={FONT}
+              fontSize={0.125}
+              color={c.shipped === 0 ? "#fbbf24" : "#5eead4"}
+              position={[1.32, 0, 0.2]}
+              anchorX="right"
+              anchorY="middle"
+            >
+              {`${c.shipped} shipped`}
+            </Text>
+            {/* NULL plaque — pops in phase B for the gap customers */}
+            <group
+              ref={(g) => {
+                plaqueRefs.current[ci] = g;
+              }}
+              visible={false}
+              position={[2.32, 0, 0.12]}
+            >
+              <RoundedBox args={[0.74, 0.28, 0.06]} radius={0.04} smoothness={2}>
+                <meshBasicMaterial color={L12_AMBER} transparent opacity={0} />
+              </RoundedBox>
+              <Text font={FONT} fontSize={0.12} color="#78350f" position={[0, 0, 0.05]} anchorX="center" anchorY="middle">
+                NULL
+              </Text>
+            </group>
+          </group>
+        ))}
+
+        {/* ---- shipped orders stack (right) ---- */}
+        <Text font={FONT} fontSize={0.22} color="#a1a1aa" position={[L12_STACK_X, 3.9, 0]} anchorX="center">
+          orders · shipped
+        </Text>
+        <Text font={FONT} fontSize={0.13} color="#52525b" position={[L12_STACK_X, 3.66, 0]} anchorX="center">
+          103 rows · 30 shipped drawn
+        </Text>
+        {Array.from({ length: 30 }).map((_, i) => (
+          <RoundedBox
+            key={i}
+            args={[0.9, 0.11, 0.11]}
+            radius={0.03}
+            smoothness={2}
+            position={[L12_STACK_X, L12_STACK_BASE + i * L12_BAR_PITCH, 0]}
+          >
+            <meshStandardMaterial color={L12_TEAL} emissive={L12_TEAL} emissiveIntensity={0.55} roughness={0.45} />
+          </RoundedBox>
+        ))}
+        <Text font={FONT} fontSize={0.125} color="#71717a" position={[L12_STACK_X, L12_STACK_BASE - 0.24, 0]} anchorX="center">
+          + 73 not shipped (52 delivered · 14 pending · 7 cancelled)
+        </Text>
+
+        {/* ---- result slabs ---- */}
+        <RoundedBox args={[4.5, 0.5, 0.36]} radius={0.08} smoothness={3} position={[-2.5, -4.7, 0]}>
+          <meshStandardMaterial color="#18181b" emissive={L12_TEAL} emissiveIntensity={0.16} roughness={0.5} />
+        </RoundedBox>
+        <Text font={FONT} fontSize={0.155} color="#5eead4" position={[-2.5, -4.7, 0.2]} anchorX="center" anchorY="middle">
+          LEFT JOIN · 36 rows = 30 + 6 NULL
+        </Text>
+        <RoundedBox args={[3.6, 0.5, 0.36]} radius={0.08} smoothness={3} position={[2.3, -4.7, 0]}>
+          <meshStandardMaterial color="#18181b" emissive="#fb7185" emissiveIntensity={0.14} roughness={0.5} />
+        </RoundedBox>
+        <Text font={FONT} fontSize={0.15} color="#fda4af" position={[2.3, -4.7, 0.2]} anchorX="center" anchorY="middle">
+          status in WHERE → 30 rows
+        </Text>
+
+        {/* ---- projection streams ---- */}
+        {flights.map((f, i) => (
+          <group key={i}>
+            <mesh
+              visible={false}
+              geometry={tubeGeoms[i]}
+              ref={(m) => {
+                trailRefs.current[i] = m as THREE.Mesh | null;
+              }}
+            >
+              <meshBasicMaterial
+                color={L12_TEAL}
+                transparent
+                opacity={0}
+                blending={THREE.AdditiveBlending}
+                depthWrite={false}
+              />
+            </mesh>
+            <mesh
+              visible={false}
+              ref={(m) => {
+                headRefs.current[i] = m as THREE.Mesh | null;
+              }}
+            >
+              <sphereGeometry args={[0.055, 16, 16]} />
+              <meshBasicMaterial
+                color={L12_TEAL}
+                transparent
+                opacity={1}
+                blending={THREE.AdditiveBlending}
+                depthWrite={false}
+              />
+              <mesh scale={2.6}>
+                <sphereGeometry args={[0.055, 12, 12]} />
+                <meshBasicMaterial
+                  color={L12_TEAL}
+                  transparent
+                  opacity={0.22}
+                  blending={THREE.AdditiveBlending}
+                  depthWrite={false}
+                />
+              </mesh>
+            </mesh>
+          </group>
+        ))}
+      </group>
+
+      {/* ---- legend ---- */}
+      <Html position={[L12_CUST_X - 1.3, -4.35, 0]} center>
+        <div className="pointer-events-none flex items-center gap-3 whitespace-nowrap text-[10px] text-zinc-400">
+          <span className="inline-flex items-center gap-1">
+            <span className="h-1.5 w-1.5 rounded-full bg-teal-400" /> matched pair ×30
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-400" /> NULL fill ×6
+          </span>
+        </div>
+      </Html>
+
+      {/* ---- HUD ---- */}
+      <Html position={[0, 4.25, 0]} center>
+        <div className="pointer-events-none whitespace-nowrap rounded-md border border-zinc-700 bg-zinc-950/90 px-3 py-1.5 text-[11px] text-zinc-300 shadow-lg">
+          {done
+            ? "36 result rows = 30 matches + 6 NULL-filled gaps — a WHERE would have deleted those 6."
+            : allMatched
+              ? "6 customers have no shipped order — LEFT JOIN keeps them, NULL-filled."
+              : `${matched} / ${flights.length} shipped orders matched…`}
+        </div>
+      </Html>
+      <Html position={[0, -5.45, 0]} center>
+        <button
+          onClick={replay}
+          className="pointer-events-auto whitespace-nowrap rounded-md border border-zinc-700 bg-zinc-900/90 px-2.5 py-1 text-[11px] text-zinc-300 shadow transition-colors hover:bg-zinc-800"
+        >
+          ↻ replay the LEFT JOIN
+        </button>
+      </Html>
+
+      <gridHelper args={[30, 30, "#27272a", "#18181b"]} position={[0, -5.75, 0]} />
+      <OrbitControls
+        target={[0, -0.4, 0]}
+        enablePan={false}
+        minDistance={8}
+        maxDistance={20}
+        maxPolarAngle={1.5}
+        enableDamping
+        dampingFactor={0.08}
+      />
+    </>
+  );
+}
+
+function L12LeftJoinSpace() {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const replayRef = useRef<(() => void) | null>(null);
+  const lastAutoRef = useRef(0);
+
+  // Auto-replay on scroll-into-view, same contract as the INNER JOIN scene.
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const en of entries) {
+          if (en.isIntersecting && en.intersectionRatio >= 0.55) {
+            const now = performance.now();
+            if (now - lastAutoRef.current > 7000) {
+              lastAutoRef.current = now;
+              replayRef.current?.();
+            }
+          }
+        }
+      },
+      { threshold: [0.55] },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={wrapRef}
+      className="relative h-[400px] w-full"
+      role="img"
+      aria-label="Interactive 3D scene of a LEFT JOIN. All 16 customer rows stand on the left; 30 teal order bars stack on the right. Each shipped order flies a glowing ribbon to its customer, then six amber NULL plaques pop beside the customers nothing arrived for — Bruno Silva, Chloe Dubois, Dmitri Volkov, Farid Nasser, Keiko Sato and Olivia Brown — because the shipped-status condition sits in ON. The result keeps 36 rows: 30 matches plus 6 NULL-filled gaps; moving the condition into WHERE would collapse the result to 30. Drag to orbit."
+    >
+      <Canvas
+        dpr={[1, 1.75]}
+        gl={{ antialias: true, alpha: true }}
+        camera={{ position: [0, 0.4, 14.4], fov: 38 }}
+      >
+        <SuspenseBoundary>
+          <LeftJoinScene replayRef={replayRef} />
+        </SuspenseBoundary>
+      </Canvas>
+    </div>
+  );
+}
+
 /* ================= registry ================= */
 
 export const FIGURES_3D: Partial<Record<FigureId, () => JSX.Element>> = {
   "j2-join-space-3d": J2JoinSpace,
+  "j12-left-space-3d": L12LeftJoinSpace,
 };
