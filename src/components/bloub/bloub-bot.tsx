@@ -44,6 +44,9 @@ export interface BloubBotProps {
   expression?: string;
   /** page colour behind the bot; eye holes read through to it */
   paper?: string;
+  /** hairline silhouette stroke — keeps an ink bot legible straight on a
+   *  dark page, where there is no light backdrop disc behind it */
+  contour?: string;
   /** freeze at this time (seconds into the state) — renders once, no loop */
   frozenAt?: number;
   /** initial / held state of a live bot */
@@ -96,6 +99,7 @@ function BotSvg({
   frame,
   ink,
   paper,
+  contour,
   size,
   uid,
   className,
@@ -105,6 +109,7 @@ function BotSvg({
   frame: BotFrame;
   ink: string;
   paper: string;
+  contour?: string;
   size: number;
   uid: string;
   className?: string;
@@ -176,6 +181,19 @@ function BotSvg({
         <g mask={`url(#${maskId})`}>
           <rect x={-VB} y={-VB} width={VB * 2} height={VB * 2} fill={ink} />
         </g>
+        {/* Hairline on the silhouette itself — reads as a sticker edge on a
+            dark page, not as another shape behind the bot. It fades with the
+            body because it lives inside the bodyAlpha group. */}
+        {contour && (
+          <path
+            d={frame.bodyPath}
+            fill="none"
+            stroke={contour}
+            strokeWidth={1.1}
+            strokeLinejoin="round"
+            vectorEffect="non-scaling-stroke"
+          />
+        )}
       </g>
 
       {!frame.dotsBehind && <Dots dots={frame.dots} ink={ink} paper={paper} />}
@@ -209,6 +227,7 @@ function FrozenBot(props: BloubBotProps & { frozenAt: number; uid: string }) {
     color,
     expression,
     paper = "#f9f9f9",
+    contour,
     frozenAt,
     state = "idle",
     uid,
@@ -225,6 +244,7 @@ function FrozenBot(props: BloubBotProps & { frozenAt: number; uid: string }) {
       frame={frame}
       ink={ink}
       paper={paper}
+      contour={contour}
       size={size}
       uid={uid}
       className={className}
@@ -240,6 +260,7 @@ function LiveBot(props: BloubBotProps & { uid: string }) {
     size = 320,
     color,
     paper = "#f9f9f9",
+    contour,
     className,
     ariaLabel,
     uid,
@@ -301,8 +322,11 @@ function LiveBot(props: BloubBotProps & { uid: string }) {
       // and the engine KEEPS a NaN target forever. Guard it here.
       if (!box || box.width === 0 || box.height === 0) return;
       if (!aiming) turnSince = clock;
-      const halfW = Math.max(1, window.innerWidth / 2);
-      const halfH = Math.max(1, window.innerHeight / 2);
+      // Gaze radius: about a third of the viewport, not half. The buddy lives
+      // in a corner, so the cursor spends its life far away — a tighter
+      // radius saturates sooner and the follow reads across the whole page.
+      const halfW = Math.max(1, window.innerWidth * 0.34);
+      const halfH = Math.max(1, window.innerHeight * 0.34);
       engine.setLook(
         lookTarget({
           nx: pointer ? clamp((pointer.x - (box.left + box.width / 2)) / halfW, -1, 1) : 0,
@@ -378,6 +402,7 @@ function LiveBot(props: BloubBotProps & { uid: string }) {
       frame={frame}
       ink={inkOf(color)}
       paper={paper}
+      contour={contour}
       size={size}
       uid={uid}
       className={className}

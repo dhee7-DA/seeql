@@ -147,7 +147,8 @@ export function SeeqGallery() {
 
   return (
     <section data-seeq-gallery="1" className="sheen mt-7 rounded-xl border border-zinc-800 bg-zinc-950 p-5">
-      {/* Hero: one live bot on its paper stage, pointer-follow, skin-aware */}
+      {/* Hero: one live bot, pointer-follow, skin-aware — no backdrop disc,
+          just the hairline contour that keeps the ink readable on dark */}
       <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:gap-6">
         <button
           type="button"
@@ -155,16 +156,16 @@ export function SeeqGallery() {
           aria-label="Poke SeeQ"
           className="relative block h-32 w-32 shrink-0 cursor-pointer rounded-full outline-none transition-transform duration-300 hover:scale-105 focus-visible:ring-2 focus-visible:ring-emerald-400/60 sm:h-36 sm:w-36"
         >
-          <span className="absolute inset-0 rounded-full bg-[#f9f9f9] shadow-[0_16px_40px_-12px_rgba(0,0,0,0.6)] ring-1 ring-black/10" />
           <BloubBot
             size={144}
             shape={s.shape}
             color={s.color}
             expression={s.expression}
             paper="#f9f9f9"
+            contour="rgba(255,255,255,0.26)"
             follow
             command={command}
-            className="relative h-full w-full"
+            className="h-full w-full drop-shadow-[0_14px_30px_rgba(0,0,0,0.5)]"
             ariaLabel="SeeQ, your study buddy — it follows your pointer"
           />
         </button>

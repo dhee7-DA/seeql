@@ -236,24 +236,20 @@ export function SeeqBuddy() {
               (collapsed ? "h-11 w-11" : "h-28 w-28 sm:h-32 sm:w-32")
             }
           >
-            {/* Paper stage: bloub reads on a light page — the disc gives the
-                ink bot the same backdrop inside the dark app, and the eye
-                holes their paper-coloured depth. */}
-            <span
-              className={
-                "absolute inset-0 rounded-full bg-[#f9f9f9] shadow-[0_10px_28px_-8px_rgba(0,0,0,0.55)] ring-1 ring-black/10 transition-transform duration-300 " +
-                (collapsed ? "scale-90" : "scale-100")
-              }
-            />
+            {/* No backdrop disc — the bot sits straight on the app. The eye
+                holes keep their paper depth because they are painted inside
+                the SVG (the paper-coloured underlay), and a hairline contour
+                keeps the ink silhouette legible on the dark page. */}
             <BloubBot
               size={collapsed ? 44 : 128}
               shape={s.shape}
               color={s.color}
               expression={s.expression}
               paper="#f9f9f9"
+              contour="rgba(255,255,255,0.26)"
               follow
               command={command}
-              className="relative h-full w-full"
+              className="h-full w-full drop-shadow-[0_10px_22px_rgba(0,0,0,0.5)]"
               ariaLabel="SeeQ study buddy"
             />
           </button>

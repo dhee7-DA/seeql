@@ -2183,3 +2183,22 @@ Stage Summary:
 - Gates: tsc 829 (baseline, 0 new), lint 4 errors + 4 warnings (baseline, 0 new), 0 console errors
 - Old localStorage key seeql.buddy.theme is obsolete and ignored; new key seeql.buddy.skin.v2
 - Next: enhancement queue #3-#8 (daily puzzle calendar next), SeeQ mood hook reserved for drills/clinic/golf results
+
+---
+Task ID: mascot-round-3
+Agent: Super Z (main agent)
+Task: User: "better... now remove the big circle at the background and improve its eyes which follows the cursor" — drop the paper backdrop disc behind the mascot, upgrade the cursor-follow gaze.
+
+Work Log:
+- Diagnosed the "big circle": the #f9f9f9 paper disc behind the corner buddy (seeq-buddy.tsx) and behind the gallery hero (seeq-gallery.tsx). Removed both spans; eye depth is safe because the paper underlay is painted INSIDE the SVG (eye holes read through to it regardless of page background).
+- Ink bot on the dark app needed a new legibility carrier: added optional `contour` prop to BloubBot/BotSvg — a 1.1px non-scaling hairline stroked on the exact bodyPath (fades with bodyAlpha, follows every shape). Buddy + hero pass rgba(255,255,255,0.26) plus a soft drop-shadow; tiles untouched (light cards, full-fidelity look).
+- Gaze rework in bloub/gaze.ts (the CHOSEN-constants file, per upstream's own comment): removed bloub's fixed -26deg left head lean (their settings layout — it made the corner buddy stare away from most cursor positions), yaw is now purely cursor-driven nx*34deg (was -26+/-16), pitch 8-/+18deg (was 10-/+13), TURN_TIME 1.1s -> 0.55s (snappier land + release), SPIN 360 en-route turn kept. Engine untouched (verbatim 1:1).
+- bloub-bot.tsx aim(): gaze radius tightened from half-viewport to 0.34x viewport — the corner buddy's cursor lives far away, so the follow now saturates sooner and reads across the whole page.
+- New QA scripts/qa-seeq3.sh + qa-seeq3b.sh against live :3000: discGone true on buddy AND hero; rim stroke rgba(255,255,255,0.26) present; 2 eye holes; tiles 14/8/16/12; poke praise; collapse 44px chip persisted + re-expand; 0 console errors. Gaze: hero monotonic (right-up tx +27.99 vs left-down -69.68); buddy in a clean idle window (first round's odd numbers were the notify tip state, which suspends following by design — documented, not a bug): right-up tx +28.6, left-down -67.7, delta 96.3 viewBox units vs ~35 in the old build (~3x travel), monotonic true.
+- Screenshots: qa-seeq3-{gallery,buddy,mobile}.png — visually inspected: no circles anywhere, bots sit straight on the dark page, eyes bright, mobile 390x844 clean.
+- Gates: tsc 829 = baseline (0 new); npm run lint 4 errors + 4 warnings = exactly baseline; scoped lint on the 4 touched files clean.
+
+Stage Summary:
+- Mascot now floats free: no backdrop circle, just the bot with a hairline sticker-edge contour and paper-bright eyes on the dark app.
+- Eyes genuinely follow the cursor: direction re-centred on the pointer (no left bias), 2x angular travel, 2x faster turn, tighter gaze radius — measured ~3x on-screen travel.
+- Next per approved queue: enhancement #3 - Daily puzzle calendar (streak-freeze, monthly badge).
