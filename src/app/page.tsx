@@ -55,6 +55,7 @@ import { SampleGallery } from "@/components/sample-gallery";
 import { clauseAtOffset, findClauses, spanOf, type ClauseKind } from "@/lib/sql-clauses";
 import { Landing } from "@/components/landing";
 import { LearnApp } from "@/components/learn/learn-app";
+import { SeeqBuddy } from "@/components/learn/seeq-buddy";
 import { useProgress } from "@/lib/curriculum/progress";
 import { MISSIONS } from "@/lib/missions";
 import { LogoFull } from "@/components/brand";
@@ -962,57 +963,85 @@ export default function Home() {
     window.scrollTo({ top: 0 });
   }, []);
 
-  if (mode === "landing") {
-    return <Landing onStart={() => go("learn")} onPlayground={() => go("playground")} />;
-  }
-  if (mode === "learn") {
-    return (
-      <div className="flex min-h-screen flex-col bg-zinc-950 text-zinc-100">
-        <header className="sticky top-0 z-40 border-b border-zinc-800/80 bg-zinc-950/85 backdrop-blur">
-          <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
-            <button onClick={() => go("landing")} aria-label="SeeQL — back to home" className="transition-opacity hover:opacity-80">
-              <LogoFull />
-            </button>
-            <div className="flex items-center gap-2">
-              {/* SeeQ playground — the mascot's own section. The mini bot is a
-                  live one: its capsule eyes track your cursor app-wide. */}
-              <button
-                onClick={() => window.dispatchEvent(new CustomEvent("seeql:nav", { detail: { kind: "seeq" } }))}
-                data-seeq-nav="1"
-                aria-label="Open the SeeQ playground — dress and place your buddy"
-                title="SeeQ playground — dress & place your buddy"
-                className="flex cursor-pointer items-center gap-1.5 rounded-md border border-zinc-800 py-1.5 pl-1.5 pr-3 text-sm text-zinc-300 transition-colors hover:bg-zinc-900"
-              >
-                <BloubBot
-                  size={26}
-                  color="encre"
-                  paper="#f9f9f9"
-                  contour="rgba(255,255,255,0.26)"
-                  follow
-                  className="h-[26px] w-[26px]"
-                  ariaLabel=""
-                />
-                <span>SeeQ</span>
+  const openSeeq = useCallback(() => {
+    window.location.hash = "#learn?view=seeq";
+    window.scrollTo({ top: 0 });
+  }, []);
+
+  // Deep link #learn?view=seeq — the mascot's workshop opens directly. The
+  // dispatch lives in an effect, not the click handler: child effects flush
+  // before parent effects in the same commit, so LearnApp's nav listener is
+  // guaranteed attached by the time this fires (also covers a hard reload on
+  // the deep link and browser back/forward).
+  const seeqDeep =
+    mode === "learn" &&
+    qMark !== -1 &&
+    new URLSearchParams(hash.slice(qMark + 1)).get("view") === "seeq";
+  useEffect(() => {
+    if (seeqDeep) {
+      window.dispatchEvent(new CustomEvent("seeql:nav", { detail: { kind: "seeq" } }));
+    }
+  }, [seeqDeep]);
+
+  // SeeQ mounts at the app ROOT, so the buddy is on every view — landing,
+  // playground and learn — and one instance survives mode switches: park him
+  // on the landing page and he is still parked there after "Start learning".
+  return (
+    <>
+      {mode === "landing" && (
+        <Landing onStart={() => go("learn")} onPlayground={() => go("playground")} onSeeq={openSeeq} />
+      )}
+      {mode === "learn" && (
+        <div className="flex min-h-screen flex-col bg-zinc-950 text-zinc-100">
+          <header className="sticky top-0 z-40 border-b border-zinc-800/80 bg-zinc-950/85 backdrop-blur">
+            <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+              <button onClick={() => go("landing")} aria-label="SeeQL — back to home" className="transition-opacity hover:opacity-80">
+                <LogoFull />
               </button>
-              <ThemeSwitcher />
-              <button
-                onClick={() => go("playground")}
-                className="hidden rounded-md border border-zinc-800 px-3.5 py-2 text-sm text-zinc-300 transition-colors hover:bg-zinc-900 sm:block"
-              >
-                Playground
-              </button>
+              <div className="flex items-center gap-2">
+                {/* SeeQ playground — the mascot's own section. The mini bot is a
+                    live one: its capsule eyes track your cursor app-wide. */}
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent("seeql:nav", { detail: { kind: "seeq" } }))}
+                  data-seeq-nav="1"
+                  aria-label="Open the SeeQ playground — dress and place your buddy"
+                  title="SeeQ playground — dress & place your buddy"
+                  className="flex cursor-pointer items-center gap-1.5 rounded-md border border-zinc-800 py-1.5 pl-1.5 pr-3 text-sm text-zinc-300 transition-colors hover:bg-zinc-900"
+                >
+                  <BloubBot
+                    size={26}
+                    color="encre"
+                    paper="#f9f9f9"
+                    contour="rgba(255,255,255,0.26)"
+                    follow
+                    className="h-[26px] w-[26px]"
+                    ariaLabel=""
+                  />
+                  <span>SeeQ</span>
+                </button>
+                <ThemeSwitcher />
+                <button
+                  onClick={() => go("playground")}
+                  className="hidden rounded-md border border-zinc-800 px-3.5 py-2 text-sm text-zinc-300 transition-colors hover:bg-zinc-900 sm:block"
+                >
+                  Playground
+                </button>
+              </div>
             </div>
-          </div>
-        </header>
-        <LearnApp />
-        <footer className="mt-auto border-t border-zinc-800/80">
-          <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3 text-[11px] text-zinc-600 sm:px-6">
-            <span>SeeQL Learn · progress saved on this device</span>
-            <span className="font-mono">read · watch · prove</span>
-          </div>
-        </footer>
-      </div>
-    );
-  }
-  return <PlaygroundView key={sharedSql ?? ""} go={go} sharedSql={sharedSql} sharedDialect={sharedDialect} />;
+          </header>
+          <LearnApp />
+          <footer className="mt-auto border-t border-zinc-800/80">
+            <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3 text-[11px] text-zinc-600 sm:px-6">
+              <span>SeeQL Learn · progress saved on this device</span>
+              <span className="font-mono">read · watch · prove</span>
+            </div>
+          </footer>
+        </div>
+      )}
+      {mode === "playground" && (
+        <PlaygroundView key={sharedSql ?? ""} go={go} sharedSql={sharedSql} sharedDialect={sharedDialect} />
+      )}
+      <SeeqBuddy />
+    </>
+  );
 }

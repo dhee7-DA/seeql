@@ -137,11 +137,19 @@ export function SeeqBuddy() {
     }
   });
   // Parked position (top-left of the buddy). The initializer follows the same
-  // client-only pattern as `collapsed` above.
+  // client-only pattern as `collapsed` above. It must also survive the SERVER
+  // render: the buddy now mounts at the app root, so its initializers run
+  // during SSR of the landing (the component still outputs null there via
+  // `mounted` — the catch just keeps that render alive).
   const [pos, setPos] = useState<Pos>(() => {
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    return clampPos(loadPos() ?? defaultPos(vw, vh, collapsed), vw, vh, buddySize(vw, collapsed));
+    try {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      return clampPos(loadPos() ?? defaultPos(vw, vh, collapsed), vw, vh, buddySize(vw, collapsed));
+    } catch {
+      /* server render — a neutral berth, replaced by the real one on mount */
+      return { x: EDGE, y: TOP_MIN };
+    }
   });
   const [dragging, setDragging] = useState(false);
   const [bubble, setBubble] = useState<string | null>(null);

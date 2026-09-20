@@ -19,6 +19,8 @@ import {
 } from "lucide-react";
 import { LogoFull } from "@/components/brand";
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import { BloubBot, type BloubCommand } from "@/components/bloub/bloub-bot";
+import type { StateId } from "@/components/bloub/states";
 import { HeroDemo } from "@/components/landing/hero-demo";
 import { LESSONS, MODULES } from "@/lib/curriculum/lessons";
 import { LEVELS } from "@/lib/curriculum/gamification";
@@ -27,6 +29,7 @@ const NAV = [
   { id: "why", label: "Why SeeQL" },
   { id: "method", label: "Method" },
   { id: "curriculum", label: "Curriculum" },
+  { id: "seeq", label: "SeeQ" },
 ];
 
 const TOTAL_MCQ = LESSONS.reduce((a, l) => a + l.mcqs.length, 0);
@@ -79,7 +82,90 @@ const LEVEL_DOT: Record<string, string> = {
   Expert: "bg-amber-400",
 };
 
-export function Landing({ onStart, onPlayground }: { onStart: () => void; onPlayground: () => void }) {
+/* ------------------------------------------------------------- SeeQ stage */
+
+/** Moves the landing hero can perform on demand (the full 14-state film
+    lives in the SeeQ workshop inside the learn app). */
+const SEEQ_MOVES: { id: StateId; label: string; hold: number }[] = [
+  { id: "wink", label: "Wink", hold: 1.6 },
+  { id: "egg", label: "Egg", hold: 1.8 },
+  { id: "hexagon", label: "Hexagon", hold: 1.6 },
+  { id: "wide", label: "Wide eyes", hold: 1.8 },
+  { id: "notify", label: "You've got mail", hold: 2.8 },
+  { id: "orbit", label: "Orbit", hold: 2.8 },
+];
+
+/** The live landing mascot: eyes follow the cursor, poke or a move chip
+    makes him perform, then he settles back to idle. Same 1:1 bloub engine
+    the corner buddy runs — no mouth, two capsule eyes, that's the character. */
+function SeeqMascot() {
+  const [command, setCommand] = useState<BloubCommand>({ state: "idle", nonce: 0 });
+  const nonce = useRef(0);
+  const revert = useRef<number | null>(null);
+
+  useEffect(
+    () => () => {
+      if (revert.current !== null) window.clearTimeout(revert.current);
+    },
+    [],
+  );
+
+  const play = (state: StateId, hold: number) => {
+    if (revert.current !== null) window.clearTimeout(revert.current);
+    nonce.current += 1;
+    setCommand({ state, nonce: nonce.current });
+    revert.current = window.setTimeout(() => {
+      nonce.current += 1;
+      setCommand({ state: "idle", nonce: nonce.current });
+    }, hold * 1000);
+  };
+
+  return (
+    <div data-seeq-stage="1" className="flex flex-col items-center gap-5">
+      <button
+        type="button"
+        onClick={() => play("wide", 1.6)}
+        data-seeq-hero="1"
+        aria-label="Poke SeeQ — he performs a move"
+        className="block cursor-pointer rounded-full outline-none transition-transform duration-300 hover:scale-105 focus-visible:ring-2 focus-visible:ring-emerald-400/60"
+      >
+        <BloubBot
+          size={176}
+          paper="#f9f9f9"
+          contour="rgba(255,255,255,0.26)"
+          follow
+          command={command}
+          className="h-40 w-40 drop-shadow-[0_18px_40px_rgba(0,0,0,0.55)] sm:h-44 sm:w-44"
+          ariaLabel="SeeQ — his eyes follow your cursor"
+        />
+      </button>
+      <div className="flex max-w-[280px] flex-wrap justify-center gap-1.5">
+        {SEEQ_MOVES.map((m) => (
+          <button
+            key={m.id}
+            type="button"
+            onClick={() => play(m.id, m.hold)}
+            data-seeq-chip={m.id}
+            className="cursor-pointer rounded-full border border-zinc-800 bg-zinc-900/50 px-2.5 py-1 text-[11px] text-zinc-400 transition-colors hover:border-zinc-600 hover:text-zinc-200"
+          >
+            {m.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function Landing({
+  onStart,
+  onPlayground,
+  onSeeq,
+}: {
+  onStart: () => void;
+  onPlayground: () => void;
+  /** Deep-link into the SeeQ workshop (#learn?view=seeq). */
+  onSeeq: () => void;
+}) {
   // resume chip — deferred read so it never blocks first paint
   const [resume, setResume] = useState<{ xp: number; rank: string } | null>(null);
   useEffect(() => {
@@ -121,6 +207,26 @@ export function Landing({ onStart, onPlayground }: { onStart: () => void; onPlay
             ))}
           </nav>
           <div className="flex items-center gap-2">
+            {/* SeeQ — the mascot's own landing section. The mini bot is live:
+                his capsule eyes track your cursor from the header. */}
+            <button
+              onClick={() => scrollTo("seeq")}
+              data-seeq-nav="1"
+              aria-label="Meet SeeQ — your study buddy"
+              title="Meet SeeQ — your study buddy"
+              className="flex cursor-pointer items-center gap-1.5 rounded-md border border-zinc-800 py-1.5 pl-1.5 pr-3 text-sm text-zinc-300 transition-colors hover:bg-zinc-900"
+            >
+              <BloubBot
+                size={26}
+                color="encre"
+                paper="#f9f9f9"
+                contour="rgba(255,255,255,0.26)"
+                follow
+                className="h-[26px] w-[26px]"
+                ariaLabel=""
+              />
+              <span>SeeQ</span>
+            </button>
             <ThemeSwitcher />
             <button
               onClick={onPlayground}
@@ -324,6 +430,74 @@ export function Landing({ onStart, onPlayground }: { onStart: () => void; onPlay
         </div>
       </section>
 
+      {/* seeq — the mascot's own landing section */}
+      <section id="seeq" data-seeq-landing="1" className="border-b border-zinc-800/80">
+        <div className="mx-auto w-full max-w-6xl px-4 py-20 sm:px-6">
+          <Reveal>
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <h2 className="font-display text-3xl font-semibold tracking-[-0.02em] text-zinc-50">
+                  Meet <span className="text-emerald-400">SeeQ</span> — your study buddy
+                </h2>
+                <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-400">
+                  One blob, two capsule eyes, no mouth — that&apos;s the whole character, and it
+                  grows on you fast. His eyes follow your cursor around the page, he taps you on
+                  the shoulder with study tips while you learn, and you can grab him with the
+                  mouse and park him anywhere on screen. Look down — he&apos;s already here.
+                </p>
+              </div>
+              <span className="sheen rounded-full border border-zinc-800 bg-zinc-900/50 px-3 py-1 font-mono text-[11px] text-zinc-500">
+                8 shapes · 16 expressions · 12 colours
+              </span>
+            </div>
+          </Reveal>
+          <Reveal delay={0.06}>
+            <div className="sheen mt-10 grid items-center gap-8 rounded-xl border border-zinc-800 bg-zinc-950 p-6 sm:p-8 lg:grid-cols-[auto_1fr] lg:gap-12">
+              <SeeqMascot />
+              <div>
+                <h3 className="font-display text-xl font-semibold text-zinc-100">He learns with you</h3>
+                <p className="mt-2 max-w-lg text-[13px] leading-6 text-zinc-400">
+                  SeeQ isn&apos;t a decoration — he&apos;s the coach. While you work through lessons
+                  he surfaces quiet, practical tips (the ones that actually save a debug session),
+                  celebrates your pokes, and never interrupts a running query. He keeps whatever
+                  outfit you give him and whatever corner you park him in — on this page and
+                  everywhere else in SeeQL.
+                </p>
+                <ul className="mt-4 space-y-2.5 text-[13px] leading-6 text-zinc-400">
+                  <li className="flex gap-2.5">
+                    <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400" />
+                    <span><span className="text-zinc-200">Click a blob, it plays.</span> Every tile in his workshop performs its move live before you decide — the full 14-animation film included.</span>
+                  </li>
+                  <li className="flex gap-2.5">
+                    <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400" />
+                    <span><span className="text-zinc-200">Grab and park him anywhere.</span> A drag places him on your favourite spot — it persists across visits, and his speech bubble flips sides so it never leaves the screen.</span>
+                  </li>
+                  <li className="flex gap-2.5">
+                    <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400" />
+                    <span><span className="text-zinc-200">He reacts, never nags.</span> Tips arrive on a quiet schedule, he collapses to a 44px chip when you need the space, and one click brings him back.</span>
+                  </li>
+                </ul>
+                <div className="mt-6 flex flex-wrap items-center gap-3">
+                  <button
+                    onClick={onSeeq}
+                    className="btn-glow inline-flex cursor-pointer items-center gap-2 rounded-md bg-emerald-400 px-5 py-2.5 text-sm font-medium text-[#052e1c] transition-all hover:bg-emerald-300"
+                  >
+                    Dress him up in the SeeQ workshop
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                  <span className="text-xs text-zinc-500">Shape, colour, mood — your buddy, your rules.</span>
+                </div>
+                <p className="mt-4 text-[11px] text-zinc-600">
+                  SeeQ is an exact 1:1 clone of{" "}
+                  <span className="text-zinc-500">bloub</span> by Jérémy Perret (MIT) — same engine,
+                  same blink calendar, same soul.
+                </p>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="border-b border-zinc-800/80">
         <div className="mx-auto w-full max-w-6xl px-4 py-24 sm:px-6">
@@ -356,6 +530,7 @@ export function Landing({ onStart, onPlayground }: { onStart: () => void; onPlay
             SeeQL — a visual way to learn SQL. Built with a real SQLite engine in your browser.
           </p>
           <div className="flex items-center gap-4 text-xs text-zinc-500">
+            <button onClick={() => scrollTo("seeq")} className="transition-colors hover:text-zinc-300">SeeQ</button>
             <button onClick={onPlayground} className="transition-colors hover:text-zinc-300">Playground</button>
             <button onClick={onStart} className="transition-colors hover:text-zinc-300">Learn</button>
           </div>
