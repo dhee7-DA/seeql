@@ -1,0 +1,206 @@
+  2060→- learn-app.tsx: View kind "perf" (sql/tab payload), sidebar Practice-lab entry (Gauge, "SCAN vs SEARCH, index stings"), ToolRail chip, dispatch branch. query-golf.tsx: "Plan in Perf lab" button after a successful run carries the learner's SQL into the workbench.
+  2061→- QA gates: tsc 829 = exact baseline (first run 832 included 3 REAL errors of mine in plan-pipeline — missed prop destructure + component-called-as-function — fixed; the sql-funnel trio was verified pre-existing INSIDE the 829, its commit is a Sep 17 ancestor); lint: fixed a real setState-in-effect error (case-tagged evidence state instead of sync reset), file-scoped lint clean on all 7 touched files.
+  2062→- Browser E2E (scripts/qa-perf.sh on :3000): pipeline badges+stories+chips ✓; workbench preset->compare "full scans 1 → 0" + GONE tag + same-rows ✓; detective wrong index rejected with bare-SCAN miss chip ✓, hint rung 1 shows ZERO SQL ✓, correct index -> "Case closed" + takeaway ✓, xpEvents ledger perf:d1=15 ✓; case nav ✓; golf -> perf lab carries SELECT * FROM orders ✓; 0 page errors. Screenshots qa-perf-{pipeline,workbench,detective,golf-link}.png. Note: eval assertions on uppercase-styled labels must match the TRANSFORMED innerText.
+  2063→
+  2064→Stage Summary:
+  2065→- The toolbox is now 16 surfaces: the course teaches indexes in L48/L51 and the Performance lab lets learners watch SCAN collapse into SEARCH on the real engine, with graded detective stings paying XP into the same mastery/SR loop.
+  2066→- Committed 1d7f9ec as perf-lab-2. Next per approved order: enhancement #3 — Daily puzzle calendar (streak-freeze, monthly badge).
+  2067→
+  2068→---
+  2069→Task ID: mascot-research
+  2070→Agent: Super Z (main agent)
+  2071→Task: User asked to visit avatar.bible-strong.app and bloub.vercel.app and assess whether either can be included in the SeeQL app as a mascot (before Enhancement #2).
+  2072→
+  2073→Work Log:
+  2074→- Visited avatar.bible-strong.app: root + 9 common paths all return Vercel DEPLOYMENT_NOT_FOUND (404). No Wayback Machine or CDX archive snapshots exist. Main domain bible-strong.app is a compressed SPA shell with zero "avatar" references. Verdict: deployment deleted, content unrecoverable from public web.
+  2075→- Visited bloub.vercel.app: "bloub — animated SVG avatar", open source at github.com/jeremy-prt/bloub. Probed DOM: 33 SVGs, no canvas/lottie/rive/video — pure SVG.
+  2076→- Read README + LICENSE: MIT (c) 2026 Jérémy Perret. It is an SVG recreation of the x.ai bot avatar: 1 filled body shape morphing across 14 states + 2 white eye shapes morphing independently; no animation library; framework-free engine core (`engine.sample(t)` pure function of time); Vue 3 + Vite + TS shell.
+  2077→- Features: 8 body shapes, 12 colours, 17 rest expressions, animation timeline editor, gaze-follow + blink idle life, exports SVG/PNG/GIF/MP4, `<BloubBot state size expression frozenAt>` component API.
+  2078→- README warning noted: MIT covers the CODE, not the design it imitates (x.ai/Grok bot). Not affiliated with x.ai.
+  2079→- Fetched docs/states.png (14 states visual) + demo.gif into scripts/mascot-research/ for reference.
+  2080→- Screenshots saved: scripts/mascot-research/{avatar-site.png, bloub-site.png, bloub-animations.png, bloub-settings.png, bloub-states.png, bloub-demo.gif}.
+  2081→
+  2082→Stage Summary:
+  2083→- avatar.bible-strong.app: DEAD, nothing includable. User can supply a screenshot if they remember it.
+  2084→- bloub: includable. Two legal paths: (A) port MIT engine verbatim (result = Grok lookalike), (B) build original SeeQL mascot using the same MIT techniques (pure-SVG morph + eye masks + blink/gaze) themed to app's emerald palette. (B) recommended — brand-clean.
+  2085→- Mascot can wire into existing app events: drills/clinic/golf results, XP/streak ups, Mentor chat avatar, empty states; future enhancements (#3 calendar, #6 blitz) can reuse reaction states.
+  2086→- No code changed. Awaiting user's mascot direction choice.
+  2087→
+  2088→---
+  2089→Task ID: mascot-seeq-1
+  2090→Agent: Super Z (main agent)
+  2091→Task: Build "SeeQ" — original corner-buddy mascot for the SeeQL app (user-approved: original character, blob buddy, corner placement, coach personality), using techniques learned from the MIT-licensed bloub project (pure-SVG morph engine; no design copy of the x.ai look).
+  2092→
+  2093→Work Log:
+  2094→- User chose via question round: Original approach / Blob buddy / Corner buddy placement / Coach personality.
+  2095→- Built src/components/learn/seeq-buddy.tsx (~560 lines, self-contained):
+  2096→  - Numeric pose model + single rAF loop; geometry painted directly onto SVG attributes (zero React re-renders per frame, zero animation libraries).
+  2097→  - Organic blob: 9-point closed Catmull-Rom spline with per-index radius quirks + time wobble + squash-and-stretch; exponential ease-out toward mood targets (idle/happy/excited/thinking/sad/wink).
+  2098→  - Life: 160ms triangle blink every 2.4-6.6s, pointer-following gaze (clamped 3.4px) with Lissajous wander fallback, gentle bob + reactive ground shadow, emerald radial-gradient body, rose cheeks, smile/o-mouth.
+  2099→  - 14 coach tips (app-aware: Mentor, golf, perf SCAN-vs-SEARCH, clinic, drills, predict, explorer) on a shuffled no-repeat bag: first tip ~2.6s, hold 8.2s, gap 22-36s. Poke -> excited praise bubble. Dismiss X. Collapsible (persisted seeql.buddy.collapsed); collapsed = 44px chip that still blinks, speech paused.
+  2100→  - A11y/robustness: aria-expanded + dynamic labels, aria-live bubble, keyboard focusable, prefers-reduced-motion -> single static frame, rAF pauses on document.hidden, portal to document.body, full cleanup.
+  2101→- Mounted in learn-app.tsx after CelebrationHost.
+  2102→- Fixed 37 self-inflicted tsc errors (as-const literal types -> number) and restructured to satisfy react-hooks set-state-in-effect: useSyncExternalStore client gate (no mounted-state effect) + moved bubble clearing into event handlers (collapseBuddy/expand).
+  2103→- Gates: tsc 829 (= baseline 829, 0 new; baseline moved from 829->829 because perf-lab commit 1d7f9ec landed between sessions), eslint 4 errors + 4 warnings = exactly pre-existing, 0 new.
+  2104→- Browser QA (scripts/qa-seeq.sh, private :3102 + live :3000): mount/position/z-55, engine morph liveness, first tip, pointer gaze (translate -2.45 -> 3.37), poke praise, collapse (chip 44px, aria-expanded false, localStorage "1"), re-expand ("0"), 0 page errors across all runs. Found + fixed two placement conflicts: desktop buddy covered sidebar nav (now lg:left-[max(340px,calc((100vw-1280px)/2+340px))] -> measured buddyLeft 340 vs sidebarRight 316), mobile chip hidden behind Next devtools badge (bottom-14 on mobile).
+  2105→- Restarted main preview stack after QA (dev.pid 7092, watchdog.pid 7255, :3000 -> 200).
+  2106→
+  2107→Stage Summary:
+  2108→- SeeQ shipped: emerald blob buddy, corner placement, coach tips, poke, collapse. Screenshots: scripts/qa-seeq-{bubble,poke,collapsed,desktop,mobile}.png.
+  2109→- Research artifacts from bloub/avatar-site investigation kept untracked in scripts/mascot-research/.
+  2110→- Future hooks: reaction states (happy/sad/excited) ready to be wired into drills/clinic/golf events and Blitz/daily-puzzle enhancements via moodRef pattern.
+  2111→
+  2112→---
+  2113→Task ID: mascot-seeq-v2
+  2114→Agent: main (Super Z)
+  2115→Task: User feedback — SeeQ "looks weird and not as smooth/similar to the reference sites" (screenshot provided). Rebuild the motion engine to bloub-grade quality.
+  2116→
+  2117→Work Log:
+  2118→- Diagnosed via side-by-side vs research captures: v1 violated all four bloub design principles (lumpy 9-pt body with ±4% radius quirks; continuous bob+wobble; flat 2D ellipse eyes with ±3px translate; mechanical triangle blink).
+  2119→- Cloned MIT repo github.com/jeremy-prt/bloub to scripts/mascot-research/bloub-repo; extracted measured engine constants (face.ts liveliness, math.ts loopNoise/easeOutQuint, shape.ts closedPath/capsulePath, states.ts blink-in masking, ui/gaze.ts pointer mapping, BloubBot.vue per-frame re-anchored setLook).
+  2120→- Rewrote seeq-buddy.tsx (~660 lines, zero anim libs): 64-pt perfect-circle body (breath 0.5% height, sub-pixel drift, still at rest); eyes as capsules projected on yaw/pitch/roll head sphere (tangent-frame matrix, limb fade, per-eye mirrored tilt, screen-space blink squash 0.06 min); deterministic blink calendar (mulberry32 0x5eed, 1.9–4.6s gaps, 18% double-blinks, close-fast/open-slow 0.18s); forced blink masks every mood morph; easeOutQuint-only morphs with freeze-and-reblend on interrupt; pointer follow normalized to half-window (YAW_MAX 16 / PITCH_MAX 13), touch ignored, wander fades while following.
+  2121→- Fixed ported-driver bug pre-QA: gaze interpolation must compute catch-up BEFORE re-anchoring (bloub order) else k=0 freezes the gaze.
+  2122→- Gates: tsc 882 stashed = 882 with change (0 new; 829→882 baseline drift is pre-existing scripts/*.ts noise); lint 4 errors + 4 warnings = exactly pre-existing after adding scripts/mascot-research/** and tool-results/** to eslint ignores.
+  2123→- QA via scripts/qa-seeq.sh on :3102 (main stack paused for dev lock, then restarted via dev.sh, :3000→200, pids 10255/7255): mount/morph/first-tip/gaze (eye matrix translation 51.5,44.0 → 57.9,43.2 toward pointer)/poke/collapse(44px chip, persisted)/re-expand/0 page errors — all pass. Desktop + mobile screenshots verified visually.
+  2124→
+  2125→Stage Summary:
+  2126→- Commit c93866c "SeeQ v2 engine: bloub-grade motion..."; worktree clean except upload/.
+  2127→- SeeQ now: smooth circle silhouette, 3D-projected leaning capsule eyes, blink-cut mood changes, calm-at-rest life model. Character identity unchanged (emerald, cream eyes, mouth, cheeks, coach tips, poke, collapse).
+  2128→- QA artifacts: qa-seeq-{bubble,poke,collapsed,idle,mobile2}.png; qa-seeq.sh step 6 reads eye path matrix (new DOM).
+  2129→
+  2130→---
+  2131→Task ID: ops-preview-on
+  2132→Agent: Super Z (main agent)
+  2133→Task: User asked "turn on the preview" (server was down after session recycle).
+  2134→
+  2135→Work Log:
+  2136→- localhost:3000 -> 000 (nothing listening; sandbox had been recycled between sessions).
+  2137→- Booted the canonical stack via .zscripts/dev.sh: bun install no-op (967 pkgs), db:push in sync + Prisma client regenerated, Next dev server up (pid 10658, .zscripts/dev.pid), health check passed, watchdog armed (pid 10769, rss cap 2000000KB).
+  2138→- Verified across multiple tool calls: HTTP 200 on :3000, caddy :81 -> 200, caddy :81 with preview Host header -> 200 (entire local proxy chain healthy).
+  2139→- External gateway preview-6a98301b-145d6674-cbf4a43676be.space-z.ai returns Go-style 404 with "Abc: preview-*" header (documented platform-side signature). 404 persisted 12+ min across 16+ attempts and 5 candidate subdomains (workspace id, session id, chat id, container id, prior bot id) => gateway route registration is platform-side, same failure mode as the ui-1 incident.
+  2140→- Left state: app fully healthy locally; gateway re-registration pending platform side (self-resolves in minutes OR user restart button re-registers, per ui-1 precedent).
+  2141→
+  2142→Stage Summary:
+  2143→- Dev server + watchdog back up and stable; the ONLY blocker for the user preview is the platform edge gateway route registration (not the app).
+  2144→- Next user-facing work queued: SeeQ mascot smoothness rework to match bloub (user rejected v1 look/animation).
+  2145→
+  2146→---
+  2147→Task ID: mascot-gallery
+  2148→Agent: Super Z (main agent)
+  2149→Task: User asked for "a separate mascot section in the top with all the shapes, expression and colours" — a live SeeQ gallery on the Overview, in the spirit of bloub's state gallery.
+  2150→
+  2151→Work Log:
+  2152→- Extracted the v2 motion engine from seeq-buddy.tsx into NEW src/components/learn/seeq-engine.tsx (~830 lines): pure math (blink calendar w/ per-instance phase, closed Catmull-Rom, capsule eyes on the yaw/pitch/roll head sphere), NEW analytic SHAPE library (circle, pebble, tall, wide, egg, drop, bean, squircle — low-order harmonics + superellipse, peak-normalised, all smooth; lumpy organic noise deliberately excluded), NEW colour THEMES (emerald, blueberry, grape, sunset, rose, slate — gradient stops + eye/ink/cheek), two NEW expressions (sleepy, surprised) beside the six moods, a shared single-rAF ticker (sleeps on tab hide + last unsubscribe), and <SeeqSprite> — one live SeeQ with SSR-real static frame, IntersectionObserver-gated animation, reduced-motion static paint, 40-pt sampling (buddy keeps 64).
+  2153→- seeq-buddy.tsx rewritten as pure BEHAVIOUR on the shared engine: same corner placement/tips/poke/collapse/persistence/pointer-follow; joins the shared ticker (one rAF for every SeeQ on the page); body colour now follows seeql.buddy.theme via useSyncExternalStore store (no setState-in-effect) — one new tip cross-promotes the gallery.
+  2154→- NEW src/components/learn/seeq-gallery.tsx: "Meet SeeQ" section at the TOP of Overview (after hero, before course map). 22 live tiles in three labelled rows — Shapes (8), Expressions (8), Colours (6). Tap any tile = poke (excited cut, 1.3 s); tap a colour = re-skin the corner buddy (persisted seeql.buddy.theme, reactive ring on the active tile, aria-pressed).
+  2155→- learn-app.tsx: SeeqGallery mounted between the hero and the course map.
+  2156→- Gates: tsc 882 = 882 stash-free baseline (0 new; drift documented in mascot-seeq-v2), eslint 4 errors + 4 warnings = exactly pre-existing; scoped lint on all 4 touched files clean.
+  2157→- QA (scripts/qa-seeq-gallery.sh against LIVE :3000 — preview never went down): 22/22 tiles with non-empty body paths; sprite morph liveness verified (body d changes over 700 ms); shapes provably distinct (circle != pebble != tall); poke flips sprite to excited; grape tile -> localStorage seeql.buddy.theme=grape + active ring + aria-pressed + buddy gradient re-rendered (verified emerald stops after reset — the QA's first stopColor selector was case-sensitive-CSS noise, 3 stops confirmed via direct probe); buddy regression all green: mounted/fixed/z, pointer gaze matrix 55.51,51.13 -> 60.43,44.2, poke praise, collapse chip 44 px persisted, re-expand; tip chain alive (praise at t+1s, scheduled tip at t+31s); 0 console errors. Screenshots: qa-gallery-{desktop,grape,buddy,mobile}.png (desktop 1280x800 + mobile 390x844, visually inspected: 8 distinct smooth shapes, 8 readable expressions, 6 clean palettes, buddy re-skins live).
+  2158→
+  2159→Stage Summary:
+  2160→- The mascot is now a SYSTEM: one engine, one rAF, N live SeeQs. The Overview opens with every shape, expression and colour alive under "Meet SeeQ", and the corner buddy is re-skinable in one tap.
+  2161→- Committed as mascot-gallery. Next per approved queue: enhancement #3 — Daily puzzle calendar (streak-freeze, monthly badge).
+  2162→
+  2163→---
+  2164→Task ID: mascot-bloub-clone-1
+  2165→Agent: Super Z (main agent)
+  2166→Task: User rejected the v1 mascot look ("i dont like it") and demanded an exact replica of the reference sites — same shape, colour, expression, NO mouth, "just clone". Deliver the exact bloub clone plus the top mascot section with all shapes/expressions/colours.
+  2167→
+  2168→Work Log:
+  2169→- Full bloub repo source was already cloned at scripts/mascot-research/bloub-repo/ (MIT); read every bot core file (engine, shape, states, face, expressions, skins, eyefit, decor, math, repere) plus BloubBot.vue, gaze.ts, cycles.ts and en.ts labels
+  2170→- Copied src/bot/*.ts VERBATIM into src/components/bloub/ (11 files + LICENSE) — zero math changes, exact fidelity: 64-sample radial profiles, Catmull-Rom closed body, sphere-projected capsule EYE HOLES punched via SVG mask (no mouth anywhere), easeOutQuint dated setters, deterministic blink calendar, eyefit translation table built at import
+  2171→- Wrote bloub/gaze.ts port (lookTarget/YAW_MAX/PITCH/TURN/SPIN/TURN_TIME) and bloub-bot.tsx React renderer: FrozenBot = pure engine.sample(frozenAt) via useMemo (SSR-deterministic); LiveBot = one rAF, props reconciled into engine through propsRef (react-hooks/refs compliant — ref written in effect, engine created inside effect, first frame from first tick), pointer follow, reduced-motion single frame
+  2172→- seeq-skin.ts: persisted SeeqSkin {shape,color,expression} store (seeql.buddy.skin.v2) via useSyncExternalStore + lazy localStorage hydration; validated against bloub catalogs
+  2173→- Rewrote seeq-buddy.tsx: kept tips/poke/collapse/flourish shell; visual is now BloubBot live (follow, encre default) on a #f9f9f9 paper disc (ink bot reads on the dark app exactly like on bloub's light page); tips drive the notify state (blue pastille), poke drives wide, flourishes wink/egg/hexagon/wide
+  2174→- Rewrote seeq-gallery.tsx: live pointer-follow hero on paper stage + Play-the-film driver (SEQUENCE at measured durations) + 4 frozen-tile rows: 14 animations (POSES times), 8 shapes, 16 expressions, 12 colours; tiles setSkin() -> buddy + hero re-dress live; Reset restores cercle/encre/neutre; labels are bloub's own English strings
+  2175→- Deleted seeq-engine.tsx (v1 engine); tsconfig excludes scripts/mascot-research (research clone was sweeping vitest/vue imports into tsc: 911 -> 829)
+  2176→- Fixed two React 19 lint-rule violations in LiveBot (react-hooks/refs: no ref writes during render, no ref reads in useState initializer)
+  2177→- QA via scripts/qa-bloub.sh + qa-bloub2.sh + qa-bloub3.sh against live :3000: tiles 14/8/16/12, ink #0a0a0c, 2 eye holes, mouthEvidence 0, hero morphs, gaze follows pointer (eye x -59 -> -32 -> -67), film plays (thinking dots), violet/happy/triangle persist across reload, scoped Reset works, tip+pastille verified in window, poke praise, 44px chip persist, mobile 0 overflow, 0 console errors, dev.log clean
+  2178→- Screenshots: scripts/qa-bloub-{film,violet,bubble,mobile}.png; committed ea5ad96
+  2179→
+  2180→Stage Summary:
+  2181→- Mascot is now a pixel-faithful bloub clone (engine verbatim, MIT license included, attribution in headers); no mouth; buddy + hero + 50 tiles all render from the one ported engine
+  2182→- Gallery section sits at the top of the Overview (existing placement, rebuilt contents); tapping any tile re-dresses the corner buddy and persists
+  2183→- Gates: tsc 829 (baseline, 0 new), lint 4 errors + 4 warnings (baseline, 0 new), 0 console errors
+  2184→- Old localStorage key seeql.buddy.theme is obsolete and ignored; new key seeql.buddy.skin.v2
+  2185→- Next: enhancement queue #3-#8 (daily puzzle calendar next), SeeQ mood hook reserved for drills/clinic/golf results
+  2186→
+  2187→---
+  2188→Task ID: mascot-round-3
+  2189→Agent: Super Z (main agent)
+  2190→Task: User: "better... now remove the big circle at the background and improve its eyes which follows the cursor" — drop the paper backdrop disc behind the mascot, upgrade the cursor-follow gaze.
+  2191→
+  2192→Work Log:
+  2193→- Diagnosed the "big circle": the #f9f9f9 paper disc behind the corner buddy (seeq-buddy.tsx) and behind the gallery hero (seeq-gallery.tsx). Removed both spans; eye depth is safe because the paper underlay is painted INSIDE the SVG (eye holes read through to it regardless of page background).
+  2194→- Ink bot on the dark app needed a new legibility carrier: added optional `contour` prop to BloubBot/BotSvg — a 1.1px non-scaling hairline stroked on the exact bodyPath (fades with bodyAlpha, follows every shape). Buddy + hero pass rgba(255,255,255,0.26) plus a soft drop-shadow; tiles untouched (light cards, full-fidelity look).
+  2195→- Gaze rework in bloub/gaze.ts (the CHOSEN-constants file, per upstream's own comment): removed bloub's fixed -26deg left head lean (their settings layout — it made the corner buddy stare away from most cursor positions), yaw is now purely cursor-driven nx*34deg (was -26+/-16), pitch 8-/+18deg (was 10-/+13), TURN_TIME 1.1s -> 0.55s (snappier land + release), SPIN 360 en-route turn kept. Engine untouched (verbatim 1:1).
+  2196→- bloub-bot.tsx aim(): gaze radius tightened from half-viewport to 0.34x viewport — the corner buddy's cursor lives far away, so the follow now saturates sooner and reads across the whole page.
+  2197→- New QA scripts/qa-seeq3.sh + qa-seeq3b.sh against live :3000: discGone true on buddy AND hero; rim stroke rgba(255,255,255,0.26) present; 2 eye holes; tiles 14/8/16/12; poke praise; collapse 44px chip persisted + re-expand; 0 console errors. Gaze: hero monotonic (right-up tx +27.99 vs left-down -69.68); buddy in a clean idle window (first round's odd numbers were the notify tip state, which suspends following by design — documented, not a bug): right-up tx +28.6, left-down -67.7, delta 96.3 viewBox units vs ~35 in the old build (~3x travel), monotonic true.
+  2198→- Screenshots: qa-seeq3-{gallery,buddy,mobile}.png — visually inspected: no circles anywhere, bots sit straight on the dark page, eyes bright, mobile 390x844 clean.
+  2199→- Gates: tsc 829 = baseline (0 new); npm run lint 4 errors + 4 warnings = exactly baseline; scoped lint on the 4 touched files clean.
+  2200→
+  2201→Stage Summary:
+  2202→- Mascot now floats free: no backdrop circle, just the bot with a hairline sticker-edge contour and paper-bright eyes on the dark app.
+  2203→- Eyes genuinely follow the cursor: direction re-centred on the pointer (no left bias), 2x angular travel, 2x faster turn, tighter gaze radius — measured ~3x on-screen travel.
+  2204→- Next per approved queue: enhancement #3 - Daily puzzle calendar (streak-freeze, monthly badge).
+  2205→
+  2206→---
+  2207→Task ID: mascot-round-4
+  2208→Agent: Super Z (main agent)
+  2209→Task: User: "make a separate section in the top header ... i can play those blobs when i click on those but can select them for the main screen and also make them like placeable so that i can grab it with mouse and place it anywhere on the screen on my favorite part."
+  2210→
+  2211→Work Log:
+  2212→- New dedicated SeeQ section: added { kind: "seeq" } view + SeeqView (src/components/learn/seeq-view.tsx, replaces the old overview-embedded gallery — seeq-gallery.tsx deleted). Reachable from THREE places: a new top-header "SeeQ" button (page.tsx, with a 26px LIVE follower bot whose capsule eyes track the cursor app-wide), the mobile ToolRail tabs (Overview / SeeQ / Mentor / Data), and the desktop sidebar Toolbox ("SeeQ playground — dress & place your buddy"). Header button navigates via a seeql:nav CustomEvent (LearnApp subscribes in one effect; setState inside the listener callback is compliant).
+  2213→- Play vs select split (the user's ask): TileBot tiles are frozen (zero cost) until clicked — the clicked tile mounts a LIVE bot keyed by nonce and plays (animation tiles run their own state for min(duration,6s), shape/expr/colour tiles do a "wide eyes" pulse, then freeze back). Clicking also re-dresses the DRAFT which the hero previews live; only "Set as my buddy" commits the draft to seeq-skin store (button disabled until dirty, flashes "That's your buddy!"; aria-live status line). Reset restores the ink default; Play-the-film retained.
+  2214→- Placeable buddy (seeq-buddy.tsx rewritten): position state {x,y} persisted at seeql.buddy.pos.v1 (initializer follows the client-only localStorage pattern; default = the classic corner berth, recomputed per breakpoint). Pointer-level drag on the buddy button: 6px threshold splits drag from poke (draggedRef suppresses the trailing click-poke exactly once); clamped to viewport with EDGE=8 and TOP_MIN=64 (below the sticky header); final spot computed from the pointerup event itself, never from state (QA caught the stale-write on fast flicks); clamped again on collapse/expand size changes. Tip bubble is now absolutely anchored to the buddy and flips sides (left-full/right-full) when parked right of centre, so it never leaves the viewport. touch-none for touch dragging; cursor-grab/grabbing.
+  2215→- Tips updated: gallery tip now points at the SeeQ playground + drag hint; first tip mentions grabbing/parking.
+  2216→- QA (scripts/qa-seeq4.sh, fresh browser, no mid-run edits): header btn + mini bot; nav switches view and removes the course map; tiles 14/8/16/12; clicked tile goes live then freezes back; violet draft -> commit -> corner buddy ink #8b5cf6 persisted; Reset -> #0a0a0c; drag 200/-80px persists exactly (saved == style, no poke); first post-drag click consumed, second pokes; bubble flips right-full when parked right; parked spot survives reload; 0 console errors (earlier "✗" was Fast Refresh HMR noise from mid-session file edits — verified clean on a fresh pass). Screenshots qa-seeq4-view.png + qa-seeq4-mobile.png inspected: header mini bot, SeeQ tab active, hero + rows + parked buddy all correct on 1280 and 390 widths.
+  2217→- Gates: tsc 829 = baseline (0 new); npm run lint 8 problems (4 errors + 4 warnings) = exactly baseline; scoped lint on all touched files clean.
+  2218→
+  2219→Stage Summary:
+  2220→- The mascot now has its own header section: play tiles on click, preview the draft on the hero, commit with "Set as my buddy".
+  2221→- The corner buddy is grabbable and parkable anywhere on screen, spot persisted; bubble auto-flips; collapse chip keeps the spot.
+  2222→- Next per approved queue: enhancement #3 - Daily puzzle calendar (streak-freeze, monthly badge).
+  2223→
+  2224→---
+  2225→Task ID: ui-kit-round-5
+  2226→Agent: Super Z (main agent)
+  2227→Task: User asked "do we think we should work on better setup of components and things in the UI to make it even less clunky?" — audit said yes with receipts (162 raw buttons vs 5 ui Button; 17 tools described in 3 parallel lists + a 17-branch ternary = 4 edit sites per new feature; repeated progress-bar/chip/panel markup; no global focus ring; hard-swapping views).
+  2228→
+  2229→Work Log:
+  2230→- New src/components/learn/tools.ts — the single TOOL registry (kind/icon/label/note/short/section) for all 17 non-lesson destinations. Sidebar "Toolbox" + "Practice lab" groups (CORE_AND_TOOLBOX / LAB_TOOLS), the mobile ToolRail pills and a compile-time drift guard (RegistryCoversViews: Exclude<View["kind"],"lesson"> must equal ToolKind both ways) all derive from it. Adding tool #18 is now a View member + one registry entry.
+  2231→- New src/components/learn/ui/kit.tsx — the shell primitive layer: Panel (tone shell/nested, pad 0/3.5/4/5, rounded lg/xl, card-hover), ProgressBar (value 0..1, fine variant), Chip (stat lozenge), SectionLabel, Btn (primary/soft/outline/ghost/pill + danger, shared focus ring, disabled, cursor), ToolRow (sidebar destination row with aria-current). All encode the existing monochrome-silver-on-zinc look (the theme remaps --color-emerald-400 to #b7b9c4 — silver IS the design; not a bug).
+  2232→- learn-app.tsx 803->~760 lines and decoupled: sidebar header on Panel+ProgressBar+Btn ghost; both tool lists -> ToolRow maps from the registry (killed ~75 duplicated lines); reset confirm -> Btn outline/danger; hero + badges + course map extracted into an Overview component (owns its own reveal state + store reads; gamification values passed in, watcher NOT re-run); 17-branch ternary -> ViewBody switch; module card CTA -> Btn soft. Ghost/Explore/... icon imports collapsed to 8.
+  2233→- View switching: motion.div keyed by view.kind (lesson keyed with id), 0.22s fade-and-rise entrance via useReducedMotion (opacity-only when reduced). Verified mid-flight (opacity 0 + translateY 2.9px right after a switch) and settled.
+  2234→- globals.css: two app-wide affordances — button:not(:disabled){cursor:pointer} (Tailwind v4 preflight defaults buttons to cursor:default) and a :where():focus-visible 2px emerald-400/80 outline. Zero-specificity :where() means shadcn components (which set outline-none + their own ring) keep full control — no double indicators. Verified: ToolRow outline 2px oklab-emerald on keyboard Tab.
+  2235→- QA scripts/qa-ui5.sh: sidebar 17 registry rows + overview aria-current; Data explorer/Mentor/Course overview switches all render with active state following (sidebar AND rail); lesson opens via hero CTA (switch case "lesson"); SeeQ section intact (14/8/16/12 tiles, commit+reset, live tiles); buddy drag persists ({x:540,y:353} == style); mobile rail 17 pills in curated order; pointer cursor + focus ring verified; 0 console errors. Screenshots qa-ui5-{overview,seeq,mobile}.png inspected.
+  2236→- Gates: tsc 829 = exact baseline (0 new; drift guard compiles); npm run lint 8 problems (4 errors + 4 warnings) = exact baseline; scoped lint on touched files clean. NOTE: many tracked files show mode-only diffs (100644->100755, zero content) — filesystem artifact, left unstaged; bloub engine.ts verified content-identical.
+  2237→
+  2238→Stage Summary:
+  2239→- The app finally has the missing layer: CSS utilities -> ui/kit primitives -> features. Consistency is now structural, not manual.
+  2240→- New tools cost 1 registry entry instead of 4 scattered edits; the queued features (#3 Daily puzzle calendar ... #8 Journey) inherit the rail, sidebar, and entrance animation for free.
+  2241→- Every shell control now shares one focus ring, pointer cursor, and one entrance motion — the "clunky" feel has structural fixes, not just cosmetic ones.
+  2242→
+  2243→---
+  2244→Task ID: seeq-everywhere-6
+  2245→Agent: Super Z (main agent)
+  2246→Task: User (with landing-page screenshot): "i cant see the blob here on the main page and neither its section with everything about him" — SeeQ (buddy + his section) existed only inside #learn; make both present on the main page.
+  2247→
+  2248→Work Log:
+  2249→- Root cause: page.tsx renders Landing / Playground / LearnApp exclusively; LearnApp mounted SeeqBuddy and SeeqView, so the landing had zero SeeQ presence. The landing header/nav had no SeeQ entry either.
+  2250→- Global buddy: SeeqBuddy now mounts ONCE at the app root (page.tsx, after the three mode branches) and is removed from LearnApp. It is a body-portal component, so one instance covers landing + playground + learn, and it SURVIVES mode switches — park him on the landing, he stays parked after "Start learning" (verified: same inline style before/after the switch, count always 1).
+  2251→- SSR crash found and fixed: root mounting made SeeqBuddy's useState initializers run during SSR for the first time (previously LearnApp never SSR'd — the server hash snapshot is always ""), and the pos initializer read window.innerWidth unguarded -> ReferenceError -> landing 500. Fixed with try/catch returning a neutral berth (same client-only pattern as the collapsed initializer; the mounted gate still renders null on the server, so no hydration risk).
+  2252→- Landing "Meet SeeQ" section (#seeq, data-seeq-landing): editorial match for the page (Reveal/sheen/zinc hairlines) with a live SeeqMascot stage — big cursor-following BloubBot (poke = wide) plus 6 move chips (wink/egg/hexagon/wide/notify/orbit) that make him perform then settle; copy on his behaviour (coach, drag-and-park, 44px collapse), "8 shapes . 16 expressions . 12 colours" chip, CTA "Dress him up in the SeeQ workshop", and the bloub MIT attribution line (Jérémy Perret).
+  2253→- Landing header: NAV gains "SeeQ" (scrolls to #seeq) plus the same live 26px mini-bot header button as the learn header; footer gains a SeeQ link.
+  2254→- Deep link: #learn?view=seeq opens the workshop directly. Home parses the hash query and dispatches the existing seeql:nav CustomEvent from a useEffect — child effects flush before parent effects, so LearnApp's listener is guaranteed attached (covers landing CTA, hard reload on the deep link, and back/forward). Landing CTA uses it via the new onSeeq prop (hash "#learn?view=seeq").
+  2255→- Infra: dev server spent the session recycle-looping (watchdog RSS cap 2.0GB vs dev boot RSS ~1.9-2.1GB) — a stray QA Chrome (~940MB) was the main aggravator; killed it and re-verified on a clean boot. Also: agent-browser's `errors --clear` is a NO-OP in this build (about:blank still showed old errors) — the ChunkLoadError "failures" were a stale buffer polluted during a recycle; fresh `--session` buffers show ZERO console errors on landing, learn and playground.
+  2256→- QA (scripts/qa-seeq6.sh + fresh-session follow-ups): landing structure (buddy x1, nav link, mini-bot, section, stage, hero, 6 chips, credit); egg chip morphs the hero body path (M99.97 -> M90.4) and settles back to the idle family (M100.18); buddy berth exact at viewport (340,756 @1280x900); CTA deep-link -> hash #learn?view=seeq, SeeqView renders, buddy same-spot survives, single instance; learn header nav -> 50 tiles; playground buddy present; 0 console errors everywhere (fresh sessions); screenshots qa-seeq6-{landing-top,landing-seeq,learn-seeq,mobile}.png inspected.
+  2257→- Gates: tsc 829 = exact baseline (0 new); npm run lint 4 errors + 4 warnings = exact baseline; scoped eslint on the 4 touched files clean.
+  2258→
+  2259→Stage Summary:
+  2260→- SeeQ is now a site-wide character: the blob greets you on the main page, his section is one nav click away (or scroll), and the workshop deep-links straight from the landing CTA.
+  2261→- Buddy is a single global instance that keeps skin AND parked spot across landing/playground/learn switches.
+  2262→- Landing SSR learned the hard lesson: root-mounted client components must guard window/localStorage in state initializers even when they render null server-side.
+  2263→- Next per approved queue: enhancement #3 - Daily puzzle calendar (streak-freeze, monthly badge).
+
+[showing lines 2060-2263 of 2264; use offset=2264 with limit to continue reading]
