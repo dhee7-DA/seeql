@@ -4,35 +4,16 @@
 // A watcher effect converts progress into badges and level-up celebrations.
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
-  Activity,
   ArrowRight,
-  Bot,
-  Briefcase,
-  Bug,
   Check,
   ChevronDown,
   ChevronsDownUp,
   ChevronsUpDown,
-  Dumbbell,
-  Eye,
-  FileStack,
-  FlaskConical,
-  Flag,
   Flame,
-  Gauge,
-  Ghost,
   GraduationCap,
-  LayoutDashboard,
-  MessagesSquare,
-  Network,
-  Printer,
   RotateCcw,
-  Shapes,
-  Stethoscope,
-  Table2,
-  Target,
 } from "lucide-react";
 import { LESSONS, MODULES } from "@/lib/curriculum/lessons";
 import { useProgress } from "@/lib/curriculum/progress";
@@ -58,6 +39,8 @@ import { SeeqBuddy } from "./seeq-buddy";
 import { SeeqView } from "./seeq-view";
 import { ActivityStrip, MasteryGrid } from "./progress-cards";
 import { CelebrationHost, celebrate } from "./celebrate";
+import { CORE_AND_TOOLBOX, LAB_TOOLS, TOOLS, type ToolKind } from "./tools";
+import { Btn, Chip, Panel, ProgressBar, SectionLabel, ToolRow } from "./ui/kit";
 
 type View =
   | { kind: "overview" }
@@ -78,6 +61,15 @@ type View =
   | { kind: "perf"; sql?: string; tab?: "pipeline" | "workbench" | "detective" }
   | { kind: "sheet" }
   | { kind: "mentor" };
+
+// Drift guard — the registry in tools.ts must name every non-lesson view
+// (and vice versa). A compile error here means: update tools.ts too.
+type NonLessonViews = Exclude<View["kind"], "lesson">;
+export type RegistryCoversViews = [NonLessonViews] extends [ToolKind]
+  ? [ToolKind] extends [NonLessonViews]
+    ? true
+    : false
+  : false;
 
 // ---- Collapsible module state (persisted) -------------------------------
 
@@ -167,17 +159,12 @@ function useBadgeWatcher() {
 
 function RankBlock({ xp, level, streak }: { xp: number; level: ReturnType<typeof levelFor>; streak: number }) {
   return (
-    <div className="sheen rounded-lg border border-zinc-800 bg-zinc-900/50 p-3.5">
+    <Panel tone="nested" pad={3.5} rounded="lg">
       <div className="flex items-center justify-between">
         <span className="font-display text-sm font-semibold text-zinc-100">{level.title}</span>
         <span className="tnum font-mono text-xs text-emerald-300">{xp.toLocaleString()} XP</span>
       </div>
-      <div className="bar-shimmer mt-2.5 h-1.5 overflow-hidden rounded-full bg-zinc-800">
-        <div
-          className="h-full rounded-full bg-emerald-400 transition-[width] duration-700 ease-out"
-          style={{ width: `${Math.round(level.pct * 100)}%` }}
-        />
-      </div>
+      <ProgressBar value={level.pct} className="mt-2.5" />
       <p className="mt-1.5 text-[11px] text-zinc-500">
         {level.next === null ? "Top rank reached — Query Wizard" : `${(level.next - xp).toLocaleString()} XP to ${titleAfter(level.index)}`}
       </p>
@@ -185,7 +172,7 @@ function RankBlock({ xp, level, streak }: { xp: number; level: ReturnType<typeof
         <Flame className={cn("h-3.5 w-3.5", streak > 0 ? "flame-live text-amber-400" : "text-zinc-600")} />
         {streak > 0 ? `${streak}-day streak — keep it alive` : "Hit your daily goal to start a streak"}
       </div>
-    </div>
+    </Panel>
   );
 }
 
@@ -279,12 +266,9 @@ function OverviewModuleCard({
             })}
           </div>
           {nextInModule && (
-            <button
-              onClick={() => onOpenLesson(nextInModule.id)}
-              className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-md border border-emerald-400/30 bg-emerald-400/[0.06] px-3 py-1.5 text-[11px] font-medium text-emerald-300 transition-colors hover:bg-emerald-400/[0.12]"
-            >
+            <Btn variant="soft" className="mt-2 w-full" onClick={() => onOpenLesson(nextInModule.id)}>
               {mDone > 0 ? "Continue module" : "Start module"} — lesson {nextInModule.num} →
-            </button>
+            </Btn>
           )}
         </div>
       </Collapse>
@@ -292,46 +276,21 @@ function OverviewModuleCard({
   );
 }
 
-/** Mobile-only quick nav — the sidebar toolbox as one horizontal thumb-scroll. */
+/** Mobile-only quick nav — the whole registry as one horizontal thumb-scroll. */
 function ToolRail({ view, setView }: { view: View; setView: (v: View) => void }) {
-  const tools: { kind: View["kind"]; icon: React.ComponentType<{ className?: string }>; label: string }[] = [
-    { kind: "overview", icon: LayoutDashboard, label: "Overview" },
-    { kind: "seeq", icon: Ghost, label: "SeeQ" },
-    { kind: "mentor", icon: Bot, label: "Mentor" },
-    { kind: "explorer", icon: Table2, label: "Data" },
-    { kind: "library", icon: Shapes, label: "Diagrams" },
-    { kind: "drills", icon: Dumbbell, label: "Drills" },
-    { kind: "mixed", icon: FlaskConical, label: "Quiz" },
-    { kind: "cases", icon: FileStack, label: "Cases" },
-    { kind: "predict", icon: Eye, label: "Predict" },
-    { kind: "clinic", icon: Bug, label: "Clinic" },
-    { kind: "golf", icon: Flag, label: "Golf" },
-    { kind: "perf", icon: Gauge, label: "Perf" },
-    { kind: "interview", icon: Briefcase, label: "Interview" },
-    { kind: "studio", icon: Network, label: "Schema" },
-    { kind: "explain", icon: MessagesSquare, label: "Explain" },
-    { kind: "mastery", icon: Activity, label: "Mastery" },
-    { kind: "sheet", icon: Printer, label: "Sheet" },
-  ];
   return (
-    <nav
-      aria-label="Quick tools"
-      className="mb-4 flex gap-1.5 overflow-x-auto pb-1 thin-scrollbar lg:hidden"
-    >
-      {tools.map((t) => (
-        <button
+    <nav aria-label="Quick tools" className="mb-4 flex gap-1.5 overflow-x-auto pb-1 thin-scrollbar lg:hidden">
+      {TOOLS.map((t) => (
+        <Btn
           key={t.kind}
+          variant="pill"
+          active={view.kind === t.kind}
+          aria-current={view.kind === t.kind ? "page" : undefined}
           onClick={() => setView({ kind: t.kind } as View)}
-          className={cn(
-            "flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-medium transition-colors",
-            view.kind === t.kind
-              ? "border-emerald-400/40 bg-emerald-400/[0.08] text-emerald-300"
-              : "border-zinc-800 bg-zinc-950 text-zinc-400 hover:border-zinc-700 hover:text-zinc-200",
-          )}
         >
           <t.icon className="h-3 w-3 shrink-0" />
-          {t.label}
-        </button>
+          {t.short}
+        </Btn>
       ))}
     </nav>
   );
@@ -340,6 +299,186 @@ function ToolRail({ view, setView }: { view: View; setView: (v: View) => void })
 function titleAfter(index: number): string {
   const ladder = ["Query Apprentice", "Analyst I", "Analyst II", "Senior Analyst", "Query Wizard"];
   return ladder[Math.min(index, ladder.length - 1)];
+}
+
+/** Course overview — the default view: hero ("where was I"), the course map,
+    activity strip, mastery grid and badges. Owns its own reveal state. */
+function Overview({
+  xp,
+  level,
+  streak,
+  ctx,
+  openLesson,
+}: {
+  xp: number;
+  level: ReturnType<typeof levelFor>;
+  streak: number;
+  ctx: ReturnType<typeof useBadgeWatcher>["ctx"];
+  openLesson: (id: string) => void;
+}) {
+  const xpEvents = useProgress((s) => s.xpEvents);
+  const badgesMap = useProgress((s) => s.badges);
+  const [openOverview, setOpenOverview] = useState<Set<number>>(() => new Set());
+
+  const nextLesson =
+    LESSONS.find((l) => xpEvents[`lesson:${l.id}`] === undefined) ?? LESSONS[LESSONS.length - 1];
+  const doneCount = LESSONS.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
+  const totalProblems = LESSONS.reduce((a, l) => a + l.problems.length, 0);
+  const totalMcqs = LESSONS.reduce((a, l) => a + l.mcqs.length, 0);
+  const toggleOverviewModule = (num: number) =>
+    setOpenOverview((s) => {
+      const n = new Set(s);
+      if (n.has(num)) n.delete(num);
+      else n.add(num);
+      return n;
+    });
+
+  return (
+    <div className="bg-ambient max-w-4xl">
+      {/* Hero — "where was I" + the one tap that matters, before any scrolling */}
+      <Panel pad={5}>
+        <p className="font-mono text-xs text-zinc-500">{MODULES.length} MODULES · BEGINNER → EXPERT</p>
+        <div className="mt-2 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+          <h1 className="font-display text-3xl font-semibold tracking-[-0.02em] text-zinc-50">The SeeQL course</h1>
+          <div className="flex flex-wrap items-center gap-2">
+            <Chip k="Rank" v={level.title} />
+            <Chip k="Total XP" v={xp.toLocaleString()} />
+            <Chip k="Streak" v={streak > 0 ? `${streak}d` : "—"} />
+            <Chip k="Badges" v={`${Object.keys(badgesMap).length}/${BADGES.length}`} />
+          </div>
+        </div>
+        <p className="mt-3 max-w-2xl text-[15px] leading-7 text-zinc-400">
+          {MODULES.length} modules, one real storefront database. Read a concept, prove it in a quiz, then solve
+          graded live queries — {totalMcqs} quiz questions and {totalProblems} graded queries in total.
+        </p>
+
+        <div className="mt-5 flex flex-wrap items-center gap-2.5">
+          <Btn variant="primary" onClick={() => openLesson(nextLesson.id)}>
+            {ctx.lessonsDone > 0 ? `Continue — lesson ${nextLesson.num} · ${nextLesson.title} →` : "Start learning →"}
+          </Btn>
+          <span className="tnum text-[11px] text-zinc-500">
+            {ctx.problemsSolved} queries solved · {ctx.mcqsCorrect} quiz answers
+          </span>
+        </div>
+
+        <div className="mt-4">
+          <ProgressBar value={doneCount / LESSONS.length} />
+          <p className="mt-1.5 text-[11px] text-zinc-500">
+            {ctx.lessonsDone > 0
+              ? `Welcome back — ${doneCount}/${LESSONS.length} lessons complete.`
+              : "Start with lesson 1 — no setup, everything runs live."}
+          </p>
+        </div>
+      </Panel>
+
+      {/* Course map — all modules scannable in one screenful, lessons reveal on demand */}
+      <section className="mt-7">
+        <div className="flex items-baseline justify-between">
+          <h2 className="font-display text-sm font-semibold text-zinc-200">Course map</h2>
+          <span className="text-[11px] text-zinc-500">tap a module to reveal its lessons</span>
+        </div>
+        <div className="mt-3 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+          {MODULES.map((m) => (
+            <OverviewModuleCard
+              key={m.id}
+              module={m}
+              open={openOverview.has(m.num)}
+              onToggle={() => toggleOverviewModule(m.num)}
+              onOpenLesson={openLesson}
+              xpEvents={xpEvents}
+            />
+          ))}
+        </div>
+      </section>
+
+      <div className="mt-7 grid gap-3 lg:grid-cols-2">
+        <ActivityStrip />
+        <MasteryGrid onOpenLesson={openLesson} />
+      </div>
+
+      <Panel rounded="lg" className="mt-6">
+        <h3 className="font-display text-sm font-semibold text-zinc-100">Badges</h3>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {BADGES.map((b) => {
+            const earned = badgesMap[b.id] !== undefined;
+            return (
+              <span
+                key={b.id}
+                title={b.desc}
+                className={cn(
+                  "rounded-md border px-2.5 py-1 text-[11px]",
+                  earned ? "border-amber-400/50 bg-amber-400/10 text-amber-200" : "border-zinc-800 text-zinc-600",
+                )}
+              >
+                {earned ? b.title : "· · ·"}
+              </span>
+            );
+          })}
+        </div>
+      </Panel>
+    </div>
+  );
+}
+
+/** The active view's body — one switch, fed by the shared helpers and the
+    gamification values (the overview needs them for its hero). */
+function ViewBody({
+  view,
+  openLesson,
+  openPerf,
+  xp,
+  level,
+  streak,
+  ctx,
+}: {
+  view: View;
+  openLesson: (id: string) => void;
+  openPerf: (sql: string) => void;
+  xp: number;
+  level: ReturnType<typeof levelFor>;
+  streak: number;
+  ctx: ReturnType<typeof useBadgeWatcher>["ctx"];
+}) {
+  switch (view.kind) {
+    case "lesson": {
+      const lesson = LESSONS.find((l) => l.id === view.id) ?? null;
+      return lesson ? <LessonView key={lesson.id} lesson={lesson} /> : null;
+    }
+    case "seeq":
+      return <SeeqView />;
+    case "explorer":
+      return <DataExplorer />;
+    case "library":
+      return <DiagramLibrary onOpenLesson={openLesson} />;
+    case "drills":
+      return <DrillYard />;
+    case "mixed":
+      return <MixedQuiz />;
+    case "cases":
+      return <CaseFiles />;
+    case "predict":
+      return <PredictView />;
+    case "clinic":
+      return <ErrorClinic />;
+    case "golf":
+      return <QueryGolf onOpenPerf={openPerf} />;
+    case "perf":
+      return <PerfLab initialSql={view.sql} initialTab={view.tab} onOpenLesson={openLesson} />;
+    case "interview":
+      return <InterviewTrack />;
+    case "studio":
+      return <SchemaStudio />;
+    case "explain":
+      return <ExplainBack />;
+    case "mastery":
+      return <MasteryMap onOpenLesson={openLesson} />;
+    case "sheet":
+      return <CheatSheet />;
+    case "mentor":
+      return <MentorChat />;
+    default:
+      return <Overview xp={xp} level={level} streak={streak} ctx={ctx} openLesson={openLesson} />;
+  }
 }
 
 export function LearnApp() {
@@ -360,19 +499,17 @@ export function LearnApp() {
   }, []);
   const { xp, level, streak, ctx } = useBadgeWatcher();
   const xpEvents = useProgress((s) => s.xpEvents);
-  const badgesMap = useProgress((s) => s.badges);
   const resetAll = useProgress((s) => s.resetAll);
   const [confirmReset, setConfirmReset] = useState(false);
 
   // Collapsible modules — persisted; the sidebar defaults to the "continue"
-  // module, the overview course map starts fully collapsed (hero handles "where was I").
+  // module. (The overview course map keeps its own reveal state.)
   const nextLesson = LESSONS.find((l) => xpEvents[`lesson:${l.id}`] === undefined) ?? LESSONS[LESSONS.length - 1];
   const continueModuleNum = moduleOf(nextLesson.id)?.num ?? 1;
   const [openModules, setOpenModules] = useState<Set<number>>(() => {
     const saved = loadOpenModules();
     return new Set(saved ?? [continueModuleNum]);
   });
-  const [openOverview, setOpenOverview] = useState<Set<number>>(() => new Set());
 
   useEffect(() => {
     try {
@@ -389,13 +526,6 @@ export function LearnApp() {
       else n.add(num);
       return n;
     });
-  const toggleOverviewModule = (num: number) =>
-    setOpenOverview((s) => {
-      const n = new Set(s);
-      if (n.has(num)) n.delete(num);
-      else n.add(num);
-      return n;
-    });
 
   const openLesson = (id: string) => {
     const mod = moduleOf(id);
@@ -406,11 +536,12 @@ export function LearnApp() {
     setView({ kind: "lesson", id });
   };
 
-  const lesson = view.kind === "lesson" ? LESSONS.find((l) => l.id === view.id) ?? null : null;
+  const openPerf = (sql: string) => setView({ kind: "perf", sql, tab: "workbench" });
   const doneCount = LESSONS.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
   const totalProblems = LESSONS.reduce((a, l) => a + l.problems.length, 0);
   const totalMcqs = LESSONS.reduce((a, l) => a + l.mcqs.length, 0);
   const allOpen = openModules.size === MODULES.length;
+  const reduced = useReducedMotion() ?? false;
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-6 lg:flex-row">
@@ -422,7 +553,7 @@ export function LearnApp() {
           percentage, which only resolves against a definite parent height —
           with max-height alone the panel overflows and buries the Toolbox. */}
       <aside className="order-2 w-full shrink-0 lg:order-1 lg:sticky lg:top-[76px] lg:h-[calc(100vh-96px)] lg:w-[300px] lg:self-start">
-        <div className="sheen flex max-h-full flex-col overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950">
+        <Panel pad={0} className="flex max-h-full flex-col overflow-hidden">
           <div className="shrink-0 border-b border-zinc-800 p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -430,33 +561,30 @@ export function LearnApp() {
                 <h2 className="font-display text-sm font-semibold text-zinc-100">SeeQL Curriculum</h2>
               </div>
               <div className="flex items-center gap-0.5">
-                <button
+                <Btn
+                  variant="ghost"
                   onClick={() => setOpenModules(new Set(MODULES.map((m) => m.num)))}
                   disabled={allOpen}
                   title="Expand all modules"
-                  className="rounded-md p-1.5 text-zinc-500 transition-colors hover:bg-zinc-900 hover:text-zinc-300 disabled:cursor-not-allowed disabled:opacity-30"
+                  aria-label="Expand all modules"
                 >
                   <ChevronsUpDown className="h-3.5 w-3.5" />
-                </button>
-                <button
+                </Btn>
+                <Btn
+                  variant="ghost"
                   onClick={() => setOpenModules(new Set())}
                   disabled={!allOpen}
                   title="Collapse all modules"
-                  className="rounded-md p-1.5 text-zinc-500 transition-colors hover:bg-zinc-900 hover:text-zinc-300 disabled:cursor-not-allowed disabled:opacity-30"
+                  aria-label="Collapse all modules"
                 >
                   <ChevronsDownUp className="h-3.5 w-3.5" />
-                </button>
+                </Btn>
               </div>
             </div>
             <p className="mt-1 text-[11px] text-zinc-500">
               {MODULES.length} modules · {LESSONS.length} lessons · {totalProblems} graded queries · {totalMcqs} quiz questions
             </p>
-            <div className="bar-shimmer mt-3 h-1.5 overflow-hidden rounded-full bg-zinc-800">
-              <div
-                className="h-full rounded-full bg-emerald-400 transition-[width] duration-700 ease-out"
-                style={{ width: `${(doneCount / LESSONS.length) * 100}%` }}
-              />
-            </div>
+            <ProgressBar value={doneCount / LESSONS.length} className="mt-3" />
             <p className="mt-1.5 text-[11px] text-zinc-500">{doneCount}/{LESSONS.length} lessons complete</p>
           </div>
 
@@ -563,77 +691,30 @@ export function LearnApp() {
           </div>
 
           <div className="shrink-0 border-t border-zinc-800/60 p-3">
-            <p className="mb-1.5 px-1 font-mono text-[10px] uppercase tracking-wider text-zinc-500">Toolbox</p>
+            <SectionLabel className="mb-1.5">Toolbox</SectionLabel>
             <div className="flex flex-col gap-0.5">
-              <button
-                onClick={() => setView({ kind: "overview" })}
-                className={cn(
-                  "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors",
-                  view.kind === "overview" ? "bg-zinc-800" : "hover:bg-zinc-900",
-                )}
-              >
-                <LayoutDashboard className={cn("h-4 w-4 shrink-0", view.kind === "overview" ? "text-emerald-300" : "text-zinc-500")} />
-                <span className="min-w-0">
-                  <span className={cn("block truncate text-xs font-medium", view.kind === "overview" ? "text-zinc-100" : "text-zinc-300")}>
-                    Course overview
-                  </span>
-                  <span className="block text-[10px] text-zinc-600">progress &amp; badges</span>
-                </span>
-              </button>
-              {[
-                { kind: "seeq" as const, icon: Ghost, label: "SeeQ playground", note: "dress & place your buddy" },
-                { kind: "explorer" as const, icon: Table2, label: "Data explorer", note: "browse the live tables" },
-                { kind: "library" as const, icon: Shapes, label: "Diagram library", note: "every visual, one wall" },
-                { kind: "drills" as const, icon: Dumbbell, label: "Keyword drills", note: "every keyword, six angles" },
-                { kind: "mixed" as const, icon: FlaskConical, label: "Mixed quiz", note: "10 from the whole course" },
-                { kind: "cases" as const, icon: FileStack, label: "Case files", note: "rebuild real stakeholder queries" },
-              ].map((t) => (
-                <button
+              {CORE_AND_TOOLBOX.map((t) => (
+                <ToolRow
                   key={t.kind}
-                  onClick={() => setView({ kind: t.kind })}
-                  className={cn(
-                    "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors",
-                    view.kind === t.kind ? "bg-zinc-800" : "hover:bg-zinc-900",
-                  )}
-                >
-                  <t.icon className={cn("h-4 w-4 shrink-0", view.kind === t.kind ? "text-emerald-300" : "text-zinc-500")} />
-                  <span className="min-w-0">
-                    <span className={cn("block truncate text-xs font-medium", view.kind === t.kind ? "text-zinc-100" : "text-zinc-300")}>
-                      {t.label}
-                    </span>
-                    <span className="block text-[10px] text-zinc-600">{t.note}</span>
-                  </span>
-                </button>
+                  icon={t.icon}
+                  label={t.label}
+                  note={t.note}
+                  active={view.kind === t.kind}
+                  onClick={() => setView({ kind: t.kind } as View)}
+                />
               ))}
-              <p className="mb-1 mt-2 px-1 font-mono text-[10px] uppercase tracking-wider text-zinc-500">Practice lab</p>
-              {[
-                { kind: "predict" as const, icon: Eye, label: "Predict the output", note: "freeze the grid before it runs" },
-                { kind: "clinic" as const, icon: Bug, label: "Error clinic", note: "diagnose real bugs, loud & silent" },
-                { kind: "mentor" as const, icon: Bot, label: "AI Mentor", note: "tiered hints on your live data" },
-                { kind: "golf" as const, icon: Flag, label: "Query golf", note: "same rows, fewer strokes" },
-                { kind: "perf" as const, icon: Gauge, label: "Performance lab", note: "SCAN vs SEARCH, index stings" },
-                { kind: "interview" as const, icon: Briefcase, label: "Interview prep", note: "the screening classics, graded" },
-                { kind: "studio" as const, icon: Network, label: "Schema studio", note: "spot the design smell" },
-                { kind: "explain" as const, icon: MessagesSquare, label: "Explain back", note: "say what the query does" },
-                { kind: "mastery" as const, icon: Activity, label: "Mastery map", note: "your skills, your daily quest" },
-                { kind: "sheet" as const, icon: Printer, label: "Cheat sheet", note: "personal revision, prints to PDF" },
-              ].map((t) => (
-                <button
+            </div>
+            <SectionLabel className="mb-1 mt-2">Practice lab</SectionLabel>
+            <div className="flex flex-col gap-0.5">
+              {LAB_TOOLS.map((t) => (
+                <ToolRow
                   key={t.kind}
-                  onClick={() => setView({ kind: t.kind })}
-                  className={cn(
-                    "flex items-center gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors",
-                    view.kind === t.kind ? "bg-zinc-800" : "hover:bg-zinc-900",
-                  )}
-                >
-                  <t.icon className={cn("h-4 w-4 shrink-0", view.kind === t.kind ? "text-emerald-300" : "text-zinc-500")} />
-                  <span className="min-w-0">
-                    <span className={cn("block truncate text-xs font-medium", view.kind === t.kind ? "text-zinc-100" : "text-zinc-300")}>
-                      {t.label}
-                    </span>
-                    <span className="block text-[10px] text-zinc-600">{t.note}</span>
-                  </span>
-                </button>
+                  icon={t.icon}
+                  label={t.label}
+                  note={t.note}
+                  active={view.kind === t.kind}
+                  onClick={() => setView({ kind: t.kind } as View)}
+                />
               ))}
             </div>
           </div>
@@ -643,159 +724,37 @@ export function LearnApp() {
               <div className="flex items-center justify-between gap-2 text-[11px]">
                 <span className="text-zinc-400">Erase all progress?</span>
                 <span className="flex gap-1.5">
-                  <button onClick={() => { resetAll(); setConfirmReset(false); }} className="rounded border border-rose-400/50 px-2 py-1 text-rose-300 hover:bg-rose-400/10">Erase</button>
-                  <button onClick={() => setConfirmReset(false)} className="rounded border border-zinc-700 px-2 py-1 text-zinc-400 hover:bg-zinc-900">Keep</button>
+                  <Btn variant="outline" danger onClick={() => { resetAll(); setConfirmReset(false); }}>Erase</Btn>
+                  <Btn variant="outline" onClick={() => setConfirmReset(false)}>Keep</Btn>
                 </span>
               </div>
             ) : (
-              <button
+              <Btn
+                variant="ghost"
                 onClick={() => setConfirmReset(true)}
-                className="flex items-center gap-1.5 text-[11px] text-zinc-600 transition-colors hover:text-zinc-400"
+                className="p-0 text-[11px] text-zinc-600 hover:bg-transparent hover:text-zinc-400"
               >
                 <RotateCcw className="h-3 w-3" /> Reset progress
-              </button>
+              </Btn>
             )}
           </div>
-        </div>
+        </Panel>
       </aside>
 
-      {/* content — first on mobile so the course starts at the top of the page */}
+      {/* content — first on mobile so the course starts at the top of the page.
+          Each switch gets the same 0.2s fade-and-rise entrance (reduced-motion
+          aware), so moving between tools feels intentional, not like a page
+          hard-swapping underneath you. */}
       <main className="order-1 min-w-0 flex-1 pb-16 lg:order-2">
         <ToolRail view={view} setView={setView} />
-        {lesson ? (
-          <LessonView key={lesson.id} lesson={lesson} />
-        ) : view.kind === "seeq" ? (
-          <SeeqView />
-        ) : view.kind === "explorer" ? (
-          <DataExplorer />
-        ) : view.kind === "library" ? (
-          <DiagramLibrary onOpenLesson={openLesson} />
-        ) : view.kind === "drills" ? (
-          <DrillYard />
-        ) : view.kind === "mixed" ? (
-          <MixedQuiz />
-        ) : view.kind === "cases" ? (
-          <CaseFiles />
-        ) : view.kind === "predict" ? (
-          <PredictView />
-        ) : view.kind === "clinic" ? (
-          <ErrorClinic />
-        ) : view.kind === "golf" ? (
-          <QueryGolf onOpenPerf={(sql) => setView({ kind: "perf", sql, tab: "workbench" })} />
-        ) : view.kind === "perf" ? (
-          <PerfLab initialSql={view.sql} initialTab={view.tab} onOpenLesson={openLesson} />
-        ) : view.kind === "interview" ? (
-          <InterviewTrack />
-        ) : view.kind === "studio" ? (
-          <SchemaStudio />
-        ) : view.kind === "explain" ? (
-          <ExplainBack />
-        ) : view.kind === "mastery" ? (
-          <MasteryMap onOpenLesson={openLesson} />
-        ) : view.kind === "sheet" ? (
-          <CheatSheet />
-        ) : view.kind === "mentor" ? (
-          <MentorChat />
-        ) : (
-          <div className="bg-ambient max-w-4xl">
-            {/* Hero — "where was I" + the one tap that matters, before any scrolling */}
-            <section className="sheen rounded-xl border border-zinc-800 bg-zinc-950 p-5">
-              <p className="font-mono text-xs text-zinc-500">{MODULES.length} MODULES · BEGINNER → EXPERT</p>
-              <div className="mt-2 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
-                <h1 className="font-display text-3xl font-semibold tracking-[-0.02em] text-zinc-50">The SeeQL course</h1>
-                <div className="flex flex-wrap items-center gap-2">
-                  {[
-                    ["Rank", level.title],
-                    ["Total XP", xp.toLocaleString()],
-                    ["Streak", streak > 0 ? `${streak}d` : "—"],
-                    ["Badges", `${Object.keys(badgesMap).length}/${BADGES.length}`],
-                  ].map(([k, v]) => (
-                    <span key={k} className="rounded-md border border-zinc-800 bg-zinc-900/60 px-2.5 py-1.5 text-[11px]">
-                      <span className="text-zinc-500">{k} </span>
-                      <span className="tnum font-medium text-zinc-200">{v}</span>
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <p className="mt-3 max-w-2xl text-[15px] leading-7 text-zinc-400">
-                {MODULES.length} modules, one real storefront database. Read a concept, prove it in a quiz, then solve
-                graded live queries — {totalMcqs} quiz questions and {totalProblems} graded queries in total.
-              </p>
-
-              <div className="mt-5 flex flex-wrap items-center gap-2.5">
-                <button
-                  onClick={() => openLesson(nextLesson.id)}
-                  className="btn-glow rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300"
-                >
-                  {ctx.lessonsDone > 0 ? `Continue — lesson ${nextLesson.num} · ${nextLesson.title} →` : "Start learning →"}
-                </button>
-                <span className="tnum text-[11px] text-zinc-500">
-                  {ctx.problemsSolved} queries solved · {ctx.mcqsCorrect} quiz answers
-                </span>
-              </div>
-
-              <div className="mt-4">
-                <div className="bar-shimmer h-1.5 overflow-hidden rounded-full bg-zinc-800">
-                  <div
-                    className="h-full rounded-full bg-emerald-400 transition-[width] duration-700 ease-out"
-                    style={{ width: `${(doneCount / LESSONS.length) * 100}%` }}
-                  />
-                </div>
-                <p className="mt-1.5 text-[11px] text-zinc-500">
-                  {ctx.lessonsDone > 0
-                    ? `Welcome back — ${doneCount}/${LESSONS.length} lessons complete.`
-                    : "Start with lesson 1 — no setup, everything runs live."}
-                </p>
-              </div>
-            </section>
-
-            {/* Course map — all modules scannable in one screenful, lessons reveal on demand */}
-            <section className="mt-7">
-              <div className="flex items-baseline justify-between">
-                <h2 className="font-display text-sm font-semibold text-zinc-200">Course map</h2>
-                <span className="text-[11px] text-zinc-500">tap a module to reveal its lessons</span>
-              </div>
-              <div className="mt-3 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
-                {MODULES.map((m) => (
-                  <OverviewModuleCard
-                    key={m.id}
-                    module={m}
-                    open={openOverview.has(m.num)}
-                    onToggle={() => toggleOverviewModule(m.num)}
-                    onOpenLesson={openLesson}
-                    xpEvents={xpEvents}
-                  />
-                ))}
-              </div>
-            </section>
-
-            <div className="mt-7 grid gap-3 lg:grid-cols-2">
-              <ActivityStrip />
-              <MasteryGrid onOpenLesson={openLesson} />
-            </div>
-
-            <div className="sheen mt-6 rounded-lg border border-zinc-800 bg-zinc-950 p-4">
-              <h3 className="font-display text-sm font-semibold text-zinc-100">Badges</h3>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {BADGES.map((b) => {
-                  const earned = badgesMap[b.id] !== undefined;
-                  return (
-                    <span
-                      key={b.id}
-                      title={b.desc}
-                      className={cn(
-                        "rounded-md border px-2.5 py-1 text-[11px]",
-                        earned ? "border-amber-400/50 bg-amber-400/10 text-amber-200" : "border-zinc-800 text-zinc-600",
-                      )}
-                    >
-                      {earned ? b.title : "· · ·"}
-                    </span>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        )}
+        <motion.div
+          key={view.kind === "lesson" ? `lesson:${view.id}` : view.kind}
+          initial={reduced ? { opacity: 0 } : { opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.22, ease: "easeOut" }}
+        >
+          <ViewBody view={view} openLesson={openLesson} openPerf={openPerf} xp={xp} level={level} streak={streak} ctx={ctx} />
+        </motion.div>
       </main>
     </div>
   );

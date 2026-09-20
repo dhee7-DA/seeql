@@ -628,3 +628,22 @@ html:not(.dark) .card-hover:hover {
     transform: none;
   }
 }
+
+/* =====================================================================
+   CONTROL AFFORDANCES — one pointer cursor, one keyboard focus ring
+   ===================================================================== */
+
+/* Tailwind v4's preflight resets buttons to cursor: default; this app is
+   pointer-first, so restore the hand everywhere (disabled stays default). */
+button:not(:disabled),
+[role="button"]:not(:disabled) {
+  cursor: pointer;
+}
+
+/* One consistent keyboard-focus ring. :where() keeps specificity at zero,
+   so any component that declares its own focus treatment (shadcn sets
+   outline-none + a ring) keeps full control and the two never stack. */
+:where(button, a, select, input, textarea, summary, [role="button"], [tabindex]):focus-visible {
+  outline: 2px solid rgb(52 211 153 / 0.8);
+  outline-offset: 2px;
+}

@@ -2220,3 +2220,22 @@ Stage Summary:
 - The mascot now has its own header section: play tiles on click, preview the draft on the hero, commit with "Set as my buddy".
 - The corner buddy is grabbable and parkable anywhere on screen, spot persisted; bubble auto-flips; collapse chip keeps the spot.
 - Next per approved queue: enhancement #3 - Daily puzzle calendar (streak-freeze, monthly badge).
+
+---
+Task ID: ui-kit-round-5
+Agent: Super Z (main agent)
+Task: User asked "do we think we should work on better setup of components and things in the UI to make it even less clunky?" — audit said yes with receipts (162 raw buttons vs 5 ui Button; 17 tools described in 3 parallel lists + a 17-branch ternary = 4 edit sites per new feature; repeated progress-bar/chip/panel markup; no global focus ring; hard-swapping views).
+
+Work Log:
+- New src/components/learn/tools.ts — the single TOOL registry (kind/icon/label/note/short/section) for all 17 non-lesson destinations. Sidebar "Toolbox" + "Practice lab" groups (CORE_AND_TOOLBOX / LAB_TOOLS), the mobile ToolRail pills and a compile-time drift guard (RegistryCoversViews: Exclude<View["kind"],"lesson"> must equal ToolKind both ways) all derive from it. Adding tool #18 is now a View member + one registry entry.
+- New src/components/learn/ui/kit.tsx — the shell primitive layer: Panel (tone shell/nested, pad 0/3.5/4/5, rounded lg/xl, card-hover), ProgressBar (value 0..1, fine variant), Chip (stat lozenge), SectionLabel, Btn (primary/soft/outline/ghost/pill + danger, shared focus ring, disabled, cursor), ToolRow (sidebar destination row with aria-current). All encode the existing monochrome-silver-on-zinc look (the theme remaps --color-emerald-400 to #b7b9c4 — silver IS the design; not a bug).
+- learn-app.tsx 803->~760 lines and decoupled: sidebar header on Panel+ProgressBar+Btn ghost; both tool lists -> ToolRow maps from the registry (killed ~75 duplicated lines); reset confirm -> Btn outline/danger; hero + badges + course map extracted into an Overview component (owns its own reveal state + store reads; gamification values passed in, watcher NOT re-run); 17-branch ternary -> ViewBody switch; module card CTA -> Btn soft. Ghost/Explore/... icon imports collapsed to 8.
+- View switching: motion.div keyed by view.kind (lesson keyed with id), 0.22s fade-and-rise entrance via useReducedMotion (opacity-only when reduced). Verified mid-flight (opacity 0 + translateY 2.9px right after a switch) and settled.
+- globals.css: two app-wide affordances — button:not(:disabled){cursor:pointer} (Tailwind v4 preflight defaults buttons to cursor:default) and a :where():focus-visible 2px emerald-400/80 outline. Zero-specificity :where() means shadcn components (which set outline-none + their own ring) keep full control — no double indicators. Verified: ToolRow outline 2px oklab-emerald on keyboard Tab.
+- QA scripts/qa-ui5.sh: sidebar 17 registry rows + overview aria-current; Data explorer/Mentor/Course overview switches all render with active state following (sidebar AND rail); lesson opens via hero CTA (switch case "lesson"); SeeQ section intact (14/8/16/12 tiles, commit+reset, live tiles); buddy drag persists ({x:540,y:353} == style); mobile rail 17 pills in curated order; pointer cursor + focus ring verified; 0 console errors. Screenshots qa-ui5-{overview,seeq,mobile}.png inspected.
+- Gates: tsc 829 = exact baseline (0 new; drift guard compiles); npm run lint 8 problems (4 errors + 4 warnings) = exact baseline; scoped lint on touched files clean. NOTE: many tracked files show mode-only diffs (100644->100755, zero content) — filesystem artifact, left unstaged; bloub engine.ts verified content-identical.
+
+Stage Summary:
+- The app finally has the missing layer: CSS utilities -> ui/kit primitives -> features. Consistency is now structural, not manual.
+- New tools cost 1 registry entry instead of 4 scattered edits; the queued features (#3 Daily puzzle calendar ... #8 Journey) inherit the rail, sidebar, and entrance animation for free.
+- Every shell control now shares one focus ring, pointer cursor, and one entrance motion — the "clunky" feel has structural fixes, not just cosmetic ones.
