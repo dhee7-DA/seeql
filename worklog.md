@@ -2159,3 +2159,27 @@ Work Log:
 Stage Summary:
 - The mascot is now a SYSTEM: one engine, one rAF, N live SeeQs. The Overview opens with every shape, expression and colour alive under "Meet SeeQ", and the corner buddy is re-skinable in one tap.
 - Committed as mascot-gallery. Next per approved queue: enhancement #3 — Daily puzzle calendar (streak-freeze, monthly badge).
+
+---
+Task ID: mascot-bloub-clone-1
+Agent: Super Z (main agent)
+Task: User rejected the v1 mascot look ("i dont like it") and demanded an exact replica of the reference sites — same shape, colour, expression, NO mouth, "just clone". Deliver the exact bloub clone plus the top mascot section with all shapes/expressions/colours.
+
+Work Log:
+- Full bloub repo source was already cloned at scripts/mascot-research/bloub-repo/ (MIT); read every bot core file (engine, shape, states, face, expressions, skins, eyefit, decor, math, repere) plus BloubBot.vue, gaze.ts, cycles.ts and en.ts labels
+- Copied src/bot/*.ts VERBATIM into src/components/bloub/ (11 files + LICENSE) — zero math changes, exact fidelity: 64-sample radial profiles, Catmull-Rom closed body, sphere-projected capsule EYE HOLES punched via SVG mask (no mouth anywhere), easeOutQuint dated setters, deterministic blink calendar, eyefit translation table built at import
+- Wrote bloub/gaze.ts port (lookTarget/YAW_MAX/PITCH/TURN/SPIN/TURN_TIME) and bloub-bot.tsx React renderer: FrozenBot = pure engine.sample(frozenAt) via useMemo (SSR-deterministic); LiveBot = one rAF, props reconciled into engine through propsRef (react-hooks/refs compliant — ref written in effect, engine created inside effect, first frame from first tick), pointer follow, reduced-motion single frame
+- seeq-skin.ts: persisted SeeqSkin {shape,color,expression} store (seeql.buddy.skin.v2) via useSyncExternalStore + lazy localStorage hydration; validated against bloub catalogs
+- Rewrote seeq-buddy.tsx: kept tips/poke/collapse/flourish shell; visual is now BloubBot live (follow, encre default) on a #f9f9f9 paper disc (ink bot reads on the dark app exactly like on bloub's light page); tips drive the notify state (blue pastille), poke drives wide, flourishes wink/egg/hexagon/wide
+- Rewrote seeq-gallery.tsx: live pointer-follow hero on paper stage + Play-the-film driver (SEQUENCE at measured durations) + 4 frozen-tile rows: 14 animations (POSES times), 8 shapes, 16 expressions, 12 colours; tiles setSkin() -> buddy + hero re-dress live; Reset restores cercle/encre/neutre; labels are bloub's own English strings
+- Deleted seeq-engine.tsx (v1 engine); tsconfig excludes scripts/mascot-research (research clone was sweeping vitest/vue imports into tsc: 911 -> 829)
+- Fixed two React 19 lint-rule violations in LiveBot (react-hooks/refs: no ref writes during render, no ref reads in useState initializer)
+- QA via scripts/qa-bloub.sh + qa-bloub2.sh + qa-bloub3.sh against live :3000: tiles 14/8/16/12, ink #0a0a0c, 2 eye holes, mouthEvidence 0, hero morphs, gaze follows pointer (eye x -59 -> -32 -> -67), film plays (thinking dots), violet/happy/triangle persist across reload, scoped Reset works, tip+pastille verified in window, poke praise, 44px chip persist, mobile 0 overflow, 0 console errors, dev.log clean
+- Screenshots: scripts/qa-bloub-{film,violet,bubble,mobile}.png; committed ea5ad96
+
+Stage Summary:
+- Mascot is now a pixel-faithful bloub clone (engine verbatim, MIT license included, attribution in headers); no mouth; buddy + hero + 50 tiles all render from the one ported engine
+- Gallery section sits at the top of the Overview (existing placement, rebuilt contents); tapping any tile re-dresses the corner buddy and persists
+- Gates: tsc 829 (baseline, 0 new), lint 4 errors + 4 warnings (baseline, 0 new), 0 console errors
+- Old localStorage key seeql.buddy.theme is obsolete and ignored; new key seeql.buddy.skin.v2
+- Next: enhancement queue #3-#8 (daily puzzle calendar next), SeeQ mood hook reserved for drills/clinic/golf results
