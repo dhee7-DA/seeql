@@ -59,20 +59,20 @@ agent-browser eval "
 "
 agent-browser screenshot "$OUT/qa-seeq-bubble.png"
 
-echo "=== 6. gaze follows pointer"
+echo "=== 6. gaze follows pointer (eye capsule matrix translation)"
 agent-browser eval "
 (() => {
-  const eyeG = document.querySelector('[data-seeq] svg g g');
-  const before = eyeG.getAttribute('transform');
+  const eyes = document.querySelectorAll('[data-seeq] svg path[transform]');
+  const t = eyes[0] ? eyes[0].getAttribute('transform') : null;
   window.dispatchEvent(new PointerEvent('pointermove', { clientX: 1200, clientY: 300, bubbles: true }));
-  return JSON.stringify({ before });
+  return JSON.stringify({ eyeCount: eyes.length, before: t });
 })()
 "
 sleep 1.5
 agent-browser eval "
 (() => {
-  const eyeG = document.querySelector('[data-seeq] svg g g');
-  return JSON.stringify({ after: eyeG.getAttribute('transform') });
+  const eyes = document.querySelectorAll('[data-seeq] svg path[transform]');
+  return JSON.stringify({ after: eyes[0] ? eyes[0].getAttribute('transform') : null });
 })()
 "
 
