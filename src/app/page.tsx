@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { BloubBot } from "@/components/bloub/bloub-bot";
 import {
   AlertTriangle,
   ArrowLeft,
@@ -973,6 +974,26 @@ export default function Home() {
               <LogoFull />
             </button>
             <div className="flex items-center gap-2">
+              {/* SeeQ playground — the mascot's own section. The mini bot is a
+                  live one: its capsule eyes track your cursor app-wide. */}
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent("seeql:nav", { detail: { kind: "seeq" } }))}
+                data-seeq-nav="1"
+                aria-label="Open the SeeQ playground — dress and place your buddy"
+                title="SeeQ playground — dress & place your buddy"
+                className="flex cursor-pointer items-center gap-1.5 rounded-md border border-zinc-800 py-1.5 pl-1.5 pr-3 text-sm text-zinc-300 transition-colors hover:bg-zinc-900"
+              >
+                <BloubBot
+                  size={26}
+                  color="encre"
+                  paper="#f9f9f9"
+                  contour="rgba(255,255,255,0.26)"
+                  follow
+                  className="h-[26px] w-[26px]"
+                  ariaLabel=""
+                />
+                <span>SeeQ</span>
+              </button>
               <ThemeSwitcher />
               <button
                 onClick={() => go("playground")}

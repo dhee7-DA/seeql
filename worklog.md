@@ -2202,3 +2202,21 @@ Stage Summary:
 - Mascot now floats free: no backdrop circle, just the bot with a hairline sticker-edge contour and paper-bright eyes on the dark app.
 - Eyes genuinely follow the cursor: direction re-centred on the pointer (no left bias), 2x angular travel, 2x faster turn, tighter gaze radius — measured ~3x on-screen travel.
 - Next per approved queue: enhancement #3 - Daily puzzle calendar (streak-freeze, monthly badge).
+
+---
+Task ID: mascot-round-4
+Agent: Super Z (main agent)
+Task: User: "make a separate section in the top header ... i can play those blobs when i click on those but can select them for the main screen and also make them like placeable so that i can grab it with mouse and place it anywhere on the screen on my favorite part."
+
+Work Log:
+- New dedicated SeeQ section: added { kind: "seeq" } view + SeeqView (src/components/learn/seeq-view.tsx, replaces the old overview-embedded gallery — seeq-gallery.tsx deleted). Reachable from THREE places: a new top-header "SeeQ" button (page.tsx, with a 26px LIVE follower bot whose capsule eyes track the cursor app-wide), the mobile ToolRail tabs (Overview / SeeQ / Mentor / Data), and the desktop sidebar Toolbox ("SeeQ playground — dress & place your buddy"). Header button navigates via a seeql:nav CustomEvent (LearnApp subscribes in one effect; setState inside the listener callback is compliant).
+- Play vs select split (the user's ask): TileBot tiles are frozen (zero cost) until clicked — the clicked tile mounts a LIVE bot keyed by nonce and plays (animation tiles run their own state for min(duration,6s), shape/expr/colour tiles do a "wide eyes" pulse, then freeze back). Clicking also re-dresses the DRAFT which the hero previews live; only "Set as my buddy" commits the draft to seeq-skin store (button disabled until dirty, flashes "That's your buddy!"; aria-live status line). Reset restores the ink default; Play-the-film retained.
+- Placeable buddy (seeq-buddy.tsx rewritten): position state {x,y} persisted at seeql.buddy.pos.v1 (initializer follows the client-only localStorage pattern; default = the classic corner berth, recomputed per breakpoint). Pointer-level drag on the buddy button: 6px threshold splits drag from poke (draggedRef suppresses the trailing click-poke exactly once); clamped to viewport with EDGE=8 and TOP_MIN=64 (below the sticky header); final spot computed from the pointerup event itself, never from state (QA caught the stale-write on fast flicks); clamped again on collapse/expand size changes. Tip bubble is now absolutely anchored to the buddy and flips sides (left-full/right-full) when parked right of centre, so it never leaves the viewport. touch-none for touch dragging; cursor-grab/grabbing.
+- Tips updated: gallery tip now points at the SeeQ playground + drag hint; first tip mentions grabbing/parking.
+- QA (scripts/qa-seeq4.sh, fresh browser, no mid-run edits): header btn + mini bot; nav switches view and removes the course map; tiles 14/8/16/12; clicked tile goes live then freezes back; violet draft -> commit -> corner buddy ink #8b5cf6 persisted; Reset -> #0a0a0c; drag 200/-80px persists exactly (saved == style, no poke); first post-drag click consumed, second pokes; bubble flips right-full when parked right; parked spot survives reload; 0 console errors (earlier "✗" was Fast Refresh HMR noise from mid-session file edits — verified clean on a fresh pass). Screenshots qa-seeq4-view.png + qa-seeq4-mobile.png inspected: header mini bot, SeeQ tab active, hero + rows + parked buddy all correct on 1280 and 390 widths.
+- Gates: tsc 829 = baseline (0 new); npm run lint 8 problems (4 errors + 4 warnings) = exactly baseline; scoped lint on all touched files clean.
+
+Stage Summary:
+- The mascot now has its own header section: play tiles on click, preview the draft on the hero, commit with "Set as my buddy".
+- The corner buddy is grabbable and parkable anywhere on screen, spot persisted; bubble auto-flips; collapse chip keeps the spot.
+- Next per approved queue: enhancement #3 - Daily puzzle calendar (streak-freeze, monthly badge).

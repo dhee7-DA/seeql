@@ -2,18 +2,22 @@
 
 // SeeQ — the SeeQL study buddy.
 //
-// The mascot is now an EXACT clone of bloub (https://github.com/jeremy-prt/bloub,
+// The mascot is an EXACT clone of bloub (https://github.com/jeremy-prt/bloub,
 // MIT © 2026 Jérémy Perret): the engine in src/components/bloub is ported 1:1,
 // so the body, the capsule eye holes, the blink calendar, the gaze follow and
 // the animation states are pixel-faithful to the reference. No mouth — the
 // face is two capsules, that is the whole character.
 //
 // This file is only the BEHAVIOUR shell around the live bot: coaching tips,
-// poke, occasional flourishes, collapse, persistence. The skin (shape, colour,
-// expression) is owned by seeq-skin.ts — the "Meet SeeQ" gallery re-dresses
-// the buddy live.
+// poke, occasional flourishes, collapse, persistence. On top of that it is
+// PLACEABLE: grab it with the mouse and park it anywhere on screen — the spot
+// persists (seeql.buddy.pos.v1). A short drag moves it, a clean click pokes
+// it; the tip bubble flips sides so it never leaves the viewport.
+//
+// The skin (shape, colour, expression) is owned by seeq-skin.ts — the SeeQ
+// playground (top header) re-dresses the buddy live.
 
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Minus, X } from "lucide-react";
@@ -30,7 +34,7 @@ import {
 // ---- coach tips (warm, app-aware, no emoji) ------------------------------
 
 const TIPS: string[] = [
-  "Hi, I'm SeeQ. I live down here while you practice — poke me any time.",
+  "Hi, I'm SeeQ. Poke me any time — or grab me and park me somewhere cozy.",
   "Stuck on a query? The AI Mentor in the toolbox gives tiered hints on your own data.",
   "Streak rule: hit your daily goal and the flame keeps burning. Five minutes is enough.",
   "Reading a query plan: SCAN touches every row, SEARCH jumps straight to matches. Indexes turn the first into the second.",
@@ -44,7 +48,7 @@ const TIPS: string[] = [
   "The Data explorer is a sandbox. Breaking things there is free — and honestly encouraged.",
   "Finished a lesson? Predict the output next: freeze the grid before it runs.",
   "Slow query in the Performance lab? Add the index it suggests and watch SCAN collapse into SEARCH.",
-  "New look? The Meet SeeQ gallery up top re-dresses me — any shape, any colour.",
+  "The SeeQ playground lives in the top header — dress me in any shape, colour or mood.",
 ];
 
 const PRAISE = [
@@ -66,11 +70,56 @@ const FLOURISHES: { state: StateId; hold: number }[] = [
 // ---- component -----------------------------------------------------------
 
 const COLLAPSE_KEY = "seeql.buddy.collapsed";
+const POS_KEY = "seeql.buddy.pos.v1";
 const TIP_HOLD_MS = 8200;
 const TIP_GAP_MS = 22000;
 const TIP_GAP_JITTER_MS = 14000;
 const FLOURISH_GAP_MS = 26000;
 const FLOURISH_JITTER_MS = 20000;
+
+/** Drag distance (px) before a press becomes a move rather than a poke. */
+const DRAG_THRESHOLD = 6;
+/** Keep the buddy this far inside the viewport edges. */
+const EDGE = 8;
+/** Never above the sticky top header. */
+const TOP_MIN = 64;
+
+interface Pos {
+  x: number;
+  y: number;
+}
+
+/** Rendered pixel size of the buddy square (mirrors the button classes). */
+const buddySize = (vw: number, collapsed: boolean) =>
+  collapsed ? 44 : vw >= 640 ? 128 : 112;
+
+/** The classic corner berth, used until the buddy is parked by hand. */
+function defaultPos(vw: number, vh: number, collapsed: boolean): Pos {
+  const size = buddySize(vw, collapsed);
+  const lg = vw >= 1024;
+  const x = lg ? Math.max(340, (vw - 1280) / 2 + 340) : 12;
+  const y = vh - (lg ? 16 : 56) - size;
+  return { x: Math.max(EDGE, Math.round(x)), y: Math.max(TOP_MIN, Math.round(y)) };
+}
+
+function clampPos(p: Pos, vw: number, vh: number, size: number): Pos {
+  return {
+    x: Math.min(Math.max(EDGE, p.x), Math.max(EDGE, vw - size - EDGE)),
+    y: Math.min(Math.max(TOP_MIN, p.y), Math.max(TOP_MIN, vh - size - EDGE)),
+  };
+}
+
+function loadPos(): Pos | null {
+  try {
+    const raw = localStorage.getItem(POS_KEY);
+    if (!raw) return null;
+    const p = JSON.parse(raw) as Partial<Pos>;
+    if (typeof p?.x === "number" && typeof p?.y === "number") return { x: p.x, y: p.y };
+  } catch {
+    /* private mode — fall through to the default berth */
+  }
+  return null;
+}
 
 /** No-op store subscription for the client gate (nothing to subscribe to). */
 const emptySubscribe = () => () => {};
@@ -78,7 +127,7 @@ const emptySubscribe = () => () => {};
 export function SeeqBuddy() {
   // SSR-safe client gate: no effect, no state — the server snapshot renders null.
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
-  // Skin, owned by the gallery. Reactive without setState-in-effect.
+  // Skin, owned by the SeeQ playground. Reactive without setState-in-effect.
   const skin = useSyncExternalStore(subscribeSkin, getSkin, getServerSkin);
   const [collapsed, setCollapsed] = useState(() => {
     try {
@@ -87,11 +136,22 @@ export function SeeqBuddy() {
       return false;
     }
   });
+  // Parked position (top-left of the buddy). The initializer follows the same
+  // client-only pattern as `collapsed` above.
+  const [pos, setPos] = useState<Pos>(() => {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    return clampPos(loadPos() ?? defaultPos(vw, vh, collapsed), vw, vh, buddySize(vw, collapsed));
+  });
+  const [dragging, setDragging] = useState(false);
   const [bubble, setBubble] = useState<string | null>(null);
   const [command, setCommand] = useState<BloubCommand>({ state: "idle", nonce: 0 });
 
   const collapsedRef = useRef(collapsed);
   const bubbleRef = useRef(bubble);
+  const dragRef = useRef<{ startX: number; startY: number; origX: number; origY: number; size: number; moved: boolean } | null>(null);
+  // A drag suppresses the click-poke that fires after pointerup.
+  const draggedRef = useRef(false);
   const showTimer = useRef<number | null>(null);
   const hideTimer = useRef<number | null>(null);
   const flourishTimer = useRef<number | null>(null);
@@ -154,6 +214,73 @@ export function SeeqBuddy() {
     }, delayMs);
   };
 
+  // ---- drag / place -------------------------------------------------------
+
+  const onBuddyPointerMove = useCallback((e: PointerEvent) => {
+    const d = dragRef.current;
+    if (!d) return;
+    const dx = e.clientX - d.startX;
+    const dy = e.clientY - d.startY;
+    if (!d.moved && Math.hypot(dx, dy) < DRAG_THRESHOLD) return;
+    if (!d.moved) {
+      d.moved = true;
+      draggedRef.current = true;
+      setDragging(true);
+    }
+    setPos(clampPos({ x: d.origX + dx, y: d.origY + dy }, window.innerWidth, window.innerHeight, d.size));
+  }, []);
+
+  const onBuddyPointerUp = useCallback(
+    (e: PointerEvent) => {
+      const d = dragRef.current;
+      dragRef.current = null;
+      window.removeEventListener("pointermove", onBuddyPointerMove);
+      setDragging(false);
+      if (d?.moved) {
+        // The final spot is computed from the pointerup itself — never from
+        // state, which can lag a frame behind on fast flicks.
+        const p = clampPos(
+          { x: d.origX + (e.clientX - d.startX), y: d.origY + (e.clientY - d.startY) },
+          window.innerWidth,
+          window.innerHeight,
+          d.size,
+        );
+        setPos(p);
+        try {
+          localStorage.setItem(POS_KEY, JSON.stringify(p));
+        } catch {
+          /* private mode — the spot just won't persist */
+        }
+      }
+    },
+    [onBuddyPointerMove],
+  );
+
+  useEffect(
+    () => () => {
+      window.removeEventListener("pointermove", onBuddyPointerMove);
+    },
+    [onBuddyPointerMove],
+  );
+
+  const onBuddyPointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    const box = e.currentTarget.getBoundingClientRect();
+    dragRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      origX: pos.x,
+      origY: pos.y,
+      size: box.width,
+      moved: false,
+    };
+    window.addEventListener("pointermove", onBuddyPointerMove);
+    window.addEventListener("pointerup", onBuddyPointerUp, { once: true });
+    window.addEventListener("pointercancel", onBuddyPointerUp, { once: true });
+  };
+
+  // ---- behaviour ----------------------------------------------------------
+
   // Collapse changes: persist + keep behaviour in sync. Speech pauses while
   // collapsed and resumes on expand (event handlers flip `collapsed`).
   useEffect(() => {
@@ -173,6 +300,11 @@ export function SeeqBuddy() {
   }, []);
 
   const poke = () => {
+    // The click that follows a drag is not a poke.
+    if (draggedRef.current) {
+      draggedRef.current = false;
+      return;
+    }
     if (collapsedRef.current) {
       expand();
       return;
@@ -192,6 +324,9 @@ export function SeeqBuddy() {
 
   const expand = () => {
     setCollapsed(false);
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    setPos((p) => clampPos(p, vw, vh, buddySize(vw, false)));
     scheduleNextTip(2600);
     scheduleFlourish(FLOURISH_GAP_MS);
   };
@@ -202,6 +337,9 @@ export function SeeqBuddy() {
     bubbleRef.current = null;
     say("idle");
     setCollapsed(true);
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    setPos((p) => clampPos(p, vw, vh, buddySize(vw, true)));
   };
 
   const dismiss = () => {
@@ -214,25 +352,26 @@ export function SeeqBuddy() {
 
   if (!mounted) return null;
   const s: SeeqSkin = skin ?? DEFAULT_SKIN;
+  // The tip bubble flips to the buddy's other side near the right edge, so a
+  // parked buddy never pushes its speech off-screen.
+  const onRight = pos.x + 64 > window.innerWidth * 0.55;
 
   return createPortal(
-    // Positioning: mobile floats above the dev-tools badge at the corner; on
-    // lg+ the left rail (300px) owns the corner, so the buddy docks to the
-    // content column instead. The calc tracks the centered max-w-7xl
-    // container: (vw-1280)/2 + page padding 16 + sidebar 300 + gap 24.
-    <div
-      data-seeq="1"
-      className="fixed bottom-14 left-3 z-[55] lg:bottom-4 lg:left-[max(340px,calc((100vw-1280px)/2+340px))]"
-    >
-      <div className="flex items-end gap-2">
-        <div className="group relative shrink-0">
+    // Fixed at the parked position (default: the classic corner berth). The
+    // bubble is absolutely anchored to the buddy, so the parking spot always
+    // means the buddy itself.
+    <div data-seeq="1" className="fixed z-[55]" style={{ left: pos.x, top: pos.y }}>
+      <div className="relative">
+        <div className="group relative">
           <button
             type="button"
             onClick={poke}
+            onPointerDown={onBuddyPointerDown}
             aria-expanded={!collapsed}
             aria-label={collapsed ? "Open SeeQ study buddy" : "SeeQ study buddy"}
             className={
-              "block cursor-pointer touch-manipulation select-none rounded-full outline-none transition-[width,height] duration-300 hover:scale-105 focus-visible:ring-2 focus-visible:ring-emerald-400/60 " +
+              "block cursor-grab touch-none select-none rounded-full outline-none transition-[width,height] duration-300 focus-visible:ring-2 focus-visible:ring-emerald-400/60 active:cursor-grabbing " +
+              (dragging ? "" : "hover:scale-105 ") +
               (collapsed ? "h-11 w-11" : "h-28 w-28 sm:h-32 sm:w-32")
             }
           >
@@ -274,7 +413,10 @@ export function SeeqBuddy() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 6, scale: 0.96 }}
               transition={{ type: "spring", stiffness: 380, damping: 26 }}
-              className="pointer-events-auto relative mb-2 w-56 max-w-[62vw] rounded-2xl rounded-bl-md border border-zinc-800 bg-zinc-900/95 p-3 pr-7 shadow-xl shadow-black/40 backdrop-blur"
+              className={
+                "pointer-events-auto absolute bottom-2 z-10 w-56 max-w-[62vw] rounded-2xl border border-zinc-800 bg-zinc-900/95 p-3 pr-7 shadow-xl shadow-black/40 backdrop-blur " +
+                (onRight ? "right-full mr-2 rounded-br-md" : "left-full ml-2 rounded-bl-md")
+              }
             >
               <p aria-live="polite" className="text-[12.5px] leading-relaxed text-zinc-200">
                 {bubble}

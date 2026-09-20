@@ -22,6 +22,7 @@ import {
   Flag,
   Flame,
   Gauge,
+  Ghost,
   GraduationCap,
   LayoutDashboard,
   MessagesSquare,
@@ -54,12 +55,13 @@ import { CheatSheet } from "./cheat-sheet";
 import { MentorChat } from "./mentor-chat";
 import { PerfLab } from "./perf-lab";
 import { SeeqBuddy } from "./seeq-buddy";
-import { SeeqGallery } from "./seeq-gallery";
+import { SeeqView } from "./seeq-view";
 import { ActivityStrip, MasteryGrid } from "./progress-cards";
 import { CelebrationHost, celebrate } from "./celebrate";
 
 type View =
   | { kind: "overview" }
+  | { kind: "seeq" }
   | { kind: "lesson"; id: string }
   | { kind: "explorer" }
   | { kind: "mixed" }
@@ -294,6 +296,7 @@ function OverviewModuleCard({
 function ToolRail({ view, setView }: { view: View; setView: (v: View) => void }) {
   const tools: { kind: View["kind"]; icon: React.ComponentType<{ className?: string }>; label: string }[] = [
     { kind: "overview", icon: LayoutDashboard, label: "Overview" },
+    { kind: "seeq", icon: Ghost, label: "SeeQ" },
     { kind: "mentor", icon: Bot, label: "Mentor" },
     { kind: "explorer", icon: Table2, label: "Data" },
     { kind: "library", icon: Shapes, label: "Diagrams" },
@@ -341,6 +344,20 @@ function titleAfter(index: number): string {
 
 export function LearnApp() {
   const [view, setView] = useState<View>({ kind: "overview" });
+
+  // The top header's SeeQ button (page shell) navigates here by event — the
+  // view state is private to this component. Listener callbacks are event
+  // handlers, so the setState inside is compliant.
+  useEffect(() => {
+    const onNav = (e: Event) => {
+      const kind = (e as CustomEvent<{ kind?: View["kind"] }>).detail?.kind;
+      if (!kind) return;
+      setView({ kind } as View);
+      window.scrollTo({ top: 0 });
+    };
+    window.addEventListener("seeql:nav", onNav);
+    return () => window.removeEventListener("seeql:nav", onNav);
+  }, []);
   const { xp, level, streak, ctx } = useBadgeWatcher();
   const xpEvents = useProgress((s) => s.xpEvents);
   const badgesMap = useProgress((s) => s.badges);
@@ -564,6 +581,7 @@ export function LearnApp() {
                 </span>
               </button>
               {[
+                { kind: "seeq" as const, icon: Ghost, label: "SeeQ playground", note: "dress & place your buddy" },
                 { kind: "explorer" as const, icon: Table2, label: "Data explorer", note: "browse the live tables" },
                 { kind: "library" as const, icon: Shapes, label: "Diagram library", note: "every visual, one wall" },
                 { kind: "drills" as const, icon: Dumbbell, label: "Keyword drills", note: "every keyword, six angles" },
@@ -646,6 +664,8 @@ export function LearnApp() {
         <ToolRail view={view} setView={setView} />
         {lesson ? (
           <LessonView key={lesson.id} lesson={lesson} />
+        ) : view.kind === "seeq" ? (
+          <SeeqView />
         ) : view.kind === "explorer" ? (
           <DataExplorer />
         ) : view.kind === "library" ? (
@@ -728,9 +748,6 @@ export function LearnApp() {
                 </p>
               </div>
             </section>
-
-            {/* Meet SeeQ — live mascot gallery: every shape, expression, colour */}
-            <SeeqGallery />
 
             {/* Course map — all modules scannable in one screenful, lessons reveal on demand */}
             <section className="mt-7">
