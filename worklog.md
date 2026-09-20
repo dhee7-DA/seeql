@@ -2142,3 +2142,20 @@ Work Log:
 Stage Summary:
 - Dev server + watchdog back up and stable; the ONLY blocker for the user preview is the platform edge gateway route registration (not the app).
 - Next user-facing work queued: SeeQ mascot smoothness rework to match bloub (user rejected v1 look/animation).
+
+---
+Task ID: mascot-gallery
+Agent: Super Z (main agent)
+Task: User asked for "a separate mascot section in the top with all the shapes, expression and colours" — a live SeeQ gallery on the Overview, in the spirit of bloub's state gallery.
+
+Work Log:
+- Extracted the v2 motion engine from seeq-buddy.tsx into NEW src/components/learn/seeq-engine.tsx (~830 lines): pure math (blink calendar w/ per-instance phase, closed Catmull-Rom, capsule eyes on the yaw/pitch/roll head sphere), NEW analytic SHAPE library (circle, pebble, tall, wide, egg, drop, bean, squircle — low-order harmonics + superellipse, peak-normalised, all smooth; lumpy organic noise deliberately excluded), NEW colour THEMES (emerald, blueberry, grape, sunset, rose, slate — gradient stops + eye/ink/cheek), two NEW expressions (sleepy, surprised) beside the six moods, a shared single-rAF ticker (sleeps on tab hide + last unsubscribe), and <SeeqSprite> — one live SeeQ with SSR-real static frame, IntersectionObserver-gated animation, reduced-motion static paint, 40-pt sampling (buddy keeps 64).
+- seeq-buddy.tsx rewritten as pure BEHAVIOUR on the shared engine: same corner placement/tips/poke/collapse/persistence/pointer-follow; joins the shared ticker (one rAF for every SeeQ on the page); body colour now follows seeql.buddy.theme via useSyncExternalStore store (no setState-in-effect) — one new tip cross-promotes the gallery.
+- NEW src/components/learn/seeq-gallery.tsx: "Meet SeeQ" section at the TOP of Overview (after hero, before course map). 22 live tiles in three labelled rows — Shapes (8), Expressions (8), Colours (6). Tap any tile = poke (excited cut, 1.3 s); tap a colour = re-skin the corner buddy (persisted seeql.buddy.theme, reactive ring on the active tile, aria-pressed).
+- learn-app.tsx: SeeqGallery mounted between the hero and the course map.
+- Gates: tsc 882 = 882 stash-free baseline (0 new; drift documented in mascot-seeq-v2), eslint 4 errors + 4 warnings = exactly pre-existing; scoped lint on all 4 touched files clean.
+- QA (scripts/qa-seeq-gallery.sh against LIVE :3000 — preview never went down): 22/22 tiles with non-empty body paths; sprite morph liveness verified (body d changes over 700 ms); shapes provably distinct (circle != pebble != tall); poke flips sprite to excited; grape tile -> localStorage seeql.buddy.theme=grape + active ring + aria-pressed + buddy gradient re-rendered (verified emerald stops after reset — the QA's first stopColor selector was case-sensitive-CSS noise, 3 stops confirmed via direct probe); buddy regression all green: mounted/fixed/z, pointer gaze matrix 55.51,51.13 -> 60.43,44.2, poke praise, collapse chip 44 px persisted, re-expand; tip chain alive (praise at t+1s, scheduled tip at t+31s); 0 console errors. Screenshots: qa-gallery-{desktop,grape,buddy,mobile}.png (desktop 1280x800 + mobile 390x844, visually inspected: 8 distinct smooth shapes, 8 readable expressions, 6 clean palettes, buddy re-skins live).
+
+Stage Summary:
+- The mascot is now a SYSTEM: one engine, one rAF, N live SeeQs. The Overview opens with every shape, expression and colour alive under "Meet SeeQ", and the corner buddy is re-skinable in one tap.
+- Committed as mascot-gallery. Next per approved queue: enhancement #3 — Daily puzzle calendar (streak-freeze, monthly badge).

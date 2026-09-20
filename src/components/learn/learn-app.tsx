@@ -54,6 +54,7 @@ import { CheatSheet } from "./cheat-sheet";
 import { MentorChat } from "./mentor-chat";
 import { PerfLab } from "./perf-lab";
 import { SeeqBuddy } from "./seeq-buddy";
+import { SeeqGallery } from "./seeq-gallery";
 import { ActivityStrip, MasteryGrid } from "./progress-cards";
 import { CelebrationHost, celebrate } from "./celebrate";
 
@@ -727,6 +728,9 @@ export function LearnApp() {
                 </p>
               </div>
             </section>
+
+            {/* Meet SeeQ — live mascot gallery: every shape, expression, colour */}
+            <SeeqGallery />
 
             {/* Course map — all modules scannable in one screenful, lessons reveal on demand */}
             <section className="mt-7">
