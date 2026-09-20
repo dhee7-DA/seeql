@@ -2126,3 +2126,19 @@ Stage Summary:
 - Commit c93866c "SeeQ v2 engine: bloub-grade motion..."; worktree clean except upload/.
 - SeeQ now: smooth circle silhouette, 3D-projected leaning capsule eyes, blink-cut mood changes, calm-at-rest life model. Character identity unchanged (emerald, cream eyes, mouth, cheeks, coach tips, poke, collapse).
 - QA artifacts: qa-seeq-{bubble,poke,collapsed,idle,mobile2}.png; qa-seeq.sh step 6 reads eye path matrix (new DOM).
+
+---
+Task ID: ops-preview-on
+Agent: Super Z (main agent)
+Task: User asked "turn on the preview" (server was down after session recycle).
+
+Work Log:
+- localhost:3000 -> 000 (nothing listening; sandbox had been recycled between sessions).
+- Booted the canonical stack via .zscripts/dev.sh: bun install no-op (967 pkgs), db:push in sync + Prisma client regenerated, Next dev server up (pid 10658, .zscripts/dev.pid), health check passed, watchdog armed (pid 10769, rss cap 2000000KB).
+- Verified across multiple tool calls: HTTP 200 on :3000, caddy :81 -> 200, caddy :81 with preview Host header -> 200 (entire local proxy chain healthy).
+- External gateway preview-6a98301b-145d6674-cbf4a43676be.space-z.ai returns Go-style 404 with "Abc: preview-*" header (documented platform-side signature). 404 persisted 12+ min across 16+ attempts and 5 candidate subdomains (workspace id, session id, chat id, container id, prior bot id) => gateway route registration is platform-side, same failure mode as the ui-1 incident.
+- Left state: app fully healthy locally; gateway re-registration pending platform side (self-resolves in minutes OR user restart button re-registers, per ui-1 precedent).
+
+Stage Summary:
+- Dev server + watchdog back up and stable; the ONLY blocker for the user preview is the platform edge gateway route registration (not the app).
+- Next user-facing work queued: SeeQ mascot smoothness rework to match bloub (user rejected v1 look/animation).
