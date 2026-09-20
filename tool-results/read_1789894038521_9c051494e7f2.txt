@@ -1,0 +1,840 @@
+     1→     1→"use client";
+     2→     2→
+     3→     3→// SeeQ — the SeeQL study buddy, motion engine v2.
+     4→     4→//
+     5→     5→// A soft emerald blob that lives in the corner: it breathes, blinks, its gaze
+     6→     6→// wanders (and follows the pointer), it reacts to mood, and every so often it
+     7→     7→// shares a short coaching tip. Poke it and it cheers you on.
+     8→     8→//
+     9→     9→// The motion techniques follow the measurements documented by the MIT project
+    10→    10→// "bloub" (https://github.com/jeremy-prt/bloub, © Jérémy Perret — technique
+    11→    11→// only, this character is our own):
+    12→    12→//
+    13→    13→// - The body is a PERFECT circle (radial deviation < 0.7% on the reference),
+    14→    14→//   sampled at 64 angles and drawn as one closed Catmull-Rom. Lumpy "organic"
+    15→    15→//   silhouettes read as deformed, not alive.
+    16→    16→// - At rest the body is still: breath is 0.5% of height, drift is sub-pixel.
+    17→    17→//   All the life comes from gaze drift and blinking.
+    18→    18→// - The eyes are capsules projected onto a rotating head sphere (yaw/pitch/
+    19→    19→//   roll). Position, compression and lean all fall out of the orthographic
+    20→    20→//   projection — eyes slide and squash near the sphere edge instead of
+    21→    21→//   translating flatly.
+    22→    22→// - Blinks come from a deterministic schedule (1.9–4.6 s apart, occasional
+    23→    23→//   double-blinks), close fast and reopen slower, and never fully close.
+    24→    24→//   Mood changes are masked by a forced blink, exactly like a cut.
+    25→    25→// - Every transition is a pure easeOutQuint — the body never overshoots.
+    26→    26→//   An interrupted morph freezes its composite and re-blends from it, so
+    27→    27→//   rapid mood changes can't jump.
+    28→    28→//
+    29→    29→// Honours prefers-reduced-motion (one static frame, no loop). Collapsible
+    30→    30→// (persisted); speech pauses while collapsed. React never re-renders per
+    31→    31→// frame: geometry is painted straight onto SVG attributes.
+    32→    32→
+    33→    33→import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+    34→    34→import { createPortal } from "react-dom";
+    35→    35→import { AnimatePresence, motion } from "framer-motion";
+    36→    36→import { Minus, X } from "lucide-react";
+    37→    37→
+    38→    38→// ---- small math --------------------------------------------------------
+    39→    39→
+    40→    40→const TAU = Math.PI * 2;
+    41→    41→
+    42→    42→const clamp = (v: number, lo = 0, hi = 1) => (v < lo ? lo : v > hi ? hi : v);
+    43→    43→const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+    44→    44→/** Short rounding: halves the weight of 60 fps path strings. */
+    45→    45→const r2 = (v: number) => Math.round(v * 100) / 100;
+    46→    46→
+    47→    47→/** Measured on the reference: transitions are pure ease-out, no overshoot. */
+    48→    48→const easeOutQuint = (t: number) => 1 - (1 - t) ** 5;
+    49→    49→
+    50→    50→/** 1D periodic noise, seamless over `period` seconds — harmonics are prime
+    51→    51→ * relative to each other, so the drift never visibly repeats. */
+    52→    52→function loopNoise(t: number, period: number, seed = 0): number {
+    53→    53→  const p = (t / period) * TAU;
+    54→    54→  return (
+    55→    55→    0.55 * Math.sin(p + seed) +
+    56→    56→    0.3 * Math.sin(2 * p + seed * 1.7 + 1.1) +
+    57→    57→    0.15 * Math.sin(3 * p + seed * 2.3 + 2.4)
+    58→    58→  );
+    59→    59→}
+    60→    60→
+    61→    61→/** Deterministic PRNG (mulberry32) — same blink calendar every visit. */
+    62→    62→function createRng(seed: number) {
+    63→    63→  let a = seed >>> 0;
+    64→    64→  return () => {
+    65→    65→    a = (a + 0x6d2b79f5) >>> 0;
+    66→    66→    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    67→    67→    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    68→    68→    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    69→    69→  };
+    70→    70→}
+    71→    71→
+    72→    72→// ---- blink -------------------------------------------------------------
+    73→    73→
+    74→    74→const BLINK_RNG = createRng(0x5eed);
+    75→    75→/** Pre-drawn blink calendar: 1.9–4.6 s apart, 18% chance of a double-blink. */
+    76→    76→const BLINKS: number[] = (() => {
+    77→    77→  const out: number[] = [];
+    78→    78→  let t = 1.4;
+    79→    79→  while (t < 900) {
+    80→    80→    out.push(t);
+    81→    81→    t += 1.9 + BLINK_RNG() * 2.7;
+    82→    82→    if (BLINK_RNG() < 0.18) {
+    83→    83→      out.push(t);
+    84→    84→      t += 0.24;
+    85→    85→    }
+    86→    86→  }
+    87→    87→  return out;
+    88→    88→})();
+    89→    89→
+    90→    90→const BLINK_DUR = 0.18;
+    91→    91→
+    92→    92→/** Lid over time: closes fast (45% of the dip), reopens a touch slower. */
+    93→    93→function blinkLid(t: number): number {
+    94→    94→  for (let i = 0; i < BLINKS.length; i++) {
+    95→    95→    const start = BLINKS[i]!;
+    96→    96→    if (t < start) break;
+    97→    97→    const k = (t - start) / BLINK_DUR;
+    98→    98→    if (k >= 0 && k <= 1) {
+    99→    99→      return k < 0.45 ? 1 - k / 0.45 : (k - 0.45) / 0.55;
+   100→   100→    }
+   101→   101→  }
+   102→   102→  return 1;
+   103→   103→}
+   104→   104→
+   105→   105→/** A blink is a screen-space vertical squash; the eye never fully shuts. */
+   106→   106→const blinkScale = (lid: number) => 0.06 + 0.94 * clamp(lid);
+   107→   107→
+   108→   108→// ---- geometry ----------------------------------------------------------
+   109→   109→
+   110→   110→/** Closed Catmull-Rom → cubics. 64 points: smooth to the pixel at any size. */
+   111→   111→function closedPath(pts: [number, number][], tension = 1 / 6): string {
+   112→   112→  const n = pts.length;
+   113→   113→  let d = `M${r2(pts[0]![0])} ${r2(pts[0]![1])}`;
+   114→   114→  for (let i = 0; i < n; i++) {
+   115→   115→    const p0 = pts[(i - 1 + n) % n]!;
+   116→   116→    const p1 = pts[i]!;
+   117→   117→    const p2 = pts[(i + 1) % n]!;
+   118→   118→    const p3 = pts[(i + 2) % n]!;
+   119→   119→    const c1x = p1[0] + (p2[0] - p0[0]) * tension;
+   120→   120→    const c1y = p1[1] + (p2[1] - p0[1]) * tension;
+   121→   121→    const c2x = p2[0] - (p3[0] - p1[0]) * tension;
+   122→   122→    const c2y = p2[1] - (p3[1] - p1[1]) * tension;
+   123→   123→    d += `C${r2(c1x)} ${r2(c1y)} ${r2(c2x)} ${r2(c2y)} ${r2(p2[0])} ${r2(p2[1])}`;
+   124→   124→  }
+   125→   125→  return `${d}Z`;
+   126→   126→}
+   127→   127→
+   128→   128→const N_PTS = 64;
+   129→   129→const BODY_CX = 60;
+   130→   130→const BODY_CY = 58;
+   131→   131→const BODY_R = 40;
+   132→   132→
+   133→   133→/** The body: a perfect circle (plus squash/breath applied by the caller). */
+   134→   134→function bodyPath(cx: number, cy: number, sx: number, sy: number): string {
+   135→   135→  const pts: [number, number][] = new Array(N_PTS);
+   136→   136→  for (let i = 0; i < N_PTS; i++) {
+   137→   137→    const a = (i / N_PTS) * TAU;
+   138→   138→    pts[i] = [cx + Math.cos(a) * BODY_R * sx, cy + Math.sin(a) * BODY_R * sy];
+   139→   139→  }
+   140→   140→  return closedPath(pts);
+   141→   141→}
+   142→   142→
+   143→   143→const INITIAL_D = bodyPath(BODY_CX, BODY_CY, 1, 1);
+   144→   144→
+   145→   145→/** Capsule (stadium) centred on the origin — the exact shape of the eyes. */
+   146→   146→function capsulePath(w: number, h: number): string {
+   147→   147→  const hw = Math.max(w, 0.01) / 2;
+   148→   148→  const hh = Math.max(h, 0.01) / 2;
+   149→   149→  const r = Math.min(hw, hh);
+   150→   150→  return (
+   151→   151→    `M${r2(-hw)} ${r2(-hh + r)}` +
+   152→   152→    `A${r2(r)} ${r2(r)} 0 0 1 ${r2(-hw + r)} ${r2(-hh)}` +
+   153→   153→    `L${r2(hw - r)} ${r2(-hh)}` +
+   154→   154→    `A${r2(r)} ${r2(r)} 0 0 1 ${r2(hw)} ${r2(-hh + r)}` +
+   155→   155→    `L${r2(hw)} ${r2(hh - r)}` +
+   156→   156→    `A${r2(r)} ${r2(r)} 0 0 1 ${r2(hw - r)} ${r2(hh)}` +
+   157→   157→    `L${r2(-hw + r)} ${r2(hh)}` +
+   158→   158→    `A${r2(r)} ${r2(r)} 0 0 1 ${r2(-hw)} ${r2(hh - r)}Z`
+   159→   159→  );
+   160→   160→}
+   161→   161→
+   162→   162→// ---- head sphere -------------------------------------------------------
+   163→   163→
+   164→   164→type Vec3 = [number, number, number];
+   165→   165→
+   166→   166→/** Rotate two orthonormal vectors within their common plane. */
+   167→   167→function spin(u: Vec3, v: Vec3, angle: number): [Vec3, Vec3] {
+   168→   168→  const c = Math.cos(angle);
+   169→   169→  const s = Math.sin(angle);
+   170→   170→  return [
+   171→   171→    [u[0] * c + v[0] * s, u[1] * c + v[1] * s, u[2] * c + v[2] * s],
+   172→   172→    [v[0] * c - u[0] * s, v[1] * c - u[1] * s, v[2] * c - u[2] * s],
+   173→   173→  ];
+   174→   174→}
+   175→   175→
+   176→   176→export interface HeadGaze {
+   177→   177→  yaw: number; // deg, positive = looks right
+   178→   178→  pitch: number; // deg, positive = looks up
+   179→   179→  roll: number; // deg, head tilt
+   180→   180→}
+   181→   181→
+   182→   182→interface EyePose {
+   183→   183→  /** centre on the unit sphere, screen space */
+   184→   184→  x: number;
+   185→   185→  y: number;
+   186→   186→  /** tangent frame columns, for SVG matrix(a,b,c,d,e,f) */
+   187→   187→  a: number;
+   188→   188→  b: number;
+   189→   189→  c: number;
+   190→   190→  d: number;
+   191→   191→  /** z of the eye normal: fades/reads the limb */
+   192→   192→  depth: number;
+   193→   193→}
+   194→   194→
+   195→   195→const deg = (d: number) => (d * Math.PI) / 180;
+   196→   196→
+   197→   197→/** Two eyes on a sphere of radius 1, separated by `split` degrees each side
+   198→   198→ * of the forward ray. The tangent projection gives position, lean and
+   199→   199→ * edge compression at once — no flat translation anywhere. */
+   200→   200→function eyePoses(gaze: HeadGaze, split: number): [EyePose, EyePose] {
+   201→   201→  let f: Vec3 = [0, 0, 1];
+   202→   202→  let right: Vec3 = [1, 0, 0];
+   203→   203→  let down: Vec3 = [0, 1, 0];
+   204→   204→
+   205→   205→  [f, right] = spin(f, right, deg(gaze.yaw));
+   206→   206→  [down, f] = spin(down, f, deg(gaze.pitch));
+   207→   207→  [right, down] = spin(right, down, deg(gaze.roll));
+   208→   208→
+   209→   209→  const build = (side: number): EyePose => {
+   210→   210→    const [ef, er] = spin(f, right, deg(split * side));
+   211→   211→    return {
+   212→   212→      x: ef[0],
+   213→   213→      y: ef[1],
+   214→   214→      a: er[0],
+   215→   215→      b: er[1],
+   216→   216→      c: down[0],
+   217→   217→      d: down[1],
+   218→   218→      depth: ef[2],
+   219→   219→    };
+   220→   220→  };
+   221→   221→
+   222→   222→  return [build(-1), build(1)];
+   223→   223→}
+   224→   224→
+   225→   225→// ---- moods -------------------------------------------------------------
+   226→   226→
+   227→   227→type Mood = "idle" | "happy" | "excited" | "thinking" | "sad" | "wink";
+   228→   228→
+   229→   229→/** Everything a mood can move. Eye sizes are fractions of the body radius. */
+   230→   230→interface MoodPose {
+   231→   231→  yaw: number;
+   232→   232→  pitch: number;
+   233→   233→  roll: number;
+   234→   234→  split: number;
+   235→   235→  wL: number;
+   236→   236→  hL: number;
+   237→   237→  wR: number;
+   238→   238→  hR: number;
+   239→   239→  tiltL: number; // per-eye lean; mirrored pairs make arcs, droops, scowls
+   240→   240→  tiltR: number;
+   241→   241→  mouth: number; // -1 frown .. 1 smile
+   242→   242→  mouthShow: number;
+   243→   243→  mouthOpen: number; // 0 closed .. 1 "o"
+   244→   244→  cheeks: number;
+   245→   245→  bounce: number; // excited squash-and-stretch
+   246→   246→}
+   247→   247→
+   248→   248→const IDLE: MoodPose = {
+   249→   249→  yaw: 8, pitch: 12, roll: -8,
+   250→   250→  split: 14.5,
+   251→   251→  wL: 0.19, hL: 0.42, wR: 0.19, hR: 0.42,
+   252→   252→  tiltL: 0, tiltR: 0,
+   253→   253→  mouth: 0, mouthShow: 0, mouthOpen: 0, cheeks: 0, bounce: 0,
+   254→   254→};
+   255→   255→
+   256→   256→const MOODS: Record<Mood, MoodPose> = {
+   257→   257→  idle: IDLE,
+   258→   258→  happy: {
+   259→   259→    ...IDLE,
+   260→   260→    yaw: 4, pitch: 17, roll: -4, split: 16,
+   261→   261→    wL: 0.26, hL: 0.16, wR: 0.26, hR: 0.16,
+   262→   262→    tiltL: 14, tiltR: -14, // tops converge: ^ ^ squint-smile
+   263→   263→    mouth: 0.9, mouthShow: 1, cheeks: 0.65,
+   264→   264→  },
+   265→   265→  excited: {
+   266→   266→    ...IDLE,
+   267→   267→    yaw: 3, pitch: 20, roll: 0, split: 17.5,
+   268→   268→    wL: 0.32, hL: 0.5, wR: 0.32, hR: 0.5,
+   269→   269→    tiltL: -8, tiltR: 8, // tops diverge: wide-eyed
+   270→   270→    mouthOpen: 1, mouthShow: 0, cheeks: 1, bounce: 1,
+   271→   271→  },
+   272→   272→  thinking: {
+   273→   273→    ...IDLE,
+   274→   274→    yaw: -16, pitch: 16, roll: -18, split: 14,
+   275→   275→    wL: 0.17, hL: 0.36, wR: 0.13, hR: 0.27,
+   276→   276→    tiltL: 8, tiltR: 4,
+   277→   277→    mouth: 0.15, mouthShow: 1, cheeks: 0,
+   278→   278→  },
+   279→   279→  sad: {
+   280→   280→    ...IDLE,
+   281→   281→    yaw: 4, pitch: -6, roll: 0, split: 16,
+   282→   282→    wL: 0.2, hL: 0.38, wR: 0.2, hR: 0.38,
+   283→   283→    tiltL: -24, tiltR: 24, // tops diverge outward: drooping
+   284→   284→    mouth: -0.85, mouthShow: 1, cheeks: 0,
+   285→   285→  },
+   286→   286→  wink: {
+   287→   287→    ...IDLE,
+   288→   288→    yaw: -6, pitch: 12, roll: -10, split: 15,
+   289→   289→    wL: 0.19, hL: 0.42, wR: 0.3, hR: 0.06, // right eye: a dash, wider than open
+   290→   290→    mouth: 0.6, mouthShow: 1, cheeks: 0.5,
+   291→   291→  },
+   292→   292→};
+   293→   293→
+   294→   294→const MOOD_KEYS = Object.keys(IDLE) as (keyof MoodPose)[];
+   295→   295→
+   296→   296→function blendMood(a: MoodPose, b: MoodPose, t: number): MoodPose {
+   297→   297→  const out: MoodPose = { ...a };
+   298→   298→  for (const k of MOOD_KEYS) out[k] = lerp(a[k], b[k], t);
+   299→   299→  return out;
+   300→   300→}
+   301→   301→
+   302→   302→// ---- coach tips (warm, app-aware, no emoji) ------------------------------
+   303→   303→
+   304→   304→const TIPS: { mood: Mood; text: string }[] = [
+   305→   305→  { mood: "happy", text: "Hi, I'm SeeQ. I live down here while you practice — poke me any time." },
+   306→   306→  { mood: "thinking", text: "Stuck on a query? The AI Mentor in the toolbox gives tiered hints on your own data." },
+   307→   307→  { mood: "excited", text: "Streak rule: hit your daily goal and the flame keeps burning. Five minutes is enough." },
+   308→   308→  { mood: "thinking", text: "Reading a query plan: SCAN touches every row, SEARCH jumps straight to matches. Indexes turn the first into the second." },
+   309→   309→  { mood: "happy", text: "Query golf scores strokes, not speed. Shorter SQL that returns the same rows wins." },
+   310→   310→  { mood: "wink", text: "Interview classic: COUNT(*) counts rows, COUNT(col) skips NULLs. Drop that and watch eyebrows rise." },
+   311→   311→  { mood: "thinking", text: "Silent bug alert: a WHERE against NULL never matches. Write IS NOT NULL before you debug for an hour." },
+   312→   312→  { mood: "happy", text: "The Error clinic grades your diagnosis, not just your fix. Say WHY it broke." },
+   313→   313→  { mood: "excited", text: "Badges unlock quietly as you practice. The overview wall keeps score." },
+   314→   314→  { mood: "wink", text: "JOIN order does not matter to the planner — but clear aliases matter to your future self." },
+   315→   315→  { mood: "thinking", text: "Window functions keep every row while adding aggregates. The drills cover them from six angles." },
+   316→   316→  { mood: "happy", text: "The Data explorer is a sandbox. Breaking things there is free — and honestly encouraged." },
+   317→   317→  { mood: "excited", text: "Finished a lesson? Predict the output next: freeze the grid before it runs." },
+   318→   318→  { mood: "happy", text: "Slow query in the Performance lab? Add the index it suggests and watch SCAN collapse into SEARCH." },
+   319→   319→];
+   320→   320→
+   321→   321→const PRAISE = [
+   322→   322→  "Ready for one more query?",
+   323→   323→  "You've got this — one table at a time.",
+   324→   324→  "Slow queries fear you, you know.",
+   325→   325→  "Small steps daily beat marathons on Sunday.",
+   326→   326→  "Poke received. Morale restored.",
+   327→   327→];
+   328→   328→
+   329→   329→// ---- engine --------------------------------------------------------------
+   330→   330→
+   331→   331→const MOOD_MORPH = 0.45; // s — mood crossfade, masked by a forced blink
+   332→   332→const LOOK_MORPH = 0.24; // s — pointer catch-up: attentive, not visquous
+   333→   333→
+   334→   334→/** Pointer-follow range: above the drift amplitudes, below the limb. */
+   335→   335→const YAW_MAX = 16;
+   336→   336→const PITCH_MAX = 13;
+   337→   337→const FOLLOW_PITCH = 10; // gaze height with the cursor centred
+   338→   338→
+   339→   339→interface Look {
+   340→   340→  yaw: number;
+   341→   341→  pitch: number;
+   342→   342→  mix: number; // 1 = pointer commands the direction
+   343→   343→  wander: number; // 1 = idle drift alive (fades while following)
+   344→   344→}
+   345→   345→
+   346→   346→interface Engine {
+   347→   347→  mood: Mood;
+   348→   348→  frozen: MoodPose | null; // composite snapshot, for interrupted morphs
+   349→   349→  tMood: number;
+   350→   350→  blinkAt: number; // forced blink (mood cut) timestamp, s
+   351→   351→  pose: MoodPose;
+   352→   352→  look: Look; // current interpolated look
+   353→   353→  lookT: Look; // target look
+   354→   354→  lookPrev: Look;
+   355→   355→  lookAt: number;
+   356→   356→  pointer: { x: number; y: number } | null;
+   357→   357→  raf: number;
+   358→   358→  last: number;
+   359→   359→  running: boolean;
+   360→   360→  reduced: boolean;
+   361→   361→}
+   362→   362→
+   363→   363→interface Painters {
+   364→   364→  body: SVGPathElement | null;
+   365→   365→  shadow: SVGEllipseElement | null;
+   366→   366→  eyeL: SVGPathElement | null;
+   367→   367→  eyeR: SVGPathElement | null;
+   368→   368→  mouthG: SVGGElement | null;
+   369→   369→  mouthCurve: SVGPathElement | null;
+   370→   370→  mouthOpen: SVGEllipseElement | null;
+   371→   371→  cheekL: SVGEllipseElement | null;
+   372→   372→  cheekR: SVGEllipseElement | null;
+   373→   373→}
+   374→   374→
+   375→   375→function setAttr(el: Element | null, name: string, v: string) {
+   376→   376→  el?.setAttribute(name, v);
+   377→   377→}
+   378→   378→
+   379→   379→function paintEye(
+   380→   380→  el: SVGPathElement | null,
+   381→   381→  pose: EyePose,
+   382→   382→  w: number,
+   383→   383→  h: number,
+   384→   384→  tilt: number,
+   385→   385→  lid: number,
+   386→   386→  driftX: number,
+   387→   387→  driftY: number,
+   388→   388→) {
+   389→   389→  if (!el) return;
+   390→   390→  const k = blinkScale(lid);
+   391→   391→  const phi = deg(tilt);
+   392→   392→  const cp = Math.cos(phi);
+   393→   393→  const sp = Math.sin(phi);
+   394→   394→  // per-eye lean: compose the tangent frame with an in-plane rotation
+   395→   395→  const ax = pose.a * cp + pose.c * sp;
+   396→   396→  const ay = pose.b * cp + pose.d * sp;
+   397→   397→  const bx = -pose.a * sp + pose.c * cp;
+   398→   398→  const by = -pose.b * sp + pose.d * cp;
+   399→   399→  const tx = BODY_CX + pose.x * BODY_R + driftX * BODY_R;
+   400→   400→  const ty = BODY_CY + pose.y * BODY_R + driftY * BODY_R;
+   401→   401→  el.setAttribute("d", capsulePath(w * BODY_R, h * BODY_R));
+   402→   402→  el.setAttribute(
+   403→   403→    "transform",
+   404→   404→    `matrix(${r2(ax)},${r2(ay * k)},${r2(bx)},${r2(by * k)},${r2(tx)},${r2(ty)})`,
+   405→   405→  );
+   406→   406→  el.setAttribute("opacity", r2(clamp(pose.depth / 0.12)).toFixed(2));
+   407→   407→}
+   408→   408→
+   409→   409→function paint(e: Engine, t: number, P: Painters) {
+   410→   410→  const p = e.pose;
+   411→   411→
+   412→   412→  // Body: still at rest. Breath is 0.5% of height; drift is sub-pixel.
+   413→   413→  const breath = 1 + Math.sin((t / 3.4) * TAU) * 0.005;
+   414→   414→  const driftX = loopNoise(t, 7.9, 1.9) * 0.006;
+   415→   415→  const driftY = loopNoise(t, 5.3, 0.3) * 0.007;
+   416→   416→  const sq = p.bounce * 0.055 * Math.abs(Math.sin(t * 5.2));
+   417→   417→  const sx = 1 + sq;
+   418→   418→  const sy = (1 - sq * 0.85) * breath;
+   419→   419→  setAttr(
+   420→   420→    P.body,
+   421→   421→    "d",
+   422→   422→    bodyPath(BODY_CX + driftX * BODY_R, BODY_CY + driftY * BODY_R, sx, sy),
+   423→   423→  );
+   424→   424→  setAttr(P.shadow, "rx", r2(23 * (2 - sy)).toFixed(2));
+   425→   425→
+   426→   426→  // Gaze: pose direction, replaced by the pointer look via mix, drift on top.
+   427→   427→  const wander = e.look.wander;
+   428→   428→  const yaw =
+   429→   429→    lerp(p.yaw, e.look.yaw, e.look.mix) +
+   430→   430→    (loopNoise(t, 11.3, 0.4) * 5.5 + loopNoise(t, 3.7, 2.1) * 1.6) * wander;
+   431→   431→  const pitch =
+   432→   432→    lerp(p.pitch, e.look.pitch, e.look.mix) +
+   433→   433→    (loopNoise(t, 9.1, 1.3) * 4.2 + loopNoise(t, 4.3, 0.7) * 1.3) * wander;
+   434→   434→  const roll = p.roll + loopNoise(t, 13.7, 3.2) * 2.2 * wander;
+   435→   435→
+   436→   436→  // Blink: scheduled, plus the forced cut that masks a mood morph.
+   437→   437→  const forced = clamp((t - e.blinkAt) / 0.2);
+   438→   438→  const forcedLid = forced < 1 ? Math.abs(forced * 2 - 1) : 1;
+   439→   439→  const lid = Math.min(blinkLid(t), forcedLid);
+   440→   440→
+   441→   441→  const [left, right] = eyePoses({ yaw, pitch, roll }, p.split);
+   442→   442→  paintEye(P.eyeL, left, p.wL, p.hL, p.tiltL, lid, driftX, driftY);
+   443→   443→  paintEye(P.eyeR, right, p.wR, p.hR, p.tiltR, lid, driftX, driftY);
+   444→   444→
+   445→   445→  // Mouth and cheeks ride the head roll so the face stays coherent.
+   446→   446→  setAttr(P.mouthG, "transform", `rotate(${r2(roll)} ${BODY_CX} ${BODY_CY})`);
+   447→   447→
+   448→   448→  const open = clamp(p.mouthOpen, 0, 1);
+   449→   449→  setAttr(P.mouthOpen, "ry", r2(1.2 + 3.4 * open).toFixed(2));
+   450→   450→  setAttr(P.mouthOpen, "opacity", open > 0.12 ? "1" : "0");
+   451→   451→  setAttr(
+   452→   452→    P.mouthCurve,
+   453→   453→    "d",
+   454→   454→    `M 54 76 Q 60 ${r2(76 - 5.5 * p.mouth)} 66 76`,
+   455→   455→  );
+   456→   456→  setAttr(
+   457→   457→    P.mouthCurve,
+   458→   458→    "opacity",
+   459→   459→    p.mouthShow > 0.5 && open <= 0.12 ? "1" : "0",
+   460→   460→  );
+   461→   461→  const cheek = (p.cheeks * 0.4).toFixed(3);
+   462→   462→  setAttr(P.cheekL, "opacity", cheek);
+   463→   463→  setAttr(P.cheekR, "opacity", cheek);
+   464→   464→}
+   465→   465→
+   466→   466→// ---- component -----------------------------------------------------------
+   467→   467→
+   468→   468→const COLLAPSE_KEY = "seeql.buddy.collapsed";
+   469→   469→const TIP_HOLD_MS = 8200;
+   470→   470→const TIP_GAP_MS = 22000;
+   471→   471→const TIP_GAP_JITTER_MS = 14000;
+   472→   472→
+   473→   473→/** No-op store subscription for the client gate (nothing to subscribe to). */
+   474→   474→const emptySubscribe = () => () => {};
+   475→   475→
+   476→   476→export function SeeqBuddy() {
+   477→   477→  // SSR-safe client gate: no effect, no state — the server snapshot renders null.
+   478→   478→  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
+   479→   479→  const [collapsed, setCollapsed] = useState(() => {
+   480→   480→    try {
+   481→   481→      return localStorage.getItem(COLLAPSE_KEY) === "1";
+   482→   482→    } catch {
+   483→   483→      return false;
+   484→   484→    }
+   485→   485→  });
+   486→   486→  const [bubble, setBubble] = useState<{ text: string; mood: Mood } | null>(null);
+   487→   487→
+   488→   488→  const wrapRef = useRef<HTMLDivElement | null>(null);
+   489→   489→  const bodyRef = useRef<SVGPathElement | null>(null);
+   490→   490→  const shadowRef = useRef<SVGEllipseElement | null>(null);
+   491→   491→  const eyeLRef = useRef<SVGPathElement | null>(null);
+   492→   492→  const eyeRRef = useRef<SVGPathElement | null>(null);
+   493→   493→  const mouthGRef = useRef<SVGGElement | null>(null);
+   494→   494→  const mouthCurveRef = useRef<SVGPathElement | null>(null);
+   495→   495→  const mouthOpenRef = useRef<SVGEllipseElement | null>(null);
+   496→   496→  const cheekLRef = useRef<SVGEllipseElement | null>(null);
+   497→   497→  const cheekRRef = useRef<SVGEllipseElement | null>(null);
+   498→   498→
+   499→   499→  const engineRef = useRef<Engine | null>(null);
+   500→   500→  const paintersRef = useRef<Painters>({
+   501→   501→    body: null, shadow: null, eyeL: null, eyeR: null, mouthG: null,
+   502→   502→    mouthCurve: null, mouthOpen: null, cheekL: null, cheekR: null,
+   503→   503→  });
+   504→   504→  const moodRef = useRef<Mood>("idle");
+   505→   505→  const collapsedRef = useRef(collapsed);
+   506→   506→  const showTimer = useRef<number | null>(null);
+   507→   507→  const hideTimer = useRef<number | null>(null);
+   508→   508→  const bag = useRef<{ order: number[]; i: number }>({ order: [], i: 0 });
+   509→   509→  const praiseIdx = useRef(0);
+   510→   510→
+   511→   511→  const clearTimers = () => {
+   512→   512→    if (showTimer.current !== null) window.clearTimeout(showTimer.current);
+   513→   513→    if (hideTimer.current !== null) window.clearTimeout(hideTimer.current);
+   514→   514→    showTimer.current = null;
+   515→   515→    hideTimer.current = null;
+   516→   516→  };
+   517→   517→
+   518→   518→  const scheduleNextTip = (delayMs: number) => {
+   519→   519→    if (showTimer.current !== null) window.clearTimeout(showTimer.current);
+   520→   520→    showTimer.current = window.setTimeout(() => {
+   521→   521→      if (collapsedRef.current) return;
+   522→   522→      const b = bag.current;
+   523→   523→      if (b.i >= b.order.length) {
+   524→   524→        b.order = TIPS.map((_, i) => i);
+   525→   525→        for (let i = b.order.length - 1; i > 0; i--) {
+   526→   526→          const j = Math.floor(Math.random() * (i + 1));
+   527→   527→          [b.order[i], b.order[j]] = [b.order[j], b.order[i]];
+   528→   528→        }
+   529→   529→        b.i = 0;
+   530→   530→      }
+   531→   531→      const tip = TIPS[b.order[b.i++]];
+   532→   532→      setBubble({ text: tip.text, mood: tip.mood });
+   533→   533→      if (hideTimer.current !== null) window.clearTimeout(hideTimer.current);
+   534→   534→      hideTimer.current = window.setTimeout(() => {
+   535→   535→        setBubble(null);
+   536→   536→        scheduleNextTip(TIP_GAP_MS + Math.random() * TIP_GAP_JITTER_MS);
+   537→   537→      }, TIP_HOLD_MS);
+   538→   538→    }, delayMs);
+   539→   539→  };
+   540→   540→
+   541→   541→  // Paint a single static frame (reduced motion / mood sync).
+   542→   542→  const staticPaint = () => {
+   543→   543→    const e = engineRef.current;
+   544→   544→    if (!e) return;
+   545→   545→    e.pose = collapsedRef.current
+   546→   546→      ? { ...MOODS[moodRef.current], mouthShow: 0 }
+   547→   547→      : { ...MOODS[moodRef.current] };
+   548→   548→    paint(e, 1.3, paintersRef.current);
+   549→   549→  };
+   550→   550→
+   551→   551→  // Bubble drives the mood; also repaints the static frame under reduced motion.
+   552→   552→  useEffect(() => {
+   553→   553→    moodRef.current = bubble?.mood ?? "idle";
+   554→   554→    if (engineRef.current?.reduced) staticPaint();
+   555→   555→  }, [bubble]);
+   556→   556→
+   557→   557→  // Collapse changes: persist + keep the engine's view in sync. Speech is
+   558→   558→  // paused/resumed by the event handlers that flip `collapsed`.
+   559→   559→  useEffect(() => {
+   560→   560→    collapsedRef.current = collapsed;
+   561→   561→    try {
+   562→   562→      localStorage.setItem(COLLAPSE_KEY, collapsed ? "1" : "0");
+   563→   563→    } catch {
+   564→   564→      /* private mode — ignore */
+   565→   565→    }
+   566→   566→  }, [collapsed]);
+   567→   567→
+   568→   568→  // Mount: start the engine and begin the tip cycle.
+   569→   569→  useEffect(() => {
+   570→   570→    paintersRef.current = {
+   571→   571→      body: bodyRef.current,
+   572→   572→      shadow: shadowRef.current,
+   573→   573→      eyeL: eyeLRef.current,
+   574→   574→      eyeR: eyeRRef.current,
+   575→   575→      mouthG: mouthGRef.current,
+   576→   576→      mouthCurve: mouthCurveRef.current,
+   577→   577→      mouthOpen: mouthOpenRef.current,
+   578→   578→      cheekL: cheekLRef.current,
+   579→   579→      cheekR: cheekRRef.current,
+   580→   580→    };
+   581→   581→
+   582→   582→    const e: Engine = {
+   583→   583→      mood: "idle",
+   584→   584→      frozen: null,
+   585→   585→      tMood: 0,
+   586→   586→      blinkAt: -10,
+   587→   587→      pose: { ...IDLE },
+   588→   588→      look: { yaw: IDLE.yaw, pitch: IDLE.pitch, mix: 0, wander: 1 },
+   589→   589→      lookT: { yaw: IDLE.yaw, pitch: IDLE.pitch, mix: 0, wander: 1 },
+   590→   590→      lookPrev: { yaw: IDLE.yaw, pitch: IDLE.pitch, mix: 0, wander: 1 },
+   591→   591→      lookAt: -10,
+   592→   592→      pointer: null,
+   593→   593→      raf: 0,
+   594→   594→      last: 0,
+   595→   595→      running: false,
+   596→   596→      reduced: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+   597→   597→    };
+   598→   598→    engineRef.current = e;
+   599→   599→
+   600→   600→    /** Mood cut: freeze the composite, re-target, and mask with a blink. */
+   601→   601→    const setMood = (id: Mood, t: number) => {
+   602→   602→      e.frozen = { ...e.pose };
+   603→   603→      e.mood = id;
+   604→   604→      e.tMood = t;
+   605→   605→      e.blinkAt = t;
+   606→   606→    };
+   607→   607→
+   608→   608→    /** Re-pose the look from the CURRENT interpolated value, or the gaze
+   609→   609→     * would step backwards one catch-up per pointer move and tremble. The
+   610→   610→     * effective look for this frame is the value caught up to `t` — each
+   611→   611→     * frame advances easeOutQuint(dt/morph) of the remaining gap. */
+   612→   612→    const setLook = (look: Look, t: number) => {
+   613→   613→      const k = easeOutQuint(clamp((t - e.lookAt) / LOOK_MORPH));
+   614→   614→      const cur: Look = {
+   615→   615→        yaw: lerp(e.lookPrev.yaw, e.lookT.yaw, k),
+   616→   616→        pitch: lerp(e.lookPrev.pitch, e.lookT.pitch, k),
+   617→   617→        mix: lerp(e.lookPrev.mix, e.lookT.mix, k),
+   618→   618→        wander: lerp(e.lookPrev.wander, e.lookT.wander, k),
+   619→   619→      };
+   620→   620→      e.lookPrev = cur;
+   621→   621→      e.lookT = look;
+   622→   622→      e.lookAt = t;
+   623→   623→      e.look = cur;
+   624→   624→    };
+   625→   625→
+   626→   626→    const aim = (t: number) => {
+   627→   627→      const el = wrapRef.current;
+   628→   628→      if (!el) return;
+   629→   629→      const box = el.getBoundingClientRect();
+   630→   630→      // A zero-surface box (hidden tab) would make the normalisation 0/0 —
+   631→   631→      // a NaN here would poison the engine for good.
+   632→   632→      if (box.width === 0 || box.height === 0) return;
+   633→   633→      if (e.pointer) {
+   634→   634→        const nx = clamp((e.pointer.x - (box.left + box.width / 2)) / Math.max(1, window.innerWidth / 2), -1, 1);
+   635→   635→        const ny = clamp((e.pointer.y - (box.top + box.height / 2)) / Math.max(1, window.innerHeight / 2), -1, 1);
+   636→   636→        setLook({ yaw: nx * YAW_MAX, pitch: FOLLOW_PITCH - ny * PITCH_MAX, mix: 1, wander: 0 }, t);
+   637→   637→      } else {
+   638→   638→        setLook({ yaw: IDLE.yaw, pitch: IDLE.pitch, mix: 0, wander: 1 }, t);
+   639→   639→      }
+   640→   640→    };
+   641→   641→
+   642→   642→    const tick = (now: number) => {
+   643→   643→      const t = now / 1000;
+   644→   644→      e.last = now;
+   645→   645→
+   646→   646→      if (moodRef.current !== e.mood) setMood(moodRef.current, t);
+   647→   647→
+   648→   648→      // Mood blend: pure easeOutQuint from the frozen composite — no overshoot,
+   649→   649→      // and an interrupted morph re-blends from where it actually was.
+   650→   650→      const target = collapsedRef.current
+   651→   651→        ? { ...MOODS[e.mood], mouthShow: 0 }
+   652→   652→        : MOODS[e.mood];
+   653→   653→      const since = t - e.tMood;
+   654→   654→      if (e.frozen && since < MOOD_MORPH) {
+   655→   655→        e.pose = blendMood(e.frozen, target, easeOutQuint(since / MOOD_MORPH));
+   656→   656→      } else {
+   657→   657→        e.frozen = null;
+   658→   658→        e.pose = target;
+   659→   659→      }
+   660→   660→
+   661→   661→      aim(t);
+   662→   662→
+   663→   663→      paint(e, t, paintersRef.current);
+   664→   664→    };
+   665→   665→
+   666→   666→    const startLoop = () => {
+   667→   667→      if (e.reduced) {
+   668→   668→        staticPaint();
+   669→   669→        return;
+   670→   670→      }
+   671→   671→      if (e.running) return;
+   672→   672→      e.running = true;
+   673→   673→      e.last = 0;
+   674→   674→      const step = (now: number) => {
+   675→   675→        tick(now);
+   676→   676→        e.raf = requestAnimationFrame(step);
+   677→   677→      };
+   678→   678→      e.raf = requestAnimationFrame(step);
+   679→   679→    };
+   680→   680→    const stopLoop = () => {
+   681→   681→      e.running = false;
+   682→   682→      cancelAnimationFrame(e.raf);
+   683→   683→    };
+   684→   684→
+   685→   685→    // Touch pointers are ignored: a lifted finger would freeze the gaze on
+   686→   686→    // its last spot, which reads as a bug.
+   687→   687→    const onMove = (ev: PointerEvent) => {
+   688→   688→      if (ev.pointerType === "touch") return;
+   689→   689→      e.pointer = { x: ev.clientX, y: ev.clientY };
+   690→   690→    };
+   691→   691→    const onLeave = () => {
+   692→   692→      e.pointer = null;
+   693→   693→    };
+   694→   694→    const onVis = () => {
+   695→   695→      if (document.hidden) stopLoop();
+   696→   696→      else startLoop();
+   697→   697→    };
+   698→   698→
+   699→   699→    window.addEventListener("pointermove", onMove, { passive: true });
+   700→   700→    document.documentElement.addEventListener("pointerleave", onLeave);
+   701→   701→    document.addEventListener("visibilitychange", onVis);
+   702→   702→    startLoop();
+   703→   703→    if (!collapsedRef.current) scheduleNextTip(2600);
+   704→   704→
+   705→   705→    return () => {
+   706→   706→      window.removeEventListener("pointermove", onMove);
+   707→   707→      document.documentElement.removeEventListener("pointerleave", onLeave);
+   708→   708→      document.removeEventListener("visibilitychange", onVis);
+   709→   709→      stopLoop();
+   710→   710→      clearTimers();
+   711→   711→      engineRef.current = null;
+   712→   712→    };
+   713→   713→  }, []);
+   714→   714→
+   715→   715→  const poke = () => {
+   716→   716→    if (collapsedRef.current) {
+   717→   717→      expand();
+   718→   718→      return;
+   719→   719→    }
+   720→   720→    clearTimers();
+   721→   721→    const text = PRAISE[praiseIdx.current++ % PRAISE.length];
+   722→   722→    setBubble({ text, mood: "excited" });
+   723→   723→    hideTimer.current = window.setTimeout(() => {
+   724→   724→      setBubble(null);
+   725→   725→      scheduleNextTip(TIP_GAP_MS + Math.random() * TIP_GAP_JITTER_MS);
+   726→   726→    }, 3000);
+   727→   727→  };
+   728→   728→
+   729→   729→  const expand = () => {
+   730→   730→    setCollapsed(false);
+   731→   731→    scheduleNextTip(2600);
+   732→   732→  };
+   733→   733→
+   734→   734→  const collapseBuddy = () => {
+   735→   735→    clearTimers();
+   736→   736→    setBubble(null);
+   737→   737→    setCollapsed(true);
+   738→   738→  };
+   739→   739→
+   740→   740→  const dismiss = () => {
+   741→   741→    clearTimers();
+   742→   742→    setBubble(null);
+   743→   743→    scheduleNextTip(15000);
+   744→   744→  };
+   745→   745→
+   746→   746→  if (!mounted) return null;
+   747→   747→
+   748→   748→  return createPortal(
+   749→   749→    // Positioning: mobile floats above the dev-tools badge at the corner; on
+   750→   750→    // lg+ the left rail (300px) owns the corner, so the buddy docks to the
+   751→   751→    // content column instead. The calc tracks the centered max-w-7xl
+   752→   752→    // container: (vw-1280)/2 + page padding 16 + sidebar 300 + gap 24.
+   753→   753→    <div
+   754→   754→      ref={wrapRef}
+   755→   755→      data-seeq="1"
+   756→   756→      className="fixed bottom-14 left-3 z-[55] lg:bottom-4 lg:left-[max(340px,calc((100vw-1280px)/2+340px))]"
+   757→   757→    >
+   758→   758→      <div className="flex items-end gap-2">
+   759→   759→        <div className="group relative shrink-0">
+   760→   760→          <button
+   761→   761→            type="button"
+   762→   762→            onClick={poke}
+   763→   763→            aria-expanded={!collapsed}
+   764→   764→            aria-label={collapsed ? "Open SeeQ study buddy" : "SeeQ study buddy"}
+   765→   765→            className={
+   766→   766→              "block cursor-pointer touch-manipulation select-none rounded-full outline-none transition-transform duration-300 hover:scale-105 focus-visible:ring-2 focus-visible:ring-emerald-400/60 " +
+   767→   767→              (collapsed ? "h-11 w-11" : "h-28 w-28 sm:h-32 sm:w-32")
+   768→   768→            }
+   769→   769→          >
+   770→   770→            <svg viewBox="0 0 120 120" className="h-full w-full overflow-visible" aria-hidden>
+   771→   771→              <defs>
+   772→   772→                <radialGradient id="seeq-body" cx="38%" cy="30%" r="80%">
+   773→   773→                  <stop offset="0%" stopColor="#4be3ae" />
+   774→   774→                  <stop offset="55%" stopColor="#17b57f" />
+   775→   775→                  <stop offset="100%" stopColor="#0a7d58" />
+   776→   776→                </radialGradient>
+   777→   777→              </defs>
+   778→   778→              <ellipse ref={shadowRef} cx={BODY_CX} cy="106" rx="23" ry="4.2" fill="#000" opacity="0.28" />
+   779→   779→              <path ref={bodyRef} d={INITIAL_D} fill="url(#seeq-body)" />
+   780→   780→              <path ref={eyeLRef} d="" fill="#f4fdfa" transform="" />
+   781→   781→              <path ref={eyeRRef} d="" fill="#f4fdfa" transform="" />
+   782→   782→              <g ref={mouthGRef}>
+   783→   783→                <path
+   784→   784→                  ref={mouthCurveRef}
+   785→   785→                  d=""
+   786→   786→                  fill="none"
+   787→   787→                  stroke="#053b2b"
+   788→   788→                  strokeWidth="2.6"
+   789→   789→                  strokeLinecap="round"
+   790→   790→                  opacity="0"
+   791→   791→                />
+   792→   792→                <ellipse ref={mouthOpenRef} cx={BODY_CX} cy="77.5" rx="3.4" ry="1.4" fill="#053b2b" opacity="0" />
+   793→   793→                <ellipse ref={cheekLRef} cx="41" cy="67" rx="4.8" ry="2.9" fill="#fb7185" opacity="0" />
+   794→   794→                <ellipse ref={cheekRRef} cx="79" cy="67" rx="4.8" ry="2.9" fill="#fb7185" opacity="0" />
+   795→   795→              </g>
+   796→   796→            </svg>
+   797→   797→          </button>
+   798→   798→          {!collapsed && (
+   799→   799→            <button
+   800→   800→              type="button"
+   801→   801→              onClick={collapseBuddy}
+   802→   802→              aria-label="Collapse SeeQ"
+   803→   803→              title="Collapse SeeQ"
+   804→   804→              className="absolute -right-0.5 -top-0.5 flex h-6 w-6 items-center justify-center rounded-full border border-zinc-700 bg-zinc-900 text-zinc-400 opacity-0 transition-all hover:border-zinc-600 hover:text-zinc-200 focus-visible:opacity-100 group-hover:opacity-100"
+   805→   805→            >
+   806→   806→              <Minus className="h-3 w-3" />
+   807→   807→            </button>
+   808→   808→          )}
+   809→   809→        </div>
+   810→   810→
+   811→   811→        <AnimatePresence>
+   812→   812→          {bubble && !collapsed && (
+   813→   813→            <motion.div
+   814→   814→              data-seeq-bubble="1"
+   815→   815→              initial={{ opacity: 0, y: 10, scale: 0.92 }}
+   816→   816→              animate={{ opacity: 1, y: 0, scale: 1 }}
+   817→   817→              exit={{ opacity: 0, y: 6, scale: 0.96 }}
+   818→   818→              transition={{ type: "spring", stiffness: 380, damping: 26 }}
+   819→   819→              className="pointer-events-auto relative mb-2 w-56 max-w-[62vw] rounded-2xl rounded-bl-md border border-zinc-800 bg-zinc-900/95 p-3 pr-7 shadow-xl shadow-black/40 backdrop-blur"
+   820→   820→            >
+   821→   821→              <p aria-live="polite" className="text-[12.5px] leading-relaxed text-zinc-200">
+   822→   822→                {bubble.text}
+   823→   823→              </p>
+   824→   824→              <button
+   825→   825→                type="button"
+   826→   826→                onClick={dismiss}
+   827→   827→                aria-label="Dismiss tip"
+   828→   828→                className="absolute right-1.5 top-1.5 rounded-md p-1 text-zinc-500 transition-colors hover:bg-zinc-800 hover:text-zinc-300"
+   829→   829→              >
+   830→   830→                <X className="h-3 w-3" />
+   831→   831→              </button>
+   832→   832→            </motion.div>
+   833→   833→          )}
+   834→   834→        </AnimatePresence>
+   835→   835→      </div>
+   836→   836→    </div>,
+   837→   837→    document.body,
+   838→   838→  );
+   839→   839→}
+   840→   840→
