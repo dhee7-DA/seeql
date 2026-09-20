@@ -2239,3 +2239,25 @@ Stage Summary:
 - The app finally has the missing layer: CSS utilities -> ui/kit primitives -> features. Consistency is now structural, not manual.
 - New tools cost 1 registry entry instead of 4 scattered edits; the queued features (#3 Daily puzzle calendar ... #8 Journey) inherit the rail, sidebar, and entrance animation for free.
 - Every shell control now shares one focus ring, pointer cursor, and one entrance motion — the "clunky" feel has structural fixes, not just cosmetic ones.
+
+---
+Task ID: seeq-everywhere-6
+Agent: Super Z (main agent)
+Task: User (with landing-page screenshot): "i cant see the blob here on the main page and neither its section with everything about him" — SeeQ (buddy + his section) existed only inside #learn; make both present on the main page.
+
+Work Log:
+- Root cause: page.tsx renders Landing / Playground / LearnApp exclusively; LearnApp mounted SeeqBuddy and SeeqView, so the landing had zero SeeQ presence. The landing header/nav had no SeeQ entry either.
+- Global buddy: SeeqBuddy now mounts ONCE at the app root (page.tsx, after the three mode branches) and is removed from LearnApp. It is a body-portal component, so one instance covers landing + playground + learn, and it SURVIVES mode switches — park him on the landing, he stays parked after "Start learning" (verified: same inline style before/after the switch, count always 1).
+- SSR crash found and fixed: root mounting made SeeqBuddy's useState initializers run during SSR for the first time (previously LearnApp never SSR'd — the server hash snapshot is always ""), and the pos initializer read window.innerWidth unguarded -> ReferenceError -> landing 500. Fixed with try/catch returning a neutral berth (same client-only pattern as the collapsed initializer; the mounted gate still renders null on the server, so no hydration risk).
+- Landing "Meet SeeQ" section (#seeq, data-seeq-landing): editorial match for the page (Reveal/sheen/zinc hairlines) with a live SeeqMascot stage — big cursor-following BloubBot (poke = wide) plus 6 move chips (wink/egg/hexagon/wide/notify/orbit) that make him perform then settle; copy on his behaviour (coach, drag-and-park, 44px collapse), "8 shapes . 16 expressions . 12 colours" chip, CTA "Dress him up in the SeeQ workshop", and the bloub MIT attribution line (Jérémy Perret).
+- Landing header: NAV gains "SeeQ" (scrolls to #seeq) plus the same live 26px mini-bot header button as the learn header; footer gains a SeeQ link.
+- Deep link: #learn?view=seeq opens the workshop directly. Home parses the hash query and dispatches the existing seeql:nav CustomEvent from a useEffect — child effects flush before parent effects, so LearnApp's listener is guaranteed attached (covers landing CTA, hard reload on the deep link, and back/forward). Landing CTA uses it via the new onSeeq prop (hash "#learn?view=seeq").
+- Infra: dev server spent the session recycle-looping (watchdog RSS cap 2.0GB vs dev boot RSS ~1.9-2.1GB) — a stray QA Chrome (~940MB) was the main aggravator; killed it and re-verified on a clean boot. Also: agent-browser's `errors --clear` is a NO-OP in this build (about:blank still showed old errors) — the ChunkLoadError "failures" were a stale buffer polluted during a recycle; fresh `--session` buffers show ZERO console errors on landing, learn and playground.
+- QA (scripts/qa-seeq6.sh + fresh-session follow-ups): landing structure (buddy x1, nav link, mini-bot, section, stage, hero, 6 chips, credit); egg chip morphs the hero body path (M99.97 -> M90.4) and settles back to the idle family (M100.18); buddy berth exact at viewport (340,756 @1280x900); CTA deep-link -> hash #learn?view=seeq, SeeqView renders, buddy same-spot survives, single instance; learn header nav -> 50 tiles; playground buddy present; 0 console errors everywhere (fresh sessions); screenshots qa-seeq6-{landing-top,landing-seeq,learn-seeq,mobile}.png inspected.
+- Gates: tsc 829 = exact baseline (0 new); npm run lint 4 errors + 4 warnings = exact baseline; scoped eslint on the 4 touched files clean.
+
+Stage Summary:
+- SeeQ is now a site-wide character: the blob greets you on the main page, his section is one nav click away (or scroll), and the workshop deep-links straight from the landing CTA.
+- Buddy is a single global instance that keeps skin AND parked spot across landing/playground/learn switches.
+- Landing SSR learned the hard lesson: root-mounted client components must guard window/localStorage in state initializers even when they render null server-side.
+- Next per approved queue: enhancement #3 - Daily puzzle calendar (streak-freeze, monthly badge).
