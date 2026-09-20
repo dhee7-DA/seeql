@@ -9,7 +9,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Flag, Loader2, Play, RotateCcw, Trophy } from "lucide-react";
+import { Flag, Gauge, Loader2, Play, RotateCcw, Trophy } from "lucide-react";
 import { useProgress } from "@/lib/curriculum/progress";
 import { GOLF_HOLES, GOLF_XP, type GolfHole } from "@/lib/curriculum/golf";
 import { countStrokes, golfVerdict } from "@/lib/curriculum/golf-score";
@@ -34,7 +34,7 @@ function planSteps(r: ExecResponse | null): number | null {
   return r?.ok ? (r.plan?.length ?? null) : null;
 }
 
-function GolfHoleCard({ hole }: { hole: GolfHole }) {
+function GolfHoleCard({ hole, onOpenPerf }: { hole: GolfHole; onOpenPerf?: (sql: string) => void }) {
   const banked = useProgress((s) => s.xpEvents[`golf:${hole.id}`] !== undefined);
   const [sql, setSql] = useState("");
   const [run, setRun] = useState<RunState>({ running: false, result: null, target: null, starterPlan: null, match: null });
@@ -155,6 +155,14 @@ function GolfHoleCard({ hole }: { hole: GolfHole }) {
               <RotateCcw className="h-3 w-3" /> Re-play
             </button>
           )}
+          {run.result?.ok && onOpenPerf && (
+            <button
+              onClick={() => onOpenPerf(sql.trim() || hole.par)}
+              className="btn-quiet flex items-center gap-1.5 rounded-md border border-zinc-700 px-3 py-2 text-xs text-zinc-400 transition-colors hover:bg-zinc-900"
+            >
+              <Gauge className="h-3 w-3" /> Plan in Perf lab
+            </button>
+          )}
           <span className="ml-auto text-[11px] text-zinc-600">
             grading: {hole.ordered ? "row order matters" : "row order free"} · SELECT * bills {hole.starColumns} strokes
           </span>
@@ -238,7 +246,7 @@ function GolfHoleCard({ hole }: { hole: GolfHole }) {
   );
 }
 
-export function QueryGolf() {
+export function QueryGolf({ onOpenPerf }: { onOpenPerf?: (sql: string) => void }) {
   const xpEvents = useProgress((s) => s.xpEvents);
   const [idx, setIdx] = useState(0);
   const hole = GOLF_HOLES[idx];
@@ -286,7 +294,7 @@ export function QueryGolf() {
       </div>
 
       <div className="mt-4">
-        <GolfHoleCard key={hole.id} hole={hole} />
+        <GolfHoleCard key={hole.id} hole={hole} onOpenPerf={onOpenPerf} />
       </div>
     </div>
   );

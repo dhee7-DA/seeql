@@ -21,6 +21,7 @@ import {
   FlaskConical,
   Flag,
   Flame,
+  Gauge,
   GraduationCap,
   LayoutDashboard,
   MessagesSquare,
@@ -51,6 +52,7 @@ import { SchemaStudio } from "./schema-studio";
 import { ExplainBack } from "./explain-back";
 import { CheatSheet } from "./cheat-sheet";
 import { MentorChat } from "./mentor-chat";
+import { PerfLab } from "./perf-lab";
 import { ActivityStrip, MasteryGrid } from "./progress-cards";
 import { CelebrationHost, celebrate } from "./celebrate";
 
@@ -69,6 +71,7 @@ type View =
   | { kind: "interview" }
   | { kind: "studio" }
   | { kind: "explain" }
+  | { kind: "perf"; sql?: string; tab?: "pipeline" | "workbench" | "detective" }
   | { kind: "sheet" }
   | { kind: "mentor" };
 
@@ -298,6 +301,7 @@ function ToolRail({ view, setView }: { view: View; setView: (v: View) => void })
     { kind: "predict", icon: Eye, label: "Predict" },
     { kind: "clinic", icon: Bug, label: "Clinic" },
     { kind: "golf", icon: Flag, label: "Golf" },
+    { kind: "perf", icon: Gauge, label: "Perf" },
     { kind: "interview", icon: Briefcase, label: "Interview" },
     { kind: "studio", icon: Network, label: "Schema" },
     { kind: "explain", icon: MessagesSquare, label: "Explain" },
@@ -586,6 +590,7 @@ export function LearnApp() {
                 { kind: "clinic" as const, icon: Bug, label: "Error clinic", note: "diagnose real bugs, loud & silent" },
                 { kind: "mentor" as const, icon: Bot, label: "AI Mentor", note: "tiered hints on your live data" },
                 { kind: "golf" as const, icon: Flag, label: "Query golf", note: "same rows, fewer strokes" },
+                { kind: "perf" as const, icon: Gauge, label: "Performance lab", note: "SCAN vs SEARCH, index stings" },
                 { kind: "interview" as const, icon: Briefcase, label: "Interview prep", note: "the screening classics, graded" },
                 { kind: "studio" as const, icon: Network, label: "Schema studio", note: "spot the design smell" },
                 { kind: "explain" as const, icon: MessagesSquare, label: "Explain back", note: "say what the query does" },
@@ -653,7 +658,9 @@ export function LearnApp() {
         ) : view.kind === "clinic" ? (
           <ErrorClinic />
         ) : view.kind === "golf" ? (
-          <QueryGolf />
+          <QueryGolf onOpenPerf={(sql) => setView({ kind: "perf", sql, tab: "workbench" })} />
+        ) : view.kind === "perf" ? (
+          <PerfLab initialSql={view.sql} initialTab={view.tab} onOpenLesson={openLesson} />
         ) : view.kind === "interview" ? (
           <InterviewTrack />
         ) : view.kind === "studio" ? (
