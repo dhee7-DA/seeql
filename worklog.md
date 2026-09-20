@@ -2108,3 +2108,21 @@ Stage Summary:
 - SeeQ shipped: emerald blob buddy, corner placement, coach tips, poke, collapse. Screenshots: scripts/qa-seeq-{bubble,poke,collapsed,desktop,mobile}.png.
 - Research artifacts from bloub/avatar-site investigation kept untracked in scripts/mascot-research/.
 - Future hooks: reaction states (happy/sad/excited) ready to be wired into drills/clinic/golf events and Blitz/daily-puzzle enhancements via moodRef pattern.
+
+---
+Task ID: mascot-seeq-v2
+Agent: main (Super Z)
+Task: User feedback — SeeQ "looks weird and not as smooth/similar to the reference sites" (screenshot provided). Rebuild the motion engine to bloub-grade quality.
+
+Work Log:
+- Diagnosed via side-by-side vs research captures: v1 violated all four bloub design principles (lumpy 9-pt body with ±4% radius quirks; continuous bob+wobble; flat 2D ellipse eyes with ±3px translate; mechanical triangle blink).
+- Cloned MIT repo github.com/jeremy-prt/bloub to scripts/mascot-research/bloub-repo; extracted measured engine constants (face.ts liveliness, math.ts loopNoise/easeOutQuint, shape.ts closedPath/capsulePath, states.ts blink-in masking, ui/gaze.ts pointer mapping, BloubBot.vue per-frame re-anchored setLook).
+- Rewrote seeq-buddy.tsx (~660 lines, zero anim libs): 64-pt perfect-circle body (breath 0.5% height, sub-pixel drift, still at rest); eyes as capsules projected on yaw/pitch/roll head sphere (tangent-frame matrix, limb fade, per-eye mirrored tilt, screen-space blink squash 0.06 min); deterministic blink calendar (mulberry32 0x5eed, 1.9–4.6s gaps, 18% double-blinks, close-fast/open-slow 0.18s); forced blink masks every mood morph; easeOutQuint-only morphs with freeze-and-reblend on interrupt; pointer follow normalized to half-window (YAW_MAX 16 / PITCH_MAX 13), touch ignored, wander fades while following.
+- Fixed ported-driver bug pre-QA: gaze interpolation must compute catch-up BEFORE re-anchoring (bloub order) else k=0 freezes the gaze.
+- Gates: tsc 882 stashed = 882 with change (0 new; 829→882 baseline drift is pre-existing scripts/*.ts noise); lint 4 errors + 4 warnings = exactly pre-existing after adding scripts/mascot-research/** and tool-results/** to eslint ignores.
+- QA via scripts/qa-seeq.sh on :3102 (main stack paused for dev lock, then restarted via dev.sh, :3000→200, pids 10255/7255): mount/morph/first-tip/gaze (eye matrix translation 51.5,44.0 → 57.9,43.2 toward pointer)/poke/collapse(44px chip, persisted)/re-expand/0 page errors — all pass. Desktop + mobile screenshots verified visually.
+
+Stage Summary:
+- Commit c93866c "SeeQ v2 engine: bloub-grade motion..."; worktree clean except upload/.
+- SeeQ now: smooth circle silhouette, 3D-projected leaning capsule eyes, blink-cut mood changes, calm-at-rest life model. Character identity unchanged (emerald, cream eyes, mouth, cheeks, coach tips, poke, collapse).
+- QA artifacts: qa-seeq-{bubble,poke,collapsed,idle,mobile2}.png; qa-seeq.sh step 6 reads eye path matrix (new DOM).
