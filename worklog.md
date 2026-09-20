@@ -2064,3 +2064,47 @@ Work Log:
 Stage Summary:
 - The toolbox is now 16 surfaces: the course teaches indexes in L48/L51 and the Performance lab lets learners watch SCAN collapse into SEARCH on the real engine, with graded detective stings paying XP into the same mastery/SR loop.
 - Committed 1d7f9ec as perf-lab-2. Next per approved order: enhancement #3 — Daily puzzle calendar (streak-freeze, monthly badge).
+
+---
+Task ID: mascot-research
+Agent: Super Z (main agent)
+Task: User asked to visit avatar.bible-strong.app and bloub.vercel.app and assess whether either can be included in the SeeQL app as a mascot (before Enhancement #2).
+
+Work Log:
+- Visited avatar.bible-strong.app: root + 9 common paths all return Vercel DEPLOYMENT_NOT_FOUND (404). No Wayback Machine or CDX archive snapshots exist. Main domain bible-strong.app is a compressed SPA shell with zero "avatar" references. Verdict: deployment deleted, content unrecoverable from public web.
+- Visited bloub.vercel.app: "bloub — animated SVG avatar", open source at github.com/jeremy-prt/bloub. Probed DOM: 33 SVGs, no canvas/lottie/rive/video — pure SVG.
+- Read README + LICENSE: MIT (c) 2026 Jérémy Perret. It is an SVG recreation of the x.ai bot avatar: 1 filled body shape morphing across 14 states + 2 white eye shapes morphing independently; no animation library; framework-free engine core (`engine.sample(t)` pure function of time); Vue 3 + Vite + TS shell.
+- Features: 8 body shapes, 12 colours, 17 rest expressions, animation timeline editor, gaze-follow + blink idle life, exports SVG/PNG/GIF/MP4, `<BloubBot state size expression frozenAt>` component API.
+- README warning noted: MIT covers the CODE, not the design it imitates (x.ai/Grok bot). Not affiliated with x.ai.
+- Fetched docs/states.png (14 states visual) + demo.gif into scripts/mascot-research/ for reference.
+- Screenshots saved: scripts/mascot-research/{avatar-site.png, bloub-site.png, bloub-animations.png, bloub-settings.png, bloub-states.png, bloub-demo.gif}.
+
+Stage Summary:
+- avatar.bible-strong.app: DEAD, nothing includable. User can supply a screenshot if they remember it.
+- bloub: includable. Two legal paths: (A) port MIT engine verbatim (result = Grok lookalike), (B) build original SeeQL mascot using the same MIT techniques (pure-SVG morph + eye masks + blink/gaze) themed to app's emerald palette. (B) recommended — brand-clean.
+- Mascot can wire into existing app events: drills/clinic/golf results, XP/streak ups, Mentor chat avatar, empty states; future enhancements (#3 calendar, #6 blitz) can reuse reaction states.
+- No code changed. Awaiting user's mascot direction choice.
+
+---
+Task ID: mascot-seeq-1
+Agent: Super Z (main agent)
+Task: Build "SeeQ" — original corner-buddy mascot for the SeeQL app (user-approved: original character, blob buddy, corner placement, coach personality), using techniques learned from the MIT-licensed bloub project (pure-SVG morph engine; no design copy of the x.ai look).
+
+Work Log:
+- User chose via question round: Original approach / Blob buddy / Corner buddy placement / Coach personality.
+- Built src/components/learn/seeq-buddy.tsx (~560 lines, self-contained):
+  - Numeric pose model + single rAF loop; geometry painted directly onto SVG attributes (zero React re-renders per frame, zero animation libraries).
+  - Organic blob: 9-point closed Catmull-Rom spline with per-index radius quirks + time wobble + squash-and-stretch; exponential ease-out toward mood targets (idle/happy/excited/thinking/sad/wink).
+  - Life: 160ms triangle blink every 2.4-6.6s, pointer-following gaze (clamped 3.4px) with Lissajous wander fallback, gentle bob + reactive ground shadow, emerald radial-gradient body, rose cheeks, smile/o-mouth.
+  - 14 coach tips (app-aware: Mentor, golf, perf SCAN-vs-SEARCH, clinic, drills, predict, explorer) on a shuffled no-repeat bag: first tip ~2.6s, hold 8.2s, gap 22-36s. Poke -> excited praise bubble. Dismiss X. Collapsible (persisted seeql.buddy.collapsed); collapsed = 44px chip that still blinks, speech paused.
+  - A11y/robustness: aria-expanded + dynamic labels, aria-live bubble, keyboard focusable, prefers-reduced-motion -> single static frame, rAF pauses on document.hidden, portal to document.body, full cleanup.
+- Mounted in learn-app.tsx after CelebrationHost.
+- Fixed 37 self-inflicted tsc errors (as-const literal types -> number) and restructured to satisfy react-hooks set-state-in-effect: useSyncExternalStore client gate (no mounted-state effect) + moved bubble clearing into event handlers (collapseBuddy/expand).
+- Gates: tsc 829 (= baseline 829, 0 new; baseline moved from 829->829 because perf-lab commit 1d7f9ec landed between sessions), eslint 4 errors + 4 warnings = exactly pre-existing, 0 new.
+- Browser QA (scripts/qa-seeq.sh, private :3102 + live :3000): mount/position/z-55, engine morph liveness, first tip, pointer gaze (translate -2.45 -> 3.37), poke praise, collapse (chip 44px, aria-expanded false, localStorage "1"), re-expand ("0"), 0 page errors across all runs. Found + fixed two placement conflicts: desktop buddy covered sidebar nav (now lg:left-[max(340px,calc((100vw-1280px)/2+340px))] -> measured buddyLeft 340 vs sidebarRight 316), mobile chip hidden behind Next devtools badge (bottom-14 on mobile).
+- Restarted main preview stack after QA (dev.pid 7092, watchdog.pid 7255, :3000 -> 200).
+
+Stage Summary:
+- SeeQ shipped: emerald blob buddy, corner placement, coach tips, poke, collapse. Screenshots: scripts/qa-seeq-{bubble,poke,collapsed,desktop,mobile}.png.
+- Research artifacts from bloub/avatar-site investigation kept untracked in scripts/mascot-research/.
+- Future hooks: reaction states (happy/sad/excited) ready to be wired into drills/clinic/golf events and Blitz/daily-puzzle enhancements via moodRef pattern.

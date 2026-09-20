@@ -53,6 +53,7 @@ import { ExplainBack } from "./explain-back";
 import { CheatSheet } from "./cheat-sheet";
 import { MentorChat } from "./mentor-chat";
 import { PerfLab } from "./perf-lab";
+import { SeeqBuddy } from "./seeq-buddy";
 import { ActivityStrip, MasteryGrid } from "./progress-cards";
 import { CelebrationHost, celebrate } from "./celebrate";
 
@@ -396,6 +397,7 @@ export function LearnApp() {
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-6 lg:flex-row">
       <CelebrationHost />
+      <SeeqBuddy />
 
       {/* sidebar — below the content on mobile, sticky rail on desktop */}
       {/* Definite height (not max-height): max-h-full on the inner panel is a
