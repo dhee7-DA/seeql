@@ -18,6 +18,7 @@ import {
 import { LESSONS, MODULES } from "@/lib/curriculum/lessons";
 import { useProgress } from "@/lib/curriculum/progress";
 import { BADGES, currentStreak, levelFor, totalXp } from "@/lib/curriculum/gamification";
+import { monthPerfect, monthsInLedger, puzzleStreak } from "@/lib/curriculum/daily";
 import { cn } from "@/lib/utils";
 import { LessonView } from "./lesson-view";
 import { DataExplorer } from "./data-explorer";
@@ -35,6 +36,7 @@ import { ExplainBack } from "./explain-back";
 import { CheatSheet } from "./cheat-sheet";
 import { MentorChat } from "./mentor-chat";
 import { PerfLab } from "./perf-lab";
+import { DailyPuzzle } from "./daily-puzzle";
 import { SeeqView } from "./seeq-view";
 import { ActivityStrip, MasteryGrid } from "./progress-cards";
 import { CelebrationHost, celebrate } from "./celebrate";
@@ -44,6 +46,7 @@ import { Btn, Chip, Panel, ProgressBar, SectionLabel, ToolRow } from "./ui/kit";
 type View =
   | { kind: "overview" }
   | { kind: "seeq" }
+  | { kind: "daily" }
   | { kind: "lesson"; id: string }
   | { kind: "explorer" }
   | { kind: "mixed" }
@@ -115,6 +118,9 @@ function useBadgeWatcher() {
   const badges = useProgress((s) => s.badges);
   const xpByDay = useProgress((s) => s.xpByDay);
   const dailyGoal = useProgress((s) => s.dailyGoal);
+  const puzzleDone = useProgress((s) => s.puzzleDone);
+  const backlogDone = useProgress((s) => s.backlogDone);
+  const freezes = useProgress((s) => s.freezes);
   const prevLevel = useRef(-1);
   const ready = useRef(false);
 
@@ -128,8 +134,13 @@ function useBadgeWatcher() {
     const perfectQuizzes = LESSONS.filter((l) =>
       l.mcqs.every((m) => mcqAttempts[m.id]?.firstTry),
     ).length;
-    return { lessonsDone, problemsSolved, mcqsCorrect, perfectQuizzes };
-  }, [xpEvents, mcqAttempts]);
+    const puzzlesDone = Object.keys(puzzleDone).length + Object.keys(backlogDone).length;
+    const puzzleStreakNow = puzzleStreak(puzzleDone, freezes).streak;
+    const months = new Set([...monthsInLedger(puzzleDone), ...monthsInLedger(backlogDone)]);
+    let perfectMonths = 0;
+    for (const mk of months) if (monthPerfect(puzzleDone, backlogDone, mk)) perfectMonths++;
+    return { lessonsDone, problemsSolved, mcqsCorrect, perfectQuizzes, puzzlesDone, puzzleStreak: puzzleStreakNow, perfectMonths };
+  }, [xpEvents, mcqAttempts, puzzleDone, backlogDone, freezes]);
 
   const streak = useMemo(() => currentStreak({ xpByDay, dailyGoal }), [xpByDay, dailyGoal]);
 
@@ -445,6 +456,8 @@ function ViewBody({
     }
     case "seeq":
       return <SeeqView />;
+    case "daily":
+      return <DailyPuzzle />;
     case "explorer":
       return <DataExplorer />;
     case "library":

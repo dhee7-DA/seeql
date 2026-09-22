@@ -15,6 +15,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { LESSONS, MODULES } from "@/lib/curriculum/lessons";
 import { useProgress } from "@/lib/curriculum/progress";
 import { BADGES, currentStreak, dayKey, levelFor, totalXp } from "@/lib/curriculum/gamification";
+import { monthPerfect, monthsInLedger, puzzleStreak } from "@/lib/curriculum/daily";
 import { celebrate } from "./celebrate";
 import { flutterBurst } from "./flutter";
 
@@ -31,6 +32,9 @@ export function useMilestoneWatcher() {
   const mcqAttempts = useProgress((s) => s.mcqAttempts);
   const xpByDay = useProgress((s) => s.xpByDay);
   const dailyGoal = useProgress((s) => s.dailyGoal);
+  const puzzleDone = useProgress((s) => s.puzzleDone);
+  const backlogDone = useProgress((s) => s.backlogDone);
+  const freezes = useProgress((s) => s.freezes);
   const prevLevel = useRef(-1);
   const prevGoal = useRef(false);
   const prevModules = useRef<Set<number> | null>(null);
@@ -46,8 +50,13 @@ export function useMilestoneWatcher() {
     const mcqsCorrect = Object.values(mcqAttempts).filter((a) => a.correct).length;
     const lessonsDone = Object.keys(xpEvents).filter((k) => k.startsWith("lesson:")).length;
     const perfectQuizzes = LESSONS.filter((l) => l.mcqs.every((m) => mcqAttempts[m.id]?.firstTry)).length;
-    return { lessonsDone, problemsSolved, mcqsCorrect, perfectQuizzes };
-  }, [xpEvents, mcqAttempts]);
+    const puzzlesDone = Object.keys(puzzleDone).length + Object.keys(backlogDone).length;
+    const puzzleStreakNow = puzzleStreak(puzzleDone, freezes).streak;
+    const months = new Set([...monthsInLedger(puzzleDone), ...monthsInLedger(backlogDone)]);
+    let perfectMonths = 0;
+    for (const mk of months) if (monthPerfect(puzzleDone, backlogDone, mk)) perfectMonths++;
+    return { lessonsDone, problemsSolved, mcqsCorrect, perfectQuizzes, puzzlesDone, puzzleStreak: puzzleStreakNow, perfectMonths };
+  }, [xpEvents, mcqAttempts, puzzleDone, backlogDone, freezes]);
 
   useEffect(() => {
     if (!ready.current) {

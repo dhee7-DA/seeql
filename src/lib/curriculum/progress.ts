@@ -12,10 +12,15 @@
 // repetition ledger: any graded item can schedule itself for resurfacing
 // at 1d → 3d → 7d → 14d after a correct answer, 1d after a wrong one.
 // questDone tracks which day's adaptive quest was completed.
+// puzzleDone tracks which day's daily puzzle was solved (the calendar),
+// and freezes counts streak-freeze tokens: earned at every natural 7-day
+// puzzle milestone (max 2 held), consumed to bridge missed days — the
+// bridging itself is DERIVED at read time by puzzleStreak() in daily.ts.
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { dayKey } from "./gamification";
+import { dayKeyOf } from "./daily";
 
 export interface SkillTally {
   /** correct answers */
@@ -46,6 +51,14 @@ export interface ProgressState {
   reviewSchedule: Record<string, ReviewCard>;
   /** dayKey → timestamp the adaptive quest was cleared */
   questDone: Record<string, number>;
+  /** dayKey → timestamp the daily puzzle was solved (today's ledger — this
+   *  one builds the streak; backlog solves go to backlogDone) */
+  puzzleDone: Record<string, number>;
+  /** dayKey → timestamp a BACKLOG (past-month) puzzle was solved — no
+   *  streak credit, but the calendar and Perfect-Month math count it */
+  backlogDone: Record<string, number>;
+  /** streak-freeze tokens held (earned at 7-day puzzle milestones, cap 2) */
+  freezes: number;
   awardXp: (key: string, amount: number) => boolean;
   recordMcqCheck: (id: string, correct: boolean) => boolean;
   markLessonDone: (id: string) => boolean;
@@ -58,6 +71,11 @@ export interface ProgressState {
   /** clear a review card (answered right on a resurfaced visit) */
   clearReview: (key: string) => void;
   markQuestDone: () => boolean;
+  /** mark today's puzzle solved (idempotent); pays a freeze token at each
+   *  natural 7-day milestone while under the 2-token cap */
+  markPuzzleDone: () => { ok: boolean; freezeEarned: boolean };
+  /** mark a backlog day solved (idempotent, no streak side effects) */
+  markBacklogDone: (day: string) => boolean;
   resetAll: () => void;
 }
 
@@ -87,6 +105,9 @@ export const useProgress = create<ProgressState>()(
       skillAttempts: {},
       reviewSchedule: {},
       questDone: {},
+      puzzleDone: {},
+      backlogDone: {},
+      freezes: 1,
 
       awardXp: (key, amount) => {
         if (get().xpEvents[key] !== undefined) return false;
@@ -174,6 +195,32 @@ export const useProgress = create<ProgressState>()(
         return true;
       },
 
+      markPuzzleDone: () => {
+        const k = dayKey();
+        if (get().puzzleDone[k] !== undefined) return { ok: false, freezeEarned: false };
+        // natural consecutive run of SOLVED days ending today (freezes
+        // bridge gaps but don't build the earning run)
+        const done = { ...get().puzzleDone, [k]: Date.now() };
+        let run = 0;
+        const d = new Date();
+        while (done[dayKeyOf(d)] !== undefined) {
+          run++;
+          d.setDate(d.getDate() - 1);
+        }
+        const freezeEarned = run > 0 && run % 7 === 0 && get().freezes < 2;
+        set((s) => ({
+          puzzleDone: done,
+          freezes: freezeEarned ? s.freezes + 1 : s.freezes,
+        }));
+        return { ok: true, freezeEarned };
+      },
+
+      markBacklogDone: (day) => {
+        if (get().backlogDone[day] !== undefined) return false;
+        set((s) => ({ backlogDone: { ...s.backlogDone, [day]: Date.now() } }));
+        return true;
+      },
+
       resetAll: () =>
         set({
           xpEvents: {},
@@ -185,6 +232,9 @@ export const useProgress = create<ProgressState>()(
           skillAttempts: {},
           reviewSchedule: {},
           questDone: {},
+          puzzleDone: {},
+          backlogDone: {},
+          freezes: 1,
         }),
     }),
     { name: "sql-visualizer-learn-v1" },

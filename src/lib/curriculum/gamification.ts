@@ -79,6 +79,12 @@ export interface BadgeCtx {
   problemsSolved: number;
   mcqsCorrect: number;
   perfectQuizzes: number;
+  /** lifetime count of daily puzzles solved */
+  puzzlesDone: number;
+  /** current puzzle streak incl. freeze-bridged days */
+  puzzleStreak: number;
+  /** how many calendar months had every day solved */
+  perfectMonths: number;
 }
 
 export interface Badge {
@@ -136,5 +142,29 @@ export const BADGES: Badge[] = [
     title: "Analyst",
     desc: "Reach Analyst I (1,000 XP)",
     test: (_c, xp) => xp >= 1000,
+  },
+  {
+    id: "puzzle-1",
+    title: "Daily Grind",
+    desc: "Solve your first daily puzzle",
+    test: (c) => c.puzzlesDone >= 1,
+  },
+  {
+    id: "puzzle-7",
+    title: "Sealed Week",
+    desc: "Solve the daily puzzle 7 days in a row",
+    test: (c) => c.puzzleStreak >= 7,
+  },
+  {
+    id: "puzzle-30",
+    title: "Calendar Keeper",
+    desc: "Solve 30 daily puzzles (lifetime)",
+    test: (c) => c.puzzlesDone >= 30,
+  },
+  {
+    id: "month-perfect",
+    title: "Perfect Month",
+    desc: "Solve every daily puzzle in a calendar month",
+    test: (c) => c.perfectMonths >= 1,
   },
 ];

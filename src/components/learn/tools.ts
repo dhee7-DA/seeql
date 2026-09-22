@@ -9,6 +9,7 @@ import {
   Bot,
   Briefcase,
   Bug,
+  CalendarDays,
   Dumbbell,
   Eye,
   FileStack,
@@ -27,6 +28,7 @@ import {
 export type ToolKind =
   | "overview"
   | "seeq"
+  | "daily"
   | "mentor"
   | "explorer"
   | "library"
@@ -60,6 +62,7 @@ export interface ToolDef {
 export const TOOLS: ToolDef[] = [
   { kind: "overview", icon: LayoutDashboard, label: "Course overview", note: "progress & badges", short: "Overview", section: "core" },
   { kind: "seeq", icon: Ghost, label: "SeeQ playground", note: "dress & place your buddy", short: "SeeQ", section: "toolbox" },
+  { kind: "daily", icon: CalendarDays, label: "Daily puzzle", note: "one a day — keep the streak", short: "Daily", section: "toolbox" },
   { kind: "mentor", icon: Bot, label: "AI Mentor", note: "tiered hints on your live data", short: "Mentor", section: "lab" },
   { kind: "explorer", icon: Table2, label: "Data explorer", note: "browse the live tables", short: "Data", section: "toolbox" },
   { kind: "library", icon: Shapes, label: "Diagram library", note: "every visual, one wall", short: "Diagrams", section: "toolbox" },
