@@ -1,0 +1,762 @@
+     1→"use client";
+     2→
+     3→// Learn shell — sidebar (module, rank, streak, lessons) + lesson content.
+     4→// A watcher effect converts progress into badges and level-up celebrations.
+     5→
+     6→import { useEffect, useMemo, useRef, useState } from "react";
+     7→import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+     8→import {
+     9→  ArrowRight,
+    10→  Check,
+    11→  ChevronDown,
+    12→  ChevronsDownUp,
+    13→  ChevronsUpDown,
+    14→  Flame,
+    15→  GraduationCap,
+    16→  RotateCcw,
+    17→} from "lucide-react";
+    18→import { LESSONS, MODULES } from "@/lib/curriculum/lessons";
+    19→import { useProgress } from "@/lib/curriculum/progress";
+    20→import { BADGES, currentStreak, levelFor, totalXp } from "@/lib/curriculum/gamification";
+    21→import { cn } from "@/lib/utils";
+    22→import { LessonView } from "./lesson-view";
+    23→import { DataExplorer } from "./data-explorer";
+    24→import { MixedQuiz } from "./mixed-quiz";
+    25→import { CaseFiles } from "./case-files";
+    26→import { DiagramLibrary } from "./diagram-library";
+    27→import { DrillYard } from "./drill-yard";
+    28→import { PredictView } from "./predict-view";
+    29→import { ErrorClinic } from "./error-clinic";
+    30→import { QueryGolf } from "./query-golf";
+    31→import { MasteryMap } from "./mastery-map";
+    32→import { InterviewTrack } from "./interview-track";
+    33→import { SchemaStudio } from "./schema-studio";
+    34→import { ExplainBack } from "./explain-back";
+    35→import { CheatSheet } from "./cheat-sheet";
+    36→import { MentorChat } from "./mentor-chat";
+    37→import { PerfLab } from "./perf-lab";
+    38→import { SeeqView } from "./seeq-view";
+    39→import { ActivityStrip, MasteryGrid } from "./progress-cards";
+    40→import { CelebrationHost, celebrate } from "./celebrate";
+    41→import { CORE_AND_TOOLBOX, LAB_TOOLS, TOOLS, type ToolKind } from "./tools";
+    42→import { Btn, Chip, Panel, ProgressBar, SectionLabel, ToolRow } from "./ui/kit";
+    43→
+    44→type View =
+    45→  | { kind: "overview" }
+    46→  | { kind: "seeq" }
+    47→  | { kind: "lesson"; id: string }
+    48→  | { kind: "explorer" }
+    49→  | { kind: "mixed" }
+    50→  | { kind: "cases" }
+    51→  | { kind: "drills" }
+    52→  | { kind: "library" }
+    53→  | { kind: "predict" }
+    54→  | { kind: "clinic" }
+    55→  | { kind: "golf" }
+    56→  | { kind: "mastery" }
+    57→  | { kind: "interview" }
+    58→  | { kind: "studio" }
+    59→  | { kind: "explain" }
+    60→  | { kind: "perf"; sql?: string; tab?: "pipeline" | "workbench" | "detective" }
+    61→  | { kind: "sheet" }
+    62→  | { kind: "mentor" };
+    63→
+    64→// Drift guard — the registry in tools.ts must name every non-lesson view
+    65→// (and vice versa). A compile error here means: update tools.ts too.
+    66→type NonLessonViews = Exclude<View["kind"], "lesson">;
+    67→export type RegistryCoversViews = [NonLessonViews] extends [ToolKind]
+    68→  ? [ToolKind] extends [NonLessonViews]
+    69→    ? true
+    70→    : false
+    71→  : false;
+    72→
+    73→// ---- Collapsible module state (persisted) -------------------------------
+    74→
+    75→const MODULES_OPEN_KEY = "seeql.modules-open";
+    76→
+    77→function loadOpenModules(): number[] | null {
+    78→  try {
+    79→    const raw = localStorage.getItem(MODULES_OPEN_KEY);
+    80→    if (!raw) return null;
+    81→    const arr = JSON.parse(raw);
+    82→    return Array.isArray(arr) ? arr.filter((n) => typeof n === "number") : null;
+    83→  } catch {
+    84→    return null;
+    85→  }
+    86→}
+    87→
+    88→/** Smooth height-reveal wrapper for module lesson lists. */
+    89→function Collapse({ open, children }: { open: boolean; children: React.ReactNode }) {
+    90→  return (
+    91→    <AnimatePresence initial={false}>
+    92→      {open && (
+    93→        <motion.div
+    94→          key="body"
+    95→          initial={{ height: 0, opacity: 0 }}
+    96→          animate={{ height: "auto", opacity: 1 }}
+    97→          exit={{ height: 0, opacity: 0 }}
+    98→          transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+    99→          className="overflow-hidden"
+   100→        >
+   101→          {children}
+   102→        </motion.div>
+   103→      )}
+   104→    </AnimatePresence>
+   105→  );
+   106→}
+   107→
+   108→function moduleOf(lessonId: string) {
+   109→  return MODULES.find((m) => m.lessons.some((l) => l.id === lessonId));
+   110→}
+   111→
+   112→function useBadgeWatcher() {
+   113→  const xpEvents = useProgress((s) => s.xpEvents);
+   114→  const mcqAttempts = useProgress((s) => s.mcqAttempts);
+   115→  const badges = useProgress((s) => s.badges);
+   116→  const xpByDay = useProgress((s) => s.xpByDay);
+   117→  const dailyGoal = useProgress((s) => s.dailyGoal);
+   118→  const prevLevel = useRef(-1);
+   119→  const ready = useRef(false);
+   120→
+   121→  const xp = useMemo(() => totalXp({ xpEvents }), [xpEvents]);
+   122→  const level = levelFor(xp);
+   123→
+   124→  const ctx = useMemo(() => {
+   125→    const problemsSolved = Object.keys(xpEvents).filter((k) => k.startsWith("solve:")).length;
+   126→    const mcqsCorrect = Object.values(mcqAttempts).filter((a) => a.correct).length;
+   127→    const lessonsDone = Object.keys(xpEvents).filter((k) => k.startsWith("lesson:")).length;
+   128→    const perfectQuizzes = LESSONS.filter((l) =>
+   129→      l.mcqs.every((m) => mcqAttempts[m.id]?.firstTry),
+   130→    ).length;
+   131→    return { lessonsDone, problemsSolved, mcqsCorrect, perfectQuizzes };
+   132→  }, [xpEvents, mcqAttempts]);
+   133→
+   134→  const streak = useMemo(() => currentStreak({ xpByDay, dailyGoal }), [xpByDay, dailyGoal]);
+   135→
+   136→  useEffect(() => {
+   137→    if (!ready.current) {
+   138→      ready.current = true;
+   139→      prevLevel.current = level.index;
+   140→      return;
+   141→    }
+   142→    const store = useProgress.getState();
+   143→    for (const b of BADGES) {
+   144→      if (store.badges[b.id] === undefined && b.test(ctx, xp, streak)) {
+   145→        if (store.unlockBadge(b.id)) {
+   146→          celebrate({ kind: "badge", title: `Badge · ${b.title}`, sub: b.desc });
+   147→        }
+   148→      }
+   149→    }
+   150→    if (level.index > prevLevel.current) {
+   151→      celebrate({ kind: "level", title: `Level up — ${level.title}`, sub: `Rank ${level.index + 1} of 6` });
+   152→      prevLevel.current = level.index;
+   153→    }
+   154→  }, [ctx, xp, streak, level]);
+   155→
+   156→  return { xp, level, streak, ctx };
+   157→}
+   158→
+   159→function RankBlock({ xp, level, streak }: { xp: number; level: ReturnType<typeof levelFor>; streak: number }) {
+   160→  return (
+   161→    <Panel tone="nested" pad={3.5} rounded="lg">
+   162→      <div className="flex items-center justify-between">
+   163→        <span className="font-display text-sm font-semibold text-zinc-100">{level.title}</span>
+   164→        <span className="tnum font-mono text-xs text-emerald-300">{xp.toLocaleString()} XP</span>
+   165→      </div>
+   166→      <ProgressBar value={level.pct} className="mt-2.5" />
+   167→      <p className="mt-1.5 text-[11px] text-zinc-500">
+   168→        {level.next === null ? "Top rank reached — Query Wizard" : `${(level.next - xp).toLocaleString()} XP to ${titleAfter(level.index)}`}
+   169→      </p>
+   170→      <div className="mt-2.5 flex items-center gap-1.5 border-t border-zinc-800 pt-2.5 text-[11px] text-zinc-400">
+   171→        <Flame className={cn("h-3.5 w-3.5", streak > 0 ? "flame-live text-amber-400" : "text-zinc-600")} />
+   172→        {streak > 0 ? `${streak}-day streak — keep it alive` : "Hit your daily goal to start a streak"}
+   173→      </div>
+   174→    </Panel>
+   175→  );
+   176→}
+   177→
+   178→/** Overview card: compact module chip with a progress ring — lessons reveal on demand. */
+   179→function OverviewModuleCard({
+   180→  module,
+   181→  open,
+   182→  onToggle,
+   183→  onOpenLesson,
+   184→  xpEvents,
+   185→}: {
+   186→  module: (typeof MODULES)[number];
+   187→  open: boolean;
+   188→  onToggle: () => void;
+   189→  onOpenLesson: (id: string) => void;
+   190→  xpEvents: Record<string, unknown>;
+   191→}) {
+   192→  const mDone = module.lessons.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
+   193→  const nextInModule = module.lessons.find((l) => xpEvents[`lesson:${l.id}`] === undefined);
+   194→  const complete = mDone === module.lessons.length;
+   195→  const pct = Math.round((mDone / module.lessons.length) * 100);
+   196→
+   197→  return (
+   198→    <div className="sheen card-hover overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950">
+   199→      <button onClick={onToggle} aria-expanded={open} className="block w-full p-3.5 text-left">
+   200→        <div className="flex items-center gap-3">
+   201→          <span
+   202→            aria-hidden
+   203→            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+   204→            style={{ background: `conic-gradient(#34d399 ${pct}%, #27272a ${pct}%)` }}
+   205→          >
+   206→            <span
+   207→              className={cn(
+   208→                "flex h-[26px] w-[26px] items-center justify-center rounded-full bg-zinc-950 font-mono text-[10px] font-medium",
+   209→                complete ? "text-emerald-300" : "text-zinc-300",
+   210→              )}
+   211→            >
+   212→              {complete ? <Check className="h-3 w-3" /> : module.num}
+   213→            </span>
+   214→          </span>
+   215→          <span className="min-w-0 flex-1">
+   216→            <span className="block truncate text-xs font-semibold text-zinc-100">{module.title}</span>
+   217→            <span className="mt-0.5 block truncate font-mono text-[10px] uppercase tracking-wider text-zinc-500">
+   218→              Module {module.num} · {module.level}
+   219→            </span>
+   220→          </span>
+   221→          <span className="tnum shrink-0 font-mono text-[10px] text-zinc-500">
+   222→            {mDone}/{module.lessons.length}
+   223→          </span>
+   224→          <ChevronDown
+   225→            className={cn(
+   226→              "h-4 w-4 shrink-0 text-zinc-600 transition-transform duration-200",
+   227→              open && "rotate-180 text-zinc-400",
+   228→            )}
+   229→          />
+   230→        </div>
+   231→        {!open && nextInModule && (
+   232→          <p className="mt-2.5 truncate text-[11px] text-zinc-500">
+   233→            Up next · lesson {nextInModule.num} — {nextInModule.title}
+   234→          </p>
+   235→        )}
+   236→      </button>
+   237→
+   238→      <Collapse open={open}>
+   239→        <div className="border-t border-zinc-800/60 px-3 pb-3 pt-2">
+   240→          <p className="px-1 pb-2 text-[11px] leading-relaxed text-zinc-500">{module.blurb}</p>
+   241→          <div className="flex flex-col gap-0.5">
+   242→            {module.lessons.map((l) => {
+   243→              const done = xpEvents[`lesson:${l.id}`] !== undefined;
+   244→              return (
+   245→                <button
+   246→                  key={l.id}
+   247→                  onClick={() => onOpenLesson(l.id)}
+   248→                  className="group/lesson flex items-center gap-2.5 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-zinc-900"
+   249→                >
+   250→                  <span
+   251→                    className={cn(
+   252→                      "flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full text-[9px] font-medium",
+   253→                      done ? "bg-emerald-400 text-[#052e1c]" : "border border-zinc-700 text-zinc-500",
+   254→                    )}
+   255→                  >
+   256→                    {done ? <Check className="h-2.5 w-2.5" /> : l.num}
+   257→                  </span>
+   258→                  <span className={cn("min-w-0 flex-1 truncate text-xs", done ? "text-zinc-500" : "text-zinc-300")}>
+   259→                    {l.title}
+   260→                  </span>
+   261→                  <span className="tnum shrink-0 font-mono text-[10px] text-zinc-600">{l.minutes}m</span>
+   262→                  <ArrowRight className="h-3 w-3 shrink-0 text-zinc-700 opacity-0 transition-opacity group-hover/lesson:opacity-100" />
+   263→                </button>
+   264→              );
+   265→            })}
+   266→          </div>
+   267→          {nextInModule && (
+   268→            <Btn variant="soft" className="mt-2 w-full" onClick={() => onOpenLesson(nextInModule.id)}>
+   269→              {mDone > 0 ? "Continue module" : "Start module"} — lesson {nextInModule.num} →
+   270→            </Btn>
+   271→          )}
+   272→        </div>
+   273→      </Collapse>
+   274→    </div>
+   275→  );
+   276→}
+   277→
+   278→/** Mobile-only quick nav — the whole registry as one horizontal thumb-scroll. */
+   279→function ToolRail({ view, setView }: { view: View; setView: (v: View) => void }) {
+   280→  return (
+   281→    <nav aria-label="Quick tools" className="mb-4 flex gap-1.5 overflow-x-auto pb-1 thin-scrollbar lg:hidden">
+   282→      {TOOLS.map((t) => (
+   283→        <Btn
+   284→          key={t.kind}
+   285→          variant="pill"
+   286→          active={view.kind === t.kind}
+   287→          aria-current={view.kind === t.kind ? "page" : undefined}
+   288→          onClick={() => setView({ kind: t.kind } as View)}
+   289→        >
+   290→          <t.icon className="h-3 w-3 shrink-0" />
+   291→          {t.short}
+   292→        </Btn>
+   293→      ))}
+   294→    </nav>
+   295→  );
+   296→}
+   297→
+   298→function titleAfter(index: number): string {
+   299→  const ladder = ["Query Apprentice", "Analyst I", "Analyst II", "Senior Analyst", "Query Wizard"];
+   300→  return ladder[Math.min(index, ladder.length - 1)];
+   301→}
+   302→
+   303→/** Course overview — the default view: hero ("where was I"), the course map,
+   304→    activity strip, mastery grid and badges. Owns its own reveal state. */
+   305→function Overview({
+   306→  xp,
+   307→  level,
+   308→  streak,
+   309→  ctx,
+   310→  openLesson,
+   311→}: {
+   312→  xp: number;
+   313→  level: ReturnType<typeof levelFor>;
+   314→  streak: number;
+   315→  ctx: ReturnType<typeof useBadgeWatcher>["ctx"];
+   316→  openLesson: (id: string) => void;
+   317→}) {
+   318→  const xpEvents = useProgress((s) => s.xpEvents);
+   319→  const badgesMap = useProgress((s) => s.badges);
+   320→  const [openOverview, setOpenOverview] = useState<Set<number>>(() => new Set());
+   321→
+   322→  const nextLesson =
+   323→    LESSONS.find((l) => xpEvents[`lesson:${l.id}`] === undefined) ?? LESSONS[LESSONS.length - 1];
+   324→  const doneCount = LESSONS.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
+   325→  const totalProblems = LESSONS.reduce((a, l) => a + l.problems.length, 0);
+   326→  const totalMcqs = LESSONS.reduce((a, l) => a + l.mcqs.length, 0);
+   327→  const toggleOverviewModule = (num: number) =>
+   328→    setOpenOverview((s) => {
+   329→      const n = new Set(s);
+   330→      if (n.has(num)) n.delete(num);
+   331→      else n.add(num);
+   332→      return n;
+   333→    });
+   334→
+   335→  return (
+   336→    <div className="bg-ambient max-w-4xl">
+   337→      {/* Hero — "where was I" + the one tap that matters, before any scrolling */}
+   338→      <Panel pad={5}>
+   339→        <p className="font-mono text-xs text-zinc-500">{MODULES.length} MODULES · BEGINNER → EXPERT</p>
+   340→        <div className="mt-2 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+   341→          <h1 className="font-display text-3xl font-semibold tracking-[-0.02em] text-zinc-50">The SeeQL course</h1>
+   342→          <div className="flex flex-wrap items-center gap-2">
+   343→            <Chip k="Rank" v={level.title} />
+   344→            <Chip k="Total XP" v={xp.toLocaleString()} />
+   345→            <Chip k="Streak" v={streak > 0 ? `${streak}d` : "—"} />
+   346→            <Chip k="Badges" v={`${Object.keys(badgesMap).length}/${BADGES.length}`} />
+   347→          </div>
+   348→        </div>
+   349→        <p className="mt-3 max-w-2xl text-[15px] leading-7 text-zinc-400">
+   350→          {MODULES.length} modules, one real storefront database. Read a concept, prove it in a quiz, then solve
+   351→          graded live queries — {totalMcqs} quiz questions and {totalProblems} graded queries in total.
+   352→        </p>
+   353→
+   354→        <div className="mt-5 flex flex-wrap items-center gap-2.5">
+   355→          <Btn variant="primary" onClick={() => openLesson(nextLesson.id)}>
+   356→            {ctx.lessonsDone > 0 ? `Continue — lesson ${nextLesson.num} · ${nextLesson.title} →` : "Start learning →"}
+   357→          </Btn>
+   358→          <span className="tnum text-[11px] text-zinc-500">
+   359→            {ctx.problemsSolved} queries solved · {ctx.mcqsCorrect} quiz answers
+   360→          </span>
+   361→        </div>
+   362→
+   363→        <div className="mt-4">
+   364→          <ProgressBar value={doneCount / LESSONS.length} />
+   365→          <p className="mt-1.5 text-[11px] text-zinc-500">
+   366→            {ctx.lessonsDone > 0
+   367→              ? `Welcome back — ${doneCount}/${LESSONS.length} lessons complete.`
+   368→              : "Start with lesson 1 — no setup, everything runs live."}
+   369→          </p>
+   370→        </div>
+   371→      </Panel>
+   372→
+   373→      {/* Course map — all modules scannable in one screenful, lessons reveal on demand */}
+   374→      <section className="mt-7">
+   375→        <div className="flex items-baseline justify-between">
+   376→          <h2 className="font-display text-sm font-semibold text-zinc-200">Course map</h2>
+   377→          <span className="text-[11px] text-zinc-500">tap a module to reveal its lessons</span>
+   378→        </div>
+   379→        <div className="mt-3 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+   380→          {MODULES.map((m) => (
+   381→            <OverviewModuleCard
+   382→              key={m.id}
+   383→              module={m}
+   384→              open={openOverview.has(m.num)}
+   385→              onToggle={() => toggleOverviewModule(m.num)}
+   386→              onOpenLesson={openLesson}
+   387→              xpEvents={xpEvents}
+   388→            />
+   389→          ))}
+   390→        </div>
+   391→      </section>
+   392→
+   393→      <div className="mt-7 grid gap-3 lg:grid-cols-2">
+   394→        <ActivityStrip />
+   395→        <MasteryGrid onOpenLesson={openLesson} />
+   396→      </div>
+   397→
+   398→      <Panel rounded="lg" className="mt-6">
+   399→        <h3 className="font-display text-sm font-semibold text-zinc-100">Badges</h3>
+   400→        <div className="mt-3 flex flex-wrap gap-2">
+   401→          {BADGES.map((b) => {
+   402→            const earned = badgesMap[b.id] !== undefined;
+   403→            return (
+   404→              <span
+   405→                key={b.id}
+   406→                title={b.desc}
+   407→                className={cn(
+   408→                  "rounded-md border px-2.5 py-1 text-[11px]",
+   409→                  earned ? "border-amber-400/50 bg-amber-400/10 text-amber-200" : "border-zinc-800 text-zinc-600",
+   410→                )}
+   411→              >
+   412→                {earned ? b.title : "· · ·"}
+   413→              </span>
+   414→            );
+   415→          })}
+   416→        </div>
+   417→      </Panel>
+   418→    </div>
+   419→  );
+   420→}
+   421→
+   422→/** The active view's body — one switch, fed by the shared helpers and the
+   423→    gamification values (the overview needs them for its hero). */
+   424→function ViewBody({
+   425→  view,
+   426→  openLesson,
+   427→  openPerf,
+   428→  xp,
+   429→  level,
+   430→  streak,
+   431→  ctx,
+   432→}: {
+   433→  view: View;
+   434→  openLesson: (id: string) => void;
+   435→  openPerf: (sql: string) => void;
+   436→  xp: number;
+   437→  level: ReturnType<typeof levelFor>;
+   438→  streak: number;
+   439→  ctx: ReturnType<typeof useBadgeWatcher>["ctx"];
+   440→}) {
+   441→  switch (view.kind) {
+   442→    case "lesson": {
+   443→      const lesson = LESSONS.find((l) => l.id === view.id) ?? null;
+   444→      return lesson ? <LessonView key={lesson.id} lesson={lesson} /> : null;
+   445→    }
+   446→    case "seeq":
+   447→      return <SeeqView />;
+   448→    case "explorer":
+   449→      return <DataExplorer />;
+   450→    case "library":
+   451→      return <DiagramLibrary onOpenLesson={openLesson} />;
+   452→    case "drills":
+   453→      return <DrillYard />;
+   454→    case "mixed":
+   455→      return <MixedQuiz />;
+   456→    case "cases":
+   457→      return <CaseFiles />;
+   458→    case "predict":
+   459→      return <PredictView />;
+   460→    case "clinic":
+   461→      return <ErrorClinic />;
+   462→    case "golf":
+   463→      return <QueryGolf onOpenPerf={openPerf} />;
+   464→    case "perf":
+   465→      return <PerfLab initialSql={view.sql} initialTab={view.tab} onOpenLesson={openLesson} />;
+   466→    case "interview":
+   467→      return <InterviewTrack />;
+   468→    case "studio":
+   469→      return <SchemaStudio />;
+   470→    case "explain":
+   471→      return <ExplainBack />;
+   472→    case "mastery":
+   473→      return <MasteryMap onOpenLesson={openLesson} />;
+   474→    case "sheet":
+   475→      return <CheatSheet />;
+   476→    case "mentor":
+   477→      return <MentorChat />;
+   478→    default:
+   479→      return <Overview xp={xp} level={level} streak={streak} ctx={ctx} openLesson={openLesson} />;
+   480→  }
+   481→}
+   482→
+   483→export function LearnApp() {
+   484→  const [view, setView] = useState<View>({ kind: "overview" });
+   485→
+   486→  // The top header's SeeQ button (page shell) navigates here by event — the
+   487→  // view state is private to this component. Listener callbacks are event
+   488→  // handlers, so the setState inside is compliant.
+   489→  useEffect(() => {
+   490→    const onNav = (e: Event) => {
+   491→      const kind = (e as CustomEvent<{ kind?: View["kind"] }>).detail?.kind;
+   492→      if (!kind) return;
+   493→      setView({ kind } as View);
+   494→      window.scrollTo({ top: 0 });
+   495→    };
+   496→    window.addEventListener("seeql:nav", onNav);
+   497→    return () => window.removeEventListener("seeql:nav", onNav);
+   498→  }, []);
+   499→  const { xp, level, streak, ctx } = useBadgeWatcher();
+   500→  const xpEvents = useProgress((s) => s.xpEvents);
+   501→  const resetAll = useProgress((s) => s.resetAll);
+   502→  const [confirmReset, setConfirmReset] = useState(false);
+   503→
+   504→  // Collapsible modules — persisted; the sidebar defaults to the "continue"
+   505→  // module. (The overview course map keeps its own reveal state.)
+   506→  const nextLesson = LESSONS.find((l) => xpEvents[`lesson:${l.id}`] === undefined) ?? LESSONS[LESSONS.length - 1];
+   507→  const continueModuleNum = moduleOf(nextLesson.id)?.num ?? 1;
+   508→  const [openModules, setOpenModules] = useState<Set<number>>(() => {
+   509→    const saved = loadOpenModules();
+   510→    return new Set(saved ?? [continueModuleNum]);
+   511→  });
+   512→
+   513→  useEffect(() => {
+   514→    try {
+   515→      localStorage.setItem(MODULES_OPEN_KEY, JSON.stringify([...openModules]));
+   516→    } catch {
+   517→      /* private mode — ignore */
+   518→    }
+   519→  }, [openModules]);
+   520→
+   521→  const toggleModule = (num: number) =>
+   522→    setOpenModules((s) => {
+   523→      const n = new Set(s);
+   524→      if (n.has(num)) n.delete(num);
+   525→      else n.add(num);
+   526→      return n;
+   527→    });
+   528→
+   529→  const openLesson = (id: string) => {
+   530→    const mod = moduleOf(id);
+   531→    if (mod) {
+   532→      // Auto-reveal the module that owns the lesson being opened.
+   533→      setOpenModules((s) => (s.has(mod.num) ? s : new Set(s).add(mod.num)));
+   534→    }
+   535→    setView({ kind: "lesson", id });
+   536→  };
+   537→
+   538→  const openPerf = (sql: string) => setView({ kind: "perf", sql, tab: "workbench" });
+   539→  const doneCount = LESSONS.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
+   540→  const totalProblems = LESSONS.reduce((a, l) => a + l.problems.length, 0);
+   541→  const totalMcqs = LESSONS.reduce((a, l) => a + l.mcqs.length, 0);
+   542→  const allOpen = openModules.size === MODULES.length;
+   543→  const reduced = useReducedMotion() ?? false;
+   544→
+   545→  return (
+   546→    <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-6 lg:flex-row">
+   547→      <CelebrationHost />
+   548→      {/* SeeqBuddy now mounts at the app root (page.tsx) so the buddy is on
+   549→          every view — landing, playground, learn — and survives switches. */}
+   550→
+   551→      {/* sidebar — below the content on mobile, sticky rail on desktop */}
+   552→      {/* Definite height (not max-height): max-h-full on the inner panel is a
+   553→          percentage, which only resolves against a definite parent height —
+   554→          with max-height alone the panel overflows and buries the Toolbox. */}
+   555→      <aside className="order-2 w-full shrink-0 lg:order-1 lg:sticky lg:top-[76px] lg:h-[calc(100vh-96px)] lg:w-[300px] lg:self-start">
+   556→        <Panel pad={0} className="flex max-h-full flex-col overflow-hidden">
+   557→          <div className="shrink-0 border-b border-zinc-800 p-4">
+   558→            <div className="flex items-center justify-between">
+   559→              <div className="flex items-center gap-2">
+   560→                <GraduationCap className="h-4 w-4 text-emerald-400" />
+   561→                <h2 className="font-display text-sm font-semibold text-zinc-100">SeeQL Curriculum</h2>
+   562→              </div>
+   563→              <div className="flex items-center gap-0.5">
+   564→                <Btn
+   565→                  variant="ghost"
+   566→                  onClick={() => setOpenModules(new Set(MODULES.map((m) => m.num)))}
+   567→                  disabled={allOpen}
+   568→                  title="Expand all modules"
+   569→                  aria-label="Expand all modules"
+   570→                >
+   571→                  <ChevronsUpDown className="h-3.5 w-3.5" />
+   572→                </Btn>
+   573→                <Btn
+   574→                  variant="ghost"
+   575→                  onClick={() => setOpenModules(new Set())}
+   576→                  disabled={!allOpen}
+   577→                  title="Collapse all modules"
+   578→                  aria-label="Collapse all modules"
+   579→                >
+   580→                  <ChevronsDownUp className="h-3.5 w-3.5" />
+   581→                </Btn>
+   582→              </div>
+   583→            </div>
+   584→            <p className="mt-1 text-[11px] text-zinc-500">
+   585→              {MODULES.length} modules · {LESSONS.length} lessons · {totalProblems} graded queries · {totalMcqs} quiz questions
+   586→            </p>
+   587→            <ProgressBar value={doneCount / LESSONS.length} className="mt-3" />
+   588→            <p className="mt-1.5 text-[11px] text-zinc-500">{doneCount}/{LESSONS.length} lessons complete</p>
+   589→          </div>
+   590→
+   591→          <div className="min-h-0 flex-1 overflow-y-auto thin-scrollbar">
+   592→            <div className="shrink-0 p-3">
+   593→              <RankBlock xp={xp} level={level} streak={streak} />
+   594→            </div>
+   595→            {MODULES.map((m) => {
+   596→              const mDone = m.lessons.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
+   597→              const open = openModules.has(m.num);
+   598→              const isContinue = m.num === continueModuleNum;
+   599→              const containsActive = view.kind === "lesson" && moduleOf(view.id)?.num === m.num;
+   600→              return (
+   601→                <nav key={m.id} className="border-b border-zinc-800/60 px-3 pb-1.5 pt-2 last:border-b-0">
+   602→                  {/* module header — click to expand/collapse */}
+   603→                  <button
+   604→                    onClick={() => toggleModule(m.num)}
+   605→                    aria-expanded={open}
+   606→                    className="group flex w-full items-center gap-2.5 rounded-md px-1.5 py-2 text-left transition-colors hover:bg-zinc-900"
+   607→                  >
+   608→                    <span
+   609→                      className={cn(
+   610→                        "flex h-6 w-6 shrink-0 items-center justify-center rounded-md border font-mono text-[10px] font-medium transition-colors",
+   611→                        mDone === m.lessons.length
+   612→                          ? "border-emerald-400/50 bg-emerald-400/10 text-emerald-300"
+   613→                          : containsActive
+   614→                            ? "border-emerald-400/40 text-emerald-300"
+   615→                            : isContinue
+   616→                              ? "border-emerald-400/30 text-emerald-300/90"
+   617→                              : "border-zinc-800 text-zinc-500",
+   618→                      )}
+   619→                    >
+   620→                      {mDone === m.lessons.length ? <Check className="h-3 w-3" /> : m.num}
+   621→                    </span>
+   622→                    <span className="min-w-0 flex-1">
+   623→                      <span
+   624→                        className={cn(
+   625→                          "block truncate text-xs font-medium",
+   626→                          containsActive || mDone === m.lessons.length ? "text-zinc-100" : "text-zinc-300 group-hover:text-zinc-100",
+   627→                        )}
+   628→                      >
+   629→                        {m.title}
+   630→                      </span>
+   631→                      <span className="mt-1.5 block h-0.5 overflow-hidden rounded-full bg-zinc-800">
+   632→                        <span
+   633→                          className="block h-full rounded-full bg-emerald-400/80 transition-[width] duration-500 ease-out"
+   634→                          style={{ width: `${(mDone / m.lessons.length) * 100}%` }}
+   635→                        />
+   636→                      </span>
+   637→                    </span>
+   638→                    <span className="tnum shrink-0 font-mono text-[10px] text-zinc-600">
+   639→                      {mDone}/{m.lessons.length}
+   640→                    </span>
+   641→                    <ChevronDown
+   642→                      className={cn(
+   643→                        "h-3.5 w-3.5 shrink-0 text-zinc-600 transition-transform duration-200",
+   644→                        open && "rotate-180 text-zinc-400",
+   645→                      )}
+   646→                    />
+   647→                  </button>
+   648→
+   649→                  {/* lessons — revealed on expand, connected by a tree rail */}
+   650→                  <Collapse open={open}>
+   651→                    <div className="ml-[16px] mt-0.5 flex flex-col gap-0.5 border-l border-zinc-800/70 pl-2 pb-2">
+   652→                      {m.lessons.map((l) => {
+   653→                        const done = xpEvents[`lesson:${l.id}`] !== undefined;
+   654→                        const active = view.kind === "lesson" && view.id === l.id;
+   655→                        return (
+   656→                          <button
+   657→                            key={l.id}
+   658→                            onClick={() => openLesson(l.id)}
+   659→                            className={cn(
+   660→                              "relative flex items-start gap-2.5 rounded-md px-2.5 py-1.5 text-left transition-colors",
+   661→                              active ? "bg-emerald-400/[0.09]" : "hover:bg-zinc-900",
+   662→                            )}
+   663→                          >
+   664→                            {active && <span className="absolute inset-y-1 left-0 w-0.5 rounded-full bg-emerald-400" />}
+   665→                            <span
+   666→                              className={cn(
+   667→                                "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-medium transition-colors",
+   668→                                done
+   669→                                  ? "bg-emerald-400 text-[#052e1c]"
+   670→                                  : active
+   671→                                    ? "border border-emerald-400/60 text-emerald-200"
+   672→                                    : "border border-zinc-700 text-zinc-500",
+   673→                              )}
+   674→                            >
+   675→                              {done ? <Check className="h-2.5 w-2.5" /> : l.num}
+   676→                            </span>
+   677→                            <span className="min-w-0">
+   678→                              <span className={cn("block truncate text-xs font-medium", active ? "text-zinc-50" : done ? "text-zinc-500" : "text-zinc-300")}>
+   679→                                {l.title}
+   680→                              </span>
+   681→                              <span className="block text-[10px] text-zinc-600">{l.minutes} min · {l.problems.length} queries</span>
+   682→                            </span>
+   683→                          </button>
+   684→                        );
+   685→                      })}
+   686→                    </div>
+   687→                  </Collapse>
+   688→                </nav>
+   689→              );
+   690→            })}
+   691→          </div>
+   692→
+   693→          <div className="shrink-0 border-t border-zinc-800/60 p-3">
+   694→            <SectionLabel className="mb-1.5">Toolbox</SectionLabel>
+   695→            <div className="flex flex-col gap-0.5">
+   696→              {CORE_AND_TOOLBOX.map((t) => (
+   697→                <ToolRow
+   698→                  key={t.kind}
+   699→                  icon={t.icon}
+   700→                  label={t.label}
+   701→                  note={t.note}
+   702→                  active={view.kind === t.kind}
+   703→                  onClick={() => setView({ kind: t.kind } as View)}
+   704→                />
+   705→              ))}
+   706→            </div>
+   707→            <SectionLabel className="mb-1 mt-2">Practice lab</SectionLabel>
+   708→            <div className="flex flex-col gap-0.5">
+   709→              {LAB_TOOLS.map((t) => (
+   710→                <ToolRow
+   711→                  key={t.kind}
+   712→                  icon={t.icon}
+   713→                  label={t.label}
+   714→                  note={t.note}
+   715→                  active={view.kind === t.kind}
+   716→                  onClick={() => setView({ kind: t.kind } as View)}
+   717→                />
+   718→              ))}
+   719→            </div>
+   720→          </div>
+   721→
+   722→          <div className="shrink-0 border-t border-zinc-800 p-3">
+   723→            {confirmReset ? (
+   724→              <div className="flex items-center justify-between gap-2 text-[11px]">
+   725→                <span className="text-zinc-400">Erase all progress?</span>
+   726→                <span className="flex gap-1.5">
+   727→                  <Btn variant="outline" danger onClick={() => { resetAll(); setConfirmReset(false); }}>Erase</Btn>
+   728→                  <Btn variant="outline" onClick={() => setConfirmReset(false)}>Keep</Btn>
+   729→                </span>
+   730→              </div>
+   731→            ) : (
+   732→              <Btn
+   733→                variant="ghost"
+   734→                onClick={() => setConfirmReset(true)}
+   735→                className="p-0 text-[11px] text-zinc-600 hover:bg-transparent hover:text-zinc-400"
+   736→              >
+   737→                <RotateCcw className="h-3 w-3" /> Reset progress
+   738→              </Btn>
+   739→            )}
+   740→          </div>
+   741→        </Panel>
+   742→      </aside>
+   743→
+   744→      {/* content — first on mobile so the course starts at the top of the page.
+   745→          Each switch gets the same 0.2s fade-and-rise entrance (reduced-motion
+   746→          aware), so moving between tools feels intentional, not like a page
+   747→          hard-swapping underneath you. */}
+   748→      <main className="order-1 min-w-0 flex-1 pb-16 lg:order-2">
+   749→        <ToolRail view={view} setView={setView} />
+   750→        <motion.div
+   751→          key={view.kind === "lesson" ? `lesson:${view.id}` : view.kind}
+   752→          initial={reduced ? { opacity: 0 } : { opacity: 0, y: 8 }}
+   753→          animate={{ opacity: 1, y: 0 }}
+   754→          transition={{ duration: 0.22, ease: "easeOut" }}
+   755→        >
+   756→          <ViewBody view={view} openLesson={openLesson} openPerf={openPerf} xp={xp} level={level} streak={streak} ctx={ctx} />
+   757→        </motion.div>
+   758→      </main>
+   759→    </div>
+   760→  );
+   761→}
+   762→
