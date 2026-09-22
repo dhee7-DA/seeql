@@ -326,7 +326,7 @@ export function SeeqView() {
                   type="button"
                   onClick={playFilm}
                   data-seeq-play="1"
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-md bg-emerald-400 px-3 py-1.5 text-[11px] font-medium text-[#052e1c] transition-colors hover:bg-emerald-300"
+                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-md bg-emerald-400 px-3 py-1.5 text-[11px] font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300"
                 >
                   <Play className="h-3 w-3" /> Play the film
                 </button>
@@ -339,7 +339,7 @@ export function SeeqView() {
                 className={
                   "inline-flex cursor-pointer items-center gap-1.5 rounded-md px-3 py-1.5 text-[11px] font-medium transition-colors " +
                   (dirty
-                    ? "bg-emerald-400 text-[#052e1c] hover:bg-emerald-300"
+                    ? "bg-emerald-400 text-[var(--brand-ink)] hover:bg-emerald-300"
                     : "cursor-default bg-zinc-800 text-zinc-500")
                 }
               >

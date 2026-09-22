@@ -88,7 +88,7 @@ function ExplainCard({ item }: { item: ExplainItem }) {
               onClick={grade}
               disabled={text.trim().length < 10}
               className={cn(
-                "btn-glow rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300",
+                "btn-glow rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300",
                 text.trim().length < 10 && "cursor-not-allowed opacity-40",
               )}
             >

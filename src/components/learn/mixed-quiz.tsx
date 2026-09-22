@@ -142,7 +142,7 @@ export function MixedQuiz() {
                   setIdx((i) => i + 1);
                   setAnswered(false);
                 }}
-                className="btn-glow flex shrink-0 items-center gap-1.5 rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300"
+                className="btn-glow flex shrink-0 items-center gap-1.5 rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300"
               >
                 {idx + 1 === deck.length ? "See the verdict" : "Next question"}
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -163,7 +163,7 @@ export function MixedQuiz() {
                 <div className="mt-4 flex flex-wrap gap-2">
                   <button
                     onClick={restart}
-                    className="btn-glow flex items-center gap-1.5 rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300"
+                    className="btn-glow flex items-center gap-1.5 rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300"
                   >
                     <RefreshCcw className="h-3.5 w-3.5" />
                     New round

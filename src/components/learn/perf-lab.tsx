@@ -164,7 +164,7 @@ function PipelineTab({ sql, setSql }: { sql: string; setSql: (v: string) => void
             onClick={run}
             disabled={!sql.trim() || running}
             className={cn(
-              "btn-glow rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300",
+              "btn-glow rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300",
               (!sql.trim() || running) && "cursor-not-allowed opacity-40",
             )}
           >
@@ -329,7 +329,7 @@ function WorkbenchTab({ sql, setSql }: { sql: string; setSql: (v: string) => voi
             onClick={compare}
             disabled={!sql.trim() || running}
             className={cn(
-              "btn-glow rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300",
+              "btn-glow rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300",
               (!sql.trim() || running) && "cursor-not-allowed opacity-40",
             )}
           >
@@ -526,7 +526,7 @@ function DetectiveTab({ onOpenLesson }: { onOpenLesson?: (id: string) => void })
             onClick={sting}
             disabled={running}
             className={cn(
-              "btn-glow rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300",
+              "btn-glow rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300",
               running && "cursor-not-allowed opacity-40",
             )}
           >

@@ -143,7 +143,7 @@ export function ProblemCard({ problem, index, onSolved }: { problem: Problem; in
         <div className="flex items-center gap-2.5">
           <span className={cn(
             "flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-medium transition-colors",
-            solved ? "bg-emerald-400 text-[#052e1c]" : "border border-zinc-700 text-zinc-400",
+            solved ? "bg-emerald-400 text-[var(--brand-ink)]" : "border border-zinc-700 text-zinc-400",
           )}>
             {solved ? <Check className="h-3.5 w-3.5" /> : index}
           </span>
@@ -187,7 +187,7 @@ export function ProblemCard({ problem, index, onSolved }: { problem: Problem; in
           <Button
             onClick={run}
             disabled={running || !sql.trim()}
-            className="btn-glow h-8 gap-1.5 rounded-md bg-emerald-400 px-4 text-xs font-medium text-[#052e1c] hover:bg-emerald-300"
+            className="btn-glow h-8 gap-1.5 rounded-md bg-emerald-400 px-4 text-xs font-medium text-[var(--brand-ink)] hover:bg-emerald-300"
           >
             {running ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Play className="h-3.5 w-3.5" />}
             Run &amp; grade

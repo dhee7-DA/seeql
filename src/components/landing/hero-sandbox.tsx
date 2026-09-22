@@ -201,7 +201,7 @@ export function HeroSandbox({ onPlayground }: { onPlayground: () => void }) {
           <button
             onClick={() => void run(sql)}
             disabled={running}
-            className="btn-glow ml-auto inline-flex min-h-[32px] items-center gap-1.5 rounded-md bg-emerald-400 px-3 py-1.5 text-xs font-medium text-[#052e1c] transition-all hover:bg-emerald-300 disabled:opacity-60"
+            className="btn-glow ml-auto inline-flex min-h-[32px] items-center gap-1.5 rounded-md bg-emerald-400 px-3 py-1.5 text-xs font-medium text-[var(--brand-ink)] transition-all hover:bg-emerald-300 disabled:opacity-60"
           >
             {running ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />

@@ -2285,3 +2285,27 @@ Stage Summary:
 - All 57 lessons, 16 practice surfaces, playground and SeeQ machinery inherit the skin through the theme ramp + kit primitives — no view rewires needed.
 - Watchdog cap raised to 2.6GB with the reasoning recorded; QA now runs one browser session at a time and kills strays first.
 - Next per approved queue: enhancement #3 - Daily puzzle calendar (streak-freeze, monthly badge).
+
+---
+Task ID: 18
+Agent: Super Z (main agent)
+Task: Accent colour swap green → electric blue + light-theme contrast fixes in the learning section (follow-up to the Active Builders UI clone)
+
+Work Log:
+- User feedback: green accent not liked ("add a better colour than this green") + light theme learn-section contrast "way too light".
+- Chose electric blue (#2563eb light / #60a5fa dark) as the new brand accent, cyan (#0891b2 / #22d3ee) as secondary — classic builder/dev-tool pairing, AA+ contrast on paper and night.
+- globals.css .theme-builder: emerald ramp fully re-pointed to blue for ALL steps components use (50/100/200/300/400/500/600/700/900/950) — text-carrying steps 200/300 now run dark (blue-800/700) so chips/labels/XP text pass AA on white; teal ramp → cyan incl. 50/100/800/900/950; brand-accent/ring/chart-1/chart-2/sidebar-ring updated.
+- Contrast root causes fixed in builder light: zinc-500 #71717a→#64646c and zinc-600 #9a9aa1→#5c5c64 (meta text like "started/untouched" was ~2.8:1), muted-foreground synced; added the plum/pastel-style darkened chromatic text-step block (amber/rose/violet/sky/orange/lime/fuchsia/red/blue/pink 200–400) — text-amber-300 (70 uses), text-rose-300 (54), text-violet-300 (35) etc. were pale Tailwind defaults on white.
+- globals.css .theme-builderdark: emerald → blue light steps (300 #93c5fd text, 400 #60a5fa solid), teal → cyan; brand tokens updated.
+- plum/pastel light themes: darkened their own emerald/teal 200/300 text steps (same pale-text bug class); jet/noir dark themes untouched.
+- Hardcoded green focus ring in globals.css (rgb(52 211 153/0.8)) → color-mix from --brand-accent (now theme-adaptive).
+- Ink sweep: 41× hardcoded dark-green ink literals (text-[#052e1c]/fill-[#052e1c] on bg-emerald-400 buttons and diagram labels) → var(--brand-ink) across 23 component files (existing convention from review/exam/fill-blank views); verified .text-/.fill-[var(--brand-ink)] utilities compiled and render white-on-blue / ink-on-lightblue per theme.
+- Copy/assets: "green SEARCH" → "blue SEARCH" (plan-view, live-sandbox), "(green)" → "(blue)" diff tip; favicon icon.svg green #3ecf8e → blue #2563eb with navy #172554 ink; themes.ts blurbs "green signal" → "blue signal".
+- Dev server flapped mid-QA (watchdog OOM recycle → backoff) — restarted clean via .zscripts/dev.sh.
+- QA: tsc 829 errors = exact baseline (0 new); npm run lint 4 errors + 4 warnings = exact baseline; agent-browser screenshots: learn overview/course map/lesson/quiz light, landing light+dark, learn dark, SeeQ workshop — blue accents everywhere, readable meta text, mascot colour tiles (bloub palette) untouched; 0 console errors; seeq deep link OK.
+
+Stage Summary:
+- Brand accent is now electric blue across all themes with cyan secondary; the Active Builders paper/night anatomy is unchanged (ink buttons still flip ink↔white).
+- Light-theme learn section contrast fixed at three layers: darkened accent text steps, darkened muted zinc meta text, theme-adaptive focus ring.
+- Key files: src/app/globals.css, src/app/icon.svg, src/lib/themes.ts, plan-view.tsx, landing/live-sandbox.tsx + 23 components ink-swept.
+- Screenshots: scripts/qa-blue-{learn-light,map-light,lesson-light,quiz-light,landing,landing-dark,learn-dark,seeq}.png

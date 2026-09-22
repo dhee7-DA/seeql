@@ -77,7 +77,7 @@ function L1Anatomy() {
         {/* PK flag */}
         <motion.g {...fade(0.7)}>
           <rect x={168} y={30} width={64} height={18} rx={4} className="fill-emerald-400" />
-          <Label x={200} y={43} anchor="middle" cls="fill-[#052e1c]" size={10}>PK · unique</Label>
+          <Label x={200} y={43} anchor="middle" cls="fill-[var(--brand-ink)]" size={10}>PK · unique</Label>
           <Arrow x1={200} y1={48} x2={200} y2={58} cls="stroke-emerald-400" />
           <Label x={620} y={43} anchor="end" cls="fill-zinc-500">customers</Label>
         </motion.g>
@@ -433,7 +433,7 @@ function L8WhereHaving() {
           <button onClick={prev} disabled={step === 0} className="rounded-md border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-900 disabled:opacity-40">
             Back
           </button>
-          <button onClick={next} disabled={step === 2} className="rounded-md bg-emerald-400 px-3 py-1.5 text-xs font-medium text-[#052e1c] hover:brightness-110 disabled:opacity-40">
+          <button onClick={next} disabled={step === 2} className="rounded-md bg-emerald-400 px-3 py-1.5 text-xs font-medium text-[var(--brand-ink)] hover:brightness-110 disabled:opacity-40">
             {step === 2 ? "Done" : "Next step"}
           </button>
         </div>
@@ -1088,7 +1088,7 @@ function S5Precedence() {
           <button onClick={prev} disabled={step === 0} className="rounded-md border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-900 disabled:opacity-40">
             Back
           </button>
-          <button onClick={next} disabled={step === 2} className="rounded-md bg-emerald-400 px-3 py-1.5 text-xs font-medium text-[#052e1c] hover:brightness-110 disabled:opacity-40">
+          <button onClick={next} disabled={step === 2} className="rounded-md bg-emerald-400 px-3 py-1.5 text-xs font-medium text-[var(--brand-ink)] hover:brightness-110 disabled:opacity-40">
             {step === 2 ? "Done" : "Next step"}
           </button>
         </div>

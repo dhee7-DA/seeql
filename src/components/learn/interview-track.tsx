@@ -110,7 +110,7 @@ function RungCard({ rung, open, onToggle }: { rung: InterviewRung; open: boolean
               onClick={run}
               disabled={running || !sql.trim()}
               className={cn(
-                "btn-glow flex items-center gap-1.5 rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300",
+                "btn-glow flex items-center gap-1.5 rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300",
                 (running || !sql.trim()) && "cursor-not-allowed opacity-40",
               )}
             >

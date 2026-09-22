@@ -150,7 +150,7 @@ const GUIDE_ITEMS: Array<{ icon: string; title: string; body: string }> = [
   {
     icon: "⚖️",
     title: "Pin & compare",
-    body: "📌 Pin a result as A, change the query, and the diff shows exactly which rows appeared (green) or vanished (red). Classic move: flip JOIN ↔ LEFT JOIN.",
+    body: "📌 Pin a result as A, change the query, and the diff shows exactly which rows appeared (blue) or vanished (red). Classic move: flip JOIN ↔ LEFT JOIN.",
   },
   {
     icon: "🗺️",
@@ -241,7 +241,7 @@ function SandboxPlan({ rows }: { rows: PlanRow[] }) {
             children&apos;s output.{" "}
             <span className="text-amber-400/90">amber SCAN</span> reads a whole table (watch for it
             on big tables),{" "}
-            <span className="text-emerald-400/90">green SEARCH</span> uses an index.
+            <span className="text-emerald-400/90">blue SEARCH</span> uses an index.
           </p>
           <div className="mt-2">
             <PlanLegend compact />

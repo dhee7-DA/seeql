@@ -88,7 +88,7 @@ export function CheatSheet() {
         </p>
         <button
           onClick={() => window.print()}
-          className="btn-glow mt-4 flex items-center gap-1.5 rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300"
+          className="btn-glow mt-4 flex items-center gap-1.5 rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300"
         >
           <Printer className="h-3.5 w-3.5" /> Print / save as PDF
         </button>

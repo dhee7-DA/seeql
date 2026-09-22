@@ -118,7 +118,7 @@ function Fin2StatementWalk() {
         {/* final balance flag */}
         <motion.g {...fade(0.8)}>
           <rect x={px(13) - 74} y={py(2148) - 34} width={148} height={22} rx={6} className="fill-emerald-400" />
-          <text x={px(13)} y={py(2148) - 19} textAnchor="middle" fontSize={11} fontFamily={MONO} className="fill-[#052e1c]">
+          <text x={px(13)} y={py(2148) - 19} textAnchor="middle" fontSize={11} fontFamily={MONO} className="fill-[var(--brand-ink)]">
             balance 2148.00
           </text>
         </motion.g>
@@ -234,7 +234,7 @@ function Fin5TrialBalance() {
         })}
         <motion.g {...fade(0.7)}>
           <rect x={300} y={236} width={180} height={26} rx={7} className="fill-emerald-400" />
-          <text x={390} y={253} textAnchor="middle" fontSize={11} fontFamily={MONO} className="fill-[#052e1c]">
+          <text x={390} y={253} textAnchor="middle" fontSize={11} fontFamily={MONO} className="fill-[var(--brand-ink)]">
             181080 = 181080 ✓
           </text>
           <Label x={494} y={253} cls="fill-zinc-400" size={10}>is it TRUE? lesson 56 decides</Label>

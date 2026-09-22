@@ -250,7 +250,7 @@ function OverviewModuleCard({
                   <span
                     className={cn(
                       "flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full text-[9px] font-medium",
-                      done ? "bg-emerald-400 text-[#052e1c]" : "border border-zinc-700 text-zinc-500",
+                      done ? "bg-emerald-400 text-[var(--brand-ink)]" : "border border-zinc-700 text-zinc-500",
                     )}
                   >
                     {done ? <Check className="h-2.5 w-2.5" /> : l.num}
@@ -666,7 +666,7 @@ export function LearnApp() {
                               className={cn(
                                 "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-medium transition-colors",
                                 done
-                                  ? "bg-emerald-400 text-[#052e1c]"
+                                  ? "bg-emerald-400 text-[var(--brand-ink)]"
                                   : active
                                     ? "border border-emerald-400/60 text-emerald-200"
                                     : "border border-zinc-700 text-zinc-500",

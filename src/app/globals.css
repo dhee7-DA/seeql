@@ -134,7 +134,7 @@
 
 /* ---- BUILDER PAPER · the Active Builders clone (light; default).
         Off-white paper #fafafa, white cards, ink #18181b type, zinc-300
-        hairlines, real-green checks. Headline voice: Chivo Mono black. ---- */
+        hairlines, electric-blue checks. Headline voice: Chivo Mono black. ---- */
 .theme-builder {
   /* zinc inverted: 950 page → 200 headline (50/100 are bright TEXT roles
      on dark, so they invert to near-ink, not to light greys).
@@ -145,23 +145,63 @@
   --color-zinc-200: #18181b;
   --color-zinc-300: #3f3f46;
   --color-zinc-400: #52525b;
-  --color-zinc-500: #71717a;
-  --color-zinc-600: #9a9aa1;
+  /* 500/600 carry meta text in the learn section — kept dark enough for
+     AA on paper (was #71717a/#9a9aa1, washed out on white). */
+  --color-zinc-500: #64646c;
+  --color-zinc-600: #5c5c64;
   --color-zinc-700: #d4d4d8;
   --color-zinc-800: #ebebee;
   --color-zinc-900: #ffffff;
   --color-zinc-950: #fafafa;
-  /* brand: the green ✓ — saturated enough for light paper */
-  --color-emerald-200: #bbf7d0;
-  --color-emerald-300: #86efac;
-  --color-emerald-400: #16a34a;
-  --color-emerald-500: #15803d;
-  --color-teal-200: #99f6e4;
-  --color-teal-300: #5eead4;
-  --color-teal-400: #0d9488;
-  --color-teal-500: #0f766e;
+  /* brand: electric blue. 200/300 are TEXT roles on light paper, so they
+     run dark (blue-800/700); 400 is the solid button/accent step. */
+  --color-emerald-50: #eff6ff;
+  --color-emerald-100: #1e3a8a;
+  --color-emerald-200: #1e40af;
+  --color-emerald-300: #1d4ed8;
+  --color-emerald-400: #2563eb;
+  --color-emerald-500: #1d4ed8;
+  --color-emerald-600: #1d4ed8;
+  --color-emerald-700: #1e40af;
+  --color-emerald-900: #1e3a8a;
+  --color-emerald-950: #dbeafe;
+  /* secondary brand: cyan (was teal-green) */
+  --color-teal-50: #ecfeff;
+  --color-teal-100: #155e75;
+  --color-teal-200: #0e7490;
+  --color-teal-300: #0e7490;
+  --color-teal-400: #0891b2;
+  --color-teal-500: #0e7490;
+  --color-teal-800: #164e63;
+  --color-teal-900: #164e63;
+  --color-teal-950: #67e8f9;
+  /* chromatic text steps darkened for paper (pale defaults are unreadable) */
+  --color-amber-200: #854d0e;
+  --color-amber-300: #a16207;
+  --color-amber-400: #b45309;
+  --color-rose-200: #9f1239;
+  --color-rose-300: #be123c;
+  --color-rose-400: #e11d48;
+  --color-violet-200: #5b21b6;
+  --color-violet-300: #6d28d9;
+  --color-violet-400: #7c3aed;
+  --color-sky-200: #075985;
+  --color-sky-300: #0369a1;
+  --color-sky-400: #0284c7;
+  --color-orange-200: #9a3412;
+  --color-orange-300: #c2410c;
+  --color-orange-400: #ea580c;
+  --color-lime-200: #4d7c0f;
+  --color-lime-300: #65a30d;
+  --color-fuchsia-300: #c026d3;
+  --color-red-300: #b91c1c;
+  --color-red-400: #dc2626;
+  --color-red-50: #fef2f2;
+  --color-blue-200: #1e40af;
+  --color-blue-300: #1d4ed8;
+  --color-pink-300: #db2777;
   /* tokens */
-  --brand-accent: #16a34a;
+  --brand-accent: #2563eb;
   --brand-ink: #ffffff;
   --background: #fafafa;
   --foreground: #18181b;
@@ -174,15 +214,15 @@
   --secondary: #f4f4f5;
   --secondary-foreground: #3f3f46;
   --muted: #f4f4f5;
-  --muted-foreground: #71717a;
+  --muted-foreground: #64646c;
   --accent: #f4f4f5;
   --accent-foreground: #3f3f46;
   --destructive: #dc2626;
   --border: #e4e4e7;
   --input: #d4d4d8;
-  --ring: #16a34a;
-  --chart-1: #16a34a;
-  --chart-2: #0d9488;
+  --ring: #2563eb;
+  --chart-1: #2563eb;
+  --chart-2: #0891b2;
   --chart-3: #d97706;
   --chart-4: #7c3aed;
   --chart-5: #dc2626;
@@ -193,7 +233,7 @@
   --sidebar-accent: #f4f4f5;
   --sidebar-accent-foreground: #3f3f46;
   --sidebar-border: #e4e4e7;
-  --sidebar-ring: #16a34a;
+  --sidebar-ring: #2563eb;
 }
 
 /* ---- BUILDER NIGHT · the Active Builders clone (dark).
@@ -211,16 +251,28 @@
   --color-zinc-800: #232328;
   --color-zinc-900: #131316;
   --color-zinc-950: #0c0c0e;
-  /* brand: the green ✓ — brighter on night paper */
-  --color-emerald-200: #bbf7d0;
-  --color-emerald-300: #86efac;
-  --color-emerald-400: #4ade80;
-  --color-emerald-500: #22c55e;
-  --color-teal-200: #99f6e4;
-  --color-teal-300: #5eead4;
-  --color-teal-400: #2dd4bf;
-  --color-teal-500: #14b8a6;
-  --brand-accent: #4ade80;
+  /* brand: electric blue — brighter steps on night paper */
+  --color-emerald-50: #172554;
+  --color-emerald-100: #bfdbfe;
+  --color-emerald-200: #bfdbfe;
+  --color-emerald-300: #93c5fd;
+  --color-emerald-400: #60a5fa;
+  --color-emerald-500: #3b82f6;
+  --color-emerald-600: #2563eb;
+  --color-emerald-700: #1d4ed8;
+  --color-emerald-900: #1e3a8a;
+  --color-emerald-950: #172554;
+  /* secondary brand: cyan (was teal-green) */
+  --color-teal-50: #083344;
+  --color-teal-100: #cffafe;
+  --color-teal-200: #a5f3fc;
+  --color-teal-300: #67e8f9;
+  --color-teal-400: #22d3ee;
+  --color-teal-500: #06b6d4;
+  --color-teal-800: #155e75;
+  --color-teal-900: #164e63;
+  --color-teal-950: #083344;
+  --brand-accent: #60a5fa;
   --brand-ink: #0c0c0e;
   --background: #0c0c0e;
   --foreground: #f5f5f6;
@@ -239,9 +291,9 @@
   --destructive: #f87171;
   --border: #26262b;
   --input: #2c2c32;
-  --ring: #4ade80;
-  --chart-1: #4ade80;
-  --chart-2: #2dd4bf;
+  --ring: #60a5fa;
+  --chart-1: #60a5fa;
+  --chart-2: #22d3ee;
   --chart-3: #fbbf24;
   --chart-4: #a78bfa;
   --chart-5: #f87171;
@@ -252,7 +304,7 @@
   --sidebar-accent: #1b1b1f;
   --sidebar-accent-foreground: #d4d4d8;
   --sidebar-border: #26262b;
-  --sidebar-ring: #4ade80;
+  --sidebar-ring: #60a5fa;
 }
 
 /* ---- JET BLACK · true black, silver mono signal (default; zinc/grey
@@ -317,13 +369,13 @@
   --color-zinc-800: #e7dfcf;
   --color-zinc-900: #f9f5ea;
   --color-zinc-950: #f3edde;
-  /* brand: plum */
-  --color-emerald-200: #dcc2d2;
-  --color-emerald-300: #c49cb5;
+  /* brand: plum — 200/300 are TEXT roles on cream, so they run dark */
+  --color-emerald-200: #9d6683;
+  --color-emerald-300: #7d4469;
   --color-emerald-400: #8a4d74;
   --color-emerald-500: #713a5c;
-  --color-teal-200: #d6c6cf;
-  --color-teal-300: #b29aad;
+  --color-teal-200: #9d7f92;
+  --color-teal-300: #7d5f77;
   --color-teal-400: #8a6d84;
   --color-teal-500: #6f5469;
   /* chromatic text steps darkened for cream */
@@ -450,14 +502,14 @@
   --color-zinc-800: #e0e5d9;
   --color-zinc-900: #f3f6ef;
   --color-zinc-950: #ecf0e6;
-  /* brand: matte sage */
-  --color-emerald-200: #c6d4ba;
-  --color-emerald-300: #a3bb92;
+  /* brand: matte sage — 200/300 are TEXT roles on fog, so they run dark */
+  --color-emerald-200: #6f8a5b;
+  --color-emerald-300: #5d7849;
   --color-emerald-400: #7c9a68;
   --color-emerald-500: #648050;
   /* secondary brand: dusty blue */
-  --color-teal-200: #c2d2da;
-  --color-teal-300: #96b0be;
+  --color-teal-200: #64879b;
+  --color-teal-300: #54788a;
   --color-teal-400: #6c8ea2;
   --color-teal-500: #547387;
   /* chromatic text steps darkened + desaturated for the fog base */
@@ -776,6 +828,6 @@ button:not(:disabled),
    so any component that declares its own focus treatment (shadcn sets
    outline-none + a ring) keeps full control and the two never stack. */
 :where(button, a, select, input, textarea, summary, [role="button"], [tabindex]):focus-visible {
-  outline: 2px solid rgb(52 211 153 / 0.8);
+  outline: 2px solid color-mix(in srgb, var(--brand-accent) 80%, transparent);
   outline-offset: 2px;
 }

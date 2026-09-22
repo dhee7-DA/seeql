@@ -282,7 +282,7 @@ export function DrillYard({ scopeId = "yard", keywords }: { scopeId?: string; ke
                     setAnswered(false);
                     commit(active, deck, i, score, roundNum);
                   }}
-                  className="btn-glow flex shrink-0 items-center gap-1.5 rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300"
+                  className="btn-glow flex shrink-0 items-center gap-1.5 rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300"
                 >
                   {idx + 1 === deck.length ? "See the verdict" : "Next question"}
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -308,7 +308,7 @@ export function DrillYard({ scopeId = "yard", keywords }: { scopeId?: string; ke
                       <>
                         <button
                           onClick={() => nextRound()}
-                          className="btn-glow flex items-center gap-1.5 rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300"
+                          className="btn-glow flex items-center gap-1.5 rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300"
                         >
                           <RefreshCcw className="h-3.5 w-3.5" />
                           Next round
@@ -324,7 +324,7 @@ export function DrillYard({ scopeId = "yard", keywords }: { scopeId?: string; ke
                     ) : (
                       <button
                         onClick={() => nextRound()}
-                        className="btn-glow flex items-center gap-1.5 rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300"
+                        className="btn-glow flex items-center gap-1.5 rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300"
                       >
                         <Layers className="h-3.5 w-3.5" />
                         Review round

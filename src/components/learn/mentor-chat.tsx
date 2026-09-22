@@ -320,7 +320,7 @@ export function MentorChat() {
           <button
             onClick={() => send(input)}
             disabled={sending || input.trim().length === 0}
-            className="btn-glow flex h-9 shrink-0 items-center gap-1.5 rounded-md bg-emerald-400 px-3 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-40"
+            className="btn-glow flex h-9 shrink-0 items-center gap-1.5 rounded-md bg-emerald-400 px-3 text-xs font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {sending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
             Send

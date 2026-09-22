@@ -85,7 +85,7 @@ function PredictCard({ item }: { item: PredictItem }) {
                   className={cn(
                     "flex h-5 w-5 items-center justify-center rounded-full border text-[10px] font-medium",
                     checked && isAnswer
-                      ? "border-emerald-400 bg-emerald-400 text-[#052e1c]"
+                      ? "border-emerald-400 bg-emerald-400 text-[var(--brand-ink)]"
                       : checked && isPicked
                         ? "border-rose-400 bg-rose-400 text-zinc-950"
                         : isPicked
@@ -113,7 +113,7 @@ function PredictCard({ item }: { item: PredictItem }) {
             onClick={check}
             disabled={picked === null}
             className={cn(
-              "btn-glow rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300",
+              "btn-glow rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300",
               picked === null && "cursor-not-allowed opacity-40",
             )}
           >

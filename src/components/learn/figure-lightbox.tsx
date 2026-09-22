@@ -130,7 +130,7 @@ function LightboxPanel({
                   onClose();
                   onOpenLesson(meta.lessonId);
                 }}
-                className="btn-glow inline-flex items-center gap-1.5 rounded-md bg-emerald-400 px-3 py-1.5 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300"
+                className="btn-glow inline-flex items-center gap-1.5 rounded-md bg-emerald-400 px-3 py-1.5 text-xs font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300"
               >
                 Open lesson {meta.lessonNum}
                 <ArrowRight className="h-3.5 w-3.5" />

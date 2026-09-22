@@ -629,7 +629,7 @@ export function LessonView({ lesson, onBonusChecked }: { lesson: Lesson; onBonus
             </p>
             <button
               onClick={() => setTab("quiz")}
-              className="btn-glow rounded-md bg-emerald-400 px-3.5 py-1.5 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300"
+              className="btn-glow rounded-md bg-emerald-400 px-3.5 py-1.5 text-xs font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300"
             >
               Take the quiz →
             </button>
@@ -650,7 +650,7 @@ export function LessonView({ lesson, onBonusChecked }: { lesson: Lesson; onBonus
             <p className="text-sm text-zinc-400">Depth banked. Now make it stick — take the quiz.</p>
             <button
               onClick={() => setTab("quiz")}
-              className="btn-glow rounded-md bg-emerald-400 px-3.5 py-1.5 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300"
+              className="btn-glow rounded-md bg-emerald-400 px-3.5 py-1.5 text-xs font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300"
             >
               Take the quiz →
             </button>

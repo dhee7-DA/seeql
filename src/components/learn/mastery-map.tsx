@@ -170,7 +170,7 @@ export function MasteryMap({ onOpenLesson }: { onOpenLesson: (id: string) => voi
                   setQuestLive(true);
                   setQuestIdx(0);
                 }}
-                className="btn-glow mt-3 rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300"
+                className="btn-glow mt-3 rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300"
               >
                 Start the quest <ArrowRight className="ml-1 inline h-3.5 w-3.5" />
               </button>
@@ -190,7 +190,7 @@ export function MasteryMap({ onOpenLesson }: { onOpenLesson: (id: string) => voi
                 setQuestIdx(next);
                 if (next >= quest.length) finishQuest();
               }}
-              className="btn-glow mt-3 flex items-center gap-1.5 rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[#052e1c] transition-colors hover:bg-emerald-300"
+              className="btn-glow mt-3 flex items-center gap-1.5 rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300"
             >
               {questIdx + 1 >= quest.length ? "Claim the quest" : "Next"} <ArrowRight className="h-3.5 w-3.5" />
             </button>
