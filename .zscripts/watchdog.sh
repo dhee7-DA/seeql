@@ -17,10 +17,15 @@ DEV_PID_FILE="$PROJECT_DIR/.zscripts/dev.pid"
 WATCHDOG_PID_FILE="$PROJECT_DIR/.zscripts/watchdog.pid"
 LOG="$PROJECT_DIR/.zscripts/watchdog.log"
 
-RSS_CAP_KB=2000000        # recycle next-server above ~2.0GB. History: 1.6GB
+RSS_CAP_KB=2600000        # recycle next-server above ~2.6GB. History: 1.6GB
                           # recycle-looped every ~20s because this app's dev-mode
-                          # boot RSS alone is ~1.9-2.1GB (2026-09-19/20). The box
-                          # OOM-kill happened at ~2.2GB, so 2.0GB keeps a margin.
+                          # boot RSS alone is ~1.9-2.1GB (2026-09-19/20). 2.0GB
+                          # still recycled healthy boots once the full-shell
+                          # Turbopack cache recompiles after wide edits (2026-09-22:
+                          # idle RSS 2.0GB, compile spikes ~2.3GB — kernel OOM only
+                          # threatens when a ~1GB QA Chrome shares the box, and
+                          # those are killed before QA now). 2.6GB keeps the
+                          # kernel-OOM margin on a 4GB box without loops.
 POLL_INTERVAL=20          # seconds between checks
 DOWN_STREAK_TO_RESTART=2  # 2 consecutive dead checks before restarting
 RESTART_BURST_LIMIT=3     # max restarts...

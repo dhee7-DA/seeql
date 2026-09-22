@@ -2261,3 +2261,27 @@ Stage Summary:
 - Buddy is a single global instance that keeps skin AND parked spot across landing/playground/learn switches.
 - Landing SSR learned the hard lesson: root-mounted client components must guard window/localStorage in state initializers even when they render null server-side.
 - Next per approved queue: enhancement #3 - Daily puzzle calendar (streak-freeze, monthly badge).
+
+---
+Task ID: ui-ab-clone-7
+Agent: Super Z (main agent)
+Task: User gave activebuilders.dev as a UI to clone 1:1 into SeeQL ("same clone of that UI ... along with the similar font and all").
+
+Work Log:
+- Studied the reference in a fresh browser session: full-page screenshots (hero, perks, pricing, dark, inner pages, 390px mobile), sampled computed styles (bg #fafafa, ink #18181b, h1 72px/900/-0.02em, body 16/26, buttons 12x20 pad radius 6px 13px font, sidebar #fff + zinc-300 hairline, muted zinc-500/700, green checks) and found the face: auger-mono via a domain-locked Adobe Typekit kit (commercial — not reusable), weights 200–900.
+- Font pick: rendered "A private community" in 8 free monos side-by-side (scripts/font-lineup.html) against the AB hero; Chivo Mono 900 matched the tall/condensed/grotesque-black texture best and carries the full 100–900 variable range (OFL, Google). Self-hosted via next/font (Chivo_Mono, --font-chivo). Legacy var names --font-geist-sans/--font-geist-mono/--font-display aliased to it in :root, so SVG text (joins-view) and .font-display follow with zero churn; @theme inline --font-sans/--font-mono remapped. FIX found by QA: the next/font variable class was on <body> while Tailwind preflight resolves the font on <html> — moved the class to <html> and Chivo now applies everywhere.
+- Themes: added builder (Builder Paper, light, DEFAULT) + builderdark (Builder Night) to themes.ts + globals.css — inverted-ramp light theme anchored to measured AB colors (page #fafafa, card #fff, hairline #d4d4d8/#ebebee, ink #18181b, green check accent #16a34a) and the dark flip (#0c0c0e/#131316, green #4ade80) where the primary button inverts to white exactly like AB's toggle. Boot script picks them up automatically (registry-generated). --radius 0.625rem -> 0.5rem = AB's 6px buttons / 8–12px cards.
+- kit.tsx: Panel lost sheen (flat), ProgressBar lost shimmer (flat green fill), Btn primary is now the AB ink button (bg-foreground text-background, hover 85% — flips to white on dark), ToolRow rebuilt to AB nav anatomy (two-digit index, label, arrow revealed on active row), SectionLabel tracking 0.14em.
+- brand.tsx: LogoMark ink square + background-colored details (theme-flipping like AB's glyph); wordmark uses foreground.
+- learn-app sidebar: ToolRow maps pass index; TOOLS registry icons stay for the rail. All 13 learn views + seeq-view stripped of bg-ambient (AB is strictly flat); landing grain/ambient/sheen dropped.
+- landing.tsx rebuilt on the AB anatomy: numbered nav (01–04) + mobile hamburger menu, eyebrow-rule markers (For self-taught analysts — EST. 2026 / 01 Why / 02 Method / 03 Curriculum / 04 SeeQ), giant 900-weight mono hero with green accent, ink CTA + "Open the Playground ->" arrow link, divided hairline stat strip, divided perk grid with bordered icon squares (negative-margin border trick), AB pricing-style CTA card with 2-col green-check list and a "No account. Rises at never." pill, column footer with SITE/ELSEWHERE labels + (c) line. SeeQ section keeps all data-seeq hooks, tiles, chips, attribution; mascot now shadow-free on paper.
+- page.tsx untouched (ramp does the work); headers adapt via zinc tokens.
+- Infra: the wide edits invalidated Turbopack cache and the recompile storm OOM/recycle-looped the dev server (watchdog cap 2.0GB vs boot RSS ~2.0GB; box OOM at ~2.2GB when a ~1GB QA Chrome shares the box). Killed stray QA Chrome sessions, raised RSS_CAP_KB 2000000 -> 2600000 with history note, restarted the watchdog; server stable, RSS settles ~1.7GB.
+- QA (fresh sessions, one browser at a time): Builder Paper + Builder Night + 390px mobile screenshots inspected (ab-clone-*.png) — hero/eyebrow/ink CTAs match the reference side-by-side; landing structure (buddy present, nav SeeQ + mini live bot, hamburger, 5 eyebrows, 5 ink buttons, mono Chivo, h1 weight 900); SeeQ workshop tiles 14/8/16/12 intact; learn sidebar numbered rows + active arrow; playground live pipeline + row funnel healthy; 0 console errors, 0 page errors.
+- Gates: tsc 829 = exact baseline (0 new); npm run lint 4 errors + 4 warnings = exact baseline; scoped lint on touched files clean.
+
+Stage Summary:
+- SeeQL now wears the Active Builders UI 1:1: one monospace voice (Chivo Mono standing in for the paid Auger Mono), paper/ink themes that flip like AB's day/night, numbered nav with active arrows, flat hairline surfaces, ink buttons, green checks.
+- All 57 lessons, 16 practice surfaces, playground and SeeQ machinery inherit the skin through the theme ramp + kit primitives — no view rewires needed.
+- Watchdog cap raised to 2.6GB with the reasoning recorded; QA now runs one browser session at a time and kills strays first.
+- Next per approved queue: enhancement #3 - Daily puzzle calendar (streak-freeze, monthly badge).

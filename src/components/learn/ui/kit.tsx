@@ -1,14 +1,16 @@
 "use client";
 
-// SeeQL shell kit — the primitive layer between the CSS utilities (sheen,
-// bar-shimmer, btn-glow…) and the app's components. Every control in the
-// shell renders through one of these so padding, radius, hover, disabled
-// and keyboard-focus styles stay identical everywhere.
+// SeeQL shell kit — the primitive layer between the CSS utilities and the
+// app's components. Every control in the shell renders through one of these
+// so padding, radius, hover, disabled and keyboard-focus styles stay
+// identical everywhere.
 //
-// The visuals encode the existing design language — emerald accents on
-// zinc — nothing here redesigns, it consolidates.
+// The visuals encode the Active Builders language: flat surfaces, hairline
+// borders, ink buttons that flip with the theme, numbered nav rows with an
+// arrow on the active one, real-green accent. No glow, no sheen — flat.
 
 import { cn } from "@/lib/utils";
+import { ArrowRight } from "lucide-react";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 /** Shared keyboard-focus ring. Raw elements only — shadcn primitives set
@@ -18,7 +20,7 @@ export const FOCUS_RING =
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400/80";
 
 /* ------------------------------------------------------------------ */
-/* Panel — the raised surface: hairline zinc border, deep fill, sheen. */
+/* Panel — the raised surface: hairline border, flat fill.             */
 /* ------------------------------------------------------------------ */
 
 export function Panel({
@@ -41,7 +43,7 @@ export function Panel({
   return (
     <div
       className={cn(
-        "sheen border border-zinc-800",
+        "border border-zinc-800",
         rounded === "xl" ? "rounded-xl" : "rounded-lg",
         tone === "nested" ? "bg-zinc-900/50" : "bg-zinc-950",
         pad === 3.5 && "p-3.5",
@@ -57,7 +59,7 @@ export function Panel({
 }
 
 /* ------------------------------------------------------------------ */
-/* ProgressBar — shimmering track + emerald fill. value: 0..1          */
+/* ProgressBar — flat track + green fill. value: 0..1                  */
 /* ------------------------------------------------------------------ */
 
 export function ProgressBar({
@@ -74,7 +76,7 @@ export function ProgressBar({
   return (
     <div
       className={cn(
-        "bar-shimmer overflow-hidden rounded-full bg-zinc-800",
+        "overflow-hidden rounded-full bg-zinc-800",
         fine ? "h-0.5" : "h-1.5",
         className,
       )}
@@ -122,7 +124,7 @@ export function Chip({
 
 export function SectionLabel({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <p className={cn("px-1 font-mono text-[10px] uppercase tracking-wider text-zinc-500", className)}>
+    <p className={cn("px-1 font-mono text-[10px] uppercase tracking-[0.14em] text-zinc-500", className)}>
       {children}
     </p>
   );
@@ -135,9 +137,11 @@ export function SectionLabel({ children, className }: { children: ReactNode; cla
 type BtnVariant = "primary" | "soft" | "outline" | "ghost" | "pill";
 
 const BTN_VARIANTS: Record<BtnVariant, (active?: boolean, danger?: boolean) => string> = {
-  /** Emerald CTA — hero "Continue". */
-  primary: () => "btn-glow bg-emerald-400 px-4 py-2 text-xs text-[#052e1c] hover:bg-emerald-300",
-  /** Soft emerald — "Start module — lesson N". */
+  /** Ink CTA — flips with the theme (ink-on-paper / paper-on-ink), the
+      AB primary button. Hero "Continue", header "Start learning". */
+  primary: () =>
+    "bg-foreground px-4 py-2 text-xs font-medium text-background hover:bg-foreground/85",
+  /** Soft green — "Start module — lesson N". */
   soft: () =>
     "border border-emerald-400/30 bg-emerald-400/[0.06] px-3 py-1.5 text-[11px] text-emerald-300 hover:bg-emerald-400/[0.12]",
   /** Small bordered action — reset confirm (tone flips to danger rose). */
@@ -189,17 +193,19 @@ export function Btn({
 }
 
 /* ------------------------------------------------------------------ */
-/* ToolRow — sidebar destination row: icon + label + note, active bar. */
+/* ToolRow — sidebar destination row, AB anatomy: a two-digit index,    */
+/* the label, and an arrow that appears on the active row.             */
 /* ------------------------------------------------------------------ */
 
 export function ToolRow({
-  icon: Icon,
+  index,
   label,
   note,
   active = false,
   onClick,
 }: {
-  icon: React.ComponentType<{ className?: string }>;
+  /** 1-based position in its group — rendered AB-style as 01, 02, … */
+  index: number;
   label: string;
   note?: string;
   active?: boolean;
@@ -212,17 +218,30 @@ export function ToolRow({
       aria-current={active ? "page" : undefined}
       className={cn(
         "flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors",
-        active ? "bg-zinc-800" : "hover:bg-zinc-900",
+        active ? "bg-zinc-800" : "hover:bg-zinc-900/70",
         FOCUS_RING,
       )}
     >
-      <Icon className={cn("h-4 w-4 shrink-0", active ? "text-emerald-300" : "text-zinc-500")} />
-      <span className="min-w-0">
+      <span
+        className={cn(
+          "tnum shrink-0 text-[10px]",
+          active ? "text-zinc-400" : "text-zinc-600",
+        )}
+      >
+        {String(index).padStart(2, "0")}
+      </span>
+      <span className="min-w-0 flex-1">
         <span className={cn("block truncate text-xs font-medium", active ? "text-zinc-100" : "text-zinc-300")}>
           {label}
         </span>
         {note && <span className="block text-[10px] text-zinc-600">{note}</span>}
       </span>
+      <ArrowRight
+        className={cn(
+          "h-3.5 w-3.5 shrink-0 text-zinc-400 transition-opacity",
+          active ? "opacity-100" : "opacity-0",
+        )}
+      />
     </button>
   );
 }

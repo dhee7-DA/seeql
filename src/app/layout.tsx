@@ -1,25 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
+import { Chivo_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { THEMES, DEFAULT_THEME, THEME_STORAGE_KEY } from "@/lib/themes";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// The single voice — a monospace for EVERYTHING (body, headlines, code),
+// exactly like the Active Builders clone. Chivo Mono is the free
+// (OFL) stand-in for Auger Mono, matched by rendering side-by-side:
+// tall x-height, slightly condensed, grotesque skeleton, and it carries
+// the 900-black headline weight the AB look is built on.
+const chivoMono = Chivo_Mono({
+  variable: "--font-chivo",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-// Display face for headlines and big numerals — the "premium" voice.
-// Body stays Geist; code stays Geist Mono.
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -66,13 +59,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark theme-jet" suppressHydrationWarning>
+    <html lang="en" className={`theme-builder ${chivoMono.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeBoot }} />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} antialiased bg-background text-foreground`}
-      >
+      <body className="antialiased bg-background text-foreground">
         {children}
         <Toaster />
       </body>

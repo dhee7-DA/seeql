@@ -333,7 +333,7 @@ function Overview({
     });
 
   return (
-    <div className="bg-ambient max-w-4xl">
+    <div className="max-w-4xl">
       {/* Hero — "where was I" + the one tap that matters, before any scrolling */}
       <Panel pad={5}>
         <p className="font-mono text-xs text-zinc-500">{MODULES.length} MODULES · BEGINNER → EXPERT</p>
@@ -693,10 +693,10 @@ export function LearnApp() {
           <div className="shrink-0 border-t border-zinc-800/60 p-3">
             <SectionLabel className="mb-1.5">Toolbox</SectionLabel>
             <div className="flex flex-col gap-0.5">
-              {CORE_AND_TOOLBOX.map((t) => (
+              {CORE_AND_TOOLBOX.map((t, i) => (
                 <ToolRow
                   key={t.kind}
-                  icon={t.icon}
+                  index={i + 1}
                   label={t.label}
                   note={t.note}
                   active={view.kind === t.kind}
@@ -706,10 +706,10 @@ export function LearnApp() {
             </div>
             <SectionLabel className="mb-1 mt-2">Practice lab</SectionLabel>
             <div className="flex flex-col gap-0.5">
-              {LAB_TOOLS.map((t) => (
+              {LAB_TOOLS.map((t, i) => (
                 <ToolRow
                   key={t.kind}
-                  icon={t.icon}
+                  index={i + 1}
                   label={t.label}
                   note={t.note}
                   active={view.kind === t.kind}

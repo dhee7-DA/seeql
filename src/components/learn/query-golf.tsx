@@ -253,7 +253,7 @@ export function QueryGolf({ onOpenPerf }: { onOpenPerf?: (sql: string) => void }
   const played = GOLF_HOLES.reduce((n, h) => n + (xpEvents[`golf:${h.id}`] !== undefined ? 1 : 0), 0);
 
   return (
-    <div className="bg-ambient mx-auto max-w-3xl px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
       <p className="flex items-center gap-2 font-mono text-xs text-zinc-500">
         <Flag className="h-3.5 w-3.5" /> {GOLF_HOLES.length} HOLES · STROKES = CLAUSES + COLUMNS
       </p>

@@ -17,6 +17,8 @@
 // layout.tsx (generated from this file).
 
 export type ThemeId =
+  | "builder"
+  | "builderdark"
   | "jet"
   | "plum"
   | "noir"
@@ -37,6 +39,22 @@ export interface ThemeDef {
 }
 
 export const THEMES: ThemeDef[] = [
+  {
+    id: "builder",
+    name: "Builder Paper",
+    tag: "Mono",
+    blurb: "Off-white paper, ink type, green signal",
+    dark: false,
+    swatch: ["#fafafa", "#ffffff", "#18181b"],
+  },
+  {
+    id: "builderdark",
+    name: "Builder Night",
+    tag: "Mono",
+    blurb: "Near-black ink, white type, green signal",
+    dark: true,
+    swatch: ["#0c0c0e", "#131316", "#f5f5f6"],
+  },
   {
     id: "jet",
     name: "Jet Black",
@@ -71,7 +89,7 @@ export const THEMES: ThemeDef[] = [
   },
 ];
 
-export const DEFAULT_THEME: ThemeId = "jet";
+export const DEFAULT_THEME: ThemeId = "builder";
 
 export const THEME_STORAGE_KEY = "seeql-theme-v1";
 

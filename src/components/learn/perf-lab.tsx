@@ -689,7 +689,7 @@ export function PerfLab({
   ];
 
   return (
-    <div className="bg-ambient mx-auto max-w-4xl px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
       <p className="flex items-center gap-2 font-mono text-xs text-zinc-500">
         <Gauge className="h-3.5 w-3.5" /> SCAN vs SEARCH · THE ENGINE&apos;S OWN ACCOUNT
       </p>

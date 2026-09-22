@@ -276,7 +276,7 @@ export function SeeqView() {
   };
 
   return (
-    <div className="bg-ambient max-w-4xl">
+    <div className="max-w-4xl">
       <section data-seeq-view="1" className="sheen rounded-xl border border-zinc-800 bg-zinc-950 p-5">
         {/* Hero: the DRAFT, live — pointer-follow, poke, film player */}
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:gap-6">

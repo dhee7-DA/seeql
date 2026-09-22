@@ -142,7 +142,7 @@ export function MentorChat() {
   const attached = failure;
 
   return (
-    <div className="bg-ambient flex max-w-2xl flex-col">
+    <div className="flex max-w-2xl flex-col">
       {/* header */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2.5">
