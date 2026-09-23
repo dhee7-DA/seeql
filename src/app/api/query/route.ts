@@ -258,7 +258,7 @@ export async function POST(req: NextRequest) {
     let message = cleanError(err instanceof Error ? err.message : "Unexpected server error");
     let hint: string | undefined;
     if (/no such table/i.test(message)) {
-      hint = "This demo database only has: customers, suppliers, products, orders, order_items. Check the Schema tab, or press Reset database to restore the sample data.";
+      hint = "The sandbox holds 5 data worlds: storefront (customers, suppliers, products, orders, order_items), finance books (invoices, payments, expenses, ledger_entries), plus the hospital, football and logistics packs. Check the Schema tab, or press Reset database to restore the sample data.";
     } else if (/no such column/i.test(message)) {
       hint = "Check the column names in the Schema tab.";
     } else if (/syntax error/i.test(message)) {

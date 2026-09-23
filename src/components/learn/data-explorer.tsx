@@ -7,27 +7,12 @@
 
 import { useEffect, useState } from "react";
 import { ExternalLink, X } from "lucide-react";
-import { SCHEMA_TABLES } from "@/lib/schema-meta";
 import { cn } from "@/lib/utils";
+import { WORLDS, WORLD_FOR_TABLE, getWorld, schemaFor } from "@/lib/worlds-meta";
 
 type Rows = { columns: string[]; rows: unknown[][] };
 
 const PAGE = 25;
-
-// Every number here was verified against the canonical seed via
-// scripts/facts-task18.ts — update that script first if the seed changes.
-const FACTS: Record<string, string> = {
-  customers:
-    "16 customers · all 16 have ordered · regions: EU 8, APAC 5, US 2, LATAM 1 · 14 of 16 active",
-  suppliers:
-    "6 suppliers · regions: APAC 2, EU 2, US 1, LATAM 1 · ratings 3.9 – 4.8 (avg 4.3)",
-  products:
-    "16 products across 7 categories (Accessories 3, Audio 3, Electronics 3, Apparel 2, Video 2, Wearables 2, Fitness 1) · prices $14.99 – $199.99 · 2,845 units in stock",
-  orders:
-    "103 orders · delivered 52, shipped 30, pending 14, cancelled 7 · 21 rows with NULL shipped_at (14 pending + 7 cancelled) · totals $25.47 – $1,088.44 (avg $338.19)",
-  order_items:
-    "251 line items · 1–3 units per line (avg 1.98) · every order and every product appears at least once · 57 lines over $200",
-};
 
 function fmt(v: unknown): string {
   if (v === null) return "NULL";
@@ -36,12 +21,15 @@ function fmt(v: unknown): string {
 }
 
 export function DataExplorer() {
+  const [worldId, setWorldId] = useState("storefront");
   const [table, setTable] = useState("orders");
   const [filter, setFilter] = useState<{ column: string; value: number } | null>(null);
   const [page, setPage] = useState(0);
   const [cache, setCache] = useState<Record<string, Rows>>({});
   const [error, setError] = useState<string | null>(null);
   const [counts, setCounts] = useState<Record<string, number> | null>(null);
+
+  const world = getWorld(worldId);
 
   useEffect(() => {
     fetch("/api/stats")
@@ -80,7 +68,7 @@ export function DataExplorer() {
     };
   }, [table, cache]);
 
-  const meta = SCHEMA_TABLES.find((t) => t.name === table) ?? SCHEMA_TABLES[0];
+  const meta = schemaFor(table);
 
   const filtered = (() => {
     if (!rowsData) return [];
@@ -98,6 +86,9 @@ export function DataExplorer() {
     setFilter(null);
     setPage(0);
     setError(null);
+    // FK jumps can cross worlds (e.g. invoices → customers) — follow the jump.
+    const targetWorld = WORLD_FOR_TABLE[name];
+    if (targetWorld && targetWorld !== worldId) setWorldId(targetWorld);
   }
 
   function openInPlayground() {
@@ -112,8 +103,9 @@ export function DataExplorer() {
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-500">Toolbox</p>
           <h1 className="font-display mt-2 text-2xl font-semibold tracking-tight text-zinc-50">Data explorer</h1>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-400">
-            Every lesson runs against this one storefront database — this is where the numbers live.
-            Browse the real rows behind each fact, and click any highlighted id to follow a relationship.
+            One sandbox, five data worlds. The lessons live on the storefront; the
+            finance books, a hospital, a football league and a freight network are
+            here to explore. Click any highlighted id to follow a relationship.
           </p>
         </div>
         <button
@@ -125,9 +117,38 @@ export function DataExplorer() {
         </button>
       </div>
 
+      {/* world picker */}
+      <div className="mt-5 flex flex-wrap items-center gap-1.5" role="tablist" aria-label="Data worlds">
+        {WORLDS.map((w) => (
+          <button
+            key={w.id}
+            role="tab"
+            aria-selected={w.id === worldId}
+            onClick={() => {
+              setWorldId(w.id);
+              // keep the selected table if it belongs to the new world
+              const stays = w.tables.some((t) => t.name === table);
+              setTable(stays ? table : w.tables[0].name);
+              setFilter(null);
+              setPage(0);
+              setError(null);
+            }}
+            className={cn(
+              "rounded-md border px-3 py-1.5 text-xs font-medium transition-colors",
+              w.id === worldId
+                ? "border-emerald-400/60 bg-emerald-400/10 text-emerald-300"
+                : "border-zinc-800 bg-zinc-950 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200",
+            )}
+          >
+            {w.name}
+            <span className="ml-1.5 font-mono text-[10px] text-zinc-500">{w.tables.length}</span>
+          </button>
+        ))}
+      </div>
+
       {/* table picker */}
-      <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
-        {SCHEMA_TABLES.map((t) => (
+      <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+        {world.tables.map((t) => (
           <button
             key={t.name}
             onClick={() => pickTable(t.name)}
@@ -250,8 +271,8 @@ export function DataExplorer() {
                           {fk && colMeta?.fk ? (
                             <button
                               onClick={() => {
+                                pickTable(colMeta.fk!.table); // switches world too if the FK crosses packs
                                 setFilter({ column: colMeta.fk!.column, value: Number(cell) });
-                                setTable(colMeta.fk!.table);
                                 setPage(0);
                               }}
                               className="text-sky-300 underline decoration-sky-400/40 underline-offset-2 hover:decoration-sky-300"
@@ -278,7 +299,7 @@ export function DataExplorer() {
         <div className="border-t border-zinc-800 bg-zinc-900/40 px-3.5 py-2.5">
           <p className="text-[11px] leading-relaxed text-zinc-400">
             <span className="font-semibold uppercase tracking-wider text-zinc-500">Field notes · </span>
-            {FACTS[table]}
+            {world.facts[table] ?? "Live rows from the seeded world — press Reset database in the playground to restore canonical numbers."}
           </p>
         </div>
       </div>

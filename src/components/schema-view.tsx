@@ -7,21 +7,16 @@
 import { useEffect, useState } from "react";
 import { KeyRound, Link2, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  SCHEMA_CANVAS,
-  SCHEMA_LAYOUT,
-  SCHEMA_RELATIONSHIPS,
-  SCHEMA_TABLES,
-} from "@/lib/schema-meta";
+import { WORLDS, getWorld } from "@/lib/worlds-meta";
 import { cn } from "@/lib/utils";
 
 const CARD_W = 190;
 const ROW_H = 22;
 const HEAD_H = 34;
 
-function rowY(table: string, column: string): number {
-  const pos = SCHEMA_LAYOUT[table];
-  const table_ = SCHEMA_TABLES.find((t) => t.name === table);
+function rowY(world: ReturnType<typeof getWorld>, table: string, column: string): number {
+  const pos = world.layout[table];
+  const table_ = world.tables.find((t) => t.name === table);
   const idx = table_?.columns.findIndex((c) => c.name === column) ?? 0;
   if (!pos) return 0;
   return pos.y + HEAD_H + idx * ROW_H + ROW_H / 2;
@@ -36,6 +31,8 @@ export function SchemaView({
   const [counts, setCounts] = useState<Record<string, number> | null>(null);
   const [loading, setLoading] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
+  const [worldId, setWorldId] = useState("storefront");
+  const world = getWorld(worldId);
 
   const fetchCounts = async () => {
     setLoading(true);
@@ -57,7 +54,7 @@ export function SchemaView({
   const isRelated = (table: string): boolean => {
     if (!hovered || hovered === table) return true;
     if (hovered === table) return true;
-    return SCHEMA_RELATIONSHIPS.some(
+    return world.relationships.some(
       (r) =>
         (r.from.table === hovered && r.to.table === table) ||
         (r.to.table === hovered && r.from.table === table),
@@ -67,10 +64,31 @@ export function SchemaView({
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
-        <p className="text-xs text-zinc-500">
-          The sample database — five related tables. Hover a table to highlight its
-          relationships.
-        </p>
+        <div
+          className="flex flex-wrap items-center gap-1.5"
+          role="tablist"
+          aria-label="Data worlds"
+        >
+          {WORLDS.map((w) => (
+            <button
+              key={w.id}
+              role="tab"
+              aria-selected={w.id === worldId}
+              onClick={() => {
+                setWorldId(w.id);
+                setHovered(null);
+              }}
+              className={cn(
+                "rounded-md border px-3 py-1.5 text-xs font-medium transition-colors",
+                w.id === worldId
+                  ? "border-emerald-400/60 bg-emerald-400/10 text-emerald-300"
+                  : "border-zinc-800 bg-zinc-950 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200",
+              )}
+            >
+              {w.name}
+            </button>
+          ))}
+        </div>
         <Button
           variant="ghost"
           size="sm"
@@ -81,6 +99,12 @@ export function SchemaView({
           Refresh counts
         </Button>
       </div>
+
+      <p className="px-1 text-xs text-zinc-500">
+        <span className="font-medium text-zinc-400">{world.name}</span>
+        {" \u00b7 "}
+        {world.tagline}
+      </p>
 
       {/* key + edge legend — decode the card and edge vocabulary at a glance */}
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 px-1 text-[10px] text-zinc-500">
@@ -98,7 +122,10 @@ export function SchemaView({
         </span>
         {counts !== null && (
           <span className="ml-auto font-mono text-zinc-600">
-            {Object.values(counts).reduce((a, b) => a + b, 0).toLocaleString()} rows live
+            {world.tables
+              .reduce((a, t) => a + (counts[t.name] ?? 0), 0)
+              .toLocaleString()}{' '}
+            rows live
           </span>
         )}
       </div>
@@ -106,23 +133,23 @@ export function SchemaView({
       <div className="thin-scrollbar overflow-x-auto rounded-xl border border-zinc-800 bg-zinc-900/40">
         <div
           className="relative"
-          style={{ width: SCHEMA_CANVAS.width, height: SCHEMA_CANVAS.height, minWidth: "100%" }}
+          style={{ width: world.canvas.width, height: world.canvas.height, minWidth: "100%" }}
         >
           {/* edges */}
           <svg
             aria-hidden
             className="pointer-events-none absolute inset-0"
-            width={SCHEMA_CANVAS.width}
-            height={SCHEMA_CANVAS.height}
+            width={world.canvas.width}
+            height={world.canvas.height}
           >
-            {SCHEMA_RELATIONSHIPS.map((rel) => {
-              const fromPos = SCHEMA_LAYOUT[rel.from.table];
-              const toPos = SCHEMA_LAYOUT[rel.to.table];
+            {world.relationships.map((rel) => {
+              const fromPos = world.layout[rel.from.table];
+              const toPos = world.layout[rel.to.table];
               if (!fromPos || !toPos) return null;
               const x1 = fromPos.x + CARD_W;
-              const y1 = rowY(rel.from.table, rel.from.column);
+              const y1 = rowY(world, rel.from.table, rel.from.column);
               const x2 = toPos.x;
-              const y2 = rowY(rel.to.table, rel.to.column);
+              const y2 = rowY(world, rel.to.table, rel.to.column);
               const mid = (x1 + x2) / 2;
               const active =
                 hovered === rel.from.table || hovered === rel.to.table;
@@ -159,8 +186,8 @@ export function SchemaView({
           </svg>
 
           {/* table cards */}
-          {SCHEMA_TABLES.map((table) => {
-            const pos = SCHEMA_LAYOUT[table.name];
+          {world.tables.map((table) => {
+            const pos = world.layout[table.name];
             if (!pos) return null;
             const count = counts?.[table.name];
             const dimmed = !isRelated(table.name);
@@ -225,15 +252,7 @@ export function SchemaView({
         </div>
       </div>
 
-      <p className="text-[11px] text-zinc-600">
-        Read it as sentences: one <span className="font-mono text-zinc-400">customer</span> places
-        many <span className="font-mono text-zinc-400">orders</span>; each{" "}
-        <span className="font-mono text-zinc-400">order</span> holds several{" "}
-        <span className="font-mono text-zinc-400">order_items</span>; each{" "}
-        <span className="font-mono text-zinc-400">order_item</span> points at one{" "}
-        <span className="font-mono text-zinc-400">product</span> made by one{" "}
-        <span className="font-mono text-zinc-400">supplier</span>.
-      </p>
+      <p className="text-[11px] leading-relaxed text-zinc-600">{world.story}</p>
     </div>
   );
 }

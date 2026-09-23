@@ -1,24 +1,29 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureDatabase } from "@/lib/sample-db";
+import { ensureWorlds, ALL_WORLD_TABLES } from "@/lib/worlds";
+
+const STOREFRONT_TABLES = [
+  "customers",
+  "suppliers",
+  "products",
+  "orders",
+  "order_items",
+] as const;
 
 export async function GET() {
   try {
     await ensureDatabase();
-    const res = (await db.$queryRawUnsafe(
-      `SELECT
-        (SELECT COUNT(*) FROM customers) AS customers,
-        (SELECT COUNT(*) FROM suppliers) AS suppliers,
-        (SELECT COUNT(*) FROM products)  AS products,
-        (SELECT COUNT(*) FROM orders)    AS orders,
-        (SELECT COUNT(*) FROM order_items) AS order_items`,
-    )) as Array<Record<string, unknown>>;
-    const r = res[0] ?? {};
+    await ensureWorlds();
+    const tables = [...STOREFRONT_TABLES, ...ALL_WORLD_TABLES];
     const counts: Record<string, number> = {};
     let total = 0;
-    for (const key of ["customers", "suppliers", "products", "orders", "order_items"]) {
-      const n = Number(r[key] ?? 0);
-      counts[key] = n;
+    for (const t of tables) {
+      const res = (await db.$queryRawUnsafe(
+        `SELECT COUNT(*) AS n FROM ${t}`,
+      )) as Array<{ n: number | bigint }>;
+      const n = Number(res[0]?.n ?? 0);
+      counts[t] = n;
       total += n;
     }
     return NextResponse.json({ ok: true, counts, total });

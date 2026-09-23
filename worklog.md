@@ -2352,3 +2352,26 @@ Stage Summary:
 - Repo is clean: 2,182 debris files gone (~45MB), standing QA/validator harnesses intact, debris classes gitignored so they cannot return.
 - NEW GATES: tsc = 633 (0 new = pass), npm run lint = 0 errors + 0 warnings. Both strictly STRONGER than the old 829 / 4+4.
 - Task A (orphan wiring) closed as moot with forensics; next per approved queue: Task C = enhancement #4 — Dataset packs (new seeded data worlds).
+
+---
+Task ID: 21
+Agent: Super Z (main agent)
+Task: Task C of "lets do all" — Enhancement #4: Dataset packs ("data worlds": hospital, sports, logistics + the finance books as a browsable world).
+
+Work Log:
+- Design: additive worlds in the SAME SQLite sandbox — the storefront stays the lesson source of truth (57 lessons untouched); each world owns its own tables, created + seeded on demand, never touched by lesson grading. The one-DB model means playground queries can even cross worlds, and FK jumps switch worlds automatically.
+- Seeds (src/lib/worlds/*-seed.ts, pure data files): med = St. Ada General (8 doctors / 16 patients / 36 visits / 14 treatments / 36 prescriptions; NULL discharged_at = still admitted; severity buckets; one prescription per visit); sport = Northland League (10 clubs / 40 players / 24 matches / 59 goals; matches carry TWO FKs into teams — the self-join lesson; deterministic scorer distribution, FW>MF>DF, never GK); logi = Meridian Freight (6 warehouses / 6 carriers / 40 shipments / 56 stops / 7 claims; origin+dest two FKs into warehouses — the alias lesson; only delivered rows carry delivered_at). All hand-planted edge cases, zero rng, FK-enforced.
+- Lifecycle (src/lib/worlds/index.ts): ensureWorlds() with the globalThis single-flight (Next bundles per-route — same rationale as storefront), per-world seed-if-empty; resetWorlds() drops children-first and reseeds.
+- Meta (src/lib/worlds-meta.ts, client-safe): WorldMeta registry of 5 worlds — storefront wrapper (existing SCHEMA_* exports unchanged for quality-audit + legacy consumers), finance books (invoices/payments/expenses/ledger_entries — first time browsable), med, sport, logi: tables/relationships/layout/canvas/tips + WORLD_FOR_TABLE + schemaFor() cross-world lookups.
+- Field notes discipline: scripts/qa-worlds.mjs reseeds via /api/reset, runs PRAGMA foreign_key_check (clean), asserts world invariants (every patient >=1 visit; no team plays itself; goals table == match scorelines; delivered => delivered_at NOT NULL; origin != dest; ledger debit == credit $181,080), computes every facts string from the live DB, then the verified strings were pasted into worlds-meta. ALL CHECKS PASSED.
+- Bugs found by the probe: claims rows were missing the id column (7-vs-6 parameter error) — fixed; Prisma wraps REAL aggregates in Decimal objects — probe coerces with Number().
+- API: /api/stats now ensures worlds and returns counts for all 23 tables; /api/reset reseeds storefront + worlds; /api/query "no such table" hint lists the five worlds.
+- Data explorer: world tab strip (role=tablist, aria-selected) — Storefront 5 / Finance books 4 / St. Ada General 5 / Northland League 4 / Meridian Freight 5; table picker + field notes scoped per world; FK jumps follow across worlds via pickTable (BUG FOUND IN QA: the FK cell used a direct setTable path that skipped the world switch — invoices->customers stayed on Finance; fixed to route through pickTable).
+- SchemaView (playground Schema tab + ERD): same world tab strip; per-world canvas/edges/story; live rows counter now sums the SELECTED world. Radix triggers need the full pointer-event sequence in QA (plain .click() never activates).
+- Browser QA (fresh session, one browser at a time): explorer tabs/table cards/counts/field notes verified for med + logi; shipments grid shows FK chips + 40 rows + pagination; cross-world FK jump verified end-to-end (invoices -> customers: world tab flips to Storefront, filter chip applied); Schema ERD hospital cards render (110 rows live); playground deep-link query "doctor visit counts" over the hospital world returns 8 aggregated rows live; mobile 390px: no horizontal overflow, 5 tabs; 0 console errors. Screenshots (gitignored): qa-worlds-{schema-med,explorer-logi,mobile}.png.
+- Gates: tsc 633 = exact post-cleanup baseline (0 new); npm run lint 0 problems. Dev server died mid-QA (watchdog recycle after the heavy probe) — restarted clean via .zscripts/dev.sh.
+
+Stage Summary:
+- Enhancement #4 shipped: one sandbox, five data worlds — the storefront course world plus finance books, a hospital, a football league and a freight network, all seeded deterministically, browsable in the explorer, drawn in the ERD, and queryable from the playground with cross-world FK navigation.
+- Key files: src/lib/worlds/{med,sport,logi}-seed.ts, src/lib/worlds/index.ts, src/lib/worlds-meta.ts, src/app/api/{stats,reset,query}/route.ts, src/components/learn/data-explorer.tsx, src/components/schema-view.tsx, scripts/qa-worlds.mjs.
+- Next per approved queue: #5 Window-frame playground, #6 Blitz mode, #7 Capstone + certificate (absorbs the lost lesson-58 draft), #8 Journey page.
