@@ -71,3 +71,4 @@ scripts/.*.txt
 scripts/e2e-*.json
 scripts/stages-*.json
 .zscripts/*.pid
+qa-shots/

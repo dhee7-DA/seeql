@@ -37,6 +37,7 @@ import { CheatSheet } from "./cheat-sheet";
 import { MentorChat } from "./mentor-chat";
 import { PerfLab } from "./perf-lab";
 import { DailyPuzzle } from "./daily-puzzle";
+import { FramePlayground } from "./frame-playground";
 import { SeeqView } from "./seeq-view";
 import { ActivityStrip, MasteryGrid } from "./progress-cards";
 import { CelebrationHost, celebrate } from "./celebrate";
@@ -47,6 +48,7 @@ type View =
   | { kind: "overview" }
   | { kind: "seeq" }
   | { kind: "daily" }
+  | { kind: "frames" }
   | { kind: "lesson"; id: string }
   | { kind: "explorer" }
   | { kind: "mixed" }
@@ -458,6 +460,8 @@ function ViewBody({
       return <SeeqView />;
     case "daily":
       return <DailyPuzzle />;
+    case "frames":
+      return <FramePlayground />;
     case "explorer":
       return <DataExplorer />;
     case "library":

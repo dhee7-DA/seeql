@@ -15,6 +15,7 @@ import {
   FileStack,
   FlaskConical,
   Flag,
+  Frame,
   Gauge,
   Ghost,
   LayoutDashboard,
@@ -29,6 +30,7 @@ export type ToolKind =
   | "overview"
   | "seeq"
   | "daily"
+  | "frames"
   | "mentor"
   | "explorer"
   | "library"
@@ -63,6 +65,7 @@ export const TOOLS: ToolDef[] = [
   { kind: "overview", icon: LayoutDashboard, label: "Course overview", note: "progress & badges", short: "Overview", section: "core" },
   { kind: "seeq", icon: Ghost, label: "SeeQ playground", note: "dress & place your buddy", short: "SeeQ", section: "toolbox" },
   { kind: "daily", icon: CalendarDays, label: "Daily puzzle", note: "one a day — keep the streak", short: "Daily", section: "toolbox" },
+  { kind: "frames", icon: Frame, label: "Window-frame playground", note: "watch the frame slide, live", short: "Frames", section: "toolbox" },
   { kind: "mentor", icon: Bot, label: "AI Mentor", note: "tiered hints on your live data", short: "Mentor", section: "lab" },
   { kind: "explorer", icon: Table2, label: "Data explorer", note: "browse the live tables", short: "Data", section: "toolbox" },
   { kind: "library", icon: Shapes, label: "Diagram library", note: "every visual, one wall", short: "Diagrams", section: "toolbox" },
