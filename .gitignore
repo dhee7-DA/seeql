@@ -53,3 +53,21 @@ server.log
 # Skills directory
 /skills/
 scripts/mascot-research/
+
+# QA debris policy (Task 20): never track tool outputs, screenshots, probe DBs, pid files
+/tool-results/
+scripts/*.png
+scripts/*.gif
+scripts/*.jpg
+scripts/*.jpeg
+scripts/tmp/
+scripts/facts/
+scripts/*-out.txt
+scripts/*-out.json
+scripts/*.out
+scripts/.*.db
+scripts/.*.ts
+scripts/.*.txt
+scripts/e2e-*.json
+scripts/stages-*.json
+.zscripts/*.pid

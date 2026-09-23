@@ -93,7 +93,6 @@ export function ReviewDeck() {
       setAnswered(false);
       setSessionMisses(0);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dueKey, session]);
 
   const currentId = session !== null && idx < session.length ? session[idx] : null;

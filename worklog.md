@@ -2331,3 +2331,24 @@ Stage Summary:
 - Enhancement #3 shipped: a real daily habit loop — one date-seeded puzzle per day, streak with honest freeze semantics, backlog practice window (current + previous month), Perfect Month badge — all graded live against the sandbox, all 24 solutions validated.
 - Key files: src/lib/curriculum/daily.ts, src/components/learn/daily-puzzle.tsx, src/lib/curriculum/progress.ts, src/lib/curriculum/gamification.ts, src/components/learn/{tools,learn-app,milestones}.tsx, scripts/{validate-daily,test-streak,today-puzzle,qa-daily.sh}.
 - Next per approved queue: enhancement #4 — Dataset packs (swap the storefront for new seeded worlds).
+
+---
+Task ID: 20
+Agent: Super Z (main agent)
+Task: Task B of "lets do all" — repo cleanup: remove QA debris, tidy tree. Plus forensics on the reported "orphan stash" (Task A input).
+
+Work Log:
+- Orphan-stash forensics: the four untracked files from the prior session no longer exist (sandbox recycle wiped untracked files). Recovery sweep: git fsck (dangling commits+blobs), reflog+unreachable scan of 231 commit trees, tool-results content search, filesystem-wide rg. Result: seeq-engine.tsx (828 ln) is byte-identical to the engine committed at 10f7e1a (mascot-gallery era, later deleted for the approved bloub clone); seeq-gallery.tsx (376 ln) matches the gallery at 161c439 (later replaced by the approved seeq-view.tsx workshop); diagrams-cs.tsx and lesson-58.ts were never in any git object — unrecoverable. Conclusion: NOT new work — stale resurrected copies + two lost drafts; wiring the pair would REGRESS the approved bloub-clone SeeQ workshop. Task A declared dead with nothing of value lost; set-op lessons L17-24 already ship 3 QA'd diagrams each; capstone lesson-58 belongs to queue #7 anyway.
+- Cleanup (scripts/cleanup-task20.sh, evidence-based keep list): deleted 2,182 tracked debris files — tool-results/ (573 cached tool outputs, 41MB), 1,013 QA screenshots (scripts/*.png|gif), all hidden probe DBs (.probe-*/.w6-*/.m*-facts.db...), scripts/tmp/, ~560 one-off probes/facts/outs (probe-*.ts, m*-facts*.ts, *-out.txt/json, check-dup-*, t5-*, fill-scratch-*), one-off codemods (ab-qa*.js, fig-audit.js, fix-*.py, insert-viz-m2.py, refactor-diagrams.py, t5-codemod.ts, wire-*.ts, inject-diagrams.ts).
+- KEPT (36 files, cited>=3x in worklog or standing ritual): all 25 qa-*.sh harnesses + case-audit.ts, restore-db.ts, qa-coach.ts, gen-expected.ts, validate-daily.ts, test-streak.ts, today-puzzle.ts, audit-bank.ts, figure-census.ts, audit-figures.ts, audit-keywords.ts, db-ensure.ts, test-seed.ts, verify-curriculum.ts, curriculum-status.ts + font-lineup.html, og-card.html.
+- .gitignore: added the QA-debris classes (tool-results/, scripts images/tmp/facts/outs/probe-dbs, .zscripts/*.pid); untracked runtime .zscripts/{dev,watchdog}.pid.
+- Mode hygiene: normalized the filesystem's 100644->100755 mode flips on remaining tracked files (chmod 644).
+- Gate drift FIXED, new honest baselines: tsc 829 -> 633 (deleted probe scripts carried 196 junk errors; 633 = the historic pre-debris baseline, 0 new); lint 4 errors + 4 warnings -> 0 problems (4 triple-slash errors lived in deleted probes).
+- Removing the 2 "unused eslint-disable" warnings surfaced a REAL pre-existing react-hooks/immutability error in exam-view.tsx (timer accessed submit before declaration). Fixed behavior-preserving: moved the single countdown useEffect below submit's function declaration (only effect in file; hoisted function semantics unchanged; zero effect-ordering implications). review.tsx: stale directive removed, no issue underneath.
+- Browser sanity on live :3000: landing + #learn render clean (Builder Paper, blue accent, buddy+tip alive, 9-module map), 0 console errors; screenshot scripts/smoke-task20.png (gitignored).
+- Left dirty on purpose: db/custom.db (runtime progress DB churn), scripts/cleanup-task20.sh removed after successful run (record lives here + git history).
+
+Stage Summary:
+- Repo is clean: 2,182 debris files gone (~45MB), standing QA/validator harnesses intact, debris classes gitignored so they cannot return.
+- NEW GATES: tsc = 633 (0 new = pass), npm run lint = 0 errors + 0 warnings. Both strictly STRONGER than the old 829 / 4+4.
+- Task A (orphan wiring) closed as moot with forensics; next per approved queue: Task C = enhancement #4 — Dataset packs (new seeded data worlds).

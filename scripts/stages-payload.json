@@ -1,1 +1,0 @@
-{"sql": "SELECT c.name, o.status, COUNT(*) AS order_count, SUM(o.total) AS revenue\nFROM customers c\nINNER JOIN orders o ON o.customer_id = c.id\nWHERE o.created_at >= '2024-01-01'\nGROUP BY c.name, o.status\nHAVING COUNT(*) > 5\nORDER BY revenue DESC;"}

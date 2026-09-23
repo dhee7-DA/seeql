@@ -48,18 +48,6 @@ export function ExamView({ moduleId, onExit }: { moduleId: string; onExit: () =>
   const deadlineRef = useRef(0);
   const submittedRef = useRef(false);
 
-  // Countdown while running; auto-submit at zero.
-  useEffect(() => {
-    if (phase !== "running") return;
-    const t = setInterval(() => {
-      const left = deadlineRef.current - Date.now();
-      setRemaining(left);
-      if (left <= 0) submit(true);
-    }, 500);
-    return () => clearInterval(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase]);
-
   function start(attemptNo: number) {
     const e = buildExam(moduleId, attemptNo);
     if (!e) return;
@@ -116,6 +104,18 @@ export function ExamView({ moduleId, onExit }: { moduleId: string; onExit: () =>
     void auto;
     setPhase("results");
   }
+
+  // Countdown while running; auto-submit at zero (declared after submit so the
+  // timer closes over the same hoisted function the buttons call).
+  useEffect(() => {
+    if (phase !== "running") return;
+    const t = setInterval(() => {
+      const left = deadlineRef.current - Date.now();
+      setRemaining(left);
+      if (left <= 0) submit(true);
+    }, 500);
+    return () => clearInterval(t);
+  }, [phase]);
 
   if (!mod) return null;
 
