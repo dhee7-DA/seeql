@@ -2418,3 +2418,21 @@ Stage Summary:
 - Key files: src/components/learn/{seeq-mood.ts (NEW), seeq-buddy.tsx, lesson-view.tsx, problem-runner.tsx, daily-puzzle.tsx, drill-yard.tsx, diagrams-kit.tsx, diagrams.tsx}.
 - Standing hooks: mood bus ready for #6 Blitz (streak/comet states) and SeeQ event reactions; scrubber kit (setFigScrub/figPhase) reusable for future diagram-scoped choreography.
 - Next per queue: #6 Blitz mode, #7 Capstone + certificate, #8 Journey page.
+
+---
+Task ID: 24
+Agent: Super Z (main agent)
+Task: Re-verification of the interactivity wave (Task 23) — user said "lets go" again after the session continuation; summary had claimed the wave was unbuilt.
+
+Work Log:
+- Forensics: git log shows Task 23 committed as 738e84e (full wave message); tree clean at HEAD 85a5aab. The two UUID commits around it are inert: 8474300 = db/custom.db binary only, 85a5aab = worklog.md +23 (the Task 23 entry itself). diff 738e84e..HEAD = worklog only. Wave code untouched.
+- Live browser re-verification (agent-browser, fresh session, viewport-before-open, #learn?fresh=w23check):
+  * #1 predicts: lesson 2 ("SELECT & FROM") shows 2 predict strips with real data ("which value lands first in name?"); picked wrong -> verdict "The grid disagrees — it leads with Mechanical Keyboard K1. Look again before the next one." + SeeQ fail bubble "That error is information. Read it once, slowly." NOTE: strips have NO data-predict DOM attribute — locate by the amber "Predict" span / "skip — just run" button.
+  * #7 moods: [data-seeq-bubble] present and reactive on the fail (see above); buddy mounted at root.
+  * #4 scrubbers: LEFT JOIN lesson (12) has 3 figures, each with "Freeze and step through" button + 0.0s timeline slider; J4 what-if switch flips to INNER ("result — 1 row: Alice Chen / 3 of 4 left rows vanished — count them") and back. Switch aria-label present on one pass, null on another (transient) — select by [role=switch] as fallback.
+- Console clean (HMR + React DevTools info + pre-existing THREE.Clock deprecation warning only). Server 200 throughout.
+- No code changes made this task.
+
+Stage Summary:
+- The interactivity wave is confirmed shipped and live at HEAD (commit 738e84e). Earlier in this session the main agent twice told the user #7 was "unwired" — that was stale-summary thinking; Task 23 had already landed it. Lesson (again): the worklog is the source of truth, not the conversation summary.
+- Next per queue: #6 Blitz mode, #7 Capstone + certificate, #8 Journey page.
