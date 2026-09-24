@@ -21,6 +21,7 @@ import type { DrillQ, DrillSet, DrillTier } from "@/lib/curriculum/drills";
 import { useProgress } from "@/lib/curriculum/progress";
 import { useDrillSession } from "@/lib/curriculum/drill-session";
 import { cn } from "@/lib/utils";
+import { seeqReact } from "./seeq-mood";
 import { McqCard } from "./mcq";
 
 const ROUND = 10;
@@ -267,6 +268,8 @@ export function DrillYard({ scopeId = "yard", keywords }: { scopeId?: string; ke
                   const sc = deck.filter((q) => att[q.id]?.correct).length;
                   setScore(sc);
                   commit(active, deck, idx, sc, roundNum);
+                  // last card of the round answered correctly = a clean round
+                  if (idx === deck.length - 1) seeqReact("streak", 2);
                 }
               }}
             />

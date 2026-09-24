@@ -59,10 +59,18 @@ export function Arrow({ x1, y1, x2, y2, cls = "stroke-zinc-600" }: { x1: number;
 
 /** Animated reveal for connection paths (framer-motion draws the stroke). */
 export function drawIn(delay = 0) {
-  if (isStatic()) {
+  const phase = figPhase(delay);
+  if (phase === "final") {
     return {
       initial: { pathLength: 1, opacity: 1 },
       animate: { pathLength: 1, opacity: 1 },
+      transition: { duration: 0 },
+    };
+  }
+  if (phase === "hidden") {
+    return {
+      initial: { pathLength: 0.0001, opacity: 0 },
+      animate: { pathLength: 0.0001, opacity: 0 },
       transition: { duration: 0 },
     };
   }
@@ -173,6 +181,29 @@ export function Panel({ x, y, w, h, cls = "fill-zinc-900 stroke-zinc-800" }: { x
   return <rect x={x} y={y} width={w} height={h} rx={8} className={cls} strokeWidth={1} />;
 }
 
+// ---- figure scrub (stage stepping) ---------------------------------------
+// A global cutoff in seconds: while set, every kit helper renders groups with
+// delay < cutoff at their FINAL state and LOCKS the rest hidden — a drag on
+// the timeline rebuilds the diagram stage by stage, exactly matching what the
+// live animation would have shown by that moment. null = normal scroll play.
+// The Figure wrapper (diagrams.tsx) owns the control bar and remounts the
+// diagram on each step; no other consumer reads or writes this.
+
+let scrubCutoff: number | null = null;
+
+/** Set the scrub cutoff (seconds). null returns every figure to live play. */
+export function setFigScrub(seconds: number | null) {
+  scrubCutoff = seconds;
+}
+
+type FigPhase = "run" | "final" | "hidden";
+
+function figPhase(delay: number): FigPhase {
+  if (isStatic()) return "final";
+  if (scrubCutoff == null) return "run";
+  return delay < scrubCutoff ? "final" : "hidden";
+}
+
 /** Static mode for the /figure-audit harness — when window.__FIG_STATIC__ is
  *  set, scroll reveals short-circuit to their final state so screenshots and
  *  layout probes see exactly what a learner sees after scrolling, without
@@ -182,10 +213,19 @@ function isStatic() {
 }
 
 export function fade(delay = 0) {
-  if (isStatic()) {
+  const phase = figPhase(delay);
+  if (phase === "final") {
     return {
       initial: { opacity: 1, y: 0 },
       animate: { opacity: 1, y: 0 },
+      transition: { duration: 0 },
+    };
+  }
+  if (phase === "hidden") {
+    // locked below the cutoff — no whileInView, it cannot leak in early
+    return {
+      initial: { opacity: 0, y: 8 },
+      animate: { opacity: 0, y: 8 },
       transition: { duration: 0 },
     };
   }

@@ -30,6 +30,7 @@ import {
   subscribeSkin,
   type SeeqSkin,
 } from "./seeq-skin";
+import { getMood, subscribeMood, type SeeqMoodEvent } from "./seeq-mood";
 
 // ---- coach tips (warm, app-aware, no emoji) ------------------------------
 
@@ -58,6 +59,42 @@ const PRAISE = [
   "Small steps daily beat marathons on Sunday.",
   "Poke received. Morale restored.",
 ];
+
+// ---- live reactions (fed by the seeq-mood bus) -------------------------
+// Short, warm, app-aware — the same voice as the tips, no emoji.
+
+const REACT_LINES: Record<SeeqMoodEvent["kind"], string[]> = {
+  win: [
+    "Clean run. The planner approves.",
+    "That query never stood a chance.",
+    "Green rows, warm glow.",
+    "Called it — and the engine agrees.",
+  ],
+  fail: [
+    "That error is information. Read it once, slowly.",
+    "Ouch. The message names the clause — look there first.",
+    "Bent, not broken. Errors are how the engine talks.",
+    "Even the planner has bad days. Again, slower."
+  ],
+  streak: [
+    "A whole round, no misses. Quiet excellence.",
+    "Every card correct — that compounding is real.",
+    "Streak secured. The flame agrees.",
+  ],
+  puzzle: [
+    "Daily puzzle, solved. See you tomorrow.",
+    "The calendar chip turns green. Deserved.",
+    "One a day — that is how streaks are built.",
+  ],
+};
+
+/** Which bloub state plays: intensity 1 uses the quiet one, 2+ the big one. */
+const REACT_STATE: Record<SeeqMoodEvent["kind"], { quiet: StateId; big: StateId }> = {
+  win: { quiet: "exclaim", big: "play" },
+  fail: { quiet: "alert", big: "alert" },
+  streak: { quiet: "wink", big: "comet" },
+  puzzle: { quiet: "exclaim", big: "burst" },
+};
 
 /** Short face-keeping states for the idle flourish. */
 const FLOURISHES: { state: StateId; hold: number }[] = [
@@ -167,6 +204,8 @@ export function SeeqBuddy() {
   const bag = useRef<{ order: number[]; i: number }>({ order: [], i: 0 });
   const praiseIdx = useRef(0);
   const nonce = useRef(0);
+  const reactIdx = useRef({ win: 0, fail: 0, streak: 0, puzzle: 0 });
+  const moodNonce = useRef(0);
 
   const say = (state: StateId) => {
     nonce.current += 1;
@@ -288,6 +327,39 @@ export function SeeqBuddy() {
   };
 
   // ---- behaviour ----------------------------------------------------------
+
+  // Live reactions: the mood bus pushes app events here (a solved problem, a
+  // failed run, a clean drill round, the daily puzzle). State changes from an
+  // external event callback — same legal shape as the pointer handlers above.
+  const reactTo = (m: SeeqMoodEvent) => {
+    if (collapsedRef.current) return;
+    clearTimers();
+    const lines = REACT_LINES[m.kind];
+    const i = reactIdx.current[m.kind]++ % lines.length;
+    const text = lines[i]!;
+    setBubble(text);
+    bubbleRef.current = text;
+    const st = REACT_STATE[m.kind];
+    say(m.intensity >= 2 ? st.big : st.quiet);
+    revertTimer.current = window.setTimeout(() => say("idle"), 2400);
+    hideTimer.current = window.setTimeout(() => {
+      setBubble(null);
+      bubbleRef.current = null;
+      scheduleNextTip(TIP_GAP_MS + Math.random() * TIP_GAP_JITTER_MS);
+    }, 3600);
+  };
+
+  useEffect(
+    () =>
+      subscribeMood(() => {
+        const m = getMood();
+        if (!m || m.nonce === moodNonce.current) return;
+        moodNonce.current = m.nonce;
+        reactTo(m);
+      }),
+    // mirrors the mount effect below — closes over stable timers/refs only
+    [],
+  );
 
   // Collapse changes: persist + keep behaviour in sync. Speech pauses while
   // collapsed and resumes on expand (event handlers flip `collapsed`).

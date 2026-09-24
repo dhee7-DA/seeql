@@ -4,7 +4,7 @@
 // theory layer), Quiz (all MCQs), Practice (graded problems).
 // Keyed remount per lesson resets tab state.
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   BookOpen,
   Brain,
@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import type { Block, DeepBlock, Lesson } from "@/lib/curriculum/types";
 import { reportMentorFailure } from "@/lib/mentor-context";
+import { seeqReact } from "./seeq-mood";
 import { useProgress } from "@/lib/curriculum/progress";
 import { LESSON_DRILLS } from "@/lib/curriculum/drills";
 import { splitStatements } from "@/lib/sql-statements";
@@ -155,17 +156,129 @@ async function runBatch(sqls: string[]): Promise<{ ok: boolean; results?: BatchI
   return (await r.json()) as { ok: boolean; results?: BatchItemResult[]; error?: string };
 }
 
+// ---- guess-before-run micro-predicts -------------------------------------
+// Every runnable read block asks for a 5-second commitment before Run reveals
+// the truth — retrieval practice stapled onto the lesson text itself. The
+// question is generated from the query's REAL output (the same endpoint the
+// Run button uses), lazily when the block scrolls near the viewport.
+
+interface Pred {
+  kind: "rows" | "first";
+  question: string;
+  options: string[];
+  answer: number;
+}
+
+/** FNV-1a — stable per-query seed so options never reshuffle between renders. */
+function hashSql(s: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619) >>> 0;
+  return h;
+}
+
+function mulberry(seed: number): () => number {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function predCell(v: unknown): string {
+  if (v === null || v === undefined) return "NULL";
+  const s = String(v);
+  return s.length > 22 ? `${s.slice(0, 21)}…` : s;
+}
+
+function shuffled(items: string[], rand: () => number): string[] {
+  const out = items.slice();
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [out[i], out[j]] = [out[j]!, out[i]!];
+  }
+  return out;
+}
+
+/** Shape the question from the query's real output. null = nothing worth
+ *  asking (empty result, too few values, or degenerate distractors). */
+function buildPred(
+  out: { columns?: string[]; rows?: unknown[][]; rowCount?: number },
+  seedSql: string,
+): Pred | null {
+  const rows = out.rows ?? [];
+  const n = typeof out.rowCount === "number" ? out.rowCount : rows.length;
+  if (!Number.isFinite(n) || n <= 0) return null;
+  const rand = mulberry(hashSql(seedSql));
+
+  // Many-row results ask "what leads the grid" — the distractors are the REAL
+  // values from rows 2–4, so a wrong pick means the ORDER BY was misread,
+  // which is exactly the skill being trained.
+  if (n >= 4 && rows.length >= 4) {
+    const firstCol = out.columns?.[0] ?? "";
+    const lead = predCell(rows[0]![0]);
+    const pool = [predCell(rows[1]![0]), predCell(rows[2]![0]), predCell(rows[3]![0])];
+    if (lead !== "NULL" && new Set([lead, ...pool]).size === 4) {
+      const options = shuffled([lead, ...pool], rand);
+      return {
+        kind: "first",
+        question: `which value lands first in ${firstCol ? `“${firstCol}”` : "the first column"}?`,
+        options,
+        answer: options.indexOf(lead),
+      };
+    }
+  }
+
+  // Otherwise: row count, with same-magnitude numeric distractors.
+  const cands = new Set<number>();
+  for (const c of [n - 1, n + 1, n + 2, n - 2, Math.ceil(n * 2), n + 4, Math.max(0, n - 3), n + 7]) {
+    if (c >= 0 && c !== n) cands.add(c);
+    if (cands.size >= 6) break;
+  }
+  if (cands.size < 3) return null;
+  const wrongs = shuffled([...cands].map(String), rand).slice(0, 3);
+  const options = shuffled([String(n), ...wrongs], rand);
+  return { kind: "rows", question: "how many rows come back?", options, answer: options.indexOf(String(n)) };
+}
+
+/** Runs the block's query exactly as Run will (same endpoint, same sandbox
+ *  flag) and shapes the question. Never throws — a failed generation simply
+ *  means no prediction bar for this block. */
+async function genPredict(seedSql: string): Promise<Pred | null> {
+  try {
+    const r = await fetch("/api/query", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sql: seedSql, sandbox: false }),
+    });
+    const out = (await r.json()) as SingleResult & { rowCount?: number };
+    if (!out.ok) return null;
+    return buildPred(out, seedSql);
+  } catch {
+    return null;
+  }
+}
+
 function CodeBlock({ sql, caption, runnable = true }: { sql: string; caption?: string; runnable?: boolean }) {
   const [result, setResult] = useState<SingleResult | null>(null);
   const [batch, setBatch] = useState<BatchItemResult[] | null>(null);
   const [batchError, setBatchError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  // micro-predict: -2 marks "skipped", otherwise the picked option index
+  const [pred, setPred] = useState<Pred | null>(null);
+  const [predPick, setPredPick] = useState<number | null>(null);
+  const [predXp, setPredXp] = useState(0);
+  const blockRef = useRef<HTMLDivElement | null>(null);
+  const ranOnceRef = useRef(false);
+  const lastFailRef = useRef(false);
   // Multi-statement blocks run as one sandboxed sequence — the statements see
   // each other's effects and nothing persists.
   const statements = useMemo(() => splitStatements(sql), [sql]);
   const isMulti = statements.length > 1;
   const isRead = looksLikeRead(sql);
   const canRun = runnable && sql.trim().length > 0;
+  const canPredict = canRun && isRead && !isMulti;
 
   async function run() {
     if (busy) return;
@@ -177,16 +290,75 @@ function CodeBlock({ sql, caption, runnable = true }: { sql: string; caption?: s
         setBatch(null);
         const r = await runBatch(statements);
         if (r.ok && r.results) setBatch(r.results);
-        else setBatchError(r.error ?? "The sequence could not be run.");
+        else {
+          setBatchError(r.error ?? "The sequence could not be run.");
+          seeqReact("fail");
+        }
       } else {
         setBatch(null);
         // Writes and DDL run sandboxed: the statement really executes,
         // then the whole thing is rolled back — the store stays untouched.
-        setResult(await runInline(sql, !isRead));
+        const res = await runInline(sql, !isRead);
+        setResult(res);
+        if (res.ok) {
+          // a win only deserves a reaction when it recovers a failure
+          if (lastFailRef.current) seeqReact("win");
+          lastFailRef.current = false;
+        } else {
+          lastFailRef.current = true;
+          seeqReact("fail");
+        }
       }
     } finally {
+      // once the real output has been shown, a prediction would be theatre
+      ranOnceRef.current = true;
       setBusy(false);
     }
+  }
+
+  // Generation is lazy: the block asks for its question the first time it
+  // scrolls near the viewport. Errors and empty results degrade silently.
+  useEffect(() => {
+    if (!canPredict || pred || ranOnceRef.current) return;
+    const el = blockRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    let dead = false;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+        void genPredict(sql).then((p) => {
+          if (!dead && p && !ranOnceRef.current) setPred(p);
+        });
+      },
+      { rootMargin: "240px" },
+    );
+    io.observe(el);
+    return () => {
+      dead = true;
+      io.disconnect();
+    };
+  }, [canPredict, pred, sql]);
+
+  function pickPred(i: number) {
+    if (!pred || predPick !== null || busy) return;
+    setPredPick(i);
+    const correct = i === pred.answer;
+    if (correct) {
+      // +5 XP, once per distinct query, ever — the ledger dedupes by key
+      if (useProgress.getState().awardXp(`predict:${hashSql(sql).toString(36)}`, 5)) setPredXp(5);
+      seeqReact("win");
+    } else {
+      seeqReact("fail");
+    }
+    // commitment first, evidence immediately after
+    void run();
+  }
+
+  function skipPred() {
+    if (predPick !== null || busy) return;
+    setPredPick(-2);
+    void run();
   }
 
   const affected = result?.ok && (result.rows ?? []).length === 0 && result.changes != null;
@@ -195,7 +367,7 @@ function CodeBlock({ sql, caption, runnable = true }: { sql: string; caption?: s
     : isRead ? "Run here" : "Run sandboxed";
 
   return (
-    <div className="my-4 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950">
+    <div ref={blockRef} className="my-4 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950">
       {(caption || canRun) && (
         <div className="flex items-center justify-between border-b border-zinc-800 px-3.5 py-2">
           <span className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">{caption ?? "SQL"}</span>
@@ -211,6 +383,48 @@ function CodeBlock({ sql, caption, runnable = true }: { sql: string; caption?: s
         </div>
       )}
       <pre className="overflow-x-auto px-3.5 py-3 font-mono text-xs leading-relaxed text-zinc-300 thin-scrollbar"><SqlNodes text={sql} /></pre>
+      {pred && predPick === null && (
+        <div className="border-t border-zinc-800 bg-amber-400/[0.03] px-3.5 py-2.5">
+          <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-amber-300">Predict</span>
+            <span className="text-xs text-zinc-400">{pred.question}</span>
+          </div>
+          <div className="mt-2 flex flex-wrap items-center gap-1.5">
+            {pred.options.map((opt, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => pickPred(i)}
+                disabled={busy}
+                className="rounded border border-zinc-700 bg-zinc-900 px-2.5 py-1 font-mono text-[11px] text-zinc-300 transition-colors hover:border-amber-400/60 hover:text-amber-200 disabled:opacity-50"
+              >
+                {opt}
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={skipPred}
+              disabled={busy}
+              className="rounded px-2 py-1 text-[11px] text-zinc-500 transition-colors hover:text-zinc-300 disabled:opacity-50"
+            >
+              skip — just run
+            </button>
+          </div>
+        </div>
+      )}
+      {pred && predPick !== null && (
+        <div className="border-t border-zinc-800 px-3.5 py-2">
+          {predPick === -2 ? (
+            <p className="text-xs text-zinc-500">Prediction skipped — the grid is the answer.</p>
+          ) : predPick === pred.answer ? (
+            <p className="text-xs text-emerald-300">Called it.{predXp > 0 ? ` +${predXp} XP banked.` : ""}</p>
+          ) : (
+            <p className="text-xs text-rose-300">
+              The grid disagrees — it {pred.kind === "rows" ? `returns ${pred.options[pred.answer]} rows` : `leads with ${pred.options[pred.answer]}`}. Look again before the next one.
+            </p>
+          )}
+        </div>
+      )}
       {result && (
         <div className="border-t border-zinc-800 p-3">
           {result.ok ? (
@@ -497,13 +711,13 @@ export function LessonView({ lesson, onBonusChecked }: { lesson: Lesson; onBonus
       <h1 className="font-display mt-2 text-[1.7rem] font-semibold tracking-[-0.02em] text-zinc-50 sm:text-3xl">{lesson.title}</h1>
       <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-zinc-400">{lesson.blurb}</p>
 
-      <div className="sheen mt-5 flex gap-1 rounded-lg border border-zinc-800 bg-zinc-950 p-1">
+      <div className="sheen thin-scrollbar mt-5 flex gap-1 overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-950 p-1">
         {tabs.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
             className={cn(
-              "flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-2 text-xs font-medium transition-colors sm:flex-none sm:px-4",
+              "flex flex-1 shrink-0 items-center justify-center gap-2 rounded-md px-3 py-2 text-xs font-medium transition-colors sm:flex-none sm:px-4",
               tab === t.id
                 ? "bg-zinc-800 text-zinc-50 shadow-[inset_0_1px_0_0_rgb(255_255_255/0.06)]"
                 : "text-zinc-500 hover:text-zinc-300",

@@ -6,9 +6,10 @@
 // framer-motion and re-skin automatically because they paint with Tailwind
 // palette utilities (which the theme engine redefines per theme).
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
+import { Pause, Play } from "lucide-react";
 import type { FigureId } from "@/lib/curriculum/types";
 import { FIGURES_M2 } from "./diagrams-m2";
 import { FIGURES_M1A } from "./diagrams-m1a";
@@ -40,6 +41,7 @@ import {
   XMark,
   fade,
   rng,
+  setFigScrub,
 } from "./diagrams-kit";
 
 /* ---------------- figures ---------------- */
@@ -645,35 +647,95 @@ function J3Chain() {
 }
 
 function J4LeftJoin() {
+  // What-if toggle: the same query run as an INNER JOIN instead. Alice (who
+  // has delivered orders) survives either way; the other three left rows are
+  // silently dropped — the invisible difference between the two joins, made
+  // visible by one click.
+  const [asInner, setAsInner] = useState(false);
+  const dropped = asInner ? [1, 2, 3] : [];
   return (
-    <svg viewBox="0 0 720 280" className="w-full" role="img" aria-label="LEFT JOIN carries customers with no delivered order, filling the right side with NULL">
-      <motion.g {...fade(0)}>
-        <Label x={30} y={30} cls="fill-zinc-300">FROM customers — 16 rows</Label>
-        <DotField n={16} cols={8} x0={30} y0={48} gap={18} />
-        <Label x={430} y={30} cls="fill-zinc-500" size={10}>LEFT JOIN orders · status = 'delivered'</Label>
-      </motion.g>
-      <motion.g {...fade(0.4)}>
-        {[
-          ["Alice Chen", "12 delivered orders", false],
-          ["Bruno Silva", "orders, none delivered*", true],
-          ["Maya Patel", "orders, none delivered*", true],
-          ["Liam O'Brien", "no match → NULL", true],
-        ].map(([name, note, dim], i) => (
-          <g key={i}>
-            <rect x={30} y={118 + i * 36} width={330} height={28} rx={5} className={i === 3 ? "fill-zinc-900 stroke-emerald-400/60" : "fill-zinc-900 stroke-zinc-800"} strokeDasharray={i === 3 ? "4 3" : undefined} />
-            <Label x={44} y={136 + i * 36} cls="fill-zinc-200" size={11}>{name}</Label>
-            <Label x={348} y={136 + i * 36} anchor="end" cls={i === 3 ? "fill-emerald-300" : "fill-zinc-500"} size={9}>{note}</Label>
-          </g>
-        ))}
-        <Label x={30} y={266} cls="fill-zinc-600" size={9}>* delivered counts vary — the point: the left row survives either way</Label>
-      </motion.g>
-      <motion.g {...fade(0.7)}>
-        <rect x={430} y={196} width={250} height={56} rx={8} className="fill-zinc-900 stroke-emerald-400/60" />
-        <Label x={444} y={218} cls="fill-emerald-300" size={10}>Liam O'Brien | NULL | NULL | NULL</Label>
-        <Label x={444} y={238} cls="fill-zinc-500" size={9}>kept, with the right side filled by NULL</Label>
-        <Link x1={364} y1={240} x2={426} y2={224} cls="stroke-emerald-400" w={1.4} dot="fill-emerald-400" delay={0.85} />
-      </motion.g>
-    </svg>
+    <div>
+      <div className="mb-1.5 flex justify-end">
+        <button
+          type="button"
+          role="switch"
+          aria-checked={asInner}
+          onClick={() => setAsInner((v) => !v)}
+          className={cn(
+            "rounded border px-2 py-0.5 font-mono text-[10px] transition-colors",
+            asInner
+              ? "border-amber-400/50 bg-amber-400/10 text-amber-300 hover:bg-amber-400/20"
+              : "border-zinc-700 text-zinc-400 hover:border-emerald-400/60 hover:text-emerald-300",
+          )}
+        >
+          {asInner ? "run as INNER — flip back to LEFT" : "what if INNER instead?"}
+        </button>
+      </div>
+      <svg
+        viewBox="0 0 720 280"
+        className="w-full"
+        role="img"
+        aria-label={
+          asInner
+            ? "The same query as an INNER JOIN: only customers with a delivered order survive, the other three rows are dropped"
+            : "LEFT JOIN carries customers with no delivered order, filling the right side with NULL"
+        }
+      >
+        <motion.g {...fade(0)}>
+          <Label x={30} y={30} cls="fill-zinc-300">FROM customers — 16 rows</Label>
+          <DotField n={16} cols={8} x0={30} y0={48} gap={18} />
+          <Label x={430} y={30} cls="fill-zinc-500" size={10}>
+            {asInner ? "INNER JOIN orders · status = 'delivered'" : "LEFT JOIN orders · status = 'delivered'"}
+          </Label>
+        </motion.g>
+        <motion.g {...fade(0.4)}>
+          {[
+            ["Alice Chen", "12 delivered orders", "kept — has a delivered order"],
+            ["Bruno Silva", "orders, none delivered*", "dropped — nothing delivered"],
+            ["Maya Patel", "orders, none delivered*", "dropped — nothing delivered"],
+            ["Liam O'Brien", "no match → NULL", "dropped — no match at all"],
+          ].map(([name, note, innerNote], i) => (
+            <g key={i} opacity={dropped.includes(i) ? 0.38 : 1}>
+              <rect
+                x={30}
+                y={118 + i * 36}
+                width={330}
+                height={28}
+                rx={5}
+                className={i === 3 && !asInner ? "fill-zinc-900 stroke-emerald-400/60" : "fill-zinc-900 stroke-zinc-800"}
+                strokeDasharray={i === 3 && !asInner ? "4 3" : undefined}
+              />
+              <Label x={44} y={136 + i * 36} cls="fill-zinc-200" size={11}>{name}</Label>
+              <Label x={348} y={136 + i * 36} anchor="end" cls={asInner ? "fill-amber-300/90" : i === 3 ? "fill-emerald-300" : "fill-zinc-500"} size={9}>
+                {asInner ? innerNote : note}
+              </Label>
+              {dropped.includes(i) && <XMark x={372} y={132 + i * 36} cls="stroke-amber-400" s={4} delay={0.55} />}
+            </g>
+          ))}
+          <Label x={30} y={266} cls="fill-zinc-600" size={9}>
+            {asInner
+              ? "INNER drops the three rows SILENTLY — no error, no NULL, just fewer rows"
+              : "* delivered counts vary — the point: the left row survives either way"}
+          </Label>
+        </motion.g>
+        <motion.g {...fade(0.7)}>
+          {asInner ? (
+            <>
+              <rect x={430} y={196} width={250} height={56} rx={8} className="fill-zinc-900 stroke-amber-400/60" />
+              <Label x={444} y={218} cls="fill-amber-300" size={10}>result — 1 row: Alice Chen</Label>
+              <Label x={444} y={238} cls="fill-zinc-500" size={9}>3 of 4 left rows vanished — count them</Label>
+            </>
+          ) : (
+            <>
+              <rect x={430} y={196} width={250} height={56} rx={8} className="fill-zinc-900 stroke-emerald-400/60" />
+              <Label x={444} y={218} cls="fill-emerald-300" size={10}>Liam O'Brien | NULL | NULL | NULL</Label>
+              <Label x={444} y={238} cls="fill-zinc-500" size={9}>kept, with the right side filled by NULL</Label>
+              <Link x1={364} y1={240} x2={426} y2={224} cls="stroke-emerald-400" w={1.4} dot="fill-emerald-400" delay={0.85} />
+            </>
+          )}
+        </motion.g>
+      </svg>
+    </div>
   );
 }
 
@@ -1674,17 +1736,75 @@ export function FigureBare({ id }: { id: FigureId }) {
   return <Cmp />;
 }
 
+/** Timeline cap for the stage scrubber — every choreography delay in the
+ *  curriculum finishes by ~1.8s (arrows land at delay+0.45), so 2.6s always
+ *  reaches the fully-revealed end state. */
+const FIG_SCRUB_MAX = 2.6;
+
 export function Figure({ id }: { id: FigureId }) {
   const is3D = FIG3D_IDS.has(id);
   const Cmp = is3D ? null : FIGURES[id];
+  // stage scrubber: freeze the choreography, rewind it stage by stage, replay
+  const [scrub, setScrub] = useState<number | null>(null);
+  const [tick, setTick] = useState(0);
+  // leaving the surface must not leak the cutoff onto library/landing figures
+  useEffect(() => () => setFigScrub(null), []);
   if (!is3D && !Cmp) return null;
+
+  const scrubTo = (v: number) => {
+    setFigScrub(v); // module var first — the remount below renders under it
+    setScrub(v);
+    setTick((t) => t + 1);
+  };
+  const play = () => {
+    setFigScrub(null);
+    setScrub(null);
+    setTick((t) => t + 1);
+    // The remount lands already-in-view, and framer-motion's viewport
+    // observer only fires on the NEXT intersection change — hand it one:
+    // two invisible 1px scrolls, a frame apart, never at scroll boundaries.
+    window.setTimeout(() => window.scrollBy(0, 1), 60);
+    window.setTimeout(() => window.scrollBy(0, -1), 140);
+  };
+
   return (
     <figure className="my-5 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950 p-3">
-      {is3D ? <Figure3DHost id={id} /> : Cmp ? <Cmp /> : null}
+      {is3D ? <Figure3DHost id={id} /> : Cmp ? <FigureBare key={`${id}:${tick}`} id={id} /> : null}
+      {!is3D && (
+        <div className="mt-2 flex items-center gap-2.5 border-t border-zinc-800 pt-2">
+          <button
+            type="button"
+            onClick={scrub == null ? () => scrubTo(FIG_SCRUB_MAX) : play}
+            aria-label={scrub == null ? "Freeze and step through the diagram" : "Replay the diagram animation"}
+            title={scrub == null ? "Freeze & step through" : "Replay"}
+            className={cn(
+              "flex h-7 w-7 shrink-0 items-center justify-center rounded border transition-colors",
+              scrub == null
+                ? "border-zinc-700 text-zinc-400 hover:border-blue-400/60 hover:text-blue-300"
+                : "border-blue-400/50 bg-blue-400/10 text-blue-300 hover:bg-blue-400/20",
+            )}
+          >
+            {scrub == null ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
+          </button>
+          <input
+            type="range"
+            min={0}
+            max={FIG_SCRUB_MAX}
+            step={0.05}
+            value={scrub ?? 0}
+            onChange={(e) => scrubTo(Number(e.target.value))}
+            aria-label="Diagram timeline — drag to step through the stages"
+            className="h-4 flex-1 cursor-ew-resize accent-blue-400"
+          />
+          <span className="tnum w-9 shrink-0 text-right font-mono text-[10px] text-zinc-500">
+            {(scrub ?? 0).toFixed(1)}s
+          </span>
+        </div>
+      )}
       <figcaption className="mt-2 border-t border-zinc-800 pt-2 text-[11px] text-zinc-500">
         {is3D
           ? "Interactive 3D scene — real numbers from the storefront database. Drag to orbit, scroll to zoom."
-          : "Interactive diagram — real numbers from the storefront database."}
+          : "Interactive diagram — real numbers from the storefront database. Freeze to step through, drag to rewind."}
       </figcaption>
     </figure>
   );

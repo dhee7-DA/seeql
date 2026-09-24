@@ -42,6 +42,7 @@ import type { ExecResponse } from "@/lib/sql-types";
 import { cn } from "@/lib/utils";
 import { awardPracticeXp, execSql, MiniGrid, recordPracticeAttempt, rowsMatch } from "./practice-kit";
 import { celebrate } from "./celebrate";
+import { seeqReact } from "./seeq-mood";
 import { SqlEditor } from "../sql-editor";
 import { SqlNodes } from "./sql-code";
 
@@ -265,6 +266,7 @@ function PuzzleWorkspace({ day, isToday, puzzle }: { day: string; isToday: boole
     }
     // solved — pay XP, mark the ledger, feed the mastery map
     setSolved(true);
+    seeqReact("puzzle", 3);
     recordPracticeAttempt(puzzle.skill, `puzzle:${day}`, true);
     const firstTry = run.runs === 0;
     if (isToday) {

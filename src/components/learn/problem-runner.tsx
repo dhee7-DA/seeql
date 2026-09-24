@@ -12,6 +12,7 @@ import { useProgress } from "@/lib/curriculum/progress";
 import { xpForDifficulty } from "@/lib/curriculum/gamification";
 import { firstMistake } from "@/lib/curriculum/coach";
 import { reportMentorFailure } from "@/lib/mentor-context";
+import { seeqReact } from "./seeq-mood";
 import type { Problem } from "@/lib/curriculum/types";
 import type { ExecResponse, ExecResult } from "@/lib/sql-types";
 import { cn } from "@/lib/utils";
@@ -114,6 +115,7 @@ export function ProblemCard({ problem, index, onSolved }: { problem: Problem; in
       setVerdict(v);
       setCoachMsg(v.ok ? null : firstMistake(sql, problem.mistakes));
       if (!v.ok) {
+        seeqReact("fail");
         // Drop the attempt on the mentor's desk — the AI Mentor chat picks it up.
         reportMentorFailure({
           sql: sql.slice(0, 2000),
@@ -130,6 +132,7 @@ export function ProblemCard({ problem, index, onSolved }: { problem: Problem; in
         if (store.awardXp(`solve:${problem.id}`, amount)) {
           celebrate({ kind: "xp", title: `+${amount} XP`, sub: `“${problem.title}” solved` });
         }
+        seeqReact("win", 2);
         onSolved?.();
       }
     } finally {
