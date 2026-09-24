@@ -216,7 +216,9 @@ function OverviewModuleCard({
           <span
             aria-hidden
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
-            style={{ background: `conic-gradient(#34d399 ${pct}%, #27272a ${pct}%)` }}
+            style={{
+              background: `conic-gradient(var(--color-emerald-400) ${pct}%, var(--color-zinc-800) ${pct}%)`,
+            }}
           >
             <span
               className={cn(
@@ -573,6 +575,11 @@ export function LearnApp() {
       {/* Definite height (not max-height): max-h-full on the inner panel is a
           percentage, which only resolves against a definite parent height —
           with max-height alone the panel overflows and buries the Toolbox. */}
+      {/* ONE scroll region (rank + curriculum + Toolbox + Practice lab) with
+          only the header and Reset pinned. Pinning the tool groups used to
+          starve the curriculum: on a 1440x900 laptop the 21 pinned rows alone
+          exceed the panel height, flex squeezed the lesson list to zero and
+          the Lab clipped mid-row. */}
       <aside className="order-2 w-full shrink-0 lg:order-1 lg:sticky lg:top-[76px] lg:h-[calc(100vh-96px)] lg:w-[300px] lg:self-start">
         <Panel pad={0} className="flex max-h-full flex-col overflow-hidden">
           <div className="shrink-0 border-b border-zinc-800 p-4">
@@ -709,34 +716,35 @@ export function LearnApp() {
                 </nav>
               );
             })}
-          </div>
-
-          <div className="shrink-0 border-t border-zinc-800/60 p-3">
-            <SectionLabel className="mb-1.5">Toolbox</SectionLabel>
-            <div className="flex flex-col gap-0.5">
-              {CORE_AND_TOOLBOX.map((t, i) => (
-                <ToolRow
-                  key={t.kind}
-                  index={i + 1}
-                  label={t.label}
-                  note={t.note}
-                  active={view.kind === t.kind}
-                  onClick={() => setView({ kind: t.kind } as View)}
-                />
-              ))}
-            </div>
-            <SectionLabel className="mb-1 mt-2">Practice lab</SectionLabel>
-            <div className="flex flex-col gap-0.5">
-              {LAB_TOOLS.map((t, i) => (
-                <ToolRow
-                  key={t.kind}
-                  index={i + 1}
-                  label={t.label}
-                  note={t.note}
-                  active={view.kind === t.kind}
-                  onClick={() => setView({ kind: t.kind } as View)}
-                />
-              ))}
+            {/* Toolbox + Practice lab live INSIDE the scroll region so the
+                curriculum can never be crowded out — see the sidebar comment. */}
+            <div className="border-t border-zinc-800/60 p-3">
+              <SectionLabel className="mb-1.5">Toolbox</SectionLabel>
+              <div className="flex flex-col gap-0.5">
+                {CORE_AND_TOOLBOX.map((t, i) => (
+                  <ToolRow
+                    key={t.kind}
+                    index={i + 1}
+                    label={t.label}
+                    note={t.note}
+                    active={view.kind === t.kind}
+                    onClick={() => setView({ kind: t.kind } as View)}
+                  />
+                ))}
+              </div>
+              <SectionLabel className="mb-1 mt-2">Practice lab</SectionLabel>
+              <div className="flex flex-col gap-0.5">
+                {LAB_TOOLS.map((t, i) => (
+                  <ToolRow
+                    key={t.kind}
+                    index={i + 1}
+                    label={t.label}
+                    note={t.note}
+                    active={view.kind === t.kind}
+                    onClick={() => setView({ kind: t.kind } as View)}
+                  />
+                ))}
+              </div>
             </div>
           </div>
 

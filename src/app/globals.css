@@ -588,6 +588,26 @@
   ::selection {
     background: color-mix(in srgb, var(--brand-accent) 28%, transparent);
   }
+  /* One quiet, theme-aware scrollbar everywhere — the page-level bar used
+     to stay the raw OS default while panels already had .thin-scrollbar.
+     Nested scrollers that declare their own colors still win. */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-zinc-700, #d4d4d8) transparent;
+  }
+  html::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  html::-webkit-scrollbar-thumb {
+    background: var(--color-zinc-700, #d4d4d8);
+    border: 3px solid transparent;
+    border-radius: 8px;
+    background-clip: padding-box;
+  }
+  html::-webkit-scrollbar-track {
+    background: transparent;
+  }
 }
 
 /* ---- SQL editor code layers (must match between <pre> and <textarea>) ---- */

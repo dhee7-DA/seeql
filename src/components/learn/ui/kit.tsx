@@ -43,7 +43,7 @@ export function Panel({
   return (
     <div
       className={cn(
-        "border border-zinc-800",
+        "sheen border border-zinc-800",
         rounded === "xl" ? "rounded-xl" : "rounded-lg",
         tone === "nested" ? "bg-zinc-900/50" : "bg-zinc-950",
         pad === 3.5 && "p-3.5",
@@ -182,7 +182,8 @@ export function Btn({
       type={type}
       {...rest}
       className={cn(
-        "inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-md font-medium transition-colors select-none",
+        "inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-md font-medium transition-all duration-150 select-none",
+        "active:translate-y-px disabled:active:translate-y-0",
         "disabled:cursor-not-allowed disabled:opacity-40",
         FOCUS_RING,
         BTN_VARIANTS[variant](active, danger),
@@ -217,15 +218,17 @@ export function ToolRow({
       onClick={onClick}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors",
-        active ? "bg-zinc-800" : "hover:bg-zinc-900/70",
+        "relative flex w-full cursor-pointer items-center gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors",
+        active ? "bg-emerald-400/[0.08]" : "hover:bg-zinc-900/70",
         FOCUS_RING,
       )}
     >
+      {/* same active language as the lesson rows: accent tick + tinted bg */}
+      {active && <span aria-hidden className="absolute inset-y-1 left-0 w-0.5 rounded-full bg-emerald-400" />}
       <span
         className={cn(
           "tnum shrink-0 text-[10px]",
-          active ? "text-zinc-400" : "text-zinc-600",
+          active ? "text-emerald-300/90" : "text-zinc-600",
         )}
       >
         {String(index).padStart(2, "0")}
@@ -238,8 +241,8 @@ export function ToolRow({
       </span>
       <ArrowRight
         className={cn(
-          "h-3.5 w-3.5 shrink-0 text-zinc-400 transition-opacity",
-          active ? "opacity-100" : "opacity-0",
+          "h-3.5 w-3.5 shrink-0 transition-opacity",
+          active ? "text-emerald-300 opacity-100" : "text-zinc-400 opacity-0",
         )}
       />
     </button>
