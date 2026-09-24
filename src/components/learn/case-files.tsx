@@ -21,6 +21,7 @@ import {
   Stamp,
   X,
 } from "lucide-react";
+import { Icon3D } from "./ui/icon3d";
 import { useProgress } from "@/lib/curriculum/progress";
 import {
   CASES,
@@ -396,7 +397,7 @@ export function CaseFiles() {
         )}{" "}
         TOOLKIT
       </p>
-      <h1 className="font-display mt-2 text-3xl font-semibold tracking-[-0.02em] text-zinc-50">The case file drawer</h1>
+      <h1 className="mt-2 flex items-center gap-3 font-display text-3xl font-semibold tracking-[-0.02em] text-zinc-50"><Icon3D name="folder" size={40} />The case file drawer</h1>
       <p className="mt-3 text-[15px] leading-7 text-zinc-400">
         Real memos from stakeholders, real queries with the figures and keywords pulled out. Rebuild each
         query from the chip bank — every wrong chip gets coached, every closed case pays {CASE_XP} XP.

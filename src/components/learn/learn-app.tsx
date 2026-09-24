@@ -11,8 +11,6 @@ import {
   ChevronDown,
   ChevronsDownUp,
   ChevronsUpDown,
-  Flame,
-  GraduationCap,
   RotateCcw,
 } from "lucide-react";
 import { LESSONS, MODULES } from "@/lib/curriculum/lessons";
@@ -44,6 +42,7 @@ import { ActivityStrip, MasteryGrid } from "./progress-cards";
 import { CelebrationHost, celebrate } from "./celebrate";
 import { CORE_AND_TOOLBOX, LAB_TOOLS, TOOLS, type ToolKind } from "./tools";
 import { Btn, Chip, Panel, ProgressBar, SectionLabel, ToolRow } from "./ui/kit";
+import { Icon3D } from "./ui/icon3d";
 
 type View =
   | { kind: "overview" }
@@ -183,7 +182,7 @@ function RankBlock({ xp, level, streak }: { xp: number; level: ReturnType<typeof
         {level.next === null ? "Top rank reached — Query Wizard" : `${(level.next - xp).toLocaleString()} XP to ${titleAfter(level.index)}`}
       </p>
       <div className="mt-2.5 flex items-center gap-1.5 border-t border-zinc-800 pt-2.5 text-[11px] text-zinc-400">
-        <Flame className={cn("h-3.5 w-3.5", streak > 0 ? "flame-live text-amber-400" : "text-zinc-600")} />
+        <Icon3D name="fire" size={18} anim={streak > 0 ? "wiggle" : "none"} className={streak > 0 ? "" : "opacity-30 grayscale"} />
         {streak > 0 ? `${streak}-day streak — keep it alive` : "Hit your daily goal to start a streak"}
       </div>
     </Panel>
@@ -355,7 +354,10 @@ function Overview({
       <Panel pad={5}>
         <p className="font-mono text-xs text-zinc-500">{MODULES.length} MODULES · BEGINNER → EXPERT</p>
         <div className="mt-2 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
-          <h1 className="font-display text-3xl font-semibold tracking-[-0.02em] text-zinc-50">The SeeQL course</h1>
+          <h1 className="flex items-center gap-3.5 font-display text-3xl font-semibold tracking-[-0.02em] text-zinc-50">
+            <Icon3D name="db" size={52} anim="float" />
+            The SeeQL course
+          </h1>
           <div className="flex flex-wrap items-center gap-2">
             <Chip k="Rank" v={level.title} />
             <Chip k="Total XP" v={xp.toLocaleString()} />
@@ -390,7 +392,10 @@ function Overview({
       {/* Course map — all modules scannable in one screenful, lessons reveal on demand */}
       <section className="mt-7">
         <div className="flex items-baseline justify-between">
-          <h2 className="font-display text-sm font-semibold text-zinc-200">Course map</h2>
+          <h2 className="flex items-center gap-2.5 font-display text-sm font-semibold text-zinc-200">
+            <Icon3D name="book" size={22} />
+            Course map
+          </h2>
           <span className="text-[11px] text-zinc-500">tap a module to reveal its lessons</span>
         </div>
         <div className="mt-3 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
@@ -413,7 +418,10 @@ function Overview({
       </div>
 
       <Panel rounded="lg" className="mt-6">
-        <h3 className="font-display text-sm font-semibold text-zinc-100">Badges</h3>
+        <h3 className="flex items-center gap-2.5 font-display text-sm font-semibold text-zinc-100">
+          <Icon3D name="trophy" size={24} />
+          Badges
+        </h3>
         <div className="mt-3 flex flex-wrap gap-2">
           {BADGES.map((b) => {
             const earned = badgesMap[b.id] !== undefined;
@@ -585,7 +593,7 @@ export function LearnApp() {
           <div className="shrink-0 border-b border-zinc-800 p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <GraduationCap className="h-4 w-4 text-emerald-400" />
+                <Icon3D name="cap" size={22} />
                 <h2 className="font-display text-sm font-semibold text-zinc-100">SeeQL Curriculum</h2>
               </div>
               <div className="flex items-center gap-0.5">

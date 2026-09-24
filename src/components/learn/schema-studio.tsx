@@ -7,6 +7,7 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle2, ChevronLeft, ChevronRight, Network, X } from "lucide-react";
+import { Icon3D } from "./ui/icon3d";
 import { useProgress } from "@/lib/curriculum/progress";
 import { STUDIO_ITEMS, STUDIO_XP, type StudioItem } from "@/lib/curriculum/schema-drills";
 import { cn } from "@/lib/utils";
@@ -151,7 +152,7 @@ export function SchemaStudio() {
       <p className="flex items-center gap-2 font-mono text-xs text-zinc-500">
         <Network className="h-3.5 w-3.5" /> {STUDIO_ITEMS.length} SCENARIOS · MODELING JUDGMENT
       </p>
-      <h1 className="font-display mt-2 text-3xl font-semibold tracking-[-0.02em] text-zinc-50">Schema studio</h1>
+      <h1 className="mt-2 flex items-center gap-3 font-display text-3xl font-semibold tracking-[-0.02em] text-zinc-50"><Icon3D name="table" size={40} />Schema studio</h1>
       <p className="mt-3 text-[15px] leading-7 text-zinc-400">
         Querying is half the job. The other half is deciding what the tables should look like — keys, normal
         forms, types, and which verb touches which layer. Ten design reviews, one call each.

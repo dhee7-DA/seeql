@@ -24,6 +24,7 @@ import {
   Trash2,
   XCircle,
 } from "lucide-react";
+import { Icon3D } from "./ui/icon3d";
 import type { CellValue, PlanRow } from "@/lib/sql-types";
 import { reportMentorFailure } from "@/lib/mentor-context";
 import { useProgress } from "@/lib/curriculum/progress";
@@ -693,7 +694,7 @@ export function PerfLab({
       <p className="flex items-center gap-2 font-mono text-xs text-zinc-500">
         <Gauge className="h-3.5 w-3.5" /> SCAN vs SEARCH · THE ENGINE&apos;S OWN ACCOUNT
       </p>
-      <h1 className="font-display mt-2 text-3xl font-semibold tracking-[-0.02em] text-zinc-50">Performance lab</h1>
+      <h1 className="mt-2 flex items-center gap-3 font-display text-3xl font-semibold tracking-[-0.02em] text-zinc-50"><Icon3D name="search" size={40} />Performance lab</h1>
       <p className="mt-3 text-[15px] leading-7 text-zinc-400">
         Every query has two costs: the rows it returns, and the path it takes to get them. EXPLAIN QUERY PLAN is the
         engine&apos;s honest account of that path. Watch it, change it with an index, and — in the detective cases —

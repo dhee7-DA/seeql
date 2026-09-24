@@ -8,6 +8,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Briefcase, ChevronDown, Loader2, Lock, Play, RotateCcw, Trophy } from "lucide-react";
+import { Icon3D } from "./ui/icon3d";
 import { useProgress } from "@/lib/curriculum/progress";
 import { INTERVIEW_RUNGS, INTERVIEW_XP, type InterviewRung } from "@/lib/curriculum/interview";
 import type { ExecResponse } from "@/lib/sql-types";
@@ -223,7 +224,7 @@ export function InterviewTrack() {
       <p className="flex items-center gap-2 font-mono text-xs text-zinc-500">
         <Briefcase className="h-3.5 w-3.5" /> {INTERVIEW_RUNGS.length} RUNGS · WARM-UP → BOSS
       </p>
-      <h1 className="font-display mt-2 text-3xl font-semibold tracking-[-0.02em] text-zinc-50">Interview prep</h1>
+      <h1 className="mt-2 flex items-center gap-3 font-display text-3xl font-semibold tracking-[-0.02em] text-zinc-50"><Icon3D name="rocket" size={40} />Interview prep</h1>
       <p className="mt-3 text-[15px] leading-7 text-zinc-400">
         The classics every screen asks: the scalar lookup, the second-max, per-group extremes, top-N, the
         anti-join and the LAG growth walk — live on the storefront, graded on your rows. Write your own query;

@@ -9,6 +9,7 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle2, ChevronLeft, ChevronRight, Circle, MessagesSquare, RotateCcw } from "lucide-react";
+import { Icon3D } from "./ui/icon3d";
 import { useProgress } from "@/lib/curriculum/progress";
 import { EXPLAINS, EXPLAIN_XP, type ConceptGroup, type ExplainItem } from "@/lib/curriculum/explains";
 import { cn } from "@/lib/utils";
@@ -193,7 +194,7 @@ export function ExplainBack() {
       <p className="flex items-center gap-2 font-mono text-xs text-zinc-500">
         <MessagesSquare className="h-3.5 w-3.5" /> {EXPLAINS.length} QUERIES · WRITE IT BACKWARDS
       </p>
-      <h1 className="font-display mt-2 text-3xl font-semibold tracking-[-0.02em] text-zinc-50">Explain back</h1>
+      <h1 className="mt-2 flex items-center gap-3 font-display text-3xl font-semibold tracking-[-0.02em] text-zinc-50"><Icon3D name="chat" size={40} />Explain back</h1>
       <p className="mt-3 text-[15px] leading-7 text-zinc-400">
         Writing SQL proves you can build; explaining it proves you understand. Read each query and say what it
         does in plain English — the grader checks for the concepts a complete answer mentions, and shows its

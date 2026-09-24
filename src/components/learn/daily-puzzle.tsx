@@ -27,6 +27,7 @@ import {
   Snowflake,
   Trophy,
 } from "lucide-react";
+import { Icon3D } from "./ui/icon3d";
 import { useProgress } from "@/lib/curriculum/progress";
 import {
   DAILY_PUZZLES,
@@ -485,7 +486,7 @@ export function DailyPuzzle() {
       <p className="flex items-center gap-2 font-mono text-xs text-zinc-500">
         <CalendarDays className="h-3.5 w-3.5" /> {DAILY_PUZZLES.length} IN ROTATION · ONE A DAY
       </p>
-      <h1 className="font-display mt-2 text-3xl font-semibold tracking-[-0.02em] text-zinc-50">Daily puzzle</h1>
+      <h1 className="mt-2 flex items-center gap-3 font-display text-3xl font-semibold tracking-[-0.02em] text-zinc-50"><Icon3D name="timer" size={40} />Daily puzzle</h1>
       <p className="mt-3 text-[15px] leading-7 text-zinc-400">
         One hand-built puzzle waits on every calendar day — dashboards, anti-joins, reconciliations, windows. Solve
         today&apos;s to keep the streak alive; miss a day and a freeze token can bridge it. Days of the current and

@@ -7,6 +7,7 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Bug, CheckCircle2, ChevronLeft, ChevronRight, Stethoscope, X } from "lucide-react";
+import { Icon3D } from "./ui/icon3d";
 import { useProgress } from "@/lib/curriculum/progress";
 import { CLINICS, CLINIC_XP, type ClinicItem } from "@/lib/curriculum/errors";
 import { cn } from "@/lib/utils";
@@ -184,7 +185,7 @@ export function ErrorClinic() {
       <p className="flex items-center gap-2 font-mono text-xs text-zinc-500">
         <Bug className="h-3.5 w-3.5" /> {CLINICS.length} CASES · 7 LOUD ERRORS · 5 SILENT BUGS
       </p>
-      <h1 className="font-display mt-2 text-3xl font-semibold tracking-[-0.02em] text-zinc-50">The error clinic</h1>
+      <h1 className="mt-2 flex items-center gap-3 font-display text-3xl font-semibold tracking-[-0.02em] text-zinc-50"><Icon3D name="shield" size={40} />The error clinic</h1>
       <p className="mt-3 text-[15px] leading-7 text-zinc-400">
         Real engine messages, real silent wrong answers — read the symptom, name the disease. The silent ones are
         the dangerous kind: valid SQL, zero errors, wrong truth. {CLINIC_XP} XP per first diagnosis.

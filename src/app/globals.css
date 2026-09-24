@@ -816,11 +816,42 @@ html:not(.dark) .card-hover:hover {
   transform-origin: 50% 90%;
 }
 
+/* 3D icon accents — glossy clay renders with real alpha (technique from
+   github.com/samyost1/3dicon, MIT). The drop shadow seats the floating
+   object on flat surfaces; motion presets are decoration only. */
+.icon3d {
+  filter: drop-shadow(0 10px 12px rgb(0 0 0 / 0.3));
+}
+@keyframes icon3d-float-kf {
+  0%, 100% { transform: translateY(0) rotate(-1.2deg); }
+  50% { transform: translateY(-7px) rotate(1.2deg); }
+}
+@keyframes icon3d-bob-kf {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+@keyframes icon3d-wiggle-kf {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+.icon3d-float { animation: icon3d-float-kf 4.4s ease-in-out infinite; }
+.icon3d-bob { animation: icon3d-bob-kf 2.6s ease-in-out infinite; }
+.icon3d-wiggle {
+  animation: icon3d-wiggle-kf 2.2s ease-in-out infinite;
+  transform-origin: 50% 85%;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .pulse-soft,
   .bar-shimmer::after,
-  .flame-live {
+  .flame-live,
+  .icon3d-float,
+  .icon3d-bob,
+  .icon3d-wiggle {
     animation: none;
+  }
+  .icon3d {
+    filter: drop-shadow(0 6px 8px rgb(0 0 0 / 0.22));
   }
   .card-hover,
   .btn-glow,

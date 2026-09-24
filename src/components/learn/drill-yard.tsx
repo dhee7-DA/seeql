@@ -16,6 +16,7 @@
 
 import { useMemo, useState } from "react";
 import { ArrowRight, Dumbbell, Layers, RefreshCcw, Zap } from "lucide-react";
+import { Icon3D } from "./ui/icon3d";
 import { DRILL_SETS, drillTotal, ASPECT_LABELS } from "@/lib/curriculum/drills";
 import type { DrillQ, DrillSet, DrillTier } from "@/lib/curriculum/drills";
 import { useProgress } from "@/lib/curriculum/progress";
@@ -224,7 +225,7 @@ export function DrillYard({ scopeId = "yard", keywords }: { scopeId?: string; ke
         <button onClick={back} className="mb-3 font-mono text-[11px] text-zinc-500 transition-colors hover:text-zinc-300">
           ← all keywords
         </button>
-        <h1 className="font-display text-2xl font-semibold tracking-tight text-zinc-50">{active.label} drill</h1>
+        <h1 className="flex items-center gap-3 font-display text-2xl font-semibold tracking-tight text-zinc-50"><Icon3D name="target" size={34} />{active.label} drill</h1>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-400">{active.blurb}</p>
         <p className="tnum mt-1.5 font-mono text-[11px] text-zinc-600">
           round {roundNum} · {deck.length} this round · bank {mastered}/{active.questions.length} mastered · {remaining} to go

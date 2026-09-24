@@ -8,6 +8,7 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Activity, ArrowRight, BellRing, CheckCircle2, Sparkles, Target } from "lucide-react";
+import { Icon3D } from "./ui/icon3d";
 import { LESSONS } from "@/lib/curriculum/lessons";
 import { dayKey } from "@/lib/curriculum/gamification";
 import { useProgress, dueReviews } from "@/lib/curriculum/progress";
@@ -91,7 +92,7 @@ export function MasteryMap({ onOpenLesson }: { onOpenLesson: (id: string) => voi
       <p className="flex items-center gap-2 font-mono text-xs text-zinc-500">
         <Activity className="h-3.5 w-3.5" /> {SKILLS.length} SKILLS · {tested} WITH SIGNAL
       </p>
-      <h1 className="font-display mt-2 text-3xl font-semibold tracking-[-0.02em] text-zinc-50">Mastery map</h1>
+      <h1 className="mt-2 flex items-center gap-3 font-display text-3xl font-semibold tracking-[-0.02em] text-zinc-50"><Icon3D name="brain" size={40} />Mastery map</h1>
       <p className="mt-3 text-[15px] leading-7 text-zinc-400">
         Every quiz, prediction, diagnosis, round of golf and interview run folds into one map. Cells with no
         signal stay gray — go make them tell you something.

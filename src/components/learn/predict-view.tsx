@@ -8,6 +8,7 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle2, ChevronLeft, ChevronRight, Eye, RotateCcw, X } from "lucide-react";
+import { Icon3D } from "./ui/icon3d";
 import { useProgress } from "@/lib/curriculum/progress";
 import { PREDICTS, PREDICTS_XP, type PredictItem } from "@/lib/curriculum/predicts";
 import { cn } from "@/lib/utils";
@@ -165,7 +166,7 @@ export function PredictView() {
       <p className="flex items-center gap-2 font-mono text-xs text-zinc-500">
         <Eye className="h-3.5 w-3.5" /> {PREDICTS.length} CHALLENGES · MENTAL EXECUTION
       </p>
-      <h1 className="font-display mt-2 text-3xl font-semibold tracking-[-0.02em] text-zinc-50">Predict the output</h1>
+      <h1 className="mt-2 flex items-center gap-3 font-display text-3xl font-semibold tracking-[-0.02em] text-zinc-50"><Icon3D name="eye" size={40} />Predict the output</h1>
       <p className="mt-3 text-[15px] leading-7 text-zinc-400">
         Read the query, freeze the grid you expect — before the engine runs. The wrong options are the mistakes
         everyone actually makes: the = NULL myth, fanout counting, forgotten filters. Prediction first, run second:

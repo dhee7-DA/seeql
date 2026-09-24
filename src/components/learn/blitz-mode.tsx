@@ -32,6 +32,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Flame, Keyboard, RefreshCcw, Shield, Timer, Trophy, Zap } from "lucide-react";
+import { Icon3D } from "./ui/icon3d";
 import { LESSONS } from "@/lib/curriculum/lessons";
 import { useProgress } from "@/lib/curriculum/progress";
 import { dayKey } from "@/lib/curriculum/gamification";
@@ -390,7 +391,7 @@ export function BlitzMode() {
   const header = (
     <>
       <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-500">Toolbox</p>
-      <h1 className="font-display mt-2 text-2xl font-semibold tracking-tight text-zinc-50">Blitz mode</h1>
+      <h1 className="mt-2 flex items-center gap-3 font-display text-2xl font-semibold tracking-tight text-zinc-50"><Icon3D name="bolt" size={34} />Blitz mode</h1>
     </>
   );
 

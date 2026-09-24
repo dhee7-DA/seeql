@@ -7,6 +7,7 @@
 
 import { useEffect, useState } from "react";
 import { ExternalLink, X } from "lucide-react";
+import { Icon3D } from "./ui/icon3d";
 import { cn } from "@/lib/utils";
 import { WORLDS, WORLD_FOR_TABLE, getWorld, schemaFor } from "@/lib/worlds-meta";
 
@@ -101,7 +102,7 @@ export function DataExplorer() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-500">Toolbox</p>
-          <h1 className="font-display mt-2 text-2xl font-semibold tracking-tight text-zinc-50">Data explorer</h1>
+          <h1 className="mt-2 flex items-center gap-3 font-display text-2xl font-semibold tracking-tight text-zinc-50"><Icon3D name="db" size={34} />Data explorer</h1>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-400">
             One sandbox, five data worlds. The lessons live on the storefront; the
             finance books, a hospital, a football league and a freight network are

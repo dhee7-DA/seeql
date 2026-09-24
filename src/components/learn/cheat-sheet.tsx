@@ -7,6 +7,7 @@
 
 import { useMemo } from "react";
 import { BookMarked, Printer } from "lucide-react";
+import { Icon3D } from "./ui/icon3d";
 import { LESSONS } from "@/lib/curriculum/lessons";
 import { useProgress, dueReviews } from "@/lib/curriculum/progress";
 import { computeMastery, LEVEL_TONE, skillLabel, weakestSkills } from "@/lib/curriculum/mastery";
@@ -80,7 +81,7 @@ export function CheatSheet() {
         <p className="flex items-center gap-2 font-mono text-xs text-zinc-500">
           <BookMarked className="h-3.5 w-3.5" /> PERSONAL · PRINTS TO PDF
         </p>
-        <h1 className="font-display mt-2 text-3xl font-semibold tracking-[-0.02em] text-zinc-50">Your cheat sheet</h1>
+        <h1 className="mt-2 flex items-center gap-3 font-display text-3xl font-semibold tracking-[-0.02em] text-zinc-50"><Icon3D name="book" size={40} />Your cheat sheet</h1>
         <p className="mt-3 text-[15px] leading-7 text-zinc-400">
           The revision sheet builds itself from what you actually did: the questions you missed, the skills the
           map calls shaky, the review cards coming due — over a compact reference layer. Print it, save the PDF,

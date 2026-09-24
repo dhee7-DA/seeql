@@ -8,6 +8,7 @@
 
 import { useMemo, useState } from "react";
 import { ArrowRight, RefreshCcw } from "lucide-react";
+import { Icon3D } from "./ui/icon3d";
 import { LESSONS } from "@/lib/curriculum/lessons";
 import { useProgress, dueReviews } from "@/lib/curriculum/progress";
 import type { Mcq } from "@/lib/curriculum/types";
@@ -93,7 +94,7 @@ export function MixedQuiz() {
   return (
     <div className="max-w-3xl">
       <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-500">Toolbox</p>
-      <h1 className="font-display mt-2 text-2xl font-semibold tracking-tight text-zinc-50">Mixed quiz</h1>
+      <h1 className="mt-2 flex items-center gap-3 font-display text-2xl font-semibold tracking-tight text-zinc-50"><Icon3D name="puzzle" size={34} />Mixed quiz</h1>
       <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-400">
         {ROUND} questions pulled from all {LESSONS.length} lessons — the deck leans toward questions you
         haven&apos;t seen or missed before. First-try answers still earn XP; repeats never pay twice.

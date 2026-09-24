@@ -10,6 +10,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Bot, Loader2, RotateCcw, Send, Sparkles, X } from "lucide-react";
+import { Icon3D } from "./ui/icon3d";
 import { useMentorContext } from "@/lib/mentor-context";
 import { cn } from "@/lib/utils";
 import { RichNodes } from "./rich";
@@ -150,7 +151,7 @@ export function MentorChat() {
             <Bot className="h-4.5 w-4.5 text-emerald-300" />
           </span>
           <div>
-            <h1 className="font-display text-lg font-semibold tracking-[-0.02em] text-zinc-50">AI Mentor</h1>
+            <h1 className="flex items-center gap-2.5 font-display text-lg font-semibold tracking-[-0.02em] text-zinc-50"><Icon3D name="chat" size={26} />AI Mentor</h1>
             <p className="text-[11px] text-zinc-500">grounded on the live storefront schema · tiered hints, never spoilers</p>
           </div>
         </div>

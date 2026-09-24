@@ -6,8 +6,9 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Award, Info, TrendingUp, Zap } from "lucide-react";
+import { Info, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Icon3D, type Icon3DName } from "./ui/icon3d";
 
 export type ToastKind = "xp" | "badge" | "level" | "info";
 
@@ -43,10 +44,10 @@ export function CelebrationHost() {
     };
   }, []);
 
-  const tone: Record<ToastKind, { bar: string; chip: string; Icon: typeof Zap }> = {
+  const tone: Record<ToastKind, { bar: string; chip: string; Icon: typeof Zap; icon3d?: Icon3DName }> = {
     xp: { bar: "border-l-emerald-400", chip: "bg-emerald-400/15 text-emerald-300", Icon: Zap },
-    badge: { bar: "border-l-amber-400", chip: "bg-amber-400/15 text-amber-300", Icon: Award },
-    level: { bar: "border-l-teal-400", chip: "bg-teal-400/15 text-teal-300", Icon: TrendingUp },
+    badge: { bar: "border-l-amber-400", chip: "bg-amber-400/15 text-amber-300", Icon: Zap, icon3d: "trophy" },
+    level: { bar: "border-l-teal-400", chip: "bg-teal-400/15 text-teal-300", Icon: Zap, icon3d: "rocket" },
     info: { bar: "border-l-zinc-500", chip: "bg-zinc-400/15 text-zinc-300", Icon: Info },
   };
 
@@ -54,7 +55,7 @@ export function CelebrationHost() {
     <div className="pointer-events-none fixed bottom-4 right-4 z-[60] flex w-[280px] flex-col gap-2" aria-live="polite">
       <AnimatePresence>
         {stack.map((t) => {
-          const { bar, chip, Icon } = tone[t.kind];
+          const { bar, chip, Icon, icon3d } = tone[t.kind];
           return (
             <motion.div
               key={t.id}
@@ -68,7 +69,7 @@ export function CelebrationHost() {
               )}
             >
               <span className={cn("mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md", chip)}>
-                <Icon className="h-3.5 w-3.5" />
+                {icon3d ? <Icon3D name={icon3d} size={22} anim="bob" /> : <Icon className="h-3.5 w-3.5" />}
               </span>
               <span className="min-w-0">
                 <p className="text-sm font-medium leading-snug text-zinc-100">{t.title}</p>

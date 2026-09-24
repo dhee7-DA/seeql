@@ -10,6 +10,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Flag, Gauge, Loader2, Play, RotateCcw, Trophy } from "lucide-react";
+import { Icon3D } from "./ui/icon3d";
 import { useProgress } from "@/lib/curriculum/progress";
 import { GOLF_HOLES, GOLF_XP, type GolfHole } from "@/lib/curriculum/golf";
 import { countStrokes, golfVerdict } from "@/lib/curriculum/golf-score";
@@ -257,7 +258,7 @@ export function QueryGolf({ onOpenPerf }: { onOpenPerf?: (sql: string) => void }
       <p className="flex items-center gap-2 font-mono text-xs text-zinc-500">
         <Flag className="h-3.5 w-3.5" /> {GOLF_HOLES.length} HOLES · STROKES = CLAUSES + COLUMNS
       </p>
-      <h1 className="font-display mt-2 text-3xl font-semibold tracking-[-0.02em] text-zinc-50">Query golf</h1>
+      <h1 className="mt-2 flex items-center gap-3 font-display text-3xl font-semibold tracking-[-0.02em] text-zinc-50"><Icon3D name="golf" size={40} />Query golf</h1>
       <p className="mt-3 text-[15px] leading-7 text-zinc-400">
         Same result, fewer strokes. Every clause and every projected column is a stroke; the engine&apos;s
         EXPLAIN QUERY PLAN is the scorecard. Run live, graded on rows first and pars second — eagle beats par

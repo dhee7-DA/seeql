@@ -11,22 +11,16 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useInView, useMotionValue, useSpring } from "framer-motion";
 import {
   ArrowRight,
-  BarChart3,
   Check,
-  CircleHelp,
-  Database,
-  Eye,
-  Layers,
   Menu,
-  PencilRuler,
   X,
-  Zap,
 } from "lucide-react";
 import { LogoFull } from "@/components/brand";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { BloubBot, type BloubCommand } from "@/components/bloub/bloub-bot";
 import type { StateId } from "@/components/bloub/states";
 import { HeroDemo } from "@/components/landing/hero-demo";
+import { Icon3D, type Icon3DName } from "@/components/learn/ui/icon3d";
 import { LESSONS, MODULES } from "@/lib/curriculum/lessons";
 import { LEVELS } from "@/lib/curriculum/gamification";
 
@@ -105,6 +99,16 @@ function IconSquare({ icon: Icon, className }: { icon: React.ComponentType<{ cla
   return (
     <span className={className ?? "inline-flex h-9 w-9 items-center justify-center rounded-md border border-zinc-700"}>
       <Icon className="h-4 w-4 text-zinc-200" />
+    </span>
+  );
+}
+
+/** AB icon square carrying a glossy 3D render instead of a flat glyph — same
+    bordered cell, one size up so the object has room to sit. */
+function Icon3DTile({ name }: { name: Icon3DName }) {
+  return (
+    <span className="inline-flex h-14 w-14 items-center justify-center rounded-lg border border-zinc-700">
+      <Icon3D name={name} size={40} />
     </span>
   );
 }
@@ -355,7 +359,11 @@ export function Landing({
                 : "No account · no setup · everything runs in your browser"}
             </p>
           </div>
-          <div className="flex justify-center lg:justify-end">
+          <div className="relative flex justify-center lg:justify-end">
+            {/* floating 3D accents — decoration, never information */}
+            <Icon3D name="db" size={56} anim="float" className="absolute -top-7 left-6 z-10 hidden sm:block lg:left-10" />
+            <Icon3D name="bolt" size={38} anim="wiggle" className="absolute -right-1 top-20 z-10 hidden sm:block lg:-right-3" />
+            <Icon3D name="star" size={34} anim="bob" className="absolute bottom-10 -left-1 z-10 hidden lg:block lg:-left-6" />
             <HeroDemo />
           </div>
         </div>
@@ -402,15 +410,15 @@ export function Landing({
           <Reveal delay={0.05}>
             <div className="mt-14 grid overflow-hidden rounded-xl border border-zinc-800 sm:grid-cols-2 lg:grid-cols-3">
               {[
-                { icon: Eye, title: "Diagrams that move", body: "Watch WHERE eat 103 rows and pass 65. Watch GROUP BY split them into buckets, then HAVING slam the gate. Every figure uses the real numbers from your database." },
-                { icon: Database, title: "A real database underneath", body: "Five related tables, 103 orders, 251 line items — messy enough to be honest. Every query you write executes on live SQLite, not a mock." },
-                { icon: CircleHelp, title: "Grading, not vibes", body: "Practice results are compared against reference answers — columns, values, and (where it matters) row order. You know exactly why a query passes or fails." },
-                { icon: Layers, title: "One idea at a time", body: "Projection, filtering, NULLs, sorting, deduplication, aggregates, GROUP BY — each lesson adds exactly one concept to your pipeline." },
-                { icon: BarChart3, title: "Progress that feels like a game", body: "XP for every solved query, six ranks from Data Novice to Query Wizard, streaks, daily goals and badges — earned, never given." },
-                { icon: Zap, title: "Zero setup", body: "No account, no installs, no Docker. Open the page and your sandbox database is already running. Progress saves to your device." },
+                { icon3d: "eye" as Icon3DName, title: "Diagrams that move", body: "Watch WHERE eat 103 rows and pass 65. Watch GROUP BY split them into buckets, then HAVING slam the gate. Every figure uses the real numbers from your database." },
+                { icon3d: "db" as Icon3DName, title: "A real database underneath", body: "Five related tables, 103 orders, 251 line items — messy enough to be honest. Every query you write executes on live SQLite, not a mock." },
+                { icon3d: "target" as Icon3DName, title: "Grading, not vibes", body: "Practice results are compared against reference answers — columns, values, and (where it matters) row order. You know exactly why a query passes or fails." },
+                { icon3d: "puzzle" as Icon3DName, title: "One idea at a time", body: "Projection, filtering, NULLs, sorting, deduplication, aggregates, GROUP BY — each lesson adds exactly one concept to your pipeline." },
+                { icon3d: "star" as Icon3DName, title: "Progress that feels like a game", body: "XP for every solved query, six ranks from Data Novice to Query Wizard, streaks, daily goals and badges — earned, never given." },
+                { icon3d: "bolt" as Icon3DName, title: "Zero setup", body: "No account, no installs, no Docker. Open the page and your sandbox database is already running. Progress saves to your device." },
               ].map((f) => (
                 <div key={f.title} className="-ml-px -mt-px border border-zinc-800 p-6">
-                  <IconSquare icon={f.icon} />
+                  <Icon3DTile name={f.icon3d} />
                   <h3 className="mt-4 text-[15px] font-semibold text-zinc-100">{f.title}</h3>
                   <p className="mt-2 text-[13px] leading-6 text-zinc-400">{f.body}</p>
                 </div>
@@ -439,14 +447,14 @@ export function Landing({
           <Reveal delay={0.05}>
             <div className="mt-14 grid overflow-hidden rounded-xl border border-zinc-800 lg:grid-cols-3">
               {[
-                { n: "01", icon: PencilRuler, title: "Read the idea", body: "Short, plain-English explanations. The paragraph that matters, right next to the query it explains." },
-                { n: "02", icon: Eye, title: "Watch it move", body: "Each hard idea gets an animated diagram on real data, so your mental model is a picture instead of a memorized rule." },
-                { n: "03", icon: Zap, title: "Prove it live", body: "Answer quiz questions, then write real SQL and get graded against the reference answer on the actual database. XP only when it's right." },
+                { n: "01", icon3d: "book" as Icon3DName, title: "Read the idea", body: "Short, plain-English explanations. The paragraph that matters, right next to the query it explains." },
+                { n: "02", icon3d: "eye" as Icon3DName, title: "Watch it move", body: "Each hard idea gets an animated diagram on real data, so your mental model is a picture instead of a memorized rule." },
+                { n: "03", icon3d: "rocket" as Icon3DName, title: "Prove it live", body: "Answer quiz questions, then write real SQL and get graded against the reference answer on the actual database. XP only when it's right." },
               ].map((s) => (
                 <div key={s.n} className="-ml-px -mt-px border border-zinc-800 p-6">
                   <div className="flex items-start justify-between">
                     <span className="tnum text-[11px] text-zinc-500">{s.n}</span>
-                    <IconSquare icon={s.icon} />
+                    <Icon3DTile name={s.icon3d} />
                   </div>
                   <h3 className="mt-5 text-[15px] font-semibold text-zinc-100">{s.title}</h3>
                   <p className="mt-2 text-[13px] leading-6 text-zinc-400">{s.body}</p>
@@ -463,7 +471,8 @@ export function Landing({
           <Reveal>
             <Eyebrow n="03">Curriculum</Eyebrow>
             <div className="mt-8 grid gap-6 lg:grid-cols-2 lg:gap-16">
-              <h2 className="font-display text-3xl font-black leading-[1.05] tracking-[-0.02em] text-zinc-100 sm:text-4xl">
+              <h2 className="flex items-center gap-4 font-display text-3xl font-black leading-[1.05] tracking-[-0.02em] text-zinc-100 sm:text-4xl">
+                <Icon3D name="cap" size={44} anim="bob" className="hidden sm:block" />
                 Nine modules. One database.
               </h2>
               <p className="text-[15px] leading-[1.7] text-zinc-400 lg:pt-1.5">
@@ -573,7 +582,8 @@ export function Landing({
       <section className="border-b border-zinc-800">
         <div className="mx-auto w-full max-w-5xl px-4 py-20 sm:px-6 lg:py-24">
           <Reveal>
-            <div className="rounded-xl border border-zinc-800 px-6 py-14 sm:px-12">
+            <div className="relative rounded-xl border border-zinc-800 px-6 py-14 sm:px-12">
+              <Icon3D name="trophy" size={72} anim="float" className="absolute right-8 top-10 hidden lg:block" />
               <div className="flex flex-wrap items-baseline justify-between gap-4">
                 <h2 className="font-display text-3xl font-black tracking-[-0.02em] text-zinc-100 sm:text-4xl">
                   Free<span className="text-zinc-500">. {LESSONS.length} lessons, one price.</span>
