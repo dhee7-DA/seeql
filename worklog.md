@@ -2458,3 +2458,25 @@ Stage Summary:
 - Key files: src/components/learn/{blitz-mode.tsx (NEW), seeq-mood.ts, seeq-buddy.tsx, tools.ts, learn-app.tsx}.
 - Standing hooks: blitz channel ready for future surfaces (any timed mode can emit start/hot/miss/end); react-hooks/refs lesson — refs are callback-only, render reads mirrored state.
 - Next per queue: #7 Capstone + certificate (absorbs the lost lesson-58 draft), #8 Journey page.
+
+---
+Task ID: 26
+Agent: Super Z (main agent)
+Task: UI polish wave — user: "lets polish the UI and overall looks of the app".
+
+Work Log:
+- Visual recon first (agent-browser screenshots: landing, learn overview, lesson, mobile 390, playground): the token layer (globals.css themes, premium material classes) and lesson/tool views are already mature; the real findings were one functional layout bug + four consistency gaps.
+- BUG (the headline): sidebar pinned sections starved the curriculum. Toolbox (10 rows) + Practice lab (11 rows) + labels were shrink-0 siblings of the flex-1 scroll region; at 1440x900 the pinned stack alone exceeds the panel height, so flex squeezed the scroll region to zero (RankBlock + module list invisible) and overflow-hidden clipped the Lab mid-row ("Error clinic" half-cut, Reset unreachable). FIX: ONE scroll region now holds RankBlock + modules + Toolbox + Lab; only the header and Reset stay pinned. Tall screens render identically; short screens get everything reachable.
+- ToolRow active language unified with lesson rows: was bg-zinc-800 block + grey arrow; now emerald-400/[0.08] tint + absolute left accent tick (inset-y-1 w-0.5 rounded) + emerald arrow/index — same active anatomy everywhere in the sidebar.
+- Module progress rings theme-adaptive: OverviewModuleCard conic-gradient hardcoded #34d399/#27272a (raw emerald/zinc) which bypass the theme remaps (builder emerald-400 = #2563eb blue) — partial progress would have shown green-on-darkgrey inside a blue app. Now conic-gradient(var(--color-emerald-400) pct%, var(--color-zinc-800) pct%). (fx.tsx confetti/draw-mark greens and figures3d scene materials left alone: success semantics and 3D lighting, not brand roles.)
+- Kit upgrades: Btn gets transition-all + active:translate-y-px (disabled:active:translate-y-0) — uniform tactile press across every shell button; Panel gains the .sheen top-highlight (milled-aluminum finish, invisible on light paper, subtle on dark).
+- globals.css: app-level scrollbar was raw OS default while panels had .thin-scrollbar — html now sets scrollbar-width:thin + scrollbar-color var(--color-zinc-700) with matching webkit rules (bordered rounded thumb, background-clip); nested scrollers with their own colors still win; theme-adaptive on all six themes via the ramp var.
+- lesson-view tab strip: whitespace-nowrap on tab buttons — "Deep dive" wrapped to two lines at 390px.
+- QA (agent-browser): 1440x900 — RankBlock ("Data Novice / 400 XP to Query Apprentice"), expanded module 1 with 9 lesson rows, full Toolbox + Practice lab scroll to bottom, Reset pinned, all verified by scrolling the region (scrollHeight 2124); AI Mentor click shows tick+tint+arrow active row; Builder Night via storage set + REAL reload (hash-only nav strikes again — theme boot needs a document load) renders sheen/rings/tick correctly; mobile 390 — lesson tabs single-line, page overflow false, SeeQ tip bubble alive; playground + landing render clean; console only HMR/React-DevTools info. Screenshots qa-shots/polish2-*.png (gitignored).
+- Gates: tsc 633 = exact baseline (0 new, foreground; note `wc -l` shows 642 because 9 lines are non-error output — grep -c "error TS" is the real counter); npm run lint = 0 problems.
+- Committed 9aee254 with explicit paths (globals.css, learn-app.tsx, lesson-view.tsx, ui/kit.tsx).
+
+Stage Summary:
+- The chrome now survives the common laptop viewport with nothing clipped, one active language everywhere, theme-adaptive progress rings, quieter scrollbars, and tactile press feedback — the flat Builder Paper voice unchanged.
+- Key files: src/components/learn/learn-app.tsx, src/components/learn/ui/kit.tsx, src/components/learn/lesson-view.tsx, src/app/globals.css.
+- Next per queue: #7 Capstone + certificate (with the orphan exam-view.tsx deletion folded in — it still carries 7 of the 633 baseline errors), then #8 Journey page.
