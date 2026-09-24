@@ -30,7 +30,15 @@ import {
   subscribeSkin,
   type SeeqSkin,
 } from "./seeq-skin";
-import { getMood, subscribeMood, type SeeqMoodEvent } from "./seeq-mood";
+import {
+  blitzActive,
+  getBlitz,
+  getMood,
+  subscribeBlitz,
+  subscribeMood,
+  type SeeqBlitzEvent,
+  type SeeqMoodEvent,
+} from "./seeq-mood";
 
 // ---- coach tips (warm, app-aware, no emoji) ------------------------------
 
@@ -95,6 +103,45 @@ const REACT_STATE: Record<SeeqMoodEvent["kind"], { quiet: StateId; big: StateId 
   streak: { quiet: "wink", big: "comet" },
   puzzle: { quiet: "exclaim", big: "burst" },
 };
+
+// ---- blitz round channel -----------------------------------------------
+// Blitz mode drives the buddy through a round's arc: focused at the start,
+// louder as the combo climbs, stung on a miss, triumphant at a record.
+// These events are self-rate-limiting (one per answer), so unlike the mood
+// bus there is no cooldown — but while a round is live the buddy HOLDS its
+// state (the next blitz event owns the face until "end"), and the tip /
+// flourish calendars stand down via blitzActive().
+
+const BLITZ_LINES: Record<Exclude<SeeqBlitzEvent["phase"], "end">, string[]> = {
+  start: [
+    "Blitz round. Eyes on the clock — I'll keep the score.",
+    "Ninety seconds. Answer fast, stay honest.",
+  ],
+  hot3: [
+    "Three straight — the combo is live, ×2.",
+    "Three in a row. Double points from here.",
+  ],
+  hot6: [
+    "Six straight! ×3 — everything you touch turns to rows.",
+    "The multiplier is maxed. Keep flying.",
+  ],
+  miss: [
+    "Ouch — the streak snaps. Breathe, take the next one.",
+    "Broken, not beaten. The clock is still running.",
+    "That one stings. The next question owes you.",
+  ],
+  record: [
+    "Past your personal best — the wall remembers this round.",
+    "Record pace. Don't look down.",
+  ],
+};
+
+function blitzEndLine(ev: SeeqBlitzEvent): string {
+  if (ev.points <= 0) return "Ninety seconds, nothing banked. The deck will be kinder — probably.";
+  if (ev.streak >= 6) return `Clock down — ${ev.points} points, ${ev.streak} straight at peak. Elite pace.`;
+  if (ev.streak >= 3) return `Clock down — ${ev.points} points with a ${ev.streak}-streak in there. Sharp.`;
+  return `Clock down — ${ev.points} points on the board. Again?`;
+}
 
 /** Short face-keeping states for the idle flourish. */
 const FLOURISHES: { state: StateId; hold: number }[] = [
@@ -206,6 +253,8 @@ export function SeeqBuddy() {
   const nonce = useRef(0);
   const reactIdx = useRef({ win: 0, fail: 0, streak: 0, puzzle: 0 });
   const moodNonce = useRef(0);
+  const blitzIdx = useRef({ start: 0, hot3: 0, hot6: 0, miss: 0, record: 0 });
+  const blitzNonce = useRef(0);
 
   const say = (state: StateId) => {
     nonce.current += 1;
@@ -222,7 +271,7 @@ export function SeeqBuddy() {
   const scheduleFlourish = (delayMs: number) => {
     if (flourishTimer.current !== null) window.clearTimeout(flourishTimer.current);
     flourishTimer.current = window.setTimeout(() => {
-      if (!collapsedRef.current && !bubbleRef.current) {
+      if (!collapsedRef.current && !bubbleRef.current && !blitzActive()) {
         const f = FLOURISHES[Math.floor(Math.random() * FLOURISHES.length)]!;
         say(f.state);
         if (revertTimer.current !== null) window.clearTimeout(revertTimer.current);
@@ -236,6 +285,7 @@ export function SeeqBuddy() {
     if (showTimer.current !== null) window.clearTimeout(showTimer.current);
     showTimer.current = window.setTimeout(() => {
       if (collapsedRef.current) return;
+      if (blitzActive()) return; // a blitz round is live — stand down
       const b = bag.current;
       if (b.i >= b.order.length) {
         b.order = TIPS.map((_, i) => i);
@@ -358,6 +408,56 @@ export function SeeqBuddy() {
         reactTo(m);
       }),
     // mirrors the mount effect below — closes over stable timers/refs only
+    [],
+  );
+
+  // Blitz round channel: same external-event shape as the mood bus above.
+  const reactToBlitz = (ev: SeeqBlitzEvent) => {
+    if (collapsedRef.current) return;
+    clearTimers();
+    let state: StateId;
+    let text: string;
+    if (ev.phase === "end") {
+      state = ev.points > 0 ? "play" : "idle";
+      text = blitzEndLine(ev);
+    } else {
+      const lines = BLITZ_LINES[ev.phase];
+      const i = blitzIdx.current[ev.phase]++ % lines.length;
+      text = lines[i]!;
+      state =
+        ev.phase === "start"
+          ? "thinking"
+          : ev.phase === "hot3"
+            ? "exclaim"
+            : ev.phase === "hot6"
+              ? "comet"
+              : ev.phase === "miss"
+                ? "wide"
+                : "burst";
+    }
+    setBubble(text);
+    bubbleRef.current = text;
+    say(state);
+    if (ev.phase === "end") {
+      // round over — resume the normal idle cycle
+      revertTimer.current = window.setTimeout(() => say("idle"), 2400);
+      hideTimer.current = window.setTimeout(() => {
+        setBubble(null);
+        bubbleRef.current = null;
+        scheduleNextTip(TIP_GAP_MS + Math.random() * TIP_GAP_JITTER_MS);
+      }, 3600);
+    }
+    // any other phase HOLDS: no revert, the next blitz event owns the face
+  };
+
+  useEffect(
+    () =>
+      subscribeBlitz(() => {
+        const ev = getBlitz();
+        if (!ev || ev.nonce === blitzNonce.current) return;
+        blitzNonce.current = ev.nonce;
+        reactToBlitz(ev);
+      }),
     [],
   );
 

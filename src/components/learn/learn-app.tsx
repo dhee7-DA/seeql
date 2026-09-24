@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 import { LessonView } from "./lesson-view";
 import { DataExplorer } from "./data-explorer";
 import { MixedQuiz } from "./mixed-quiz";
+import { BlitzMode } from "./blitz-mode";
 import { CaseFiles } from "./case-files";
 import { DiagramLibrary } from "./diagram-library";
 import { DrillYard } from "./drill-yard";
@@ -52,6 +53,7 @@ type View =
   | { kind: "lesson"; id: string }
   | { kind: "explorer" }
   | { kind: "mixed" }
+  | { kind: "blitz" }
   | { kind: "cases" }
   | { kind: "drills" }
   | { kind: "library" }
@@ -470,6 +472,8 @@ function ViewBody({
       return <DrillYard />;
     case "mixed":
       return <MixedQuiz />;
+    case "blitz":
+      return <BlitzMode />;
     case "cases":
       return <CaseFiles />;
     case "predict":

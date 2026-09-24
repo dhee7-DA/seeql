@@ -63,3 +63,51 @@ export function subscribeMood(listener: () => void): () => void {
 export function getMood(): SeeqMoodEvent | null {
   return current;
 }
+
+// ---- blitz channel --------------------------------------------------------
+// Round-lifecycle events from Blitz mode. Unlike the mood bus there are NO
+// cooldowns here — the game itself rate-limits (one event per answer) — and
+// the buddy still de-dupes by nonce. While a round is live (`blitzActive()`)
+// the buddy HOLDS its reaction state instead of reverting to idle, and the
+// idle behaviour (tips, flourishes) stands down until the round ends.
+
+export type SeeqBlitzPhase = "start" | "hot3" | "hot6" | "miss" | "record" | "end";
+
+export interface SeeqBlitzEvent {
+  phase: SeeqBlitzPhase;
+  /** streak at the moment of the event (a miss carries the one that died) */
+  streak: number;
+  /** running round score in points */
+  points: number;
+  /** monotonic id — the buddy ignores replays of the same event */
+  nonce: number;
+  ts: number;
+}
+
+let blitzVersion = 0;
+let blitzCurrent: SeeqBlitzEvent | null = null;
+let blitzLive = false;
+const blitzListeners = new Set<() => void>();
+
+export function seeqBlitz(phase: SeeqBlitzPhase, streak = 0, points = 0): void {
+  blitzVersion += 1;
+  blitzCurrent = { phase, streak, points, nonce: blitzVersion, ts: Date.now() };
+  blitzLive = phase !== "end";
+  blitzListeners.forEach((l) => l());
+}
+
+export function subscribeBlitz(listener: () => void): () => void {
+  blitzListeners.add(listener);
+  return () => {
+    blitzListeners.delete(listener);
+  };
+}
+
+export function getBlitz(): SeeqBlitzEvent | null {
+  return blitzCurrent;
+}
+
+/** True while a blitz round is running — idle buddy behaviour stands down. */
+export function blitzActive(): boolean {
+  return blitzLive;
+}
