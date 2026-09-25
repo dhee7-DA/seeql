@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Chivo_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { PwaRegister } from "@/components/pwa-register";
 import { THEMES, DEFAULT_THEME, THEME_STORAGE_KEY } from "@/lib/themes";
 
 // The single voice — a monospace for EVERYTHING (body, headlines, code),
@@ -38,6 +39,21 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "SeeQL",
   },
+  manifest: "/manifest.webmanifest",
+  icons: {
+    apple: "/icons/apple-touch-icon.png",
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "SeeQL",
+  },
+};
+
+// Painted on the browser chrome so the installed app and the tab blend into
+// the zinc-950 shell on every platform.
+export const viewport: Viewport = {
+  themeColor: "#09090b",
 };
 
 /**
@@ -66,6 +82,7 @@ export default function RootLayout({
       <body className="antialiased bg-background text-foreground">
         {children}
         <Toaster />
+        <PwaRegister />
       </body>
     </html>
   );

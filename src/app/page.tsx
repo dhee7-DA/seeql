@@ -503,10 +503,16 @@ function PlaygroundView({
       </header>
 
       {/* main */}
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5">
+      <main id="playground-main" className="mx-auto w-full max-w-7xl flex-1 px-4 py-5">
+        <a
+          href="#sql-editor-panel"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-3 focus:top-3 focus:z-50 focus:rounded-md focus:border focus:border-zinc-600 focus:bg-zinc-950 focus:px-3 focus:py-2 focus:text-xs focus:text-zinc-100"
+        >
+          Skip to editor
+        </a>
         <div className="grid items-start gap-5 lg:grid-cols-[minmax(360px,2fr)_minmax(0,3fr)]">
           {/* editor panel */}
-          <section aria-label="SQL editor" className="flex flex-col gap-2">
+          <section id="sql-editor-panel" aria-label="SQL editor" className="relative flex flex-col gap-2">
             <div className="flex items-center justify-between px-1">
               <h2 className="text-xs font-semibold tracking-widest text-zinc-400 uppercase">
                 Query
@@ -1006,6 +1012,7 @@ export default function Home() {
                 <button
                   onClick={() => window.dispatchEvent(new CustomEvent("seeql:nav", { detail: { kind: "seeq" } }))}
                   data-seeq-nav="1"
+                  data-tour="seeq"
                   aria-label="Open the SeeQ playground — dress and place your buddy"
                   title="SeeQ playground — dress & place your buddy"
                   className="flex cursor-pointer items-center gap-1.5 rounded-md border border-zinc-800 py-1.5 pl-1.5 pr-3 text-sm text-zinc-300 transition-colors hover:bg-zinc-900"

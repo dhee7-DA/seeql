@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SeeQL — offline</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: #09090b;
+        color: #e4e4e7;
+        font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+        text-align: center;
+        padding: 24px;
+      }
+      .card {
+        border: 1px solid #27272a;
+        border-radius: 16px;
+        padding: 40px 44px;
+        max-width: 460px;
+        background: #09090b;
+      }
+      .dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: #34d399;
+        margin-right: 8px;
+      }
+      h1 {
+        font-size: 20px;
+        margin: 18px 0 10px;
+        letter-spacing: -0.02em;
+      }
+      p {
+        color: #a1a1aa;
+        font-size: 13px;
+        line-height: 1.7;
+        margin: 0 0 22px;
+      }
+      .logo {
+        font-weight: 900;
+        font-size: 15px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #fafafa;
+      }
+      .logo span {
+        color: #34d399;
+      }
+      a {
+        display: inline-block;
+        border: 1px solid #3f3f46;
+        border-radius: 8px;
+        padding: 9px 16px;
+        font-size: 12px;
+        color: #d4d4d8;
+        text-decoration: none;
+      }
+      a:hover {
+        background: #18181b;
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .dot {
+          animation: pulse 1.6s ease-in-out infinite;
+        }
+        @keyframes pulse {
+          50% {
+            opacity: 0.35;
+          }
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="logo">see<span>ql</span></div>
+      <h1><span class="dot" aria-hidden="true"></span>You're offline</h1>
+      <p>
+        SeeQL runs entirely on this device — your progress is saved locally and
+        nothing is lost. Graded queries and the mentor need the connection
+        back; everything else works as soon as this page reloads.
+      </p>
+      <a href="/">Reconnect</a>
+    </div>
+  </body>
+</html>

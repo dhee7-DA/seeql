@@ -11,7 +11,9 @@ import {
   ChevronDown,
   ChevronsDownUp,
   ChevronsUpDown,
+  Download,
   RotateCcw,
+  Upload,
 } from "lucide-react";
 import { LESSONS, MODULES } from "@/lib/curriculum/lessons";
 import { useProgress } from "@/lib/curriculum/progress";
@@ -46,6 +48,8 @@ import { Icon3D } from "./ui/icon3d";
 import { ActivityHeatmap } from "./activity-heatmap";
 import { CsvSandbox } from "./csv-sandbox";
 import { QueryNotebook } from "./query-notebook";
+import { OnboardingTour, TourReplayButton, markTourSeen, tourSeen } from "./onboarding-tour";
+import { BackupError, buildBackup, downloadBackup, importBackupFile } from "@/lib/port";
 
 type View =
   | { kind: "overview" }
@@ -376,7 +380,7 @@ function Overview({
         </p>
 
         <div className="mt-5 flex flex-wrap items-center gap-2.5">
-          <Btn variant="primary" onClick={() => openLesson(nextLesson.id)}>
+          <Btn variant="primary" data-tour="hero-cta" onClick={() => openLesson(nextLesson.id)}>
             {ctx.lessonsDone > 0 ? `Continue — lesson ${nextLesson.num} · ${nextLesson.title} →` : "Start learning →"}
           </Btn>
           <span className="tnum text-[11px] text-zinc-500">
@@ -398,7 +402,7 @@ function Overview({
       <ActivityHeatmap />
 
       {/* Course map — all modules scannable in one screenful, lessons reveal on demand */}
-      <section className="mt-7">
+      <section className="mt-7" data-tour="course-map">
         <div className="flex items-baseline justify-between">
           <h2 className="flex items-center gap-2.5 font-display text-sm font-semibold text-zinc-200">
             <Icon3D name="book" size={22} />
@@ -526,6 +530,56 @@ function ViewBody({
 export function LearnApp() {
   const [view, setView] = useState<View>({ kind: "overview" });
 
+  // Guided tour — auto-starts once for first-run visitors (the seen flag is
+  // written on close, complete or skipped); the sidebar Tour chip replays it.
+  const [tourStep, setTourStep] = useState<number | null>(null);
+  useEffect(() => {
+    if (tourSeen()) return;
+    const t = setTimeout(() => setTourStep(0), 900);
+    return () => clearTimeout(t);
+  }, []);
+  const closeTour = () => {
+    markTourSeen();
+    setTourStep(null);
+  };
+
+  // Progress backup / restore — all seeql.* stores as one JSON file.
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [portMsg, setPortMsg] = useState<{ text: string; ok: boolean } | null>(null);
+  const msgTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const flashPort = (text: string, ok: boolean) => {
+    setPortMsg({ text, ok });
+    if (msgTimer.current) clearTimeout(msgTimer.current);
+    msgTimer.current = setTimeout(() => setPortMsg(null), 5000);
+  };
+  useEffect(
+    () => () => {
+      if (msgTimer.current) clearTimeout(msgTimer.current);
+    },
+    [],
+  );
+  const onExport = () => {
+    try {
+      const backup = buildBackup();
+      downloadBackup(backup);
+      flashPort(`Backed up ${Object.keys(backup.entries).length} stores — check your downloads.`, true);
+    } catch {
+      flashPort("Export failed — storage unavailable.", false);
+    }
+  };
+  const onImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // allow re-picking the same file after a fix
+    if (!file) return;
+    try {
+      const { count, summary } = await importBackupFile(file);
+      flashPort(`Restored ${count} stores · ${summary} — reloading…`, true);
+      setTimeout(() => window.location.reload(), 900);
+    } catch (err) {
+      flashPort(err instanceof BackupError ? err.message : "Import failed.", false);
+    }
+  };
+
   // The top header's SeeQ button (page shell) navigates here by event — the
   // view state is private to this component. Listener callbacks are event
   // handlers, so the setState inside is compliant.
@@ -588,6 +642,14 @@ export function LearnApp() {
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-6 lg:flex-row">
       <CelebrationHost />
+      <OnboardingTour step={tourStep} setStep={setTourStep} onClose={closeTour} />
+      {/* keyboard users can jump straight past the 300px rail */}
+      <a
+        href="#learn-main"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[80] focus:rounded-md focus:border focus:border-zinc-600 focus:bg-zinc-950 focus:px-3 focus:py-2 focus:text-xs focus:text-zinc-100"
+      >
+        Skip to content
+      </a>
       {/* SeeqBuddy now mounts at the app root (page.tsx) so the buddy is on
           every view — landing, playground, learn — and survives switches. */}
 
@@ -602,7 +664,7 @@ export function LearnApp() {
           the Lab clipped mid-row. */}
       <aside className="order-2 w-full shrink-0 lg:order-1 lg:sticky lg:top-[76px] lg:h-[calc(100vh-96px)] lg:w-[300px] lg:self-start">
         <Panel pad={0} className="flex max-h-full flex-col overflow-hidden">
-          <div className="shrink-0 border-b border-zinc-800 p-4">
+          <div className="shrink-0 border-b border-zinc-800 p-4" data-tour="curriculum">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Icon3D name="cap" size={22} />
@@ -740,7 +802,7 @@ export function LearnApp() {
                 curriculum can never be crowded out — see the sidebar comment. */}
             <div className="border-t border-zinc-800/60 p-3">
               <SectionLabel className="mb-1.5">Toolbox</SectionLabel>
-              <div className="flex flex-col gap-0.5">
+              <div className="flex flex-col gap-0.5" data-tour="toolbox">
                 {CORE_AND_TOOLBOX.map((t, i) => (
                   <ToolRow
                     key={t.kind}
@@ -753,7 +815,7 @@ export function LearnApp() {
                 ))}
               </div>
               <SectionLabel className="mb-1 mt-2">Practice lab</SectionLabel>
-              <div className="flex flex-col gap-0.5">
+              <div className="flex flex-col gap-0.5" data-tour="lab">
                 {LAB_TOOLS.map((t, i) => (
                   <ToolRow
                     key={t.kind}
@@ -778,13 +840,56 @@ export function LearnApp() {
                 </span>
               </div>
             ) : (
-              <Btn
-                variant="ghost"
-                onClick={() => setConfirmReset(true)}
-                className="p-0 text-[11px] text-zinc-600 hover:bg-transparent hover:text-zinc-400"
-              >
-                <RotateCcw className="h-3 w-3" /> Reset progress
-              </Btn>
+              <>
+                {/* the quiet utilities: tour, backup, restore, reset */}
+                <div className="flex items-center justify-between gap-0.5">
+                  <TourReplayButton
+                    onClick={() => setTourStep(0)}
+                  />
+                  <Btn
+                    variant="ghost"
+                    onClick={onExport}
+                    title="Download all your progress as a JSON backup"
+                    aria-label="Export progress backup"
+                    className="gap-1 p-0 text-[11px] text-zinc-600 hover:bg-transparent hover:text-zinc-400"
+                  >
+                    <Download className="h-3 w-3" /> Export
+                  </Btn>
+                  <Btn
+                    variant="ghost"
+                    onClick={() => fileRef.current?.click()}
+                    title="Restore progress from a SeeQL backup file"
+                    aria-label="Import progress backup"
+                    className="gap-1 p-0 text-[11px] text-zinc-600 hover:bg-transparent hover:text-zinc-400"
+                  >
+                    <Upload className="h-3 w-3" /> Import
+                  </Btn>
+                  <Btn
+                    variant="ghost"
+                    onClick={() => setConfirmReset(true)}
+                    className="gap-1 p-0 text-[11px] text-zinc-600 hover:bg-transparent hover:text-zinc-400"
+                  >
+                    <RotateCcw className="h-3 w-3" /> Reset
+                  </Btn>
+                </div>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="application/json,.json"
+                  className="hidden"
+                  aria-hidden="true"
+                  tabIndex={-1}
+                  onChange={onImportFile}
+                />
+                {portMsg && (
+                  <p
+                    role="status"
+                    className={cn("mt-1.5 text-[10px] leading-snug", portMsg.ok ? "text-emerald-300" : "text-rose-300")}
+                  >
+                    {portMsg.text}
+                  </p>
+                )}
+              </>
             )}
           </div>
         </Panel>
@@ -794,7 +899,7 @@ export function LearnApp() {
           Each switch gets the same 0.2s fade-and-rise entrance (reduced-motion
           aware), so moving between tools feels intentional, not like a page
           hard-swapping underneath you. */}
-      <main className="order-1 min-w-0 flex-1 pb-16 lg:order-2">
+      <main id="learn-main" className="order-1 min-w-0 flex-1 pb-16 lg:order-2">
         <ToolRail view={view} setView={setView} />
         <motion.div
           key={view.kind === "lesson" ? `lesson:${view.id}` : view.kind}
