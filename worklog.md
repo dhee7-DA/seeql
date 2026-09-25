@@ -2501,3 +2501,23 @@ Stage Summary:
 - Key files: src/components/learn/ui/icon3d.tsx (NEW), public/icons3d/* (NEW), scripts/{gen-3d-icons.mjs, matte-3d-icons.py, add-3d-headers.mjs, contact-sheet.py} (NEW), src/components/landing.tsx, src/components/learn/{learn-app,celebrate}.tsx + 16 tool views, src/app/globals.css.
 - Standing hooks: adding a new icon = one ICONS entry in gen script -> node scripts/gen-3d-icons.mjs all -> python3 scripts/matte-3d-icons.py all -> one registry line. #7 Capstone could use the gem icon for the certificate.
 - Next per queue: #7 Capstone + certificate (absorbs lesson-58 draft, deletes orphan exam-view.tsx, drops tsc baseline to 626), then #8 Journey page.
+
+---
+Task ID: 28
+Agent: Super Z (main agent)
+Task: REBUILD of do-all wave 1 (sound design + SeeQ mood full wiring + activity heatmap) — the original Task 28 work was lost when the sandbox restart rolled the disk back to the Task 27 snapshot. Reconstructed from the in-context specs (worklog entries + commit messages captured this session).
+
+Work Log:
+- Recovery context: post-restart disk = Task 27 state (verified: all wave 1-4 files missing, commits 983b29d..59b16a6 gone from objects, no remote). Baseline re-verified: tsc 633, lint 0+0, git healthy again (porcelain works; only cosmetic file-mode noise on ~20 untouched files, restored).
+- Sound engine REBUILT as src/lib/sound.ts: 8 synthesized cues (correct chime, wrong thud, streak run, puzzle fanfare, xp blip, badge bell, levelup arpeggio, record punch), zero assets, oscillator notes with exponential envelope ramps, lazy AudioContext (webkitAudioContext fallback), silent-never-throw guards. Opt-in OFF by default, persisted seeql.sound.v1, hydration-safe via useSyncExternalStore (server snapshot = off).
+- Sounds ride the seeq mood bus (module-level subscription: win/fail/streak/puzzle -> correct/wrong/streak/fanfare, cooldowns upstream) AND the blitz channel (hot3/hot6 -> streak, miss -> wrong, record -> record cue) — mood cooldowns do not eat blitz events (separate bus).
+- SoundToggle (src/components/sound-toggle.tsx): Volume2/VolumeX button, aria-pressed, mounts in ALL THREE headers (landing.tsx, page.tsx playground header + learn header) next to ThemeSwitcher; first enable plays a cue (doubles as the AudioContext unlock gesture).
+- Mood-bus completion REBUILT: recordPracticeAttempt choke point in practice-kit.tsx now emits seeqReact(win|fail) — covers predict/clinic/explain/perf/studio; query-golf.tsx fail paths (error + rows-mismatch) emit seeqReact(fail); mixed-quiz.tsx onAnswered emits win/fail; celebrate() now cues xp/badge/levelup directly on toast kinds. (pre-existing emitters: problem-runner, lesson-view, drill-yard streak, daily-puzzle puzzle — untouched.)
+- Activity heatmap REBUILT as src/components/learn/activity-heatmap.tsx: 26-week GitHub-style grid on the learn overview (between hero and course map), weeks Sun->Sat ending this week, cells colored vs daily goal (0/.25/.5/1 quartile ramp), alpha-based emerald ramp = theme-safe on all six themes, month labels with 3-column collision guard, today ring, title tooltips, role=img aria summary, horizontal scroll on narrow screens, data-tour=heatmap anchor for the future onboarding tour.
+- Gates: tsc 633 = exact baseline 0 new (fixed: bus listeners are zero-arg -> getMood()/getBlitz() inside; sound-toggle setState-in-effect lint -> useSyncExternalStore), lint 0+0 (exit 0).
+- QA (agent-browser): landing header toggle click -> aria-pressed=true, seeql.sound.v1=1 persisted; learn overview heatmap renders (light Builder Paper + dark Builder Night screenshots), month labels + today ring + legend correct; mobile 390px no horizontal overflow, heatmap scrolls; console clean (HMR only). Note: platform dev server was already serving :3000 in the fresh sandbox.
+
+Stage Summary:
+- Wave 1 fully reconstructed and committed; the app now has a sound layer (opt-in), a fully-wired mood bus (every graded surface emits), and a 26-week activity heatmap on the overview.
+- Key files: src/lib/sound.ts (NEW), src/components/sound-toggle.tsx (NEW), src/components/learn/activity-heatmap.tsx (NEW), practice-kit.tsx, query-golf.tsx, mixed-quiz.tsx, celebrate.tsx, learn-app.tsx, landing.tsx, page.tsx.
+- Next: wave 2 rebuild (CSV sandbox + query notebook + challenge creator), then wave 3 (PWA + tour + progress port), wave 4 (leaderboard + share cards).
