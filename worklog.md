@@ -2521,3 +2521,21 @@ Stage Summary:
 - Wave 1 fully reconstructed and committed; the app now has a sound layer (opt-in), a fully-wired mood bus (every graded surface emits), and a 26-week activity heatmap on the overview.
 - Key files: src/lib/sound.ts (NEW), src/components/sound-toggle.tsx (NEW), src/components/learn/activity-heatmap.tsx (NEW), practice-kit.tsx, query-golf.tsx, mixed-quiz.tsx, celebrate.tsx, learn-app.tsx, landing.tsx, page.tsx.
 - Next: wave 2 rebuild (CSV sandbox + query notebook + challenge creator), then wave 3 (PWA + tour + progress port), wave 4 (leaderboard + share cards).
+
+---
+Task ID: 29
+Agent: Super Z (main agent)
+Task: REBUILD of do-all wave 2 (CSV sandbox + query notebook + challenge creator) — reconstructed from the in-context specs after the rollback snapshot wiped the original.
+
+Work Log:
+- /api/sandbox route (NEW): RFC4180-ish CSV parser (quoted fields, doubled quotes, CRLF, BOM strip, delimiter sniffing comma/semicolon/tab), header sanitizing + dedupe, per-column type inference (INTEGER/REAL/TEXT with empty->NULL), chunked multi-row INSERTs with '' escaping, replace-on-collision (DROP IF EXISTS then CREATE). Caps enforced: 2 MB CSV, 64 columns, 10k rows, 6 tables. GET lists csv_% tables (sqlite_master ESCAPE('|'), PRAGMA table_info + COUNT), DELETE drops by sanitized name. Tables are REAL and live beside the sample worlds (verified JOIN csv_x JOIN customers works).
+- CSV sandbox tool (NEW src/components/learn/csv-sandbox.tsx): name input with visible csv_ prefix, paste textarea + .csv/.tsv/.txt upload (2 MB client check, auto-name from filename), 8-row sample, table cards (rows + col:type list + drop buttons), read-only query runner (client-side SELECT/WITH/EXPLAIN guard after comment-stripping) over the shared execSql + MiniGrid. Registered in tools.ts toolbox (FileUp icon, kind "sandbox"); View union + ViewBody case added; drift-guard green.
+- Query notebook tool (NEW src/components/learn/query-notebook.tsx + src/lib/curriculum/notebook.ts): localStorage seeql.notebook.v1, title+sql+note entries, seeded starter (written only when the key is absent), add/update/delete via a hydration-safe cached-ref store, sidebar list with first-SQL-line preview + delete, editor with SqlEditor (onVisualize run), live run grid + timing. Registered in tools.ts lab (NotebookPen, kind "notebook").
+- Challenge creator in query golf (NEW HoleDesigner + golf-custom.ts store): design-a-hole form (target words, starter, par, optional skill tag) — Test & save runs BOTH statements live; hole is only born if both execute cleanly AND row counts agree. Saved holes ride the same GolfHoleCard (starColumns=1, ordered=false, ledger keys golf:c<n>), "c1 · yours" sky pills with inline delete, designer toggle pill, count/progress reflect custom holes. Store: seeql.golf-custom.v1 with a STABLE empty-array snapshot (fixed a real useSyncExternalStore infinite-loop crash: fresh [] per getSnapshot when the key was absent) + write() now caches the written JSON ref; onCreated reads the FRESH store (the memo closure predates the write) to auto-select the new hole.
+- Gates: tsc 633 = exact baseline 0 new (fixed: ternary union narrowing for ExecResponse.error, server-snapshot function form); lint 0+0.
+- QA (agent-browser + curl): API — create with correct inference, JOIN against sample worlds OK, replace-on-collision OK, DELETE+GET OK; UI — sample loaded, "8 rows, 4 columns live", query ran 8 rows/1.95ms, notebook seed visible, save->run(4 rows/1.62ms)->update verified, designer validation -> hole c1 created+persisted+selected, delete returns to 6 holes; mobile 390 no overflow; console clean (after store fix).
+
+Stage Summary:
+- Wave 2 fully reconstructed and committed; the app now takes your own data (real csv_ tables + JOINs), keeps queries+notes, and lets learners publish their own golf holes.
+- Key files: src/app/api/sandbox/route.ts (NEW), src/components/learn/csv-sandbox.tsx (NEW), src/components/learn/query-notebook.tsx (NEW), src/lib/curriculum/{notebook,golf-custom}.ts (NEW), tools.ts, learn-app.tsx, query-golf.tsx.
+- Next: wave 3 rebuild (PWA + onboarding tour + progress export/import + a11y), then wave 4 (leaderboard + share cards).
