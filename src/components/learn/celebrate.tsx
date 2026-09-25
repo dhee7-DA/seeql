@@ -9,6 +9,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Info, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Icon3D, type Icon3DName } from "./ui/icon3d";
+import { playCue } from "@/lib/sound";
 
 export type ToastKind = "xp" | "badge" | "level" | "info";
 
@@ -25,6 +26,11 @@ let seq = 0;
 
 export function celebrate(t: Omit<Toast, "id">) {
   const toast: Toast = { ...t, id: ++seq };
+  // Cue sounds ride the toast kinds (the mood bus covers graded outcomes;
+  // these cover the reward layer). Silent when sound is off — the default.
+  if (t.kind === "xp") playCue("xp");
+  else if (t.kind === "badge") playCue("badge");
+  else if (t.kind === "level") playCue("levelup");
   listeners.forEach((l) => l(toast));
 }
 

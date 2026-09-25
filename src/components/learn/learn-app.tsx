@@ -43,6 +43,7 @@ import { CelebrationHost, celebrate } from "./celebrate";
 import { CORE_AND_TOOLBOX, LAB_TOOLS, TOOLS, type ToolKind } from "./tools";
 import { Btn, Chip, Panel, ProgressBar, SectionLabel, ToolRow } from "./ui/kit";
 import { Icon3D } from "./ui/icon3d";
+import { ActivityHeatmap } from "./activity-heatmap";
 
 type View =
   | { kind: "overview" }
@@ -388,6 +389,9 @@ function Overview({
           </p>
         </div>
       </Panel>
+
+      {/* Activity heatmap — the last 26 weeks at a glance */}
+      <ActivityHeatmap />
 
       {/* Course map — all modules scannable in one screenful, lessons reveal on demand */}
       <section className="mt-7">

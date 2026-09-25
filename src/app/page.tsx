@@ -60,6 +60,7 @@ import { useProgress } from "@/lib/curriculum/progress";
 import { MISSIONS } from "@/lib/missions";
 import { LogoFull } from "@/components/brand";
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import { SoundToggle } from "@/components/sound-toggle";
 import { DEFAULT_SAMPLE, SAMPLE_QUERIES } from "@/lib/samples";
 import { DIALECTS, type DialectName } from "@/lib/sql-types";
 import type {
@@ -442,6 +443,7 @@ function PlaygroundView({
           </div>
 
           <div className="ml-auto flex flex-wrap items-center gap-2">
+            <SoundToggle />
             <ThemeSwitcher />
             <button
               onClick={() => go("learn")}
@@ -1019,6 +1021,7 @@ export default function Home() {
                   />
                   <span>SeeQ</span>
                 </button>
+                <SoundToggle />
                 <ThemeSwitcher />
                 <button
                   onClick={() => go("playground")}

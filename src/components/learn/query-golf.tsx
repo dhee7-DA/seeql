@@ -17,6 +17,7 @@ import { countStrokes, golfVerdict } from "@/lib/curriculum/golf-score";
 import type { ExecResponse } from "@/lib/sql-types";
 import { cn } from "@/lib/utils";
 import { awardPracticeXp, MiniGrid, recordPracticeAttempt, rowsMatch } from "./practice-kit";
+import { seeqReact } from "./seeq-mood";
 import { reportMentorFailure } from "@/lib/mentor-context";
 import { SqlEditor } from "../sql-editor";
 import { SqlNodes } from "./sql-code";
@@ -77,6 +78,7 @@ function GolfHoleCard({ hole, onOpenPerf }: { hole: GolfHole; onOpenPerf?: (sql:
         : false;
     setRun({ running: false, result, target, starterPlan: run.starterPlan, match });
     if (!result.ok) {
+      seeqReact("fail");
       // Land the attempt on the mentor's desk — the AI Mentor chat picks it up.
       reportMentorFailure({
         sql: sql.slice(0, 2000),
@@ -85,6 +87,7 @@ function GolfHoleCard({ hole, onOpenPerf }: { hole: GolfHole; onOpenPerf?: (sql:
         source: `Query golf · hole ${hole.id}`,
       });
     } else if (!match) {
+      seeqReact("fail");
       reportMentorFailure({
         sql: sql.slice(0, 2000),
         error: null,

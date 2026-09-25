@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { LogoFull } from "@/components/brand";
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import { SoundToggle } from "@/components/sound-toggle";
 import { BloubBot, type BloubCommand } from "@/components/bloub/bloub-bot";
 import type { StateId } from "@/components/bloub/states";
 import { HeroDemo } from "@/components/landing/hero-demo";
@@ -298,6 +299,7 @@ export function Landing({
               />
               <span>SeeQ</span>
             </button>
+            <SoundToggle />
             <ThemeSwitcher />
             <InkButton onClick={onStart}>{resume ? "Continue" : "Start learning"}</InkButton>
             <button

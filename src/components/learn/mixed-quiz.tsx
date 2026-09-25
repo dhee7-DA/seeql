@@ -14,6 +14,7 @@ import { useProgress, dueReviews } from "@/lib/curriculum/progress";
 import type { Mcq } from "@/lib/curriculum/types";
 import { cn } from "@/lib/utils";
 import { McqCard } from "./mcq";
+import { seeqReact } from "./seeq-mood";
 
 const ROUND = 10;
 
@@ -89,6 +90,7 @@ export function MixedQuiz() {
   function onAnswered(correct: boolean) {
     setAnswered(true);
     if (correct) setScore((s) => s + 1);
+    seeqReact(correct ? "win" : "fail");
   }
 
   return (

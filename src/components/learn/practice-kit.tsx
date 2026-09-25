@@ -9,6 +9,7 @@ import type { CellValue, ExecResponse } from "@/lib/sql-types";
 import { useProgress } from "@/lib/curriculum/progress";
 import { reportMentorFailure } from "@/lib/mentor-context";
 import { celebrate } from "./celebrate";
+import { seeqReact } from "./seeq-mood";
 import { cn } from "@/lib/utils";
 
 /** POST a statement to the sandbox API. Hard failures land in the mentor context. */
@@ -92,11 +93,14 @@ export function awardPracticeXp(key: string, amount: number, label: string): boo
   return paid;
 }
 
-/** Fold a graded attempt into the mastery ledger + the SR schedule. */
+/** Fold a graded attempt into the mastery ledger + the SR schedule, and
+ *  feed the SeeQ mood bus (win/fail — cooldowns upstream pace the buddy
+ *  and any cue sounds; the learner loop never gets jittered). */
 export function recordPracticeAttempt(skill: string, ledgerKey: string, correct: boolean) {
   const store = useProgress.getState();
   store.recordSkill(skill, correct);
   store.scheduleReview(ledgerKey, correct);
+  seeqReact(correct ? "win" : "fail");
 }
 
 /** Multiset row comparison — order-sensitive when `ordered`. */
