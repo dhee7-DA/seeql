@@ -1,4 +1,4 @@
-// Drill set — Text functions (Module 5, core, 45 questions).
+// Drill set (MERGED into its primary twin — ids renumbered, KW aligned) — Text functions (Module 5, core, 45 questions).
 // Engine-verified receipts (db/custom.db): UPPER('Alice Chen') matches 1 row,
 // lowercase `= 'alice chen'` matches 0 ( = is case-sensitive; LIKE folds
 // ASCII); longest names Isabella Rossi 14, Dmitri Volkov 13, Pedro Alvarez 13
@@ -11,11 +11,11 @@
 
 import type { DrillQ } from "../types";
 
-const KW = "text functions";
+const KW = "Text toolkit";
 
 export const TEXT_FUNCTIONS: DrillQ[] = [
   // ---------- syntax ----------
-  { id: "dr5-tx-01", keyword: KW, tier: "core", aspect: "syntax",
+  { id: "dr5-tx-51", keyword: KW, tier: "core", aspect: "syntax",
     prompt: "Which call correctly upper-cases every customer name for a shout-list email?",
     choices: [
       "`SELECT UPPER(name) FROM customers`",
@@ -26,7 +26,7 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
     answer: 0,
     why: "SQLite's text functions are plain function calls: UPPER(expr). There is no UPCASE, no method syntax, and `UPPER` without parentheses is a column reference, not a call.",
   },
-  { id: "dr5-tx-02", keyword: KW, tier: "core", aspect: "syntax",
+  { id: "dr5-tx-52", keyword: KW, tier: "core", aspect: "syntax",
     prompt: "You want the first 7 characters of each order's created_at. Which is valid?",
     choices: [
       "`SELECT SUBSTR(created_at, 1, 7) FROM orders`",
@@ -40,7 +40,7 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
       { choice: 3, why: "SUBSTR(created_at, 7) returns characters 7 through the end — '01-15', not the year-month." },
     ],
   },
-  { id: "dr5-tx-03", keyword: KW, tier: "core", aspect: "syntax",
+  { id: "dr5-tx-53", keyword: KW, tier: "core", aspect: "syntax",
     prompt: "Which operator glues 'Total: ' and the number 5 into one string in SQLite?",
     choices: [
       "`||` — `'Total: ' || 5`",
@@ -54,7 +54,7 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
       { choice: 1, why: "`+` never concatenates in SQLite — it numerically coerces. 'Total: ' becomes 0, so you'd get 5." },
     ],
   },
-  { id: "dr5-tx-04", keyword: KW, tier: "core", aspect: "syntax",
+  { id: "dr5-tx-54", keyword: KW, tier: "core", aspect: "syntax",
     prompt: "Which expression extracts the two-digit month from a 'YYYY-MM-DD' text date using SUBSTR?",
     choices: [
       "`SUBSTR('2024-01-05', 6, 2)` → '01'",
@@ -65,7 +65,7 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
     answer: 0,
     why: "Positions are 1-based and inclusive: characters 6–7 are the month digits. Position 5 is the first dash; 0 behaves oddly (clips before the start); -2 counts from the end and would give '05'. Probed: SUBSTR(...,6,2) = '01'.",
   },
-  { id: "dr5-tx-05", keyword: KW, tier: "core", aspect: "syntax",
+  { id: "dr5-tx-55", keyword: KW, tier: "core", aspect: "syntax",
     prompt: "You need each customer's first name — everything before the first space. Which pair of functions does it?",
     choices: [
       "`SUBSTR(name, 1, INSTR(name, ' ') - 1)`",
@@ -79,7 +79,7 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
       { choice: 3, why: "REPLACE removes the space but keeps the last name — 'AliceChen'." },
     ],
   },
-  { id: "dr5-tx-06", keyword: KW, tier: "core", aspect: "syntax",
+  { id: "dr5-tx-56", keyword: KW, tier: "core", aspect: "syntax",
     prompt: "Which call swaps every dash in a date for a slash?",
     choices: [
       "`REPLACE('2024-01-05', '-', '/')` → '2024/01/05'",
@@ -90,7 +90,7 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
     answer: 0,
     why: "REPLACE(string, from, to) substitutes every occurrence — probed to '2024/01/05'. TRANSLATE does not exist in SQLite, and TRIM only strips characters from the ends.",
   },
-  { id: "dr5-tx-07", keyword: KW, tier: "core", aspect: "syntax",
+  { id: "dr5-tx-57", keyword: KW, tier: "core", aspect: "syntax",
     prompt: "Which expression builds 'Berlin, EU' from the city and region columns?",
     choices: [
       "`city || ', ' || region`",
@@ -102,7 +102,7 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
     why: "Chain `||` with a literal ', ' between the two columns — probed to 'Berlin, EU'. Mixing `||` and `+` mixes string and arithmetic semantics; CONCAT would drop the separator unless you pass it; a comma just lists two output columns.",
   },
   // ---------- semantics ----------
-  { id: "dr5-tx-08", keyword: KW, tier: "core", aspect: "semantics",
+  { id: "dr5-tx-58", keyword: KW, tier: "core", aspect: "semantics",
     prompt: "`WHERE name = 'alice chen'` returns 0 rows, and there is definitely an Alice Chen. Why?",
     choices: [
       "`=` compares case-sensitively for TEXT; you need UPPER(name) = 'ALICE CHEN' or LIKE",
@@ -116,7 +116,7 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
       { choice: 2, why: "COLLATE NOCASE works but is a table/index-level declaration — you don't need to touch the schema to fix a WHERE clause." },
     ],
   },
-  { id: "dr5-tx-09", keyword: KW, tier: "core", aspect: "semantics",
+  { id: "dr5-tx-59", keyword: KW, tier: "core", aspect: "semantics",
     prompt: "What does `LENGTH('São Paulo')` return in SQLite?",
     choices: [
       "9 — LENGTH counts characters, not bytes",
@@ -127,7 +127,7 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
     answer: 0,
     why: "SQLite's LENGTH is character-based for TEXT: S, ã, o, space, P, a, u, l, o = 9. Probed live. (For BLOBs LENGTH counts bytes — the type changes the meaning.)",
   },
-  { id: "dr5-tx-10", keyword: KW, tier: "core", aspect: "semantics",
+  { id: "dr5-tx-60", keyword: KW, tier: "core", aspect: "semantics",
     prompt: "`SELECT LENGTH(name), name FROM customers ORDER BY LENGTH(name) DESC LIMIT 3` — what lands on top?",
     choices: [
       "Isabella Rossi at 14 characters",
@@ -138,13 +138,13 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
     answer: 0,
     why: "Probed: Isabella Rossi = 14, then Dmitri Volkov and Pedro Alvarez tied at 13. Ordering by an aggregate-free expression like LENGTH(name) is legal in ORDER BY, and the longest name surfaces first.",
   },
-  { id: "dr5-tx-11", keyword: KW, tier: "core", aspect: "semantics",
+  { id: "dr5-tx-61", keyword: KW, tier: "core", aspect: "semantics",
     prompt: "How many customer names are longer than 12 characters?",
     choices: ["3", "1", "0", "16"],
     answer: 0,
     why: "Probed: exactly 3 — Isabella Rossi (14), Dmitri Volkov (13), Pedro Alvarez (13). A quick `WHERE LENGTH(name) > 12` is the standard name-quality census.",
   },
-  { id: "dr5-tx-12", keyword: KW, tier: "core", aspect: "semantics",
+  { id: "dr5-tx-62", keyword: KW, tier: "core", aspect: "semantics",
     prompt: "What does `'x' || NULL` evaluate to?",
     choices: [
       "NULL — concatenation propagates holes",
@@ -158,7 +158,7 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
       { choice: 1, why: "Unlike some engines, SQLite does not silently swap NULL for '' inside ||. If you want that, say COALESCE(col, '') || 'x'." },
     ],
   },
-  { id: "dr5-tx-13", keyword: KW, tier: "core", aspect: "semantics",
+  { id: "dr5-tx-63", keyword: KW, tier: "core", aspect: "semantics",
     prompt: "`INSTR('Alice Chen', 'z')` returns what, and what does that value mean?",
     choices: [
       "0 — the character is not present",
@@ -169,25 +169,25 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
     answer: 0,
     why: "Probed: INSTR('Alice Chen', ' ') = 6 (first space), but INSTR('Alice Chen', 'z') = 0. Zero is SQLite's 'not found' for INSTR — truthy-looking but meaning no occurrence, so guard with > 0.",
   },
-  { id: "dr5-tx-14", keyword: KW, tier: "core", aspect: "semantics",
+  { id: "dr5-tx-64", keyword: KW, tier: "core", aspect: "semantics",
     prompt: "How many customer names contain a space, per `WHERE INSTR(name, ' ') > 0`?",
     choices: ["16 — every name is 'First Last'", "15 — one name has no space", "8", "0"],
     answer: 0,
     why: "Probed: all 16 match. The seed data uses uniform 'First Last' naming, so the space census is total — a clean baseline before you trust name-splitting expressions.",
   },
-  { id: "dr5-tx-15", keyword: KW, tier: "core", aspect: "semantics",
+  { id: "dr5-tx-65", keyword: KW, tier: "core", aspect: "semantics",
     prompt: "`UPPER(SUBSTR(city, 1, 3))` over Berlin, Austin, Milan produces which tags?",
     choices: ["BER, AUS, MIL", "ber, aus, mil", "Ber, Aus, Mil", "B, A, M"],
     answer: 0,
     why: "Probed: SUBSTR takes the first three characters, UPPER shouts them — BER, AUS, MIL. Function chains read inside-out: the inner call's output becomes the outer call's input.",
   },
-  { id: "dr5-tx-16", keyword: KW, tier: "core", aspect: "semantics",
+  { id: "dr5-tx-66", keyword: KW, tier: "core", aspect: "semantics",
     prompt: "`TRIM('  pad  ')` returns what, and what is its LENGTH?",
     choices: ["'pad' with LENGTH 3", "'  pad  ' unchanged with LENGTH 7", "'pad' with LENGTH 5", "'pad  ' with LENGTH 5"],
     answer: 0,
     why: "Probed: TRIM strips spaces from both ends → 'pad', length 3. TRIM(col, 'x') with a second argument strips that character instead.",
   },
-  { id: "dr5-tx-17", keyword: KW, tier: "core", aspect: "semantics",
+  { id: "dr5-tx-67", keyword: KW, tier: "core", aspect: "semantics",
     prompt: "`COUNT(*) FROM orders WHERE TRIM(status) != status` returns 0. What does that tell you?",
     choices: [
       "The status values carry no stray leading/trailing spaces — TRIM is a no-op here",
@@ -198,7 +198,7 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
     answer: 0,
     why: "Probed: 0 rows differ under TRIM. Comparing TRIM(col) to col is the classic whitespace audit — on this seed it confirms statuses are clean, so downstream status checks can't be silently broken by padding.",
   },
-  { id: "dr5-tx-18", keyword: KW, tier: "core", aspect: "semantics",
+  { id: "dr5-tx-68", keyword: KW, tier: "core", aspect: "semantics",
     prompt: "Which statement about `1 || 2` is true?",
     choices: [
       "It returns the text '12' — || coerces numbers to text and concatenates",
@@ -210,7 +210,7 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
     why: "Probed: 1 || 2 = '12'. The `||` operator renders numbers as text and glues them. Mirror-image trap: 'Total: ' || 5 = 'Total: 5', but 'Total: ' + 5 = 5.",
   },
   // ---------- edge ----------
-  { id: "dr5-tx-19", keyword: KW, tier: "core", aspect: "edge",
+  { id: "dr5-tx-69", keyword: KW, tier: "core", aspect: "edge",
     prompt: "What does `UPPER(NULL)` return? And `LENGTH(NULL)`?",
     choices: [
       "Both NULL — text functions pass holes through",
@@ -221,7 +221,7 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
     answer: 0,
     why: "Probed: UPPER(NULL), LENGTH(NULL) are all NULL. Text functions neither crash on NULL nor invent values; the hole flows through the expression, keeping three-valued logic intact.",
   },
-  { id: "dr5-tx-20", keyword: KW, tier: "core", aspect: "edge",
+  { id: "dr5-tx-70", keyword: KW, tier: "core", aspect: "edge",
     prompt: "A customer name is exactly 'Irene' (no space). What does `SUBSTR(name, 1, INSTR(name, ' ') - 1)` return?",
     choices: [
       "An empty string — INSTR returns 0, so the length is -1 → clipped to nothing",
@@ -235,13 +235,13 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
       { choice: 0, why: "Close — the expression degenerates, but the result is empty text, not NULL. Test it: SUBSTR('Irene', 1, -1) = ''." },
     ],
   },
-  { id: "dr5-tx-21", keyword: KW, tier: "core", aspect: "edge",
+  { id: "dr5-tx-71", keyword: KW, tier: "core", aspect: "edge",
     prompt: "`SUBSTR('2024-01-05', -2)` returns what?",
     choices: ["'05' — negative start counts from the end", "'20' — negative wraps to the front", "NULL", "An error"],
     answer: 0,
     why: "Negative start positions count backward from the last character: -2 grabs the final two digits. Handy for suffixes, lethal if you meant to grab a prefix — position 1 is the front.",
   },
-  { id: "dr5-tx-22", keyword: KW, tier: "core", aspect: "edge",
+  { id: "dr5-tx-72", keyword: KW, tier: "core", aspect: "edge",
     prompt: "`SUBSTR('2024-01-05', 6, 100)` — the length overruns the string. Result?",
     choices: [
       "'01-05' — SQLite clips the length at the end of the string",
@@ -252,7 +252,7 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
     answer: 0,
     why: "SQLite is forgiving: an overlong length just stops at the string's end. Probed in the date-parts receipt — asking for 2 characters mid-string is the precise form; overrunning is tolerated, not fatal.",
   },
-  { id: "dr5-tx-23", keyword: KW, tier: "core", aspect: "edge",
+  { id: "dr5-tx-73", keyword: KW, tier: "core", aspect: "edge",
     prompt: "You write `WHERE name = UPPER('Alice Chen')`. How many rows?",
     choices: [
       "0 — you upper-cased the wrong side; the stored name is mixed-case",
@@ -266,13 +266,13 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
       { choice: 1, why: "Case folding is not automatic for `=`. Only LIKE folds ASCII case, and even that ignores non-ASCII accents." },
     ],
   },
-  { id: "dr5-tx-24", keyword: KW, tier: "core", aspect: "edge",
+  { id: "dr5-tx-74", keyword: KW, tier: "core", aspect: "edge",
     prompt: "`LENGTH(CAST(34.5 AS TEXT))` returns what?",
     choices: ["4 — '34.5'", "3 — the decimal point is dropped", "5 — a sign is prepended", "An error — CAST to TEXT of numbers is invalid"],
     answer: 0,
     why: "Probed: CAST(34.5 AS TEXT) = '34.5', length 4. Numbers render in their canonical text form — knowing the exact rendering matters when you then SUBSTR or LENGTH it.",
   },
-  { id: "dr5-tx-25", keyword: KW, tier: "core", aspect: "edge",
+  { id: "dr5-tx-75", keyword: KW, tier: "core", aspect: "edge",
     prompt: "Two customers: 'Anne Marie Lopez' and 'Ana Lopez'. Both hit `WHERE LENGTH(name) <= 15`. One query sorts by LENGTH(name). What is guaranteed?",
     choices: [
       "The shorter name sorts first only if you also say so — ties elsewhere are engine-order",
@@ -284,7 +284,7 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
     why: "LENGTH is a deterministic per-row value, so sorting by it is reliable — but equal lengths (and rows you didn't include in the key) have no promised order. Add a second sort key (name) for reproducible output.",
   },
   // ---------- errors ----------
-  { id: "dr5-tx-26", keyword: KW, tier: "core", aspect: "errors",
+  { id: "dr5-tx-76", keyword: KW, tier: "core", aspect: "errors",
     prompt: "`SELECT LEFT(name, 3) FROM customers` fails. What is the SQLite-native fix?",
     choices: [
       "`SUBSTR(name, 1, 3)` — SQLite has no LEFT/RIGHT functions",
@@ -295,7 +295,7 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
     answer: 0,
     why: "MySQL's LEFT()/RIGHT() don't exist in SQLite. SUBSTR with a 1-based start and length covers both prefixes (start 1) and suffixes (negative start).",
   },
-  { id: "dr5-tx-27", keyword: KW, tier: "core", aspect: "errors",
+  { id: "dr5-tx-77", keyword: KW, tier: "core", aspect: "errors",
     prompt: "`SELECT name FROM customers WHERE INSTR(name, ' ')` runs but looks wrong. Why is the predicate sloppy?",
     choices: [
       "INSTR returns a position, and a bare nonzero position is truthy — write `> 0` to say 'contains'",
@@ -306,7 +306,7 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
     answer: 0,
     why: "SQLite has no true boolean type; any nonzero number satisfies WHERE. It works by accident, but `INSTR(...) > 0` states the intent ('a space exists') and never surprises on edge returns.",
   },
-  { id: "dr5-tx-28", keyword: KW, tier: "core", aspect: "errors",
+  { id: "dr5-tx-78", keyword: KW, tier: "core", aspect: "errors",
     prompt: "A teammate's report shows 'Total: 5' as 5. Their code was `'Total: ' + 5`. What happened?",
     choices: [
       "`+` is arithmetic: 'Total: ' coerced to 0, then 0 + 5 = 5 — they needed `||`",
@@ -317,7 +317,7 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
     answer: 0,
     why: "Probed: 'Total: ' + 5 = 5 (typeof integer). Non-numeric text coerces to 0 in arithmetic. The `||` operator is the only concatenation in SQLite — a top-three beginner bug.",
   },
-  { id: "dr5-tx-29", keyword: KW, tier: "core", aspect: "errors",
+  { id: "dr5-tx-79", keyword: KW, tier: "core", aspect: "errors",
     prompt: "`SELECT SUBSTR(created_at, 1, 7) AS month, COUNT(*) FROM orders GROUP BY month` — the GROUP BY names an alias. Is that legal?",
     choices: [
       "Yes — SQLite allows GROUP BY to reference output aliases",
@@ -328,7 +328,7 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
     answer: 0,
     why: "SQLite is lenient: GROUP BY (and HAVING, and even ORDER BY) can reference SELECT aliases. It's a documented convenience — though writing the raw expression is the most portable spelling across engines.",
   },
-  { id: "dr5-tx-30", keyword: KW, tier: "core", aspect: "errors",
+  { id: "dr5-tx-80", keyword: KW, tier: "core", aspect: "errors",
     prompt: "A query returns '2024/01/05' where '2024-01-05' was expected. The author used REPLACE('2024-01-05', '-', '/'). What's the minimal fix?",
     choices: [
       "Swap the arguments: REPLACE(str, '/', '-') — the 'from' comes first",
@@ -340,62 +340,62 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
     why: "REPLACE(string, from, to) replaced '-' with '/' because that's what the arguments said. The fix is argument order, not a different function — REPLACE is symmetric in capability.",
   },
   // ---------- predict ----------
-  { id: "dr5-tx-31", keyword: KW, tier: "core", aspect: "predict",
+  { id: "dr5-tx-81", keyword: KW, tier: "core", aspect: "predict",
     prompt: "Storefront: `SELECT COUNT(*) FROM customers WHERE UPPER(name) = 'ALICE CHEN'`. How many rows?",
     choices: ["1", "0", "16", "8"],
     answer: 0,
     why: "Probed: exactly 1. UPPER on the column side normalizes both sides to 'ALICE CHEN', and only Alice Chen bears that name.",
   },
-  { id: "dr5-tx-32", keyword: KW, tier: "core", aspect: "predict",
+  { id: "dr5-tx-82", keyword: KW, tier: "core", aspect: "predict",
     prompt: "`SELECT SUBSTR('2024-01-05', 1, 7) || '-01'` returns what?",
     choices: ["'2024-01-01'", "'2024-01-05'", "'2024-01'", "NULL"],
     answer: 0,
     why: "SUBSTR takes characters 1–7 ('2024-01'), then `||` glues '-01' → '2024-01-01'. String surgery on ISO dates composes new dates — valid because the format is zero-padded.",
   },
-  { id: "dr5-tx-33", keyword: KW, tier: "core", aspect: "predict",
+  { id: "dr5-tx-83", keyword: KW, tier: "core", aspect: "predict",
     prompt: "`SELECT name, SUBSTR(name, 1, INSTR(name, ' ') - 1) AS first FROM customers WHERE id = 2` — what is `first`?",
     choices: ["'Bruno'", "'Bruno Silva'", "'B'", "'Silva'"],
     answer: 0,
     why: "Probed: id 2 is Bruno Silva; INSTR finds the space at 6, so SUBSTR takes 1–5 = 'Bruno'. The same expression yields 'Alice' for id 1 and 'Chloe' for id 3.",
   },
-  { id: "dr5-tx-34", keyword: KW, tier: "core", aspect: "predict",
+  { id: "dr5-tx-84", keyword: KW, tier: "core", aspect: "predict",
     prompt: "`SELECT city || ', ' || region AS place FROM customers WHERE id = 1` returns what?",
     choices: ["'Berlin, EU'", "'BerlinEU'", "'EU, Berlin'", "NULL"],
     answer: 0,
     why: "Probed: id 1 is Alice Chen of Berlin, EU — the literal ', ' lands between the columns exactly once. Concatenation chains are how display strings get assembled.",
   },
-  { id: "dr5-tx-35", keyword: KW, tier: "core", aspect: "predict",
+  { id: "dr5-tx-85", keyword: KW, tier: "core", aspect: "predict",
     prompt: "`SELECT COUNT(*) FROM customers WHERE name LIKE 'alice%'` — how many rows does the ASCII-folding LIKE find?",
     choices: ["1 — LIKE folds case for ASCII letters", "0 — LIKE is case-sensitive", "8 — it matches every A-name", "16"],
     answer: 0,
     why: "LIKE is case-insensitive for ASCII: 'alice%' matches 'Alice Chen'. Note the asymmetry with `=`, which is byte-strict — the same predicate with = would return 0.",
   },
-  { id: "dr5-tx-36", keyword: KW, tier: "core", aspect: "predict",
+  { id: "dr5-tx-86", keyword: KW, tier: "core", aspect: "predict",
     prompt: "`SELECT name FROM customers ORDER BY LENGTH(name) DESC LIMIT 1` returns which name?",
     choices: ["Isabella Rossi", "Alice Chen", "Pedro Alvarez", "Bruno Silva"],
     answer: 0,
     why: "Probed: Isabella Rossi is the longest at 14 characters (Dmitri Volkov and Pedro Alvarez tie at 13 behind it). LIMIT 1 plus a deterministic ORDER BY = a stable winner.",
   },
-  { id: "dr5-tx-37", keyword: KW, tier: "core", aspect: "predict",
+  { id: "dr5-tx-87", keyword: KW, tier: "core", aspect: "predict",
     prompt: "`SELECT REPLACE('2024-01-05', '-', '')` returns what?",
     choices: ["'20240105'", "'2024 01 05'", "'2024-01-05'", "NULL"],
     answer: 0,
     why: "REPLACE with an empty 'to' deletes every dash — the standard pre-CAST cleanup when a column must become a compact date key.",
   },
-  { id: "dr5-tx-38", keyword: KW, tier: "core", aspect: "predict",
+  { id: "dr5-tx-88", keyword: KW, tier: "core", aspect: "predict",
     prompt: "`SELECT SUBSTR(created_at, 1, 7) AS mo, COUNT(*) FROM orders GROUP BY mo ORDER BY mo LIMIT 1` — what surfaces?",
     choices: ["'2024-01' with 8 orders", "'2024-01' with 9 orders", "'2025-02' with 7", "'2024-02' with 9"],
     answer: 0,
     why: "Probed: the earliest month bucket is 2024-01 with 8 orders (February has 9 but sorts later). SUBSTR(…,1,7) on the zero-padded ISO dates builds the same month buckets strftime('%Y-%m') would.",
   },
-  { id: "dr5-tx-39", keyword: KW, tier: "core", aspect: "predict",
+  { id: "dr5-tx-89", keyword: KW, tier: "core", aspect: "predict",
     prompt: "`SELECT COUNT(*) FROM orders WHERE TRIM(status) != status` — what does the audit return?",
     choices: ["0 — no status has stray padding", "14 — one per pending order", "103", "NULL"],
     answer: 0,
     why: "Probed: zero. Every status is already clean, so TRIM never changes a value. When the audit returns nonzero, you've found invisible characters that break equality filters — the failure mode is silent, which is why the audit exists.",
   },
   // ---------- judgment ----------
-  { id: "dr5-tx-40", keyword: KW, tier: "core", aspect: "judgment",
+  { id: "dr5-tx-90", keyword: KW, tier: "core", aspect: "judgment",
     prompt: "You need month buckets from created_at ('YYYY-MM-DD' TEXT). Which is the more honest tool?",
     choices: [
       "strftime('%Y-%m', created_at) — declares date intent and handles the format contract",
@@ -409,7 +409,7 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
       { choice: 2, why: "Interchangeable only under today's exact format. The format contract lives in one place with strftime, zero places with SUBSTR." },
     ],
   },
-  { id: "dr5-tx-41", keyword: KW, tier: "core", aspect: "judgment",
+  { id: "dr5-tx-91", keyword: KW, tier: "core", aspect: "judgment",
     prompt: "When is UPPER() the wrong tool for a case-insensitive match?",
     choices: [
       "On non-ASCII text — UPPER only folds ASCII letters, so 'É' stays put",
@@ -420,7 +420,7 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
     answer: 0,
     why: "SQLite's UPPER/LOWER are ASCII-only: accented characters pass through untouched. For Unicode-aware folding you need application-side normalization or ICU extensions — knowing the boundary prevents 'works on my data' bugs.",
   },
-  { id: "dr5-tx-42", keyword: KW, tier: "core", aspect: "judgment",
+  { id: "dr5-tx-92", keyword: KW, tier: "core", aspect: "judgment",
     prompt: "A report needs 'ORDER #103 — 324.16'. Which is the defensible choice?",
     choices: [
       "`'ORDER #' || id || ' — ' || total` — display-layer formatting is legitimate string work",
@@ -431,7 +431,7 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
     answer: 0,
     why: "Building display labels in the query keeps the label always in sync with the data — storing it duplicates truth and rots. The anti-pattern isn't string building; it's storing what you can derive.",
   },
-  { id: "dr5-tx-43", keyword: KW, tier: "core", aspect: "judgment",
+  { id: "dr5-tx-93", keyword: KW, tier: "core", aspect: "judgment",
     prompt: "Before trusting a first-name split (SUBSTR + INSTR) in production, which check matters most?",
     choices: [
       "Census the delimiter: COUNT(*) WHERE INSTR(name, ' ') = 0 — find rows the split will mangle",
@@ -442,7 +442,7 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
     answer: 0,
     why: "The split silently degrades to '' for space-less names (probe: length -1 → empty string). A delimiter census quantifies the blast radius before anyone consumes the derived column. On this db: 0 at-risk rows out of 16.",
   },
-  { id: "dr5-tx-44", keyword: KW, tier: "core", aspect: "judgment",
+  { id: "dr5-tx-94", keyword: KW, tier: "core", aspect: "judgment",
     prompt: "When does TRIM earn its place in a query?",
     choices: [
       "As a defensive audit or cleanup of ingested data — not as a permanent crutch on clean data",
@@ -453,7 +453,7 @@ export const TEXT_FUNCTIONS: DrillQ[] = [
     answer: 0,
     why: "TRIM-as-audit (TRIM(col) != col) catches padding at the door; TRIM-as-permanent-filter hides an upstream data-quality bug and slows every scan. Fix ingestion, then drop the crutch.",
   },
-  { id: "dr5-tx-45", keyword: KW, tier: "core", aspect: "judgment",
+  { id: "dr5-tx-95", keyword: KW, tier: "core", aspect: "judgment",
     prompt: "A colleague proposes validating emails with `WHERE INSTR(email, '@') > 0`. Reasonable?",
     choices: [
       "As a coarse sanity gate yes — but it accepts 'a@' and '@b'; real validation lives outside SQL",

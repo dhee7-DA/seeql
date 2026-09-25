@@ -1,11 +1,17 @@
 // XP economy, career ladder, daily goals and badges.
 // Pure functions + constants — no React, no storage.
 
+import type { CaseStudy } from "./types";
 import type { ProgressState } from "./progress";
 
 export const XP = {
   mcq: 5,
   mcqFirstBonus: 3,
+  fill: 8,
+  fillFirstBonus: 4,
+  case: 12,
+  caseFirstBonus: 6,
+  examPass: 60,
   lessonBonus: 50,
 } as const;
 
@@ -13,6 +19,39 @@ export type Difficulty = "easy" | "medium" | "hard";
 
 export function xpForDifficulty(d: Difficulty): number {
   return d === "easy" ? 5 : d === "medium" ? 10 : 20;
+}
+
+/** Difficulty of a scenario case — authored value wins, otherwise infer
+ *  from the slot count (4+ slots to place reads as hard). */
+export function caseDifficulty(cs: Pick<CaseStudy, "difficulty" | "answers">): Difficulty {
+  return cs.difficulty ?? (cs.answers.length >= 4 ? "hard" : "medium");
+}
+
+/** Star string for a difficulty, e.g. medium → "★★☆". */
+export function starsFor(d: Difficulty): string {
+  return d === "easy" ? "★☆☆" : d === "medium" ? "★★☆" : "★★★";
+}
+
+/** Longest calendar run of days that ever met the daily goal. */
+export function bestStreak(
+  state: Pick<ProgressState, "xpByDay" | "dailyGoal">,
+): number {
+  const met = Object.keys(state.xpByDay)
+    .filter((k) => (state.xpByDay[k] ?? 0) >= state.dailyGoal)
+    .sort();
+  let best = 0;
+  let run = 0;
+  let prev: Date | null = null;
+  for (const k of met) {
+    const [y, m, d] = k.split("-").map(Number);
+    const day = new Date(y, m - 1, d);
+    const consecutive =
+      prev !== null && day.getTime() - prev.getTime() === 86_400_000;
+    run = consecutive ? run + 1 : 1;
+    if (run > best) best = run;
+    prev = day;
+  }
+  return best;
 }
 
 export interface LevelInfo {

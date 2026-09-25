@@ -48,6 +48,25 @@ import { CTE_RECURSIVE } from "./m4/cte-recursive";
 import { SUB_EDGES } from "./m4/sub-edges";
 import { SUB_ERRORS } from "./m4/sub-errors";
 import { SUB_JUDGMENT } from "./m4/sub-judgment";
+import { RANK_FAMILY } from "./m5/rank-family";
+import { WINDOW_RANK_DRILL } from "./m5/window-rank";
+import { LAG_LEAD } from "./m5/lag-lead";
+import { WINDOW_OFFSETS_DRILL } from "./m5/window-offsets";
+import { TEXT_FUNCTIONS } from "./m5/text-functions";
+import { TEXT_TOOLKIT_DRILL } from "./m5/text-toolkit";
+import { CAST_COERCION } from "./m5/cast-coercion";
+import { TYPE_CAST_DRILL } from "./m5/type-cast";
+import { DATE_BUCKETS } from "./m5/date-buckets";
+import { DATE_MATH } from "./m5/date-math";
+import { PARTITION_WINDOWS } from "./m5/partition-windows";
+import { FRAMES } from "./m5/frames";
+import { WINDOW_FRAMES_DRILL } from "./m5/window-frames";
+import { NTILE_DRILL } from "./m5/ntile";
+import { DATE_EDGES_DRILL } from "./m5/date-edges";
+import { WINDOW_EDGES_DRILL } from "./m5/window-edges";
+import { WINDOW_JUDGMENT_DRILL } from "./m5/window-judgment";
+import { OPS_CALENDAR } from "./m5/ops-calendar";
+import { TOOLKIT_CAPSTONE_DRILL } from "./m5/toolkit-capstone";
 
 function set(
   keyword: string, label: string, module: number, tier: DrillSet["tier"],
@@ -198,6 +217,50 @@ export const DRILL_SETS: DrillSet[] = [
   set("sub-judgment", "Choosing subqueries", 4, "secondary",
     "Which shape when — IN vs EXISTS vs JOIN vs staged CTE, and the honest tool for each brief.",
     SUB_JUDGMENT),
+  // ---- Module 5 · core ----
+  set("ranking-windows", "Ranking windows", 5, "core",
+    "The leaderboard family — ROW_NUMBER vs RANK vs DENSE_RANK, tie arithmetic, per-partition restarts, and top-N-per-group staging.",
+    [...WINDOW_RANK_DRILL, ...RANK_FAMILY]),
+  set("lag-lead", "LAG & LEAD", 5, "core",
+    "The offset pair — previous and next rows, the first/last NULL fence, custom fallbacks, and deltas that make trends readable.",
+    [...WINDOW_OFFSETS_DRILL, ...LAG_LEAD]),
+  set("text-toolkit", "Text toolkit", 5, "core",
+    "Reshape any value — SUBSTR slicing, INSTR locating, UPPER/LOWER/REPLACE, concatenation, and the case-folding fine print.",
+    [...TEXT_TOOLKIT_DRILL, ...TEXT_FUNCTIONS]),
+  set("cast-coercion", "CAST & coercion", 5, "core",
+    "Types on demand — CAST truncation, SQLite's silent affinity rules, typeof receipts, and the coercions that never error.",
+    [...CAST_COERCION, ...TYPE_CAST_DRILL]),
+  set("date-buckets", "Date buckets (strftime)", 5, "core",
+    "The calendar as groups — %Y/%m/%w buckets, weekday censuses, zero-padded contracts, and month counts that tie.",
+    DATE_BUCKETS),
+  set("date-math", "Date math (julianday)", 5, "core",
+    "Arithmetic on time — date() modifiers, julianday diffs, month-end overflow, and ship-speed averages.",
+    DATE_MATH),
+  set("window-partitions", "PARTITION BY windows", 5, "core",
+    "Windows with walls — per-region restarts, top-N-per-group staging, partition stamps, and the census partition SUM keeps.",
+    PARTITION_WINDOWS),
+  // ---- Module 5 · secondary ----
+  set("window-frames", "Frames & running totals", 5, "secondary",
+    "The moving window — default RANGE frames, ROWS alternatives, moving averages, and the grand-total reconciliation.",
+    [...WINDOW_FRAMES_DRILL, ...FRAMES]),
+  set("ntile", "NTILE", 5, "secondary",
+    "Equal buckets — quartiles and percentiles, remainders dealt left to right, oversized tile counts, and the top-quartile filter.",
+    NTILE_DRILL),
+  set("date-edges", "Date edge cases", 5, "secondary",
+    "When dates get weird — NULL shipped_at, unpadded strings that refuse to parse, boundary guards, and rounding the average.",
+    DATE_EDGES_DRILL),
+  set("window-edges", "Window edge cases", 5, "secondary",
+    "When windows get weird — WHERE/HAVING bans, alias misuse, nested windows, empty partitions, and the ORDER BY loophole.",
+    WINDOW_EDGES_DRILL),
+  set("window-judgment", "Choosing windows", 5, "secondary",
+    "Choosing the window — rank vs row_number, when GROUP BY is the honest tool, staging patterns, and reading intent.",
+    WINDOW_JUDGMENT_DRILL),
+  set("ops-calendar", "Ops calendar synthesis", 5, "secondary",
+    "The Module 5 synthesis — month buckets, running lines, weekday censuses and ship speeds assembled into the ops calendar.",
+    OPS_CALENDAR),
+  set("toolkit-capstone", "Toolkit capstone", 5, "secondary",
+    "Text, dates and windows in one pipeline — the full toolkit stack with the free reconciliation at the end.",
+    TOOLKIT_CAPSTONE_DRILL),
 ];
 
 export type { DrillSet, DrillQ, DrillTier, DrillAspect } from "./types";
@@ -249,4 +312,10 @@ export const LESSON_DRILLS: Record<string, string[]> = {
   "lesson-27": ["derived"],                      // query in FROM
   "lesson-28": ["cte", "cte-recursive"],         // WITH stages + RECURSIVE
   "lesson-38": ["sub-judgment", "sub-edges", "sub-errors"], // capstone: choosing shapes + traps
+  // ---- Module 5 (scalar & window toolkit) ----
+  "lesson-29": ["text-toolkit", "cast-coercion"],               // text & type toolkit
+  "lesson-30": ["date-buckets", "date-math"],                    // dates & buckets
+  "lesson-31": ["ranking-windows", "window-partitions", "ntile"], // Windows I: rank without collapsing
+  "lesson-32": ["lag-lead", "window-frames"],                    // Windows II: offsets & running totals
+  "lesson-39": ["ops-calendar", "toolkit-capstone"],             // case study: the ops calendar
 };

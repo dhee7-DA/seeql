@@ -16,7 +16,23 @@ import { RichNodes } from "./rich";
 import { looksLikeSql, SqlNodes } from "./sql-code";
 import { celebrate } from "./celebrate";
 
-export function McqCard({ mcq, onAnswered }: { mcq: Mcq; onAnswered?: (correct: boolean) => void }) {
+export function McqCard({
+  mcq,
+  index,
+  reviewMode = false,
+  examMode = false,
+  onAnswered,
+}: {
+  mcq: Mcq;
+  /** Optional 1-based question number (quiz pages render "Q3" tags). */
+  index?: number;
+  /** Review deck: zero XP, the first Check records recall/miss on the card. */
+  reviewMode?: boolean;
+  /** Exam mode: zero XP, feedback withheld until submit, misses still feed
+   *  the review deck. */
+  examMode?: boolean;
+  onAnswered?: (correct: boolean) => void;
+}) {
   const [picked, setPicked] = useState<number | null>(null);
   const [checked, setChecked] = useState(false);
   const [flutter, setFlutter] = useState<{ gained: number; seq: number } | null>(null);
@@ -36,11 +52,30 @@ export function McqCard({ mcq, onAnswered }: { mcq: Mcq; onAnswered?: (correct: 
     awardRef.current = true;
     setChecked(true);
     const store = useProgress.getState();
-    const isFirst = store.recordMcqCheck(mcq.id, picked === mcq.answer);
+    const ok = picked === mcq.answer;
+
+    // Exam mode: the answer is recorded (misses still feed the review deck)
+    // but XP and feedback are sealed until the results phase.
+    if (examMode) {
+      store.recordMcqCheck(mcq.id, ok);
+      if (!ok) store.recordMiss(mcq.id);
+      onAnswered?.(ok);
+      return;
+    }
+
+    // Review mode: retention, not farming — zero XP, the Leitner card moves.
+    if (reviewMode) {
+      if (ok) store.recordRecall(mcq.id);
+      else store.recordMiss(mcq.id);
+      onAnswered?.(ok);
+      return;
+    }
+
+    const isFirst = store.recordMcqCheck(mcq.id, ok);
     // spaced repetition: every answer schedules the card's return —
     // 1d/3d/7d/14d ladder after corrects, back to tomorrow after a miss
-    store.scheduleReview(`mcq:${mcq.id}`, picked === mcq.answer);
-    if (picked === mcq.answer) {
+    store.scheduleReview(`mcq:${mcq.id}`, ok);
+    if (ok) {
       // XP truth comes from the ledger: awardXp returns whether it paid.
       // Repeats never pay twice, so "gained" is honest — the chip and
       // toast can never claim XP the ledger didn't bank.
@@ -56,11 +91,16 @@ export function McqCard({ mcq, onAnswered }: { mcq: Mcq; onAnswered?: (correct: 
           : "XP already banked for this one",
       });
     }
-    onAnswered?.(picked === mcq.answer);
+    onAnswered?.(ok);
   }
 
   return (
     <div className="sheen relative rounded-lg border border-zinc-800 bg-zinc-950 p-4 sm:p-5">
+      {index !== undefined && (
+        <p className="mb-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-zinc-600">
+          Q{index}
+        </p>
+      )}
       <p className="text-sm font-medium leading-relaxed text-zinc-100"><RichNodes text={mcq.prompt} /></p>
       <div className="mt-3.5 grid gap-2">
         {mcq.choices.map((choice, i) => {
@@ -111,7 +151,12 @@ export function McqCard({ mcq, onAnswered }: { mcq: Mcq; onAnswered?: (correct: 
           );
         })}
       </div>
-      {checked && (
+      {checked && examMode && (
+        <p className="mt-3.5 flex items-center gap-1.5 text-xs text-zinc-500">
+          <X className="h-3 w-3" /> Answer locked — feedback comes when you submit.
+        </p>
+      )}
+      {checked && !examMode && (
         <motion.div
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
@@ -154,7 +199,7 @@ export function McqCard({ mcq, onAnswered }: { mcq: Mcq; onAnswered?: (correct: 
             picked === null && "cursor-not-allowed opacity-40",
           )}
         >
-          Check answer
+          {examMode ? "Lock in answer" : "Check answer"}
         </button>
       )}
       {flutter && (

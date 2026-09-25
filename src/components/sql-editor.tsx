@@ -40,7 +40,7 @@ interface Token {
 const TOKEN_RE =
   /(--[^\n]*|#[^\n]*|\/\*[\s\S]*?\*\/)|('(?:[^']|'')*'|"(?:[^"]|"")*"|`[^`]*`|\[[^\]]*\])|(\b\d+(?:\.\d+)?\b)|(@[A-Za-z_][A-Za-z0-9_]*|\$\d+)|([A-Za-z_][A-Za-z0-9_]*)|([(),;.=<>!+\-*/%|&~])/g;
 
-function tokenize(sql: string): Token[] {
+export function tokenizeSql(sql: string): Token[] {
   const tokens: Token[] = [];
   let last = 0;
   let match: RegExpExecArray | null;
@@ -103,7 +103,7 @@ export function SqlEditor({
   const preRef = useRef<HTMLPreElement>(null);
   const gutterRef = useRef<HTMLDivElement>(null);
 
-  const tokens = useMemo(() => tokenize(value), [value]);
+  const tokens = useMemo(() => tokenizeSql(value), [value]);
   const lineCount = useMemo(() => value.split("\n").length, [value]);
 
   // keep highlight + gutter in sync with textarea scroll

@@ -1,4 +1,4 @@
-// Drill set — Window frames & running totals (Module 5, secondary, 45
+// Drill set (MERGED into its primary twin — ids renumbered, KW aligned) — Window frames & running totals (Module 5, secondary, 45
 // questions). Engine-verified receipts (db/custom.db): running SUM by id —
 // 576.54, 993.35, 1760.99, 1919.47, 2644.81 (ids 1–5); default frame =
 // RANGE UNBOUNDED PRECEDING AND CURRENT ROW, identical to ROWS here (ids
@@ -13,11 +13,11 @@
 
 import type { DrillQ } from "../types";
 
-const KW = "window frames";
+const KW = "Frames & running totals";
 
 export const FRAMES: DrillQ[] = [
   // ---------- syntax ----------
-  { id: "dr5-fr-01", keyword: KW, tier: "secondary", aspect: "syntax",
+  { id: "dr5-wf-46", keyword: KW, tier: "secondary", aspect: "syntax",
     prompt: "What is the DEFAULT frame when you write `SUM(total) OVER (ORDER BY id)` with no frame clause?",
     choices: [
       "RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW — from the start up to the current row (and its peers)",
@@ -28,7 +28,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "The default frame walks from the beginning to the current row — that's why ORDER BY id yields a running total (probed: 576.54, 993.35, 1760.99, 1919.47, 2644.81). It's RANGE-based, which matters only when peers exist.",
   },
-  { id: "dr5-fr-02", keyword: KW, tier: "secondary", aspect: "syntax",
+  { id: "dr5-wf-47", keyword: KW, tier: "secondary", aspect: "syntax",
     prompt: "Which spelling makes the window cover the WHOLE partition regardless of order?",
     choices: [
       "`OVER ()` — empty: no partition, no order, frame = everything",
@@ -39,7 +39,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "Probed: SUM(total) OVER () = 34,833.28 stamped identically on all 103 rows. Add ORDER BY and the default frame turns it into a running total — the empty OVER is the only spelling that means 'one number everywhere'.",
   },
-  { id: "dr5-fr-03", keyword: KW, tier: "secondary", aspect: "syntax",
+  { id: "dr5-wf-48", keyword: KW, tier: "secondary", aspect: "syntax",
     prompt: "Which frame computes a 3-row moving sum (previous, current, next)?",
     choices: [
       "`ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING`",
@@ -50,7 +50,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "ROWS frames count physical rows: one back, one ahead. (3 PRECEDING AND CURRENT ROW is a 4-row window — probed family: 1 PRECEDING AND CURRENT ROW summed id2 = 993.35 from two rows.) Boundaries are inclusive on both ends.",
   },
-  { id: "dr5-fr-04", keyword: KW, tier: "secondary", aspect: "syntax",
+  { id: "dr5-wf-49", keyword: KW, tier: "secondary", aspect: "syntax",
     prompt: "Which keyword pair makes the frame count ROWS physically vs VALUE ranges?",
     choices: [
       "ROWS vs RANGE — ROWS counts positions, RANGE includes value-peers of the current row",
@@ -61,7 +61,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "Probed: on unique ids ROWS and RANGE produce identical running totals (576.54…2644.81). They diverge exactly when the ORDER BY ties — RANGE drags peers in (the month receipt: all 7 orders of 2025-02 got 2,390.53 together).",
   },
-  { id: "dr5-fr-05", keyword: KW, tier: "secondary", aspect: "syntax",
+  { id: "dr5-wf-50", keyword: KW, tier: "secondary", aspect: "syntax",
     prompt: "Which frame builds a 'remaining total' (from the current row to the end)?",
     choices: [
       "`ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING`",
@@ -72,7 +72,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "The reverse-running frame. Probed (under WHERE id <= 3): id 1 = 1,760.99 (sum of all three survivors), id 3 = 767.64 (just itself). The mirror of the running total — order total vs what's still ahead.",
   },
-  { id: "dr5-fr-06", keyword: KW, tier: "secondary", aspect: "syntax",
+  { id: "dr5-wf-51", keyword: KW, tier: "secondary", aspect: "syntax",
     prompt: "Can a frame clause exist without ORDER BY in the OVER?",
     choices: [
       "Technically allowed but meaningless for ROWS/RANGE with UNBOUNDED — without ORDER BY the frame defaults to the whole partition",
@@ -83,7 +83,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "The default without ORDER BY is the entire partition (probed OVER () = one number everywhere). Frames shape ordered windows; unordered windows are already whole-partition. Writing a frame without ORDER BY is a smell.",
   },
-  { id: "dr5-fr-07", keyword: KW, tier: "secondary", aspect: "syntax",
+  { id: "dr5-wf-52", keyword: KW, tier: "secondary", aspect: "syntax",
     prompt: "Which window computes a 3-day moving average over daily revenue rows ordered by day?",
     choices: [
       "`AVG(t) OVER (ORDER BY day ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING)`",
@@ -95,7 +95,7 @@ export const FRAMES: DrillQ[] = [
     why: "ROWS 1 PRECEDING AND 1 FOLLOWING = exactly three physical rows centered on the current one (probed family: moving averages 576.54, 496.675, 586.997…). RANGE would grab value-neighbors (3 units of `day`), not 3 rows — a different, sometimes wrong, window.",
   },
   // ---------- semantics ----------
-  { id: "dr5-fr-08", keyword: KW, tier: "secondary", aspect: "semantics",
+  { id: "dr5-wf-53", keyword: KW, tier: "secondary", aspect: "semantics",
     prompt: "Why does `SUM(total) OVER (ORDER BY id)` produce a RUNNING total rather than a grand total?",
     choices: [
       "The ORDER BY sets the default frame to 'start of partition through current row' — each row sums its prefix",
@@ -106,7 +106,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "Probed prefix sums: row 3 carries 1,760.99 = 576.54 + 416.81 + 767.64. The frame is the memory: each row's window is its past. Grand total needs the empty OVER (34,833.28 everywhere).",
   },
-  { id: "dr5-fr-09", keyword: KW, tier: "secondary", aspect: "semantics",
+  { id: "dr5-wf-54", keyword: KW, tier: "secondary", aspect: "semantics",
     prompt: "What does the running-total column mean on row 5 (725.34 → running 2,644.81)?",
     choices: [
       "The sum of orders 1 through 5 — 576.54 + 416.81 + 767.64 + 158.48 + 725.34 = 2,644.81",
@@ -117,7 +117,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "Probed exactly: 2,644.81. Each running value is a prefix sum — the receipt that anchors all frame arithmetic. The final row (order 103) carries the grand total 34,833.28… IF the partition is the full table.",
   },
-  { id: "dr5-fr-10", keyword: KW, tier: "secondary", aspect: "semantics",
+  { id: "dr5-wf-55", keyword: KW, tier: "secondary", aspect: "semantics",
     prompt: "Frames do NOT change the row count. What do they change?",
     choices: [
       "Which rows each computation sees — the sliding/anchored window behind every stamped value",
@@ -128,7 +128,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "Probed: 103 rows in, 103 rows out — each carrying its frame's aggregate. PARTITION BY sets the arena, ORDER BY lines up rows, the FRAME picks the subset. Three dials, one row count.",
   },
-  { id: "dr5-fr-11", keyword: KW, tier: "secondary", aspect: "semantics",
+  { id: "dr5-wf-56", keyword: KW, tier: "secondary", aspect: "semantics",
     prompt: "Why do running totals and ROWS-UNBOUNDED frames agree on this db (2,644.81 both ways)?",
     choices: [
       "The ORDER BY key (id) is unique — no peers, so RANGE's peer-inclusion never adds rows",
@@ -139,7 +139,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "Probed: identical sequences. RANGE's default includes PEERS of the current row; unique ids have no peers. The divergence is dormant until ties exist — the month-bucket receipt (7 tied orders sharing 2,390.53) is where RANGE's true behavior shows.",
   },
-  { id: "dr5-fr-12", keyword: KW, tier: "secondary", aspect: "semantics",
+  { id: "dr5-wf-57", keyword: KW, tier: "secondary", aspect: "semantics",
     prompt: "The month-peers receipt: 7 orders in 2025-02 each show 2,390.53 under a RANGE running sum. Why?",
     choices: [
       "RANGE's frame includes value-peers — all 7 rows tie on the month key, so each row's 'prefix' includes the whole tied group",
@@ -150,7 +150,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "The defining RANGE receipt: on a tied ORDER BY key, 'current row' expands to 'current value group'. All seven peers sum the entire month — 2,390.53 stamped on each. ROWS would have given 7 different running values. Frame choice on tied keys is a semantic decision.",
   },
-  { id: "dr5-fr-13", keyword: KW, tier: "secondary", aspect: "semantics",
+  { id: "dr5-wf-58", keyword: KW, tier: "secondary", aspect: "semantics",
     prompt: "What does `COUNT(*) OVER (ORDER BY id)` accumulate (probed 1, 2, 3 for the first rows)?",
     choices: [
       "Row position — the running COUNT is the row number within the ordered partition",
@@ -161,7 +161,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "Probed: 1, 2, 3. Any aggregate runs under frames — SUM accumulates, COUNT counts, MIN/MAX track extremes (probed mn 416.81 / mx 576.54 by row 2), AVG averages. The frame is the generic 'prefix machine'.",
   },
-  { id: "dr5-fr-14", keyword: KW, tier: "secondary", aspect: "semantics",
+  { id: "dr5-wf-59", keyword: KW, tier: "secondary", aspect: "semantics",
     prompt: "What distinguishes a moving average (3-wide frame) from the running average (default frame)?",
     choices: [
       "The window size — 3-wide averages exactly 3 neighbors (probed id4: 447.64 over 3 rows), running averages everything from the start",
@@ -172,7 +172,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "Probed: 3-wide AVG gives 576.54, 496.675 (two rows), 586.997 (three rows), 447.643 — a smoothed local signal. The default-frame AVG would drift toward the global mean. Short frames respond; long frames remember.",
   },
-  { id: "dr5-fr-15", keyword: KW, tier: "secondary", aspect: "semantics",
+  { id: "dr5-wf-60", keyword: KW, tier: "secondary", aspect: "semantics",
     prompt: "Why is the empty OVER () called the 'grand-total stamp' in this module?",
     choices: [
       "It computes the aggregate over the whole partition and stamps the SAME value on every row — probed 34,833.28 × 103 rows",
@@ -184,7 +184,7 @@ export const FRAMES: DrillQ[] = [
     why: "Probed: 103 rows, each carrying 34,833.28. That stamp enables per-row shares (`total / SUM(total) OVER ()` = each order's slice of the store) — the window way of joining every row to its whole.",
   },
   // ---------- edge ----------
-  { id: "dr5-fr-16", keyword: KW, tier: "secondary", aspect: "edge",
+  { id: "dr5-wf-61", keyword: KW, tier: "secondary", aspect: "edge",
     prompt: "The WHERE-shrinks receipt: `WHERE id = 103` + running SUM OVER (ORDER BY id). What value?",
     choices: [
       "324.16 — the partition is one row, so the 'running' total is just order 103's own total",
@@ -195,7 +195,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "Probed: 324.16, not 34,833.28. WHERE ran first; the frame starts and ends at the single survivor. Running totals over filtered sets describe the filtered world — 'revenue to date' needs the full population in the window.",
   },
-  { id: "dr5-fr-17", keyword: KW, tier: "secondary", aspect: "edge",
+  { id: "dr5-wf-62", keyword: KW, tier: "secondary", aspect: "edge",
     prompt: "Frame `ROWS BETWEEN 2 PRECEDING AND 1 FOLLOWING` under WHERE id <= 3 — why do rows 2 and 3 BOTH show 1,760.99?",
     choices: [
       "The WHERE clipped the partition to 3 rows — row 2's forward reach (id 4) is gone, and row 3 has no follower, so both frames span ids 1–3",
@@ -206,7 +206,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "Probed: 1,760.99 twice. Forward boundaries hit the partition's end and stop — frames clip, they don't error. (In the FULL table, row 3's frame would reach id 4's 158.48.) Edge frames near boundaries shrink silently.",
   },
-  { id: "dr5-fr-18", keyword: KW, tier: "secondary", aspect: "edge",
+  { id: "dr5-wf-63", keyword: KW, tier: "secondary", aspect: "edge",
     prompt: "Why does the 1-PRECEDING frame on row 1 (576.54 alone) not error — there IS no preceding row?",
     choices: [
       "Frame boundaries clip at partition edges — a partial frame computes over what exists",
@@ -217,7 +217,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "Probed: row 1's 3-wide sum = 576.54 (just itself), row 2's = 993.35 (two rows). Windows never wrap around; boundaries shrink. The first and last rows of any moving window always have less context — plan for it.",
   },
-  { id: "dr5-fr-19", keyword: KW, tier: "secondary", aspect: "edge",
+  { id: "dr5-wf-64", keyword: KW, tier: "secondary", aspect: "edge",
     prompt: "Where do ROWS and RANGE frames DIVERGE most dangerously in production data?",
     choices: [
       "Tied ORDER BY keys — RANGE includes peers (probed: 7 tied month rows share one sum), ROWS stays positional, so the same query gives different money",
@@ -228,7 +228,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "The probed peer receipt is the warning: on tied keys the DEFAULT (RANGE) frame quietly includes the whole tie group. 'Why is my running total flat across these 7 rows?' — because they're peers. Decide ROWS vs RANGE deliberately; never inherit the default on tie-able keys.",
   },
-  { id: "dr5-fr-20", keyword: KW, tier: "secondary", aspect: "edge",
+  { id: "dr5-wf-65", keyword: KW, tier: "secondary", aspect: "edge",
     prompt: "A running total's last row should read 34,833.28. When does it legitimately read something else?",
     choices: [
       "When WHERE/PARTITION shrank the population — probed 324.16 under WHERE id = 103, or a per-customer partition's last row = that customer's spend",
@@ -239,7 +239,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "The running total's endpoint equals the sum of whatever the partition contains. Probed variants: full table → 34,833.28; filtered → 324.16; Alice's partition → 7,262.35. 'The last row should be the grand total' is an audit that verifies the POPULATION, not the math.",
   },
-  { id: "dr5-fr-21", keyword: KW, tier: "secondary", aspect: "edge",
+  { id: "dr5-wf-66", keyword: KW, tier: "secondary", aspect: "edge",
     prompt: "What does MIN/MAX OVER (ORDER BY id) track (probed: row 2 shows mn 416.81, mx 576.54)?",
     choices: [
       "The extremes SO FAR — a running min-max envelope over the prefix frame",
@@ -250,7 +250,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "Probed: row 1 (576.54) is both min and max of its prefix; row 2 splits them. Running extremes power 'all-time high so far' columns — the frame machine is generic across aggregates.",
   },
-  { id: "dr5-fr-22", keyword: KW, tier: "secondary", aspect: "edge",
+  { id: "dr5-wf-67", keyword: KW, tier: "secondary", aspect: "edge",
     prompt: "NULL totals inside a 3-wide frame — how does the moving SUM treat them?",
     choices: [
       "SUM skips NULLs — the frame sums non-NULL values, so a 3-row window with one NULL behaves like a 2-row sum",
@@ -262,7 +262,7 @@ export const FRAMES: DrillQ[] = [
     why: "Aggregate-NULL rules apply inside frames as everywhere: SUM/AVG skip holes (probed aggregate behavior), COUNT(*) counts rows. A frame over sparse data shifts width invisibly — one more reason to census NULLs before framing.",
   },
   // ---------- errors ----------
-  { id: "dr5-fr-23", keyword: KW, tier: "secondary", aspect: "errors",
+  { id: "dr5-wf-68", keyword: KW, tier: "secondary", aspect: "errors",
     prompt: "A 'running revenue' chart starts at 324.16 instead of 576.54. What clause bit it?",
     choices: [
       "A WHERE clause shrank the partition before the window ran (probed: WHERE id = 103 → 324.16) — move the filter outside the windowed query",
@@ -273,7 +273,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "The probed starvation: filters inside remove rows from the frame's universe. The chart's shape isn't wrong arithmetic — it's a different population. 'Filter after framing' (CTE wrap) is the fix.",
   },
-  { id: "dr5-fr-24", keyword: KW, tier: "secondary", aspect: "errors",
+  { id: "dr5-wf-69", keyword: KW, tier: "secondary", aspect: "errors",
     prompt: "A dev writes `SUM(total) OVER (ORDER BY month ROWS UNBOUNDED PRECEDING)` — incomplete frame. What's missing?",
     choices: [
       "The upper bound — ROWS frames need `BETWEEN ... AND ...` (or accept the shorthand `ROWS UNBOUNDED PRECEDING` meaning TO CURRENT ROW in SQLite)",
@@ -284,7 +284,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "SQLite accepts the one-bound shorthand (equivalent to BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW), but the explicit BETWEEN form is the professional spelling — portable and unambiguous about where the frame ends.",
   },
-  { id: "dr5-fr-25", keyword: KW, tier: "secondary", aspect: "errors",
+  { id: "dr5-wf-70", keyword: KW, tier: "secondary", aspect: "errors",
     prompt: "A monthly running total is FLAT for a whole month's rows, then jumps. Diagnosis?",
     choices: [
       "The ORDER BY ties on the month key and the default RANGE frame includes peers — all tied rows share the group's sum (probed 2,390.53 × 7)",
@@ -295,7 +295,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "The probed peer receipt exactly: tied keys under RANGE sum as one group. If per-row accumulation is wanted, spell ROWS (or order by a unique key inside the month). The flat-plateau shape is the visual signature of RANGE-on-ties.",
   },
-  { id: "dr5-fr-26", keyword: KW, tier: "secondary", aspect: "errors",
+  { id: "dr5-wf-71", keyword: KW, tier: "secondary", aspect: "errors",
     prompt: "`SELECT SUM(total) OVER (ORDER BY id) FROM orders GROUP BY customer_id` — what's conceptually broken?",
     choices: [
       "Mixing a bare column window over GROUP BY without nesting — the window would run on grouped rows; stamping raw totals needs the aggregate nested: SUM(SUM(total)) OVER (...)",
@@ -307,68 +307,68 @@ export const FRAMES: DrillQ[] = [
     why: "After GROUP BY, windows see one row per group. A running total ACROSS customers then needs the nested form (window over the grouped SUM) — the same nesting the per-region ranks use. Un-nested, the query either errors or computes over the wrong population.",
   },
   // ---------- predict ----------
-  { id: "dr5-fr-27", keyword: KW, tier: "secondary", aspect: "predict",
+  { id: "dr5-wf-72", keyword: KW, tier: "secondary", aspect: "predict",
     prompt: "Running SUM by id: what does order 3's row carry (totals 576.54, 416.81, 767.64 so far)?",
     choices: ["1,760.99", "1,344.35", "767.64", "34,833.28"],
     answer: 0,
     why: "Probed: 576.54 + 416.81 + 767.64 = 1,760.99 — the three-row prefix sum. Row 4 then reads 1,919.47, row 5 reads 2,644.81.",
   },
-  { id: "dr5-fr-28", keyword: KW, tier: "secondary", aspect: "predict",
+  { id: "dr5-wf-73", keyword: KW, tier: "secondary", aspect: "predict",
     prompt: "`SUM(total) OVER ()` — what value appears on order 55's row?",
     choices: ["34,833.28 — the grand total, stamped identically on every row", "The running total to order 55", "Order 55's total", "NULL"],
     answer: 0,
     why: "Probed: the empty OVER computes one aggregate over the whole set and stamps it 103 times (n = 103 rows all carrying 34,833.28). Position doesn't matter — the frame is everything.",
   },
-  { id: "dr5-fr-29", keyword: KW, tier: "secondary", aspect: "predict",
+  { id: "dr5-wf-74", keyword: KW, tier: "secondary", aspect: "predict",
     prompt: "Frame `1 PRECEDING AND CURRENT ROW` — order 2's sum (576.54 + 416.81)?",
     choices: ["993.35", "1,184.45", "416.81", "1,760.99"],
     answer: 0,
     why: "Probed: the two-row sliding window on row 2 = 993.35. Row 3 then slides to 416.81 + 767.64 = 1,184.45 — the window moves WITH the row, always the same width (once the edge passes).",
   },
-  { id: "dr5-fr-30", keyword: KW, tier: "secondary", aspect: "predict",
+  { id: "dr5-wf-75", keyword: KW, tier: "secondary", aspect: "predict",
     prompt: "Moving AVG over `2 PRECEDING AND CURRENT ROW` — row 4's value (rows 2–4: 416.81, 767.64, 158.48)?",
     choices: ["≈ 447.64", "≈ 586.99", "158.48", "≈ 496.67"],
     answer: 0,
     why: "Probed: (416.81 + 767.64 + 158.48) / 3 = 447.64. Row 3's value (586.997) averaged rows 1–3 — each row is the mean of its three-row prefix window.",
   },
-  { id: "dr5-fr-31", keyword: KW, tier: "secondary", aspect: "predict",
+  { id: "dr5-wf-76", keyword: KW, tier: "secondary", aspect: "predict",
     prompt: "Reverse frame `CURRENT ROW AND UNBOUNDED FOLLOWING` under WHERE id <= 3 — row 1's value?",
     choices: ["1,760.99 — everything from row 1 to the end of the (filtered) partition", "576.54", "34,833.28", "NULL"],
     answer: 0,
     why: "Probed: the reverse running total = 576.54 + 416.81 + 767.64 = 1,760.99 on row 1, shrinking to 767.64 on row 3. 'What remains ahead' — the complement of the running total.",
   },
-  { id: "dr5-fr-32", keyword: KW, tier: "secondary", aspect: "predict",
+  { id: "dr5-wf-77", keyword: KW, tier: "secondary", aspect: "predict",
     prompt: "`WHERE id = 103` + running SUM: the value on the single returned row?",
     choices: ["324.16", "34,833.28", "NULL", "0"],
     answer: 0,
     why: "Probed: the WHERE-shrinks-window receipt. One row in, one-row frame — the 'running total' equals order 103's own total. The grand total requires the unfiltered population.",
   },
-  { id: "dr5-fr-33", keyword: KW, tier: "secondary", aspect: "predict",
+  { id: "dr5-wf-78", keyword: KW, tier: "secondary", aspect: "predict",
     prompt: "COUNT(*) OVER (ORDER BY id) — what shows on the 55th row?",
     choices: ["55 — the running count IS the position", "103", "1", "0"],
     answer: 0,
     why: "Probed head (1, 2, 3): the default frame counts the prefix, so row N reads N. The free row-number generator — though ROW_NUMBER() says it explicitly and works without aggregate semantics.",
   },
-  { id: "dr5-fr-34", keyword: KW, tier: "secondary", aspect: "predict",
+  { id: "dr5-wf-79", keyword: KW, tier: "secondary", aspect: "predict",
     prompt: "RANGE frame over month buckets with ties (2025-02's 7 orders): how many DISTINCT values does the running sum show for those rows?",
     choices: ["1 — all 7 show 2,390.53", "7 — one per row", "0", "14"],
     answer: 0,
     why: "Probed: the peer frame collapses the 7 rows to one shared value — each tied row's prefix includes the whole group. Under ROWS the same rows would show 7 different running values. Same query, different frame, different chart.",
   },
-  { id: "dr5-fr-35", keyword: KW, tier: "secondary", aspect: "predict",
+  { id: "dr5-wf-80", keyword: KW, tier: "secondary", aspect: "predict",
     prompt: "Running total by id across ALL 103 orders — what does the LAST row carry?",
     choices: ["34,833.28 — the full-store sum", "2,644.81", "324.16", "0"],
     answer: 0,
     why: "Probed: the running total's endpoint is the grand total (34,833.28) when the partition is the full, unfiltered table. The prefix machine's last stop IS the whole — the audit that ties running totals to totals.",
   },
-  { id: "dr5-fr-36", keyword: KW, tier: "secondary", aspect: "predict",
+  { id: "dr5-wf-81", keyword: KW, tier: "secondary", aspect: "predict",
     prompt: "3-wide frame at row 1 (no preceding row): what does SUM show?",
     choices: ["576.54 — the frame clipped to just row 1", "NULL", "An error", "993.35"],
     answer: 0,
     why: "Probed: edge frames shrink, never wrap. Row 1's window holds itself alone; row 2's holds two rows; row 3 onward holds the full width. Moving windows always start and end 'smaller' at the boundaries.",
   },
   // ---------- judgment ----------
-  { id: "dr5-fr-37", keyword: KW, tier: "secondary", aspect: "judgment",
+  { id: "dr5-wf-82", keyword: KW, tier: "secondary", aspect: "judgment",
     prompt: "'Revenue to date' dashboard: which frame spelling do you ship and why?",
     choices: [
       "`SUM(t) OVER (ORDER BY month ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)` over a month CTE — explicit frame, unique-ish keys, documented intent",
@@ -379,7 +379,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "The default would work today (probed identical on unique keys), but month keys can tie across sources and the explicit ROWS spelling declares 'per-row accumulation' — the exact decision the probed RANGE-peer receipt shows matters. Explicit frames are documentation that executes.",
   },
-  { id: "dr5-fr-38", keyword: KW, tier: "secondary", aspect: "judgment",
+  { id: "dr5-wf-83", keyword: KW, tier: "secondary", aspect: "judgment",
     prompt: "When is `SUM OVER ()` (the stamp) the right tool vs a running frame?",
     choices: [
       "When every row needs the WHOLE for comparison (per-order share of store revenue) — stamps for ratios, frames for trajectories",
@@ -390,7 +390,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "Probed stamp: 34,833.28 on all rows → `total / 34833.28` is each order's share. The running frame answers 'how did we get here'; the stamp answers 'where does this row sit in the whole'. Different questions, both one line.",
   },
-  { id: "dr5-fr-39", keyword: KW, tier: "secondary", aspect: "judgment",
+  { id: "dr5-wf-84", keyword: KW, tier: "secondary", aspect: "judgment",
     prompt: "3-day vs 30-day moving average: what does frame width trade off?",
     choices: [
       "Responsiveness vs stability — 3-wide tracks local shifts (probed 447.64 vs 586.99 swings), long frames smooth them away toward the mean",
@@ -401,7 +401,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "Probed: the 3-wide averages wobble row to row (576.54 → 496.67 → 586.99 → 447.64); the running average would drift slower and slower as the prefix grows. Width is the smoothing dial — choose it from the noise scale, not the syntax.",
   },
-  { id: "dr5-fr-40", keyword: KW, tier: "secondary", aspect: "judgment",
+  { id: "dr5-wf-85", keyword: KW, tier: "secondary", aspect: "judgment",
     prompt: "Why must the 'revenue to date' population be decided BEFORE the frame is written?",
     choices: [
       "The frame can only sum what the query hands it — probed 324.16 under a shrunken WHERE vs 34,833.28 full; the population IS the metric's definition",
@@ -412,7 +412,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "The probed pair (324.16 vs 34,833.28) is the same function on different populations. 'Revenue to date' silently becomes 'revenue to date of the filtered set' — a different KPI with the same name. Population first, frame second, chart last.",
   },
-  { id: "dr5-fr-41", keyword: KW, tier: "secondary", aspect: "judgment",
+  { id: "dr5-wf-86", keyword: KW, tier: "secondary", aspect: "judgment",
     prompt: "Order-level running totals vs month-level: which does the ops calendar use, and why?",
     choices: [
       "Month-level — 14 buckets with the running line 3,731.97 → 7,341.61 → 9,958.69 tells the story; 103 order-level points are noise",
@@ -423,7 +423,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "Probed month CTE: the running sums (3,731.97, 7,341.61, 9,958.69…) climb monotonically to 34,833.28 — 14 legible steps. The order-level version (probed head) wobbles with every 158.48 dip. Frame the grain the audience reads.",
   },
-  { id: "dr5-fr-42", keyword: KW, tier: "secondary", aspect: "judgment",
+  { id: "dr5-wf-87", keyword: KW, tier: "secondary", aspect: "judgment",
     prompt: "The audit for any running-total column: what must the last row equal?",
     choices: [
       "The SUM of the partition's population (full table: 34,833.28; Alice's partition: 7,262.35) — the endpoint reconciliation",
@@ -434,7 +434,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "Probed both scales: the prefix machine's last value IS the group total. If it isn't, a WHERE shrank the population or the partition key drifted — the one-line endpoint check catches the whole WHERE-shrinks family.",
   },
-  { id: "dr5-fr-43", keyword: KW, tier: "secondary", aspect: "judgment",
+  { id: "dr5-wf-88", keyword: KW, tier: "secondary", aspect: "judgment",
     prompt: "A teammate proposes computing the running total with a correlated subquery per row. Why is the frame better?",
     choices: [
       "One window pass computes all prefixes (probed sequence in one scan); the correlated version re-aggregates per row — correct but quadratic-feeling and noisier",
@@ -445,7 +445,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "The frame IS the prefix machine: one sorted pass, every row stamped (probed 576.54…2644.81). The correlated spelling re-derives each prefix — same numbers, more work, more surface for the base-population drift bugs Module 4 catalogued.",
   },
-  { id: "dr5-fr-44", keyword: KW, tier: "secondary", aspect: "judgment",
+  { id: "dr5-wf-89", keyword: KW, tier: "secondary", aspect: "judgment",
     prompt: "Choosing ROWS vs RANGE for a revenue running line on month buckets: the deciding receipt?",
     choices: [
       "The tie census — if month keys can repeat (or you're on raw rows with shared dates), ROWS keeps the line per-row; RANGE would plateau across peers (probed 2,390.53 × 7)",
@@ -456,7 +456,7 @@ export const FRAMES: DrillQ[] = [
     answer: 0,
     why: "The probed peer receipt shows RANGE's plateau on ties; the probed tie-free sums show the two frames coinciding. The decision input is always: can the ORDER BY tie? Unique keys → either works; tie-able keys → ROWS (or a unique tiebreaker) for positional truth.",
   },
-  { id: "dr5-fr-45", keyword: KW, tier: "secondary", aspect: "judgment",
+  { id: "dr5-wf-90", keyword: KW, tier: "secondary", aspect: "judgment",
     prompt: "Capstone instinct: before shipping any framed aggregate, which two receipts must exist?",
     choices: [
       "A worked boundary chain (first row's clipped frame, a mid-row prefix sum like 2,644.81, the endpoint = population sum) and the tie/peer decision (ROWS vs RANGE)",

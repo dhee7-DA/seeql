@@ -38,7 +38,7 @@ for (const s of DRILL_SETS) {
 
 console.log(`\n== Other practice banks`);
 console.log(`   Golf holes:            ${GOLF_HOLES.length}`);
-for (const h of GOLF_HOLES) console.log(`     • ${h.id ?? ""} ${h.title ?? h.name ?? ""}`);
+for (const h of GOLF_HOLES) console.log(`     • ${(h as { id?: string }).id ?? ""} ${(h as { title?: string }).title ?? ""}`);
 console.log(`   Predict-the-output:    ${PREDICTS.length}`);
 console.log(`   Interview rungs:       ${INTERVIEW_RUNGS.length}`);
 console.log(`   Schema studio items:   ${STUDIO_ITEMS.length}`);

@@ -1,4 +1,4 @@
-// Drill set — LAG & LEAD (Module 5, core, 45 questions).
+// Drill set (MERGED into its primary twin — ids renumbered, KW aligned) — LAG & LEAD (Module 5, core, 45 questions).
 // Engine-verified receipts (db/custom.db): LAG(total) OVER (ORDER BY id):
 // order 1 → NULL, order 2 → 576.54, order 3 → 416.81, order 4 → 767.64;
 // exactly 1 NULL LAG (first row) and 1 NULL LEAD (order 103) in 103 rows;
@@ -15,7 +15,7 @@ const KW = "LAG & LEAD";
 
 export const LAG_LEAD: DrillQ[] = [
   // ---------- syntax ----------
-  { id: "dr5-lag-01", keyword: KW, tier: "core", aspect: "syntax",
+  { id: "dr5-wo-51", keyword: KW, tier: "core", aspect: "syntax",
     prompt: "Which is the correct spelling for 'previous order's total, ordered by id'?",
     choices: [
       "`LAG(total) OVER (ORDER BY id)`",
@@ -26,7 +26,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "LAG takes the column (plus optional offset and default) and the OVER supplies the row order that defines 'previous'. There is no PREV function, and partitioning by id would make every partition one row — every LAG NULL.",
   },
-  { id: "dr5-lag-02", keyword: KW, tier: "core", aspect: "syntax",
+  { id: "dr5-wo-52", keyword: KW, tier: "core", aspect: "syntax",
     prompt: "What are LAG's optional arguments?",
     choices: [
       "`LAG(col, offset, default)` — e.g. LAG(total, 2, 0) reads two rows back, filling 0 where none exists",
@@ -37,7 +37,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "Probed: LAG(total, 1, 0) turns order 1's NULL into 0. The offset (default 1) moves N rows back; the default replaces the edge NULL. LEAD mirrors both for forward reads.",
   },
-  { id: "dr5-lag-03", keyword: KW, tier: "core", aspect: "syntax",
+  { id: "dr5-wo-53", keyword: KW, tier: "core", aspect: "syntax",
     prompt: "Which OVER belongs to a week-over-week revenue comparison?",
     choices: [
       "`OVER (ORDER BY month)` — order by the time key so LAG reads the prior period",
@@ -48,7 +48,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "LAG/LEAD are order-defined: 'previous' means previous in the OVER's sort. Probed: ORDER BY id makes order 2 see order 1 (576.54). Sorting by total would give 'the next-smaller total' — a different, usually wrong, neighbor.",
   },
-  { id: "dr5-lag-04", keyword: KW, tier: "core", aspect: "syntax",
+  { id: "dr5-wo-54", keyword: KW, tier: "core", aspect: "syntax",
     prompt: "How do you compute 'next order's total' in the same row?",
     choices: [
       "`LEAD(total) OVER (ORDER BY id)` — the mirror of LAG",
@@ -59,7 +59,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "LEAD reads forward. (Option 2 is actually equivalent output but an anti-pattern — reversed sorts confuse every reader; negative offsets are not supported, use LEAD.) Probed: order 102 sees 324.16 ahead; order 103 sees NULL.",
   },
-  { id: "dr5-lag-05", keyword: KW, tier: "core", aspect: "syntax",
+  { id: "dr5-wo-55", keyword: KW, tier: "core", aspect: "syntax",
     prompt: "Can LAG read a TEXT column?",
     choices: [
       "Yes — LAG(name) OVER (ORDER BY id) carries the previous customer's name (probed: Bruno Silva after Alice Chen)",
@@ -70,7 +70,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "Probed: LAG over names returns 'Alice Chen' as row 1's NULL edge and 'Bruno Silva' for row 2. Windows shift ANY value type — text, numbers, dates. Offset columns are type-agnostic.",
   },
-  { id: "dr5-lag-06", keyword: KW, tier: "core", aspect: "syntax",
+  { id: "dr5-wo-56", keyword: KW, tier: "core", aspect: "syntax",
     prompt: "Which expression computes period-over-period delta cleanly?",
     choices: [
       "`total - LAG(total) OVER (ORDER BY id)`",
@@ -81,7 +81,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "Probed: order 2 = 416.81 − 576.54 = −159.73; order 3 = +350.83; order 1 = NULL (nothing before it). Current minus shifted — the arithmetic wraps the window, not the other way.",
   },
-  { id: "dr5-lag-07", keyword: KW, tier: "core", aspect: "syntax",
+  { id: "dr5-wo-57", keyword: KW, tier: "core", aspect: "syntax",
     prompt: "Two LAG columns in one SELECT — `LAG(total) OVER (ORDER BY id)`, `LAG(total, 2) OVER (ORDER BY id)`. Legal?",
     choices: [
       "Yes — independent windows, one row back and two rows back simultaneously",
@@ -93,7 +93,7 @@ export const LAG_LEAD: DrillQ[] = [
     why: "Each function+OVER pair is independent (probed LEAD(total,2): order 1 sees order 3's 767.64 when the partition is full). Multi-offset receipts let one query carry step-1 and step-2 comparisons.",
   },
   // ---------- semantics ----------
-  { id: "dr5-lag-08", keyword: KW, tier: "core", aspect: "semantics",
+  { id: "dr5-wo-58", keyword: KW, tier: "core", aspect: "semantics",
     prompt: "What does LAG do, in one sentence?",
     choices: [
       "Copies a neighboring row's value into the current row, per the OVER's order — no join, no self-join",
@@ -104,7 +104,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "Probed: order 3's row carries 416.81 (order 2's total) without any join. The window shifts values across rows within the same result set — 'delta columns' and 'previous value' patterns in one function.",
   },
-  { id: "dr5-lag-09", keyword: KW, tier: "core", aspect: "semantics",
+  { id: "dr5-wo-59", keyword: KW, tier: "core", aspect: "semantics",
     prompt: "How many edge NULLs does LAG(total) OVER (ORDER BY id) produce across 103 orders?",
     choices: [
       "Exactly 1 — the first row has no previous",
@@ -115,7 +115,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "Probed: exactly one NULL (order 1). LEAD's twin also has exactly one (order 103). The edge-NULL census is the first sanity check on any offset column — more than one means your ORDER BY isn't unique.",
   },
-  { id: "dr5-lag-10", keyword: KW, tier: "core", aspect: "semantics",
+  { id: "dr5-wo-60", keyword: KW, tier: "core", aspect: "semantics",
     prompt: "The 576.54 → 416.81 → 767.64 chain: what does LAG show on each of the three rows?",
     choices: [
       "NULL, 576.54, 416.81 — each row sees exactly its predecessor",
@@ -126,7 +126,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "Probed head rows. Row 1: no predecessor → NULL. Row 2: sees 576.54. Row 3: sees 416.81. The value appears on the READING row — LAG pulls the past into the present, never the reverse.",
   },
-  { id: "dr5-lag-11", keyword: KW, tier: "core", aspect: "semantics",
+  { id: "dr5-wo-61", keyword: KW, tier: "core", aspect: "semantics",
     prompt: "50 of the 102 consecutive pairs rose (probed streak-ups). What query shape produced that?",
     choices: [
       "`SELECT ... FROM (SELECT total, LAG(total) OVER (ORDER BY id) prev FROM orders) WHERE total > prev`",
@@ -137,7 +137,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "The wrap-then-compare pattern: LAG inside, comparison outside. (The self-join on id+1 also works but scales worse and breaks on gaps; the window reads neighbors positionally.) 50/102 — the chain wobbles up as often as not.",
   },
-  { id: "dr5-lag-12", keyword: KW, tier: "core", aspect: "semantics",
+  { id: "dr5-wo-62", keyword: KW, tier: "core", aspect: "semantics",
     prompt: "Why does the first row's LAG NULL matter more than 'missing data'?",
     choices: [
       "It's structural — no amount of data fills it; only the default argument or COALESCE hides it, and hiding it can fake a delta",
@@ -148,7 +148,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "Probed: exactly 1 structural NULL. LAG(total, 1, 0) would make the first delta read 576.54 − 0 — a fake +576.54 'jump'. Structural NULLs are information (period start); defaults are display sugar that must not enter math.",
   },
-  { id: "dr5-lag-13", keyword: KW, tier: "core", aspect: "semantics",
+  { id: "dr5-wo-63", keyword: KW, tier: "core", aspect: "semantics",
     prompt: "What population does LAG's ORDER BY id compare — and what changes under ORDER BY created_at?",
     choices: [
       "Whichever order the OVER sorts — by id, neighbors are insertion neighbors; by created_at, chronological neighbors (different pairs when ids and dates disagree)",
@@ -159,7 +159,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "'Previous' is defined entirely by the OVER's sort (probed: ORDER BY id chains 1→2→3). If rows were inserted out of date order, id-neighbors and date-neighbors diverge — the offset question must name its ordering explicitly.",
   },
-  { id: "dr5-lag-14", keyword: KW, tier: "core", aspect: "semantics",
+  { id: "dr5-wo-64", keyword: KW, tier: "core", aspect: "semantics",
     prompt: "Why is LAG preferred over a self-join (`o2.id = o.id - 1`) for previous-row reads?",
     choices: [
       "LAG reads positionally in the sorted set — no key arithmetic, no breaks on gaps, no fan-out",
@@ -170,7 +170,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "The self-join depends on id arithmetic surviving (gaps, non-integer keys, composite sorts); LAG just walks the sorted partition (probed chain). Judgment: keys describe identity, positions describe sequence — LAG works in the sequence domain.",
   },
-  { id: "dr5-lag-15", keyword: KW, tier: "core", aspect: "semantics",
+  { id: "dr5-wo-65", keyword: KW, tier: "core", aspect: "semantics",
     prompt: "What does LEAD(total, 2) mean, and what does it yield at order 101 of 103?",
     choices: [
       "Read two rows ahead — at 101 it sees order 103's total; at 102+ it's NULL (nothing two ahead)",
@@ -182,7 +182,7 @@ export const LAG_LEAD: DrillQ[] = [
     why: "Probed: LEAD(total,2) at order 1 (full partition) sees order 3's 767.64. Offsets count rows in the sorted partition; near the tail the window runs out and NULLs appear — the mirror of LAG's head.",
   },
   // ---------- edge ----------
-  { id: "dr5-lag-16", keyword: KW, tier: "core", aspect: "edge",
+  { id: "dr5-wo-66", keyword: KW, tier: "core", aspect: "edge",
     prompt: "The WHERE-shrinks-window receipt: `WHERE id = 1` plus LAG(total) OVER (ORDER BY id) returns what?",
     choices: [
       "NULL — the partition now holds ONE row, and a one-row partition has no previous",
@@ -193,7 +193,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "Probed: NULL. WHERE runs before windows — the partition is just {order 1}. The classic bug: 'why is my LAG always NULL?' because a WHERE clause starved the partition. Filter AFTER the window (CTE wrap) to keep neighbors.",
   },
-  { id: "dr5-lag-17", keyword: KW, tier: "core", aspect: "edge",
+  { id: "dr5-wo-67", keyword: KW, tier: "core", aspect: "edge",
     prompt: "LEAD(total, 2) under WHERE id = 1 — what and why?",
     choices: [
       "NULL — two-ahead of the only surviving row doesn't exist in the shrunken partition",
@@ -204,7 +204,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "Probed: NULL. In the full table, order 1's two-ahead is order 3 (767.64); with WHERE id = 1 the partition holds one row. Same lesson, LEAD side: the window sees the filtered world only.",
   },
-  { id: "dr5-lag-18", keyword: KW, tier: "core", aspect: "edge",
+  { id: "dr5-wo-68", keyword: KW, tier: "core", aspect: "edge",
     prompt: "LAG with a non-unique ORDER BY (e.g. ORDER BY status) — what happens to 'previous'?",
     choices: [
       "Ties make the neighbor ambiguous — engine-order decides which tied row is 'previous', so results can shift between runs",
@@ -215,7 +215,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "Offset functions walk the sorted partition; tied keys have no defined among-order. Probed determinism comes from the unique id sort. The professional spelling always pins a unique tiebreaker into the OVER.",
   },
-  { id: "dr5-lag-19", keyword: KW, tier: "core", aspect: "edge",
+  { id: "dr5-wo-69", keyword: KW, tier: "core", aspect: "edge",
     prompt: "What does LAG return on the first row of EACH partition (PARTITION BY customer_id)?",
     choices: [
       "NULL per partition — every customer's first order has no within-customer previous (so 16 edge NULLs, not 1)",
@@ -226,7 +226,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "Probed mechanism (partition counters): partitions reset computation. 16 customers → 16 first-rows → 16 NULLs under PARTITION BY customer_id. Edge NULLs multiply by partition count — the census changes shape with the partition key.",
   },
-  { id: "dr5-lag-20", keyword: KW, tier: "core", aspect: "edge",
+  { id: "dr5-wo-70", keyword: KW, tier: "core", aspect: "edge",
     prompt: "Order 103's LEAD is NULL. A dashboard shows 'next order total: blank'. The business wants 0. What's the defensible move?",
     choices: [
       "Display-only COALESCE(LEAD(...), 0) or a label like '—' in the presentation layer; keep the raw NULL in any math",
@@ -237,7 +237,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "Probed: exactly 1 tail NULL, structural. Feeding 0 into `total - LEAD(...)` manufactures a fake 324.16 'drop' at the end of history. Display labels are fine; math inputs must stay honest.",
   },
-  { id: "dr5-lag-21", keyword: KW, tier: "core", aspect: "edge",
+  { id: "dr5-wo-71", keyword: KW, tier: "core", aspect: "edge",
     prompt: "Why is `LAG(total) OVER (ORDER BY id)` = 576.54 on order 2 NOT 'order 2's previous total by value'?",
     choices: [
       "It's the total of the id-previous row (576.54 = order 1's total) — positional, not ranked-by-value",
@@ -248,7 +248,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "Probed chain: the neighbor is whatever sorts adjacent (order 1, 576.54), regardless of value rank. If order 1 had been the smallest order ever, LAG would still show it. 'Previous by position' vs 'previous by value' (needs MIN with a range) are different questions.",
   },
-  { id: "dr5-lag-22", keyword: KW, tier: "core", aspect: "edge",
+  { id: "dr5-wo-72", keyword: KW, tier: "core", aspect: "edge",
     prompt: "A partition has 5 rows; you call LAG(col, 7). What comes back?",
     choices: [
       "NULL on every row — the offset overshoots the partition from row 1",
@@ -260,7 +260,7 @@ export const LAG_LEAD: DrillQ[] = [
     why: "Offset walks N positions; there is no row 8 positions back in a 5-row partition, so every read misses. Probed family (LEAD(total,2) in shrunken partitions): oversized offsets are silent NULL factories — check offset vs partition size.",
   },
   // ---------- errors ----------
-  { id: "dr5-lag-23", keyword: KW, tier: "core", aspect: "errors",
+  { id: "dr5-wo-73", keyword: KW, tier: "core", aspect: "errors",
     prompt: "`SELECT LAG(total) FROM orders` — no OVER. What does SQLite say?",
     choices: [
       "'misuse of window function LAG()' — offsets are windows and demand OVER",
@@ -271,7 +271,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "Probed family (NTILE twin): window functions without OVER die with 'misuse of window function …'. LAG has no row-order context without OVER — the error is the grammar enforcing sequence definitions.",
   },
-  { id: "dr5-lag-24", keyword: KW, tier: "core", aspect: "errors",
+  { id: "dr5-wo-74", keyword: KW, tier: "core", aspect: "errors",
     prompt: "A delta column shows NULL for every row. Top suspect?",
     choices: [
       "A WHERE clause shrank every partition to one row (probed: WHERE id = 1 → LAG NULL) — or the OVER's ORDER BY is missing/mis-keyed",
@@ -282,7 +282,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "The probed starvation: WHERE before window leaves each partition a singleton, and singletons have no neighbors. All-NULL deltas are never a data problem first — they're a clause-order or OVER-shape problem.",
   },
-  { id: "dr5-lag-25", keyword: KW, tier: "core", aspect: "errors",
+  { id: "dr5-wo-75", keyword: KW, tier: "core", aspect: "errors",
     prompt: "A dev 'fixed' the edge NULL with LAG(total, 1, 0) and now the month-over-month report shows a huge spike at the start. What happened?",
     choices: [
       "The default 0 manufactured a fake delta (current − 0) on the first row — the default belongs in display, not in delta math",
@@ -293,7 +293,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "Probed: LAG(total, 1, 0) turns order 1's prev into 0, so its delta reads the full 576.54 as growth. Defaults exist to label edges ('period start'), not to feed subtraction. Filter the first row or keep the NULL.",
   },
-  { id: "dr5-lag-26", keyword: KW, tier: "core", aspect: "errors",
+  { id: "dr5-wo-76", keyword: KW, tier: "core", aspect: "errors",
     prompt: "Comparing rows with LAG over `ORDER BY created_at` where 9 orders share a day — what's the risk?",
     choices: [
       "Tied timestamps make 'previous' engine-order — add a tiebreaker (id) to the OVER for a stable neighbor",
@@ -305,68 +305,68 @@ export const LAG_LEAD: DrillQ[] = [
     why: "Probed determinism comes from unique ids. Month buckets share dates freely (probed: 84 days hold 103 orders); a date-only sort ties constantly. The stable spelling: ORDER BY created_at, id.",
   },
   // ---------- predict ----------
-  { id: "dr5-lag-27", keyword: KW, tier: "core", aspect: "predict",
+  { id: "dr5-wo-77", keyword: KW, tier: "core", aspect: "predict",
     prompt: "`SELECT id, total, LAG(total) OVER (ORDER BY id) prev FROM orders WHERE id <= 4` — order 4's prev?",
     choices: ["767.64 (order 3's total)", "416.81", "576.54", "NULL"],
     answer: 0,
     why: "Probed chain: NULL, 576.54, 416.81, 767.64 for orders 1–4. Order 4 reads its immediate predecessor, order 3 (767.64).",
   },
-  { id: "dr5-lag-28", keyword: KW, tier: "core", aspect: "predict",
+  { id: "dr5-wo-78", keyword: KW, tier: "core", aspect: "predict",
     prompt: "Same query — how many NULLs appear in the prev column across the four rows?",
     choices: ["1 — only order 1", "0", "2", "4"],
     answer: 0,
     why: "Probed: exactly the first row is NULL. Across all 103 orders it stays exactly 1 — the structural edge. Counting NULLs in an offset column is the quick 'is my ordering unique' audit.",
   },
-  { id: "dr5-lag-29", keyword: KW, tier: "core", aspect: "predict",
+  { id: "dr5-wo-79", keyword: KW, tier: "core", aspect: "predict",
     prompt: "`SELECT LAG(total, 1, 0) OVER (ORDER BY id) prev FROM orders WHERE id = 1` — the value?",
     choices: ["0 — the default fills the edge", "NULL", "576.54", "416.81"],
     answer: 0,
     why: "Probed: the three-argument LAG substitutes 0 where no previous exists. Note the trap this creates in deltas (0 − 576.54 arithmetic) — the default is a label, not a neighbor.",
   },
-  { id: "dr5-lag-30", keyword: KW, tier: "core", aspect: "predict",
+  { id: "dr5-wo-80", keyword: KW, tier: "core", aspect: "predict",
     prompt: "`SELECT id, LEAD(total) OVER (ORDER BY id) nxt FROM orders WHERE id >= 102` — order 103's nxt?",
     choices: ["NULL — the last row has no next", "324.16", "115.06", "0"],
     answer: 0,
     why: "Probed tail: order 102 sees 324.16 (order 103's total); order 103 sees nothing — the LEAD edge. Symmetric with LAG's head: one structural NULL on each side of 103 rows.",
   },
-  { id: "dr5-lag-31", keyword: KW, tier: "core", aspect: "predict",
+  { id: "dr5-wo-81", keyword: KW, tier: "core", aspect: "predict",
     prompt: "Delta column `total - LAG(total) OVER (ORDER BY id)` for order 2 (416.81 after 576.54)?",
     choices: ["−159.73", "+159.73", "0", "NULL"],
     answer: 0,
     why: "Probed: 416.81 − 576.54 = −159.73 — a drop. Order 3 then rebounds +350.83 (767.64 − 416.81). The delta column is the LAG payoff: direction and magnitude per row, no joins.",
   },
-  { id: "dr5-lag-32", keyword: KW, tier: "core", aspect: "predict",
+  { id: "dr5-wo-82", keyword: KW, tier: "core", aspect: "predict",
     prompt: "`LAG(name) OVER (ORDER BY id)` on customers — row 2 (Bruno Silva) shows what?",
     choices: ["'Alice Chen'", "NULL", "'Bruno Silva'", "'Chloe Dubois'"],
     answer: 0,
     why: "Probed: row 1 NULL, row 2 'Alice Chen' — LAG shifts text exactly like numbers. Offset columns are type-agnostic; 'previous customer's name' is one function call.",
   },
-  { id: "dr5-lag-33", keyword: KW, tier: "core", aspect: "predict",
+  { id: "dr5-wo-83", keyword: KW, tier: "core", aspect: "predict",
     prompt: "The streak census: how many of the 102 id-adjacent pairs rose (total > previous total)?",
     choices: ["50", "52", "103", "25"],
     answer: 0,
     why: "Probed: 50 ups. The wrap-then-compare (LAG inside, filter outside) counts direction per step. Slightly under half — order-to-order totals wobble without a trend, another 'flat with noise' storefront fact.",
   },
-  { id: "dr5-lag-34", keyword: KW, tier: "core", aspect: "predict",
+  { id: "dr5-wo-84", keyword: KW, tier: "core", aspect: "predict",
     prompt: "`WHERE id = 1` + `LAG(total) OVER (ORDER BY id)` — order 1's prev is NULL. Change the WHERE to id = 2: what is prev?",
     choices: ["576.54 — the partition holds orders 1–2, so order 2 sees order 1", "NULL", "416.81", "0"],
     answer: 0,
     why: "Probed: WHERE id = 2 keeps TWO rows in the partition — order 2 reads order 1. Only the singleton partition (id = 1) starves. WHERE shapes the neighbor set; the boundary is literally visible in this pair of probes.",
   },
-  { id: "dr5-lag-35", keyword: KW, tier: "core", aspect: "predict",
+  { id: "dr5-wo-85", keyword: KW, tier: "core", aspect: "predict",
     prompt: "LEAD(total, 2) OVER (ORDER BY id) on the FULL table at order 1 — what value?",
     choices: ["767.64 — order 3 is two ahead", "416.81", "NULL", "576.54"],
     answer: 0,
     why: "Probed: in the full partition, two-ahead of order 1 is order 3 (767.64). (Under WHERE id = 1 the same call is NULL — the partition shrank to one row.) Same function, opposite answers, clause-order explained.",
   },
-  { id: "dr5-lag-36", keyword: KW, tier: "core", aspect: "predict",
+  { id: "dr5-wo-86", keyword: KW, tier: "core", aspect: "predict",
     prompt: "PARTITION BY customer_id + LAG(total): how many edge NULLs across 16 customers?",
     choices: ["16 — one per customer's first order", "1", "0", "103"],
     answer: 0,
     why: "Probed mechanism: partitions reset the window; each of the 16 first-rows has no within-customer previous. Edge-NULL counts are a function of the partition key — 1 globally, 16 per-customer, 14 per-month.",
   },
   // ---------- judgment ----------
-  { id: "dr5-lag-37", keyword: KW, tier: "core", aspect: "judgment",
+  { id: "dr5-wo-87", keyword: KW, tier: "core", aspect: "judgment",
     prompt: "Month-over-month revenue delta: which population should LAG walk?",
     choices: [
       "The month-bucket rows (14 of them) — LAG over the grouped CTE, not over 103 raw orders",
@@ -377,7 +377,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "The probed buckets (3731.97, 3609.64, 2617.08, …) are the periods; LAG over the bucket CTE gives month deltas (−122.33, −992.56 …). LAG over raw orders would compare adjacent ORDERS and call it 'monthly'. The partition/population choice is the whole question.",
   },
-  { id: "dr5-lag-38", keyword: KW, tier: "core", aspect: "judgment",
+  { id: "dr5-wo-88", keyword: KW, tier: "core", aspect: "judgment",
     prompt: "When is a self-join actually preferable to LAG for neighbor comparisons?",
     choices: [
       "When the 'previous' relationship is semantic (same customer's PREVIOUS order, maybe non-adjacent) and gap-tolerant — a join on derived keys states the relationship explicitly",
@@ -388,7 +388,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "LAG reads positionally (probed chain). 'Each order vs the customer's previous order' needs partition + order semantics LAG handles too (PARTITION BY customer_id ORDER BY created_at) — but skip relationships, many-to-many looks, and gap logic live more honestly in joins. Sequence-adjacent = LAG; relationship-based = join.",
   },
-  { id: "dr5-lag-39", keyword: KW, tier: "core", aspect: "judgment",
+  { id: "dr5-wo-89", keyword: KW, tier: "core", aspect: "judgment",
     prompt: "Trend report needs 'first period shows blank, not zero'. Which spelling ships?",
     choices: [
       "Raw LAG (NULL edge) in the data layer; COALESCE to a display label only in the presentation query",
@@ -399,7 +399,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "Probed: the edge is structural (exactly 1 NULL). NULL at the data layer means 'no comparison possible'; 0 means 'compared against zero' — different claims. The blank cell is honest; the fake delta is not.",
   },
-  { id: "dr5-lag-40", keyword: KW, tier: "core", aspect: "judgment",
+  { id: "dr5-wo-90", keyword: KW, tier: "core", aspect: "judgment",
     prompt: "Where does the filter belong in 'orders above 500 vs their previous order'?",
     choices: [
       "Filter AFTER the window (CTE wrap): compute LAG over all orders, then WHERE total > 500 — the previous-order context must exist first",
@@ -410,7 +410,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "Probed starvation: WHERE inside removes rows and their neighbor-ness (id = 1 case). 'This order's previous order' must be read from the full sequence, then the pair filtered. Clause order is data semantics here, not style.",
   },
-  { id: "dr5-lag-41", keyword: KW, tier: "core", aspect: "judgment",
+  { id: "dr5-wo-91", keyword: KW, tier: "core", aspect: "judgment",
     prompt: "50/102 pairs rose — no trend. What does this receipt teach about delta-based claims?",
     choices: [
       "Per-step deltas are noise-prone at small scales — aggregate direction over buckets (or use running totals) before claiming momentum",
@@ -421,7 +421,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "Probed: near-coin-flip direction across adjacent orders. Order-to-order deltas wobble; month-bucket sums (3731.97 → 3609.64 → 2617.08) show the actual revenue shape. Granularity discipline: deltas need populations big enough to mean something.",
   },
-  { id: "dr5-lag-42", keyword: KW, tier: "core", aspect: "judgment",
+  { id: "dr5-wo-92", keyword: KW, tier: "core", aspect: "judgment",
     prompt: "A KPI needs 'change vs the SAME month last year'. Is LAG(col, 12) over month buckets right?",
     choices: [
       "Close but fragile — it works only if the bucket list has zero gaps (probed: 14 contiguous months); one missing month shifts every offset",
@@ -432,7 +432,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "Offset = row positions, not calendar units (probed: LAG walks the sorted set). With 14 contiguous buckets LAG(col,12) happens to align; one gap and 'last year' reads the wrong row. Calendar-distance comparisons want a self-join/lookup on the actual period key — positions are for adjacent reads.",
   },
-  { id: "dr5-lag-43", keyword: KW, tier: "core", aspect: "judgment",
+  { id: "dr5-wo-93", keyword: KW, tier: "core", aspect: "judgment",
     prompt: "Which audit pair ships with any LAG-based report?",
     choices: [
       "Edge-NULL census (expect exactly 1 per partition ordering) + tie-census on the OVER's sort key (uniqueness makes neighbors deterministic)",
@@ -443,7 +443,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "Probed: 1 NULL globally, 16 per-customer — the expected edge count is derivable, so deviations signal partition bugs. And the ORDER BY's uniqueness is what makes 'previous' well-defined. Both checks are one-liners that catch the whole failure family.",
   },
-  { id: "dr5-lag-44", keyword: KW, tier: "core", aspect: "judgment",
+  { id: "dr5-wo-94", keyword: KW, tier: "core", aspect: "judgment",
     prompt: "The 21 unshipped orders and LAG(shipped_at): what does the offset column do with those NULLs inside the chain?",
     choices: [
       "NULLs flow through positionally — a row after an unshipped one sees NULL as its 'previous shipped date', a structural artifact to annotate",
@@ -454,7 +454,7 @@ export const LAG_LEAD: DrillQ[] = [
     answer: 0,
     why: "LAG shifts values; NULL is a value (probed propagation everywhere). The neighbor is the previous ROW, not the previous NON-NULL value — if you need the last non-NULL shipped date, that's a different (correlated/CASE) construction. Positional honesty: the shift moves holes too.",
   },
-  { id: "dr5-lag-45", keyword: KW, tier: "core", aspect: "judgment",
+  { id: "dr5-wo-95", keyword: KW, tier: "core", aspect: "judgment",
     prompt: "Capstone instinct: before shipping an offset column, what two receipts must exist?",
     choices: [
       "A worked head/tail chain (probed: NULL → 576.54 → 416.81 … → tail NULL) and the partition-edge census (how many NULLs SHOULD exist)",

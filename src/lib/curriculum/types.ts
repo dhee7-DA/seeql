@@ -193,6 +193,8 @@ export interface Mcq {
   why: string;
   /** Coached explanations for the most tempting wrong choice(s), shown when picked. */
   notes?: Array<{ choice: number; why: string }>;
+  /** Difficulty tag (expansion banks are tagged; inline lesson MCQs may omit). */
+  difficulty?: "easy" | "medium" | "hard";
 }
 
 export interface ExpectedResult {
@@ -235,6 +237,54 @@ export interface Problem {
    *  its rows become the grading target (used to verify writes/DDL). */
   verify?: string;
 }
+
+/** Fill-in-the-blank drill: rebuild a query by placing chips into the
+ *  numbered slots of `template` ({1}, {2} …). First all-correct Check pays
+ *  XP; a miss enrolls the fill in the review deck (Leitner). Every fill's
+ *  completed SQL is mechanically audited against the seed database. */
+export interface Fill {
+  /** Stable id, e.g. "l45-f1" — referenced by the XP ledger. */
+  id: string;
+  prompt: string;
+  /** SQL with numbered slots, e.g. "SELECT {1}\nFROM {2};" */
+  template: string;
+  /** Answer chips + distractors, shown as the placement pool. */
+  chips: string[];
+  /** Exact chip per slot, in slot order. */
+  answers: string[];
+  /** Shown after answering, right or wrong. */
+  why: string;
+  /** Coached explanation for a wrong slot (keyed by 1-based slot number). */
+  notes?: Array<{ slot: number; why: string }>;
+}
+
+/** Scenario case — the fill machinery wearing a business memo. The lesson
+ *  number comes from the case-studies registry; Card renders `ask` as the
+ *  prompt and pays case XP (never enrolls in the review deck). */
+export interface CaseStudy extends Omit<Fill, "prompt"> {
+  title: string;
+  /** Optional one-line teaser under the title. */
+  subtitle?: string;
+  /** The business brief shown above the ask. */
+  brief: string;
+  /** The one-line ask — becomes the card's prompt. */
+  ask: string;
+  difficulty?: "easy" | "medium" | "hard";
+}
+
+/** Legacy theory-block union — matches the dormant TheoryBlocks renderer.
+ *  Live lessons use `Block` / `DeepBlock` instead. */
+export type TheoryBlock =
+  | { kind: "p"; text: string }
+  | { kind: "h"; text: string }
+  | { kind: "list"; ordered?: boolean; items: string[] }
+  | { kind: "code"; sql: string; caption?: string; tryIt?: boolean }
+  | { kind: "table"; headers: string[]; rows: string[][]; caption?: string }
+  | { kind: "diagram"; figure: FigureId }
+  | { kind: "note"; tone: "tip" | "pitfall" | "warning" | "info"; title: string; text: string };
+
+/** Back-compat alias used by the lesson quiz runner. */
+export type MCQ = Mcq;
 
 export interface Lesson {
   /** Stable id, e.g. "lesson-01" — referenced by the XP ledger. */

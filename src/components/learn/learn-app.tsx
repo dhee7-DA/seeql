@@ -12,6 +12,7 @@ import {
   ChevronsDownUp,
   ChevronsUpDown,
   Download,
+  GraduationCap,
   RotateCcw,
   Upload,
 } from "lucide-react";
@@ -21,6 +22,7 @@ import { BADGES, currentStreak, levelFor, totalXp } from "@/lib/curriculum/gamif
 import { monthPerfect, monthsInLedger, puzzleStreak } from "@/lib/curriculum/daily";
 import { cn } from "@/lib/utils";
 import { LessonView } from "./lesson-view";
+import { ExamView } from "./exam-view";
 import { DataExplorer } from "./data-explorer";
 import { MixedQuiz } from "./mixed-quiz";
 import { BlitzMode } from "./blitz-mode";
@@ -57,6 +59,7 @@ type View =
   | { kind: "daily" }
   | { kind: "frames" }
   | { kind: "lesson"; id: string }
+  | { kind: "exam"; moduleId: string }
   | { kind: "explorer" }
   | { kind: "mixed" }
   | { kind: "blitz" }
@@ -78,7 +81,9 @@ type View =
 
 // Drift guard — the registry in tools.ts must name every non-lesson view
 // (and vice versa). A compile error here means: update tools.ts too.
-type NonLessonViews = Exclude<View["kind"], "lesson">;
+// ("exam" is argumented per-module like "lesson", so it sits outside the
+// registry — its entry point lives in each module's sidebar section.)
+type NonLessonViews = Exclude<View["kind"], "lesson" | "exam">;
 export type RegistryCoversViews = [NonLessonViews] extends [ToolKind]
   ? [ToolKind] extends [NonLessonViews]
     ? true
@@ -462,6 +467,7 @@ function ViewBody({
   view,
   openLesson,
   openPerf,
+  exitExam,
   xp,
   level,
   streak,
@@ -470,6 +476,7 @@ function ViewBody({
   view: View;
   openLesson: (id: string) => void;
   openPerf: (sql: string) => void;
+  exitExam: () => void;
   xp: number;
   level: ReturnType<typeof levelFor>;
   streak: number;
@@ -480,6 +487,8 @@ function ViewBody({
       const lesson = LESSONS.find((l) => l.id === view.id) ?? null;
       return lesson ? <LessonView key={lesson.id} lesson={lesson} /> : null;
     }
+    case "exam":
+      return <ExamView key={view.moduleId} moduleId={view.moduleId} onExit={exitExam} />;
     case "seeq":
       return <SeeqView />;
     case "daily":
@@ -595,6 +604,7 @@ export function LearnApp() {
   }, []);
   const { xp, level, streak, ctx } = useBadgeWatcher();
   const xpEvents = useProgress((s) => s.xpEvents);
+  const exams = useProgress((s) => s.exams);
   const resetAll = useProgress((s) => s.resetAll);
   const [confirmReset, setConfirmReset] = useState(false);
 
@@ -633,6 +643,7 @@ export function LearnApp() {
   };
 
   const openPerf = (sql: string) => setView({ kind: "perf", sql, tab: "workbench" });
+  const exitExam = () => setView({ kind: "overview" });
   const doneCount = LESSONS.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
   const totalProblems = LESSONS.reduce((a, l) => a + l.problems.length, 0);
   const totalMcqs = LESSONS.reduce((a, l) => a + l.mcqs.length, 0);
@@ -793,6 +804,35 @@ export function LearnApp() {
                           </button>
                         );
                       })}
+                      {/* module exam — the module's own timed gate; the fill
+                          rebuilds live here, so this row is the fill bank's
+                          front door */}
+                      <button
+                        onClick={() => setView({ kind: "exam", moduleId: m.id })}
+                        className={cn(
+                          "relative flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left transition-colors",
+                          view.kind === "exam" && view.moduleId === m.id ? "bg-emerald-400/[0.09]" : "hover:bg-zinc-900",
+                        )}
+                      >
+                        <span
+                          className={cn(
+                            "flex h-5 w-5 shrink-0 items-center justify-center rounded-full transition-colors",
+                            exams[m.id]?.passedAt ? "bg-emerald-400 text-[var(--brand-ink)]" : "border border-zinc-700 text-zinc-500",
+                          )}
+                        >
+                          {exams[m.id]?.passedAt ? <Check className="h-2.5 w-2.5" /> : <GraduationCap className="h-2.5 w-2.5" />}
+                        </span>
+                        <span className="min-w-0">
+                          <span className={cn("block truncate text-xs font-medium", exams[m.id]?.passedAt ? "text-zinc-500" : "text-zinc-300")}>
+                            Module exam
+                          </span>
+                          <span className="block text-[10px] text-zinc-600">
+                            {exams[m.id]
+                              ? `best ${exams[m.id].best}/${exams[m.id].total} · ${exams[m.id].attempts} attempt${exams[m.id].attempts === 1 ? "" : "s"}`
+                              : "12 questions · pass at 9"}
+                          </span>
+                        </span>
+                      </button>
                     </div>
                   </Collapse>
                 </nav>
@@ -902,12 +942,18 @@ export function LearnApp() {
       <main id="learn-main" className="order-1 min-w-0 flex-1 pb-16 lg:order-2">
         <ToolRail view={view} setView={setView} />
         <motion.div
-          key={view.kind === "lesson" ? `lesson:${view.id}` : view.kind}
+          key={
+            view.kind === "lesson"
+              ? `lesson:${view.id}`
+              : view.kind === "exam"
+                ? `exam:${view.moduleId}`
+                : view.kind
+          }
           initial={reduced ? { opacity: 0 } : { opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.22, ease: "easeOut" }}
         >
-          <ViewBody view={view} openLesson={openLesson} openPerf={openPerf} xp={xp} level={level} streak={streak} ctx={ctx} />
+          <ViewBody view={view} openLesson={openLesson} openPerf={openPerf} exitExam={exitExam} xp={xp} level={level} streak={streak} ctx={ctx} />
         </motion.div>
       </main>
     </div>

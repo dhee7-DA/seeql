@@ -1,4 +1,4 @@
-// Drill set — CAST & typeof (Module 5, secondary, 45 questions).
+// Drill set (MERGED into its primary twin — ids renumbered, KW aligned) — CAST & typeof (Module 5, secondary, 45 questions).
 // Engine-verified receipts (db/custom.db, SQLite 3.53): CAST(price AS
 // INTEGER) truncates toward zero — 89.99→89, 34.5→34, 199.99→199,
 // 42.5→42 — while whole-dollar rows pass through (49→49, 129→129); 10 of
@@ -53,11 +53,11 @@
 
 import type { DrillQ } from "../types";
 
-const KW = "CAST & typeof";
+const KW = "CAST & coercion";
 
 export const TYPE_CAST_DRILL: DrillQ[] = [
   // ---------- syntax ----------
-  { id: "dr5-cs-01", keyword: KW, tier: "secondary", aspect: "syntax",
+  { id: "dr5-cast-46", keyword: KW, tier: "secondary", aspect: "syntax",
     prompt: "Which is the correct SQLite spelling for forcing a value's type?",
     choices: [
       "`CAST(price AS INTEGER)`",
@@ -72,7 +72,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
       { choice: 3, why: "It looks like a function call, so SQLite literally looks up a function named INTEGER and answers 'no such function: INTEGER'." },
     ],
   },
-  { id: "dr5-cs-02", keyword: KW, tier: "secondary", aspect: "syntax",
+  { id: "dr5-cast-47", keyword: KW, tier: "secondary", aspect: "syntax",
     prompt: "Which target-type names does SQLite accept for whole-number casts?",
     choices: [
       "Only the full word INTEGER",
@@ -83,7 +83,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
     answer: 2,
     why: "Probed: CAST(3.7 AS INT) = 3 with typeof 'integer' — identical to AS INTEGER. The target name is matched by substring rules, and both spellings select the same integer storage class.",
   },
-  { id: "dr5-cs-03", keyword: KW, tier: "secondary", aspect: "syntax",
+  { id: "dr5-cast-48", keyword: KW, tier: "secondary", aspect: "syntax",
     prompt: "You want whole-dollar order buckets. Where can `CAST(total AS INTEGER)` legally appear?",
     choices: [
       "Only in the SELECT list",
@@ -94,7 +94,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
     answer: 2,
     why: "CAST is an ordinary expression. Probed: GROUP BY CAST(total AS INTEGER) buckets all 103 orders (top buckets tie at 2), WHERE CAST(total AS INTEGER) >= 1000 keeps 1 row, and ORDER BY CAST(price AS INTEGER) sorts the shelf.",
   },
-  { id: "dr5-cs-04", keyword: KW, tier: "secondary", aspect: "syntax",
+  { id: "dr5-cast-49", keyword: KW, tier: "secondary", aspect: "syntax",
     prompt: "Which typeof() call is valid grammar?",
     choices: [
       "`typeof(total)`",
@@ -108,7 +108,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
       { choice: 2, why: "One value in, one class name out. To compare two columns' types, select typeof() twice as two result columns." },
     ],
   },
-  { id: "dr5-cs-05", keyword: KW, tier: "secondary", aspect: "syntax",
+  { id: "dr5-cast-50", keyword: KW, tier: "secondary", aspect: "syntax",
     prompt: "Which statement about spelling and case is true for the type toolkit?",
     choices: [
       "Keywords and functions are case-insensitive: cast(price as integer) and TYPEOF(total) both parse",
@@ -121,7 +121,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
   },
 
   // ---------- semantics ----------
-  { id: "dr5-cs-06", keyword: KW, tier: "secondary", aspect: "semantics",
+  { id: "dr5-cast-51", keyword: KW, tier: "secondary", aspect: "semantics",
     prompt: "What does `CAST(89 AS REAL)` change?",
     choices: [
       "The storage class — typeof flips from 'integer' to 'real'",
@@ -135,7 +135,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
       { choice: 2, why: "Casting TO TEXT is what renders '89' as a string (probed CAST(89 AS TEXT) = '89'). Casting to REAL keeps it numeric — typeof is what changed." },
     ],
   },
-  { id: "dr5-cs-07", keyword: KW, tier: "secondary", aspect: "semantics",
+  { id: "dr5-cast-52", keyword: KW, tier: "secondary", aspect: "semantics",
     prompt: "Which values can typeof() return?",
     choices: [
       "The column's declared type, like 'INTEGER' or 'VARCHAR'",
@@ -150,7 +150,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
       { choice: 3, why: "The result is the four-letter text 'null' describing the missing value — the result itself is never NULL." },
     ],
   },
-  { id: "dr5-cs-08", keyword: KW, tier: "secondary", aspect: "semantics",
+  { id: "dr5-cast-53", keyword: KW, tier: "secondary", aspect: "semantics",
     prompt: "What does `'42' + 8` return, and why?",
     choices: [
       "50 — numeric-looking text coerces to a number for arithmetic",
@@ -164,7 +164,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
       { choice: 1, why: "That's ||'s job — and the mirror trap: 'Alice Chen' + 'Berlin' does arithmetic, coercing both alpha texts to 0 (probed)." },
     ],
   },
-  { id: "dr5-cs-09", keyword: KW, tier: "secondary", aspect: "semantics",
+  { id: "dr5-cast-54", keyword: KW, tier: "secondary", aspect: "semantics",
     prompt: "`'3.9' + 0` vs `CAST('3.9' AS INTEGER)` — what comes back?",
     choices: [
       "3.9 and 3",
@@ -175,7 +175,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
     answer: 0,
     why: "Probed: the arithmetic coercion parses the full number and returns real 3.9; CAST AS INTEGER truncates to integer 3. Same input text, two different converters — arithmetic coerces, CAST converts and discards the fraction.",
   },
-  { id: "dr5-cs-10", keyword: KW, tier: "secondary", aspect: "semantics",
+  { id: "dr5-cast-55", keyword: KW, tier: "secondary", aspect: "semantics",
     prompt: "What does `CAST(89.0 AS TEXT)` return?",
     choices: [
       "'89.0' — the REAL rendering keeps its decimal point",
@@ -186,7 +186,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
     answer: 0,
     why: "Probed: CAST(89.0 AS TEXT) = '89.0' while CAST(89 AS TEXT) = '89' — the rendering mirrors the storage class, decimals and all. CAST(34.5 AS TEXT) = '34.5' with no padded zero. Text keys built from REALs inherit these quirks.",
   },
-  { id: "dr5-cs-11", keyword: KW, tier: "secondary", aspect: "semantics",
+  { id: "dr5-cast-56", keyword: KW, tier: "secondary", aspect: "semantics",
     prompt: "`SELECT COUNT(*) FROM orders WHERE total > '999'` — how many rows?",
     choices: [
       "0 — numbers never compare against text",
@@ -200,7 +200,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
       { choice: 0, why: "Cross-type comparisons never fail — one side converts if it can. total = '1088.44' even matches (probed 1 row): well-formed numeric text always converts." },
     ],
   },
-  { id: "dr5-cs-12", keyword: KW, tier: "secondary", aspect: "semantics",
+  { id: "dr5-cast-57", keyword: KW, tier: "secondary", aspect: "semantics",
     prompt: "What storage classes do the aggregates over orders return?",
     choices: [
       "COUNT(*) integer; AVG, SUM, and MAX over total all real",
@@ -211,7 +211,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
     answer: 0,
     why: "Probed: typeof(COUNT(*)) = 'integer', typeof(AVG(total)) = 'real', typeof(SUM(total)) = 'real', typeof(MAX(total)) = 'real'. An aggregate's class follows its input: SUM over the integer active column stays 'integer' (probed), SUM over REAL money stays 'real'.",
   },
-  { id: "dr5-cs-13", keyword: KW, tier: "secondary", aspect: "semantics",
+  { id: "dr5-cast-58", keyword: KW, tier: "secondary", aspect: "semantics",
     prompt: "customers.active stores booleans as what — and what does COUNT(active) count?",
     choices: [
       "INTEGER 0/1; COUNT(active) counts every non-NULL — 16 here, the two 0s included",
@@ -225,7 +225,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
       { choice: 2, why: "COUNT only skips NULL — and no active value is NULL. When you want just the trues, that's SUM(active) = 14 or WHERE active = 1 (also probed 14)." },
     ],
   },
-  { id: "dr5-cs-14", keyword: KW, tier: "secondary", aspect: "semantics",
+  { id: "dr5-cast-59", keyword: KW, tier: "secondary", aspect: "semantics",
     prompt: "What is `7 / 2` in SQLite, and what decides it?",
     choices: [
       "3 — both operands are INTEGER, so the division is integer division",
@@ -241,7 +241,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
   },
 
   // ---------- edge ----------
-  { id: "dr5-cs-15", keyword: KW, tier: "secondary", aspect: "edge",
+  { id: "dr5-cast-60", keyword: KW, tier: "secondary", aspect: "edge",
     prompt: "What does `CAST(NULL AS INTEGER)` return?",
     choices: [
       "NULL — casts propagate missing values; typeof still reports 'null'",
@@ -255,7 +255,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
       { choice: 1, why: "The zero instinct confuses junk text ('abc' → 0) with missing data. NULL in, NULL out — the value is unknown, not zero." },
     ],
   },
-  { id: "dr5-cs-16", keyword: KW, tier: "secondary", aspect: "edge",
+  { id: "dr5-cast-61", keyword: KW, tier: "secondary", aspect: "edge",
     prompt: "CAST('abc' AS INTEGER) returns 0. What does typeof() say about that result?",
     choices: [
       "'integer' — a genuine typed zero was manufactured",
@@ -269,7 +269,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
       { choice: 1, why: "The entire point of CAST is to change the class — the output is integer even when the input was unparseable." },
     ],
   },
-  { id: "dr5-cs-17", keyword: KW, tier: "secondary", aspect: "edge",
+  { id: "dr5-cast-62", keyword: KW, tier: "secondary", aspect: "edge",
     prompt: "`CAST(-34.5 AS INTEGER)` returns…",
     choices: [
       "-34 — truncation is toward zero on both sides of the axis",
@@ -283,7 +283,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
       { choice: 3, why: "Half-away-from-zero rounding is ROUND's contract (probed -34.5 → -35.0), not CAST's — CAST never looks at the fraction's size." },
     ],
   },
-  { id: "dr5-cs-18", keyword: KW, tier: "secondary", aspect: "edge",
+  { id: "dr5-cast-63", keyword: KW, tier: "secondary", aspect: "edge",
     prompt: "One customer's spend SUM prints 2667.9300000000003 before any ROUND. What happened?",
     choices: [
       "A SUM bug — report it to the engine vendor",
@@ -297,7 +297,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
       { choice: 0, why: "It's IEEE-754, not a defect — the same in every language. You can't predict which sums will wobble, which is why display rounding is routine." },
     ],
   },
-  { id: "dr5-cs-19", keyword: KW, tier: "secondary", aspect: "edge",
+  { id: "dr5-cast-64", keyword: KW, tier: "secondary", aspect: "edge",
     prompt: "Which pair matches the engine on the half-values 2.5 and 3.5?",
     choices: [
       "CAST gives 2 and 3 (truncate); ROUND gives 3.0 and 4.0 (half away from zero)",
@@ -311,7 +311,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
       { choice: 2, why: "That's ROUND-only behavior. CAST never rounds — a label that must show 90 for 89.99 needs ROUND (probed 90), not CAST (probed 89)." },
     ],
   },
-  { id: "dr5-cs-20", keyword: KW, tier: "secondary", aspect: "edge",
+  { id: "dr5-cast-65", keyword: KW, tier: "secondary", aspect: "edge",
     prompt: "What is `'abc42' + 0`?",
     choices: [
       "0 — coercion reads the leading numeric prefix, and 'abc' has none",
@@ -325,7 +325,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
       { choice: 1, why: "There's no scan-and-find — parsing starts at position 1 or not at all. That's why 'EU' and 'APAC' style keys both coerce to 0 (probed)." },
     ],
   },
-  { id: "dr5-cs-21", keyword: KW, tier: "secondary", aspect: "edge",
+  { id: "dr5-cast-66", keyword: KW, tier: "secondary", aspect: "edge",
     prompt: "What does `CAST(' 42 ' AS INTEGER)` return (the literal includes the spaces)?",
     choices: [
       "42 — leading and trailing whitespace is skipped by the parser",
@@ -339,7 +339,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
       { choice: 1, why: "Junk means unparseable characters — padding spaces are tolerated. Don't lean on it: TRIM at the source keeps keys honest." },
     ],
   },
-  { id: "dr5-cs-22", keyword: KW, tier: "secondary", aspect: "edge",
+  { id: "dr5-cast-67", keyword: KW, tier: "secondary", aspect: "edge",
     prompt: "`CAST('1e3' AS INTEGER)` and `'1e3' + 0` — what do they return?",
     choices: [
       "1 and 1000.0 — the cast stops at the 'e', the arithmetic parses the exponent",
@@ -355,7 +355,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
   },
 
   // ---------- errors ----------
-  { id: "dr5-cs-23", keyword: KW, tier: "secondary", aspect: "errors",
+  { id: "dr5-cast-68", keyword: KW, tier: "secondary", aspect: "errors",
     prompt: "`SELECT CAST(price) FROM products` — what does SQLite say?",
     choices: [
       "'near \")\": syntax error' — CAST requires AS plus a type name",
@@ -369,7 +369,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
       { choice: 1, why: "CAST is syntax, not a function — that's why the complaint comes from the parser ('near ...') and not the function resolver." },
     ],
   },
-  { id: "dr5-cs-24", keyword: KW, tier: "secondary", aspect: "errors",
+  { id: "dr5-cast-69", keyword: KW, tier: "secondary", aspect: "errors",
     prompt: "`SELECT typeof() FROM orders` — what's the failure?",
     choices: [
       "'wrong number of arguments to function typeof()'",
@@ -380,7 +380,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
     answer: 0,
     why: "Probed verbatim on both the 0-arg call and the 2-arg call typeof(total, status): wrong number of arguments to function typeof(). typeof takes exactly one argument — and the message names the function for you, which makes it a fast fix.",
   },
-  { id: "dr5-cs-25", keyword: KW, tier: "secondary", aspect: "errors",
+  { id: "dr5-cast-70", keyword: KW, tier: "secondary", aspect: "errors",
     prompt: "You typo the target: `SELECT CAST(89.99 AS INGEGER)`. What happens?",
     choices: [
       "No error — SQLite accepts any type name, and 89.99 comes back REAL, untruncated",
@@ -394,7 +394,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
       { choice: 3, why: "Only names containing INT trigger integer conversion — INGEGER doesn't. The engine won't guess your intent; verify casts with typeof()." },
     ],
   },
-  { id: "dr5-cs-26", keyword: KW, tier: "secondary", aspect: "errors",
+  { id: "dr5-cast-71", keyword: KW, tier: "secondary", aspect: "errors",
     prompt: "`SELECT typeif(total) FROM orders` — the function name is mistyped. Result?",
     choices: [
       "'no such function: typeif'",
@@ -405,7 +405,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
     answer: 0,
     why: "Probed verbatim: no such function: typeif. Unknown functions fail loudly — unlike unknown CAST type names, which are tolerated (probed). That asymmetry is worth memorizing: typo the function, you hear about it; typo the type, you don't.",
   },
-  { id: "dr5-cs-27", keyword: KW, tier: "secondary", aspect: "errors",
+  { id: "dr5-cast-72", keyword: KW, tier: "secondary", aspect: "errors",
     prompt: "`SELECT price::INTEGER FROM products` — the Postgres shorthand. What does SQLite say?",
     choices: [
       "'unrecognized token: \":\"'",
@@ -416,7 +416,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
     answer: 0,
     why: "Probed verbatim: unrecognized token: \":\". SQLite has exactly one cast spelling — CAST(x AS T) — and the tokenizer rejects the colon before the type is even reached. Dialect shorthand is the most portable-shaped syntax error there is.",
   },
-  { id: "dr5-cs-28", keyword: KW, tier: "secondary", aspect: "errors",
+  { id: "dr5-cast-73", keyword: KW, tier: "secondary", aspect: "errors",
     prompt: "`SELECT 1 / 0` — division by zero. What does SQLite return?",
     choices: [
       "NULL — no error; division by zero yields NULL and propagates",
@@ -432,13 +432,13 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
   },
 
   // ---------- predict ----------
-  { id: "dr5-cs-29", keyword: KW, tier: "secondary", aspect: "predict",
+  { id: "dr5-cast-74", keyword: KW, tier: "secondary", aspect: "predict",
     prompt: "Predict: `SELECT COUNT(*) FROM products WHERE price != CAST(price AS INTEGER)`.",
     choices: ["10", "16", "6", "0"],
     answer: 0,
     why: "Probed: 10 of the 16 products carry cents and lose them to truncation (89.99 → 89, 34.5 → 34, 59.99 → 59 …). The other 6 are whole-dollar prices (49, 119, 129, 79, 65, 32) where the cast is a no-op and equality survives.",
   },
-  { id: "dr5-cs-30", keyword: KW, tier: "secondary", aspect: "predict",
+  { id: "dr5-cast-75", keyword: KW, tier: "secondary", aspect: "predict",
     prompt: "Predict: `SELECT CAST(SUBSTR(created_at, 1, 4) AS INTEGER) FROM orders LIMIT 1`.",
     choices: [
       "2024 — a real integer",
@@ -452,7 +452,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
       { choice: 1, why: "Without the CAST you'd keep typeof 'text' (probed) — fine for display, but the value is a string, and string behavior follows it everywhere." },
     ],
   },
-  { id: "dr5-cs-31", keyword: KW, tier: "secondary", aspect: "predict",
+  { id: "dr5-cast-76", keyword: KW, tier: "secondary", aspect: "predict",
     prompt: "Predict: `SELECT CAST(MIN(total) AS INTEGER), CAST(MAX(total) AS INTEGER) FROM orders`.",
     choices: [
       "25 and 1088",
@@ -463,13 +463,13 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
     answer: 0,
     why: "Probed: MIN(total) = 25.47 → 25, MAX(total) = 1088.44 → 1088. The cast applies to each aggregate's result — truncation cuts the cents in both directions and never rounds 25.47 up to 26.",
   },
-  { id: "dr5-cs-32", keyword: KW, tier: "secondary", aspect: "predict",
+  { id: "dr5-cast-77", keyword: KW, tier: "secondary", aspect: "predict",
     prompt: "Predict: `SELECT CAST(AVG(total) AS INTEGER) FROM orders`.",
     choices: ["338", "338.19", "339", "NULL"],
     answer: 0,
     why: "Probed: AVG(total) = 338.1871844660194 across the 103 orders; the cast truncates to 338. ROUND(AVG(total), 2) would print 338.19 — but CAST's mechanism is fraction-dropping, so even 338.9 would cast to 338.",
   },
-  { id: "dr5-cs-33", keyword: KW, tier: "secondary", aspect: "predict",
+  { id: "dr5-cast-78", keyword: KW, tier: "secondary", aspect: "predict",
     prompt: "Predict: `SELECT SUM(active), COUNT(active) FROM customers`.",
     choices: [
       "14 and 16",
@@ -480,13 +480,13 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
     answer: 0,
     why: "Probed: SUM of the 0/1 flags adds only the trues → 14; COUNT(active) counts every non-NULL value — the two 0s included → 16. Same column, two aggregates, two different questions answered.",
   },
-  { id: "dr5-cs-34", keyword: KW, tier: "secondary", aspect: "predict",
+  { id: "dr5-cast-79", keyword: KW, tier: "secondary", aspect: "predict",
     prompt: "Predict: `SELECT AVG(active) FROM customers`.",
     choices: ["0.875", "1", "0.5", "14"],
     answer: 0,
     why: "Probed: 14 trues out of 16 non-NULL flags → 14/16 = 0.875. Averages treat 0/1 boolean flags as plain numbers, handing you the active share for free — no CASE expression needed.",
   },
-  { id: "dr5-cs-35", keyword: KW, tier: "secondary", aspect: "predict",
+  { id: "dr5-cast-80", keyword: KW, tier: "secondary", aspect: "predict",
     prompt: "Predict: `SELECT typeof(ROUND(338.19, 1)), ROUND(338.19, 1)`.",
     choices: [
       "'real' and 338.2",
@@ -500,13 +500,13 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
       { choice: 1, why: "That's CAST's answer (probed: CAST(AVG(total) AS INTEGER) = 338). ROUND looks at neighbors; CAST drops the fraction — and the output types differ too (real vs integer)." },
     ],
   },
-  { id: "dr5-cs-36", keyword: KW, tier: "secondary", aspect: "predict",
+  { id: "dr5-cast-81", keyword: KW, tier: "secondary", aspect: "predict",
     prompt: "Predict: `SELECT typeof(PRINTF('%.2f', total)) FROM orders LIMIT 1`.",
     choices: ["'text'", "'real'", "'integer'", "'null'"],
     answer: 0,
     why: "Probed: PRINTF('%.2f', 1088.44) returns the string '1088.44' — typeof 'text'. Formatting is a type change: after PRINTF the value can't be summed or numerically sorted without coercing back. Format at the display edge; keep REAL at rest.",
   },
-  { id: "dr5-cs-37", keyword: KW, tier: "secondary", aspect: "predict",
+  { id: "dr5-cast-82", keyword: KW, tier: "secondary", aspect: "predict",
     prompt: "Predict: `SELECT '42abc' + 0, typeof('42abc' + 0)`.",
     choices: [
       "42 and 'integer'",
@@ -517,7 +517,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
     answer: 0,
     why: "Probed: arithmetic coercion takes the leading numeric prefix — 42 — and returns an integer; the trailing 'abc' is ignored without a whisper. Only leading-alpha text like 'abc42' collapses to 0 (probed).",
   },
-  { id: "dr5-cs-38", keyword: KW, tier: "secondary", aspect: "predict",
+  { id: "dr5-cast-83", keyword: KW, tier: "secondary", aspect: "predict",
     prompt: "Predict: `SELECT typeof(created_at) FROM orders LIMIT 1`.",
     choices: [
       "'text' — ISO date strings are TEXT, not a date type",
@@ -531,7 +531,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
       { choice: 2, why: "Epoch integers are a convention some schemas choose — this one didn't. typeof() tells you which world you're in before any date math." },
     ],
   },
-  { id: "dr5-cs-39", keyword: KW, tier: "secondary", aspect: "predict",
+  { id: "dr5-cast-84", keyword: KW, tier: "secondary", aspect: "predict",
     prompt: "Predict: `SELECT CAST(SUM(total) AS INTEGER) FROM orders`.",
     choices: ["34833", "34833.28", "34834", "NULL"],
     answer: 0,
@@ -539,7 +539,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
   },
 
   // ---------- judgment ----------
-  { id: "dr5-cs-40", keyword: KW, tier: "secondary", aspect: "judgment",
+  { id: "dr5-cast-85", keyword: KW, tier: "secondary", aspect: "judgment",
     prompt: "Shelf labels must show whole dollars (89.99 → 89). Where does the cast belong?",
     choices: [
       "In the display query's SELECT list — the REAL price stays intact at rest",
@@ -553,7 +553,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
       { choice: 1, why: "That's one-way data loss — the cents can never be recovered, and every future report inherits the truncation. Display transforms belong in display queries." },
     ],
   },
-  { id: "dr5-cs-41", keyword: KW, tier: "secondary", aspect: "judgment",
+  { id: "dr5-cast-86", keyword: KW, tier: "secondary", aspect: "judgment",
     prompt: "A column 'looks numeric but compares like text'. What's the first diagnostic?",
     choices: [
       "typeof(col) — ask the engine what storage class the values actually are",
@@ -567,7 +567,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
       { choice: 1, why: "A blind CAST changes behavior everywhere it lands and never tells you what was wrong. Diagnose with typeof, then decide deliberately." },
     ],
   },
-  { id: "dr5-cs-42", keyword: KW, tier: "secondary", aspect: "judgment",
+  { id: "dr5-cast-87", keyword: KW, tier: "secondary", aspect: "judgment",
     prompt: "customers.active is INTEGER 0/1. A teammate writes WHERE active = 'true'. Verdict?",
     choices: [
       "0 rows — 'true' is text with no numeric form; the flag compares against 1/0",
@@ -581,7 +581,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
       { choice: 1, why: "The silent-zero-rows trap: the query runs, returns nothing, and looks like missing data. typeof(active) = 'integer' (probed) ends the debate." },
     ],
   },
-  { id: "dr5-cs-43", keyword: KW, tier: "secondary", aspect: "judgment",
+  { id: "dr5-cast-88", keyword: KW, tier: "secondary", aspect: "judgment",
     prompt: "Totals were cast to TEXT for a 'sort fix'. Which sorts first as text: '25.47' or '1088.44'?",
     choices: [
       "'1088.44' — text compares character by character, and '1' < '2'",
@@ -595,7 +595,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
       { choice: 1, why: "Once values are TEXT, the engine compares strings — full stop. If a sort looks wrong, typeof() the sort key before rewriting the query." },
     ],
   },
-  { id: "dr5-cs-44", keyword: KW, tier: "secondary", aspect: "judgment",
+  { id: "dr5-cast-89", keyword: KW, tier: "secondary", aspect: "judgment",
     prompt: "A teammate 'cleans' regions: UPDATE customers SET region = CAST(region AS INTEGER). What's in the column after?",
     choices: [
       "16 rows of '0' — CAST junks every region to integer 0, then the TEXT column re-renders it as text",
@@ -609,7 +609,7 @@ export const TYPE_CAST_DRILL: DrillQ[] = [
       { choice: 2, why: "Close — CAST does produce integer 0 — but the column's affinity is applied before storage, so what lands is text '0'. typeof() after the damage proves it." },
     ],
   },
-  { id: "dr5-cs-45", keyword: KW, tier: "secondary", aspect: "judgment",
+  { id: "dr5-cast-90", keyword: KW, tier: "secondary", aspect: "judgment",
     prompt: "The spec says 89.99 displays as 90 (nearest dollar). The dev used CAST(price AS INTEGER) and got 89. The fix?",
     choices: [
       "ROUND(price, 0) — nearest-dollar is a value change; CAST is a type change",

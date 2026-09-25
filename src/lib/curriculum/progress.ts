@@ -38,6 +38,22 @@ export interface ReviewCard {
   lapses: number;
 }
 
+/** Leitner card for the review deck: a miss drops to box 0 (due in 10
+ *  minutes), a recall promotes one box. Box intervals are BOX_MS below;
+ *  box MAX_BOX (the 16-day interval) is "graduated". */
+export interface LeitnerCard {
+  due: number;
+  box: number;
+}
+
+/** Exam ledger per module: attempts, best score, and when it was passed. */
+export interface ExamRecord {
+  attempts: number;
+  best: number;
+  total: number;
+  passedAt?: number;
+}
+
 export interface ProgressState {
   xpEvents: Record<string, number>;
   xpByDay: Record<string, number>;
@@ -49,6 +65,15 @@ export interface ProgressState {
   skillAttempts: Record<string, SkillTally>;
   /** ledger key (e.g. "mcq:l3-q2", "predict:p1") → spaced-repetition card */
   reviewSchedule: Record<string, ReviewCard>;
+  /** question/fill id → Leitner card in the review deck (misses land here) */
+  review: Record<string, LeitnerCard>;
+  /** lifetime recall / miss counts inside review-deck sessions */
+  reviewCorrect: number;
+  reviewWrong: number;
+  /** moduleId → exam history (attempts, best, pass) */
+  exams: Record<string, ExamRecord>;
+  /** mcq id → true once answered correctly (drives quiz score dots) */
+  mcqBest: Record<string, boolean>;
   /** dayKey → timestamp the adaptive quest was cleared */
   questDone: Record<string, number>;
   /** dayKey → timestamp the daily puzzle was solved (today's ledger — this
@@ -68,6 +93,12 @@ export interface ProgressState {
   recordSkill: (skill: string, correct: boolean) => void;
   /** spaced repetition: correct advances 1d→3d→7d→14d, wrong resets to 1d */
   scheduleReview: (key: string, correct: boolean) => void;
+  /** review deck: a miss anywhere enrolls the item at box 0 (due 10 min) */
+  recordMiss: (id: string) => void;
+  /** review deck: a recalled card promotes one box and reschedules */
+  recordRecall: (id: string) => void;
+  /** record a module exam attempt (score, total, pass) */
+  recordExam: (moduleId: string, score: number, total: number, pass: boolean) => void;
   /** clear a review card (answered right on a resurfaced visit) */
   clearReview: (key: string) => void;
   markQuestDone: () => boolean;
@@ -81,6 +112,17 @@ export interface ProgressState {
 
 /** Spaced-repetition ladder in ms: 1d → 3d → 7d → 14d (then it graduates). */
 export const REVIEW_INTERVALS = [1, 3, 7, 14].map((d) => d * 86_400_000);
+
+/** Leitner ladder in ms, indexed by box: 10min → 1d → 2d → 4d → 8d → 16d. */
+export const BOX_MS = [10 * 60_000, 1, 2, 4, 8, 16].map((d) => d * 86_400_000);
+
+/** Highest Leitner box — reaching it means the card reads "graduated". */
+export const MAX_BOX = BOX_MS.length - 1;
+
+/** Was this MCQ ever answered correctly (first attempt wins)? */
+export function mcqPassed(state: Pick<ProgressState, "mcqAttempts">, id: string): boolean {
+  return state.mcqAttempts[id]?.correct === true;
+}
 
 /** Cards due for resurfacing right now. */
 export function dueReviews(
@@ -104,6 +146,11 @@ export const useProgress = create<ProgressState>()(
       lessonsDone: {},
       skillAttempts: {},
       reviewSchedule: {},
+      review: {},
+      reviewCorrect: 0,
+      reviewWrong: 0,
+      exams: {},
+      mcqBest: {},
       questDone: {},
       puzzleDone: {},
       backlogDone: {},
@@ -120,9 +167,16 @@ export const useProgress = create<ProgressState>()(
 
       recordMcqCheck: (id, correct) => {
         const prev = get().mcqAttempts[id];
-        if (prev) return false;
+        if (prev) {
+          // a later correct answer still upgrades the best-of ledger
+          if (correct && !get().mcqBest[id]) {
+            set((s) => ({ mcqBest: { ...s.mcqBest, [id]: true } }));
+          }
+          return false;
+        }
         set((s) => ({
           mcqAttempts: { ...s.mcqAttempts, [id]: { correct, firstTry: correct } },
+          mcqBest: correct ? { ...s.mcqBest, [id]: true } : s.mcqBest,
         }));
         return true;
       },
@@ -188,6 +242,37 @@ export const useProgress = create<ProgressState>()(
         });
       },
 
+      recordMiss: (id) => {
+        set((s) => ({
+          review: { ...s.review, [id]: { due: Date.now() + BOX_MS[0], box: 0 } },
+          reviewWrong: s.reviewWrong + 1,
+        }));
+      },
+
+      recordRecall: (id) => {
+        const prev = get().review[id];
+        const box = Math.min((prev?.box ?? -1) + 1, MAX_BOX);
+        set((s) => ({
+          review: { ...s.review, [id]: { due: Date.now() + BOX_MS[box], box } },
+          reviewCorrect: s.reviewCorrect + 1,
+        }));
+      },
+
+      recordExam: (moduleId, score, total, pass) => {
+        const prev = get().exams[moduleId];
+        set((s) => ({
+          exams: {
+            ...s.exams,
+            [moduleId]: {
+              attempts: (prev?.attempts ?? 0) + 1,
+              best: Math.max(prev?.best ?? 0, score),
+              total,
+              passedAt: pass ? (prev?.passedAt ?? Date.now()) : prev?.passedAt,
+            },
+          },
+        }));
+      },
+
       markQuestDone: () => {
         const k = dayKey();
         if (get().questDone[k] !== undefined) return false;
@@ -231,6 +316,11 @@ export const useProgress = create<ProgressState>()(
           lessonsDone: {},
           skillAttempts: {},
           reviewSchedule: {},
+          review: {},
+          reviewCorrect: 0,
+          reviewWrong: 0,
+          exams: {},
+          mcqBest: {},
           questDone: {},
           puzzleDone: {},
           backlogDone: {},

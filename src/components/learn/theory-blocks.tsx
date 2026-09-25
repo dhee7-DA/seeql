@@ -136,8 +136,7 @@ function SqlCodeBlock({
               live result · {run.res.rowCount} row{run.res.rowCount === 1 ? "" : "s"}
             </p>
             <ResultGrid
-              columns={run.res.columns}
-              rows={run.res.rows}
+              data={{ columns: run.res.columns, rows: run.res.rows }}
               maxHeight="max-h-48"
             />
           </div>

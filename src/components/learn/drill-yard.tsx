@@ -381,7 +381,7 @@ export function DrillYard({ scopeId = "yard", keywords }: { scopeId?: string; ke
                 {tier}
               </span>
               <span className="font-mono text-[10px] text-zinc-600">
-                {tier === "core" ? "the load-bearing keywords — 50 questions each" : "focused coverage — 8 to 20 each"}
+                {tier === "core" ? "the load-bearing keywords" : "focused coverage — edges, judgment and synthesis"}
               </span>
             </div>
           )}
