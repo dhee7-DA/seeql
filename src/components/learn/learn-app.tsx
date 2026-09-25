@@ -44,6 +44,8 @@ import { CORE_AND_TOOLBOX, LAB_TOOLS, TOOLS, type ToolKind } from "./tools";
 import { Btn, Chip, Panel, ProgressBar, SectionLabel, ToolRow } from "./ui/kit";
 import { Icon3D } from "./ui/icon3d";
 import { ActivityHeatmap } from "./activity-heatmap";
+import { CsvSandbox } from "./csv-sandbox";
+import { QueryNotebook } from "./query-notebook";
 
 type View =
   | { kind: "overview" }
@@ -66,7 +68,9 @@ type View =
   | { kind: "explain" }
   | { kind: "perf"; sql?: string; tab?: "pipeline" | "workbench" | "detective" }
   | { kind: "sheet" }
-  | { kind: "mentor" };
+  | { kind: "mentor" }
+  | { kind: "sandbox" }
+  | { kind: "notebook" };
 
 // Drift guard — the registry in tools.ts must name every non-lesson view
 // (and vice versa). A compile error here means: update tools.ts too.
@@ -510,6 +514,10 @@ function ViewBody({
       return <CheatSheet />;
     case "mentor":
       return <MentorChat />;
+    case "sandbox":
+      return <CsvSandbox />;
+    case "notebook":
+      return <QueryNotebook />;
     default:
       return <Overview xp={xp} level={level} streak={streak} ctx={ctx} openLesson={openLesson} />;
   }

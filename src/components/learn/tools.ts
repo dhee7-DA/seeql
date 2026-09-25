@@ -13,6 +13,7 @@ import {
   Dumbbell,
   Eye,
   FileStack,
+  FileUp,
   FlaskConical,
   Flag,
   Frame,
@@ -21,6 +22,7 @@ import {
   LayoutDashboard,
   MessagesSquare,
   Network,
+  NotebookPen,
   Printer,
   Shapes,
   Table2,
@@ -47,7 +49,9 @@ export type ToolKind =
   | "studio"
   | "explain"
   | "mastery"
-  | "sheet";
+  | "sheet"
+  | "sandbox"
+  | "notebook";
 
 export interface ToolDef {
   kind: ToolKind;
@@ -75,6 +79,7 @@ export const TOOLS: ToolDef[] = [
   { kind: "mixed", icon: FlaskConical, label: "Mixed quiz", note: "10 from the whole course", short: "Quiz", section: "toolbox" },
   { kind: "blitz", icon: Zap, label: "Blitz mode", note: "90 seconds, all engines", short: "Blitz", section: "toolbox" },
   { kind: "cases", icon: FileStack, label: "Case files", note: "rebuild real stakeholder queries", short: "Cases", section: "toolbox" },
+  { kind: "sandbox", icon: FileUp, label: "CSV sandbox", note: "bring your own data", short: "CSV", section: "toolbox" },
   { kind: "predict", icon: Eye, label: "Predict the output", note: "freeze the grid before it runs", short: "Predict", section: "lab" },
   { kind: "clinic", icon: Bug, label: "Error clinic", note: "diagnose real bugs, loud & silent", short: "Clinic", section: "lab" },
   { kind: "golf", icon: Flag, label: "Query golf", note: "same rows, fewer strokes", short: "Golf", section: "lab" },
@@ -84,6 +89,7 @@ export const TOOLS: ToolDef[] = [
   { kind: "explain", icon: MessagesSquare, label: "Explain back", note: "say what the query does", short: "Explain", section: "lab" },
   { kind: "mastery", icon: Activity, label: "Mastery map", note: "your skills, your daily quest", short: "Mastery", section: "lab" },
   { kind: "sheet", icon: Printer, label: "Cheat sheet", note: "personal revision, prints to PDF", short: "Sheet", section: "lab" },
+  { kind: "notebook", icon: NotebookPen, label: "Query notebook", note: "save queries + margin notes", short: "Notes", section: "lab" },
 ];
 
 /** Sidebar group 1: overview + toolbox tools, in registry order. */

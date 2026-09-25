@@ -7,9 +7,9 @@
 // Eagle under par, par for the reference shape, bogey when the starter
 // is still haunting the query.
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { motion } from "framer-motion";
-import { Flag, Gauge, Loader2, Play, RotateCcw, Trophy } from "lucide-react";
+import { Flag, Gauge, Hammer, Loader2, Play, RotateCcw, Trash2, Trophy, X } from "lucide-react";
 import { Icon3D } from "./ui/icon3d";
 import { useProgress } from "@/lib/curriculum/progress";
 import { GOLF_HOLES, GOLF_XP, type GolfHole } from "@/lib/curriculum/golf";
@@ -18,6 +18,14 @@ import type { ExecResponse } from "@/lib/sql-types";
 import { cn } from "@/lib/utils";
 import { awardPracticeXp, MiniGrid, recordPracticeAttempt, rowsMatch } from "./practice-kit";
 import { seeqReact } from "./seeq-mood";
+import {
+  addCustomHole,
+  CUSTOM_HOLES_SERVER_SNAPSHOT,
+  getCustomHolesSnapshot,
+  removeCustomHole,
+  subscribeCustomHoles,
+  type CustomHole,
+} from "@/lib/curriculum/golf-custom";
 import { reportMentorFailure } from "@/lib/mentor-context";
 import { SqlEditor } from "../sql-editor";
 import { SqlNodes } from "./sql-code";
@@ -250,56 +258,231 @@ function GolfHoleCard({ hole, onOpenPerf }: { hole: GolfHole; onOpenPerf?: (sql:
   );
 }
 
+/** Design-a-hole — write a target, a verbose starter and your leanest par.
+ *  Both SQLs are test-run live before saving: the hole only exists if both
+ *  RUN clean AND agree on the row count (a golf hole needs a stable target). */
+function HoleDesigner({ onCreated }: { onCreated: (id: string) => void }) {
+  const [target, setTarget] = useState("");
+  const [skill, setSkill] = useState("");
+  const [starter, setStarter] = useState("");
+  const [par, setPar] = useState("");
+  const [testing, setTesting] = useState(false);
+  const [verdict, setVerdict] = useState<{ tone: "ok" | "bad"; text: string } | null>(null);
+
+  const ready = target.trim() && starter.trim() && par.trim();
+
+  async function testAndSave() {
+    if (testing || !ready) return;
+    setTesting(true);
+    setVerdict(null);
+    try {
+      const [starterRes, parRes] = (await Promise.all([
+        fetch("/api/query", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sql: starter }),
+        }).then((r) => r.json() as Promise<ExecResponse>),
+        fetch("/api/query", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sql: par }),
+        }).then((r) => r.json() as Promise<ExecResponse>),
+      ])) as [ExecResponse, ExecResponse];
+      if (!starterRes.ok || !parRes.ok) {
+        const bad = !starterRes.ok ? starterRes : !parRes.ok ? parRes : null;
+        const which = !starterRes.ok ? "starter" : "par";
+        setVerdict({ tone: "bad", text: `The ${which} doesn't run: ${bad?.error ?? "unknown error"}` });
+        return;
+      }
+      if (starterRes.rowCount !== parRes.rowCount) {
+        setVerdict({
+          tone: "bad",
+          text: `They run, but disagree — starter returns ${starterRes.rowCount} rows, par returns ${parRes.rowCount}. A hole needs one stable answer.`,
+        });
+        return;
+      }
+      const holes = getCustomHolesSnapshot();
+      const hole = addCustomHole({
+        target: target.trim(),
+        starter: starter.trim().replace(/;+\s*$/, ""),
+        par: par.trim().replace(/;+\s*$/, ""),
+        skill: skill.trim() || "custom",
+        title: `Custom hole · ${target.trim().slice(0, 42)}${target.trim().length > 42 ? "…" : ""}`,
+      });
+      setVerdict({ tone: "ok", text: `Hole ${hole.id} is live — ${parRes.rowCount} rows in the target.` });
+      setTarget("");
+      setStarter("");
+      setPar("");
+      setSkill("");
+      onCreated(hole.id);
+    } catch {
+      setVerdict({ tone: "bad", text: "The test run failed — is the dev server up?" });
+    } finally {
+      setTesting(false);
+    }
+  }
+
+  return (
+    <div className="sheen rounded-lg border border-sky-400/25 bg-sky-400/[0.04] p-4 sm:p-5">
+      <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-sky-300">
+        <Hammer className="h-3.5 w-3.5" /> Design your own hole
+      </p>
+      <p className="mt-2 text-xs leading-relaxed text-zinc-400">
+        Write a target in words, a verbose starter, and your leanest par. Both statements are test-run live — they must execute cleanly
+        and return the same number of rows before the hole is saved. Custom holes are graded like any other (order-free, SELECT * costs
+        one stroke).
+      </p>
+      <input
+        value={target}
+        onChange={(e) => setTarget(e.target.value)}
+        placeholder="The target in words — e.g. “every supplier in the EU with their product count”"
+        aria-label="Hole target description"
+        className="mt-3 w-full rounded-md border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-sm text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-zinc-600"
+      />
+      <div className="mt-3 grid gap-3 lg:grid-cols-2">
+        <div>
+          <p className="mb-1.5 font-mono text-[10px] uppercase tracking-wider text-zinc-500">the starter (correct, verbose)</p>
+          <div className="overflow-hidden rounded-md border border-zinc-800">
+            <SqlEditor value={starter} onChange={setStarter} onVisualize={testAndSave} className="min-h-[96px]" />
+          </div>
+        </div>
+        <div>
+          <p className="mb-1.5 font-mono text-[10px] uppercase tracking-wider text-zinc-500">your par (lean shape)</p>
+          <div className="overflow-hidden rounded-md border border-zinc-800">
+            <SqlEditor value={par} onChange={setPar} onVisualize={testAndSave} className="min-h-[96px]" />
+          </div>
+        </div>
+      </div>
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <input
+          value={skill}
+          onChange={(e) => setSkill(e.target.value)}
+          placeholder="skill tag (optional)"
+          aria-label="Skill tag for the mastery map"
+          className="w-44 rounded-md border border-zinc-800 bg-zinc-900/60 px-3 py-2 font-mono text-xs text-zinc-200 outline-none placeholder:text-zinc-600 focus:border-zinc-600"
+        />
+        <button
+          onClick={testAndSave}
+          disabled={testing || !ready}
+          className={cn(
+            "btn-glow flex items-center gap-1.5 rounded-md bg-emerald-400 px-4 py-2 text-xs font-medium text-[var(--brand-ink)] transition-colors hover:bg-emerald-300",
+            (testing || !ready) && "cursor-not-allowed opacity-40",
+          )}
+        >
+          {testing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Hammer className="h-3.5 w-3.5" />}
+          Test &amp; save hole
+        </button>
+        {verdict && (
+          <span className={cn("font-mono text-xs", verdict.tone === "ok" ? "text-emerald-300" : "text-rose-300")} role="status">
+            {verdict.text}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function QueryGolf({ onOpenPerf }: { onOpenPerf?: (sql: string) => void }) {
   const xpEvents = useProgress((s) => s.xpEvents);
+  const custom = useSyncExternalStore(subscribeCustomHoles, getCustomHolesSnapshot, () => CUSTOM_HOLES_SERVER_SNAPSHOT);
   const [idx, setIdx] = useState(0);
-  const hole = GOLF_HOLES[idx];
-  const played = GOLF_HOLES.reduce((n, h) => n + (xpEvents[`golf:${h.id}`] !== undefined ? 1 : 0), 0);
+  const [designing, setDesigning] = useState(false);
+  const holes = useMemo<Array<GolfHole | CustomHole>>(() => [...GOLF_HOLES, ...custom], [custom]);
+  const hole = holes[Math.min(idx, holes.length - 1)];
+  const played = holes.reduce((n, h) => n + (xpEvents[`golf:${h.id}`] !== undefined ? 1 : 0), 0);
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
       <p className="flex items-center gap-2 font-mono text-xs text-zinc-500">
-        <Flag className="h-3.5 w-3.5" /> {GOLF_HOLES.length} HOLES · STROKES = CLAUSES + COLUMNS
+        <Flag className="h-3.5 w-3.5" /> {holes.length} HOLES · STROKES = CLAUSES + COLUMNS
       </p>
       <h1 className="mt-2 flex items-center gap-3 font-display text-3xl font-semibold tracking-[-0.02em] text-zinc-50"><Icon3D name="golf" size={40} />Query golf</h1>
       <p className="mt-3 text-[15px] leading-7 text-zinc-400">
         Same result, fewer strokes. Every clause and every projected column is a stroke; the engine&apos;s
         EXPLAIN QUERY PLAN is the scorecard. Run live, graded on rows first and pars second — eagle beats par
-        beats bogey.
+        beats bogey. Or design a hole of your own and add it to the course.
       </p>
 
       <div className="sheen mt-5 rounded-lg border border-zinc-800 bg-zinc-950 p-4">
         <div className="flex items-center justify-between text-xs">
           <span className="font-medium text-zinc-300">Round progress</span>
-          <span className="tnum text-zinc-500">{played} / {GOLF_HOLES.length} holes played</span>
+          <span className="tnum text-zinc-500">{played} / {holes.length} holes played</span>
         </div>
         <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-zinc-800">
-          <div className="h-full rounded-full bg-emerald-400 transition-all duration-500" style={{ width: `${(played / GOLF_HOLES.length) * 100}%` }} />
+          <div className="h-full rounded-full bg-emerald-400 transition-all duration-500" style={{ width: `${(played / holes.length) * 100}%` }} />
         </div>
       </div>
 
       <div className="mt-5 flex flex-wrap gap-1.5">
-        {GOLF_HOLES.map((h, i) => (
-          <button
-            key={h.id}
-            onClick={() => setIdx(i)}
-            className={cn(
-              "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
-              i === idx
-                ? "border-emerald-400/60 bg-emerald-400/10 text-emerald-300"
-                : xpEvents[`golf:${h.id}`] !== undefined
-                  ? "border-emerald-400/25 bg-zinc-950 text-emerald-300/70"
-                  : "border-zinc-800 bg-zinc-950 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200",
-            )}
-          >
-            {h.id.replace("g", "Hole ")}
-          </button>
-        ))}
+        {holes.map((h, i) => {
+          const isCustom = h.id.startsWith("c");
+          return (
+            <span key={h.id} className="relative inline-flex">
+              <button
+                onClick={() => setIdx(i)}
+                className={cn(
+                  "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+                  isCustom && "pr-7",
+                  i === idx
+                    ? "border-emerald-400/60 bg-emerald-400/10 text-emerald-300"
+                    : xpEvents[`golf:${h.id}`] !== undefined
+                      ? "border-emerald-400/25 bg-zinc-950 text-emerald-300/70"
+                      : isCustom
+                        ? "border-sky-400/30 bg-zinc-950 text-sky-300/80 hover:border-sky-400/60 hover:text-sky-200"
+                        : "border-zinc-800 bg-zinc-950 text-zinc-400 hover:border-zinc-600 hover:text-zinc-200",
+                )}
+              >
+                {isCustom ? `${h.id} · yours` : h.id.replace("g", "Hole ")}
+              </button>
+              {isCustom && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeCustomHole(h.id);
+                    if (i === idx) setIdx(0);
+                  }}
+                  aria-label={`Delete your custom hole ${h.id}`}
+                  title={`Delete ${h.id}`}
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded p-0.5 text-zinc-600 transition-colors hover:text-rose-300"
+                >
+                  <Trash2 className="h-2.5 w-2.5" />
+                </button>
+              )}
+            </span>
+          );
+        })}
+        <button
+          onClick={() => setDesigning((d) => !d)}
+          className={cn(
+            "flex items-center gap-1 rounded-full border border-dashed px-3 py-1.5 text-xs font-medium transition-colors",
+            designing
+              ? "border-sky-400/60 bg-sky-400/10 text-sky-200"
+              : "border-zinc-700 text-zinc-500 hover:border-sky-400/50 hover:text-sky-300",
+          )}
+          aria-expanded={designing}
+        >
+          {designing ? <X className="h-3 w-3" /> : <Hammer className="h-3 w-3" />}
+          Design a hole
+        </button>
       </div>
 
       <div className="mt-4">
         <GolfHoleCard key={hole.id} hole={hole} onOpenPerf={onOpenPerf} />
       </div>
+
+      {designing && (
+        <div className="mt-5">
+          <HoleDesigner
+            onCreated={(id) => {
+              setDesigning(false);
+              // read the FRESH store — the `holes` memo in this closure predates the write
+              const fresh = getCustomHolesSnapshot();
+              const pos = fresh.findIndex((h) => h.id === id);
+              if (pos >= 0) setIdx(GOLF_HOLES.length + pos);
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }
