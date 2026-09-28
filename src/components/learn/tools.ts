@@ -24,6 +24,7 @@ import {
   Network,
   NotebookPen,
   Printer,
+  Route,
   Shapes,
   Table2,
   Zap,
@@ -31,6 +32,7 @@ import {
 
 export type ToolKind =
   | "overview"
+  | "roadmap"
   | "seeq"
   | "daily"
   | "frames"
@@ -69,6 +71,7 @@ export interface ToolDef {
 // Registry order == mobile rail order (curated: Overview, SeeQ, Mentor first).
 export const TOOLS: ToolDef[] = [
   { kind: "overview", icon: LayoutDashboard, label: "Course overview", note: "progress & badges", short: "Overview", section: "core" },
+  { kind: "roadmap", icon: Route, label: "30-day sprint", note: "the day-by-day roadmap", short: "Sprint", section: "toolbox" },
   { kind: "seeq", icon: Ghost, label: "SeeQ playground", note: "dress & place your buddy", short: "SeeQ", section: "toolbox" },
   { kind: "daily", icon: CalendarDays, label: "Daily puzzle", note: "one a day — keep the streak", short: "Daily", section: "toolbox" },
   { kind: "frames", icon: Frame, label: "Window-frame playground", note: "watch the frame slide, live", short: "Frames", section: "toolbox" },

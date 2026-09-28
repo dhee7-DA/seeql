@@ -23,6 +23,7 @@ import { monthPerfect, monthsInLedger, puzzleStreak } from "@/lib/curriculum/dai
 import { cn } from "@/lib/utils";
 import { LessonView } from "./lesson-view";
 import { ExamView } from "./exam-view";
+import { RoadmapTrack } from "./roadmap-track";
 import { DataExplorer } from "./data-explorer";
 import { MixedQuiz } from "./mixed-quiz";
 import { BlitzMode } from "./blitz-mode";
@@ -55,6 +56,7 @@ import { BackupError, buildBackup, downloadBackup, importBackupFile } from "@/li
 
 type View =
   | { kind: "overview" }
+  | { kind: "roadmap" }
   | { kind: "seeq" }
   | { kind: "daily" }
   | { kind: "frames" }
@@ -467,6 +469,8 @@ function ViewBody({
   view,
   openLesson,
   openPerf,
+  openExam,
+  openDrills,
   exitExam,
   xp,
   level,
@@ -476,6 +480,8 @@ function ViewBody({
   view: View;
   openLesson: (id: string) => void;
   openPerf: (sql: string) => void;
+  openExam: (moduleId: string) => void;
+  openDrills: () => void;
   exitExam: () => void;
   xp: number;
   level: ReturnType<typeof levelFor>;
@@ -489,6 +495,8 @@ function ViewBody({
     }
     case "exam":
       return <ExamView key={view.moduleId} moduleId={view.moduleId} onExit={exitExam} />;
+    case "roadmap":
+      return <RoadmapTrack onOpenLesson={openLesson} onOpenExam={openExam} onOpenDrills={openDrills} />;
     case "seeq":
       return <SeeqView />;
     case "daily":
@@ -594,9 +602,9 @@ export function LearnApp() {
   // handlers, so the setState inside is compliant.
   useEffect(() => {
     const onNav = (e: Event) => {
-      const kind = (e as CustomEvent<{ kind?: View["kind"] }>).detail?.kind;
-      if (!kind) return;
-      setView({ kind } as View);
+      const detail = (e as CustomEvent<{ kind?: View["kind"]; id?: string }>).detail;
+      if (!detail?.kind) return;
+      setView(detail.kind === "lesson" && detail.id ? { kind: "lesson", id: detail.id } : ({ kind: detail.kind } as View));
       window.scrollTo({ top: 0 });
     };
     window.addEventListener("seeql:nav", onNav);
@@ -643,6 +651,8 @@ export function LearnApp() {
   };
 
   const openPerf = (sql: string) => setView({ kind: "perf", sql, tab: "workbench" });
+  const openExam = (moduleId: string) => setView({ kind: "exam", moduleId });
+  const openDrills = () => setView({ kind: "drills" });
   const exitExam = () => setView({ kind: "overview" });
   const doneCount = LESSONS.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
   const totalProblems = LESSONS.reduce((a, l) => a + l.problems.length, 0);
@@ -953,7 +963,7 @@ export function LearnApp() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.22, ease: "easeOut" }}
         >
-          <ViewBody view={view} openLesson={openLesson} openPerf={openPerf} exitExam={exitExam} xp={xp} level={level} streak={streak} ctx={ctx} />
+          <ViewBody view={view} openLesson={openLesson} openPerf={openPerf} openExam={openExam} openDrills={openDrills} exitExam={exitExam} xp={xp} level={level} streak={streak} ctx={ctx} />
         </motion.div>
       </main>
     </div>

@@ -991,6 +991,25 @@ export default function Home() {
     }
   }, [seeqDeep]);
 
+  // Deep links #learn?view=roadmap (the 30-day sprint) and
+  // #learn?view=lesson&id=lesson-NN (a specific lesson — the roadmap's deep
+  // links) ride the same event bus with the same effect-timing guarantees.
+  const learnDeepParams =
+    mode === "learn" && qMark !== -1 ? new URLSearchParams(hash.slice(qMark + 1)) : null;
+  const roadmapDeep = learnDeepParams?.get("view") === "roadmap";
+  const lessonDeepId =
+    learnDeepParams?.get("view") === "lesson" ? learnDeepParams.get("id") : null;
+  useEffect(() => {
+    if (roadmapDeep) {
+      window.dispatchEvent(new CustomEvent("seeql:nav", { detail: { kind: "roadmap" } }));
+    }
+  }, [roadmapDeep]);
+  useEffect(() => {
+    if (lessonDeepId) {
+      window.dispatchEvent(new CustomEvent("seeql:nav", { detail: { kind: "lesson", id: lessonDeepId } }));
+    }
+  }, [lessonDeepId]);
+
   // SeeQ mounts at the app ROOT, so the buddy is on every view — landing,
   // playground and learn — and one instance survives mode switches: park him
   // on the landing page and he is still parked there after "Start learning".
