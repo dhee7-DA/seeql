@@ -2628,3 +2628,18 @@ Stage Summary:
 - Key files: src/lib/curriculum/roadmap.ts, src/components/learn/roadmap-track.tsx (NEW); tools.ts, learn-app.tsx, page.tsx (wiring); scripts/{sprint-plan-stats,roadmap-gates,roadmap-seed-day1}.ts (probes/QA).
 - Standing hooks: roadmap items are lessonId/moduleId references — new lessons need a ROADMAP row; case gating follows CASE_TOPICS.lessonNum automatically; sprintStats()/daySummary() need zero edits when banks grow; Day 30 flips done when every DRILL_SETS question is answered correct in mcqAttempts.
 - Next per queue: Cloudflare hosting migration (D1 + OpenNext); keyword x case x problem coverage table (displaced, confirm with user); orphan registries deletion still an open user question.
+
+---
+Task ID: lint-1
+Agent: Super Z (main agent)
+Task: Consistency audit requested by user ("are there any inconsistencies now?") post-Task-42.
+
+Work Log:
+- Full audit: git HEAD 3094015 clean -> verified; worklog sequence intact through Task 42; tsc 45 = exact baseline; roadmap-gates.ts re-run -> ALL 23 gate checks pass (30 days, 63 lessons, 913 mcqs, 730 queries, 10 exams, 289 fills, 1992 case files, 2695 drills, 1117 min); dev server 200 OK.
+- Found ONE real inconsistency: `npm run lint` (eslint .) flagged scripts/schema-dump.cjs (Task-41 probe, uses require()) — previous "eslint 0+0" gate runs had been scoped to src/, so scripts/ was never measured. Fixed with a scoped inline eslint-disable (CJS require is intentional in a .cjs probe); did NOT broaden config ignores.
+- Orphan hygiene re-verified: curriculum/index.ts (FOUNDATIONS_MODULE/COURSE_MODULES barrel) has ZERO consumers — dead code, not bundled; its ./case-studies import resolves to the orphan FILE case-studies.ts (file beats dir in resolution), and the case-studies/ dir (CASES_L01..L11/l35) is unreachable; mcqs/mcqs-0X + problems/problems-0X unimported; case-study-view.tsx no longer exists; NO cases.ts shadow file exists, so roadmap.ts ./cases and case-files.tsx @/lib/curriculum/cases both hit the LIVE deck. Live chain confirmed: lessons/index.ts LESSONS(63)/MODULES(10) + cases/ deck + fills/ + drills/.
+- Gates after fix: eslint 0, tsc 45 = baseline.
+
+Stage Summary:
+- Project state is consistent: gates green, roadmap gate math green, live registries correctly wired, orphans inert and unadvertised (deletion still an open user question).
+- Noted: babel deopt notice on expected.ts (>500KB) is a build-perf warning, not an error — irrelevant at dev scale, worth remembering for the Cloudflare build.
