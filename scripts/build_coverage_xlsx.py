@@ -38,7 +38,7 @@ CAT_ORDER = [
 MOD_SHEET_NAMES = {
     1: "M1 Foundations", 2: "M2 Joins", 3: "M3 Sets & CASE", 4: "M4 Subqueries & CTEs",
     5: "M5 Toolkit", 6: "M6 Expert Clinic", 7: "M7 Writes", 8: "M8 Schema",
-    9: "M9 Finance", 10: "M10 Windows",
+    9: "M9 Finance", 10: "M10 Windows", 11: "M11 Performance",
 }
 
 zero_font = Font(name=FONT_NAME, size=11, color=ACCENT_NEGATIVE)
@@ -240,17 +240,19 @@ for c, h in enumerate(headers, start=2):
     ws.cell(row=4, column=c, value=h)
 style_header_row(ws, row_num=4, col_start=2, col_end=last_col)
 
+mod_last = 4 + len(MODULES)  # rows 5..mod_last are the module rows
+cap_row_ref = mod_last + 1   # the Cross-module (cap) row
 checks = [
     ("Modules", 10, "=COUNTA(Totals!B5:B14)"),
-    ("Lessons", S["lessons"], "=SUM(Totals!D5:D15)"),
-    ("Quiz questions (MCQs)", S["mcqs"], "=SUM(Totals!E5:E15)"),
-    ("Graded query problems", S["queries"], "=SUM(Totals!F5:F15)"),
-    ("Case files", S["cases"], "=SUM(Totals!G5:G15)"),
-    ("Fill-in-the-blank drills", S["fills"], "=SUM(Totals!H5:H15)"),
-    ("Keyword drill questions", S["drillQuestions"], "=SUM(Totals!I5:I15)"),
-    ("Lesson minutes", sum(m["minutes"] for m in MODULES), "=SUM(Totals!J5:J15)"),
+    ("Lessons", S["lessons"], f"=SUM(Totals!D5:D{cap_row_ref})"),
+    ("Quiz questions (MCQs)", S["mcqs"], f"=SUM(Totals!E5:E{cap_row_ref})"),
+    ("Graded query problems", S["queries"], f"=SUM(Totals!F5:F{cap_row_ref})"),
+    ("Case files", S["cases"], f"=SUM(Totals!G5:G{cap_row_ref})"),
+    ("Fill-in-the-blank drills", S["fills"], f"=SUM(Totals!H5:H{cap_row_ref})"),
+    ("Keyword drill questions", S["drillQuestions"], f"=SUM(Totals!I5:I{cap_row_ref})"),
+    ("Lesson minutes", sum(m["minutes"] for m in MODULES), f"=SUM(Totals!J5:J{cap_row_ref})"),
     ("Keyword rows on Keywords sheet", len(KEYWORDS), f"=COUNTA(Keywords!B5:B{4 + len(KEYWORDS)})"),
-    ("Cross-module (cap) case files", S["crossModuleCases"], "=Totals!G15"),
+    ("Cross-module (cap) case files", S["crossModuleCases"], f"=Totals!G{cap_row_ref}"),
 ]
 r = 5
 for i, (label, expected, actual) in enumerate(checks):

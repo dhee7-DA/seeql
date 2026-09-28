@@ -1,7 +1,7 @@
-// The 30-day sprint — a day-by-day roadmap across the whole course.
+// The 31-day sprint — a day-by-day roadmap across the whole course.
 //
 // Every lesson, every module exam and one drill-bank finale, arranged into
-// 30 days with a hard gate: the next day stays locked until today's list is
+// 31 days with a hard gate: the next day stays locked until today's list is
 // FULLY done — theory read, every quiz question answered correct, every
 // graded query solved and every mapped case file rebuilt (module exams for
 // exam items). Completion is never stored; it is DERIVED from the same
@@ -45,7 +45,7 @@ const L = (num: number): RoadmapItem => ({
 });
 const E = (moduleId: string): RoadmapItem => ({ kind: "exam", moduleId });
 
-/** Budget for the Day-30 drill-bank clearing house (an honest estimate). */
+/** Budget for the Day-31 drill-bank clearing house (an honest estimate). */
 export const DRILL_DAY_MINUTES = 120;
 
 export const ROADMAP: RoadmapDay[] = [
@@ -225,6 +225,12 @@ export const ROADMAP: RoadmapDay[] = [
   },
   {
     day: 30,
+    title: "Performance & index design",
+    focus: "Read the plan, design the index, verify the verdict — then sit the module exam.",
+    items: [L(64), E("performance")],
+  },
+  {
+    day: 31,
     title: "Drill Yard graduation",
     focus: "The clearing house: every keyword drill bank answered correct, end to end.",
     items: [{ kind: "drills" }],

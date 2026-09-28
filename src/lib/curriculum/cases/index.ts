@@ -70,6 +70,9 @@ import { casesN3 } from "./cases-n3";
 import { casesN4 } from "./cases-n4";
 import { casesN5 } from "./cases-n5";
 import { casesN6 } from "./cases-n6";
+// Module 11 — Query Performance & Index Design (cs-1993…cs-2012)
+import { casesP1 } from "./cases-p1";
+import { casesP2 } from "./cases-p2";
 
 export const CASES: CaseStudy[] = [
   ...casesExemplars,
@@ -141,6 +144,9 @@ export const CASES: CaseStudy[] = [
   ...casesN4,
   ...casesN5,
   ...casesN6,
+  // Module 11 — Query Performance & Index Design (cs-1993…cs-2012)
+  ...casesP1,
+  ...casesP2,
 ].sort((a, b) => Number(a.id.slice(3)) - Number(b.id.slice(3)));
 
 export function caseById(id: string): CaseStudy | undefined {

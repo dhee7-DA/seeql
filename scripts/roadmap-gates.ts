@@ -38,17 +38,17 @@ for (const d of ROADMAP) {
   }
 }
 ok(unresolved === 0, `all roadmap items resolve (${ROADMAP.length} days)`);
-ok(ROADMAP.length === 30, "exactly 30 days");
+ok(ROADMAP.length === 31, "exactly 31 days");
 const allLessons = ROADMAP.flatMap((d) => d.items).filter((i) => i.kind === "lesson");
-ok(allLessons.length === 63, `63 lesson items on the plan (${allLessons.length})`);
+ok(allLessons.length === 64, `64 lesson items on the plan (${allLessons.length})`);
 const seen = new Set(allLessons.map((i) => (i.kind === "lesson" ? i.lessonId : "")));
-ok(seen.size === 63, "no lesson repeated across days");
+ok(seen.size === 64, "no lesson repeated across days");
 
 // ---- 2. census ------------------------------------------------------------
 const s = sprintStats();
 console.log(`stats: days=${s.days} lessons=${s.lessons} mcqs=${s.mcqs} queries=${s.queries} exams=${s.exams} fills=${s.fills} caseFiles=${s.caseFiles} drills=${s.drills} minutes=${s.minutes} (~${Math.round(s.minutes / 60)}h)`);
-ok(s.days === 30 && s.lessons === 63 && s.mcqs === 913 && s.queries === 730, "census lessons/mcqs/queries");
-ok(s.exams === 10 && s.caseFiles === CASES.length && s.drills === 2695, "census exams/cases/drills");
+ok(s.days === 31 && s.lessons === 64 && s.mcqs === 943 && s.queries === 755, "census lessons/mcqs/queries");
+ok(s.exams === 11 && s.caseFiles === CASES.length && s.drills === 2695, "census exams/cases/drills");
 ok(s.minutes > 0, `plan minutes ${s.minutes}`);
 
 // ---- 3. fresh profile -----------------------------------------------------
@@ -111,8 +111,10 @@ ok(d3.lessons === 3 && d3.exams === 1 && d3.cases > 0, "day 3 summary (3 lessons
 const d29 = daySummary(ROADMAP[28]);
 ok(d29.exams === 1 && d29.lessons === 0, "day 29 is the exam-only day");
 const d30 = daySummary(ROADMAP[29]);
-ok(d30.drills && d30.lessons === 0, "day 30 is the drills clearing house");
-console.log(`day minutes: 1=${dayMinutes(ROADMAP[0])} 23=${dayMinutes(ROADMAP[22])} 30=${dayMinutes(ROADMAP[29])}`);
+ok(d30.lessons === 1 && d30.exams === 1, "day 30 is the performance lesson + module exam");
+const d31 = daySummary(ROADMAP[30]);
+ok(d31.drills && d31.lessons === 0, "day 31 is the drills clearing house");
+console.log(`day minutes: 1=${dayMinutes(ROADMAP[0])} 23=${dayMinutes(ROADMAP[22])} 30=${dayMinutes(ROADMAP[29])} 31=${dayMinutes(ROADMAP[30])}`);
 
 console.log(fails === 0 ? "\nALL GATE CHECKS PASS" : `\n${fails} CHECK(S) FAILED`);
 process.exit(fails === 0 ? 0 : 1);

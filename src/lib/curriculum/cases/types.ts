@@ -141,6 +141,11 @@ export const CASE_TOPICS: CaseTopicMeta[] = [
   { id: "n4", label: "Frames & running math", lessonNum: 61 },
   { id: "n5", label: "Tiles & shares", lessonNum: 62 },
   { id: "n6", label: "Window patterns", lessonNum: 63 },
+  // Module 11 — Query Performance & Index Design (lesson 64)
+  { id: "p1", label: "Reading the plan", lessonNum: 64 },
+  { id: "p2", label: "Index design", lessonNum: 64 },
+  { id: "p3", label: "Covering & composite", lessonNum: 64 },
+  { id: "p4", label: "Perf capstone", lessonNum: 64 },
 ];
 
 export interface CaseUniverseMeta {

@@ -6,8 +6,9 @@
 // Module 6 (Expert Clinic, lessons 33–34 + case study 40),
 // Module 7 (Data Modification, lessons 41–44 + case study 50),
 // Module 8 (Schema, Views & Beyond, lessons 45–49 + case study 51),
-// Module 9 (SQL for Finance, lessons 52–57) and
-// Module 10 (Window Functions Masterclass, lessons 58–63).
+// Module 9 (SQL for Finance, lessons 52–57),
+// Module 10 (Window Functions Masterclass, lessons 58–63) and
+// Module 11 (Query Performance & Index Design, lesson 64).
 import type { Lesson } from "../types";
 import { lesson01 } from "./lesson-01";
 import { lesson02 } from "./lesson-02";
@@ -72,6 +73,7 @@ import { lesson60 } from "./lesson-60";
 import { lesson61 } from "./lesson-61";
 import { lesson62 } from "./lesson-62";
 import { lesson63 } from "./lesson-63";
+import { lesson64 } from "./lesson-64";
 
 export const LESSONS: Lesson[] = [
   lesson01,
@@ -137,6 +139,7 @@ export const LESSONS: Lesson[] = [
   lesson61,
   lesson62,
   lesson63,
+  lesson64,
 ];
 
 export interface ModuleInfo {
@@ -237,6 +240,15 @@ export const MODULES: Array<ModuleInfo & { lessons: Lesson[] }> = [
     blurb:
       "The dedicated window-functions home — Windows IV through IX: OVER from first principles and the evaluation order, the ranking playbook (top-N-per-group, dedupe, tie contracts), LAG/LEAD mastery with deltas and streaks, frames in full (ROWS/RANGE/GROUPS, EXCLUDE, the LAST_VALUE trap), distribution windows (NTILE quartiles, PERCENT_RANK, CUME_DIST, Pareto concentration) and the pattern library (gaps-and-islands, sessionization, YoY ladders, mixed boards) — 300 quiz questions, 300 graded queries and 300 case files on the same live storefront.",
     lessons: [lesson58, lesson59, lesson60, lesson61, lesson62, lesson63],
+  },
+  {
+    id: "performance",
+    num: 11,
+    title: "Query Performance & Index Design",
+    level: "Expert",
+    blurb:
+      "The discipline beyond CREATE INDEX: the storefront's zero-index secret, reading EXPLAIN QUERY PLAN as a contract (SCAN vs SEARCH vs the temp b-trees), selectivity arithmetic and the planner's verdict, composite design (equality first, range last), covering indexes, the index-hostile patterns — functions on columns, leading wildcards, cross-column ORs — and the measure → design → verify loop with the write cost owned knowingly.",
+    lessons: [lesson64],
   },
 ];
 

@@ -88734,5 +88734,615 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
         4
       ]
     ]
+  },
+  "l64-p1": {
+    "columns": [
+      "id",
+      "parent",
+      "notused",
+      "detail"
+    ],
+    "rows": [
+      [
+        2,
+        0,
+        0,
+        "SCAN orders"
+      ]
+    ]
+  },
+  "l64-p2": {
+    "columns": [
+      "id",
+      "parent",
+      "notused",
+      "detail"
+    ],
+    "rows": [
+      [
+        2,
+        0,
+        0,
+        "SEARCH orders USING INTEGER PRIMARY KEY (rowid=?)"
+      ]
+    ]
+  },
+  "l64-p3": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        4
+      ]
+    ]
+  },
+  "l64-p4": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        16
+      ]
+    ]
+  },
+  "l64-p5": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "idx_orders_created"
+      ]
+    ]
+  },
+  "l64-p6": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "customer_id"
+      ],
+      [
+        "created_at"
+      ]
+    ]
+  },
+  "l64-p7": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        0
+      ]
+    ]
+  },
+  "l64-p8": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "idx_invoices_number"
+      ]
+    ]
+  },
+  "l64-p9": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "idx_orders_status_total"
+      ]
+    ]
+  },
+  "l64-p10": {
+    "columns": [
+      "status",
+      "total"
+    ],
+    "rows": [
+      [
+        "delivered",
+        752.96
+      ],
+      [
+        "delivered",
+        705.23
+      ],
+      [
+        "delivered",
+        668.45
+      ],
+      [
+        "delivered",
+        659.7
+      ],
+      [
+        "delivered",
+        632.29
+      ],
+      [
+        "delivered",
+        625.14
+      ],
+      [
+        "delivered",
+        624.66
+      ],
+      [
+        "delivered",
+        611.87
+      ],
+      [
+        "delivered",
+        577.19
+      ],
+      [
+        "delivered",
+        450.12
+      ],
+      [
+        "delivered",
+        444.8
+      ],
+      [
+        "delivered",
+        435.09
+      ],
+      [
+        "delivered",
+        419.37
+      ],
+      [
+        "delivered",
+        416.81
+      ],
+      [
+        "delivered",
+        412.88
+      ],
+      [
+        "delivered",
+        397.91
+      ],
+      [
+        "delivered",
+        388.61
+      ],
+      [
+        "delivered",
+        375.93
+      ],
+      [
+        "delivered",
+        334.66
+      ],
+      [
+        "delivered",
+        326.05
+      ],
+      [
+        "delivered",
+        324.16
+      ],
+      [
+        "delivered",
+        317.63
+      ],
+      [
+        "delivered",
+        303.26
+      ],
+      [
+        "delivered",
+        298.18
+      ],
+      [
+        "delivered",
+        295.66
+      ],
+      [
+        "delivered",
+        285.1
+      ],
+      [
+        "delivered",
+        262.89
+      ],
+      [
+        "delivered",
+        241.88
+      ],
+      [
+        "delivered",
+        238.38
+      ],
+      [
+        "delivered",
+        235.71
+      ],
+      [
+        "delivered",
+        233.95
+      ],
+      [
+        "delivered",
+        187.38
+      ],
+      [
+        "delivered",
+        175.68
+      ],
+      [
+        "delivered",
+        164.17
+      ],
+      [
+        "delivered",
+        142.25
+      ],
+      [
+        "delivered",
+        135.24
+      ],
+      [
+        "delivered",
+        125.88
+      ],
+      [
+        "delivered",
+        125.4
+      ],
+      [
+        "delivered",
+        124.41
+      ],
+      [
+        "delivered",
+        121.12
+      ],
+      [
+        "delivered",
+        116.69
+      ],
+      [
+        "delivered",
+        116.28
+      ],
+      [
+        "delivered",
+        115.06
+      ],
+      [
+        "delivered",
+        113.66
+      ],
+      [
+        "delivered",
+        99.48
+      ],
+      [
+        "delivered",
+        86.11
+      ],
+      [
+        "delivered",
+        80.27
+      ],
+      [
+        "delivered",
+        75.47
+      ],
+      [
+        "delivered",
+        49.92
+      ],
+      [
+        "delivered",
+        45.36
+      ],
+      [
+        "delivered",
+        44.48
+      ],
+      [
+        "delivered",
+        30.24
+      ]
+    ]
+  },
+  "l64-p11": {
+    "columns": [
+      "id",
+      "parent",
+      "notused",
+      "detail"
+    ],
+    "rows": [
+      [
+        6,
+        0,
+        0,
+        "SCAN orders"
+      ],
+      [
+        8,
+        0,
+        0,
+        "USE TEMP B-TREE FOR GROUP BY"
+      ]
+    ]
+  },
+  "l64-p12": {
+    "columns": [
+      "id",
+      "total"
+    ],
+    "rows": [
+      [
+        74,
+        1088.44
+      ],
+      [
+        43,
+        945.21
+      ],
+      [
+        39,
+        845.92
+      ]
+    ]
+  },
+  "l64-p13": {
+    "columns": [
+      "id",
+      "parent",
+      "notused",
+      "detail"
+    ],
+    "rows": [
+      [
+        4,
+        0,
+        0,
+        "SCAN orders"
+      ],
+      [
+        17,
+        0,
+        0,
+        "USE TEMP B-TREE FOR ORDER BY"
+      ]
+    ]
+  },
+  "l64-p14": {
+    "columns": [
+      "id",
+      "parent",
+      "notused",
+      "detail"
+    ],
+    "rows": [
+      [
+        2,
+        0,
+        0,
+        "SCAN orders"
+      ]
+    ]
+  },
+  "l64-p15": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        8
+      ]
+    ]
+  },
+  "l64-p16": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        1
+      ]
+    ]
+  },
+  "l64-p17": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        14
+      ]
+    ]
+  },
+  "l64-p18": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        44
+      ]
+    ]
+  },
+  "l64-p19": {
+    "columns": [
+      "id",
+      "parent",
+      "notused",
+      "detail"
+    ],
+    "rows": [
+      [
+        3,
+        0,
+        0,
+        "SCAN oi"
+      ],
+      [
+        5,
+        0,
+        0,
+        "SEARCH o USING INTEGER PRIMARY KEY (rowid=?)"
+      ]
+    ]
+  },
+  "l64-p20": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        1
+      ]
+    ]
+  },
+  "l64-p21": {
+    "columns": [
+      "month",
+      "revenue"
+    ],
+    "rows": [
+      [
+        "2024-01",
+        3579.45
+      ],
+      [
+        "2024-02",
+        3609.64
+      ],
+      [
+        "2024-03",
+        2480.97
+      ],
+      [
+        "2024-04",
+        2468.91
+      ],
+      [
+        "2024-05",
+        2910.31
+      ],
+      [
+        "2024-06",
+        2047.43
+      ],
+      [
+        "2024-07",
+        1078.04
+      ],
+      [
+        "2024-08",
+        2352.07
+      ],
+      [
+        "2024-09",
+        3116.04
+      ],
+      [
+        "2024-10",
+        2975.67
+      ],
+      [
+        "2024-11",
+        1106.95
+      ],
+      [
+        "2024-12",
+        2101.47
+      ],
+      [
+        "2025-01",
+        1463.31
+      ],
+      [
+        "2025-02",
+        2390.53
+      ]
+    ]
+  },
+  "l64-p22": {
+    "columns": [
+      "status",
+      "n",
+      "avg_total"
+    ],
+    "rows": [
+      [
+        "cancelled",
+        7,
+        164.64
+      ],
+      [
+        "delivered",
+        52,
+        299.44
+      ],
+      [
+        "pending",
+        14,
+        436.64
+      ],
+      [
+        "shipped",
+        30,
+        399.89
+      ]
+    ]
+  },
+  "l64-p23": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        0
+      ]
+    ]
+  },
+  "l64-p24": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        90
+      ]
+    ]
+  },
+  "l64-p25": {
+    "columns": [
+      "customer_id",
+      "n"
+    ],
+    "rows": [
+      [
+        1,
+        24
+      ],
+      [
+        5,
+        17
+      ],
+      [
+        7,
+        14
+      ],
+      [
+        13,
+        13
+      ]
+    ]
   }
 };
