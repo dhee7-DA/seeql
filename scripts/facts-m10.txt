@@ -1,0 +1,260 @@
+
+## customers by region
+{"region":"APAC","n":5}
+{"region":"EU","n":8}
+{"region":"LATAM","n":1}
+{"region":"US","n":2}
+
+## customers active
+{"active":0,"n":2}
+{"active":1,"n":14}
+
+## customers created_at years
+{"y":"2023","n":4}
+{"y":"2024","n":12}
+
+## customers list
+{"id":1,"name":"Alice Chen","region":"EU","active":1,"created_at":"2023-11-02"}
+{"id":2,"name":"Bruno Silva","region":"LATAM","active":1,"created_at":"2023-11-17"}
+{"id":3,"name":"Chloe Dubois","region":"EU","active":1,"created_at":"2023-12-05"}
+{"id":4,"name":"Dmitri Volkov","region":"EU","active":0,"created_at":"2023-12-19"}
+{"id":5,"name":"Emma Wilson","region":"US","active":1,"created_at":"2024-01-08"}
+{"id":6,"name":"Farid Nasser","region":"APAC","active":1,"created_at":"2024-01-22"}
+{"id":7,"name":"Grace Kim","region":"APAC","active":1,"created_at":"2024-02-03"}
+{"id":8,"name":"Hiro Tanaka","region":"APAC","active":1,"created_at":"2024-02-14"}
+{"id":9,"name":"Isabella Rossi","region":"EU","active":1,"created_at":"2024-03-01"}
+{"id":10,"name":"Jamal Wright","region":"US","active":1,"created_at":"2024-03-18"}
+{"id":11,"name":"Keiko Sato","region":"APAC","active":0,"created_at":"2024-04-02"}
+{"id":12,"name":"Liam O'Brien","region":"EU","active":1,"created_at":"2024-04-21"}
+{"id":13,"name":"Maya Patel","region":"APAC","active":1,"created_at":"2024-05-09"}
+{"id":14,"name":"Noah Meyer","region":"EU","active":1,"created_at":"2024-05-27"}
+{"id":15,"name":"Olivia Brown","region":"EU","active":1,"created_at":"2024-06-11"}
+{"id":16,"name":"Pedro Alvarez","region":"EU","active":1,"created_at":"2024-07-03"}
+
+## orders by status
+{"status":"delivered","n":52,"amt":15571.07}
+{"status":"shipped","n":30,"amt":11996.72}
+{"status":"pending","n":14,"amt":6113}
+{"status":"cancelled","n":7,"amt":1152.49}
+
+## orders date range
+{"lo":"2024-01-01","hi":"2025-02-27","months":14}
+
+## orders per month
+{"m":"2024-01","n":8,"amt":3731.97}
+{"m":"2024-02","n":9,"amt":3609.64}
+{"m":"2024-03","n":8,"amt":2617.08}
+{"m":"2024-04","n":7,"amt":2468.91}
+{"m":"2024-05","n":8,"amt":2910.31}
+{"m":"2024-06","n":6,"amt":2047.43}
+{"m":"2024-07","n":8,"amt":1193.86}
+{"m":"2024-08","n":7,"amt":2352.07}
+{"m":"2024-09","n":9,"amt":3116.04}
+{"m":"2024-10","n":7,"amt":2975.67}
+{"m":"2024-11","n":6,"amt":1648.8}
+{"m":"2024-12","n":7,"amt":2101.47}
+{"m":"2025-01","n":6,"amt":1669.5}
+{"m":"2025-02","n":7,"amt":2390.53}
+
+## orders per customer top
+{"customer_id":1,"n":24,"spend":7262.35}
+{"customer_id":5,"n":17,"spend":6640.56}
+{"customer_id":7,"n":14,"spend":4574.23}
+{"customer_id":13,"n":13,"spend":3644.56}
+{"customer_id":3,"n":5,"spend":2667.93}
+{"customer_id":16,"n":4,"spend":1686.17}
+{"customer_id":6,"n":3,"spend":1458.97}
+{"customer_id":11,"n":4,"spend":1098.6}
+
+## orders ties on total
+
+## statuses per month
+{"m":"2024-01","status":"cancelled","n":1}
+{"m":"2024-01","status":"delivered","n":2}
+{"m":"2024-01","status":"pending","n":2}
+{"m":"2024-01","status":"shipped","n":3}
+{"m":"2024-02","status":"delivered","n":4}
+{"m":"2024-02","status":"pending","n":1}
+{"m":"2024-02","status":"shipped","n":4}
+{"m":"2024-03","status":"cancelled","n":1}
+{"m":"2024-03","status":"delivered","n":4}
+{"m":"2024-03","status":"pending","n":2}
+{"m":"2024-03","status":"shipped","n":1}
+{"m":"2024-04","status":"delivered","n":3}
+{"m":"2024-04","status":"shipped","n":4}
+{"m":"2024-05","status":"delivered","n":4}
+{"m":"2024-05","status":"shipped","n":4}
+{"m":"2024-06","status":"delivered","n":2}
+{"m":"2024-06","status":"pending","n":2}
+{"m":"2024-06","status":"shipped","n":2}
+{"m":"2024-07","status":"cancelled","n":2}
+{"m":"2024-07","status":"delivered","n":2}
+{"m":"2024-07","status":"pending","n":1}
+{"m":"2024-07","status":"shipped","n":3}
+{"m":"2024-08","status":"delivered","n":5}
+{"m":"2024-08","status":"shipped","n":2}
+{"m":"2024-09","status":"delivered","n":7}
+{"m":"2024-09","status":"shipped","n":2}
+{"m":"2024-10","status":"delivered","n":5}
+{"m":"2024-10","status":"pending","n":2}
+{"m":"2024-11","status":"cancelled","n":2}
+{"m":"2024-11","status":"delivered","n":3}
+{"m":"2024-11","status":"pending","n":1}
+{"m":"2024-12","status":"delivered","n":4}
+{"m":"2024-12","status":"pending","n":1}
+{"m":"2024-12","status":"shipped","n":2}
+{"m":"2025-01","status":"cancelled","n":1}
+{"m":"2025-01","status":"delivered","n":3}
+{"m":"2025-01","status":"pending","n":1}
+{"m":"2025-01","status":"shipped","n":1}
+{"m":"2025-02","status":"delivered","n":4}
+{"m":"2025-02","status":"pending","n":1}
+{"m":"2025-02","status":"shipped","n":2}
+
+## products by category
+{"category":"Accessories","n":3,"avgp":27.49}
+{"category":"Apparel","n":2,"avgp":41.75}
+{"category":"Audio","n":3,"avgp":109.66}
+{"category":"Electronics","n":3,"avgp":57.83}
+{"category":"Fitness","n":1,"avgp":32}
+{"category":"Video","n":2,"avgp":84.5}
+{"category":"Wearables","n":2,"avgp":139.5}
+
+## products list
+{"id":1,"name":"Mechanical Keyboard K1","category":"Electronics","price":89.99,"stock":120,"supplier_id":1}
+{"id":2,"name":"Wireless Mouse M3","category":"Electronics","price":34.5,"stock":300,"supplier_id":2}
+{"id":3,"name":"USB-C Hub 7-in-1","category":"Electronics","price":49,"stock":85,"supplier_id":3}
+{"id":4,"name":"Noise-Canceling Headset","category":"Audio","price":149.99,"stock":60,"supplier_id":4}
+{"id":5,"name":"Studio Desktop Mic","category":"Audio","price":119,"stock":45,"supplier_id":5}
+{"id":6,"name":"Bluetooth Speaker Mini","category":"Audio","price":59.99,"stock":210,"supplier_id":6}
+{"id":7,"name":"4K Webcam Pro","category":"Video","price":129,"stock":70,"supplier_id":1}
+{"id":8,"name":"Ring Light 14\"","category":"Video","price":39.99,"stock":150,"supplier_id":2}
+{"id":9,"name":"HDMI 2.1 Cable 2m","category":"Accessories","price":14.99,"stock":500,"supplier_id":3}
+{"id":10,"name":"Laptop Stand Aluminum","category":"Accessories","price":42.5,"stock":180,"supplier_id":4}
+{"id":11,"name":"Desk Mat Extended","category":"Accessories","price":24.99,"stock":260,"supplier_id":5}
+{"id":12,"name":"Fitness Band X2","category":"Wearables","price":79,"stock":95,"supplier_id":6}
+{"id":13,"name":"Smart Watch S","category":"Wearables","price":199.99,"stock":40,"supplier_id":1}
+{"id":14,"name":"Running Socks 3-pack","category":"Apparel","price":18.5,"stock":400,"supplier_id":2}
+{"id":15,"name":"Cycling Jersey Pro","category":"Apparel","price":65,"stock":110,"supplier_id":3}
+{"id":16,"name":"Yoga Mat Eco 6mm","category":"Fitness","price":32,"stock":220,"supplier_id":4}
+
+## products by supplier
+{"supplier_id":1,"n":3}
+{"supplier_id":2,"n":3}
+{"supplier_id":3,"n":3}
+{"supplier_id":4,"n":3}
+{"supplier_id":5,"n":2}
+{"supplier_id":6,"n":2}
+
+## suppliers
+{"id":1,"name":"Nordic Gadgets AB","region":"EU","rating":4.6}
+{"id":2,"name":"Shenzhen Electro","region":"APAC","rating":4.1}
+{"id":3,"name":"Pacific Textiles","region":"APAC","rating":3.9}
+{"id":4,"name":"Midwest Hardware Co","region":"US","rating":4.4}
+{"id":5,"name":"Alpine Audio GmbH","region":"EU","rating":4.8}
+{"id":6,"name":"Andes Naturals SA","region":"LATAM","rating":4}
+
+## order_items qty stats
+{"quantity":1,"n":93}
+{"quantity":2,"n":69}
+{"quantity":3,"n":89}
+
+## items per order dist
+{"n_items":1,"c":26}
+{"n_items":2,"c":29}
+{"n_items":3,"c":25}
+{"n_items":4,"c":23}
+
+## revenue by category
+{"category":"Audio","rev":11744.01}
+{"category":"Wearables","rev":6929.12}
+{"category":"Video","rev":5198.41}
+{"category":"Electronics","rev":4818.61}
+{"category":"Accessories","rev":3294.29}
+{"category":"Apparel","rev":1984.93}
+{"category":"Fitness","rev":863.91}
+
+## unit price ties
+{"unit_price":41.38,"c":2}
+{"unit_price":24.94,"c":2}
+{"unit_price":18.14,"c":2}
+{"unit_price":15.12,"c":2}
+
+## products never ordered
+{"n":0}
+
+## customers no orders
+{"n":0}
+
+## same-day orders
+{"created_at":"2024-10-13","c":3}
+{"created_at":"2024-05-12","c":3}
+{"created_at":"2025-02-12","c":2}
+{"created_at":"2024-11-04","c":2}
+{"created_at":"2024-10-04","c":2}
+{"created_at":"2024-09-21","c":2}
+{"created_at":"2024-09-09","c":2}
+{"created_at":"2024-09-07","c":2}
+
+## distinct day count
+{"d":84}
+
+## city list
+{"city":"Austin","n":1}
+{"city":"Berlin","n":1}
+{"city":"Chicago","n":1}
+{"city":"Cork","n":1}
+{"city":"Dubai","n":1}
+{"city":"Hamburg","n":1}
+{"city":"London","n":1}
+{"city":"Lyon","n":1}
+{"city":"Madrid","n":1}
+{"city":"Milan","n":1}
+{"city":"Mumbai","n":1}
+{"city":"Nagoya","n":1}
+{"city":"Osaka","n":1}
+{"city":"Seoul","n":1}
+{"city":"São Paulo","n":1}
+{"city":"Tallinn","n":1}
+
+## daily orders sample
+{"d":"2024-01-01","n":1,"amt":752.96}
+{"d":"2024-01-02","n":2,"amt":877.86}
+{"d":"2024-01-05","n":1,"amt":576.54}
+{"d":"2024-01-15","n":2,"amt":598.49}
+{"d":"2024-01-18","n":1,"amt":158.48}
+{"d":"2024-01-22","n":1,"amt":767.64}
+{"d":"2024-02-05","n":1,"amt":46.67}
+{"d":"2024-02-07","n":1,"amt":148.28}
+{"d":"2024-02-13","n":2,"amt":1109.15}
+{"d":"2024-02-15","n":1,"amt":175.68}
+{"d":"2024-02-16","n":1,"amt":285.1}
+{"d":"2024-02-20","n":1,"amt":705.23}
+{"d":"2024-02-25","n":1,"amt":632.29}
+{"d":"2024-02-26","n":1,"amt":507.24}
+{"d":"2024-03-04","n":1,"amt":450.12}
+{"d":"2024-03-05","n":1,"amt":317.49}
+{"d":"2024-03-06","n":2,"amt":1124.76}
+{"d":"2024-03-18","n":1,"amt":136.11}
+{"d":"2024-03-22","n":1,"amt":99.48}
+{"d":"2024-03-25","n":1,"amt":364.71}
+{"d":"2024-03-26","n":1,"amt":124.41}
+{"d":"2024-04-05","n":1,"amt":633.91}
+{"d":"2024-04-16","n":1,"amt":241.88}
+{"d":"2024-04-17","n":1,"amt":645.91}
+{"d":"2024-04-18","n":1,"amt":56.19}
+{"d":"2024-04-19","n":1,"amt":263.91}
+{"d":"2024-04-26","n":2,"amt":627.11}
+{"d":"2024-05-12","n":3,"amt":1354.16}
+{"d":"2024-05-14","n":2,"amt":430.54}
+{"d":"2024-05-19","n":2,"amt":745.78}
+{"d":"2024-05-22","n":1,"amt":379.83}
+{"d":"2024-06-02","n":1,"amt":282.51}
+{"d":"2024-06-07","n":1,"amt":412.88}
+{"d":"2024-06-12","n":1,"amt":67.25}
+{"d":"2024-06-16","n":1,"amt":945.21}
+{"d":"2024-06-17","n":1,"amt":259.31}
+{"d":"2024-06-22","n":1,"amt":80.27}
+{"d":"2024-07-02","n":1,"amt":90.35}
+{"d":"2024-07-06","n":1,"amt":306.92}
+{"d":"2024-07-10","n":1,"amt":32.01}

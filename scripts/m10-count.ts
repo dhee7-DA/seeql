@@ -1,0 +1,21 @@
+import { ROWS as M58 } from "../src/lib/curriculum/lessons/banks/l58-mcqs";
+import { ROWS as P58 } from "../src/lib/curriculum/lessons/banks/l58-problems";
+import { ROWS as M59 } from "../src/lib/curriculum/lessons/banks/l59-mcqs";
+import { ROWS as P59 } from "../src/lib/curriculum/lessons/banks/l59-problems";
+import { ROWS as M60 } from "../src/lib/curriculum/lessons/banks/l60-mcqs";
+import { ROWS as P60 } from "../src/lib/curriculum/lessons/banks/l60-problems";
+import { ROWS as M61 } from "../src/lib/curriculum/lessons/banks/l61-mcqs";
+import { ROWS as P61 } from "../src/lib/curriculum/lessons/banks/l61-problems";
+import { ROWS as M62 } from "../src/lib/curriculum/lessons/banks/l62-mcqs";
+import { ROWS as P62 } from "../src/lib/curriculum/lessons/banks/l62-problems";
+import { ROWS as M63 } from "../src/lib/curriculum/lessons/banks/l63-mcqs";
+import { ROWS as P63 } from "../src/lib/curriculum/lessons/banks/l63-problems";
+const mcqs: Array<[string, number]> = [["l58", M58.length], ["l59", M59.length], ["l60", M60.length], ["l61", M61.length], ["l62", M62.length], ["l63", M63.length]];
+const probs: Array<[string, number]> = [["l58", P58.length], ["l59", P59.length], ["l60", P60.length], ["l61", P61.length], ["l62", P62.length], ["l63", P63.length]];
+console.log("mcqs", mcqs, "total", mcqs.reduce((a, b) => a + b[1], 0));
+console.log("probs", probs, "total", probs.reduce((a, b) => a + b[1], 0));
+// duplicate prompt check
+const allM = [...M58, ...M59, ...M60, ...M61, ...M62, ...M63].map(r => r[0]);
+console.log("dup mcq prompts:", allM.length - new Set(allM).size);
+const allP = [...P58, ...P59, ...P60, ...P61, ...P62, ...P63].map(r => r[0]);
+console.log("dup problem titles:", allP.length - new Set(allP).size);

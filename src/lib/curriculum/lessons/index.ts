@@ -5,8 +5,9 @@
 // Module 5 (Scalar & Window Toolkit, lessons 29–32 + case study 39),
 // Module 6 (Expert Clinic, lessons 33–34 + case study 40),
 // Module 7 (Data Modification, lessons 41–44 + case study 50),
-// Module 8 (Schema, Views & Beyond, lessons 45–49 + case study 51) and
-// Module 9 (SQL for Finance, lessons 52–57).
+// Module 8 (Schema, Views & Beyond, lessons 45–49 + case study 51),
+// Module 9 (SQL for Finance, lessons 52–57) and
+// Module 10 (Window Functions Masterclass, lessons 58–63).
 import type { Lesson } from "../types";
 import { lesson01 } from "./lesson-01";
 import { lesson02 } from "./lesson-02";
@@ -65,6 +66,12 @@ import { lesson54 } from "./lesson-54";
 import { lesson55 } from "./lesson-55";
 import { lesson56 } from "./lesson-56";
 import { lesson57 } from "./lesson-57";
+import { lesson58 } from "./lesson-58";
+import { lesson59 } from "./lesson-59";
+import { lesson60 } from "./lesson-60";
+import { lesson61 } from "./lesson-61";
+import { lesson62 } from "./lesson-62";
+import { lesson63 } from "./lesson-63";
 
 export const LESSONS: Lesson[] = [
   lesson01,
@@ -124,6 +131,12 @@ export const LESSONS: Lesson[] = [
   lesson55,
   lesson56,
   lesson57,
+  lesson58,
+  lesson59,
+  lesson60,
+  lesson61,
+  lesson62,
+  lesson63,
 ];
 
 export interface ModuleInfo {
@@ -215,6 +228,15 @@ export const MODULES: Array<ModuleInfo & { lessons: Lesson[] }> = [
     blurb:
       "The store's own books, in integer cents: invoices and payments, running customer balances walked with window functions, the AR aging ladder that drives collections calls, month-over-month growth via LAG with its moving-average antidote, double-entry reconciliation that catches a ghost payment and a refund owed — and the advanced window tier (CUME_DIST, hand-rolled standard deviation, z-scores) that turns 'August looks big' into 'August is 3.3 sigma out'.",
     lessons: [lesson52, lesson53, lesson54, lesson55, lesson56, lesson57],
+  },
+  {
+    id: "windows",
+    num: 10,
+    title: "Window Functions Masterclass",
+    level: "Advanced",
+    blurb:
+      "The dedicated window-functions home — Windows IV through IX: OVER from first principles and the evaluation order, the ranking playbook (top-N-per-group, dedupe, tie contracts), LAG/LEAD mastery with deltas and streaks, frames in full (ROWS/RANGE/GROUPS, EXCLUDE, the LAST_VALUE trap), distribution windows (NTILE quartiles, PERCENT_RANK, CUME_DIST, Pareto concentration) and the pattern library (gaps-and-islands, sessionization, YoY ladders, mixed boards) — 300 quiz questions, 300 graded queries and 300 case files on the same live storefront.",
+    lessons: [lesson58, lesson59, lesson60, lesson61, lesson62, lesson63],
   },
 ];
 
