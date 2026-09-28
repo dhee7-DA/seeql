@@ -134,6 +134,13 @@ export const CASE_TOPICS: CaseTopicMeta[] = [
   { id: "f4", label: "Month-over-month", lessonNum: 55 },
   { id: "f5", label: "Reconciliation", lessonNum: 56 },
   { id: "fcap", label: "Advanced windows", lessonNum: 57 },
+  // Module 10 — Window Functions Masterclass (lessons 58–63)
+  { id: "n1", label: "Window fundamentals", lessonNum: 58 },
+  { id: "n2", label: "Ranking playbook", lessonNum: 59 },
+  { id: "n3", label: "LAG & LEAD", lessonNum: 60 },
+  { id: "n4", label: "Frames & running math", lessonNum: 61 },
+  { id: "n5", label: "Tiles & shares", lessonNum: 62 },
+  { id: "n6", label: "Window patterns", lessonNum: 63 },
 ];
 
 export interface CaseUniverseMeta {

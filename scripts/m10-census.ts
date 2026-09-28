@@ -1,0 +1,16 @@
+import { LESSONS, MODULES } from "../src/lib/curriculum/lessons";
+import { CASES } from "../src/lib/curriculum/cases";
+import { allFills } from "../src/lib/curriculum/fills";
+import { DRILL_SETS } from "../src/lib/curriculum/drills";
+const mcqs = LESSONS.reduce((a, l) => a + l.mcqs.length, 0);
+const probs = LESSONS.reduce((a, l) => a + l.problems.length, 0);
+const m10mcq = LESSONS.filter(l => l.num >= 58).reduce((a, l) => a + l.mcqs.length, 0);
+const m10prob = LESSONS.filter(l => l.num >= 58).reduce((a, l) => a + l.problems.length, 0);
+console.log(`modules: ${MODULES.length} · lessons: ${LESSONS.length}`);
+console.log(`inline MCQs: ${mcqs} (M10: ${m10mcq}) · problems: ${probs} (M10: ${m10prob})`);
+console.log(`case deck: ${CASES.length} (M10 topics n1-n6: ${CASES.filter(c => c.topic.startsWith("n")).length})`);
+console.log(`fills: ${allFills().length} · drills: ${DRILL_SETS.reduce((a, s) => a + s.questions.length, 0)}`);
+const ids = CASES.map(c => c.id);
+console.log("dup case ids:", ids.length - new Set(ids).size);
+const minutes = LESSONS.filter(l => l.num >= 58).reduce((a, l) => a + l.minutes, 0);
+console.log(`M10 minutes: ${minutes}`);

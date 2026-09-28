@@ -1,4 +1,4 @@
-// Case batch M7 — Data Modification (lessons 41–44, 50), cs-1601…cs-1605.
+// Case batch M7 — Data Modification (lessons 41–44, 50), cs-1976…cs-1980.
 // Write-verb cases in the chip-rebuild format: the rebuilt statement is
 // graded chip-by-chip (no execution — the sandbox would roll it back
 // anyway), so every number slot is noVerify flavor and every keyword
@@ -8,7 +8,7 @@ import type { CaseStudy } from "./types";
 
 export const casesM7: CaseStudy[] = [
   {
-    id: "cs-1601",
+    id: "cs-1976",
     tier: "easy",
     topic: "w1",
     universe: "catalog",
@@ -51,7 +51,7 @@ VALUES ({1}, {2}, {3}, 40, {4});`,
       "The column list names exactly five columns and the VALUES row feeds exactly five — the contract holds. 'Desk Lamp Pro' and 'Video' are quoted strings; 59.99 and 40 and 5 are bare numbers; NULL would violate NOT NULL on name and 59,99 would never parse. In the sandbox this INSERT runs for real inside the rollback transaction — the row exists just long enough to verify, then the storefront forgets it. On a live system the next commit makes it permanent, which is why the category spelling matters before, not after.",
   },
   {
-    id: "cs-1602",
+    id: "cs-1977",
     tier: "medium",
     topic: "w2",
     universe: "pricing",
@@ -88,7 +88,7 @@ WHERE {3} = 'Audio';`,
       "SET price = price * 1.1 with WHERE category = 'Audio' — three chips and the raise is scoped, correct, and reversible only by doing the inverse UPDATE (0.909090…, and now you see why backups matter). Drop the WHERE and the engine reprices all sixteen products without a word of warning: UPDATE's blast radius is exactly its WHERE. The sandbox rolls this back after grading — production never would.",
   },
   {
-    id: "cs-1603",
+    id: "cs-1978",
     tier: "medium",
     topic: "w3",
     universe: "expense",
@@ -124,7 +124,7 @@ WHERE {2} < {3};`,
       "DELETE FROM expenses WHERE amount_cents < 1000 — the same three-part shape as the pre-flight SELECT COUNT(*) FROM expenses WHERE amount_cents < 1000 that finance demands first. The WHERE is what separates a purge from an unplug: bare DELETE FROM expenses removes all 36 rows. And the aggregate decoy is the lesson-43 boundary: aggregates can't sit in WHERE — row-by-row is the only scope DELETE understands.",
   },
   {
-    id: "cs-1604",
+    id: "cs-1979",
     tier: "hard",
     topic: "w4",
     universe: "month-close",
@@ -163,7 +163,7 @@ VALUES (18, '2025-03-05', 87300, {2});
       "BEGIN opens the bubble; the UPDATE voids INV-2024-018 by number; the INSERT writes the 87300-cent trail keyed to invoice 18; COMMIT seals both. Crash before COMMIT? The engine unwinds everything — no voided invoice without a trail, no trail without a void. This is the exact mechanism this course's own sandbox uses against your graded writes: BEGIN, do the work, verify, always ROLLBACK. The transaction is why the course can let you fire UPDATEs at a real database and still promise the storefront survives.",
   },
   {
-    id: "cs-1605",
+    id: "cs-1980",
     tier: "hard",
     topic: "wcap",
     universe: "inventory",

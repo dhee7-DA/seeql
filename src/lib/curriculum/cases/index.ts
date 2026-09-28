@@ -63,6 +63,13 @@ import { casesX8 } from "./cases-x8";
 import { casesM7 } from "./cases-m7";
 import { casesM8 } from "./cases-m8";
 import { casesM9 } from "./cases-m9";
+// Module 10 — Window Functions Masterclass (cs-1676…cs-1975)
+import { casesN1 } from "./cases-n1";
+import { casesN2 } from "./cases-n2";
+import { casesN3 } from "./cases-n3";
+import { casesN4 } from "./cases-n4";
+import { casesN5 } from "./cases-n5";
+import { casesN6 } from "./cases-n6";
 
 export const CASES: CaseStudy[] = [
   ...casesExemplars,
@@ -127,6 +134,13 @@ export const CASES: CaseStudy[] = [
   ...casesM7,
   ...casesM8,
   ...casesM9,
+  // Module 10 — Window Functions Masterclass (cs-1676…cs-1975)
+  ...casesN1,
+  ...casesN2,
+  ...casesN3,
+  ...casesN4,
+  ...casesN5,
+  ...casesN6,
 ].sort((a, b) => Number(a.id.slice(3)) - Number(b.id.slice(3)));
 
 export function caseById(id: string): CaseStudy | undefined {

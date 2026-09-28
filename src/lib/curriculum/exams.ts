@@ -47,11 +47,14 @@ export function buildExam(moduleId: string, attempt = 0): Exam | null {
   const mod = MODULES.find((m) => m.id === moduleId);
   if (!mod) return null;
   const seed = mod.lessons.reduce((acc, l) => acc + l.num * 7919, attempt * 104729);
-  const mcqs = seededShuffle(mod.lessons.flatMap((l) => l.mcqs), seed).slice(0, EXAM_MCQS);
   const fills = seededShuffle(
     mod.lessons.flatMap((l) => fillsFor(l.num)),
     seed ^ 0x9e3779b9,
   ).slice(0, EXAM_FILLS);
+  // Modules without registered fills (e.g. Module 10) top up with extra MCQs
+  // so every exam still carries EXAM_MCQS + EXAM_FILLS questions (pass mark 9).
+  const mcqTarget = EXAM_MCQS + Math.max(0, EXAM_FILLS - fills.length);
+  const mcqs = seededShuffle(mod.lessons.flatMap((l) => l.mcqs), seed).slice(0, mcqTarget);
 
   // Interleave: two MCQs, then a fill, repeating — the mode switches feel
   // deliberate instead of two blocks of the same shape.

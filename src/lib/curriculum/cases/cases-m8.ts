@@ -1,4 +1,4 @@
-// Case batch M8 — Schema, Views & Beyond (lessons 45–49, 51), cs-1606…cs-1611.
+// Case batch M8 — Schema, Views & Beyond (lessons 45–49, 51), cs-1981…cs-1986.
 // DDL-and-schema cases in the chip-rebuild format. Figures anchored to the
 // live db where cited (orders.customer_id SCAN→SEARCH, month revenue
 // 2024-07 = 1078.04).
@@ -6,7 +6,7 @@ import type { CaseStudy } from "./types";
 
 export const casesM8: CaseStudy[] = [
   {
-    id: "cs-1606",
+    id: "cs-1981",
     tier: "easy",
     topic: "d1",
     universe: "catalog",
@@ -45,7 +45,7 @@ export const casesM8: CaseStudy[] = [
       "Four lines, four contracts: the surrogate id (rowid alias, auto-assigned), the enforced relationship (REFERENCES customers(id)), and two NOT NULLs that make half-finished rows impossible. CREATE TABLE is the one statement where thinking about tomorrow is cheapest — every constraint added here is a bug class that can never be written, versus an app-side check that can be bypassed by any writer.",
   },
   {
-    id: "cs-1607",
+    id: "cs-1982",
     tier: "medium",
     topic: "d2",
     universe: "catalog",
@@ -81,7 +81,7 @@ UPDATE products SET discontinued = {3} WHERE price < 10;`,
       "ALTER TABLE adds the column with DEFAULT 0 so all existing rows are born 'active'; the follow-up UPDATE sets discontinued = 1 exactly where price < 10. Schema change and data change are different verbs on different layers — the classic mix-up is reaching for UPDATE to do ALTER's job. And the DEFAULT clause is the migration story: without it, NOT NULL on a populated table is an instant error, because ALTER can't guess what the past rows should read.",
   },
   {
-    id: "cs-1608",
+    id: "cs-1983",
     tier: "medium",
     topic: "d3",
     universe: "growth",
@@ -120,7 +120,7 @@ GROUP BY month;`,
       "CREATE VIEW month_revenue AS … saves the query under a name; SUBSTR(created_at, 1, 7) is the month bucket; the != 'cancelled' gate keeps all real money. The board chart becomes SELECT revenue FROM month_revenue WHERE month = '2024-07' → 1078.04, verified against the live orders. When the definition needs to change, it changes in ONE place — the drift between six dashboards was the smell, and the view is the fix (lesson-47's reporting layer, exactly).",
   },
   {
-    id: "cs-1609",
+    id: "cs-1984",
     tier: "hard",
     topic: "d4",
     universe: "funnel",
@@ -155,7 +155,7 @@ GROUP BY month;`,
       "CREATE INDEX idx_orders_customer ON orders(customer_id) — and the plan flips: 'SCAN orders' becomes 'SEARCH orders USING INDEX idx_orders_customer (customer_id=?)', verified live in the lesson-48 3D scene (103 rows read vs 24 for customer 1). The trade is written in the same plan: every INSERT, UPDATE and DELETE on orders now maintains the sorted tree. Index the columns you FILTER by, not the ones you display — reads pay for the shortcut, writes pay the rent.",
   },
   {
-    id: "cs-1610",
+    id: "cs-1985",
     tier: "medium",
     topic: "d5",
     universe: "growth",
@@ -196,7 +196,7 @@ SELECT COUNT(*) FROM cnt;`,
       "WITH RECURSIVE cnt(x): the anchor SELECT 1 plants the first row; UNION ALL feeds each result back in; x + 1 from cnt produces the next; WHERE x < 10 stops the machine at exactly ten rows. COUNT(*) reads the spine: 10. This is lesson-49's generator — the same shape that builds month spines for calendars and walks org charts that no table stores. Recursive SQL is a while-loop you can SELECT from.",
   },
   {
-    id: "cs-1611",
+    id: "cs-1986",
     tier: "hard",
     topic: "dcap",
     universe: "month-close",

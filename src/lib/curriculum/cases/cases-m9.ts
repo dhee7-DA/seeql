@@ -1,4 +1,4 @@
-// Case batch M9 — SQL for Finance (lessons 52–57), cs-1612…cs-1617.
+// Case batch M9 — SQL for Finance (lessons 52–57), cs-1987…cs-1992.
 // Finance cases in the chip-rebuild format. Figures verified live: 6
 // unpaid invoices led by INV-2025-024 (493700), invoice status buckets
 // open/paid/void, payments card/wire, ledger double-entry.
@@ -6,7 +6,7 @@ import type { CaseStudy } from "./types";
 
 export const casesM9: CaseStudy[] = [
   {
-    id: "cs-1612",
+    id: "cs-1987",
     tier: "easy",
     topic: "f1",
     universe: "month-close",
@@ -44,7 +44,7 @@ ORDER BY i.amount_cents DESC;`,
       "Left join preserves all 28 invoices; the IS NULL gate keeps the six with no payment — INV-2025-024 at 493700 cents on top, verified live. The anti-join shape from the joins module, pointed at money. And the same three slots build the twin report: flip NULL to NOT NULL and AR gets the paid-in-full list. One keyword of separation between the collections call list and the thank-you list.",
   },
   {
-    id: "cs-1613",
+    id: "cs-1988",
     tier: "medium",
     topic: "f2",
     universe: "month-close",
@@ -77,7 +77,7 @@ ORDER BY issued_on;`,
       "SUM(amount_cents) OVER (ORDER BY issued_on) — the running-total window from lesson-32, aimed at the books: each invoice row keeps its identity and gains the balance-so-far. PARTITION inside OVER would restart the sum per group (here it would zero out every row's story); GROUP BY would collapse the walk into one row and destroy exactly the row-per-invoice shape the dispute needs. Windows annotate; aggregates annihilate.",
   },
   {
-    id: "cs-1614",
+    id: "cs-1989",
     tier: "medium",
     topic: "f3",
     universe: "refund-audit",
@@ -119,7 +119,7 @@ WHERE status = 'open';`,
       "CASE walks its WHENs top-down: 60+ catches the deepest arrears first, the second WHEN inherits everything younger (30–60), ELSE labels the rest current, END closes the expression. The aging ladder from lesson-54 — the same top-down cascade rule that makes pivots work. One status filter keeps the pile honest: paid invoices aren't late, they're history; void ones aren't money at all.",
   },
   {
-    id: "cs-1615",
+    id: "cs-1990",
     tier: "medium",
     topic: "f4",
     universe: "growth",
@@ -151,7 +151,7 @@ FROM monthly_revenue;`,
       "LAG(revenue) OVER (ORDER BY month) fetches the prior month onto the current row — twice, once per side of the difference — and 100.0 * (a − b) / b turns it into percent with REAL precision: July's −47.3 against June, August's +118.2 rebound, verified live. LAG vs LEAD is direction: LEAD measures the NEXT month, flipping every sign on the slide. And the first row's growth is honestly NULL — there is no month before the first month.",
   },
   {
-    id: "cs-1616",
+    id: "cs-1991",
     tier: "hard",
     topic: "f5",
     universe: "fraud",
@@ -184,7 +184,7 @@ GROUP BY account
       "GROUP BY account, then HAVING SUM(debit_cents) != SUM(credit_cents) — every balanced account passes silently, the one broken account floats up. That's the double-entry reconciliation from lesson-56: the equality is an identity, so its violation IS the anomaly. The WHERE decoy is the whole lesson: aggregates are born in the GROUP BY stage, and WHERE has left the building by then. In the clinic this was a silent bug; here it's a detective query.",
   },
   {
-    id: "cs-1617",
+    id: "cs-1992",
     tier: "hard",
     topic: "fcap",
     universe: "growth",
