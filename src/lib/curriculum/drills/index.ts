@@ -67,6 +67,13 @@ import { WINDOW_EDGES_DRILL } from "./m5/window-edges";
 import { WINDOW_JUDGMENT_DRILL } from "./m5/window-judgment";
 import { OPS_CALENDAR } from "./m5/ops-calendar";
 import { TOOLKIT_CAPSTONE_DRILL } from "./m5/toolkit-capstone";
+import { NON_EQUI_JOINS } from "./m6/non-equi-joins";
+import { OUTER_JOINS } from "./m6/outer-joins";
+import { UPDATES_DELETES } from "./m7/updates-deletes";
+import { UPSERT_RETURNING } from "./m7/upsert-returning";
+import { TRANSACTIONS } from "./m7/transactions";
+import { CREATE_TABLE } from "./m8/create-table";
+import { INDEXES_EXPLAIN } from "./m11/indexes-explain";
 
 function set(
   keyword: string, label: string, module: number, tier: DrillSet["tier"],
@@ -261,6 +268,31 @@ export const DRILL_SETS: DrillSet[] = [
   set("toolkit-capstone", "Toolkit capstone", 5, "secondary",
     "Text, dates and windows in one pipeline — the full toolkit stack with the free reconciliation at the end.",
     TOOLKIT_CAPSTONE_DRILL),
+  // ---- Module 6 · secondary (thin-spot patch wave) ----
+  set("non-equi-joins", "Non-equi joins", 6, "secondary",
+    "Matching without equals — band ladders, half-open bounds, the fanout disease, and pair censuses built from inequalities.",
+    NON_EQUI_JOINS),
+  set("outer-joins", "RIGHT / FULL JOIN", 6, "secondary",
+    "The other keep sides — direction is spelling, ON decides matching, WHERE decides survival, and FULL keeps both ends.",
+    OUTER_JOINS),
+  // ---- Module 7 · secondary (thin-spot patch wave) ----
+  set("updates-deletes", "UPDATE & DELETE", 7, "secondary",
+    "Change and purge — self-referencing SET, the WHERE blast radius, affected counts, and the pre-count discipline.",
+    UPDATES_DELETES),
+  set("upsert-returning", "UPSERT & RETURNING", 7, "secondary",
+    "Collision-safe writes — ON CONFLICT targets, the excluded row vocabulary, and writes that echo every row they touched.",
+    UPSERT_RETURNING),
+  set("transactions", "Transactions", 7, "secondary",
+    "All-or-nothing — BEGIN/COMMIT/ROLLBACK, the sandbox that powers this course, and the invariants worth wrapping.",
+    TRANSACTIONS),
+  // ---- Module 8 · secondary (thin-spot patch wave) ----
+  set("create-table", "CREATE TABLE", 8, "secondary",
+    "Contracts in DDL — types as affinity, NOT NULL/DEFAULT/CHECK/UNIQUE, the rowid-alias PK, and reading schemas back.",
+    CREATE_TABLE),
+  // ---- Module 11 · secondary (thin-spot patch wave) ----
+  set("indexes-explain", "Indexes & EXPLAIN", 11, "secondary",
+    "Plans and structures — SCAN vs SEARCH, leftmost prefix, sort-serving, write costs, and the judgment to index nothing.",
+    INDEXES_EXPLAIN),
 ];
 
 export type { DrillSet, DrillQ, DrillTier, DrillAspect } from "./types";
@@ -318,4 +350,12 @@ export const LESSON_DRILLS: Record<string, string[]> = {
   "lesson-31": ["ranking-windows", "window-partitions", "ntile"], // Windows I: rank without collapsing
   "lesson-32": ["lag-lead", "window-frames"],                    // Windows II: offsets & running totals
   "lesson-39": ["ops-calendar", "toolkit-capstone"],             // case study: the ops calendar
+  // ---- Modules 6-8, 11 (thin-spot patch wave) ----
+  "lesson-34": ["non-equi-joins", "outer-joins"],  // non-equi + outer-keep clinic
+  "lesson-42": ["updates-deletes"],                 // UPDATE
+  "lesson-43": ["updates-deletes"],                 // DELETE
+  "lesson-44": ["upsert-returning", "transactions"], // UPSERT & transactions
+  "lesson-45": ["create-table"],                    // CREATE TABLE
+  "lesson-48": ["indexes-explain"],                 // indexes & EXPLAIN
+  "lesson-64": ["indexes-explain"],                 // query performance capstone
 };

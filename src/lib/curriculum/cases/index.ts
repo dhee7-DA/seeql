@@ -73,9 +73,13 @@ import { casesN6 } from "./cases-n6";
 // Module 11 — Query Performance & Index Design (cs-1993…cs-2012)
 import { casesP1 } from "./cases-p1";
 import { casesP2 } from "./cases-p2";
+import { casesN4B } from "./cases-n4b";
+import { casesW5 } from "./cases-w5";
 
 export const CASES: CaseStudy[] = [
   ...casesExemplars,
+  ...casesN4B,
+  ...casesW5,
   ...casesB1,
   ...casesB2a,
   ...casesB2b,

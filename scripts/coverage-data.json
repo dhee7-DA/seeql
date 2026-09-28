@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-09-28T18:21:01.810Z",
+  "generatedAt": "2026-09-28T19:51:16.552Z",
   "sources": {
     "lessons": 64,
-    "mcqs": 943,
-    "queries": 755,
-    "cases": 2012,
+    "mcqs": 951,
+    "queries": 761,
+    "cases": 2030,
     "fills": 289,
-    "drillQuestions": 2695,
-    "drillSets": 58,
+    "drillQuestions": 2799,
+    "drillSets": 65,
     "crossModuleCases": 6
   },
   "modules": [
@@ -84,10 +84,10 @@
       "lessons": 3,
       "minutes": 44,
       "mcqs": 32,
-      "queries": 21,
+      "queries": 27,
       "cases": 175,
       "fills": 18,
-      "drills": 0
+      "drills": 30
     },
     {
       "num": 7,
@@ -96,11 +96,11 @@
       "level": "Expert",
       "lessons": 5,
       "minutes": 63,
-      "mcqs": 58,
+      "mcqs": 66,
       "queries": 37,
-      "cases": 5,
+      "cases": 13,
       "fills": 25,
-      "drills": 0
+      "drills": 42
     },
     {
       "num": 8,
@@ -113,7 +113,7 @@
       "queries": 45,
       "cases": 6,
       "fills": 30,
-      "drills": 0
+      "drills": 14
     },
     {
       "num": 9,
@@ -137,7 +137,7 @@
       "minutes": 102,
       "mcqs": 300,
       "queries": 300,
-      "cases": 300,
+      "cases": 310,
       "fills": 0,
       "drills": 0
     },
@@ -152,41 +152,41 @@
       "queries": 25,
       "cases": 20,
       "fills": 0,
-      "drills": 0
+      "drills": 18
     }
   ],
   "keywords": [
     {
       "keyword": "SELECT & FROM",
       "category": "Reading data",
-      "mcqs": 287,
-      "queries": 720,
-      "cases": 2012,
+      "mcqs": 292,
+      "queries": 726,
+      "cases": 2030,
       "fills": 289,
       "drills": 50,
-      "total": 3358,
+      "total": 3387,
       "primaryModule": 10
     },
     {
       "keyword": "WHERE",
       "category": "Reading data",
-      "mcqs": 184,
-      "queries": 332,
-      "cases": 1346,
+      "mcqs": 188,
+      "queries": 333,
+      "cases": 1354,
       "fills": 166,
       "drills": 50,
-      "total": 2078,
+      "total": 2091,
       "primaryModule": 1
     },
     {
       "keyword": "ORDER BY & LIMIT",
       "category": "Reading data",
       "mcqs": 204,
-      "queries": 568,
-      "cases": 1131,
+      "queries": 571,
+      "cases": 1141,
       "fills": 149,
       "drills": 135,
-      "total": 2187,
+      "total": 2200,
       "primaryModule": 10
     },
     {
@@ -194,10 +194,10 @@
       "category": "Reading data",
       "mcqs": 68,
       "queries": 60,
-      "cases": 276,
+      "cases": 278,
       "fills": 34,
       "drills": 20,
-      "total": 458,
+      "total": 460,
       "primaryModule": 3
     },
     {
@@ -205,10 +205,10 @@
       "category": "Reading data",
       "mcqs": 3,
       "queries": 5,
-      "cases": 14,
+      "cases": 15,
       "fills": 5,
       "drills": 20,
-      "total": 47,
+      "total": 48,
       "primaryModule": 1
     },
     {
@@ -216,43 +216,43 @@
       "category": "Reading data",
       "mcqs": 52,
       "queries": 69,
-      "cases": 158,
+      "cases": 166,
       "fills": 11,
       "drills": 15,
-      "total": 305,
+      "total": 313,
       "primaryModule": 10
     },
     {
       "keyword": "IN (list)",
       "category": "Reading data",
-      "mcqs": 22,
+      "mcqs": 23,
       "queries": 21,
       "cases": 123,
       "fills": 14,
       "drills": 20,
-      "total": 200,
+      "total": 201,
       "primaryModule": 4
     },
     {
       "keyword": "AND / OR / NOT",
       "category": "Boolean logic",
-      "mcqs": 16,
+      "mcqs": 17,
       "queries": 10,
-      "cases": 110,
+      "cases": 111,
       "fills": 8,
       "drills": 20,
-      "total": 164,
+      "total": 166,
       "primaryModule": 5
     },
     {
       "keyword": "NULL / IS NULL",
       "category": "NULL handling",
-      "mcqs": 128,
+      "mcqs": 130,
       "queries": 97,
-      "cases": 308,
+      "cases": 310,
       "fills": 52,
       "drills": 50,
-      "total": 635,
+      "total": 639,
       "primaryModule": 10
     },
     {
@@ -269,23 +269,23 @@
     {
       "keyword": "Aggregates (COUNT/SUM/AVG/MIN/MAX)",
       "category": "Aggregation",
-      "mcqs": 333,
-      "queries": 537,
-      "cases": 1745,
+      "mcqs": 336,
+      "queries": 543,
+      "cases": 1757,
       "fills": 175,
       "drills": 100,
-      "total": 2890,
+      "total": 2911,
       "primaryModule": 10
     },
     {
       "keyword": "GROUP BY",
       "category": "Aggregation",
       "mcqs": 138,
-      "queries": 343,
-      "cases": 850,
+      "queries": 346,
+      "cases": 856,
       "fills": 97,
       "drills": 50,
-      "total": 1478,
+      "total": 1487,
       "primaryModule": 10
     },
     {
@@ -293,10 +293,10 @@
       "category": "Aggregation",
       "mcqs": 16,
       "queries": 22,
-      "cases": 141,
+      "cases": 142,
       "fills": 11,
       "drills": 50,
-      "total": 240,
+      "total": 241,
       "primaryModule": 1
     },
     {
@@ -325,11 +325,11 @@
       "keyword": "INNER JOIN",
       "category": "Joins",
       "mcqs": 122,
-      "queries": 236,
-      "cases": 648,
+      "queries": 242,
+      "cases": 652,
       "fills": 92,
       "drills": 280,
-      "total": 1378,
+      "total": 1388,
       "primaryModule": 2
     },
     {
@@ -337,10 +337,10 @@
       "category": "Joins",
       "mcqs": 35,
       "queries": 27,
-      "cases": 169,
+      "cases": 170,
       "fills": 23,
       "drills": 95,
-      "total": 349,
+      "total": 350,
       "primaryModule": 2
     },
     {
@@ -350,8 +350,8 @@
       "queries": 1,
       "cases": 40,
       "fills": 3,
-      "drills": 0,
-      "total": 47,
+      "drills": 15,
+      "total": 62,
       "primaryModule": 6
     },
     {
@@ -361,19 +361,19 @@
       "queries": 3,
       "cases": 29,
       "fills": 1,
-      "drills": 0,
-      "total": 36,
+      "drills": 15,
+      "total": 51,
       "primaryModule": 6
     },
     {
       "keyword": "CROSS JOIN",
       "category": "Joins",
-      "mcqs": 5,
+      "mcqs": 6,
       "queries": 3,
       "cases": 40,
       "fills": 5,
       "drills": 0,
-      "total": 53,
+      "total": 54,
       "primaryModule": 6
     },
     {
@@ -381,10 +381,10 @@
       "category": "Joins",
       "mcqs": 10,
       "queries": 3,
-      "cases": 70,
+      "cases": 74,
       "fills": 1,
       "drills": 45,
-      "total": 129,
+      "total": 133,
       "primaryModule": 2
     },
     {
@@ -402,22 +402,22 @@
       "keyword": "Non-equi & range joins",
       "category": "Joins",
       "mcqs": 2,
-      "queries": 0,
+      "queries": 1,
       "cases": 10,
       "fills": 1,
-      "drills": 0,
-      "total": 13,
+      "drills": 15,
+      "total": 29,
       "primaryModule": 6
     },
     {
       "keyword": "Join fan-out & grain",
       "category": "Joins",
       "mcqs": 44,
-      "queries": 28,
-      "cases": 262,
+      "queries": 29,
+      "cases": 264,
       "fills": 26,
       "drills": 55,
-      "total": 415,
+      "total": 418,
       "primaryModule": 2
     },
     {
@@ -446,11 +446,11 @@
       "keyword": "INTERSECT",
       "category": "Set operations",
       "mcqs": 20,
-      "queries": 13,
+      "queries": 14,
       "cases": 153,
       "fills": 12,
       "drills": 165,
-      "total": 363,
+      "total": 364,
       "primaryModule": 3
     },
     {
@@ -469,21 +469,21 @@
       "category": "Conditional logic",
       "mcqs": 16,
       "queries": 61,
-      "cases": 67,
+      "cases": 69,
       "fills": 21,
       "drills": 145,
-      "total": 310,
+      "total": 312,
       "primaryModule": 3
     },
     {
       "keyword": "Subqueries (umbrella)",
       "category": "Subqueries",
-      "mcqs": 46,
-      "queries": 317,
-      "cases": 721,
+      "mcqs": 47,
+      "queries": 318,
+      "cases": 722,
       "fills": 85,
       "drills": 120,
-      "total": 1289,
+      "total": 1292,
       "primaryModule": 4
     },
     {
@@ -524,10 +524,10 @@
       "category": "Subqueries",
       "mcqs": 17,
       "queries": 6,
-      "cases": 40,
+      "cases": 42,
       "fills": 4,
       "drills": 45,
-      "total": 112,
+      "total": 114,
       "primaryModule": 4
     },
     {
@@ -545,11 +545,11 @@
       "keyword": "WITH (CTE)",
       "category": "CTEs",
       "mcqs": 47,
-      "queries": 221,
-      "cases": 107,
+      "queries": 222,
+      "cases": 108,
       "fills": 18,
       "drills": 45,
-      "total": 438,
+      "total": 440,
       "primaryModule": 10
     },
     {
@@ -568,10 +568,10 @@
       "category": "Window functions",
       "mcqs": 38,
       "queries": 325,
-      "cases": 441,
+      "cases": 451,
       "fills": 20,
       "drills": 170,
-      "total": 994,
+      "total": 1004,
       "primaryModule": 10
     },
     {
@@ -589,11 +589,11 @@
       "keyword": "RANK & DENSE_RANK",
       "category": "Window functions",
       "mcqs": 105,
-      "queries": 97,
-      "cases": 484,
+      "queries": 98,
+      "cases": 486,
       "fills": 19,
       "drills": 135,
-      "total": 840,
+      "total": 843,
       "primaryModule": 10
     },
     {
@@ -612,10 +612,10 @@
       "category": "Window functions",
       "mcqs": 71,
       "queries": 90,
-      "cases": 538,
+      "cases": 544,
       "fills": 14,
       "drills": 135,
-      "total": 848,
+      "total": 854,
       "primaryModule": 5
     },
     {
@@ -623,10 +623,10 @@
       "category": "Window functions",
       "mcqs": 11,
       "queries": 9,
-      "cases": 0,
+      "cases": 10,
       "fills": 1,
       "drills": 0,
-      "total": 21,
+      "total": 31,
       "primaryModule": 10
     },
     {
@@ -634,10 +634,10 @@
       "category": "Window functions",
       "mcqs": 62,
       "queries": 57,
-      "cases": 71,
+      "cases": 81,
       "fills": 4,
       "drills": 130,
-      "total": 324,
+      "total": 334,
       "primaryModule": 10
     },
     {
@@ -667,10 +667,10 @@
       "category": "Functions",
       "mcqs": 8,
       "queries": 110,
-      "cases": 85,
+      "cases": 88,
       "fills": 8,
       "drills": 95,
-      "total": 306,
+      "total": 309,
       "primaryModule": 5
     },
     {
@@ -700,21 +700,21 @@
       "category": "Functions",
       "mcqs": 23,
       "queries": 308,
-      "cases": 559,
+      "cases": 568,
       "fills": 52,
       "drills": 0,
-      "total": 942,
+      "total": 951,
       "primaryModule": 10
     },
     {
       "keyword": "INSERT",
       "category": "Writes",
-      "mcqs": 38,
+      "mcqs": 42,
       "queries": 16,
-      "cases": 3,
+      "cases": 11,
       "fills": 9,
       "drills": 0,
-      "total": 66,
+      "total": 78,
       "primaryModule": 7
     },
     {
@@ -722,21 +722,21 @@
       "category": "Writes",
       "mcqs": 1,
       "queries": 16,
-      "cases": 4,
+      "cases": 9,
       "fills": 4,
-      "drills": 0,
-      "total": 25,
+      "drills": 15,
+      "total": 45,
       "primaryModule": 7
     },
     {
       "keyword": "DELETE",
       "category": "Writes",
-      "mcqs": 4,
+      "mcqs": 6,
       "queries": 8,
       "cases": 1,
       "fills": 2,
-      "drills": 0,
-      "total": 15,
+      "drills": 15,
+      "total": 32,
       "primaryModule": 7
     },
     {
@@ -744,33 +744,33 @@
       "category": "Writes",
       "mcqs": 13,
       "queries": 9,
-      "cases": 0,
+      "cases": 8,
       "fills": 4,
-      "drills": 0,
-      "total": 26,
+      "drills": 15,
+      "total": 49,
       "primaryModule": 7
     },
     {
       "keyword": "RETURNING",
       "category": "Writes",
-      "mcqs": 0,
+      "mcqs": 9,
       "queries": 29,
-      "cases": 1,
+      "cases": 2,
       "fills": 0,
-      "drills": 0,
-      "total": 30,
+      "drills": 15,
+      "total": 55,
       "primaryModule": 7
     },
     {
       "keyword": "Transactions",
       "category": "Writes",
-      "mcqs": 15,
+      "mcqs": 18,
       "queries": 1,
       "cases": 35,
       "fills": 2,
-      "drills": 0,
-      "total": 53,
-      "primaryModule": 1
+      "drills": 12,
+      "total": 68,
+      "primaryModule": 7
     },
     {
       "keyword": "CREATE TABLE",
@@ -779,8 +779,8 @@
       "queries": 7,
       "cases": 2,
       "fills": 1,
-      "drills": 0,
-      "total": 16,
+      "drills": 14,
+      "total": 30,
       "primaryModule": 8
     },
     {
@@ -799,10 +799,10 @@
       "category": "Schema",
       "mcqs": 26,
       "queries": 14,
-      "cases": 44,
+      "cases": 45,
       "fills": 13,
       "drills": 0,
-      "total": 97,
+      "total": 98,
       "primaryModule": 8
     },
     {
@@ -812,19 +812,19 @@
       "queries": 35,
       "cases": 29,
       "fills": 13,
-      "drills": 0,
-      "total": 134,
+      "drills": 18,
+      "total": 152,
       "primaryModule": 11
     },
     {
       "keyword": "Constraints (PK/FK/UNIQUE…)",
       "category": "Schema",
-      "mcqs": 35,
+      "mcqs": 38,
       "queries": 16,
-      "cases": 45,
+      "cases": 47,
       "fills": 28,
       "drills": 0,
-      "total": 124,
+      "total": 129,
       "primaryModule": 2
     }
   ],
@@ -2944,51 +2944,51 @@
         "keyword": "SELECT & FROM",
         "category": "Reading data",
         "mcqs": 12,
-        "queries": 21,
+        "queries": 27,
         "cases": 175,
         "fills": 18,
         "drills": 0,
-        "total": 226
+        "total": 232
       },
       {
         "keyword": "Aggregates (COUNT/SUM/AVG/MIN/MAX)",
         "category": "Aggregation",
         "mcqs": 17,
-        "queries": 14,
+        "queries": 20,
         "cases": 166,
         "fills": 14,
         "drills": 0,
-        "total": 211
+        "total": 217
       },
       {
         "keyword": "INNER JOIN",
         "category": "Joins",
         "mcqs": 14,
-        "queries": 15,
+        "queries": 21,
         "cases": 128,
         "fills": 12,
         "drills": 0,
-        "total": 169
+        "total": 175
       },
       {
         "keyword": "WHERE",
         "category": "Reading data",
         "mcqs": 9,
-        "queries": 5,
+        "queries": 6,
         "cases": 138,
         "fills": 10,
         "drills": 0,
-        "total": 162
+        "total": 163
       },
       {
         "keyword": "ORDER BY & LIMIT",
         "category": "Reading data",
         "mcqs": 5,
-        "queries": 14,
+        "queries": 17,
         "cases": 98,
         "fills": 13,
         "drills": 0,
-        "total": 130
+        "total": 133
       },
       {
         "keyword": "GROUP_CONCAT",
@@ -3004,21 +3004,21 @@
         "keyword": "GROUP BY",
         "category": "Aggregation",
         "mcqs": 6,
-        "queries": 11,
+        "queries": 14,
         "cases": 83,
         "fills": 10,
         "drills": 0,
-        "total": 110
+        "total": 113
       },
       {
         "keyword": "Subqueries (umbrella)",
         "category": "Subqueries",
         "mcqs": 3,
-        "queries": 8,
+        "queries": 9,
         "cases": 85,
         "fills": 5,
         "drills": 0,
-        "total": 101
+        "total": 102
       },
       {
         "keyword": "Derived tables",
@@ -3071,6 +3071,16 @@
         "total": 57
       },
       {
+        "keyword": "RIGHT JOIN",
+        "category": "Joins",
+        "mcqs": 3,
+        "queries": 1,
+        "cases": 34,
+        "fills": 1,
+        "drills": 15,
+        "total": 54
+      },
+      {
         "keyword": "Math & rounding",
         "category": "Functions",
         "mcqs": 1,
@@ -3079,6 +3089,16 @@
         "fills": 4,
         "drills": 0,
         "total": 48
+      },
+      {
+        "keyword": "FULL OUTER JOIN",
+        "category": "Joins",
+        "mcqs": 3,
+        "queries": 1,
+        "cases": 27,
+        "fills": 1,
+        "drills": 15,
+        "total": 47
       },
       {
         "keyword": "UNION & UNION ALL",
@@ -3091,6 +3111,16 @@
         "total": 47
       },
       {
+        "keyword": "RANK & DENSE_RANK",
+        "category": "Window functions",
+        "mcqs": 0,
+        "queries": 1,
+        "cases": 40,
+        "fills": 2,
+        "drills": 0,
+        "total": 43
+      },
+      {
         "keyword": "LAG & LEAD",
         "category": "Window functions",
         "mcqs": 0,
@@ -3099,26 +3129,6 @@
         "fills": 1,
         "drills": 0,
         "total": 42
-      },
-      {
-        "keyword": "RANK & DENSE_RANK",
-        "category": "Window functions",
-        "mcqs": 0,
-        "queries": 0,
-        "cases": 40,
-        "fills": 2,
-        "drills": 0,
-        "total": 42
-      },
-      {
-        "keyword": "RIGHT JOIN",
-        "category": "Joins",
-        "mcqs": 3,
-        "queries": 1,
-        "cases": 34,
-        "fills": 1,
-        "drills": 0,
-        "total": 39
       },
       {
         "keyword": "Date & time functions",
@@ -3151,14 +3161,14 @@
         "total": 35
       },
       {
-        "keyword": "FULL OUTER JOIN",
+        "keyword": "Non-equi & range joins",
         "category": "Joins",
-        "mcqs": 3,
+        "mcqs": 1,
         "queries": 1,
-        "cases": 27,
+        "cases": 8,
         "fills": 1,
-        "drills": 0,
-        "total": 32
+        "drills": 15,
+        "total": 26
       },
       {
         "keyword": "Anti-join",
@@ -3174,11 +3184,11 @@
         "keyword": "Join fan-out & grain",
         "category": "Joins",
         "mcqs": 3,
-        "queries": 1,
+        "queries": 2,
         "cases": 13,
         "fills": 3,
         "drills": 0,
-        "total": 20
+        "total": 21
       },
       {
         "keyword": "ALTER & DROP",
@@ -3221,6 +3231,16 @@
         "total": 16
       },
       {
+        "keyword": "INTERSECT",
+        "category": "Set operations",
+        "mcqs": 1,
+        "queries": 1,
+        "cases": 13,
+        "fills": 0,
+        "drills": 0,
+        "total": 15
+      },
+      {
         "keyword": "OVER & PARTITION BY",
         "category": "Window functions",
         "mcqs": 0,
@@ -3241,26 +3261,6 @@
         "total": 15
       },
       {
-        "keyword": "INTERSECT",
-        "category": "Set operations",
-        "mcqs": 1,
-        "queries": 0,
-        "cases": 13,
-        "fills": 0,
-        "drills": 0,
-        "total": 14
-      },
-      {
-        "keyword": "Non-equi & range joins",
-        "category": "Joins",
-        "mcqs": 1,
-        "queries": 0,
-        "cases": 8,
-        "fills": 1,
-        "drills": 0,
-        "total": 10
-      },
-      {
         "keyword": "IN (list)",
         "category": "Reading data",
         "mcqs": 0,
@@ -3271,21 +3271,21 @@
         "total": 7
       },
       {
+        "keyword": "WITH (CTE)",
+        "category": "CTEs",
+        "mcqs": 1,
+        "queries": 4,
+        "cases": 1,
+        "fills": 1,
+        "drills": 0,
+        "total": 7
+      },
+      {
         "keyword": "NTILE",
         "category": "Window functions",
         "mcqs": 1,
         "queries": 0,
         "cases": 4,
-        "fills": 1,
-        "drills": 0,
-        "total": 6
-      },
-      {
-        "keyword": "WITH (CTE)",
-        "category": "CTEs",
-        "mcqs": 1,
-        "queries": 3,
-        "cases": 1,
         "fills": 1,
         "drills": 0,
         "total": 6
@@ -3443,144 +3443,144 @@
     ],
     "7": [
       {
-        "keyword": "WHERE",
-        "category": "Reading data",
-        "mcqs": 30,
-        "queries": 23,
-        "cases": 4,
-        "fills": 24,
-        "drills": 0,
-        "total": 81
-      },
-      {
         "keyword": "SELECT & FROM",
         "category": "Reading data",
-        "mcqs": 30,
+        "mcqs": 35,
         "queries": 17,
-        "cases": 5,
+        "cases": 13,
         "fills": 25,
         "drills": 0,
-        "total": 77
+        "total": 90
+      },
+      {
+        "keyword": "WHERE",
+        "category": "Reading data",
+        "mcqs": 34,
+        "queries": 23,
+        "cases": 5,
+        "fills": 24,
+        "drills": 0,
+        "total": 86
       },
       {
         "keyword": "Aggregates (COUNT/SUM/AVG/MIN/MAX)",
         "category": "Aggregation",
-        "mcqs": 23,
+        "mcqs": 26,
         "queries": 14,
-        "cases": 1,
+        "cases": 4,
         "fills": 15,
         "drills": 0,
-        "total": 53
+        "total": 59
       },
       {
         "keyword": "INSERT",
         "category": "Writes",
-        "mcqs": 21,
+        "mcqs": 25,
         "queries": 16,
-        "cases": 2,
+        "cases": 10,
         "fills": 8,
         "drills": 0,
-        "total": 47
+        "total": 59
       },
       {
         "keyword": "RETURNING",
         "category": "Writes",
-        "mcqs": 0,
+        "mcqs": 9,
         "queries": 27,
-        "cases": 1,
+        "cases": 2,
         "fills": 0,
-        "drills": 0,
-        "total": 28
-      },
-      {
-        "keyword": "UPDATE",
-        "category": "Writes",
-        "mcqs": 1,
-        "queries": 16,
-        "cases": 3,
-        "fills": 4,
-        "drills": 0,
-        "total": 24
+        "drills": 15,
+        "total": 53
       },
       {
         "keyword": "UPSERT (ON CONFLICT)",
         "category": "Writes",
         "mcqs": 11,
         "queries": 8,
-        "cases": 0,
+        "cases": 8,
         "fills": 4,
-        "drills": 0,
-        "total": 23
+        "drills": 15,
+        "total": 46
+      },
+      {
+        "keyword": "UPDATE",
+        "category": "Writes",
+        "mcqs": 1,
+        "queries": 16,
+        "cases": 8,
+        "fills": 4,
+        "drills": 15,
+        "total": 44
       },
       {
         "keyword": "DELETE",
         "category": "Writes",
-        "mcqs": 4,
+        "mcqs": 6,
         "queries": 8,
         "cases": 1,
         "fills": 2,
-        "drills": 0,
-        "total": 15
-      },
-      {
-        "keyword": "Subqueries (umbrella)",
-        "category": "Subqueries",
-        "mcqs": 5,
-        "queries": 5,
-        "cases": 1,
-        "fills": 4,
-        "drills": 0,
-        "total": 15
+        "drills": 15,
+        "total": 32
       },
       {
         "keyword": "Transactions",
         "category": "Writes",
-        "mcqs": 10,
+        "mcqs": 13,
         "queries": 0,
         "cases": 3,
         "fills": 1,
-        "drills": 0,
-        "total": 14
+        "drills": 12,
+        "total": 29
       },
       {
         "keyword": "Constraints (PK/FK/UNIQUE…)",
         "category": "Schema",
-        "mcqs": 7,
+        "mcqs": 10,
         "queries": 1,
-        "cases": 1,
+        "cases": 3,
         "fills": 3,
         "drills": 0,
-        "total": 12
+        "total": 17
       },
       {
         "keyword": "LAG & LEAD",
         "category": "Window functions",
         "mcqs": 6,
         "queries": 3,
-        "cases": 1,
+        "cases": 6,
         "fills": 2,
         "drills": 0,
-        "total": 12
+        "total": 17
+      },
+      {
+        "keyword": "Subqueries (umbrella)",
+        "category": "Subqueries",
+        "mcqs": 6,
+        "queries": 5,
+        "cases": 1,
+        "fills": 4,
+        "drills": 0,
+        "total": 16
       },
       {
         "keyword": "NULL / IS NULL",
         "category": "NULL handling",
-        "mcqs": 6,
+        "mcqs": 8,
         "queries": 1,
-        "cases": 1,
+        "cases": 2,
         "fills": 3,
         "drills": 0,
-        "total": 11
+        "total": 14
       },
       {
         "keyword": "IN (list)",
         "category": "Reading data",
-        "mcqs": 2,
+        "mcqs": 3,
         "queries": 3,
         "cases": 0,
         "fills": 5,
         "drills": 0,
-        "total": 10
+        "total": 11
       },
       {
         "keyword": "Math & rounding",
@@ -3593,6 +3593,16 @@
         "total": 10
       },
       {
+        "keyword": "GROUP BY",
+        "category": "Aggregation",
+        "mcqs": 1,
+        "queries": 1,
+        "cases": 4,
+        "fills": 1,
+        "drills": 0,
+        "total": 7
+      },
+      {
         "keyword": "IN subqueries",
         "category": "Subqueries",
         "mcqs": 1,
@@ -3603,42 +3613,32 @@
         "total": 7
       },
       {
-        "keyword": "ALTER & DROP",
-        "category": "Schema",
-        "mcqs": 2,
-        "queries": 0,
-        "cases": 1,
-        "fills": 2,
-        "drills": 0,
-        "total": 5
-      },
-      {
         "keyword": "BETWEEN",
         "category": "Reading data",
         "mcqs": 3,
         "queries": 0,
-        "cases": 2,
+        "cases": 3,
         "fills": 0,
         "drills": 0,
-        "total": 5
+        "total": 6
       },
       {
         "keyword": "CASE WHEN",
         "category": "Conditional logic",
         "mcqs": 0,
         "queries": 2,
-        "cases": 0,
+        "cases": 1,
         "fills": 3,
         "drills": 0,
-        "total": 5
+        "total": 6
       },
       {
-        "keyword": "GROUP BY",
-        "category": "Aggregation",
-        "mcqs": 1,
-        "queries": 1,
-        "cases": 2,
-        "fills": 1,
+        "keyword": "ALTER & DROP",
+        "category": "Schema",
+        "mcqs": 2,
+        "queries": 0,
+        "cases": 1,
+        "fills": 2,
         "drills": 0,
         "total": 5
       },
@@ -3681,6 +3681,16 @@
         "fills": 1,
         "drills": 0,
         "total": 4
+      },
+      {
+        "keyword": "AND / OR / NOT",
+        "category": "Boolean logic",
+        "mcqs": 1,
+        "queries": 0,
+        "cases": 1,
+        "fills": 0,
+        "drills": 0,
+        "total": 2
       },
       {
         "keyword": "Anti-join",
@@ -3783,11 +3793,41 @@
         "total": 2
       },
       {
+        "keyword": "CROSS JOIN",
+        "category": "Joins",
+        "mcqs": 1,
+        "queries": 0,
+        "cases": 0,
+        "fills": 0,
+        "drills": 0,
+        "total": 1
+      },
+      {
         "keyword": "DISTINCT",
         "category": "Reading data",
         "mcqs": 1,
         "queries": 0,
         "cases": 0,
+        "fills": 0,
+        "drills": 0,
+        "total": 1
+      },
+      {
+        "keyword": "HAVING",
+        "category": "Aggregation",
+        "mcqs": 0,
+        "queries": 0,
+        "cases": 1,
+        "fills": 0,
+        "drills": 0,
+        "total": 1
+      },
+      {
+        "keyword": "LEFT JOIN",
+        "category": "Joins",
+        "mcqs": 0,
+        "queries": 0,
+        "cases": 1,
         "fills": 0,
         "drills": 0,
         "total": 1
@@ -3873,6 +3913,16 @@
         "fills": 3,
         "drills": 0,
         "total": 31
+      },
+      {
+        "keyword": "CREATE TABLE",
+        "category": "Schema",
+        "mcqs": 4,
+        "queries": 7,
+        "cases": 2,
+        "fills": 1,
+        "drills": 14,
+        "total": 28
       },
       {
         "keyword": "NULL / IS NULL",
@@ -3983,16 +4033,6 @@
         "fills": 1,
         "drills": 0,
         "total": 15
-      },
-      {
-        "keyword": "CREATE TABLE",
-        "category": "Schema",
-        "mcqs": 4,
-        "queries": 7,
-        "cases": 2,
-        "fills": 1,
-        "drills": 0,
-        "total": 14
       },
       {
         "keyword": "Math & rounding",
@@ -4683,100 +4723,120 @@
         "category": "Reading data",
         "mcqs": 95,
         "queries": 300,
-        "cases": 300,
+        "cases": 310,
         "fills": 0,
         "drills": 0,
-        "total": 695
+        "total": 705
       },
       {
         "keyword": "SELECT & FROM",
         "category": "Reading data",
         "mcqs": 42,
         "queries": 300,
-        "cases": 300,
+        "cases": 310,
         "fills": 0,
         "drills": 0,
-        "total": 642
+        "total": 652
       },
       {
         "keyword": "Aggregates (COUNT/SUM/AVG/MIN/MAX)",
         "category": "Aggregation",
         "mcqs": 115,
         "queries": 270,
-        "cases": 237,
+        "cases": 246,
         "fills": 0,
         "drills": 0,
-        "total": 622
+        "total": 631
       },
       {
         "keyword": "OVER & PARTITION BY",
         "category": "Window functions",
         "mcqs": 28,
         "queries": 295,
-        "cases": 270,
+        "cases": 280,
         "fills": 0,
         "drills": 0,
-        "total": 593
+        "total": 603
       },
       {
         "keyword": "GROUP BY",
         "category": "Aggregation",
         "mcqs": 48,
         "queries": 192,
-        "cases": 100,
+        "cases": 104,
         "fills": 0,
         "drills": 0,
-        "total": 340
+        "total": 344
       },
       {
         "keyword": "Math & rounding",
         "category": "Functions",
         "mcqs": 4,
         "queries": 200,
-        "cases": 129,
+        "cases": 138,
         "fills": 0,
         "drills": 0,
-        "total": 333
+        "total": 342
       },
       {
         "keyword": "RANK & DENSE_RANK",
         "category": "Window functions",
         "mcqs": 75,
         "queries": 51,
-        "cases": 164,
+        "cases": 166,
         "fills": 0,
         "drills": 0,
-        "total": 290
+        "total": 292
       },
       {
         "keyword": "WITH (CTE)",
         "category": "CTEs",
         "mcqs": 17,
         "queries": 185,
-        "cases": 33,
+        "cases": 34,
         "fills": 0,
         "drills": 0,
-        "total": 235
+        "total": 236
       },
       {
         "keyword": "LAG & LEAD",
         "category": "Window functions",
         "mcqs": 51,
         "queries": 76,
-        "cases": 66,
+        "cases": 67,
         "fills": 0,
         "drills": 0,
-        "total": 193
+        "total": 194
       },
       {
         "keyword": "Subqueries (umbrella)",
         "category": "Subqueries",
         "mcqs": 5,
         "queries": 185,
-        "cases": 0,
+        "cases": 1,
         "fills": 0,
         "drills": 0,
-        "total": 190
+        "total": 191
+      },
+      {
+        "keyword": "Window frames",
+        "category": "Window functions",
+        "mcqs": 50,
+        "queries": 53,
+        "cases": 64,
+        "fills": 0,
+        "drills": 0,
+        "total": 167
+      },
+      {
+        "keyword": "WHERE",
+        "category": "Reading data",
+        "mcqs": 16,
+        "queries": 98,
+        "cases": 52,
+        "fills": 0,
+        "drills": 0,
+        "total": 166
       },
       {
         "keyword": "ROW_NUMBER",
@@ -4789,64 +4849,44 @@
         "total": 160
       },
       {
-        "keyword": "WHERE",
-        "category": "Reading data",
-        "mcqs": 16,
-        "queries": 98,
-        "cases": 45,
-        "fills": 0,
-        "drills": 0,
-        "total": 159
-      },
-      {
-        "keyword": "Window frames",
-        "category": "Window functions",
-        "mcqs": 50,
-        "queries": 53,
-        "cases": 54,
-        "fills": 0,
-        "drills": 0,
-        "total": 157
-      },
-      {
         "keyword": "NULL / IS NULL",
         "category": "NULL handling",
         "mcqs": 24,
         "queries": 45,
-        "cases": 66,
+        "cases": 67,
         "fills": 0,
         "drills": 0,
-        "total": 135
+        "total": 136
       },
       {
         "keyword": "INNER JOIN",
         "category": "Joins",
         "mcqs": 5,
         "queries": 89,
-        "cases": 34,
+        "cases": 38,
         "fills": 0,
         "drills": 0,
-        "total": 128
+        "total": 132
       },
       {
         "keyword": "Text functions",
         "category": "Functions",
         "mcqs": 3,
         "queries": 92,
-        "cases": 12,
+        "cases": 15,
         "fills": 0,
         "drills": 0,
-        "total": 107
+        "total": 110
       },
       {
         "keyword": "BETWEEN",
         "category": "Reading data",
         "mcqs": 15,
         "queries": 56,
-        "cases": 24,
+        "cases": 31,
         "fills": 0,
         "drills": 0,
-        "total": 95
+        "total": 102
       },
       {
         "keyword": "NTILE",
@@ -4893,10 +4933,20 @@
         "category": "Joins",
         "mcqs": 5,
         "queries": 6,
-        "cases": 33,
+        "cases": 35,
         "fills": 0,
         "drills": 0,
-        "total": 44
+        "total": 46
+      },
+      {
+        "keyword": "SELF JOIN",
+        "category": "Joins",
+        "mcqs": 2,
+        "queries": 0,
+        "cases": 38,
+        "fills": 0,
+        "drills": 0,
+        "total": 40
       },
       {
         "keyword": "Date & time functions",
@@ -4919,24 +4969,14 @@
         "total": 36
       },
       {
-        "keyword": "SELF JOIN",
-        "category": "Joins",
-        "mcqs": 2,
-        "queries": 0,
-        "cases": 34,
-        "fills": 0,
-        "drills": 0,
-        "total": 36
-      },
-      {
         "keyword": "CASE WHEN",
         "category": "Conditional logic",
         "mcqs": 0,
         "queries": 29,
-        "cases": 0,
+        "cases": 1,
         "fills": 0,
         "drills": 0,
-        "total": 29
+        "total": 30
       },
       {
         "keyword": "ALTER & DROP",
@@ -4953,26 +4993,26 @@
         "category": "Reading data",
         "mcqs": 13,
         "queries": 12,
-        "cases": 0,
+        "cases": 2,
         "fills": 0,
         "drills": 0,
-        "total": 25
-      },
-      {
-        "keyword": "CAST & types",
-        "category": "Functions",
-        "mcqs": 0,
-        "queries": 17,
-        "cases": 0,
-        "fills": 0,
-        "drills": 0,
-        "total": 17
+        "total": 27
       },
       {
         "keyword": "FIRST_VALUE & LAST_VALUE",
         "category": "Window functions",
         "mcqs": 8,
         "queries": 9,
+        "cases": 10,
+        "fills": 0,
+        "drills": 0,
+        "total": 27
+      },
+      {
+        "keyword": "CAST & types",
+        "category": "Functions",
+        "mcqs": 0,
+        "queries": 17,
         "cases": 0,
         "fills": 0,
         "drills": 0,
@@ -4999,6 +5039,26 @@
         "total": 8
       },
       {
+        "keyword": "Correlated subqueries",
+        "category": "Subqueries",
+        "mcqs": 3,
+        "queries": 0,
+        "cases": 2,
+        "fills": 0,
+        "drills": 0,
+        "total": 5
+      },
+      {
+        "keyword": "Views",
+        "category": "Schema",
+        "mcqs": 3,
+        "queries": 1,
+        "cases": 1,
+        "fills": 0,
+        "drills": 0,
+        "total": 5
+      },
+      {
         "keyword": "Anti-join",
         "category": "Joins",
         "mcqs": 4,
@@ -5019,30 +5079,10 @@
         "total": 4
       },
       {
-        "keyword": "Views",
-        "category": "Schema",
-        "mcqs": 3,
-        "queries": 1,
-        "cases": 0,
-        "fills": 0,
-        "drills": 0,
-        "total": 4
-      },
-      {
         "keyword": "AND / OR / NOT",
         "category": "Boolean logic",
         "mcqs": 1,
         "queries": 2,
-        "cases": 0,
-        "fills": 0,
-        "drills": 0,
-        "total": 3
-      },
-      {
-        "keyword": "Correlated subqueries",
-        "category": "Subqueries",
-        "mcqs": 3,
-        "queries": 0,
         "cases": 0,
         "fills": 0,
         "drills": 0,
@@ -5109,6 +5149,16 @@
         "total": 1
       },
       {
+        "keyword": "LIKE & wildcards",
+        "category": "Reading data",
+        "mcqs": 0,
+        "queries": 0,
+        "cases": 1,
+        "fills": 0,
+        "drills": 0,
+        "total": 1
+      },
+      {
         "keyword": "Transactions",
         "category": "Writes",
         "mcqs": 1,
@@ -5137,8 +5187,8 @@
         "queries": 19,
         "cases": 20,
         "fills": 0,
-        "drills": 0,
-        "total": 69
+        "drills": 18,
+        "total": 87
       },
       {
         "keyword": "SELECT & FROM",

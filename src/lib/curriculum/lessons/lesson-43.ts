@@ -284,6 +284,36 @@ RETURNING id;`,
         { choice: 0, why: "SQLite supports RETURNING on DELETE fine (problems 2 and 3 use it) — the gap isn't support, it's timing: after the delete, the only remaining option is the restore." },
       ],
     },
+    {
+      id: "l43-q16",
+      prompt: "A purge deletes by a subquery: `DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE status = 'cancelled')`. The subquery returns EMPTY. What happens — and what should have happened first?",
+      choices: [
+        "Error — IN needs at least one value",
+        "0 rows deleted, silently — a SELECT COUNT with the same subquery first would have revealed the empty set before the write",
+        "All order_items are deleted",
+        "The engine prompts to widen the filter",
+      ],
+      answer: 1,
+      why: "An empty IN list matches nothing: the DELETE succeeds with 0 rows affected. Silent no-ops are their own failure mode — the cancelled count may have been purged already, or the subquery's WHERE is wrong. The pre-count discipline (same subquery, SELECT COUNT) catches both before the write.",
+      notes: [
+        { choice: 2, why: "IN only shrinks — an empty list can't widen a match. The catastrophic case is the opposite: a subquery that returns MORE ids than you traced." },
+      ],
+    },
+    {
+      id: "l43-q17",
+      prompt: "You must delete the 7 cancelled orders AND their 12 order_items rows. Which ORDER of deletes keeps the data consistent — and why?",
+      choices: [
+        "Orders first — delete the parent to cascade the intent",
+        "order_items first, then orders — children leave before parents, or the second DELETE hits rows whose parent is already gone (and FKs would have blocked the first)",
+        "Either order — SQLite doesn't care",
+        "Interleave them row by row",
+      ],
+      answer: 1,
+      why: "Referential integrity runs parent → child: order_items rows POINT at their order, so the children must go first (the l43-p1 shape: DELETE FROM order_items WHERE order_id IN …). With foreign_keys ON, deleting parents first orphans children — the engine blocks it; with FKs off it silently leaves dangling rows. The professional purge is child-first, one transaction, both counts reconciled.",
+      notes: [
+        { choice: 0, why: "That's the orphaning order — blocked under PRAGMA foreign_keys = ON ('FOREIGN KEY constraint failed') and silently destructive with FKs off." },
+      ],
+    },
   ],
   problems: [
     {

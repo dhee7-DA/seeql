@@ -239,6 +239,66 @@ RETURNING id, name;   -- 2 rows: the two apparel items, re-priced`,
         { choice: 0, why: "RETURNING is scoped to the rows YOUR statement wrote — other connections' work never appears in your echo." },
       ],
     },
+    {
+      id: "l41-q13",
+      prompt: "An INSERT carries `RETURNING id, name` but the write is rejected by a NOT NULL constraint. What does RETURNING echo?",
+      choices: [
+        "The attempted values anyway — echoes fire before constraints",
+        "Nothing — the statement wrote no rows, so there is nothing to return",
+        "An empty string per column",
+        "The constraint's error text as a row",
+      ],
+      answer: 1,
+      why: "RETURNING's contract is rows the statement WROTE. A rejected insert wrote zero rows — the echo is empty and the error is raised. The receipt printer only prints what actually landed; constraints fire before any row exists to echo.",
+      notes: [
+        { choice: 0, why: "No pre-echo exists — RETURNING reads the after-state of written rows. Nothing written, nothing echoed." },
+      ],
+    },
+    {
+      id: "l41-q14",
+      prompt: "Which statement both archives the 7 cancelled orders to a side table AND echoes what moved — in one statement each?",
+      choices: [
+        "`INSERT INTO cancelled_orders SELECT * FROM orders WHERE status = 'cancelled' RETURNING id;` then `DELETE FROM orders WHERE status = 'cancelled';`",
+        "`DELETE FROM orders WHERE status = 'cancelled' SAVE id;`",
+        "`MOVE orders TO cancelled_orders WHERE status = 'cancelled' RETURNING id;`",
+        "`SELECT * FROM orders WHERE status = 'cancelled' INTO cancelled_orders;`",
+      ],
+      answer: 0,
+      why: "Two writes, each with its own receipt: the INSERT … SELECT carries RETURNING for the archived rows, the DELETE follows (its own RETURNING could echo the removals). SQL has no MOVE — archive-and-purge is spelled as two statements, ideally inside one transaction.",
+      notes: [
+        { choice: 2, why: "MOVE isn't SQL — the archive is an INSERT … SELECT plus a DELETE. Wrapping both in BEGIN…COMMIT makes the pair all-or-nothing." },
+      ],
+    },
+    {
+      id: "l41-q15",
+      prompt: "A multi-row insert writes 2 rows; the second violates a UNIQUE constraint. What does the client see?",
+      choices: [
+        "One row echoed (the first) and a warning",
+        "Both rows rolled back — the statement fails atomically, nothing echoes",
+        "The first row committed, the second dropped",
+        "Both rows inserted with a constraint flag",
+      ],
+      answer: 1,
+      why: "A statement is atomic: one bad VALUES row fails the WHOLE insert — no partial landing, no echo. The engine-verified pattern from the drills: multi-row writes are all-or-nothing, which is why RETURNING's echo only ever shows fully committed rows.",
+      notes: [
+        { choice: 2, why: "Partial applies need the rows split into separate statements (or INSERT OR IGNORE, which skips bad rows on purpose) — a single INSERT never half-lands." },
+      ],
+    },
+    {
+      id: "l41-q16",
+      prompt: "`INSERT INTO products … RETURNING id` echoes id 17. A colleague calls that \"the next id forever.\" What's the honest correction?",
+      choices: [
+        "Correct — ids are monotonic and gapless",
+        "It's the next unused rowid — after a DELETE of the max row, that id can be reused; gaps can appear",
+        "It's random",
+        "It's the row count plus one",
+      ],
+      answer: 1,
+      why: "The engine assigns max(rowid) + 1 among UNUSED ids — delete the highest row and its id becomes eligible again, so sequences can reuse and gap. The engine-verified roster: 16 products, so a fresh insert echoes 17 — but that's the current maximum, not a promise.",
+      notes: [
+        { choice: 0, why: "Monotonic-and-gapless is SEQUENCE behavior in other engines — SQLite's rowid assignment is next-unused, which reuses after max-row deletes." },
+      ],
+    },
   ],
   problems: [
     {

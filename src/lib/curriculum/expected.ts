@@ -15274,6 +15274,100 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
       ]
     ]
   },
+  "l34-p9": {
+    "columns": [
+      "label",
+      "n"
+    ],
+    "rows": [
+      [
+        "entry",
+        3
+      ],
+      [
+        "core",
+        6
+      ],
+      [
+        "pro",
+        4
+      ],
+      [
+        "elite",
+        3
+      ]
+    ]
+  },
+  "l34-p10": {
+    "columns": [
+      "pairs"
+    ],
+    "rows": [
+      [
+        14
+      ]
+    ]
+  },
+  "l34-p11": {
+    "columns": [
+      "close_pairs"
+    ],
+    "rows": [
+      [
+        5
+      ]
+    ]
+  },
+  "l34-p12": {
+    "columns": [
+      "label",
+      "n"
+    ],
+    "rows": [
+      [
+        "petty",
+        17
+      ],
+      [
+        "modest",
+        4
+      ],
+      [
+        "major",
+        15
+      ]
+    ]
+  },
+  "l34-p13": {
+    "columns": [
+      "label",
+      "n"
+    ],
+    "rows": [
+      [
+        "silver",
+        1
+      ],
+      [
+        "gold",
+        6
+      ],
+      [
+        "platinum",
+        9
+      ]
+    ]
+  },
+  "l34-p14": {
+    "columns": [
+      "matched_rows"
+    ],
+    "rows": [
+      [
+        19
+      ]
+    ]
+  },
   "l35-p1": {
     "columns": [
       "name",

@@ -47,8 +47,8 @@ ok(seen.size === 64, "no lesson repeated across days");
 // ---- 2. census ------------------------------------------------------------
 const s = sprintStats();
 console.log(`stats: days=${s.days} lessons=${s.lessons} mcqs=${s.mcqs} queries=${s.queries} exams=${s.exams} fills=${s.fills} caseFiles=${s.caseFiles} drills=${s.drills} minutes=${s.minutes} (~${Math.round(s.minutes / 60)}h)`);
-ok(s.days === 31 && s.lessons === 64 && s.mcqs === 943 && s.queries === 755, "census lessons/mcqs/queries");
-ok(s.exams === 11 && s.caseFiles === CASES.length && s.drills === 2695, "census exams/cases/drills");
+ok(s.days === 31 && s.lessons === 64 && s.mcqs === 951 && s.queries === 761, "census lessons/mcqs/queries");
+ok(s.exams === 11 && s.caseFiles === CASES.length && s.drills === 2799, "census exams/cases/drills");
 ok(s.minutes > 0, `plan minutes ${s.minutes}`);
 
 // ---- 3. fresh profile -----------------------------------------------------

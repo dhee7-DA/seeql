@@ -110,7 +110,7 @@ const failures: string[] = [];
 // Topics outside this read-only harness's reach: writes/DDL (Task 31's write-audit
 // path) and finance cases that depend on runtime-created finance tables (validated
 // at play-time by the app's SQL runner).
-const MUTATING_TOPICS = new Set(["w1", "w2", "w3", "w4", "wcap", "d1", "d2", "d3", "d4", "d5", "dcap", "f1", "f2", "f3", "f4", "f5", "fcap"]);
+const MUTATING_TOPICS = new Set(["w1", "w2", "w3", "w4", "w5", "wcap", "d1", "d2", "d3", "d4", "d5", "dcap", "f1", "f2", "f3", "f4", "f5", "fcap"]);
 
 function auditCase(c: CaseStudy, seen: Map<string, string>): string[] {
   const errs: string[] = [];

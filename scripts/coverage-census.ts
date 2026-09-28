@@ -106,7 +106,7 @@ const D: KwDef[] = [
   { kw: "UPDATE", cat: "Writes", prose: [/\bupdate statement\b/, /\bupdating rows?\b/, /\bthe update\b/, /\bprice sweep\b/], sql: [/\bupdate\b/] },
   { kw: "DELETE", cat: "Writes", prose: [/\bdelete statement\b/, /\bdeleting rows?\b/, /\bthe delete\b/], sql: [/\bdelete\b/] },
   { kw: "UPSERT (ON CONFLICT)", cat: "Writes", prose: [/\bupsert\b/, /\bon conflict\b/], sql: [/\bon conflict\b/] },
-  { kw: "RETURNING", cat: "Writes", prose: [/\breturning clause\b/], sql: [/\breturning\b/] },
+  { kw: "RETURNING", cat: "Writes", prose: [/\breturning clause\b/, /`?returning`? \b(id|\*|rows|the|every|shows?|echoes?|reports?|makes?|on\b)/], sql: [/\breturning\b/] },
   { kw: "Transactions", cat: "Writes", prose: [/\btransaction/, /\batomic/, /\ball.or.nothing\b/], sql: [/\bbegin\b/, /\bcommit\b/, /\brollback\b/] },
   // Schema
   { kw: "CREATE TABLE", cat: "Schema", prose: [/\bcreate table\b/, /\bconstraint contract\b/], sql: [/\bcreate table\b/] },
@@ -184,6 +184,14 @@ const DRILL_MAP: Record<string, string[]> = {
   "date-edges": ["Date & time functions"],
   "ops-calendar": ["Date & time functions"],
   "toolkit-capstone": ["OVER & PARTITION BY", "RANK & DENSE_RANK", "LAG & LEAD", "Window frames"],
+  // Modules 6-8, 11 — thin-spot patch wave
+  "non-equi-joins": ["Non-equi & range joins"],
+  "outer-joins": ["RIGHT JOIN", "FULL OUTER JOIN"],
+  "updates-deletes": ["UPDATE", "DELETE"],
+  "upsert-returning": ["UPSERT (ON CONFLICT)", "RETURNING"],
+  "transactions": ["Transactions"],
+  "create-table": ["CREATE TABLE"],
+  "indexes-explain": ["Indexes & EXPLAIN"],
 };
 const UNMAPPED: Record<string, number> = {};
 

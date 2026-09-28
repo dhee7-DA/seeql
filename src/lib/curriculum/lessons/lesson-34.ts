@@ -455,6 +455,117 @@ GROUP BY b.label ORDER BY MIN(b.lo);   -- small 8 · medium 30 · large 40 · ju
       ],
       expected: EXPECTED["l34-p8"],
     },
+    {
+      id: "l34-p9",
+      title: "The price ladder",
+      brief: "Catalog pricing bands as a VALUES ladder — (0, 30, 'entry'), (30, 60, 'core'), (60, 120, 'pro'), (120, 99999, 'elite') — joined to products by the closed-open rule. Output `label` and `n`, ladder order. The counts must sum to 16.",
+      hints: [
+        "Closed-open means >= lo AND < hi — each price matches exactly one band. Order by MIN(b.lo) to keep the ladder upright.",
+        "Shape: WITH bands(lo, hi, label) AS (VALUES (0, 30, 'entry'), …) SELECT b.label, COUNT(*) AS n FROM products p JOIN bands b ON p.price >= b.lo AND p.price < b.hi GROUP BY b.label ORDER BY MIN(b.lo);",
+      ],
+      difficulty: "hard",
+      solution:
+        "WITH bands(lo, hi, label) AS (\n  VALUES (0, 30, 'entry'), (30, 60, 'core'),\n         (60, 120, 'pro'), (120, 99999, 'elite')\n)\nSELECT b.label, COUNT(*) AS n\nFROM products p\nJOIN bands b ON p.price >= b.lo AND p.price < b.hi\nGROUP BY b.label\nORDER BY MIN(b.lo);",
+      mistakes: [
+        { test: ">\\s*=\\s*b\\.hi|<\\s*=\\s*b\\.hi", message: "The upper bound is OPEN (< hi, never <=) — a price exactly at a boundary must belong to the band above, not both." },
+        { test: ">\\s*b\\.lo", message: "Strict > at the lower bound silently drops exactly-at-lo prices — closed-open is >= lo AND < hi, the contract that never loses or doubles a boundary." },
+        { test: "order\\s+by\\s+b\\.label", message: "Alphabetical order scrambles the ladder (core < elite < entry < pro) — ORDER BY MIN(b.lo) keeps small → large." },
+      ],
+      expected: EXPECTED["l34-p9"],
+      ordered: true,
+    },
+    {
+      id: "l34-p10",
+      title: "The supplier price gap",
+      brief: "Within each supplier, how many cheaper→pricier product pairs exist? A self non-equi join on products: same supplier, strictly lower price on the left. Output one column `pairs`.",
+      hints: [
+        "Two conditions in ON: p1.supplier_id = p2.supplier_id AND p1.price < p2.price. The inequality is already one-directional — no id guard needed.",
+        "Shape: SELECT COUNT(*) AS pairs FROM products p1 JOIN products p2 ON p1.supplier_id = p2.supplier_id AND p1.price < p2.price;",
+      ],
+      difficulty: "medium",
+      solution:
+        "SELECT COUNT(*) AS pairs\nFROM products p1\nJOIN products p2\n  ON p1.supplier_id = p2.supplier_id AND p1.price < p2.price;",
+      mistakes: [
+        { test: "p1\\.id\\s*<\\s*p2\\.id", message: "The id guard halves legitimate pairs — the price inequality ALREADY breaks symmetry (a product can't be cheaper than itself, and only one direction of each pair survives)." },
+        { test: "<=\\s*p2\\.price", message: "Equal prices would self-pair and double-count ties — the brief says strictly cheaper: <." },
+        { test: "\\bwhere\\b", message: "Both conditions join the two COPIES of products — they belong in ON. A WHERE after the cross product computes the same rows here, but the ON is where the pairing logic lives." },
+      ],
+      expected: EXPECTED["l34-p10"],
+    },
+    {
+      id: "l34-p11",
+      title: "Close cousins",
+      brief: "Tighten the supplier gap: keep only pairs where the pricier item costs less than 1.5× the cheaper one — same supplier, p1.price < p2.price < p1.price * 1.5. Output one column `close_pairs`.",
+      hints: [
+        "Stack a third predicate in ON: AND p2.price < p1.price * 1.5. Each extra inequality shrinks the surviving set.",
+        "Shape: SELECT COUNT(*) AS close_pairs FROM products p1 JOIN products p2 ON p1.supplier_id = p2.supplier_id AND p1.price < p2.price AND p2.price < p1.price * 1.5;",
+      ],
+      difficulty: "hard",
+      solution:
+        "SELECT COUNT(*) AS close_pairs\nFROM products p1\nJOIN products p2\n  ON p1.supplier_id = p2.supplier_id\n AND p1.price < p2.price\n AND p2.price < p1.price * 1.5;",
+      mistakes: [
+        { test: "1\\.5\\s*<\\s*p2|p2\\.price\\s*>\\s*p1\\.price\\s*\\*\\s*1\\.5", message: "The ratio test keeps pairs CLOSE in price — p2 must be UNDER 1.5× p1, not over it. Reversed, the filter keeps only the widest gaps." },
+        { test: "\\bwhere\\s+p2\\.price", message: "All three predicates participate in the PAIRING — they belong in ON together. Splitting them into WHERE still computes the same count here, but the ON is the contract." },
+        { test: "round\\s*\\(\\s*p1\\.price", message: "No rounding — the ratio test runs on raw prices. Rounding belongs in output columns, never in join predicates." },
+      ],
+      expected: EXPECTED["l34-p11"],
+    },
+    {
+      id: "l34-p12",
+      title: "The expense ladder",
+      brief: "Finance wants the spend ladder in cents: (0, 40000, 'petty'), (40000, 80000, 'modest'), (80000, 999999999, 'major') joined to expenses by range. Output `label` and `n`, ladder order. Counts must sum to 36.",
+      hints: [
+        "Same closed-open join as the price ladder, on amount_cents: >= lo AND < hi. GROUP BY the label.",
+        "Shape: WITH bands(lo, hi, label) AS (VALUES (0, 40000, 'petty'), …) SELECT b.label, COUNT(*) AS n FROM expenses e JOIN bands b ON e.amount_cents >= b.lo AND e.amount_cents < b.hi GROUP BY b.label ORDER BY MIN(b.lo);",
+      ],
+      difficulty: "medium",
+      solution:
+        "WITH bands(lo, hi, label) AS (\n  VALUES (0, 40000, 'petty'), (40000, 80000, 'modest'),\n         (80000, 999999999, 'major')\n)\nSELECT b.label, COUNT(*) AS n\nFROM expenses e\nJOIN bands b ON e.amount_cents >= b.lo AND e.amount_cents < b.hi\nGROUP BY b.label\nORDER BY MIN(b.lo);",
+      mistakes: [
+        { test: "/\\s*100", message: "No dividing — the ladder is declared in CENTS to match amount_cents exactly. Mixing units (dividing by 100) breaks the comparison silently." },
+        { test: "<\\s*=\\s*b\\.hi", message: "Open upper bound: an expense of exactly 40,000 cents belongs to modest, not petty — both bands would claim it if the hi were inclusive." },
+        { test: "\\bsum\\s*\\(", message: "The brief wants COUNTS per band, not sums — COUNT(*) counts the matched rows; SUM(amount_cents) would answer a different memo." },
+      ],
+      expected: EXPECTED["l34-p12"],
+      ordered: true,
+    },
+    {
+      id: "l34-p13",
+      title: "The loyalty tiers",
+      brief: "Bin every customer by lifetime spend: stage per-customer SUM(total) in a CTE, then range-join a tiers ladder — (0, 200, 'bronze'), (200, 500, 'silver'), (500, 900, 'gold'), (900, 999999, 'platinum'). Output `label` and `n`, tier order.",
+      hints: [
+        "Stage first: WITH spend AS (SELECT customer_id, SUM(total) AS s FROM orders GROUP BY customer_id). Then join spend to the tiers by s >= lo AND s < hi.",
+        "Shape: WITH spend AS (…), tiers(lo, hi, label) AS (VALUES …) SELECT t.label, COUNT(*) AS n FROM spend s JOIN tiers t ON s.s >= t.lo AND s.s < t.hi GROUP BY t.label ORDER BY MIN(t.lo);",
+      ],
+      difficulty: "hard",
+      solution:
+        "WITH spend AS (\n  SELECT customer_id, SUM(total) AS s\n  FROM orders\n  GROUP BY customer_id\n),\ntiers(lo, hi, label) AS (\n  VALUES (0, 200, 'bronze'), (200, 500, 'silver'),\n         (500, 900, 'gold'), (900, 999999, 'platinum')\n)\nSELECT t.label, COUNT(*) AS n\nFROM spend s\nJOIN tiers t ON s.s >= t.lo AND s.s < t.hi\nGROUP BY t.label\nORDER BY MIN(t.lo);",
+      mistakes: [
+        { test: "join\\s+tiers[^;]*sum\\s*\\(\\s*total\\s*\\)\\s*over", message: "No window needed — the grain is one row per CUSTOMER. Aggregate to per-customer spend in the CTE first; joining raw orders to tiers would count orders, not customers." },
+        { test: "\\bbronze\\b.*\\b0\\s*,\\s*\\d", message: "Check the tier bounds match the brief (0/200/500/900) — inventing your own boundaries answers a different loyalty program." },
+        { test: "count\\s*\\(\\s*distinct\\s+customer_id", message: "COUNT(*) over the staged CTE is already one row per customer — the DISTINCT would be a symptom of joining raw orders instead of the rollup." },
+      ],
+      expected: EXPECTED["l34-p13"],
+      ordered: true,
+    },
+    {
+      id: "l34-p14",
+      title: "The overlap audit",
+      brief: "Two marketing bands overlap on purpose: under-100 (0–100) and mid-band (50–150). Join products to BOTH and count the full matched output: one column `matched_rows`. (Reconciliation: the counts per band sum to more than the catalog — that's the fanout you're measuring.)",
+      hints: [
+        "One product can match BOTH bands — the join emits one row per true predicate. 12 + 7 = 19 matched rows for 16 products.",
+        "Shape: WITH bands(lo, hi, label) AS (VALUES (0, 100, 'under-100'), (50, 150, 'mid-band')) SELECT COUNT(*) AS matched_rows FROM products p JOIN bands b ON p.price >= b.lo AND p.price < b.hi;",
+      ],
+      difficulty: "medium",
+      solution:
+        "WITH bands(lo, hi, label) AS (\n  VALUES (0, 100, 'under-100'), (50, 150, 'mid-band')\n)\nSELECT COUNT(*) AS matched_rows\nFROM products p\nJOIN bands b ON p.price >= b.lo AND p.price < b.hi;",
+      mistakes: [
+        { test: "count\\s*\\(\\s*distinct\\s+p\\.id", message: "DISTINCT would collapse the double-matched products back to 16 and erase the very fanout this audit measures — the brief wants the RAW matched-row count (19)." },
+        { test: "\\bgroup\\s+by\\b", message: "One number, not per-band rows — the audit's whole point is the TOTAL (12 + 7 = 19) against the catalog's 16. GROUP BY would hand back two innocent-looking counts and hide the overlap." },
+        { test: "\\bwhere\\s+b\\.label", message: "No label filter — both bands participate. Filtering to one band would read 12 or 7 and miss the 4 products that count twice." },
+      ],
+      expected: EXPECTED["l34-p14"],
+    },
   ],
   takeaway: "RIGHT is LEFT read backwards, FULL keeps both sides (the 115-row audit), CROSS generates the grid on purpose, and non-equi joins match on ranges — every shape is now yours, with the bounds discipline that keeps fanout out.",
 };

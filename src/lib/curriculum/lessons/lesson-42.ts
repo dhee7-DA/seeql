@@ -304,6 +304,36 @@ RETURNING id, price;   -- 5 products re-priced: K1 82.79, Studio Mic 114.24, …
         { choice: 1, why: "UPDATE … JOIN is MySQL's flavor — the third coat on the same job, and just as non-portable. Standard SQL has only the subquery spelling." },
       ],
     },
+    {
+      id: "l42-q16",
+      prompt: "`UPDATE products SET stock = 0 WHERE stock < 0 OR stock IS NULL` runs on a table where no stock is negative and none are NULL. The engine reports…",
+      choices: [
+        "An error — the predicate is unsatisfiable",
+        "0 rows affected — a successful statement that matched nothing",
+        "All rows — OR widens any predicate to everything",
+        "A warning and no execution",
+      ],
+      answer: 1,
+      why: "A zero-match UPDATE is a SUCCESS with an affected count of 0 — the quiet twin of the full-table rewrite. Pre-counting with the same WHERE (SELECT COUNT …) is how you tell 'correctly matched nothing' from 'my WHERE is nonsense' before the write runs.",
+      notes: [
+        { choice: 2, why: "OR widens only across its OPERANDS — 'stock < 0 OR stock IS NULL' is still a concrete filter. Widening to all-rows is what a tautology does, not OR by itself." },
+      ],
+    },
+    {
+      id: "l42-q17",
+      prompt: "Two UPDATEs run in sequence: (1) `SET price = 20 WHERE category = 'Fitness'` (1 row), (2) `SET price = price * 1.1 WHERE price = 20`. Why can statement 2 hit MORE rows than the Fitness shelf?",
+      choices: [
+        "It can't — the second statement sees the original data",
+        "Because statement 1 already wrote 20 into those rows — writes compose through the data, so any OTHER product already priced 20 joins the match set too",
+        "Because SQLite caches the first statement's WHERE",
+        "Because 1.1 multiplies the match count",
+      ],
+      answer: 1,
+      why: "Each UPDATE reads the CURRENT table state: after statement 1, every Fitness row is priced 20 — and any product that ALREADY sat at 20 matches statement 2's WHERE too. Sequenced writes interact through the data; that's the whole reason the course runs them one at a time in a sandbox.",
+      notes: [
+        { choice: 0, why: "The opposite — the second statement sees exactly what the first wrote. Ignoring that is how batch scripts double-apply discounts." },
+      ],
+    },
   ],
   problems: [
     {

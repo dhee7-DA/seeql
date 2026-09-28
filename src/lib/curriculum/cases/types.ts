@@ -119,6 +119,7 @@ export const CASE_TOPICS: CaseTopicMeta[] = [
   { id: "w2", label: "UPDATE", lessonNum: 42 },
   { id: "w3", label: "DELETE", lessonNum: 43 },
   { id: "w4", label: "Transactions", lessonNum: 44 },
+  { id: "w5", label: "UPSERT & collisions", lessonNum: 44 },
   { id: "wcap", label: "Write capstone", lessonNum: 50 },
   // Module 8 — Schema, Views & Beyond (lessons 45–49, 51)
   { id: "d1", label: "CREATE TABLE", lessonNum: 45 },
