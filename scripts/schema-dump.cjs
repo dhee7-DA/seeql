@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- standalone CJS probe script; require() is intentional */
 const { PrismaClient } = require("@prisma/client");
 const p = new PrismaClient();
 (async () => {
