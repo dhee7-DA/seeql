@@ -2643,3 +2643,50 @@ Work Log:
 Stage Summary:
 - Project state is consistent: gates green, roadmap gate math green, live registries correctly wired, orphans inert and unadvertised (deletion still an open user question).
 - Noted: babel deopt notice on expected.ts (>500KB) is a build-perf warning, not an error — irrelevant at dev scale, worth remembering for the Cloudflare build.
+
+---
+Task ID: 43
+Agent: Super Z (main agent)
+Task: Keyword x case-studies x query-problems coverage table (user request displaced twice), delivered as .xlsx per clarification round (coverage table first -> then Indexes & perf as a full lesson -> xlsx format).
+
+Work Log:
+- Clarification round answered: Priority = coverage table first; new topic = Indexes & perf; depth = full lesson each; format = Excel (.xlsx).
+- Loaded xlsx skill chain (SKILL.md -> scenes/create.md -> quality/pipeline.md -> engines/design.md -> templates/base.py) before any build.
+- Explored live data model: LESSONS[].mcqs/problems, CASES + CASE_TOPICS.lessonNum (cap = null), DRILL_SETS with explicit keyword+module, fills/m01..m09 FILLS_BY_LESSON.
+- scripts/coverage-census.ts: 61-keyword dictionary with two-scope scan (sqlText = solutions/templates/answer chips; proseText = prompts/briefs/whys) + exact drill keyword map (58 sets, 0 unmapped); per-question drill units fixed after first emit showed 73.
+- census exact: 63 lessons / 913 mcqs / 730 queries / 1992 cases (6 cross-module cap) / 289 fills / 2695 drill questions.
+- scripts/build_coverage_xlsx.py: 14-sheet workbook (Read Me, Totals, Keywords, M1-M10, Review) on the skill design system (professional palette, base.py helpers, B2 origin, alternating fills, zero-CF red highlight, data bars, live SUM formulas, freeze panes, Review amber tab with 10 cross-checks).
+- QA: LibreOffice recalc 27 formulas 0 errors, audit clean, scan clean, validate exit 0, Review 10/10 PASS after recalc.
+- Gap analysis delivered in chat: 0 graded queries = Non-equi & range joins; 0 case files = FIRST/LAST_VALUE, UPSERT; thinnest = DELETE 15, CREATE TABLE 16; Indexes & EXPLAIN = 65 total / 0 drills.
+- Committed ec3bdc1 (census + builder scripts; workbook lives in download/, regenerated on demand).
+
+Stage Summary:
+- Deliverable: download/SeeQL_SQL_Coverage_by_Keyword.xlsx (filterable, self-checking, regenerable via npx tsx scripts/coverage-census.ts --emit && python3 scripts/build_coverage_xlsx.py).
+- The table's thin-keyword output set up Task 44's target: Indexes & EXPLAIN at 65 total.
+
+---
+Task ID: 44
+Agent: Super Z (main agent)
+Task: Author Module 11 — Query Performance & Index Design as a full lesson (theory + ~30 MCQs + ~25 engine-verified queries + ~20 case files), wire exam + CASE_TOPICS + roadmap; per user's clarification answers.
+
+Work Log:
+- Facts probes (scripts/m11-facts.ts, m11-facts2.ts): schema has ZERO secondary indexes (all PKs = rowid aliases) — became the module's hook; verified EQP texts (SCAN / SEARCH ... USING INTEGER PRIMARY KEY (rowid=?) / USE TEMP B-TREE FOR GROUP BY/ORDER BY), selectivity numbers (4 statuses, 16 customers), customer 1 = 24 orders $7,262.35, invoices 28 with 0 duplicate numbers, July 2024 = 8 orders, 'A%' = 1 vs '%a%' = 14, top totals 1088.44/945.21/845.92.
+- banks/l64-util.ts: ProbRowX tuple builder extending the M10 pattern with verify + mutating (DDL problems need them); mcqBank reused.
+- banks/l64-mcqs.ts: 30 MCQs (selectivity, composite order, leftmost prefix, covering, sort-serving, DESC backward walk, temp b-trees, index-hostile patterns, write cost, DROP, ANALYZE, partial + expression indexes, join loop flips, workflow).
+- banks/l64-problems.ts: 25 problems — 6 EQP reads (ordered), 5 mutating CREATE/UNIQUE INDEX with sqlite_master/pragma_index_info verifies, 14 data censuses; all distinct angles; fixed a stray named-arg-in-tuple syntax slip before first compile.
+- lesson-64.ts: full theory (plan-as-contract, selectivity table, design steps, index-hostile table, warn/dialects/tip) + deep blocks (mind, engine steps, 2 myths, 5 edges); wired via mcqBank/probBankX.
+- lessons/index.ts: Module 11 registered (id performance, num 11, Expert); 64 lessons.
+- cases-p1.ts (10) + cases-p2.ts (10): cs-1993..cs-2012, topics p1 Reading the plan / p2 Index design / p3 Covering & composite / p4 Perf capstone, all lessonNum 64. Case-audit iterations taught the read-only harness rules: 3-7 slots mandatory, single SELECT no JOIN/subquery for p-topics, alias slots inherently ambiguous (canonRows compares values), zero/empty results are ambiguity traps, sqlite rating lives on suppliers not products; rewrote all 20 as read-only rebuilds; fixed cs-1993 slot-order-vs-marker mismatch (slots [AVG, total, status] -> [AVG, status, total]). Final deck audit: 2012 cases, 1995 pass, 0 fail, 17 skip.
+- gen-expected: all 755 problems re-verified OK on the seed db (25 new, incl. 5 sandboxed DDL); expected.ts +610 lines.
+- roadmap.ts: Day 30 = L(64) + E("performance"), Drill Yard finale -> Day 31 (31-day sprint; comments updated); roadmap-gates.ts re-asserts 31 days / 64 lessons / 943 mcqs / 755 queries / 11 exams — ALL PASS (minutes 1147 ~19h).
+- exams.ts needed NO changes: top-up gives M11 a 12-question exam (8 MCQ + 4 fills missing -> 12 MCQs).
+- Coverage workbook regenerated: 15 sheets (M11 Performance added), Review range fix (dynamic cap-row reference), ALL 10 PASS; Indexes & EXPLAIN row 65 -> 134 (57 mcqs / 35 queries / 29 cases / 13 fills / 0 drills).
+- Gates: tsc exactly 45 (0 new), eslint 0+0.
+- Browser QA (agent-browser): roadmap deep link -> Day 1 current, 31 jump buttons, Days 2-31 disabled; header "11 modules · 64 lessons · 755 graded queries · 943 quiz questions"; sidebar M11 "Query Performance & Index Design 0/1"; lesson-64 deep link opens; 390x844 no overflow on lesson + roadmap; Builder Night screenshots (qa-shots/m11-*.png); tour modal dismissed (Skip tour); console + page errors clean; storage cleared, browser closed.
+- Committed 0c6b105 (module + banks + cases + expected.ts + roadmap + gates + builder fix); db/custom.db left uncommitted (mode noise only).
+
+Stage Summary:
+- Module 11 ships the coverage table's top gap: performance content more than doubled (Indexes & EXPLAIN keyword 65 -> 134 practice items).
+- Course now: 11 modules · 64 lessons · 943 quiz · 755 graded queries · 2012 case files · 289 fills · 2695 drills · 11 exams · 31-day sprint (~19h).
+- Standing hooks unchanged: new lessons need a ROADMAP row; sprintStats/census self-maintain; workbook regenerates from live banks.
+- Next per queue: Cloudflare hosting migration (D1 + OpenNext).
