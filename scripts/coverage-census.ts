@@ -8,11 +8,17 @@
 // Keyword tagging: two-scope scan — sqlText (solutions / templates / answer chips)
 // and proseText (prompts, briefs, whys). Drill attribution is exact via a
 // curated keyword map, never scanned.
+// Content dimension: the same tag() runs over each LESSON's teaching material
+// (blocks + deep layer + takeaway) to build the per-keyword lesson list, and
+// every diagram block inherits its lesson's keywords — so each keyword row
+// also carries the lessons and SVG figures that teach it.
 //
 //   npx tsx scripts/coverage-census.ts --report   → distinct drill keywords + per-module volumes
 //   npx tsx scripts/coverage-census.ts --emit     → scripts/coverage-data.json for the xlsx builder
 
 import { LESSONS, MODULES } from "../src/lib/curriculum/lessons";
+import type { Lesson, Block, DeepBlock, FigureId } from "../src/lib/curriculum/types";
+import { prettyFigureLabel } from "../src/lib/curriculum/figure-meta";
 import { CASES, CASE_TOPICS } from "../src/lib/curriculum/cases";
 import { DRILL_SETS } from "../src/lib/curriculum/drills";
 import { FILLS_BY_LESSON as F1 } from "../src/lib/curriculum/fills/m01";
@@ -278,6 +284,100 @@ for (const set of DRILL_SETS) {
 }
 
 // ---------------------------------------------------------------------------
+// 4b. Lesson content + SVG diagrams — the "content list" dimension.
+//     A lesson teaches a keyword when its teaching prose or SQL matches the
+//     same dictionary via the same tag() used for every other source.
+//     Each diagram block inherits its lesson's keywords.
+// ---------------------------------------------------------------------------
+interface LessonScan {
+  num: number;
+  id: string;
+  title: string;
+  module: number | null;
+  prose: string;
+  sql: string;
+  figures: FigureId[];
+  mcqs: number;
+  problems: number;
+}
+
+function scanLesson(l: Lesson, mod: number | null): LessonScan {
+  let prose = `${l.title} ${l.blurb} `;
+  const sqlParts: string[] = [];
+  const figures: FigureId[] = [];
+  const walk = (blocks: Array<Block | DeepBlock>) => {
+    for (const b of blocks) {
+      switch (b.kind) {
+        case "diagram":
+          figures.push(b.figure);
+          break;
+        case "code":
+          sqlParts.push(b.sql, b.caption ?? "");
+          break;
+        case "table":
+          prose += `${b.headers.join(" ")} ${b.rows.flat().join(" ")} ${b.caption ?? ""} `;
+          break;
+        case "bullets":
+        case "steps":
+          prose += `${b.items.join(" ")} `;
+          break;
+        case "engine":
+          prose += `${b.title} ${b.steps.join(" ")} `;
+          break;
+        case "myth":
+          prose += `${b.myth} ${b.truth} `;
+          break;
+        case "edge":
+          prose += `${b.items.map((e) => `${e.c} ${e.r}`).join(" ")} `;
+          break;
+        default:
+          if ("text" in b) prose += `${(b as { text: string }).text} `;
+      }
+    }
+  };
+  walk(l.blocks);
+  if (l.deep) walk(l.deep);
+  if (l.takeaway) prose += l.takeaway;
+  return {
+    num: l.num, id: l.id, title: l.title, module: mod,
+    prose, sql: sqlParts.join(" "), figures,
+    mcqs: l.mcqs.length, problems: l.problems.length,
+  };
+}
+
+const lessonScans: Array<LessonScan & { kws: Set<string> }> = [];
+const kwLessons = new Map<string, number[]>();
+const kwDiagrams = new Map<string, string[]>();
+const figureRows: Array<{ figure: FigureId; label: string; module: number | null; lessonNum: number; lessonTitle: string; kws: Set<string> }> = [];
+const figureSeen = new Set<FigureId>();
+for (const l of LESSONS) {
+  const mod = lessonToModule.get(l.num) ?? null;
+  const scan = scanLesson(l, mod);
+  const kws = tag(mod, scan.prose, scan.sql).kws;
+  lessonScans.push({ ...scan, kws });
+  for (const kw of kws) {
+    const arr = kwLessons.get(kw) ?? [];
+    arr.push(l.num);
+    kwLessons.set(kw, arr);
+  }
+  for (const fig of scan.figures) {
+    const label = prettyFigureLabel(fig);
+    for (const kw of kws) {
+      const arr = kwDiagrams.get(kw) ?? [];
+      if (!arr.includes(label)) arr.push(label);
+      kwDiagrams.set(kw, arr);
+    }
+    if (!figureSeen.has(fig)) {
+      figureSeen.add(fig);
+      figureRows.push({ figure: fig, label, module: mod, lessonNum: l.num, lessonTitle: l.title, kws });
+    }
+  }
+}
+const kwOrder = new Map(D.map((d, i) => [d.kw, i] as const));
+const kwListSorted = (kws: Set<string>): string[] =>
+  [...kws].sort((a, b) => (kwOrder.get(a) ?? 99) - (kwOrder.get(b) ?? 99));
+
+// ---------------------------------------------------------------------------
 // 5. Aggregate
 // ---------------------------------------------------------------------------
 interface Counts {
@@ -439,12 +539,37 @@ const out = {
     drills: r.drills,
     total: r.total,
     primaryModule: r.primaryModule,
+    lessons: [...(kwLessons.get(r.keyword) ?? [])].sort((a, b) => a - b),
+    lessonCount: (kwLessons.get(r.keyword) ?? []).length,
+    diagrams: kwDiagrams.get(r.keyword) ?? [],
+    diagramCount: (kwDiagrams.get(r.keyword) ?? []).length,
+  })),
+  lessonMap: lessonScans
+    .slice()
+    .sort((a, b) => a.num - b.num)
+    .map((ls) => ({
+      num: ls.num,
+      id: ls.id,
+      title: ls.title,
+      module: ls.module,
+      keywords: kwListSorted(ls.kws),
+      diagrams: ls.figures.map((f) => prettyFigureLabel(f)),
+      mcqs: ls.mcqs,
+      problems: ls.problems,
+    })),
+  figures: figureRows.map((f) => ({
+    figure: f.figure,
+    label: f.label,
+    module: f.module,
+    lessonNum: f.lessonNum,
+    lessonTitle: f.lessonTitle,
+    keywords: kwListSorted(f.kws),
   })),
   perModuleKeywords,
 };
 
 writeFileSync(new URL("./coverage-data.json", import.meta.url), JSON.stringify(out, null, 2));
-console.log(`emitted scripts/coverage-data.json — ${kwRows.length} keywords · ${mcqItems.length} mcqs · ${problemItems.length} queries · ${caseItems.length} cases (${capCases} cross-module) · ${fillItems.length} fills · ${drillItems.length} drill questions`);
+console.log(`emitted scripts/coverage-data.json — ${kwRows.length} keywords · ${mcqItems.length} mcqs · ${problemItems.length} queries · ${caseItems.length} cases (${capCases} cross-module) · ${fillItems.length} fills · ${drillItems.length} drill questions · ${lessonScans.length} lessons mapped · ${figureRows.length} distinct figures`);
 if (Object.keys(UNMAPPED).length > 0) {
   console.log("WARNING — unmapped drill keywords (excluded from keyword rows):");
   for (const [k, n] of Object.entries(UNMAPPED)) console.log(`  "${k}" — ${n}q`);

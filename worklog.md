@@ -2711,3 +2711,19 @@ Stage Summary:
 - Key files: src/lib/curriculum/drills/{m6,m7,m8,m11}/* (NEW), drills/index.ts, lessons/lesson-{34,41,42,43}.ts, cases/{cases-n4b,cases-w5}.ts (NEW) + types.ts + index.ts, expected.ts, scripts/{thin-facts,thin-facts2,thin-write-audit}.{ts,py} + case-audit.ts + coverage-census.ts + roadmap-gates.ts, download/SeeQL_SQL_Coverage_by_Keyword.xlsx.
 - Standing hooks: new drill sets need a DRILL_MAP row in coverage-census.ts (unmapped are counted and reported); write-case topics go in MUTATING_TOPICS and get verified via a write-audit probe, not the read-only harness; roadmap census assertions must move with bank growth.
 - Next per queue: Cloudflare hosting migration (D1 + OpenNext) — still awaiting user confirmation.
+---
+Task ID: 46
+Agent: Super Z (main agent)
+Task: Keyword inventory — per-keyword content list (lessons), SVG diagrams, MCQs, case files and query problems (user: "give me the list of all the keywords with their content list, svg diagrams, mcqs, case studies and query problems").
+
+Work Log:
+- coverage-census.ts gained a content dimension: scanLesson() walks every lesson's teaching material (blocks + deep layer + takeaway; p/h/bullets/steps/code/table/tip/warn/dialect/mind/engine/myth/edge) and tags it with the same 61-keyword dictionary via the same tag() used for the practice surfaces. Diagram blocks inherit their lesson's keywords.
+- Emit now carries per keyword: lessons/lessonCount + diagrams/diagramCount (labels via prettyFigureLabel from figure-meta). New top-level arrays: lessonMap (64 lessons: keywords, diagrams, own mcqs/problems) and figures (115 distinct SVG figures: id, label, module, lesson, keywords). Practice volumes unchanged: 951 mcqs / 761 queries / 2030 cases / 289 fills / 2799 drills.
+- build_coverage_xlsx.py: 3 new sheets — "Content & Diagrams" (61 keyword rows: lesson list + SVG diagram names + all practice counts + data bars), "Diagram Catalog" (115 figures with introducing lesson and inherited keywords), "Lesson Map" (64 lessons with diagrams and keyword tags). Read Me got the content-tagging note + updated sheet guide (M1..M11 fix); Review got 2 new checks (SVG figures catalogued, Lessons mapped). Workbook now 18 sheets.
+- QA: xlsx.py validate 0 issues / inspect row counts line up (64/118/67 data rows); tsc exactly 45 (0 new); eslint 0+0 on TS; roadmap-gates ALL PASS. Mode-bit noise restored (db/custom.db + m10-* scripts), never committed.
+- Every keyword has >=1 lesson and >=1 diagram; avg 22.9 diagrams/keyword. Thin content lists (<=4 lessons): Non-equi & range joins L34, ON vs WHERE L11, DELETE L43+L59, CREATE TABLE L45+L51, UPDATE L42+L44, LIKE & wildcards L3+L64, RIGHT JOIN L12+L34, IN subqueries L25+L43, FIRST/LAST_VALUE L57+L61, CROSS JOIN L10/L34/L40, FULL OUTER JOIN L12/L13/L34/L56, Scalar subqueries L25-L28, EXISTS L6/L26/L44/L56, NTILE L32/L39/L59/L62, UPSERT L44/L45/L50/L51.
+
+Stage Summary:
+- The keyword inventory deliverable: download/SeeQL_SQL_Coverage_by_Keyword.xlsx (18 sheets) now answers "what content, which diagrams, how much practice" for all 61 keywords, rebuilt from live registries (regeneration command unchanged).
+- Content dimension is fully derived, never hand-edited; drill attribution and multi-label semantics unchanged.
+- Next per queue: Cloudflare hosting migration (D1 + OpenNext) — still awaiting user confirmation.

@@ -28,6 +28,8 @@ S = DATA["sources"]
 MODULES = DATA["modules"]
 KEYWORDS = DATA["keywords"]
 PER_MOD = DATA["perModuleKeywords"]
+FIGURES = DATA["figures"]
+LESSON_MAP = DATA["lessonMap"]
 
 CAT_ORDER = [
     "Reading data", "Boolean logic", "NULL handling", "Aggregation", "Joins",
@@ -89,7 +91,7 @@ readme = [
     ("What this file is",
      "A keyword-level coverage map of the SeeQL course: every SQL keyword/concept measured against the practice material that teaches it — quiz questions (MCQs), graded query problems, case files, fill-in-the-blank drills and keyword drills."),
     ("Generated",
-     f"{datetime.date.today().isoformat()} from the live course registries: 10 modules, {S['lessons']} lessons, {S['mcqs']} MCQs, {S['queries']} graded query problems, {S['cases']} case files, {S['fills']} fills, {S['drillQuestions']} keyword-drill questions across {S['drillSets']} drill sets."),
+     f"{datetime.date.today().isoformat()} from the live course registries: 11 modules, {S['lessons']} lessons, {S['mcqs']} MCQs, {S['queries']} graded query problems, {S['cases']} case files, {S['fills']} fills, {S['drillQuestions']} keyword-drill questions across {S['drillSets']} drill sets, {len(FIGURES)} SVG figures."),
     ("How to read coverage",
      "Counts are multi-label: one item can cover several keywords (a query using GROUP BY + CASE + LEFT JOIN counts once in each of those rows). Keyword rows therefore do not sum to module volumes — that is by design."),
     ("Exact volumes",
@@ -100,10 +102,12 @@ readme = [
      "Total practice = MCQs + queries + cases + fills + drills for that keyword; the bar shows relative depth at a glance."),
     ("Drill attribution",
      f"Every drill set carries an explicit keyword and module. Generic sets (edges / syntax / judgment / capstones) map to their closest canonical keywords; all {S['drillQuestions']} drill questions are attributed."),
+    ("Content & diagrams",
+     "A lesson is listed under a keyword when its teaching prose or SQL matches that keyword — the same multi-label tagging used for the practice counts. Each SVG figure is listed under the keywords of the lesson that introduces it, so figures inherit what their lesson teaches."),
     ("Capstone cases",
      f"{S['crossModuleCases']} 'cap' case files deliberately mix modules. They appear on the Totals sheet as Cross-module and inside keyword rows, but not on the per-module sheets."),
     ("Sheet guide",
-     "Totals — module volumes. Keywords — all keyword rows across the course. M1..M10 — keyword distribution inside each module. Review — self-check formulas (PASS/FAIL)."),
+     "Totals — module volumes. Keywords — all keyword rows with practice counts. Content & Diagrams — per-keyword lesson list and SVG figures. Diagram Catalog — every SVG figure with its lesson and keywords. Lesson Map — per-lesson diagrams and keywords. M1..M11 — keyword distribution inside each module. Review — self-check formulas (PASS/FAIL)."),
     ("Regeneration",
      "npx tsx scripts/coverage-census.ts --emit  &&  python3 scripts/build_coverage_xlsx.py — the workbook rebuilds from the live material banks, so it can never drift from the app."),
 ]
@@ -198,6 +202,101 @@ ws.freeze_panes = "D5"
 caption(ws, kw_last + 2, 2, "Multi-label tagging: one item can cover several keywords, so columns do not sum to course totals. Red zero = no material of that kind yet.")
 
 # ---------------------------------------------------------------------------
+# Sheet — Content & Diagrams (keyword inventory: lessons + SVG figures)
+# ---------------------------------------------------------------------------
+ws = wb.create_sheet("Content & Diagrams")
+headers = ["Keyword", "Category", "Lessons (content list)", "Lessons #",
+           "SVG diagrams", "Diagrams #", "MCQs", "Query problems",
+           "Case files", "Fills", "Drill questions", "Total practice"]
+last_col = len(headers) + 1  # B..M
+setup_sheet(ws, title="Keyword inventory — which lessons and figures teach it, and how much practice backs it", last_col=last_col)
+for c, h in enumerate(headers, start=2):
+    ws.cell(row=4, column=c, value=h)
+style_header_row(ws, row_num=4, col_start=2, col_end=last_col)
+
+r = 5
+for i, k in enumerate(kw_sorted):
+    lessons_txt = ", ".join(f"L{n}" for n in k["lessons"]) if k["lessons"] else "—"
+    diagrams_txt = "; ".join(k["diagrams"]) if k["diagrams"] else "—"
+    vals = [k["keyword"], k["category"], lessons_txt, k["lessonCount"], diagrams_txt,
+            k["diagramCount"], k["mcqs"], k["queries"], k["cases"], k["fills"],
+            k["drills"], k["total"]]
+    for c, v in enumerate(vals, start=2):
+        ws.cell(row=r, column=c, value=v)
+    style_data_row(ws, row_num=r, col_start=2, col_end=last_col, row_index=i)
+    num_cells(ws, r, (5, 7, 8, 9, 10, 11, 12, 13))
+    r += 1
+inv_last = r - 1
+add_zero_cf(ws, f"H5:L{inv_last}")
+add_databar(ws, f"M5:M{inv_last}")
+ws.freeze_panes = "D5"
+for col, w in {"B": 34, "C": 16, "D": 46, "E": 10, "F": 58, "G": 11, "H": 8,
+               "I": 13, "J": 10, "K": 8, "L": 13, "M": 13}.items():
+    ws.column_dimensions[col].width = w
+caption(ws, inv_last + 2, 2,
+        "Lessons = every lesson whose teaching material matches the keyword (multi-label, same tagging as the counts). Diagrams inherit the keywords of the lesson that shows them. Practice columns reuse the Keywords-sheet counts.")
+
+# ---------------------------------------------------------------------------
+# Sheet — Diagram Catalog (every SVG figure taught in the course)
+# ---------------------------------------------------------------------------
+ws = wb.create_sheet("Diagram Catalog")
+headers = ["SVG diagram", "Figure id", "Module", "Lesson", "Lesson title",
+           "Keywords taught", "Keywords #"]
+last_col = len(headers) + 1  # B..H
+setup_sheet(ws, title="Diagram catalog — every SVG figure and where it is taught", last_col=last_col)
+for c, h in enumerate(headers, start=2):
+    ws.cell(row=4, column=c, value=h)
+style_header_row(ws, row_num=4, col_start=2, col_end=last_col)
+
+figs_sorted = sorted(FIGURES, key=lambda f: (f["module"] if f["module"] is not None else 99,
+                                             f["lessonNum"], f["label"]))
+r = 5
+for i, f in enumerate(figs_sorted):
+    vals = [f["label"], f["figure"], f"M{f['module']}" if f["module"] else "—",
+            f"L{f['lessonNum']}", f["lessonTitle"], "; ".join(f["keywords"]),
+            len(f["keywords"])]
+    for c, v in enumerate(vals, start=2):
+        ws.cell(row=r, column=c, value=v)
+    style_data_row(ws, row_num=r, col_start=2, col_end=last_col, row_index=i)
+    num_cells(ws, r, (8,))
+    r += 1
+fig_last = r - 1
+ws.freeze_panes = "C5"
+for col, w in {"B": 26, "C": 22, "D": 9, "E": 9, "F": 40, "G": 72, "H": 12}.items():
+    ws.column_dimensions[col].width = w
+caption(ws, fig_last + 2, 2,
+        "First lesson that shows each figure (some figures reappear later). Keywords inherit from that introducing lesson — multi-label, so one figure can teach several.")
+
+# ---------------------------------------------------------------------------
+# Sheet — Lesson Map (one row per lesson)
+# ---------------------------------------------------------------------------
+ws = wb.create_sheet("Lesson Map")
+headers = ["Lesson", "Module", "Title", "SVG diagrams", "Diagrams #",
+           "MCQs", "Query problems", "Keywords taught"]
+last_col = len(headers) + 1  # B..I
+setup_sheet(ws, title="Lesson map — diagrams and keyword coverage per lesson", last_col=last_col)
+for c, h in enumerate(headers, start=2):
+    ws.cell(row=4, column=c, value=h)
+style_header_row(ws, row_num=4, col_start=2, col_end=last_col)
+
+r = 5
+for i, l in enumerate(LESSON_MAP):
+    vals = [f"L{l['num']}", f"M{l['module']}" if l["module"] else "—", l["title"],
+            "; ".join(l["diagrams"]) if l["diagrams"] else "—", len(l["diagrams"]),
+            l["mcqs"], l["problems"], "; ".join(l["keywords"])]
+    for c, v in enumerate(vals, start=2):
+        ws.cell(row=r, column=c, value=v)
+    style_data_row(ws, row_num=r, col_start=2, col_end=last_col, row_index=i)
+    num_cells(ws, r, (6, 7, 8))
+    r += 1
+lm_last = r - 1
+ws.freeze_panes = "D5"
+for col, w in {"B": 9, "C": 9, "D": 42, "E": 58, "F": 11, "G": 8, "H": 14, "I": 72}.items():
+    ws.column_dimensions[col].width = w
+caption(ws, lm_last + 2, 2,
+        "MCQs and query problems are the lesson's own inline banks. Keywords = every keyword the lesson's teaching material matches (multi-label).")
+
+# ---------------------------------------------------------------------------
 # Sheets 4..13 — one per module
 # ---------------------------------------------------------------------------
 for m in MODULES:
@@ -253,6 +352,8 @@ checks = [
     ("Lesson minutes", sum(m["minutes"] for m in MODULES), f"=SUM(Totals!J5:J{cap_row_ref})"),
     ("Keyword rows on Keywords sheet", len(KEYWORDS), f"=COUNTA(Keywords!B5:B{4 + len(KEYWORDS)})"),
     ("Cross-module (cap) case files", S["crossModuleCases"], f"=Totals!G{cap_row_ref}"),
+    ("SVG figures catalogued", len(FIGURES), f"=COUNTA('Diagram Catalog'!B5:B{4 + len(FIGURES)})"),
+    ("Lessons mapped", S["lessons"], f"=COUNTA('Lesson Map'!B5:B{4 + len(LESSON_MAP)})"),
 ]
 r = 5
 for i, (label, expected, actual) in enumerate(checks):
