@@ -11,6 +11,7 @@ import {
   Bug,
   CalendarDays,
   Dumbbell,
+  Crosshair,
   Eye,
   FileStack,
   FileUp,
@@ -40,6 +41,7 @@ export type ToolKind =
   | "explorer"
   | "library"
   | "drills"
+  | "practice"
   | "mixed"
   | "blitz"
   | "cases"
@@ -79,6 +81,7 @@ export const TOOLS: ToolDef[] = [
   { kind: "explorer", icon: Table2, label: "Data explorer", note: "browse the live tables", short: "Data", section: "toolbox" },
   { kind: "library", icon: Shapes, label: "Diagram library", note: "every visual, one wall", short: "Diagrams", section: "toolbox" },
   { kind: "drills", icon: Dumbbell, label: "Keyword drills", note: "every keyword, six angles", short: "Drills", section: "toolbox" },
+  { kind: "practice", icon: Crosshair, label: "Keyword Practice", note: "the whole course, per keyword", short: "Practice", section: "toolbox" },
   { kind: "mixed", icon: FlaskConical, label: "Mixed quiz", note: "10 from the whole course", short: "Quiz", section: "toolbox" },
   { kind: "blitz", icon: Zap, label: "Blitz mode", note: "90 seconds, all engines", short: "Blitz", section: "toolbox" },
   { kind: "cases", icon: FileStack, label: "Case files", note: "rebuild real stakeholder queries", short: "Cases", section: "toolbox" },

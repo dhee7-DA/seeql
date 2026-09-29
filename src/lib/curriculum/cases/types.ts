@@ -69,6 +69,8 @@ export const CASE_TOPICS: CaseTopicMeta[] = [
   { id: "l7", label: "Aggregates", lessonNum: 7 },
   { id: "l8", label: "GROUP BY & HAVING", lessonNum: 8 },
   { id: "cap", label: "Capstone mix", lessonNum: null },
+  // Module gauntlets — module-end practice banks (live in curriculum/gauntlet)
+  { id: "gm1", label: "M1 Gauntlet", lessonNum: 35 },
   // Module 2 — Joins & Relationships (lessons 9–16)
   { id: "j1", label: "Two tables", lessonNum: 9 },
   { id: "j2", label: "INNER JOIN", lessonNum: 10 },

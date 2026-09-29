@@ -12,6 +12,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowRight, BrainCircuit, RefreshCcw } from "lucide-react";
 import { LESSONS } from "@/lib/curriculum/lessons";
+import { ALL_GAUNTLET_MCQS } from "@/lib/curriculum/gauntlet";
 import { fillsFor } from "@/lib/curriculum/fills";
 import { MAX_BOX, useProgress } from "@/lib/curriculum/progress";
 import type { Fill, Mcq } from "@/lib/curriculum/types";
@@ -36,6 +37,10 @@ function useCatalog(): Map<string, Card> {
       for (const f of fillsFor(l.num))
         map.set(f.id, { id: f.id, kind: "fill", fill: f, lessonNum: l.num, lessonTitle: l.title });
     }
+    // Gauntlet MCQs join the review deck too — a miss in the gauntlet must
+    // resolve here, or the Leitner store would hold unresolvable ids.
+    for (const q of ALL_GAUNTLET_MCQS)
+      map.set(q.id, { id: q.id, kind: "mcq", mcq: q, lessonNum: 0, lessonTitle: "Module gauntlet" });
     return map;
   }, []);
 }

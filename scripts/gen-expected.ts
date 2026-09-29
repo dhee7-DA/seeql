@@ -9,6 +9,7 @@ import { pathToFileURL } from "node:url";
 import { db } from "../src/lib/db";
 import { resetDatabase } from "../src/lib/sample-db";
 import { LESSONS } from "../src/lib/curriculum/lessons";
+import { ALL_GAUNTLET_PROBLEMS } from "../src/lib/curriculum/gauntlet";
 
 function normalizeCell(v: unknown): string | number | null {
   if (v === null || v === undefined) return null;
@@ -95,6 +96,35 @@ async function main() {
         failures++;
         console.error(`FAIL ${p.id}: ${err instanceof Error ? err.message : err}`);
       }
+    }
+  }
+
+  // Module gauntlet problems — same pipeline, separate banks.
+  for (const p of ALL_GAUNTLET_PROBLEMS) {
+    try {
+      if (p.mutating) {
+        const got = await sandboxRun(p.solution, p.verify);
+        const out2: { columns: string[]; rows: unknown[][]; changes?: number } = {
+          columns: got.columns,
+          rows: got.rows,
+        };
+        if (got.rows.length === 0) out2.changes = got.changes;
+        out[p.id] = out2;
+        console.log(
+          `OK   ${p.id}  ${got.rows.length} rows${got.rows.length === 0 ? ` (changes=${got.changes})` : ""} [sandbox]`,
+        );
+      } else {
+        const raw = (await db.$queryRawUnsafe(p.solution)) as Array<
+          Record<string, unknown>
+        >;
+        const columns = raw.length ? Object.keys(raw[0]) : [];
+        const rows = raw.map((r) => columns.map((c) => normalizeCell(r[c])));
+        out[p.id] = { columns, rows };
+        console.log(`OK   ${p.id}  ${rows.length} rows`);
+      }
+    } catch (err) {
+      failures++;
+      console.error(`FAIL ${p.id}: ${err instanceof Error ? err.message : err}`);
     }
   }
 

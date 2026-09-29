@@ -2727,3 +2727,21 @@ Stage Summary:
 - The keyword inventory deliverable: download/SeeQL_SQL_Coverage_by_Keyword.xlsx (18 sheets) now answers "what content, which diagrams, how much practice" for all 61 keywords, rebuilt from live registries (regeneration command unchanged).
 - Content dimension is fully derived, never hand-edited; drill attribution and multi-label semantics unchanged.
 - Next per queue: Cloudflare hosting migration (D1 + OpenNext) — still awaiting user confirmation.
+---
+Task ID: 47
+Agent: Super Z (main agent)
+Task: Keyword Mastery program kickoff — M1 pilot (user-approved: strict 50/30/30 per keyword, Module Gauntlet tier, M1 first, Keyword Practice hub).
+
+Work Log:
+- Program bar locked: every keyword ≥50 MCQs / ≥30 cases / ≥30 queries (census multi-label); module-end Gauntlet = 50 MCQs + 30/30/30 cases + 30/30/30 problems; strict quota with honest flags, never padding. scripts/keyword-quota-gate.ts reports the program state: 12/61 keywords at quota, 49 with gaps (the roadmap for M2-M11 passes).
+- keyword-taxonomy.ts extracted (client-safe): canonical 61-keyword dictionary + multi-label tag(), now shared by the census, the quota tracker and the UI hub — census emit verified byte-identical through the refactor.
+- M1 Gauntlet bank (src/lib/curriculum/gauntlet/): m01-mcqs 50 (six-aspect matrix, 16E/17M/17H), 90 cases cs-2031..cs-2120 (30/30/30, topic "gm1" registered in CASE_TOPICS, 10 universes) + 90 problems gm1-p01..p90 (30/30/30) — every figure probed via scripts/m1-gauntlet-facts{,2}.ts; gen-expected extended to gauntlet banks: 851 problems verified 0 failures; case-audit extended: 2120 cases audited (2030 core + 90 gauntlet, 0 fail). Audit hardening lessons applied: alias slots can't hold decoys, chained comparisons go always-true (SQLite type ordering), empty-result cases need error-only decoys, LIMIT/OFFSET decoys checked for coincidence.
+- roadmap-gates.ts +7 checks: gauntlet volumes 50/90/90, case-id uniqueness, case tier 30/30/30, problem tier 30/30/30, MCQ difficulty coverage, expected-target completeness — ALL PASS (30 total checks).
+- UI: PracticeRunner (deck runner shared by both surfaces, McqCard/CaseFileCard/ProblemCard, seeded shuffle, session persistence via seeql-gauntlet-v1 — auto-backed-up by port.ts); GauntletView (module-end tier, difficulty picker); KeywordPractice hub (61 keywords × category, live multi-label counts + solved badges, expandable decks); sidebar "Module gauntlet" row under modules with banks; tools.ts "practice" entry; review.tsx resolves gauntlet MCQ misses (orphan fix).
+- QA: tsc exactly 45 (0 new), eslint 0+0, roadmap-gates ALL PASS, case-audit 2120/0 fail, gen-expected 851/0 fail; browser QA: gauntlet row renders M1-only, gauntlet view (Quiz 50 / Cases 90 / Problems 90 tabs), MCQ answered correct with XP + first-try bonus + badge, Keyword Practice hub shows live counts (SELECT & FROM 327/2120/816 matches census), 390x844 zero overflow, console/page errors clean; storage cleared, browser closed.
+- Workbook regenerated from new census: 1001 mcqs / 851 queries / 2120 cases / 2799 drills (18 sheets).
+
+Stage Summary:
+- The Keyword Mastery program is live end-to-end: quota bar enforced by gates, M1 shipped at full quota (230 items, all engine-verified), hub + gauntlet UI in place, and a 49-keyword gap table that IS the build queue for M2-M11 passes.
+- Key files: src/lib/curriculum/{keyword-taxonomy,keyword-practice,gauntlet-session}.ts, src/lib/curriculum/gauntlet/* (NEW), src/components/learn/{practice-runner,gauntlet-view,keyword-practice}.tsx (NEW), scripts/{keyword-quota-gate,coverage-census,roadmap-gates,case-audit,gen-expected,m1-gauntlet-facts*}.{ts,py}, cases/types.ts (gm1 topic), review.tsx (orphan fix).
+- Next per queue: M2 pass (7 keywords + gauntlet, ~940 items) — then M3-M11; Cloudflare hosting migration still parked behind the program.

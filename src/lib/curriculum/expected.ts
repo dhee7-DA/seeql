@@ -89438,5 +89438,2547 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
         13
       ]
     ]
+  },
+  "gm1-p01": {
+    "columns": [
+      "id",
+      "name",
+      "price"
+    ],
+    "rows": [
+      [
+        1,
+        "Mechanical Keyboard K1",
+        89.99
+      ],
+      [
+        2,
+        "Wireless Mouse M3",
+        34.5
+      ],
+      [
+        3,
+        "USB-C Hub 7-in-1",
+        49
+      ],
+      [
+        4,
+        "Noise-Canceling Headset",
+        149.99
+      ],
+      [
+        5,
+        "Studio Desktop Mic",
+        119
+      ],
+      [
+        6,
+        "Bluetooth Speaker Mini",
+        59.99
+      ],
+      [
+        7,
+        "4K Webcam Pro",
+        129
+      ],
+      [
+        8,
+        "Ring Light 14\"",
+        39.99
+      ],
+      [
+        9,
+        "HDMI 2.1 Cable 2m",
+        14.99
+      ],
+      [
+        10,
+        "Laptop Stand Aluminum",
+        42.5
+      ],
+      [
+        11,
+        "Desk Mat Extended",
+        24.99
+      ],
+      [
+        12,
+        "Fitness Band X2",
+        79
+      ],
+      [
+        13,
+        "Smart Watch S",
+        199.99
+      ],
+      [
+        14,
+        "Running Socks 3-pack",
+        18.5
+      ],
+      [
+        15,
+        "Cycling Jersey Pro",
+        65
+      ],
+      [
+        16,
+        "Yoga Mat Eco 6mm",
+        32
+      ]
+    ]
+  },
+  "gm1-p02": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "4K Webcam Pro"
+      ],
+      [
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Desk Mat Extended"
+      ],
+      [
+        "Fitness Band X2"
+      ],
+      [
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Ring Light 14\""
+      ],
+      [
+        "Running Socks 3-pack"
+      ],
+      [
+        "Smart Watch S"
+      ],
+      [
+        "Studio Desktop Mic"
+      ],
+      [
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Wireless Mouse M3"
+      ],
+      [
+        "Yoga Mat Eco 6mm"
+      ]
+    ]
+  },
+  "gm1-p03": {
+    "columns": [
+      "name",
+      "price"
+    ],
+    "rows": [
+      [
+        "Smart Watch S",
+        199.99
+      ],
+      [
+        "Noise-Canceling Headset",
+        149.99
+      ],
+      [
+        "4K Webcam Pro",
+        129
+      ],
+      [
+        "Studio Desktop Mic",
+        119
+      ]
+    ]
+  },
+  "gm1-p04": {
+    "columns": [
+      "id",
+      "total"
+    ],
+    "rows": [
+      [
+        3,
+        767.64
+      ],
+      [
+        7,
+        152.52
+      ],
+      [
+        13,
+        632.29
+      ],
+      [
+        14,
+        705.23
+      ],
+      [
+        19,
+        317.49
+      ],
+      [
+        21,
+        136.11
+      ],
+      [
+        31,
+        633.91
+      ],
+      [
+        32,
+        645.91
+      ],
+      [
+        40,
+        135.24
+      ],
+      [
+        42,
+        259.31
+      ],
+      [
+        48,
+        187.38
+      ],
+      [
+        55,
+        113.66
+      ],
+      [
+        58,
+        298.18
+      ],
+      [
+        63,
+        334.66
+      ],
+      [
+        66,
+        125.4
+      ],
+      [
+        70,
+        131.39
+      ],
+      [
+        79,
+        212.03
+      ],
+      [
+        84,
+        153.51
+      ],
+      [
+        86,
+        116.28
+      ],
+      [
+        89,
+        684.53
+      ],
+      [
+        93,
+        45.36
+      ],
+      [
+        95,
+        206.19
+      ],
+      [
+        100,
+        125.88
+      ],
+      [
+        101,
+        142.25
+      ]
+    ]
+  },
+  "gm1-p05": {
+    "columns": [
+      "delivered_orders"
+    ],
+    "rows": [
+      [
+        52
+      ]
+    ]
+  },
+  "gm1-p06": {
+    "columns": [
+      "name",
+      "price"
+    ],
+    "rows": [
+      [
+        "Smart Watch S",
+        199.99
+      ],
+      [
+        "Noise-Canceling Headset",
+        149.99
+      ],
+      [
+        "4K Webcam Pro",
+        129
+      ],
+      [
+        "Studio Desktop Mic",
+        119
+      ],
+      [
+        "Mechanical Keyboard K1",
+        89.99
+      ]
+    ]
+  },
+  "gm1-p07": {
+    "columns": [
+      "name",
+      "city"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        "Berlin"
+      ],
+      [
+        "Chloe Dubois",
+        "Lyon"
+      ],
+      [
+        "Dmitri Volkov",
+        "Tallinn"
+      ],
+      [
+        "Isabella Rossi",
+        "Milan"
+      ],
+      [
+        "Liam O'Brien",
+        "Cork"
+      ],
+      [
+        "Noah Meyer",
+        "Hamburg"
+      ],
+      [
+        "Olivia Brown",
+        "London"
+      ],
+      [
+        "Pedro Alvarez",
+        "Madrid"
+      ]
+    ]
+  },
+  "gm1-p08": {
+    "columns": [
+      "id"
+    ],
+    "rows": [
+      [
+        1
+      ],
+      [
+        5
+      ],
+      [
+        7
+      ],
+      [
+        12
+      ],
+      [
+        19
+      ],
+      [
+        21
+      ],
+      [
+        25
+      ],
+      [
+        42
+      ],
+      [
+        43
+      ],
+      [
+        47
+      ],
+      [
+        50
+      ],
+      [
+        51
+      ],
+      [
+        74
+      ],
+      [
+        75
+      ],
+      [
+        79
+      ],
+      [
+        82
+      ],
+      [
+        83
+      ],
+      [
+        90
+      ],
+      [
+        94
+      ],
+      [
+        95
+      ],
+      [
+        97
+      ]
+    ]
+  },
+  "gm1-p09": {
+    "columns": [
+      "name",
+      "stock"
+    ],
+    "rows": [
+      [
+        "HDMI 2.1 Cable 2m",
+        500
+      ],
+      [
+        "Running Socks 3-pack",
+        400
+      ],
+      [
+        "Wireless Mouse M3",
+        300
+      ]
+    ]
+  },
+  "gm1-p10": {
+    "columns": [
+      "name",
+      "price"
+    ],
+    "rows": [
+      [
+        "HDMI 2.1 Cable 2m",
+        14.99
+      ],
+      [
+        "Running Socks 3-pack",
+        18.5
+      ],
+      [
+        "Desk Mat Extended",
+        24.99
+      ]
+    ]
+  },
+  "gm1-p11": {
+    "columns": [
+      "product_count"
+    ],
+    "rows": [
+      [
+        16
+      ]
+    ]
+  },
+  "gm1-p12": {
+    "columns": [
+      "name",
+      "price"
+    ],
+    "rows": [
+      [
+        "HDMI 2.1 Cable 2m",
+        14.99
+      ]
+    ]
+  },
+  "gm1-p13": {
+    "columns": [
+      "revenue"
+    ],
+    "rows": [
+      [
+        34833.28
+      ]
+    ]
+  },
+  "gm1-p14": {
+    "columns": [
+      "avg_order_value"
+    ],
+    "rows": [
+      [
+        338.19
+      ]
+    ]
+  },
+  "gm1-p15": {
+    "columns": [
+      "status"
+    ],
+    "rows": [
+      [
+        "cancelled"
+      ],
+      [
+        "delivered"
+      ],
+      [
+        "pending"
+      ],
+      [
+        "shipped"
+      ]
+    ]
+  },
+  "gm1-p16": {
+    "columns": [
+      "region"
+    ],
+    "rows": [
+      [
+        "APAC"
+      ],
+      [
+        "EU"
+      ],
+      [
+        "LATAM"
+      ],
+      [
+        "US"
+      ]
+    ]
+  },
+  "gm1-p17": {
+    "columns": [
+      "id",
+      "total"
+    ],
+    "rows": [
+      [
+        1,
+        576.54
+      ],
+      [
+        2,
+        416.81
+      ],
+      [
+        3,
+        767.64
+      ],
+      [
+        4,
+        158.48
+      ],
+      [
+        5,
+        725.34
+      ],
+      [
+        6,
+        752.96
+      ],
+      [
+        7,
+        152.52
+      ],
+      [
+        8,
+        181.68
+      ]
+    ]
+  },
+  "gm1-p18": {
+    "columns": [
+      "id",
+      "total"
+    ],
+    "rows": [
+      [
+        7,
+        152.52
+      ],
+      [
+        21,
+        136.11
+      ],
+      [
+        50,
+        90.35
+      ],
+      [
+        51,
+        25.47
+      ],
+      [
+        82,
+        143.86
+      ],
+      [
+        83,
+        397.99
+      ],
+      [
+        95,
+        206.19
+      ]
+    ]
+  },
+  "gm1-p19": {
+    "columns": [
+      "name",
+      "price"
+    ],
+    "rows": [
+      [
+        "Yoga Mat Eco 6mm",
+        32
+      ],
+      [
+        "Wireless Mouse M3",
+        34.5
+      ],
+      [
+        "Ring Light 14\"",
+        39.99
+      ],
+      [
+        "Laptop Stand Aluminum",
+        42.5
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        49
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        59.99
+      ]
+    ]
+  },
+  "gm1-p20": {
+    "columns": [
+      "name",
+      "price"
+    ],
+    "rows": [
+      [
+        "Mechanical Keyboard K1",
+        89.99
+      ]
+    ]
+  },
+  "gm1-p21": {
+    "columns": [
+      "name",
+      "region"
+    ],
+    "rows": [
+      [
+        "Dmitri Volkov",
+        "EU"
+      ],
+      [
+        "Keiko Sato",
+        "APAC"
+      ]
+    ]
+  },
+  "gm1-p22": {
+    "columns": [
+      "id",
+      "total"
+    ],
+    "rows": [
+      [
+        103,
+        324.16
+      ],
+      [
+        102,
+        115.06
+      ],
+      [
+        101,
+        142.25
+      ],
+      [
+        100,
+        125.88
+      ],
+      [
+        99,
+        489.33
+      ]
+    ]
+  },
+  "gm1-p23": {
+    "columns": [
+      "name",
+      "category"
+    ],
+    "rows": [
+      [
+        "Mechanical Keyboard K1",
+        "Electronics"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Electronics"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Electronics"
+      ],
+      [
+        "4K Webcam Pro",
+        "Video"
+      ],
+      [
+        "Ring Light 14\"",
+        "Video"
+      ],
+      [
+        "Fitness Band X2",
+        "Wearables"
+      ],
+      [
+        "Smart Watch S",
+        "Wearables"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Apparel"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Apparel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Fitness"
+      ]
+    ]
+  },
+  "gm1-p24": {
+    "columns": [
+      "id",
+      "total"
+    ],
+    "rows": [
+      [
+        74,
+        1088.44
+      ]
+    ]
+  },
+  "gm1-p25": {
+    "columns": [
+      "max_price"
+    ],
+    "rows": [
+      [
+        199.99
+      ]
+    ]
+  },
+  "gm1-p26": {
+    "columns": [
+      "name",
+      "stock"
+    ],
+    "rows": [
+      [
+        "HDMI 2.1 Cable 2m",
+        500
+      ]
+    ]
+  },
+  "gm1-p27": {
+    "columns": [
+      "name",
+      "region"
+    ],
+    "rows": [
+      [
+        "Farid Nasser",
+        "APAC"
+      ],
+      [
+        "Grace Kim",
+        "APAC"
+      ],
+      [
+        "Hiro Tanaka",
+        "APAC"
+      ],
+      [
+        "Keiko Sato",
+        "APAC"
+      ],
+      [
+        "Maya Patel",
+        "APAC"
+      ],
+      [
+        "Bruno Silva",
+        "LATAM"
+      ],
+      [
+        "Emma Wilson",
+        "US"
+      ],
+      [
+        "Jamal Wright",
+        "US"
+      ]
+    ]
+  },
+  "gm1-p28": {
+    "columns": [
+      "distinct_cities"
+    ],
+    "rows": [
+      [
+        16
+      ]
+    ]
+  },
+  "gm1-p29": {
+    "columns": [
+      "id",
+      "total"
+    ],
+    "rows": [
+      [
+        48,
+        187.38
+      ],
+      [
+        8,
+        181.68
+      ],
+      [
+        10,
+        175.68
+      ],
+      [
+        81,
+        164.17
+      ],
+      [
+        90,
+        160.3
+      ],
+      [
+        4,
+        158.48
+      ],
+      [
+        84,
+        153.51
+      ],
+      [
+        7,
+        152.52
+      ],
+      [
+        94,
+        149
+      ],
+      [
+        12,
+        148.28
+      ],
+      [
+        82,
+        143.86
+      ],
+      [
+        101,
+        142.25
+      ],
+      [
+        21,
+        136.11
+      ],
+      [
+        40,
+        135.24
+      ],
+      [
+        70,
+        131.39
+      ],
+      [
+        100,
+        125.88
+      ],
+      [
+        66,
+        125.4
+      ],
+      [
+        18,
+        124.41
+      ],
+      [
+        34,
+        121.12
+      ],
+      [
+        69,
+        116.69
+      ],
+      [
+        86,
+        116.28
+      ],
+      [
+        102,
+        115.06
+      ],
+      [
+        55,
+        113.66
+      ]
+    ]
+  },
+  "gm1-p30": {
+    "columns": [
+      "id"
+    ],
+    "rows": [
+      [
+        2
+      ],
+      [
+        3
+      ],
+      [
+        4
+      ],
+      [
+        6
+      ],
+      [
+        8
+      ],
+      [
+        9
+      ],
+      [
+        10
+      ],
+      [
+        11
+      ],
+      [
+        13
+      ],
+      [
+        14
+      ],
+      [
+        15
+      ],
+      [
+        16
+      ],
+      [
+        17
+      ],
+      [
+        18
+      ],
+      [
+        20
+      ],
+      [
+        22
+      ],
+      [
+        23
+      ],
+      [
+        24
+      ],
+      [
+        26
+      ],
+      [
+        27
+      ],
+      [
+        28
+      ],
+      [
+        29
+      ],
+      [
+        30
+      ],
+      [
+        31
+      ],
+      [
+        32
+      ],
+      [
+        33
+      ],
+      [
+        34
+      ],
+      [
+        35
+      ],
+      [
+        36
+      ],
+      [
+        37
+      ],
+      [
+        38
+      ],
+      [
+        39
+      ],
+      [
+        40
+      ],
+      [
+        41
+      ],
+      [
+        44
+      ],
+      [
+        45
+      ],
+      [
+        46
+      ],
+      [
+        48
+      ],
+      [
+        49
+      ],
+      [
+        52
+      ],
+      [
+        53
+      ],
+      [
+        54
+      ],
+      [
+        55
+      ],
+      [
+        56
+      ],
+      [
+        57
+      ],
+      [
+        58
+      ],
+      [
+        59
+      ],
+      [
+        60
+      ],
+      [
+        61
+      ],
+      [
+        62
+      ],
+      [
+        63
+      ],
+      [
+        64
+      ],
+      [
+        65
+      ],
+      [
+        66
+      ],
+      [
+        67
+      ],
+      [
+        68
+      ],
+      [
+        69
+      ],
+      [
+        70
+      ],
+      [
+        71
+      ],
+      [
+        72
+      ],
+      [
+        73
+      ],
+      [
+        76
+      ],
+      [
+        77
+      ],
+      [
+        78
+      ],
+      [
+        80
+      ],
+      [
+        81
+      ],
+      [
+        84
+      ],
+      [
+        85
+      ],
+      [
+        86
+      ],
+      [
+        87
+      ],
+      [
+        88
+      ],
+      [
+        89
+      ],
+      [
+        91
+      ],
+      [
+        92
+      ],
+      [
+        93
+      ],
+      [
+        96
+      ],
+      [
+        98
+      ],
+      [
+        99
+      ],
+      [
+        100
+      ],
+      [
+        101
+      ],
+      [
+        102
+      ],
+      [
+        103
+      ]
+    ]
+  },
+  "gm1-p31": {
+    "columns": [
+      "status",
+      "orders"
+    ],
+    "rows": [
+      [
+        "cancelled",
+        7
+      ],
+      [
+        "delivered",
+        52
+      ],
+      [
+        "pending",
+        14
+      ],
+      [
+        "shipped",
+        30
+      ]
+    ]
+  },
+  "gm1-p32": {
+    "columns": [
+      "region",
+      "customers"
+    ],
+    "rows": [
+      [
+        "EU",
+        8
+      ],
+      [
+        "APAC",
+        5
+      ],
+      [
+        "US",
+        2
+      ],
+      [
+        "LATAM",
+        1
+      ]
+    ]
+  },
+  "gm1-p33": {
+    "columns": [
+      "category",
+      "avg_price"
+    ],
+    "rows": [
+      [
+        "Accessories",
+        27.49
+      ],
+      [
+        "Apparel",
+        41.75
+      ],
+      [
+        "Audio",
+        109.66
+      ],
+      [
+        "Electronics",
+        57.83
+      ],
+      [
+        "Fitness",
+        32
+      ],
+      [
+        "Video",
+        84.5
+      ],
+      [
+        "Wearables",
+        139.5
+      ]
+    ]
+  },
+  "gm1-p34": {
+    "columns": [
+      "status",
+      "revenue"
+    ],
+    "rows": [
+      [
+        "delivered",
+        15571.07
+      ],
+      [
+        "shipped",
+        11996.72
+      ],
+      [
+        "pending",
+        6113
+      ],
+      [
+        "cancelled",
+        1152.49
+      ]
+    ]
+  },
+  "gm1-p35": {
+    "columns": [
+      "status",
+      "orders"
+    ],
+    "rows": [
+      [
+        "delivered",
+        52
+      ]
+    ]
+  },
+  "gm1-p36": {
+    "columns": [
+      "category",
+      "avg_price"
+    ],
+    "rows": [
+      [
+        "Wearables",
+        139.5
+      ],
+      [
+        "Audio",
+        109.66
+      ],
+      [
+        "Video",
+        84.5
+      ]
+    ]
+  },
+  "gm1-p37": {
+    "columns": [
+      "customer_id",
+      "spend"
+    ],
+    "rows": [
+      [
+        1,
+        7262.35
+      ],
+      [
+        5,
+        6640.56
+      ],
+      [
+        7,
+        4574.23
+      ]
+    ]
+  },
+  "gm1-p38": {
+    "columns": [
+      "units_sold"
+    ],
+    "rows": [
+      [
+        498
+      ]
+    ]
+  },
+  "gm1-p39": {
+    "columns": [
+      "id",
+      "total"
+    ],
+    "rows": [
+      [
+        18,
+        124.41
+      ],
+      [
+        22,
+        450.12
+      ],
+      [
+        23,
+        99.48
+      ],
+      [
+        24,
+        419.37
+      ]
+    ]
+  },
+  "gm1-p40": {
+    "columns": [
+      "region",
+      "active_customers"
+    ],
+    "rows": [
+      [
+        "APAC",
+        4
+      ],
+      [
+        "EU",
+        7
+      ],
+      [
+        "LATAM",
+        1
+      ],
+      [
+        "US",
+        2
+      ]
+    ]
+  },
+  "gm1-p41": {
+    "columns": [
+      "category",
+      "total_stock"
+    ],
+    "rows": [
+      [
+        "Accessories",
+        760
+      ],
+      [
+        "Apparel",
+        400
+      ],
+      [
+        "Electronics",
+        300
+      ],
+      [
+        "Fitness",
+        220
+      ],
+      [
+        "Audio",
+        210
+      ]
+    ]
+  },
+  "gm1-p42": {
+    "columns": [
+      "id",
+      "ship_label"
+    ],
+    "rows": [
+      [
+        1,
+        "not shipped"
+      ],
+      [
+        5,
+        "not shipped"
+      ],
+      [
+        7,
+        "not shipped"
+      ],
+      [
+        12,
+        "not shipped"
+      ],
+      [
+        19,
+        "not shipped"
+      ]
+    ]
+  },
+  "gm1-p43": {
+    "columns": [
+      "delivered_revenue"
+    ],
+    "rows": [
+      [
+        15571.07
+      ]
+    ]
+  },
+  "gm1-p44": {
+    "columns": [
+      "distinct_products_sold"
+    ],
+    "rows": [
+      [
+        16
+      ]
+    ]
+  },
+  "gm1-p45": {
+    "columns": [
+      "category",
+      "products"
+    ],
+    "rows": [
+      [
+        "Accessories",
+        3
+      ],
+      [
+        "Apparel",
+        2
+      ],
+      [
+        "Audio",
+        3
+      ],
+      [
+        "Electronics",
+        3
+      ],
+      [
+        "Video",
+        2
+      ],
+      [
+        "Wearables",
+        2
+      ]
+    ]
+  },
+  "gm1-p46": {
+    "columns": [
+      "name",
+      "price"
+    ],
+    "rows": [
+      [
+        "Noise-Canceling Headset",
+        149.99
+      ],
+      [
+        "Studio Desktop Mic",
+        119
+      ],
+      [
+        "Cycling Jersey Pro",
+        65
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        59.99
+      ],
+      [
+        "Running Socks 3-pack",
+        18.5
+      ]
+    ]
+  },
+  "gm1-p47": {
+    "columns": [
+      "category",
+      "products",
+      "min_price",
+      "max_price"
+    ],
+    "rows": [
+      [
+        "Accessories",
+        3,
+        14.99,
+        42.5
+      ],
+      [
+        "Apparel",
+        2,
+        18.5,
+        65
+      ],
+      [
+        "Audio",
+        3,
+        59.99,
+        149.99
+      ],
+      [
+        "Electronics",
+        3,
+        34.5,
+        89.99
+      ],
+      [
+        "Fitness",
+        1,
+        32,
+        32
+      ],
+      [
+        "Video",
+        2,
+        39.99,
+        129
+      ],
+      [
+        "Wearables",
+        2,
+        79,
+        199.99
+      ]
+    ]
+  },
+  "gm1-p48": {
+    "columns": [
+      "names_with_a"
+    ],
+    "rows": [
+      [
+        14
+      ]
+    ]
+  },
+  "gm1-p49": {
+    "columns": [
+      "customer_id",
+      "order_count"
+    ],
+    "rows": [
+      [
+        1,
+        24
+      ],
+      [
+        5,
+        17
+      ],
+      [
+        7,
+        14
+      ],
+      [
+        13,
+        13
+      ],
+      [
+        3,
+        5
+      ]
+    ]
+  },
+  "gm1-p50": {
+    "columns": [
+      "category",
+      "stock_value"
+    ],
+    "rows": [
+      [
+        "Audio",
+        26952.3
+      ],
+      [
+        "Electronics",
+        25313.8
+      ],
+      [
+        "Accessories",
+        21642.4
+      ],
+      [
+        "Wearables",
+        15504.6
+      ],
+      [
+        "Video",
+        15028.5
+      ],
+      [
+        "Apparel",
+        14550
+      ],
+      [
+        "Fitness",
+        7040
+      ]
+    ]
+  },
+  "gm1-p51": {
+    "columns": [
+      "bulk_lines"
+    ],
+    "rows": [
+      [
+        89
+      ]
+    ]
+  },
+  "gm1-p52": {
+    "columns": [
+      "avg_quantity"
+    ],
+    "rows": [
+      [
+        1.98
+      ]
+    ]
+  },
+  "gm1-p53": {
+    "columns": [
+      "city",
+      "region"
+    ],
+    "rows": [
+      [
+        "Dubai",
+        "APAC"
+      ],
+      [
+        "Mumbai",
+        "APAC"
+      ],
+      [
+        "Nagoya",
+        "APAC"
+      ],
+      [
+        "Osaka",
+        "APAC"
+      ],
+      [
+        "Seoul",
+        "APAC"
+      ],
+      [
+        "Berlin",
+        "EU"
+      ],
+      [
+        "Cork",
+        "EU"
+      ],
+      [
+        "Hamburg",
+        "EU"
+      ],
+      [
+        "London",
+        "EU"
+      ],
+      [
+        "Lyon",
+        "EU"
+      ],
+      [
+        "Madrid",
+        "EU"
+      ],
+      [
+        "Milan",
+        "EU"
+      ],
+      [
+        "Tallinn",
+        "EU"
+      ],
+      [
+        "São Paulo",
+        "LATAM"
+      ],
+      [
+        "Austin",
+        "US"
+      ],
+      [
+        "Chicago",
+        "US"
+      ]
+    ]
+  },
+  "gm1-p54": {
+    "columns": [
+      "name",
+      "created_at"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        "2023-11-02"
+      ]
+    ]
+  },
+  "gm1-p55": {
+    "columns": [
+      "id",
+      "created_at"
+    ],
+    "rows": [
+      [
+        97,
+        "2025-02-27"
+      ]
+    ]
+  },
+  "gm1-p56": {
+    "columns": [
+      "status",
+      "min_total",
+      "max_total"
+    ],
+    "rows": [
+      [
+        "cancelled",
+        25.47,
+        397.99
+      ],
+      [
+        "delivered",
+        30.24,
+        752.96
+      ],
+      [
+        "pending",
+        148.28,
+        1088.44
+      ],
+      [
+        "shipped",
+        32.01,
+        845.92
+      ]
+    ]
+  },
+  "gm1-p57": {
+    "columns": [
+      "cancelled_revenue"
+    ],
+    "rows": [
+      [
+        1152.49
+      ]
+    ]
+  },
+  "gm1-p58": {
+    "columns": [
+      "id",
+      "total"
+    ],
+    "rows": [
+      [
+        74,
+        1088.44
+      ],
+      [
+        43,
+        945.21
+      ],
+      [
+        5,
+        725.34
+      ],
+      [
+        97,
+        585.79
+      ],
+      [
+        1,
+        576.54
+      ]
+    ]
+  },
+  "gm1-p59": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Alice Chen"
+      ],
+      [
+        "Chloe Dubois"
+      ],
+      [
+        "Isabella Rossi"
+      ],
+      [
+        "Liam O'Brien"
+      ],
+      [
+        "Noah Meyer"
+      ],
+      [
+        "Olivia Brown"
+      ],
+      [
+        "Pedro Alvarez"
+      ]
+    ]
+  },
+  "gm1-p60": {
+    "columns": [
+      "name",
+      "price"
+    ],
+    "rows": [
+      [
+        "4K Webcam Pro",
+        129
+      ],
+      [
+        "Cycling Jersey Pro",
+        65
+      ]
+    ]
+  },
+  "gm1-p61": {
+    "columns": [
+      "category",
+      "top_price"
+    ],
+    "rows": [
+      [
+        "Wearables",
+        199.99
+      ],
+      [
+        "Audio",
+        149.99
+      ],
+      [
+        "Video",
+        129
+      ]
+    ]
+  },
+  "gm1-p62": {
+    "columns": [
+      "category",
+      "roster"
+    ],
+    "rows": [
+      [
+        "Accessories",
+        "HDMI 2.1 Cable 2m,Laptop Stand Aluminum,Desk Mat Extended"
+      ],
+      [
+        "Apparel",
+        "Running Socks 3-pack,Cycling Jersey Pro"
+      ],
+      [
+        "Audio",
+        "Noise-Canceling Headset,Studio Desktop Mic,Bluetooth Speaker Mini"
+      ],
+      [
+        "Electronics",
+        "Mechanical Keyboard K1,Wireless Mouse M3,USB-C Hub 7-in-1"
+      ],
+      [
+        "Fitness",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Video",
+        "4K Webcam Pro,Ring Light 14\""
+      ],
+      [
+        "Wearables",
+        "Fitness Band X2,Smart Watch S"
+      ]
+    ]
+  },
+  "gm1-p63": {
+    "columns": [
+      "status",
+      "revenue"
+    ],
+    "rows": [
+      [
+        "delivered",
+        15571.07
+      ],
+      [
+        "shipped",
+        11996.72
+      ],
+      [
+        "pending",
+        6113
+      ]
+    ]
+  },
+  "gm1-p64": {
+    "columns": [
+      "region",
+      "customers"
+    ],
+    "rows": [
+      [
+        "EU",
+        8
+      ],
+      [
+        "APAC",
+        5
+      ],
+      [
+        "US",
+        2
+      ]
+    ]
+  },
+  "gm1-p65": {
+    "columns": [
+      "id",
+      "order_id",
+      "product_id",
+      "quantity"
+    ],
+    "rows": [
+      [
+        1,
+        1,
+        16,
+        3
+      ],
+      [
+        4,
+        1,
+        4,
+        3
+      ],
+      [
+        5,
+        2,
+        8,
+        3
+      ]
+    ]
+  },
+  "gm1-p66": {
+    "columns": [
+      "id",
+      "total"
+    ],
+    "rows": [
+      [
+        13,
+        632.29
+      ],
+      [
+        68,
+        625.14
+      ],
+      [
+        33,
+        624.66
+      ],
+      [
+        64,
+        611.87
+      ],
+      [
+        98,
+        608.06
+      ]
+    ]
+  },
+  "gm1-p67": {
+    "columns": [
+      "name",
+      "price"
+    ],
+    "rows": [
+      [
+        "Studio Desktop Mic",
+        119
+      ],
+      [
+        "Mechanical Keyboard K1",
+        89.99
+      ],
+      [
+        "Fitness Band X2",
+        79
+      ],
+      [
+        "Cycling Jersey Pro",
+        65
+      ]
+    ]
+  },
+  "gm1-p68": {
+    "columns": [
+      "all_orders",
+      "shipped_orders"
+    ],
+    "rows": [
+      [
+        103,
+        82
+      ]
+    ]
+  },
+  "gm1-p69": {
+    "columns": [
+      "status",
+      "avg_total"
+    ],
+    "rows": [
+      [
+        "pending",
+        436.64
+      ],
+      [
+        "shipped",
+        399.89
+      ]
+    ]
+  },
+  "gm1-p70": {
+    "columns": [
+      "not_delivered"
+    ],
+    "rows": [
+      [
+        51
+      ]
+    ]
+  },
+  "gm1-p71": {
+    "columns": [
+      "fallback_rows"
+    ],
+    "rows": [
+      [
+        21
+      ]
+    ]
+  },
+  "gm1-p72": {
+    "columns": [
+      "category",
+      "premium_products"
+    ],
+    "rows": [
+      [
+        "Audio",
+        1
+      ],
+      [
+        "Video",
+        1
+      ],
+      [
+        "Wearables",
+        1
+      ]
+    ]
+  },
+  "gm1-p73": {
+    "columns": [
+      "status_list"
+    ],
+    "rows": [
+      [
+        "pending,delivered,shipped,cancelled"
+      ]
+    ]
+  },
+  "gm1-p74": {
+    "columns": [
+      "id",
+      "quantity"
+    ],
+    "rows": [
+      [
+        1,
+        3
+      ]
+    ]
+  },
+  "gm1-p75": {
+    "columns": [
+      "customer_id",
+      "order_count"
+    ],
+    "rows": [
+      [
+        1,
+        24
+      ],
+      [
+        5,
+        17
+      ],
+      [
+        7,
+        14
+      ],
+      [
+        13,
+        13
+      ]
+    ]
+  },
+  "gm1-p76": {
+    "columns": [
+      "category",
+      "spread"
+    ],
+    "rows": [
+      [
+        "Wearables",
+        120.99
+      ],
+      [
+        "Audio",
+        90
+      ],
+      [
+        "Video",
+        89.01
+      ],
+      [
+        "Electronics",
+        55.49
+      ],
+      [
+        "Apparel",
+        46.5
+      ],
+      [
+        "Accessories",
+        27.51
+      ],
+      [
+        "Fitness",
+        0
+      ]
+    ]
+  },
+  "gm1-p77": {
+    "columns": [
+      "active_regions"
+    ],
+    "rows": [
+      [
+        3
+      ]
+    ]
+  },
+  "gm1-p78": {
+    "columns": [
+      "id",
+      "total",
+      "created_at"
+    ],
+    "rows": [
+      [
+        42,
+        259.31,
+        "2024-06-17"
+      ],
+      [
+        43,
+        945.21,
+        "2024-06-16"
+      ]
+    ]
+  },
+  "gm1-p79": {
+    "columns": [
+      "id",
+      "total"
+    ],
+    "rows": [
+      [
+        39,
+        845.92
+      ],
+      [
+        57,
+        785.79
+      ],
+      [
+        5,
+        725.34
+      ],
+      [
+        33,
+        624.66
+      ],
+      [
+        96,
+        590.2
+      ]
+    ]
+  },
+  "gm1-p80": {
+    "columns": [],
+    "rows": []
+  },
+  "gm1-p81": {
+    "columns": [
+      "name",
+      "price"
+    ],
+    "rows": [
+      [
+        "HDMI 2.1 Cable 2m",
+        14.99
+      ],
+      [
+        "Running Socks 3-pack",
+        18.5
+      ],
+      [
+        "Desk Mat Extended",
+        24.99
+      ],
+      [
+        "Smart Watch S",
+        199.99
+      ]
+    ]
+  },
+  "gm1-p82": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Ring Light 14\""
+      ],
+      [
+        "Running Socks 3-pack"
+      ],
+      [
+        "Smart Watch S"
+      ]
+    ]
+  },
+  "gm1-p83": {
+    "columns": [
+      "id",
+      "approx_total"
+    ],
+    "rows": [
+      [
+        74,
+        1088
+      ],
+      [
+        43,
+        945
+      ],
+      [
+        39,
+        846
+      ]
+    ]
+  },
+  "gm1-p84": {
+    "columns": [
+      "line_count",
+      "units",
+      "avg_qty",
+      "max_qty"
+    ],
+    "rows": [
+      [
+        251,
+        498,
+        1.98,
+        3
+      ]
+    ]
+  },
+  "gm1-p85": {
+    "columns": [
+      "customer_id",
+      "spend"
+    ],
+    "rows": [
+      [
+        1,
+        7262.35
+      ],
+      [
+        5,
+        6640.56
+      ],
+      [
+        7,
+        4574.23
+      ]
+    ]
+  },
+  "gm1-p86": {
+    "columns": [
+      "name",
+      "price"
+    ],
+    "rows": [
+      [
+        "HDMI 2.1 Cable 2m",
+        14.99
+      ],
+      [
+        "Running Socks 3-pack",
+        18.5
+      ],
+      [
+        "Desk Mat Extended",
+        24.99
+      ],
+      [
+        "4K Webcam Pro",
+        129
+      ],
+      [
+        "Noise-Canceling Headset",
+        149.99
+      ],
+      [
+        "Smart Watch S",
+        199.99
+      ]
+    ]
+  },
+  "gm1-p87": {
+    "columns": [
+      "id",
+      "total"
+    ],
+    "rows": [
+      [
+        1,
+        576.54
+      ],
+      [
+        5,
+        725.34
+      ],
+      [
+        12,
+        148.28
+      ],
+      [
+        19,
+        317.49
+      ],
+      [
+        25,
+        364.71
+      ],
+      [
+        42,
+        259.31
+      ],
+      [
+        43,
+        945.21
+      ],
+      [
+        47,
+        306.92
+      ],
+      [
+        74,
+        1088.44
+      ],
+      [
+        75,
+        273.64
+      ],
+      [
+        79,
+        212.03
+      ],
+      [
+        90,
+        160.3
+      ],
+      [
+        94,
+        149
+      ],
+      [
+        97,
+        585.79
+      ]
+    ]
+  },
+  "gm1-p88": {
+    "columns": [
+      "name",
+      "category",
+      "price"
+    ],
+    "rows": [
+      [
+        "Smart Watch S",
+        "Wearables",
+        199.99
+      ],
+      [
+        "4K Webcam Pro",
+        "Video",
+        129
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Apparel",
+        65
+      ]
+    ]
+  },
+  "gm1-p89": {
+    "columns": [
+      "integrity_violations"
+    ],
+    "rows": [
+      [
+        0
+      ]
+    ]
+  },
+  "gm1-p90": {
+    "columns": [
+      "category",
+      "products",
+      "avg_price"
+    ],
+    "rows": [
+      [
+        "Wearables",
+        2,
+        139.5
+      ],
+      [
+        "Audio",
+        3,
+        109.66
+      ],
+      [
+        "Video",
+        2,
+        84.5
+      ]
+    ]
   }
 };

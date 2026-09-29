@@ -118,7 +118,7 @@ const TIER_BADGE: Record<string, string> = {
 
 // ---- one case card ----------------------------------------------------------
 
-function CaseFileCard({ cs, onSolved }: { cs: CaseStudy; onSolved?: () => void }) {
+export function CaseFileCard({ cs, onSolved }: { cs: CaseStudy; onSolved?: () => void }) {
   const solvedBefore = useProgress((s) => s.xpEvents[`case:${cs.id}`] !== undefined);
   const [placed, setPlaced] = useState<Record<number, string>>({});
   const [armed, setArmed] = useState<string | null>(null);

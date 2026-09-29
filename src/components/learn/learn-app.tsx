@@ -14,6 +14,7 @@ import {
   Download,
   GraduationCap,
   RotateCcw,
+  Swords,
   Upload,
 } from "lucide-react";
 import { LESSONS, MODULES } from "@/lib/curriculum/lessons";
@@ -43,6 +44,9 @@ import { PerfLab } from "./perf-lab";
 import { DailyPuzzle } from "./daily-puzzle";
 import { FramePlayground } from "./frame-playground";
 import { SeeqView } from "./seeq-view";
+import { GauntletView } from "./gauntlet-view";
+import { KeywordPractice } from "./keyword-practice";
+import { gauntletFor } from "@/lib/curriculum/gauntlet";
 import { ActivityStrip, MasteryGrid } from "./progress-cards";
 import { CelebrationHost, celebrate } from "./celebrate";
 import { CORE_AND_TOOLBOX, LAB_TOOLS, TOOLS, type ToolKind } from "./tools";
@@ -62,6 +66,8 @@ type View =
   | { kind: "frames" }
   | { kind: "lesson"; id: string }
   | { kind: "exam"; moduleId: string }
+  | { kind: "gauntlet"; moduleId: string }
+  | { kind: "practice" }
   | { kind: "explorer" }
   | { kind: "mixed" }
   | { kind: "blitz" }
@@ -85,7 +91,7 @@ type View =
 // (and vice versa). A compile error here means: update tools.ts too.
 // ("exam" is argumented per-module like "lesson", so it sits outside the
 // registry — its entry point lives in each module's sidebar section.)
-type NonLessonViews = Exclude<View["kind"], "lesson" | "exam">;
+type NonLessonViews = Exclude<View["kind"], "lesson" | "exam" | "gauntlet">;
 export type RegistryCoversViews = [NonLessonViews] extends [ToolKind]
   ? [ToolKind] extends [NonLessonViews]
     ? true
@@ -495,6 +501,10 @@ function ViewBody({
     }
     case "exam":
       return <ExamView key={view.moduleId} moduleId={view.moduleId} onExit={exitExam} />;
+    case "gauntlet":
+      return <GauntletView key={view.moduleId} moduleId={view.moduleId} onExit={exitExam} />;
+    case "practice":
+      return <KeywordPractice />;
     case "roadmap":
       return <RoadmapTrack onOpenLesson={openLesson} onOpenExam={openExam} onOpenDrills={openDrills} />;
     case "seeq":
@@ -843,6 +853,23 @@ export function LearnApp() {
                           </span>
                         </span>
                       </button>
+                      {gauntletFor(m.num) && (
+                        <button
+                          onClick={() => setView({ kind: "gauntlet", moduleId: m.id })}
+                          className={cn(
+                            "relative flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left transition-colors",
+                            view.kind === "gauntlet" && view.moduleId === m.id ? "bg-indigo-400/[0.12]" : "hover:bg-zinc-900",
+                          )}
+                        >
+                          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-indigo-700 text-indigo-400">
+                            <Swords className="h-2.5 w-2.5" />
+                          </span>
+                          <span className="min-w-0">
+                            <span className="block truncate text-xs font-medium text-zinc-300">Module gauntlet</span>
+                            <span className="block text-[10px] text-zinc-600">50 quiz · 90 cases · 90 problems</span>
+                          </span>
+                        </button>
+                      )}
                     </div>
                   </Collapse>
                 </nav>

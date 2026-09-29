@@ -37,8 +37,11 @@ const args = process.argv.slice(2);
 let cases: CaseStudy[] = [];
 if (args.length === 0) {
   const mod = await import("../src/lib/curriculum/cases/index");
-  cases = mod.CASES;
-  console.log(`Auditing assembled index: ${cases.length} cases`);
+  cases = [...mod.CASES];
+  // Module gauntlet banks ride the default audit too (module-end practice tiers).
+  const gau = await import("../src/lib/curriculum/gauntlet");
+  cases.push(...gau.ALL_GAUNTLET_CASES);
+  console.log(`Auditing assembled index: ${cases.length} cases (${mod.CASES.length} core + ${gau.ALL_GAUNTLET_CASES.length} gauntlet)`);
 } else {
   for (const p of args) {
     const mod = await import(`../${p}`);

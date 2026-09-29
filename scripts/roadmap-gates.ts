@@ -18,6 +18,7 @@ import {
   type ProgSlice,
 } from "../src/lib/curriculum/roadmap";
 import { CASES } from "../src/lib/curriculum/cases";
+import { GAUNTLET_BANKS } from "../src/lib/curriculum/gauntlet";
 
 let fails = 0;
 function ok(cond: boolean, label: string) {
@@ -49,6 +50,28 @@ const s = sprintStats();
 console.log(`stats: days=${s.days} lessons=${s.lessons} mcqs=${s.mcqs} queries=${s.queries} exams=${s.exams} fills=${s.fills} caseFiles=${s.caseFiles} drills=${s.drills} minutes=${s.minutes} (~${Math.round(s.minutes / 60)}h)`);
 ok(s.days === 31 && s.lessons === 64 && s.mcqs === 951 && s.queries === 761, "census lessons/mcqs/queries");
 ok(s.exams === 11 && s.caseFiles === CASES.length && s.drills === 2799, "census exams/cases/drills");
+
+// ---- 2b. module gauntlet banks (Keyword Mastery program) -------------------
+const gTot = GAUNTLET_BANKS.reduce(
+  (a, b) => ({ mcqs: a.mcqs + b.mcqs.length, cases: a.cases + b.cases.length, problems: a.problems + b.problems.length }),
+  { mcqs: 0, cases: 0, problems: 0 },
+);
+ok(gTot.mcqs === 50 && gTot.cases === 90 && gTot.problems === 90, `gauntlet bank volumes 50/90/90 (got ${gTot.mcqs}/${gTot.cases}/${gTot.problems})`);
+const gCaseIds = GAUNTLET_BANKS.flatMap((b) => b.cases).map((c) => c.id);
+ok(new Set(gCaseIds).size === gCaseIds.length, "gauntlet case ids unique");
+const gCaseTiers = { easy: 0, medium: 0, hard: 0 } as Record<string, number>;
+for (const b of GAUNTLET_BANKS) for (const c of b.cases) gCaseTiers[c.tier] = (gCaseTiers[c.tier] ?? 0) + 1;
+ok(gCaseTiers.easy === 30 && gCaseTiers.medium === 30 && gCaseTiers.hard === 30, `gauntlet case tiers 30/30/30 (got ${gCaseTiers.easy}/${gCaseTiers.medium}/${gCaseTiers.hard})`);
+const gProbTiers = { easy: 0, medium: 0, hard: 0 } as Record<string, number>;
+for (const b of GAUNTLET_BANKS) for (const p of b.problems) gProbTiers[p.difficulty] = (gProbTiers[p.difficulty] ?? 0) + 1;
+ok(gProbTiers.easy === 30 && gProbTiers.medium === 30 && gProbTiers.hard === 30, `gauntlet problem tiers 30/30/30 (got ${gProbTiers.easy}/${gProbTiers.medium}/${gProbTiers.hard})`);
+const gMcqTiers = { easy: 0, medium: 0, hard: 0 } as Record<string, number>;
+for (const b of GAUNTLET_BANKS) for (const q of b.mcqs) gMcqTiers[q.difficulty ?? "easy"] = (gMcqTiers[q.difficulty ?? "easy"] ?? 0) + 1;
+ok(gMcqTiers.easy + gMcqTiers.medium + gMcqTiers.hard === 50, `gauntlet MCQ difficulties tagged (${gMcqTiers.easy}/${gMcqTiers.medium}/${gMcqTiers.hard})`);
+// gauntlet graded problems must have engine-verified targets
+import { EXPECTED } from "../src/lib/curriculum/expected";
+const gMissing = GAUNTLET_BANKS.flatMap((b) => b.problems).filter((p) => !EXPECTED[p.id]).length;
+ok(gMissing === 0, `gauntlet problems all have expected targets (${gMissing} missing)`);
 ok(s.minutes > 0, `plan minutes ${s.minutes}`);
 
 // ---- 3. fresh profile -----------------------------------------------------
