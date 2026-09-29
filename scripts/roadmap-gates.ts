@@ -52,26 +52,73 @@ ok(s.days === 31 && s.lessons === 64 && s.mcqs === 951 && s.queries === 761, "ce
 ok(s.exams === 11 && s.caseFiles === CASES.length && s.drills === 2799, "census exams/cases/drills");
 
 // ---- 2b. module gauntlet banks (Keyword Mastery program) -------------------
+// Every gauntlet bank must carry the full module-end contract: 50 MCQs +
+// 90 cases (30/30/30) + 90 problems (30/30/30), difficulty-tagged, expecteds.
+const gBankSizes = GAUNTLET_BANKS.map(
+  (b) => ({ moduleNum: b.moduleNum, mcqs: b.mcqs.length, cases: b.cases.length, problems: b.problems.length }),
+);
+ok(
+  gBankSizes.every((s) => s.mcqs === 50 && s.cases === 90 && s.problems === 90),
+  `each gauntlet bank volumes 50/90/90 (got ${gBankSizes.map((s) => `M${s.moduleNum}:${s.mcqs}/${s.cases}/${s.problems}`).join(", ")})`,
+);
 const gTot = GAUNTLET_BANKS.reduce(
   (a, b) => ({ mcqs: a.mcqs + b.mcqs.length, cases: a.cases + b.cases.length, problems: a.problems + b.problems.length }),
   { mcqs: 0, cases: 0, problems: 0 },
 );
-ok(gTot.mcqs === 50 && gTot.cases === 90 && gTot.problems === 90, `gauntlet bank volumes 50/90/90 (got ${gTot.mcqs}/${gTot.cases}/${gTot.problems})`);
+ok(gTot.mcqs === GAUNTLET_BANKS.length * 50, `gauntlet MCQ totals ${gTot.mcqs} = ${GAUNTLET_BANKS.length}×50`);
 const gCaseIds = GAUNTLET_BANKS.flatMap((b) => b.cases).map((c) => c.id);
 ok(new Set(gCaseIds).size === gCaseIds.length, "gauntlet case ids unique");
-const gCaseTiers = { easy: 0, medium: 0, hard: 0 } as Record<string, number>;
-for (const b of GAUNTLET_BANKS) for (const c of b.cases) gCaseTiers[c.tier] = (gCaseTiers[c.tier] ?? 0) + 1;
-ok(gCaseTiers.easy === 30 && gCaseTiers.medium === 30 && gCaseTiers.hard === 30, `gauntlet case tiers 30/30/30 (got ${gCaseTiers.easy}/${gCaseTiers.medium}/${gCaseTiers.hard})`);
-const gProbTiers = { easy: 0, medium: 0, hard: 0 } as Record<string, number>;
-for (const b of GAUNTLET_BANKS) for (const p of b.problems) gProbTiers[p.difficulty] = (gProbTiers[p.difficulty] ?? 0) + 1;
-ok(gProbTiers.easy === 30 && gProbTiers.medium === 30 && gProbTiers.hard === 30, `gauntlet problem tiers 30/30/30 (got ${gProbTiers.easy}/${gProbTiers.medium}/${gProbTiers.hard})`);
-const gMcqTiers = { easy: 0, medium: 0, hard: 0 } as Record<string, number>;
-for (const b of GAUNTLET_BANKS) for (const q of b.mcqs) gMcqTiers[q.difficulty ?? "easy"] = (gMcqTiers[q.difficulty ?? "easy"] ?? 0) + 1;
-ok(gMcqTiers.easy + gMcqTiers.medium + gMcqTiers.hard === 50, `gauntlet MCQ difficulties tagged (${gMcqTiers.easy}/${gMcqTiers.medium}/${gMcqTiers.hard})`);
+const gCaseTiersByBank = GAUNTLET_BANKS.map((b) => {
+  const t = { easy: 0, medium: 0, hard: 0 } as Record<string, number>;
+  for (const c of b.cases) t[c.tier] = (t[c.tier] ?? 0) + 1;
+  return t;
+});
+ok(
+  gCaseTiersByBank.every((t) => t.easy === 30 && t.medium === 30 && t.hard === 30),
+  `gauntlet case tiers 30/30/30 per bank (got ${gCaseTiersByBank.map((t) => `${t.easy}/${t.medium}/${t.hard}`).join(", ")})`,
+);
+const gProbTiersByBank = GAUNTLET_BANKS.map((b) => {
+  const t = { easy: 0, medium: 0, hard: 0 } as Record<string, number>;
+  for (const p of b.problems) t[p.difficulty] = (t[p.difficulty] ?? 0) + 1;
+  return t;
+});
+ok(
+  gProbTiersByBank.every((t) => t.easy === 30 && t.medium === 30 && t.hard === 30),
+  `gauntlet problem tiers 30/30/30 per bank (got ${gProbTiersByBank.map((t) => `${t.easy}/${t.medium}/${t.hard}`).join(", ")})`,
+);
+const gMcqTiersByBank = GAUNTLET_BANKS.map((b) => {
+  const t = { easy: 0, medium: 0, hard: 0 } as Record<string, number>;
+  for (const q of b.mcqs) t[q.difficulty ?? "easy"] = (t[q.difficulty ?? "easy"] ?? 0) + 1;
+  return t;
+});
+ok(
+  gMcqTiersByBank.every((t) => t.easy + t.medium + t.hard === 50),
+  `gauntlet MCQ difficulties tagged per bank (got ${gMcqTiersByBank.map((t) => `${t.easy}/${t.medium}/${t.hard}`).join(", ")})`,
+);
 // gauntlet graded problems must have engine-verified targets
 import { EXPECTED } from "../src/lib/curriculum/expected";
 const gMissing = GAUNTLET_BANKS.flatMap((b) => b.problems).filter((p) => !EXPECTED[p.id]).length;
 ok(gMissing === 0, `gauntlet problems all have expected targets (${gMissing} missing)`);
+
+// ---- 2c. keyword mastery banks (per-keyword gap closers) -------------------
+import { KEYWORD_BANKS, ALL_KEYWORD_BANK_CASES } from "../src/lib/curriculum/keyword-banks";
+import { D as KW_DICT } from "../src/lib/curriculum/keyword-taxonomy";
+const kwNames = new Set(KW_DICT.map((d) => d.kw));
+ok(
+  KEYWORD_BANKS.every((b) => kwNames.has(b.kw)),
+  `keyword banks name canonical dictionary keywords (${KEYWORD_BANKS.map((b) => b.kw).join("; ")})`,
+);
+ok(new Set(KEYWORD_BANKS.map((b) => b.kw)).size === KEYWORD_BANKS.length, "keyword bank keywords unique");
+const kbCaseIds = ALL_KEYWORD_BANK_CASES.map((c) => c.id);
+ok(new Set(kbCaseIds).size === kbCaseIds.length, "keyword-bank case ids unique");
+ok(
+  new Set([...gCaseIds, ...kbCaseIds]).size === gCaseIds.length + kbCaseIds.length,
+  "no overlap between gauntlet and keyword-bank case ids",
+);
+const kbMcqIds = KEYWORD_BANKS.flatMap((b) => b.mcqs).map((q) => q.id);
+ok(new Set(kbMcqIds).size === kbMcqIds.length, "keyword-bank MCQ ids unique");
+const kbMissing = KEYWORD_BANKS.flatMap((b) => b.problems).filter((p) => !EXPECTED[p.id]).length;
+ok(kbMissing === 0, `keyword-bank problems all have expected targets (${kbMissing} missing)`);
 ok(s.minutes > 0, `plan minutes ${s.minutes}`);
 
 // ---- 3. fresh profile -----------------------------------------------------

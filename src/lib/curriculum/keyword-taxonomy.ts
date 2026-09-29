@@ -37,11 +37,11 @@ export const D: KwDef[] = [
   { kw: "RIGHT JOIN", cat: "Joins", prose: [/\bright (outer )?join\b/], sql: [/\bright (outer )?join\b/] },
   { kw: "FULL OUTER JOIN", cat: "Joins", prose: [/\bfull (outer )?join\b/, /\bsymmetric difference\b/], sql: [/\bfull (outer )?join\b/] },
   { kw: "CROSS JOIN", cat: "Joins", prose: [/\bcross (join|product)\b/, /\bpair(s|ing|wise)? (every|all|combin)/, /\bpermutation/], sql: [/\bcross join\b/] },
-  { kw: "SELF JOIN", cat: "Joins", prose: [/\bself.?join/], sql: [] },
+  { kw: "SELF JOIN", cat: "Joins", prose: [/\bself.?join/, /\btable (joined )?to itself\b/, /\bjoin(s|ing)? [^.;]{0,24}\bitself\b/, /\bsame table [^.;]{0,20}(joined|pair)/], sql: [] },
   { kw: "Anti-join", cat: "Joins", prose: [/\banti.?join/, /\bnever (ordered|paid|placed)/, /\bno (orders?|payments?|match|reply)/], sql: [/\bnot exists\b/, /left join[^;]{0,160}?is\s+null/] },
   { kw: "Non-equi & range joins", cat: "Joins", prose: [/\bnon.?equi/, /\brange join/, /\bband join/, /\boverlapping (ranges?|intervals?|bounds)/], sql: [] },
   { kw: "Join fan-out & grain", cat: "Joins", prose: [/\bfan.?out/, /\bdouble.?count/, /\binflat/, /\bgrain\b/, /\bduplicated rows?\b/, /\bone row per\b/], sql: [] },
-  { kw: "ON vs WHERE", cat: "Joins", prose: [/\bon vs\.? where\b/, /\bon clause\b/, /\bin the on\b/], sql: [] },
+  { kw: "ON vs WHERE", cat: "Joins", prose: [/\bon vs\.? where\b/, /\bon.?clause\b/, /\bin the on\b/, /\bthe on\b/, /\bin on\b/, /\binside the on\b/, /\bplacement\b/], sql: [] },
   // Set operations
   { kw: "UNION & UNION ALL", cat: "Set operations", prose: [/\bunion\b/, /\bstack(ed)? reports?\b/], sql: [/\bunion\b/] },
   { kw: "INTERSECT", cat: "Set operations", prose: [/\bintersect\b/, /\boverlap\b/], sql: [/\bintersect\b/] },

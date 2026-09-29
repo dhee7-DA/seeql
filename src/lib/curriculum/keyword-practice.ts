@@ -8,12 +8,13 @@ import type { CaseStudy } from "./cases/types";
 import { LESSONS, MODULES } from "./lessons";
 import { CASES, CASE_TOPICS } from "./cases";
 import { GAUNTLET_BANKS } from "./gauntlet";
+import { KEYWORD_BANKS } from "./keyword-banks";
 import { tag } from "./keyword-taxonomy";
 
 export interface KeywordPool {
-  mcqs: Array<{ item: Mcq; source: "lesson" | "gauntlet" }>;
-  cases: Array<{ item: CaseStudy; source: "lesson" | "gauntlet" }>;
-  problems: Array<{ item: Problem; source: "lesson" | "gauntlet" }>;
+  mcqs: Array<{ item: Mcq; source: "lesson" | "gauntlet" | "bank" }>;
+  cases: Array<{ item: CaseStudy; source: "lesson" | "gauntlet" | "bank" }>;
+  problems: Array<{ item: Problem; source: "lesson" | "gauntlet" | "bank" }>;
 }
 
 const lessonToModule = new Map<number, number>();
@@ -66,6 +67,22 @@ function buildPools(): Map<string, KeywordPool> {
       const slotText = c.slots.map((s) => `${s.answer} ${s.label} ${s.why}`).join(" ");
       for (const kw of tag(bank.moduleNum, `${c.title} ${c.brief} ${c.ask} ${c.walkthrough} ${slotText}`, `${c.template} ${c.slots.map((s) => s.answer).join(" ")}`).kws)
         poolFor(kw).cases.push({ item: c, source: "gauntlet" });
+    }
+  }
+  // Per-keyword mastery banks — items written for a specific keyword, still multi-labeled
+  for (const bank of KEYWORD_BANKS) {
+    for (const q of bank.mcqs) {
+      const why = (q.why ?? "") + " " + (q.notes ?? []).map((n) => n.why).join(" ");
+      for (const kw of tag(bank.moduleNum, `${q.prompt} ${why}`, "").kws) poolFor(kw).mcqs.push({ item: q, source: "bank" });
+    }
+    for (const p of bank.problems) {
+      const hints = (p.hints ?? []).join(" ");
+      for (const kw of tag(bank.moduleNum, `${p.title} ${p.brief} ${hints}`, p.solution).kws) poolFor(kw).problems.push({ item: p, source: "bank" });
+    }
+    for (const c of bank.cases) {
+      const slotText = c.slots.map((s) => `${s.answer} ${s.label} ${s.why}`).join(" ");
+      for (const kw of tag(bank.moduleNum, `${c.title} ${c.brief} ${c.ask} ${c.walkthrough} ${slotText}`, `${c.template} ${c.slots.map((s) => s.answer).join(" ")}`).kws)
+        poolFor(kw).cases.push({ item: c, source: "bank" });
     }
   }
   return pools;

@@ -41,7 +41,12 @@ if (args.length === 0) {
   // Module gauntlet banks ride the default audit too (module-end practice tiers).
   const gau = await import("../src/lib/curriculum/gauntlet");
   cases.push(...gau.ALL_GAUNTLET_CASES);
-  console.log(`Auditing assembled index: ${cases.length} cases (${mod.CASES.length} core + ${gau.ALL_GAUNTLET_CASES.length} gauntlet)`);
+  // Keyword Mastery banks — per-keyword gap closers (audit under their topic grammar).
+  const kb = await import("../src/lib/curriculum/keyword-banks");
+  cases.push(...kb.ALL_KEYWORD_BANK_CASES);
+  console.log(
+    `Auditing assembled index: ${cases.length} cases (${mod.CASES.length} core + ${gau.ALL_GAUNTLET_CASES.length} gauntlet + ${kb.ALL_KEYWORD_BANK_CASES.length} keyword-bank)`,
+  );
 } else {
   for (const p of args) {
     const mod = await import(`../${p}`);

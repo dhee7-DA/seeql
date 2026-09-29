@@ -91980,5 +91980,22654 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
         84.5
       ]
     ]
+  },
+  "kb-lj-p01": {
+    "columns": [
+      "name",
+      "order_count"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        24
+      ],
+      [
+        "Emma Wilson",
+        17
+      ],
+      [
+        "Grace Kim",
+        14
+      ],
+      [
+        "Maya Patel",
+        13
+      ],
+      [
+        "Chloe Dubois",
+        5
+      ],
+      [
+        "Isabella Rossi",
+        4
+      ],
+      [
+        "Keiko Sato",
+        4
+      ],
+      [
+        "Noah Meyer",
+        4
+      ],
+      [
+        "Pedro Alvarez",
+        4
+      ],
+      [
+        "Farid Nasser",
+        3
+      ],
+      [
+        "Hiro Tanaka",
+        3
+      ],
+      [
+        "Bruno Silva",
+        2
+      ],
+      [
+        "Dmitri Volkov",
+        2
+      ],
+      [
+        "Jamal Wright",
+        2
+      ],
+      [
+        "Liam O'Brien",
+        1
+      ],
+      [
+        "Olivia Brown",
+        1
+      ]
+    ]
+  },
+  "kb-lj-p02": {
+    "columns": [
+      "name",
+      "pending_count"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        3
+      ],
+      [
+        "Emma Wilson",
+        3
+      ],
+      [
+        "Chloe Dubois",
+        2
+      ],
+      [
+        "Maya Patel",
+        2
+      ],
+      [
+        "Farid Nasser",
+        1
+      ],
+      [
+        "Grace Kim",
+        1
+      ],
+      [
+        "Keiko Sato",
+        1
+      ],
+      [
+        "Pedro Alvarez",
+        1
+      ],
+      [
+        "Bruno Silva",
+        0
+      ],
+      [
+        "Dmitri Volkov",
+        0
+      ],
+      [
+        "Hiro Tanaka",
+        0
+      ],
+      [
+        "Isabella Rossi",
+        0
+      ],
+      [
+        "Jamal Wright",
+        0
+      ],
+      [
+        "Liam O'Brien",
+        0
+      ],
+      [
+        "Noah Meyer",
+        0
+      ],
+      [
+        "Olivia Brown",
+        0
+      ]
+    ]
+  },
+  "kb-lj-p03": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Bruno Silva"
+      ],
+      [
+        "Dmitri Volkov"
+      ],
+      [
+        "Hiro Tanaka"
+      ],
+      [
+        "Isabella Rossi"
+      ],
+      [
+        "Jamal Wright"
+      ],
+      [
+        "Liam O'Brien"
+      ],
+      [
+        "Noah Meyer"
+      ],
+      [
+        "Olivia Brown"
+      ]
+    ]
+  },
+  "kb-lj-p04": {
+    "columns": [
+      "name",
+      "pending_spend"
+    ],
+    "rows": [
+      [
+        "Emma Wilson",
+        1471.43
+      ],
+      [
+        "Chloe Dubois",
+        1309.92
+      ],
+      [
+        "Farid Nasser",
+        1088.44
+      ],
+      [
+        "Alice Chen",
+        788.83
+      ],
+      [
+        "Pedro Alvarez",
+        576.54
+      ],
+      [
+        "Maya Patel",
+        455.2
+      ],
+      [
+        "Grace Kim",
+        273.64
+      ],
+      [
+        "Keiko Sato",
+        149
+      ],
+      [
+        "Bruno Silva",
+        "0"
+      ],
+      [
+        "Dmitri Volkov",
+        "0"
+      ],
+      [
+        "Hiro Tanaka",
+        "0"
+      ],
+      [
+        "Isabella Rossi",
+        "0"
+      ],
+      [
+        "Jamal Wright",
+        "0"
+      ],
+      [
+        "Liam O'Brien",
+        "0"
+      ],
+      [
+        "Noah Meyer",
+        "0"
+      ],
+      [
+        "Olivia Brown",
+        "0"
+      ]
+    ]
+  },
+  "kb-lj-p05": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Dmitri Volkov"
+      ],
+      [
+        "Hiro Tanaka"
+      ],
+      [
+        "Jamal Wright"
+      ],
+      [
+        "Keiko Sato"
+      ],
+      [
+        "Noah Meyer"
+      ],
+      [
+        "Olivia Brown"
+      ]
+    ]
+  },
+  "kb-lj-p06": {
+    "columns": [
+      "region",
+      "unshipped"
+    ],
+    "rows": [
+      [
+        "EU",
+        9
+      ],
+      [
+        "APAC",
+        8
+      ],
+      [
+        "US",
+        4
+      ]
+    ]
+  },
+  "kb-rj-p01": {
+    "columns": [
+      "number",
+      "payment_id",
+      "amount_cents"
+    ],
+    "rows": [
+      [
+        "INV-2024-001",
+        1,
+        243000
+      ],
+      [
+        "INV-2024-001",
+        2,
+        243000
+      ],
+      [
+        "INV-2024-002",
+        3,
+        214300
+      ],
+      [
+        "INV-2024-003",
+        4,
+        342000
+      ],
+      [
+        "INV-2024-004",
+        5,
+        158900
+      ],
+      [
+        "INV-2024-005",
+        6,
+        264200
+      ],
+      [
+        "INV-2024-005",
+        7,
+        264200
+      ],
+      [
+        "INV-2024-006",
+        8,
+        233600
+      ],
+      [
+        "INV-2024-007",
+        9,
+        198200
+      ],
+      [
+        "INV-2024-008",
+        10,
+        401500
+      ],
+      [
+        "INV-2024-009",
+        11,
+        187300
+      ],
+      [
+        "INV-2024-010",
+        12,
+        296800
+      ],
+      [
+        "INV-2024-011",
+        22,
+        92500
+      ],
+      [
+        "INV-2024-012",
+        13,
+        236150
+      ],
+      [
+        "INV-2024-012",
+        14,
+        236150
+      ],
+      [
+        "INV-2024-013",
+        15,
+        254700
+      ],
+      [
+        "INV-2024-014",
+        16,
+        351200
+      ],
+      [
+        "INV-2024-015",
+        17,
+        228900
+      ],
+      [
+        "INV-2024-016",
+        18,
+        389600
+      ],
+      [
+        "INV-2024-017",
+        23,
+        141800
+      ],
+      [
+        "INV-2024-018",
+        null,
+        null
+      ],
+      [
+        "INV-2024-019",
+        19,
+        280700
+      ],
+      [
+        "INV-2024-019",
+        20,
+        280700
+      ],
+      [
+        "INV-2024-020",
+        21,
+        268300
+      ],
+      [
+        "INV-2024-021",
+        null,
+        null
+      ],
+      [
+        "INV-2024-022",
+        24,
+        222950
+      ],
+      [
+        "INV-2024-022",
+        25,
+        222950
+      ],
+      [
+        "INV-2024-023",
+        26,
+        307600
+      ],
+      [
+        "INV-2025-024",
+        null,
+        null
+      ],
+      [
+        "INV-2025-025",
+        27,
+        400000
+      ],
+      [
+        "INV-2025-026",
+        null,
+        null
+      ],
+      [
+        "INV-2025-027",
+        null,
+        null
+      ],
+      [
+        "INV-2025-028",
+        null,
+        null
+      ]
+    ]
+  },
+  "kb-rj-p02": {
+    "columns": [
+      "joined_rows"
+    ],
+    "rows": [
+      [
+        33
+      ]
+    ]
+  },
+  "kb-rj-p03": {
+    "columns": [
+      "number"
+    ],
+    "rows": [
+      [
+        "INV-2024-018"
+      ],
+      [
+        "INV-2024-021"
+      ],
+      [
+        "INV-2025-024"
+      ],
+      [
+        "INV-2025-026"
+      ],
+      [
+        "INV-2025-027"
+      ],
+      [
+        "INV-2025-028"
+      ]
+    ]
+  },
+  "kb-rj-p04": {
+    "columns": [
+      "order_id",
+      "total",
+      "customer"
+    ],
+    "rows": [
+      [
+        1,
+        576.54,
+        "Pedro Alvarez"
+      ],
+      [
+        2,
+        416.81,
+        "Maya Patel"
+      ],
+      [
+        3,
+        767.64,
+        "Alice Chen"
+      ],
+      [
+        4,
+        158.48,
+        "Maya Patel"
+      ],
+      [
+        5,
+        725.34,
+        "Emma Wilson"
+      ],
+      [
+        6,
+        752.96,
+        "Bruno Silva"
+      ],
+      [
+        7,
+        152.52,
+        "Alice Chen"
+      ],
+      [
+        8,
+        181.68,
+        "Emma Wilson"
+      ],
+      [
+        9,
+        46.67,
+        "Grace Kim"
+      ],
+      [
+        10,
+        175.68,
+        "Keiko Sato"
+      ],
+      [
+        11,
+        283.12,
+        "Maya Patel"
+      ],
+      [
+        12,
+        148.28,
+        "Maya Patel"
+      ],
+      [
+        13,
+        632.29,
+        "Alice Chen"
+      ],
+      [
+        14,
+        705.23,
+        "Alice Chen"
+      ],
+      [
+        15,
+        826.03,
+        "Grace Kim"
+      ],
+      [
+        16,
+        507.24,
+        "Emma Wilson"
+      ],
+      [
+        17,
+        285.1,
+        "Emma Wilson"
+      ],
+      [
+        18,
+        124.41,
+        "Grace Kim"
+      ],
+      [
+        19,
+        317.49,
+        "Alice Chen"
+      ],
+      [
+        20,
+        705.39,
+        "Liam O'Brien"
+      ],
+      [
+        21,
+        136.11,
+        "Alice Chen"
+      ],
+      [
+        22,
+        450.12,
+        "Hiro Tanaka"
+      ],
+      [
+        23,
+        99.48,
+        "Bruno Silva"
+      ],
+      [
+        24,
+        419.37,
+        "Maya Patel"
+      ],
+      [
+        25,
+        364.71,
+        "Chloe Dubois"
+      ],
+      [
+        26,
+        263.91,
+        "Hiro Tanaka"
+      ],
+      [
+        27,
+        577.19,
+        "Chloe Dubois"
+      ],
+      [
+        28,
+        241.88,
+        "Jamal Wright"
+      ],
+      [
+        29,
+        49.92,
+        "Isabella Rossi"
+      ],
+      [
+        30,
+        56.19,
+        "Noah Meyer"
+      ],
+      [
+        31,
+        633.91,
+        "Alice Chen"
+      ],
+      [
+        32,
+        645.91,
+        "Alice Chen"
+      ],
+      [
+        33,
+        624.66,
+        "Emma Wilson"
+      ],
+      [
+        34,
+        121.12,
+        "Chloe Dubois"
+      ],
+      [
+        35,
+        373,
+        "Grace Kim"
+      ],
+      [
+        36,
+        355.07,
+        "Pedro Alvarez"
+      ],
+      [
+        37,
+        379.83,
+        "Emma Wilson"
+      ],
+      [
+        38,
+        75.47,
+        "Noah Meyer"
+      ],
+      [
+        39,
+        845.92,
+        "Emma Wilson"
+      ],
+      [
+        40,
+        135.24,
+        "Alice Chen"
+      ],
+      [
+        41,
+        67.25,
+        "Emma Wilson"
+      ],
+      [
+        42,
+        259.31,
+        "Alice Chen"
+      ],
+      [
+        43,
+        945.21,
+        "Chloe Dubois"
+      ],
+      [
+        44,
+        282.51,
+        "Maya Patel"
+      ],
+      [
+        45,
+        80.27,
+        "Grace Kim"
+      ],
+      [
+        46,
+        412.88,
+        "Grace Kim"
+      ],
+      [
+        47,
+        306.92,
+        "Maya Patel"
+      ],
+      [
+        48,
+        187.38,
+        "Alice Chen"
+      ],
+      [
+        49,
+        32.01,
+        "Isabella Rossi"
+      ],
+      [
+        50,
+        90.35,
+        "Maya Patel"
+      ],
+      [
+        51,
+        25.47,
+        "Maya Patel"
+      ],
+      [
+        52,
+        238.38,
+        "Grace Kim"
+      ],
+      [
+        53,
+        39.39,
+        "Emma Wilson"
+      ],
+      [
+        54,
+        273.96,
+        "Maya Patel"
+      ],
+      [
+        55,
+        113.66,
+        "Alice Chen"
+      ],
+      [
+        56,
+        317.63,
+        "Grace Kim"
+      ],
+      [
+        57,
+        785.79,
+        "Emma Wilson"
+      ],
+      [
+        58,
+        298.18,
+        "Alice Chen"
+      ],
+      [
+        59,
+        44.48,
+        "Farid Nasser"
+      ],
+      [
+        60,
+        403.72,
+        "Jamal Wright"
+      ],
+      [
+        61,
+        388.61,
+        "Grace Kim"
+      ],
+      [
+        62,
+        86.11,
+        "Pedro Alvarez"
+      ],
+      [
+        63,
+        334.66,
+        "Alice Chen"
+      ],
+      [
+        64,
+        611.87,
+        "Maya Patel"
+      ],
+      [
+        65,
+        425.08,
+        "Emma Wilson"
+      ],
+      [
+        66,
+        125.4,
+        "Alice Chen"
+      ],
+      [
+        67,
+        659.7,
+        "Chloe Dubois"
+      ],
+      [
+        68,
+        625.14,
+        "Grace Kim"
+      ],
+      [
+        69,
+        116.69,
+        "Noah Meyer"
+      ],
+      [
+        70,
+        131.39,
+        "Alice Chen"
+      ],
+      [
+        71,
+        668.45,
+        "Pedro Alvarez"
+      ],
+      [
+        72,
+        30.24,
+        "Emma Wilson"
+      ],
+      [
+        73,
+        375.93,
+        "Keiko Sato"
+      ],
+      [
+        74,
+        1088.44,
+        "Farid Nasser"
+      ],
+      [
+        75,
+        273.64,
+        "Grace Kim"
+      ],
+      [
+        76,
+        235.71,
+        "Grace Kim"
+      ],
+      [
+        77,
+        303.26,
+        "Maya Patel"
+      ],
+      [
+        78,
+        295.66,
+        "Isabella Rossi"
+      ],
+      [
+        79,
+        212.03,
+        "Alice Chen"
+      ],
+      [
+        80,
+        435.09,
+        "Dmitri Volkov"
+      ],
+      [
+        81,
+        164.17,
+        "Dmitri Volkov"
+      ],
+      [
+        82,
+        143.86,
+        "Emma Wilson"
+      ],
+      [
+        83,
+        397.99,
+        "Keiko Sato"
+      ],
+      [
+        84,
+        153.51,
+        "Alice Chen"
+      ],
+      [
+        85,
+        262.89,
+        "Emma Wilson"
+      ],
+      [
+        86,
+        116.28,
+        "Alice Chen"
+      ],
+      [
+        87,
+        326.05,
+        "Farid Nasser"
+      ],
+      [
+        88,
+        397.91,
+        "Grace Kim"
+      ],
+      [
+        89,
+        684.53,
+        "Alice Chen"
+      ],
+      [
+        90,
+        160.3,
+        "Emma Wilson"
+      ],
+      [
+        91,
+        444.8,
+        "Olivia Brown"
+      ],
+      [
+        92,
+        233.95,
+        "Grace Kim"
+      ],
+      [
+        93,
+        45.36,
+        "Alice Chen"
+      ],
+      [
+        94,
+        149,
+        "Keiko Sato"
+      ],
+      [
+        95,
+        206.19,
+        "Alice Chen"
+      ],
+      [
+        96,
+        590.2,
+        "Emma Wilson"
+      ],
+      [
+        97,
+        585.79,
+        "Emma Wilson"
+      ],
+      [
+        98,
+        608.06,
+        "Isabella Rossi"
+      ],
+      [
+        99,
+        489.33,
+        "Noah Meyer"
+      ],
+      [
+        100,
+        125.88,
+        "Alice Chen"
+      ],
+      [
+        101,
+        142.25,
+        "Alice Chen"
+      ],
+      [
+        102,
+        115.06,
+        "Hiro Tanaka"
+      ],
+      [
+        103,
+        324.16,
+        "Maya Patel"
+      ]
+    ]
+  },
+  "kb-rj-p05": {
+    "columns": [
+      "payment_id",
+      "method",
+      "amount_cents",
+      "number"
+    ],
+    "rows": [
+      [
+        1,
+        "card",
+        243000,
+        "INV-2024-001"
+      ],
+      [
+        2,
+        "wire",
+        243000,
+        "INV-2024-001"
+      ],
+      [
+        3,
+        "card",
+        214300,
+        "INV-2024-002"
+      ],
+      [
+        4,
+        "wire",
+        342000,
+        "INV-2024-003"
+      ],
+      [
+        5,
+        "card",
+        158900,
+        "INV-2024-004"
+      ],
+      [
+        6,
+        "card",
+        264200,
+        "INV-2024-005"
+      ],
+      [
+        7,
+        "wire",
+        264200,
+        "INV-2024-005"
+      ],
+      [
+        8,
+        "card",
+        233600,
+        "INV-2024-006"
+      ],
+      [
+        9,
+        "wire",
+        198200,
+        "INV-2024-007"
+      ],
+      [
+        10,
+        "card",
+        401500,
+        "INV-2024-008"
+      ],
+      [
+        11,
+        "card",
+        187300,
+        "INV-2024-009"
+      ],
+      [
+        12,
+        "wire",
+        296800,
+        "INV-2024-010"
+      ],
+      [
+        13,
+        "card",
+        236150,
+        "INV-2024-012"
+      ],
+      [
+        14,
+        "wire",
+        236150,
+        "INV-2024-012"
+      ],
+      [
+        15,
+        "card",
+        254700,
+        "INV-2024-013"
+      ],
+      [
+        16,
+        "wire",
+        351200,
+        "INV-2024-014"
+      ],
+      [
+        17,
+        "card",
+        228900,
+        "INV-2024-015"
+      ],
+      [
+        18,
+        "wire",
+        389600,
+        "INV-2024-016"
+      ],
+      [
+        19,
+        "card",
+        280700,
+        "INV-2024-019"
+      ],
+      [
+        20,
+        "wire",
+        280700,
+        "INV-2024-019"
+      ],
+      [
+        21,
+        "card",
+        268300,
+        "INV-2024-020"
+      ],
+      [
+        22,
+        "card",
+        92500,
+        "INV-2024-011"
+      ],
+      [
+        23,
+        "card",
+        141800,
+        "INV-2024-017"
+      ],
+      [
+        24,
+        "card",
+        222950,
+        "INV-2024-022"
+      ],
+      [
+        25,
+        "wire",
+        222950,
+        "INV-2024-022"
+      ],
+      [
+        26,
+        "card",
+        307600,
+        "INV-2024-023"
+      ],
+      [
+        27,
+        "wire",
+        400000,
+        "INV-2025-025"
+      ]
+    ]
+  },
+  "kb-rj-p06": {
+    "columns": [
+      "unpaid_invoices"
+    ],
+    "rows": [
+      [
+        6
+      ]
+    ]
+  },
+  "kb-rj-p07": {
+    "columns": [
+      "product",
+      "supplier"
+    ],
+    "rows": [
+      [
+        "4K Webcam Pro",
+        "Nordic Gadgets AB"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Andes Naturals SA"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Pacific Textiles"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alpine Audio GmbH"
+      ],
+      [
+        "Fitness Band X2",
+        "Andes Naturals SA"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Pacific Textiles"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Midwest Hardware Co"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Nordic Gadgets AB"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Midwest Hardware Co"
+      ],
+      [
+        "Ring Light 14\"",
+        "Shenzhen Electro"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Shenzhen Electro"
+      ],
+      [
+        "Smart Watch S",
+        "Nordic Gadgets AB"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alpine Audio GmbH"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Pacific Textiles"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Shenzhen Electro"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Midwest Hardware Co"
+      ]
+    ]
+  },
+  "kb-rj-p08": {
+    "columns": [
+      "payment_id",
+      "number",
+      "amount_cents"
+    ],
+    "rows": [
+      [
+        22,
+        "INV-2024-011",
+        92500
+      ]
+    ]
+  },
+  "kb-rj-p09": {
+    "columns": [
+      "item_id",
+      "product",
+      "quantity"
+    ],
+    "rows": [
+      [
+        1,
+        "Yoga Mat Eco 6mm",
+        3
+      ],
+      [
+        2,
+        "HDMI 2.1 Cable 2m",
+        2
+      ],
+      [
+        3,
+        "Desk Mat Extended",
+        1
+      ],
+      [
+        4,
+        "Noise-Canceling Headset",
+        3
+      ],
+      [
+        5,
+        "Ring Light 14\"",
+        3
+      ],
+      [
+        6,
+        "Noise-Canceling Headset",
+        2
+      ],
+      [
+        7,
+        "Mechanical Keyboard K1",
+        1
+      ],
+      [
+        8,
+        "Yoga Mat Eco 6mm",
+        3
+      ],
+      [
+        9,
+        "Smart Watch S",
+        3
+      ],
+      [
+        10,
+        "Fitness Band X2",
+        2
+      ],
+      [
+        11,
+        "Noise-Canceling Headset",
+        2
+      ],
+      [
+        12,
+        "HDMI 2.1 Cable 2m",
+        3
+      ],
+      [
+        13,
+        "4K Webcam Pro",
+        3
+      ],
+      [
+        14,
+        "Studio Desktop Mic",
+        3
+      ],
+      [
+        15,
+        "Mechanical Keyboard K1",
+        3
+      ],
+      [
+        16,
+        "Desk Mat Extended",
+        1
+      ],
+      [
+        17,
+        "Wireless Mouse M3",
+        3
+      ],
+      [
+        18,
+        "USB-C Hub 7-in-1",
+        3
+      ],
+      [
+        19,
+        "Running Socks 3-pack",
+        3
+      ],
+      [
+        20,
+        "Wireless Mouse M3",
+        2
+      ],
+      [
+        21,
+        "Bluetooth Speaker Mini",
+        1
+      ],
+      [
+        22,
+        "USB-C Hub 7-in-1",
+        1
+      ],
+      [
+        23,
+        "Cycling Jersey Pro",
+        2
+      ],
+      [
+        24,
+        "Laptop Stand Aluminum",
+        1
+      ],
+      [
+        25,
+        "Noise-Canceling Headset",
+        1
+      ],
+      [
+        26,
+        "Wireless Mouse M3",
+        1
+      ],
+      [
+        27,
+        "Desk Mat Extended",
+        2
+      ],
+      [
+        28,
+        "HDMI 2.1 Cable 2m",
+        3
+      ],
+      [
+        29,
+        "Wireless Mouse M3",
+        3
+      ],
+      [
+        30,
+        "Laptop Stand Aluminum",
+        1
+      ],
+      [
+        31,
+        "Mechanical Keyboard K1",
+        2
+      ],
+      [
+        32,
+        "Noise-Canceling Headset",
+        3
+      ],
+      [
+        33,
+        "Running Socks 3-pack",
+        1
+      ],
+      [
+        34,
+        "Noise-Canceling Headset",
+        3
+      ],
+      [
+        35,
+        "Fitness Band X2",
+        3
+      ],
+      [
+        36,
+        "Mechanical Keyboard K1",
+        3
+      ],
+      [
+        37,
+        "Noise-Canceling Headset",
+        3
+      ],
+      [
+        38,
+        "HDMI 2.1 Cable 2m",
+        2
+      ],
+      [
+        39,
+        "Cycling Jersey Pro",
+        1
+      ],
+      [
+        40,
+        "Wireless Mouse M3",
+        2
+      ],
+      [
+        41,
+        "Cycling Jersey Pro",
+        3
+      ],
+      [
+        42,
+        "Mechanical Keyboard K1",
+        2
+      ],
+      [
+        43,
+        "Bluetooth Speaker Mini",
+        1
+      ],
+      [
+        44,
+        "Cycling Jersey Pro",
+        1
+      ],
+      [
+        45,
+        "Ring Light 14\"",
+        1
+      ],
+      [
+        46,
+        "USB-C Hub 7-in-1",
+        3
+      ],
+      [
+        47,
+        "Running Socks 3-pack",
+        2
+      ],
+      [
+        48,
+        "Ring Light 14\"",
+        3
+      ],
+      [
+        49,
+        "4K Webcam Pro",
+        1
+      ],
+      [
+        50,
+        "Fitness Band X2",
+        1
+      ],
+      [
+        51,
+        "HDMI 2.1 Cable 2m",
+        3
+      ],
+      [
+        52,
+        "Wireless Mouse M3",
+        2
+      ],
+      [
+        53,
+        "Smart Watch S",
+        3
+      ],
+      [
+        54,
+        "HDMI 2.1 Cable 2m",
+        2
+      ],
+      [
+        55,
+        "Bluetooth Speaker Mini",
+        1
+      ],
+      [
+        56,
+        "Desk Mat Extended",
+        1
+      ],
+      [
+        57,
+        "HDMI 2.1 Cable 2m",
+        1
+      ],
+      [
+        58,
+        "Studio Desktop Mic",
+        1
+      ],
+      [
+        59,
+        "4K Webcam Pro",
+        3
+      ],
+      [
+        60,
+        "Desk Mat Extended",
+        3
+      ],
+      [
+        61,
+        "Wireless Mouse M3",
+        3
+      ],
+      [
+        62,
+        "Laptop Stand Aluminum",
+        3
+      ],
+      [
+        63,
+        "Yoga Mat Eco 6mm",
+        3
+      ],
+      [
+        64,
+        "Bluetooth Speaker Mini",
+        3
+      ],
+      [
+        65,
+        "Studio Desktop Mic",
+        3
+      ],
+      [
+        66,
+        "Wireless Mouse M3",
+        1
+      ],
+      [
+        67,
+        "HDMI 2.1 Cable 2m",
+        3
+      ],
+      [
+        68,
+        "Running Socks 3-pack",
+        2
+      ],
+      [
+        69,
+        "Noise-Canceling Headset",
+        1
+      ],
+      [
+        70,
+        "4K Webcam Pro",
+        3
+      ],
+      [
+        71,
+        "HDMI 2.1 Cable 2m",
+        1
+      ],
+      [
+        72,
+        "Noise-Canceling Headset",
+        1
+      ],
+      [
+        73,
+        "4K Webcam Pro",
+        1
+      ],
+      [
+        74,
+        "Desk Mat Extended",
+        3
+      ],
+      [
+        75,
+        "Ring Light 14\"",
+        1
+      ],
+      [
+        76,
+        "Desk Mat Extended",
+        2
+      ],
+      [
+        77,
+        "Running Socks 3-pack",
+        3
+      ],
+      [
+        78,
+        "Wireless Mouse M3",
+        1
+      ],
+      [
+        79,
+        "Smart Watch S",
+        3
+      ],
+      [
+        80,
+        "4K Webcam Pro",
+        3
+      ],
+      [
+        81,
+        "Studio Desktop Mic",
+        1
+      ],
+      [
+        82,
+        "Desk Mat Extended",
+        2
+      ],
+      [
+        83,
+        "Laptop Stand Aluminum",
+        2
+      ],
+      [
+        84,
+        "Desk Mat Extended",
+        2
+      ],
+      [
+        85,
+        "Smart Watch S",
+        2
+      ],
+      [
+        86,
+        "Running Socks 3-pack",
+        3
+      ],
+      [
+        87,
+        "Studio Desktop Mic",
+        1
+      ],
+      [
+        88,
+        "Laptop Stand Aluminum",
+        1
+      ],
+      [
+        89,
+        "Ring Light 14\"",
+        2
+      ],
+      [
+        90,
+        "Desk Mat Extended",
+        3
+      ],
+      [
+        91,
+        "Noise-Canceling Headset",
+        2
+      ],
+      [
+        92,
+        "Bluetooth Speaker Mini",
+        2
+      ],
+      [
+        93,
+        "USB-C Hub 7-in-1",
+        1
+      ],
+      [
+        94,
+        "Wireless Mouse M3",
+        2
+      ],
+      [
+        95,
+        "Ring Light 14\"",
+        3
+      ],
+      [
+        96,
+        "4K Webcam Pro",
+        2
+      ],
+      [
+        97,
+        "Desk Mat Extended",
+        3
+      ],
+      [
+        98,
+        "Running Socks 3-pack",
+        3
+      ],
+      [
+        99,
+        "Fitness Band X2",
+        1
+      ],
+      [
+        100,
+        "Smart Watch S",
+        2
+      ],
+      [
+        101,
+        "Wireless Mouse M3",
+        3
+      ],
+      [
+        102,
+        "Cycling Jersey Pro",
+        3
+      ],
+      [
+        103,
+        "Laptop Stand Aluminum",
+        3
+      ],
+      [
+        104,
+        "4K Webcam Pro",
+        1
+      ],
+      [
+        105,
+        "Desk Mat Extended",
+        2
+      ],
+      [
+        106,
+        "HDMI 2.1 Cable 2m",
+        1
+      ],
+      [
+        107,
+        "Mechanical Keyboard K1",
+        2
+      ],
+      [
+        108,
+        "Desk Mat Extended",
+        3
+      ],
+      [
+        109,
+        "Noise-Canceling Headset",
+        2
+      ],
+      [
+        110,
+        "Mechanical Keyboard K1",
+        3
+      ],
+      [
+        111,
+        "4K Webcam Pro",
+        1
+      ],
+      [
+        112,
+        "Fitness Band X2",
+        3
+      ],
+      [
+        113,
+        "Laptop Stand Aluminum",
+        3
+      ],
+      [
+        114,
+        "Noise-Canceling Headset",
+        1
+      ],
+      [
+        115,
+        "Fitness Band X2",
+        1
+      ],
+      [
+        116,
+        "Desk Mat Extended",
+        2
+      ],
+      [
+        117,
+        "Studio Desktop Mic",
+        3
+      ],
+      [
+        118,
+        "Studio Desktop Mic",
+        2
+      ],
+      [
+        119,
+        "Desk Mat Extended",
+        3
+      ],
+      [
+        120,
+        "Bluetooth Speaker Mini",
+        3
+      ],
+      [
+        121,
+        "Yoga Mat Eco 6mm",
+        1
+      ],
+      [
+        122,
+        "Mechanical Keyboard K1",
+        1
+      ],
+      [
+        123,
+        "Desk Mat Extended",
+        1
+      ],
+      [
+        124,
+        "Studio Desktop Mic",
+        2
+      ],
+      [
+        125,
+        "Ring Light 14\"",
+        1
+      ],
+      [
+        126,
+        "HDMI 2.1 Cable 2m",
+        2
+      ],
+      [
+        127,
+        "Running Socks 3-pack",
+        2
+      ],
+      [
+        128,
+        "Studio Desktop Mic",
+        1
+      ],
+      [
+        129,
+        "Yoga Mat Eco 6mm",
+        3
+      ],
+      [
+        130,
+        "Mechanical Keyboard K1",
+        1
+      ],
+      [
+        131,
+        "Desk Mat Extended",
+        1
+      ],
+      [
+        132,
+        "HDMI 2.1 Cable 2m",
+        1
+      ],
+      [
+        133,
+        "Fitness Band X2",
+        3
+      ],
+      [
+        134,
+        "Desk Mat Extended",
+        3
+      ],
+      [
+        135,
+        "Ring Light 14\"",
+        3
+      ],
+      [
+        136,
+        "4K Webcam Pro",
+        3
+      ],
+      [
+        137,
+        "Mechanical Keyboard K1",
+        3
+      ],
+      [
+        138,
+        "Running Socks 3-pack",
+        3
+      ],
+      [
+        139,
+        "USB-C Hub 7-in-1",
+        2
+      ],
+      [
+        140,
+        "Noise-Canceling Headset",
+        1
+      ],
+      [
+        141,
+        "Laptop Stand Aluminum",
+        1
+      ],
+      [
+        142,
+        "Running Socks 3-pack",
+        2
+      ],
+      [
+        143,
+        "Ring Light 14\"",
+        2
+      ],
+      [
+        144,
+        "Fitness Band X2",
+        3
+      ],
+      [
+        145,
+        "Desk Mat Extended",
+        2
+      ],
+      [
+        146,
+        "USB-C Hub 7-in-1",
+        1
+      ],
+      [
+        147,
+        "Studio Desktop Mic",
+        2
+      ],
+      [
+        148,
+        "Yoga Mat Eco 6mm",
+        3
+      ],
+      [
+        149,
+        "HDMI 2.1 Cable 2m",
+        3
+      ],
+      [
+        150,
+        "Laptop Stand Aluminum",
+        1
+      ],
+      [
+        151,
+        "Bluetooth Speaker Mini",
+        3
+      ],
+      [
+        152,
+        "Noise-Canceling Headset",
+        1
+      ],
+      [
+        153,
+        "Laptop Stand Aluminum",
+        2
+      ],
+      [
+        154,
+        "Noise-Canceling Headset",
+        2
+      ],
+      [
+        155,
+        "Bluetooth Speaker Mini",
+        3
+      ],
+      [
+        156,
+        "Ring Light 14\"",
+        1
+      ],
+      [
+        157,
+        "4K Webcam Pro",
+        2
+      ],
+      [
+        158,
+        "Wireless Mouse M3",
+        1
+      ],
+      [
+        159,
+        "Laptop Stand Aluminum",
+        3
+      ],
+      [
+        160,
+        "Ring Light 14\"",
+        3
+      ],
+      [
+        161,
+        "Ring Light 14\"",
+        1
+      ],
+      [
+        162,
+        "Bluetooth Speaker Mini",
+        2
+      ],
+      [
+        163,
+        "USB-C Hub 7-in-1",
+        1
+      ],
+      [
+        164,
+        "Noise-Canceling Headset",
+        3
+      ],
+      [
+        165,
+        "Studio Desktop Mic",
+        2
+      ],
+      [
+        166,
+        "Noise-Canceling Headset",
+        2
+      ],
+      [
+        167,
+        "Bluetooth Speaker Mini",
+        1
+      ],
+      [
+        168,
+        "Running Socks 3-pack",
+        3
+      ],
+      [
+        169,
+        "Desk Mat Extended",
+        1
+      ],
+      [
+        170,
+        "Wireless Mouse M3",
+        1
+      ],
+      [
+        171,
+        "Bluetooth Speaker Mini",
+        1
+      ],
+      [
+        172,
+        "4K Webcam Pro",
+        1
+      ],
+      [
+        173,
+        "Studio Desktop Mic",
+        3
+      ],
+      [
+        174,
+        "4K Webcam Pro",
+        2
+      ],
+      [
+        175,
+        "USB-C Hub 7-in-1",
+        1
+      ],
+      [
+        176,
+        "HDMI 2.1 Cable 2m",
+        2
+      ],
+      [
+        177,
+        "Fitness Band X2",
+        3
+      ],
+      [
+        178,
+        "USB-C Hub 7-in-1",
+        3
+      ],
+      [
+        179,
+        "Yoga Mat Eco 6mm",
+        1
+      ],
+      [
+        180,
+        "Smart Watch S",
+        3
+      ],
+      [
+        181,
+        "Noise-Canceling Headset",
+        3
+      ],
+      [
+        182,
+        "Laptop Stand Aluminum",
+        3
+      ],
+      [
+        183,
+        "Noise-Canceling Headset",
+        1
+      ],
+      [
+        184,
+        "Cycling Jersey Pro",
+        3
+      ],
+      [
+        185,
+        "Wireless Mouse M3",
+        1
+      ],
+      [
+        186,
+        "Yoga Mat Eco 6mm",
+        2
+      ],
+      [
+        187,
+        "Studio Desktop Mic",
+        2
+      ],
+      [
+        188,
+        "Noise-Canceling Headset",
+        1
+      ],
+      [
+        189,
+        "HDMI 2.1 Cable 2m",
+        1
+      ],
+      [
+        190,
+        "Cycling Jersey Pro",
+        2
+      ],
+      [
+        191,
+        "Laptop Stand Aluminum",
+        1
+      ],
+      [
+        192,
+        "HDMI 2.1 Cable 2m",
+        1
+      ],
+      [
+        193,
+        "Fitness Band X2",
+        2
+      ],
+      [
+        194,
+        "Running Socks 3-pack",
+        2
+      ],
+      [
+        195,
+        "Smart Watch S",
+        1
+      ],
+      [
+        196,
+        "Cycling Jersey Pro",
+        3
+      ],
+      [
+        197,
+        "Mechanical Keyboard K1",
+        1
+      ],
+      [
+        198,
+        "Ring Light 14\"",
+        2
+      ],
+      [
+        199,
+        "Noise-Canceling Headset",
+        1
+      ],
+      [
+        200,
+        "Cycling Jersey Pro",
+        2
+      ],
+      [
+        201,
+        "Laptop Stand Aluminum",
+        2
+      ],
+      [
+        202,
+        "Yoga Mat Eco 6mm",
+        2
+      ],
+      [
+        203,
+        "Studio Desktop Mic",
+        1
+      ],
+      [
+        204,
+        "Desk Mat Extended",
+        3
+      ],
+      [
+        205,
+        "Fitness Band X2",
+        1
+      ],
+      [
+        206,
+        "HDMI 2.1 Cable 2m",
+        2
+      ],
+      [
+        207,
+        "4K Webcam Pro",
+        1
+      ],
+      [
+        208,
+        "Wireless Mouse M3",
+        3
+      ],
+      [
+        209,
+        "Ring Light 14\"",
+        3
+      ],
+      [
+        210,
+        "Laptop Stand Aluminum",
+        1
+      ],
+      [
+        211,
+        "Mechanical Keyboard K1",
+        3
+      ],
+      [
+        212,
+        "Running Socks 3-pack",
+        2
+      ],
+      [
+        213,
+        "Mechanical Keyboard K1",
+        1
+      ],
+      [
+        214,
+        "Studio Desktop Mic",
+        2
+      ],
+      [
+        215,
+        "Desk Mat Extended",
+        1
+      ],
+      [
+        216,
+        "Noise-Canceling Headset",
+        1
+      ],
+      [
+        217,
+        "Mechanical Keyboard K1",
+        1
+      ],
+      [
+        218,
+        "Yoga Mat Eco 6mm",
+        1
+      ],
+      [
+        219,
+        "Smart Watch S",
+        2
+      ],
+      [
+        220,
+        "Fitness Band X2",
+        2
+      ],
+      [
+        221,
+        "4K Webcam Pro",
+        1
+      ],
+      [
+        222,
+        "Studio Desktop Mic",
+        1
+      ],
+      [
+        223,
+        "Smart Watch S",
+        1
+      ],
+      [
+        224,
+        "HDMI 2.1 Cable 2m",
+        2
+      ],
+      [
+        225,
+        "Cycling Jersey Pro",
+        1
+      ],
+      [
+        226,
+        "Wireless Mouse M3",
+        1
+      ],
+      [
+        227,
+        "USB-C Hub 7-in-1",
+        2
+      ],
+      [
+        228,
+        "HDMI 2.1 Cable 2m",
+        3
+      ],
+      [
+        229,
+        "4K Webcam Pro",
+        1
+      ],
+      [
+        230,
+        "Desk Mat Extended",
+        1
+      ],
+      [
+        231,
+        "USB-C Hub 7-in-1",
+        3
+      ],
+      [
+        232,
+        "Yoga Mat Eco 6mm",
+        2
+      ],
+      [
+        233,
+        "Fitness Band X2",
+        2
+      ],
+      [
+        234,
+        "Ring Light 14\"",
+        1
+      ],
+      [
+        235,
+        "Smart Watch S",
+        2
+      ],
+      [
+        236,
+        "Wireless Mouse M3",
+        3
+      ],
+      [
+        237,
+        "Noise-Canceling Headset",
+        3
+      ],
+      [
+        238,
+        "Laptop Stand Aluminum",
+        1
+      ],
+      [
+        239,
+        "Noise-Canceling Headset",
+        3
+      ],
+      [
+        240,
+        "Yoga Mat Eco 6mm",
+        1
+      ],
+      [
+        241,
+        "Laptop Stand Aluminum",
+        3
+      ],
+      [
+        242,
+        "Laptop Stand Aluminum",
+        1
+      ],
+      [
+        243,
+        "Fitness Band X2",
+        3
+      ],
+      [
+        244,
+        "Smart Watch S",
+        1
+      ],
+      [
+        245,
+        "Laptop Stand Aluminum",
+        3
+      ],
+      [
+        246,
+        "Wireless Mouse M3",
+        3
+      ],
+      [
+        247,
+        "Running Socks 3-pack",
+        2
+      ],
+      [
+        248,
+        "Desk Mat Extended",
+        1
+      ],
+      [
+        249,
+        "Mechanical Keyboard K1",
+        1
+      ],
+      [
+        250,
+        "4K Webcam Pro",
+        2
+      ],
+      [
+        251,
+        "Yoga Mat Eco 6mm",
+        2
+      ]
+    ]
+  },
+  "kb-rj-p10": {
+    "columns": [],
+    "rows": []
+  },
+  "kb-rj-p11": {
+    "columns": [
+      "number",
+      "payment_count"
+    ],
+    "rows": [
+      [
+        "INV-2024-001",
+        2
+      ],
+      [
+        "INV-2024-005",
+        2
+      ],
+      [
+        "INV-2024-012",
+        2
+      ],
+      [
+        "INV-2024-019",
+        2
+      ],
+      [
+        "INV-2024-022",
+        2
+      ],
+      [
+        "INV-2024-002",
+        1
+      ],
+      [
+        "INV-2024-003",
+        1
+      ],
+      [
+        "INV-2024-004",
+        1
+      ],
+      [
+        "INV-2024-006",
+        1
+      ],
+      [
+        "INV-2024-007",
+        1
+      ],
+      [
+        "INV-2024-008",
+        1
+      ],
+      [
+        "INV-2024-009",
+        1
+      ],
+      [
+        "INV-2024-010",
+        1
+      ],
+      [
+        "INV-2024-011",
+        1
+      ],
+      [
+        "INV-2024-013",
+        1
+      ],
+      [
+        "INV-2024-014",
+        1
+      ],
+      [
+        "INV-2024-015",
+        1
+      ],
+      [
+        "INV-2024-016",
+        1
+      ],
+      [
+        "INV-2024-017",
+        1
+      ],
+      [
+        "INV-2024-020",
+        1
+      ],
+      [
+        "INV-2024-023",
+        1
+      ],
+      [
+        "INV-2025-025",
+        1
+      ],
+      [
+        "INV-2024-018",
+        0
+      ],
+      [
+        "INV-2024-021",
+        0
+      ],
+      [
+        "INV-2025-024",
+        0
+      ],
+      [
+        "INV-2025-026",
+        0
+      ],
+      [
+        "INV-2025-027",
+        0
+      ],
+      [
+        "INV-2025-028",
+        0
+      ]
+    ]
+  },
+  "kb-rj-p12": {
+    "columns": [
+      "number"
+    ],
+    "rows": [
+      [
+        "INV-2024-001"
+      ],
+      [
+        "INV-2024-005"
+      ],
+      [
+        "INV-2024-012"
+      ],
+      [
+        "INV-2024-019"
+      ],
+      [
+        "INV-2024-022"
+      ]
+    ]
+  },
+  "kb-rj-p13": {
+    "columns": [
+      "number",
+      "received_cents"
+    ],
+    "rows": [
+      [
+        "INV-2024-019",
+        561400
+      ],
+      [
+        "INV-2024-005",
+        528400
+      ],
+      [
+        "INV-2024-001",
+        486000
+      ],
+      [
+        "INV-2024-012",
+        472300
+      ],
+      [
+        "INV-2024-022",
+        445900
+      ],
+      [
+        "INV-2024-008",
+        401500
+      ],
+      [
+        "INV-2025-025",
+        400000
+      ],
+      [
+        "INV-2024-016",
+        389600
+      ],
+      [
+        "INV-2024-014",
+        351200
+      ],
+      [
+        "INV-2024-003",
+        342000
+      ],
+      [
+        "INV-2024-023",
+        307600
+      ],
+      [
+        "INV-2024-010",
+        296800
+      ],
+      [
+        "INV-2024-020",
+        268300
+      ],
+      [
+        "INV-2024-013",
+        254700
+      ],
+      [
+        "INV-2024-006",
+        233600
+      ],
+      [
+        "INV-2024-015",
+        228900
+      ],
+      [
+        "INV-2024-002",
+        214300
+      ],
+      [
+        "INV-2024-007",
+        198200
+      ],
+      [
+        "INV-2024-009",
+        187300
+      ],
+      [
+        "INV-2024-004",
+        158900
+      ],
+      [
+        "INV-2024-017",
+        141800
+      ],
+      [
+        "INV-2024-011",
+        92500
+      ],
+      [
+        "INV-2024-018",
+        0
+      ],
+      [
+        "INV-2024-021",
+        0
+      ],
+      [
+        "INV-2025-024",
+        0
+      ],
+      [
+        "INV-2025-026",
+        0
+      ],
+      [
+        "INV-2025-027",
+        0
+      ],
+      [
+        "INV-2025-028",
+        0
+      ]
+    ]
+  },
+  "kb-rj-p14": {
+    "columns": [
+      "number",
+      "status"
+    ],
+    "rows": [
+      [
+        "INV-2025-028",
+        "paid"
+      ]
+    ]
+  },
+  "kb-rj-p15": {
+    "columns": [
+      "region",
+      "orders"
+    ],
+    "rows": [
+      [
+        "EU",
+        45
+      ],
+      [
+        "APAC",
+        37
+      ],
+      [
+        "US",
+        19
+      ],
+      [
+        "LATAM",
+        2
+      ]
+    ]
+  },
+  "kb-rj-p16": {
+    "columns": [
+      "category",
+      "line_items"
+    ],
+    "rows": [
+      [
+        "Accessories",
+        62
+      ],
+      [
+        "Audio",
+        51
+      ],
+      [
+        "Electronics",
+        44
+      ],
+      [
+        "Video",
+        32
+      ],
+      [
+        "Wearables",
+        25
+      ],
+      [
+        "Apparel",
+        24
+      ],
+      [
+        "Fitness",
+        13
+      ]
+    ]
+  },
+  "kb-rj-p17": {
+    "columns": [
+      "unpaid_total"
+    ],
+    "rows": [
+      [
+        15217
+      ]
+    ]
+  },
+  "kb-rj-p18": {
+    "columns": [
+      "method",
+      "row_count"
+    ],
+    "rows": [
+      [
+        "card",
+        16
+      ],
+      [
+        "wire",
+        11
+      ],
+      [
+        null,
+        6
+      ]
+    ]
+  },
+  "kb-rj-p19": {
+    "columns": [
+      "number",
+      "payment_id",
+      "method"
+    ],
+    "rows": [
+      [
+        "INV-2024-018",
+        null,
+        null
+      ],
+      [
+        "INV-2024-021",
+        null,
+        null
+      ],
+      [
+        "INV-2025-024",
+        null,
+        null
+      ],
+      [
+        "INV-2025-025",
+        27,
+        "wire"
+      ],
+      [
+        "INV-2025-026",
+        null,
+        null
+      ],
+      [
+        "INV-2025-027",
+        null,
+        null
+      ]
+    ]
+  },
+  "kb-rj-p20": {
+    "columns": [
+      "payment_id",
+      "number",
+      "status"
+    ],
+    "rows": [
+      [
+        1,
+        "INV-2024-001",
+        "paid"
+      ],
+      [
+        2,
+        "INV-2024-001",
+        "paid"
+      ],
+      [
+        3,
+        "INV-2024-002",
+        "paid"
+      ],
+      [
+        4,
+        "INV-2024-003",
+        "paid"
+      ],
+      [
+        5,
+        "INV-2024-004",
+        "paid"
+      ],
+      [
+        6,
+        "INV-2024-005",
+        "paid"
+      ],
+      [
+        7,
+        "INV-2024-005",
+        "paid"
+      ],
+      [
+        8,
+        "INV-2024-006",
+        "paid"
+      ],
+      [
+        9,
+        "INV-2024-007",
+        "paid"
+      ],
+      [
+        10,
+        "INV-2024-008",
+        "paid"
+      ],
+      [
+        11,
+        "INV-2024-009",
+        "paid"
+      ],
+      [
+        12,
+        "INV-2024-010",
+        "paid"
+      ],
+      [
+        13,
+        "INV-2024-012",
+        "paid"
+      ],
+      [
+        14,
+        "INV-2024-012",
+        "paid"
+      ],
+      [
+        15,
+        "INV-2024-013",
+        "paid"
+      ],
+      [
+        16,
+        "INV-2024-014",
+        "paid"
+      ],
+      [
+        17,
+        "INV-2024-015",
+        "paid"
+      ],
+      [
+        18,
+        "INV-2024-016",
+        "paid"
+      ],
+      [
+        19,
+        "INV-2024-019",
+        "paid"
+      ],
+      [
+        20,
+        "INV-2024-019",
+        "paid"
+      ],
+      [
+        21,
+        "INV-2024-020",
+        "paid"
+      ],
+      [
+        22,
+        null,
+        null
+      ],
+      [
+        23,
+        "INV-2024-017",
+        "paid"
+      ],
+      [
+        24,
+        "INV-2024-022",
+        "paid"
+      ],
+      [
+        25,
+        "INV-2024-022",
+        "paid"
+      ],
+      [
+        26,
+        "INV-2024-023",
+        "paid"
+      ],
+      [
+        27,
+        null,
+        null
+      ]
+    ]
+  },
+  "kb-rj-p21": {
+    "columns": [
+      "number",
+      "status",
+      "payment_count"
+    ],
+    "rows": [
+      [
+        "INV-2024-011",
+        "void",
+        1
+      ],
+      [
+        "INV-2025-025",
+        "open",
+        1
+      ],
+      [
+        "INV-2025-028",
+        "paid",
+        0
+      ]
+    ]
+  },
+  "kb-rj-p22": {
+    "columns": [
+      "name",
+      "payment_rows"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        9
+      ],
+      [
+        "Maya Patel",
+        5
+      ],
+      [
+        "Emma Wilson",
+        3
+      ],
+      [
+        "Grace Kim",
+        3
+      ],
+      [
+        "Isabella Rossi",
+        2
+      ],
+      [
+        "Jamal Wright",
+        2
+      ],
+      [
+        "Olivia Brown",
+        2
+      ],
+      [
+        "Liam O'Brien",
+        1
+      ],
+      [
+        "Chloe Dubois",
+        0
+      ],
+      [
+        "Hiro Tanaka",
+        0
+      ],
+      [
+        "Pedro Alvarez",
+        0
+      ]
+    ]
+  },
+  "kb-rj-p23": {
+    "columns": [
+      "region",
+      "unpaid"
+    ],
+    "rows": [
+      [
+        "EU",
+        4
+      ],
+      [
+        "APAC",
+        1
+      ],
+      [
+        "US",
+        1
+      ]
+    ]
+  },
+  "kb-rj-p24": {
+    "columns": [
+      "double_paid_total"
+    ],
+    "rows": [
+      [
+        24940
+      ]
+    ]
+  },
+  "kb-rj-p25": {
+    "columns": [],
+    "rows": []
+  },
+  "kb-rj-p26": {
+    "columns": [
+      "payment_count",
+      "invoices"
+    ],
+    "rows": [
+      [
+        0,
+        6
+      ],
+      [
+        1,
+        17
+      ],
+      [
+        2,
+        5
+      ]
+    ]
+  },
+  "kb-rj-p27": {
+    "columns": [
+      "name",
+      "invoice_count"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        5
+      ],
+      [
+        "Emma Wilson",
+        4
+      ],
+      [
+        "Maya Patel",
+        4
+      ],
+      [
+        "Grace Kim",
+        3
+      ],
+      [
+        "Isabella Rossi",
+        3
+      ],
+      [
+        "Jamal Wright",
+        2
+      ],
+      [
+        "Liam O'Brien",
+        2
+      ],
+      [
+        "Olivia Brown",
+        2
+      ],
+      [
+        "Chloe Dubois",
+        1
+      ],
+      [
+        "Hiro Tanaka",
+        1
+      ],
+      [
+        "Pedro Alvarez",
+        1
+      ],
+      [
+        "Bruno Silva",
+        0
+      ],
+      [
+        "Dmitri Volkov",
+        0
+      ],
+      [
+        "Farid Nasser",
+        0
+      ],
+      [
+        "Keiko Sato",
+        0
+      ],
+      [
+        "Noah Meyer",
+        0
+      ]
+    ]
+  },
+  "kb-rj-p28": {
+    "columns": [
+      "issue_month",
+      "unpaid"
+    ],
+    "rows": [
+      [
+        "2024-10",
+        1
+      ],
+      [
+        "2024-12",
+        1
+      ],
+      [
+        "2025-01",
+        1
+      ],
+      [
+        "2025-02",
+        3
+      ]
+    ]
+  },
+  "kb-rj-p29": {
+    "columns": [
+      "status",
+      "method",
+      "row_count"
+    ],
+    "rows": [
+      [
+        "open",
+        null,
+        5
+      ],
+      [
+        "open",
+        "wire",
+        1
+      ],
+      [
+        "paid",
+        "card",
+        15
+      ],
+      [
+        "paid",
+        "wire",
+        10
+      ],
+      [
+        "paid",
+        null,
+        1
+      ],
+      [
+        "void",
+        "card",
+        1
+      ]
+    ]
+  },
+  "kb-rj-p30": {
+    "columns": [
+      "status",
+      "invoices",
+      "payment_rows"
+    ],
+    "rows": [
+      [
+        "open",
+        6,
+        1
+      ],
+      [
+        "paid",
+        21,
+        25
+      ],
+      [
+        "void",
+        1,
+        1
+      ]
+    ]
+  },
+  "kb-fo-p01": {
+    "columns": [
+      "number",
+      "payment_id"
+    ],
+    "rows": [
+      [
+        "INV-2024-001",
+        1
+      ],
+      [
+        "INV-2024-001",
+        2
+      ],
+      [
+        "INV-2024-002",
+        3
+      ],
+      [
+        "INV-2024-003",
+        4
+      ],
+      [
+        "INV-2024-004",
+        5
+      ],
+      [
+        "INV-2024-005",
+        6
+      ],
+      [
+        "INV-2024-005",
+        7
+      ],
+      [
+        "INV-2024-006",
+        8
+      ],
+      [
+        "INV-2024-007",
+        9
+      ],
+      [
+        "INV-2024-008",
+        10
+      ],
+      [
+        "INV-2024-009",
+        11
+      ],
+      [
+        "INV-2024-010",
+        12
+      ],
+      [
+        "INV-2024-011",
+        22
+      ],
+      [
+        "INV-2024-012",
+        13
+      ],
+      [
+        "INV-2024-012",
+        14
+      ],
+      [
+        "INV-2024-013",
+        15
+      ],
+      [
+        "INV-2024-014",
+        16
+      ],
+      [
+        "INV-2024-015",
+        17
+      ],
+      [
+        "INV-2024-016",
+        18
+      ],
+      [
+        "INV-2024-017",
+        23
+      ],
+      [
+        "INV-2024-018",
+        null
+      ],
+      [
+        "INV-2024-019",
+        19
+      ],
+      [
+        "INV-2024-019",
+        20
+      ],
+      [
+        "INV-2024-020",
+        21
+      ],
+      [
+        "INV-2024-021",
+        null
+      ],
+      [
+        "INV-2024-022",
+        24
+      ],
+      [
+        "INV-2024-022",
+        25
+      ],
+      [
+        "INV-2024-023",
+        26
+      ],
+      [
+        "INV-2025-024",
+        null
+      ],
+      [
+        "INV-2025-025",
+        27
+      ],
+      [
+        "INV-2025-026",
+        null
+      ],
+      [
+        "INV-2025-027",
+        null
+      ],
+      [
+        "INV-2025-028",
+        null
+      ]
+    ]
+  },
+  "kb-fo-p02": {
+    "columns": [
+      "sweep_rows"
+    ],
+    "rows": [
+      [
+        33
+      ]
+    ]
+  },
+  "kb-fo-p03": {
+    "columns": [
+      "row_count"
+    ],
+    "rows": [
+      [
+        103
+      ]
+    ]
+  },
+  "kb-fo-p04": {
+    "columns": [
+      "number"
+    ],
+    "rows": [
+      [
+        "INV-2024-018"
+      ],
+      [
+        "INV-2024-021"
+      ],
+      [
+        "INV-2025-024"
+      ],
+      [
+        "INV-2025-026"
+      ],
+      [
+        "INV-2025-027"
+      ],
+      [
+        "INV-2025-028"
+      ]
+    ]
+  },
+  "kb-fo-p05": {
+    "columns": [],
+    "rows": []
+  },
+  "kb-fo-p06": {
+    "columns": [
+      "row_count"
+    ],
+    "rows": [
+      [
+        251
+      ]
+    ]
+  },
+  "kb-fo-p07": {
+    "columns": [
+      "supplier",
+      "product"
+    ],
+    "rows": [
+      [
+        "Alpine Audio GmbH",
+        "Desk Mat Extended"
+      ],
+      [
+        "Alpine Audio GmbH",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Andes Naturals SA",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Andes Naturals SA",
+        "Fitness Band X2"
+      ],
+      [
+        "Midwest Hardware Co",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Midwest Hardware Co",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Midwest Hardware Co",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Nordic Gadgets AB",
+        "4K Webcam Pro"
+      ],
+      [
+        "Nordic Gadgets AB",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Nordic Gadgets AB",
+        "Smart Watch S"
+      ],
+      [
+        "Pacific Textiles",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Pacific Textiles",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Pacific Textiles",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Shenzhen Electro",
+        "Ring Light 14\""
+      ],
+      [
+        "Shenzhen Electro",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Shenzhen Electro",
+        "Wireless Mouse M3"
+      ]
+    ]
+  },
+  "kb-fo-p08": {
+    "columns": [
+      "payment_id",
+      "number",
+      "status"
+    ],
+    "rows": [
+      [
+        1,
+        "INV-2024-001",
+        "paid"
+      ],
+      [
+        2,
+        "INV-2024-001",
+        "paid"
+      ],
+      [
+        3,
+        "INV-2024-002",
+        "paid"
+      ],
+      [
+        4,
+        "INV-2024-003",
+        "paid"
+      ],
+      [
+        5,
+        "INV-2024-004",
+        "paid"
+      ],
+      [
+        6,
+        "INV-2024-005",
+        "paid"
+      ],
+      [
+        7,
+        "INV-2024-005",
+        "paid"
+      ],
+      [
+        8,
+        "INV-2024-006",
+        "paid"
+      ],
+      [
+        9,
+        "INV-2024-007",
+        "paid"
+      ],
+      [
+        10,
+        "INV-2024-008",
+        "paid"
+      ],
+      [
+        11,
+        "INV-2024-009",
+        "paid"
+      ],
+      [
+        12,
+        "INV-2024-010",
+        "paid"
+      ],
+      [
+        13,
+        "INV-2024-012",
+        "paid"
+      ],
+      [
+        14,
+        "INV-2024-012",
+        "paid"
+      ],
+      [
+        15,
+        "INV-2024-013",
+        "paid"
+      ],
+      [
+        16,
+        "INV-2024-014",
+        "paid"
+      ],
+      [
+        17,
+        "INV-2024-015",
+        "paid"
+      ],
+      [
+        18,
+        "INV-2024-016",
+        "paid"
+      ],
+      [
+        19,
+        "INV-2024-019",
+        "paid"
+      ],
+      [
+        20,
+        "INV-2024-019",
+        "paid"
+      ],
+      [
+        21,
+        "INV-2024-020",
+        "paid"
+      ],
+      [
+        22,
+        "INV-2024-011",
+        "void"
+      ],
+      [
+        23,
+        "INV-2024-017",
+        "paid"
+      ],
+      [
+        24,
+        "INV-2024-022",
+        "paid"
+      ],
+      [
+        25,
+        "INV-2024-022",
+        "paid"
+      ],
+      [
+        26,
+        "INV-2024-023",
+        "paid"
+      ],
+      [
+        27,
+        "INV-2025-025",
+        "open"
+      ]
+    ]
+  },
+  "kb-fo-p09": {
+    "columns": [
+      "total_rows",
+      "payment_rows"
+    ],
+    "rows": [
+      [
+        33,
+        27
+      ]
+    ]
+  },
+  "kb-fo-p10": {
+    "columns": [
+      "number",
+      "payment_id"
+    ],
+    "rows": [
+      [
+        "INV-2024-018",
+        null
+      ],
+      [
+        "INV-2024-021",
+        null
+      ],
+      [
+        "INV-2025-024",
+        null
+      ],
+      [
+        "INV-2025-026",
+        null
+      ],
+      [
+        "INV-2025-027",
+        null
+      ],
+      [
+        "INV-2025-028",
+        null
+      ]
+    ]
+  },
+  "kb-fo-p11": {
+    "columns": [
+      "number",
+      "payment_count"
+    ],
+    "rows": [
+      [
+        "INV-2024-001",
+        2
+      ],
+      [
+        "INV-2024-005",
+        2
+      ],
+      [
+        "INV-2024-012",
+        2
+      ],
+      [
+        "INV-2024-019",
+        2
+      ],
+      [
+        "INV-2024-022",
+        2
+      ],
+      [
+        "INV-2024-002",
+        1
+      ],
+      [
+        "INV-2024-003",
+        1
+      ],
+      [
+        "INV-2024-004",
+        1
+      ],
+      [
+        "INV-2024-006",
+        1
+      ],
+      [
+        "INV-2024-007",
+        1
+      ],
+      [
+        "INV-2024-008",
+        1
+      ],
+      [
+        "INV-2024-009",
+        1
+      ],
+      [
+        "INV-2024-010",
+        1
+      ],
+      [
+        "INV-2024-011",
+        1
+      ],
+      [
+        "INV-2024-013",
+        1
+      ],
+      [
+        "INV-2024-014",
+        1
+      ],
+      [
+        "INV-2024-015",
+        1
+      ],
+      [
+        "INV-2024-016",
+        1
+      ],
+      [
+        "INV-2024-017",
+        1
+      ],
+      [
+        "INV-2024-020",
+        1
+      ],
+      [
+        "INV-2024-023",
+        1
+      ],
+      [
+        "INV-2025-025",
+        1
+      ],
+      [
+        "INV-2024-018",
+        0
+      ],
+      [
+        "INV-2024-021",
+        0
+      ],
+      [
+        "INV-2025-024",
+        0
+      ],
+      [
+        "INV-2025-026",
+        0
+      ],
+      [
+        "INV-2025-027",
+        0
+      ],
+      [
+        "INV-2025-028",
+        0
+      ]
+    ]
+  },
+  "kb-fo-p12": {
+    "columns": [
+      "number",
+      "received_cents"
+    ],
+    "rows": [
+      [
+        "INV-2024-019",
+        561400
+      ],
+      [
+        "INV-2024-005",
+        528400
+      ],
+      [
+        "INV-2024-001",
+        486000
+      ],
+      [
+        "INV-2024-012",
+        472300
+      ],
+      [
+        "INV-2024-022",
+        445900
+      ],
+      [
+        "INV-2024-008",
+        401500
+      ],
+      [
+        "INV-2025-025",
+        400000
+      ],
+      [
+        "INV-2024-016",
+        389600
+      ],
+      [
+        "INV-2024-014",
+        351200
+      ],
+      [
+        "INV-2024-003",
+        342000
+      ],
+      [
+        "INV-2024-023",
+        307600
+      ],
+      [
+        "INV-2024-010",
+        296800
+      ],
+      [
+        "INV-2024-020",
+        268300
+      ],
+      [
+        "INV-2024-013",
+        254700
+      ],
+      [
+        "INV-2024-006",
+        233600
+      ],
+      [
+        "INV-2024-015",
+        228900
+      ],
+      [
+        "INV-2024-002",
+        214300
+      ],
+      [
+        "INV-2024-007",
+        198200
+      ],
+      [
+        "INV-2024-009",
+        187300
+      ],
+      [
+        "INV-2024-004",
+        158900
+      ],
+      [
+        "INV-2024-017",
+        141800
+      ],
+      [
+        "INV-2024-011",
+        92500
+      ],
+      [
+        "INV-2024-018",
+        0
+      ],
+      [
+        "INV-2024-021",
+        0
+      ],
+      [
+        "INV-2025-024",
+        0
+      ],
+      [
+        "INV-2025-026",
+        0
+      ],
+      [
+        "INV-2025-027",
+        0
+      ],
+      [
+        "INV-2025-028",
+        0
+      ]
+    ]
+  },
+  "kb-fo-p13": {
+    "columns": [
+      "status",
+      "unpaid"
+    ],
+    "rows": [
+      [
+        "open",
+        5
+      ],
+      [
+        "paid",
+        1
+      ]
+    ]
+  },
+  "kb-fo-p14": {
+    "columns": [
+      "number"
+    ],
+    "rows": [
+      [
+        "INV-2025-028"
+      ]
+    ]
+  },
+  "kb-fo-p15": {
+    "columns": [
+      "number",
+      "payment_id"
+    ],
+    "rows": [
+      [
+        "INV-2024-001",
+        1
+      ],
+      [
+        "INV-2024-001",
+        2
+      ],
+      [
+        "INV-2024-002",
+        3
+      ],
+      [
+        "INV-2024-003",
+        4
+      ],
+      [
+        "INV-2024-004",
+        5
+      ],
+      [
+        "INV-2024-005",
+        6
+      ],
+      [
+        "INV-2024-005",
+        7
+      ],
+      [
+        "INV-2024-006",
+        8
+      ],
+      [
+        "INV-2024-007",
+        9
+      ],
+      [
+        "INV-2024-008",
+        10
+      ],
+      [
+        "INV-2024-009",
+        11
+      ],
+      [
+        "INV-2024-010",
+        12
+      ],
+      [
+        "INV-2024-011",
+        null
+      ],
+      [
+        "INV-2024-012",
+        13
+      ],
+      [
+        "INV-2024-012",
+        14
+      ],
+      [
+        "INV-2024-013",
+        15
+      ],
+      [
+        "INV-2024-014",
+        16
+      ],
+      [
+        "INV-2024-015",
+        17
+      ],
+      [
+        "INV-2024-016",
+        18
+      ],
+      [
+        "INV-2024-017",
+        23
+      ],
+      [
+        "INV-2024-018",
+        null
+      ],
+      [
+        "INV-2024-019",
+        19
+      ],
+      [
+        "INV-2024-019",
+        20
+      ],
+      [
+        "INV-2024-020",
+        21
+      ],
+      [
+        "INV-2024-021",
+        null
+      ],
+      [
+        "INV-2024-022",
+        24
+      ],
+      [
+        "INV-2024-022",
+        25
+      ],
+      [
+        "INV-2024-023",
+        26
+      ],
+      [
+        "INV-2025-024",
+        null
+      ],
+      [
+        "INV-2025-025",
+        null
+      ],
+      [
+        "INV-2025-026",
+        null
+      ],
+      [
+        "INV-2025-027",
+        null
+      ],
+      [
+        "INV-2025-028",
+        null
+      ],
+      [
+        null,
+        22
+      ],
+      [
+        null,
+        27
+      ]
+    ]
+  },
+  "kb-fo-p16": {
+    "columns": [
+      "unpaid_total"
+    ],
+    "rows": [
+      [
+        15217
+      ]
+    ]
+  },
+  "kb-fo-p17": {
+    "columns": [
+      "region",
+      "orders"
+    ],
+    "rows": [
+      [
+        "EU",
+        45
+      ],
+      [
+        "APAC",
+        37
+      ],
+      [
+        "US",
+        19
+      ],
+      [
+        "LATAM",
+        2
+      ]
+    ]
+  },
+  "kb-fo-p18": {
+    "columns": [
+      "category",
+      "line_items"
+    ],
+    "rows": [
+      [
+        "Accessories",
+        62
+      ],
+      [
+        "Audio",
+        51
+      ],
+      [
+        "Electronics",
+        44
+      ],
+      [
+        "Video",
+        32
+      ],
+      [
+        "Wearables",
+        25
+      ],
+      [
+        "Apparel",
+        24
+      ],
+      [
+        "Fitness",
+        13
+      ]
+    ]
+  },
+  "kb-fo-p19": {
+    "columns": [
+      "customer",
+      "order_id",
+      "status"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        19,
+        "pending"
+      ],
+      [
+        "Alice Chen",
+        42,
+        "pending"
+      ],
+      [
+        "Alice Chen",
+        79,
+        "pending"
+      ],
+      [
+        "Bruno Silva",
+        null,
+        null
+      ],
+      [
+        "Chloe Dubois",
+        25,
+        "pending"
+      ],
+      [
+        "Chloe Dubois",
+        43,
+        "pending"
+      ],
+      [
+        "Dmitri Volkov",
+        null,
+        null
+      ],
+      [
+        "Emma Wilson",
+        5,
+        "pending"
+      ],
+      [
+        "Emma Wilson",
+        90,
+        "pending"
+      ],
+      [
+        "Emma Wilson",
+        97,
+        "pending"
+      ],
+      [
+        "Farid Nasser",
+        74,
+        "pending"
+      ],
+      [
+        "Grace Kim",
+        75,
+        "pending"
+      ],
+      [
+        "Hiro Tanaka",
+        null,
+        null
+      ],
+      [
+        "Isabella Rossi",
+        null,
+        null
+      ],
+      [
+        "Jamal Wright",
+        null,
+        null
+      ],
+      [
+        "Keiko Sato",
+        94,
+        "pending"
+      ],
+      [
+        "Liam O'Brien",
+        null,
+        null
+      ],
+      [
+        "Maya Patel",
+        12,
+        "pending"
+      ],
+      [
+        "Maya Patel",
+        47,
+        "pending"
+      ],
+      [
+        "Noah Meyer",
+        null,
+        null
+      ],
+      [
+        "Olivia Brown",
+        null,
+        null
+      ],
+      [
+        "Pedro Alvarez",
+        1,
+        "pending"
+      ],
+      [
+        null,
+        2,
+        "delivered"
+      ],
+      [
+        null,
+        3,
+        "shipped"
+      ],
+      [
+        null,
+        4,
+        "shipped"
+      ],
+      [
+        null,
+        6,
+        "delivered"
+      ],
+      [
+        null,
+        7,
+        "cancelled"
+      ],
+      [
+        null,
+        8,
+        "shipped"
+      ],
+      [
+        null,
+        9,
+        "shipped"
+      ],
+      [
+        null,
+        10,
+        "delivered"
+      ],
+      [
+        null,
+        11,
+        "shipped"
+      ],
+      [
+        null,
+        13,
+        "delivered"
+      ],
+      [
+        null,
+        14,
+        "delivered"
+      ],
+      [
+        null,
+        15,
+        "shipped"
+      ],
+      [
+        null,
+        16,
+        "shipped"
+      ],
+      [
+        null,
+        17,
+        "delivered"
+      ],
+      [
+        null,
+        18,
+        "delivered"
+      ],
+      [
+        null,
+        20,
+        "shipped"
+      ],
+      [
+        null,
+        21,
+        "cancelled"
+      ],
+      [
+        null,
+        22,
+        "delivered"
+      ],
+      [
+        null,
+        23,
+        "delivered"
+      ],
+      [
+        null,
+        24,
+        "delivered"
+      ],
+      [
+        null,
+        26,
+        "shipped"
+      ],
+      [
+        null,
+        27,
+        "delivered"
+      ],
+      [
+        null,
+        28,
+        "delivered"
+      ],
+      [
+        null,
+        29,
+        "delivered"
+      ],
+      [
+        null,
+        30,
+        "shipped"
+      ],
+      [
+        null,
+        31,
+        "shipped"
+      ],
+      [
+        null,
+        32,
+        "shipped"
+      ],
+      [
+        null,
+        33,
+        "delivered"
+      ],
+      [
+        null,
+        34,
+        "delivered"
+      ],
+      [
+        null,
+        35,
+        "shipped"
+      ],
+      [
+        null,
+        36,
+        "shipped"
+      ],
+      [
+        null,
+        37,
+        "shipped"
+      ],
+      [
+        null,
+        38,
+        "delivered"
+      ],
+      [
+        null,
+        39,
+        "shipped"
+      ],
+      [
+        null,
+        40,
+        "delivered"
+      ],
+      [
+        null,
+        41,
+        "shipped"
+      ],
+      [
+        null,
+        44,
+        "shipped"
+      ],
+      [
+        null,
+        45,
+        "delivered"
+      ],
+      [
+        null,
+        46,
+        "delivered"
+      ],
+      [
+        null,
+        48,
+        "delivered"
+      ],
+      [
+        null,
+        49,
+        "shipped"
+      ],
+      [
+        null,
+        50,
+        "cancelled"
+      ],
+      [
+        null,
+        51,
+        "cancelled"
+      ],
+      [
+        null,
+        52,
+        "delivered"
+      ],
+      [
+        null,
+        53,
+        "shipped"
+      ],
+      [
+        null,
+        54,
+        "shipped"
+      ],
+      [
+        null,
+        55,
+        "delivered"
+      ],
+      [
+        null,
+        56,
+        "delivered"
+      ],
+      [
+        null,
+        57,
+        "shipped"
+      ],
+      [
+        null,
+        58,
+        "delivered"
+      ],
+      [
+        null,
+        59,
+        "delivered"
+      ],
+      [
+        null,
+        60,
+        "shipped"
+      ],
+      [
+        null,
+        61,
+        "delivered"
+      ],
+      [
+        null,
+        62,
+        "delivered"
+      ],
+      [
+        null,
+        63,
+        "delivered"
+      ],
+      [
+        null,
+        64,
+        "delivered"
+      ],
+      [
+        null,
+        65,
+        "shipped"
+      ],
+      [
+        null,
+        66,
+        "delivered"
+      ],
+      [
+        null,
+        67,
+        "delivered"
+      ],
+      [
+        null,
+        68,
+        "delivered"
+      ],
+      [
+        null,
+        69,
+        "delivered"
+      ],
+      [
+        null,
+        70,
+        "shipped"
+      ],
+      [
+        null,
+        71,
+        "delivered"
+      ],
+      [
+        null,
+        72,
+        "delivered"
+      ],
+      [
+        null,
+        73,
+        "delivered"
+      ],
+      [
+        null,
+        76,
+        "delivered"
+      ],
+      [
+        null,
+        77,
+        "delivered"
+      ],
+      [
+        null,
+        78,
+        "delivered"
+      ],
+      [
+        null,
+        80,
+        "delivered"
+      ],
+      [
+        null,
+        81,
+        "delivered"
+      ],
+      [
+        null,
+        82,
+        "cancelled"
+      ],
+      [
+        null,
+        83,
+        "cancelled"
+      ],
+      [
+        null,
+        84,
+        "shipped"
+      ],
+      [
+        null,
+        85,
+        "delivered"
+      ],
+      [
+        null,
+        86,
+        "delivered"
+      ],
+      [
+        null,
+        87,
+        "delivered"
+      ],
+      [
+        null,
+        88,
+        "delivered"
+      ],
+      [
+        null,
+        89,
+        "shipped"
+      ],
+      [
+        null,
+        91,
+        "delivered"
+      ],
+      [
+        null,
+        92,
+        "delivered"
+      ],
+      [
+        null,
+        93,
+        "delivered"
+      ],
+      [
+        null,
+        95,
+        "cancelled"
+      ],
+      [
+        null,
+        96,
+        "shipped"
+      ],
+      [
+        null,
+        98,
+        "shipped"
+      ],
+      [
+        null,
+        99,
+        "shipped"
+      ],
+      [
+        null,
+        100,
+        "delivered"
+      ],
+      [
+        null,
+        101,
+        "delivered"
+      ],
+      [
+        null,
+        102,
+        "delivered"
+      ],
+      [
+        null,
+        103,
+        "delivered"
+      ]
+    ]
+  },
+  "kb-fo-p20": {
+    "columns": [
+      "zone",
+      "row_count"
+    ],
+    "rows": [
+      [
+        "order_stray",
+        89
+      ],
+      [
+        "matched",
+        14
+      ],
+      [
+        "customer_stray",
+        8
+      ]
+    ]
+  },
+  "kb-fo-p21": {
+    "columns": [
+      "status",
+      "invoices",
+      "payment_rows",
+      "unpaid_invoices"
+    ],
+    "rows": [
+      [
+        "open",
+        6,
+        1,
+        5
+      ],
+      [
+        "paid",
+        21,
+        25,
+        1
+      ],
+      [
+        "void",
+        1,
+        1,
+        0
+      ]
+    ]
+  },
+  "kb-fo-p22": {
+    "columns": [
+      "number",
+      "payment_id"
+    ],
+    "rows": [
+      [
+        "INV-2024-001",
+        1
+      ],
+      [
+        "INV-2024-001",
+        2
+      ],
+      [
+        "INV-2024-002",
+        3
+      ],
+      [
+        "INV-2024-003",
+        4
+      ],
+      [
+        "INV-2024-004",
+        5
+      ],
+      [
+        "INV-2024-005",
+        6
+      ],
+      [
+        "INV-2024-005",
+        7
+      ],
+      [
+        "INV-2024-006",
+        8
+      ],
+      [
+        "INV-2024-007",
+        9
+      ],
+      [
+        "INV-2024-008",
+        10
+      ],
+      [
+        "INV-2024-009",
+        11
+      ],
+      [
+        "INV-2024-010",
+        12
+      ],
+      [
+        "INV-2024-011",
+        22
+      ],
+      [
+        "INV-2024-012",
+        13
+      ],
+      [
+        "INV-2024-012",
+        14
+      ],
+      [
+        "INV-2024-013",
+        15
+      ],
+      [
+        "INV-2024-014",
+        16
+      ],
+      [
+        "INV-2024-015",
+        17
+      ],
+      [
+        "INV-2024-016",
+        18
+      ],
+      [
+        "INV-2024-017",
+        23
+      ],
+      [
+        "INV-2024-018",
+        null
+      ],
+      [
+        "INV-2024-019",
+        19
+      ],
+      [
+        "INV-2024-019",
+        20
+      ],
+      [
+        "INV-2024-020",
+        21
+      ],
+      [
+        "INV-2024-021",
+        null
+      ],
+      [
+        "INV-2024-022",
+        24
+      ],
+      [
+        "INV-2024-022",
+        25
+      ],
+      [
+        "INV-2024-023",
+        26
+      ],
+      [
+        "INV-2025-024",
+        null
+      ],
+      [
+        "INV-2025-025",
+        27
+      ],
+      [
+        "INV-2025-026",
+        null
+      ],
+      [
+        "INV-2025-027",
+        null
+      ],
+      [
+        "INV-2025-028",
+        null
+      ]
+    ]
+  },
+  "kb-fo-p23": {
+    "columns": [
+      "region",
+      "method",
+      "payments"
+    ],
+    "rows": [
+      [
+        "APAC",
+        "wire",
+        5
+      ],
+      [
+        "APAC",
+        "card",
+        3
+      ],
+      [
+        "EU",
+        "card",
+        8
+      ],
+      [
+        "EU",
+        "wire",
+        6
+      ],
+      [
+        "US",
+        "card",
+        5
+      ]
+    ]
+  },
+  "kb-fo-p24": {
+    "columns": [
+      "name",
+      "unpaid_invoices",
+      "orphan_payments"
+    ],
+    "rows": [
+      [
+        "Chloe Dubois",
+        1,
+        0
+      ],
+      [
+        "Emma Wilson",
+        1,
+        0
+      ],
+      [
+        "Hiro Tanaka",
+        1,
+        0
+      ],
+      [
+        "Isabella Rossi",
+        1,
+        0
+      ],
+      [
+        "Liam O'Brien",
+        1,
+        0
+      ],
+      [
+        "Pedro Alvarez",
+        1,
+        0
+      ],
+      [
+        "Alice Chen",
+        0,
+        0
+      ],
+      [
+        "Grace Kim",
+        0,
+        0
+      ],
+      [
+        "Jamal Wright",
+        0,
+        0
+      ],
+      [
+        "Maya Patel",
+        0,
+        0
+      ],
+      [
+        "Olivia Brown",
+        0,
+        0
+      ]
+    ]
+  },
+  "kb-fo-p25": {
+    "columns": [
+      "yy",
+      "half",
+      "unpaid"
+    ],
+    "rows": [
+      [
+        "2024",
+        "H2",
+        2
+      ],
+      [
+        "2025",
+        "H1",
+        4
+      ]
+    ]
+  },
+  "kb-fo-p26": {
+    "columns": [
+      "method",
+      "row_count"
+    ],
+    "rows": [
+      [
+        "card",
+        16
+      ],
+      [
+        "wire",
+        11
+      ],
+      [
+        null,
+        6
+      ]
+    ]
+  },
+  "kb-fo-p27": {
+    "columns": [
+      "status",
+      "strays"
+    ],
+    "rows": [
+      [
+        "delivered",
+        52
+      ],
+      [
+        "shipped",
+        30
+      ],
+      [
+        "cancelled",
+        7
+      ]
+    ]
+  },
+  "kb-fo-p28": {
+    "columns": [
+      "impossible_rows"
+    ],
+    "rows": [
+      [
+        0
+      ]
+    ]
+  },
+  "kb-cj-p01": {
+    "columns": [
+      "product_a",
+      "product_b"
+    ],
+    "rows": [
+      [
+        "Mechanical Keyboard K1",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "4K Webcam Pro"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Ring Light 14\""
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Desk Mat Extended"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Fitness Band X2"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Smart Watch S"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Wireless Mouse M3",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Wireless Mouse M3",
+        "4K Webcam Pro"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Ring Light 14\""
+      ],
+      [
+        "Wireless Mouse M3",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Desk Mat Extended"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Fitness Band X2"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Smart Watch S"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Wireless Mouse M3"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Studio Desktop Mic"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "4K Webcam Pro"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Ring Light 14\""
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Desk Mat Extended"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Fitness Band X2"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Smart Watch S"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Running Socks 3-pack"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "4K Webcam Pro"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Ring Light 14\""
+      ],
+      [
+        "Noise-Canceling Headset",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Desk Mat Extended"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Fitness Band X2"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Smart Watch S"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Studio Desktop Mic",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Studio Desktop Mic",
+        "4K Webcam Pro"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Ring Light 14\""
+      ],
+      [
+        "Studio Desktop Mic",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Desk Mat Extended"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Fitness Band X2"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Smart Watch S"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "4K Webcam Pro"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Ring Light 14\""
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Desk Mat Extended"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Fitness Band X2"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Smart Watch S"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "4K Webcam Pro",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "4K Webcam Pro",
+        "Wireless Mouse M3"
+      ],
+      [
+        "4K Webcam Pro",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "4K Webcam Pro",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "4K Webcam Pro",
+        "Studio Desktop Mic"
+      ],
+      [
+        "4K Webcam Pro",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "4K Webcam Pro",
+        "4K Webcam Pro"
+      ],
+      [
+        "4K Webcam Pro",
+        "Ring Light 14\""
+      ],
+      [
+        "4K Webcam Pro",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "4K Webcam Pro",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "4K Webcam Pro",
+        "Desk Mat Extended"
+      ],
+      [
+        "4K Webcam Pro",
+        "Fitness Band X2"
+      ],
+      [
+        "4K Webcam Pro",
+        "Smart Watch S"
+      ],
+      [
+        "4K Webcam Pro",
+        "Running Socks 3-pack"
+      ],
+      [
+        "4K Webcam Pro",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "4K Webcam Pro",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Ring Light 14\"",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Ring Light 14\"",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Ring Light 14\"",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Ring Light 14\"",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Ring Light 14\"",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Ring Light 14\"",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Ring Light 14\"",
+        "4K Webcam Pro"
+      ],
+      [
+        "Ring Light 14\"",
+        "Ring Light 14\""
+      ],
+      [
+        "Ring Light 14\"",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Ring Light 14\"",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Ring Light 14\"",
+        "Desk Mat Extended"
+      ],
+      [
+        "Ring Light 14\"",
+        "Fitness Band X2"
+      ],
+      [
+        "Ring Light 14\"",
+        "Smart Watch S"
+      ],
+      [
+        "Ring Light 14\"",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Ring Light 14\"",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Ring Light 14\"",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Wireless Mouse M3"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Studio Desktop Mic"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "4K Webcam Pro"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Ring Light 14\""
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Desk Mat Extended"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Fitness Band X2"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Smart Watch S"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Running Socks 3-pack"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "4K Webcam Pro"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Ring Light 14\""
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Desk Mat Extended"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Fitness Band X2"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Smart Watch S"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Desk Mat Extended",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Desk Mat Extended",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Desk Mat Extended",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Desk Mat Extended",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Desk Mat Extended",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Desk Mat Extended",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Desk Mat Extended",
+        "4K Webcam Pro"
+      ],
+      [
+        "Desk Mat Extended",
+        "Ring Light 14\""
+      ],
+      [
+        "Desk Mat Extended",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Desk Mat Extended",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Desk Mat Extended",
+        "Desk Mat Extended"
+      ],
+      [
+        "Desk Mat Extended",
+        "Fitness Band X2"
+      ],
+      [
+        "Desk Mat Extended",
+        "Smart Watch S"
+      ],
+      [
+        "Desk Mat Extended",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Desk Mat Extended",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Desk Mat Extended",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Fitness Band X2",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Fitness Band X2",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Fitness Band X2",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Fitness Band X2",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Fitness Band X2",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Fitness Band X2",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Fitness Band X2",
+        "4K Webcam Pro"
+      ],
+      [
+        "Fitness Band X2",
+        "Ring Light 14\""
+      ],
+      [
+        "Fitness Band X2",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Fitness Band X2",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Fitness Band X2",
+        "Desk Mat Extended"
+      ],
+      [
+        "Fitness Band X2",
+        "Fitness Band X2"
+      ],
+      [
+        "Fitness Band X2",
+        "Smart Watch S"
+      ],
+      [
+        "Fitness Band X2",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Fitness Band X2",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Fitness Band X2",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Smart Watch S",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Smart Watch S",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Smart Watch S",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Smart Watch S",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Smart Watch S",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Smart Watch S",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Smart Watch S",
+        "4K Webcam Pro"
+      ],
+      [
+        "Smart Watch S",
+        "Ring Light 14\""
+      ],
+      [
+        "Smart Watch S",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Smart Watch S",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Smart Watch S",
+        "Desk Mat Extended"
+      ],
+      [
+        "Smart Watch S",
+        "Fitness Band X2"
+      ],
+      [
+        "Smart Watch S",
+        "Smart Watch S"
+      ],
+      [
+        "Smart Watch S",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Smart Watch S",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Smart Watch S",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Running Socks 3-pack",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Running Socks 3-pack",
+        "4K Webcam Pro"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Ring Light 14\""
+      ],
+      [
+        "Running Socks 3-pack",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Desk Mat Extended"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Fitness Band X2"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Smart Watch S"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "4K Webcam Pro"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Ring Light 14\""
+      ],
+      [
+        "Cycling Jersey Pro",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Desk Mat Extended"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Fitness Band X2"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Smart Watch S"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "4K Webcam Pro"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Ring Light 14\""
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Desk Mat Extended"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Fitness Band X2"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Smart Watch S"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Yoga Mat Eco 6mm"
+      ]
+    ]
+  },
+  "kb-cj-p02": {
+    "columns": [
+      "grid_rows"
+    ],
+    "rows": [
+      [
+        256
+      ]
+    ]
+  },
+  "kb-cj-p03": {
+    "columns": [
+      "expense_id",
+      "category",
+      "product"
+    ],
+    "rows": [
+      [
+        1,
+        "Rent",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        1,
+        "Rent",
+        "Wireless Mouse M3"
+      ],
+      [
+        1,
+        "Rent",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        1,
+        "Rent",
+        "Noise-Canceling Headset"
+      ],
+      [
+        1,
+        "Rent",
+        "Studio Desktop Mic"
+      ],
+      [
+        1,
+        "Rent",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        1,
+        "Rent",
+        "4K Webcam Pro"
+      ],
+      [
+        1,
+        "Rent",
+        "Ring Light 14\""
+      ],
+      [
+        1,
+        "Rent",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        1,
+        "Rent",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        1,
+        "Rent",
+        "Desk Mat Extended"
+      ],
+      [
+        1,
+        "Rent",
+        "Fitness Band X2"
+      ],
+      [
+        1,
+        "Rent",
+        "Smart Watch S"
+      ],
+      [
+        1,
+        "Rent",
+        "Running Socks 3-pack"
+      ],
+      [
+        1,
+        "Rent",
+        "Cycling Jersey Pro"
+      ],
+      [
+        1,
+        "Rent",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        2,
+        "Ads",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        2,
+        "Ads",
+        "Wireless Mouse M3"
+      ],
+      [
+        2,
+        "Ads",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        2,
+        "Ads",
+        "Noise-Canceling Headset"
+      ],
+      [
+        2,
+        "Ads",
+        "Studio Desktop Mic"
+      ],
+      [
+        2,
+        "Ads",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        2,
+        "Ads",
+        "4K Webcam Pro"
+      ],
+      [
+        2,
+        "Ads",
+        "Ring Light 14\""
+      ],
+      [
+        2,
+        "Ads",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        2,
+        "Ads",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        2,
+        "Ads",
+        "Desk Mat Extended"
+      ],
+      [
+        2,
+        "Ads",
+        "Fitness Band X2"
+      ],
+      [
+        2,
+        "Ads",
+        "Smart Watch S"
+      ],
+      [
+        2,
+        "Ads",
+        "Running Socks 3-pack"
+      ],
+      [
+        2,
+        "Ads",
+        "Cycling Jersey Pro"
+      ],
+      [
+        2,
+        "Ads",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        3,
+        "Tools",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        3,
+        "Tools",
+        "Wireless Mouse M3"
+      ],
+      [
+        3,
+        "Tools",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        3,
+        "Tools",
+        "Noise-Canceling Headset"
+      ],
+      [
+        3,
+        "Tools",
+        "Studio Desktop Mic"
+      ],
+      [
+        3,
+        "Tools",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        3,
+        "Tools",
+        "4K Webcam Pro"
+      ],
+      [
+        3,
+        "Tools",
+        "Ring Light 14\""
+      ],
+      [
+        3,
+        "Tools",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        3,
+        "Tools",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        3,
+        "Tools",
+        "Desk Mat Extended"
+      ],
+      [
+        3,
+        "Tools",
+        "Fitness Band X2"
+      ],
+      [
+        3,
+        "Tools",
+        "Smart Watch S"
+      ],
+      [
+        3,
+        "Tools",
+        "Running Socks 3-pack"
+      ],
+      [
+        3,
+        "Tools",
+        "Cycling Jersey Pro"
+      ],
+      [
+        3,
+        "Tools",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        4,
+        "Rent",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        4,
+        "Rent",
+        "Wireless Mouse M3"
+      ],
+      [
+        4,
+        "Rent",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        4,
+        "Rent",
+        "Noise-Canceling Headset"
+      ],
+      [
+        4,
+        "Rent",
+        "Studio Desktop Mic"
+      ],
+      [
+        4,
+        "Rent",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        4,
+        "Rent",
+        "4K Webcam Pro"
+      ],
+      [
+        4,
+        "Rent",
+        "Ring Light 14\""
+      ],
+      [
+        4,
+        "Rent",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        4,
+        "Rent",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        4,
+        "Rent",
+        "Desk Mat Extended"
+      ],
+      [
+        4,
+        "Rent",
+        "Fitness Band X2"
+      ],
+      [
+        4,
+        "Rent",
+        "Smart Watch S"
+      ],
+      [
+        4,
+        "Rent",
+        "Running Socks 3-pack"
+      ],
+      [
+        4,
+        "Rent",
+        "Cycling Jersey Pro"
+      ],
+      [
+        4,
+        "Rent",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        5,
+        "Ads",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        5,
+        "Ads",
+        "Wireless Mouse M3"
+      ],
+      [
+        5,
+        "Ads",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        5,
+        "Ads",
+        "Noise-Canceling Headset"
+      ],
+      [
+        5,
+        "Ads",
+        "Studio Desktop Mic"
+      ],
+      [
+        5,
+        "Ads",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        5,
+        "Ads",
+        "4K Webcam Pro"
+      ],
+      [
+        5,
+        "Ads",
+        "Ring Light 14\""
+      ],
+      [
+        5,
+        "Ads",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        5,
+        "Ads",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        5,
+        "Ads",
+        "Desk Mat Extended"
+      ],
+      [
+        5,
+        "Ads",
+        "Fitness Band X2"
+      ],
+      [
+        5,
+        "Ads",
+        "Smart Watch S"
+      ],
+      [
+        5,
+        "Ads",
+        "Running Socks 3-pack"
+      ],
+      [
+        5,
+        "Ads",
+        "Cycling Jersey Pro"
+      ],
+      [
+        5,
+        "Ads",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        6,
+        "Rent",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        6,
+        "Rent",
+        "Wireless Mouse M3"
+      ],
+      [
+        6,
+        "Rent",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        6,
+        "Rent",
+        "Noise-Canceling Headset"
+      ],
+      [
+        6,
+        "Rent",
+        "Studio Desktop Mic"
+      ],
+      [
+        6,
+        "Rent",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        6,
+        "Rent",
+        "4K Webcam Pro"
+      ],
+      [
+        6,
+        "Rent",
+        "Ring Light 14\""
+      ],
+      [
+        6,
+        "Rent",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        6,
+        "Rent",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        6,
+        "Rent",
+        "Desk Mat Extended"
+      ],
+      [
+        6,
+        "Rent",
+        "Fitness Band X2"
+      ],
+      [
+        6,
+        "Rent",
+        "Smart Watch S"
+      ],
+      [
+        6,
+        "Rent",
+        "Running Socks 3-pack"
+      ],
+      [
+        6,
+        "Rent",
+        "Cycling Jersey Pro"
+      ],
+      [
+        6,
+        "Rent",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        7,
+        "Ads",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        7,
+        "Ads",
+        "Wireless Mouse M3"
+      ],
+      [
+        7,
+        "Ads",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        7,
+        "Ads",
+        "Noise-Canceling Headset"
+      ],
+      [
+        7,
+        "Ads",
+        "Studio Desktop Mic"
+      ],
+      [
+        7,
+        "Ads",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        7,
+        "Ads",
+        "4K Webcam Pro"
+      ],
+      [
+        7,
+        "Ads",
+        "Ring Light 14\""
+      ],
+      [
+        7,
+        "Ads",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        7,
+        "Ads",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        7,
+        "Ads",
+        "Desk Mat Extended"
+      ],
+      [
+        7,
+        "Ads",
+        "Fitness Band X2"
+      ],
+      [
+        7,
+        "Ads",
+        "Smart Watch S"
+      ],
+      [
+        7,
+        "Ads",
+        "Running Socks 3-pack"
+      ],
+      [
+        7,
+        "Ads",
+        "Cycling Jersey Pro"
+      ],
+      [
+        7,
+        "Ads",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        8,
+        "Travel",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        8,
+        "Travel",
+        "Wireless Mouse M3"
+      ],
+      [
+        8,
+        "Travel",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        8,
+        "Travel",
+        "Noise-Canceling Headset"
+      ],
+      [
+        8,
+        "Travel",
+        "Studio Desktop Mic"
+      ],
+      [
+        8,
+        "Travel",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        8,
+        "Travel",
+        "4K Webcam Pro"
+      ],
+      [
+        8,
+        "Travel",
+        "Ring Light 14\""
+      ],
+      [
+        8,
+        "Travel",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        8,
+        "Travel",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        8,
+        "Travel",
+        "Desk Mat Extended"
+      ],
+      [
+        8,
+        "Travel",
+        "Fitness Band X2"
+      ],
+      [
+        8,
+        "Travel",
+        "Smart Watch S"
+      ],
+      [
+        8,
+        "Travel",
+        "Running Socks 3-pack"
+      ],
+      [
+        8,
+        "Travel",
+        "Cycling Jersey Pro"
+      ],
+      [
+        8,
+        "Travel",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        9,
+        "Rent",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        9,
+        "Rent",
+        "Wireless Mouse M3"
+      ],
+      [
+        9,
+        "Rent",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        9,
+        "Rent",
+        "Noise-Canceling Headset"
+      ],
+      [
+        9,
+        "Rent",
+        "Studio Desktop Mic"
+      ],
+      [
+        9,
+        "Rent",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        9,
+        "Rent",
+        "4K Webcam Pro"
+      ],
+      [
+        9,
+        "Rent",
+        "Ring Light 14\""
+      ],
+      [
+        9,
+        "Rent",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        9,
+        "Rent",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        9,
+        "Rent",
+        "Desk Mat Extended"
+      ],
+      [
+        9,
+        "Rent",
+        "Fitness Band X2"
+      ],
+      [
+        9,
+        "Rent",
+        "Smart Watch S"
+      ],
+      [
+        9,
+        "Rent",
+        "Running Socks 3-pack"
+      ],
+      [
+        9,
+        "Rent",
+        "Cycling Jersey Pro"
+      ],
+      [
+        9,
+        "Rent",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        10,
+        "Ads",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        10,
+        "Ads",
+        "Wireless Mouse M3"
+      ],
+      [
+        10,
+        "Ads",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        10,
+        "Ads",
+        "Noise-Canceling Headset"
+      ],
+      [
+        10,
+        "Ads",
+        "Studio Desktop Mic"
+      ],
+      [
+        10,
+        "Ads",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        10,
+        "Ads",
+        "4K Webcam Pro"
+      ],
+      [
+        10,
+        "Ads",
+        "Ring Light 14\""
+      ],
+      [
+        10,
+        "Ads",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        10,
+        "Ads",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        10,
+        "Ads",
+        "Desk Mat Extended"
+      ],
+      [
+        10,
+        "Ads",
+        "Fitness Band X2"
+      ],
+      [
+        10,
+        "Ads",
+        "Smart Watch S"
+      ],
+      [
+        10,
+        "Ads",
+        "Running Socks 3-pack"
+      ],
+      [
+        10,
+        "Ads",
+        "Cycling Jersey Pro"
+      ],
+      [
+        10,
+        "Ads",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        11,
+        "Tools",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        11,
+        "Tools",
+        "Wireless Mouse M3"
+      ],
+      [
+        11,
+        "Tools",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        11,
+        "Tools",
+        "Noise-Canceling Headset"
+      ],
+      [
+        11,
+        "Tools",
+        "Studio Desktop Mic"
+      ],
+      [
+        11,
+        "Tools",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        11,
+        "Tools",
+        "4K Webcam Pro"
+      ],
+      [
+        11,
+        "Tools",
+        "Ring Light 14\""
+      ],
+      [
+        11,
+        "Tools",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        11,
+        "Tools",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        11,
+        "Tools",
+        "Desk Mat Extended"
+      ],
+      [
+        11,
+        "Tools",
+        "Fitness Band X2"
+      ],
+      [
+        11,
+        "Tools",
+        "Smart Watch S"
+      ],
+      [
+        11,
+        "Tools",
+        "Running Socks 3-pack"
+      ],
+      [
+        11,
+        "Tools",
+        "Cycling Jersey Pro"
+      ],
+      [
+        11,
+        "Tools",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        12,
+        "Rent",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        12,
+        "Rent",
+        "Wireless Mouse M3"
+      ],
+      [
+        12,
+        "Rent",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        12,
+        "Rent",
+        "Noise-Canceling Headset"
+      ],
+      [
+        12,
+        "Rent",
+        "Studio Desktop Mic"
+      ],
+      [
+        12,
+        "Rent",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        12,
+        "Rent",
+        "4K Webcam Pro"
+      ],
+      [
+        12,
+        "Rent",
+        "Ring Light 14\""
+      ],
+      [
+        12,
+        "Rent",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        12,
+        "Rent",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        12,
+        "Rent",
+        "Desk Mat Extended"
+      ],
+      [
+        12,
+        "Rent",
+        "Fitness Band X2"
+      ],
+      [
+        12,
+        "Rent",
+        "Smart Watch S"
+      ],
+      [
+        12,
+        "Rent",
+        "Running Socks 3-pack"
+      ],
+      [
+        12,
+        "Rent",
+        "Cycling Jersey Pro"
+      ],
+      [
+        12,
+        "Rent",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        13,
+        "Ads",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        13,
+        "Ads",
+        "Wireless Mouse M3"
+      ],
+      [
+        13,
+        "Ads",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        13,
+        "Ads",
+        "Noise-Canceling Headset"
+      ],
+      [
+        13,
+        "Ads",
+        "Studio Desktop Mic"
+      ],
+      [
+        13,
+        "Ads",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        13,
+        "Ads",
+        "4K Webcam Pro"
+      ],
+      [
+        13,
+        "Ads",
+        "Ring Light 14\""
+      ],
+      [
+        13,
+        "Ads",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        13,
+        "Ads",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        13,
+        "Ads",
+        "Desk Mat Extended"
+      ],
+      [
+        13,
+        "Ads",
+        "Fitness Band X2"
+      ],
+      [
+        13,
+        "Ads",
+        "Smart Watch S"
+      ],
+      [
+        13,
+        "Ads",
+        "Running Socks 3-pack"
+      ],
+      [
+        13,
+        "Ads",
+        "Cycling Jersey Pro"
+      ],
+      [
+        13,
+        "Ads",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        14,
+        "Rent",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        14,
+        "Rent",
+        "Wireless Mouse M3"
+      ],
+      [
+        14,
+        "Rent",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        14,
+        "Rent",
+        "Noise-Canceling Headset"
+      ],
+      [
+        14,
+        "Rent",
+        "Studio Desktop Mic"
+      ],
+      [
+        14,
+        "Rent",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        14,
+        "Rent",
+        "4K Webcam Pro"
+      ],
+      [
+        14,
+        "Rent",
+        "Ring Light 14\""
+      ],
+      [
+        14,
+        "Rent",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        14,
+        "Rent",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        14,
+        "Rent",
+        "Desk Mat Extended"
+      ],
+      [
+        14,
+        "Rent",
+        "Fitness Band X2"
+      ],
+      [
+        14,
+        "Rent",
+        "Smart Watch S"
+      ],
+      [
+        14,
+        "Rent",
+        "Running Socks 3-pack"
+      ],
+      [
+        14,
+        "Rent",
+        "Cycling Jersey Pro"
+      ],
+      [
+        14,
+        "Rent",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        15,
+        "Ads",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        15,
+        "Ads",
+        "Wireless Mouse M3"
+      ],
+      [
+        15,
+        "Ads",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        15,
+        "Ads",
+        "Noise-Canceling Headset"
+      ],
+      [
+        15,
+        "Ads",
+        "Studio Desktop Mic"
+      ],
+      [
+        15,
+        "Ads",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        15,
+        "Ads",
+        "4K Webcam Pro"
+      ],
+      [
+        15,
+        "Ads",
+        "Ring Light 14\""
+      ],
+      [
+        15,
+        "Ads",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        15,
+        "Ads",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        15,
+        "Ads",
+        "Desk Mat Extended"
+      ],
+      [
+        15,
+        "Ads",
+        "Fitness Band X2"
+      ],
+      [
+        15,
+        "Ads",
+        "Smart Watch S"
+      ],
+      [
+        15,
+        "Ads",
+        "Running Socks 3-pack"
+      ],
+      [
+        15,
+        "Ads",
+        "Cycling Jersey Pro"
+      ],
+      [
+        15,
+        "Ads",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        16,
+        "Rent",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        16,
+        "Rent",
+        "Wireless Mouse M3"
+      ],
+      [
+        16,
+        "Rent",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        16,
+        "Rent",
+        "Noise-Canceling Headset"
+      ],
+      [
+        16,
+        "Rent",
+        "Studio Desktop Mic"
+      ],
+      [
+        16,
+        "Rent",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        16,
+        "Rent",
+        "4K Webcam Pro"
+      ],
+      [
+        16,
+        "Rent",
+        "Ring Light 14\""
+      ],
+      [
+        16,
+        "Rent",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        16,
+        "Rent",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        16,
+        "Rent",
+        "Desk Mat Extended"
+      ],
+      [
+        16,
+        "Rent",
+        "Fitness Band X2"
+      ],
+      [
+        16,
+        "Rent",
+        "Smart Watch S"
+      ],
+      [
+        16,
+        "Rent",
+        "Running Socks 3-pack"
+      ],
+      [
+        16,
+        "Rent",
+        "Cycling Jersey Pro"
+      ],
+      [
+        16,
+        "Rent",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        17,
+        "Ads",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        17,
+        "Ads",
+        "Wireless Mouse M3"
+      ],
+      [
+        17,
+        "Ads",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        17,
+        "Ads",
+        "Noise-Canceling Headset"
+      ],
+      [
+        17,
+        "Ads",
+        "Studio Desktop Mic"
+      ],
+      [
+        17,
+        "Ads",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        17,
+        "Ads",
+        "4K Webcam Pro"
+      ],
+      [
+        17,
+        "Ads",
+        "Ring Light 14\""
+      ],
+      [
+        17,
+        "Ads",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        17,
+        "Ads",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        17,
+        "Ads",
+        "Desk Mat Extended"
+      ],
+      [
+        17,
+        "Ads",
+        "Fitness Band X2"
+      ],
+      [
+        17,
+        "Ads",
+        "Smart Watch S"
+      ],
+      [
+        17,
+        "Ads",
+        "Running Socks 3-pack"
+      ],
+      [
+        17,
+        "Ads",
+        "Cycling Jersey Pro"
+      ],
+      [
+        17,
+        "Ads",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        18,
+        "Tools",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        18,
+        "Tools",
+        "Wireless Mouse M3"
+      ],
+      [
+        18,
+        "Tools",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        18,
+        "Tools",
+        "Noise-Canceling Headset"
+      ],
+      [
+        18,
+        "Tools",
+        "Studio Desktop Mic"
+      ],
+      [
+        18,
+        "Tools",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        18,
+        "Tools",
+        "4K Webcam Pro"
+      ],
+      [
+        18,
+        "Tools",
+        "Ring Light 14\""
+      ],
+      [
+        18,
+        "Tools",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        18,
+        "Tools",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        18,
+        "Tools",
+        "Desk Mat Extended"
+      ],
+      [
+        18,
+        "Tools",
+        "Fitness Band X2"
+      ],
+      [
+        18,
+        "Tools",
+        "Smart Watch S"
+      ],
+      [
+        18,
+        "Tools",
+        "Running Socks 3-pack"
+      ],
+      [
+        18,
+        "Tools",
+        "Cycling Jersey Pro"
+      ],
+      [
+        18,
+        "Tools",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        19,
+        "Rent",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        19,
+        "Rent",
+        "Wireless Mouse M3"
+      ],
+      [
+        19,
+        "Rent",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        19,
+        "Rent",
+        "Noise-Canceling Headset"
+      ],
+      [
+        19,
+        "Rent",
+        "Studio Desktop Mic"
+      ],
+      [
+        19,
+        "Rent",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        19,
+        "Rent",
+        "4K Webcam Pro"
+      ],
+      [
+        19,
+        "Rent",
+        "Ring Light 14\""
+      ],
+      [
+        19,
+        "Rent",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        19,
+        "Rent",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        19,
+        "Rent",
+        "Desk Mat Extended"
+      ],
+      [
+        19,
+        "Rent",
+        "Fitness Band X2"
+      ],
+      [
+        19,
+        "Rent",
+        "Smart Watch S"
+      ],
+      [
+        19,
+        "Rent",
+        "Running Socks 3-pack"
+      ],
+      [
+        19,
+        "Rent",
+        "Cycling Jersey Pro"
+      ],
+      [
+        19,
+        "Rent",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        20,
+        "Ads",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        20,
+        "Ads",
+        "Wireless Mouse M3"
+      ],
+      [
+        20,
+        "Ads",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        20,
+        "Ads",
+        "Noise-Canceling Headset"
+      ],
+      [
+        20,
+        "Ads",
+        "Studio Desktop Mic"
+      ],
+      [
+        20,
+        "Ads",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        20,
+        "Ads",
+        "4K Webcam Pro"
+      ],
+      [
+        20,
+        "Ads",
+        "Ring Light 14\""
+      ],
+      [
+        20,
+        "Ads",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        20,
+        "Ads",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        20,
+        "Ads",
+        "Desk Mat Extended"
+      ],
+      [
+        20,
+        "Ads",
+        "Fitness Band X2"
+      ],
+      [
+        20,
+        "Ads",
+        "Smart Watch S"
+      ],
+      [
+        20,
+        "Ads",
+        "Running Socks 3-pack"
+      ],
+      [
+        20,
+        "Ads",
+        "Cycling Jersey Pro"
+      ],
+      [
+        20,
+        "Ads",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        21,
+        "Travel",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        21,
+        "Travel",
+        "Wireless Mouse M3"
+      ],
+      [
+        21,
+        "Travel",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        21,
+        "Travel",
+        "Noise-Canceling Headset"
+      ],
+      [
+        21,
+        "Travel",
+        "Studio Desktop Mic"
+      ],
+      [
+        21,
+        "Travel",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        21,
+        "Travel",
+        "4K Webcam Pro"
+      ],
+      [
+        21,
+        "Travel",
+        "Ring Light 14\""
+      ],
+      [
+        21,
+        "Travel",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        21,
+        "Travel",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        21,
+        "Travel",
+        "Desk Mat Extended"
+      ],
+      [
+        21,
+        "Travel",
+        "Fitness Band X2"
+      ],
+      [
+        21,
+        "Travel",
+        "Smart Watch S"
+      ],
+      [
+        21,
+        "Travel",
+        "Running Socks 3-pack"
+      ],
+      [
+        21,
+        "Travel",
+        "Cycling Jersey Pro"
+      ],
+      [
+        21,
+        "Travel",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        22,
+        "Rent",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        22,
+        "Rent",
+        "Wireless Mouse M3"
+      ],
+      [
+        22,
+        "Rent",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        22,
+        "Rent",
+        "Noise-Canceling Headset"
+      ],
+      [
+        22,
+        "Rent",
+        "Studio Desktop Mic"
+      ],
+      [
+        22,
+        "Rent",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        22,
+        "Rent",
+        "4K Webcam Pro"
+      ],
+      [
+        22,
+        "Rent",
+        "Ring Light 14\""
+      ],
+      [
+        22,
+        "Rent",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        22,
+        "Rent",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        22,
+        "Rent",
+        "Desk Mat Extended"
+      ],
+      [
+        22,
+        "Rent",
+        "Fitness Band X2"
+      ],
+      [
+        22,
+        "Rent",
+        "Smart Watch S"
+      ],
+      [
+        22,
+        "Rent",
+        "Running Socks 3-pack"
+      ],
+      [
+        22,
+        "Rent",
+        "Cycling Jersey Pro"
+      ],
+      [
+        22,
+        "Rent",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        23,
+        "Ads",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        23,
+        "Ads",
+        "Wireless Mouse M3"
+      ],
+      [
+        23,
+        "Ads",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        23,
+        "Ads",
+        "Noise-Canceling Headset"
+      ],
+      [
+        23,
+        "Ads",
+        "Studio Desktop Mic"
+      ],
+      [
+        23,
+        "Ads",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        23,
+        "Ads",
+        "4K Webcam Pro"
+      ],
+      [
+        23,
+        "Ads",
+        "Ring Light 14\""
+      ],
+      [
+        23,
+        "Ads",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        23,
+        "Ads",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        23,
+        "Ads",
+        "Desk Mat Extended"
+      ],
+      [
+        23,
+        "Ads",
+        "Fitness Band X2"
+      ],
+      [
+        23,
+        "Ads",
+        "Smart Watch S"
+      ],
+      [
+        23,
+        "Ads",
+        "Running Socks 3-pack"
+      ],
+      [
+        23,
+        "Ads",
+        "Cycling Jersey Pro"
+      ],
+      [
+        23,
+        "Ads",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        24,
+        "Rent",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        24,
+        "Rent",
+        "Wireless Mouse M3"
+      ],
+      [
+        24,
+        "Rent",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        24,
+        "Rent",
+        "Noise-Canceling Headset"
+      ],
+      [
+        24,
+        "Rent",
+        "Studio Desktop Mic"
+      ],
+      [
+        24,
+        "Rent",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        24,
+        "Rent",
+        "4K Webcam Pro"
+      ],
+      [
+        24,
+        "Rent",
+        "Ring Light 14\""
+      ],
+      [
+        24,
+        "Rent",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        24,
+        "Rent",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        24,
+        "Rent",
+        "Desk Mat Extended"
+      ],
+      [
+        24,
+        "Rent",
+        "Fitness Band X2"
+      ],
+      [
+        24,
+        "Rent",
+        "Smart Watch S"
+      ],
+      [
+        24,
+        "Rent",
+        "Running Socks 3-pack"
+      ],
+      [
+        24,
+        "Rent",
+        "Cycling Jersey Pro"
+      ],
+      [
+        24,
+        "Rent",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        25,
+        "Ads",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        25,
+        "Ads",
+        "Wireless Mouse M3"
+      ],
+      [
+        25,
+        "Ads",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        25,
+        "Ads",
+        "Noise-Canceling Headset"
+      ],
+      [
+        25,
+        "Ads",
+        "Studio Desktop Mic"
+      ],
+      [
+        25,
+        "Ads",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        25,
+        "Ads",
+        "4K Webcam Pro"
+      ],
+      [
+        25,
+        "Ads",
+        "Ring Light 14\""
+      ],
+      [
+        25,
+        "Ads",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        25,
+        "Ads",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        25,
+        "Ads",
+        "Desk Mat Extended"
+      ],
+      [
+        25,
+        "Ads",
+        "Fitness Band X2"
+      ],
+      [
+        25,
+        "Ads",
+        "Smart Watch S"
+      ],
+      [
+        25,
+        "Ads",
+        "Running Socks 3-pack"
+      ],
+      [
+        25,
+        "Ads",
+        "Cycling Jersey Pro"
+      ],
+      [
+        25,
+        "Ads",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        26,
+        "Tools",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        26,
+        "Tools",
+        "Wireless Mouse M3"
+      ],
+      [
+        26,
+        "Tools",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        26,
+        "Tools",
+        "Noise-Canceling Headset"
+      ],
+      [
+        26,
+        "Tools",
+        "Studio Desktop Mic"
+      ],
+      [
+        26,
+        "Tools",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        26,
+        "Tools",
+        "4K Webcam Pro"
+      ],
+      [
+        26,
+        "Tools",
+        "Ring Light 14\""
+      ],
+      [
+        26,
+        "Tools",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        26,
+        "Tools",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        26,
+        "Tools",
+        "Desk Mat Extended"
+      ],
+      [
+        26,
+        "Tools",
+        "Fitness Band X2"
+      ],
+      [
+        26,
+        "Tools",
+        "Smart Watch S"
+      ],
+      [
+        26,
+        "Tools",
+        "Running Socks 3-pack"
+      ],
+      [
+        26,
+        "Tools",
+        "Cycling Jersey Pro"
+      ],
+      [
+        26,
+        "Tools",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        27,
+        "Rent",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        27,
+        "Rent",
+        "Wireless Mouse M3"
+      ],
+      [
+        27,
+        "Rent",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        27,
+        "Rent",
+        "Noise-Canceling Headset"
+      ],
+      [
+        27,
+        "Rent",
+        "Studio Desktop Mic"
+      ],
+      [
+        27,
+        "Rent",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        27,
+        "Rent",
+        "4K Webcam Pro"
+      ],
+      [
+        27,
+        "Rent",
+        "Ring Light 14\""
+      ],
+      [
+        27,
+        "Rent",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        27,
+        "Rent",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        27,
+        "Rent",
+        "Desk Mat Extended"
+      ],
+      [
+        27,
+        "Rent",
+        "Fitness Band X2"
+      ],
+      [
+        27,
+        "Rent",
+        "Smart Watch S"
+      ],
+      [
+        27,
+        "Rent",
+        "Running Socks 3-pack"
+      ],
+      [
+        27,
+        "Rent",
+        "Cycling Jersey Pro"
+      ],
+      [
+        27,
+        "Rent",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        28,
+        "Ads",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        28,
+        "Ads",
+        "Wireless Mouse M3"
+      ],
+      [
+        28,
+        "Ads",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        28,
+        "Ads",
+        "Noise-Canceling Headset"
+      ],
+      [
+        28,
+        "Ads",
+        "Studio Desktop Mic"
+      ],
+      [
+        28,
+        "Ads",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        28,
+        "Ads",
+        "4K Webcam Pro"
+      ],
+      [
+        28,
+        "Ads",
+        "Ring Light 14\""
+      ],
+      [
+        28,
+        "Ads",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        28,
+        "Ads",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        28,
+        "Ads",
+        "Desk Mat Extended"
+      ],
+      [
+        28,
+        "Ads",
+        "Fitness Band X2"
+      ],
+      [
+        28,
+        "Ads",
+        "Smart Watch S"
+      ],
+      [
+        28,
+        "Ads",
+        "Running Socks 3-pack"
+      ],
+      [
+        28,
+        "Ads",
+        "Cycling Jersey Pro"
+      ],
+      [
+        28,
+        "Ads",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        29,
+        "Travel",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        29,
+        "Travel",
+        "Wireless Mouse M3"
+      ],
+      [
+        29,
+        "Travel",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        29,
+        "Travel",
+        "Noise-Canceling Headset"
+      ],
+      [
+        29,
+        "Travel",
+        "Studio Desktop Mic"
+      ],
+      [
+        29,
+        "Travel",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        29,
+        "Travel",
+        "4K Webcam Pro"
+      ],
+      [
+        29,
+        "Travel",
+        "Ring Light 14\""
+      ],
+      [
+        29,
+        "Travel",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        29,
+        "Travel",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        29,
+        "Travel",
+        "Desk Mat Extended"
+      ],
+      [
+        29,
+        "Travel",
+        "Fitness Band X2"
+      ],
+      [
+        29,
+        "Travel",
+        "Smart Watch S"
+      ],
+      [
+        29,
+        "Travel",
+        "Running Socks 3-pack"
+      ],
+      [
+        29,
+        "Travel",
+        "Cycling Jersey Pro"
+      ],
+      [
+        29,
+        "Travel",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        30,
+        "Rent",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        30,
+        "Rent",
+        "Wireless Mouse M3"
+      ],
+      [
+        30,
+        "Rent",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        30,
+        "Rent",
+        "Noise-Canceling Headset"
+      ],
+      [
+        30,
+        "Rent",
+        "Studio Desktop Mic"
+      ],
+      [
+        30,
+        "Rent",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        30,
+        "Rent",
+        "4K Webcam Pro"
+      ],
+      [
+        30,
+        "Rent",
+        "Ring Light 14\""
+      ],
+      [
+        30,
+        "Rent",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        30,
+        "Rent",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        30,
+        "Rent",
+        "Desk Mat Extended"
+      ],
+      [
+        30,
+        "Rent",
+        "Fitness Band X2"
+      ],
+      [
+        30,
+        "Rent",
+        "Smart Watch S"
+      ],
+      [
+        30,
+        "Rent",
+        "Running Socks 3-pack"
+      ],
+      [
+        30,
+        "Rent",
+        "Cycling Jersey Pro"
+      ],
+      [
+        30,
+        "Rent",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        31,
+        "Ads",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        31,
+        "Ads",
+        "Wireless Mouse M3"
+      ],
+      [
+        31,
+        "Ads",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        31,
+        "Ads",
+        "Noise-Canceling Headset"
+      ],
+      [
+        31,
+        "Ads",
+        "Studio Desktop Mic"
+      ],
+      [
+        31,
+        "Ads",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        31,
+        "Ads",
+        "4K Webcam Pro"
+      ],
+      [
+        31,
+        "Ads",
+        "Ring Light 14\""
+      ],
+      [
+        31,
+        "Ads",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        31,
+        "Ads",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        31,
+        "Ads",
+        "Desk Mat Extended"
+      ],
+      [
+        31,
+        "Ads",
+        "Fitness Band X2"
+      ],
+      [
+        31,
+        "Ads",
+        "Smart Watch S"
+      ],
+      [
+        31,
+        "Ads",
+        "Running Socks 3-pack"
+      ],
+      [
+        31,
+        "Ads",
+        "Cycling Jersey Pro"
+      ],
+      [
+        31,
+        "Ads",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        32,
+        "Rent",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        32,
+        "Rent",
+        "Wireless Mouse M3"
+      ],
+      [
+        32,
+        "Rent",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        32,
+        "Rent",
+        "Noise-Canceling Headset"
+      ],
+      [
+        32,
+        "Rent",
+        "Studio Desktop Mic"
+      ],
+      [
+        32,
+        "Rent",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        32,
+        "Rent",
+        "4K Webcam Pro"
+      ],
+      [
+        32,
+        "Rent",
+        "Ring Light 14\""
+      ],
+      [
+        32,
+        "Rent",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        32,
+        "Rent",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        32,
+        "Rent",
+        "Desk Mat Extended"
+      ],
+      [
+        32,
+        "Rent",
+        "Fitness Band X2"
+      ],
+      [
+        32,
+        "Rent",
+        "Smart Watch S"
+      ],
+      [
+        32,
+        "Rent",
+        "Running Socks 3-pack"
+      ],
+      [
+        32,
+        "Rent",
+        "Cycling Jersey Pro"
+      ],
+      [
+        32,
+        "Rent",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        33,
+        "Ads",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        33,
+        "Ads",
+        "Wireless Mouse M3"
+      ],
+      [
+        33,
+        "Ads",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        33,
+        "Ads",
+        "Noise-Canceling Headset"
+      ],
+      [
+        33,
+        "Ads",
+        "Studio Desktop Mic"
+      ],
+      [
+        33,
+        "Ads",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        33,
+        "Ads",
+        "4K Webcam Pro"
+      ],
+      [
+        33,
+        "Ads",
+        "Ring Light 14\""
+      ],
+      [
+        33,
+        "Ads",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        33,
+        "Ads",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        33,
+        "Ads",
+        "Desk Mat Extended"
+      ],
+      [
+        33,
+        "Ads",
+        "Fitness Band X2"
+      ],
+      [
+        33,
+        "Ads",
+        "Smart Watch S"
+      ],
+      [
+        33,
+        "Ads",
+        "Running Socks 3-pack"
+      ],
+      [
+        33,
+        "Ads",
+        "Cycling Jersey Pro"
+      ],
+      [
+        33,
+        "Ads",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        34,
+        "Tools",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        34,
+        "Tools",
+        "Wireless Mouse M3"
+      ],
+      [
+        34,
+        "Tools",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        34,
+        "Tools",
+        "Noise-Canceling Headset"
+      ],
+      [
+        34,
+        "Tools",
+        "Studio Desktop Mic"
+      ],
+      [
+        34,
+        "Tools",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        34,
+        "Tools",
+        "4K Webcam Pro"
+      ],
+      [
+        34,
+        "Tools",
+        "Ring Light 14\""
+      ],
+      [
+        34,
+        "Tools",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        34,
+        "Tools",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        34,
+        "Tools",
+        "Desk Mat Extended"
+      ],
+      [
+        34,
+        "Tools",
+        "Fitness Band X2"
+      ],
+      [
+        34,
+        "Tools",
+        "Smart Watch S"
+      ],
+      [
+        34,
+        "Tools",
+        "Running Socks 3-pack"
+      ],
+      [
+        34,
+        "Tools",
+        "Cycling Jersey Pro"
+      ],
+      [
+        34,
+        "Tools",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        35,
+        "Rent",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        35,
+        "Rent",
+        "Wireless Mouse M3"
+      ],
+      [
+        35,
+        "Rent",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        35,
+        "Rent",
+        "Noise-Canceling Headset"
+      ],
+      [
+        35,
+        "Rent",
+        "Studio Desktop Mic"
+      ],
+      [
+        35,
+        "Rent",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        35,
+        "Rent",
+        "4K Webcam Pro"
+      ],
+      [
+        35,
+        "Rent",
+        "Ring Light 14\""
+      ],
+      [
+        35,
+        "Rent",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        35,
+        "Rent",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        35,
+        "Rent",
+        "Desk Mat Extended"
+      ],
+      [
+        35,
+        "Rent",
+        "Fitness Band X2"
+      ],
+      [
+        35,
+        "Rent",
+        "Smart Watch S"
+      ],
+      [
+        35,
+        "Rent",
+        "Running Socks 3-pack"
+      ],
+      [
+        35,
+        "Rent",
+        "Cycling Jersey Pro"
+      ],
+      [
+        35,
+        "Rent",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        36,
+        "Ads",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        36,
+        "Ads",
+        "Wireless Mouse M3"
+      ],
+      [
+        36,
+        "Ads",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        36,
+        "Ads",
+        "Noise-Canceling Headset"
+      ],
+      [
+        36,
+        "Ads",
+        "Studio Desktop Mic"
+      ],
+      [
+        36,
+        "Ads",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        36,
+        "Ads",
+        "4K Webcam Pro"
+      ],
+      [
+        36,
+        "Ads",
+        "Ring Light 14\""
+      ],
+      [
+        36,
+        "Ads",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        36,
+        "Ads",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        36,
+        "Ads",
+        "Desk Mat Extended"
+      ],
+      [
+        36,
+        "Ads",
+        "Fitness Band X2"
+      ],
+      [
+        36,
+        "Ads",
+        "Smart Watch S"
+      ],
+      [
+        36,
+        "Ads",
+        "Running Socks 3-pack"
+      ],
+      [
+        36,
+        "Ads",
+        "Cycling Jersey Pro"
+      ],
+      [
+        36,
+        "Ads",
+        "Yoga Mat Eco 6mm"
+      ]
+    ]
+  },
+  "kb-cj-p04": {
+    "columns": [
+      "product_a",
+      "product_b",
+      "category"
+    ],
+    "rows": [
+      [
+        "Desk Mat Extended",
+        "Desk Mat Extended",
+        "Accessories"
+      ],
+      [
+        "Desk Mat Extended",
+        "HDMI 2.1 Cable 2m",
+        "Accessories"
+      ],
+      [
+        "Desk Mat Extended",
+        "Laptop Stand Aluminum",
+        "Accessories"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Desk Mat Extended",
+        "Accessories"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "HDMI 2.1 Cable 2m",
+        "Accessories"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Laptop Stand Aluminum",
+        "Accessories"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Desk Mat Extended",
+        "Accessories"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "HDMI 2.1 Cable 2m",
+        "Accessories"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Laptop Stand Aluminum",
+        "Accessories"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Cycling Jersey Pro",
+        "Apparel"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Running Socks 3-pack",
+        "Apparel"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Cycling Jersey Pro",
+        "Apparel"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Running Socks 3-pack",
+        "Apparel"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Bluetooth Speaker Mini",
+        "Audio"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Noise-Canceling Headset",
+        "Audio"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Studio Desktop Mic",
+        "Audio"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Bluetooth Speaker Mini",
+        "Audio"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Noise-Canceling Headset",
+        "Audio"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Studio Desktop Mic",
+        "Audio"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Bluetooth Speaker Mini",
+        "Audio"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Noise-Canceling Headset",
+        "Audio"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Studio Desktop Mic",
+        "Audio"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Mechanical Keyboard K1",
+        "Electronics"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "USB-C Hub 7-in-1",
+        "Electronics"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Wireless Mouse M3",
+        "Electronics"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Mechanical Keyboard K1",
+        "Electronics"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "USB-C Hub 7-in-1",
+        "Electronics"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Wireless Mouse M3",
+        "Electronics"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Mechanical Keyboard K1",
+        "Electronics"
+      ],
+      [
+        "Wireless Mouse M3",
+        "USB-C Hub 7-in-1",
+        "Electronics"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Wireless Mouse M3",
+        "Electronics"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Yoga Mat Eco 6mm",
+        "Fitness"
+      ],
+      [
+        "4K Webcam Pro",
+        "4K Webcam Pro",
+        "Video"
+      ],
+      [
+        "4K Webcam Pro",
+        "Ring Light 14\"",
+        "Video"
+      ],
+      [
+        "Ring Light 14\"",
+        "4K Webcam Pro",
+        "Video"
+      ],
+      [
+        "Ring Light 14\"",
+        "Ring Light 14\"",
+        "Video"
+      ],
+      [
+        "Fitness Band X2",
+        "Fitness Band X2",
+        "Wearables"
+      ],
+      [
+        "Fitness Band X2",
+        "Smart Watch S",
+        "Wearables"
+      ],
+      [
+        "Smart Watch S",
+        "Fitness Band X2",
+        "Wearables"
+      ],
+      [
+        "Smart Watch S",
+        "Smart Watch S",
+        "Wearables"
+      ]
+    ]
+  },
+  "kb-cj-p05": {
+    "columns": [
+      "category_a",
+      "category_b",
+      "pairs"
+    ],
+    "rows": [
+      [
+        "Accessories",
+        "Accessories",
+        9
+      ],
+      [
+        "Accessories",
+        "Audio",
+        9
+      ],
+      [
+        "Accessories",
+        "Electronics",
+        9
+      ],
+      [
+        "Audio",
+        "Accessories",
+        9
+      ],
+      [
+        "Audio",
+        "Audio",
+        9
+      ],
+      [
+        "Audio",
+        "Electronics",
+        9
+      ],
+      [
+        "Electronics",
+        "Accessories",
+        9
+      ],
+      [
+        "Electronics",
+        "Audio",
+        9
+      ],
+      [
+        "Electronics",
+        "Electronics",
+        9
+      ],
+      [
+        "Accessories",
+        "Apparel",
+        6
+      ],
+      [
+        "Accessories",
+        "Video",
+        6
+      ],
+      [
+        "Accessories",
+        "Wearables",
+        6
+      ],
+      [
+        "Apparel",
+        "Accessories",
+        6
+      ],
+      [
+        "Apparel",
+        "Audio",
+        6
+      ],
+      [
+        "Apparel",
+        "Electronics",
+        6
+      ],
+      [
+        "Audio",
+        "Apparel",
+        6
+      ],
+      [
+        "Audio",
+        "Video",
+        6
+      ],
+      [
+        "Audio",
+        "Wearables",
+        6
+      ],
+      [
+        "Electronics",
+        "Apparel",
+        6
+      ],
+      [
+        "Electronics",
+        "Video",
+        6
+      ],
+      [
+        "Electronics",
+        "Wearables",
+        6
+      ],
+      [
+        "Video",
+        "Accessories",
+        6
+      ],
+      [
+        "Video",
+        "Audio",
+        6
+      ],
+      [
+        "Video",
+        "Electronics",
+        6
+      ],
+      [
+        "Wearables",
+        "Accessories",
+        6
+      ],
+      [
+        "Wearables",
+        "Audio",
+        6
+      ],
+      [
+        "Wearables",
+        "Electronics",
+        6
+      ],
+      [
+        "Apparel",
+        "Apparel",
+        4
+      ],
+      [
+        "Apparel",
+        "Video",
+        4
+      ],
+      [
+        "Apparel",
+        "Wearables",
+        4
+      ],
+      [
+        "Video",
+        "Apparel",
+        4
+      ],
+      [
+        "Video",
+        "Video",
+        4
+      ],
+      [
+        "Video",
+        "Wearables",
+        4
+      ],
+      [
+        "Wearables",
+        "Apparel",
+        4
+      ],
+      [
+        "Wearables",
+        "Video",
+        4
+      ],
+      [
+        "Wearables",
+        "Wearables",
+        4
+      ],
+      [
+        "Accessories",
+        "Fitness",
+        3
+      ],
+      [
+        "Audio",
+        "Fitness",
+        3
+      ],
+      [
+        "Electronics",
+        "Fitness",
+        3
+      ],
+      [
+        "Fitness",
+        "Accessories",
+        3
+      ],
+      [
+        "Fitness",
+        "Audio",
+        3
+      ],
+      [
+        "Fitness",
+        "Electronics",
+        3
+      ],
+      [
+        "Apparel",
+        "Fitness",
+        2
+      ],
+      [
+        "Fitness",
+        "Apparel",
+        2
+      ],
+      [
+        "Fitness",
+        "Video",
+        2
+      ],
+      [
+        "Fitness",
+        "Wearables",
+        2
+      ],
+      [
+        "Video",
+        "Fitness",
+        2
+      ],
+      [
+        "Wearables",
+        "Fitness",
+        2
+      ],
+      [
+        "Fitness",
+        "Fitness",
+        1
+      ]
+    ]
+  },
+  "kb-cj-p06": {
+    "columns": [
+      "name",
+      "price",
+      "tier"
+    ],
+    "rows": [
+      [
+        "HDMI 2.1 Cable 2m",
+        14.99,
+        "cheap"
+      ],
+      [
+        "Running Socks 3-pack",
+        18.5,
+        "cheap"
+      ],
+      [
+        "Desk Mat Extended",
+        24.99,
+        "cheap"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        32,
+        "cheap"
+      ],
+      [
+        "Wireless Mouse M3",
+        34.5,
+        "cheap"
+      ],
+      [
+        "Ring Light 14\"",
+        39.99,
+        "cheap"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        42.5,
+        "cheap"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        49,
+        "cheap"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        59.99,
+        "mid"
+      ],
+      [
+        "Cycling Jersey Pro",
+        65,
+        "mid"
+      ],
+      [
+        "Fitness Band X2",
+        79,
+        "mid"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        89.99,
+        "mid"
+      ],
+      [
+        "Studio Desktop Mic",
+        119,
+        "premium"
+      ],
+      [
+        "4K Webcam Pro",
+        129,
+        "premium"
+      ],
+      [
+        "Noise-Canceling Headset",
+        149.99,
+        "premium"
+      ],
+      [
+        "Smart Watch S",
+        199.99,
+        "premium"
+      ]
+    ]
+  },
+  "kb-cj-p07": {
+    "columns": [
+      "product_a",
+      "product_b"
+    ],
+    "rows": [
+      [
+        "Mechanical Keyboard K1",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "4K Webcam Pro"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Ring Light 14\""
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Desk Mat Extended"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Fitness Band X2"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Smart Watch S"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Wireless Mouse M3",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Wireless Mouse M3",
+        "4K Webcam Pro"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Ring Light 14\""
+      ],
+      [
+        "Wireless Mouse M3",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Desk Mat Extended"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Fitness Band X2"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Smart Watch S"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Studio Desktop Mic"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "4K Webcam Pro"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Ring Light 14\""
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Desk Mat Extended"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Fitness Band X2"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Smart Watch S"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Running Socks 3-pack"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "4K Webcam Pro"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Ring Light 14\""
+      ],
+      [
+        "Noise-Canceling Headset",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Desk Mat Extended"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Fitness Band X2"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Smart Watch S"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Studio Desktop Mic",
+        "4K Webcam Pro"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Ring Light 14\""
+      ],
+      [
+        "Studio Desktop Mic",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Desk Mat Extended"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Fitness Band X2"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Smart Watch S"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "4K Webcam Pro"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Ring Light 14\""
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Desk Mat Extended"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Fitness Band X2"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Smart Watch S"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "4K Webcam Pro",
+        "Ring Light 14\""
+      ],
+      [
+        "4K Webcam Pro",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "4K Webcam Pro",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "4K Webcam Pro",
+        "Desk Mat Extended"
+      ],
+      [
+        "4K Webcam Pro",
+        "Fitness Band X2"
+      ],
+      [
+        "4K Webcam Pro",
+        "Smart Watch S"
+      ],
+      [
+        "4K Webcam Pro",
+        "Running Socks 3-pack"
+      ],
+      [
+        "4K Webcam Pro",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "4K Webcam Pro",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Ring Light 14\"",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Ring Light 14\"",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Ring Light 14\"",
+        "Desk Mat Extended"
+      ],
+      [
+        "Ring Light 14\"",
+        "Fitness Band X2"
+      ],
+      [
+        "Ring Light 14\"",
+        "Smart Watch S"
+      ],
+      [
+        "Ring Light 14\"",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Ring Light 14\"",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Ring Light 14\"",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Desk Mat Extended"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Fitness Band X2"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Smart Watch S"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Running Socks 3-pack"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Desk Mat Extended"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Fitness Band X2"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Smart Watch S"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Desk Mat Extended",
+        "Fitness Band X2"
+      ],
+      [
+        "Desk Mat Extended",
+        "Smart Watch S"
+      ],
+      [
+        "Desk Mat Extended",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Desk Mat Extended",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Desk Mat Extended",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Fitness Band X2",
+        "Smart Watch S"
+      ],
+      [
+        "Fitness Band X2",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Fitness Band X2",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Fitness Band X2",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Smart Watch S",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Smart Watch S",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Smart Watch S",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Yoga Mat Eco 6mm"
+      ]
+    ]
+  },
+  "kb-cj-p08": {
+    "columns": [
+      "customer_region",
+      "supplier_region"
+    ],
+    "rows": [
+      [
+        "APAC",
+        "APAC"
+      ],
+      [
+        "APAC",
+        "EU"
+      ],
+      [
+        "APAC",
+        "LATAM"
+      ],
+      [
+        "APAC",
+        "US"
+      ],
+      [
+        "EU",
+        "APAC"
+      ],
+      [
+        "EU",
+        "EU"
+      ],
+      [
+        "EU",
+        "LATAM"
+      ],
+      [
+        "EU",
+        "US"
+      ],
+      [
+        "LATAM",
+        "APAC"
+      ],
+      [
+        "LATAM",
+        "EU"
+      ],
+      [
+        "LATAM",
+        "LATAM"
+      ],
+      [
+        "LATAM",
+        "US"
+      ],
+      [
+        "US",
+        "APAC"
+      ],
+      [
+        "US",
+        "EU"
+      ],
+      [
+        "US",
+        "LATAM"
+      ],
+      [
+        "US",
+        "US"
+      ]
+    ]
+  },
+  "kb-cj-p09": {
+    "columns": [
+      "category",
+      "product_a",
+      "product_b"
+    ],
+    "rows": [
+      [
+        "Accessories",
+        "HDMI 2.1 Cable 2m",
+        "Desk Mat Extended"
+      ],
+      [
+        "Accessories",
+        "HDMI 2.1 Cable 2m",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Accessories",
+        "Laptop Stand Aluminum",
+        "Desk Mat Extended"
+      ],
+      [
+        "Apparel",
+        "Running Socks 3-pack",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Audio",
+        "Noise-Canceling Headset",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Audio",
+        "Noise-Canceling Headset",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Audio",
+        "Studio Desktop Mic",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Electronics",
+        "Mechanical Keyboard K1",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Electronics",
+        "Mechanical Keyboard K1",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Electronics",
+        "Wireless Mouse M3",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Video",
+        "4K Webcam Pro",
+        "Ring Light 14\""
+      ],
+      [
+        "Wearables",
+        "Fitness Band X2",
+        "Smart Watch S"
+      ]
+    ]
+  },
+  "kb-cj-p10": {
+    "columns": [
+      "cheaper",
+      "pricier",
+      "gap"
+    ],
+    "rows": [
+      [
+        "Fitness Band X2",
+        "Smart Watch S",
+        120.99
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Noise-Canceling Headset",
+        90
+      ],
+      [
+        "Ring Light 14\"",
+        "4K Webcam Pro",
+        89.01
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Studio Desktop Mic",
+        59.01
+      ],
+      [
+        "Wireless Mouse M3",
+        "Mechanical Keyboard K1",
+        55.49
+      ],
+      [
+        "Running Socks 3-pack",
+        "Cycling Jersey Pro",
+        46.5
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Mechanical Keyboard K1",
+        40.99
+      ],
+      [
+        "Studio Desktop Mic",
+        "Noise-Canceling Headset",
+        30.99
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Laptop Stand Aluminum",
+        27.51
+      ],
+      [
+        "Desk Mat Extended",
+        "Laptop Stand Aluminum",
+        17.51
+      ],
+      [
+        "Wireless Mouse M3",
+        "USB-C Hub 7-in-1",
+        14.5
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Desk Mat Extended",
+        10
+      ]
+    ]
+  },
+  "kb-cj-p11": {
+    "columns": [
+      "cheaper",
+      "pricier",
+      "gap"
+    ],
+    "rows": [
+      [
+        "Fitness Band X2",
+        "Smart Watch S",
+        120.99
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Noise-Canceling Headset",
+        90
+      ],
+      [
+        "Ring Light 14\"",
+        "4K Webcam Pro",
+        89.01
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Studio Desktop Mic",
+        59.01
+      ],
+      [
+        "Wireless Mouse M3",
+        "Mechanical Keyboard K1",
+        55.49
+      ],
+      [
+        "Running Socks 3-pack",
+        "Cycling Jersey Pro",
+        46.5
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Mechanical Keyboard K1",
+        40.99
+      ],
+      [
+        "Studio Desktop Mic",
+        "Noise-Canceling Headset",
+        30.99
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Laptop Stand Aluminum",
+        27.51
+      ],
+      [
+        "Desk Mat Extended",
+        "Laptop Stand Aluminum",
+        17.51
+      ],
+      [
+        "Wireless Mouse M3",
+        "USB-C Hub 7-in-1",
+        14.5
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Desk Mat Extended",
+        10
+      ]
+    ]
+  },
+  "kb-cj-p12": {
+    "columns": [
+      "product_a",
+      "price_a",
+      "product_b",
+      "price_b"
+    ],
+    "rows": [
+      [
+        "HDMI 2.1 Cable 2m",
+        14.99,
+        "Running Socks 3-pack",
+        18.5
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        14.99,
+        "Desk Mat Extended",
+        24.99
+      ],
+      [
+        "Desk Mat Extended",
+        24.99,
+        "Running Socks 3-pack",
+        18.5
+      ]
+    ]
+  },
+  "kb-cj-p13": {
+    "columns": [
+      "product_a",
+      "product_b",
+      "cheaper"
+    ],
+    "rows": [
+      [
+        "Bluetooth Speaker Mini",
+        "Noise-Canceling Headset",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Studio Desktop Mic",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Bluetooth Speaker Mini",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Studio Desktop Mic",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Bluetooth Speaker Mini",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Noise-Canceling Headset",
+        "Studio Desktop Mic"
+      ]
+    ]
+  },
+  "kb-cj-p14": {
+    "columns": [
+      "cheaper",
+      "pricier",
+      "ratio"
+    ],
+    "rows": [
+      [
+        "Running Socks 3-pack",
+        "Cycling Jersey Pro",
+        3.51
+      ],
+      [
+        "Ring Light 14\"",
+        "4K Webcam Pro",
+        3.23
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Laptop Stand Aluminum",
+        2.84
+      ],
+      [
+        "Wireless Mouse M3",
+        "Mechanical Keyboard K1",
+        2.61
+      ],
+      [
+        "Fitness Band X2",
+        "Smart Watch S",
+        2.53
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Noise-Canceling Headset",
+        2.5
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Studio Desktop Mic",
+        1.98
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Mechanical Keyboard K1",
+        1.84
+      ],
+      [
+        "Desk Mat Extended",
+        "Laptop Stand Aluminum",
+        1.7
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Desk Mat Extended",
+        1.67
+      ]
+    ]
+  },
+  "kb-cj-p15": {
+    "columns": [
+      "supplier_id",
+      "product_a",
+      "product_b"
+    ],
+    "rows": [
+      [
+        1,
+        "4K Webcam Pro",
+        "Smart Watch S"
+      ],
+      [
+        1,
+        "Mechanical Keyboard K1",
+        "4K Webcam Pro"
+      ],
+      [
+        1,
+        "Mechanical Keyboard K1",
+        "Smart Watch S"
+      ],
+      [
+        2,
+        "Ring Light 14\"",
+        "Running Socks 3-pack"
+      ],
+      [
+        2,
+        "Wireless Mouse M3",
+        "Ring Light 14\""
+      ],
+      [
+        2,
+        "Wireless Mouse M3",
+        "Running Socks 3-pack"
+      ],
+      [
+        3,
+        "HDMI 2.1 Cable 2m",
+        "Cycling Jersey Pro"
+      ],
+      [
+        3,
+        "USB-C Hub 7-in-1",
+        "Cycling Jersey Pro"
+      ],
+      [
+        3,
+        "USB-C Hub 7-in-1",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        4,
+        "Laptop Stand Aluminum",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        4,
+        "Noise-Canceling Headset",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        4,
+        "Noise-Canceling Headset",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        5,
+        "Studio Desktop Mic",
+        "Desk Mat Extended"
+      ],
+      [
+        6,
+        "Bluetooth Speaker Mini",
+        "Fitness Band X2"
+      ]
+    ]
+  },
+  "kb-cj-p16": {
+    "columns": [
+      "category_a",
+      "category_b",
+      "bridges"
+    ],
+    "rows": [
+      [
+        "Accessories",
+        "Audio",
+        9
+      ],
+      [
+        "Accessories",
+        "Electronics",
+        9
+      ],
+      [
+        "Audio",
+        "Electronics",
+        9
+      ],
+      [
+        "Accessories",
+        "Apparel",
+        6
+      ],
+      [
+        "Accessories",
+        "Video",
+        6
+      ],
+      [
+        "Accessories",
+        "Wearables",
+        6
+      ],
+      [
+        "Apparel",
+        "Audio",
+        6
+      ],
+      [
+        "Apparel",
+        "Electronics",
+        6
+      ],
+      [
+        "Audio",
+        "Video",
+        6
+      ],
+      [
+        "Audio",
+        "Wearables",
+        6
+      ],
+      [
+        "Electronics",
+        "Video",
+        6
+      ],
+      [
+        "Electronics",
+        "Wearables",
+        6
+      ],
+      [
+        "Apparel",
+        "Video",
+        4
+      ],
+      [
+        "Apparel",
+        "Wearables",
+        4
+      ],
+      [
+        "Video",
+        "Wearables",
+        4
+      ],
+      [
+        "Accessories",
+        "Fitness",
+        3
+      ],
+      [
+        "Audio",
+        "Fitness",
+        3
+      ],
+      [
+        "Electronics",
+        "Fitness",
+        3
+      ],
+      [
+        "Apparel",
+        "Fitness",
+        2
+      ],
+      [
+        "Fitness",
+        "Video",
+        2
+      ],
+      [
+        "Fitness",
+        "Wearables",
+        2
+      ]
+    ]
+  },
+  "kb-cj-p17": {
+    "columns": [
+      "expense_id",
+      "vendor",
+      "product",
+      "share"
+    ],
+    "rows": [
+      [
+        1,
+        "Atlas Property GmbH",
+        "Mechanical Keyboard K1",
+        75
+      ],
+      [
+        1,
+        "Atlas Property GmbH",
+        "Wireless Mouse M3",
+        75
+      ],
+      [
+        1,
+        "Atlas Property GmbH",
+        "USB-C Hub 7-in-1",
+        75
+      ],
+      [
+        1,
+        "Atlas Property GmbH",
+        "Noise-Canceling Headset",
+        75
+      ],
+      [
+        1,
+        "Atlas Property GmbH",
+        "Studio Desktop Mic",
+        75
+      ],
+      [
+        1,
+        "Atlas Property GmbH",
+        "Bluetooth Speaker Mini",
+        75
+      ],
+      [
+        1,
+        "Atlas Property GmbH",
+        "4K Webcam Pro",
+        75
+      ],
+      [
+        1,
+        "Atlas Property GmbH",
+        "Ring Light 14\"",
+        75
+      ],
+      [
+        1,
+        "Atlas Property GmbH",
+        "HDMI 2.1 Cable 2m",
+        75
+      ],
+      [
+        1,
+        "Atlas Property GmbH",
+        "Laptop Stand Aluminum",
+        75
+      ],
+      [
+        1,
+        "Atlas Property GmbH",
+        "Desk Mat Extended",
+        75
+      ],
+      [
+        1,
+        "Atlas Property GmbH",
+        "Fitness Band X2",
+        75
+      ],
+      [
+        1,
+        "Atlas Property GmbH",
+        "Smart Watch S",
+        75
+      ],
+      [
+        1,
+        "Atlas Property GmbH",
+        "Running Socks 3-pack",
+        75
+      ],
+      [
+        1,
+        "Atlas Property GmbH",
+        "Cycling Jersey Pro",
+        75
+      ],
+      [
+        1,
+        "Atlas Property GmbH",
+        "Yoga Mat Eco 6mm",
+        75
+      ],
+      [
+        2,
+        "AdWorks Media",
+        "Mechanical Keyboard K1",
+        13.75
+      ],
+      [
+        2,
+        "AdWorks Media",
+        "Wireless Mouse M3",
+        13.75
+      ],
+      [
+        2,
+        "AdWorks Media",
+        "USB-C Hub 7-in-1",
+        13.75
+      ],
+      [
+        2,
+        "AdWorks Media",
+        "Noise-Canceling Headset",
+        13.75
+      ],
+      [
+        2,
+        "AdWorks Media",
+        "Studio Desktop Mic",
+        13.75
+      ],
+      [
+        2,
+        "AdWorks Media",
+        "Bluetooth Speaker Mini",
+        13.75
+      ],
+      [
+        2,
+        "AdWorks Media",
+        "4K Webcam Pro",
+        13.75
+      ],
+      [
+        2,
+        "AdWorks Media",
+        "Ring Light 14\"",
+        13.75
+      ],
+      [
+        2,
+        "AdWorks Media",
+        "HDMI 2.1 Cable 2m",
+        13.75
+      ],
+      [
+        2,
+        "AdWorks Media",
+        "Laptop Stand Aluminum",
+        13.75
+      ],
+      [
+        2,
+        "AdWorks Media",
+        "Desk Mat Extended",
+        13.75
+      ],
+      [
+        2,
+        "AdWorks Media",
+        "Fitness Band X2",
+        13.75
+      ],
+      [
+        2,
+        "AdWorks Media",
+        "Smart Watch S",
+        13.75
+      ],
+      [
+        2,
+        "AdWorks Media",
+        "Running Socks 3-pack",
+        13.75
+      ],
+      [
+        2,
+        "AdWorks Media",
+        "Cycling Jersey Pro",
+        13.75
+      ],
+      [
+        2,
+        "AdWorks Media",
+        "Yoga Mat Eco 6mm",
+        13.75
+      ],
+      [
+        3,
+        "DevTools Inc",
+        "Mechanical Keyboard K1",
+        18.69
+      ],
+      [
+        3,
+        "DevTools Inc",
+        "Wireless Mouse M3",
+        18.69
+      ],
+      [
+        3,
+        "DevTools Inc",
+        "USB-C Hub 7-in-1",
+        18.69
+      ],
+      [
+        3,
+        "DevTools Inc",
+        "Noise-Canceling Headset",
+        18.69
+      ],
+      [
+        3,
+        "DevTools Inc",
+        "Studio Desktop Mic",
+        18.69
+      ],
+      [
+        3,
+        "DevTools Inc",
+        "Bluetooth Speaker Mini",
+        18.69
+      ],
+      [
+        3,
+        "DevTools Inc",
+        "4K Webcam Pro",
+        18.69
+      ],
+      [
+        3,
+        "DevTools Inc",
+        "Ring Light 14\"",
+        18.69
+      ],
+      [
+        3,
+        "DevTools Inc",
+        "HDMI 2.1 Cable 2m",
+        18.69
+      ],
+      [
+        3,
+        "DevTools Inc",
+        "Laptop Stand Aluminum",
+        18.69
+      ],
+      [
+        3,
+        "DevTools Inc",
+        "Desk Mat Extended",
+        18.69
+      ],
+      [
+        3,
+        "DevTools Inc",
+        "Fitness Band X2",
+        18.69
+      ],
+      [
+        3,
+        "DevTools Inc",
+        "Smart Watch S",
+        18.69
+      ],
+      [
+        3,
+        "DevTools Inc",
+        "Running Socks 3-pack",
+        18.69
+      ],
+      [
+        3,
+        "DevTools Inc",
+        "Cycling Jersey Pro",
+        18.69
+      ],
+      [
+        3,
+        "DevTools Inc",
+        "Yoga Mat Eco 6mm",
+        18.69
+      ],
+      [
+        4,
+        "Atlas Property GmbH",
+        "Mechanical Keyboard K1",
+        75
+      ],
+      [
+        4,
+        "Atlas Property GmbH",
+        "Wireless Mouse M3",
+        75
+      ],
+      [
+        4,
+        "Atlas Property GmbH",
+        "USB-C Hub 7-in-1",
+        75
+      ],
+      [
+        4,
+        "Atlas Property GmbH",
+        "Noise-Canceling Headset",
+        75
+      ],
+      [
+        4,
+        "Atlas Property GmbH",
+        "Studio Desktop Mic",
+        75
+      ],
+      [
+        4,
+        "Atlas Property GmbH",
+        "Bluetooth Speaker Mini",
+        75
+      ],
+      [
+        4,
+        "Atlas Property GmbH",
+        "4K Webcam Pro",
+        75
+      ],
+      [
+        4,
+        "Atlas Property GmbH",
+        "Ring Light 14\"",
+        75
+      ],
+      [
+        4,
+        "Atlas Property GmbH",
+        "HDMI 2.1 Cable 2m",
+        75
+      ],
+      [
+        4,
+        "Atlas Property GmbH",
+        "Laptop Stand Aluminum",
+        75
+      ],
+      [
+        4,
+        "Atlas Property GmbH",
+        "Desk Mat Extended",
+        75
+      ],
+      [
+        4,
+        "Atlas Property GmbH",
+        "Fitness Band X2",
+        75
+      ],
+      [
+        4,
+        "Atlas Property GmbH",
+        "Smart Watch S",
+        75
+      ],
+      [
+        4,
+        "Atlas Property GmbH",
+        "Running Socks 3-pack",
+        75
+      ],
+      [
+        4,
+        "Atlas Property GmbH",
+        "Cycling Jersey Pro",
+        75
+      ],
+      [
+        4,
+        "Atlas Property GmbH",
+        "Yoga Mat Eco 6mm",
+        75
+      ],
+      [
+        5,
+        "AdWorks Media",
+        "Mechanical Keyboard K1",
+        15
+      ],
+      [
+        5,
+        "AdWorks Media",
+        "Wireless Mouse M3",
+        15
+      ],
+      [
+        5,
+        "AdWorks Media",
+        "USB-C Hub 7-in-1",
+        15
+      ],
+      [
+        5,
+        "AdWorks Media",
+        "Noise-Canceling Headset",
+        15
+      ],
+      [
+        5,
+        "AdWorks Media",
+        "Studio Desktop Mic",
+        15
+      ],
+      [
+        5,
+        "AdWorks Media",
+        "Bluetooth Speaker Mini",
+        15
+      ],
+      [
+        5,
+        "AdWorks Media",
+        "4K Webcam Pro",
+        15
+      ],
+      [
+        5,
+        "AdWorks Media",
+        "Ring Light 14\"",
+        15
+      ],
+      [
+        5,
+        "AdWorks Media",
+        "HDMI 2.1 Cable 2m",
+        15
+      ],
+      [
+        5,
+        "AdWorks Media",
+        "Laptop Stand Aluminum",
+        15
+      ],
+      [
+        5,
+        "AdWorks Media",
+        "Desk Mat Extended",
+        15
+      ],
+      [
+        5,
+        "AdWorks Media",
+        "Fitness Band X2",
+        15
+      ],
+      [
+        5,
+        "AdWorks Media",
+        "Smart Watch S",
+        15
+      ],
+      [
+        5,
+        "AdWorks Media",
+        "Running Socks 3-pack",
+        15
+      ],
+      [
+        5,
+        "AdWorks Media",
+        "Cycling Jersey Pro",
+        15
+      ],
+      [
+        5,
+        "AdWorks Media",
+        "Yoga Mat Eco 6mm",
+        15
+      ],
+      [
+        6,
+        "Atlas Property GmbH",
+        "Mechanical Keyboard K1",
+        75
+      ],
+      [
+        6,
+        "Atlas Property GmbH",
+        "Wireless Mouse M3",
+        75
+      ],
+      [
+        6,
+        "Atlas Property GmbH",
+        "USB-C Hub 7-in-1",
+        75
+      ],
+      [
+        6,
+        "Atlas Property GmbH",
+        "Noise-Canceling Headset",
+        75
+      ],
+      [
+        6,
+        "Atlas Property GmbH",
+        "Studio Desktop Mic",
+        75
+      ],
+      [
+        6,
+        "Atlas Property GmbH",
+        "Bluetooth Speaker Mini",
+        75
+      ],
+      [
+        6,
+        "Atlas Property GmbH",
+        "4K Webcam Pro",
+        75
+      ],
+      [
+        6,
+        "Atlas Property GmbH",
+        "Ring Light 14\"",
+        75
+      ],
+      [
+        6,
+        "Atlas Property GmbH",
+        "HDMI 2.1 Cable 2m",
+        75
+      ],
+      [
+        6,
+        "Atlas Property GmbH",
+        "Laptop Stand Aluminum",
+        75
+      ],
+      [
+        6,
+        "Atlas Property GmbH",
+        "Desk Mat Extended",
+        75
+      ],
+      [
+        6,
+        "Atlas Property GmbH",
+        "Fitness Band X2",
+        75
+      ],
+      [
+        6,
+        "Atlas Property GmbH",
+        "Smart Watch S",
+        75
+      ],
+      [
+        6,
+        "Atlas Property GmbH",
+        "Running Socks 3-pack",
+        75
+      ],
+      [
+        6,
+        "Atlas Property GmbH",
+        "Cycling Jersey Pro",
+        75
+      ],
+      [
+        6,
+        "Atlas Property GmbH",
+        "Yoga Mat Eco 6mm",
+        75
+      ],
+      [
+        7,
+        "AdWorks Media",
+        "Mechanical Keyboard K1",
+        16.56
+      ],
+      [
+        7,
+        "AdWorks Media",
+        "Wireless Mouse M3",
+        16.56
+      ],
+      [
+        7,
+        "AdWorks Media",
+        "USB-C Hub 7-in-1",
+        16.56
+      ],
+      [
+        7,
+        "AdWorks Media",
+        "Noise-Canceling Headset",
+        16.56
+      ],
+      [
+        7,
+        "AdWorks Media",
+        "Studio Desktop Mic",
+        16.56
+      ],
+      [
+        7,
+        "AdWorks Media",
+        "Bluetooth Speaker Mini",
+        16.56
+      ],
+      [
+        7,
+        "AdWorks Media",
+        "4K Webcam Pro",
+        16.56
+      ],
+      [
+        7,
+        "AdWorks Media",
+        "Ring Light 14\"",
+        16.56
+      ],
+      [
+        7,
+        "AdWorks Media",
+        "HDMI 2.1 Cable 2m",
+        16.56
+      ],
+      [
+        7,
+        "AdWorks Media",
+        "Laptop Stand Aluminum",
+        16.56
+      ],
+      [
+        7,
+        "AdWorks Media",
+        "Desk Mat Extended",
+        16.56
+      ],
+      [
+        7,
+        "AdWorks Media",
+        "Fitness Band X2",
+        16.56
+      ],
+      [
+        7,
+        "AdWorks Media",
+        "Smart Watch S",
+        16.56
+      ],
+      [
+        7,
+        "AdWorks Media",
+        "Running Socks 3-pack",
+        16.56
+      ],
+      [
+        7,
+        "AdWorks Media",
+        "Cycling Jersey Pro",
+        16.56
+      ],
+      [
+        7,
+        "AdWorks Media",
+        "Yoga Mat Eco 6mm",
+        16.56
+      ],
+      [
+        8,
+        "Skyline Travel",
+        "Mechanical Keyboard K1",
+        28.25
+      ],
+      [
+        8,
+        "Skyline Travel",
+        "Wireless Mouse M3",
+        28.25
+      ],
+      [
+        8,
+        "Skyline Travel",
+        "USB-C Hub 7-in-1",
+        28.25
+      ],
+      [
+        8,
+        "Skyline Travel",
+        "Noise-Canceling Headset",
+        28.25
+      ],
+      [
+        8,
+        "Skyline Travel",
+        "Studio Desktop Mic",
+        28.25
+      ],
+      [
+        8,
+        "Skyline Travel",
+        "Bluetooth Speaker Mini",
+        28.25
+      ],
+      [
+        8,
+        "Skyline Travel",
+        "4K Webcam Pro",
+        28.25
+      ],
+      [
+        8,
+        "Skyline Travel",
+        "Ring Light 14\"",
+        28.25
+      ],
+      [
+        8,
+        "Skyline Travel",
+        "HDMI 2.1 Cable 2m",
+        28.25
+      ],
+      [
+        8,
+        "Skyline Travel",
+        "Laptop Stand Aluminum",
+        28.25
+      ],
+      [
+        8,
+        "Skyline Travel",
+        "Desk Mat Extended",
+        28.25
+      ],
+      [
+        8,
+        "Skyline Travel",
+        "Fitness Band X2",
+        28.25
+      ],
+      [
+        8,
+        "Skyline Travel",
+        "Smart Watch S",
+        28.25
+      ],
+      [
+        8,
+        "Skyline Travel",
+        "Running Socks 3-pack",
+        28.25
+      ],
+      [
+        8,
+        "Skyline Travel",
+        "Cycling Jersey Pro",
+        28.25
+      ],
+      [
+        8,
+        "Skyline Travel",
+        "Yoga Mat Eco 6mm",
+        28.25
+      ],
+      [
+        9,
+        "Atlas Property GmbH",
+        "Mechanical Keyboard K1",
+        75
+      ],
+      [
+        9,
+        "Atlas Property GmbH",
+        "Wireless Mouse M3",
+        75
+      ],
+      [
+        9,
+        "Atlas Property GmbH",
+        "USB-C Hub 7-in-1",
+        75
+      ],
+      [
+        9,
+        "Atlas Property GmbH",
+        "Noise-Canceling Headset",
+        75
+      ],
+      [
+        9,
+        "Atlas Property GmbH",
+        "Studio Desktop Mic",
+        75
+      ],
+      [
+        9,
+        "Atlas Property GmbH",
+        "Bluetooth Speaker Mini",
+        75
+      ],
+      [
+        9,
+        "Atlas Property GmbH",
+        "4K Webcam Pro",
+        75
+      ],
+      [
+        9,
+        "Atlas Property GmbH",
+        "Ring Light 14\"",
+        75
+      ],
+      [
+        9,
+        "Atlas Property GmbH",
+        "HDMI 2.1 Cable 2m",
+        75
+      ],
+      [
+        9,
+        "Atlas Property GmbH",
+        "Laptop Stand Aluminum",
+        75
+      ],
+      [
+        9,
+        "Atlas Property GmbH",
+        "Desk Mat Extended",
+        75
+      ],
+      [
+        9,
+        "Atlas Property GmbH",
+        "Fitness Band X2",
+        75
+      ],
+      [
+        9,
+        "Atlas Property GmbH",
+        "Smart Watch S",
+        75
+      ],
+      [
+        9,
+        "Atlas Property GmbH",
+        "Running Socks 3-pack",
+        75
+      ],
+      [
+        9,
+        "Atlas Property GmbH",
+        "Cycling Jersey Pro",
+        75
+      ],
+      [
+        9,
+        "Atlas Property GmbH",
+        "Yoga Mat Eco 6mm",
+        75
+      ],
+      [
+        10,
+        "AdWorks Media",
+        "Mechanical Keyboard K1",
+        15.63
+      ],
+      [
+        10,
+        "AdWorks Media",
+        "Wireless Mouse M3",
+        15.63
+      ],
+      [
+        10,
+        "AdWorks Media",
+        "USB-C Hub 7-in-1",
+        15.63
+      ],
+      [
+        10,
+        "AdWorks Media",
+        "Noise-Canceling Headset",
+        15.63
+      ],
+      [
+        10,
+        "AdWorks Media",
+        "Studio Desktop Mic",
+        15.63
+      ],
+      [
+        10,
+        "AdWorks Media",
+        "Bluetooth Speaker Mini",
+        15.63
+      ],
+      [
+        10,
+        "AdWorks Media",
+        "4K Webcam Pro",
+        15.63
+      ],
+      [
+        10,
+        "AdWorks Media",
+        "Ring Light 14\"",
+        15.63
+      ],
+      [
+        10,
+        "AdWorks Media",
+        "HDMI 2.1 Cable 2m",
+        15.63
+      ],
+      [
+        10,
+        "AdWorks Media",
+        "Laptop Stand Aluminum",
+        15.63
+      ],
+      [
+        10,
+        "AdWorks Media",
+        "Desk Mat Extended",
+        15.63
+      ],
+      [
+        10,
+        "AdWorks Media",
+        "Fitness Band X2",
+        15.63
+      ],
+      [
+        10,
+        "AdWorks Media",
+        "Smart Watch S",
+        15.63
+      ],
+      [
+        10,
+        "AdWorks Media",
+        "Running Socks 3-pack",
+        15.63
+      ],
+      [
+        10,
+        "AdWorks Media",
+        "Cycling Jersey Pro",
+        15.63
+      ],
+      [
+        10,
+        "AdWorks Media",
+        "Yoga Mat Eco 6mm",
+        15.63
+      ],
+      [
+        11,
+        "DevTools Inc",
+        "Mechanical Keyboard K1",
+        18.69
+      ],
+      [
+        11,
+        "DevTools Inc",
+        "Wireless Mouse M3",
+        18.69
+      ],
+      [
+        11,
+        "DevTools Inc",
+        "USB-C Hub 7-in-1",
+        18.69
+      ],
+      [
+        11,
+        "DevTools Inc",
+        "Noise-Canceling Headset",
+        18.69
+      ],
+      [
+        11,
+        "DevTools Inc",
+        "Studio Desktop Mic",
+        18.69
+      ],
+      [
+        11,
+        "DevTools Inc",
+        "Bluetooth Speaker Mini",
+        18.69
+      ],
+      [
+        11,
+        "DevTools Inc",
+        "4K Webcam Pro",
+        18.69
+      ],
+      [
+        11,
+        "DevTools Inc",
+        "Ring Light 14\"",
+        18.69
+      ],
+      [
+        11,
+        "DevTools Inc",
+        "HDMI 2.1 Cable 2m",
+        18.69
+      ],
+      [
+        11,
+        "DevTools Inc",
+        "Laptop Stand Aluminum",
+        18.69
+      ],
+      [
+        11,
+        "DevTools Inc",
+        "Desk Mat Extended",
+        18.69
+      ],
+      [
+        11,
+        "DevTools Inc",
+        "Fitness Band X2",
+        18.69
+      ],
+      [
+        11,
+        "DevTools Inc",
+        "Smart Watch S",
+        18.69
+      ],
+      [
+        11,
+        "DevTools Inc",
+        "Running Socks 3-pack",
+        18.69
+      ],
+      [
+        11,
+        "DevTools Inc",
+        "Cycling Jersey Pro",
+        18.69
+      ],
+      [
+        11,
+        "DevTools Inc",
+        "Yoga Mat Eco 6mm",
+        18.69
+      ],
+      [
+        12,
+        "Atlas Property GmbH",
+        "Mechanical Keyboard K1",
+        75
+      ],
+      [
+        12,
+        "Atlas Property GmbH",
+        "Wireless Mouse M3",
+        75
+      ],
+      [
+        12,
+        "Atlas Property GmbH",
+        "USB-C Hub 7-in-1",
+        75
+      ],
+      [
+        12,
+        "Atlas Property GmbH",
+        "Noise-Canceling Headset",
+        75
+      ],
+      [
+        12,
+        "Atlas Property GmbH",
+        "Studio Desktop Mic",
+        75
+      ],
+      [
+        12,
+        "Atlas Property GmbH",
+        "Bluetooth Speaker Mini",
+        75
+      ],
+      [
+        12,
+        "Atlas Property GmbH",
+        "4K Webcam Pro",
+        75
+      ],
+      [
+        12,
+        "Atlas Property GmbH",
+        "Ring Light 14\"",
+        75
+      ],
+      [
+        12,
+        "Atlas Property GmbH",
+        "HDMI 2.1 Cable 2m",
+        75
+      ],
+      [
+        12,
+        "Atlas Property GmbH",
+        "Laptop Stand Aluminum",
+        75
+      ],
+      [
+        12,
+        "Atlas Property GmbH",
+        "Desk Mat Extended",
+        75
+      ],
+      [
+        12,
+        "Atlas Property GmbH",
+        "Fitness Band X2",
+        75
+      ],
+      [
+        12,
+        "Atlas Property GmbH",
+        "Smart Watch S",
+        75
+      ],
+      [
+        12,
+        "Atlas Property GmbH",
+        "Running Socks 3-pack",
+        75
+      ],
+      [
+        12,
+        "Atlas Property GmbH",
+        "Cycling Jersey Pro",
+        75
+      ],
+      [
+        12,
+        "Atlas Property GmbH",
+        "Yoga Mat Eco 6mm",
+        75
+      ],
+      [
+        13,
+        "AdWorks Media",
+        "Mechanical Keyboard K1",
+        17.5
+      ],
+      [
+        13,
+        "AdWorks Media",
+        "Wireless Mouse M3",
+        17.5
+      ],
+      [
+        13,
+        "AdWorks Media",
+        "USB-C Hub 7-in-1",
+        17.5
+      ],
+      [
+        13,
+        "AdWorks Media",
+        "Noise-Canceling Headset",
+        17.5
+      ],
+      [
+        13,
+        "AdWorks Media",
+        "Studio Desktop Mic",
+        17.5
+      ],
+      [
+        13,
+        "AdWorks Media",
+        "Bluetooth Speaker Mini",
+        17.5
+      ],
+      [
+        13,
+        "AdWorks Media",
+        "4K Webcam Pro",
+        17.5
+      ],
+      [
+        13,
+        "AdWorks Media",
+        "Ring Light 14\"",
+        17.5
+      ],
+      [
+        13,
+        "AdWorks Media",
+        "HDMI 2.1 Cable 2m",
+        17.5
+      ],
+      [
+        13,
+        "AdWorks Media",
+        "Laptop Stand Aluminum",
+        17.5
+      ],
+      [
+        13,
+        "AdWorks Media",
+        "Desk Mat Extended",
+        17.5
+      ],
+      [
+        13,
+        "AdWorks Media",
+        "Fitness Band X2",
+        17.5
+      ],
+      [
+        13,
+        "AdWorks Media",
+        "Smart Watch S",
+        17.5
+      ],
+      [
+        13,
+        "AdWorks Media",
+        "Running Socks 3-pack",
+        17.5
+      ],
+      [
+        13,
+        "AdWorks Media",
+        "Cycling Jersey Pro",
+        17.5
+      ],
+      [
+        13,
+        "AdWorks Media",
+        "Yoga Mat Eco 6mm",
+        17.5
+      ],
+      [
+        14,
+        "Atlas Property GmbH",
+        "Mechanical Keyboard K1",
+        75
+      ],
+      [
+        14,
+        "Atlas Property GmbH",
+        "Wireless Mouse M3",
+        75
+      ],
+      [
+        14,
+        "Atlas Property GmbH",
+        "USB-C Hub 7-in-1",
+        75
+      ],
+      [
+        14,
+        "Atlas Property GmbH",
+        "Noise-Canceling Headset",
+        75
+      ],
+      [
+        14,
+        "Atlas Property GmbH",
+        "Studio Desktop Mic",
+        75
+      ],
+      [
+        14,
+        "Atlas Property GmbH",
+        "Bluetooth Speaker Mini",
+        75
+      ],
+      [
+        14,
+        "Atlas Property GmbH",
+        "4K Webcam Pro",
+        75
+      ],
+      [
+        14,
+        "Atlas Property GmbH",
+        "Ring Light 14\"",
+        75
+      ],
+      [
+        14,
+        "Atlas Property GmbH",
+        "HDMI 2.1 Cable 2m",
+        75
+      ],
+      [
+        14,
+        "Atlas Property GmbH",
+        "Laptop Stand Aluminum",
+        75
+      ],
+      [
+        14,
+        "Atlas Property GmbH",
+        "Desk Mat Extended",
+        75
+      ],
+      [
+        14,
+        "Atlas Property GmbH",
+        "Fitness Band X2",
+        75
+      ],
+      [
+        14,
+        "Atlas Property GmbH",
+        "Smart Watch S",
+        75
+      ],
+      [
+        14,
+        "Atlas Property GmbH",
+        "Running Socks 3-pack",
+        75
+      ],
+      [
+        14,
+        "Atlas Property GmbH",
+        "Cycling Jersey Pro",
+        75
+      ],
+      [
+        14,
+        "Atlas Property GmbH",
+        "Yoga Mat Eco 6mm",
+        75
+      ],
+      [
+        15,
+        "AdWorks Media",
+        "Mechanical Keyboard K1",
+        19.38
+      ],
+      [
+        15,
+        "AdWorks Media",
+        "Wireless Mouse M3",
+        19.38
+      ],
+      [
+        15,
+        "AdWorks Media",
+        "USB-C Hub 7-in-1",
+        19.38
+      ],
+      [
+        15,
+        "AdWorks Media",
+        "Noise-Canceling Headset",
+        19.38
+      ],
+      [
+        15,
+        "AdWorks Media",
+        "Studio Desktop Mic",
+        19.38
+      ],
+      [
+        15,
+        "AdWorks Media",
+        "Bluetooth Speaker Mini",
+        19.38
+      ],
+      [
+        15,
+        "AdWorks Media",
+        "4K Webcam Pro",
+        19.38
+      ],
+      [
+        15,
+        "AdWorks Media",
+        "Ring Light 14\"",
+        19.38
+      ],
+      [
+        15,
+        "AdWorks Media",
+        "HDMI 2.1 Cable 2m",
+        19.38
+      ],
+      [
+        15,
+        "AdWorks Media",
+        "Laptop Stand Aluminum",
+        19.38
+      ],
+      [
+        15,
+        "AdWorks Media",
+        "Desk Mat Extended",
+        19.38
+      ],
+      [
+        15,
+        "AdWorks Media",
+        "Fitness Band X2",
+        19.38
+      ],
+      [
+        15,
+        "AdWorks Media",
+        "Smart Watch S",
+        19.38
+      ],
+      [
+        15,
+        "AdWorks Media",
+        "Running Socks 3-pack",
+        19.38
+      ],
+      [
+        15,
+        "AdWorks Media",
+        "Cycling Jersey Pro",
+        19.38
+      ],
+      [
+        15,
+        "AdWorks Media",
+        "Yoga Mat Eco 6mm",
+        19.38
+      ],
+      [
+        16,
+        "Atlas Property GmbH",
+        "Mechanical Keyboard K1",
+        75
+      ],
+      [
+        16,
+        "Atlas Property GmbH",
+        "Wireless Mouse M3",
+        75
+      ],
+      [
+        16,
+        "Atlas Property GmbH",
+        "USB-C Hub 7-in-1",
+        75
+      ],
+      [
+        16,
+        "Atlas Property GmbH",
+        "Noise-Canceling Headset",
+        75
+      ],
+      [
+        16,
+        "Atlas Property GmbH",
+        "Studio Desktop Mic",
+        75
+      ],
+      [
+        16,
+        "Atlas Property GmbH",
+        "Bluetooth Speaker Mini",
+        75
+      ],
+      [
+        16,
+        "Atlas Property GmbH",
+        "4K Webcam Pro",
+        75
+      ],
+      [
+        16,
+        "Atlas Property GmbH",
+        "Ring Light 14\"",
+        75
+      ],
+      [
+        16,
+        "Atlas Property GmbH",
+        "HDMI 2.1 Cable 2m",
+        75
+      ],
+      [
+        16,
+        "Atlas Property GmbH",
+        "Laptop Stand Aluminum",
+        75
+      ],
+      [
+        16,
+        "Atlas Property GmbH",
+        "Desk Mat Extended",
+        75
+      ],
+      [
+        16,
+        "Atlas Property GmbH",
+        "Fitness Band X2",
+        75
+      ],
+      [
+        16,
+        "Atlas Property GmbH",
+        "Smart Watch S",
+        75
+      ],
+      [
+        16,
+        "Atlas Property GmbH",
+        "Running Socks 3-pack",
+        75
+      ],
+      [
+        16,
+        "Atlas Property GmbH",
+        "Cycling Jersey Pro",
+        75
+      ],
+      [
+        16,
+        "Atlas Property GmbH",
+        "Yoga Mat Eco 6mm",
+        75
+      ],
+      [
+        17,
+        "AdWorks Media",
+        "Mechanical Keyboard K1",
+        18.44
+      ],
+      [
+        17,
+        "AdWorks Media",
+        "Wireless Mouse M3",
+        18.44
+      ],
+      [
+        17,
+        "AdWorks Media",
+        "USB-C Hub 7-in-1",
+        18.44
+      ],
+      [
+        17,
+        "AdWorks Media",
+        "Noise-Canceling Headset",
+        18.44
+      ],
+      [
+        17,
+        "AdWorks Media",
+        "Studio Desktop Mic",
+        18.44
+      ],
+      [
+        17,
+        "AdWorks Media",
+        "Bluetooth Speaker Mini",
+        18.44
+      ],
+      [
+        17,
+        "AdWorks Media",
+        "4K Webcam Pro",
+        18.44
+      ],
+      [
+        17,
+        "AdWorks Media",
+        "Ring Light 14\"",
+        18.44
+      ],
+      [
+        17,
+        "AdWorks Media",
+        "HDMI 2.1 Cable 2m",
+        18.44
+      ],
+      [
+        17,
+        "AdWorks Media",
+        "Laptop Stand Aluminum",
+        18.44
+      ],
+      [
+        17,
+        "AdWorks Media",
+        "Desk Mat Extended",
+        18.44
+      ],
+      [
+        17,
+        "AdWorks Media",
+        "Fitness Band X2",
+        18.44
+      ],
+      [
+        17,
+        "AdWorks Media",
+        "Smart Watch S",
+        18.44
+      ],
+      [
+        17,
+        "AdWorks Media",
+        "Running Socks 3-pack",
+        18.44
+      ],
+      [
+        17,
+        "AdWorks Media",
+        "Cycling Jersey Pro",
+        18.44
+      ],
+      [
+        17,
+        "AdWorks Media",
+        "Yoga Mat Eco 6mm",
+        18.44
+      ],
+      [
+        18,
+        "DevTools Inc",
+        "Mechanical Keyboard K1",
+        18.69
+      ],
+      [
+        18,
+        "DevTools Inc",
+        "Wireless Mouse M3",
+        18.69
+      ],
+      [
+        18,
+        "DevTools Inc",
+        "USB-C Hub 7-in-1",
+        18.69
+      ],
+      [
+        18,
+        "DevTools Inc",
+        "Noise-Canceling Headset",
+        18.69
+      ],
+      [
+        18,
+        "DevTools Inc",
+        "Studio Desktop Mic",
+        18.69
+      ],
+      [
+        18,
+        "DevTools Inc",
+        "Bluetooth Speaker Mini",
+        18.69
+      ],
+      [
+        18,
+        "DevTools Inc",
+        "4K Webcam Pro",
+        18.69
+      ],
+      [
+        18,
+        "DevTools Inc",
+        "Ring Light 14\"",
+        18.69
+      ],
+      [
+        18,
+        "DevTools Inc",
+        "HDMI 2.1 Cable 2m",
+        18.69
+      ],
+      [
+        18,
+        "DevTools Inc",
+        "Laptop Stand Aluminum",
+        18.69
+      ],
+      [
+        18,
+        "DevTools Inc",
+        "Desk Mat Extended",
+        18.69
+      ],
+      [
+        18,
+        "DevTools Inc",
+        "Fitness Band X2",
+        18.69
+      ],
+      [
+        18,
+        "DevTools Inc",
+        "Smart Watch S",
+        18.69
+      ],
+      [
+        18,
+        "DevTools Inc",
+        "Running Socks 3-pack",
+        18.69
+      ],
+      [
+        18,
+        "DevTools Inc",
+        "Cycling Jersey Pro",
+        18.69
+      ],
+      [
+        18,
+        "DevTools Inc",
+        "Yoga Mat Eco 6mm",
+        18.69
+      ],
+      [
+        19,
+        "Atlas Property GmbH",
+        "Mechanical Keyboard K1",
+        75
+      ],
+      [
+        19,
+        "Atlas Property GmbH",
+        "Wireless Mouse M3",
+        75
+      ],
+      [
+        19,
+        "Atlas Property GmbH",
+        "USB-C Hub 7-in-1",
+        75
+      ],
+      [
+        19,
+        "Atlas Property GmbH",
+        "Noise-Canceling Headset",
+        75
+      ],
+      [
+        19,
+        "Atlas Property GmbH",
+        "Studio Desktop Mic",
+        75
+      ],
+      [
+        19,
+        "Atlas Property GmbH",
+        "Bluetooth Speaker Mini",
+        75
+      ],
+      [
+        19,
+        "Atlas Property GmbH",
+        "4K Webcam Pro",
+        75
+      ],
+      [
+        19,
+        "Atlas Property GmbH",
+        "Ring Light 14\"",
+        75
+      ],
+      [
+        19,
+        "Atlas Property GmbH",
+        "HDMI 2.1 Cable 2m",
+        75
+      ],
+      [
+        19,
+        "Atlas Property GmbH",
+        "Laptop Stand Aluminum",
+        75
+      ],
+      [
+        19,
+        "Atlas Property GmbH",
+        "Desk Mat Extended",
+        75
+      ],
+      [
+        19,
+        "Atlas Property GmbH",
+        "Fitness Band X2",
+        75
+      ],
+      [
+        19,
+        "Atlas Property GmbH",
+        "Smart Watch S",
+        75
+      ],
+      [
+        19,
+        "Atlas Property GmbH",
+        "Running Socks 3-pack",
+        75
+      ],
+      [
+        19,
+        "Atlas Property GmbH",
+        "Cycling Jersey Pro",
+        75
+      ],
+      [
+        19,
+        "Atlas Property GmbH",
+        "Yoga Mat Eco 6mm",
+        75
+      ],
+      [
+        20,
+        "AdWorks Media",
+        "Mechanical Keyboard K1",
+        20.63
+      ],
+      [
+        20,
+        "AdWorks Media",
+        "Wireless Mouse M3",
+        20.63
+      ],
+      [
+        20,
+        "AdWorks Media",
+        "USB-C Hub 7-in-1",
+        20.63
+      ],
+      [
+        20,
+        "AdWorks Media",
+        "Noise-Canceling Headset",
+        20.63
+      ],
+      [
+        20,
+        "AdWorks Media",
+        "Studio Desktop Mic",
+        20.63
+      ],
+      [
+        20,
+        "AdWorks Media",
+        "Bluetooth Speaker Mini",
+        20.63
+      ],
+      [
+        20,
+        "AdWorks Media",
+        "4K Webcam Pro",
+        20.63
+      ],
+      [
+        20,
+        "AdWorks Media",
+        "Ring Light 14\"",
+        20.63
+      ],
+      [
+        20,
+        "AdWorks Media",
+        "HDMI 2.1 Cable 2m",
+        20.63
+      ],
+      [
+        20,
+        "AdWorks Media",
+        "Laptop Stand Aluminum",
+        20.63
+      ],
+      [
+        20,
+        "AdWorks Media",
+        "Desk Mat Extended",
+        20.63
+      ],
+      [
+        20,
+        "AdWorks Media",
+        "Fitness Band X2",
+        20.63
+      ],
+      [
+        20,
+        "AdWorks Media",
+        "Smart Watch S",
+        20.63
+      ],
+      [
+        20,
+        "AdWorks Media",
+        "Running Socks 3-pack",
+        20.63
+      ],
+      [
+        20,
+        "AdWorks Media",
+        "Cycling Jersey Pro",
+        20.63
+      ],
+      [
+        20,
+        "AdWorks Media",
+        "Yoga Mat Eco 6mm",
+        20.63
+      ],
+      [
+        21,
+        "Skyline Travel",
+        "Mechanical Keyboard K1",
+        105
+      ],
+      [
+        21,
+        "Skyline Travel",
+        "Wireless Mouse M3",
+        105
+      ],
+      [
+        21,
+        "Skyline Travel",
+        "USB-C Hub 7-in-1",
+        105
+      ],
+      [
+        21,
+        "Skyline Travel",
+        "Noise-Canceling Headset",
+        105
+      ],
+      [
+        21,
+        "Skyline Travel",
+        "Studio Desktop Mic",
+        105
+      ],
+      [
+        21,
+        "Skyline Travel",
+        "Bluetooth Speaker Mini",
+        105
+      ],
+      [
+        21,
+        "Skyline Travel",
+        "4K Webcam Pro",
+        105
+      ],
+      [
+        21,
+        "Skyline Travel",
+        "Ring Light 14\"",
+        105
+      ],
+      [
+        21,
+        "Skyline Travel",
+        "HDMI 2.1 Cable 2m",
+        105
+      ],
+      [
+        21,
+        "Skyline Travel",
+        "Laptop Stand Aluminum",
+        105
+      ],
+      [
+        21,
+        "Skyline Travel",
+        "Desk Mat Extended",
+        105
+      ],
+      [
+        21,
+        "Skyline Travel",
+        "Fitness Band X2",
+        105
+      ],
+      [
+        21,
+        "Skyline Travel",
+        "Smart Watch S",
+        105
+      ],
+      [
+        21,
+        "Skyline Travel",
+        "Running Socks 3-pack",
+        105
+      ],
+      [
+        21,
+        "Skyline Travel",
+        "Cycling Jersey Pro",
+        105
+      ],
+      [
+        21,
+        "Skyline Travel",
+        "Yoga Mat Eco 6mm",
+        105
+      ],
+      [
+        22,
+        "Atlas Property GmbH",
+        "Mechanical Keyboard K1",
+        75
+      ],
+      [
+        22,
+        "Atlas Property GmbH",
+        "Wireless Mouse M3",
+        75
+      ],
+      [
+        22,
+        "Atlas Property GmbH",
+        "USB-C Hub 7-in-1",
+        75
+      ],
+      [
+        22,
+        "Atlas Property GmbH",
+        "Noise-Canceling Headset",
+        75
+      ],
+      [
+        22,
+        "Atlas Property GmbH",
+        "Studio Desktop Mic",
+        75
+      ],
+      [
+        22,
+        "Atlas Property GmbH",
+        "Bluetooth Speaker Mini",
+        75
+      ],
+      [
+        22,
+        "Atlas Property GmbH",
+        "4K Webcam Pro",
+        75
+      ],
+      [
+        22,
+        "Atlas Property GmbH",
+        "Ring Light 14\"",
+        75
+      ],
+      [
+        22,
+        "Atlas Property GmbH",
+        "HDMI 2.1 Cable 2m",
+        75
+      ],
+      [
+        22,
+        "Atlas Property GmbH",
+        "Laptop Stand Aluminum",
+        75
+      ],
+      [
+        22,
+        "Atlas Property GmbH",
+        "Desk Mat Extended",
+        75
+      ],
+      [
+        22,
+        "Atlas Property GmbH",
+        "Fitness Band X2",
+        75
+      ],
+      [
+        22,
+        "Atlas Property GmbH",
+        "Smart Watch S",
+        75
+      ],
+      [
+        22,
+        "Atlas Property GmbH",
+        "Running Socks 3-pack",
+        75
+      ],
+      [
+        22,
+        "Atlas Property GmbH",
+        "Cycling Jersey Pro",
+        75
+      ],
+      [
+        22,
+        "Atlas Property GmbH",
+        "Yoga Mat Eco 6mm",
+        75
+      ],
+      [
+        23,
+        "AdWorks Media",
+        "Mechanical Keyboard K1",
+        21.56
+      ],
+      [
+        23,
+        "AdWorks Media",
+        "Wireless Mouse M3",
+        21.56
+      ],
+      [
+        23,
+        "AdWorks Media",
+        "USB-C Hub 7-in-1",
+        21.56
+      ],
+      [
+        23,
+        "AdWorks Media",
+        "Noise-Canceling Headset",
+        21.56
+      ],
+      [
+        23,
+        "AdWorks Media",
+        "Studio Desktop Mic",
+        21.56
+      ],
+      [
+        23,
+        "AdWorks Media",
+        "Bluetooth Speaker Mini",
+        21.56
+      ],
+      [
+        23,
+        "AdWorks Media",
+        "4K Webcam Pro",
+        21.56
+      ],
+      [
+        23,
+        "AdWorks Media",
+        "Ring Light 14\"",
+        21.56
+      ],
+      [
+        23,
+        "AdWorks Media",
+        "HDMI 2.1 Cable 2m",
+        21.56
+      ],
+      [
+        23,
+        "AdWorks Media",
+        "Laptop Stand Aluminum",
+        21.56
+      ],
+      [
+        23,
+        "AdWorks Media",
+        "Desk Mat Extended",
+        21.56
+      ],
+      [
+        23,
+        "AdWorks Media",
+        "Fitness Band X2",
+        21.56
+      ],
+      [
+        23,
+        "AdWorks Media",
+        "Smart Watch S",
+        21.56
+      ],
+      [
+        23,
+        "AdWorks Media",
+        "Running Socks 3-pack",
+        21.56
+      ],
+      [
+        23,
+        "AdWorks Media",
+        "Cycling Jersey Pro",
+        21.56
+      ],
+      [
+        23,
+        "AdWorks Media",
+        "Yoga Mat Eco 6mm",
+        21.56
+      ],
+      [
+        24,
+        "Atlas Property GmbH",
+        "Mechanical Keyboard K1",
+        75
+      ],
+      [
+        24,
+        "Atlas Property GmbH",
+        "Wireless Mouse M3",
+        75
+      ],
+      [
+        24,
+        "Atlas Property GmbH",
+        "USB-C Hub 7-in-1",
+        75
+      ],
+      [
+        24,
+        "Atlas Property GmbH",
+        "Noise-Canceling Headset",
+        75
+      ],
+      [
+        24,
+        "Atlas Property GmbH",
+        "Studio Desktop Mic",
+        75
+      ],
+      [
+        24,
+        "Atlas Property GmbH",
+        "Bluetooth Speaker Mini",
+        75
+      ],
+      [
+        24,
+        "Atlas Property GmbH",
+        "4K Webcam Pro",
+        75
+      ],
+      [
+        24,
+        "Atlas Property GmbH",
+        "Ring Light 14\"",
+        75
+      ],
+      [
+        24,
+        "Atlas Property GmbH",
+        "HDMI 2.1 Cable 2m",
+        75
+      ],
+      [
+        24,
+        "Atlas Property GmbH",
+        "Laptop Stand Aluminum",
+        75
+      ],
+      [
+        24,
+        "Atlas Property GmbH",
+        "Desk Mat Extended",
+        75
+      ],
+      [
+        24,
+        "Atlas Property GmbH",
+        "Fitness Band X2",
+        75
+      ],
+      [
+        24,
+        "Atlas Property GmbH",
+        "Smart Watch S",
+        75
+      ],
+      [
+        24,
+        "Atlas Property GmbH",
+        "Running Socks 3-pack",
+        75
+      ],
+      [
+        24,
+        "Atlas Property GmbH",
+        "Cycling Jersey Pro",
+        75
+      ],
+      [
+        24,
+        "Atlas Property GmbH",
+        "Yoga Mat Eco 6mm",
+        75
+      ],
+      [
+        25,
+        "AdWorks Media",
+        "Mechanical Keyboard K1",
+        22.5
+      ],
+      [
+        25,
+        "AdWorks Media",
+        "Wireless Mouse M3",
+        22.5
+      ],
+      [
+        25,
+        "AdWorks Media",
+        "USB-C Hub 7-in-1",
+        22.5
+      ],
+      [
+        25,
+        "AdWorks Media",
+        "Noise-Canceling Headset",
+        22.5
+      ],
+      [
+        25,
+        "AdWorks Media",
+        "Studio Desktop Mic",
+        22.5
+      ],
+      [
+        25,
+        "AdWorks Media",
+        "Bluetooth Speaker Mini",
+        22.5
+      ],
+      [
+        25,
+        "AdWorks Media",
+        "4K Webcam Pro",
+        22.5
+      ],
+      [
+        25,
+        "AdWorks Media",
+        "Ring Light 14\"",
+        22.5
+      ],
+      [
+        25,
+        "AdWorks Media",
+        "HDMI 2.1 Cable 2m",
+        22.5
+      ],
+      [
+        25,
+        "AdWorks Media",
+        "Laptop Stand Aluminum",
+        22.5
+      ],
+      [
+        25,
+        "AdWorks Media",
+        "Desk Mat Extended",
+        22.5
+      ],
+      [
+        25,
+        "AdWorks Media",
+        "Fitness Band X2",
+        22.5
+      ],
+      [
+        25,
+        "AdWorks Media",
+        "Smart Watch S",
+        22.5
+      ],
+      [
+        25,
+        "AdWorks Media",
+        "Running Socks 3-pack",
+        22.5
+      ],
+      [
+        25,
+        "AdWorks Media",
+        "Cycling Jersey Pro",
+        22.5
+      ],
+      [
+        25,
+        "AdWorks Media",
+        "Yoga Mat Eco 6mm",
+        22.5
+      ],
+      [
+        26,
+        "DevTools Inc",
+        "Mechanical Keyboard K1",
+        18.69
+      ],
+      [
+        26,
+        "DevTools Inc",
+        "Wireless Mouse M3",
+        18.69
+      ],
+      [
+        26,
+        "DevTools Inc",
+        "USB-C Hub 7-in-1",
+        18.69
+      ],
+      [
+        26,
+        "DevTools Inc",
+        "Noise-Canceling Headset",
+        18.69
+      ],
+      [
+        26,
+        "DevTools Inc",
+        "Studio Desktop Mic",
+        18.69
+      ],
+      [
+        26,
+        "DevTools Inc",
+        "Bluetooth Speaker Mini",
+        18.69
+      ],
+      [
+        26,
+        "DevTools Inc",
+        "4K Webcam Pro",
+        18.69
+      ],
+      [
+        26,
+        "DevTools Inc",
+        "Ring Light 14\"",
+        18.69
+      ],
+      [
+        26,
+        "DevTools Inc",
+        "HDMI 2.1 Cable 2m",
+        18.69
+      ],
+      [
+        26,
+        "DevTools Inc",
+        "Laptop Stand Aluminum",
+        18.69
+      ],
+      [
+        26,
+        "DevTools Inc",
+        "Desk Mat Extended",
+        18.69
+      ],
+      [
+        26,
+        "DevTools Inc",
+        "Fitness Band X2",
+        18.69
+      ],
+      [
+        26,
+        "DevTools Inc",
+        "Smart Watch S",
+        18.69
+      ],
+      [
+        26,
+        "DevTools Inc",
+        "Running Socks 3-pack",
+        18.69
+      ],
+      [
+        26,
+        "DevTools Inc",
+        "Cycling Jersey Pro",
+        18.69
+      ],
+      [
+        26,
+        "DevTools Inc",
+        "Yoga Mat Eco 6mm",
+        18.69
+      ],
+      [
+        27,
+        "Atlas Property GmbH",
+        "Mechanical Keyboard K1",
+        75
+      ],
+      [
+        27,
+        "Atlas Property GmbH",
+        "Wireless Mouse M3",
+        75
+      ],
+      [
+        27,
+        "Atlas Property GmbH",
+        "USB-C Hub 7-in-1",
+        75
+      ],
+      [
+        27,
+        "Atlas Property GmbH",
+        "Noise-Canceling Headset",
+        75
+      ],
+      [
+        27,
+        "Atlas Property GmbH",
+        "Studio Desktop Mic",
+        75
+      ],
+      [
+        27,
+        "Atlas Property GmbH",
+        "Bluetooth Speaker Mini",
+        75
+      ],
+      [
+        27,
+        "Atlas Property GmbH",
+        "4K Webcam Pro",
+        75
+      ],
+      [
+        27,
+        "Atlas Property GmbH",
+        "Ring Light 14\"",
+        75
+      ],
+      [
+        27,
+        "Atlas Property GmbH",
+        "HDMI 2.1 Cable 2m",
+        75
+      ],
+      [
+        27,
+        "Atlas Property GmbH",
+        "Laptop Stand Aluminum",
+        75
+      ],
+      [
+        27,
+        "Atlas Property GmbH",
+        "Desk Mat Extended",
+        75
+      ],
+      [
+        27,
+        "Atlas Property GmbH",
+        "Fitness Band X2",
+        75
+      ],
+      [
+        27,
+        "Atlas Property GmbH",
+        "Smart Watch S",
+        75
+      ],
+      [
+        27,
+        "Atlas Property GmbH",
+        "Running Socks 3-pack",
+        75
+      ],
+      [
+        27,
+        "Atlas Property GmbH",
+        "Cycling Jersey Pro",
+        75
+      ],
+      [
+        27,
+        "Atlas Property GmbH",
+        "Yoga Mat Eco 6mm",
+        75
+      ],
+      [
+        28,
+        "AdWorks Media",
+        "Mechanical Keyboard K1",
+        24.06
+      ],
+      [
+        28,
+        "AdWorks Media",
+        "Wireless Mouse M3",
+        24.06
+      ],
+      [
+        28,
+        "AdWorks Media",
+        "USB-C Hub 7-in-1",
+        24.06
+      ],
+      [
+        28,
+        "AdWorks Media",
+        "Noise-Canceling Headset",
+        24.06
+      ],
+      [
+        28,
+        "AdWorks Media",
+        "Studio Desktop Mic",
+        24.06
+      ],
+      [
+        28,
+        "AdWorks Media",
+        "Bluetooth Speaker Mini",
+        24.06
+      ],
+      [
+        28,
+        "AdWorks Media",
+        "4K Webcam Pro",
+        24.06
+      ],
+      [
+        28,
+        "AdWorks Media",
+        "Ring Light 14\"",
+        24.06
+      ],
+      [
+        28,
+        "AdWorks Media",
+        "HDMI 2.1 Cable 2m",
+        24.06
+      ],
+      [
+        28,
+        "AdWorks Media",
+        "Laptop Stand Aluminum",
+        24.06
+      ],
+      [
+        28,
+        "AdWorks Media",
+        "Desk Mat Extended",
+        24.06
+      ],
+      [
+        28,
+        "AdWorks Media",
+        "Fitness Band X2",
+        24.06
+      ],
+      [
+        28,
+        "AdWorks Media",
+        "Smart Watch S",
+        24.06
+      ],
+      [
+        28,
+        "AdWorks Media",
+        "Running Socks 3-pack",
+        24.06
+      ],
+      [
+        28,
+        "AdWorks Media",
+        "Cycling Jersey Pro",
+        24.06
+      ],
+      [
+        28,
+        "AdWorks Media",
+        "Yoga Mat Eco 6mm",
+        24.06
+      ],
+      [
+        29,
+        "Skyline Travel",
+        "Mechanical Keyboard K1",
+        24.31
+      ],
+      [
+        29,
+        "Skyline Travel",
+        "Wireless Mouse M3",
+        24.31
+      ],
+      [
+        29,
+        "Skyline Travel",
+        "USB-C Hub 7-in-1",
+        24.31
+      ],
+      [
+        29,
+        "Skyline Travel",
+        "Noise-Canceling Headset",
+        24.31
+      ],
+      [
+        29,
+        "Skyline Travel",
+        "Studio Desktop Mic",
+        24.31
+      ],
+      [
+        29,
+        "Skyline Travel",
+        "Bluetooth Speaker Mini",
+        24.31
+      ],
+      [
+        29,
+        "Skyline Travel",
+        "4K Webcam Pro",
+        24.31
+      ],
+      [
+        29,
+        "Skyline Travel",
+        "Ring Light 14\"",
+        24.31
+      ],
+      [
+        29,
+        "Skyline Travel",
+        "HDMI 2.1 Cable 2m",
+        24.31
+      ],
+      [
+        29,
+        "Skyline Travel",
+        "Laptop Stand Aluminum",
+        24.31
+      ],
+      [
+        29,
+        "Skyline Travel",
+        "Desk Mat Extended",
+        24.31
+      ],
+      [
+        29,
+        "Skyline Travel",
+        "Fitness Band X2",
+        24.31
+      ],
+      [
+        29,
+        "Skyline Travel",
+        "Smart Watch S",
+        24.31
+      ],
+      [
+        29,
+        "Skyline Travel",
+        "Running Socks 3-pack",
+        24.31
+      ],
+      [
+        29,
+        "Skyline Travel",
+        "Cycling Jersey Pro",
+        24.31
+      ],
+      [
+        29,
+        "Skyline Travel",
+        "Yoga Mat Eco 6mm",
+        24.31
+      ],
+      [
+        30,
+        "Atlas Property GmbH",
+        "Mechanical Keyboard K1",
+        75
+      ],
+      [
+        30,
+        "Atlas Property GmbH",
+        "Wireless Mouse M3",
+        75
+      ],
+      [
+        30,
+        "Atlas Property GmbH",
+        "USB-C Hub 7-in-1",
+        75
+      ],
+      [
+        30,
+        "Atlas Property GmbH",
+        "Noise-Canceling Headset",
+        75
+      ],
+      [
+        30,
+        "Atlas Property GmbH",
+        "Studio Desktop Mic",
+        75
+      ],
+      [
+        30,
+        "Atlas Property GmbH",
+        "Bluetooth Speaker Mini",
+        75
+      ],
+      [
+        30,
+        "Atlas Property GmbH",
+        "4K Webcam Pro",
+        75
+      ],
+      [
+        30,
+        "Atlas Property GmbH",
+        "Ring Light 14\"",
+        75
+      ],
+      [
+        30,
+        "Atlas Property GmbH",
+        "HDMI 2.1 Cable 2m",
+        75
+      ],
+      [
+        30,
+        "Atlas Property GmbH",
+        "Laptop Stand Aluminum",
+        75
+      ],
+      [
+        30,
+        "Atlas Property GmbH",
+        "Desk Mat Extended",
+        75
+      ],
+      [
+        30,
+        "Atlas Property GmbH",
+        "Fitness Band X2",
+        75
+      ],
+      [
+        30,
+        "Atlas Property GmbH",
+        "Smart Watch S",
+        75
+      ],
+      [
+        30,
+        "Atlas Property GmbH",
+        "Running Socks 3-pack",
+        75
+      ],
+      [
+        30,
+        "Atlas Property GmbH",
+        "Cycling Jersey Pro",
+        75
+      ],
+      [
+        30,
+        "Atlas Property GmbH",
+        "Yoga Mat Eco 6mm",
+        75
+      ],
+      [
+        31,
+        "AdWorks Media",
+        "Mechanical Keyboard K1",
+        25.63
+      ],
+      [
+        31,
+        "AdWorks Media",
+        "Wireless Mouse M3",
+        25.63
+      ],
+      [
+        31,
+        "AdWorks Media",
+        "USB-C Hub 7-in-1",
+        25.63
+      ],
+      [
+        31,
+        "AdWorks Media",
+        "Noise-Canceling Headset",
+        25.63
+      ],
+      [
+        31,
+        "AdWorks Media",
+        "Studio Desktop Mic",
+        25.63
+      ],
+      [
+        31,
+        "AdWorks Media",
+        "Bluetooth Speaker Mini",
+        25.63
+      ],
+      [
+        31,
+        "AdWorks Media",
+        "4K Webcam Pro",
+        25.63
+      ],
+      [
+        31,
+        "AdWorks Media",
+        "Ring Light 14\"",
+        25.63
+      ],
+      [
+        31,
+        "AdWorks Media",
+        "HDMI 2.1 Cable 2m",
+        25.63
+      ],
+      [
+        31,
+        "AdWorks Media",
+        "Laptop Stand Aluminum",
+        25.63
+      ],
+      [
+        31,
+        "AdWorks Media",
+        "Desk Mat Extended",
+        25.63
+      ],
+      [
+        31,
+        "AdWorks Media",
+        "Fitness Band X2",
+        25.63
+      ],
+      [
+        31,
+        "AdWorks Media",
+        "Smart Watch S",
+        25.63
+      ],
+      [
+        31,
+        "AdWorks Media",
+        "Running Socks 3-pack",
+        25.63
+      ],
+      [
+        31,
+        "AdWorks Media",
+        "Cycling Jersey Pro",
+        25.63
+      ],
+      [
+        31,
+        "AdWorks Media",
+        "Yoga Mat Eco 6mm",
+        25.63
+      ],
+      [
+        32,
+        "Atlas Property GmbH",
+        "Mechanical Keyboard K1",
+        75
+      ],
+      [
+        32,
+        "Atlas Property GmbH",
+        "Wireless Mouse M3",
+        75
+      ],
+      [
+        32,
+        "Atlas Property GmbH",
+        "USB-C Hub 7-in-1",
+        75
+      ],
+      [
+        32,
+        "Atlas Property GmbH",
+        "Noise-Canceling Headset",
+        75
+      ],
+      [
+        32,
+        "Atlas Property GmbH",
+        "Studio Desktop Mic",
+        75
+      ],
+      [
+        32,
+        "Atlas Property GmbH",
+        "Bluetooth Speaker Mini",
+        75
+      ],
+      [
+        32,
+        "Atlas Property GmbH",
+        "4K Webcam Pro",
+        75
+      ],
+      [
+        32,
+        "Atlas Property GmbH",
+        "Ring Light 14\"",
+        75
+      ],
+      [
+        32,
+        "Atlas Property GmbH",
+        "HDMI 2.1 Cable 2m",
+        75
+      ],
+      [
+        32,
+        "Atlas Property GmbH",
+        "Laptop Stand Aluminum",
+        75
+      ],
+      [
+        32,
+        "Atlas Property GmbH",
+        "Desk Mat Extended",
+        75
+      ],
+      [
+        32,
+        "Atlas Property GmbH",
+        "Fitness Band X2",
+        75
+      ],
+      [
+        32,
+        "Atlas Property GmbH",
+        "Smart Watch S",
+        75
+      ],
+      [
+        32,
+        "Atlas Property GmbH",
+        "Running Socks 3-pack",
+        75
+      ],
+      [
+        32,
+        "Atlas Property GmbH",
+        "Cycling Jersey Pro",
+        75
+      ],
+      [
+        32,
+        "Atlas Property GmbH",
+        "Yoga Mat Eco 6mm",
+        75
+      ],
+      [
+        33,
+        "AdWorks Media",
+        "Mechanical Keyboard K1",
+        26.88
+      ],
+      [
+        33,
+        "AdWorks Media",
+        "Wireless Mouse M3",
+        26.88
+      ],
+      [
+        33,
+        "AdWorks Media",
+        "USB-C Hub 7-in-1",
+        26.88
+      ],
+      [
+        33,
+        "AdWorks Media",
+        "Noise-Canceling Headset",
+        26.88
+      ],
+      [
+        33,
+        "AdWorks Media",
+        "Studio Desktop Mic",
+        26.88
+      ],
+      [
+        33,
+        "AdWorks Media",
+        "Bluetooth Speaker Mini",
+        26.88
+      ],
+      [
+        33,
+        "AdWorks Media",
+        "4K Webcam Pro",
+        26.88
+      ],
+      [
+        33,
+        "AdWorks Media",
+        "Ring Light 14\"",
+        26.88
+      ],
+      [
+        33,
+        "AdWorks Media",
+        "HDMI 2.1 Cable 2m",
+        26.88
+      ],
+      [
+        33,
+        "AdWorks Media",
+        "Laptop Stand Aluminum",
+        26.88
+      ],
+      [
+        33,
+        "AdWorks Media",
+        "Desk Mat Extended",
+        26.88
+      ],
+      [
+        33,
+        "AdWorks Media",
+        "Fitness Band X2",
+        26.88
+      ],
+      [
+        33,
+        "AdWorks Media",
+        "Smart Watch S",
+        26.88
+      ],
+      [
+        33,
+        "AdWorks Media",
+        "Running Socks 3-pack",
+        26.88
+      ],
+      [
+        33,
+        "AdWorks Media",
+        "Cycling Jersey Pro",
+        26.88
+      ],
+      [
+        33,
+        "AdWorks Media",
+        "Yoga Mat Eco 6mm",
+        26.88
+      ],
+      [
+        34,
+        "DevTools Inc",
+        "Mechanical Keyboard K1",
+        20.56
+      ],
+      [
+        34,
+        "DevTools Inc",
+        "Wireless Mouse M3",
+        20.56
+      ],
+      [
+        34,
+        "DevTools Inc",
+        "USB-C Hub 7-in-1",
+        20.56
+      ],
+      [
+        34,
+        "DevTools Inc",
+        "Noise-Canceling Headset",
+        20.56
+      ],
+      [
+        34,
+        "DevTools Inc",
+        "Studio Desktop Mic",
+        20.56
+      ],
+      [
+        34,
+        "DevTools Inc",
+        "Bluetooth Speaker Mini",
+        20.56
+      ],
+      [
+        34,
+        "DevTools Inc",
+        "4K Webcam Pro",
+        20.56
+      ],
+      [
+        34,
+        "DevTools Inc",
+        "Ring Light 14\"",
+        20.56
+      ],
+      [
+        34,
+        "DevTools Inc",
+        "HDMI 2.1 Cable 2m",
+        20.56
+      ],
+      [
+        34,
+        "DevTools Inc",
+        "Laptop Stand Aluminum",
+        20.56
+      ],
+      [
+        34,
+        "DevTools Inc",
+        "Desk Mat Extended",
+        20.56
+      ],
+      [
+        34,
+        "DevTools Inc",
+        "Fitness Band X2",
+        20.56
+      ],
+      [
+        34,
+        "DevTools Inc",
+        "Smart Watch S",
+        20.56
+      ],
+      [
+        34,
+        "DevTools Inc",
+        "Running Socks 3-pack",
+        20.56
+      ],
+      [
+        34,
+        "DevTools Inc",
+        "Cycling Jersey Pro",
+        20.56
+      ],
+      [
+        34,
+        "DevTools Inc",
+        "Yoga Mat Eco 6mm",
+        20.56
+      ],
+      [
+        35,
+        "Atlas Property GmbH",
+        "Mechanical Keyboard K1",
+        75
+      ],
+      [
+        35,
+        "Atlas Property GmbH",
+        "Wireless Mouse M3",
+        75
+      ],
+      [
+        35,
+        "Atlas Property GmbH",
+        "USB-C Hub 7-in-1",
+        75
+      ],
+      [
+        35,
+        "Atlas Property GmbH",
+        "Noise-Canceling Headset",
+        75
+      ],
+      [
+        35,
+        "Atlas Property GmbH",
+        "Studio Desktop Mic",
+        75
+      ],
+      [
+        35,
+        "Atlas Property GmbH",
+        "Bluetooth Speaker Mini",
+        75
+      ],
+      [
+        35,
+        "Atlas Property GmbH",
+        "4K Webcam Pro",
+        75
+      ],
+      [
+        35,
+        "Atlas Property GmbH",
+        "Ring Light 14\"",
+        75
+      ],
+      [
+        35,
+        "Atlas Property GmbH",
+        "HDMI 2.1 Cable 2m",
+        75
+      ],
+      [
+        35,
+        "Atlas Property GmbH",
+        "Laptop Stand Aluminum",
+        75
+      ],
+      [
+        35,
+        "Atlas Property GmbH",
+        "Desk Mat Extended",
+        75
+      ],
+      [
+        35,
+        "Atlas Property GmbH",
+        "Fitness Band X2",
+        75
+      ],
+      [
+        35,
+        "Atlas Property GmbH",
+        "Smart Watch S",
+        75
+      ],
+      [
+        35,
+        "Atlas Property GmbH",
+        "Running Socks 3-pack",
+        75
+      ],
+      [
+        35,
+        "Atlas Property GmbH",
+        "Cycling Jersey Pro",
+        75
+      ],
+      [
+        35,
+        "Atlas Property GmbH",
+        "Yoga Mat Eco 6mm",
+        75
+      ],
+      [
+        36,
+        "AdWorks Media",
+        "Mechanical Keyboard K1",
+        28.13
+      ],
+      [
+        36,
+        "AdWorks Media",
+        "Wireless Mouse M3",
+        28.13
+      ],
+      [
+        36,
+        "AdWorks Media",
+        "USB-C Hub 7-in-1",
+        28.13
+      ],
+      [
+        36,
+        "AdWorks Media",
+        "Noise-Canceling Headset",
+        28.13
+      ],
+      [
+        36,
+        "AdWorks Media",
+        "Studio Desktop Mic",
+        28.13
+      ],
+      [
+        36,
+        "AdWorks Media",
+        "Bluetooth Speaker Mini",
+        28.13
+      ],
+      [
+        36,
+        "AdWorks Media",
+        "4K Webcam Pro",
+        28.13
+      ],
+      [
+        36,
+        "AdWorks Media",
+        "Ring Light 14\"",
+        28.13
+      ],
+      [
+        36,
+        "AdWorks Media",
+        "HDMI 2.1 Cable 2m",
+        28.13
+      ],
+      [
+        36,
+        "AdWorks Media",
+        "Laptop Stand Aluminum",
+        28.13
+      ],
+      [
+        36,
+        "AdWorks Media",
+        "Desk Mat Extended",
+        28.13
+      ],
+      [
+        36,
+        "AdWorks Media",
+        "Fitness Band X2",
+        28.13
+      ],
+      [
+        36,
+        "AdWorks Media",
+        "Smart Watch S",
+        28.13
+      ],
+      [
+        36,
+        "AdWorks Media",
+        "Running Socks 3-pack",
+        28.13
+      ],
+      [
+        36,
+        "AdWorks Media",
+        "Cycling Jersey Pro",
+        28.13
+      ],
+      [
+        36,
+        "AdWorks Media",
+        "Yoga Mat Eco 6mm",
+        28.13
+      ]
+    ]
+  },
+  "kb-cj-p18": {
+    "columns": [
+      "customer_a",
+      "region_a",
+      "customer_b",
+      "region_b"
+    ],
+    "rows": [
+      [
+        "Farid Nasser",
+        "APAC",
+        "Isabella Rossi",
+        "EU"
+      ],
+      [
+        "Farid Nasser",
+        "APAC",
+        "Liam O'Brien",
+        "EU"
+      ],
+      [
+        "Farid Nasser",
+        "APAC",
+        "Noah Meyer",
+        "EU"
+      ],
+      [
+        "Farid Nasser",
+        "APAC",
+        "Olivia Brown",
+        "EU"
+      ],
+      [
+        "Farid Nasser",
+        "APAC",
+        "Pedro Alvarez",
+        "EU"
+      ],
+      [
+        "Grace Kim",
+        "APAC",
+        "Isabella Rossi",
+        "EU"
+      ],
+      [
+        "Grace Kim",
+        "APAC",
+        "Liam O'Brien",
+        "EU"
+      ],
+      [
+        "Grace Kim",
+        "APAC",
+        "Noah Meyer",
+        "EU"
+      ],
+      [
+        "Grace Kim",
+        "APAC",
+        "Olivia Brown",
+        "EU"
+      ],
+      [
+        "Grace Kim",
+        "APAC",
+        "Pedro Alvarez",
+        "EU"
+      ],
+      [
+        "Hiro Tanaka",
+        "APAC",
+        "Isabella Rossi",
+        "EU"
+      ],
+      [
+        "Hiro Tanaka",
+        "APAC",
+        "Liam O'Brien",
+        "EU"
+      ],
+      [
+        "Hiro Tanaka",
+        "APAC",
+        "Noah Meyer",
+        "EU"
+      ],
+      [
+        "Hiro Tanaka",
+        "APAC",
+        "Olivia Brown",
+        "EU"
+      ],
+      [
+        "Hiro Tanaka",
+        "APAC",
+        "Pedro Alvarez",
+        "EU"
+      ],
+      [
+        "Keiko Sato",
+        "APAC",
+        "Liam O'Brien",
+        "EU"
+      ],
+      [
+        "Keiko Sato",
+        "APAC",
+        "Noah Meyer",
+        "EU"
+      ],
+      [
+        "Keiko Sato",
+        "APAC",
+        "Olivia Brown",
+        "EU"
+      ],
+      [
+        "Keiko Sato",
+        "APAC",
+        "Pedro Alvarez",
+        "EU"
+      ],
+      [
+        "Maya Patel",
+        "APAC",
+        "Noah Meyer",
+        "EU"
+      ],
+      [
+        "Maya Patel",
+        "APAC",
+        "Olivia Brown",
+        "EU"
+      ],
+      [
+        "Maya Patel",
+        "APAC",
+        "Pedro Alvarez",
+        "EU"
+      ],
+      [
+        "Farid Nasser",
+        "APAC",
+        "Jamal Wright",
+        "US"
+      ],
+      [
+        "Grace Kim",
+        "APAC",
+        "Jamal Wright",
+        "US"
+      ],
+      [
+        "Hiro Tanaka",
+        "APAC",
+        "Jamal Wright",
+        "US"
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        "Farid Nasser",
+        "APAC"
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        "Grace Kim",
+        "APAC"
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        "Hiro Tanaka",
+        "APAC"
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        "Keiko Sato",
+        "APAC"
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        "Maya Patel",
+        "APAC"
+      ],
+      [
+        "Chloe Dubois",
+        "EU",
+        "Farid Nasser",
+        "APAC"
+      ],
+      [
+        "Chloe Dubois",
+        "EU",
+        "Grace Kim",
+        "APAC"
+      ],
+      [
+        "Chloe Dubois",
+        "EU",
+        "Hiro Tanaka",
+        "APAC"
+      ],
+      [
+        "Chloe Dubois",
+        "EU",
+        "Keiko Sato",
+        "APAC"
+      ],
+      [
+        "Chloe Dubois",
+        "EU",
+        "Maya Patel",
+        "APAC"
+      ],
+      [
+        "Dmitri Volkov",
+        "EU",
+        "Farid Nasser",
+        "APAC"
+      ],
+      [
+        "Dmitri Volkov",
+        "EU",
+        "Grace Kim",
+        "APAC"
+      ],
+      [
+        "Dmitri Volkov",
+        "EU",
+        "Hiro Tanaka",
+        "APAC"
+      ],
+      [
+        "Dmitri Volkov",
+        "EU",
+        "Keiko Sato",
+        "APAC"
+      ],
+      [
+        "Dmitri Volkov",
+        "EU",
+        "Maya Patel",
+        "APAC"
+      ],
+      [
+        "Isabella Rossi",
+        "EU",
+        "Keiko Sato",
+        "APAC"
+      ],
+      [
+        "Isabella Rossi",
+        "EU",
+        "Maya Patel",
+        "APAC"
+      ],
+      [
+        "Liam O'Brien",
+        "EU",
+        "Maya Patel",
+        "APAC"
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        "Bruno Silva",
+        "LATAM"
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        "Emma Wilson",
+        "US"
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        "Jamal Wright",
+        "US"
+      ],
+      [
+        "Chloe Dubois",
+        "EU",
+        "Emma Wilson",
+        "US"
+      ],
+      [
+        "Chloe Dubois",
+        "EU",
+        "Jamal Wright",
+        "US"
+      ],
+      [
+        "Dmitri Volkov",
+        "EU",
+        "Emma Wilson",
+        "US"
+      ],
+      [
+        "Dmitri Volkov",
+        "EU",
+        "Jamal Wright",
+        "US"
+      ],
+      [
+        "Isabella Rossi",
+        "EU",
+        "Jamal Wright",
+        "US"
+      ],
+      [
+        "Bruno Silva",
+        "LATAM",
+        "Farid Nasser",
+        "APAC"
+      ],
+      [
+        "Bruno Silva",
+        "LATAM",
+        "Grace Kim",
+        "APAC"
+      ],
+      [
+        "Bruno Silva",
+        "LATAM",
+        "Hiro Tanaka",
+        "APAC"
+      ],
+      [
+        "Bruno Silva",
+        "LATAM",
+        "Keiko Sato",
+        "APAC"
+      ],
+      [
+        "Bruno Silva",
+        "LATAM",
+        "Maya Patel",
+        "APAC"
+      ],
+      [
+        "Bruno Silva",
+        "LATAM",
+        "Chloe Dubois",
+        "EU"
+      ],
+      [
+        "Bruno Silva",
+        "LATAM",
+        "Dmitri Volkov",
+        "EU"
+      ],
+      [
+        "Bruno Silva",
+        "LATAM",
+        "Isabella Rossi",
+        "EU"
+      ],
+      [
+        "Bruno Silva",
+        "LATAM",
+        "Liam O'Brien",
+        "EU"
+      ],
+      [
+        "Bruno Silva",
+        "LATAM",
+        "Noah Meyer",
+        "EU"
+      ],
+      [
+        "Bruno Silva",
+        "LATAM",
+        "Olivia Brown",
+        "EU"
+      ],
+      [
+        "Bruno Silva",
+        "LATAM",
+        "Pedro Alvarez",
+        "EU"
+      ],
+      [
+        "Bruno Silva",
+        "LATAM",
+        "Emma Wilson",
+        "US"
+      ],
+      [
+        "Bruno Silva",
+        "LATAM",
+        "Jamal Wright",
+        "US"
+      ],
+      [
+        "Emma Wilson",
+        "US",
+        "Farid Nasser",
+        "APAC"
+      ],
+      [
+        "Emma Wilson",
+        "US",
+        "Grace Kim",
+        "APAC"
+      ],
+      [
+        "Emma Wilson",
+        "US",
+        "Hiro Tanaka",
+        "APAC"
+      ],
+      [
+        "Emma Wilson",
+        "US",
+        "Keiko Sato",
+        "APAC"
+      ],
+      [
+        "Emma Wilson",
+        "US",
+        "Maya Patel",
+        "APAC"
+      ],
+      [
+        "Jamal Wright",
+        "US",
+        "Keiko Sato",
+        "APAC"
+      ],
+      [
+        "Jamal Wright",
+        "US",
+        "Maya Patel",
+        "APAC"
+      ],
+      [
+        "Emma Wilson",
+        "US",
+        "Isabella Rossi",
+        "EU"
+      ],
+      [
+        "Emma Wilson",
+        "US",
+        "Liam O'Brien",
+        "EU"
+      ],
+      [
+        "Emma Wilson",
+        "US",
+        "Noah Meyer",
+        "EU"
+      ],
+      [
+        "Emma Wilson",
+        "US",
+        "Olivia Brown",
+        "EU"
+      ],
+      [
+        "Emma Wilson",
+        "US",
+        "Pedro Alvarez",
+        "EU"
+      ],
+      [
+        "Jamal Wright",
+        "US",
+        "Liam O'Brien",
+        "EU"
+      ],
+      [
+        "Jamal Wright",
+        "US",
+        "Noah Meyer",
+        "EU"
+      ],
+      [
+        "Jamal Wright",
+        "US",
+        "Olivia Brown",
+        "EU"
+      ],
+      [
+        "Jamal Wright",
+        "US",
+        "Pedro Alvarez",
+        "EU"
+      ]
+    ]
+  },
+  "kb-cj-p19": {
+    "columns": [
+      "name",
+      "price",
+      "band"
+    ],
+    "rows": [
+      [
+        "HDMI 2.1 Cable 2m",
+        14.99,
+        "entry"
+      ],
+      [
+        "Running Socks 3-pack",
+        18.5,
+        "entry"
+      ],
+      [
+        "Desk Mat Extended",
+        24.99,
+        "entry"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        32,
+        "core"
+      ],
+      [
+        "Wireless Mouse M3",
+        34.5,
+        "core"
+      ],
+      [
+        "Ring Light 14\"",
+        39.99,
+        "core"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        42.5,
+        "core"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        49,
+        "core"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        59.99,
+        "core"
+      ],
+      [
+        "Cycling Jersey Pro",
+        65,
+        "pro"
+      ],
+      [
+        "Fitness Band X2",
+        79,
+        "pro"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        89.99,
+        "pro"
+      ],
+      [
+        "Studio Desktop Mic",
+        119,
+        "pro"
+      ],
+      [
+        "4K Webcam Pro",
+        129,
+        "elite"
+      ],
+      [
+        "Noise-Canceling Headset",
+        149.99,
+        "elite"
+      ],
+      [
+        "Smart Watch S",
+        199.99,
+        "elite"
+      ]
+    ]
+  },
+  "kb-cj-p20": {
+    "columns": [
+      "band",
+      "claims"
+    ],
+    "rows": [
+      [
+        "high",
+        7
+      ],
+      [
+        "low",
+        12
+      ]
+    ]
+  },
+  "kb-cj-p21": {
+    "columns": [
+      "category",
+      "cheaper",
+      "pricier",
+      "gap"
+    ],
+    "rows": [
+      [
+        "Wearables",
+        "Fitness Band X2",
+        "Smart Watch S",
+        120.99
+      ],
+      [
+        "Audio",
+        "Bluetooth Speaker Mini",
+        "Noise-Canceling Headset",
+        90
+      ],
+      [
+        "Video",
+        "Ring Light 14\"",
+        "4K Webcam Pro",
+        89.01
+      ],
+      [
+        "Electronics",
+        "Wireless Mouse M3",
+        "Mechanical Keyboard K1",
+        55.49
+      ],
+      [
+        "Apparel",
+        "Running Socks 3-pack",
+        "Cycling Jersey Pro",
+        46.5
+      ],
+      [
+        "Accessories",
+        "HDMI 2.1 Cable 2m",
+        "Laptop Stand Aluminum",
+        27.51
+      ]
+    ]
+  },
+  "kb-cj-p22": {
+    "columns": [
+      "cheaper",
+      "nemesis",
+      "gap"
+    ],
+    "rows": [
+      [
+        "Fitness Band X2",
+        "Smart Watch S",
+        120.99
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Noise-Canceling Headset",
+        90
+      ],
+      [
+        "Ring Light 14\"",
+        "4K Webcam Pro",
+        89.01
+      ],
+      [
+        "Wireless Mouse M3",
+        "Mechanical Keyboard K1",
+        55.49
+      ],
+      [
+        "Running Socks 3-pack",
+        "Cycling Jersey Pro",
+        46.5
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Mechanical Keyboard K1",
+        40.99
+      ],
+      [
+        "Studio Desktop Mic",
+        "Noise-Canceling Headset",
+        30.99
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Laptop Stand Aluminum",
+        27.51
+      ],
+      [
+        "Desk Mat Extended",
+        "Laptop Stand Aluminum",
+        17.51
+      ]
+    ]
+  },
+  "kb-cj-p23": {
+    "columns": [
+      "supplier_id",
+      "switch_opportunities",
+      "total_gap"
+    ],
+    "rows": [
+      [
+        2,
+        4,
+        205.5
+      ],
+      [
+        3,
+        3,
+        78.5
+      ],
+      [
+        6,
+        3,
+        270
+      ],
+      [
+        5,
+        2,
+        48.5
+      ]
+    ]
+  },
+  "kb-cj-p24": {
+    "columns": [
+      "grid_rows",
+      "unordered_pairs",
+      "same_category_pairs",
+      "same_supplier_pairs"
+    ],
+    "rows": [
+      [
+        256,
+        120,
+        12,
+        14
+      ]
+    ]
+  },
+  "kb-cj-p25": {
+    "columns": [
+      "first_p",
+      "second_p",
+      "third_p",
+      "category"
+    ],
+    "rows": [
+      [
+        "HDMI 2.1 Cable 2m",
+        "Laptop Stand Aluminum",
+        "Desk Mat Extended",
+        "Accessories"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Studio Desktop Mic",
+        "Bluetooth Speaker Mini",
+        "Audio"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Wireless Mouse M3",
+        "USB-C Hub 7-in-1",
+        "Electronics"
+      ]
+    ]
+  },
+  "kb-cj-p26": {
+    "columns": [
+      "category",
+      "products",
+      "share_per_product"
+    ],
+    "rows": [
+      [
+        "Rent",
+        16,
+        16800
+      ],
+      [
+        "Ads",
+        16,
+        4570
+      ],
+      [
+        "Travel",
+        16,
+        2521
+      ],
+      [
+        "Tools",
+        16,
+        1525
+      ]
+    ]
+  },
+  "kb-cj-p27": {
+    "columns": [
+      "inflated_total",
+      "honest_total",
+      "inflation_factor"
+    ],
+    "rows": [
+      [
+        8743153.28,
+        34833.28,
+        251
+      ]
+    ]
+  },
+  "kb-cj-p28": {
+    "columns": [
+      "region",
+      "trios"
+    ],
+    "rows": [
+      [
+        "EU",
+        56
+      ],
+      [
+        "APAC",
+        10
+      ]
+    ]
+  },
+  "kb-sj-p01": {
+    "columns": [
+      "region",
+      "customer_a",
+      "customer_b"
+    ],
+    "rows": [
+      [
+        "APAC",
+        "Farid Nasser",
+        "Grace Kim"
+      ],
+      [
+        "APAC",
+        "Farid Nasser",
+        "Hiro Tanaka"
+      ],
+      [
+        "APAC",
+        "Farid Nasser",
+        "Keiko Sato"
+      ],
+      [
+        "APAC",
+        "Farid Nasser",
+        "Maya Patel"
+      ],
+      [
+        "APAC",
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "APAC",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "APAC",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "APAC",
+        "Hiro Tanaka",
+        "Keiko Sato"
+      ],
+      [
+        "APAC",
+        "Hiro Tanaka",
+        "Maya Patel"
+      ],
+      [
+        "APAC",
+        "Keiko Sato",
+        "Maya Patel"
+      ],
+      [
+        "EU",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "EU",
+        "Alice Chen",
+        "Dmitri Volkov"
+      ],
+      [
+        "EU",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "EU",
+        "Alice Chen",
+        "Liam O'Brien"
+      ],
+      [
+        "EU",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "EU",
+        "Alice Chen",
+        "Olivia Brown"
+      ],
+      [
+        "EU",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "EU",
+        "Chloe Dubois",
+        "Dmitri Volkov"
+      ],
+      [
+        "EU",
+        "Chloe Dubois",
+        "Isabella Rossi"
+      ],
+      [
+        "EU",
+        "Chloe Dubois",
+        "Liam O'Brien"
+      ],
+      [
+        "EU",
+        "Chloe Dubois",
+        "Noah Meyer"
+      ],
+      [
+        "EU",
+        "Chloe Dubois",
+        "Olivia Brown"
+      ],
+      [
+        "EU",
+        "Chloe Dubois",
+        "Pedro Alvarez"
+      ],
+      [
+        "EU",
+        "Dmitri Volkov",
+        "Isabella Rossi"
+      ],
+      [
+        "EU",
+        "Dmitri Volkov",
+        "Liam O'Brien"
+      ],
+      [
+        "EU",
+        "Dmitri Volkov",
+        "Noah Meyer"
+      ],
+      [
+        "EU",
+        "Dmitri Volkov",
+        "Olivia Brown"
+      ],
+      [
+        "EU",
+        "Dmitri Volkov",
+        "Pedro Alvarez"
+      ],
+      [
+        "EU",
+        "Isabella Rossi",
+        "Liam O'Brien"
+      ],
+      [
+        "EU",
+        "Isabella Rossi",
+        "Noah Meyer"
+      ],
+      [
+        "EU",
+        "Isabella Rossi",
+        "Olivia Brown"
+      ],
+      [
+        "EU",
+        "Isabella Rossi",
+        "Pedro Alvarez"
+      ],
+      [
+        "EU",
+        "Liam O'Brien",
+        "Noah Meyer"
+      ],
+      [
+        "EU",
+        "Liam O'Brien",
+        "Olivia Brown"
+      ],
+      [
+        "EU",
+        "Liam O'Brien",
+        "Pedro Alvarez"
+      ],
+      [
+        "EU",
+        "Noah Meyer",
+        "Olivia Brown"
+      ],
+      [
+        "EU",
+        "Noah Meyer",
+        "Pedro Alvarez"
+      ],
+      [
+        "EU",
+        "Olivia Brown",
+        "Pedro Alvarez"
+      ],
+      [
+        "US",
+        "Emma Wilson",
+        "Jamal Wright"
+      ]
+    ]
+  },
+  "kb-sj-p02": {
+    "columns": [
+      "same_region_pairs"
+    ],
+    "rows": [
+      [
+        39
+      ]
+    ]
+  },
+  "kb-sj-p03": {
+    "columns": [
+      "customer_a",
+      "customer_b"
+    ],
+    "rows": [
+      [
+        "Emma Wilson",
+        "Jamal Wright"
+      ]
+    ]
+  },
+  "kb-sj-p04": {
+    "columns": [
+      "category",
+      "product_a",
+      "product_b"
+    ],
+    "rows": [
+      [
+        "Accessories",
+        "HDMI 2.1 Cable 2m",
+        "Desk Mat Extended"
+      ],
+      [
+        "Accessories",
+        "HDMI 2.1 Cable 2m",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Accessories",
+        "Laptop Stand Aluminum",
+        "Desk Mat Extended"
+      ],
+      [
+        "Apparel",
+        "Running Socks 3-pack",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Audio",
+        "Noise-Canceling Headset",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Audio",
+        "Noise-Canceling Headset",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Audio",
+        "Studio Desktop Mic",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Electronics",
+        "Mechanical Keyboard K1",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Electronics",
+        "Mechanical Keyboard K1",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Electronics",
+        "Wireless Mouse M3",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Video",
+        "4K Webcam Pro",
+        "Ring Light 14\""
+      ],
+      [
+        "Wearables",
+        "Fitness Band X2",
+        "Smart Watch S"
+      ]
+    ]
+  },
+  "kb-sj-p05": {
+    "columns": [
+      "region",
+      "customer_a",
+      "customer_b"
+    ],
+    "rows": [
+      [
+        "APAC",
+        "Farid Nasser",
+        "Grace Kim"
+      ],
+      [
+        "APAC",
+        "Farid Nasser",
+        "Hiro Tanaka"
+      ],
+      [
+        "APAC",
+        "Farid Nasser",
+        "Maya Patel"
+      ],
+      [
+        "APAC",
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "APAC",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "APAC",
+        "Hiro Tanaka",
+        "Maya Patel"
+      ],
+      [
+        "EU",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "EU",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "EU",
+        "Alice Chen",
+        "Liam O'Brien"
+      ],
+      [
+        "EU",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "EU",
+        "Alice Chen",
+        "Olivia Brown"
+      ],
+      [
+        "EU",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "EU",
+        "Chloe Dubois",
+        "Isabella Rossi"
+      ],
+      [
+        "EU",
+        "Chloe Dubois",
+        "Liam O'Brien"
+      ],
+      [
+        "EU",
+        "Chloe Dubois",
+        "Noah Meyer"
+      ],
+      [
+        "EU",
+        "Chloe Dubois",
+        "Olivia Brown"
+      ],
+      [
+        "EU",
+        "Chloe Dubois",
+        "Pedro Alvarez"
+      ],
+      [
+        "EU",
+        "Isabella Rossi",
+        "Liam O'Brien"
+      ],
+      [
+        "EU",
+        "Isabella Rossi",
+        "Noah Meyer"
+      ],
+      [
+        "EU",
+        "Isabella Rossi",
+        "Olivia Brown"
+      ],
+      [
+        "EU",
+        "Isabella Rossi",
+        "Pedro Alvarez"
+      ],
+      [
+        "EU",
+        "Liam O'Brien",
+        "Noah Meyer"
+      ],
+      [
+        "EU",
+        "Liam O'Brien",
+        "Olivia Brown"
+      ],
+      [
+        "EU",
+        "Liam O'Brien",
+        "Pedro Alvarez"
+      ],
+      [
+        "EU",
+        "Noah Meyer",
+        "Olivia Brown"
+      ],
+      [
+        "EU",
+        "Noah Meyer",
+        "Pedro Alvarez"
+      ],
+      [
+        "EU",
+        "Olivia Brown",
+        "Pedro Alvarez"
+      ],
+      [
+        "US",
+        "Emma Wilson",
+        "Jamal Wright"
+      ]
+    ]
+  },
+  "kb-sj-p06": {
+    "columns": [
+      "customer_id",
+      "order_a",
+      "order_b",
+      "month"
+    ],
+    "rows": [
+      [
+        1,
+        3,
+        7,
+        "2024-01"
+      ],
+      [
+        1,
+        13,
+        14,
+        "2024-02"
+      ],
+      [
+        1,
+        19,
+        21,
+        "2024-03"
+      ],
+      [
+        1,
+        31,
+        32,
+        "2024-04"
+      ],
+      [
+        1,
+        55,
+        58,
+        "2024-08"
+      ],
+      [
+        1,
+        63,
+        66,
+        "2024-09"
+      ],
+      [
+        1,
+        63,
+        70,
+        "2024-09"
+      ],
+      [
+        1,
+        66,
+        70,
+        "2024-09"
+      ],
+      [
+        1,
+        84,
+        86,
+        "2024-12"
+      ],
+      [
+        1,
+        84,
+        89,
+        "2024-12"
+      ],
+      [
+        1,
+        86,
+        89,
+        "2024-12"
+      ],
+      [
+        1,
+        93,
+        95,
+        "2025-01"
+      ],
+      [
+        1,
+        100,
+        101,
+        "2025-02"
+      ],
+      [
+        4,
+        80,
+        81,
+        "2024-11"
+      ],
+      [
+        5,
+        5,
+        8,
+        "2024-01"
+      ],
+      [
+        5,
+        16,
+        17,
+        "2024-02"
+      ],
+      [
+        5,
+        33,
+        39,
+        "2024-05"
+      ],
+      [
+        5,
+        33,
+        37,
+        "2024-05"
+      ],
+      [
+        5,
+        37,
+        39,
+        "2024-05"
+      ],
+      [
+        5,
+        85,
+        90,
+        "2024-12"
+      ],
+      [
+        7,
+        9,
+        15,
+        "2024-02"
+      ],
+      [
+        7,
+        45,
+        46,
+        "2024-06"
+      ],
+      [
+        7,
+        56,
+        61,
+        "2024-08"
+      ],
+      [
+        7,
+        75,
+        76,
+        "2024-10"
+      ],
+      [
+        13,
+        2,
+        4,
+        "2024-01"
+      ],
+      [
+        13,
+        11,
+        12,
+        "2024-02"
+      ],
+      [
+        13,
+        47,
+        50,
+        "2024-07"
+      ],
+      [
+        13,
+        47,
+        54,
+        "2024-07"
+      ],
+      [
+        13,
+        47,
+        51,
+        "2024-07"
+      ],
+      [
+        13,
+        50,
+        54,
+        "2024-07"
+      ],
+      [
+        13,
+        50,
+        51,
+        "2024-07"
+      ],
+      [
+        13,
+        51,
+        54,
+        "2024-07"
+      ]
+    ]
+  },
+  "kb-sj-p07": {
+    "columns": [
+      "supplier_id",
+      "product_a",
+      "product_b"
+    ],
+    "rows": [
+      [
+        1,
+        "4K Webcam Pro",
+        "Smart Watch S"
+      ],
+      [
+        1,
+        "Mechanical Keyboard K1",
+        "4K Webcam Pro"
+      ],
+      [
+        1,
+        "Mechanical Keyboard K1",
+        "Smart Watch S"
+      ],
+      [
+        2,
+        "Ring Light 14\"",
+        "Running Socks 3-pack"
+      ],
+      [
+        2,
+        "Wireless Mouse M3",
+        "Ring Light 14\""
+      ],
+      [
+        2,
+        "Wireless Mouse M3",
+        "Running Socks 3-pack"
+      ],
+      [
+        3,
+        "HDMI 2.1 Cable 2m",
+        "Cycling Jersey Pro"
+      ],
+      [
+        3,
+        "USB-C Hub 7-in-1",
+        "Cycling Jersey Pro"
+      ],
+      [
+        3,
+        "USB-C Hub 7-in-1",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        4,
+        "Laptop Stand Aluminum",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        4,
+        "Noise-Canceling Headset",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        4,
+        "Noise-Canceling Headset",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        5,
+        "Studio Desktop Mic",
+        "Desk Mat Extended"
+      ],
+      [
+        6,
+        "Bluetooth Speaker Mini",
+        "Fitness Band X2"
+      ]
+    ]
+  },
+  "kb-sj-p08": {
+    "columns": [
+      "region",
+      "trios"
+    ],
+    "rows": [
+      [
+        "EU",
+        56
+      ],
+      [
+        "APAC",
+        10
+      ]
+    ]
+  },
+  "kb-sj-p09": {
+    "columns": [
+      "region",
+      "pairs"
+    ],
+    "rows": [
+      [
+        "EU",
+        28
+      ],
+      [
+        "APAC",
+        10
+      ],
+      [
+        "US",
+        1
+      ]
+    ]
+  },
+  "kb-sj-p10": {
+    "columns": [
+      "customer",
+      "region_mate"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Alice Chen",
+        "Dmitri Volkov"
+      ],
+      [
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Alice Chen",
+        "Liam O'Brien"
+      ],
+      [
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Alice Chen",
+        "Olivia Brown"
+      ],
+      [
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Chloe Dubois",
+        "Alice Chen"
+      ],
+      [
+        "Chloe Dubois",
+        "Dmitri Volkov"
+      ],
+      [
+        "Chloe Dubois",
+        "Isabella Rossi"
+      ],
+      [
+        "Chloe Dubois",
+        "Liam O'Brien"
+      ],
+      [
+        "Chloe Dubois",
+        "Noah Meyer"
+      ],
+      [
+        "Chloe Dubois",
+        "Olivia Brown"
+      ],
+      [
+        "Chloe Dubois",
+        "Pedro Alvarez"
+      ],
+      [
+        "Dmitri Volkov",
+        "Alice Chen"
+      ],
+      [
+        "Dmitri Volkov",
+        "Chloe Dubois"
+      ],
+      [
+        "Dmitri Volkov",
+        "Isabella Rossi"
+      ],
+      [
+        "Dmitri Volkov",
+        "Liam O'Brien"
+      ],
+      [
+        "Dmitri Volkov",
+        "Noah Meyer"
+      ],
+      [
+        "Dmitri Volkov",
+        "Olivia Brown"
+      ],
+      [
+        "Dmitri Volkov",
+        "Pedro Alvarez"
+      ],
+      [
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "Farid Nasser",
+        "Grace Kim"
+      ],
+      [
+        "Farid Nasser",
+        "Hiro Tanaka"
+      ],
+      [
+        "Farid Nasser",
+        "Keiko Sato"
+      ],
+      [
+        "Farid Nasser",
+        "Maya Patel"
+      ],
+      [
+        "Grace Kim",
+        "Farid Nasser"
+      ],
+      [
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Hiro Tanaka",
+        "Farid Nasser"
+      ],
+      [
+        "Hiro Tanaka",
+        "Grace Kim"
+      ],
+      [
+        "Hiro Tanaka",
+        "Keiko Sato"
+      ],
+      [
+        "Hiro Tanaka",
+        "Maya Patel"
+      ],
+      [
+        "Isabella Rossi",
+        "Alice Chen"
+      ],
+      [
+        "Isabella Rossi",
+        "Chloe Dubois"
+      ],
+      [
+        "Isabella Rossi",
+        "Dmitri Volkov"
+      ],
+      [
+        "Isabella Rossi",
+        "Liam O'Brien"
+      ],
+      [
+        "Isabella Rossi",
+        "Noah Meyer"
+      ],
+      [
+        "Isabella Rossi",
+        "Olivia Brown"
+      ],
+      [
+        "Isabella Rossi",
+        "Pedro Alvarez"
+      ],
+      [
+        "Jamal Wright",
+        "Emma Wilson"
+      ],
+      [
+        "Keiko Sato",
+        "Farid Nasser"
+      ],
+      [
+        "Keiko Sato",
+        "Grace Kim"
+      ],
+      [
+        "Keiko Sato",
+        "Hiro Tanaka"
+      ],
+      [
+        "Keiko Sato",
+        "Maya Patel"
+      ],
+      [
+        "Liam O'Brien",
+        "Alice Chen"
+      ],
+      [
+        "Liam O'Brien",
+        "Chloe Dubois"
+      ],
+      [
+        "Liam O'Brien",
+        "Dmitri Volkov"
+      ],
+      [
+        "Liam O'Brien",
+        "Isabella Rossi"
+      ],
+      [
+        "Liam O'Brien",
+        "Noah Meyer"
+      ],
+      [
+        "Liam O'Brien",
+        "Olivia Brown"
+      ],
+      [
+        "Liam O'Brien",
+        "Pedro Alvarez"
+      ],
+      [
+        "Maya Patel",
+        "Farid Nasser"
+      ],
+      [
+        "Maya Patel",
+        "Grace Kim"
+      ],
+      [
+        "Maya Patel",
+        "Hiro Tanaka"
+      ],
+      [
+        "Maya Patel",
+        "Keiko Sato"
+      ],
+      [
+        "Noah Meyer",
+        "Alice Chen"
+      ],
+      [
+        "Noah Meyer",
+        "Chloe Dubois"
+      ],
+      [
+        "Noah Meyer",
+        "Dmitri Volkov"
+      ],
+      [
+        "Noah Meyer",
+        "Isabella Rossi"
+      ],
+      [
+        "Noah Meyer",
+        "Liam O'Brien"
+      ],
+      [
+        "Noah Meyer",
+        "Olivia Brown"
+      ],
+      [
+        "Noah Meyer",
+        "Pedro Alvarez"
+      ],
+      [
+        "Olivia Brown",
+        "Alice Chen"
+      ],
+      [
+        "Olivia Brown",
+        "Chloe Dubois"
+      ],
+      [
+        "Olivia Brown",
+        "Dmitri Volkov"
+      ],
+      [
+        "Olivia Brown",
+        "Isabella Rossi"
+      ],
+      [
+        "Olivia Brown",
+        "Liam O'Brien"
+      ],
+      [
+        "Olivia Brown",
+        "Noah Meyer"
+      ],
+      [
+        "Olivia Brown",
+        "Pedro Alvarez"
+      ],
+      [
+        "Pedro Alvarez",
+        "Alice Chen"
+      ],
+      [
+        "Pedro Alvarez",
+        "Chloe Dubois"
+      ],
+      [
+        "Pedro Alvarez",
+        "Dmitri Volkov"
+      ],
+      [
+        "Pedro Alvarez",
+        "Isabella Rossi"
+      ],
+      [
+        "Pedro Alvarez",
+        "Liam O'Brien"
+      ],
+      [
+        "Pedro Alvarez",
+        "Noah Meyer"
+      ],
+      [
+        "Pedro Alvarez",
+        "Olivia Brown"
+      ]
+    ]
+  },
+  "kb-sj-p11": {
+    "columns": [
+      "customer_id",
+      "status",
+      "order_a",
+      "order_b"
+    ],
+    "rows": [
+      [
+        1,
+        "shipped",
+        3,
+        31
+      ],
+      [
+        1,
+        "shipped",
+        3,
+        32
+      ],
+      [
+        1,
+        "shipped",
+        3,
+        70
+      ],
+      [
+        1,
+        "shipped",
+        3,
+        84
+      ],
+      [
+        1,
+        "shipped",
+        3,
+        89
+      ],
+      [
+        1,
+        "cancelled",
+        7,
+        21
+      ],
+      [
+        1,
+        "cancelled",
+        7,
+        95
+      ],
+      [
+        1,
+        "delivered",
+        13,
+        14
+      ],
+      [
+        1,
+        "delivered",
+        13,
+        40
+      ],
+      [
+        1,
+        "delivered",
+        13,
+        48
+      ],
+      [
+        1,
+        "delivered",
+        13,
+        55
+      ],
+      [
+        1,
+        "delivered",
+        13,
+        58
+      ],
+      [
+        1,
+        "delivered",
+        13,
+        63
+      ],
+      [
+        1,
+        "delivered",
+        13,
+        66
+      ],
+      [
+        1,
+        "delivered",
+        13,
+        86
+      ],
+      [
+        1,
+        "delivered",
+        13,
+        93
+      ],
+      [
+        1,
+        "delivered",
+        13,
+        100
+      ],
+      [
+        1,
+        "delivered",
+        13,
+        101
+      ],
+      [
+        1,
+        "delivered",
+        14,
+        40
+      ],
+      [
+        1,
+        "delivered",
+        14,
+        48
+      ],
+      [
+        1,
+        "delivered",
+        14,
+        55
+      ],
+      [
+        1,
+        "delivered",
+        14,
+        58
+      ],
+      [
+        1,
+        "delivered",
+        14,
+        63
+      ],
+      [
+        1,
+        "delivered",
+        14,
+        66
+      ],
+      [
+        1,
+        "delivered",
+        14,
+        86
+      ],
+      [
+        1,
+        "delivered",
+        14,
+        93
+      ],
+      [
+        1,
+        "delivered",
+        14,
+        100
+      ],
+      [
+        1,
+        "delivered",
+        14,
+        101
+      ],
+      [
+        1,
+        "pending",
+        19,
+        42
+      ],
+      [
+        1,
+        "pending",
+        19,
+        79
+      ],
+      [
+        1,
+        "cancelled",
+        21,
+        95
+      ],
+      [
+        1,
+        "shipped",
+        31,
+        32
+      ],
+      [
+        1,
+        "shipped",
+        31,
+        70
+      ],
+      [
+        1,
+        "shipped",
+        31,
+        84
+      ],
+      [
+        1,
+        "shipped",
+        31,
+        89
+      ],
+      [
+        1,
+        "shipped",
+        32,
+        70
+      ],
+      [
+        1,
+        "shipped",
+        32,
+        84
+      ],
+      [
+        1,
+        "shipped",
+        32,
+        89
+      ],
+      [
+        1,
+        "delivered",
+        40,
+        48
+      ],
+      [
+        1,
+        "delivered",
+        40,
+        55
+      ],
+      [
+        1,
+        "delivered",
+        40,
+        58
+      ],
+      [
+        1,
+        "delivered",
+        40,
+        63
+      ],
+      [
+        1,
+        "delivered",
+        40,
+        66
+      ],
+      [
+        1,
+        "delivered",
+        40,
+        86
+      ],
+      [
+        1,
+        "delivered",
+        40,
+        93
+      ],
+      [
+        1,
+        "delivered",
+        40,
+        100
+      ],
+      [
+        1,
+        "delivered",
+        40,
+        101
+      ],
+      [
+        1,
+        "pending",
+        42,
+        79
+      ],
+      [
+        1,
+        "delivered",
+        48,
+        55
+      ],
+      [
+        1,
+        "delivered",
+        48,
+        58
+      ],
+      [
+        1,
+        "delivered",
+        48,
+        63
+      ],
+      [
+        1,
+        "delivered",
+        48,
+        66
+      ],
+      [
+        1,
+        "delivered",
+        48,
+        86
+      ],
+      [
+        1,
+        "delivered",
+        48,
+        93
+      ],
+      [
+        1,
+        "delivered",
+        48,
+        100
+      ],
+      [
+        1,
+        "delivered",
+        48,
+        101
+      ],
+      [
+        1,
+        "delivered",
+        55,
+        58
+      ],
+      [
+        1,
+        "delivered",
+        55,
+        63
+      ],
+      [
+        1,
+        "delivered",
+        55,
+        66
+      ],
+      [
+        1,
+        "delivered",
+        55,
+        86
+      ],
+      [
+        1,
+        "delivered",
+        55,
+        93
+      ],
+      [
+        1,
+        "delivered",
+        55,
+        100
+      ],
+      [
+        1,
+        "delivered",
+        55,
+        101
+      ],
+      [
+        1,
+        "delivered",
+        58,
+        63
+      ],
+      [
+        1,
+        "delivered",
+        58,
+        66
+      ],
+      [
+        1,
+        "delivered",
+        58,
+        86
+      ],
+      [
+        1,
+        "delivered",
+        58,
+        93
+      ],
+      [
+        1,
+        "delivered",
+        58,
+        100
+      ],
+      [
+        1,
+        "delivered",
+        58,
+        101
+      ],
+      [
+        1,
+        "delivered",
+        63,
+        66
+      ],
+      [
+        1,
+        "delivered",
+        63,
+        86
+      ],
+      [
+        1,
+        "delivered",
+        63,
+        93
+      ],
+      [
+        1,
+        "delivered",
+        63,
+        100
+      ],
+      [
+        1,
+        "delivered",
+        63,
+        101
+      ],
+      [
+        1,
+        "delivered",
+        66,
+        86
+      ],
+      [
+        1,
+        "delivered",
+        66,
+        93
+      ],
+      [
+        1,
+        "delivered",
+        66,
+        100
+      ],
+      [
+        1,
+        "delivered",
+        66,
+        101
+      ],
+      [
+        1,
+        "shipped",
+        70,
+        84
+      ],
+      [
+        1,
+        "shipped",
+        70,
+        89
+      ],
+      [
+        1,
+        "shipped",
+        84,
+        89
+      ],
+      [
+        1,
+        "delivered",
+        86,
+        93
+      ],
+      [
+        1,
+        "delivered",
+        86,
+        100
+      ],
+      [
+        1,
+        "delivered",
+        86,
+        101
+      ],
+      [
+        1,
+        "delivered",
+        93,
+        100
+      ],
+      [
+        1,
+        "delivered",
+        93,
+        101
+      ],
+      [
+        1,
+        "delivered",
+        100,
+        101
+      ],
+      [
+        2,
+        "delivered",
+        6,
+        23
+      ],
+      [
+        3,
+        "pending",
+        25,
+        43
+      ],
+      [
+        3,
+        "delivered",
+        27,
+        34
+      ],
+      [
+        3,
+        "delivered",
+        27,
+        67
+      ],
+      [
+        3,
+        "delivered",
+        34,
+        67
+      ],
+      [
+        4,
+        "delivered",
+        80,
+        81
+      ],
+      [
+        5,
+        "pending",
+        5,
+        90
+      ],
+      [
+        5,
+        "pending",
+        5,
+        97
+      ],
+      [
+        5,
+        "shipped",
+        8,
+        16
+      ],
+      [
+        5,
+        "shipped",
+        8,
+        37
+      ],
+      [
+        5,
+        "shipped",
+        8,
+        39
+      ],
+      [
+        5,
+        "shipped",
+        8,
+        41
+      ],
+      [
+        5,
+        "shipped",
+        8,
+        53
+      ],
+      [
+        5,
+        "shipped",
+        8,
+        57
+      ],
+      [
+        5,
+        "shipped",
+        8,
+        65
+      ],
+      [
+        5,
+        "shipped",
+        8,
+        96
+      ],
+      [
+        5,
+        "shipped",
+        16,
+        37
+      ],
+      [
+        5,
+        "shipped",
+        16,
+        39
+      ],
+      [
+        5,
+        "shipped",
+        16,
+        41
+      ],
+      [
+        5,
+        "shipped",
+        16,
+        53
+      ],
+      [
+        5,
+        "shipped",
+        16,
+        57
+      ],
+      [
+        5,
+        "shipped",
+        16,
+        65
+      ],
+      [
+        5,
+        "shipped",
+        16,
+        96
+      ],
+      [
+        5,
+        "delivered",
+        17,
+        33
+      ],
+      [
+        5,
+        "delivered",
+        17,
+        72
+      ],
+      [
+        5,
+        "delivered",
+        17,
+        85
+      ],
+      [
+        5,
+        "delivered",
+        33,
+        72
+      ],
+      [
+        5,
+        "delivered",
+        33,
+        85
+      ],
+      [
+        5,
+        "shipped",
+        37,
+        39
+      ],
+      [
+        5,
+        "shipped",
+        37,
+        41
+      ],
+      [
+        5,
+        "shipped",
+        37,
+        53
+      ],
+      [
+        5,
+        "shipped",
+        37,
+        57
+      ],
+      [
+        5,
+        "shipped",
+        37,
+        65
+      ],
+      [
+        5,
+        "shipped",
+        37,
+        96
+      ],
+      [
+        5,
+        "shipped",
+        39,
+        41
+      ],
+      [
+        5,
+        "shipped",
+        39,
+        53
+      ],
+      [
+        5,
+        "shipped",
+        39,
+        57
+      ],
+      [
+        5,
+        "shipped",
+        39,
+        65
+      ],
+      [
+        5,
+        "shipped",
+        39,
+        96
+      ],
+      [
+        5,
+        "shipped",
+        41,
+        53
+      ],
+      [
+        5,
+        "shipped",
+        41,
+        57
+      ],
+      [
+        5,
+        "shipped",
+        41,
+        65
+      ],
+      [
+        5,
+        "shipped",
+        41,
+        96
+      ],
+      [
+        5,
+        "shipped",
+        53,
+        57
+      ],
+      [
+        5,
+        "shipped",
+        53,
+        65
+      ],
+      [
+        5,
+        "shipped",
+        53,
+        96
+      ],
+      [
+        5,
+        "shipped",
+        57,
+        65
+      ],
+      [
+        5,
+        "shipped",
+        57,
+        96
+      ],
+      [
+        5,
+        "shipped",
+        65,
+        96
+      ],
+      [
+        5,
+        "delivered",
+        72,
+        85
+      ],
+      [
+        5,
+        "pending",
+        90,
+        97
+      ],
+      [
+        6,
+        "delivered",
+        59,
+        87
+      ],
+      [
+        7,
+        "shipped",
+        9,
+        15
+      ],
+      [
+        7,
+        "shipped",
+        9,
+        35
+      ],
+      [
+        7,
+        "shipped",
+        15,
+        35
+      ],
+      [
+        7,
+        "delivered",
+        18,
+        45
+      ],
+      [
+        7,
+        "delivered",
+        18,
+        46
+      ],
+      [
+        7,
+        "delivered",
+        18,
+        52
+      ],
+      [
+        7,
+        "delivered",
+        18,
+        56
+      ],
+      [
+        7,
+        "delivered",
+        18,
+        61
+      ],
+      [
+        7,
+        "delivered",
+        18,
+        68
+      ],
+      [
+        7,
+        "delivered",
+        18,
+        76
+      ],
+      [
+        7,
+        "delivered",
+        18,
+        88
+      ],
+      [
+        7,
+        "delivered",
+        18,
+        92
+      ],
+      [
+        7,
+        "delivered",
+        45,
+        46
+      ],
+      [
+        7,
+        "delivered",
+        45,
+        52
+      ],
+      [
+        7,
+        "delivered",
+        45,
+        56
+      ],
+      [
+        7,
+        "delivered",
+        45,
+        61
+      ],
+      [
+        7,
+        "delivered",
+        45,
+        68
+      ],
+      [
+        7,
+        "delivered",
+        45,
+        76
+      ],
+      [
+        7,
+        "delivered",
+        45,
+        88
+      ],
+      [
+        7,
+        "delivered",
+        45,
+        92
+      ],
+      [
+        7,
+        "delivered",
+        46,
+        52
+      ],
+      [
+        7,
+        "delivered",
+        46,
+        56
+      ],
+      [
+        7,
+        "delivered",
+        46,
+        61
+      ],
+      [
+        7,
+        "delivered",
+        46,
+        68
+      ],
+      [
+        7,
+        "delivered",
+        46,
+        76
+      ],
+      [
+        7,
+        "delivered",
+        46,
+        88
+      ],
+      [
+        7,
+        "delivered",
+        46,
+        92
+      ],
+      [
+        7,
+        "delivered",
+        52,
+        56
+      ],
+      [
+        7,
+        "delivered",
+        52,
+        61
+      ],
+      [
+        7,
+        "delivered",
+        52,
+        68
+      ],
+      [
+        7,
+        "delivered",
+        52,
+        76
+      ],
+      [
+        7,
+        "delivered",
+        52,
+        88
+      ],
+      [
+        7,
+        "delivered",
+        52,
+        92
+      ],
+      [
+        7,
+        "delivered",
+        56,
+        61
+      ],
+      [
+        7,
+        "delivered",
+        56,
+        68
+      ],
+      [
+        7,
+        "delivered",
+        56,
+        76
+      ],
+      [
+        7,
+        "delivered",
+        56,
+        88
+      ],
+      [
+        7,
+        "delivered",
+        56,
+        92
+      ],
+      [
+        7,
+        "delivered",
+        61,
+        68
+      ],
+      [
+        7,
+        "delivered",
+        61,
+        76
+      ],
+      [
+        7,
+        "delivered",
+        61,
+        88
+      ],
+      [
+        7,
+        "delivered",
+        61,
+        92
+      ],
+      [
+        7,
+        "delivered",
+        68,
+        76
+      ],
+      [
+        7,
+        "delivered",
+        68,
+        88
+      ],
+      [
+        7,
+        "delivered",
+        68,
+        92
+      ],
+      [
+        7,
+        "delivered",
+        76,
+        88
+      ],
+      [
+        7,
+        "delivered",
+        76,
+        92
+      ],
+      [
+        7,
+        "delivered",
+        88,
+        92
+      ],
+      [
+        8,
+        "delivered",
+        22,
+        102
+      ],
+      [
+        9,
+        "delivered",
+        29,
+        78
+      ],
+      [
+        9,
+        "shipped",
+        49,
+        98
+      ],
+      [
+        11,
+        "delivered",
+        10,
+        73
+      ],
+      [
+        13,
+        "delivered",
+        2,
+        24
+      ],
+      [
+        13,
+        "delivered",
+        2,
+        64
+      ],
+      [
+        13,
+        "delivered",
+        2,
+        77
+      ],
+      [
+        13,
+        "delivered",
+        2,
+        103
+      ],
+      [
+        13,
+        "shipped",
+        4,
+        11
+      ],
+      [
+        13,
+        "shipped",
+        4,
+        44
+      ],
+      [
+        13,
+        "shipped",
+        4,
+        54
+      ],
+      [
+        13,
+        "shipped",
+        11,
+        44
+      ],
+      [
+        13,
+        "shipped",
+        11,
+        54
+      ],
+      [
+        13,
+        "pending",
+        12,
+        47
+      ],
+      [
+        13,
+        "delivered",
+        24,
+        64
+      ],
+      [
+        13,
+        "delivered",
+        24,
+        77
+      ],
+      [
+        13,
+        "delivered",
+        24,
+        103
+      ],
+      [
+        13,
+        "shipped",
+        44,
+        54
+      ],
+      [
+        13,
+        "cancelled",
+        50,
+        51
+      ],
+      [
+        13,
+        "delivered",
+        64,
+        77
+      ],
+      [
+        13,
+        "delivered",
+        64,
+        103
+      ],
+      [
+        13,
+        "delivered",
+        77,
+        103
+      ],
+      [
+        14,
+        "shipped",
+        30,
+        99
+      ],
+      [
+        14,
+        "delivered",
+        38,
+        69
+      ],
+      [
+        16,
+        "delivered",
+        62,
+        71
+      ]
+    ]
+  },
+  "kb-sj-p12": {
+    "columns": [
+      "customer_id",
+      "order_a",
+      "order_b"
+    ],
+    "rows": [
+      [
+        1,
+        19,
+        42
+      ],
+      [
+        1,
+        19,
+        79
+      ],
+      [
+        1,
+        42,
+        79
+      ],
+      [
+        3,
+        25,
+        43
+      ],
+      [
+        5,
+        5,
+        90
+      ],
+      [
+        5,
+        5,
+        97
+      ],
+      [
+        5,
+        90,
+        97
+      ],
+      [
+        13,
+        12,
+        47
+      ]
+    ]
+  },
+  "kb-sj-p13": {
+    "columns": [
+      "supplier_id",
+      "product_a",
+      "product_b",
+      "gap"
+    ],
+    "rows": [
+      [
+        4,
+        "Noise-Canceling Headset",
+        "Yoga Mat Eco 6mm",
+        117.99
+      ],
+      [
+        1,
+        "Mechanical Keyboard K1",
+        "Smart Watch S",
+        110
+      ],
+      [
+        4,
+        "Noise-Canceling Headset",
+        "Laptop Stand Aluminum",
+        107.49
+      ],
+      [
+        5,
+        "Studio Desktop Mic",
+        "Desk Mat Extended",
+        94.01
+      ],
+      [
+        1,
+        "4K Webcam Pro",
+        "Smart Watch S",
+        70.99
+      ],
+      [
+        3,
+        "HDMI 2.1 Cable 2m",
+        "Cycling Jersey Pro",
+        50.01
+      ],
+      [
+        1,
+        "Mechanical Keyboard K1",
+        "4K Webcam Pro",
+        39.01
+      ],
+      [
+        3,
+        "USB-C Hub 7-in-1",
+        "HDMI 2.1 Cable 2m",
+        34.01
+      ],
+      [
+        2,
+        "Ring Light 14\"",
+        "Running Socks 3-pack",
+        21.49
+      ],
+      [
+        6,
+        "Bluetooth Speaker Mini",
+        "Fitness Band X2",
+        19.01
+      ],
+      [
+        2,
+        "Wireless Mouse M3",
+        "Running Socks 3-pack",
+        16
+      ],
+      [
+        3,
+        "USB-C Hub 7-in-1",
+        "Cycling Jersey Pro",
+        16
+      ],
+      [
+        4,
+        "Laptop Stand Aluminum",
+        "Yoga Mat Eco 6mm",
+        10.5
+      ],
+      [
+        2,
+        "Wireless Mouse M3",
+        "Ring Light 14\"",
+        5.49
+      ]
+    ]
+  },
+  "kb-sj-p14": {
+    "columns": [
+      "category",
+      "product_a",
+      "product_b",
+      "gap"
+    ],
+    "rows": [
+      [
+        "Wearables",
+        "Fitness Band X2",
+        "Smart Watch S",
+        120.99
+      ],
+      [
+        "Audio",
+        "Noise-Canceling Headset",
+        "Bluetooth Speaker Mini",
+        90
+      ],
+      [
+        "Video",
+        "4K Webcam Pro",
+        "Ring Light 14\"",
+        89.01
+      ],
+      [
+        "Audio",
+        "Studio Desktop Mic",
+        "Bluetooth Speaker Mini",
+        59.01
+      ],
+      [
+        "Electronics",
+        "Mechanical Keyboard K1",
+        "Wireless Mouse M3",
+        55.49
+      ],
+      [
+        "Apparel",
+        "Running Socks 3-pack",
+        "Cycling Jersey Pro",
+        46.5
+      ],
+      [
+        "Electronics",
+        "Mechanical Keyboard K1",
+        "USB-C Hub 7-in-1",
+        40.99
+      ],
+      [
+        "Audio",
+        "Noise-Canceling Headset",
+        "Studio Desktop Mic",
+        30.99
+      ],
+      [
+        "Accessories",
+        "HDMI 2.1 Cable 2m",
+        "Laptop Stand Aluminum",
+        27.51
+      ],
+      [
+        "Accessories",
+        "Laptop Stand Aluminum",
+        "Desk Mat Extended",
+        17.51
+      ],
+      [
+        "Electronics",
+        "Wireless Mouse M3",
+        "USB-C Hub 7-in-1",
+        14.5
+      ],
+      [
+        "Accessories",
+        "HDMI 2.1 Cable 2m",
+        "Desk Mat Extended",
+        10
+      ]
+    ]
+  },
+  "kb-sj-p15": {
+    "columns": [
+      "customer_id",
+      "status",
+      "pair_count"
+    ],
+    "rows": [
+      [
+        1,
+        "delivered",
+        66
+      ],
+      [
+        7,
+        "delivered",
+        45
+      ],
+      [
+        5,
+        "shipped",
+        36
+      ],
+      [
+        1,
+        "shipped",
+        15
+      ],
+      [
+        13,
+        "delivered",
+        10
+      ],
+      [
+        5,
+        "delivered",
+        6
+      ],
+      [
+        13,
+        "shipped",
+        6
+      ],
+      [
+        1,
+        "cancelled",
+        3
+      ],
+      [
+        1,
+        "pending",
+        3
+      ],
+      [
+        3,
+        "delivered",
+        3
+      ],
+      [
+        5,
+        "pending",
+        3
+      ],
+      [
+        7,
+        "shipped",
+        3
+      ]
+    ]
+  },
+  "kb-sj-p16": {
+    "columns": [],
+    "rows": []
+  },
+  "kb-sj-p17": {
+    "columns": [
+      "region_a",
+      "region_b",
+      "pairs"
+    ],
+    "rows": [
+      [
+        "APAC",
+        "EU",
+        22
+      ],
+      [
+        "EU",
+        "APAC",
+        18
+      ],
+      [
+        "US",
+        "EU",
+        9
+      ],
+      [
+        "EU",
+        "US",
+        7
+      ],
+      [
+        "LATAM",
+        "EU",
+        7
+      ],
+      [
+        "US",
+        "APAC",
+        7
+      ],
+      [
+        "LATAM",
+        "APAC",
+        5
+      ],
+      [
+        "APAC",
+        "US",
+        3
+      ],
+      [
+        "LATAM",
+        "US",
+        2
+      ],
+      [
+        "EU",
+        "LATAM",
+        1
+      ]
+    ]
+  },
+  "kb-sj-p18": {
+    "columns": [
+      "customer_id",
+      "order_a",
+      "order_b",
+      "day_gap"
+    ],
+    "rows": [
+      [
+        1,
+        66,
+        70,
+        1
+      ],
+      [
+        5,
+        33,
+        37,
+        3
+      ],
+      [
+        13,
+        2,
+        4,
+        3
+      ]
+    ]
+  },
+  "kb-sj-p19": {
+    "columns": [
+      "all_rows",
+      "true_pairs",
+      "self_pairs",
+      "mirror_rows"
+    ],
+    "rows": [
+      [
+        94,
+        39,
+        16,
+        39
+      ]
+    ]
+  },
+  "kb-sj-p20": {
+    "columns": [
+      "customer_id",
+      "pending_order",
+      "shipped_order",
+      "delivered_order"
+    ],
+    "rows": [
+      [
+        1,
+        19,
+        31,
+        40
+      ],
+      [
+        1,
+        19,
+        31,
+        48
+      ],
+      [
+        1,
+        19,
+        31,
+        55
+      ],
+      [
+        1,
+        19,
+        31,
+        58
+      ],
+      [
+        1,
+        19,
+        31,
+        63
+      ],
+      [
+        1,
+        19,
+        31,
+        66
+      ],
+      [
+        1,
+        19,
+        31,
+        86
+      ],
+      [
+        1,
+        19,
+        31,
+        93
+      ],
+      [
+        1,
+        19,
+        31,
+        100
+      ],
+      [
+        1,
+        19,
+        31,
+        101
+      ],
+      [
+        1,
+        19,
+        32,
+        40
+      ],
+      [
+        1,
+        19,
+        32,
+        48
+      ],
+      [
+        1,
+        19,
+        32,
+        55
+      ],
+      [
+        1,
+        19,
+        32,
+        58
+      ],
+      [
+        1,
+        19,
+        32,
+        63
+      ],
+      [
+        1,
+        19,
+        32,
+        66
+      ],
+      [
+        1,
+        19,
+        32,
+        86
+      ],
+      [
+        1,
+        19,
+        32,
+        93
+      ],
+      [
+        1,
+        19,
+        32,
+        100
+      ],
+      [
+        1,
+        19,
+        32,
+        101
+      ],
+      [
+        1,
+        19,
+        70,
+        86
+      ],
+      [
+        1,
+        19,
+        70,
+        93
+      ],
+      [
+        1,
+        19,
+        70,
+        100
+      ],
+      [
+        1,
+        19,
+        70,
+        101
+      ],
+      [
+        1,
+        19,
+        84,
+        86
+      ],
+      [
+        1,
+        19,
+        84,
+        93
+      ],
+      [
+        1,
+        19,
+        84,
+        100
+      ],
+      [
+        1,
+        19,
+        84,
+        101
+      ],
+      [
+        1,
+        19,
+        89,
+        93
+      ],
+      [
+        1,
+        19,
+        89,
+        100
+      ],
+      [
+        1,
+        19,
+        89,
+        101
+      ],
+      [
+        1,
+        42,
+        70,
+        86
+      ],
+      [
+        1,
+        42,
+        70,
+        93
+      ],
+      [
+        1,
+        42,
+        70,
+        100
+      ],
+      [
+        1,
+        42,
+        70,
+        101
+      ],
+      [
+        1,
+        42,
+        84,
+        86
+      ],
+      [
+        1,
+        42,
+        84,
+        93
+      ],
+      [
+        1,
+        42,
+        84,
+        100
+      ],
+      [
+        1,
+        42,
+        84,
+        101
+      ],
+      [
+        1,
+        42,
+        89,
+        93
+      ],
+      [
+        1,
+        42,
+        89,
+        100
+      ],
+      [
+        1,
+        42,
+        89,
+        101
+      ],
+      [
+        1,
+        79,
+        84,
+        86
+      ],
+      [
+        1,
+        79,
+        84,
+        93
+      ],
+      [
+        1,
+        79,
+        84,
+        100
+      ],
+      [
+        1,
+        79,
+        84,
+        101
+      ],
+      [
+        1,
+        79,
+        89,
+        93
+      ],
+      [
+        1,
+        79,
+        89,
+        100
+      ],
+      [
+        1,
+        79,
+        89,
+        101
+      ],
+      [
+        5,
+        5,
+        8,
+        17
+      ],
+      [
+        5,
+        5,
+        8,
+        33
+      ],
+      [
+        5,
+        5,
+        8,
+        72
+      ],
+      [
+        5,
+        5,
+        8,
+        85
+      ],
+      [
+        5,
+        5,
+        16,
+        17
+      ],
+      [
+        5,
+        5,
+        16,
+        33
+      ],
+      [
+        5,
+        5,
+        16,
+        72
+      ],
+      [
+        5,
+        5,
+        16,
+        85
+      ],
+      [
+        5,
+        5,
+        37,
+        72
+      ],
+      [
+        5,
+        5,
+        37,
+        85
+      ],
+      [
+        5,
+        5,
+        39,
+        72
+      ],
+      [
+        5,
+        5,
+        39,
+        85
+      ],
+      [
+        5,
+        5,
+        41,
+        72
+      ],
+      [
+        5,
+        5,
+        41,
+        85
+      ],
+      [
+        5,
+        5,
+        53,
+        72
+      ],
+      [
+        5,
+        5,
+        53,
+        85
+      ],
+      [
+        5,
+        5,
+        57,
+        72
+      ],
+      [
+        5,
+        5,
+        57,
+        85
+      ],
+      [
+        5,
+        5,
+        65,
+        72
+      ],
+      [
+        5,
+        5,
+        65,
+        85
+      ],
+      [
+        13,
+        12,
+        44,
+        64
+      ],
+      [
+        13,
+        12,
+        44,
+        77
+      ],
+      [
+        13,
+        12,
+        44,
+        103
+      ],
+      [
+        13,
+        12,
+        54,
+        64
+      ],
+      [
+        13,
+        12,
+        54,
+        77
+      ],
+      [
+        13,
+        12,
+        54,
+        103
+      ],
+      [
+        13,
+        47,
+        54,
+        64
+      ],
+      [
+        13,
+        47,
+        54,
+        77
+      ],
+      [
+        13,
+        47,
+        54,
+        103
+      ],
+      [
+        16,
+        1,
+        36,
+        62
+      ],
+      [
+        16,
+        1,
+        36,
+        71
+      ]
+    ]
+  },
+  "kb-sj-p21": {
+    "columns": [
+      "order_id",
+      "customer_id",
+      "next_order"
+    ],
+    "rows": [
+      [
+        3,
+        1,
+        7
+      ],
+      [
+        7,
+        1,
+        13
+      ],
+      [
+        13,
+        1,
+        14
+      ],
+      [
+        14,
+        1,
+        19
+      ],
+      [
+        19,
+        1,
+        21
+      ],
+      [
+        21,
+        1,
+        31
+      ],
+      [
+        31,
+        1,
+        32
+      ],
+      [
+        32,
+        1,
+        40
+      ],
+      [
+        40,
+        1,
+        42
+      ],
+      [
+        42,
+        1,
+        48
+      ],
+      [
+        48,
+        1,
+        55
+      ],
+      [
+        55,
+        1,
+        58
+      ],
+      [
+        58,
+        1,
+        63
+      ],
+      [
+        63,
+        1,
+        66
+      ],
+      [
+        66,
+        1,
+        70
+      ],
+      [
+        70,
+        1,
+        79
+      ],
+      [
+        79,
+        1,
+        84
+      ],
+      [
+        84,
+        1,
+        86
+      ],
+      [
+        86,
+        1,
+        89
+      ],
+      [
+        89,
+        1,
+        93
+      ],
+      [
+        93,
+        1,
+        95
+      ],
+      [
+        95,
+        1,
+        100
+      ],
+      [
+        100,
+        1,
+        101
+      ],
+      [
+        6,
+        2,
+        23
+      ],
+      [
+        25,
+        3,
+        27
+      ],
+      [
+        27,
+        3,
+        34
+      ],
+      [
+        34,
+        3,
+        43
+      ],
+      [
+        43,
+        3,
+        67
+      ],
+      [
+        80,
+        4,
+        81
+      ],
+      [
+        5,
+        5,
+        8
+      ],
+      [
+        8,
+        5,
+        16
+      ],
+      [
+        16,
+        5,
+        17
+      ],
+      [
+        17,
+        5,
+        33
+      ],
+      [
+        33,
+        5,
+        37
+      ],
+      [
+        37,
+        5,
+        39
+      ],
+      [
+        39,
+        5,
+        41
+      ],
+      [
+        41,
+        5,
+        53
+      ],
+      [
+        53,
+        5,
+        57
+      ],
+      [
+        57,
+        5,
+        65
+      ],
+      [
+        65,
+        5,
+        72
+      ],
+      [
+        72,
+        5,
+        82
+      ],
+      [
+        82,
+        5,
+        85
+      ],
+      [
+        85,
+        5,
+        90
+      ],
+      [
+        90,
+        5,
+        96
+      ],
+      [
+        96,
+        5,
+        97
+      ],
+      [
+        59,
+        6,
+        74
+      ],
+      [
+        74,
+        6,
+        87
+      ],
+      [
+        9,
+        7,
+        15
+      ],
+      [
+        15,
+        7,
+        18
+      ],
+      [
+        18,
+        7,
+        35
+      ],
+      [
+        35,
+        7,
+        45
+      ],
+      [
+        45,
+        7,
+        46
+      ],
+      [
+        46,
+        7,
+        52
+      ],
+      [
+        52,
+        7,
+        56
+      ],
+      [
+        56,
+        7,
+        61
+      ],
+      [
+        61,
+        7,
+        68
+      ],
+      [
+        68,
+        7,
+        75
+      ],
+      [
+        75,
+        7,
+        76
+      ],
+      [
+        76,
+        7,
+        88
+      ],
+      [
+        88,
+        7,
+        92
+      ],
+      [
+        22,
+        8,
+        26
+      ],
+      [
+        26,
+        8,
+        102
+      ],
+      [
+        29,
+        9,
+        49
+      ],
+      [
+        49,
+        9,
+        78
+      ],
+      [
+        78,
+        9,
+        98
+      ],
+      [
+        28,
+        10,
+        60
+      ],
+      [
+        10,
+        11,
+        73
+      ],
+      [
+        73,
+        11,
+        83
+      ],
+      [
+        83,
+        11,
+        94
+      ],
+      [
+        2,
+        13,
+        4
+      ],
+      [
+        4,
+        13,
+        11
+      ],
+      [
+        11,
+        13,
+        12
+      ],
+      [
+        12,
+        13,
+        24
+      ],
+      [
+        24,
+        13,
+        44
+      ],
+      [
+        44,
+        13,
+        47
+      ],
+      [
+        47,
+        13,
+        50
+      ],
+      [
+        50,
+        13,
+        51
+      ],
+      [
+        51,
+        13,
+        54
+      ],
+      [
+        54,
+        13,
+        64
+      ],
+      [
+        64,
+        13,
+        77
+      ],
+      [
+        77,
+        13,
+        103
+      ],
+      [
+        30,
+        14,
+        38
+      ],
+      [
+        38,
+        14,
+        69
+      ],
+      [
+        69,
+        14,
+        99
+      ],
+      [
+        1,
+        16,
+        36
+      ],
+      [
+        36,
+        16,
+        62
+      ],
+      [
+        62,
+        16,
+        71
+      ]
+    ]
+  },
+  "kb-sj-p22": {
+    "columns": [],
+    "rows": []
+  },
+  "kb-sj-p23": {
+    "columns": [
+      "day",
+      "customer_a",
+      "customer_b",
+      "order_a",
+      "order_b"
+    ],
+    "rows": [
+      [
+        "2024-01-02",
+        5,
+        1,
+        5,
+        7
+      ],
+      [
+        "2024-01-15",
+        13,
+        5,
+        2,
+        8
+      ],
+      [
+        "2024-02-13",
+        13,
+        7,
+        11,
+        15
+      ],
+      [
+        "2024-03-06",
+        12,
+        13,
+        20,
+        24
+      ],
+      [
+        "2024-04-26",
+        3,
+        9,
+        27,
+        29
+      ],
+      [
+        "2024-05-12",
+        7,
+        5,
+        35,
+        39
+      ],
+      [
+        "2024-05-12",
+        7,
+        1,
+        35,
+        40
+      ],
+      [
+        "2024-05-12",
+        5,
+        1,
+        39,
+        40
+      ],
+      [
+        "2024-05-14",
+        16,
+        14,
+        36,
+        38
+      ],
+      [
+        "2024-05-19",
+        5,
+        3,
+        33,
+        34
+      ],
+      [
+        "2024-07-19",
+        7,
+        13,
+        52,
+        54
+      ],
+      [
+        "2024-08-23",
+        10,
+        7,
+        60,
+        61
+      ],
+      [
+        "2024-09-07",
+        13,
+        1,
+        64,
+        70
+      ],
+      [
+        "2024-09-09",
+        3,
+        14,
+        67,
+        69
+      ],
+      [
+        "2024-09-21",
+        16,
+        1,
+        62,
+        63
+      ],
+      [
+        "2024-10-04",
+        6,
+        7,
+        74,
+        75
+      ],
+      [
+        "2024-10-13",
+        11,
+        7,
+        73,
+        76
+      ],
+      [
+        "2024-10-13",
+        11,
+        13,
+        73,
+        77
+      ],
+      [
+        "2024-10-13",
+        7,
+        13,
+        76,
+        77
+      ],
+      [
+        "2024-11-04",
+        4,
+        11,
+        81,
+        83
+      ],
+      [
+        "2025-02-12",
+        1,
+        8,
+        101,
+        102
+      ]
+    ]
+  },
+  "kb-sj-p24": {
+    "columns": [
+      "region",
+      "pairs",
+      "share"
+    ],
+    "rows": [
+      [
+        "EU",
+        28,
+        0.72
+      ],
+      [
+        "APAC",
+        10,
+        0.26
+      ],
+      [
+        "US",
+        1,
+        0.03
+      ]
+    ]
+  },
+  "kb-sj-p25": {
+    "columns": [
+      "customer_a",
+      "customer_b",
+      "day"
+    ],
+    "rows": [
+      [
+        7,
+        13,
+        "2024-02-13"
+      ],
+      [
+        3,
+        9,
+        "2024-04-26"
+      ],
+      [
+        14,
+        16,
+        "2024-05-14"
+      ],
+      [
+        7,
+        13,
+        "2024-07-19"
+      ],
+      [
+        3,
+        14,
+        "2024-09-09"
+      ],
+      [
+        1,
+        16,
+        "2024-09-21"
+      ],
+      [
+        6,
+        7,
+        "2024-10-04"
+      ],
+      [
+        7,
+        11,
+        "2024-10-13"
+      ],
+      [
+        7,
+        13,
+        "2024-10-13"
+      ],
+      [
+        11,
+        13,
+        "2024-10-13"
+      ]
+    ]
+  },
+  "kb-sj-p26": {
+    "columns": [
+      "id",
+      "name",
+      "supplier_mates",
+      "category_mates"
+    ],
+    "rows": [
+      [
+        9,
+        "HDMI 2.1 Cable 2m",
+        2,
+        2
+      ],
+      [
+        10,
+        "Laptop Stand Aluminum",
+        2,
+        2
+      ],
+      [
+        1,
+        "Mechanical Keyboard K1",
+        2,
+        2
+      ],
+      [
+        4,
+        "Noise-Canceling Headset",
+        2,
+        2
+      ],
+      [
+        3,
+        "USB-C Hub 7-in-1",
+        2,
+        2
+      ],
+      [
+        2,
+        "Wireless Mouse M3",
+        2,
+        2
+      ],
+      [
+        7,
+        "4K Webcam Pro",
+        2,
+        1
+      ],
+      [
+        15,
+        "Cycling Jersey Pro",
+        2,
+        1
+      ],
+      [
+        8,
+        "Ring Light 14\"",
+        2,
+        1
+      ],
+      [
+        14,
+        "Running Socks 3-pack",
+        2,
+        1
+      ],
+      [
+        13,
+        "Smart Watch S",
+        2,
+        1
+      ],
+      [
+        16,
+        "Yoga Mat Eco 6mm",
+        2,
+        0
+      ],
+      [
+        6,
+        "Bluetooth Speaker Mini",
+        1,
+        2
+      ],
+      [
+        11,
+        "Desk Mat Extended",
+        1,
+        2
+      ],
+      [
+        5,
+        "Studio Desktop Mic",
+        1,
+        2
+      ],
+      [
+        12,
+        "Fitness Band X2",
+        1,
+        1
+      ]
+    ]
+  },
+  "kb-sj-p27": {
+    "columns": [
+      "from_status",
+      "to_status",
+      "transitions"
+    ],
+    "rows": [
+      [
+        "shipped",
+        "delivered",
+        112
+      ],
+      [
+        "delivered",
+        "shipped",
+        59
+      ],
+      [
+        "pending",
+        "delivered",
+        44
+      ],
+      [
+        "delivered",
+        "pending",
+        36
+      ],
+      [
+        "shipped",
+        "pending",
+        33
+      ],
+      [
+        "cancelled",
+        "delivered",
+        31
+      ],
+      [
+        "pending",
+        "shipped",
+        24
+      ],
+      [
+        "shipped",
+        "cancelled",
+        22
+      ],
+      [
+        "delivered",
+        "cancelled",
+        21
+      ],
+      [
+        "cancelled",
+        "shipped",
+        13
+      ],
+      [
+        "pending",
+        "cancelled",
+        9
+      ],
+      [
+        "cancelled",
+        "pending",
+        8
+      ]
+    ]
+  },
+  "kb-sj-p28": {
+    "columns": [
+      "customer_a",
+      "spend_a",
+      "customer_b",
+      "spend_b",
+      "gap"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        7262.35,
+        "Olivia Brown",
+        444.8,
+        6817.55
+      ],
+      [
+        "Alice Chen",
+        7262.35,
+        "Dmitri Volkov",
+        599.26,
+        6663.09
+      ],
+      [
+        "Alice Chen",
+        7262.35,
+        "Liam O'Brien",
+        705.39,
+        6556.96
+      ],
+      [
+        "Alice Chen",
+        7262.35,
+        "Noah Meyer",
+        737.68,
+        6524.67
+      ],
+      [
+        "Alice Chen",
+        7262.35,
+        "Isabella Rossi",
+        985.65,
+        6276.7
+      ],
+      [
+        "Emma Wilson",
+        6640.56,
+        "Jamal Wright",
+        645.6,
+        5994.96
+      ],
+      [
+        "Alice Chen",
+        7262.35,
+        "Pedro Alvarez",
+        1686.17,
+        5576.18
+      ],
+      [
+        "Alice Chen",
+        7262.35,
+        "Chloe Dubois",
+        2667.93,
+        4594.42
+      ],
+      [
+        "Grace Kim",
+        4574.23,
+        "Hiro Tanaka",
+        829.09,
+        3745.14
+      ],
+      [
+        "Grace Kim",
+        4574.23,
+        "Keiko Sato",
+        1098.6,
+        3475.63
+      ],
+      [
+        "Farid Nasser",
+        1458.97,
+        "Grace Kim",
+        4574.23,
+        3115.26
+      ],
+      [
+        "Hiro Tanaka",
+        829.09,
+        "Maya Patel",
+        3644.56,
+        2815.47
+      ],
+      [
+        "Keiko Sato",
+        1098.6,
+        "Maya Patel",
+        3644.56,
+        2545.96
+      ],
+      [
+        "Chloe Dubois",
+        2667.93,
+        "Olivia Brown",
+        444.8,
+        2223.13
+      ],
+      [
+        "Farid Nasser",
+        1458.97,
+        "Maya Patel",
+        3644.56,
+        2185.59
+      ],
+      [
+        "Chloe Dubois",
+        2667.93,
+        "Dmitri Volkov",
+        599.26,
+        2068.67
+      ],
+      [
+        "Chloe Dubois",
+        2667.93,
+        "Liam O'Brien",
+        705.39,
+        1962.54
+      ],
+      [
+        "Chloe Dubois",
+        2667.93,
+        "Noah Meyer",
+        737.68,
+        1930.25
+      ],
+      [
+        "Chloe Dubois",
+        2667.93,
+        "Isabella Rossi",
+        985.65,
+        1682.28
+      ],
+      [
+        "Olivia Brown",
+        444.8,
+        "Pedro Alvarez",
+        1686.17,
+        1241.37
+      ],
+      [
+        "Dmitri Volkov",
+        599.26,
+        "Pedro Alvarez",
+        1686.17,
+        1086.91
+      ]
+    ]
+  },
+  "kb-aj-p01": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Bruno Silva"
+      ],
+      [
+        "Chloe Dubois"
+      ],
+      [
+        "Dmitri Volkov"
+      ],
+      [
+        "Farid Nasser"
+      ],
+      [
+        "Keiko Sato"
+      ],
+      [
+        "Olivia Brown"
+      ]
+    ]
+  },
+  "kb-aj-p02": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Liam O'Brien"
+      ]
+    ]
+  },
+  "kb-aj-p03": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Bruno Silva"
+      ],
+      [
+        "Dmitri Volkov"
+      ],
+      [
+        "Hiro Tanaka"
+      ],
+      [
+        "Isabella Rossi"
+      ],
+      [
+        "Jamal Wright"
+      ],
+      [
+        "Liam O'Brien"
+      ],
+      [
+        "Noah Meyer"
+      ],
+      [
+        "Olivia Brown"
+      ]
+    ]
+  },
+  "kb-aj-p04": {
+    "columns": [
+      "number"
+    ],
+    "rows": [
+      [
+        "INV-2024-018"
+      ],
+      [
+        "INV-2024-021"
+      ],
+      [
+        "INV-2025-024"
+      ],
+      [
+        "INV-2025-026"
+      ],
+      [
+        "INV-2025-027"
+      ],
+      [
+        "INV-2025-028"
+      ]
+    ]
+  },
+  "kb-aj-p05": {
+    "columns": [],
+    "rows": []
+  },
+  "kb-aj-p06": {
+    "columns": [],
+    "rows": []
+  },
+  "kb-aj-p07": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Bruno Silva"
+      ],
+      [
+        "Chloe Dubois"
+      ],
+      [
+        "Dmitri Volkov"
+      ],
+      [
+        "Farid Nasser"
+      ],
+      [
+        "Grace Kim"
+      ],
+      [
+        "Hiro Tanaka"
+      ],
+      [
+        "Isabella Rossi"
+      ],
+      [
+        "Jamal Wright"
+      ],
+      [
+        "Liam O'Brien"
+      ],
+      [
+        "Noah Meyer"
+      ],
+      [
+        "Olivia Brown"
+      ],
+      [
+        "Pedro Alvarez"
+      ]
+    ]
+  },
+  "kb-aj-p08": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Bruno Silva"
+      ],
+      [
+        "Chloe Dubois"
+      ],
+      [
+        "Dmitri Volkov"
+      ],
+      [
+        "Farid Nasser"
+      ],
+      [
+        "Keiko Sato"
+      ],
+      [
+        "Olivia Brown"
+      ]
+    ]
+  },
+  "kb-aj-p09": {
+    "columns": [
+      "number"
+    ],
+    "rows": [
+      [
+        "INV-2024-018"
+      ],
+      [
+        "INV-2024-021"
+      ],
+      [
+        "INV-2025-024"
+      ],
+      [
+        "INV-2025-026"
+      ],
+      [
+        "INV-2025-027"
+      ],
+      [
+        "INV-2025-028"
+      ]
+    ]
+  },
+  "kb-aj-p10": {
+    "columns": [],
+    "rows": []
+  },
+  "kb-aj-p11": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Dmitri Volkov"
+      ],
+      [
+        "Hiro Tanaka"
+      ],
+      [
+        "Jamal Wright"
+      ],
+      [
+        "Keiko Sato"
+      ],
+      [
+        "Noah Meyer"
+      ],
+      [
+        "Olivia Brown"
+      ]
+    ]
+  },
+  "kb-aj-p12": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Dmitri Volkov"
+      ],
+      [
+        "Jamal Wright"
+      ]
+    ]
+  },
+  "kb-aj-p13": {
+    "columns": [
+      "status",
+      "invoices",
+      "unpaid_invoices"
+    ],
+    "rows": [
+      [
+        "open",
+        6,
+        5
+      ],
+      [
+        "paid",
+        21,
+        1
+      ],
+      [
+        "void",
+        1,
+        0
+      ]
+    ]
+  },
+  "kb-aj-p14": {
+    "columns": [
+      "name",
+      "has_pending",
+      "has_shipped",
+      "has_delivered",
+      "has_cancelled"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        1,
+        1,
+        1,
+        1
+      ],
+      [
+        "Bruno Silva",
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        "Chloe Dubois",
+        1,
+        0,
+        1,
+        0
+      ],
+      [
+        "Dmitri Volkov",
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        "Emma Wilson",
+        1,
+        1,
+        1,
+        1
+      ],
+      [
+        "Farid Nasser",
+        1,
+        0,
+        1,
+        0
+      ],
+      [
+        "Grace Kim",
+        1,
+        1,
+        1,
+        0
+      ],
+      [
+        "Hiro Tanaka",
+        0,
+        1,
+        1,
+        0
+      ],
+      [
+        "Isabella Rossi",
+        0,
+        1,
+        1,
+        0
+      ],
+      [
+        "Jamal Wright",
+        0,
+        1,
+        1,
+        0
+      ],
+      [
+        "Keiko Sato",
+        1,
+        0,
+        1,
+        1
+      ],
+      [
+        "Liam O'Brien",
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        "Maya Patel",
+        1,
+        1,
+        1,
+        1
+      ],
+      [
+        "Noah Meyer",
+        0,
+        1,
+        1,
+        0
+      ],
+      [
+        "Olivia Brown",
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        "Pedro Alvarez",
+        1,
+        1,
+        1,
+        0
+      ]
+    ]
+  },
+  "kb-ow-p01": {
+    "columns": [
+      "name",
+      "order_id",
+      "total"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        19,
+        317.49
+      ],
+      [
+        "Alice Chen",
+        42,
+        259.31
+      ],
+      [
+        "Alice Chen",
+        79,
+        212.03
+      ],
+      [
+        "Chloe Dubois",
+        25,
+        364.71
+      ],
+      [
+        "Chloe Dubois",
+        43,
+        945.21
+      ],
+      [
+        "Emma Wilson",
+        5,
+        725.34
+      ],
+      [
+        "Emma Wilson",
+        90,
+        160.3
+      ],
+      [
+        "Emma Wilson",
+        97,
+        585.79
+      ],
+      [
+        "Farid Nasser",
+        74,
+        1088.44
+      ],
+      [
+        "Grace Kim",
+        75,
+        273.64
+      ],
+      [
+        "Keiko Sato",
+        94,
+        149
+      ],
+      [
+        "Maya Patel",
+        12,
+        148.28
+      ],
+      [
+        "Maya Patel",
+        47,
+        306.92
+      ],
+      [
+        "Pedro Alvarez",
+        1,
+        576.54
+      ]
+    ]
+  },
+  "kb-ow-p02": {
+    "columns": [
+      "name",
+      "order_id",
+      "total"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        19,
+        317.49
+      ],
+      [
+        "Alice Chen",
+        42,
+        259.31
+      ],
+      [
+        "Alice Chen",
+        79,
+        212.03
+      ],
+      [
+        "Bruno Silva",
+        null,
+        null
+      ],
+      [
+        "Chloe Dubois",
+        25,
+        364.71
+      ],
+      [
+        "Chloe Dubois",
+        43,
+        945.21
+      ],
+      [
+        "Dmitri Volkov",
+        null,
+        null
+      ],
+      [
+        "Emma Wilson",
+        5,
+        725.34
+      ],
+      [
+        "Emma Wilson",
+        90,
+        160.3
+      ],
+      [
+        "Emma Wilson",
+        97,
+        585.79
+      ],
+      [
+        "Farid Nasser",
+        74,
+        1088.44
+      ],
+      [
+        "Grace Kim",
+        75,
+        273.64
+      ],
+      [
+        "Hiro Tanaka",
+        null,
+        null
+      ],
+      [
+        "Isabella Rossi",
+        null,
+        null
+      ],
+      [
+        "Jamal Wright",
+        null,
+        null
+      ],
+      [
+        "Keiko Sato",
+        94,
+        149
+      ],
+      [
+        "Liam O'Brien",
+        null,
+        null
+      ],
+      [
+        "Maya Patel",
+        12,
+        148.28
+      ],
+      [
+        "Maya Patel",
+        47,
+        306.92
+      ],
+      [
+        "Noah Meyer",
+        null,
+        null
+      ],
+      [
+        "Olivia Brown",
+        null,
+        null
+      ],
+      [
+        "Pedro Alvarez",
+        1,
+        576.54
+      ]
+    ]
+  },
+  "kb-ow-p03": {
+    "columns": [
+      "total_rows",
+      "matched_rows"
+    ],
+    "rows": [
+      [
+        22,
+        14
+      ]
+    ]
+  },
+  "kb-ow-p04": {
+    "columns": [
+      "order_id",
+      "name"
+    ],
+    "rows": [
+      [
+        1,
+        "Pedro Alvarez"
+      ],
+      [
+        3,
+        "Alice Chen"
+      ],
+      [
+        7,
+        "Alice Chen"
+      ],
+      [
+        13,
+        "Alice Chen"
+      ],
+      [
+        14,
+        "Alice Chen"
+      ],
+      [
+        19,
+        "Alice Chen"
+      ],
+      [
+        20,
+        "Liam O'Brien"
+      ],
+      [
+        21,
+        "Alice Chen"
+      ],
+      [
+        25,
+        "Chloe Dubois"
+      ],
+      [
+        27,
+        "Chloe Dubois"
+      ],
+      [
+        29,
+        "Isabella Rossi"
+      ],
+      [
+        30,
+        "Noah Meyer"
+      ],
+      [
+        31,
+        "Alice Chen"
+      ],
+      [
+        32,
+        "Alice Chen"
+      ],
+      [
+        34,
+        "Chloe Dubois"
+      ],
+      [
+        36,
+        "Pedro Alvarez"
+      ],
+      [
+        38,
+        "Noah Meyer"
+      ],
+      [
+        40,
+        "Alice Chen"
+      ],
+      [
+        42,
+        "Alice Chen"
+      ],
+      [
+        43,
+        "Chloe Dubois"
+      ],
+      [
+        48,
+        "Alice Chen"
+      ],
+      [
+        49,
+        "Isabella Rossi"
+      ],
+      [
+        55,
+        "Alice Chen"
+      ],
+      [
+        58,
+        "Alice Chen"
+      ],
+      [
+        62,
+        "Pedro Alvarez"
+      ],
+      [
+        63,
+        "Alice Chen"
+      ],
+      [
+        66,
+        "Alice Chen"
+      ],
+      [
+        67,
+        "Chloe Dubois"
+      ],
+      [
+        69,
+        "Noah Meyer"
+      ],
+      [
+        70,
+        "Alice Chen"
+      ],
+      [
+        71,
+        "Pedro Alvarez"
+      ],
+      [
+        78,
+        "Isabella Rossi"
+      ],
+      [
+        79,
+        "Alice Chen"
+      ],
+      [
+        80,
+        "Dmitri Volkov"
+      ],
+      [
+        81,
+        "Dmitri Volkov"
+      ],
+      [
+        84,
+        "Alice Chen"
+      ],
+      [
+        86,
+        "Alice Chen"
+      ],
+      [
+        89,
+        "Alice Chen"
+      ],
+      [
+        91,
+        "Olivia Brown"
+      ],
+      [
+        93,
+        "Alice Chen"
+      ],
+      [
+        95,
+        "Alice Chen"
+      ],
+      [
+        98,
+        "Isabella Rossi"
+      ],
+      [
+        99,
+        "Noah Meyer"
+      ],
+      [
+        100,
+        "Alice Chen"
+      ],
+      [
+        101,
+        "Alice Chen"
+      ]
+    ]
+  },
+  "kb-ow-p05": {
+    "columns": [
+      "order_id",
+      "name",
+      "total"
+    ],
+    "rows": [
+      [
+        103,
+        "Maya Patel",
+        324.16
+      ],
+      [
+        102,
+        "Hiro Tanaka",
+        115.06
+      ],
+      [
+        101,
+        "Alice Chen",
+        142.25
+      ],
+      [
+        100,
+        "Alice Chen",
+        125.88
+      ],
+      [
+        93,
+        "Alice Chen",
+        45.36
+      ],
+      [
+        92,
+        "Grace Kim",
+        233.95
+      ],
+      [
+        91,
+        "Olivia Brown",
+        444.8
+      ],
+      [
+        88,
+        "Grace Kim",
+        397.91
+      ],
+      [
+        87,
+        "Farid Nasser",
+        326.05
+      ],
+      [
+        86,
+        "Alice Chen",
+        116.28
+      ],
+      [
+        85,
+        "Emma Wilson",
+        262.89
+      ],
+      [
+        81,
+        "Dmitri Volkov",
+        164.17
+      ],
+      [
+        80,
+        "Dmitri Volkov",
+        435.09
+      ],
+      [
+        78,
+        "Isabella Rossi",
+        295.66
+      ],
+      [
+        77,
+        "Maya Patel",
+        303.26
+      ],
+      [
+        76,
+        "Grace Kim",
+        235.71
+      ],
+      [
+        73,
+        "Keiko Sato",
+        375.93
+      ],
+      [
+        72,
+        "Emma Wilson",
+        30.24
+      ],
+      [
+        71,
+        "Pedro Alvarez",
+        668.45
+      ],
+      [
+        69,
+        "Noah Meyer",
+        116.69
+      ],
+      [
+        68,
+        "Grace Kim",
+        625.14
+      ],
+      [
+        67,
+        "Chloe Dubois",
+        659.7
+      ],
+      [
+        66,
+        "Alice Chen",
+        125.4
+      ],
+      [
+        64,
+        "Maya Patel",
+        611.87
+      ],
+      [
+        63,
+        "Alice Chen",
+        334.66
+      ],
+      [
+        62,
+        "Pedro Alvarez",
+        86.11
+      ],
+      [
+        61,
+        "Grace Kim",
+        388.61
+      ],
+      [
+        59,
+        "Farid Nasser",
+        44.48
+      ],
+      [
+        58,
+        "Alice Chen",
+        298.18
+      ],
+      [
+        56,
+        "Grace Kim",
+        317.63
+      ],
+      [
+        55,
+        "Alice Chen",
+        113.66
+      ],
+      [
+        52,
+        "Grace Kim",
+        238.38
+      ],
+      [
+        48,
+        "Alice Chen",
+        187.38
+      ],
+      [
+        46,
+        "Grace Kim",
+        412.88
+      ],
+      [
+        45,
+        "Grace Kim",
+        80.27
+      ],
+      [
+        40,
+        "Alice Chen",
+        135.24
+      ],
+      [
+        38,
+        "Noah Meyer",
+        75.47
+      ],
+      [
+        34,
+        "Chloe Dubois",
+        121.12
+      ],
+      [
+        33,
+        "Emma Wilson",
+        624.66
+      ],
+      [
+        29,
+        "Isabella Rossi",
+        49.92
+      ],
+      [
+        28,
+        "Jamal Wright",
+        241.88
+      ],
+      [
+        27,
+        "Chloe Dubois",
+        577.19
+      ],
+      [
+        24,
+        "Maya Patel",
+        419.37
+      ],
+      [
+        23,
+        "Bruno Silva",
+        99.48
+      ],
+      [
+        22,
+        "Hiro Tanaka",
+        450.12
+      ],
+      [
+        18,
+        "Grace Kim",
+        124.41
+      ],
+      [
+        17,
+        "Emma Wilson",
+        285.1
+      ],
+      [
+        14,
+        "Alice Chen",
+        705.23
+      ],
+      [
+        13,
+        "Alice Chen",
+        632.29
+      ],
+      [
+        10,
+        "Keiko Sato",
+        175.68
+      ],
+      [
+        6,
+        "Bruno Silva",
+        752.96
+      ],
+      [
+        2,
+        "Maya Patel",
+        416.81
+      ]
+    ]
+  },
+  "kb-ow-p06": {
+    "columns": [
+      "name",
+      "order_id"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        3
+      ],
+      [
+        "Alice Chen",
+        7
+      ],
+      [
+        "Alice Chen",
+        13
+      ],
+      [
+        "Alice Chen",
+        14
+      ],
+      [
+        "Alice Chen",
+        19
+      ],
+      [
+        "Alice Chen",
+        21
+      ],
+      [
+        "Alice Chen",
+        31
+      ],
+      [
+        "Alice Chen",
+        32
+      ],
+      [
+        "Alice Chen",
+        40
+      ],
+      [
+        "Alice Chen",
+        42
+      ],
+      [
+        "Alice Chen",
+        48
+      ],
+      [
+        "Alice Chen",
+        55
+      ],
+      [
+        "Alice Chen",
+        58
+      ],
+      [
+        "Alice Chen",
+        63
+      ],
+      [
+        "Alice Chen",
+        66
+      ],
+      [
+        "Alice Chen",
+        70
+      ],
+      [
+        "Alice Chen",
+        79
+      ],
+      [
+        "Alice Chen",
+        84
+      ],
+      [
+        "Alice Chen",
+        86
+      ],
+      [
+        "Alice Chen",
+        89
+      ],
+      [
+        "Alice Chen",
+        93
+      ],
+      [
+        "Alice Chen",
+        95
+      ],
+      [
+        "Alice Chen",
+        100
+      ],
+      [
+        "Alice Chen",
+        101
+      ],
+      [
+        "Chloe Dubois",
+        25
+      ],
+      [
+        "Chloe Dubois",
+        27
+      ],
+      [
+        "Chloe Dubois",
+        34
+      ],
+      [
+        "Chloe Dubois",
+        43
+      ],
+      [
+        "Chloe Dubois",
+        67
+      ],
+      [
+        "Dmitri Volkov",
+        80
+      ],
+      [
+        "Dmitri Volkov",
+        81
+      ],
+      [
+        "Isabella Rossi",
+        29
+      ],
+      [
+        "Isabella Rossi",
+        49
+      ],
+      [
+        "Isabella Rossi",
+        78
+      ],
+      [
+        "Isabella Rossi",
+        98
+      ],
+      [
+        "Liam O'Brien",
+        20
+      ],
+      [
+        "Noah Meyer",
+        30
+      ],
+      [
+        "Noah Meyer",
+        38
+      ],
+      [
+        "Noah Meyer",
+        69
+      ],
+      [
+        "Noah Meyer",
+        99
+      ],
+      [
+        "Olivia Brown",
+        91
+      ],
+      [
+        "Pedro Alvarez",
+        1
+      ],
+      [
+        "Pedro Alvarez",
+        36
+      ],
+      [
+        "Pedro Alvarez",
+        62
+      ],
+      [
+        "Pedro Alvarez",
+        71
+      ]
+    ]
+  },
+  "kb-ow-p07": {
+    "columns": [
+      "name",
+      "order_id",
+      "has_pending"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        19,
+        1
+      ],
+      [
+        "Alice Chen",
+        42,
+        1
+      ],
+      [
+        "Alice Chen",
+        79,
+        1
+      ],
+      [
+        "Chloe Dubois",
+        25,
+        1
+      ],
+      [
+        "Chloe Dubois",
+        43,
+        1
+      ],
+      [
+        "Emma Wilson",
+        5,
+        1
+      ],
+      [
+        "Emma Wilson",
+        90,
+        1
+      ],
+      [
+        "Emma Wilson",
+        97,
+        1
+      ],
+      [
+        "Farid Nasser",
+        74,
+        1
+      ],
+      [
+        "Grace Kim",
+        75,
+        1
+      ],
+      [
+        "Keiko Sato",
+        94,
+        1
+      ],
+      [
+        "Maya Patel",
+        12,
+        1
+      ],
+      [
+        "Maya Patel",
+        47,
+        1
+      ],
+      [
+        "Pedro Alvarez",
+        1,
+        1
+      ],
+      [
+        "Bruno Silva",
+        null,
+        0
+      ],
+      [
+        "Dmitri Volkov",
+        null,
+        0
+      ],
+      [
+        "Hiro Tanaka",
+        null,
+        0
+      ],
+      [
+        "Isabella Rossi",
+        null,
+        0
+      ],
+      [
+        "Jamal Wright",
+        null,
+        0
+      ],
+      [
+        "Liam O'Brien",
+        null,
+        0
+      ],
+      [
+        "Noah Meyer",
+        null,
+        0
+      ],
+      [
+        "Olivia Brown",
+        null,
+        0
+      ]
+    ]
+  },
+  "kb-ow-p08": {
+    "columns": [
+      "name",
+      "order_id"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        3
+      ],
+      [
+        "Alice Chen",
+        31
+      ],
+      [
+        "Alice Chen",
+        32
+      ],
+      [
+        "Alice Chen",
+        70
+      ],
+      [
+        "Alice Chen",
+        84
+      ],
+      [
+        "Alice Chen",
+        89
+      ],
+      [
+        "Bruno Silva",
+        null
+      ],
+      [
+        "Chloe Dubois",
+        null
+      ],
+      [
+        "Dmitri Volkov",
+        null
+      ],
+      [
+        "Emma Wilson",
+        8
+      ],
+      [
+        "Emma Wilson",
+        16
+      ],
+      [
+        "Emma Wilson",
+        37
+      ],
+      [
+        "Emma Wilson",
+        39
+      ],
+      [
+        "Emma Wilson",
+        41
+      ],
+      [
+        "Emma Wilson",
+        53
+      ],
+      [
+        "Emma Wilson",
+        57
+      ],
+      [
+        "Emma Wilson",
+        65
+      ],
+      [
+        "Emma Wilson",
+        96
+      ],
+      [
+        "Farid Nasser",
+        null
+      ],
+      [
+        "Grace Kim",
+        9
+      ],
+      [
+        "Grace Kim",
+        15
+      ],
+      [
+        "Grace Kim",
+        35
+      ],
+      [
+        "Hiro Tanaka",
+        26
+      ],
+      [
+        "Isabella Rossi",
+        49
+      ],
+      [
+        "Isabella Rossi",
+        98
+      ],
+      [
+        "Jamal Wright",
+        60
+      ],
+      [
+        "Keiko Sato",
+        null
+      ],
+      [
+        "Liam O'Brien",
+        20
+      ],
+      [
+        "Maya Patel",
+        4
+      ],
+      [
+        "Maya Patel",
+        11
+      ],
+      [
+        "Maya Patel",
+        44
+      ],
+      [
+        "Maya Patel",
+        54
+      ],
+      [
+        "Noah Meyer",
+        30
+      ],
+      [
+        "Noah Meyer",
+        99
+      ],
+      [
+        "Olivia Brown",
+        null
+      ],
+      [
+        "Pedro Alvarez",
+        36
+      ]
+    ]
+  },
+  "kb-ow-p09": {
+    "columns": [
+      "name",
+      "order_id",
+      "total"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        13,
+        632.29
+      ],
+      [
+        "Alice Chen",
+        14,
+        705.23
+      ],
+      [
+        "Alice Chen",
+        40,
+        135.24
+      ],
+      [
+        "Alice Chen",
+        48,
+        187.38
+      ],
+      [
+        "Alice Chen",
+        55,
+        113.66
+      ],
+      [
+        "Alice Chen",
+        58,
+        298.18
+      ],
+      [
+        "Alice Chen",
+        63,
+        334.66
+      ],
+      [
+        "Alice Chen",
+        66,
+        125.4
+      ],
+      [
+        "Alice Chen",
+        86,
+        116.28
+      ],
+      [
+        "Alice Chen",
+        93,
+        45.36
+      ],
+      [
+        "Alice Chen",
+        100,
+        125.88
+      ],
+      [
+        "Alice Chen",
+        101,
+        142.25
+      ],
+      [
+        "Chloe Dubois",
+        27,
+        577.19
+      ],
+      [
+        "Chloe Dubois",
+        34,
+        121.12
+      ],
+      [
+        "Chloe Dubois",
+        67,
+        659.7
+      ],
+      [
+        "Dmitri Volkov",
+        80,
+        435.09
+      ],
+      [
+        "Dmitri Volkov",
+        81,
+        164.17
+      ],
+      [
+        "Isabella Rossi",
+        29,
+        49.92
+      ],
+      [
+        "Isabella Rossi",
+        78,
+        295.66
+      ],
+      [
+        "Noah Meyer",
+        38,
+        75.47
+      ],
+      [
+        "Noah Meyer",
+        69,
+        116.69
+      ],
+      [
+        "Olivia Brown",
+        91,
+        444.8
+      ],
+      [
+        "Pedro Alvarez",
+        62,
+        86.11
+      ],
+      [
+        "Pedro Alvarez",
+        71,
+        668.45
+      ]
+    ]
+  },
+  "kb-ow-p10": {
+    "columns": [
+      "name",
+      "order_id"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        19
+      ],
+      [
+        "Alice Chen",
+        42
+      ],
+      [
+        "Alice Chen",
+        79
+      ],
+      [
+        "Chloe Dubois",
+        25
+      ],
+      [
+        "Chloe Dubois",
+        43
+      ],
+      [
+        "Emma Wilson",
+        5
+      ],
+      [
+        "Emma Wilson",
+        90
+      ],
+      [
+        "Emma Wilson",
+        97
+      ],
+      [
+        "Farid Nasser",
+        74
+      ],
+      [
+        "Grace Kim",
+        75
+      ],
+      [
+        "Keiko Sato",
+        94
+      ],
+      [
+        "Maya Patel",
+        12
+      ],
+      [
+        "Maya Patel",
+        47
+      ],
+      [
+        "Pedro Alvarez",
+        1
+      ]
+    ]
+  },
+  "kb-ow-p11": {
+    "columns": [
+      "name",
+      "pending_spend"
+    ],
+    "rows": [
+      [
+        "Emma Wilson",
+        1471.43
+      ],
+      [
+        "Chloe Dubois",
+        1309.92
+      ],
+      [
+        "Farid Nasser",
+        1088.44
+      ],
+      [
+        "Alice Chen",
+        788.83
+      ],
+      [
+        "Pedro Alvarez",
+        576.54
+      ],
+      [
+        "Maya Patel",
+        455.2
+      ],
+      [
+        "Grace Kim",
+        273.64
+      ],
+      [
+        "Keiko Sato",
+        149
+      ],
+      [
+        "Bruno Silva",
+        "0"
+      ],
+      [
+        "Dmitri Volkov",
+        "0"
+      ],
+      [
+        "Hiro Tanaka",
+        "0"
+      ],
+      [
+        "Isabella Rossi",
+        "0"
+      ],
+      [
+        "Jamal Wright",
+        "0"
+      ],
+      [
+        "Liam O'Brien",
+        "0"
+      ],
+      [
+        "Noah Meyer",
+        "0"
+      ],
+      [
+        "Olivia Brown",
+        "0"
+      ]
+    ]
+  },
+  "kb-ow-p12": {
+    "columns": [
+      "name",
+      "order_id",
+      "total"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        3,
+        767.64
+      ],
+      [
+        "Alice Chen",
+        13,
+        632.29
+      ],
+      [
+        "Alice Chen",
+        14,
+        705.23
+      ],
+      [
+        "Alice Chen",
+        31,
+        633.91
+      ],
+      [
+        "Alice Chen",
+        32,
+        645.91
+      ],
+      [
+        "Alice Chen",
+        89,
+        684.53
+      ],
+      [
+        "Bruno Silva",
+        6,
+        752.96
+      ],
+      [
+        "Chloe Dubois",
+        27,
+        577.19
+      ],
+      [
+        "Chloe Dubois",
+        43,
+        945.21
+      ],
+      [
+        "Chloe Dubois",
+        67,
+        659.7
+      ],
+      [
+        "Dmitri Volkov",
+        null,
+        null
+      ],
+      [
+        "Emma Wilson",
+        5,
+        725.34
+      ],
+      [
+        "Emma Wilson",
+        16,
+        507.24
+      ],
+      [
+        "Emma Wilson",
+        33,
+        624.66
+      ],
+      [
+        "Emma Wilson",
+        39,
+        845.92
+      ],
+      [
+        "Emma Wilson",
+        57,
+        785.79
+      ],
+      [
+        "Emma Wilson",
+        96,
+        590.2
+      ],
+      [
+        "Emma Wilson",
+        97,
+        585.79
+      ],
+      [
+        "Farid Nasser",
+        74,
+        1088.44
+      ],
+      [
+        "Grace Kim",
+        15,
+        826.03
+      ],
+      [
+        "Grace Kim",
+        68,
+        625.14
+      ],
+      [
+        "Hiro Tanaka",
+        null,
+        null
+      ],
+      [
+        "Isabella Rossi",
+        98,
+        608.06
+      ],
+      [
+        "Jamal Wright",
+        null,
+        null
+      ],
+      [
+        "Keiko Sato",
+        null,
+        null
+      ],
+      [
+        "Liam O'Brien",
+        20,
+        705.39
+      ],
+      [
+        "Maya Patel",
+        64,
+        611.87
+      ],
+      [
+        "Noah Meyer",
+        null,
+        null
+      ],
+      [
+        "Olivia Brown",
+        null,
+        null
+      ],
+      [
+        "Pedro Alvarez",
+        1,
+        576.54
+      ],
+      [
+        "Pedro Alvarez",
+        71,
+        668.45
+      ]
+    ]
+  },
+  "kb-ow-p13": {
+    "columns": [
+      "name",
+      "big_spend"
+    ],
+    "rows": [
+      [
+        "Emma Wilson",
+        4664.94
+      ],
+      [
+        "Alice Chen",
+        4069.51
+      ],
+      [
+        "Chloe Dubois",
+        2182.1
+      ],
+      [
+        "Grace Kim",
+        1451.17
+      ],
+      [
+        "Pedro Alvarez",
+        1244.99
+      ],
+      [
+        "Farid Nasser",
+        1088.44
+      ],
+      [
+        "Bruno Silva",
+        752.96
+      ],
+      [
+        "Liam O'Brien",
+        705.39
+      ],
+      [
+        "Maya Patel",
+        611.87
+      ],
+      [
+        "Isabella Rossi",
+        608.06
+      ],
+      [
+        "Dmitri Volkov",
+        "0"
+      ],
+      [
+        "Hiro Tanaka",
+        "0"
+      ],
+      [
+        "Jamal Wright",
+        "0"
+      ],
+      [
+        "Keiko Sato",
+        "0"
+      ],
+      [
+        "Noah Meyer",
+        "0"
+      ],
+      [
+        "Olivia Brown",
+        "0"
+      ]
+    ]
+  },
+  "kb-ow-p14": {
+    "columns": [
+      "name",
+      "order_id"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        19
+      ],
+      [
+        "Alice Chen",
+        42
+      ],
+      [
+        "Alice Chen",
+        79
+      ],
+      [
+        "Chloe Dubois",
+        25
+      ],
+      [
+        "Chloe Dubois",
+        43
+      ],
+      [
+        "Emma Wilson",
+        5
+      ],
+      [
+        "Emma Wilson",
+        90
+      ],
+      [
+        "Emma Wilson",
+        97
+      ],
+      [
+        "Farid Nasser",
+        74
+      ],
+      [
+        "Grace Kim",
+        75
+      ],
+      [
+        "Keiko Sato",
+        94
+      ],
+      [
+        "Maya Patel",
+        12
+      ],
+      [
+        "Maya Patel",
+        47
+      ],
+      [
+        "Pedro Alvarez",
+        1
+      ]
+    ]
+  },
+  "kb-ow-p15": {
+    "columns": [
+      "name",
+      "region",
+      "order_id"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        "EU",
+        3
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        7
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        13
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        14
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        19
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        21
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        31
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        32
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        40
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        42
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        48
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        55
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        58
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        63
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        66
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        70
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        79
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        84
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        86
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        89
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        93
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        95
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        100
+      ],
+      [
+        "Alice Chen",
+        "EU",
+        101
+      ],
+      [
+        "Bruno Silva",
+        "LATAM",
+        null
+      ],
+      [
+        "Chloe Dubois",
+        "EU",
+        25
+      ],
+      [
+        "Chloe Dubois",
+        "EU",
+        27
+      ],
+      [
+        "Chloe Dubois",
+        "EU",
+        34
+      ],
+      [
+        "Chloe Dubois",
+        "EU",
+        43
+      ],
+      [
+        "Chloe Dubois",
+        "EU",
+        67
+      ],
+      [
+        "Dmitri Volkov",
+        "EU",
+        80
+      ],
+      [
+        "Dmitri Volkov",
+        "EU",
+        81
+      ],
+      [
+        "Emma Wilson",
+        "US",
+        null
+      ],
+      [
+        "Farid Nasser",
+        "APAC",
+        null
+      ],
+      [
+        "Grace Kim",
+        "APAC",
+        null
+      ],
+      [
+        "Hiro Tanaka",
+        "APAC",
+        null
+      ],
+      [
+        "Isabella Rossi",
+        "EU",
+        29
+      ],
+      [
+        "Isabella Rossi",
+        "EU",
+        49
+      ],
+      [
+        "Isabella Rossi",
+        "EU",
+        78
+      ],
+      [
+        "Isabella Rossi",
+        "EU",
+        98
+      ],
+      [
+        "Jamal Wright",
+        "US",
+        null
+      ],
+      [
+        "Keiko Sato",
+        "APAC",
+        null
+      ],
+      [
+        "Liam O'Brien",
+        "EU",
+        20
+      ],
+      [
+        "Maya Patel",
+        "APAC",
+        null
+      ],
+      [
+        "Noah Meyer",
+        "EU",
+        30
+      ],
+      [
+        "Noah Meyer",
+        "EU",
+        38
+      ],
+      [
+        "Noah Meyer",
+        "EU",
+        69
+      ],
+      [
+        "Noah Meyer",
+        "EU",
+        99
+      ],
+      [
+        "Olivia Brown",
+        "EU",
+        91
+      ],
+      [
+        "Pedro Alvarez",
+        "EU",
+        1
+      ],
+      [
+        "Pedro Alvarez",
+        "EU",
+        36
+      ],
+      [
+        "Pedro Alvarez",
+        "EU",
+        62
+      ],
+      [
+        "Pedro Alvarez",
+        "EU",
+        71
+      ]
+    ]
+  },
+  "kb-ow-p16": {
+    "columns": [
+      "order_id",
+      "total",
+      "match_reason"
+    ],
+    "rows": [
+      [
+        1,
+        576.54,
+        "big-order match"
+      ],
+      [
+        3,
+        767.64,
+        "own"
+      ],
+      [
+        5,
+        725.34,
+        "big-order match"
+      ],
+      [
+        6,
+        752.96,
+        "big-order match"
+      ],
+      [
+        7,
+        152.52,
+        "own"
+      ],
+      [
+        13,
+        632.29,
+        "own"
+      ],
+      [
+        14,
+        705.23,
+        "own"
+      ],
+      [
+        15,
+        826.03,
+        "big-order match"
+      ],
+      [
+        16,
+        507.24,
+        "big-order match"
+      ],
+      [
+        19,
+        317.49,
+        "own"
+      ],
+      [
+        20,
+        705.39,
+        "big-order match"
+      ],
+      [
+        21,
+        136.11,
+        "own"
+      ],
+      [
+        27,
+        577.19,
+        "big-order match"
+      ],
+      [
+        31,
+        633.91,
+        "own"
+      ],
+      [
+        32,
+        645.91,
+        "own"
+      ],
+      [
+        33,
+        624.66,
+        "big-order match"
+      ],
+      [
+        39,
+        845.92,
+        "big-order match"
+      ],
+      [
+        40,
+        135.24,
+        "own"
+      ],
+      [
+        42,
+        259.31,
+        "own"
+      ],
+      [
+        43,
+        945.21,
+        "big-order match"
+      ],
+      [
+        48,
+        187.38,
+        "own"
+      ],
+      [
+        55,
+        113.66,
+        "own"
+      ],
+      [
+        57,
+        785.79,
+        "big-order match"
+      ],
+      [
+        58,
+        298.18,
+        "own"
+      ],
+      [
+        63,
+        334.66,
+        "own"
+      ],
+      [
+        64,
+        611.87,
+        "big-order match"
+      ],
+      [
+        66,
+        125.4,
+        "own"
+      ],
+      [
+        67,
+        659.7,
+        "big-order match"
+      ],
+      [
+        68,
+        625.14,
+        "big-order match"
+      ],
+      [
+        70,
+        131.39,
+        "own"
+      ],
+      [
+        71,
+        668.45,
+        "big-order match"
+      ],
+      [
+        74,
+        1088.44,
+        "big-order match"
+      ],
+      [
+        79,
+        212.03,
+        "own"
+      ],
+      [
+        84,
+        153.51,
+        "own"
+      ],
+      [
+        86,
+        116.28,
+        "own"
+      ],
+      [
+        89,
+        684.53,
+        "own"
+      ],
+      [
+        93,
+        45.36,
+        "own"
+      ],
+      [
+        95,
+        206.19,
+        "own"
+      ],
+      [
+        96,
+        590.2,
+        "big-order match"
+      ],
+      [
+        97,
+        585.79,
+        "big-order match"
+      ],
+      [
+        98,
+        608.06,
+        "big-order match"
+      ],
+      [
+        100,
+        125.88,
+        "own"
+      ],
+      [
+        101,
+        142.25,
+        "own"
+      ]
+    ]
+  },
+  "kb-ow-p17": {
+    "columns": [
+      "name",
+      "cancelled_count"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        3
+      ],
+      [
+        "Maya Patel",
+        2
+      ],
+      [
+        "Emma Wilson",
+        1
+      ],
+      [
+        "Keiko Sato",
+        1
+      ],
+      [
+        "Bruno Silva",
+        0
+      ],
+      [
+        "Chloe Dubois",
+        0
+      ],
+      [
+        "Dmitri Volkov",
+        0
+      ],
+      [
+        "Farid Nasser",
+        0
+      ],
+      [
+        "Grace Kim",
+        0
+      ],
+      [
+        "Hiro Tanaka",
+        0
+      ],
+      [
+        "Isabella Rossi",
+        0
+      ],
+      [
+        "Jamal Wright",
+        0
+      ],
+      [
+        "Liam O'Brien",
+        0
+      ],
+      [
+        "Noah Meyer",
+        0
+      ],
+      [
+        "Olivia Brown",
+        0
+      ],
+      [
+        "Pedro Alvarez",
+        0
+      ]
+    ]
+  },
+  "kb-ow-p18": {
+    "columns": [
+      "region",
+      "pending_orders"
+    ],
+    "rows": [
+      [
+        "EU",
+        6
+      ],
+      [
+        "APAC",
+        5
+      ],
+      [
+        "US",
+        3
+      ],
+      [
+        "LATAM",
+        0
+      ]
+    ]
+  },
+  "kb-ow-p19": {
+    "columns": [
+      "name",
+      "shipped_spend"
+    ],
+    "rows": [
+      [
+        "Emma Wilson",
+        3822.38
+      ],
+      [
+        "Alice Chen",
+        3016.89
+      ],
+      [
+        "Grace Kim",
+        1245.7
+      ],
+      [
+        "Maya Patel",
+        998.07
+      ],
+      [
+        "Liam O'Brien",
+        705.39
+      ],
+      [
+        "Isabella Rossi",
+        640.07
+      ],
+      [
+        "Noah Meyer",
+        545.52
+      ],
+      [
+        "Jamal Wright",
+        403.72
+      ],
+      [
+        "Pedro Alvarez",
+        355.07
+      ],
+      [
+        "Hiro Tanaka",
+        263.91
+      ],
+      [
+        "Bruno Silva",
+        "0"
+      ],
+      [
+        "Chloe Dubois",
+        "0"
+      ],
+      [
+        "Dmitri Volkov",
+        "0"
+      ],
+      [
+        "Farid Nasser",
+        "0"
+      ],
+      [
+        "Keiko Sato",
+        "0"
+      ],
+      [
+        "Olivia Brown",
+        "0"
+      ]
+    ]
+  },
+  "kb-ow-p20": {
+    "columns": [
+      "name",
+      "order_id",
+      "total"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        19,
+        317.49
+      ],
+      [
+        "Alice Chen",
+        42,
+        259.31
+      ],
+      [
+        "Alice Chen",
+        79,
+        212.03
+      ],
+      [
+        "Chloe Dubois",
+        25,
+        364.71
+      ],
+      [
+        "Chloe Dubois",
+        43,
+        945.21
+      ],
+      [
+        "Dmitri Volkov",
+        null,
+        null
+      ],
+      [
+        "Isabella Rossi",
+        null,
+        null
+      ],
+      [
+        "Liam O'Brien",
+        null,
+        null
+      ],
+      [
+        "Noah Meyer",
+        null,
+        null
+      ],
+      [
+        "Olivia Brown",
+        null,
+        null
+      ],
+      [
+        "Pedro Alvarez",
+        1,
+        576.54
+      ]
+    ]
+  },
+  "kb-ow-p21": {
+    "columns": [
+      "on_placement",
+      "where_placement"
+    ],
+    "rows": [
+      [
+        22,
+        14
+      ]
+    ]
+  },
+  "kb-ow-p22": {
+    "columns": [
+      "impossible_rows"
+    ],
+    "rows": [
+      [
+        0
+      ]
+    ]
+  },
+  "kb-ow-p23": {
+    "columns": [
+      "total_rows",
+      "padded_rows",
+      "matched_rows"
+    ],
+    "rows": [
+      [
+        22,
+        8,
+        14
+      ]
+    ]
+  },
+  "kb-ow-p24": {
+    "columns": [
+      "name",
+      "pending_order",
+      "open_invoice"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        19,
+        "INV-2025-025"
+      ],
+      [
+        "Alice Chen",
+        42,
+        "INV-2025-025"
+      ],
+      [
+        "Alice Chen",
+        79,
+        "INV-2025-025"
+      ],
+      [
+        "Bruno Silva",
+        null,
+        null
+      ],
+      [
+        "Chloe Dubois",
+        25,
+        "INV-2024-021"
+      ],
+      [
+        "Chloe Dubois",
+        43,
+        "INV-2024-021"
+      ],
+      [
+        "Dmitri Volkov",
+        null,
+        null
+      ],
+      [
+        "Emma Wilson",
+        5,
+        "INV-2025-024"
+      ],
+      [
+        "Emma Wilson",
+        90,
+        "INV-2025-024"
+      ],
+      [
+        "Emma Wilson",
+        97,
+        "INV-2025-024"
+      ],
+      [
+        "Farid Nasser",
+        74,
+        null
+      ],
+      [
+        "Grace Kim",
+        75,
+        null
+      ],
+      [
+        "Hiro Tanaka",
+        null,
+        null
+      ],
+      [
+        "Isabella Rossi",
+        null,
+        "INV-2025-027"
+      ],
+      [
+        "Jamal Wright",
+        null,
+        null
+      ],
+      [
+        "Keiko Sato",
+        94,
+        null
+      ],
+      [
+        "Liam O'Brien",
+        null,
+        "INV-2025-026"
+      ],
+      [
+        "Maya Patel",
+        12,
+        null
+      ],
+      [
+        "Maya Patel",
+        47,
+        null
+      ],
+      [
+        "Noah Meyer",
+        null,
+        null
+      ],
+      [
+        "Olivia Brown",
+        null,
+        null
+      ],
+      [
+        "Pedro Alvarez",
+        1,
+        "INV-2024-018"
+      ]
+    ]
+  },
+  "kb-ow-p25": {
+    "columns": [
+      "region",
+      "matched_orders",
+      "padded_rows"
+    ],
+    "rows": [
+      [
+        "EU",
+        45,
+        0
+      ],
+      [
+        "APAC",
+        0,
+        5
+      ],
+      [
+        "LATAM",
+        0,
+        1
+      ],
+      [
+        "US",
+        0,
+        2
+      ]
+    ]
+  },
+  "kb-ow-p26": {
+    "columns": [
+      "name",
+      "pending_spend",
+      "delivered_spend"
+    ],
+    "rows": [
+      [
+        "Emma Wilson",
+        1471.43,
+        1202.89
+      ],
+      [
+        "Chloe Dubois",
+        1309.92,
+        1358.01
+      ],
+      [
+        "Farid Nasser",
+        1088.44,
+        370.53
+      ],
+      [
+        "Alice Chen",
+        788.83,
+        2961.81
+      ],
+      [
+        "Pedro Alvarez",
+        576.54,
+        754.56
+      ],
+      [
+        "Maya Patel",
+        455.2,
+        2075.47
+      ],
+      [
+        "Grace Kim",
+        273.64,
+        3054.89
+      ],
+      [
+        "Keiko Sato",
+        149,
+        551.61
+      ],
+      [
+        "Bruno Silva",
+        "0",
+        852.44
+      ],
+      [
+        "Dmitri Volkov",
+        "0",
+        599.26
+      ],
+      [
+        "Hiro Tanaka",
+        "0",
+        565.18
+      ],
+      [
+        "Olivia Brown",
+        "0",
+        444.8
+      ],
+      [
+        "Isabella Rossi",
+        "0",
+        345.58
+      ],
+      [
+        "Jamal Wright",
+        "0",
+        241.88
+      ],
+      [
+        "Noah Meyer",
+        "0",
+        192.16
+      ],
+      [
+        "Liam O'Brien",
+        "0",
+        "0"
+      ]
+    ]
+  },
+  "kb-ow-p27": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Bruno Silva"
+      ],
+      [
+        "Dmitri Volkov"
+      ],
+      [
+        "Hiro Tanaka"
+      ],
+      [
+        "Isabella Rossi"
+      ],
+      [
+        "Jamal Wright"
+      ],
+      [
+        "Liam O'Brien"
+      ],
+      [
+        "Noah Meyer"
+      ],
+      [
+        "Olivia Brown"
+      ]
+    ]
+  },
+  "kb-ow-p28": {
+    "columns": [
+      "population",
+      "row_count"
+    ],
+    "rows": [
+      [
+        "order_stray",
+        89
+      ],
+      [
+        "matched",
+        14
+      ],
+      [
+        "customer_stray",
+        8
+      ]
+    ]
+  },
+  "kb-ow-p29": {
+    "columns": [
+      "plain_left",
+      "subset_in_on",
+      "subset_in_where"
+    ],
+    "rows": [
+      [
+        103,
+        22,
+        14
+      ]
+    ]
+  },
+  "kb-ow-p30": {
+    "columns": [
+      "name",
+      "pending_count",
+      "pending_spend",
+      "pending_share"
+    ],
+    "rows": [
+      [
+        "Emma Wilson",
+        3,
+        1471.43,
+        0.24
+      ],
+      [
+        "Chloe Dubois",
+        2,
+        1309.92,
+        0.21
+      ],
+      [
+        "Farid Nasser",
+        1,
+        1088.44,
+        0.18
+      ],
+      [
+        "Alice Chen",
+        3,
+        788.83,
+        0.13
+      ],
+      [
+        "Pedro Alvarez",
+        1,
+        576.54,
+        0.09
+      ],
+      [
+        "Maya Patel",
+        2,
+        455.2,
+        0.07
+      ],
+      [
+        "Grace Kim",
+        1,
+        273.64,
+        0.04
+      ],
+      [
+        "Keiko Sato",
+        1,
+        149,
+        0.02
+      ],
+      [
+        "Bruno Silva",
+        0,
+        "0",
+        0
+      ],
+      [
+        "Dmitri Volkov",
+        0,
+        "0",
+        0
+      ],
+      [
+        "Hiro Tanaka",
+        0,
+        "0",
+        0
+      ],
+      [
+        "Isabella Rossi",
+        0,
+        "0",
+        0
+      ],
+      [
+        "Jamal Wright",
+        0,
+        "0",
+        0
+      ],
+      [
+        "Liam O'Brien",
+        0,
+        "0",
+        0
+      ],
+      [
+        "Noah Meyer",
+        0,
+        "0",
+        0
+      ],
+      [
+        "Olivia Brown",
+        0,
+        "0",
+        0
+      ]
+    ]
   }
 };

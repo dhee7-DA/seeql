@@ -13,6 +13,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowRight, BrainCircuit, RefreshCcw } from "lucide-react";
 import { LESSONS } from "@/lib/curriculum/lessons";
 import { ALL_GAUNTLET_MCQS } from "@/lib/curriculum/gauntlet";
+import { ALL_KEYWORD_BANK_MCQS } from "@/lib/curriculum/keyword-banks";
 import { fillsFor } from "@/lib/curriculum/fills";
 import { MAX_BOX, useProgress } from "@/lib/curriculum/progress";
 import type { Fill, Mcq } from "@/lib/curriculum/types";
@@ -41,6 +42,9 @@ function useCatalog(): Map<string, Card> {
     // resolve here, or the Leitner store would hold unresolvable ids.
     for (const q of ALL_GAUNTLET_MCQS)
       map.set(q.id, { id: q.id, kind: "mcq", mcq: q, lessonNum: 0, lessonTitle: "Module gauntlet" });
+    // Keyword-bank MCQs likewise — misses in the Keyword Practice hub must resolve.
+    for (const q of ALL_KEYWORD_BANK_MCQS)
+      map.set(q.id, { id: q.id, kind: "mcq", mcq: q, lessonNum: 0, lessonTitle: "Keyword practice" });
     return map;
   }, []);
 }

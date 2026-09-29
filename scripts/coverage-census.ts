@@ -21,6 +21,7 @@ import type { Lesson, Block, DeepBlock, FigureId } from "../src/lib/curriculum/t
 import { prettyFigureLabel } from "../src/lib/curriculum/figure-meta";
 import { CASES, CASE_TOPICS } from "../src/lib/curriculum/cases";
 import { GAUNTLET_BANKS } from "../src/lib/curriculum/gauntlet";
+import { KEYWORD_BANKS } from "../src/lib/curriculum/keyword-banks";
 import { D, tag } from "../src/lib/curriculum/keyword-taxonomy";
 import type { Tagged } from "../src/lib/curriculum/keyword-taxonomy";
 import { DRILL_SETS } from "../src/lib/curriculum/drills";
@@ -190,6 +191,23 @@ for (const bank of GAUNTLET_BANKS) {
   }
 }
 
+// Keyword Mastery banks — per-keyword gap closers, tagged the same way and
+// attributed to their owning module.
+for (const bank of KEYWORD_BANKS) {
+  for (const q of bank.mcqs) {
+    const why = (q.why ?? "") + " " + (q.notes ?? []).map((n) => n.why).join(" ");
+    mcqItems.push(tag(bank.moduleNum, `${q.prompt} ${why}`, ""));
+  }
+  for (const pr of bank.problems) {
+    const hints = (pr.hints ?? []).join(" ");
+    problemItems.push(tag(bank.moduleNum, `${pr.title} ${pr.brief} ${hints}`, pr.solution));
+  }
+  for (const c of bank.cases) {
+    const slotText = c.slots.map((s) => `${s.answer} ${s.label} ${s.why}`).join(" ");
+    caseItems.push(tag(bank.moduleNum, `${c.title} ${c.brief} ${c.ask} ${c.walkthrough} ${slotText}`, `${c.template} ${c.slots.map((s) => s.answer).join(" ")}`));
+  }
+}
+
 // ---------------------------------------------------------------------------
 // 4b. Lesson content + SVG diagrams — the "content list" dimension.
 //     A lesson teaches a keyword when its teaching prose or SQL matches the
@@ -330,7 +348,8 @@ if (process.argv.includes("--report")) {
     console.log(`M${m.num} ${m.title}: lessons=${lessons} mcqs=${mcqs} queries=${problems} cases=${cases} minutes=${minutes}`);
   }
   const gauntletCaseCount = GAUNTLET_BANKS.reduce((a, b) => a + b.cases.length, 0);
-const capCases = CASES.length - (caseItems.filter((c) => c.module != null).length - gauntletCaseCount);
+  const bankCaseCount = KEYWORD_BANKS.reduce((a, b) => a + b.cases.length, 0);
+  const capCases = CASES.length - (caseItems.filter((c) => c.module != null).length - gauntletCaseCount - bankCaseCount);
   console.log(`cross-module (cap) cases: ${capCases} · total cases ${CASES.length}`);
   console.log(`fills: ${fillItems.length} · drill sets: ${DRILL_SETS.length} · drill questions: ${DRILL_SETS.reduce((a, s) => a + s.questions.length, 0)}`);
   console.log("\n== distinct DRILL_SETS keywords (verbatim) ==");
@@ -405,7 +424,8 @@ const moduleRows = MODULES.map((m) => {
 });
 
 const gauntletCaseCount = GAUNTLET_BANKS.reduce((a, b) => a + b.cases.length, 0);
-const capCases = CASES.length - (caseItems.filter((c) => c.module != null).length - gauntletCaseCount);
+const bankCaseCount = KEYWORD_BANKS.reduce((a, b) => a + b.cases.length, 0);
+const capCases = CASES.length - (caseItems.filter((c) => c.module != null).length - gauntletCaseCount - bankCaseCount);
 
 const perModuleKeywords: Record<string, Array<{ keyword: string; category: string } & Counts & { total: number }>> = {};
 // per-module with source split
