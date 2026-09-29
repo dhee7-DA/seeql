@@ -6,7 +6,8 @@
 // module gauntlets on purpose: exams keep drawing lesson-owned items only,
 // and the gauntlet tier contract stays exactly 50/90/90 per module.
 //
-// Case ids: cs-2211..cs-2232 (m02 gauntlet owns cs-2121..cs-2210).
+// Case ids: cs-2211..cs-2232 (earlier banks) + cs-2233..cs-2250 (non-equi);
+// m02 gauntlet owns cs-2121..cs-2210.
 import type { Mcq, Problem } from "../types";
 import type { CaseStudy } from "../cases/types";
 
@@ -18,6 +19,7 @@ import { selfJoinBank } from "./self-join";
 import { antiJoinBank } from "./anti-join";
 import { fanOutGrainBank } from "./fan-out-grain";
 import { onVsWhereBank } from "./on-vs-where";
+import { nonEquiJoinsBank } from "./non-equi-joins";
 
 export interface KeywordBank {
   /** Canonical keyword, verbatim from keyword-taxonomy's dictionary. */
@@ -38,6 +40,7 @@ export const KEYWORD_BANKS: KeywordBank[] = [
   antiJoinBank,
   fanOutGrainBank,
   onVsWhereBank,
+  nonEquiJoinsBank,
 ];
 
 /** Every keyword-bank MCQ, in registry order. */

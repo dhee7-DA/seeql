@@ -24,6 +24,15 @@ import { m01CasesMediumA } from "./m01-cases-medium-a";
 import { m01CasesMediumB } from "./m01-cases-medium-b";
 import { m01CasesHardA } from "./m01-cases-hard-a";
 import { m01CasesHardB } from "./m01-cases-hard-b";
+import { m02Mcqs } from "./m02-mcqs";
+import { m02ProblemsEasy, m02ProblemsMedium } from "./m02-problems-a";
+import { m02ProblemsHard } from "./m02-problems-b";
+import { m02CasesEasyA } from "./m02-cases-easy-a";
+import { m02CasesEasyB } from "./m02-cases-easy-b";
+import { m02CasesMediumA } from "./m02-cases-medium-a";
+import { m02CasesMediumB } from "./m02-cases-medium-b";
+import { m02CasesHardA } from "./m02-cases-hard-a";
+import { m02CasesHardB } from "./m02-cases-hard-b";
 
 export const GAUNTLET_BANKS: GauntletBank[] = [
   {
@@ -32,6 +41,13 @@ export const GAUNTLET_BANKS: GauntletBank[] = [
     mcqs: m01Mcqs,
     cases: [...m01CasesEasyA, ...m01CasesEasyB, ...m01CasesMediumA, ...m01CasesMediumB, ...m01CasesHardA, ...m01CasesHardB],
     problems: [...m01ProblemsEasy, ...m01ProblemsMedium, ...m01ProblemsHard],
+  },
+  {
+    moduleNum: 2,
+    title: "Joins & Multi-Table Data",
+    mcqs: m02Mcqs,
+    cases: [...m02CasesEasyA, ...m02CasesEasyB, ...m02CasesMediumA, ...m02CasesMediumB, ...m02CasesHardA, ...m02CasesHardB],
+    problems: [...m02ProblemsEasy, ...m02ProblemsMedium, ...m02ProblemsHard],
   },
 ];
 

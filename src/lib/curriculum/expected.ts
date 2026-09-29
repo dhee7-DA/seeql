@@ -91981,6 +91981,18999 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
       ]
     ]
   },
+  "gm2-p01": {
+    "columns": [
+      "order_id",
+      "customer",
+      "total"
+    ],
+    "rows": [
+      [
+        1,
+        "Pedro Alvarez",
+        576.54
+      ],
+      [
+        2,
+        "Maya Patel",
+        416.81
+      ],
+      [
+        3,
+        "Alice Chen",
+        767.64
+      ],
+      [
+        4,
+        "Maya Patel",
+        158.48
+      ],
+      [
+        5,
+        "Emma Wilson",
+        725.34
+      ],
+      [
+        6,
+        "Bruno Silva",
+        752.96
+      ],
+      [
+        7,
+        "Alice Chen",
+        152.52
+      ],
+      [
+        8,
+        "Emma Wilson",
+        181.68
+      ],
+      [
+        9,
+        "Grace Kim",
+        46.67
+      ],
+      [
+        10,
+        "Keiko Sato",
+        175.68
+      ],
+      [
+        11,
+        "Maya Patel",
+        283.12
+      ],
+      [
+        12,
+        "Maya Patel",
+        148.28
+      ],
+      [
+        13,
+        "Alice Chen",
+        632.29
+      ],
+      [
+        14,
+        "Alice Chen",
+        705.23
+      ],
+      [
+        15,
+        "Grace Kim",
+        826.03
+      ],
+      [
+        16,
+        "Emma Wilson",
+        507.24
+      ],
+      [
+        17,
+        "Emma Wilson",
+        285.1
+      ],
+      [
+        18,
+        "Grace Kim",
+        124.41
+      ],
+      [
+        19,
+        "Alice Chen",
+        317.49
+      ],
+      [
+        20,
+        "Liam O'Brien",
+        705.39
+      ],
+      [
+        21,
+        "Alice Chen",
+        136.11
+      ],
+      [
+        22,
+        "Hiro Tanaka",
+        450.12
+      ],
+      [
+        23,
+        "Bruno Silva",
+        99.48
+      ],
+      [
+        24,
+        "Maya Patel",
+        419.37
+      ],
+      [
+        25,
+        "Chloe Dubois",
+        364.71
+      ],
+      [
+        26,
+        "Hiro Tanaka",
+        263.91
+      ],
+      [
+        27,
+        "Chloe Dubois",
+        577.19
+      ],
+      [
+        28,
+        "Jamal Wright",
+        241.88
+      ],
+      [
+        29,
+        "Isabella Rossi",
+        49.92
+      ],
+      [
+        30,
+        "Noah Meyer",
+        56.19
+      ],
+      [
+        31,
+        "Alice Chen",
+        633.91
+      ],
+      [
+        32,
+        "Alice Chen",
+        645.91
+      ],
+      [
+        33,
+        "Emma Wilson",
+        624.66
+      ],
+      [
+        34,
+        "Chloe Dubois",
+        121.12
+      ],
+      [
+        35,
+        "Grace Kim",
+        373
+      ],
+      [
+        36,
+        "Pedro Alvarez",
+        355.07
+      ],
+      [
+        37,
+        "Emma Wilson",
+        379.83
+      ],
+      [
+        38,
+        "Noah Meyer",
+        75.47
+      ],
+      [
+        39,
+        "Emma Wilson",
+        845.92
+      ],
+      [
+        40,
+        "Alice Chen",
+        135.24
+      ],
+      [
+        41,
+        "Emma Wilson",
+        67.25
+      ],
+      [
+        42,
+        "Alice Chen",
+        259.31
+      ],
+      [
+        43,
+        "Chloe Dubois",
+        945.21
+      ],
+      [
+        44,
+        "Maya Patel",
+        282.51
+      ],
+      [
+        45,
+        "Grace Kim",
+        80.27
+      ],
+      [
+        46,
+        "Grace Kim",
+        412.88
+      ],
+      [
+        47,
+        "Maya Patel",
+        306.92
+      ],
+      [
+        48,
+        "Alice Chen",
+        187.38
+      ],
+      [
+        49,
+        "Isabella Rossi",
+        32.01
+      ],
+      [
+        50,
+        "Maya Patel",
+        90.35
+      ],
+      [
+        51,
+        "Maya Patel",
+        25.47
+      ],
+      [
+        52,
+        "Grace Kim",
+        238.38
+      ],
+      [
+        53,
+        "Emma Wilson",
+        39.39
+      ],
+      [
+        54,
+        "Maya Patel",
+        273.96
+      ],
+      [
+        55,
+        "Alice Chen",
+        113.66
+      ],
+      [
+        56,
+        "Grace Kim",
+        317.63
+      ],
+      [
+        57,
+        "Emma Wilson",
+        785.79
+      ],
+      [
+        58,
+        "Alice Chen",
+        298.18
+      ],
+      [
+        59,
+        "Farid Nasser",
+        44.48
+      ],
+      [
+        60,
+        "Jamal Wright",
+        403.72
+      ],
+      [
+        61,
+        "Grace Kim",
+        388.61
+      ],
+      [
+        62,
+        "Pedro Alvarez",
+        86.11
+      ],
+      [
+        63,
+        "Alice Chen",
+        334.66
+      ],
+      [
+        64,
+        "Maya Patel",
+        611.87
+      ],
+      [
+        65,
+        "Emma Wilson",
+        425.08
+      ],
+      [
+        66,
+        "Alice Chen",
+        125.4
+      ],
+      [
+        67,
+        "Chloe Dubois",
+        659.7
+      ],
+      [
+        68,
+        "Grace Kim",
+        625.14
+      ],
+      [
+        69,
+        "Noah Meyer",
+        116.69
+      ],
+      [
+        70,
+        "Alice Chen",
+        131.39
+      ],
+      [
+        71,
+        "Pedro Alvarez",
+        668.45
+      ],
+      [
+        72,
+        "Emma Wilson",
+        30.24
+      ],
+      [
+        73,
+        "Keiko Sato",
+        375.93
+      ],
+      [
+        74,
+        "Farid Nasser",
+        1088.44
+      ],
+      [
+        75,
+        "Grace Kim",
+        273.64
+      ],
+      [
+        76,
+        "Grace Kim",
+        235.71
+      ],
+      [
+        77,
+        "Maya Patel",
+        303.26
+      ],
+      [
+        78,
+        "Isabella Rossi",
+        295.66
+      ],
+      [
+        79,
+        "Alice Chen",
+        212.03
+      ],
+      [
+        80,
+        "Dmitri Volkov",
+        435.09
+      ],
+      [
+        81,
+        "Dmitri Volkov",
+        164.17
+      ],
+      [
+        82,
+        "Emma Wilson",
+        143.86
+      ],
+      [
+        83,
+        "Keiko Sato",
+        397.99
+      ],
+      [
+        84,
+        "Alice Chen",
+        153.51
+      ],
+      [
+        85,
+        "Emma Wilson",
+        262.89
+      ],
+      [
+        86,
+        "Alice Chen",
+        116.28
+      ],
+      [
+        87,
+        "Farid Nasser",
+        326.05
+      ],
+      [
+        88,
+        "Grace Kim",
+        397.91
+      ],
+      [
+        89,
+        "Alice Chen",
+        684.53
+      ],
+      [
+        90,
+        "Emma Wilson",
+        160.3
+      ],
+      [
+        91,
+        "Olivia Brown",
+        444.8
+      ],
+      [
+        92,
+        "Grace Kim",
+        233.95
+      ],
+      [
+        93,
+        "Alice Chen",
+        45.36
+      ],
+      [
+        94,
+        "Keiko Sato",
+        149
+      ],
+      [
+        95,
+        "Alice Chen",
+        206.19
+      ],
+      [
+        96,
+        "Emma Wilson",
+        590.2
+      ],
+      [
+        97,
+        "Emma Wilson",
+        585.79
+      ],
+      [
+        98,
+        "Isabella Rossi",
+        608.06
+      ],
+      [
+        99,
+        "Noah Meyer",
+        489.33
+      ],
+      [
+        100,
+        "Alice Chen",
+        125.88
+      ],
+      [
+        101,
+        "Alice Chen",
+        142.25
+      ],
+      [
+        102,
+        "Hiro Tanaka",
+        115.06
+      ],
+      [
+        103,
+        "Maya Patel",
+        324.16
+      ]
+    ]
+  },
+  "gm2-p02": {
+    "columns": [
+      "order_id",
+      "customer",
+      "total"
+    ],
+    "rows": [
+      [
+        1,
+        "Pedro Alvarez",
+        576.54
+      ],
+      [
+        3,
+        "Alice Chen",
+        767.64
+      ],
+      [
+        7,
+        "Alice Chen",
+        152.52
+      ],
+      [
+        13,
+        "Alice Chen",
+        632.29
+      ],
+      [
+        14,
+        "Alice Chen",
+        705.23
+      ],
+      [
+        19,
+        "Alice Chen",
+        317.49
+      ],
+      [
+        20,
+        "Liam O'Brien",
+        705.39
+      ],
+      [
+        21,
+        "Alice Chen",
+        136.11
+      ],
+      [
+        25,
+        "Chloe Dubois",
+        364.71
+      ],
+      [
+        27,
+        "Chloe Dubois",
+        577.19
+      ],
+      [
+        29,
+        "Isabella Rossi",
+        49.92
+      ],
+      [
+        30,
+        "Noah Meyer",
+        56.19
+      ],
+      [
+        31,
+        "Alice Chen",
+        633.91
+      ],
+      [
+        32,
+        "Alice Chen",
+        645.91
+      ],
+      [
+        34,
+        "Chloe Dubois",
+        121.12
+      ],
+      [
+        36,
+        "Pedro Alvarez",
+        355.07
+      ],
+      [
+        38,
+        "Noah Meyer",
+        75.47
+      ],
+      [
+        40,
+        "Alice Chen",
+        135.24
+      ],
+      [
+        42,
+        "Alice Chen",
+        259.31
+      ],
+      [
+        43,
+        "Chloe Dubois",
+        945.21
+      ],
+      [
+        48,
+        "Alice Chen",
+        187.38
+      ],
+      [
+        49,
+        "Isabella Rossi",
+        32.01
+      ],
+      [
+        55,
+        "Alice Chen",
+        113.66
+      ],
+      [
+        58,
+        "Alice Chen",
+        298.18
+      ],
+      [
+        62,
+        "Pedro Alvarez",
+        86.11
+      ],
+      [
+        63,
+        "Alice Chen",
+        334.66
+      ],
+      [
+        66,
+        "Alice Chen",
+        125.4
+      ],
+      [
+        67,
+        "Chloe Dubois",
+        659.7
+      ],
+      [
+        69,
+        "Noah Meyer",
+        116.69
+      ],
+      [
+        70,
+        "Alice Chen",
+        131.39
+      ],
+      [
+        71,
+        "Pedro Alvarez",
+        668.45
+      ],
+      [
+        78,
+        "Isabella Rossi",
+        295.66
+      ],
+      [
+        79,
+        "Alice Chen",
+        212.03
+      ],
+      [
+        80,
+        "Dmitri Volkov",
+        435.09
+      ],
+      [
+        81,
+        "Dmitri Volkov",
+        164.17
+      ],
+      [
+        84,
+        "Alice Chen",
+        153.51
+      ],
+      [
+        86,
+        "Alice Chen",
+        116.28
+      ],
+      [
+        89,
+        "Alice Chen",
+        684.53
+      ],
+      [
+        91,
+        "Olivia Brown",
+        444.8
+      ],
+      [
+        93,
+        "Alice Chen",
+        45.36
+      ],
+      [
+        95,
+        "Alice Chen",
+        206.19
+      ],
+      [
+        98,
+        "Isabella Rossi",
+        608.06
+      ],
+      [
+        99,
+        "Noah Meyer",
+        489.33
+      ],
+      [
+        100,
+        "Alice Chen",
+        125.88
+      ],
+      [
+        101,
+        "Alice Chen",
+        142.25
+      ]
+    ]
+  },
+  "gm2-p03": {
+    "columns": [
+      "product",
+      "supplier",
+      "rating"
+    ],
+    "rows": [
+      [
+        "Mechanical Keyboard K1",
+        "Nordic Gadgets AB",
+        4.6
+      ],
+      [
+        "Wireless Mouse M3",
+        "Shenzhen Electro",
+        4.1
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Pacific Textiles",
+        3.9
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Midwest Hardware Co",
+        4.4
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alpine Audio GmbH",
+        4.8
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Andes Naturals SA",
+        4
+      ],
+      [
+        "4K Webcam Pro",
+        "Nordic Gadgets AB",
+        4.6
+      ],
+      [
+        "Ring Light 14\"",
+        "Shenzhen Electro",
+        4.1
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Pacific Textiles",
+        3.9
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Midwest Hardware Co",
+        4.4
+      ],
+      [
+        "Desk Mat Extended",
+        "Alpine Audio GmbH",
+        4.8
+      ],
+      [
+        "Fitness Band X2",
+        "Andes Naturals SA",
+        4
+      ],
+      [
+        "Smart Watch S",
+        "Nordic Gadgets AB",
+        4.6
+      ],
+      [
+        "Running Socks 3-pack",
+        "Shenzhen Electro",
+        4.1
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Pacific Textiles",
+        3.9
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Midwest Hardware Co",
+        4.4
+      ]
+    ]
+  },
+  "gm2-p04": {
+    "columns": [
+      "item_id",
+      "product",
+      "quantity"
+    ],
+    "rows": [
+      [
+        1,
+        "Yoga Mat Eco 6mm",
+        3
+      ],
+      [
+        2,
+        "HDMI 2.1 Cable 2m",
+        2
+      ],
+      [
+        3,
+        "Desk Mat Extended",
+        1
+      ],
+      [
+        4,
+        "Noise-Canceling Headset",
+        3
+      ],
+      [
+        5,
+        "Ring Light 14\"",
+        3
+      ],
+      [
+        6,
+        "Noise-Canceling Headset",
+        2
+      ],
+      [
+        7,
+        "Mechanical Keyboard K1",
+        1
+      ],
+      [
+        8,
+        "Yoga Mat Eco 6mm",
+        3
+      ],
+      [
+        9,
+        "Smart Watch S",
+        3
+      ],
+      [
+        10,
+        "Fitness Band X2",
+        2
+      ],
+      [
+        11,
+        "Noise-Canceling Headset",
+        2
+      ],
+      [
+        12,
+        "HDMI 2.1 Cable 2m",
+        3
+      ],
+      [
+        13,
+        "4K Webcam Pro",
+        3
+      ],
+      [
+        14,
+        "Studio Desktop Mic",
+        3
+      ],
+      [
+        15,
+        "Mechanical Keyboard K1",
+        3
+      ],
+      [
+        16,
+        "Desk Mat Extended",
+        1
+      ],
+      [
+        17,
+        "Wireless Mouse M3",
+        3
+      ],
+      [
+        18,
+        "USB-C Hub 7-in-1",
+        3
+      ],
+      [
+        19,
+        "Running Socks 3-pack",
+        3
+      ],
+      [
+        20,
+        "Wireless Mouse M3",
+        2
+      ],
+      [
+        21,
+        "Bluetooth Speaker Mini",
+        1
+      ],
+      [
+        22,
+        "USB-C Hub 7-in-1",
+        1
+      ],
+      [
+        23,
+        "Cycling Jersey Pro",
+        2
+      ],
+      [
+        24,
+        "Laptop Stand Aluminum",
+        1
+      ],
+      [
+        25,
+        "Noise-Canceling Headset",
+        1
+      ],
+      [
+        26,
+        "Wireless Mouse M3",
+        1
+      ],
+      [
+        27,
+        "Desk Mat Extended",
+        2
+      ],
+      [
+        28,
+        "HDMI 2.1 Cable 2m",
+        3
+      ],
+      [
+        29,
+        "Wireless Mouse M3",
+        3
+      ],
+      [
+        30,
+        "Laptop Stand Aluminum",
+        1
+      ],
+      [
+        31,
+        "Mechanical Keyboard K1",
+        2
+      ],
+      [
+        32,
+        "Noise-Canceling Headset",
+        3
+      ],
+      [
+        33,
+        "Running Socks 3-pack",
+        1
+      ],
+      [
+        34,
+        "Noise-Canceling Headset",
+        3
+      ],
+      [
+        35,
+        "Fitness Band X2",
+        3
+      ],
+      [
+        36,
+        "Mechanical Keyboard K1",
+        3
+      ],
+      [
+        37,
+        "Noise-Canceling Headset",
+        3
+      ],
+      [
+        38,
+        "HDMI 2.1 Cable 2m",
+        2
+      ],
+      [
+        39,
+        "Cycling Jersey Pro",
+        1
+      ],
+      [
+        40,
+        "Wireless Mouse M3",
+        2
+      ],
+      [
+        41,
+        "Cycling Jersey Pro",
+        3
+      ],
+      [
+        42,
+        "Mechanical Keyboard K1",
+        2
+      ],
+      [
+        43,
+        "Bluetooth Speaker Mini",
+        1
+      ],
+      [
+        44,
+        "Cycling Jersey Pro",
+        1
+      ],
+      [
+        45,
+        "Ring Light 14\"",
+        1
+      ],
+      [
+        46,
+        "USB-C Hub 7-in-1",
+        3
+      ],
+      [
+        47,
+        "Running Socks 3-pack",
+        2
+      ],
+      [
+        48,
+        "Ring Light 14\"",
+        3
+      ],
+      [
+        49,
+        "4K Webcam Pro",
+        1
+      ],
+      [
+        50,
+        "Fitness Band X2",
+        1
+      ],
+      [
+        51,
+        "HDMI 2.1 Cable 2m",
+        3
+      ],
+      [
+        52,
+        "Wireless Mouse M3",
+        2
+      ],
+      [
+        53,
+        "Smart Watch S",
+        3
+      ],
+      [
+        54,
+        "HDMI 2.1 Cable 2m",
+        2
+      ],
+      [
+        55,
+        "Bluetooth Speaker Mini",
+        1
+      ],
+      [
+        56,
+        "Desk Mat Extended",
+        1
+      ],
+      [
+        57,
+        "HDMI 2.1 Cable 2m",
+        1
+      ],
+      [
+        58,
+        "Studio Desktop Mic",
+        1
+      ],
+      [
+        59,
+        "4K Webcam Pro",
+        3
+      ],
+      [
+        60,
+        "Desk Mat Extended",
+        3
+      ],
+      [
+        61,
+        "Wireless Mouse M3",
+        3
+      ],
+      [
+        62,
+        "Laptop Stand Aluminum",
+        3
+      ],
+      [
+        63,
+        "Yoga Mat Eco 6mm",
+        3
+      ],
+      [
+        64,
+        "Bluetooth Speaker Mini",
+        3
+      ],
+      [
+        65,
+        "Studio Desktop Mic",
+        3
+      ],
+      [
+        66,
+        "Wireless Mouse M3",
+        1
+      ],
+      [
+        67,
+        "HDMI 2.1 Cable 2m",
+        3
+      ],
+      [
+        68,
+        "Running Socks 3-pack",
+        2
+      ],
+      [
+        69,
+        "Noise-Canceling Headset",
+        1
+      ],
+      [
+        70,
+        "4K Webcam Pro",
+        3
+      ],
+      [
+        71,
+        "HDMI 2.1 Cable 2m",
+        1
+      ],
+      [
+        72,
+        "Noise-Canceling Headset",
+        1
+      ],
+      [
+        73,
+        "4K Webcam Pro",
+        1
+      ],
+      [
+        74,
+        "Desk Mat Extended",
+        3
+      ],
+      [
+        75,
+        "Ring Light 14\"",
+        1
+      ],
+      [
+        76,
+        "Desk Mat Extended",
+        2
+      ],
+      [
+        77,
+        "Running Socks 3-pack",
+        3
+      ],
+      [
+        78,
+        "Wireless Mouse M3",
+        1
+      ],
+      [
+        79,
+        "Smart Watch S",
+        3
+      ],
+      [
+        80,
+        "4K Webcam Pro",
+        3
+      ],
+      [
+        81,
+        "Studio Desktop Mic",
+        1
+      ],
+      [
+        82,
+        "Desk Mat Extended",
+        2
+      ],
+      [
+        83,
+        "Laptop Stand Aluminum",
+        2
+      ],
+      [
+        84,
+        "Desk Mat Extended",
+        2
+      ],
+      [
+        85,
+        "Smart Watch S",
+        2
+      ],
+      [
+        86,
+        "Running Socks 3-pack",
+        3
+      ],
+      [
+        87,
+        "Studio Desktop Mic",
+        1
+      ],
+      [
+        88,
+        "Laptop Stand Aluminum",
+        1
+      ],
+      [
+        89,
+        "Ring Light 14\"",
+        2
+      ],
+      [
+        90,
+        "Desk Mat Extended",
+        3
+      ],
+      [
+        91,
+        "Noise-Canceling Headset",
+        2
+      ],
+      [
+        92,
+        "Bluetooth Speaker Mini",
+        2
+      ],
+      [
+        93,
+        "USB-C Hub 7-in-1",
+        1
+      ],
+      [
+        94,
+        "Wireless Mouse M3",
+        2
+      ],
+      [
+        95,
+        "Ring Light 14\"",
+        3
+      ],
+      [
+        96,
+        "4K Webcam Pro",
+        2
+      ],
+      [
+        97,
+        "Desk Mat Extended",
+        3
+      ],
+      [
+        98,
+        "Running Socks 3-pack",
+        3
+      ],
+      [
+        99,
+        "Fitness Band X2",
+        1
+      ],
+      [
+        100,
+        "Smart Watch S",
+        2
+      ],
+      [
+        101,
+        "Wireless Mouse M3",
+        3
+      ],
+      [
+        102,
+        "Cycling Jersey Pro",
+        3
+      ],
+      [
+        103,
+        "Laptop Stand Aluminum",
+        3
+      ],
+      [
+        104,
+        "4K Webcam Pro",
+        1
+      ],
+      [
+        105,
+        "Desk Mat Extended",
+        2
+      ],
+      [
+        106,
+        "HDMI 2.1 Cable 2m",
+        1
+      ],
+      [
+        107,
+        "Mechanical Keyboard K1",
+        2
+      ],
+      [
+        108,
+        "Desk Mat Extended",
+        3
+      ],
+      [
+        109,
+        "Noise-Canceling Headset",
+        2
+      ],
+      [
+        110,
+        "Mechanical Keyboard K1",
+        3
+      ],
+      [
+        111,
+        "4K Webcam Pro",
+        1
+      ],
+      [
+        112,
+        "Fitness Band X2",
+        3
+      ],
+      [
+        113,
+        "Laptop Stand Aluminum",
+        3
+      ],
+      [
+        114,
+        "Noise-Canceling Headset",
+        1
+      ],
+      [
+        115,
+        "Fitness Band X2",
+        1
+      ],
+      [
+        116,
+        "Desk Mat Extended",
+        2
+      ],
+      [
+        117,
+        "Studio Desktop Mic",
+        3
+      ],
+      [
+        118,
+        "Studio Desktop Mic",
+        2
+      ],
+      [
+        119,
+        "Desk Mat Extended",
+        3
+      ],
+      [
+        120,
+        "Bluetooth Speaker Mini",
+        3
+      ],
+      [
+        121,
+        "Yoga Mat Eco 6mm",
+        1
+      ],
+      [
+        122,
+        "Mechanical Keyboard K1",
+        1
+      ],
+      [
+        123,
+        "Desk Mat Extended",
+        1
+      ],
+      [
+        124,
+        "Studio Desktop Mic",
+        2
+      ],
+      [
+        125,
+        "Ring Light 14\"",
+        1
+      ],
+      [
+        126,
+        "HDMI 2.1 Cable 2m",
+        2
+      ],
+      [
+        127,
+        "Running Socks 3-pack",
+        2
+      ],
+      [
+        128,
+        "Studio Desktop Mic",
+        1
+      ],
+      [
+        129,
+        "Yoga Mat Eco 6mm",
+        3
+      ],
+      [
+        130,
+        "Mechanical Keyboard K1",
+        1
+      ],
+      [
+        131,
+        "Desk Mat Extended",
+        1
+      ],
+      [
+        132,
+        "HDMI 2.1 Cable 2m",
+        1
+      ],
+      [
+        133,
+        "Fitness Band X2",
+        3
+      ],
+      [
+        134,
+        "Desk Mat Extended",
+        3
+      ],
+      [
+        135,
+        "Ring Light 14\"",
+        3
+      ],
+      [
+        136,
+        "4K Webcam Pro",
+        3
+      ],
+      [
+        137,
+        "Mechanical Keyboard K1",
+        3
+      ],
+      [
+        138,
+        "Running Socks 3-pack",
+        3
+      ],
+      [
+        139,
+        "USB-C Hub 7-in-1",
+        2
+      ],
+      [
+        140,
+        "Noise-Canceling Headset",
+        1
+      ],
+      [
+        141,
+        "Laptop Stand Aluminum",
+        1
+      ],
+      [
+        142,
+        "Running Socks 3-pack",
+        2
+      ],
+      [
+        143,
+        "Ring Light 14\"",
+        2
+      ],
+      [
+        144,
+        "Fitness Band X2",
+        3
+      ],
+      [
+        145,
+        "Desk Mat Extended",
+        2
+      ],
+      [
+        146,
+        "USB-C Hub 7-in-1",
+        1
+      ],
+      [
+        147,
+        "Studio Desktop Mic",
+        2
+      ],
+      [
+        148,
+        "Yoga Mat Eco 6mm",
+        3
+      ],
+      [
+        149,
+        "HDMI 2.1 Cable 2m",
+        3
+      ],
+      [
+        150,
+        "Laptop Stand Aluminum",
+        1
+      ],
+      [
+        151,
+        "Bluetooth Speaker Mini",
+        3
+      ],
+      [
+        152,
+        "Noise-Canceling Headset",
+        1
+      ],
+      [
+        153,
+        "Laptop Stand Aluminum",
+        2
+      ],
+      [
+        154,
+        "Noise-Canceling Headset",
+        2
+      ],
+      [
+        155,
+        "Bluetooth Speaker Mini",
+        3
+      ],
+      [
+        156,
+        "Ring Light 14\"",
+        1
+      ],
+      [
+        157,
+        "4K Webcam Pro",
+        2
+      ],
+      [
+        158,
+        "Wireless Mouse M3",
+        1
+      ],
+      [
+        159,
+        "Laptop Stand Aluminum",
+        3
+      ],
+      [
+        160,
+        "Ring Light 14\"",
+        3
+      ],
+      [
+        161,
+        "Ring Light 14\"",
+        1
+      ],
+      [
+        162,
+        "Bluetooth Speaker Mini",
+        2
+      ],
+      [
+        163,
+        "USB-C Hub 7-in-1",
+        1
+      ],
+      [
+        164,
+        "Noise-Canceling Headset",
+        3
+      ],
+      [
+        165,
+        "Studio Desktop Mic",
+        2
+      ],
+      [
+        166,
+        "Noise-Canceling Headset",
+        2
+      ],
+      [
+        167,
+        "Bluetooth Speaker Mini",
+        1
+      ],
+      [
+        168,
+        "Running Socks 3-pack",
+        3
+      ],
+      [
+        169,
+        "Desk Mat Extended",
+        1
+      ],
+      [
+        170,
+        "Wireless Mouse M3",
+        1
+      ],
+      [
+        171,
+        "Bluetooth Speaker Mini",
+        1
+      ],
+      [
+        172,
+        "4K Webcam Pro",
+        1
+      ],
+      [
+        173,
+        "Studio Desktop Mic",
+        3
+      ],
+      [
+        174,
+        "4K Webcam Pro",
+        2
+      ],
+      [
+        175,
+        "USB-C Hub 7-in-1",
+        1
+      ],
+      [
+        176,
+        "HDMI 2.1 Cable 2m",
+        2
+      ],
+      [
+        177,
+        "Fitness Band X2",
+        3
+      ],
+      [
+        178,
+        "USB-C Hub 7-in-1",
+        3
+      ],
+      [
+        179,
+        "Yoga Mat Eco 6mm",
+        1
+      ],
+      [
+        180,
+        "Smart Watch S",
+        3
+      ],
+      [
+        181,
+        "Noise-Canceling Headset",
+        3
+      ],
+      [
+        182,
+        "Laptop Stand Aluminum",
+        3
+      ],
+      [
+        183,
+        "Noise-Canceling Headset",
+        1
+      ],
+      [
+        184,
+        "Cycling Jersey Pro",
+        3
+      ],
+      [
+        185,
+        "Wireless Mouse M3",
+        1
+      ],
+      [
+        186,
+        "Yoga Mat Eco 6mm",
+        2
+      ],
+      [
+        187,
+        "Studio Desktop Mic",
+        2
+      ],
+      [
+        188,
+        "Noise-Canceling Headset",
+        1
+      ],
+      [
+        189,
+        "HDMI 2.1 Cable 2m",
+        1
+      ],
+      [
+        190,
+        "Cycling Jersey Pro",
+        2
+      ],
+      [
+        191,
+        "Laptop Stand Aluminum",
+        1
+      ],
+      [
+        192,
+        "HDMI 2.1 Cable 2m",
+        1
+      ],
+      [
+        193,
+        "Fitness Band X2",
+        2
+      ],
+      [
+        194,
+        "Running Socks 3-pack",
+        2
+      ],
+      [
+        195,
+        "Smart Watch S",
+        1
+      ],
+      [
+        196,
+        "Cycling Jersey Pro",
+        3
+      ],
+      [
+        197,
+        "Mechanical Keyboard K1",
+        1
+      ],
+      [
+        198,
+        "Ring Light 14\"",
+        2
+      ],
+      [
+        199,
+        "Noise-Canceling Headset",
+        1
+      ],
+      [
+        200,
+        "Cycling Jersey Pro",
+        2
+      ],
+      [
+        201,
+        "Laptop Stand Aluminum",
+        2
+      ],
+      [
+        202,
+        "Yoga Mat Eco 6mm",
+        2
+      ],
+      [
+        203,
+        "Studio Desktop Mic",
+        1
+      ],
+      [
+        204,
+        "Desk Mat Extended",
+        3
+      ],
+      [
+        205,
+        "Fitness Band X2",
+        1
+      ],
+      [
+        206,
+        "HDMI 2.1 Cable 2m",
+        2
+      ],
+      [
+        207,
+        "4K Webcam Pro",
+        1
+      ],
+      [
+        208,
+        "Wireless Mouse M3",
+        3
+      ],
+      [
+        209,
+        "Ring Light 14\"",
+        3
+      ],
+      [
+        210,
+        "Laptop Stand Aluminum",
+        1
+      ],
+      [
+        211,
+        "Mechanical Keyboard K1",
+        3
+      ],
+      [
+        212,
+        "Running Socks 3-pack",
+        2
+      ],
+      [
+        213,
+        "Mechanical Keyboard K1",
+        1
+      ],
+      [
+        214,
+        "Studio Desktop Mic",
+        2
+      ],
+      [
+        215,
+        "Desk Mat Extended",
+        1
+      ],
+      [
+        216,
+        "Noise-Canceling Headset",
+        1
+      ],
+      [
+        217,
+        "Mechanical Keyboard K1",
+        1
+      ],
+      [
+        218,
+        "Yoga Mat Eco 6mm",
+        1
+      ],
+      [
+        219,
+        "Smart Watch S",
+        2
+      ],
+      [
+        220,
+        "Fitness Band X2",
+        2
+      ],
+      [
+        221,
+        "4K Webcam Pro",
+        1
+      ],
+      [
+        222,
+        "Studio Desktop Mic",
+        1
+      ],
+      [
+        223,
+        "Smart Watch S",
+        1
+      ],
+      [
+        224,
+        "HDMI 2.1 Cable 2m",
+        2
+      ],
+      [
+        225,
+        "Cycling Jersey Pro",
+        1
+      ],
+      [
+        226,
+        "Wireless Mouse M3",
+        1
+      ],
+      [
+        227,
+        "USB-C Hub 7-in-1",
+        2
+      ],
+      [
+        228,
+        "HDMI 2.1 Cable 2m",
+        3
+      ],
+      [
+        229,
+        "4K Webcam Pro",
+        1
+      ],
+      [
+        230,
+        "Desk Mat Extended",
+        1
+      ],
+      [
+        231,
+        "USB-C Hub 7-in-1",
+        3
+      ],
+      [
+        232,
+        "Yoga Mat Eco 6mm",
+        2
+      ],
+      [
+        233,
+        "Fitness Band X2",
+        2
+      ],
+      [
+        234,
+        "Ring Light 14\"",
+        1
+      ],
+      [
+        235,
+        "Smart Watch S",
+        2
+      ],
+      [
+        236,
+        "Wireless Mouse M3",
+        3
+      ],
+      [
+        237,
+        "Noise-Canceling Headset",
+        3
+      ],
+      [
+        238,
+        "Laptop Stand Aluminum",
+        1
+      ],
+      [
+        239,
+        "Noise-Canceling Headset",
+        3
+      ],
+      [
+        240,
+        "Yoga Mat Eco 6mm",
+        1
+      ],
+      [
+        241,
+        "Laptop Stand Aluminum",
+        3
+      ],
+      [
+        242,
+        "Laptop Stand Aluminum",
+        1
+      ],
+      [
+        243,
+        "Fitness Band X2",
+        3
+      ],
+      [
+        244,
+        "Smart Watch S",
+        1
+      ],
+      [
+        245,
+        "Laptop Stand Aluminum",
+        3
+      ],
+      [
+        246,
+        "Wireless Mouse M3",
+        3
+      ],
+      [
+        247,
+        "Running Socks 3-pack",
+        2
+      ],
+      [
+        248,
+        "Desk Mat Extended",
+        1
+      ],
+      [
+        249,
+        "Mechanical Keyboard K1",
+        1
+      ],
+      [
+        250,
+        "4K Webcam Pro",
+        2
+      ],
+      [
+        251,
+        "Yoga Mat Eco 6mm",
+        2
+      ]
+    ]
+  },
+  "gm2-p05": {
+    "columns": [
+      "order_id",
+      "customer",
+      "total"
+    ],
+    "rows": [
+      [
+        1,
+        "Pedro Alvarez",
+        576.54
+      ],
+      [
+        5,
+        "Emma Wilson",
+        725.34
+      ],
+      [
+        12,
+        "Maya Patel",
+        148.28
+      ],
+      [
+        19,
+        "Alice Chen",
+        317.49
+      ],
+      [
+        25,
+        "Chloe Dubois",
+        364.71
+      ],
+      [
+        42,
+        "Alice Chen",
+        259.31
+      ],
+      [
+        43,
+        "Chloe Dubois",
+        945.21
+      ],
+      [
+        47,
+        "Maya Patel",
+        306.92
+      ],
+      [
+        74,
+        "Farid Nasser",
+        1088.44
+      ],
+      [
+        75,
+        "Grace Kim",
+        273.64
+      ],
+      [
+        79,
+        "Alice Chen",
+        212.03
+      ],
+      [
+        90,
+        "Emma Wilson",
+        160.3
+      ],
+      [
+        94,
+        "Keiko Sato",
+        149
+      ],
+      [
+        97,
+        "Emma Wilson",
+        585.79
+      ]
+    ]
+  },
+  "gm2-p06": {
+    "columns": [
+      "name",
+      "order_count"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        24
+      ],
+      [
+        "Emma Wilson",
+        17
+      ],
+      [
+        "Grace Kim",
+        14
+      ],
+      [
+        "Maya Patel",
+        13
+      ],
+      [
+        "Chloe Dubois",
+        5
+      ],
+      [
+        "Isabella Rossi",
+        4
+      ],
+      [
+        "Keiko Sato",
+        4
+      ],
+      [
+        "Noah Meyer",
+        4
+      ],
+      [
+        "Pedro Alvarez",
+        4
+      ],
+      [
+        "Farid Nasser",
+        3
+      ],
+      [
+        "Hiro Tanaka",
+        3
+      ],
+      [
+        "Bruno Silva",
+        2
+      ],
+      [
+        "Dmitri Volkov",
+        2
+      ],
+      [
+        "Jamal Wright",
+        2
+      ],
+      [
+        "Liam O'Brien",
+        1
+      ],
+      [
+        "Olivia Brown",
+        1
+      ]
+    ]
+  },
+  "gm2-p07": {
+    "columns": [
+      "region",
+      "orders"
+    ],
+    "rows": [
+      [
+        "EU",
+        45
+      ],
+      [
+        "APAC",
+        37
+      ],
+      [
+        "US",
+        19
+      ],
+      [
+        "LATAM",
+        2
+      ]
+    ]
+  },
+  "gm2-p08": {
+    "columns": [
+      "name",
+      "spend"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        7262.35
+      ],
+      [
+        "Emma Wilson",
+        6640.56
+      ],
+      [
+        "Grace Kim",
+        4574.23
+      ],
+      [
+        "Maya Patel",
+        3644.56
+      ],
+      [
+        "Chloe Dubois",
+        2667.93
+      ],
+      [
+        "Pedro Alvarez",
+        1686.17
+      ],
+      [
+        "Farid Nasser",
+        1458.97
+      ],
+      [
+        "Keiko Sato",
+        1098.6
+      ],
+      [
+        "Isabella Rossi",
+        985.65
+      ],
+      [
+        "Bruno Silva",
+        852.44
+      ],
+      [
+        "Hiro Tanaka",
+        829.09
+      ],
+      [
+        "Noah Meyer",
+        737.68
+      ],
+      [
+        "Liam O'Brien",
+        705.39
+      ],
+      [
+        "Jamal Wright",
+        645.6
+      ],
+      [
+        "Dmitri Volkov",
+        599.26
+      ],
+      [
+        "Olivia Brown",
+        444.8
+      ]
+    ]
+  },
+  "gm2-p09": {
+    "columns": [
+      "region",
+      "delivered"
+    ],
+    "rows": [
+      [
+        "EU",
+        24
+      ],
+      [
+        "APAC",
+        21
+      ],
+      [
+        "US",
+        5
+      ],
+      [
+        "LATAM",
+        2
+      ]
+    ]
+  },
+  "gm2-p10": {
+    "columns": [
+      "payment_id",
+      "amount_cents",
+      "number"
+    ],
+    "rows": [
+      [
+        1,
+        243000,
+        "INV-2024-001"
+      ],
+      [
+        2,
+        243000,
+        "INV-2024-001"
+      ],
+      [
+        3,
+        214300,
+        "INV-2024-002"
+      ],
+      [
+        4,
+        342000,
+        "INV-2024-003"
+      ],
+      [
+        5,
+        158900,
+        "INV-2024-004"
+      ],
+      [
+        6,
+        264200,
+        "INV-2024-005"
+      ],
+      [
+        7,
+        264200,
+        "INV-2024-005"
+      ],
+      [
+        8,
+        233600,
+        "INV-2024-006"
+      ],
+      [
+        9,
+        198200,
+        "INV-2024-007"
+      ],
+      [
+        10,
+        401500,
+        "INV-2024-008"
+      ],
+      [
+        11,
+        187300,
+        "INV-2024-009"
+      ],
+      [
+        12,
+        296800,
+        "INV-2024-010"
+      ],
+      [
+        13,
+        236150,
+        "INV-2024-012"
+      ],
+      [
+        14,
+        236150,
+        "INV-2024-012"
+      ],
+      [
+        15,
+        254700,
+        "INV-2024-013"
+      ],
+      [
+        16,
+        351200,
+        "INV-2024-014"
+      ],
+      [
+        17,
+        228900,
+        "INV-2024-015"
+      ],
+      [
+        18,
+        389600,
+        "INV-2024-016"
+      ],
+      [
+        19,
+        280700,
+        "INV-2024-019"
+      ],
+      [
+        20,
+        280700,
+        "INV-2024-019"
+      ],
+      [
+        21,
+        268300,
+        "INV-2024-020"
+      ],
+      [
+        22,
+        92500,
+        "INV-2024-011"
+      ],
+      [
+        23,
+        141800,
+        "INV-2024-017"
+      ],
+      [
+        24,
+        222950,
+        "INV-2024-022"
+      ],
+      [
+        25,
+        222950,
+        "INV-2024-022"
+      ],
+      [
+        26,
+        307600,
+        "INV-2024-023"
+      ],
+      [
+        27,
+        400000,
+        "INV-2025-025"
+      ]
+    ]
+  },
+  "gm2-p11": {
+    "columns": [
+      "name",
+      "line_items"
+    ],
+    "rows": [
+      [
+        "Desk Mat Extended",
+        24
+      ],
+      [
+        "Noise-Canceling Headset",
+        24
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        19
+      ],
+      [
+        "Laptop Stand Aluminum",
+        19
+      ],
+      [
+        "Wireless Mouse M3",
+        18
+      ],
+      [
+        "4K Webcam Pro",
+        17
+      ],
+      [
+        "Studio Desktop Mic",
+        16
+      ],
+      [
+        "Mechanical Keyboard K1",
+        15
+      ],
+      [
+        "Ring Light 14\"",
+        15
+      ],
+      [
+        "Fitness Band X2",
+        14
+      ],
+      [
+        "Running Socks 3-pack",
+        14
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        13
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        11
+      ],
+      [
+        "Smart Watch S",
+        11
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        11
+      ],
+      [
+        "Cycling Jersey Pro",
+        10
+      ]
+    ]
+  },
+  "gm2-p12": {
+    "columns": [
+      "number",
+      "payment_count"
+    ],
+    "rows": [
+      [
+        "INV-2024-001",
+        2
+      ],
+      [
+        "INV-2024-005",
+        2
+      ],
+      [
+        "INV-2024-012",
+        2
+      ],
+      [
+        "INV-2024-019",
+        2
+      ],
+      [
+        "INV-2024-022",
+        2
+      ],
+      [
+        "INV-2024-002",
+        1
+      ],
+      [
+        "INV-2024-003",
+        1
+      ],
+      [
+        "INV-2024-004",
+        1
+      ],
+      [
+        "INV-2024-006",
+        1
+      ],
+      [
+        "INV-2024-007",
+        1
+      ],
+      [
+        "INV-2024-008",
+        1
+      ],
+      [
+        "INV-2024-009",
+        1
+      ],
+      [
+        "INV-2024-010",
+        1
+      ],
+      [
+        "INV-2024-011",
+        1
+      ],
+      [
+        "INV-2024-013",
+        1
+      ],
+      [
+        "INV-2024-014",
+        1
+      ],
+      [
+        "INV-2024-015",
+        1
+      ],
+      [
+        "INV-2024-016",
+        1
+      ],
+      [
+        "INV-2024-017",
+        1
+      ],
+      [
+        "INV-2024-020",
+        1
+      ],
+      [
+        "INV-2024-023",
+        1
+      ],
+      [
+        "INV-2025-025",
+        1
+      ]
+    ]
+  },
+  "gm2-p13": {
+    "columns": [
+      "category",
+      "revenue"
+    ],
+    "rows": [
+      [
+        "Audio",
+        11744.01
+      ],
+      [
+        "Wearables",
+        6929.12
+      ],
+      [
+        "Video",
+        5198.41
+      ],
+      [
+        "Electronics",
+        4818.61
+      ],
+      [
+        "Accessories",
+        3294.29
+      ],
+      [
+        "Apparel",
+        1984.93
+      ],
+      [
+        "Fitness",
+        863.91
+      ]
+    ]
+  },
+  "gm2-p14": {
+    "columns": [
+      "name",
+      "revenue"
+    ],
+    "rows": [
+      [
+        "Nordic Gadgets AB",
+        11130.25
+      ],
+      [
+        "Midwest Hardware Co",
+        9294.93
+      ],
+      [
+        "Alpine Audio GmbH",
+        4765.63
+      ],
+      [
+        "Andes Naturals SA",
+        3613.25
+      ],
+      [
+        "Shenzhen Electro",
+        3049.07
+      ],
+      [
+        "Pacific Textiles",
+        2980.15
+      ]
+    ]
+  },
+  "gm2-p15": {
+    "columns": [
+      "order_id",
+      "items"
+    ],
+    "rows": [
+      [
+        1,
+        4
+      ],
+      [
+        6,
+        4
+      ],
+      [
+        11,
+        4
+      ],
+      [
+        15,
+        4
+      ],
+      [
+        16,
+        4
+      ],
+      [
+        17,
+        4
+      ],
+      [
+        19,
+        4
+      ],
+      [
+        20,
+        4
+      ],
+      [
+        26,
+        4
+      ],
+      [
+        32,
+        4
+      ],
+      [
+        33,
+        4
+      ],
+      [
+        36,
+        4
+      ],
+      [
+        39,
+        4
+      ],
+      [
+        43,
+        4
+      ],
+      [
+        54,
+        4
+      ],
+      [
+        60,
+        4
+      ],
+      [
+        64,
+        4
+      ],
+      [
+        67,
+        4
+      ],
+      [
+        68,
+        4
+      ],
+      [
+        83,
+        4
+      ],
+      [
+        88,
+        4
+      ],
+      [
+        89,
+        4
+      ],
+      [
+        92,
+        4
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        8,
+        3
+      ],
+      [
+        14,
+        3
+      ],
+      [
+        24,
+        3
+      ],
+      [
+        27,
+        3
+      ],
+      [
+        28,
+        3
+      ],
+      [
+        37,
+        3
+      ],
+      [
+        56,
+        3
+      ],
+      [
+        57,
+        3
+      ],
+      [
+        58,
+        3
+      ],
+      [
+        61,
+        3
+      ],
+      [
+        65,
+        3
+      ],
+      [
+        69,
+        3
+      ],
+      [
+        71,
+        3
+      ],
+      [
+        74,
+        3
+      ],
+      [
+        78,
+        3
+      ],
+      [
+        79,
+        3
+      ],
+      [
+        80,
+        3
+      ],
+      [
+        85,
+        3
+      ],
+      [
+        91,
+        3
+      ],
+      [
+        96,
+        3
+      ],
+      [
+        97,
+        3
+      ],
+      [
+        98,
+        3
+      ],
+      [
+        99,
+        3
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        10,
+        2
+      ],
+      [
+        12,
+        2
+      ],
+      [
+        13,
+        2
+      ],
+      [
+        21,
+        2
+      ],
+      [
+        22,
+        2
+      ],
+      [
+        31,
+        2
+      ],
+      [
+        34,
+        2
+      ],
+      [
+        35,
+        2
+      ],
+      [
+        41,
+        2
+      ],
+      [
+        42,
+        2
+      ],
+      [
+        44,
+        2
+      ],
+      [
+        46,
+        2
+      ],
+      [
+        47,
+        2
+      ],
+      [
+        55,
+        2
+      ],
+      [
+        62,
+        2
+      ],
+      [
+        63,
+        2
+      ],
+      [
+        73,
+        2
+      ],
+      [
+        75,
+        2
+      ],
+      [
+        76,
+        2
+      ],
+      [
+        77,
+        2
+      ],
+      [
+        81,
+        2
+      ],
+      [
+        84,
+        2
+      ],
+      [
+        87,
+        2
+      ],
+      [
+        94,
+        2
+      ],
+      [
+        95,
+        2
+      ],
+      [
+        101,
+        2
+      ],
+      [
+        102,
+        2
+      ],
+      [
+        103,
+        2
+      ],
+      [
+        4,
+        1
+      ],
+      [
+        7,
+        1
+      ],
+      [
+        9,
+        1
+      ],
+      [
+        18,
+        1
+      ],
+      [
+        23,
+        1
+      ],
+      [
+        25,
+        1
+      ],
+      [
+        29,
+        1
+      ],
+      [
+        30,
+        1
+      ],
+      [
+        38,
+        1
+      ],
+      [
+        40,
+        1
+      ],
+      [
+        45,
+        1
+      ],
+      [
+        48,
+        1
+      ],
+      [
+        49,
+        1
+      ],
+      [
+        50,
+        1
+      ],
+      [
+        51,
+        1
+      ],
+      [
+        52,
+        1
+      ],
+      [
+        53,
+        1
+      ],
+      [
+        59,
+        1
+      ],
+      [
+        66,
+        1
+      ],
+      [
+        70,
+        1
+      ],
+      [
+        72,
+        1
+      ],
+      [
+        82,
+        1
+      ],
+      [
+        86,
+        1
+      ],
+      [
+        90,
+        1
+      ],
+      [
+        93,
+        1
+      ],
+      [
+        100,
+        1
+      ]
+    ]
+  },
+  "gm2-p16": {
+    "columns": [
+      "order_id",
+      "customer",
+      "total"
+    ],
+    "rows": [
+      [
+        1,
+        "Pedro Alvarez",
+        576.54
+      ],
+      [
+        19,
+        "Alice Chen",
+        317.49
+      ],
+      [
+        25,
+        "Chloe Dubois",
+        364.71
+      ],
+      [
+        42,
+        "Alice Chen",
+        259.31
+      ],
+      [
+        43,
+        "Chloe Dubois",
+        945.21
+      ],
+      [
+        79,
+        "Alice Chen",
+        212.03
+      ]
+    ]
+  },
+  "gm2-p17": {
+    "columns": [
+      "us_spend"
+    ],
+    "rows": [
+      [
+        7286.16
+      ]
+    ]
+  },
+  "gm2-p18": {
+    "columns": [
+      "region",
+      "delivered_revenue"
+    ],
+    "rows": [
+      [
+        "EU",
+        6656.18
+      ],
+      [
+        "APAC",
+        6617.68
+      ],
+      [
+        "US",
+        1444.77
+      ],
+      [
+        "LATAM",
+        852.44
+      ]
+    ]
+  },
+  "gm2-p19": {
+    "columns": [
+      "name",
+      "price"
+    ],
+    "rows": [
+      [
+        "Mechanical Keyboard K1",
+        89.99
+      ],
+      [
+        "4K Webcam Pro",
+        129
+      ],
+      [
+        "Smart Watch S",
+        199.99
+      ]
+    ]
+  },
+  "gm2-p20": {
+    "columns": [
+      "order_id",
+      "status",
+      "total"
+    ],
+    "rows": [
+      [
+        3,
+        "shipped",
+        767.64
+      ],
+      [
+        7,
+        "cancelled",
+        152.52
+      ],
+      [
+        13,
+        "delivered",
+        632.29
+      ],
+      [
+        14,
+        "delivered",
+        705.23
+      ],
+      [
+        19,
+        "pending",
+        317.49
+      ],
+      [
+        21,
+        "cancelled",
+        136.11
+      ],
+      [
+        31,
+        "shipped",
+        633.91
+      ],
+      [
+        32,
+        "shipped",
+        645.91
+      ],
+      [
+        40,
+        "delivered",
+        135.24
+      ],
+      [
+        42,
+        "pending",
+        259.31
+      ],
+      [
+        48,
+        "delivered",
+        187.38
+      ],
+      [
+        55,
+        "delivered",
+        113.66
+      ],
+      [
+        58,
+        "delivered",
+        298.18
+      ],
+      [
+        63,
+        "delivered",
+        334.66
+      ],
+      [
+        66,
+        "delivered",
+        125.4
+      ],
+      [
+        70,
+        "shipped",
+        131.39
+      ],
+      [
+        79,
+        "pending",
+        212.03
+      ],
+      [
+        84,
+        "shipped",
+        153.51
+      ],
+      [
+        86,
+        "delivered",
+        116.28
+      ],
+      [
+        89,
+        "shipped",
+        684.53
+      ],
+      [
+        93,
+        "delivered",
+        45.36
+      ],
+      [
+        95,
+        "cancelled",
+        206.19
+      ],
+      [
+        100,
+        "delivered",
+        125.88
+      ],
+      [
+        101,
+        "delivered",
+        142.25
+      ]
+    ]
+  },
+  "gm2-p21": {
+    "columns": [
+      "order_id",
+      "customer",
+      "total"
+    ],
+    "rows": [
+      [
+        74,
+        "Farid Nasser",
+        1088.44
+      ],
+      [
+        43,
+        "Chloe Dubois",
+        945.21
+      ],
+      [
+        39,
+        "Emma Wilson",
+        845.92
+      ],
+      [
+        15,
+        "Grace Kim",
+        826.03
+      ],
+      [
+        57,
+        "Emma Wilson",
+        785.79
+      ],
+      [
+        3,
+        "Alice Chen",
+        767.64
+      ],
+      [
+        6,
+        "Bruno Silva",
+        752.96
+      ],
+      [
+        5,
+        "Emma Wilson",
+        725.34
+      ],
+      [
+        20,
+        "Liam O'Brien",
+        705.39
+      ],
+      [
+        14,
+        "Alice Chen",
+        705.23
+      ],
+      [
+        89,
+        "Alice Chen",
+        684.53
+      ],
+      [
+        71,
+        "Pedro Alvarez",
+        668.45
+      ],
+      [
+        67,
+        "Chloe Dubois",
+        659.7
+      ],
+      [
+        32,
+        "Alice Chen",
+        645.91
+      ],
+      [
+        31,
+        "Alice Chen",
+        633.91
+      ],
+      [
+        13,
+        "Alice Chen",
+        632.29
+      ],
+      [
+        68,
+        "Grace Kim",
+        625.14
+      ],
+      [
+        33,
+        "Emma Wilson",
+        624.66
+      ],
+      [
+        64,
+        "Maya Patel",
+        611.87
+      ],
+      [
+        98,
+        "Isabella Rossi",
+        608.06
+      ],
+      [
+        96,
+        "Emma Wilson",
+        590.2
+      ],
+      [
+        97,
+        "Emma Wilson",
+        585.79
+      ],
+      [
+        27,
+        "Chloe Dubois",
+        577.19
+      ],
+      [
+        1,
+        "Pedro Alvarez",
+        576.54
+      ],
+      [
+        16,
+        "Emma Wilson",
+        507.24
+      ]
+    ]
+  },
+  "gm2-p22": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Alice Chen"
+      ],
+      [
+        "Chloe Dubois"
+      ],
+      [
+        "Dmitri Volkov"
+      ],
+      [
+        "Emma Wilson"
+      ],
+      [
+        "Farid Nasser"
+      ],
+      [
+        "Grace Kim"
+      ],
+      [
+        "Jamal Wright"
+      ],
+      [
+        "Keiko Sato"
+      ],
+      [
+        "Liam O'Brien"
+      ],
+      [
+        "Maya Patel"
+      ],
+      [
+        "Noah Meyer"
+      ],
+      [
+        "Olivia Brown"
+      ]
+    ]
+  },
+  "gm2-p23": {
+    "columns": [
+      "number",
+      "customer",
+      "amount"
+    ],
+    "rows": [
+      [
+        "INV-2024-001",
+        "Alice Chen",
+        4860
+      ],
+      [
+        "INV-2024-002",
+        "Emma Wilson",
+        2143
+      ],
+      [
+        "INV-2024-003",
+        "Grace Kim",
+        3420
+      ],
+      [
+        "INV-2024-004",
+        "Maya Patel",
+        1589
+      ],
+      [
+        "INV-2024-005",
+        "Alice Chen",
+        5284
+      ],
+      [
+        "INV-2024-006",
+        "Isabella Rossi",
+        2336
+      ],
+      [
+        "INV-2024-007",
+        "Maya Patel",
+        1982
+      ],
+      [
+        "INV-2024-008",
+        "Emma Wilson",
+        4015
+      ],
+      [
+        "INV-2024-009",
+        "Jamal Wright",
+        1873
+      ],
+      [
+        "INV-2024-010",
+        "Grace Kim",
+        2968
+      ],
+      [
+        "INV-2024-011",
+        "Liam O'Brien",
+        925
+      ],
+      [
+        "INV-2024-012",
+        "Alice Chen",
+        4723
+      ],
+      [
+        "INV-2024-013",
+        "Olivia Brown",
+        2547
+      ],
+      [
+        "INV-2024-014",
+        "Maya Patel",
+        3512
+      ],
+      [
+        "INV-2024-015",
+        "Emma Wilson",
+        2289
+      ],
+      [
+        "INV-2024-016",
+        "Isabella Rossi",
+        3896
+      ],
+      [
+        "INV-2024-017",
+        "Jamal Wright",
+        1418
+      ],
+      [
+        "INV-2024-018",
+        "Pedro Alvarez",
+        873
+      ],
+      [
+        "INV-2024-019",
+        "Alice Chen",
+        5614
+      ],
+      [
+        "INV-2024-020",
+        "Grace Kim",
+        2683
+      ],
+      [
+        "INV-2024-021",
+        "Chloe Dubois",
+        1295
+      ],
+      [
+        "INV-2024-022",
+        "Maya Patel",
+        4459
+      ],
+      [
+        "INV-2024-023",
+        "Olivia Brown",
+        3076
+      ],
+      [
+        "INV-2025-024",
+        "Emma Wilson",
+        4937
+      ],
+      [
+        "INV-2025-025",
+        "Alice Chen",
+        6148
+      ],
+      [
+        "INV-2025-026",
+        "Liam O'Brien",
+        3562
+      ],
+      [
+        "INV-2025-027",
+        "Isabella Rossi",
+        2794
+      ],
+      [
+        "INV-2025-028",
+        "Hiro Tanaka",
+        1756
+      ]
+    ]
+  },
+  "gm2-p24": {
+    "columns": [
+      "region",
+      "method",
+      "payments"
+    ],
+    "rows": [
+      [
+        "APAC",
+        "wire",
+        5
+      ],
+      [
+        "APAC",
+        "card",
+        3
+      ],
+      [
+        "EU",
+        "card",
+        8
+      ],
+      [
+        "EU",
+        "wire",
+        6
+      ],
+      [
+        "US",
+        "card",
+        5
+      ]
+    ]
+  },
+  "gm2-p25": {
+    "columns": [
+      "order_id",
+      "customer",
+      "shipped_at"
+    ],
+    "rows": [
+      [
+        98,
+        "Isabella Rossi",
+        "2025-03-01"
+      ],
+      [
+        99,
+        "Noah Meyer",
+        "2025-02-14"
+      ],
+      [
+        96,
+        "Emma Wilson",
+        "2025-01-09"
+      ],
+      [
+        84,
+        "Alice Chen",
+        "2024-12-20"
+      ],
+      [
+        89,
+        "Alice Chen",
+        "2024-12-16"
+      ],
+      [
+        65,
+        "Emma Wilson",
+        "2024-09-16"
+      ],
+      [
+        70,
+        "Alice Chen",
+        "2024-09-10"
+      ],
+      [
+        60,
+        "Jamal Wright",
+        "2024-08-26"
+      ],
+      [
+        57,
+        "Emma Wilson",
+        "2024-08-10"
+      ],
+      [
+        53,
+        "Emma Wilson",
+        "2024-07-23"
+      ],
+      [
+        54,
+        "Maya Patel",
+        "2024-07-22"
+      ],
+      [
+        49,
+        "Isabella Rossi",
+        "2024-07-12"
+      ],
+      [
+        41,
+        "Emma Wilson",
+        "2024-06-14"
+      ],
+      [
+        44,
+        "Maya Patel",
+        "2024-06-04"
+      ],
+      [
+        37,
+        "Emma Wilson",
+        "2024-05-26"
+      ],
+      [
+        36,
+        "Pedro Alvarez",
+        "2024-05-16"
+      ],
+      [
+        35,
+        "Grace Kim",
+        "2024-05-14"
+      ],
+      [
+        39,
+        "Emma Wilson",
+        "2024-05-14"
+      ],
+      [
+        26,
+        "Hiro Tanaka",
+        "2024-04-23"
+      ],
+      [
+        30,
+        "Noah Meyer",
+        "2024-04-21"
+      ],
+      [
+        32,
+        "Alice Chen",
+        "2024-04-20"
+      ],
+      [
+        31,
+        "Alice Chen",
+        "2024-04-07"
+      ],
+      [
+        20,
+        "Liam O'Brien",
+        "2024-03-09"
+      ],
+      [
+        16,
+        "Emma Wilson",
+        "2024-03-01"
+      ],
+      [
+        11,
+        "Maya Patel",
+        "2024-02-17"
+      ],
+      [
+        15,
+        "Grace Kim",
+        "2024-02-16"
+      ],
+      [
+        9,
+        "Grace Kim",
+        "2024-02-09"
+      ],
+      [
+        3,
+        "Alice Chen",
+        "2024-01-26"
+      ],
+      [
+        4,
+        "Maya Patel",
+        "2024-01-20"
+      ],
+      [
+        8,
+        "Emma Wilson",
+        "2024-01-18"
+      ]
+    ]
+  },
+  "gm2-p26": {
+    "columns": [
+      "name",
+      "units"
+    ],
+    "rows": [
+      [
+        "Desk Mat Extended",
+        47
+      ],
+      [
+        "Noise-Canceling Headset",
+        46
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        38
+      ],
+      [
+        "Laptop Stand Aluminum",
+        36
+      ],
+      [
+        "Wireless Mouse M3",
+        36
+      ],
+      [
+        "Running Socks 3-pack",
+        33
+      ],
+      [
+        "4K Webcam Pro",
+        31
+      ],
+      [
+        "Fitness Band X2",
+        30
+      ],
+      [
+        "Ring Light 14\"",
+        30
+      ],
+      [
+        "Studio Desktop Mic",
+        30
+      ],
+      [
+        "Mechanical Keyboard K1",
+        28
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        27
+      ],
+      [
+        "Smart Watch S",
+        23
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        21
+      ],
+      [
+        "Cycling Jersey Pro",
+        21
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        21
+      ]
+    ]
+  },
+  "gm2-p27": {
+    "columns": [
+      "bought_pairs"
+    ],
+    "rows": [
+      [
+        132
+      ]
+    ]
+  },
+  "gm2-p28": {
+    "columns": [
+      "order_id",
+      "customer",
+      "status",
+      "total"
+    ],
+    "rows": [
+      [
+        10,
+        "Keiko Sato",
+        "delivered",
+        175.68
+      ],
+      [
+        73,
+        "Keiko Sato",
+        "delivered",
+        375.93
+      ],
+      [
+        80,
+        "Dmitri Volkov",
+        "delivered",
+        435.09
+      ],
+      [
+        81,
+        "Dmitri Volkov",
+        "delivered",
+        164.17
+      ],
+      [
+        83,
+        "Keiko Sato",
+        "cancelled",
+        397.99
+      ],
+      [
+        94,
+        "Keiko Sato",
+        "pending",
+        149
+      ]
+    ]
+  },
+  "gm2-p29": {
+    "columns": [
+      "name",
+      "invoice_count"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        5
+      ],
+      [
+        "Emma Wilson",
+        4
+      ],
+      [
+        "Maya Patel",
+        4
+      ],
+      [
+        "Grace Kim",
+        3
+      ],
+      [
+        "Isabella Rossi",
+        3
+      ],
+      [
+        "Jamal Wright",
+        2
+      ],
+      [
+        "Liam O'Brien",
+        2
+      ],
+      [
+        "Olivia Brown",
+        2
+      ],
+      [
+        "Chloe Dubois",
+        1
+      ],
+      [
+        "Hiro Tanaka",
+        1
+      ],
+      [
+        "Pedro Alvarez",
+        1
+      ]
+    ]
+  },
+  "gm2-p30": {
+    "columns": [
+      "name",
+      "paid_total"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        24481
+      ],
+      [
+        "Maya Patel",
+        11542
+      ],
+      [
+        "Grace Kim",
+        9071
+      ],
+      [
+        "Emma Wilson",
+        8447
+      ],
+      [
+        "Isabella Rossi",
+        6232
+      ],
+      [
+        "Olivia Brown",
+        5623
+      ],
+      [
+        "Jamal Wright",
+        3291
+      ],
+      [
+        "Liam O'Brien",
+        925
+      ]
+    ]
+  },
+  "gm2-p31": {
+    "columns": [
+      "name",
+      "pending_spend"
+    ],
+    "rows": [
+      [
+        "Emma Wilson",
+        1471.43
+      ],
+      [
+        "Chloe Dubois",
+        1309.92
+      ],
+      [
+        "Farid Nasser",
+        1088.44
+      ],
+      [
+        "Alice Chen",
+        788.83
+      ],
+      [
+        "Pedro Alvarez",
+        576.54
+      ],
+      [
+        "Maya Patel",
+        455.2
+      ],
+      [
+        "Grace Kim",
+        273.64
+      ],
+      [
+        "Keiko Sato",
+        149
+      ],
+      [
+        "Bruno Silva",
+        "0"
+      ],
+      [
+        "Dmitri Volkov",
+        "0"
+      ],
+      [
+        "Hiro Tanaka",
+        "0"
+      ],
+      [
+        "Isabella Rossi",
+        "0"
+      ],
+      [
+        "Jamal Wright",
+        "0"
+      ],
+      [
+        "Liam O'Brien",
+        "0"
+      ],
+      [
+        "Noah Meyer",
+        "0"
+      ],
+      [
+        "Olivia Brown",
+        "0"
+      ]
+    ]
+  },
+  "gm2-p32": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Bruno Silva"
+      ],
+      [
+        "Chloe Dubois"
+      ],
+      [
+        "Dmitri Volkov"
+      ],
+      [
+        "Farid Nasser"
+      ],
+      [
+        "Keiko Sato"
+      ],
+      [
+        "Olivia Brown"
+      ]
+    ]
+  },
+  "gm2-p33": {
+    "columns": [
+      "number"
+    ],
+    "rows": [
+      [
+        "INV-2024-018"
+      ],
+      [
+        "INV-2024-021"
+      ],
+      [
+        "INV-2025-024"
+      ],
+      [
+        "INV-2025-026"
+      ],
+      [
+        "INV-2025-027"
+      ],
+      [
+        "INV-2025-028"
+      ]
+    ]
+  },
+  "gm2-p34": {
+    "columns": [
+      "sweep_rows"
+    ],
+    "rows": [
+      [
+        33
+      ]
+    ]
+  },
+  "gm2-p35": {
+    "columns": [
+      "region",
+      "customer_a",
+      "customer_b"
+    ],
+    "rows": [
+      [
+        "APAC",
+        "Farid Nasser",
+        "Grace Kim"
+      ],
+      [
+        "APAC",
+        "Farid Nasser",
+        "Hiro Tanaka"
+      ],
+      [
+        "APAC",
+        "Farid Nasser",
+        "Keiko Sato"
+      ],
+      [
+        "APAC",
+        "Farid Nasser",
+        "Maya Patel"
+      ],
+      [
+        "APAC",
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "APAC",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "APAC",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "APAC",
+        "Hiro Tanaka",
+        "Keiko Sato"
+      ],
+      [
+        "APAC",
+        "Hiro Tanaka",
+        "Maya Patel"
+      ],
+      [
+        "APAC",
+        "Keiko Sato",
+        "Maya Patel"
+      ],
+      [
+        "EU",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "EU",
+        "Alice Chen",
+        "Dmitri Volkov"
+      ],
+      [
+        "EU",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "EU",
+        "Alice Chen",
+        "Liam O'Brien"
+      ],
+      [
+        "EU",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "EU",
+        "Alice Chen",
+        "Olivia Brown"
+      ],
+      [
+        "EU",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "EU",
+        "Chloe Dubois",
+        "Dmitri Volkov"
+      ],
+      [
+        "EU",
+        "Chloe Dubois",
+        "Isabella Rossi"
+      ],
+      [
+        "EU",
+        "Chloe Dubois",
+        "Liam O'Brien"
+      ],
+      [
+        "EU",
+        "Chloe Dubois",
+        "Noah Meyer"
+      ],
+      [
+        "EU",
+        "Chloe Dubois",
+        "Olivia Brown"
+      ],
+      [
+        "EU",
+        "Chloe Dubois",
+        "Pedro Alvarez"
+      ],
+      [
+        "EU",
+        "Dmitri Volkov",
+        "Isabella Rossi"
+      ],
+      [
+        "EU",
+        "Dmitri Volkov",
+        "Liam O'Brien"
+      ],
+      [
+        "EU",
+        "Dmitri Volkov",
+        "Noah Meyer"
+      ],
+      [
+        "EU",
+        "Dmitri Volkov",
+        "Olivia Brown"
+      ],
+      [
+        "EU",
+        "Dmitri Volkov",
+        "Pedro Alvarez"
+      ],
+      [
+        "EU",
+        "Isabella Rossi",
+        "Liam O'Brien"
+      ],
+      [
+        "EU",
+        "Isabella Rossi",
+        "Noah Meyer"
+      ],
+      [
+        "EU",
+        "Isabella Rossi",
+        "Olivia Brown"
+      ],
+      [
+        "EU",
+        "Isabella Rossi",
+        "Pedro Alvarez"
+      ],
+      [
+        "EU",
+        "Liam O'Brien",
+        "Noah Meyer"
+      ],
+      [
+        "EU",
+        "Liam O'Brien",
+        "Olivia Brown"
+      ],
+      [
+        "EU",
+        "Liam O'Brien",
+        "Pedro Alvarez"
+      ],
+      [
+        "EU",
+        "Noah Meyer",
+        "Olivia Brown"
+      ],
+      [
+        "EU",
+        "Noah Meyer",
+        "Pedro Alvarez"
+      ],
+      [
+        "EU",
+        "Olivia Brown",
+        "Pedro Alvarez"
+      ],
+      [
+        "US",
+        "Emma Wilson",
+        "Jamal Wright"
+      ]
+    ]
+  },
+  "gm2-p36": {
+    "columns": [
+      "category",
+      "product_a",
+      "product_b",
+      "gap"
+    ],
+    "rows": [
+      [
+        "Wearables",
+        "Fitness Band X2",
+        "Smart Watch S",
+        120.99
+      ],
+      [
+        "Audio",
+        "Noise-Canceling Headset",
+        "Bluetooth Speaker Mini",
+        90
+      ],
+      [
+        "Video",
+        "4K Webcam Pro",
+        "Ring Light 14\"",
+        89.01
+      ],
+      [
+        "Audio",
+        "Studio Desktop Mic",
+        "Bluetooth Speaker Mini",
+        59.01
+      ],
+      [
+        "Electronics",
+        "Mechanical Keyboard K1",
+        "Wireless Mouse M3",
+        55.49
+      ],
+      [
+        "Apparel",
+        "Running Socks 3-pack",
+        "Cycling Jersey Pro",
+        46.5
+      ],
+      [
+        "Electronics",
+        "Mechanical Keyboard K1",
+        "USB-C Hub 7-in-1",
+        40.99
+      ],
+      [
+        "Audio",
+        "Noise-Canceling Headset",
+        "Studio Desktop Mic",
+        30.99
+      ],
+      [
+        "Accessories",
+        "HDMI 2.1 Cable 2m",
+        "Laptop Stand Aluminum",
+        27.51
+      ],
+      [
+        "Accessories",
+        "Laptop Stand Aluminum",
+        "Desk Mat Extended",
+        17.51
+      ],
+      [
+        "Electronics",
+        "Wireless Mouse M3",
+        "USB-C Hub 7-in-1",
+        14.5
+      ],
+      [
+        "Accessories",
+        "HDMI 2.1 Cable 2m",
+        "Desk Mat Extended",
+        10
+      ]
+    ]
+  },
+  "gm2-p37": {
+    "columns": [
+      "on_placement",
+      "where_placement"
+    ],
+    "rows": [
+      [
+        22,
+        14
+      ]
+    ]
+  },
+  "gm2-p38": {
+    "columns": [
+      "number",
+      "payment_count"
+    ],
+    "rows": [
+      [
+        "INV-2024-001",
+        2
+      ],
+      [
+        "INV-2024-005",
+        2
+      ],
+      [
+        "INV-2024-012",
+        2
+      ],
+      [
+        "INV-2024-019",
+        2
+      ],
+      [
+        "INV-2024-022",
+        2
+      ],
+      [
+        "INV-2024-002",
+        1
+      ],
+      [
+        "INV-2024-003",
+        1
+      ],
+      [
+        "INV-2024-004",
+        1
+      ],
+      [
+        "INV-2024-006",
+        1
+      ],
+      [
+        "INV-2024-007",
+        1
+      ],
+      [
+        "INV-2024-008",
+        1
+      ],
+      [
+        "INV-2024-009",
+        1
+      ],
+      [
+        "INV-2024-010",
+        1
+      ],
+      [
+        "INV-2024-011",
+        1
+      ],
+      [
+        "INV-2024-013",
+        1
+      ],
+      [
+        "INV-2024-014",
+        1
+      ],
+      [
+        "INV-2024-015",
+        1
+      ],
+      [
+        "INV-2024-016",
+        1
+      ],
+      [
+        "INV-2024-017",
+        1
+      ],
+      [
+        "INV-2024-020",
+        1
+      ],
+      [
+        "INV-2024-023",
+        1
+      ],
+      [
+        "INV-2025-025",
+        1
+      ],
+      [
+        "INV-2024-018",
+        0
+      ],
+      [
+        "INV-2024-021",
+        0
+      ],
+      [
+        "INV-2025-024",
+        0
+      ],
+      [
+        "INV-2025-026",
+        0
+      ],
+      [
+        "INV-2025-027",
+        0
+      ],
+      [
+        "INV-2025-028",
+        0
+      ]
+    ]
+  },
+  "gm2-p39": {
+    "columns": [
+      "number",
+      "status"
+    ],
+    "rows": [
+      [
+        "INV-2025-028",
+        "paid"
+      ]
+    ]
+  },
+  "gm2-p40": {
+    "columns": [
+      "customer_id",
+      "status",
+      "pair_count"
+    ],
+    "rows": [
+      [
+        1,
+        "delivered",
+        66
+      ],
+      [
+        7,
+        "delivered",
+        45
+      ],
+      [
+        5,
+        "shipped",
+        36
+      ],
+      [
+        1,
+        "shipped",
+        15
+      ],
+      [
+        13,
+        "delivered",
+        10
+      ],
+      [
+        5,
+        "delivered",
+        6
+      ],
+      [
+        13,
+        "shipped",
+        6
+      ],
+      [
+        1,
+        "cancelled",
+        3
+      ],
+      [
+        1,
+        "pending",
+        3
+      ],
+      [
+        3,
+        "delivered",
+        3
+      ],
+      [
+        5,
+        "pending",
+        3
+      ],
+      [
+        7,
+        "shipped",
+        3
+      ],
+      [
+        2,
+        "delivered",
+        1
+      ],
+      [
+        3,
+        "pending",
+        1
+      ],
+      [
+        4,
+        "delivered",
+        1
+      ],
+      [
+        6,
+        "delivered",
+        1
+      ],
+      [
+        8,
+        "delivered",
+        1
+      ],
+      [
+        9,
+        "delivered",
+        1
+      ],
+      [
+        9,
+        "shipped",
+        1
+      ],
+      [
+        11,
+        "delivered",
+        1
+      ],
+      [
+        13,
+        "cancelled",
+        1
+      ],
+      [
+        13,
+        "pending",
+        1
+      ],
+      [
+        14,
+        "delivered",
+        1
+      ],
+      [
+        14,
+        "shipped",
+        1
+      ],
+      [
+        16,
+        "delivered",
+        1
+      ]
+    ]
+  },
+  "gm2-p41": {
+    "columns": [
+      "inflated_total",
+      "honest_total",
+      "inflation_factor"
+    ],
+    "rows": [
+      [
+        103244.55,
+        34833.28,
+        2.96
+      ]
+    ]
+  },
+  "gm2-p42": {
+    "columns": [
+      "order_id",
+      "items",
+      "order_total"
+    ],
+    "rows": [
+      [
+        1,
+        4,
+        576.54
+      ],
+      [
+        6,
+        4,
+        752.96
+      ],
+      [
+        11,
+        4,
+        283.12
+      ],
+      [
+        15,
+        4,
+        826.03
+      ],
+      [
+        16,
+        4,
+        507.24
+      ],
+      [
+        17,
+        4,
+        285.1
+      ],
+      [
+        19,
+        4,
+        317.49
+      ],
+      [
+        20,
+        4,
+        705.39
+      ],
+      [
+        26,
+        4,
+        263.91
+      ],
+      [
+        32,
+        4,
+        645.91
+      ],
+      [
+        33,
+        4,
+        624.66
+      ],
+      [
+        36,
+        4,
+        355.07
+      ],
+      [
+        39,
+        4,
+        845.92
+      ],
+      [
+        43,
+        4,
+        945.21
+      ],
+      [
+        54,
+        4,
+        273.96
+      ],
+      [
+        60,
+        4,
+        403.72
+      ],
+      [
+        64,
+        4,
+        611.87
+      ],
+      [
+        67,
+        4,
+        659.7
+      ],
+      [
+        68,
+        4,
+        625.14
+      ],
+      [
+        83,
+        4,
+        397.99
+      ],
+      [
+        88,
+        4,
+        397.91
+      ],
+      [
+        89,
+        4,
+        684.53
+      ],
+      [
+        92,
+        4,
+        233.95
+      ],
+      [
+        3,
+        3,
+        767.64
+      ],
+      [
+        5,
+        3,
+        725.34
+      ],
+      [
+        8,
+        3,
+        181.68
+      ],
+      [
+        14,
+        3,
+        705.23
+      ],
+      [
+        24,
+        3,
+        419.37
+      ],
+      [
+        27,
+        3,
+        577.19
+      ],
+      [
+        28,
+        3,
+        241.88
+      ],
+      [
+        37,
+        3,
+        379.83
+      ],
+      [
+        56,
+        3,
+        317.63
+      ],
+      [
+        57,
+        3,
+        785.79
+      ],
+      [
+        58,
+        3,
+        298.18
+      ],
+      [
+        61,
+        3,
+        388.61
+      ],
+      [
+        65,
+        3,
+        425.08
+      ],
+      [
+        69,
+        3,
+        116.69
+      ],
+      [
+        71,
+        3,
+        668.45
+      ],
+      [
+        74,
+        3,
+        1088.44
+      ],
+      [
+        78,
+        3,
+        295.66
+      ],
+      [
+        79,
+        3,
+        212.03
+      ],
+      [
+        80,
+        3,
+        435.09
+      ],
+      [
+        85,
+        3,
+        262.89
+      ],
+      [
+        91,
+        3,
+        444.8
+      ],
+      [
+        96,
+        3,
+        590.2
+      ],
+      [
+        97,
+        3,
+        585.79
+      ],
+      [
+        98,
+        3,
+        608.06
+      ],
+      [
+        99,
+        3,
+        489.33
+      ],
+      [
+        2,
+        2,
+        416.81
+      ],
+      [
+        10,
+        2,
+        175.68
+      ],
+      [
+        12,
+        2,
+        148.28
+      ],
+      [
+        13,
+        2,
+        632.29
+      ],
+      [
+        21,
+        2,
+        136.11
+      ],
+      [
+        22,
+        2,
+        450.12
+      ],
+      [
+        31,
+        2,
+        633.91
+      ],
+      [
+        34,
+        2,
+        121.12
+      ],
+      [
+        35,
+        2,
+        373
+      ],
+      [
+        41,
+        2,
+        67.25
+      ],
+      [
+        42,
+        2,
+        259.31
+      ],
+      [
+        44,
+        2,
+        282.51
+      ],
+      [
+        46,
+        2,
+        412.88
+      ],
+      [
+        47,
+        2,
+        306.92
+      ],
+      [
+        55,
+        2,
+        113.66
+      ],
+      [
+        62,
+        2,
+        86.11
+      ],
+      [
+        63,
+        2,
+        334.66
+      ],
+      [
+        73,
+        2,
+        375.93
+      ],
+      [
+        75,
+        2,
+        273.64
+      ],
+      [
+        76,
+        2,
+        235.71
+      ],
+      [
+        77,
+        2,
+        303.26
+      ],
+      [
+        81,
+        2,
+        164.17
+      ],
+      [
+        84,
+        2,
+        153.51
+      ],
+      [
+        87,
+        2,
+        326.05
+      ],
+      [
+        94,
+        2,
+        149
+      ],
+      [
+        95,
+        2,
+        206.19
+      ],
+      [
+        101,
+        2,
+        142.25
+      ],
+      [
+        102,
+        2,
+        115.06
+      ],
+      [
+        103,
+        2,
+        324.16
+      ],
+      [
+        4,
+        1,
+        158.48
+      ],
+      [
+        7,
+        1,
+        152.52
+      ],
+      [
+        9,
+        1,
+        46.67
+      ],
+      [
+        18,
+        1,
+        124.41
+      ],
+      [
+        23,
+        1,
+        99.48
+      ],
+      [
+        25,
+        1,
+        364.71
+      ],
+      [
+        29,
+        1,
+        49.92
+      ],
+      [
+        30,
+        1,
+        56.19
+      ],
+      [
+        38,
+        1,
+        75.47
+      ],
+      [
+        40,
+        1,
+        135.24
+      ],
+      [
+        45,
+        1,
+        80.27
+      ],
+      [
+        48,
+        1,
+        187.38
+      ],
+      [
+        49,
+        1,
+        32.01
+      ],
+      [
+        50,
+        1,
+        90.35
+      ],
+      [
+        51,
+        1,
+        25.47
+      ],
+      [
+        52,
+        1,
+        238.38
+      ],
+      [
+        53,
+        1,
+        39.39
+      ],
+      [
+        59,
+        1,
+        44.48
+      ],
+      [
+        66,
+        1,
+        125.4
+      ],
+      [
+        70,
+        1,
+        131.39
+      ],
+      [
+        72,
+        1,
+        30.24
+      ],
+      [
+        82,
+        1,
+        143.86
+      ],
+      [
+        86,
+        1,
+        116.28
+      ],
+      [
+        90,
+        1,
+        160.3
+      ],
+      [
+        93,
+        1,
+        45.36
+      ],
+      [
+        100,
+        1,
+        125.88
+      ]
+    ]
+  },
+  "gm2-p43": {
+    "columns": [
+      "region",
+      "unshipped"
+    ],
+    "rows": [
+      [
+        "EU",
+        9
+      ],
+      [
+        "APAC",
+        8
+      ],
+      [
+        "US",
+        4
+      ]
+    ]
+  },
+  "gm2-p44": {
+    "columns": [
+      "category",
+      "line_items"
+    ],
+    "rows": [
+      [
+        "Accessories",
+        62
+      ],
+      [
+        "Audio",
+        51
+      ],
+      [
+        "Electronics",
+        44
+      ],
+      [
+        "Video",
+        32
+      ],
+      [
+        "Wearables",
+        25
+      ],
+      [
+        "Apparel",
+        24
+      ],
+      [
+        "Fitness",
+        13
+      ]
+    ]
+  },
+  "gm2-p45": {
+    "columns": [],
+    "rows": []
+  },
+  "gm2-p46": {
+    "columns": [
+      "supplier",
+      "product_a",
+      "product_b"
+    ],
+    "rows": [
+      [
+        "Alpine Audio GmbH",
+        "Studio Desktop Mic",
+        "Desk Mat Extended"
+      ],
+      [
+        "Andes Naturals SA",
+        "Bluetooth Speaker Mini",
+        "Fitness Band X2"
+      ],
+      [
+        "Midwest Hardware Co",
+        "Laptop Stand Aluminum",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Midwest Hardware Co",
+        "Noise-Canceling Headset",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Midwest Hardware Co",
+        "Noise-Canceling Headset",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Nordic Gadgets AB",
+        "4K Webcam Pro",
+        "Smart Watch S"
+      ],
+      [
+        "Nordic Gadgets AB",
+        "Mechanical Keyboard K1",
+        "4K Webcam Pro"
+      ],
+      [
+        "Nordic Gadgets AB",
+        "Mechanical Keyboard K1",
+        "Smart Watch S"
+      ],
+      [
+        "Pacific Textiles",
+        "HDMI 2.1 Cable 2m",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Pacific Textiles",
+        "USB-C Hub 7-in-1",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Pacific Textiles",
+        "USB-C Hub 7-in-1",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Shenzhen Electro",
+        "Ring Light 14\"",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Shenzhen Electro",
+        "Wireless Mouse M3",
+        "Ring Light 14\""
+      ],
+      [
+        "Shenzhen Electro",
+        "Wireless Mouse M3",
+        "Running Socks 3-pack"
+      ]
+    ]
+  },
+  "gm2-p47": {
+    "columns": [
+      "region",
+      "pending_orders"
+    ],
+    "rows": [
+      [
+        "EU",
+        6
+      ],
+      [
+        "APAC",
+        5
+      ],
+      [
+        "US",
+        3
+      ],
+      [
+        "LATAM",
+        0
+      ]
+    ]
+  },
+  "gm2-p48": {
+    "columns": [
+      "name",
+      "delivered_count",
+      "pending_count"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        12,
+        3
+      ],
+      [
+        "Grace Kim",
+        10,
+        1
+      ],
+      [
+        "Maya Patel",
+        5,
+        2
+      ],
+      [
+        "Emma Wilson",
+        4,
+        3
+      ],
+      [
+        "Chloe Dubois",
+        3,
+        2
+      ],
+      [
+        "Bruno Silva",
+        2,
+        0
+      ],
+      [
+        "Dmitri Volkov",
+        2,
+        0
+      ],
+      [
+        "Farid Nasser",
+        2,
+        1
+      ],
+      [
+        "Hiro Tanaka",
+        2,
+        0
+      ],
+      [
+        "Isabella Rossi",
+        2,
+        0
+      ],
+      [
+        "Keiko Sato",
+        2,
+        1
+      ],
+      [
+        "Noah Meyer",
+        2,
+        0
+      ],
+      [
+        "Pedro Alvarez",
+        2,
+        1
+      ],
+      [
+        "Jamal Wright",
+        1,
+        0
+      ],
+      [
+        "Olivia Brown",
+        1,
+        0
+      ],
+      [
+        "Liam O'Brien",
+        0,
+        0
+      ]
+    ]
+  },
+  "gm2-p49": {
+    "columns": [
+      "status",
+      "method",
+      "row_count"
+    ],
+    "rows": [
+      [
+        "open",
+        null,
+        5
+      ],
+      [
+        "open",
+        "wire",
+        1
+      ],
+      [
+        "paid",
+        "card",
+        15
+      ],
+      [
+        "paid",
+        "wire",
+        10
+      ],
+      [
+        "paid",
+        null,
+        1
+      ],
+      [
+        "void",
+        "card",
+        1
+      ]
+    ]
+  },
+  "gm2-p50": {
+    "columns": [
+      "name",
+      "order_id",
+      "total"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        3,
+        767.64
+      ],
+      [
+        "Alice Chen",
+        13,
+        632.29
+      ],
+      [
+        "Alice Chen",
+        14,
+        705.23
+      ],
+      [
+        "Alice Chen",
+        31,
+        633.91
+      ],
+      [
+        "Alice Chen",
+        32,
+        645.91
+      ],
+      [
+        "Alice Chen",
+        89,
+        684.53
+      ],
+      [
+        "Bruno Silva",
+        6,
+        752.96
+      ],
+      [
+        "Chloe Dubois",
+        27,
+        577.19
+      ],
+      [
+        "Chloe Dubois",
+        43,
+        945.21
+      ],
+      [
+        "Chloe Dubois",
+        67,
+        659.7
+      ],
+      [
+        "Dmitri Volkov",
+        null,
+        null
+      ],
+      [
+        "Emma Wilson",
+        5,
+        725.34
+      ],
+      [
+        "Emma Wilson",
+        16,
+        507.24
+      ],
+      [
+        "Emma Wilson",
+        33,
+        624.66
+      ],
+      [
+        "Emma Wilson",
+        39,
+        845.92
+      ],
+      [
+        "Emma Wilson",
+        57,
+        785.79
+      ],
+      [
+        "Emma Wilson",
+        96,
+        590.2
+      ],
+      [
+        "Emma Wilson",
+        97,
+        585.79
+      ],
+      [
+        "Farid Nasser",
+        74,
+        1088.44
+      ],
+      [
+        "Grace Kim",
+        15,
+        826.03
+      ],
+      [
+        "Grace Kim",
+        68,
+        625.14
+      ],
+      [
+        "Hiro Tanaka",
+        null,
+        null
+      ],
+      [
+        "Isabella Rossi",
+        98,
+        608.06
+      ],
+      [
+        "Jamal Wright",
+        null,
+        null
+      ],
+      [
+        "Keiko Sato",
+        null,
+        null
+      ],
+      [
+        "Liam O'Brien",
+        20,
+        705.39
+      ],
+      [
+        "Maya Patel",
+        64,
+        611.87
+      ],
+      [
+        "Noah Meyer",
+        null,
+        null
+      ],
+      [
+        "Olivia Brown",
+        null,
+        null
+      ],
+      [
+        "Pedro Alvarez",
+        1,
+        576.54
+      ],
+      [
+        "Pedro Alvarez",
+        71,
+        668.45
+      ]
+    ]
+  },
+  "gm2-p51": {
+    "columns": [
+      "city",
+      "revenue"
+    ],
+    "rows": [
+      [
+        "Berlin",
+        7262.35
+      ],
+      [
+        "Austin",
+        6640.56
+      ],
+      [
+        "Seoul",
+        4574.23
+      ],
+      [
+        "Mumbai",
+        3644.56
+      ],
+      [
+        "Lyon",
+        2667.93
+      ],
+      [
+        "Madrid",
+        1686.17
+      ],
+      [
+        "Dubai",
+        1458.97
+      ],
+      [
+        "Nagoya",
+        1098.6
+      ],
+      [
+        "Milan",
+        985.65
+      ],
+      [
+        "São Paulo",
+        852.44
+      ],
+      [
+        "Osaka",
+        829.09
+      ],
+      [
+        "Hamburg",
+        737.68
+      ],
+      [
+        "Cork",
+        705.39
+      ],
+      [
+        "Chicago",
+        645.6
+      ],
+      [
+        "Tallinn",
+        599.26
+      ],
+      [
+        "London",
+        444.8
+      ]
+    ]
+  },
+  "gm2-p52": {
+    "columns": [
+      "status",
+      "invoices",
+      "payment_rows",
+      "unpaid"
+    ],
+    "rows": [
+      [
+        "open",
+        6,
+        1,
+        5
+      ],
+      [
+        "paid",
+        21,
+        25,
+        1
+      ],
+      [
+        "void",
+        1,
+        1,
+        0
+      ]
+    ]
+  },
+  "gm2-p53": {
+    "columns": [
+      "name",
+      "wearables_revenue"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        2131.86
+      ],
+      [
+        "Emma Wilson",
+        1530
+      ],
+      [
+        "Liam O'Brien",
+        589.86
+      ],
+      [
+        "Farid Nasser",
+        583.02
+      ],
+      [
+        "Noah Meyer",
+        524.37
+      ],
+      [
+        "Grace Kim",
+        306.59
+      ],
+      [
+        "Chloe Dubois",
+        246.63
+      ],
+      [
+        "Jamal Wright",
+        237.54
+      ],
+      [
+        "Keiko Sato",
+        227.19
+      ],
+      [
+        "Olivia Brown",
+        200.07
+      ],
+      [
+        "Dmitri Volkov",
+        193.51
+      ],
+      [
+        "Maya Patel",
+        158.48
+      ]
+    ]
+  },
+  "gm2-p54": {
+    "columns": [
+      "active",
+      "orders"
+    ],
+    "rows": [
+      [
+        1,
+        97
+      ],
+      [
+        0,
+        6
+      ]
+    ]
+  },
+  "gm2-p55": {
+    "columns": [
+      "customer",
+      "region_mate"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Alice Chen",
+        "Dmitri Volkov"
+      ],
+      [
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Alice Chen",
+        "Liam O'Brien"
+      ],
+      [
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Alice Chen",
+        "Olivia Brown"
+      ],
+      [
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Chloe Dubois",
+        "Alice Chen"
+      ],
+      [
+        "Chloe Dubois",
+        "Dmitri Volkov"
+      ],
+      [
+        "Chloe Dubois",
+        "Isabella Rossi"
+      ],
+      [
+        "Chloe Dubois",
+        "Liam O'Brien"
+      ],
+      [
+        "Chloe Dubois",
+        "Noah Meyer"
+      ],
+      [
+        "Chloe Dubois",
+        "Olivia Brown"
+      ],
+      [
+        "Chloe Dubois",
+        "Pedro Alvarez"
+      ],
+      [
+        "Dmitri Volkov",
+        "Alice Chen"
+      ],
+      [
+        "Dmitri Volkov",
+        "Chloe Dubois"
+      ],
+      [
+        "Dmitri Volkov",
+        "Isabella Rossi"
+      ],
+      [
+        "Dmitri Volkov",
+        "Liam O'Brien"
+      ],
+      [
+        "Dmitri Volkov",
+        "Noah Meyer"
+      ],
+      [
+        "Dmitri Volkov",
+        "Olivia Brown"
+      ],
+      [
+        "Dmitri Volkov",
+        "Pedro Alvarez"
+      ],
+      [
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "Farid Nasser",
+        "Grace Kim"
+      ],
+      [
+        "Farid Nasser",
+        "Hiro Tanaka"
+      ],
+      [
+        "Farid Nasser",
+        "Keiko Sato"
+      ],
+      [
+        "Farid Nasser",
+        "Maya Patel"
+      ],
+      [
+        "Grace Kim",
+        "Farid Nasser"
+      ],
+      [
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Hiro Tanaka",
+        "Farid Nasser"
+      ],
+      [
+        "Hiro Tanaka",
+        "Grace Kim"
+      ],
+      [
+        "Hiro Tanaka",
+        "Keiko Sato"
+      ],
+      [
+        "Hiro Tanaka",
+        "Maya Patel"
+      ],
+      [
+        "Isabella Rossi",
+        "Alice Chen"
+      ],
+      [
+        "Isabella Rossi",
+        "Chloe Dubois"
+      ],
+      [
+        "Isabella Rossi",
+        "Dmitri Volkov"
+      ],
+      [
+        "Isabella Rossi",
+        "Liam O'Brien"
+      ],
+      [
+        "Isabella Rossi",
+        "Noah Meyer"
+      ],
+      [
+        "Isabella Rossi",
+        "Olivia Brown"
+      ],
+      [
+        "Isabella Rossi",
+        "Pedro Alvarez"
+      ],
+      [
+        "Jamal Wright",
+        "Emma Wilson"
+      ],
+      [
+        "Keiko Sato",
+        "Farid Nasser"
+      ],
+      [
+        "Keiko Sato",
+        "Grace Kim"
+      ],
+      [
+        "Keiko Sato",
+        "Hiro Tanaka"
+      ],
+      [
+        "Keiko Sato",
+        "Maya Patel"
+      ],
+      [
+        "Liam O'Brien",
+        "Alice Chen"
+      ],
+      [
+        "Liam O'Brien",
+        "Chloe Dubois"
+      ],
+      [
+        "Liam O'Brien",
+        "Dmitri Volkov"
+      ],
+      [
+        "Liam O'Brien",
+        "Isabella Rossi"
+      ],
+      [
+        "Liam O'Brien",
+        "Noah Meyer"
+      ],
+      [
+        "Liam O'Brien",
+        "Olivia Brown"
+      ],
+      [
+        "Liam O'Brien",
+        "Pedro Alvarez"
+      ],
+      [
+        "Maya Patel",
+        "Farid Nasser"
+      ],
+      [
+        "Maya Patel",
+        "Grace Kim"
+      ],
+      [
+        "Maya Patel",
+        "Hiro Tanaka"
+      ],
+      [
+        "Maya Patel",
+        "Keiko Sato"
+      ],
+      [
+        "Noah Meyer",
+        "Alice Chen"
+      ],
+      [
+        "Noah Meyer",
+        "Chloe Dubois"
+      ],
+      [
+        "Noah Meyer",
+        "Dmitri Volkov"
+      ],
+      [
+        "Noah Meyer",
+        "Isabella Rossi"
+      ],
+      [
+        "Noah Meyer",
+        "Liam O'Brien"
+      ],
+      [
+        "Noah Meyer",
+        "Olivia Brown"
+      ],
+      [
+        "Noah Meyer",
+        "Pedro Alvarez"
+      ],
+      [
+        "Olivia Brown",
+        "Alice Chen"
+      ],
+      [
+        "Olivia Brown",
+        "Chloe Dubois"
+      ],
+      [
+        "Olivia Brown",
+        "Dmitri Volkov"
+      ],
+      [
+        "Olivia Brown",
+        "Isabella Rossi"
+      ],
+      [
+        "Olivia Brown",
+        "Liam O'Brien"
+      ],
+      [
+        "Olivia Brown",
+        "Noah Meyer"
+      ],
+      [
+        "Olivia Brown",
+        "Pedro Alvarez"
+      ],
+      [
+        "Pedro Alvarez",
+        "Alice Chen"
+      ],
+      [
+        "Pedro Alvarez",
+        "Chloe Dubois"
+      ],
+      [
+        "Pedro Alvarez",
+        "Dmitri Volkov"
+      ],
+      [
+        "Pedro Alvarez",
+        "Isabella Rossi"
+      ],
+      [
+        "Pedro Alvarez",
+        "Liam O'Brien"
+      ],
+      [
+        "Pedro Alvarez",
+        "Noah Meyer"
+      ],
+      [
+        "Pedro Alvarez",
+        "Olivia Brown"
+      ]
+    ]
+  },
+  "gm2-p56": {
+    "columns": [
+      "customer_a",
+      "spend_a",
+      "customer_b",
+      "spend_b",
+      "gap"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        7262.35,
+        "Olivia Brown",
+        444.8,
+        6817.55
+      ],
+      [
+        "Alice Chen",
+        7262.35,
+        "Dmitri Volkov",
+        599.26,
+        6663.09
+      ],
+      [
+        "Alice Chen",
+        7262.35,
+        "Liam O'Brien",
+        705.39,
+        6556.96
+      ],
+      [
+        "Alice Chen",
+        7262.35,
+        "Noah Meyer",
+        737.68,
+        6524.67
+      ],
+      [
+        "Alice Chen",
+        7262.35,
+        "Isabella Rossi",
+        985.65,
+        6276.7
+      ],
+      [
+        "Emma Wilson",
+        6640.56,
+        "Jamal Wright",
+        645.6,
+        5994.96
+      ],
+      [
+        "Alice Chen",
+        7262.35,
+        "Pedro Alvarez",
+        1686.17,
+        5576.18
+      ],
+      [
+        "Alice Chen",
+        7262.35,
+        "Chloe Dubois",
+        2667.93,
+        4594.42
+      ],
+      [
+        "Grace Kim",
+        4574.23,
+        "Hiro Tanaka",
+        829.09,
+        3745.14
+      ],
+      [
+        "Grace Kim",
+        4574.23,
+        "Keiko Sato",
+        1098.6,
+        3475.63
+      ],
+      [
+        "Farid Nasser",
+        1458.97,
+        "Grace Kim",
+        4574.23,
+        3115.26
+      ],
+      [
+        "Hiro Tanaka",
+        829.09,
+        "Maya Patel",
+        3644.56,
+        2815.47
+      ],
+      [
+        "Keiko Sato",
+        1098.6,
+        "Maya Patel",
+        3644.56,
+        2545.96
+      ],
+      [
+        "Chloe Dubois",
+        2667.93,
+        "Olivia Brown",
+        444.8,
+        2223.13
+      ],
+      [
+        "Farid Nasser",
+        1458.97,
+        "Maya Patel",
+        3644.56,
+        2185.59
+      ],
+      [
+        "Chloe Dubois",
+        2667.93,
+        "Dmitri Volkov",
+        599.26,
+        2068.67
+      ],
+      [
+        "Chloe Dubois",
+        2667.93,
+        "Liam O'Brien",
+        705.39,
+        1962.54
+      ],
+      [
+        "Chloe Dubois",
+        2667.93,
+        "Noah Meyer",
+        737.68,
+        1930.25
+      ],
+      [
+        "Chloe Dubois",
+        2667.93,
+        "Isabella Rossi",
+        985.65,
+        1682.28
+      ],
+      [
+        "Olivia Brown",
+        444.8,
+        "Pedro Alvarez",
+        1686.17,
+        1241.37
+      ],
+      [
+        "Dmitri Volkov",
+        599.26,
+        "Pedro Alvarez",
+        1686.17,
+        1086.91
+      ]
+    ]
+  },
+  "gm2-p57": {
+    "columns": [
+      "method",
+      "paid_total"
+    ],
+    "rows": [
+      [
+        "card",
+        37364
+      ],
+      [
+        "wire",
+        32248
+      ]
+    ]
+  },
+  "gm2-p58": {
+    "columns": [
+      "order_id",
+      "order_total",
+      "items"
+    ],
+    "rows": [
+      [
+        43,
+        945.21,
+        4
+      ],
+      [
+        39,
+        845.92,
+        4
+      ],
+      [
+        15,
+        826.03,
+        4
+      ],
+      [
+        6,
+        752.96,
+        4
+      ],
+      [
+        20,
+        705.39,
+        4
+      ],
+      [
+        89,
+        684.53,
+        4
+      ],
+      [
+        67,
+        659.7,
+        4
+      ],
+      [
+        32,
+        645.91,
+        4
+      ],
+      [
+        68,
+        625.14,
+        4
+      ],
+      [
+        33,
+        624.66,
+        4
+      ],
+      [
+        64,
+        611.87,
+        4
+      ],
+      [
+        1,
+        576.54,
+        4
+      ],
+      [
+        16,
+        507.24,
+        4
+      ],
+      [
+        60,
+        403.72,
+        4
+      ],
+      [
+        83,
+        397.99,
+        4
+      ],
+      [
+        88,
+        397.91,
+        4
+      ],
+      [
+        36,
+        355.07,
+        4
+      ],
+      [
+        19,
+        317.49,
+        4
+      ],
+      [
+        17,
+        285.1,
+        4
+      ],
+      [
+        11,
+        283.12,
+        4
+      ],
+      [
+        54,
+        273.96,
+        4
+      ],
+      [
+        26,
+        263.91,
+        4
+      ],
+      [
+        92,
+        233.95,
+        4
+      ]
+    ]
+  },
+  "gm2-p59": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Alice Chen"
+      ],
+      [
+        "Bruno Silva"
+      ],
+      [
+        "Chloe Dubois"
+      ],
+      [
+        "Emma Wilson"
+      ],
+      [
+        "Farid Nasser"
+      ],
+      [
+        "Grace Kim"
+      ],
+      [
+        "Hiro Tanaka"
+      ],
+      [
+        "Isabella Rossi"
+      ],
+      [
+        "Keiko Sato"
+      ],
+      [
+        "Liam O'Brien"
+      ],
+      [
+        "Maya Patel"
+      ],
+      [
+        "Noah Meyer"
+      ],
+      [
+        "Pedro Alvarez"
+      ]
+    ]
+  },
+  "gm2-p60": {
+    "columns": [
+      "unpaid_total"
+    ],
+    "rows": [
+      [
+        15217
+      ]
+    ]
+  },
+  "gm2-p61": {
+    "columns": [
+      "population",
+      "row_count"
+    ],
+    "rows": [
+      [
+        "order_stray",
+        89
+      ],
+      [
+        "matched",
+        14
+      ],
+      [
+        "customer_stray",
+        8
+      ]
+    ]
+  },
+  "gm2-p62": {
+    "columns": [
+      "number",
+      "payment_id"
+    ],
+    "rows": [
+      [
+        "INV-2024-001",
+        1
+      ],
+      [
+        "INV-2024-001",
+        2
+      ],
+      [
+        "INV-2024-002",
+        3
+      ],
+      [
+        "INV-2024-003",
+        4
+      ],
+      [
+        "INV-2024-004",
+        5
+      ],
+      [
+        "INV-2024-005",
+        6
+      ],
+      [
+        "INV-2024-005",
+        7
+      ],
+      [
+        "INV-2024-006",
+        8
+      ],
+      [
+        "INV-2024-007",
+        9
+      ],
+      [
+        "INV-2024-008",
+        10
+      ],
+      [
+        "INV-2024-009",
+        11
+      ],
+      [
+        "INV-2024-010",
+        12
+      ],
+      [
+        "INV-2024-011",
+        22
+      ],
+      [
+        "INV-2024-012",
+        13
+      ],
+      [
+        "INV-2024-012",
+        14
+      ],
+      [
+        "INV-2024-013",
+        15
+      ],
+      [
+        "INV-2024-014",
+        16
+      ],
+      [
+        "INV-2024-015",
+        17
+      ],
+      [
+        "INV-2024-016",
+        18
+      ],
+      [
+        "INV-2024-017",
+        23
+      ],
+      [
+        "INV-2024-018",
+        null
+      ],
+      [
+        "INV-2024-019",
+        19
+      ],
+      [
+        "INV-2024-019",
+        20
+      ],
+      [
+        "INV-2024-020",
+        21
+      ],
+      [
+        "INV-2024-021",
+        null
+      ],
+      [
+        "INV-2024-022",
+        24
+      ],
+      [
+        "INV-2024-022",
+        25
+      ],
+      [
+        "INV-2024-023",
+        26
+      ],
+      [
+        "INV-2025-024",
+        null
+      ],
+      [
+        "INV-2025-025",
+        27
+      ],
+      [
+        "INV-2025-026",
+        null
+      ],
+      [
+        "INV-2025-027",
+        null
+      ],
+      [
+        "INV-2025-028",
+        null
+      ]
+    ]
+  },
+  "gm2-p63": {
+    "columns": [
+      "cheaper",
+      "nemesis",
+      "gap"
+    ],
+    "rows": [
+      [
+        "Fitness Band X2",
+        "Smart Watch S",
+        120.99
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Noise-Canceling Headset",
+        90
+      ],
+      [
+        "Ring Light 14\"",
+        "4K Webcam Pro",
+        89.01
+      ],
+      [
+        "Wireless Mouse M3",
+        "Mechanical Keyboard K1",
+        55.49
+      ],
+      [
+        "Running Socks 3-pack",
+        "Cycling Jersey Pro",
+        46.5
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Mechanical Keyboard K1",
+        40.99
+      ],
+      [
+        "Studio Desktop Mic",
+        "Noise-Canceling Headset",
+        30.99
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Laptop Stand Aluminum",
+        27.51
+      ],
+      [
+        "Desk Mat Extended",
+        "Laptop Stand Aluminum",
+        17.51
+      ]
+    ]
+  },
+  "gm2-p64": {
+    "columns": [
+      "from_status",
+      "to_status",
+      "transitions"
+    ],
+    "rows": [
+      [
+        "shipped",
+        "delivered",
+        112
+      ],
+      [
+        "delivered",
+        "shipped",
+        59
+      ],
+      [
+        "pending",
+        "delivered",
+        44
+      ],
+      [
+        "delivered",
+        "pending",
+        36
+      ],
+      [
+        "shipped",
+        "pending",
+        33
+      ],
+      [
+        "cancelled",
+        "delivered",
+        31
+      ],
+      [
+        "pending",
+        "shipped",
+        24
+      ],
+      [
+        "shipped",
+        "cancelled",
+        22
+      ],
+      [
+        "delivered",
+        "cancelled",
+        21
+      ],
+      [
+        "cancelled",
+        "shipped",
+        13
+      ],
+      [
+        "pending",
+        "cancelled",
+        9
+      ],
+      [
+        "cancelled",
+        "pending",
+        8
+      ]
+    ]
+  },
+  "gm2-p65": {
+    "columns": [
+      "order_id",
+      "customer_id",
+      "next_order"
+    ],
+    "rows": [
+      [
+        3,
+        1,
+        7
+      ],
+      [
+        7,
+        1,
+        13
+      ],
+      [
+        13,
+        1,
+        14
+      ],
+      [
+        14,
+        1,
+        19
+      ],
+      [
+        19,
+        1,
+        21
+      ],
+      [
+        21,
+        1,
+        31
+      ],
+      [
+        31,
+        1,
+        32
+      ],
+      [
+        32,
+        1,
+        40
+      ],
+      [
+        40,
+        1,
+        42
+      ],
+      [
+        42,
+        1,
+        48
+      ],
+      [
+        48,
+        1,
+        55
+      ],
+      [
+        55,
+        1,
+        58
+      ],
+      [
+        58,
+        1,
+        63
+      ],
+      [
+        63,
+        1,
+        66
+      ],
+      [
+        66,
+        1,
+        70
+      ],
+      [
+        70,
+        1,
+        79
+      ],
+      [
+        79,
+        1,
+        84
+      ],
+      [
+        84,
+        1,
+        86
+      ],
+      [
+        86,
+        1,
+        89
+      ],
+      [
+        89,
+        1,
+        93
+      ],
+      [
+        93,
+        1,
+        95
+      ],
+      [
+        95,
+        1,
+        100
+      ],
+      [
+        100,
+        1,
+        101
+      ],
+      [
+        6,
+        2,
+        23
+      ],
+      [
+        25,
+        3,
+        27
+      ],
+      [
+        27,
+        3,
+        34
+      ],
+      [
+        34,
+        3,
+        43
+      ],
+      [
+        43,
+        3,
+        67
+      ],
+      [
+        80,
+        4,
+        81
+      ],
+      [
+        5,
+        5,
+        8
+      ],
+      [
+        8,
+        5,
+        16
+      ],
+      [
+        16,
+        5,
+        17
+      ],
+      [
+        17,
+        5,
+        33
+      ],
+      [
+        33,
+        5,
+        37
+      ],
+      [
+        37,
+        5,
+        39
+      ],
+      [
+        39,
+        5,
+        41
+      ],
+      [
+        41,
+        5,
+        53
+      ],
+      [
+        53,
+        5,
+        57
+      ],
+      [
+        57,
+        5,
+        65
+      ],
+      [
+        65,
+        5,
+        72
+      ],
+      [
+        72,
+        5,
+        82
+      ],
+      [
+        82,
+        5,
+        85
+      ],
+      [
+        85,
+        5,
+        90
+      ],
+      [
+        90,
+        5,
+        96
+      ],
+      [
+        96,
+        5,
+        97
+      ],
+      [
+        59,
+        6,
+        74
+      ],
+      [
+        74,
+        6,
+        87
+      ],
+      [
+        9,
+        7,
+        15
+      ],
+      [
+        15,
+        7,
+        18
+      ],
+      [
+        18,
+        7,
+        35
+      ],
+      [
+        35,
+        7,
+        45
+      ],
+      [
+        45,
+        7,
+        46
+      ],
+      [
+        46,
+        7,
+        52
+      ],
+      [
+        52,
+        7,
+        56
+      ],
+      [
+        56,
+        7,
+        61
+      ],
+      [
+        61,
+        7,
+        68
+      ],
+      [
+        68,
+        7,
+        75
+      ],
+      [
+        75,
+        7,
+        76
+      ],
+      [
+        76,
+        7,
+        88
+      ],
+      [
+        88,
+        7,
+        92
+      ],
+      [
+        22,
+        8,
+        26
+      ],
+      [
+        26,
+        8,
+        102
+      ],
+      [
+        29,
+        9,
+        49
+      ],
+      [
+        49,
+        9,
+        78
+      ],
+      [
+        78,
+        9,
+        98
+      ],
+      [
+        28,
+        10,
+        60
+      ],
+      [
+        10,
+        11,
+        73
+      ],
+      [
+        73,
+        11,
+        83
+      ],
+      [
+        83,
+        11,
+        94
+      ],
+      [
+        2,
+        13,
+        4
+      ],
+      [
+        4,
+        13,
+        11
+      ],
+      [
+        11,
+        13,
+        12
+      ],
+      [
+        12,
+        13,
+        24
+      ],
+      [
+        24,
+        13,
+        44
+      ],
+      [
+        44,
+        13,
+        47
+      ],
+      [
+        47,
+        13,
+        50
+      ],
+      [
+        50,
+        13,
+        51
+      ],
+      [
+        51,
+        13,
+        54
+      ],
+      [
+        54,
+        13,
+        64
+      ],
+      [
+        64,
+        13,
+        77
+      ],
+      [
+        77,
+        13,
+        103
+      ],
+      [
+        30,
+        14,
+        38
+      ],
+      [
+        38,
+        14,
+        69
+      ],
+      [
+        69,
+        14,
+        99
+      ],
+      [
+        1,
+        16,
+        36
+      ],
+      [
+        36,
+        16,
+        62
+      ],
+      [
+        62,
+        16,
+        71
+      ]
+    ]
+  },
+  "gm2-p66": {
+    "columns": [
+      "day",
+      "customer_a",
+      "customer_b",
+      "order_a",
+      "order_b"
+    ],
+    "rows": [
+      [
+        "2024-01-02",
+        5,
+        1,
+        5,
+        7
+      ],
+      [
+        "2024-01-15",
+        13,
+        5,
+        2,
+        8
+      ],
+      [
+        "2024-02-13",
+        13,
+        7,
+        11,
+        15
+      ],
+      [
+        "2024-03-06",
+        12,
+        13,
+        20,
+        24
+      ],
+      [
+        "2024-04-26",
+        3,
+        9,
+        27,
+        29
+      ],
+      [
+        "2024-05-12",
+        7,
+        5,
+        35,
+        39
+      ],
+      [
+        "2024-05-12",
+        7,
+        1,
+        35,
+        40
+      ],
+      [
+        "2024-05-12",
+        5,
+        1,
+        39,
+        40
+      ],
+      [
+        "2024-05-14",
+        16,
+        14,
+        36,
+        38
+      ],
+      [
+        "2024-05-19",
+        5,
+        3,
+        33,
+        34
+      ],
+      [
+        "2024-07-19",
+        7,
+        13,
+        52,
+        54
+      ],
+      [
+        "2024-08-23",
+        10,
+        7,
+        60,
+        61
+      ],
+      [
+        "2024-09-07",
+        13,
+        1,
+        64,
+        70
+      ],
+      [
+        "2024-09-09",
+        3,
+        14,
+        67,
+        69
+      ],
+      [
+        "2024-09-21",
+        16,
+        1,
+        62,
+        63
+      ],
+      [
+        "2024-10-04",
+        6,
+        7,
+        74,
+        75
+      ],
+      [
+        "2024-10-13",
+        11,
+        7,
+        73,
+        76
+      ],
+      [
+        "2024-10-13",
+        11,
+        13,
+        73,
+        77
+      ],
+      [
+        "2024-10-13",
+        7,
+        13,
+        76,
+        77
+      ],
+      [
+        "2024-11-04",
+        4,
+        11,
+        81,
+        83
+      ],
+      [
+        "2025-02-12",
+        1,
+        8,
+        101,
+        102
+      ]
+    ]
+  },
+  "gm2-p67": {
+    "columns": [
+      "region",
+      "pairs",
+      "share"
+    ],
+    "rows": [
+      [
+        "EU",
+        28,
+        0.72
+      ],
+      [
+        "APAC",
+        10,
+        0.26
+      ],
+      [
+        "US",
+        1,
+        0.03
+      ]
+    ]
+  },
+  "gm2-p68": {
+    "columns": [
+      "customer_id",
+      "pending_order",
+      "shipped_order",
+      "delivered_order"
+    ],
+    "rows": [
+      [
+        1,
+        19,
+        31,
+        40
+      ],
+      [
+        1,
+        19,
+        31,
+        48
+      ],
+      [
+        1,
+        19,
+        31,
+        55
+      ],
+      [
+        1,
+        19,
+        31,
+        58
+      ],
+      [
+        1,
+        19,
+        31,
+        63
+      ],
+      [
+        1,
+        19,
+        31,
+        66
+      ],
+      [
+        1,
+        19,
+        31,
+        86
+      ],
+      [
+        1,
+        19,
+        31,
+        93
+      ],
+      [
+        1,
+        19,
+        31,
+        100
+      ],
+      [
+        1,
+        19,
+        31,
+        101
+      ],
+      [
+        1,
+        19,
+        32,
+        40
+      ],
+      [
+        1,
+        19,
+        32,
+        48
+      ],
+      [
+        1,
+        19,
+        32,
+        55
+      ],
+      [
+        1,
+        19,
+        32,
+        58
+      ],
+      [
+        1,
+        19,
+        32,
+        63
+      ],
+      [
+        1,
+        19,
+        32,
+        66
+      ],
+      [
+        1,
+        19,
+        32,
+        86
+      ],
+      [
+        1,
+        19,
+        32,
+        93
+      ],
+      [
+        1,
+        19,
+        32,
+        100
+      ],
+      [
+        1,
+        19,
+        32,
+        101
+      ],
+      [
+        1,
+        19,
+        70,
+        86
+      ],
+      [
+        1,
+        19,
+        70,
+        93
+      ],
+      [
+        1,
+        19,
+        70,
+        100
+      ],
+      [
+        1,
+        19,
+        70,
+        101
+      ],
+      [
+        1,
+        19,
+        84,
+        86
+      ],
+      [
+        1,
+        19,
+        84,
+        93
+      ],
+      [
+        1,
+        19,
+        84,
+        100
+      ],
+      [
+        1,
+        19,
+        84,
+        101
+      ],
+      [
+        1,
+        19,
+        89,
+        93
+      ],
+      [
+        1,
+        19,
+        89,
+        100
+      ],
+      [
+        1,
+        19,
+        89,
+        101
+      ],
+      [
+        1,
+        42,
+        70,
+        86
+      ],
+      [
+        1,
+        42,
+        70,
+        93
+      ],
+      [
+        1,
+        42,
+        70,
+        100
+      ],
+      [
+        1,
+        42,
+        70,
+        101
+      ],
+      [
+        1,
+        42,
+        84,
+        86
+      ],
+      [
+        1,
+        42,
+        84,
+        93
+      ],
+      [
+        1,
+        42,
+        84,
+        100
+      ],
+      [
+        1,
+        42,
+        84,
+        101
+      ],
+      [
+        1,
+        42,
+        89,
+        93
+      ],
+      [
+        1,
+        42,
+        89,
+        100
+      ],
+      [
+        1,
+        42,
+        89,
+        101
+      ],
+      [
+        1,
+        79,
+        84,
+        86
+      ],
+      [
+        1,
+        79,
+        84,
+        93
+      ],
+      [
+        1,
+        79,
+        84,
+        100
+      ],
+      [
+        1,
+        79,
+        84,
+        101
+      ],
+      [
+        1,
+        79,
+        89,
+        93
+      ],
+      [
+        1,
+        79,
+        89,
+        100
+      ],
+      [
+        1,
+        79,
+        89,
+        101
+      ],
+      [
+        5,
+        5,
+        8,
+        17
+      ],
+      [
+        5,
+        5,
+        8,
+        33
+      ],
+      [
+        5,
+        5,
+        8,
+        72
+      ],
+      [
+        5,
+        5,
+        8,
+        85
+      ],
+      [
+        5,
+        5,
+        16,
+        17
+      ],
+      [
+        5,
+        5,
+        16,
+        33
+      ],
+      [
+        5,
+        5,
+        16,
+        72
+      ],
+      [
+        5,
+        5,
+        16,
+        85
+      ],
+      [
+        5,
+        5,
+        37,
+        72
+      ],
+      [
+        5,
+        5,
+        37,
+        85
+      ],
+      [
+        5,
+        5,
+        39,
+        72
+      ],
+      [
+        5,
+        5,
+        39,
+        85
+      ],
+      [
+        5,
+        5,
+        41,
+        72
+      ],
+      [
+        5,
+        5,
+        41,
+        85
+      ],
+      [
+        5,
+        5,
+        53,
+        72
+      ],
+      [
+        5,
+        5,
+        53,
+        85
+      ],
+      [
+        5,
+        5,
+        57,
+        72
+      ],
+      [
+        5,
+        5,
+        57,
+        85
+      ],
+      [
+        5,
+        5,
+        65,
+        72
+      ],
+      [
+        5,
+        5,
+        65,
+        85
+      ],
+      [
+        13,
+        12,
+        44,
+        64
+      ],
+      [
+        13,
+        12,
+        44,
+        77
+      ],
+      [
+        13,
+        12,
+        44,
+        103
+      ],
+      [
+        13,
+        12,
+        54,
+        64
+      ],
+      [
+        13,
+        12,
+        54,
+        77
+      ],
+      [
+        13,
+        12,
+        54,
+        103
+      ],
+      [
+        13,
+        47,
+        54,
+        64
+      ],
+      [
+        13,
+        47,
+        54,
+        77
+      ],
+      [
+        13,
+        47,
+        54,
+        103
+      ],
+      [
+        16,
+        1,
+        36,
+        62
+      ],
+      [
+        16,
+        1,
+        36,
+        71
+      ]
+    ]
+  },
+  "gm2-p69": {
+    "columns": [
+      "region",
+      "method",
+      "paid_total"
+    ],
+    "rows": [
+      [
+        "APAC",
+        "wire",
+        14111.5
+      ],
+      [
+        "APAC",
+        "card",
+        6501.5
+      ],
+      [
+        "EU",
+        "card",
+        19124.5
+      ],
+      [
+        "EU",
+        "wire",
+        18136.5
+      ],
+      [
+        "US",
+        "card",
+        11738
+      ]
+    ]
+  },
+  "gm2-p70": {
+    "columns": [
+      "yy",
+      "half",
+      "unpaid"
+    ],
+    "rows": [
+      [
+        "2024",
+        "H2",
+        2
+      ],
+      [
+        "2025",
+        "H1",
+        4
+      ]
+    ]
+  },
+  "gm2-p71": {
+    "columns": [
+      "supplier_id",
+      "switch_opportunities",
+      "total_gap"
+    ],
+    "rows": [
+      [
+        2,
+        4,
+        205.5
+      ],
+      [
+        3,
+        3,
+        78.5
+      ],
+      [
+        6,
+        3,
+        270
+      ],
+      [
+        5,
+        2,
+        48.5
+      ]
+    ]
+  },
+  "gm2-p72": {
+    "columns": [
+      "grid_rows",
+      "unordered_pairs",
+      "same_category_pairs",
+      "same_supplier_pairs"
+    ],
+    "rows": [
+      [
+        256,
+        120,
+        12,
+        14
+      ]
+    ]
+  },
+  "gm2-p73": {
+    "columns": [
+      "name",
+      "price",
+      "band"
+    ],
+    "rows": [
+      [
+        "HDMI 2.1 Cable 2m",
+        14.99,
+        "entry"
+      ],
+      [
+        "Running Socks 3-pack",
+        18.5,
+        "entry"
+      ],
+      [
+        "Desk Mat Extended",
+        24.99,
+        "entry"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        32,
+        "core"
+      ],
+      [
+        "Wireless Mouse M3",
+        34.5,
+        "core"
+      ],
+      [
+        "Ring Light 14\"",
+        39.99,
+        "core"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        42.5,
+        "core"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        49,
+        "core"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        59.99,
+        "core"
+      ],
+      [
+        "Cycling Jersey Pro",
+        65,
+        "pro"
+      ],
+      [
+        "Fitness Band X2",
+        79,
+        "pro"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        89.99,
+        "pro"
+      ],
+      [
+        "Studio Desktop Mic",
+        119,
+        "pro"
+      ],
+      [
+        "4K Webcam Pro",
+        129,
+        "elite"
+      ],
+      [
+        "Noise-Canceling Headset",
+        149.99,
+        "elite"
+      ],
+      [
+        "Smart Watch S",
+        199.99,
+        "elite"
+      ]
+    ]
+  },
+  "gm2-p74": {
+    "columns": [
+      "low_claims",
+      "high_claims",
+      "both_claims"
+    ],
+    "rows": [
+      [
+        12,
+        7,
+        4
+      ]
+    ]
+  },
+  "gm2-p75": {
+    "columns": [],
+    "rows": []
+  },
+  "gm2-p76": {
+    "columns": [
+      "payment_count",
+      "invoices"
+    ],
+    "rows": [
+      [
+        0,
+        6
+      ],
+      [
+        1,
+        17
+      ],
+      [
+        2,
+        5
+      ]
+    ]
+  },
+  "gm2-p77": {
+    "columns": [
+      "name",
+      "invoices",
+      "payment_rows"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        5,
+        9
+      ],
+      [
+        "Maya Patel",
+        4,
+        5
+      ],
+      [
+        "Emma Wilson",
+        4,
+        3
+      ],
+      [
+        "Grace Kim",
+        3,
+        3
+      ],
+      [
+        "Isabella Rossi",
+        3,
+        2
+      ],
+      [
+        "Jamal Wright",
+        2,
+        2
+      ],
+      [
+        "Olivia Brown",
+        2,
+        2
+      ],
+      [
+        "Liam O'Brien",
+        2,
+        1
+      ],
+      [
+        "Chloe Dubois",
+        1,
+        0
+      ],
+      [
+        "Hiro Tanaka",
+        1,
+        0
+      ],
+      [
+        "Pedro Alvarez",
+        1,
+        0
+      ]
+    ]
+  },
+  "gm2-p78": {
+    "columns": [
+      "region",
+      "unpaid"
+    ],
+    "rows": [
+      [
+        "EU",
+        4
+      ],
+      [
+        "APAC",
+        1
+      ],
+      [
+        "US",
+        1
+      ]
+    ]
+  },
+  "gm2-p79": {
+    "columns": [
+      "name",
+      "orders",
+      "revenue",
+      "line_items"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        24,
+        7262.35,
+        50
+      ],
+      [
+        "Emma Wilson",
+        17,
+        6640.56,
+        46
+      ],
+      [
+        "Grace Kim",
+        14,
+        4574.23,
+        34
+      ],
+      [
+        "Maya Patel",
+        13,
+        3644.56,
+        30
+      ],
+      [
+        "Chloe Dubois",
+        5,
+        2667.93,
+        14
+      ],
+      [
+        "Pedro Alvarez",
+        4,
+        1686.17,
+        13
+      ],
+      [
+        "Farid Nasser",
+        3,
+        1458.97,
+        6
+      ],
+      [
+        "Keiko Sato",
+        4,
+        1098.6,
+        10
+      ],
+      [
+        "Isabella Rossi",
+        4,
+        985.65,
+        8
+      ],
+      [
+        "Bruno Silva",
+        2,
+        852.44,
+        5
+      ],
+      [
+        "Hiro Tanaka",
+        3,
+        829.09,
+        8
+      ],
+      [
+        "Noah Meyer",
+        4,
+        737.68,
+        8
+      ],
+      [
+        "Liam O'Brien",
+        1,
+        705.39,
+        4
+      ],
+      [
+        "Jamal Wright",
+        2,
+        645.6,
+        7
+      ],
+      [
+        "Dmitri Volkov",
+        2,
+        599.26,
+        5
+      ],
+      [
+        "Olivia Brown",
+        1,
+        444.8,
+        3
+      ]
+    ]
+  },
+  "gm2-p80": {
+    "columns": [
+      "product",
+      "customer_a",
+      "customer_b"
+    ],
+    "rows": [
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Jamal Wright"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Jamal Wright"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Jamal Wright"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Jamal Wright"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Olivia Brown"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Olivia Brown"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Olivia Brown"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Olivia Brown"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "4K Webcam Pro",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "4K Webcam Pro",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "4K Webcam Pro",
+        "Chloe Dubois",
+        "Hiro Tanaka"
+      ],
+      [
+        "4K Webcam Pro",
+        "Chloe Dubois",
+        "Hiro Tanaka"
+      ],
+      [
+        "4K Webcam Pro",
+        "Chloe Dubois",
+        "Jamal Wright"
+      ],
+      [
+        "4K Webcam Pro",
+        "Chloe Dubois",
+        "Jamal Wright"
+      ],
+      [
+        "4K Webcam Pro",
+        "Chloe Dubois",
+        "Keiko Sato"
+      ],
+      [
+        "4K Webcam Pro",
+        "Chloe Dubois",
+        "Keiko Sato"
+      ],
+      [
+        "4K Webcam Pro",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "4K Webcam Pro",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "4K Webcam Pro",
+        "Chloe Dubois",
+        "Olivia Brown"
+      ],
+      [
+        "4K Webcam Pro",
+        "Chloe Dubois",
+        "Olivia Brown"
+      ],
+      [
+        "4K Webcam Pro",
+        "Chloe Dubois",
+        "Pedro Alvarez"
+      ],
+      [
+        "4K Webcam Pro",
+        "Chloe Dubois",
+        "Pedro Alvarez"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Keiko Sato"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Keiko Sato"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Keiko Sato"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Keiko Sato"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Keiko Sato"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Olivia Brown"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Olivia Brown"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Olivia Brown"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Olivia Brown"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Olivia Brown"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "4K Webcam Pro",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "4K Webcam Pro",
+        "Hiro Tanaka",
+        "Jamal Wright"
+      ],
+      [
+        "4K Webcam Pro",
+        "Hiro Tanaka",
+        "Keiko Sato"
+      ],
+      [
+        "4K Webcam Pro",
+        "Hiro Tanaka",
+        "Maya Patel"
+      ],
+      [
+        "4K Webcam Pro",
+        "Hiro Tanaka",
+        "Olivia Brown"
+      ],
+      [
+        "4K Webcam Pro",
+        "Hiro Tanaka",
+        "Pedro Alvarez"
+      ],
+      [
+        "4K Webcam Pro",
+        "Jamal Wright",
+        "Keiko Sato"
+      ],
+      [
+        "4K Webcam Pro",
+        "Jamal Wright",
+        "Maya Patel"
+      ],
+      [
+        "4K Webcam Pro",
+        "Jamal Wright",
+        "Olivia Brown"
+      ],
+      [
+        "4K Webcam Pro",
+        "Jamal Wright",
+        "Pedro Alvarez"
+      ],
+      [
+        "4K Webcam Pro",
+        "Keiko Sato",
+        "Maya Patel"
+      ],
+      [
+        "4K Webcam Pro",
+        "Keiko Sato",
+        "Olivia Brown"
+      ],
+      [
+        "4K Webcam Pro",
+        "Keiko Sato",
+        "Pedro Alvarez"
+      ],
+      [
+        "4K Webcam Pro",
+        "Maya Patel",
+        "Olivia Brown"
+      ],
+      [
+        "4K Webcam Pro",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "4K Webcam Pro",
+        "Olivia Brown",
+        "Pedro Alvarez"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Alice Chen",
+        "Liam O'Brien"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Alice Chen",
+        "Liam O'Brien"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Chloe Dubois",
+        "Liam O'Brien"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Chloe Dubois",
+        "Noah Meyer"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Chloe Dubois",
+        "Pedro Alvarez"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Emma Wilson",
+        "Liam O'Brien"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Emma Wilson",
+        "Liam O'Brien"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Grace Kim",
+        "Liam O'Brien"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Grace Kim",
+        "Noah Meyer"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Liam O'Brien",
+        "Maya Patel"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Liam O'Brien",
+        "Maya Patel"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Liam O'Brien",
+        "Noah Meyer"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Liam O'Brien",
+        "Pedro Alvarez"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Maya Patel",
+        "Noah Meyer"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Maya Patel",
+        "Noah Meyer"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Noah Meyer",
+        "Pedro Alvarez"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Dmitri Volkov",
+        "Emma Wilson"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Dmitri Volkov",
+        "Emma Wilson"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Dmitri Volkov",
+        "Emma Wilson"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Dmitri Volkov",
+        "Grace Kim"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Dmitri Volkov",
+        "Grace Kim"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Dmitri Volkov",
+        "Grace Kim"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Dmitri Volkov",
+        "Isabella Rossi"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Dmitri Volkov",
+        "Keiko Sato"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Dmitri Volkov",
+        "Keiko Sato"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Emma Wilson",
+        "Isabella Rossi"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Emma Wilson",
+        "Isabella Rossi"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Emma Wilson",
+        "Isabella Rossi"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Emma Wilson",
+        "Keiko Sato"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Emma Wilson",
+        "Keiko Sato"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Emma Wilson",
+        "Keiko Sato"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Emma Wilson",
+        "Keiko Sato"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Emma Wilson",
+        "Keiko Sato"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Emma Wilson",
+        "Keiko Sato"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Grace Kim",
+        "Isabella Rossi"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Grace Kim",
+        "Isabella Rossi"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Grace Kim",
+        "Isabella Rossi"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Isabella Rossi",
+        "Keiko Sato"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Isabella Rossi",
+        "Keiko Sato"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Bruno Silva"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Bruno Silva"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Bruno Silva"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Bruno Silva"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Liam O'Brien"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Liam O'Brien"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Liam O'Brien"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Liam O'Brien"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Desk Mat Extended",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Desk Mat Extended",
+        "Bruno Silva",
+        "Emma Wilson"
+      ],
+      [
+        "Desk Mat Extended",
+        "Bruno Silva",
+        "Emma Wilson"
+      ],
+      [
+        "Desk Mat Extended",
+        "Bruno Silva",
+        "Emma Wilson"
+      ],
+      [
+        "Desk Mat Extended",
+        "Bruno Silva",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Bruno Silva",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Bruno Silva",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Bruno Silva",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Bruno Silva",
+        "Hiro Tanaka"
+      ],
+      [
+        "Desk Mat Extended",
+        "Bruno Silva",
+        "Hiro Tanaka"
+      ],
+      [
+        "Desk Mat Extended",
+        "Bruno Silva",
+        "Isabella Rossi"
+      ],
+      [
+        "Desk Mat Extended",
+        "Bruno Silva",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Bruno Silva",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Bruno Silva",
+        "Keiko Sato"
+      ],
+      [
+        "Desk Mat Extended",
+        "Bruno Silva",
+        "Liam O'Brien"
+      ],
+      [
+        "Desk Mat Extended",
+        "Bruno Silva",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Bruno Silva",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Bruno Silva",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Bruno Silva",
+        "Noah Meyer"
+      ],
+      [
+        "Desk Mat Extended",
+        "Bruno Silva",
+        "Pedro Alvarez"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Isabella Rossi"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Isabella Rossi"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Isabella Rossi"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Keiko Sato"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Keiko Sato"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Keiko Sato"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Liam O'Brien"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Liam O'Brien"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Liam O'Brien"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "Desk Mat Extended",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Isabella Rossi"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Isabella Rossi"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Isabella Rossi"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Isabella Rossi"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Liam O'Brien"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Liam O'Brien"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Liam O'Brien"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Liam O'Brien"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Noah Meyer"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Noah Meyer"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Noah Meyer"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Noah Meyer"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "Desk Mat Extended",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "Desk Mat Extended",
+        "Hiro Tanaka",
+        "Isabella Rossi"
+      ],
+      [
+        "Desk Mat Extended",
+        "Hiro Tanaka",
+        "Isabella Rossi"
+      ],
+      [
+        "Desk Mat Extended",
+        "Hiro Tanaka",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Hiro Tanaka",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Hiro Tanaka",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Hiro Tanaka",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Hiro Tanaka",
+        "Keiko Sato"
+      ],
+      [
+        "Desk Mat Extended",
+        "Hiro Tanaka",
+        "Keiko Sato"
+      ],
+      [
+        "Desk Mat Extended",
+        "Hiro Tanaka",
+        "Liam O'Brien"
+      ],
+      [
+        "Desk Mat Extended",
+        "Hiro Tanaka",
+        "Liam O'Brien"
+      ],
+      [
+        "Desk Mat Extended",
+        "Hiro Tanaka",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Hiro Tanaka",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Hiro Tanaka",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Hiro Tanaka",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Hiro Tanaka",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Hiro Tanaka",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Hiro Tanaka",
+        "Noah Meyer"
+      ],
+      [
+        "Desk Mat Extended",
+        "Hiro Tanaka",
+        "Noah Meyer"
+      ],
+      [
+        "Desk Mat Extended",
+        "Hiro Tanaka",
+        "Pedro Alvarez"
+      ],
+      [
+        "Desk Mat Extended",
+        "Hiro Tanaka",
+        "Pedro Alvarez"
+      ],
+      [
+        "Desk Mat Extended",
+        "Isabella Rossi",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Isabella Rossi",
+        "Jamal Wright"
+      ],
+      [
+        "Desk Mat Extended",
+        "Isabella Rossi",
+        "Keiko Sato"
+      ],
+      [
+        "Desk Mat Extended",
+        "Isabella Rossi",
+        "Liam O'Brien"
+      ],
+      [
+        "Desk Mat Extended",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Isabella Rossi",
+        "Noah Meyer"
+      ],
+      [
+        "Desk Mat Extended",
+        "Isabella Rossi",
+        "Pedro Alvarez"
+      ],
+      [
+        "Desk Mat Extended",
+        "Jamal Wright",
+        "Keiko Sato"
+      ],
+      [
+        "Desk Mat Extended",
+        "Jamal Wright",
+        "Keiko Sato"
+      ],
+      [
+        "Desk Mat Extended",
+        "Jamal Wright",
+        "Liam O'Brien"
+      ],
+      [
+        "Desk Mat Extended",
+        "Jamal Wright",
+        "Liam O'Brien"
+      ],
+      [
+        "Desk Mat Extended",
+        "Jamal Wright",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Jamal Wright",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Jamal Wright",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Jamal Wright",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Jamal Wright",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Jamal Wright",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Jamal Wright",
+        "Noah Meyer"
+      ],
+      [
+        "Desk Mat Extended",
+        "Jamal Wright",
+        "Noah Meyer"
+      ],
+      [
+        "Desk Mat Extended",
+        "Jamal Wright",
+        "Pedro Alvarez"
+      ],
+      [
+        "Desk Mat Extended",
+        "Jamal Wright",
+        "Pedro Alvarez"
+      ],
+      [
+        "Desk Mat Extended",
+        "Keiko Sato",
+        "Liam O'Brien"
+      ],
+      [
+        "Desk Mat Extended",
+        "Keiko Sato",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Keiko Sato",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Keiko Sato",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Keiko Sato",
+        "Noah Meyer"
+      ],
+      [
+        "Desk Mat Extended",
+        "Keiko Sato",
+        "Pedro Alvarez"
+      ],
+      [
+        "Desk Mat Extended",
+        "Liam O'Brien",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Liam O'Brien",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Liam O'Brien",
+        "Maya Patel"
+      ],
+      [
+        "Desk Mat Extended",
+        "Liam O'Brien",
+        "Noah Meyer"
+      ],
+      [
+        "Desk Mat Extended",
+        "Liam O'Brien",
+        "Pedro Alvarez"
+      ],
+      [
+        "Desk Mat Extended",
+        "Maya Patel",
+        "Noah Meyer"
+      ],
+      [
+        "Desk Mat Extended",
+        "Maya Patel",
+        "Noah Meyer"
+      ],
+      [
+        "Desk Mat Extended",
+        "Maya Patel",
+        "Noah Meyer"
+      ],
+      [
+        "Desk Mat Extended",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "Desk Mat Extended",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "Desk Mat Extended",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "Desk Mat Extended",
+        "Noah Meyer",
+        "Pedro Alvarez"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Jamal Wright"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Jamal Wright"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Jamal Wright"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Jamal Wright"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Fitness Band X2",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Fitness Band X2",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Fitness Band X2",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Fitness Band X2",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Fitness Band X2",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Fitness Band X2",
+        "Chloe Dubois",
+        "Jamal Wright"
+      ],
+      [
+        "Fitness Band X2",
+        "Chloe Dubois",
+        "Keiko Sato"
+      ],
+      [
+        "Fitness Band X2",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Fitness Band X2",
+        "Chloe Dubois",
+        "Noah Meyer"
+      ],
+      [
+        "Fitness Band X2",
+        "Chloe Dubois",
+        "Noah Meyer"
+      ],
+      [
+        "Fitness Band X2",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Fitness Band X2",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Fitness Band X2",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Fitness Band X2",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Fitness Band X2",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "Fitness Band X2",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "Fitness Band X2",
+        "Emma Wilson",
+        "Keiko Sato"
+      ],
+      [
+        "Fitness Band X2",
+        "Emma Wilson",
+        "Keiko Sato"
+      ],
+      [
+        "Fitness Band X2",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Fitness Band X2",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Fitness Band X2",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Fitness Band X2",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Fitness Band X2",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Fitness Band X2",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Fitness Band X2",
+        "Grace Kim",
+        "Jamal Wright"
+      ],
+      [
+        "Fitness Band X2",
+        "Grace Kim",
+        "Jamal Wright"
+      ],
+      [
+        "Fitness Band X2",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "Fitness Band X2",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "Fitness Band X2",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Fitness Band X2",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Fitness Band X2",
+        "Grace Kim",
+        "Noah Meyer"
+      ],
+      [
+        "Fitness Band X2",
+        "Grace Kim",
+        "Noah Meyer"
+      ],
+      [
+        "Fitness Band X2",
+        "Grace Kim",
+        "Noah Meyer"
+      ],
+      [
+        "Fitness Band X2",
+        "Grace Kim",
+        "Noah Meyer"
+      ],
+      [
+        "Fitness Band X2",
+        "Jamal Wright",
+        "Keiko Sato"
+      ],
+      [
+        "Fitness Band X2",
+        "Jamal Wright",
+        "Maya Patel"
+      ],
+      [
+        "Fitness Band X2",
+        "Jamal Wright",
+        "Noah Meyer"
+      ],
+      [
+        "Fitness Band X2",
+        "Jamal Wright",
+        "Noah Meyer"
+      ],
+      [
+        "Fitness Band X2",
+        "Keiko Sato",
+        "Maya Patel"
+      ],
+      [
+        "Fitness Band X2",
+        "Keiko Sato",
+        "Noah Meyer"
+      ],
+      [
+        "Fitness Band X2",
+        "Keiko Sato",
+        "Noah Meyer"
+      ],
+      [
+        "Fitness Band X2",
+        "Maya Patel",
+        "Noah Meyer"
+      ],
+      [
+        "Fitness Band X2",
+        "Maya Patel",
+        "Noah Meyer"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Liam O'Brien"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Liam O'Brien"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Liam O'Brien"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Liam O'Brien"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Chloe Dubois",
+        "Hiro Tanaka"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Chloe Dubois",
+        "Isabella Rossi"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Chloe Dubois",
+        "Liam O'Brien"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Chloe Dubois",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Chloe Dubois",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Isabella Rossi"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Isabella Rossi"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Isabella Rossi"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Isabella Rossi"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Liam O'Brien"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Liam O'Brien"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Liam O'Brien"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Liam O'Brien"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Grace Kim",
+        "Isabella Rossi"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Grace Kim",
+        "Isabella Rossi"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Grace Kim",
+        "Isabella Rossi"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Grace Kim",
+        "Liam O'Brien"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Grace Kim",
+        "Liam O'Brien"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Grace Kim",
+        "Liam O'Brien"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Hiro Tanaka",
+        "Isabella Rossi"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Hiro Tanaka",
+        "Liam O'Brien"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Hiro Tanaka",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Hiro Tanaka",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Hiro Tanaka",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Hiro Tanaka",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Isabella Rossi",
+        "Liam O'Brien"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Isabella Rossi",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Isabella Rossi",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Liam O'Brien",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Liam O'Brien",
+        "Maya Patel"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Liam O'Brien",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Liam O'Brien",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Farid Nasser"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Farid Nasser"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Farid Nasser"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Farid Nasser"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Farid Nasser"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Farid Nasser"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Chloe Dubois",
+        "Farid Nasser"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Chloe Dubois",
+        "Farid Nasser"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Chloe Dubois",
+        "Isabella Rossi"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Chloe Dubois",
+        "Keiko Sato"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Chloe Dubois",
+        "Keiko Sato"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Chloe Dubois",
+        "Noah Meyer"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Chloe Dubois",
+        "Pedro Alvarez"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Farid Nasser"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Farid Nasser"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Farid Nasser"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Farid Nasser"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Farid Nasser"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Farid Nasser"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Isabella Rossi"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Isabella Rossi"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Isabella Rossi"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Keiko Sato"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Keiko Sato"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Keiko Sato"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Keiko Sato"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Keiko Sato"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Keiko Sato"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Farid Nasser",
+        "Grace Kim"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Farid Nasser",
+        "Grace Kim"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Farid Nasser",
+        "Isabella Rossi"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Farid Nasser",
+        "Isabella Rossi"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Farid Nasser",
+        "Keiko Sato"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Farid Nasser",
+        "Keiko Sato"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Farid Nasser",
+        "Keiko Sato"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Farid Nasser",
+        "Keiko Sato"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Farid Nasser",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Farid Nasser",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Farid Nasser",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Farid Nasser",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Farid Nasser",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Farid Nasser",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Farid Nasser",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Farid Nasser",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Farid Nasser",
+        "Noah Meyer"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Farid Nasser",
+        "Noah Meyer"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Farid Nasser",
+        "Pedro Alvarez"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Farid Nasser",
+        "Pedro Alvarez"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Grace Kim",
+        "Isabella Rossi"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Grace Kim",
+        "Noah Meyer"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Isabella Rossi",
+        "Keiko Sato"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Isabella Rossi",
+        "Keiko Sato"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Isabella Rossi",
+        "Noah Meyer"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Isabella Rossi",
+        "Pedro Alvarez"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Keiko Sato",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Keiko Sato",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Keiko Sato",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Keiko Sato",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Keiko Sato",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Keiko Sato",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Keiko Sato",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Keiko Sato",
+        "Maya Patel"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Keiko Sato",
+        "Noah Meyer"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Keiko Sato",
+        "Noah Meyer"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Keiko Sato",
+        "Pedro Alvarez"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Keiko Sato",
+        "Pedro Alvarez"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Maya Patel",
+        "Noah Meyer"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Maya Patel",
+        "Noah Meyer"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Maya Patel",
+        "Noah Meyer"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Maya Patel",
+        "Noah Meyer"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Noah Meyer",
+        "Pedro Alvarez"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Bruno Silva"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Bruno Silva"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Bruno Silva"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Bruno Silva"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Bruno Silva"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Dmitri Volkov"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Dmitri Volkov"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Dmitri Volkov"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Dmitri Volkov"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Dmitri Volkov"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Farid Nasser"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Farid Nasser"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Farid Nasser"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Farid Nasser"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Farid Nasser"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Bruno Silva",
+        "Chloe Dubois"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Bruno Silva",
+        "Dmitri Volkov"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Bruno Silva",
+        "Emma Wilson"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Bruno Silva",
+        "Emma Wilson"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Bruno Silva",
+        "Farid Nasser"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Bruno Silva",
+        "Grace Kim"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Bruno Silva",
+        "Grace Kim"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Bruno Silva",
+        "Hiro Tanaka"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Bruno Silva",
+        "Maya Patel"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Chloe Dubois",
+        "Dmitri Volkov"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Chloe Dubois",
+        "Farid Nasser"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Chloe Dubois",
+        "Hiro Tanaka"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Dmitri Volkov",
+        "Emma Wilson"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Dmitri Volkov",
+        "Emma Wilson"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Dmitri Volkov",
+        "Farid Nasser"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Dmitri Volkov",
+        "Grace Kim"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Dmitri Volkov",
+        "Grace Kim"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Dmitri Volkov",
+        "Hiro Tanaka"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Dmitri Volkov",
+        "Maya Patel"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Emma Wilson",
+        "Farid Nasser"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Emma Wilson",
+        "Farid Nasser"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Farid Nasser",
+        "Grace Kim"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Farid Nasser",
+        "Grace Kim"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Farid Nasser",
+        "Hiro Tanaka"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Farid Nasser",
+        "Maya Patel"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Hiro Tanaka",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Farid Nasser"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Farid Nasser"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Farid Nasser"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Farid Nasser"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Farid Nasser"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Farid Nasser"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Farid Nasser"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Farid Nasser"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Hiro Tanaka"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Hiro Tanaka"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Hiro Tanaka"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Pedro Alvarez"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Pedro Alvarez"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Chloe Dubois",
+        "Pedro Alvarez"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Farid Nasser"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Farid Nasser"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Farid Nasser"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Farid Nasser",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Farid Nasser",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Farid Nasser",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Farid Nasser",
+        "Grace Kim"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Farid Nasser",
+        "Hiro Tanaka"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Farid Nasser",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Farid Nasser",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Farid Nasser",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Farid Nasser",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Farid Nasser",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Farid Nasser",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Farid Nasser",
+        "Pedro Alvarez"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Hiro Tanaka",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Hiro Tanaka",
+        "Isabella Rossi"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Hiro Tanaka",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Hiro Tanaka",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Hiro Tanaka",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Hiro Tanaka",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Hiro Tanaka",
+        "Pedro Alvarez"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Isabella Rossi",
+        "Pedro Alvarez"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Isabella Rossi",
+        "Pedro Alvarez"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Dmitri Volkov"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Dmitri Volkov"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Jamal Wright"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Jamal Wright"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Jamal Wright"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Jamal Wright"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Ring Light 14\"",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Ring Light 14\"",
+        "Chloe Dubois",
+        "Dmitri Volkov"
+      ],
+      [
+        "Ring Light 14\"",
+        "Chloe Dubois",
+        "Dmitri Volkov"
+      ],
+      [
+        "Ring Light 14\"",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Ring Light 14\"",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Ring Light 14\"",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Ring Light 14\"",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Ring Light 14\"",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Ring Light 14\"",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Ring Light 14\"",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Ring Light 14\"",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Ring Light 14\"",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Ring Light 14\"",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Ring Light 14\"",
+        "Chloe Dubois",
+        "Jamal Wright"
+      ],
+      [
+        "Ring Light 14\"",
+        "Chloe Dubois",
+        "Jamal Wright"
+      ],
+      [
+        "Ring Light 14\"",
+        "Chloe Dubois",
+        "Jamal Wright"
+      ],
+      [
+        "Ring Light 14\"",
+        "Chloe Dubois",
+        "Jamal Wright"
+      ],
+      [
+        "Ring Light 14\"",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Ring Light 14\"",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Ring Light 14\"",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Ring Light 14\"",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Ring Light 14\"",
+        "Chloe Dubois",
+        "Pedro Alvarez"
+      ],
+      [
+        "Ring Light 14\"",
+        "Chloe Dubois",
+        "Pedro Alvarez"
+      ],
+      [
+        "Ring Light 14\"",
+        "Dmitri Volkov",
+        "Emma Wilson"
+      ],
+      [
+        "Ring Light 14\"",
+        "Dmitri Volkov",
+        "Emma Wilson"
+      ],
+      [
+        "Ring Light 14\"",
+        "Dmitri Volkov",
+        "Emma Wilson"
+      ],
+      [
+        "Ring Light 14\"",
+        "Dmitri Volkov",
+        "Emma Wilson"
+      ],
+      [
+        "Ring Light 14\"",
+        "Dmitri Volkov",
+        "Grace Kim"
+      ],
+      [
+        "Ring Light 14\"",
+        "Dmitri Volkov",
+        "Jamal Wright"
+      ],
+      [
+        "Ring Light 14\"",
+        "Dmitri Volkov",
+        "Jamal Wright"
+      ],
+      [
+        "Ring Light 14\"",
+        "Dmitri Volkov",
+        "Maya Patel"
+      ],
+      [
+        "Ring Light 14\"",
+        "Dmitri Volkov",
+        "Maya Patel"
+      ],
+      [
+        "Ring Light 14\"",
+        "Dmitri Volkov",
+        "Pedro Alvarez"
+      ],
+      [
+        "Ring Light 14\"",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Ring Light 14\"",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Ring Light 14\"",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Ring Light 14\"",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Ring Light 14\"",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "Ring Light 14\"",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "Ring Light 14\"",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "Ring Light 14\"",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "Ring Light 14\"",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "Ring Light 14\"",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "Ring Light 14\"",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "Ring Light 14\"",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "Ring Light 14\"",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Ring Light 14\"",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Ring Light 14\"",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Ring Light 14\"",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Ring Light 14\"",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Ring Light 14\"",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Ring Light 14\"",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Ring Light 14\"",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Ring Light 14\"",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "Ring Light 14\"",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "Ring Light 14\"",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "Ring Light 14\"",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "Ring Light 14\"",
+        "Grace Kim",
+        "Jamal Wright"
+      ],
+      [
+        "Ring Light 14\"",
+        "Grace Kim",
+        "Jamal Wright"
+      ],
+      [
+        "Ring Light 14\"",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Ring Light 14\"",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Ring Light 14\"",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "Ring Light 14\"",
+        "Jamal Wright",
+        "Maya Patel"
+      ],
+      [
+        "Ring Light 14\"",
+        "Jamal Wright",
+        "Maya Patel"
+      ],
+      [
+        "Ring Light 14\"",
+        "Jamal Wright",
+        "Maya Patel"
+      ],
+      [
+        "Ring Light 14\"",
+        "Jamal Wright",
+        "Maya Patel"
+      ],
+      [
+        "Ring Light 14\"",
+        "Jamal Wright",
+        "Pedro Alvarez"
+      ],
+      [
+        "Ring Light 14\"",
+        "Jamal Wright",
+        "Pedro Alvarez"
+      ],
+      [
+        "Ring Light 14\"",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "Ring Light 14\"",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Dmitri Volkov"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Dmitri Volkov"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Dmitri Volkov"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Jamal Wright"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Jamal Wright"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Jamal Wright"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Dmitri Volkov",
+        "Emma Wilson"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Dmitri Volkov",
+        "Emma Wilson"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Dmitri Volkov",
+        "Emma Wilson"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Dmitri Volkov",
+        "Emma Wilson"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Dmitri Volkov",
+        "Grace Kim"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Dmitri Volkov",
+        "Grace Kim"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Dmitri Volkov",
+        "Hiro Tanaka"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Dmitri Volkov",
+        "Jamal Wright"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Dmitri Volkov",
+        "Maya Patel"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Dmitri Volkov",
+        "Noah Meyer"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Emma Wilson",
+        "Jamal Wright"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Grace Kim",
+        "Jamal Wright"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Grace Kim",
+        "Jamal Wright"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Grace Kim",
+        "Noah Meyer"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Grace Kim",
+        "Noah Meyer"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Hiro Tanaka",
+        "Jamal Wright"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Hiro Tanaka",
+        "Maya Patel"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Hiro Tanaka",
+        "Noah Meyer"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Jamal Wright",
+        "Maya Patel"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Jamal Wright",
+        "Noah Meyer"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Maya Patel",
+        "Noah Meyer"
+      ],
+      [
+        "Smart Watch S",
+        "Alice Chen",
+        "Dmitri Volkov"
+      ],
+      [
+        "Smart Watch S",
+        "Alice Chen",
+        "Dmitri Volkov"
+      ],
+      [
+        "Smart Watch S",
+        "Alice Chen",
+        "Dmitri Volkov"
+      ],
+      [
+        "Smart Watch S",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Smart Watch S",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Smart Watch S",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Smart Watch S",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Smart Watch S",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Smart Watch S",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Smart Watch S",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Smart Watch S",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Smart Watch S",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Smart Watch S",
+        "Alice Chen",
+        "Farid Nasser"
+      ],
+      [
+        "Smart Watch S",
+        "Alice Chen",
+        "Farid Nasser"
+      ],
+      [
+        "Smart Watch S",
+        "Alice Chen",
+        "Farid Nasser"
+      ],
+      [
+        "Smart Watch S",
+        "Alice Chen",
+        "Liam O'Brien"
+      ],
+      [
+        "Smart Watch S",
+        "Alice Chen",
+        "Liam O'Brien"
+      ],
+      [
+        "Smart Watch S",
+        "Alice Chen",
+        "Liam O'Brien"
+      ],
+      [
+        "Smart Watch S",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Smart Watch S",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Smart Watch S",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Smart Watch S",
+        "Alice Chen",
+        "Olivia Brown"
+      ],
+      [
+        "Smart Watch S",
+        "Alice Chen",
+        "Olivia Brown"
+      ],
+      [
+        "Smart Watch S",
+        "Alice Chen",
+        "Olivia Brown"
+      ],
+      [
+        "Smart Watch S",
+        "Dmitri Volkov",
+        "Emma Wilson"
+      ],
+      [
+        "Smart Watch S",
+        "Dmitri Volkov",
+        "Emma Wilson"
+      ],
+      [
+        "Smart Watch S",
+        "Dmitri Volkov",
+        "Emma Wilson"
+      ],
+      [
+        "Smart Watch S",
+        "Dmitri Volkov",
+        "Farid Nasser"
+      ],
+      [
+        "Smart Watch S",
+        "Dmitri Volkov",
+        "Liam O'Brien"
+      ],
+      [
+        "Smart Watch S",
+        "Dmitri Volkov",
+        "Noah Meyer"
+      ],
+      [
+        "Smart Watch S",
+        "Dmitri Volkov",
+        "Olivia Brown"
+      ],
+      [
+        "Smart Watch S",
+        "Emma Wilson",
+        "Farid Nasser"
+      ],
+      [
+        "Smart Watch S",
+        "Emma Wilson",
+        "Farid Nasser"
+      ],
+      [
+        "Smart Watch S",
+        "Emma Wilson",
+        "Farid Nasser"
+      ],
+      [
+        "Smart Watch S",
+        "Emma Wilson",
+        "Liam O'Brien"
+      ],
+      [
+        "Smart Watch S",
+        "Emma Wilson",
+        "Liam O'Brien"
+      ],
+      [
+        "Smart Watch S",
+        "Emma Wilson",
+        "Liam O'Brien"
+      ],
+      [
+        "Smart Watch S",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Smart Watch S",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Smart Watch S",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Smart Watch S",
+        "Emma Wilson",
+        "Olivia Brown"
+      ],
+      [
+        "Smart Watch S",
+        "Emma Wilson",
+        "Olivia Brown"
+      ],
+      [
+        "Smart Watch S",
+        "Emma Wilson",
+        "Olivia Brown"
+      ],
+      [
+        "Smart Watch S",
+        "Farid Nasser",
+        "Liam O'Brien"
+      ],
+      [
+        "Smart Watch S",
+        "Farid Nasser",
+        "Noah Meyer"
+      ],
+      [
+        "Smart Watch S",
+        "Farid Nasser",
+        "Olivia Brown"
+      ],
+      [
+        "Smart Watch S",
+        "Liam O'Brien",
+        "Noah Meyer"
+      ],
+      [
+        "Smart Watch S",
+        "Liam O'Brien",
+        "Olivia Brown"
+      ],
+      [
+        "Smart Watch S",
+        "Noah Meyer",
+        "Olivia Brown"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Bruno Silva"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Bruno Silva"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Olivia Brown"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Olivia Brown"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Bruno Silva",
+        "Chloe Dubois"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Bruno Silva",
+        "Emma Wilson"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Bruno Silva",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Bruno Silva",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Bruno Silva",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Bruno Silva",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Bruno Silva",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Bruno Silva",
+        "Keiko Sato"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Bruno Silva",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Bruno Silva",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Bruno Silva",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Bruno Silva",
+        "Olivia Brown"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Bruno Silva",
+        "Pedro Alvarez"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Chloe Dubois",
+        "Keiko Sato"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Chloe Dubois",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Chloe Dubois",
+        "Olivia Brown"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Chloe Dubois",
+        "Pedro Alvarez"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Emma Wilson",
+        "Keiko Sato"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Emma Wilson",
+        "Olivia Brown"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Olivia Brown"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Olivia Brown"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Olivia Brown"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Olivia Brown"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Olivia Brown"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Keiko Sato",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Keiko Sato",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Keiko Sato",
+        "Maya Patel"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Keiko Sato",
+        "Olivia Brown"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Keiko Sato",
+        "Pedro Alvarez"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Maya Patel",
+        "Olivia Brown"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Maya Patel",
+        "Olivia Brown"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Maya Patel",
+        "Olivia Brown"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Olivia Brown",
+        "Pedro Alvarez"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Alice Chen",
+        "Chloe Dubois"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Chloe Dubois",
+        "Emma Wilson"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Chloe Dubois",
+        "Grace Kim"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Chloe Dubois",
+        "Keiko Sato"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Chloe Dubois",
+        "Pedro Alvarez"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Chloe Dubois",
+        "Pedro Alvarez"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Emma Wilson",
+        "Keiko Sato"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Keiko Sato",
+        "Pedro Alvarez"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Keiko Sato",
+        "Pedro Alvarez"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Bruno Silva"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Bruno Silva"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Bruno Silva"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Bruno Silva"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Bruno Silva"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Bruno Silva"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Hiro Tanaka"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Noah Meyer"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Emma Wilson"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Grace Kim"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Grace Kim"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Grace Kim"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Grace Kim"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Hiro Tanaka"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Hiro Tanaka"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Noah Meyer"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Noah Meyer"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Pedro Alvarez"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bruno Silva",
+        "Pedro Alvarez"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Grace Kim"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Hiro Tanaka"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Noah Meyer"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Emma Wilson",
+        "Pedro Alvarez"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Grace Kim",
+        "Hiro Tanaka"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Grace Kim",
+        "Noah Meyer"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Grace Kim",
+        "Noah Meyer"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Hiro Tanaka",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Hiro Tanaka",
+        "Maya Patel"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Hiro Tanaka",
+        "Noah Meyer"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Hiro Tanaka",
+        "Pedro Alvarez"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Maya Patel",
+        "Noah Meyer"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Maya Patel",
+        "Noah Meyer"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Noah Meyer",
+        "Pedro Alvarez"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Farid Nasser"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Farid Nasser"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Farid Nasser"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Grace Kim"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Isabella Rossi"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Keiko Sato"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Alice Chen",
+        "Pedro Alvarez"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Farid Nasser",
+        "Grace Kim"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Farid Nasser",
+        "Isabella Rossi"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Farid Nasser",
+        "Isabella Rossi"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Farid Nasser",
+        "Keiko Sato"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Farid Nasser",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Farid Nasser",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Farid Nasser",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Farid Nasser",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Farid Nasser",
+        "Pedro Alvarez"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Grace Kim",
+        "Isabella Rossi"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Grace Kim",
+        "Isabella Rossi"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Grace Kim",
+        "Keiko Sato"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Grace Kim",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Grace Kim",
+        "Pedro Alvarez"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Isabella Rossi",
+        "Keiko Sato"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Isabella Rossi",
+        "Keiko Sato"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Isabella Rossi",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Isabella Rossi",
+        "Pedro Alvarez"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Isabella Rossi",
+        "Pedro Alvarez"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Keiko Sato",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Keiko Sato",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Keiko Sato",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Keiko Sato",
+        "Maya Patel"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Keiko Sato",
+        "Pedro Alvarez"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Maya Patel",
+        "Pedro Alvarez"
+      ]
+    ]
+  },
+  "gm2-p81": {
+    "columns": [
+      "quadrant",
+      "customers"
+    ],
+    "rows": [
+      [
+        "active_and_open",
+        24
+      ],
+      [
+        "new_or_stuck",
+        17
+      ],
+      [
+        "active_and_open",
+        14
+      ],
+      [
+        "active_and_open",
+        13
+      ],
+      [
+        "new_or_stuck",
+        5
+      ],
+      [
+        "quiet",
+        4
+      ],
+      [
+        "new_or_stuck",
+        4
+      ],
+      [
+        "quiet",
+        4
+      ],
+      [
+        "new_or_stuck",
+        4
+      ],
+      [
+        "new_or_stuck",
+        3
+      ],
+      [
+        "quiet",
+        3
+      ],
+      [
+        "quiet",
+        2
+      ],
+      [
+        "quiet",
+        2
+      ],
+      [
+        "quiet",
+        2
+      ],
+      [
+        "quiet",
+        1
+      ],
+      [
+        "quiet",
+        1
+      ]
+    ]
+  },
+  "gm2-p82": {
+    "columns": [
+      "name",
+      "catalog_size",
+      "sold_products",
+      "revenue"
+    ],
+    "rows": [
+      [
+        "Nordic Gadgets AB",
+        3,
+        3,
+        11130.25
+      ],
+      [
+        "Midwest Hardware Co",
+        3,
+        3,
+        9294.93
+      ],
+      [
+        "Alpine Audio GmbH",
+        2,
+        2,
+        4765.63
+      ],
+      [
+        "Andes Naturals SA",
+        2,
+        2,
+        3613.25
+      ],
+      [
+        "Shenzhen Electro",
+        3,
+        3,
+        3049.07
+      ],
+      [
+        "Pacific Textiles",
+        3,
+        3,
+        2980.15
+      ]
+    ]
+  },
+  "gm2-p83": {
+    "columns": [
+      "number",
+      "invoiced",
+      "paid",
+      "balance"
+    ],
+    "rows": [
+      [
+        "INV-2025-024",
+        4937,
+        0,
+        4937
+      ],
+      [
+        "INV-2025-026",
+        3562,
+        0,
+        3562
+      ],
+      [
+        "INV-2025-027",
+        2794,
+        0,
+        2794
+      ],
+      [
+        "INV-2025-025",
+        6148,
+        4000,
+        2148
+      ],
+      [
+        "INV-2025-028",
+        1756,
+        0,
+        1756
+      ],
+      [
+        "INV-2024-021",
+        1295,
+        0,
+        1295
+      ],
+      [
+        "INV-2024-018",
+        873,
+        0,
+        873
+      ],
+      [
+        "INV-2024-001",
+        4860,
+        4860,
+        0
+      ],
+      [
+        "INV-2024-002",
+        2143,
+        2143,
+        0
+      ],
+      [
+        "INV-2024-003",
+        3420,
+        3420,
+        0
+      ],
+      [
+        "INV-2024-004",
+        1589,
+        1589,
+        0
+      ],
+      [
+        "INV-2024-005",
+        5284,
+        5284,
+        0
+      ],
+      [
+        "INV-2024-006",
+        2336,
+        2336,
+        0
+      ],
+      [
+        "INV-2024-007",
+        1982,
+        1982,
+        0
+      ],
+      [
+        "INV-2024-008",
+        4015,
+        4015,
+        0
+      ],
+      [
+        "INV-2024-009",
+        1873,
+        1873,
+        0
+      ],
+      [
+        "INV-2024-010",
+        2968,
+        2968,
+        0
+      ],
+      [
+        "INV-2024-011",
+        925,
+        925,
+        0
+      ],
+      [
+        "INV-2024-012",
+        4723,
+        4723,
+        0
+      ],
+      [
+        "INV-2024-013",
+        2547,
+        2547,
+        0
+      ],
+      [
+        "INV-2024-014",
+        3512,
+        3512,
+        0
+      ],
+      [
+        "INV-2024-015",
+        2289,
+        2289,
+        0
+      ],
+      [
+        "INV-2024-016",
+        3896,
+        3896,
+        0
+      ],
+      [
+        "INV-2024-017",
+        1418,
+        1418,
+        0
+      ],
+      [
+        "INV-2024-019",
+        5614,
+        5614,
+        0
+      ],
+      [
+        "INV-2024-020",
+        2683,
+        2683,
+        0
+      ],
+      [
+        "INV-2024-022",
+        4459,
+        4459,
+        0
+      ],
+      [
+        "INV-2024-023",
+        3076,
+        3076,
+        0
+      ]
+    ]
+  },
+  "gm2-p84": {
+    "columns": [
+      "customer_id",
+      "same_pairs",
+      "cross_pairs"
+    ],
+    "rows": [
+      [
+        1,
+        87,
+        189
+      ],
+      [
+        5,
+        45,
+        91
+      ],
+      [
+        13,
+        18,
+        60
+      ],
+      [
+        7,
+        48,
+        43
+      ],
+      [
+        3,
+        4,
+        6
+      ],
+      [
+        11,
+        1,
+        5
+      ],
+      [
+        16,
+        1,
+        5
+      ],
+      [
+        9,
+        2,
+        4
+      ],
+      [
+        14,
+        2,
+        4
+      ],
+      [
+        6,
+        1,
+        2
+      ],
+      [
+        8,
+        1,
+        2
+      ],
+      [
+        10,
+        0,
+        1
+      ],
+      [
+        2,
+        1,
+        0
+      ],
+      [
+        4,
+        1,
+        0
+      ]
+    ]
+  },
+  "gm2-p85": {
+    "columns": [
+      "plain_left",
+      "subset_in_on",
+      "subset_in_where"
+    ],
+    "rows": [
+      [
+        103,
+        22,
+        14
+      ]
+    ]
+  },
+  "gm2-p86": {
+    "columns": [
+      "region",
+      "avg_lesser",
+      "avg_greater"
+    ],
+    "rows": [
+      [
+        "APAC",
+        1134.94,
+        1499.99
+      ],
+      [
+        "EU",
+        663.99,
+        853.06
+      ],
+      [
+        "US",
+        null,
+        645.6
+      ]
+    ]
+  },
+  "gm2-p87": {
+    "columns": [
+      "number",
+      "customer",
+      "unpaid_amount",
+      "customer_spend"
+    ],
+    "rows": [
+      [
+        "INV-2025-024",
+        "Emma Wilson",
+        4937,
+        6640.56
+      ],
+      [
+        "INV-2025-026",
+        "Liam O'Brien",
+        3562,
+        705.39
+      ],
+      [
+        "INV-2025-027",
+        "Isabella Rossi",
+        2794,
+        985.65
+      ],
+      [
+        "INV-2025-028",
+        "Hiro Tanaka",
+        1756,
+        829.09
+      ],
+      [
+        "INV-2024-021",
+        "Chloe Dubois",
+        1295,
+        2667.93
+      ],
+      [
+        "INV-2024-018",
+        "Pedro Alvarez",
+        873,
+        1686.17
+      ]
+    ]
+  },
+  "gm2-p88": {
+    "columns": [
+      "product_a",
+      "product_b"
+    ],
+    "rows": [
+      [
+        "4K Webcam Pro",
+        "Desk Mat Extended"
+      ],
+      [
+        "4K Webcam Pro",
+        "Desk Mat Extended"
+      ],
+      [
+        "4K Webcam Pro",
+        "Desk Mat Extended"
+      ],
+      [
+        "4K Webcam Pro",
+        "Desk Mat Extended"
+      ],
+      [
+        "4K Webcam Pro",
+        "Desk Mat Extended"
+      ],
+      [
+        "4K Webcam Pro",
+        "Fitness Band X2"
+      ],
+      [
+        "4K Webcam Pro",
+        "Fitness Band X2"
+      ],
+      [
+        "4K Webcam Pro",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "4K Webcam Pro",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "4K Webcam Pro",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "4K Webcam Pro",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "4K Webcam Pro",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "4K Webcam Pro",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "4K Webcam Pro",
+        "Ring Light 14\""
+      ],
+      [
+        "4K Webcam Pro",
+        "Running Socks 3-pack"
+      ],
+      [
+        "4K Webcam Pro",
+        "Smart Watch S"
+      ],
+      [
+        "4K Webcam Pro",
+        "Studio Desktop Mic"
+      ],
+      [
+        "4K Webcam Pro",
+        "Studio Desktop Mic"
+      ],
+      [
+        "4K Webcam Pro",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "4K Webcam Pro",
+        "Wireless Mouse M3"
+      ],
+      [
+        "4K Webcam Pro",
+        "Wireless Mouse M3"
+      ],
+      [
+        "4K Webcam Pro",
+        "Wireless Mouse M3"
+      ],
+      [
+        "4K Webcam Pro",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Desk Mat Extended"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Ring Light 14\""
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Ring Light 14\""
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Ring Light 14\""
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Desk Mat Extended",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Desk Mat Extended",
+        "Fitness Band X2"
+      ],
+      [
+        "Desk Mat Extended",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Desk Mat Extended",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Desk Mat Extended",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Desk Mat Extended",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Desk Mat Extended",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Desk Mat Extended",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Desk Mat Extended",
+        "Ring Light 14\""
+      ],
+      [
+        "Desk Mat Extended",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Desk Mat Extended",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Desk Mat Extended",
+        "Smart Watch S"
+      ],
+      [
+        "Desk Mat Extended",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Desk Mat Extended",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Desk Mat Extended",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Desk Mat Extended",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Fitness Band X2",
+        "Desk Mat Extended"
+      ],
+      [
+        "Fitness Band X2",
+        "Desk Mat Extended"
+      ],
+      [
+        "Fitness Band X2",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Fitness Band X2",
+        "Ring Light 14\""
+      ],
+      [
+        "Fitness Band X2",
+        "Smart Watch S"
+      ],
+      [
+        "Fitness Band X2",
+        "Smart Watch S"
+      ],
+      [
+        "Fitness Band X2",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Fitness Band X2",
+        "Wireless Mouse M3"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "4K Webcam Pro"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "4K Webcam Pro"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Desk Mat Extended"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Desk Mat Extended"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Desk Mat Extended"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Fitness Band X2"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Fitness Band X2"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Running Socks 3-pack"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Running Socks 3-pack"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Studio Desktop Mic"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Studio Desktop Mic"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Wireless Mouse M3"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Wireless Mouse M3"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Wireless Mouse M3"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Fitness Band X2"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Fitness Band X2"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Ring Light 14\""
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Ring Light 14\""
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Smart Watch S"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "4K Webcam Pro"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Desk Mat Extended"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Desk Mat Extended"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Desk Mat Extended"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Desk Mat Extended"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Fitness Band X2"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Ring Light 14\""
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Smart Watch S"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Smart Watch S"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "4K Webcam Pro"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "4K Webcam Pro"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Desk Mat Extended"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Fitness Band X2"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Fitness Band X2"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Ring Light 14\""
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Smart Watch S"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Ring Light 14\"",
+        "4K Webcam Pro"
+      ],
+      [
+        "Ring Light 14\"",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Ring Light 14\"",
+        "Desk Mat Extended"
+      ],
+      [
+        "Ring Light 14\"",
+        "Fitness Band X2"
+      ],
+      [
+        "Ring Light 14\"",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Ring Light 14\"",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Ring Light 14\"",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Ring Light 14\"",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Ring Light 14\"",
+        "Smart Watch S"
+      ],
+      [
+        "Ring Light 14\"",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Ring Light 14\"",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Desk Mat Extended"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Desk Mat Extended"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Fitness Band X2"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Fitness Band X2"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Ring Light 14\""
+      ],
+      [
+        "Running Socks 3-pack",
+        "Smart Watch S"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Running Socks 3-pack",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Smart Watch S",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Smart Watch S",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Smart Watch S",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Smart Watch S",
+        "Desk Mat Extended"
+      ],
+      [
+        "Smart Watch S",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Smart Watch S",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Smart Watch S",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Smart Watch S",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Smart Watch S",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Smart Watch S",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Studio Desktop Mic",
+        "4K Webcam Pro"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Desk Mat Extended"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Desk Mat Extended"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Desk Mat Extended"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Desk Mat Extended"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Smart Watch S"
+      ],
+      [
+        "Studio Desktop Mic",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Ring Light 14\""
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Running Socks 3-pack"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Studio Desktop Mic"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Wireless Mouse M3"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Yoga Mat Eco 6mm"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Desk Mat Extended"
+      ],
+      [
+        "Wireless Mouse M3",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Wireless Mouse M3",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Ring Light 14\""
+      ],
+      [
+        "Wireless Mouse M3",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Smart Watch S"
+      ],
+      [
+        "Wireless Mouse M3",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Desk Mat Extended"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Smart Watch S"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Smart Watch S"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Smart Watch S"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Studio Desktop Mic"
+      ]
+    ]
+  },
+  "gm2-p89": {
+    "columns": [
+      "region",
+      "invoices",
+      "payment_rows",
+      "unpaid_invoices",
+      "unpaid_exposure"
+    ],
+    "rows": [
+      [
+        "EU",
+        14,
+        14,
+        4,
+        8524
+      ],
+      [
+        "US",
+        6,
+        5,
+        1,
+        4937
+      ],
+      [
+        "APAC",
+        8,
+        8,
+        1,
+        1756
+      ]
+    ]
+  },
+  "gm2-p90": {
+    "columns": [
+      "name",
+      "orders",
+      "revenue",
+      "line_items",
+      "pending_count",
+      "payment_rows"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        24,
+        7262.35,
+        50,
+        3,
+        9
+      ],
+      [
+        "Emma Wilson",
+        17,
+        6640.56,
+        46,
+        3,
+        3
+      ],
+      [
+        "Grace Kim",
+        14,
+        4574.23,
+        34,
+        1,
+        3
+      ],
+      [
+        "Maya Patel",
+        13,
+        3644.56,
+        30,
+        2,
+        5
+      ],
+      [
+        "Chloe Dubois",
+        5,
+        2667.93,
+        14,
+        2,
+        0
+      ],
+      [
+        "Pedro Alvarez",
+        4,
+        1686.17,
+        13,
+        1,
+        0
+      ],
+      [
+        "Farid Nasser",
+        3,
+        1458.97,
+        6,
+        1,
+        0
+      ],
+      [
+        "Keiko Sato",
+        4,
+        1098.6,
+        10,
+        1,
+        0
+      ],
+      [
+        "Isabella Rossi",
+        4,
+        985.65,
+        8,
+        0,
+        2
+      ],
+      [
+        "Bruno Silva",
+        2,
+        852.44,
+        5,
+        0,
+        0
+      ],
+      [
+        "Hiro Tanaka",
+        3,
+        829.09,
+        8,
+        0,
+        0
+      ],
+      [
+        "Noah Meyer",
+        4,
+        737.68,
+        8,
+        0,
+        0
+      ],
+      [
+        "Liam O'Brien",
+        1,
+        705.39,
+        4,
+        0,
+        1
+      ],
+      [
+        "Jamal Wright",
+        2,
+        645.6,
+        7,
+        0,
+        2
+      ],
+      [
+        "Dmitri Volkov",
+        2,
+        599.26,
+        5,
+        0,
+        0
+      ],
+      [
+        "Olivia Brown",
+        1,
+        444.8,
+        3,
+        0,
+        2
+      ]
+    ]
+  },
   "kb-lj-p01": {
     "columns": [
       "name",
@@ -114627,6 +133620,1152 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
         0,
         "0",
         0
+      ]
+    ]
+  },
+  "kb-ne-p01": {
+    "columns": [
+      "cheaper",
+      "pricier",
+      "gap"
+    ],
+    "rows": [
+      [
+        "Fitness Band X2",
+        "Smart Watch S",
+        120.99
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Noise-Canceling Headset",
+        90
+      ],
+      [
+        "Ring Light 14\"",
+        "4K Webcam Pro",
+        89.01
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Studio Desktop Mic",
+        59.01
+      ],
+      [
+        "Wireless Mouse M3",
+        "Mechanical Keyboard K1",
+        55.49
+      ],
+      [
+        "Running Socks 3-pack",
+        "Cycling Jersey Pro",
+        46.5
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Mechanical Keyboard K1",
+        40.99
+      ],
+      [
+        "Studio Desktop Mic",
+        "Noise-Canceling Headset",
+        30.99
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Laptop Stand Aluminum",
+        27.51
+      ],
+      [
+        "Desk Mat Extended",
+        "Laptop Stand Aluminum",
+        17.51
+      ],
+      [
+        "Wireless Mouse M3",
+        "USB-C Hub 7-in-1",
+        14.5
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Desk Mat Extended",
+        10
+      ]
+    ]
+  },
+  "kb-ne-p02": {
+    "columns": [
+      "product",
+      "pricier_peers"
+    ],
+    "rows": [
+      [
+        "Smart Watch S",
+        0
+      ],
+      [
+        "Noise-Canceling Headset",
+        1
+      ],
+      [
+        "4K Webcam Pro",
+        2
+      ],
+      [
+        "Studio Desktop Mic",
+        3
+      ],
+      [
+        "Mechanical Keyboard K1",
+        4
+      ],
+      [
+        "Fitness Band X2",
+        5
+      ],
+      [
+        "Cycling Jersey Pro",
+        6
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        7
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        8
+      ],
+      [
+        "Laptop Stand Aluminum",
+        9
+      ],
+      [
+        "Ring Light 14\"",
+        10
+      ],
+      [
+        "Wireless Mouse M3",
+        11
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        12
+      ],
+      [
+        "Desk Mat Extended",
+        13
+      ],
+      [
+        "Running Socks 3-pack",
+        14
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        15
+      ]
+    ]
+  },
+  "kb-ne-p03": {
+    "columns": [
+      "supplier",
+      "flagship",
+      "price"
+    ],
+    "rows": [
+      [
+        "Nordic Gadgets AB",
+        "Smart Watch S",
+        199.99
+      ],
+      [
+        "Midwest Hardware Co",
+        "Noise-Canceling Headset",
+        149.99
+      ],
+      [
+        "Alpine Audio GmbH",
+        "Studio Desktop Mic",
+        119
+      ],
+      [
+        "Andes Naturals SA",
+        "Fitness Band X2",
+        79
+      ],
+      [
+        "Pacific Textiles",
+        "Cycling Jersey Pro",
+        65
+      ],
+      [
+        "Shenzhen Electro",
+        "Ring Light 14\"",
+        39.99
+      ]
+    ]
+  },
+  "kb-ne-p04": {
+    "columns": [
+      "customer_a",
+      "customer_b",
+      "spend_a",
+      "spend_b",
+      "gap"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        "Olivia Brown",
+        7262.35,
+        444.8,
+        6817.55
+      ],
+      [
+        "Alice Chen",
+        "Dmitri Volkov",
+        7262.35,
+        599.26,
+        6663.09
+      ],
+      [
+        "Alice Chen",
+        "Liam O'Brien",
+        7262.35,
+        705.39,
+        6556.96
+      ],
+      [
+        "Alice Chen",
+        "Noah Meyer",
+        7262.35,
+        737.68,
+        6524.67
+      ],
+      [
+        "Alice Chen",
+        "Isabella Rossi",
+        7262.35,
+        985.65,
+        6276.7
+      ],
+      [
+        "Emma Wilson",
+        "Jamal Wright",
+        6640.56,
+        645.6,
+        5994.96
+      ],
+      [
+        "Alice Chen",
+        "Pedro Alvarez",
+        7262.35,
+        1686.17,
+        5576.18
+      ],
+      [
+        "Alice Chen",
+        "Chloe Dubois",
+        7262.35,
+        2667.93,
+        4594.42
+      ],
+      [
+        "Grace Kim",
+        "Hiro Tanaka",
+        4574.23,
+        829.09,
+        3745.14
+      ],
+      [
+        "Grace Kim",
+        "Keiko Sato",
+        4574.23,
+        1098.6,
+        3475.63
+      ],
+      [
+        "Farid Nasser",
+        "Grace Kim",
+        1458.97,
+        4574.23,
+        3115.26
+      ],
+      [
+        "Hiro Tanaka",
+        "Maya Patel",
+        829.09,
+        3644.56,
+        2815.47
+      ],
+      [
+        "Keiko Sato",
+        "Maya Patel",
+        1098.6,
+        3644.56,
+        2545.96
+      ],
+      [
+        "Chloe Dubois",
+        "Olivia Brown",
+        2667.93,
+        444.8,
+        2223.13
+      ],
+      [
+        "Farid Nasser",
+        "Maya Patel",
+        1458.97,
+        3644.56,
+        2185.59
+      ],
+      [
+        "Chloe Dubois",
+        "Dmitri Volkov",
+        2667.93,
+        599.26,
+        2068.67
+      ],
+      [
+        "Chloe Dubois",
+        "Liam O'Brien",
+        2667.93,
+        705.39,
+        1962.54
+      ],
+      [
+        "Chloe Dubois",
+        "Noah Meyer",
+        2667.93,
+        737.68,
+        1930.25
+      ],
+      [
+        "Chloe Dubois",
+        "Isabella Rossi",
+        2667.93,
+        985.65,
+        1682.28
+      ],
+      [
+        "Olivia Brown",
+        "Pedro Alvarez",
+        444.8,
+        1686.17,
+        1241.37
+      ],
+      [
+        "Dmitri Volkov",
+        "Pedro Alvarez",
+        599.26,
+        1686.17,
+        1086.91
+      ]
+    ]
+  },
+  "kb-ne-p05": {
+    "columns": [
+      "lower_priced",
+      "higher_priced",
+      "gap"
+    ],
+    "rows": [
+      [
+        "Yoga Mat Eco 6mm",
+        "Wireless Mouse M3",
+        2.5
+      ]
+    ]
+  },
+  "kb-ne-p06": {
+    "columns": [
+      "lopsided"
+    ],
+    "rows": [
+      [
+        3027
+      ]
+    ]
+  },
+  "kb-ne-p07": {
+    "columns": [
+      "customer_a",
+      "customer_b",
+      "spend_a",
+      "spend_b",
+      "gap"
+    ],
+    "rows": [
+      [
+        "Liam O'Brien",
+        "Noah Meyer",
+        705.39,
+        737.68,
+        32.29
+      ],
+      [
+        "Dmitri Volkov",
+        "Liam O'Brien",
+        599.26,
+        705.39,
+        106.13
+      ],
+      [
+        "Dmitri Volkov",
+        "Noah Meyer",
+        599.26,
+        737.68,
+        138.42
+      ],
+      [
+        "Dmitri Volkov",
+        "Olivia Brown",
+        599.26,
+        444.8,
+        154.46
+      ],
+      [
+        "Isabella Rossi",
+        "Noah Meyer",
+        985.65,
+        737.68,
+        247.97
+      ],
+      [
+        "Liam O'Brien",
+        "Olivia Brown",
+        705.39,
+        444.8,
+        260.59
+      ],
+      [
+        "Hiro Tanaka",
+        "Keiko Sato",
+        829.09,
+        1098.6,
+        269.51
+      ],
+      [
+        "Isabella Rossi",
+        "Liam O'Brien",
+        985.65,
+        705.39,
+        280.26
+      ],
+      [
+        "Noah Meyer",
+        "Olivia Brown",
+        737.68,
+        444.8,
+        292.88
+      ],
+      [
+        "Farid Nasser",
+        "Keiko Sato",
+        1458.97,
+        1098.6,
+        360.37
+      ],
+      [
+        "Dmitri Volkov",
+        "Isabella Rossi",
+        599.26,
+        985.65,
+        386.39
+      ]
+    ]
+  },
+  "kb-ne-p08": {
+    "columns": [
+      "base_item",
+      "marked_up",
+      "gap"
+    ],
+    "rows": [
+      [
+        "Noise-Canceling Headset",
+        "Smart Watch S",
+        50
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "4K Webcam Pro",
+        39.01
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Studio Desktop Mic",
+        29.01
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Fitness Band X2",
+        19.01
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Cycling Jersey Pro",
+        16
+      ],
+      [
+        "Wireless Mouse M3",
+        "USB-C Hub 7-in-1",
+        14.5
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Bluetooth Speaker Mini",
+        10.99
+      ],
+      [
+        "Studio Desktop Mic",
+        "4K Webcam Pro",
+        10
+      ],
+      [
+        "Wireless Mouse M3",
+        "Laptop Stand Aluminum",
+        8
+      ],
+      [
+        "Desk Mat Extended",
+        "Yoga Mat Eco 6mm",
+        7.01
+      ],
+      [
+        "Wireless Mouse M3",
+        "Ring Light 14\"",
+        5.49
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Cycling Jersey Pro",
+        5.01
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Running Socks 3-pack",
+        3.51
+      ],
+      [
+        "Ring Light 14\"",
+        "Laptop Stand Aluminum",
+        2.51
+      ]
+    ]
+  },
+  "kb-ne-p09": {
+    "columns": [
+      "near_twins"
+    ],
+    "rows": [
+      [
+        735
+      ]
+    ]
+  },
+  "kb-ne-p10": {
+    "columns": [
+      "number",
+      "paid",
+      "coverage_pct"
+    ],
+    "rows": [
+      [
+        "INV-2024-002",
+        2143,
+        100
+      ],
+      [
+        "INV-2024-003",
+        3420,
+        100
+      ],
+      [
+        "INV-2024-004",
+        1589,
+        100
+      ],
+      [
+        "INV-2024-006",
+        2336,
+        100
+      ],
+      [
+        "INV-2024-007",
+        1982,
+        100
+      ],
+      [
+        "INV-2024-008",
+        4015,
+        100
+      ],
+      [
+        "INV-2024-009",
+        1873,
+        100
+      ],
+      [
+        "INV-2024-010",
+        2968,
+        100
+      ],
+      [
+        "INV-2024-011",
+        925,
+        100
+      ],
+      [
+        "INV-2024-013",
+        2547,
+        100
+      ],
+      [
+        "INV-2024-014",
+        3512,
+        100
+      ],
+      [
+        "INV-2024-015",
+        2289,
+        100
+      ],
+      [
+        "INV-2024-016",
+        3896,
+        100
+      ],
+      [
+        "INV-2024-017",
+        1418,
+        100
+      ],
+      [
+        "INV-2024-020",
+        2683,
+        100
+      ],
+      [
+        "INV-2024-023",
+        3076,
+        100
+      ],
+      [
+        "INV-2025-025",
+        4000,
+        65.1
+      ],
+      [
+        "INV-2024-001",
+        2430,
+        50
+      ],
+      [
+        "INV-2024-001",
+        2430,
+        50
+      ],
+      [
+        "INV-2024-005",
+        2642,
+        50
+      ],
+      [
+        "INV-2024-005",
+        2642,
+        50
+      ],
+      [
+        "INV-2024-012",
+        2361.5,
+        50
+      ],
+      [
+        "INV-2024-012",
+        2361.5,
+        50
+      ],
+      [
+        "INV-2024-019",
+        2807,
+        50
+      ],
+      [
+        "INV-2024-019",
+        2807,
+        50
+      ],
+      [
+        "INV-2024-022",
+        2229.5,
+        50
+      ],
+      [
+        "INV-2024-022",
+        2229.5,
+        50
+      ]
+    ]
+  },
+  "kb-ne-p11": {
+    "columns": [
+      "supplier_a",
+      "supplier_b",
+      "gap"
+    ],
+    "rows": [
+      [
+        "Pacific Textiles",
+        "Andes Naturals SA",
+        0.1
+      ],
+      [
+        "Shenzhen Electro",
+        "Andes Naturals SA",
+        0.1
+      ],
+      [
+        "Nordic Gadgets AB",
+        "Midwest Hardware Co",
+        0.2
+      ],
+      [
+        "Nordic Gadgets AB",
+        "Alpine Audio GmbH",
+        0.2
+      ],
+      [
+        "Shenzhen Electro",
+        "Pacific Textiles",
+        0.2
+      ],
+      [
+        "Shenzhen Electro",
+        "Midwest Hardware Co",
+        0.3
+      ],
+      [
+        "Midwest Hardware Co",
+        "Alpine Audio GmbH",
+        0.4
+      ],
+      [
+        "Midwest Hardware Co",
+        "Andes Naturals SA",
+        0.4
+      ]
+    ]
+  },
+  "kb-ne-p12": {
+    "columns": [
+      "lower_priced",
+      "higher_priced",
+      "gap"
+    ],
+    "rows": [
+      [
+        "Ring Light 14\"",
+        "Laptop Stand Aluminum",
+        2.51
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Running Socks 3-pack",
+        3.51
+      ]
+    ]
+  },
+  "kb-ne-p13": {
+    "columns": [
+      "invoice_a",
+      "invoice_b",
+      "drift"
+    ],
+    "rows": [
+      [
+        "INV-2024-019",
+        "INV-2025-025",
+        534
+      ],
+      [
+        "INV-2024-001",
+        "INV-2024-005",
+        424
+      ],
+      [
+        "INV-2024-005",
+        "INV-2024-019",
+        330
+      ],
+      [
+        "INV-2024-002",
+        "INV-2024-015",
+        146
+      ]
+    ]
+  },
+  "kb-ne-p14": {
+    "columns": [
+      "mid_market"
+    ],
+    "rows": [
+      [
+        39
+      ]
+    ]
+  },
+  "kb-ne-p15": {
+    "columns": [
+      "escalations"
+    ],
+    "rows": [
+      [
+        266
+      ]
+    ]
+  },
+  "kb-ne-p16": {
+    "columns": [],
+    "rows": []
+  },
+  "kb-ne-p17": {
+    "columns": [
+      "cheaper_side",
+      "pricier_side"
+    ],
+    "rows": [
+      [
+        "4K Webcam Pro",
+        "Ring Light 14\""
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Running Socks 3-pack"
+      ],
+      [
+        "Desk Mat Extended",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Desk Mat Extended",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Fitness Band X2",
+        "Smart Watch S"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Desk Mat Extended"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Desk Mat Extended"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Studio Desktop Mic"
+      ],
+      [
+        "Ring Light 14\"",
+        "4K Webcam Pro"
+      ],
+      [
+        "Running Socks 3-pack",
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Smart Watch S",
+        "Fitness Band X2"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Studio Desktop Mic",
+        "Noise-Canceling Headset"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Wireless Mouse M3"
+      ],
+      [
+        "Wireless Mouse M3",
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Wireless Mouse M3",
+        "USB-C Hub 7-in-1"
+      ]
+    ]
+  },
+  "kb-ne-p18": {
+    "columns": [
+      "product",
+      "pricier_peers"
+    ],
+    "rows": [
+      [
+        "HDMI 2.1 Cable 2m",
+        15
+      ],
+      [
+        "Running Socks 3-pack",
+        14
+      ],
+      [
+        "Desk Mat Extended",
+        13
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        12
+      ],
+      [
+        "Wireless Mouse M3",
+        11
+      ]
+    ]
+  },
+  "kb-ne-p19": {
+    "columns": [
+      "lower_priced",
+      "higher_priced",
+      "gap"
+    ],
+    "rows": [
+      [
+        "HDMI 2.1 Cable 2m",
+        "Smart Watch S",
+        185
+      ]
+    ]
+  },
+  "kb-ne-p20": {
+    "columns": [
+      "cheaper",
+      "pricier",
+      "gap"
+    ],
+    "rows": [
+      [
+        "Mechanical Keyboard K1",
+        "Smart Watch S",
+        110
+      ],
+      [
+        "4K Webcam Pro",
+        "Smart Watch S",
+        70.99
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Cycling Jersey Pro",
+        50.01
+      ],
+      [
+        "Mechanical Keyboard K1",
+        "4K Webcam Pro",
+        39.01
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Fitness Band X2",
+        19.01
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Cycling Jersey Pro",
+        16
+      ],
+      [
+        "Wireless Mouse M3",
+        "Ring Light 14\"",
+        5.49
+      ]
+    ]
+  },
+  "kb-ne-p21": {
+    "columns": [
+      "order_a",
+      "order_b",
+      "gap"
+    ],
+    "rows": [
+      [
+        83,
+        88,
+        0.08
+      ]
+    ]
+  },
+  "kb-ne-p22": {
+    "columns": [
+      "near_full"
+    ],
+    "rows": [
+      [
+        16
+      ]
+    ]
+  },
+  "kb-ne-p23": {
+    "columns": [
+      "customer_a",
+      "customer_b",
+      "region_a",
+      "region_b"
+    ],
+    "rows": [
+      [
+        "Dmitri Volkov",
+        "Keiko Sato",
+        "EU",
+        "APAC"
+      ]
+    ]
+  },
+  "kb-ne-p24": {
+    "columns": [
+      "order_id",
+      "spread"
+    ],
+    "rows": [
+      [
+        33,
+        186.27
+      ],
+      [
+        20,
+        181.15
+      ],
+      [
+        80,
+        174.96
+      ]
+    ]
+  },
+  "kb-ne-p25": {
+    "columns": [
+      "name",
+      "width"
+    ],
+    "rows": [
+      [
+        "Midwest Hardware Co",
+        117.99
+      ],
+      [
+        "Nordic Gadgets AB",
+        110
+      ],
+      [
+        "Alpine Audio GmbH",
+        94.01
+      ],
+      [
+        "Pacific Textiles",
+        50.01
+      ],
+      [
+        "Shenzhen Electro",
+        21.49
+      ],
+      [
+        "Andes Naturals SA",
+        19.01
+      ]
+    ]
+  },
+  "kb-ne-p26": {
+    "columns": [
+      "name",
+      "spend"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        7262.35
+      ],
+      [
+        "Emma Wilson",
+        6640.56
+      ]
+    ]
+  },
+  "kb-ne-p27": {
+    "columns": [
+      "parallel_pairs"
+    ],
+    "rows": [
+      [
+        12
+      ]
+    ]
+  },
+  "kb-ne-p28": {
+    "columns": [
+      "comfortable_pairs"
+    ],
+    "rows": [
+      [
+        37
+      ]
+    ]
+  },
+  "kb-ne-p29": {
+    "columns": [
+      "band",
+      "products"
+    ],
+    "rows": [
+      [
+        "core",
+        6
+      ],
+      [
+        "pro",
+        4
+      ],
+      [
+        "elite",
+        3
+      ],
+      [
+        "entry",
+        3
       ]
     ]
   }
