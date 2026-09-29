@@ -1,0 +1,188 @@
+// Keyword Mastery bank — Subqueries MCQs, part J (derived tables kb-dt-q16..q30).
+// Continues the probed set: multi-stage derivation, derived + window seeding,
+// derived in scalar and IN positions, grain audits, spend-vs-average pattern,
+// two-hop staging (items→products), staging discipline.
+import type { Mcq } from "../types";
+
+export const subqueryMcqsJ: Mcq[] = [
+  {
+    id: "kb-dt-q16", difficulty: "medium",
+    prompt: "Which query stages per-customer spend AND ranks it against the average spend in one statement?",
+    choices: [
+      "SELECT d.name, d.spend FROM (SELECT c.name, SUM(o.total) AS spend FROM customers c INNER JOIN orders o ON o.customer_id = c.id GROUP BY c.id) d WHERE d.spend > (SELECT AVG(spend) FROM (SELECT SUM(total) AS spend FROM orders GROUP BY customer_id) s)",
+      "SELECT name FROM customers HAVING spend > AVG(spend)",
+      "SELECT name, SUM(total) FROM orders GROUP BY name WHERE SUM(total) > AVG(SUM(total))",
+      "SELECT * FROM orders WHERE total > 2177.08",
+    ],
+    answer: 0,
+    why: "The outer derived table computes per-customer spend with names; the scalar subquery stages the same aggregation a second time to compute the 2177.08 benchmark. Two stagings, one statement — no temporary tables, no views. Five customers clear the bar.",
+  },
+  {
+    id: "kb-dt-q17", difficulty: "hard",
+    prompt: "Stage discipline: the inner derived table in kb-dt-q16 groups by c.id but projects c.name. Why group by id?",
+    choices: [
+      "Grouping by the key collapses each customer's rows correctly even if two customers shared a name — grouping by name would merge them",
+      "Names are illegal in GROUP BY",
+      "id is shorter",
+      "It makes no difference on any data",
+    ],
+    answer: 0,
+    why: "GROUP BY keys by identity, not by display text. The seed's sixteen names happen to be unique, but the pattern must survive duplicates: two 'Jane Smith' accounts would merge under name-grouping and double their spend. Group by the key, project the label.",
+  },
+  {
+    id: "kb-dt-q18", difficulty: "medium",
+    prompt: "Which derived table finds each product's revenue contribution — the two-hop stage through order_items?",
+    choices: [
+      "FROM (SELECT p.id, p.name, SUM(oi.quantity * oi.unit_price) AS revenue FROM order_items oi INNER JOIN products p ON p.id = oi.product_id GROUP BY p.id) d",
+      "FROM products p GROUP BY revenue",
+      "FROM (SELECT * FROM orders) d",
+      "FROM (SELECT name FROM products) d WHERE revenue > 0",
+    ],
+    answer: 0,
+    why: "Revenue lives on order lines (quantity × unit_price), so the stage joins items to products and aggregates per product. The derived table hands the outer query a clean (id, name, revenue) set — ranked, filtered, or joined onward at will.",
+  },
+  {
+    id: "kb-dt-q19", difficulty: "easy",
+    prompt: "What does the engine do with a derived table's rows once the outer query finishes?",
+    choices: [
+      "Discards them — derived tables are per-query, in-memory (or temp-spilled) result sets",
+      "Writes them to disk as tables",
+      "Stores them in the schema",
+      "Caches them forever",
+    ],
+    answer: 0,
+    why: "No persistence: the derivation lives and dies with the statement. Views persist a query DEFINITION; CREATE TABLE persists rows; derived tables persist nothing. That ephemerality is the feature — self-contained, permission-free, repeatable.",
+  },
+  {
+    id: "kb-dt-q20", difficulty: "medium",
+    prompt: "Nested staging: a derived table whose own FROM contains another derived table. Which statement is TRUE?",
+    choices: [
+      "Legal and common — SQLite evaluates innermost first; each layer must carry its own alias",
+      "Illegal beyond one layer",
+      "Legal only with WITH",
+      "Legal but the aliases become optional",
+    ],
+    answer: 0,
+    why: "Derivation nests arbitrarily: `(SELECT … FROM (SELECT …) inner) outer`. Each layer narrows or reshapes the data; each needs a name for the layer above to reference. Deep nesting hurts readability — the point where WITH (CTE) syntax earns its keep.",
+  },
+  {
+    id: "kb-dt-q21", difficulty: "hard",
+    prompt: "Rewrite-with-CTE: `WITH spend AS (SELECT customer_id, SUM(total) AS s FROM orders GROUP BY customer_id) SELECT … FROM customers c INNER JOIN spend …` — what changed versus the derived-table form?",
+    choices: [
+      "Syntax and readability only — the staging semantics are the same aggregation-then-join",
+      "The aggregation moved to a physical table",
+      "The join disappeared",
+      "The WHERE became HAVING",
+    ],
+    answer: 0,
+    why: "WITH names the staged result before the main query, turning inline nesting into a labeled step. The engine still derives it at query time. CTEs and derived tables are two spellings of the same idea — CTE wins on reuse (reference the name twice) and on deep pipelines.",
+  },
+  {
+    id: "kb-dt-q22", difficulty: "medium",
+    prompt: "A derived table is referenced TWICE in one outer query (e.g. joined to customers AND compared to a scalar). What happens?",
+    choices: [
+      "The subquery text appears (and executes) once per reference — SQLite may recompute it; a CTE names it once for both uses",
+      "Illegal — derived tables are single-use",
+      "The engine always caches it",
+      "It errors on the second reference",
+    ],
+    answer: 0,
+    why: "Each FROM (SELECT …) is an independent derivation; two references mean two copies of the text — and possibly two evaluations. When one stage feeds several consumers, promote it to a CTE: name once, reference by name. That is the practical derived→CTE migration trigger.",
+  },
+  {
+    id: "kb-dt-q23", difficulty: "medium",
+    prompt: "Which derived stage computes the pending-exposure ledger — pending spend per customer over 400?",
+    choices: [
+      "SELECT c.name, d.pend FROM customers c INNER JOIN (SELECT customer_id, SUM(total) AS pend FROM orders WHERE status = 'pending' GROUP BY customer_id) d ON d.customer_id = c.id WHERE d.pend > 400",
+      "SELECT name, total FROM customers WHERE status = 'pending'",
+      "SELECT customer_id FROM orders GROUP BY pending",
+      "SELECT c.name, SUM(o.total) FROM customers c WHERE o.status = 'pending'",
+    ],
+    answer: 0,
+    why: "The stage filters pending INSIDE the derivation, aggregates per customer, then the outer query joins names and applies the 400 gate. Emma (1471.43), Chloe (1309.92), Farid (1088.44) lead that ledger. Filter early in the stage — the derived table should carry only relevant rows.",
+  },
+  {
+    id: "kb-dt-q24", difficulty: "hard",
+    prompt: "Filter placement: why put `WHERE status = 'pending'` INSIDE the derived table (kb-dt-q23) rather than outside after the join?",
+    choices: [
+      "Filtering inside shrinks the aggregation's input first — fewer rows grouped, and the join carries only relevant customers",
+      "It is syntactically required",
+      "Outside filters are illegal",
+      "It changes the results",
+    ],
+    answer: 0,
+    why: "Both placements yield the same answer here, but the inside filter aggregates 14 pending rows instead of scanning all 103 and discarding later. Predicate pushdown is the manual optimization the planner sometimes does for you — writing it explicitly makes the intent and the cost visible.",
+  },
+  {
+    id: "kb-dt-q25", difficulty: "medium",
+    prompt: "Derived-table grain check: staging `SELECT region, COUNT(*) AS customers FROM customers GROUP BY region` yields rows at what grain?",
+    choices: [
+      "One row per region — 4 rows (EU 8, APAC 5, US 2, LATAM 1)",
+      "One row per customer — 16 rows",
+      "One row — the grand total",
+      "Zero rows",
+    ],
+    answer: 0,
+    why: "GROUP BY region collapses the sixteen directory rows to four regional buckets. That 4-row derived table joins cleanly to anything else at region grain — supplier counts, revenue stages — with no fan-out. The GROUP BY defines the derived grain.",
+  },
+  {
+    id: "kb-dt-q26", difficulty: "hard",
+    prompt: "Fan-out audit: joining the 4-row region-count stage to the 16-row customer directory multiplies nothing. What WOULD fan out?",
+    choices: [
+      "Staging per-CUSTOMER counts (16 rows) and joining to customers — then a second join to orders at order grain multiplies through the 1-to-many edge",
+      "Nothing can fan out in derived joins",
+      "Any join to customers",
+      "Only OUTER joins fan out",
+    ],
+    answer: 0,
+    why: "Fan-out follows grain mismatch: joining an N-row stage back through a 1-to-many edge multiplies the stage's rows once per match. Region grain (all customers share the region value) is safe against the directory; order-grain stages must re-aggregate before further joins. Stage at the grain you consume. Stage at the grain you consume — the derived table's fan-out discipline.",
+  },
+  {
+    id: "kb-dt-q27", difficulty: "easy",
+    prompt: "Which position can NOT host a derived table?",
+    choices: [
+      "WHERE — predicates take values, not row sets (that is IN/EXISTS territory)",
+      "FROM",
+      "Inside a scalar subquery's FROM",
+      "Inside a CTE's body",
+    ],
+    answer: 0,
+    why: "Derived tables are row sets for FROM positions (including nested and CTE bodies). WHERE compares values — a derived table there is a syntax error; membership questions belong to IN subqueries, existence to EXISTS. Shape dictates placement: rows → FROM, values → predicates.",
+  },
+  {
+    id: "kb-dt-q28", difficulty: "medium",
+    prompt: "The two-derived region join produced EU 8/15089.23. What does the LEFT JOIN variant protect against that INNER JOIN would not?",
+    choices: [
+      "A region with customers but zero orders would keep its count row with NULL revenue instead of disappearing — LATAM-style dropout protection",
+      "Nothing — they always match",
+      "Only index behavior",
+      "Column ordering",
+    ],
+    answer: 0,
+    why: "Every region on this seed has revenue, so the two joins coincide. But a new region with customers and no orders would drop from an INNER join — the board would silently lose a market. LEFT JOIN from the counts side preserves the directory's full footprint with NULLs where revenue is absent. The LEFT JOIN from the counts side preserves the directory's footprint over the derived table stages.",
+  },
+  {
+    id: "kb-dt-q29", difficulty: "hard",
+    prompt: "Anti-pattern check: which use of a derived table is WASTEFUL on this seed?",
+    choices: [
+      "FROM (SELECT * FROM orders) o — a pass-through derivation that renames nothing and filters nothing",
+      "FROM (SELECT customer_id, SUM(total) AS spend … GROUP BY customer_id) d",
+      "FROM (SELECT category, AVG(price) … ) c",
+      "FROM (SELECT order_id, COUNT(*) … ) n",
+    ],
+    answer: 0,
+    why: "A SELECT * derivation adds a layer with zero transformation — the optimizer usually flattens it, but it costs readability and signals confusion between staging and querying. Derive to CHANGE something: aggregate, filter, rename, reshape. Pass-throughs belong in CTEs only when they aid narration.",
+  },
+  {
+    id: "kb-dt-q30", difficulty: "medium",
+    prompt: "Final synthesis: the derived-table family on this seed answered which questions best?",
+    choices: [
+      "Whale lists (5 over 2000), region dashboards (4×2 staged join), basket outliers (4-line carts), pending ledgers (over 400) — any aggregate-then-compose pipeline",
+      "Simple single-table lookups",
+      "Pure boolean existence flags",
+      "Schema changes",
+    ],
+    answer: 0,
+    why: "Every answer staged an aggregation, then composed it with a join, filter, or second stage. That compute-then-compose shape — not any single query — is the derived table's job. When a question needs GROUP BY's output treated as DATA, derivation (or its CTE twin) is the tool.",
+  },
+];

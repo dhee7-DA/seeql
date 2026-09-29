@@ -1,0 +1,226 @@
+// Keyword Mastery bank — Text functions MCQs, part A (kb-tx-q01..q22).
+// Facts probed via scripts/m5-facts.ts: email handles alice.chen / bruno.silva
+// / chloe.dubois / d.volkov (Dmitri breaks the firstname.lastname pattern!);
+// ALL 16 domains are example.com; longest name Isabella Rossi 14, shortest
+// Grace Kim 9; TRIM('  padded  ') = 'padded' (6 chars); REPLACE date slashes;
+// SUBSTR 1-based; INSTR 1-based, 0 when absent.
+import type { Mcq } from "../types";
+
+export const windowMcqsTxA: Mcq[] = [
+  {
+    id: "kb-tx-q01", difficulty: "easy",
+    prompt: "What does SUBSTR(email, 1, INSTR(email, '@') - 1) extract from 'alice.chen@example.com'?",
+    choices: ["example.com", "alice.chen", "alice", "@example", "The whole email"],
+    answer: 1,
+    why: "INSTR finds the @ at position 11; subtracting 1 and slicing from position 1 keeps everything BEFORE the @ — the handle 'alice.chen'. This is the classic handle-extraction duo: INSTR locates the boundary, SUBSTR cuts it. Text functions are 1-based in SQLite, so position 1 is the first character.",
+    notes: [{ choice: 0, why: "The domain is the OTHER side: SUBSTR(email, INSTR(email, '@') + 1) starts one past the @." }],
+  },
+  {
+    id: "kb-tx-q02", difficulty: "easy",
+    prompt: "String positions in SQLite's text functions start at…",
+    choices: ["0", "1", "-1", "Any index the column declares"],
+    answer: 1,
+    why: "SUBSTR, INSTR and friends are 1-based: the first character is position 1, and INSTR returns 1 for a match at the start. 0 in INSTR means NOT FOUND — which is why INSTR(email, '@') - 1 would slice from position 0 and behave unexpectedly on @-less strings. The 1-based convention (versus 0-based languages) is the top source of off-by-one text bugs.",
+  },
+  {
+    id: "kb-tx-q03", difficulty: "medium",
+    prompt: "INSTR('alice.chen@example.com', '@') returns…",
+    choices: ["10", "11", "12", "0"],
+    answer: 1,
+    why: "Counting 1-based: a-l-i-c-e-.-c-h-e-n is ten characters, so the @ sits at position 11. The INSTR text function returns the 1-based index of the FIRST occurrence, or 0 when the needle is absent — the 0-means-absent convention is what makes INSTR useful as a presence test, not just a locator.",
+  },
+  {
+    id: "kb-tx-q04", difficulty: "medium",
+    prompt: "On the seed, every customer email shares which domain?",
+    choices: ["A mix of gmail.com and outlook.com", "example.com — all 16", "seed.test", "Domains are all NULL"],
+    answer: 1,
+    why: "Probed directly: SUBSTR(email, INSTR(email, '@') + 1) groups to exactly one value — example.com, 16 of 16. The seed carries no gmail or outlook addresses, so any 'domain census' query on this data returns a single row; the domain-extraction pattern still matters for the day real addresses arrive.",
+  },
+  {
+    id: "kb-tx-q05", difficulty: "easy",
+    prompt: "UPPER(name) on 'Alice Chen' yields…",
+    choices: ["alice chen", "ALICE CHEN", "Alice Chen", "Error — UPPER needs a CAST"],
+    answer: 1,
+    why: "UPPER maps each letter to its uppercase form and leaves digits, spaces and punctuation alone: 'ALICE CHEN'. LOWER is its mirror. Both are row-wise text functions — one value in, one value out, no OVER clause needed (though they compose happily inside window expressions).",
+  },
+  {
+    id: "kb-tx-q06", difficulty: "medium",
+    prompt: "Which expression builds the label 'Alice Chen (EU)' from name and region?",
+    choices: [
+      "CONCAT_WS(' ', name, region)",
+      "name || ' (' || region || ')'",
+      "name + ' (' + region + ')'",
+      "APPEND(name, region)",
+    ],
+    answer: 1,
+    why: "SQLite's string function for concatenation is || — the probed output 'Alice Chen (EU)' needs the parentheses and spaces as literals between the pipes. (SQLite does provide CONCAT/CONCAT_WS in newer builds, but || is the portable, always-there form; the + operator would attempt NUMERIC addition and mangle the strings.)",
+    notes: [{ choice: 2, why: "+ on text performs numeric coercion in SQLite — 'Alice' + ' (EU)' collapses to a number, not a label." }],
+  },
+  {
+    id: "kb-tx-q07", difficulty: "medium",
+    prompt: "LENGTH('Isabella Rossi') returns…",
+    choices: ["13", "14", "15", "The byte count of the column"],
+    answer: 1,
+    why: "'Isabella Rossi' is the seed's longest customer name at 14 characters (8 + space + 5... count: I-s-a-b-e-l-l-a is 8, space is 1, R-o-s-s-i is 5 → 14). LENGTH counts characters including spaces; the shortest is 'Grace Kim' at 9. Name-length census queries (ORDER BY LENGTH(name) DESC) are a standard text function drill.",
+  },
+  {
+    id: "kb-tx-q08", difficulty: "medium",
+    prompt: "TRIM('  padded  ') returns what, and how long is it?",
+    choices: ["'padded' — 6 characters", "'  padded  ' — unchanged", "'padded  ' — left side only", "'' — empty"],
+    answer: 0,
+    why: "TRIM strips spaces (by default) from BOTH ends: the result is 'padded', 6 characters. Variants LTRIM and RTRIM keep one side — the trim family is the text function workhorse of cleanup. Trim-then-compare is the standard cleanup before matching imported data, where trailing spaces silently break equality tests — 'padded ' is not equal to 'padded'.",
+  },
+  {
+    id: "kb-tx-q09", difficulty: "easy",
+    prompt: "REPLACE('2024-05-09', '-', '/') yields…",
+    choices: ["2024/05/09", "2024-05-09", "20240509", "Error — dates cannot be replaced"],
+    answer: 0,
+    why: "The REPLACE text function swaps EVERY occurrence of the from-string: the ISO date's dashes become slashes — '2024/05/09'. It operates on pure text (no date awareness); formatting the stored ISO dates for display is its most common job in this database.",
+  },
+  {
+    id: "kb-tx-q10", difficulty: "medium",
+    prompt: "Which expression shows each customer's email INITIALS-STYLE: first letter of the handle?",
+    choices: [
+      "SUBSTR(email, 1, 1)",
+      "LEFT(email, 0)",
+      "INSTR(email, 1)",
+      "TRIM(email, 1)",
+    ],
+    answer: 0,
+    why: "SUBSTR(text, 1, 1) slices exactly the first character — 'a' for alice.chen@example.com. There is no LEFT/RIGHT function in SQLite (that is other engines); SUBSTR covers both ends, and negative or omitted lengths extend its reach. Every text-slice question reduces to SUBSTR with the right 1-based arithmetic.",
+  },
+  {
+    id: "kb-tx-q11", difficulty: "hard",
+    prompt: "The marketing brief wants the handle AND a normalized lowercase domain per customer. Which projection delivers both in one pass?",
+    choices: [
+      "SUBSTR(email, 1, INSTR(email, '@') - 1) AS handle, LOWER(SUBSTR(email, INSTR(email, '@') + 1)) AS domain",
+      "UPPER(email) AS handle, email AS domain",
+      "SUBSTR(email, '@') AS handle, domain",
+      "SPLIT(email, '@') AS handle, domain",
+    ],
+    answer: 0,
+    why: "One scan, two text pipelines off the same column: the handle cuts before the @, the domain cuts after it and LOWER normalizes case for dedupe-safe grouping. There is no SPLIT function in SQLite — boundary location (INSTR) plus slicing (SUBSTR) is THE idiom. On this seed the domain column would read example.com for all 16 rows.",
+  },
+  {
+    id: "kb-tx-q12", difficulty: "medium",
+    prompt: "What does INSTR return when the needle is missing — and why does that matter for slicing?",
+    choices: [
+      "-1 — slicing then errors",
+      "0 — so INSTR(email, '@') - 1 = -1 makes SUBSTR start from the string's END under negative-index rules, silently producing wrong handles",
+      "NULL — the whole expression becomes NULL",
+      "It throws an error",
+    ],
+    answer: 1,
+    why: "Missing needles yield 0, and the handle formula's -1 then produces -1. SQLite's SUBSTR accepts negative start positions (counting from the end), so the expression does not error — it returns a WRONG slice quietly. Defensive builds test presence first: CASE WHEN INSTR(email, '@') > 0 THEN … ELSE email END. (All 16 seed emails carry @, so the guard is dormant here — but the day it matters, it matters loudly.)",
+  },
+  {
+    id: "kb-tx-q13", difficulty: "medium",
+    prompt: "Which query counts customers per email domain — the census that returns ONE row on this seed?",
+    choices: [
+      "SELECT SUBSTR(email, INSTR(email, '@') + 1) AS domain, COUNT(*) FROM customers GROUP BY domain",
+      "SELECT domain, COUNT(*) FROM customers",
+      "SELECT COUNT(DISTINCT email) FROM customers",
+      "SELECT UPPER(email), COUNT(*) FROM customers",
+    ],
+    answer: 0,
+    why: "Extract the domain inline in the SELECT, then GROUP BY the computed alias — grouping on an expression is legal and the census reads one row: example.com, 16. The other shapes either reference a nonexistent column or count the wrong thing. The pattern generalizes to any derived bucket: slice, alias, group.",
+  },
+  {
+    id: "kb-tx-q14", difficulty: "easy",
+    prompt: "Which function family do SUBSTR, INSTR, LENGTH, UPPER, LOWER, TRIM and REPLACE belong to?",
+    choices: [
+      "Window functions",
+      "Scalar (row-wise) text functions — one value in, one value out, no OVER clause",
+      "Aggregates",
+      "Join operators",
+    ],
+    answer: 1,
+    why: "They are scalar functions: each row's value flows through the pipe independently — no grouping, no frame, no OVER clause required (though they compose inside window expressions and aggregates fine). The Module-5 toolkit splits exactly this way: scalar reshapers (this family), then the window family that needs OVER.",
+  },
+  {
+    id: "kb-tx-q15", difficulty: "medium",
+    prompt: "How would you find customers whose name contains 'an' (case-insensitive) WITHOUT LIKE?",
+    choices: [
+      "WHERE INSTR(LOWER(name), 'an') > 0",
+      "WHERE name = 'an'",
+      "WHERE LENGTH(name) = 2",
+      "WHERE TRIM(name) = 'an'",
+    ],
+    answer: 0,
+    why: "The SUBSTR family's locator, INSTR, doubles as a contains-test: position > 0 means found, and LOWER on the haystack makes the test case-insensitive. LIKE '%an%' is the sibling approach — but the INSTR form returns WHERE it matched, not just THAT it matched, which the cleanup queries often need next. (Seed check: 'Chloe Dubois'? no — but 'Dmitri Volkov' has no 'an' either; 'Keiko Sato' — no; names like 'Hannah' would light up.)",
+  },
+  {
+    id: "kb-tx-q16", difficulty: "medium",
+    prompt: "SUBSTR('2024-05-09', 1, 7) returns…",
+    choices: ["'2024-05'", "'2024-0'", "'24-05-09'", "'' "],
+    answer: 0,
+    why: "Start at position 1, take 7 characters: '2024-05' — the year-month bucket as text. Slicing ISO dates by fixed offsets is a legitimate quick bucket (though strftime('%Y-%m', …) is the date-aware form). Omitting the third argument runs SUBSTR to the end of the string.",
+  },
+  {
+    id: "kb-tx-q17", difficulty: "hard",
+    prompt: "The ops team wants initials per customer: first letter of each name word. Which single-expression approach is honest for 'Alice Chen' → 'AC'?",
+    choices: [
+      "UPPER(SUBSTR(name, 1, 1) || SUBSTR(name, INSTR(name, ' ') + 1, 1))",
+      "UPPER(LEFT(name, 2))",
+      "SUBSTR(UPPER(name), 1, 2)",
+      "TRIM(name, 2)",
+    ],
+    answer: 0,
+    why: "The first word's initial is position 1; the second word's initial sits one past the space (INSTR locates it), sliced one character — pure SUBSTR and INSTR slicing. Piped together and uppercased: 'AC'. Choice C would grab 'AL' — the first two letters, not initials. The expression assumes exactly two words (true for all 16 seed names); three-word names would need richer parsing — a real-world caveat the expression should carry as a comment.",
+  },
+  {
+    id: "kb-tx-q18", difficulty: "medium",
+    prompt: "Which of these returns the NUMBER OF CUSTOMERS whose handle starts with 'd'?",
+    choices: [
+      "SELECT COUNT(*) FROM customers WHERE SUBSTR(email, 1, INSTR(email, '@') - 1) LIKE 'd%'",
+      "SELECT COUNT(*) FROM customers WHERE email LIKE 'd%'",
+      "SELECT SUM(INSTR(email, 'd')) FROM customers",
+      "SELECT COUNT(email) FROM customers WHERE handle = 'd'",
+    ],
+    answer: 0,
+    why: "SUBSTR slices the handle (or equivalently test email LIKE 'd%@%' — the handle IS the email's prefix), then count. Choice B tests the email's first character — which IS the handle's first character here, so it happens to coincide; but the handle-slice version survives format changes (leading whitespace, separators). Seed check: 'd.volkov' matches — 1 customer.",
+  },
+  {
+    id: "kb-tx-q19", difficulty: "medium",
+    prompt: "What does SUBSTR(name, -4) return for 'Grace Kim'?",
+    choices: ["' Kim' — the LAST 4 characters; negative start counts from the end", "'Grac'", "NULL", "Error — negative positions are illegal"],
+    answer: 0,
+    why: "SQLite extends SUBSTR with negative starts: -4 means 'begin 4 characters from the end and run to the end' — ' Kim'. The suffix slice is the mirror of the prefix slice and needs no LENGTH arithmetic. (WITH a length argument like SUBSTR(name, -4, 2) you get ' K' — two characters from that point.)",
+  },
+  {
+    id: "kb-tx-q20", difficulty: "hard",
+    prompt: "A cleanup job must normalize names: trim spaces, uppercase, and collapse nothing else. Which ORDER of operations preserves correctness?",
+    choices: [
+      "UPPER(TRIM(name)) — trim first so hidden spaces never survive into the normalized value",
+      "TRIM(UPPER(name)) — identical output; order never matters",
+      "REPLACE(UPPER(name), ' ', '') then TRIM",
+      "UPPER(name) alone is enough",
+    ],
+    answer: 0,
+    why: "Functionally TRIM(UPPER(name)) and UPPER(TRIM(name)) agree here — case mapping does not create or destroy spaces — so the honest answer is about DEFENSIBLE habit: trim first, because any future transformation that ADDS whitespace (concatenation, padding) would otherwise bake it in. The real point: name cleanup pipelines are ordered pipelines, and the order should be a decision, not an accident.",
+  },
+  {
+    id: "kb-tx-q21", difficulty: "medium",
+    prompt: "Which text function would you use to measure whether ANY customer name exceeds 12 characters — and what is the seed's answer?",
+    choices: [
+      "LENGTH in a comparison — yes: Isabella Rossi (14), Dmitri Volkov (13) and Pedro Alvarez (13) exceed 12",
+      "COUNT — none do",
+      "TRIM — all do",
+      "REPLACE — the answer is 0",
+    ],
+    answer: 0,
+    why: "LENGTH(name) > 12 is the test; three seed names pass it, led by Isabella Rossi at 14. LENGTH counts CHARACTERS in SQLite (not bytes, for the built-in encodings) — the detail that matters when names carry accents or non-Latin scripts and reports get compared against byte-based systems.",
+  },
+  {
+    id: "kb-tx-q22", difficulty: "easy",
+    prompt: "Text functions compose with aggregates how?",
+    choices: [
+      "They cannot — pick one or the other",
+      "Naturally: SELECT SUBSTR(email, INSTR(email, '@') + 1) AS domain, COUNT(*) FROM customers GROUP BY domain — reshape per row, then aggregate",
+      "Only inside window functions",
+      "Only with a CAST",
+    ],
+    answer: 1,
+    why: "The scalar reshape happens per row in the SELECT; the aggregate then buckets the reshaped values. Reshape-then-group is the standard text census pattern — domains, name initials, date slices all follow it. The same composed value can also feed WHERE (with the expression repeated) or a HAVING on the aggregate.",
+  },
+];

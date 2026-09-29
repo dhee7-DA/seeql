@@ -1,0 +1,180 @@
+// Keyword Mastery bank — Correlated subquery graded problems (kb-co-i01..i24).
+// Probed facts: 45 orders above own-customer avg, 7 products above category
+// avg, per-customer maxes 1088.44/945.21/845.92/826.03/767.64, second-highest
+// 945.21, heavy four 24/17/14/13, active flags (97 active orders / 6 dormant),
+// latest dates Emma 2025-02-27 …, pending share Farid 74.6%.
+import type { Problem } from "../types";
+import { EXPECTED } from "../expected";
+
+const p = (v: Omit<Problem, "expected">): Problem => ({ ...v, expected: EXPECTED[v.id] });
+
+export const subqueryProblemsC: Problem[] = [
+  p({
+    id: "kb-co-i01", difficulty: "easy",
+    title: "Per-customer order counts",
+    brief: "The canonical correlated scalar: each directory row carries its own order tally from an inner COUNT scoped by the correlation. Alice leads at 24; the ledger runs down to single orders. No GROUP BY — the subquery does the counting per row.",
+    hints: ["SELECT c.name, (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id) AS n FROM customers c.", "ORDER BY n DESC, name for the leaderboard read."],
+    solution: "SELECT c.name, (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id) AS n FROM customers c ORDER BY n DESC, c.name ASC;",
+  }),
+  p({
+    id: "kb-co-i02", difficulty: "easy",
+    title: "Per-customer lifetime spend",
+    brief: "The correlated SUM: each customer's total spend computed per row. NULL never appears here — all sixteen bought — but the pattern stays NULL-safe for non-buyers. Alice 7262.35 tops Emma 6640.56.",
+    hints: ["Swap the COUNT for SUM(o.total) and round to 2 decimals.", "Same correlation: o.customer_id = c.id. ORDER BY spend DESC."],
+    solution: "SELECT c.name, ROUND((SELECT SUM(o.total) FROM orders o WHERE o.customer_id = c.id), 2) AS spend FROM customers c ORDER BY spend DESC, c.name ASC;",
+  }),
+  p({
+    id: "kb-co-i03", difficulty: "easy",
+    title: "Above-own-average orders",
+    brief: "The within-group test: orders whose total beats THEIR customer's average. The inner AVG correlates on customer id; forty-five orders clear their personal bar — three more than the global-average test. The correlated average re-benchmarks each order against its own account.",
+    hints: ["SELECT o.id, o.customer_id, o.total FROM orders o WHERE o.total > (SELECT AVG(o2.total) FROM orders o2 WHERE o2.customer_id = o.customer_id).", "Fresh alias o2 inside; ORDER BY o.id."],
+    solution: "SELECT o.id, o.customer_id, o.total FROM orders o WHERE o.total > (SELECT AVG(o2.total) FROM orders o2 WHERE o2.customer_id = o.customer_id) ORDER BY o.id ASC;",
+  }),
+  p({
+    id: "kb-co-i04", difficulty: "easy",
+    title: "Products above their shelf",
+    brief: "Category-relative pricing: products above THEIR category's average. The inner AVG correlates on category — seven shelf leaders, from Smart Watch S (199.99 vs 139.50) down to Laptop Stand Aluminum (42.50 vs 27.49). The correlation scopes the shelf average per product — the category-relative correlated test.",
+    hints: ["SELECT p.name, p.price, p.category FROM products p WHERE p.price > (SELECT AVG(p2.price) FROM products p2 WHERE p2.category = p.category).", "ORDER BY p.price DESC."],
+    solution: "SELECT p.name, p.price, p.category FROM products p WHERE p.price > (SELECT AVG(p2.price) FROM products p2 WHERE p2.category = p.category) ORDER BY p.price DESC;",
+  }),
+  p({
+    id: "kb-co-i05", difficulty: "medium",
+    title: "Per-customer averages with max side-by-side",
+    brief: "Two correlated scalars, one row: each buyer's average order and their biggest, side by side. Liam's degenerate pair (705.39 / 705.39) exposes single-order histories; Chloe's spread (533.59 / 945.21) shows real variance.",
+    hints: ["Two inner SELECTs: AVG(o2.total) and MAX(o2.total), both scoped by o2.customer_id = c.id.", "ROUND both to 2; filter to customers WITH orders via an outer WHERE EXISTS if you want to skip NULLs; ORDER BY avg DESC."],
+    solution: "SELECT c.name, ROUND((SELECT AVG(o2.total) FROM orders o2 WHERE o2.customer_id = c.id), 2) AS avg_total, ROUND((SELECT MAX(o2.total) FROM orders o2 WHERE o2.customer_id = c.id), 2) AS max_total FROM customers c WHERE c.id IN (SELECT customer_id FROM orders) ORDER BY avg_total DESC, c.name ASC;",
+  }),
+  p({
+    id: "kb-co-i06", difficulty: "medium",
+    title: "Each customer's ceiling",
+    brief: "The per-customer argmax in correlated form: every order whose total EQUALS its customer's MAX — sixteen rows, one leader per account. The gap-to-ceiling customers (everyone else's rows) fail the equality.",
+    hints: ["WHERE o.total = (SELECT MAX(o2.total) FROM orders o2 WHERE o2.customer_id = o.customer_id).", "SELECT o.id, o.customer_id, o.total; ORDER BY o.total DESC."],
+    solution: "SELECT o.id, o.customer_id, o.total FROM orders o WHERE o.total = (SELECT MAX(o2.total) FROM orders o2 WHERE o2.customer_id = o.customer_id) ORDER BY o.total DESC, o.id ASC;",
+  }),
+  p({
+    id: "kb-co-i07", difficulty: "medium",
+    title: "Gap to the personal ceiling",
+    brief: "The same computation as a per-row metric: each order's total minus its customer's maximum — leaders compute 0.00, the rest carry negatives. A customer-relative ledger in one correlated expression.",
+    hints: ["SELECT o.id, ROUND(o.total - (SELECT MAX(o2.total) FROM orders o2 WHERE o2.customer_id = o.customer_id), 2) AS gap FROM orders o.", "ORDER BY gap DESC, o.id."],
+    solution: "SELECT o.id, ROUND(o.total - (SELECT MAX(o2.total) FROM orders o2 WHERE o2.customer_id = o.customer_id), 2) AS gap FROM orders o ORDER BY gap DESC, o.id ASC;",
+  }),
+  p({
+    id: "kb-co-i08", difficulty: "medium",
+    title: "Heavy buyers via correlated COUNT",
+    brief: "GROUP BY-free segmentation: customers whose correlated order COUNT exceeds 6. The heavy four surface — Alice 24, Emma 17, Grace 14, Maya 13 — straight from the directory, no grouping needed.",
+    hints: ["WHERE (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id) > 6.", "SELECT id, name FROM customers c; ORDER BY name."],
+    solution: "SELECT id, name FROM customers c WHERE (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id) > 6 ORDER BY name ASC;",
+  }),
+  p({
+    id: "kb-co-i09", difficulty: "medium",
+    title: "The five-plus club",
+    brief: "Boundary awareness: >= 5 admits the fifth customer (the lone 5-order account) to the heavy list — five rows. No customer sits at exactly 6, so >= 6 would equal > 6; the 5 threshold is the one that moves the count. The correlated count threshold admits the fifth customer at the >= 5 boundary.",
+    hints: ["Change the threshold to >= 5 in the heavy-buyers query.", "ORDER BY name."],
+    solution: "SELECT id, name FROM customers c WHERE (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id) >= 5 ORDER BY name ASC;",
+  }),
+  p({
+    id: "kb-co-i10", difficulty: "medium",
+    title: "Second-highest total",
+    brief: "Hand-rolled ranking: orders whose count of DISTINCT higher totals equals exactly 1 — the runner-up rung. The answer: 945.21 (Chloe's best). Change the constant to 0 for the max, 2 for third place. The correlated COUNT is the hand-rolled rank this second-place probe walks.",
+    hints: ["SELECT DISTINCT o.total FROM orders o WHERE (SELECT COUNT(DISTINCT o2.total) FROM orders o2 WHERE o2.total > o.total) = 1.", "ORDER BY o.total DESC."],
+    solution: "SELECT DISTINCT o.total FROM orders o WHERE (SELECT COUNT(DISTINCT o2.total) FROM orders o2 WHERE o2.total > o.total) = 1 ORDER BY o.total DESC;",
+  }),
+  p({
+    id: "kb-co-i11", difficulty: "medium",
+    title: "Recency ledger",
+    brief: "Each customer's latest order date via correlated MAX — the 'when did they last act' column. Emma Wilson holds the frontier (2025-02-27); volume leaders like Alice (2025-02-19) do not necessarily buy recently.",
+    hints: ["SELECT c.name, (SELECT MAX(o.created_at) FROM orders o WHERE o.customer_id = c.id) AS latest FROM customers c WHERE c.id IN (SELECT customer_id FROM orders).", "ORDER BY latest DESC."],
+    solution: "SELECT c.name, (SELECT MAX(o.created_at) FROM orders o WHERE o.customer_id = c.id) AS latest FROM customers c WHERE c.id IN (SELECT customer_id FROM orders) ORDER BY latest DESC, c.name ASC;",
+  }),
+  p({
+    id: "kb-co-i12", difficulty: "medium",
+    title: "Active-flag lookup ledger",
+    brief: "Scalar flag fetch: every order row gains its customer's active flag via a correlated lookup of the directory column. Two customers read 0 — Dmitri Volkov and Keiko Sato. A per-row join replaced by a probe.",
+    hints: ["SELECT o.id, o.customer_id, (SELECT c2.active FROM customers c2 WHERE c2.id = o.customer_id) AS active FROM orders o.", "ORDER BY o.id."],
+    solution: "SELECT o.id, o.customer_id, (SELECT c2.active FROM customers c2 WHERE c2.id = o.customer_id) AS active FROM orders o ORDER BY o.id ASC;",
+  }),
+  p({
+    id: "kb-co-i13", difficulty: "hard",
+    title: "Orders of active customers only",
+    brief: "Filter through the correlated lookup: keep orders whose customer reads active = 1. The dormant pair's 6 orders drop — 97 survive. The correlated scalar in WHERE is the per-row directory check.",
+    hints: ["WHERE (SELECT c2.active FROM customers c2 WHERE c2.id = o.customer_id) = 1.", "SELECT o.id FROM orders o; ORDER BY o.id."],
+    solution: "SELECT o.id FROM orders o WHERE (SELECT c2.active FROM customers c2 WHERE c2.id = o.customer_id) = 1 ORDER BY o.id ASC;",
+  }),
+  p({
+    id: "kb-co-i14", difficulty: "hard",
+    title: "Pending share per customer",
+    brief: "The risk ledger: each customer's pending spend divided by lifetime spend — two correlated SUMs, one filtered. Farid Nasser tops at 74.6% (1088.44 of 1458.97); zero-pending customers read 0.0.",
+    hints: ["ROUND(pending_sum * 1.0 / lifetime_sum, 4) from two inner SELECTs — one with AND o.status = 'pending'.", "Guard the division: customers all have orders here, so lifetime is never 0. ORDER BY share DESC."],
+    solution: "SELECT c.name, ROUND((SELECT SUM(o.total) FROM orders o WHERE o.customer_id = c.id AND o.status = 'pending') * 1.0 / (SELECT SUM(o2.total) FROM orders o2 WHERE o2.customer_id = c.id), 4) AS pending_share FROM customers c WHERE c.id IN (SELECT customer_id FROM orders) ORDER BY pending_share DESC, c.name ASC;",
+  }),
+  p({
+    id: "kb-co-i15", difficulty: "hard",
+    title: "Above-own-average big tickets",
+    brief: "Two predicates compose: the order must clear its CUSTOMER's average AND 500 absolute. The correlation sets the personal bar; the literal sets the floor. Probed: a tight subset of the 45 personal winners. The correlated personal bar composes with the absolute materiality line.",
+    hints: ["WHERE o.total > (SELECT AVG(o2.total) …) AND o.total > 500.", "SELECT o.id, o.customer_id, o.total; ORDER BY o.total DESC."],
+    solution: "SELECT o.id, o.customer_id, o.total FROM orders o WHERE o.total > (SELECT AVG(o2.total) FROM orders o2 WHERE o2.customer_id = o.customer_id) AND o.total > 500 ORDER BY o.total DESC, o.id ASC;",
+  }),
+  p({
+    id: "kb-co-i16", difficulty: "hard",
+    title: "Cancels per customer, threshold form",
+    brief: "The count-threshold filter: customers whose correlated cancellation COUNT is at most 1 — fourteen pass (twelve clean plus two single-cancellation holders). Alice (3) and Maya (2) fail. The count form tunes where NOT EXISTS cannot.",
+    hints: ["WHERE (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id AND o.status = 'cancelled') <= 1.", "SELECT id, name; ORDER BY name."],
+    solution: "SELECT id, name FROM customers c WHERE (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id AND o.status = 'cancelled') <= 1 ORDER BY name ASC;",
+  }),
+  p({
+    id: "kb-co-i17", difficulty: "hard",
+    title: "Per-category average alongside each product",
+    brief: "The correlated AVG as a projected column: every product row carries its own shelf's average price next to its price. The comparison becomes visible — Smart Watch S sees 139.50 beside its 199.99.",
+    hints: ["SELECT p.name, p.price, ROUND((SELECT AVG(p2.price) FROM products p2 WHERE p2.category = p.category), 2) AS cat_avg FROM products p.", "ORDER BY p.price DESC."],
+    solution: "SELECT p.name, p.price, ROUND((SELECT AVG(p2.price) FROM products p2 WHERE p2.category = p.category), 2) AS cat_avg FROM products p ORDER BY p.price DESC, p.name ASC;",
+  }),
+  p({
+    id: "kb-co-i18", difficulty: "hard",
+    title: "Year-over-year-style compare",
+    brief: "Correlation over a computed column: each 2025 order compared against the average total of ALL 2024 orders. The inner AVG correlates on a strftime expression, not a key — correlation scope is any outer-column condition. Correlation over a computed column: the year slice scopes the correlated average.",
+    hints: ["WHERE strftime('%Y', o.created_at) = '2025' AND o.total > (SELECT AVG(o2.total) FROM orders o2 WHERE strftime('%Y', o2.created_at) = '2024').", "SELECT o.id, o.total; ORDER BY o.total DESC."],
+    solution: "SELECT o.id, o.total FROM orders o WHERE strftime('%Y', o.created_at) = '2025' AND o.total > (SELECT AVG(o2.total) FROM orders o2 WHERE strftime('%Y', o2.created_at) = '2024') ORDER BY o.total DESC, o.id ASC;",
+  }),
+  p({
+    id: "kb-co-i19", difficulty: "hard",
+    title: "Leaderboard positions via correlated count",
+    brief: "Every order ranked by how many DISTINCT higher totals exist — a hand-rolled dense rank as a projected column. The maximum reads 0, the runner-up 1. The full ledger exposes ties the plain sort hides.",
+    hints: ["SELECT o.total, (SELECT COUNT(DISTINCT o2.total) FROM orders o2 WHERE o2.total > o.total) AS better FROM orders o — with DISTINCT on the outer to collapse repeats.", "ORDER BY better, o.total DESC."],
+    solution: "SELECT DISTINCT o.total, (SELECT COUNT(DISTINCT o2.total) FROM orders o2 WHERE o2.total > o.total) AS better FROM orders o ORDER BY better ASC, o.total DESC;",
+  }),
+  p({
+    id: "kb-co-i20", difficulty: "hard",
+    title: "Per-customer first purchase",
+    brief: "The correlated MIN: each customer's earliest order date — the acquisition ledger. Correlation works identically for MIN and MAX; the anchor question flips from recency to tenure.",
+    hints: ["Swap MAX for MIN in the recency ledger — keep the same correlation and the buyers-only filter.", "ORDER BY latest → earliest ASC."],
+    solution: "SELECT c.name, (SELECT MIN(o.created_at) FROM orders o WHERE o.customer_id = c.id) AS first_order FROM customers c WHERE c.id IN (SELECT customer_id FROM orders) ORDER BY first_order ASC, c.name ASC;",
+  }),
+  p({
+    id: "kb-co-i21", difficulty: "hard",
+    title: "Double-correlated split ledger",
+    brief: "Two scopes in one row: each pending order carries its customer's TOTAL order count (correlated) beside its own total. The inner COUNT ignores status — deliberately: it answers 'how big is this account' for each stuck ticket.",
+    hints: ["SELECT o.id, o.total, (SELECT COUNT(*) FROM orders o2 WHERE o2.customer_id = o.customer_id) AS account_orders FROM orders o WHERE o.status = 'pending'.", "ORDER BY o.total DESC."],
+    solution: "SELECT o.id, o.total, (SELECT COUNT(*) FROM orders o2 WHERE o2.customer_id = o.customer_id) AS account_orders FROM orders o WHERE o.status = 'pending' ORDER BY o.total DESC, o.id ASC;",
+  }),
+  p({
+    id: "kb-co-i22", difficulty: "medium",
+    title: "Correlated EXISTS: premium buyers",
+    brief: "The EXISTS spelling of a correlated filter: customers holding at least one order above the STORE-WIDE average (338.19). All sixteen qualify — the probe finds each holder's single qualifying ticket instantly.",
+    hints: ["WHERE EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.id AND o.total > (SELECT AVG(total) FROM orders)).", "Nested: correlated probe wrapping an uncorrelated scalar. SELECT name; ORDER BY name."],
+    solution: "SELECT name FROM customers c WHERE EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.id AND o.total > (SELECT AVG(total) FROM orders)) ORDER BY name ASC;",
+  }),
+  p({
+    id: "kb-co-i23", difficulty: "medium",
+    title: "Per-customer pending count column",
+    brief: "A projected correlated COUNT with a status filter: every customer row carries its pending tally — eight customers read positive, led by Emma's pending pile. Zero stays zero (COUNT over empty), never NULL.",
+    hints: ["SELECT c.name, (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id AND o.status = 'pending') AS pend FROM customers c.", "ORDER BY pend DESC, name."],
+    solution: "SELECT c.name, (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id AND o.status = 'pending') AS pend FROM customers c ORDER BY pend DESC, c.name ASC;",
+  }),
+  p({
+    id: "kb-co-i24", difficulty: "hard",
+    title: "Own-category rank ladder",
+    brief: "The category-relative rank: each product's count of same-shelf products priced HIGHER (DISTINCT, so ties share a rung). The seven shelf leaders all read 0 — the correlated lens proves leadership without window functions.",
+    hints: ["SELECT p.name, p.category, (SELECT COUNT(DISTINCT p2.price) FROM products p2 WHERE p2.category = p.category AND p2.price > p.price) AS above FROM products p.", "ORDER BY above ASC, p.price DESC."],
+    solution: "SELECT p.name, p.category, (SELECT COUNT(DISTINCT p2.price) FROM products p2 WHERE p2.category = p.category AND p2.price > p.price) AS above FROM products p ORDER BY above ASC, p.price DESC, p.name ASC;",
+  }),
+];

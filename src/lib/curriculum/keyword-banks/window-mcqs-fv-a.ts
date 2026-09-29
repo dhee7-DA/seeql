@@ -1,0 +1,246 @@
+// Keyword Mastery bank — FIRST_VALUE & LAST_VALUE MCQs, part A (kb-fv-q01..q21).
+// Facts probed via scripts/m5-facts.ts: first order overall is #6 on
+// 2024-01-01 at 752.96, last is #97 on 2025-02-27 at 585.79; LAST_VALUE with
+// the default frame returns the CURRENT ROW's value (752.96 on the first row)
+// while the full UNBOUNDED FOLLOWING frame returns 585.79; FIRST_VALUE per
+// customer (by created_at, id): c1 152.52, c2 752.96, c3 364.71, c4 164.17,
+// c5 725.34.
+import type { Mcq } from "../types";
+
+export const windowMcqsFvA: Mcq[] = [
+  {
+    id: "kb-fv-q01", difficulty: "easy",
+    prompt: "What does FIRST_VALUE(total) OVER (ORDER BY created_at) return on every row?",
+    choices: [
+      "The smallest total in the table",
+      "The total of the earliest-ordered row in the window — 752.96 on this seed's date ordering",
+      "The first row's primary key",
+      "The average of all totals",
+    ],
+    answer: 1,
+    why: "FIRST_VALUE is a window function that reproduces ONE value — the leading row of the window ordering — onto every row of its partition. With the window ORDER BY created_at, the earliest order (2024-01-01, order 6, total 752.96) is that leading row, so every output row carries 752.96 in the first_value column. It is a lookup, not an aggregate: nothing is summed or collapsed.",
+  },
+  {
+    id: "kb-fv-q02", difficulty: "easy",
+    prompt: "Which pair are window VALUE functions rather than aggregates?",
+    choices: [
+      "SUM and COUNT",
+      "FIRST_VALUE and LAST_VALUE",
+      "ROUND and CAST",
+      "MAX and MIN",
+    ],
+    answer: 1,
+    why: "FIRST_VALUE and LAST_VALUE are the window function family's pointers: they fetch a value from a specific position (window start, window end) without aggregating. MAX/MIN look similar in output but are aggregates — they need GROUP BY or the OVER clause and collapse differently. The value functions answer 'what sits at the edge of my window', not 'what summarizes my rows'.",
+  },
+  {
+    id: "kb-fv-q03", difficulty: "medium",
+    prompt: "`SELECT id, LAST_VALUE(total) OVER (ORDER BY created_at) lv FROM orders` — on the FIRST output row, lv equals…",
+    choices: ["585.79 — the last order's total", "752.96 — the first row's own total", "NULL", "338.19 — the average"],
+    answer: 1,
+    why: "This is the most famous window frame trap in SQL. LAST_VALUE's default frame is RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW — the window ENDS AT THE CURRENT ROW until you say otherwise. On the first row, the frame's last row IS the first row, so LAST_VALUE returns that row's own total, 752.96. The true store-wide last total (585.79, order 97) only appears with the full frame: ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING.",
+    notes: [{ choice: 0, why: "That is what intuition expects and what the full frame delivers — but the default frame never looks ahead, so LAST_VALUE 'works' only in the last row." }],
+  },
+  {
+    id: "kb-fv-q04", difficulty: "medium",
+    prompt: "The correct window definition for a true LAST_VALUE over the whole partition is…",
+    choices: [
+      "OVER (ORDER BY created_at)",
+      "OVER (ORDER BY created_at ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)",
+      "OVER (PARTITION BY created_at)",
+      "OVER (ORDER BY created_at ROWS BETWEEN CURRENT ROW AND CURRENT ROW)",
+    ],
+    answer: 1,
+    why: "LAST_VALUE must see to the END of the partition, and only the explicit UNBOUNDED FOLLOWING frame extends the window that far. Probed on the seed: with the full frame, every row reports 585.79 (order 97, 2025-02-27); with the default frame, rows report their own running-last. The frame clause is not decoration — it IS the semantics of the value functions.",
+  },
+  {
+    id: "kb-fv-q05", difficulty: "easy",
+    prompt: "FIRST_VALUE has the same default-frame issue as LAST_VALUE. Why does it rarely bite?",
+    choices: [
+      "It does — FIRST_VALUE is equally broken",
+      "The default frame already starts at UNBOUNDED PRECEDING, which is exactly where FIRST_VALUE looks",
+      "FIRST_VALUE ignores frames entirely",
+      "SQLite special-cases FIRST_VALUE",
+    ],
+    answer: 1,
+    why: "The default frame is RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW — it always begins at the partition's start, which is precisely the position FIRST_VALUE reads. FIRST_VALUE is frame-safe by coincidence of direction; LAST_VALUE reads the frame's END, which moves with the current row. That asymmetry is why only LAST_VALUE surprises people.",
+  },
+  {
+    id: "kb-fv-q06", difficulty: "medium",
+    prompt: "FIRST_VALUE(total) OVER (PARTITION BY customer_id ORDER BY created_at, id) — what does customer 2's row show?",
+    choices: ["752.96", "152.52", "364.71", "164.17"],
+    answer: 0,
+    why: "Partitioned by customer, the FIRST_VALUE pointer resets: it reads the earliest order WITHIN customer 2's own timeline, which is their 752.96 order (order 6 — the store's very first order belongs to customer 2). Customer 1's earliest is 152.52, customer 3's is 364.71, customer 4's is 164.17. The PARTITION BY clause gives each customer their own window start.",
+    notes: [{ choice: 1, why: "152.52 is customer 1's first-order total — the partition boundary is what keeps these numbers separate." }],
+  },
+  {
+    id: "kb-fv-q07", difficulty: "easy",
+    prompt: "What does `order_total - FIRST_VALUE(order_total) OVER (PARTITION BY customer_id ORDER BY created_at)` measure per row?",
+    choices: [
+      "The order's discount",
+      "How far each order sits from that customer's FIRST order — the per-customer baseline delta",
+      "The store-wide average gap",
+      "Nothing — arithmetic on window values is illegal",
+    ],
+    answer: 1,
+    why: "Because FIRST_VALUE stamps every row of a partition with the same baseline (that customer's opening order), subtracting it yields the drift from each customer's own starting point — the 'growth since first purchase' column. Window output is a normal value the moment it exists: arithmetic, CASE and comparisons all compose on top of the OVER clause result.",
+  },
+  {
+    id: "kb-fv-q08", difficulty: "medium",
+    prompt: "Which query shape produces a 'opening order vs latest order' comparison per customer in ONE pass?",
+    choices: [
+      "FIRST_VALUE(total) OVER (PARTITION BY customer_id ORDER BY created_at) alongside LAST_VALUE(total) OVER (PARTITION BY customer_id ORDER BY created_at ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)",
+      "Two GROUP BY queries joined",
+      "MIN(total) and MAX(total) — same thing",
+      "A correlated subquery per row",
+    ],
+    answer: 0,
+    why: "Two window columns over one scan: the FIRST_VALUE reads the partition's head; the LAST_VALUE needs the explicit full frame to read its tail. Note the honest distinction — MIN/MAX are value extremes (a customer's cheapest/priciest order), NOT first/last in time. The earliest and latest orders can sit anywhere on the price scale; only the value functions with a date ordering answer the timeline question.",
+  },
+  {
+    id: "kb-fv-q09", difficulty: "medium",
+    prompt: "Why is `FIRST_VALUE(name) OVER (ORDER BY total)` NOT 'the name of the cheapest order' on the seed?",
+    choices: [
+      "It is, actually — names and totals travel together",
+      "It is — but only because the window ORDER BY total puts the minimum first; the phrase misleads because FIRST_VALUE reads the WINDOW order, not any column you might assume",
+      "Names cannot be window inputs",
+      "FIRST_VALUE requires numeric columns",
+    ],
+    answer: 1,
+    why: "FIRST_VALUE returns whatever column you project from the row that leads the window ORDER BY — order by total ascending and the leading row is the 25.47 minimum, so its name IS the cheapest order's name. The subtlety worth teaching: the function's meaning lives entirely in the window definition. Change the ordering and the same FIRST_VALUE(name) points at a completely different row — there is no built-in 'first' without it.",
+  },
+  {
+    id: "kb-fv-q10", difficulty: "medium",
+    prompt: "The default frame is RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW. What does RANGE mean for LAST_VALUE on rows sharing a sort value?",
+    choices: [
+      "Nothing special — frames are always row-by-row",
+      "Peers with the same ORDER BY value join or leave the frame TOGETHER — the frame includes all ties of the current row",
+      "RANGE forces NULL values",
+      "RANGE only applies to numeric frames",
+    ],
+    answer: 1,
+    why: "RANGE frames treat tied rows (peers) as one unit: the frame ends at the LAST PEER of the current row, not the current row alone. So with duplicate created_at values, LAST_VALUE under the default frame can already peek past the current row to its peers — which is why the ROWS variant is preferred when row-precise frames matter. This seed's order dates contain ties (Alice has several same-day orders), so the distinction is live here, not theoretical.",
+  },
+  {
+    id: "kb-fv-q11", difficulty: "hard",
+    prompt: "You want, per customer, the total of their FIRST order next to every order. Which is CORRECT and deterministic?",
+    choices: [
+      "FIRST_VALUE(total) OVER (PARTITION BY customer_id ORDER BY created_at)",
+      "FIRST_VALUE(total) OVER (PARTITION BY customer_id ORDER BY created_at, id)",
+      "MIN(total) OVER (PARTITION BY customer_id)",
+      "FIRST_VALUE(total) OVER ()",
+    ],
+    answer: 1,
+    why: "Choice A works except when two orders share a created_at — then the 'first' is arbitrary and can flip between runs. Folding id into the window ORDER BY pins the winner deterministically (smallest id among same-date orders). Choice C is a different question entirely — MIN is the cheapest order, not the chronological first. Choice D has no ordering, so 'first' means nothing. Deterministic FIRST_VALUE queries put a unique tiebreaker in every window definition.",
+  },
+  {
+    id: "kb-fv-q12", difficulty: "medium",
+    prompt: "What is the difference between LAST_VALUE(total) and MAX(total) — both with OVER (ORDER BY created_at)?",
+    choices: [
+      "None — they are aliases",
+      "LAST_VALUE reads the frame's LAST ROW (with the full frame: the latest order's total, 585.79); MAX reads the largest VALUE in the frame — a different number unless the latest order happens to also be the biggest",
+      "MAX is illegal in windows",
+      "LAST_VALUE sums the frame",
+    ],
+    answer: 1,
+    why: "Position versus magnitude: LAST_VALUE (full frame) fetches 585.79 because order 97 sits at the end of the timeline; MAX fetches 1088.44 because some mid-timeline order was enormous. Both are window functions here, but they answer 'which row is last' versus 'which value is biggest'. Seed check: the store's last order is nowhere near its biggest.",
+  },
+  {
+    id: "kb-fv-q13", difficulty: "easy",
+    prompt: "Which clause can make LAST_VALUE safe in every window you write?",
+    choices: [
+      "Adding DISTINCT",
+      "Explicitly ending the frame with UNBOUNDED FOLLOWING (or another intended endpoint) every time",
+      "Adding a GROUP BY",
+      "Casting the value column",
+    ],
+    answer: 1,
+    why: "The LAST_VALUE trap is a missing frame endpoint. Writing the frame explicitly — ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING for whole-partition semantics — makes the intent visible and correct. Teams that mandate explicit frames never ship the running-last bug; the default exists for compat, not for safety.",
+  },
+  {
+    id: "kb-fv-q14", difficulty: "medium",
+    prompt: "FIRST_VALUE over a partition of ONE row (LATAM's single customer) returns…",
+    choices: ["NULL", "That row's own value — the partition's first and last are the same row", "0", "An error — windows need ≥2 rows"],
+    answer: 0,
+    why: "Wait — it returns that row's own value: with a single-row partition, the first row is the only row, so FIRST_VALUE and (full-frame) LAST_VALUE both read it. Windows happily operate on partitions of size one — LATAM's customer simply has their own tiny window. Frame arithmetic never requires multiple rows; it only gets interesting when there are several.",
+    notes: [{ choice: 0, why: "NULL is what the value functions show only when the projected column itself is NULL — partition size is irrelevant." }],
+  },
+  {
+    id: "kb-fv-q15", difficulty: "hard",
+    prompt: "An analyst reports: 'my LAST_VALUE column shows the same value as the row itself on every row — broken!' What is the diagnosis?",
+    choices: [
+      "The column is broken; file a bug",
+      "Classic default-frame behavior: the frame ends at the current row, so LAST_VALUE equals the current row's value everywhere — fix by extending the frame to UNBOUNDED FOLLOWING",
+      "They forgot PARTITION BY",
+      "The ORDER BY is descending",
+    ],
+    answer: 1,
+    why: "With the default frame (…AND CURRENT ROW), the 'last row in frame' of row N is row N itself — the output equals the input on every row, exactly the reported symptom. The window function is faithfully reading a frame that never looks ahead. One-line fix, textbook lesson: LAST_VALUE without an explicit trailing frame is a no-op mirror.",
+  },
+  {
+    id: "kb-fv-q16", difficulty: "medium",
+    prompt: "Which statement about FIRST_VALUE/LAST_VALUE and NULLs is true?",
+    choices: [
+      "They skip NULLs to find the first real value",
+      "They return whatever value sits at the frame edge, NULL included — to skip NULLs, pair them with COALESCE or filter first",
+      "They error on NULL input",
+      "They convert NULL to zero",
+    ],
+    answer: 1,
+    why: "The value functions are position readers, not NULL-proof finders: if the leading row's column is NULL, FIRST_VALUE hands back NULL on every row of the partition. (Orders.total is NOT NULL on this schema, but shipped_at is nullable — FIRST_VALUE(shipped_at) partitioned by customer would happily stamp NULL for customers whose first order never shipped.) The NULL-handling layer — COALESCE, filters — stays your job.",
+  },
+  {
+    id: "kb-fv-q17", difficulty: "medium",
+    prompt: "For a 'first order of each month' flag — which window definition feeds FIRST_VALUE correctly?",
+    choices: [
+      "PARTITION BY strftime('%Y-%m', created_at) ORDER BY created_at, id — the month is the partition, so rn-style firsts become FIRST_VALUE hits",
+      "ORDER BY created_at alone",
+      "PARTITION BY customer_id",
+      "No window — DISTINCT is enough",
+    ],
+    answer: 0,
+    why: "Partition by the month bucket and the window's first row IS the month's opening order; project id and compare it to the row's own id (or use it directly) to flag month-starters. The PARTITION BY key defines 'first of WHAT' — that decision, not the function call, is where the semantics live.",
+  },
+  {
+    id: "kb-fv-q18", difficulty: "hard",
+    prompt: "Judgment call: retention wants each customer's OPENING order total and the DATE GAP from that opening to every later order. What does the honest build look like?",
+    choices: [
+      "One window column: FIRST_VALUE(total) PARTITION BY customer ORDER BY created_at, id — then julianday(created_at) - julianday(FIRST_VALUE(created_at) OVER (same window)) for the gap",
+      "MAX(created_at) - MIN(created_at) GROUP BY customer",
+      "A CROSS JOIN of customers to their orders",
+      "LAG(created_at) over the whole table",
+    ],
+    answer: 0,
+    why: "Two window columns sharing one window definition (the customer's date-ordered partition with an id tiebreaker): FIRST_VALUE(total) stamps the opening ticket, FIRST_VALUE(created_at) stamps the opening date, and julianday subtraction yields per-order aging from each customer's own day one. MAX-MIN collapses to one row per customer and loses the per-order ledger; LAG measures neighbor-to-neighbor, not origin-to-row. The window definition is reused verbatim — same partition, same ordering — so the two columns can never disagree about where 'first' is.",
+  },
+  {
+    id: "kb-fv-q19", difficulty: "easy",
+    prompt: "FIRST_VALUE(id) OVER (ORDER BY created_at, id) on the orders table returns which id everywhere?",
+    choices: ["1", "6 — the earliest-dated order", "103", "97"],
+    answer: 1,
+    why: "The window's leading row is the earliest order — 2024-01-01, order 6 — so its id, 6, is stamped on all 103 rows. Order 1 exists but was placed later than order 6; the window ORDER BY created_at, id ranks by time first, id only as tiebreaker. 'First' means first in the window's order, whatever the ids say.",
+  },
+  {
+    id: "kb-fv-q20", difficulty: "medium",
+    prompt: "Can FIRST_VALUE and LAST_VALUE appear in the same SELECT with DIFFERENT frame clauses?",
+    choices: [
+      "No — one query, one frame",
+      "Yes — each window function carries its own OVER clause, frames included",
+      "Only in a CTE",
+      "Only with PARTITION BY",
+    ],
+    answer: 1,
+    why: "Every OVER clause is self-contained: `FIRST_VALUE(total) OVER (w ORDER BY created_at)` and `LAST_VALUE(total) OVER (w ORDER BY created_at ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)` coexist happily (and a named WINDOW clause can share the common parts). Independent frames per function are not just legal — they are how the first-value/head and last-value/tail semantics get expressed side by side in one scan.",
+  },
+  {
+    id: "kb-fv-q21", difficulty: "medium",
+    prompt: "What does NTH_VALUE add over FIRST_VALUE/LAST_VALUE?",
+    choices: [
+      "It averages the first n values",
+      "It reads an arbitrary position — the nth row of the frame — generalizing the head/tail pointers to any rung",
+      "It is SQLite-only syntax from 3.25+ that returns NULL when the frame has fewer than n rows (so early rows legitimately show NULL)",
+      "It counts partitions",
+    ],
+    answer: 2,
+    why: "NTH_VALUE(col, n) points at the nth row of the frame; rows before the nth exists report NULL — a frame-boundary NULL, not an error. It slots into the same value-function family: same OVER clause, same frame rules, same trap awareness (the frame must actually REACH the nth row for the value to appear). SQLite gained it in 3.25 alongside the window-function support itself.",
+  },
+];

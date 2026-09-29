@@ -1,0 +1,187 @@
+// Keyword Mastery bank — Subqueries MCQs, part G (correlated kb-co-q01..q18).
+// Facts probed via scripts/m4-facts{,2}.ts + m4-verify-claims.ts: 45 orders
+// above their customer's own average, 7 products above their category average,
+// 5 customers above the 2177.08 average spend, heavy four Alice 24 / Emma 17 /
+// Grace 14 / Maya 13, second-highest total 945.21, Chloe clears her own bar 3
+// times, singles (Liam, Olivia) never clear it.
+import type { Mcq } from "../types";
+
+export const subqueryMcqsG: Mcq[] = [
+  {
+    id: "kb-co-q01", difficulty: "easy",
+    prompt: "What makes a subquery CORRELATED?",
+    choices: [
+      "It references a column from the outer query, so its value depends on the current outer row",
+      "It uses an aggregate function",
+      "It appears in the FROM clause",
+      "It returns multiple rows",
+    ],
+    answer: 0,
+    why: "Correlation is an outer reference: `(SELECT AVG(o2.total) FROM orders o2 WHERE o2.customer_id = o.customer_id)` cannot be evaluated until the engine knows WHICH order (o) it is working on. That per-row dependency is the entire definition — uncorrelated subqueries evaluate once, correlated ones per row.",
+  },
+  {
+    id: "kb-co-q02", difficulty: "easy",
+    prompt: "How many times does an uncorrelated subquery evaluate for a 103-row outer scan? A correlated one?",
+    choices: [
+      "Once; 103 times (once per outer row)",
+      "103 times; once",
+      "Both once",
+      "Both 103 times",
+    ],
+    answer: 0,
+    why: "Uncorrelated subqueries are constants — evaluated once and reused. Correlated subqueries re-run for every candidate row because their meaning changes row by row. That O(outer × inner) shape is the correlated family's defining cost.",
+  },
+  {
+    id: "kb-co-q03", difficulty: "medium",
+    prompt: "The canonical correlated test: `SELECT COUNT(*) FROM orders o WHERE o.total > (SELECT AVG(o2.total) FROM orders o2 WHERE o2.customer_id = o.customer_id)` returns…",
+    choices: ["42", "45", "61", "103"],
+    answer: 1,
+    why: "Each order is compared against ITS customer's average — the correlation scopes the aggregate per customer. Forty-five orders clear their personal bar. The store-wide version passed 42: three extra orders win when the benchmark shifts from global to personal.",
+    notes: [{ choice: 0, why: "42 is the uncorrelated global-average cut. Correlation re-benchmarks each order against its own customer's history." }],
+  },
+  {
+    id: "kb-co-q04", difficulty: "hard",
+    prompt: "Liam O'Brien and Olivia Brown each placed ONE order. How do they fare in the correlated above-own-average test?",
+    choices: [
+      "Zero rows each — a single order equals its own average, and strict > rejects the tie",
+      "Both pass",
+      "Only Liam passes",
+      "NULL — the test errors on singles",
+    ],
+    answer: 0,
+    why: "For a one-row history, AVG(total) IS that total: T > T is false. Single-order customers can never beat their personal mean under strict inequality. Every one of the 45 passing orders comes from a multi-order customer with spread in their ticket sizes.",
+    notes: [{ choice: 1, why: "That would require >=. The strictness choice is the hinge: > excludes self-ties, >= would pass every single-order row trivially." }],
+  },
+  {
+    id: "kb-co-q05", difficulty: "medium",
+    prompt: "Chloe Dubois placed 5 orders averaging 533.59 (max 945.21). How many of her orders clear her own average?",
+    choices: ["1", "3", "5", "0"],
+    answer: 1,
+    why: "Probed directly: 3 of Chloe's 5 tickets exceed her 533.59 personal average. Her spread — 2667.93 total spend across 5 orders, topped by the 945.21 runner-up of the whole store — gives her history room for both winners and losers. Probed directly: three of Chloe's tickets clear her correlated personal bar.",
+  },
+  {
+    id: "kb-co-q06", difficulty: "medium",
+    prompt: "Which correlated query flags products priced above THEIR CATEGORY's average?",
+    choices: [
+      "SELECT name FROM products p WHERE p.price > (SELECT AVG(p2.price) FROM products p2 WHERE p2.category = p.category)",
+      "SELECT name FROM products p WHERE p.price > (SELECT AVG(price) FROM products)",
+      "SELECT name FROM products WHERE price > AVG(price)",
+      "SELECT name FROM products p WHERE p.price > (SELECT price FROM products p2 WHERE p2.category = p.category)",
+    ],
+    answer: 0,
+    why: "The inner average matches the outer row's category — the correlation key is p.category, not a constant. Each product is judged on its own shelf: Smart Watch S (199.99 vs Wearables' 139.50) passes, the same value would be judged differently on Audio. Option B is the global test (6 hits vs 7).",
+  },
+  {
+    id: "kb-co-q07", difficulty: "easy",
+    prompt: "How many products are above their category average (the correlated test)?",
+    choices: ["6", "7", "10", "16"],
+    answer: 1,
+    why: "Seven products lead their shelves: Smart Watch S (199.99/139.50), Noise-Canceling Headset (149.99/109.66), 4K Webcam Pro (129/84.50), Studio Desktop Mic (119/109.66), Mechanical Keyboard K1 (89.99/57.83), Cycling Jersey Pro (65/41.75), Laptop Stand Aluminum (42.50/27.49).",
+    notes: [{ choice: 0, why: "6 is the global-average count. Category context flips exactly one product across the line — the correlated lens finds one more leader." }],
+  },
+  {
+    id: "kb-co-q08", difficulty: "medium",
+    prompt: "Which product flips status between the GLOBAL above-average test (6 hits) and the CATEGORY-level test (7 hits)?",
+    choices: [
+      "Laptop Stand Aluminum — 42.50 sits below the 71.78 global average but above Accessories' 27.49",
+      "Smart Watch S",
+      "Cycling Jersey Pro",
+      "No product flips",
+    ],
+    answer: 0,
+    why: "42.50 is under the catalog-wide 71.78 average — invisible globally — but towers over its Accessories shelf average of 27.49. The correlated test surfaces shelf-relative leaders that global thresholds miss; that is correlation's analytical payoff.",
+  },
+  {
+    id: "kb-co-q09", difficulty: "medium",
+    prompt: "Which correlated scalar computes each customer's LIFETIME spend, NULL for non-buyers?",
+    choices: [
+      "(SELECT SUM(o2.total) FROM orders o2 WHERE o2.customer_id = c.id)",
+      "SUM(orders.total) in the SELECT list",
+      "(SELECT COUNT(o2.total) FROM orders o2 WHERE o2.customer_id = c.id)",
+      "(SELECT total FROM orders WHERE customer_id = c.id)",
+    ],
+    answer: 0,
+    why: "The correlated SUM walks each customer's orders. For buyers it returns their total (Alice 7262.35 at the top); for a non-buyer SUM over empty is NULL. COUNT would return 0 — a number, not NULL — and the unaggregated version violates the scalar contract.",
+  },
+  {
+    id: "kb-co-q10", difficulty: "hard",
+    prompt: "The average CUSTOMER spend is 2177.08. How many customers exceed it (via a correlated spend scalar)?",
+    choices: ["3", "5", "8", "11"],
+    answer: 1,
+    why: "Five whales clear 2177.08: Alice 7262.35, Emma 6640.56, Grace 4574.23, Maya 3644.56, Chloe 2667.93. The other eleven buyers sit below — and on this seed every customer has orders, so the probe covers all 16. Concentration, quantified in one correlated expression.",
+  },
+  {
+    id: "kb-co-q11", difficulty: "medium",
+    prompt: "Which correlated pattern implements 'customers with MORE than 6 orders' without GROUP BY?",
+    choices: [
+      "WHERE (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id) > 6",
+      "WHERE COUNT(orders) > 6",
+      "WHERE orders > 6",
+      "HAVING COUNT(*) > 6 — with no GROUP BY, illegal over a plain directory",
+    ],
+    answer: 0,
+    why: "The correlated COUNT per customer row replaces GROUP BY + HAVING: the aggregate lives inside the subquery, the comparison outside. It surfaces the heavy four — Alice 24, Emma 17, Grace 14, Maya 13 — straight from the directory.",
+    notes: [{ choice: 3, why: "HAVING without GROUP BY aggregates the whole table into one row — it cannot return per-customer answers. The correlated COUNT is the per-row idiom." }],
+  },
+  {
+    id: "kb-co-q12", difficulty: "easy",
+    prompt: "kb-co-q11's pattern with > 6 returns how many customers?",
+    choices: ["1", "4", "5", "8"],
+    answer: 1,
+    why: "Exactly four customers exceed six orders — the heavy four at 24, 17, 14, and 13. The next bucket down is 5 orders (one customer), and no customer sits at exactly 6, so > 6 and >= 6 agree here: 4 either way. The correlated COUNT inside the filter replaces GROUP BY entirely.",
+  },
+  {
+    id: "kb-co-q13", difficulty: "hard",
+    prompt: "The order-count distribution: 2 customers at 1, three at 2, two at 3, four at 4, one at 5, then 13/14/17/24. What does `>= 5` return?",
+    choices: ["4", "5", "9", "11"],
+    answer: 1,
+    why: "Five customers hold five or more orders: the four heavies plus the lone 5-order buyer. Boundary probes matter — the = 6 bucket is empty, so > 6, >= 5, and >= 6 do NOT all agree; only the >= 5 cut includes the fifth customer. The distribution makes the correlated thresholds' boundaries real.",
+  },
+  {
+    id: "kb-co-q14", difficulty: "medium",
+    prompt: "Second-highest DISTINCT order total via correlated ranking: `WHERE (SELECT COUNT(DISTINCT o2.total) FROM orders o2 WHERE o2.total > o.total) = 1` yields which value?",
+    choices: ["1088.44", "945.21", "845.92", "705.39"],
+    answer: 1,
+    why: "The correlated COUNT ranks each order by how many distinct totals sit above it. Exactly one total exceeds 945.21 (the 1088.44 max), so 945.21 — Chloe's best ticket — is the runner-up. Adjust the constant: = 0 for the max, = 2 for third place.",
+    notes: [{ choice: 0, why: "1088.44 has zero totals above it — the = 0 rung. The correlated count IS a rank function written by hand." }],
+  },
+  {
+    id: "kb-co-q15", difficulty: "medium",
+    prompt: "Why is the correlated count in kb-co-q14 effectively a hand-rolled RANK()?",
+    choices: [
+      "It counts how many distinct values strictly precede the current row's value — the definition of rank (ties share the same count)",
+      "It sorts the table",
+      "It uses the RANK keyword internally",
+      "It only works on the maximum",
+    ],
+    answer: 0,
+    why: "Rank = number of strictly better competitors + 1. The correlated COUNT computes exactly that per row; DISTINCT makes ties share one rank (DENSE_RANK behavior). Window functions package this pattern — understanding the correlated original is understanding what RANK() does.",
+  },
+  {
+    id: "kb-co-q16", difficulty: "hard",
+    prompt: "Each customer's LATEST order date via correlated MAX: which customer tops the list?",
+    choices: [
+      "Emma Wilson — 2025-02-27",
+      "Alice Chen — 2025-02-19",
+      "Isabella Rossi — 2025-02-25",
+      "Maya Patel — 2025-02-10",
+    ],
+    answer: 0,
+    why: "The correlated MAX(created_at) per customer yields each account's recency; Emma Wilson's 2025-02-27 order is both her latest and the store's frontier. Alice's heavy volume (24 orders) does not buy recency — her latest is the 19th.",
+    notes: [{ choice: 1, why: "Alice leads volume, not recency. Correlated MAX answers 'when did THIS customer last act' — per-row, not global." }],
+  },
+  {
+    id: "kb-co-q17", difficulty: "medium",
+    prompt: "Which year-split is correct via correlated date extraction — orders in 2024 vs 2025?",
+    choices: ["90 / 13", "13 / 90", "52 / 51", "103 / 0"],
+    answer: 0,
+    why: "Ninety orders fall in 2024 and thirteen in 2025 (the store's data ends 2025-02-27). The correlated pattern attaches each order's year-slice — e.g. comparing an order to its own year's average — demonstrating correlation over computed columns, not just keys.",
+  },
+  {
+    id: "kb-co-q18", difficulty: "medium",
+    prompt: "Per-customer average order value, top of the ledger: which customer's average (705.39) equals their single order?",
+    choices: ["Liam O'Brien", "Chloe Dubois", "Farid Nasser", "Bruno Silva"],
+    answer: 0,
+    why: "Liam's one order of 705.39 makes his average equal his maximum — a degenerate history. The correlated AVG/MAX pair flags such customers for 'needs more data' treatment: their averages carry no spread information. Chloe (533.59 avg, 945.21 max) shows the informative opposite.",
+  },
+];

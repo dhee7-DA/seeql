@@ -43,6 +43,15 @@ import { m03CasesMediumA } from "./m03-cases-medium-a";
 import { m03CasesMediumB } from "./m03-cases-medium-b";
 import { m03CasesHardA } from "./m03-cases-hard-a";
 import { m03CasesHardB } from "./m03-cases-hard-b";
+import { m04Mcqs } from "./m04-mcqs";
+import { m04ProblemsEasy, m04ProblemsMedium } from "./m04-problems-a";
+import { m04ProblemsHard } from "./m04-problems-b";
+import { m04CasesEasyA } from "./m04-cases-easy-a";
+import { m04CasesEasyB } from "./m04-cases-easy-b";
+import { m04CasesMediumA } from "./m04-cases-medium-a";
+import { m04CasesMediumB } from "./m04-cases-medium-b";
+import { m04CasesHardA } from "./m04-cases-hard-a";
+import { m04CasesHardB } from "./m04-cases-hard-b";
 
 export const GAUNTLET_BANKS: GauntletBank[] = [
   {
@@ -65,6 +74,13 @@ export const GAUNTLET_BANKS: GauntletBank[] = [
     mcqs: m03Mcqs,
     cases: [...m03CasesEasyA, ...m03CasesEasyB, ...m03CasesMediumA, ...m03CasesMediumB, ...m03CasesHardA, ...m03CasesHardB],
     problems: [...m03ProblemsEasy, ...m03ProblemsMedium, ...m03ProblemsHard],
+  },
+  {
+    moduleNum: 4,
+    title: "Subqueries & CTEs",
+    mcqs: m04Mcqs,
+    cases: [...m04CasesEasyA, ...m04CasesEasyB, ...m04CasesMediumA, ...m04CasesMediumB, ...m04CasesHardA, ...m04CasesHardB],
+    problems: [...m04ProblemsEasy, ...m04ProblemsMedium, ...m04ProblemsHard],
   },
 ];
 

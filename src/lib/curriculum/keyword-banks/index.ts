@@ -7,9 +7,11 @@
 // and the gauntlet tier contract stays exactly 50/90/90 per module.
 //
 // Case ids: cs-2211..cs-2232 (earlier banks) + cs-2233..cs-2250 (non-equi);
-// m02 gauntlet owns cs-2121..cs-2210; m03 gauntlet owns cs-2251..cs-2340.
-// The M3 set-op banks (union/intersect/except/case-when) carry NO case files —
-// those keywords already clear the 30-case bar from lesson banks.
+// m02 gauntlet owns cs-2121..cs-2210; m03 gauntlet owns cs-2251..cs-2340;
+// the scalar-subquery bank owns cs-2341..cs-2355; m04 gauntlet owns cs-2356..cs-2445;
+// the window banks own cs-2446..cs-2473 (22 FIRST/LAST_VALUE + 6 CAST).
+// The M3 set-op banks and all M4/M5 banks except scalar/first-last/cast carry
+// NO case files — those keywords already clear the 30-case bar from lesson banks.
 import type { Mcq, Problem } from "../types";
 import type { CaseStudy } from "../cases/types";
 
@@ -23,6 +25,8 @@ import { fanOutGrainBank } from "./fan-out-grain";
 import { onVsWhereBank } from "./on-vs-where";
 import { nonEquiJoinsBank } from "./non-equi-joins";
 import { unionBank, intersectBank, exceptBank, caseWhenBank } from "./set-ops-banks";
+import { inSubqueryBank, scalarSubqueryBank, existsBank, correlatedBank, derivedTableBank, recursiveCteBank } from "./subquery-banks";
+import { overPartitionBank, rowNumberBank, ntileBank, firstLastValueBank, percentRankBank, runningTotalsBank, textFunctionsBank, castTypesBank, mathRoundingBank } from "./window-banks";
 
 export interface KeywordBank {
   /** Canonical keyword, verbatim from keyword-taxonomy's dictionary. */
@@ -48,6 +52,21 @@ export const KEYWORD_BANKS: KeywordBank[] = [
   intersectBank,
   exceptBank,
   caseWhenBank,
+  inSubqueryBank,
+  scalarSubqueryBank,
+  existsBank,
+  correlatedBank,
+  derivedTableBank,
+  recursiveCteBank,
+  overPartitionBank,
+  rowNumberBank,
+  ntileBank,
+  firstLastValueBank,
+  percentRankBank,
+  runningTotalsBank,
+  textFunctionsBank,
+  castTypesBank,
+  mathRoundingBank,
 ];
 
 /** Every keyword-bank MCQ, in registry order. */

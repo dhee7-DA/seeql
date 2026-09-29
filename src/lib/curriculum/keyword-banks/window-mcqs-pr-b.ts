@@ -1,0 +1,156 @@
+// Keyword Mastery bank — PERCENT_RANK & CUME_DIST MCQs, part B (kb-pr-q15..q27).
+import type { Mcq } from "../types";
+
+export const windowMcqsPrB: Mcq[] = [
+  {
+    id: "kb-pr-q15", difficulty: "medium",
+    prompt: "Which window ORDER BY direction makes CUME_DIST grow toward the SMALL values?",
+    choices: [
+      "ORDER BY total ASC — small totals accumulate the rising share",
+      "ORDER BY total DESC",
+      "Direction is irrelevant",
+      "CUME_DIST always grows toward large values",
+    ],
+    answer: 0,
+    why: "CUME_DIST accumulates along the window ordering: ASC walks from the 25.47 cheapest upward, so the cheapest rows hold the smallest cumulative shares and the distribution completes at the priciest end. DESC walks from the champion down. Direction defines which end is 'zero-ish' — and flips the meaning of every threshold built on the number.",
+  },
+  {
+    id: "kb-pr-q16", difficulty: "hard",
+    prompt: "Threshold alerts: 'flag customers in the top 10% of lifetime spend.' Which WHERE (on a derived table) is exactly right?",
+    choices: [
+      "WHERE CUME_DIST-computed share <= 0.10 (with spend DESC ordering)",
+      "WHERE spend > AVG(spend)",
+      "WHERE NTILE(10) = 1 — same precision",
+      "WHERE PERCENT_RANK > 0.9",
+    ],
+    answer: 0,
+    why: "With ORDER BY spend DESC, cume_dist ≤ 0.10 selects rows in the top decile INCLUDING exact ties at the boundary. Choice D looks similar but percent_rank ≥ 0.9 EXCLUDES the boundary peers in a different way and starts from 0-based counting — off-by-one-row risk on tie blocks. The AVG cut answers 'above average', not 'top decile'. NTILE(10) = 1 is usually equivalent in count but its boundary falls on a count, not a share — with ties the two can legitimately disagree, and the percentile form is the one that states the business rule verbatim.",
+  },
+  {
+    id: "kb-pr-q17", difficulty: "medium",
+    prompt: "PERCENT_RANK() OVER (ORDER BY total) vs ROW_NUMBER-based math (rn − 1)/(n − 1) — when do they diverge?",
+    choices: [
+      "Never — they are the same by definition",
+      "On ties: row_number breaks them arbitrarily while RANK keeps them equal, so percent_rank stays tie-faithful and row_number math invents order",
+      "Only on empty tables",
+      "Only with PARTITION BY",
+    ],
+    answer: 1,
+    why: "percent_rank is rank-derived — peers share a rank, hence a percent_rank. Rebuilding it from row_number splits peers arbitrarily, so tied rows get different 'percentiles'. This seed's distinct totals mask the issue, but customer-level aggregates (shared totals like the 633.91/645.91 near-twins) can tie; the faithful percentile uses the ranking functions' tie semantics, not a hand-rolled counter.",
+  },
+  {
+    id: "kb-pr-q18", difficulty: "easy",
+    prompt: "Which clause scopes BOTH percent_rank and cume_dist to 'per region' rankings?",
+    choices: ["WHERE region", "PARTITION BY region inside the OVER clause", "GROUP BY region", "A separate query per region"],
+    answer: 1,
+    why: "The window definition carries the population: PARTITION BY region ORDER BY spend DESC makes every region run its own 0-to-1 distribution — EU's 8 customers and US's 2 each get their own head and tail. WHERE filters rows away before the window runs (other regions vanish); GROUP BY collapses them. The percentile pair answers within-population questions only when the partition defines that population.",
+  },
+  {
+    id: "kb-pr-q19", difficulty: "medium",
+    prompt: "Fraud triage wants 'the smallest orders that still make up the bottom 5% of the population' — which direction + function?",
+    choices: [
+      "ORDER BY total ASC, CUME_DIST() <= 0.05",
+      "ORDER BY total DESC, CUME_DIST() <= 0.05",
+      "ORDER BY total ASC, PERCENT_RANK() >= 0.95",
+      "MAX(total) GROUP BY status",
+    ],
+    answer: 0,
+    why: "Bottom 5% by size: order ascending (cheapest first) and take rows whose cumulative share stays at or under 0.05 — the first rungs of the ladder. Choice B flags the top 5% instead; choice C uses percent_rank ≥ 0.95, which under ASC ordering is the TOP of the cheap end — actually it flags the same cheap end but with the (n−1) denominator and tie behavior shifted; the cume_dist form states the share directly and includes boundary peers. Probed anchor: with 103 orders, the bottom-5% cohort is the first handful of rungs at 25.47 and neighbors.",
+  },
+  {
+    id: "kb-pr-q20", difficulty: "medium",
+    prompt: "What is the relationship between CUME_DIST and 'running count of rows seen so far'?",
+    choices: [
+      "None",
+      "cume_dist = running count of rows at or below the current position (peers included) ÷ partition size — it IS the running count, normalized",
+      "cume_dist = running SUM of values ÷ partition size",
+      "cume_dist counts distinct values only",
+    ],
+    answer: 1,
+    why: "Under the hood, cume_dist is a normalized running census: the k-th distinct position carries k (plus peers) over n. That is why its values are always of the form k/n — 1/103, 2/103, … 103/103 on this seed — while percent_rank's are (rank−1)/(n−1). Seeing cume_dist as 'position share' explains both its monotonic rise and its tie blocks.",
+  },
+  {
+    id: "kb-pr-q21", difficulty: "hard",
+    prompt: "Both functions run over the 16-customer spend ranking. How many DISTINCT values does each produce?",
+    choices: [
+      "16 and 16",
+      "15 and 16 — percent_rank loses one distinct value when the top and bottom… actually both produce 16 distinct values here because all spends are distinct",
+      "1 and 16",
+      "0 and 0",
+    ],
+    answer: 1,
+    why: "With all 16 spends distinct (probed: every customer's lifetime total differs), each row holds a unique rank and hence a unique percent_rank — 16 distinct values, 0 through 1 inclusive. CUME_DIST likewise yields 16 distinct k/16 steps. Ties are what collapse distinct counts; this seed simply has none at the customer level — the same probe run over 103 order totals showed 103 distinct values for both.",
+  },
+  {
+    id: "kb-pr-q22", difficulty: "medium",
+    prompt: "Which query attaches each order's percentile (by total) WITHOUT collapsing the row detail?",
+    choices: [
+      "GROUP BY total with AVG(percent)",
+      "ROUND(CUME_DIST() OVER (ORDER BY total), 4) in the SELECT list — window pass keeps all 103 rows",
+      "DISTINCT total, percent",
+      "A self-join counting cheaper orders",
+    ],
+    answer: 1,
+    why: "The window function stamps the percentile on every row and the detail survives — 103 rows in, 103 rows out. The self-join shape (count rows with smaller totals) also works but doubles the scan and begs for index care; GROUP BY and DISTINCT both destroy the one-row-per-order grain the report needs. Percentile columns are a window-function showcase exactly because the detail persists.",
+  },
+  {
+    id: "kb-pr-q23", difficulty: "easy",
+    prompt: "Do PERCENT_RANK and CUME_DIST need an ORDER BY inside OVER to be meaningful?",
+    choices: [
+      "No — they work fine without",
+      "Without an ordering, every row is a peer of every other — cume_dist collapses to 1 and percent_rank to 0 everywhere; technically valid, analytically useless",
+      "Only cume_dist needs it",
+      "The parser requires it",
+    ],
+    answer: 1,
+    why: "No ORDER BY means one peer group: cume_dist counts the whole partition for every row (always 1) and percent_rank's rank is 1 for all (always 0). The engine does not stop you — the semantics do. Every real percentile query pins its ordering; the empty-OVER call is a good party trick for demonstrating what 'peers' means.",
+  },
+  {
+    id: "kb-pr-q24", difficulty: "hard",
+    prompt: "The deck wants a Lorenz-style read: each customer's share of total revenue versus their share of the population. Which pair of windows builds it?",
+    choices: [
+      "CUME_DIST() OVER (ORDER BY spend DESC) for population share, alongside (running SUM of spend ÷ grand total) for revenue share — two windows, one scan",
+      "PERCENT_RANK computes the revenue share directly",
+      "NTILE(4) computes both",
+      "GROUP BY customer computes both",
+    ],
+    answer: 0,
+    why: "Population share is positional — cume_dist over the spend ranking; revenue share is a running sum normalized by the 34833.28 grand total. Plotting one against the other IS the Lorenz curve; the gap from the diagonal is concentration. The percentile functions locate customers; the running-sum window (SUM(SUM(total)) OVER (…) pattern over grouped spend) carries the money axis. Two window definitions, one derived table, zero joins.",
+  },
+  {
+    id: "kb-pr-q25", difficulty: "medium",
+    prompt: "Which statement about the two functions' behavior at the BOTTOM row is correct?",
+    choices: [
+      "Both return 1",
+      "Both return 1 — percent_rank (n−1)/(n−1) and cume_dist n/n coincide there for the last peer group",
+      "percent_rank 1, cume_dist 0",
+      "They return NULL at the bottom",
+    ],
+    answer: 1,
+    why: "The tail is where the two curves finally touch: the last row's rank is n so percent_rank reads (n−1)/(n−1) = 1, and cume_dist reads n/n = 1. (With ties at the bottom, ALL bottom peers share both 1s.) At the head they diverge maximally — 0 versus 1/n — which is why top-of-list reports must choose the function whose zero-anchoring matches the story.",
+  },
+  {
+    id: "kb-pr-q26", difficulty: "medium",
+    prompt: "You compute CUME_DIST() OVER (ORDER BY spend DESC) and find a customer at 0.5. Precisely what does that mean?",
+    choices: [
+      "Their spend is the average",
+      "Half the customers stand at or above their spend level (peers included)",
+      "They have half the top spend",
+      "They are in quartile 2 exactly",
+    ],
+    answer: 1,
+    why: "CUME_DIST is a population share, not a value share: 0.5 means 'at or above this customer's spend sit exactly half the customers' — the median position, whether their spend is 900 or 9000. Value-half and population-half are different medians; conflating them is the classic percentile misread. (The value median would be AVG-based, a different calculation entirely.)",
+  },
+  {
+    id: "kb-pr-q27", difficulty: "hard",
+    prompt: "Final judgment: 'is customer X in the top quartile?' — two analysts answer differently: one uses NTILE(4) = 1, the other CUME_DIST <= 0.25. When do they disagree, and which is faithful to the phrase?",
+    choices: [
+      "They never disagree",
+      "They disagree only when ties straddle the 25% boundary — ntile cuts by count (forced 4/4/4/4), cume_dist cuts by share including all boundary peers; the percentile form is the faithful reading of 'top 25%'",
+      "ntile is always faithful",
+      "Both are wrong — use AVG",
+    ],
+    answer: 1,
+    why: "With 16 customers and no ties both give the same 4-customer cohort (probed: tile 1 = the 3644.56-to-7262.35 crowd). The difference appears with tied boundary values: ntile must place exactly 4 in tile 1 even if the 4th and 5th spends are equal, while cume_dist sweeps both peers into the ≤ 0.25 share (cohort grows). 'Top quartile' is a share statement, so the percentile is the honest translation — ntile is the equal-COUNT approximation that is fine for decks, wrong for contracts.",
+  },
+];

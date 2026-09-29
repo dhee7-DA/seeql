@@ -1,0 +1,163 @@
+// Keyword Mastery bank — WITH RECURSIVE graded problems (kb-rc-i01..i21).
+// Probed facts: counter 1..10 / sum 5050, evens 2..18, doubling to 64, UNION
+// dedupe walk 1,2,3,4,0, date spine 424 days, month spine 14 (2024-01..2025-02),
+// EU CTE chain 45/15089.23, heavy CTE 4/68, per-order line counts max 4,
+// zero-filled daily counts, depth columns.
+import type { Problem } from "../types";
+import { EXPECTED } from "../expected";
+
+const p = (v: Omit<Problem, "expected">): Problem => ({ ...v, expected: EXPECTED[v.id] });
+
+export const subqueryProblemsD: Problem[] = [
+  p({
+    id: "kb-rc-i01", difficulty: "easy",
+    title: "Count to ten",
+    brief: "The hello-world of recursion: a counter CTE walking 1 through 10. Anchor emits 1; the step adds 1 while x < 10. Return every row so the walk itself is the deliverable — ten rows in generation order.",
+    hints: ["WITH RECURSIVE cnt(x) AS (SELECT 1 UNION ALL SELECT x + 1 FROM cnt WHERE x < 10) SELECT x FROM cnt.", "No outer ORDER BY — generation order IS 1..10 for a single-seed walk."],
+    solution: "WITH RECURSIVE cnt(x) AS (SELECT 1 UNION ALL SELECT x + 1 FROM cnt WHERE x < 10) SELECT x FROM cnt;",
+    ordered: true,
+  }),
+  p({
+    id: "kb-rc-i02", difficulty: "easy",
+    title: "Sum the first hundred",
+    brief: "Gauss by queue: walk 1..100 and aggregate. The CTE manufactures the series; SUM(x) collapses it to 5050 — with COUNT confirming 100 rows. The guard carries the boundary.",
+    hints: ["Extend the counter guard to x < 100; the outer SELECT aggregates: SUM(x) AS s, COUNT(*) AS n.", "One row out — no ORDER BY needed."],
+    solution: "WITH RECURSIVE cnt(x) AS (SELECT 1 UNION ALL SELECT x + 1 FROM cnt WHERE x < 100) SELECT SUM(x) AS s, COUNT(*) AS n FROM cnt;",
+  }),
+  p({
+    id: "kb-rc-i03", difficulty: "easy",
+    title: "Evens below twenty",
+    brief: "Anchor at 2, step by 2, guard at 18 — the walk emits 2, 4, …, 18. Fold them with GROUP_CONCAT for a single comma-joined cell: the sequence as one string.",
+    hints: ["WITH RECURSIVE ev(x) AS (SELECT 2 UNION ALL SELECT x + 2 FROM ev WHERE x < 18) SELECT GROUP_CONCAT(x) AS vals FROM ev.", "The guard refuses continuation FROM 18 — the emitted max is 18."],
+    solution: "WITH RECURSIVE ev(x) AS (SELECT 2 UNION ALL SELECT x + 2 FROM ev WHERE x < 18) SELECT GROUP_CONCAT(x) AS vals FROM ev;",
+  }),
+  p({
+    id: "kb-rc-i04", difficulty: "easy",
+    title: "The doubling walk",
+    brief: "Exponential growth on a queue: anchor 1, step x * 2, guard x * 2 < 100 — the walk emits 1, 2, 4, 8, 16, 32, 64 and stops before 128. Concatenate the sequence as the deliverable.",
+    hints: ["WITH RECURSIVE dbl(x) AS (SELECT 1 UNION ALL SELECT x * 2 FROM dbl WHERE x * 2 < 100) SELECT GROUP_CONCAT(x) AS vals FROM dbl.", "The guard tests the SUCCESSOR — 64 survives because its double fails the test."],
+    solution: "WITH RECURSIVE dbl(x) AS (SELECT 1 UNION ALL SELECT x * 2 FROM dbl WHERE x * 2 < 100) SELECT GROUP_CONCAT(x) AS vals FROM dbl;",
+  }),
+  p({
+    id: "kb-rc-i05", difficulty: "medium",
+    title: "Depth-tagged counter",
+    brief: "Carry the depth as data: the anchor emits (1, 1); the step emits (x + 1, depth + 1). Walk to 5 and show both columns — the skeleton every org-chart distance metric builds on.",
+    hints: ["WITH RECURSIVE t(x, depth) AS (SELECT 1, 1 UNION ALL SELECT x + 1, depth + 1 FROM t WHERE x < 5) SELECT x, depth FROM t.", "Both columns ride the queue together."],
+    solution: "WITH RECURSIVE t(x, depth) AS (SELECT 1, 1 UNION ALL SELECT x + 1, depth + 1 FROM t WHERE x < 5) SELECT x, depth FROM t;",
+    ordered: true,
+  }),
+  p({
+    id: "kb-rc-i06", difficulty: "medium",
+    title: "Termination by dedupe",
+    brief: "The cyclic walk: anchor 1, step (x + 1) % 5, NO guard — UNION (not ALL) is the brake. Dedupe refuses re-emitting 1 once the cycle closes; the queue drains at 1, 2, 3, 4, 0.",
+    hints: ["WITH RECURSIVE w(x) AS (SELECT 1 UNION SELECT (x + 1) % 5 FROM w) SELECT GROUP_CONCAT(x) AS vals FROM w.", "UNION ALL here would loop forever — the dedupe IS the termination."],
+    solution: "WITH RECURSIVE w(x) AS (SELECT 1 UNION SELECT (x + 1) % 5 FROM w) SELECT GROUP_CONCAT(x) AS vals FROM w;",
+  }),
+  p({
+    id: "kb-rc-i07", difficulty: "medium",
+    title: "The order-history spine",
+    brief: "Manufacture the calendar: walk one day at a time from the earliest order date to the latest. The anchor pulls MIN(date(created_at)) via a scalar subquery; the step adds '+1 day' while d is before the MAX. 424 days.",
+    hints: ["WITH RECURSIVE spine(d) AS (SELECT (SELECT MIN(date(created_at)) FROM orders) UNION ALL SELECT date(d, '+1 day') FROM spine WHERE d < (SELECT MAX(date(created_at)) FROM orders)) SELECT COUNT(*) AS days FROM spine.", "COUNT keeps the deliverable compact — the spine itself is the machinery."],
+    solution: "WITH RECURSIVE spine(d) AS (SELECT (SELECT MIN(date(created_at)) FROM orders) UNION ALL SELECT date(d, '+1 day') FROM spine WHERE d < (SELECT MAX(date(created_at)) FROM orders)) SELECT COUNT(*) AS days, MIN(d) AS lo, MAX(d) AS hi FROM spine;",
+  }),
+  p({
+    id: "kb-rc-i08", difficulty: "medium",
+    title: "Zero-filled daily counts",
+    brief: "The spine earns its keep: LEFT JOIN orders to the day spine and count matched ids per day. Quiet days read 0 (COUNT of NULLs), never vanish. 424 rows, one per calendar day.",
+    hints: ["Reuse the spine; outer: SELECT s.d, COUNT(o.id) AS n FROM spine s LEFT JOIN orders o ON date(o.created_at) = s.d GROUP BY s.d ORDER BY s.d.", "COUNT(o.id) not COUNT(*) — the row itself must not count on empty days."],
+    solution: "WITH RECURSIVE spine(d) AS (SELECT (SELECT MIN(date(created_at)) FROM orders) UNION ALL SELECT date(d, '+1 day') FROM spine WHERE d < (SELECT MAX(date(created_at)) FROM orders)) SELECT s.d, COUNT(o.id) AS n FROM spine s LEFT JOIN orders o ON date(o.created_at) = s.d GROUP BY s.d ORDER BY s.d ASC;",
+  }),
+  p({
+    id: "kb-rc-i09", difficulty: "medium",
+    title: "Month spine to the data's edge",
+    brief: "Walk months, not days: anchor '2024-01', step strftime('%Y-%m', date(m || '-01', '+1 month')), guard m < '2025-02' — fourteen month labels covering the whole order history.",
+    hints: ["WITH RECURSIVE m(m) AS (SELECT '2024-01' UNION ALL SELECT strftime('%Y-%m', date(m || '-01', '+1 month')) FROM m WHERE m < '2025-02') SELECT COUNT(*) AS n, MAX(m) AS last_m FROM m.", "TEXT comparison is safe on zero-padded YYYY-MM codes."],
+    solution: "WITH RECURSIVE m(m) AS (SELECT '2024-01' UNION ALL SELECT strftime('%Y-%m', date(m || '-01', '+1 month')) FROM m WHERE m < '2025-02') SELECT COUNT(*) AS n, MAX(m) AS last_m FROM m;",
+  }),
+  p({
+    id: "kb-rc-i10", difficulty: "hard",
+    title: "Monthly revenue over the full spine",
+    brief: "The calendar-integrity report: stage per-month revenue from orders, then LEFT JOIN it to the 14-month spine. Months with no sales would read NULL — COALESCE to 0.00 so the board sees complete months.",
+    hints: ["Stage: SELECT strftime('%Y-%m', created_at) AS m, SUM(total) AS rev FROM orders GROUP BY m. Join the spine LEFT to the stage on m; COALESCE(rev, 0).", "ORDER BY m for the chronology."],
+    solution: "WITH RECURSIVE m(m) AS (SELECT '2024-01' UNION ALL SELECT strftime('%Y-%m', date(m || '-01', '+1 month')) FROM m WHERE m < '2025-02') SELECT m.m, ROUND(COALESCE(r.rev, 0), 2) AS rev FROM m LEFT JOIN (SELECT strftime('%Y-%m', created_at) AS m, SUM(total) AS rev FROM orders GROUP BY m) r ON r.m = m.m ORDER BY m.m ASC;",
+  }),
+  p({
+    id: "kb-rc-i11", difficulty: "hard",
+    title: "Two walks in one WITH",
+    brief: "One WITH RECURSIVE, two independent CTEs: a counts to 3 by ones, b counts 10 to 30 by tens. The final SELECT aggregates both — maxes 3 and 30 — proving multiple self-feeding stages coexist.",
+    hints: ["WITH RECURSIVE a(x) AS (SELECT 1 UNION ALL SELECT x + 1 FROM a WHERE x < 3), b(y) AS (SELECT 10 UNION ALL SELECT y + 10 FROM b WHERE y < 30) SELECT (SELECT MAX(x) FROM a) AS mx, (SELECT MAX(y) FROM b) AS my.", "Comma between definitions; one RECURSIVE token covers both."],
+    solution: "WITH RECURSIVE a(x) AS (SELECT 1 UNION ALL SELECT x + 1 FROM a WHERE x < 3), b(y) AS (SELECT 10 UNION ALL SELECT y + 10 FROM b WHERE y < 30) SELECT (SELECT MAX(x) FROM a) AS mx, (SELECT MAX(y) FROM b) AS my;",
+  }),
+  p({
+    id: "kb-rc-i12", difficulty: "hard",
+    title: "The heavy-stage chain",
+    brief: "Stage, then probe twice: WITH heavy AS (per-customer counts HAVING COUNT(*) > 6) — four rows — then one SELECT reading heavy twice: COUNT(*) for the roster size, SUM(n) for their combined 68 orders. A named stage read twice — the CTE reuse the WITH RECURSIVE unit's naming buys.",
+    hints: ["WITH heavy AS (SELECT customer_id, COUNT(*) AS n FROM orders GROUP BY customer_id HAVING COUNT(*) > 6) SELECT (SELECT COUNT(*) FROM heavy) AS a, (SELECT SUM(n) FROM heavy) AS b.", "The CTE name is a table to both consumers."],
+    solution: "WITH heavy AS (SELECT customer_id, COUNT(*) AS n FROM orders GROUP BY customer_id HAVING COUNT(*) > 6) SELECT (SELECT COUNT(*) FROM heavy) AS a, (SELECT SUM(n) FROM heavy) AS b;",
+  }),
+  p({
+    id: "kb-rc-i13", difficulty: "medium",
+    title: "The rank-rung spine",
+    brief: "An integer axis for a histogram: walk rungs 1..4 (the observed line-count range), LEFT JOIN the per-order line counts staged at each rung, and count how many baskets sit at each level — rungs with no baskets would still appear.",
+    hints: ["WITH RECURSIVE rung(n) AS (SELECT 1 UNION ALL SELECT n + 1 FROM rung WHERE n < 4) SELECT rung.n, COUNT(l.order_id) AS baskets FROM rung LEFT JOIN (SELECT order_id, COUNT(*) AS n FROM order_items GROUP BY order_id) l ON l.n = rung.n GROUP BY rung.n ORDER BY rung.n.", "COUNT(l.order_id) keeps empty rungs at 0."],
+    solution: "WITH RECURSIVE rung(n) AS (SELECT 1 UNION ALL SELECT n + 1 FROM rung WHERE n < 4) SELECT rung.n, COUNT(l.order_id) AS baskets FROM rung LEFT JOIN (SELECT order_id, COUNT(*) AS n FROM order_items GROUP BY order_id) l ON l.n = rung.n GROUP BY rung.n ORDER BY rung.n ASC;",
+  }),
+  p({
+    id: "kb-rc-i14", difficulty: "medium",
+    title: "EU ids via a named stage",
+    brief: "Plain WITH feeding an IN probe: stage the 8 EU ids, then count orders whose customer_id is in the staged list — 45. The CTE is a table to every consumer; the semantics match the direct IN subquery exactly. A plain CTE stage feeding an IN probe — the WITH RECURSIVE unit's non-recursive staging sibling.",
+    hints: ["WITH eu AS (SELECT id FROM customers WHERE region = 'EU') SELECT COUNT(*) AS n FROM orders WHERE customer_id IN (SELECT id FROM eu).", "One stage, one consumer — the named form pays off when reused."],
+    solution: "WITH eu AS (SELECT id FROM customers WHERE region = 'EU') SELECT COUNT(*) AS n FROM orders WHERE customer_id IN (SELECT id FROM eu);",
+  }),
+  p({
+    id: "kb-rc-i15", difficulty: "medium",
+    title: "Stage-and-join: EU revenue",
+    brief: "The two-stage chain: eu stages the 8 EU ids; eu_orders joins them to orders; the final SELECT counts and sums — 45 orders, 15089.23. Read the pipeline top-down like steps in a recipe. The two-stage chain in the WITH RECURSIVE unit's staging syntax: filter the directory, then join the ledger.",
+    hints: ["WITH eu AS (…), eu_orders AS (SELECT o.id, o.total FROM orders o INNER JOIN eu ON eu.id = o.customer_id) SELECT COUNT(*) AS n, ROUND(SUM(total), 2) AS revenue FROM eu_orders.", "The second CTE consumes the first."],
+    solution: "WITH eu AS (SELECT id, name FROM customers WHERE region = 'EU'), eu_orders AS (SELECT o.id, o.total, o.customer_id FROM orders o INNER JOIN eu ON eu.id = o.customer_id) SELECT COUNT(*) AS n, ROUND(SUM(total), 2) AS revenue FROM eu_orders;",
+  }),
+  p({
+    id: "kb-rc-i16", difficulty: "hard",
+    title: "Stage-and-join: the big-ticket CTE",
+    brief: "Stage per-order line sums, join back to orders, filter over 1000 — the derived-table classic in WITH spelling. Exactly one order qualifies: id 74 at 1088.44, the store's biggest basket. The per-order line-sum stage in the WITH RECURSIVE unit's staging syntax — the derived-table classic renamed.",
+    hints: ["WITH per_order AS (SELECT order_id, SUM(unit_price * quantity) AS line_sum FROM order_items GROUP BY order_id) SELECT po.order_id, ROUND(po.line_sum, 2) AS line_sum FROM per_order po INNER JOIN orders o ON o.id = po.order_id WHERE po.line_sum > 1000.", "ORDER BY line_sum DESC."],
+    solution: "WITH per_order AS (SELECT order_id, SUM(unit_price * quantity) AS line_sum FROM order_items GROUP BY order_id) SELECT po.order_id, ROUND(po.line_sum, 2) AS line_sum FROM per_order po INNER JOIN orders o ON o.id = po.order_id WHERE po.line_sum > 1000 ORDER BY line_sum DESC;",
+  }),
+  p({
+    id: "kb-rc-i17", difficulty: "hard",
+    title: "Nested WITH in a scalar probe",
+    brief: "WITH at subquery depth: inside a derived table, declare a private CTE of pending order ids and count them — 14. Proof that WITH scopes to any SELECT, not just statement top level. WITH at subquery depth — a private stage inside the derived table, WITH RECURSIVE syntax included.",
+    hints: ["SELECT COUNT(*) AS n FROM (WITH t AS (SELECT id FROM orders WHERE status = 'pending') SELECT * FROM t).", "The parenthesized query carries its own WITH."],
+    solution: "SELECT COUNT(*) AS n FROM (WITH t AS (SELECT id FROM orders WHERE status = 'pending') SELECT * FROM t);",
+  }),
+  p({
+    id: "kb-rc-i18", difficulty: "hard",
+    title: "Spend whales via a named stage",
+    brief: "The whale list in WITH form: stage per-customer spend, join the directory for names, filter over 2000 — five customers led by Alice Chen's 7262.35. The named stage reads like a temporary table without the DDL. The whale list in the WITH RECURSIVE unit's staging form: stage, join, filter.",
+    hints: ["WITH spend AS (SELECT customer_id, SUM(total) AS s FROM orders GROUP BY customer_id) SELECT c.name, ROUND(spend.s, 2) AS spend FROM customers c INNER JOIN spend ON spend.customer_id = c.id WHERE spend.s > 2000.", "ORDER BY spend DESC."],
+    solution: "WITH spend AS (SELECT customer_id, SUM(total) AS s FROM orders GROUP BY customer_id) SELECT c.name, ROUND(spend.s, 2) AS spend FROM customers c INNER JOIN spend ON spend.customer_id = c.id WHERE spend.s > 2000 ORDER BY spend DESC, c.name ASC;",
+  }),
+  p({
+    id: "kb-rc-i19", difficulty: "hard",
+    title: "Top-3 staging with inner ORDER BY",
+    brief: "Top-N staging: the CTE sorts the catalog by price descending and keeps 3 — Smart Watch S, Noise-Canceling Headset, 4K Webcam Pro. The inner ORDER BY + LIMIT is honored; the outer query reads the staged trio. Top-N staging: inner ORDER BY plus LIMIT inside the CTE — WITH RECURSIVE shares the syntax.",
+    hints: ["WITH top AS (SELECT name, price FROM products ORDER BY price DESC LIMIT 3) SELECT * FROM top.", "Pair inner ORDER BY with LIMIT — bare inner sorts promise nothing."],
+    solution: "WITH top AS (SELECT name, price FROM products ORDER BY price DESC LIMIT 3) SELECT * FROM top;",
+    ordered: true,
+  }),
+  p({
+    id: "kb-rc-i20", difficulty: "hard",
+    title: "Running total over a staged order",
+    brief: "CTE + window: stage orders ranked by id, then walk SUM(total) OVER (ORDER BY rn) — the running revenue curve across all 103 orders, ending at the store's grand total. The two-act structure: shape, then compute. CTE plus window — the WITH RECURSIVE unit's staging discipline — stage the ranked orders, then walk the running sum.",
+    hints: ["WITH ranked AS (SELECT id, total, ROW_NUMBER() OVER (ORDER BY id) AS rn FROM orders) SELECT id, ROUND(total, 2) AS total, ROUND(SUM(total) OVER (ORDER BY rn), 2) AS running FROM ranked.", "ORDER BY rn in the outer query keeps the curve in order."],
+    solution: "WITH ranked AS (SELECT id, total, ROW_NUMBER() OVER (ORDER BY id) AS rn FROM orders) SELECT id, ROUND(total, 2) AS total, ROUND(SUM(total) OVER (ORDER BY rn), 2) AS running FROM ranked ORDER BY rn ASC;",
+  }),
+  p({
+    id: "kb-rc-i21", difficulty: "hard",
+    title: "Paired spines: quarters walked twice",
+    brief: "Two seeds, one walk: anchor rows 1 and 100, step toward the middle (first +1, second −1) guarded to stop before crossing. The paired-spine trick seeds two queues in one CTE — here they meet in the middle at 50/51 territory.",
+    hints: ["WITH RECURSIVE w(x, dir) AS (SELECT 1, 1 UNION ALL SELECT 100, -1 UNION ALL SELECT x + dir, dir FROM w WHERE x + dir BETWEEN 45 AND 56) SELECT x, dir FROM w ORDER BY x, dir.", "Two anchor rows seed two lineages; the guard bounds both."],
+    solution: "WITH RECURSIVE w(x, dir) AS (SELECT 1, 1 UNION ALL SELECT 100, -1 UNION ALL SELECT x + dir, dir FROM w WHERE x + dir BETWEEN 45 AND 56) SELECT x, dir FROM w ORDER BY x ASC, dir ASC;",
+    ordered: true,
+  }),
+];

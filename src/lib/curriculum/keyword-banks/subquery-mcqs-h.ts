@@ -1,0 +1,206 @@
+// Keyword Mastery bank — Subqueries MCQs, part H (correlated kb-co-q19..q36).
+// Continues the probed set: EXISTS-shaped correlated probes, correlated UPDATE
+// semantics (theory), performance rewrites, correlation scope errors, FARID
+// pending share 74.6%, inactive pair Dmitri/Keiko (6 orders).
+import type { Mcq } from "../types";
+
+export const subqueryMcqsH: Mcq[] = [
+  {
+    id: "kb-co-q19", difficulty: "medium",
+    prompt: "Which correlated EXISTS asks 'does this customer have an order bigger than 800?'",
+    choices: [
+      "EXISTS (SELECT 1 FROM orders o WHERE o.customer_id = c.id AND o.total > 800)",
+      "EXISTS (SELECT 1 FROM orders WHERE total > 800)",
+      "EXISTS (SELECT total FROM orders)",
+      "EXISTS (SELECT 1 FROM orders o WHERE o.total > c.total)",
+    ],
+    answer: 0,
+    why: "The probe correlates on customer id AND applies the 800 threshold inside — TRUE the moment one big ticket appears for that customer. Option B drops the correlation (asks about the table); D compares the order to the customer's OWN total, a different question entirely.",
+  },
+  {
+    id: "kb-co-q20", difficulty: "hard",
+    prompt: "How many customers have at least one order above 800?",
+    choices: ["4", "8", "12", "16"],
+    answer: 0,
+    why: "Exactly four customers hold at least one 800+ ticket — the probe collapses each customer's big-order history to a boolean. The heavy four dominate the premium tier; the other twelve directories never cross 800. Existence counts holders, not event counts. The correlated probe collapses each customer's big-ticket history to a boolean.",
+    notes: [{ choice: 1, why: "8 would need half the directory above 800 — the actual premium-holder set is much tighter. Existence probes answer holder counts." }],
+  },
+  {
+    id: "kb-co-q21", difficulty: "medium",
+    prompt: "Correlation scope bug: `(SELECT AVG(o2.total) FROM orders o2)` inside a per-customer question computes…",
+    choices: [
+      "The STORE-WIDE average — dropping the correlation silently changes per-customer to global",
+      "The customer's average",
+      "NULL",
+      "A syntax error",
+    ],
+    answer: 0,
+    why: "Without the WHERE o2.customer_id = o.customer_id link, the aggregate ignores the outer row — every customer is compared against the same 338.19. The query still runs; only the semantics broke. Scope audits: check the probe's WHERE references the outer row. Dropping the outer reference silently un-correlates the correlated aggregate.",
+  },
+  {
+    id: "kb-co-q22", difficulty: "hard",
+    prompt: "Farid Nasser's pending share: 1088.44 pending of 1458.97 lifetime. Which correlated pair computes his share?",
+    choices: [
+      "(SELECT SUM(o2.total) FROM orders o2 WHERE o2.customer_id = c.id AND o2.status = 'pending') divided by (SELECT SUM(o2.total) FROM orders o2 WHERE o2.customer_id = c.id)",
+      "SUM(pending) / SUM(total) over the whole orders table",
+      "(SELECT AVG(o2.total) …) / (SELECT MAX(o2.total) …)",
+      "COUNT(pending) / COUNT(*)",
+    ],
+    answer: 0,
+    why: "Two correlated SUMs, one filtered to pending, one total — their ratio is the account's at-risk share: 74.6% for Farid, the seed's worst. Correlation scope must match on BOTH sides; mixing scopes (one correlated, one global) produces plausible nonsense.",
+  },
+  {
+    id: "kb-co-q23", difficulty: "medium",
+    prompt: "Which customers does the inactive filter exclude — `WHERE (SELECT active FROM customers c2 WHERE c2.id = o.customer_id) = 1` fails for…",
+    choices: [
+      "Dmitri Volkov and Keiko Sato — the two active = 0 accounts (6 orders drop)",
+      "Alice Chen",
+      "Nobody — everyone is active",
+      "All LATAM customers",
+    ],
+    answer: 0,
+    why: "The correlated scalar fetches each order's customer's active flag; the two deactivated accounts fail the = 1 test, removing their 6 orders — 97 of 103 survive. Scalar lookups of flag columns are a common correlated pattern in directory-driven filters.",
+  },
+  {
+    id: "kb-co-q24", difficulty: "easy",
+    prompt: "What is the performance ceiling of correlated subqueries on big tables?",
+    choices: [
+      "O(outer × inner) — each outer row triggers a probe; indexes on the correlation key reduce each probe to a seek",
+      "O(1) always",
+      "O(log n) regardless of indexes",
+      "Correlated subqueries cannot read tables",
+    ],
+    answer: 0,
+    why: "Sixteen outer rows × a scan of orders each = 16 scans here; at millions of rows the product explodes. An index on the correlation column (orders.customer_id) converts each probe from scan to seek — the standard mitigation before reaching for the derived-table rewrite.",
+  },
+  {
+    id: "kb-co-q25", difficulty: "hard",
+    prompt: "The scalable rewrite of 'orders above their customer's average' joins orders to a derived per-customer average. Why is it faster at scale?",
+    choices: [
+      "The aggregate computes ONCE per customer (16 rows), then a hash/merge join applies it — replacing 103 per-row aggregations",
+      "It removes the WHERE clause",
+      "It avoids indexes",
+      "It caches to disk",
+    ],
+    answer: 0,
+    why: "Derived staging trades per-row recomputation for one GROUP BY and one join: aggregate 103 orders into 16 averages, then join. Same answer (45 orders), radically different work profile. Correlation optimizes for clarity; derivation optimizes for scale. The derived rewrite trades per-row correlated probes for one staging pass.",
+  },
+  {
+    id: "kb-co-q26", difficulty: "medium",
+    prompt: "Correlated vs derived equivalence check — products above category average: the correlated test says 7. The derived join `(products ⋈ (SELECT category, AVG(price) … WHERE p.price > c.ap))` says…",
+    choices: ["5", "7 — identical, the semantics coincide", "10", "16"],
+    answer: 1,
+    why: "Both scopes compute the same per-category average and apply the same strict comparison — 7 either way. When the correlation is a simple group-key equality, the derived rewrite is ALWAYS semantically identical and usually faster. Equivalence testing one against the other is a good habit.",
+  },
+  {
+    id: "kb-co-q27", difficulty: "medium",
+    prompt: "Which correlation direction is legal — outer orders, probe customers?",
+    choices: [
+      "Yes: (SELECT c.region FROM customers c WHERE c.id = o.customer_id) — the probe may reference ANY outer-table column",
+      "No — probes must run on the same table",
+      "Only in UPDATE statements",
+      "Only with LEFT JOINs",
+    ],
+    answer: 0,
+    why: "Correlation is just an outer reference: the probe (customers) reads the outer row's columns (o.customer_id). Direction is free — probe the directory from the ledger, probe the ledger from the directory. The scope must reference the CURRENT row, that is all. The probe may reference any outer column — correlated direction is free.",
+  },
+  {
+    id: "kb-co-q28", difficulty: "hard",
+    prompt: "Double correlation: which query finds orders that are their CUSTOMER's maximum AND above 500?",
+    choices: [
+      "WHERE (SELECT MAX(o2.total) FROM orders o2 WHERE o2.customer_id = o.customer_id) = o.total AND o.total > 500",
+      "WHERE MAX(o.total) = o.total",
+      "WHERE o.total > 500 GROUP BY customer_id",
+      "WHERE (SELECT MAX(total) FROM orders) = o.total AND o.total > 500",
+    ],
+    answer: 0,
+    why: "The correlated MAX fetches the customer's ceiling per row; equality identifies their leader (gap 0.00 customers); the AND applies the 500 gate. Option D correlates to nothing — the store-wide max (1088.44) is a constant, finding only the global champion.",
+  },
+  {
+    id: "kb-co-q29", difficulty: "medium",
+    prompt: "How many rows does kb-co-q28's customer-leader test (without the 500 gate) return on the seed?",
+    choices: ["4", "16", "45", "103"],
+    answer: 1,
+    why: "Every customer's history has exactly one maximum (16 customers, all with orders), so 16 rows tie their own ceiling. The 500 gate then filters those leaders — a per-customer argmax expressed in pure correlated SQL, no window functions needed.",
+  },
+  {
+    id: "kb-co-q30", difficulty: "medium",
+    prompt: "Which correlated aggregate CANNOT return more than one value per outer row?",
+    choices: [
+      "All of them — MAX, MIN, AVG, SUM, COUNT each collapse the probe to a single value (COUNT never NULL; others NULL on empty)",
+      "Only MAX",
+      "None — correlated aggregates return lists",
+      "Only COUNT",
+    ],
+    answer: 0,
+    why: "Aggregation is the one-row guarantee: whatever the probe matches, the aggregate compresses it to one cell. COUNT over empty yields 0; the rest yield NULL — the only difference. This is why 'correlated scalar' and 'correlated aggregate' are near-synonyms.",
+  },
+  {
+    id: "kb-co-q31", difficulty: "hard",
+    prompt: "Aliasing rule: inside `(SELECT AVG(o2.total) FROM orders o2 WHERE o2.customer_id = o.customer_id)`, why the fresh alias o2?",
+    choices: [
+      "The inner FROM must not shadow or collide with the outer alias o — o2 names the probe's independent scan of the same table",
+      "o2 is a reserved word",
+      "Aliases are illegal in subqueries",
+      "SQLite requires numbered aliases",
+    ],
+    answer: 0,
+    why: "Self-correlation scans the SAME table twice: outer o (the row being tested) and inner o2 (the aggregate's view of the whole table for that customer). Sharing an alias would make the inner reference ambiguous — the classic 'same-table, two-aliases' discipline from self-joins, reborn in subqueries. Self-correlation scans the same table twice — the correlated alias discipline.",
+  },
+  {
+    id: "kb-co-q32", difficulty: "medium",
+    prompt: "What does the correlated pattern `(SELECT COUNT(*) FROM orders o2 WHERE o2.customer_id = c.id AND o2.status = 'pending') = 0` express?",
+    choices: [
+      "Customers with zero pending orders — a correlated existence count standing in for NOT EXISTS",
+      "All customers",
+      "Customers with pending orders",
+      "A syntax error",
+    ],
+    answer: 0,
+    why: "The correlated COUNT per customer yields their pending tally; = 0 keeps the twelve customers with clean pipelines. It is NOT EXISTS spelled with arithmetic — same semantics, more machinery. Prefer NOT EXISTS for readability; the count form earns its keep when the threshold is nonzero (= 1, <= 2).",
+  },
+  {
+    id: "kb-co-q33", difficulty: "medium",
+    prompt: "Threshold variant: `(SELECT COUNT(*) FROM orders o2 WHERE o2.customer_id = c.id AND o2.status = 'cancelled') <= 1` — how many customers pass?",
+    choices: ["4", "12", "14", "16"],
+    answer: 2,
+    why: "The cancelled tallies: Alice 3, Maya 2, Keiko 1, Emma 1, everyone else 0. The <= 1 cut passes the twelve zero-cancellation customers PLUS Keiko and Emma (one each) — 14 pass. Only the repeat cancellers (Alice, Maya) fail the threshold. The correlated COUNT threshold tunes where NOT EXISTS cannot.",
+    notes: [{ choice: 1, why: "12 is the zero-cancellation cut (NOT EXISTS spelling). The <= 1 threshold admits the two single-cancellation holders — the count form's fine-grained control." }],
+  },
+  {
+    id: "kb-co-q34", difficulty: "easy",
+    prompt: "Which census keyword owns these items?",
+    choices: [
+      "Correlated subqueries — tagged by the word 'correlated' in the prose (or SQL)",
+      "Scalar subqueries only",
+      "EXISTS only",
+      "Derived tables",
+    ],
+    answer: 0,
+    why: "The taxonomy's correlated matcher scans for 'correlated' in prose or SQL text. Correlated items often ALSO tag scalar/EXISTS keywords when they use those placements — multi-label counting means one item can credit several keywords, but 'correlated' must appear for THIS row.",
+  },
+  {
+    id: "kb-co-q35", difficulty: "hard",
+    prompt: "Correlated IN: `WHERE o.total > 500 AND o.customer_id IN (SELECT c2.id FROM customers c2 WHERE c2.city = o.city)` — what does the o.city reference make the IN subquery?",
+    choices: [
+      "Correlated — it re-derives the id list per order, matching customers in the same city as the current order",
+      "Uncorrelated — IN is always uncorrelated",
+      "A derived table",
+      "Illegal SQL",
+    ],
+    answer: 0,
+    why: "The subquery reads o.city — an outer column — so the id list is rebuilt per outer row. The query finds 500+ orders whose customer lives in the order's own city. Correlation is a property of the REFERENCE, not the operator: IN, EXISTS and scalar subqueries all correlate the same way.",
+  },
+  {
+    id: "kb-co-q36", difficulty: "medium",
+    prompt: "Final synthesis: which trio of seed facts did the correlated lens uniquely reveal?",
+    choices: [
+      "45 orders beat their customer's own average; 7 products lead their category; 5 customers outspend the 2177.08 average",
+      "103 orders exist; 16 products sell; 6 suppliers ship",
+      "4 statuses; 7 categories; 4 regions",
+      "21 unshipped orders; 14 pending; 7 cancelled",
+    ],
+    answer: 0,
+    why: "All three are WITHIN-GROUP comparisons — the correlated family's signature. The global facts (option B) and vocabulary counts (C/D) need no correlation. Whenever the question says 'above their own …' or 'relative to their group's …', think correlated — or its derived-table twin.",
+  },
+];

@@ -181,8 +181,8 @@ function auditCase(c: CaseStudy, seen: Map<string, string>): string[] {
   const isM2 = c.topic.startsWith("j");
   const isM79 = /^(w|d|f)/.test(c.topic); // Modules 7-9: writes, schema, finance — joins allowed
   const isM3 = c.topic.startsWith("s") || c.topic === "gm3";
-  const isM4 = c.topic.startsWith("q");
-  const isM5 = c.topic.startsWith("t");
+  const isM4 = c.topic.startsWith("q") || c.topic === "gm4";
+  const isM5 = c.topic.startsWith("t") || c.topic === "gm5";
   const isM6 = c.topic.startsWith("x");
   const hasJoin = /\bJOIN\b/i.test(filledCorrect);
   const hasSetOp = /\bUNION\b|\bINTERSECT\b|\bEXCEPT\b/i.test(filledCorrect);
@@ -208,6 +208,8 @@ function auditCase(c: CaseStudy, seen: Map<string, string>): string[] {
       add("q7 cases must use WITH RECURSIVE");
     if (c.topic === "q8" && !hasSubquery && !hasWith)
       add("q8 capstone must embed a subquery or stage a CTE");
+    if (c.topic === "gm4" && !hasSubquery && !hasWith)
+      add("M4 gauntlet cases must embed a subquery or stage a CTE");
   } else if (isM5) {
     if (["t1"].includes(c.topic) && !/\b(SUBSTR|SUBSTRING|INSTR|UPPER|LOWER|LENGTH|TRIM|REPLACE|CAST)\b/i.test(filledCorrect))
       add("t1 text topic but no SUBSTR/INSTR/UPPER/LOWER/LENGTH/TRIM/REPLACE/CAST — these cases must reshape values");
@@ -223,6 +225,8 @@ function auditCase(c: CaseStudy, seen: Map<string, string>): string[] {
       add("t6 cases must use PARTITION BY");
     if (c.topic === "t7" && !/\b(LAG|LEAD)\s*\(/i.test(filledCorrect))
       add("t7 cases must use LAG or LEAD");
+    if (c.topic === "gm5" && !hasOver)
+      add("M5 gauntlet cases must keep every row — the toolkit tier is window-first (OVER() required)");
     if (selects >= 2 && !hasSubquery && !hasWith)
       add(`${selects} SELECT keywords with no subquery or WITH — M5 window queries stage via derived tables or CTEs, not bare compounds`);
   } else if (isM6) {

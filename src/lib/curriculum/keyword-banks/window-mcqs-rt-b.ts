@@ -1,0 +1,161 @@
+// Keyword Mastery bank — Running totals MCQs, part B (kb-rt-q14..q26).
+import type { Mcq } from "../types";
+
+export const windowMcqsRtB: Mcq[] = [
+  {
+    id: "kb-rt-q14", difficulty: "medium",
+    prompt: "What distinguishes a running total from a moving (rolling) total syntactically?",
+    choices: [
+      "Different functions — RUNNING_SUM versus MOVING_SUM",
+      "The frame clause: running = default/UNBOUNDED PRECEDING start; moving = a finite PRECEDING bound",
+      "Moving totals need GROUP BY",
+      "Nothing — they are the same",
+    ],
+    answer: 1,
+    why: "One function, two frames: SUM(total) OVER (ORDER BY d) walks forever (running); SUM(total) OVER (ORDER BY d ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) carries a 7-row trailing window (moving). The OVER clause is a small language for 'how much history does each row see' — the answer defines the report's memory.",
+  },
+  {
+    id: "kb-rt-q15", difficulty: "medium",
+    prompt: "A 3-month trailing average of monthly revenue needs which composition?",
+    choices: [
+      "AVG(rev) OVER (ORDER BY month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) over the monthly spine",
+      "AVG(rev) OVER (ORDER BY month) over the monthly spine",
+      "AVG(rev) OVER () over raw orders",
+      "ROUND(AVG(rev), 3)",
+    ],
+    answer: 0,
+    why: "Stage the monthly revenue (GROUP BY), then AVG with a 3-row trailing frame — March's row averages Jan–Mar, April's Feb–Apr. The default-frame version (choice B) is a cumulative average from inception — the running-total walk instead of the trailing window, a different series that smooths ever harder. Running accumulates, trailing moves; the frame is the difference.",
+  },
+  {
+    id: "kb-rt-q16", difficulty: "hard",
+    prompt: "Why does the running-total filter pattern need a derived table — `SELECT * FROM (SELECT …, SUM(total) OVER (ORDER BY created_at) rt FROM orders) WHERE rt > 20000`?",
+    choices: [
+      "Derived tables are faster",
+      "WHERE runs before the window pass, so the raw level cannot filter on the running column; the derived table exposes the computed walk as an ordinary column the outer WHERE can use",
+      "Running totals cannot exceed 20000 otherwise",
+      "It is style only — both forms are identical",
+    ],
+    answer: 1,
+    why: "Window functions are computed after WHERE — the running total does not exist yet when the raw WHERE evaluates. The derived table (or CTE) materializes the walk one level up, turning a computed column into a filterable one. The same staging rule covers every window output: ranks, percentiles, value-function anchors.",
+  },
+  {
+    id: "kb-rt-q17", difficulty: "medium",
+    prompt: "RANGE versus ROWS in a running SUM over a column with ties — which is TRUE?",
+    choices: [
+      "Identical results always",
+      "RANGE sweeps tie peers together (frame includes all equal sort values), ROWS counts row-by-row — running sums can differ at tie blocks",
+      "ROWS is invalid in SQLite",
+      "RANGE only works on dates",
+    ],
+    answer: 1,
+    why: "RANGE is value-based: the frame's boundary lands on the current row's VALUE, pulling all peers in or out together. ROWS is positional: each row joins individually. On tie-free orderings the two agree exactly; on tied dates (Alice's same-day orders) the running SUM jumps by the whole tie block under RANGE. Deterministic ledgers either add a tiebreaker to the ordering (making values unique) or choose ROWS deliberately.",
+  },
+  {
+    id: "kb-rt-q18", difficulty: "easy",
+    prompt: "Which column pairing best serves a 'month-over-month growth' report built from a running total?",
+    choices: [
+      "Running total alone",
+      "Running total plus LAG(running_total) OVER (ORDER BY month) — the walk and its previous rung, whose difference is the month's revenue",
+      "MAX and MIN",
+      "COUNT and SUM",
+    ],
+    answer: 1,
+    why: "The running total is cumulative; the growth story lives in its DELTAS. LAG over the walk exposes the previous rung, and the difference recovers each month's own revenue (3731.97, then 3609.64, …). Many teams publish the running column for context and the lag-delta for the headline — one scan, two windows over the same spine.",
+  },
+  {
+    id: "kb-rt-q19", difficulty: "medium",
+    prompt: "Does a running total respect a WHERE filter on status? `SUM(total) OVER (ORDER BY created_at)` with WHERE status = 'delivered'…",
+    choices: [
+      "No — windows ignore WHERE",
+      "Yes — the walk runs over the FILTERED rows only: 52 delivered orders form their own timeline and their own cumulative sum",
+      "It doubles the totals",
+      "It errors",
+    ],
+    answer: 1,
+    why: "WHERE runs before windows: the partition IS the delivered slice, the walk accumulates only delivered money, and its final rung is the delivered grand total (not 34833.28). Every pre-window clause reshapes the population the walk sees — which is precisely why hidden filters silently re-base running totals, and why 'why did the walk shrink?' audits start at the WHERE clause.",
+  },
+  {
+    id: "kb-rt-q20", difficulty: "hard",
+    prompt: "Two analysts build the same yearly cumulative revenue: one orders by `strftime('%Y-%m', created_at)`, the other by raw `created_at` then reads month boundaries. Which claim is right?",
+    choices: [
+      "Identical numbers at month ends",
+      "Both walks end at 34833.28 and agree at each month's LAST row — the raw walk just carries intra-month detail rows the monthly walk collapsed; same ledger, different grain",
+      "The raw walk is always bigger",
+      "The monthly walk is invalid SQL",
+    ],
+    answer: 1,
+    why: "The walk is additive, so every month-end rung of the raw walk equals the monthly walk's rung — 3731.97 after January's last order, 7341.61 after February's, and so on. The monthly spine is the raw walk sampled at month ends. Choose the grain that matches the audience: ledgers per order, board packs per month.",
+  },
+  {
+    id: "kb-rt-q21", difficulty: "medium",
+    prompt: "Which statement about running totals and NULL totals is correct?",
+    choices: [
+      "NULL poisons the walk — every later rung becomes NULL",
+      "SUM skips NULLs: a NULL total contributes nothing and the walk continues with the accumulated value",
+      "NULLs restart the walk at zero",
+      "The query errors on the first NULL",
+    ],
+    answer: 1,
+    why: "The running total's NULL-skip (SUM semantics) applies to windows too: NULLs are transparent to the accumulation (only an all-NULL prefix yields NULL rungs). orders.total is NOT NULL on this schema, so the walk here never meets one — but nullable money columns (adjusted_amount and friends) rely on this rule. COUNT(*) counts rows regardless; SUM skips NULL VALUES — the pair diverges exactly where data has holes.",
+  },
+  {
+    id: "kb-rt-q22", difficulty: "medium",
+    prompt: "The board wants 'revenue to date as a share of the year' per month. Which expression completes it over the monthly spine?",
+    choices: [
+      "Running total ÷ grand total, both as windows: SUM(SUM(total)) OVER (ORDER BY m) / SUM(SUM(total)) OVER ()",
+      "Running total × 12",
+      "AVG per month",
+      "NTILE(12) over months",
+    ],
+    answer: 0,
+    why: "The numerator is the running total walk; the denominator is the same SUM with an empty OVER() — the whole-partition total (34833.28) stamped on every row. Window-over-window division is legal and reads cleanly: each month carries 'how much of the story has happened by me' — 0.107 by January's end, 0.249 by March's, 0.601 by August's, 1.0 at the close.",
+  },
+  {
+    id: "kb-rt-q23", difficulty: "hard",
+    prompt: "An engineer proposes computing the running total with a correlated scalar subquery `(SELECT SUM(total) FROM orders o2 WHERE o2.created_at <= o1.created_at)`. Why is the window version preferred?",
+    choices: [
+      "The subquery version is wrong",
+      "The window computes the walk in one pass; the correlated form re-aggregates per row — correct numbers, quadratic work as the table grows, and same-timestamp rows need peer handling that is easy to get subtly wrong",
+      "Correlated subqueries cannot SUM",
+      "The window version rounds differently",
+    ],
+    answer: 1,
+    why: "Both produce the same rungs on this seed, but the correlated form is O(n²): every row re-scans its prefix. The window version is one sort plus one pass. And the tie problem is real: <= on dates sweeps same-day rows together (RANGE-like), while <= created_at AND id <= gives row precision — the same ROWS/RANGE fork, hand-rolled. Windows put that fork in the frame clause where reviewers can see it.",
+  },
+  {
+    id: "kb-rt-q24", difficulty: "medium",
+    prompt: "Which ORDER BY produces a running total that is meaningless as a balance walk?",
+    choices: [
+      "ORDER BY created_at, id",
+      "ORDER BY total DESC — the walk accumulates value-ordered rows, so rungs mean 'revenue of all orders bigger than this', not time-based balances",
+      "ORDER BY month",
+      "ORDER BY id",
+    ],
+    answer: 1,
+    why: "The stride defines the semantics: date-ordered walks are balances; total-DESC walks are concentration curves ('money held above this ticket') — actually useful for Pareto reads, but NOT a balance. Neither errors; one lies quietly if presented as a timeline. Every running-total review starts with one question: ordered by WHAT, and does that match the report's story?",
+  },
+  {
+    id: "kb-rt-q25", difficulty: "easy",
+    prompt: "Running totals are which family of computation?",
+    choices: [
+      "Aggregates that collapse rows",
+      "Window functions — SUM/COUNT/AVG with an ordered OVER clause, keeping every row",
+      "Join results",
+      "Scalar subqueries",
+    ],
+    answer: 1,
+    why: "The running total is an aggregate FUNCTION used as a window function: the OVER clause with an ORDER BY converts SUM from a collapser into a walker. Every row survives, each stamped with its prefix total — the defining window-function behavior, and the reason running totals, moving averages, ranks and percentiles all live in one clause family.",
+  },
+  {
+    id: "kb-rt-q26", difficulty: "hard",
+    prompt: "Final audit: a monthly walk's last rung shows 32442.75 but the finance grand total is 34833.28. What is the first thing to check?",
+    choices: [
+      "The window function is broken",
+      "The walk's WHERE or partition is missing rows — e.g. the walk was built on a filtered slice (like delivered-only) or the month spine dropped 2025-02 (2390.53); a walk's tail must equal its population's total",
+      "Rounding — always rounding",
+      "The engine caps walks at 13 rungs",
+    ],
+    answer: 1,
+    why: "The gap is exactly 2390.53 — February 2025's revenue — so the walk ran over 13 months, not 14: the spine's last month was filtered or the ORDER BY month string sorted differently than expected. The identity 'last rung = population total' is the running total's built-in integrity check; when it fails, the walk is telling you its input population differs from the report's assumption.",
+  },
+];
