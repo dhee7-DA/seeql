@@ -72,6 +72,7 @@ export const CASE_TOPICS: CaseTopicMeta[] = [
   // Module gauntlets — module-end practice banks (live in curriculum/gauntlet)
   { id: "gm1", label: "M1 Gauntlet", lessonNum: 35 },
   { id: "jg2", label: "M2 Gauntlet", lessonNum: 36 },
+  { id: "gm3", label: "M3 Gauntlet", lessonNum: 37 },
   // Keyword Mastery banks — per-keyword gap closers (live in curriculum/keyword-banks)
   { id: "jkw", label: "Keyword mastery", lessonNum: 9 },
   // Module 2 — Joins & Relationships (lessons 9–16)

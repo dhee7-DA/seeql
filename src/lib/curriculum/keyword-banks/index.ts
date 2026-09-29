@@ -7,7 +7,9 @@
 // and the gauntlet tier contract stays exactly 50/90/90 per module.
 //
 // Case ids: cs-2211..cs-2232 (earlier banks) + cs-2233..cs-2250 (non-equi);
-// m02 gauntlet owns cs-2121..cs-2210.
+// m02 gauntlet owns cs-2121..cs-2210; m03 gauntlet owns cs-2251..cs-2340.
+// The M3 set-op banks (union/intersect/except/case-when) carry NO case files —
+// those keywords already clear the 30-case bar from lesson banks.
 import type { Mcq, Problem } from "../types";
 import type { CaseStudy } from "../cases/types";
 
@@ -20,6 +22,7 @@ import { antiJoinBank } from "./anti-join";
 import { fanOutGrainBank } from "./fan-out-grain";
 import { onVsWhereBank } from "./on-vs-where";
 import { nonEquiJoinsBank } from "./non-equi-joins";
+import { unionBank, intersectBank, exceptBank, caseWhenBank } from "./set-ops-banks";
 
 export interface KeywordBank {
   /** Canonical keyword, verbatim from keyword-taxonomy's dictionary. */
@@ -41,6 +44,10 @@ export const KEYWORD_BANKS: KeywordBank[] = [
   fanOutGrainBank,
   onVsWhereBank,
   nonEquiJoinsBank,
+  unionBank,
+  intersectBank,
+  exceptBank,
+  caseWhenBank,
 ];
 
 /** Every keyword-bank MCQ, in registry order. */

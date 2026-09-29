@@ -33,6 +33,16 @@ import { m02CasesMediumA } from "./m02-cases-medium-a";
 import { m02CasesMediumB } from "./m02-cases-medium-b";
 import { m02CasesHardA } from "./m02-cases-hard-a";
 import { m02CasesHardB } from "./m02-cases-hard-b";
+import { m03Mcqs } from "./m03-mcqs";
+import { m03ProblemsEasy } from "./m03-problems-a";
+import { m03ProblemsMedium } from "./m03-problems-b";
+import { m03ProblemsHard } from "./m03-problems-c";
+import { m03CasesEasyA } from "./m03-cases-easy-a";
+import { m03CasesEasyB } from "./m03-cases-easy-b";
+import { m03CasesMediumA } from "./m03-cases-medium-a";
+import { m03CasesMediumB } from "./m03-cases-medium-b";
+import { m03CasesHardA } from "./m03-cases-hard-a";
+import { m03CasesHardB } from "./m03-cases-hard-b";
 
 export const GAUNTLET_BANKS: GauntletBank[] = [
   {
@@ -48,6 +58,13 @@ export const GAUNTLET_BANKS: GauntletBank[] = [
     mcqs: m02Mcqs,
     cases: [...m02CasesEasyA, ...m02CasesEasyB, ...m02CasesMediumA, ...m02CasesMediumB, ...m02CasesHardA, ...m02CasesHardB],
     problems: [...m02ProblemsEasy, ...m02ProblemsMedium, ...m02ProblemsHard],
+  },
+  {
+    moduleNum: 3,
+    title: "Set Operations & CASE",
+    mcqs: m03Mcqs,
+    cases: [...m03CasesEasyA, ...m03CasesEasyB, ...m03CasesMediumA, ...m03CasesMediumB, ...m03CasesHardA, ...m03CasesHardB],
+    problems: [...m03ProblemsEasy, ...m03ProblemsMedium, ...m03ProblemsHard],
   },
 ];
 

@@ -110974,6 +110974,5132 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
       ]
     ]
   },
+  "gm3-p01": {
+    "columns": [
+      "value",
+      "kind"
+    ],
+    "rows": [
+      [
+        "APAC",
+        "region"
+      ],
+      [
+        "EU",
+        "region"
+      ],
+      [
+        "LATAM",
+        "region"
+      ],
+      [
+        "US",
+        "region"
+      ],
+      [
+        "cancelled",
+        "status"
+      ],
+      [
+        "delivered",
+        "status"
+      ],
+      [
+        "pending",
+        "status"
+      ],
+      [
+        "shipped",
+        "status"
+      ]
+    ]
+  },
+  "gm3-p02": {
+    "columns": [
+      "val",
+      "kind"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        "customer"
+      ],
+      [
+        "Bruno Silva",
+        "customer"
+      ],
+      [
+        "Chloe Dubois",
+        "customer"
+      ],
+      [
+        "Dmitri Volkov",
+        "customer"
+      ],
+      [
+        "Emma Wilson",
+        "customer"
+      ],
+      [
+        "Farid Nasser",
+        "customer"
+      ],
+      [
+        "Grace Kim",
+        "customer"
+      ],
+      [
+        "Hiro Tanaka",
+        "customer"
+      ],
+      [
+        "Isabella Rossi",
+        "customer"
+      ],
+      [
+        "Jamal Wright",
+        "customer"
+      ],
+      [
+        "Keiko Sato",
+        "customer"
+      ],
+      [
+        "Liam O'Brien",
+        "customer"
+      ],
+      [
+        "Maya Patel",
+        "customer"
+      ],
+      [
+        "Noah Meyer",
+        "customer"
+      ],
+      [
+        "Olivia Brown",
+        "customer"
+      ],
+      [
+        "Pedro Alvarez",
+        "customer"
+      ],
+      [
+        "Alpine Audio GmbH",
+        "supplier"
+      ],
+      [
+        "Andes Naturals SA",
+        "supplier"
+      ],
+      [
+        "Midwest Hardware Co",
+        "supplier"
+      ],
+      [
+        "Nordic Gadgets AB",
+        "supplier"
+      ],
+      [
+        "Pacific Textiles",
+        "supplier"
+      ],
+      [
+        "Shenzhen Electro",
+        "supplier"
+      ]
+    ]
+  },
+  "gm3-p03": {
+    "columns": [
+      "region"
+    ],
+    "rows": [
+      [
+        "APAC"
+      ],
+      [
+        "EU"
+      ],
+      [
+        "LATAM"
+      ],
+      [
+        "US"
+      ]
+    ]
+  },
+  "gm3-p04": {
+    "columns": [],
+    "rows": []
+  },
+  "gm3-p05": {
+    "columns": [
+      "status"
+    ],
+    "rows": [
+      [
+        "cancelled"
+      ],
+      [
+        "delivered"
+      ],
+      [
+        "pending"
+      ],
+      [
+        "shipped"
+      ]
+    ]
+  },
+  "gm3-p06": {
+    "columns": [
+      "region"
+    ],
+    "rows": [
+      [
+        "APAC"
+      ],
+      [
+        "EU"
+      ],
+      [
+        "LATAM"
+      ],
+      [
+        "US"
+      ]
+    ]
+  },
+  "gm3-p07": {
+    "columns": [
+      "product",
+      "price",
+      "band"
+    ],
+    "rows": [
+      [
+        "USB-C Hub 7-in-1",
+        49,
+        "budget"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        42.5,
+        "budget"
+      ],
+      [
+        "Ring Light 14\"",
+        39.99,
+        "budget"
+      ],
+      [
+        "Wireless Mouse M3",
+        34.5,
+        "budget"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        32,
+        "budget"
+      ],
+      [
+        "Desk Mat Extended",
+        24.99,
+        "budget"
+      ],
+      [
+        "Running Socks 3-pack",
+        18.5,
+        "budget"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        14.99,
+        "budget"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        89.99,
+        "mid"
+      ],
+      [
+        "Fitness Band X2",
+        79,
+        "mid"
+      ],
+      [
+        "Cycling Jersey Pro",
+        65,
+        "mid"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        59.99,
+        "mid"
+      ],
+      [
+        "Smart Watch S",
+        199.99,
+        "premium"
+      ],
+      [
+        "Noise-Canceling Headset",
+        149.99,
+        "premium"
+      ],
+      [
+        "4K Webcam Pro",
+        129,
+        "premium"
+      ],
+      [
+        "Studio Desktop Mic",
+        119,
+        "premium"
+      ]
+    ]
+  },
+  "gm3-p08": {
+    "columns": [
+      "size",
+      "orders"
+    ],
+    "rows": [
+      [
+        "large",
+        25
+      ],
+      [
+        "medium",
+        63
+      ],
+      [
+        "small",
+        15
+      ]
+    ]
+  },
+  "gm3-p09": {
+    "columns": [
+      "bucket",
+      "orders"
+    ],
+    "rows": [
+      [
+        "closed",
+        59
+      ],
+      [
+        "open",
+        44
+      ]
+    ]
+  },
+  "gm3-p10": {
+    "columns": [
+      "distinct_names"
+    ],
+    "rows": [
+      [
+        22
+      ]
+    ]
+  },
+  "gm3-p11": {
+    "columns": [
+      "category"
+    ],
+    "rows": [
+      [
+        "Accessories"
+      ],
+      [
+        "Apparel"
+      ],
+      [
+        "Audio"
+      ],
+      [
+        "Electronics"
+      ],
+      [
+        "Fitness"
+      ],
+      [
+        "Video"
+      ],
+      [
+        "Wearables"
+      ]
+    ]
+  },
+  "gm3-p12": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "4K Webcam Pro"
+      ],
+      [
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Smart Watch S"
+      ],
+      [
+        "Studio Desktop Mic"
+      ]
+    ]
+  },
+  "gm3-p13": {
+    "columns": [
+      "tier",
+      "orders"
+    ],
+    "rows": [
+      [
+        "large",
+        25
+      ],
+      [
+        "standard",
+        78
+      ]
+    ]
+  },
+  "gm3-p14": {
+    "columns": [
+      "id",
+      "status"
+    ],
+    "rows": [
+      [
+        1,
+        "pending"
+      ],
+      [
+        5,
+        "pending"
+      ],
+      [
+        7,
+        "cancelled"
+      ],
+      [
+        12,
+        "pending"
+      ],
+      [
+        19,
+        "pending"
+      ],
+      [
+        21,
+        "cancelled"
+      ],
+      [
+        25,
+        "pending"
+      ],
+      [
+        42,
+        "pending"
+      ],
+      [
+        43,
+        "pending"
+      ],
+      [
+        47,
+        "pending"
+      ],
+      [
+        50,
+        "cancelled"
+      ],
+      [
+        51,
+        "cancelled"
+      ],
+      [
+        74,
+        "pending"
+      ],
+      [
+        75,
+        "pending"
+      ],
+      [
+        79,
+        "pending"
+      ],
+      [
+        82,
+        "cancelled"
+      ],
+      [
+        83,
+        "cancelled"
+      ],
+      [
+        90,
+        "pending"
+      ],
+      [
+        94,
+        "pending"
+      ],
+      [
+        95,
+        "cancelled"
+      ],
+      [
+        97,
+        "pending"
+      ]
+    ]
+  },
+  "gm3-p15": {
+    "columns": [],
+    "rows": []
+  },
+  "gm3-p16": {
+    "columns": [
+      "val",
+      "kind"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        "EU"
+      ],
+      [
+        "Chloe Dubois",
+        "EU"
+      ],
+      [
+        "Dmitri Volkov",
+        "EU"
+      ],
+      [
+        "Isabella Rossi",
+        "EU"
+      ],
+      [
+        "Liam O'Brien",
+        "EU"
+      ],
+      [
+        "Noah Meyer",
+        "EU"
+      ],
+      [
+        "Olivia Brown",
+        "EU"
+      ],
+      [
+        "Pedro Alvarez",
+        "EU"
+      ],
+      [
+        "Emma Wilson",
+        "US"
+      ],
+      [
+        "Jamal Wright",
+        "US"
+      ]
+    ]
+  },
+  "gm3-p17": {
+    "columns": [
+      "customer",
+      "market"
+    ],
+    "rows": [
+      [
+        "Bruno Silva",
+        "abroad"
+      ],
+      [
+        "Emma Wilson",
+        "abroad"
+      ],
+      [
+        "Farid Nasser",
+        "abroad"
+      ],
+      [
+        "Grace Kim",
+        "abroad"
+      ],
+      [
+        "Hiro Tanaka",
+        "abroad"
+      ],
+      [
+        "Jamal Wright",
+        "abroad"
+      ],
+      [
+        "Keiko Sato",
+        "abroad"
+      ],
+      [
+        "Maya Patel",
+        "abroad"
+      ],
+      [
+        "Alice Chen",
+        "home"
+      ],
+      [
+        "Chloe Dubois",
+        "home"
+      ],
+      [
+        "Dmitri Volkov",
+        "home"
+      ],
+      [
+        "Isabella Rossi",
+        "home"
+      ],
+      [
+        "Liam O'Brien",
+        "home"
+      ],
+      [
+        "Noah Meyer",
+        "home"
+      ],
+      [
+        "Olivia Brown",
+        "home"
+      ],
+      [
+        "Pedro Alvarez",
+        "home"
+      ]
+    ]
+  },
+  "gm3-p18": {
+    "columns": [
+      "name",
+      "price",
+      "kind"
+    ],
+    "rows": [
+      [
+        "Wireless Mouse M3",
+        34.5,
+        "bottom"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        32,
+        "bottom"
+      ],
+      [
+        "Desk Mat Extended",
+        24.99,
+        "bottom"
+      ],
+      [
+        "Running Socks 3-pack",
+        18.5,
+        "bottom"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        14.99,
+        "bottom"
+      ],
+      [
+        "Smart Watch S",
+        199.99,
+        "top"
+      ],
+      [
+        "Noise-Canceling Headset",
+        149.99,
+        "top"
+      ],
+      [
+        "4K Webcam Pro",
+        129,
+        "top"
+      ],
+      [
+        "Studio Desktop Mic",
+        119,
+        "top"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        89.99,
+        "top"
+      ]
+    ]
+  },
+  "gm3-p19": {
+    "columns": [
+      "val"
+    ],
+    "rows": [
+      [
+        "Accessories"
+      ],
+      [
+        "Apparel"
+      ],
+      [
+        "Audio"
+      ],
+      [
+        "Austin"
+      ],
+      [
+        "Berlin"
+      ],
+      [
+        "Chicago"
+      ],
+      [
+        "Cork"
+      ],
+      [
+        "Dubai"
+      ],
+      [
+        "Electronics"
+      ],
+      [
+        "Fitness"
+      ],
+      [
+        "Hamburg"
+      ],
+      [
+        "London"
+      ],
+      [
+        "Lyon"
+      ],
+      [
+        "Madrid"
+      ],
+      [
+        "Milan"
+      ],
+      [
+        "Mumbai"
+      ],
+      [
+        "Nagoya"
+      ],
+      [
+        "Osaka"
+      ],
+      [
+        "Seoul"
+      ],
+      [
+        "São Paulo"
+      ],
+      [
+        "Tallinn"
+      ],
+      [
+        "Video"
+      ],
+      [
+        "Wearables"
+      ]
+    ]
+  },
+  "gm3-p20": {
+    "columns": [
+      "distinct_values"
+    ],
+    "rows": [
+      [
+        8
+      ]
+    ]
+  },
+  "gm3-p21": {
+    "columns": [
+      "id",
+      "status",
+      "flag"
+    ],
+    "rows": [
+      [
+        1,
+        "pending",
+        "needs action"
+      ],
+      [
+        2,
+        "delivered",
+        "ok"
+      ],
+      [
+        3,
+        "shipped",
+        "ok"
+      ],
+      [
+        4,
+        "shipped",
+        "ok"
+      ],
+      [
+        5,
+        "pending",
+        "needs action"
+      ],
+      [
+        6,
+        "delivered",
+        "ok"
+      ],
+      [
+        7,
+        "cancelled",
+        "ok"
+      ],
+      [
+        8,
+        "shipped",
+        "ok"
+      ],
+      [
+        9,
+        "shipped",
+        "ok"
+      ],
+      [
+        10,
+        "delivered",
+        "ok"
+      ]
+    ]
+  },
+  "gm3-p22": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "4K Webcam Pro"
+      ],
+      [
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Desk Mat Extended"
+      ],
+      [
+        "Fitness Band X2"
+      ],
+      [
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Ring Light 14\""
+      ],
+      [
+        "Smart Watch S"
+      ],
+      [
+        "Studio Desktop Mic"
+      ],
+      [
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Wireless Mouse M3"
+      ],
+      [
+        "Yoga Mat Eco 6mm"
+      ]
+    ]
+  },
+  "gm3-p23": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Alice Chen"
+      ],
+      [
+        "Emma Wilson"
+      ],
+      [
+        "Grace Kim"
+      ],
+      [
+        "Maya Patel"
+      ],
+      [
+        "Pedro Alvarez"
+      ]
+    ]
+  },
+  "gm3-p24": {
+    "columns": [
+      "size",
+      "orders"
+    ],
+    "rows": [
+      [
+        "not small",
+        88
+      ],
+      [
+        "small",
+        15
+      ]
+    ]
+  },
+  "gm3-p25": {
+    "columns": [
+      "val"
+    ],
+    "rows": [
+      [
+        "4K Webcam Pro"
+      ],
+      [
+        "Accessories"
+      ],
+      [
+        "Apparel"
+      ],
+      [
+        "Audio"
+      ],
+      [
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Desk Mat Extended"
+      ],
+      [
+        "Electronics"
+      ],
+      [
+        "Fitness"
+      ],
+      [
+        "Fitness Band X2"
+      ],
+      [
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Ring Light 14\""
+      ],
+      [
+        "Running Socks 3-pack"
+      ],
+      [
+        "Smart Watch S"
+      ],
+      [
+        "Studio Desktop Mic"
+      ],
+      [
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Video"
+      ],
+      [
+        "Wearables"
+      ],
+      [
+        "Wireless Mouse M3"
+      ],
+      [
+        "Yoga Mat Eco 6mm"
+      ]
+    ]
+  },
+  "gm3-p26": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Bruno Silva"
+      ],
+      [
+        "Chloe Dubois"
+      ],
+      [
+        "Dmitri Volkov"
+      ],
+      [
+        "Farid Nasser"
+      ],
+      [
+        "Keiko Sato"
+      ],
+      [
+        "Olivia Brown"
+      ]
+    ]
+  },
+  "gm3-p27": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Alice Chen"
+      ],
+      [
+        "Emma Wilson"
+      ],
+      [
+        "Grace Kim"
+      ],
+      [
+        "Hiro Tanaka"
+      ],
+      [
+        "Isabella Rossi"
+      ],
+      [
+        "Jamal Wright"
+      ],
+      [
+        "Maya Patel"
+      ],
+      [
+        "Noah Meyer"
+      ],
+      [
+        "Pedro Alvarez"
+      ]
+    ]
+  },
+  "gm3-p28": {
+    "columns": [
+      "name",
+      "price",
+      "band"
+    ],
+    "rows": [
+      [
+        "Smart Watch S",
+        199.99,
+        "premium"
+      ],
+      [
+        "Noise-Canceling Headset",
+        149.99,
+        "premium"
+      ],
+      [
+        "4K Webcam Pro",
+        129,
+        "premium"
+      ],
+      [
+        "Studio Desktop Mic",
+        119,
+        "premium"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        89.99,
+        "mid"
+      ],
+      [
+        "Fitness Band X2",
+        79,
+        "mid"
+      ],
+      [
+        "Cycling Jersey Pro",
+        65,
+        "mid"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        59.99,
+        "mid"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        49,
+        "budget"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        42.5,
+        "budget"
+      ],
+      [
+        "Ring Light 14\"",
+        39.99,
+        "budget"
+      ],
+      [
+        "Wireless Mouse M3",
+        34.5,
+        "budget"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        32,
+        "budget"
+      ],
+      [
+        "Desk Mat Extended",
+        24.99,
+        "budget"
+      ],
+      [
+        "Running Socks 3-pack",
+        18.5,
+        "budget"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        14.99,
+        "budget"
+      ]
+    ]
+  },
+  "gm3-p29": {
+    "columns": [
+      "val",
+      "n"
+    ],
+    "rows": [
+      [
+        "APAC",
+        5
+      ],
+      [
+        "EU",
+        8
+      ],
+      [
+        "LATAM",
+        1
+      ],
+      [
+        "US",
+        2
+      ],
+      [
+        "cancelled",
+        7
+      ],
+      [
+        "delivered",
+        52
+      ],
+      [
+        "pending",
+        14
+      ],
+      [
+        "shipped",
+        30
+      ]
+    ]
+  },
+  "gm3-p30": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Desk Mat Extended"
+      ],
+      [
+        "Fitness Band X2"
+      ],
+      [
+        "HDMI 2.1 Cable 2m"
+      ],
+      [
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Ring Light 14\""
+      ],
+      [
+        "Running Socks 3-pack"
+      ],
+      [
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Wireless Mouse M3"
+      ],
+      [
+        "Yoga Mat Eco 6mm"
+      ]
+    ]
+  },
+  "gm3-p31": {
+    "columns": [
+      "region",
+      "people"
+    ],
+    "rows": [
+      [
+        "APAC",
+        7
+      ],
+      [
+        "EU",
+        10
+      ],
+      [
+        "LATAM",
+        2
+      ],
+      [
+        "US",
+        3
+      ]
+    ]
+  },
+  "gm3-p32": {
+    "columns": [
+      "region",
+      "delivered",
+      "shipped",
+      "pending",
+      "cancelled"
+    ],
+    "rows": [
+      [
+        "APAC",
+        21,
+        8,
+        5,
+        3
+      ],
+      [
+        "EU",
+        24,
+        12,
+        6,
+        3
+      ],
+      [
+        "LATAM",
+        2,
+        0,
+        0,
+        0
+      ],
+      [
+        "US",
+        5,
+        10,
+        3,
+        1
+      ]
+    ]
+  },
+  "gm3-p33": {
+    "columns": [
+      "bucket",
+      "revenue",
+      "orders"
+    ],
+    "rows": [
+      [
+        "banked",
+        27567.79,
+        82
+      ],
+      [
+        "at risk",
+        6113,
+        14
+      ],
+      [
+        "lost",
+        1152.49,
+        7
+      ]
+    ]
+  },
+  "gm3-p34": {
+    "columns": [
+      "customer",
+      "spend",
+      "tier"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        7262.35,
+        "whale"
+      ],
+      [
+        "Emma Wilson",
+        6640.56,
+        "whale"
+      ],
+      [
+        "Grace Kim",
+        4574.23,
+        "whale"
+      ],
+      [
+        "Maya Patel",
+        3644.56,
+        "whale"
+      ],
+      [
+        "Chloe Dubois",
+        2667.93,
+        "regular"
+      ],
+      [
+        "Pedro Alvarez",
+        1686.17,
+        "regular"
+      ],
+      [
+        "Farid Nasser",
+        1458.97,
+        "occasional"
+      ],
+      [
+        "Keiko Sato",
+        1098.6,
+        "occasional"
+      ],
+      [
+        "Isabella Rossi",
+        985.65,
+        "occasional"
+      ],
+      [
+        "Bruno Silva",
+        852.44,
+        "occasional"
+      ],
+      [
+        "Hiro Tanaka",
+        829.09,
+        "occasional"
+      ],
+      [
+        "Noah Meyer",
+        737.68,
+        "occasional"
+      ],
+      [
+        "Liam O'Brien",
+        705.39,
+        "occasional"
+      ],
+      [
+        "Jamal Wright",
+        645.6,
+        "occasional"
+      ],
+      [
+        "Dmitri Volkov",
+        599.26,
+        "occasional"
+      ],
+      [
+        "Olivia Brown",
+        444.8,
+        "occasional"
+      ]
+    ]
+  },
+  "gm3-p35": {
+    "columns": [
+      "email"
+    ],
+    "rows": [
+      [
+        "alice.chen@example.com"
+      ],
+      [
+        "chloe.dubois@example.com"
+      ],
+      [
+        "emma.wilson@example.com"
+      ],
+      [
+        "farid.n@example.com"
+      ],
+      [
+        "grace.kim@example.com"
+      ],
+      [
+        "keiko.sato@example.com"
+      ],
+      [
+        "maya.patel@example.com"
+      ],
+      [
+        "pedro.alv@example.com"
+      ]
+    ]
+  },
+  "gm3-p36": {
+    "columns": [
+      "basket_orders"
+    ],
+    "rows": [
+      [
+        17
+      ]
+    ]
+  },
+  "gm3-p37": {
+    "columns": [
+      "shelf",
+      "revenue"
+    ],
+    "rows": [
+      [
+        "Audio",
+        11744.01
+      ],
+      [
+        "Wearables",
+        6929.12
+      ],
+      [
+        "Video",
+        5198.41
+      ],
+      [
+        "Electronics",
+        4818.61
+      ],
+      [
+        "Accessories",
+        3294.29
+      ],
+      [
+        "Apparel",
+        1984.93
+      ],
+      [
+        "Fitness",
+        863.91
+      ],
+      [
+        "TOTAL",
+        34833.28
+      ]
+    ]
+  },
+  "gm3-p38": {
+    "columns": [
+      "id",
+      "status",
+      "total"
+    ],
+    "rows": [
+      [
+        1,
+        "pending",
+        576.54
+      ],
+      [
+        5,
+        "pending",
+        725.34
+      ],
+      [
+        12,
+        "pending",
+        148.28
+      ],
+      [
+        19,
+        "pending",
+        317.49
+      ],
+      [
+        25,
+        "pending",
+        364.71
+      ],
+      [
+        42,
+        "pending",
+        259.31
+      ],
+      [
+        43,
+        "pending",
+        945.21
+      ],
+      [
+        47,
+        "pending",
+        306.92
+      ],
+      [
+        74,
+        "pending",
+        1088.44
+      ],
+      [
+        75,
+        "pending",
+        273.64
+      ],
+      [
+        79,
+        "pending",
+        212.03
+      ],
+      [
+        90,
+        "pending",
+        160.3
+      ],
+      [
+        94,
+        "pending",
+        149
+      ],
+      [
+        97,
+        "pending",
+        585.79
+      ],
+      [
+        2,
+        "delivered",
+        416.81
+      ],
+      [
+        3,
+        "shipped",
+        767.64
+      ],
+      [
+        4,
+        "shipped",
+        158.48
+      ],
+      [
+        6,
+        "delivered",
+        752.96
+      ],
+      [
+        7,
+        "cancelled",
+        152.52
+      ],
+      [
+        8,
+        "shipped",
+        181.68
+      ],
+      [
+        9,
+        "shipped",
+        46.67
+      ],
+      [
+        10,
+        "delivered",
+        175.68
+      ],
+      [
+        11,
+        "shipped",
+        283.12
+      ],
+      [
+        13,
+        "delivered",
+        632.29
+      ],
+      [
+        14,
+        "delivered",
+        705.23
+      ],
+      [
+        15,
+        "shipped",
+        826.03
+      ],
+      [
+        16,
+        "shipped",
+        507.24
+      ],
+      [
+        17,
+        "delivered",
+        285.1
+      ],
+      [
+        18,
+        "delivered",
+        124.41
+      ],
+      [
+        20,
+        "shipped",
+        705.39
+      ],
+      [
+        21,
+        "cancelled",
+        136.11
+      ],
+      [
+        22,
+        "delivered",
+        450.12
+      ],
+      [
+        23,
+        "delivered",
+        99.48
+      ],
+      [
+        24,
+        "delivered",
+        419.37
+      ],
+      [
+        26,
+        "shipped",
+        263.91
+      ],
+      [
+        27,
+        "delivered",
+        577.19
+      ],
+      [
+        28,
+        "delivered",
+        241.88
+      ],
+      [
+        29,
+        "delivered",
+        49.92
+      ],
+      [
+        30,
+        "shipped",
+        56.19
+      ],
+      [
+        31,
+        "shipped",
+        633.91
+      ],
+      [
+        32,
+        "shipped",
+        645.91
+      ],
+      [
+        33,
+        "delivered",
+        624.66
+      ],
+      [
+        34,
+        "delivered",
+        121.12
+      ],
+      [
+        35,
+        "shipped",
+        373
+      ],
+      [
+        36,
+        "shipped",
+        355.07
+      ],
+      [
+        37,
+        "shipped",
+        379.83
+      ],
+      [
+        38,
+        "delivered",
+        75.47
+      ],
+      [
+        39,
+        "shipped",
+        845.92
+      ],
+      [
+        40,
+        "delivered",
+        135.24
+      ],
+      [
+        41,
+        "shipped",
+        67.25
+      ],
+      [
+        44,
+        "shipped",
+        282.51
+      ],
+      [
+        45,
+        "delivered",
+        80.27
+      ],
+      [
+        46,
+        "delivered",
+        412.88
+      ],
+      [
+        48,
+        "delivered",
+        187.38
+      ],
+      [
+        49,
+        "shipped",
+        32.01
+      ],
+      [
+        50,
+        "cancelled",
+        90.35
+      ],
+      [
+        51,
+        "cancelled",
+        25.47
+      ],
+      [
+        52,
+        "delivered",
+        238.38
+      ],
+      [
+        53,
+        "shipped",
+        39.39
+      ],
+      [
+        54,
+        "shipped",
+        273.96
+      ],
+      [
+        55,
+        "delivered",
+        113.66
+      ],
+      [
+        56,
+        "delivered",
+        317.63
+      ],
+      [
+        57,
+        "shipped",
+        785.79
+      ],
+      [
+        58,
+        "delivered",
+        298.18
+      ],
+      [
+        59,
+        "delivered",
+        44.48
+      ],
+      [
+        60,
+        "shipped",
+        403.72
+      ],
+      [
+        61,
+        "delivered",
+        388.61
+      ],
+      [
+        62,
+        "delivered",
+        86.11
+      ],
+      [
+        63,
+        "delivered",
+        334.66
+      ],
+      [
+        64,
+        "delivered",
+        611.87
+      ],
+      [
+        65,
+        "shipped",
+        425.08
+      ],
+      [
+        66,
+        "delivered",
+        125.4
+      ],
+      [
+        67,
+        "delivered",
+        659.7
+      ],
+      [
+        68,
+        "delivered",
+        625.14
+      ],
+      [
+        69,
+        "delivered",
+        116.69
+      ],
+      [
+        70,
+        "shipped",
+        131.39
+      ],
+      [
+        71,
+        "delivered",
+        668.45
+      ],
+      [
+        72,
+        "delivered",
+        30.24
+      ],
+      [
+        73,
+        "delivered",
+        375.93
+      ],
+      [
+        76,
+        "delivered",
+        235.71
+      ],
+      [
+        77,
+        "delivered",
+        303.26
+      ],
+      [
+        78,
+        "delivered",
+        295.66
+      ],
+      [
+        80,
+        "delivered",
+        435.09
+      ],
+      [
+        81,
+        "delivered",
+        164.17
+      ],
+      [
+        82,
+        "cancelled",
+        143.86
+      ],
+      [
+        83,
+        "cancelled",
+        397.99
+      ],
+      [
+        84,
+        "shipped",
+        153.51
+      ],
+      [
+        85,
+        "delivered",
+        262.89
+      ],
+      [
+        86,
+        "delivered",
+        116.28
+      ],
+      [
+        87,
+        "delivered",
+        326.05
+      ],
+      [
+        88,
+        "delivered",
+        397.91
+      ],
+      [
+        89,
+        "shipped",
+        684.53
+      ],
+      [
+        91,
+        "delivered",
+        444.8
+      ],
+      [
+        92,
+        "delivered",
+        233.95
+      ],
+      [
+        93,
+        "delivered",
+        45.36
+      ],
+      [
+        95,
+        "cancelled",
+        206.19
+      ],
+      [
+        96,
+        "shipped",
+        590.2
+      ],
+      [
+        98,
+        "shipped",
+        608.06
+      ],
+      [
+        99,
+        "shipped",
+        489.33
+      ],
+      [
+        100,
+        "delivered",
+        125.88
+      ],
+      [
+        101,
+        "delivered",
+        142.25
+      ],
+      [
+        102,
+        "delivered",
+        115.06
+      ],
+      [
+        103,
+        "delivered",
+        324.16
+      ]
+    ]
+  },
+  "gm3-p39": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Fitness Band X2"
+      ],
+      [
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Ring Light 14\""
+      ],
+      [
+        "USB-C Hub 7-in-1"
+      ]
+    ]
+  },
+  "gm3-p40": {
+    "columns": [
+      "value",
+      "n",
+      "kind"
+    ],
+    "rows": [
+      [
+        "APAC",
+        5,
+        "customers"
+      ],
+      [
+        "EU",
+        8,
+        "customers"
+      ],
+      [
+        "LATAM",
+        1,
+        "customers"
+      ],
+      [
+        "US",
+        2,
+        "customers"
+      ],
+      [
+        "cancelled",
+        7,
+        "orders"
+      ],
+      [
+        "delivered",
+        52,
+        "orders"
+      ],
+      [
+        "pending",
+        14,
+        "orders"
+      ],
+      [
+        "shipped",
+        30,
+        "orders"
+      ]
+    ]
+  },
+  "gm3-p41": {
+    "columns": [
+      "name",
+      "category",
+      "price"
+    ],
+    "rows": [
+      [
+        "Mechanical Keyboard K1",
+        "Electronics",
+        89.99
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        "Electronics",
+        49
+      ],
+      [
+        "Wireless Mouse M3",
+        "Electronics",
+        34.5
+      ],
+      [
+        "Noise-Canceling Headset",
+        "Audio",
+        149.99
+      ],
+      [
+        "Studio Desktop Mic",
+        "Audio",
+        119
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        "Audio",
+        59.99
+      ],
+      [
+        "Smart Watch S",
+        "Wearables",
+        199.99
+      ],
+      [
+        "4K Webcam Pro",
+        "Video",
+        129
+      ],
+      [
+        "Fitness Band X2",
+        "Wearables",
+        79
+      ],
+      [
+        "Cycling Jersey Pro",
+        "Apparel",
+        65
+      ],
+      [
+        "Laptop Stand Aluminum",
+        "Accessories",
+        42.5
+      ],
+      [
+        "Ring Light 14\"",
+        "Video",
+        39.99
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        "Fitness",
+        32
+      ],
+      [
+        "Desk Mat Extended",
+        "Accessories",
+        24.99
+      ],
+      [
+        "Running Socks 3-pack",
+        "Apparel",
+        18.5
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        "Accessories",
+        14.99
+      ]
+    ]
+  },
+  "gm3-p42": {
+    "columns": [
+      "order_id"
+    ],
+    "rows": [
+      [
+        6
+      ],
+      [
+        13
+      ],
+      [
+        15
+      ],
+      [
+        16
+      ],
+      [
+        43
+      ],
+      [
+        67
+      ],
+      [
+        71
+      ],
+      [
+        89
+      ],
+      [
+        97
+      ]
+    ]
+  },
+  "gm3-p43": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Alice Chen"
+      ],
+      [
+        "Emma Wilson"
+      ],
+      [
+        "Keiko Sato"
+      ],
+      [
+        "Maya Patel"
+      ]
+    ]
+  },
+  "gm3-p44": {
+    "columns": [
+      "region",
+      "open_orders"
+    ],
+    "rows": [
+      [
+        "APAC",
+        13
+      ],
+      [
+        "EU",
+        18
+      ],
+      [
+        "LATAM",
+        0
+      ],
+      [
+        "US",
+        13
+      ]
+    ]
+  },
+  "gm3-p45": {
+    "columns": [
+      "id",
+      "kind",
+      "amount"
+    ],
+    "rows": [
+      [
+        1,
+        "expense",
+        1200
+      ],
+      [
+        2,
+        "expense",
+        220
+      ],
+      [
+        3,
+        "expense",
+        299
+      ],
+      [
+        4,
+        "expense",
+        1200
+      ],
+      [
+        5,
+        "expense",
+        240
+      ],
+      [
+        6,
+        "expense",
+        1200
+      ],
+      [
+        7,
+        "expense",
+        265
+      ],
+      [
+        8,
+        "expense",
+        452
+      ],
+      [
+        9,
+        "expense",
+        1200
+      ],
+      [
+        10,
+        "expense",
+        250
+      ],
+      [
+        11,
+        "expense",
+        299
+      ],
+      [
+        12,
+        "expense",
+        1200
+      ],
+      [
+        13,
+        "expense",
+        280
+      ],
+      [
+        14,
+        "expense",
+        1200
+      ],
+      [
+        15,
+        "expense",
+        310
+      ],
+      [
+        16,
+        "expense",
+        1200
+      ],
+      [
+        17,
+        "expense",
+        295
+      ],
+      [
+        18,
+        "expense",
+        299
+      ],
+      [
+        19,
+        "expense",
+        1200
+      ],
+      [
+        20,
+        "expense",
+        330
+      ],
+      [
+        21,
+        "expense",
+        1680
+      ],
+      [
+        22,
+        "expense",
+        1200
+      ],
+      [
+        23,
+        "expense",
+        345
+      ],
+      [
+        24,
+        "expense",
+        1200
+      ],
+      [
+        25,
+        "expense",
+        360
+      ],
+      [
+        26,
+        "expense",
+        299
+      ],
+      [
+        27,
+        "expense",
+        1200
+      ],
+      [
+        28,
+        "expense",
+        385
+      ],
+      [
+        29,
+        "expense",
+        389
+      ],
+      [
+        30,
+        "expense",
+        1200
+      ],
+      [
+        31,
+        "expense",
+        410
+      ],
+      [
+        32,
+        "expense",
+        1200
+      ],
+      [
+        33,
+        "expense",
+        430
+      ],
+      [
+        34,
+        "expense",
+        329
+      ],
+      [
+        35,
+        "expense",
+        1200
+      ],
+      [
+        36,
+        "expense",
+        450
+      ],
+      [
+        1,
+        "order",
+        576.54
+      ],
+      [
+        2,
+        "order",
+        416.81
+      ],
+      [
+        3,
+        "order",
+        767.64
+      ],
+      [
+        4,
+        "order",
+        158.48
+      ],
+      [
+        5,
+        "order",
+        725.34
+      ],
+      [
+        6,
+        "order",
+        752.96
+      ],
+      [
+        7,
+        "order",
+        152.52
+      ],
+      [
+        8,
+        "order",
+        181.68
+      ],
+      [
+        9,
+        "order",
+        46.67
+      ],
+      [
+        10,
+        "order",
+        175.68
+      ],
+      [
+        11,
+        "order",
+        283.12
+      ],
+      [
+        12,
+        "order",
+        148.28
+      ],
+      [
+        13,
+        "order",
+        632.29
+      ],
+      [
+        14,
+        "order",
+        705.23
+      ],
+      [
+        15,
+        "order",
+        826.03
+      ],
+      [
+        16,
+        "order",
+        507.24
+      ],
+      [
+        17,
+        "order",
+        285.1
+      ],
+      [
+        18,
+        "order",
+        124.41
+      ],
+      [
+        19,
+        "order",
+        317.49
+      ],
+      [
+        20,
+        "order",
+        705.39
+      ],
+      [
+        21,
+        "order",
+        136.11
+      ],
+      [
+        22,
+        "order",
+        450.12
+      ],
+      [
+        23,
+        "order",
+        99.48
+      ],
+      [
+        24,
+        "order",
+        419.37
+      ],
+      [
+        25,
+        "order",
+        364.71
+      ],
+      [
+        26,
+        "order",
+        263.91
+      ],
+      [
+        27,
+        "order",
+        577.19
+      ],
+      [
+        28,
+        "order",
+        241.88
+      ],
+      [
+        29,
+        "order",
+        49.92
+      ],
+      [
+        30,
+        "order",
+        56.19
+      ],
+      [
+        31,
+        "order",
+        633.91
+      ],
+      [
+        32,
+        "order",
+        645.91
+      ],
+      [
+        33,
+        "order",
+        624.66
+      ],
+      [
+        34,
+        "order",
+        121.12
+      ],
+      [
+        35,
+        "order",
+        373
+      ],
+      [
+        36,
+        "order",
+        355.07
+      ],
+      [
+        37,
+        "order",
+        379.83
+      ],
+      [
+        38,
+        "order",
+        75.47
+      ],
+      [
+        39,
+        "order",
+        845.92
+      ],
+      [
+        40,
+        "order",
+        135.24
+      ],
+      [
+        41,
+        "order",
+        67.25
+      ],
+      [
+        42,
+        "order",
+        259.31
+      ],
+      [
+        43,
+        "order",
+        945.21
+      ],
+      [
+        44,
+        "order",
+        282.51
+      ],
+      [
+        45,
+        "order",
+        80.27
+      ],
+      [
+        46,
+        "order",
+        412.88
+      ],
+      [
+        47,
+        "order",
+        306.92
+      ],
+      [
+        48,
+        "order",
+        187.38
+      ],
+      [
+        49,
+        "order",
+        32.01
+      ],
+      [
+        50,
+        "order",
+        90.35
+      ],
+      [
+        51,
+        "order",
+        25.47
+      ],
+      [
+        52,
+        "order",
+        238.38
+      ],
+      [
+        53,
+        "order",
+        39.39
+      ],
+      [
+        54,
+        "order",
+        273.96
+      ],
+      [
+        55,
+        "order",
+        113.66
+      ],
+      [
+        56,
+        "order",
+        317.63
+      ],
+      [
+        57,
+        "order",
+        785.79
+      ],
+      [
+        58,
+        "order",
+        298.18
+      ],
+      [
+        59,
+        "order",
+        44.48
+      ],
+      [
+        60,
+        "order",
+        403.72
+      ],
+      [
+        61,
+        "order",
+        388.61
+      ],
+      [
+        62,
+        "order",
+        86.11
+      ],
+      [
+        63,
+        "order",
+        334.66
+      ],
+      [
+        64,
+        "order",
+        611.87
+      ],
+      [
+        65,
+        "order",
+        425.08
+      ],
+      [
+        66,
+        "order",
+        125.4
+      ],
+      [
+        67,
+        "order",
+        659.7
+      ],
+      [
+        68,
+        "order",
+        625.14
+      ],
+      [
+        69,
+        "order",
+        116.69
+      ],
+      [
+        70,
+        "order",
+        131.39
+      ],
+      [
+        71,
+        "order",
+        668.45
+      ],
+      [
+        72,
+        "order",
+        30.24
+      ],
+      [
+        73,
+        "order",
+        375.93
+      ],
+      [
+        74,
+        "order",
+        1088.44
+      ],
+      [
+        75,
+        "order",
+        273.64
+      ],
+      [
+        76,
+        "order",
+        235.71
+      ],
+      [
+        77,
+        "order",
+        303.26
+      ],
+      [
+        78,
+        "order",
+        295.66
+      ],
+      [
+        79,
+        "order",
+        212.03
+      ],
+      [
+        80,
+        "order",
+        435.09
+      ],
+      [
+        81,
+        "order",
+        164.17
+      ],
+      [
+        82,
+        "order",
+        143.86
+      ],
+      [
+        83,
+        "order",
+        397.99
+      ],
+      [
+        84,
+        "order",
+        153.51
+      ],
+      [
+        85,
+        "order",
+        262.89
+      ],
+      [
+        86,
+        "order",
+        116.28
+      ],
+      [
+        87,
+        "order",
+        326.05
+      ],
+      [
+        88,
+        "order",
+        397.91
+      ],
+      [
+        89,
+        "order",
+        684.53
+      ],
+      [
+        90,
+        "order",
+        160.3
+      ],
+      [
+        91,
+        "order",
+        444.8
+      ],
+      [
+        92,
+        "order",
+        233.95
+      ],
+      [
+        93,
+        "order",
+        45.36
+      ],
+      [
+        94,
+        "order",
+        149
+      ],
+      [
+        95,
+        "order",
+        206.19
+      ],
+      [
+        96,
+        "order",
+        590.2
+      ],
+      [
+        97,
+        "order",
+        585.79
+      ],
+      [
+        98,
+        "order",
+        608.06
+      ],
+      [
+        99,
+        "order",
+        489.33
+      ],
+      [
+        100,
+        "order",
+        125.88
+      ],
+      [
+        101,
+        "order",
+        142.25
+      ],
+      [
+        102,
+        "order",
+        115.06
+      ],
+      [
+        103,
+        "order",
+        324.16
+      ]
+    ]
+  },
+  "gm3-p46": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "4K Webcam Pro"
+      ],
+      [
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Smart Watch S"
+      ],
+      [
+        "Studio Desktop Mic"
+      ]
+    ]
+  },
+  "gm3-p47": {
+    "columns": [
+      "tier",
+      "customers"
+    ],
+    "rows": [
+      [
+        "whale",
+        4
+      ],
+      [
+        "regular",
+        2
+      ],
+      [
+        "occasional",
+        10
+      ]
+    ]
+  },
+  "gm3-p48": {
+    "columns": [
+      "order_id"
+    ],
+    "rows": [
+      [
+        3
+      ],
+      [
+        7
+      ],
+      [
+        9
+      ],
+      [
+        12
+      ],
+      [
+        17
+      ],
+      [
+        19
+      ],
+      [
+        23
+      ],
+      [
+        31
+      ],
+      [
+        39
+      ],
+      [
+        42
+      ],
+      [
+        50
+      ],
+      [
+        55
+      ],
+      [
+        57
+      ],
+      [
+        65
+      ],
+      [
+        73
+      ],
+      [
+        76
+      ],
+      [
+        81
+      ],
+      [
+        85
+      ],
+      [
+        87
+      ],
+      [
+        92
+      ],
+      [
+        95
+      ],
+      [
+        101
+      ],
+      [
+        102
+      ]
+    ]
+  },
+  "gm3-p49": {
+    "columns": [
+      "order_id"
+    ],
+    "rows": [
+      [
+        1
+      ],
+      [
+        2
+      ],
+      [
+        5
+      ],
+      [
+        14
+      ],
+      [
+        20
+      ],
+      [
+        21
+      ],
+      [
+        24
+      ],
+      [
+        25
+      ],
+      [
+        27
+      ],
+      [
+        32
+      ],
+      [
+        33
+      ],
+      [
+        35
+      ],
+      [
+        44
+      ],
+      [
+        46
+      ],
+      [
+        47
+      ],
+      [
+        48
+      ],
+      [
+        52
+      ],
+      [
+        54
+      ],
+      [
+        63
+      ],
+      [
+        64
+      ],
+      [
+        68
+      ],
+      [
+        74
+      ],
+      [
+        75
+      ],
+      [
+        77
+      ],
+      [
+        78
+      ],
+      [
+        82
+      ],
+      [
+        83
+      ],
+      [
+        91
+      ],
+      [
+        98
+      ]
+    ]
+  },
+  "gm3-p50": {
+    "columns": [
+      "category",
+      "avg_price",
+      "band"
+    ],
+    "rows": [
+      [
+        "Video",
+        84.5,
+        "mid"
+      ],
+      [
+        "Electronics",
+        57.83,
+        "mid"
+      ],
+      [
+        "Wearables",
+        139.5,
+        "premium"
+      ],
+      [
+        "Audio",
+        109.66,
+        "premium"
+      ],
+      [
+        "Apparel",
+        41.75,
+        "value"
+      ],
+      [
+        "Fitness",
+        32,
+        "value"
+      ],
+      [
+        "Accessories",
+        27.49,
+        "value"
+      ]
+    ]
+  },
+  "gm3-p51": {
+    "columns": [
+      "kind",
+      "val"
+    ],
+    "rows": [
+      [
+        "customer",
+        "Alice Chen"
+      ],
+      [
+        "customer",
+        "Bruno Silva"
+      ],
+      [
+        "customer",
+        "Chloe Dubois"
+      ],
+      [
+        "customer",
+        "Dmitri Volkov"
+      ],
+      [
+        "customer",
+        "Emma Wilson"
+      ],
+      [
+        "customer",
+        "Farid Nasser"
+      ],
+      [
+        "customer",
+        "Grace Kim"
+      ],
+      [
+        "customer",
+        "Hiro Tanaka"
+      ],
+      [
+        "customer",
+        "Isabella Rossi"
+      ],
+      [
+        "customer",
+        "Jamal Wright"
+      ],
+      [
+        "customer",
+        "Keiko Sato"
+      ],
+      [
+        "customer",
+        "Liam O'Brien"
+      ],
+      [
+        "customer",
+        "Maya Patel"
+      ],
+      [
+        "customer",
+        "Noah Meyer"
+      ],
+      [
+        "customer",
+        "Olivia Brown"
+      ],
+      [
+        "customer",
+        "Pedro Alvarez"
+      ],
+      [
+        "supplier",
+        "Alpine Audio GmbH"
+      ],
+      [
+        "supplier",
+        "Andes Naturals SA"
+      ],
+      [
+        "supplier",
+        "Midwest Hardware Co"
+      ],
+      [
+        "supplier",
+        "Nordic Gadgets AB"
+      ],
+      [
+        "supplier",
+        "Pacific Textiles"
+      ],
+      [
+        "supplier",
+        "Shenzhen Electro"
+      ],
+      [
+        "TOTAL",
+        "22"
+      ]
+    ]
+  },
+  "gm3-p52": {
+    "columns": [
+      "supplier",
+      "rating",
+      "tier"
+    ],
+    "rows": [
+      [
+        "Alpine Audio GmbH",
+        4.8,
+        "elite"
+      ],
+      [
+        "Nordic Gadgets AB",
+        4.6,
+        "elite"
+      ],
+      [
+        "Midwest Hardware Co",
+        4.4,
+        "solid"
+      ],
+      [
+        "Shenzhen Electro",
+        4.1,
+        "solid"
+      ],
+      [
+        "Andes Naturals SA",
+        4,
+        "solid"
+      ],
+      [
+        "Pacific Textiles",
+        3.9,
+        "watch"
+      ]
+    ]
+  },
+  "gm3-p53": {
+    "columns": [
+      "id"
+    ],
+    "rows": [
+      [
+        12
+      ],
+      [
+        19
+      ],
+      [
+        25
+      ],
+      [
+        42
+      ],
+      [
+        47
+      ],
+      [
+        75
+      ],
+      [
+        79
+      ],
+      [
+        90
+      ],
+      [
+        94
+      ]
+    ]
+  },
+  "gm3-p54": {
+    "columns": [
+      "id"
+    ],
+    "rows": [
+      [
+        1
+      ],
+      [
+        5
+      ],
+      [
+        43
+      ],
+      [
+        74
+      ],
+      [
+        97
+      ]
+    ]
+  },
+  "gm3-p55": {
+    "columns": [
+      "state",
+      "orders"
+    ],
+    "rows": [
+      [
+        "shipment logged",
+        82
+      ],
+      [
+        "waiting",
+        21
+      ]
+    ]
+  },
+  "gm3-p56": {
+    "columns": [
+      "order_id"
+    ],
+    "rows": [
+      [
+        6
+      ],
+      [
+        11
+      ],
+      [
+        15
+      ],
+      [
+        26
+      ],
+      [
+        69
+      ],
+      [
+        88
+      ],
+      [
+        97
+      ]
+    ]
+  },
+  "gm3-p57": {
+    "columns": [
+      "raw_stack",
+      "deduped"
+    ],
+    "rows": [
+      [
+        119,
+        8
+      ]
+    ]
+  },
+  "gm3-p58": {
+    "columns": [
+      "supplier",
+      "products",
+      "premium"
+    ],
+    "rows": [
+      [
+        "Alpine Audio GmbH",
+        2,
+        1
+      ],
+      [
+        "Andes Naturals SA",
+        2,
+        0
+      ],
+      [
+        "Midwest Hardware Co",
+        3,
+        1
+      ],
+      [
+        "Nordic Gadgets AB",
+        3,
+        2
+      ],
+      [
+        "Pacific Textiles",
+        3,
+        0
+      ],
+      [
+        "Shenzhen Electro",
+        3,
+        0
+      ]
+    ]
+  },
+  "gm3-p59": {
+    "columns": [
+      "category"
+    ],
+    "rows": [
+      [
+        "Accessories"
+      ],
+      [
+        "Apparel"
+      ],
+      [
+        "Electronics"
+      ],
+      [
+        "Fitness"
+      ]
+    ]
+  },
+  "gm3-p60": {
+    "columns": [
+      "bucket",
+      "orders"
+    ],
+    "rows": [
+      [
+        "delivered",
+        52
+      ],
+      [
+        "shipped",
+        30
+      ],
+      [
+        "pending",
+        14
+      ],
+      [
+        "cancelled",
+        7
+      ],
+      [
+        "TOTAL",
+        103
+      ]
+    ]
+  },
+  "gm3-p61": {
+    "columns": [
+      "region",
+      "delivered",
+      "shipped",
+      "pending",
+      "cancelled"
+    ],
+    "rows": [
+      [
+        "APAC",
+        21,
+        8,
+        5,
+        3
+      ],
+      [
+        "EU",
+        24,
+        12,
+        6,
+        3
+      ],
+      [
+        "LATAM",
+        2,
+        0,
+        0,
+        0
+      ],
+      [
+        "US",
+        5,
+        10,
+        3,
+        1
+      ],
+      [
+        "TOTAL",
+        52,
+        30,
+        14,
+        7
+      ]
+    ]
+  },
+  "gm3-p62": {
+    "columns": [
+      "part",
+      "orders"
+    ],
+    "rows": [
+      [
+        "audio_only",
+        29
+      ],
+      [
+        "both",
+        17
+      ],
+      [
+        "electronics_only",
+        23
+      ]
+    ]
+  },
+  "gm3-p63": {
+    "columns": [
+      "part",
+      "customers"
+    ],
+    "rows": [
+      [
+        "both",
+        9
+      ],
+      [
+        "delivered_only",
+        6
+      ],
+      [
+        "shipped_only",
+        1
+      ]
+    ]
+  },
+  "gm3-p64": {
+    "columns": [
+      "tier",
+      "delivered",
+      "not_yet"
+    ],
+    "rows": [
+      [
+        "core",
+        29,
+        35
+      ],
+      [
+        "growth",
+        23,
+        16
+      ]
+    ]
+  },
+  "gm3-p65": {
+    "columns": [
+      "name",
+      "price"
+    ],
+    "rows": [
+      [
+        "Studio Desktop Mic",
+        119
+      ],
+      [
+        "Mechanical Keyboard K1",
+        89.99
+      ],
+      [
+        "Fitness Band X2",
+        79
+      ],
+      [
+        "Cycling Jersey Pro",
+        65
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        59.99
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        49
+      ],
+      [
+        "Laptop Stand Aluminum",
+        42.5
+      ],
+      [
+        "Ring Light 14\"",
+        39.99
+      ],
+      [
+        "Wireless Mouse M3",
+        34.5
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        32
+      ]
+    ]
+  },
+  "gm3-p66": {
+    "columns": [
+      "customer",
+      "delivered",
+      "shipped",
+      "pending",
+      "cancelled"
+    ],
+    "rows": [
+      [
+        "Alice Chen",
+        12,
+        6,
+        3,
+        3
+      ],
+      [
+        "Bruno Silva",
+        2,
+        0,
+        0,
+        0
+      ],
+      [
+        "Chloe Dubois",
+        3,
+        0,
+        2,
+        0
+      ],
+      [
+        "Dmitri Volkov",
+        2,
+        0,
+        0,
+        0
+      ],
+      [
+        "Emma Wilson",
+        4,
+        9,
+        3,
+        1
+      ],
+      [
+        "Farid Nasser",
+        2,
+        0,
+        1,
+        0
+      ],
+      [
+        "Grace Kim",
+        10,
+        3,
+        1,
+        0
+      ],
+      [
+        "Hiro Tanaka",
+        2,
+        1,
+        0,
+        0
+      ],
+      [
+        "Isabella Rossi",
+        2,
+        2,
+        0,
+        0
+      ],
+      [
+        "Jamal Wright",
+        1,
+        1,
+        0,
+        0
+      ],
+      [
+        "Keiko Sato",
+        2,
+        0,
+        1,
+        1
+      ],
+      [
+        "Liam O'Brien",
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        "Maya Patel",
+        5,
+        4,
+        2,
+        2
+      ],
+      [
+        "Noah Meyer",
+        2,
+        2,
+        0,
+        0
+      ],
+      [
+        "Olivia Brown",
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        "Pedro Alvarez",
+        2,
+        1,
+        1,
+        0
+      ]
+    ]
+  },
+  "gm3-p67": {
+    "columns": [
+      "pair",
+      "orders"
+    ],
+    "rows": [
+      [
+        "all_three",
+        7
+      ],
+      [
+        "audio_accessories",
+        25
+      ],
+      [
+        "electronics_accessories",
+        17
+      ],
+      [
+        "electronics_audio",
+        17
+      ]
+    ]
+  },
+  "gm3-p68": {
+    "columns": [
+      "status",
+      "small",
+      "medium",
+      "large"
+    ],
+    "rows": [
+      [
+        "cancelled",
+        2,
+        5,
+        0
+      ],
+      [
+        "delivered",
+        8,
+        35,
+        9
+      ],
+      [
+        "pending",
+        0,
+        9,
+        5
+      ],
+      [
+        "shipped",
+        5,
+        14,
+        11
+      ]
+    ]
+  },
+  "gm3-p69": {
+    "columns": [
+      "region",
+      "never_crossed"
+    ],
+    "rows": [
+      [
+        "APAC",
+        2
+      ],
+      [
+        "EU",
+        3
+      ],
+      [
+        "US",
+        1
+      ]
+    ]
+  },
+  "gm3-p70": {
+    "columns": [
+      "region",
+      "people",
+      "cut"
+    ],
+    "rows": [
+      [
+        "APAC",
+        7,
+        "combined"
+      ],
+      [
+        "APAC",
+        5,
+        "customers"
+      ],
+      [
+        "APAC",
+        2,
+        "suppliers"
+      ],
+      [
+        "EU",
+        10,
+        "combined"
+      ],
+      [
+        "EU",
+        8,
+        "customers"
+      ],
+      [
+        "EU",
+        2,
+        "suppliers"
+      ],
+      [
+        "LATAM",
+        2,
+        "combined"
+      ],
+      [
+        "LATAM",
+        1,
+        "customers"
+      ],
+      [
+        "LATAM",
+        1,
+        "suppliers"
+      ],
+      [
+        "US",
+        3,
+        "combined"
+      ],
+      [
+        "US",
+        2,
+        "customers"
+      ],
+      [
+        "US",
+        1,
+        "suppliers"
+      ]
+    ]
+  },
+  "gm3-p71": {
+    "columns": [
+      "pair",
+      "raw",
+      "deduped"
+    ],
+    "rows": [
+      [
+        "categories_status",
+        119,
+        11
+      ],
+      [
+        "names",
+        22,
+        22
+      ],
+      [
+        "status_region",
+        119,
+        8
+      ]
+    ]
+  },
+  "gm3-p72": {
+    "columns": [
+      "id",
+      "status",
+      "total"
+    ],
+    "rows": [
+      [
+        74,
+        "pending",
+        1088.44
+      ],
+      [
+        43,
+        "pending",
+        945.21
+      ],
+      [
+        5,
+        "pending",
+        725.34
+      ],
+      [
+        97,
+        "pending",
+        585.79
+      ],
+      [
+        1,
+        "pending",
+        576.54
+      ],
+      [
+        25,
+        "pending",
+        364.71
+      ],
+      [
+        19,
+        "pending",
+        317.49
+      ],
+      [
+        47,
+        "pending",
+        306.92
+      ],
+      [
+        75,
+        "pending",
+        273.64
+      ],
+      [
+        42,
+        "pending",
+        259.31
+      ],
+      [
+        79,
+        "pending",
+        212.03
+      ],
+      [
+        90,
+        "pending",
+        160.3
+      ],
+      [
+        94,
+        "pending",
+        149
+      ],
+      [
+        12,
+        "pending",
+        148.28
+      ],
+      [
+        39,
+        "shipped",
+        845.92
+      ],
+      [
+        15,
+        "shipped",
+        826.03
+      ],
+      [
+        57,
+        "shipped",
+        785.79
+      ],
+      [
+        3,
+        "shipped",
+        767.64
+      ],
+      [
+        20,
+        "shipped",
+        705.39
+      ],
+      [
+        89,
+        "shipped",
+        684.53
+      ],
+      [
+        32,
+        "shipped",
+        645.91
+      ],
+      [
+        31,
+        "shipped",
+        633.91
+      ],
+      [
+        98,
+        "shipped",
+        608.06
+      ],
+      [
+        96,
+        "shipped",
+        590.2
+      ],
+      [
+        16,
+        "shipped",
+        507.24
+      ],
+      [
+        99,
+        "shipped",
+        489.33
+      ],
+      [
+        65,
+        "shipped",
+        425.08
+      ],
+      [
+        60,
+        "shipped",
+        403.72
+      ],
+      [
+        37,
+        "shipped",
+        379.83
+      ],
+      [
+        35,
+        "shipped",
+        373
+      ],
+      [
+        36,
+        "shipped",
+        355.07
+      ],
+      [
+        11,
+        "shipped",
+        283.12
+      ],
+      [
+        44,
+        "shipped",
+        282.51
+      ],
+      [
+        54,
+        "shipped",
+        273.96
+      ],
+      [
+        26,
+        "shipped",
+        263.91
+      ],
+      [
+        8,
+        "shipped",
+        181.68
+      ],
+      [
+        4,
+        "shipped",
+        158.48
+      ],
+      [
+        84,
+        "shipped",
+        153.51
+      ],
+      [
+        70,
+        "shipped",
+        131.39
+      ],
+      [
+        41,
+        "shipped",
+        67.25
+      ],
+      [
+        30,
+        "shipped",
+        56.19
+      ],
+      [
+        9,
+        "shipped",
+        46.67
+      ],
+      [
+        53,
+        "shipped",
+        39.39
+      ],
+      [
+        49,
+        "shipped",
+        32.01
+      ],
+      [
+        6,
+        "delivered",
+        752.96
+      ],
+      [
+        14,
+        "delivered",
+        705.23
+      ],
+      [
+        71,
+        "delivered",
+        668.45
+      ],
+      [
+        67,
+        "delivered",
+        659.7
+      ],
+      [
+        13,
+        "delivered",
+        632.29
+      ],
+      [
+        68,
+        "delivered",
+        625.14
+      ],
+      [
+        33,
+        "delivered",
+        624.66
+      ],
+      [
+        64,
+        "delivered",
+        611.87
+      ],
+      [
+        27,
+        "delivered",
+        577.19
+      ],
+      [
+        22,
+        "delivered",
+        450.12
+      ],
+      [
+        91,
+        "delivered",
+        444.8
+      ],
+      [
+        80,
+        "delivered",
+        435.09
+      ],
+      [
+        24,
+        "delivered",
+        419.37
+      ],
+      [
+        2,
+        "delivered",
+        416.81
+      ],
+      [
+        46,
+        "delivered",
+        412.88
+      ],
+      [
+        88,
+        "delivered",
+        397.91
+      ],
+      [
+        61,
+        "delivered",
+        388.61
+      ],
+      [
+        73,
+        "delivered",
+        375.93
+      ],
+      [
+        63,
+        "delivered",
+        334.66
+      ],
+      [
+        87,
+        "delivered",
+        326.05
+      ],
+      [
+        103,
+        "delivered",
+        324.16
+      ],
+      [
+        56,
+        "delivered",
+        317.63
+      ],
+      [
+        77,
+        "delivered",
+        303.26
+      ],
+      [
+        58,
+        "delivered",
+        298.18
+      ],
+      [
+        78,
+        "delivered",
+        295.66
+      ],
+      [
+        17,
+        "delivered",
+        285.1
+      ],
+      [
+        85,
+        "delivered",
+        262.89
+      ],
+      [
+        28,
+        "delivered",
+        241.88
+      ],
+      [
+        52,
+        "delivered",
+        238.38
+      ],
+      [
+        76,
+        "delivered",
+        235.71
+      ],
+      [
+        92,
+        "delivered",
+        233.95
+      ],
+      [
+        48,
+        "delivered",
+        187.38
+      ],
+      [
+        10,
+        "delivered",
+        175.68
+      ],
+      [
+        81,
+        "delivered",
+        164.17
+      ],
+      [
+        101,
+        "delivered",
+        142.25
+      ],
+      [
+        40,
+        "delivered",
+        135.24
+      ],
+      [
+        100,
+        "delivered",
+        125.88
+      ],
+      [
+        66,
+        "delivered",
+        125.4
+      ],
+      [
+        18,
+        "delivered",
+        124.41
+      ],
+      [
+        34,
+        "delivered",
+        121.12
+      ],
+      [
+        69,
+        "delivered",
+        116.69
+      ],
+      [
+        86,
+        "delivered",
+        116.28
+      ],
+      [
+        102,
+        "delivered",
+        115.06
+      ],
+      [
+        55,
+        "delivered",
+        113.66
+      ],
+      [
+        23,
+        "delivered",
+        99.48
+      ],
+      [
+        62,
+        "delivered",
+        86.11
+      ],
+      [
+        45,
+        "delivered",
+        80.27
+      ],
+      [
+        38,
+        "delivered",
+        75.47
+      ],
+      [
+        29,
+        "delivered",
+        49.92
+      ],
+      [
+        93,
+        "delivered",
+        45.36
+      ],
+      [
+        59,
+        "delivered",
+        44.48
+      ],
+      [
+        72,
+        "delivered",
+        30.24
+      ],
+      [
+        83,
+        "cancelled",
+        397.99
+      ],
+      [
+        95,
+        "cancelled",
+        206.19
+      ],
+      [
+        7,
+        "cancelled",
+        152.52
+      ],
+      [
+        82,
+        "cancelled",
+        143.86
+      ],
+      [
+        21,
+        "cancelled",
+        136.11
+      ],
+      [
+        50,
+        "cancelled",
+        90.35
+      ],
+      [
+        51,
+        "cancelled",
+        25.47
+      ]
+    ]
+  },
+  "gm3-p73": {
+    "columns": [
+      "sym_diff"
+    ],
+    "rows": [
+      [
+        0
+      ]
+    ]
+  },
+  "gm3-p74": {
+    "columns": [
+      "region",
+      "delivered",
+      "shipped",
+      "pending",
+      "cancelled"
+    ],
+    "rows": [
+      [
+        "APAC",
+        21,
+        8,
+        5,
+        3
+      ],
+      [
+        "EU",
+        24,
+        12,
+        6,
+        3
+      ],
+      [
+        "US",
+        5,
+        10,
+        3,
+        1
+      ]
+    ]
+  },
+  "gm3-p75": {
+    "columns": [
+      "small",
+      "medium",
+      "large",
+      "total_orders"
+    ],
+    "rows": [
+      [
+        15,
+        63,
+        25,
+        103
+      ]
+    ]
+  },
+  "gm3-p76": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Fitness Band X2"
+      ],
+      [
+        "Laptop Stand Aluminum"
+      ],
+      [
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Ring Light 14\""
+      ],
+      [
+        "Studio Desktop Mic"
+      ],
+      [
+        "USB-C Hub 7-in-1"
+      ],
+      [
+        "Wireless Mouse M3"
+      ],
+      [
+        "Yoga Mat Eco 6mm"
+      ]
+    ]
+  },
+  "gm3-p77": {
+    "columns": [
+      "tier",
+      "delivered",
+      "shipped",
+      "pending",
+      "cancelled"
+    ],
+    "rows": [
+      [
+        "whale",
+        31,
+        22,
+        9,
+        6
+      ],
+      [
+        "regular",
+        5,
+        1,
+        3,
+        0
+      ],
+      [
+        "occasional",
+        16,
+        7,
+        2,
+        1
+      ]
+    ]
+  },
+  "gm3-p78": {
+    "columns": [],
+    "rows": []
+  },
+  "gm3-p79": {
+    "columns": [
+      "id"
+    ],
+    "rows": [
+      [
+        3
+      ],
+      [
+        6
+      ],
+      [
+        12
+      ],
+      [
+        13
+      ],
+      [
+        14
+      ],
+      [
+        15
+      ],
+      [
+        16
+      ],
+      [
+        19
+      ],
+      [
+        20
+      ],
+      [
+        25
+      ],
+      [
+        27
+      ],
+      [
+        31
+      ],
+      [
+        32
+      ],
+      [
+        33
+      ],
+      [
+        39
+      ],
+      [
+        42
+      ],
+      [
+        47
+      ],
+      [
+        57
+      ],
+      [
+        64
+      ],
+      [
+        67
+      ],
+      [
+        68
+      ],
+      [
+        71
+      ],
+      [
+        75
+      ],
+      [
+        79
+      ],
+      [
+        89
+      ],
+      [
+        90
+      ],
+      [
+        94
+      ],
+      [
+        96
+      ],
+      [
+        98
+      ]
+    ]
+  },
+  "gm3-p80": {
+    "columns": [
+      "band",
+      "suppliers",
+      "revenue"
+    ],
+    "rows": [
+      [
+        "key",
+        2,
+        20425.18
+      ],
+      [
+        "standard",
+        4,
+        14408.1
+      ],
+      [
+        "TOTAL",
+        6,
+        34833.28
+      ]
+    ]
+  },
+  "gm3-p81": {
+    "columns": [
+      "id",
+      "region"
+    ],
+    "rows": [
+      [
+        1,
+        "EU"
+      ],
+      [
+        3,
+        "EU"
+      ],
+      [
+        4,
+        "EU"
+      ],
+      [
+        9,
+        "EU"
+      ],
+      [
+        12,
+        "EU"
+      ],
+      [
+        14,
+        "EU"
+      ],
+      [
+        15,
+        "EU"
+      ],
+      [
+        16,
+        "EU"
+      ]
+    ]
+  },
+  "gm3-p82": {
+    "columns": [
+      "delivered_pct",
+      "shipped_pct",
+      "pending_pct",
+      "cancelled_pct"
+    ],
+    "rows": [
+      [
+        50.5,
+        29.1,
+        13.6,
+        6.8
+      ]
+    ]
+  },
+  "gm3-p83": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Alice Chen"
+      ],
+      [
+        "Chloe Dubois"
+      ],
+      [
+        "Emma Wilson"
+      ],
+      [
+        "Farid Nasser"
+      ],
+      [
+        "Grace Kim"
+      ],
+      [
+        "Keiko Sato"
+      ],
+      [
+        "Maya Patel"
+      ],
+      [
+        "Pedro Alvarez"
+      ]
+    ]
+  },
+  "gm3-p84": {
+    "columns": [
+      "month"
+    ],
+    "rows": [
+      [
+        "2024-01"
+      ],
+      [
+        "2024-02"
+      ],
+      [
+        "2024-03"
+      ],
+      [
+        "2024-04"
+      ],
+      [
+        "2024-05"
+      ],
+      [
+        "2024-06"
+      ],
+      [
+        "2024-07"
+      ],
+      [
+        "2024-08"
+      ],
+      [
+        "2024-09"
+      ],
+      [
+        "2024-10"
+      ],
+      [
+        "2024-11"
+      ],
+      [
+        "2024-12"
+      ],
+      [
+        "2025-01"
+      ],
+      [
+        "2025-02"
+      ]
+    ]
+  },
+  "gm3-p85": {
+    "columns": [
+      "category"
+    ],
+    "rows": [
+      [
+        "Apparel"
+      ],
+      [
+        "Fitness"
+      ]
+    ]
+  },
+  "gm3-p86": {
+    "columns": [
+      "banked",
+      "at_risk",
+      "lost",
+      "grand"
+    ],
+    "rows": [
+      [
+        27567.79,
+        6113,
+        1152.49,
+        34833.28
+      ]
+    ]
+  },
+  "gm3-p87": {
+    "columns": [
+      "category",
+      "delivered",
+      "shipped",
+      "pending",
+      "cancelled"
+    ],
+    "rows": [
+      [
+        "Accessories",
+        27,
+        20,
+        12,
+        3
+      ],
+      [
+        "Apparel",
+        14,
+        9,
+        0,
+        1
+      ],
+      [
+        "Audio",
+        27,
+        13,
+        8,
+        3
+      ],
+      [
+        "Electronics",
+        21,
+        15,
+        5,
+        3
+      ],
+      [
+        "Fitness",
+        4,
+        5,
+        2,
+        2
+      ],
+      [
+        "Video",
+        18,
+        10,
+        4,
+        0
+      ],
+      [
+        "Wearables",
+        8,
+        12,
+        5,
+        0
+      ]
+    ]
+  },
+  "gm3-p88": {
+    "columns": [
+      "pair",
+      "raw",
+      "deduped"
+    ],
+    "rows": [
+      [
+        "money_totals",
+        21,
+        21
+      ],
+      [
+        "status_region",
+        119,
+        8
+      ]
+    ]
+  },
+  "gm3-p89": {
+    "columns": [
+      "name",
+      "price",
+      "band"
+    ],
+    "rows": [
+      [
+        "Smart Watch S",
+        199.99,
+        "premium"
+      ],
+      [
+        "Noise-Canceling Headset",
+        149.99,
+        "premium"
+      ],
+      [
+        "4K Webcam Pro",
+        129,
+        "premium"
+      ],
+      [
+        "Studio Desktop Mic",
+        119,
+        "premium"
+      ],
+      [
+        "Mechanical Keyboard K1",
+        89.99,
+        "mid"
+      ],
+      [
+        "Fitness Band X2",
+        79,
+        "mid"
+      ],
+      [
+        "Cycling Jersey Pro",
+        65,
+        "mid"
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        59.99,
+        "mid"
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        49,
+        "budget"
+      ],
+      [
+        "Laptop Stand Aluminum",
+        42.5,
+        "budget"
+      ],
+      [
+        "Ring Light 14\"",
+        39.99,
+        "budget"
+      ],
+      [
+        "Wireless Mouse M3",
+        34.5,
+        "budget"
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        32,
+        "budget"
+      ],
+      [
+        "Desk Mat Extended",
+        24.99,
+        "budget"
+      ],
+      [
+        "Running Socks 3-pack",
+        18.5,
+        "budget"
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        14.99,
+        "budget"
+      ]
+    ]
+  },
+  "gm3-p90": {
+    "columns": [
+      "cut",
+      "bucket",
+      "revenue",
+      "orders"
+    ],
+    "rows": [
+      [
+        "all",
+        "banked",
+        27567.79,
+        82
+      ],
+      [
+        "all",
+        "at risk",
+        6113,
+        14
+      ],
+      [
+        "all",
+        "lost",
+        1152.49,
+        7
+      ],
+      [
+        "eu",
+        "banked",
+        11919.12,
+        36
+      ],
+      [
+        "eu",
+        "at risk",
+        2675.29,
+        6
+      ],
+      [
+        "eu",
+        "lost",
+        494.82,
+        3
+      ]
+    ]
+  },
   "kb-lj-p01": {
     "columns": [
       "name",
@@ -134766,6 +139892,636 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
       [
         "entry",
         3
+      ]
+    ]
+  },
+  "kb-so-i01": {
+    "columns": [
+      "region"
+    ],
+    "rows": [
+      [
+        "APAC"
+      ],
+      [
+        "EU"
+      ],
+      [
+        "LATAM"
+      ],
+      [
+        "US"
+      ]
+    ]
+  },
+  "kb-so-i02": {
+    "columns": [
+      "category"
+    ],
+    "rows": [
+      [
+        "Accessories"
+      ],
+      [
+        "Apparel"
+      ],
+      [
+        "Audio"
+      ],
+      [
+        "Electronics"
+      ],
+      [
+        "Fitness"
+      ],
+      [
+        "Video"
+      ],
+      [
+        "Wearables"
+      ]
+    ]
+  },
+  "kb-so-i03": {
+    "columns": [],
+    "rows": []
+  },
+  "kb-so-i04": {
+    "columns": [
+      "category"
+    ],
+    "rows": [
+      [
+        "Audio"
+      ],
+      [
+        "Video"
+      ],
+      [
+        "Wearables"
+      ]
+    ]
+  },
+  "kb-so-i05": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Alice Chen"
+      ],
+      [
+        "Chloe Dubois"
+      ],
+      [
+        "Emma Wilson"
+      ],
+      [
+        "Farid Nasser"
+      ],
+      [
+        "Grace Kim"
+      ],
+      [
+        "Keiko Sato"
+      ],
+      [
+        "Maya Patel"
+      ],
+      [
+        "Pedro Alvarez"
+      ]
+    ]
+  },
+  "kb-so-i06": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Alice Chen"
+      ],
+      [
+        "Emma Wilson"
+      ],
+      [
+        "Grace Kim"
+      ],
+      [
+        "Maya Patel"
+      ],
+      [
+        "Pedro Alvarez"
+      ]
+    ]
+  },
+  "kb-so-i07": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Alpine Audio GmbH"
+      ],
+      [
+        "Nordic Gadgets AB"
+      ]
+    ]
+  },
+  "kb-so-i08": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Alice Chen"
+      ],
+      [
+        "Emma Wilson"
+      ],
+      [
+        "Maya Patel"
+      ]
+    ]
+  },
+  "kb-so-i09": {
+    "columns": [
+      "order_id"
+    ],
+    "rows": [
+      [
+        6
+      ],
+      [
+        8
+      ],
+      [
+        11
+      ],
+      [
+        13
+      ],
+      [
+        15
+      ],
+      [
+        16
+      ],
+      [
+        26
+      ],
+      [
+        36
+      ],
+      [
+        43
+      ],
+      [
+        58
+      ],
+      [
+        61
+      ],
+      [
+        67
+      ],
+      [
+        69
+      ],
+      [
+        71
+      ],
+      [
+        88
+      ],
+      [
+        89
+      ],
+      [
+        97
+      ]
+    ]
+  },
+  "kb-so-i10": {
+    "columns": [
+      "order_id"
+    ],
+    "rows": [
+      [
+        10
+      ],
+      [
+        15
+      ],
+      [
+        26
+      ],
+      [
+        33
+      ],
+      [
+        37
+      ],
+      [
+        39
+      ],
+      [
+        54
+      ],
+      [
+        60
+      ],
+      [
+        78
+      ],
+      [
+        83
+      ],
+      [
+        88
+      ],
+      [
+        92
+      ]
+    ]
+  },
+  "kb-so-i11": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "4K Webcam Pro"
+      ],
+      [
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Smart Watch S"
+      ],
+      [
+        "Studio Desktop Mic"
+      ]
+    ]
+  },
+  "kb-so-i12": {
+    "columns": [
+      "region"
+    ],
+    "rows": [
+      [
+        "APAC"
+      ],
+      [
+        "EU"
+      ],
+      [
+        "LATAM"
+      ]
+    ]
+  },
+  "kb-so-i13": {
+    "columns": [
+      "order_id"
+    ],
+    "rows": [
+      [
+        6
+      ],
+      [
+        13
+      ],
+      [
+        15
+      ],
+      [
+        16
+      ],
+      [
+        43
+      ],
+      [
+        67
+      ],
+      [
+        71
+      ],
+      [
+        89
+      ],
+      [
+        97
+      ]
+    ]
+  },
+  "kb-so-e01": {
+    "columns": [
+      "status"
+    ],
+    "rows": [
+      [
+        "cancelled"
+      ],
+      [
+        "delivered"
+      ],
+      [
+        "pending"
+      ],
+      [
+        "shipped"
+      ]
+    ]
+  },
+  "kb-so-e02": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Bruno Silva"
+      ],
+      [
+        "Emma Wilson"
+      ],
+      [
+        "Farid Nasser"
+      ],
+      [
+        "Grace Kim"
+      ],
+      [
+        "Hiro Tanaka"
+      ],
+      [
+        "Jamal Wright"
+      ],
+      [
+        "Keiko Sato"
+      ],
+      [
+        "Maya Patel"
+      ]
+    ]
+  },
+  "kb-so-e03": {
+    "columns": [
+      "category"
+    ],
+    "rows": [
+      [
+        "Accessories"
+      ],
+      [
+        "Apparel"
+      ],
+      [
+        "Electronics"
+      ],
+      [
+        "Fitness"
+      ]
+    ]
+  },
+  "kb-so-e04": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "4K Webcam Pro"
+      ],
+      [
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Smart Watch S"
+      ],
+      [
+        "Studio Desktop Mic"
+      ]
+    ]
+  },
+  "kb-so-e05": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Bruno Silva"
+      ],
+      [
+        "Dmitri Volkov"
+      ],
+      [
+        "Hiro Tanaka"
+      ],
+      [
+        "Isabella Rossi"
+      ],
+      [
+        "Jamal Wright"
+      ],
+      [
+        "Liam O'Brien"
+      ],
+      [
+        "Noah Meyer"
+      ],
+      [
+        "Olivia Brown"
+      ]
+    ]
+  },
+  "kb-so-e06": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Liam O'Brien"
+      ]
+    ]
+  },
+  "kb-so-e07": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Alpine Audio GmbH"
+      ],
+      [
+        "Nordic Gadgets AB"
+      ]
+    ]
+  },
+  "kb-so-e08": {
+    "columns": [
+      "status"
+    ],
+    "rows": [
+      [
+        "delivered"
+      ],
+      [
+        "pending"
+      ],
+      [
+        "shipped"
+      ]
+    ]
+  },
+  "kb-so-e09": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "4K Webcam Pro"
+      ],
+      [
+        "Bluetooth Speaker Mini"
+      ],
+      [
+        "Cycling Jersey Pro"
+      ],
+      [
+        "Fitness Band X2"
+      ],
+      [
+        "Mechanical Keyboard K1"
+      ],
+      [
+        "Noise-Canceling Headset"
+      ],
+      [
+        "Smart Watch S"
+      ],
+      [
+        "Studio Desktop Mic"
+      ]
+    ]
+  },
+  "kb-so-e10": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Bruno Silva"
+      ],
+      [
+        "Chloe Dubois"
+      ],
+      [
+        "Dmitri Volkov"
+      ],
+      [
+        "Farid Nasser"
+      ],
+      [
+        "Grace Kim"
+      ],
+      [
+        "Hiro Tanaka"
+      ],
+      [
+        "Isabella Rossi"
+      ],
+      [
+        "Jamal Wright"
+      ],
+      [
+        "Liam O'Brien"
+      ],
+      [
+        "Noah Meyer"
+      ],
+      [
+        "Olivia Brown"
+      ],
+      [
+        "Pedro Alvarez"
+      ]
+    ]
+  },
+  "kb-so-e11": {
+    "columns": [
+      "status"
+    ],
+    "rows": [
+      [
+        "delivered"
+      ]
+    ]
+  },
+  "kb-so-e12": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Dmitri Volkov"
+      ],
+      [
+        "Hiro Tanaka"
+      ],
+      [
+        "Jamal Wright"
+      ],
+      [
+        "Keiko Sato"
+      ],
+      [
+        "Noah Meyer"
+      ],
+      [
+        "Olivia Brown"
+      ]
+    ]
+  },
+  "kb-so-e13": {
+    "columns": [
+      "region"
+    ],
+    "rows": [
+      [
+        "APAC"
+      ],
+      [
+        "EU"
+      ],
+      [
+        "US"
+      ]
+    ]
+  },
+  "kb-so-e14": {
+    "columns": [
+      "email"
+    ],
+    "rows": [
+      [
+        "bruno.silva@example.com"
+      ],
+      [
+        "chloe.dubois@example.com"
+      ],
+      [
+        "d.volkov@example.com"
+      ],
+      [
+        "farid.n@example.com"
+      ],
+      [
+        "keiko.sato@example.com"
+      ],
+      [
+        "olivia.brown@example.com"
       ]
     ]
   }

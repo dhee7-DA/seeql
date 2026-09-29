@@ -180,7 +180,7 @@ function auditCase(c: CaseStudy, seen: Map<string, string>): string[] {
   const selects = (filledCorrect.match(/\bSELECT\b/gi) ?? []).length;
   const isM2 = c.topic.startsWith("j");
   const isM79 = /^(w|d|f)/.test(c.topic); // Modules 7-9: writes, schema, finance — joins allowed
-  const isM3 = c.topic.startsWith("s");
+  const isM3 = c.topic.startsWith("s") || c.topic === "gm3";
   const isM4 = c.topic.startsWith("q");
   const isM5 = c.topic.startsWith("t");
   const isM6 = c.topic.startsWith("x");
@@ -193,6 +193,8 @@ function auditCase(c: CaseStudy, seen: Map<string, string>): string[] {
   if (isM3) {
     if (["s1", "s2", "s3", "s4", "s5"].includes(c.topic) && !hasSetOp)
       add("Module 3 set-op topic but no UNION/INTERSECT/EXCEPT — these cases must compare or combine result sets");
+    if (c.topic === "gm3" && !hasSetOp && !hasCase)
+      add("M3 gauntlet cases must stack sets (UNION/INTERSECT/EXCEPT) or branch with CASE");
     if (["s6", "s7", "s8"].includes(c.topic) && !hasCase)
       add("Module 3 CASE topic but no CASE keyword — these cases must branch");
     if (selects >= 2 && !hasSetOp && !hasCase)
