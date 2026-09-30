@@ -52,6 +52,16 @@ import { m04CasesMediumA } from "./m04-cases-medium-a";
 import { m04CasesMediumB } from "./m04-cases-medium-b";
 import { m04CasesHardA } from "./m04-cases-hard-a";
 import { m04CasesHardB } from "./m04-cases-hard-b";
+import { m05Mcqs } from "./m05-mcqs";
+import { m05ProblemsEasy } from "./m05-problems-a";
+import { m05ProblemsMedium } from "./m05-problems-b";
+import { m05ProblemsHard } from "./m05-problems-c";
+import { m05CasesEasyA } from "./m05-cases-easy-a";
+import { m05CasesEasyB } from "./m05-cases-easy-b";
+import { m05CasesMediumA } from "./m05-cases-medium-a";
+import { m05CasesMediumB } from "./m05-cases-medium-b";
+import { m05CasesHardA } from "./m05-cases-hard-a";
+import { m05CasesHardB } from "./m05-cases-hard-b";
 
 export const GAUNTLET_BANKS: GauntletBank[] = [
   {
@@ -81,6 +91,13 @@ export const GAUNTLET_BANKS: GauntletBank[] = [
     mcqs: m04Mcqs,
     cases: [...m04CasesEasyA, ...m04CasesEasyB, ...m04CasesMediumA, ...m04CasesMediumB, ...m04CasesHardA, ...m04CasesHardB],
     problems: [...m04ProblemsEasy, ...m04ProblemsMedium, ...m04ProblemsHard],
+  },
+  {
+    moduleNum: 5,
+    title: "Scalar & Window Toolkit",
+    mcqs: m05Mcqs,
+    cases: [...m05CasesEasyA, ...m05CasesEasyB, ...m05CasesMediumA, ...m05CasesMediumB, ...m05CasesHardA, ...m05CasesHardB],
+    problems: [...m05ProblemsEasy, ...m05ProblemsMedium, ...m05ProblemsHard],
   },
 ];
 

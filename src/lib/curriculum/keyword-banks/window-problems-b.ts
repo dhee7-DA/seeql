@@ -1,10 +1,12 @@
 // Keyword Mastery bank — PERCENT_RANK/CUME_DIST problems (kb-pr-i01..i12)
-// + Running totals problems (kb-rt-i01..i05).
+// + Running totals problems (kb-rt-i01..i05) + the CAST & types closer
+// (kb-ct-01) that lifts the keyword past the 30-query bar.
 // Probed facts: spend ranking desc — Alice 7262.35 (pr 0, cd 0.0625), Emma
 // 6640.56 (0.0667/0.125), Grace 4574.23 (0.1333/0.1875), Maya 3644.56
 // (0.2/0.25); monthly running total crosses 20000 in Aug (20931.27); grand
-// 34833.28. Running-totals problems carry the prose triggers ("running
-// total"/"cumulative"/"balance walk") the taxonomy scanner requires.
+// 34833.28; whole-dollar products = 6 (32/49/65/79/119/129). Running-totals
+// problems carry the prose triggers ("running total"/"cumulative"/"balance
+// walk") the taxonomy scanner requires.
 import type { Problem } from "../types";
 import { EXPECTED } from "../expected";
 
@@ -129,5 +131,12 @@ export const windowProblemsB: Problem[] = [
     brief: "Smooth the calendar: a 3-month TRAILING average of monthly revenue, where each month averages itself and its two predecessors. The frame clause — ROWS BETWEEN 2 PRECEDING AND CURRENT ROW — turns the running total's endless walk into a sliding window; edge months simply see less history.",
     hints: ["Stage monthly revenue first (GROUP BY m).", "AVG(rev) OVER (ORDER BY m ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) AS trailing_avg — a 3-row frame; ORDER BY m; ROUND(…, 2)."],
     solution: "SELECT m, ROUND(rev, 2) AS rev, ROUND(AVG(rev) OVER (ORDER BY m ROWS BETWEEN 2 PRECEDING AND CURRENT ROW), 2) AS trailing_avg FROM (SELECT strftime('%Y-%m', created_at) AS m, SUM(total) AS rev FROM orders GROUP BY m) ORDER BY m;",
+  }),
+  p({
+    id: "kb-ct-01", difficulty: "medium",
+    title: "The whole-dollar shelf",
+    brief: "Type conversion as a census: exactly six products carry whole-integer prices (32, 49, 65, 79, 119, 129) while the other ten are cent-priced. CAST(price AS INTEGER) truncates the decimal part, so a price that equals its own truncation is a whole dollar amount — the coercion check catalog teams run before any currency migration, counting who survives the trip unchanged.",
+    hints: ["CAST truncates toward zero: 89.99 becomes 89, but a whole-dollar 49 survives unchanged — equality with its own truncation is the whole-dollar fingerprint.", "SELECT name, price FROM products WHERE CAST(price AS INTEGER) = price ORDER BY price ASC."],
+    solution: "SELECT name, price FROM products WHERE CAST(price AS INTEGER) = price ORDER BY price ASC;",
   }),
 ];

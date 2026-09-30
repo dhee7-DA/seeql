@@ -53,7 +53,7 @@ export const firstLastValueBank: KeywordBank = {
   kw: "FIRST_VALUE & LAST_VALUE",
   moduleNum: 5,
   mcqs: [...windowMcqsFvA, ...windowMcqsFvB],
-  cases: windowCasesA,
+  cases: [...windowCasesA, ...windowCasesB.filter((c) => c.topic === "t8")],
   problems: windowProblemsA,
 };
 
@@ -86,7 +86,7 @@ export const castTypesBank: KeywordBank = {
   moduleNum: 5,
   mcqs: [...windowMcqsCtA, ...windowMcqsCtB],
   cases: windowCasesB.filter((c) => c.topic === "t1"),
-  problems: [],
+  problems: windowProblemsB.filter((pr) => pr.id.startsWith("kb-ct-")),
 };
 
 export const mathRoundingBank: KeywordBank = {
