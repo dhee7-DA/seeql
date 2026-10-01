@@ -27,6 +27,7 @@ import { nonEquiJoinsBank } from "./non-equi-joins";
 import { unionBank, intersectBank, exceptBank, caseWhenBank } from "./set-ops-banks";
 import { inSubqueryBank, scalarSubqueryBank, existsBank, correlatedBank, derivedTableBank, recursiveCteBank } from "./subquery-banks";
 import { overPartitionBank, rowNumberBank, ntileBank, firstLastValueBank, percentRankBank, runningTotalsBank, textFunctionsBank, castTypesBank, mathRoundingBank } from "./window-banks";
+import { insertBank, updateBank, deleteBank, upsertBank, returningBank, transactionsBank } from "./write-banks";
 
 export interface KeywordBank {
   /** Canonical keyword, verbatim from keyword-taxonomy's dictionary. */
@@ -67,6 +68,12 @@ export const KEYWORD_BANKS: KeywordBank[] = [
   textFunctionsBank,
   castTypesBank,
   mathRoundingBank,
+  insertBank,
+  updateBank,
+  deleteBank,
+  upsertBank,
+  returningBank,
+  transactionsBank,
 ];
 
 /** Every keyword-bank MCQ, in registry order. */
