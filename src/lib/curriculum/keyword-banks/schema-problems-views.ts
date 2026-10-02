@@ -1,0 +1,118 @@
+// M8 schema-bank problems — Views (kb-vw-p01..p12). CREATE VIEW solutions;
+// the verify reads the view's live rows (recomputed per run — the receipts
+// cited are probed on the seed).
+import type { Problem } from "../types";
+import { EXPECTED } from "../expected";
+
+const p = (v: Omit<Problem, "expected">): Problem => ({ ...v, expected: EXPECTED[v.id] });
+
+export const schemaProblemsViews: Problem[] = [
+  p({
+    id: "kb-vw-p01", difficulty: "easy",
+    title: "The active lens",
+    brief: "The CRM keeps asking for 'current customers' — save it once: CREATE VIEW active_customers AS SELECT id, name, region FROM customers WHERE active = 1. Fourteen rows should answer every future SELECT.",
+    hints: ["CREATE VIEW name AS SELECT …;", "The filter is the seed's active flag."],
+    solution: `CREATE VIEW active_customers AS SELECT id, name, region FROM customers WHERE active = 1;`,
+    mutating: true,
+    verify: `SELECT COUNT(*) AS n FROM active_customers`,
+  }),
+  p({
+    id: "kb-vw-p02", difficulty: "easy",
+    title: "The regional rollup",
+    brief: "Board staple: per-region customer counts under stable names. CREATE VIEW region_counts (region, n) AS SELECT region, COUNT(*) FROM customers GROUP BY region — the column list renames the output so the deck never breaks.",
+    hints: ["The (region, n) list names the view's columns by position.", "GROUP BY region does the folding."],
+    solution: `CREATE VIEW region_counts (region, n) AS SELECT region, COUNT(*) FROM customers GROUP BY region;`,
+    mutating: true,
+    verify: `SELECT region, n FROM region_counts ORDER BY region`,
+  }),
+  p({
+    id: "kb-vw-p03", difficulty: "easy",
+    title: "The wire slice",
+    brief: "Finance reviews wire transfers weekly — define wire_payments as a view over payments carrying paid_on and amount_cents where the method is wire. Eleven rows should answer the weekly SELECT.",
+    hints: ["CREATE VIEW wire_payments AS SELECT paid_on, amount_cents …", "The WHERE carries the method filter."],
+    solution: `CREATE VIEW wire_payments AS SELECT paid_on, amount_cents FROM payments WHERE method = 'wire';`,
+    mutating: true,
+    verify: `SELECT COUNT(*) AS n FROM wire_payments`,
+  }),
+  p({
+    id: "kb-vw-p04", difficulty: "medium",
+    title: "The EU slice",
+    brief: "Growth's EU board needs the active-EU intersection as a named lens: eu_active over customers where active = 1 AND region = 'EU'. Eight rows should read back.",
+    hints: ["One view, two filters in one WHERE.", "CREATE VIEW eu_active AS SELECT id, name FROM customers WHERE …;"],
+    solution: `CREATE VIEW eu_active AS SELECT id, name FROM customers WHERE active = 1 AND region = 'EU';`,
+    mutating: true,
+    verify: `SELECT COUNT(*) AS n FROM eu_active`,
+  }),
+  p({
+    id: "kb-vw-p05", difficulty: "medium",
+    title: "The paid totals lens",
+    brief: "AR's favorite question — 'who owes us history-wise?' — becomes paid_invoice_totals: SUM(amount_cents) per customer over PAID invoices. The view's top row should read customer 1 at 2048100 cents.",
+    hints: ["GROUP BY customer_id with SUM(amount_cents) AS cents.", "Filter status = 'paid' inside the view."],
+    solution: `CREATE VIEW paid_invoice_totals AS SELECT customer_id, SUM(amount_cents) AS cents FROM invoices WHERE status = 'paid' GROUP BY customer_id;`,
+    mutating: true,
+    verify: `SELECT customer_id, cents FROM paid_invoice_totals ORDER BY cents DESC LIMIT 1`,
+  }),
+  p({
+    id: "kb-vw-p06", difficulty: "medium",
+    title: "The pending book",
+    brief: "Ops watches the open pipeline: pending_orders as a view over orders (id, customer_id, total) where the status is pending. Fourteen rows totalling 6113.00 should answer the daily check.",
+    hints: ["CREATE VIEW pending_orders AS SELECT id, customer_id, total …", "WHERE status = 'pending'."],
+    solution: `CREATE VIEW pending_orders AS SELECT id, customer_id, total FROM orders WHERE status = 'pending';`,
+    mutating: true,
+    verify: `SELECT COUNT(*) AS n, ROUND(SUM(total), 2) AS book FROM pending_orders`,
+  }),
+  p({
+    id: "kb-vw-p07", difficulty: "medium",
+    title: "The low-price lens",
+    brief: "The outlet team ships sub-$20 products weekly: budget_items as a view over products (id, name, price) where price < 20. Save the definition once so every future reprice shows up automatically.",
+    hints: ["CREATE VIEW budget_items AS SELECT id, name, price …", "WHERE price < 20 — the view recomputes on every read."],
+    solution: `CREATE VIEW budget_items AS SELECT id, name, price FROM products WHERE price < 20;`,
+    mutating: true,
+    verify: `SELECT COUNT(*) AS n FROM budget_items`,
+  }),
+  p({
+    id: "kb-vw-p08", difficulty: "hard",
+    title: "The saved join",
+    brief: "The support queue opens with cancelled-order briefs — save the join once: order_briefs joining orders to customers (o.id, c.name, o.total) for status 'cancelled'. Seven rows should answer, join already done.",
+    hints: ["JOIN customers c ON c.id = o.customer_id inside the view.", "CREATE VIEW order_briefs AS SELECT o.id, c.name, o.total …"],
+    solution: `CREATE VIEW order_briefs AS SELECT o.id, c.name, o.total FROM orders o JOIN customers c ON c.id = o.customer_id WHERE o.status = 'cancelled';`,
+    mutating: true,
+    verify: `SELECT COUNT(*) AS n FROM order_briefs`,
+  }),
+  p({
+    id: "kb-vw-p09", difficulty: "hard",
+    title: "The year lens",
+    brief: "The 2024 annual close needs delivered-2024 isolated: delivered_2024 as a view over orders (id, total, created_at) where the status is delivered AND the created_at year is 2024. Forty-five rows should read back.",
+    hints: ["created_at LIKE '2024%' is the year filter on ISO text dates.", "CREATE VIEW delivered_2024 AS SELECT id, total, created_at …"],
+    solution: `CREATE VIEW delivered_2024 AS SELECT id, total, created_at FROM orders WHERE status = 'delivered' AND created_at LIKE '2024%';`,
+    mutating: true,
+    verify: `SELECT COUNT(*) AS n FROM delivered_2024`,
+  }),
+  p({
+    id: "kb-vw-p10", difficulty: "hard",
+    title: "The vendor cards",
+    brief: "The procurement UI wants stable output names: supplier_cards (vendor, score) AS SELECT name, rating FROM suppliers. The highest score should read Alpine Audio GmbH at 4.8 through the new names.",
+    hints: ["The (vendor, score) list renames the projection.", "CREATE VIEW supplier_cards (vendor, score) AS SELECT name, rating …"],
+    solution: `CREATE VIEW supplier_cards (vendor, score) AS SELECT name, rating FROM suppliers;`,
+    mutating: true,
+    verify: `SELECT vendor, score FROM supplier_cards ORDER BY score DESC LIMIT 1`,
+  }),
+  p({
+    id: "kb-vw-p11", difficulty: "medium",
+    title: "The big-ticket lens",
+    brief: "Fraud spot-checks the expensive tail: big_orders as a view over orders (id, customer_id, total) where total >= 400. Thirty-four rows should answer the reviewer's count.",
+    hints: ["CREATE VIEW big_orders AS SELECT id, customer_id, total …", "WHERE total >= 400 — the threshold lives in the view."],
+    solution: `CREATE VIEW big_orders AS SELECT id, customer_id, total FROM orders WHERE total >= 400;`,
+    mutating: true,
+    verify: `SELECT COUNT(*) AS n FROM big_orders`,
+  }),
+  p({
+    id: "kb-vw-p12", difficulty: "hard",
+    title: "The status averages",
+    brief: "The ops dashboard's headline — average order value per pipeline stage — becomes order_averages: status plus ROUND(AVG(total), 2) AS avg_total grouped over orders. Four rows should read: cancelled 164.64, delivered 299.44, pending 436.64, shipped 399.89.",
+    hints: ["GROUP BY status with the rounded average aliased.", "CREATE VIEW order_averages AS SELECT status, ROUND(AVG(total), 2) AS avg_total …"],
+    solution: `CREATE VIEW order_averages AS SELECT status, ROUND(AVG(total), 2) AS avg_total FROM orders GROUP BY status;`,
+    mutating: true,
+    verify: `SELECT status, avg_total FROM order_averages ORDER BY status`,
+  }),
+];

@@ -9,7 +9,9 @@
 // Case ids: cs-2211..cs-2232 (earlier banks) + cs-2233..cs-2250 (non-equi);
 // m02 gauntlet owns cs-2121..cs-2210; m03 gauntlet owns cs-2251..cs-2340;
 // the scalar-subquery bank owns cs-2341..cs-2355; m04 gauntlet owns cs-2356..cs-2445;
-// the window banks own cs-2446..cs-2473 (22 FIRST/LAST_VALUE + 6 CAST).
+// the window banks own cs-2446..cs-2473 (22 FIRST/LAST_VALUE + 6 CAST);
+// m05 gauntlet owns cs-2474..cs-2563; the write banks own cs-2564..cs-2692;
+// the M8 schema banks own cs-2693..cs-2720 (CREATE TABLE d1).
 // The M3 set-op banks and all M4/M5 banks except scalar/first-last/cast carry
 // NO case files — those keywords already clear the 30-case bar from lesson banks.
 import type { Mcq, Problem } from "../types";
@@ -28,6 +30,7 @@ import { unionBank, intersectBank, exceptBank, caseWhenBank } from "./set-ops-ba
 import { inSubqueryBank, scalarSubqueryBank, existsBank, correlatedBank, derivedTableBank, recursiveCteBank } from "./subquery-banks";
 import { overPartitionBank, rowNumberBank, ntileBank, firstLastValueBank, percentRankBank, runningTotalsBank, textFunctionsBank, castTypesBank, mathRoundingBank } from "./window-banks";
 import { insertBank, updateBank, deleteBank, upsertBank, returningBank, transactionsBank } from "./write-banks";
+import { createTableBank, alterDropBank, viewsBank, constraintsBank } from "./schema-banks";
 
 export interface KeywordBank {
   /** Canonical keyword, verbatim from keyword-taxonomy's dictionary. */
@@ -74,6 +77,10 @@ export const KEYWORD_BANKS: KeywordBank[] = [
   upsertBank,
   returningBank,
   transactionsBank,
+  createTableBank,
+  alterDropBank,
+  viewsBank,
+  constraintsBank,
 ];
 
 /** Every keyword-bank MCQ, in registry order. */

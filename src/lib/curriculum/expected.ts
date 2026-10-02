@@ -165335,5 +165335,712 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
     "columns": [],
     "rows": [],
     "changes": 93
+  },
+  "kb-tb-p01": {
+    "columns": [
+      "name",
+      "type",
+      "notnull",
+      "pk"
+    ],
+    "rows": [
+      [
+        "id",
+        "INTEGER",
+        0,
+        1
+      ],
+      [
+        "label",
+        "TEXT",
+        1,
+        0
+      ]
+    ]
+  },
+  "kb-tb-p02": {
+    "columns": [
+      "name",
+      "type",
+      "notnull",
+      "dflt_value"
+    ],
+    "rows": [
+      [
+        "name",
+        "TEXT",
+        1,
+        null
+      ],
+      [
+        "qty",
+        "INTEGER",
+        0,
+        "5"
+      ]
+    ]
+  },
+  "kb-tb-p03": {
+    "columns": [
+      "rows_n",
+      "cols"
+    ],
+    "rows": [
+      [
+        7,
+        3
+      ]
+    ]
+  },
+  "kb-tb-p04": {
+    "columns": [
+      "name",
+      "type",
+      "pk"
+    ],
+    "rows": [
+      [
+        "region",
+        "TEXT",
+        1
+      ],
+      [
+        "customers",
+        "INTEGER",
+        0
+      ]
+    ]
+  },
+  "kb-tb-p05": {
+    "columns": [
+      "cols",
+      "fks",
+      "nn"
+    ],
+    "rows": [
+      [
+        3,
+        1,
+        2
+      ]
+    ]
+  },
+  "kb-tb-p06": {
+    "columns": [
+      "name",
+      "type"
+    ],
+    "rows": [
+      [
+        "a",
+        "INTEGER"
+      ],
+      [
+        "b",
+        "TEXT"
+      ],
+      [
+        "c",
+        "REAL"
+      ]
+    ]
+  },
+  "kb-tb-p07": {
+    "columns": [
+      "nn",
+      "defs"
+    ],
+    "rows": [
+      [
+        1,
+        1
+      ]
+    ]
+  },
+  "kb-tb-p08": {
+    "columns": [
+      "pk_cols"
+    ],
+    "rows": [
+      [
+        2
+      ]
+    ]
+  },
+  "kb-tb-p09": {
+    "columns": [
+      "uq"
+    ],
+    "rows": [
+      [
+        2
+      ]
+    ]
+  },
+  "kb-tb-p10": {
+    "columns": [
+      "rows_n",
+      "cols"
+    ],
+    "rows": [
+      [
+        6,
+        2
+      ]
+    ]
+  },
+  "kb-tb-p11": {
+    "columns": [
+      "fks",
+      "nn"
+    ],
+    "rows": [
+      [
+        2,
+        1
+      ]
+    ]
+  },
+  "kb-tb-p12": {
+    "columns": [
+      "dflt",
+      "nn"
+    ],
+    "rows": [
+      [
+        "1000",
+        1
+      ]
+    ]
+  },
+  "kb-tb-p13": {
+    "columns": [
+      "id",
+      "spend"
+    ],
+    "rows": [
+      [
+        1,
+        11130.25
+      ]
+    ]
+  },
+  "kb-tb-p14": {
+    "columns": [
+      "defs",
+      "nn"
+    ],
+    "rows": [
+      [
+        2,
+        3
+      ]
+    ]
+  },
+  "kb-tb-p15": {
+    "columns": [
+      "nn",
+      "fks"
+    ],
+    "rows": [
+      [
+        4,
+        2
+      ]
+    ]
+  },
+  "kb-tb-p16": {
+    "columns": [
+      "uq",
+      "nn"
+    ],
+    "rows": [
+      [
+        1,
+        2
+      ]
+    ]
+  },
+  "kb-tb-p17": {
+    "columns": [
+      "parent",
+      "sentinel",
+      "nn"
+    ],
+    "rows": [
+      [
+        "suppliers",
+        "'9999-12-31'",
+        3
+      ]
+    ]
+  },
+  "kb-tb-p18": {
+    "columns": [
+      "rows_n",
+      "cols"
+    ],
+    "rows": [
+      [
+        5,
+        4
+      ]
+    ]
+  },
+  "kb-tb-p19": {
+    "columns": [
+      "int_cols",
+      "nn"
+    ],
+    "rows": [
+      [
+        2,
+        3
+      ]
+    ]
+  },
+  "kb-tb-p20": {
+    "columns": [
+      "defs",
+      "fks",
+      "nn"
+    ],
+    "rows": [
+      [
+        1,
+        1,
+        3
+      ]
+    ]
+  },
+  "kb-tb-p21": {
+    "columns": [
+      "pk_cols",
+      "fks",
+      "nn"
+    ],
+    "rows": [
+      [
+        2,
+        2,
+        3
+      ]
+    ]
+  },
+  "kb-tb-p22": {
+    "columns": [
+      "fks",
+      "author",
+      "nn"
+    ],
+    "rows": [
+      [
+        1,
+        "'system'",
+        2
+      ]
+    ]
+  },
+  "kb-tb-p23": {
+    "columns": [
+      "defs",
+      "nn"
+    ],
+    "rows": [
+      [
+        2,
+        1
+      ]
+    ]
+  },
+  "kb-ad-p01": {
+    "columns": [
+      "name",
+      "city"
+    ],
+    "rows": [
+      [
+        "Nordic Gadgets AB",
+        null
+      ],
+      [
+        "Shenzhen Electro",
+        null
+      ]
+    ]
+  },
+  "kb-ad-p02": {
+    "columns": [
+      "standard_n"
+    ],
+    "rows": [
+      [
+        6
+      ]
+    ]
+  },
+  "kb-ad-p03": {
+    "columns": [
+      "name",
+      "score"
+    ],
+    "rows": [
+      [
+        "Nordic Gadgets AB",
+        4.6
+      ]
+    ]
+  },
+  "kb-ad-p04": {
+    "columns": [
+      "cols"
+    ],
+    "rows": [
+      [
+        3
+      ]
+    ]
+  },
+  "kb-ad-p05": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        6
+      ]
+    ]
+  },
+  "kb-ad-p06": {
+    "columns": [
+      "fks",
+      "nn_partner"
+    ],
+    "rows": [
+      [
+        1,
+        0
+      ]
+    ]
+  },
+  "kb-vw-p01": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        14
+      ]
+    ]
+  },
+  "kb-vw-p02": {
+    "columns": [
+      "region",
+      "n"
+    ],
+    "rows": [
+      [
+        "APAC",
+        5
+      ],
+      [
+        "EU",
+        8
+      ],
+      [
+        "LATAM",
+        1
+      ],
+      [
+        "US",
+        2
+      ]
+    ]
+  },
+  "kb-vw-p03": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        11
+      ]
+    ]
+  },
+  "kb-vw-p04": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        7
+      ]
+    ]
+  },
+  "kb-vw-p05": {
+    "columns": [
+      "customer_id",
+      "cents"
+    ],
+    "rows": [
+      [
+        1,
+        2048100
+      ]
+    ]
+  },
+  "kb-vw-p06": {
+    "columns": [
+      "n",
+      "book"
+    ],
+    "rows": [
+      [
+        14,
+        6113
+      ]
+    ]
+  },
+  "kb-vw-p07": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        2
+      ]
+    ]
+  },
+  "kb-vw-p08": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        7
+      ]
+    ]
+  },
+  "kb-vw-p09": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        45
+      ]
+    ]
+  },
+  "kb-vw-p10": {
+    "columns": [
+      "vendor",
+      "score"
+    ],
+    "rows": [
+      [
+        "Alpine Audio GmbH",
+        4.8
+      ]
+    ]
+  },
+  "kb-vw-p11": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        34
+      ]
+    ]
+  },
+  "kb-vw-p12": {
+    "columns": [
+      "status",
+      "avg_total"
+    ],
+    "rows": [
+      [
+        "cancelled",
+        164.64
+      ],
+      [
+        "delivered",
+        299.44
+      ],
+      [
+        "pending",
+        436.64
+      ],
+      [
+        "shipped",
+        399.89
+      ]
+    ]
+  },
+  "kb-ck-p01": {
+    "columns": [
+      "nn"
+    ],
+    "rows": [
+      [
+        1
+      ]
+    ]
+  },
+  "kb-ck-p02": {
+    "columns": [
+      "name",
+      "dflt_value"
+    ],
+    "rows": [
+      [
+        "theme",
+        "'dark'"
+      ]
+    ]
+  },
+  "kb-ck-p03": {
+    "columns": [
+      "pk"
+    ],
+    "rows": [
+      [
+        1
+      ]
+    ]
+  },
+  "kb-ck-p04": {
+    "columns": [
+      "table",
+      "from",
+      "to"
+    ],
+    "rows": [
+      [
+        "products",
+        "pid",
+        "id"
+      ]
+    ]
+  },
+  "kb-ck-p05": {
+    "columns": [
+      "uq"
+    ],
+    "rows": [
+      [
+        2
+      ]
+    ]
+  },
+  "kb-ck-p06": {
+    "columns": [
+      "fks",
+      "nn"
+    ],
+    "rows": [
+      [
+        1,
+        1
+      ]
+    ]
+  },
+  "kb-ck-p07": {
+    "columns": [
+      "pk_cols",
+      "pk_type"
+    ],
+    "rows": [
+      [
+        1,
+        "TEXT"
+      ]
+    ]
+  },
+  "kb-ck-p08": {
+    "columns": [
+      "nn"
+    ],
+    "rows": [
+      [
+        3
+      ]
+    ]
+  },
+  "kb-ck-p09": {
+    "columns": [
+      "nn",
+      "defs"
+    ],
+    "rows": [
+      [
+        1,
+        1
+      ]
+    ]
+  },
+  "kb-ck-p10": {
+    "columns": [
+      "fks",
+      "uq",
+      "nn"
+    ],
+    "rows": [
+      [
+        1,
+        1,
+        2
+      ]
+    ]
+  },
+  "kb-ck-p11": {
+    "columns": [
+      "parent",
+      "nn"
+    ],
+    "rows": [
+      [
+        "invoices",
+        2
+      ]
+    ]
+  },
+  "kb-ck-p12": {
+    "columns": [
+      "fks",
+      "pk_cols",
+      "nn"
+    ],
+    "rows": [
+      [
+        2,
+        2,
+        3
+      ]
+    ]
+  },
+  "kb-ck-p13": {
+    "columns": [
+      "defs",
+      "nn"
+    ],
+    "rows": [
+      [
+        2,
+        2
+      ]
+    ]
+  },
+  "kb-ck-p14": {
+    "columns": [
+      "pk_cols",
+      "nn"
+    ],
+    "rows": [
+      [
+        1,
+        1
+      ]
+    ]
   }
 };
