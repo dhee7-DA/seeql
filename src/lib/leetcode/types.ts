@@ -3,6 +3,8 @@
 // for this app (never scraped text); company tags are community-sourced
 // interview-report knowledge, not LeetCode premium data.
 
+import type { CellValue } from "@/lib/sql-types";
+
 export type LcDifficulty = "Easy" | "Medium" | "Hard";
 
 /** One registry row — metadata only (the deep-dive lives separately). */
@@ -99,3 +101,52 @@ export const LC_XP: Record<LcDifficulty, number> = { Easy: 10, Medium: 20, Hard:
 
 /** Ledger key for a solved problem in the shared progress store. */
 export const lcSolveKey = (slug: string) => `lc:${slug}`;
+
+/* ------------------------------------------------------------------ */
+/* SQL 50 deep-dives — solved in the in-app SQLite sandbox             */
+/* ------------------------------------------------------------------ */
+
+/** Per-problem schema: exact LeetCode-style tables, loaded into a sandboxed
+ *  transaction for every run (created, seeded, queried, rolled back). */
+export interface LcSqlSchema {
+  /** CREATE TABLE statements (SQLite dialect), semicolon-terminated. */
+  ddl: string;
+  /** INSERT statements loading the sample data, semicolon-terminated. */
+  seed: string;
+  /** Optional one-line-per-table notes shown next to the DDL. */
+  tables?: Array<{ name: string; note: string }>;
+}
+
+/** What a SQL problem's solution returns on its seed data (snapshot). */
+export interface LcSqlExpected {
+  slug: string;
+  columns: string[];
+  rows: CellValue[][];
+  /** exact = row order graded (ORDER BY is the point); any = compared as a set. */
+  order: "exact" | "any";
+}
+
+/** Deep-dive for a SQL problem — same teaching shape, SQL solution. */
+export interface LcSqlDive {
+  slug: string;
+  statement: string;
+  examples: LcExample[];
+  constraints: string[];
+  breakdown: string[];
+  edges: string[];
+  ladder: LcRung[];
+  approach: string;
+  schema: LcSqlSchema;
+  /** SQLite solution — exactly ONE statement (CTEs welcome), commented. */
+  code: string;
+  /** For write problems (DELETE/UPDATE): the SELECT that grades the result. */
+  writeVerify?: string;
+  /** exact = row order graded (ORDER BY is the point); any = compared as a set. */
+  order: "exact" | "any";
+  walkthrough: string[];
+  time: string;
+  space: string;
+  followUps?: string[];
+  related?: string[];
+  xp: number;
+}

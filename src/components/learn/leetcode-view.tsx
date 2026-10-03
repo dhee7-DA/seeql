@@ -13,8 +13,10 @@ import {
   ChevronRight,
   Code2,
   Copy,
+  Database,
   Lightbulb,
   ListChecks,
+  Play,
   Search,
   Stamp,
 } from "lucide-react";
@@ -25,8 +27,14 @@ import {
   LC_TOPICS,
   lcByCompany,
 } from "@/lib/leetcode/registry";
-import { lcDeepDive } from "@/lib/leetcode/content/content";
-import { LC_XP, lcSolveKey, type LcDifficulty, type LcRef } from "@/lib/leetcode/types";
+import { lcDeepDive, lcSqlDive } from "@/lib/leetcode/content/content";
+import { lcSqlExpected } from "@/lib/leetcode/content/sql-expected";
+import { gradeSqlResult, type SqlCheckOutcome } from "@/lib/leetcode/sql-check";
+import type { ExecResult } from "@/lib/sql-types";
+import type { LcDifficulty, LcRef, LcSqlDive, LcSqlSchema } from "@/lib/leetcode/types";
+import { LC_XP, lcSolveKey } from "@/lib/leetcode/types";
+import { SqlEditor } from "@/components/sql-editor";
+import { ResultGrid } from "./result-grid";
 import { useProgress } from "@/lib/curriculum/progress";
 import { celebrate } from "./celebrate";
 import { Btn, Chip, FOCUS_RING, Panel, ProgressBar, SectionLabel } from "./ui/kit";
@@ -155,13 +163,174 @@ function Reveal({ label, children }: { label: string; children: React.ReactNode 
 }
 
 /* ------------------------------------------------------------------ */
+/* SQL 50 — schema panel + sandbox practice                            */
+/* ------------------------------------------------------------------ */
+
+function SqlSchemaPanel({ schema }: { schema: LcSqlSchema }) {
+  const [showSeed, setShowSeed] = useState(false);
+  return (
+    <Panel pad={4}>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <SectionLabel>The schema — your SQLite sandbox</SectionLabel>
+        <span className="flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider text-zinc-500">
+          <Database className="h-3 w-3" /> seeded fresh on every run
+        </span>
+      </div>
+      {schema.tables && (
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {schema.tables.map((t) => (
+            <Chip key={t.name} k={t.name} v={t.note} />
+          ))}
+        </div>
+      )}
+      <div className="mt-3">
+        <CodeBlock code={schema.ddl} />
+      </div>
+      <div className="mt-2">
+        <Btn variant="soft" onClick={() => setShowSeed((v) => !v)}>
+          {showSeed ? "Hide" : "Show"} sample data
+        </Btn>
+        {showSeed && (
+          <div className="mt-2">
+            <CodeBlock code={schema.seed} />
+          </div>
+        )}
+      </div>
+    </Panel>
+  );
+}
+
+function SqlPractice({ dive }: { dive: LcSqlDive }) {
+  const awardXp = useProgress((s) => s.awardXp);
+  const solvedAt = useProgress((s) => s.xpEvents[lcSolveKey(dive.slug)]);
+  const [sql, setSql] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [result, setResult] = useState<ExecResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [outcome, setOutcome] = useState<SqlCheckOutcome | null>(null);
+
+  const run = async (check: boolean) => {
+    if (busy || !sql.trim()) return;
+    setBusy(true);
+    setError(null);
+    setOutcome(null);
+    try {
+      const res = await fetch("/api/lc-sql", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: dive.slug, sql }),
+      });
+      const data = (await res.json()) as ExecResult | { ok: false; error: string };
+      if (!data.ok) {
+        setError("error" in data ? data.error : "Query failed");
+        setResult(null);
+      } else {
+        setResult(data);
+        if (check) {
+          const expected = lcSqlExpected(dive.slug);
+          if (expected) {
+            const oc = gradeSqlResult(data, expected);
+            setOutcome(oc);
+            if (oc.status === "pass" && awardXp(lcSolveKey(dive.slug), dive.xp)) {
+              celebrate({ kind: "xp", title: `+${dive.xp} XP — ${dive.slug.replace(/-/g, " ")}`, sub: "SQL 50 · solved in the sandbox" });
+            }
+          }
+        }
+      }
+    } catch {
+      setError("Network error — try again.");
+      setResult(null);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Panel pad={4}>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <SectionLabel>Solve it — write your query</SectionLabel>
+        {solvedAt !== undefined && (
+          <span className="flex items-center gap-1.5 rounded-md border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-1 text-[11px] font-medium text-emerald-300">
+            <Check className="h-3 w-3" /> Solved · {solvedAt} XP
+          </span>
+        )}
+      </div>
+      <p className="mt-1 text-[12px] leading-relaxed text-zinc-500">
+        Runs against the seeded schema above inside a rolled-back sandbox — experiment freely.{" "}
+        {dive.writeVerify
+          ? "Write problem: your statement really mutates the tables, then you'll see rows affected plus the resulting data."
+          : "Ctrl/⌘ + Enter runs."}
+      </p>
+      <div className="mt-3">
+        <SqlEditor
+          value={sql}
+          onChange={setSql}
+          onVisualize={() => void run(false)}
+          className="min-h-[120px]"
+        />
+      </div>
+      <div className="mt-2 flex flex-wrap gap-2">
+        <Btn variant="primary" disabled={busy || !sql.trim()} onClick={() => void run(false)}>
+          <Play className="h-3.5 w-3.5" /> {busy ? "Running…" : "Run"}
+        </Btn>
+        <Btn variant="soft" disabled={busy || !sql.trim()} onClick={() => void run(true)}>
+          <Check className="h-3.5 w-3.5" /> Run & check · +{dive.xp} XP
+        </Btn>
+      </div>
+
+      {error && (
+        <div className="mt-3 rounded-lg border border-rose-400/30 bg-rose-400/[0.06] p-3">
+          <p className="font-mono text-[10px] uppercase tracking-wider text-rose-300">Query error</p>
+          <p className="mt-1 font-mono text-[12px] leading-relaxed text-zinc-300">{error}</p>
+        </div>
+      )}
+
+      {outcome && (
+        <div
+          className={cn(
+            "mt-3 rounded-lg border p-3",
+            outcome.status === "pass"
+              ? "border-emerald-400/30 bg-emerald-400/[0.06]"
+              : "border-amber-400/30 bg-amber-400/[0.06]",
+          )}
+        >
+          <p
+            className={cn(
+              "font-mono text-[10px] uppercase tracking-wider",
+              outcome.status === "pass" ? "text-emerald-300" : "text-amber-300",
+            )}
+          >
+            {outcome.title}
+          </p>
+          <p className="mt-1 text-[12px] leading-relaxed text-zinc-400">{outcome.detail}</p>
+        </div>
+      )}
+
+      {result && (
+        <div className="mt-3">
+          {result.changes !== null && (
+            <p className="mb-2 font-mono text-[11px] text-zinc-500">{result.changes} row{result.changes === 1 ? "" : "s"} affected · showing the resulting data</p>
+          )}
+          <ResultGrid data={{ columns: result.columns, rows: result.rows }} />
+        </div>
+      )}
+      {!result && !error && (
+        <p className="mt-3 text-[12px] text-zinc-600">Run your query to see the result table here.</p>
+      )}
+    </Panel>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /* Deep-dive detail                                                    */
 /* ------------------------------------------------------------------ */
 
 function LcDetail({ p, onBack }: { p: LcRef; onBack: () => void }) {
   const awardXp = useProgress((s) => s.awardXp);
   const solvedAt = useProgress((s) => s.xpEvents[lcSolveKey(p.slug)]);
+  const sdive = p.sql ? lcSqlDive(p.slug) : undefined;
   const deep = lcDeepDive(p.slug);
+  const dive = sdive ?? deep;
   const xp = LC_XP[p.difficulty];
 
   const markSolved = () => {
@@ -221,11 +390,11 @@ function LcDetail({ p, onBack }: { p: LcRef; onBack: () => void }) {
         </div>
       </Panel>
 
-      {!deep ? (
+      {!dive ? (
         <Panel pad={4}>
           <SectionLabel>Deep-dive in progress</SectionLabel>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-            The full report for this problem ships in a later topic pass — the registry, companies and
+            The full report for this problem ships in a later pass — the registry, companies and
             solved-tracking are live now. Meanwhile: it appears on {p.lists.join(", ")}, and marking it solved
             above pays {xp} XP into the same ledger as the rest of the app.
           </p>
@@ -235,9 +404,9 @@ function LcDetail({ p, onBack }: { p: LcRef; onBack: () => void }) {
           {/* The problem */}
           <Panel pad={4}>
             <SectionLabel>The problem</SectionLabel>
-            <p className="mt-2 text-sm leading-relaxed text-zinc-300">{deep.statement}</p>
+            <p className="mt-2 text-sm leading-relaxed text-zinc-300">{dive.statement}</p>
             <div className="mt-3 space-y-2">
-              {deep.examples.map((ex, i) => (
+              {dive.examples.map((ex, i) => (
                 <div key={i} className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3 font-mono text-[12px]">
                   <p className="text-zinc-400">Input · {ex.input}</p>
                   <p className="mt-1 text-zinc-200">Output · {ex.output}</p>
@@ -246,7 +415,7 @@ function LcDetail({ p, onBack }: { p: LcRef; onBack: () => void }) {
               ))}
             </div>
             <div className="mt-3 flex flex-wrap gap-1.5">
-              {deep.constraints.map((c) => (
+              {dive.constraints.map((c) => (
                 <Chip key={c} k="" v={c} />
               ))}
             </div>
@@ -258,7 +427,7 @@ function LcDetail({ p, onBack }: { p: LcRef; onBack: () => void }) {
             <div className="mt-2">
               <Reveal label="Reveal the breakdown">
                 <div className="space-y-2.5">
-                  {deep.breakdown.map((para, i) => (
+                  {dive.breakdown.map((para, i) => (
                     <p key={i} className="text-sm leading-relaxed text-zinc-300">
                       {para}
                     </p>
@@ -274,7 +443,7 @@ function LcDetail({ p, onBack }: { p: LcRef; onBack: () => void }) {
             <div className="mt-2">
               <Reveal label="Reveal the ladder (brute force → pattern → optimal)">
                 <ol className="space-y-3">
-                  {deep.ladder.map((rung, i) => (
+                  {dive.ladder.map((rung, i) => (
                     <li key={i} className="flex gap-3">
                       <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-emerald-400/40 font-mono text-[10px] text-emerald-300">
                         {i + 1}
@@ -289,7 +458,7 @@ function LcDetail({ p, onBack }: { p: LcRef; onBack: () => void }) {
                 <div className="mt-3 rounded-lg border border-amber-400/20 bg-amber-400/[0.04] p-3">
                   <p className="font-mono text-[10px] uppercase tracking-wider text-amber-300">Traps & edges</p>
                   <ul className="mt-1.5 space-y-1">
-                    {deep.edges.map((e) => (
+                    {dive.edges.map((e) => (
                       <li key={e} className="text-[12px] leading-relaxed text-zinc-400">
                         · {e}
                       </li>
@@ -300,28 +469,32 @@ function LcDetail({ p, onBack }: { p: LcRef; onBack: () => void }) {
             </div>
           </Panel>
 
+          {/* SQL 50: schema + live sandbox practice (before the solution reveal) */}
+          {sdive && <SqlSchemaPanel schema={sdive.schema} />}
+          {sdive && <SqlPractice dive={sdive} />}
+
           {/* Solution */}
           <Panel pad={4}>
-            <SectionLabel>The solution — {deep.approach}</SectionLabel>
+            <SectionLabel>The solution — {dive.approach}</SectionLabel>
             <div className="mt-2">
-              <Reveal label="Reveal the Python solution (engine-verified)">
-                <CodeBlock code={deep.code} />
+              <Reveal label={sdive ? "Reveal the SQL solution (engine-verified)" : "Reveal the Python solution (engine-verified)"}>
+                <CodeBlock code={dive.code} />
                 <div className="mt-3 space-y-2.5">
-                  {deep.walkthrough.map((para, i) => (
+                  {dive.walkthrough.map((para, i) => (
                     <p key={i} className="text-sm leading-relaxed text-zinc-400">
                       {para}
                     </p>
                   ))}
                 </div>
                 <div className="mt-3 flex flex-wrap gap-1.5">
-                  <Chip k="time" v={deep.time} />
-                  <Chip k="space" v={deep.space} />
+                  <Chip k="time" v={dive.time} />
+                  <Chip k="space" v={dive.space} />
                 </div>
-                {deep.followUps && (
+                {dive.followUps && (
                   <div className="mt-3 rounded-lg border border-zinc-800 bg-zinc-900/50 p-3">
                     <p className="font-mono text-[10px] uppercase tracking-wider text-zinc-500">Interview follow-ups</p>
                     <ul className="mt-1.5 space-y-1">
-                      {deep.followUps.map((f) => (
+                      {dive.followUps.map((f) => (
                         <li key={f} className="text-[12px] leading-relaxed text-zinc-400">
                           · {f}
                         </li>
