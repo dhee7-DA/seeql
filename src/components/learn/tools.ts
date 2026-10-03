@@ -10,6 +10,7 @@ import {
   Briefcase,
   Bug,
   CalendarDays,
+  Code2,
   Dumbbell,
   Crosshair,
   Eye,
@@ -55,7 +56,8 @@ export type ToolKind =
   | "mastery"
   | "sheet"
   | "sandbox"
-  | "notebook";
+  | "notebook"
+  | "lc";
 
 export interface ToolDef {
   kind: ToolKind;
@@ -96,6 +98,7 @@ export const TOOLS: ToolDef[] = [
   { kind: "mastery", icon: Activity, label: "Mastery map", note: "your skills, your daily quest", short: "Mastery", section: "lab" },
   { kind: "sheet", icon: Printer, label: "Cheat sheet", note: "personal revision, prints to PDF", short: "Sheet", section: "lab" },
   { kind: "notebook", icon: NotebookPen, label: "Query notebook", note: "save queries + margin notes", short: "Notes", section: "lab" },
+  { kind: "lc", icon: Code2, label: "LeetCode Big 300", note: "every classic, deep-dived", short: "LC", section: "lab" },
 ];
 
 /** Sidebar group 1: overview + toolbox tools, in registry order. */

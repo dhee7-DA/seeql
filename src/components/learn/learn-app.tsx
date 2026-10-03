@@ -46,6 +46,7 @@ import { FramePlayground } from "./frame-playground";
 import { SeeqView } from "./seeq-view";
 import { GauntletView } from "./gauntlet-view";
 import { KeywordPractice } from "./keyword-practice";
+import { LeetCodeView } from "./leetcode-view";
 import { gauntletFor } from "@/lib/curriculum/gauntlet";
 import { ActivityStrip, MasteryGrid } from "./progress-cards";
 import { CelebrationHost, celebrate } from "./celebrate";
@@ -85,7 +86,8 @@ type View =
   | { kind: "sheet" }
   | { kind: "mentor" }
   | { kind: "sandbox" }
-  | { kind: "notebook" };
+  | { kind: "notebook" }
+  | { kind: "lc" };
 
 // Drift guard — the registry in tools.ts must name every non-lesson view
 // (and vice versa). A compile error here means: update tools.ts too.
@@ -549,6 +551,8 @@ function ViewBody({
       return <CsvSandbox />;
     case "notebook":
       return <QueryNotebook />;
+    case "lc":
+      return <LeetCodeView />;
     default:
       return <Overview xp={xp} level={level} streak={streak} ctx={ctx} openLesson={openLesson} />;
   }

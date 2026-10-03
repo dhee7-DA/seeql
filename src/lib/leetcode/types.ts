@@ -1,0 +1,101 @@
+// The Big 300 — types. Every LeetCode classic the registry tracks, plus the
+// deep-dive report format. All statements are ORIGINAL PARAPHRASES written
+// for this app (never scraped text); company tags are community-sourced
+// interview-report knowledge, not LeetCode premium data.
+
+export type LcDifficulty = "Easy" | "Medium" | "Hard";
+
+/** One registry row — metadata only (the deep-dive lives separately). */
+export interface LcRef {
+  num: number;
+  slug: string;
+  title: string;
+  difficulty: LcDifficulty;
+  /** Primary topic (plus any secondary, pipe-split in source data). */
+  topics: string[];
+  /** Canonical lists this problem appears on. */
+  lists: string[];
+  /** Top 3 companies that ask it, most-asked first (community-sourced). */
+  companies: string[];
+  /** Freely viewable on leetcode.com (false = premium-only). */
+  free: boolean;
+  /** SQL problem — graded in the in-app sandbox (phase 2 wiring). */
+  sql: boolean;
+}
+
+/** Where a problem is curated: the four canonical lists + our extras. */
+export const LISTS = ["NeetCode 150", "Blind 75", "Top Interview 150", "SQL 50", "Big 300 extras"] as const;
+export type LcList = (typeof LISTS)[number];
+
+export interface LcExample {
+  input: string;
+  output: string;
+  explanation?: string;
+}
+
+/** One rung of the logic-building ladder (brute force → pattern → optimal). */
+export interface LcRung {
+  title: string;
+  body: string;
+}
+
+/** A test case for the Python solution harness (JSON-native args). */
+export interface LcVerifyCase {
+  args: unknown[];
+  expect: unknown;
+}
+
+/** How the harness wraps args / unwraps results for special signatures. */
+export type LcWrap =
+  | "plain" // args are JSON-native, result compared directly
+  | "matrix" // plain, but documents that args contain 2-D boards
+  | "listnode" // arg0 array → ListNode chain; result ListNode → array
+  | "listnodeTwo" // arg0+arg1 arrays → two chains; result → array
+  | "listnodeCycle" // arg0 array + arg1 pos → cycled chain; expect bool
+  | "listnodeIdx" // arg0 array + arg1 n → chain; result → array
+  | "listnodeInPlace" // arg0 array → chain; fn mutates; result → traversed chain
+  | "codec" // round-trip: expect decode(encode(arg0)) === arg0
+  | "class"; // arg0 = [[op, arg?], …]; results of non-void ops compared
+
+/** Normalizer applied before comparison (for order-insensitive outputs). */
+export type LcNormalize = "none" | "sortGroups" | "sortFlat";
+
+export interface LcVerify {
+  /** Function name(s) defined by the code (codec = encode + decode). */
+  fn: string;
+  wrap: LcWrap;
+  normalize?: LcNormalize;
+  cases: LcVerifyCase[];
+}
+
+/** The full deep-dive report for one problem. */
+export interface LcDeepDive {
+  slug: string;
+  statement: string;
+  examples: LcExample[];
+  constraints: string[];
+  /** What the problem is REALLY asking + naive missteps. */
+  breakdown: string[];
+  /** Traps and edge cases worth naming before coding. */
+  edges: string[];
+  /** 3 rungs: brute force → the pattern → the optimal idea. */
+  ladder: LcRung[];
+  /** Name of the optimal approach. */
+  approach: string;
+  /** Python 3 solution, commented. */
+  code: string;
+  /** One paragraph per logical chunk of the code. */
+  walkthrough: string[];
+  time: string;
+  space: string;
+  followUps?: string[];
+  related?: string[];
+  verify: LcVerify;
+  /** XP for a first honest solve: Easy 10 / Medium 20 / Hard 35. */
+  xp: number;
+}
+
+export const LC_XP: Record<LcDifficulty, number> = { Easy: 10, Medium: 20, Hard: 35 };
+
+/** Ledger key for a solved problem in the shared progress store. */
+export const lcSolveKey = (slug: string) => `lc:${slug}`;
