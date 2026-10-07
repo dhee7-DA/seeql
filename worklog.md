@@ -3038,3 +3038,19 @@ Work Log:
 Stage Summary:
 - sql-more2-analytics.ts (5 analytics deep-dives, 30 XP total: 2 Easy + 3 Medium) is authored and engine-checked against the graded expected rows; batch 3 deliverable done. Awaiting lead wiring: content.ts aggregation, registry rows (1142/1398/1435/1204/1607), sections entry, sql-expected.ts regeneration via scripts/lc-sql-verify.ts.
 - Only deviation: DISTINCT added to the 1398 solution (join fan-out from Alba's two 'A' orders) — required to hit the contract rows; the fan-out became a taught edge instead.
+
+---
+Task ID: 63
+Agent: main
+Task: User asked "so what now" — continue the approved expansion (ALL SQL problems from LeetCode + other major interview platforms). Batch 3: 78 → 100 problems, 12 → 17 sections.
+
+Work Log:
+- Repo audit: Task 62 (78 problems / 12 sections) was already committed; the dirty tree was only file-mode churn + dev-db noise. Next headroom per Task 62's stage summary: more LeetCode Database + more platform banks.
+- Picked 22 problems targeting the 100 milestone: 13 LeetCode Database (1303, 1077, 1164, 1454, 608, 603, 1459, 1241, 1142, 1398, 1435, 1204, 1607 — window aggregates, rank argmin, as-of pricing, streak anchors, self/non-equi joins, funnels, running sums, anti-joins) + 6 HackerRank classics re-authored (9506-9511: type-of-triangle, the-blunder, station-shortest-longest, asian-population, challenges, occupations-pivot) + 3 DataLemur sets (9512-9514: uber-first-transaction, linkedin-power-creators, compressed-mode).
+- Designed all 22 specs UP FRONT (schema DDL, seed rows with planted traps, solution SQL, expected result sets, order/xp) and dispatched 5 parallel content authors (63-a windows, 63-b self/non-equi joins, 63-c analytics, 63-d hackerrank, 63-e datalemur), each with the exemplar + hard invariants + mandatory bun:sqlite self-check against the graded contract. Authors caught 3 spec inconsistencies and fixed them correctly (1164 seed date vs expected default-branch; 1398 join fan-out needed DISTINCT; 9513 Priya hire date). All temp check scripts deleted.
+- Lead integration: registry-sql-more2.ts (22 rows), registry.ts LC_ALL + SQL_MORE2, sections.ts +5 sections (windows-2, self-non-equi, analytics-funnels, hackerrank-2, datalemur), content/content.ts imports, Module 12 blurb → 100 problems / 17 sections.
+- Verification: bun scripts/lc-sql-verify.ts → 100/100 authored, all engine checks pass FIRST run, sql-expected.ts regenerated (100 problems); bun scripts/lc-sections-check.ts → 17 sections, 100 rows 1:1, all deep-dived + gradeable, ALL PASS (stale log copy fixed).
+- QA: tsc 0 errors on touched files (45-error baseline elsewhere untouched), eslint clean. E2E via agent-browser (fresh session, skip tour): sidebar "12 LeetCode SQL 50+ 0/100", module card shows all 17 sections with per-section counts, CTA "Open the SQL 50 — 0/100 solved"; SQL view renders 17 section groups incl. all 5 new ones; solved 1303 find-the-team-size in the sandbox (COUNT(*) OVER (PARTITION BY team_id)) → "CORRECT — YOUR RESULT MATCHES THE EXPECTED ANSWER · 6 rows · 44.69 ms" → "Solved · 10 XP" chip → counters 1/100 and 1/4 live; console clean; 390×844 zero overflow. Screenshots: download/lc100-team-size-solved.png, lc100-team-size-mobile.png, lc100-sections-full.png.
+
+Stage Summary:
+- THE SQL BAND HITS 100: 100 sandbox-graded problems across 17 skill sections (SQL 50 + LeetCode extras + HackerRank + DataLemur classics), all engine-verified, auto-graded, XP-integrated. Next headroom if "literally all" is still the goal: ~40+ more LeetCode Database problems (premium-flavored, re-authored) and further platform banks — the pipeline stays mechanical (spec → author → verify → sections).
