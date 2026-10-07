@@ -16,6 +16,13 @@ import { SQL_GROUP } from "./sql-group";
 import { SQL_ADVANCED } from "./sql-advanced";
 import { SQL_SUBQUERIES } from "./sql-subqueries";
 import { SQL_STRINGS } from "./sql-strings";
+import { SQL_MORE_JOINS } from "./sql-more-joins";
+import { SQL_MORE_AGG_A } from "./sql-more-agg-a";
+import { SQL_MORE_AGG_B } from "./sql-more-agg-b";
+import { SQL_MORE_DATES } from "./sql-more-dates";
+import { SQL_MORE_PIVOTS } from "./sql-more-pivots";
+import { SQL_MORE_STRINGS } from "./sql-more-strings";
+import { SQL_MORE_PLATFORM } from "./sql-more-platform";
 
 export const LC_CONTENT: LcDeepDive[] = [
   ...ARRAYS,
@@ -26,7 +33,8 @@ export const LC_CONTENT: LcDeepDive[] = [
   ...LINKED_LIST,
 ];
 
-/** SQL 50 deep-dives — solved in the in-app SQLite sandbox. */
+/** SQL deep-dives — the SQL 50 plus the 50+ expansion band, all
+ *  sandbox-graded. */
 export const LC_SQL_CONTENT: LcSqlDive[] = [
   ...SQL_SELECT,
   ...SQL_JOINS,
@@ -35,6 +43,13 @@ export const LC_SQL_CONTENT: LcSqlDive[] = [
   ...SQL_ADVANCED,
   ...SQL_SUBQUERIES,
   ...SQL_STRINGS,
+  ...SQL_MORE_JOINS,
+  ...SQL_MORE_AGG_A,
+  ...SQL_MORE_AGG_B,
+  ...SQL_MORE_DATES,
+  ...SQL_MORE_PIVOTS,
+  ...SQL_MORE_STRINGS,
+  ...SQL_MORE_PLATFORM,
 ];
 
 const bySlug = new Map(LC_CONTENT.map((d) => [d.slug, d]));

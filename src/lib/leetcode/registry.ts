@@ -9,6 +9,7 @@ import type { LcRow } from "./row";
 import { NC150 } from "./registry-nc150";
 import { TI150_EXTRAS } from "./registry-ti150";
 import { SQL50 } from "./registry-sql50";
+import { SQL_MORE } from "./registry-sql-more";
 import { CONTENT_SLUGS } from "./content/content";
 
 const DIFF: LcDifficulty[] = ["Easy", "Medium", "Hard"];
@@ -24,13 +25,15 @@ function expand(row: LcRow): LcRef {
     lists: lists.split("|"),
     companies: companies.split("|"),
     free: free !== 0,
-    sql: lists.includes("SQL 50"),
+    // "SQL 50" = the official study list · "SQL 50+" = the expansion band —
+    // both are sandbox-graded SQL problems.
+    sql: /^SQL/.test(lists),
   };
 }
 
 /** Registry order: NeetCode topic order first (the canonical learning path),
  *  then TI150 uniques, then the extras, then the SQL 50. */
-export const LC_ALL: LcRef[] = [...NC150, ...TI150_EXTRAS, ...SQL50].map(expand);
+export const LC_ALL: LcRef[] = [...NC150, ...TI150_EXTRAS, ...SQL50, ...SQL_MORE].map(expand);
 
 const bySlug = new Map(LC_ALL.map((p) => [p.slug, p]));
 export const lcBySlug = (slug: string) => bySlug.get(slug);

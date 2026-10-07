@@ -1,8 +1,9 @@
-// The SQL 50, divided into sections. The official study list is best worked
-// in order — each section is one skill family, and the sandbox deep-dives
-// were authored per section (content/sql-select.ts … content/sql-strings.ts
-// mirror this file 1:1). The LeetCode view groups the SQL band by these, and
-// the Module 12 band shows the same seven sections in its card.
+// The SQL band, divided into sections. The first seven mirror the official
+// SQL 50 study list (and the sandbox deep-dive files authored per section);
+// the five "beyond the 50" sections hold the expansion band — LeetCode's
+// free Database extras plus platform classics. The LeetCode view groups the
+// SQL band by these, and the Module 12 band shows the same sections in its
+// card.
 //
 // Kept import-free on purpose: no cycles, and the section map stays usable
 // from scripts and the registry without pulling content blobs.
@@ -123,6 +124,75 @@ export const SQL50_SECTIONS: LcSection[] = [
       "capital-gain-loss",
       "top-travellers",
       "market-analysis-i",
+      // 50+ additions — includes the band's write problem (UPDATE)
+      "invalid-tweets",
+      "calculate-special-bonus",
+      "swap-salary",
+    ],
+  },
+  {
+    id: "extra-joins",
+    title: "Joins & Relationships",
+    blurb:
+      "Beyond the 50 — lookup joins, composite keys, unordered-pair canonicalization and the symmetric-difference anti-join.",
+    slugs: [
+      "npv-queries",
+      "bank-account-summary-ii",
+      "number-of-calls-between-two-persons",
+      "employees-with-missing-information",
+    ],
+  },
+  {
+    id: "extra-aggregation",
+    title: "Aggregation & Reporting",
+    blurb:
+      "Beyond the 50 — argmax and tie handling, distinct counting, per-day ratios and the aggregate-of-aggregates pattern.",
+    slugs: [
+      "game-play-analysis-i",
+      "customer-placing-the-largest-number-of-orders",
+      "biggest-single-number",
+      "actors-and-directors-who-cooperated-at-least-three-times",
+      "project-employees-ii",
+      "reported-posts",
+      "daily-leads-and-partners",
+      "find-followers-count",
+      "find-total-time-spent-by-each-employee",
+      "number-of-rich-customers",
+    ],
+  },
+  {
+    id: "extra-dates",
+    title: "Dates & Times",
+    blurb:
+      "Beyond the 50 — ISO string slicing for month buckets, half-open year ranges and why canonical dates sort correctly.",
+    slugs: [
+      "monthly-transactions-i",
+      "fix-product-name-format",
+      "the-latest-login-in-2020",
+    ],
+  },
+  {
+    id: "extra-pivots",
+    title: "Pivots & Hierarchies",
+    blurb:
+      "Beyond the 50 — reshaping wide↔long with CASE and UNION ALL, and walking org trees with a recursive CTE.",
+    slugs: [
+      "reformat-department-table",
+      "rearrange-products-table",
+      "all-people-report-to-the-given-manager",
+    ],
+  },
+  {
+    id: "platform-classics",
+    title: "Platform Classics",
+    blurb:
+      "The famous non-LeetCode interview staples — HackerRank and DataLemur-flavored tasks, re-authored and sandbox-graded.",
+    slugs: [
+      "top-earners",
+      "station-median",
+      "company-hierarchy-counts",
+      "ratings-histogram",
+      "top-five-artists",
     ],
   },
 ];

@@ -1390,6 +1390,746 @@ export const SQL_EXPECTED: LcSqlExpected[] = [
       ]
     ],
     "order": "any"
+  },
+  {
+    "slug": "npv-queries",
+    "columns": [
+      "id",
+      "year",
+      "npv"
+    ],
+    "rows": [
+      [
+        1,
+        2018,
+        100
+      ],
+      [
+        1,
+        2019,
+        100
+      ],
+      [
+        1,
+        2020,
+        0
+      ],
+      [
+        2,
+        2018,
+        200
+      ],
+      [
+        2,
+        2019,
+        1000
+      ],
+      [
+        3,
+        2019,
+        600
+      ],
+      [
+        4,
+        2019,
+        0
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "bank-account-summary-ii",
+    "columns": [
+      "name",
+      "balance"
+    ],
+    "rows": [
+      [
+        "Alicia",
+        11000
+      ]
+    ],
+    "order": "any"
+  },
+  {
+    "slug": "number-of-calls-between-two-persons",
+    "columns": [
+      "person1",
+      "person2",
+      "call_count",
+      "total_duration"
+    ],
+    "rows": [
+      [
+        1,
+        2,
+        3,
+        135
+      ],
+      [
+        1,
+        3,
+        2,
+        250
+      ],
+      [
+        2,
+        4,
+        2,
+        160
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "employees-with-missing-information",
+    "columns": [
+      "employee_id"
+    ],
+    "rows": [
+      [
+        3
+      ],
+      [
+        5
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "game-play-analysis-i",
+    "columns": [
+      "player_id",
+      "first_login"
+    ],
+    "rows": [
+      [
+        1,
+        "2016-03-01"
+      ],
+      [
+        2,
+        "2017-06-25"
+      ],
+      [
+        3,
+        "2016-03-02"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "customer-placing-the-largest-number-of-orders",
+    "columns": [
+      "customer_number"
+    ],
+    "rows": [
+      [
+        1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "biggest-single-number",
+    "columns": [
+      "num"
+    ],
+    "rows": [
+      [
+        5
+      ]
+    ],
+    "order": "any"
+  },
+  {
+    "slug": "actors-and-directors-who-cooperated-at-least-three-times",
+    "columns": [
+      "actor_id",
+      "director_id"
+    ],
+    "rows": [
+      [
+        1,
+        1
+      ],
+      [
+        3,
+        3
+      ]
+    ],
+    "order": "any"
+  },
+  {
+    "slug": "project-employees-ii",
+    "columns": [
+      "project_id"
+    ],
+    "rows": [
+      [
+        1
+      ],
+      [
+        2
+      ]
+    ],
+    "order": "any"
+  },
+  {
+    "slug": "reported-posts",
+    "columns": [
+      "action_date",
+      "average_daily_reports"
+    ],
+    "rows": [
+      [
+        "2019-07-01",
+        1
+      ],
+      [
+        "2019-07-02",
+        1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "daily-leads-and-partners",
+    "columns": [
+      "date_id",
+      "make_name",
+      "unique_leads",
+      "unique_partners"
+    ],
+    "rows": [
+      [
+        "2020-12-07",
+        "honda",
+        3,
+        2
+      ],
+      [
+        "2020-12-08",
+        "toyota",
+        2,
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-followers-count",
+    "columns": [
+      "user_id",
+      "followers_count"
+    ],
+    "rows": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        3,
+        1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-total-time-spent-by-each-employee",
+    "columns": [
+      "event_day",
+      "emp_id",
+      "total_time"
+    ],
+    "rows": [
+      [
+        "2020-11-28",
+        1,
+        173
+      ],
+      [
+        "2020-11-28",
+        2,
+        30
+      ],
+      [
+        "2020-11-30",
+        1,
+        35
+      ],
+      [
+        "2020-11-30",
+        3,
+        9
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "number-of-rich-customers",
+    "columns": [
+      "rich_count"
+    ],
+    "rows": [
+      [
+        2
+      ]
+    ],
+    "order": "any"
+  },
+  {
+    "slug": "monthly-transactions-i",
+    "columns": [
+      "month",
+      "country",
+      "trans_count",
+      "approved_count",
+      "trans_total_amount",
+      "approved_total_amount"
+    ],
+    "rows": [
+      [
+        "2019-01",
+        "DE",
+        1,
+        0,
+        2000,
+        0
+      ],
+      [
+        "2019-01",
+        "US",
+        2,
+        1,
+        3000,
+        1000
+      ],
+      [
+        "2019-02",
+        "DE",
+        1,
+        1,
+        2000,
+        2000
+      ],
+      [
+        "2019-02",
+        "UK",
+        1,
+        1,
+        1500,
+        1500
+      ],
+      [
+        "2019-02",
+        "US",
+        2,
+        1,
+        1900,
+        1200
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "fix-product-name-format",
+    "columns": [
+      "product_name",
+      "sale_date",
+      "total_amount"
+    ],
+    "rows": [
+      [
+        "Lc key",
+        "2020-02",
+        12.5
+      ],
+      [
+        "Lckey",
+        "2020-02",
+        75
+      ],
+      [
+        "Lcphone",
+        "2020-01",
+        70
+      ],
+      [
+        "Lcphone",
+        "2020-02",
+        14.5
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "the-latest-login-in-2020",
+    "columns": [
+      "user_id",
+      "last_stamp"
+    ],
+    "rows": [
+      [
+        1,
+        "2020-11-12 13:15:00"
+      ],
+      [
+        2,
+        "2020-12-20 07:30:00"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "reformat-department-table",
+    "columns": [
+      "id",
+      "jan_revenue",
+      "feb_revenue",
+      "mar_revenue",
+      "apr_revenue",
+      "may_revenue",
+      "jun_revenue",
+      "jul_revenue",
+      "aug_revenue",
+      "sep_revenue",
+      "oct_revenue",
+      "nov_revenue",
+      "dec_revenue"
+    ],
+    "rows": [
+      [
+        1,
+        8000,
+        7000,
+        6000,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        2,
+        9000,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      [
+        3,
+        null,
+        10000,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "rearrange-products-table",
+    "columns": [
+      "product_id",
+      "store",
+      "price"
+    ],
+    "rows": [
+      [
+        0,
+        "store1",
+        95
+      ],
+      [
+        0,
+        "store2",
+        100
+      ],
+      [
+        0,
+        "store3",
+        105
+      ],
+      [
+        1,
+        "store1",
+        70
+      ],
+      [
+        1,
+        "store3",
+        80
+      ],
+      [
+        2,
+        "store2",
+        110
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "all-people-report-to-the-given-manager",
+    "columns": [
+      "employee_id",
+      "employee_name",
+      "distance"
+    ],
+    "rows": [
+      [
+        2,
+        "Omar",
+        1
+      ],
+      [
+        3,
+        "Priya",
+        1
+      ],
+      [
+        4,
+        "Quentin",
+        2
+      ],
+      [
+        5,
+        "Rania",
+        2
+      ],
+      [
+        7,
+        "Tara",
+        2
+      ],
+      [
+        6,
+        "Sami",
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "invalid-tweets",
+    "columns": [
+      "tweet_id"
+    ],
+    "rows": [
+      [
+        2
+      ],
+      [
+        4
+      ]
+    ],
+    "order": "any"
+  },
+  {
+    "slug": "calculate-special-bonus",
+    "columns": [
+      "employee_id",
+      "name",
+      "bonus"
+    ],
+    "rows": [
+      [
+        2,
+        "Meir",
+        0
+      ],
+      [
+        3,
+        "Michael",
+        0
+      ],
+      [
+        7,
+        "Addilyn",
+        7400
+      ],
+      [
+        8,
+        "Juan",
+        0
+      ],
+      [
+        9,
+        "Kannon",
+        7700
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "swap-salary",
+    "columns": [
+      "id",
+      "name",
+      "sex"
+    ],
+    "rows": [
+      [
+        1,
+        "Aisha",
+        "m"
+      ],
+      [
+        2,
+        "Boris",
+        "f"
+      ],
+      [
+        3,
+        "Chen",
+        "m"
+      ],
+      [
+        4,
+        "Dmitri",
+        "f"
+      ]
+    ],
+    "order": "any"
+  },
+  {
+    "slug": "top-earners",
+    "columns": [
+      "earnings",
+      "employee_count"
+    ],
+    "rows": [
+      [
+        108000,
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "station-median",
+    "columns": [
+      "median"
+    ],
+    "rows": [
+      [
+        57.75
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "company-hierarchy-counts",
+    "columns": [
+      "company_code",
+      "founder",
+      "lead_managers",
+      "senior_managers",
+      "managers",
+      "employees"
+    ],
+    "rows": [
+      [
+        "C1",
+        "Monika",
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        "C2",
+        "Aaron",
+        1,
+        1,
+        1,
+        2
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "ratings-histogram",
+    "columns": [
+      "number_of_stars",
+      "review_histogram"
+    ],
+    "rows": [
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        4,
+        2
+      ],
+      [
+        5,
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "top-five-artists",
+    "columns": [
+      "artist_name",
+      "total_streams"
+    ],
+    "rows": [
+      [
+        "Aria",
+        1200
+      ],
+      [
+        "BoomBox",
+        1200
+      ],
+      [
+        "Chorus",
+        900
+      ],
+      [
+        "Delta",
+        700
+      ],
+      [
+        "Echo",
+        550
+      ]
+    ],
+    "order": "exact"
   }
 ];
 
