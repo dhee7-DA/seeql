@@ -2906,3 +2906,24 @@ Work Log:
 
 Stage Summary:
 - THE SQL 50 IS FULLY AUTHORED AND PLAYABLE IN-APP: 50/50 engine-verified deep-dives with exact per-problem schemas, live sandboxed execution (create → seed → run → rollback), snapshot-based auto-grading, XP into the shared ledger. Big 300 registry unchanged (300 problems, 88 with deep-dives: 38 Python + 50 SQL). Known cosmetic nit parked: "B75" list tag over-applied (121 rows vs canonical 75) — retag needs the canonical Blind 75 slug list. Python Phase-2 (Trees etc.) cancelled per user pivot; Cloudflare hosting migration remains parked.
+
+---
+Task ID: 61
+Agent: main
+Task: SQL-problems-only scope — divide the LeetCode SQL band into sections; re-apply SW retirement (found missing in this checkout); register Module 12 in the menu.
+
+Work Log:
+- Repo state audit: this checkout (HEAD ef119a0) predates the summarized session — no Module 12, old cache-first sw.js still registering, no sql-extras file; SQL band = 50 problems (registry-sql50.ts), fully built: 7 content files (6+10+8+9+4+7+6 = 50) with deep-dives + sql-expected specs + /api/lc-sql grading.
+- New src/lib/leetcode/sections.ts: 7 sections (select=6, joins=10, aggregation=8, grouping=9, advanced-select=4, subqueries=7, strings=6) mirroring the content files 1:1; exports SQL50_SLUGS + sqlSectionOf.
+- leetcode-view.tsx: SQL rows group by section (canonical order after algorithm topics; no more flat "SQL" pile), section blurb under each header, per-section solved counters, jump-chip strip when SQL filter is on (scroll-mt anchors, sql-sec-<id>), initialTopic prop with remount key.
+- Curriculum: registered Module 12 "leetcode-sql50" (num 12, level Interview, lessons: []).
+- learn-app.tsx: isLcBand special-casing in OverviewModuleCard + sidebar loop — progress from lc:<slug> XP ledger (fixes 0/0 counter + NaN progress ring), expanded card shows the 7 sections with per-section counts + "Open the SQL 50 — d/50 solved" CTA; View type {kind:"lc"; topic?: string}; openLc helper threaded through ViewBody/Overview.
+- SW retirement re-applied: public/sw.js → self-retiring no-op (no fetch handler, activate purges all caches); pwa-register.tsx → unregister + cache purge on every mount.
+- scripts/lc-sections-check.ts: sections cover registry SQL rows exactly 1:1, every slug deep-dived + gradeable → ALL PASS.
+- QA: tsc/eslint clean on touched files (45-error baseline is elsewhere); E2E via agent-browser (fresh session, skip tour): sidebar "12 LeetCode SQL 50+ 0/50", expand → 7 sections, CTA opens view pre-filtered to SQL, solved 1378 in sandbox → "correct" + XP, counters went 1/50 / 1/6 live, jump chip scrolled to Strings & CASE (top=64), tool-rail entry still opens unfiltered hub, overview card CTA verified, 390×844 overflow 0, console clean, 0 SW registrations / 0 caches. Screenshots in download/.
+
+Stage Summary:
+- The SQL 50 now presents as 7 sections everywhere (sidebar module card, overview card, LeetCode view); Module 12 is back in the menu with a working 0/50 counter driven by the XP ledger.
+- Stale-cache bug permanently impossible again: no SW registration, no caches, self-healing teardown.
+- Scope confirmed with user: SQL problems only for now; algorithm problems deferred (remain browse-only in the Big 300 registry).
+- State: commit on main, tree clean; dev server verified; browser closed.
