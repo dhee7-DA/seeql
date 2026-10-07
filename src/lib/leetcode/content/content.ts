@@ -23,6 +23,11 @@ import { SQL_MORE_DATES } from "./sql-more-dates";
 import { SQL_MORE_PIVOTS } from "./sql-more-pivots";
 import { SQL_MORE_STRINGS } from "./sql-more-strings";
 import { SQL_MORE_PLATFORM } from "./sql-more-platform";
+import { SQL_MORE2_WINDOWS } from "./sql-more2-windows";
+import { SQL_MORE2_JOINS } from "./sql-more2-joins";
+import { SQL_MORE2_ANALYTICS } from "./sql-more2-analytics";
+import { SQL_MORE2_HACKERRANK } from "./sql-more2-hackerrank";
+import { SQL_MORE2_DATALEMUR } from "./sql-more2-datalemur";
 
 export const LC_CONTENT: LcDeepDive[] = [
   ...ARRAYS,
@@ -33,7 +38,7 @@ export const LC_CONTENT: LcDeepDive[] = [
   ...LINKED_LIST,
 ];
 
-/** SQL deep-dives — the SQL 50 plus the 50+ expansion band, all
+/** SQL deep-dives — the SQL 50 plus the two expansion batches, all
  *  sandbox-graded. */
 export const LC_SQL_CONTENT: LcSqlDive[] = [
   ...SQL_SELECT,
@@ -50,6 +55,11 @@ export const LC_SQL_CONTENT: LcSqlDive[] = [
   ...SQL_MORE_PIVOTS,
   ...SQL_MORE_STRINGS,
   ...SQL_MORE_PLATFORM,
+  ...SQL_MORE2_WINDOWS,
+  ...SQL_MORE2_JOINS,
+  ...SQL_MORE2_ANALYTICS,
+  ...SQL_MORE2_HACKERRANK,
+  ...SQL_MORE2_DATALEMUR,
 ];
 
 const bySlug = new Map(LC_CONTENT.map((d) => [d.slug, d]));

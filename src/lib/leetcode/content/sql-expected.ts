@@ -2130,6 +2130,548 @@ export const SQL_EXPECTED: LcSqlExpected[] = [
       ]
     ],
     "order": "exact"
+  },
+  {
+    "slug": "find-the-team-size",
+    "columns": [
+      "employee_id",
+      "team_id",
+      "team_size"
+    ],
+    "rows": [
+      [
+        1,
+        1,
+        3
+      ],
+      [
+        2,
+        1,
+        3
+      ],
+      [
+        3,
+        1,
+        3
+      ],
+      [
+        4,
+        2,
+        2
+      ],
+      [
+        5,
+        2,
+        2
+      ],
+      [
+        6,
+        3,
+        1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "project-employees-iii",
+    "columns": [
+      "project_id",
+      "employee_id",
+      "name"
+    ],
+    "rows": [
+      [
+        1,
+        3,
+        "Sam"
+      ],
+      [
+        2,
+        4,
+        "Bob"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "product-price-at-a-given-date",
+    "columns": [
+      "product_id",
+      "price"
+    ],
+    "rows": [
+      [
+        1,
+        6
+      ],
+      [
+        2,
+        7
+      ],
+      [
+        3,
+        10
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "active-users",
+    "columns": [
+      "id",
+      "name"
+    ],
+    "rows": [
+      [
+        1,
+        "Alice"
+      ],
+      [
+        7,
+        "Cara"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "tree-node",
+    "columns": [
+      "id",
+      "type"
+    ],
+    "rows": [
+      [
+        1,
+        "Root"
+      ],
+      [
+        2,
+        "Inner"
+      ],
+      [
+        3,
+        "Inner"
+      ],
+      [
+        4,
+        "Leaf"
+      ],
+      [
+        5,
+        "Leaf"
+      ],
+      [
+        6,
+        "Leaf"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "consecutive-available-seats",
+    "columns": [
+      "seat_a",
+      "seat_b"
+    ],
+    "rows": [
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        7,
+        8
+      ],
+      [
+        8,
+        9
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "rectangle-area",
+    "columns": [
+      "id_a",
+      "id_b",
+      "area"
+    ],
+    "rows": [
+      [
+        4,
+        5,
+        30
+      ],
+      [
+        2,
+        5,
+        12
+      ],
+      [
+        3,
+        4,
+        8
+      ],
+      [
+        1,
+        5,
+        5
+      ],
+      [
+        1,
+        4,
+        4
+      ],
+      [
+        2,
+        4,
+        4
+      ],
+      [
+        3,
+        5,
+        4
+      ],
+      [
+        1,
+        2,
+        2
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "number-of-comments-per-post",
+    "columns": [
+      "submission_id",
+      "number_of_comments"
+    ],
+    "rows": [
+      [
+        101,
+        2
+      ],
+      [
+        102,
+        3
+      ],
+      [
+        103,
+        0
+      ],
+      [
+        104,
+        1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "user-activity-for-the-past-30-days-ii",
+    "columns": [
+      "average_sessions_per_user"
+    ],
+    "rows": [
+      [
+        1.75
+      ]
+    ],
+    "order": "any"
+  },
+  {
+    "slug": "customers-who-bought-a-and-b-not-c",
+    "columns": [
+      "customer_id",
+      "customer_name"
+    ],
+    "rows": [
+      [
+        1,
+        "Alba"
+      ],
+      [
+        2,
+        "Ben"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "create-a-session-bar-chart",
+    "columns": [
+      "label",
+      "sessions_count"
+    ],
+    "rows": [
+      [
+        "[0-5>",
+        2
+      ],
+      [
+        "[5-10>",
+        3
+      ],
+      [
+        "[10-15>",
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "last-person-to-fit-in-the-elevator",
+    "columns": [
+      "person_name"
+    ],
+    "rows": [
+      [
+        "Di"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "sellers-with-no-sales",
+    "columns": [
+      "seller_name"
+    ],
+    "rows": [
+      [
+        "Ben"
+      ],
+      [
+        "Dee"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "type-of-triangle",
+    "columns": [
+      "id",
+      "triangle_type"
+    ],
+    "rows": [
+      [
+        1,
+        "Equilateral"
+      ],
+      [
+        2,
+        "Isosceles"
+      ],
+      [
+        3,
+        "Scalene"
+      ],
+      [
+        4,
+        "Not A Triangle"
+      ],
+      [
+        5,
+        "Not A Triangle"
+      ],
+      [
+        6,
+        "Not A Triangle"
+      ],
+      [
+        7,
+        "Not A Triangle"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "the-blunder",
+    "columns": [
+      "error_amount"
+    ],
+    "rows": [
+      [
+        4230
+      ]
+    ],
+    "order": "any"
+  },
+  {
+    "slug": "station-shortest-longest",
+    "columns": [
+      "which",
+      "city"
+    ],
+    "rows": [
+      [
+        "shortest",
+        "Aba"
+      ],
+      [
+        "longest",
+        "Springvale"
+      ]
+    ],
+    "order": "any"
+  },
+  {
+    "slug": "asian-population",
+    "columns": [
+      "asian_population"
+    ],
+    "rows": [
+      [
+        117860000
+      ]
+    ],
+    "order": "any"
+  },
+  {
+    "slug": "challenges",
+    "columns": [
+      "hacker_id",
+      "name",
+      "created"
+    ],
+    "rows": [
+      [
+        1,
+        "Ada",
+        5
+      ],
+      [
+        2,
+        "Ben",
+        3
+      ],
+      [
+        3,
+        "Cy",
+        3
+      ],
+      [
+        4,
+        "Dee",
+        2
+      ],
+      [
+        5,
+        "Fay",
+        0
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "occupations-pivot",
+    "columns": [
+      "Doctor",
+      "Professor",
+      "Singer",
+      "Actor"
+    ],
+    "rows": [
+      [
+        "Alice",
+        "Carol",
+        "Frank",
+        "Henry"
+      ],
+      [
+        "Bob",
+        "Dave",
+        "Grace",
+        "Ivy"
+      ],
+      [
+        null,
+        "Eve",
+        null,
+        "Jack"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "uber-first-transaction",
+    "columns": [
+      "user_id",
+      "first_name",
+      "ride_date",
+      "ride_type"
+    ],
+    "rows": [
+      [
+        1,
+        "Ana",
+        "2024-01-03",
+        "Premium"
+      ],
+      [
+        2,
+        "Ben",
+        "2024-01-04",
+        "Economy"
+      ],
+      [
+        3,
+        "Cy",
+        "2024-02-01",
+        "Premium"
+      ],
+      [
+        4,
+        "Dee",
+        "2024-01-10",
+        "Economy"
+      ],
+      [
+        5,
+        "Ed",
+        "2024-03-03",
+        "Premium"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "linkedin-power-creators",
+    "columns": [
+      "employee_name",
+      "title",
+      "hired_date",
+      "manager_name"
+    ],
+    "rows": [
+      [
+        "Lena",
+        "Director",
+        "2016-06-15",
+        "Priya"
+      ],
+      [
+        "Ivy",
+        "Manager",
+        "2018-09-01",
+        "Omar"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "compressed-mode",
+    "columns": [
+      "mode_value"
+    ],
+    "rows": [
+      [
+        3
+      ]
+    ],
+    "order": "any"
   }
 ];
 

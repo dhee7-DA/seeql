@@ -57,4 +57,4 @@ if (fail > 0) {
   console.error(`\n${fail} FAILURES`);
   process.exit(1);
 }
-console.log("\nALL PASS — 7 sections cover the SQL 50 exactly 1:1, every problem fully built and gradeable.");
+console.log("\nALL PASS — the SQL sections cover the band exactly 1:1, every problem fully built and gradeable.");

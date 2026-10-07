@@ -2948,3 +2948,93 @@ Stage Summary:
 - Band now: 78 SQL problems, 12 sections, all engine-verified and auto-graded (49 Easy / 7 Medium among the new ones — totals: Easy 10 XP, Medium 20 XP).
 - Still out of scope by user decision: algorithm problems (browse-only in the Big 300 registry).
 - Remaining headroom if the user wants "literally all": premium LeetCode Database problems (~40) and further platform banks — the pipeline (registry row → dive file → verify → sections) makes each future batch mechanical.
+
+---
+Task ID: 63-e
+Agent: content-author (subagent)
+Task: Author batch-3 DataLemur dives (3 of the 78→100 SQL band expansion) — one new content file, sql-more2-datalemur.ts; no other files touched.
+
+Work Log:
+- Read worklog tail + exemplar (sql-more-platform.ts) + types.ts (LcSqlDive) to mirror voice/format: original statements, 95xx custom ids noted in file header, template-literal schemas/code with no backticks or ${}, one statement per solution.
+- Authored src/lib/leetcode/content/sql-more2-datalemur.ts with 3 Medium/20xp dives:
+  - uber-first-transaction (9512): first ride per rider via ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY ride_date, ride_id) — two-key window sort contract (tie-break INSIDE the window), rn=1 filter outside the CTE, 1:1 riders join for names; teaching covers MIN()-over-window + correlated-subquery alternatives and the unused fare column. order:exact, ORDER BY user_id.
+  - linkedin-power-creators (9513): same-table self-join (e = employee, m = manager), WHERE e.hired_date < m.hired_date; teaching stresses WHY the INNER JOIN's CEO drop is safe (NULL manager can't qualify) and the sibling pattern employees-earning-more-than-their-managers. order:exact, ORDER BY hired_date.
+  - compressed-mode (9514): mode via aggregate-of-aggregates — counts CTE (GROUP BY value), top CTE (MAX(freq)), outer WHERE freq = (SELECT m FROM top) + MIN(value) as the one-keyword tie policy; follow-up asks the empty-table trace. order:any, single row.
+- related slugs verified against the registry before use: department-highest-salary, top-five-artists, employees-earning-more-than-their-managers, market-analysis-i, ratings-histogram, biggest-single-number (skipped project-employees-iii — not present in this checkout).
+- Seed fix (deviation, spec was internally inconsistent): spec's employees seed had Priya (CEO) hired 2015-01-01, but the spec's own expected output includes Lena (hired 2016-06-15) beating her manager — with that seed the given solution returns only Ivy. Changed Priya's hired_date to 2017-01-01 (after Lena, before Omar) so the solution reproduces the graded contract EXACTLY: Lena then Ivy. All other dates/rows untouched.
+- Self-check via throwaway scripts/tmp-check-63e.ts (bun:sqlite :memory:, DDL → seed → solution, printed columns+rows, programmatic compare of values AND order for order:exact, plus one-statement/xp/ORDER-BY hygiene assertions): ALL CHECKS PASS. tsc --noEmit clean for the new file. Temp script deleted.
+
+Stage Summary:
+- New file src/lib/leetcode/content/sql-more2-datalemur.ts exports SQL_MORE2_DATALEMUR: 3 engine-verified Medium dives (uber-first-transaction 5 rows exact, linkedin-power-creators 2 rows exact, compressed-mode 1 row any), all xp 20.
+- Deviation to flag for the lead: linkedin-power-creators seed uses Priya hired_date 2017-01-01 (not 2015-01-01) — required to satisfy the spec's expected rows; everything else matches the spec verbatim.
+- Registry rows (9512/9513/9514), content.ts aggregation, sections.ts, sql-expected.ts left to the lead as instructed.
+
+---
+Task ID: 63-d
+Agent: content-author (subagent)
+Task: Batch 3 of the LeetCode SQL band expansion (78 → 100): author 6 HackerRank-flavored dives in one new content file, src/lib/leetcode/content/sql-more2-hackerrank.ts (custom 95xx ids, no other files touched — content.ts/registry/sections/sql-expected are the lead's).
+
+Work Log:
+- Read worklog tail, sql-more-platform.ts (voice/format exemplar) and types.ts LcSqlDive; confirmed referenced related slugs (triangle-judgement, fix-names-in-a-table, reformat-department-table, station-median, top-earners, company-hierarchy-counts, all-people-report-to-the-given-manager, ratings-histogram, top-five-artists) exist in the codebase.
+- Authored 6 dives: type-of-triangle (9506 Easy/10, ordered CASE with the validity gate FIRST so 10-10-20 isn't misread as Isosceles), the-blunder (9507 Medium/20, REPLACE+CAST digit surgery with the CEIL-free integer ceiling identity (a+n-1)/n — spec-mandated, no CEIL() reliance), station-shortest-longest (9508 Medium/20, two wrapped top-1 subqueries UNION ALL — per-branch ORDER BY+LIMIT must complete inside subqueries since compound SELECT allows one trailing ORDER BY), asian-population (9509 Easy/10, join→filter-on-parent→global SUM), challenges (9510 Medium/20, LEFT JOIN zero-survival + counts/maxc CTEs + two-branch WHERE sparing a unique max), occupations-pivot (9511 Medium/20, ROW_NUMBER PARTITION BY occupation + conditional MAX aggregation, NULL padding via CASE default).
+- Each dive mirrors exemplar depth: original statements, 1-2 examples, 3 constraints, 3-paragraph breakdowns, 3-4 traps, 3-rung ladders, one-line approach, schema {ddl, seed, tables[]}, one-statement commented SQLite code (no backticks/${} in template literals), 3-step walkthrough tracing the actual seed, time/space, 2 followUps, 2-3 real related slugs.
+- Self-check via throwaway scripts/tmp-check-63d.ts (bun:sqlite :memory:, ddl→seed→solution, printed columns+rows): all 6 match the graded contract exactly — type-of-triangle 7 rows exact (1/Equilateral … 7/Not A Triangle), the-blunder 1 row 4230, station-shortest-longest 2 rows (shortest/Aba, longest/Springvale), asian-population 1 row 117860000, challenges 5 rows exact (Ada 5, Ben 3, Cy 3, Dee 2, Fay 0), occupations-pivot 3 rows exact (Alice/Carol/Frank/Henry · Bob/Dave/Grace/Ivy · NULL/Eve/NULL/Jack).
+- tsc --noEmit: no errors referencing the new file; eslint clean. Temp script deleted.
+
+Stage Summary:
+- Delivered src/lib/leetcode/content/sql-more2-hackerrank.ts exporting SQL_MORE2_HACKERRANK: LcSqlDive[] with 6 engine-verified dives (2 Easy/10xp, 4 Medium/20xp; 3 order-exact, 3 order-any).
+- All solutions verified in bun:sqlite against the spec's expected rows AND order; no deviations from spec needed (spec solutions ran green as written; only the throwaway checker's column introspection needed a bun-version fix).
+- Handoff to lead: register the 6 slugs + 95xx ids in the registry/sections, aggregate the file into content.ts, regenerate sql-expected.ts via scripts/lc-sql-verify.ts.
+
+---
+Task ID: 63-a
+Agent: content-author (subagent)
+Task: Batch 3 of the LeetCode SQL band expansion (78 → 100) — author the window-function content file with 4 deep-dives.
+
+Work Log:
+- Read worklog tail + exemplar sql-more-platform.ts + types.ts (LcSqlDive) to mirror the teaching format (3-para breakdown, 3-rung ladder, traps, walkthroughs that trace the real seed).
+- Authored src/lib/leetcode/content/sql-more2-windows.ts exporting SQL_MORE2_WINDOWS: find-the-team-size (1303, Easy/10, COUNT(*) OVER PARTITION without row collapse), project-employees-iii (1077, Medium/20, per-project argmin via RANK, ties kept), product-price-at-a-given-date (1164, Medium/20, as-of-date snapshot: filter-then-ROW_NUMBER + UNION ALL default-price branch), active-users (1454, Medium/20, streaks via date − ROW_NUMBER anchor, DISTINCT-days first). Each teaches its assigned window angle; related slugs verified against the existing band.
+- Spec contradiction resolved for 1164: the given seed row (3,9,'2019-08-05') is BEFORE the 2019-08-16 snapshot, which would yield (3,9) — the graded contract says (3,10), so the seed row became (3,9,'2019-08-17') (change dated after the snapshot → default-price branch fires). Expected rows kept exactly as specified.
+- Dive 3's compound SELECT uses ordinal ORDER BY 1 (worklog task 62 lesson: compound-SELECT ORDER BY by name trips the parse pipeline).
+- Self-check script scripts/tmp-check-63a.ts (bun:sqlite, splitStatements like lc-sql-verify.ts): all 4 dives execute; columns + rows match the contract EXACTLY — find-the-team-size 6 rows (1,1,3)…(6,3,1); project-employees-iii 2 rows (1,3,'Sam'),(2,4,'Bob'); product-price-at-a-given-date 3 rows (1,6),(2,7),(3,10); active-users 2 rows (1,'Alice'),(7,'Cara'). Also asserted: no backticks/${} in template literals, ORDER BY present for order:"exact", xp matches difficulty. Temp script deleted after green.
+- tsc + eslint clean on the new file. No other files touched (registry/sections/content.ts/sql-expected.ts left to the lead).
+
+Stage Summary:
+- New file src/lib/leetcode/content/sql-more2-windows.ts with 4 engine-verified window-function dives (1 Easy + 3 Medium, total XP 70), ready for the lead's registry/section/expected wiring.
+- 1164 seed deviation documented above (date moved past the snapshot to honor the graded (3,10) row); everything else matches the spec verbatim.
+
+---
+Task ID: 63-b
+Agent: content-author (subagent)
+Task: Batch 3 of the LeetCode SQL band expansion (78 → 100) — authored the SELF-JOIN / NON-EQUI-JOIN batch: one new content file with 4 deep-dives (sql-more2-joins.ts).
+
+Work Log:
+- Read worklog tail + the voice exemplar sql-more-platform.ts + LcSqlDive in types.ts; confirmed none of the 4 spec slugs (tree-node 608, consecutive-available-seats 603, rectangle-area 1459, number-of-comments-per-post 1241) exist in any registry/content file (no dup slugs) and that all "related" slugs are real (employees-earning-more-than-their-managers, exchange-seats in registry-sql50; number-of-calls-between-two-persons, npv-queries in registry-sql-more).
+- Authored src/lib/leetcode/content/sql-more2-joins.ts — SQL_MORE2_JOINS: LcSqlDive[] = [tree-node M20, consecutive-available-seats M20, rectangle-area M20, number-of-comments-per-post E10], all order:"exact" with ORDER BY. Teaching angles per spec: tree-node = branch-order priority (root is often ALSO a parent — NULL gate must run first) + set-of-parents membership + defensive WHERE p_id IS NOT NULL + LEFT-JOIN/COUNT alternative argued in the ladder; consecutive-available-seats = adjacency as the +1 offset equality, offset join IS the pair canonicalization (vs number-of-calls-between-two-persons), boundary trap (3–4 fails on seat 4), LEAD() alternative in ladder/followUps; rectangle-area = true NON-EQUI join (no equality in ON → nested loop, no index fast-path), id < id as dedupe+direction, ABS deltas, three-way area-4 tie demanding the full (area DESC, id_a, id_b) sort contract; number-of-comments-per-post = correlated count keeps the zero case free, LEFT JOIN alternative's COUNT(*)-vs-COUNT(c.submission_id) trap called out, direct-comments-only scope → recursive-CTE follow-up.
+- Self-check script scripts/tmp-check-63b.ts (bun:sqlite, in-memory): ran ddl+seed, executed each solution, compared columns + rows + order against the graded contract. First run caught a checker bug (trailing comment after the final `;` broke a naive one-statement guard — fixed the checker to strip line comments first; the SQL itself was valid single statements). Second run: ALL CHECKS GREEN — tree-node 6 rows (1,'Root'),(2,'Inner'),(3,'Inner'),(4,'Leaf'),(5,'Leaf'),(6,'Leaf'); consecutive-available-seats 4 rows (1,2),(2,3),(7,8),(8,9); rectangle-area 8 rows (4,5,30),(2,5,12),(3,4,8),(1,5,5),(1,4,4),(2,4,4),(3,5,4),(1,2,2) — (2,3) correctly absent; number-of-comments-per-post 4 rows (101,2),(102,3),(103,0),(104,1). Static invariants green: unique slugs, one-statement codes, ORDER BY on all exact problems, 3-para breakdowns / 3-rung ladders / 3-step walkthroughs, no backticks or ${} in template literals.
+- Deleted scripts/tmp-check-63b.ts after green (tmp-check-63a.ts belongs to the parallel batch and was left alone). Project tsc: 0 errors referencing sql-more2-joins.ts (46 pre-existing baseline errors elsewhere, rg-filtered). No other file touched — registry/content.ts/sections/sql-expected wiring left to the lead.
+
+Stage Summary:
+- Delivered src/lib/leetcode/content/sql-more2-joins.ts: 4 engine-verified self/non-equi-join deep-dives (3 Medium ×20 + 1 Easy ×10 = 70 XP), every solution executed against its seed in bun:sqlite with outputs matching the expected rows exactly in value AND order.
+- Batch 3 slugs ready for lead wiring: tree-node, consecutive-available-seats, rectangle-area, number-of-comments-per-post.
+
+---
+Task ID: 63-c
+Agent: content-author (subagent)
+Task: Batch 3 of the LeetCode SQL band expansion (78 → 100) — author ONE content file: src/lib/leetcode/content/sql-more2-analytics.ts with 5 analytics/reporting deep-dives (1142, 1398, 1435, 1204, 1607), mirroring the sql-more-platform.ts voice/format. No registry/sections/expected edits (lead owns those).
+
+Work Log:
+- Read worklog tail (Tasks 61–62: SQL band 50 → 78, pipeline = dive file → lc-sql-verify → sections) + types.ts LcSqlDive + exemplars sql-more-platform.ts / sql-more-joins.ts.
+- Authored sql-more2-analytics.ts: 5 dives, original statements, 1–2 examples each, 3 constraints, 3-para breakdowns, 3–4 traps, 3-rung ladders, one-liner approaches, walkthroughs tracing the ACTUAL seed, time/space, 2 followUps, real related slugs, xp 10/20.
+  - user-activity-for-the-past-30-days-ii (Easy/10, order any): two scalar subqueries (window session count ÷ whole-log distinct users), * 1.0 REAL-division lesson, empty-window → 0.0 note. Seed: 7 in-window sessions ÷ 4 users = 1.75.
+  - customers-who-bought-a-and-b-not-c (Medium/20, exact): two product-filtered self-joins + NOT IN 'C' subquery; DEVIATION-FIX: spec's join-only solution duplicates Alba (2 'A' orders fan-out) → added SELECT DISTINCT to match the graded contract ((1,Alba),(2,Ben)); fan-out/grain + NOT IN NULL-poisoning taught; conditional-aggregation HAVING SUM(...) alternative in ladder.
+  - create-a-session-bar-chart (Easy/10, exact): VALUES CTE as bins dimension + LEFT JOIN on half-open bounds + COUNT(matched side); seam values 5 and 10 called out; alphabetical-label-order trap; CASE-bucketing failure mode explained.
+  - last-person-to-fit-in-the-elevator (Medium/20, exact): SUM() OVER (ORDER BY turn ROWS UNBOUNDED PRECEDING…) prefix totals → WHERE running <= 1000 → ORDER BY turn DESC LIMIT 1; explicit ROWS-vs-RANGE frame lesson (peers), exactly-at-cap boundary, self-join prefix-sum alternative.
+  - sellers-with-no-sales (Medium/20, exact): NOT IN anti-join over half-open year [2020-01-01, 2021-01-01); BETWEEN/YEAR() sargability traps; Dee (no orders at all) qualifies by absence; LEFT JOIN + IS NULL variant with date-filter-in-ON trap.
+- Hard rules held: one statement per code, SQLite only; order:"exact" solutions all contain ORDER BY; single-row dive 1 is order "any" without one; template literals free of backticks/${}; schema.tables notes present.
+- Self-check (scripts/tmp-check-63c.ts, bun:sqlite :memory: → ddl → seed → solution, columns+rows asserted vs contract): ALL 5 GREEN — 1142 → [1.75]; 1398 → (1,Alba),(2,Ben); 1435 → [0-5>·2,[5-10>·3,[10-15>·3; 1204 → Di; 1607 → Ben,Dee. Temp script DELETED after green.
+- QA: tsc -p tsconfig.json = 45 errors = exact pre-existing baseline, none in new files; eslint clean on sql-more2-analytics.ts.
+
+Stage Summary:
+- sql-more2-analytics.ts (5 analytics deep-dives, 30 XP total: 2 Easy + 3 Medium) is authored and engine-checked against the graded expected rows; batch 3 deliverable done. Awaiting lead wiring: content.ts aggregation, registry rows (1142/1398/1435/1204/1607), sections entry, sql-expected.ts regeneration via scripts/lc-sql-verify.ts.
+- Only deviation: DISTINCT added to the 1398 solution (join fan-out from Alba's two 'A' orders) — required to hit the contract rows; the fan-out became a taught edge instead.

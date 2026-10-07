@@ -195,6 +195,68 @@ export const SQL50_SECTIONS: LcSection[] = [
       "top-five-artists",
     ],
   },
+  {
+    id: "windows-2",
+    title: "Window Functions II",
+    blurb:
+      "Beyond the 50 — window aggregates that never collapse rows, RANK-based argmin with ties, as-of pricing and streak detection.",
+    slugs: [
+      "find-the-team-size",
+      "project-employees-iii",
+      "product-price-at-a-given-date",
+      "active-users",
+    ],
+  },
+  {
+    id: "self-non-equi",
+    title: "Self & Non-Equi Joins",
+    blurb:
+      "A table joined to itself — parent/child classification, seat adjacency, inequality geometry and comment trees.",
+    slugs: [
+      "tree-node",
+      "consecutive-available-seats",
+      "rectangle-area",
+      "number-of-comments-per-post",
+    ],
+  },
+  {
+    id: "analytics-funnels",
+    title: "Analytics & Funnels",
+    blurb:
+      "Product-flavored asks — per-user rates over a window, bought-A-and-B-never-C logic, zero-count bins and running totals against a budget.",
+    slugs: [
+      "user-activity-for-the-past-30-days-ii",
+      "customers-who-bought-a-and-b-not-c",
+      "create-a-session-bar-chart",
+      "last-person-to-fit-in-the-elevator",
+      "sellers-with-no-sales",
+    ],
+  },
+  {
+    id: "hackerrank-2",
+    title: "HackerRank Classics II",
+    blurb:
+      "The next tier of the famous bank — triangle classification, dirty-data averages, name-length extremes, continent sums, exclusion logic and the ROW_NUMBER pivot.",
+    slugs: [
+      "type-of-triangle",
+      "the-blunder",
+      "station-shortest-longest",
+      "asian-population",
+      "challenges",
+      "occupations-pivot",
+    ],
+  },
+  {
+    id: "datalemur",
+    title: "DataLemur Interview Sets",
+    blurb:
+      "Real interview questions from the DataLemur bank, re-authored — first transactions, out-pacing your manager, and the mode with a tie policy.",
+    slugs: [
+      "uber-first-transaction",
+      "linkedin-power-creators",
+      "compressed-mode",
+    ],
+  },
 ];
 
 /** Flat solving order — every SQL 50 problem exactly once. */
