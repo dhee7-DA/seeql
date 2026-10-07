@@ -1,7 +1,7 @@
 // The SQL band, divided into sections. The first seven mirror the official
 // SQL 50 study list (and the sandbox deep-dive files authored per section);
-// the five "beyond the 50" sections hold the expansion band — LeetCode's
-// free Database extras plus platform classics. The LeetCode view groups the
+// the remaining sections hold the expansion band — LeetCode's free Database
+// extras plus three tiers of platform classics. The LeetCode view groups the
 // SQL band by these, and the Module 12 band shows the same sections in its
 // card.
 //
@@ -255,6 +255,97 @@ export const SQL50_SECTIONS: LcSection[] = [
       "uber-first-transaction",
       "linkedin-power-creators",
       "compressed-mode",
+    ],
+  },
+  {
+    id: "select-2",
+    title: "Select & Validation II",
+    blurb:
+      "Beyond 100 — the first filters of the trade: WHERE gates, GLOB pattern validation, classified joins, rounded-group thresholds, month buckets and the visit/transaction anti-join.",
+    slugs: [
+      "recyclable-and-low-fat-products",
+      "find-users-with-valid-e-mails",
+      "weather-type-in-each-country",
+      "activity-participants",
+      "unique-orders-and-customers-per-month",
+      "customer-who-visited-but-did-not-transact",
+    ],
+  },
+  {
+    id: "engagement",
+    title: "Engagement & Reporting",
+    blurb:
+      "Beyond 100 — product-flavored metrics: dated windows, removal and click-through rates, row-vs-group averages and argmax with tiebreakers.",
+    slugs: [
+      "user-activity-for-the-past-30-days-i",
+      "reported-posts-ii",
+      "ads-performance",
+      "active-businesses",
+      "highest-grade-for-each-student",
+    ],
+  },
+  {
+    id: "matchups",
+    title: "Joins & Matchups",
+    blurb:
+      "Beyond 100 — two-sided reporting: tournament points over UNION legs, same-key pairings, per-customer argmax, two-month thresholds and the weekday pivot.",
+    slugs: [
+      "team-scores-in-football-tournament",
+      "apples-and-oranges",
+      "most-frequently-ordered-product-per-customer",
+      "customer-order-frequency",
+      "sales-by-day-of-the-week",
+    ],
+  },
+  {
+    id: "streaks",
+    title: "Streaks & Recency",
+    blurb:
+      "Beyond 100 — time as data: two-grain date streams, LEAD-made gaps, 7-day run detection, gaps-and-islands grouping and second-most-recent with RANK semantics.",
+    slugs: [
+      "monthly-transactions-ii",
+      "biggest-window-between-events",
+      "user-purchase-platform",
+      "report-contiguous-dates",
+      "second-most-recent-activity",
+    ],
+  },
+  {
+    id: "hard-finales",
+    title: "Hard Finales",
+    blurb:
+      "Beyond 100 — the interview-endgame tier: zero-filled histogram bins, deduped subset averages against a global baseline, and always-full category reports.",
+    slugs: [
+      "transactions-per-visit-histogram",
+      "countries-you-can-safely-invest-in",
+      "count-salary-categories",
+    ],
+  },
+  {
+    id: "hackerrank-3",
+    title: "HackerRank Classics III",
+    blurb:
+      "The famous join set, re-authored — ranged grade lookups, four-table score chains, two-grain string reports, bridge tables, symmetric canonicalization and the daily-streak leaderboard.",
+    slugs: [
+      "the-report",
+      "top-competitors",
+      "the-pads",
+      "placements",
+      "symmetric-pairs",
+      "fifteen-days-of-learning",
+    ],
+  },
+  {
+    id: "datalemur-2",
+    title: "DataLemur Interview Sets II",
+    blurb:
+      "More real interview questions, re-authored — launch rates, one-scan funnels, cumulative spend histograms, confirmation gaps and the same-day first-order pattern.",
+    slugs: [
+      "card-launch-success",
+      "ads-funnel",
+      "spend-histogram",
+      "second-day-confirmation",
+      "same-day-sale",
     ],
   },
 ];

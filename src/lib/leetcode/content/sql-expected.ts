@@ -2672,6 +2672,937 @@ export const SQL_EXPECTED: LcSqlExpected[] = [
       ]
     ],
     "order": "any"
+  },
+  {
+    "slug": "recyclable-and-low-fat-products",
+    "columns": [
+      "product_id"
+    ],
+    "rows": [
+      [
+        1024
+      ],
+      [
+        5590
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-users-with-valid-e-mails",
+    "columns": [
+      "user_id",
+      "name",
+      "mail"
+    ],
+    "rows": [
+      [
+        101,
+        "Alice",
+        "alice@example.com"
+      ],
+      [
+        102,
+        "Bob",
+        "bob.smith@example.com"
+      ],
+      [
+        103,
+        "Cara",
+        "cara_99@example.com"
+      ],
+      [
+        107,
+        "Gus",
+        "g-us@example.com"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "weather-type-in-each-country",
+    "columns": [
+      "country",
+      "weather_type"
+    ],
+    "rows": [
+      [
+        "Frostland",
+        "Cold"
+      ],
+      [
+        "Quietisle",
+        "Unknown"
+      ],
+      [
+        "Scorchtown",
+        "Hot"
+      ],
+      [
+        "Tempvale",
+        "Warm"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "activity-participants",
+    "columns": [
+      "activity"
+    ],
+    "rows": [
+      [
+        "Chess"
+      ],
+      [
+        "Puzzles"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "unique-orders-and-customers-per-month",
+    "columns": [
+      "month",
+      "unique_orders",
+      "unique_customers"
+    ],
+    "rows": [
+      [
+        "2024-01",
+        4,
+        3
+      ],
+      [
+        "2024-02",
+        2,
+        2
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "customer-who-visited-but-did-not-transact",
+    "columns": [
+      "customer_id",
+      "count_no_trans"
+    ],
+    "rows": [
+      [
+        101,
+        1
+      ],
+      [
+        103,
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "user-activity-for-the-past-30-days-i",
+    "columns": [
+      "day",
+      "active_users",
+      "total_sessions"
+    ],
+    "rows": [
+      [
+        "2019-06-28",
+        1,
+        1
+      ],
+      [
+        "2019-07-05",
+        2,
+        3
+      ],
+      [
+        "2019-07-27",
+        1,
+        1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "reported-posts-ii",
+    "columns": [
+      "average_removal_rate"
+    ],
+    "rows": [
+      [
+        44.44
+      ]
+    ],
+    "order": "any"
+  },
+  {
+    "slug": "ads-performance",
+    "columns": [
+      "ad_id",
+      "ctr"
+    ],
+    "rows": [
+      [
+        3,
+        20
+      ],
+      [
+        4,
+        20
+      ],
+      [
+        2,
+        12.5
+      ],
+      [
+        7,
+        12.01
+      ],
+      [
+        6,
+        11.5
+      ],
+      [
+        1,
+        10
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "active-businesses",
+    "columns": [
+      "business_id",
+      "event_type"
+    ],
+    "rows": [
+      [
+        1,
+        "ads"
+      ],
+      [
+        1,
+        "reviews"
+      ],
+      [
+        3,
+        "reviews"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "highest-grade-for-each-student",
+    "columns": [
+      "student_id",
+      "course_id",
+      "grade"
+    ],
+    "rows": [
+      [
+        1,
+        12,
+        91
+      ],
+      [
+        2,
+        3,
+        78
+      ],
+      [
+        3,
+        4,
+        66
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "team-scores-in-football-tournament",
+    "columns": [
+      "team_id",
+      "team_name",
+      "num_points"
+    ],
+    "rows": [
+      [
+        1,
+        "Auckland",
+        4
+      ],
+      [
+        2,
+        "Basel",
+        4
+      ],
+      [
+        3,
+        "Chicago",
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "apples-and-oranges",
+    "columns": [
+      "day",
+      "fruit",
+      "sold_amount"
+    ],
+    "rows": [
+      [
+        1,
+        "apple",
+        10
+      ],
+      [
+        2,
+        "orange",
+        9
+      ],
+      [
+        4,
+        "apple",
+        7
+      ],
+      [
+        5,
+        "orange",
+        8
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "most-frequently-ordered-product-per-customer",
+    "columns": [
+      "customer_id",
+      "product_id",
+      "product_name"
+    ],
+    "rows": [
+      [
+        1,
+        1,
+        "Anvil"
+      ],
+      [
+        2,
+        2,
+        "Bolts"
+      ],
+      [
+        3,
+        4,
+        "Drill"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "customer-order-frequency",
+    "columns": [
+      "customer_id"
+    ],
+    "rows": [
+      [
+        1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "sales-by-day-of-the-week",
+    "columns": [
+      "item_id",
+      "item_name",
+      "mon",
+      "tue",
+      "wed",
+      "thu",
+      "fri",
+      "sat",
+      "sun"
+    ],
+    "rows": [
+      [
+        1,
+        "Latte",
+        12,
+        0,
+        9,
+        0,
+        15,
+        20,
+        0
+      ],
+      [
+        2,
+        "Muffin",
+        7,
+        8,
+        0,
+        0,
+        0,
+        5,
+        11
+      ],
+      [
+        3,
+        "Croissant",
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "monthly-transactions-ii",
+    "columns": [
+      "trans_month",
+      "country",
+      "approved_count",
+      "approved_amount",
+      "chargeback_count",
+      "chargeback_amount"
+    ],
+    "rows": [
+      [
+        "2020-05",
+        "DE",
+        1,
+        500,
+        0,
+        0
+      ],
+      [
+        "2020-05",
+        "US",
+        1,
+        1000,
+        1,
+        300
+      ],
+      [
+        "2020-06",
+        "DE",
+        0,
+        0,
+        1,
+        700
+      ],
+      [
+        "2020-06",
+        "US",
+        1,
+        2000,
+        1,
+        1000
+      ],
+      [
+        "2020-07",
+        "US",
+        1,
+        400,
+        0,
+        0
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "biggest-window-between-events",
+    "columns": [
+      "user_id",
+      "window_start_date",
+      "window_size"
+    ],
+    "rows": [
+      [
+        1,
+        "2023-01-02",
+        39
+      ],
+      [
+        2,
+        "2023-03-01",
+        8
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "user-purchase-platform",
+    "columns": [
+      "percentage"
+    ],
+    "rows": [
+      [
+        20.83
+      ]
+    ],
+    "order": "any"
+  },
+  {
+    "slug": "report-contiguous-dates",
+    "columns": [
+      "period_start",
+      "period_end"
+    ],
+    "rows": [
+      [
+        "2023-01-01",
+        "2023-01-03"
+      ],
+      [
+        "2023-01-08",
+        "2023-01-09"
+      ],
+      [
+        "2023-01-15",
+        "2023-01-15"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "second-most-recent-activity",
+    "columns": [
+      "username",
+      "activity",
+      "startDate",
+      "endDate"
+    ],
+    "rows": [
+      [
+        "Bob",
+        "Browse",
+        "2020-02-20",
+        "2020-02-21"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "transactions-per-visit-histogram",
+    "columns": [
+      "transactions_count",
+      "visits_count"
+    ],
+    "rows": [
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        3,
+        2
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "countries-you-can-safely-invest-in",
+    "columns": [
+      "country_name"
+    ],
+    "rows": [
+      [
+        "Aurora"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "count-salary-categories",
+    "columns": [
+      "category",
+      "accounts_count"
+    ],
+    "rows": [
+      [
+        "Low Salary",
+        2
+      ],
+      [
+        "Average Salary",
+        4
+      ],
+      [
+        "High Salary",
+        0
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "the-report",
+    "columns": [
+      "grade",
+      "name",
+      "marks"
+    ],
+    "rows": [
+      [
+        9,
+        "Kristeen",
+        90
+      ],
+      [
+        9,
+        "Priya",
+        80
+      ],
+      [
+        8,
+        "Heraldo",
+        74
+      ],
+      [
+        7,
+        null,
+        65
+      ],
+      [
+        3,
+        null,
+        21
+      ],
+      [
+        3,
+        null,
+        25
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "top-competitors",
+    "columns": [
+      "hacker_id",
+      "name",
+      "full_score_count"
+    ],
+    "rows": [
+      [
+        1,
+        "Denise",
+        2
+      ],
+      [
+        4,
+        "Oscar",
+        2
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "the-pads",
+    "columns": [
+      "line"
+    ],
+    "rows": [
+      [
+        "Alex(S)"
+      ],
+      [
+        "Amina(A)"
+      ],
+      [
+        "Jane(S)"
+      ],
+      [
+        "Peter(S)"
+      ],
+      [
+        "Rose(D)"
+      ],
+      [
+        "Sam(D)"
+      ],
+      [
+        "There are a total of 1 actors."
+      ],
+      [
+        "There are a total of 2 doctors."
+      ],
+      [
+        "There are a total of 3 singers."
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "placements",
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Ben"
+      ],
+      [
+        "Cleo"
+      ],
+      [
+        "Cleo"
+      ],
+      [
+        "Wren"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "symmetric-pairs",
+    "columns": [
+      "x",
+      "y"
+    ],
+    "rows": [
+      [
+        1,
+        2
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        20,
+        20
+      ],
+      [
+        20,
+        20
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "fifteen-days-of-learning",
+    "columns": [
+      "day",
+      "full_streak",
+      "leader_id",
+      "leader_name"
+    ],
+    "rows": [
+      [
+        1,
+        3,
+        505,
+        "Zed"
+      ],
+      [
+        2,
+        3,
+        505,
+        "Zed"
+      ],
+      [
+        3,
+        3,
+        505,
+        "Zed"
+      ],
+      [
+        4,
+        2,
+        101,
+        "Nora"
+      ],
+      [
+        5,
+        1,
+        303,
+        "Pia"
+      ],
+      [
+        6,
+        1,
+        101,
+        "Nora"
+      ],
+      [
+        7,
+        1,
+        404,
+        "Raj"
+      ],
+      [
+        8,
+        1,
+        101,
+        "Nora"
+      ],
+      [
+        9,
+        1,
+        101,
+        "Nora"
+      ],
+      [
+        10,
+        1,
+        202,
+        "Milo"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "card-launch-success",
+    "columns": [
+      "apply_month",
+      "card_name",
+      "success_rate"
+    ],
+    "rows": [
+      [
+        "2024-01",
+        "Quartz",
+        40
+      ],
+      [
+        "2024-01",
+        "Sapphire",
+        75
+      ],
+      [
+        "2024-02",
+        "Sapphire",
+        100
+      ],
+      [
+        "2024-03",
+        "Quartz",
+        33.33
+      ],
+      [
+        "2024-03",
+        "Sapphire",
+        50
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "ads-funnel",
+    "columns": [
+      "product_id",
+      "view_to_cart",
+      "cart_to_purchase"
+    ],
+    "rows": [
+      [
+        1,
+        66.67,
+        50
+      ],
+      [
+        2,
+        50,
+        100
+      ],
+      [
+        3,
+        200,
+        50
+      ],
+      [
+        5,
+        66.67,
+        100
+      ],
+      [
+        6,
+        0,
+        null
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "spend-histogram",
+    "columns": [
+      "bucket",
+      "users",
+      "cumulative_users"
+    ],
+    "rows": [
+      [
+        "0-49",
+        2,
+        2
+      ],
+      [
+        "50-99",
+        4,
+        6
+      ],
+      [
+        "100-149",
+        2,
+        8
+      ],
+      [
+        "150+",
+        2,
+        10
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "second-day-confirmation",
+    "columns": [
+      "success_rate"
+    ],
+    "rows": [
+      [
+        60
+      ]
+    ],
+    "order": "any"
+  },
+  {
+    "slug": "same-day-sale",
+    "columns": [
+      "user_id"
+    ],
+    "rows": [
+      [
+        301
+      ],
+      [
+        303
+      ],
+      [
+        304
+      ],
+      [
+        305
+      ]
+    ],
+    "order": "exact"
   }
 ];
 

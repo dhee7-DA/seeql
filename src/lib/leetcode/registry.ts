@@ -11,6 +11,7 @@ import { TI150_EXTRAS } from "./registry-ti150";
 import { SQL50 } from "./registry-sql50";
 import { SQL_MORE } from "./registry-sql-more";
 import { SQL_MORE2 } from "./registry-sql-more2";
+import { SQL_MORE3 } from "./registry-sql-more3";
 import { CONTENT_SLUGS } from "./content/content";
 
 const DIFF: LcDifficulty[] = ["Easy", "Medium", "Hard"];
@@ -34,7 +35,7 @@ function expand(row: LcRow): LcRef {
 
 /** Registry order: NeetCode topic order first (the canonical learning path),
  *  then TI150 uniques, then the extras, then the SQL 50. */
-export const LC_ALL: LcRef[] = [...NC150, ...TI150_EXTRAS, ...SQL50, ...SQL_MORE, ...SQL_MORE2].map(expand);
+export const LC_ALL: LcRef[] = [...NC150, ...TI150_EXTRAS, ...SQL50, ...SQL_MORE, ...SQL_MORE2, ...SQL_MORE3].map(expand);
 
 const bySlug = new Map(LC_ALL.map((p) => [p.slug, p]));
 export const lcBySlug = (slug: string) => bySlug.get(slug);

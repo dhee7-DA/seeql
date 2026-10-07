@@ -256,7 +256,7 @@ export const MODULES: Array<ModuleInfo & { lessons: Lesson[] }> = [
     title: "LeetCode SQL 50+",
     level: "Interview",
     blurb:
-      "The interview band — no lessons, just SQL problems: the official SQL 50 study list, the free Database extras and platform classics from HackerRank and DataLemur — 100 problems across 17 skill sections. Every problem ships a full deep-dive, a seeded schema and live auto-grading in the sandbox; progress here is counted from solved problems, not lessons.",
+      "The interview band — no lessons, just SQL problems: the official SQL 50 study list, the free Database extras and three tiers of platform classics from HackerRank and DataLemur — 135 problems across 24 skill sections. Every problem ships a full deep-dive, a seeded schema and live auto-grading in the sandbox; progress here is counted from solved problems, not lessons.",
     lessons: [],
   },
 ];

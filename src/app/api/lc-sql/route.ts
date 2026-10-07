@@ -67,7 +67,30 @@ export async function POST(req: NextRequest) {
     try {
       await db.$transaction(
         async (tx) => {
-          // build the problem's world — exact table names, fresh every run
+          // build the problem's world — exact table names, fresh every run.
+          // SQLite table names are case-insensitive, so a dive's `Products`
+          // collides with the storefront's own `products` — drop any table
+          // the DDL is about to create first. The transaction below is
+          // ALWAYS rolled back, so the persistent schema is untouched.
+          const created = [
+            ...dive.schema.ddl.matchAll(/CREATE TABLE (?:IF NOT EXISTS )?["`[]?([A-Za-z_][\w]*)/gi),
+          ].map((m) => m[1]);
+          if (created.length > 0) {
+            // Park any same-name PERSISTENT table under a shadow name for the
+            // duration of the transaction. ALTER TABLE RENAME rewrites child
+            // FK references, so no dangling constraints ever exist (a DROP
+            // would either fail on FK enforcement or orphan the children).
+            // The transaction below ALWAYS ends in ROLLBACK, which restores
+            // the original name and drops the sandbox tables.
+            let i = 0;
+            for (const name of new Set(created)) {
+              const hit = (await tx.$queryRaw`SELECT name FROM sqlite_master WHERE type = 'table' AND lower(name) = lower(${name})`) as Array<{ name: string }>;
+              if (hit.length > 0) {
+                await tx.$executeRawUnsafe(`ALTER TABLE "${hit[0].name}" RENAME TO "__seeql_shadow_${Date.now()}_${i}"`);
+                i += 1;
+              }
+            }
+          }
           for (const stmt of splitStatements(dive.schema.ddl)) await tx.$executeRawUnsafe(stmt);
           for (const stmt of splitStatements(dive.schema.seed)) await tx.$executeRawUnsafe(stmt);
 

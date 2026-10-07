@@ -28,6 +28,13 @@ import { SQL_MORE2_JOINS } from "./sql-more2-joins";
 import { SQL_MORE2_ANALYTICS } from "./sql-more2-analytics";
 import { SQL_MORE2_HACKERRANK } from "./sql-more2-hackerrank";
 import { SQL_MORE2_DATALEMUR } from "./sql-more2-datalemur";
+import { SQL_MORE3_SELECT } from "./sql-more3-select";
+import { SQL_MORE3_ENGAGEMENT } from "./sql-more3-engagement";
+import { SQL_MORE3_MATCHUPS } from "./sql-more3-matchups";
+import { SQL_MORE3_STREAKS } from "./sql-more3-streaks";
+import { SQL_MORE3_FINALES } from "./sql-more3-finales";
+import { SQL_MORE3_HACKERRANK } from "./sql-more3-hackerrank";
+import { SQL_MORE3_DATALEMUR } from "./sql-more3-datalemur";
 
 export const LC_CONTENT: LcDeepDive[] = [
   ...ARRAYS,
@@ -38,7 +45,7 @@ export const LC_CONTENT: LcDeepDive[] = [
   ...LINKED_LIST,
 ];
 
-/** SQL deep-dives — the SQL 50 plus the two expansion batches, all
+/** SQL deep-dives — the SQL 50 plus the three expansion batches, all
  *  sandbox-graded. */
 export const LC_SQL_CONTENT: LcSqlDive[] = [
   ...SQL_SELECT,
@@ -60,6 +67,13 @@ export const LC_SQL_CONTENT: LcSqlDive[] = [
   ...SQL_MORE2_ANALYTICS,
   ...SQL_MORE2_HACKERRANK,
   ...SQL_MORE2_DATALEMUR,
+  ...SQL_MORE3_SELECT,
+  ...SQL_MORE3_ENGAGEMENT,
+  ...SQL_MORE3_MATCHUPS,
+  ...SQL_MORE3_STREAKS,
+  ...SQL_MORE3_FINALES,
+  ...SQL_MORE3_HACKERRANK,
+  ...SQL_MORE3_DATALEMUR,
 ];
 
 const bySlug = new Map(LC_CONTENT.map((d) => [d.slug, d]));
