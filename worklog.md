@@ -2927,3 +2927,24 @@ Stage Summary:
 - Stale-cache bug permanently impossible again: no SW registration, no caches, self-healing teardown.
 - Scope confirmed with user: SQL problems only for now; algorithm problems deferred (remain browse-only in the Big 300 registry).
 - State: commit on main, tree clean; dev server verified; browser closed.
+
+---
+Task ID: 62
+Agent: main
+Task: User approved the sections design and asked for ALL SQL problems from LeetCode + other major interview platforms. Expanded the band from 50 to 78 sandbox-graded problems.
+
+Work Log:
+- Studied the existing pipeline first: scripts/lc-sql-verify.ts already generates sql-expected.ts by executing every dive's solution in bun:sqlite and snapshotting the output — so all new problems are engine-verified, expected results are never hand-authored.
+- Picked 23 well-known FREE LeetCode Database problems outside the SQL 50 (511, 586, 619, 627, 1050, 1076, 1113, 1179, 1193, 1270, 1421, 1543, 1587, 1683, 1693, 1699, 1729, 1741, 1795, 1873, 1890, 1965, 2082) + 5 platform classics re-authored fresh (HackerRank: Top Earners, Weather-Station median, New Companies; DataLemur: Amazon ratings histogram, Spotify top-5) under custom 95xx ids.
+- Authored 7 new content files (sql-more-joins/agg-a/agg-b/dates/pivots/strings/platform): full deep-dives with original statements, 3-para breakdowns, 3-rung ladders, traps, commented SQLite solutions, walkthroughs; per-problem schemas + seeds; 627 is a write problem (UPDATE + CASE, writeVerify), 1270 a recursive CTE, 9502 a window-function median.
+- registry-sql-more.ts (28 rows, lists "SQL 50+"); registry.ts expand() now flags sql via /^SQL/ on the lists string; content.ts aggregates the new files into LC_SQL_CONTENT.
+- sections.ts: +5 sections (extra-joins 4, extra-aggregation 10, extra-dates 3, extra-pivots 3, platform-classics 5); Strings & CASE grows to 9 — 12 sections, 78 slugs.
+- Verifier round: 78/78 authored; 4 initial failures fixed (UNION ORDER BY needs ordinal ORDER BY 1 in SQLite; 3 single-row/write problems re-declared order:"any"); snapshot regenerated at 78 problems, ALL checks pass.
+- lc-sections-check.ts: 12 sections cover 78 registry SQL rows 1:1, all deep-dived + gradeable — ALL PASS.
+- Module 12 blurb updated (78 problems, 12 sections).
+- QA: tsc clean on touched files, eslint clean; E2E browser (fresh session, skip tour): sidebar "12 LeetCode SQL 50+ 0/78", module card shows 12 section rows with per-section counts, CTA "Open the SQL 50 — 0/78 solved"; view renders 12 section groups + jump chips; solved npv-queries in the sandbox (LEFT JOIN + IFNULL) → "correct" → Solved → counters 1/78 and 1/4 live; console clean. Screenshots in download/.
+
+Stage Summary:
+- Band now: 78 SQL problems, 12 sections, all engine-verified and auto-graded (49 Easy / 7 Medium among the new ones — totals: Easy 10 XP, Medium 20 XP).
+- Still out of scope by user decision: algorithm problems (browse-only in the Big 300 registry).
+- Remaining headroom if the user wants "literally all": premium LeetCode Database problems (~40) and further platform banks — the pipeline (registry row → dive file → verify → sections) makes each future batch mechanical.
