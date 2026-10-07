@@ -27,6 +27,7 @@ import {
   LC_TOPICS,
   lcByCompany,
 } from "@/lib/leetcode/registry";
+import { SQL50_SECTIONS, sqlSectionOf } from "@/lib/leetcode/sections";
 import { lcDeepDive, lcSqlDive } from "@/lib/leetcode/content/content";
 import { lcSqlExpected } from "@/lib/leetcode/content/sql-expected";
 import { gradeSqlResult, type SqlCheckOutcome } from "@/lib/leetcode/sql-check";
@@ -42,6 +43,9 @@ import { cn } from "@/lib/utils";
 
 type Tab = "problems" | "companies";
 type Diff = "All" | LcDifficulty;
+
+/** Section lookup by display title — for group headers + anchors. */
+const SECTION_BY_TITLE = new Map(SQL50_SECTIONS.map((s) => [s.title, s]));
 
 const DIFF_DOT: Record<LcDifficulty, string> = {
   Easy: "bg-emerald-400",
@@ -572,11 +576,11 @@ function CompaniesIndex({ onPick, solvedOf }: { onPick: (company: string) => voi
 /* Main view                                                           */
 /* ------------------------------------------------------------------ */
 
-export function LeetCodeView() {
+export function LeetCodeView({ initialTopic }: { initialTopic?: string }) {
   const xpEvents = useProgress((s) => s.xpEvents);
   const [sel, setSel] = useState<string | null>(null);
   const [tab, setTab] = useState<Tab>("problems");
-  const [topic, setTopic] = useState<string>("All");
+  const [topic, setTopic] = useState<string>(initialTopic ?? "All");
   const [diff, setDiff] = useState<Diff>("All");
   const [company, setCompany] = useState<string>("All");
   const [deepOnly, setDeepOnly] = useState(false);
@@ -602,21 +606,27 @@ export function LeetCodeView() {
   const deepTotal = LC_DEEP_SLUGS.size;
   const solvedTotal = solvedSlugs.size;
 
-  // Group the filtered list by display topic.
+  // Group the filtered list by display topic — SQL rows group by their SQL 50
+  // section (the study plan's seven skill families, in canonical order), not
+  // one flat "SQL" pile.
   const groups = useMemo(() => {
-    const keyOf = (p: LcRef) => (p.sql ? "SQL" : p.topics[0]);
+    const keyOf = (p: LcRef) => (p.sql ? (sqlSectionOf(p.slug)?.title ?? "SQL") : p.topics[0]);
     const m = new Map<string, LcRef[]>();
     for (const p of filtered) {
       const k = keyOf(p);
       if (!m.has(k)) m.set(k, []);
       m.get(k)!.push(p);
     }
-    // canonical topic order, unknown topics last (alphabetical)
-    return [...m.entries()].sort((a, b) => {
-      const ia = LC_TOPICS.indexOf(a[0]);
-      const ib = LC_TOPICS.indexOf(b[0]);
-      return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib) || a[0].localeCompare(b[0]);
-    });
+    // canonical order: regular topics first, then SQL sections in study-plan
+    // order, then anything unknown (alphabetical)
+    const rank = (k: string) => {
+      const t = LC_TOPICS.indexOf(k);
+      if (t !== -1) return t;
+      const s = SQL50_SECTIONS.findIndex((sec) => sec.title === k);
+      if (s !== -1) return 100 + s;
+      return 999;
+    };
+    return [...m.entries()].sort((a, b) => rank(a[0]) - rank(b[0]) || a[0].localeCompare(b[0]));
   }, [filtered]);
 
   const selected = sel ? LC_ALL.find((p) => p.slug === sel) ?? null : null;
@@ -724,6 +734,28 @@ export function LeetCodeView() {
                 </nav>
               </div>
 
+              {/* SQL 50 section jump-strip — visible while the SQL filter is on */}
+              {topic === "SQL" && (
+                <nav
+                  aria-label="SQL 50 sections"
+                  className="thin-scrollbar flex gap-1.5 overflow-x-auto pb-1"
+                >
+                  {SQL50_SECTIONS.map((s) => (
+                    <Btn
+                      key={s.id}
+                      variant="pill"
+                      onClick={() =>
+                        document
+                          .getElementById(`sql-sec-${s.id}`)
+                          ?.scrollIntoView({ behavior: "smooth", block: "start" })
+                      }
+                    >
+                      {s.title} · {s.slugs.length}
+                    </Btn>
+                  ))}
+                </nav>
+              )}
+
               {/* grouped list */}
               {groups.length === 0 ? (
                 <Panel pad={4}>
@@ -732,14 +764,18 @@ export function LeetCodeView() {
               ) : (
                 groups.map(([t, rows]) => {
                   const done = rows.filter((p) => solvedSlugs.has(p.slug)).length;
+                  const sec = SECTION_BY_TITLE.get(t);
                   return (
-                    <section key={t} className="space-y-2">
+                    <section key={t} className="scroll-mt-16 space-y-2" id={sec ? `sql-sec-${sec.id}` : undefined}>
                       <div className="flex items-center justify-between px-1">
                         <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-400">{t}</h2>
                         <span className="tnum font-mono text-[10px] text-zinc-600">
                           {done}/{rows.length} solved
                         </span>
                       </div>
+                      {sec && (
+                        <p className="px-1 text-[11px] leading-relaxed text-zinc-500">{sec.blurb}</p>
+                      )}
                       <div className="overflow-hidden rounded-xl border border-black/10 dark:border-white/10">
                         {rows.map((p, i) => (
                           <ProblemRow

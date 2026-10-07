@@ -250,6 +250,15 @@ export const MODULES: Array<ModuleInfo & { lessons: Lesson[] }> = [
       "The discipline beyond CREATE INDEX: the storefront's zero-index secret, reading EXPLAIN QUERY PLAN as a contract (SCAN vs SEARCH vs the temp b-trees), selectivity arithmetic and the planner's verdict, composite design (equality first, range last), covering indexes, the index-hostile patterns — functions on columns, leading wildcards, cross-column ORs — and the measure → design → verify loop with the write cost owned knowingly.",
     lessons: [lesson64],
   },
+  {
+    id: "leetcode-sql50",
+    num: 12,
+    title: "LeetCode SQL 50+",
+    level: "Interview",
+    blurb:
+      "The interview band — no lessons, just the 50 SQL problems from the study list, divided into 7 skill sections. Every problem ships a full deep-dive, a seeded schema and live auto-grading in the sandbox; progress here is counted from solved problems, not lessons.",
+    lessons: [],
+  },
 ];
 
 /** Back-compat alias for consumers that only know Module 1. */

@@ -58,6 +58,7 @@ import { CsvSandbox } from "./csv-sandbox";
 import { QueryNotebook } from "./query-notebook";
 import { OnboardingTour, TourReplayButton, markTourSeen, tourSeen } from "./onboarding-tour";
 import { BackupError, buildBackup, downloadBackup, importBackupFile } from "@/lib/port";
+import { SQL50_SECTIONS, SQL50_SLUGS } from "@/lib/leetcode/sections";
 
 type View =
   | { kind: "overview" }
@@ -87,7 +88,7 @@ type View =
   | { kind: "mentor" }
   | { kind: "sandbox" }
   | { kind: "notebook" }
-  | { kind: "lc" };
+  | { kind: "lc"; topic?: string };
 
 // Drift guard — the registry in tools.ts must name every non-lesson view
 // (and vice versa). A compile error here means: update tools.ts too.
@@ -219,18 +220,26 @@ function OverviewModuleCard({
   open,
   onToggle,
   onOpenLesson,
+  onOpenLc,
   xpEvents,
 }: {
   module: (typeof MODULES)[number];
   open: boolean;
   onToggle: () => void;
   onOpenLesson: (id: string) => void;
+  onOpenLc: () => void;
   xpEvents: Record<string, unknown>;
 }) {
-  const mDone = module.lessons.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
+  // Module 12 (LeetCode SQL 50+) is a lesson-less band — its progress lives
+  // in the lc:<slug> XP ledger, not lesson:<id> completions.
+  const isLcBand = module.lessons.length === 0;
+  const mTotal = isLcBand ? SQL50_SLUGS.length : module.lessons.length;
+  const mDone = isLcBand
+    ? SQL50_SLUGS.filter((s) => xpEvents[`lc:${s}`] !== undefined).length
+    : module.lessons.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
   const nextInModule = module.lessons.find((l) => xpEvents[`lesson:${l.id}`] === undefined);
-  const complete = mDone === module.lessons.length;
-  const pct = Math.round((mDone / module.lessons.length) * 100);
+  const complete = mDone === mTotal;
+  const pct = Math.round((mDone / mTotal) * 100);
 
   return (
     <div className="sheen card-hover overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950">
@@ -259,7 +268,7 @@ function OverviewModuleCard({
             </span>
           </span>
           <span className="tnum shrink-0 font-mono text-[10px] text-zinc-500">
-            {mDone}/{module.lessons.length}
+            {mDone}/{mTotal}
           </span>
           <ChevronDown
             className={cn(
@@ -278,36 +287,66 @@ function OverviewModuleCard({
       <Collapse open={open}>
         <div className="border-t border-zinc-800/60 px-3 pb-3 pt-2">
           <p className="px-1 pb-2 text-[11px] leading-relaxed text-zinc-500">{module.blurb}</p>
-          <div className="flex flex-col gap-0.5">
-            {module.lessons.map((l) => {
-              const done = xpEvents[`lesson:${l.id}`] !== undefined;
-              return (
-                <button
-                  key={l.id}
-                  onClick={() => onOpenLesson(l.id)}
-                  className="group/lesson flex items-center gap-2.5 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-zinc-900"
-                >
-                  <span
-                    className={cn(
-                      "flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full text-[9px] font-medium",
-                      done ? "bg-emerald-400 text-[var(--brand-ink)]" : "border border-zinc-700 text-zinc-500",
-                    )}
-                  >
-                    {done ? <Check className="h-2.5 w-2.5" /> : l.num}
-                  </span>
-                  <span className={cn("min-w-0 flex-1 truncate text-xs", done ? "text-zinc-500" : "text-zinc-300")}>
-                    {l.title}
-                  </span>
-                  <span className="tnum shrink-0 font-mono text-[10px] text-zinc-600">{l.minutes}m</span>
-                  <ArrowRight className="h-3 w-3 shrink-0 text-zinc-700 opacity-0 transition-opacity group-hover/lesson:opacity-100" />
-                </button>
-              );
-            })}
-          </div>
-          {nextInModule && (
-            <Btn variant="soft" className="mt-2 w-full" onClick={() => onOpenLesson(nextInModule.id)}>
-              {mDone > 0 ? "Continue module" : "Start module"} — lesson {nextInModule.num} →
-            </Btn>
+          {isLcBand ? (
+            <>
+              <div className="flex flex-col gap-0.5">
+                {SQL50_SECTIONS.map((sec) => {
+                  const sDone = sec.slugs.filter((s) => xpEvents[`lc:${s}`] !== undefined).length;
+                  return (
+                    <button
+                      key={sec.id}
+                      onClick={onOpenLc}
+                      className="group/lesson flex items-center gap-2.5 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-zinc-900"
+                    >
+                      <span className="tnum flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full border border-zinc-700 font-mono text-[8px] text-zinc-500">
+                        {sec.slugs.length}
+                      </span>
+                      <span className="min-w-0 flex-1 truncate text-xs text-zinc-300">{sec.title}</span>
+                      <span className="tnum shrink-0 font-mono text-[10px] text-zinc-600">
+                        {sDone}/{sec.slugs.length}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+              <Btn variant="soft" className="mt-2 w-full" onClick={onOpenLc}>
+                Open the SQL 50 — {mDone}/{mTotal} solved →
+              </Btn>
+            </>
+          ) : (
+            <>
+              <div className="flex flex-col gap-0.5">
+                {module.lessons.map((l) => {
+                  const done = xpEvents[`lesson:${l.id}`] !== undefined;
+                  return (
+                    <button
+                      key={l.id}
+                      onClick={() => onOpenLesson(l.id)}
+                      className="group/lesson flex items-center gap-2.5 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-zinc-900"
+                    >
+                      <span
+                        className={cn(
+                          "flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded-full text-[9px] font-medium",
+                          done ? "bg-emerald-400 text-[var(--brand-ink)]" : "border border-zinc-700 text-zinc-500",
+                        )}
+                      >
+                        {done ? <Check className="h-2.5 w-2.5" /> : l.num}
+                      </span>
+                      <span className={cn("min-w-0 flex-1 truncate text-xs", done ? "text-zinc-500" : "text-zinc-300")}>
+                        {l.title}
+                      </span>
+                      <span className="tnum shrink-0 font-mono text-[10px] text-zinc-600">{l.minutes}m</span>
+                      <ArrowRight className="h-3 w-3 shrink-0 text-zinc-700 opacity-0 transition-opacity group-hover/lesson:opacity-100" />
+                    </button>
+                  );
+                })}
+              </div>
+              {nextInModule && (
+                <Btn variant="soft" className="mt-2 w-full" onClick={() => onOpenLesson(nextInModule.id)}>
+                  {mDone > 0 ? "Continue module" : "Start module"} — lesson {nextInModule.num} →
+                </Btn>
+              )}
+            </>
           )}
         </div>
       </Collapse>
@@ -348,12 +387,14 @@ function Overview({
   streak,
   ctx,
   openLesson,
+  onOpenLc,
 }: {
   xp: number;
   level: ReturnType<typeof levelFor>;
   streak: number;
   ctx: ReturnType<typeof useBadgeWatcher>["ctx"];
   openLesson: (id: string) => void;
+  onOpenLc: () => void;
 }) {
   const xpEvents = useProgress((s) => s.xpEvents);
   const badgesMap = useProgress((s) => s.badges);
@@ -433,6 +474,7 @@ function Overview({
               open={openOverview.has(m.num)}
               onToggle={() => toggleOverviewModule(m.num)}
               onOpenLesson={openLesson}
+              onOpenLc={onOpenLc}
               xpEvents={xpEvents}
             />
           ))}
@@ -479,6 +521,7 @@ function ViewBody({
   openPerf,
   openExam,
   openDrills,
+  openLc,
   exitExam,
   xp,
   level,
@@ -490,6 +533,7 @@ function ViewBody({
   openPerf: (sql: string) => void;
   openExam: (moduleId: string) => void;
   openDrills: () => void;
+  openLc: (topic?: string) => void;
   exitExam: () => void;
   xp: number;
   level: ReturnType<typeof levelFor>;
@@ -552,9 +596,9 @@ function ViewBody({
     case "notebook":
       return <QueryNotebook />;
     case "lc":
-      return <LeetCodeView />;
+      return <LeetCodeView key={view.topic ?? "lc"} initialTopic={view.topic} />;
     default:
-      return <Overview xp={xp} level={level} streak={streak} ctx={ctx} openLesson={openLesson} />;
+      return <Overview xp={xp} level={level} streak={streak} ctx={ctx} openLesson={openLesson} onOpenLc={() => openLc("SQL")} />;
   }
 }
 
@@ -667,6 +711,7 @@ export function LearnApp() {
   const openPerf = (sql: string) => setView({ kind: "perf", sql, tab: "workbench" });
   const openExam = (moduleId: string) => setView({ kind: "exam", moduleId });
   const openDrills = () => setView({ kind: "drills" });
+  const openLc = (topic?: string) => setView({ kind: "lc", topic });
   const exitExam = () => setView({ kind: "overview" });
   const doneCount = LESSONS.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
   const totalProblems = LESSONS.reduce((a, l) => a + l.problems.length, 0);
@@ -738,7 +783,13 @@ export function LearnApp() {
               <RankBlock xp={xp} level={level} streak={streak} />
             </div>
             {MODULES.map((m) => {
-              const mDone = m.lessons.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
+              // Module 12 (LeetCode SQL 50+) is a lesson-less band — progress
+              // is read from the lc:<slug> XP ledger instead of lessons.
+              const isLcBand = m.lessons.length === 0;
+              const mTotal = isLcBand ? SQL50_SLUGS.length : m.lessons.length;
+              const mDone = isLcBand
+                ? SQL50_SLUGS.filter((s) => xpEvents[`lc:${s}`] !== undefined).length
+                : m.lessons.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
               const open = openModules.has(m.num);
               const isContinue = m.num === continueModuleNum;
               const containsActive = view.kind === "lesson" && moduleOf(view.id)?.num === m.num;
@@ -753,7 +804,7 @@ export function LearnApp() {
                     <span
                       className={cn(
                         "flex h-6 w-6 shrink-0 items-center justify-center rounded-md border font-mono text-[10px] font-medium transition-colors",
-                        mDone === m.lessons.length
+                        mDone === mTotal
                           ? "border-emerald-400/50 bg-emerald-400/10 text-emerald-300"
                           : containsActive
                             ? "border-emerald-400/40 text-emerald-300"
@@ -762,13 +813,13 @@ export function LearnApp() {
                               : "border-zinc-800 text-zinc-500",
                       )}
                     >
-                      {mDone === m.lessons.length ? <Check className="h-3 w-3" /> : m.num}
+                      {mDone === mTotal ? <Check className="h-3 w-3" /> : m.num}
                     </span>
                     <span className="min-w-0 flex-1">
                       <span
                         className={cn(
                           "block truncate text-xs font-medium",
-                          containsActive || mDone === m.lessons.length ? "text-zinc-100" : "text-zinc-300 group-hover:text-zinc-100",
+                          containsActive || mDone === mTotal ? "text-zinc-100" : "text-zinc-300 group-hover:text-zinc-100",
                         )}
                       >
                         {m.title}
@@ -776,12 +827,12 @@ export function LearnApp() {
                       <span className="mt-1.5 block h-0.5 overflow-hidden rounded-full bg-zinc-800">
                         <span
                           className="block h-full rounded-full bg-emerald-400/80 transition-[width] duration-500 ease-out"
-                          style={{ width: `${(mDone / m.lessons.length) * 100}%` }}
+                          style={{ width: `${(mDone / mTotal) * 100}%` }}
                         />
                       </span>
                     </span>
                     <span className="tnum shrink-0 font-mono text-[10px] text-zinc-600">
-                      {mDone}/{m.lessons.length}
+                      {mDone}/{mTotal}
                     </span>
                     <ChevronDown
                       className={cn(
@@ -791,9 +842,53 @@ export function LearnApp() {
                     />
                   </button>
 
-                  {/* lessons — revealed on expand, connected by a tree rail */}
+                  {/* lessons — revealed on expand, connected by a tree rail.
+                      The lesson-less LC band shows its seven SQL sections + an
+                      open CTA instead of lessons/exam rows. */}
                   <Collapse open={open}>
-                    <div className="ml-[16px] mt-0.5 flex flex-col gap-0.5 border-l border-zinc-800/70 pl-2 pb-2">
+                    {isLcBand ? (
+                      <div className="ml-[16px] mt-0.5 flex flex-col gap-0.5 border-l border-zinc-800/70 pl-2 pb-2">
+                        {SQL50_SECTIONS.map((sec) => {
+                          const sDone = sec.slugs.filter((s) => xpEvents[`lc:${s}`] !== undefined).length;
+                          return (
+                            <button
+                              key={sec.id}
+                              onClick={() => setView({ kind: "lc", topic: "SQL" })}
+                              className={cn(
+                                "relative flex items-start gap-2.5 rounded-md px-2.5 py-1.5 text-left transition-colors",
+                                view.kind === "lc" ? "bg-emerald-400/[0.09]" : "hover:bg-zinc-900",
+                              )}
+                            >
+                              <span className="tnum mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-zinc-700 font-mono text-[9px] text-zinc-500">
+                                {sec.slugs.length}
+                              </span>
+                              <span className="min-w-0">
+                                <span className="block truncate text-xs font-medium text-zinc-300">{sec.title}</span>
+                                <span className="block text-[10px] text-zinc-600">{sec.blurb.split(" — ")[0]}</span>
+                              </span>
+                              <span className="tnum ml-auto shrink-0 font-mono text-[10px] text-zinc-600">
+                                {sDone}/{sec.slugs.length}
+                              </span>
+                            </button>
+                          );
+                        })}
+                        <button
+                          onClick={() => setView({ kind: "lc", topic: "SQL" })}
+                          className={cn(
+                            "relative flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left transition-colors",
+                            view.kind === "lc" ? "bg-emerald-400/[0.09]" : "hover:bg-zinc-900",
+                          )}
+                        >
+                          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-400 text-[var(--brand-ink)]">
+                            <ArrowRight className="h-2.5 w-2.5" />
+                          </span>
+                          <span className="block truncate text-xs font-medium text-emerald-300">
+                            Open the SQL 50 — {mDone}/{mTotal} solved
+                          </span>
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="ml-[16px] mt-0.5 flex flex-col gap-0.5 border-l border-zinc-800/70 pl-2 pb-2">
                       {m.lessons.map((l) => {
                         const done = xpEvents[`lesson:${l.id}`] !== undefined;
                         const active = view.kind === "lesson" && view.id === l.id;
@@ -874,7 +969,8 @@ export function LearnApp() {
                           </span>
                         </button>
                       )}
-                    </div>
+                      </div>
+                    )}
                   </Collapse>
                 </nav>
               );
@@ -994,7 +1090,7 @@ export function LearnApp() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.22, ease: "easeOut" }}
         >
-          <ViewBody view={view} openLesson={openLesson} openPerf={openPerf} openExam={openExam} openDrills={openDrills} exitExam={exitExam} xp={xp} level={level} streak={streak} ctx={ctx} />
+          <ViewBody view={view} openLesson={openLesson} openPerf={openPerf} openExam={openExam} openDrills={openDrills} openLc={openLc} exitExam={exitExam} xp={xp} level={level} streak={streak} ctx={ctx} />
         </motion.div>
       </main>
     </div>
