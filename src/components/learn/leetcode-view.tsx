@@ -32,7 +32,7 @@ import {
   LC_TOPICS,
   lcByCompany,
 } from "@/lib/leetcode/registry";
-import { SQL50_SECTIONS, sqlSectionOf } from "@/lib/leetcode/sections";
+import { SQL_ALL_SECTIONS, sqlSectionOf } from "@/lib/leetcode/sections";
 import { lcDeepDive, lcSqlDive } from "@/lib/leetcode/content/content";
 import { lcSqlExpected } from "@/lib/leetcode/content/sql-expected";
 import { gradeSqlResult, type SqlCheckOutcome } from "@/lib/leetcode/sql-check";
@@ -63,7 +63,7 @@ type Tab = "problems" | "companies";
 type Diff = "All" | LcDifficulty;
 
 /** Section lookup by display title — for group headers + anchors. */
-const SECTION_BY_TITLE = new Map(SQL50_SECTIONS.map((s) => [s.title, s]));
+const SECTION_BY_TITLE = new Map(SQL_ALL_SECTIONS.map((s) => [s.title, s]));
 
 const DIFF_DOT: Record<LcDifficulty, string> = {
   Easy: "bg-emerald-400",
@@ -698,7 +698,7 @@ export function LeetCodeView({ initialTopic }: { initialTopic?: string }) {
     const rank = (k: string) => {
       const t = LC_TOPICS.indexOf(k);
       if (t !== -1) return t;
-      const s = SQL50_SECTIONS.findIndex((sec) => sec.title === k);
+      const s = SQL_ALL_SECTIONS.findIndex((sec) => sec.title === k);
       if (s !== -1) return 100 + s;
       return 999;
     };
@@ -716,8 +716,9 @@ export function LeetCodeView({ initialTopic }: { initialTopic?: string }) {
         </div>
         <p className="text-sm text-neutral-500 dark:text-neutral-400">
           Every classic interview problem, deduped from NeetCode 150 (superset of Blind 75), Top Interview 150,
-          the SQL 50 and the famous extras. Deep-dives walk the full path — problem → breakdown → logic
-          building → engine-verified Python solution — with the companies that ask each one.
+          the SQL 50 and the famous extras — plus an original Data &amp; Finance track for product-analytics
+          and finance-role prep. Deep-dives walk the full path — problem → breakdown → logic building →
+          sandbox-graded SQL or engine-verified Python — with the companies that ask each one.
         </p>
       </header>
 
@@ -816,7 +817,7 @@ export function LeetCodeView({ initialTopic }: { initialTopic?: string }) {
                   aria-label="SQL 50 sections"
                   className="thin-scrollbar flex gap-1.5 overflow-x-auto pb-1"
                 >
-                  {SQL50_SECTIONS.map((s) => (
+                  {SQL_ALL_SECTIONS.map((s) => (
                     <Btn
                       key={s.id}
                       variant="pill"

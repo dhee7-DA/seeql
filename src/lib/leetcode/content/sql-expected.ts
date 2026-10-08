@@ -8836,6 +8836,574 @@ export const SQL_EXPECTED: LcSqlExpected[] = [
       ]
     ],
     "order": "exact"
+  },
+  {
+    "slug": "dau-wau-stickiness",
+    "columns": [
+      "day",
+      "dau",
+      "wau7",
+      "stickiness_pct"
+    ],
+    "rows": [
+      [
+        "2026-09-01",
+        4,
+        4,
+        100
+      ],
+      [
+        "2026-09-02",
+        5,
+        6,
+        83.3
+      ],
+      [
+        "2026-09-03",
+        5,
+        7,
+        71.4
+      ],
+      [
+        "2026-09-04",
+        3,
+        7,
+        42.9
+      ],
+      [
+        "2026-09-05",
+        3,
+        8,
+        37.5
+      ],
+      [
+        "2026-09-06",
+        5,
+        9,
+        55.6
+      ],
+      [
+        "2026-09-07",
+        5,
+        10,
+        50
+      ],
+      [
+        "2026-09-08",
+        2,
+        10,
+        20
+      ],
+      [
+        "2026-09-09",
+        5,
+        10,
+        50
+      ],
+      [
+        "2026-09-10",
+        4,
+        10,
+        40
+      ],
+      [
+        "2026-09-11",
+        3,
+        10,
+        30
+      ],
+      [
+        "2026-09-12",
+        3,
+        9,
+        33.3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "growth-accounting",
+    "columns": [
+      "month",
+      "new_users",
+      "retained",
+      "resurrected",
+      "churned"
+    ],
+    "rows": [
+      [
+        "2026-05",
+        6,
+        0,
+        0,
+        0
+      ],
+      [
+        "2026-06",
+        3,
+        4,
+        0,
+        2
+      ],
+      [
+        "2026-07",
+        1,
+        4,
+        1,
+        3
+      ],
+      [
+        "2026-08",
+        1,
+        4,
+        2,
+        2
+      ],
+      [
+        "2026-09",
+        1,
+        6,
+        0,
+        1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "funnel-step-conversion",
+    "columns": [
+      "step",
+      "users",
+      "pct_of_visitors",
+      "pct_from_prev"
+    ],
+    "rows": [
+      [
+        "visit",
+        12,
+        100,
+        100
+      ],
+      [
+        "signup",
+        8,
+        66.7,
+        66.7
+      ],
+      [
+        "cart",
+        5,
+        41.7,
+        62.5
+      ],
+      [
+        "purchase",
+        3,
+        25,
+        60
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "cohort-retention-matrix",
+    "columns": [
+      "signup_month",
+      "cohort",
+      "m0_pct",
+      "m1_pct",
+      "m2_pct"
+    ],
+    "rows": [
+      [
+        "2026-06",
+        4,
+        75,
+        50,
+        50
+      ],
+      [
+        "2026-07",
+        2,
+        100,
+        100,
+        100
+      ],
+      [
+        "2026-08",
+        4,
+        100,
+        0,
+        0
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "sessionize-events",
+    "columns": [
+      "user_id",
+      "sessions",
+      "avg_min"
+    ],
+    "rows": [
+      [
+        201,
+        3,
+        19.3
+      ],
+      [
+        202,
+        1,
+        0
+      ],
+      [
+        203,
+        2,
+        29.5
+      ],
+      [
+        204,
+        2,
+        40
+      ],
+      [
+        205,
+        4,
+        25
+      ],
+      [
+        206,
+        2,
+        26.5
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "ab-test-conversion-lift",
+    "columns": [
+      "variant",
+      "users",
+      "conversions",
+      "conv_pct",
+      "lift_pp"
+    ],
+    "rows": [
+      [
+        "control",
+        20,
+        11,
+        55,
+        20
+      ],
+      [
+        "treatment",
+        20,
+        15,
+        75,
+        20
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "loan-amortization-schedule",
+    "columns": [
+      "loan_id",
+      "month_no",
+      "interest_cents",
+      "principal_cents",
+      "ending_balance_cents"
+    ],
+    "rows": [
+      [
+        1,
+        1,
+        600,
+        9730,
+        110270
+      ],
+      [
+        1,
+        2,
+        551,
+        9779,
+        100491
+      ],
+      [
+        1,
+        3,
+        502,
+        9828,
+        90663
+      ],
+      [
+        1,
+        4,
+        453,
+        9877,
+        80786
+      ],
+      [
+        1,
+        5,
+        404,
+        9926,
+        70860
+      ],
+      [
+        1,
+        6,
+        354,
+        9976,
+        60884
+      ],
+      [
+        1,
+        7,
+        304,
+        10026,
+        50858
+      ],
+      [
+        1,
+        8,
+        254,
+        10076,
+        40782
+      ],
+      [
+        1,
+        9,
+        204,
+        10126,
+        30656
+      ],
+      [
+        1,
+        10,
+        153,
+        10177,
+        20479
+      ],
+      [
+        1,
+        11,
+        102,
+        10228,
+        10251
+      ],
+      [
+        1,
+        12,
+        51,
+        10251,
+        0
+      ],
+      [
+        2,
+        1,
+        0,
+        8334,
+        41666
+      ],
+      [
+        2,
+        2,
+        0,
+        8334,
+        33332
+      ],
+      [
+        2,
+        3,
+        0,
+        8334,
+        24998
+      ],
+      [
+        2,
+        4,
+        0,
+        8334,
+        16664
+      ],
+      [
+        2,
+        5,
+        0,
+        8334,
+        8330
+      ],
+      [
+        2,
+        6,
+        0,
+        8330,
+        0
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "delinquency-buckets",
+    "columns": [
+      "loan_id",
+      "dpd_bucket"
+    ],
+    "rows": [
+      [
+        1,
+        "current"
+      ],
+      [
+        2,
+        "current"
+      ],
+      [
+        3,
+        "1-30"
+      ],
+      [
+        4,
+        "31-60"
+      ],
+      [
+        5,
+        "61-90"
+      ],
+      [
+        6,
+        "90+"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "portfolio-weights",
+    "columns": [
+      "account_id",
+      "symbol",
+      "market_value_c",
+      "weight_pct"
+    ],
+    "rows": [
+      [
+        1,
+        "AAPL",
+        790000,
+        49.62
+      ],
+      [
+        1,
+        "MSFT",
+        498000,
+        31.28
+      ],
+      [
+        1,
+        "NVDA",
+        304000,
+        19.1
+      ],
+      [
+        2,
+        "XOM",
+        2178000,
+        40.9
+      ],
+      [
+        2,
+        "JNJ",
+        1407600,
+        26.43
+      ],
+      [
+        2,
+        "PG",
+        955500,
+        17.94
+      ],
+      [
+        2,
+        "TSCO",
+        784500,
+        14.73
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "settlement-fails-aging",
+    "columns": [
+      "fail_bucket",
+      "fails",
+      "fail_value_c"
+    ],
+    "rows": [
+      [
+        "1-3 days",
+        1,
+        525000
+      ],
+      [
+        "4-7 days",
+        1,
+        500000
+      ],
+      [
+        "8+ days",
+        1,
+        300000
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "realized-pnl-average-cost",
+    "columns": [
+      "account_id",
+      "symbol",
+      "realized_pnl_c"
+    ],
+    "rows": [
+      [
+        101,
+        "AAPL",
+        13200
+      ],
+      [
+        102,
+        "MSFT",
+        -2139
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "gl-reconciliation",
+    "columns": [
+      "account",
+      "ledger_net_c",
+      "system_balance_c",
+      "delta_c"
+    ],
+    "rows": [
+      [
+        "cash_payroll",
+        22000,
+        20000,
+        2000
+      ],
+      [
+        "accounts_payable",
+        -8300,
+        -8000,
+        -300
+      ]
+    ],
+    "order": "exact"
   }
 ];
 

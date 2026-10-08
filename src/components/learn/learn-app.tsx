@@ -58,7 +58,7 @@ import { CsvSandbox } from "./csv-sandbox";
 import { QueryNotebook } from "./query-notebook";
 import { OnboardingTour, TourReplayButton, markTourSeen, tourSeen } from "./onboarding-tour";
 import { BackupError, buildBackup, downloadBackup, importBackupFile } from "@/lib/port";
-import { SQL50_SECTIONS, SQL50_SLUGS } from "@/lib/leetcode/sections";
+import { BAND_BY_MODULE } from "@/lib/leetcode/sections";
 
 type View =
   | { kind: "overview" }
@@ -230,12 +230,13 @@ function OverviewModuleCard({
   onOpenLc: () => void;
   xpEvents: Record<string, unknown>;
 }) {
-  // Module 12 (LeetCode SQL 50+) is a lesson-less band — its progress lives
-  // in the lc:<slug> XP ledger, not lesson:<id> completions.
+  // Lesson-less band modules (12 LeetCode SQL 50+, 13 Data & Finance SQL) —
+  // progress lives in the lc:<slug> XP ledger, counted per module's own slugs.
+  const band = BAND_BY_MODULE[module.id];
   const isLcBand = module.lessons.length === 0;
-  const mTotal = isLcBand ? SQL50_SLUGS.length : module.lessons.length;
-  const mDone = isLcBand
-    ? SQL50_SLUGS.filter((s) => xpEvents[`lc:${s}`] !== undefined).length
+  const mTotal = band ? band.slugs.length : module.lessons.length;
+  const mDone = band
+    ? band.slugs.filter((s) => xpEvents[`lc:${s}`] !== undefined).length
     : module.lessons.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
   const nextInModule = module.lessons.find((l) => xpEvents[`lesson:${l.id}`] === undefined);
   const complete = mDone === mTotal;
@@ -290,7 +291,7 @@ function OverviewModuleCard({
           {isLcBand ? (
             <>
               <div className="flex flex-col gap-0.5">
-                {SQL50_SECTIONS.map((sec) => {
+                {(band?.sections ?? []).map((sec) => {
                   const sDone = sec.slugs.filter((s) => xpEvents[`lc:${s}`] !== undefined).length;
                   return (
                     <button
@@ -310,7 +311,7 @@ function OverviewModuleCard({
                 })}
               </div>
               <Btn variant="soft" className="mt-2 w-full" onClick={onOpenLc}>
-                Open the SQL 50 — {mDone}/{mTotal} solved →
+                Open the band — {mDone}/{mTotal} solved →
               </Btn>
             </>
           ) : (
@@ -783,12 +784,13 @@ export function LearnApp() {
               <RankBlock xp={xp} level={level} streak={streak} />
             </div>
             {MODULES.map((m) => {
-              // Module 12 (LeetCode SQL 50+) is a lesson-less band — progress
-              // is read from the lc:<slug> XP ledger instead of lessons.
+              // Lesson-less band modules (12 + 13) read progress from the
+              // lc:<slug> XP ledger, counted per module's own slugs.
+              const band = BAND_BY_MODULE[m.id];
               const isLcBand = m.lessons.length === 0;
-              const mTotal = isLcBand ? SQL50_SLUGS.length : m.lessons.length;
-              const mDone = isLcBand
-                ? SQL50_SLUGS.filter((s) => xpEvents[`lc:${s}`] !== undefined).length
+              const mTotal = band ? band.slugs.length : m.lessons.length;
+              const mDone = band
+                ? band.slugs.filter((s) => xpEvents[`lc:${s}`] !== undefined).length
                 : m.lessons.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
               const open = openModules.has(m.num);
               const isContinue = m.num === continueModuleNum;
@@ -848,7 +850,7 @@ export function LearnApp() {
                   <Collapse open={open}>
                     {isLcBand ? (
                       <div className="ml-[16px] mt-0.5 flex flex-col gap-0.5 border-l border-zinc-800/70 pl-2 pb-2">
-                        {SQL50_SECTIONS.map((sec) => {
+                        {(band?.sections ?? []).map((sec) => {
                           const sDone = sec.slugs.filter((s) => xpEvents[`lc:${s}`] !== undefined).length;
                           return (
                             <button
@@ -883,7 +885,7 @@ export function LearnApp() {
                             <ArrowRight className="h-2.5 w-2.5" />
                           </span>
                           <span className="block truncate text-xs font-medium text-emerald-300">
-                            Open the SQL 50 — {mDone}/{mTotal} solved
+                            Open the band — {mDone}/{mTotal} solved
                           </span>
                         </button>
                       </div>

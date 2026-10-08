@@ -834,11 +834,60 @@ export const SQL50_SECTIONS: LcSection[] = [
 /** Flat solving order — every SQL 50 problem exactly once. */
 export const SQL50_SLUGS: string[] = SQL50_SECTIONS.flatMap((s) => s.slugs);
 
+/* ------------------------------------------------------------------ */
+/* Data & Finance track (Module 13) — original domain problems,        */
+/* authored for data & finance interview prep. ids 8001-8012.          */
+/* ------------------------------------------------------------------ */
+
+export const DATAFIN_SECTIONS: LcSection[] = [
+  {
+    id: "df-product-analytics",
+    title: "Product Analytics",
+    blurb:
+      "The product-analytics stack — DAU against the trailing-7 WAU it lives inside, growth accounting's four levers (new, retained, resurrected, churned), funnel reach in both readings, signup-cohort retention at offsets M0-M2, gap-threshold sessionization and an A/B readout whose lift rides both rows.",
+    slugs: [
+      "dau-wau-stickiness",
+      "growth-accounting",
+      "funnel-step-conversion",
+      "cohort-retention-matrix",
+      "sessionize-events",
+      "ab-test-conversion-lift",
+    ],
+  },
+  {
+    id: "df-finance-core",
+    title: "Finance Core",
+    blurb:
+      "The lender's and the trader's arithmetic — a recursive amortization walk that closes to the cent, DPD buckets ruled by the oldest unpaid installment, window-share portfolio weights, T+2 settlement fails aged by lateness, average-cost realized P&L that a sell must not move, and a ledger-vs-sub-ledger reconciliation that surfaces both break signs.",
+    slugs: [
+      "loan-amortization-schedule",
+      "delinquency-buckets",
+      "portfolio-weights",
+      "settlement-fails-aging",
+      "realized-pnl-average-cost",
+      "gl-reconciliation",
+    ],
+  },
+];
+
+/** Flat solving order for the Data & Finance track. */
+export const DATAFIN_SLUGS: string[] = DATAFIN_SECTIONS.flatMap((s) => s.slugs);
+
+/** Every sandbox-graded SQL section in canonical order (SQL 50+ band first). */
+export const SQL_ALL_SECTIONS: LcSection[] = [...SQL50_SECTIONS, ...DATAFIN_SECTIONS];
+
 const SECTION_BY_SLUG = new Map<string, LcSection>(
-  SQL50_SECTIONS.flatMap((s) => s.slugs.map((slug) => [slug, s] as const)),
+  SQL_ALL_SECTIONS.flatMap((s) => s.slugs.map((slug) => [slug, s] as const)),
 );
 
-/** The section a SQL 50 problem belongs to (undefined for non-SQL rows). */
+/** The section a SQL problem belongs to (undefined for non-SQL rows). */
 export function sqlSectionOf(slug: string): LcSection | undefined {
   return SECTION_BY_SLUG.get(slug);
 }
+
+/** Lesson-less band module id → its sections + slugs, so each band module
+ *  counts (and displays) its own progress instead of sharing Module 12's. */
+export const BAND_BY_MODULE: Record<string, { sections: LcSection[]; slugs: string[] }> = {
+  "leetcode-sql50": { sections: SQL50_SECTIONS, slugs: SQL50_SLUGS },
+  "data-finance-sql": { sections: DATAFIN_SECTIONS, slugs: DATAFIN_SLUGS },
+};

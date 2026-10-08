@@ -259,6 +259,15 @@ export const MODULES: Array<ModuleInfo & { lessons: Lesson[] }> = [
       "The interview band — no lessons, just SQL problems: the official SQL 50 study list, the free Database extras, three tiers of platform classics from HackerRank and DataLemur, and the LeetCode premium tier — 335 problems across 59 skill sections. Every problem ships a full deep-dive, a seeded schema and live auto-grading in the sandbox; progress here is counted from solved problems, not lessons.",
     lessons: [],
   },
+  {
+    id: "data-finance-sql",
+    num: 13,
+    title: "Data & Finance SQL",
+    level: "Interview",
+    blurb:
+      "The domain band — original problems authored for data & finance interview prep. Product Analytics: DAU/WAU stickiness, growth accounting's four levers, funnel conversion, cohort retention matrices, gap-threshold sessionization and A/B lift. Finance Core: recursive loan amortization, delinquency buckets, portfolio weights, T+2 settlement fails, average-cost realized P&L and ledger reconciliation — 12 problems across 2 skill sections, each with a full deep-dive, seeded schema and live auto-grading.",
+    lessons: [],
+  },
 ];
 
 /** Back-compat alias for consumers that only know Module 1. */

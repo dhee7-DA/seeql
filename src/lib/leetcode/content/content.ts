@@ -71,6 +71,10 @@ import { SQL_FREE_WINDOWS } from "./sql-free-windows";
 import { SQL_FREE_PARSING } from "./sql-free-parsing";
 import { SQL_FREE_ORG } from "./sql-free-org";
 import { SQL_FREE_MARKET } from "./sql-free-market";
+import { SQL_DF_METRICS } from "./sql-df-metrics";
+import { SQL_DF_COHORTS } from "./sql-df-cohorts";
+import { SQL_DF_MONEY } from "./sql-df-money";
+import { SQL_DF_LEDGER } from "./sql-df-ledger";
 
 export const LC_CONTENT: LcDeepDive[] = [
   ...ARRAYS,
@@ -146,6 +150,10 @@ export const LC_SQL_CONTENT: LcSqlDive[] = [
   ...SQL_FREE_PARSING,
   ...SQL_FREE_ORG,
   ...SQL_FREE_MARKET,
+  ...SQL_DF_METRICS,
+  ...SQL_DF_COHORTS,
+  ...SQL_DF_MONEY,
+  ...SQL_DF_LEDGER,
 ];
 
 const bySlug = new Map(LC_CONTENT.map((d) => [d.slug, d]));
