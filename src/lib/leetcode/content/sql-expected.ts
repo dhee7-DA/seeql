@@ -6339,6 +6339,961 @@ export const SQL_EXPECTED: LcSqlExpected[] = [
       ]
     ],
     "order": "exact"
+  },
+  {
+    "slug": "immediate-food-delivery-iii",
+    "columns": [
+      "month",
+      "immediate_pct"
+    ],
+    "rows": [
+      [
+        "2024-01",
+        50
+      ],
+      [
+        "2024-02",
+        33.33
+      ],
+      [
+        "2024-03",
+        100
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "bikes-last-time-used",
+    "columns": [
+      "bike_id",
+      "last_used"
+    ],
+    "rows": [
+      [
+        1,
+        "2024-05-06 09:55"
+      ],
+      [
+        2,
+        "2024-05-03 11:25"
+      ],
+      [
+        3,
+        "2024-05-03 11:25"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-active-users",
+    "columns": [
+      "username",
+      "active_days"
+    ],
+    "rows": [
+      [
+        "cleo",
+        6
+      ],
+      [
+        "ada",
+        5
+      ],
+      [
+        "esme",
+        5
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "count-occurrences-in-text",
+    "columns": [
+      "matching_notes"
+    ],
+    "rows": [
+      [
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "total-traveled-distance",
+    "columns": [
+      "user_id",
+      "name",
+      "total_distance"
+    ],
+    "rows": [
+      [
+        1,
+        "Ada",
+        125
+      ],
+      [
+        2,
+        "Bram",
+        0
+      ],
+      [
+        3,
+        "Cleo",
+        0
+      ],
+      [
+        4,
+        "Dov",
+        42
+      ],
+      [
+        5,
+        "Esme",
+        7
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "calculate-orders-within-each-interval",
+    "columns": [
+      "interval",
+      "order_count",
+      "total_quantity"
+    ],
+    "rows": [
+      [
+        "small",
+        4,
+        8
+      ],
+      [
+        "medium",
+        3,
+        15
+      ],
+      [
+        "large",
+        3,
+        26
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "highest-salaries-difference",
+    "columns": [
+      "salary_gap"
+    ],
+    "rows": [
+      [
+        8000
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "rolling-average-steps",
+    "columns": [
+      "user_id",
+      "walk_date",
+      "rolling_avg"
+    ],
+    "rows": [
+      [
+        201,
+        "2024-06-01",
+        6000
+      ],
+      [
+        201,
+        "2024-06-02",
+        6500
+      ],
+      [
+        201,
+        "2024-06-03",
+        7500
+      ],
+      [
+        201,
+        "2024-06-04",
+        8500
+      ],
+      [
+        202,
+        "2024-06-01",
+        4000
+      ],
+      [
+        202,
+        "2024-06-02",
+        4500
+      ],
+      [
+        202,
+        "2024-06-04",
+        7000
+      ],
+      [
+        202,
+        "2024-06-05",
+        7500
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "market-analysis-iii",
+    "columns": [
+      "item_id"
+    ],
+    "rows": [
+      [
+        501
+      ],
+      [
+        504
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-expensive-cities",
+    "columns": [
+      "city",
+      "city_avg"
+    ],
+    "rows": [
+      [
+        "Alder",
+        210
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "class-performance",
+    "columns": [
+      "student_id",
+      "name",
+      "subject",
+      "score",
+      "subject_avg"
+    ],
+    "rows": [
+      [
+        41,
+        "Anya",
+        "Algebra",
+        55,
+        79
+      ],
+      [
+        41,
+        "Anya",
+        "Biology",
+        60,
+        76
+      ],
+      [
+        44,
+        "Dov",
+        "Algebra",
+        76,
+        79
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "loan-types",
+    "columns": [
+      "user_id",
+      "name",
+      "loan_type"
+    ],
+    "rows": [
+      [
+        601,
+        "Ana",
+        "both"
+      ],
+      [
+        602,
+        "Bram",
+        "personal"
+      ],
+      [
+        603,
+        "Cleo",
+        "business"
+      ],
+      [
+        604,
+        "Dov",
+        "none"
+      ],
+      [
+        605,
+        "Ana",
+        "personal"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "consecutive-transactions-with-increasing-amounts",
+    "columns": [
+      "customer_id",
+      "best_run_start"
+    ],
+    "rows": [
+      [
+        1,
+        1
+      ],
+      [
+        3,
+        10
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "popularity-percentage",
+    "columns": [
+      "user_id",
+      "popularity_pct"
+    ],
+    "rows": [
+      [
+        1,
+        16.67
+      ],
+      [
+        2,
+        16.67
+      ],
+      [
+        3,
+        16.67
+      ],
+      [
+        4,
+        33.33
+      ],
+      [
+        5,
+        16.67
+      ],
+      [
+        6,
+        0
+      ],
+      [
+        7,
+        0
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "customers-with-maximum-number-of-transactions-on-consecutive-days",
+    "columns": [
+      "customer_id",
+      "longest_streak"
+    ],
+    "rows": [
+      [
+        1,
+        4
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "maximize-items",
+    "columns": [
+      "warehouse_id",
+      "item_type",
+      "max_items"
+    ],
+    "rows": [
+      [
+        1,
+        "W",
+        500
+      ],
+      [
+        2,
+        "W",
+        374
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-peak-calling-hours-for-each-city",
+    "columns": [
+      "city",
+      "peak_hour",
+      "peak_calls"
+    ],
+    "rows": [
+      [
+        "Hillcrest",
+        13,
+        2
+      ],
+      [
+        "Lakeside",
+        9,
+        2
+      ],
+      [
+        "Riverton",
+        8,
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "symmetric-coordinates",
+    "columns": [
+      "axis_a",
+      "axis_b"
+    ],
+    "rows": [
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        4
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "flight-occupancy-and-waitlist-analysis",
+    "columns": [
+      "flight_no",
+      "booked",
+      "status",
+      "waitlisted"
+    ],
+    "rows": [
+      [
+        "FJ201",
+        3,
+        "full",
+        0
+      ],
+      [
+        "FJ204",
+        6,
+        "full",
+        2
+      ],
+      [
+        "FJ210",
+        2,
+        "seats available",
+        0
+      ],
+      [
+        "FJ215",
+        0,
+        "seats available",
+        0
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "classifying-triangles-by-lengths",
+    "columns": [
+      "shape_id",
+      "classification"
+    ],
+    "rows": [
+      [
+        1,
+        "equilateral"
+      ],
+      [
+        2,
+        "isosceles"
+      ],
+      [
+        3,
+        "isosceles"
+      ],
+      [
+        4,
+        "scalene"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "binary-tree-nodes",
+    "columns": [
+      "node_id",
+      "label",
+      "node_type"
+    ],
+    "rows": [
+      [
+        1,
+        "trunk",
+        "root"
+      ],
+      [
+        2,
+        "oak",
+        "inner"
+      ],
+      [
+        3,
+        "acorn",
+        "leaf"
+      ],
+      [
+        4,
+        "fern",
+        "leaf"
+      ],
+      [
+        5,
+        "pine",
+        "inner"
+      ],
+      [
+        6,
+        "moss",
+        "leaf"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "snaps-analysis",
+    "columns": [
+      "age_bucket",
+      "sending_users",
+      "opening_users"
+    ],
+    "rows": [
+      [
+        18,
+        0,
+        1
+      ],
+      [
+        21,
+        1,
+        1
+      ],
+      [
+        25,
+        1,
+        1
+      ],
+      [
+        29,
+        2,
+        1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "manager-of-the-largest-department",
+    "columns": [
+      "dept_id",
+      "dept_name",
+      "manager_id",
+      "manager_name"
+    ],
+    "rows": [
+      [
+        1,
+        "Harbor Operations",
+        11,
+        "Ada"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "calculate-compressed-mean",
+    "columns": [
+      "mean_wage"
+    ],
+    "rows": [
+      [
+        377.27
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-third-transaction",
+    "columns": [
+      "user_id",
+      "third_amount",
+      "third_time"
+    ],
+    "rows": [
+      [
+        1,
+        80,
+        "2024-05-03"
+      ],
+      [
+        2,
+        30,
+        "2024-05-03"
+      ],
+      [
+        4,
+        25,
+        "2024-05-02"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "top-three-wineries",
+    "columns": [
+      "region",
+      "winery_name",
+      "rating",
+      "rnk"
+    ],
+    "rows": [
+      [
+        "Douro",
+        "Quinta Alma",
+        88,
+        1
+      ],
+      [
+        "Loire",
+        "Chateau Lumiere",
+        90,
+        1
+      ],
+      [
+        "Loire",
+        "Clos Rene",
+        80,
+        2
+      ],
+      [
+        "Mosel",
+        "Weingut Falk",
+        90,
+        1
+      ],
+      [
+        "Mosel",
+        "Kupfer Grube",
+        85,
+        2
+      ],
+      [
+        "Mosel",
+        "Stern Lay",
+        85,
+        2
+      ],
+      [
+        "Rioja",
+        "Bodega Luna",
+        90,
+        1
+      ],
+      [
+        "Rioja",
+        "Bodega Sol",
+        90,
+        1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "top-percentile-fraud",
+    "columns": [
+      "state",
+      "tx_id",
+      "amount"
+    ],
+    "rows": [
+      [
+        "Nevada",
+        1,
+        200
+      ],
+      [
+        "Oregon",
+        21,
+        100
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "employees-project-allocation",
+    "columns": [
+      "project_id",
+      "employee_id",
+      "role",
+      "best_skill",
+      "years"
+    ],
+    "rows": [
+      [
+        1,
+        101,
+        "lead",
+        "Python",
+        6
+      ],
+      [
+        1,
+        102,
+        "builder",
+        "Go",
+        5
+      ],
+      [
+        1,
+        103,
+        "builder",
+        "SQL",
+        4
+      ],
+      [
+        2,
+        103,
+        "reviewer",
+        "SQL",
+        4
+      ],
+      [
+        2,
+        104,
+        "lead",
+        "Scala",
+        7
+      ],
+      [
+        2,
+        105,
+        "builder",
+        "Python",
+        9
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-candidates-for-data-scientist-position",
+    "columns": [
+      "candidate_id"
+    ],
+    "rows": [
+      [
+        1
+      ],
+      [
+        4
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "friday-purchases-i",
+    "columns": [
+      "friday_date",
+      "item_name",
+      "total_spent"
+    ],
+    "rows": [
+      [
+        "2024-06-07",
+        "Kettle",
+        10
+      ],
+      [
+        "2024-06-07",
+        "Mug",
+        4
+      ],
+      [
+        "2024-06-14",
+        "Kettle",
+        12
+      ],
+      [
+        "2024-06-14",
+        "Mug",
+        10
+      ],
+      [
+        "2024-06-21",
+        "Bowl",
+        8
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "friday-purchases-ii",
+    "columns": [
+      "friday_date",
+      "item_name",
+      "total_spent",
+      "pct_of_day"
+    ],
+    "rows": [
+      [
+        "2024-06-07",
+        "Umbrella",
+        30,
+        60
+      ],
+      [
+        "2024-06-07",
+        "Anorak",
+        20,
+        40
+      ],
+      [
+        "2024-06-14",
+        "Bowl",
+        10,
+        33.33
+      ],
+      [
+        "2024-06-14",
+        "Cup",
+        10,
+        33.33
+      ],
+      [
+        "2024-06-14",
+        "Plate",
+        10,
+        33.33
+      ],
+      [
+        "2024-06-21",
+        "Tray",
+        15,
+        100
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "viewers-turned-streamers",
+    "columns": [
+      "user_id",
+      "turn_count",
+      "first_stream"
+    ],
+    "rows": [
+      [
+        301,
+        2,
+        "2024-06-05 21:00"
+      ],
+      [
+        304,
+        1,
+        "2024-06-08 22:00"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "pizza-toppings-cost-analysis",
+    "columns": [
+      "ingredient_name",
+      "cost",
+      "monthly_cost",
+      "extra"
+    ],
+    "rows": [
+      [
+        "Mozzarella",
+        "5.50",
+        165,
+        20.63
+      ],
+      [
+        "Burrata",
+        "5.00",
+        150,
+        18.75
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "friends-with-no-mutual-friends",
+    "columns": [
+      "user1_id",
+      "user2_id"
+    ],
+    "rows": [
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        4
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-all-unique-email-domains",
+    "columns": [
+      "domain",
+      "account_count"
+    ],
+    "rows": [
+      [
+        "gmail.com",
+        2
+      ],
+      [
+        "outlook.com",
+        1
+      ],
+      [
+        "proton.me",
+        1
+      ],
+      [
+        "zai.io",
+        1
+      ]
+    ],
+    "order": "exact"
   }
 ];
 

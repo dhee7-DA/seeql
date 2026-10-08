@@ -598,6 +598,89 @@ export const SQL50_SECTIONS: LcSection[] = [
       "count-artist-occurrences-on-spotify-ranking-list",
     ],
   },
+  {
+    id: "premium4-flow",
+    title: "Premium Delivery & Flow",
+    blurb:
+      "Throughput reporting — same-day delivery ratios under two competing definitions, last-use timestamps that ignore trip ids, 30-day window actives under COUNT(DISTINCT) days, whole-word text matching with punctuation padding, cancelled-trip distance sums and CASE-bucketed quantity ladders.",
+    slugs: [
+      "immediate-food-delivery-iii",
+      "bikes-last-time-used",
+      "find-active-users",
+      "count-occurrences-in-text",
+      "total-traveled-distance",
+      "calculate-orders-within-each-interval",
+    ],
+  },
+  {
+    id: "premium4-money",
+    title: "Premium Money & Market",
+    blurb:
+      "Money mechanics — top-two gaps that survive duplicate maxima, calendar-true rolling averages over julianday RANGE frames, year-on-year anti-joins, group-versus-global price gates with exact-boundary cities, below-subject-average report cards and loan portfolios that keep 'none' customers.",
+    slugs: [
+      "highest-salaries-difference",
+      "rolling-average-steps",
+      "market-analysis-iii",
+      "find-expensive-cities",
+      "class-performance",
+      "loan-types",
+    ],
+  },
+  {
+    id: "premium4-streaks",
+    title: "Premium Consecutive Engines",
+    blurb:
+      "The four hard engines — strictly-rising transaction runs via LAG-flag islands, two-hop popularity percentages that exclude existing friends, calendar-day purchase streaks fused through julianday arithmetic, and capacity floor-division argmax across item types.",
+    slugs: [
+      "consecutive-transactions-with-increasing-amounts",
+      "popularity-percentage",
+      "customers-with-maximum-number-of-transactions-on-consecutive-days",
+      "maximize-items",
+    ],
+  },
+  {
+    id: "premium4-city",
+    title: "Premium City & Shapes",
+    blurb:
+      "Spatial and structural reads — peak calling hours under a smallest-hour tie rule, mirrored coordinate pairs deduped across four-row families, flight occupancy with zero-floor waitlists, triangle equality classes, tree role labels over NULL parents and age-bucket sender/open tallies.",
+    slugs: [
+      "find-peak-calling-hours-for-each-city",
+      "symmetric-coordinates",
+      "flight-occupancy-and-waitlist-analysis",
+      "classifying-triangles-by-lengths",
+      "binary-tree-nodes",
+      "snaps-analysis",
+    ],
+  },
+  {
+    id: "premium4-boards",
+    title: "Premium Boards & Percentiles",
+    blurb:
+      "Leaderboard machinery — largest-department managers over empty groups, weighted means against naive AVG deception, third-transaction picks through timestamp ties, RANK-based top-two regions that keep ties, PERCENT_RANK fraud gates and composite argmax with alphabetical tie-breaks.",
+    slugs: [
+      "manager-of-the-largest-department",
+      "calculate-compressed-mean",
+      "find-third-transaction",
+      "top-three-wineries",
+      "top-percentile-fraud",
+      "employees-project-allocation",
+      "find-candidates-for-data-scientist-position",
+    ],
+  },
+  {
+    id: "premium4-social",
+    title: "Premium Social & Weekly",
+    blurb:
+      "Social cadence — Friday-only purchase pivots, share-of-day percentages that must survive repeating thirds, viewers-turned-streamers gated by a strict first-watch boundary, above-average topping costs cast from TEXT prices, mutual-friend-free pairs and domain tallies off INSTR extraction.",
+    slugs: [
+      "friday-purchases-i",
+      "friday-purchases-ii",
+      "viewers-turned-streamers",
+      "pizza-toppings-cost-analysis",
+      "friends-with-no-mutual-friends",
+      "find-all-unique-email-domains",
+    ],
+  },
 ];
 
 /** Flat solving order — every SQL 50 problem exactly once. */
