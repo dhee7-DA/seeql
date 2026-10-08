@@ -3999,3 +3999,21 @@ Stage Summary:
 - BATCH 9 LANDS: 310 sandbox-graded problems across 54 skill sections. The PREMIUM TIER IS COMPLETE: all 216 live premium Database problems authored (175 facet = 216 minus the 41 premium-flagged rows already counted elsewhere? — no: the facet counts premium-list rows built = 35+35+35+35+35 = 175; the remaining 41 of the 216 live premium are covered among earlier batches' free-listed rows and pre-batch built set; the by-ID reconciliation is authoritative and now shows ZERO premium remaining).
 - Remaining for batch 10: the 25 free new-gen problems (LC ids 177-3611 region) → then EVERY one of the 310 live LeetCode Database problems is in the sandbox.
 - Batch-9 XP total 805 (6E×10 + 18M×20 + 11H×35); all 35 order:"exact" reads.
+
+---
+Task ID: 70-a
+Agent: main
+Task: Batch 10 lead wiring + verification — the FINAL 25 free Database problems (LC ids 177-3611), 310 → 335 problems / 54 → 59 sections. COMPLETES the entire live LeetCode Database tag.
+
+Work Log:
+- Dispatched 5 parallel content authors (70-b1 classics, b2 windows, b3 parsing, b4 org, b5 market — 5 problems each, deliberately under the deadline ceiling after batches 7-9's Hard-file timeouts). ALL FIVE returned ALL GREEN first-try: b1 5/5 (287 assertions + 16 trap probes, one hand-derivation self-caught via probe), b2 5/5 (378 assertions + 14 probes), b3 5/5 (1054 assertions), b4 5/5 (340 assertions + 16 probes), b5 5/5 (166 assertions + 10 probes). Artifacts retained as scripts/tmp-70bN-check.ts. Authors kept the itemized-traps-over-stated-counts precedent where specs self-contradicted, each logged in their final report.
+- Lead wiring: registry-sql-final-free.ts (25 free 7-tuple rows, list "SQL 50+", company facet "LeetCode" for the new-gen 3xxx ids), registry.ts LC_ALL +SQL_FINAL_FREE, content.ts +5 imports/spreads, sections.ts +5 sections (Free Classics 5, Free Windows & Growth 5, Free Format Validation 5, Free Org & Recovery 5, Free Pairs & Seasons 5), Module 12 blurb → 335 problems / 59 sections.
+- Verification: lc-sql-verify → 335/335 authored, ALL engine checks pass, sql-expected.ts regenerated at 335. lc-sections-check → 59 sections, 335 rows 1:1, ALL PASS. tsc: zero mentions of batch-10 or lead files; eslint clean on all touched lead files.
+- Live API grading smoke test (scripts/tmp-70-grade.ts): find-invalid-ip-addresses, analyze-organization-hierarchy, first-letter-capitalization-ii, human-traffic-of-stadium, find-category-recommendation-pairs — all ok:true. SMOKE PASS.
+- DEFINITIVE LIVE RECONCILIATION (scripts/lc-live-remain-by-id.ts, after adding the missing SQL_PREMIUM5 static import — its earlier "35 remaining" read was a script omission, not missing content): LIVE Database tag 310 (94 free / 216 premium) → built & live (by id) = 94 + 216 = 310, 20 slug renames, 0 stale → TRUE REMAINING: 0 free + 0 premium. EVERY live LeetCode Database problem is built.
+- E2E: fresh session → Skip tour → sidebar "12 LeetCode SQL 50+ 0/335" → module card lists all 59 sections incl. the 5 new free rows → CTA "Open the SQL 50 — 0/335 solved" → band shows "LeetCode Premium (175)" facet + 5 new jump chips → jumped to Free Classics → opened 584 → typed the IS NULL OR <> 2 solution → "CORRECT — YOUR RESULT MATCHES THE EXPECTED ANSWER" · 27.7 ms → sidebar 1/335. Mobile 390×844 overflowX false; console clean. Screenshots: download/lc335-free-solved.png, download/lc335-free-mobile.png. agent-browser closed.
+
+Stage Summary:
+- THE EXPANSION IS DONE: 335 sandbox-graded problems across 59 skill sections = 310/310 live LeetCode Database problems (94 free + 216 premium, all ID-matched against the live tag today) + 25 platform re-authors (HackerRank/DataLemur classics, 95xx ids). Every problem ships an original deep-dive, seeded schema and live auto-grading.
+- Session arc (this expansion): started at 205 problems / 36 sections → batches 7 (35 premium), 8 (35 premium), 9 (35 premium), 10 (25 free) → 335 / 59. XP added: 745 + 730 + 805 + 515 = 2795. Total band XP now ≈ 4660.
+- The user's "315 total incl. premium" figure reconciled: the live tag holds 310 today (it drifts as LC adds/removes problems; the by-ID pipeline in scripts/lc-live-remain-by-id.ts re-verifies any time).

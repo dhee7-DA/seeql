@@ -764,6 +764,71 @@ export const SQL50_SECTIONS: LcSection[] = [
       "first-letter-capitalization",
     ],
   },
+  {
+    id: "free-classics",
+    title: "Free Classics",
+    blurb:
+      "The canonical interview traps — second-highest salaries through duplicate tops and OFFSET-into-NULL, three-in-a-row values that never touch, strictly-rising temperatures past a flat day, NULL-referee shoppers the bare inequality loses and OR-gated nations that just miss both thresholds.",
+    slugs: [
+      "nth-highest-salary",
+      "consecutive-numbers",
+      "rising-temperature",
+      "find-customer-referee",
+      "big-countries",
+    ],
+  },
+  {
+    id: "free-windows",
+    title: "Free Windows & Growth",
+    blurb:
+      "Window foundations — stadium runs of three hundred-plus days kept whole by island keys, relational division over a full product catalog, seven-day cafe averages that only exist once the frame is full, attempt-one-versus-two score gains and all-up review ladders gated at three reviews.",
+    slugs: [
+      "human-traffic-of-stadium",
+      "customers-who-bought-all-products",
+      "restaurant-growth",
+      "find-students-who-improved",
+      "find-consistently-improving-employees",
+    ],
+  },
+  {
+    id: "free-formats",
+    title: "Free Format Validation",
+    blurb:
+      "Text gauntlets — stop-word capitalizers folded inside a recursive walk, emails judged by one-@ and tld arms, IPv4 octets split and range-checked against leading zeros, whole-string GLOB serial shapes and DNA signatures counted through two REPLACE literals.",
+    slugs: [
+      "first-letter-capitalization-ii",
+      "find-valid-emails",
+      "find-invalid-ip-addresses",
+      "find-products-with-valid-serial-numbers",
+      "dna-pattern-recognition",
+    ],
+  },
+  {
+    id: "free-org",
+    title: "Free Org & Recovery",
+    blurb:
+      "State machines over people — recursive subtree tallies that count others but pay themselves, trial-to-paid conversions measured in julianday days, strictly-overlapping rota pairs that spare the touch, recoveries anchored to the first positive and libraries where unreturned loans meet total copies.",
+    slugs: [
+      "analyze-organization-hierarchy",
+      "analyze-subscription-conversion",
+      "find-overbooked-employees",
+      "find-covid-recovery-patients",
+      "find-books-with-no-available-copies",
+    ],
+  },
+  {
+    id: "free-pairs",
+    title: "Free Pairs & Seasons",
+    blurb:
+      "Co-occurrence arithmetic — basket pairs canonicalized under distinct-basket counts, category affinities reported in BOTH orders past a two-buyer gate, season buckets that wrap December into winter, id-parity payment splits and drivers judged by log_id order rather than insertion.",
+    slugs: [
+      "find-product-recommendation-pairs",
+      "find-category-recommendation-pairs",
+      "seasonal-sales-analysis",
+      "odd-and-even-transactions",
+      "find-drivers-with-improved-fuel-efficiency",
+    ],
+  },
 ];
 
 /** Flat solving order — every SQL 50 problem exactly once. */

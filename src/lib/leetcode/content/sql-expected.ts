@@ -8221,6 +8221,621 @@ export const SQL_EXPECTED: LcSqlExpected[] = [
       ]
     ],
     "order": "exact"
+  },
+  {
+    "slug": "nth-highest-salary",
+    "columns": [
+      "second_highest"
+    ],
+    "rows": [
+      [
+        89000
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "consecutive-numbers",
+    "columns": [
+      "value"
+    ],
+    "rows": [
+      [
+        5
+      ],
+      [
+        7
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "rising-temperature",
+    "columns": [
+      "day"
+    ],
+    "rows": [
+      [
+        2
+      ],
+      [
+        4
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-customer-referee",
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Bo"
+      ],
+      [
+        "Cy"
+      ],
+      [
+        "Elif"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "big-countries",
+    "columns": [
+      "name",
+      "continent",
+      "area",
+      "population"
+    ],
+    "rows": [
+      [
+        "Aurelia",
+        "Meridia",
+        3500000,
+        12000000
+      ],
+      [
+        "Borealia",
+        "Boreala",
+        900000,
+        41000000
+      ],
+      [
+        "Cindralon",
+        "Equatoria",
+        9900000,
+        130000000
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "human-traffic-of-stadium",
+    "columns": [
+      "day",
+      "visitors"
+    ],
+    "rows": [
+      [
+        1,
+        120
+      ],
+      [
+        2,
+        115
+      ],
+      [
+        3,
+        130
+      ],
+      [
+        10,
+        145
+      ],
+      [
+        11,
+        100
+      ],
+      [
+        12,
+        118
+      ],
+      [
+        14,
+        160
+      ],
+      [
+        15,
+        155
+      ],
+      [
+        16,
+        150
+      ],
+      [
+        17,
+        170
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "customers-who-bought-all-products",
+    "columns": [
+      "shopper_id"
+    ],
+    "rows": [
+      [
+        1
+      ],
+      [
+        2
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "restaurant-growth",
+    "columns": [
+      "visited_on",
+      "rolling_avg"
+    ],
+    "rows": [
+      [
+        "2024-06-07",
+        117.14
+      ],
+      [
+        "2024-06-08",
+        125.71
+      ],
+      [
+        "2024-06-09",
+        123.57
+      ],
+      [
+        "2024-06-10",
+        120
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-students-who-improved",
+    "columns": [
+      "student_id",
+      "subject",
+      "first_score",
+      "second_score"
+    ],
+    "rows": [
+      [
+        1,
+        "Math",
+        70,
+        85
+      ],
+      [
+        1,
+        "Physics",
+        80,
+        92
+      ],
+      [
+        2,
+        "Math",
+        65,
+        78
+      ],
+      [
+        4,
+        "Physics",
+        59,
+        60
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-consistently-improving-employees",
+    "columns": [
+      "employee_id",
+      "review_count"
+    ],
+    "rows": [
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "first-letter-capitalization-ii",
+    "columns": [
+      "entry_id",
+      "transformed"
+    ],
+    "rows": [
+      [
+        1,
+        "The Lord of the Rings"
+      ],
+      [
+        2,
+        "And"
+      ],
+      [
+        3,
+        "Salt Water Air at"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-valid-emails",
+    "columns": [
+      "email"
+    ],
+    "rows": [
+      [
+        "ada@mail.com"
+      ],
+      [
+        "esme@a.b.com"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-invalid-ip-addresses",
+    "columns": [
+      "ip"
+    ],
+    "rows": [
+      [
+        "1.02.3.4"
+      ],
+      [
+        "1.2.3"
+      ],
+      [
+        "1.2.3.4.5"
+      ],
+      [
+        "256.1.1.1"
+      ],
+      [
+        "abc.def.1.2"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-products-with-valid-serial-numbers",
+    "columns": [
+      "item_id"
+    ],
+    "rows": [
+      [
+        1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "dna-pattern-recognition",
+    "columns": [
+      "sample_id",
+      "match_count"
+    ],
+    "rows": [
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        3,
+        2
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "analyze-organization-hierarchy",
+    "columns": [
+      "staff_id",
+      "name",
+      "level",
+      "subordinates",
+      "subtree_salary"
+    ],
+    "rows": [
+      [
+        1,
+        "Nadia",
+        1,
+        6,
+        820
+      ],
+      [
+        2,
+        "Omar",
+        2,
+        2,
+        310
+      ],
+      [
+        3,
+        "Priya",
+        2,
+        2,
+        310
+      ],
+      [
+        4,
+        "Quinn",
+        3,
+        1,
+        160
+      ],
+      [
+        5,
+        "Rhea",
+        3,
+        0,
+        90
+      ],
+      [
+        6,
+        "Sami",
+        3,
+        0,
+        80
+      ],
+      [
+        7,
+        "Tara",
+        4,
+        0,
+        60
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "analyze-subscription-conversion",
+    "columns": [
+      "user_id",
+      "trial_start",
+      "converted",
+      "days_to_convert"
+    ],
+    "rows": [
+      [
+        201,
+        "2024-01-10",
+        "yes",
+        3
+      ],
+      [
+        202,
+        "2024-02-05",
+        "yes",
+        0
+      ],
+      [
+        203,
+        "2024-03-28",
+        "yes",
+        33
+      ],
+      [
+        204,
+        "2024-01-15",
+        "no",
+        null
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-overbooked-employees",
+    "columns": [
+      "employee_id"
+    ],
+    "rows": [
+      [
+        31
+      ],
+      [
+        33
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-covid-recovery-patients",
+    "columns": [
+      "patient_id",
+      "positive_date",
+      "recovery_date"
+    ],
+    "rows": [
+      [
+        41,
+        "2024-01-05",
+        "2024-01-12"
+      ],
+      [
+        42,
+        "2024-02-10",
+        "2024-02-20"
+      ],
+      [
+        43,
+        "2024-03-03",
+        "2024-03-15"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-books-with-no-available-copies",
+    "columns": [
+      "book_id",
+      "title"
+    ],
+    "rows": [
+      [
+        61,
+        "Chain of Office"
+      ],
+      [
+        62,
+        "Quiet Ledger"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-product-recommendation-pairs",
+    "columns": [
+      "product1",
+      "product2",
+      "pairs_count"
+    ],
+    "rows": [
+      [
+        1,
+        2,
+        4
+      ],
+      [
+        3,
+        4,
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-category-recommendation-pairs",
+    "columns": [
+      "category1",
+      "category2",
+      "affinity"
+    ],
+    "rows": [
+      [
+        "bakery",
+        "dairy",
+        3
+      ],
+      [
+        "dairy",
+        "bakery",
+        3
+      ],
+      [
+        "meat",
+        "produce",
+        2
+      ],
+      [
+        "produce",
+        "meat",
+        2
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "seasonal-sales-analysis",
+    "columns": [
+      "season",
+      "total_sales",
+      "sale_count"
+    ],
+    "rows": [
+      [
+        "summer",
+        900,
+        1
+      ],
+      [
+        "spring",
+        700,
+        3
+      ],
+      [
+        "winter",
+        700,
+        2
+      ],
+      [
+        "autumn",
+        430,
+        4
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "odd-and-even-transactions",
+    "columns": [
+      "parity",
+      "total_amount",
+      "tx_count"
+    ],
+    "rows": [
+      [
+        "even",
+        303,
+        3
+      ],
+      [
+        "odd",
+        330,
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-drivers-with-improved-fuel-efficiency",
+    "columns": [
+      "driver_id",
+      "first_efficiency",
+      "latest_efficiency",
+      "gain"
+    ],
+    "rows": [
+      [
+        11,
+        7.5,
+        8,
+        0.5
+      ],
+      [
+        12,
+        9,
+        9.1,
+        0.1
+      ]
+    ],
+    "order": "exact"
   }
 ];
 

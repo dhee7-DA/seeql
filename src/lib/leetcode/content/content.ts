@@ -66,6 +66,11 @@ import { SQL_PREMIUM5_GRAPH } from "./sql-premium5-graph";
 import { SQL_PREMIUM5_PASSES } from "./sql-premium5-passes";
 import { SQL_PREMIUM5_MARKET } from "./sql-premium5-market";
 import { SQL_PREMIUM5_FINALS } from "./sql-premium5-finales";
+import { SQL_FREE_CLASSICS } from "./sql-free-classics";
+import { SQL_FREE_WINDOWS } from "./sql-free-windows";
+import { SQL_FREE_PARSING } from "./sql-free-parsing";
+import { SQL_FREE_ORG } from "./sql-free-org";
+import { SQL_FREE_MARKET } from "./sql-free-market";
 
 export const LC_CONTENT: LcDeepDive[] = [
   ...ARRAYS,
@@ -136,6 +141,11 @@ export const LC_SQL_CONTENT: LcSqlDive[] = [
   ...SQL_PREMIUM5_PASSES,
   ...SQL_PREMIUM5_MARKET,
   ...SQL_PREMIUM5_FINALS,
+  ...SQL_FREE_CLASSICS,
+  ...SQL_FREE_WINDOWS,
+  ...SQL_FREE_PARSING,
+  ...SQL_FREE_ORG,
+  ...SQL_FREE_MARKET,
 ];
 
 const bySlug = new Map(LC_CONTENT.map((d) => [d.slug, d]));
