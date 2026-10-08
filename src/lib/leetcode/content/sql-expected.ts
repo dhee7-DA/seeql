@@ -4554,6 +4554,854 @@ export const SQL_EXPECTED: LcSqlExpected[] = [
       ]
     ],
     "order": "exact"
+  },
+  {
+    "slug": "game-play-analysis-ii",
+    "columns": [
+      "player_id",
+      "device_id",
+      "first_login"
+    ],
+    "rows": [
+      [
+        1001,
+        2,
+        "2024-03-01"
+      ],
+      [
+        1002,
+        1,
+        "2024-03-02"
+      ],
+      [
+        1003,
+        2,
+        "2024-03-04"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "game-play-analysis-iii",
+    "columns": [
+      "player_id",
+      "event_date",
+      "games_played_so_far"
+    ],
+    "rows": [
+      [
+        2001,
+        "2024-03-01",
+        5
+      ],
+      [
+        2001,
+        "2024-03-04",
+        7
+      ],
+      [
+        2001,
+        "2024-03-09",
+        11
+      ],
+      [
+        2002,
+        "2024-03-02",
+        3
+      ],
+      [
+        2002,
+        "2024-03-03",
+        9
+      ],
+      [
+        2003,
+        "2024-03-05",
+        7
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "winning-candidate",
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Ada"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-cumulative-salary-of-an-employee",
+    "columns": [
+      "id",
+      "month",
+      "salary"
+    ],
+    "rows": [
+      [
+        1,
+        1,
+        20000
+      ],
+      [
+        1,
+        2,
+        50000
+      ],
+      [
+        1,
+        3,
+        90000
+      ],
+      [
+        2,
+        1,
+        35000
+      ],
+      [
+        2,
+        2,
+        73000
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "count-student-number-in-departments",
+    "columns": [
+      "dept_name",
+      "student_number"
+    ],
+    "rows": [
+      [
+        "Engineering",
+        3
+      ],
+      [
+        "Science",
+        2
+      ],
+      [
+        "Arts",
+        0
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "shortest-distance-in-a-plane",
+    "columns": [
+      "shortest"
+    ],
+    "rows": [
+      [
+        1.41
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "shortest-distance-in-a-line",
+    "columns": [
+      "shortest"
+    ],
+    "rows": [
+      [
+        2
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "second-degree-follower",
+    "columns": [
+      "follower",
+      "num"
+    ],
+    "rows": [
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        3,
+        1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "new-users-daily-count",
+    "columns": [
+      "login_date",
+      "new_users"
+    ],
+    "rows": [
+      [
+        "2024-05-31",
+        1
+      ],
+      [
+        "2024-06-01",
+        2
+      ],
+      [
+        "2024-06-02",
+        1
+      ],
+      [
+        "2024-06-03",
+        2
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "tournament-winners",
+    "columns": [
+      "group_id",
+      "player_id"
+    ],
+    "rows": [
+      [
+        1,
+        11
+      ],
+      [
+        2,
+        22
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-the-start-and-end-number-of-continuous-ranges",
+    "columns": [
+      "start_id",
+      "end_id",
+      "run_length"
+    ],
+    "rows": [
+      [
+        1,
+        3,
+        3
+      ],
+      [
+        6,
+        6,
+        1
+      ],
+      [
+        8,
+        12,
+        5
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "market-analysis-ii",
+    "columns": [
+      "buyer_id"
+    ],
+    "rows": [
+      [
+        1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "page-recommendations",
+    "columns": [
+      "page_id"
+    ],
+    "rows": [
+      [
+        24
+      ],
+      [
+        25
+      ],
+      [
+        26
+      ],
+      [
+        27
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "running-total-for-different-genders",
+    "columns": [
+      "gender",
+      "day",
+      "total"
+    ],
+    "rows": [
+      [
+        "F",
+        "2019-02-01",
+        560
+      ],
+      [
+        "F",
+        "2019-02-05",
+        940
+      ],
+      [
+        "F",
+        "2019-02-09",
+        1360
+      ],
+      [
+        "F",
+        "2019-02-14",
+        2000
+      ],
+      [
+        "M",
+        "2019-02-02",
+        450
+      ],
+      [
+        "M",
+        "2019-02-06",
+        960
+      ],
+      [
+        "M",
+        "2019-02-11",
+        1260
+      ],
+      [
+        "M",
+        "2019-02-16",
+        2030
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "students-with-invalid-departments",
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Quincy"
+      ],
+      [
+        "Ravi"
+      ],
+      [
+        "Tomas"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "number-of-trusted-contacts-of-a-customer",
+    "columns": [
+      "customer_id",
+      "customer_name",
+      "trusted_contacts_count",
+      "total_call_duration"
+    ],
+    "rows": [
+      [
+        1,
+        "Ava Chen",
+        2,
+        19
+      ],
+      [
+        2,
+        "Ben Ode",
+        2,
+        30
+      ],
+      [
+        3,
+        "Cara Vaux",
+        1,
+        0
+      ],
+      [
+        4,
+        "Dov Lin",
+        0,
+        0
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "evaluate-boolean-expression",
+    "columns": [
+      "expression_id",
+      "value"
+    ],
+    "rows": [
+      [
+        1,
+        "true"
+      ],
+      [
+        2,
+        "false"
+      ],
+      [
+        3,
+        "true"
+      ],
+      [
+        4,
+        "false"
+      ],
+      [
+        5,
+        "true"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "calculate-salaries",
+    "columns": [
+      "company_id",
+      "employee_id",
+      "employee_name",
+      "salary"
+    ],
+    "rows": [
+      [
+        1,
+        1,
+        "Iris",
+        29950
+      ],
+      [
+        1,
+        2,
+        "Jules",
+        25400
+      ],
+      [
+        1,
+        3,
+        "Kofi",
+        27800
+      ],
+      [
+        2,
+        4,
+        "Lena",
+        27360
+      ],
+      [
+        2,
+        5,
+        "Marco",
+        13984
+      ],
+      [
+        2,
+        6,
+        "Nadia",
+        23575
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "the-most-recent-orders-for-each-product",
+    "columns": [
+      "product_name",
+      "product_id",
+      "order_id",
+      "order_date"
+    ],
+    "rows": [
+      [
+        "Bookend",
+        1,
+        15,
+        "2020-02-29"
+      ],
+      [
+        "Desk Lamp",
+        2,
+        16,
+        "2020-02-14"
+      ],
+      [
+        "Notebook",
+        3,
+        17,
+        "2020-02-20"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "warehouse-manager",
+    "columns": [
+      "name",
+      "volume"
+    ],
+    "rows": [
+      [
+        "Dockside",
+        54
+      ],
+      [
+        "Hilltop",
+        236
+      ],
+      [
+        "Lakeside",
+        375
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-the-missing-ids",
+    "columns": [
+      "ids"
+    ],
+    "rows": [
+      [
+        3
+      ],
+      [
+        5
+      ],
+      [
+        9
+      ],
+      [
+        10
+      ],
+      [
+        11
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "count-apples-and-oranges",
+    "columns": [
+      "apple_count",
+      "orange_count"
+    ],
+    "rows": [
+      [
+        158,
+        159
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "products-price-for-each-store",
+    "columns": [
+      "product_id",
+      "store",
+      "price"
+    ],
+    "rows": [
+      [
+        1,
+        "store1",
+        130
+      ],
+      [
+        1,
+        "store2",
+        160
+      ],
+      [
+        1,
+        "store3",
+        185
+      ],
+      [
+        2,
+        "store2",
+        210
+      ],
+      [
+        3,
+        "store1",
+        140
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "hopper-company-queries-i",
+    "columns": [
+      "month",
+      "working_drivers"
+    ],
+    "rows": [
+      [
+        10,
+        3
+      ],
+      [
+        11,
+        5
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "hopper-company-queries-ii",
+    "columns": [
+      "month",
+      "percentage"
+    ],
+    "rows": [
+      [
+        10,
+        66.67
+      ],
+      [
+        11,
+        80
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "hopper-company-queries-iii",
+    "columns": [
+      "month",
+      "average_ride_distance",
+      "average_ride_duration"
+    ],
+    "rows": [
+      [
+        10,
+        19.25,
+        28.75
+      ],
+      [
+        11,
+        23,
+        31.67
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-the-subtasks-that-did-not-execute",
+    "columns": [
+      "task_id",
+      "subtask_id"
+    ],
+    "rows": [
+      [
+        4,
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "grand-slam-titles",
+    "columns": [
+      "player_id",
+      "name",
+      "grand_slams_count"
+    ],
+    "rows": [
+      [
+        1,
+        "Moreau",
+        2
+      ],
+      [
+        2,
+        "Lindqvist",
+        2
+      ],
+      [
+        3,
+        "Tanaka",
+        2
+      ],
+      [
+        4,
+        "Okafor",
+        1
+      ],
+      [
+        5,
+        "Duarte",
+        1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-interview-candidates",
+    "columns": [
+      "user_id"
+    ],
+    "rows": [
+      [
+        2
+      ],
+      [
+        3
+      ],
+      [
+        4
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "ad-free-sessions",
+    "columns": [
+      "customer_id"
+    ],
+    "rows": [
+      [
+        2
+      ],
+      [
+        4
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-customers-with-positive-revenue-this-year",
+    "columns": [
+      "customer_id"
+    ],
+    "rows": [
+      [
+        11
+      ],
+      [
+        13
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "convert-date-format",
+    "columns": [
+      "day"
+    ],
+    "rows": [
+      [
+        "1st of March, 2024"
+      ],
+      [
+        "11th of March, 2024"
+      ],
+      [
+        "2nd of April, 2024"
+      ],
+      [
+        "21st of April, 2024"
+      ],
+      [
+        "13th of May, 2024"
+      ],
+      [
+        "23rd of May, 2024"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "orders-with-maximum-quantity-above-average",
+    "columns": [
+      "order_number"
+    ],
+    "rows": [
+      [
+        7
+      ],
+      [
+        9
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "group-employees-of-the-same-salary",
+    "columns": [
+      "employee_id",
+      "name",
+      "salary",
+      "team_id"
+    ],
+    "rows": [
+      [
+        1,
+        "Ann",
+        3000,
+        1
+      ],
+      [
+        2,
+        "Ben",
+        3000,
+        1
+      ],
+      [
+        4,
+        "Dee",
+        2000,
+        2
+      ],
+      [
+        5,
+        "Eli",
+        2000,
+        2
+      ],
+      [
+        6,
+        "Fay",
+        2000,
+        2
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "leetcodify-friends-recommendations",
+    "columns": [
+      "user1_id",
+      "user2_id"
+    ],
+    "rows": [
+      [
+        1,
+        2
+      ]
+    ],
+    "order": "exact"
   }
 ];
 

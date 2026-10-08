@@ -432,6 +432,89 @@ export const SQL50_SECTIONS: LcSection[] = [
       "employee-task-duration-and-concurrent-tasks",
     ],
   },
+  {
+    id: "premium2-games",
+    title: "Premium Game Analysis",
+    blurb:
+      "Play-grade analytics — first-login device join-backs, inclusive running sums, vote count-outs, three-month salary windows with the latest month dropped and zero-student departments kept alive.",
+    slugs: [
+      "game-play-analysis-ii",
+      "game-play-analysis-iii",
+      "winning-candidate",
+      "find-cumulative-salary-of-an-employee",
+      "count-student-number-in-departments",
+    ],
+  },
+  {
+    id: "premium2-rankings",
+    title: "Premium Distances & Rankings",
+    blurb:
+      "Geometry and leaderboards — oriented self-joins for shortest distances, semijoin follow graphs, first-login cohorts, tournament points and gaps-and-islands streaks.",
+    slugs: [
+      "shortest-distance-in-a-plane",
+      "shortest-distance-in-a-line",
+      "second-degree-follower",
+      "new-users-daily-count",
+      "tournament-winners",
+      "find-the-start-and-end-number-of-continuous-ranges",
+    ],
+  },
+  {
+    id: "premium2-market",
+    title: "Premium Market Analytics",
+    blurb:
+      "Market-grade joins — brand-mismatch buyers, friend-driven page recommendations, gender-first running totals, dangling foreign keys, trusted-contact chains and CASE-built boolean evaluators.",
+    slugs: [
+      "market-analysis-ii",
+      "page-recommendations",
+      "running-total-for-different-genders",
+      "students-with-invalid-departments",
+      "number-of-trusted-contacts-of-a-customer",
+      "evaluate-boolean-expression",
+    ],
+  },
+  {
+    id: "premium2-orders",
+    title: "Premium Orders & Inventory",
+    blurb:
+      "Commerce-grade reporting — company tax brackets, latest-order argmax inside a window, warehouse volumes, recursive missing-id grids, double-count-resistant fruit tallies and long-to-wide price pivots.",
+    slugs: [
+      "calculate-salaries",
+      "the-most-recent-orders-for-each-product",
+      "warehouse-manager",
+      "find-the-missing-ids",
+      "count-apples-and-oranges",
+      "products-price-for-each-store",
+    ],
+  },
+  {
+    id: "premium2-finals",
+    title: "Premium Hopper & Champions",
+    blurb:
+      "Cohort-grade finals — monthly driver spines with hard join-date rules, acceptance percentages, requested-vs-accepted bucketing, recursive subtask grids, grand-slam unpivots and three-way candidate logic.",
+    slugs: [
+      "hopper-company-queries-i",
+      "hopper-company-queries-ii",
+      "hopper-company-queries-iii",
+      "find-the-subtasks-that-did-not-execute",
+      "grand-slam-titles",
+      "find-interview-candidates",
+    ],
+  },
+  {
+    id: "premium2-users",
+    title: "Premium Users & Dates",
+    blurb:
+      "User-grade hygiene — ad-overlap anti-joins, positive-revenue sums, ordinal date formatting, global-average bars, salary-group dense ranks and same-day song graphs gated by friendship.",
+    slugs: [
+      "ad-free-sessions",
+      "find-customers-with-positive-revenue-this-year",
+      "convert-date-format",
+      "orders-with-maximum-quantity-above-average",
+      "group-employees-of-the-same-salary",
+      "leetcodify-friends-recommendations",
+    ],
+  },
 ];
 
 /** Flat solving order — every SQL 50 problem exactly once. */
