@@ -3603,6 +3603,957 @@ export const SQL_EXPECTED: LcSqlExpected[] = [
       ]
     ],
     "order": "exact"
+  },
+  {
+    "slug": "friend-requests-i-overall-acceptance-rate",
+    "columns": [
+      "accept_rate"
+    ],
+    "rows": [
+      [
+        0.75
+      ]
+    ],
+    "order": "any"
+  },
+  {
+    "slug": "users-that-actively-request-confirmation-messages",
+    "columns": [
+      "user_id"
+    ],
+    "rows": [
+      [
+        7
+      ],
+      [
+        10
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "the-winner-university",
+    "columns": [
+      "winner"
+    ],
+    "rows": [
+      [
+        "California"
+      ]
+    ],
+    "order": "any"
+  },
+  {
+    "slug": "all-valid-triplets-that-can-represent-a-country",
+    "columns": [
+      "student_name_a",
+      "student_name_b",
+      "student_name_c"
+    ],
+    "rows": [
+      [
+        "Alba",
+        "Nia",
+        "Ravi"
+      ],
+      [
+        "Alba",
+        "Nia",
+        "Zoe"
+      ],
+      [
+        "Alba",
+        "Ravi",
+        "Zoe"
+      ],
+      [
+        "Alba",
+        "Tomas",
+        "Ravi"
+      ],
+      [
+        "Alba",
+        "Tomas",
+        "Zoe"
+      ],
+      [
+        "Nia",
+        "Ravi",
+        "Zoe"
+      ],
+      [
+        "Nia",
+        "Tomas",
+        "Ravi"
+      ],
+      [
+        "Nia",
+        "Tomas",
+        "Zoe"
+      ],
+      [
+        "Ravi",
+        "Nia",
+        "Zoe"
+      ],
+      [
+        "Ravi",
+        "Tomas",
+        "Zoe"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "products-worth-over-invoices",
+    "columns": [
+      "name",
+      "worth"
+    ],
+    "rows": [
+      [
+        "Trail Pack",
+        200
+      ],
+      [
+        "Camp Stove",
+        140
+      ],
+      [
+        "Sleeping Bag",
+        140
+      ],
+      [
+        "Water Filter",
+        -140
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-latest-salaries",
+    "columns": [
+      "employee_id",
+      "amount",
+      "effective_year"
+    ],
+    "rows": [
+      [
+        101,
+        72000,
+        2022
+      ],
+      [
+        101,
+        78000,
+        2023
+      ],
+      [
+        102,
+        65000,
+        2022
+      ],
+      [
+        102,
+        71000,
+        2023
+      ],
+      [
+        103,
+        91000,
+        2024
+      ],
+      [
+        104,
+        88000,
+        2023
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "friend-requests-ii-who-has-the-most-friends",
+    "columns": [
+      "id",
+      "num"
+    ],
+    "rows": [
+      [
+        1,
+        5
+      ],
+      [
+        5,
+        3
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        4,
+        2
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "strong-friendship",
+    "columns": [
+      "user1_id",
+      "user2_id",
+      "common_cnt"
+    ],
+    "rows": [
+      [
+        1,
+        2,
+        4
+      ],
+      [
+        2,
+        3,
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "all-the-pairs-with-the-maximum-number-of-common-followers",
+    "columns": [
+      "user1_id",
+      "user2_id"
+    ],
+    "rows": [
+      [
+        1,
+        2
+      ],
+      [
+        3,
+        4
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "page-recommendations-ii",
+    "columns": [
+      "page_id"
+    ],
+    "rows": [
+      [
+        11
+      ],
+      [
+        13
+      ],
+      [
+        14
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "the-airport-with-the-most-flights",
+    "columns": [
+      "id"
+    ],
+    "rows": [
+      [
+        1
+      ],
+      [
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "get-highest-answer-rate-question",
+    "columns": [
+      "question_id",
+      "answer_rate"
+    ],
+    "rows": [
+      [
+        401,
+        1
+      ]
+    ],
+    "order": "any"
+  },
+  {
+    "slug": "unpopular-books",
+    "columns": [
+      "book_id",
+      "name",
+      "author",
+      "price",
+      "available"
+    ],
+    "rows": [
+      [
+        4,
+        "Night Skies",
+        "T. Okafor",
+        15.75,
+        5
+      ],
+      [
+        5,
+        "Clay & Kiln",
+        "P. Marsh",
+        9.99,
+        12
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "friendly-movies-streamed-last-month",
+    "columns": [
+      "title"
+    ],
+    "rows": [
+      [
+        "Cartoon Kids Hour"
+      ],
+      [
+        "KIDS Karaoke Night"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "the-most-recent-three-orders",
+    "columns": [
+      "name",
+      "purchase_id",
+      "purchase_date"
+    ],
+    "rows": [
+      [
+        "Ivo",
+        12,
+        "2023-03-14"
+      ],
+      [
+        "Ivo",
+        11,
+        "2023-03-14"
+      ],
+      [
+        "Ivo",
+        13,
+        "2023-02-02"
+      ],
+      [
+        "Noor",
+        20,
+        "2023-04-01"
+      ],
+      [
+        "Noor",
+        22,
+        "2023-02-27"
+      ],
+      [
+        "Noor",
+        21,
+        "2023-01-19"
+      ],
+      [
+        "Pia",
+        32,
+        "2023-05-21"
+      ],
+      [
+        "Pia",
+        30,
+        "2023-03-30"
+      ],
+      [
+        "Pia",
+        31,
+        "2023-03-03"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "finding-the-topic-of-each-post",
+    "columns": [
+      "post_id",
+      "keyword"
+    ],
+    "rows": [
+      [
+        1,
+        "ski"
+      ],
+      [
+        1,
+        "slope"
+      ],
+      [
+        1,
+        "snow"
+      ],
+      [
+        2,
+        "oven"
+      ],
+      [
+        3,
+        "N/A"
+      ],
+      [
+        4,
+        "knead"
+      ],
+      [
+        5,
+        "knead"
+      ],
+      [
+        5,
+        "oven"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "leetflex-banned-accounts",
+    "columns": [
+      "account_id"
+    ],
+    "rows": [
+      [
+        1
+      ],
+      [
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "maximum-transaction-each-day",
+    "columns": [
+      "day",
+      "txn_id",
+      "amount"
+    ],
+    "rows": [
+      [
+        "2024-11-03",
+        1,
+        900
+      ],
+      [
+        "2024-11-03",
+        2,
+        900
+      ],
+      [
+        "2024-11-04",
+        5,
+        1200
+      ],
+      [
+        "2024-11-06",
+        7,
+        450
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "users-with-two-purchases-within-seven-days",
+    "columns": [
+      "user_id"
+    ],
+    "rows": [
+      [
+        11
+      ],
+      [
+        14
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "total-sales-amount-by-year",
+    "columns": [
+      "report_year",
+      "product_id",
+      "total_amount"
+    ],
+    "rows": [
+      [
+        2023,
+        7,
+        32
+      ],
+      [
+        2023,
+        9,
+        21
+      ],
+      [
+        2024,
+        7,
+        12
+      ],
+      [
+        2024,
+        9,
+        21
+      ],
+      [
+        2025,
+        9,
+        21
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "the-first-day-of-the-maximum-recorded-temperature-in-each-city",
+    "columns": [
+      "city",
+      "first_date"
+    ],
+    "rows": [
+      [
+        "Ardmore",
+        "2024-07-09"
+      ],
+      [
+        "Bexley",
+        "2024-07-10"
+      ],
+      [
+        "Corwick",
+        "2024-07-15"
+      ],
+      [
+        "Dunmoor",
+        "2024-08-08"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "first-and-last-call-on-the-same-day",
+    "columns": [
+      "caller_id",
+      "call_day"
+    ],
+    "rows": [
+      [
+        41,
+        "2024-09-02"
+      ],
+      [
+        43,
+        "2024-09-02"
+      ],
+      [
+        42,
+        "2024-09-03"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "bank-account-summary",
+    "columns": [
+      "account_id",
+      "name",
+      "balance"
+    ],
+    "rows": [
+      [
+        1,
+        "Ada Vale",
+        700
+      ],
+      [
+        2,
+        "Bright Harbor",
+        -420
+      ],
+      [
+        3,
+        "Cedar & Co",
+        350
+      ],
+      [
+        4,
+        "Dune Trust",
+        0
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "league-statistics",
+    "columns": [
+      "club_name",
+      "played",
+      "wins",
+      "draws",
+      "losses",
+      "points"
+    ],
+    "rows": [
+      [
+        "Ashford",
+        2,
+        2,
+        0,
+        0,
+        6
+      ],
+      [
+        "Brindle",
+        3,
+        1,
+        1,
+        1,
+        4
+      ],
+      [
+        "Calder",
+        3,
+        0,
+        2,
+        1,
+        2
+      ],
+      [
+        "Dovewood",
+        2,
+        0,
+        1,
+        1,
+        1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "account-balance",
+    "columns": [
+      "account_id",
+      "day",
+      "balance"
+    ],
+    "rows": [
+      [
+        1,
+        "2025-04-01",
+        500
+      ],
+      [
+        1,
+        "2025-04-03",
+        700
+      ],
+      [
+        1,
+        "2025-04-06",
+        -200
+      ],
+      [
+        1,
+        "2025-04-09",
+        400
+      ],
+      [
+        2,
+        "2025-04-02",
+        1000
+      ],
+      [
+        2,
+        "2025-04-04",
+        750
+      ],
+      [
+        2,
+        "2025-04-05",
+        650
+      ],
+      [
+        2,
+        "2025-04-08",
+        1000
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "employees-with-deductions",
+    "columns": [
+      "employee_id",
+      "name"
+    ],
+    "rows": [
+      [
+        1,
+        "Nadia"
+      ],
+      [
+        2,
+        "Omar"
+      ],
+      [
+        4,
+        "Quinn"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "generate-the-invoice",
+    "columns": [
+      "buyer_id",
+      "item_id",
+      "name",
+      "price"
+    ],
+    "rows": [
+      [
+        1,
+        14,
+        "Hammer Drill",
+        120
+      ],
+      [
+        2,
+        11,
+        "Clamps",
+        75
+      ],
+      [
+        2,
+        13,
+        "Bench Vise",
+        75
+      ],
+      [
+        3,
+        16,
+        "Work Gloves",
+        18.5
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "suspicious-bank-account-transactions",
+    "columns": [
+      "account_id"
+    ],
+    "rows": [
+      [
+        1
+      ],
+      [
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "trips-and-users",
+    "columns": [
+      "request_day",
+      "cancellation_rate"
+    ],
+    "rows": [
+      [
+        "2024-10-01",
+        0.5
+      ],
+      [
+        "2024-10-02",
+        0.33
+      ],
+      [
+        "2024-10-03",
+        0
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "median-employee-salary",
+    "columns": [
+      "company",
+      "salary"
+    ],
+    "rows": [
+      [
+        "A",
+        18000
+      ],
+      [
+        "B",
+        26000
+      ],
+      [
+        "B",
+        30000
+      ],
+      [
+        "C",
+        15000
+      ],
+      [
+        "C",
+        41000
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-the-median",
+    "columns": [
+      "median"
+    ],
+    "rows": [
+      [
+        5
+      ]
+    ],
+    "order": "any"
+  },
+  {
+    "slug": "find-the-quiet-students-in-all-exams",
+    "columns": [
+      "student_id",
+      "student_name"
+    ],
+    "rows": [
+      [
+        1,
+        "Ivy"
+      ],
+      [
+        6,
+        "Noa"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "students-report-by-geography",
+    "columns": [
+      "America_1",
+      "America_2",
+      "Asia_1",
+      "Asia_2",
+      "Europe_1",
+      "Europe_2"
+    ],
+    "rows": [
+      [
+        "Alana",
+        "Beatrix",
+        "Chen",
+        "Hari",
+        "Anke",
+        "Boris"
+      ],
+      [
+        "Corazon",
+        "Denton",
+        null,
+        null,
+        null,
+        null
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "merge-overlapping-events-in-the-same-hall",
+    "columns": [
+      "hall_id",
+      "block_start",
+      "block_end"
+    ],
+    "rows": [
+      [
+        1,
+        "2025-03-03",
+        "2025-03-12"
+      ],
+      [
+        2,
+        "2025-03-02",
+        "2025-03-04"
+      ],
+      [
+        2,
+        "2025-03-11",
+        "2025-03-15"
+      ],
+      [
+        3,
+        "2025-03-20",
+        "2025-03-21"
+      ],
+      [
+        4,
+        "2025-03-07",
+        "2025-03-16"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "employee-task-duration-and-concurrent-tasks",
+    "columns": [
+      "task_id",
+      "actual_duration"
+    ],
+    "rows": [
+      [
+        1,
+        41
+      ],
+      [
+        2,
+        42
+      ],
+      [
+        3,
+        23
+      ],
+      [
+        4,
+        104
+      ],
+      [
+        5,
+        41
+      ],
+      [
+        6,
+        48
+      ]
+    ],
+    "order": "exact"
   }
 ];
 

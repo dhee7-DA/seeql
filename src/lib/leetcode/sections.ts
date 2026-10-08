@@ -1,9 +1,10 @@
 // The SQL band, divided into sections. The first seven mirror the official
 // SQL 50 study list (and the sandbox deep-dive files authored per section);
 // the remaining sections hold the expansion band — LeetCode's free Database
-// extras plus three tiers of platform classics. The LeetCode view groups the
-// SQL band by these, and the Module 12 band shows the same sections in its
-// card.
+// extras, three tiers of platform classics, and the LeetCode PREMIUM tier
+// (batch 5, re-authored with original schemas/seeds). The LeetCode view
+// groups the SQL band by these, and the Module 12 band shows the same
+// sections in its card.
 //
 // Kept import-free on purpose: no cycles, and the section map stays usable
 // from scripts and the registry without pulling content blobs.
@@ -346,6 +347,89 @@ export const SQL50_SECTIONS: LcSection[] = [
       "spend-histogram",
       "second-day-confirmation",
       "same-day-sale",
+    ],
+  },
+  {
+    id: "premium-warmups",
+    title: "Premium Warmups",
+    blurb:
+      "The premium tier opens — acceptance-rate ratios, confirmation lags, distinct-student averages, three-way triplet joins, netted invoice worths and sync-glitch dedupes.",
+    slugs: [
+      "friend-requests-i-overall-acceptance-rate",
+      "users-that-actively-request-confirmation-messages",
+      "the-winner-university",
+      "all-valid-triplets-that-can-represent-a-country",
+      "products-worth-over-invoices",
+      "find-latest-salaries",
+    ],
+  },
+  {
+    id: "premium-community",
+    title: "Premium Friend Graphs",
+    blurb:
+      "Graph thinking in SQL — two-sided friend ledgers, common-friend intersections, directed follower pairs, recommendation anti-joins and traffic ties.",
+    slugs: [
+      "friend-requests-ii-who-has-the-most-friends",
+      "strong-friendship",
+      "all-the-pairs-with-the-maximum-number-of-common-followers",
+      "page-recommendations-ii",
+      "the-airport-with-the-most-flights",
+    ],
+  },
+  {
+    id: "premium-content",
+    title: "Premium Media & Content",
+    blurb:
+      "Content-platform asks — answer-rate argmax, never-dispatched books, kids-movie filters, per-buyer recency cutoffs and keyword-substring matching.",
+    slugs: [
+      "get-highest-answer-rate-question",
+      "unpopular-books",
+      "friendly-movies-streamed-last-month",
+      "the-most-recent-three-orders",
+      "finding-the-topic-of-each-post",
+    ],
+  },
+  {
+    id: "premium-time",
+    title: "Premium Time Windows",
+    blurb:
+      "Time as evidence — overlapping login intervals, per-day maxima with ties, seven-day proximity, interval-to-year expansion and first/last-call join-backs.",
+    slugs: [
+      "leetflex-banned-accounts",
+      "maximum-transaction-each-day",
+      "users-with-two-purchases-within-seven-days",
+      "total-sales-amount-by-year",
+      "the-first-day-of-the-maximum-recorded-temperature-in-each-city",
+      "first-and-last-call-on-the-same-day",
+    ],
+  },
+  {
+    id: "premium-money",
+    title: "Premium Ledgers & Money",
+    blurb:
+      "Money-grade reporting — always-full account summaries, two-leg league records, running balances, shortfall counts, tie-sharing invoices and sliding-window alerts.",
+    slugs: [
+      "bank-account-summary",
+      "league-statistics",
+      "account-balance",
+      "employees-with-deductions",
+      "generate-the-invoice",
+      "suspicious-bank-account-transactions",
+    ],
+  },
+  {
+    id: "premium-finales",
+    title: "Premium Hard Finales",
+    blurb:
+      "The premium endgame — cancellation rates over banned parties, row-based medians, all-exam quiet students, continent pivots, merged booking blocks and concurrency math.",
+    slugs: [
+      "trips-and-users",
+      "median-employee-salary",
+      "find-the-median",
+      "find-the-quiet-students-in-all-exams",
+      "students-report-by-geography",
+      "merge-overlapping-events-in-the-same-hall",
+      "employee-task-duration-and-concurrent-tasks",
     ],
   },
 ];

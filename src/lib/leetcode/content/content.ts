@@ -35,6 +35,12 @@ import { SQL_MORE3_STREAKS } from "./sql-more3-streaks";
 import { SQL_MORE3_FINALES } from "./sql-more3-finales";
 import { SQL_MORE3_HACKERRANK } from "./sql-more3-hackerrank";
 import { SQL_MORE3_DATALEMUR } from "./sql-more3-datalemur";
+import { SQL_PREMIUM_WARMUPS } from "./sql-premium-warmups";
+import { SQL_PREMIUM_COMMUNITY } from "./sql-premium-community";
+import { SQL_PREMIUM_CONTENT } from "./sql-premium-content";
+import { SQL_PREMIUM_TIME } from "./sql-premium-time";
+import { SQL_PREMIUM_MONEY } from "./sql-premium-money";
+import { SQL_PREMIUM_FINALES } from "./sql-premium-finales";
 
 export const LC_CONTENT: LcDeepDive[] = [
   ...ARRAYS,
@@ -45,8 +51,8 @@ export const LC_CONTENT: LcDeepDive[] = [
   ...LINKED_LIST,
 ];
 
-/** SQL deep-dives — the SQL 50 plus the three expansion batches, all
- *  sandbox-graded. */
+/** SQL deep-dives — the SQL 50, the expansion batches and the premium tier,
+ *  all sandbox-graded. */
 export const LC_SQL_CONTENT: LcSqlDive[] = [
   ...SQL_SELECT,
   ...SQL_JOINS,
@@ -74,6 +80,12 @@ export const LC_SQL_CONTENT: LcSqlDive[] = [
   ...SQL_MORE3_FINALES,
   ...SQL_MORE3_HACKERRANK,
   ...SQL_MORE3_DATALEMUR,
+  ...SQL_PREMIUM_WARMUPS,
+  ...SQL_PREMIUM_COMMUNITY,
+  ...SQL_PREMIUM_CONTENT,
+  ...SQL_PREMIUM_TIME,
+  ...SQL_PREMIUM_MONEY,
+  ...SQL_PREMIUM_FINALES,
 ];
 
 const bySlug = new Map(LC_CONTENT.map((d) => [d.slug, d]));
