@@ -6,6 +6,12 @@ import { SQL_MORE } from "../src/lib/leetcode/registry-sql-more";
 import { SQL_MORE2 } from "../src/lib/leetcode/registry-sql-more2";
 import { SQL_MORE3 } from "../src/lib/leetcode/registry-sql-more3";
 import { SQL_PREMIUM } from "../src/lib/leetcode/registry-sql-premium";
+import { SQL_PREMIUM2 } from "../src/lib/leetcode/registry-sql-premium2";
+// future registries (batches 8/9) are picked up automatically once they exist
+async function tryImport(path: string): Promise<any[]> {
+  try { const m: any = await import(path); return Object.values(m)[0] as any[] ?? []; }
+  catch { return []; }
+}
 
 const res = await fetch("https://leetcode.com/graphql/", {
   method: "POST",
@@ -30,6 +36,10 @@ for (const q of qs) live.set(Number(q.questionFrontendId), q);
 const built = new Map<number, { premium: boolean; slug: string }>();
 for (const r of [...SQL50, ...SQL_MORE, ...SQL_MORE2, ...SQL_MORE3]) built.set(r[0], { premium: false, slug: r[1] });
 for (const r of SQL_PREMIUM) built.set(r[0], { premium: true, slug: r[1] });
+for (const r of SQL_PREMIUM2) built.set(r[0], { premium: true, slug: r[1] });
+for (const r of await tryImport("../src/lib/leetcode/registry-sql-premium3.ts")) built.set(r[0], { premium: true, slug: r[1] });
+for (const r of await tryImport("../src/lib/leetcode/registry-sql-premium4.ts")) built.set(r[0], { premium: true, slug: r[1] });
+for (const r of await tryImport("../src/lib/leetcode/registry-sql-final-free.ts")) built.set(r[0], { premium: false, slug: r[1] });
 
 let bf = 0, bp = 0;
 const remainF: Array<{ id: string; slug: string; difficulty: string }> = [];

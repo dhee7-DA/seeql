@@ -515,6 +515,89 @@ export const SQL50_SECTIONS: LcSection[] = [
       "leetcodify-friends-recommendations",
     ],
   },
+  {
+    id: "premium3-stats",
+    title: "Premium Stats & Eligibility",
+    blurb:
+      "Eligibility arithmetic — capacity cutoffs over descending score pools, six-hour timestamp buckets, login-without-stream accounting under NOT EXISTS, integer-division approval ratios, min-round acceptance gates and lifetime-spend tier labels that keep zero-purchase members on the roster.",
+    slugs: [
+      "find-cutoff-score-for-each-school",
+      "count-the-number-of-experiments",
+      "number-of-accounts-that-did-not-stream",
+      "low-quality-problems",
+      "accepted-candidates-from-the-interviews",
+      "the-category-of-each-member-in-the-store",
+    ],
+  },
+  {
+    id: "premium3-commerce",
+    title: "Premium Commerce & Discounts",
+    blurb:
+      "Commerce hygiene — conditional DELETEs that spare the type-0 rows that justify them, same-row date+amount eligibility under COUNT(DISTINCT), user spines that keep never-passenger drivers at zero, and per-buyer argmax with a stated tie-break.",
+    slugs: [
+      "drop-type-1-orders-for-customers-with-type-0-orders",
+      "the-number-of-users-that-are-eligible-for-discount",
+      "the-users-that-are-eligible-for-discount",
+      "number-of-times-a-driver-was-a-passenger",
+      "product-sales-analysis-iv",
+      "product-sales-analysis-v",
+    ],
+  },
+  {
+    id: "premium3-arena",
+    title: "Premium Contests & Boards",
+    blurb:
+      "Competition machinery — earliest-eligible-bus boarding, weight-capped greedy fills that leave one rider behind, consecutive-day win islands, applied score deltas ranked with RANK, full round-robin fixture grids and strictly-above percentages under a field of six.",
+    slugs: [
+      "the-number-of-passengers-in-each-bus-i",
+      "the-number-of-passengers-in-each-bus-ii",
+      "longest-winning-streak",
+      "the-change-in-global-rankings",
+      "all-the-matches-of-the-league",
+      "compute-the-rank-as-a-percentage",
+    ],
+  },
+  {
+    id: "premium3-mold",
+    title: "Premium Pivots & Layouts",
+    blurb:
+      "Table shape-shifting — polynomial strings assembled slot-by-slot with MAX(CASE), two columns sorted in opposite directions and zipped by position, fixed-slot pivots that keep missing months NULL, UNION ALL unpivots that drop NULL cells, and F-M interleave arrangements with the leftover tail.",
+    slugs: [
+      "build-the-equation",
+      "order-two-columns-independently",
+      "dynamic-pivoting-of-a-table",
+      "dynamic-unpivoting-of-a-table",
+      "arrange-table-by-gender",
+    ],
+  },
+  {
+    id: "premium3-ops",
+    title: "Premium Operations & Classify",
+    blurb:
+      "Operations reporting — weekend-versus-weekday pivots off strftime's text codes, influence gated by the customer's salesperson bearing more than one account, four-key Olympic sorts, forward-fill readings that never backfill, top-two atom picks per molecule and parenthesized profession badges.",
+    slugs: [
+      "tasks-count-in-the-weekend",
+      "calculate-the-influence-of-each-salesperson",
+      "sort-the-olympic-table",
+      "change-null-values-in-a-table-to-the-previous-value",
+      "form-a-chemical-bond",
+      "concatenate-the-name-and-the-profession",
+    ],
+  },
+  {
+    id: "premium3-finales",
+    title: "Premium Hard Streaks & Budgets",
+    blurb:
+      "The batch's hard wall — friendship-gated taste graphs over DISTINCT shared songs, per-role budget greeds whose running sums swallow salary ties, one shared pool hiring across roles, strictly-increasing purchase islands of length three, consecutive-year order quotas and two-hop chart counts.",
+    slugs: [
+      "leetcodify-similar-friends",
+      "the-number-of-seniors-and-juniors-to-join-the-company",
+      "the-number-of-seniors-and-juniors-to-join-the-company-ii",
+      "customers-with-strictly-increasing-purchases",
+      "products-with-three-or-more-orders-in-two-consecutive-years",
+      "count-artist-occurrences-on-spotify-ranking-list",
+    ],
+  },
 ];
 
 /** Flat solving order — every SQL 50 problem exactly once. */

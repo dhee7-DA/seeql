@@ -47,6 +47,12 @@ import { SQL_PREMIUM2_MARKET } from "./sql-premium2-market";
 import { SQL_PREMIUM2_ORDERS } from "./sql-premium2-orders";
 import { SQL_PREMIUM2_FINALS } from "./sql-premium2-finals";
 import { SQL_PREMIUM2_USERS } from "./sql-premium2-users";
+import { SQL_PREMIUM3_STATS } from "./sql-premium3-stats";
+import { SQL_PREMIUM3_COMMERCE } from "./sql-premium3-commerce";
+import { SQL_PREMIUM3_ARENA } from "./sql-premium3-arena";
+import { SQL_PREMIUM3_MOLD } from "./sql-premium3-mold";
+import { SQL_PREMIUM3_OPS } from "./sql-premium3-ops";
+import { SQL_PREMIUM3_FINALS } from "./sql-premium3-finales";
 
 export const LC_CONTENT: LcDeepDive[] = [
   ...ARRAYS,
@@ -98,6 +104,12 @@ export const LC_SQL_CONTENT: LcSqlDive[] = [
   ...SQL_PREMIUM2_ORDERS,
   ...SQL_PREMIUM2_FINALS,
   ...SQL_PREMIUM2_USERS,
+  ...SQL_PREMIUM3_STATS,
+  ...SQL_PREMIUM3_COMMERCE,
+  ...SQL_PREMIUM3_ARENA,
+  ...SQL_PREMIUM3_MOLD,
+  ...SQL_PREMIUM3_OPS,
+  ...SQL_PREMIUM3_FINALS,
 ];
 
 const bySlug = new Map(LC_CONTENT.map((d) => [d.slug, d]));

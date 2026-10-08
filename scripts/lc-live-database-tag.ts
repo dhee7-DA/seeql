@@ -1,4 +1,4 @@
-// Task 66 — live reconciliation v2: the classic topicTag query still works.
+// Live reconciliation v3: the classic topicTag query still works.
 // Pull every Database-tagged question from LeetCode's public GraphQL and diff
 // against our built LC-origin slugs → exact remaining free/premium gap lists.
 import { SQL50 } from "../src/lib/leetcode/registry-sql50";
@@ -6,6 +6,12 @@ import { SQL_MORE } from "../src/lib/leetcode/registry-sql-more";
 import { SQL_MORE2 } from "../src/lib/leetcode/registry-sql-more2";
 import { SQL_MORE3 } from "../src/lib/leetcode/registry-sql-more3";
 import { SQL_PREMIUM } from "../src/lib/leetcode/registry-sql-premium";
+import { SQL_PREMIUM2 } from "../src/lib/leetcode/registry-sql-premium2";
+// future registries (batches 8/9) are picked up automatically once they exist
+async function tryImport(path: string): Promise<any[]> {
+  try { const m: any = await import(path); return Object.values(m)[0] as any[] ?? []; }
+  catch { return []; }
+}
 
 const QUERY = `
 query topicTag($slug: String!) {
@@ -50,6 +56,10 @@ console.log(`LIVE Database tag: ${all.length} questions`);
 const built = new Map<string, { id: number; premium: boolean }>();
 for (const r of [...SQL50, ...SQL_MORE, ...SQL_MORE2, ...SQL_MORE3]) built.set(r[1], { id: r[0], premium: false });
 for (const r of SQL_PREMIUM) built.set(r[1], { id: r[0], premium: true });
+for (const r of SQL_PREMIUM2) built.set(r[1], { id: r[0], premium: true });
+for (const r of await tryImport("../src/lib/leetcode/registry-sql-premium3.ts")) built.set(r[1], { id: r[0], premium: true });
+for (const r of await tryImport("../src/lib/leetcode/registry-sql-premium4.ts")) built.set(r[1], { id: r[0], premium: true });
+for (const r of await tryImport("../src/lib/leetcode/registry-sql-final-free.ts")) built.set(r[1], { id: r[0], premium: false });
 
 const seen = new Set<string>();
 const free: Q[] = [], prem: Q[] = [];
@@ -71,7 +81,7 @@ for (const q of all) {
 for (const [slug, b] of built) if (!seen.has(slug)) { stale++; console.error(`BUILT NOT IN LIVE TAG: ${slug} (${b.id})`); }
 
 console.log(`---- RECONCILIATION ----`);
-console.log(`built & live: ${builtFree} free + ${builtPrem} premium = ${builtFree + builtPrem} of 170 built (${stale} built slugs not in the live Database tag)`);
+console.log(`built & live: ${builtFree} free + ${builtPrem} premium = ${builtFree + builtPrem} built LC-origin (${stale} built slugs not in the live Database tag)`);
 console.log(`REMAINING: ${remainFree.length} free · ${remainPrem.length} premium · ${remainFree.length + remainPrem.length} total`);
 
 const fmt = (q: Q) => `${q.questionFrontendId}|${q.titleSlug}|${q.difficulty[0]}`;

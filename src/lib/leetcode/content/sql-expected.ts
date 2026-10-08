@@ -5402,6 +5402,943 @@ export const SQL_EXPECTED: LcSqlExpected[] = [
       ]
     ],
     "order": "exact"
+  },
+  {
+    "slug": "find-cutoff-score-for-each-school",
+    "columns": [
+      "school_id",
+      "name",
+      "cutoff_score"
+    ],
+    "rows": [
+      [
+        10,
+        "Northgate",
+        95
+      ],
+      [
+        20,
+        "Southgate",
+        64
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "count-the-number-of-experiments",
+    "columns": [
+      "block_start",
+      "experiments",
+      "total_samples"
+    ],
+    "rows": [
+      [
+        "2024-05-01 00:00:00",
+        2,
+        8
+      ],
+      [
+        "2024-05-01 06:00:00",
+        2,
+        11
+      ],
+      [
+        "2024-05-01 12:00:00",
+        1,
+        6
+      ],
+      [
+        "2024-05-01 18:00:00",
+        1,
+        8
+      ],
+      [
+        "2024-05-02 00:00:00",
+        1,
+        9
+      ],
+      [
+        "2024-05-02 06:00:00",
+        1,
+        2
+      ],
+      [
+        "2024-05-02 12:00:00",
+        1,
+        1
+      ],
+      [
+        "2024-05-02 18:00:00",
+        1,
+        5
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "number-of-accounts-that-did-not-stream",
+    "columns": [
+      "accounts_count"
+    ],
+    "rows": [
+      [
+        4
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "low-quality-problems",
+    "columns": [
+      "post_id"
+    ],
+    "rows": [
+      [
+        101
+      ],
+      [
+        103
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "accepted-candidates-from-the-interviews",
+    "columns": [
+      "candidate_id",
+      "name"
+    ],
+    "rows": [
+      [
+        1,
+        "Ada"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "the-category-of-each-member-in-the-store",
+    "columns": [
+      "member_id",
+      "name",
+      "category"
+    ],
+    "rows": [
+      [
+        1,
+        "Ada",
+        "VIP"
+      ],
+      [
+        2,
+        "Ben",
+        "Preferred"
+      ],
+      [
+        3,
+        "Cleo",
+        "Standard"
+      ],
+      [
+        4,
+        "Dov",
+        "Standard"
+      ],
+      [
+        5,
+        "Esme",
+        "Preferred"
+      ],
+      [
+        6,
+        "Fay",
+        "Standard"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "drop-type-1-orders-for-customers-with-type-0-orders",
+    "columns": [
+      "order_id"
+    ],
+    "rows": [
+      [
+        1
+      ],
+      [
+        3
+      ],
+      [
+        4
+      ],
+      [
+        6
+      ]
+    ],
+    "order": "any"
+  },
+  {
+    "slug": "the-number-of-users-that-are-eligible-for-discount",
+    "columns": [
+      "eligible_users"
+    ],
+    "rows": [
+      [
+        2
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "the-users-that-are-eligible-for-discount",
+    "columns": [
+      "user_id"
+    ],
+    "rows": [
+      [
+        501
+      ],
+      [
+        502
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "number-of-times-a-driver-was-a-passenger",
+    "columns": [
+      "user_id",
+      "passenger_rides"
+    ],
+    "rows": [
+      [
+        901,
+        2
+      ],
+      [
+        902,
+        0
+      ],
+      [
+        903,
+        1
+      ],
+      [
+        904,
+        1
+      ],
+      [
+        905,
+        0
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "product-sales-analysis-iv",
+    "columns": [
+      "buyer_id",
+      "product_name"
+    ],
+    "rows": [
+      [
+        701,
+        "Espresso"
+      ],
+      [
+        702,
+        "Kettle"
+      ],
+      [
+        703,
+        "Grinder"
+      ],
+      [
+        704,
+        "Mug"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "product-sales-analysis-v",
+    "columns": [
+      "buyer_id",
+      "total_quantity"
+    ],
+    "rows": [
+      [
+        801,
+        25
+      ],
+      [
+        802,
+        19
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "the-number-of-passengers-in-each-bus-i",
+    "columns": [
+      "bus_id",
+      "riders_cnt"
+    ],
+    "rows": [
+      [
+        3,
+        3
+      ],
+      [
+        7,
+        0
+      ],
+      [
+        12,
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "the-number-of-passengers-in-each-bus-ii",
+    "columns": [
+      "bus_id",
+      "boarded_cnt",
+      "boarded_weight"
+    ],
+    "rows": [
+      [
+        3,
+        2,
+        40
+      ],
+      [
+        7,
+        2,
+        100
+      ],
+      [
+        9,
+        2,
+        60
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "longest-winning-streak",
+    "columns": [
+      "team_id",
+      "longest_streak"
+    ],
+    "rows": [
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        4,
+        1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "the-change-in-global-rankings",
+    "columns": [
+      "team_id",
+      "name",
+      "total_points",
+      "pos"
+    ],
+    "rows": [
+      [
+        1,
+        "Atlas",
+        55,
+        1
+      ],
+      [
+        4,
+        "Dunlin",
+        55,
+        2
+      ],
+      [
+        2,
+        "Boldon",
+        50,
+        3
+      ],
+      [
+        5,
+        "Ember",
+        35,
+        4
+      ],
+      [
+        3,
+        "Cobalt",
+        30,
+        5
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "all-the-matches-of-the-league",
+    "columns": [
+      "host_id",
+      "guest_id"
+    ],
+    "rows": [
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        3,
+        2
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "compute-the-rank-as-a-percentage",
+    "columns": [
+      "contestant_id",
+      "name",
+      "score",
+      "pct"
+    ],
+    "rows": [
+      [
+        1,
+        "Iris",
+        120,
+        0
+      ],
+      [
+        2,
+        "Jonas",
+        120,
+        0
+      ],
+      [
+        3,
+        "Kaya",
+        100,
+        33.33
+      ],
+      [
+        4,
+        "Liam",
+        90,
+        50
+      ],
+      [
+        5,
+        "Mina",
+        70,
+        66.67
+      ],
+      [
+        6,
+        "Noor",
+        50,
+        83.33
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "build-the-equation",
+    "columns": [
+      "equation"
+    ],
+    "rows": [
+      [
+        "4x^3+x^2+3x"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "order-two-columns-independently",
+    "columns": [
+      "asc_val",
+      "desc_val"
+    ],
+    "rows": [
+      [
+        10,
+        95
+      ],
+      [
+        23,
+        87
+      ],
+      [
+        41,
+        33
+      ],
+      [
+        64,
+        12
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "dynamic-pivoting-of-a-table",
+    "columns": [
+      "store_id",
+      "jan",
+      "feb",
+      "mar"
+    ],
+    "rows": [
+      [
+        1,
+        30,
+        40,
+        50
+      ],
+      [
+        2,
+        20,
+        null,
+        15
+      ],
+      [
+        3,
+        25,
+        10,
+        null
+      ],
+      [
+        4,
+        null,
+        35,
+        null
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "dynamic-unpivoting-of-a-table",
+    "columns": [
+      "store_id",
+      "quarter",
+      "sales"
+    ],
+    "rows": [
+      [
+        1,
+        "Q1",
+        120
+      ],
+      [
+        1,
+        "Q2",
+        0
+      ],
+      [
+        1,
+        "Q3",
+        95
+      ],
+      [
+        2,
+        "Q1",
+        60
+      ],
+      [
+        2,
+        "Q3",
+        60
+      ],
+      [
+        3,
+        "Q1",
+        45
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "arrange-table-by-gender",
+    "columns": [
+      "person_id",
+      "name",
+      "gender"
+    ],
+    "rows": [
+      [
+        2,
+        "Hana",
+        "F"
+      ],
+      [
+        3,
+        "Emil",
+        "M"
+      ],
+      [
+        4,
+        "Aiko",
+        "F"
+      ],
+      [
+        6,
+        "Gustav",
+        "M"
+      ],
+      [
+        7,
+        "Dara",
+        "F"
+      ],
+      [
+        9,
+        "Bruno",
+        "M"
+      ],
+      [
+        8,
+        "Farah",
+        "F"
+      ],
+      [
+        1,
+        "Cleo",
+        "O"
+      ],
+      [
+        5,
+        "Ivo",
+        "O"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "tasks-count-in-the-weekend",
+    "columns": [
+      "period",
+      "task_cnt",
+      "total_effort"
+    ],
+    "rows": [
+      [
+        "weekend",
+        4,
+        22
+      ],
+      [
+        "weekday",
+        4,
+        18
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "calculate-the-influence-of-each-salesperson",
+    "columns": [
+      "salesperson_id",
+      "name",
+      "influence"
+    ],
+    "rows": [
+      [
+        1,
+        "Ada",
+        450
+      ],
+      [
+        2,
+        "Bram",
+        0
+      ],
+      [
+        3,
+        "Cleo",
+        0
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "sort-the-olympic-table",
+    "columns": [
+      "country",
+      "gold",
+      "silver",
+      "bronze"
+    ],
+    "rows": [
+      [
+        "Elandia",
+        2,
+        1,
+        3
+      ],
+      [
+        "Farwood",
+        2,
+        1,
+        3
+      ],
+      [
+        "Dorwell",
+        2,
+        1,
+        1
+      ],
+      [
+        "Ivera",
+        1,
+        4,
+        0
+      ],
+      [
+        "Hollow",
+        1,
+        2,
+        9
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "change-null-values-in-a-table-to-the-previous-value",
+    "columns": [
+      "reading_id",
+      "filled"
+    ],
+    "rows": [
+      [
+        1,
+        120
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        4,
+        121
+      ],
+      [
+        5,
+        121
+      ],
+      [
+        6,
+        117
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "form-a-chemical-bond",
+    "columns": [
+      "molecule_id",
+      "name",
+      "atom_one",
+      "atom_two"
+    ],
+    "rows": [
+      [
+        1,
+        "hydroxide",
+        "H",
+        "O"
+      ],
+      [
+        2,
+        "dolomite",
+        "C",
+        "O"
+      ],
+      [
+        3,
+        "copper sulfate",
+        "O",
+        "S"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "concatenate-the-name-and-the-profession",
+    "columns": [
+      "person_id",
+      "badge"
+    ],
+    "rows": [
+      [
+        1,
+        "Ada (D)"
+      ],
+      [
+        2,
+        "Bram (A)"
+      ],
+      [
+        3,
+        "Cleo (S)"
+      ],
+      [
+        4,
+        "Dov (P)"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "leetcodify-similar-friends",
+    "columns": [
+      "user1_id",
+      "user2_id"
+    ],
+    "rows": [
+      [
+        1,
+        2
+      ],
+      [
+        3,
+        5
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "the-number-of-seniors-and-juniors-to-join-the-company",
+    "columns": [
+      "role",
+      "accepted_candidates"
+    ],
+    "rows": [
+      [
+        "senior",
+        2
+      ],
+      [
+        "junior",
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "the-number-of-seniors-and-juniors-to-join-the-company-ii",
+    "columns": [
+      "role",
+      "accepted_candidates"
+    ],
+    "rows": [
+      [
+        "senior",
+        2
+      ],
+      [
+        "junior",
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "customers-with-strictly-increasing-purchases",
+    "columns": [
+      "customer_id",
+      "name"
+    ],
+    "rows": [
+      [
+        1,
+        "Rita"
+      ],
+      [
+        2,
+        "Sana"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "products-with-three-or-more-orders-in-two-consecutive-years",
+    "columns": [
+      "product_id"
+    ],
+    "rows": [
+      [
+        1
+      ],
+      [
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "count-artist-occurrences-on-spotify-ranking-list",
+    "columns": [
+      "artist_name",
+      "chart_appearances"
+    ],
+    "rows": [
+      [
+        "Aurora",
+        3
+      ],
+      [
+        "Bloom",
+        2
+      ],
+      [
+        "Caspian",
+        2
+      ],
+      [
+        "Dune",
+        1
+      ]
+    ],
+    "order": "exact"
   }
 ];
 
