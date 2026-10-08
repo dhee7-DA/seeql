@@ -28,6 +28,7 @@ export function Panel({
   pad = 4,
   rounded = "xl",
   hover = false,
+  id,
   className,
   children,
 }: {
@@ -37,11 +38,14 @@ export function Panel({
   pad?: 0 | 3.5 | 4 | 5;
   rounded?: "lg" | "xl";
   hover?: boolean;
+  /** DOM anchor for in-page step navigation. */
+  id?: string;
   className?: string;
   children: ReactNode;
 }) {
   return (
     <div
+      id={id}
       className={cn(
         "sheen border border-zinc-800",
         rounded === "xl" ? "rounded-xl" : "rounded-lg",

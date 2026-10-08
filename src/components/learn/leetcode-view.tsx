@@ -7,18 +7,23 @@
 
 import { useMemo, useState } from "react";
 import {
+  BookOpen,
   Building2,
   Check,
   ChevronLeft,
   ChevronRight,
   Code2,
-  Copy,
+  Compass,
   Database,
+  FlaskConical,
   Lightbulb,
   ListChecks,
   Play,
   Search,
+  Sparkles,
   Stamp,
+  TriangleAlert,
+  TrendingUp,
 } from "lucide-react";
 import {
   LC_ALL,
@@ -39,6 +44,19 @@ import { ResultGrid } from "./result-grid";
 import { useProgress } from "@/lib/curriculum/progress";
 import { celebrate } from "./celebrate";
 import { Btn, Chip, FOCUS_RING, Panel, ProgressBar, SectionLabel } from "./ui/kit";
+import {
+  ConstraintList,
+  DiveCodeBlock,
+  ExampleCards,
+  FollowUpList,
+  LadderRungs,
+  SectionHead,
+  SqlProse,
+  TrapList,
+  type Tone,
+} from "./lc-dive-ui";
+import { ErMiniDiagram } from "./lc-diagrams";
+import { PatternDiagram } from "./lc-pattern";
 import { cn } from "@/lib/utils";
 
 type Tab = "problems" | "companies";
@@ -56,6 +74,20 @@ const DIFF_TEXT: Record<LcDifficulty, string> = {
   Easy: "text-emerald-400",
   Medium: "text-amber-400",
   Hard: "text-rose-400",
+};
+const DIFF_PILL: Record<LcDifficulty, string> = {
+  Easy: "border-emerald-400/30 bg-emerald-400/10 text-emerald-300",
+  Medium: "border-amber-400/30 bg-amber-400/10 text-amber-300",
+  Hard: "border-rose-400/30 bg-rose-400/10 text-rose-300",
+};
+const STEP_DOT: Record<Tone, string> = {
+  sky: "bg-sky-400",
+  violet: "bg-violet-400",
+  fuchsia: "bg-fuchsia-400",
+  rose: "bg-rose-400",
+  cyan: "bg-cyan-400",
+  emerald: "bg-emerald-400",
+  amber: "bg-amber-400",
 };
 
 function DiffDot({ d }: { d: LcDifficulty }) {
@@ -109,6 +141,11 @@ function ProblemRow({
           sql
         </span>
       )}
+      {!p.free && (
+        <span className="hidden shrink-0 rounded-full border border-amber-400/30 bg-amber-400/10 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-amber-300 sm:block">
+          premium
+        </span>
+      )}
       <span
         className={cn(
           "flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
@@ -120,38 +157,6 @@ function ProblemRow({
       </span>
       <ChevronRight className="h-3.5 w-3.5 shrink-0 text-zinc-600" />
     </button>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Code block with copy                                                */
-/* ------------------------------------------------------------------ */
-
-function CodeBlock({ code }: { code: string }) {
-  const [copied, setCopied] = useState(false);
-  const copy = () => {
-    navigator.clipboard?.writeText(code).then(
-      () => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
-      },
-      () => undefined,
-    );
-  };
-  return (
-    <div className="relative overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950">
-      <button
-        type="button"
-        onClick={copy}
-        aria-label="Copy solution"
-        className="absolute right-2 top-2 z-10 rounded-md border border-zinc-700 bg-zinc-900/90 p-1.5 text-zinc-400 hover:text-emerald-300"
-      >
-        {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
-      </button>
-      <pre className="thin-scrollbar overflow-x-auto p-4 pr-12 font-mono text-[12px] leading-relaxed text-zinc-200">
-        {code}
-      </pre>
-    </div>
   );
 }
 
@@ -173,22 +178,28 @@ function Reveal({ label, children }: { label: string; children: React.ReactNode 
 function SqlSchemaPanel({ schema }: { schema: LcSqlSchema }) {
   const [showSeed, setShowSeed] = useState(false);
   return (
-    <Panel pad={4}>
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <SectionLabel>The schema — your SQLite sandbox</SectionLabel>
-        <span className="flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider text-zinc-500">
-          <Database className="h-3 w-3" /> seeded fresh on every run
-        </span>
-      </div>
+    <Panel pad={4} id="dive-schema" className="scroll-mt-16">
+      <SectionHead
+        tone="cyan"
+        icon={Database}
+        title="The schema — your SQLite sandbox"
+        kicker="every table, every key"
+        right={
+          <span className="flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider text-zinc-500">
+            <Database className="h-3 w-3" /> seeded fresh on every run
+          </span>
+        }
+      />
+      <ErMiniDiagram ddl={schema.ddl} />
       {schema.tables && (
-        <div className="mt-2 flex flex-wrap gap-1.5">
+        <div className="mt-3 flex flex-wrap gap-1.5">
           {schema.tables.map((t) => (
             <Chip key={t.name} k={t.name} v={t.note} />
           ))}
         </div>
       )}
       <div className="mt-3">
-        <CodeBlock code={schema.ddl} />
+        <DiveCodeBlock code={schema.ddl} tone="ddl" />
       </div>
       <div className="mt-2">
         <Btn variant="soft" onClick={() => setShowSeed((v) => !v)}>
@@ -196,7 +207,7 @@ function SqlSchemaPanel({ schema }: { schema: LcSqlSchema }) {
         </Btn>
         {showSeed && (
           <div className="mt-2">
-            <CodeBlock code={schema.seed} />
+            <DiveCodeBlock code={schema.seed} tone="seed" />
           </div>
         )}
       </div>
@@ -231,7 +242,6 @@ function SqlPractice({ dive }: { dive: LcSqlDive }) {
       } else {
         setResult(data);
         if (check) {
-          const expected = lcSqlExpected(dive.slug);
           if (expected) {
             const oc = gradeSqlResult(data, expected);
             setOutcome(oc);
@@ -249,22 +259,53 @@ function SqlPractice({ dive }: { dive: LcSqlDive }) {
     }
   };
 
+  const expected = lcSqlExpected(dive.slug);
   return (
-    <Panel pad={4}>
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <SectionLabel>Solve it — write your query</SectionLabel>
-        {solvedAt !== undefined && (
-          <span className="flex items-center gap-1.5 rounded-md border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-1 text-[11px] font-medium text-emerald-300">
-            <Check className="h-3 w-3" /> Solved · {solvedAt} XP
-          </span>
-        )}
-      </div>
-      <p className="mt-1 text-[12px] leading-relaxed text-zinc-500">
+    <Panel pad={4} id="dive-sandbox" className="scroll-mt-16">
+      <SectionHead
+        tone="emerald"
+        icon={FlaskConical}
+        title="Solve it — write your query"
+        kicker="live sandbox · rolled back after every run"
+        right={
+          solvedAt !== undefined ? (
+            <span className="flex items-center gap-1.5 rounded-md border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-1 text-[11px] font-medium text-emerald-300">
+              <Check className="h-3 w-3" /> Solved · {solvedAt} XP
+            </span>
+          ) : (
+            <span className="rounded-md border border-amber-400/30 bg-amber-400/10 px-2.5 py-1 text-[11px] font-medium text-amber-300">
+              +{dive.xp} XP on first solve
+            </span>
+          )
+        }
+      />
+      <p className="text-[12px] leading-relaxed text-zinc-500">
         Runs against the seeded schema above inside a rolled-back sandbox — experiment freely.{" "}
         {dive.writeVerify
           ? "Write problem: your statement really mutates the tables, then you'll see rows affected plus the resulting data."
           : "Ctrl/⌘ + Enter runs."}
       </p>
+      {expected && (
+        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+          <span className="font-mono text-[9.5px] uppercase tracking-[0.14em] text-zinc-500">shape hint</span>
+          <span className="rounded-md border border-sky-400/25 bg-sky-400/[0.07] px-2 py-0.5 font-mono text-[10px] text-sky-300">
+            {expected.columns.length} column{expected.columns.length === 1 ? "" : "s"}
+          </span>
+          <span className="rounded-md border border-violet-400/25 bg-violet-400/[0.07] px-2 py-0.5 font-mono text-[10px] text-violet-300">
+            {expected.rows.length} row{expected.rows.length === 1 ? "" : "s"}
+          </span>
+          <span
+            className={cn(
+              "rounded-md border px-2 py-0.5 font-mono text-[10px]",
+              dive.order === "exact"
+                ? "border-orange-400/25 bg-orange-400/[0.07] text-orange-300"
+                : "border-zinc-700 bg-zinc-900/60 text-zinc-400",
+            )}
+          >
+            {dive.order === "exact" ? "row order graded" : "any row order"}
+          </span>
+        </div>
+      )}
       <div className="mt-3">
         <SqlEditor
           value={sql}
@@ -344,6 +385,22 @@ function LcDetail({ p, onBack }: { p: LcRef; onBack: () => void }) {
     }
   };
 
+  const sec = p.sql ? sqlSectionOf(p.slug) : undefined;
+  const steps: Array<{ id: string; label: string; tone: Tone }> = [
+    { id: "dive-problem", label: "Problem", tone: "sky" },
+    { id: "dive-breakdown", label: "Breakdown", tone: "violet" },
+    { id: "dive-ladder", label: "Ladder", tone: "fuchsia" },
+    ...(sdive
+      ? ([
+          { id: "dive-schema", label: "Schema", tone: "cyan" },
+          { id: "dive-sandbox", label: "Sandbox", tone: "emerald" },
+        ] as const)
+      : []),
+    { id: "dive-solution", label: "Solution", tone: "amber" },
+  ];
+  const jump = (id: string) =>
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+
   return (
     <div className="space-y-5">
       <button
@@ -368,18 +425,27 @@ function LcDetail({ p, onBack }: { p: LcRef; onBack: () => void }) {
               {p.title} <DiffDot d={p.difficulty} />
             </h2>
             <div className="mt-2 flex flex-wrap items-center gap-1.5">
-              <span className={cn("font-mono text-[11px]", DIFF_TEXT[p.difficulty])}>{p.difficulty}</span>
-              <span className="text-zinc-600">·</span>
-              {p.companies.map((c) => (
-                <span key={c} className="rounded-md border border-zinc-800 bg-zinc-900/60 px-2 py-0.5 text-[10px] text-zinc-400">
-                  {c}
+              <span className={cn("rounded-md border px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wider", DIFF_PILL[p.difficulty])}>
+                {p.difficulty}
+              </span>
+              {sec && (
+                <span className="rounded-md border border-emerald-400/25 bg-emerald-400/[0.07] px-2 py-0.5 text-[10px] font-medium text-emerald-300">
+                  {sec.title}
                 </span>
-              ))}
+              )}
+              <span className="rounded-md border border-zinc-700 bg-zinc-900/60 px-2 py-0.5 font-mono text-[10px] text-amber-300">
+                +{xp} XP
+              </span>
               {!p.free && (
                 <span className="rounded-md border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[10px] text-amber-300">
                   premium
                 </span>
               )}
+              {p.companies.map((c) => (
+                <span key={c} className="rounded-md border border-zinc-800 bg-zinc-900/60 px-2 py-0.5 text-[10px] text-zinc-400">
+                  {c}
+                </span>
+              ))}
             </div>
           </div>
           {solvedAt !== undefined ? (
@@ -394,6 +460,22 @@ function LcDetail({ p, onBack }: { p: LcRef; onBack: () => void }) {
         </div>
       </Panel>
 
+      {/* step nav — the five stops of every deep-dive */}
+      {dive && (
+        <nav
+          aria-label="Deep-dive sections"
+          className="thin-scrollbar flex gap-1.5 overflow-x-auto pb-1"
+        >
+          {steps.map((s, i) => (
+            <Btn key={s.id} variant="pill" onClick={() => jump(s.id)}>
+              <span aria-hidden className={cn("h-1.5 w-1.5 rounded-full", STEP_DOT[s.tone])} />
+              <span className="tnum font-mono text-[9px] text-zinc-500">{i + 1}</span>
+              {s.label}
+            </Btn>
+          ))}
+        </nav>
+      )}
+
       {!dive ? (
         <Panel pad={4}>
           <SectionLabel>Deep-dive in progress</SectionLabel>
@@ -406,71 +488,66 @@ function LcDetail({ p, onBack }: { p: LcRef; onBack: () => void }) {
       ) : (
         <>
           {/* The problem */}
-          <Panel pad={4}>
-            <SectionLabel>The problem</SectionLabel>
-            <p className="mt-2 text-sm leading-relaxed text-zinc-300">{dive.statement}</p>
-            <div className="mt-3 space-y-2">
-              {dive.examples.map((ex, i) => (
-                <div key={i} className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3 font-mono text-[12px]">
-                  <p className="text-zinc-400">Input · {ex.input}</p>
-                  <p className="mt-1 text-zinc-200">Output · {ex.output}</p>
-                  {ex.explanation && <p className="mt-1 text-[11px] text-zinc-500">{ex.explanation}</p>}
-                </div>
-              ))}
+          <Panel pad={4} id="dive-problem" className="scroll-mt-16">
+            <SectionHead
+              tone="sky"
+              icon={BookOpen}
+              title="The problem"
+              kicker={sdive ? "read it twice — the tables tell the story" : "original paraphrase"}
+            />
+            <p className="text-sm leading-relaxed text-zinc-300">
+              <SqlProse text={dive.statement} />
+            </p>
+            {sdive && (
+              <div className="mt-3">
+                <PatternDiagram sectionId={sec?.id ?? ""} ddl={sdive.schema.ddl} />
+              </div>
+            )}
+            <div className="mt-3">
+              <ExampleCards examples={dive.examples} />
             </div>
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {dive.constraints.map((c) => (
-                <Chip key={c} k="" v={c} />
-              ))}
-            </div>
+            <p className="mt-4 mb-2 font-mono text-[9.5px] uppercase tracking-[0.14em] text-cyan-300">
+              Constraints — what the data promises you
+            </p>
+            <ConstraintList items={dive.constraints} />
           </Panel>
 
           {/* Breakdown */}
-          <Panel pad={4}>
-            <SectionLabel>The breakdown — what is really being asked</SectionLabel>
-            <div className="mt-2">
-              <Reveal label="Reveal the breakdown">
-                <div className="space-y-2.5">
-                  {dive.breakdown.map((para, i) => (
-                    <p key={i} className="text-sm leading-relaxed text-zinc-300">
-                      {para}
-                    </p>
-                  ))}
-                </div>
-              </Reveal>
-            </div>
+          <Panel pad={4} id="dive-breakdown" className="scroll-mt-16">
+            <SectionHead
+              tone="violet"
+              icon={Compass}
+              title="The breakdown — what is really being asked"
+              kicker="the why behind the wording"
+            />
+            <Reveal label="Reveal the breakdown">
+              <div className="space-y-3">
+                {dive.breakdown.map((para, i) => (
+                  <p key={i} className="text-sm leading-relaxed text-zinc-300">
+                    <SqlProse text={para} />
+                  </p>
+                ))}
+              </div>
+            </Reveal>
           </Panel>
 
           {/* Logic building ladder */}
-          <Panel pad={4}>
-            <SectionLabel>Logic building — the intuition ladder</SectionLabel>
-            <div className="mt-2">
-              <Reveal label="Reveal the ladder (brute force → pattern → optimal)">
-                <ol className="space-y-3">
-                  {dive.ladder.map((rung, i) => (
-                    <li key={i} className="flex gap-3">
-                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-emerald-400/40 font-mono text-[10px] text-emerald-300">
-                        {i + 1}
-                      </span>
-                      <div>
-                        <p className="text-sm font-semibold text-zinc-100">{rung.title}</p>
-                        <p className="mt-0.5 text-[13px] leading-relaxed text-zinc-400">{rung.body}</p>
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-                <div className="mt-3 rounded-lg border border-amber-400/20 bg-amber-400/[0.04] p-3">
-                  <p className="font-mono text-[10px] uppercase tracking-wider text-amber-300">Traps & edges</p>
-                  <ul className="mt-1.5 space-y-1">
-                    {dive.edges.map((e) => (
-                      <li key={e} className="text-[12px] leading-relaxed text-zinc-400">
-                        · {e}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </Reveal>
-            </div>
+          <Panel pad={4} id="dive-ladder" className="scroll-mt-16">
+            <SectionHead
+              tone="fuchsia"
+              icon={TrendingUp}
+              title="Logic building — the intuition ladder"
+              kicker="brute force → pattern → optimal"
+            />
+            <Reveal label="Reveal the ladder (brute force → pattern → optimal)">
+              <LadderRungs rungs={dive.ladder} />
+              <div className="mt-4">
+                <p className="mb-2 flex items-center gap-1.5 font-mono text-[9.5px] uppercase tracking-[0.14em] text-rose-300">
+                  <TriangleAlert className="h-3 w-3" /> Traps & edges — where points are lost
+                </p>
+                <TrapList items={dive.edges} />
+              </div>
+            </Reveal>
           </Panel>
 
           {/* SQL 50: schema + live sandbox practice (before the solution reveal) */}
@@ -478,36 +555,35 @@ function LcDetail({ p, onBack }: { p: LcRef; onBack: () => void }) {
           {sdive && <SqlPractice dive={sdive} />}
 
           {/* Solution */}
-          <Panel pad={4}>
-            <SectionLabel>The solution — {dive.approach}</SectionLabel>
-            <div className="mt-2">
-              <Reveal label={sdive ? "Reveal the SQL solution (engine-verified)" : "Reveal the Python solution (engine-verified)"}>
-                <CodeBlock code={dive.code} />
-                <div className="mt-3 space-y-2.5">
-                  {dive.walkthrough.map((para, i) => (
-                    <p key={i} className="text-sm leading-relaxed text-zinc-400">
-                      {para}
-                    </p>
-                  ))}
+          <Panel pad={4} id="dive-solution" className="scroll-mt-16">
+            <SectionHead
+              tone="amber"
+              icon={Sparkles}
+              title={`The solution — ${dive.approach}`}
+              kicker={sdive ? "engine-verified SQLite" : "engine-verified Python"}
+            />
+            <Reveal label={sdive ? "Reveal the SQL solution (engine-verified)" : "Reveal the Python solution (engine-verified)"}>
+              <DiveCodeBlock code={dive.code} tone={sdive ? "solution" : "python"} />
+              <div className="mt-3 space-y-3">
+                {dive.walkthrough.map((para, i) => (
+                  <p key={i} className="text-sm leading-relaxed text-zinc-400">
+                    <SqlProse text={para} />
+                  </p>
+                ))}
+              </div>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                <Chip k="time" v={dive.time} />
+                <Chip k="space" v={dive.space} />
+              </div>
+              {dive.followUps && dive.followUps.length > 0 && (
+                <div className="mt-4">
+                  <p className="mb-2 font-mono text-[9.5px] uppercase tracking-[0.14em] text-sky-300">
+                    Interview follow-ups — where the conversation goes next
+                  </p>
+                  <FollowUpList items={dive.followUps} />
                 </div>
-                <div className="mt-3 flex flex-wrap gap-1.5">
-                  <Chip k="time" v={dive.time} />
-                  <Chip k="space" v={dive.space} />
-                </div>
-                {dive.followUps && (
-                  <div className="mt-3 rounded-lg border border-zinc-800 bg-zinc-900/50 p-3">
-                    <p className="font-mono text-[10px] uppercase tracking-wider text-zinc-500">Interview follow-ups</p>
-                    <ul className="mt-1.5 space-y-1">
-                      {dive.followUps.map((f) => (
-                        <li key={f} className="text-[12px] leading-relaxed text-zinc-400">
-                          · {f}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </Reveal>
-            </div>
+              )}
+            </Reveal>
           </Panel>
         </>
       )}
