@@ -7294,6 +7294,933 @@ export const SQL_EXPECTED: LcSqlExpected[] = [
       ]
     ],
     "order": "exact"
+  },
+  {
+    "slug": "find-trending-hashtags",
+    "columns": [
+      "tag",
+      "usage_count"
+    ],
+    "rows": [
+      [
+        "#Dawn",
+        4
+      ],
+      [
+        "#Peak",
+        3
+      ],
+      [
+        "#Trail",
+        2
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-trending-hashtags-ii",
+    "columns": [
+      "tag",
+      "unique_authors"
+    ],
+    "rows": [
+      [
+        "#Glow",
+        4
+      ],
+      [
+        "#Bloom",
+        3
+      ],
+      [
+        "#Dusk",
+        2
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-bursty-behavior",
+    "columns": [
+      "user_id",
+      "peak_day",
+      "peak_clicks",
+      "avg_clicks"
+    ],
+    "rows": [
+      [
+        1,
+        "2024-06-03",
+        30,
+        8
+      ],
+      [
+        4,
+        "2024-06-04",
+        12,
+        4
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "user-activities-within-time-bounds",
+    "columns": [
+      "session_id",
+      "user_id",
+      "events_in_session"
+    ],
+    "rows": [
+      [
+        1,
+        1,
+        2
+      ],
+      [
+        2,
+        2,
+        2
+      ],
+      [
+        3,
+        3,
+        0
+      ],
+      [
+        4,
+        1,
+        0
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "friday-purchase-iii",
+    "columns": [
+      "month",
+      "item_name",
+      "total_spent"
+    ],
+    "rows": [
+      [
+        "2024-06",
+        "Kettle",
+        10
+      ],
+      [
+        "2024-06",
+        "Mug",
+        10
+      ],
+      [
+        "2024-07",
+        "Kettle",
+        12
+      ],
+      [
+        "2024-07",
+        "Mug",
+        5
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-products-with-three-consecutive-digits",
+    "columns": [
+      "product_id"
+    ],
+    "rows": [
+      [
+        1
+      ],
+      [
+        2
+      ],
+      [
+        3
+      ],
+      [
+        5
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-longest-calls",
+    "columns": [
+      "caller_id",
+      "call_id",
+      "duration_minutes"
+    ],
+    "rows": [
+      [
+        101,
+        3,
+        30
+      ],
+      [
+        102,
+        4,
+        18
+      ],
+      [
+        103,
+        8,
+        14
+      ],
+      [
+        104,
+        6,
+        0
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "server-utilization-time",
+    "columns": [
+      "server_id",
+      "total_minutes",
+      "utilization_pct"
+    ],
+    "rows": [
+      [
+        1,
+        300,
+        100
+      ],
+      [
+        2,
+        240,
+        59.26
+      ],
+      [
+        3,
+        100,
+        100
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "consecutive-available-seats-ii",
+    "columns": [
+      "seat_id",
+      "best_run"
+    ],
+    "rows": [
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        5,
+        7
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "calculate-parking-fees-and-duration",
+    "columns": [
+      "stay_id",
+      "plate",
+      "minutes",
+      "hours_billed",
+      "fee"
+    ],
+    "rows": [
+      [
+        1,
+        "KDA-204",
+        60,
+        1,
+        4
+      ],
+      [
+        2,
+        "MRF-88",
+        61,
+        2,
+        8
+      ],
+      [
+        3,
+        "TXR-11",
+        1439,
+        24,
+        96
+      ],
+      [
+        4,
+        "PLM-5",
+        30,
+        1,
+        4
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "second-day-verification",
+    "columns": [
+      "user_id"
+    ],
+    "rows": [
+      [
+        71
+      ],
+      [
+        73
+      ],
+      [
+        75
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "invalid-tweets-ii",
+    "columns": [
+      "invalid_count"
+    ],
+    "rows": [
+      [
+        5
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "premier-league-table-ranking",
+    "columns": [
+      "team",
+      "points"
+    ],
+    "rows": [
+      [
+        "Albion",
+        4
+      ],
+      [
+        "Borough",
+        4
+      ],
+      [
+        "Camden",
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "premier-league-table-ranking-ii",
+    "columns": [
+      "team",
+      "played",
+      "points",
+      "goal_diff"
+    ],
+    "rows": [
+      [
+        "Barrow",
+        3,
+        7,
+        4
+      ],
+      [
+        "Amberley",
+        3,
+        7,
+        3
+      ],
+      [
+        "Dover",
+        3,
+        3,
+        1
+      ],
+      [
+        "Colwyn",
+        3,
+        0,
+        -8
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "premier-league-table-ranking-iii",
+    "columns": [
+      "position",
+      "team",
+      "played",
+      "wins",
+      "draws",
+      "losses",
+      "points"
+    ],
+    "rows": [
+      [
+        1,
+        "Ashford",
+        2,
+        2,
+        0,
+        0,
+        6
+      ],
+      [
+        2,
+        "Cirencester",
+        3,
+        1,
+        1,
+        1,
+        4
+      ],
+      [
+        3,
+        "Banbury",
+        2,
+        1,
+        1,
+        0,
+        4
+      ],
+      [
+        4,
+        "Dorking",
+        3,
+        0,
+        0,
+        3,
+        0
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-cities-in-each-state",
+    "columns": [
+      "state",
+      "cities"
+    ],
+    "rows": [
+      [
+        "Nevada",
+        "Carson, Elko, Reno"
+      ],
+      [
+        "Oregon",
+        "Salem"
+      ],
+      [
+        "Texas",
+        "Albany, Alton"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-cities-in-each-state-ii",
+    "columns": [
+      "state_line"
+    ],
+    "rows": [
+      [
+        "Arizona: Gilbert, Mesa, Phoenix, Tucson"
+      ],
+      [
+        "Maine: Augusta, Bangor, Portland"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "second-highest-salary-ii",
+    "columns": [
+      "department",
+      "second_max"
+    ],
+    "rows": [
+      [
+        "Engineering",
+        105000
+      ],
+      [
+        "Finance",
+        80000
+      ],
+      [
+        "Legal",
+        null
+      ],
+      [
+        "Support",
+        null
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "ceo-subordinate-hierarchy",
+    "columns": [
+      "emp_id",
+      "name",
+      "level"
+    ],
+    "rows": [
+      [
+        1,
+        "Nadia",
+        1
+      ],
+      [
+        2,
+        "Boris",
+        2
+      ],
+      [
+        5,
+        "Omar",
+        2
+      ],
+      [
+        3,
+        "Chen",
+        3
+      ],
+      [
+        6,
+        "Dana",
+        3
+      ],
+      [
+        7,
+        "Priya",
+        3
+      ],
+      [
+        4,
+        "Elif",
+        4
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "calculate-trapping-rain-water",
+    "columns": [
+      "position",
+      "water"
+    ],
+    "rows": [
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        4,
+        3
+      ],
+      [
+        9,
+        1
+      ],
+      [
+        10,
+        2
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "bitwise-user-permissions-analysis",
+    "columns": [
+      "user_id",
+      "combined_mask"
+    ],
+    "rows": [
+      [
+        1,
+        7
+      ],
+      [
+        5,
+        15
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-circular-gift-exchange-chains",
+    "columns": [
+      "giver_id",
+      "receiver_id",
+      "cycle_size"
+    ],
+    "rows": [
+      [
+        1,
+        2,
+        3
+      ],
+      [
+        2,
+        3,
+        3
+      ],
+      [
+        3,
+        1,
+        3
+      ],
+      [
+        4,
+        5,
+        5
+      ],
+      [
+        5,
+        6,
+        5
+      ],
+      [
+        6,
+        7,
+        5
+      ],
+      [
+        7,
+        8,
+        5
+      ],
+      [
+        8,
+        4,
+        5
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "team-dominance-by-pass-success",
+    "columns": [
+      "team",
+      "completion_pct"
+    ],
+    "rows": [
+      [
+        "home",
+        83.33
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "longest-team-pass-streak",
+    "columns": [
+      "team",
+      "longest_streak"
+    ],
+    "rows": [
+      [
+        "away",
+        3
+      ],
+      [
+        "home",
+        5
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "year-on-year-growth-rate",
+    "columns": [
+      "product_id",
+      "year",
+      "revenue",
+      "prior_revenue",
+      "growth_pct"
+    ],
+    "rows": [
+      [
+        1,
+        2022,
+        145,
+        100,
+        45
+      ],
+      [
+        1,
+        2023,
+        200,
+        145,
+        37.93
+      ],
+      [
+        2,
+        2022,
+        190,
+        250,
+        -24
+      ],
+      [
+        3,
+        2023,
+        130,
+        90,
+        44.44
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "customer-purchasing-behavior-analysis",
+    "columns": [
+      "customer_id",
+      "segment",
+      "total_spent",
+      "order_count"
+    ],
+    "rows": [
+      [
+        501,
+        "big",
+        1000,
+        2
+      ],
+      [
+        502,
+        "occasional",
+        299,
+        2
+      ],
+      [
+        503,
+        "regular",
+        300,
+        1
+      ],
+      [
+        504,
+        "big",
+        2500,
+        1
+      ],
+      [
+        505,
+        "regular",
+        350,
+        5
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "calculate-product-final-price",
+    "columns": [
+      "product_id",
+      "base_price",
+      "final_price"
+    ],
+    "rows": [
+      [
+        101,
+        400,
+        300
+      ],
+      [
+        102,
+        800,
+        800
+      ],
+      [
+        103,
+        550,
+        550
+      ],
+      [
+        104,
+        999,
+        499.5
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-top-performing-driver",
+    "columns": [
+      "driver_id",
+      "total_runs",
+      "on_time_rate"
+    ],
+    "rows": [
+      [
+        9,
+        5,
+        100
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-candidates-for-data-scientist-position-ii",
+    "columns": [
+      "applicant_id"
+    ],
+    "rows": [
+      [
+        601
+      ],
+      [
+        604
+      ],
+      [
+        606
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-top-scoring-students",
+    "columns": [
+      "student_id",
+      "passed_subjects"
+    ],
+    "rows": [
+      [
+        3,
+        3
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        2
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-top-scoring-students-ii",
+    "columns": [
+      "student_id",
+      "subjects_attempted",
+      "min_subject_score"
+    ],
+    "rows": [
+      [
+        501,
+        3,
+        85
+      ],
+      [
+        503,
+        2,
+        80
+      ],
+      [
+        505,
+        2,
+        82
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-overlapping-shifts",
+    "columns": [
+      "employee_id",
+      "shift_id_a",
+      "shift_id_b"
+    ],
+    "rows": [
+      [
+        11,
+        1,
+        2
+      ],
+      [
+        33,
+        5,
+        6
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-overlapping-shifts-ii",
+    "columns": [
+      "employee_id",
+      "max_concurrent"
+    ],
+    "rows": [
+      [
+        11,
+        3
+      ],
+      [
+        22,
+        1
+      ],
+      [
+        33,
+        1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "books-with-null-ratings",
+    "columns": [
+      "rated_count",
+      "unrated_count",
+      "avg_rated"
+    ],
+    "rows": [
+      [
+        4,
+        1,
+        6
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "first-letter-capitalization",
+    "columns": [
+      "entry_id",
+      "transformed"
+    ],
+    "rows": [
+      [
+        1,
+        "Hello world Again today"
+      ],
+      [
+        2,
+        "Hello"
+      ],
+      [
+        3,
+        "Once upon A time Today"
+      ]
+    ],
+    "order": "exact"
   }
 ];
 

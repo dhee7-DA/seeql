@@ -681,6 +681,89 @@ export const SQL50_SECTIONS: LcSection[] = [
       "find-all-unique-email-domains",
     ],
   },
+  {
+    id: "premium5-trends",
+    title: "Premium Trends & Bursts",
+    blurb:
+      "Trend detection — recursive hashtag tokenizers under whole-token rules, DISTINCT-author trending that survives mention spam, peak-versus-average burst gates with a single-day escape hatch, session-bounded event counts that refuse cross-user leaks, Friday month buckets and digit-run GLOB scans.",
+    slugs: [
+      "find-trending-hashtags",
+      "find-trending-hashtags-ii",
+      "find-bursty-behavior",
+      "user-activities-within-time-bounds",
+      "friday-purchase-iii",
+      "find-products-with-three-consecutive-digits",
+    ],
+  },
+  {
+    id: "premium5-system",
+    title: "Premium System Ops",
+    blurb:
+      "Systems accounting — per-caller argmax through zero-length ties, span-versus-sum utilization that charges idle minutes, island-based bookable seat runs, CEIL billing that bills part-hours whole, month-boundary login pairs via julianday and triple-arm invalid-row sweeps.",
+    slugs: [
+      "find-longest-calls",
+      "server-utilization-time",
+      "consecutive-available-seats-ii",
+      "calculate-parking-fees-and-duration",
+      "second-day-verification",
+      "invalid-tweets-ii",
+    ],
+  },
+  {
+    id: "premium5-league",
+    title: "Premium League Tables",
+    blurb:
+      "Standings engineering — home/away unpivots that pay draws twice, goal-difference tie-breaks invisible to points alone, full-season tables with row-number positions, scan-order GROUP_CONCAT city lists gated at three cities and DENSE_RANK second salaries that pass NULL through.",
+    slugs: [
+      "premier-league-table-ranking",
+      "premier-league-table-ranking-ii",
+      "premier-league-table-ranking-iii",
+      "find-cities-in-each-state",
+      "find-cities-in-each-state-ii",
+      "second-highest-salary-ii",
+    ],
+  },
+  {
+    id: "premium5-graph",
+    title: "Premium Graph Engines",
+    blurb:
+      "The recursive wall — WITH RECURSIVE org depths from a NULL anchor, twin inclusive window maxes pooling rain water, SUM(DISTINCT) standing in for bitwise OR, step-bounded cycle chases through gift permutations, completion-ratio dominance and full-sequence LAG islands over interleaved passes.",
+    slugs: [
+      "ceo-subordinate-hierarchy",
+      "calculate-trapping-rain-water",
+      "bitwise-user-permissions-analysis",
+      "find-circular-gift-exchange-chains",
+      "team-dominance-by-pass-success",
+      "longest-team-pass-streak",
+    ],
+  },
+  {
+    id: "premium5-market",
+    title: "Premium Growth & Rates",
+    blurb:
+      "Growth arithmetic — LAG-based year-over-year rates that survive missing years, inclusive spend-tier boundaries one unit apart, best-rule discounts that refuse to stack, on-time-rate leaders gated by a five-run minimum and skill-count candidate gates with an IN-list wall.",
+    slugs: [
+      "year-on-year-growth-rate",
+      "customer-purchasing-behavior-analysis",
+      "calculate-product-final-price",
+      "find-top-performing-driver",
+      "find-candidates-for-data-scientist-position-ii",
+    ],
+  },
+  {
+    id: "premium5-finales",
+    title: "Premium Assessment Finales",
+    blurb:
+      "The premium close — retake-proof per-subject maxes double-gated at eighty, all-pass transcripts judged on their lowest subject, strict-touch interval pairs, END-before-START sweep lines counting concurrency, COUNT(col) versus COUNT(*) over unrated books and parity-driven capitalizers folded inside a recursive walk.",
+    slugs: [
+      "find-top-scoring-students",
+      "find-top-scoring-students-ii",
+      "find-overlapping-shifts",
+      "find-overlapping-shifts-ii",
+      "books-with-null-ratings",
+      "first-letter-capitalization",
+    ],
+  },
 ];
 
 /** Flat solving order — every SQL 50 problem exactly once. */
