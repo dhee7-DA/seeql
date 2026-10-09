@@ -75,6 +75,10 @@ import { SQL_DF_METRICS } from "./sql-df-metrics";
 import { SQL_DF_COHORTS } from "./sql-df-cohorts";
 import { SQL_DF_MONEY } from "./sql-df-money";
 import { SQL_DF_LEDGER } from "./sql-df-ledger";
+import { SQL_DF_GROWTH_A } from "./sql-df-growth-a";
+import { SQL_DF_GROWTH_B } from "./sql-df-growth-b";
+import { SQL_DF_MARKETS_A } from "./sql-df-markets-a";
+import { SQL_DF_MARKETS_B } from "./sql-df-markets-b";
 
 export const LC_CONTENT: LcDeepDive[] = [
   ...ARRAYS,
@@ -154,6 +158,10 @@ export const LC_SQL_CONTENT: LcSqlDive[] = [
   ...SQL_DF_COHORTS,
   ...SQL_DF_MONEY,
   ...SQL_DF_LEDGER,
+  ...SQL_DF_GROWTH_A,
+  ...SQL_DF_GROWTH_B,
+  ...SQL_DF_MARKETS_A,
+  ...SQL_DF_MARKETS_B,
 ];
 
 const bySlug = new Map(LC_CONTENT.map((d) => [d.slug, d]));

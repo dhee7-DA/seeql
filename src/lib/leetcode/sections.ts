@@ -868,6 +868,34 @@ export const DATAFIN_SECTIONS: LcSection[] = [
       "gl-reconciliation",
     ],
   },
+  {
+    id: "df-growth-experiments",
+    title: "Growth & Experiments",
+    blurb:
+      "The growth desk's weekly rhythm — WoW churn against the week that just left, median days-to-convert per signup cohort, a trailing-7 rolling-active line no frame can sum, PERCENT_RANK usage tiers where ties share a tier, the sample-ratio check every experiment must pass, and adoption read off each user's own signup clock.",
+    slugs: [
+      "week-over-week-churn",
+      "median-time-to-convert",
+      "rolling-7d-actives",
+      "usage-tier-percentiles",
+      "ab-sample-ratio-mismatch",
+      "feature-adoption-windows",
+    ],
+  },
+  {
+    id: "df-markets-risk",
+    title: "Markets & Risk",
+    blurb:
+      "The markets desk in SQL — FX exposure normalized through the latest as-of rate, HHI concentration on the 0-10000 scale, a date-spine interest accrual that carries day-end balances, the dividend income calendar gated on ex-dates, running-max drawdowns with the peak that set them, and duplicate-charge pairs inside a 120-second window.",
+    slugs: [
+      "fx-exposure-report",
+      "portfolio-concentration-hhi",
+      "daily-balance-interest",
+      "dividend-income-calendar",
+      "max-drawdown",
+      "duplicate-charge-pairs",
+    ],
+  },
 ];
 
 /** Flat solving order for the Data & Finance track. */

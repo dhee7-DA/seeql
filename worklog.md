@@ -4137,3 +4137,61 @@ Stage Summary:
 - MODULE 13 SHIPS: the Data & Finance track — 12 original domain problems, 240 XP, all order:"exact", live-graded in the sandbox with the full enhanced UI (syntax highlighting, colourful prose, ER mini-diagrams, pattern SVGs — all inherited from the rendering layer with zero content-file styling work).
 - Track grows on request: batch 2 candidates drafted (Growth & Experiments + Markets & Risk, 12 more) — WoW churn, time-to-convert, rolling actives, power-user percentiles / FX exposure, concentration risk, dividend income, daily-balance interest accrual.
 - Band plumbing is now generic: BAND_BY_MODULE in sections.ts means any future lesson-less module (e.g. an algo band) registers its own counters by adding one map entry.
+
+---
+Task ID: 73-c
+Agent: content author (markets A)
+Task: Author batch 2 of the Data & Finance track — src/lib/leetcode/content/sql-df-markets-a.ts exporting SQL_DF_MARKETS_A with 3 dives (ids 8019-8021: fx-exposure-report Medium/20, portfolio-concentration-hhi Medium/20, daily-balance-interest Hard/35; all order:"exact") plus the engine self-check scripts/tmp-73-c-check.ts.
+
+Work Log:
+- Read worklog tail (Task 72 batch-1 protocol), types.ts (LcSqlDive), sql-df-money.ts (house template) and tmp-72-b4-check.ts (check protocol) first; verified all 9 pool slugs (4+4+4 with overlap) resolve in LC_ALL with real registry rows before citing any.
+- Dive 1 fx-exposure-report: latest_rates CTE (WHERE rate_date <= '2026-10-01' + ROW_NUMBER per currency by rate_date DESC, rn = 1) joined on currency, one-step CAST(ROUND(balance_minor * usd_per_unit) AS INTEGER) — pinned the minor-units scale fact (balance_minor IS cents, so the product is USD cents, no /100). Seed: 5 accounts (EUR 250000/43750, GBP 89000, CAD 500000, USD 125000); fx_rates plants the stale EUR 09-01 row (1.1640), the driving 09-28 row (1.1720) AND a future 10-05 row (1.1810), plus GBP's lone old 08-15 row (1.3410). Paris pinned at 43750 (not a round hundred) so the /100 scale-slip probe truncates honestly (43750/100 = 437 → 51216 vs contract 51275).
+- Dive 2 portfolio-concentration-hhi: weights CTE (100.0 * mv / SUM(mv) OVER (PARTITION BY portfolio_id)) → scored CTE (COUNT, MAX(w), SUM(w*w)) → ROUND/CAST + CASE with the strict > 2500 / >= 1500 antitrust thresholds. Seed built EXACT: market_value_cents = percent point × 2500 (P1 50/25/15/10 → 3450 concentrated; P2 four equal 25s → 2500.0 exactly ON the boundary → moderate; P3 20/15/14/13/12/10/9/7 over a 250000 book → 1364 diversified) — zero float noise reaches ROUND, and the 0-1 fractional probe reads 0.345/0.25/0.1364 within 1e-9.
+- Dive 3 daily-balance-interest: WITH RECURSIVE days spine ('2026-09-01' .. '2026-09-30') CROSS JOIN accounts, daily_net folded per (account, txn_date) so A2's same-day +120000/-120000 pair collapses to one 0 net, LEFT JOIN + COALESCE 0, running window SUM = EOD walk, final GROUP BY sums EOD * apy_pct / 100.0 / 365 over the 30 days with the single end-ROUND, and SUM(net_cents) as end_balance_cents. Hand cent-days: A1 5530000 → 606, A2 1960000 → 188, A3 2400000 → 329; check script mirrors the engine's float ops in TS (per-day (eod*apy)/100.0/365, day-ascending accumulation) and asserts |raw − ts| < 1e-9 plus Math.round agreement on all three accounts.
+- Self-check scripts/tmp-73-c-check.ts (bun + bun:sqlite; b4 protocol): per dive — one-statement via BOTH counters, ORDER BY after stripComments+stripOver, read-only head, trailing-semicolon + no-;-in-comments hygiene, sentence audits (statement 3-6, breakdown 3-6, walkthrough >= 3, ladder >= 2, edges >= 1), 2 examples WITH explanations, exactly 3 related each validated against the per-dive pool AND LC_ALL, tables-notes == CREATE TABLE count, no backticks/${/platform strings, no "e.g."/"i.e.", MONEY convention (every *_cents/_minor DDL column INTEGER; money outputs declared integer; REAL cells within 1e-9), determinism double-run, exact columns, row count, EVERY cell, whole-array equality, integer-cell types.
+- Probe sections: D1 5 (future-rate 295250/51669; oldest-rate 291000/50925; currency-less join fans out to 25 rows; two-step integer-division scale slip 51216; global-latest join ships 1 row), D2 4 (0-1 scale ~0.345/0.25/0.1364; OVER () grand-total 2250000 → 681/494/17 all 'diversified'; >= 2500 boundary flips P2 to 'concentrated'; wrong largest_pct denominator 22.2/11.1/2.2), D3 5 (per-txn accrual 58/40/21 incl. the 09-10 double-count; opening-balance accrual 586/182/308; 360-day year 614/191/333; per-day ROUND drift 608/196/336; no-spine activity-days-only 58/21/21 — A3 loses 15 carry days). Plus hand blocks: D1 driving-rate dates/rates + TS re-multiply of all 5 accounts; D2 weights sum to 100 per portfolio (1e-9) and exact hand square-sums 3450/2500/1364; D3 cent-days identities, TS-vs-engine float mirrors (1e-9, all three), end balances from the ledger.
+- Iteration: run 1 = 227/4 (D1 code had a trailing comment after the final ';' — the b3 trap again; the money-convention assert had a buggy regex that matched 'conce[ntr]ation'; D3's running CTE forgot to carry net_cents so SUM(net_cents) failed with "no such column"; the D1 oldest-rate probe still expected 46560 from the pre-final 40000 Paris balance instead of 50925), run 2 = 249/1 (money assert rebuilt to check DDL money columns are INTEGER — D2 legitimately has no _cents OUTPUT column), run 3 = 253/0 ALL CHECKS PASS 3/3. Assertions never weakened — the two failing asserts were rebuilt to test the actual documented convention; prose/code fixed everywhere else.
+- Registry tuples (num/difficulty/xp per slug in LC_ALL): the 8019-8021 rows are NOT wired yet (batch-1 pattern — the lead wires after content lands), so the script prints PEND today and the asserts are ARMED: the moment the lead adds the rows, any num/difficulty/xp mismatch hard-fails the script. Dive xp fields match the Easy 10 / Medium 20 / Hard 35 map unconditionally (asserted).
+- QA: tsc --noEmit shows 0 mentions of sql-df-markets-a or tmp-73-c-check; eslint exit 0 on both files. No lead files touched (no registry*, sections.ts, content.ts, sql-expected.ts, components or curriculum changes) — slugs are ready for the lead's 8019-8021 wiring and a "Markets & Risk" section.
+
+Stage Summary:
+- DELIVERED: src/lib/leetcode/content/sql-df-markets-a.ts (SQL_DF_MARKETS_A, 3 dives, 75 XP: 20+20+35, all order:"exact", all read-only single-statement solutions) + scripts/tmp-73-c-check.ts retained as the re-runnable artifact. 253 assertions, 0 failures (3 registry PENDs are lead-wiring placeholders with armed asserts).
+- Engine snapshots pinned: fx-exposure 5 rows ordered by computed usd_value_cents DESC (362000/293000/125000/119349/51275); HHI 3 rows (3450 concentrated / 2500 exactly-moderate / 1364 diversified) with largest_pct 50.0/25.0/20.0; interest accrual 3 rows (606 / 188 / 329 cents on end balances 180000/60000/150000, single end-ROUND, TS float mirror within 1e-9).
+- 14 wrong-query probes pin every documented misstep with its wrong output; D3's per-day-ROUND probe DOES drift on the shipped seed (608/196/336), so the spec's "adjust until it drifts" fallback was not needed.
+- Related slugs drawn ONLY from the brief's pools, each confirmed in LC_ALL. No lead files touched.
+
+---
+Task ID: 73-a
+Agent: content author (growth A) — entry recorded by lead (agent finished all work + checks green, then hit its context deadline before appending)
+Task: Author sql-df-growth-a.ts — week-over-week-churn (8013 M/20), median-time-to-convert (8014 H/35), rolling-7d-actives (8015 M/20).
+
+Work Log:
+- Delivered src/lib/leetcode/content/sql-df-growth-a.ts (SQL_DF_GROWTH_A, 3 dives, all order:"exact") + scripts/tmp-73-a-check.ts.
+- Final check run: 306 passed, 0 failed — ALL CHECKS PASS 3/3 (structure + engine per-cell + wrong-query probes + registry asserts armed vs LC_ALL).
+
+Stage Summary:
+- 150 XP of growth content, engine-verified; lead wired registry/content/sections after delivery.
+
+---
+Task ID: 73-b
+Agent: content author (growth B) — entry recorded by lead (agent finished all work + checks green, then hit its context deadline before appending)
+Task: Author sql-df-growth-b.ts — usage-tier-percentiles (8016 M/20), ab-sample-ratio-mismatch (8017 M/20), feature-adoption-windows (8018 H/35).
+
+Work Log:
+- Delivered src/lib/leetcode/content/sql-df-growth-b.ts (SQL_DF_GROWTH_B, 3 dives, all order:"exact") + scripts/tmp-73-b-check.ts.
+- Final check run: 269 passed, 0 failed — ALL CHECKS PASS 3/3. Notable: a documented non-live probe (ROUND vs CAST on integral-midnight day deltas agrees on this seed) is honestly labeled HAPPENS TO AGREE.
+
+Stage Summary:
+- Growth/experiments content verified incl. the shared-rank tie semantics and the 5.00% SRM boundary case; lead wired after delivery.
+
+---
+Task ID: 73-d
+Agent: content author (markets B) — entry recorded by lead (agent finished all work + checks green, then hit its context deadline before appending)
+Task: Author sql-df-markets-b.ts — dividend-income-calendar (8022 M/20), max-drawdown (8023 H/35), duplicate-charge-pairs (8024 M/20).
+
+Work Log:
+- Delivered src/lib/leetcode/content/sql-df-markets-b.ts (SQL_DF_MARKETS_B, 3 dives, all order:"exact") + scripts/tmp-73-d-check.ts.
+- Final check run: 250 passed, 0 failed — ALL CHECKS PASS 3/3. Notable probe: the julianday float path reads 119.99999284744263 at the 120-second wall vs the pinned epoch-integer contract.
+
+Stage Summary:
+- Markets/risk content verified; ex-date gate, running-max argmax and 120s-window pair identity all engine-pinned; lead wired after delivery.

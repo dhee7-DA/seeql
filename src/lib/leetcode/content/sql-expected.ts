@@ -9404,6 +9404,462 @@ export const SQL_EXPECTED: LcSqlExpected[] = [
       ]
     ],
     "order": "exact"
+  },
+  {
+    "slug": "week-over-week-churn",
+    "columns": [
+      "week_start",
+      "actives",
+      "retained",
+      "churned",
+      "churn_rate"
+    ],
+    "rows": [
+      [
+        "2026-08-10",
+        11,
+        8,
+        2,
+        20
+      ],
+      [
+        "2026-08-17",
+        12,
+        9,
+        2,
+        18.2
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "median-time-to-convert",
+    "columns": [
+      "cohort_month",
+      "cohort_size",
+      "converted",
+      "unconverted",
+      "median_days"
+    ],
+    "rows": [
+      [
+        "2026-07",
+        5,
+        4,
+        1,
+        2.5
+      ],
+      [
+        "2026-08",
+        4,
+        4,
+        0,
+        3.5
+      ],
+      [
+        "2026-09",
+        6,
+        5,
+        1,
+        12
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "rolling-7d-actives",
+    "columns": [
+      "day",
+      "rolling_actives",
+      "delta"
+    ],
+    "rows": [
+      [
+        "2026-09-08",
+        11,
+        2
+      ],
+      [
+        "2026-09-09",
+        12,
+        1
+      ],
+      [
+        "2026-09-10",
+        12,
+        0
+      ],
+      [
+        "2026-09-11",
+        12,
+        0
+      ],
+      [
+        "2026-09-12",
+        12,
+        0
+      ],
+      [
+        "2026-09-13",
+        12,
+        0
+      ],
+      [
+        "2026-09-14",
+        11,
+        -1
+      ],
+      [
+        "2026-09-15",
+        9,
+        -2
+      ],
+      [
+        "2026-09-16",
+        9,
+        0
+      ],
+      [
+        "2026-09-17",
+        12,
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "usage-tier-percentiles",
+    "columns": [
+      "tier",
+      "users",
+      "avg_events"
+    ],
+    "rows": [
+      [
+        "whale",
+        1,
+        120
+      ],
+      [
+        "power",
+        3,
+        75
+      ],
+      [
+        "core",
+        6,
+        43.8
+      ],
+      [
+        "casual",
+        10,
+        23.1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "ab-sample-ratio-mismatch",
+    "columns": [
+      "experiment_id",
+      "exp_name",
+      "control_n",
+      "treatment_n",
+      "expected_control_n",
+      "deviation_pct",
+      "srm_flag"
+    ],
+    "rows": [
+      [
+        1,
+        "checkout-v2",
+        100,
+        100,
+        100,
+        0,
+        "ok"
+      ],
+      [
+        2,
+        "pricing-page",
+        120,
+        80,
+        100,
+        20,
+        "SRM"
+      ],
+      [
+        3,
+        "onboarding-nudge",
+        133,
+        67,
+        140,
+        5,
+        "ok"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "feature-adoption-windows",
+    "columns": [
+      "cohort_week",
+      "users",
+      "pct_7d",
+      "pct_14d",
+      "pct_30d"
+    ],
+    "rows": [
+      [
+        "2026-09-07",
+        6,
+        50,
+        66.7,
+        83.3
+      ],
+      [
+        "2026-09-14",
+        5,
+        40,
+        60,
+        60
+      ],
+      [
+        "2026-09-21",
+        4,
+        25,
+        50,
+        50
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "fx-exposure-report",
+    "columns": [
+      "account_id",
+      "account_name",
+      "currency",
+      "balance_minor",
+      "usd_value_cents"
+    ],
+    "rows": [
+      [
+        3,
+        "Toronto Payroll",
+        "CAD",
+        500000,
+        362000
+      ],
+      [
+        1,
+        "Frankfurt Operating",
+        "EUR",
+        250000,
+        293000
+      ],
+      [
+        4,
+        "NY Treasury",
+        "USD",
+        125000,
+        125000
+      ],
+      [
+        2,
+        "London Trading",
+        "GBP",
+        89000,
+        119349
+      ],
+      [
+        5,
+        "Paris Marketing",
+        "EUR",
+        43750,
+        51275
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "portfolio-concentration-hhi",
+    "columns": [
+      "portfolio_id",
+      "positions",
+      "largest_pct",
+      "hhi",
+      "concentration"
+    ],
+    "rows": [
+      [
+        1,
+        4,
+        50,
+        3450,
+        "concentrated"
+      ],
+      [
+        2,
+        4,
+        25,
+        2500,
+        "moderate"
+      ],
+      [
+        3,
+        8,
+        20,
+        1364,
+        "diversified"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "daily-balance-interest",
+    "columns": [
+      "account_id",
+      "apy_pct",
+      "interest_cents",
+      "end_balance_cents"
+    ],
+    "rows": [
+      [
+        1,
+        4,
+        606,
+        180000
+      ],
+      [
+        2,
+        3.5,
+        188,
+        60000
+      ],
+      [
+        3,
+        5,
+        329,
+        150000
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "dividend-income-calendar",
+    "columns": [
+      "account_id",
+      "symbol",
+      "pay_date",
+      "shares",
+      "income_cents"
+    ],
+    "rows": [
+      [
+        1,
+        "JNJ",
+        "2026-12-08",
+        40,
+        5200
+      ],
+      [
+        2,
+        "JNJ",
+        "2026-12-08",
+        75,
+        9750
+      ],
+      [
+        1,
+        "KO",
+        "2026-12-11",
+        150,
+        7200
+      ],
+      [
+        2,
+        "KO",
+        "2026-12-11",
+        300,
+        14400
+      ],
+      [
+        1,
+        "KO",
+        "2027-03-12",
+        150,
+        7800
+      ],
+      [
+        2,
+        "KO",
+        "2027-03-12",
+        300,
+        15600
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "max-drawdown",
+    "columns": [
+      "portfolio_id",
+      "max_drawdown_pct",
+      "trough_date",
+      "peak_date"
+    ],
+    "rows": [
+      [
+        1,
+        -3.42,
+        "2026-09-10",
+        "2026-09-08"
+      ],
+      [
+        2,
+        -8.1,
+        "2026-09-11",
+        "2026-09-09"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "duplicate-charge-pairs",
+    "columns": [
+      "charge_id_a",
+      "charge_id_b",
+      "seconds_apart"
+    ],
+    "rows": [
+      [
+        101,
+        102,
+        90
+      ],
+      [
+        102,
+        103,
+        110
+      ],
+      [
+        110,
+        111,
+        45
+      ],
+      [
+        120,
+        121,
+        120
+      ],
+      [
+        170,
+        171,
+        0
+      ]
+    ],
+    "order": "exact"
   }
 ];
 

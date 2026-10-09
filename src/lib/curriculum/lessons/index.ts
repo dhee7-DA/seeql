@@ -265,7 +265,7 @@ export const MODULES: Array<ModuleInfo & { lessons: Lesson[] }> = [
     title: "Data & Finance SQL",
     level: "Interview",
     blurb:
-      "The domain band — original problems authored for data & finance interview prep. Product Analytics: DAU/WAU stickiness, growth accounting's four levers, funnel conversion, cohort retention matrices, gap-threshold sessionization and A/B lift. Finance Core: recursive loan amortization, delinquency buckets, portfolio weights, T+2 settlement fails, average-cost realized P&L and ledger reconciliation — 12 problems across 2 skill sections, each with a full deep-dive, seeded schema and live auto-grading.",
+      "The domain band — original problems authored for data & finance interview prep. Product Analytics: DAU/WAU stickiness, growth accounting's four levers, funnel conversion, cohort retention matrices, gap-threshold sessionization and A/B lift. Finance Core: recursive loan amortization, delinquency buckets, portfolio weights, T+2 settlement fails, average-cost realized P&L and ledger reconciliation. Growth & Experiments: WoW churn, median time-to-convert, rolling actives, usage-tier percentiles, sample-ratio mismatch and adoption windows. Markets & Risk: FX exposure, HHI concentration, daily-balance interest accrual, dividend calendars, max drawdown and duplicate-charge detection — 24 problems across 4 skill sections, each with a full deep-dive, seeded schema and live auto-grading.",
     lessons: [],
   },
 ];
