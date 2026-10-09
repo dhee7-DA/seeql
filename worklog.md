@@ -4195,3 +4195,23 @@ Work Log:
 
 Stage Summary:
 - Markets/risk content verified; ex-date gate, running-max argmax and 120s-window pair identity all engine-pinned; lead wired after delivery.
+
+---
+Task ID: 73
+Agent: main (lead)
+Task: Data & Finance track batch 2 — grow Module 13 from 12 to 24 problems across 2 new sections (Growth & Experiments, Markets & Risk), after the user's "yes" to the drafted batch-2 candidates.
+
+Work Log:
+- Re-verified repo state first: HEAD at the Task 72 worklog commit, dev server up, only db/custom.db churn.
+- Studied house formats end-to-end before authoring (types.ts, sql-df-money.ts template, tmp-72-b4-check.ts protocol, sections/BAND_BY_MODULE wiring, lc-sql-verify/lc-sections-check) — confirmed the wiring is fully generic: new DF sections only need DATAFIN_SECTIONS entries.
+- Designed batch 2 with pinned formulas and trap coverage: Growth & Experiments (8013 WoW churn w/ prior-week denominator + resurrected-vs-retained, 8014 row-number-mirror median per cohort, 8015 trailing-7 rolling distinct via self-join, 8016 PERCENT_RANK tiers with shared-rank boundary tie, 8017 SRM control-side deviation strict >5.0 w/ exact 5.00 case, 8018 7/14/30-day adoption windows anchored on each user's signup) and Markets & Risk (8019 latest-as-of FX normalization in one multiplication, 8020 HHI 0-10000 w/ exact-2500 boundary, 8021 recursive date-spine daily accrual end-rounded once, 8022 ex-date-gated dividend calendar w/ honest fanout, 8023 running-max drawdown + argmax peak date, 8024 epoch-second duplicate-charge pairs w/ tie-safe identity).
+- Dispatched 4 parallel content authors (73-a..73-d) with fully self-contained briefs. 73-c returned a full report (253/0); 73-a/b/d hit context deadlines AFTER writing both files and going green — verified by running their scripts directly (306/269/250, all 0 failed), so no re-dispatch was needed; their worklog entries recorded by lead.
+- Lead wiring: registry-sql-datafin.ts +12 rows (8013-8024, same "SQL · Data & Finance" list facet, data/finance company tags); content.ts +4 imports/spreads; sections.ts +2 sections (df-growth-experiments, df-markets-risk) — DATAFIN_SLUGS/SQL_ALL_SECTIONS/BAND_BY_MODULE/SECTION_BY_SLUG all derive automatically; Module 13 blurb → 24 problems / 4 sections.
+- Verification: all 4 agent scripts re-run green against the live registry (registry asserts armed and passing); lc-sql-verify regenerated sql-expected.ts at 359 ALL PASS (347 → 359); lc-sections-check 63 sections (59+4) 1:1 ALL PASS, both bands disjoint; tsc filtered clean; eslint exit 0.
+- E2E gotcha worth remembering: after solving a problem, "Open the band" from the sidebar re-lands on the still-open detail view — the reliable route back to the list is the detail header's "All problems" button; also the grader is "Run & check · +N XP", NOT the plain "Run" button.
+- E2E: fresh session → skip tour → Module 13 "0/24" with all 4 sections listed → band shows 30 jump chips incl. "Growth & Experiments · 6" / "Markets & Risk · 6" → solved fx-exposure-report via Run & check → "CORRECT — YOUR RESULT MATCHES THE EXPECTED ANSWER · 5 rows · 24.26ms" → counters 1/24, Markets & Risk 1/6 → solved week-over-week-churn → CORRECT · 2 rows · 23.24ms → 2/24, Growth & Experiments 1/6 → Module 12 isolated at 0/335. Mobile 390×844 overX false; console clean (HMR + DevTools info only). Screenshots: download/df2-band-mobile.png, download/df2-band-desktop.png. agent-browser closed.
+
+Stage Summary:
+- MODULE 13 NOW SHIPS 24 problems / 4 sections / 540 XP: Product Analytics + Finance Core (batch 1) joined by Growth & Experiments + Markets & Risk (batch 2) — all original, all engine-verified, all live-graded, full enhanced UI inherited from the rendering layer.
+- Track total now: 359 gradeable SQL problems (335 LeetCode-band + 24 Data & Finance), sql-expected at 359 ALL PASS.
+- Natural next candidates if the user wants more: a third DF batch (e.g. Reporting & Reconciliation: variance analysis, period-close checklists, covenant ratios; or Data Engineering flavor: dedup/SCD/late-arriving events), polishing the 50 thin SQL50 breakdowns from the audit, or the deferred algorithm track.
