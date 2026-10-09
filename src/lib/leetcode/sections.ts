@@ -9,6 +9,8 @@
 // Kept import-free on purpose: no cycles, and the section map stays usable
 // from scripts and the registry without pulling content blobs.
 
+import type { LcSectionStudy } from "./types";
+
 export interface LcSection {
   /** stable id — used for DOM anchors (`sql-sec-<id>`) and logging */
   id: string;
@@ -18,6 +20,9 @@ export interface LcSection {
   blurb: string;
   /** problem slugs in the intended solving order */
   slugs: string[];
+  /** optional STUDY GUIDE — detailed learning material rendered under the
+   *  header (Data & Finance sections): domain intro, flow diagram, path. */
+  study?: LcSectionStudy;
 }
 
 export const SQL50_SECTIONS: LcSection[] = [
@@ -895,6 +900,126 @@ export const DATAFIN_SECTIONS: LcSection[] = [
       "max-drawdown",
       "duplicate-charge-pairs",
     ],
+  },
+  {
+    id: "df-banking-credit",
+    title: "Banking & Credit Risk",
+    blurb:
+      "The lender's whole pipe in SQL — vintage default curves that cohort loans by origination month, the delinquency roll-rate matrix a credit officer reads weekly, the utilization bands behind every credit score, PD × LGD × EAD provisioning, the rate sheet with its override exceptions, and the two balance walks that price an early payoff.",
+    slugs: [
+      "vintage-default-curves",
+      "delinquency-roll-rates",
+      "credit-utilization-bands",
+      "expected-credit-loss",
+      "risk-based-pricing",
+      "prepayment-detection",
+    ],
+    study: {
+      intro: [
+        "Start with one sentence: a bank lends money and some of it does not come back. Everything in this section is machinery for measuring WHICH loans, HOW LATE, and HOW MUCH. A loan is born at origination (the score picks the APR), lives month by month on an amortization schedule, and either runs to term or dies early — paid off, or defaulted. The whole section is SQL reading of that pipe: each problem takes one leg.",
+        "The core trick every problem shares: comparing states over TIME. A vintage curve compares loan cohorts (the 2026-01 brew against the 2026-02 brew) as they age side by side. Roll rates compare every customer's delinquency bucket this month against last month — a state machine you build with a self-join. Utilization and pricing compare a customer against a ladder of bands. ECL multiplies three rates into one loss number. Prepayment runs TWO walks over the same loan — the schedule and what actually happened — and reads the difference.",
+        "Read the study flow below first: origination on the left, servicing in the middle, the delinquency stair and the default exit on the right. Then solve in the suggested order — the easy gauge first, the recursive schedule last. Every problem carries a primer that teaches its concept from zero, so if PD/LGD/EAD reads like alphabet soup, the primer fixes that before the breakdown starts.",
+      ],
+      flow: "loan-life",
+      path: [
+        { slug: "credit-utilization-bands", why: "The gentlest on-ramp: latest-row + a ratio + CASE bands — and the 30% line is a real credit-score mechanic you can use outside interviews." },
+        { slug: "risk-based-pricing", why: "The band-join pattern (score BETWEEN tier bounds) plus override precedence — how the APR on a real offer letter was actually produced." },
+        { slug: "vintage-default-curves", why: "The classic credit-risk interview question: cohort by origination month, cumulative default with a window SUM, and the curve that only steps up." },
+        { slug: "expected-credit-loss", why: "Three rates multiplied per loan and summed per segment — the regulator's number, and the sum-of-products trap that fails half the candidates." },
+        { slug: "delinquency-roll-rates", why: "The state machine: bucket this month vs last month for every customer, ordered by a severity CASE — never alphabetical." },
+        { slug: "prepayment-detection", why: "The finale: a WITH RECURSIVE scheduled walk over the same loan the payments table records actually — savings to the cent." },
+      ],
+    },
+  },
+  {
+    id: "df-fraud-aml",
+    title: "Fraud & AML",
+    blurb:
+      "The surveillance desk in SQL — cash deposits sliced under the CTR wall, 300-second velocity bursts on the card feed, boomerang transfers that come back inside seven days, z-scores against the customer's own baseline, merchants over the 1% chargeback wall, and the dormant account that wakes up unverified.",
+    slugs: [
+      "structuring-detection",
+      "transaction-velocity",
+      "circular-transfers",
+      "amount-anomaly-zscore",
+      "chargeback-rate-ranking",
+      "dormant-reactivation",
+    ],
+    study: {
+      intro: [
+        "Fraud work is pattern-hunting with rules a regulator can read. Money moves through a pipeline — swipe, authorize, capture, settle — and every stage has a screen: velocity at authorization, duplicates at settlement, dispute rates across a merchant portfolio. On the AML side, the government's reporting walls (the 10,000-dollar CTR) create a signature: criminals slice under them, and the SQL that catches slicing is a GROUP BY with a guard.",
+        "Two SQL shapes dominate this section. The first is the WINDOW: bucket time (300-second velocity buckets) or rank within a group (the 5th-worst return, the earliest matching sell). The second is the SELF-JOIN: a table paired with itself — a transfer against the transfer that comes back, a login against the login six months earlier. Both shapes fail in characteristic ways, and every problem here pins those wrong answers with live probes.",
+        "The primers carry the domain: what structuring is and why it is a crime even when the money is clean, why stolen cards burst, what a z-score means against a customer's own history. The study flow shows the pipeline — find each problem's gate on it before you write a line of SQL.",
+      ],
+      flow: "payments-pipeline",
+      path: [
+        { slug: "chargeback-rate-ranking", why: "The easiest read: GROUP BY, a rate, a HAVING wall — plus the refund-in-the-denominator trap that processors actually litigate." },
+        { slug: "structuring-detection", why: "The classic AML flag: per-day grouping with three guards at once (count, total, and every slice under the wall)." },
+        { slug: "transaction-velocity", why: "Time-bucket math on epoch seconds — integer division, purchases only, and the burst that straddles a bucket edge." },
+        { slug: "amount-anomaly-zscore", why: "Your first per-group statistics: mean, population sigma via sqrt, and the z-score compared RAW before any rounding." },
+        { slug: "dormant-reactivation", why: "The negative-space pattern: proving ZERO logins in a window with NOT EXISTS, and shipping the NULL prior-login row honestly." },
+        { slug: "circular-transfers", why: "The self-join finale: the boomerang pair inside 604,800 seconds, deduped by id order — and why a 3-hop chain never matches." },
+      ],
+    },
+  },
+  {
+    id: "df-accounting-close",
+    title: "Accounting & Close",
+    blurb:
+      "The controller's month in SQL — a trial balance that surfaces the one broken account, the AR aging conveyor, the opening-plus-activity rollforward auditors request first, FIFO inventory layers consumed oldest-first, deferred revenue unwinding across service months, and the document-number gaps that prove a deletion.",
+    slugs: [
+      "trial-balance-check",
+      "ar-aging-schedule",
+      "balance-rollforward",
+      "fifo-inventory-cogs",
+      "deferred-revenue",
+      "journal-gap-detection",
+    ],
+    study: {
+      intro: [
+        "Accounting runs on one iron rule: every transaction touches at least TWO accounts, and debits equal credits. That rule makes accounting data perfect for SQL — everything balances, so every query you write is a checkpoint that either ties out or names the account that broke. The month-end close is the ritual that proves it: sub-ledgers post to the journal, the journal posts to the general ledger, the trial balance checks, the rollforwards bridge last month to this month, and only then do statements print.",
+        "This section is five of those checkpoints plus the two hardest valuation puzzles in the batch. FIFO inventory is the marquee: sales consume the OLDEST cost layers first, and the set-based solution is a cross join with three clamps — the kind of query that separates candidates who can follow SQL from candidates who can think in it. Deferred revenue is its mirror: cash arrives on day one, but revenue is recognized month by month across a term, on a recursive month spine.",
+        "The sign conventions are pinned in the constraints of each problem (this track uses one uniform closing formula and says so). The primers teach debits and credits from zero — left vs right, not good vs bad — so the trial balance reads like a scale and not like a mystery.",
+      ],
+      flow: "month-close",
+      path: [
+        { slug: "trial-balance-check", why: "Start at the heartbeat: SUM both sides per account, read the delta — the easiest query in the batch and the close's first gate." },
+        { slug: "balance-rollforward", why: "One equation per account — and the LEFT JOIN trap that erases the quiet account every candidate falls for at least once." },
+        { slug: "ar-aging-schedule", why: "The pivot: five buckets built from SUM(CASE ...), with the bucket-edge boundaries seeded exactly where audits bite." },
+        { slug: "journal-gap-detection", why: "A recursive number spine against the table — completeness testing, and the cleanest WITH RECURSIVE warm-up in the track." },
+        { slug: "deferred-revenue", why: "Time on a spine: month labels from date(start_date, '+N months'), the term-end off-by-one seeded as the trap." },
+        { slug: "fifo-inventory-cogs", why: "The finale and the hardest problem in the batch: cumulative supply and demand, a cross join, three clamps, and cents that must tie exactly." },
+      ],
+    },
+  },
+  {
+    id: "df-quant-desk",
+    title: "Quant Desk",
+    blurb:
+      "The fund's numbers in SQL — sub-period returns chained across deposit breaks, the Sharpe ratio with population sigma, the 5th-worst day as VaR, beta against the benchmark from a ratio of sums, the split-adjusted position rebuilt through corporate actions, and the wash-trade pairs surveillance screens.",
+    slugs: [
+      "time-weighted-return",
+      "sharpe-ratio",
+      "value-at-risk",
+      "beta-benchmark",
+      "split-adjusted-position",
+      "wash-trade-detection",
+    ],
+    study: {
+      intro: [
+        "Every number on a fund factsheet starts as the same two columns: dated values and dated cash flows. Trades build positions, positions get marked to market every day, daily marks become a returns series — and the returns series answers four different questions depending on the statistic you pour over it. TWR strips out deposit timing, Sharpe divides by the bumpiness, VaR reads the left tail, beta measures the wobble against the market itself.",
+        "The SQL is statistics under discipline. Sharpe and beta are one SELECT each — but only if you pin the POPULATION sigma (divide by n, never n−1), compute sqrt from SQLite's math functions, and compare on RAW values before rounding for display. VaR is a ranking: order the returns ascending and pick row 5 — where the off-by-one lives. TWR is the hardest: boundaries at flow dates, flows excluded from return, three sub-periods the engine grades to four decimals.",
+        "The section closes with surveillance and bookkeeping: splits rewrite history (adjust shares and prices in OPPOSITE directions, only for the split's symbol, only before the date), and wash trades are the self-join pair hunt with an earliest-match dedupe. The primers assume zero finance background — the chef analogy for TWR, the heartbeat analogy for beta.",
+      ],
+      flow: "trades-to-risk",
+      path: [
+        { slug: "beta-benchmark", why: "One row, one formula: a ratio of sums with a TS float mirror — and the correlation-vs-beta confusion probed live." },
+        { slug: "sharpe-ratio", why: "LAG into a returns series, population sigma via sqrt, the risk-free subtraction — and the n−1 probe that fails half the candidates." },
+        { slug: "value-at-risk", why: "Ranking as SQL: ROW_NUMBER ascending, pick rn = 5, report the SIGNED loss — the off-by-one is seeded on purpose." },
+        { slug: "split-adjusted-position", why: "Corporate actions: shares multiply, prices divide, and only that symbol's pre-split trades adjust — ZYGO must come out untouched." },
+        { slug: "wash-trade-detection", why: "The pair hunt: same account, same symbol, 1 to 3600 seconds inclusive, earliest sell only — the dedupe is the trap." },
+        { slug: "time-weighted-return", why: "The finale: sub-period boundaries at flow dates, flows subtracted from value not from return, chained factsheet math graded to four decimals." },
+      ],
+    },
   },
 ];
 

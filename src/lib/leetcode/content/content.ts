@@ -79,6 +79,14 @@ import { SQL_DF_GROWTH_A } from "./sql-df-growth-a";
 import { SQL_DF_GROWTH_B } from "./sql-df-growth-b";
 import { SQL_DF_MARKETS_A } from "./sql-df-markets-a";
 import { SQL_DF_MARKETS_B } from "./sql-df-markets-b";
+import { SQL_DF_BANK_A } from "./sql-df-bank-a";
+import { SQL_DF_BANK_B } from "./sql-df-bank-b";
+import { SQL_DF_FRAUD_A } from "./sql-df-fraud-a";
+import { SQL_DF_FRAUD_B } from "./sql-df-fraud-b";
+import { SQL_DF_ACCT_A } from "./sql-df-acct-a";
+import { SQL_DF_ACCT_B } from "./sql-df-acct-b";
+import { SQL_DF_QUANT_A } from "./sql-df-quant-a";
+import { SQL_DF_QUANT_B } from "./sql-df-quant-b";
 
 export const LC_CONTENT: LcDeepDive[] = [
   ...ARRAYS,
@@ -162,6 +170,14 @@ export const LC_SQL_CONTENT: LcSqlDive[] = [
   ...SQL_DF_GROWTH_B,
   ...SQL_DF_MARKETS_A,
   ...SQL_DF_MARKETS_B,
+  ...SQL_DF_BANK_A,
+  ...SQL_DF_BANK_B,
+  ...SQL_DF_FRAUD_A,
+  ...SQL_DF_FRAUD_B,
+  ...SQL_DF_ACCT_A,
+  ...SQL_DF_ACCT_B,
+  ...SQL_DF_QUANT_A,
+  ...SQL_DF_QUANT_B,
 ];
 
 const bySlug = new Map(LC_CONTENT.map((d) => [d.slug, d]));

@@ -57,6 +57,7 @@ import {
 } from "./lc-dive-ui";
 import { ErMiniDiagram } from "./lc-diagrams";
 import { PatternDiagram } from "./lc-pattern";
+import { PrimerCard, SectionStudyPanel } from "./lc-primer";
 import { cn } from "@/lib/utils";
 
 type Tab = "problems" | "companies";
@@ -388,6 +389,7 @@ function LcDetail({ p, onBack }: { p: LcRef; onBack: () => void }) {
   const sec = p.sql ? sqlSectionOf(p.slug) : undefined;
   const steps: Array<{ id: string; label: string; tone: Tone }> = [
     { id: "dive-problem", label: "Problem", tone: "sky" },
+    ...(sdive?.primer ? ([{ id: "dive-primer", label: "Primer", tone: "amber" }] as const) : []),
     { id: "dive-breakdown", label: "Breakdown", tone: "violet" },
     { id: "dive-ladder", label: "Ladder", tone: "fuchsia" },
     ...(sdive
@@ -511,6 +513,9 @@ function LcDetail({ p, onBack }: { p: LcRef; onBack: () => void }) {
             </p>
             <ConstraintList items={dive.constraints} />
           </Panel>
+
+          {/* The concept primer — Data & Finance problems teach the domain first */}
+          {sdive?.primer && <PrimerCard dive={sdive} />}
 
           {/* Breakdown */}
           <Panel pad={4} id="dive-breakdown" className="scroll-mt-16">
@@ -852,6 +857,9 @@ export function LeetCodeView({ initialTopic }: { initialTopic?: string }) {
                       </div>
                       {sec && (
                         <p className="px-1 text-[11px] leading-relaxed text-zinc-500">{sec.blurb}</p>
+                      )}
+                      {sec?.study && (
+                        <SectionStudyPanel sec={sec} />
                       )}
                       <div className="overflow-hidden rounded-xl border border-black/10 dark:border-white/10">
                         {rows.map((p, i) => (

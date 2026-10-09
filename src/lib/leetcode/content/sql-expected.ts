@@ -9860,6 +9860,1069 @@ export const SQL_EXPECTED: LcSqlExpected[] = [
       ]
     ],
     "order": "exact"
+  },
+  {
+    "slug": "vintage-default-curves",
+    "columns": [
+      "origination_month",
+      "mob",
+      "cohort_loans",
+      "defaults_so_far",
+      "cum_default_pct"
+    ],
+    "rows": [
+      [
+        "2026-01",
+        1,
+        4,
+        0,
+        0
+      ],
+      [
+        "2026-01",
+        2,
+        4,
+        0,
+        0
+      ],
+      [
+        "2026-01",
+        3,
+        4,
+        1,
+        25
+      ],
+      [
+        "2026-01",
+        4,
+        4,
+        1,
+        25
+      ],
+      [
+        "2026-01",
+        5,
+        4,
+        2,
+        50
+      ],
+      [
+        "2026-01",
+        6,
+        4,
+        2,
+        50
+      ],
+      [
+        "2026-02",
+        1,
+        4,
+        0,
+        0
+      ],
+      [
+        "2026-02",
+        2,
+        4,
+        0,
+        0
+      ],
+      [
+        "2026-02",
+        3,
+        4,
+        0,
+        0
+      ],
+      [
+        "2026-02",
+        4,
+        4,
+        0,
+        0
+      ],
+      [
+        "2026-02",
+        5,
+        4,
+        0,
+        0
+      ],
+      [
+        "2026-02",
+        6,
+        4,
+        1,
+        25
+      ],
+      [
+        "2026-03",
+        1,
+        4,
+        0,
+        0
+      ],
+      [
+        "2026-03",
+        2,
+        4,
+        0,
+        0
+      ],
+      [
+        "2026-03",
+        3,
+        4,
+        0,
+        0
+      ],
+      [
+        "2026-03",
+        4,
+        4,
+        0,
+        0
+      ],
+      [
+        "2026-03",
+        5,
+        4,
+        0,
+        0
+      ],
+      [
+        "2026-03",
+        6,
+        4,
+        0,
+        0
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "delinquency-roll-rates",
+    "columns": [
+      "bucket_from",
+      "bucket_to",
+      "transitions"
+    ],
+    "rows": [
+      [
+        "current",
+        "current",
+        2
+      ],
+      [
+        "current",
+        "d1_30",
+        2
+      ],
+      [
+        "current",
+        "d31_60",
+        1
+      ],
+      [
+        "d1_30",
+        "current",
+        1
+      ],
+      [
+        "d1_30",
+        "d1_30",
+        1
+      ],
+      [
+        "d1_30",
+        "d31_60",
+        1
+      ],
+      [
+        "d31_60",
+        "d1_30",
+        1
+      ],
+      [
+        "d31_60",
+        "d61_90",
+        1
+      ],
+      [
+        "d61_90",
+        "current",
+        1
+      ],
+      [
+        "d61_90",
+        "d90_plus",
+        1
+      ],
+      [
+        "d90_plus",
+        "current",
+        1
+      ],
+      [
+        "d90_plus",
+        "d90_plus",
+        1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "credit-utilization-bands",
+    "columns": [
+      "card_id",
+      "credit_limit_cents",
+      "balance_cents",
+      "utilization_pct",
+      "band"
+    ],
+    "rows": [
+      [
+        1,
+        200000,
+        0,
+        0,
+        "low"
+      ],
+      [
+        2,
+        100000,
+        24900,
+        24.9,
+        "low"
+      ],
+      [
+        3,
+        100000,
+        30000,
+        30,
+        "moderate"
+      ],
+      [
+        4,
+        200000,
+        123000,
+        61.5,
+        "high"
+      ],
+      [
+        5,
+        100000,
+        90000,
+        90,
+        "maxed"
+      ],
+      [
+        6,
+        50000,
+        48650,
+        97.3,
+        "maxed"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "expected-credit-loss",
+    "columns": [
+      "segment_name",
+      "loan_count",
+      "ead_total_cents",
+      "ecl_cents"
+    ],
+    "rows": [
+      [
+        "subprime",
+        3,
+        400000,
+        14300
+      ],
+      [
+        "near-prime",
+        3,
+        700000,
+        6300
+      ],
+      [
+        "prime",
+        4,
+        1200000,
+        2400
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "risk-based-pricing",
+    "columns": [
+      "applicant_id",
+      "applicant_name",
+      "credit_score",
+      "apr_pct",
+      "price_source"
+    ],
+    "rows": [
+      [
+        1,
+        "Dana Whitfield",
+        755,
+        7.9,
+        "sheet"
+      ],
+      [
+        2,
+        "Marcus Chen",
+        620,
+        12.5,
+        "sheet"
+      ],
+      [
+        3,
+        "Priya Natarajan",
+        719,
+        9.2,
+        "sheet"
+      ],
+      [
+        4,
+        "Elena Rossi",
+        680,
+        6.4,
+        "override"
+      ],
+      [
+        5,
+        "Tom Okafor",
+        780,
+        21.9,
+        "override"
+      ],
+      [
+        6,
+        "Jack Alvarez",
+        540,
+        14.4,
+        "sheet"
+      ],
+      [
+        7,
+        "Mei Lin",
+        810,
+        5.8,
+        "sheet"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "prepayment-detection",
+    "columns": [
+      "loan_id",
+      "term_months",
+      "months_taken",
+      "actual_interest_cents",
+      "scheduled_interest_cents",
+      "savings_cents"
+    ],
+    "rows": [
+      [
+        1,
+        12,
+        12,
+        3932,
+        3932,
+        0
+      ],
+      [
+        2,
+        6,
+        5,
+        2013,
+        2115,
+        102
+      ],
+      [
+        3,
+        6,
+        3,
+        1503,
+        2105,
+        602
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "structuring-detection",
+    "columns": [
+      "customer_id",
+      "deposit_date",
+      "deposit_count",
+      "day_total_cents"
+    ],
+    "rows": [
+      [
+        7,
+        "2026-09-14",
+        4,
+        1040000
+      ],
+      [
+        3,
+        "2026-09-16",
+        3,
+        1020000
+      ],
+      [
+        2,
+        "2026-09-18",
+        3,
+        1000000
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "transaction-velocity",
+    "columns": [
+      "card_id",
+      "window_start",
+      "txn_count",
+      "window_total_cents"
+    ],
+    "rows": [
+      [
+        11,
+        1758067200,
+        5,
+        404000
+      ],
+      [
+        12,
+        1758067800,
+        3,
+        510000
+      ],
+      [
+        14,
+        1758068400,
+        4,
+        395000
+      ],
+      [
+        16,
+        1758069300,
+        2,
+        500000
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "circular-transfers",
+    "columns": [
+      "a_account",
+      "b_account",
+      "out_cents",
+      "back_cents",
+      "days_apart"
+    ],
+    "rows": [
+      [
+        501,
+        502,
+        700000,
+        700000,
+        0
+      ],
+      [
+        510,
+        511,
+        400000,
+        380000,
+        2
+      ],
+      [
+        520,
+        521,
+        250000,
+        250000,
+        7
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "amount-anomaly-zscore",
+    "columns": [
+      "txn_id",
+      "customer_id",
+      "amount_cents",
+      "baseline_mean_cents",
+      "sigma_cents",
+      "z_score"
+    ],
+    "rows": [
+      [
+        6,
+        21,
+        89000,
+        50000,
+        707.11,
+        55.15
+      ],
+      [
+        24,
+        24,
+        44300,
+        40000,
+        1414.21,
+        3.04
+      ],
+      [
+        25,
+        24,
+        44243,
+        40000,
+        1414.21,
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "chargeback-rate-ranking",
+    "columns": [
+      "merchant_id",
+      "txn_count",
+      "chargeback_count",
+      "chargeback_rate_pct"
+    ],
+    "rows": [
+      [
+        105,
+        40,
+        2,
+        5
+      ],
+      [
+        101,
+        150,
+        3,
+        2
+      ],
+      [
+        103,
+        50,
+        1,
+        2
+      ],
+      [
+        106,
+        99,
+        1,
+        1.01
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "dormant-reactivation",
+    "columns": [
+      "account_id",
+      "kyc_verified",
+      "prior_login_date",
+      "reactivation_date",
+      "dormant_days"
+    ],
+    "rows": [
+      [
+        2,
+        0,
+        "2026-04-30",
+        "2026-09-01",
+        124
+      ],
+      [
+        1,
+        0,
+        "2026-05-18",
+        "2026-09-03",
+        108
+      ],
+      [
+        3,
+        0,
+        "2026-03-12",
+        "2026-09-15",
+        187
+      ],
+      [
+        4,
+        0,
+        null,
+        "2026-09-20",
+        null
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "trial-balance-check",
+    "columns": [
+      "account_id",
+      "account_name",
+      "debit_total_cents",
+      "credit_total_cents",
+      "delta_cents",
+      "balance_status"
+    ],
+    "rows": [
+      [
+        1,
+        "cash",
+        575000,
+        575000,
+        0,
+        "balanced"
+      ],
+      [
+        2,
+        "sales_revenue",
+        30000,
+        600000,
+        -570000,
+        "credit balance"
+      ],
+      [
+        3,
+        "accounts_payable",
+        0,
+        95000,
+        -95000,
+        "credit balance"
+      ],
+      [
+        4,
+        "accounts_receivable",
+        260000,
+        140000,
+        120000,
+        "debit balance"
+      ],
+      [
+        5,
+        "payroll_expense",
+        202000,
+        200000,
+        2000,
+        "debit balance"
+      ],
+      [
+        6,
+        "inventory_clearing",
+        4700,
+        5000,
+        -300,
+        "credit balance"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "ar-aging-schedule",
+    "columns": [
+      "customer_id",
+      "current_cents",
+      "days_1_30_cents",
+      "days_31_60_cents",
+      "days_61_90_cents",
+      "days_over_90_cents",
+      "total_outstanding_cents"
+    ],
+    "rows": [
+      [
+        501,
+        90000,
+        60000,
+        45000,
+        30000,
+        25000,
+        250000
+      ],
+      [
+        502,
+        0,
+        0,
+        0,
+        0,
+        70000,
+        70000
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "balance-rollforward",
+    "columns": [
+      "account_id",
+      "opening_cents",
+      "debit_total_cents",
+      "credit_total_cents",
+      "closing_cents"
+    ],
+    "rows": [
+      [
+        1,
+        125000,
+        0,
+        0,
+        125000
+      ],
+      [
+        2,
+        40000,
+        85000,
+        30000,
+        95000
+      ],
+      [
+        3,
+        10000,
+        57000,
+        0,
+        67000
+      ],
+      [
+        4,
+        80000,
+        0,
+        36000,
+        44000
+      ],
+      [
+        5,
+        0,
+        70000,
+        25000,
+        45000
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "fifo-inventory-cogs",
+    "columns": [
+      "sale_id",
+      "units_sold",
+      "cogs_cents"
+    ],
+    "rows": [
+      [
+        1,
+        80,
+        24000
+      ],
+      [
+        2,
+        60,
+        18800
+      ],
+      [
+        3,
+        180,
+        56900
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "deferred-revenue",
+    "columns": [
+      "sub_id",
+      "month",
+      "recognized_cents"
+    ],
+    "rows": [
+      [
+        1,
+        "2026-07",
+        10000
+      ],
+      [
+        1,
+        "2026-08",
+        10000
+      ],
+      [
+        1,
+        "2026-09",
+        10000
+      ],
+      [
+        2,
+        "2026-08",
+        7000
+      ],
+      [
+        2,
+        "2026-09",
+        7000
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "journal-gap-detection",
+    "columns": [
+      "missing_doc_no"
+    ],
+    "rows": [
+      [
+        1004
+      ],
+      [
+        1005
+      ],
+      [
+        1010
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "time-weighted-return",
+    "columns": [
+      "period_no",
+      "period_start",
+      "period_end",
+      "flow_cents",
+      "period_return_pct"
+    ],
+    "rows": [
+      [
+        1,
+        "2026-09-01",
+        "2026-09-08",
+        10000,
+        -0.5
+      ],
+      [
+        2,
+        "2026-09-08",
+        "2026-09-18",
+        -5000,
+        -4.1096
+      ],
+      [
+        3,
+        "2026-09-18",
+        "2026-09-30",
+        0,
+        8
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "sharpe-ratio",
+    "columns": [
+      "trading_days",
+      "mean_excess_pct",
+      "daily_vol_pct",
+      "sharpe_daily"
+    ],
+    "rows": [
+      [
+        29,
+        0.043,
+        0.3874,
+        0.11
+      ]
+    ],
+    "order": "any"
+  },
+  {
+    "slug": "value-at-risk",
+    "columns": [
+      "n_returns",
+      "var95_pct",
+      "worst_pct"
+    ],
+    "rows": [
+      [
+        100,
+        -1.3056,
+        -3.1904
+      ]
+    ],
+    "order": "any"
+  },
+  {
+    "slug": "beta-benchmark",
+    "columns": [
+      "n_days",
+      "covariance",
+      "benchmark_variance",
+      "beta",
+      "style"
+    ],
+    "rows": [
+      [
+        24,
+        1.208,
+        0.8454,
+        1.4289,
+        "aggressive"
+      ]
+    ],
+    "order": "any"
+  },
+  {
+    "slug": "split-adjusted-position",
+    "columns": [
+      "trade_id",
+      "symbol",
+      "raw_shares",
+      "adjusted_shares",
+      "raw_price_cents",
+      "adjusted_price_cents",
+      "adjustment"
+    ],
+    "rows": [
+      [
+        1,
+        "ACME",
+        100,
+        200,
+        20000,
+        10000,
+        "split-adjusted"
+      ],
+      [
+        2,
+        "ACME",
+        40,
+        80,
+        21000,
+        10500,
+        "split-adjusted"
+      ],
+      [
+        3,
+        "ACME",
+        30,
+        60,
+        19500,
+        9750,
+        "split-adjusted"
+      ],
+      [
+        4,
+        "ACME",
+        50,
+        50,
+        10200,
+        10200,
+        "as-traded"
+      ],
+      [
+        5,
+        "ACME",
+        60,
+        60,
+        10400,
+        10400,
+        "as-traded"
+      ],
+      [
+        6,
+        "ACME",
+        25,
+        25,
+        10800,
+        10800,
+        "as-traded"
+      ],
+      [
+        7,
+        "ZYGO",
+        120,
+        120,
+        7500,
+        7500,
+        "as-traded"
+      ],
+      [
+        8,
+        "ZYGO",
+        70,
+        70,
+        7800,
+        7800,
+        "as-traded"
+      ],
+      [
+        9,
+        "ZYGO",
+        90,
+        90,
+        8100,
+        8100,
+        "as-traded"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "wash-trade-detection",
+    "columns": [
+      "account_id",
+      "symbol",
+      "buy_trade_id",
+      "sell_trade_id",
+      "seconds_apart",
+      "round_trip_pct"
+    ],
+    "rows": [
+      [
+        701,
+        "QUA",
+        1,
+        2,
+        1,
+        0
+      ],
+      [
+        704,
+        "WLT",
+        13,
+        14,
+        300,
+        1
+      ],
+      [
+        702,
+        "ORB",
+        3,
+        4,
+        600,
+        0.5
+      ],
+      [
+        701,
+        "NVI",
+        5,
+        6,
+        3600,
+        1
+      ]
+    ],
+    "order": "exact"
   }
 ];
 

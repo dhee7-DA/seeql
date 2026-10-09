@@ -48,6 +48,11 @@ const ARCH_BY_SECTION: Record<string, Arch> = {
   "premium5-market": "ledger", "premium2-orders": "ledger",
   "premium-community": "graph", "premium5-graph": "graph",
   "extra-pivots": "pivot", "premium3-mold": "pivot",
+  // Data & Finance track
+  "df-product-analytics": "agg", "df-growth-experiments": "timeline",
+  "df-finance-core": "ledger", "df-markets-risk": "ledger",
+  "df-banking-credit": "timeline", "df-fraud-aml": "graph",
+  "df-accounting-close": "ledger", "df-quant-desk": "window",
 };
 
 const ARCH_LABEL: Record<Arch, string> = {

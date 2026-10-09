@@ -126,12 +126,56 @@ export interface LcSqlExpected {
   order: "exact" | "any";
 }
 
+/** Section-level STUDY GUIDE — the detailed learning material shown under a
+ *  section header: a real-life walkthrough of the domain, a premium flow
+ *  diagram (keyed into the art library) and the suggested reading order. */
+export interface LcSectionStudy {
+  /** 2-3 paragraphs teaching the domain from zero — start here. */
+  intro: string[];
+  /** Key into the study-flow art library (lc-df-art). */
+  flow: string;
+  /** Suggested solving order with the WHY of each stop. */
+  path: Array<{ slug: string; why: string }>;
+}
+
+/* ------------------------------------------------------------------ */
+/* Domain primers — the concept taught from zero, before the SQL        */
+/* ------------------------------------------------------------------ */
+
+/** One glossary entry — jargon defined in one line. */
+export interface LcPrimerTerm {
+  term: string;
+  def: string;
+}
+
+/** A per-problem CONCEPT PRIMER — for learners meeting the domain for the
+ *  first time. Renders as the first teaching panel (before the breakdown):
+ *  what the concept is in real life, a tiny example walked by hand, the
+ *  jargon defined, and where interviews actually use it. */
+export interface LcPrimer {
+  /** One-sentence real-life pitch — "why this number exists". */
+  hook: string;
+  /** 3-4 paragraphs teaching the concept from zero, no unexplained jargon. */
+  concept: string[];
+  /** 3-5 steps working a tiny example by hand (before any SQL). */
+  worked: string[];
+  /** 4-6 domain terms defined in one line each. */
+  glossary: LcPrimerTerm[];
+  /** 2-3 paragraphs: how this plays out at a real company — who runs it,
+   *  what breaks, what decisions the numbers drive. */
+  reallife: string[];
+  /** Which roles / companies ask this — one sentence. */
+  where: string;
+}
+
 /** Deep-dive for a SQL problem — same teaching shape, SQL solution. */
 export interface LcSqlDive {
   slug: string;
   statement: string;
   examples: LcExample[];
   constraints: string[];
+  /** Optional domain primer — concept from zero (Data & Finance track). */
+  primer?: LcPrimer;
   breakdown: string[];
   edges: string[];
   ladder: LcRung[];
