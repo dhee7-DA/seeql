@@ -132,8 +132,9 @@ export interface LcSqlExpected {
 export interface LcSectionStudy {
   /** 2-3 paragraphs teaching the domain from zero — start here. */
   intro: string[];
-  /** Key into the study-flow art library (lc-df-art). */
-  flow: string;
+  /** Key into the study-flow art library (lc-df-art). Optional — text-only
+   *  study guides (the SQL 50 band) render without flow art. */
+  flow?: string;
   /** Suggested solving order with the WHY of each stop. */
   path: Array<{ slug: string; why: string }>;
 }

@@ -39,6 +39,21 @@ export const SQL50_SECTIONS: LcSection[] = [
       "employee-bonus",
       "students-and-examinations",
     ],
+    study: {
+      intro: [
+        "Almost no real report lives in one table. A store logs sales in a long fact table (one row per sale, keyed by product id), while the human-readable names sit in a small dimension table (one row per product). SQL's JOIN is the operator that stitches them back together on a shared key — and the first skill of this section is reading a schema well enough to name the key and decide what a row MEANS after the join.",
+        "The second skill is choosing the join type on business grounds. INNER JOIN keeps only rows that match on both sides — right for fact × dimension enrichment, wrong when a person can legitimately have no match (an employee with no bonus row must still appear, with NULL). LEFT JOIN keeps every row of the left table and fills the right side with NULLs where nothing matched — and learning to treat those NULLs as DATA, not dirt, is the section's central habit.",
+        "The third skill is grain discipline. A join can only multiply or preserve rows; GROUP BY is what changes the grain (sales → per-product totals), and ranking like 'top two years per product' is a POST-aggregate step (ROW_NUMBER inside each group). Every problem here rehearses one of those three moves — enrich, decide NULL policy, then change grain — in that order.",
+      ],
+      path: [
+        { slug: "replace-employee-id-with-unique-identifier", why: "The LEFT JOIN warm-up: the id mapping is optional, so unmatched employees must survive as rows with NULL — the join type follows the business meaning." },
+        { slug: "product-sales-analysis-i", why: "The fact × dimension INNER join that attaches product names to sales — the enrichment pattern the next two problems reuse." },
+        { slug: "product-sales-analysis-ii", why: "First aggregation over an enriched join: GROUP BY product moves the grain from one-sale-per-row to one-total-per-product." },
+        { slug: "product-sales-analysis-iii", why: "Top two years per product: aggregate first, then ROW_NUMBER inside each group — ranking is a post-aggregate step, never a WHERE." },
+        { slug: "employee-bonus", why: "The LEFT JOIN where NULL payloads are the ANSWER — bonus < 100 must include the employees whose bonus is NULL, not only small ones." },
+        { slug: "students-and-examinations", why: "The CROSS JOIN scaffold builds the full student × subject grid, then COUNT(column) vs COUNT(*) keeps zero-attempt rows honest." },
+      ],
+    },
   },
   {
     id: "joins",
@@ -57,6 +72,25 @@ export const SQL50_SECTIONS: LcSection[] = [
       "sales-analysis-ii",
       "sales-analysis-iii",
     ],
+    study: {
+      intro: [
+        "A join is set logic wearing a data costume. Two tables share a key; the join pairs rows across them — INNER keeps mutual matches, LEFT keeps everything from one side, and the aliases you pick decide which table plays which role. This section is where joins stop being syntax and start being reasoning: who must appear even without a match, and who must NOT appear because they have one.",
+        "Two derived shapes do most of the interview work. The ANTI-JOIN asks for rows on one side with no partner on the other — expressed as LEFT JOIN … WHERE right.key IS NULL (or NOT IN/NOT EXISTS, with NULL-handling caveats the subqueries section revisits). The SELF-JOIN puts one table on both sides under two aliases — an Employee table is simultaneously the staff list and the org chart, and a manager_id column is just a foreign key pointing at a row of its own table.",
+        "The stealth skill is filter placement. On an INNER join, ON and WHERE behave the same; on an OUTER join they are NOT interchangeable — a right-side predicate belongs in ON if unmatched left rows must survive, and in WHERE if they may be discarded. And once joins multiply rows, group-level questions (who did X twice, who sold ONLY in one quarter) move into HAVING with COUNT(DISTINCT …) or conditional SUMs — never into WHERE.",
+      ],
+      path: [
+        { slug: "combine-two-tables", why: "The canonical LEFT JOIN: people without an address record are part of the answer, with NULL city and state — NULL is the answer, not an error." },
+        { slug: "customers-who-never-order", why: "The canonical anti-join: LEFT JOIN … WHERE orders.customer_id IS NULL — ask for the absent partner explicitly." },
+        { slug: "employees-earning-more-than-their-managers", why: "The first self-join: one Employee table under two aliases, joined on managerId = id, compared on salary." },
+        { slug: "duplicate-emails", why: "Group-level existence: GROUP BY email + HAVING COUNT(*) > 1 — duplication is a property of a GROUP, not of a row." },
+        { slug: "article-views-i", why: "Intra-row logic: the author-viewer match is a comparison between two columns of the SAME row — no join needed, plus DISTINCT." },
+        { slug: "article-views-ii", why: "Composite grain: group by (viewer, day) and gate on COUNT(DISTINCT article_id) — DISTINCT stops same-article re-reads from faking the pair." },
+        { slug: "sales-person", why: "Filter placement: RED orders are excluded BEFORE the anti-join — a WHERE inside the join changes who survives as unmatched." },
+        { slug: "sales-analysis-i", why: "Ties at the top: aggregate to per-product totals, then keep every row tied at the MAX — a subquery, not a LIMIT." },
+        { slug: "sales-analysis-ii", why: "Subtraction via NOT IN: buyers minus buyers-of-the-thing — set difference expressed over resolved names." },
+        { slug: "sales-analysis-iii", why: "Purity check: conditional SUMs per quarter inside HAVING — 'all sales in one quarter' is a group property." },
+      ],
+    },
   },
   {
     id: "aggregation",
@@ -73,6 +107,23 @@ export const SQL50_SECTIONS: LcSection[] = [
       "managers-with-at-least-5-direct-reports",
       "confirmation-rate",
     ],
+    study: {
+      intro: [
+        "An aggregate is a promise to change grain: COUNT, SUM, AVG and friends collapse many rows into one per group. Everything tricky about aggregation flows from that promise. AVG answers 'mean per row of the group' — so a weighted average (price weighted by units sold) is NOT an AVG of a joined column but a ratio of two SUMs. And a percentage is often an AVG of a boolean, because SQLite sums TRUE as 1 and FALSE as 0.",
+        "Filtering follows the grain. WHERE runs before grouping and speaks row-language; HAVING runs after and speaks group-language — 'at least five direct reports' is a group property, so it lives in HAVING. Denominators deserve special suspicion: 'what share of ALL users attended this contest' needs the total as a scalar subquery (or a window COUNT(*) OVER ()), not the per-group count that happens to be in scope.",
+        "Two join-shaped traps anchor the section. A RANGE join (sale date BETWEEN a price period's start and end) pairs rows by predicate instead of equality — and the weighted-average question it feeds divides SUM(value×qty) by SUM(qty), with an explicit float cast to dodge integer division. And a role-pinned self-join pairs a 'start' row with its matching 'end' row — duration aggregates only exist once those two roles are told apart.",
+      ],
+      path: [
+        { slug: "not-boring-movies", why: "The warm-up: a WHERE predicate plus a deterministic ORDER BY — filtering and sorting before any grouping exists." },
+        { slug: "project-employees-i", why: "Join-then-group: AVG(experience) per project with ROUND — the plainest join × aggregate composition." },
+        { slug: "percentage-of-users-attended-a-contest", why: "The denominator move: per-group COUNT over a scalar-subquery total of ALL users, with float division forced explicitly." },
+        { slug: "average-selling-price", why: "The range join: date BETWEEN period bounds pairs each sale with its price window — then the weighted average is SUM(price×qty)/SUM(qty), not AVG." },
+        { slug: "queries-quality-and-percentage", why: "One pass, two aggregates: AVG of per-row ratios plus a boolean-SUM percentage — two different 'averages' in the same GROUP BY." },
+        { slug: "average-time-of-process-per-machine", why: "The role-pinned self-join: pair each 'start' row with its 'end' row before any AVG of durations makes sense." },
+        { slug: "managers-with-at-least-5-direct-reports", why: "GROUP BY the FK, HAVING the threshold, then join back for names — group filtering happens before the cosmetic join." },
+        { slug: "confirmation-rate", why: "AVG of a boolean IS the rate — and COALESCE zero-fills the users who never confirmed, so silence reads as 0% instead of NULL." },
+      ],
+    },
   },
   {
     id: "grouping",
@@ -90,6 +141,24 @@ export const SQL50_SECTIONS: LcSection[] = [
       "group-sold-products-by-the-date",
       "immediate-food-delivery-ii",
     ],
+    study: {
+      intro: [
+        "GROUP BY is schema surgery: it decides what one row of the result IS. This section lives one level past the aggregation basics — here grouping is the tool that finds winners (the highest salary per department, with ALL its ties), cleans tables (delete every duplicate but the oldest row), and pivots rows into lists (GROUP_CONCAT building 'A, B, C' per day).",
+        "Ranking is the big new instrument. RANK() OVER (ORDER BY score DESC) numbers rows WITHOUT collapsing them — ties share a rank and the next rank is skipped, which is exactly why 'second highest salary' is safer as a ranking or DISTINCT + OFFSET question than as MAX(MAX(s)). 'Top three per department' then adds PARTITION BY — a window computed per group rather than over the whole table.",
+        "The section's write problem closes the loop: DELETE carries the same group logic as SELECT. 'Keep one row per email' is 'keep the row whose id equals MIN(id) within its email group' — expressed as id NOT IN (SELECT MIN(id) … GROUP BY email). Every cleanup, winner-pick and list-build here is a grouping question in disguise, and the ladder teaches you to name the grain before writing any clause.",
+      ],
+      path: [
+        { slug: "fix-names-in-a-table", why: "String normalization as slice-shift-glue: UPPER(first letter) + LOWER(rest) — per-character surgery before any grouping." },
+        { slug: "patients-with-a-condition", why: "Two-arm LIKE with a space as the word boundary — matching DIAB1 as a prefix OR after a space, but never inside DIAB10." },
+        { slug: "classes-more-than-5-students", why: "The purest grain filter: GROUP BY class + HAVING COUNT(*) >= 5 — HAVING speaks group-language WHERE cannot." },
+        { slug: "rank-scores", why: "The first window function: RANK() OVER (ORDER BY score DESC) — ties share a rank and the sequence skips, without collapsing rows." },
+        { slug: "second-highest-salary", why: "DISTINCT + LIMIT/OFFSET wrapped in a scalar subquery — and the outer SELECT turns a missing second place into NULL, as asked." },
+        { slug: "department-highest-salary", why: "Pair-set membership: (dept, salary) IN (SELECT dept, MAX(salary) … GROUP BY dept) keeps ALL ties — a LIMIT would silently drop them." },
+        { slug: "group-sold-products-by-the-date", why: "GROUP_CONCAT(DISTINCT …) pivots rows into a sorted list per day — grouping as string building." },
+        { slug: "immediate-food-delivery-ii", why: "Two grains in one query: ROW_NUMBER picks each customer's first order, then a boolean ratio measures immediacy over those firsts." },
+        { slug: "delete-duplicate-emails", why: "The write problem: DELETE id NOT IN (SELECT MIN(id) … GROUP BY email) — group logic driving a mutation, keeping the oldest row." },
+      ],
+    },
   },
   {
     id: "advanced-select",
@@ -102,6 +171,19 @@ export const SQL50_SECTIONS: LcSection[] = [
       "immediate-food-delivery-i",
       "number-of-employees-who-met-the-target",
     ],
+    study: {
+      intro: [
+        "Ordinary SELECT reports the data that is there. Advanced SELECT computes the data that ISN'T — it branches (CASE WHEN … THEN … ELSE), counts conditionally (SUM of a boolean), and stacks unrelated results into one grid (UNION ALL). The common thread: the SELECT list stops being a passthrough of stored columns and becomes a small program evaluated per row or per group.",
+        "CASE is the workhorse. Inline in the select list it turns a raw fact into a label ('special bonus granted' vs NULL); inside an aggregate it becomes conditional aggregation — SUM(CASE WHEN type = 'refund' THEN 1 ELSE 0 END) counts only the rows that qualify, and AVG of a boolean flag IS a percentage in one expression. Once you see it, half of interview SQL is CASE wearing different hats.",
+        "UNION ALL solves the opposite problem: two questions with DIFFERENT grains that must ship as one result ('the movie with the most ratings' and 'the user who rated the most' have nothing to group over together — but they share column names, so the UNION stitches them row-wise). The discipline is matching column lists and remembering that UNION ALL keeps duplicates while plain UNION dedupes at a cost.",
+      ],
+      path: [
+        { slug: "number-of-employees-who-met-the-target", why: "The simplest conditional count: boolean-SUM (or COUNT after WHERE) — one gate, one number." },
+        { slug: "immediate-food-delivery-i", why: "AVG of an immediate-flag boolean IS the percentage — conditional aggregation as a one-expression rate." },
+        { slug: "list-the-products-ordered-in-a-period", why: "The full filter → group → gate pipeline: month filter, GROUP BY product, HAVING SUM(quantity) >= 100." },
+        { slug: "movie-rating", why: "UNION ALL of two top-1 subqueries — different grains, one grid; each arm orders and LIMITs independently." },
+      ],
+    },
   },
   {
     id: "subqueries",
@@ -117,6 +199,22 @@ export const SQL50_SECTIONS: LcSection[] = [
       "department-top-three-salaries",
       "average-salary-of-departments",
     ],
+    study: {
+      intro: [
+        "A subquery is a query used as a VALUE. A scalar subquery stands where a number would (the total user count in a denominator); an IN-list subquery stands where a set would (the emails that appear twice); a derived-table subquery stands where a table would (a per-customer 'first order' CTE). CTEs — the WITH clause — give any of these a NAME, which is what turns a four-level nested query into something you can actually read.",
+        "The correlated subquery is the power move: the inner query references the outer row, so it re-runs per row — 'exists a prompt above THIS user's average'. EXISTS is usually the honest spelling of that idea, and unlike IN it never stumbles over NULLs. The NOT IN trap, by contrast, is the section's rite of passage: if the inner list contains a single NULL, NOT IN returns nothing at all — the employees-whose-manager-left problem pins that guard.",
+        "The last skill is composing steps. 'Fraction of players who logged in the day after their first login' decomposes into: compute firsts (CTE), join next-day logins, divide with a guarded denominator. 'Top three salaries per department' decomposes into: DENSE_RANK partitioned by department, then filter rank <= 3. Interview SQL is nearly always two or three named steps — and the CTE is where each step gets its name.",
+      ],
+      path: [
+        { slug: "employees-whose-manager-left-the-company", why: "The NOT IN NULL trap: one NULL in the inner list silently empties NOT IN — guard it (or switch to NOT EXISTS)." },
+        { slug: "game-play-analysis-iv", why: "First-login CTE + next-day join + a fraction whose denominator is ALL players — named steps, guarded division." },
+        { slug: "exchange-seats", why: "Parity CASE in the select list: swap each seat with its neighbor, and the last odd seat stays put — branching without a join." },
+        { slug: "game-play-analysis-v", why: "Firsts CTE + LEFT JOIN + COUNT(*) vs COUNT(column) — the day-1 retention fraction where NULL rows still count in the denominator." },
+        { slug: "investments-in-2016", why: "Two independent group tests ANDed together: a HAVING sum gate plus a row-value IN over duplicate (lat, lon) pairs." },
+        { slug: "department-top-three-salaries", why: "DENSE_RANK() PARTITION BY department, keep rank <= 3 — top-three VALUES with ties, not top-three rows." },
+        { slug: "average-salary-of-departments", why: "Two-grain CTEs joined on the month key — per-employee monthly pay rolled up to per-department monthly averages, then compared." },
+      ],
+    },
   },
   {
     id: "strings",
@@ -135,6 +233,24 @@ export const SQL50_SECTIONS: LcSection[] = [
       "calculate-special-bonus",
       "swap-salary",
     ],
+    study: {
+      intro: [
+        "Strings are where reports meet humans: names with messy casing, codes packed into space-separated lists, tweets a few characters over the limit. SQL's text kit is small but sharp — LENGTH for size gates, LIKE/GLOB for shapes, UPPER/LOWER/SUBSTR/CONCAT for surgery — and this section teaches you to compose those atoms into validation and formatting rules.",
+        "CASE deserves its co-billing in the title. Inside the select list it renders a decision per row (is three sides a triangle? who gets the special bonus?); inside SUM it turns signed bookkeeping into one aggregate (capital gains as SUM of +sell-price and −buy-price); inside an UPDATE's SET it rewrites values in place (the self-inverse salary swap). One construct, three completely different jobs.",
+        "Two quiet habits separate clean text SQL from fragile SQL. First, anchors: LIKE 'M%' and NOT LIKE 'M%' mean STARTS-with — unanchored patterns match anywhere and silently over-select. Second, nullability at the edges: a LEFT JOIN's missing text must be COALESCE'd before it lands in a report, and COUNT(column) vs COUNT(*) decides whether missing rows count at all. Both habits show up as the section's boundary traps.",
+      ],
+      path: [
+        { slug: "the-number-of-employees-which-report-to-each-employee", why: "Self-join + GROUP BY manager: counting people under each lead, with the NULL-at-the-top chain handled by the join." },
+        { slug: "primary-department-for-each-employee", why: "Window COUNT per employee + a two-rule OR — the primary flag wins, but a lone membership is primary by default." },
+        { slug: "triangle-judgement", why: "CASE over the three pair-sum inequalities — boolean logic rendered as a label per row." },
+        { slug: "capital-gain-loss", why: "Signed-CASE aggregation: SUM of +sell-price and −buy-price per stock — bookkeeping as one aggregate." },
+        { slug: "top-travellers", why: "LEFT JOIN + COALESCE(SUM(…), 0) — users who never travelled must read 0, not NULL, in the ranked report." },
+        { slug: "market-analysis-i", why: "The anti-join with the filter in ON: excluding 2021 purchases in the join keeps the never-buyers visible in the result." },
+        { slug: "invalid-tweets", why: "LENGTH() in WHERE: content validation as a row filter — and the seed pins the exact 15-character boundary." },
+        { slug: "calculate-special-bonus", why: "One CASE carries the whole rule — the anchored NOT LIKE gate plus id parity decide who gets the bonus multiplier." },
+        { slug: "swap-salary", why: "The band's UPDATE problem: a self-inverse CASE in SET swaps 'f' and 'm' in one statement — no temp column, no double update." },
+      ],
+    },
   },
   {
     id: "extra-joins",

@@ -242,7 +242,9 @@ export function SectionStudyPanel({ sec }: { sec: LcSection }) {
       </button>
       {open && (
         <Panel className="mt-2 border-amber-400/20 bg-amber-400/[0.03]">
-          <StudyFlowArt flow={study.flow} label={FLOW_LABEL[study.flow] ?? "study flow"} />
+          {study.flow && (
+            <StudyFlowArt flow={study.flow} label={FLOW_LABEL[study.flow] ?? "study flow"} />
+          )}
           <div className="mt-4 space-y-2.5">
             {study.intro.map((para, i) => (
               <p key={i} className="text-[13px] leading-relaxed text-zinc-300">
