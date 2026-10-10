@@ -4865,3 +4865,18 @@ Work Log:
 Stage Summary:
 - Study-guide coverage is now 25/73 sections (7 core SQL50 + 6 technique-family expansion + 12 Data & Finance); 49 path whys added on top of Task 80's 53.
 - Remaining deepening candidates (in suggested order): batch 2 = the platform-classics wave (platform-classics, hackerrank-2, datalemur, select-2, engagement, matchups, streaks, hard-finales, hackerrank-3, datalemur-2 — 10 sections / 49 problems), then the five premium waves, then free-* + final-* sections.
+
+---
+Task ID: 82
+Agent: Super Z (main agent)
+Task: "continiue" — study-guide batch 2: the platform-classics wave (platform-classics, hackerrank-2, datalemur, select-2, engagement, matchups, streaks, hard-finales, hackerrank-3, datalemur-2; 49 problems). Sections with study guides: 25 → 35 of 73.
+
+Work Log:
+- Dumped all 49 dives' approach + breakdown (scripts/tmp-dump-study-batch1.ts, BATCH set swapped to the 10 sections) and authored 10 study blocks in sections.ts, all text-only, path order following each section's slug array exactly.
+- Intro themes per section (30 paras total): platform-classics = derived metrics + order statistics (dual-slot median) + fan-out honesty and complete tie-breaker chains; hackerrank-2 = syntax-is-the-problem puzzles + string-surgery repair with (a+n-1)/n integer ceiling + zero-row survival; datalemur = hidden tie-break contracts + justified INNER drops + three-grain mode; select-2 = precise conditions + GLOB templates + labels for absent data + strftime zero-padding; engagement = start-date grain + rate arithmetic (load-bearing 100.0 dot) + row-vs-its-group windows + argmax identity; matchups = two-legs trick + join-totals-never-raw-rows + conditional-aggregation family; streaks = gaps-and-islands anchor + LEAD-made pairs + fuse-after-union + RANK-vs-DENSE_RANK as the problem; hard-finales = shape guarantees GROUP BY can't manufacture + recursive-CTE bins + population mixing; hackerrank-3 = join architecture (non-equi bands, four-table chains, pure bridges, diagonal witnesses, negated-existence streaks); datalemur-2 = rate discipline (deliberate COUNT(*) denominators) + clause-forced layer order + summarize-then-join-back.
+- Validation: tsc filtered to sections.ts = 0 errors; eslint silent; lc-sections-check ALL PASS (73 sections / 419 rows 1:1); bun probe: 35/73 sections with study, all 10 batch-2 path lengths match slug counts, no bad slugs.
+- E2E (single-call server boot): module card expanded via real click — but study toggles count 0 at CARD level (sections render as rows there; the study panel lives in the section DRILL-DOWN) → clicked the "Platform Classics" section row (ref e189) → full section view renders 35 toggles (23 LC + 12 DF). Fixed stale-index trap: Task 81's toggle indices shifted because platform-classics gained a toggle; now map header→toggle index via DOM walk (Platform Classics=11, Streaks & Recency=19) instead of hardcoding. platform-classics guide: all 3 paras + dual-slot + fan-out/top-k whys render; streaks guide: all 3 paras + LEAD + RANK-vs-DENSE_RANK + fuse/ordinal whys render. Mobile 390×844 overflowX = 0. Screenshots: download/study-batch2-desktop.png, download/study-batch2-mobile.png.
+
+Stage Summary:
+- Study-guide coverage is now 35/73 sections (7 core + 16 expansion + 12 DF); 49 more path whys on top of Tasks 80-81 (130 total). Remaining without study: 38 sections (premium-warmups → premium5-finales, 26 sections; free-* 5; final-* 2; analytics-funnels, platform-adjacent leftovers) — batches 3-5 will finish the band.
+- E2E anatomy note for future passes: study toggles only render in the section drill-down view, not the module card's row list; header-anchored toggle lookup is the robust pattern.

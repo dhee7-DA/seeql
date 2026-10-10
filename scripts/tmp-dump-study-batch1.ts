@@ -4,12 +4,16 @@ import { SQL50_SECTIONS } from '../src/lib/leetcode/sections';
 import { LC_SQL_CONTENT, lcSqlDive } from '../src/lib/leetcode/content/content';
 
 const BATCH = new Set([
-  'extra-joins',
-  'extra-aggregation',
-  'extra-dates',
-  'extra-pivots',
-  'windows-2',
-  'self-non-equi',
+  'platform-classics',
+  'hackerrank-2',
+  'datalemur',
+  'select-2',
+  'engagement',
+  'matchups',
+  'streaks',
+  'hard-finales',
+  'hackerrank-3',
+  'datalemur-2',
 ]);
 
 const diveBySlug = new Map<string, any>();
