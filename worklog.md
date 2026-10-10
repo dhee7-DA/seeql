@@ -4832,3 +4832,19 @@ Stage Summary:
 - The orphan family is fully resolved: 12 fresh problems live in two new sections, 47 shadow re-authorings deleted, SQL_EXTRAS registry gone — catalog is 419 problems / 73 sections, 0 audit flags, every problem engine-verified and gradeable.
 - The free LeetCode SQL catalog is now genuinely complete: every free Database problem the app knows of is wired, sectioned, deep-dive'd and gradeable (335 LC band + 12 Final Wave + 72 Data & Finance).
 - Environment note: background processes are reaped between bash calls — future E2E must boot the server and run all server-dependent steps inside a single call; agent-browser sessions persist.
+
+---
+Task ID: 80
+Agent: Super Z (main agent)
+Task: "keep deepening sql" continuation — give the SQL 50 band's 7 core sections the teaching layer Data & Finance already has: full study guides (domain intro + suggested path with per-problem whys).
+
+Work Log:
+- Made LcSectionStudy.flow optional (types.ts) and guarded the StudyFlowArt render in lc-primer.tsx SectionStudyPanel ({study.flow && ...}) — text-only guides render the intro paragraphs + path list without flow art; DF guides unchanged.
+- Dumped every core-section dive's approach + statement (bun probe) so each path WHY is grounded in that dive's actual mechanics/traps, not invented.
+- Authored 7 study blocks in sections.ts (select / joins / aggregation / grouping / advanced-select / subqueries / strings): 3 intro paragraphs each teaching the domain from zero in house voice (grain discipline, join-type decisioning, anti-join/self-join shapes, filter placement ON-vs-WHERE, weighted-average SUM/SUM, boolean-AVG rates, ranking without collapsing, NOT-IN-NULL hazards, CTE step-naming, CASE's three jobs, anchor discipline), plus a path entry per problem (53 whys total) in Easy→Hard arc order.
+- Validation: tsc filtered to the 3 touched files clean; eslint silent; lc-sections-check ALL PASS (73 sections / 419 rows 1:1).
+- E2E (single-call server boot — background processes reaped between bash calls; browser session persists): /#learn → skip tour → Module 12 → Select Basics → study toggle ("Study guide — start here if this domain is new") → intro para 1, "the suggested path" and the first WHY all render; 19 study toggles across the view (7 core + 12 DF); no flow art on core guides (correct); DF Retail & RFM guide unaffected. Mobile 390×844 overflowX = 0. Screenshots: download/study-guide-desktop.png (open guide with keyword-highlighted prose + numbered path), download/study-guide-mobile.png.
+
+Stage Summary:
+- The SQL 50 band's seven canonical sections now open with the same start-here teaching layer as Data & Finance: 21 intro paragraphs + 53 path whys, all grounded in the dives' real traps. Remaining LC-band sections (54 expansion sections) still have blurbs only — natural candidates for the next deepening batches.
+- Study-flow art for the core band (if ever wanted) can be added later by assigning flow keys + drawing into lc-df-art — the panel renders it automatically once a flow key exists.
