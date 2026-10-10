@@ -264,7 +264,7 @@ WHERE id NOT IN (
     ],
     breakdown: [
       "Two traps in one problem. First, DISTINCT: for salaries 300, 300, 200 there is no 'second highest row' of 300 — ranks run over distinct values, so the answer is 200. ORDER BY salary DESC LIMIT 1 OFFSET 1 over the raw table returns 300 and is wrong; the DISTINCT must happen before the skip.",
-      "Second, the empty case. If the table holds a single distinct salary, LIMIT/OFFSET matches zero rows — but the caller expects one row containing NULL. A bare SELECT cannot turn 'no rows' into 'a row with a NULL in it'.",
+      "Second, the empty case. If the table holds a single distinct salary, LIMIT/OFFSET matches zero rows — but the caller expects one row containing NULL. A bare SELECT cannot turn 'no rows' into 'a row with a NULL in it'. Run the unwrapped version against a one-row table and the client reports an empty result set — a different SHAPE of answer, which most drivers surface as an empty list, not a null. Graders compare shape as strictly as values.",
       "The fix is wrapping the query in a scalar subquery: SELECT (SELECT DISTINCT salary ... LIMIT 1 OFFSET 1). A scalar subquery that matches no rows yields NULL by definition, and the outer SELECT projects exactly one row around it. The wrapper is not decoration — it IS the NULL generator. (The MAX-flavored alternative — the largest salary strictly below the global max — is NULL-safe natively, because MAX of an empty set is NULL.)",
     ],
     edges: [
@@ -433,7 +433,7 @@ ORDER BY d.name, e.salary DESC;`,
     breakdown: [
       "This is the canonical RANK() showcase. The three ranking siblings differ only in tie handling: ROW_NUMBER gives every row a fresh number (1,2,3…), RANK gives ties the same number and then skips (1,1,3), DENSE_RANK gives ties the same number without skipping (1,1,2). The spec — share a rank, then jump — is RANK's exact contract.",
       "RANK() OVER (ORDER BY score DESC) is the entire computation: the window's ORDER BY defines the ranking order (best first), and because there is no PARTITION BY, all rows form one ranking group. A window function decorates rows without collapsing them, so the output keeps one row per contestant — GROUP BY score would merge the tied rows and break the contract.",
-      "Side note on naming: 'rank' is a perfectly legal column alias in SQLite — no quoting required — and ORDER BY can reference it like any other output column.",
+      "Side note on naming: 'rank' is a perfectly legal column alias in SQLite — no quoting required — and ORDER BY can reference it like any other output column. In stricter engines the word is a reserved keyword and demands quoting or a safer alias such as rnk — knowing which names are free where is part of writing portable SQL. SQLite resolves output aliases first, which is why the bare alias works in this problem's ORDER BY.",
     ],
     edges: [
       "Two 4.00s → both rank 1; the next distinct score is 3 (two rows precede it).",

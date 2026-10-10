@@ -18,8 +18,8 @@ export const SQL_MORE_JOINS: LcSqlDive[] = [
     constraints: ["NPV has at most one row per (id, year)", "Queries may contain pairs absent from NPV", "both tables may repeat the same id across different years"],
     breakdown: [
       "The shape of this problem is a left join wearing a costume: Queries is the driving table (every question must appear in the answer), NPV is an optional lookup. Whenever 'every row of A, plus matching data from B if it exists' appears, LEFT JOIN is the tool.",
-      "The composite key matters: a pair matches only when BOTH id and year agree. Joining on id alone would multiply rows (id 1 has two NPV years) and attach the wrong values — the classic fan-out bug that composite keys prevent.",
-      "Missing matches surface as NULL, but the spec wants 0 — a business convention, not a data fact. That is COALESCE/IFNULL's whole job: convert 'no data' into the neutral value the report promises.",
+      "The composite key matters: a pair matches only when BOTH id and year agree. Joining on id alone would multiply rows (id 1 has two NPV years) and attach the wrong values — the classic fan-out bug that composite keys prevent. Run the id-only version on the seed: the query for (1,2019) would join to BOTH of id 1's valuation rows, so the output grows from 7 rows to 9 and reports 2018's 100 against the 2019 question. Right shape, corrupted contents — the worst kind of wrong.",
+      "Missing matches surface as NULL, but the spec wants 0 — a business convention, not a data fact. That is COALESCE/IFNULL's whole job: convert 'no data' into the neutral value the report promises. The seed plants the case deliberately: (1,2020) and (4,2019) are queried but never valued, and they are exactly the rows that distinguish a passing answer from a NULL-leaking one. Pick defaults from the reader's expectations — 0 for money reports, NULL when absence itself is the message.",
     ],
     edges: [
       "Join on BOTH id and year — id alone fans out (id 1 has two years).",
@@ -88,8 +88,8 @@ ORDER BY q.id, q.year;`,
     constraints: ["amount can be negative (debits)", "a user with no transactions has no balance row here — decide what that means", "output columns: name, balance"],
     breakdown: [
       "A 'balance' is not stored anywhere — it only exists after aggregation. SUM(amount) grouped by account turns a transaction log into a number per person; that computed value is what HAVING filters, because WHERE runs before aggregation exists and cannot see it.",
-      "The join direction is inner by design: the threshold report asks about people whose balance is KNOWN, and a user with no transactions has none. (If the spec wanted zero-balance users too, the join would flip to LEFT and COALESCE the sum.)",
-      "Group by the identity (account), carry the label (name) along. Grouping by name alone would merge two customers who happen to share a name — grouping keys must be unique identifiers, never display labels.",
+      "The join direction is inner by design: the threshold report asks about people whose balance is KNOWN, and a user with no transactions has none. (If the spec wanted zero-balance users too, the join would flip to LEFT and COALESCE the sum.) The seed can't arbitrate this one — all three accounts transact — but the constraint sheet flags the case, and the safe reading is: INNER JOIN reports balances, LEFT JOIN + COALESCE reports people.",
+      "Group by the identity (account), carry the label (name) along. Grouping by name alone would merge two customers who happen to share a name — grouping keys must be unique identifiers, never display labels. Here the code groups by u.account, u.name: the identifier does the separating, the name does the displaying. Alicia's 11000 is one row because account 1 is one group, not because the string 'Alicia' happens to be unique.",
     ],
     edges: [
       "Negative amounts must subtract — SUM handles it, but only if you never pre-filtered them out.",
@@ -160,8 +160,8 @@ HAVING SUM(t.amount) > 10000;`,
     constraints: ["from_id ≠ to_id in every row", "the pair {A,B} is unordered — one output row per pair", "output columns: person1, person2, call_count, total_duration"],
     breakdown: [
       "The entire problem is one normalization move: rewrite each row's endpoints as (smaller, larger). Then 1→2 and 2→1 both become (1,2), and a plain GROUP BY counts what direction used to split apart. Canonicalization before grouping — the same trick normalizes edges in graphs and URLs in analytics.",
-      "SQLite's scalar min(a, b) / max(a, b) take two arguments and return the smaller/larger — a two-column comparator, not the aggregate. This is the moment to learn they exist; writing two CASE branches for the same job is noise.",
-      "Why MIN and MAX are safe as pair-identities: they're deterministic and symmetric, so both directions of a call always collapse to the same key. Any formula with those two properties works; these are simply the cheapest.",
+      "SQLite's scalar min(a, b) / max(a, b) take two arguments and return the smaller/larger — a two-column comparator, not the aggregate. This is the moment to learn they exist; writing two CASE branches for the same job is noise. The seed exercises the merge directly: (1,2,60), (2,1,45) and (1,2,30) all canonicalize to the key (1,2), so that group's COUNT(*) lands at 3 and SUM(duration) at 135.",
+      "Why MIN and MAX are safe as pair-identities: they're deterministic and symmetric, so both directions of a call always collapse to the same key. Any formula with those two properties works; these are simply the cheapest. The seed's (2,4,80) and (4,2,80) — identical durations in both directions — still merge cleanly, because symmetry ignores the payload entirely. And a self-call (from_id = to_id) would canonicalize fine too, but the constraints exclude it so nobody gets paired with themselves.",
     ],
     edges: [
       "Direction must NOT split a pair — (1,2) and (2,1) are one row.",
@@ -223,7 +223,7 @@ ORDER BY person1, person2;`,
     breakdown: [
       "SQL has no FULL OUTER JOIN in SQLite, and this problem is exactly a full outer join's null side: ids present in one table but not the other. The portable answer is the symmetric difference — rows from A absent in B, UNIONed with rows from B absent in A.",
       "Two anti-joins do the detecting. LEFT JOIN … WHERE right.id IS NULL keeps left rows with no match; run it once in each direction and the two halves together cover both failure modes. UNION (not UNION ALL) is a free safety net: an id can't be in both halves anyway, but dedupe costs nothing here.",
-      "This pattern is the interview-favorite way to say 'find records that failed to sync between two systems'. Once you can rebuild FULL OUTER JOIN from two LEFT JOINs, outer joins stop being syntax and become a shape you control.",
+      "This pattern is the interview-favorite way to say 'find records that failed to sync between two systems'. Once you can rebuild FULL OUTER JOIN from two LEFT JOINs, outer joins stop being syntax and become a shape you control. The seed stages both failure modes on purpose: id 3 is a name with no pay, id 5 is pay with no name — the UNION returns exactly those two ids, sorted once at the end.",
     ],
     edges: [
       "Only ids in EXACTLY one table qualify — an id in both tables is fine and must not appear.",

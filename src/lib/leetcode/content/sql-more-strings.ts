@@ -16,9 +16,9 @@ export const SQL_MORE_STRINGS: LcSqlDive[] = [
     ],
     constraints: ["content length counts every character including spaces", "strictly longer than 15 — exactly 15 is valid", "output: single column tweet_id"],
     breakdown: [
-      "The whole task is one row-level predicate: LENGTH(content) > 15. No grouping, no joining — a filter. Problems this small are where clause-choice (WHERE vs HAVING) and boundary semantics (strict >) get tested, not query architecture.",
+      "The whole task is one row-level predicate: LENGTH(content) > 15. No grouping, no joining — a filter. Problems this small are where clause-choice (WHERE vs HAVING) and boundary semantics (strict >) get tested, not query architecture. The seed's four rows split two-and-two across the line — 14 and 15 stay, 31 and 40 go — so a single mistyped operator visibly reshuffles half the answer.",
       "LENGTH in SQLite counts CHARACTERS of a TEXT value, which matches how a tweet limit works. In other engines LENGTH can mean bytes (Oracle) — multibyte content then breaks the count. Knowing your dialect's length function is the real content of this problem.",
-      "The boundary is the test: exactly 15 characters is VALID because the rule says strictly longer. In the seed, tweet 1 sits precisely on the line — if your comparison is >=, you fail a test case that was written for exactly this purpose.",
+      "The boundary is the test: exactly 15 characters is VALID because the rule says strictly longer. The seed plants tweet 3 ('Fifteen chars!!') precisely on the line at 15 characters — with a >= comparison it would wrongly join the invalid list, failing a test case written for exactly this purpose. Checking the boundary row against the spec, not just the obviously-long ones, is the habit that catches these.",
     ],
     edges: [
       "Strictly longer: > 15, not >= 15 — the 15-character tweet must survive.",
@@ -74,7 +74,7 @@ WHERE LENGTH(content) > 15;      -- strictly longer than the limit`,
     ],
     constraints: ["odd id = id % 2 = 1", "names starting with 'M' (uppercase) never get the bonus", "output columns: employee_id, name, bonus, all employees"],
     breakdown: [
-      "One CASE expression IS the business rule: WHEN id is odd AND name avoids 'M' THEN salary ELSE 0. Conditional logic belongs in the SELECT when it produces a value per row — this is CASE's native habitat, no joins or groups anywhere.",
+      "One CASE expression IS the business rule: WHEN id is odd AND name avoids 'M' THEN salary ELSE 0. Conditional logic belongs in the SELECT when it produces a value per row — this is CASE's native habitat, no joins or groups anywhere. The seed exercises the outcome grid: odd + M (Michael) and even + non-M both fall to ELSE 0, while odd + non-M (Addilyn) collects the salary — two conditions, four combinations, one expression.",
       "The name test is LIKE 'M%' — anchored at the start. A name CONTAINING M (like 'Ramina') still qualifies; only the first character matters. LIKE patterns are sentences: 'M%' reads 'starts with M', '%M%' would read 'contains M' — different contracts.",
       "Parity via id % 2 = 1 is dialect-neutral (MOD(id, 2) elsewhere). Note the trap in NOT (odd AND no-M): an id that's even with a non-M name still gets 0 — the ELSE branch, not a NULL. With no ELSE, CASE returns NULL and a bonus column of NULLs would fail the grader.",
     ],

@@ -90,7 +90,7 @@ ORDER BY action_date;`,
     breakdown: [
       "COUNT and COUNT(DISTINCT …) answer different questions about the same bucket, and this report needs both side by side: raw rows are events, distinct values are entities. One GROUP BY, two flavors of the same function — that's the entire query.",
       "The composite group key (date, brand) is the report's grain. Get it wrong — group by brand alone — and seven days of activity merge into one lying row. Grain errors don't crash; they silently aggregate across the boundary you meant to keep.",
-      "COUNT(DISTINCT x) ignores NULLs and dedupes within the bucket, which is exactly 'how many different things were involved'. When a stakeholder says 'unique', your fingers should already be typing DISTINCT inside the COUNT.",
+      "COUNT(DISTINCT x) ignores NULLs and dedupes within the bucket, which is exactly 'how many different things were involved'. When a stakeholder says 'unique', your fingers should already be typing DISTINCT inside the COUNT. The seed makes the two columns diverge visibly: honda's 4 rows carry 3 distinct leads but only 2 distinct partners — same bucket, different dedup results, so the aggregates never interfere.",
     ],
     edges: [
       "Group by (date_id, make_name) — the full reporting grain.",
@@ -152,9 +152,9 @@ ORDER BY date_id, make_name;`,
     ],
     constraints: ["(user_id, follower_id) is unique", "output columns: user_id, followers_count"],
     breakdown: [
-      "The smallest complete GROUP BY exercise: the group key IS the entity, COUNT(*) is the metric, ORDER BY formats the roster. If this feels too easy, notice how much of reporting it contains — grain, aggregate, sort — in three clauses.",
-      "Direction matters and is easy to blur: the table says user_id HAS follower_id. Grouping by follower_id would answer 'how many people does each account follow' — a different business question from a one-column typo.",
-      "Every row contributes exactly one follower, so COUNT(*) is correct without DISTINCT; the PK's uniqueness guarantee is what licenses the simpler aggregate. Knowing when DISTINCT is unnecessary is as valuable as knowing when it's mandatory.",
+      "The smallest complete GROUP BY exercise: the group key IS the entity, COUNT(*) is the metric, ORDER BY formats the roster. If this feels too easy, notice how much of reporting it contains — grain, aggregate, sort — in three clauses. The seed's five edges collapse to four rows, with user 2's two inbound follows merging into the single count 2 while everyone else stays at 1.",
+      "Direction matters and is easy to blur: the table says user_id HAS follower_id. Grouping by follower_id would answer 'how many people does each account follow' — a different business question from a one-column typo. The seed makes the flip visible: follower buckets read 1→4, 2→1 (follower 1 follows everyone), instead of the required 0→3 roster of followers per user.",
+      "Every row contributes exactly one follower, so COUNT(*) is correct without DISTINCT; the PK's uniqueness guarantee is what licenses the simpler aggregate. Knowing when DISTINCT is unnecessary is as valuable as knowing when it's mandatory. If the table ever logged duplicate follow events, COUNT(*) would inflate silently and COUNT(DISTINCT follower_id) would become mandatory — the constraint, not taste, picks the aggregate.",
     ],
     edges: [
       "Group by user_id (the followed), not follower_id (the following).",
@@ -212,7 +212,7 @@ ORDER BY user_id;`,
     breakdown: [
       "Derived metrics beat stored metrics: duration isn't a column, it's out_time - in_time computed per row, then SUM'd per group. Computing inside the aggregate — SUM(a - b), not SUM(a) - SUM(b) (same answer here, but the per-row form is the habit that survives harder formulas).",
       "The group key is (event_day, emp_id) — the report's grain is 'per person per day', not 'per person'. One-day-per-row reports hide this; multi-session logs expose it: forget the day and two sessions on different days sum into a meaningless total.",
-      "Out/in times are minutes-since-midnight integers, which makes subtraction honest. With TIMESTAMP columns you'd borrow the same shape via strftime or julianday deltas — the aggregation logic never changes, only the arithmetic layer.",
+      "Out/in times are minutes-since-midnight integers, which makes subtraction honest. With TIMESTAMP columns you'd borrow the same shape via strftime or julianday deltas — the aggregation logic never changes, only the arithmetic layer. The seed's arithmetic stays human-checkable: emp 1's 28 + 145 merge into 173 only because both sessions share the (day, employee) bucket — group by employee alone and the 30th's 35 would melt into that same total.",
     ],
     edges: [
       "Multiple sessions per day MUST merge — group by (day, employee).",
@@ -274,7 +274,7 @@ ORDER BY event_day, emp_id;`,
     breakdown: [
       "The question is a count of PEOPLE, but the evidence is in TRANSACTIONS. COUNT(DISTINCT customer_id) after the WHERE is the exact bridge: filter rows to the qualifying bills, then collapse the customer column to its distinct values and count them.",
       "Compare with the wrong answer, COUNT(*): the seed has 3 qualifying bills but only 2 qualifying customers. Aggregation functions differ precisely in what they collapse — rows, or distinct values of a column — and this problem flips between them with one keyword.",
-      "'Strictly greater' is doing quiet work: a bill of exactly 500 does NOT qualify. Boundary semantics belong in the filter verbatim — > 500, never >= 500 — because the test data will absolutely probe the edge.",
+      "'Strictly greater' is doing quiet work: a bill of exactly 500 does NOT qualify. Boundary semantics belong in the filter verbatim — > 500, never >= 500 — because the test data will absolutely probe the edge. The seed keeps every bill just off the line — 394 and 257 fail on size, not on the boundary — so a quiet >= would pass this seed and fail the hidden case; the discipline is checking the operator against the spec, not against one dataset.",
     ],
     edges: [
       "DISTINCT is the difference between 2 and 3 on this seed.",

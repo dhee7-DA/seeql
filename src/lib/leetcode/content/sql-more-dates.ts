@@ -17,8 +17,8 @@ export const SQL_MORE_DATES: LcSqlDive[] = [
     constraints: ["trans_date is 'YYYY-MM-DD' text", "state is 'approved' or 'declined'", "order by month, then country"],
     breakdown: [
       "Four metrics from one pass: two unconditional (COUNT(*), SUM(amount)) and two conditional (approved only). Conditional aggregation — SUM(CASE WHEN state='approved' THEN … END) — computes a subset metric inside the same GROUP BY as the total. This is the pattern behind every funnel, dashboard and reconciliation report.",
-      "The month is derived: SUBSTR(trans_date, 1, 7) slices 'YYYY-MM-DD' to 'YYYY-MM'. ISO dates slice cleanly by character position — one more payoff of canonical date storage. Group by the derived month, not the raw day.",
-      "COUNT(*) vs SUM(CASE…): the conditional count is a sum of 0/1 flags, which is why CASE must return 1 or 0 explicitly (or rely on ELSE NULL with SUM ignoring NULLs — but explicit beats clever under pressure).",
+      "The month is derived: SUBSTR(trans_date, 1, 7) slices 'YYYY-MM-DD' to 'YYYY-MM'. ISO dates slice cleanly by character position — one more payoff of canonical date storage. Group by the derived month, not the raw day. The seed spans two months across three countries, so the derived key turns 7 payment rows into 6 ledger lines — 2019-01/US merges rows 1 and 2 even though their days sit nine apart.",
+      "COUNT(*) vs SUM(CASE…): the conditional count is a sum of 0/1 flags, which is why CASE must return 1 or 0 explicitly (or rely on ELSE NULL with SUM ignoring NULLs — but explicit beats clever under pressure). The seed's DE row 4 is the check: a declined-only group must read approved_count 0 and approved_amount 0, and the ELSE 0 branches are what keep those cells numeric where a forgotten ELSE would print NULL.",
     ],
     edges: [
       "Group by (month, country) — derived month first, country second.",
@@ -90,7 +90,7 @@ ORDER BY month, country;`,
     breakdown: [
       "Group keys must be computed BEFORE grouping: normalize the name in an inner SELECT, then GROUP BY the clean column. Grouping by the raw column would keep ' LCPhone' and 'lcPhone ' as separate buckets — the data-cleaning bug this problem exists to teach.",
       "SQLite has no INITCAP, so capitalization is built by hand: UPPER(first letter) || LOWER(rest). String slicing (SUBSTR) + concatenation (||) compose into any formatting rule the report needs — and the TRIM must happen first, or the 'first letter' is a space.",
-      "The revenue metric is itself derived twice: per-row (quantity × price), then SUM per bucket, then ROUND to the reporting precision. Rounding LAST — after aggregation — is the rule; rounding per row then summing accumulates error.",
+      "The revenue metric is itself derived twice: per-row (quantity × price), then SUM per bucket, then ROUND to the reporting precision. Rounding LAST — after aggregation — is the rule; rounding per row then summing accumulates error. The seed shows the cleanup paying off: '  LCPhone' ×2 and 'lcPhone ' ×3 form one bucket worth 70.0, while grouping on the raw names would print two separate 28.0 lines and lose the product's real January total.",
     ],
     edges: [
       "TRIM before slicing — leading spaces would become the 'first letter'.",
@@ -166,7 +166,7 @@ ORDER BY product_name, sale_date;`,
     breakdown: [
       "Two operations compose: filter the year, then take MAX per user. The ORDER matters — filtering to 2020 rows BEFORE the aggregate is what excludes user 3 automatically, with no HAVING gymnastics. Row-level conditions go in WHERE; they're cheaper and simpler than group-level ones.",
       "The year boundary is a half-open range: time_stamp >= '2020-01-01' AND time_stamp < '2021-01-01'. String comparison works because the format is fixed-width ISO. Comparing to '2020-12-31' would silently drop everything on the last day after 00:00:00 — the classic inclusive-date bug.",
-      "MAX on 'YYYY-MM-DD HH:MM:SS' text is calendar-ordered lexicographically — fixed width is what makes text timestamps sortable. Truncate one digit ('YYYY-M-D') and '2020-9-1' > '2020-10-1' becomes a lie.",
+      "MAX on 'YYYY-MM-DD HH:MM:SS' text is calendar-ordered lexicographically — fixed width is what makes text timestamps sortable. Truncate one digit ('YYYY-M-D') and '2020-9-1' > '2020-10-1' becomes a lie. The same fixed-width contract powers the year boundary too: '2020-12-31 23:59:59' sorts below '2021-01-01' as pure text, which is why the half-open range needs no date parsing whatsoever.",
     ],
     edges: [
       "Half-open range [< next year] captures every second of 2020.",

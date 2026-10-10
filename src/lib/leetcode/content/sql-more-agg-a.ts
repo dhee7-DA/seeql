@@ -16,9 +16,9 @@ export const SQL_MORE_AGG_A: LcSqlDive[] = [
     ],
     constraints: ["a player may log in many times", "output columns: player_id, first_login, one row per player"],
     breakdown: [
-      "'First X per group' is the hello-world of aggregation: collapse the table to one row per player with MIN(event_date). No join, no window function — GROUP BY alone answers it, and reaching for something fancier is the beginner's tell.",
-      "MIN works on dates because ISO 'YYYY-MM-DD' strings sort lexicographically in exactly calendar order. The moment dates become free-form text ('Mar 3, 2016'), that guarantee dies — which is why the schema stores dates canonically.",
-      "One output row per player means the grain of the report is the player. Deciding the grain first, then picking the aggregate that fits it, is the reliable order of operations for every reporting query.",
+      "'First X per group' is the hello-world of aggregation: collapse the table to one row per player with MIN(event_date). No join, no window function — GROUP BY alone answers it, and reaching for something fancier is the beginner's tell. The seed shows the collapse concretely: five sessions become three rows, with player 1's two logins shrinking to their minimum 2016-03-01.",
+      "MIN works on dates because ISO 'YYYY-MM-DD' strings sort lexicographically in exactly calendar order. The moment dates become free-form text ('Mar 3, 2016'), that guarantee dies — which is why the schema stores dates canonically. MIN's NULL semantics matter here too: it skips NULLs rather than poisoning the result, so a stray NULL event_date would surface AS that player's first_login — exactly why the column is declared NOT NULL.",
+      "One output row per player means the grain of the report is the player. Deciding the grain first, then picking the aggregate that fits it, is the reliable order of operations for every reporting query. Here the translation is mechanical: 'for each player, the first date' fixes the grain at player, and MIN is the only aggregate that reduces a set of dates to the one the sentence describes.",
     ],
     edges: [
       "One row per player, even for players with a single session.",
@@ -77,9 +77,9 @@ ORDER BY player_id;`,
     ],
     constraints: ["one row per order", "guaranteed unique maximum for the test data", "output: single column, single row"],
     breakdown: [
-      "Two steps hide in one sentence: count orders per customer (GROUP BY + COUNT), then keep only the top count (ORDER BY … DESC LIMIT 1). SQL reads the sentence left to right and so should the query.",
+      "Two steps hide in one sentence: count orders per customer (GROUP BY + COUNT), then keep only the top count (ORDER BY … DESC LIMIT 1). SQL reads the sentence left to right and so should the query. The seed's tallies run 1→3, 2→1, 3→2, so the sort lines up 3, 2, 1 and LIMIT 1 cuts customer 1 out whole — one row, as ordered.",
       "LIMIT 1 after ORDER BY is 'the argmax' idiom. It's simple, but it silently makes a promise: the maximum is UNIQUE. If two customers could tie, LIMIT 1 would arbitrarily keep one — exactly the gap that version 2 of this problem (ties → all rows) is built to expose.",
-      "Note the grain shift: the table's grain is the order, the answer's grain is the customer. Any query whose output grain differs from its input grain is an aggregation, whether or not it looks like one.",
+      "Note the grain shift: the table's grain is the order, the answer's grain is the customer. Any query whose output grain differs from its input grain is an aggregation, whether or not it looks like one. The seed's six order rows become three customer rows before the sort ever runs — if your mental model still holds six rows at ORDER BY time, the LIMIT feels arbitrary instead of derived.",
     ],
     edges: [
       "COUNT counts orders, not customers — group first, then order.",
@@ -137,7 +137,7 @@ LIMIT 1;`,
     breakdown: [
       "Two predicates stack here: 'appears exactly once' (a GROUP BY/HAVING filter) and 'the biggest of what survives' (an outer MAX). Each is trivial alone; the mistake is trying to do both in one SELECT, which mixes row-level filtering with an aggregate-of-aggregates.",
       "The outer aggregate is load-bearing even in the empty case: MAX over zero rows produces one row containing NULL, which is precisely the required output. Drop it and a filtered-empty table returns zero rows — the classic way this problem's second test case catches people.",
-      "COUNT(*) = 1 in HAVING is the exact translation of 'appears exactly once'. HAVING — not WHERE — because uniqueness is a property of the GROUP, knowable only after rows have been counted.",
+      "COUNT(*) = 1 in HAVING is the exact translation of 'appears exactly once'. HAVING — not WHERE — because uniqueness is a property of the GROUP, knowable only after rows have been counted. The seed makes the two layers legible: 8×2, 3×2 and 6×2 die at the HAVING, leaving 4 and 5 for the outer MAX to rank — two predicates, two stages, zero ambiguity.",
     ],
     edges: [
       "An empty result must still print one row with NULL — the outer MAX guarantees it.",
@@ -193,9 +193,9 @@ FROM (
     ],
     constraints: ["timestamp is unique per row", "output columns: actor_id, director_id — one row per qualifying pair"],
     breakdown: [
-      "The whole problem is a frequency threshold on a composite key: GROUP BY the pair, HAVING COUNT(*) >= 3. 'At least N times' questions are always this shape, and the N lives in HAVING because it's a property of the group, not of any row.",
+      "The whole problem is a frequency threshold on a composite key: GROUP BY the pair, HAVING COUNT(*) >= 3. 'At least N times' questions are always this shape, and the N lives in HAVING because it's a property of the group, not of any row. The seed plants the boundary case exactly: (1,1) and (3,3) sit at precisely 3 collaborations, so a >= that quietly became > would report nothing at all.",
       "(1,2) and (2,1) are DIFFERENT pairs here — nothing in the spec asks to canonicalize direction (unlike the phone-calls problem). Reading the spec precisely decides this; assuming symmetry where none was requested is how correct-looking queries fail.",
-      "The timestamp plays no role beyond existing — it makes rows distinct so COUNT counts genuine collaborations. When a column exists purely to disambiguate rows, it's a key, and it's not part of the answer.",
+      "The timestamp plays no role beyond existing — it makes rows distinct so COUNT counts genuine collaborations. When a column exists purely to disambiguate rows, it's a key, and it's not part of the answer. Drop it and the three (1,1) rows would still be three rows — SQLite tables are bags, not sets — but the timestamp is what makes each collaboration auditable and ordered after the fact.",
     ],
     edges: [
       "Group by BOTH ids — actor_id alone would merge a person's work across directors.",

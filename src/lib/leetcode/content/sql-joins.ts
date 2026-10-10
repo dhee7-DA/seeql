@@ -204,8 +204,8 @@ ORDER BY e.name;`,
       "emails are compared as stored (case-sensitive here)",
     ],
     breakdown: [
-      "'More than once' is a property of a GROUP, not of any single row — you cannot know an email repeats until you have seen the whole table. The translation is GROUP BY email, then filter the groups with HAVING COUNT(*) > 1.",
-      "WHERE vs HAVING is the real lesson. WHERE runs before grouping and sees individual rows; HAVING runs after and sees aggregates. Writing WHERE COUNT(*) > 1 is the classic error — not just wrong, but illegal in every engine.",
+      "'More than once' is a property of a GROUP, not of any single row — you cannot know an email repeats until you have seen the whole table. The translation is GROUP BY email, then filter the groups with HAVING COUNT(*) > 1. In the seed that grouping yields three buckets — a@b.com holding 3 rows, c@d.com holding 2, e@f.com holding 1 — and only the first two survive the filter. The count belongs to the bucket, never to any row inside it.",
+      "WHERE vs HAVING is the real lesson. WHERE runs before grouping and sees individual rows; HAVING runs after and sees aggregates. Writing WHERE COUNT(*) > 1 is the classic error — not just wrong, but illegal in every engine. SQLite refuses it at parse time with 'misuse of aggregate function', so the failure is compiler-grade rather than a silently wrong answer — one of the few mistakes the database catches for you.",
       "The second trap is over-reporting: SELECT DISTINCT email alone lists every address once with no filtering at all. And since email is the group key, plain COUNT(*) is the right counter — COUNT(DISTINCT email) would always be 1 inside its own group, so the HAVING could never fire.",
     ],
     edges: [
@@ -676,7 +676,7 @@ ORDER BY sp.name;`,
     ],
     breakdown: [
       "The grain moves from sale to product: sum quantities per product_id, then compare products. That is a two-stage query — aggregate first, then select the winner(s) — and the stages cannot be fused because 'the maximum of the totals' does not exist until the totals do.",
-      "The winner-finding trick: compute MAX(total) in a scalar subquery over the same aggregated CTE, then keep every row equal to it. MAX ignores ties naturally — all rows at the top score survive, so both Nokias come through.",
+      "The winner-finding trick: compute MAX(total) in a scalar subquery over the same aggregated CTE, then keep every row equal to it. MAX ignores ties naturally — all rows at the top score survive, so both Nokias come through. In the seed Nokia 1100 and Nokia 3210 both total 15 while Nokia 8800 sits at 7, so the equality test returns exactly two rows — tie-awareness LIMIT 1 simply does not have.",
       "The popular near-miss is ORDER BY total DESC LIMIT 1: it returns ONE row, silently dropping the tie the seed contains. The other classic, MAX(SUM(quantity)), is illegal nesting — aggregates do not compose; the CTE exists precisely to give SUM a finished value for MAX to consume.",
     ],
     edges: [

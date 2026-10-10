@@ -19,8 +19,8 @@ export const SQL_MORE_PLATFORM: LcSqlDive[] = [
     constraints: ["earnings = salary × months (computed, never stored)", "output columns: earnings, employee_count — exactly one row"],
     breakdown: [
       "A derived metric moves to center stage: salary × months isn't a column, so every clause that references earnings must recompute it (or group by it). GROUP BY salary * months is legal and readable — SQLite groups by the expression, treating equal products as one bucket.",
-      "The output is a TIE COUNT wearing a MAX costume: the top bucket's value (MAX of earnings) and its size (COUNT of the bucket that achieved it). One GROUP BY produces both, and ORDER BY earnings DESC LIMIT 1 cuts the top bucket out whole.",
-      "COUNT(*) counts members of the bucket — exactly the 'how many people earn this' the report asks. If the answer had to list WHO, the shape would grow a window function or a join; the scalar question stays a scalar query.",
+      "The output is a TIE COUNT wearing a MAX costume: the top bucket's value (MAX of earnings) and its size (COUNT of the bucket that achieved it). One GROUP BY produces both, and ORDER BY earnings DESC LIMIT 1 cuts the top bucket out whole. On this seed the buckets read 108000×3, 99000×2, 62000×1, so the cut returns value 108000 and count 3 in a single row — value and membership always agree because they come from the same bucket.",
+      "COUNT(*) counts members of the bucket — exactly the 'how many people earn this' the report asks. If the answer had to list WHO, the shape would grow a window function or a join; the scalar question stays a scalar query. Kim, Ravi and Cy all land in the 108000 bucket from wildly different salary/month splits (4500×24, 2700×40, 2250×48) — the product erases those differences, which is exactly why the bucket, not the row, is the unit of counting.",
     ],
     edges: [
       "Group by the EXPRESSION salary * months, not by salary alone.",
@@ -235,7 +235,7 @@ ORDER BY c.company_code;`,
     constraints: ["rating is 1.0–5.0; average per user first, THEN round", "SQLite ROUND rounds .5 away from zero: 3.5 → 4", "output columns: number_of_stars, review_histogram"],
     breakdown: [
       "Two aggregation stages in sequence: per-user AVG (inner), then per-star COUNT of rounded averages (outer). Nesting aggregates directly is illegal — AVG(ROUND(AVG(rating))) mixes grains — so the inner aggregate becomes a derived table (or CTE) the outer one can group. 'Aggregate of aggregates' is always two queries stacked.",
-      "The bucket function is ROUND(avg) cast to INTEGER: 3.5 → 4, 2.4 → 2, 4.6 → 5. SQLite's ROUND uses half-away-from-zero, so exactly-.5 averages jump up — the seed plants a 3.5 to make that contract visible.",
+      "The bucket function is ROUND(avg) cast to INTEGER: 3.5 → 4, 2.4 → 2, 4.6 → 5. SQLite's ROUND uses half-away-from-zero, so exactly-.5 averages jump up — and the seed plants the boundary three times over: user 102's plain 3.5, user 104's averaged 1.5 and user 106's 4.5 all round upward, which is what crowds three users onto star 5.",
       "The histogram's grain is the STAR, and 'stars nobody landed on' are excluded by construction: only buckets that exist appear. Filling the 1–5 gap (zero rows for empty stars) would need a calendar-style star table LEFT JOINed in — a deliberate scope decision to notice.",
     ],
     edges: [
@@ -307,7 +307,7 @@ ORDER BY number_of_stars;`,
     breakdown: [
       "Aggregation then top-k: GROUP BY artist with SUM(streams), ORDER BY the sum DESC, LIMIT 5. The tie-break is a second ORDER BY key — when two artists share a total, artist_name ASC gives the sort a deterministic, spec-mandated decider. Ties are why ORDER BY is a LIST, not a value.",
       "Determinism matters beyond taste: the grader compares row order (this problem is order-exact), and a sort key that doesn't fully determine order lets the engine return tied rows arbitrarily. Every order-exact query needs a complete tie-breaker chain — here, (total DESC, name ASC) is total because names are unique.",
-      "LIMIT k is the honest SQL for top-k. The window alternative (ROW_NUMBER or DENSE_RANK) earns its keep only when the spec says 'top 5 PER something' or 'all ties at the boundary' — plain global top-k stays two clauses.",
+      "LIMIT k is the honest SQL for top-k. The window alternative (ROW_NUMBER or DENSE_RANK) earns its keep only when the spec says 'top 5 PER something' or 'all ties at the boundary' — plain global top-k stays two clauses. The seed shows the cut's sharpness: Forte's 100 misses the list entirely, and even a sixth artist tied exactly with the 5th-place total would stay out, because the spec demands exactly five rows.",
     ],
     edges: [
       "Two sort keys: total DESC, then artist_name ASC for ties.",

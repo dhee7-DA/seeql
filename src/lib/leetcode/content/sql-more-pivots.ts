@@ -88,7 +88,7 @@ ORDER BY id;`,
     breakdown: [
       "This is the unpivot (long ↔ wide reshape in reverse). The relational answer is UNION ALL over three single-column projections: 'store1 prices' SELECTed with a literal 'store1' as data, then store2, then store3. The column NAME becomes a VALUE — that's the entire conceptual move.",
       "WHERE storeX IS NOT NULL on each branch is what kills the gaps: a NULL price is 'not sold here', and the output format wants only facts. (The spec guarantees at least one price per product, so no product disappears entirely — with weaker guarantees you'd check.)",
-      "UNION ALL, not UNION: the three branches are disjoint by construction (different store literals), so dedup would be wasted work — and if two branches ever legitimately produced identical rows, silently merging them would corrupt the count.",
+      "UNION ALL, not UNION: the three branches are disjoint by construction (different store literals), so dedup would be wasted work — and if two branches ever legitimately produced identical rows, silently merging them would corrupt the count. The seed pins the arithmetic: 3 products × 3 stores = 9 slots, 3 of them NULL, so the reshape must emit exactly 6 rows — a deduping UNION happens to agree here but has nothing to fall back on if slots ever held equal prices.",
     ],
     edges: [
       "The store label is a literal string in each branch — the pivot's inverse trick.",
@@ -150,7 +150,7 @@ ORDER BY product_id, store;`,
     constraints: ["the tree is rooted at employee_id 1 with manager_id NULL", "manager references may dangle (a manager id with no row)", "output columns: employee_id, employee_name, distance, ordered by distance then id"],
     breakdown: [
       "Reporting chains are unbounded — org charts are trees, and SQL's plain joins can't walk 'any depth' without knowing it in advance. A recursive CTE is the tool: an anchor (the head's direct reports) UNIONed with a step (everyone whose manager is already in the set), executed until nothing new appears.",
-      "The distance column is the recursion's depth gauge: the anchor seeds 1, and each step adds one to the distance of the row it extends from. Carry depth in the recursive set and every level labels itself — no post-hoc counting needed.",
+      "The distance column is the recursion's depth gauge: the anchor seeds 1, and each step adds one to the distance of the row it extends from. Carry depth in the recursive set and every level labels itself — no post-hoc counting needed. The seed reads like a depth ruler: Omar and Priya get 1 from the anchor, Quentin and Rania inherit 1 + 1 = 2, and Sami rides Quentin's 2 up to 3 — three hops, three self-labeled levels, zero bookkeeping afterwards.",
       "Termination is structural: each step only extends rows with a manager matching an existing member, and manager chains point UP the tree, so the frontier shrinks to nothing. A dangling manager id (Umar → 9) simply never matches anyone in the set and drops out silently — the recursion needs no special case.",
     ],
     edges: [

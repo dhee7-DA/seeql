@@ -18,8 +18,8 @@ export const SQL_SELECT: LcSqlDive[] = [
     constraints: ["1 <= rows in Employees", "EmployeeUNI.unique_id values are unique", "an id appears at most once in EmployeeUNI"],
     breakdown: [
       "The lookup table is OPTIONAL on the right: every employee must appear, whether or not a mapping exists. That single sentence chooses the join for you — INNER JOIN would silently delete Alice and Bob, which is exactly the bug this problem is built to catch.",
-      "LEFT JOIN keeps every row of the left table (Employees) and fills unmatched right columns with NULL. The NULL isn't an error to fix — it IS the answer for unassigned employees, and the grader expects it.",
-      "Notice what 'mapping' means here: EmployeeUNI.id is the join key, unique_id is the payload. Beginners often join on the wrong pair (id to unique_id) — always join the two columns that describe the same entity, not the two ids you can see.",
+      "LEFT JOIN keeps every row of the left table (Employees) and fills unmatched right columns with NULL. The NULL isn't an error to fix — it IS the answer for unassigned employees, and the grader expects it. Mechanically, the engine synthesizes that all-NULL right side for Alice and Bob at read time — nothing is stored or modified; the miss is manufactured on the fly. Two NULL rows in the output are not a defect to clean up but the join's honest report: five employees in, five out, two unmapped.",
+      "Notice what 'mapping' means here: EmployeeUNI.id is the join key, unique_id is the payload. Beginners often join on the wrong pair (id to unique_id) — always join the two columns that describe the same entity, not the two ids you can see. In this seed the mistake looks survivable — both tables carry an id and a numeric column — but e.id = u.unique_id would match Alice's 1 against Jonathan's mapping and scramble every row that follows. Key pairs with key, payload with payload: internal ids join to internal ids.",
     ],
     edges: [
       "Employees with no mapping must still appear — with NULL, not zero and not dropped.",
@@ -83,9 +83,9 @@ ORDER BY e.name;`,
     ],
     constraints: ["Sales.product_id references Product.product_id", "every sale has a matching product", "(year, price) is reported per sale, not per product"],
     breakdown: [
-      "This is the friendliest join in the set: every sale references exactly one product and every reference resolves, so a plain INNER JOIN is correct — no NULL-handling gymnastics required yet.",
+      "This is the friendliest join in the set: every sale references exactly one product and every reference resolves, so a plain INNER JOIN is correct — no NULL-handling gymnastics required yet. The schema guarantees it: Sales.product_id carries REFERENCES Product(product_id), so a sale pointing at a delisted product is uninsertable and the join can never miss. Later problems in the band remove that guarantee; this one lets you drill the enrichment shape on safe ground.",
       "Read the request column by column: 'the product's name' (lives in Product), 'the year' and 'the price' (live on the sale row). Nothing asks for a SUM, MAX or count — one output row per input row. The most common mistake on easy joins is aggregating out of reflex.",
-      "The join key is s.product_id = p.product_id; the sale's own id stays in the shadows. If two products were ever sold in the same year at the same price, they are still two rows — the grain of the answer equals the grain of Sales.",
+      "The join key is s.product_id = p.product_id; the sale's own id stays in the shadows. If two products were ever sold in the same year at the same price, they are still two rows — the grain of the answer equals the grain of Sales. The seed demonstrates the point: product 100 sells in 2008 at 5000 and again in 2009 at 5100, and both rows survive separately into the output. Distinct sale_id, distinct row — only an explicit GROUP BY would merge them.",
     ],
     edges: [
       "Grain check: one row OUT per row IN — if your answer has fewer rows than Sales, you grouped by accident.",
@@ -158,9 +158,9 @@ ORDER BY s.sale_id;`,
     ],
     constraints: ["group per product (not per year)", "quantity is summed; price is ignored", "every product_id in Sales resolves to Product"],
     breakdown: [
-      "The grain changes here: from 'one row per sale' to 'one row per product'. Any time a sentence says 'for each X, the total Y', GROUP BY X with an aggregate over Y is the translation.",
-      "GROUP BY p.product_id, p.product_name — grouping by the key plus the name you display. Grouping by name alone would merge two products that share a name; grouping by id alone leaves the name dangling outside the group in some engines.",
-      "SUM(s.quantity) sums one column per group. The classic trap is SUM(s.quantity * s.price) — that's revenue, a different (and equally useful) number. The spec asks for units, so price never enters the computation.",
+      "The grain changes here: from 'one row per sale' to 'one row per product'. Any time a sentence says 'for each X, the total Y', GROUP BY X with an aggregate over Y is the translation. The seed makes the collapse visible: product 100's two sales (10 units in 2008, 8 in 2009) fuse into one Nokia 1100 row carrying 18. Five sale rows go in, three product rows come out.",
+      "GROUP BY p.product_id, p.product_name — grouping by the key plus the name you display. Grouping by name alone would merge two products that share a name; grouping by id alone leaves the name dangling outside the group in some engines. SQLite is relaxed about this, but PostgreSQL and SQL Server require every non-aggregated SELECT column to appear in the GROUP BY — so the id-plus-name form is the portable habit worth building from day one.",
+      "SUM(s.quantity) sums one column per group. The classic trap is SUM(s.quantity * s.price) — that's revenue, a different (and equally useful) number. The spec asks for units, so price never enters the computation. Run the wrong version on this seed and Nokia 1100's row reads 90800 (10 × 5000 plus 8 × 5100) instead of 18 — a plausible-looking number of precisely the wrong kind, which is why reviewers re-check the requested unit before trusting an aggregate.",
     ],
     edges: [
       "Group by the product identity, not just the display name.",
@@ -331,8 +331,8 @@ ORDER BY p.product_name, r.year;`,
     constraints: ["every employee appears exactly once in the output", "bonus NULL ⇔ no Bonus row", "output columns: name, bonus"],
     breakdown: [
       "Same skeleton as Replace Employee ID, one table later: mandatory left table (Employee), optional right table (Bonus), so LEFT JOIN from Employee. If you reach for INNER JOIN here, half the output vanishes and the first test case catches it.",
-      "The join key is empId on both sides. Note the asymmetry of direction: the LEFT table is the one whose rows ALL appear — since the spec says 'each employee's bonus', Employee must be leftmost regardless of which table is 'bigger'.",
-      "NULL discipline: don't COALESCE the bonus to 0. 'No bonus row' and 'bonus of zero' are different facts, and the grader wants the NULL. (A reporting layer might format it as '—' later — that's presentation, not query.)",
+      "The join key is empId on both sides. Note the asymmetry of direction: the LEFT table is the one whose rows ALL appear — since the spec says 'each employee's bonus', Employee must be leftmost regardless of which table is 'bigger'. Swap the tables and the contract flips: Bonus LEFT JOIN Employee would still show Dan's 500 and Thomas's 2000, but Brad and John — the people with no bonus row — would vanish entirely, losing two of the four required rows.",
+      "NULL discipline: don't COALESCE the bonus to 0. 'No bonus row' and 'bonus of zero' are different facts, and the grader wants the NULL. (A reporting layer might format it as '—' later — that's presentation, not query.) The distinction has downstream teeth: AVG(bonus) over this exact join returns 1250 — the mean of 500 and 2000 — while a COALESCE-to-zero version returns 625 by averaging in two fictitious zeros. Aggregates skip NULLs; they never skip zeros.",
     ],
     edges: [
       "Direction: Employee LEFT JOIN Bonus, never the reverse — reversed, unmatched bonuses (none here) would survive while Brad/John vanish.",

@@ -214,7 +214,7 @@ ORDER BY p.product_id;`,
     breakdown: [
       "'Average experience per project' is GROUP BY project_id with AVG over the experience column — the whole problem in one clause pair. Its teaching value is join discipline: experience lives on Employee, assignments live on Project, so the aggregate must run over the JOINED rows.",
       "Join first, then group: the join multiplies nothing because employee_id is a key on the Employee side, so grouping by project_id after the join counts each assignment exactly once. ROUND(...,2) applies to the already-averaged value — rounding inputs before averaging would poison the result.",
-      "The reflex to avoid is aggregation without the join (AVG over nothing to average) or over the wrong grain — grouping by employee fragments the average into per-person numbers that happen to look like an answer.",
+      "The reflex to avoid is aggregation without the join (AVG over nothing to average) or over the wrong grain — grouping by employee fragments the average into per-person numbers that happen to look like an answer. Concretely: grouping by employee_id would emit employee 1's own experience as a tidy 3.0 row, indistinguishable at a glance from a real per-project average. Right numbers, wrong grain — the most dangerous failure mode in reporting SQL.",
     ],
     edges: [
       "The bench employee (Ivy, 5 years, no assignments) never enters the pipeline — her Employee row matches no Project row and contributes nothing.",
@@ -392,7 +392,7 @@ ORDER BY
       "quality averages the per-row ratios — it is NOT SUM(rating)/SUM(position)",
     ],
     breakdown: [
-      "Two statistics per query_name: quality (average of per-row rating/position ratios) and poor_query_percentage (share of rows with rating < 3). Both are plain group aggregates — the difficulty lives entirely in the arithmetic idioms.",
+      "Two statistics per query_name: quality (average of per-row rating/position ratios) and poor_query_percentage (share of rows with rating < 3). Both are plain group aggregates — the difficulty lives entirely in the arithmetic idioms. The seed's three groups exercise every corner of the spec: Dog averages three distinct ratios, Bird turns out 100% poor, and Cat's two identical rows make its average trivially 0.5 with nothing flagged.",
       "The boolean idiom: (rating < 3) evaluates to 1 or 0 per row, so SUM(rating < 3) counts poor rows and the same expression inside AVG gives their fraction directly. SUM(CASE WHEN … THEN 1 ELSE 0 END) is the same computation with more ceremony — know both, write the short one.",
       "The misstep is per-row integer division: AVG(rating/position) truncates 1/2 to 0 BEFORE averaging, so every sub-1 ratio collapses and quality comes out far too low. Cast per row — 1.0 * rating / position — because AVG(1.0*rating)/AVG(position) is a ratio of averages, a different (wrong) number.",
     ],
