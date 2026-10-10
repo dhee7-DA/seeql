@@ -4812,3 +4812,23 @@ Work Log:
 Stage Summary:
 - The SQL catalog is now structurally spotless: 407/407 problems, 0 soft flags, 0 hard flags — every breakdown paragraph meets the depth bar with substantive, seed-grounded content. Grading surface untouched (sql-expected.ts not regenerated — no schema/code/output changes).
 - Open item for the lead: the orphan extras family (6+ content files, 59 registry rows, 47 shadow slugs) — decide wire-or-delete in a dedicated pass; do not "fix" audits against it blindly since it is unreachable from the app.
+
+---
+Task ID: 79
+Agent: Super Z (main agent)
+Task: "do whats recommended" — resolve the Task-78 open item: wire-or-delete the orphan extras family. Verdict: extract the 12 genuinely-fresh dives into two new live sections ("Final Wave: Users & Habits" / "Final Wave: Ops & Pairs"), delete all 47 shadow dives + the SQL_EXTRAS registry. Catalog 407 → 419.
+
+Work Log:
+- Diffed the 59 orphan SQL_EXTRAS rows against the live registry (bun probe): 47 shadow slugs (already live, live copies always win) + 12 genuinely fresh — LC 1204 last-person-to-fit-in-the-bus + 11 of the 2025 wave (3793/3617/3626/3642/3657/3705/3716/3673/3764/3808/3832).
+- Located all 12 fresh dives across 6 orphan content files (sql-extras-windows, sql-final-{text,org,commerce,behavior,pairs}); census 59 dives = 59 rows exactly accounted for.
+- Wrote a string/template-aware brace-scanner (tmp-extract-fresh.ts) that split each exported array into top-level object literals and pulled the 12 fresh dives verbatim; validated per-file object counts (4/6/6/6/5/5) before emitting.
+- Emitted sql-final-wave-a.ts (Users & Habits: token-usage E, golden-hour M, churn-risk M, loyal M, emotionally-consistent M, persistent-behavior H) and sql-final-wave-b.ts (Ops & Pairs: last-person M, stores-imbalance M, polarized-books M, zombie-sessions H, course-pairs H, study-spiral H) — headers carry the julianday-float→epoch-seconds engine lesson that applies to 3673/3832; registry-sql-final-wave.ts with the 12 rows (one double-comma emit bug fixed by hand).
+- Wiring: registry.ts +SQL_FINAL_WAVE spread; content.ts +2 imports/spreads; sections.ts +2 sections at the end of SQL50_SECTIONS with house-voice blurbs.
+- Deleted the whole orphan family: 12 content files + registry-sql-extras.ts (47 shadow dives die; git history preserves them). Zero dangling references (grep clean).
+- Validation: lc-sql-verify → 419/419 authored, snapshot regenerated, all checks passed; lc-sections-check → 73 sections (SQL50 61 + datafin 12), 419 rows = 419 dives = 419 gradeable, ALL PASS 1:1; content audit → 1 soft flag (find-loyal-customers breakdown para 3 under 3 sentences) → deepened in place with seed-grounded mechanics (same-group single-pass honesty + 107/108/109 trap reads) → re-audit 0 soft / 0 hard; tsc filtered to touched files clean; eslint silent on the 6 touched src files.
+- E2E (dev server re-daemonized; NOTE: setsid alone no longer survives between tool calls in this environment — server + all its dependent steps must share one bash call; browser session DOES persist across calls while the loaded page needs no server): /#learn → learn overview shows both Final Wave sections (0/6 each) and the band at 0/347; opened Module 12 → problem #3793 detail → section chip "Final Wave: Users & Habits", 6-stop nav (no Primer stop — correct for LC band), #dive-breakdown anchor renders the real breakdown → filled the sandbox via textarea value-setter + input event (scripts/e2e-fill-token.js kept for reuse) → Run & check → CORRECT, 3 rows · 44.66 ms, "Solved · 10 XP" badge awarded; module header counter auto-grew to 761 graded queries. Mobile 390×844 overflowX = 0. Screenshots: download/wave-graded.png, download/wave-graded-mobile.png.
+
+Stage Summary:
+- The orphan family is fully resolved: 12 fresh problems live in two new sections, 47 shadow re-authorings deleted, SQL_EXTRAS registry gone — catalog is 419 problems / 73 sections, 0 audit flags, every problem engine-verified and gradeable.
+- The free LeetCode SQL catalog is now genuinely complete: every free Database problem the app knows of is wired, sectioned, deep-dive'd and gradeable (335 LC band + 12 Final Wave + 72 Data & Finance).
+- Environment note: background processes are reaped between bash calls — future E2E must boot the server and run all server-dependent steps inside a single call; agent-browser sessions persist.
