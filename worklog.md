@@ -4583,3 +4583,21 @@ Stage Summary:
 - Module 13 teaching layer now COMPLETE: all 48 problems carry domain primers, all 8 sections carry study guides + flow art — 24 new bespoke diagrams (total 56 DF diagrams incl. batch 3) in the house pastel/mono language.
 - Grading surface untouched (383/383 verify); no registry/sections slug changes (48 problems, 8 sections, counters stable).
 - Key files: 8 sql-df-*.ts content files, 4 new lc-df-art-*.tsx families, lc-df-art.tsx, lc-primer.tsx, sections.ts, scripts/tmp-75-primer-check.ts.
+
+---
+Task ID: 76
+Agent: Super Z (main agent)
+Task: Post-landing verification + user coverage question ("lets do those sql problems and also just fifty or those 315 or so?") — confirm what is built, smoke-test live, answer scope.
+
+Work Log:
+- Session resumed after context rollover; plan assumed batch 3 unstarted, but git log showed a5227a4 (batch 3: 4 sections, 8025-8048, primers + 28 SVGs) and 9fa476f (primer retrofit on 8001-8024) already landed. Repo clean at 9fa476f.
+- scripts/lc-sections-check.ts: 67 sections (SQL50 band 59 + datafin 8), 383 SQL registry rows, 383 deep-dives, 383 gradeable — ALL PASS 1:1.
+- Primer audit via grep: 48/48 Data & Finance dives carry primer blocks across 16 sql-df-*.ts files; worklog Task 75 confirms 8/8 study guides + 56 bespoke DF diagrams + 383/383 lc-sql-verify.
+- Registry census: LeetCode SQL band = 335 rows (sql50 50 + premium/more/final-free 285), datafin = 48, plus STAGED-ONLY algo rows — registry-nc150.ts (NeetCode 150, 148 rows) + registry-ti150.ts (Top Interview 150 extras + Big-300 classics, 102 rows) — not wired into curriculum, no content, no module.
+- Live E2E smoke at /#learn (fresh session, Skip tour): Module 13 renders "Data & Finance SQL 0/48"; all 8 section titles present; opened 8025 Vintage Default Curves — 7-stop step nav, full statement + pattern SVG; #dive-primer section verified (hook, concept art SVG with vintage-curve chart + window-formula panel, 4991 chars, 7 svg elements). Note: step nav is a scroll-jump nav (getElementById + scrollIntoView), not a tab switcher — all steps stay in DOM.
+- Mobile 390x844: overflowX 0, bodyW 390. Console clean (Fast Refresh lines only). Screenshots: download/df-smoke-module13.png, download/df-smoke-primer-live.png. Browser closed.
+
+Stage Summary:
+- NO code changes. SQL side is 100% complete: 383 problems / 67 sections, LeetCode SQL 50 + full premium pool (~315) + Data & Finance 48, all gradeable, teaching layer complete.
+- Answer to user: both 50 and 315 are covered; nothing left on LeetCode SQL side.
+- Open decision surfaced: algo track (250 staged rows: NeetCode 150 + TI150 extras) matches user's deferred "we will cover algo problems" — needs explicit green-light with build order (50-problem starter batch suggested).
