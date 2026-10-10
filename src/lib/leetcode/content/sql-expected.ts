@@ -12014,6 +12014,451 @@ export const SQL_EXPECTED: LcSqlExpected[] = [
       ]
     ],
     "order": "exact"
+  },
+  {
+    "slug": "find-users-with-high-token-usage",
+    "columns": [
+      "user_id",
+      "prompt_count",
+      "avg_tokens"
+    ],
+    "rows": [
+      [
+        3,
+        4,
+        237.5
+      ],
+      [
+        1,
+        3,
+        133.33
+      ],
+      [
+        6,
+        3,
+        20
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-golden-hour-customers",
+    "columns": [
+      "customer_id",
+      "total_orders",
+      "peak_hour_percentage",
+      "average_rating"
+    ],
+    "rows": [
+      [
+        106,
+        5,
+        80,
+        4.67
+      ],
+      [
+        103,
+        3,
+        100,
+        4.67
+      ],
+      [
+        101,
+        4,
+        100,
+        4.67
+      ],
+      [
+        108,
+        4,
+        100,
+        4.5
+      ],
+      [
+        105,
+        3,
+        100,
+        4.33
+      ],
+      [
+        107,
+        5,
+        60,
+        4
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-churn-risk-customers",
+    "columns": [
+      "user_id",
+      "current_plan",
+      "current_monthly_amount",
+      "max_historical_amount",
+      "days_as_subscriber"
+    ],
+    "rows": [
+      [
+        501,
+        "basic",
+        9.99,
+        29.99,
+        79
+      ],
+      [
+        508,
+        "basic",
+        9.99,
+        19.99,
+        75
+      ],
+      [
+        502,
+        "basic",
+        9.99,
+        29.99,
+        70
+      ],
+      [
+        507,
+        "basic",
+        9.99,
+        29.99,
+        60
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-loyal-customers",
+    "columns": [
+      "customer_id"
+    ],
+    "rows": [
+      [
+        101
+      ],
+      [
+        104
+      ],
+      [
+        105
+      ],
+      [
+        109
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-emotionally-consistent-users",
+    "columns": [
+      "user_id",
+      "dominant_reaction",
+      "reaction_ratio"
+    ],
+    "rows": [
+      [
+        3,
+        "love",
+        1
+      ],
+      [
+        1,
+        "like",
+        0.8
+      ],
+      [
+        5,
+        "like",
+        0.67
+      ],
+      [
+        6,
+        "wow",
+        0.6
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-users-with-persistent-behavior-patterns",
+    "columns": [
+      "user_id",
+      "action",
+      "streak_length",
+      "start_date",
+      "end_date"
+    ],
+    "rows": [
+      [
+        3,
+        "view",
+        7,
+        "2024-01-01",
+        "2024-01-07"
+      ],
+      [
+        6,
+        "login",
+        6,
+        "2024-03-01",
+        "2024-03-06"
+      ],
+      [
+        1,
+        "login",
+        5,
+        "2024-01-01",
+        "2024-01-05"
+      ],
+      [
+        5,
+        "view",
+        5,
+        "2024-01-29",
+        "2024-02-02"
+      ],
+      [
+        7,
+        "scroll",
+        5,
+        "2024-04-01",
+        "2024-04-05"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "last-person-to-fit-in-the-bus",
+    "columns": [
+      "person_name"
+    ],
+    "rows": [
+      [
+        "Chir"
+      ]
+    ],
+    "order": "any"
+  },
+  {
+    "slug": "find-stores-with-inventory-imbalance",
+    "columns": [
+      "store_id",
+      "store_name",
+      "location",
+      "most_exp_product",
+      "cheapest_product",
+      "imbalance_ratio"
+    ],
+    "rows": [
+      [
+        3,
+        "City Center",
+        "Los Angeles",
+        "Tablet",
+        "Stylus",
+        40
+      ],
+      [
+        2,
+        "Suburb Mall",
+        "Chicago",
+        "Phone",
+        "Case",
+        25
+      ],
+      [
+        1,
+        "Downtown Tech",
+        "New York",
+        "Laptop",
+        "Mouse",
+        10
+      ],
+      [
+        7,
+        "Riverside Roast",
+        "Portland",
+        "Espresso Grinder",
+        "Syrup",
+        10
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-books-with-polarized-opinions",
+    "columns": [
+      "book_id",
+      "title",
+      "author",
+      "genre",
+      "pages",
+      "rating_spread",
+      "polarization_score"
+    ],
+    "rows": [
+      [
+        1,
+        "The Great Gatsby",
+        "F. Scott",
+        "Fiction",
+        180,
+        4,
+        1
+      ],
+      [
+        3,
+        "1984",
+        "George Orwell",
+        "Dystopian",
+        328,
+        4,
+        1
+      ],
+      [
+        8,
+        "Middlemarch",
+        "George Eliot",
+        "Fiction",
+        880,
+        2,
+        0.6
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-zombie-sessions",
+    "columns": [
+      "session_id",
+      "user_id",
+      "session_duration_minutes",
+      "scroll_count"
+    ],
+    "rows": [
+      [
+        "S009",
+        209,
+        60,
+        7
+      ],
+      [
+        "S001",
+        201,
+        35,
+        6
+      ],
+      [
+        "S006",
+        206,
+        50,
+        6
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "most-common-course-pairs",
+    "columns": [
+      "first_course",
+      "second_course",
+      "transition_count"
+    ],
+    "rows": [
+      [
+        "Node.js",
+        "Docker",
+        2
+      ],
+      [
+        "React Basics",
+        "Node.js",
+        2
+      ],
+      [
+        "Docker",
+        "AWS Fundamentals",
+        1
+      ],
+      [
+        "Docker",
+        "Data Science",
+        1
+      ],
+      [
+        "JavaScript",
+        "Docker",
+        1
+      ],
+      [
+        "JavaScript",
+        "React Basics",
+        1
+      ],
+      [
+        "Python Basics",
+        "JavaScript",
+        1
+      ],
+      [
+        "Python Basics",
+        "React Basics",
+        1
+      ],
+      [
+        "Python Basics",
+        "SQL Fundamentals",
+        1
+      ],
+      [
+        "SQL Fundamentals",
+        "JavaScript",
+        1
+      ],
+      [
+        "SQL Fundamentals",
+        "Python Basics",
+        1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "find-students-with-study-spiral-pattern",
+    "columns": [
+      "student_id",
+      "student_name",
+      "major",
+      "cycle_length",
+      "total_study_hours"
+    ],
+    "rows": [
+      [
+        2,
+        "Bob Johnson",
+        "Mathematics",
+        4,
+        26
+      ],
+      [
+        1,
+        "Alice Chen",
+        "Computer Science",
+        3,
+        15
+      ],
+      [
+        6,
+        "Felix Ng",
+        "Economics",
+        3,
+        12
+      ]
+    ],
+    "order": "exact"
   }
 ];
 

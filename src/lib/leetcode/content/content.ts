@@ -95,6 +95,8 @@ import { SQL_DF_WH_A } from "./sql-df-wh-a";
 import { SQL_DF_WH_B } from "./sql-df-wh-b";
 import { SQL_DF_RETAIL_A } from "./sql-df-retail-a";
 import { SQL_DF_RETAIL_B } from "./sql-df-retail-b";
+import { SQL_FINAL_WAVE_A } from "./sql-final-wave-a";
+import { SQL_FINAL_WAVE_B } from "./sql-final-wave-b";
 
 export const LC_CONTENT: LcDeepDive[] = [
   ...ARRAYS,
@@ -194,6 +196,8 @@ export const LC_SQL_CONTENT: LcSqlDive[] = [
   ...SQL_DF_WH_B,
   ...SQL_DF_RETAIL_A,
   ...SQL_DF_RETAIL_B,
+  ...SQL_FINAL_WAVE_A,
+  ...SQL_FINAL_WAVE_B,
 ];
 
 const bySlug = new Map(LC_CONTENT.map((d) => [d.slug, d]));

@@ -834,6 +834,34 @@ export const SQL50_SECTIONS: LcSection[] = [
       "find-drivers-with-improved-fuel-efficiency",
     ],
   },
+  {
+    id: "final-habits",
+    title: "Final Wave: Users & Habits",
+    blurb:
+      "The last free user-behavior problems — token averages judged through an EXISTS arm against the raw mean, peak-hour regulars gated four ways at once, churn-risk profiles built from a latest-row window over whole-history aggregates, loyalty proven by boolean-sum HAVING clauses across a julianday span, dominant-reaction shares kept unrounded against double-precision drift and one-action-day streaks surfaced by gaps-and-islands.",
+    slugs: [
+      "find-users-with-high-token-usage",
+      "find-golden-hour-customers",
+      "find-churn-risk-customers",
+      "find-loyal-customers",
+      "find-emotionally-consistent-users",
+      "find-users-with-persistent-behavior-patterns",
+    ],
+  },
+  {
+    id: "final-ops",
+    title: "Final Wave: Ops & Pairs",
+    blurb:
+      "The last free operational closes — a bus queue boarded through a running SUM that admits only the last fitting turn, store inventory imbalance read from dual-direction ROW_NUMBERs, polarized books split by conditional-aggregation stats, zombie sessions fingerprinted per session with MIN/MAX and boolean sums, course pairs chained through a step+1 self-join over ROW_NUMBER sequencing and study spirals audited by LAG gaps and a period-k self-check.",
+    slugs: [
+      "last-person-to-fit-in-the-bus",
+      "find-stores-with-inventory-imbalance",
+      "find-books-with-polarized-opinions",
+      "find-zombie-sessions",
+      "most-common-course-pairs",
+      "find-students-with-study-spiral-pattern",
+    ],
+  },
 ];
 
 /** Flat solving order — every SQL 50 problem exactly once. */

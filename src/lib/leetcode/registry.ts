@@ -18,6 +18,7 @@ import { SQL_PREMIUM3 } from "./registry-sql-premium3";
 import { SQL_PREMIUM4 } from "./registry-sql-premium4";
 import { SQL_PREMIUM5 } from "./registry-sql-premium5";
 import { SQL_FINAL_FREE } from "./registry-sql-final-free";
+import { SQL_FINAL_WAVE } from "./registry-sql-final-wave";
 import { SQL_DATAFIN } from "./registry-sql-datafin";
 import { CONTENT_SLUGS } from "./content/content";
 
@@ -42,7 +43,7 @@ function expand(row: LcRow): LcRef {
 
 /** Registry order: NeetCode topic order first (the canonical learning path),
  *  then TI150 uniques, then the extras, then the SQL 50. */
-export const LC_ALL: LcRef[] = [...NC150, ...TI150_EXTRAS, ...SQL50, ...SQL_MORE, ...SQL_MORE2, ...SQL_MORE3, ...SQL_PREMIUM, ...SQL_PREMIUM2, ...SQL_PREMIUM3, ...SQL_PREMIUM4, ...SQL_PREMIUM5, ...SQL_FINAL_FREE, ...SQL_DATAFIN].map(expand);
+export const LC_ALL: LcRef[] = [...NC150, ...TI150_EXTRAS, ...SQL50, ...SQL_MORE, ...SQL_MORE2, ...SQL_MORE3, ...SQL_PREMIUM, ...SQL_PREMIUM2, ...SQL_PREMIUM3, ...SQL_PREMIUM4, ...SQL_PREMIUM5, ...SQL_FINAL_FREE, ...SQL_FINAL_WAVE, ...SQL_DATAFIN].map(expand);
 
 const bySlug = new Map(LC_ALL.map((p) => [p.slug, p]));
 export const lcBySlug = (slug: string) => bySlug.get(slug);
