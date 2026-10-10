@@ -10923,6 +10923,1097 @@ export const SQL_EXPECTED: LcSqlExpected[] = [
       ]
     ],
     "order": "exact"
+  },
+  {
+    "slug": "trial-to-paid-funnel",
+    "columns": [
+      "week",
+      "trials",
+      "activated",
+      "converted",
+      "activation_pct",
+      "conversion_pct"
+    ],
+    "rows": [
+      [
+        "2026-08-03",
+        6,
+        3,
+        3,
+        50,
+        50
+      ],
+      [
+        "2026-08-10",
+        6,
+        4,
+        3,
+        66.67,
+        50
+      ],
+      [
+        "2026-08-17",
+        7,
+        6,
+        0,
+        85.71,
+        0
+      ],
+      [
+        "2026-08-24",
+        7,
+        4,
+        2,
+        57.14,
+        28.57
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "plan-migration-paths",
+    "columns": [
+      "customer_id",
+      "prev_month",
+      "month",
+      "from_plan",
+      "to_plan",
+      "direction"
+    ],
+    "rows": [
+      [
+        1,
+        "2026-04",
+        "2026-05",
+        "starter",
+        "pro",
+        "upgrade"
+      ],
+      [
+        1,
+        "2026-06",
+        "2026-07",
+        "pro",
+        "business",
+        "upgrade"
+      ],
+      [
+        2,
+        "2026-04",
+        "2026-05",
+        "business",
+        "starter",
+        "downgrade"
+      ],
+      [
+        3,
+        "2026-05",
+        "2026-06",
+        "pro",
+        "team",
+        "lateral"
+      ],
+      [
+        4,
+        "2026-03",
+        "2026-04",
+        "team",
+        "business",
+        "upgrade"
+      ],
+      [
+        4,
+        "2026-04",
+        "2026-05",
+        "business",
+        "team",
+        "downgrade"
+      ],
+      [
+        6,
+        "2026-03",
+        "2026-05",
+        "pro",
+        "starter",
+        "downgrade"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "mrr-waterfall",
+    "columns": [
+      "month",
+      "new_mrr",
+      "expansion_mrr",
+      "contraction_mrr",
+      "churned_mrr",
+      "ending_mrr"
+    ],
+    "rows": [
+      [
+        "2026-04",
+        23500,
+        0,
+        0,
+        0,
+        23500
+      ],
+      [
+        "2026-05",
+        4000,
+        1600,
+        800,
+        3000,
+        25300
+      ],
+      [
+        "2026-06",
+        3200,
+        2500,
+        600,
+        2600,
+        27800
+      ],
+      [
+        "2026-07",
+        2400,
+        300,
+        400,
+        2500,
+        27600
+      ],
+      [
+        "2026-08",
+        2200,
+        500,
+        200,
+        5300,
+        24800
+      ],
+      [
+        "2026-09",
+        1300,
+        200,
+        200,
+        3200,
+        22900
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "net-revenue-retention",
+    "columns": [
+      "cohort_month",
+      "m0_mrr",
+      "m3_mrr",
+      "nrr_pct"
+    ],
+    "rows": [
+      [
+        "2026-04-01",
+        28000,
+        43000,
+        153.57
+      ],
+      [
+        "2026-05-01",
+        20000,
+        20000,
+        100
+      ],
+      [
+        "2026-06-01",
+        30000,
+        11000,
+        36.67
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "ltv-cac-payback",
+    "columns": [
+      "channel",
+      "customers",
+      "arpu_mrr",
+      "monthly_churn_pct",
+      "cac_cents",
+      "ltv_cents",
+      "ltv_to_cac",
+      "payback_months"
+    ],
+    "rows": [
+      [
+        "organic",
+        5,
+        4950,
+        5,
+        10000,
+        79200,
+        7.92,
+        2.5
+      ],
+      [
+        "paid_search",
+        4,
+        10312.5,
+        6.25,
+        100000,
+        132000,
+        1.32,
+        12.1
+      ],
+      [
+        "paid_social",
+        5,
+        6000,
+        25,
+        80000,
+        19200,
+        0.24,
+        16.7
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "winback-recovery",
+    "columns": [
+      "cancel_reason",
+      "churned_customers",
+      "recovered",
+      "recovery_pct",
+      "avg_days_to_return"
+    ],
+    "rows": [
+      [
+        "missing_features",
+        4,
+        2,
+        50,
+        40.5
+      ],
+      [
+        "price",
+        4,
+        3,
+        75,
+        59.7
+      ],
+      [
+        "bugs",
+        3,
+        1,
+        33.33,
+        49
+      ],
+      [
+        "switching",
+        3,
+        0,
+        0,
+        0
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "roas-by-campaign",
+    "columns": [
+      "campaign",
+      "spend_cents",
+      "revenue_cents",
+      "roas",
+      "rn"
+    ],
+    "rows": [
+      [
+        "search-brand",
+        30000,
+        132000,
+        4.4,
+        1
+      ],
+      [
+        "social-ads",
+        32000,
+        72050,
+        2.25,
+        2
+      ],
+      [
+        "video-ads",
+        40000,
+        90000,
+        2.25,
+        2
+      ],
+      [
+        "display-retargeting",
+        25000,
+        38750,
+        1.55,
+        4
+      ],
+      [
+        "podcast-sponsorships",
+        18000,
+        0,
+        0,
+        5
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "first-last-touch-attribution",
+    "columns": [
+      "conversion_id",
+      "first_channel",
+      "last_channel"
+    ],
+    "rows": [
+      [
+        1,
+        "Meta",
+        "Google"
+      ],
+      [
+        2,
+        "Google",
+        "Google"
+      ],
+      [
+        3,
+        "Email",
+        "Email"
+      ],
+      [
+        4,
+        "none",
+        "none"
+      ],
+      [
+        5,
+        "Email",
+        "Google"
+      ],
+      [
+        6,
+        "none",
+        "none"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "email-engagement-funnel",
+    "columns": [
+      "campaign",
+      "sent",
+      "delivered",
+      "opened",
+      "clicked",
+      "converted",
+      "open_pct",
+      "click_pct"
+    ],
+    "rows": [
+      [
+        "newsletter-weekly",
+        8,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        "product-launch",
+        6,
+        6,
+        5,
+        1,
+        1,
+        83.33,
+        20
+      ],
+      [
+        "spring-sale",
+        10,
+        9,
+        6,
+        3,
+        2,
+        66.67,
+        50
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "linear-multi-touch",
+    "columns": [
+      "channel",
+      "touches_assisted",
+      "credited_conversions"
+    ],
+    "rows": [
+      [
+        "Email",
+        6,
+        1.83
+      ],
+      [
+        "Meta",
+        6,
+        1.75
+      ],
+      [
+        "Google",
+        6,
+        1.42
+      ],
+      [
+        "Affiliate",
+        1,
+        1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "budget-pacing",
+    "columns": [
+      "campaign",
+      "breach_day",
+      "cum_spend_at_breach",
+      "budget_cents",
+      "over_by_cents"
+    ],
+    "rows": [
+      [
+        "flash_sale",
+        "2026-10-03",
+        53000,
+        50000,
+        3000
+      ],
+      [
+        "brand_search",
+        "2026-10-09",
+        76000,
+        75000,
+        1000
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "channel-ltv-vs-cac",
+    "columns": [
+      "channel",
+      "customers",
+      "cac_cents",
+      "rev90_cents",
+      "rev90_per_customer",
+      "ltv_cac_ratio"
+    ],
+    "rows": [
+      [
+        "search",
+        4,
+        9000,
+        236000,
+        59000,
+        6.56
+      ],
+      [
+        "email",
+        4,
+        6000,
+        55000,
+        13750,
+        2.29
+      ],
+      [
+        "social",
+        5,
+        1000,
+        3000,
+        600,
+        0.6
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "keep-latest-dedupe",
+    "columns": [
+      "order_id",
+      "status",
+      "updated_at"
+    ],
+    "rows": [
+      [
+        101,
+        "shipped",
+        "2026-09-03 08:05:00"
+      ],
+      [
+        102,
+        "shipped",
+        "2026-09-02 11:30:00"
+      ],
+      [
+        103,
+        "shipped",
+        "2026-09-02 14:20:00"
+      ],
+      [
+        104,
+        "cancelled",
+        "2026-09-04 09:30:00"
+      ],
+      [
+        105,
+        "placed",
+        "2026-09-04 12:00:00"
+      ],
+      [
+        106,
+        "delivered",
+        "2026-09-05 17:25:00"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "null-blank-audit",
+    "columns": [
+      "total_rows",
+      "null_emails",
+      "blank_emails",
+      "null_phone",
+      "blank_phone",
+      "null_city",
+      "stale_rows",
+      "pass"
+    ],
+    "rows": [
+      [
+        8,
+        1,
+        2,
+        1,
+        1,
+        1,
+        1,
+        0
+      ]
+    ],
+    "order": "any"
+  },
+  {
+    "slug": "point-in-time-asof",
+    "columns": [
+      "customer_id",
+      "city_asof",
+      "valid_from",
+      "valid_to"
+    ],
+    "rows": [
+      [
+        201,
+        "Porto",
+        "2026-03-01",
+        "9999-12-31"
+      ],
+      [
+        202,
+        "Madrid",
+        "2026-01-01",
+        "2026-09-01"
+      ],
+      [
+        203,
+        "Berlin",
+        "2026-07-15",
+        "9999-12-31"
+      ],
+      [
+        204,
+        "Stuttgart",
+        "2026-07-15",
+        "9999-12-31"
+      ],
+      [
+        205,
+        "Vienna",
+        "2026-01-01",
+        "9999-12-31"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "scd2-build",
+    "columns": [
+      "customer_id",
+      "city",
+      "valid_from",
+      "valid_to",
+      "is_current"
+    ],
+    "rows": [
+      [
+        1,
+        "Austin",
+        "2026-01-10",
+        "2026-03-05",
+        0
+      ],
+      [
+        1,
+        "Denver",
+        "2026-03-05",
+        "2026-06-20",
+        0
+      ],
+      [
+        1,
+        "Seattle",
+        "2026-06-20",
+        "9999-12-31",
+        1
+      ],
+      [
+        2,
+        "Boston",
+        "2026-02-01",
+        "9999-12-31",
+        1
+      ],
+      [
+        3,
+        "Austin",
+        "2026-01-05",
+        "2026-02-10",
+        0
+      ],
+      [
+        3,
+        "Dallas",
+        "2026-02-10",
+        "2026-05-30",
+        0
+      ],
+      [
+        3,
+        "Austin",
+        "2026-05-30",
+        "9999-12-31",
+        1
+      ],
+      [
+        4,
+        "Miami",
+        "2026-03-15",
+        "9999-12-31",
+        1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "late-arriving-restatement",
+    "columns": [
+      "event_date",
+      "true_events",
+      "counted_same_day",
+      "restatement_delta"
+    ],
+    "rows": [
+      [
+        "2026-09-09",
+        2,
+        1,
+        1
+      ],
+      [
+        "2026-09-10",
+        3,
+        0,
+        3
+      ],
+      [
+        "2026-09-11",
+        2,
+        1,
+        1
+      ],
+      [
+        "2026-09-14",
+        2,
+        1,
+        1
+      ],
+      [
+        "2026-09-16",
+        2,
+        1,
+        1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "snapshot-delta-detect",
+    "columns": [
+      "status",
+      "row_count"
+    ],
+    "rows": [
+      [
+        "changed",
+        3
+      ],
+      [
+        "inserted",
+        2
+      ],
+      [
+        "removed",
+        1
+      ],
+      [
+        "unchanged",
+        2
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "basket-depth-aov",
+    "columns": [
+      "month",
+      "orders",
+      "aov_cents",
+      "items_per_order"
+    ],
+    "rows": [
+      [
+        "2026-07",
+        3,
+        4500,
+        2.7
+      ],
+      [
+        "2026-08",
+        4,
+        2525,
+        2
+      ],
+      [
+        "2026-09",
+        4,
+        24375,
+        4.5
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "repeat-purchase-rate",
+    "columns": [
+      "month",
+      "customers",
+      "repeaters",
+      "repeat_pct"
+    ],
+    "rows": [
+      [
+        "2026-07",
+        5,
+        2,
+        40
+      ],
+      [
+        "2026-08",
+        7,
+        1,
+        14.29
+      ],
+      [
+        "2026-09",
+        4,
+        1,
+        25
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "rfm-segmentation",
+    "columns": [
+      "customer_id",
+      "recency_days",
+      "frequency",
+      "monetary_cents",
+      "r",
+      "f",
+      "m",
+      "segment"
+    ],
+    "rows": [
+      [
+        1,
+        2,
+        12,
+        162000,
+        5,
+        5,
+        5,
+        "champion"
+      ],
+      [
+        2,
+        5,
+        11,
+        148500,
+        5,
+        5,
+        5,
+        "champion"
+      ],
+      [
+        3,
+        9,
+        10,
+        4200,
+        4,
+        4,
+        1,
+        "loyal"
+      ],
+      [
+        4,
+        41,
+        9,
+        41500,
+        2,
+        4,
+        4,
+        "at risk"
+      ],
+      [
+        5,
+        14,
+        8,
+        22600,
+        4,
+        3,
+        3,
+        "promising"
+      ],
+      [
+        6,
+        20,
+        7,
+        34200,
+        3,
+        3,
+        4,
+        "core"
+      ],
+      [
+        7,
+        27,
+        6,
+        28900,
+        3,
+        2,
+        3,
+        "core"
+      ],
+      [
+        8,
+        53,
+        5,
+        18700,
+        2,
+        2,
+        2,
+        "hibernating"
+      ],
+      [
+        9,
+        67,
+        4,
+        15800,
+        2,
+        2,
+        2,
+        "hibernating"
+      ],
+      [
+        10,
+        82,
+        3,
+        12400,
+        1,
+        1,
+        2,
+        "hibernating"
+      ],
+      [
+        11,
+        104,
+        2,
+        9100,
+        1,
+        1,
+        1,
+        "hibernating"
+      ],
+      [
+        12,
+        151,
+        1,
+        6800,
+        1,
+        1,
+        1,
+        "hibernating"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "weeks-of-supply",
+    "columns": [
+      "sku",
+      "on_hand_units",
+      "weekly_rate",
+      "weeks_of_supply",
+      "reorder"
+    ],
+    "rows": [
+      [
+        "FST-1101",
+        140,
+        280,
+        0.5,
+        1
+      ],
+      [
+        "BND-4477",
+        200,
+        100,
+        2,
+        0
+      ],
+      [
+        "OKG-2205",
+        480,
+        90,
+        5.3,
+        0
+      ],
+      [
+        "OVR-3390",
+        2400,
+        75,
+        32,
+        0
+      ],
+      [
+        "NOS-5512",
+        310,
+        0,
+        99.9,
+        1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "returns-rate-by-category",
+    "columns": [
+      "category",
+      "sold_units",
+      "returned_units",
+      "return_pct",
+      "flagged"
+    ],
+    "rows": [
+      [
+        "Accessories",
+        40,
+        5,
+        12.5,
+        1
+      ],
+      [
+        "Footwear",
+        200,
+        20,
+        10,
+        1
+      ],
+      [
+        "Outerwear",
+        250,
+        20,
+        8,
+        0
+      ],
+      [
+        "Home",
+        180,
+        0,
+        0,
+        0
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "cohort-repeat-revenue",
+    "columns": [
+      "cohort_month",
+      "m0_revenue",
+      "m1_revenue",
+      "m2_revenue",
+      "repeat_share_pct"
+    ],
+    "rows": [
+      [
+        "2026-05",
+        15000,
+        2000,
+        4500,
+        30.23
+      ],
+      [
+        "2026-06",
+        12500,
+        3500,
+        0,
+        21.88
+      ],
+      [
+        "2026-07",
+        15000,
+        0,
+        0,
+        0
+      ]
+    ],
+    "order": "exact"
   }
 ];
 

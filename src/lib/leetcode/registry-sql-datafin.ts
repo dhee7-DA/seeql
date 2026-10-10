@@ -63,4 +63,32 @@ export const SQL_DATAFIN: LcRow[] = [
   [8046, "beta-benchmark", "Beta vs Benchmark", 2, "SQL · Covariance ratio|Beta", "SQL · Data & Finance", "Citadel|Point72"],
   [8047, "split-adjusted-position", "Split-Adjusted Position", 1, "SQL · Ratio adjust|Position rebuild", "SQL · Data & Finance", "Robinhood|Interactive Brokers"],
   [8048, "wash-trade-detection", "Wash Trade Pairs", 1, "SQL · Pair window|Surveillance", "SQL · Data & Finance", "Nasdaq|CME Group"],
+  // SAAS & SUBSCRIPTIONS — trial funnel, migrations, MRR waterfall, NRR, unit economics, winback
+  [8049, "trial-to-paid-funnel", "Trial-to-Paid Funnel", 0, "SQL · Trial funnel|Conditional counts", "SQL · Data & Finance", "Slack|Zoom"],
+  [8050, "plan-migration-paths", "Plan Migration Paths", 1, "SQL · LAG transitions|Tier compare", "SQL · Data & Finance", "Atlassian|Notion"],
+  [8051, "mrr-waterfall", "MRR Movement Waterfall", 2, "SQL · LAG waterfall|Movement classify", "SQL · Data & Finance", "Stripe|Salesforce"],
+  [8052, "net-revenue-retention", "Net Revenue Retention", 1, "SQL · Cohort revenue|NRR", "SQL · Data & Finance", "Snowflake|Datadog"],
+  [8053, "ltv-cac-payback", "LTV, CAC & Payback", 1, "SQL · Unit economics|Ratio ladder", "SQL · Data & Finance", "HubSpot|Canva"],
+  [8054, "winback-recovery", "Winback Recovery", 2, "SQL · Winback window|Recovery rate", "SQL · Data & Finance", "Spotify|Duolingo"],
+  // MARKETING & ATTRIBUTION — ROAS, first/last touch, email funnel, multi-touch, pacing, channel LTV
+  [8055, "roas-by-campaign", "ROAS by Campaign", 0, "SQL · ROAS|Outer join guard", "SQL · Data & Finance", "Google|Amazon"],
+  [8056, "first-last-touch-attribution", "First & Last Touch Attribution", 0, "SQL · FIRST_VALUE|Lookback window", "SQL · Data & Finance", "HubSpot|Mailchimp"],
+  [8057, "email-engagement-funnel", "Email Engagement Funnel", 1, "SQL · Funnel pivot|Step rates", "SQL · Data & Finance", "Klaviyo|Shopify"],
+  [8058, "linear-multi-touch", "Linear Multi-Touch Credit", 1, "SQL · Fractional credit|Window split", "SQL · Data & Finance", "Amazon|eBay"],
+  [8059, "budget-pacing", "Budget Pacing Breach", 1, "SQL · Running sum|First breach", "SQL · Data & Finance", "Meta|TikTok"],
+  [8060, "channel-ltv-vs-cac", "Channel 90-Day LTV vs CAC", 2, "SQL · Personal clock|Trailing revenue", "SQL · Data & Finance", "Shopify|Instacart"],
+  // WAREHOUSE CRAFT — dedupe, DQ sweep, SCD2 as-of, SCD2 build, late data, snapshot deltas
+  [8061, "keep-latest-dedupe", "Keep-Latest Dedupe", 0, "SQL · ROW_NUMBER dedupe|Tiebreak", "SQL · Data & Finance", "Uber|Airbnb"],
+  [8062, "null-blank-audit", "Null & Blank Audit", 0, "SQL · Data quality|Conditional SUM", "SQL · Data & Finance", "Netflix|Spotify"],
+  [8063, "point-in-time-asof", "Point-in-Time As-Of Join", 1, "SQL · SCD2 as-of|Half-open interval", "SQL · Data & Finance", "Airbnb|DoorDash"],
+  [8064, "scd2-build", "Build SCD Type 2", 2, "SQL · LEAD validity|SCD2", "SQL · Data & Finance", "Shopify|Lyft"],
+  [8065, "late-arriving-restatement", "Late-Arriving Restatement", 2, "SQL · Watermark|Restatement", "SQL · Data & Finance", "Snowflake|Databricks"],
+  [8066, "snapshot-delta-detect", "Snapshot Delta Detection", 1, "SQL · FULL OUTER JOIN|CDC compare", "SQL · Data & Finance", "Stripe|Adyen"],
+  // RETAIL & RFM — basket depth, repeat rate, RFM quintiles, weeks of supply, returns, revenue cohorts
+  [8067, "basket-depth-aov", "Basket Depth & AOV", 0, "SQL · Basket metrics|Join agg", "SQL · Data & Finance", "Walmart|Target"],
+  [8068, "repeat-purchase-rate", "Repeat Purchase Rate", 0, "SQL · Repeat rate|HAVING bucket", "SQL · Data & Finance", "Starbucks|Chipotle"],
+  [8069, "rfm-segmentation", "RFM Segmentation", 1, "SQL · NTILE quintiles|Segment CASE", "SQL · Data & Finance", "Sephora|Nike"],
+  [8070, "weeks-of-supply", "Weeks of Supply", 1, "SQL · Trailing rate|Division guard", "SQL · Data & Finance", "Home Depot|Best Buy"],
+  [8071, "returns-rate-by-category", "Returns Rate by Category", 0, "SQL · LEFT JOIN rate|Category rollup", "SQL · Data & Finance", "Zappos|Gap"],
+  [8072, "cohort-repeat-revenue", "Cohort Repeat Revenue", 2, "SQL · Revenue cohorts|Offset months", "SQL · Data & Finance", "Chewy|Warby Parker"],
 ];

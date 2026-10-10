@@ -46,6 +46,26 @@ import {
   ArtFxExposureReport, ArtMaxDrawdown, ArtPortfolioConcentrationHhi,
   ArtStudyMarketDesk,
 } from "./lc-df-art-mkts";
+import {
+  ArtMrrWaterfall, ArtNetRevenueRetention, ArtPlanMigrationPaths,
+  ArtStudyRevenueLifecycle, ArtTrialToPaidFunnel, ArtWinbackRecovery,
+  ArtLtvCacPayback,
+} from "./lc-df-art-saas";
+import {
+  ArtBudgetPacing, ArtChannelLtvVsCac, ArtEmailEngagementFunnel,
+  ArtFirstLastTouch, ArtLinearMultiTouch, ArtRoasByCampaign,
+  ArtStudySpendToSignup,
+} from "./lc-df-art-mktg";
+import {
+  ArtKeepLatestDedupe, ArtLateArrivingRestatement, ArtNullBlankAudit,
+  ArtPointInTimeAsOf, ArtScd2Build, ArtSnapshotDeltaDetect,
+  ArtStudyIngestToTrust,
+} from "./lc-df-art-wh";
+import {
+  ArtBasketDepthAov, ArtCohortRepeatRevenue, ArtRepeatPurchaseRate,
+  ArtReturnsRateByCategory, ArtRfmSegmentation, ArtStudyShopToSegment,
+  ArtWeeksOfSupply,
+} from "./lc-df-art-retail";
 
 const PRIMER_ART: Record<string, ComponentType> = {
   // Banking & Credit Risk
@@ -104,6 +124,34 @@ const PRIMER_ART: Record<string, ComponentType> = {
   "dividend-income-calendar": ArtDividendIncomeCalendar,
   "max-drawdown": ArtMaxDrawdown,
   "duplicate-charge-pairs": ArtDuplicateChargePairs,
+  // SaaS & Subscriptions
+  "trial-to-paid-funnel": ArtTrialToPaidFunnel,
+  "plan-migration-paths": ArtPlanMigrationPaths,
+  "mrr-waterfall": ArtMrrWaterfall,
+  "net-revenue-retention": ArtNetRevenueRetention,
+  "ltv-cac-payback": ArtLtvCacPayback,
+  "winback-recovery": ArtWinbackRecovery,
+  // Marketing & Attribution
+  "roas-by-campaign": ArtRoasByCampaign,
+  "first-last-touch-attribution": ArtFirstLastTouch,
+  "email-engagement-funnel": ArtEmailEngagementFunnel,
+  "linear-multi-touch": ArtLinearMultiTouch,
+  "budget-pacing": ArtBudgetPacing,
+  "channel-ltv-vs-cac": ArtChannelLtvVsCac,
+  // Warehouse Craft
+  "keep-latest-dedupe": ArtKeepLatestDedupe,
+  "null-blank-audit": ArtNullBlankAudit,
+  "snapshot-delta-detect": ArtSnapshotDeltaDetect,
+  "point-in-time-asof": ArtPointInTimeAsOf,
+  "late-arriving-restatement": ArtLateArrivingRestatement,
+  "scd2-build": ArtScd2Build,
+  // Retail & RFM
+  "basket-depth-aov": ArtBasketDepthAov,
+  "repeat-purchase-rate": ArtRepeatPurchaseRate,
+  "rfm-segmentation": ArtRfmSegmentation,
+  "weeks-of-supply": ArtWeeksOfSupply,
+  "returns-rate-by-category": ArtReturnsRateByCategory,
+  "cohort-repeat-revenue": ArtCohortRepeatRevenue,
 };
 
 const STUDY_FLOW: Record<string, ComponentType> = {
@@ -115,6 +163,10 @@ const STUDY_FLOW: Record<string, ComponentType> = {
   "money-pipeline": ArtStudyMoneyPipeline,
   "experiment-life": ArtStudyExperimentLife,
   "market-desk": ArtStudyMarketDesk,
+  "revenue-lifecycle": ArtStudyRevenueLifecycle,
+  "spend-to-signup": ArtStudySpendToSignup,
+  "ingest-to-trust": ArtStudyIngestToTrust,
+  "shop-to-segment": ArtStudyShopToSegment,
 };
 
 /** One concept diagram, framed — keyed by problem slug. */

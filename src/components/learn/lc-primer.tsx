@@ -81,6 +81,34 @@ const PRIMER_ART_LABEL: Record<string, string> = {
   "dividend-income-calendar": "concept · own it on ex-date, get paid",
   "max-drawdown": "concept · the deepest fall from the highest peak",
   "duplicate-charge-pairs": "concept · the same charge, twice",
+  // batch 4 — SaaS & Subscriptions
+  "trial-to-paid-funnel": "concept · the trial funnel and its denominators",
+  "plan-migration-paths": "concept · the plan ladder and its three directions",
+  "mrr-waterfall": "concept · the movement waterfall — new, expand, contract, churn",
+  "net-revenue-retention": "concept · the cohort that keeps its empty seats",
+  "ltv-cac-payback": "concept · what a customer costs and pays back",
+  "winback-recovery": "concept · the 90-day window back in",
+  // batch 4 — Marketing & Attribution
+  "roas-by-campaign": "concept · spend against attributed revenue",
+  "first-last-touch-attribution": "concept · the two bookends of a journey",
+  "email-engagement-funnel": "concept · the inbox funnel, step by step",
+  "linear-multi-touch": "concept · credit split into fair slices",
+  "budget-pacing": "concept · the cumulative line against the budget",
+  "channel-ltv-vs-cac": "concept · the 90-day clock every channel runs on",
+  // batch 4 — Warehouse Craft
+  "keep-latest-dedupe": "concept · many writes, one survivor",
+  "null-blank-audit": "concept · NULL is not blank, blank is not NULL",
+  "snapshot-delta-detect": "concept · two snapshots, four kinds of change",
+  "point-in-time-asof": "concept · the dimension as it stood yesterday",
+  "late-arriving-restatement": "concept · late facts re-open their true day",
+  "scd2-build": "concept · from change feed to validity windows",
+  // batch 4 — Retail & RFM
+  "basket-depth-aov": "concept · the basket and its two numbers",
+  "repeat-purchase-rate": "concept · one-timers stay in the denominator",
+  "rfm-segmentation": "concept · three digits, one segment",
+  "weeks-of-supply": "concept · how long the shelf holds",
+  "returns-rate-by-category": "concept · the eight-percent wall",
+  "cohort-repeat-revenue": "concept · the revenue triangle, M0 to M2",
 };
 
 export function PrimerCard({ dive }: { dive: LcSqlDive }) {
@@ -179,6 +207,10 @@ const FLOW_LABEL: Record<string, string> = {
   "money-pipeline": "study flow · from contracts to numbers",
   "experiment-life": "study flow · the life of an experiment",
   "market-desk": "study flow · the market desk's day",
+  "revenue-lifecycle": "study flow · the subscription revenue lifecycle",
+  "spend-to-signup": "study flow · from spend to signup",
+  "ingest-to-trust": "study flow · from ingest to trust",
+  "shop-to-segment": "study flow · from carts to segments",
 };
 
 function Panel({ id, children, className }: { id?: string; children: React.ReactNode; className?: string }) {

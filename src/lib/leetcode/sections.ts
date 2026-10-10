@@ -1085,6 +1085,126 @@ export const DATAFIN_SECTIONS: LcSection[] = [
       ],
     },
   },
+  {
+    id: "df-saas-metrics",
+    title: "SaaS & Subscriptions",
+    blurb:
+      "The subscription revenue lifecycle in SQL — a trial funnel with honest denominators, plan migrations ranked by tier, the MRR movement waterfall every board deck prints, NRR that keeps churned customers in the denominator, unit economics priced per channel, and the winback window that decides which save-offer ships.",
+    slugs: [
+      "trial-to-paid-funnel",
+      "plan-migration-paths",
+      "mrr-waterfall",
+      "net-revenue-retention",
+      "ltv-cac-payback",
+      "winback-recovery",
+    ],
+    study: {
+      intro: [
+        "A subscription business lives or dies on one loop: a visitor starts a trial, activates (uses the product enough to feel value), converts to paying, expands into a bigger plan, and either stays, churns, or comes back. Every metric in this section watches one leg of that loop, and every one of them is a fraction — which means every one of them is an argument about the DENOMINATOR. Activation against trials or signups? NRR including the churned or pretending they never left? The SQL is rarely hard; the conventions are.",
+        "The SQL shapes: a weekly funnel of conditional counts with a pinned trial window, a LAG plan-transition walk joined to a tier ladder, the movement waterfall that classifies each customer's month-over-month MRR into new, expansion, contraction and churned, a cohort NRR with month-offset arithmetic, a unit-economics ladder (ARPU, churn, CAC, LTV, payback) built per channel, and a winback read that grades resubscribes against a 90-day clock. Money stays INTEGER cents throughout; rates and ratios are the only REALs.",
+        "Read the study flow first: signup on the left, the expand-or-churn fork in the middle, the winback loop on the right. Then solve in the suggested order — the funnel warm-ups before the waterfall, because the waterfall is where careless denominators stop being rounded errors and start being wrong decks. Every problem carries a primer: if NRR and CAC payback read like alphabet soup, the primer fixes that before the breakdown starts.",
+      ],
+      flow: "revenue-lifecycle",
+      path: [
+        { slug: "trial-to-paid-funnel", why: "The gentlest on-ramp: a weekly funnel of conditional counts — and the 14-day activation window that separates real activation from late noise." },
+        { slug: "plan-migration-paths", why: "The LAG transition walk: classify every plan change as upgrade, downgrade or lateral by joining a tier ladder — never by comparing plan names." },
+        { slug: "net-revenue-retention", why: "The money-weighted cohort: MRR at month 0 versus month 3, with churned customers held honestly at zero IN the denominator." },
+        { slug: "ltv-cac-payback", why: "The unit-economics ladder per channel: ARPU, churn, CAC, LTV at the pinned 80 percent margin, and the payback month every CFO asks for." },
+        { slug: "mrr-waterfall", why: "The board-deck finale: classify each customer's month-over-month move — new, expansion, contraction, churned — with churned counted at the PRIOR month's MRR." },
+        { slug: "winback-recovery", why: "The loop closer: resubscribes inside an inclusive 90-day window, per cancel reason — with the zero-recovery reasons still reporting." },
+      ],
+    },
+  },
+  {
+    id: "df-marketing-attribution",
+    title: "Marketing & Attribution",
+    blurb:
+      "From spend to signup in SQL — ROAS with a zero-revenue guard, first and last touch inside the 30-day lookback, the email funnel's step-by-step rates, linear multi-touch splitting credit into fractions, budget pacing that names the first breach day, and the channel whose customers actually pay back their CAC in 90 days.",
+    slugs: [
+      "roas-by-campaign",
+      "first-last-touch-attribution",
+      "email-engagement-funnel",
+      "linear-multi-touch",
+      "budget-pacing",
+      "channel-ltv-vs-cac",
+    ],
+    study: {
+      intro: [
+        "Marketing runs on a chain of accountability: dollars go in at the top, touches (an ad seen, an email opened) pile up in the middle, conversions come out the bottom — and every model in this section is a different way of drawing the arrows backward from revenue to spend. Attribution is the argument: last-touch says the closing ad earned it, first-touch says the introduction did, linear splits the credit evenly. The SQL exists to make those arguments reproducible.",
+        "The SQL shapes: a ROAS rollup with the LEFT JOIN that keeps zero-revenue campaigns alive, FIRST_VALUE and LAST_VALUE over a pinned 30-day lookback (where the window-frame clause is the difference between right and confidently wrong), a five-step funnel of conditional counts, fractional credit as 1.0/n summed per channel, a running-sum pacing line with a strictly-greater breach gate, and a channel readout measured on each customer's OWN 90-day clock. Denominators again: opened against delivered, credit against touch count, revenue against every acquired customer including the ones who never ordered.",
+        "The primers teach the models from zero — what a lookback window is, why linear rewards the assisters, what payback months mean — and the study flow walks the chain from budget to LTV:CAC. The two Hards at the end are the interview set-pieces: one about time (the personal clock), one about fairness (the fraction machine).",
+      ],
+      flow: "spend-to-signup",
+      path: [
+        { slug: "roas-by-campaign", why: "The Monday-morning read: revenue over spend per campaign — and the LEFT JOIN that keeps the zero-revenue campaign visible at 0.0 instead of vanishing." },
+        { slug: "first-last-touch-attribution", why: "The two-bookend models in one query: FIRST_VALUE and LAST_VALUE over a pinned lookback, where the window-frame clause is seeded as the trap." },
+        { slug: "email-engagement-funnel", why: "Five steps, five distinct counts, two step rates — each against its IMMEDIATE predecessor, the denominators every CRM argument is about." },
+        { slug: "linear-multi-touch", why: "The fraction machine: 1.0/n credit per touch, summed per channel — where rounding after the SUM (never before) decides the winner." },
+        { slug: "budget-pacing", why: "The running-sum gate: cumulative spend against the budget line, strictly greater, first breach only — and the exactly-at-budget campaign that must NOT flag." },
+        { slug: "channel-ltv-vs-cac", why: "The finale: 90-day revenue measured on each customer's own acquisition clock, against the channel's CAC — with zero-order customers kept honest in the denominator." },
+      ],
+    },
+  },
+  {
+    id: "df-warehouse-craft",
+    title: "Warehouse Craft",
+    blurb:
+      "The analytics engineer's toolkit in SQL — a keep-latest dedupe with a tie-break, the null-and-blank sweep that gates every dashboard, point-in-time reads against a Type 2 dimension, BUILDING that dimension from a change feed, the late-arriving restatement that re-opens last week, and the snapshot delta that names every overnight change.",
+    slugs: [
+      "keep-latest-dedupe",
+      "null-blank-audit",
+      "snapshot-delta-detect",
+      "point-in-time-asof",
+      "late-arriving-restatement",
+      "scd2-build",
+    ],
+    study: {
+      intro: [
+        "Between the raw feed and the dashboard sits a craft: turning an append-only, duplicate-riddled, late-delivering event stream into tables a stakeholder can trust. This section is that craft. A status feed fires five updates per order and the dashboard wants ONE row per order. A source table carries NULLs, empty strings and whitespace like they are values. Facts arrive dated last Tuesday in yesterday's batch. Customer attributes change and someone asks what the data said LAST quarter. None of this is analytics — all of it must be true before analytics starts.",
+        "The SQL shapes: ROW_NUMBER dedupe with a lexicographic (timestamp, id) tie-break, a single-row conditional-aggregation audit that counts NULL and blank SEPARATELY, the FULL OUTER JOIN snapshot comparison that classifies inserted, removed, changed and unchanged, the half-open [valid_from, valid_to) as-of join against a Type 2 dimension, a restatement delta between true event dates and processed dates, and the full SCD2 build — LAG the dedupe, LEAD the validity window, sentinel the current row.",
+        "The primers teach the warehouse worldview from zero — what slowly changing means, why the current row's valid_to is the year 9999, what a watermark is — and the study flow walks the pipeline from raw feed to trusted read, with the restatement loop-back drawn where it belongs. The two Hards close the section because they are the two interview questions analytics-engineer loops always reach: build the SCD2, and handle the late data.",
+      ],
+      flow: "ingest-to-trust",
+      path: [
+        { slug: "keep-latest-dedupe", why: "The daily bread: one row per key, latest wins — with the timestamp TIE that only a lexicographic (updated_at, event_id) ordering resolves." },
+        { slug: "null-blank-audit", why: "The pre-flight sweep: NULL and blank counted separately, a pinned freshness window, and one pass-fail bit that gates the dashboard." },
+        { slug: "snapshot-delta-detect", why: "The overnight compare: a FULL OUTER JOIN that names every change — inserted, removed, changed, unchanged — with NULL-safe keys." },
+        { slug: "point-in-time-asof", why: "Read the dimension AS OF yesterday: the half-open interval convention, the 9999 sentinel, and the two boundary edges seeded on purpose." },
+        { slug: "late-arriving-restatement", why: "When yesterday's batch contains last Tuesday: true date against processed date, and the delta that names which days need re-issuing." },
+        { slug: "scd2-build", why: "The finale: BUILD the Type 2 dimension — dedupe no-ops with LAG, cut validity windows with LEAD, sentinel the current row — the analytics-engineer interview's favorite ask." },
+      ],
+    },
+  },
+  {
+    id: "df-retail-rfm",
+    title: "Retail & RFM",
+    blurb:
+      "The merchandiser's month in SQL — basket depth and average order value, the repeat rate that proves habit, RFM quintiles cut with NTILE into named segments, weeks of supply against the two-week reorder line, return rates against the eight-percent wall, and the revenue cohort triangle that prices loyalty.",
+    slugs: [
+      "basket-depth-aov",
+      "repeat-purchase-rate",
+      "rfm-segmentation",
+      "weeks-of-supply",
+      "returns-rate-by-category",
+      "cohort-repeat-revenue",
+    ],
+    study: {
+      intro: [
+        "Retail analytics is the oldest data game there is, and its core questions have not changed: how big is a basket, how often do buyers come back, who is about to run out of stock, and what came back over the transom. RFM is the classic synthesis — score every customer on Recency, Frequency and Monetary value, cut each into quintiles, and map the three digits to segments marketing can act on: champions to reward, the at-risk to win back, the hibernating to leave alone.",
+        "The SQL shapes: a two-metric monthly rollup where the items join defines the basket, a repeat rate whose denominator includes the one-timers, NTILE(5) quintiles with PINNED directions (and the tile arithmetic that makes a 12-customer seed exact), a trailing four-week sales rate against on-hand inventory with a zero-sales sentinel, a category return rate where exactly-8.00 is unflagged, and the revenue cohort triangle — month offsets computed arithmetically, revenue attributed to M0, M1 and M2.",
+        "The primers teach the retail lens from zero — what a quintile is, why weeks of supply divides by four, what makes a cohort's repeat share the number loyalty programs defend — and the study flow runs from carts to segments to the campaign loop-back. RFM is the section's interview centerpiece; the two cohort problems around it are where the real thinking lives.",
+      ],
+      flow: "shop-to-segment",
+      path: [
+        { slug: "basket-depth-aov", why: "The monthly staples: average order value and items per order — where the zero-item order must NOT pollute the average." },
+        { slug: "repeat-purchase-rate", why: "The habit read: customers with two or more orders over ALL customers that month — one-timers stay in the denominator on purpose." },
+        { slug: "returns-rate-by-category", why: "The quality wall: returned over sold per category, strictly above 8.00 flags — with the exactly-8.00 category seeded as the edge." },
+        { slug: "weeks-of-supply", why: "The buyer's clock: on-hand over the trailing four-week rate, reorder below 2.0 weeks — and the zero-sales sentinel that must not divide by zero." },
+        { slug: "rfm-segmentation", why: "The centerpiece: recency, frequency, monetary into NTILE quintiles, three digits into named segments — the ladder's order decides who is a champion." },
+        { slug: "cohort-repeat-revenue", why: "The finale: the revenue-weighted cohort triangle — M0, M1, M2 offsets by arithmetic, and the repeat share that prices loyalty." },
+      ],
+    },
+  },
 ];
 
 /** Flat solving order for the Data & Finance track. */
