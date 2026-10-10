@@ -32,6 +32,38 @@ export const SQL_DF_MONEY: LcSqlDive[] = [
       "one row per month per loan, month 1 through the closing month (exactly term_months rows on this seed); the final month is where the MIN cap bites and ending_balance_cents lands on 0",
       "ORDER BY loan_id ASC, month_no ASC",
     ],
+    primer: {
+      hook:
+        "An amortization schedule is the receipt a lender hands a borrower on day one — every future payment, split into interest and principal, laid out until the balance walks down to exactly zero.",
+      concept: [
+        "A fixed-rate loan is a promise with a fixed shape: the borrower pays the same amount every month — monthly_payment_cents here — and the lender splits that payment in two. Interest is the rent the borrower pays for still owing money: each month it is the annual rate divided by twelve, charged on the balance actually owed. Principal is the rest of the payment, and it is the part that retires debt — once principal is paid, that money is no longer owed. Amortization is the bookkeeping that walks the balance from the full amount borrowed down to zero, one payment at a time.",
+        "The split is not fifty-fifty and it does not stand still. Month 1 charges interest on the full principal, so interest takes its biggest bite of the payment and principal gets the leftovers. Every dollar of principal that gets retired shrinks next month's balance, which shrinks next month's interest, which frees a little more of the same payment for principal. Early months are interest-heavy and late months are principal-heavy — the crossover happens without anyone changing the payment.",
+        "The amortization schedule lays this walk out row by row: one row per month with the interest charged, the principal retired and the ending balance left over. Each row starts from the previous row's ending balance, which makes the schedule a chain — a computation, not a lookup. The final row is special: the last payment rarely divides evenly, so the principal side is capped at whatever is still owed and the balance lands on exactly 0. A schedule that ends anywhere else is wrong, and a one-cent miss on the last row is the classic implementation bug.",
+        "Integer cents keep the chain honest: interest is rounded to a whole cent inside every month, before anything computes from it, so month 12's numbers match a hand computation exactly. The annual rate is the one decimal-typed column and never reaches the output. A 0% loan exercises the same machinery with the interest term pinned at zero — the whole payment retires principal and the balance falls by the full payment every month. One formula carries both loans, no special cases.",
+      ],
+      worked: [
+        "Take loan 1: 120000 cents borrowed at 6.0% APR — an annual rate charged one twelfth at a time, so each month costs 6.0 / 12 = 0.5% of whatever is owed — repaid at 10330 cents a month.",
+        "Month 1: the owed balance is the full 120000, so interest is 120000 * 6.0 / 1200 = 600 cents. The payment covers the 600, principal takes 10330 - 600 = 9730, and the balance steps down to 120000 - 9730 = 110270.",
+        "Month 2 charges rent on the smaller balance: 110270 * 6.0 / 1200 = 551.35, rounded to 551. Principal grows to 10330 - 551 = 9779 and the balance stair-steps to 100491.",
+        "Month 3 repeats on 100491: interest 502 (100491 * 6.0 / 1200 = 502.455, rounded), principal 9828, balance 90663. Watch the drift inside an unchanged 10330 payment — interest fell 600 to 551 to 502 while principal climbed 9730 to 9779 to 9828.",
+        "By month 12 the balance is 10251: interest is 51, the raw principal 10330 - 51 = 10279 would overshoot the debt, so the cap trims it to the 10251 still owed and the balance lands on exactly 0 — the loan closes, and a month 13 row would be a bug.",
+      ],
+      glossary: [
+        { term: "amortization", def: "paying a loan off in fixed monthly installments that split into interest and principal" },
+        { term: "APR", def: "annual percentage rate — the yearly cost of the loan, charged one twelfth each month" },
+        { term: "interest", def: "the month's rent on the balance still owed, at annual_rate_pct / 12 of that balance" },
+        { term: "principal", def: "the part of a payment that retires debt and shrinks the balance" },
+        { term: "outstanding balance", def: "the amount still owed at the start of a month, before that month's payment lands" },
+        { term: "term", def: "the number of scheduled monthly payments the loan is set to run (term_months)" },
+      ],
+      reallife: [
+        "Loan servicing teams run amortization engines every day at any lender that holds loans — banks, credit unions, fintechs. The schedule drives the billing statement the borrower receives, the interest income the lender books each month, and the payoff quote when someone sells a house or refinances a car. Payment sizing is the same math run in reverse: given a rate, a term and a principal, what monthly payment closes the balance at exactly zero? Pricing teams, not engineers, own that question, and they answer it with the same schedule.",
+        "What breaks in practice is rarely the formula and usually the world around it. Extra principal payments, rate resets on adjustable loans, and fees rolled into the balance all knock the schedule off its rails, so real servicing systems re-amortize after anything changes instead of trusting the original table. Rounding is the second offender: a schedule that rounds once at the end drifts away from one that rounds every month, and a two-cent mismatch against a borrower's statement is a support ticket. The ending balance must be exactly zero — collectors, auditors and regulators all read that last row first.",
+        "The numbers drive real decisions. Forecasting teams sum scheduled interest across a whole book of loans to project revenue; finance teams read the principal rows to model when cash comes back; and a borrower comparing two offers compares total interest paid, which is just the schedule's interest column added up. An interview that asks for the schedule is really asking whether you can express this chain — each month computed from the last — as a single statement.",
+      ],
+      where:
+        "Lending-ops, loan-servicing and credit-product interviews at SoFi, Rocket, Chase and Capital One open with amortization schedules before moving on to pricing and reserve questions.",
+    },
     breakdown: [
       "The ask is to unfold two static rows of loans into a full month-by-month ledger, and the ledger is recursive by nature: each month's five numbers compute from the previous month's ending_balance_cents, which no fixed join can manufacture. The interest/principal split is the whole story — interest_cents is rent on the money still owed (start_balance * annual_rate_pct / 1200.0), and principal_cents is the part of monthly_payment_cents that actually retires debt. Because the balance shrinks every month, the interest share shrinks with it and the principal share grows: loan 1's split moves from 600/9730 on month 1 to 51/10251 on month 12. A schedule is a computation, not a lookup.",
       "The classic misstep is charging interest on the wrong balance — computing it from principal_cents every month produces flat interest (600 cents in every one of loan 1's months) and a ledger that never matches the declining-balance contract. The sibling error is capping the wrong quantity: the contract caps the PRINCIPAL at the remaining balance, MIN(monthly_payment_cents - interest_cents, start_balance), not the payment itself. Capping the payment instead makes loan 1's month 12 pay 10251, cover 51 of interest and retire only 10200 of principal, stranding a 51-cent balance — and the recursion then emits a phantom month 13 to sweep it up. The cap sits where the contract pins it: on principal_cents.",
@@ -138,6 +170,38 @@ ORDER BY loan_id ASC, month_no ASC;`,
       "buckets pin as dpd >= 90 → '90+', 61-89 → '61-90', 31-60 → '31-60', 1-30 → '1-30' — every seeded loan sits mid-bucket (20, 45, 75, 100 days) so no boundary decides a row",
       "one row per loan_id with 'current' whenever no unpaid past-due installment exists, ORDER BY loan_id ASC",
     ],
+    primer: {
+      hook:
+        "A delinquency bucket is the aging clock collections reads every morning — how many days behind a borrower is, graded into the bands that decide who gets a phone call and who gets written off.",
+      concept: [
+        "A loan is delinquent when a scheduled payment has come due and was never made. Not paid late — paid late is an obligation met, however tardily, and the ledger records it with a paid date. Delinquency is the unpaid-and-past-due state: an installment — one scheduled payment with its own due date — that has no paid date and whose due date already sits behind the reporting day. Everything collections does starts from that one definition.",
+        "Days past due, written DPD, counts how far behind that oldest unpaid past-due installment is: the gap between the reporting date and the due date it missed. A loan can miss several installments at once, and the rule is deliberately harsh — the oldest one sets the clock. A borrower 100 days behind on one installment and 10 days behind on another is a 100-day problem, not a 10-day one, because the oldest debt is where the loan's story started going wrong. Reporting anything else would flatter the book.",
+        "Collections grades DPD into buckets — current, then 1-30, 31-60, 61-90, 90+ — and reads them like an aging clock moving left to right. A loan only ever ages rightward while its installment sits unpaid: 1-30 today becomes 31-60 next month unless a payment lands. A cure moves a loan back left — the borrower catches up and the clock resets — and a loan that runs off the right end is charged off, written down as a loss. The buckets are the conveyor belt, and every loan stands on it somewhere.",
+        "One subtlety keeps the report honest: delinquency is measured as of a fixed date, a snapshot. An installment due next week is not delinquent today, no matter how worried anyone is, and a payment posted the day after the snapshot does not exist yet. The report answers exactly one question — who is behind, and by how much, on this date — and two snapshots a day apart can tell different stories.",
+      ],
+      worked: [
+        "Stand on the as-of date 2026-10-01 with loan 6's ledger in hand: two installments unpaid — due 2026-06-23 and due 2026-09-21 — and nothing else in the file for this loan.",
+        "Age the OLDEST one: 2026-06-23 to 2026-10-01 is 7 remaining days of June, plus 31 of July, 31 of August, 30 of September and 1 — 100 days past due.",
+        "100 lands in the 90+ bucket, the report's worst label. The newer unpaid installment is only 10 days past due and changes nothing — the oldest drives the bucket.",
+        "Now loan 2, which paid every installment late — 9 days, then 15 — but did pay: a set paid date keeps it out of the unpaid set entirely, so it reports 'current'.",
+        "Loan 1's next installment (due 2026-10-05) is unpaid but not yet past due on the snapshot — future-due is not delinquent — so loan 1 reports 'current' too.",
+      ],
+      glossary: [
+        { term: "delinquency", def: "the state of having an installment that came due and was never paid" },
+        { term: "past due", def: "an installment whose due date already lies behind the as-of date" },
+        { term: "days past due", def: "the day count between an unpaid installment's due date and the as-of date, written DPD" },
+        { term: "aging bucket", def: "a DPD band — current, 1-30, 31-60, 61-90, 90+ — that grades how far behind a loan is" },
+        { term: "as-of date", def: "the fixed snapshot date a delinquency report is measured on, never 'today'" },
+        { term: "cure", def: "a borrower catching up on what is owed, moving the loan back to current" },
+      ],
+      reallife: [
+        "Collections and servicing operations run the aging report every single day — at banks, fintech lenders, auto-finance companies, anywhere installment loans exist. The report is the queue: the 1-30 bucket gets reminders and early-outreach calls, 31-60 gets live agents and payment plans, 61-90 gets escalation, and 90+ is where charge-off decisions and outside collections begin. Regulators read the same buckets — the share of the lender's whole book of loans sitting past due is a standard disclosure. And the loss reserves a bank must hold against expected losses are fed by the loss rates each bucket earns.",
+        "What breaks in practice: payments post a day after the snapshot and flip a loan's bucket overnight, so the as-of date has to be pinned, never 'today'. Partial payments arrive that cover some but not all of an installment, and whether that cures the loan is a policy call the raw data cannot make alone. Date parsing is the silent killer — one wrong timezone in a batch job shifts every bucket in the report. Teams therefore watch roll rates, the share of each bucket that moves rightward into the next bucket next month, as the earliest warning that a book is souring.",
+        "The buckets drive money directly: a charge-off policy that fires at 120 days past due is a rule written on top of these very buckets, and collector staffing, hardship-plan eligibility and reserve levels all trace back to them. In an interview, the oldest-unpaid-installment rule is the whole point — candidates who bucket on the newest missed payment read as people who have never watched a real ledger. Nail that, and the SQL is a filter, a MIN and a CASE.",
+      ],
+      where:
+        "Collections-strategy and servicing-analytics interviews at Rocket, Synchrony, Capital One and Ally lean on DPD bucket questions — the aging report is those desks' daily bread.",
+    },
     breakdown: [
       "The report compresses a whole payment history into one delinquency state per loan, and the state machine has exactly one moving part: the oldest installment that is both unpaid and past due as of '2026-10-01'. Paid-late rows like loan 2's (due 2026-06-10, paid 2026-06-19) never enter that set — a set paid_date means the obligation was met, however tardily. Future-due unpaid rows like loan 1's 2026-10-05 installment stay out too: not yet due is not yet delinquent. What survives the filter is the delinquent set, and MIN(due_date) over it is each loan's clock.",
       "The naive misstep is reading the WRONG unpaid installment. MAX(due_date) on loan 6 — whose 2026-06-23 and 2026-09-21 installments are both unpaid — reads 10 days past due and drops the loan into '1-30', when the contract's oldest-first rule reads 100 days and '90+'. The same wrongness arrives dressed as 'any unpaid installment will do', or as ordering candidates by amount_cents instead of due_date. The bucket keys off MIN(due_date) of the unpaid past-due set, full stop.",
@@ -260,6 +324,38 @@ ORDER BY p.loan_id ASC;`,
       "one row per holding: the window SUM must preserve rows exactly as GROUP BY cannot",
       "ORDER BY account_id ASC, weight_pct DESC, symbol ASC",
     ],
+    primer: {
+      hook:
+        "A portfolio weight is your slice of the pie — what fraction of an account's total value sits in one position — and it is the number every risk, rebalance and client-statement conversation starts from.",
+      concept: [
+        "An account holds positions — a position is one symbol: some quantity of shares at a last known price. A position's market value is simple arithmetic, quantity times price, in cents here. The interesting number is the weight: that value divided by the account's total market value, summed across every position in the same account. Weights turn raw dollars into shares of one whole — 49.62 means this position is 49.62 percent of everything the account owns.",
+        "The slices always sum to 100 percent inside an account, because every position was divided by the same total — slices of one pie. That is what makes weight the honest language for comparing holdings: two accounts of very different sizes can still be compared slice against slice, because a percent of one pie is the same unit as a percent of another. Raw market values cannot make that comparison — a big account's small bet can outweigh a small account's entire book.",
+        "Prices move and nobody trades, yet the weights drift. If one symbol rallies while its neighbors sit still, its slice grows and every other slice shrinks by exactly the amount that keeps the pie at 100 percent — concentration creeps in silently. That drift is why weight reports carry a date: last month's balanced account can be this month's lopsided one without a single order ticket. Rebalancing exists to push the slices back to target, and it triggers off exactly this arithmetic.",
+        "Each account weights independently: an account's denominator is its own total, never another account's and never the whole book. Mixing denominators is the classic error — dividing one account's position by everything the firm manages produces numbers that no longer sum to 100 inside any single account and answer a question nobody asked. The denominator belongs to the pie being measured.",
+      ],
+      worked: [
+        "Account 1 holds three positions: 40 shares of AAPL at 19750 cents, 12 of MSFT at 41500, 25 of NVDA at 12160.",
+        "Market values: AAPL 40 * 19750 = 790000, MSFT 12 * 41500 = 498000, NVDA 25 * 12160 = 304000 — and the account total is 790000 + 498000 + 304000 = 1592000 cents.",
+        "Divide each slice by the same denominator: AAPL 100.0 * 790000 / 1592000 = 49.62 percent, MSFT 31.28, NVDA 19.1.",
+        "The pie closes without a trade: 49.62 + 31.28 + 19.1 = 100.00 — the ratios partition the account, nothing was sold.",
+        "Let AAPL's price alone rise 10 percent, to 21725: its value becomes 869000, the account total 1671000, and the weights re-cut themselves — AAPL about 52.00, MSFT 29.80, NVDA 18.19 — price drift moved the slices while nobody traded.",
+      ],
+      glossary: [
+        { term: "position", def: "one holding in an account: a symbol, a quantity of shares and a last known price" },
+        { term: "market value", def: "quantity times last price — what the position is worth at the snapshot" },
+        { term: "weight", def: "a position's market value expressed as a percent of its account's total market value" },
+        { term: "portfolio", def: "the full set of positions in one account, treated as a single pie" },
+        { term: "denominator", def: "the account total every weight divides by — that account's own, never another's" },
+        { term: "symbol", def: "the short ticker code naming a tradable security, like AAPL" },
+      ],
+      reallife: [
+        "Portfolio analytics and wealth-management teams compute weights constantly — at asset managers like BlackRock, at brokerages like Fidelity, and inside every automated adviser that promises to keep a portfolio on target. The weight table is the backbone of the client statement: your account is 49.6 percent equities, 30.2 percent bonds, and so on. It feeds the risk models that estimate how much an account moves with the market, and it triggers rebalancing when a slice drifts past its target band. Compliance reads the same table for concentration limits — rules that cap how much of one account may sit in a single name.",
+        "What breaks in practice: prices are only as fresh as the last quote, so a weight report built on stale closes misstates every slice. Corporate actions — splits, mergers, tickers that vanish overnight — leave positions with nonsensical prices until someone reconciles them, and cash is a position too, one that naive reports forget, which pushes the weights over or under 100. The SQL trap mirrors the operational one: computing the account total with GROUP BY collapses the very rows the report needs, which is exactly why the window SUM exists.",
+        "The numbers drive real money: a rebalance order, an 'overweight energy' warning to a client, a concentration flag raised to a manager — all are weight comparisons against a target. In interviews the question looks like simple arithmetic, but the grade sits in whether the denominator is per-account and whether every row survives to the output. Those are precisely the two places real dashboards go wrong.",
+      ],
+      where:
+        "Portfolio-analytics and wealth-tech interviews at BlackRock, Fidelity, Vanguard and Schwab start with share-of-total questions exactly like this one.",
+    },
     breakdown: [
       "The ask looks like an aggregation but grades as a projection: every one of holdings' seven rows must still be standing at the end, each now carrying its share of the account. That rules out GROUP BY on the spot — folding holdings by account_id collapses account 1's AAPL, MSFT and NVDA into one row and deletes the very positions the report needs. The denominator is still an aggregate, though, and it has to ride on every row: SUM(market_value_c) OVER (PARTITION BY account_id) computes account 1's 1592000 cents and stamps it onto all three of its rows without removing any.",
       "The ratio is where SQLite's typing bites. 100 * market_value_c / account_value_c with an INTEGER numerator and denominator performs integer division — 79000000 / 1592000 truncates to 49 and the decimal weight vanishes — while the 100.0 literal promotes the division to floating point and 49.62 survives. Rounding comes last, ROUND(..., 2), applied to the finished ratio; rounding the operands first would distort the share itself. Round the finished ratio and nothing earlier.",

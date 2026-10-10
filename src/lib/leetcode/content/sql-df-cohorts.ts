@@ -31,6 +31,37 @@ export const SQL_DF_COHORTS: LcSqlDive[] = [
       "cohort counts USERS signed up that month, never activity rows; a user with no activity rows still counts toward cohort and still drags every percentage down",
       "columns signup_month, cohort, m0_pct, m1_pct, m2_pct, one row per signup month present in users, ordered by signup_month ASC",
     ],
+    primer: {
+      hook:
+        "A retention matrix is how a growth team learns whether the users it signed up in a given month ever came back — and how quickly they drifted away.",
+      concept: [
+        "Product teams rarely judge users one at a time; they judge them by the month they arrived. A cohort is every user who signed up in the same calendar month, treated as one group that moves through time together — the way a school class moves through its grades together. Users from one month share the same onboarding screens, the same pricing page and the same campaign that brought them in, so comparing cohorts isolates what the product did that month from everything the users did afterwards. It is the closest thing growth has to a controlled comparison that costs nothing to run.",
+        "Retention is the share of a cohort that comes back. A user counts as active in a month when their name shows up in the activity log for that month — opened the app, played a lesson, placed an order, whatever the product's heartbeat is. The matrix lays this out as a triangle: each signup month is a row, and the columns are ages, not calendar months — M0 is the signup month itself, M1 one month later, M2 two months later, always counted from each row's own start. Reading across a row shows one cohort decaying through life; reading down a column compares different cohorts at the same age, which is the apples-to-apples view that tells you whether March's onboarding rewrite held people better than February's.",
+        "The picture is a triangle because of time itself: the newest cohort has only just signed up, so it has an M0 but no M1 or M2 yet, and each older row stretches one column further until the oldest rows run complete. In this report every cohort is old enough to fill all three columns, but a live dashboard keeps the triangle shape as its newest rows grow into it. The offsets are month arithmetic, not calendar labels — 2027-01 sits seven months after 2026-06, and the fold across the year has to survive the arithmetic.",
+        "Two bookkeeping rules keep the numbers honest. The denominator is the signup count for that month — every user who signed up counts, including the ones who never came back at all, because the users who vanished are exactly what retention exists to measure. And active at offset N means present in that exact month, not on a streak: someone who shows up in June, skips July and returns in August is retained at M0 and M2 and lost at M1, which is why a column can tick back up instead of only decaying.",
+      ],
+      worked: [
+        "Take the June cohort from the seed — users 101, 102, 103 and 104 signed up in 2026-06, so the row's denominator is 4.",
+        "M0 is the signup month: 101, 102 and 103 were active in 2026-06 while 104 never logged a single event — 3 of 4, and 100.0 * 3 / 4 = 75.0.",
+        "M1 is one month later: 101 and 102 returned, 103 sat July out, 104 is still gone — 2 of 4, so 50.0.",
+        "M2 is two months later: 101 and 103 were back even though 103 had skipped a month — 2 of 4, so 50.0, and the dip-then-recover is legal because retention is membership in the month, not a streak.",
+        "User 103's 2027-01 activity folds to an offset of (2027 * 12 + 1) - (2026 * 12 + 6) = 7 — far outside the M0-M2 window — so it counts toward no column and the row ships 75.0, 50.0, 50.0.",
+      ],
+      glossary: [
+        { term: "cohort", def: "every user who signed up in the same month, followed forward as one group" },
+        { term: "signup month", def: "the calendar month a user created their account — the cohort's shared starting line" },
+        { term: "retention", def: "the share of a cohort that is active again at a given age" },
+        { term: "month offset", def: "how many whole months after signup an activity month sits — 0, 1 or 2 here" },
+        { term: "M0 / M1 / M2", def: "shorthand for offsets zero, one and two: the signup month, then one and two months later" },
+        { term: "activation", def: "a user's first real action in the product — a user who never activated has no activity rows at all" },
+      ],
+      reallife: [
+        "A growth team's weekly retention review runs on exactly this matrix, and it is usually the first dashboard an analytics group ships — Duolingo watches lesson weeks this way, Spotify watches listening weeks, Airbnb watches repeat-booking months. The report goes to the product managers and upward to whoever owns the growth model, because retention is the multiplier every forecast multiplies through. A cohort bending downward earlier than its neighbours sends the team digging — which channel fed it, which onboarding screen changed, which pricing test went live that month.",
+        "What breaks in practice: tracking code that silently stops logging events makes a healthy product look like it is bleeding, duplicate activity rows inflate every numerator, and defining active too generously — counting a push notification opened by accident — flatters all three columns at once. Timezones bite too, since an event near midnight can land in the wrong month and shift an offset. The numbers drive real decisions — killing an acquisition channel whose cohorts never return, doubling down on an onboarding rewrite, pausing a paid campaign — and a wrong denominator quietly redirects all of that spend.",
+      ],
+      where:
+        "Retention-matrix questions open growth and product-analytics interviews at consumer apps — Duolingo, Spotify, Airbnb, Netflix, Strava — because every one of those teams lives on this triangle.",
+    },
     breakdown: [
       "The report runs on two grains at once: the row grain is signup months, but the counting grain is users inside a window that slides per user. The join is users LEFT JOIN activity on user_id — LEFT because a user with zero activity rows must still occupy their cohort's denominator, and an inner join would silently shrink the cohort and read m0 as a perfect 100.0. The month offset is real arithmetic, not string math: fold each 'YYYY-MM' into (year * 12 + month) and subtract, which makes 2027-01 exactly 7 months after 2026-06. Any shortcut that subtracts month numbers alone or casts the whole string to a number survives this seed by accident and corrupts the matrix the first time a cohort crosses a year.",
       "The pivot is conditional aggregation: COUNT(DISTINCT CASE WHEN month_offset = 0 THEN user_id END) counts the cohort members active in the signup month, and the = 1 and = 2 twins count the later windows. The DISTINCT matters even on clean data — the seed stores one row per user-month, but any duplicate activity row would inflate a COUNT(*) arm without it, and real event pipelines emit repeats. The denominator is COUNT(DISTINCT user_id) grouped by signup_month — the USER count, never the joined row count, which on the 2026-06 cohort is 9 rows (8 activity rows plus user 104's NULL-padded one) and would read m0 as 33.3 and m1 as 22.2. Percentages divide users by users, so the arm counts and the denominator must be computed over the same joined grain.",
@@ -161,6 +192,37 @@ ORDER BY signup_month ASC;              -- zero-padded 'YYYY-MM' sorts chronolog
       "a session's duration is its last event timestamp minus its first in minutes; a one-event session lasts 0.0 minutes and idle stretches inside the run count toward the span",
       "columns user_id, sessions, avg_min with avg_min = ROUND(AVG(duration), 1), one row per user present in events, ordered by user_id ASC",
     ],
+    primer: {
+      hook:
+        "Sessionization is how a raw firehose of taps and pings becomes a visit a product team can reason about — how long someone stayed, and what they did while they were there.",
+      concept: [
+        "Every app logs its users' lives as events: one row per tap, per page view, per ping, each stamped with a timestamp — the recorded moment it happened. The log arrives as a shapeless stream, millions of rows in whatever order the servers flushed them, with no notion of a visit anywhere in it. Before anyone can ask how long people stay or where they wander, the stream has to be folded into sessions, and that folding is sessionization — the first transformation nearly every product-analytics pipeline runs.",
+        "The industry's convention is a timeout wall: when one user's events sit more than 30 minutes apart, the wall falls between them, and everything on one side of the wall is a session. A session is a maximal run — it swallows events until a gap strictly over 30 minutes cuts it, which means an exactly-30-minute pause stays inside and a 30-minute-and-one-second pause cuts. The number predates most of the tools using it: web analytics settled on 30 minutes decades ago, and mobile dashboards, ad platforms and warehouses inherited it, which is why session counts from different vendors are at least arguing about the same shape.",
+        "A session's duration is its span, not its activity: last event's timestamp minus first event's, idle stretches included. Someone who opens a page, reads for a few seconds, then sits idle for 25 minutes before tapping again has one 25-minute session with almost no activity in it — the span is the envelope around the behavior, and that is what makes sessions comparable across users. A lone event with no neighbors is still a session, just one that lasts 0.0 minutes.",
+        "Two rules keep the cutting honest. The wall only ever compares a user against themselves — the gap between your evening tap and my midnight ping means nothing, so every comparison runs inside one user's own timeline, re-sorted by time before any gap is measured. And the wall measures elapsed time, not calendar walls: a run from 23:40 to 00:19 crosses midnight and stays one session, because 39 minutes have passed and 39 is all the rule sees.",
+      ],
+      worked: [
+        "Sort user 204's six events into time order — 08:00, 08:30, 09:15, 09:22, 09:40, 10:05 — because the table landed them scrambled and gaps mean nothing until the timeline is straight.",
+        "Measure each consecutive gap in minutes: 30, 45, 7, 18 and 25.",
+        "Apply the wall — only a gap strictly over 30 minutes cuts: the 30-minute gap survives because exactly at the limit stays, the 45-minute gap cuts, and the small gaps never come close.",
+        "Two sessions fall out: one running 08:00 to 08:30 with a 30-minute span, one running 09:15 to 10:05 with a 50-minute span.",
+        "User 204's row reads 2 sessions averaging (30 + 50) / 2 = 40.0 minutes — and a seventh event at 14:00 would have opened a third session, not extended the second.",
+      ],
+      glossary: [
+        { term: "event", def: "one logged user action — a tap, a page view, a ping — carrying its recorded time" },
+        { term: "session", def: "a maximal run of one user's events in which every consecutive gap is 30 minutes or less" },
+        { term: "sessionization", def: "folding a raw event stream into sessions by cutting wherever a long gap appears" },
+        { term: "gap", def: "the elapsed time between one event and the same user's next" },
+        { term: "30-minute wall", def: "the industry timeout convention — a gap strictly over 30 minutes ends the session" },
+        { term: "session duration", def: "the span from a session's first event to its last, idle stretches included" },
+      ],
+      reallife: [
+        "Every analytics organization runs this job, usually as a nightly pipeline owned by data engineering — Uber folds ride requests and app opens, Netflix folds play starts and pauses, Duolingo folds lesson events, and the 30-minute number is the same across Google Analytics, Amplitude and Mixpanel because sessions only mean something when everyone counts them the same way. The sessionized table feeds half the dashboards in the building: daily active users, average session length, feature adoption all read from it. When it is wrong, everything downstream is confidently wrong.",
+        "What breaks in practice: background pings that fire every 20 minutes weld an entire day into one 24-hour session, server retries duplicate events, device clocks drift, and rows land out of order so any code that trusts arrival order measures nonsense. Teams tune the timeout too — a gaming studio may cut at 15 minutes because play bursts are short, while a banking app may stretch to 60 — which makes cross-company session counts non-comparable until the definitions are read side by side. The numbers drive real decisions — engagement targets, ad pricing, staffing for peak traffic — so a sessionization bug is never a cosmetic one.",
+      ],
+      where:
+        "Sessionization is the canonical gaps-and-islands screen in data-engineering and product-analytics interviews at event-heavy companies — Uber, Netflix, Stripe, Duolingo, Amplitude.",
+    },
     breakdown: [
       "This is gaps-and-islands over time: the table has no session column, so the query must manufacture session identities from the gaps between consecutive events. The word 'maximal' is the engine hint — a session absorbs every event until a gap strictly over 30 minutes arrives, and only then does the next event start a new island. That reduces each event to a binary question: is this event the START of a session? An event is a start when it is the user's first (no previous event at all) or when it sits more than 30 minutes after the user's previous event — LAG(event_ts) OVER (PARTITION BY user_id ORDER BY event_ts) puts the previous timestamp on every row, and the PARTITION BY is what stops one user's tail from being compared against the next user's head.",
       "Turning start flags into session ids is a running sum: SUM(is_start) OVER (PARTITION BY user_id ORDER BY event_ts) adds 1 exactly at starts, so every event inside the first session carries 1, the second session carries 2, and so on — the flag-and-running-sum pair enumerates the islands without recursion. The boundary needs the strictness call: at most 30 minutes stays in, so the flag tests gap > 1800 seconds, and the seed's user 204 fires at 08:00:00 and 08:30:00 exactly — a >= test would split that 30-minute session into two one-event sessions and read 204 as three sessions averaging 16.7 minutes. Comparing INTEGER epoch seconds (strftime('%s')) instead of julianday REAL differences is what makes 1800 > 1800 a clean false — the float path lands within a few billionths of 30 and the boundary becomes a coin flip.",
@@ -318,6 +380,37 @@ ORDER BY user_id ASC;`,
       "lift_pp = ROUND(100.0 * raw_treatment_rate - 100.0 * raw_control_rate, 1) computed from RAW rates and rounded once — identical on both rows, control included",
       "columns variant, users, conversions, conv_pct, lift_pp, ordered by variant ASC — 'control' sorts before 'treatment'",
     ],
+    primer: {
+      hook:
+        "Conversion lift is the number a product team reads before shipping a change — the new experience measured against the old one, reduced to a single honest difference.",
+      concept: [
+        "An A/B test — most teams just call it an experiment — runs two worlds at once. Users are split at random: the control group keeps the current experience, the treatment group gets the change, and the randomization is the whole trick, because two groups drawn from the same population differ only by the change itself. Conversion is the goal action — bought the ticket, finished the subscription, clicked the button — recorded as a 1 or a 0 per participant.",
+        "Each arm reports a conversion rate: conversions divided by participants, written as a percentage. Control converting 11 of 20 reads 55.0; treatment converting 15 of 20 reads 75.0. The lift is the difference between the two rates, measured in percentage points — one point is one tick of a rate, so 75.0 against 55.0 is a 20.0-point lift — and it belongs to the experiment as a whole, not to either row, which is why a report repeats the same lift on every line.",
+        "The lift rides both denominators at once: each rate is a fraction whose bottom is that group's user count, so both group sizes are folded into the one shared number. That is why one extra conversion moves a small group far more than a big one — a single convert shifts a 20-user group's rate by a full 5.0 points but a 200-user group's by only 0.5 — and each rate passes its movement straight into the lift, one point for one point. In a winning readout the treatment bar is the taller one, and it is treatment's gains that push the shared number upward while control holds the baseline still — the bigger bar is where the lift's movement lives.",
+        "The arithmetic has one honesty rule: subtract the raw rates — the unrounded ones — and round once at the very end. Rounding each rate first and subtracting afterwards compounds the error: a 1-in-3 rate against a 2-in-3 rate rounds to 33.3 and 66.7, whose difference reads 33.4, while the raw difference of 33.333 rounds to the honest 33.3. The same discipline guards the percentage itself — the 100.0 multiplier lands before the division, or an integer division truncates the whole rate to zero.",
+      ],
+      worked: [
+        "Count each arm of the seed experiment: control holds 20 participants, treatment holds 20 — the equal split randomization owes you.",
+        "Count conversions: 11 of the 20 control participants converted, and 15 of the 20 treatment participants did.",
+        "Divide each arm's rate and keep it raw: 100.0 * 11 / 20 = 55.0 for control, 100.0 * 15 / 20 = 75.0 for treatment.",
+        "Subtract the raw rates for the lift: 75.0 - 55.0 = 20.0 percentage points, rounded once — one number for the whole experiment, repeated on both report rows.",
+        "Feel the denominators: one more control conversion would have read 12 of 20 = 60.0 and cut the lift to 15.0 — a single participant moved the shared number by 5.0 points, because 20 is a small group.",
+      ],
+      glossary: [
+        { term: "A/B test", def: "an experiment that splits users at random so a change's effect can be read on its own" },
+        { term: "variant", def: "one arm of the experiment — here control or treatment" },
+        { term: "control", def: "the arm that keeps the current, unchanged experience" },
+        { term: "treatment", def: "the arm that receives the change being tested" },
+        { term: "conversion", def: "a participant completing the goal action inside the experiment window" },
+        { term: "lift", def: "the treatment conversion rate minus the control rate, in percentage points" },
+      ],
+      reallife: [
+        "Experimentation teams at Airbnb, Booking.com, Netflix, Uber and Duolingo produce hundreds of readouts like this one every week, and the table itself — users, conversions, rate, lift — is the artifact a data scientist carries into the ship-or-kill meeting. The lift decides: a large, trustworthy lift ships the new checkout flow to everyone, a flat one kills the idea, a noisy one buys another week of traffic. Guardrail metrics ride alongside — latency, unsubscribes, complaint rates — because a conversion gain that costs retention is a bad trade.",
+        "What breaks in practice: teams peek at the readout on day two and ship a lift that was luck, the random split fails silently and one arm holds heavier users, bots inflate one variant, and novelty — the change being fresh rather than good — flatters the treatment in week one. A sample-ratio mismatch, where the two arms' user counts drift apart despite an assigned 50-50 split, is the classic tell that the plumbing is broken before any rate deserves trust. The numbers drive decisions worth real money, which is why the rounding and denominator rules above read as contracts, not style.",
+      ],
+      where:
+        "Experimentation and data-science interviews at Airbnb, Booking.com, Netflix, Uber and Duolingo open with exactly this readout — rates, lift in percentage points, the rounding contract — before any talk of significance tests.",
+    },
     breakdown: [
       "The readout mixes two grains in one report: per-variant aggregates (users, conversions, conv_pct) that a plain GROUP BY produces, and an experiment-level scalar — the lift — that needs BOTH variants' rates on the same row. No amount of grouping can see across groups: once the query is inside GROUP BY variant, the control row cannot read the treatment row. So the shape is two stages: aggregate once into a rates CTE with one row per variant, then join that CTE to itself so every output row carries both scalars. The join keys do the semantics — t pinned to 'treatment' and c to 'control' — and since each side is a single row, the self-join is a clean cross product of exactly two rows.",
       "The percentage arithmetic hides SQLite's favorite trap: converted is INTEGER, users is a COUNT, and SUM(converted) / COUNT(*) is INTEGER divided by INTEGER — control's 11 / 20 truncates to 0 and the whole report prints 0.0. The 100.0 must multiply FIRST: 100.0 * SUM(converted) / COUNT(*) promotes the division to float before it happens. Then the rounding order is a contract of its own: lift_pp subtracts the RAW rates (75.0 and 55.0 here) and rounds once, because subtracting already-rounded percentages compounds the error — a 1/3 vs 2/3 experiment rounds to 33.3 and 66.7, whose difference 33.4 disagrees with the raw difference's honest 33.3.",

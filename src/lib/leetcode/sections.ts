@@ -858,6 +858,22 @@ export const DATAFIN_SECTIONS: LcSection[] = [
       "sessionize-events",
       "ab-test-conversion-lift",
     ],
+    study: {
+      intro: [
+        "Product analytics is the craft of turning an event stream into decisions. Every click, login and purchase lands in an events table, and everything in this section is built on top of it: DAU counts the bodies on one day, WAU the trailing seven, funnels measure where the journey leaks, cohorts ask whether NEW users behave better than OLD ones, and A/B tests decide whether a change moved the number or just got lucky. If you can count distinct users over the right slice of time, you can build this entire section.",
+        "The SQL shapes: a trailing-7 window for the DAU/WAU envelope, a LAG status pivot for growth accounting's four levers, a FIRST_VALUE funnel pivot for step conversion, month offsets computed arithmetically for the retention triangle, gaps-and-islands for sessionization, and the two-denominator cross join for the A/B lift. The recurring trap is the same everywhere: who belongs in the denominator — this week's actives or last week's, the events or the users, the converted only or every signup.",
+        "Read the study flow first: instrument, measure, funnel, experiment, decide — every problem lives at one station of the loop. Then solve in the suggested order. Every problem carries a primer that teaches its concept from zero, and the two hardest — sessionization and the mirrored median — are worth saving until the warm-ups have shown you the table's grain.",
+      ],
+      flow: "product-loop",
+      path: [
+        { slug: "funnel-step-conversion", why: "The gentlest on-ramp: a FIRST_VALUE funnel pivot — and the overall-vs-stepwise reading that trips candidates on the real thing." },
+        { slug: "ab-test-conversion-lift", why: "Two rates and one lift across a cross join — plus the repeat-row trap: the metric counts USERS, the table logs events." },
+        { slug: "dau-wau-stickiness", why: "The trailing-7 envelope: distinct users in a sliding window, and the campaign spike that fattens WAU without building habit." },
+        { slug: "growth-accounting", why: "The four levers (new, retained, resurrected, churned) off a LAG status pivot — and the reconciliation identity that checks your own answer." },
+        { slug: "cohort-retention-matrix", why: "The retention triangle: month offsets computed arithmetically, pivoted into M0/M1/M2 — read down a column to compare cohorts at the same age." },
+        { slug: "sessionize-events", why: "The finale: gaps-and-islands — LAG the gap, flag every break over 30 minutes, and let a running sum cut the stream into sessions." },
+      ],
+    },
   },
   {
     id: "df-finance-core",
@@ -872,6 +888,22 @@ export const DATAFIN_SECTIONS: LcSection[] = [
       "realized-pnl-average-cost",
       "gl-reconciliation",
     ],
+    study: {
+      intro: [
+        "This section is the lender's and the trader's arithmetic in its rawest form. A loan amortizes: every fixed payment splits into interest — rent on the balance still owed — and principal, which retires debt. A portfolio has weights: every position is a slice of one total. A trade settles: T+2 means the money moves two days after the trade, and a miss becomes a fail that ages. A position carries a cost basis, and only selling at market against that basis realizes P&L. And behind every one of those numbers sit two books — the general ledger and the sub-ledger — that must tell the same story.",
+        "The SQL shapes: a WITH RECURSIVE walk for the schedule (each month computes from the previous ending balance), CASE ladders for DPD buckets, a window share for weights, aging brackets off due dates for fails, a running average-cost replay for realized P&L, and delta-by-account for the reconciliation. Money is INTEGER cents throughout — REAL is reserved for rates and never reaches an output column.",
+        "The primers teach each contract from zero — what amortization is, what days-past-due means, why weights always sum to 100 — and the study flow shows the pipeline from contracts to reports. The two valuations at the end are the interviews' favorites because both fail silently when a join fans out: a wrong SUM of P&L, a delta that never zeroes.",
+      ],
+      flow: "money-pipeline",
+      path: [
+        { slug: "delinquency-buckets", why: "Start at the collections desk: CASE the oldest unpaid installment into current / 1-30 / 31-60 / 61-90 / 90+ — the bucket ladder every credit report uses." },
+        { slug: "portfolio-weights", why: "One window share per account — value ÷ SUM(value) OVER (PARTITION BY account) — and slices that must sum to 100.00 exactly." },
+        { slug: "loan-amortization-schedule", why: "The recursive month machine: interest = rate/12 × balance, the MIN cap on principal, and a schedule that closes at exactly 0." },
+        { slug: "settlement-fails-aging", why: "The T+2 gate: due-date arithmetic, fails vs on-time, and aging brackets off days late — settlement ops' daily sheet." },
+        { slug: "gl-reconciliation", why: "Two books, one truth: net each account both ways and surface the break in BOTH signs — a sub-ledger missing an entry, a GL double-count." },
+        { slug: "realized-pnl-average-cost", why: "The finale: a running average-cost replay where every buy re-blends the basis and each sell realizes price − average — to the cent." },
+      ],
+    },
   },
   {
     id: "df-growth-experiments",
@@ -886,6 +918,22 @@ export const DATAFIN_SECTIONS: LcSection[] = [
       "ab-sample-ratio-mismatch",
       "feature-adoption-windows",
     ],
+    study: {
+      intro: [
+        "Growth teams run on a weekly rhythm: measure who left, measure who converts and how fast, keep the active-user line honest, rank engagement into tiers, and only then trust an experiment. Churn is measured against the week that just left — the at-risk pool is last week's actives, not this week's. Time-to-convert is reported as a MEDIAN because one straggler drags a mean but not a median. The rolling-7 active count collapses a user active five days into ONE body, never five. Percentile tiers rank users against each other, not against a fixed bar. And before any lift is read, the sample-ratio check asks one question: did the traffic actually split the way we designed it?",
+        "The SQL shapes: a weekly pivot with LAG for churn, the row-number mirror median, an inclusive trailing-7 self-join for rolling actives (no window frame can sum DISTINCT), PERCENT_RANK with fixed cut points for tiers, a deviation guard for the SRM check, and conditional windows measured off each user's OWN signup clock for adoption. The recurring discipline is denominators: the departed week for churn, the converted only for medians, every signup for adoption.",
+        "The primers carry the concepts from zero — what SRM is, why medians, what a percentile means — and the study flow walks an experiment's life from hypothesis to monitor. Solve the warm-ups first; the two window problems at the end are the batch's hardest because both hinges — adjacency and the personal clock — stay invisible until you have hand-walked one user through them.",
+      ],
+      flow: "experiment-life",
+      path: [
+        { slug: "ab-sample-ratio-mismatch", why: "The gate before the lift: one ratio, one tolerance, one guard — the cheapest query in the section and the one every experiment must pass." },
+        { slug: "usage-tier-percentiles", why: "PERCENT_RANK with fixed cut points — where you stand in the line, and ties share a tier." },
+        { slug: "rolling-7d-actives", why: "The trailing window no frame can sum: an inclusive trailing-7 self-join and DISTINCT — the anti-SUM lesson." },
+        { slug: "week-over-week-churn", why: "The weekly pivot with LAG: this week's absent set over LAST week's pool — plus the resurrection edge case." },
+        { slug: "median-time-to-convert", why: "The row-number mirror median per signup cohort — and the straggler that moves the mean but not the median." },
+        { slug: "feature-adoption-windows", why: "The finale: 7/14/30-day conditional windows measured off each user's own signup date, never-users kept honest in the denominator." },
+      ],
+    },
   },
   {
     id: "df-markets-risk",
@@ -900,6 +948,22 @@ export const DATAFIN_SECTIONS: LcSection[] = [
       "max-drawdown",
       "duplicate-charge-pairs",
     ],
+    study: {
+      intro: [
+        "The markets desk runs on one loop: positions get marked to market every day, marks become exposures, exposures become risk numbers, and cash events — interest, dividends, FX — land in the income line. FX exposure normalizes every currency through its latest as-of rate into one USD column. HHI squares each weight to punish concentration. Interest accrues on every day-end balance, not on the month's average. Dividends belong to whoever holds the stock BEFORE the ex-date — one day late loses the whole payment. Max drawdown measures the deepest fall from the highest peak the portfolio has stood on. And surveillance hunts the duplicate charge: the same amount twice inside a 120-second window.",
+        "The SQL shapes: the latest-row-as-of join (rank rates by recency per currency), a squared-weight SUM for HHI, a WITH RECURSIVE date spine carrying the balance day by day, the ex-date gate for the income calendar, a running-max window with an argmax join-back for drawdowns, and the self-join pair hunt with tie-safe identity for duplicates. Two currencies of trap: minor units (all money is INTEGER cents) and boundary edges — the rate exactly on the as-of date, the charge exactly 120 seconds later.",
+        "The primers teach each instrument from zero — what an as-of rate is, why HHI squares, what ex-date means — and the study flow follows the desk's day from marks to report. The three Hards (the interest spine, the drawdown argmax, the pair hunt's chain-vs-clique) are the interview set-pieces; earn them with the easier reads first.",
+      ],
+      flow: "market-desk",
+      path: [
+        { slug: "portfolio-concentration-hhi", why: "One weight, squared, summed: the HHI on its 0-10000 scale — and the 2500 case sitting exactly on the moderate line." },
+        { slug: "dividend-income-calendar", why: "The ex-date gate: a strictly-future comparison and the honest fanout when one holding earned two dividends." },
+        { slug: "fx-exposure-report", why: "The latest-rate-as-of join per currency — exposure = minor units × USD-per-unit in one multiplication." },
+        { slug: "duplicate-charge-pairs", why: "The pair hunt: equality on amount inside an inclusive 0-120-second window, deduped by id order — chains are not cliques." },
+        { slug: "max-drawdown", why: "The running-max window and the argmax join-back: the deepest trough paired with the peak that set it." },
+        { slug: "daily-balance-interest", why: "The finale: a recursive date spine carrying every day-end balance, rate/365 accrual per day, rounded once at the end." },
+      ],
+    },
   },
   {
     id: "df-banking-credit",

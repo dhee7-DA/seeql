@@ -4407,3 +4407,179 @@ Stage Summary:
 - MODULE 13 NOW SHIPS 48 problems / 8 sections / 1095 XP across the full Data & Finance domain: Product Analytics + Finance Core + Growth & Experiments + Markets & Risk (batches 1-2) joined by Banking & Credit Risk + Fraud & AML + Accounting & Close + Quant Desk (batch 3).
 - NEW TEACHING LAYER SHIPS: every batch-3 problem opens with a concept primer (domain taught from zero + its own real-life SVG diagram), and every new section carries a study guide (pipeline flow diagram + start-here intro + suggested solving path). sql-expected at 383 ALL PASS; track total 383 gradeable SQL problems.
 - Natural next candidates: retrofit primers/study guides onto the 24 batch-1/2 Data & Finance problems (the primer UI already renders them — only content is missing); polish of the 50 thin SQL50 breakdowns; the deferred algorithm track.
+---
+Task ID: 75-e
+Agent: general-purpose
+Task: Teaching-layer retrofit — add LcPrimer blocks to the 3 ORIGINAL batch-1 dives in src/lib/leetcode/content/sql-df-growth-a.ts (8013 week-over-week-churn, 8014 median-time-to-convert, 8015 rolling-7d-actives). Content-only; every other field byte-identical.
+
+Work Log:
+- Read worklog tail (protocol + batch-3 house style), types.ts (LcPrimer/LcSqlDive), sql-df-bank-a.ts primer template, and all of sql-df-growth-a.ts incl. seed INSERTs before writing a word.
+- Inserted a full primer (after constraints, before breakdown) per dive, aligned to the parallel artist's diagram concepts: churn leaves last week's porch (rate over the departed week's at-risk pool); the median outruns the mean (straggler math walked by hand); the trailing window that never sums (sum of daily distincts 23 vs union 9 on 2026-09-15).
+- Glossaries, 6 terms each: churn/retention/population-at-risk/baseline-week/resurrection/week-over-week · cohort/conversion/time-to-convert/median/mean/unconverted · rolling-window/actives/distinct-count/daily-actives/date-spine/delta. Worked steps tie to seed rows with arithmetic verified (20.0 and 18.2 churn rates; 2.5 median vs 3.75/23.75 means; rolling 9 vs overcounted 23, delta -2).
+- No other field or file touched (no sections.ts/registry/sql-expected.ts); tsc --noEmit filtered for sql-df-growth-a prints NOTHING (45-error landing/* baseline ignored).
+
+Stage Summary:
+- DELIVERED: 3 primers in sql-df-growth-a.ts only — 1 file changed, house shape (hook 1 sentence, concept 4 paras, worked 5 steps, glossary 6 terms, reallife 2 paras, where 1 sentence with real companies). Next: the artist's 3 paired diagrams; remaining batch-1/2 Data & Finance files.
+---
+Task ID: 75-c
+Agent: general-purpose
+Task: Teaching-layer retrofit — add domain primers to the 3 ORIGINAL dives in src/lib/leetcode/content/sql-df-money.ts (8007 loan-amortization-schedule, 8008 delinquency-buckets, 8009 portfolio-weights). CONTENT-ONLY: primer blocks inserted after constraints, before breakdown; nothing else touched.
+
+Work Log:
+- Read worklog tail (74 protocol), types.ts LcPrimer/LcPrimerTerm/LcSqlDive and the house template sql-df-bank-a.ts first; matched its register (vivid, no emojis, no markdown/backticks, every term explained on first use, hook exactly 1 sentence, concept 4 paras, worked 5 hand steps, glossary 6 defs, reallife 3 paras, where 1 sentence).
+- Verified all worked-example numbers against the file's own seeds before writing: loan 1 walk 120000/6.0/10330 → 600 interest, 9730/110270, 551/9779/100491, 502/9828/90663, month-12 cap 51/10251/0; loan 6 DPD 2026-06-23 → 2026-10-01 = 7+31+31+30+1 = 100 → 90+ with loan 2 paid-late and loan 1 future-due contrasts; account 1 pie 790000+498000+304000 = 1592000 → 49.62/31.28/19.1 plus the +10% AAPL drift to 869000/1671000 → 52.00/29.80/18.19.
+- Prose aligned to the parallel artist's diagram concepts: interest-as-rent + stair-step to 0 + interest-heavy early months; DPD aging clock, oldest-unpaid drives, loans only age right (cures left, charge-offs off the end); slice-of-pie weights summing to 100, drift without trading. Primers avoid e.g./i.e./backticks/${/platform strings.
+
+Stage Summary:
+- DELIVERED: 3 primer blocks in sql-df-money.ts (+96 lines, additions-only; git diff shows zero removed lines). Glossaries — loan-amortization-schedule: amortization, APR, interest, principal, outstanding balance, term; delinquency-buckets: delinquency, past due, days past due, aging bucket, as-of date, cure; portfolio-weights: position, market value, weight, portfolio, denominator, symbol.
+- Statement/examples/constraints/breakdown/edges/ladder/approach/schema/code/order/walkthrough/xp byte-identical; no other repo file touched by this task.
+- QA: bunx tsc --noEmit filtered for sql-df-money prints NOTHING (pre-existing 45-error baseline elsewhere untouched).
+
+---
+Task ID: 75-a
+Agent: general-purpose
+Task: Retro-fit domain primers onto the 3 ORIGINAL dives in src/lib/leetcode/content/sql-df-metrics.ts (dau-wau-stickiness, growth-accounting, funnel-step-conversion) — content-only, nothing else changes.
+
+Work Log:
+- Read worklog tail protocol, types.ts (LcPrimer/LcPrimerTerm/LcSqlDive), sql-df-bank-a.ts (house template) and the full target file incl. seed INSERTs; hand-verified every worked-example figure against the seeds before writing.
+- Inserted a full primer (hook 1 sentence; concept 4 paras; worked 5 hand steps; glossary 6 one-line terms; reallife 2 paras; where 1 sentence) after constraints / before breakdown in each dive — bank-a register: no backticks, no e.g./i.e., no emojis, every term defined on first use.
+- dau-wau-stickiness: envelope/dot/gauge framing aligned to the planned diagram; worked ties to seed rows (Sep 12 = 3/9 -> 33.3, Sep 01 truncation 100.0, Sep 08 low 20.0); glossary DAU, WAU, stickiness, trailing window, active, campaign spike.
+- growth-accounting: four-levers-flowing-into-one-total framing; July worked by hand from the seed (June 7 = 4 retained + 3 churned; July 6 = 1+4+1; identity 7+1+1-3=6; user 8 hits all four levers); glossary growth accounting, new user, retained user, resurrected user, churned user, net change.
+- funnel-step-conversion: two-readings framing (purchase 25.0 overall vs 60.0 stepwise on the seed's 12-8-5-3 reach); worked incl. repeat-row discipline (user 3/7); glossary funnel, reach, top of funnel, overall conversion, stepwise conversion, drop-off.
+- QA: git diff = 93 insertions, 0 deletions (statement/examples/constraints/breakdown/edges/ladder/approach/schema/code/walkthrough/xp byte-identical); no other file written; bunx tsc --noEmit 2>&1 | grep "sql-df-metrics" prints NOTHING (baseline errors elsewhere only).
+
+Stage Summary:
+- DELIVERED: 3 primers in sql-df-metrics.ts only — the ORIGINAL 24 of Module 13 now carry the batch-3 teaching layer; no registry/sections.ts/sql-expected.ts changes; typecheck clean.
+Task ID: 75-g
+Agent: general-purpose
+Task: Primer retrofit for the ORIGINAL markets file — src/lib/leetcode/content/sql-df-markets-a.ts (ids 8019 fx-exposure-report, 8020 portfolio-concentration-hhi, 8021 daily-balance-interest): insert a domain `primer` block into EACH of the 3 dives, content-only, nothing else.
+
+Work Log:
+- Read worklog tail (74-x batch-3 protocol), types.ts (LcPrimer/LcPrimerTerm/LcSqlDive) and sql-df-bank-a.ts (house template) first; read the target file in full including statements, constraints, seeds, code and walkthroughs before writing a word.
+- Inserted 3 primer blocks (house placement: after constraints, before breakdown) in bank-a register — hook 1 sentence, concept 4 paras, worked 5 hand steps, glossary 6 terms, reallife 2 paras, where 1 sentence; no backticks/${/e.g./i.e., all arithmetic hand-verified against the seed INSERTs.
+- D1 fx-exposure-report: worked walks Frankfurt 250000 EUR cents as-of 2026-10-01 — visible rows 09-01@1.1640 / 09-28@1.1720, future 10-05@1.1810 excluded; 250000*1.1720=293000, stale 291000, future 295250; GBP lone 08-15@1.3410 still drives (89000*1.3410=119349). Glossary: minor units, major unit, usd_per_unit, FX exposure, as-of date, revaluation. Diagram pair: rate table = exchange booth, all currencies land in one USD column.
+- D2 portfolio-concentration-hhi: worked walks five equal 20s (5x400=2000) vs one 60 + four 10s (3600+400=4000, same money, square triples weight into ninefold contribution); seed check P1 3450 (~2.9 effective), P2 exactly 2500, P3 1364 (~7.3). Glossary: weight, market value, concentration, Herfindahl-Hirschman Index, effective positions, diversified. Diagram pair: many small vs one big (90% near 8100), the square punishes hard.
+- D3 daily-balance-interest: worked walks A1's staircase 200000x14 + 150000x5 + 180000x11 = 5530000 cent-days, 5530000*0.04/365 = 606.03, round once = 606, EOD 180000; daily slices 16-22 cents. Glossary: accrual, end-of-day balance, APY, 365-day convention, cent-days, date spine. Diagram pair: staircase moved by deposits/withdrawals, tiny daily drops sum to the month.
+- QA: git diff --numstat = 93 insertions / 0 deletions on the file (pure insertions; statement/examples/constraints/breakdown/edges/ladder/approach/schema/code/walkthrough/xp untouched); no other file touched. bunx tsc --noEmit filtered for sql-df-markets-a prints NOTHING (pre-existing baseline elsewhere untouched); bun import confirms 3 dives, all primer-ok.
+
+Stage Summary:
+- DELIVERED: 3 primers in sql-df-markets-a.ts only (8019/8020/8021), content-only retrofit matching the batch-3 house shape; where-lines cite real interviewers (HSBC/Citi/Wise/Stripe; BlackRock/Vanguard/State Street/Fidelity; Stripe/Wise/Chime/Ally). tsc clean for the file — ready for review.
+
+---
+Task ID: 75-f
+Agent: general-purpose
+Task: Teaching-layer retrofit on sql-df-growth-b.ts — insert LcPrimer blocks into the 3 ORIGINAL dives (8016 usage-tier-percentiles, 8017 ab-sample-ratio-mismatch, 8018 feature-adoption-windows). Content-only; nothing else changes.
+
+Work Log:
+- Read worklog tail (74-b/c/d/f protocol), types.ts LcPrimer/LcPrimerTerm/LcSqlDive, sql-df-bank-a.ts (house template) and the full target file incl. seed INSERTs before writing; primers placed after constraints, before breakdown (house placement), bank-a formatting/register matched.
+- All worked examples hand-verified against the seeds: D1 ranks 9/19≈0.474 (33, casual) vs 10/19≈0.526 (35, core), 90→18/19≈0.947 power, 120→1.0 whale, tier avgs 120.0/225÷3=75.0/263÷6=43.8/231÷10=23.1; D2 E2 ROUND(200×0.5)=100, dev 20.0 SRM, E3 ROUND(200×0.7)=140, dev exactly 5.0 ok, NULL-fed variant 201→141→5.67 false alarm; D3 user 3 day 6, user 5 day 22, user 6 never-user zero, week-1 fold 3/6=50.0, 4/6=66.7, 5/6=83.3.
+- Diagram alignment honored: D1 sorted-line 0..1 position with fixed cut points and tie-sharing; D2 the gate before the lift (observed vs planned split, tolerance band, invalid regardless of lift); D3 personal clocks from OWN signup vs calendar weeks, adoption = first use inside the window.
+- Hygiene: no backticks/${/"e.g."/"platform" in primer strings; glossary defs 5+ words; hook 1 sentence, concept 4 paras, worked 5 steps, glossary 6 terms, reallife 2 paras, where 1 sentence per dive.
+- QA: tsc --noEmit filtered for sql-df-growth-b = ZERO lines (45-error baseline elsewhere untouched); eslint exit 0; git numstat 93 insertions / 0 deletions — statement/examples/constraints/breakdown/edges/ladder/approach/schema/code/walkthrough/xp all byte-identical; no other file touched.
+
+Stage Summary:
+- DELIVERED: 3 primer blocks in src/lib/leetcode/content/sql-df-growth-b.ts (the last 3 primer-less Data & Finance dives in this file; Module 13 retrofit batch). Glossaries — usage-tier-percentiles: percentile, PERCENT_RANK, RANK, tie, tier, whale; ab-sample-ratio-mismatch: sample ratio, SRM, control, treatment, expected_control_share, failed assignment; feature-adoption-windows: adoption window, cohort week, first use, never-user, first_use_days, denominator.
+- where lines cite real growth/experimentation employers: Spotify/Netflix/Duolingo/LinkedIn/Airbnb (D1), Booking.com/Netflix/Airbnb/Uber/LinkedIn/Duolingo (D2), Duolingo/LinkedIn/Uber/Airbnb/Netflix (D3).
+Task ID: 75-h
+Agent: general-purpose
+Task: Content-only retrofit — add domain primers to the 3 dives in src/lib/leetcode/content/sql-df-markets-b.ts (8022 dividend-income-calendar · 8023 max-drawdown · 8024 duplicate-charge-pairs), primer after constraints / before breakdown; everything else byte-identical.
+
+Work Log:
+- Read worklog tail (74-* protocol), types.ts (LcPrimer/LcPrimerTerm/LcSqlDive), sql-df-bank-a.ts (house primer style) and the full target file incl. seed INSERTs; all worked-example numbers hand-verified against the seeds (75x1.30=9750, 200x0.63=12600 locked, 150x0.48/0.52=7200/7800; -3.4196->-3.42, -8.10 exact, recoveries -1.76/-0.28; 90/110/200s chain, 120s inclusive wall vs 121s miss, 0s tie 170<171).
+- Inserted 3 full primers (hook 1 sentence; concept 4 paras; worked 5 hand steps tied to seed rows; glossary 6 one-line terms; reallife 2 paras; where 1 sentence, real companies). Diagram concepts honored: ex-date timeline (own it on ex-date or you are out; record/pay follow), running-max line above the equity curve with deepest trough-to-peak drop, chain-not-clique 120s pairs with tie-surviving pair identity.
+- Hygiene matched to batch-3 audits: no backticks/${/e.g./i.e./platform mentions; sentence/word counts pass the primer heuristics (verified with a throwaway bun audit: ALL PASS, then removed).
+- QA: git diff = 93 insertions, 0 deletions, 1 file; bunx tsc --noEmit | grep sql-df-markets-b prints NOTHING (45-error pre-existing baseline untouched). No other files touched.
+
+Stage Summary:
+- DELIVERED: 3 primers in sql-df-markets-b.ts — dividend-income-calendar (ex-date, record date, pay date, dps, income calendar, minor units), max-drawdown (NAV, running peak, drawdown, equity curve, peak-to-trough, trough), duplicate-charge-pairs (authorization, double-submission, equality triple, duplicate window, epoch seconds, pair identity).
+- Statement/examples/constraints/breakdown/edges/ladder/approach/schema/code/order/walkthrough/xp untouched; remaining batch-1/2 Data & Finance files still primer-less (next 75-* candidates).
+---
+Task ID: 75-b
+Agent: general-purpose
+Task: Primer retrofit (content-only) on src/lib/leetcode/content/sql-df-cohorts.ts — added the missing domain LcPrimer to all 3 dives (8004 cohort-retention-matrix, 8005 sessionize-events, 8006 ab-test-conversion-lift), house placement after constraints / before breakdown.
+
+Work Log:
+- Read worklog tail (74 protocol), types.ts LcPrimer/LcPrimerTerm/LcSqlDive, sql-df-bank-a.ts (house style template) and the full target file incl. every seed INSERT before writing; verified ids 8004-8006 in registry-sql-datafin.ts.
+- Inserted one full primer per dive: hook 1 sentence, concept 4 paras, worked 5 hand steps, glossary 6 terms, reallife 2 paras, where 1 sentence — statement/examples/constraints/breakdown/edges/ladder/approach/schema/code/walkthrough/xp byte-identical, no other file touched.
+- Prose aligned to the parallel artist's diagrams: D1 retention triangle (rows = cohorts, columns = M0/M1/M2, read down for same-age compares); D2 timestamp stream cut by the 30-minute wall; D3 control vs treatment bars, one lift riding both denominators.
+- Worked numbers hand-verified against seeds: D1 2026-06 cohort 75.0/50.0/50.0 with user 103's 2027-01 folding to offset 7; D2 user 204 sorted gaps 30/45/7/18/25 → sessions 30 + 50, avg 40.0; D3 11/20 = 55.0 vs 15/20 = 75.0, lift 20.0 on both rows.
+- Glossaries: D1 cohort · signup month · retention · month offset · M0/M1/M2 · activation; D2 event · session · sessionization · gap · 30-minute wall · session duration; D3 A/B test · variant · control · treatment · conversion · lift.
+- QA: bunx tsc --noEmit → zero mentions of sql-df-cohorts (45-error pre-existing baseline in examples/scripts/skills untouched); register matches batch-3 (no emojis, no e.g./i.e., no backticks, jargon defined on first use, real companies in where).
+
+Stage Summary:
+- DELIVERED: 3 primers in sql-df-cohorts.ts only — batch-1/2 teaching-layer retrofit continues; content-only change, grader-facing artifacts untouched.
+---
+Task ID: 75-d
+Agent: general-purpose
+Task: Retrofit DOMAIN PRIMERS onto the 3 original Finance Core ledger dives in src/lib/leetcode/content/sql-df-ledger.ts (settlement-fails-aging 8010, realized-pnl-average-cost 8011, gl-reconciliation 8012) — content-only, nothing else touched.
+
+Work Log:
+- Read worklog tail (74-* protocol), types.ts LcPrimer/LcPrimerTerm/LcSqlDive, sql-df-bank-a.ts (house template) and the full target file incl. every seed INSERT before writing a word.
+- Inserted one primer block per dive at the house placement (after constraints, before breakdown), matching bank-a register: hook 1 sentence, concept 3-4 paras, worked 5 hand steps, glossary 6 one-line terms, reallife 2 paras, where 1 sentence; plain prose, no backticks/bold/emoji/e.g.-i.e.
+- Worked examples tie to the file's own seeds, re-verified by hand: fail clock 525000 (trade 3, late 2) / 500000 (trade 4, late 5) / 300000 (trade 5, late 9) with trade 6 the due-today exclusion; average-cost pool 210000/200 = 1050 → 267500/250 = 1070, realizes 12000 + 1200 = 13200 and −1500 − 638.89 → −2139; recon nets cash_payroll 22000 vs 20000 (+2000), accounts_payable −8300 vs −8000 (−300), cash_main 45000 reconciled.
+- Prose aligned to the parallel artist's diagram concepts: fail clock (T+2 gate → aging buckets 1-3/4-7/8+ → buy-in exposure), average-cost ledger (buy layers pool into ONE average; sells never move it), two-books-one-truth (breaks in BOTH signs: sub-ledger missing an entry vs GL double-counting one).
+- QA: git diff shows 93 insertions / 0 deletions in the one file — statement, examples, constraints, breakdown, edges, ladder, approach, schema, code, walkthrough, xp byte-identical; no other file touched.
+- tsc --noEmit filtered for sql-df-ledger: NO output (clean against the pre-existing 45-error baseline in landing/*).
+
+Stage Summary:
+- DELIVERED: 3 primers in sql-df-ledger.ts — glossaries: settlement-fails-aging (settlement, T+1/T+2, settlement fail, aging, exposure, buy-in); realized-pnl-average-cost (position, lot, average cost, realized P&L, unrealized P&L, replay); gl-reconciliation (general ledger, sub-ledger, posting, debit-positive, reconciliation, break). Each `where` names the dive's registry-tagged firms (Schwab/Citadel · Robinhood/Two Sigma · Stripe/Adyen) alongside Goldman/JPMorgan/State Street/Northern Trust.
+## Task ID: 75-k — Data & Finance art retrofit (Growth & Experiments family)
+**Agent:** general-purpose
+
+**Task:** Create the Growth & Experiments art file for Module 13's four original batch-3 sections: 6 problem diagrams (860×210 inner `<g>`) + 1 study flow (860×300), matching the lc-df-art-bank.tsx style template (palette C, MONO, Box/Tag/Arrow/Note/Defs helpers, flat design, per-component marker ids `arw-dfg-*`).
+
+**Work:**
+- Created `src/components/learn/lc-df-art-growth.tsx` ("use client", single `<g>` roots, no gradients/filters/shadows).
+- Exports: ArtWeekOverWeekChurn, ArtMedianTimeToConvert, ArtRolling7dActives, ArtUsageTierPercentiles, ArtAbSampleRatioMismatch, ArtFeatureAdoptionWindows, ArtStudyExperimentLife (+ GROWTH_ART_W/H consts).
+- Study flow marks 6 numbered gates (1 WoW churn · 2 time-to-convert · 3 rolling actives · 4 usage tiers · 5 SRM check · 6 adoption windows) across the hypothesis→design→run→SRM gate→read→decide→monitor loop with loop-back arrow.
+- Wiring into lc-df-art.tsx lookups deliberately left out of scope for this task.
+
+**Stage summary:** File complete; `bunx tsc --noEmit | grep lc-df-art-growth` prints nothing (50-line pre-existing baseline elsewhere untouched). Next: register the exports in lc-df-art.tsx PRIMER_ART/STUDY_FLOW maps when the growth sections land.
+## Task ID: 75-i — Data & Finance art retrofit (Product Analytics family)
+- Agent: general-purpose
+- Task: create lc-df-art-product.tsx — 6 problem concept diagrams (860×210) + 1 section study flow (860×300) for the 4 original Product Analytics sections' primers.
+- Work Log: copied the lc-df-art-bank.tsx helper structure verbatim (palette C, MONO, Box/Tag/Arrow/Note/Defs, flat design, marker convention) with family prefix arw-dfp; rendered inner <g> content only per lc-df-art.tsx framing; exports ArtDauWauStickiness, ArtGrowthAccounting, ArtFunnelStepConversion, ArtCohortRetentionMatrix, ArtSessionizeEvents, ArtAbTestConversionLift, ArtStudyProductLoop (6 gates on the loop pipeline with return arrow).
+- Stage Summary: file typechecks clean (bunx tsc --noEmit | grep lc-df-art-product → empty); not yet wired into lc-df-art.tsx lookups (PRIMER_ART/STUDY_FLOW) — follow-up task should register slugs + primer labels.
+## Task ID: 75-j — Data & Finance art retrofit (Finance Core family)
+
+**Agent:** general-purpose
+
+**Task:** Create `src/components/learn/lc-df-art-finance.tsx` — the Finance Core art family: 6 problem primer diagrams (860×210 inner `<g>` only) + 1 study flow (860×300), following the lc-df-art-bank.tsx template (palette C, MONO labels, Box/Tag/Arrow/Note/Defs helpers, flat dark pastel style).
+
+**Work Log:**
+- Read lc-df-art-bank.tsx (style template), lc-df-art.tsx (framing: outer svg supplied by PrimerArt/StudyFlowArt), lc-primer.tsx lines 58-100.
+- Built 6 diagrams: ArtLoanAmortizationSchedule (balance stair + exploded interest/principal payment bar + rate/12 formula panel), ArtDelinquencyBuckets (5-bucket DPD stair, ages arrows, cure arc, default exit), ArtPortfolioWeights (4-slice donut + weight bars under one "total" bracket), ArtSettlementFailsAging (T/T+1/T+2 rail, settlement gate, green settled leg, fail aging brackets 1-3/4-7/8+ + buy-in risk), ArtRealizedPnlAverageCost ($10/$14 lots pooling into $12 avg, $15 sell, +$3/sh P&L bracket), ArtGlReconciliation (GL vs sub-ledger rows, missing-in-GL + double-counted breaks, Δ=0 badge).
+- Built ArtStudyMoneyPipeline: contracts → service → measure → reconcile → report with 6 numbered amber gates (amortization, DPD buckets, weights, fails aging, realized P&L, GL recon) on a gate rail + owner panel.
+- Marker prefix `arw-dfn-1..6` + `arw-dfn-s1` (dff/dfb/dfa/dfq already taken by sibling families); no gradients/filters; "use client" header; TS strict-clean.
+
+**Stage Summary:** File created and verified — `bunx tsc --noEmit | grep lc-df-art-finance` prints nothing (pre-existing 45-error baseline untouched). Ready for wiring into lc-df-art.tsx lookup maps by the integration task.
+## Task ID: 75-l — Data & Finance art retrofit (Markets & Risk family)
+
+**Agent:** general-purpose
+
+**Task:** Create `src/components/learn/lc-df-art-mkts.tsx` — the Markets & Risk family art file: 6 primer concept diagrams (860×210) + 1 study flow (860×300), inner `<g>` content only, styled exactly on the lc-df-art-bank template (palette C, mono, Box/Tag/Arrow/Note/Defs helpers, flat, no gradients/filters).
+
+**Work log:**
+- Read lc-df-art-bank.tsx (style template), lc-df-art.tsx (framing), lc-primer.tsx (PrimerArt render site), sections.ts + sql-df-markets-a/b.ts (slug + domain facts).
+- Wrote 7 exports with unique marker ids `arw-dfm-1..6` / `arw-dfm-s1`: ArtFxExposureReport (3 currency books → ×rate chips → USD 254,078 total), ArtPortfolioConcentrationHhi (5×20% = 2,000 vs 89/8/3 = 7,994 ≈ 8,000, HHI banner), ArtDailyBalanceInterest (EOD staircase, per-step rate/365 drops, Σ-drops bucket), ArtDividendIncomeCalendar (ex-date gate, green pre-gate buy rides $0.42 chip, red post-gate too late), ArtMaxDrawdown (running-max steps, day3→day7 −12.96% bracket), ArtDuplicateChargePairs (A/B 90s pair bracket, C chains, 0-120s window chip), ArtStudyMarketDesk (6-gate desk-day pipe with clock + readers panels).
+- Typecheck: `bunx tsc --noEmit` filtered for "lc-df-art-mkts" prints NOTHING (baseline 45 errors untouched).
+
+**Stage summary:** File complete and strict-clean; wiring into lc-df-art.tsx PRIMER_ART/STUDY_FLOW maps is left to the integration task (slugs: fx-exposure-report, portfolio-concentration-hhi, daily-balance-interest, dividend-income-calendar, max-drawdown, duplicate-charge-pairs; flow: market-desk).
+---
+Task ID: 75
+Agent: Super Z (main agent)
+Task: Teaching-layer retrofit — primers, concept art and study guides for the ORIGINAL 24 Data & Finance problems (8001-8024) and their 4 sections, completing the batch-3 teaching layer across all of Module 13.
+
+Work Log:
+- Discovered on session resume that batch 3 (commit a5227a4) had already landed the 4 new sections + primers for 8025-8048; the pending work was the retrofit of 8001-8024 (8 content files with 0 primers) + study guides for the 4 original sections.
+- Mapped scope: sql-df-{metrics,cohorts,money,ledger,growth-a,growth-b,markets-a,markets-b}.ts (3 dives each) + lc-df-art registry + lc-primer labels + sections.ts.
+- 8 parallel content authors (75-a..75-h) inserted one full LcPrimer per dive — house placement (after constraints, before breakdown), worked examples hand-verified against each file's own seeds, 4-6 glossary terms, 2-3 real-life paras, real-company `where`. Diff: 93-96 insertions per file, 0 deletions — all other fields byte-identical.
+- 4 parallel art authors (75-i..75-l) created lc-df-art-{product,finance,growth,mkts}.tsx — 6 problem concept diagrams (860x210) + 1 study flow (860x300) each, copied from the lc-df-art-bank.tsx helper language (flat, pastel, mono, unique marker ids).
+- Lead wiring: lc-df-art.tsx +24 PRIMER_ART entries +4 STUDY_FLOW entries; lc-primer.tsx +24 PRIMER_ART_LABEL entries +4 FLOW_LABEL entries; sections.ts +4 study blocks (product-loop, money-pipeline, experiment-life, market-desk flows; paths ordered Easy->Hard with real trap notes).
+- Validation: scripts/tmp-75-primer-check.ts — ALL PRIMER AUDITS PASS (48/48 primers complete, 8/8 study guides, art+label coverage 100%); lc-sections-check 383 1:1 ALL PASS; lc-sql-verify 383/383 ALL PASS (grading untouched); tsc/eslint clean filtered to touched files.
+- E2E at /#learn: Module 13 renders 8 sections each with a study guide; Product Analytics study flow renders (39 svg els, label "study flow · the product analytics loop"); loan-amortization-schedule + portfolio-weights primers render full panels (hook + 860x210 concept art + worked steps + glossary + reallife + where); step nav = 7 stops with dive-primer as stop 2; solved portfolio-weights live "Run & check" -> Correct, module 0/48 -> 1/48, +10 XP; mobile 390x844 overflowX 0; console clean (Fast Refresh only). Screenshots: download/df75-*.png.
+
+Stage Summary:
+- Module 13 teaching layer now COMPLETE: all 48 problems carry domain primers, all 8 sections carry study guides + flow art — 24 new bespoke diagrams (total 56 DF diagrams incl. batch 3) in the house pastel/mono language.
+- Grading surface untouched (383/383 verify); no registry/sections slug changes (48 problems, 8 sections, counters stable).
+- Key files: 8 sql-df-*.ts content files, 4 new lc-df-art-*.tsx families, lc-df-art.tsx, lc-primer.tsx, sections.ts, scripts/tmp-75-primer-check.ts.

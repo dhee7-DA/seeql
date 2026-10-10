@@ -53,6 +53,34 @@ const PRIMER_ART_LABEL: Record<string, string> = {
   "beta-benchmark": "concept · the scatter against the market",
   "split-adjusted-position": "concept · the split cliff, raw vs adjusted",
   "wash-trade-detection": "concept · the round trip inside the window",
+  // batch 1-2 retrofit — Product Analytics
+  "dau-wau-stickiness": "concept · DAU inside the WAU envelope",
+  "growth-accounting": "concept · the four levers of growth accounting",
+  "funnel-step-conversion": "concept · the funnel and its two readings",
+  "cohort-retention-matrix": "concept · the retention triangle",
+  "sessionize-events": "concept · events folding into sessions",
+  "ab-test-conversion-lift": "concept · one experiment, two worlds",
+  // batch 1-2 retrofit — Finance Core
+  "loan-amortization-schedule": "concept · every payment splits — interest then principal",
+  "delinquency-buckets": "concept · the DPD aging clock",
+  "portfolio-weights": "concept · your slice of the pie",
+  "settlement-fails-aging": "concept · T+2 and the fail clock",
+  "realized-pnl-average-cost": "concept · the average-cost ledger",
+  "gl-reconciliation": "concept · two books, one truth",
+  // batch 1-2 retrofit — Growth & Experiments
+  "week-over-week-churn": "concept · churn leaves last week's porch",
+  "median-time-to-convert": "concept · the median outruns the mean",
+  "rolling-7d-actives": "concept · the trailing window that never sums",
+  "usage-tier-percentiles": "concept · where you stand in the line",
+  "ab-sample-ratio-mismatch": "concept · the gate before the lift",
+  "feature-adoption-windows": "concept · clocks that start at signup",
+  // batch 1-2 retrofit — Markets & Risk
+  "fx-exposure-report": "concept · every currency becomes one number",
+  "portfolio-concentration-hhi": "concept · many small vs one big",
+  "daily-balance-interest": "concept · interest accrues on every day-end balance",
+  "dividend-income-calendar": "concept · own it on ex-date, get paid",
+  "max-drawdown": "concept · the deepest fall from the highest peak",
+  "duplicate-charge-pairs": "concept · the same charge, twice",
 };
 
 export function PrimerCard({ dive }: { dive: LcSqlDive }) {
@@ -147,6 +175,10 @@ const FLOW_LABEL: Record<string, string> = {
   "payments-pipeline": "study flow · the payments pipeline",
   "month-close": "study flow · the month-end close",
   "trades-to-risk": "study flow · from trades to risk numbers",
+  "product-loop": "study flow · the product analytics loop",
+  "money-pipeline": "study flow · from contracts to numbers",
+  "experiment-life": "study flow · the life of an experiment",
+  "market-desk": "study flow · the market desk's day",
 };
 
 function Panel({ id, children, className }: { id?: string; children: React.ReactNode; className?: string }) {

@@ -31,6 +31,37 @@ export const SQL_DF_METRICS: LcSqlDive[] = [
       "dau counts distinct users with an event on the day itself — user 1 logs twice on 2026-09-01 and still counts once",
       "columns day, dau, wau7, stickiness_pct = ROUND(100.0 * dau / wau7, 1), ordered by day ASC; days with zero events never report",
     ],
+    primer: {
+      hook:
+        "Stickiness is how a product team learns whether its weekly audience is turning into a daily habit or just passing through — before anyone spends another dollar acquiring users the product cannot keep.",
+      concept: [
+        "The first number is DAU, daily active users: the count of distinct people who fired at least one real action in the product on a given calendar day — opened the app, played a track, sent a message. Two rules hide inside that definition. The action must be logged as an event, because active is a defined behavior, not a feeling a dashboard guesses at; and the count is of users, not events, because one person firing ten actions in a morning is still one person. Every double-log, refresh and retry therefore has to collapse, which is why these reports are built on distinct-user counts rather than raw row counts.",
+        "The second number is WAU, weekly active users: the distinct people who fired at least one event anywhere in the trailing 7-day window ending on the day being reported, that day itself included. Picture it as an envelope laid over the calendar — a band six days wide plus today — with today's DAU as a single dot inside it. The envelope can never be narrower than the dot, because today is part of the window: every user counted today is automatically counted this week too. On the first day of a dataset the window has nothing behind it, so the envelope collapses onto the dot — an artifact worth knowing about before anyone celebrates a perfect score.",
+        "Stickiness divides the two: DAU over WAU, written as a percentage. It answers one question — of everyone who cared enough to show up this week, what share showed up today. A reading near 50 means the weekly audience tends to appear every other day; a reading near 10 means most of the week's visitors came once and moved on. The same idea scales to any window — DAU over monthly actives is the classic dashboard ratio — but the arithmetic never changes: a small daily numerator divided by a wider, window-fed denominator.",
+        "The ratio is also a lie detector for traffic. A one-off marketing campaign shoves new visitors into the weekly envelope while today's habit-bound crowd barely moves, so stickiness sinks during a spike — the envelope fattened faster than the dot. Organic, habit-forming usage does the opposite: the daily dot keeps pace with the band and the gauge climbs. That is why teams read stickiness beside the raw counts instead of alone — the same percentage can describe a healthy product on a quiet day and a struggling one the morning after a big ad push.",
+      ],
+      worked: [
+        "Walk a tiny three-user product first: user A shows up every day, user B on days 1 and 2, user C only on day 2 — and nothing exists before day 1.",
+        "Day 3 by hand: the day scope finds only A, so dau reads 1; the trailing window covers days 1 through 3 and finds A, B and C, so wau7 reads 3; stickiness is 100 × 1 / 3 = 33.3.",
+        "The same arithmetic on the seed's last day, 2026-09-12: the day scope finds users 1, 4 and 6, so dau is 3, while the window Sep 6–12 still holds 9 distinct users (user 5 last fired on Sep 5, one day outside) — 100.0 × 3 / 9 rounds to 33.3, the same reading from real rows.",
+        "Contrast the seed's first day, 2026-09-01: no earlier data exists, so the truncated window collapses onto the day itself — dau 4 (user 1 logs twice and still counts once) against wau7 4 reads 100.0, an artifact of the data's edge, not a healthy product.",
+        "And the quietest day, 2026-09-08: only users 1 and 6 fire, so dau reads 2, but the window Sep 2–8 reaches all 10 users — 100.0 × 2 / 10 = 20.0, the run's low, a small dot under a full envelope.",
+      ],
+      glossary: [
+        { term: "DAU", def: "daily active users — distinct people who fire at least one event on a given day" },
+        { term: "WAU", def: "weekly active users — distinct people with an event in the trailing 7 days, today included" },
+        { term: "stickiness", def: "the DAU-over-WAU percentage — the share of the weekly audience that showed up today" },
+        { term: "trailing window", def: "a range ending on the reporting day and reaching a fixed span back, both ends inclusive" },
+        { term: "active", def: "a logged, meaningful action — the event that makes a user count, distinct from a raw row" },
+        { term: "campaign spike", def: "a one-off burst of acquired traffic that widens the weekly envelope faster than the daily habit grows" },
+      ],
+      reallife: [
+        "A consumer product's growth or core-analytics team computes DAU, WAU and the ratio between them every morning, usually as the first panel of the dashboard reviewed in standup. The numbers decide small daily things — whether to send the re-engagement push, whether yesterday's dip was weather or a regression — and big strategic ones, because investors read stickiness as a proxy for habit. A team watching the gauge slide week over week typically splits the audience into cohorts before reacting: organic users versus campaign-acquired, newcomers versus long-tenured.",
+        "What breaks in practice: timezones, first of all — a global product has no single Tuesday, and the day boundary has to be pinned per user or the counts smear across midnight. Bot and test traffic inflates the weekly envelope while real humans hold the daily dot down, quietly sinking the ratio; and every launch, press hit or paid push lands as a spike that reads as a stickiness collapse unless the campaign cohort is split out first. The numbers drive real decisions — shifting budget from acquisition to retention, tightening onboarding, rolling back a redesign — and a good analyst can reproduce the daily query by hand before defending any of them.",
+      ],
+      where:
+        "Product-analytics and growth interviews at consumer tech companies — Spotify, Duolingo, Netflix, Airbnb, Uber — lean on DAU/WAU stickiness for analyst, data-scientist and product-analyst roles.",
+    },
     breakdown: [
       "One event stream, two windows, one ratio. Each output day asks two distinct-user questions over the same events table: who fired today (dau) and who fired sometime in the trailing seven days including today (wau7). The stickiness ratio is only honest because both counts are DISTINCT users — an event count would rise whenever a user logs twice, which measures logging behavior, not audience size. The window ending on the day itself is what makes wau7 >= dau a mathematical guarantee rather than a coincidence.",
       "The naive walk builds the calendar wrong. Hard-coding the 12 days — or generating a dense calendar from min to max date — works here only because every day happened to log an event; the contract says days with zero events do not exist, and DISTINCT date(event_ts) is the only definition that respects that for any seed. The other classic slip is the window bound: BETWEEN date(day, '-6 days') AND day is a 7-day window inclusive of both ends, and writing '< day' or '-7 days' shifts the audience — on 2026-09-12 it would read the Sep 5–11 audience (10 users) instead of the Sep 6–12 one (9 users).",
@@ -181,6 +212,37 @@ ORDER BY d.day ASC;`,
       "churned is attributed to the month the user left; the first month reports churned = 0, and a user active only in 2026-09 (user 11) shows no churn because 2026-10 is outside the data",
       "columns month, new_users, retained, resurrected, churned, ordered by month ASC",
     ],
+    primer: {
+      hook:
+        "Growth accounting is the audit behind an active-user chart — it names which lever moved the total, so a team knows whether growth was bought, kept or won back.",
+      concept: [
+        "An active-user chart that reads up and to the right hides its own explanation: the base could be swelling with newcomers, holding on to everyone it already has, or refilling a leaky bucket. Growth accounting replaces that one number with a partition. Each month's active users split three ways by their history: new users, whose first-ever activity lands this month; retained users, who were also active in the previous calendar month; and resurrected users, who were away for at least one calendar month and came back. The three buckets never overlap, so they sum exactly to the month's active base.",
+        "The fourth lever, churned, is counted in the month a user left, not the month they were missed: everyone active last calendar month who did not return lands as this month's churn. That direction makes the report a system of double entries with two identities that must always balance — this month's actives equal new plus retained plus resurrected, and last month's actives equal retained plus churned. Stitch the months together and a third identity falls out: this month's actives equal last month's actives, plus new, plus resurrected, minus churned. Picture the levers as pipes around one tank — new and resurrected pour in, churned drains out, and retained is last month's water that never left.",
+        "The word that separates a correct report from a plausible wrong one is calendar. A user active in May and July was not retained in July — July's previous calendar month is June, and June holds no activity for them — so July calls them resurrected. Comparing each month against the user's own previous active month instead of the previous calendar month silently converts every gap into a retention, flattering the exact number the report exists to interrogate.",
+        "Why split what one total already shows? Because each lever carries a different diagnosis. Growth that is mostly new is rented — it continues only while the acquisition spend continues; growth that is mostly retained compounds on itself; a fat resurrected count means lapsed users still have a reason to come back, and win-back campaigns have something to push on. The lever mix is the strategy memo; the total is just the headline.",
+      ],
+      worked: [
+        "Take the seed's June and July by hand: June holds 7 actives — users 1, 2, 3, 5, 7, 8 and 12 — while July holds 6 — users 1, 2, 4, 7, 9 and 12.",
+        "Classify July's six by history: user 9 has no earlier row at all, so new; users 1, 2, 7 and 12 were active in June, so retained; user 4 was active in May but not June — a skipped calendar month — so resurrected. That is 1 new + 4 retained + 1 resurrected, and 1 + 4 + 1 = 6 reconciles against July's actives.",
+        "Churn flows forward from June: users 3, 5 and 8 were June actives who never arrived in July, so July's churned reads 3 — and June's 7 actives reconcile as 4 retained + 3 churned.",
+        "The growth identity closes the loop: July's 6 actives equal June's 7 + 1 new + 1 resurrected − 3 churned — 7 + 1 + 1 − 3 = 6.",
+        "One lever per user-month is the rule, but not one per career: the seed's user 8 is new in June, churned in July, resurrected in August and churned again in September — all four levers touched by a single user.",
+      ],
+      glossary: [
+        { term: "growth accounting", def: "splitting each period's active base into new, retained and resurrected, with churn attributed to the month the user left" },
+        { term: "new user", def: "a user whose first-ever activity lands in the current month" },
+        { term: "retained user", def: "a user active this month and in the previous calendar month" },
+        { term: "resurrected user", def: "a lapsed user back this month after skipping at least one calendar month" },
+        { term: "churned user", def: "a user active last calendar month who did not return, counted in the month they left" },
+        { term: "net change", def: "new plus resurrected minus churned — the lever sum that carries last month's base into this month's" },
+      ],
+      reallife: [
+        "A growth team at a subscription consumer app runs this report monthly, and the growth product manager opens the leadership review with it: one stacked bar per month, each lever a different color. The mix decides where next quarter's effort goes — a new-heavy chart argues for retention work before more acquisition spend, a retained-heavy chart justifies pouring fuel on the funnel, and a fat resurrected lever makes the win-back email campaign the cheapest growth in the building. Boards like the report because it audits: the four levers either reconcile last month into this month, or someone's pipeline is leaking rows.",
+        "What breaks in practice: month boundaries first — teams that report on rolling 28-day windows instead of calendar months get different retentions than their finance counterparts, and the two reports stop reconciling. The first month of any dataset reads as all-new with zero churn, so dashboards anchored at the data start quietly overstate acquisition; and a December holiday spike turns into a January resurrection wave that no one should celebrate. Seasonality, bot signups and duplicate accounts each contaminate one lever or another, which is why mature teams pin the definitions — calendar month, distinct user, first-ever activity — in writing before arguing about the numbers.",
+      ],
+      where:
+        "Growth and product-analytics interviews at consumer subscription companies — Duolingo, Spotify, Netflix, Uber, DoorDash — lean on growth accounting for data-scientist, product-analyst and growth-product-manager screens.",
+    },
     breakdown: [
       "Growth accounting is a partition with a direction. Each month's actives split cleanly three ways — new (no earlier activity), retained (also active the previous calendar month), resurrected (back after skipping at least one month) — and the fourth lever, churned, belongs to the month the user LEFT, counting the previous month's actives who did not follow up. The identities hold per month: actives = new + retained + resurrected, and the previous month's actives = retained + churned. That double-entry structure is what makes the four counts auditable — May's 6 actives reappear as June's 4 retained plus 2 churned.",
       "The naive misstep trusts LAG(active_month) equality. 'Consecutive activity' is not 'the user was active last time' unless you compare against the previous CALENDAR month computed with date arithmetic — user 4's LAG on their July row is '2026-05', an earlier month that proves prior activity but not July retention. The fix anchors on day 01: date(active_month || '-01', '-1 month') lands exactly one calendar month back (the anchor also sidesteps any month-end clamping), and the CASE compares two strings of the same 'YYYY-MM' shape.",
@@ -355,6 +417,37 @@ ORDER BY m.month ASC;`,
       "columns step, users, pct_of_visitors = ROUND(100.0 * users / visitors, 1), pct_from_prev = ROUND(100.0 * users / prev_step_users, 1); the visit row reports pct_from_prev = 100.0",
       "rows in funnel order visit → signup → cart → purchase — semantic order, not alphabetical",
     ],
+    primer: {
+      hook:
+        "A funnel report is how a product team finds the exact step where would-be customers give up — reach per step, and two conversion readings that agree on the counts but disagree on the story.",
+      concept: [
+        "A funnel is the ordered path a product expects people to walk toward its money moment: visit the site, sign up, fill the cart, purchase. The order is semantic — defined by the product's logic, never alphabetical — and each step's reach is the number of distinct users who ever logged that step, however many times they logged it. Reach should shrink or hold as you descend, because everyone at cart has, by the product's story, already visited and signed up. When the counts stop shrinking the way the story expects, the funnel is where an investigation starts.",
+        "Every step carries two readings of the same reach. Overall conversion divides a step's users by the original visitors — the share of everyone who ever entered that got this far, start to finish. Stepwise conversion divides the same users by the previous step's audience — of the people who made it to the previous step, how many took this one, adjacent pair by adjacent pair. The two disagree by design, and the disagreement is information: three buyers out of twelve visitors is a modest 25.0 overall, while the same three out of five carters is a strong 60.0 stepwise.",
+        "The two readings answer different management questions. Overall conversion sizes the whole pipeline — it is what a marketing dollar buys, the number that feeds revenue forecasts and acquisition budgets. Stepwise conversion localizes the leak — it points at the one seam bleeding users, the step a redesign or an experiment should target first. A funnel can convert well at every step yet lose badly overall, simply because an early seam let most of the crowd out before the good steps began.",
+        "Two pieces of hygiene keep the numbers honest. Reach counts users, not rows — a shopper who carts on Tuesday and again on Thursday is still one carter, and counting both rows inflates every percentage downstream. And every row of the report divides one users figure by a different denominator — the original visitors for the overall reading, the previous step for the stepwise one — so a report that shares a single denominator across both columns has flattened the very contrast it exists to show.",
+      ],
+      worked: [
+        "Tally the seed's reaches by hand: 12 distinct users visit (users 1 through 12), 8 of them sign up, 5 cart, and 3 purchase — users 1, 2 and 4, the only complete journeys.",
+        "The overall reading divides each step by the original 12 visitors: signup 100 × 8 / 12 = 66.7, cart 100 × 5 / 12 = 41.7, purchase 100 × 3 / 12 = 25.0 — a quarter of everyone who visited ever bought.",
+        "The stepwise reading divides each step by the step before it: signup 8 / 12 = 66.7 (the same number here, because visit is the top), cart 100 × 5 / 8 = 62.5, purchase 100 × 3 / 5 = 60.0.",
+        "Read the disagreement: purchase is 25.0 overall yet 60.0 stepwise, so checkout is not the leak — the funnel bled early, losing 4 of its 12 visitors already at signup.",
+        "Watch the repeat rows: user 3 carts twice and user 7 visits twice, so raw row counts would read 13 visits and 6 carts, while distinct users read 12 and 5 — and every percentage hangs off those.",
+      ],
+      glossary: [
+        { term: "funnel", def: "the ordered sequence of steps a product expects users to pass through toward a goal" },
+        { term: "reach", def: "the count of distinct users who ever logged a given step, repeat rows collapsed" },
+        { term: "top of funnel", def: "the first step's audience — the visitors every overall percentage divides by" },
+        { term: "overall conversion", def: "a step's users divided by the original visitors — the start-to-finish share" },
+        { term: "stepwise conversion", def: "a step's users divided by the previous step's users, one adjacent pair at a time" },
+        { term: "drop-off", def: "the users a step loses — the previous step's reach minus this step's" },
+      ],
+      reallife: [
+        "Product-analytics teams own funnel dashboards wherever a product has a money moment: checkout at DoorDash or Airbnb, onboarding at a subscription software tool, the signup-to-first-play path at Spotify. The weekly growth review reads the two columns together — overall conversion to size the prize, stepwise to pick the seam — and each quarter's experiment backlog is largely a list of attacks on the worst stepwise rate. When one step's reading moves after a release, this report is often the first signal that a redesign helped or broke.",
+        "What breaks in practice: users who skip steps or log them out of order — a returning shopper who goes straight to cart — bend the counts in ways the neat story does not expect, and the team has to decide whether the funnel is a strict sequence or a set of milestones. Window choice changes the numbers: a funnel joined within a single session reads tighter than one joined across thirty days, and the two are not comparable. Repeat events, bot traffic and steps logged by back-end jobs rather than user actions each inflate reach unless it is defined as distinct users over a curated event list — exactly the discipline the SQL has to encode.",
+      ],
+      where:
+        "Product-analytics and e-commerce interviews — Airbnb, DoorDash, Uber, Shopify, Spotify — lean on funnel conversion for product-analyst, data-scientist and growth-engineer screens.",
+    },
     breakdown: [
       "One count, two denominators. Per step the report wants reach (distinct users), the step's share of the original visitors (users / 12 here) and the step-over-step conversion (users / previous step's users) — and the same number tells two different stories: purchase's 25.0 says a quarter of everyone who visited bought, while its 60.0 says most people who carted followed through. Keeping the two apart is the whole problem: every row divides the SAME users figure by a DIFFERENT denominator.",
       "The funnel's order is semantic and must be imposed, not assumed. Alphabetical ORDER BY step ships cart, purchase, signup, visit — which scrambles the narrative and, worse, feeds LAG the wrong previous row, so every step-over-step ratio divides by the wrong step (signup would divide by purchase's 3 and read 266.7). A four-row VALUES CTE — or a CASE rank — pins visit → signup → cart → purchase before any window function runs, and ordering by that rank makes the output contract deterministic.",

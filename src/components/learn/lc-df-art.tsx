@@ -26,6 +26,26 @@ import {
   ArtStudyTradesToRisk, ArtTimeWeightedReturn, ArtValueAtRisk,
   ArtWashTradeDetection,
 } from "./lc-df-art-quant";
+import {
+  ArtAbTestConversionLift, ArtCohortRetentionMatrix, ArtDauWauStickiness,
+  ArtFunnelStepConversion, ArtGrowthAccounting, ArtSessionizeEvents,
+  ArtStudyProductLoop,
+} from "./lc-df-art-product";
+import {
+  ArtDelinquencyBuckets, ArtGlReconciliation, ArtLoanAmortizationSchedule,
+  ArtPortfolioWeights, ArtRealizedPnlAverageCost, ArtSettlementFailsAging,
+  ArtStudyMoneyPipeline,
+} from "./lc-df-art-finance";
+import {
+  ArtAbSampleRatioMismatch, ArtFeatureAdoptionWindows, ArtMedianTimeToConvert,
+  ArtRolling7dActives, ArtStudyExperimentLife, ArtUsageTierPercentiles,
+  ArtWeekOverWeekChurn,
+} from "./lc-df-art-growth";
+import {
+  ArtDailyBalanceInterest, ArtDividendIncomeCalendar, ArtDuplicateChargePairs,
+  ArtFxExposureReport, ArtMaxDrawdown, ArtPortfolioConcentrationHhi,
+  ArtStudyMarketDesk,
+} from "./lc-df-art-mkts";
 
 const PRIMER_ART: Record<string, ComponentType> = {
   // Banking & Credit Risk
@@ -56,6 +76,34 @@ const PRIMER_ART: Record<string, ComponentType> = {
   "beta-benchmark": ArtBetaBenchmark,
   "split-adjusted-position": ArtSplitAdjustedPosition,
   "wash-trade-detection": ArtWashTradeDetection,
+  // Product Analytics
+  "dau-wau-stickiness": ArtDauWauStickiness,
+  "growth-accounting": ArtGrowthAccounting,
+  "funnel-step-conversion": ArtFunnelStepConversion,
+  "cohort-retention-matrix": ArtCohortRetentionMatrix,
+  "sessionize-events": ArtSessionizeEvents,
+  "ab-test-conversion-lift": ArtAbTestConversionLift,
+  // Finance Core
+  "loan-amortization-schedule": ArtLoanAmortizationSchedule,
+  "delinquency-buckets": ArtDelinquencyBuckets,
+  "portfolio-weights": ArtPortfolioWeights,
+  "settlement-fails-aging": ArtSettlementFailsAging,
+  "realized-pnl-average-cost": ArtRealizedPnlAverageCost,
+  "gl-reconciliation": ArtGlReconciliation,
+  // Growth & Experiments
+  "week-over-week-churn": ArtWeekOverWeekChurn,
+  "median-time-to-convert": ArtMedianTimeToConvert,
+  "rolling-7d-actives": ArtRolling7dActives,
+  "usage-tier-percentiles": ArtUsageTierPercentiles,
+  "ab-sample-ratio-mismatch": ArtAbSampleRatioMismatch,
+  "feature-adoption-windows": ArtFeatureAdoptionWindows,
+  // Markets & Risk
+  "fx-exposure-report": ArtFxExposureReport,
+  "portfolio-concentration-hhi": ArtPortfolioConcentrationHhi,
+  "daily-balance-interest": ArtDailyBalanceInterest,
+  "dividend-income-calendar": ArtDividendIncomeCalendar,
+  "max-drawdown": ArtMaxDrawdown,
+  "duplicate-charge-pairs": ArtDuplicateChargePairs,
 };
 
 const STUDY_FLOW: Record<string, ComponentType> = {
@@ -63,6 +111,10 @@ const STUDY_FLOW: Record<string, ComponentType> = {
   "payments-pipeline": ArtStudyPaymentsPipeline,
   "month-close": ArtStudyMonthClose,
   "trades-to-risk": ArtStudyTradesToRisk,
+  "product-loop": ArtStudyProductLoop,
+  "money-pipeline": ArtStudyMoneyPipeline,
+  "experiment-life": ArtStudyExperimentLife,
+  "market-desk": ArtStudyMarketDesk,
 };
 
 /** One concept diagram, framed — keyed by problem slug. */
