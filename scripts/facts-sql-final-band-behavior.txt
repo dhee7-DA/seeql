@@ -1,0 +1,505 @@
+// Official FACTS (schemas + example rows + constraints) for band "band-behavior".
+// Source: leetcode.com public GraphQL, fetched 2026-10-06.
+// Use ONLY the factual data (table shapes, example rows, ordering rules).
+// Statements/blurbs must be written as ORIGINAL PARAPHRASES (app policy).
+
+##### 3220 odd-and-even-transactions [Medium]
+Table: transactions
+
++------------------+------+
+| Column Name      | Type |
++------------------+------+
+| transaction_id   | int  |
+| amount           | int  |
+| transaction_date | date |
++------------------+------+
+The transactions_id column uniquely identifies each row in this table.
+Each row of this table contains the transaction id, amount and transaction date.
+
+Write a solution to find the sum of amounts for odd and even transactions for each day. If there are no odd or even transactions for a specific date, display as 0.
+
+Return the result table ordered by transaction_date in ascending order.
+
+The result format is in the following example.
+
+Example:
+
+Input:
+
+transactions table:
+
++----------------+--------+------------------+
+| transaction_id | amount | transaction_date |
++----------------+--------+------------------+
+| 1              | 150    | 2024-07-01       |
+| 2              | 200    | 2024-07-01       |
+| 3              | 75     | 2024-07-01       |
+| 4              | 300    | 2024-07-02       |
+| 5              | 50     | 2024-07-02       |
+| 6              | 120    | 2024-07-03       |
++----------------+--------+------------------+
+
+Output:
+
++------------------+---------+----------+
+| transaction_date | odd_sum | even_sum |
++------------------+---------+----------+
+| 2024-07-01       | 75      | 350      |
+| 2024-07-02       | 0       | 350      |
+| 2024-07-03       | 0       | 120      |
++------------------+---------+----------+
+
+Explanation:
+
+	For transaction dates:
+
+		2024-07-01:
+
+			Sum of amounts for odd transactions: 75
+			Sum of amounts for even transactions: 150 + 200 = 350
+
+		2024-07-02:
+
+			Sum of amounts for odd transactions: 0
+			Sum of amounts for even transactions: 300 + 50 = 350
+
+		2024-07-03:
+
+			Sum of amounts for odd transactions: 0
+			Sum of amounts for even transactions: 120
+
+Note: The output table is ordered by transaction_date in ascending order.
+
+##### 3497 analyze-subscription-conversion [Medium]
+Table: UserActivity
+
++------------------+---------+
+| Column Name      | Type    |
++------------------+---------+
+| user_id          | int     |
+| activity_date    | date    |
+| activity_type    | varchar |
+| activity_duration| int     |
++------------------+---------+
+(user_id, activity_date, activity_type) is the unique key for this table.
+activity_type is one of ('free_trial', 'paid', 'cancelled').
+activity_duration is the number of minutes the user spent on the platform that day.
+Each row represents a user's activity on a specific date.
+
+A subscription service wants to analyze user behavior patterns. The company offers a 7-day free trial, after which users can subscribe to a paid plan or cancel. Write a solution to:
+
+	Find users who converted from free trial to paid subscription
+	Calculate each user's average daily activity duration during their free trial period (rounded to 2 decimal places)
+	Calculate each user's average daily activity duration during their paid subscription period (rounded to 2 decimal places)
+
+Return the result table ordered by user_id in ascending order.
+
+The result format is in the following example.
+
+Example:
+
+Input:
+
+UserActivity table:
+
++---------+---------------+---------------+-------------------+
+| user_id | activity_date | activity_type | activity_duration |
++---------+---------------+---------------+-------------------+
+| 1       | 2023-01-01    | free_trial    | 45                |
+| 1       | 2023-01-02    | free_trial    | 30                |
+| 1       | 2023-01-05    | free_trial    | 60                |
+| 1       | 2023-01-10    | paid          | 75                |
+| 1       | 2023-01-12    | paid          | 90                |
+| 1       | 2023-01-15    | paid          | 65                |
+| 2       | 2023-02-01    | free_trial    | 55                |
+| 2       | 2023-02-03    | free_trial    | 25                |
+| 2       | 2023-02-07    | free_trial    | 50                |
+| 2       | 2023-02-10    | cancelled     | 0                 |
+| 3       | 2023-03-05    | free_trial    | 70                |
+| 3       | 2023-03-06    | free_trial    | 60                |
+| 3       | 2023-03-08    | free_trial    | 80                |
+| 3       | 2023-03-12    | paid          | 50                |
+| 3       | 2023-03-15    | paid          | 55                |
+| 3       | 2023-03-20    | paid          | 85                |
+| 4       | 2023-04-01    | free_trial    | 40                |
+| 4       | 2023-04-03    | free_trial    | 35                |
+| 4       | 2023-04-05    | paid          | 45                |
+| 4       | 2023-04-07    | cancelled     | 0                 |
++---------+---------------+---------------+-------------------+
+
+Output:
+
++---------+--------------------+-------------------+
+| user_id | trial_avg_duration | paid_avg_duration |
++---------+--------------------+-------------------+
+| 1       | 45.00              | 76.67             |
+| 3       | 70.00              | 63.33             |
+| 4       | 37.50              | 45.00             |
++---------+--------------------+-------------------+
+
+Explanation:
+
+	User 1:
+
+		Had 3 days of free trial with durations of 45, 30, and 60 minutes.
+		Average trial duration: (45 + 30 + 60) / 3 = 45.00 minutes.
+		Had 3 days of paid subscription with durations of 75, 90, and 65 minutes.
+		Average paid duration: (75 + 90 + 65) / 3 = 76.67 minutes.
+
+	User 2:
+
+		Had 3 days of free trial with durations of 55, 25, and 50 minutes.
+		Average trial duration: (55 + 25 + 50) / 3 = 43.33 minutes.
+		Did not convert to a paid subscription (only had free_trial and cancelled activities).
+		Not included in the output because they didn't convert to paid.
+
+	User 3:
+
+		Had 3 days of free trial with durations of 70, 60, and 80 minutes.
+		Average trial duration: (70 + 60 + 80) / 3 = 70.00 minutes.
+		Had 3 days of paid subscription with durations of 50, 55, and 85 minutes.
+		Average paid duration: (50 + 55 + 85) / 3 = 63.33 minutes.
+
+	User 4:
+
+		Had 2 days of free trial with durations of 40 and 35 minutes.
+		Average trial duration: (40 + 35) / 2 = 37.50 minutes.
+		Had 1 day of paid subscription with duration of 45 minutes before cancelling.
+		Average paid duration: 45.00 minutes.
+
+The result table only includes users who converted from free trial to paid subscription (users 1, 3, and 4), and is ordered by user_id in ascending order.
+
+##### 3601 find-drivers-with-improved-fuel-efficiency [Medium]
+Table: drivers
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| driver_id   | int     |
+| driver_name | varchar |
++-------------+---------+
+driver_id is the unique identifier for this table.
+Each row contains information about a driver.
+
+Table: trips
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| trip_id       | int     |
+| driver_id     | int     |
+| trip_date     | date    |
+| distance_km   | decimal |
+| fuel_consumed | decimal |
++---------------+---------+
+trip_id is the unique identifier for this table.
+Each row represents a trip made by a driver, including the distance traveled and fuel consumed for that trip.
+
+Write a solution to find drivers whose fuel efficiency has improved by comparing their average fuel efficiency in the first half of the year with the second half of the year.
+
+	Calculate fuel efficiency as distance_km / fuel_consumed for each trip
+	First half: January to June, Second half: July to December
+	Only include drivers who have trips in both halves of the year
+	Calculate the efficiency improvement as (second_half_avg - first_half_avg)
+	Round all results to 2 decimal places
+
+Return the result table ordered by efficiency improvement in descending order, then by driver name in ascending order.
+
+The result format is in the following example.
+
+Example:
+
+Input:
+
+drivers table:
+
++-----------+---------------+
+| driver_id | driver_name   |
++-----------+---------------+
+| 1         | Alice Johnson |
+| 2         | Bob Smith     |
+| 3         | Carol Davis   |
+| 4         | David Wilson  |
+| 5         | Emma Brown    |
++-----------+---------------+
+
+trips table:
+
++---------+-----------+------------+-------------+---------------+
+| trip_id | driver_id | trip_date  | distance_km | fuel_consumed |
++---------+-----------+------------+-------------+---------------+
+| 1       | 1         | 2023-02-15 | 120.5       | 10.2          |
+| 2       | 1         | 2023-03-20 | 200.0       | 16.5          |
+| 3       | 1         | 2023-08-10 | 150.0       | 11.0          |
+| 4       | 1         | 2023-09-25 | 180.0       | 12.5          |
+| 5       | 2         | 2023-01-10 | 100.0       | 9.0           |
+| 6       | 2         | 2023-04-15 | 250.0       | 22.0          |
+| 7       | 2         | 2023-10-05 | 200.0       | 15.0          |
+| 8       | 3         | 2023-03-12 | 80.0        | 8.5           |
+| 9       | 3         | 2023-05-18 | 90.0        | 9.2           |
+| 10      | 4         | 2023-07-22 | 160.0       | 12.8          |
+| 11      | 4         | 2023-11-30 | 140.0       | 11.0          |
+| 12      | 5         | 2023-02-28 | 110.0       | 11.5          |
++---------+-----------+------------+-------------+---------------+
+
+Output:
+
++-----------+---------------+------------------+-------------------+------------------------+
+| driver_id | driver_name   | first_half_avg   | second_half_avg   | efficiency_improvement |
++-----------+---------------+------------------+-------------------+------------------------+
+| 2         | Bob Smith     | 11.24            | 13.33             | 2.10                   |
+| 1         | Alice Johnson | 11.97            | 14.02             | 2.05                   |
++-----------+---------------+------------------+-------------------+------------------------+
+
+Explanation:
+
+	Alice Johnson (driver_id = 1):
+
+		First half trips (Jan-Jun): Feb 15 (120.5/10.2 = 11.81), Mar 20 (200.0/16.5 = 12.12)
+		First half average efficiency: (11.81 + 12.12) / 2 = 11.97
+		Second half trips (Jul-Dec): Aug 10 (150.0/11.0 = 13.64), Sep 25 (180.0/12.5 = 14.40)
+		Second half average efficiency: (13.64 + 14.40) / 2 = 14.02
+		Efficiency improvement: 14.02 - 11.97 = 2.05
+
+	Bob Smith (driver_id = 2):
+
+		First half trips: Jan 10 (100.0/9.0 = 11.11), Apr 15 (250.0/22.0 = 11.36)
+		First half average efficiency: (11.11 + 11.36) / 2 = 11.24
+		Second half trips: Oct 5 (200.0/15.0 = 13.33)
+		Second half average efficiency: 13.33
+		Efficiency improvement: 13.33 - 11.24 = 2.10 (rounded to 2 decimal places)
+
+	Drivers not included:
+
+		Carol Davis (driver_id = 3): Only has trips in first half (Mar, May)
+		David Wilson (driver_id = 4): Only has trips in second half (Jul, Nov)
+		Emma Brown (driver_id = 5): Only has trips in first half (Feb)
+
+The output table is ordered by efficiency improvement in descending order then by name in ascending order.
+
+##### 3705 find-golden-hour-customers [Medium]
+Table: restaurant_orders
+
++------------------+----------+
+| Column Name      | Type     |
++------------------+----------+
+| order_id         | int      |
+| customer_id      | int      |
+| order_timestamp  | datetime |
+| order_amount     | decimal  |
+| payment_method   | varchar  |
+| order_rating     | int      |
++------------------+----------+
+order_id is the unique identifier for this table.
+payment_method can be cash, card, or app.
+order_rating is between 1 and 5, where 5 is the best (NULL if not rated).
+order_timestamp contains both date and time information.
+
+Write a solution to find golden hour customers - customers who consistently order during peak hours and provide high satisfaction. A customer is a golden hour customer if they meet ALL the following criteria:
+
+	Made at least 3 orders.
+	At least 60% of their orders are during peak hours (11:00-14:00 or 18:00-21:00).
+	Their average rating for rated orders is at least 4.0, round it to 2 decimal places.
+	Have rated at least 50% of their orders.
+
+Return the result table ordered by average_rating in descending order, then by customer_id​​​​​​​ in descending order.
+
+The result format is in the following example.
+
+Example:
+
+Input:
+
+restaurant_orders table:
+
++----------+-------------+---------------------+--------------+----------------+--------------+
+| order_id | customer_id | order_timestamp     | order_amount | payment_method | order_rating |
++----------+-------------+---------------------+--------------+----------------+--------------+
+| 1        | 101         | 2024-03-01 12:30:00 | 25.50        | card           | 5            |
+| 2        | 101         | 2024-03-02 19:15:00 | 32.00        | app            | 4            |
+| 3        | 101         | 2024-03-03 13:45:00 | 28.75        | card           | 5            |
+| 4        | 101         | 2024-03-04 20:30:00 | 41.00        | app            | NULL         |
+| 5        | 102         | 2024-03-01 11:30:00 | 18.50        | cash           | 4            |
+| 6        | 102         | 2024-03-02 12:00:00 | 22.00        | card           | 3            |
+| 7        | 102         | 2024-03-03 15:30:00 | 19.75        | cash           | NULL         |
+| 8        | 103         | 2024-03-01 19:00:00 | 55.00        | app            | 5            |
+| 9        | 103         | 2024-03-02 20:45:00 | 48.50        | app            | 4            |
+| 10       | 103         | 2024-03-03 18:30:00 | 62.00        | card           | 5            |
+| 11       | 104         | 2024-03-01 10:00:00 | 15.00        | cash           | 3            |
+| 12       | 104         | 2024-03-02 09:30:00 | 18.00        | cash           | 2            |
+| 13       | 104         | 2024-03-03 16:00:00 | 20.00        | card           | 3            |
+| 14       | 105         | 2024-03-01 12:15:00 | 30.00        | app            | 4            |
+| 15       | 105         | 2024-03-02 13:00:00 | 35.50        | app            | 5            |
+| 16       | 105         | 2024-03-03 11:45:00 | 28.00        | card           | 4            |
++----------+-------------+---------------------+--------------+----------------+--------------+
+
+Output:
+
++-------------+--------------+----------------------+----------------+
+| customer_id | total_orders | peak_hour_percentage | average_rating |
++-------------+--------------+----------------------+----------------+
+| 103         | 3            | 100                  | 4.67           |
+| 101         | 4            | 100                  | 4.67           |
+| 105         | 3            | 100                  | 4.33           |
++-------------+--------------+----------------------+----------------+
+
+Explanation:
+
+	Customer 101:
+
+		Total orders: 4 (at least 3)
+		Peak hour orders: 4 out of 4 (12:30, 19:15, 13:45, and 20:30 are in peak hours)
+		Peak hour percentage: 100% (at least 60%)
+		Rated orders: 3 out of 4 (75% rating completion)
+		Average rating: (5+4+5)/3 = 4.67 (at least 4.0)
+		Result: Golden hour customer
+
+	Customer 102:
+
+		Total orders: 3 (at least 3)
+		Peak hour orders: 2 out of 3 (11:30, 12:00 are in peak hours; 15:30 is not)
+		Peak hour percentage: 2/3 = 66.67% (at least 60%)
+		Rated orders: 2 out of 3 (66.67% rating completion)
+		Average rating: (4+3)/2 = 3.5 (less than 4.0)
+		Result: Not a golden hour customer (average rating too low)
+
+	Customer 103:
+
+		Total orders: 3 (at least 3)
+		Peak hour orders: 3 out of 3 (19:00, 20:45, 18:30 all in evening peak)
+		Peak hour percentage: 3/3 = 100% (at least 60%)
+		Rated orders: 3 out of 3 (100% rating completion)
+		Average rating: (5+4+5)/3 = 4.67 (at least 4.0)
+		Result: Golden hour customer
+
+	Customer 104:
+
+		Total orders: 3 (at least 3)
+		Peak hour orders: 0 out of 3 (10:00, 09:30, 16:00 all outside peak hours)
+		Peak hour percentage: 0/3 = 0% (less than 60%)
+		Result: Not a golden hour customer (insufficient peak hour orders)
+
+	Customer 105:
+
+		Total orders: 3 (at least 3)
+		Peak hour orders: 3 out of 3 (12:15, 13:00, 11:45 all in lunch peak)
+		Peak hour percentage: 3/3 = 100% (at least 60%)
+		Rated orders: 3 out of 3 (100% rating completion)
+		Average rating: (4+5+4)/3 = 4.33 (at least 4.0)
+		Result: Golden hour customer
+
+The results table is ordered by average_rating DESC, then customer_id DESC.
+
+##### 3716 find-churn-risk-customers [Medium]
+Table: subscription_events
+
++------------------+---------+
+| Column Name      | Type    |
++------------------+---------+
+| event_id         | int     |
+| user_id          | int     |
+| event_date       | date    |
+| event_type       | varchar |
+| plan_name        | varchar |
+| monthly_amount   | decimal |
++------------------+---------+
+event_id is the unique identifier for this table.
+event_type can be start, upgrade, downgrade, or cancel.
+plan_name can be basic, standard, premium, or NULL (when event_type is cancel).
+monthly_amount represents the monthly subscription cost after this event.
+For cancel events, monthly_amount is 0.
+
+Write a solution to Find Churn Risk Customers - users who show warning signs before churning. A user is considered churn risk customer if they meet ALL the following criteria:
+
+	Currently have an active subscription (their last event is not cancel).
+	Have performed at least one downgrade in their subscription history.
+	Their current plan revenue is less than 50% of their historical maximum plan revenue.
+	Have been a subscriber for at least 60 days.
+
+Return the result table ordered by days_as_subscriber in descending order, then by user_id in ascending order.
+
+The result format is in the following example.
+
+Example:
+
+Input:
+
+subscription_events table:
+
++----------+---------+------------+------------+-----------+----------------+
+| event_id | user_id | event_date | event_type | plan_name | monthly_amount |
++----------+---------+------------+------------+-----------+----------------+
+| 1        | 501     | 2024-01-01 | start      | premium   | 29.99          |
+| 2        | 501     | 2024-02-15 | downgrade  | standard  | 19.99          |
+| 3        | 501     | 2024-03-20 | downgrade  | basic     | 9.99           |
+| 4        | 502     | 2024-01-05 | start      | standard  | 19.99          |
+| 5        | 502     | 2024-02-10 | upgrade    | premium   | 29.99          |
+| 6        | 502     | 2024-03-15 | downgrade  | basic     | 9.99           |
+| 7        | 503     | 2024-01-10 | start      | basic     | 9.99           |
+| 8        | 503     | 2024-02-20 | upgrade    | standard  | 19.99          |
+| 9        | 503     | 2024-03-25 | upgrade    | premium   | 29.99          |
+| 10       | 504     | 2024-01-15 | start      | premium   | 29.99          |
+| 11       | 504     | 2024-03-01 | downgrade  | standard  | 19.99          |
+| 12       | 504     | 2024-03-30 | cancel     | NULL      | 0.00           |
+| 13       | 505     | 2024-02-01 | start      | basic     | 9.99           |
+| 14       | 505     | 2024-02-28 | upgrade    | standard  | 19.99          |
+| 15       | 506     | 2024-01-20 | start      | premium   | 29.99          |
+| 16       | 506     | 2024-03-10 | downgrade  | basic     | 9.99           |
++----------+---------+------------+------------+-----------+----------------+
+
+Output:
+
++----------+--------------+------------------------+-----------------------+--------------------+
+| user_id  | current_plan | current_monthly_amount | max_historical_amount | days_as_subscriber |
++----------+--------------+------------------------+-----------------------+--------------------+
+| 501      | basic        | 9.99                   | 29.99                 | 79                 |
+| 502      | basic        | 9.99                   | 29.99                 | 70                 |
++----------+--------------+------------------------+-----------------------+--------------------+
+
+Explanation:
+
+	User 501:
+
+		Currently active: Last event is downgrade to basic (not cancelled)
+		Has downgrades: Yes, 2 downgrades in history
+		Current revenue (9.99) vs max (29.99): 9.99/29.99 = 33.3% (less than 50%)
+		Days as subscriber: Jan 1 to Mar 20 = 79 days (at least 60)
+		Result: Churn Risk Customer
+
+	User 502:
+
+		Currently active: Last event is downgrade to basic (not cancelled)
+		Has downgrades: Yes, 1 downgrade in history
+		Current revenue (9.99) vs max (29.99): 9.99/29.99 = 33.3% (less than 50%)
+		Days as subscriber: Jan 5 to Mar 15 = 70 days (at least 60)
+		Result: Churn Risk Customer
+
+	User 503:
+
+		Currently active: Last event is upgrade to premium (not cancelled)
+		Has downgrades: No downgrades in history
+		Result: Not at-risk (no downgrade history)
+
+	User 504:
+
+		Currently active: Last event is cancel
+		Result: Not at-risk (subscription cancelled)
+
+	User 505:
+
+		Currently active: Last event is 'upgrade' to standard (not cancelled)
+		Has downgrades: No downgrades in history
+		Result: Not at-risk (no downgrade history)
+
+	User 506:
+
+		Currently active: Last event is downgrade to basic (not cancelled)
+		Has downgrades: Yes, 1 downgrade in history
+		Current revenue (9.99) vs max (29.99): 9.99/29.99 = 33.3% (less than 50%)
+		Days as subscriber: Jan 20 to Mar 10 = 50 days (less than 60)
+		Result: Not at-risk (insufficient subscription duration)
+
+Result table is ordered by days_as_subscriber DESC, then user_id ASC.
+
+Note: days_as_subscriber is calculated from the first event date to the last event date for each user.
+

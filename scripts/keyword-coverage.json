@@ -1,0 +1,1832 @@
+{
+  "topics": [
+    {
+      "code": "l1",
+      "label": "Tables & keys",
+      "moduleNum": 1,
+      "moduleTitle": "SQL Foundations",
+      "lessonNum": 1,
+      "cases": 17,
+      "mcqs": 12,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "l2",
+      "label": "SELECT & FROM",
+      "moduleNum": 1,
+      "moduleTitle": "SQL Foundations",
+      "lessonNum": 2,
+      "cases": 37,
+      "mcqs": 11,
+      "problems": 9,
+      "fills": 5
+    },
+    {
+      "code": "l3",
+      "label": "WHERE filters",
+      "moduleNum": 1,
+      "moduleTitle": "SQL Foundations",
+      "lessonNum": 3,
+      "cases": 48,
+      "mcqs": 16,
+      "problems": 9,
+      "fills": 6
+    },
+    {
+      "code": "l4",
+      "label": "NULL handling",
+      "moduleNum": 1,
+      "moduleTitle": "SQL Foundations",
+      "lessonNum": 4,
+      "cases": 32,
+      "mcqs": 15,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "l5",
+      "label": "ORDER BY & LIMIT",
+      "moduleNum": 1,
+      "moduleTitle": "SQL Foundations",
+      "lessonNum": 5,
+      "cases": 40,
+      "mcqs": 24,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "l6",
+      "label": "DISTINCT",
+      "moduleNum": 1,
+      "moduleTitle": "SQL Foundations",
+      "lessonNum": 6,
+      "cases": 30,
+      "mcqs": 11,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "l7",
+      "label": "Aggregates",
+      "moduleNum": 1,
+      "moduleTitle": "SQL Foundations",
+      "lessonNum": 7,
+      "cases": 50,
+      "mcqs": 15,
+      "problems": 9,
+      "fills": 5
+    },
+    {
+      "code": "l8",
+      "label": "GROUP BY & HAVING",
+      "moduleNum": 1,
+      "moduleTitle": "SQL Foundations",
+      "lessonNum": 8,
+      "cases": 40,
+      "mcqs": 14,
+      "problems": 12,
+      "fills": 5
+    },
+    {
+      "code": "cap",
+      "label": "Capstone mix",
+      "moduleNum": 1,
+      "moduleTitle": "SQL Foundations (cross-lesson)",
+      "lessonNum": null,
+      "cases": 6,
+      "mcqs": null,
+      "problems": null,
+      "fills": null
+    },
+    {
+      "code": "j1",
+      "label": "Two tables",
+      "moduleNum": 2,
+      "moduleTitle": "Joins & Relationships",
+      "lessonNum": 9,
+      "cases": 30,
+      "mcqs": 11,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "j2",
+      "label": "INNER JOIN",
+      "moduleNum": 2,
+      "moduleTitle": "Joins & Relationships",
+      "lessonNum": 10,
+      "cases": 46,
+      "mcqs": 8,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "j3",
+      "label": "3-table chains",
+      "moduleNum": 2,
+      "moduleTitle": "Joins & Relationships",
+      "lessonNum": 11,
+      "cases": 39,
+      "mcqs": 8,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "j4",
+      "label": "LEFT JOIN",
+      "moduleNum": 2,
+      "moduleTitle": "Joins & Relationships",
+      "lessonNum": 12,
+      "cases": 39,
+      "mcqs": 8,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "j5",
+      "label": "Anti-join",
+      "moduleNum": 2,
+      "moduleTitle": "Joins & Relationships",
+      "lessonNum": 13,
+      "cases": 37,
+      "mcqs": 8,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "j6",
+      "label": "Self-join",
+      "moduleNum": 2,
+      "moduleTitle": "Joins & Relationships",
+      "lessonNum": 14,
+      "cases": 30,
+      "mcqs": 12,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "j7",
+      "label": "Joins + aggregates",
+      "moduleNum": 2,
+      "moduleTitle": "Joins & Relationships",
+      "lessonNum": 15,
+      "cases": 45,
+      "mcqs": 8,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "j8",
+      "label": "Join capstone",
+      "moduleNum": 2,
+      "moduleTitle": "Joins & Relationships",
+      "lessonNum": 16,
+      "cases": 34,
+      "mcqs": 8,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "s1",
+      "label": "UNION stacks",
+      "moduleNum": 3,
+      "moduleTitle": "Set Operations & CASE",
+      "lessonNum": 17,
+      "cases": 50,
+      "mcqs": 10,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "s2",
+      "label": "Stacked reports",
+      "moduleNum": 3,
+      "moduleTitle": "Set Operations & CASE",
+      "lessonNum": 18,
+      "cases": 50,
+      "mcqs": 11,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "s3",
+      "label": "INTERSECT",
+      "moduleNum": 3,
+      "moduleTitle": "Set Operations & CASE",
+      "lessonNum": 19,
+      "cases": 50,
+      "mcqs": 8,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "s4",
+      "label": "EXCEPT",
+      "moduleNum": 3,
+      "moduleTitle": "Set Operations & CASE",
+      "lessonNum": 20,
+      "cases": 50,
+      "mcqs": 8,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "s5",
+      "label": "Set chains",
+      "moduleNum": 3,
+      "moduleTitle": "Set Operations & CASE",
+      "lessonNum": 21,
+      "cases": 50,
+      "mcqs": 11,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "s6",
+      "label": "CASE WHEN",
+      "moduleNum": 3,
+      "moduleTitle": "Set Operations & CASE",
+      "lessonNum": 22,
+      "cases": 50,
+      "mcqs": 8,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "s7",
+      "label": "CASE pivots",
+      "moduleNum": 3,
+      "moduleTitle": "Set Operations & CASE",
+      "lessonNum": 23,
+      "cases": 0,
+      "mcqs": 12,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "s8",
+      "label": "Set+CASE capstone",
+      "moduleNum": 3,
+      "moduleTitle": "Set Operations & CASE",
+      "lessonNum": 24,
+      "cases": 0,
+      "mcqs": 8,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "q1",
+      "label": "IN subqueries",
+      "moduleNum": 4,
+      "moduleTitle": "Subqueries & CTEs",
+      "lessonNum": 25,
+      "cases": 45,
+      "mcqs": 11,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "q2",
+      "label": "Scalar subqueries",
+      "moduleNum": 4,
+      "moduleTitle": "Subqueries & CTEs",
+      "lessonNum": 25,
+      "cases": 45,
+      "mcqs": 11,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "q3",
+      "label": "EXISTS tests",
+      "moduleNum": 4,
+      "moduleTitle": "Subqueries & CTEs",
+      "lessonNum": 26,
+      "cases": 30,
+      "mcqs": 11,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "q4",
+      "label": "Correlated",
+      "moduleNum": 4,
+      "moduleTitle": "Subqueries & CTEs",
+      "lessonNum": 26,
+      "cases": 30,
+      "mcqs": 11,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "q5",
+      "label": "Derived tables",
+      "moduleNum": 4,
+      "moduleTitle": "Subqueries & CTEs",
+      "lessonNum": 27,
+      "cases": 45,
+      "mcqs": 8,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "q6",
+      "label": "CTEs",
+      "moduleNum": 4,
+      "moduleTitle": "Subqueries & CTEs",
+      "lessonNum": 28,
+      "cases": 45,
+      "mcqs": 8,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "q7",
+      "label": "Recursive CTEs",
+      "moduleNum": 4,
+      "moduleTitle": "Subqueries & CTEs",
+      "lessonNum": 28,
+      "cases": 30,
+      "mcqs": 8,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "q8",
+      "label": "Subquery capstone",
+      "moduleNum": 4,
+      "moduleTitle": "Subqueries & CTEs",
+      "lessonNum": 38,
+      "cases": 30,
+      "mcqs": 4,
+      "problems": 5,
+      "fills": 5
+    },
+    {
+      "code": "t1",
+      "label": "Text & type",
+      "moduleNum": 5,
+      "moduleTitle": "Scalar & Window Toolkit",
+      "lessonNum": 29,
+      "cases": 45,
+      "mcqs": 23,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "t2",
+      "label": "COALESCE & NULLs",
+      "moduleNum": 5,
+      "moduleTitle": "Scalar & Window Toolkit",
+      "lessonNum": 29,
+      "cases": 40,
+      "mcqs": 23,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "t3",
+      "label": "Dates & calendars",
+      "moduleNum": 5,
+      "moduleTitle": "Scalar & Window Toolkit",
+      "lessonNum": 30,
+      "cases": 35,
+      "mcqs": 12,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "t4",
+      "label": "Month buckets",
+      "moduleNum": 5,
+      "moduleTitle": "Scalar & Window Toolkit",
+      "lessonNum": 30,
+      "cases": 30,
+      "mcqs": 12,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "t5",
+      "label": "RANK & friends",
+      "moduleNum": 5,
+      "moduleTitle": "Scalar & Window Toolkit",
+      "lessonNum": 31,
+      "cases": 45,
+      "mcqs": 14,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "t6",
+      "label": "Partition windows",
+      "moduleNum": 5,
+      "moduleTitle": "Scalar & Window Toolkit",
+      "lessonNum": 31,
+      "cases": 45,
+      "mcqs": 14,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "t7",
+      "label": "LAG & LEAD",
+      "moduleNum": 5,
+      "moduleTitle": "Scalar & Window Toolkit",
+      "lessonNum": 32,
+      "cases": 30,
+      "mcqs": 13,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "t8",
+      "label": "Window capstone",
+      "moduleNum": 5,
+      "moduleTitle": "Scalar & Window Toolkit",
+      "lessonNum": 39,
+      "cases": 30,
+      "mcqs": 4,
+      "problems": 5,
+      "fills": 5
+    },
+    {
+      "code": "x1",
+      "label": "GROUP_CONCAT folds",
+      "moduleNum": 6,
+      "moduleTitle": "Expert Clinic",
+      "lessonNum": 33,
+      "cases": 20,
+      "mcqs": 14,
+      "problems": 8,
+      "fills": 6
+    },
+    {
+      "code": "x2",
+      "label": "FILTER censuses",
+      "moduleNum": 6,
+      "moduleTitle": "Expert Clinic",
+      "lessonNum": 33,
+      "cases": 15,
+      "mcqs": 14,
+      "problems": 8,
+      "fills": 6
+    },
+    {
+      "code": "x3",
+      "label": "Grand-total stacks",
+      "moduleNum": 6,
+      "moduleTitle": "Expert Clinic",
+      "lessonNum": 33,
+      "cases": 15,
+      "mcqs": 14,
+      "problems": 8,
+      "fills": 6
+    },
+    {
+      "code": "x4",
+      "label": "RIGHT JOIN",
+      "moduleNum": 6,
+      "moduleTitle": "Expert Clinic",
+      "lessonNum": 34,
+      "cases": 25,
+      "mcqs": 14,
+      "problems": 8,
+      "fills": 6
+    },
+    {
+      "code": "x5",
+      "label": "FULL OUTER",
+      "moduleNum": 6,
+      "moduleTitle": "Expert Clinic",
+      "lessonNum": 34,
+      "cases": 25,
+      "mcqs": 14,
+      "problems": 8,
+      "fills": 6
+    },
+    {
+      "code": "x6",
+      "label": "CROSS JOIN",
+      "moduleNum": 6,
+      "moduleTitle": "Expert Clinic",
+      "lessonNum": 34,
+      "cases": 25,
+      "mcqs": 14,
+      "problems": 8,
+      "fills": 6
+    },
+    {
+      "code": "x7",
+      "label": "Non-equi joins",
+      "moduleNum": 6,
+      "moduleTitle": "Expert Clinic",
+      "lessonNum": 34,
+      "cases": 25,
+      "mcqs": 14,
+      "problems": 8,
+      "fills": 6
+    },
+    {
+      "code": "x8",
+      "label": "Clinic capstone",
+      "moduleNum": 6,
+      "moduleTitle": "Expert Clinic",
+      "lessonNum": 40,
+      "cases": 25,
+      "mcqs": 4,
+      "problems": 5,
+      "fills": 6
+    },
+    {
+      "code": "w1",
+      "label": "INSERT",
+      "moduleNum": 7,
+      "moduleTitle": "Data Modification",
+      "lessonNum": 41,
+      "cases": 1,
+      "mcqs": 12,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "w2",
+      "label": "UPDATE",
+      "moduleNum": 7,
+      "moduleTitle": "Data Modification",
+      "lessonNum": 42,
+      "cases": 1,
+      "mcqs": 15,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "w3",
+      "label": "DELETE",
+      "moduleNum": 7,
+      "moduleTitle": "Data Modification",
+      "lessonNum": 43,
+      "cases": 1,
+      "mcqs": 15,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "w4",
+      "label": "Transactions",
+      "moduleNum": 7,
+      "moduleTitle": "Data Modification",
+      "lessonNum": 44,
+      "cases": 1,
+      "mcqs": 12,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "wcap",
+      "label": "Write capstone",
+      "moduleNum": 7,
+      "moduleTitle": "Data Modification",
+      "lessonNum": 50,
+      "cases": 1,
+      "mcqs": 4,
+      "problems": 5,
+      "fills": 5
+    },
+    {
+      "code": "d1",
+      "label": "CREATE TABLE",
+      "moduleNum": 8,
+      "moduleTitle": "Schema, Views & Beyond",
+      "lessonNum": 45,
+      "cases": 1,
+      "mcqs": 16,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "d2",
+      "label": "ALTER & DROP",
+      "moduleNum": 8,
+      "moduleTitle": "Schema, Views & Beyond",
+      "lessonNum": 46,
+      "cases": 1,
+      "mcqs": 14,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "d3",
+      "label": "Views",
+      "moduleNum": 8,
+      "moduleTitle": "Schema, Views & Beyond",
+      "lessonNum": 47,
+      "cases": 1,
+      "mcqs": 12,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "d4",
+      "label": "Indexes & EXPLAIN",
+      "moduleNum": 8,
+      "moduleTitle": "Schema, Views & Beyond",
+      "lessonNum": 48,
+      "cases": 1,
+      "mcqs": 12,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "d5",
+      "label": "Recursive CTEs",
+      "moduleNum": 8,
+      "moduleTitle": "Schema, Views & Beyond",
+      "lessonNum": 49,
+      "cases": 1,
+      "mcqs": 14,
+      "problems": 8,
+      "fills": 5
+    },
+    {
+      "code": "dcap",
+      "label": "Reporting layer",
+      "moduleNum": 8,
+      "moduleTitle": "Schema, Views & Beyond",
+      "lessonNum": 51,
+      "cases": 1,
+      "mcqs": 4,
+      "problems": 5,
+      "fills": 5
+    },
+    {
+      "code": "f1",
+      "label": "Invoices & payments",
+      "moduleNum": 9,
+      "moduleTitle": "SQL for Finance",
+      "lessonNum": 52,
+      "cases": 1,
+      "mcqs": 11,
+      "problems": 6,
+      "fills": 5
+    },
+    {
+      "code": "f2",
+      "label": "Balance walks",
+      "moduleNum": 9,
+      "moduleTitle": "SQL for Finance",
+      "lessonNum": 53,
+      "cases": 1,
+      "mcqs": 11,
+      "problems": 6,
+      "fills": 5
+    },
+    {
+      "code": "f3",
+      "label": "AR aging",
+      "moduleNum": 9,
+      "moduleTitle": "SQL for Finance",
+      "lessonNum": 54,
+      "cases": 1,
+      "mcqs": 11,
+      "problems": 6,
+      "fills": 5
+    },
+    {
+      "code": "f4",
+      "label": "Month-over-month",
+      "moduleNum": 9,
+      "moduleTitle": "SQL for Finance",
+      "lessonNum": 55,
+      "cases": 1,
+      "mcqs": 11,
+      "problems": 6,
+      "fills": 5
+    },
+    {
+      "code": "f5",
+      "label": "Reconciliation",
+      "moduleNum": 9,
+      "moduleTitle": "SQL for Finance",
+      "lessonNum": 56,
+      "cases": 1,
+      "mcqs": 11,
+      "problems": 6,
+      "fills": 5
+    },
+    {
+      "code": "fcap",
+      "label": "Advanced windows",
+      "moduleNum": 9,
+      "moduleTitle": "SQL for Finance",
+      "lessonNum": 57,
+      "cases": 1,
+      "mcqs": 11,
+      "problems": 6,
+      "fills": 5
+    }
+  ],
+  "lessons": [
+    {
+      "num": 1,
+      "title": "Databases, tables & your storefront",
+      "moduleNum": 1,
+      "moduleTitle": "SQL Foundations",
+      "minutes": 12,
+      "mcqs": 12,
+      "problems": 8,
+      "cases": 17,
+      "fills": 5
+    },
+    {
+      "num": 2,
+      "title": "SELECT & FROM — reading data",
+      "moduleNum": 1,
+      "moduleTitle": "SQL Foundations",
+      "minutes": 14,
+      "mcqs": 11,
+      "problems": 9,
+      "cases": 37,
+      "fills": 5
+    },
+    {
+      "num": 3,
+      "title": "WHERE — filtering rows",
+      "moduleNum": 1,
+      "moduleTitle": "SQL Foundations",
+      "minutes": 16,
+      "mcqs": 16,
+      "problems": 9,
+      "cases": 48,
+      "fills": 6
+    },
+    {
+      "num": 4,
+      "title": "NULL — working with missing data",
+      "moduleNum": 1,
+      "moduleTitle": "SQL Foundations",
+      "minutes": 15,
+      "mcqs": 15,
+      "problems": 8,
+      "cases": 32,
+      "fills": 5
+    },
+    {
+      "num": 5,
+      "title": "ORDER BY & LIMIT — sorting and top-N",
+      "moduleNum": 1,
+      "moduleTitle": "SQL Foundations",
+      "minutes": 14,
+      "mcqs": 24,
+      "problems": 8,
+      "cases": 40,
+      "fills": 5
+    },
+    {
+      "num": 6,
+      "title": "DISTINCT — the uniqueness lens",
+      "moduleNum": 1,
+      "moduleTitle": "SQL Foundations",
+      "minutes": 11,
+      "mcqs": 11,
+      "problems": 8,
+      "cases": 30,
+      "fills": 5
+    },
+    {
+      "num": 7,
+      "title": "Aggregates — COUNT, SUM, AVG, MIN, MAX",
+      "moduleNum": 1,
+      "moduleTitle": "SQL Foundations",
+      "minutes": 15,
+      "mcqs": 15,
+      "problems": 9,
+      "cases": 50,
+      "fills": 5
+    },
+    {
+      "num": 8,
+      "title": "GROUP BY & HAVING — buckets and gates",
+      "moduleNum": 1,
+      "moduleTitle": "SQL Foundations",
+      "minutes": 18,
+      "mcqs": 14,
+      "problems": 12,
+      "cases": 40,
+      "fills": 5
+    },
+    {
+      "num": 9,
+      "title": "Two tables, one answer",
+      "moduleNum": 2,
+      "moduleTitle": "Joins & Relationships",
+      "minutes": 12,
+      "mcqs": 11,
+      "problems": 8,
+      "cases": 30,
+      "fills": 5
+    },
+    {
+      "num": 10,
+      "title": "INNER JOIN mechanics",
+      "moduleNum": 2,
+      "moduleTitle": "Joins & Relationships",
+      "minutes": 13,
+      "mcqs": 8,
+      "problems": 8,
+      "cases": 46,
+      "fills": 5
+    },
+    {
+      "num": 11,
+      "title": "Three-table chains",
+      "moduleNum": 2,
+      "moduleTitle": "Joins & Relationships",
+      "minutes": 14,
+      "mcqs": 8,
+      "problems": 8,
+      "cases": 39,
+      "fills": 5
+    },
+    {
+      "num": 12,
+      "title": "LEFT JOIN — keep the left side",
+      "moduleNum": 2,
+      "moduleTitle": "Joins & Relationships",
+      "minutes": 13,
+      "mcqs": 8,
+      "problems": 8,
+      "cases": 39,
+      "fills": 5
+    },
+    {
+      "num": 13,
+      "title": "Anti-join: finding the holes",
+      "moduleNum": 2,
+      "moduleTitle": "Joins & Relationships",
+      "minutes": 12,
+      "mcqs": 8,
+      "problems": 8,
+      "cases": 37,
+      "fills": 5
+    },
+    {
+      "num": 14,
+      "title": "Self-join: a table against itself",
+      "moduleNum": 2,
+      "moduleTitle": "Joins & Relationships",
+      "minutes": 12,
+      "mcqs": 12,
+      "problems": 8,
+      "cases": 30,
+      "fills": 5
+    },
+    {
+      "num": 15,
+      "title": "Joins + aggregates",
+      "moduleNum": 2,
+      "moduleTitle": "Joins & Relationships",
+      "minutes": 14,
+      "mcqs": 8,
+      "problems": 8,
+      "cases": 45,
+      "fills": 5
+    },
+    {
+      "num": 16,
+      "title": "Capstone: join pitfalls & power moves",
+      "moduleNum": 2,
+      "moduleTitle": "Joins & Relationships",
+      "minutes": 15,
+      "mcqs": 8,
+      "problems": 8,
+      "cases": 34,
+      "fills": 5
+    },
+    {
+      "num": 17,
+      "title": "UNION & UNION ALL: stack result sets",
+      "moduleNum": 3,
+      "moduleTitle": "Set Operations & CASE",
+      "minutes": 12,
+      "mcqs": 10,
+      "problems": 8,
+      "cases": 50,
+      "fills": 5
+    },
+    {
+      "num": 18,
+      "title": "Stacking real data: labels, arms, alignment",
+      "moduleNum": 3,
+      "moduleTitle": "Set Operations & CASE",
+      "minutes": 12,
+      "mcqs": 11,
+      "problems": 8,
+      "cases": 50,
+      "fills": 5
+    },
+    {
+      "num": 19,
+      "title": "INTERSECT: rows present in both",
+      "moduleNum": 3,
+      "moduleTitle": "Set Operations & CASE",
+      "minutes": 11,
+      "mcqs": 8,
+      "problems": 8,
+      "cases": 50,
+      "fills": 5
+    },
+    {
+      "num": 20,
+      "title": "EXCEPT: in the first, never in the second",
+      "moduleNum": 3,
+      "moduleTitle": "Set Operations & CASE",
+      "minutes": 12,
+      "mcqs": 8,
+      "problems": 8,
+      "cases": 50,
+      "fills": 5
+    },
+    {
+      "num": 21,
+      "title": "Chains & precedence: who evaluates first",
+      "moduleNum": 3,
+      "moduleTitle": "Set Operations & CASE",
+      "minutes": 13,
+      "mcqs": 11,
+      "problems": 8,
+      "cases": 50,
+      "fills": 5
+    },
+    {
+      "num": 22,
+      "title": "CASE WHEN: branching inside a query",
+      "moduleNum": 3,
+      "moduleTitle": "Set Operations & CASE",
+      "minutes": 12,
+      "mcqs": 8,
+      "problems": 8,
+      "cases": 50,
+      "fills": 5
+    },
+    {
+      "num": 23,
+      "title": "CASE at work: counters, pivots, custom sorts",
+      "moduleNum": 3,
+      "moduleTitle": "Set Operations & CASE",
+      "minutes": 13,
+      "mcqs": 12,
+      "problems": 8,
+      "cases": 0,
+      "fills": 5
+    },
+    {
+      "num": 24,
+      "title": "Capstone: one report, three patterns",
+      "moduleNum": 3,
+      "moduleTitle": "Set Operations & CASE",
+      "minutes": 15,
+      "mcqs": 8,
+      "problems": 8,
+      "cases": 0,
+      "fills": 5
+    },
+    {
+      "num": 25,
+      "title": "Subqueries inside WHERE — ask in two steps",
+      "moduleNum": 4,
+      "moduleTitle": "Subqueries & CTEs",
+      "minutes": 12,
+      "mcqs": 11,
+      "problems": 8,
+      "cases": 90,
+      "fills": 5
+    },
+    {
+      "num": 26,
+      "title": "EXISTS & correlated subqueries — the per-row probe",
+      "moduleNum": 4,
+      "moduleTitle": "Subqueries & CTEs",
+      "minutes": 13,
+      "mcqs": 11,
+      "problems": 8,
+      "cases": 60,
+      "fills": 5
+    },
+    {
+      "num": 27,
+      "title": "Derived tables — a query in FROM",
+      "moduleNum": 4,
+      "moduleTitle": "Subqueries & CTEs",
+      "minutes": 13,
+      "mcqs": 8,
+      "problems": 8,
+      "cases": 45,
+      "fills": 5
+    },
+    {
+      "num": 28,
+      "title": "CTEs — WITH, the readable subquery",
+      "moduleNum": 4,
+      "moduleTitle": "Subqueries & CTEs",
+      "minutes": 12,
+      "mcqs": 8,
+      "problems": 8,
+      "cases": 75,
+      "fills": 5
+    },
+    {
+      "num": 29,
+      "title": "Text & type toolkit — reshape any value",
+      "moduleNum": 5,
+      "moduleTitle": "Scalar & Window Toolkit",
+      "minutes": 12,
+      "mcqs": 23,
+      "problems": 8,
+      "cases": 85,
+      "fills": 5
+    },
+    {
+      "num": 30,
+      "title": "Dates & buckets — slicing the calendar",
+      "moduleNum": 5,
+      "moduleTitle": "Scalar & Window Toolkit",
+      "minutes": 13,
+      "mcqs": 12,
+      "problems": 8,
+      "cases": 65,
+      "fills": 5
+    },
+    {
+      "num": 31,
+      "title": "Windows I — rank without collapsing",
+      "moduleNum": 5,
+      "moduleTitle": "Scalar & Window Toolkit",
+      "minutes": 14,
+      "mcqs": 14,
+      "problems": 8,
+      "cases": 90,
+      "fills": 5
+    },
+    {
+      "num": 32,
+      "title": "Windows II — offsets & running totals",
+      "moduleNum": 5,
+      "moduleTitle": "Scalar & Window Toolkit",
+      "minutes": 14,
+      "mcqs": 13,
+      "problems": 8,
+      "cases": 30,
+      "fills": 5
+    },
+    {
+      "num": 33,
+      "title": "String aggregation & grand totals",
+      "moduleNum": 6,
+      "moduleTitle": "Expert Clinic",
+      "minutes": 13,
+      "mcqs": 14,
+      "problems": 8,
+      "cases": 50,
+      "fills": 6
+    },
+    {
+      "num": 34,
+      "title": "Every join shape — RIGHT, FULL, CROSS & beyond",
+      "moduleNum": 6,
+      "moduleTitle": "Expert Clinic",
+      "minutes": 14,
+      "mcqs": 14,
+      "problems": 8,
+      "cases": 100,
+      "fills": 6
+    },
+    {
+      "num": 35,
+      "title": "Case study — the new analyst's first week",
+      "moduleNum": 1,
+      "moduleTitle": "SQL Foundations",
+      "minutes": 15,
+      "mcqs": 4,
+      "problems": 6,
+      "cases": 0,
+      "fills": 5
+    },
+    {
+      "num": 36,
+      "title": "Case study — who's still buying?",
+      "moduleNum": 2,
+      "moduleTitle": "Joins & Relationships",
+      "minutes": 16,
+      "mcqs": 4,
+      "problems": 6,
+      "cases": 0,
+      "fills": 5
+    },
+    {
+      "num": 37,
+      "title": "Case study — the quarterly merchandising review",
+      "moduleNum": 3,
+      "moduleTitle": "Set Operations & CASE",
+      "minutes": 17,
+      "mcqs": 4,
+      "problems": 6,
+      "cases": 0,
+      "fills": 5
+    },
+    {
+      "num": 38,
+      "title": "Case study — the VIP shortlist",
+      "moduleNum": 4,
+      "moduleTitle": "Subqueries & CTEs",
+      "minutes": 16,
+      "mcqs": 4,
+      "problems": 5,
+      "cases": 30,
+      "fills": 5
+    },
+    {
+      "num": 39,
+      "title": "Case study — the ops calendar",
+      "moduleNum": 5,
+      "moduleTitle": "Scalar & Window Toolkit",
+      "minutes": 17,
+      "mcqs": 4,
+      "problems": 5,
+      "cases": 30,
+      "fills": 5
+    },
+    {
+      "num": 40,
+      "title": "Case study — the executive one-pager",
+      "moduleNum": 6,
+      "moduleTitle": "Expert Clinic",
+      "minutes": 17,
+      "mcqs": 4,
+      "problems": 5,
+      "cases": 25,
+      "fills": 6
+    },
+    {
+      "num": 41,
+      "title": "INSERT — adding rows",
+      "moduleNum": 7,
+      "moduleTitle": "Data Modification",
+      "minutes": 12,
+      "mcqs": 12,
+      "problems": 8,
+      "cases": 1,
+      "fills": 5
+    },
+    {
+      "num": 42,
+      "title": "UPDATE — changing rows in place",
+      "moduleNum": 7,
+      "moduleTitle": "Data Modification",
+      "minutes": 12,
+      "mcqs": 15,
+      "problems": 8,
+      "cases": 1,
+      "fills": 5
+    },
+    {
+      "num": 43,
+      "title": "DELETE — removing rows safely",
+      "moduleNum": 7,
+      "moduleTitle": "Data Modification",
+      "minutes": 11,
+      "mcqs": 15,
+      "problems": 8,
+      "cases": 1,
+      "fills": 5
+    },
+    {
+      "num": 44,
+      "title": "UPSERT & transactions — collisions and all-or-nothing",
+      "moduleNum": 7,
+      "moduleTitle": "Data Modification",
+      "minutes": 13,
+      "mcqs": 12,
+      "problems": 8,
+      "cases": 1,
+      "fills": 5
+    },
+    {
+      "num": 45,
+      "title": "CREATE TABLE — shapes & constraints",
+      "moduleNum": 8,
+      "moduleTitle": "Schema, Views & Beyond",
+      "minutes": 12,
+      "mcqs": 16,
+      "problems": 8,
+      "cases": 1,
+      "fills": 5
+    },
+    {
+      "num": 46,
+      "title": "ALTER & DROP — schema evolution",
+      "moduleNum": 8,
+      "moduleTitle": "Schema, Views & Beyond",
+      "minutes": 10,
+      "mcqs": 14,
+      "problems": 8,
+      "cases": 1,
+      "fills": 5
+    },
+    {
+      "num": 47,
+      "title": "Views — saved queries",
+      "moduleNum": 8,
+      "moduleTitle": "Schema, Views & Beyond",
+      "minutes": 11,
+      "mcqs": 12,
+      "problems": 8,
+      "cases": 1,
+      "fills": 5
+    },
+    {
+      "num": 48,
+      "title": "Indexes & EXPLAIN QUERY PLAN",
+      "moduleNum": 8,
+      "moduleTitle": "Schema, Views & Beyond",
+      "minutes": 12,
+      "mcqs": 12,
+      "problems": 8,
+      "cases": 1,
+      "fills": 5
+    },
+    {
+      "num": 49,
+      "title": "Recursive CTEs — generate & walk",
+      "moduleNum": 8,
+      "moduleTitle": "Schema, Views & Beyond",
+      "minutes": 13,
+      "mcqs": 14,
+      "problems": 8,
+      "cases": 1,
+      "fills": 5
+    },
+    {
+      "num": 50,
+      "title": "Case study — the data-fix ticket",
+      "moduleNum": 7,
+      "moduleTitle": "Data Modification",
+      "minutes": 15,
+      "mcqs": 4,
+      "problems": 5,
+      "cases": 1,
+      "fills": 5
+    },
+    {
+      "num": 51,
+      "title": "Case study — building the reporting layer",
+      "moduleNum": 8,
+      "moduleTitle": "Schema, Views & Beyond",
+      "minutes": 15,
+      "mcqs": 4,
+      "problems": 5,
+      "cases": 1,
+      "fills": 5
+    },
+    {
+      "num": 52,
+      "title": "The books — invoices, payments & cents",
+      "moduleNum": 9,
+      "moduleTitle": "SQL for Finance",
+      "minutes": 14,
+      "mcqs": 11,
+      "problems": 6,
+      "cases": 1,
+      "fills": 5
+    },
+    {
+      "num": 53,
+      "title": "Running balances — the account statement",
+      "moduleNum": 9,
+      "moduleTitle": "SQL for Finance",
+      "minutes": 15,
+      "mcqs": 11,
+      "problems": 6,
+      "cases": 1,
+      "fills": 5
+    },
+    {
+      "num": 54,
+      "title": "AR aging — who owes, how late",
+      "moduleNum": 9,
+      "moduleTitle": "SQL for Finance",
+      "minutes": 15,
+      "mcqs": 11,
+      "problems": 6,
+      "cases": 1,
+      "fills": 5
+    },
+    {
+      "num": 55,
+      "title": "MoM growth — LAG does the trend",
+      "moduleNum": 9,
+      "moduleTitle": "SQL for Finance",
+      "minutes": 15,
+      "mcqs": 11,
+      "problems": 6,
+      "cases": 1,
+      "fills": 5
+    },
+    {
+      "num": 56,
+      "title": "Reconciliation — when books disagree",
+      "moduleNum": 9,
+      "moduleTitle": "SQL for Finance",
+      "minutes": 16,
+      "mcqs": 11,
+      "problems": 6,
+      "cases": 1,
+      "fills": 5
+    },
+    {
+      "num": 57,
+      "title": "Windows III — percentiles & outliers",
+      "moduleNum": 9,
+      "moduleTitle": "SQL for Finance",
+      "minutes": 16,
+      "mcqs": 11,
+      "problems": 6,
+      "cases": 1,
+      "fills": 5
+    }
+  ],
+  "capCases": 6,
+  "modules": [
+    {
+      "num": 1,
+      "title": "SQL Foundations",
+      "lessons": 9,
+      "minutes": 130,
+      "mcqs": 122,
+      "problems": 77,
+      "cases": 300,
+      "fills": 46,
+      "drills": 470,
+      "exam": 1
+    },
+    {
+      "num": 2,
+      "title": "Joins & Relationships",
+      "lessons": 9,
+      "minutes": 121,
+      "mcqs": 75,
+      "problems": 70,
+      "cases": 300,
+      "fills": 45,
+      "drills": 465,
+      "exam": 1
+    },
+    {
+      "num": 3,
+      "title": "Set Operations & CASE",
+      "lessons": 9,
+      "minutes": 117,
+      "mcqs": 80,
+      "problems": 70,
+      "cases": 300,
+      "fills": 45,
+      "drills": 455,
+      "exam": 1
+    },
+    {
+      "num": 4,
+      "title": "Subqueries & CTEs",
+      "lessons": 5,
+      "minutes": 66,
+      "mcqs": 42,
+      "problems": 37,
+      "cases": 300,
+      "fills": 25,
+      "drills": 445,
+      "exam": 1
+    },
+    {
+      "num": 5,
+      "title": "Scalar & Window Toolkit",
+      "lessons": 5,
+      "minutes": 70,
+      "mcqs": 66,
+      "problems": 37,
+      "cases": 300,
+      "fills": 25,
+      "drills": 860,
+      "exam": 1
+    },
+    {
+      "num": 6,
+      "title": "Expert Clinic",
+      "lessons": 3,
+      "minutes": 44,
+      "mcqs": 32,
+      "problems": 21,
+      "cases": 175,
+      "fills": 18,
+      "drills": 0,
+      "exam": 1
+    },
+    {
+      "num": 7,
+      "title": "Data Modification",
+      "lessons": 5,
+      "minutes": 63,
+      "mcqs": 58,
+      "problems": 37,
+      "cases": 5,
+      "fills": 25,
+      "drills": 0,
+      "exam": 1
+    },
+    {
+      "num": 8,
+      "title": "Schema, Views & Beyond",
+      "lessons": 6,
+      "minutes": 73,
+      "mcqs": 72,
+      "problems": 45,
+      "cases": 6,
+      "fills": 30,
+      "drills": 0,
+      "exam": 1
+    },
+    {
+      "num": 9,
+      "title": "SQL for Finance",
+      "lessons": 6,
+      "minutes": 91,
+      "mcqs": 66,
+      "problems": 36,
+      "cases": 6,
+      "fills": 30,
+      "drills": 0,
+      "exam": 1
+    }
+  ],
+  "drills": [
+    {
+      "keyword": "select",
+      "label": "SELECT + FROM",
+      "module": 1,
+      "questions": 50
+    },
+    {
+      "keyword": "where",
+      "label": "WHERE",
+      "module": 1,
+      "questions": 50
+    },
+    {
+      "keyword": "null",
+      "label": "NULL / IS NULL",
+      "module": 1,
+      "questions": 50
+    },
+    {
+      "keyword": "order-limit",
+      "label": "ORDER BY + LIMIT",
+      "module": 1,
+      "questions": 50
+    },
+    {
+      "keyword": "aggregates",
+      "label": "Aggregates",
+      "module": 1,
+      "questions": 50
+    },
+    {
+      "keyword": "groupby",
+      "label": "GROUP BY",
+      "module": 1,
+      "questions": 50
+    },
+    {
+      "keyword": "having",
+      "label": "HAVING",
+      "module": 1,
+      "questions": 50
+    },
+    {
+      "keyword": "in",
+      "label": "IN",
+      "module": 1,
+      "questions": 20
+    },
+    {
+      "keyword": "between",
+      "label": "BETWEEN",
+      "module": 1,
+      "questions": 15
+    },
+    {
+      "keyword": "like",
+      "label": "LIKE",
+      "module": 1,
+      "questions": 20
+    },
+    {
+      "keyword": "and-or-not",
+      "label": "AND / OR / NOT",
+      "module": 1,
+      "questions": 20
+    },
+    {
+      "keyword": "distinct",
+      "label": "DISTINCT",
+      "module": 1,
+      "questions": 20
+    },
+    {
+      "keyword": "coalesce",
+      "label": "COALESCE",
+      "module": 1,
+      "questions": 15
+    },
+    {
+      "keyword": "nullif",
+      "label": "NULLIF",
+      "module": 1,
+      "questions": 10
+    },
+    {
+      "keyword": "inner-join",
+      "label": "JOIN · ON",
+      "module": 2,
+      "questions": 55
+    },
+    {
+      "keyword": "left-join",
+      "label": "LEFT JOIN",
+      "module": 2,
+      "questions": 55
+    },
+    {
+      "keyword": "multi-join",
+      "label": "Multi-table joins",
+      "module": 2,
+      "questions": 50
+    },
+    {
+      "keyword": "join-aggregate",
+      "label": "JOIN + aggregates",
+      "module": 2,
+      "questions": 55
+    },
+    {
+      "keyword": "anti-join",
+      "label": "Anti-join",
+      "module": 2,
+      "questions": 45
+    },
+    {
+      "keyword": "self-join",
+      "label": "Self-join",
+      "module": 2,
+      "questions": 45
+    },
+    {
+      "keyword": "on-vs-where",
+      "label": "ON vs WHERE",
+      "module": 2,
+      "questions": 40
+    },
+    {
+      "keyword": "join-edges",
+      "label": "Join edge cases",
+      "module": 2,
+      "questions": 40
+    },
+    {
+      "keyword": "join-syntax",
+      "label": "USING & aliases",
+      "module": 2,
+      "questions": 40
+    },
+    {
+      "keyword": "join-judgment",
+      "label": "Choosing joins",
+      "module": 2,
+      "questions": 40
+    },
+    {
+      "keyword": "union",
+      "label": "UNION & UNION ALL",
+      "module": 3,
+      "questions": 55
+    },
+    {
+      "keyword": "intersect",
+      "label": "INTERSECT",
+      "module": 3,
+      "questions": 45
+    },
+    {
+      "keyword": "except",
+      "label": "EXCEPT",
+      "module": 3,
+      "questions": 45
+    },
+    {
+      "keyword": "case-when",
+      "label": "CASE WHEN",
+      "module": 3,
+      "questions": 55
+    },
+    {
+      "keyword": "case-aggregate",
+      "label": "CASE + aggregates",
+      "module": 3,
+      "questions": 50
+    },
+    {
+      "keyword": "set-precedence",
+      "label": "Set precedence & parens",
+      "module": 3,
+      "questions": 40
+    },
+    {
+      "keyword": "set-ordering",
+      "label": "Ordering & shaping sets",
+      "module": 3,
+      "questions": 45
+    },
+    {
+      "keyword": "set-edges",
+      "label": "Set op edge cases",
+      "module": 3,
+      "questions": 40
+    },
+    {
+      "keyword": "set-judgment",
+      "label": "Choosing set ops",
+      "module": 3,
+      "questions": 40
+    },
+    {
+      "keyword": "case-sorts",
+      "label": "CASE sorts & labels",
+      "module": 3,
+      "questions": 40
+    },
+    {
+      "keyword": "in-subquery",
+      "label": "IN + subquery",
+      "module": 4,
+      "questions": 55
+    },
+    {
+      "keyword": "scalar-sub",
+      "label": "Scalar subquery",
+      "module": 4,
+      "questions": 45
+    },
+    {
+      "keyword": "exists",
+      "label": "EXISTS / NOT EXISTS",
+      "module": 4,
+      "questions": 50
+    },
+    {
+      "keyword": "correlated",
+      "label": "Correlated subquery",
+      "module": 4,
+      "questions": 45
+    },
+    {
+      "keyword": "derived",
+      "label": "Derived tables",
+      "module": 4,
+      "questions": 45
+    },
+    {
+      "keyword": "cte",
+      "label": "CTE / WITH",
+      "module": 4,
+      "questions": 45
+    },
+    {
+      "keyword": "cte-recursive",
+      "label": "WITH RECURSIVE",
+      "module": 4,
+      "questions": 40
+    },
+    {
+      "keyword": "sub-edges",
+      "label": "Subquery edge cases",
+      "module": 4,
+      "questions": 40
+    },
+    {
+      "keyword": "sub-errors",
+      "label": "Subquery errors",
+      "module": 4,
+      "questions": 40
+    },
+    {
+      "keyword": "sub-judgment",
+      "label": "Choosing subqueries",
+      "module": 4,
+      "questions": 40
+    },
+    {
+      "keyword": "ranking-windows",
+      "label": "Ranking windows",
+      "module": 5,
+      "questions": 95
+    },
+    {
+      "keyword": "lag-lead",
+      "label": "LAG & LEAD",
+      "module": 5,
+      "questions": 95
+    },
+    {
+      "keyword": "text-toolkit",
+      "label": "Text toolkit",
+      "module": 5,
+      "questions": 95
+    },
+    {
+      "keyword": "cast-coercion",
+      "label": "CAST & coercion",
+      "module": 5,
+      "questions": 90
+    },
+    {
+      "keyword": "date-buckets",
+      "label": "Date buckets (strftime)",
+      "module": 5,
+      "questions": 45
+    },
+    {
+      "keyword": "date-math",
+      "label": "Date math (julianday)",
+      "module": 5,
+      "questions": 45
+    },
+    {
+      "keyword": "window-partitions",
+      "label": "PARTITION BY windows",
+      "module": 5,
+      "questions": 45
+    },
+    {
+      "keyword": "window-frames",
+      "label": "Frames & running totals",
+      "module": 5,
+      "questions": 90
+    },
+    {
+      "keyword": "ntile",
+      "label": "NTILE",
+      "module": 5,
+      "questions": 45
+    },
+    {
+      "keyword": "date-edges",
+      "label": "Date edge cases",
+      "module": 5,
+      "questions": 45
+    },
+    {
+      "keyword": "window-edges",
+      "label": "Window edge cases",
+      "module": 5,
+      "questions": 45
+    },
+    {
+      "keyword": "window-judgment",
+      "label": "Choosing windows",
+      "module": 5,
+      "questions": 40
+    },
+    {
+      "keyword": "ops-calendar",
+      "label": "Ops calendar synthesis",
+      "module": 5,
+      "questions": 45
+    },
+    {
+      "keyword": "toolkit-capstone",
+      "label": "Toolkit capstone",
+      "module": 5,
+      "questions": 40
+    }
+  ],
+  "totals": {
+    "lessons": 57,
+    "modules": 9,
+    "mcqs": 613,
+    "problems": 430,
+    "cases": 1692,
+    "fills": 289,
+    "drills": 2695,
+    "drillSets": 58,
+    "topics": 66,
+    "minutes": 775
+  }
+}

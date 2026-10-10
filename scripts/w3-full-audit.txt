@@ -1,0 +1,1056 @@
+Auditing assembled index: 1050 cases
+PASS cs-001  Shelf card for the HDMI cable
+PASS cs-002  EU active roster for the mail merge
+PASS cs-003  Vendor card for the audio partner
+PASS cs-004  Receipt line 4, itemized
+PASS cs-005  The Wearables shelf, listed
+PASS cs-006  Headline count for the growth deck
+PASS cs-007  Which cancelled ticket was worth 397.99
+PASS cs-008  The anchor price, confirmed
+PASS cs-009  Pull the flagged ticket's record
+PASS cs-010  Count the Shenzhen shelf slots
+PASS cs-011  CRM seed file, first five
+PASS cs-012  How many partners call the EU home
+PASS cs-013  The voucher's receipt lines
+PASS cs-014  Which shelf is the studio mic on
+PASS cs-015  One account's booking register
+PASS cs-016  The board pack's catalog snapshot
+PASS cs-017  The CRM contact sheet
+PASS cs-018  Refund math for ticket #4519
+PASS cs-019  The 15%-off promo sheet
+PASS cs-020  Cents for the gateway cross-check
+PASS cs-021  What the shelves are holding
+PASS cs-022  The voucher column for the win-back
+PASS cs-023  Supplier scores on a 50-point scale
+PASS cs-024  Processing fees on the card ledger
+PASS cs-025  Publish-safe product sheet
+PASS cs-026  The raw ledger for the auditors
+PASS cs-027  Bookings feed for the metrics slide
+PASS cs-028  Restocking fee on refund payouts
+PASS cs-029  The restock planning sheet
+PASS cs-030  The reviewer hand-off extract
+PASS cs-031  Everything on the shelf, valued
+PASS cs-032  The mailing-list import file
+PASS cs-033  Vendor scores on a 100-point scale
+PASS cs-034  Rebuilding spend line by line
+PASS cs-035  The lean stock feed
+PASS cs-036  The reconciliation pull
+PASS cs-037  The market map roster
+PASS cs-038  Goodwill credits, computed per order
+PASS cs-039  The flat-cut promo worksheet
+PASS cs-040  The velocity watchlist feed
+PASS cs-041  Cancelled orders worth chasing
+PASS cs-042  Shelves running thin
+PASS cs-043  Two regions for the Q3 push
+PASS cs-044  Rate-card review: the 4.5 bar
+PASS cs-045  The mid-band card pile
+PASS cs-046  Two shelves for the hero-banner shoot
+PASS cs-047  September's booking count
+PASS cs-048  Personalization smoke test
+PASS cs-049  Open-lane orders for the reserve
+PASS cs-050  Above the 100 mark
+PASS cs-051  Pending tickets over 500
+PASS cs-052  Bulk bins above the line
+PASS cs-053  Audience the agency inherits
+PASS cs-054  The renegotiation shortlist
+PASS cs-055  Volume lines for renegotiation
+PASS cs-056  Priced out of the impulse zone
+PASS cs-057  Big delivered orders for the revenue note
+PASS cs-058  Who can we actually visit
+PASS cs-059  March's single cancellation
+PASS cs-060  The mid-market shelf
+PASS cs-061  Accounts outside the home corridors
+PASS cs-062  Bulk pick lines for the wave plan
+PASS cs-063  January's booked volume
+PASS cs-064  Partners above the quality bar
+PASS cs-065  Open exposure on the books
+PASS cs-066  Everything that mentions USB
+PASS cs-067  The mid-tier order band
+PASS cs-068  Dormant accounts for the win-back list
+PASS cs-069  Cancellations worth a phone call
+PASS cs-070  Premium audio, shortlist edition
+PASS cs-071  The hole in the shipment ledger
+PASS cs-072  Orders nobody can vouch for
+PASS cs-073  Stamps on the dispatch ledger
+PASS cs-074  What actually left the funnel
+PASS cs-075  Heavy orders still on the dock
+PASS cs-076  The report that came back empty
+PASS cs-077  Sizing the stuck pile before the walk
+PASS cs-078  Sorting the limbo pile
+PASS cs-079  Limbo by the month it was booked
+PASS cs-080  Cancelled, never dispatched
+PASS cs-081  Baseline of the dispatched book
+PASS cs-082  Big tickets with no dispatch confirmation
+PASS cs-083  Open picks with no dispatch stamp
+PASS cs-084  Dispatch-confirmed share of all orders
+PASS cs-085  Unconfirmed orders split by status
+PASS cs-086  What the unconfirmed backlog is worth
+PASS cs-087  First five records missing dispatch stamps
+PASS cs-088  Value confirmed out the door
+PASS cs-089  How old is the unconfirmed backlog
+PASS cs-090  Cancelled and never dispatched
+PASS cs-091  Three biggest tickets for manual review
+PASS cs-092  Five price anchors for the reset board
+PASS cs-093  Newest tickets on the fraud queue
+PASS cs-094  The restock queue, thinnest first
+PASS cs-095  A/B split group one, A to Z
+PASS cs-096  Two APAC seats at the QBR
+PASS cs-097  Line items for the spend review
+PASS cs-098  Shelf reset plan, first six rows
+PASS cs-099  Five invoices for the close binder
+PASS cs-100  Founding cohort for the anniversary
+PASS cs-101  Three cancellations worth goodwill
+PASS cs-102  The entry-level price ladder
+PASS cs-103  Card-testing probe: smallest tickets
+PASS cs-104  Where the pallets pile up
+PASS cs-105  Page two of the storefront grid
+PASS cs-106  Suppliers on the improvement list
+PASS cs-107  Page two of the spend ledger
+PASS cs-108  The back of the catalog proof
+PASS cs-109  The three oldest open tickets
+PASS cs-110  The rollout sheet, region by region
+PASS cs-111  Everything past the escalation bar
+PASS cs-112  The mid-shelf repricing band
+PASS cs-113  Card-testing sweep: the tiniest tickets
+PASS cs-114  The count sheet's opening lines
+PASS cs-115  The entry-price shelf for the landing page
+PASS cs-116  Counting the vendors behind the catalog
+PASS cs-117  Products behind the premium ledger lines
+PASS cs-118  The shelf list for the navigation rebuild
+PASS cs-119  How many months the order ledger spans
+PASS cs-120  The EU city map, deduplicated
+PASS cs-121  Accounts behind the cancelled orders
+PASS cs-122  Shelves that already carry premium prices
+PASS cs-123  Sizing the over-500 review queue
+PASS cs-124  Batch sizes on the pick line
+PASS cs-125  Markets we've actually acquired in
+PASS cs-126  The APAC vendor day agenda
+PASS cs-127  Months the CFO will ask about
+PASS cs-128  Who's holding the thin stock
+PASS cs-129  Months in the closing binder
+PASS cs-130  Cities on the board map
+PASS cs-131  States an order can be stuck in
+PASS cs-132  Shelves carrying premium price tags
+PASS cs-133  Accounts behind the big tickets
+PASS cs-134  Who stocks the Audio aisle
+PASS cs-135  Catalog breadth that actually sold
+PASS cs-136  Headline numbers for the close deck
+PASS cs-137  Nordic Gadgets' shelf footprint
+PASS cs-138  The spend report's two headline cells
+PASS cs-139  The price band of the catalog
+PASS cs-140  January's booked revenue
+PASS cs-141  Closed deals, average ticket
+PASS cs-142  The cancellation ledger
+PASS cs-143  How deep is a basket
+PASS cs-144  Orders over the review line
+PASS cs-145  Thin shelves before the count
+PASS cs-146  Live accounts on the board
+PASS cs-147  Grading the supplier bench
+PASS cs-148  The petty-spend pool
+PASS cs-149  What the warehouse holds
+PASS cs-150  The band our tickets travel in
+PASS cs-151  Pipeline waiting on the board
+PASS cs-152  The cancellation backlog in one row
+PASS cs-153  The catalog's price floor and ceiling
+PASS cs-154  Exposure above a line never crossed
+PASS cs-155  Units on the shelf, counted once
+PASS cs-156  The bottom of the funnel, priced
+PASS cs-157  Supplier scorecard extremes
+PASS cs-158  What the big tickets cost us
+PASS cs-159  The affordable shelf, sized
+PASS cs-160  The January signature number
+PASS cs-161  The board deck's one-line business
+PASS cs-162  What a walk-away costs on average
+PASS cs-163  Sizing the premium shelf
+PASS cs-164  The ticket range on file
+PASS cs-165  Pick lines at the cap, verified
+PASS cs-166  Categories carrying premium pricing
+PASS cs-167  Busiest months for campaign timing
+PASS cs-168  Suppliers carrying a full shelf
+PASS cs-169  Accounts that keep reordering
+PASS cs-170  Shelves with depth and a cheap hook
+PASS cs-171  Booked value by fulfillment status
+PASS cs-172  Regions with an active base
+PASS cs-173  Small status queues for manual review
+PASS cs-174  Shelves with a sub-20 entry point
+PASS cs-175  Status buckets hiding jumbo tickets
+PASS cs-176  Heavy shelves for the cycle count
+PASS cs-177  Three-thousand months for the retro
+PASS cs-178  Who fields multiple premium SKUs
+PASS cs-179  Accounts over 1500 in spend
+PASS cs-180  Shelves whose ceiling passes 120
+PASS cs-181  Average ticket by fulfillment status
+PASS cs-182  Stages that carry the volume
+PASS cs-183  Small buckets the team can clear by hand
+PASS cs-184  Budget shelves for the entry-tier line
+PASS cs-185  Accounts ordering like resellers
+PASS cs-186  Shelves running thin before the count
+PASS cs-187  Months that hit the campaign bar
+PASS cs-188  Suppliers carrying real catalog weight
+PASS cs-189  Parcels with four-line packing loads
+PASS cs-190  Shelves where even the floor reads premium
+PASS cs-191  Monthly revenue buckets for the close deck
+PASS cs-192  Regions with a real member base
+PASS cs-193  Stages where the average ticket clears 300
+PASS cs-194  Shelves that can anchor the premium tier
+PASS cs-195  Booked value piled in a few accounts
+PASS cs-196  The month that carried the building
+PASS cs-197  Where orders stall before dispatch
+PASS cs-198  Regions with a second source
+PASS cs-199  Rates above the 200 line
+PASS cs-200  Headline numbers for the audio shelf
+PASS cs-201  The 2.9% processor fee column
+PASS cs-202  One account's cancelled tickets
+PASS cs-203  Unit cost at 60 percent of list
+PASS cs-204  A-items for the cycle count
+PASS cs-205  The newest signup on the board
+PASS cs-206  Vendor cards for the portal import
+PASS cs-207  Settled money on the card ledger
+PASS cs-208  The board map's account roster
+PASS cs-209  The four-figure order
+PASS cs-210  The pick list for the count floor
+PASS cs-211  Dispatch blanks, filled for print
+PASS cs-212  The credit queue's four accounts
+PASS cs-213  The all-in price tag
+PASS cs-214  The stock ladder, thinnest first
+PASS cs-215  SKUs that have actually moved
+PASS cs-216  The EU visit list
+PASS cs-217  Accounts on the month's statement
+PASS cs-218  The account map's city list
+PASS cs-219  Stamps the warehouse did apply
+PASS cs-220  Pro anywhere in the name
+PASS cs-221  The close deck's average cell
+PASS cs-222  Refund cases without a dispatch stamp
+PASS cs-223  Line rates, floor to ceiling
+PASS cs-224  Units on the Electronics wall
+PASS cs-225  Where the funnel opened
+PASS cs-226  The bench's mean score
+PASS cs-227  Batch two, smallest tickets first
+PASS cs-228  The dormant account's record
+PASS cs-229  The biggest ticket still uncaptured
+PASS cs-230  Depth column for the bin sheet
+PASS cs-231  February's revenue line
+PASS cs-232  The 300-bar refund queue
+PASS cs-233  Ex-VAT prices for the EU sheet
+PASS cs-234  The deep-stock eight for the count
+PASS cs-235  How many accounts ever bought
+PASS cs-236  Below the 4.2 quality bar
+PASS cs-237  The spend extract, field by field
+PASS cs-238  The cohort sheet with sign-up dates
+PASS cs-239  Tickets above the 800 hold line
+PASS cs-240  Categories on the budget shelf
+PASS cs-241  The close binder's stamped count
+PASS cs-242  The refund ledger's two cells
+PASS cs-243  Three anchors for the pricing memo
+PASS cs-244  The deepest bin on the floor
+PASS cs-245  Newest sign-ups for the onboarding wave
+PASS cs-246  The vendor grid, three columns
+PASS cs-247  What the expense ledger adds up to
+PASS cs-248  Average basket on the shipped book
+PASS cs-249  Scan stamps, real or marked
+PASS cs-250  Floor to ceiling on the shelf
+PASS cs-251  The January booking window
+PASS cs-252  Rows to tag before the refund meeting
+PASS cs-253  Prices six through eight, descending
+PASS cs-254  Vendors behind the thin shelves
+PASS cs-255  Active cities for the geo push
+PASS cs-256  Shenzhen Electro's full vendor record
+PASS cs-257  The sub-300 expense lines
+PASS cs-258  The board export's money column
+PASS cs-259  Three gates on the jumbo sweep
+PASS cs-260  Cheapest lines first, ties settled
+PASS cs-261  Quiet months, biggest tickets first
+PASS cs-262  Headcount versus dispatch stamps
+PASS cs-263  Shelves under the 60 average
+PASS cs-264  Depth read for every shelf
+PASS cs-265  The spring cohort, newest four
+PASS cs-266  Partners moving 450 units
+PASS cs-267  The sweep that found nothing
+PASS cs-268  The 2024 cohort, region by region
+PASS cs-269  Stages without a dispatch trail
+PASS cs-270  Cheapest three with real headroom
+PASS cs-271  Mid-shelf band, stock-capped
+PASS cs-272  The mouse never sells at sticker
+PASS cs-273  The deferred pot: booked, not shipped
+PASS cs-274  Deep shelves or the audio wall
+PASS cs-275  Which aisles run deep?
+PASS cs-276  The supplier report card, ties settled
+PASS cs-277  The A-list, best foot first
+PASS cs-278  The big-ticket slice of the spend book
+PASS cs-279  Vendors that earn a line item
+PASS cs-280  Two aisles, three restock candidates
+PASS cs-281  Shipped revenue months that clear the bar
+PASS cs-282  The refund ledger in four numbers
+PASS cs-283  Ranking the sound-and-video shelf
+PASS cs-284  Thin-stock walk order
+PASS cs-285  Stages with a broad buyer base
+PASS cs-286  Partners pricing below the floor
+PASS cs-287  The three heaviest spend months
+PASS cs-288  The stretch-pipeline slide
+PASS cs-289  Value outside the chain of custody
+PASS cs-290  Premium depth on the board's page
+PASS cs-291  The whale watch-list sweep
+PASS cs-292  Months the stamps fell behind
+PASS cs-293  The repeat-cancellation shortlist
+PASS cs-294  Markets the spring cohort opened
+PASS cs-295  The freshest five, same-day pair sorted
+PASS cs-296  Same-day doubles on the fraud radar
+PASS cs-297  The close binder's collected cash
+PASS cs-298  Cancellations from 100 upward
+PASS cs-299  The stage that must stay empty
+PASS cs-300  Q2 realized revenue for the board
+PASS cs-301  Pending money needs a name
+PASS cs-302  Where the orders live
+PASS cs-303  Whose headset are we selling?
+PASS cs-304  Region scoreboard
+PASS cs-305  The one cancellation worth chasing
+PASS cs-306  Money in limbo, name by name
+PASS cs-307  Stock backed by a rated supplier
+PASS cs-308  Regions that clear the revenue bar
+PASS cs-309  Next quarter's planning prices
+PASS cs-310  Capital parked on shelves, by supplier
+PASS cs-311  Catalog snapshot with the maker
+PASS cs-312  Units out the door
+PASS cs-313  Cash actually collected
+PASS cs-314  Catalog value by supplier region
+PASS cs-315  Follow a payment back to its buyer
+PASS cs-316  Pull one order's paper trail
+PASS cs-317  Lines and spend, biggest books first
+PASS cs-318  Units by region, gated
+PASS cs-319  Four-line baskets
+PASS cs-320  Name every line's product
+PASS cs-321  Units by customer region
+PASS cs-322  Order 1's supplier spread
+PASS cs-323  Supplier volume leaderboard
+PASS cs-324  Spend at the line grain, gated
+PASS cs-325  Where the cash came from
+PASS cs-326  What a line really costs
+PASS cs-327  Where the money ships from
+PASS cs-328  Cash by city
+PASS cs-329  Nobody off the books
+PASS cs-330  The 33-vs-28 tell
+PASS cs-331  Six invoices nobody touched
+PASS cs-332  Prove nobody is order-less
+PASS cs-333  Keep the pipeline visible
+PASS cs-334  Name the unpaid six
+PASS cs-335  Coverage with the empties kept
+PASS cs-336  Two-hop holes
+PASS cs-337  The unbilled five
+PASS cs-338  Count the unbilled
+PASS cs-339  Zero dead stock, proven
+PASS cs-340  The no-pending eight
+PASS cs-341  Unbilled exposure
+PASS cs-342  Same-region teammates
+PASS cs-343  Order twins
+PASS cs-344  Alice's order twins
+PASS cs-345  One city, one customer
+PASS cs-346  City revenue ranking
+PASS cs-347  Units vs distinct orders
+PASS cs-348  Category units and revenue
+PASS cs-349  Top books at the line grain
+PASS cs-350  Rows and money after the fan-out
+PASS cs-351  Maya's billing paper
+PASS cs-352  Inactive but ordering
+PASS cs-353  Who holds the open paper
+PASS cs-354  Open balances through the fee lens
+PASS cs-355  Orders carrying the Desk Mat
+PASS cs-356  Fulfillment lines by status
+PASS cs-357  Baskets that want the headset
+PASS cs-358  Units by status
+PASS cs-359  Cancelled lines, named
+PASS cs-360  Money by payment method
+PASS cs-361  Two-grain money, side by side
+PASS cs-362  Deep-bench suppliers only
+PASS cs-363  Who buys the headset
+PASS cs-364  HDMI volume
+PASS cs-365  Category × region grid
+PASS cs-366  Regional supply floor
+PASS cs-367  Spend by city, three hops deep
+PASS cs-368  The unshipped exposure, named
+PASS cs-369  Invoices with their cash, holes kept
+PASS cs-370  Books with their raw cents
+PASS cs-371  Suppliers and their shelf weight
+PASS cs-372  The unshipped coverage view
+PASS cs-373  Receivables per customer, zeros included
+PASS cs-374  Region coverage with invoice money
+PASS cs-375  The paid-status anomaly hunt
+PASS cs-376  The never-invoiced, by region
+PASS cs-377  Count the payment-less invoices
+PASS cs-378  Accounts with no cancelled history
+PASS cs-379  Accounts we can't pitch
+PASS cs-380  The double-anti: unbilled and quiet
+PASS cs-381  The gap, in three numbers
+PASS cs-382  EU teammates only
+PASS cs-383  The unguarded pairing
+PASS cs-384  Emma's order twins
+PASS cs-385  Same-product line pairs
+PASS cs-386  Bridges across regions
+PASS cs-387  Supplier product counts
+PASS cs-388  Collected cash by method
+PASS cs-389  Invoice money by region
+PASS cs-390  Books with four-plus invoices
+PASS cs-391  The movers, top three
+PASS cs-392  Supplier revenue, realized
+PASS cs-393  Lines vs orders, per region
+PASS cs-394  The whole book, three truths
+PASS cs-395  The USING shorthand
+PASS cs-396  The NATURAL trap
+PASS cs-397  The EU-in-ON coverage
+PASS cs-398  The invoice-order mesh
+PASS cs-399  The CROSS JOIN experiment
+PASS cs-400  Wrong-FK forensics
+PASS cs-401  Deep-stock catalog page
+PASS cs-402  The one-order accounts
+PASS cs-403  Chloe's open paper
+PASS cs-404  The early-pay discount grid
+PASS cs-405  Headset revenue
+PASS cs-406  The wired money
+PASS cs-407  Orders and lines, side by side
+PASS cs-408  Categories on the shelf
+PASS cs-409  Andes' two movers
+PASS cs-410  The twice-paid invoice
+PASS cs-411  The per-invoice gap, isolated
+PASS cs-412  Every line's maker
+PASS cs-413  Joins that don't fan out
+PASS cs-414  Region lines leaderboard
+PASS cs-415  Billing paper by city
+PASS cs-416  What gets unwound
+PASS cs-417  Midwest's money mix
+PASS cs-418  The three-thousand-spend club
+PASS cs-419  The supplier stability view
+PASS cs-420  The twice-paid five
+PASS cs-421  The two-hop census
+PASS cs-422  The unbilled five, in orders
+PASS cs-423  Shelf value, gated
+PASS cs-424  Pending exposure, the eight holders
+PASS cs-425  The EU billing gap
+PASS cs-426  The unpaid, by claim
+PASS cs-427  The pitchable-account census
+PASS cs-428  The dark-account count
+PASS cs-429  Exposure geography
+PASS cs-430  The gap, bucketed honestly
+PASS cs-431  Grace's internal pairs
+PASS cs-432  The unguarded order pairing
+PASS cs-433  Lines that share a basket
+PASS cs-434  Same-city order pairing
+PASS cs-435  Supplier region pairs
+PASS cs-436  The invoice book census
+PASS cs-437  Delivered units
+PASS cs-438  Basket depth by region
+PASS cs-439  The category revenue podium
+PASS cs-440  Average ticket by rail
+PASS cs-441  The premium-basket leaderboard
+PASS cs-442  The moving-categories floor
+PASS cs-443  The biggest baskets, in money
+PASS cs-444  USING, the second exhibit
+PASS cs-445  The RIGHT JOIN survey
+PASS cs-446  The cancelled-in-ON census
+PASS cs-447  The unshipped census, two ways
+PASS cs-448  The five-table chain, whole
+PASS cs-449  RIGHT JOIN the cash
+PASS cs-450  NATURAL, the one-column edition
+PASS cs-451  Cheap and well-made
+PASS cs-452  The US book, counted
+PASS cs-453  The open-paper owners
+PASS cs-454  The list-vs-realized discount
+PASS cs-455  Audio's line depth
+PASS cs-456  The card rail's first page
+PASS cs-457  The three-plus billing club
+PASS cs-458  Alice's baskets, biggest first
+PASS cs-459  The APAC product board
+PASS cs-460  The five-thousand revenue floor
+PASS cs-461  Cancellation geography
+PASS cs-462  Suppliers per category
+PASS cs-463  Buyers and boxes by region
+PASS cs-464  Shelf value by category
+PASS cs-465  The APAC bench check
+PASS cs-466  The status schedule, two grains
+PASS cs-467  The region × category grid
+PASS cs-468  The paid book's payment counts
+PASS cs-469  The eight quiet accounts, mapped
+PASS cs-470  The settled claim with no cash
+PASS cs-471  Europe's unbilled count
+PASS cs-472  The vendor line census
+PASS cs-473  The recovery list, with names
+PASS cs-474  The pending book with ids
+PASS cs-475  The gap, city by city
+PASS cs-476  Count the quiet eight
+PASS cs-477  The spotless roster, by region
+PASS cs-478  The spotless twelve, named
+PASS cs-479  The unpaid, by due date
+PASS cs-480  The coverage ratio, guarded
+PASS cs-481  The inclusive city pairs
+PASS cs-482  The desk mat's twins
+PASS cs-483  Sibling products, paired
+PASS cs-484  Order bridges across regions
+PASS cs-485  The keyboard's siblings
+PASS cs-486  Category line census
+PASS cs-487  Shipped units
+PASS cs-488  The unwound money
+PASS cs-489  List-price averages by category
+PASS cs-490  Units by vendor rating
+PASS cs-491  Spend per order, ranked
+PASS cs-492  Cancellation lines, regionalized
+PASS cs-493  The thinnest shelf covers
+PASS cs-494  USING on the chain
+PASS cs-495  NATURAL on the chain
+PASS cs-496  RIGHT JOIN from the accounts
+PASS cs-497  The Cartesian census
+PASS cs-498  Pending exposure, holder-gated
+PASS cs-499  The FULL OUTER survey
+PASS cs-500  The capstone census
+PASS cs-501  Nordic's catalog page
+PASS cs-502  Berlin's biggest baskets
+PASS cs-503  Open exposure per owner
+PASS cs-504  The flagged-and-pending overlap
+PASS cs-505  The keyboard's transacted prices
+PASS cs-506  The holders, counted
+PASS cs-507  The shelf column that lied
+PASS cs-508  The wire timeline with amounts
+PASS cs-509  The EU supplier board
+PASS cs-510  The holder ledger with lines
+PASS cs-511  Basket depth per account
+PASS cs-512  The supplier-sorted shelf page
+PASS cs-513  Region revenue with counts
+PASS cs-514  The desk mat's baskets, listed
+PASS cs-515  The vendor work census
+PASS cs-516  Pending money by city
+PASS cs-517  Cancellation value per account
+PASS cs-518  Payments per invoice, the full page
+PASS cs-519  Pending counts, zeros included
+PASS cs-520  Collected cash, by payer region
+PASS cs-521  Unshipped counts, holder-gated
+PASS cs-522  Unpaid counts per owner
+PASS cs-523  The pipeline's line ledger
+PASS cs-524  Count the billed cities
+PASS cs-525  Count the cashed invoices
+PASS cs-526  The billed books, biggest first
+PASS cs-527  The quiet unbilled, counted
+PASS cs-528  The anomaly's five neighbors
+PASS cs-529  The double-payment ledger
+PASS cs-530  The EU pair list, named
+PASS cs-531  Order pairs inside the EU
+PASS cs-532  The speaker's shelf-mate
+PASS cs-533  The APAC vendor pair
+PASS cs-534  Pairing pools, by region
+PASS cs-535  Nordic's sibling pairs
+PASS cs-536  Collected cash by ledger claim
+PASS cs-537  The cable's realized revenue
+PASS cs-538  The yoga mat's cover ratio
+PASS cs-539  List vs realized, one line
+PASS cs-540  Andes' two money columns
+PASS cs-541  The whale's basket depth
+PASS cs-542  The pending slice, two grains
+PASS cs-543  The unwind's product money
+PASS cs-544  USING between the vendors
+PASS cs-545  The unshipped exposure rollup
+PASS cs-546  RIGHT JOIN down the chain
+PASS cs-547  The Cartesian money noise
+PASS cs-548  NATURAL with money attached
+PASS cs-549  The chain's work podium
+PASS cs-550  The closing header, with money
+PASS cs-551  Alpine's catalog page
+PASS cs-552  Seoul's book, counted
+PASS cs-553  The open-paper owners, emailed
+PASS cs-554  The dormant-flag ledger
+PASS cs-555  The headset's transacted ladder
+PASS cs-556  The delivered book, by buyer
+PASS cs-557  The card rail's average ladder
+PASS cs-558  Shenzhen's money mix
+PASS cs-559  The delivered census, city edition
+PASS cs-560  The cancelled baskets, listed
+PASS cs-561  The whale's delivered ladder
+PASS cs-562  The category × maker grid
+PASS cs-563  The three-hop buyer census
+PASS cs-564  The HDMI basket list
+PASS cs-565  The maker's units page
+PASS cs-566  The exposure grid, region × status
+PASS cs-567  The unwind's regional money
+PASS cs-568  The twice-paid, with money
+PASS cs-569  The unpaid six, with owners
+PASS cs-570  The quiet eight, with emails
+PASS cs-571  Dispatch counts per buyer
+PASS cs-572  The vendor shelf page, preserved
+PASS cs-573  The aging view, with claims
+PASS cs-574  The exposure ledger with lines
+PASS cs-575  Unbilled by region, tile edition
+PASS cs-576  The unpaid census by claim, filed
+PASS cs-577  The billed-cities ladder
+PASS cs-578  The dark cohort, named
+PASS cs-579  The unpaid, exposure-ordered
+PASS cs-580  The coverage tile, both halves
+PASS cs-581  The APAC pairing pool, named
+PASS cs-582  The watch's shelf-mates
+PASS cs-583  The EU vendor pair
+PASS cs-584  The pairing pools, per supplier bench
+PASS cs-585  The pairing triangle, city edition
+PASS cs-586  Stock by supplier, summed
+PASS cs-587  Pending units, the pipeline's weight
+PASS cs-588  Units per maker, product-split
+PASS cs-589  Realized vs list, cable edition
+PASS cs-590  The wire rail's payment counts
+PASS cs-591  Emma's depth number, proven
+PASS cs-592  The close's per-region header
+PASS cs-593  The recovery ledger, filed
+PASS cs-594  USING with money attached
+PASS cs-595  NATURAL with the shelf summed
+PASS cs-596  RIGHT JOIN with money kept
+PASS cs-597  The chain's regional header
+PASS cs-598  The FULL OUTER, with the money checked
+PASS cs-599  The capstone header, regionalized
+PASS cs-600  The module's final reconciliation
+PASS cs-601  One column of every lifecycle word
+PASS cs-602  Count the whole stack
+PASS cs-603  Who is on the map at all
+PASS cs-604  Every name in the building
+PASS cs-605  Labeled mini-census
+PASS cs-606  The three-stat line
+PASS cs-607  Customers with orders, by key
+PASS cs-608  Shared geography
+PASS cs-609  The empty middle
+PASS cs-610  Words only fulfillment uses
+PASS cs-611  Regions only suppliers know
+PASS cs-612  The shelf that wasn't
+PASS cs-613  Two vocabularies, one list, counted
+PASS cs-614  Self-stack, doubled
+PASS cs-615  The warehouse word census
+PASS cs-616  Cohort union: pending or uninvoiced
+PASS cs-617  Payment words and expense words, kept raw
+PASS cs-618  The board's four-region line-up
+PASS cs-619  Money arms: invoiced vs paid
+PASS cs-620  Status census, ranked
+PASS cs-621  Top order, then the summary row
+PASS cs-622  Invoice coverage by key
+PASS cs-623  Words both catalogs share
+PASS cs-624  The NULL that matches
+PASS cs-625  Ledger words and payment words
+PASS cs-626  Catalog minus sold, counted
+PASS cs-627  Keys beyond the people
+PASS cs-628  Billing words we don't fulfill with
+PASS cs-629  The cancelled-only slice
+PASS cs-630  Stock arms: catalog vs shelf
+PASS cs-631  Cities that order
+PASS cs-632  The close-day word pile
+PASS cs-633  The unshipped vocabulary check
+PASS cs-634  The three-arm vocabulary merge
+PASS cs-635  The wrap that sorts a stack
+PASS cs-636  Per-arm ceilings, wrapped
+PASS cs-637  The six-line spend grid
+PASS cs-638  FK audit by intersection
+PASS cs-639  Chained subtraction, documented
+PASS cs-640  The precedence probe
+PASS cs-641  The paren the grammar refuses
+PASS cs-642  The NULL that dedups
+PASS cs-643  The arms that almost agree
+PASS cs-644  The top-and-floor grid
+PASS cs-645  The supplier FK sweep
+PASS cs-646  The asymmetric pair, filed
+PASS cs-647  The affinity boundary
+PASS cs-648  The self-intersection mirror
+PASS cs-649  The status census, three ways
+PASS cs-650  The sold-out complement
+PASS cs-651  Fulfillment words, payment words
+PASS cs-652  Cities plus lifecycle words
+PASS cs-653  The spend envelope, three rows
+PASS cs-654  Two catalogs, one headcount
+PASS cs-655  Rent and ads, side by side
+PASS cs-656  The billing pile by state
+PASS cs-657  Shared ground on the map
+PASS cs-658  The id-space accident
+PASS cs-659  Fulfillment words billing never uses
+PASS cs-660  Payment words the ledger lacks
+PASS cs-661  Product families finance never sees
+PASS cs-662  Vendors the supply chain doesn't know
+PASS cs-663  Billing words fulfillment never prints
+PASS cs-664  The three-vocabulary page
+PASS cs-665  Flags meet billing words
+PASS cs-666  The transaction census, labeled
+PASS cs-667  The four-ledger vocabulary
+PASS cs-668  Money lens, two dimensions
+PASS cs-669  Days we both sold and spent
+PASS cs-670  Selling days with no spend
+PASS cs-671  Categories, then the grand total
+PASS cs-672  The NULL that counts once
+PASS cs-673  Key ranges, table by table
+PASS cs-674  Accounts the till never touches
+PASS cs-675  Chain receipt: subtract, then append
+PASS cs-676  The wrap that groups first
+PASS cs-677  Paper money vs collected cash
+PASS cs-678  Status census over region census
+PASS cs-679  One row, both directions
+PASS cs-680  The trailing operator that dedups everything
+PASS cs-681  Chain receipt: append, then subtract
+PASS cs-682  Pending money over delivered money
+PASS cs-683  The FK receipt, set-op edition
+PASS cs-684  Accounts that post both ways
+PASS cs-685  Chain receipt: intersect, then append
+PASS cs-686  The quiet tail of the census
+PASS cs-687  The exposure cohort, stacked
+PASS cs-688  Shared accounting months
+PASS cs-689  Three ledgers, three sums
+PASS cs-690  Shared map vs raw pile
+PASS cs-691  Subtraction, both directions
+PASS cs-692  Category vocabularies, three probes
+PASS cs-693  The onboarding list, printed
+PASS cs-694  The grammar probe, side by side
+PASS cs-695  Three ledgers, one ranking
+PASS cs-696  The region that never pends
+PASS cs-697  Status money, both ledgers
+PASS cs-698  The account roll call
+PASS cs-699  Till words, ledger words
+PASS cs-700  The pile that NULL keeps
+PASS cs-701  Card money over wire money
+PASS cs-702  Billing states over till words
+PASS cs-703  The double-risk customers
+PASS cs-704  No orphan lines, proven
+PASS cs-705  The month spend beat billing
+PASS cs-706  Cities that are not regions
+PASS cs-707  Three vocabularies, ten words
+PASS cs-708  Deep stock over the rest
+PASS cs-709  The price ladder, three rungs
+PASS cs-710  Billing words the books lack
+PASS cs-711  Billed and settled
+PASS cs-712  Region invoices, then the total
+PASS cs-713  Chain receipt: categories, then the till
+PASS cs-714  No spendless order month
+PASS cs-715  Category bookings, then the total
+PASS cs-716  Chain receipt: till, statuses, regions
+PASS cs-717  Categories the books never name
+PASS cs-718  Region volume, both ledgers
+PASS cs-719  Delivered and paid, proven
+PASS cs-720  Pending but billable
+PASS cs-721  Delivered but never settled
+PASS cs-722  Timestamps in both states
+PASS cs-723  The merged calendar
+PASS cs-724  Double subtraction receipt
+PASS cs-725  The self-intersect warm-up
+PASS cs-726  Spend days vs posting days
+PASS cs-727  Cohort years, both sides
+PASS cs-728  Invoiced months, all collected
+PASS cs-729  Order days on invoice paper
+PASS cs-730  Books, till, billing — one list
+PASS cs-731  Vendors over categories
+PASS cs-732  Active accounts, no paper
+PASS cs-733  Books and till, month aligned
+PASS cs-734  The junction that must stay empty
+PASS cs-735  Three ledgers, counts and money
+PASS cs-736  The double-entry mirror
+PASS cs-737  The stuck list, by name
+PASS cs-738  Reuse vs the NULL pile
+PASS cs-739  Clean and gap, reconciled
+PASS cs-740  Lines and orphans, one row
+PASS cs-741  The pending pile, split
+PASS cs-742  The pre-billing month, printed
+PASS cs-743  Spend words vs the till, both probes
+PASS cs-744  The label triage
+PASS cs-745  The alphabet's first four words
+PASS cs-746  Spend and fulfillment, one vocabulary
+PASS cs-747  Settled pairs, subtracted
+PASS cs-748  Billing calendar vs spend calendar
+PASS cs-749  The exposure ladder
+PASS cs-750  The wrap that saves the subtraction
+PASS cs-751  Lifecycle words meet spend words
+PASS cs-752  Regions meet billing states
+PASS cs-753  Vendors and customers, one list
+PASS cs-754  Three ceilings, one column
+PASS cs-755  Chain receipt: spend, minus statuses, plus till
+PASS cs-756  Regions, till, billing — merged
+PASS cs-757  Cities, statuses, till — the big pile
+PASS cs-758  Chain receipt: statuses, minus regions, plus billing
+PASS cs-759  The lifecycle buckets
+PASS cs-760  The order-size bands
+PASS cs-761  The ELSE that NULLs
+PASS cs-762  The NULL comparison trap
+PASS cs-763  The lifecycle reading order
+PASS cs-764  The parity receipt
+PASS cs-765  Fixed versus variable spend
+PASS cs-766  The two-counter idiom
+PASS cs-767  Active versus churned
+PASS cs-768  Product names meet their own categories
+PASS cs-769  Three averages, one column
+PASS cs-770  Cities meet billing states
+PASS cs-771  Spend, books, billing — one pile
+PASS cs-772  Till, regions, cities — the geography pile
+PASS cs-773  Chain receipt: statuses, till, minus billing
+PASS cs-774  Chain receipt: cities, minus statuses, plus regions
+PASS cs-775  Chain receipt: books, minus spend, plus statuses
+PASS cs-776  The split that rebuilds itself
+PASS cs-777  The vendor master list, printed
+PASS cs-778  The covered universe
+PASS cs-779  The first-match trap, run
+PASS cs-780  COUNT versus SUM, reconciled
+PASS cs-781  IIF, the two-way shorthand
+PASS cs-782  CASE inside WHERE
+PASS cs-783  The region lifecycle grid
+PASS cs-784  The five-ledger census
+PASS cs-785  Categories, statuses, cities — the wide pile
+PASS cs-786  Three category vocabularies, one list
+PASS cs-787  Fulfillment, till, billing — the state pile
+PASS cs-788  The chain that ends in subtraction
+PASS cs-789  The three-calendar pile
+PASS cs-790  Pending or settled, the union
+PASS cs-791  The six-vocabulary master list
+PASS cs-792  The geography chain, three operators
+PASS cs-793  The status-size grid
+PASS cs-794  The spend-band grid
+PASS cs-795  The premium grid
+PASS cs-796  The till-band grid
+PASS cs-797  The account classes
+PASS cs-798  The invoice-size bands
+PASS cs-799  The buckets, with money
+PASS cs-800  The capstone: a CASE arm joins the chain
+PASS cs-801  Five till words, three billing words
+PASS cs-802  Two counters, one pile
+PASS cs-803  Live and churned, stacked
+PASS cs-804  Ceiling and floor
+PASS cs-805  Seven lifecycle words, one column
+PASS cs-806  Everyone we pay, A to Z
+PASS cs-807  The fixed floor and the growth line
+PASS cs-808  The till ties out
+PASS cs-809  Do the vocabularies touch?
+PASS cs-810  Regions both sides sell in
+PASS cs-811  Sixteen cities, mirrored
+PASS cs-812  Billing words the warehouse never says
+PASS cs-813  Spend words the shelf never stocks
+PASS cs-814  Who's still on, by region
+PASS cs-815  Big tickets vs the rest
+PASS cs-816  First half vs second half
+PASS cs-817  Paid, open, void — and the whole book
+PASS cs-818  Two vintages and the whole flow
+PASS cs-819  Four regions, counted per arm
+PASS cs-820  Regions and lifecycles, one ledger
+PASS cs-821  The books balance, three ways
+PASS cs-822  Waiting on a repeat
+PASS cs-823  Four accounts order, then cancel
+PASS cs-824  The top shared id
+PASS cs-825  Quiet days on the calendar
+PASS cs-826  Till words the bill never speaks
+PASS cs-827  Billed and calm
+PASS cs-828  The sweep at the end
+PASS cs-829  Where engines disagree
+PASS cs-830  Two regions out of the roll
+PASS cs-831  Three shelves for sixteen products
+PASS cs-832  Stock depth bands
+PASS cs-833  Billing's two halves
+PASS cs-834  Three ceilings, one ladder
+PASS cs-835  The whole ledger of records
+PASS cs-836  Big money by category
+PASS cs-837  Three id spaces, one overlap
+PASS cs-838  One sweep, four piles
+PASS cs-839  The pile, trimmed to three
+PASS cs-840  Till methods, split at 3,000
+PASS cs-841  Four quarters, booked and labeled
+PASS cs-842  Every state, every region, one grid
+PASS cs-843  Price tier against stock depth
+PASS cs-844  Rating shelves for six suppliers
+PASS cs-845  Out the door, back from the book
+PASS cs-846  The overlap, bracketed
+PASS cs-847  Lean, but affordable
+PASS cs-848  Every state, counted and priced
+PASS cs-849  Strip the regions, keep the cities
+PASS cs-850  The ledger's own reading order
+PASS cs-851  The balance that must agree
+PASS cs-852  The bookend tickets
+PASS cs-853  Two shelves of customers
+PASS cs-854  Three books, one memo
+PASS cs-855  Three ceilings on one slide
+PASS cs-856  Two vocabularies, counted
+PASS cs-857  Two rails through the till
+PASS cs-858  Settled, outstanding, killed
+PASS cs-859  The year in four checks
+PASS cs-860  Big tickets, small tickets
+PASS cs-861  The spend ledger with a floor line
+PASS cs-862  Every state of the money, biggest first
+PASS cs-863  The premium movers
+PASS cs-864  Europe's live accounts
+PASS cs-865  Thirteen shared months
+PASS cs-866  Billed buyers, delivered orders
+PASS cs-867  The due-date overlap
+PASS cs-868  One shared day in 2025
+PASS cs-869  Shipped and billed, both boxes ticked
+PASS cs-870  The affordable movers
+PASS cs-871  Europe's unbilled two
+PASS cs-872  Live accounts, zero paper
+PASS cs-873  Billed, never stalled
+PASS cs-874  Fourteen quiet bookkeeping days
+PASS cs-875  The one that slipped
+PASS cs-876  The jumbo that never settled
+PASS cs-877  Eight movers above the budget line
+PASS cs-878  Outside the two big zones
+PASS cs-879  Fourteen words, three sheets
+PASS cs-880  The tail of the pile
+PASS cs-881  Where spend words meet book words
+PASS cs-882  The union swallows the intersect
+PASS cs-883  Uppercase goes first
+PASS cs-884  Two rails, one till
+PASS cs-885  Founders and scalers
+PASS cs-886  Home market and export
+PASS cs-887  Three lanes for a bill
+PASS cs-888  Shelf check, two buckets
+PASS cs-889  Orders by the quarter
+PASS cs-890  The fixed floor's share
+PASS cs-891  The supplier podium
+PASS cs-892  Three sizes of ticket
+PASS cs-893  Rails and their heavy lifts
+PASS cs-894  The year in one row
+PASS cs-895  The four-region grid
+PASS cs-896  Billed by region, settled or not
+PASS cs-897  The premium paradox
+PASS cs-898  The fixed cost goes first
+PASS cs-899  Where churn lives
+PASS cs-900  Every status, split at 150
+PASS cs-901  The cancelled club
+PASS cs-902  Everyone but the four
+PASS cs-903  Regions our best suppliers call home
+PASS cs-904  Carts still hot
+PASS cs-905  Audio appetite
+PASS cs-906  Orders on open books
+PASS cs-907  Twins of the whale
+PASS cs-908  The void paper
+PASS cs-909  The seatbelt clause
+PASS cs-910  Stranded in LATAM
+PASS cs-911  Tainted paperwork
+PASS cs-912  Wearable heat
+PASS cs-913  Out of both hot zones
+PASS cs-914  The pay-later ledger
+PASS cs-915  Tuples of the five-hundred club
+PASS cs-916  The bar to clear
+PASS cs-917  The ceiling product
+PASS cs-918  Stamp the pipeline
+PASS cs-919  Best in class
+PASS cs-920  Above the house average
+PASS cs-921  Twice the typical
+PASS cs-922  The delivered bar
+PASS cs-923  Category champions
+PASS cs-924  The biggest bill
+PASS cs-925  The price stamp
+PASS cs-926  The VIP bar
+PASS cs-927  Below the halfway mark
+PASS cs-928  The pending bar
+PASS cs-929  Double the delivered bar
+PASS cs-930  Out-earning the biggest ticket
+PASS cs-931  The pending eight
+PASS cs-932  Never shipped
+PASS cs-933  The audio fourteen
+PASS cs-934  The lone whale
+PASS cs-935  EU carts left hot
+PASS cs-936  The five-hundred club
+PASS cs-937  The wearable twelve
+PASS cs-938  The impossible status
+PASS cs-939  The ghost segment
+PASS cs-940  The unanchored flag
+PASS cs-941  The personal counter
+PASS cs-942  My biggest ticket
+PASS cs-943  The solo pair
+PASS cs-944  The stellar forty-five
+PASS cs-945  Both bars at once
+PASS cs-946  Pricey in my lane
+PASS cs-947  Above the neighborhood bar
+PASS cs-948  Quiet overachievers
+PASS cs-949  The double stamp
+PASS cs-950  The veteran four
+PASS cs-951  Sixteen lines on the stage
+PASS cs-952  The board's top five
+PASS cs-953  Priced above their shelf
+PASS cs-954  Where the money went
+PASS cs-955  Paid, by account
+PASS cs-956  Beating the neighborhood average
+PASS cs-957  The heavy-spend shortlist
+PASS cs-958  The three biggest tickets
+PASS cs-959  The stage's vital signs
+PASS cs-960  Two roads to eight
+PASS cs-961  One-product shelves don't count
+PASS cs-962  Nobody beneath the bar
+PASS cs-963  Regional champions
+PASS cs-964  Settled business only
+PASS cs-965  Stage math on the shelf
+PASS cs-966  Name the stage once
+PASS cs-967  Two bars, one stage
+PASS cs-968  The paid club, staged
+PASS cs-969  Travel, staged to dollars
+PASS cs-970  The region chain, staged
+PASS cs-971  The bar that builds itself
+PASS cs-972  Three tickets, how many hands
+PASS cs-973  The premium shelf, staged
+PASS cs-974  The ghost in the order book
+PASS cs-975  The forward reference
+PASS cs-976  Heavyweights, staged and stitched
+PASS cs-977  Above our own average
+PASS cs-978  Stars versus their streets
+PASS cs-979  The settlement ledger, staged
+PASS cs-980  The stage nobody reads
+PASS cs-981  The five-touch ladder
+PASS cs-982  The escalation runbook, reversed
+PASS cs-983  Rungs that double
+PASS cs-984  The cycle-count walk
+PASS cs-985  The rent clock
+PASS cs-986  Trading days on the calendar
+PASS cs-987  The duplicated first step
+PASS cs-988  Hot days on the live calendar
+PASS cs-989  The fee that doubles past its cap
+PASS cs-990  Sourcing tiers on a ladder
+PASS cs-991  Two bars, one memo
+PASS cs-992  Ghost accounts
+PASS cs-993  Orders above the storewide bar
+PASS cs-994  The single biggest ticket
+PASS cs-995  The veterans test
+PASS cs-996  Stars via scalar
+PASS cs-997  Premium pieces, catalog-wide
+PASS cs-998  Receipts above the mean
+PASS cs-999  The wide-basket census
+PASS cs-1000  White-glove orders
+PASS cs-1001  Nine SKUs on hold
+PASS cs-1002  One supply line reaches everyone
+PASS cs-1003  The day the big one landed
+PASS cs-1004  The void-free fifteen
+PASS cs-1005  Two names on the exception list
+PASS cs-1006  Premium carriers
+PASS cs-1007  Never touched the risky shelf
+PASS cs-1008  The books balance
+PASS cs-1009  The half-price shelf
+PASS cs-1010  Above the pending pace
+PASS cs-1011  Below-the-line shelves
+PASS cs-1012  What the customers actually sent
+PASS cs-1013  The flagship's fifth of the book
+PASS cs-1014  The in-between band
+PASS cs-1015  The payers, through EXISTS
+PASS cs-1016  Clean of voids
+PASS cs-1017  Delivered heavyweights
+PASS cs-1018  The all-paid club
+PASS cs-1019  The delivered-only books
+PASS cs-1020  Suppliers the cancellations spared
+PASS cs-1021  Who carries the invoice book
+PASS cs-1022  The order magnets
+PASS cs-1023  Above the pull rate
+PASS cs-1024  Under their own pace
+PASS cs-1025  Status peaks
+PASS cs-1026  The regional outperformers
+PASS cs-1027  The busy-status census
+PASS cs-1028  Four-line orders
+PASS cs-1029  The biggest single day
+PASS cs-1030  Five accounts beat the average account
+PASS cs-1031  The heaviest settlement
+PASS cs-1032  Two regions run hot
+PASS cs-1033  The workhorse accounts
+PASS cs-1034  The big-ticket ledger
+PASS cs-1035  The podium
+PASS cs-1036  Big money, European shelf
+PASS cs-1037  One stage, two answers
+PASS cs-1038  The premium shelves
+PASS cs-1039  The three-deep ladder
+PASS cs-1040  Big orders, no big bills
+PASS cs-1041  The ten-rung countdown
+PASS cs-1042  The id walk
+PASS cs-1043  The billing calendar
+PASS cs-1044  Powers of three under the cap
+PASS cs-1045  The posting-day calendar
+PASS cs-1046  The VIP ceiling test
+PASS cs-1047  The settle-up gap
+PASS cs-1048  The VIPs bought the lot
+PASS cs-1049  Europe's paid three
+PASS cs-1050  The double-badge elite
+
+==== SUMMARY ====
+cases: 1050  pass: 1050  fail: 0
+tiers: easy=351 medium=351 hard=348
+EXIT:0

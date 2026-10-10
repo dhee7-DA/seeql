@@ -1,0 +1,71 @@
+Auditing 1 file(s): 50 cases
+PASS cs-1251  The spend podium
+PASS cs-1252  Ties that share a podium
+PASS cs-1253  Numbered regardless of ties
+PASS cs-1254  The oldest member
+PASS cs-1255  The eighth member aboard
+PASS cs-1256  The tenth-biggest ticket
+PASS cs-1257  The status leaderboard
+PASS cs-1258  The four-figure club, ranked
+PASS cs-1259  The quality rank
+PASS cs-1260  The tie policy compare
+PASS cs-1261  The runner-up pair
+PASS cs-1262  The bottom four
+PASS cs-1263  The region order race
+PASS cs-1264  The repeat-buyer rank
+PASS cs-1265  The completed-work crown
+PASS cs-1266  The region champions
+PASS cs-1267  The regional podium count
+PASS cs-1268  The EU ladder
+PASS cs-1269  The category price toppers
+FAIL cs-1270  The best-day census
+     - ambiguous: distractor "2" in slot 4 (the open revenue floor) produces the SAME result as the correct fill
+     - ambiguous: distractor "300" in slot 4 (the open revenue floor) produces the SAME result as the correct fill
+PASS cs-1271  The regional shelf rank
+PASS cs-1272  The status month champions
+PASS cs-1273  The second shelf tag
+PASS cs-1274  The premium shelf slots
+PASS cs-1275  The home-market crown
+PASS cs-1276  The shelf champions, gated
+PASS cs-1277  The one-member pot
+PASS cs-1278  The biggest open invoice
+PASS cs-1279  The US runner-up
+PASS cs-1280  The lane runner-up calendars
+FAIL cs-1281  The February verdict
+     - filled SQL fails to execute: no such column: mo
+FAIL cs-1282  The first-month frontier
+     - template has 2 distinct markers but 3 slots
+     - template missing marker {3}
+     - ambiguous: distractor ">=" in slot 3 (the backward fetch) produces the SAME result as the correct fill
+     - ambiguous: distractor "'2024-03'" in slot 3 (the backward fetch) produces the SAME result as the correct fill
+     - ambiguous: distractor "LEAD" in slot 3 (the backward fetch) produces the SAME result as the correct fill
+FAIL cs-1283  The biggest slide
+     - template marker {3} used more than once
+PASS cs-1284  The follow-up month
+PASS cs-1285  The longest silence
+PASS cs-1286  The gain count
+FAIL cs-1287  The order-count seesaw
+     - template has 4 distinct markers but 5 slots
+     - template missing marker {5}
+     - filled SQL fails to execute: near "mo": syntax error
+PASS cs-1288  The gap to the crown
+FAIL cs-1289  The invoicing momentum
+     - template has 4 distinct markers but 5 slots
+     - template missing marker {5}
+     - filled SQL fails to execute: near "mo": syntax error
+PASS cs-1290  The long-silence census
+PASS cs-1291  The running revenue line
+PASS cs-1292  The grand-total convergence
+PASS cs-1293  The 20000 wall
+PASS cs-1294  The quartile gate
+PASS cs-1295  The bottom-quartile ceiling
+PASS cs-1296  The two-month smoothing
+PASS cs-1297  The smoothing frontier
+PASS cs-1298  The region pots
+PASS cs-1299  The running order census
+PASS cs-1300  The whale month, tracked
+
+==== SUMMARY ====
+cases: 50  pass: 44  fail: 6
+tiers: easy=17 medium=16 hard=17
+failing: cs-1270, cs-1281, cs-1282, cs-1283, cs-1287, cs-1289

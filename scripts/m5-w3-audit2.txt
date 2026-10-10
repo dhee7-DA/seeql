@@ -1,0 +1,74 @@
+Auditing 1 file(s): 50 cases
+PASS cs-1301  The crowded at-position
+PASS cs-1302  The over-length roster
+PASS cs-1303  The per-shelf width champions
+PASS cs-1304  The vendor tail census
+PASS cs-1305  The handle range
+PASS cs-1306  The regional name lengths
+PASS cs-1307  The hyphenated tags
+PASS cs-1308  The 'a' roll call
+PASS cs-1309  The shelf-stock floor
+FAIL cs-1310  The 4.8 flag
+     - ambiguous: distractor "REAL" in slot 1 (the print cast) produces the SAME result as the correct fill
+     - ambiguous: distractor "LOWER" in slot 1 (the print cast) produces the SAME result as the correct fill
+PASS cs-1311  The prefix solitude
+FAIL cs-1312  The already-caps census
+     - ambiguous: distractor "LOWER" in slot 1 (the caps test) produces the SAME result as the correct fill
+     - ambiguous: distractor "LOWER" in slot 2 (the clean-city check) produces the SAME result as the correct fill
+     - ambiguous: distractor "LOWER" in slot 3 (the name gauge) produces the SAME result as the correct fill
+     - ambiguous: distractor "UPPER" in slot 2 (the clean-city check) produces the SAME result as the correct fill
+     - ambiguous: distractor "UPPER" in slot 3 (the name gauge) produces the SAME result as the correct fill
+PASS cs-1313  The APAC badge list
+PASS cs-1314  The surname width table
+PASS cs-1315  The handle census line
+PASS cs-1316  The debit-ledger split
+PASS cs-1317  The sentinel census
+PASS cs-1318  The unpaid years
+FAIL cs-1319  The void line in euros
+     - ambiguous: distractor "'paid'" in slot 4 (the window edge) produces the SAME result as the correct fill
+FAIL cs-1320  The settlement gap
+     - t2 fallback topic but no COALESCE/IFNULL/NULLIF — these cases must guard NULLs
+PASS cs-1321  The rent coverage
+PASS cs-1322  The aged open balances
+PASS cs-1323  The settlement-month census
+PASS cs-1324  The split-settlement pot
+PASS cs-1325  The spend calendar count
+PASS cs-1326  The second-half debit split
+FAIL cs-1327  The pending-month map
+     - duplicate slot answers: 7
+     - ambiguous: distractor "3" in slot 3 (the label floor) produces the SAME result as the correct fill
+PASS cs-1328  The vintage leaderboard
+FAIL cs-1329  The premium stuck queue
+     - filled SQL fails to execute: near "=": syntax error
+PASS cs-1330  The one-sided cash book
+PASS cs-1331  The book's span
+PASS cs-1332  The roster's span
+PASS cs-1333  The shipping calendar
+PASS cs-1334  The Monday settlements
+PASS cs-1335  The completed-lane histogram
+PASS cs-1336  The 2024 weekend read
+PASS cs-1337  The late-month openers
+FAIL cs-1338  The mid-month shippable
+     - ambiguous: distractor "20" in slot 2 (the mid-month day) produces the SAME result as the correct fill
+     - ambiguous: distractor "20" in slot 4 (the dead lane) produces the SAME result as the correct fill
+PASS cs-1339  The first-quarter cohort
+PASS cs-1340  The cohort pace
+PASS cs-1341  The expense crown month
+FAIL cs-1342  The spike month count
+     - ambiguous: distractor "100000" in slot 4 (the never-true label) produces the SAME result as the correct fill
+FAIL cs-1343  The issue-month census
+     - ambiguous: distractor "UPPER" in slot 3 (the storage check) produces the SAME result as the correct fill
+PASS cs-1344  The settlement years
+PASS cs-1345  The second-quarter cohort
+FAIL cs-1346  The September spotlight
+     - ambiguous: distractor "50" in slot 3 (the open line floor) produces the SAME result as the correct fill
+PASS cs-1347  The pair-month census
+FAIL cs-1348  The pending pot
+     - Module 5 date topic but no date function — t3/t4 cases must slice the calendar
+PASS cs-1349  The year split
+PASS cs-1350  The Monday grid
+
+==== SUMMARY ====
+cases: 50  pass: 39  fail: 11
+tiers: easy=19 medium=15 hard=16
+failing: cs-1310, cs-1312, cs-1319, cs-1320, cs-1327, cs-1329, cs-1338, cs-1342, cs-1343, cs-1346, cs-1348

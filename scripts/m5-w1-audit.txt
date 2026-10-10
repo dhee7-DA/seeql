@@ -1,0 +1,102 @@
+Auditing 1 file(s): 50 cases
+FAIL cs-1201  The handle-length average
+     - 2 slots — must be 3..7
+FAIL cs-1202  The longest name on the roster
+     - ambiguous: distractor "15" in slot 3 (the open ceiling) produces the SAME result as the correct fill
+     - ambiguous: distractor "12" in slot 2 (the open floor) produces the SAME result as the correct fill
+FAIL cs-1203  The twelve-character club
+     - unknown universe "crm"
+     - ambiguous: distractor "11" in slot 2 (the email sanity floor) produces the SAME result as the correct fill
+PASS cs-1204  The longest shelf tag
+FAIL cs-1205  The average shelf-tag width
+     - ambiguous: distractor "0" in slot 3 (the open length floor) produces the SAME result as the correct fill
+FAIL cs-1206  The 'o' roll call
+     - ambiguous: distractor "1" in slot 3 (the pass-through region guard) produces the SAME result as the correct fill
+PASS cs-1207  The numbered models
+PASS cs-1208  The longest supplier letterhead
+FAIL cs-1209  The surname meter
+     - unknown universe "crm"
+     - ambiguous: distractor "5" in slot 2 (the has-space guard) produces the SAME result as the correct fill
+     - ambiguous: distractor "7" in slot 1 (the space marker) produces the SAME result as the correct fill
+PASS cs-1210  The cheapest integer tag
+PASS cs-1211  The seven-letter market towns
+PASS cs-1212  The shouted status census
+PASS cs-1213  The digit-led tag
+FAIL cs-1214  The s-final surname check
+     - unknown universe "crm"
+FAIL cs-1215  The six-letter surname club
+     - unknown universe "crm"
+PASS cs-1216  The never-shipped census
+PASS cs-1217  The not-shipped headline
+FAIL cs-1218  The timestamp ledger pair
+     - duplicate slot answers: '1900-01-01'
+     - ambiguous: distractor "total" in slot 1 (the counted column) produces the SAME result as the correct fill
+     - ambiguous: distractor "'2000-01-01'" in slot 1 (the counted column) produces the SAME result as the correct fill
+     - ambiguous: distractor "'1899-12-31'" in slot 1 (the counted column) produces the SAME result as the correct fill
+FAIL cs-1219  The unpaid roll call
+     - ambiguous: distractor "<" in slot 3 (the void exclusion) produces the SAME result as the correct fill
+PASS cs-1220  The unpaid pot
+FAIL cs-1221  The dormant sweep proof
+     - ambiguous: distractor "orders" in slot 2 (the member source) produces the SAME result as the correct fill
+FAIL cs-1222  The split settlements
+     - t2 fallback topic but no COALESCE/IFNULL/NULLIF — these cases must guard NULLs
+PASS cs-1223  The phantom paid
+PASS cs-1224  The open-balance report
+PASS cs-1225  The never-settled notes
+PASS cs-1226  The debit-side discipline
+PASS cs-1227  The single-receipt majority
+FAIL cs-1228  The late-settlement sweep
+     - duplicate slot answers: >
+     - t2 fallback topic but no COALESCE/IFNULL/NULLIF — these cases must guard NULLs
+FAIL cs-1229  The never-invoiced cohort
+     - t2 fallback topic but no COALESCE/IFNULL/NULLIF — these cases must guard NULLs
+     - ambiguous: distractor "0" in slot 4 (the email length floor) produces the SAME result as the correct fill
+FAIL cs-1230  The fully-settled count
+     - duplicate slot answers: >, 0
+     - ambiguous: distractor "100" in slot 3 (the open paid floor) produces the SAME result as the correct fill
+PASS cs-1231  The shipping speed line
+FAIL cs-1232  The two-day turnarounds
+     - ambiguous: distractor "3" in slot 3 (the excluded status) produces the SAME result as the correct fill
+     - ambiguous: distractor "'pending'" in slot 3 (the excluded status) produces the SAME result as the correct fill
+PASS cs-1233  The delivered middle lane
+PASS cs-1234  The in-flight slow lane
+PASS cs-1235  The completed-work speed
+PASS cs-1236  The status speed board
+FAIL cs-1237  The Sunday runs
+     - ambiguous: distractor "'1'" in slot 4 (the open total floor) produces the SAME result as the correct fill
+FAIL cs-1238  The weekend share
+     - ambiguous: distractor "'pending'" in slot 4 (the excluded status) produces the SAME result as the correct fill
+FAIL cs-1239  The busiest weekday
+     - ambiguous: distractor "7" in slot 2 (the open total floor) produces the SAME result as the correct fill
+PASS cs-1240  The active-days count
+FAIL cs-1241  The month league
+     - ambiguous: distractor "'%Y'" in slot 3 (the never-true label) produces the SAME result as the correct fill
+FAIL cs-1242  The peak-month tie
+     - ambiguous: distractor ">" in slot 3 (the label exclusion) produces the SAME result as the correct fill
+     - ambiguous: distractor "8" in slot 4 (the never-true label) produces the SAME result as the correct fill
+     - ambiguous: distractor "'2025-01'" in slot 4 (the never-true label) produces the SAME result as the correct fill
+FAIL cs-1243  The February take
+     - unknown universe "finance"
+FAIL cs-1244  The revenue crown month
+     - unknown universe "finance"
+     - ambiguous: distractor "3" in slot 2 (the open total floor) produces the SAME result as the correct fill
+FAIL cs-1245  The below-pace months
+     - ambiguous: distractor ">" in slot 2 (the label exclusion) produces the SAME result as the correct fill
+FAIL cs-1246  The quiet-month list
+     - ambiguous: distractor ">" in slot 1 (the quiet test) produces the SAME result as the correct fill
+     - ambiguous: distractor "7" in slot 2 (the quiet bar) produces the SAME result as the correct fill
+     - ambiguous: distractor "<" in slot 1 (the quiet test) produces the SAME result as the correct fill
+     - ambiguous: distractor "<" in slot 3 (the grain guard direction) produces the SAME result as the correct fill
+     - ambiguous: distractor "3" in slot 2 (the quiet bar) produces the SAME result as the correct fill
+FAIL cs-1247  The month-take average
+     - unknown universe "finance"
+     - duplicate slot answers: >
+PASS cs-1248  The cancellation map
+FAIL cs-1249  The new-year delivered line
+     - duplicate slot answers: >
+PASS cs-1250  The signup cohort months
+
+==== SUMMARY ====
+cases: 50  pass: 23  fail: 27
+tiers: easy=16 medium=18 hard=16
+failing: cs-1201, cs-1202, cs-1203, cs-1205, cs-1206, cs-1209, cs-1214, cs-1215, cs-1218, cs-1219, cs-1221, cs-1222, cs-1228, cs-1229, cs-1230, cs-1232, cs-1237, cs-1238, cs-1239, cs-1241, cs-1242, cs-1243, cs-1244, cs-1245, cs-1246, cs-1247, cs-1249

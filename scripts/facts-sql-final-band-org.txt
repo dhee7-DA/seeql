@@ -1,0 +1,619 @@
+// Official FACTS (schemas + example rows + constraints) for band "band-org".
+// Source: leetcode.com public GraphQL, fetched 2026-10-06.
+// Use ONLY the factual data (table shapes, example rows, ordering rules).
+// Statements/blurbs must be written as ORIGINAL PARAPHRASES (app policy).
+
+##### 3482 analyze-organization-hierarchy [Hard]
+Table: Employees
+
++----------------+---------+
+| Column Name    | Type    |
++----------------+---------+
+| employee_id    | int     |
+| employee_name  | varchar |
+| manager_id     | int     |
+| salary         | int     |
+| department     | varchar |
++----------------+----------+
+employee_id is the unique key for this table.
+Each row contains information about an employee, including their ID, name, their manager's ID, salary, and department.
+manager_id is null for the top-level manager (CEO).
+
+Write a solution to analyze the organizational hierarchy and answer the following:
+
+	Hierarchy Levels: For each employee, determine their level in the organization (CEO is level 1, employees reporting directly to the CEO are level 2, and so on).
+	Team Size: For each employee who is a manager, count the total number of employees under them (direct and indirect reports).
+	Salary Budget: For each manager, calculate the total salary budget they control (sum of salaries of all employees under them, including indirect reports, plus their own salary).
+
+Return the result table ordered by the result ordered by level in ascending order, then by budget in descending order, and finally by employee_name in ascending order.
+
+The result format is in the following example.
+
+Example:
+
+Input:
+
+Employees table:
+
++-------------+---------------+------------+--------+-------------+
+| employee_id | employee_name | manager_id | salary | department  |
++-------------+---------------+------------+--------+-------------+
+| 1           | Alice         | null       | 12000  | Executive   |
+| 2           | Bob           | 1          | 10000  | Sales       |
+| 3           | Charlie       | 1          | 10000  | Engineering |
+| 4           | David         | 2          | 7500   | Sales       |
+| 5           | Eva           | 2          | 7500   | Sales       |
+| 6           | Frank         | 3          | 9000   | Engineering |
+| 7           | Grace         | 3          | 8500   | Engineering |
+| 8           | Hank          | 4          | 6000   | Sales       |
+| 9           | Ivy           | 6          | 7000   | Engineering |
+| 10          | Judy          | 6          | 7000   | Engineering |
++-------------+---------------+------------+--------+-------------+
+
+Output:
+
++-------------+---------------+-------+-----------+--------+
+| employee_id | employee_name | level | team_size | budget |
++-------------+---------------+-------+-----------+--------+
+| 1           | Alice         | 1     | 9         | 84500  |
+| 3           | Charlie       | 2     | 4         | 41500  |
+| 2           | Bob           | 2     | 3         | 31000  |
+| 6           | Frank         | 3     | 2         | 23000  |
+| 4           | David         | 3     | 1         | 13500  |
+| 7           | Grace         | 3     | 0         | 8500   |
+| 5           | Eva           | 3     | 0         | 7500   |
+| 9           | Ivy           | 4     | 0         | 7000   |
+| 10          | Judy          | 4     | 0         | 7000   |
+| 8           | Hank          | 4     | 0         | 6000   |
++-------------+---------------+-------+-----------+--------+
+
+Explanation:
+
+	Organization Structure:
+
+		Alice (ID: 1) is the CEO (level 1) with no manager
+		Bob (ID: 2) and Charlie (ID: 3) report directly to Alice (level 2)
+		David (ID: 4), Eva (ID: 5) report to Bob, while Frank (ID: 6) and Grace (ID: 7) report to Charlie (level 3)
+		Hank (ID: 8) reports to David, and Ivy (ID: 9) and Judy (ID: 10) report to Frank (level 4)
+
+	Level Calculation:
+
+		The CEO (Alice) is at level 1
+		Each subsequent level of management adds 1 to the level
+
+	Team Size Calculation:
+
+		Alice has 9 employees under her (the entire company except herself)
+		Bob has 3 employees (David, Eva, and Hank)
+		Charlie has 4 employees (Frank, Grace, Ivy, and Judy)
+		David has 1 employee (Hank)
+		Frank has 2 employees (Ivy and Judy)
+		Eva, Grace, Hank, Ivy, and Judy have no direct reports (team_size = 0)
+
+	Budget Calculation:
+
+		Alice's budget: Her salary (12000) + all employees' salaries (72500) = 84500
+		Charlie's budget: His salary (10000) + Frank's budget (23000) + Grace's salary (8500) = 41500
+		Bob's budget: His salary (10000) + David's budget (13500) + Eva's salary (7500) = 31000
+		Frank's budget: His salary (9000) + Ivy's salary (7000) + Judy's salary (7000) = 23000
+		David's budget: His salary (7500) + Hank's salary (6000) = 13500
+		Employees with no direct reports have budgets equal to their own salary
+
+Note:
+
+	The result is ordered first by level in ascending order
+	Within the same level, employees are ordered by budget in descending order then by name in ascending order
+
+##### 3580 find-consistently-improving-employees [Medium]
+Table: employees
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| employee_id | int     |
+| name        | varchar |
++-------------+---------+
+employee_id is the unique identifier for this table.
+Each row contains information about an employee.
+
+Table: performance_reviews
+
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| review_id   | int  |
+| employee_id | int  |
+| review_date | date |
+| rating      | int  |
++-------------+------+
+review_id is the unique identifier for this table.
+Each row represents a performance review for an employee. The rating is on a scale of 1-5 where 5 is excellent and 1 is poor.
+
+Write a solution to find employees who have consistently improved their performance over their last three reviews.
+
+	An employee must have at least 3 review to be considered
+	The employee's last 3 reviews must show strictly increasing ratings (each review better than the previous)
+	Use the most recent 3 reviews based on review_date for each employee
+	Calculate the improvement score as the difference between the latest rating and the earliest rating among the last 3 reviews
+
+Return the result table ordered by improvement score in descending order, then by name in ascending order.
+
+The result format is in the following example.
+
+Example:
+
+Input:
+
+employees table:
+
++-------------+----------------+
+| employee_id | name           |
++-------------+----------------+
+| 1           | Alice Johnson  |
+| 2           | Bob Smith      |
+| 3           | Carol Davis    |
+| 4           | David Wilson   |
+| 5           | Emma Brown     |
++-------------+----------------+
+
+performance_reviews table:
+
++-----------+-------------+-------------+--------+
+| review_id | employee_id | review_date | rating |
++-----------+-------------+-------------+--------+
+| 1         | 1           | 2023-01-15  | 2      |
+| 2         | 1           | 2023-04-15  | 3      |
+| 3         | 1           | 2023-07-15  | 4      |
+| 4         | 1           | 2023-10-15  | 5      |
+| 5         | 2           | 2023-02-01  | 3      |
+| 6         | 2           | 2023-05-01  | 2      |
+| 7         | 2           | 2023-08-01  | 4      |
+| 8         | 2           | 2023-11-01  | 5      |
+| 9         | 3           | 2023-03-10  | 1      |
+| 10        | 3           | 2023-06-10  | 2      |
+| 11        | 3           | 2023-09-10  | 3      |
+| 12        | 3           | 2023-12-10  | 4      |
+| 13        | 4           | 2023-01-20  | 4      |
+| 14        | 4           | 2023-04-20  | 4      |
+| 15        | 4           | 2023-07-20  | 4      |
+| 16        | 5           | 2023-02-15  | 3      |
+| 17        | 5           | 2023-05-15  | 2      |
++-----------+-------------+-------------+--------+
+
+Output:
+
++-------------+----------------+-------------------+
+| employee_id | name           | improvement_score |
++-------------+----------------+-------------------+
+| 2           | Bob Smith      | 3                 |
+| 1           | Alice Johnson  | 2                 |
+| 3           | Carol Davis    | 2                 |
++-------------+----------------+-------------------+
+
+Explanation:
+
+	Alice Johnson (employee_id = 1):
+
+		Has 4 reviews with ratings: 2, 3, 4, 5
+		Last 3 reviews (by date): 2023-04-15 (3), 2023-07-15 (4), 2023-10-15 (5)
+		Ratings are strictly increasing: 3 &rarr; 4 &rarr; 5
+		Improvement score: 5 - 3 = 2
+
+	Carol Davis (employee_id = 3):
+
+		Has 4 reviews with ratings: 1, 2, 3, 4
+		Last 3 reviews (by date): 2023-06-10 (2), 2023-09-10 (3), 2023-12-10 (4)
+		Ratings are strictly increasing: 2 &rarr; 3 &rarr; 4
+		Improvement score: 4 - 2 = 2
+
+	Bob Smith (employee_id = 2):
+
+		Has 4 reviews with ratings: 3, 2, 4, 5
+		Last 3 reviews (by date): 2023-05-01 (2), 2023-08-01 (4), 2023-11-01 (5)
+		Ratings are strictly increasing: 2 &rarr; 4 &rarr; 5
+		Improvement score: 5 - 2 = 3
+
+	Employees not included:
+
+		David Wilson (employee_id = 4): Last 3 reviews are all 4 (no improvement)
+		Emma Brown (employee_id = 5): Only has 2 reviews (needs at least 3)
+
+The output table is ordered by improvement_score in descending order, then by name in ascending order.
+
+##### 3611 find-overbooked-employees [Medium]
+Table: employees
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| employee_id   | int     |
+| employee_name | varchar |
+| department    | varchar |
++---------------+---------+
+employee_id is the unique identifier for this table.
+Each row contains information about an employee and their department.
+
+Table: meetings
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| meeting_id    | int     |
+| employee_id   | int     |
+| meeting_date  | date    |
+| meeting_type  | varchar |
+| duration_hours| decimal |
++---------------+---------+
+meeting_id is the unique identifier for this table.
+Each row represents a meeting attended by an employee. meeting_type can be 'Team', 'Client', or 'Training'.
+
+Write a solution to find employees who are meeting-heavy - employees who spend more than 50% of their working time in meetings during any given week.
+
+	Assume a standard work week is 40 hours
+	Calculate total meeting hours per employee per week (Monday to Sunday)
+	An employee is meeting-heavy if their weekly meeting hours > 20 hours (50% of 40 hours)
+	Count how many weeks each employee was meeting-heavy
+	Only include employees who were meeting-heavy for at least 2 weeks
+
+Return the result table ordered by the number of meeting-heavy weeks in descending order, then by employee name in ascending order.
+
+The result format is in the following example.
+
+Example:
+
+Input:
+
+employees table:
+
++-------------+----------------+-------------+
+| employee_id | employee_name  | department  |
++-------------+----------------+-------------+
+| 1           | Alice Johnson  | Engineering |
+| 2           | Bob Smith      | Marketing   |
+| 3           | Carol Davis    | Sales       |
+| 4           | David Wilson   | Engineering |
+| 5           | Emma Brown     | HR          |
++-------------+----------------+-------------+
+
+meetings table:
+
++------------+-------------+--------------+--------------+----------------+
+| meeting_id | employee_id | meeting_date | meeting_type | duration_hours |
++------------+-------------+--------------+--------------+----------------+
+| 1          | 1           | 2023-06-05   | Team         | 8.0            |
+| 2          | 1           | 2023-06-06   | Client       | 6.0            |
+| 3          | 1           | 2023-06-07   | Training     | 7.0            |
+| 4          | 1           | 2023-06-12   | Team         | 12.0           |
+| 5          | 1           | 2023-06-13   | Client       | 9.0            |
+| 6          | 2           | 2023-06-05   | Team         | 15.0           |
+| 7          | 2           | 2023-06-06   | Client       | 8.0            |
+| 8          | 2           | 2023-06-12   | Training     | 10.0           |
+| 9          | 3           | 2023-06-05   | Team         | 4.0            |
+| 10         | 3           | 2023-06-06   | Client       | 3.0            |
+| 11         | 4           | 2023-06-05   | Team         | 25.0           |
+| 12         | 4           | 2023-06-19   | Client       | 22.0           |
+| 13         | 5           | 2023-06-05   | Training     | 2.0            |
++------------+-------------+--------------+--------------+----------------+
+
+Output:
+
++-------------+----------------+-------------+---------------------+
+| employee_id | employee_name  | department  | meeting_heavy_weeks |
++-------------+----------------+-------------+---------------------+
+| 1           | Alice Johnson  | Engineering | 2                   |
+| 4           | David Wilson   | Engineering | 2                   |
++-------------+----------------+-------------+---------------------+
+
+Explanation:
+
+	Alice Johnson (employee_id = 1):
+
+		Week of June 5-11 (2023-06-05 to 2023-06-11): 8.0 + 6.0 + 7.0 = 21.0 hours (> 20 hours)
+		Week of June 12-18 (2023-06-12 to 2023-06-18): 12.0 + 9.0 = 21.0 hours (> 20 hours)
+		Meeting-heavy for 2 weeks
+
+	David Wilson (employee_id = 4):
+
+		Week of June 5-11: 25.0 hours (> 20 hours)
+		Week of June 19-25: 22.0 hours (> 20 hours)
+		Meeting-heavy for 2 weeks
+
+	Employees not included:
+
+		Bob Smith (employee_id = 2): Week of June 5-11: 15.0 + 8.0 = 23.0 hours (> 20), Week of June 12-18: 10.0 hours (< 20). Only 1 meeting-heavy week
+		Carol Davis (employee_id = 3): Week of June 5-11: 4.0 + 3.0 = 7.0 hours (< 20). No meeting-heavy weeks
+		Emma Brown (employee_id = 5): Week of June 5-11: 2.0 hours (< 20). No meeting-heavy weeks
+
+The result table is ordered by meeting_heavy_weeks in descending order, then by employee name in ascending order.
+
+##### 3421 find-students-who-improved [Medium]
+Table: Scores
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| student_id  | int     |
+| subject     | varchar |
+| score       | int     |
+| exam_date   | varchar |
++-------------+---------+
+(student_id, subject, exam_date) is the primary key for this table.
+Each row contains information about a student's score in a specific subject on a particular exam date. score is between 0 and 100 (inclusive).
+
+Write a solution to find the students who have shown improvement. A student is considered to have shown improvement if they meet both of these conditions:
+
+	Have taken exams in the same subject on at least two different dates
+	Their latest score in that subject is higher than their first score
+
+Return the result table ordered by student_id, subject in ascending order.
+
+The result format is in the following example.
+
+Example:
+
+Input:
+
+Scores table:
+
++------------+----------+-------+------------+
+| student_id | subject  | score | exam_date  |
++------------+----------+-------+------------+
+| 101        | Math     | 70    | 2023-01-15 |
+| 101        | Math     | 85    | 2023-02-15 |
+| 101        | Physics  | 65    | 2023-01-15 |
+| 101        | Physics  | 60    | 2023-02-15 |
+| 102        | Math     | 80    | 2023-01-15 |
+| 102        | Math     | 85    | 2023-02-15 |
+| 103        | Math     | 90    | 2023-01-15 |
+| 104        | Physics  | 75    | 2023-01-15 |
+| 104        | Physics  | 85    | 2023-02-15 |
++------------+----------+-------+------------+
+
+Output:
+
++------------+----------+-------------+--------------+
+| student_id | subject  | first_score | latest_score |
++------------+----------+-------------+--------------+
+| 101        | Math     | 70          | 85           |
+| 102        | Math     | 80          | 85           |
+| 104        | Physics  | 75          | 85           |
++------------+----------+-------------+--------------+
+
+Explanation:
+
+	Student 101 in Math: Improved from 70 to 85
+	Student 101 in Physics: No improvement (dropped from 65 to 60)
+	Student 102 in Math: Improved from 80 to 85
+	Student 103 in Math: Only one exam, not eligible
+	Student 104 in Physics: Improved from 75 to 85
+
+Result table is ordered by student_id, subject.
+
+##### 3617 find-students-with-study-spiral-pattern [Hard]
+Table: students
+
++--------------+---------+
+| Column Name  | Type    |
++--------------+---------+
+| student_id   | int     |
+| student_name | varchar |
+| major        | varchar |
++--------------+---------+
+student_id is the unique identifier for this table.
+Each row contains information about a student and their academic major.
+
+Table: study_sessions
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| session_id    | int     |
+| student_id    | int     |
+| subject       | varchar |
+| session_date  | date    |
+| hours_studied | decimal |
++---------------+---------+
+session_id is the unique identifier for this table.
+Each row represents a study session by a student for a specific subject.
+
+Write a solution to find students who follow the Study Spiral Pattern - students who consistently study multiple subjects in a rotating cycle.
+
+	A Study Spiral Pattern means a student studies at least 3 different subjects in a repeating sequence
+	The pattern must repeat for at least 2 complete cycles (minimum 6 study sessions)
+	Sessions must be consecutive dates with no gaps longer than 2 days between sessions
+	Calculate the cycle length (number of different subjects in the pattern)
+	Calculate the total study hours across all sessions in the pattern
+	Only include students with cycle length of at least 3 subjects
+
+Return the result table ordered by cycle length in descending order, then by total study hours in descending order.
+
+The result format is in the following example.
+
+Example:
+
+Input:
+
+students table:
+
++------------+--------------+------------------+
+| student_id | student_name | major            |
++------------+--------------+------------------+
+| 1          | Alice Chen   | Computer Science |
+| 2          | Bob Johnson  | Mathematics      |
+| 3          | Carol Davis  | Physics          |
+| 4          | David Wilson | Chemistry        |
+| 5          | Emma Brown   | Biology          |
++------------+--------------+------------------+
+
+study_sessions table:
+
++------------+------------+------------+--------------+---------------+
+| session_id | student_id | subject    | session_date | hours_studied |
++------------+------------+------------+--------------+---------------+
+| 1          | 1          | Math       | 2023-10-01   | 2.5           |
+| 2          | 1          | Physics    | 2023-10-02   | 3.0           |
+| 3          | 1          | Chemistry  | 2023-10-03   | 2.0           |
+| 4          | 1          | Math       | 2023-10-04   | 2.5           |
+| 5          | 1          | Physics    | 2023-10-05   | 3.0           |
+| 6          | 1          | Chemistry  | 2023-10-06   | 2.0           |
+| 7          | 2          | Algebra    | 2023-10-01   | 4.0           |
+| 8          | 2          | Calculus   | 2023-10-02   | 3.5           |
+| 9          | 2          | Statistics | 2023-10-03   | 2.5           |
+| 10         | 2          | Geometry   | 2023-10-04   | 3.0           |
+| 11         | 2          | Algebra    | 2023-10-05   | 4.0           |
+| 12         | 2          | Calculus   | 2023-10-06   | 3.5           |
+| 13         | 2          | Statistics | 2023-10-07   | 2.5           |
+| 14         | 2          | Geometry   | 2023-10-08   | 3.0           |
+| 15         | 3          | Biology    | 2023-10-01   | 2.0           |
+| 16         | 3          | Chemistry  | 2023-10-02   | 2.5           |
+| 17         | 3          | Biology    | 2023-10-03   | 2.0           |
+| 18         | 3          | Chemistry  | 2023-10-04   | 2.5           |
+| 19         | 4          | Organic    | 2023-10-01   | 3.0           |
+| 20         | 4          | Physical   | 2023-10-05   | 2.5           |
++------------+------------+------------+--------------+---------------+
+
+Output:
+
++------------+--------------+------------------+--------------+-------------------+
+| student_id | student_name | major            | cycle_length | total_study_hours |
++------------+--------------+------------------+--------------+-------------------+
+| 2          | Bob Johnson  | Mathematics      | 4            | 26.0              |
+| 1          | Alice Chen   | Computer Science | 3            | 15.0              |
++------------+--------------+------------------+--------------+-------------------+
+
+Explanation:
+
+	Alice Chen (student_id = 1):
+
+		Study sequence: Math &rarr; Physics &rarr; Chemistry &rarr; Math &rarr; Physics &rarr; Chemistry
+		Pattern: 3 subjects (Math, Physics, Chemistry) repeating for 2 complete cycles
+		Consecutive dates: Oct 1-6 with no gaps > 2 days
+		Cycle length: 3 subjects
+		Total hours: 2.5 + 3.0 + 2.0 + 2.5 + 3.0 + 2.0 = 15.0 hours
+
+	Bob Johnson (student_id = 2):
+
+		Study sequence: Algebra &rarr; Calculus &rarr; Statistics &rarr; Geometry &rarr; Algebra &rarr; Calculus &rarr; Statistics &rarr; Geometry
+		Pattern: 4 subjects (Algebra, Calculus, Statistics, Geometry) repeating for 2 complete cycles
+		Consecutive dates: Oct 1-8 with no gaps > 2 days
+		Cycle length: 4 subjects
+		Total hours: 4.0 + 3.5 + 2.5 + 3.0 + 4.0 + 3.5 + 2.5 + 3.0 = 26.0 hours
+
+	Students not included:
+
+		Carol Davis (student_id = 3): Only 2 subjects (Biology, Chemistry) - doesn't meet minimum 3 subjects requirement
+		David Wilson (student_id = 4): Only 2 study sessions with a 4-day gap - doesn't meet consecutive dates requirement
+		Emma Brown (student_id = 5): No study sessions recorded
+
+The result table is ordered by cycle_length in descending order, then by total_study_hours in descending order.
+
+##### 3586 find-covid-recovery-patients [Medium]
+Table: patients
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| patient_id  | int     |
+| patient_name| varchar |
+| age         | int     |
++-------------+---------+
+patient_id is the unique identifier for this table.
+Each row contains information about a patient.
+
+Table: covid_tests
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| test_id     | int     |
+| patient_id  | int     |
+| test_date   | date    |
+| result      | varchar |
++-------------+---------+
+test_id is the unique identifier for this table.
+Each row represents a COVID test result. The result can be Positive, Negative, or Inconclusive.
+
+Write a solution to find patients who have recovered from COVID - patients who tested positive but later tested negative.
+
+	A patient is considered recovered if they have at least one Positive test followed by at least one Negative test on a later date
+	Calculate the recovery time in days as the difference between the first positive test and the first negative test after that positive test
+	Only include patients who have both positive and negative test results
+
+Return the result table ordered by recovery_time in ascending order, then by patient_name in ascending order.
+
+The result format is in the following example.
+
+Example:
+
+Input:
+
+patients table:
+
++------------+--------------+-----+
+| patient_id | patient_name | age |
++------------+--------------+-----+
+| 1          | Alice Smith  | 28  |
+| 2          | Bob Johnson  | 35  |
+| 3          | Carol Davis  | 42  |
+| 4          | David Wilson | 31  |
+| 5          | Emma Brown   | 29  |
++------------+--------------+-----+
+
+covid_tests table:
+
++---------+------------+------------+--------------+
+| test_id | patient_id | test_date  | result       |
++---------+------------+------------+--------------+
+| 1       | 1          | 2023-01-15 | Positive     |
+| 2       | 1          | 2023-01-25 | Negative     |
+| 3       | 2          | 2023-02-01 | Positive     |
+| 4       | 2          | 2023-02-05 | Inconclusive |
+| 5       | 2          | 2023-02-12 | Negative     |
+| 6       | 3          | 2023-01-20 | Negative     |
+| 7       | 3          | 2023-02-10 | Positive     |
+| 8       | 3          | 2023-02-20 | Negative     |
+| 9       | 4          | 2023-01-10 | Positive     |
+| 10      | 4          | 2023-01-18 | Positive     |
+| 11      | 5          | 2023-02-15 | Negative     |
+| 12      | 5          | 2023-02-20 | Negative     |
++---------+------------+------------+--------------+
+
+Output:
+
++------------+--------------+-----+---------------+
+| patient_id | patient_name | age | recovery_time |
++------------+--------------+-----+---------------+
+| 1          | Alice Smith  | 28  | 10            |
+| 3          | Carol Davis  | 42  | 10            |
+| 2          | Bob Johnson  | 35  | 11            |
++------------+--------------+-----+---------------+
+
+Explanation:
+
+	Alice Smith (patient_id = 1):
+
+		First positive test: 2023-01-15
+		First negative test after positive: 2023-01-25
+		Recovery time: 25 - 15 = 10 days
+
+	Bob Johnson (patient_id = 2):
+
+		First positive test: 2023-02-01
+		Inconclusive test on 2023-02-05 (ignored for recovery calculation)
+		First negative test after positive: 2023-02-12
+		Recovery time: 12 - 1 = 11 days
+
+	Carol Davis (patient_id = 3):
+
+		Had negative test on 2023-01-20 (before positive test)
+		First positive test: 2023-02-10
+		First negative test after positive: 2023-02-20
+		Recovery time: 20 - 10 = 10 days
+
+	Patients not included:
+
+		David Wilson (patient_id = 4): Only has positive tests, no negative test after positive
+		Emma Brown (patient_id = 5): Only has negative tests, never tested positive
+
+Output table is ordered by recovery_time in ascending order, and then by patient_name in ascending order.
+

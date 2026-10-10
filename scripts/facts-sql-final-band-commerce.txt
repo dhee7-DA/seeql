@@ -1,0 +1,690 @@
+// Official FACTS (schemas + example rows + constraints) for band "band-commerce".
+// Source: leetcode.com public GraphQL, fetched 2026-10-06.
+// Use ONLY the factual data (table shapes, example rows, ordering rules).
+// Statements/blurbs must be written as ORIGINAL PARAPHRASES (app policy).
+
+##### 3521 find-product-recommendation-pairs [Medium]
+Table: ProductPurchases
+
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| user_id     | int  |
+| product_id  | int  |
+| quantity    | int  |
++-------------+------+
+(user_id, product_id) is the unique key for this table.
+Each row represents a purchase of a product by a user in a specific quantity.
+
+Table: ProductInfo
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| product_id  | int     |
+| category    | varchar |
+| price       | decimal |
++-------------+---------+
+product_id is the primary key for this table.
+Each row assigns a category and price to a product.
+
+Amazon wants to implement the Customers who bought this also bought... feature based on co-purchase patterns. Write a solution to :
+
+	Identify distinct product pairs frequently purchased together by the same customers (where product1_id < product2_id)
+	For each product pair, determine how many customers purchased both products
+
+A product pair is considered for recommendation if at least 3 different customers have purchased both products.
+
+Return the result table ordered by customer_count in descending order, and in case of a tie, by product1_id in ascending order, and then by product2_id in ascending order.
+
+The result format is in the following example.
+
+Example:
+
+Input:
+
+ProductPurchases table:
+
++---------+------------+----------+
+| user_id | product_id | quantity |
++---------+------------+----------+
+| 1       | 101        | 2        |
+| 1       | 102        | 1        |
+| 1       | 103        | 3        |
+| 2       | 101        | 1        |
+| 2       | 102        | 5        |
+| 2       | 104        | 1        |
+| 3       | 101        | 2        |
+| 3       | 103        | 1        |
+| 3       | 105        | 4        |
+| 4       | 101        | 1        |
+| 4       | 102        | 1        |
+| 4       | 103        | 2        |
+| 4       | 104        | 3        |
+| 5       | 102        | 2        |
+| 5       | 104        | 1        |
++---------+------------+----------+
+
+ProductInfo table:
+
++------------+-------------+-------+
+| product_id | category    | price |
++------------+-------------+-------+
+| 101        | Electronics | 100   |
+| 102        | Books       | 20    |
+| 103        | Clothing    | 35    |
+| 104        | Kitchen     | 50    |
+| 105        | Sports      | 75    |
++------------+-------------+-------+
+
+Output:
+
++-------------+-------------+-------------------+-------------------+----------------+
+| product1_id | product2_id | product1_category | product2_category | customer_count |
++-------------+-------------+-------------------+-------------------+----------------+
+| 101         | 102         | Electronics       | Books             | 3              |
+| 101         | 103         | Electronics       | Clothing          | 3              |
+| 102         | 104         | Books             | Kitchen           | 3              |
++-------------+-------------+-------------------+-------------------+----------------+
+
+Explanation:
+
+	Product pair (101, 102):
+
+		Purchased by users 1, 2, and 4 (3 customers)
+		Product 101 is in Electronics category
+		Product 102 is in Books category
+
+	Product pair (101, 103):
+
+		Purchased by users 1, 3, and 4 (3 customers)
+		Product 101 is in Electronics category
+		Product 103 is in Clothing category
+
+	Product pair (102, 104):
+
+		Purchased by users 2, 4, and 5 (3 customers)
+		Product 102 is in Books category
+		Product 104 is in Kitchen category
+
+The result is ordered by customer_count in descending order. For pairs with the same customer_count, they are ordered by product1_id and then product2_id in ascending order.
+
+##### 3564 seasonal-sales-analysis [Medium]
+Table: sales
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| sale_id       | int     |
+| product_id    | int     |
+| sale_date     | date    |
+| quantity      | int     |
+| price         | decimal |
++---------------+---------+
+sale_id is the unique identifier for this table.
+Each row contains information about a product sale including the product_id, date of sale, quantity sold, and price per unit.
+
+Table: products
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| product_id    | int     |
+| product_name  | varchar |
+| category      | varchar |
++---------------+---------+
+product_id is the unique identifier for this table.
+Each row contains information about a product including its name and category.
+
+Write a solution to find the most popular product category for each season. The seasons are defined as:
+
+	Winter: December, January, February
+	Spring: March, April, May
+	Summer: June, July, August
+	Fall: September, October, November
+
+The popularity of a category is determined by the total quantity sold in that season. If there is a tie, select the category with the highest total revenue (quantity &times; price). If there is still a tie, return the lexicographically smaller category.
+
+Return the result table ordered by season in ascending order.
+
+The result format is in the following example.
+
+Example:
+
+Input:
+
+sales table:
+
++---------+------------+------------+----------+-------+
+| sale_id | product_id | sale_date  | quantity | price |
++---------+------------+------------+----------+-------+
+| 1       | 1          | 2023-01-15 | 5        | 10.00 |
+| 2       | 2          | 2023-01-20 | 4        | 15.00 |
+| 3       | 3          | 2023-03-10 | 3        | 18.00 |
+| 4       | 4          | 2023-04-05 | 1        | 20.00 |
+| 5       | 1          | 2023-05-20 | 2        | 10.00 |
+| 6       | 2          | 2023-06-12 | 4        | 15.00 |
+| 7       | 5          | 2023-06-15 | 5        | 12.00 |
+| 8       | 3          | 2023-07-24 | 2        | 18.00 |
+| 9       | 4          | 2023-08-01 | 5        | 20.00 |
+| 10      | 5          | 2023-09-03 | 3        | 12.00 |
+| 11      | 1          | 2023-09-25 | 6        | 10.00 |
+| 12      | 2          | 2023-11-10 | 4        | 15.00 |
+| 13      | 3          | 2023-12-05 | 6        | 18.00 |
+| 14      | 4          | 2023-12-22 | 3        | 20.00 |
+| 15      | 5          | 2024-02-14 | 2        | 12.00 |
++---------+------------+------------+----------+-------+
+
+products table:
+
++------------+-----------------+----------+
+| product_id | product_name    | category |
++------------+-----------------+----------+
+| 1          | Warm Jacket     | Apparel  |
+| 2          | Designer Jeans  | Apparel  |
+| 3          | Cutting Board   | Kitchen  |
+| 4          | Smart Speaker   | Tech     |
+| 5          | Yoga Mat        | Fitness  |
++------------+-----------------+----------+
+
+Output:
+
++---------+----------+----------------+---------------+
+| season  | category | total_quantity | total_revenue |
++---------+----------+----------------+---------------+
+| Fall    | Apparel  | 10             | 120.00        |
+| Spring  | Kitchen  | 3              | 54.00         |
+| Summer  | Tech     | 5              | 100.00        |
+| Winter  | Apparel  | 9              | 110.00        |
++---------+----------+----------------+---------------+
+
+Explanation:
+
+	Fall (Sep, Oct, Nov):
+
+		Apparel: 10 items sold (6 Jackets in Sep, 4 Jeans in Nov), revenue $120.00 (6&times;$10.00 + 4&times;$15.00)
+		Fitness: 3 Yoga Mats sold in Sep, revenue $36.00
+		Most popular: Apparel with highest total quantity (10)
+
+	Spring (Mar, Apr, May):
+
+		Kitchen: 3 Cutting Boards sold in Mar, revenue $54.00
+		Tech: 1 Smart Speaker sold in Apr, revenue $20.00
+		Apparel: 2 Warm Jackets sold in May, revenue $20.00
+		Most popular: Kitchen with highest total quantity (3) and highest revenue ($54.00)
+
+	Summer (Jun, Jul, Aug):
+
+		Apparel: 4 Designer Jeans sold in Jun, revenue $60.00
+		Fitness: 5 Yoga Mats sold in Jun, revenue $60.00
+		Kitchen: 2 Cutting Boards sold in Jul, revenue $36.00
+		Tech: 5 Smart Speakers sold in Aug, revenue $100.00
+		Most popular: Tech and Fitness both have 5 items, but Tech has higher revenue ($100.00 vs $60.00)
+
+	Winter (Dec, Jan, Feb):
+
+		Apparel: 9 items sold (5 Jackets in Jan, 4 Jeans in Jan), revenue $110.00
+		Kitchen: 6 Cutting Boards sold in Dec, revenue $108.00
+		Tech: 3 Smart Speakers sold in Dec, revenue $60.00
+		Fitness: 2 Yoga Mats sold in Feb, revenue $24.00
+		Most popular: Apparel with highest total quantity (9) and highest revenue ($110.00)
+
+The result table is ordered by season in ascending order.
+
+##### 3570 find-books-with-no-available-copies [Easy]
+Table: library_books
+
++------------------+---------+
+| Column Name      | Type    |
++------------------+---------+
+| book_id          | int     |
+| title            | varchar |
+| author           | varchar |
+| genre            | varchar |
+| publication_year | int     |
+| total_copies     | int     |
++------------------+---------+
+book_id is the unique identifier for this table.
+Each row contains information about a book in the library, including the total number of copies owned by the library.
+
+Table: borrowing_records
+
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| record_id     | int     |
+| book_id       | int     |
+| borrower_name | varchar |
+| borrow_date   | date    |
+| return_date   | date    |
++---------------+---------+
+record_id is the unique identifier for this table.
+Each row represents a borrowing transaction and return_date is NULL if the book is currently borrowed and hasn't been returned yet.
+
+Write a solution to find all books that are currently borrowed (not returned) and have zero copies available in the library.
+
+	A book is considered currently borrowed if there exists a borrowing record with a NULL return_date
+
+Return the result table ordered by current borrowers in descending order, then by book title in ascending order.
+
+The result format is in the following example.
+
+Example:
+
+Input:
+
+library_books table:
+
++---------+------------------------+------------------+----------+------------------+--------------+
+| book_id | title                  | author           | genre    | publication_year | total_copies |
++---------+------------------------+------------------+----------+------------------+--------------+
+| 1       | The Great Gatsby       | F. Scott         | Fiction  | 1925             | 3            |
+| 2       | To Kill a Mockingbird  | Harper Lee       | Fiction  | 1960             | 3            |
+| 3       | 1984                   | George Orwell    | Dystopian| 1949             | 1            |
+| 4       | Pride and Prejudice    | Jane Austen      | Romance  | 1813             | 2            |
+| 5       | The Catcher in the Rye | J.D. Salinger    | Fiction  | 1951             | 1            |
+| 6       | Brave New World        | Aldous Huxley    | Dystopian| 1932             | 4            |
++---------+------------------------+------------------+----------+------------------+--------------+
+
+borrowing_records table:
+
++-----------+---------+---------------+-------------+-------------+
+| record_id | book_id | borrower_name | borrow_date | return_date |
++-----------+---------+---------------+-------------+-------------+
+| 1         | 1       | Alice Smith   | 2024-01-15  | NULL        |
+| 2         | 1       | Bob Johnson   | 2024-01-20  | NULL        |
+| 3         | 2       | Carol White   | 2024-01-10  | 2024-01-25  |
+| 4         | 3       | David Brown   | 2024-02-01  | NULL        |
+| 5         | 4       | Emma Wilson   | 2024-01-05  | NULL        |
+| 6         | 5       | Frank Davis   | 2024-01-18  | 2024-02-10  |
+| 7         | 1       | Grace Miller  | 2024-02-05  | NULL        |
+| 8         | 6       | Henry Taylor  | 2024-01-12  | NULL        |
+| 9         | 2       | Ivan Clark    | 2024-02-12  | NULL        |
+| 10        | 2       | Jane Adams    | 2024-02-15  | NULL        |
++-----------+---------+---------------+-------------+-------------+
+
+Output:
+
++---------+------------------+---------------+-----------+------------------+-------------------+
+| book_id | title            | author        | genre     | publication_year | current_borrowers |
++---------+------------------+---------------+-----------+------------------+-------------------+
+| 1       | The Great Gatsby | F. Scott      | Fiction   | 1925             | 3                 |
+| 3       | 1984             | George Orwell | Dystopian | 1949             | 1                 |
++---------+------------------+---------------+-----------+------------------+-------------------+
+
+Explanation:
+
+	The Great Gatsby (book_id = 1):
+
+		Total copies: 3
+		Currently borrowed by Alice Smith, Bob Johnson, and Grace Miller (3 borrowers)
+		Available copies: 3 - 3 = 0
+		Included because available_copies = 0
+
+	1984 (book_id = 3):
+
+		Total copies: 1
+		Currently borrowed by David Brown (1 borrower)
+		Available copies: 1 - 1 = 0
+		Included because available_copies = 0
+
+	Books not included:
+
+		To Kill a Mockingbird (book_id = 2): Total copies = 3, current borrowers = 2, available = 1
+		Pride and Prejudice (book_id = 4): Total copies = 2, current borrowers = 1, available = 1
+		The Catcher in the Rye (book_id = 5): Total copies = 1, current borrowers = 0, available = 1
+		Brave New World (book_id = 6): Total copies = 4, current borrowers = 1, available = 3
+
+	Result ordering:
+
+		The Great Gatsby appears first with 3 current borrowers
+		1984 appears second with 1 current borrower
+
+Output table is ordered by current_borrowers in descending order, then by book_title in ascending order.
+
+##### 3626 find-stores-with-inventory-imbalance [Medium]
+Table: stores
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| store_id    | int     |
+| store_name  | varchar |
+| location    | varchar |
++-------------+---------+
+store_id is the unique identifier for this table.
+Each row contains information about a store and its location.
+
+Table: inventory
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| inventory_id| int     |
+| store_id    | int     |
+| product_name| varchar |
+| quantity    | int     |
+| price       | decimal |
++-------------+---------+
+inventory_id is the unique identifier for this table.
+Each row represents the inventory of a specific product at a specific store.
+
+Write a solution to find stores that have inventory imbalance - stores where the most expensive product has lower stock than the cheapest product.
+
+	For each store, identify the most expensive product (highest price) and its quantity
+	For each store, identify the cheapest product (lowest price) and its quantity
+	A store has inventory imbalance if the most expensive product's quantity is less than the cheapest product's quantity
+	Calculate the imbalance ratio as (cheapest_quantity / most_expensive_quantity)
+	Round the imbalance ratio to 2 decimal places
+	Only include stores that have at least 3 different products
+
+Return the result table ordered by imbalance ratio in descending order, then by store name in ascending order.
+
+The result format is in the following example.
+
+Example:
+
+Input:
+
+stores table:
+
++----------+----------------+-------------+
+| store_id | store_name     | location    |
++----------+----------------+-------------+
+| 1        | Downtown Tech  | New York    |
+| 2        | Suburb Mall    | Chicago     |
+| 3        | City Center    | Los Angeles |
+| 4        | Corner Shop    | Miami       |
+| 5        | Plaza Store    | Seattle     |
++----------+----------------+-------------+
+
+inventory table:
+
++--------------+----------+--------------+----------+--------+
+| inventory_id | store_id | product_name | quantity | price  |
++--------------+----------+--------------+----------+--------+
+| 1            | 1        | Laptop       | 5        | 999.99 |
+| 2            | 1        | Mouse        | 50       | 19.99  |
+| 3            | 1        | Keyboard     | 25       | 79.99  |
+| 4            | 1        | Monitor      | 15       | 299.99 |
+| 5            | 2        | Phone        | 3        | 699.99 |
+| 6            | 2        | Charger      | 100      | 25.99  |
+| 7            | 2        | Case         | 75       | 15.99  |
+| 8            | 2        | Headphones   | 20       | 149.99 |
+| 9            | 3        | Tablet       | 2        | 499.99 |
+| 10           | 3        | Stylus       | 80       | 29.99  |
+| 11           | 3        | Cover        | 60       | 39.99  |
+| 12           | 4        | Watch        | 10       | 299.99 |
+| 13           | 4        | Band         | 25       | 49.99  |
+| 14           | 5        | Camera       | 8        | 599.99 |
+| 15           | 5        | Lens         | 12       | 199.99 |
++--------------+----------+--------------+----------+--------+
+
+Output:
+
++----------+----------------+-------------+------------------+--------------------+------------------+
+| store_id | store_name     | location    | most_exp_product | cheapest_product   | imbalance_ratio  |
++----------+----------------+-------------+------------------+--------------------+------------------+
+| 3        | City Center    | Los Angeles | Tablet           | Stylus             | 40.00            |
+| 2        | Suburb Mall    | Chicago     | Phone            | Case               | 25.00            |
+| 1        | Downtown Tech  | New York    | Laptop           | Mouse              | 10.00            |
++----------+----------------+-------------+------------------+--------------------+------------------+
+
+Explanation:
+
+	Downtown Tech (store_id = 1):
+
+		Most expensive product: Laptop ($999.99) with quantity 5
+		Cheapest product: Mouse ($19.99) with quantity 50
+		Inventory imbalance: 5 < 50 (expensive product has lower stock)
+		Imbalance ratio: 50 / 5 = 10.00
+		Has 4 products (&ge; 3), so qualifies
+
+	Suburb Mall (store_id = 2):
+
+		Most expensive product: Phone ($699.99) with quantity 3
+		Cheapest product: Case ($15.99) with quantity 75
+		Inventory imbalance: 3 < 75 (expensive product has lower stock)
+		Imbalance ratio: 75 / 3 = 25.00
+		Has 4 products (&ge; 3), so qualifies
+
+	City Center (store_id = 3):
+
+		Most expensive product: Tablet ($499.99) with quantity 2
+		Cheapest product: Stylus ($29.99) with quantity 80
+		Inventory imbalance: 2 < 80 (expensive product has lower stock)
+		Imbalance ratio: 80 / 2 = 40.00
+		Has 3 products (&ge; 3), so qualifies
+
+	Stores not included:
+
+		Corner Shop (store_id = 4): Only has 2 products (Watch, Band) - doesn't meet minimum 3 products requirement
+		Plaza Store (store_id = 5): Only has 2 products (Camera, Lens) - doesn't meet minimum 3 products requirement
+
+The Results table is ordered by imbalance ratio in descending order, then by store name in ascending order
+
+##### 3642 find-books-with-polarized-opinions [Medium]
+Table: books
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| book_id     | int     |
+| title       | varchar |
+| author      | varchar |
+| genre       | varchar |
+| pages       | int     |
++-------------+---------+
+book_id is the unique ID for this table.
+Each row contains information about a book including its genre and page count.
+
+Table: reading_sessions
+
++----------------+---------+
+| Column Name    | Type    |
++----------------+---------+
+| session_id     | int     |
+| book_id        | int     |
+| reader_name    | varchar |
+| pages_read     | int     |
+| session_rating | int     |
++----------------+---------+
+session_id is the unique ID for this table.
+Each row represents a reading session where someone read a portion of a book. session_rating is on a scale of 1-5.
+
+Write a solution to find books that have polarized opinions - books that receive both very high ratings and very low ratings from different readers.
+
+	A book has polarized opinions if it has at least one rating &ge; 4 and at least one rating &le; 2
+	Only consider books that have at least 5 reading sessions
+	Calculate the rating spread as (highest_rating - lowest_rating)
+	Calculate the polarization score as the number of extreme ratings (ratings &le; 2 or &ge; 4) divided by total sessions
+	Only include books where polarization score &ge; 0.6 (at least 60% extreme ratings)
+
+Return the result table ordered by polarization score in descending order, then by title in descending order.
+
+The polarization score should be rounded to 2 decimal places.
+
+The result format is in the following example.
+
+Example:
+
+Input:
+
+books table:
+
++---------+------------------------+---------------+----------+-------+
+| book_id | title                  | author        | genre    | pages |
++---------+------------------------+---------------+----------+-------+
+| 1       | The Great Gatsby       | F. Scott      | Fiction  | 180   |
+| 2       | To Kill a Mockingbird  | Harper Lee    | Fiction  | 281   |
+| 3       | 1984                   | George Orwell | Dystopian| 328   |
+| 4       | Pride and Prejudice    | Jane Austen   | Romance  | 432   |
+| 5       | The Catcher in the Rye | J.D. Salinger | Fiction  | 277   |
++---------+------------------------+---------------+----------+-------+
+
+reading_sessions table:
+
++------------+---------+-------------+------------+----------------+
+| session_id | book_id | reader_name | pages_read | session_rating |
++------------+---------+-------------+------------+----------------+
+| 1          | 1       | Alice       | 50         | 5              |
+| 2          | 1       | Bob         | 60         | 1              |
+| 3          | 1       | Carol       | 40         | 4              |
+| 4          | 1       | David       | 30         | 2              |
+| 5          | 1       | Emma        | 45         | 5              |
+| 6          | 2       | Frank       | 80         | 4              |
+| 7          | 2       | Grace       | 70         | 4              |
+| 8          | 2       | Henry       | 90         | 5              |
+| 9          | 2       | Ivy         | 60         | 4              |
+| 10         | 2       | Jack        | 75         | 4              |
+| 11         | 3       | Kate        | 100        | 2              |
+| 12         | 3       | Liam        | 120        | 1              |
+| 13         | 3       | Mia         | 80         | 2              |
+| 14         | 3       | Noah        | 90         | 1              |
+| 15         | 3       | Olivia      | 110        | 4              |
+| 16         | 3       | Paul        | 95         | 5              |
+| 17         | 4       | Quinn       | 150        | 3              |
+| 18         | 4       | Ruby        | 140        | 3              |
+| 19         | 5       | Sam         | 80         | 1              |
+| 20         | 5       | Tara        | 70         | 2              |
++------------+---------+-------------+------------+----------------+
+
+Output:
+
++---------+------------------+---------------+-----------+-------+---------------+--------------------+
+| book_id | title            | author        | genre     | pages | rating_spread | polarization_score |
++---------+------------------+---------------+-----------+-------+---------------+--------------------+
+| 1       | The Great Gatsby | F. Scott      | Fiction   | 180   | 4             | 1.00               |
+| 3       | 1984             | George Orwell | Dystopian | 328   | 4             | 1.00               |
++---------+------------------+---------------+-----------+-------+---------------+--------------------+
+
+Explanation:
+
+	The Great Gatsby (book_id = 1):
+
+		Has 5 reading sessions (meets minimum requirement)
+		Ratings: 5, 1, 4, 2, 5
+		Has ratings &ge; 4: 5, 4, 5 (3 sessions)
+		Has ratings &le; 2: 1, 2 (2 sessions)
+		Rating spread: 5 - 1 = 4
+		Extreme ratings (&le;2 or &ge;4): All 5 sessions (5, 1, 4, 2, 5)
+		Polarization score: 5/5 = 1.00 (&ge; 0.6, qualifies)
+
+	1984 (book_id = 3):
+
+		Has 6 reading sessions (meets minimum requirement)
+		Ratings: 2, 1, 2, 1, 4, 5
+		Has ratings &ge; 4: 4, 5 (2 sessions)
+		Has ratings &le; 2: 2, 1, 2, 1 (4 sessions)
+		Rating spread: 5 - 1 = 4
+		Extreme ratings (&le;2 or &ge;4): All 6 sessions (2, 1, 2, 1, 4, 5)
+		Polarization score: 6/6 = 1.00 (&ge; 0.6, qualifies)
+
+	Books not included:
+
+		To Kill a Mockingbird (book_id = 2): All ratings are 4-5, no low ratings (&le;2)
+		Pride and Prejudice (book_id = 4): Only 2 sessions (< 5 minimum)
+		The Catcher in the Rye (book_id = 5): Only 2 sessions (< 5 minimum)
+
+The result table is ordered by polarization score in descending order, then by book title in descending order.
+
+##### 3657 find-loyal-customers [Medium]
+Table: customer_transactions
+
++------------------+---------+
+| Column Name      | Type    |
++------------------+---------+
+| transaction_id   | int     |
+| customer_id      | int     |
+| transaction_date | date    |
+| amount           | decimal |
+| transaction_type | varchar |
++------------------+---------+
+transaction_id is the unique identifier for this table.
+transaction_type can be either 'purchase' or 'refund'.
+
+Write a solution to find loyal customers. A customer is considered loyal if they meet ALL the following criteria:
+
+	Made at least 3 purchase transactions.
+	Have been active for at least 30 days.
+	Their refund rate is less than 20% .
+
+Refund rate is the proportion of transactions that are refunds, calculated as the number of refund transactions divided by the total number of transactions (purchases plus refunds).
+
+Return the result table ordered by customer_id in ascending order.
+
+The result format is in the following example.
+
+Example:
+
+Input:
+
+customer_transactions table:
+
++----------------+-------------+------------------+--------+------------------+
+| transaction_id | customer_id | transaction_date | amount | transaction_type |
++----------------+-------------+------------------+--------+------------------+
+| 1              | 101         | 2024-01-05       | 150.00 | purchase         |
+| 2              | 101         | 2024-01-15       | 200.00 | purchase         |
+| 3              | 101         | 2024-02-10       | 180.00 | purchase         |
+| 4              | 101         | 2024-02-20       | 250.00 | purchase         |
+| 5              | 102         | 2024-01-10       | 100.00 | purchase         |
+| 6              | 102         | 2024-01-12       | 120.00 | purchase         |
+| 7              | 102         | 2024-01-15       | 80.00  | refund           |
+| 8              | 102         | 2024-01-18       | 90.00  | refund           |
+| 9              | 102         | 2024-02-15       | 130.00 | purchase         |
+| 10             | 103         | 2024-01-01       | 500.00 | purchase         |
+| 11             | 103         | 2024-01-02       | 450.00 | purchase         |
+| 12             | 103         | 2024-01-03       | 400.00 | purchase         |
+| 13             | 104         | 2024-01-01       | 200.00 | purchase         |
+| 14             | 104         | 2024-02-01       | 250.00 | purchase         |
+| 15             | 104         | 2024-02-15       | 300.00 | purchase         |
+| 16             | 104         | 2024-03-01       | 350.00 | purchase         |
+| 17             | 104         | 2024-03-10       | 280.00 | purchase         |
+| 18             | 104         | 2024-03-15       | 100.00 | refund           |
++----------------+-------------+------------------+--------+------------------+
+
+Output:
+
++-------------+
+| customer_id |
++-------------+
+| 101         |
+| 104         |
++-------------+
+
+Explanation:
+
+	Customer 101:
+
+		Purchase transactions: 4 (IDs: 1, 2, 3, 4)
+		Refund transactions: 0
+		Refund rate: 0/4 = 0% (less than 20%)
+		Active period: Jan 5 to Feb 20 = 46 days (at least 30 days)
+		Qualifies as loyal
+
+	Customer 102:
+
+		Purchase transactions: 3 (IDs: 5, 6, 9)
+		Refund transactions: 2 (IDs: 7, 8)
+		Refund rate: 2/5 = 40% (exceeds 20%)
+		Not loyal
+
+	Customer 103:
+
+		Purchase transactions: 3 (IDs: 10, 11, 12)
+		Refund transactions: 0
+		Refund rate: 0/3 = 0% (less than 20%)
+		Active period: Jan 1 to Jan 3 = 2 days (less than 30 days)
+		Not loyal
+
+	Customer 104:
+
+		Purchase transactions: 5 (IDs: 13, 14, 15, 16, 17)
+		Refund transactions: 1 (ID: 18)
+		Refund rate: 1/6 = 16.67% (less than 20%)
+		Active period: Jan 1 to Mar 15 = 73 days (at least 30 days)
+		Qualifies as loyal
+
+The result table is ordered by customer_id in ascending order.
+

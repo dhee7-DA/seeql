@@ -1,0 +1,749 @@
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    city TEXT NOT NULL,
+    region TEXT NOT NULL,
+    active INTEGER NOT NULL DEFAULT 1,
+    created_at TEXT NOT NULL
+  )
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    region TEXT NOT NULL,
+    rating REAL NOT NULL
+  )
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    category TEXT NOT NULL,
+    price REAL NOT NULL,
+    stock INTEGER NOT NULL DEFAULT 0,
+    supplier_id INTEGER NOT NULL REFERENCES suppliers(id)
+  )
+    id INTEGER PRIMARY KEY,
+    customer_id INTEGER NOT NULL REFERENCES customers(id),
+    status TEXT NOT NULL,
+    total REAL NOT NULL,
+    created_at TEXT NOT NULL,
+    shipped_at TEXT
+  )
+    id INTEGER PRIMARY KEY,
+    order_id INTEGER NOT NULL REFERENCES orders(id),
+    product_id INTEGER NOT NULL REFERENCES products(id),
+    quantity INTEGER NOT NULL,
+    unit_price REAL NOT NULL
+  )
+    id INTEGER PRIMARY KEY,
+    customer_id INTEGER NOT NULL REFERENCES customers(id),
+    number TEXT NOT NULL,
+    issued_on TEXT NOT NULL,
+    due_on TEXT NOT NULL,
+    amount_cents INTEGER NOT NULL,
+    status TEXT NOT NULL
+  )
+    id INTEGER PRIMARY KEY,
+    invoice_id INTEGER NOT NULL REFERENCES invoices(id),
+    paid_on TEXT NOT NULL,
+    amount_cents INTEGER NOT NULL,
+    method TEXT NOT NULL
+  )
+    id INTEGER PRIMARY KEY,
+    category TEXT NOT NULL,
+    vendor TEXT NOT NULL,
+    spent_on TEXT NOT NULL,
+    amount_cents INTEGER NOT NULL
+  )
+    id INTEGER PRIMARY KEY,
+    entry_date TEXT NOT NULL,
+    account TEXT NOT NULL,
+    debit_cents INTEGER NOT NULL DEFAULT 0,
+    credit_cents INTEGER NOT NULL DEFAULT 0,
+    memo TEXT NOT NULL
+  )
+{
+ "orderRange": [
+  {
+   "min": "2024-01-01",
+   "max": "2025-02-27"
+  }
+ ],
+ "statusCounts": [
+  {
+   "status": "delivered",
+   "n": 52
+  },
+  {
+   "status": "shipped",
+   "n": 30
+  },
+  {
+   "status": "pending",
+   "n": 14
+  },
+  {
+   "status": "cancelled",
+   "n": 7
+  }
+ ],
+ "ordersPerMonth": [
+  {
+   "ym": "2024-01",
+   "n": 8
+  },
+  {
+   "ym": "2024-02",
+   "n": 9
+  },
+  {
+   "ym": "2024-03",
+   "n": 8
+  },
+  {
+   "ym": "2024-04",
+   "n": 7
+  },
+  {
+   "ym": "2024-05",
+   "n": 8
+  },
+  {
+   "ym": "2024-06",
+   "n": 6
+  },
+  {
+   "ym": "2024-07",
+   "n": 8
+  },
+  {
+   "ym": "2024-08",
+   "n": 7
+  },
+  {
+   "ym": "2024-09",
+   "n": 9
+  },
+  {
+   "ym": "2024-10",
+   "n": 7
+  },
+  {
+   "ym": "2024-11",
+   "n": 6
+  },
+  {
+   "ym": "2024-12",
+   "n": 7
+  },
+  {
+   "ym": "2025-01",
+   "n": 6
+  },
+  {
+   "ym": "2025-02",
+   "n": 7
+  }
+ ],
+ "ordersPerCustomerTop": [
+  {
+   "customer_id": 1,
+   "n": 24
+  },
+  {
+   "customer_id": 5,
+   "n": 17
+  },
+  {
+   "customer_id": 7,
+   "n": 14
+  },
+  {
+   "customer_id": 13,
+   "n": 13
+  },
+  {
+   "customer_id": 3,
+   "n": 5
+  },
+  {
+   "customer_id": 16,
+   "n": 4
+  },
+  {
+   "customer_id": 14,
+   "n": 4
+  },
+  {
+   "customer_id": 11,
+   "n": 4
+  }
+ ],
+ "totalTies": [
+  {
+   "tied_pairs": 0
+  }
+ ],
+ "bigTies": [],
+ "customerOrderCountTies": [
+  {
+   "n": 24,
+   "customers_with_n": 1
+  },
+  {
+   "n": 17,
+   "customers_with_n": 1
+  },
+  {
+   "n": 14,
+   "customers_with_n": 1
+  },
+  {
+   "n": 13,
+   "customers_with_n": 1
+  },
+  {
+   "n": 5,
+   "customers_with_n": 1
+  },
+  {
+   "n": 4,
+   "customers_with_n": 4
+  },
+  {
+   "n": 3,
+   "customers_with_n": 2
+  },
+  {
+   "n": 2,
+   "customers_with_n": 3
+  },
+  {
+   "n": 1,
+   "customers_with_n": 2
+  }
+ ],
+ "regions": [
+  {
+   "region": "EU",
+   "customers": 8,
+   "orders": 45
+  },
+  {
+   "region": "APAC",
+   "customers": 5,
+   "orders": 37
+  },
+  {
+   "region": "US",
+   "customers": 2,
+   "orders": 19
+  },
+  {
+   "region": "LATAM",
+   "customers": 1,
+   "orders": 2
+  }
+ ],
+ "cities": [
+  {
+   "city": "Austin"
+  },
+  {
+   "city": "Berlin"
+  },
+  {
+   "city": "Chicago"
+  },
+  {
+   "city": "Cork"
+  },
+  {
+   "city": "Dubai"
+  },
+  {
+   "city": "Hamburg"
+  },
+  {
+   "city": "London"
+  },
+  {
+   "city": "Lyon"
+  },
+  {
+   "city": "Madrid"
+  },
+  {
+   "city": "Milan"
+  },
+  {
+   "city": "Mumbai"
+  },
+  {
+   "city": "Nagoya"
+  },
+  {
+   "city": "Osaka"
+  },
+  {
+   "city": "Seoul"
+  },
+  {
+   "city": "São Paulo"
+  },
+  {
+   "city": "Tallinn"
+  }
+ ],
+ "categories": [
+  {
+   "category": "Electronics",
+   "n": 3,
+   "min_p": 34.5,
+   "max_p": 89.99
+  },
+  {
+   "category": "Audio",
+   "n": 3,
+   "min_p": 59.99,
+   "max_p": 149.99
+  },
+  {
+   "category": "Accessories",
+   "n": 3,
+   "min_p": 14.99,
+   "max_p": 42.5
+  },
+  {
+   "category": "Wearables",
+   "n": 2,
+   "min_p": 79,
+   "max_p": 199.99
+  },
+  {
+   "category": "Video",
+   "n": 2,
+   "min_p": 39.99,
+   "max_p": 129
+  },
+  {
+   "category": "Apparel",
+   "n": 2,
+   "min_p": 18.5,
+   "max_p": 65
+  },
+  {
+   "category": "Fitness",
+   "n": 1,
+   "min_p": 32,
+   "max_p": 32
+  }
+ ],
+ "productPriceTies": [
+  {
+   "tied": 0
+  }
+ ],
+ "categoryRevenue": [
+  {
+   "category": "Audio",
+   "revenue": 11744.01
+  },
+  {
+   "category": "Wearables",
+   "revenue": 6929.12
+  },
+  {
+   "category": "Video",
+   "revenue": 5198.41
+  },
+  {
+   "category": "Electronics",
+   "revenue": 4818.61
+  },
+  {
+   "category": "Accessories",
+   "revenue": 3294.29
+  },
+  {
+   "category": "Apparel",
+   "revenue": 1984.93
+  },
+  {
+   "category": "Fitness",
+   "revenue": 863.91
+  }
+ ],
+ "invoiceStatus": [
+  {
+   "status": "open",
+   "n": 6,
+   "cents": 1960900
+  },
+  {
+   "status": "paid",
+   "n": 21,
+   "cents": 6644300
+  },
+  {
+   "status": "void",
+   "n": 1,
+   "cents": 92500
+  }
+ ],
+ "invoiceRange": [
+  {
+   "min": "2024-02-05",
+   "max": "2025-02-19"
+  }
+ ],
+ "paymentMethods": [
+  {
+   "method": "card",
+   "n": 16,
+   "cents": 3736400
+  },
+  {
+   "method": "wire",
+   "n": 11,
+   "cents": 3224800
+  }
+ ],
+ "expenseCats": [
+  {
+   "category": "Rent",
+   "n": 14,
+   "cents": 1680000
+  },
+  {
+   "category": "Ads",
+   "n": 14,
+   "cents": 457000
+  },
+  {
+   "category": "Travel",
+   "n": 3,
+   "cents": 252100
+  },
+  {
+   "category": "Tools",
+   "n": 5,
+   "cents": 152500
+  }
+ ],
+ "expenseRange": [
+  {
+   "min": "2024-01-01",
+   "max": "2025-02-14"
+  }
+ ],
+ "ledgerAccounts": [
+  {
+   "account": "accounts_receivable",
+   "n": 26,
+   "debits": 8605200,
+   "credits": 6961200
+  },
+  {
+   "account": "cash",
+   "n": 27,
+   "debits": 6961200,
+   "credits": 2541600
+  },
+  {
+   "account": "operating_expenses",
+   "n": 14,
+   "debits": 2541600,
+   "credits": 0
+  },
+  {
+   "account": "sales_revenue",
+   "n": 13,
+   "debits": 0,
+   "credits": 8605200
+  }
+ ],
+ "ledgerRange": [
+  {
+   "min": "2024-01-31",
+   "max": "2025-02-28"
+  }
+ ],
+ "suppliers": [
+  {
+   "id": 1,
+   "name": "Nordic Gadgets AB",
+   "region": "EU",
+   "rating": 4.6
+  },
+  {
+   "id": 2,
+   "name": "Shenzhen Electro",
+   "region": "APAC",
+   "rating": 4.1
+  },
+  {
+   "id": 3,
+   "name": "Pacific Textiles",
+   "region": "APAC",
+   "rating": 3.9
+  },
+  {
+   "id": 4,
+   "name": "Midwest Hardware Co",
+   "region": "US",
+   "rating": 4.4
+  },
+  {
+   "id": 5,
+   "name": "Alpine Audio GmbH",
+   "region": "EU",
+   "rating": 4.8
+  },
+  {
+   "id": 6,
+   "name": "Andes Naturals SA",
+   "region": "LATAM",
+   "rating": 4
+  }
+ ],
+ "shippedNull": [
+  {
+   "n": 21
+  }
+ ],
+ "stockZero": [
+  {
+   "n": 0
+  }
+ ],
+ "inactiveCustomers": [
+  {
+   "n": 2
+  }
+ ],
+ "productNames": [
+  {
+   "id": 1,
+   "name": "Mechanical Keyboard K1",
+   "category": "Electronics",
+   "price": 89.99,
+   "stock": 120
+  },
+  {
+   "id": 2,
+   "name": "Wireless Mouse M3",
+   "category": "Electronics",
+   "price": 34.5,
+   "stock": 300
+  },
+  {
+   "id": 3,
+   "name": "USB-C Hub 7-in-1",
+   "category": "Electronics",
+   "price": 49,
+   "stock": 85
+  },
+  {
+   "id": 4,
+   "name": "Noise-Canceling Headset",
+   "category": "Audio",
+   "price": 149.99,
+   "stock": 60
+  },
+  {
+   "id": 5,
+   "name": "Studio Desktop Mic",
+   "category": "Audio",
+   "price": 119,
+   "stock": 45
+  },
+  {
+   "id": 6,
+   "name": "Bluetooth Speaker Mini",
+   "category": "Audio",
+   "price": 59.99,
+   "stock": 210
+  },
+  {
+   "id": 7,
+   "name": "4K Webcam Pro",
+   "category": "Video",
+   "price": 129,
+   "stock": 70
+  },
+  {
+   "id": 8,
+   "name": "Ring Light 14\"",
+   "category": "Video",
+   "price": 39.99,
+   "stock": 150
+  },
+  {
+   "id": 9,
+   "name": "HDMI 2.1 Cable 2m",
+   "category": "Accessories",
+   "price": 14.99,
+   "stock": 500
+  },
+  {
+   "id": 10,
+   "name": "Laptop Stand Aluminum",
+   "category": "Accessories",
+   "price": 42.5,
+   "stock": 180
+  },
+  {
+   "id": 11,
+   "name": "Desk Mat Extended",
+   "category": "Accessories",
+   "price": 24.99,
+   "stock": 260
+  },
+  {
+   "id": 12,
+   "name": "Fitness Band X2",
+   "category": "Wearables",
+   "price": 79,
+   "stock": 95
+  },
+  {
+   "id": 13,
+   "name": "Smart Watch S",
+   "category": "Wearables",
+   "price": 199.99,
+   "stock": 40
+  },
+  {
+   "id": 14,
+   "name": "Running Socks 3-pack",
+   "category": "Apparel",
+   "price": 18.5,
+   "stock": 400
+  },
+  {
+   "id": 15,
+   "name": "Cycling Jersey Pro",
+   "category": "Apparel",
+   "price": 65,
+   "stock": 110
+  },
+  {
+   "id": 16,
+   "name": "Yoga Mat Eco 6mm",
+   "category": "Fitness",
+   "price": 32,
+   "stock": 220
+  }
+ ],
+ "customerNames": [
+  {
+   "id": 1,
+   "name": "Alice Chen",
+   "city": "Berlin",
+   "region": "EU",
+   "active": 1
+  },
+  {
+   "id": 2,
+   "name": "Bruno Silva",
+   "city": "São Paulo",
+   "region": "LATAM",
+   "active": 1
+  },
+  {
+   "id": 3,
+   "name": "Chloe Dubois",
+   "city": "Lyon",
+   "region": "EU",
+   "active": 1
+  },
+  {
+   "id": 4,
+   "name": "Dmitri Volkov",
+   "city": "Tallinn",
+   "region": "EU",
+   "active": 0
+  },
+  {
+   "id": 5,
+   "name": "Emma Wilson",
+   "city": "Austin",
+   "region": "US",
+   "active": 1
+  },
+  {
+   "id": 6,
+   "name": "Farid Nasser",
+   "city": "Dubai",
+   "region": "APAC",
+   "active": 1
+  },
+  {
+   "id": 7,
+   "name": "Grace Kim",
+   "city": "Seoul",
+   "region": "APAC",
+   "active": 1
+  },
+  {
+   "id": 8,
+   "name": "Hiro Tanaka",
+   "city": "Osaka",
+   "region": "APAC",
+   "active": 1
+  },
+  {
+   "id": 9,
+   "name": "Isabella Rossi",
+   "city": "Milan",
+   "region": "EU",
+   "active": 1
+  },
+  {
+   "id": 10,
+   "name": "Jamal Wright",
+   "city": "Chicago",
+   "region": "US",
+   "active": 1
+  },
+  {
+   "id": 11,
+   "name": "Keiko Sato",
+   "city": "Nagoya",
+   "region": "APAC",
+   "active": 0
+  },
+  {
+   "id": 12,
+   "name": "Liam O'Brien",
+   "city": "Cork",
+   "region": "EU",
+   "active": 1
+  },
+  {
+   "id": 13,
+   "name": "Maya Patel",
+   "city": "Mumbai",
+   "region": "APAC",
+   "active": 1
+  },
+  {
+   "id": 14,
+   "name": "Noah Meyer",
+   "city": "Hamburg",
+   "region": "EU",
+   "active": 1
+  },
+  {
+   "id": 15,
+   "name": "Olivia Brown",
+   "city": "London",
+   "region": "EU",
+   "active": 1
+  },
+  {
+   "id": 16,
+   "name": "Pedro Alvarez",
+   "city": "Madrid",
+   "region": "EU",
+   "active": 1
+  }
+ ]
+}
