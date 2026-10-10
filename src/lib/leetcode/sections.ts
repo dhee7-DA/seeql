@@ -263,6 +263,19 @@ export const SQL50_SECTIONS: LcSection[] = [
       "number-of-calls-between-two-persons",
       "employees-with-missing-information",
     ],
+    study: {
+      intro: [
+        "Past the first 50, the join key itself becomes a decision. A lookup table may match on a COMPOSITE key — both id and year must agree, and joining on id alone fans one row out to many, attaching valuations from the wrong year. The filter you apply may also only exist after aggregation: a bank 'balance' is not stored anywhere, it is SUM(amount) grouped by account, which means the report's threshold filter is a HAVING, not a WHERE — WHERE runs before the aggregate exists and cannot see it.",
+        "Some facts hide in two directions at once. A calls table records 1→2 and 2→1 as different rows, but the question 'total calls between the two' counts them as one pair — the fix is CANONICALIZATION: rewrite each row's endpoints as (smaller, larger) with SQLite's two-argument scalar min(a, b) / max(a, b), and a plain GROUP BY counts what direction used to split. The same normalize-then-group move handles edges in graphs and URLs in analytics.",
+        "And when both sides can hold the missing rows, SQLite has no FULL OUTER JOIN to lean on — the portable answer is the SYMMETRIC DIFFERENCE: rows of A absent from B (LEFT JOIN … WHERE B.key IS NULL), UNIONed with rows of B absent from A. Choosing inner vs left vs anti is a business question — who must appear even with no match, and who must NOT appear because they have one — and this section makes you answer it explicitly every time.",
+      ],
+      path: [
+        { slug: "npv-queries", why: "The composite-key left join: every question must appear, and the match needs BOTH id and year — joining on id alone fans rows out to the wrong valuations." },
+        { slug: "bank-account-summary-ii", why: "A balance is computed, not stored: SUM per account first, HAVING the threshold second — the join is inner by design because the report asks about KNOWN balances." },
+        { slug: "number-of-calls-between-two-persons", why: "Canonicalize the unordered pair: scalar min(a,b)/max(a,b) rewrite both directions to (smaller, larger), and one GROUP BY counts what direction used to split." },
+        { slug: "employees-with-missing-information", why: "The symmetric difference: no FULL OUTER JOIN in SQLite, so two anti-joins — one per direction — UNION into the full set of mismatched ids." },
+      ],
+    },
   },
   {
     id: "extra-aggregation",
@@ -281,6 +294,25 @@ export const SQL50_SECTIONS: LcSection[] = [
       "find-total-time-spent-by-each-employee",
       "number-of-rich-customers",
     ],
+    study: {
+      intro: [
+        "Reporting is aggregation with an audience: the output is a table someone will read, so the GRAIN — one row per what? — is the first decision, the aggregate is the second, and the denominator is the standing trap. This section runs the whole ladder, from the hello-world collapse (GROUP BY + MIN per player) to a day-level ratio that divides two different counts computed in the same pass.",
+        "The argmax family deserves its own habit. ORDER BY the count DESC + LIMIT 1 is the simple idiom, but it silently promises the maximum is unique — the moment ties matter, the shape becomes HAVING count = (SELECT MAX of the per-group counts), which keeps every winner. Its cousin is the aggregate-of-aggregates: filter groups with HAVING, then wrap an outer MAX over what survives — and that outer aggregate is load-bearing even when nothing survives, because MAX over zero rows correctly produces the one-NULL-row answer the spec asks for.",
+        "Counting has flavors, and confusing them is the classic reporting bug. COUNT(*) counts rows (events); COUNT(DISTINCT x) counts entities (people, products) — a day's 'average reports per post' divides the first by the second, after the filter has run in WHERE. Derived metrics (duration = out_time − in_time) are computed per row and SUM'd per group, and the group key must carry the report's full grain — (day, employee), not employee — or the totals silently merge across the boundary you meant to keep.",
+      ],
+      path: [
+        { slug: "game-play-analysis-i", why: "The hello-world collapse: GROUP BY + MIN(event_date) per player — no join, no window, and MIN works on dates because ISO strings sort in calendar order." },
+        { slug: "find-followers-count", why: "The smallest complete report in three clauses: group key = entity, COUNT(*) = metric, ORDER BY formats — and grouping by the wrong column answers a different business question." },
+        { slug: "number-of-rich-customers", why: "Rows vs entities: the evidence is transactions but the question is people — COUNT(DISTINCT customer_id) after the WHERE, not COUNT(*), which would count bills." },
+        { slug: "find-total-time-spent-by-each-employee", why: "Derived metrics: duration = out_time − in_time computed per row, SUM'd per (day, emp) — forget the day in the group key and two sessions on different days merge into a meaningless total." },
+        { slug: "daily-leads-and-partners", why: "Two flavors of COUNT side by side: raw rows are events, COUNT(DISTINCT) counts entities — one composite GROUP BY, both truths in one row." },
+        { slug: "customer-placing-the-largest-number-of-orders", why: "The argmax idiom: ORDER BY COUNT DESC + LIMIT 1 — simple, but it silently promises the maximum is unique, which is exactly what the next problem breaks." },
+        { slug: "project-employees-ii", why: "The tie-proof argmax: compute the best headcount as a scalar subquery, keep every project matching it in HAVING — LIMIT 1 is disqualified the moment ties matter. (The Employee table is a decoy.)" },
+        { slug: "biggest-single-number", why: "The aggregate-of-aggregates: HAVING COUNT(*) = 1 keeps singletons, an outer MAX wraps the survivors — and stays load-bearing when nothing survives, returning the required one-NULL row." },
+        { slug: "actors-and-directors-who-cooperated-at-least-three-times", why: "A threshold on a composite pair: GROUP BY (actor, director), HAVING COUNT(*) >= 3 — and read the spec before canonicalizing direction, because (1,2) and (2,1) are different pairs here." },
+        { slug: "reported-posts", why: "The ratio report: COUNT(*) / COUNT(DISTINCT post_id) per day computes both sides of the fraction in one pass — spam filter in WHERE, float cast to survive integer division." },
+      ],
+    },
   },
   {
     id: "extra-dates",
@@ -292,6 +324,18 @@ export const SQL50_SECTIONS: LcSection[] = [
       "fix-product-name-format",
       "the-latest-login-in-2020",
     ],
+    study: {
+      intro: [
+        "Dates in SQLite are strings with a contract: store them as fixed-width ISO-8601 ('YYYY-MM-DD') and lexicographic comparison becomes calendar comparison — MIN and MAX work on them directly, ORDER BY sorts them chronologically, and SUBSTR(trans_date, 1, 7) slices off a clean 'YYYY-MM' month bucket. Every guarantee in this section flows from that format; the moment dates become free-form text ('Mar 3, 2016'), all of it dies, which is why real schemas store dates canonically and format them only at the edge.",
+        "Time-window filters want the HALF-OPEN range: time_stamp >= '2020-01-01' AND time_stamp < '2021-01-01'. It includes New Year's Eve 23:59:59 without any inclusive-endpoint gymnastics — comparing to '2020-12-31' instead silently drops everything on the last day after midnight, the classic inclusive-date bug. Filtering to the window BEFORE the aggregate is also what makes row-level exclusion free: users with no 2020 rows simply never enter the grouping, no HAVING gymnastics needed.",
+        "Two habits round the section out. Derive buckets before grouping: GROUP BY the derived month, not the raw day. And clean keys before grouping: normalize dirty text (TRIM, UPPER, concatenation) in an inner SELECT, then GROUP BY the clean column — grouping by the raw column keeps ' LCPhone' and 'lcPhone ' as separate buckets and the report lies. Conditional aggregation — SUM(CASE WHEN state = 'approved' THEN amount END) — makes a subset metric ride along in the same pass as the total, the pattern behind every funnel and reconciliation report.",
+      ],
+      path: [
+        { slug: "monthly-transactions-i", why: "One pass, four metrics: two unconditional aggregates plus two approved-only CASE columns, grouped by the SUBSTR'd 'YYYY-MM' month bucket derived from the ISO date." },
+        { slug: "fix-product-name-format", why: "Clean the key before grouping: TRIM then UPPER(first letter) || LOWER(rest) in an inner SELECT, then GROUP BY the clean column — or the raw variants report as separate products." },
+        { slug: "the-latest-login-in-2020", why: "The half-open year filter: >= '2020-01-01' AND < '2021-01-01' keeps Dec 31 fully inside, then MAX per user — row filter first, aggregate second, and absent users exclude themselves." },
+      ],
+    },
   },
   {
     id: "extra-pivots",
@@ -303,6 +347,18 @@ export const SQL50_SECTIONS: LcSection[] = [
       "rearrange-products-table",
       "all-people-report-to-the-given-manager",
     ],
+    study: {
+      intro: [
+        "Two reshape directions, no keywords. PIVOT turns rows into columns — one output column per month — and UNPIVOT turns columns back into rows, where the conceptual move is that a column NAME becomes a VALUE. SQLite has neither PIVOT nor UNPIVOT, so both are built by hand: MAX(CASE WHEN …) repeated once per output column going wide, UNION ALL over single-column projections going long.",
+        "Why MAX(CASE)? Each CASE acts as a per-group value extractor: it keeps the matching rows' value and NULLs the rest, and MAX ignores NULLs, lifting exactly the one real value per bucket. SUM would also work when each key appears once, but it implies addition that never happens — MAX expresses 'the value', which is what you mean. And absent members stay NULL because the CASE never fired: that NULL is data ('this product was not sold here', 'no revenue that month'), not dirt.",
+        "Hierarchies are the third dimension. Org charts are trees of unbounded depth, and plain joins cannot walk 'any depth' without knowing it in advance. The RECURSIVE CTE is the tool: an anchor (the head's direct reports) UNIONed with a step (everyone whose manager is already in the set), executed until nothing new appears. Carry a distance column — the anchor seeds 1, each step adds one to the row it extends from — and every level labels its own depth with no post-hoc counting.",
+      ],
+      path: [
+        { slug: "reformat-department-table", why: "The manual pivot: one MAX(CASE WHEN month = 'x' THEN revenue END) per output column, GROUP BY id — MAX lifts the real value and leaves absent months honestly NULL." },
+        { slug: "rearrange-products-table", why: "The manual unpivot: three single-column projections UNION ALL'd with the store name SELECTed as a literal — the column name becomes data, and per-branch IS NOT NULL filters kill the gaps." },
+        { slug: "all-people-report-to-the-given-manager", why: "The recursive CTE: anchor at direct reports, step down the tree, carry a distance column so every level labels its own depth — the seed reads like a depth ruler." },
+      ],
+    },
   },
   {
     id: "platform-classics",
@@ -328,6 +384,19 @@ export const SQL50_SECTIONS: LcSection[] = [
       "product-price-at-a-given-date",
       "active-users",
     ],
+    study: {
+      intro: [
+        "Window functions answer the questions GROUP BY structurally cannot: they compute over a group but return one value PER ROW, never collapsing anything. COUNT(*) OVER (PARTITION BY team_id) walks the employees one at a time and, for each, counts all rows sharing its team — the count just rides along as a new column while the roster stays intact. GROUP BY would shrink the table to one row per team and you'd have to join the ids back; the window version needs no join, no subquery, no second pass.",
+        "The ranking family turns argmin/argmax into a one-liner that handles ties. RANK() OVER (PARTITION BY project ORDER BY experience) numbers each group's rows with ties sharing a rank, and WHERE rnk = 1 keeps every row tied at the top — the whole answer to 'who is the least experienced', all of them, which LIMIT 1 could never promise. Point-in-time questions compose with it: filter FIRST (WHERE change_date <= snapshot runs before the window is computed), then ROW_NUMBER … ORDER BY change_date DESC and keep rn = 1 — skip the pre-filter and tomorrow's price wins the ranking.",
+        "The payoff trick is streak detection. GROUP BY is blind to sequence — it sees bags, not orderings — so 'N consecutive days' is unreachable by aggregation alone. ROW_NUMBER restores the timeline: number each user's distinct days 1..k by date, then compute the anchor date minus (row_number − 1) days. On a truly consecutive run, the calendar and the row number advance in lockstep, so the shifted values COLLAPSE to one constant — and 'consecutive' becomes a plain GROUP BY counting the members of each collapsed constant. Once you see date − rn, you see it everywhere: gaps-and-islands is this trick plus a step counter.",
+      ],
+      path: [
+        { slug: "find-the-team-size", why: "The hello-world window aggregate: COUNT(*) OVER (PARTITION BY team_id) rides the count onto every row — GROUP BY would shrink the roster away and force a join to get ids back." },
+        { slug: "project-employees-iii", why: "Argmin with ties: RANK() per project ordered by experience, keep rank 1 — every least-experienced member survives, which LIMIT 1 could never promise." },
+        { slug: "product-price-at-a-given-date", why: "The as-of snapshot: filter to change_date <= the date FIRST (WHERE runs before the window), then ROW_NUMBER DESC keeps each product's latest surviving change — plus a UNION ALL default-price branch." },
+        { slug: "active-users", why: "The streak anchor: number each user's distinct days with ROW_NUMBER, then GROUP BY date minus (rn − 1) days — consecutive runs collapse to one constant and count themselves." },
+      ],
+    },
   },
   {
     id: "self-non-equi",
@@ -340,6 +409,19 @@ export const SQL50_SECTIONS: LcSection[] = [
       "rectangle-area",
       "number-of-comments-per-post",
     ],
+    study: {
+      intro: [
+        "A self-join puts one table on both sides under two aliases — and the alias is the role. In a seats table, alias 'a' is the left seat of a pair and 'b' the right; in an Employee table, one copy is the staff list and the other the org chart. Most self-joins are equality joins on a SHIFTED key: b.seat_id = a.seat_id + 1 turns the English word 'adjacent' into arithmetic in the ON clause, and the directional offset does double duty — every pair emits exactly once, as (a, b) with a < b, no dedupe needed.",
+        "The NON-EQUI join drops equality entirely: ON p1.id < p2.id AND p1.x <> p2.x AND p1.y <> p2.y manufactures pairs with pure predicates instead of looking them up. Under the hood there is no hash or index fast-path for 'different' — it is a nested loop with a filter, O(n²) pairs at n rows. That is fine at interview scale (hundreds of rows) and the canonical place to say out loud: 'this is O(n²) and I know it'. The id ordering in the ON clause is also what canonicalizes the output — each pair once, never both directions.",
+        "Two companions finish the toolkit. Ordered CASE branches encode a PRIORITY CONTRACT: branches evaluate top-down and stop at the first hit, so Root = p_id IS NULL must be tested before parent-membership — the root is usually also a parent, and the wrong order lets that branch steal it. And when the aggregation must not disturb the outer rows, a CORRELATED SUBQUERY counts in place — one scalar per row, no GROUP BY anywhere, because the count collapses the subquery's rows, not the report's. The zero case comes free: a post with no children counts an empty set, which is 0.",
+      ],
+      path: [
+        { slug: "tree-node", why: "The ordered CASE: Root's NULL gate must run before parent-membership, or the root — usually also a parent — gets stolen by the wrong branch." },
+        { slug: "consecutive-available-seats", why: "Adjacency as arithmetic: alias the table twice and join b.seat_id = a.seat_id + 1 — each seat matches at most one partner, and the +1 offset canonicalizes every pair." },
+        { slug: "rectangle-area", why: "The non-equi join: no key anywhere — id-ordered pairs plus x≠x, y≠y predicates manufacture the matches, an O(n²) nested loop you name out loud." },
+        { slug: "number-of-comments-per-post", why: "The correlated count: one scalar subquery per post row, zero GROUP BY — the count collapses the subquery's rows, not the report's, so zero-comment posts count 0 for free." },
+      ],
+    },
   },
   {
     id: "analytics-funnels",

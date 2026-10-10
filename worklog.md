@@ -4848,3 +4848,20 @@ Work Log:
 Stage Summary:
 - The SQL 50 band's seven canonical sections now open with the same start-here teaching layer as Data & Finance: 21 intro paragraphs + 53 path whys, all grounded in the dives' real traps. Remaining LC-band sections (54 expansion sections) still have blurbs only — natural candidates for the next deepening batches.
 - Study-flow art for the core band (if ever wanted) can be added later by assigning flow keys + drawing into lc-df-art — the panel renders it automatically once a flow key exists.
+
+---
+Task ID: 81
+Agent: Super Z (main agent)
+Task: "where are we" + standing deepen-SQL directive — study-guide batch 1: the six technique-family expansion sections that extend the core band (extra-joins, extra-aggregation, extra-dates, extra-pivots, windows-2, self-non-equi; 28 problems). Sections with study guides: 19 → 25 of 73.
+
+Work Log:
+- Re-derived the remaining deepening worklist: 54 expansion sections (294 problems) still had blurbs only; picked the 6 technique families as batch 1 since they extend the core band's own sections.
+- Dumped all 28 dives' approach + breakdown (scripts/tmp-dump-study-batch1.ts) so every path WHY is grounded in real dive mechanics (composite-key fan-out, canonicalization via scalar min/max, tie-proof argmax shape, outer-MAX-as-NULL-row, half-open year ranges, MAX(CASE) pivots, date-minus-rn streak anchor, O(n^2) non-equi joins).
+- Authored 6 study blocks in sections.ts (text-only, flow omitted): 3 intro paragraphs each in house voice (21 paras total: join-key decisions, argmax family + aggregate-of-aggregates, ISO date contract + half-open ranges, manual pivot/unpivot + recursive CTEs, window-vs-GROUP BY + ranking + streak anchor, self/non-equi joins + priority CASE + correlated counts), plus a path entry per problem (28 whys).
+- Validation: tsc filtered to sections.ts = 0 errors; eslint silent; lc-sections-check ALL PASS (73 sections / 419 rows 1:1); bun probe confirms 25/73 sections with study, all 6 new path lengths match slug counts.
+- E2E (single-call server boot — server reaped between calls, as before): /#learn → skip tour → real-click Module 12 card (DOM .click() only toggles accordion state unreliably; real ref clicks required) → section list renders; studyToggles across view = 25; opened extra-aggregation toggle (index 8) → all 3 intro paras + tie-proof-argmax WHY render; opened windows-2 toggle (index 11) → streak-anchor prose + gaps-and-islands line render. Mobile 390×844 overflowX = 0. Screenshots: download/study-batch1-desktop.png, download/study-batch1-mobile.png.
+- agent-browser notes: `set viewport W H` is the viewport command (not `viewport`); transient document.body-null eval errors can occur mid-render — retry the probe.
+
+Stage Summary:
+- Study-guide coverage is now 25/73 sections (7 core SQL50 + 6 technique-family expansion + 12 Data & Finance); 49 path whys added on top of Task 80's 53.
+- Remaining deepening candidates (in suggested order): batch 2 = the platform-classics wave (platform-classics, hackerrank-2, datalemur, select-2, engagement, matchups, streaks, hard-finales, hackerrank-3, datalemur-2 — 10 sections / 49 problems), then the five premium waves, then free-* + final-* sections.
