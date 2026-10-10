@@ -704,6 +704,21 @@ export const SQL50_SECTIONS: LcSection[] = [
       "products-worth-over-invoices",
       "find-latest-salaries",
     ],
+    study: {
+      intro: [
+        "Rates open the premium tier, and a rate is only as honest as its unit. A friend-request table logs EVENTS, and events repeat: a resend adds a row without adding a request, a re-synced acceptance adds a row without adding an acceptance. So both sides of the fraction reduce to DISTINCT pairs inside counted subqueries — a pair is one unit of friendship intent, a row is not. And every division carries the batch's oldest trap: integer division truncates, so the 1.0 dot (or an explicit CAST) lands before ROUND ever runs.",
+        "Derived quantities are judged at group grain. The confirmation lag is computed per row — julianday difference × 24 turns the timestamp pair into hours — and only then averaged per user, which makes the judgment an aggregate: HAVING, never WHERE, because WHERE runs before grouping and cannot see an average at all. The same two-layer thinking covers comparing aggregates across tables: each side becomes its own scalar subquery returning one number, and a CASE with a 'No Winner' ELSE shows how to label the empty outcome instead of letting it vanish.",
+        "Candidate spaces and append-only logs round out the set. When no key connects two tables, CROSS JOIN is the honest operator — it states 'every combination' outright, and the validity rule then prunes with ALL pairwise filters. When a pipeline re-sends records, the log grows by rows rather than changing them: deduplicate by the business key, arbitrate which copy arrived last with the delivery id, and join back to keep the winning copy itself. And a net figure (worth, balance) is per-row algebra BEFORE it is an aggregation — a sum is only as good as the expression it sums.",
+      ],
+      path: [
+        { slug: "friend-requests-i-overall-acceptance-rate", why: "The unit audit: a resend is a row but not a request — each side reduces to DISTINCT pairs inside a counted subquery, and the 1.0 dot keeps the rate from truncating to zero before ROUND." },
+        { slug: "users-that-actively-request-confirmation-messages", why: "A derived quantity judged at group grain: julianday lag × 24 computed per confirmation, then AVG per user under HAVING — WHERE runs before grouping and cannot see the average." },
+        { slug: "the-winner-university", why: "Dedupe before averaging: student 4's synced copy double-weights a raw AVG and crowns the wrong school (76.4 vs the true 77.5); DISTINCT student_id, score first, then two scalar subqueries compared with a 'No Winner' ELSE." },
+        { slug: "all-valid-triplets-that-can-represent-a-country", why: "The honest CROSS JOIN: no key connects schools, so every A × B × C combination is generated outright (3 × 3 × 2 = 18) — then THREE pairwise <> filters, because two conjuncts let B and C share a name." },
+        { slug: "products-worth-over-invoices", why: "Netting is per-row algebra before aggregation: rest + paid - canceled - refunded evaluates line by line (a full cancel nets to exactly 0), and only then does SUM roll the lines up per product." },
+        { slug: "find-latest-salaries", why: "An append-only log: the same business triple exists under several sync_ids, so GROUP BY the triple, arbitrate with MAX(sync_id), and join back to keep the winning copy itself." },
+      ],
+    },
   },
   {
     id: "premium-community",
@@ -717,6 +732,20 @@ export const SQL50_SECTIONS: LcSection[] = [
       "page-recommendations-ii",
       "the-airport-with-the-most-flights",
     ],
+    study: {
+      intro: [
+        "Graph tables are edge lists, and an edge touches TWO nodes who each deserve credit. Reading a friendship table as 'group by requester' counts only half of every acceptance: the accepter's gain lives in the same row, under a different column. The canonical cure is to explode — UNION ALL the two endpoint columns into one tall list of ids — after which the busiest node is the plainest aggregation there is. UNION ALL is load-bearing: a deduping UNION would collapse repeated ids and undercount exactly the repeat friends the question asks about.",
+        "Orientation is a storage detail the reader pays for. Edges stored once (smaller id first, or in no order at all) make 'who is friends with u?' a two-branch scan — rows where u is user1_id OR user2_id. Either normalize once (UNION ALL both orientations into directed (u, f) rows) or adopt a read rule (CASE returns the OTHER endpoint). Do it once, upstream, and every downstream question — intersections, recommendations, traffic — becomes a single-condition lookup instead of a place where mistakes breed.",
+        "Pairs do not exist in the table — they are manufactured. A self-join with a canonical inequality (smaller id first) builds each unordered pair exactly once; common-follower counts are intersections of two per-node sets counted per pair; and the maximum is kept by equality with the global MAX, never LIMIT 1, because ties are answers. Recommendations flip the shape: an anti-join (NOT EXISTS) subtracts what the target already has. The seed plants asymmetric nodes — a user who follows but is never followed — so half-reads fail visibly.",
+      ],
+      path: [
+        { slug: "friend-requests-ii-who-has-the-most-friends", why: "The two-endpoint credit rule: (a, b) contributes one row for a and one for b — UNION ALL the requester and accepter columns into a tall list, then GROUP BY id, COUNT(*); a deduping UNION would silently drop repeat friends." },
+        { slug: "strong-friendship", why: "Normalize once, read forever: both orientations UNION ALLed into directed (u, f) rows turn every question into a single-condition lookup; joining each candidate pair's two neighbor sets and HAVING COUNT(*) >= 3 is the common-friend test." },
+        { slug: "all-the-pairs-with-the-maximum-number-of-common-followers", why: "Direction is the flavor: a follow row speaks of one user only, so common followers are the intersection of two follower sets — pairs manufactured by self-join with followee1 < followee2, user 9 (follows, never followed) proving the asymmetry; keep pairs equal to the global MAX." },
+        { slug: "page-recommendations-ii", why: "The reader pays for storage: friendship rows have no canonical order, so CASE WHEN user1_id = 1 THEN user2_id ELSE user1_id END reads the other endpoint; candidates are friends' liked pages, and NOT EXISTS subtracts the pages user 1 already likes." },
+        { slug: "the-airport-with-the-most-flights", why: "One movement, two airports, both counted: UNION ALL departure and destination legs, traffic is a plain COUNT(*), and the tie survives because the keeper is equality with the global MAX — ORDER BY id for determinism." },
+      ],
+    },
   },
   {
     id: "premium-content",
@@ -730,6 +759,20 @@ export const SQL50_SECTIONS: LcSection[] = [
       "the-most-recent-three-orders",
       "finding-the-topic-of-each-post",
     ],
+    study: {
+      intro: [
+        "Content logs mix event types in one table, which makes every count inside a ratio a CONDITIONAL count: SUM(CASE WHEN action = 'answer' THEN 1 ELSE 0 END) tallies one action while its twin tallies the other, and a plain COUNT(*) lumps both into one meaningless number. The idiom has a cousin worth knowing — COUNT(CASE WHEN ... THEN 1 END) skips NULLs and counts the same rows — but the explicit 0/1 flags extend more cleanly to per-day and per-segment cuts.",
+        "Reports AND predicates of different shapes, and each shape fails its own way. A per-table aggregate (below the global average) has a scope trap: the AVG must scan ALL books, and a scalar subquery does exactly that no matter what the outer WHERE filters — filter first and the bar drifts down, wrongly qualifying borderline rows. A per-entity existential (never dispatched in a window) wants NOT EXISTS over a half-open range. And when filters live on three tables, the join chain is the query's spine: event, pattern, role — with DISTINCT collapsing the event grain to the display grain.",
+        "Two different 'top' questions can stack, and they need two different tools: 'the three buyers with the most purchases' ranks an aggregate (COUNT per buyer, then RANK over the counts), while 'their three most recent purchases' is a per-group recency cutoff (ROW_NUMBER newest-first). Neither window can live in the other's SELECT — the honest shape is a chain of CTEs. Substring matching completes the set: CROSS JOIN posts × keywords with the pattern built from the data itself, plus a UNION ALL branch so unmatched posts still print.",
+      ],
+      path: [
+        { slug: "get-highest-answer-rate-question", why: "The twin-CASE rate: answer shows and answer events counted separately — SUM(CASE) / COUNT with a 1.0 dot — because COUNT(*) would lump both actions into one number; ORDER BY rate DESC LIMIT 1 crowns the question." },
+        { slug: "unpopular-books", why: "Two predicate shapes ANDed: the average must scan ALL books (the scalar subquery runs its own scan — filter first and the bar drifts down, wrongly qualifying borderline stock), while never-dispatched is NOT EXISTS over a half-open window." },
+        { slug: "friendly-movies-streamed-last-month", why: "A three-table spine: WatchLog supplies the event, Movies the LIKE pattern, Memberships the role test — evaluated per watch row, so one qualifying viewer is enough for the movie; DISTINCT then collapses event grain to one row per title." },
+        { slug: "the-most-recent-three-orders", why: "Two top-questions, two tools: COUNT per buyer ranked by RANK (rnk <= 3), then ROW_NUMBER per gated buyer newest-first (rn <= 3) — neither filter can live in the other's SELECT, hence the CTE chain." },
+        { slug: "finding-the-topic-of-each-post", why: "Every post against every keyword: CROSS JOIN builds the pair space, LIKE '%' || keyword || '%' builds the pattern from data (substring semantics — 'knead' matches 'kneaded'), and a UNION ALL NOT EXISTS branch prints 'N/A' so no post goes missing." },
+      ],
+    },
   },
   {
     id: "premium-time",
@@ -744,6 +787,21 @@ export const SQL50_SECTIONS: LcSection[] = [
       "the-first-day-of-the-maximum-recorded-temperature-in-each-city",
       "first-and-last-call-on-the-same-day",
     ],
+    study: {
+      intro: [
+        "Time evidence usually lives in PAIRS of rows: a single session never proves a ban, a single purchase never proves a burst. Self-joins manufacture the pairs, scoped to the entity key so probes stay within one account or one user; the predicates are interval tests — the closed-interval overlap (a.login <= b.logout AND b.login <= a.logout) — and gap tests, where SQLite's lack of DATEDIFF is bridged by julianday differences. Every extra condition (differing IPs, a strict inequality) just narrows which pairs count as evidence.",
+        "Per-bucket maxima are argmax with a join-back, and the window form does it in one pass: MAX(...) OVER (PARTITION BY bucket) annotates EVERY row with its bucket's peak, and the equality filter (amount = day_peak) keeps all attaining rows — ties are answers, not accidents. What you leave OUT of the partition is the trick: a withdrawal must compete against deposits inside the same day. Value-plus-date tangles (the first day of each city's peak) resolve the same way — ORDER BY value DESC, date ASC inside the window makes row 1 the earliest day of the peak.",
+        "Reports often demand a grain the table does not have, and time grains are manufactured. A shipment spanning 2023 → 2025 must exist three times before yearly totals make sense — WITH RECURSIVE emits one row per year. Caller-days do not exist until DATE(timestamp) buckets full timestamps; the buckets then yield MIN and MAX boundaries, but aggregates discard WHO — a join back to the fact rows recovers the recipients, and only then can the report judge them.",
+      ],
+      path: [
+        { slug: "leetflex-banned-accounts", why: "Evidence is a pair: a self-join scoped to account_id, the closed-interval overlap test (a.login <= b.logout AND b.login <= a.logout) plus differing IPs — DISTINCT the ids; cross-account coincidences never enter because the join key scopes the probe." },
+        { slug: "maximum-transaction-each-day", why: "Argmax as annotation: MAX(amount) OVER (PARTITION BY day) rides every row — kind deliberately out of the partition, so a 1200 withdrawal outranks a 300 deposit — and amount = day_peak keeps every tie." },
+        { slug: "users-with-two-purchases-within-seven-days", why: "Pairs with a gap: self-join on user_id, julianday(b) - julianday(a) because SQLite has no DATEDIFF, and a one-sided 0 < gap <= 7 so same-instant pairs cannot sneak in; DISTINCT the surviving users." },
+        { slug: "total-sales-amount-by-year", why: "Grain before totals: a 2023 → 2025 shipment must exist three times — WITH RECURSIVE emits yr + 1 while it has not passed the end year, and only then does GROUP BY year/product SUM(units × price) mean anything." },
+        { slug: "the-first-day-of-the-maximum-recorded-temperature-in-each-city", why: "Value and date untangled in one window: ROW_NUMBER PARTITION BY city ORDER BY temperature DESC, record_date ASC — rn = 1 is the hottest reading, earliest among its repeats; the second ORDER BY key IS the tie handling." },
+        { slug: "first-and-last-call-on-the-same-day", why: "The unit is the caller-DAY: DATE(call_time) buckets timestamps, GROUP BY caller/day takes MIN and MAX — then a join-back, because the aggregates discarded WHO received the boundary calls; keep caller-days with exactly one distinct boundary recipient." },
+      ],
+    },
   },
   {
     id: "premium-money",
@@ -758,6 +816,21 @@ export const SQL50_SECTIONS: LcSection[] = [
       "generate-the-invoice",
       "suspicious-bank-account-transactions",
     ],
+    study: {
+      intro: [
+        "Money reports promise completeness, and the anchor of the query decides who survives. Driving FROM the movements table with a GROUP BY account counts only the accounts that moved — the dormant account contributes no group and vanishes silently from a report that promised every account. Anchor on the account table instead and LEFT JOIN the log on: the dormant row survives with NULL movement columns, and the aggregates over that nullable side need COALESCE so 'no credits' reads as 0, not NULL, before the balance is credits minus debits.",
+        "Some rows speak twice, and some histories must stay alive. A fixture row talks about two clubs at once — reading it once and CASE-ing the host's result scores only the home side, so the two-legs trick UNION ALLs a host view and a mirrored away view until the stream is one row per (club, match); after that the standings are the most ordinary conditional sums. A balance after each movement is a cumulative sum, which GROUP BY cannot produce — grouping collapses what the report must keep alive — so a window SUM partitions per account, orders by time, and keeps every input row carrying its own subtotal, with a CASE signing the amounts before the window runs.",
+        "Counting has flavors, ranking has an order, and alerts have a shape. COUNT(*) counts rows, COUNT(col) counts non-NULLs, COUNT(DISTINCT col) counts distinct values — rows and days part ways the moment one day logs two shifts. Rank after filter: the category cut must precede the per-buyer RANK, and rank-1 ties share the invoice. And a threshold policy about CONCENTRATION is a windows question, not a totals question: structuring money so every single day is boring while the total climbs defeats any whole-history SUM — probe a sliding date window instead.",
+      ],
+      path: [
+        { slug: "bank-account-summary", why: "The anchor keeps the promise: FROM Accounts LEFT JOIN Movements — dormant account 4 survives with NULL movement columns; COALESCE around each sum turns 'no credits' into 0, and the balance is credits minus debits." },
+        { slug: "league-statistics", why: "The two-legs trick: a fixture row speaks for two clubs, so a host view and a mirrored away view are UNION ALLed into one row per (club, match) — then wins, draws and goals are the most ordinary conditional sums in the book." },
+        { slug: "account-balance", why: "Every step stays alive: SUM(signed CASE amount) OVER (PARTITION BY account ORDER BY day, movement_id ROWS UNBOUNDED PRECEDING AND CURRENT ROW) — a GROUP BY would collapse the history this report must print." },
+        { slug: "employees-with-deductions", why: "Rows and days part ways: employee 1 holds four rows across three distinct days, so COUNT(*) meets the bar of 4 wrongly — COUNT(DISTINCT ot_date) reads 3 and the shortfall surfaces under HAVING." },
+        { slug: "generate-the-invoice", why: "Filter, then rank: the category cut runs BEFORE the per-buyer maximum, or buyer 3's 500.0 heater takes the invoice that belongs to their 18.5 gloves; RANK() over price DESC lets rank-1 ties share the bill." },
+        { slug: "suspicious-bank-account-transactions", why: "Concentration, not totals: account 2 moves 10200 over ten boring days and no three-day window nears 10000 — self-join to the [made_at, made_at + duration] window, HAVING SUM(amount) >= threshold, DISTINCT the accounts." },
+      ],
+    },
   },
   {
     id: "premium-finales",
@@ -773,6 +846,22 @@ export const SQL50_SECTIONS: LcSection[] = [
       "merge-overlapping-events-in-the-same-hall",
       "employee-task-duration-and-concurrent-tasks",
     ],
+    study: {
+      intro: [
+        "Population rules cut both ways. A ride belongs to the cancellation report only when its rider is unbanned AND its driver is unbanned — a two-sided rule that needs two joins to the same People table, each alias carrying its own banned = 'No' directly in the ON clause. Filter one side and the fraction corrupts silently: the banned rider's ride and the banned driver's ride must both leave the denominator as well as the numerator, because the metric is the cancellation experience of rides among clean accounts.",
+        "Medians over people are row selection, not arithmetic. With an even head-count the answer is the two middle ROWS printed verbatim — averaging them invents a salary nobody earns, and company C (just 15000 and 41000) makes that bug impossible to miss. Position language is window language: ROW_NUMBER ascending and descending plus COUNT(*) OVER () flag the middle rows, and rn IN ((n+1)/2, n/2+1) followed by AVG answers odd and even in one statement with no parity branch — while ORDER BY LIMIT OFFSET is really two queries, a parity conditional, and an off-by-one waiting for an even-sized input.",
+        "Quantifier scope, grain rotation, and reach separate the finales. 'Clean in every exam' is a universal claim — per-exam bounds plus NOT EXISTS (ties count as extremes) plus a positive EXISTS so students who sat nothing stay out. A pivot is a rotation of the grain: rank, pair the ranks with (rn + 1) / 2, GROUP BY the pair with MAX(CASE) columns — never three derived tables stitched on rank, which is a FULL OUTER JOIN in disguise. And interval merging is reach-based islands: the boundary is 'this event starts after everything before it has finished' — a running MAX of end days — not 'this event starts the day after the previous start'.",
+      ],
+      path: [
+        { slug: "trips-and-users", why: "The two-sided rule needs two joins: Rides to People twice — rider and driver aliases each carrying banned = 'No' in ON — so rides 3 and 5 leave the denominator too; the rate is SUM(CASE cancelled) × 1.0 / COUNT(*), grouped by day." },
+        { slug: "median-employee-salary", why: "Selection, not arithmetic: company B's answer is the two middle ROWS verbatim (26000 and 30000), and company C's 'average' would name a salary nobody earns — rn ascending + descending, both in [n/2, n/2 + 1]." },
+        { slug: "find-the-median", why: "The reflex is brittle twice: LIMIT/OFFSET returns one of two middles and branches on parity — instead rn IN ((n+1)/2, n/2+1) with COUNT(*) OVER () for n, then AVG over the selection, answers odd and even identically." },
+        { slug: "find-the-quiet-students-in-all-exams", why: "Mina is the counterexample: clean in exam 102, but her 90 ties exam 103's max — 'every exam' needs per-exam MIN/MAX bounds + NOT EXISTS (ties count as extremes) + a positive EXISTS so students who sat nothing stay out." },
+        { slug: "students-report-by-geography", why: "A pivot as grain rotation: ROW_NUMBER per continent, the pair key (rn + 1) / 2 glues ranks (1,2)(3,4), and six MAX(CASE continent, parity) columns build each row — no three-way stitch, no FULL OUTER JOIN in disguise." },
+        { slug: "merge-overlapping-events-in-the-same-hall", why: "Reach, not starts: hall 1's second event starts three days after the first yet belongs with it — the island boundary is start > running MAX(end_day); a running SUM numbers the islands, and GROUP BY hall/island takes MIN and MAX." },
+        { slug: "employee-task-duration-and-concurrent-tasks", why: "The statement pins the model: concurrency is SAMPLED at each task's start — a self-inclusive containment count (both bounds inclusive, global across employees); julianday minutes summed per task." },
+      ],
+    },
   },
   {
     id: "premium2-games",
@@ -786,6 +875,20 @@ export const SQL50_SECTIONS: LcSection[] = [
       "find-cumulative-salary-of-an-employee",
       "count-student-number-in-departments",
     ],
+    study: {
+      intro: [
+        "The recurring coupling is aggregate plus fact: the earliest date per player is an aggregate — MIN over a GROUP BY computes it in one pass — but the device is a plain column of the row that happened to win the minimum. An aggregate query answers aggregate questions, and any bare column asked for in the same breath is borrowed from an unspecified row; the engine is under no obligation to pick the row that produced the MIN. The reliable shapes bind the fact to the winner explicitly: a CTE of per-player minima joined back on the aggregate key, or a window annotation plus a filter.",
+        "Window frames are contracts, and every word earns its place. A running total is SUM(...) OVER (PARTITION BY player ORDER BY date) — the output grain stays the session, and a frame ending at CURRENT ROW includes the current row, because 'including' is doing real work in the spec. The salary variant needs ROWS 2 PRECEDING: with ORDER BY the default frame is RANGE, which treats equal VALUES as peers and lets same-month rows ride inside each other's windows — ROWS means exactly three physical rows. And when the report then drops each id's latest month, that is a second phase, not a clause.",
+        "Join direction is decided before any counting starts. 'Zero-student departments count too' is a contract the join keyword writes: LEFT JOIN from Department threads every department through and fills the student side with NULLs, and COUNT over a student-side column counts non-NULLs — so zeros stay zero, where COUNT(*) would report 1 and an INNER join would silently vanish the empty faculty. Winners need only ballots cast: tally, join the names afterwards, ORDER BY count DESC LIMIT 1 — a zero-vote candidate contributes no group and cannot lead.",
+      ],
+      path: [
+        { slug: "game-play-analysis-ii", why: "The aggregate-fact coupling: MIN(event_date) per player is a GROUP BY answer, but the device is a column of the winning row — a CTE of first logins joined back on (player_id, event_date) binds them; a bare column in the aggregate query is borrowed from an unspecified row." },
+        { slug: "game-play-analysis-iii", why: "A running total that keeps sessions alive: SUM(games_played) OVER (PARTITION BY player ORDER BY event_date) — the frame ends at CURRENT ROW, which includes the current row, and the output grain stays one row per session." },
+        { slug: "winning-candidate", why: "The plain argmax: GROUP BY candidateId over Vote, names joined afterwards, ORDER BY cnt DESC LIMIT 1 — an inner join suffices because a zero-vote candidate contributes no group and cannot lead." },
+        { slug: "find-cumulative-salary-of-an-employee", why: "Every frame word earns its place: ROWS BETWEEN 2 PRECEDING AND CURRENT ROW — the default RANGE frame would make same-month VALUES peers inside each other's windows; then the latest month per id is removed after aggregating." },
+        { slug: "count-student-number-in-departments", why: "Join direction is the contract: LEFT JOIN from Department keeps the empty faculty, and COUNT(student-side column) counts non-NULLs so the zero survives — COUNT(*) would report 1 for a department with no students." },
+      ],
+    },
   },
   {
     id: "premium2-rankings",
@@ -800,6 +903,21 @@ export const SQL50_SECTIONS: LcSection[] = [
       "tournament-winners",
       "find-the-start-and-end-number-of-continuous-ranges",
     ],
+    study: {
+      intro: [
+        "Distances live on pairs, and the candidate space is a self-join. An ordered join of a points table to itself builds every pairing TWICE — (A, B) and (B, A) are the same distance in opposite directions — so the pairing rule imposes an orientation: keep the pair only when p1.x < p2.x, or when the x values tie and p1.y < p2.y. That clause is the whole dedup, and it halves the candidate set before any math runs. The measure itself (ABS of a difference, or a squared distance) is per-row arithmetic; MIN answers the question; sqrt and ROUND happen once, at the very end — never inside the loop.",
+        "Populations defined by roles and by firsts need probes, not joins. Follower and followee are ROLES a user plays on a row — the same user can hold both — and 'holds both roles' is two EXISTS probes: a self-join would glue each follower's outgoing rows to their incoming rows and multiply. First-ever events need their filter BEFORE the aggregate: the WHERE that keeps only logins must run before MIN(activity_date), or engagement rows compete for earliest and win. Both patterns become per-entity CTEs, and the report then re-aggregates one grain up.",
+        "Double-voice rows split, and runs collapse. A match row is two results wearing one row — UNION ALL the two player sides, each carrying BOTH scores so the win test becomes a within-row CASE, then conditional sums per player and a ROW_NUMBER argmax per group. Runs of consecutive ids are gaps-and-islands: the island key log_id - ROW_NUMBER() is constant inside a run (both climb by exactly one, so their difference cannot move) and jumps across gaps — GROUP BY it for start, end, and length.",
+      ],
+      path: [
+        { slug: "shortest-distance-in-a-plane", why: "Manufacture pairs, then orient them: the lexicographic rule (p1.x < p2.x, or x equal and y smaller) halves the candidates; squared distance per row, MIN over candidates, and sqrt + ROUND once at the end." },
+        { slug: "shortest-distance-in-a-line", why: "One column still hides pairs: p1.x < p2.x cuts 20 ordered pairings to 10 unordered candidates; ABS(x1 - x2) per row — the ABS is not cosmetic, a signed difference inherits the join's orientation." },
+        { slug: "second-degree-follower", why: "Roles, not classes: the output is users holding BOTH roles — EXISTS probes the followee role on top of the follower rows (a self-join would cross outgoing × incoming and multiply); then GROUP BY follower, COUNT(DISTINCT followee)." },
+        { slug: "new-users-daily-count", why: "Order of operations in the shape: WHERE activity_type = 'login' runs BEFORE MIN(activity_date) per user — engagement rows would otherwise compete and win; the CTE answers per user, the outer query re-aggregates per date." },
+        { slug: "tournament-winners", why: "A match is two results in one row: UNION ALL the player sides, each carrying BOTH scores so the win test is a within-row CASE; SUM(CASE points) per player, roster LEFT JOINed, and ROW_NUMBER picks each group's champion." },
+        { slug: "find-the-start-and-end-number-of-continuous-ranges", why: "The island key: log_id - ROW_NUMBER() over the kept rows — inside a run both climb by exactly one, so the difference cannot move; GROUP BY it for MIN(start), MAX(end), and COUNT as the length." },
+      ],
+    },
   },
   {
     id: "premium2-market",
@@ -814,6 +932,21 @@ export const SQL50_SECTIONS: LcSection[] = [
       "number-of-trusted-contacts-of-a-customer",
       "evaluate-boolean-expression",
     ],
+    study: {
+      intro: [
+        "One table can serve two jobs in one query, and the alias count is the tell. A predicate that crosses roles — did the buyer, whose join_date matters, buy an item matching the SELLER's favorite brand? — forces Orders to join Users twice (once per role) plus Items once; collapsing the two Users joins into one is the classic first mistake, and it fails on ambiguity before the logic is ever tested. 'Different days' gets the same precision: at least two orders on different days is COUNT(DISTINCT order_date) >= 2, not COUNT(*) >= 2.",
+        "Anti-joins and orientation carry the recommendations. 'Friends' pages minus my pages' is NOT EXISTS — the probe that gives NULL its business meaning, where NOT IN over a list containing one NULL erases every row. And friend edges stored once with no canonical order need the two-arm UNION read rule: one arm reads user2_id from rows matching on user1_id, the other reads user1_id from rows matching on user2_id — write only one arm and the seed's reversed rows (2, 1) silently vanish from the graph. Running totals add one more discipline: the window's ORDER BY drives the accumulation, the output's ORDER BY drives presentation — two different instruments.",
+        "Spines, derived relations, and data-driven operators close the set. A report hangs off a spine table while the same table validates elsewhere — two aliases for two roles, the trusted set built as a derived relation (contacts joined to the directory by email), and both-endpoint rules judged only when every participant qualifies. Boolean evaluators resolve NAME operands through two aliases of a variables table, then translate a stored TEXT operator with CASE: the string '<' is not the less-than operator, it is a string that MEANS less-than — judged with CASE, never executed.",
+      ],
+      path: [
+        { slug: "market-analysis-ii", why: "Two aliases, two jobs: Orders joins Users for the buyer's join_date and again for the seller's favorite_brand, plus Items once; the bar is COUNT(DISTINCT order_date) >= 2 — different DAYS, not two same-day orders." },
+        { slug: "page-recommendations", why: "Storage direction is data: the two-arm UNION CTE reads the OTHER endpoint on either side — the seed's reversed rows (2,1) and (4,1) survive; then friends' liked pages, NOT EXISTS minus user 1's own, DISTINCT." },
+        { slug: "running-total-for-different-genders", why: "Two ORDER BYs, two instruments: the window's (gender, day) drives the accumulation, the outer ORDER BY presents — the gender key ordered so the female block prints first, and the default frame making it running." },
+        { slug: "students-with-invalid-departments", why: "The NULL-proof anti-join: NOT EXISTS probes Departments per student, so Ravi's NULL department matches nothing and Ravi is reported — NOT IN over a list containing NULL would erase every row." },
+        { slug: "number-of-trusted-contacts-of-a-customer", why: "Customers plays two roles: directory (validating contact emails) and spine (the report hangs from it) — two aliases; a call counts toward C only when BOTH endpoints are trusted; LEFT JOIN + COALESCE keeps quiet customers at zero." },
+        { slug: "evaluate-boolean-expression", why: "Operands are names, the operator is text: two Variables aliases resolve 'x' and 'y' to values, and CASE translates the stored '<' / '=' / '>' into comparisons — the TEXT '<' MEANS less-than, it is never executed." },
+      ],
+    },
   },
   {
     id: "premium2-orders",
@@ -828,6 +961,21 @@ export const SQL50_SECTIONS: LcSection[] = [
       "count-apples-and-oranges",
       "products-price-for-each-store",
     ],
+    study: {
+      intro: [
+        "Group properties must land on individual rows. An employee's tax rate comes from their COMPANY's maximum salary, never their own — Marco's 18400 sits below every bracket yet is priced by company 2's 36000 ceiling. MAX(...) OVER (PARTITION BY company) repeats each group's ceiling on every one of its rows with no self-join and no grouped detour; a CASE then maps ceilings to rates through half-open bands, and rounding and casting happen exactly once, at the end.",
+        "Order of operations is the game. Scope, then argmax: filter the range BEFORE ranking, or the window happily crowns rows nobody asked about — rank first and Bookend's March order answers a February question. Join, multiply, then sum: the multiplication grain is the joined row where all factors coexist (units × cube lives on a warehouse's stock of one product, not on either table alone), so SUM enters only after the join has materialized every such row — aggregating either side first double-counts.",
+        "Absence and shape are the quiet skills. Missing ids are rows that do not exist — no GROUP BY enumerates them — so WITH RECURSIVE builds the candidate ladder first and LEFT JOIN + IS NULL keeps the gaps. Overlapping sources must be stacked, never joined: chests already summarize their boxes, so a join-and-sum double-counts everything the chest contains. And wide → long is a reshape, not an aggregation: each price column becomes a labeled stack of rows, the column's NAME promoted into DATA by a string literal, one SELECT branch per column.",
+      ],
+      path: [
+        { slug: "calculate-salaries", why: "The group's ceiling on every row: Marco's 18400 is priced by company 2's max of 36000 — MAX(salary) OVER (PARTITION BY company_id), a CASE of half-open bands, and CAST(ROUND(salary × (1 - rate), 0)) once at the end." },
+        { slug: "the-most-recent-orders-for-each-product", why: "Scope, then argmax: the February filter runs first — otherwise Bookend's March 5 order wins a question nobody asked; ROW_NUMBER per product on (order_date DESC, order_id DESC), keep rn = 1." },
+        { slug: "warehouse-manager", why: "Multiply at the joined grain: units × width × length × height lives where all four numbers coexist — one joined row per (warehouse, product); join first, multiply per row, SUM per warehouse last." },
+        { slug: "find-the-missing-ids", why: "Generate the space, keep the gaps: WITH RECURSIVE seeds 1 and climbs while under (SELECT MAX(customer_id)); LEFT JOIN Customers and keep the IS NULL rungs — absence is not something a GROUP BY can enumerate." },
+        { slug: "count-apples-and-oranges", why: "Overlap, not complement: chest 1's 100/60 already contains its boxes, so joining Boxes to Chests and summing per box row double-counts; the inventory is every Chests row plus the NULL-chest Boxes rows — UNION ALL, then one SUM." },
+        { slug: "products-price-for-each-store", why: "Wide to long is a reshape: SELECT 'store1' AS store, store1 AS price promotes the column's NAME into DATA — three branches, UNION ALL, per-branch NULL filters, ordered by product then store." },
+      ],
+    },
   },
   {
     id: "premium2-finals",
@@ -842,6 +990,21 @@ export const SQL50_SECTIONS: LcSection[] = [
       "grand-slam-titles",
       "find-interview-candidates",
     ],
+    study: {
+      intro: [
+        "Spine-first reporting: 'one row per period' starts from a period table the query builds. WITH months AS (VALUES (10), (11)) turns the report's axis into data, facts are LEFT JOINed onto it, and the business rule (join_date <= month start) lives in the ON clause where it decides who matches without evicting the month. Unmatched months must read 0 — which is why COUNT counts the joined column, never *: COUNT(driver_id) over a NULL side is 0, while COUNT(*) would call an empty month 1.",
+        "Ratios across grains, and buckets as contracts. The denominator (drivers on staff) and the numerator (distinct accepters) live at different grains, and the acceptance DATE lives on Rides — acceptances only become countable after AcceptedRides joins Rides, with COUNT(DISTINCT) weighing a driver once no matter how many rides they took. Bucket keys are contracts too: CAST(strftime('%m', requested_date) AS INTEGER) puts the boundary ride — requested Oct 31, accepted Nov 1 — in October; a wrong bucket is invisible in the output's shape and visible only in the numbers.",
+        "Definitions vs logs, and wide vs tall. 'Everything that should have run' is a count, not rows — the recursive grid climbs per family with THAT family's own bound, which forces the recursive step to re-join the family table. Four champion columns and three medal columns are wide storage of tall facts: a UNION ALL unpivot makes them countable, carrying the ORDER column (contest, season) that streak logic needs — and columns of one row project independently, so a player holding two titles on one row still yields two rows.",
+      ],
+      path: [
+        { slug: "hopper-company-queries-i", why: "The month axis is data: WITH months AS (VALUES (10), (11)) drives one row per reported month; LEFT JOIN with join_date <= month-start in ON, and COUNT(d.driver_id) — the column, never * — turns an empty month into 0 instead of 1." },
+        { slug: "hopper-company-queries-ii", why: "Two populations, two grains, one ratio: the denominator is Part I's spine verbatim; the numerator is COUNT(DISTINCT ar.driver_id) after AcceptedRides joins Rides — the acceptance DATE lives there, and driver 1 must weigh once." },
+        { slug: "hopper-company-queries-iii", why: "The bucket key is the contract: CAST(strftime('%m', requested_date) AS INTEGER) puts ride 4 (requested 10-31, accepted 11-01) in October's group — AVG distance and duration per bucket, ROUND to 2." },
+        { slug: "find-the-subtasks-that-did-not-execute", why: "The definition side is a count: the recursive step re-joins TaskFamily so THAT family's subtasks_count bounds the climb; NOT EXISTS over executed (family, subtask) pairs then reads the gaps directly." },
+        { slug: "grand-slam-titles", why: "Unpivot before counting: four UNION ALL projections read each champion column independently — player 2 holding two titles on one row still yields two rows; GROUP BY player, ORDER BY count DESC then player_id." },
+        { slug: "find-interview-candidates", why: "One tall CTE feeds two rules: medals unpivoted WITH contest_id (the streak needs contest order) — consecutive golds are islands over the global contest ordering (run >= 2), the trifecta is COUNT(DISTINCT medal) = 3, and UNION merges the sets." },
+      ],
+    },
   },
   {
     id: "premium2-users",
@@ -856,6 +1019,21 @@ export const SQL50_SECTIONS: LcSection[] = [
       "group-employees-of-the-same-salary",
       "leetcodify-friends-recommendations",
     ],
+    study: {
+      intro: [
+        "Exclusion predicates are compound, and naming them precisely is most of the work. An ad interacts with a playback session only when the customer matches AND the timestamp sits strictly inside the window — a join carrying a non-equi condition — and the answer is that probe's complement: the customers it never finds. Bucket judgment is the opposite shape, a pipeline with fixed clause order: WHERE slices the year, GROUP BY buckets the customer, HAVING judges the bucket's SUM — a row-level WHERE revenue > 0 answers 'had a good month sometime', not 'netted positive'.",
+        "Strings are built by hand in SQLite, and scopes coexist as columns. Date formatting is part extraction — strftime('%d'), ('%m'), ('%Y') pieces assembled with || — with the ordinal suffix computed from arithmetic (the 11th, 12th and 13th handled before the % 10 rule) and month names pulled from a lookup CTE. Two scopes share one query as window columns: MAX over the order's partition and AVG over the empty partition ride every row at once — the GROUP BY + HAVING shape cannot hold both, because once rows are grouped every aggregate sees only its own group.",
+        "Windows run in phases, and meetings have a grain. Membership (how many hold my salary?) and identity (where does it rank?) are different questions — compute the COUNT OVER partition in an inner query, prune the solo salaries, then DENSE_RANK outside; the phase order IS the trick. Song meetings live at (pair, day, song) grain: a self-join equal on BOTH day and song with a strict user inequality — the inequality canonicalizes the pair AND blocks self-pairing — then per-pair-day counting, and the friendship table gates who may be recommended at all.",
+      ],
+      path: [
+        { slug: "ad-free-sessions", why: "Name the compound predicate: share customer AND session_start < timestamp < session_end — a non-equi probe; the answer is its complement, the Playback customers the probe never finds." },
+        { slug: "find-customers-with-positive-revenue-this-year", why: "Judge the bucket, not the rows: WHERE slices 2021, GROUP BY customer, HAVING SUM(revenue) > 0 strict — a row-level WHERE revenue > 0 would miss customers whose negatives net positive." },
+        { slug: "convert-date-format", why: "A string factory: strftime('%d') / ('%m') / ('%Y') pieces, the ordinal suffix from % 10 with 11/12/13 handled first, month names from a lookup CTE — all assembled with ||." },
+        { slug: "orders-with-maximum-quantity-above-average", why: "Two scopes as columns: MAX(quantity) OVER (PARTITION BY order_number) and AVG(quantity) OVER () ride the ungrouped rows — filter max > avg, DISTINCT; the GROUP BY + HAVING shape compares an order to itself." },
+        { slug: "group-employees-of-the-same-salary", why: "Phases, not one query: COUNT(*) OVER (PARTITION BY salary) answers membership in an inner query, WHERE prunes the solo salaries, and DENSE_RANK() OVER (ORDER BY salary DESC) assigns identity outside." },
+        { slug: "leetcodify-friends-recommendations", why: "The meeting grain is (pair, day, song): self-join equal on BOTH day and song_id with l2.user_id > l1.user_id — the inequality canonicalizes the pair and blocks self-pairing; GROUP BY pair-day, HAVING COUNT(DISTINCT song_id) >= 3, and Friendship gates the output." },
+      ],
+    },
   },
   {
     id: "premium3-stats",
