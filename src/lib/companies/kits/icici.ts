@@ -21,6 +21,14 @@
 // stated per problem.
 // Case figures: scripts/company-facts.md (probed 2026-10-12), case cells
 // re-probed against db/custom.db (read-only) before authoring.
+// 3x expansion (Task 95, append-only): brief 4->6, dayInLife 3->4, metrics
+// 8->12, topics 10->15, theory icici-t9..t24, mcqs icici-mcq-11..30, cases
+// cs-icici-3..6 (topics s6 / t7 / q6 / j7 — all distinct from the kit's existing
+// j5 + x3 and pairwise distinct), problems 16->32. Pool provenance unchanged:
+// 0 tagged sql rows for icici — all new topics/problem slugs theme-curated from
+// company-pools.md. New case figures re-probed against db/custom.db before
+// authoring (per-circle state board, monthly opex walk, first-settlement clock,
+// product-line revenue board).
 
 import type { CompanyKit } from "../types";
 
@@ -36,12 +44,15 @@ export const iciciKit: CompanyKit = {
     "The money tables are where ICICI screens live, and they are integer cents — the dollar read is always `amount_cents / 100.0`. Invoices carry the fee billings: 21 paid for 66443.00, 6 open at 19609.00, 1 void at 925.00. Payments are the settlement legs that clear them on two rails — {emerald:card}, the retail card rail (16 legs for 37364.00), and {sky:wire}, the interbank rail (11 legs for 32248.00) — and five billings were settled on split plans that cross both rails. The ledger is the branch audit trail: **181080.00 debits against 181080.00 credits across 80 entries, delta 0**. *A circle number that can't tie back to the books is a rumor, not a read.*",
     "The SQL screens are settlement-hygiene screens. A warm-up per-circle fold, then the two questions the audit culture is famous for: the {emerald:coverage census} — 21 exact (65612.00), 1 partial (4000.00 of 6148.00), 6 none (15217.00) — where membership is rail evidence, not the status column, and the {rose:anomaly pair} — a void billing that still drew its **925.00** rail hit, and a paid-status billing at **1756.00** with no rail hit at all. Follow-ups probe the denominator ('open-status or no-leg — which six?') and the fan-out ('leg count or billing count — one billing can take two rail hits').",
     "Prep the way the screens run. Drill conditional folds and `FILTER (WHERE …)` censuses, strftime month buckets across the 2024-01 to 2025-02 window, the branch cost reads (Rent at 14 lines / **16800.00**, monthly opex peaking **3210.00** in 2024-08), and the settlement clock — billings average **28.4 days** to first settlement, fastest 13, slowest 84, against flat 30-day terms. Then practice the sentence that gets hired at a house that clears UPI-scale flow: *same product, different circle — the definition travels, the evidence stays local, and every census names its denominator.*",
+    "Depth two — the portfolio reads. The product-line board folds fee revenue by `products.category`: **Audio's 97 units for 11744.01** leads the book and Wearables' 53 units for 6929.12 follows, while Accessories touches the most fee events (**54**) on the smallest dollars (3294.29) — attach and value are different claims, and the cross-sell review exists to argue about the gap. The AOV spread sets the per-circle bar: **338.19** network-wide, with US at 383.48 and LATAM at 426.22 clearing it while EU (335.32) and APAC (313.66) sit under — and LATAM's beat rides a two-event book, the sample-size caveat every board memo carries. {rose:Concentration} closes the read: **63.5%** of booked value sits in households over 3000.00, 71.2% over the 2000.00 line.",
+    "Depth three — the KPI definitions the desks drill before they drill SQL. A {sky:rail-level success rate} is cleared legs over attempted legs *per rail* — card 16 legs, wire 11 — never pooled, because the five split billings ride both rails and pooling hides the 27-into-22 squeeze. {violet:EMI amortization} is a recursive schedule: level payment, interest split off the declining balance, a zero-guard at payoff. The {amber:KYC-dropoff funnel} counts distinct clients per stage from a staged one-row-per-client CTE, and {emerald:delinquency buckets} age the no-leg book against a pinned reference date. *Definitions travel across circles; evidence stays local — that is the sentence this bank hires on.*",
   ],
 
   dayInLife: [
     "**08:15 —** the circle proof before the branch calls. First query proves the ledger — **181080.00 against 181080.00, delta 0** across 80 entries — then the rail census: card **16 legs / 37364.00**, wire 11 / 32248.00, cross-footed to the cash book's 69612.00 debit fold. The break list pairs state with evidence: one void billing that still drew **925.00**, one paid-status billing with no rail hit at **1756.00**. The branch heads dial in at 08:45; the books tie before they do.",
     "**11:30 —** deep work: the collections worklist, cut per circle. Billings `LEFT JOIN`ed to their settlement legs, the no-leg six isolated — **EU 4 / 8524.00, US 1 / 4937.00, APAC 1 / 1756.00** — with the APAC row being the paid-status billing whose trail shows no leg ever moved. LATAM's book prints nothing at all, and the instinct being trained is that {rose:absence is not zero} — a clean circle prints no row, and the worklist counts *billings*, never leg rows, because the five cross-rail splits would double-count exactly the billings worth arguing about.",
     "**16:45 —** circle review prep and the EOD writeup. The pack ships three reads with definitions attached: card-portfolio health against the rail census, the opex calendar (Rent at 14 lines / **16800.00**, the 3210.00 peak in 2024-08), and the settlement clock — **28.4 days** average against flat 30-day terms, fastest 13, slowest 84. Tomorrow's ask is queued for the audit-trail board: the paid-unmoved **1756.00**, waiting on the source system's own explanation. *The review doesn't argue with evidence; it argues with definitions — so the definitions go in writing.*",
+    "**19:10 —** the EOD writeup and tomorrow's staging. The settlement-clock board ships: **20 settled billings averaging 28.4 days** against flat 30-day terms, fastest 13, slowest 84 — and the per-circle cut is queued as a staged CTE (first leg per billing, then the fold) so the split billings weight their circle once, not twice. The ledger proof re-runs one last time — **181080.00 against 181080.00, delta 0** — and the concentration read (63.5% of value in the 3000.00-plus households) goes into the risk pack. *Close the day the way the close runs: definitions in writing, evidence tied, tomorrow's query already staged.*",
   ],
 
   metrics: [
@@ -53,6 +64,10 @@ export const iciciKit: CompanyKit = {
     { name: "Anomaly pair watch", what: "The two breaks every audit review opens with: void-but-drawn (925.00) and paid-with-no-leg (1756.00). State paired with rail evidence, quantified in dollars, routed — never deleted." },
     { name: "Branch cost lines", what: "Branch-and-ops spend by category and month — Rent 14 lines / 16800.00 (the branch leases), Ads 14 / 4570.00, monthly opex peaking 3210.00 in 2024-08, biggest single line 1680.00. The cost read behind every branch conversation." },
     { name: "Settlement lag", what: "Days from billing to first settlement on settled billings — 20 billings, 28.4 days average, fastest 13, slowest 84, against flat 30-day terms. The collections tempo, per circle." },
+    { name: "Fee-event state mix", what: "Booked fee events by lifecycle state — 52 {emerald:settled} / 30 in-flight / 14 awaiting / 7 {rose:lost}, a **50.5%** settled share. The funnel view behind every onboarding read; US is the one circle where in-flight (10) outruns settled (5)." },
+    { name: "Product-line fee revenue", what: "Fee revenue folded by `products.category` — Audio 97 units / 11744.01, Wearables 53 / 6929.12, Video 61 / 5198.41. Accessories touches the most fee events (54) on the smallest dollars (3294.29): attach and value are different KPIs, and the board ships both." },
+    { name: "Circle fee-event AOV", what: "Average booked fee event per circle against the **338.19** network mean — US 383.48 and LATAM 426.22 clear it; EU 335.32 and APAC 313.66 sit under. LATAM's beat rides a two-event book; the caveat ships with the number, every time." },
+    { name: "Household concentration", what: "Share of booked value from the top households — **63.5%** from those over 3000.00 lifetime, 71.2% over the 2000.00 line. The whale-dependency read the risk review quotes before any growth claim gets made." },
   ],
 
   topics: [
@@ -106,6 +121,31 @@ export const iciciKit: CompanyKit = {
       why: "Relationship managers read households, not events: repeat-fee frequencies, loyal-client screens and completion-rate reads decide who gets the call — and the 24-event household is exactly the record this drill finds first.",
       slugs: ["customer-order-frequency", "find-loyal-customers", "confirmation-rate"],
     },
+    {
+      name: "Window frames & running folds",
+      why: "Balance rollforwards and collected-to-date columns are running folds, and the default frame (RANGE … CURRENT ROW) has opinions about ties: same-day legs move together. The cash book's {emerald:69612.00} debit fold is the proof surface — ROWS versus RANGE decides whether the trail reads leg by leg or day by day. Frame choice is a definition, not a style.",
+      slugs: ["find-cumulative-salary-of-an-employee", "running-total-for-different-genders", "restaurant-growth"],
+    },
+    {
+      name: "Set ops & the audit stack",
+      why: "The close pack stacks folds at two grains — per-rail census plus a TOTAL banner — and compares circle lists across states. UNION ALL appends without the dedupe sort; INTERSECT/EXCEPT answer set membership, with NULLs comparing equal (unlike NOT IN). The rail stack — card 16 / wire 11 / TOTAL 27 legs, **69612.00** — is the canonical drill.",
+      slugs: ["count-salary-categories", "league-statistics", "movie-rating"],
+    },
+    {
+      name: "Staged CTE reads",
+      why: "The settlement clock, the KYC funnel and the dedupe all need a first stage — fold legs per billing, one row per client, keep-latest per household — before the outer fold. CTEs name that stage so the review can audit it; nested one-liners hide the exact fold the numbers depend on. Staging earlier than fashion suggests is this bank's instinct.",
+      slugs: ["market-analysis-i", "second-highest-salary", "managers-with-at-least-5-direct-reports"],
+    },
+    {
+      name: "NULL policy & fallback arms",
+      why: "A no-leg billing folds to NULL, not zero — and the watchlist (6 billings / **15217.00**) only exists if the LEFT JOIN's NULL arm is handled on purpose. COALESCE at the fold, COUNT(right key) beside COUNT(*), and a NOT IN list with one NULL emptying the whole read: the three habits that keep censuses honest here.",
+      slugs: ["find-customer-referee", "books-with-null-ratings", "analyze-subscription-conversion"],
+    },
+    {
+      name: "Calendar math & weekday rails",
+      why: "Retail flow breathes on weekdays and month-ends: %Y-%m buckets for cohorts, %w for the weekend-rails read, julianday diffs for the settlement clock (**28.4 days** against flat 30-day terms). The traps are knowable: %M is minutes, malformed dates NULL silently through date functions, and text comparison only works because the keys are ISO.",
+      slugs: ["convert-date-format", "rising-temperature", "tasks-count-in-the-weekend"],
+    },
   ],
 
   theory: [
@@ -156,6 +196,102 @@ export const iciciKit: CompanyKit = {
       q: "A void billing still drew a 925.00 settlement, and a paid billing shows no rail hit at all. What's the break policy?",
       a: "Detect, quantify, route — per circle, then as a network. Detect by pairing state with evidence: status = 'void' AND a settlement leg exists (the 925.00 break), status = 'paid' AND no leg (the 1756.00 break) — a one-pass FILTER (WHERE …) census counts both arms on the same scan so every circle's numbers come from one query. Quantify in dollars; route to the desk that owns the source system; never delete, never silently re-status — the audit trail is the product. Then reconcile to the book of record — the ledger still proves 181080.00 against 181080.00, delta 0, because double-entry records what happened, breaks included. The trial balance alone is never sufficient evidence of correctness — that sentence is the audit culture here.",
       tag: "quality",
+    },
+    {
+      id: "icici-t9",
+      q: "The collections board wants collected-to-date beside every settlement leg, date-ordered. What does the default window frame do — and when do you override it?",
+      a: "The default frame is RANGE UNBOUNDED PRECEDING TO CURRENT ROW, and it is tie-aware: rows sharing the ORDER BY value — two legs paid the same day — enter the frame together, so the running sum jumps by the whole day. For a money-on-a-date column that is usually the right read: the cash book's day balance should include every same-day leg on its way to the **69612.00** fold. For a leg-by-leg audit trail I override with `ROWS UNBOUNDED PRECEDING`, which orders strictly by row and prints the intermediate step after each posting. The discipline is to name the frame in the review, because the same query ships two different trails — same endpoint, different stories on the way — and an unnamed frame is an undocumented definition.",
+      tag: "frames",
+    },
+    {
+      id: "icici-t10",
+      q: "The close pack needs the rail census plus a TOTAL banner; another pack needs billings on one list but not the other. Which set tools, and what does each cost?",
+      a: "UNION ALL appends — no dedupe pass, no surprise: the rail stack folds payments per method (card 16 legs / 37364.00, wire 11 / 32248.00) and the banner folds the whole feed (**TOTAL 27 legs / 69612.00**), both rows surviving because the label literal differs. UNION dedupes with a sort — wasted work here, and a hazard where legitimate duplicates exist. INTERSECT and EXCEPT answer membership, and their killer feature on this book is that NULLs compare equal inside set ops — so billings EXCEPT legs returns the never-settled six (15217.00) without the NOT IN NULL trap. Costs named, the choice follows the grain: append for stacks, difference for watchlists, and never a bare UNION where the rows are distinct by construction.",
+      tag: "setops",
+    },
+    {
+      id: "icici-t11",
+      q: "A teammate rewrote the no-leg watchlist as WHERE i.id NOT IN (SELECT invoice_id FROM payments). What's the risk profile?",
+      a: "One NULL in that subquery and the whole NOT IN returns zero rows — silently, no error, the worst failure mode an audit culture knows. Today `payments.invoice_id` is NOT NULL so it works, but a re-fed extract or an outer-joined fold reintroduces NULL and the **15217.00** watchlist empties into a false all-clear. I reach for the LEFT JOIN … IS NULL anti-join or NOT EXISTS — membership by evidence, immune to NULL drift — and I keep the watchlist per circle so absence is visible (LATAM's clean book prints no row at all). *The query that fails loud is annoying; the query that fails silent is a finding.* That asymmetry is why NOT IN against a fold is a code smell on this desk.",
+      tag: "subqueries",
+    },
+    {
+      id: "icici-t12",
+      q: "Your coverage fold prints some uncollected balances as NULL and some as 0. What's the NULL policy on this book?",
+      a: "They are two different facts. SUM over a fold with no rows is NULL — no settlement legs, the watchlist six; a fold that nets to nothing is genuinely 0. So the policy: `COALESCE(SUM(p.amount_cents), 0)` when the watchlist must sum to **15217.00**, and the raw NULL when zero-versus-absence is itself the signal the reviewer reads. Beside it: COUNT(p.id) counts legs while COUNT(*) counts join rows — on the fanned billings-to-legs join they differ by exactly the five splits. And rate reads guard their denominators with NULLIF, so a rail with no attempted legs prints NULL rather than a divide-by-zero. Classification stays computed — the book stores states, the query stores nothing.",
+      tag: "nulls",
+    },
+    {
+      id: "icici-t13",
+      q: "A rail review wants weekday cadence, month cohorts and the settlement clock in one pack. Which date tools, which traps?",
+      a: "Three tools. Cohorts: `strftime('%Y-%m', issued_on)` — the '2024-11' key that folds cleanly and sorts correctly as text across the 2024-01 to 2025-02 window. Weekdays: `strftime('%w', paid_on)` — 0 is Sunday, and the weekend-rails cadence keys on it. Clocks: julianday differences for the **28.4-day** average issue-to-first-settlement against flat 30-day terms (fastest 13, slowest 84). Traps named out loud: %M is minutes, not month; malformed or partial dates NULL silently through the date functions and drift the denominator; text date arithmetic coerces the leading year and collapses to garbage. And the terms clock itself is built with modifiers — `DATE(issued_on, '+30 day')` — which is the contract the behavioral lag is measured against.",
+      tag: "dates",
+    },
+    {
+      id: "icici-t14",
+      q: "Define a rail-level settlement success rate that survives the audit review.",
+      a: "Leg grain, per rail, evidence-based. Numerator: legs that cleared — a paid_on present and the full amount posted. Denominator: legs attempted on that rail, because card and wire are never pooled: the five split billings ride both rails, and a pooled rate hides the 27-into-22 squeeze entirely. The context line is the rail mix — card 16 legs / 37364.00, wire 11 / 32248.00 — and the billing-level coverage census (21 exact / 65612.00, 1 partial / 4000.00 of 6148.00, 6 none / 15217.00) is a *different* KPI at a different grain. The classic audit finding is a deck averaging the two, or computing a {sky:success} rate off the status column — re-asserting the claim the rail evidence exists to test.",
+      tag: "kpi",
+    },
+    {
+      id: "icici-t15",
+      q: "The retail desk needs an EMI schedule from a disbursal row: level payment, interest split, declining balance. How does SQL do it?",
+      a: "WITH RECURSIVE. The anchor is the disbursal row — month 0, balance, rate — and the recursive member computes interest = balance × monthly rate, principal = EMI − interest, next balance = balance − principal, guarded by WHERE balance > 0 so the schedule stops at payoff instead of running negative forever. The traps are numeric: integer division on the rate unless you multiply by 1.0, and the instinct that a window running-sum is *not* the same thing — the interest split depends on the prior balance, which makes the schedule genuinely recursive rather than cumulative. That is why {violet:EMI amortization} is the desk's favorite interview question: it separates people who reach for recursion on purpose from people who reach for it by fashion.",
+      tag: "recursion",
+    },
+    {
+      id: "icici-t16",
+      q: "Build the KYC-dropoff funnel — applied, documents, verified, funded — so the stages can't double-count.",
+      a: "Stage the funnel first: a CTE with one row per client and a flag per stage (EXISTS probes or MAX over CASE arms on the event feed), then fold per stage with COUNT(DISTINCT client_id) and compute conversion as stage n over stage 1, NULLIF on the denominator. The double-count comes from joining stage tables directly — a client with two document events fans every later stage. The one-row-per-client stage is the same move as folding settlement legs per billing before the coverage census: grain discipline is the reusable skill. And the read always names its denominator — {amber:clients at the top of the funnel}, not events — because a client stuck uploading documents twice is one blocked onboarding, not two.",
+      tag: "funnel",
+    },
+    {
+      id: "icici-t17",
+      q: "Collections wants DPD buckets — current, 1-30, 31-60, 61-90, 90+. What makes the bucket read defensible?",
+      a: "Three things. A pinned reference date — without one the buckets drift every run; MAX(paid_on) or a stated close date is the audit anchor. Days-past computed as julianday(reference) − julianday(due_on) and banded by an explicit CASE whose boundaries are written into the memo, not implied. And the denominator named: the no-leg book (**6 billings / 15217.00**) ages differently from the open-status book (19609.00) — the membership lesson again, now with buckets. Roll rates are the follow-up: state-to-state moves between cycle snapshots need LAG over the ordering key, and the 'cure' arm — a billing stepping back down a bucket — is the number the collections desk actually argues about, because cures and rolls are different stories wearing the same aging schedule.",
+      tag: "risk",
+    },
+    {
+      id: "icici-t18",
+      q: "Why does WHERE AVG(x) > 10 error, why can't WHERE see your SELECT alias, and why does WHERE rung <= 3 fail on a ranked board?",
+      a: "One answer: logical evaluation order. FROM and JOIN build rows, WHERE filters rows, GROUP BY folds them, HAVING filters folds, SELECT projects, window functions evaluate after HAVING, ORDER BY and LIMIT run last. So the aggregate doesn't exist at WHERE time (that is HAVING's job), the alias isn't projected yet (SQLite is lenient in GROUP BY and ORDER BY, not in WHERE), and the window output exists only after the fold — a 'top three per circle' board must stage the ranked set through a derived table or CTE and filter outside. On the branch boards I narrate the pipeline out loud: the interviewer here is checking whether the order is a mental model, because branch reporting is folds and gates landing in the right clause, every close.",
+      tag: "pipeline",
+    },
+    {
+      id: "icici-t19",
+      q: "Two opex postings share a date and your running-total chart jumps twice as far on that row. Explain it and fix it.",
+      a: "The default frame — RANGE UNBOUNDED PRECEDING TO CURRENT ROW — admits peer ties: rows equal on the ORDER BY key enter and leave the frame together, so a same-day pair moves the running sum by both postings at once. Sometimes that is the definition (a day balance should fold the whole day); sometimes it isn't (a posting-by-posting trail). The fix is an explicit frame — `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW` — plus a deterministic tiebreak inside the window's ORDER BY (the entry id), so reruns reproduce the trail row for row. The audit instinct: a running column without a named frame is an undocumented definition, and undocumented definitions are exactly what the next review finds. Same numbers at the end, different evidence on the way.",
+      tag: "windows",
+    },
+    {
+      id: "icici-t20",
+      q: "The first row of your MoM opex board prints NULL delta and a stakeholder calls it a bug. What's your response — and your options?",
+      a: "LAG has no row before the first one, so NULL is the *correct* shape — the query proving the series starts where it says it starts — and I say that before offering fixes. Options, in order of honesty: leave the NULL and label it; `COALESCE(opex - LAG(opex) OVER (…), 0)` when the deck mandates a number; never invent a prior month. Then the sharper point: with a materiality gate upstream, LAG pairs each kept month against the prior *kept* month — 2024-03 reads against 2024-01 when 2024-02 dropped below the bar — which is a definition to state in the caption, not a bug to patch. And the window must ORDER BY the month key; ordering by value pairs months that were never adjacent on the calendar.",
+      tag: "sequencing",
+    },
+    {
+      id: "icici-t21",
+      q: "One client, two KYC records, and the funnel double-counts. Fix it in SQL — properly.",
+      a: "Keep-latest by window: `ROW_NUMBER() OVER (PARTITION BY client_id ORDER BY updated_at DESC, id DESC)`, keep rn = 1, and do it in a staged CTE — a window can't sit in WHERE because windows evaluate after it. RANK would keep both records on an updated_at tie and re-double the count; ROW_NUMBER with the id tiebreak is deterministic, so the branch head's rerun reproduces the census row for row. COUNT(DISTINCT client_id) is the cheap guard for spot checks, not the fix — a distinct count hides the stale record instead of correcting it. The KYC file, the client email file, the settlement splits: same shape everywhere — dedupe at the grain the census counts, then let the funnel fold cleanly.",
+      tag: "dedupe",
+    },
+    {
+      id: "icici-t22",
+      q: "FILTER (WHERE …) versus SUM(CASE WHEN …) on a settlement census — when do you reach for each?",
+      a: "Same one-pass idea, different ergonomics. FILTER reads like the census it is — `COUNT(*) FILTER (WHERE method = 'card')` beside the wire arm — and keeps one scan under one fold. SUM(CASE WHEN … THEN x ELSE 0 END) is the portable workhorse that carries value arms — the no-leg book as SUM(CASE WHEN p.id IS NULL THEN i.amount_cents ELSE 0 END) — and works in engines without FILTER. One subtlety I name: SUM over an empty filter set prints NULL, not 0 — on the rail census that NULL is the *absence* signal, and COALESCE turns it into a zero only when the pack needs a number. Two queries stapled by UNION where one census will do is the habit I coach against: one pass, one definition, one set of numbers that can't drift apart.",
+      tag: "aggregation",
+    },
+    {
+      id: "icici-t23",
+      q: "The watchlist printed 6 rows in the deck and 0 in prod. Walk me through the join-family bugs that fail empty-but-wrong.",
+      a: "The four horsemen. NOT IN over a list carrying one NULL — the whole predicate goes unknown and the **15217.00** watchlist evaporates. An INNER JOIN where the LEFT was meant — the no-leg six drop at the join, before any filter sees them. EXCEPT pointed the wrong way — billings EXCEPT legs is the watchlist, legs EXCEPT billings is a different question. And IS NULL tested on the left table's key (always populated) instead of the right table's key (the anti-join signal). The discipline that catches all four: build the anti-join as LEFT JOIN … WHERE right.key IS NULL, group per circle, and expect LATAM's absence — a clean book prints no row. The reviewer who knows what absence looks like catches an empty-but-wrong read on sight.",
+      tag: "joins",
+    },
+    {
+      id: "icici-t24",
+      q: "This circle board runs in a blink on the training db. The branch db is sixteen million rows. What changes?",
+      a: "Nothing about the definition — everything about the shape. Filter early: circle and date predicates in WHERE before the fold, not HAVING after it. Keep predicates sargable — `SUBSTR(created_at, 1, 7) = '2024-08'` defeats an index on created_at; a range predicate (`created_at >= '2024-08-01' AND created_at < '2024-09-01'`) keeps it usable. Index the join keys the censuses ride — payments.invoice_id, invoices.customer_id — and let staged CTEs project only the columns the next stage reads. COUNT(DISTINCT …) only where the fan-out demands it: honest on the billing census because of the splits, waste everywhere else. And measure with EXPLAIN QUERY PLAN before optimizing — the plan is evidence, and this bank believes evidence over instinct.",
+      tag: "performance",
     },
   ],
 
@@ -330,6 +466,341 @@ export const iciciKit: CompanyKit = {
       ],
       difficulty: "hard",
     },
+    {
+      id: "icici-mcq-11",
+      prompt: "The watchlist query uses WHERE i.id NOT IN (SELECT invoice_id FROM payments). A re-fed extract leaves one leg with invoice_id NULL. What does the review see?",
+      choices: [
+        "An empty watchlist — NOT IN over a list containing NULL returns no rows",
+        "The usual six billings / 15217.00",
+        "A type error on the NULL invoice_id",
+        "Only the billing whose leg went NULL",
+      ],
+      answer: 0,
+      why: "x NOT IN (…, NULL) can never be TRUE — the predicate goes unknown for every row, so the anti-join silently empties. The watchlist that should read 6 billings / 15217.00 prints nothing, and nobody gets an error to debug.",
+      notes: [
+        { choice: 1, why: "Six billings is what a correct anti-join returns — but NOT IN is not a correct anti-join once NULL enters the list. The number is right; the mechanism can't produce it." },
+        { choice: 2, why: "NULL doesn't raise — it poisons the predicate. Silent empties are why this desk's screens grade NOT EXISTS and LEFT JOIN … IS NULL over NOT IN." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "icici-mcq-12",
+      prompt: "The branch pack folds each circle's client roster into one cell: 'Alice Chen, Bruno Silva, …'. Which expression is the honest fold?",
+      choices: [
+        "GROUP_CONCAT(DISTINCT c.name, ', ') inside the per-circle fold",
+        "CONCAT(c.name, ', ') over the join",
+        "STRING_AGG(c.name, ', ') — the dialect this db ships",
+        "GROUP_CONCAT(c.name) over the billings-to-legs join, no DISTINCT",
+      ],
+      answer: 0,
+      why: "GROUP_CONCAT is SQLite's fold-to-cell; the delimiter argument prints the roster readably, and DISTINCT guards the roster when the join fans — a client with two billings must appear once in a roster of clients.",
+      notes: [
+        { choice: 1, why: "CONCAT doesn't fold — it concatenates per row, printing one row per client instead of one cell per circle. The pack needs the fold." },
+        { choice: 3, why: "Over a fanned join the roster repeats a client once per settlement leg — the same fan-out the billing census guards with COUNT(DISTINCT)." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "icici-mcq-13",
+      prompt: "The close pack stacks the per-rail census under a TOTAL banner. Why UNION ALL rather than UNION?",
+      choices: [
+        "The rows are distinct by construction — UNION's dedupe sort is wasted work",
+        "UNION would dedupe the rail rows away",
+        "UNION ALL is faster to type",
+        "UNION can't stack SELECTs with different column counts",
+      ],
+      answer: 0,
+      why: "The banner's literal ('TOTAL') and the rail labels guarantee distinct rows; UNION would pay for a dedupe pass that finds nothing — and on rail-scale books that sort is the cost you feel.",
+      notes: [
+        { choice: 1, why: "UNION dedupes only identical rows — card 37364.00 and the 69612.00 banner differ in every cell. Nothing is at risk of being deduped away." },
+        { choice: 3, why: "Both SELECTs here carry the same four columns — the stacking rule is satisfied either way. The choice is about cost, not capability." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "icici-mcq-14",
+      prompt: "Collected-to-date runs by paid_on date, and two legs settled the same day. The default window frame counts…",
+      choices: [
+        "Both legs at once — RANGE … CURRENT ROW admits peer ties",
+        "Only the earlier leg — frames are strictly row-ordered",
+        "Only the later leg — frames lead by one row",
+        "It errors — ties require an explicit ROWS frame",
+      ],
+      answer: 0,
+      why: "The default frame is RANGE UNBOUNDED PRECEDING TO CURRENT ROW: rows equal on the ORDER BY key enter the frame together, so the running sum jumps by the whole same-day group — right for a day balance, wrong for a leg-by-leg trail (that's ROWS).",
+      notes: [
+        { choice: 1, why: "ROWS does that; RANGE — the default — does not. The two frames disagree exactly on ties, which is why the frame gets named in the review." },
+        { choice: 3, why: "Ties don't error — they silently change the definition. The silent ones are the ones a later audit finds." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "icici-mcq-15",
+      prompt: "Keep the latest KYC record per client before the funnel folds. Which pattern survives the audit?",
+      choices: [
+        "ROW_NUMBER() OVER (PARTITION BY client_id ORDER BY updated_at DESC, id DESC) staged in a CTE, kept where rn = 1",
+        "RANK() … = 1 filtered directly in WHERE",
+        "SELECT DISTINCT client_id — one row each, done",
+        "MAX(updated_at) GROUP BY client_id, joined back",
+      ],
+      answer: 0,
+      why: "ROW_NUMBER with the id tiebreak is deterministic; the CTE staging exists because windows evaluate after WHERE — the rn = 1 filter must run in an outer query.",
+      notes: [
+        { choice: 1, why: "RANK keeps both records on an updated_at tie — the double-count survives — and WHERE can't hold a window expression at all." },
+        { choice: 2, why: "DISTINCT dedupes identical rows; two different KYC records are different rows. The census still counts the client twice." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "icici-mcq-16",
+      prompt: "The close needs 2024-08's branch cost lines with an index-friendly filter on spent_on. Which predicate keeps the index usable?",
+      choices: [
+        "spent_on >= '2024-08-01' AND spent_on < '2024-09-01'",
+        "SUBSTR(spent_on, 1, 7) = '2024-08'",
+        "strftime('%Y-%m', spent_on) = '2024-08'",
+        "spent_on LIKE '2024-08%'",
+      ],
+      answer: 0,
+      why: "A range predicate compares the raw column to constants, so the index on spent_on stays usable. Wrapping the column in a function — SUBSTR, strftime, a leading-wildcard LIKE — forces a scan of every cost line.",
+      notes: [
+        { choice: 1, why: "Same rows returned, different plan: the function wraps the indexed column and the index is ignored. The opex walk gets slower every month the ledger grows." },
+        { choice: 3, why: "LIKE with a leading constant can sometimes use an index — but the contract is fragile and the range form says exactly what it means. Range is the form this desk writes." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "icici-mcq-17",
+      prompt: "A teammate computes settlement lag as paid_on - issued_on (plain text subtraction) and reports ~1 day everywhere. What happened?",
+      choices: [
+        "SQLite coerced the leading year out of each string — text arithmetic isn't date arithmetic",
+        "The billings really do settle in about a day",
+        "julianday would return the same ~1",
+        "The lag needs ROUND(…, 2) to be right",
+      ],
+      answer: 0,
+      why: "Subtracting 'YYYY-MM-DD' strings coerces their numeric prefix — year minus year — so '2025-01-20' - '2024-12-31' reads as 1. The clock needs julianday() on both sides: 20 settled billings average 28.4 days that way, fastest 13, slowest 84.",
+      notes: [
+        { choice: 2, why: "julianday is precisely the fix — instant arithmetic on calendar days. The one-day output is the string coercion, not the truth." },
+        { choice: 3, why: "Rounding a wrong number keeps it wrong — two decimals of year-minus-year is still not a lag. The unit conversion is julianday's job." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "icici-mcq-18",
+      prompt: "In the coverage fold, the no-leg billings' uncollected balance should print as…",
+      choices: [
+        "0 via COALESCE(SUM(legs), 0) when the watchlist must sum — and the raw NULL when zero-vs-absence is the signal",
+        "NULL always — zero is a lie on a watchlist",
+        "0 automatically — SUM never returns NULL",
+        "-1 as a sentinel the pack can filter on",
+      ],
+      answer: 0,
+      why: "SUM over a fold with no rows is NULL — 'no legs' — while a fold netting to nothing is genuinely 0. The policy picks deliberately: the 15217.00 watchlist sums (COALESCE), the census keeps NULL as the absence signal.",
+      notes: [
+        { choice: 2, why: "SUM ignores NULL values but over an empty set returns NULL, not 0 — the no-leg six prove it every close." },
+        { choice: 3, why: "Sentinels pollute every fold downstream — the watchlist would sum to 15216.99. NULL and COALESCE are the honest pair." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "icici-mcq-19",
+      prompt: "The pricing memo wants circles whose average fee event clears the network mean (338.19). Where does the scalar subquery go?",
+      choices: [
+        "HAVING AVG(o.total) > (SELECT AVG(total) FROM orders)",
+        "WHERE AVG(o.total) > (SELECT AVG(total) FROM orders)",
+        "In the SELECT list, filtered later by eye",
+        "ORDER BY AVG(o.total) > (SELECT AVG(total) FROM orders)",
+      ],
+      answer: 0,
+      why: "The comparison is against a fold, and folds exist only after GROUP BY — the gate is HAVING. The subquery prints the network bar once (338.19 over all 103 fee events) and the HAVING keeps US (383.48) and LATAM (426.22).",
+      notes: [
+        { choice: 1, why: "WHERE can't evaluate AVG(o.total) — the fold doesn't exist at row-filter time. It errors, loudly at least." },
+        { choice: 2, why: "Printing the bar and eyeballing the cut is the manual version of HAVING — the screen grades the clause that does the work." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "icici-mcq-20",
+      prompt: "Set difference by evidence: (SELECT id FROM invoices) EXCEPT (SELECT invoice_id FROM payments) returns…",
+      choices: [
+        "The never-settled six — in-billings, not-in-legs, NULLs comparing equal",
+        "The settled 22",
+        "All 28 billings — EXCEPT can't span tables",
+        "A type error — the column names don't match",
+      ],
+      answer: 0,
+      why: "EXCEPT keeps left rows absent from the right set, and NULLs compare as equal inside set ops — so the six no-leg billings (15217.00) come back with no NOT IN trap in sight.",
+      notes: [
+        { choice: 1, why: "That's the other direction — legs EXCEPT billings answers a different question. The watchlist is billings minus legs, always." },
+        { choice: 3, why: "Set ops align columns by position and compare values — the names never have to match. The audit grades the direction, not the labels." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "icici-mcq-21",
+      prompt: "Two billings tie for the biggest amount in one circle's book. How do RANK, DENSE_RANK and ROW_NUMBER print the next rung?",
+      choices: [
+        "RANK skips to 3, DENSE_RANK prints 2, ROW_NUMBER numbers the tie 1-2 arbitrarily",
+        "All three print 2 — ties are ties",
+        "RANK prints 2, DENSE_RANK skips to 3",
+        "All three error on ties",
+      ],
+      answer: 0,
+      why: "RANK shares the rung and gaps (1, 1, 3); DENSE_RANK shares without gaps (1, 1, 2); ROW_NUMBER breaks the tie by its ORDER BY — which is why deterministic tiebreakers (the id) ride along on boards the branch reruns.",
+      notes: [
+        { choice: 1, why: "That's DENSE_RANK's behavior only — RANK's gap is the point when the board must show that two billings jointly hold rung 1." },
+        { choice: 2, why: "Backwards: RANK is the gapping one. The ladder's shape — who the tie excludes — is exactly what the review reads." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "icici-mcq-22",
+      prompt: "One pass over the settlement feed must print card legs and wire legs side by side. The census move is…",
+      choices: [
+        "COUNT(*) FILTER (WHERE method = 'card') and the wire arm — one scan, one fold",
+        "Two queries, one per rail, stapled in the deck",
+        "WHERE method = 'card' OR 'wire' with a single COUNT(*)",
+        "GROUP BY method can't produce side-by-side columns",
+      ],
+      answer: 0,
+      why: "FILTER (WHERE …) folds both arms in a single scan — the one-pass census the anomaly screens run (the void-but-drawn 925.00 and paid-unmoved 1756.00 were counted the same way).",
+      notes: [
+        { choice: 1, why: "Two scans print the same numbers today — and drift apart the moment someone edits one and not the other. One pass is one definition." },
+        { choice: 2, why: "That WHERE compares method to the literal 'wire' as well — SQLite may accept it, but it doesn't mean what it says. The census needs arms, not ORs." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "icici-mcq-23",
+      prompt: "The board wants 'top three billings per circle' — but WHERE rn <= 3 on the ranked query errors. Why, and what's the fix?",
+      choices: [
+        "Windows evaluate after WHERE — stage the ranking in a CTE or derived table and filter in the outer query",
+        "Use HAVING rn <= 3 on the same query",
+        "Cast rn to an integer first",
+        "ORDER BY rn and read the first rows per circle by eye",
+      ],
+      answer: 0,
+      why: "The window output doesn't exist at row-filter time — the pipeline evaluates windows after WHERE. Staging the ranked set and filtering outside is the move, and it keeps the PARTITION BY per circle intact.",
+      notes: [
+        { choice: 1, why: "HAVING filters folds, not window outputs — the same evaluation-order problem one clause later. The rank still isn't born yet." },
+        { choice: 3, why: "A global order mixes circles onto one ladder — EU's whales own every rung. The board's definition is per circle, so the filter must be too." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "icici-mcq-24",
+      prompt: "The weekend-rails read keys on strftime('%w', paid_on). Which value marks Sunday?",
+      choices: ["'0'", "'1'", "'7'", "'Sun'"],
+      answer: 0,
+      why: "SQLite's %w runs 0 (Sunday) through 6 (Saturday) — a different convention from ISO weekday numbering, and exactly the kind of off-by-one that reshapes a weekend cadence read.",
+      notes: [
+        { choice: 1, why: "'1' is Monday in %w — the ISO reflex. One day off and the 'weekend surge' lands on Monday's ledger." },
+        { choice: 2, why: "%w never prints 7 — the range is 0 through 6. Anything else is a different function's contract." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "icici-mcq-25",
+      prompt: "The MoM opex board's first row prints NULL in the delta column. The honest handling is…",
+      choices: [
+        "Leave it and label it — LAG with no prior row is NULL by design, proving where the series starts",
+        "COALESCE it to zero in every case",
+        "Drop the first row",
+        "Backfill it with the series average",
+      ],
+      answer: 0,
+      why: "NULL is the correct shape — the query has no prior month to pair. Zeroing it hides the series boundary; dropping the row hides it harder. COALESCE only when the deck mandates a number, and the caption says so.",
+      notes: [
+        { choice: 1, why: "A zero delta on the opening row reads as 'flat versus last month' — a claim about a month the query never saw." },
+        { choice: 3, why: "The average is a fabricated prior. The audit culture's rule: a value with no evidence is a footnote, never a fill." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "icici-mcq-26",
+      prompt: "Which definition of 'rail-level settlement success rate' survives the audit review?",
+      choices: [
+        "Cleared legs over attempted legs, computed per rail — card and wire never pooled",
+        "Settled dollars over billed dollars, both rails pooled",
+        "Paid-status billings over all billings, pooled",
+        "Legs over billings, computed per rail",
+      ],
+      answer: 0,
+      why: "Leg grain, per rail, evidence-based: the five split billings ride both rails, so pooling hides the 27-legs-on-22-billings squeeze — and a status-based numerator re-asserts the claim the rail evidence exists to test (card 16 / 37364.00, wire 11 / 32248.00).",
+      notes: [
+        { choice: 1, why: "Dollars over billed is a coverage ratio, not a success rate — and pooling mixes rails with different attempt profiles. Different KPI, different meeting." },
+        { choice: 3, why: "Legs over billings crosses grains — the ratio isn't a rate of anything. The 27-into-22 squeeze is the reason the grains must never mix." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "icici-mcq-27",
+      prompt: "The EMI schedule via WITH RECURSIVE: inside the recursive member, the next balance is computed as…",
+      choices: [
+        "balance - (EMI - balance * monthly_rate), guarded by WHERE balance > 0",
+        "balance - EMI",
+        "balance * monthly_rate",
+        "EMI * remaining_months",
+      ],
+      answer: 0,
+      why: "Interest accrues on the declining balance: interest = balance × rate, principal = EMI − interest, so each month's payment retires less principal early and more late. balance − EMI silently pretends the interest is free.",
+      notes: [
+        { choice: 1, why: "That schedule under-accrues interest from month one and never converges to the amortized total — the classic flat-interest bug the desk screens for." },
+        { choice: 2, why: "That's the interest line, not a balance — and it never pays the loan off. Hence the WHERE balance > 0 guard." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "icici-mcq-28",
+      prompt: "The KYC-dropoff funnel's stage conversion is computed as…",
+      choices: [
+        "COUNT(DISTINCT client_id) at each stage, from a staged one-row-per-client CTE, stage n over stage 1",
+        "Sum of client events per stage over total events",
+        "The average of the stage counts",
+        "The raw row count of each stage table",
+      ],
+      answer: 0,
+      why: "Client grain, staged: folding the event feed first — one row per client, flags per stage — stops the fan-out that a client with two document uploads would otherwise push into the verified stage. Conversion is clients over clients, never events over events.",
+      notes: [
+        { choice: 1, why: "Event grain rewards a client for uploading twice — the verified stage inflates exactly where the process is failing." },
+        { choice: 3, why: "Raw stage-table rows carry the same double-count plus whatever stale records the file still holds — the dedupe lesson applies before any funnel folds." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "icici-mcq-29",
+      prompt: "Terms are flat 30 days on this book. Which expression rebuilds each billing's contractual due date from issued_on?",
+      choices: [
+        "DATE(issued_on, '+30 day')",
+        "due_on - 30",
+        "julianday(issued_on) + 30",
+        "strftime('%d', issued_on) + 30",
+      ],
+      answer: 0,
+      why: "The date modifier adds calendar days and returns a date — and the book agrees: min and max terms both print 30, so any spread in the 28.4-day settlement clock is behavior, not contract.",
+      notes: [
+        { choice: 2, why: "julianday + 30 returns a float day-number, not a date string — arithmetic without the conversion back." },
+        { choice: 3, why: "That adds 30 to the day-of-month number — a '2024-01-31' billing would become day 61 of a month that doesn't have one." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "icici-mcq-30",
+      prompt: "The DPD bucket read must reproduce next week. What pins it?",
+      choices: [
+        "A stated reference date — MAX(paid_on) or the close date — with buckets off julianday(ref) - julianday(due_on)",
+        "CURRENT_DATE evaluated at query time",
+        "The status column's own aging",
+        "ORDER BY due_on — oldest first implies the buckets",
+      ],
+      answer: 0,
+      why: "A pinned reference is the difference between an aging schedule and a moving target: the no-leg book (6 billings / 15217.00) must bucket against the same anchor every run, and the CASE boundaries get written into the memo.",
+      notes: [
+        { choice: 1, why: "CURRENT_DATE re-buckets everything each run — the 31-60 bucket drains by a day per week with no collection event behind it." },
+        { choice: 2, why: "Status is the claim, not the clock — the paid-status 1756.00 has aged by evidence for cycles while claiming current." },
+      ],
+      difficulty: "hard",
+    },
   ],
 
   cases: [
@@ -429,6 +900,189 @@ export const iciciKit: CompanyKit = {
       walkthrough:
         "A rail audit stack is two folds of the same feed at two grains, stacked by UNION ALL. The upper SELECT folds legs per method: card 16 legs / 16 billings / 37364.00, wire 11 / 11 / 32248.00 — per-rail billing counts look clean because the five split billings each ride one leg per rail; the lower SELECT folds the whole feed and labels itself TOTAL: 27 legs, 22 billings, 69612.00. The squeeze — five more legs than billings — is visible only at total grain, and it is the cross-rail split story the rails desk lives in. The cross-foot is the point: 37364.00 + 32248.00 = 69612.00, tying the cash book's debit fold line for line, with ROUND(.../100.0, 2) converting cents exactly once at the edge. UNION ALL, not UNION — the rows are distinct anyway and nothing needs deduping. The distractors fail honestly: 'invoice_id' or 'paid_on' in the rail slot shreds the census into 22 billing rows or a per-day calendar; the wrong divisor truncates the odd-cent legs (2361.50, 2229.50) until the cross-foot misses; a relabeled banner breaks the TOTAL contract; ASC buries the banner. The habit being graded: a grand-total row is a definition — same feed, same fold, said out loud.",
     },
+    {
+      id: "cs-icici-3",
+      tier: "medium",
+      topic: "s6",
+      universe: "funnel",
+      title: "The fee-event state board",
+      brief:
+        "ICICI-flavored memo on the storefront db (orders = booked fee events; status = where the event sits in the booking lifecycle): the onboarding review wants the {rose:dropoff board} — fee events cut per circle into settled, in-flight, awaiting and lost — for circles with a real book. Probed facts: the network reads **52 settled / 30 in-flight / 14 awaiting / 7 lost** (50.5% settled), and the circle cut lands EU 45 events (24 settled, 12 in flight, 6 awaiting, 3 lost), APAC 37 (21/8/5/3), US 19 (5/10/3/1) — the only circle where in-flight outruns settled. LATAM's 2-event book stays off the board: *a funnel with no volume is an anecdote, not a stage.*",
+      ask: "Return the gated state board: circle, events, settled, in-flight, awaiting, lost — biggest book first.",
+      template:
+        "SELECT c.region AS circle,\n       COUNT(*) AS events,\n       SUM(CASE WHEN o.status = '{1}' THEN 1 ELSE 0 END) AS settled,\n       SUM(CASE WHEN o.status = 'shipped' THEN 1 ELSE 0 END) AS in_flight,\n       SUM(CASE WHEN o.status = 'pending' THEN 1 ELSE 0 END) AS awaiting,\n       SUM(CASE WHEN o.status = 'cancelled' THEN 1 ELSE 0 END) AS lost\nFROM orders o\nJOIN customers c ON c.id = o.{2}\nGROUP BY c.{3}\nHAVING COUNT(*) >= {4}\nORDER BY events {5};",
+      slots: [
+        {
+          answer: "delivered",
+          kind: "keyword",
+          label: "the settled-state literal",
+          why: "'delivered' is the state the settled arm counts — the board's proof cell (EU 24, APAC 21, US 5). 'shipped' would quietly relabel the column into a second in-flight count and the settled story becomes a different claim.",
+        },
+        {
+          answer: "customer_id",
+          kind: "keyword",
+          label: "the circle join key",
+          why: "Fee events attach to circle books through c.id = o.customer_id. Joining on o.id pairs each event with whichever client shares its row number — most of the 103 events have no client at that number, and the fold collapses before the gate.",
+        },
+        {
+          answer: "region",
+          kind: "keyword",
+          label: "the circle grain",
+          why: "GROUP BY c.region folds 103 events into the four circle books the review reads. Grouping by city re-folds at street grain — 17 city keys, and only Berlin's 24-event household survives the gate.",
+        },
+        {
+          answer: "19",
+          kind: "number",
+          label: "the volume gate",
+          why: "HAVING COUNT(*) >= 19 keeps the three circles with a real funnel — EU 45, APAC 37, US 19 (the gate sits exactly on US's book) — and drops LATAM's 2-event anecdote. 19 is also a result cell: US's own event count.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-book order",
+          why: "ORDER BY events DESC leads the board with EU's 45 and buries nothing. ASC opens on US's 19 — the boundary circle — and reads the funnel smallest-first.",
+        },
+      ],
+      distractors: ["shipped", "city", "id", "ASC", "2"],
+      walkthrough:
+        "A state board is a CASE pivot over one fold, with the gate on volume. The join attaches circle keys to 103 fee events; GROUP BY c.region folds them into four books; each SUM(CASE …) arm counts one lifecycle state — settled (delivered), in-flight (shipped), awaiting (pending), lost (cancelled). The board prints EU 45 / 24-12-6-3, APAC 37 / 21-8-5-3, US 19 / 5-10-3-1, and the gate at 19 drops LATAM's 2-event book — sitting exactly on US's count, which is why the gate reads as a volume bar and 19 doubles as a result cell. The reads the review argues about are visible in the arms: the network's 52/30/14/7 split (50.5% settled), and US the only circle where in-flight (10) outruns settled (5) — a pipeline shape, not a book-value shape. The distractors fail honestly: 'shipped' swaps the settled arm into a second in-flight column; 'city' re-folds at street grain until Berlin is the only survivor; 'id' as the join key empties the fold; 'ASC' inverts the lead; '2' re-admits the anecdote. Arms, key, grain, gate, order — five decisions, and each distractor breaks exactly one.",
+    },
+    {
+      id: "cs-icici-4",
+      tier: "medium",
+      topic: "t7",
+      universe: "expense",
+      title: "The branch opex walk",
+      brief:
+        "ICICI-flavored memo on the storefront db (expenses = branch-and-ops opex lines, amount_cents integer cents): the facilities review wants the monthly opex walk at the 2024-08 close — opex lines, opex dollars, and each kept month's move against the prior KEPT month. Probed facts: monthly opex runs from **1719.00 in 2024-01** to 1650.00 in 2025-02 and peaks at **3210.00 in 2024-08**; the materiality gate at 1650.00 keeps nine months and drops the five thin books — 2024-02 (1440.00), 2024-05 (1480.00), 2024-06 (1510.00), 2024-09 (1545.00) and 2024-12 (1610.00). *A gap month is a break in the series, not a zero — the delta reads against the prior kept month, and the caption says so.*",
+      ask: "Return the gated opex walk: month, opex lines, opex (2dp), MoM delta (2dp) — calendar order.",
+      template:
+        "WITH monthly AS (\n  SELECT SUBSTR(spent_on, 1, 7) AS month,\n         COUNT(*) AS opex_lines,\n         ROUND(SUM(amount_cents) / {1}, 2) AS opex\n  FROM expenses\n  GROUP BY month\n  HAVING SUM(amount_cents) / 100.0 >= {2}\n)\nSELECT month,\n       opex_lines,\n       opex,\n       ROUND(opex - {3}(opex) OVER (ORDER BY month), 2) AS delta\nFROM monthly\nORDER BY month {4};",
+      slots: [
+        {
+          answer: "100.0",
+          kind: "number",
+          noVerify: true,
+          label: "the cents divisor",
+          why: "Opex dollars are amount_cents / 100.0 — float division, rounded once at the edge. /1000 reads every month at a tenth its size (the 3210.00 peak becomes 321.00) and the walk stops tying to the branch ledgers.",
+        },
+        {
+          answer: "1650",
+          kind: "number",
+          label: "the materiality gate",
+          why: "The gate keeps nine months and drops the five thin books; 1650.00 (2025-02) sits exactly on the line and is a result cell of the walk itself. A lower gate re-admits 1610.00's December and the 'kept' series changes definition.",
+        },
+        {
+          answer: "LAG",
+          kind: "keyword",
+          label: "the look-back",
+          why: "Each kept month's delta is opex minus the PRIOR KEPT month: LAG(opex) OVER (ORDER BY month) pairs 2024-03's 1917.00 against 2024-01's 1719.00 — the gap where 2024-02 dropped made visible, not smoothed. LEAD reads the series backwards.",
+        },
+        {
+          answer: "ASC",
+          kind: "keyword",
+          label: "the calendar direction",
+          why: "The walk reads January to the close; ASC keeps the calendar. DESC opens on 2025-02 and hands the review a reversed series whose deltas read with the wrong signs.",
+        },
+      ],
+      distractors: ["1000", "LEAD", "DESC", "AVG"],
+      walkthrough:
+        "An opex walk is three stages: bucket, gate, look back. SUBSTR(spent_on, 1, 7) buckets the branch cost lines into month keys; the gate — SUM(amount_cents)/100.0 >= 1650 — keeps the nine material books and drops 2024-02, 2024-05, 2024-06, 2024-09 and 2024-12; ROUND(SUM(amount_cents)/100.0, 2) converts cents exactly once, printing the walk's dollar spine from 1719.00 up to the **3210.00** peak in 2024-08. LAG(opex) OVER (ORDER BY month) then pairs each kept month with the prior KEPT month: 2024-03 books +198.00 against 2024-01 (the February gap is visible as a jump, not a zero), 2024-08 books +1416.00, 2024-10 books −1351.00 — the peak unwinding — and the opening month prints NULL, the shape that proves the series starts where it says. The distractors fail honestly: 1000 re-scales every dollar to a tenth its size and empties the gate; LEAD flips every delta's sign; DESC reverses the calendar; AVG turns the delta column into a running mean — a different KPI wearing the same header. Bucket, gate, look-back, direction: the walk is four decisions, and each distractor breaks exactly one.",
+    },
+    {
+      id: "cs-icici-5",
+      tier: "hard",
+      topic: "q6",
+      universe: "month-close",
+      title: "The settlement clock, per circle",
+      brief:
+        "ICICI-flavored memo on the storefront db (invoices = client fee billings, payments = settlement legs): the collections review wants the settlement clock cut per circle — first-settlement lag per billing, circles with at least five settled billings, slowest book first — to set next quarter's terms talk. Probed facts: the book's clock is **20 settled billings averaging 28.4 days** issue-to-first-settlement, fastest 13, slowest 84, against flat 30-day terms. The staged read (first leg per billing, then the circle fold) prints US 5 settled / 36.6 days, APAC 7 / 27.3, EU 8 / 24.4 — *only the US book sits above the 28.4-day bar, and the split billings must weight their circle once, not twice.*",
+      ask: "Return the circle clock: circle, settled billings, average days to first settlement (1dp) — slowest first, gated at five.",
+      template:
+        "WITH first_leg AS (\n  SELECT i.id,\n         i.customer_id,\n         i.issued_on,\n         MIN(p.{1}) AS first_settled\n  FROM invoices i\n  JOIN payments p ON p.invoice_id = i.id\n  WHERE i.status = '{2}'\n  GROUP BY i.id\n)\nSELECT c.{3} AS circle,\n       COUNT(*) AS settled_billings,\n       ROUND(AVG(julianday(first_settled) - julianday(issued_on)), 1) AS avg_days\nFROM first_leg\nJOIN customers c ON c.id = first_leg.customer_id\nGROUP BY circle\nHAVING COUNT(*) >= {4}\nORDER BY avg_days {5};",
+      slots: [
+        {
+          answer: "paid_on",
+          kind: "keyword",
+          label: "the first-settlement timestamp",
+          why: "MIN(paid_on) folds each billing's legs to its FIRST settlement — the splits (five billings ride two rails) weight their circle once. MIN(p.method) folds to a string no calendar can read and the lag column NULLs out.",
+        },
+        {
+          answer: "paid",
+          kind: "keyword",
+          label: "the evidence filter",
+          why: "status = 'paid' keeps the settled book the clock is defined on — 20 billings. 'void' admits the void-but-drawn 925.00 (a claim the trail contradicts) and 'open' admits the 4000.00-partial — both are settlement-hygiene findings, not tempo evidence.",
+        },
+        {
+          answer: "region",
+          kind: "keyword",
+          label: "the circle key",
+          why: "c.region is the circle book the review reads. The city column re-folds at street grain — the US book's five settled billings split across Austin (3) and Chicago (2) and neither city clears the gate.",
+        },
+        {
+          answer: "5",
+          kind: "number",
+          label: "the sample gate",
+          why: "HAVING COUNT(*) >= 5 keeps the three circles whose settled book is a sample worth reading — US 5 (the gate sits on it), APAC 7, EU 8. 5 is also a result cell: the US book's own count. Seven drops US; eight leaves EU alone.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the slowest-first order",
+          why: "ORDER BY avg_days DESC headlines the problem book — US 36.6 — which is the whole point of the pack. ASC opens on EU's 24.4 and buries the circle that is actually late.",
+        },
+      ],
+      distractors: ["method", "open", "void", "city", "7", "ASC"],
+      walkthrough:
+        "A settlement clock is a staged read: fold legs per billing, then fold billings per circle. The CTE takes MIN(paid_on) per billing — first settlement, not every leg, so the five split billings weight their circle once — and the status filter pins the book to 'paid', which keeps the void-but-drawn 925.00 and the open 4000.00-partial out of a tempo read that isn't about them. The outer fold averages julianday(first_settled) - julianday(issued_on) per circle: US 5 billings at **36.6 days**, APAC 7 at 27.3, EU 8 at 24.4 — and against the book's **28.4-day** bar (fastest 13, slowest 84, terms flat 30), only the US book is slow. The gate at 5 sits exactly on the US count and is a result cell besides. The distractors fail honestly: 'method' folds the timestamp slot to a rail string and NULLs every lag; 'open' and 'void' admit the hygiene findings into the tempo book; 'city' shreds the circles at street grain; 7 and 8 cut the gate until the late circle is gone; ASC reads the pack fastest-first. Stage, filter, fold, gate, order — the clock is five decisions.",
+    },
+    {
+      id: "cs-icici-6",
+      tier: "medium",
+      topic: "j7",
+      universe: "growth",
+      title: "The product-line revenue board",
+      brief:
+        "ICICI-flavored memo on the storefront db (products = account and card products, order_items = booked fee lines): the cross-sell review wants the product-line board — booked fee revenue, units and distinct fee events touched per product family, families carrying at least 53 units — to pick the next branch push. Probed facts: **Audio's 97 units book 11744.01** and lead the network; Wearables' 53 units book 6929.12, Video 61 / 5198.41, Electronics 85 / 4818.61, Accessories 121 / 3294.29, Apparel 54 / 1984.93 — and Accessories touches the most fee events (54) on the smallest dollars, the attach-versus-value split the review exists to argue. Fitness' 27-unit book stays off the board.",
+      ask: "Return the gated product-line board: line, fee events touched, units, fee revenue (2dp) — biggest revenue first.",
+      template:
+        "SELECT p.{1} AS product_line,\n       COUNT(DISTINCT oi.order_id) AS events_touched,\n       SUM(oi.quantity) AS units,\n       ROUND(SUM(oi.quantity * oi.{2}), 2) AS fee_revenue\nFROM order_items oi\nJOIN products p ON p.id = oi.{3}\nGROUP BY p.category\nHAVING SUM(oi.quantity) >= {4}\nORDER BY fee_revenue {5};",
+      slots: [
+        {
+          answer: "category",
+          kind: "keyword",
+          label: "the product-line column",
+          why: "p.category is the product family the board reads — the fold's grain. The name column prints product labels under a family fold: real values, wrong grain, a board nobody can act on.",
+        },
+        {
+          answer: "unit_price",
+          kind: "keyword",
+          label: "the booked-money column",
+          why: "Fee revenue is units times the booked unit_price — the transaction's own price. The catalog's list price is a different column: booking at p.price re-prices the whole board (the network's 34833.28 becomes 34802.17) and the family ranking drifts.",
+        },
+        {
+          answer: "product_id",
+          kind: "keyword",
+          label: "the product key",
+          why: "Fee lines attach to products through p.id = oi.product_id. Joining on oi.id wires each line to whichever product shares its row number — the fold re-prices on coincidence and the gate keeps the wrong families.",
+        },
+        {
+          answer: "53",
+          kind: "number",
+          label: "the units gate",
+          why: "HAVING SUM(oi.quantity) >= 53 keeps the six families with a real book and drops Fitness' 27 units. 53 is also a result cell — Wearables' book sits exactly on the gate, which is why the bar reads as materiality.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-revenue order",
+          why: "ORDER BY fee_revenue DESC leads with Audio's 11744.01 and reads the board as a revenue ladder. ASC opens on Apparel's 1984.93 and buries the line the push is actually about.",
+        },
+      ],
+      distractors: ["name", "price", "id", "27", "ASC"],
+      walkthrough:
+        "A product-line board is a join-fold with a gate: fee lines join to products, GROUP BY p.category folds 251 lines into seven families, and three measures ride the same fold — COUNT(DISTINCT oi.order_id) for fee events touched (the anti-fan-out count: Accessories touches 54 events on 121 units), SUM(oi.quantity) for units, and SUM(oi.quantity * oi.unit_price) for booked revenue, rounded once at the edge. The gate at 53 units keeps six families and drops Fitness' 27; the ladder reads **Audio 11744.01**, Wearables 6929.12, Video 5198.41, Electronics 4818.61, Accessories 3294.29, Apparel 1984.93. The review's argument is already in the cells: Accessories leads attach (54 events) and trails value (3294.29) — the attach-versus-value split. The distractors fail honestly: 'name' prints product labels under a family fold; 'price' re-books the board at list prices (the network total drifts 34833.28 → 34802.17); 'id' as the join key re-prices on row-number coincidence; 27 re-admits Fitness; ASC inverts the ladder. Column, key, gate, order — the board is four decisions, and each distractor breaks exactly one.",
+    },
   ],
 
   problems: [
@@ -448,5 +1102,21 @@ export const iciciKit: CompanyKit = {
     { slug: "risk-based-pricing", why: "Band joins between exposure and price tables: card pricing that steps by band — the billing-cycle engine as a join problem." },
     { slug: "split-adjusted-position", why: "One economic event, several recorded legs: the split-plan billing read in miniature — normalize before you sum." },
     { slug: "portfolio-concentration-hhi", why: "Concentration indices over the book: the 63.5% of value the top households carry, computed the way the risk review quotes it." },
+    { slug: "keep-latest-dedupe", why: "Keep-latest per client via ROW_NUMBER: one client, two KYC records, and the funnel double-counts — the dedupe pass that fixes the client file before any census folds. Curated fill." },
+    { slug: "null-blank-audit", why: "NULL/blank sweep across the client file: the KYC-hygiene read that catches an empty email before the onboarding push does — a census of absence, not a join. Curated fill." },
+    { slug: "account-balance", why: "Running balance over a transaction spine: the cash book's 44196.00 net fold walked day by day — the rollforward shape the branch proof re-runs every close. Curated fill." },
+    { slug: "find-the-missing-ids", why: "WITH RECURSIVE over an id spine hunting gaps: the journal-completeness control — a ledger whose 80 entries must account for every posting date, or the feed dropped a day. Curated fill." },
+    { slug: "median-time-to-convert", why: "Median emulation over a lag: the settlement clock's middle sibling — 28.4 days is the mean, 13 to 84 the spread, and the median is the number the collections desk plans around. Curated fill." },
+    { slug: "rfm-segmentation", why: "NTILE tiers over recency, frequency, value: the client book cut into segments the relationship managers work — the 63.5%-concentration whale list, formalized. Curated fill." },
+    { slug: "cohort-retention-matrix", why: "Cohort offset matrix: billing cohorts followed cycle by cycle — the vintage view of the fee book, where each month's cohort is its own panel. Curated fill." },
+    { slug: "week-over-week-churn", why: "LAG over weekly client states: the activity read behind the lapsed-client screen — who stopped transacting this week that didn't last week. Curated fill." },
+    { slug: "rolling-7d-actives", why: "Rolling distinct counts over a 7-day frame: the rail-activity read — flow this week against the trailing week, windows drilled with the frame named. Curated fill." },
+    { slug: "year-on-year-growth-rate", why: "LAG prior-year folds: fee revenue this month versus the same month last year — the growth read the board deck quotes with the seasonality caveat attached. Curated fill." },
+    { slug: "growth-accounting", why: "LAG state transitions: new, retained, walked — the client-state migration read that turns a status column into a flow, the same discipline the coverage census runs. Curated fill." },
+    { slug: "investments-in-2016", why: "Same-value, same-day pair screens: mirror legs that deserve a second look — the duplicate-charge read at billing grain, the 27-into-22 squeeze made visible. Curated fill." },
+    { slug: "symmetric-pairs", why: "EXISTS mirror-pair tests: value that left a household and came back through a paired rail — the round-trip screen's formal shape at wire-rail grain. Curated fill." },
+    { slug: "consecutive-transactions-with-increasing-amounts", why: "LAG flags over ordered legs: escalating amounts, each hit bigger than the last — the escalation screen the rails desk runs before structuring becomes a finding. Curated fill." },
+    { slug: "customers-who-bought-all-products", why: "Relational division: clients holding every product in a family — the cross-sell completeness read that names who the branch still has to call. Curated fill." },
+    { slug: "restaurant-growth", why: "Trailing 7-day frame over a date spine: the flow average the branch staffs against — rolling windows where the frame is stated, never implied. Curated fill." },
   ],
 };

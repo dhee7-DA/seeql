@@ -19,6 +19,15 @@
 // invoices/payments = the merchant billing and driver settlement books
 // (INTEGER cents — divide by 100.0). Every case slot is mechanically
 // verified against the live db by scripts/case-audit.ts.
+//
+// Expansion (task 95-yassir, 3x append-only): brief 4→6, dayInLife 3→4,
+// metrics 8→12, topics 10→15, theory t9–t24, mcqs 11–30, cases
+// cs-yassir-3..6 (topics s6/t7/q2/x2 — pairwise distinct, distinct from the
+// original x3/j4), problems 16→32. Yassir's tagged pool remains 0 sql rows,
+// so all new topic/problem slugs are theme-curated rows from the
+// company-pools.md theme menu. New-case number cells and every
+// distractor×slot substitution were probe-verified against db/custom.db by
+// a one-shot read-only probe run.
 
 import type { CompanyKit } from "../types";
 
@@ -34,12 +43,15 @@ export const yassirKit: CompanyKit = {
     "Two reads define the analyst job here. The {amber:one-pass cluster census}: city ops opens with a single-scan fold per city cluster — jobs, moving, awaiting, cancelled, volume in one GROUP BY (EU: 45 jobs, 36 moving, 6 awaiting, 3 cancelled, **15,089.23**) — because the same fold runs every morning in every launch city. The {sky:supply-side read}: six driver cohorts carry capacity, the top cohort takes 32% of settled volume (11,130.25) and the top two 58.7% — concentration is a supply-risk conversation, not trivia. The close stamp runs on a batched ops clock: 2.98-day average over the 82 stamped jobs, range 2..4.",
     "Interviews are funnel-first, one-pass-flavored, cents-precise. A screen opens with a warm-up join (attach job legs to their request), escalates into a conditional fold (`SUM(CASE WHEN …)` is the house idiom), then lands on a rate where the denominator is the whole test: moving ÷ ALL posted jobs, awaiting and cancelled included, or the funnel flatters itself. Fintech rounds go through the books: 28 `invoices` against 27 `payments`, INTEGER cents read as `amount_cents / 100.0`, 6 unpaid claims worth 15,217.00, one of them — #28, 1,756.00 — *marked paid with zero settlement rows*. Follow-ups are spoken aloud: 'is that per job or per leg?', 'does an awaiting job sit in your denominator?'",
     "Preparation strategy: Yassir has **0 tagged LC** rows in this app's pool, so the kit is **theme-curated** — all 30 topic slugs and 16 problems are hand-picked from the theme menu to mirror super-app screens: job funnels, cluster censuses, tier crowns, cohort earnings, launch pacing, settlement AR. Then run both case studies on the live db: one rebuilds the {amber:city ops stack} the ops board reads, the other rebuilds the {sky:driver-cohort earnings fold} the supply desk orders payouts from. The bar to clear: name the grain, state the denominator, and gate the NULLs deliberately before you compute anything.",
+    "The wallet spine is the third business and it audits differently. Settlements ride two rails — `card` 16 payments worth **37,364.00**, `wire` the other 11 worth 32,248.00 — on uniform {sky:30-day terms} that actually clear in **28.4 days** (fastest 13, slowest 84). The exception pile is the risk file: 6 claims with zero settlement rows worth 15,217.00, one void-but-paid at 925.00, one partial at 4,000.00 of 6,148.00. The books still tie — 181,080 debits against 181,080 credits — so *every anomaly is classification, never balance*.",
+    "Preparation roadmap for the expanded kit, four passes: run the one-pass cluster census (EU 45 jobs / 36 moving / 6 awaiting / 3 cancelled) until `SUM(CASE WHEN …)` is reflex; drill set ops — UNION ALL stacks, EXCEPT sweeps — because a super-app is always diffing two verticals' books; then windows, LAG pacing on the 14-month spine and frames that survive ties; then money — cents discipline across 28 claims against 27 settlements. Sit all six case studies: the {amber:ops stack}, the {sky:cohort-earnings fold}, the coverage classifier, the pacing walk, the above-mean fare screen, the rails census. The bar is unchanged — **name the grain, state the denominator, gate the NULLs** — *before you compute anything*.",
   ],
 
   dayInLife: [
     "**08:15 —** The day opens on the city board: overnight job requests versus moving-and-done — 82 of 103 — and the first query is the one-pass cluster census, one scan per city cluster: jobs, completed, en route, awaiting, cancelled, volume in a single GROUP BY. The numbers must reconcile before the standup: moving arms sum to 82, awaiting to 14, cancelled to 7, and the leg fan-out (251 legs under 103 requests) says whether yesterday's multi-stop jobs actually stitched together. A drift here is the day's first fire, and the analyst who can write the census *and* the diff against yesterday's fold owns the incident.",
     "**11:00 —** Midday is multi-vertical deep-work. The ops lead wants the {sky:close-stamp ladder} by cluster — JULIANDAY lag over the 82 stamped jobs, APAC's 2.93 benchmarked against LATAM's 3.5 — and a vertical GM wants the awaiting-acceptance queue per cluster (`SUM(CASE WHEN o.status = 'pending' …)`, *counted per job, never per leg*): EU 6, APAC 5, US 3. A supply manager asks why one cohort carries 56 legs but only 26.7% of settled volume — the legs-versus-earnings split that says which verticals a cohort actually serves — and the tier-crown read lands mid-block: the top vertical family books 11,744.01 of fare volume.",
     "**16:30 —** The afternoon is the stakeholder cycle, and it ends the day. The city review walks the ops stack with its {amber:TOTAL banner} and material floor, then the settlement desk takes the books — 28 `invoices`, INTEGER cents read as dollars, six unpaid claims worth 15,217.00, with #28 — the 1,756.00 claim {rose:marked paid with zero settlement rows} — queued beside its mirror, #11, void-but-paid at 925.00, and one partial claim settled at 4,000.00 of 6,148.00. The day closes with the writeup: census reconciliations printed, denominators named, *every funnel number legible at the grain it claims*.",
+    "**21:30 —** The close-out is the wallet watch. The fintech desk runs the settlement census one last time before midnight: 27 settlements fold to **69,612.00** — card 16 rows / **37,364.00**, wire 11 / 32,248.00 — and the arms must reassemble the total or the close stops. Then the exception sweep: the {rose:cash-collection risk} file holds 6 claims worth 15,217.00 with zero settlement rows, one of them (#28, 1,756.00) still claiming {emerald:paid}, and the trial balance has to read 181,080 against 181,080 before tomorrow's ledger gate opens. The writeup ships *definitions first, figures second* — the 07:00 analyst inherits a chase list, not a mystery.",
   ],
 
   metrics: [
@@ -51,6 +63,10 @@ export const yassirKit: CompanyKit = {
     { name: "Vertical tier crowns", what: "Fare volume by vertical family: the top family books 11,744.01 across 97 quantity-weighted legs, the smallest 863.91 — where engagement actually lives in the super-app." },
     { name: "Driver-cohort concentration", what: "Share of settled volume by cohort: the top cohort carries 32% (11,130.25), the second 26.7% (9,294.93) on MORE legs (56 vs 43) — cheaper legs, different verticals. Supply and renewal risk live in this fold." },
     { name: "Settlement AR", what: "Claims with no settlement rows: 6 worth 15,217.00 — one (#28, 1,756.00) marked paid with zero settlements, plus 1 partial (4,000.00 of 6,148.00). The anti-join the fintech desk runs monthly." },
+    { name: "Cash-collection risk", what: "Unsettled value over billed value, measured on settlement rows: 15,217.00 of zero-row claims against the 28-claim book. Status labels are claims, not evidence — #28 reads paid with nothing behind it." },
+    { name: "Wallet rails mix", what: "Settlement value by rail: card 16 payments / 37,364.00, wire 11 / 32,248.00, total 69,612.00 across 27 settlements. The arms must reassemble the total at every close." },
+    { name: "Terms-versus-reality", what: "Bills issue on uniform 30-day terms; settled claims clear in 28.4 days on average (fastest 13, slowest 84 over 20 settled). Near-terms clearance is the collection-health signal." },
+    { name: "Cohort quality ladder", what: "Driver-cohort service ratings run 4.8, 4.6, 4.4, 4.1, 4.0, 3.9 — only two clear the 4.5 trusted bench. Concentration (32% + 26.7% of settled volume) on a thin quality bench is the supply-risk stack." },
   ],
 
   topics: [
@@ -104,6 +120,31 @@ export const yassirKit: CompanyKit = {
       why: "A super-app's bread-and-butter read is 'best per customer': the most-ordered tier per customer, the most recent job per tier, the day a customer came back after activating. Argmax shapes — RANK/ROW_NUMBER over a partition, or a correlated pick — are how the vertical GMs get their one row each.",
       slugs: ["most-frequently-ordered-product-per-customer", "the-most-recent-orders-for-each-product", "game-play-analysis-iv"],
     },
+    {
+      name: "Set operations & book sweeps",
+      why: "A super-app is forever diffing books: which riders rode both verticals this week, which claims settled on one rail but not the other, which months exist on the spine but not in a city's book. UNION stacks build the full spine, INTERSECT finds the overlap, EXCEPT names the one-sided rows — and UNION ALL versus UNION decides whether the TOTAL banner double-counts.",
+      slugs: ["movie-rating", "monthly-transactions-ii", "team-scores-in-football-tournament"],
+    },
+    {
+      name: "Subquery shapes & staging",
+      why: "Yassir's screens keep asking compare-a-group-to-the-whole: which cluster's average fare beats the platform's 338.19, which rider's spend beats their cluster's, which claim settles below its bill. Scalar subqueries, IN/EXISTS membership and derived-table staging each answer one of those shapes — picking the wrong shape is how a screen dies at the follow-up.",
+      slugs: ["second-highest-salary", "managers-with-at-least-5-direct-reports", "investments-in-2016"],
+    },
+    {
+      name: "Window frames & running math",
+      why: "The pacing walk is running math: revenue down the 2024-01..2025-02 spine, cumulative settlement value against the close line, cohort earnings year-to-date. The default frame is RANGE — it silently swallows peer rows — and ROWS versus RANGE is the difference between a smooth curve and one that lurches at every tie.",
+      slugs: ["find-cumulative-salary-of-an-employee", "running-total-for-different-genders", "account-balance"],
+    },
+    {
+      name: "Streaks, gaps & dormancy",
+      why: "Rider habit is streak-shaped: consecutive active days on the wallet, gaps between jobs, the quiet stretch that precedes churn. Gaps-and-islands and LAG/LEAD chains turn the job ledger into retention intelligence — the reads the engagement team runs before any push notification goes out.",
+      slugs: ["user-purchase-platform", "report-contiguous-dates", "longest-winning-streak"],
+    },
+    {
+      name: "Identity & catalog hygiene",
+      why: "A MENA super-app onboards riders and drivers across three scripts and a dozen cities; names, tier labels and vendor strings arrive messy. The hygiene drills — case folding, trimming, pattern gates on identifiers — are the KYC-grade cleaning every payout and invoice join depends on.",
+      slugs: ["fix-names-in-a-table", "invalid-tweets", "fix-product-name-format"],
+    },
   ],
 
   theory: [
@@ -154,6 +195,102 @@ export const yassirKit: CompanyKit = {
       q: "The fintech desk says a settlement claim is marked paid but has no settlement rows behind it. Walk me through the reconciliation query you write first — and the cents rule you never break writing it.",
       a: "First the anti-join: invoices LEFT JOIN payments, keep p.id IS NULL — on this book that returns 6 claims worth 15,217.00, and one of them (#28, 1,756.00) is marked 'paid' with zero settlement rows: a status that lies, which is why the settlement rows are the ledger of record and the status column is a claim. Then the mirror check: a void claim WITH a settlement row (this book has one, #11 at 925.00) never appears in that anti-join — the two error modes are mirrors, and both reconcile to the row-level anomaly list, not to vibes. The cents rule: invoices and payments carry INTEGER cents, so every dollar read is amount_cents / 100.0 — the missing .0 is integer division, it floors every odd-cent claim, and at wallet scale the counterparty audits line by line. One more super-app habit: when the same query feeds rides and delivery dashboards, the reconciliation is per VERTICAL grain — a fold that nets across verticals can hide that one vertical's book is broken while the total looks fine.",
       tag: "quality",
+    },
+    {
+      id: "yassir-t9",
+      q: "Before any folding starts: walk me through the order SQL actually evaluates a SELECT — WHERE, GROUP BY, HAVING, the window functions, ORDER BY. Where does the morning census break?",
+      a: "The pipeline runs FROM/JOIN → WHERE → GROUP BY → the aggregate fold → HAVING → window functions → ORDER BY/LIMIT, and every downstream stage only sees what survived upstream. Two burns follow. First, a window function evaluates AFTER the fold, so it sees filtered, grouped rows — a running sum over the census inherits every WHERE exclusion, which is exactly how the 14 awaiting and 7 cancelled jobs vanish from a curve instead of reading zero. Second, you cannot filter on a window's own output in WHERE or HAVING — ROW_NUMBER() = 1 in a WHERE is an error, not a filter — so 'latest job per rider' wraps in a CTE or derived table and filters the wrap. At Yassir this is the morning census in miniature: the fold computes its arms over one population, HAVING judges the groups after, and anything that needs a window's answer needs a second pass. Say the order out loud and half the weird-number tickets close themselves.",
+      tag: "pipeline",
+    },
+    {
+      id: "yassir-t10",
+      q: "What does the default window frame cover, and when does ROWS versus RANGE actually change a running curve on our settlement book?",
+      a: "The default frame is RANGE UNBOUNDED PRECEDING TO CURRENT ROW — and RANGE treats peers as one: every row tied on the ORDER BY value joins the frame together. On the month spine that is invisible, because '%Y-%m' buckets are unique and the running revenue climbs cleanly from 2024-01's 3,731.97. It bites the moment the ORDER BY key repeats: run the cumulative settlement value ordered by amount_cents and the book ties — rows sharing an amount enter the frame in one lump, so the curve steps instead of walking. Pinning ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW forces the strict row-by-row walk; ROWS BETWEEN 2 PRECEDING AND CURRENT ROW builds a three-row moving window for smoothing. The habit to grade: whenever the ORDER BY key can repeat — amounts, leg counts, ratings — name the frame in review, because the default's peer-swallowing is silent and the two curves disagree exactly at the ties.",
+      tag: "windows",
+    },
+    {
+      id: "yassir-t11",
+      q: "The ops stack ships as one CSV with a TOTAL banner row. Why UNION ALL there — and when would plain UNION be the bug?",
+      a: "UNION ALL concatenates; UNION deduplicates and sorts. The stack wants concatenation: the state arms (delivered 52 / 15,571.07, shipped 30 / 11,996.72, pending 14, cancelled 7) plus the banner ('TOTAL', 103, 34,833.28) are all legitimate rows, and the reconciliation contract — arms reassemble the base — depends on every row surviving. Plain UNION opens two failure modes: it silently drops any two arms that tie on every column (a state row and another state row with the same count and volume — rare today, inevitable someday as the book grows), and it pays a sort-plus-dedupe cost on every morning run for a guarantee nobody asked for. The reverse discipline matters too: when you DO want set membership — overlapping rider sets across two verticals — UNION's dedupe is the feature, and UNION ALL would double-count the intersection. The rule I'd ship at Yassir: banners and censuses are UNION ALL, and every UNION lands with a comment naming what it is allowed to collapse.",
+      tag: "setops",
+    },
+    {
+      id: "yassir-t12",
+      q: "Claims with no settlement rows — EXCEPT, NOT IN, or NOT EXISTS? Where does each one break?",
+      a: "All three can name the 6 unpaid claims worth 15,217.00, and each fails differently. EXCEPT compares whole result sets: claim ids EXCEPT settlement invoice ids — clean, but it silently deduplicates and demands column-count and type alignment, so it is brittle to 'just add a column' edits. NOT IN is the trap: one NULL invoice_id on the payments side poisons the whole predicate — NOT IN (…NULL…) can never be true, the sweep returns ZERO claims, and the dunning report ships empty and looks finished. NOT EXISTS survives NULLs, reads as the business question ('no settlement row exists for this claim'), and uses the join key properly — it is the default I'd mandate. The company twist: this book's headline anomaly is a claim marked paid with zero settlement rows (1,756.00), so the anti-join is not cleanup, it is the ledger of record — and an anti-join that one stray NULL can silently empty is a control, not a query.",
+      tag: "setops",
+    },
+    {
+      id: "yassir-t13",
+      q: "Per-claim coverage — settled versus billed — needs folding payments before comparing to the bill. Walk me through staging it, and why the naive one-pass fold lies.",
+      a: "Five claims on this book settled in two rows (split payments), so joining invoices to payments and folding in one pass fans out: the bill side multiplies by its settlement-row count, and SUM(billed) over the join double-counts every split claim's bill. The fix is staging: a CTE (or derived table) folds one row per claim first — claim id, bill, SUM(amount_cents) settled — and only then does the outer query compare settled to billed and classify exact, partial or none. 28 claims in, 28 rows staged, 27 settlement rows folded into them, 6 landing at NULL settled — which the outer fold COALESCEs to zero so the 'no settlement' class sums honestly. Derived table versus CTE is readability and reuse: the CTE gets a name the next analyst can cite, which matters when the same staging feeds the classifier and the aging read. The transferable lesson is grain discipline: fold to the grain you compare at, then classify — never classify across a join that is still fanning.",
+      tag: "ctes",
+    },
+    {
+      id: "yassir-t14",
+      q: "For each rider, their most recent job — correlated subquery, ROW_NUMBER wrap, or LAG? When is the correlated shape actually the right call?",
+      a: "Three shapes, three tradeoffs. The correlated subquery runs once per outer row — 'posted_at = (SELECT MAX(posted_at) FROM jobs j2 WHERE j2.rider_id = j1.rider_id)' — simple, obviously correct, and O(rows × probe) costly at scale; at this ledger's size (16 riders, 103 jobs) it is perfectly fine and the most teachable. The ROW_NUMBER wrap partitions by rider, orders by posted_at DESC and filters rn = 1 in a second pass — the scaling shape, and it survives ties only if you name a deterministic tie-breaker. LAG is the wrong tool here: it walks a partition's rows and cannot pick 'the last one' without the same wrap. The right call for correlated is small outer sets plus a NULL-safe story: a rider with no jobs yields a NULL scalar, the comparison against NULL drops them — which is either a bug or exactly the never-activated filter you wanted, and the strong candidate says which. At Yassir I'd take the wrap for anything feeding a dashboard and keep correlated for one-off probes.",
+      tag: "subqueries",
+    },
+    {
+      id: "yassir-t15",
+      q: "JULIANDAY deltas, STRFTIME buckets, DATE arithmetic — three timestamp moves. How do you choose, and what does each get wrong on our close stamp?",
+      a: "They answer three different questions. JULIANDAY differences answer 'how long': the close-latency read, 2.98 days average over the 82 stamped jobs, range 2..4 — continuous math, and it honors time-of-day if the stamp carries one. STRFTIME('%Y-%m') answers 'which bucket': the 14-month launch spine, where '%m' alone folds January 2024 into January 2025 and the pacing curve becomes fiction. DATE arithmetic answers 'which side of a threshold': posted_at >= '2024-01-01' AND posted_at < '2024-04-01' — half-open, so the last night of March survives where BETWEEN quietly drops it. The Yassir caveat is honesty about the source: our close stamp is a batched back-office clock, so 2.98 'days' is batch cadence, not door-to-door minutes, and reading hours into a date-only stamp invents precision the data never had. Strong candidates name the question first, then the function — and label what the clock actually measures.",
+      tag: "dates",
+    },
+    {
+      id: "yassir-t16",
+      q: "Mechanics check: what do SUM, COUNT(*) and COUNT(col) each return over an empty or NULL-riddled set on the settlement book?",
+      a: "COUNT(*) counts rows and returns 0 on an empty set — the only aggregate that promises a zero. SUM over zero rows returns NULL, not 0: a staging city with no settlements folds to NULL, and ROUND(NULL/100.0, 2) is still NULL — the census cell prints NULL and the dashboard's total goes dark unless you COALESCE(SUM(...), 0) where zero is the business truth. COUNT(col) counts non-NULL values only, so COUNT(shipped_at) over 103 jobs reads 82 while COUNT(*) reads 103 — and that gap IS the awaiting-plus-cancelled queue, which makes it a feature when named and a bug when it silently re-labels a population. AVG ignores NULLs, so averaging a NULL-riddled column computes over the shrunken population without saying so. The settlement classifier leans on all three deliberately: COUNT(p.id) = 0 names 'no settlement', COALESCE(SUM(p.amount_cents), 0) prints honest zeros, and the arms reconcile because every arm describes the same population. Zero, NULL and missing are three different facts — the strong answer keeps them three.",
+      tag: "nulls",
+    },
+    {
+      id: "yassir-t17",
+      q: "Define cash-collection risk the way this desk reports it — numerator, denominator, and what the status column gets wrong.",
+      a: "Risk is unsettled value over billed value, measured on settlement rows: 6 claims with zero settlement rows worth 15,217.00, against a 28-claim book — that is the file the desk chases. The status column is a claim, not evidence: #28 reads 'paid' and has no settlement row behind it (1,756.00), while #11 reads 'void' and carries a settled 925.00 — so a status-based risk file catches the wrong claims in both directions, and the anti-join on settlement rows is the ledger of record. The denominator discipline: bill the whole book (28 claims), not just the open ones, or the ratio flatters the desk every time a paid-but-unsettled anomaly exists. Aging sharpens it — issued_on against the uniform 30-day terms, paid_on against due_on (cleared in 28.4 days on average, fastest 13, slowest 84) — so the file orders by how overdue, not just how much. And per vertical, always: a fold that nets across verticals can hide one vertical's broken book behind another's clean total.",
+      tag: "kpis",
+    },
+    {
+      id: "yassir-t18",
+      q: "The growth team wants the wallet top-up funnel. Define the stages, the conversions, and the one number you refuse to compute.",
+      a: "Stages on this ledger read straight off the job funnel: posted (103), moving — a driver accepted and is en route (82), completed (52), paid-and-settled downstream. The conversions are conditional counts over ONE population: 82 of 103 posted (79.6%) and 52 of 103 posted (50.5%) — denominators decided before the ratio, awaiting and cancelled staying in the base. The moves I'd refuse: 52 of 89 resolved is the resolved-job share wearing the funnel's name, and 52 of 82 moving is a completion rate pretending to be a conversion — each is a real metric with a different job, and collapsing them is how decks start lying. Per-cluster and per-month cuts are the actual product: EU 45 posted with 3 cancelled (6.7%), APAC 37 with 8.1% — the cancellation share by cluster is the funnel's leak map. And the number I'd put in the slide's title is the 14 awaiting: demand the supply side never answered, said louder than any conversion ratio.",
+      tag: "kpis",
+    },
+    {
+      id: "yassir-t19",
+      q: "How would you define driver supply hours and utilization from a ledger like this — and what would you refuse to compute?",
+      a: "The honest answer starts with what the ledger lacks: there is no online-hours column, so 'supply hours' as the industry computes it is not computable here, and I would refuse to fake it with a proxy that looks like one. What IS computable: legs carried per driver cohort (43, 56, 40, 25, 47, 40 summing to 251) against each cohort's share of settled volume (32% on 43 legs, 26.7% on 56), and the legs-versus-earnings split that says which verticals a cohort actually serves — the second cohort carries MORE legs for LESS money, which is a mix story, not an effort story. Utilization the honest way needs both sides — served jobs over available supply — and available supply is exactly the missing column, so the deliverable is legs-per-cohort trends plus the concentration read (top two cohorts carry 58.7% of settled volume) and the quality bench (ratings 4.8 down to 3.9, only two cohorts above 4.5). The strong candidate states the gap, ships the computable proxies, and names what instrument would close it — that is the difference between an analyst and a number generator.",
+      tag: "kpis",
+    },
+    {
+      id: "yassir-t20",
+      q: "Multi-stop jobs stitch several legs under one request. Where does GROUP_CONCAT earn its keep, and what are its traps?",
+      a: "It earns its keep at presentation grain: one row per job with its legs' tier labels folded into a cell — the multi-stop cart rendered as text — which is exactly what an ops CSV wants and exactly what no downstream aggregate wants. The traps: order is undefined by default, so the leg sequence can print scrambled unless the concatenation carries its own ORDER BY (or you stage legs with ROW_NUMBER and concatenate the staged order); length is effectively unbounded in SQLite, so a 40-leg job makes a cell that breaks the CSV; and the folded string is a dead end — you cannot sum, count or rank what is inside it, so any analysis goes back to the rows. The discipline I'd ship: GROUP_CONCAT only in the outermost presentation query, separator chosen deliberately, leg count kept as its own numeric column beside the string (the 251-legs-under-103-jobs fold), and never inside a CTE that later math depends on. A string cell is a view for humans; the ledger stays relational underneath.",
+      tag: "aggregation",
+    },
+    {
+      id: "yassir-t21",
+      q: "The ops lead wants close-latency quartiles and a 'worst quartile' flag. NTILE, CASE bands, or percentile emulation — and what happens to the unstamped jobs?",
+      a: "NTILE(4) OVER (ORDER BY lag) divides the 82 stamped jobs into near-quarters — 82 does not split by 4, so the remainders land in the earliest tiles (21/21/20/20), and that rule is worth saying out loud before anyone reads the quartiles as exact. CASE bands with named thresholds — 2, 3, 4 days, matching this ledger's actual range — are reproducible and legible in a way tiles are not: every analyst re-derives the same bands and the boundary row lands where the spec says. Percentile emulation buys precision the ops review does not need at this range. But the real question is the unstamped 21: they have no lag, so they enter no tile — and a worst-quartile flag computed over stamped jobs only must say so, or the flag reads as 'the network's worst' when it is 'the worst among stamped'. My ship: NTILE for the quick cut, CASE bands for the standing report, and a count of unstamped jobs printed beside the quartiles — the queue is the supply story, not noise in the tail.",
+      tag: "windows",
+    },
+    {
+      id: "yassir-t22",
+      q: "When does a self-join beat a window function on a ledger like ours? Give me a concrete read you'd run.",
+      a: "Self-joins answer pairing questions windows answer awkwardly: which two riders in the same cluster posted the same total on the same day (duplicate-posting sweep), which pairs of jobs share a leg pattern, which cohorts serve the same tier family. The concrete read I'd run: orders o1 JOIN orders o2 ON o1.customer_id = o2.customer_id AND o1.id < o2.id AND o1.total = o2.total AND SUBSTR(o1.created_at,1,10) = SUBSTR(o2.created_at,1,10) — same rider, same day, same value: the duplicate-charge shape the fintech desk runs on payments. The trap is fan-out: a self-join without the asymmetric guard pairs every row with itself and counts each pair twice — COUNT doubles, and the a.id < b.id convention IS the query's correctness. Windows win for per-row neighbors (LAG to the previous job, running sums); self-joins win for row-to-row relations where 'the other row' is not adjacent in any single ordering. Say which side of that line your query lives on and the follow-ups get easy.",
+      tag: "joins",
+    },
+    {
+      id: "yassir-t23",
+      q: "Beyond the cents rule — where do type-coercion traps hide in folds like ours, and what is your pre-flight check?",
+      a: "Four places. Integer division: 92500/100 is 925 and hides, but 92.5 becomes 92 — the missing .0 floors every odd-cent claim, and the first counterparty audit finds it; the fix is promoting before dividing (amount_cents/100.0). Aggregation type: SUM over INTEGER cents stays INTEGER forever until something divides, so a grand total can look exact while every per-row division below it truncates. Comparison type: status = 'paid' is text, amount_cents >= 50000 is integer — mix them (method = 50000, amount_cents < 'cash') and SQLite does not error, it just returns rows you did not mean, because int-versus-text comparisons follow type ordering, not equality. String numbers: ids and codes that arrive as TEXT compare as text ('10' < '9'), so CAST before any numeric fold on imported keys. The pre-flight check I'd ship: for every fold, write the unit next to the column (cents, dollars, days, count) and make one query print both the raw and converted form of a known row — 92500 cents beside 925.00 dollars — so the type contract is visible, not assumed.",
+      tag: "types",
+    },
+    {
+      id: "yassir-t24",
+      q: "Cluster average fares read 426.22, 383.48, 335.32 and 313.66. Does averaging those give the platform average — and what is the right fold?",
+      a: "No — averaging the four cluster means weights LATAM's 2 jobs exactly like EU's 45, and the plain mean of those four numbers (364.67) is a fiction no population on the ledger actually has. The platform average is the weighted fold: SUM(total)/COUNT(*) over all 103 jobs, which reads 338.19 — and the per-cluster averages (EU 335.32, APAC 313.66, US 383.48, LATAM 426.22) are a different, legitimate metric whose weights are each cluster's own job count. Both can ship in the same memo if every number carries its name and its population: 'per-cluster AOV' versus 'platform AOV, all 103 jobs'. The divergence is itself signal — LATAM's 426.22 sits on 2 jobs and is fragile; the US's 383.48 sits on 19 and means something — so alongside the averages I'd print the n each rests on. The trap behind the trap: AVG of an AVG also appears when someone 'simplifies' a two-level fold into one query; the fix is the same discipline — go back to the row grain, fold once, label the population. Means of means are not means; they are opinions with formatting.",
+      tag: "aggregation",
     },
   ],
 
@@ -293,6 +430,246 @@ export const yassirKit: CompanyKit = {
       ],
       difficulty: "hard",
     },
+    {
+      id: "yassir-mcq-11",
+      prompt: "The payout leaderboard folds cohort earnings and two cohorts land on the same total. Under RANK(), what rung does the next cohort below the tie take?",
+      choices: ["2 — ties compress the ladder", "3 — RANK consumes the shared rungs", "2 — every rank function compresses", "An error — RANK cannot resolve ties"],
+      answer: 1,
+      why: "RANK hands both tied cohorts rung 1 and the next cohort takes rung 3 — the shared rung is consumed, not compressed. DENSE_RANK would give 2; ROW_NUMBER would break the tie arbitrarily. The payout policy picks the function, not habit.",
+      notes: [
+        { choice: 0, why: "2 is DENSE_RANK's answer — it never skips. Ship RANK and the third cohort's rung visibly jumps, which is exactly the audit trail a payout run wants." },
+        { choice: 3, why: "Ties are what ranking functions exist for — every window rank resolves them deterministically (RANK/DENSE_RANK) or deliberately arbitrarily (ROW_NUMBER)." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "yassir-mcq-12",
+      prompt: "The job ledger holds 103 posted requests; close stamps (shipped_at) exist on 82. What does COUNT(shipped_at) return?",
+      choices: ["103 — COUNT counts rows", "82 — COUNT(column) skips the NULL close stamps", "21 — it counts the unstamped", "0 — NULL poisons the whole count"],
+      answer: 1,
+      why: "COUNT(*) counts rows; COUNT(column) counts non-NULL values — 82 stamped jobs. The 14 awaiting and 7 cancelled requests carry no close stamp, so they vanish from the column count while staying in the row count. That 103-vs-82 gap IS the in-flight queue.",
+      notes: [
+        { choice: 0, why: "That is COUNT(*). The moment you name a column, NULLs drop — silently relabeling 'posted' as 'closed' on every board that uses the column form." },
+        { choice: 2, why: "COUNT never counts NULLs, even implicitly — 21 is COUNT(*) WHERE shipped_at IS NOT NULL is false, a different query with a different meaning." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "yassir-mcq-13",
+      prompt: "SELECT status AS state, COUNT(*) FROM orders WHERE state = 'cancelled' GROUP BY status — what does SQLite actually do?",
+      choices: ["Errors — WHERE can never see SELECT aliases", "Runs — SQLite resolves output aliases in WHERE as an extension, though portable SQL forbids it", "Returns all rows — the filter is ignored", "Filters after grouping — aliases only resolve post-GROUP BY"],
+      answer: 1,
+      why: "SQLite quietly resolves the alias and filters the 7 cancelled jobs — an engine extension, not standard SQL: the same line dies with 'column not found' on Postgres or BigQuery. The house style writes the raw column in WHERE precisely because the alias form is a portability trap that also hides the pipeline (FROM → WHERE → GROUP BY → SELECT).",
+      notes: [
+        { choice: 0, why: "That is the textbook rule and the truth on most engines — but SQLite is looser than the textbook, which is exactly how the alias form slips into a notebook and only fails when ported." },
+        { choice: 2, why: "The filter is not ignored — 7 rows pass. The danger is subtler: the query works, so nobody notices it is unportable until it isn't." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "yassir-mcq-14",
+      prompt: "SUM(total) OVER (ORDER BY created_at) runs on the pacing board; two jobs share the same created_at stamp (2024-01-02 does on this ledger). What does the running fold do at that point?",
+      choices: ["Adds the twins one row at a time — each row gets its own increment", "Jumps by both jobs' combined total — the default RANGE frame treats equal keys as peers", "Errors — the window ORDER BY key must be unique", "Returns NULL for the second twin"],
+      answer: 1,
+      why: "With ORDER BY and no frame clause, the default frame is RANGE UNBOUNDED PRECEDING TO CURRENT ROW — and RANGE includes PEERS: both rows at the same stamp receive the same running total, jumped by the pair's combined fare. The chart looks like a double-count; it is the frame doing exactly what the default says.",
+      notes: [
+        { choice: 0, why: "That is ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW — one row at a time. Write the frame explicitly when the pacing read needs row-granular steps." },
+        { choice: 2, why: "Duplicate ORDER BY keys are legal — ties are exactly what RANGE frames were built to absorb." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "yassir-mcq-15",
+      prompt: "A month-close stack unions the state arms with a banner arm, and two arms coincidentally emit identical rows. What changes if the analyst ships UNION instead of UNION ALL?",
+      choices: ["Nothing — both keep duplicates", "UNION dedupes — the coincidental row collapses and the board silently loses a line", "UNION errors on duplicate rows", "UNION keeps both but marks the second"],
+      answer: 1,
+      why: "UNION is UNION ALL plus an implicit DISTINCT: identical rows collapse into one, so a legitimate business event disappears with no error to catch it. UNION ALL keeps every row — the house stacks use it for exactly this reason, and because the dedupe pass costs a sort on every refresh.",
+      notes: [
+        { choice: 0, why: "That distinction is the whole trap — UNION collapses duplicates, and on a stack the collapse looks like data, not like a bug." },
+        { choice: 2, why: "Duplicate rows are perfectly legal input — the engine just removes the copies, which is worse than an error." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "yassir-mcq-16",
+      prompt: "WHERE total > (SELECT total FROM orders WHERE status = 'pending') — the awaiting queue holds 14 rows. What does SQLite do?",
+      choices: ["Errors — a scalar subquery must return exactly one row", "Compares against the MAX of the 14 fares", "Silently compares against ONE row the scan serves — 23 jobs clear 576.54 today, and a different plan reshuffles the cut", "Compares against the average of the 14"],
+      answer: 2,
+      why: "SQLite does not raise the multi-row error other engines do: the scalar subquery quietly evaluates to one row — whichever the scan serves first, no ORDER BY, no guarantee. On this book the cut lands on 576.54 and 23 jobs clear it; a different plan picks a different pending fare and the 'premium job list' rewrites itself.",
+      notes: [
+        { choice: 0, why: "That is Postgres behavior ('more than one row returned by a subquery used as an expression') — the portability argument for writing the aggregate deliberately. SQLite just shrugs." },
+        { choice: 1, why: "MAX would be a defensible read — and it is not what happens. Nothing aggregates; the engine takes one arbitrary row." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "yassir-mcq-17",
+      prompt: "An analyst computes SUBSTR(close, 1, 7) - SUBSTR(posted, 1, 7) — '2025-02' minus '2024-12' — to get the month gap on the wallet ladder. What comes back?",
+      choices: ["2 — the month parts subtract", "1 — SQLite coerces each string to its leading number, so the years subtract and the months vanish", "An error — strings cannot subtract", "NULL — one operand is text"],
+      answer: 1,
+      why: "'2025-02' casts to 2025 and '2024-12' to 2024 — the numeric prefix is all SQLite keeps — so the 'month gap' returns 1: a year gap wearing a month costume. Real month gaps need the calendar in the math: a julianday delta divided out, or DATE(posted, '+1 month') steps on a date spine.",
+      notes: [
+        { choice: 0, why: "The '-02' and '-12' never enter the arithmetic — the cast stops at the first non-numeric character. The bug hides because small gaps look accidentally right." },
+        { choice: 2, why: "SQLite is happy to subtract text by casting — that is the trap. It runs, returns a number, and the number is wrong." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "yassir-mcq-18",
+      prompt: "The collection review: invoices with status 'open' total 19,609 on 6 invoices; the no-payment anti-join reads 15,217 on 6 invoices. Why don't the two 6s agree?",
+      choices: ["They must — one probe is stale", "The sets differ: 'open' includes the partially-paid #25 (4,000 of 6,148 already collected); the no-payment set instead carries #28 (1,756) — a 'paid' stamp with zero payment rows — and drops #25", "The anti-join double-counts void invoices", "Rounding drift — cents vs dollars"],
+      answer: 1,
+      why: "Two honest reads of two different definitions. 'Open' is a status fold: 5 no-payment invoices plus the partial #25 (6,148 billed, 4,000 already in) = 19,609. The anti-join is a rows fold: every invoice with zero payment rows — 5 open + #28 = 15,217. The 4,392 gap is exactly 6,148 − 1,756. Both numbers are true; neither is 'the' exposure until the desk names its denominator.",
+      notes: [
+        { choice: 2, why: "No double-counting: #11 (void-but-paid, 925) sits in NEITHER set — it has a payment row and a void status, which is why the payment-rows fold (69,612 moved) is the third read the desk runs." },
+        { choice: 3, why: "Every figure here is whole dollars off the same INTEGER-cents book — the drift is set membership, not units." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "yassir-mcq-19",
+      prompt: "LAG(volume) OVER (ORDER BY month) runs on the cluster pacing board without PARTITION BY. What contaminates the chain?",
+      choices: ["Nothing — LAG is always per-cluster", "Each cluster's first month borrows the previous cluster's last month — the chain leaks across the partition boundary", "Only the board's first row gets a value instead of NULL", "LAG errors without a partition"],
+      answer: 1,
+      why: "Without PARTITION BY the window is one chain over the whole result: APAC's January inherits EU's December — a step no cluster ever took. PARTITION BY region restarts the chain and hands each cluster's first month the honest NULL. On a 4-cluster board, three first-month steps are fiction until the partition is declared.",
+      notes: [
+        { choice: 0, why: "LAG's default partition is the ENTIRE result set — the partition clause is what scopes it. Forgetting it is the most common pacing-board bug this team screens for." },
+        { choice: 2, why: "Unpartitioned, only the very first row overall gets NULL — every other boundary month gets a borrowed, wrong step." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "yassir-mcq-20",
+      prompt: "An analyst writes SELECT status FROM orders WHERE COUNT(*) >= 14 to keep job states above the material floor. What happens?",
+      choices: ["It runs and filters per state", "It errors — aggregates are illegal in WHERE; the floor belongs in HAVING, which fires after grouping", "It returns the 14 biggest rows", "It silently treats COUNT(*) as a column count"],
+      answer: 1,
+      why: "WHERE evaluates per ROW, before any grouping exists — COUNT(*) has no meaning there and SQLite raises 'misuse of aggregate function COUNT()'. The floor is a property of the GROUP, so it lives in HAVING: GROUP BY status HAVING COUNT(*) >= 14 keeps delivered (52), shipped (30) and pending (14) — the boundary state exactly surviving.",
+      notes: [
+        { choice: 2, why: "LIMIT 14 would take ROWS — a different lever entirely, sliced in whatever order the plan chose. Floors on folds are HAVING's job." },
+        { choice: 3, why: "No silent fallback here — SQLite catches this one at parse time, which is why the bug never ships: it simply never runs." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "yassir-mcq-21",
+      prompt: "The desk wants every invoice on the book that has NO payment row. Which set operation answers it?",
+      choices: ["UNION", "INTERSECT", "EXCEPT — book ids minus payment-covered ids", "UNION ALL"],
+      answer: 2,
+      why: "EXCEPT keeps rows of the first set that never appear in the second: SELECT id FROM invoices EXCEPT SELECT invoice_id FROM payments — the 6-invoice, 15,217 hole. It is the set-op spelling of the anti-join the house more often writes as LEFT JOIN … WHERE right.id IS NULL.",
+      notes: [
+        { choice: 1, why: "INTERSECT is the opposite cut — invoices WITH payments (22 of them, #25's partial included). Useful for the funded side, useless for the hole." },
+        { choice: 0, why: "UNION merges sets — it can never subtract. A merged set answers 'who exists', not 'who is missing'." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "yassir-mcq-22",
+      prompt: "SELECT SUM(total) FROM orders WHERE status = 'refunded' — no refunded jobs exist on this ledger. What does the cell hold?",
+      choices: ["0 — empty sums are zero", "NULL — SUM over an empty set yields no value", "An error — the status doesn't exist", "An empty string"],
+      answer: 1,
+      why: "An aggregate over zero rows is NULL, not 0 — and that NULL walks into every expression downstream: ROUND(NULL, 2) is NULL, the funnel cell prints blank, 100.0 * NULL / 103 is NULL. If the board needs a zero, the policy is explicit: COALESCE(SUM(total), 0).",
+      notes: [
+        { choice: 0, why: "0 and NULL differ in every downstream fold — AVG skips the NULL row entirely while a 0 drags it down. Zero-filling is a decision, never a default." },
+        { choice: 2, why: "The status simply matches nothing — a missing VALUE is not a missing COLUMN. The query runs and returns one row of NULL." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "yassir-mcq-23",
+      prompt: "Driver supply hours fold as julianday(close) - julianday(posted); 21 of 103 jobs are unstamped (close IS NULL). Why does the desk refuse IFNULL(lag, 0)?",
+      choices: ["Because NULLs error inside julianday", "Because zero-fill fakes supply: 21 phantom zero-hour jobs drag the 2.98-day average toward 0 and celebrate a latency win that never happened — unstamped rows are excluded (or stamped with the batch clock), never zeroed", "Because IFNULL is slower than a WHERE filter", "Because julianday returns hours, not days"],
+      answer: 1,
+      why: "A NULL close stamp means 'no measurement', not 'zero hours'. Zero-filling manufactures 21 perfectly punctual jobs: the average collapses below the honest 2.98 and the ops review congratulates itself on phantom speed. Excluding (the 82-row average) or stamping with the batch clock are the only defensible policies.",
+      notes: [
+        { choice: 0, why: "julianday(NULL) is NULL — it never errors. The danger is downstream folds silently skipping it, which is precisely the behavior the zero-fill was 'fixing'." },
+        { choice: 3, why: "julianday returns fractional DAYS — 2.98 is days. Unit confusion is real but separate; IFNULL(lag, 0) is a policy bug, not a unit bug." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "yassir-mcq-24",
+      prompt: "(SELECT AVG(oi2.quantity) FROM order_items oi2 WHERE oi2.product_id = oi.product_id) sits inside the outer order_items query. What makes it CORRELATED?",
+      choices: ["It uses AVG", "The inner WHERE references the outer row's alias (oi.product_id) — the inner scan runs once per outer row", "It sits in the SELECT list", "It aggregates over the same table"],
+      answer: 1,
+      why: "Correlation is the reference, not the aggregate: the subquery reads the outer query's current row, so it re-runs per row — per-tier averages computed tier by tier. Drop the outer reference and it becomes a one-shot scalar over all 251 legs. On leg grain that is 251 inner scans — the shape the planner flags first.",
+      notes: [
+        { choice: 0, why: "AVG is incidental — a correlated subquery can return any scalar, and an uncorrelated one can aggregate. The linkage is the outer alias." },
+        { choice: 2, why: "Position doesn't correlate — the same subquery in WHERE with an outer reference is equally correlated. What matters is which rows the inner query can see." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "yassir-mcq-25",
+      prompt: "A rolling-7 read orders rows by booking date and writes ROWS BETWEEN 6 PRECEDING AND CURRENT ROW. One day carries 3 bookings. What went wrong?",
+      choices: ["Nothing — 7 rows is 7 days", "The window is 7 ROWS but fewer than 7 calendar days — the triple-booking day crowds two days out of the frame; the honest rolling week anchors on the calendar (a join on booking_date >= booking_date - 6, or a pre-built date spine)", "ROWS frames error on duplicate dates", "The window grows to 9 days"],
+      answer: 1,
+      why: "ROWS counts rows, not days: a 3-booking day consumes 3 of the 7 slots, so the 'rolling 7' spans 5 calendar days and the weekly read undercounts demand on the busiest days — precisely the days the surge desk cares about. Calendar-honest rolling windows anchor on dates, not row positions.",
+      notes: [
+        { choice: 0, why: "7 rows ≠ 7 days the moment a day repeats — the frame's unit is the trap, and it only bites when volume is uneven, i.e. always." },
+        { choice: 2, why: "Duplicate dates are legal in ROWS frames — they are just treated as separate rows, which is exactly the bug." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "yassir-mcq-26",
+      prompt: "The wallet funnel stack unions three arms (registered → attempted → funded). The analyst puts ORDER BY inside the FIRST arm. What happens?",
+      choices: ["It orders just the first arm", "It errors — in a compound, ORDER BY is legal once, at the tail, where it governs the whole stack", "It orders the entire stack", "It is ignored"],
+      answer: 1,
+      why: "SQLite raises 'ORDER BY clause should come after UNION ALL not before' — a compound is ONE statement with ONE sort, applied after the arms merge. The tail ORDER BY sorts the full stack: arm key first, then step, if the funnel must read top-down.",
+      notes: [
+        { choice: 0, why: "Even in engines that tolerate a mid-compound ORDER BY, it never means 'sort only this arm' — and SQLite does not tolerate it at all." },
+        { choice: 2, why: "A tail ORDER BY does order everything — but it cannot be placed mid-stack, and pretending the first arm has its own sort is how the error appears." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "yassir-mcq-27",
+      prompt: "The close stamp lands at 23:59:30 on the batch clock. What does julianday(close) - julianday(posted) preserve that DATE(close) - DATE(posted) destroys?",
+      choices: ["Nothing — both give whole days", "The fractional day: julianday keeps the 0.999 of the stamp — the 2.98-day average on this ledger is fractional — while DATE() truncates to midnight and biases same-day closes toward 0 or 1", "julianday returns seconds", "DATE() is the more precise of the two"],
+      answer: 1,
+      why: "julianday is a real number of days — 2.98 averages only because fractions survive. DATE() floors each stamp to its calendar day, so a 23:59 close reads a full day earlier and the 2..4 range quietly becomes 1..3 — same rows, different metric. Latency KPIs stay on julianday; DATE is for bucketing, not measuring.",
+      notes: [
+        { choice: 0, why: "If both gave whole days the average would be an integer — the .98 in 2.98 is the fingerprint of fractional days." },
+        { choice: 3, why: "DATE has no time at all — it is the coarser of the two. Precision here means keeping the fraction, which is julianday's whole point." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "yassir-mcq-28",
+      prompt: "The unpaid-invoices report ships as WHERE id NOT IN (SELECT invoice_id FROM payments). payments.invoice_id is NOT NULL today and the report returns the true 6. Which future schema drift silently zeroes it?",
+      choices: ["Adding more payments", "One row slipping in with invoice_id NULL — NOT IN against a set containing NULL yields UNKNOWN for every row, and the report returns 0 with no error", "Renaming the column", "Adding an index on invoice_id"],
+      answer: 1,
+      why: "x NOT IN (…, NULL) can never be TRUE: the comparison is UNKNOWN whenever the set holds NULL, so every invoice fails the filter — the 15,217 hole vanishes and the cash review reads clean. That is why the house anti-join is LEFT JOIN … IS NULL (or NOT EXISTS, which is NULL-safe): the report must survive schema drift, not just today's constraints.",
+      notes: [
+        { choice: 0, why: "More payments shrink the hole honestly — the report still returns whatever remains. Only NULL poisons the operator itself." },
+        { choice: 2, why: "A rename breaks loudly — 'no such column'. The NULL drift is dangerous precisely because it fails silently, returning a plausible empty report." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "yassir-mcq-29",
+      prompt: "The status fold reads 66,443 collected (21 'paid' invoices); the payment-rows fold reads 69,612 moved. Which row makes the status fold LIE about collected cash?",
+      choices: ["#28 — stamped 'paid' with zero payment rows behind it (1,756 of phantom cash)", "#11 — stamped 'void' with a 925 payment that did move", "#25 — the partial (4,000 of 6,148)", "The card-vs-wire split"],
+      answer: 0,
+      why: "'Paid' is a label; the payment row is the event. #28 contributes 1,756 to the status fold and nothing to cash — phantom collections. #11 (925 on void) understates the fold, and #25's 4,000 sits in 'open': the full walk from 66,443 to 69,612 is −1,756 + 925 + 4,000 = +3,169, and each term is a different policy question.",
+      notes: [
+        { choice: 1, why: "#11 moves the fold the other way — real cash the status hides. Both anomalies matter; only #28 inflates 'collected'." },
+        { choice: 2, why: "#25's 4,000 is collected but its invoice is 'open' — it belongs to the cash fold and the open-book read, not to the 'paid' fold." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "yassir-mcq-30",
+      prompt: "ROUND(AVG(SUM(o.total)) OVER (PARTITION BY c.region), 2) with GROUP BY c.region, o.status — what does the cell compute?",
+      choices: ["The average fare per job in the region", "The average of the per-status revenue sums within the region — the window folds the GROUP's rows after grouping", "An error — aggregates cannot nest inside windows", "The region's total revenue"],
+      answer: 1,
+      why: "Windows run after GROUP BY: each region's rows are the per-status sums (APAC's four status sums total 11,605.45), and AVG over them reads 2,901.36 — a fold of folds, useful for 'how lopsided is this region's mix', and nothing like the per-job fare. Nesting is legal; the grain surprise is the interview.",
+      notes: [
+        { choice: 0, why: "Per-job fare would be AVG(o.total) — one fold, job grain. The nested form has already collapsed jobs to status sums before the window sees them." },
+        { choice: 2, why: "Nesting an aggregate inside a window is exactly how staged folds are written — SUM(SUM(x)) OVER () is the grand-total idiom." },
+      ],
+      difficulty: "hard",
+    },
   ],
 
   cases: [
@@ -366,6 +743,153 @@ export const yassirKit: CompanyKit = {
       walkthrough:
         "Two LEFT JOINs, one fold, a proof column. suppliers LEFT JOIN products ON p.supplier_id = s.id attaches each cohort's service tiers; the second LEFT JOIN attaches job legs ON oi.product_id = p.id; COUNT(oi.id) counts legs — 0 when a cohort has none, which is why the LEFT arms exist — and SUM(oi.unit_price * oi.quantity) folds earnings to 11,130.25 / 9,294.93 / 4,765.63 / 3,613.25 / 3,049.07 / 2,980.15, biggest first. The liveness proof the desk runs: 43 + 56 + 40 + 25 + 47 + 40 = 251 legs — every cohort is live, and the second cohort's 56 legs at 9,294.93 (cheaper legs than the leader's 43 at 11,130.25) is the legs-versus-earnings split the vertical review argues about. The distractors each break differently: oi.unit_price drops the quantity multiplier and shorts every multi-leg job; p.id mis-assigns tiers to cohorts on coincidental ids; oi.order_id = p.id re-homes legs across id domains — cohorts paid for jobs they never served; oi.product_id = s.id joins legs straight to supplier ids, colliding two id spaces and scrambling both counts. The deeper habit: a payout fold is a chain of keys — cohort, tier, leg — and each key is a contract; one wrong column and the money moves to whoever the typo favors.",
     },
+    {
+      id: "cs-yassir-3",
+      tier: "easy",
+      topic: "t5",
+      universe: "catalog",
+      title: "The vertical crown ranking",
+      brief:
+        "The monthly vertical review ranks Yassir's service families by fare revenue booked through the job legs, and the GM wants a crown column computed in the same query as the fold — a dense rank that never skips a rung. Probed: Audio 11,744.01 on 46 distinct jobs, Wearables 6,929.12 on 23, Video 5,198.41 on 30, Electronics 4,818.61 on 40, Accessories 3,294.29 on 54. The board carries a 23-job materiality floor, so a family stays on the ladder only with 23 or more distinct jobs — Apparel (22) and Fitness (13) drop under it.",
+      ask: "Return every vertical above the job floor with its job count, revenue and a dense crown rank, crowns ascending.",
+      template:
+        "SELECT p.category AS vertical,\n       COUNT(DISTINCT oi.order_id) AS jobs,\n       ROUND(SUM(oi.unit_price * oi.quantity), 2) AS revenue,\n       DENSE_RANK() OVER (ORDER BY SUM(oi.unit_price * oi.quantity) {1}) AS crown\nFROM order_items oi\nJOIN products p ON p.id = {2}\nGROUP BY p.category\nHAVING COUNT(DISTINCT oi.order_id) >= {3}\nORDER BY crown;",
+      slots: [
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the crown direction",
+          why: "Crowns run biggest revenue first — DESC makes Audio's 11,744.01 rung 1. ASC crowns Fitness (863.91) and the review reads the ladder upside down, bottom family first.",
+        },
+        {
+          answer: "oi.product_id",
+          kind: "keyword",
+          label: "the leg-to-tier key",
+          why: "Legs attach to tiers on order_items.product_id = products.id. oi.order_id lives in the job-id domain (1..103 against 1..16) — the collision joins a few legs by accident and every vertical's fold lands on the wrong families.",
+        },
+        {
+          answer: "23",
+          kind: "number",
+          label: "the materiality floor",
+          why: "The board keeps verticals with 23+ distinct jobs: Wearables' own count is 23, so the boundary family exactly survives. 22 re-admits Apparel (22 jobs, 1,984.93); 30 deletes Wearables and the crown list loses its #2 rung.",
+        },
+      ],
+      distractors: ["ASC", "oi.order_id = p.id", "22", "30", "54"],
+      walkthrough:
+        "Rank the fold, then floor it. The join attaches legs to tiers on the real key (oi.product_id = p.id); GROUP BY category folds fare value as SUM(unit_price × quantity) and counts DISTINCT jobs per family, while HAVING COUNT(DISTINCT oi.order_id) >= 23 applies the materiality floor — Wearables' own 23 exactly survives, and Apparel (22) and Fitness (13) drop. The window runs after grouping: DENSE_RANK() OVER (ORDER BY revenue DESC) crowns Audio 1 (11,744.01), Wearables 2 (6,929.12), Video 3 (5,198.41), Electronics 4 (4,818.61), Accessories 5 (3,294.29) — no skipped rungs by design, which is why the board specifies DENSE over RANK. The distractors each break differently: ASC crowns Fitness (863.91) and reads the ladder upside down; oi.order_id = p.id collides the job-id domain (1..103) into tier ids (1..16) and re-homes legs to the wrong families; 22 re-admits Apparel (22 / 1,984.93) below the floor; 30 deletes the #2 crown from the board; 54 keeps only the busiest family (Accessories' own 54 exactly surviving its own floor). The deeper habit: a ranked fold is three layers — fold, floor, rank — and each layer fails silently on its own.",
+    },
+    {
+      id: "cs-yassir-4",
+      tier: "medium",
+      topic: "t7",
+      universe: "month-close",
+      title: "The spliced pacing chain",
+      brief:
+        "The city-close deck reads month-over-month pacing on the job ledger, but the board only carries months with at least 8 posted jobs — the expansion floor. Probed: 2024-01 8 jobs / 3,731.97, 2024-02 9 / 3,609.64, 2024-03 8 / 2,617.08, 2024-05 8 / 2,910.31, 2024-07 8 / 1,193.86 (the July trough, both of that month's cancellations inside it), 2024-09 9 / 3,116.04. The step column is volume minus the previous CARRIED month — and because the floor filters BEFORE the window runs, the chain splices: May's step rides on March, not April, and the deck must footnote it or it lies.",
+      ask: "Return the board months with jobs, volume, the previous carried month's volume and the step — calendar order.",
+      template:
+        "WITH monthly AS (\n  SELECT SUBSTR(created_at, 1, 7) AS month,\n         COUNT(*) AS jobs,\n         ROUND(SUM(total), 2) AS volume\n  FROM orders\n  GROUP BY SUBSTR(created_at, 1, 7)\n  HAVING COUNT(*) >= {1}\n), chained AS (\n  SELECT month,\n         jobs,\n         volume,\n         LAG(volume) OVER (ORDER BY {2}) AS prev_read\n  FROM monthly\n)\nSELECT month,\n       jobs,\n       volume,\n       prev_read,\n       ROUND({3}, 2) AS step\nFROM chained\nORDER BY month;",
+      slots: [
+        {
+          answer: "8",
+          kind: "number",
+          label: "the expansion floor",
+          why: "Months survive with 8+ posted jobs: six months make the board (8, 9, 8, 8, 8, 9). 9 keeps only the two 9-job months and the chain collapses to a single step; 14 empties the board — no month ever posted 14.",
+        },
+        {
+          answer: "month",
+          kind: "keyword",
+          label: "the chain order",
+          why: "The LAG chain must walk the calendar: OVER (ORDER BY month). Ordering by jobs scrambles the chain into workload order and every 'previous month' becomes a different month; ordering by volume rewrites the pacing story around the July trough.",
+        },
+        {
+          answer: "volume - prev_read",
+          kind: "keyword",
+          label: "the step fold",
+          why: "Step = this month's volume minus the previous CARRIED month: 3,609.64 − 3,731.97 = −122.33 into February, −992.56 into March. prev_read − volume flips every sign and the deck reads recovery as decline.",
+        },
+      ],
+      distractors: ["DESC", "jobs", "volume", "shipped_at", "prev_read - volume"],
+      walkthrough:
+        "Two stages: fold the months, then chain them. Stage one buckets SUBSTR(created_at, 1, 7) and folds jobs and volume; HAVING COUNT(*) >= 8 keeps 2024-01 (8 / 3,731.97), 2024-02 (9 / 3,609.64), 2024-03 (8 / 2,617.08), 2024-05 (8 / 2,910.31), 2024-07 (8 / 1,193.86) and 2024-09 (9 / 3,116.04) — April, June, August and October-through-February drop under the floor. Stage two walks the calendar: LAG(volume) OVER (ORDER BY month) hands each month the previous CARRIED month, so the chain splices — May's prev is March (step +293.23), July's prev is May (step −1,716.45), September's prev is July (step +1,922.18). That splice is the story: the floor edits the population BEFORE the window, so every step quietly compares non-adjacent months — the honest deck says so in a footnote, or it sells fiction. The distractors each break differently: DESC walks the chain backwards so March's prev is May; jobs orders the chain by workload and every prev becomes a different month; volume chains around the trough; shipped_at is not a column of the fold and dies; prev_read − volume flips every sign — February reads +122.33 recovery on a 122.33 decline. The deeper habit: filter-then-window is a contract about WHICH rows the chain walks, and the floor is the party that breaks it.",
+    },
+    {
+      id: "cs-yassir-5",
+      tier: "medium",
+      topic: "s6",
+      universe: "funnel",
+      title: "The cancel-share census",
+      brief:
+        "Yassir's cash-on-delivery legs make every cancellation a collection risk, so the weekly city review folds cancellation share per cluster in one pass. Probed: APAC 37 posted / 3 cancelled / 8.1%, EU 45 / 3 / 6.7%, US 19 / 1 / 5.3%. LATAM's two jobs sit below the 19-job sample floor — a 0.0% share on 2 jobs is noise wearing a KPI costume, and the floor keeps it off the board. The share multiplies by 100.0 BEFORE the division, and the cancelled arm is CASE-counted in the same scan as the placed fold.",
+      ask: "Return each cluster above the sample floor with posted, cancelled and cancel_pct, riskiest cluster first.",
+      template:
+        "SELECT c.region AS cluster,\n       COUNT(*) AS placed,\n       SUM(CASE WHEN o.status = 'cancelled' THEN 1 ELSE 0 END) AS cancelled,\n       ROUND(100.0 * SUM(CASE WHEN o.status = 'cancelled' THEN 1 ELSE 0 END) / COUNT(*), 1) AS cancel_pct\nFROM orders o\nJOIN customers c ON c.id = {1}\nGROUP BY c.region\nHAVING COUNT(*) >= {2}\nORDER BY cancel_pct {3};",
+      slots: [
+        {
+          answer: "o.customer_id",
+          kind: "keyword",
+          label: "the job-to-rider key",
+          why: "Jobs attach to clusters via orders.customer_id = customers.id. c.id = c.id is a tautology — every job pairs with all 16 riders and every fold multiplies by 16 (APAC would read 592 posted).",
+        },
+        {
+          answer: "19",
+          kind: "number",
+          label: "the sample floor",
+          why: "Clusters stay on the board with 19+ posted jobs: US's own count is 19 — the boundary cluster exactly survives. 2 re-admits LATAM's two-job 0.0%; 37 drops US and the board loses its third data point.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the risk direction",
+          why: "Riskiest cluster first: APAC 8.1%, EU 6.7%, US 5.3%. ASC buries the collection risk at the bottom of the CSV and the review reads it last, after the meeting has moved on.",
+        },
+      ],
+      distractors: ["c.city", "2", "37", "ASC", "placed"],
+      walkthrough:
+        "One scan, three folds, a floor. The join keys jobs to riders on orders.customer_id; GROUP BY region folds placed = COUNT(*), cancelled = the CASE arm (APAC 3, EU 3, US 1) and cancel_pct = 100.0 × cancelled / placed — the 100.0 sits before the division so the share stays real arithmetic (8.1, 6.7, 5.3 instead of a truncating 8, 6, 5). HAVING COUNT(*) >= 19 applies the sample floor: US's own 19 exactly survives, LATAM's 2-job 0.0% stays off — a share with no denominator is not a share. The reconciliation: 37 + 45 + 19 = 101 of 103 posted; LATAM's 2 jobs are the excluded tail. ORDER BY cancel_pct DESC hands the review its riskiest-first read. The distractors each break differently: c.city joins an INTEGER id to TEXT city names — the join empties and the board goes blank; 2 re-admits LATAM and prints a 0.0% KPI on 2 jobs; 37 deletes the US boundary cluster; ASC buries APAC's 8.1% risk at the bottom; placed orders by job volume so EU (45) leads and the risk read inverts. The deeper habit: a share census is denominator discipline — floor the sample, keep the multiplication before the division, and CASE-count in the same scan instead of shipping three queries.",
+    },
+    {
+      id: "cs-yassir-6",
+      tier: "hard",
+      topic: "q2",
+      universe: "growth",
+      title: "The 3,000 concentration board",
+      brief:
+        "Finance's expansion memo hangs on rider concentration: of the 34,833.28 book, riders with lifetime spend at or above 3,000 carry 63.5%. The board wants those riders with job counts, lifetime spend and share of the WHOLE book — the share computed against a scalar subquery over all posted jobs, not the folded subset, so the denominators cannot drift. Probed: Alice Chen 24 jobs / 7,262.35, Emma Wilson 17 / 6,640.56, Grace Kim 14 / 4,574.23, Maya Patel 13 / 3,644.56 — 22,121.70 of the book between four riders.",
+      ask: "Return riders at or above the 3,000 lifetime floor with jobs, lifetime and share of the full book, biggest spend first.",
+      template:
+        "SELECT c.name AS rider,\n       COUNT(*) AS jobs,\n       ROUND(SUM(o.total), 2) AS lifetime,\n       ROUND(100.0 * SUM(o.total) / (SELECT {1}), 1) AS share\nFROM orders o\nJOIN customers c ON c.id = {2}\nGROUP BY c.id\nHAVING SUM(o.total) >= {3}\nORDER BY lifetime {4};",
+      slots: [
+        {
+          answer: "SUM(total) FROM orders",
+          kind: "keyword",
+          label: "the whole-book scalar",
+          why: "The share's denominator is the FULL 34,833.28 book — a scalar subquery over orders, evaluated once. SUM over the grouped subset would make every rider 100.0 and the concentration read vanish.",
+        },
+        {
+          answer: "o.customer_id",
+          kind: "keyword",
+          label: "the spend-to-rider key",
+          why: "Jobs attach to riders on orders.customer_id = customers.id. c.id = c.id pairs every job with all 16 riders — each rider's lifetime reads the whole 34,833.28 and the floor admits everyone.",
+        },
+        {
+          answer: "3000",
+          kind: "number",
+          noVerify: true,
+          label: "the lifetime floor",
+          why: "Finance's concentration threshold: riders at or above 3,000 lifetime. 2000 re-admits Chloe Dubois (2,667.93) and the board reads 71.2% — a different, honest concentration number for a different definition.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the spend order",
+          why: "Biggest spend first: Alice 7,262.35, Emma 6,640.56, Grace 4,574.23, Maya 3,644.56. ASC leads with Maya and the memo's headline rider lands at the bottom of the page.",
+        },
+      ],
+      distractors: ["SUM(amount_cents) FROM invoices", "COUNT(*) FROM orders", "c.id", "2000", "ASC"],
+      walkthrough:
+        "Concentration is a denominator story. The inner scalar — SELECT SUM(total) FROM orders — evaluates ONCE to 34,833.28, the whole book, and sits under the 100.0-multiplication so share stays real arithmetic. The join keys jobs to riders on orders.customer_id; GROUP BY c.id folds each rider's jobs and lifetime; HAVING SUM(o.total) >= 3000 keeps Alice Chen (24 jobs, 7,262.35, 20.8%), Emma Wilson (17, 6,640.56, 19.1%), Grace Kim (14, 4,574.23, 13.1%) and Maya Patel (13, 3,644.56, 10.5%) — 22,121.70 of book, the 63.5% concentration the memo quotes. ORDER BY lifetime DESC hands the memo its headline order. The distractors each break differently: SUM(amount_cents) FROM invoices swaps books — 8,697,700 under the same numerator crushes every share to 0.1; COUNT(*) FROM orders divides money by a job count (Alice 'owns' 7,050.8% of nothing); c.id = c.id pairs every job with all 16 riders so each lifetime reads 34,833.28 and the floor admits everyone; 2000 is a different honest definition — 71.2% over five riders; ASC buries Alice. The deeper habit: a scalar subquery is a denominator contract — write it once, above the fold, and every share on the board inherits the same truth.",
+    },
   ],
 
   problems: [
@@ -385,5 +909,21 @@ export const yassirKit: CompanyKit = {
     { slug: "bank-account-summary-ii", why: "Credit and debit folds per account with NULL-safe sums — the wallet-ledger shape behind every settlement read." },
     { slug: "product-sales-analysis-ii", why: "Tier-line folds: fare volume per service tier across all jobs — the vertical-crown read the GMs quote from the same GROUP BY." },
     { slug: "most-frequently-ordered-product-per-customer", why: "Argmax per customer — the most-booked tier per rider, the one-row-per-customer shape every vertical GM asks for." },
+    { slug: "immediate-food-delivery-i", why: "Instant vs scheduled split with a CASE fold — the delivery vertical's promise-mode mix the ops review quotes per city." },
+    { slug: "immediate-food-delivery-ii", why: "Share of jobs closed on the customer's preferred day, staged through a CTE — the delivery promise-kept rate behind the NPS read." },
+    { slug: "customer-who-visited-but-did-not-transact", why: "App opens that never became a booking — the demand-leak census the growth squad runs against the visit ledger every Monday." },
+    { slug: "friend-requests-i-overall-acceptance-rate", why: "Overall acceptance rate with honest denominators and the 100.0-before-division fix — ride-acceptance math in textbook clothing." },
+    { slug: "dau-wau-stickiness", why: "DAU over WAU per rider base — the super-app stickiness read that decides whether delivery is feeding rides or cannibalizing them." },
+    { slug: "rolling-7d-actives", why: "Rolling 7-day actives per rider — the engagement pacing curve the city GMs watch while a new cluster ramps." },
+    { slug: "find-golden-hour-customers", why: "Riders whose bookings cluster in the peak window — the surge-prep list the supply desk staffs drivers against." },
+    { slug: "user-purchase-platform", why: "Per-rider split across surfaces — which surface each booking rode on, the cross-vertical attribution question a super-app cannot dodge." },
+    { slug: "keep-latest-dedupe", why: "ROW_NUMBER keep-latest on tied records — the driver-document dedupe that must run before every payout batch." },
+    { slug: "second-most-recent-activity", why: "Second-most-recent job per rider — recency beyond the last trip, the churn-watchlist shape the engagement team ships." },
+    { slug: "null-blank-audit", why: "NULL/blank audit across key columns — the ledger hygiene gate that must pass before the city month can close." },
+    { slug: "restaurant-growth", why: "7-day rolling average of merchant spend — the restaurant-side trend line the delivery GM quotes in the city review." },
+    { slug: "monthly-transactions-ii", why: "UNION ALL month grain with a TOTAL banner — the wallet-ledger month close, stacked in one statement the CSV ingests." },
+    { slug: "transactions-per-visit-histogram", why: "Zero-filled histogram of bookings per app-open — how deep the funnel runs, including the zero arm no bare GROUP BY prints." },
+    { slug: "funnel-step-conversion", why: "Funnel pivot with FIRST_VALUE — wallet top-up funnel step rates, first-touch to funded, computed in one pass." },
+    { slug: "top-percentile-fraud", why: "Top-percentile screen over payment amounts — the cash-collection risk outliers the risk team pulls before settlement runs." },
   ],
 };
