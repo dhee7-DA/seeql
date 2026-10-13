@@ -1,5 +1,5 @@
-// Company Interview Universe — the registry. 8 domains × 11 companies =
-// the 88-company matrix (40 flagship + 24 wave-5 + 24 wave-6 additions).
+// Company Interview Universe — the registry. 8 domains × 14 companies =
+// the 112-company matrix (40 flagship + 24 wave-5 + 24 wave-6 + 24 wave-7).
 // Kit authoring lands in waves; a company without an authored kit yet shows
 // as "kit in build". Company picks follow interview-report frequency
 // (community-sourced tags on the SQL band) + domain diversity, not personal
@@ -94,6 +94,30 @@ import { santanderKit } from "./kits/santander";
 import { servicenowKit } from "./kits/servicenow";
 import { notionKit } from "./kits/notion";
 import { mongodbKit } from "./kits/mongodb";
+import { zalandoKit } from "./kits/zalando";
+import { chewyKit } from "./kits/chewy";
+import { sephoraKit } from "./kits/sephora";
+import { indriveKit } from "./kits/indrive";
+import { blablacarKit } from "./kits/blablacar";
+import { yassirKit } from "./kits/yassir";
+import { discordKit } from "./kits/discord";
+import { bumbleKit } from "./kits/bumble";
+import { duolingoKit } from "./kits/duolingo";
+import { nubankKit } from "./kits/nubank";
+import { chimeKit } from "./kits/chime";
+import { rampKit } from "./kits/ramp";
+import { woltKit } from "./kits/wolt";
+import { blinkitKit } from "./kits/blinkit";
+import { zeptoKit } from "./kits/zepto";
+import { tripcomKit } from "./kits/tripcom";
+import { hiltonKit } from "./kits/hilton";
+import { trainlineKit } from "./kits/trainline";
+import { ubsKit } from "./kits/ubs";
+import { ingKit } from "./kits/ing";
+import { iciciKit } from "./kits/icici";
+import { dropboxKit } from "./kits/dropbox";
+import { zendeskKit } from "./kits/zendesk";
+import { canvaKit } from "./kits/canva";
 
 /** Display meta for one company slot in the matrix (kit may come later). */
 export interface CompanyMeta {
@@ -108,56 +132,56 @@ export const COMPANY_DOMAINS: CompanyDomain[] = [
     name: "E-commerce & Marketplace",
     blurb:
       "Catalogs, carts, fulfillment and returns at hundred-million-order scale — the richest SQL interview territory there is.",
-    companies: ["amazon", "flipkart", "alibaba", "shopify", "ebay", "walmart", "etsy", "myntra", "target", "wayfair", "temu"],
+    companies: ["amazon", "flipkart", "alibaba", "shopify", "ebay", "walmart", "etsy", "myntra", "target", "wayfair", "temu", "zalando", "chewy", "sephora"],
   },
   {
     id: "mobility",
     name: "Ride-hailing & Mobility",
     blurb:
       "Trips, drivers, surge windows and ETA math — two-sided marketplaces where every row has a timestamp and a geography.",
-    companies: ["uber", "lyft", "ola", "bolt", "grab", "didi", "careem", "lime", "gett", "freenow", "via"],
+    companies: ["uber", "lyft", "ola", "bolt", "grab", "didi", "careem", "lime", "gett", "freenow", "via", "indrive", "blablacar", "yassir"],
   },
   {
     id: "media",
     name: "Streaming & Social",
     blurb:
       "Watch time, feeds, engagement streaks and content funnels — the home of session-level window-function questions.",
-    companies: ["netflix", "spotify", "youtube", "meta", "tiktok", "reddit", "pinterest", "linkedin", "twitch", "snapchat", "twitter"],
+    companies: ["netflix", "spotify", "youtube", "meta", "tiktok", "reddit", "pinterest", "linkedin", "twitch", "snapchat", "twitter", "discord", "bumble", "duolingo"],
   },
   {
     id: "fintech",
     name: "Fintech & Payments",
     blurb:
       "Ledgers, authorizations, settlement and fraud — money movement where correctness outranks cleverness.",
-    companies: ["stripe", "paypal", "visa", "revolut", "block", "adyen", "wise", "robinhood", "klarna", "coinbase", "plaid"],
+    companies: ["stripe", "paypal", "visa", "revolut", "block", "adyen", "wise", "robinhood", "klarna", "coinbase", "plaid", "nubank", "chime", "ramp"],
   },
   {
     id: "food",
     name: "Food & Quick-commerce",
     blurb:
       "Orders, couriers, delivery SLAs and dark stores — sub-30-minute logistics squeezed through GROUP BY.",
-    companies: ["doordash", "swiggy", "zomato", "instacart", "deliveroo", "grubhub", "justeat", "dominos", "starbucks", "mcdonalds", "hellofresh"],
+    companies: ["doordash", "swiggy", "zomato", "instacart", "deliveroo", "grubhub", "justeat", "dominos", "starbucks", "mcdonalds", "hellofresh", "wolt", "blinkit", "zepto"],
   },
   {
     id: "travel",
     name: "Travel & Hospitality",
     blurb:
       "Searches, bookings, cancellations and seasonal occupancy — long funnels with heavy drop-off between steps.",
-    companies: ["airbnb", "booking", "expedia", "oyo", "makemytrip", "agoda", "marriott", "ryanair", "priceline", "trivago", "southwest"],
+    companies: ["airbnb", "booking", "expedia", "oyo", "makemytrip", "agoda", "marriott", "ryanair", "priceline", "trivago", "southwest", "tripcom", "hilton", "trainline"],
   },
   {
     id: "banking",
     name: "Banking & Capital Markets",
     blurb:
       "Accounts, balances, transactions and regulatory counts — the traditional finance screen, precise and unforgiving.",
-    companies: ["goldman", "jpmorgan", "capitalone", "wellsfargo", "hsbc", "amex", "citi", "barclays", "bofa", "morganstanley", "santander"],
+    companies: ["goldman", "jpmorgan", "capitalone", "wellsfargo", "hsbc", "amex", "citi", "barclays", "bofa", "morganstanley", "santander", "ubs", "ing", "icici"],
   },
   {
     id: "saas",
     name: "SaaS & Enterprise",
     blurb:
       "Subscriptions, retention cohorts, churn and ARR movements — recurring revenue measured in windows.",
-    companies: ["salesforce", "slack", "zoom", "atlassian", "snowflake", "hubspot", "datadog", "twilio", "servicenow", "notion", "mongodb"],
+    companies: ["salesforce", "slack", "zoom", "atlassian", "snowflake", "hubspot", "datadog", "twilio", "servicenow", "notion", "mongodb", "dropbox", "zendesk", "canva"],
   },
 ];
 
@@ -276,10 +300,43 @@ export const COMPANY_META: Record<string, CompanyMeta> = {
   servicenow: { id: "servicenow", name: "ServiceNow", tagline: "Enterprise workflow platform: ITSM analytics" },
   notion: { id: "notion", name: "Notion", tagline: "Connected workspace: docs, teams, usage" },
   mongodb: { id: "mongodb", name: "MongoDB", tagline: "The database company: Atlas usage and support" },
+
+  // Wave-7 additions — 3 more slots per domain (112-company matrix).
+  zalando: { id: "zalando", name: "Zalando", tagline: "Europe's fashion marketplace: drops, returns, logistics" },
+  chewy: { id: "chewy", name: "Chewy", tagline: "Pet e-commerce: autoship, pharmacy, pet profiles" },
+  sephora: { id: "sephora", name: "Sephora", tagline: "Beauty omnichannel: rewards, bins and baskets" },
+
+  indrive: { id: "indrive", name: "inDrive", tagline: "Fixed-fare ride-hailing: offers, rides, cities" },
+  blablacar: { id: "blablacar", name: "BlaBlaCar", tagline: "Long-distance carpooling: seats, bookings, check-ins" },
+  yassir: { id: "yassir", name: "Yassir", tagline: "MENA super-app: rides, delivery, fintech" },
+
+  discord: { id: "discord", name: "Discord", tagline: "Servers, voice rooms and Nitro subscriptions" },
+  bumble: { id: "bumble", name: "Bumble", tagline: "Women-first dating: swipes, matches, conversations" },
+  duolingo: { id: "duolingo", name: "Duolingo", tagline: "Streaks, lessons and the gamified learning loop" },
+
+  nubank: { id: "nubank", name: "Nubank", tagline: "LatAm neobank: accounts, cards, credit lines" },
+  chime: { id: "chime", name: "Chime", tagline: "Fee-free neobanking: spots, deposits, Credit Builder" },
+  ramp: { id: "ramp", name: "Ramp", tagline: "Corporate cards and spend management" },
+
+  wolt: { id: "wolt", name: "Wolt", tagline: "DoorDash-owned EU delivery: couriers, markets, SKUs" },
+  blinkit: { id: "blinkit", name: "Blinkit", tagline: "India quick-commerce: 10-minute dark stores" },
+  zepto: { id: "zepto", name: "Zepto", tagline: "Quick-commerce at Zepto speed: dark stores and SLAs" },
+
+  tripcom: { id: "tripcom", name: "Trip.com", tagline: "Global OTA: flights, hotels and trains in one funnel" },
+  hilton: { id: "hilton", name: "Hilton", tagline: "Hotels worldwide: properties, stays, Honors loyalty" },
+  trainline: { id: "trainline", name: "Trainline", tagline: "UK/EU rail ticketing: routes, fares, platforms" },
+
+  ubs: { id: "ubs", name: "UBS", tagline: "Global wealth & investment banking, post-CS integration" },
+  ing: { id: "ing", name: "ING", tagline: "Dutch retail bank with a data-first culture" },
+  icici: { id: "icici", name: "ICICI Bank", tagline: "India's private bank: retail, cards, UPI-scale flows" },
+
+  dropbox: { id: "dropbox", name: "Dropbox", tagline: "Storage SaaS: teams, seats and usage" },
+  zendesk: { id: "zendesk", name: "Zendesk", tagline: "Support SaaS: tickets, SLAs, agent workloads" },
+  canva: { id: "canva", name: "Canva", tagline: "Design SaaS: teams, templates and usage" },
 };
 
-/** Authored kits — keyed by company id. ALL 88 slots live: 40 flagship
- *  (batches A–I) + 24 wave-5 + 24 wave-6 additions. */
+/** Authored kits — keyed by company id. ALL 112 slots live: 40 flagship
+ *  (batches A–I) + 24 wave-5 + 24 wave-6 + 24 wave-7 additions. */
 export const COMPANY_KITS: Record<string, CompanyKit> = {
   amazon: amazonKit,
   flipkart: flipkartKit,
@@ -373,6 +430,32 @@ export const COMPANY_KITS: Record<string, CompanyKit> = {
   servicenow: servicenowKit,
   notion: notionKit,
   mongodb: mongodbKit,
+
+  // Wave-7 additions — 3 more per domain, all 8 domains extended to 14 companies.
+  zalando: zalandoKit,
+  chewy: chewyKit,
+  sephora: sephoraKit,
+  indrive: indriveKit,
+  blablacar: blablacarKit,
+  yassir: yassirKit,
+  discord: discordKit,
+  bumble: bumbleKit,
+  duolingo: duolingoKit,
+  nubank: nubankKit,
+  chime: chimeKit,
+  ramp: rampKit,
+  wolt: woltKit,
+  blinkit: blinkitKit,
+  zepto: zeptoKit,
+  tripcom: tripcomKit,
+  hilton: hiltonKit,
+  trainline: trainlineKit,
+  ubs: ubsKit,
+  ing: ingKit,
+  icici: iciciKit,
+  dropbox: dropboxKit,
+  zendesk: zendeskKit,
+  canva: canvaKit,
 };
 
 export const companyKit = (id: string): CompanyKit | undefined => COMPANY_KITS[id];

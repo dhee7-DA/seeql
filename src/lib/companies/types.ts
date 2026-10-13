@@ -1,10 +1,10 @@
 // Company Interview Universe — types. Client-safe.
 //
-// The universe is organized as DOMAINS (industries) × 8 companies
-// each (64-company matrix). Every company carries a KIT: everything that company asks in SQL
+// The universe is organized as DOMAINS (industries) × 14 companies
+// each (112-company matrix). Every company carries a KIT: everything that company asks in SQL
 // interviews, wrapped in the day-to-day business context its data teams
 // actually live in. Kits land domain by domain (see worklog); the registry
-// always lists the full 40-company matrix so the structure is visible
+// always lists the full matrix so the structure is visible
 // before every kit is authored.
 
 import type { Mcq } from "@/lib/curriculum/types";

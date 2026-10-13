@@ -1,7 +1,7 @@
 "use client";
 
 // Company Interview Universe — the interview-prep wall. 8 industry domains ×
-// 5 flagship companies each; every company with a live kit carries the full
+// 14 companies each; every company with a live kit carries the full
 // package: business brief, day-in-the-life, KPI wall, topics-to-master (with
 // practice links into the SQL band), written theory Q&A, MCQs, case studies
 // and a curated problem pool. Kits land domain by domain — companies without
@@ -419,7 +419,7 @@ function UniverseHome({ onOpen }: { onOpen: (domainId: string) => void }) {
           <h2 className="text-base font-bold tracking-tight text-zinc-100">Company Interview Universe</h2>
         </div>
         <p className="mt-2 text-xs leading-relaxed text-zinc-400">
-          Eight industries, eight companies each, and — for every company with a live kit — everything they ask in SQL interviews:
+          Eight industries, fourteen companies each, and — for every company with a live kit — everything they ask in SQL interviews:
           the business brief, a day in their data team, the KPIs they live by, the topics to master, written theory, MCQs, case studies and a
           curated problem pool. {totalKits} of {totalCompanies} kits live so far — new kits land domain by domain.
         </p>
