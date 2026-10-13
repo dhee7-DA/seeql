@@ -27,15 +27,9 @@ const MAX_ENUM_VALUES = 15;
 const TIMELINE_TABLES: Array<{ table: string; dateCol: string; flaggedSql: string }> = [
   {
     table: "orders",
-    dateCol: "order_date",
-    flaggedSql: `status IS NULL OR total_amount IS NULL OR total_amount < 0 OR customer_id IS NULL
+    dateCol: "created_at",
+    flaggedSql: `status IS NULL OR total IS NULL OR total < 0 OR customer_id IS NULL
                  OR NOT EXISTS (SELECT 1 FROM customers c WHERE c.id = customer_id)`,
-  },
-  {
-    table: "reviews",
-    dateCol: "review_date",
-    flaggedSql: `rating IS NULL OR rating NOT BETWEEN 1 AND 5 OR body IS NULL OR body = ''
-                 OR review_date IS NOT NULL AND date(review_date) > date('now')`,
   },
 ];
 

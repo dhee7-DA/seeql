@@ -6246,3 +6246,301 @@ Work Log:
 Stage Summary:
 - ALL 112 kits now at full 3x volume. Case-audit sweep: 112/112 ALL PASS. Probe ALL PASS: 3,025 problems / 2,128 theory / 2,660 MCQs / 532 cases (was 2,641/1,744/2,180/436). tsc clean (only pre-existing windows-track noise), eslint clean.
 - Next: wave-8 (+3/domain → 17/domain = 136 kits), then wave-9 (→ 20/domain = 160 kits).
+---
+Task ID: 96-chipotle
+Agent: general-purpose (wave-8 kit author)
+Task: Author wave-8 Chipotle kit (food), standard spec.
+
+Work Log:
+- Read spec/types/flipkart/asana exemplar, company-facts.md (probed 2026-10-12), company-pools.md fully. Chipotle has 0 tagged LC rows (no pools section) — header + brief declare all 10 topic slug sets and all 16 problems theme-curated from the pools file's SQL rows.
+- Stage map: customers = rewards members, orders = tickets through the line (delivered = served & closed 52, shipped = staged on the pass/mobile-order shelf 30, pending = queued 14, cancelled = 86'd 7), order_items = build lines (quantity = portions), products = 16-SKU menu matrix with stock as prep par, shipped_at = the pass stamp (82 of 103; 2.98 avg on the db's DAY clock — production reads minutes), invoices/payments = ingredient settlements in INTEGER cents. Probed traps honored: created_at is DATE-only so the daypart split is an honest dead-end (mcq-10), no channel column (digital vs front line not splittable), never-ordered = 0 so the honest anti-join lives in billing.
+- Wrote one temp probe (scripts/tmp-probe-96-chipotle.ts, DELETED after) verifying both cases' number-slot cells and all 55 distractor×slot substitutions before authoring.
+- Authored src/lib/companies/kits/chipotle.ts ONLY (no registry/other-kit/script touches): brief 4 / dayInLife 3 / metrics 8 / topics 10 (30 legal slugs, none w*/d*/f*) / theory 8 (chipotle-t1..t8; joins, windows, aggregation, NULLs, pipeline, subqueries, dates, quality) / mcqs 10 (chipotle-mcq-1..10; 3 easy / 4 medium / 3 hard; ≥2 notes each) / cases 2 / problems 16 (all distinct, all legal).
+- Cases: cs-chipotle-1 (s7 CASE pivot, funnel, easy — "The make-line census by market": region × stage census reconciling 45/37/19/2 with aov 335.32/313.66/383.48/426.22, 5 slots, 5 distractors, 0 noVerify) and cs-chipotle-2 (t5 RANK, catalog, hard — "The menu velocity ladder": portions per SKU 47/46/38/36-tie/33/31 with par cover 213 and 14, RANK-vs-DENSE/ROW_NUMBER tie policy, LIMIT 7 whose gate appears as the 7th rung, 5 slots, 6 distractors, 0 noVerify). Topic families pairwise distinct and distinct from wave-8 siblings (j7/t5/t4/t3/s6 repeats avoided).
+- Gates: case-audit "cases: 2, pass: 2, fail: 0" (tiers easy=1 hard=1); bunx tsc --noEmit | grep "kits/chipotle" → empty. Probe deleted; git status shows only chipotle.ts added by this agent.
+
+Stage Summary:
+- Chipotle kit shipped at standard wave-8 volume (4/3/8/10/8/10/2/16), theme-curated provenance declared, every case figure from scripts/company-facts.md, 0 figures invented or recomputed.
+- Note for next facts dump: the per-SKU portion-pull ranking (Desk Mat 47 / Headset 46 / HDMI 38 / 36-tie pair / Socks 33 / Webcam 31) and the region × status stage grid (EU 24-12-6-3, APAC 21-8-5-3, US 5-10-3-1, LATAM 2-0-0-0) are probe-derived canonical cells worth adding; also no per-SKU portion counts exist for remaining SKUs beyond the stock-vs-sold table (fine — sourced there).
+---
+---
+Task ID: 96-turo
+Agent: general-purpose (wave-8 kit author)
+Task: Author wave-8 Turo kit (mobility), standard spec.
+
+Work Log:
+- Read spec, types, asana exemplar (structure template), flipkart (voice), company-facts.md, company-pools.md. No Turo section in pools (0 tagged) → all 30 topic slugs + 16 problems theme-curated from the theme menu, disjoint sets, all verified present with a grep sweep; no w*/d*/f* topic grammar.
+- db mapping (gett/uber-style, stated in header): orders = trips, customers = guests, suppliers = fleet-host partners, products = vehicle listings (price = daily rate), order_items = daily charge lines (quantity = booked days), shipped_at = checkout stamp (key handover), invoices/payments = host-payout settlement books in INTEGER cents.
+- One read-only temp probe (scripts/tmp-probe-96-turo.ts, deleted after) verified both case templates' result cells against facts-file figures and every distractor substitution (error-or-change) — zero ambiguous, incl. the commutative-product trap avoided in cs-turo-1 and '2' number slot cell check in cs-turo-2.
+- Authored src/lib/companies/kits/turo.ts only: brief 4 / dayInLife 3 (time anchors) / metrics 8 / topics 10 / theory 8 (turo-t1..t8: joins, windows, aggregation, nulls, pipeline, subqueries, dates, quality) / mcqs 10 (turo-mcq-1..10, easy 3 / medium 4 / hard 3) / cases 2 / problems 16. Header fields exactly per task; accent text-pink-300.
+- Gates: case-audit "cases: 2, pass: 2, fail: 0"; bunx tsc --noEmit | grep "kits/turo" → empty. Probe deleted; only turo.ts + worklog appended.
+
+Stage Summary:
+- Turo kit live at standard wave-8 volume; case families j7 (catalog, easy) + s6 (funnel, medium) — distinct families and universes; all case figures verbatim from company-facts.md (34,833.28 book; 52/30/14/7 fates; EU 45/8, APAC 37/5, US 19/2, LATAM 2/1; lead 2.98 avg / 2.94-3.5 regional; payout coverage 21/1/6 with 15,217 unsettled; ledger 181,080 = 181,080).
+- No figures wanted but missing — facts file covered every slot; probe-derived per-listing utilization (46/60, 38/500 booked/listed days) used only at raw-number level in prose.
+---
+---
+Task ID: 96-telegram
+Agent: general-purpose (wave-8 kit author)
+Task: Author wave-8 Telegram kit (media), standard spec.
+
+Work Log:
+- Read the mandated inputs (worklog tail, kit-authoring-spec, types.ts, flipkart.ts style bar, asana.ts wave-8 exemplar, company-facts.md, company-pools.md). Telegram has NO tagged pool (0 tagged LC) — header marked theme-curated, all 10 topic slug sets and all 16 problems curated from the pools file's theme menu (sql rows only, no w*/d*/f*).
+- Storefront mapping fixed in the kit header: customers = broadcast channels, orders = channel posts (delivered = read 52, shipped = delivered-but-unread 30, pending = scheduled 14, cancelled = deleted 7), order_items = attachment lines (251), invoices/payments = Premium billing in INTEGER cents.
+- Wrote src/lib/companies/kits/telegram.ts — NEW file, only edit surface: brief 4 / dayInLife 3 (bold time anchors) / metrics 8 / topics 10 / theory 8 (telegram-t1..t8, spread joins/windows/aggregation/nulls/pipeline/subqueries/dates/quality, answers 716+ chars) / mcqs 10 (telegram-mcq-1..10, 3/4/3 difficulty, notes on 2+ wrongs each) / cases 2 / problems 16. Accent text-cyan-300 free among media siblings.
+- Cases: cs-telegram-1 easy s6 funnel "The moderation census" (region grid: 45/3/53.3 EU, 37/3/56.8 APAC, 19/1/26.3 US, 2/0/100 LATAM; 4 slots, distractors 'shipped'/'pending'/2/0/ASC) and cs-telegram-2 hard t5 growth "The EU channel leaderboard" (EU roster 24/7262.35 Alice Chen, 5/2667.93 Chloe, three-way tie at 4 consuming ranks 3-5, Dmitri 2 on rank 6, reach foots to 15,089.23; RANK + DESC + 2dp + 'EU' slots, distractors DENSE_RANK/ROW_NUMBER/ASC/1/0). Verified both fills and key substitutions via temp probe scripts/tmp-probe-96-telegram.ts on a COPY of db/custom.db, then DELETED the probe.
+- Gates: bun scripts/case-audit.ts src/lib/companies/kits/telegram.ts → "cases: 2 pass: 2 fail: 0" (tiers easy=1 hard=1); bunx tsc --noEmit | grep kits/telegram → empty. Structural self-check: all slugs legal pool sql rows, marker counts 2-5 per paragraph, zero nested markers, ids sequential and unique (no cs-telegram/telegram-t/telegram-mcq collisions anywhere).
+
+Stage Summary:
+- Telegram kit ships at standard wave-8 volume: 8/10/8/10/2/16 (theory/topics/metrics/mcqs/cases/problems) + 4-para brief + 3 beats. Case-audit 2/2 PASS, tsc clean for the kit. No figures invented — every case number is a facts-file cell or an audit-verified query result.
+- Figure I wanted but facts lacked: per-customer cancelled-post counts (status × channel) — case 1 quotes regional deleted counts only (3/3/1/0 from facts); and shipped-share percentages by region (derived, deliberately not quoted in prose). Worth adding to the next facts dump: posts-per-channel ladder AFTER excluding the 7 cancelled, if a status-filtered leaderboard case is ever authored.
+---
+---
+Task ID: 96-gitlab
+Agent: general-purpose (wave-8 kit author)
+Task: Author wave-8 GitLab kit (saas), standard spec.
+
+Work Log:
+- Read spec, types, flipkart (voice), asana (wave-8 exemplar), company-facts.md, company-pools.md (no GitLab section -> 0 tagged rows, all topic slugs + 16 problems theme-curated from sql rows; w*/d*/f* excluded).
+- Authored src/lib/companies/kits/gitlab.ts (ONLY edit surface): brief 4 / dayInLife 3 / metrics 8 / topics 10 (x3 slugs) / theory gitlab-t1..t8 (tags joins, windows, aggregation, nulls, pipeline, subqueries, dates, quality; min answer 768 chars) / mcqs gitlab-mcq-1..10 (3/4/3 difficulty, >=2 notes each) / cases 2 / problems 16. Rich markers per para: brief 5/5/4/5, dayInLife 4/3/5, bold time anchors on all beats.
+- db mapping: customers = namespaces, orders = seat subscription renewals (delivered = renewed to term, shipped = running on the fleet, pending = provisioning queued, cancelled = churned), shipped_at -> created_at as the DORA lead-time analog (2.98d over 82 stamped).
+- Cases: cs-gitlab-1 (s6/funnel/easy) one-pass fleet status census by region — SUM(CASE) arms at_term 24/21/5/2, running 12/8/10/0, churned 3/3/1/0, pending read off as remainder 6/5/3/0, reconciles 52+30+14+7=103; cs-gitlab-2 (j7/growth/medium) five-plus concentration read — HAVING COUNT(*) >= 5 keeps 5 namespaces at 7,262.35/6,640.56/4,574.23/3,644.56/2,667.93 (the 71.2%-of-book cohort). Topic families s6 + j7 (distinct), universes funnel + growth, tiers easy + medium.
+- Wrote scripts/tmp-probe-96-gitlab.ts against a COPY of db/custom.db: correct fills returned facts-exact cells (region census 45/37/19/2; top-spenders rows) and all 45 distractor-x-slot substitutions errored or differed (0 ambiguous — rejected "1"/"4"/"6"/"10"/"o.id" during design: GROUP BY 1 ordinal = GROUP BY c.id aliasing, ROUND precision >=2 = identical money cells). Probe deleted.
+- Fix during audit: cs-gitlab-2 template markers were out of slot order ({5} appeared first) — renumbered {1}..{5} in appearance order; audit then green.
+- Gates: bun scripts/case-audit.ts src/lib/companies/kits/gitlab.ts -> "cases: 2 pass: 2 fail: 0" (tiers easy=1 medium=1); bunx tsc --noEmit | grep "kits/gitlab" -> empty. Slug sweep: 30 topic + 16 problem slugs all legal pools rows, 0 dups. registry.ts / other kits / scripts untouched.
+
+Stage Summary:
+- gitlab kit live at standard wave-8 volume (8/3/8/10/8/10/2/16), case-audit 2/2 PASS, tsc clean. Every case figure from scripts/company-facts.md; no figures invented. Suggested canonical cells for the next facts dump: five-plus-renewal namespace cohort (24/7,262.35, 17/6,640.56, 14/4,574.23, 13/3,644.56, 5/2,667.93 = the 71.2% cohort) and per-region status census remainders (pending EU 6 / APAC 5 / US 3 / LATAM 0).
+---
+---
+Task ID: 96-substack
+Agent: general-purpose (wave-8 kit author)
+Task: Author wave-8 Substack kit (media), standard spec.
+
+Work Log:
+- Read spec, types, flipkart/asana exemplars, company-facts.md, company-pools.md. Substack has NO tagged pool (0 rows) — header + brief P4 say all 10 topic slug sets and 16 problems are theme-curated from the theme menu (sql rows only, 46 distinct slugs, zero in-kit dupes, none from w/d/f rows).
+- db mapping: customers = publications, orders = posts (delivered = landed 52, shipped = in-flight 30 w/ shipped_at as send stamp, pending = scheduled 14, cancelled = killed 7), order_items = tier lines (251), invoices/payments = payout runs/settlements (INTEGER cents).
+- Authored substack.ts: brief 4 / dayInLife 3 / metrics 8 / topics 10 / theory 8 (t1-t8: joins, windows, aggregation, nulls, pipeline, subqueries, dates, quality) / mcqs 10 (3/4/3, >=2 notes each) / cases 2 / problems 16.
+- Cases: cs-substack-1 s6/funnel/easy (one-pass delivery census, CASE four-way, cells EU 24/12/6/3 of 45, APAC 21/8/5/3 of 37, US 5/10/3/1 of 19, LATAM 2/0/0/0 of 2); cs-substack-2 q2/pricing/hard (above-the-mean publications, scalar subquery in HAVING vs 338.19 platform mean, 7 rows led by 705.39 single-post, tail 390.62 over 17). Topic families s6+q2 (pairwise distinct, matches task example pair).
+- Temp probe (scripts/tmp-probe-96-substack.ts, db COPY, deleted after) verified both cases' result cells + every distractor substitution consequential in every slot; distractor sets: "'sent'/'delivered'/o.id/ASC/region" and "0/MIN/c.customer_id/SUM/ASC".
+
+Stage Summary:
+- Gates: case-audit "cases: 2, pass: 2, fail: 0" (easy=1, hard=1); bunx tsc --noEmit | grep kits/substack -> empty; id collisions across universe: none. Only substack.ts touched; probe deleted.
+- Figure wanted but facts lacked: per-publication average issue value (derived from top-spenders spend/orders; probe-verified cells 705.39/533.59/486.32/444.8/426.22/421.54/390.62 vs the 338.19 platform mean — worth adding as canonical cells next facts dump). All other figures straight from scripts/company-facts.md.
+---
+---
+Task ID: 96-figma
+Agent: general-purpose (wave-8 kit author)
+Task: Author wave-8 Figma kit (saas), standard spec.
+
+Work Log:
+- Read spec/types/flipkart/asana exemplar, company-facts.md, company-pools.md. No Figma tagged pool exists (pools file carries no Figma section) → header + brief declare theme-curated provenance for all 10 topic slug sets and all 16 problems (theme-menu sql rows only; no w/d/f rows).
+- Authored src/lib/companies/kits/figma.ts (NEW, only edit surface): brief 4 / dayInLife 3 (bold time anchors 09:00/12:30/16:30) / metrics 8 / topics 10 / theory 8 (figma-t1..t8, tags joins/windows/aggregation/nulls/pipeline/subqueries/dates/quality) / mcqs 10 (figma-mcq-1..10, 3/4/3 easy-medium-hard) / cases 2 / problems 16. Rich markers flat, 2-5 per paragraph, verified no nesting; every figure from facts file.
+- Flavor mapping: customers=orgs, orders=license renewals, order_items=seat lines (qty=seats, unit_price=per-seat price), shipped_at=multiplayer go-live stamp; DevMode handoff, editor-vs-viewer seats, design-system adoption, FigJam, plugins woven through prose.
+- One read-only temp probe (scripts/tmp-probe-96-figma.ts, DELETED) verified case cells + distractor substitutions: seat-band fold (starter 8 SKUs/268 seats/31.01, editor 8/230/115.85, premium arm empty — max price 199.99; 498 seats over 251 lines) and above-the-line AR read (12 invoices above the paid-average line ≈3,164; tops 6,148 partial, catches 4,937/3,562 of the 6 never-collected).
+- Case families: cs-figma-1 s6/pricing/easy (seat-band census) + cs-figma-2 q2/month-close/hard (above-the-line list) — distinct topics, universes, tiers; 4 slots + 6 distractors each, all keyword slots, 0 noVerify; every distractor consequential in every slot.
+
+Stage Summary:
+- Gates: case-audit "cases: 2, pass: 2, fail: 0 (tiers easy=1 hard=1)"; bunx tsc --noEmit | grep "kits/figma" → empty. Probe deleted; figma.ts is the only file touched.
+- Facts gap noted: no facts-file row for the seat-band fold cells (268/230 seats, 31.01/115.85 avg line price) or the above-line invoice count (12) — all probe-derived; worth adding as canonical cells in the next facts dump.
+---
+---
+Task ID: 96-zipcar
+Agent: general-purpose (wave-8 kit author)
+Task: Author wave-8 Zipcar kit (mobility), standard spec.
+
+Work Log:
+- Read worklog tail, kit-authoring-spec.md, types.ts, flipkart.ts (voice), asana.ts (wave-8 exemplar), company-facts.md, company-pools.md in full. No zipcar tagged pool exists (0 tagged rows) — all topic slugs + 16 problems theme-curated from the Theme menu (sql rows only, no w*/d*/f* rows); header says so.
+- Mapped the storefront db Zipcar-honest (per mobility house convention): customers = members, orders = reservations (delivered = completed round trip, shipped = underway with shipped_at as the fob-checkout stamp, pending = reserved, cancelled = no-show), order_items = billable lines (quantity = hours, unit_price = hourly rate), products = vehicle models, suppliers = fleet partners, invoices/payments = fleet-billing books in INTEGER cents.
+- Wrote one temp probe (scripts/tmp-probe-96-zipcar.ts) against a COPY of db/custom.db: confirmed cents convention (invoice #11 amount_cents 92500 → 925.00 via /100.0; unpaid 6 / 15,217), verified both case queries cell-for-cell (case 1 partner census: Nordic 4.6/3 models/38 reservations/11,130.25 … Pacific 2,980.15; case 2 coverage census 21 exact / 6 no payment / 1 partial with #25 at 6,148/4,000 and the no-payment block #24 4,937 → #18 873 carrying paid-status #28 1,756.00), and checked every distractor substitution into every slot (all error or change the result). Probe + copy deleted after.
+- Authored src/lib/companies/kits/zipcar.ts (new file, only edit surface): brief 4 / dayInLife 3 (bold time anchors, 4-5 rich markers per para) / metrics 8 / topics 10 / theory 8 (zipcar-t1..t8; tags joins, windows, aggregation, nulls, pipeline, subqueries, dates, quality; 739+ char answers) / mcqs 10 (zipcar-mcq-1..10; 3/4/3 easy-medium-hard; notes on 2+ wrongs each) / cases 2 / problems 16.
+- Gates: case-audit "cases: 2, pass: 2, fail: 0" (tiers easy=1 medium=1); bunx tsc --noEmit | grep "kits/zipcar" → empty. Registry/learn-app/tools untouched; worklog append-only.
+
+Stage Summary:
+- Zipcar kit ships at standard wave-8 volume. Case topic families: j7 (supplier, easy) + s6 (month-close, medium) — distinct families and universes. Case 1 = fleet-partner audit (j7 over suppliers→products→order_items→orders); Case 2 = settlement coverage census (LEFT JOIN fold + zero-guard CASE, noVerify-free, number slot verified as the settled-0 cell).
+- Note for next facts dump: per-fleet-partner reservation counts (Nordic 38, Midwest 45, Alpine 34, Andes 25, Shenzhen 41, Pacific 35) are probe-derived and worth adding as canonical cells; the no-payment dunning block with ids/balances (24/4,937.00, 26/3,562.00, 27/2,794.00, 28/1,756.00, 21/1,295.00, 18/873.00) is also probe-verified row-level.
+---
+---
+Task ID: 96-subway
+Agent: general-purpose (wave-8 kit author)
+Task: Author wave-8 Subway kit (food), standard spec.
+
+Work Log:
+- Read spec/types/flipkart/asana exemplar/company-facts.md/company-pools.md; confirmed no Subway tagged pool (0 rows) → all topic slugs + 16 problems theme-curated from the theme menu, provenance stated in header.
+- Mapped the storefront db to franchise world: customers = franchise units, orders = weekly co-op POs (34,833.28; delivered 52 / shipped 30 / pending 14 / cancelled 7), order_items = PO lines, suppliers = 6 approved co-op vendors, invoices = royalty + ad-fund bills, payments = remittances (INTEGER cents, /100.0 dollar read).
+- Temp probe (scripts/tmp-probe-96-subway.ts, deleted) verified: case-1 shape reproduces the supplier revenue table exactly (Nordic 3/11,130.25 … Pacific 3/2,980.15); staged s6 shape reproduces the coverage rollup exactly (exact 21/65,612/65,612, none 6/15,217/0, partial 1/6,148/4,000 — note facts-file money figures are cents/100 dollars); all distractor substitutions fail or change results; scalar MAX(NULL,0)=NULL semantics confirmed.
+- Authored src/lib/companies/kits/subway.ts (only file touched): brief 4 / dayInLife 3 (bold time anchors) / metrics 8 / topics 10 / theory 8 (t1..t8, joins→quality spread) / mcqs 10 (3 easy/4 medium/3 hard, ≥2 notes) / cases 2 / problems 16. Case families j7 (cs-subway-1 easy, supplier, "The co-op vendor audit", 5 slots) + s6 (cs-subway-2 medium, month-close, "The royalty coverage census", staged fold + CASE, 5 slots) — distinct families and universes.
+- Gates: case-audit → "cases: 2 pass: 2 skipped: 0 fail: 0" (tiers easy=1 medium=1); bunx tsc --noEmit | grep "kits/subway" → empty. Slug sweep: 46 distinct slugs, all present in company-pools.md, zero topic/problem overlap, case topics j7/s6 (no w/d/f).
+
+Stage Summary:
+- subway kit live at standard wave-8 volume, accent text-emerald-300 (unused in food domain). Both cases quote only facts-file figures; probe deleted. Note for next facts dump: facts file stores invoice/payment money as cents/100 dollars (raw table = INTEGER cents, e.g. AR 1,521,700 cents = 15,217 dollars) — worth stating explicitly; also per-region invoice/royalty splits are NOT in the facts file (wanted them for a regional AR cut, fell back to the network coverage rollup).
+---
+---
+Task ID: 96-getyourguide
+Agent: general-purpose (wave-8 kit author)
+Task: Author wave-8 GetYourGuide kit (travel), standard spec.
+
+Work Log:
+- Read worklog tail, kit-authoring-spec.md, types.ts, flipkart.ts (voice), asana.ts (wave-8 exemplar), company-facts.md, company-pools.md in full. No GetYourGuide tagged pool exists (0 rows) — all topic slugs + 16 problems theme-curated from the theme menu (sql rows only, no w*/d*/f* rows); header says so.
+- Mapped the storefront db to the activities marketplace per travel-domain house convention: customers = travelers (16 cities, one account each), orders = bookings (delivered = completed experience, shipped = operated with shipped_at as the travel-date stamp, pending = awaiting supplier confirmation, cancelled = cancelled per policy), order_items = participant lines (quantity = participants, unit_price = per-participant price), products = bookable activities, suppliers = supply partners with review ratings, invoices/payments = settlement books in INTEGER cents.
+- Wrote one temp probe (scripts/tmp-probe-96-getyourguide.ts, DELETED) against a COPY of db/custom.db: case-1 fill reproduces the operator census exactly (Nordic 3/4.6/11,130.25, Midwest 3/4.4/9,294.93, Alpine 2/4.8/4,765.63, Andes 2/4/3,613.25, Shenzhen 3/4.1/3,049.07, Pacific 3/3.9/2,980.15); case-2 fill reproduces the gated ladder (Alice 24/7,262.35/rank 1 … four-way tie at 4 sharing rank 6, the two 3-booking travelers at rank 10); every distractor substitution into every slot errors or changes the result; extra prose cells verified: 498 participant units across 251 lines.
+- Authored src/lib/companies/kits/getyourguide.ts (NEW, only edit surface): brief 4 / dayInLife 3 (bold time anchors 08:30/11:30/15:30) / metrics 8 / topics 10 / theory 8 (getyourguide-t1..t8; tags joins/windows/aggregation/nulls/pipeline/subqueries/dates/quality) / mcqs 10 (getyourguide-mcq-1..10, 3/4/3 easy-medium-hard) / cases 2 / problems 16. Rich markers flat, 4-5 per paragraph; every figure from the facts file.
+- Case families: cs-getyourguide-1 j7/supplier/easy ("The operator payout census", 4 slots + 4 distractors) + cs-getyourguide-2 t5/growth/medium ("The traveler value ladder", 3 slots + 5 distractors, 1 noVerify gate) — distinct topics, universes, tiers; each marker used exactly once; every distractor consequential in every slot.
+- Gates: case-audit "cases: 2  pass: 2  skipped: 0  fail: 0 (tiers: easy=1 medium=1)"; bunx tsc --noEmit | grep "kits/getyourguide" → empty. Slug sweep: 46 distinct slugs, all present in company-pools.md, zero forbidden rows. Registry/learn-app/tools untouched; worklog append-only.
+
+Stage Summary:
+- getyourguide kit ships at standard wave-8 volume, accent text-orange-300. Probe deleted; getyourguide.ts is the only file touched.
+- Facts gap noted: total participant units (498 over 251 lines) is probe-derived, not a facts-file row — worth adding as a canonical cell; a per-status × region cancellation split exists but a per-supplier settlement-coverage cut is absent from the facts file (wanted it for an operator-dunning case, fell back to the traveler ladder).
+---
+---
+Task ID: 96-rakuten
+Agent: general-purpose (wave-8 kit author)
+Task: Author wave-8 Rakuten kit (ecom), standard spec.
+
+Work Log:
+- Read worklog tail, kit-authoring-spec.md, types.ts, flipkart.ts (voice), asana.ts (wave-8 exemplar), company-facts.md, company-pools.md in full. No Rakuten tagged pool exists (0 tagged rows) — all topic slugs + 16 problems theme-curated from the theme menu (sql rows only, no w/d/f case topics); provenance stated in the header.
+- Mapped the storefront db to Rakuten-honest: customers = members, orders = Ichiba purchase orders (delivered = completed/point-credited, shipped = dispatched with shipped_at as the dispatch stamp, pending = awaiting merchant dispatch, cancelled = abandoned), order_items = order lines (qty = units, unit_price = listing price), suppliers = 6 RMS shop merchants, invoices/payments = settlement books in INTEGER cents.
+- Temp probe (scripts/tmp-probe-96-rakuten.ts, DELETED) verified against a COPY of db/custom.db: case-1 merchant census reproduces the facts-file supplier table exactly (Nordic 4.6/3/11130.25 … Pacific 3.9/3/2980.15, ROUND precision "2" present in cells) and case-2 units ladder gives 47/46/38/36,36/33/31/30,30,30 with DENSE_RANK rungs 1..7 under the 30-unit floor (10 rows, "30" in cells); full 6x4 and 6x3 distractor matrices: every substitution errors or changes the result, zero ambiguities.
+- Authored src/lib/companies/kits/rakuten.ts (NEW, only edit surface): brief 4 / dayInLife 3 (bold time anchors 09:00/12:30/16:30, 3-4 rich markers per beat) / metrics 8 / topics 10 / theory 8 (rakuten-t1..t8, tags joins/windows/aggregation/nulls/pipeline/subqueries/dates/quality, answers 735+ chars) / mcqs 10 (rakuten-mcq-1..10, 3/4/3 easy-medium-hard, ≥2 notes each) / cases 2 / problems 16. Every figure from company-facts.md; 46 distinct slugs all verified present in company-pools.md.
+- Gates: case-audit → "cases: 2 pass: 2 skipped: 0 fail: 0 (tiers easy=1 medium=1)"; bunx tsc --noEmit | grep "kits/rakuten" → empty. Probe deleted; rakuten.ts is the only file touched; worklog append-only.
+
+Stage Summary:
+- rakuten kit ships at standard wave-8 volume. Case topic families: j7 (cs-rakuten-1 easy, supplier, "The merchant commission census") + t5 (cs-rakuten-2 medium, growth, "The ranking ladder") — distinct families and universes; 4+3 slots, 6 distractors each, 0 noVerify, all keyword/number cells probe-verified.
+- Note for next facts dump: per-listing unitsSold IS in the facts file but product-level REVENUE is not (only category/merchant rollups) — worth adding for argmax/revenue-ladder cases; also the 36/30-unit tie structure of the units ladder and per-region settlement splits are probe-derived and could be canonicalized.
+---
+---
+Task ID: 96-standardchartered
+Agent: general-purpose (wave-8 kit author)
+Task: Author wave-8 Standard Chartered kit (banking), standard spec.
+
+Work Log:
+- Read worklog tail, kit-authoring-spec.md, types.ts, flipkart.ts (voice), asana.ts (wave-8 exemplar), company-facts.md, company-pools.md in full. No standardchartered tagged pool exists (no section, 0 rows) — all topic slugs + 16 problems theme-curated from the Theme menu (sql rows only, no w*/d*/f* rows); 46 distinct slugs, zero topic/problem overlap; header says so.
+- Mapped the storefront db as a trade-banking corridor sandbox (HSBC-style honest mapping): customers = institutional clients (region = corridor), orders = booked trade transactions (delivered = settled to final, shipped = released/in-flight with shipped_at as the release stamp, pending = awaiting documents, cancelled = rejected), order_items = cargo lines (quantity = units, unit_price = unit value), products = goods SKUs under the instruments, suppliers = exporter counterparties, invoices/payments = fee-billing and settlement books in INTEGER cents, ledger_entries = the double-entry core. Real product nouns in prose: Straight2Bank, letters of credit, documentary collections, remittances, correspondent banking, treasury.
+- One read-only temp probe (scripts/tmp-probe-96-standardchartered.ts, DELETED, plus its db copy) verified both case queries cell-for-cell and the full distractor×slot matrix: case 1 trusted-bench read (Nordic 3/11130.25, Alpine 2/4765.63; threshold slot 4.5 noVerify; all 30 combos error-or-change); case 2 corridor census (EU 45/24/12/3/6.7, APAC 37/21/8/3/8.1, US 19/5/10/1/5.3, LATAM 2/2/0/0/0; all 16 combos error-or-change); number slots '2' and '1' confirmed present in result cells; all-6 supplier read reproduced the facts table exactly.
+- Authored src/lib/companies/kits/standardchartered.ts (NEW, only edit surface): brief 4 / dayInLife 3 (bold time anchors 09:30/12:30/16:30, flat rich markers verified 2-5 per paragraph) / metrics 8 / topics 10 (2+ sentence company whys, 3 slugs each) / theory 8 (standardchartered-t1..t8, tags joins/windows/aggregation/nulls/pipeline/subqueries/dates/quality, 741+ char answers) / mcqs 10 (standardchartered-mcq-1..10, 3/4/3 easy-medium-hard, notes on 2+ wrongs each) / cases 2 / problems 16.
+- CASE ID NOTE: the audit's id grammar caps the company segment at 12 chars, so "cs-standardchartered-N" is illegal — used the bank's real shorthand cs-stanchart-1/2 (same convention as Morgan Stanley cs-ms-N); noted in the file header.
+- Gates: case-audit "cases: 2, pass: 2, skipped: 0, fail: 0 (tiers easy=1 medium=1)"; bunx tsc --noEmit | grep "kits/standardchartered" → empty. Registry/learn-app/tools untouched; probe deleted.
+
+Stage Summary:
+- standardchartered kit ships at standard wave-8 volume, accent text-lime-300 (mandated). Case topic families: j7 (cs-stanchart-1, easy, supplier universe, "The trusted-bench exposure read", 5 slots) + s6 (cs-stanchart-2, medium, funnel universe, "The corridor status census", 4 slots) — distinct families and universes; 1 noVerify slot total; every distractor consequential in every slot.
+- Facts gap noted for next dump: per-invoice settlement-day figures are aggregated only (28.4 avg / 13 fastest / 84 slowest) — a per-corridor or per-month settlement-day split would let future banking kits build a days-to-settle case; the avg paid-invoice amount (≈3,164 cents over the 21 paid) is likewise not in the facts file.
+---
+---
+Task ID: 96-emirates
+Agent: general-purpose (wave-8 kit author)
+Task: Author wave-8 Emirates kit (travel), standard spec.
+
+Work Log:
+- Read worklog tail, kit-authoring-spec.md, types.ts, flipkart.ts (voice), asana.ts (wave-8 exemplar), company-facts.md, company-pools.md; confirmed NO Emirates tagged pool (0 tagged rows) → all 10 topic slug sets + 16 problems theme-curated from the theme menu (sql rows only, no w*/d*/f* rows), stated in header comment; slug sweep verified all 46 slugs exist in company-pools.md, zero topic/problem overlap.
+- Mapped the storefront db airline-honest (per travel house convention): customers = Skywards members, orders = booked itineraries (PNRs) (delivered = completed 52, shipped = airborne 30 with shipped_at as flight-flown stamp, pending = booking window 14, cancelled = scrubbed 7), order_items = ancillary lines, products = SKU families, suppliers = hub concession & catering partners, region = market; money tables read as INTEGER cents.
+- Wrote one temp probe (scripts/tmp-probe-96-emirates.ts, DELETED) against a COPY of db/custom.db: verified case-1 concession bench cells (Nordic 4.6/3 listings/11,130.25 vs 43 lines; Alpine 4.8/2/4,765.63 vs 40 lines; 4.5 floor keeps exactly 2 of 6 partners) and case-2 frequency ladder (24/17/14/13/5, four-way tie at 4 → RANK 6,6,6,6, 3s at 10, 2s at 12, HAVING>=2 keeps 14 members), and ran every distractor × every slot (all error or change the result; fixed a RANK()-takes-no-args slot shape before shipping).
+- Authored src/lib/companies/kits/emirates.ts (NEW, only edit surface): brief 4 / dayInLife 3 (bold time anchors 08:30/11:30/15:30, 4-5 flat rich markers per para, no nesting) / metrics 8 / topics 10 / theory 8 (emirates-t1..t8, tags joins/windows/aggregation/nulls/pipeline/subqueries/dates/quality, 794-961 char answers) / mcqs 10 (emirates-mcq-1..10, 3 easy/4 medium/3 hard, 2+ notes each) / cases 2 / problems 16.
+- Case families: cs-emirates-1 j7/supplier/easy ("The concession bench audit": 4 slots + 5 distractors, 1 noVerify rating floor) + cs-emirates-2 t5/growth/medium ("The Skywards frequency board": CTE + HAVING floor + RANK, 3 slots + 5 distractors, 0 noVerify) — distinct topic families, universes, tiers.
+- Gates: case-audit "cases: 2 pass: 2 skipped: 0 fail: 0 (tiers easy=1 medium=1)"; bunx tsc --noEmit | grep "kits/emirates" → empty. Registry/learn-app/tools untouched; worklog append-only.
+
+Stage Summary:
+- Emirates kit ships at standard wave-8 volume, accent text-red-400, tagline "Long-haul economics out of the Dubai hub". Case figures quote only facts-file numbers (11,130.25/4,765.63, 32% share, ladder 24/17/14/13/5 + 4×4 tie); probe deleted.
+- Note for next facts dump: partner line-vs-listing counts (Nordic 43 lines/3 listings, Alpine 40/2, Midwest 56/3, Shenzhen 47/3, Pacific 40/3, Andes 25/2) are probe-derived, worth adding as canonical cells; also per-partner ancillary-flow share beyond Nordic's 32% is not in the facts file (wanted the full share column quoted in the case brief).
+---
+---
+Task ID: 96-mercadolibre
+Agent: general-purpose (wave-8 kit author)
+Task: Author wave-8 Mercado Libre kit (ecom), standard spec.
+
+Work Log:
+- Read worklog tail, kit-authoring-spec.md, types.ts, flipkart.ts (voice), asana.ts (wave-8 exemplar, imitated structure exactly), company-facts.md, company-pools.md. Confirmed no mercadolibre tagged pool (0 rows) → all 10 topic slug sets + 16 problems theme-curated from the Theme menu (sql rows only, no w*/d*/f* rows); provenance stated in header comment.
+- Mapped the storefront db to the Mercado Libre world: customers = registered buyers, orders = purchases (delivered = at the door 52/50.5%, shipped = in transit 30 with shipped_at as the Envios dispatch stamp, pending = awaiting dispatch 14, cancelled = dropped 7), order_items = cart lines (quantity = units, unit_price = line price), products = listings, suppliers = official stores, invoices/payments = the Mercado Pago billing book (INTEGER cents).
+- One temp probe (scripts/tmp-probe-96-mercadolibre.ts against a COPY of db/custom.db, DELETED after): case-1 census reproduces the supplier revenue table cell-for-cell (Nordic 3/11,130.25, Midwest 3/9,294.93, Alpine 2/4,765.63, Andes 2/3,613.25, Shenzhen 3/3,049.07, Pacific 3/2,980.15); case-2 units ladder reproduces facts units_sold (Desk Mat 47 … three-way 30 tie at ranks 8/8/8); all distractor×slot substitutions error or change results — one initial AMBIGUOUS (distractor "price" in the ROUND-precision slot coerced silently) fixed by swapping to "cost", re-verified consequential everywhere.
+- Authored src/lib/companies/kits/mercadolibre.ts (NEW, only edit surface): brief 4 / dayInLife 3 (bold time anchors 08:40/11:30/15:30, 3-5 flat markers per para) / metrics 8 / topics 10 / theory 8 (mercadolibre-t1..t8; tags joins/windows/aggregation/nulls/pipeline/subqueries/dates/quality; answers 862-1,045 chars) / mcqs 10 (mercadolibre-mcq-1..10; 3 easy/4 medium/3 hard; notes on 2+ wrongs each) / cases 2 / problems 16. 46 distinct slugs, all present in company-pools.md, zero topic/problem overlap.
+- Case families: cs-mercadolibre-1 j7/supplier/easy ("The official-store revenue census", 5 slots + 6 distractors) + cs-mercadolibre-2 t5/growth/medium ("The best-seller ladder", CTE fold + HAVING floor + RANK, 4 slots + 6 distractors) — distinct families, universes, tiers; 0 noVerify slots.
+- Gates: case-audit "cases: 2 pass: 2 skipped: 0 fail: 0 (tiers easy=1 medium=1)"; bunx tsc --noEmit | grep "kits/mercadolibre" → empty. Registry/learn-app/tools untouched; worklog append-only.
+
+Stage Summary:
+- mercadolibre kit ships at standard wave-8 volume, accent text-yellow-300 per task spec. Both cases quote only facts-file figures; probe + copy deleted. Case figure notes: case-2's unit ladder equals the facts "Stock vs sold" units_sold column verbatim (47/46/38/36/36/33/31/30/30/30 above the 30-unit line) — worth promoting to a canonical facts row next dump.
+- Facts gap noted: per-supplier units and per-month LATAM/region revenue splits beyond the existing tables were not in the facts file; case briefs stayed strictly inside the probed tables. Also the premium (>=200) listing band is confirmed EMPTY (max 199.99) and is used as an honest "prove the band is empty" teaching beat, per the spec's warning.
+---
+---
+Task ID: 96-affirm
+Agent: general-purpose (wave-8 kit author)
+Task: Author wave-8 Affirm kit (fintech), standard spec.
+
+Work Log:
+- Read worklog tail, kit-authoring-spec.md, types.ts, flipkart.ts (voice), asana.ts (wave-8 exemplar), company-facts.md, company-pools.md in full. No affirm tagged pool exists (0 tagged rows) — all topic slugs + 16 problems theme-curated from the Theme menu (sql rows only, no w*/d*/f* rows); header says so.
+- Mapped the storefront db Affirm-honest, distinct from Klarna's plan mapping: customers = shoppers, orders = financed checkouts (delivered = paid in full, shipped = funded-and-amortizing with shipped_at as the funding stamp, pending = approved-not-funded, cancelled = reversed before funding), order_items = financed lines, products = the catalog financed, suppliers = merchant partners (GMV per merchant = merchant-fee book), invoices = billing statements on uniform 30-day terms, payments = installment dollars (INTEGER cents, /100.0). Product nouns woven in prose: Pay in 4 (0% APR), interest-bearing monthly installments, merchant fees, delinquency/dunning, chargebacks, approval rates, GMV per merchant.
+- One temp probe (scripts/tmp-probe-96-affirm.ts, DELETED) against a COPY of db/custom.db verified both cases cell-for-cell and every distractor substitution: case 1 category census (Audio 11,744.01/3 SKUs/97 units/46 checkouts … Fitness 863.91/1/27/13; GMVs sum to 34,833.28; category checkouts sum to 228 touches over 103 checkouts; number slot "2" verified via the skus cells), case 2 anti-join dunning list (6 statements/15,217.00: #24 4,937 open, #26 3,562, #27 2,794, #28 1,756 PAID, #21 1,295, #18 873; 22 statements carry ≥1 of 27 installments). First probe run caught my own IS NOT NULL/IS NULL inversion — fixed to the honest anti-join and re-verified, 0 failures.
+- Authored src/lib/companies/kits/affirm.ts (NEW, only edit surface): brief 4 / dayInLife 3 (bold anchors 08:15/11:30/15:30) / metrics 8 / topics 10 / theory 8 (affirm-t1..t8, tags joins/windows/aggregation/nulls/pipeline/subqueries/dates/quality, 700+ char answers) / mcqs 10 (affirm-mcq-1..10, 3/4/3 easy-medium-hard, ≥2 notes each) / cases 2 / problems 16. Rich markers flat, 3-5 per paragraph, nesting-checked programmatically; every figure from facts file (concentration 63.5%/71.2%, ticket bands 111.5 vs 32.06, merchants 32%/26.7%, coverage 21/1/6, ledger 181,080=181,080).
+- Gates: case-audit "cases: 2 pass: 2 skipped: 0 fail: 0" (tiers easy=1 medium=1); bunx tsc --noEmit | grep "kits/affirm" → empty. Slug sweep: 46 distinct slugs, all present in company-pools.md, zero topic/problem overlap. Probe + copy deleted; affirm.ts is the only file touched.
+
+Stage Summary:
+- affirm kit ships at standard wave-8 volume, accent text-sky-300 (unused by fintech siblings). Case topic families: cs-affirm-1 j7/catalog/easy ("The financed-basket census") + cs-affirm-2 j5/month-close/medium ("The uncollected-exposure list") — distinct topics and universes; 5 slots + 6 distractors and 4 slots + 6 distractors, 0 noVerify, every distractor consequential in every slot.
+- Note for next facts dump: per-merchant checkout counts are NOT in the facts file (wanted them for a merchant load-vs-coverage cut; supplier revenue/listings/ratings only). Also the 84-day slowest settlement vs 30-day terms implies a late-settled cohort whose per-statement split is not printed — worth adding as canonical cells.
+---
+---
+Task ID: 96-monzo
+Agent: general-purpose (wave-8 kit author)
+Task: Author wave-8 Monzo kit (fintech), standard spec.
+
+Work Log:
+- Read worklog tail, kit-authoring-spec.md, types.ts, flipkart.ts (voice), asana.ts (wave-8 exemplar), company-facts.md, company-pools.md in full. No Monzo tagged pool exists (0 tagged rows; dormant-reactivation is the lone Monzo-named slug) — all topic slugs + 15 of 16 problems theme-curated from the theme menu (sql rows only, no w*/d*/f*); header says so.
+- Mapped the storefront db Monzo-honest (fintech house convention, sibling of revolut/chime): customers = account holders (region = market), orders = card authorizations (delivered = settled clean, shipped = settled with the settlement stamp, pending = pre-auth in flight, cancelled = declined by fraud/risk controls), order_items = itemized basket lines (quantity = units, unit_price = shelf price), suppliers = savings-marketplace partner providers, invoices = bill-pot obligations, payments = funding legs (INTEGER cents, /100.0).
+- Wrote one temp probe (scripts/tmp-probe-96-monzo.ts, DELETED) against a COPY of db/custom.db: verified both case correct-fills cell-for-cell (case 1: EU 45/8/335.32/6.7, APAC 37/5/313.66/8.1, US 19/2/383.48/5.3, LATAM 2/1/426.22/0; case 2: split bills 19/5,614, 5/5,284, 1/4,860, 12/4,723, 22/4,459 each 2 legs, ranks 1-5) and all distractor-x-slot substitutions (all error or change the result). Also confirmed row-level: 5 split-payment bills (1,5,12,19,22), #28 paid-status 0 legs (1,756.00), #11 void 1 leg (925.00), 82 stamped authorizations avg 2.98 days.
+- Authored src/lib/companies/kits/monzo.ts (NEW, only edit surface): brief 4 / dayInLife 3 (bold time anchors 08:45/11:30/15:30) / metrics 8 / topics 10 / theory 8 (monzo-t1..t8, tags joins/windows/aggregation/nulls/pipeline/subqueries/dates/quality, 200+ char answers) / mcqs 10 (monzo-mcq-1..10, 3/4/3 easy-medium-hard, notes on 2+ wrongs each) / cases 2 / problems 16. Slug sweep: 46 distinct slugs, all present in company-pools.md, zero topic/problem overlap. Rich markers flat, 2-5 per paragraph, no nesting; every figure from facts file.
+- Case families: cs-monzo-1 j7/fraud/easy ("The decline map": per-market authorization census with CASE decline share, 5 slots) + cs-monzo-2 t5/month-close/medium ("The split-settlement ladder": LEFT JOIN leg fold + HAVING gate + RANK, 4 slots) — distinct families and universes; 0 noVerify; every distractor consequential in every slot.
+
+Stage Summary:
+- Gates: case-audit "cases: 2 pass: 2 skipped: 0 fail: 0 (tiers easy=1 medium=1)"; bunx tsc --noEmit | grep "kits/monzo" → empty (pre-existing sql-funnel.ts errors are another agent's file, untouched). Probe deleted; monzo.ts is the only file touched.
+- Facts gap noted for next dump: per-bill leg counts and the no-payment dunning block ids/amounts (18/873, 21/1,295, 24/4,937, 26/3,562, 27/2,794 beyond the anomalies table's row list) are probe-derived; the facts file only carries the 6/15,217 aggregate plus the 8-row anomaly table. Also per-supplier order/authorization counts were wanted for a marketplace-provider read but are not in the facts file.
+---
+---
+Task ID: 96-n26
+Agent: general-purpose (wave-8 kit author)
+Task: Author wave-8 N26 kit (fintech), standard spec.
+
+Work Log:
+- Read worklog tail, kit-authoring-spec.md, types.ts, flipkart.ts (voice), asana.ts (wave-8 exemplar), company-facts.md, company-pools.md in full. No N26 tagged pool exists (0 tagged rows) — all topic slugs + 16 problems theme-curated from the theme menu (sql rows only, no w*/d*/f* rows); header says so.
+- Mapped the storefront db as a consumer-bank sandbox (fintech house convention): customers = account holders (region = market, 8 of 16 EU home), orders = card transactions (delivered = settled, shipped = captured/settling with shipped_at as the settlement stamp, pending = awaiting capture, cancelled = declined), order_items = itemized terminal lines, products = merchant catalog (max ticket 199.99, premium band empty), suppliers = six acquiring partners, invoices = monthly statement cycles (28), payments = inbound legs on two rails (card top-ups / SEPA wire, INTEGER cents, /100.0), expenses = opex, ledger_entries = GL. Spaces sub-accounts, Wise-powered FX transfers, VideoIdent KYC and Standard→Metal tiers woven through prose, never into numbers.
+- One temp probe (scripts/tmp-probe-96-n26.ts, self-deleted + copy removed) verified both case queries cell-for-cell and every distractor substitution. Key finding: /100 integer division is NOT a usable distractor on the statement fold — all group sums are whole-euro multiples, so "100" would be ambiguous; used 1000/INNER/SUM/COUNT/ASC instead.
+- Authored src/lib/companies/kits/n26.ts (NEW, only edit surface): brief 4 / dayInLife 3 (bold anchors 08:30/11:30/15:30, 3-5 markers per para, verified flat) / metrics 8 / topics 10 (3 sql slugs each) / theory 8 (n26-t1..t8; tags joins/windows/aggregation/nulls/pipeline/subqueries/dates/quality; 200+ char answers) / mcqs 10 (n26-mcq-1..10, 3/4/3 easy-medium-hard, ≥2 notes each) / cases 2 / problems 16. 45 distinct slugs, zero topic/problem overlap, all present in company-pools.md.
+- Case families: cs-ntwentysix-1 j4/month-close/easy ("The status-versus-settlement audit" — statements LEFT JOIN legs grouped by claimed status; cells paid 21/64,687, open 6/4,000 = the #25 partial of 6,148, void 1/925 = the #11 void-but-settled leg; 4 slots, 1 noVerify on the 100.0 cents divider) + cs-ntwentysix-2 x2/fraud/medium ("The one-pass decline census" — FILTER (WHERE…) branches over region, 5 slots incl. verified "1" precision slot, 0 noVerify; APAC 8.1 / EU 6.7 / US 5.3 / LATAM 0, US majority-still-settling 10-of-19 hook).
+- Deviation note: case ids could NOT be cs-n26-1/2 — case-audit's id regex is cs-[a-z]{2,12}-n (letters only, no digits in the company segment), so cs-n26-1 fails structurally. Followed the amz/ali/mcd shortening precedent: cs-ntwentysix-1 / cs-ntwentysix-2. Audit id gate wins over the task-line suggestion; registry/learn-app untouched.
+
+Stage Summary:
+- Gates: case-audit "cases: 2, pass: 2, skipped: 0, fail: 0 (tiers easy=1 medium=1)"; bunx tsc --noEmit | grep "kits/n26" → empty. Probe and db copy deleted; n26.ts is the only file touched; worklog append-only.
+- Facts gaps for next dump: (1) paid-status settled legs = 64,687 (65,612 exact-covered − 925 void leg) is probe-derived and worth a canonical row; (2) "100" ambiguity on cents folds (all statement group sums whole-euro multiples) worth documenting; (3) per-partner order counts and above-average-ticket transaction counts wanted for richer briefs, absent from facts file.
+---
+---
+Task ID: 96-bnpparibas
+Agent: general-purpose (wave-8 kit author)
+Task: Author wave-8 BNP Paribas kit (banking), standard spec.
+
+Work Log:
+- Read worklog tail, kit-authoring-spec.md, types.ts, flipkart.ts (voice), asana.ts (wave-8 exemplar), company-facts.md, company-pools.md in full. No BNP Paribas tagged pool exists (0 rows) — all topic slugs + 16 problems theme-curated from the Theme menu (sql rows only, no w*/d*/f* rows); header and prep para say so.
+- Mapped the storefront db to the universal-bank world: customers = counterparties across four booking corridors (EU/US/APAC/LATAM), orders = booked client flows (REAL dollars, status delivered = settled 52 / shipped = in flight 30 / pending 14 / cancelled = busted 7, shipped_at = the value-date settlement stamp → 82 stamped averaging 2.98 days in a 2–4 band = the T+2 clock), order_items = instrument legs, invoices = trade-finance/fee receivables on the flat 30-day documentary tenor, payments = settlement legs (card = instant rail 16/37,364, wire = SWIFT/SEPA rail 11/32,248), expenses = desk/network opex, ledger_entries = the double-entry book of record (trial balance 181,080 = 181,080).
+- Temp probe (scripts/tmp-probe-96-bnpparibas.ts, DELETED) against a COPY of db/custom.db verified both case queries cell-for-cell (case 1: 82 / 2.98 / 2 / 4; case 2: exactly one row — #28, paid, 0 legs, 1,756.00, tenor 30) and every distractor substitution into every slot (all error or change the result; >= and '100' were avoided as ambiguous-by-design). Row-level unpaid set confirmed: 18/873, 21/1,295, 24/4,937, 26/3,562, 27/2,794 open + 28/1,756 paid-status (aggregate 6 / 15,217 is the facts-file figure quoted in prose).
+- Authored src/lib/companies/kits/bnpparibas.ts (NEW, only edit surface): brief 4 / dayInLife 3 (bold time anchors 08:15/11:30/15:45, 3-5 rich markers per para, verified flat, no nesting) / metrics 8 / topics 10 / theory 8 (bnpparibas-t1..t8, tags joins/windows/aggregation/nulls/pipeline/subqueries/dates/quality, answers 774-953 chars) / mcqs 10 (bnpparibas-mcq-1..10, 3/4/3 easy-medium-hard, notes on 2+ tempting wrongs each) / cases 2 / problems 16. Slug sweep: 46 distinct slugs, all present in company-pools.md, zero topic/problem overlap.
+- Gates: case-audit → "cases: 2, pass: 2, skipped: 0, fail: 0" (tiers easy=1 medium=1); bunx tsc --noEmit | grep "kits/bnpparibas" → empty. Registry/learn-app/tools untouched; probe deleted; worklog append-only.
+
+Stage Summary:
+- bnpparibas kit ships at standard wave-8 volume. Case topic families: cs-bnpparibas-1 = t3 (date funcs, easy, "The T+2 settlement clock", funnel, 3 slots + 3 distractors) + cs-bnpparibas-2 = j4 (LEFT JOIN, medium, "The paid-status that never settled", month-close, 5 slots + 6 distractors) — distinct families and universes; number slots 82/2.98/2/4 and 30, all facts-file figures.
+- Note for next facts dump: the row-level unpaid-receivables split (open 18/873.00, 21/1,295.00, 24/4,937.00, 26/3,562.00, 27/2,794.00 vs paid-status lie 28/1,756.00) is probe-derived — worth adding as canonical cells; per-corridor latency cells (US 3.07 / LATAM 3.5 / EU 2.94 / APAC 2.93) are in the facts file but the shipped-status per-region counts (36/29/15/2) used by sibling kits are only implied.
+---
+
+---
+Task ID: 96 (orchestrator)
+Agent: Super Z (main agent)
+Task: Wave-8 — 24 new kits, 112 → 136 companies (8 domains × 17), full gates.
+
+Work Log:
+- Resumed after context break: found 7/24 wave-8 kits already on disk (asana, costco, deutsche, gojek, gopuff, hyatt, quora) — audited 14/14 PASS, tsc clean, unregistered.
+- Picked remaining 17 companies (3/domain, no dupes): saas figma+gitlab, media telegram+substack, food chipotle+subway, mobility turo+zipcar, ecom rakuten+mercadolibre, banking bnpparibas+standardchartered, travel emirates+getyourguide, fintech monzo+affirm+n26. Accents checked distinct per domain.
+- Authored via 8+9 parallel single-kit agents (proven batch pattern); hand-fixed n26 problems 15→16 (top-percentile-fraud). Case-id prefix deviations per audit's 12-char regex: cs-stanchart-1/2, cs-ntwentysix-1/2 (amz/ali/mcd precedent).
+- Wired registry: 24 imports, 24 COMPANY_META, 8 domain arrays 14→17, 24 COMPANY_KITS; copy updates (companies-view "seventeen companies each", tools note "8 domains × 17 companies, 136 kits", types header, header comments).
+- Probe patched 14→17. Probe ALL PASS: 136 kits / 3,409 problems / 2,320 theory / 2,900 MCQs / 580 cases (was 3,025/2,128/2,660/532).
+- Case-audit sweep: 580/580 PASS (easy=142 medium=276 hard=162). tsc clean on touched tree (remaining noise = pre-existing scratch/examples files). eslint clean on all 22 touched files.
+- E2E: dev-server reap (~60-90s, worklog quirk) kept killing the learn-app chunk compile; switched to PRODUCTION build. Blocked by pre-existing breakage: quality-audit.ts imported QUALITY_COLUMN_RULES/QUALITY_ENUM_COLUMNS/QUALITY_ANOMALIES (missing from schema-meta.ts) and carried stale TIMELINE_TABLES (orders.total_amount + a reviews table that don't exist). Reconstructed all three exports from their usage contracts against the current SCHEMA_TABLES schema; timelines now orders/created_at. Build now passes ALL routes including /api/quality.
+- E2E (prod, agent-browser): counter "136 of 136 kits live" PASS; 12 wave-8 wall names PASS; E-commerce + Fintech domain pages "17/17 kits live" PASS; Figma kit opens, Mock round start button + question text PASS; mobile 390px overflowX CLEAN (wall + kit); desktop CLEAN. Screenshots in download/wave8-*.png. Lesson: agent-browser eval silently breaks on regex literals — use string methods; run e2e against next build + standalone server, not dev.
+
+Stage Summary:
+- Universe: 8 domains × 17 companies = 136/136 kits live, ALL at full 3x volume (wave-8 authored at standard volume — 3x-expansion is a future wave, mirroring the wave-7 pattern).
+- Pre-existing quality-audit/schema-meta breakage fixed; prod build green for the first time.
+- Next options: wave-9 (+3/domain → 20/domain = 160 kits), 3x-expand the 24 wave-8 kits, COMPANY_TAG_ALIASES name normalization, menu re-order (user sign-off pending).

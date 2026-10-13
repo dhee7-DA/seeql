@@ -1,5 +1,5 @@
-// Company Interview Universe — the registry. 8 domains × 14 companies =
-// the 112-company matrix (40 flagship + 24 wave-5 + 24 wave-6 + 24 wave-7).
+// Company Interview Universe — the registry. 8 domains × 17 companies =
+// the 136-company matrix (40 flagship + 24 wave-5 + 24 wave-6 + 24 wave-7 + 24 wave-8).
 // Kit authoring lands in waves; a company without an authored kit yet shows
 // as "kit in build". Company picks follow interview-report frequency
 // (community-sourced tags on the SQL band) + domain diversity, not personal
@@ -118,6 +118,30 @@ import { iciciKit } from "./kits/icici";
 import { dropboxKit } from "./kits/dropbox";
 import { zendeskKit } from "./kits/zendesk";
 import { canvaKit } from "./kits/canva";
+import { asanaKit } from "./kits/asana";
+import { figmaKit } from "./kits/figma";
+import { gitlabKit } from "./kits/gitlab";
+import { costcoKit } from "./kits/costco";
+import { rakutenKit } from "./kits/rakuten";
+import { mercadolibreKit } from "./kits/mercadolibre";
+import { gojekKit } from "./kits/gojek";
+import { turoKit } from "./kits/turo";
+import { zipcarKit } from "./kits/zipcar";
+import { quoraKit } from "./kits/quora";
+import { telegramKit } from "./kits/telegram";
+import { substackKit } from "./kits/substack";
+import { monzoKit } from "./kits/monzo";
+import { affirmKit } from "./kits/affirm";
+import { n26Kit } from "./kits/n26";
+import { gopuffKit } from "./kits/gopuff";
+import { chipotleKit } from "./kits/chipotle";
+import { subwayKit } from "./kits/subway";
+import { hyattKit } from "./kits/hyatt";
+import { emiratesKit } from "./kits/emirates";
+import { getyourguideKit } from "./kits/getyourguide";
+import { deutscheKit } from "./kits/deutsche";
+import { bnpparibasKit } from "./kits/bnpparibas";
+import { standardcharteredKit } from "./kits/standardchartered";
 
 /** Display meta for one company slot in the matrix (kit may come later). */
 export interface CompanyMeta {
@@ -132,56 +156,56 @@ export const COMPANY_DOMAINS: CompanyDomain[] = [
     name: "E-commerce & Marketplace",
     blurb:
       "Catalogs, carts, fulfillment and returns at hundred-million-order scale — the richest SQL interview territory there is.",
-    companies: ["amazon", "flipkart", "alibaba", "shopify", "ebay", "walmart", "etsy", "myntra", "target", "wayfair", "temu", "zalando", "chewy", "sephora"],
+    companies: ["amazon", "flipkart", "alibaba", "shopify", "ebay", "walmart", "etsy", "myntra", "target", "wayfair", "temu", "zalando", "chewy", "sephora", "costco", "rakuten", "mercadolibre"],
   },
   {
     id: "mobility",
     name: "Ride-hailing & Mobility",
     blurb:
       "Trips, drivers, surge windows and ETA math — two-sided marketplaces where every row has a timestamp and a geography.",
-    companies: ["uber", "lyft", "ola", "bolt", "grab", "didi", "careem", "lime", "gett", "freenow", "via", "indrive", "blablacar", "yassir"],
+    companies: ["uber", "lyft", "ola", "bolt", "grab", "didi", "careem", "lime", "gett", "freenow", "via", "indrive", "blablacar", "yassir", "gojek", "turo", "zipcar"],
   },
   {
     id: "media",
     name: "Streaming & Social",
     blurb:
       "Watch time, feeds, engagement streaks and content funnels — the home of session-level window-function questions.",
-    companies: ["netflix", "spotify", "youtube", "meta", "tiktok", "reddit", "pinterest", "linkedin", "twitch", "snapchat", "twitter", "discord", "bumble", "duolingo"],
+    companies: ["netflix", "spotify", "youtube", "meta", "tiktok", "reddit", "pinterest", "linkedin", "twitch", "snapchat", "twitter", "discord", "bumble", "duolingo", "quora", "telegram", "substack"],
   },
   {
     id: "fintech",
     name: "Fintech & Payments",
     blurb:
       "Ledgers, authorizations, settlement and fraud — money movement where correctness outranks cleverness.",
-    companies: ["stripe", "paypal", "visa", "revolut", "block", "adyen", "wise", "robinhood", "klarna", "coinbase", "plaid", "nubank", "chime", "ramp"],
+    companies: ["stripe", "paypal", "visa", "revolut", "block", "adyen", "wise", "robinhood", "klarna", "coinbase", "plaid", "nubank", "chime", "ramp", "monzo", "affirm", "n26"],
   },
   {
     id: "food",
     name: "Food & Quick-commerce",
     blurb:
       "Orders, couriers, delivery SLAs and dark stores — sub-30-minute logistics squeezed through GROUP BY.",
-    companies: ["doordash", "swiggy", "zomato", "instacart", "deliveroo", "grubhub", "justeat", "dominos", "starbucks", "mcdonalds", "hellofresh", "wolt", "blinkit", "zepto"],
+    companies: ["doordash", "swiggy", "zomato", "instacart", "deliveroo", "grubhub", "justeat", "dominos", "starbucks", "mcdonalds", "hellofresh", "wolt", "blinkit", "zepto", "gopuff", "chipotle", "subway"],
   },
   {
     id: "travel",
     name: "Travel & Hospitality",
     blurb:
       "Searches, bookings, cancellations and seasonal occupancy — long funnels with heavy drop-off between steps.",
-    companies: ["airbnb", "booking", "expedia", "oyo", "makemytrip", "agoda", "marriott", "ryanair", "priceline", "trivago", "southwest", "tripcom", "hilton", "trainline"],
+    companies: ["airbnb", "booking", "expedia", "oyo", "makemytrip", "agoda", "marriott", "ryanair", "priceline", "trivago", "southwest", "tripcom", "hilton", "trainline", "hyatt", "emirates", "getyourguide"],
   },
   {
     id: "banking",
     name: "Banking & Capital Markets",
     blurb:
       "Accounts, balances, transactions and regulatory counts — the traditional finance screen, precise and unforgiving.",
-    companies: ["goldman", "jpmorgan", "capitalone", "wellsfargo", "hsbc", "amex", "citi", "barclays", "bofa", "morganstanley", "santander", "ubs", "ing", "icici"],
+    companies: ["goldman", "jpmorgan", "capitalone", "wellsfargo", "hsbc", "amex", "citi", "barclays", "bofa", "morganstanley", "santander", "ubs", "ing", "icici", "deutsche", "bnpparibas", "standardchartered"],
   },
   {
     id: "saas",
     name: "SaaS & Enterprise",
     blurb:
       "Subscriptions, retention cohorts, churn and ARR movements — recurring revenue measured in windows.",
-    companies: ["salesforce", "slack", "zoom", "atlassian", "snowflake", "hubspot", "datadog", "twilio", "servicenow", "notion", "mongodb", "dropbox", "zendesk", "canva"],
+    companies: ["salesforce", "slack", "zoom", "atlassian", "snowflake", "hubspot", "datadog", "twilio", "servicenow", "notion", "mongodb", "dropbox", "zendesk", "canva", "asana", "figma", "gitlab"],
   },
 ];
 
@@ -333,10 +357,43 @@ export const COMPANY_META: Record<string, CompanyMeta> = {
   dropbox: { id: "dropbox", name: "Dropbox", tagline: "Storage SaaS: teams, seats and usage" },
   zendesk: { id: "zendesk", name: "Zendesk", tagline: "Support SaaS: tickets, SLAs, agent workloads" },
   canva: { id: "canva", name: "Canva", tagline: "Design SaaS: teams, templates and usage" },
+
+  // Wave-8 additions — 3 more slots per domain (136-company matrix).
+  costco: { id: "costco", name: "Costco", tagline: "Warehouse-club membership economics, pallet by pallet" },
+  rakuten: { id: "rakuten", name: "Rakuten", tagline: "Japan's marketplace: loyalty points to logistics" },
+  mercadolibre: { id: "mercadolibre", name: "Mercado Libre", tagline: "Latin America's commerce ecosystem, listing to logistics" },
+
+  gojek: { id: "gojek", name: "Gojek", tagline: "Southeast Asia's everything app: rides to payments" },
+  turo: { id: "turo", name: "Turo", tagline: "Peer-to-peer car sharing, trip by trip" },
+  zipcar: { id: "zipcar", name: "Zipcar", tagline: "Round-trip car sharing, reservation to key fob" },
+
+  quora: { id: "quora", name: "Quora", tagline: "The Q&A graph: questions, answers and expertise" },
+  telegram: { id: "telegram", name: "Telegram", tagline: "Messaging at scale: chats, channels and bots" },
+  substack: { id: "substack", name: "Substack", tagline: "Writer economics across publications and posts" },
+
+  monzo: { id: "monzo", name: "Monzo", tagline: "Coral-card neobanking, pot by pot" },
+  affirm: { id: "affirm", name: "Affirm", tagline: "BNPL underwriting at the checkout" },
+  n26: { id: "n26", name: "N26", tagline: "Mobile banking across the eurozone" },
+
+  gopuff: { id: "gopuff", name: "Gopuff", tagline: "Instant delivery from micro-fulfillment clouds" },
+  chipotle: { id: "chipotle", name: "Chipotle", tagline: "Digital kitchens, bowls per line-hour" },
+  subway: { id: "subway", name: "Subway", tagline: "Sandwich units, franchises and foot-long economics" },
+
+  hyatt: { id: "hyatt", name: "Hyatt", tagline: "Global hospitality portfolio, stay by stay" },
+  emirates: { id: "emirates", name: "Emirates", tagline: "Long-haul economics out of the Dubai hub" },
+  getyourguide: { id: "getyourguide", name: "GetYourGuide", tagline: "Travel activities: supply to booking funnel" },
+
+  deutsche: { id: "deutsche", name: "Deutsche Bank", tagline: "Frankfurt's universal bank, trade to balance sheet" },
+  bnpparibas: { id: "bnpparibas", name: "BNP Paribas", tagline: "Europe's universal bank, desk to ledger" },
+  standardchartered: { id: "standardchartered", name: "Standard Chartered", tagline: "Asia-Africa corridors, trade to treasury" },
+
+  asana: { id: "asana", name: "Asana", tagline: "Work management graphs, tasks to goals" },
+  figma: { id: "figma", name: "Figma", tagline: "Design files, components and multiplayer canvases" },
+  gitlab: { id: "gitlab", name: "GitLab", tagline: "DevOps pipelines from idea to production" },
 };
 
-/** Authored kits — keyed by company id. ALL 112 slots live: 40 flagship
- *  (batches A–I) + 24 wave-5 + 24 wave-6 + 24 wave-7 additions. */
+/** Authored kits — keyed by company id. ALL 136 slots live: 40 flagship
+ *  (batches A–I) + 24 wave-5 + 24 wave-6 + 24 wave-7 + 24 wave-8 additions. */
 export const COMPANY_KITS: Record<string, CompanyKit> = {
   amazon: amazonKit,
   flipkart: flipkartKit,
@@ -456,6 +513,32 @@ export const COMPANY_KITS: Record<string, CompanyKit> = {
   dropbox: dropboxKit,
   zendesk: zendeskKit,
   canva: canvaKit,
+
+  // Wave-8 additions — 3 more per domain, all 8 domains extended to 17 companies.
+  costco: costcoKit,
+  rakuten: rakutenKit,
+  mercadolibre: mercadolibreKit,
+  gojek: gojekKit,
+  turo: turoKit,
+  zipcar: zipcarKit,
+  quora: quoraKit,
+  telegram: telegramKit,
+  substack: substackKit,
+  monzo: monzoKit,
+  affirm: affirmKit,
+  n26: n26Kit,
+  gopuff: gopuffKit,
+  chipotle: chipotleKit,
+  subway: subwayKit,
+  hyatt: hyattKit,
+  emirates: emiratesKit,
+  getyourguide: getyourguideKit,
+  deutsche: deutscheKit,
+  bnpparibas: bnpparibasKit,
+  standardchartered: standardcharteredKit,
+  asana: asanaKit,
+  figma: figmaKit,
+  gitlab: gitlabKit,
 };
 
 export const companyKit = (id: string): CompanyKit | undefined => COMPANY_KITS[id];
