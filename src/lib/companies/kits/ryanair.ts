@@ -1,0 +1,1072 @@
+// RyanAir — kit 8 of the Travel & Hospitality domain (Batch H).
+// Europe's low-fare airline: load factor, ancillary revenue per passenger and
+// route-level yield. Pool provenance: RyanAir has NO registry tags in this
+// app's pools — 0 tagged LC problems — so every topic and problem slug is
+// theme-curated from scripts/company-pools.md's theme menu, mirroring the
+// workflows RyanAir screens are known to probe (conditional load-state
+// censuses, basket folds, rolling demand, ranking boards, anti-joins on zero
+// attach). Case studies run on the storefront db with probed figures from
+// scripts/company-facts.md — mapped honestly as orders=booked itineraries
+// (PNRs), order_items=line items (fare + ancillary SKUs), products=SKU
+// families, customers=passengers, shipped_at=flight flown, region=market.
+
+import type { CompanyKit } from "../types";
+
+export const ryanairKit: CompanyKit = {
+  id: "ryanair",
+  domainId: "travel",
+  name: "RyanAir",
+  tagline: "Europe's low-fare airline: yield and ancillaries",
+  accent: "text-indigo-200",
+
+  brief: [
+    "**RyanAir** is Europe's largest low-fare airline by passengers — a single-fleet, high-frequency network where the ticket is deliberately thin and the margin lives in what happens after the fare: bags, seats, priority, onboard. The analytics culture reflects that: *load factor and ancillary yield per passenger are the two numbers the network lives by*. In this app's training db the mapping is honest: `orders` are booked itineraries (PNRs), order_items are the line items a PNR carries (fare plus ancillary SKUs), products are SKU families, customers are passengers, and shipped_at is the flight flown. Probed scale: **103 PNRs worth 34833.28** carrying **251 line items**, so the basket runs about 2.4 lines per booking.",
+    "The data org is revenue-management-shaped. Network planning owns load: on the db, **82 of 103** PNRs flew (52 {emerald:flown-completed} plus 30 in the air), 14 sit {amber:pending} in the booking window, and 7 are {rose:cancelled} — 6.8% of demand that never boarded. Ancillary analytics owns attach: the SKU families split into a census of units per PNR — the busiest family logged 121 units across 54 PNRs — and per-basket value reads 301.27 at the top family down to 61.01 at the bottom. Finance owns the settlement stack, where money moves as integer cents across 28 invoices and 27 payments.",
+    "The SQL screens are live-db and denominator-ruthless. You will be asked for a load-state census in one pass — booked, flown, cancelled, share — and the trap is filtering the denominator: a WHERE that drops {rose:cancelled} before the fold prints a load factor that flatters the network. You will be asked for value per basket, and the trap is grain: 251 lines folding through joins until COUNT(*) counts SKUs and calls them passengers. Dead-demand anti-joins return **zero rows** here — every passenger and every SKU has moved — and the fare ceiling sits at **199.99**, so premium-band filters come back empty by construction.",
+    "Prep the way the screens run: conditional counts (`COUNT(*) FILTER (WHERE …)`, `SUM(CASE …)`) until a load-state census is one query with no sub-steps; joins plus aggregates until per-basket and per-passenger reads survive the fan-out; window ranks for route and SKU boards where ties are real; julianday for the **2.98-day** average booking-to-departure lead; and month buckets via `SUBSTR(created_at, 1, 7)` across 2024-01 to 2025-02. Then rehearse the two sentences the interviewer grades: *the numerator is PNRs that flew, the denominator is every PNR booked — and lines, passengers and units are three different counts on the same rows*.",
+    "Follow the value and the map splits fast. The {sky:market mix}: EU books **45 PNRs worth 15089.23**, APAC 37 worth 11605.45, US 19 worth 7286.16, LATAM just 2 worth 852.44 — value shares of 43.3 / 33.3 / 20.9 / 2.4, so every per-market yield call carries that skew into the room. The monthly pace, by contrast, is flat: **6 to 9 PNRs every month** from 2024-01 (8 PNRs, 3731.97, 1 cancellation) through 2025-02, which is why every claimed spike gets a denominator check before it gets a slide. Concentration is the quiet headline: passengers over the 3000 lifetime line are **63.5%** of booking value — and they are four names out of 16. *Wide demand, thin value, in one sentence.*",
+    "The expansion widens the aperture to money and state in motion. Settlement lives in INTEGER cents — `invoices.amount_cents` divides by 100.0 at the presentation edge or it lies by a hundredfold — and the finance tables carry real texture: **21** invoices settled exact, one partial stuck at 4000 of 6148, **6** invoices with no payment at all worth 15217, and a {rose:void} invoice quietly carrying a 925 payment. The screens probe that depth: LAG/LEAD gap math between a passenger's own bookings, set-op stacks that reconcile two feeds, CTE-staged ladders, GROUP_CONCAT itineraries, and the one-pass censuses month-close signs off on. Same rule as ever, deeper water: *state the definition before the syntax, and the hard tier stops being hard.*",
+  ],
+
+  dayInLife: [
+    "**07:30 —** Load-state first: the overnight census — 103 PNRs booked, 82 flown, 14 {amber:pending} in the window, 7 {rose:cancelled} — and the flown share beside it, 79.6, *with the denominator printed on the slide or the number means nothing*. A route manager has already pinged about tomorrow's bookings curve, so the 30-day pace roll runs before the standup.",
+    "**11:00 —** Deep work: the ancillary cut. Value per basket by SKU family — revenue folded per family over `COUNT(DISTINCT order_id)` baskets — puts the top family at **301.27** per PNR against the attach-heavy one at 61.01 across 54 baskets, and the per-passenger yield board follows. The instinct being trained: the fan-out is the trap, so the basket counter is DISTINCT or the fold counts SKUs and calls them passengers.",
+    "**14:30 —** Network review: route boards with ranks and ties called out, the booking-to-departure lead at **2.98** days (the upsell window), and settlement hygiene — one invoice {rose:void} yet carrying a payment, flagged before the cents tie-out. Revenue management wants the cancellation haircut on every forecast slide: 6.8% of PNRs never board.",
+    "**17:30 —** EOD writeup: the yield note ships with definitions attached — flown versus booked, baskets as DISTINCT PNRs, lead time as julianday on flown PNRs only — and the data-quality queue takes the double-logged ancillary rows from one OTA feed, queued for a `ROW_NUMBER` dedupe. The note goes out; the denominators ride along.",
+    "**20:45 —** Settlement close before the lights go down: the AR stack re-reads — **6 unpaid invoices worth 15217**, the partial stuck at 4000 of 6148, the {rose:void}-but-paid 925 re-flagged for finance's morning tie-out. The night-shift handoff pre-stages tomorrow's `ROW_NUMBER` dedupe on the OTA feed and re-checks the 14 {amber:pending} PNRs still inside the booking window. *A handoff note that carries its denominators is worth three dashboards.*",
+  ],
+
+  metrics: [
+    { name: "Load factor", what: "PNRs that flew over PNRs booked — 82 of 103 on the db, 79.6%. The network's heartbeat: every read that filters cancelled out of the base first is a load factor that lies." },
+    { name: "Ancillary revenue per passenger", what: "Non-fare line value divided by DISTINCT passengers. Low fares win seats; ancillaries win the quarter — this is the number the model actually optimizes." },
+    { name: "Value per basket", what: "Family revenue over DISTINCT PNRs touching it — 301.27 at the top family, 61.01 at the bottom. Tells attach strategy which families ride on few, fat baskets." },
+    { name: "Cancellation / no-show share", what: "Cancelled PNRs over booked PNRs — 6.8% network, 8.1% in the APAC-like market. Yield forecasts carry this haircut before seats are re-released." },
+    { name: "Booking-to-departure lead", what: "julianday(flight) minus julianday(booking) on flown PNRs — 2.98 days average, range 2 to 4. The upsell and re-opt window length by market." },
+    { name: "Lines per PNR", what: "Line items over bookings — 251 over 103, about 2.4. The attach-rate proxy: how many SKUs the average itinerary carries beyond the fare." },
+    { name: "Passenger value concentration", what: "Share of booking value from passengers above a lifetime threshold — 63.5% at the 3000 line. Even a volume business has whales, and the yield team knows their names." },
+    { name: "Average booking value", what: "Mean PNR total — 338.19 network, 383.48 in the richest market, 313.66 in the busiest one. Fare-mix shifts show up here before they show up in yield calls." },
+    { name: "Settlement coverage", what: "Invoices with matching payment rows over all invoices — 21 settled exact, 1 partial (4000 of 6148), 6 with nothing. Money is INTEGER cents; a skipped /100.0 turns a clean tie-out into a phantom break." },
+    { name: "Days-to-settle", what: "Issue-to-payment on paid invoices — 28.4 days average over 20, fastest 13, slowest 84, against uniform 30-day terms. The AR conversation starts the week this crosses the terms line." },
+    { name: "Market value share", what: "Each market's slice of the 34833.28 booking base — EU 43.3, APAC 33.3, US 20.9, LATAM 2.4. Reads the network's center of gravity before any per-market yield call is made." },
+    { name: "Operating expense mix", what: "The cost side in INTEGER cents — Rent 16800, Ads 4570, Travel 2521, Tools 1525 across 36 entries. Ancillary margin is only margin after this stack is subtracted." },
+  ],
+
+  topics: [
+    {
+      name: "Load-state conditional counts",
+      why: "Every load read is a conditional census — booked, flown, pending, cancelled, share — folded in one pass. FILTER (WHERE …) and SUM(CASE …) over status are the exact drills; the denominator discipline is the graded part.",
+      slugs: ["flight-occupancy-and-waitlist-analysis", "immediate-food-delivery-ii", "monthly-transactions-ii"],
+    },
+    {
+      name: "Ancillary basket folds",
+      why: "Ancillary analytics lives on line items: units and value folded per SKU family, per period, per basket. The join from PNRs to lines fans out, so every fold must state its grain — lines, units or DISTINCT baskets.",
+      slugs: ["product-sales-analysis-ii", "list-the-products-ordered-in-a-period", "most-frequently-ordered-product-per-customer"],
+    },
+    {
+      name: "Yield & share ratios",
+      why: "Yield is a ratio culture: shares of PNRs meeting a condition, per-family percentages, acceptance-style rates. Each one is a fold over a stated denominator with real division — 100.0 before the slash, always.",
+      slugs: ["queries-quality-and-percentage", "percentage-of-users-attended-a-contest", "card-launch-success"],
+    },
+    {
+      name: "Rolling demand windows",
+      why: "Booking pace is read in rolling windows — 7-day actives, DAU/WAU-style stickiness on the booking curve, trailing averages for the pace board. Window frames over dates are the load-planning drill.",
+      slugs: ["rolling-7d-actives", "dau-wau-stickiness", "restaurant-growth"],
+    },
+    {
+      name: "Route & yield ranking",
+      why: "Route boards, SKU boards and top-passenger lists are window ranks over folded aggregates — with ties that must share rungs honestly and percentages computed against the partition, not the eyeball.",
+      slugs: ["rank-scores", "compute-the-rank-as-a-percentage", "top-earners"],
+    },
+    {
+      name: "Base & peak-hour demand",
+      why: "The network reads itself by base and hour: busiest airports, peak departure hours per market, weekday demand skews. Argmax and bucketing drills — the busiest entity per group — are the exact shapes.",
+      slugs: ["the-airport-with-the-most-flights", "find-peak-calling-hours-for-each-city", "tasks-count-in-the-weekend"],
+    },
+    {
+      name: "Turnaround & interval billing",
+      why: "Ancillaries bill by duration and turns are timed: duration-billed fees, span-versus-sum utilization, average process time per aircraft. Timestamp-pair arithmetic with CEIL-style billing rules is the drill.",
+      slugs: ["average-time-of-process-per-machine", "calculate-parking-fees-and-duration", "server-utilization-time"],
+    },
+    {
+      name: "Seat maps & self-joins",
+      why: "Seat inventory is row-neighborhood logic: consecutive-available seats, seat swaps, consecutive runs. Self-joins and LAG over seat positions are the load-adjacent drills this airline is famous for asking.",
+      slugs: ["consecutive-available-seats", "exchange-seats", "consecutive-numbers"],
+    },
+    {
+      name: "Zero-attach anti-joins",
+      why: "A SKU family that never attaches, a route with no takers — the anti-join is the yield team's leak detector. On this db every product and passenger has moved, so the drill includes knowing when zero is the true answer.",
+      slugs: ["sellers-with-no-sales", "unpopular-books", "find-churn-risk-customers"],
+    },
+    {
+      name: "YoY & seasonality",
+      why: "Demand is seasonal and the board thinks in year-over-year deltas: LAG prior-year comparisons, seasonal CASE splits, and multi-year repeat-demand reads are the pace-pack staples.",
+      slugs: ["year-on-year-growth-rate", "seasonal-sales-analysis", "products-with-three-or-more-orders-in-two-consecutive-years"],
+    },
+    {
+      name: "Settlement & cents discipline",
+      why: "Money settles in INTEGER cents across 28 invoices and 27 payments, and a skipped /100.0 turns a clean tie-out into a phantom break a hundredfold. The drills are per-entity conditional folds — exact, partial, nothing — with cents-to-euros at the presentation edge and the void-but-paid 925 as the standing reconciliation catch.",
+      slugs: ["bank-account-summary-ii", "products-worth-over-invoices", "trial-balance-check"],
+    },
+    {
+      name: "Subquery & CTE staging",
+      why: "Yield benchmarks live one level up: families above the network basket, passengers above the 2177.08 per-passenger average. Scalar subqueries set the bar inline; CTEs stage the fold so the definition survives review. The drill is two-stage reads where the benchmark and the rows fold on the same grain.",
+      slugs: ["second-highest-salary", "department-highest-salary", "market-analysis-i"],
+    },
+    {
+      name: "Set ops & reconciliation",
+      why: "Two feeds describe the same network — the OTA feed and the direct channel — and month-close stitches them with UNION ALL stacks that name every state. The reconciliation read runs both stacks and reads the delta: the rows plain UNION dedupes are exactly the double-logs the audit hunts.",
+      slugs: ["league-statistics", "count-salary-categories", "team-scores-in-football-tournament"],
+    },
+    {
+      name: "CASE tiering & fare bands",
+      why: "The fare ladder is a CASE ladder — budget, mid, premium — with the premium band EMPTY by construction at the 199.99 ceiling, so the honest cut is benchmark position, not band membership. CASE pivots and interval buckets drill one-pass ladders where every PNR lands in exactly one tier.",
+      slugs: ["calculate-orders-within-each-interval", "weather-type-in-each-country", "the-category-of-each-member-in-the-store"],
+    },
+    {
+      name: "Running totals & share-of-partition",
+      why: "The booking-value walk and the market-share slide are window folds: cumulative SUM over the month keys, value share over the 34833.28 base with the shares summing back to 100. Frames are the graded part — the default RANGE folds peer rows, and a pace walk that jumps two PNRs at once is a frame bug.",
+      slugs: ["running-total-for-different-genders", "portfolio-weights", "find-cumulative-salary-of-an-employee"],
+    },
+  ],
+
+  theory: [
+    {
+      id: "ryanair-t1",
+      q: "A per-passenger yield query joins PNRs to their line items and the passenger count explodes. What happened and what's the fix?",
+      a: "The join fanned out: 103 PNRs carry 251 line items, so joining to lines multiplies passenger rows by items per PNR and COUNT(*) counts SKUs, not passengers. The fix is grain honesty — either fold lines to PNR level first in a CTE, then join up, or keep the fan-out and fold with COUNT(DISTINCT o.customer_id). I say the three counts out loud on any ancillary read: lines (251), PNRs (103), passengers (16 on this db) — and the one the slide claims must match the fold actually written. A yield number built on the wrong grain isn't slightly off; it's a different metric wearing the right name.",
+      tag: "joins",
+    },
+    {
+      id: "ryanair-t2",
+      q: "The route board ranks bases by PNR count, and two bases tie. How do you make the tie a decision instead of an accident?",
+      a: "Pick the window function by its tie policy and state it: ROW_NUMBER breaks ties arbitrarily — the board looks precise and is actually ordered by rowid. RANK gives tied bases the same rung and skips consumed slots (2, 2, then 4), which is honest about how many bases sit above. DENSE_RANK numbers rungs consecutively and hides the depth of the tie. On an operations board I ship RANK with a deterministic tiebreaker (base id), and if the tie itself matters — two bases at the same load — I surface the tie as a column, because 'tied' is a fact the network team will act on, not noise to hide behind an arbitrary integer.",
+      tag: "windows",
+    },
+    {
+      id: "ryanair-t3",
+      q: "Write the load-state census in one query: booked, flown, cancelled, flown share. Where do candidates usually go wrong?",
+      a: "One pass with conditional folds: COUNT(*) AS booked, COUNT(*) FILTER (WHERE shipped_at IS NOT NULL) AS flown, COUNT(*) FILTER (WHERE status = 'cancelled') AS cancelled, and ROUND(100.0 * flown / COUNT(*), 1) AS flown_pct — 103, 82, 7, 79.6 on this db. The classic failure is a WHERE clause: filtering cancelled out 'to keep it clean' shrinks the base to 96 and prints a load factor the network never earned; the second is integer division, where 100 * 82/103 truncates to 0 or 79 depending on where the 100.0 sits. The census must keep every PNR in exactly one conditional bucket and all of them in the denominator — that is the whole definition.",
+      tag: "aggregation",
+    },
+    {
+      id: "ryanair-t4",
+      q: "shipped_at is NULL on 21 PNRs. What does that NULL mean, and how should queries treat it?",
+      a: "On this mapping the NULL is a business state: the flight hasn't flown — 14 PNRs pending in the booking window and 7 cancelled, 21 total. Treating it as dirty data is the cardinal error: filling it with today's date fabricates departures, excluding those rows from a load read shrinks the denominator and flatters load factor. The honest tools are state-based: COUNT(shipped_at) rides the NULL-blindness for the flown numerator, shipped_at IS NULL splits the not-flown arm into pending versus cancelled by joining on status, and julianday lead-time math over NULL rows NULLs them — which is correct, because a PNR that never flew has no departure lead. NULL here is information; the queries should read it, not repair it.",
+      tag: "nulls",
+    },
+    {
+      id: "ryanair-t5",
+      q: "Where do WHERE and HAVING each belong in a per-route load query, and why does mixing them up matter?",
+      a: "WHERE filters rows before the fold: market filters, date windows, 'PNRs created this month'. HAVING filters groups after the fold: routes with at least 10 PNRs, families whose attach crosses a bar. The pipeline order is FROM/JOIN → WHERE → GROUP BY → HAVING → SELECT → ORDER BY, and the two conditions are not interchangeable — WHERE COUNT(*) fails because the fold doesn't exist yet, and pushing a row filter into HAVING folds data you then throw away. On a small-network read the difference is real: gate the tiny routes in HAVING so a two-PNR route can't top a load board on sample size, and keep the market slice in WHERE so the fold only ever saw the rows that mattered.",
+      tag: "pipeline",
+    },
+    {
+      id: "ryanair-t6",
+      q: "Ancillary strategy wants SKU families whose per-basket value beats the network average basket. Subquery, window, or CTE?",
+      a: "All three are honest; the definition's weight picks one. A scalar subquery — HAVING SUM(value)/COUNT(DISTINCT order_id) > (SELECT SUM(value)/COUNT(DISTINCT order_id) FROM order_items) — is the compact benchmark read. A windowed fold, AVG(SUM(value)) OVER (), keeps every family in the result with its premium versus the network visible, which is what the strategy deck actually wants. A CTE earns its place when 'basket value' needs a definition — fare lines excluded, refunds netted — because a named two-stage fold survives review and a nested one-liner doesn't. What's not negotiable: the benchmark and the families must fold on the same grain, or the comparison is units against baskets.",
+      tag: "subqueries",
+    },
+    {
+      id: "ryanair-t7",
+      q: "Two date reads every week: booking pace by month and booking-to-departure lead by market. What machinery does each need?",
+      a: "Pace is bucketing: SUBSTR(created_at, 1, 7) makes a '2024-01' month key that GROUP BY folds and sorts correctly — the 13-bucket trend from 2024-01 (8 PNRs, 3731.97) through 2025-02. Lead time is instant math: julianday(shipped_at) - julianday(created_at) on the 82 flown PNRs, averaged to 2.98 days with the 2-to-4 range quoted, because the upsell window is sized in days. The traps I name out loud: bucketing the raw timestamp gives one row per PNR; julianday over NULL departures NULLs those rows, which is the definition and not a bug; and the round happens once at the edge so the deck, the query and the audit all print 2.98.",
+      tag: "dates",
+    },
+    {
+      id: "ryanair-t8",
+      q: "One OTA feed double-logs ancillary lines, and finance just found a void invoice carrying a payment. How do you keep both from poisoning yield reads?",
+      a: "Dedupe on a natural key, reconcile states against evidence. For the feed: ROW_NUMBER() OVER (PARTITION BY pnr, sku, event_time ORDER BY ingested_at DESC, id DESC) and keep rn = 1 — with the tiebreak stated, because 'latest' needs a deterministic definition when timestamps tie. For finance: conditional counts that cross-examine status against payment rows surface the void-but-paid invoice (925.00 on this db) and the paid-with-no-payments case (1756.00) before the tie-out, and the cents discipline — integer cents over 100.0 — keeps the money honest. The habit being graded: row counts are claims, keys and evidence are truth, and a yield number shipped from a deduped, reconciled base is the only one worth defending.",
+      tag: "quality",
+    },
+    {
+      id: "ryanair-t9",
+      q: "The booking-value walk on the pace board jumps two PNRs at once on some days and steps one on others. What's actually happening in the window?",
+      a: "The default frame with ORDER BY is RANGE, and RANGE folds peer rows — rows sharing the sort key — into one frame step. On this db 17 booking days carry two PNRs, so the walk is uneven by design: on 2024-01-02, PNR 5 at 725.34 and PNR 7 at 152.52 land together and the walk jumps from 752.96 straight to 1630.82. The fix is an explicit frame: SUM(o.total) OVER (ORDER BY o.created_at ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) — ROWS steps row by row, so the same day reads 752.96, then 1478.30, then 1630.82. I state which frame the board wants before writing it: a pace walk is ROWS, a per-day total is RANGE — and on Ryanair pace boards that choice is visible in every running-total slide.",
+      tag: "windows",
+    },
+    {
+      id: "ryanair-t10",
+      q: "You're computing the gap between a passenger's consecutive bookings. What does LAG need to say in shape, and what nonsense comes out if you drop half of it?",
+      a: "LAG(o.created_at) OVER (PARTITION BY o.customer_id ORDER BY o.created_at) puts each passenger's previous booking beside the current one, and julianday(current) - julianday(previous) is the gap in days. Drop the PARTITION BY and the window walks the whole table in date order, so one passenger's last booking diffs against a stranger's next booking — a 'gap' that is really a handoff between two people. On this db that matters: the heavy bookers carry 24, 17, 14 and 13 PNRs, so the unpartitioned walk would smear dozens of fake cross-passenger gaps into the histogram. My habit: partition by the entity, order by the event time, diff last — and print the row count beside the average so the first-booking NULLs are visibly excluded, not silently averaged away.",
+      tag: "lags",
+    },
+    {
+      id: "ryanair-t11",
+      q: "Two booking feeds — OTA and direct — need one reconciliation sheet. UNION or UNION ALL, and what does the gap between the two runs tell you?",
+      a: "Both, deliberately. UNION ALL stacks every row of both feeds with no dedupe pass — the full census, and the cheaper scan. Plain UNION applies an implicit DISTINCT across the stack, so rows identical row-for-row collapse to one. The reconciliation finding IS the delta between the runs: the rows UNION removed are exactly the double-logged bookings this kit's OTA feeds produce, and a keep-latest ROW_NUMBER over the natural key then decides which copy survives. What I never do is reach for plain UNION by reflex: it silently hides the duplicates the audit exists to catch, and the dedupe work it burns is a signal you're throwing away before anyone reads it. Set ops are vocabulary for evidence, not convenience.",
+      tag: "setops",
+    },
+    {
+      id: "ryanair-t12",
+      q: "Growth wants passengers who booked in 2024 but never came back in 2025. Anti-join, NOT IN, or EXCEPT — and what does each print here?",
+      a: "Three shapes, one answer: 7 passengers. The anti-join — LEFT JOIN the 2025 side, keep IS NULL — is my default because it survives NULLs on the right and reads as intent. NOT IN (SELECT customer_id FROM orders WHERE year = '2025') happens to work here, but it is one NULL away from returning an empty set forever: NOT IN over a list containing NULL matches nothing, silently. EXCEPT is the declarative cut and my pick when both sides are clean DISTINCT folds — on this db the 2024 bookers split into 8 who returned in 2025 and 7 who didn't, and the INTERSECT side of the same pair is the retention read. I name the shape in the review, because '7 lapsed' and '8 retained' are two headlines over one query family — and the winback budget hangs on which one the slide carries.",
+      tag: "antijoin",
+    },
+    {
+      id: "ryanair-t13",
+      q: "The yield review needs value per basket, then a rank, then a top-N cut. Walk me through staging that in one query.",
+      a: "A CTE per stage, named for the stage. First family_value: fold SUM(value) and COUNT(DISTINCT order_id) per SKU family — the grain is the family, so the basket counter must be DISTINCT or the 251-line fan-out counts lines and calls them baskets. Then the outer query ranks: RANK() OVER (ORDER BY value_per_basket DESC), rounds once, and LIMIT draws the board's height. A derived table does the same job inline and is fine at two steps, but three-step reads with named definitions are where CTEs pay: the reviewer can point at family_value and ask 'does value include the fare line?', and the answer is visible in one place instead of buried in a nested fold. On Ryanair boards the CTE name becomes the definition of record — family_value, flown_only, pace_by_month — and the definition question gets answered by reading, not re-deriving.",
+      tag: "ctes",
+    },
+    {
+      id: "ryanair-t14",
+      q: "Winback wants each passenger's most recent booking. Correlated subquery or ROW_NUMBER — and which one survives the tie question?",
+      a: "Both compute 'latest', and they disagree on ties. The correlated form — WHERE o.created_at = (SELECT MAX(o2.created_at) FROM orders o2 WHERE o2.customer_id = o.customer_id) — returns EVERY booking sitting on the passenger's max date, so two bookings sharing the latest day both come back; tie-honest by construction. ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY created_at DESC) = 1 returns exactly one row per passenger, but which one is arbitrary unless the ORDER BY carries a deterministic tiebreaker like id DESC — and 'arbitrary' is a bug when the winback email references a specific itinerary. My rule: per-row uniqueness is a data decision, not a syntax one — if the business wants one row per passenger, declare the tiebreaker out loud; if it wants the truth about ties, the correlated MAX keeps them. Either runs instantly on 16 passengers; the habit matters when the table has millions of bookings.",
+      tag: "subqueries",
+    },
+    {
+      id: "ryanair-t15",
+      q: "The market board must show every market carrying at least one cancellation, alongside each market's full placed count. Where do the conditions go?",
+      a: "The cancellation test is a property of the group, so it lives in HAVING: HAVING SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) > 0 — a conditional fold inside the gate. All four markets fold, the zero-cancellation one drops, and every surviving row still prints its full placed count because no rows were filtered first. The trap is filtering rows instead: WHERE status = 'cancelled' before GROUP BY also leaves three markets, but the placed-count column now counts only cancelled rows — 3, 3, 1 printed under a header that says placed, which is a quietly wrong slide, not an error. On this db the difference is LATAM: two placed PNRs, zero cancellations — present with honest counts in the HAVING shape, absent entirely in the WHERE shape. Pipeline order isn't pedantry here; it decides whether the denominator survives to the slide.",
+      tag: "pipeline",
+    },
+    {
+      id: "ryanair-t16",
+      q: "Ops wants one cell per PNR listing the SKUs inside it, each listed once. How do you build that fold, and what are its limits?",
+      a: "GROUP_CONCAT with an explicit contract. GROUP_CONCAT(DISTINCT p.name) collapses repeated SKUs, the default comma separator is fine for boards, and I set the separator explicitly when the cell is parsed downstream. The part everyone forgets: the row order inside the cell is unspecified unless the engine version supports ORDER BY in the aggregate, so a manifest whose reading order matters needs that guarantee stated or the consumer told the order is not contractual. On this db the safety is cheap: every PNR's lines are already distinct SKUs — no duplicate product rows inside any booking — so DISTINCT changes nothing today and quietly saves the manifest the day a double-logged ancillary arrives. My line in review: concat cells are presentation-layer; definitions stay in columns. The moment someone parses that cell for math, the design has failed.",
+      tag: "strings",
+    },
+    {
+      id: "ryanair-t17",
+      q: "The 2025-02 bucket is missing from a teammate's pace trend and the deck calls it missing data. How do you build month buckets that can't silently lose a month?",
+      a: "Two tools, one trap. SUBSTR(created_at, 1, 7) slices the ISO timestamp to a '2024-01' key that sorts correctly as text and folds cleanly; strftime('%Y-%m', created_at) is the same key with nicer intent and more date math available — on this db they print identical 14-bucket trends. The trap: GROUP BY only emits buckets that exist — a month with zero bookings vanishes, and a stakeholder reads the gap as missing data rather than zero demand. The fix is a calendar spine: a month list LEFT JOINed to the folded counts, so every month prints and zeros are explicit. On this db's pace the gap never bites — 6 to 9 PNRs every month — but the spine is the habit that survives a real dry month, because absence of rows is not a zero until a spine says so.",
+      tag: "dates",
+    },
+    {
+      id: "ryanair-t18",
+      q: "Finance says your settlement total is out by a factor of a hundred. Where does the cents discipline usually break?",
+      a: "At the unit boundary. `invoices` and `payments` here carry INTEGER cents — 1521700 cents of open AR across 6 invoices, not 15217 — and the /100.0 conversion happens exactly once, at the presentation edge. The failures I look for first: summing cents and calling it euros (a hundredfold error that survives every cross-check sharing the mistake), dividing in INTEGER arithmetic and dropping remainders on odd cents, and converting inside the fold so ROUND meets the money twice. The discipline: keep cents end to end, divide once, ROUND once, and print the unit beside the number — '15217.00' with a currency label, never a bare 1521700. On a route-P&L slide the difference between those two numbers is the difference between a rounding note and a re-audit.",
+      tag: "cents",
+    },
+    {
+      id: "ryanair-t19",
+      q: "Your latency average prints 2.98 but the deck shows 3.0. Who's wrong, and what's the rounding policy?",
+      a: "Different precisions, same data — and the pack's contract decides. The latency fold is AVG(julianday(shipped_at) - julianday(created_at)) over the 82 flown PNRs: 2.98 at two decimals, 3.0 at one, 3 at none. The policy I hold: fold raw and round once at the presentation edge — never ROUND inside the fold, because averaging pre-rounded values rounds every intermediate and drifts; and every cell in a pack carries the same precision, because a 2dp column beside a 1dp column reads as a data conflict. The subtle one: sums of rounded line values don't equal the rounded sum, so reconciliation happens at the fold's grain, not the cell's. The 3.0 wasn't wrong arithmetic — it was a different contract — but on a deck where every share is 1dp and every money cell is 2dp, the odd cell out is treated as a bug, and it should be.",
+      tag: "rounding",
+    },
+    {
+      id: "ryanair-t20",
+      q: "Define ancillary revenue per passenger the way you'd defend it in a metrics review, with this db's numbers.",
+      a: "Ancillary revenue per passenger is non-fare line value divided by DISTINCT passengers who booked — and every word of that definition is load-bearing. Non-fare means the SKU families beyond the fare line; value is quantity times unit_price folded over 251 line items; and the denominator is COUNT(DISTINCT customer_id) — 16 on this db — not 103 PNRs and not 251 lines, because the fan-out makes those three counts different numbers wearing similar names. On this db the per-family cut is the actionable shape: value per basket runs 301.27 at the top family down to 61.01 at the busiest-thinnest, so attach strategy targets few-fat-basket families, not volume. Defensible means the three counts are stated, the fare exclusion is explicit, and the number survives a re-derivation by someone who only read the slide.",
+      tag: "kpi",
+    },
+    {
+      id: "ryanair-t21",
+      q: "Your per-market yield query joins PNRs to lines and is getting slow as the table grows. First three instincts before reaching for an index?",
+      a: "Filter early, fold late, carry less. First, push row filters to WHERE before the fold — the market literal and the date window shrink the fold's input, and on a joined read the filter that halves the many-side halves the join work. Second, kill the fan-out before it fans: fold 251 lines to 103 PNR-level rows in a CTE and join the fold, because carrying line rows through every window is pure waste when the metric is per-market. Third, select the columns the board prints — SELECT * through a join drags wide rows through the sort the window built. Then the index conversation, aimed at the join key and the sort: (customer_id, created_at) turns a per-passenger window from a sort into a scan. On a 103-row training db none of this matters; the screens ask because the instinct has to exist before the scale does.",
+      tag: "performance",
+    },
+    {
+      id: "ryanair-t22",
+      q: "Marketing wants passengers who booked in the same market on the same day — co-occurring PNRs. How do you pair rows honestly?",
+      a: "A self-join with an anti-symmetry guard. Join orders o1 to o2 on the shared attributes — same market via the customers join, same day via a SUBSTR(created_at, 1, 10) bucket — and add o1.id < o2.id so each pair appears once, never twice, and never a passenger with themselves. Without the guard you double-count every pair and include self-pairs, and the co-occurrence count doubles for reasons that look like demand. The deeper shape: bucket both sides to the comparison grain FIRST — day, market — pair within the bucket, then fold, because pairing on raw timestamps finds nothing and pairing on raw region finds everything. On this db the pairing base is small — 103 PNRs, 17 days carrying more than one — so correctness is visible by eye; the discipline is what scales when the double-count is invisible until the campaign budget doubles with it.",
+      tag: "selfjoin",
+    },
+    {
+      id: "ryanair-t23",
+      q: "A fare-only PNR carries no ancillary lines. What does SUM return for its ancillary total, and what's your policy?",
+      a: "NULL — and that's the definition, not a bug. A LEFT JOIN to order_items keeps the PNR with NULL line columns, SUM over no non-NULL values returns NULL, and a NULL total that reaches a yield slide as 'blank' gets read as zero by the stakeholder and as broken by the analyst. The policy: COALESCE(SUM(oi.quantity * oi.unit_price), 0) when the business meaning of 'no lines' is zero spend, with the rule stated in the CTE name or a comment; never COALESCE the raw column before the fold, which flattens structural NULLs and real NULLs alike. On this db the case is real: 26 of 103 PNRs carry exactly one line — the fare — so the ancillary fold meets the NULL arm 26 times. NULL means 'nothing to sum'; zero is a business decision you make once, out loud.",
+      tag: "nulls",
+    },
+    {
+      id: "ryanair-t24",
+      q: "A PNR sat pending for two weeks, then flew. Which dashboards were wrong in the meantime, and what's your policy for state that arrives late?",
+      a: "Every snapshot was right at its moment and wrong afterwards — the flown share printed it as 'not happened', and the moment shipped_at arrived, every historical read that folds COUNT(shipped_at) silently changed. My policy: event tables are append-only truth, snapshots are labelled as-of their run, and any metric that restates — flown share, lead time, cancellation share — is published with as-of dates and recomputed the same way every time, never spliced. The discipline the late arrival teaches: COUNT(shipped_at) isn't 'flown', it's 'flown as of this query' — on this db the 82 will grow while the 14 pending drain, and a weekly number that moves backwards is a restatement, not an error. I'd rather ship a small number with a timestamp than a big number with no as-of; the second is how a team stops trusting its own dashboards.",
+      tag: "quality",
+    },
+  ],
+
+  mcqs: [
+    {
+      id: "ryanair-mcq-1",
+      prompt: "One-pass load census. Which fragment counts PNRs that actually flew — 82 of 103?",
+      choices: [
+        "COUNT(*) FILTER (WHERE status = 'delivered')",
+        "COUNT(*) FILTER (WHERE o.shipped_at IS NOT NULL)",
+        "COUNT(o.status)",
+        "SUM(shipped_at) ",
+      ],
+      answer: 1,
+      why: "shipped_at is the flight-flown timestamp — NULL until the PNR flies. The FILTER keeps the conditional census in one pass: 82 flown, while COUNT(*) stays 103 in the same SELECT.",
+      notes: [
+        { choice: 0, why: "'Delivered' counts one raw state (52) — the mapped completed bucket — but flights flown is delivered PLUS the in-air bucket, 82. Pick the state-free definition: shipped_at IS NOT NULL." },
+        { choice: 3, why: "SUM over a timestamp column adds date numbers — a meaningless figure. Conditional counting needs a boolean predicate inside FILTER or CASE, not arithmetic on dates." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "ryanair-mcq-2",
+      prompt: "Which expression prints the flown share as 79.6 rather than 0?",
+      choices: [
+        "100 * 82 / 103",
+        "100.0 * COUNT(shipped_at) / COUNT(*)",
+        "CAST(82 / 103 AS REAL) * 100",
+        "82.0 / 103.0 (then multiply in the deck)",
+      ],
+      answer: 1,
+      why: "The 100.0 promotes the fold to real arithmetic BEFORE the division — 82/103 becomes 79.6. Integer division happens first in every other option and truncates at the slash.",
+      notes: [
+        { choice: 0, why: "82/103 in integer arithmetic is 0; times 100 stays 0. The .0 has to enter before the division, not decorate it afterwards." },
+        { choice: 2, why: "The cast happens after the integer division has already floored 82/103 to 0. Real-promotion must precede the slash." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "ryanair-mcq-3",
+      prompt: "Booking pace by month for the network pack. The GROUP BY key is:",
+      choices: [
+        "created_at (raw timestamp)",
+        "strftime('%Y', created_at)",
+        "SUBSTR(created_at, 1, 7)",
+        "DATE(created_at, 'start of month') formatted in the deck",
+      ],
+      answer: 2,
+      why: "SUBSTR(created_at, 1, 7) builds the '2024-01' year-month key — 13 buckets from 2024-01 (8 PNRs, 3731.97) to 2025-02 — that sorts correctly as text and folds the whole window.",
+      notes: [
+        { choice: 0, why: "The raw timestamp gives one group per PNR — 103 rows of one. Pace needs a derived bucket key, not the raw instant." },
+        { choice: 1, why: "%Y collapses the window to two rows: 2024 and 2025. The seasonality story — and the YoY comparison — needs the month in the key." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "ryanair-mcq-4",
+      prompt: "Value per basket by SKU family: revenue divided by PNRs touching the family. The denominator is:",
+      choices: [
+        "COUNT(*) after joining order_items to products",
+        "COUNT(DISTINCT oi.order_id)",
+        "SUM(oi.quantity)",
+        "COUNT(DISTINCT p.id)",
+      ],
+      answer: 1,
+      why: "A basket is a PNR, and the join fans each PNR out to one row per line — 103 PNRs become 251 rows. COUNT(DISTINCT oi.order_id) folds back to distinct baskets: 46 for the audio family against 11744.01 of value → 255.3.",
+      notes: [
+        { choice: 0, why: "COUNT(*) counts LINES — 251 across the network — and calls them baskets. Per-basket value then drops about 2.4x and the attach story quietly inverts." },
+        { choice: 2, why: "SUM(quantity) is the unit census (121 in the busiest family) — units over baskets is units-per-basket, a different metric than value-per-basket." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "ryanair-mcq-5",
+      prompt: "The attach board wants lines per PNR. On this db that's 251 lines over 103 PNRs. Which query shape computes it per market without fanning out?",
+      choices: [
+        "Join orders to order_items, COUNT(*) / COUNT(DISTINCT o.id) per market",
+        "Join and compute SUM(quantity) / COUNT(*) per market",
+        "Fold lines to PNR level first, then average per market",
+        "COUNT(*) from order_items divided by COUNT(*) from orders in two separate queries",
+      ],
+      answer: 2,
+      why: "Lines per PNR is a two-grain metric: fold lines to one row per PNR (a CTE or derived table), then average PNR line-counts per market. One clean stage per grain — no DISTINCT gymnastics holding a fan-out together.",
+      notes: [
+        { choice: 0, why: "COUNT(*) on the fanned-out join counts lines while COUNT(DISTINCT o.id) counts PNRs — the ratio is right but the shape invites the next person to add a column that breaks it. Staged folds are the durable build." },
+        { choice: 1, why: "SUM(quantity) over COUNT(*) is units per LINE — not lines per PNR. Three counts live on these rows (lines, units, PNRs) and this divides the wrong two." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "ryanair-mcq-6",
+      prompt: "Route load board: keep markets with at least 10 booked PNRs. The gate goes in:",
+      choices: [
+        "WHERE COUNT(*) >= 10",
+        "HAVING COUNT(*) >= 10",
+        "LIMIT 10",
+        "ORDER BY COUNT(*) DESC",
+      ],
+      answer: 1,
+      why: "The PNR count is a fold — it exists only after GROUP BY — so the gate is HAVING. WHERE runs before grouping and can't see a count; LIMIT truncates rows, it doesn't define thresholds.",
+      notes: [
+        { choice: 0, why: "WHERE COUNT(...) is the classic error — the aggregate doesn't exist at row-filter time. Every gate on a fold lives in HAVING." },
+        { choice: 3, why: "Sorting by the fold is ordering, not gating — small routes still appear, they just appear at the bottom. The ask was to EXCLUDE them." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "ryanair-mcq-7",
+      prompt: "The base board ranks routes by PNR count. Two routes tie in third place (two bases sit above them). What does RANK() print for the tied pair and the next route?",
+      choices: [
+        "3, 4 then 5 — no shared rungs",
+        "3, 3 then 4 — consecutive rungs, no skip",
+        "3, 3 then 5 — ties share, next skips by tie size",
+        "5, 5 then 6 — ties take the last slot",
+      ],
+      answer: 2,
+      why: "RANK ties share the rung and the next route's rank jumps past the whole tie block: 3, 3, then 3 + 2 = 5. ROW_NUMBER would print 3, 4 arbitrarily; DENSE_RANK would print 3, 3, then 4 with no skip.",
+      notes: [
+        { choice: 0, why: "That's ROW_NUMBER — arbitrary distinct ranks inside the tie. The board would show one route 'ahead' of the other for no reason at all." },
+        { choice: 1, why: "That's DENSE_RANK — consecutive rungs that hide how deep the tie was. Both are defensible conventions; only one is what RANK actually does." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "ryanair-mcq-8",
+      prompt: "'PNRs still in play' = booked, not yet flown, not cancelled. Which predicate returns exactly the 14 pending PNRs?",
+      choices: [
+        "WHERE shipped_at IS NULL — 21 PNRs",
+        "WHERE status <> 'cancelled' — 96 PNRs",
+        "WHERE shipped_at IS NULL AND status <> 'cancelled' — 14 PNRs",
+        "WHERE status = 'pending' OR shipped_at IS NULL — 35 PNRs",
+      ],
+      answer: 2,
+      why: "The 21 not-flown PNRs (shipped_at IS NULL) split into 14 pending and 7 cancelled. In-play keeps only the pending arm: both conditions, because each alone over-counts by 7 or by 82.",
+      notes: [
+        { choice: 0, why: "shipped_at IS NULL includes the 7 cancelled PNRs — demand that will never board. Claiming it's 'in play' inflates the re-opt pool." },
+        { choice: 1, why: "status <> 'cancelled' keeps all 82 flown PNRs too. 'Not cancelled' is not 'still pending' — the flown arm must be excluded as well." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "ryanair-mcq-9",
+      prompt: "The passenger board joins PNRs to ancillary lines and ranks by COUNT(*). The top passenger shows 30 'bookings' but has 3 PNRs. What happened?",
+      choices: [
+        "The passenger really books 10x more than anyone — ship it",
+        "The join fanned out: COUNT(*) counts line items, so rank by COUNT(DISTINCT o.id) or fold lines per PNR first",
+        "COUNT(*) auto-deduplicates joined rows",
+        "The rank should be SUM(o.id) instead",
+      ],
+      answer: 1,
+      why: "On the fanned-out grain, COUNT(*) is the passenger's LINE count — 30 SKUs across 3 PNRs — not bookings. The board must fold at PNR grain (COUNT(DISTINCT o.id)) or stage lines-per-PNR in a CTE before ranking.",
+      notes: [
+        { choice: 0, why: "That's how an ancillary whale gets reported as a frequency whale — the two whales are different passengers, and the campaign that targets 'frequent flyers' would mail an attach outlier." },
+        { choice: 3, why: "SUM over an id column adds id VALUES — a number that grows with id assignment. Aggregating an id is always a smell, never a fix." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "ryanair-mcq-10",
+      prompt: "Yield hygiene asks for SKU families with ZERO attach all period. On this db the query returns:",
+      choices: [
+        "One family — the smallest one",
+        "Zero rows — every family has attached (and every product has sold)",
+        "All seven families — the join is wrong",
+        "The query errors — anti-joins need NOT EXISTS",
+      ],
+      answer: 1,
+      why: "Every product on this db has sold (never-ordered products = 0), so the anti-join — families whose SKUs never appear in order_items — is legitimately empty. Knowing when zero is the TRUE answer is part of the discipline.",
+      notes: [
+        { choice: 0, why: "The smallest family still moved 27 units. A one-row result here means the join or the period filter changed the population, not that demand died." },
+        { choice: 3, why: "LEFT JOIN + IS NULL, NOT EXISTS and EXCEPT all express the anti-join — the query runs fine. The interesting result is the empty set itself." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "ryanair-mcq-11",
+      prompt: "The OTA feed and the direct feed are stacked into one reconciliation sheet. What does plain UNION do that UNION ALL does not?",
+      choices: [
+        "Applies an implicit DISTINCT and collapses rows that are identical across both feeds",
+        "Sorts the combined rows by the first column",
+        "Drops rows where any column is NULL",
+        "Renames conflicting columns from the second feed",
+      ],
+      answer: 0,
+      why: "UNION ALL is a raw stack — every row of both feeds survives. UNION runs an implicit DISTINCT over the stack, so row-for-row doubles collapse to one. In a reconciliation that delta IS the finding: the removed rows are exactly the double-logs the audit hunts.",
+      notes: [
+        { choice: 1, why: "Sort order is an implementation detail, not the contract. The guarantee UNION makes is deduplication — assuming sort behavior is how cross-engine bugs are born." },
+        { choice: 2, why: "Neither form filters NULLs. Identical NULL-carrying rows collapse together under UNION — that's dedupe, not a NULL filter, and counting on it is a bug." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "ryanair-mcq-12",
+      prompt: "The fare board wants the single biggest booking on record — 1088.44. Which query returns it?",
+      choices: [
+        "SELECT id, total FROM orders ORDER BY total DESC LIMIT 1",
+        "SELECT id, total FROM orders ORDER BY total LIMIT 1",
+        "SELECT id, total FROM orders LIMIT 1 ORDER BY total DESC",
+        "SELECT id, MAX(total) FROM orders",
+      ],
+      answer: 0,
+      why: "ORDER BY total DESC puts the 1088.44 maximum first and LIMIT 1 keeps it. The floor is 25.47, so the direction of the sort is the entire question — 'biggest' is a DESC ask.",
+      notes: [
+        { choice: 1, why: "Ascending order surfaces the 25.47 minimum — right syntax, inverted headline." },
+        { choice: 3, why: "MAX(total) without GROUP BY is a valid one-row fold — but pairing it with a bare id selects an arbitrary row's id beside the aggregate, mixing grains in one output row." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "ryanair-mcq-13",
+      prompt: "The latency card printed 3.0 days where the pack expects 2.98. Which expression restores the standard cell?",
+      choices: [
+        "ROUND(AVG(julianday(shipped_at) - julianday(created_at)), 2)",
+        "ROUND(AVG(julianday(shipped_at) - julianday(created_at)), 1)",
+        "ROUND(AVG(julianday(shipped_at) - julianday(created_at)))",
+        "AVG(ROUND(julianday(shipped_at) - julianday(created_at), 2))",
+      ],
+      answer: 0,
+      why: "Two decimals is the pack's latency shape: 2.98 over the 82 flown PNRs. Rounded to one it prints 3.0, to none it prints 3 — both read as a different SLA on the same data.",
+      notes: [
+        { choice: 1, why: "One decimal is exactly how 3.0 got published. The precision isn't cosmetic — it's the cell's contract with every other latency figure in the pack." },
+        { choice: 3, why: "Rounding each lag before averaging changes the fold itself. The inputs are whole days so it happens to agree — but the policy is round the fold once, at the edge." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "ryanair-mcq-14",
+      prompt: "Open AR on this db is 1521700 INTEGER cents across 6 invoices. Which expression prints the 15217.00 the finance pack carries?",
+      choices: [
+        "ROUND(SUM(amount_cents) / 100.0, 2)",
+        "SUM(amount_cents)",
+        "ROUND(SUM(amount_cents) / 10000.0, 2)",
+        "ROUND(SUM(amount_cents) * 100.0, 2)",
+      ],
+      answer: 0,
+      why: "The cents-to-euro conversion is one division by 100.0 at the presentation edge: 1521700 cents prints 15217.00. Skipping it reports cents as euros — a hundredfold error that survives any cross-check sharing the mistake.",
+      notes: [
+        { choice: 1, why: "That prints 1521700 — the raw cents. Every dashboard built the same way will agree with it, which is exactly why it ships for a month before finance catches it." },
+        { choice: 2, why: "Dividing by 10000 is the over-correction — it prints 152.17, a tenth of the truth. The divisor matches the unit, not the digit count you wish you had." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "ryanair-mcq-15",
+      prompt: "The board needs every market carrying at least one cancellation, with each market's FULL placed count. Which shape survives review?",
+      choices: [
+        "GROUP BY region, then HAVING SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) > 0",
+        "WHERE status = 'cancelled' applied before GROUP BY region",
+        "HAVING COUNT(*) > 0",
+        "WHERE region <> 'LATAM'",
+      ],
+      answer: 0,
+      why: "The conditional fold inside HAVING keeps all four markets in the fold and drops only LATAM (2 placed, 0 cancelled) — every surviving row still prints its full placed count. Filtering rows first would print 3, 3, 1 under a header that says placed.",
+      notes: [
+        { choice: 1, why: "Three markets survive — but their placed columns now count only cancelled rows. A quietly wrong slide, not an error; nothing crashes, which is why it ships." },
+        { choice: 2, why: "COUNT(*) > 0 is true for every group that exists — the gate filters nothing and LATAM rides along with its zero cancellations." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "ryanair-mcq-16",
+      prompt: "Your pace query buckets with SUBSTR(created_at, 1, 7); a teammate's uses strftime('%Y-%m', created_at). Both print the same 14 buckets. What's true?",
+      choices: [
+        "They produce identical keys on ISO timestamps, and both sort chronologically as text",
+        "strftime is numeric, so it sorts differently than SUBSTR",
+        "SUBSTR breaks when timestamps carry timezone offsets",
+        "strftime requires wrapping created_at in DATE() first",
+      ],
+      answer: 0,
+      why: "On ISO timestamps both build the same '2024-01' year-month key — zero-padded text that sorts chronologically, so ORDER BY month is calendar order in both. The choice is taste and available date math, not correctness.",
+      notes: [
+        { choice: 1, why: "strftime returns text like SUBSTR does — '2024-01' sorts as text either way. The imaginary numeric mismatch sends people casting keys that were never numbers." },
+        { choice: 2, why: "If the column carried offsets, BOTH keys would inherit the storage convention — the difference between the two functions is syntax, not timezone behavior." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "ryanair-mcq-17",
+      prompt: "A booking-gap histogram diffs each PNR against LAG(created_at) OVER (ORDER BY created_at) — no PARTITION BY. The biggest 'gap' spans weeks. What is it actually?",
+      choices: [
+        "The gap between two different passengers' bookings — a stranger-diff, fixed by PARTITION BY customer_id",
+        "A genuine slow month in demand",
+        "A timezone artifact in created_at",
+        "Proof the passenger churned",
+      ],
+      answer: 0,
+      why: "Without PARTITION BY the window walks the whole table in date order, so one passenger's last booking diffs against the next passenger's booking. Partition by the entity, order by the event time, then diff.",
+      notes: [
+        { choice: 1, why: "The calendar may well be slow — but this number is built from two different people's bookings. Fix the window before reading demand into it." },
+        { choice: 3, why: "Churn is a per-passenger judgment. A cross-passenger diff can't support it — the fix is the partition, not the interpretation." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "ryanair-mcq-18",
+      prompt: "The board needs the second-largest fare on record — 945.21. Which shape prints it?",
+      choices: [
+        "SELECT MAX(total) FROM orders WHERE total < (SELECT MAX(total) FROM orders)",
+        "SELECT total FROM orders ORDER BY total LIMIT 1 OFFSET 1",
+        "SELECT MIN(total) FROM orders WHERE total > (SELECT MIN(total) FROM orders)",
+        "SELECT total FROM orders ORDER BY total DESC LIMIT 2",
+      ],
+      answer: 0,
+      why: "The 'MAX below MAX' shape: exclude the 1088.44 ceiling, fold the rest, and 945.21 is the biggest survivor. It is tie-safe at the top: if two PNRs shared the max, both would be excluded together and the read would stay honest.",
+      notes: [
+        { choice: 1, why: "Ascending order with OFFSET 1 walks up from the 25.47 floor — it prints 32, the second-smallest fare. Right mechanics, wrong end of the board." },
+        { choice: 3, why: "LIMIT 2 returns the two biggest fares as two rows — a top-two board, not the second value. The ask was one cell." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "ryanair-mcq-19",
+      prompt: "Lapsed passengers via NOT IN (SELECT customer_id FROM orders WHERE … '2025') returns EMPTY — but passengers did lapse. What's the NULL trap?",
+      choices: [
+        "NOT IN over a list containing NULL matches nothing — switch to LEFT JOIN … IS NULL or NOT EXISTS",
+        "NOT IN needs DISTINCT to work",
+        "The subquery must be joined, not nested",
+        "NOT IN only works on numeric columns",
+      ],
+      answer: 0,
+      why: "x NOT IN (list) is x <> v1 AND x <> v2 … — one NULL in the list makes every comparison UNKNOWN, so nothing matches and the set is empty forever. The NULL-safe shapes are the anti-join (LEFT JOIN + IS NULL) and NOT EXISTS.",
+      notes: [
+        { choice: 1, why: "DISTINCT shrinks the list, it can't fix its NULL — the three-valued logic kills every row regardless of duplicates." },
+        { choice: 2, why: "Syntax isn't the issue — NOT IN nests fine. The predicate's semantics against NULL are the issue, and no join rearrangement of NOT IN changes that." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "ryanair-mcq-20",
+      prompt: "invoices LEFT JOIN payments prints 33 rows for 28 invoices — 27 payment rows over 22 invoices with at least one payment. Which fold counts invoices SETTLED (at least one payment row)?",
+      choices: [
+        "COUNT(DISTINCT i.id) over the joined rows where a payment exists",
+        "COUNT(*) on the joined rows",
+        "SUM(i.id)",
+        "COUNT(payments.*)",
+      ],
+      answer: 0,
+      why: "The join fans invoices out to payment-row grain — 33 rows, and each of the 5 split-payment invoices contributes 2. COUNT(DISTINCT i.id) folds back to invoice grain: 22 of 28 invoices carry at least one payment; 6 carry none.",
+      notes: [
+        { choice: 1, why: "COUNT(*) counts JOIN ROWS — 33 — and calls them invoices. The split-payment invoices get counted twice and coverage inflates past 100%." },
+        { choice: 2, why: "SUM over an id adds id VALUES — a number that grows with id assignment. Aggregating an id is always a smell, never a fold." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "ryanair-mcq-21",
+      prompt: "One-pass not-flown census: which fragment counts the PNRs that haven't flown — 21 of 103?",
+      choices: [
+        "COUNT(*) FILTER (WHERE o.shipped_at IS NULL)",
+        "COUNT(o.shipped_at)",
+        "COUNT(*) FILTER (WHERE o.status = 'cancelled')",
+        "COUNT(*) - COUNT(o.created_at)",
+      ],
+      answer: 0,
+      why: "shipped_at IS NULL is the not-flown arm: 14 pending + 7 cancelled = 21, counted in one pass beside COUNT(*) = 103. The NULL is the state — the query reads it, it doesn't repair it.",
+      notes: [
+        { choice: 1, why: "COUNT(shipped_at) skips NULLs — it prints 82, the flown arm. The exact inverse of the ask." },
+        { choice: 2, why: "'Cancelled' alone counts 7 — the pending 14 stay invisible and the re-opt pool understates by two-thirds." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "ryanair-mcq-22",
+      prompt: "Why does ORDER BY month sort the pace ledger chronologically when month = SUBSTR(created_at, 1, 7)?",
+      choices: [
+        "'2024-01' style keys are zero-padded ISO text — lexicographic order IS calendar order",
+        "SQLite detects date strings and sorts them as dates",
+        "SUBSTR returns a numeric month",
+        "It doesn't — you must CAST the key to DATE first",
+      ],
+      answer: 0,
+      why: "The year comes first, the month is zero-padded, and text comparison sorts '2024-01' < '2024-10' < '2025-02' correctly. The format carries the sort — no casting needed.",
+      notes: [
+        { choice: 1, why: "There's no date-type detection in the comparison — the correctness is pure lexicography, which is why the zero-padding matters." },
+        { choice: 3, why: "CASTing '2024-01' to a date type adds nothing here — and to a number it's just 2024, which would fold every year together." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "ryanair-mcq-23",
+      prompt: "The manifest fold is GROUP_CONCAT(p.name) per PNR. A stakeholder demands each SKU listed once. What changes?",
+      choices: [
+        "GROUP_CONCAT(DISTINCT p.name) — with the caveat that cell order stays non-contractual",
+        "GROUP_CONCAT(*) with DISTINCT",
+        "Nothing — GROUP_CONCAT deduplicates by default",
+        "Wrap it in UPPER() to normalize duplicates",
+      ],
+      answer: 0,
+      why: "DISTINCT inside the aggregate collapses repeated SKUs. On this db every PNR's lines are already distinct products, so today it changes nothing — but it costs nothing either, and the day a double-logged ancillary arrives, the manifest stays clean.",
+      notes: [
+        { choice: 1, why: "GROUP_CONCAT takes an expression, not a star — that variant is a syntax error, not a dedupe." },
+        { choice: 2, why: "The default is keep-everything: duplicates collapse only when you ask with DISTINCT." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "ryanair-mcq-24",
+      prompt: "The booking-value walk jumps two PNRs at once on shared booking days. Which frame makes it step row by row?",
+      choices: [
+        "SUM(total) OVER (ORDER BY created_at ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)",
+        "SUM(total) OVER (ORDER BY created_at)",
+        "SUM(total) OVER ()",
+        "SUM(total) OVER (PARTITION BY created_at)",
+      ],
+      answer: 0,
+      why: "With ORDER BY the default frame is RANGE, which folds peer rows — on 2024-01-02 the walk jumps 752.96 to 1630.82. The explicit ROWS frame steps 725.34, then 152.52, then forward.",
+      notes: [
+        { choice: 1, why: "That's the default RANGE behavior — the bug being reported, not the fix." },
+        { choice: 2, why: "No ORDER BY means one partition of everything: every row prints the network total 34833.28 — a watermark, not a walk." },
+        { choice: 3, why: "Partitioning by timestamp makes each booking its own partition — the 'walk' restarts at every row." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "ryanair-mcq-25",
+      prompt: "The mix slide claims EU carries 43.3 of the 34833.28 booking base. Which expression prints that share per market?",
+      choices: [
+        "ROUND(100.0 * SUM(o.total) / (SELECT SUM(total) FROM orders), 1)",
+        "ROUND(100.0 * AVG(o.total) / (SELECT AVG(total) FROM orders), 1)",
+        "ROUND(SUM(o.total) / COUNT(*), 1)",
+        "ROUND(100.0 * SUM(o.total) / 103, 1)",
+      ],
+      answer: 0,
+      why: "The scalar subquery sets the network base — 34833.28 — and each market's fold divides against it: EU 15089.23 prints 43.3, APAC 33.3, US 20.9, LATAM 2.4. Same grain on both sides of the slash.",
+      notes: [
+        { choice: 1, why: "Market average over network average is 1.0 scaled — every market prints 100.0. Ratios of averages are not shares of totals." },
+        { choice: 2, why: "SUM/COUNT is the market's own average booking value — EU 335.32 — wearing a share's name." },
+        { choice: 3, why: "103 is the NETWORK PNR count, not the market's base — EU prints 14649.7, a number with no denominator story at all." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "ryanair-mcq-26",
+      prompt: "Yield reads join PNRs to their line items. Which join key pairs each PNR with its own lines?",
+      choices: [
+        "oi.order_id = o.id",
+        "oi.product_id = o.id",
+        "oi.order_id = o.customer_id",
+        "oi.id = o.id",
+      ],
+      answer: 0,
+      why: "order_items.order_id points at its parent PNR: oi.order_id = o.id keeps 103 PNRs carrying 251 lines. Every other key re-parents rows by coincidence.",
+      notes: [
+        { choice: 1, why: "product_id points at the SKU catalog — joining it to o.id matches line rows to whichever PNR shares their id, a different, meaningless graph." },
+        { choice: 2, why: "order_id against customer_id mixes grains: line rows paired to passenger ids — the fold counts nonsense before anyone notices." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "ryanair-mcq-27",
+      prompt: "26 of 103 PNRs carry exactly one line — the fare. What does SUM(oi.quantity * oi.unit_price) return for such a PNR's ancillary-only arm, and what's the fix?",
+      choices: [
+        "NULL — wrap the fold: COALESCE(SUM(...), 0) when 'no lines' means zero",
+        "0 — SUM returns 0 over no rows",
+        "The fare value — SUM picks up the missing rows from the fare side",
+        "An error — SUM requires at least one row",
+      ],
+      answer: 0,
+      why: "Over zero non-NULL values SUM returns NULL — and a NULL that reaches the slide reads as broken to the analyst and zero to the stakeholder. COALESCE at the fold makes 'no ancillary' mean 0.00, once, explicitly.",
+      notes: [
+        { choice: 1, why: "That's COUNT's empty-set behavior, not SUM's. SUM of nothing is NULL — the distinction is the whole question." },
+        { choice: 3, why: "SUM over an empty set is perfectly legal — it just returns NULL, which is the quiet part that breaks slides." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "ryanair-mcq-28",
+      prompt: "The re-release team wants the FARE VALUE sitting in the 7 cancelled PNRs — 1152.49. Which fold prints it?",
+      choices: [
+        "SUM(total) FILTER (WHERE status = 'cancelled')",
+        "COUNT(total) FILTER (WHERE status = 'cancelled')",
+        "SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END)",
+        "SUM(total)",
+      ],
+      answer: 0,
+      why: "The FILTER narrows the SUM to cancelled rows and folds their totals: 1152.49 across 7 PNRs. Value folds and count folds must never wear each other's names on a re-release slide.",
+      notes: [
+        { choice: 1, why: "COUNT prints 7 — the PNR census, not the fare value. The release team would re-release 7 units of nothing." },
+        { choice: 2, why: "Same trap in CASE clothing: this folds to 7 — a count, not a value. The THEN branch must carry the money: THEN total ELSE 0." },
+        { choice: 3, why: "Unfiltered SUM prints 34833.28 — the network base. On a cancellation slide that's the most expensive bug in the set." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "ryanair-mcq-29",
+      prompt: "The route board re-runs nightly and two tied routes keep swapping order between runs. The fix?",
+      choices: [
+        "Add a deterministic tiebreaker to the ORDER BY — a stable key like id — after the rank column",
+        "Switch RANK to ROW_NUMBER",
+        "Round the counts before ranking",
+        "Remove ORDER BY — let the engine decide",
+      ],
+      answer: 0,
+      why: "Ties have no inherent order; without a tiebreaker the engine's plan decides, and the plan can change. A stable key after the value column freezes the board — same data, same order, every night.",
+      notes: [
+        { choice: 1, why: "ROW_NUMBER doesn't remove the tie — it hides it behind an arbitrary integer that can still flip between runs. The tiebreaker fixes the instability; the rank function is a separate, already-made decision." },
+        { choice: 3, why: "Removing the sort doesn't remove the nondeterminism — it guarantees it, at full table scale." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "ryanair-mcq-30",
+      prompt: "The fare-ceiling watermark board prints 1088.44 on EVERY row. Which window does that?",
+      choices: [
+        "MAX(total) OVER ()",
+        "MAX(total) OVER (ORDER BY created_at)",
+        "MAX(total) OVER (PARTITION BY status)",
+        "MAX(total) OVER (ORDER BY created_at ROWS BETWEEN 1 PRECEDING AND CURRENT ROW)",
+      ],
+      answer: 0,
+      why: "The empty OVER () is one partition of everything: every row folds the whole network and prints the 1088.44 ceiling. Over an ordering, the same MAX becomes a running watermark that climbs toward 1088.44 — right function, different board.",
+      notes: [
+        { choice: 1, why: "With ORDER BY the default frame is RANGE UNBOUNDED PRECEDING to CURRENT ROW — a running max that only reaches 1088.44 after the biggest PNR appears. Early rows print smaller ceilings." },
+        { choice: 2, why: "Per-status partitions print four different maxima — the cancelled partition's ceiling is 397.99, not the network's — four boards wearing one header." },
+        { choice: 3, why: "A 1-row sliding frame compares each booking with its predecessor — a neighbor scan, not a watermark." },
+      ],
+      difficulty: "hard",
+    },
+  ],
+
+  cases: [
+    {
+      id: "cs-ry-1",
+      tier: "easy",
+      topic: "x2",
+      universe: "funnel",
+      title: "The load-state census",
+      brief:
+        "RyanAir-flavored brief on the storefront db (orders = booked PNRs, shipped_at = flight flown): the network review opens with the load-state census — booked, flown, cancelled and flown share, one row, one pass, no sub-steps. The ops lead is explicit about the denominator: 'flown share is flights flown over ALL PNRs booked; cancelled and pending stay in the base.' Probed facts: 103 PNRs booked; 82 carry a flown timestamp (the mapped completed 52 plus the in-air 30); 14 sit pending in the booking window; 7 are cancelled — 6.8% of demand that never boarded. The flown share works out to 79.6, and the census must print the 82 and the 103 beside it so nobody has to ask what the share was computed over.",
+      ask: "Return one row: PNRs booked, PNRs flown, PNRs cancelled, and the flown share in percent (1dp).",
+      template:
+        "SELECT COUNT(*) AS booked,\n       COUNT(*) FILTER (WHERE o.{1} IS NOT NULL) AS flown,\n       COUNT(*) FILTER (WHERE o.status = '{2}') AS cancelled,\n       ROUND(100.0 * COUNT(*) FILTER (WHERE o.shipped_at IS NOT NULL) / COUNT(*), {3}) AS flown_pct\nFROM orders o;",
+      slots: [
+        {
+          answer: "shipped_at",
+          kind: "keyword",
+          label: "the flown flag",
+          why: "shipped_at is the flight-flown timestamp — NULL until the PNR flies, so IS NOT NULL is the state-free flown definition covering both completed and in-air buckets (82). created_at is never NULL and would count all 103 as flown.",
+        },
+        {
+          answer: "cancelled",
+          kind: "keyword",
+          label: "the cancelled state",
+          why: "The census names each leakage bucket: status = 'cancelled' is the 7 PNRs that never boarded. 'pending' would print the 14 still-in-window PNRs under the cancelled label, and the ops slide would misstate its own funnel.",
+        },
+        {
+          answer: "1",
+          kind: "number",
+          label: "the share precision",
+          noVerify: true,
+          why: "The network pack prints shares to one decimal — 79.6, matching every other percentage cell in the deck. ROUND to 2 publishes 79.61, a different number than the pack carries.",
+        },
+      ],
+      distractors: ["created_at", "pending", "delivered", "2"],
+      walkthrough:
+        "A load census is three conditional counts and one ratio over the SAME base. COUNT(*) folds all 103 PNRs — the denominator that never shrinks; the FILTER arms split it: shipped_at IS NOT NULL catches the 82 flown (completed and in-air buckets alike), status = 'cancelled' names the 7 that never boarded, and the ratio — 100.0 times the flown arm over COUNT(*), rounded once — prints 79.6 with the .0 inside the division so integer truncation never touches it. The distractors all rewrite the funnel: created_at is never NULL and claims 103 flights; 'pending' relabels the 14 in-window PNRs as cancellations; 'delivered' under-counts the flown arm by the in-air 30; and ROUND to 2 prints 79.61 — a number no other cell in the pack carries. The habit being graded: one pass, every PNR in exactly one named bucket, and the denominator printed beside the share.",
+    },
+    {
+      id: "cs-ry-2",
+      tier: "medium",
+      topic: "j7",
+      universe: "pricing",
+      title: "Value per basket by SKU family",
+      brief:
+        "RyanAir-flavored brief on the storefront db (order_items = line items, products = SKU families, orders = PNRs): the ancillary review wants value per basket per family — family revenue over the DISTINCT PNRs that carry the family — biggest per-basket value first, because attach strategy targets families that ride on few, fat baskets. Probed facts: 251 line items across 103 PNRs; the family census runs units 121 / 97 / 85 / 61 / 54 / 53 / 27 with revenue 3294.29 / 11744.01 / 4818.61 / 5198.41 / 1984.93 / 6929.12 / 863.91 and baskets 54 / 46 / 40 / 30 / 22 / 23 / 13. The leaders work out to 301.27 per basket (Wearables-family: 6929.12 over 23) and 255.3 (Audio-family: 11744.01 over 46) — while the busiest family by baskets, 54 of them, yields just 61.01 per basket.",
+      ask: "Return per SKU family: units, line value (2dp), distinct baskets, and value per basket (2dp) — richest basket first.",
+      template:
+        "SELECT p.category,\n       {1}(oi.quantity) AS units,\n       ROUND(SUM(oi.quantity * oi.{2}), 2) AS line_value,\n       COUNT(DISTINCT oi.order_id) AS baskets,\n       ROUND(SUM(oi.quantity * oi.unit_price) / COUNT(DISTINCT oi.order_id), {3}) AS value_per_basket\nFROM order_items oi\nJOIN products p ON p.id = oi.{4}\nGROUP BY p.category\nORDER BY value_per_basket {5};",
+      slots: [
+        {
+          answer: "SUM",
+          kind: "keyword",
+          label: "the unit fold",
+          why: "SUM(oi.quantity) counts UNITS per family — 121, 97, 85 … the attach census. MAX(quantity) prints the single biggest line (a 4) and COUNT(oi.quantity) counts lines: three different numbers the family census keeps strictly apart.",
+        },
+        {
+          answer: "unit_price",
+          kind: "keyword",
+          label: "the value line",
+          why: "Line value is quantity times unit_price at the line grain — 11744.01 for the audio family, matching the books. quantity times quantity would print 188 for that family: arithmetic with no business meaning.",
+        },
+        {
+          answer: "2",
+          kind: "number",
+          label: "the money precision",
+          noVerify: true,
+          why: "Yield cells print to 2dp — 301.27, 255.3, 173.28 — the shape every money cell in the pack carries. ROUND to 1 publishes 301.3 and 173.3, numbers the deck never shows.",
+        },
+        {
+          answer: "product_id",
+          kind: "keyword",
+          label: "the family key",
+          why: "Lines attach to families through the product key: p.id = oi.product_id. Joining on order_id would bolt families onto PNR ids — the audio family's value becomes 1361.35 of pure noise.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the richest-first order",
+          why: "Attach strategy reads the fat-basket end first: 301.27, 255.3, 173.28, then down to 61.01. ASC would lead with the 61.01 family — the busiest, thinnest basket — and frame the meeting backwards.",
+        },
+      ],
+      distractors: ["MAX", "quantity", "order_id", "ASC", "0"],
+      walkthrough:
+        "An ancillary fold where the grain is the whole game. Lines join to families on the product key; GROUP BY p.category folds 251 lines into seven families; and three counters read three truths off the same rows — SUM(quantity) is units (121 in the busiest family), ROUND(SUM(quantity * unit_price), 2) is line value (11744.01 in the audio family), and COUNT(DISTINCT oi.order_id) is baskets, folded back through the fan-out to distinct PNRs (46). Value per basket divides value by DISTINCT baskets and rounds once: 301.27, 255.3, 173.28 … 61.01 — the attach story in one column. The distractors all move a number: MAX in the unit fold prints a biggest-line census, quantity-squared value invents revenue, the wrong join key re-parents every family, ROUND to 0 prints whole units of money, and ASC leads the meeting with the thinnest basket. State the grain per column; the fan-out forgives nothing.",
+    },
+    {
+      id: "cs-ry-3",
+      tier: "medium",
+      topic: "t4",
+      universe: "growth",
+      title: "The booking-pace ledger",
+      brief:
+        "RyanAir-flavored brief on the storefront db (orders = booked PNRs): the network pack's pace page needs the loud months isolated — the months that book at least 8 PNRs — so the capacity conversation stops guessing. Probed facts: 103 PNRs worth 34833.28 spread across the 2024-01 to 2025-02 window at a steady 6-to-9 per month; 2024-01 opens at 8 PNRs / 3731.97 with 1 cancellation, 2024-02 and 2024-09 peak at 9, and 2024-07 carries the heaviest leak at 2 cancellations on 8. The network lead's definition is explicit: 'loud' is a property of the fold — a month books 8 or more PNRs — so the gate applies AFTER the GROUP BY, and the month key must come from the booking timestamp bucketed '%Y-%m' so the buckets sort chronologically.",
+      ask: "Return the loud months: month key, PNRs booked, booked value (2dp), and cancellations — months carrying at least 8 PNRs, calendar order.",
+      template:
+        "SELECT {1}('%Y-%m', o.created_at) AS month,\n       COUNT(*) AS pnrs,\n       ROUND(SUM(o.total), 2) AS booked_value,\n       SUM(CASE WHEN o.status = '{2}' THEN 1 ELSE 0 END) AS cancelled\nFROM orders o\nGROUP BY month\nHAVING COUNT(*) >= {3}\nORDER BY month;",
+      slots: [
+        {
+          answer: "strftime",
+          kind: "keyword",
+          label: "the month bucket",
+          why: "strftime('%Y-%m', …) builds the '2024-01' key that groups and sorts chronologically. SUBSTR('%Y-%m', created_at) slices the wrong string — the format literal — and collapses every PNR into one empty-key month.",
+        },
+        {
+          answer: "cancelled",
+          kind: "keyword",
+          label: "the leak state",
+          why: "status = 'cancelled' is the 7 never-boarded PNRs; per month it surfaces 2024-07's leak of 2. 'delivered' would print completed counts (52 network-wide) under a cancellation header — a slide that says the opposite of leakage.",
+        },
+        {
+          answer: "8",
+          kind: "number",
+          label: "the loud-month gate",
+          why: "Eight or more PNRs is the loud line, and the gate's evidence sits in the result: the surviving months print pnrs cells of 8 and 9. At 6, all 14 months pass and the page stops isolating anything; at 9 only the two peak months survive.",
+        },
+      ],
+      distractors: ["SUBSTR", "delivered", "6", "9"],
+      walkthrough:
+        "A pace ledger is a key, a fold, and a gate. The key: strftime('%Y-%m', created_at) turns the booking timestamp into a '2024-01' month bucket that GROUP BY folds and sorts as text — 14 buckets in calendar order. The fold: COUNT(*) per bucket is the pace column (8, 9 …), ROUND(SUM(total), 2) is the value column, and the cancelled fold counts the 7 network leak PNRs per bucket — 2 of them sit in 2024-07. The gate is HAVING COUNT(*) >= 8, applied after the fold: six months survive, from 2024-01 (8 PNRs, 3731.97, 1 cancelled) through 2024-09 (9 PNRs, 3116.04). The distractors all rewrite the read: SUBSTR slices the format literal instead of the timestamp and collapses 103 PNRs into one empty-key row; 'delivered' relabels completed work as leakage; a gate of 6 lets every month through; a gate of 9 keeps only the peaks. Key before the fold, gate after it — that's the whole page.",
+    },
+    {
+      id: "cs-ry-4",
+      tier: "hard",
+      topic: "q2",
+      universe: "fraud",
+      title: "The whale concentration read",
+      brief:
+        "RyanAir-flavored brief on the storefront db (orders = booked PNRs, customers = passengers): the spot-check verifies the deck's concentration claim — passengers over a 3000 lifetime-spend line carry 63.5% of booking value — by rebuilding the whale board from raw rows. Probed facts: 103 PNRs worth 34833.28 across 16 passengers; lifetime spends top out at Alice Chen 7262.35 over 24 PNRs, Emma Wilson 6640.56 over 17, Grace Kim 4574.23 over 14, Maya Patel 3644.56 over 13 — 63.5 between them as 20.85 / 19.06 / 13.13 / 10.46 value shares. Finance's rule: the share denominator is the NETWORK base — every PNR booked, not the market's own fold — and the line is >= 3000, so Chloe Dubois at 2667.93 stays off the board no matter how loyal.",
+      ask: "Return the 3000-plus passengers: name, PNRs, lifetime spend (2dp) and value share of the network base (2dp), biggest share first.",
+      template:
+        "SELECT c.name AS passenger,\n       COUNT(*) AS pnrs,\n       ROUND(SUM(o.total), 2) AS lifetime_spend,\n       ROUND({1}.0 * SUM(o.total) / (SELECT SUM(total) FROM orders), 2) AS value_share\nFROM orders o\nJOIN customers c ON c.id = o.{2}\nGROUP BY c.id\nHAVING SUM(o.total) >= {3}\nORDER BY value_share DESC;",
+      slots: [
+        {
+          answer: "100",
+          kind: "number",
+          noVerify: true,
+          label: "the percent multiplier",
+          why: "The multiplier enters before the division so the share is real arithmetic: 100.0 * 7262.35 / 34833.28 prints 20.85. A bare division prints 0.21 — a share expressed as a fraction the deck never carries. The chip shapes the cell; it never appears in it.",
+        },
+        {
+          answer: "customer_id",
+          kind: "keyword",
+          label: "the passenger key",
+          why: "The join runs on the passenger key: c.id = o.customer_id. o.id would attach PNRs to whichever passenger shares their row id — Alice's 7262.35 rebuilt out of strangers' bookings, and the concentration claim unverifiable.",
+        },
+        {
+          answer: "3000",
+          kind: "number",
+          noVerify: true,
+          label: "the concentration line",
+          why: "3000 is the deck's stated line and the facts' 63.5% is computed over it: the four survivors sum to 63.5 of value share. At 2500, Chloe Dubois (2667.93) rides in and the board's headline stops matching the deck.",
+        },
+      ],
+      distractors: ["supplier_id", "MIN", "10", "2500"],
+      walkthrough:
+        "A concentration read is a fold, a scalar benchmark, and a stated line. The fold: GROUP BY c.id after joining on the passenger key gives one row per passenger — SUM(o.total) is lifetime spend, COUNT(*) is PNR count. The benchmark: the scalar subquery (SELECT SUM(total) FROM orders) sets the 34833.28 network base, and 100.0 * spend / base is the value share — real arithmetic because the 100.0 enters before the slash: Alice 20.85, Emma 19.06, Grace 13.13, Maya 10.46, summing to the 63.5 the deck claims. The line: HAVING SUM(o.total) >= 3000 keeps exactly those four; Chloe at 2667.93 waits below it. The distractors all break the verification: supplier_id doesn't exist on orders and errors; MIN as the multiplier is a syntax break; 10 divides every share by ten — 2.09 for Alice, a board that no longer reconciles to 63.5; 2500 lets Chloe in and the headline becomes a different cut than the one finance signed off. The spot-check's job is to make the deck's number re-derivable — denominators, line and all.",
+    },
+    {
+      id: "cs-ry-5",
+      tier: "medium",
+      topic: "s6",
+      universe: "month-close",
+      title: "The market state pivot",
+      brief:
+        "RyanAir-flavored brief on the storefront db (orders = booked PNRs, shipped_at = flight flown, region = market): month-close signs off on the load-state pivot — one row per market, completed and cancelled folded side by side, placed and the flown share beside them. Probed facts: EU books 45 PNRs (24 completed, 3 cancelled, 80.0 flown), APAC 37 (21, 3, 78.4), US 19 (5, 1, 78.9), LATAM 2 (0, 0, 100.0 on a two-PNR sample). The controller's definitions: completed is the 'delivered' state, cancelled is the 'cancelled' state, and flown is the shipped_at test — NOT a status filter — while the pack only signs markets carrying at least 19 placed PNRs, so LATAM's tiny sample waits outside. Cross-foot check: completed + in-air + pending + cancelled must add back to placed (EU: 24 + 12 + 6 + 3 = 45).",
+      ask: "One pass: per market with at least 19 placed PNRs — completed, cancelled, placed, and flown share (1dp), best share first.",
+      template:
+        "SELECT c.region AS market,\n       SUM(CASE WHEN o.status = '{1}' THEN 1 ELSE 0 END) AS completed,\n       SUM(CASE WHEN o.status = '{2}' THEN 1 ELSE 0 END) AS cancelled,\n       COUNT(*) AS placed,\n       ROUND({4}.0 * SUM(CASE WHEN o.{3} IS NOT NULL THEN 1 ELSE 0 END) / COUNT(*), 1) AS flown_pct\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nGROUP BY c.region\nHAVING COUNT(*) >= {5}\nORDER BY flown_pct DESC;",
+      slots: [
+        {
+          answer: "delivered",
+          kind: "keyword",
+          label: "the completed state",
+          why: "'Delivered' is the mapped completed bucket — 52 network, 24 in EU. 'pending' would print the 6 in-window EU PNRs under a completed header; 'shipped' would swap completed for the 12 in-air instead.",
+        },
+        {
+          answer: "cancelled",
+          kind: "keyword",
+          label: "the leak state",
+          why: "status = 'cancelled' names the PNRs that never boarded — 3 in EU and APAC, 1 in US. Any other state relabels a healthy bucket as leakage and the month-close cross-foot stops adding back to placed.",
+        },
+        {
+          answer: "shipped_at",
+          kind: "keyword",
+          label: "the flown test",
+          why: "shipped_at IS NOT NULL is the state-free flown definition — 82 network. created_at is never NULL, so that swap prints a 100.0 flown share for every market and erases the funnel the pivot exists to show.",
+        },
+        {
+          answer: "100",
+          kind: "number",
+          noVerify: true,
+          label: "the percent multiplier",
+          why: "100.0 enters before the division so the share is real arithmetic: 100.0 * 36 / 45 prints 80.0 for EU. A 50.0 multiplier halves every market's share and the pivot stops reconciling with the network's 79.6. The chip shapes the cell; it never appears in it.",
+        },
+        {
+          answer: "19",
+          kind: "number",
+          label: "the sample gate",
+          why: "Nineteen placed PNRs is the sign-off line, and the gate's evidence sits in the result: US prints placed = 19 and survives; LATAM's 2-PNR sample drops. At 20 the US market vanishes from its own month-close.",
+        },
+      ],
+      distractors: ["pending", "shipped", "created_at", "50", "20"],
+      walkthrough:
+        "The pivot is four conditional folds over one 103-row base, grouped by market. The CASE arms name the states: 'delivered' folds completed (EU 24, APAC 21, US 5), 'cancelled' folds the leak (3, 3, 1), COUNT(*) is placed (45, 37, 19), and the flown share rides the shipped_at test — 100.0 * flown arm / placed, rounded once: EU 80.0, US 78.9, APAC 78.4. The gate HAVING COUNT(*) >= 19 signs exactly those three and leaves LATAM's 2-PNR sample outside — a two-booking market at 100.0 would top the board on noise. The distractors all move a number: 'pending' relabels in-window PNRs as completed; 'shipped' swaps the completed bucket for the in-air 12; created_at is never NULL so the flown share prints 100.0 everywhere; a 50.0 multiplier halves every share; and a gate of 20 deletes the US market from its own month-close. One pass, one base, cross-footing columns — that's what sign-off means.",
+    },
+    {
+      id: "cs-ry-6",
+      tier: "hard",
+      topic: "t7",
+      universe: "funnel",
+      title: "The accelerating months",
+      brief:
+        "RyanAir-flavored brief on the storefront db (orders = booked PNRs): the pace board's follow-up asks for the accelerating months — the buckets that booked exactly one more PNR than the month before. Probed facts: the pace runs 2024-01 (8 PNRs) through 2025-02 (7) at 6-to-9 per month; the month-over-month deltas are small integers — +1 four times (2024-02, 2024-05, 2024-12, 2025-02), +2 twice, -1 five times, -2 twice — and the first month has no predecessor, so its delta is NULL by construction, not by error. The growth lead's rule: the walk is per-network (no partition), ordered by the month key, and 'accelerating' means delta exactly 1 — the first bucket can never qualify, because you cannot accelerate from nothing.",
+      ask: "Return the accelerating months: month, PNRs booked, previous month's PNRs, and the +1 delta — calendar order.",
+      template:
+        "WITH pace AS (\n  SELECT {1}('%Y-%m', o.created_at) AS month, COUNT(*) AS pnrs\n  FROM orders o\n  GROUP BY month\n), walk AS (\n  SELECT month, pnrs, LAG(pnrs) OVER (ORDER BY {3}) AS prev_month\n  FROM pace\n)\nSELECT month, pnrs, prev_month, pnrs - prev_month AS delta\nFROM walk\nWHERE pnrs - prev_month = {2}\nORDER BY month;",
+      slots: [
+        {
+          answer: "strftime",
+          kind: "keyword",
+          label: "the month bucket",
+          why: "strftime('%Y-%m', …) builds the sortable month key the walk steps through. SUBSTR('%Y-%m', created_at) slices the format literal instead of the timestamp and folds all 103 PNRs into one empty-key month with no predecessor.",
+        },
+        {
+          answer: "1",
+          kind: "number",
+          label: "the acceleration delta",
+          why: "Exactly +1 is the definition — four months qualify, each printing its delta cell of 1. At 2 the board switches to the two jump months (2024-07 and 2024-09); the deliverable was acceleration, not leaps.",
+        },
+        {
+          answer: "month",
+          kind: "keyword",
+          label: "the walk order",
+          why: "LAG walks in month order: OVER (ORDER BY month) puts each month's predecessor beside it. Ordered by pnrs, the walk compares strangers — a 6 next to a 7 from a different month — and the deltas stop meaning pace.",
+        },
+      ],
+      distractors: ["SUBSTR", "pnrs", "created_at"],
+      walkthrough:
+        "The pace walk stages in two CTEs. pace folds 103 PNRs into 14 month buckets — strftime('%Y-%m', created_at) is the key, COUNT(*) the pace. walk adds the predecessor: LAG(pnrs) OVER (ORDER BY month) puts last month's pace beside this month's, and the first bucket's prev is NULL by construction — you cannot accelerate from nothing. The outer SELECT diffs and gates: pnrs - prev_month = 1 keeps exactly four rows — 2024-02 (9 after 8), 2024-05 (8 after 7), 2024-12 (7 after 6), 2025-02 (7 after 6) — each printing its delta cell of 1. The distractors all break the walk: SUBSTR slices the format literal and folds everything into one empty-key month with no predecessor, so the board empties; 'pnrs' as the delta demands prev_month = 0, which no month has; created_at isn't a column of the pace fold and errors; and walking in pnrs order diffs strangers, so the 'acceleration' list fills with months whose pace didn't move. Partition nothing, order by the key, gate on the diff — that's the board.",
+    },
+  ],
+
+  problems: [
+    { slug: "flight-occupancy-and-waitlist-analysis", why: "Capacity and waitlist states side by side — the load-factor read in graded form: seats sold, waitlisted, and the share that actually flew." },
+    { slug: "immediate-food-delivery-ii", why: "Share of orders meeting a promise flag — the flown-share shape: numerator a state, denominator ALL PNRs, 82-of-103 in textbook form." },
+    { slug: "monthly-transactions-ii", why: "Conditional classification stacked per month — the load-state census with UNION ALL scaffolding: one row per state, no bucket left unnamed." },
+    { slug: "product-sales-analysis-ii", why: "Per-family demand folds from line items — the ancillary census at the right grain: families, not lines, not PNRs." },
+    { slug: "list-the-products-ordered-in-a-period", why: "Period-filtered SKU demand — the seasonal attach read: which SKUs moved inside the booking window, with the period filter applied before the fold." },
+    { slug: "most-frequently-ordered-product-per-customer", why: "Argmax per passenger — each PNR's dominant SKU family: the attach-preference read behind per-segment ancillary targeting." },
+    { slug: "queries-quality-and-percentage", why: "Per-entity quality ratios — the on-time and completion-share shape: a ratio per group with the denominator folded honestly beside it." },
+    { slug: "percentage-of-users-attended-a-contest", why: "Distinct-participation shares — the flown-share pattern in another costume: DISTINCT numerators over stated bases, real division throughout." },
+    { slug: "card-launch-success", why: "Rollout success rates per cohort — the new-ancillary launch read: attach rate before versus after, gated to a launch window." },
+    { slug: "rolling-7d-actives", why: "Rolling 7-day distinct counts — the booking-pace roll: DISTINCT folds over sliding date windows, the load-planning cadence in graded form." },
+    { slug: "dau-wau-stickiness", why: "DAU/WAU-style stickiness ratios — booking frequency against the weekly base: the repeat-demand lens on a high-frequency network." },
+    { slug: "restaurant-growth", why: "Trailing 7-day moving averages over dated events — the pace board's smoothing read, window frames over booking dates drilled end to end." },
+    { slug: "rank-scores", why: "Score ladders where ties share rungs: RANK versus DENSE_RANK as a board-design decision — the route-board tie problem in textbook form." },
+    { slug: "compute-the-rank-as-a-percentage", why: "Rank expressed as a share of the partition — yield percentile boards: where this route sits against the network, computed not eyeballed." },
+    { slug: "top-earners", why: "Top-N over folded value with ties handled — the top-passenger and top-route boards, ranked on a fold that survives the line-item fan-out." },
+    { slug: "the-airport-with-the-most-flights", why: "Busiest node via stacked UNION ALL counts — the base-volume read: departures and arrivals folded per airport, biggest base first." },
+    { slug: "trips-and-users", why: "Cancellation share per market against every booked trip — the leaked-demand read: cancelled over placed by city, denominator unfiltered, 6.8% network in graded form." },
+    { slug: "confirmation-rate", why: "Confirmed over requested, per passenger — the promise-kept ratio: a share whose denominator is everyone who asked, not everyone who succeeded." },
+    { slug: "average-selling-price", why: "Value per unit with a weighting choice — the fare-realization read: weighting by volume changes both the number and the argument behind it." },
+    { slug: "product-price-at-a-given-date", why: "The price that WAS live at booking time, not today's — as-of fare logic, the exact read behind 'why did this PNR cost more' disputes." },
+    { slug: "the-most-recent-three-orders", why: "Each passenger's last three PNRs via ROW_NUMBER — the recency window behind winback lists and re-opt surfaces." },
+    { slug: "last-person-to-fit-in-the-bus", why: "Cumulative boarding against a capacity line — the load-fill read: rows sorted, threshold crossed, the last unit that fits is the answer." },
+    { slug: "find-the-team-size", why: "Crew size per fleet via a partitioned COUNT — the per-group constant: every row of a group carries its group's total without a join." },
+    { slug: "game-play-analysis-iv", why: "Day-one cohort shares over the right denominator — the first-booking-to-check-in read: what fraction of a passenger's cohort actually flew." },
+    { slug: "investments-in-2016", why: "Multi-condition screens in one GROUP BY/HAVING pass — the pattern-matching drill behind 'booked bag AND seat but never priority' hunts." },
+    { slug: "customers-who-bought-a-and-b-not-c", why: "Bundle attach with a hole — the bag-and-seat-without-priority read: conditional EXISTS logic over one passenger's line history." },
+    { slug: "group-sold-products-by-the-date", why: "One manifest cell per day via GROUP_CONCAT — the departure manifest fold: SKUs per date, order non-contractual, duplicates declared." },
+    { slug: "report-contiguous-dates", why: "Consecutive-day demand islands with state labels — the pace-read hard mode: streaks of busy days folded from row-level bookings." },
+    { slug: "human-traffic-of-stadium", why: "Three-plus consecutive busy days via window islands — the peak-week detector: streak identification with the run boundaries printed." },
+    { slug: "calculate-special-bonus", why: "Conditional per-row values via CASE — the voucher-eligibility read: every passenger gets a row, only some get the bonus column." },
+    { slug: "top-travellers", why: "Value boards over folded distance — the top-flyer read: fold per passenger, rank, and let ties be a stated policy." },
+    { slug: "number-of-employees-who-met-the-target", why: "Target attainment per period — the weekly pace-vs-target read: conditional counts beside the base so attainment carries its denominator." },
+  ],
+};

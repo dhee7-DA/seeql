@@ -9,6 +9,7 @@ import {
   Bot,
   Briefcase,
   Bug,
+  Building2,
   CalendarDays,
   Code2,
   Dumbbell,
@@ -51,6 +52,7 @@ export type ToolKind =
   | "golf"
   | "perf"
   | "interview"
+  | "companies"
   | "studio"
   | "explain"
   | "mastery"
@@ -93,6 +95,7 @@ export const TOOLS: ToolDef[] = [
   { kind: "golf", icon: Flag, label: "Query golf", note: "same rows, fewer strokes", short: "Golf", section: "lab" },
   { kind: "perf", icon: Gauge, label: "Performance lab", note: "SCAN vs SEARCH, index stings", short: "Perf", section: "lab" },
   { kind: "interview", icon: Briefcase, label: "Interview prep", note: "the screening classics, graded", short: "Interview", section: "lab" },
+  { kind: "companies", icon: Building2, label: "Company screens", note: "8 domains × 8 companies, 64 kits", short: "Companies", section: "lab" },
   { kind: "studio", icon: Network, label: "Schema studio", note: "spot the design smell", short: "Schema", section: "lab" },
   { kind: "explain", icon: MessagesSquare, label: "Explain back", note: "say what the query does", short: "Explain", section: "lab" },
   { kind: "mastery", icon: Activity, label: "Mastery map", note: "your skills, your daily quest", short: "Mastery", section: "lab" },

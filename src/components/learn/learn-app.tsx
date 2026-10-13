@@ -47,6 +47,7 @@ import { SeeqView } from "./seeq-view";
 import { GauntletView } from "./gauntlet-view";
 import { KeywordPractice } from "./keyword-practice";
 import { LeetCodeView } from "./leetcode-view";
+import { CompaniesView } from "./companies-view";
 import { gauntletFor } from "@/lib/curriculum/gauntlet";
 import { ActivityStrip, MasteryGrid } from "./progress-cards";
 import { CelebrationHost, celebrate } from "./celebrate";
@@ -81,6 +82,7 @@ type View =
   | { kind: "golf" }
   | { kind: "mastery" }
   | { kind: "interview" }
+  | { kind: "companies"; domain?: string; company?: string }
   | { kind: "studio" }
   | { kind: "explain" }
   | { kind: "perf"; sql?: string; tab?: "pipeline" | "workbench" | "detective" }
@@ -88,7 +90,7 @@ type View =
   | { kind: "mentor" }
   | { kind: "sandbox" }
   | { kind: "notebook" }
-  | { kind: "lc"; topic?: string };
+  | { kind: "lc"; topic?: string; slug?: string };
 
 // Drift guard — the registry in tools.ts must name every non-lesson view
 // (and vice versa). A compile error here means: update tools.ts too.
@@ -534,7 +536,7 @@ function ViewBody({
   openPerf: (sql: string) => void;
   openExam: (moduleId: string) => void;
   openDrills: () => void;
-  openLc: (topic?: string) => void;
+  openLc: (topic?: string, slug?: string) => void;
   exitExam: () => void;
   xp: number;
   level: ReturnType<typeof levelFor>;
@@ -597,7 +599,9 @@ function ViewBody({
     case "notebook":
       return <QueryNotebook />;
     case "lc":
-      return <LeetCodeView key={view.topic ?? "lc"} initialTopic={view.topic} />;
+      return <LeetCodeView key={`${view.topic ?? "lc"}:${view.slug ?? ""}`} initialTopic={view.topic} initialSlug={view.slug} />;
+    case "companies":
+      return <CompaniesView initialDomain={view.domain} initialCompany={view.company} openLc={(slug) => openLc(undefined, slug)} />;
     default:
       return <Overview xp={xp} level={level} streak={streak} ctx={ctx} openLesson={openLesson} onOpenLc={() => openLc("SQL")} />;
   }
@@ -605,6 +609,16 @@ function ViewBody({
 
 export function LearnApp() {
   const [view, setView] = useState<View>({ kind: "overview" });
+
+  // Every view change lands at the top of the new view. On narrow viewports
+  // the sidebar renders BELOW the content, so a rail tap swaps the view
+  // thousands of pixels above the thumb and reads as "nothing opened" —
+  // scroll snaps the fresh view into place. (In-view navigation like the LC
+  // list ⇄ dive drill-down is component state, not a view change, so list
+  // scroll positions survive back-navigation.)
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [view]);
 
   // Guided tour — auto-starts once for first-run visitors (the seen flag is
   // written on close, complete or skipped); the sidebar Tour chip replays it.
@@ -712,7 +726,7 @@ export function LearnApp() {
   const openPerf = (sql: string) => setView({ kind: "perf", sql, tab: "workbench" });
   const openExam = (moduleId: string) => setView({ kind: "exam", moduleId });
   const openDrills = () => setView({ kind: "drills" });
-  const openLc = (topic?: string) => setView({ kind: "lc", topic });
+  const openLc = (topic?: string, slug?: string) => setView({ kind: "lc", topic, slug });
   const exitExam = () => setView({ kind: "overview" });
   const doneCount = LESSONS.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
   const totalProblems = LESSONS.reduce((a, l) => a + l.problems.length, 0);

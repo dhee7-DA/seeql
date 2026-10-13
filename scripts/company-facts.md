@@ -1,0 +1,471 @@
+# Storefront db — probed ground truth for company-kit case studies
+
+Probed 2026-10-12 against db/custom.db (read-only).
+Every figure below is copy-paste safe for case briefs and number slots.
+
+### Scale census
+```sql
+SELECT COUNT(*) FROM <each table>
+```
+| customers | suppliers | products | orders | order_items | invoices | payments | expenses | ledger_entries |
+|---|---|---|---|---|---|---|---|---|
+| 16 | 6 | 16 | 103 | 251 | 28 | 27 | 36 | 80 |
+
+### Order value totals
+```sql
+SELECT COUNT(*), ROUND(SUM(total),2), ROUND(AVG(total),2), MIN(total), MAX(total) FROM orders
+```
+| orders | total_value | avg_order_value | min_total | max_total |
+|---|---|---|---|---|
+| 103 | 34833.28 | 338.19 | 25.47 | 1088.44 |
+
+### Order status distribution
+```sql
+SELECT status, COUNT(*) AS n FROM orders GROUP BY status ORDER BY n DESC
+```
+| status | n | pct |
+|---|---|---|
+| delivered | 52 | 50.5 |
+| shipped | 30 | 29.1 |
+| pending | 14 | 13.6 |
+| cancelled | 7 | 6.8 |
+
+### Status x region (orders via customer)
+```sql
+SELECT c.region, o.status, COUNT(*) FROM orders o JOIN customers c ON c.id=o.customer_id GROUP BY c.region, o.status
+```
+| region | status | n |
+|---|---|---|
+| APAC | delivered | 21 |
+| APAC | shipped | 8 |
+| APAC | pending | 5 |
+| APAC | cancelled | 3 |
+| EU | delivered | 24 |
+| EU | shipped | 12 |
+| EU | pending | 6 |
+| EU | cancelled | 3 |
+| LATAM | delivered | 2 |
+| US | shipped | 10 |
+| US | delivered | 5 |
+| US | pending | 3 |
+| US | cancelled | 1 |
+
+### Region census — orders, buyers, revenue
+```sql
+SELECT c.region, COUNT(*), COUNT(DISTINCT o.customer_id), ROUND(SUM(o.total),2), ROUND(AVG(o.total),2) FROM orders o JOIN customers c ON c.id=o.customer_id GROUP BY c.region
+```
+| region | orders | buyers | revenue | aov |
+|---|---|---|---|---|
+| EU | 45 | 8 | 15089.23 | 335.32 |
+| APAC | 37 | 5 | 11605.45 | 313.66 |
+| US | 19 | 2 | 7286.16 | 383.48 |
+| LATAM | 2 | 1 | 852.44 | 426.22 |
+
+### Cancellation share by region
+```sql
+100.0 * SUM(CASE WHEN status='cancelled' THEN 1 ELSE 0 END)/COUNT(*) grouped by region
+```
+| region | placed | cancelled | cancel_pct |
+|---|---|---|---|
+| APAC | 37 | 3 | 8.1 |
+| EU | 45 | 3 | 6.7 |
+| US | 19 | 1 | 5.3 |
+| LATAM | 2 | 0 | 0 |
+
+### Customer cities
+```sql
+SELECT city, region, COUNT(*) FROM customers GROUP BY city, region
+```
+| city | region | customers |
+|---|---|---|
+| Austin | US | 1 |
+| Berlin | EU | 1 |
+| Chicago | US | 1 |
+| Cork | EU | 1 |
+| Dubai | APAC | 1 |
+| Hamburg | EU | 1 |
+| London | EU | 1 |
+| Lyon | EU | 1 |
+| Madrid | EU | 1 |
+| Milan | EU | 1 |
+| Mumbai | APAC | 1 |
+| Nagoya | APAC | 1 |
+| Osaka | APAC | 1 |
+| Seoul | APAC | 1 |
+| São Paulo | LATAM | 1 |
+| Tallinn | EU | 1 |
+
+### Repeat vs one-time buyers
+```sql
+SELECT customer_id, COUNT(*) FROM orders GROUP BY customer_id
+```
+| orders_n | buyers |
+|---|---|
+| 1 | 2 |
+| 2 | 3 |
+| 3 | 2 |
+| 4 | 4 |
+| 5 | 1 |
+| 13 | 1 |
+| 14 | 1 |
+| 17 | 1 |
+| 24 | 1 |
+
+### Top spenders
+```sql
+top spenders by SUM(o.total)
+```
+| id | name | region | orders | spend |
+|---|---|---|---|---|
+| 1 | Alice Chen | EU | 24 | 7262.35 |
+| 5 | Emma Wilson | US | 17 | 6640.56 |
+| 7 | Grace Kim | APAC | 14 | 4574.23 |
+| 13 | Maya Patel | APAC | 13 | 3644.56 |
+| 3 | Chloe Dubois | EU | 5 | 2667.93 |
+| 16 | Pedro Alvarez | EU | 4 | 1686.17 |
+| 6 | Farid Nasser | APAC | 3 | 1458.97 |
+| 11 | Keiko Sato | APAC | 4 | 1098.6 |
+| 9 | Isabella Rossi | EU | 4 | 985.65 |
+| 2 | Bruno Silva | LATAM | 2 | 852.44 |
+| 8 | Hiro Tanaka | APAC | 3 | 829.09 |
+| 14 | Noah Meyer | EU | 4 | 737.68 |
+| 12 | Liam O'Brien | EU | 1 | 705.39 |
+| 10 | Jamal Wright | US | 2 | 645.6 |
+| 4 | Dmitri Volkov | EU | 2 | 599.26 |
+| 15 | Olivia Brown | EU | 1 | 444.8 |
+
+### Customer spend concentration
+```sql
+share of revenue from customers whose lifetime spend crosses a threshold
+```
+| top_spenders_3000_plus_pct | spenders_2000_plus_pct |
+|---|---|
+| 63.5 | 71.2 |
+
+### Never-ordered customers
+```sql
+anti-join count
+```
+| never_ordered |
+|---|
+| 0 |
+
+### Category crowns — revenue, units, products
+```sql
+category revenue/units from order_items
+```
+| category | products | units | revenue |
+|---|---|---|---|
+| Audio | 3 | 97 | 11744.01 |
+| Wearables | 2 | 53 | 6929.12 |
+| Video | 2 | 61 | 5198.41 |
+| Electronics | 3 | 85 | 4818.61 |
+| Accessories | 3 | 121 | 3294.29 |
+| Apparel | 2 | 54 | 1984.93 |
+| Fitness | 1 | 27 | 863.91 |
+
+### Category order fan-out
+```sql
+distinct orders touching each category
+```
+| category | orders_touched |
+|---|---|
+| Accessories | 54 |
+| Audio | 46 |
+| Electronics | 40 |
+| Video | 30 |
+| Wearables | 23 |
+| Apparel | 22 |
+| Fitness | 13 |
+
+### Price bands
+```sql
+CASE price bands over products.price
+```
+| band | products | avg_price |
+|---|---|---|
+| mid (50-200) | 8 | 111.5 |
+| budget (<50) | 8 | 32.06 |
+
+### Product price ranking
+```sql
+full product list by price
+```
+| id | name | category | price | stock |
+|---|---|---|---|---|
+| 13 | Smart Watch S | Wearables | 199.99 | 40 |
+| 4 | Noise-Canceling Headset | Audio | 149.99 | 60 |
+| 7 | 4K Webcam Pro | Video | 129 | 70 |
+| 5 | Studio Desktop Mic | Audio | 119 | 45 |
+| 1 | Mechanical Keyboard K1 | Electronics | 89.99 | 120 |
+| 12 | Fitness Band X2 | Wearables | 79 | 95 |
+| 15 | Cycling Jersey Pro | Apparel | 65 | 110 |
+| 6 | Bluetooth Speaker Mini | Audio | 59.99 | 210 |
+| 3 | USB-C Hub 7-in-1 | Electronics | 49 | 85 |
+| 10 | Laptop Stand Aluminum | Accessories | 42.5 | 180 |
+| 8 | Ring Light 14" | Video | 39.99 | 150 |
+| 2 | Wireless Mouse M3 | Electronics | 34.5 | 300 |
+| 16 | Yoga Mat Eco 6mm | Fitness | 32 | 220 |
+| 11 | Desk Mat Extended | Accessories | 24.99 | 260 |
+| 14 | Running Socks 3-pack | Apparel | 18.5 | 400 |
+| 9 | HDMI 2.1 Cable 2m | Accessories | 14.99 | 500 |
+
+### Never-ordered products
+```sql
+anti-join
+```
+(empty)
+
+### Stock vs sold per product
+```sql
+stock minus sold per product
+```
+| id | name | category | stock | units_sold | remaining |
+|---|---|---|---|---|---|
+| 11 | Desk Mat Extended | Accessories | 260 | 47 | 213 |
+| 4 | Noise-Canceling Headset | Audio | 60 | 46 | 14 |
+| 9 | HDMI 2.1 Cable 2m | Accessories | 500 | 38 | 462 |
+| 2 | Wireless Mouse M3 | Electronics | 300 | 36 | 264 |
+| 10 | Laptop Stand Aluminum | Accessories | 180 | 36 | 144 |
+| 14 | Running Socks 3-pack | Apparel | 400 | 33 | 367 |
+| 7 | 4K Webcam Pro | Video | 70 | 31 | 39 |
+| 5 | Studio Desktop Mic | Audio | 45 | 30 | 15 |
+| 8 | Ring Light 14" | Video | 150 | 30 | 120 |
+| 12 | Fitness Band X2 | Wearables | 95 | 30 | 65 |
+| 1 | Mechanical Keyboard K1 | Electronics | 120 | 28 | 92 |
+| 16 | Yoga Mat Eco 6mm | Fitness | 220 | 27 | 193 |
+| 13 | Smart Watch S | Wearables | 40 | 23 | 17 |
+| 3 | USB-C Hub 7-in-1 | Electronics | 85 | 21 | 64 |
+| 6 | Bluetooth Speaker Mini | Audio | 210 | 21 | 189 |
+| 15 | Cycling Jersey Pro | Apparel | 110 | 21 | 89 |
+
+### Supplier revenue + listings + rating
+```sql
+supplier revenue via products->order_items
+```
+| id | name | region | rating | listings | revenue |
+|---|---|---|---|---|---|
+| 1 | Nordic Gadgets AB | EU | 4.6 | 3 | 11130.25 |
+| 4 | Midwest Hardware Co | US | 4.4 | 3 | 9294.93 |
+| 5 | Alpine Audio GmbH | EU | 4.8 | 2 | 4765.63 |
+| 6 | Andes Naturals SA | LATAM | 4 | 2 | 3613.25 |
+| 2 | Shenzhen Electro | APAC | 4.1 | 3 | 3049.07 |
+| 3 | Pacific Textiles | APAC | 3.9 | 3 | 2980.15 |
+
+### Supplier revenue share
+```sql
+each supplier's % of total revenue
+```
+| name | revenue | pct |
+|---|---|---|
+| Nordic Gadgets AB | 11130.25 | 32 |
+| Midwest Hardware Co | 9294.93 | 26.7 |
+| Alpine Audio GmbH | 4765.63 | 13.7 |
+| Andes Naturals SA | 3613.25 | 10.4 |
+| Shenzhen Electro | 3049.07 | 8.8 |
+| Pacific Textiles | 2980.15 | 8.6 |
+
+### Trusted supplier bench (rating >= 4.5)
+```sql
+suppliers with rating >= 4.5 and their catalog
+```
+| name | region | rating | listings | avg_price |
+|---|---|---|---|---|
+| Nordic Gadgets AB | EU | 4.6 | 3 | 139.66 |
+| Alpine Audio GmbH | EU | 4.8 | 2 | 72 |
+
+### Date range
+```sql
+min/max order dates
+```
+| first_order | last_order | first_ship | last_ship |
+|---|---|---|---|
+| 2024-01-01 | 2025-02-27 | 2024-01-04 | 2025-03-01 |
+
+### Monthly order trend
+```sql
+orders grouped by SUBSTR(created_at,1,7)
+```
+| month | orders | revenue | cancelled |
+|---|---|---|---|
+| 2024-01 | 8 | 3731.97 | 1 |
+| 2024-02 | 9 | 3609.64 | 0 |
+| 2024-03 | 8 | 2617.08 | 1 |
+| 2024-04 | 7 | 2468.91 | 0 |
+| 2024-05 | 8 | 2910.31 | 0 |
+| 2024-06 | 6 | 2047.43 | 0 |
+| 2024-07 | 8 | 1193.86 | 2 |
+| 2024-08 | 7 | 2352.07 | 0 |
+| 2024-09 | 9 | 3116.04 | 0 |
+| 2024-10 | 7 | 2975.67 | 0 |
+| 2024-11 | 6 | 1648.8 | 2 |
+| 2024-12 | 7 | 2101.47 | 0 |
+| 2025-01 | 6 | 1669.5 | 1 |
+| 2025-02 | 7 | 2390.53 | 0 |
+
+### Ship latency (days, where shipped)
+```sql
+julianday delta where shipped_at IS NOT NULL
+```
+| shipped | avg_days | min_days | max_days |
+|---|---|---|---|
+| 82 | 2.98 | 2 | 4 |
+
+### Latency by region (delivered+shipped only)
+```sql
+regional ship latency, shipped_at IS NOT NULL
+```
+| region | shipped_orders | avg_days |
+|---|---|---|
+| LATAM | 2 | 3.5 |
+| US | 15 | 3.07 |
+| EU | 36 | 2.94 |
+| APAC | 29 | 2.93 |
+
+### Invoice status
+```sql
+invoice status distribution
+```
+| status | n | total_amount |
+|---|---|---|
+| open | 6 | 19609 |
+| paid | 21 | 66443 |
+| void | 1 | 925 |
+
+### Invoice aging vs max paid date
+```sql
+aging context: reference date = MAX(paid_on) in payments
+```
+| status | invoices | amount |
+|---|---|---|
+| open | 6 | 19609 |
+| paid | 21 | 66443 |
+| void | 1 | 925 |
+
+### Payments by method
+```sql
+payment method mix
+```
+| method | payments | total |
+|---|---|---|
+| card | 16 | 37364 |
+| wire | 11 | 32248 |
+
+### AR: invoices without payment
+```sql
+anti-join AR
+```
+| unpaid_invoices | unpaid_amount |
+|---|---|
+| 6 | 15217 |
+
+### Expenses by category
+```sql
+expense categories
+```
+| category | n | total |
+|---|---|---|
+| Rent | 14 | 16800 |
+| Ads | 14 | 4570 |
+| Travel | 3 | 2521 |
+| Tools | 5 | 1525 |
+
+### Payment coverage per invoice (partial-payment check)
+```sql
+invoices LEFT JOIN grouped payments, classified exact/partial/none
+```
+| coverage | invoices | invoice_amount | paid_amount |
+|---|---|---|---|
+| exact | 21 | 65612 | 65612 |
+| no payment | 6 | 15217 | 0 |
+| partial | 1 | 6148 | 4000 |
+
+### Invoice issue-to-due window (days)
+```sql
+payment terms spread
+```
+| avg_terms_days | min_days | max_days |
+|---|---|---|
+| 30 | 30 | 30 |
+
+### Paid-invoice settlement days
+```sql
+days from issue to first payment, paid invoices only
+```
+| paid_invoices | avg_days_to_pay | fastest | slowest |
+|---|---|---|---|
+| 20 | 28.4 | 13 | 84 |
+
+### Region x category revenue (top combos)
+```sql
+region x category revenue
+```
+| region | category | revenue |
+|---|---|---|
+| APAC | Audio | 5162.4 |
+| EU | Audio | 5102.4 |
+| EU | Wearables | 3886.3 |
+| EU | Video | 2260.79 |
+| US | Video | 1885.98 |
+| EU | Electronics | 1855.02 |
+| US | Wearables | 1767.54 |
+| APAC | Accessories | 1432.46 |
+| APAC | Electronics | 1410.04 |
+| APAC | Wearables | 1275.28 |
+| US | Audio | 1121.7 |
+| EU | Accessories | 1108.03 |
+
+### Expenses by month
+```sql
+expense monthly trend
+```
+| month | n | total |
+|---|---|---|
+| 2024-01 | 3 | 1719 |
+| 2024-02 | 2 | 1440 |
+| 2024-03 | 3 | 1917 |
+| 2024-04 | 3 | 1749 |
+| 2024-05 | 2 | 1480 |
+| 2024-06 | 2 | 1510 |
+| 2024-07 | 3 | 1794 |
+| 2024-08 | 3 | 3210 |
+| 2024-09 | 2 | 1545 |
+| 2024-10 | 3 | 1859 |
+| 2024-11 | 3 | 1974 |
+| 2024-12 | 2 | 1610 |
+| 2025-01 | 3 | 1959 |
+| 2025-02 | 2 | 1650 |
+
+### Ledger trial balance
+```sql
+global ledger balance check
+```
+| total_debits | total_credits | delta |
+|---|---|---|
+| 181080 | 181080 | 0 |
+
+### Ledger balances by account
+```sql
+ledger balance per account
+```
+| account | entries | debits | credits | net |
+|---|---|---|---|---|
+| cash | 27 | 69612 | 25416 | 44196 |
+| operating_expenses | 14 | 25416 | 0 | 25416 |
+| accounts_receivable | 26 | 86052 | 69612 | 16440 |
+| sales_revenue | 13 | 0 | 86052 | -86052 |
+
+### Reconciliation anomalies (verified row-level)
+```sql
+anomalies: void-but-paid #11 (925.00), paid-no-payments #28 (1756.00), 5 split-payment invoices (1,5,12,19,22), 1 partial (4000 of 6148)
+```
+| id | status | invoice_amount | payment_rows | paid_amount |
+|---|---|---|---|---|
+| 1 | paid | 4860 | 2 | 4860 |
+| 5 | paid | 5284 | 2 | 5284 |
+| 11 | void | 925 | 1 | 925 |
+| 12 | paid | 4723 | 2 | 4723 |
+| 19 | paid | 5614 | 2 | 5614 |
+| 22 | paid | 4459 | 2 | 4459 |
+| 25 | open | 6148 | 1 | 4000 |
+| 28 | paid | 1756 | 0 | 0 |

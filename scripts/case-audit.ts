@@ -51,11 +51,19 @@ if (args.length === 0) {
   for (const p of args) {
     const mod = await import(`../${p}`);
     const arr = Object.values(mod).find((v) => Array.isArray(v)) as CaseStudy[] | undefined;
-    if (!arr) {
-      console.error(`FAIL loading ${p}: no exported array found`);
-      process.exit(1);
+    if (arr) {
+      cases.push(...arr);
+    } else {
+      // Company kits export a CompanyKit OBJECT with a .cases array.
+      const kit = Object.values(mod).find(
+        (v) => v && typeof v === "object" && Array.isArray((v as { cases?: unknown }).cases),
+      ) as { cases: CaseStudy[] } | undefined;
+      if (!kit) {
+        console.error(`FAIL loading ${p}: no exported array or kit object found`);
+        process.exit(1);
+      }
+      cases.push(...kit.cases);
     }
-    cases.push(...arr);
   }
   console.log(`Auditing ${args.length} file(s): ${cases.length} cases`);
 }
@@ -129,7 +137,8 @@ function auditCase(c: CaseStudy, seen: Map<string, string>): string[] {
   }
 
   // ids
-  if (!/^cs-\d{3,4}$/.test(c.id)) add(`id "${c.id}" does not match cs-###`);
+  if (!/^cs-\d{3,4}$/.test(c.id) && !/^cs-[a-z]{2,12}-\d{1,2}$/.test(c.id))
+    add(`id "${c.id}" does not match cs-### or cs-<company>-<n>`);
   if (seen.has(c.id)) add(`duplicate id — also defined in ${seen.get(c.id)}`);
   else seen.set(c.id, "this audit set");
   if (!TOPIC_IDS.has(c.topic)) add(`unknown topic "${c.topic}"`);

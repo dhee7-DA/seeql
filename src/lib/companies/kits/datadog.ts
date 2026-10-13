@@ -1,0 +1,932 @@
+// Datadog — kit 7 of the SaaS & Enterprise domain (Batch K).
+// Usage-based billing SQL: the storefront db read as an observability
+// sandbox — customers are monitored organizations (tenant accounts), orders
+// are billing periods, order_items are metered usage lines (hosts, spans,
+// logs) priced per unit, products are billable service families, and
+// invoices/payments are the usage billing runs in INTEGER cents. Family burn
+// stacks, segment baselines, spike screens and the AR anti-join underneath.
+// Pool provenance: the registry tags exactly 1 sql row for Datadog
+// (net-revenue-retention) — it leads the pool, the rest is theme-curated and
+// says so. Case briefs quote probed figures from scripts/company-facts.md
+// (probed 2026-10-12); every case slot is mechanically verified against
+// db/custom.db by scripts/case-audit.ts.
+
+import type { CompanyKit } from "../types";
+
+export const datadogKit: CompanyKit = {
+  id: "datadog",
+  domainId: "saas",
+  name: "Datadog",
+  tagline: "Observability SaaS: usage, hosts, credit burn",
+  accent: "text-purple-300",
+
+  brief: [
+    "Datadog is the observability platform whose revenue model is metered truth: infrastructure monitoring per host-hour, APM per span, logs per ingested GB — customers buy the telemetry and the invoice IS the usage curve. The analytics reality is {violet:consumption economics}: burn per service family, spend versus baseline, and the concentration story every usage business lives on. On this storefront db the mapping is honest: 16 monitored orgs generate 103 billing periods worth **34,833.28**, folded from 251 metered lines across 7 service families; the calendar runs 2024-01 to 2025-02 with a **3,731.97** burn peak and a **1,193.86** floor, and 63.5% of lifetime consumption sits with orgs whose spend crosses the 3,000 line — *the skew a consumption CFO watches instead of logins*.",
+    "The data org models the platform from the inside. Usage analytics owns the burn fold: metered lines joined to service families and aggregated per billing period — units times `unit_price`, never units alone. Billing desk owns the runs: 28 `invoices` against 27 `payments`, 21 exact, 1 partial (4,000 of 6,148), 6 {rose:never-collected} — with the ledger-grade rule that a burn stack must sum back to the calendar before it ships. Reliability analytics owns restatements: late-arriving metered rows are a first-class event when customers are billed on the same feeds the dashboards read. Segment baselines anchor every anomaly call: the average period bills 383.48 in the US, 335.32 in the EU, 313.66 in APAC, 426.22 in LATAM.",
+    "Interview style is economy-of-folds. A screen walks from a warm-up join to a per-family burn fold (units, spend, one GROUP BY), then escalates into a **baseline screen** — which org-months burned above their region's average, and by how much — or a concentration ratio where the denominator is the whole base. Follow-ups probe units and skew: 'is that spend compute or storage?', 'what share of the base is your top decile — and is that healthy?', 'why is the premium band (200-plus) empty on this catalog — max price 199.99?' Candidates who narrate the fold before the filter do well; Datadog's data teams think in *GROUP BY economics, not dashboards*.",
+    "Preparation strategy: the registry tags exactly one sql row for Datadog (`net-revenue-retention`) — it leads the pool, and the rest of the 30 topic slugs and 16 problems are theme-curated to known screens: burn calendars, overage bands, segment baselines, AR reconciliation. Then run both case studies on the live db: one rebuilds the service-family burn stack the close reconciles against the calendar, the other rebuilds the segment-baseline screen that flags org-months burning above their region. The bar to clear: state the fold's unit (units or dollars) and the baseline's population before you compute anything.",
+    "The expansion reads go past the fold. Window frames price the running burn — `SUM(burn) OVER (ORDER BY month)` defaults to a RANGE frame, so tied order keys ride together and the running total jumps. Set ops stack the close: the rails read (card 16 settlements / 37,364.00, wire 11 / 32,248.00) appends a **TOTAL row — 27 movements, 69,612.00** — and UNION's dedupe tax is a live bug class there. Derived staging carries the tier census — fold lifetime burn per org, *then* band it — and anomaly triage stays row-level: a {rose:void} run carrying a 925.00 settlement (#11), a paid run carrying none (#28, 1,756.00). Every read names its {violet:grain, frame and denominator} before it computes.",
+    "Preparation for the deeper rounds mirrors the base kit: the five new topics run window frames, set ops, derived gates, collection aging and text hygiene — 15 fresh slugs, still theme-curated because the registry tags exactly one Datadog sql row. Then run the four new cases on the live db: the {violet:tenant concentration census} — 4 core orgs holding 22,121.70, the 63.5% read, derived-table staged — the period-band census (25 flagship periods at 500-plus), the never-collected anti-join (**6 runs, 15,217.00**, one of them a *paid* run with no settlement rows), and the calendar stack whose `TOTAL` row must land on 34,833.28. The bar is unchanged: state the grain, the frame and the denominator — *then* let the query talk.",
+  ],
+
+  dayInLife: [
+    "**08:15 —** The morning starts on the burn calendar. A consumption analyst opens the monthly trend first: where does burn sit against the **3,731.97** January peak and the **1,193.86** July floor, and which service families moved? The first query is the reconciliation fold — per-family units and spend, with the family rows summing back to the calendar's 34,833.28. If the stack doesn't sum, the day's numbers are quarantined — a consumption business cannot publish a burn number that doesn't fold back to its own invoice base.",
+    "**11:00 —** Midday is baseline surgery. A capacity planner wants the org-months that out-burned their {violet:segment baseline} and by how much (the 1,088.44 period against APAC's 313.66 average is the standing record); a revenue partner wants concentration re-cut per region (EU's 15,089.23 leads, LATAM's 852.44 barely registers); billing wants the AR anti-join refreshed — the 6 never-collected runs — before the dunning cycle goes out. Each ask is a fold with a stated denominator, and the analyst ships the query with the baseline's population attached, because a burn number without its baseline is *a rumor with decimals*.",
+    "**14:30 —** The afternoon is the stakeholder loop. Weekly consumption reviews walk the calendar with SQL attached to every bar; the billing desk closes against the coverage census (21 exact, 1 partial at 4,000 of 6,148, 6 never-collected); and the reliability hour reviews restatements — which period's burn changed after late-arriving rows landed, and did the re-cut calendar get republished before the customer saw a stale number. This is the hour the three grains meet their audiences: line, family, calendar — *each defended in front of the people who bill against it*.",
+    "**17:45 —** End of day is the writeup that keeps the ledger honest. The burn stack ships with its reconciliation identity in the header — family rows sum to the calendar; the baseline screen ships with its partition column named (region, not org — a per-org baseline proves nothing); and tomorrow's dunning queue is staged with the anti-join already attached. The rhythm to internalize: Datadog SQL exists to make consumption honest at three grains at once — line, family, calendar — and the analyst who can reconcile across all three in one sitting is the one finance calls first.",
+    "**21:30 —** Close nights are stack nights. The burn calendar re-derives first — fourteen month rows from 2024-01 to 2025-02 — then the `UNION ALL` TOTAL row lands: **103 periods, 34,833.28**, and a grand row that misses by a cent holds the whole close. The coverage census is re-run, not re-read — 21 exact, 1 partial (4,000 of 6,148), 6 never-collected — with the anti-join behind it, because the six include a {rose:paid} run with no settlement rows (#28) and that row is the morning's first call. The ledger spine closes the night at **181,080 against 181,080** — *delta zero or no ship* — and tomorrow's dunning queue is staged from the same query that priced the 15,217.00 exposure, so the close hands off queries, not screenshots.",
+  ],
+
+  metrics: [
+    { name: "Monthly billed usage", what: "Burn folded per billing period — on this db the calendar swings 3,731.97 (2024-01) to 1,193.86 (2024-07). The headline consumption metric every trend claim starts from." },
+    { name: "Consumption revenue", what: "34,833.28 across the calendar here. The revenue line that IS usage: no seats to hide behind, so a soft month is visible the day it closes." },
+    { name: "Metered units per family", what: "Unit volume by service family — Audio 97, Accessories 121, Electronics 85. Units price the bill (units × unit_price); quoting units as dollars is the fold error this kit hunts." },
+    { name: "Spend concentration", what: "Share of base from orgs above a threshold: 63.5% from 3,000-plus (71.2% from 2,000-plus). The skew metric a consumption business reports instead of a logo count." },
+    { name: "Segment baseline", what: "Average burn per period by region: US 383.48, EU 335.32, APAC 313.66, LATAM 426.22. The population every 'spike' call is measured against — PARTITION BY region, stated." },
+    { name: "Billing-run coverage", what: "Periods with a settled payment vs all — 21 of 28 exact, 1 partial (4,000 of 6,148), 6 never-collected. The AR anti-join finance refreshes every close." },
+    { name: "Service-tier mix", what: "The catalog's price bands: 8 mid-tier families (50–200) averaging 111.5 versus 8 budget families (< 50) at 32.06 — and the premium band (200-plus) is EMPTY: max list price 199.99. Empty arms are findings, not errors." },
+    { name: "Lost-period rate", what: "Cancelled periods ÷ all: 7 of 103 (6.8%) — contract churn, the consumption business's version of logos lost. APAC runs the highest regional share at 8.1%." },
+    { name: "Payment rail mix", what: "Settlements by rail: card 16 movements / 37,364.00 against wire 11 / 32,248.00 — 27 settlements, 69,612.00 appended as the TOTAL row. The stack the billing desk opens with; a rail swinging share is a collections conversation." },
+    { name: "Settlement pace", what: "Issue-to-payment days on the 20 paid runs that actually moved cash: 28.4 average, fastest 13, slowest 84, against flat 30-day terms. The paid run with no settlement row (#28) stays out of the average — and in the anomaly queue." },
+    { name: "Burn-band mix", what: "Periods banded by size: 25 flagship (500-plus) worth 17,379.43, 40 scale (200–499.99) at 13,306.84, 38 steady below at 4,147.01. Bands reconcile to 103 periods and 34,833.28 — the census every threshold debate starts from." },
+    { name: "Standing anomalies", what: "The exception queue never empties here: void-with-cash #11 (925.00), paid-with-no-cash #28 (1,756.00), five split-leg runs (#1, 5, 12, 19, 22) and one partial (#25, 4,000 of 6,148). Counts and sums must agree between systems — these rows are where they don't." },
+  ],
+
+  topics: [
+    {
+      name: "Usage censuses",
+      why: "Every Datadog review opens with a fold: billing periods, monitored orgs, metered lines — grouped and counted without letting the grain blur. COUNT(*) counts periods, COUNT(DISTINCT customer_id) counts orgs; the calendar's 103 periods come from just 16 accounts, and the census is where candidates prove they know which grain they're standing on.",
+      slugs: ["product-sales-analysis-ii", "unique-orders-and-customers-per-month", "find-followers-count"],
+    },
+    {
+      name: "The burn calendar",
+      why: "Consumption is calendar arithmetic: STRFTIME('%Y-%m') buckets over billing periods, then trend reads against the 3,731.97 peak and the 1,193.86 floor. Datadog drills the month-bucket idiom because every burn chart hangs on that spine — and a '%m'-without-year fold merges two years into one lie.",
+      slugs: ["friday-purchase-iii", "monthly-transactions-i", "the-latest-login-in-2020"],
+    },
+    {
+      name: "Service-family joins & unit pricing",
+      why: "Metered lines carry no family names — the compute-vs-storage split is a join to the service catalog plus a weighted fold (units × unit_price). Datadog drills the join-then-weigh pattern because average-selling-price questions are exactly how per-unit family economics get compared.",
+      slugs: ["average-selling-price", "product-sales-analysis-i", "top-travellers"],
+    },
+    {
+      name: "Overage bands with CASE",
+      why: "Usage tiers and overage classification are CASE work: which orgs crossed their band, which SKUs price mid versus budget, and what to do with an empty premium arm (this catalog tops out at 199.99). The arms must be exhaustive and ordered — a hole in the CASE is a hole in the invoice.",
+      slugs: ["weather-type-in-each-country", "the-category-of-each-member-in-the-store", "calculate-orders-within-each-interval"],
+    },
+    {
+      name: "NRR & cohort revenue",
+      why: "The registry-tagged problem is the consumption business's north star: this cohort's revenue this period versus the same cohort last period. NRR is a two-stage cohort fold — and the repeat-burn curve on this db (2 one-period orgs, 4 embedded at 10-plus periods) is its shape.",
+      slugs: ["net-revenue-retention", "cohort-retention-matrix", "week-over-week-churn"],
+    },
+    {
+      name: "Baselines & spike screens",
+      why: "'Is this burn anomalous?' is always a window question: each period against its segment's average via AVG() OVER (PARTITION BY region). Choosing the partition column is the business decision — region baseline flags noisy tenants; an org baseline flags nothing but rounding.",
+      slugs: ["class-performance", "rolling-average-steps", "find-bursty-behavior"],
+    },
+    {
+      name: "Concentration & tenant sizing",
+      why: "When 63.5% of burn sits with 3,000-plus orgs, concentration reads decide capacity planning and CS staffing. Share-of-total windows, HHI concentration and usage-tier percentiles turn a period table into a portfolio view — the denominator is always the whole base.",
+      slugs: ["portfolio-weights", "portfolio-concentration-hhi", "usage-tier-percentiles"],
+    },
+    {
+      name: "Billing-run reconciliation",
+      why: "Usage billing is a reconciliation discipline: 28 invoices against 27 payments, coverage classified exact / partial / none, and the row-level anomaly list (a void run WITH a payment, a paid run with none) as the source of truth. Counts and sums must agree between systems or the query that shows which rows disagree is the deliverable.",
+      slugs: ["gl-reconciliation", "bank-account-summary-ii", "trial-balance-check"],
+    },
+    {
+      name: "Subquery gates",
+      why: "Screens escalate into nested logic: periods above the platform average, orgs clearing a burn threshold. Scalar and HAVING-gated shapes each carry an empty-inner-query answer you are expected to give unprompted — especially on filtered staging tables where the inner fold can legitimately come back empty.",
+      slugs: ["orders-with-maximum-quantity-above-average", "second-highest-salary", "managers-with-at-least-5-direct-reports"],
+    },
+    {
+      name: "Dormant orgs & churn screens",
+      why: "A monitored org that stops sending telemetry is a renewal risk long before the renewal date. Anti-joins and dormancy reads (zero-period orgs, one-and-done tenants — 2 of 16 here) are the early-warning queries, and proving a confident zero or a named list is the analyst's job.",
+      slugs: ["find-churn-risk-customers", "dormant-reactivation", "customers-who-never-order"],
+    },
+    {
+      name: "Window frames & running burn",
+      why: "Cumulative burn and trailing reads are frame decisions, not just ORDER BY: SQLite's default RANGE frame absorbs ORDER BY peers, so a running total silently jumps by the whole tie block the moment the sort key repeats. Datadog drills ROWS BETWEEN discipline because the month-to-date fold and the burn walk are the two queries the close re-derives every night.",
+      slugs: ["find-cumulative-salary-of-an-employee", "restaurant-growth", "last-person-to-fit-in-the-elevator"],
+    },
+    {
+      name: "Stacked close boards (set ops)",
+      why: "The close ships appended boards — fourteen month rows plus a TOTAL row, open arms next to settled arms — and UNION ALL is the honest append while UNION pays a dedupe tax that can silently merge two legitimately distinct rows. Column contracts (same count, same order, compatible types) and one stack-wide ORDER BY are the drill.",
+      slugs: ["monthly-transactions-ii", "movie-rating", "count-salary-categories"],
+    },
+    {
+      name: "Derived staging & relational gates",
+      why: "Classify-after-fold needs a staged fold — lifetime burn per org computed in a derived table, THEN banded — because SQLite cannot group by an aggregate. The relational-division gate (orgs that used every service family) is the multi-product adoption read that separates embedded tenants from single-family ones.",
+      slugs: ["department-highest-salary", "customers-who-bought-all-products", "game-play-analysis-iv"],
+    },
+    {
+      name: "Collection aging & settlement cycles",
+      why: "Usage billing is collections: terms run a flat 30 days, settlement averaged 28.4 days on the 20 paid runs that moved cash (fastest 13, slowest 84). Aging pivots and delinquency buckets turn the AR anti-join — 6 runs, 15,217.00 — into a schedule the dunning queue can actually walk.",
+      slugs: ["ar-aging-schedule", "settlement-fails-aging", "delinquency-buckets"],
+    },
+    {
+      name: "Text hygiene & NULL audits",
+      why: "Org names, plan labels and invoice numbers arrive messy; UPPER/TRIM/REPLACE passes are the pre-flight before any GROUP BY merges 'acme' with 'ACME '. One-pass NULL/blank censuses (COUNT(column) versus COUNT(*)) are how the desk proves a column is clean instead of assuming it.",
+      slugs: ["fix-names-in-a-table", "fix-product-name-format", "null-blank-audit"],
+    },
+  ],
+
+  theory: [
+    {
+      id: "dd-t1",
+      q: "Your burn report joins metered lines to their service families. When do you INNER and when do you LEFT — and what silently breaks if you filter a usage column in WHERE after a LEFT JOIN?",
+      a: "Decide from the survival rule the question implies. A billed-usage report joins lines to families: a metered line with no family is corruption, so INNER is honest — and worth a data-quality flag rather than a silent inner join. A coverage report must be LEFT from families: the family with no metered lines IS the finding (a listed SKU that never burned), arriving with NULL usage columns. The classic break: filtering quantity > 0 in WHERE after a LEFT JOIN kills every NULL-payload family row — the LEFT JOIN quietly became an INNER and the zero-usage finding vanished. The fix is moving the predicate into ON or an outer query. Zero-usage families are real on a catalog like this one — the premium band is empty, and proving an empty arm confidently is the analyst's job.",
+      tag: "joins",
+    },
+    {
+      id: "dd-t2",
+      q: "The burn stack shows 103 billing periods, 16 orgs and 251 metered lines. Why do those three counts disagree and what does each mean to the business?",
+      a: "They disagree because they count at different grains. COUNT(*) over the joined lines counts metered rows — 251; COUNT(DISTINCT o.id) folds them back to billing periods — 103; COUNT(DISTINCT customer_id) folds further to orgs — 16. None is wrong: lines measure ingestion load, periods measure the billing calendar, orgs measure the installed base. The ratios are the reads — 2.4 lines per period, 6.4 periods per org — and they decide whether growth is broadening (more orgs) or deepening (more burn per org). The trap that catches candidates is quoting a line count as a period count in a burn trend; one org-month with three metered lines is one invoice row, not three. Saying 'one row per what?' for every COUNT is the habit the interviewer grades.",
+      tag: "aggregation",
+    },
+    {
+      id: "dd-t3",
+      q: "The capacity review wants periods that billed at least 500 for families carrying at least ten periods. Where does each filter live, and why does the wrong clause either error or lie?",
+      a: "Two filters, two clauses. The burn floor is a group-level fact — HAVING SUM(quantity * unit_price) >= 500 after GROUP BY; putting it in WHERE errors because the fold does not exist before groups form. The ten-period floor is likewise HAVING COUNT(DISTINCT order_id) >= 10. Row-level facts — a date window, a status filter — live in WHERE, applied before any fold. The pipeline order — FROM, WHERE, GROUP BY, HAVING, SELECT, ORDER BY — is not trivia here; it is the difference between a capacity line and an error, and between a threshold applied to units versus to dollars. The strong answer places every filter by asking: is this a fact about one metered line, or about a family's whole fold?",
+      tag: "pipeline",
+    },
+    {
+      id: "dd-t4",
+      q: "You build a spike screen: each org-month against its region's average burn. Why AVG() OVER (PARTITION BY region) — and what changes if you partition by org instead?",
+      a: "The partition column IS the baseline's population, and the population is the business claim. PARTITION BY region makes every org-month compete against its segment's average — the US baseline is 383.48, APAC's 313.66 on this db — so a 700-burn month is flagged in APAC but ordinary in the US. PARTITION BY customer_id makes each org compete against ITS OWN average: every one-period org's gap collapses to exactly zero and the screen flags nothing but multi-period noise — a query that proves only that averages are averages. The window keeps every row (that's the point: every org-month gets its baseline alongside), and the gap column — burn minus baseline — is the ranked output leadership actually reads. Choosing the partition is a business decision; the analyst who states it out loud is the one the review trusts.",
+      tag: "windows",
+    },
+    {
+      id: "dd-t5",
+      q: "Metered rows arrive with usage timestamps; a period's burn isn't final until validation closes. What is your NULL policy for the burn trend, and how do NULLs behave in the aggregates it uses?",
+      a: "Policy first: only validated periods have a final burn, so the trend measures closed periods and says so — on this db 82 of 103 periods carry a completion timestamp (shipped_at), 14 are still validating, 7 were cancelled outright. Then mechanics: AVG and SUM ignore NULLs, so an average over ALL periods returns the validated-only average with a silently shrunken population — a real number wearing the wrong name. COUNT(validated_at) counts the closed subset; the gap between it and COUNT(*) IS the in-flight count, which is a feature, not a bug. What is never acceptable is IFNULL-ing the in-flight burn to zero to 'fix' the trend — that publishes a dip that is really a pipeline delay, and a consumption customer who sees a fake dip calls support. A report whose WHERE clause is doing definitional work without saying so is exactly what a Datadog reviewer hunts for.",
+      tag: "nulls",
+    },
+    {
+      id: "dd-t6",
+      q: "WHERE total > (SELECT AVG(total) FROM orders) — what is that scalar subquery allowed to return, and what happens when the inner fold comes back empty?",
+      a: "A scalar subquery is contractually 0-or-1 rows, 1 column. One row drives the comparison; zero rows return NULL — not an error — and total > NULL is UNKNOWN, so the above-average screen silently returns nothing while looking valid. On the full table that is theoretical: 103 periods always produce an average. On filtered staging tables — one region, one family, one month — the empty-inner-query bug ships regularly, and the platform-average comparison is exactly how it hides. The correlated cousin (compare each line to ITS family's average) re-runs per outer row and answers a different question at a different cost. The strong candidate states the inner fold's population and its empty-case behavior unprompted, because that is the follow-up the panel is fishing for.",
+      tag: "subqueries",
+    },
+    {
+      id: "dd-t7",
+      q: "The burn trend buckets periods by month on TEXT timestamps. How do you build the spine, cut a quarter without losing its last night, and read the first row of the LAG?",
+      a: "Three moves. The spine: STRFTIME('%Y-%m', created_at) — year plus zero-padded month, 14 buckets on this db from 2024-01 to 2025-02; '%m' alone would merge January 2024 with January 2025 and the burn curve becomes fiction. The quarter window: half-open intervals — created_at >= '2024-01-01' AND created_at < '2024-04-01' — because BETWEEN '2024-03-01' AND '2024-03-31' silently drops the last night's metered rows, and month-end is exactly when usage lands. The LAG: on a month-ordered spine the first row's prior value is NULL, so the first delta is NULL by definition — report it as NULL or label it 'baseline', never coalesce it to zero, which reads as a flat month in a burn walk. Date discipline is burn discipline: the spine, the window and the edge row are where consumption reports go wrong.",
+      tag: "dates",
+    },
+    {
+      id: "dd-t8",
+      q: "The billing desk says a void invoice shows a payment against it. Walk me through the reconciliation query you write first — and the money-handling rule you never break while writing it.",
+      a: "First the anomaly flip: invoices JOIN payments, keep status = 'void' — on this db that surfaces #11, a void run with a 925.00 settlement against it; and the mirror mode, a 'paid' run with zero payment rows (#28, 1,756.00), is found by the anti-join: invoices LEFT JOIN payments, keep p.id IS NULL — 6 runs, 15,217 in balance. The two error modes are mirrors, and both reconcile to the row-level anomaly list, not to vibes. The money rule: invoices and payments carry INTEGER cents, so every dollar read is amount_cents / 100.0 — the missing .0 turns a 4,937.00 print into 4,937 and quietly eats cents on every odd-cent run. Reconciliation culture here is ledger-grade: counts and sums must agree between systems, and when they do not, the query that shows WHICH rows disagree is the deliverable — the trial balance closes at 181,080 versus 181,080, and a query that can't reproduce that identity doesn't ship.",
+      tag: "quality",
+    },
+    {
+      id: "dd-t9",
+      q: "The burn walk computes SUM(burn) OVER (ORDER BY month) for a running total. What frame does that get by default, and when does the default lie to you?",
+      a: "The default frame is RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW, and RANGE treats ORDER BY peers as one value: when two rows share the sort key, both land inside each other's frame and the running total jumps by the whole tie block at once. On a month spine the keys are unique so it behaves — but order by anything with repeats (runs per day, orgs sharing a burn value) and the walk doubles count without telling you. ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW takes exactly one row at a time and is the frame the desk pins when the walk must reconcile to a TOTAL row. Frame choice on this kit is a correctness decision, not style: the calendar's running fold has to agree with the 34,833.28 grand total, and only a declared frame guarantees which rows each step saw.",
+      tag: "frames",
+    },
+    {
+      id: "dd-t10",
+      q: "The close board appends fourteen month rows and one TOTAL row. Why UNION ALL and not UNION — and what contract do the two arms share?",
+      a: "UNION ALL concatenates; UNION dedupes entire rows before returning. The dedupe tax sounds harmless until two arms produce identical value rows — same label, same count, same sum — and one of them vanishes, after which the board no longer reconciles to 103 periods and 34,833.28. The contract the arms share is columnar: same number of columns, same order, compatible types, because the compound types by position, not by name. ORDER BY appears once, at the end, and sorts the whole stack — 'TOTAL' sorts after '2025-02' by string order, which is exactly where the close reads it. On this db the rails stack (card 16 settlements / 37,364.00, wire 11 / 32,248.00, TOTAL 27 / 69,612.00) is the canonical shape: three arms, one column contract, one grand row that must land last and sum true.",
+      tag: "setops",
+    },
+    {
+      id: "dd-t11",
+      q: "Three shapes find billing runs with no settlement: LEFT JOIN … IS NULL, NOT IN, NOT EXISTS. Which do you ship, and what does each do when a NULL sneaks in?",
+      a: "The desk ships LEFT JOIN payments … WHERE p.id IS NULL: the NULL payload IS the miss signal, so the shape is immune to NULLs by construction, extends naturally to per-run counts and sums, and on this db surfaces the 6 never-collected runs carrying 15,217.00 — including paid-but-unmoved #28, which the status split makes visible. NOT EXISTS is the NULL-safe logic twin: it asks 'does any row match?' instead of comparing values, so NULLs cannot poison it. NOT IN is the trap: one NULL in the compared list and every row evaluates UNKNOWN — the dunning list ships empty while looking valid. The rule I state out loud: anti-joins over money use the join shape or EXISTS; NOT IN only when the compared column is provably NOT NULL, and I can show why.",
+      tag: "antijoin",
+    },
+    {
+      id: "dd-t12",
+      q: "When is a correlated subquery the RIGHT answer rather than a smell — and how do you rewrite it when it isn't?",
+      a: "When the question is genuinely per-row against a group the row belongs to and no window expresses it cleanly — though 'against its group's average' almost always IS a window (AVG() OVER PARTITION BY), which is the first thing to check. Correlated shapes re-run per outer row: fine at 16 orgs, fatal at a million metered lines, and the cost is invisible in a small result set. The rewrite is staging: fold first in a derived table (per-invoice paid cents), then join back and classify — two passes over 28 invoices instead of 28 correlated probes, and the staging grain gets a name the reviewer can audit. On this db the coverage census (21 exact / 1 partial / 6 none) is exactly that derived fold; writing it correlated would be a flex, not an answer.",
+      tag: "correlated",
+    },
+    {
+      id: "dd-t13",
+      q: "The tier census CASE bands lifetime burn into core / growth / longtail. What breaks if the arms run in the wrong order, and how would you catch it?",
+      a: "CASE evaluates arms top-down and takes the first match, so arm order is semantics: put the 2,000-plus growth arm before the 3,000-plus core arm and every core org is swallowed into growth — the census prints 5 growth / 0 core, the 63.5% concentration read becomes fiction, and the query stays perfectly valid. Exhaustiveness is the second contract: the ELSE catches the tail, but an ELSE you didn't plan is a bucket you can't name in the deck. The catch is the reconciliation assert — tiers must fold to 16 orgs and 34,833.28 AND match the probed split (4 core at 22,121.70, 1 growth at 2,667.93, 11 longtail at 10,043.65); band arithmetic reconciles even when misfiled, so the tier counts are the canary. Order arms high-to-low, always, and say why in the comment.",
+      tag: "cases",
+    },
+    {
+      id: "dd-t14",
+      q: "A reviewer asks why you staged a CTE instead of writing one big query. What is your answer?",
+      a: "Because the query computes at two grains and pretending otherwise is where the fan-out bugs live. Fold payments per run — one row per invoice — is a different grain from classifying exact / partial / none, and a single query that does both in one SELECT is where a split-leg run (#1, 5, 12, 19, 22 on this book) double-counts. A CTE gives the fold a name, a place for the grain comment, and a debug seam: run the staging alone, assert 28 rows, then classify. The close's query tree is built from named stages precisely so a restatement lands in one stage instead of a rewrite — the calendar, the coverage census and the anomaly board all stage the same per-run fold and share its correctness. One big query is not simpler; it is unaudited.",
+      tag: "ctes",
+    },
+    {
+      id: "dd-t15",
+      q: "Where does the ROUND go — per row or after the fold — and why does it matter on a cents column?",
+      a: "Round once, at the leaf. Per-row rounding donates each line's sub-cent remainder to the floor before the fold: round all 251 metered lines to 2 decimals and then sum, and the donated dust can move the total by whole cents — enough that the family stack no longer reconciles to the 34,833.28 calendar. The correct shape on INTEGER cents is two separate jobs: keep the arithmetic exact in cents (SUM(amount_cents)), promote with /100.0 at read time, and ROUND(..., 2) once, for humans, at print. Never feed a rounded column back into arithmetic — it propagates the dust forward and the ledger stops closing. The interview tell is saying 'exact until the last step' out loud; the desk's standing rule is that rounding is a presentation concern, never a computation concern.",
+      tag: "arithmetic",
+    },
+    {
+      id: "dd-t16",
+      q: "You join invoices to payments to build an exposure report and the totals come back overstated. What happened, and what is the fix?",
+      a: "Fan-out: the relationship is one-to-many, so the join multiplies rows. Five runs on this book settle in two legs (#1, 5, 12, 19, 22), so each of those faces appears on two joined rows and SUM(invoice face) counts them twice — the overstatement is exactly the five split faces, small enough to hide and big enough to fail a reconciliation. The fix is order of operations: fold payments per run first (SUM per invoice_id — 27 payment rows become 22 per-run folds), then join, so every face is counted once. The audit habit that catches it mechanically: before trusting any joined sum, ask how many rows the join produced — 28 invoices and 27 payments yield 33 joined rows here, and knowing that number is how you notice when a rewrite silently changes it.",
+      tag: "fanout",
+    },
+    {
+      id: "dd-t17",
+      q: "Two org-months tie on burn and the spike leaderboard must be reproducible tomorrow. What do you change about the query?",
+      a: "Add a deterministic tiebreak and say it out loud: ROW_NUMBER() OVER (ORDER BY burn DESC, org) makes rank assignment engine-independent, so position 1 is the same org in every replay, on every plan. RANK and DENSE_RANK share rungs honestly, but they leave WHICH tied row sits where ambiguous for anything downstream — and a LIMIT cut on tied ranks returns a different board depending on the plan the planner felt like. The desk's contract: rankings that feed a review carry a stated tiebreak; rankings that feed a LIMIT carry ROW_NUMBER plus one. This kit's spike screen breaks ties by org name and its walkthrough says so — because a leaderboard whose order can drift between runs is not a leaderboard, it is a screenshot of one plan's mood.",
+      tag: "ranking",
+    },
+    {
+      id: "dd-t18",
+      q: "NTILE(4) the org base by lifetime burn. What lands in tile 4, and what does that tile tell the business?",
+      a: "Sixteen orgs divided by four tiles is exactly 4 orgs each, and tile 4 — ordered by burn descending — is Alice Chen, Emma Wilson, Grace Kim and Maya Patel: 22,121.70 of the 34,833.28 base, the 63.5% concentration headline expressed as a tile. The teaching point is that tiles are count-balanced, never value-balanced: a quarter of the orgs holds nearly two-thirds of the burn, which is precisely the skew a consumption business reports instead of an average. PERCENT_RANK and CUME_DIST give the continuous cousins; NTILE gives the CS team its tiering — but on a skewed base the tiles mislead the moment you quote tile averages instead of tile shares. The defense: state the ORDER BY direction and the tile size with the number, or the tier names are decoration.",
+      tag: "percentiles",
+    },
+    {
+      id: "dd-t19",
+      q: "The burn calendar and the expense calendar live in two tables with raw timestamps. How do you join them by month — and what does the naive join return?",
+      a: "Bucket both sides to the same TEXT key first — SUBSTR(created_at, 1, 7) on orders, SUBSTR(spent_on, 1, 7) on expenses — then join on the month key. The naive join on raw timestamps matches essentially nothing: meters and expense stamps never share an instant, so equality on raw times is the empty-join trap wearing a valid syntax. The bucket key must carry the year — '%Y-%m', not '%m' — or January 2024 merges with January 2025 and the walk becomes fiction. On this db the two calendars align perfectly: 14 burn months and 14 expense months from 2024-01 to 2025-02, one-to-one, and the joined fold is the budget-versus-burn walk the CFO reads every Monday. Bucket-then-join is the general rule: grain-match before key-match, and say the grain you matched on.",
+      tag: "buckets",
+    },
+    {
+      id: "dd-t20",
+      q: "A late metered row lands in closed month 2024-06. Under the watermark contract, what exactly gets restated — and what does not?",
+      a: "The month cell and everything derived from it: 2024-06's burn, the running total that crosses it, the quarter roll-up it feeds, and the calendar TOTAL — 34,833.28 moves by the late line's worth, and any dashboard holding the old grand total is now inconsistent with its own parts. What does NOT move: months after the watermark, and family stacks that never received the line. The watermark — the max metered timestamp processed — is the contract that makes 'closed' a queryable property: everything before it is final, everything after is provisional, and a restatement re-derives only the affected stage. The desk republishes with a restated-months note, never a silent rewrite — a consumption customer who sees a closed invoice change without a note calls support, and on usage billing that call is a churn event, not a ticket.",
+      tag: "restatements",
+    },
+    {
+      id: "dd-t21",
+      q: "One scan, four numbers: delivered, shipped, pending, cancelled counts. What are the two ways to write it, and which do you ship?",
+      a: "Conditional aggregation in one pass: COUNT(*) FILTER (WHERE status = 'delivered') where the engine supports it, or the portable SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) — both scan 103 periods once and both must reconcile to 103 or the census is broken. The arms read 52 / 30 / 14 / 7 here, and naming them after the ledger vocabulary (billed, in flight, validating, lost) makes the census double as documentation. The alternative — four scalar subqueries — is four scans of the same table and a consistency hazard: each subquery snapshots the table separately, so a mid-scan write can print a census that sums to 102. One pass is not just faster; it is the only shape that guarantees the four numbers came from the same instant, which is the whole point of a census.",
+      tag: "census",
+    },
+    {
+      id: "dd-t22",
+      q: "GROUP_CONCAT folds a service family's product lineup into one cell. What are its sharp edges?",
+      a: "Order is unspecified unless you pin it: 'Audio: Headset, Mic' and 'Audio: Mic, Headset' are both correct runs until a diff-based test disagrees with yesterday's cell, so a reproducible fold carries an explicit order (and a deterministic tiebreak) inside the aggregation. The separator is the second argument — and an empty group returns NULL, not an empty string, so a lineage column silently flips to NULL for any family with no lines, which reads as missing data downstream. Use it for lineups, audit trails and exception lists — the per-family catalog read (3 Audio SKUs, 3 Electronics SKUs, 3 Accessories) is exactly the one-cell shape pricing reviews ask for — never for values anyone will sum or parse positionally. A string cell is a presentation; the moment it becomes an interface, it becomes a contract, and contracts need determinism.",
+      tag: "strings",
+    },
+    {
+      id: "dd-t23",
+      q: "The burn trend got slow after someone added WHERE SUBSTR(created_at, 1, 7) = '2024-06'. Why, and what is the rewrite?",
+      a: "The function wraps the column, so any index on created_at is unusable — the planner must scan every period and compute a substring for each before it can compare. The sargable rewrite is a half-open range on the bare column: created_at >= '2024-06-01' AND created_at < '2024-07-01' — same six periods, index-friendly, and the half-open upper bound is what keeps month-end night inside the window (BETWEEN '2024-06-30' would drop the last night's metered rows, which is exactly when usage lands). The instinct generalizes: any predicate that transforms the column — SUBSTR, UPPER, arithmetic — converts an index seek into a scan. On 103 rows the scan is free; on a billion metered lines it is the incident. Write the range shape even when it does not matter yet, because the query outlives the dataset size you tested it at.",
+      tag: "performance",
+    },
+    {
+      id: "dd-t24",
+      q: "Defend your NRR number. What is the denominator, what is excluded — and what does this db make of it?",
+      a: "NRR is a same-cohort ratio: the orgs that existed at period start, their burn this period versus their burn then. The denominator is the opening cohort's burn — not the period's total (34,833.28 is the wrong base the moment new orgs appear) — and new logos are excluded from the numerator by definition, or the metric stops measuring retention and starts measuring sales. On this db the shape is visible in the repeat curve: 2 one-period orgs against 4 embedded at 10-plus periods, with the middle of the distribution thin (3 orgs at two periods, 4 at four). Because 63.5% of burn sits with 4 orgs, NRR here swings on a handful of accounts — one expansion or contraction at the top moves the metric more than the entire long tail. The defense that lands: cohort, two periods, exclusions — then the number is a definition, not a vibe.",
+      tag: "kpi",
+    },
+  ],
+
+  mcqs: [
+    {
+      id: "dd-mcq-1",
+      prompt: "A billing period's status column reads 'delivered'. In the usage-ledger vocabulary, what is it?",
+      choices: ["Metered clean — usage validated and billed", "In flight — metering still running", "Failed — the contract was lost", "Queued — awaiting validation"],
+      answer: 0,
+      why: "This kit's ledger map is fixed: delivered = validated and billed (52 of 103 periods), shipped = in flight (30), pending = awaiting validation (14), cancelled = contract lost (7). 'Delivered' is the only status that has happened.",
+      notes: [
+        { choice: 1, why: "In-flight is 'shipped' — 30 periods still metering. Calling in-flight periods billed is how burn reports acquire fictional revenue." },
+        { choice: 3, why: "Queued is 'pending' — 14 periods under validation. Billing a pending period invoices usage nobody has verified." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "dd-mcq-2",
+      prompt: "The burn fold joins 251 metered lines to 103 periods. What does COUNT(DISTINCT o.customer_id) return?",
+      choices: ["251", "103", "16", "7"],
+      answer: 2,
+      why: "The fold's third grain: 103 periods come from just 16 monitored orgs. COUNT(DISTINCT customer_id) folds periods back to orgs — the installed-base read, as opposed to load (lines) or calendar (periods).",
+      notes: [
+        { choice: 0, why: "251 is the line count — COUNT(*) over the joined rows. Quoting lines as orgs is the grain error that inflates every per-customer metric." },
+        { choice: 3, why: "7 is the count of cancelled periods — a status slice, not a population. Different question, different fold." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "dd-mcq-3",
+      prompt: "Which figure is the lifetime consumption base the concentration ratio divides by?",
+      choices: ["3,731.97", "34,833.28", "338.19", "1,088.44"],
+      answer: 1,
+      why: "34,833.28 is the calendar's total billed usage — the denominator of every share-of-base read (the 63.5% from 3,000-plus orgs). The peak month, the mean period and the largest single period are all real but different metrics.",
+      notes: [
+        { choice: 0, why: "3,731.97 is the 2024-01 peak — one month's burn, not the base. Concentration against a monthly numerator would overstate every share ~12x." },
+        { choice: 2, why: "338.19 is the average period — a per-period normalization, not a base. Ratios need a denominator from the same population as the numerator." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "dd-mcq-4",
+      prompt: "The family burn fold computes spend from metered lines. Which expression is correct?",
+      choices: ["SUM(quantity)", "SUM(quantity * unit_price)", "AVG(unit_price)", "SUM(unit_price)"],
+      answer: 1,
+      why: "Each metered line bills quantity × unit_price; SUM over those products is the family's spend — Audio bills 97 units into 11,744.01. SUM(quantity) prices every unit at 1.0; SUM(unit_price) prices every line at one unit.",
+      notes: [
+        { choice: 0, why: "SUM(quantity) is the UNITS fold — real and useful for capacity, but quoting it as dollars understates Audio by two orders of magnitude. Name the unit before you ship the number." },
+        { choice: 3, why: "SUM(unit_price) adds one price per line, ignoring how many units each line metered — a fold that bills a 500-unit line the same as a 1-unit line." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "dd-mcq-5",
+      prompt: "A pricing review CASE bands the catalog: >= 200 'premium', 50–199 'mid', < 50 'budget'. What does the premium arm return on this db?",
+      choices: ["The most expensive families", "An empty set — max list price is 199.99", "An error — the CASE is malformed", "Families priced in credits, not dollars"],
+      answer: 1,
+      why: "The catalog tops out at 199.99 (Smart Watch S), so the premium band is EMPTY — 8 mid families (avg 111.5) and 8 budget families (avg 32.06) is the whole base. An empty arm is a finding to report, not a bug to fix.",
+      notes: [
+        { choice: 0, why: "Nothing qualifies — 199.99 < 200. The band boundary sits one cent above the ceiling, which is exactly why probed catalogs beat guessed thresholds." },
+        { choice: 2, why: "The CASE is perfectly valid — it simply matches zero rows. Silent empties are the honest outcome; the error is claiming premium SKUs exist." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "dd-mcq-6",
+      prompt: "AVG(o.total) OVER (PARTITION BY c.region) runs on the burn table. What does the window return for each row?",
+      choices: ["The org's own average burn", "The region's average burn — same value on every row of that region", "The platform-wide average burn", "The row's share of regional burn"],
+      answer: 1,
+      why: "PARTITION BY region computes the fold once per region and stamps it on every row of that partition — US rows all carry 383.48, APAC rows 313.66. The gap column (burn minus that stamp) is the spike screen.",
+      notes: [
+        { choice: 0, why: "That's PARTITION BY customer_id — a per-org baseline whose gap is zero for every one-period org. The partition choice is the business decision." },
+        { choice: 3, why: "Share-of-partition needs the row value IN the ratio (burn / SUM(burn) OVER PARTITION). AVG is a level, not a share." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "dd-mcq-7",
+      prompt: "Two org-months tie for the largest burn on the spike screen. Under RANK, what rank does the NEXT distinct burn carry?",
+      choices: ["It shares the tie's rank", "The tie's rank plus one", "The tie's rank plus TWO — RANK skips past the whole tie block", "RANK cannot handle ties"],
+      answer: 2,
+      why: "RANK's contract: ties share a rung and the next distinct value skips the consumed positions — 4, 4, then 6. The gap implies a phantom position that does not exist; DENSE_RANK would answer 'plus one' by design.",
+      notes: [
+        { choice: 1, why: "That's DENSE_RANK — shared rungs without gaps. RANK's skip is the point: leaderboard position 6 after a tie at 4 means positions 4 and 5 were consumed." },
+        { choice: 3, why: "RANK exists precisely to score ties with a documented policy. The alternative — ROW_NUMBER — splits ties arbitrarily, a silent judgment call about rankings." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "dd-mcq-8",
+      prompt: "WHERE burn > (SELECT AVG(burn) FROM periods WHERE region = 'LATAM') runs against a staging copy where the LATAM filter matches nothing. What does the screen return?",
+      choices: ["An error — scalar subqueries must return a row", "Zero rows silently — the comparison passes nothing", "Every row — NULL comparisons default to true", "Only NULL-burn rows"],
+      answer: 1,
+      why: "The empty inner fold yields NULL, burn > NULL is UNKNOWN, and WHERE passes nothing — an above-average screen that ships empty-looking-but-valid. On filtered staging tables this bug is routine, which is why the inner fold's population is stated out loud.",
+      notes: [
+        { choice: 0, why: "SQLite tolerates the empty case as NULL rather than erroring — worse than a crash, because the screen LOOKS fine. Stricter engines error; the portable answer is to check the inner fold." },
+        { choice: 2, why: "No comparison against NULL ever defaults to true — UNKNOWN is discarded by WHERE in both directions. Nothing 'passes' a NULL comparison." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "dd-mcq-9",
+      prompt: "A billing run reads amount_cents = 493700. Which expression prints its dollar value?",
+      choices: ["amount_cents / 100", "ROUND(amount_cents / 100.0, 2)", "amount_cents * 100", "ROUND(amount_cents, 2)"],
+      answer: 1,
+      why: "INTEGER cents ÷ 100.0 promotes to real arithmetic: 4,937.00. The .0 is the entire fix — integer ÷ integer truncates, and every odd-cent run leaks its cents into the floor.",
+      notes: [
+        { choice: 0, why: "493700 / 100 is integer division = 4937 — on round-dollar runs the bug hides; the first odd-cent row exposes it. Promote before you divide." },
+        { choice: 2, why: "Multiplying gives 49,370,000 — units inverted. Sanity-check magnitude: dollars are smaller than cents." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "dd-mcq-10",
+      prompt: "A burn walk computes ROUND(burned - LAG(burned) OVER (ORDER BY month), 2). What is the first month's delta, and what is the honest way to present it?",
+      choices: ["0 — the walk starts flat", "NULL — labeled 'baseline' or left blank, because no prior month exists", "The first month's burned value", "An error — LAG has no row to reach"],
+      answer: 1,
+      why: "LAG finds no prior row and returns NULL; burned - NULL is NULL. The first row of every walk is the baseline — reporting NULL (or an explicit 'baseline' label) is honest; the db's spine starts at 2024-01 with 3,731.97 and no delta.",
+      notes: [
+        { choice: 0, why: "Coalescing to 0 fabricates a flat month — the single most common walk lie. A zero delta is a measurement; a missing prior is an edge." },
+        { choice: 2, why: "LAG returns NULL, not the current value — that would be the identity window. Pulling the first burn into the delta double-counts the opening month." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "dd-mcq-11",
+      prompt: "The burn trend needs periods still in flight — metering running, not yet validated. How many are on this db?",
+      choices: ["14", "30", "52", "82"],
+      answer: 1,
+      why: "Shipped = in flight = 30 of 103 periods (29.1%). The ledger map is fixed: delivered 52 validated-and-billed, shipped 30 metering, pending 14 awaiting validation, cancelled 7 lost.",
+      notes: [
+        { choice: 0, why: "14 is pending — queued for validation, not metering. Billing a pending period invoices usage nobody has verified." },
+        { choice: 3, why: "82 is delivered + shipped — every period carrying a completion timestamp. The in-flight slice alone is 30." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "dd-mcq-12",
+      prompt: "Which region leads lifetime burn, and by how many billing periods?",
+      choices: ["APAC — 37 periods", "EU — 45 periods, 15,089.23", "US — 19 periods", "LATAM — 2 periods, 852.44"],
+      answer: 1,
+      why: "EU leads on both counts: 45 periods worth 15,089.23 from 8 buying orgs. APAC is second (37 / 11,605.45), US third (19 / 7,286.16 from just 2 orgs), LATAM barely registers (2 / 852.44).",
+      notes: [
+        { choice: 0, why: "APAC is second — 37 periods and 11,605.45. Quoting it as the leader flatters the wrong segment's capacity plan." },
+        { choice: 2, why: "US has the highest average period (383.48) but only 19 of them — value density is not volume." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "dd-mcq-13",
+      prompt: "The dormant-tenant anti-join (orgs with zero billing periods) runs against this db. What ships?",
+      choices: ["16 — every org is dormant", "2 — the one-period orgs", "0 — a confident zero, proven", "The query errors — there are no rows to test"],
+      answer: 2,
+      why: "All 16 monitored orgs have at least one period, so the anti-join returns 0 — and shipping a proven zero (16 orgs, 103 periods, no misses) is the analyst's job, not a data gap to escalate.",
+      notes: [
+        { choice: 1, why: "2 is the count of ONE-period orgs — dormant means zero, and those two did transact once." },
+        { choice: 3, why: "An empty result set is a valid answer here; reading it as an error is how fake 'data gaps' get reported upward." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "dd-mcq-14",
+      prompt: "The completion share reads ROUND(100.0 * COUNT(shipped_at) / COUNT(*), 1) over all 103 periods. What prints?",
+      choices: ["79.6 — 82 of 103 carry a completion timestamp", "82.0 — the count of completed periods", "50.5 — delivered is the only completed state", "100.0 — every period eventually completes"],
+      answer: 0,
+      why: "COUNT(shipped_at) skips NULLs: 82 of 103 periods carry a completion timestamp (52 delivered + 30 shipped), so the share prints 79.6. COUNT(*) in the denominator keeps the population honest — the 21 without one stay counted as not-yet.",
+      notes: [
+        { choice: 1, why: "82 is the numerator — printing it as a percentage drops the denominator and overstates completion by 2.4 points." },
+        { choice: 2, why: "50.5 is delivered's share of periods — a status slice, not the completion share. Different question, different fold." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "dd-mcq-15",
+      prompt: "The close board stacks open runs on top of settled runs. What does UNION buy — and what does it cost?",
+      choices: ["It sorts the board — UNION implies ORDER BY", "It dedupes whole rows — harmless here, since open and paid never collide", "Nothing — SQLite treats UNION and UNION ALL identically", "It dedupes whole rows — and can silently merge two distinct arms that produce identical value rows"],
+      answer: 3,
+      why: "UNION applies DISTINCT to the compound's rows; two arms that happen to emit identical rows (same label, count, sum) collapse into one and the board stops reconciling to 28. UNION ALL appends honestly — the desk's default for close boards.",
+      notes: [
+        { choice: 0, why: "UNION does not sort — ORDER BY is a separate clause and applies once to the whole stack." },
+        { choice: 2, why: "They differ exactly when duplicates exist — and duplicate-LOOKING rows across arms are precisely the case the close must catch." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "dd-mcq-16",
+      prompt: "NOT IN (SELECT customer_id FROM payments_source) drives the dunning list. The subquery returns one NULL among its ids. What ships?",
+      choices: ["The list minus the NULL org — everything else", "An empty dunning list — every comparison goes UNKNOWN", "An error — NOT IN rejects NULLs", "Only the orgs with NULL ids"],
+      answer: 1,
+      why: "x NOT IN (…, NULL) can never be provably true — any non-match evaluates UNKNOWN, not FALSE — so WHERE passes nothing and the dunning cycle silently skips everyone. The NULL-safe shapes are LEFT JOIN … IS NULL and NOT EXISTS.",
+      notes: [
+        { choice: 0, why: "There is no partial pass — UNKNOWN poisons the whole predicate, not one row of it." },
+        { choice: 2, why: "It fails silently, not loudly — a crash would at least page someone; an empty list ships for a month." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "dd-mcq-17",
+      prompt: "SUM(burn) OVER (ORDER BY day) builds a running total; two rows share the same day. What does the second row's total include?",
+      choices: ["Only rows strictly before that day — the tie is excluded", "Both tied rows — the default frame is RANGE and peers ride together", "An error — running totals require unique keys", "Only the row itself — frames start at CURRENT ROW"],
+      answer: 1,
+      why: "The default frame is RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW, and RANGE treats ORDER BY peers as one value: both same-day rows sit inside each other's frame, so the running total jumps by the whole tie block. ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW takes one row at a time — the fix.",
+      notes: [
+        { choice: 0, why: "That is the ROWS behavior — switching to it is the fix, not the default." },
+        { choice: 2, why: "SQLite runs it happily; the lie is numeric, not syntactic — which is exactly why frame discipline is a review item." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "dd-mcq-18",
+      prompt: "Per-line rounding: ROUND(quantity * unit_price, 2) summed over 251 metered lines, versus SUM(quantity * unit_price) rounded once. When do they disagree?",
+      choices: ["Never — rounding is associative", "Only if some unit_price is NULL", "When odd-cent lines exist — per-line rounding donates each line's remainder to the floor, and the dust sums to real money", "Only when the ORDER BY is non-deterministic"],
+      answer: 2,
+      why: "Each per-line ROUND discards the sub-cent remainder before the fold; 251 lines of donated dust can move the total by whole cents — enough that the family stack stops reconciling to the 34,833.28 calendar. Fold exact, round once at the leaf.",
+      notes: [
+        { choice: 0, why: "'Sum of rounded = rounded sum' is not free — the drift is exactly what ledger closes exist to catch." },
+        { choice: 1, why: "NULLs are ignored identically by both shapes; the disagreement is about cent dust, not NULL policy." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "dd-mcq-19",
+      prompt: "Restated metered rows arrive with duplicate (org, family, day) keys. The dedupe keeps the latest per key. Which rewrite is reproducible?",
+      choices: [
+        "ROW_NUMBER() OVER (PARTITION BY org, family, day ORDER BY metered_at DESC) = 1",
+        "ROW_NUMBER() OVER (PARTITION BY org, family, day ORDER BY metered_at DESC, id DESC) = 1",
+        "MAX(metered_at) per key, then join back without a tiebreak",
+        "SELECT DISTINCT org, family, day FROM metered",
+      ],
+      answer: 1,
+      why: "Two rows can share the same (key, metered_at) — late arrivals often do — and without the id tiebreak the 'latest' pick is engine-dependent, so today's dedupe and tomorrow's disagree. The composite ORDER BY makes rank 1 a fact, not a plan.",
+      notes: [
+        { choice: 0, why: "Deterministic until the first tied timestamp — then it flips arbitrarily between replays, the worst bug class there is." },
+        { choice: 2, why: "The join-back re-fans on the same ties it was meant to fix — duplicates survive the round trip." },
+        { choice: 3, why: "DISTINCT keeps BOTH tied rows — it dedupes identical full rows, not keyed versions." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "dd-mcq-20",
+      prompt: "Per-run coverage: invoices LEFT JOIN payments, folded with COUNT(*). What does the never-collected arm read, and what is the fix?",
+      choices: ["0 — correct as written", "1 — the NULL-payload row counts; COUNT(p.id) reads 0 and is the fix", "6 — COUNT(*) counts the invoices", "27 — the payment count leaks in"],
+      answer: 1,
+      why: "LEFT JOIN gives each of the 6 never-collected runs one row with NULL payment columns; COUNT(*) counts rows, so the arm reads 1 instead of 0 and 'never-collected' becomes 'one attempt'. COUNT(p.id) — the payload column — reads 0 for those runs and 2 for the five split-leg runs (#1, 5, 12, 19, 22).",
+      notes: [
+        { choice: 0, why: "0 is the honest answer the desk wants; COUNT(*) structurally cannot produce it for an outer-joined miss." },
+        { choice: 2, why: "6 is the number of runs, not a per-run count — the fold happens before the count, so no row reads 6." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "dd-mcq-21",
+      prompt: "The open-AR bucket folds to amount_cents = 1,960,900 across 6 runs. What does the desk print?",
+      choices: ["$1,960,900.00 — cents are dollars", "$19,609.00 — INTEGER cents divided by 100.0", "$196.09 — two decimal moves", "$19.61 — what the column name implies"],
+      answer: 1,
+      why: "The column is INTEGER cents: 1,960,900 / 100.0 = $19,609.00. Magnitude sanity is part of the read — six usage runs averaging $3,268.17 each is plausible; $1.9M for 16 orgs is not.",
+      notes: [
+        { choice: 0, why: "That is the unit error the /100.0 rule exists to kill — the print must divide, and the .0 keeps it real arithmetic." },
+        { choice: 2, why: "One decimal move loses a factor of ten; two loses a hundred — always divide by 100, never shift by eye." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "dd-mcq-22",
+      prompt: "The 28.4-day average settlement pace — which population does it describe?",
+      choices: ["All 28 billing runs", "The 21 runs marked paid", "The 20 paid runs that actually have a settlement row — fastest 13, slowest 84", "The 6 never-collected runs"],
+      answer: 2,
+      why: "Settlement days need two timestamps — issued_on and a payment's paid_on. Run #28 is marked paid but has zero settlement rows (the standing anomaly), so the paced population is 20, not 21 — and the 6 never-collected have no pace at all.",
+      notes: [
+        { choice: 1, why: "21 paid runs minus the one with no cash movement = 20; quoting 21 imports the anomaly into the KPI." },
+        { choice: 3, why: "Never-collected runs define the opposite metric — days outstanding, unbounded so far." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "dd-mcq-23",
+      prompt: "Which expense line leads the spend report?",
+      choices: ["Rent — 14 entries, 16,800.00", "Ads — 14 entries, 4,570.00", "Travel — 3 entries, 2,521.00", "Tools — 5 entries, 1,525.00"],
+      answer: 0,
+      why: "Rent leads on both counts: 14 of 36 expense rows and 16,800.00 of the 25,416.00 total. Ads matches Rent on count (14) but not size — count leaders and value leaders are different reads, and this db splits them.",
+      notes: [
+        { choice: 1, why: "Ads ties on entry count (14) — a count-ordered census hides that Rent is 3.7x its value." },
+        { choice: 2, why: "Travel is 3 rows for 2,521.00 — a per-entry read (840.33) still trails Rent's 1,200.00; count, value and per-row averages are three different folds." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "dd-mcq-24",
+      prompt: "The budget-vs-burn walk joins the order calendar to the expense calendar by month. What is the join key?",
+      choices: [
+        "created_at = spent_on — timestamps match",
+        "SUBSTR(created_at, 1, 7) = SUBSTR(spent_on, 1, 7) — both sides bucketed to '%Y-%m' first",
+        "MONTH(created_at) — the month number alone",
+        "A CROSS JOIN filtered in WHERE",
+      ],
+      answer: 1,
+      why: "Meters and expense stamps never share an instant, so raw-timestamp equality matches nothing; bucket both sides to the same '%Y-%m' TEXT key (year included — '%m' alone merges Jan 2024 with Jan 2025) and the 14 burn months align 1:1 with the 14 expense months.",
+      notes: [
+        { choice: 0, why: "Equality on raw timestamps is the empty-join trap — two feeds, two clocks." },
+        { choice: 2, why: "Month number without year merges the two Januaries into one bucket — the calendar becomes fiction." },
+        { choice: 3, why: "CROSS JOIN then filter works mechanically but pairs every period with every month — a scan where an equi-join exists." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "dd-mcq-25",
+      prompt: "An exposure report joins invoices to payments and SUMs invoice face. Five runs settle in two legs (#1, 5, 12, 19, 22). What is the overstatement?",
+      choices: ["Zero — joins do not duplicate rows", "Exactly the five split faces, each counted twice", "Half the book — every invoice doubles", "Only #25, the partial"],
+      answer: 1,
+      why: "The join fans out per payment row: each of the five split-leg runs contributes two rows, so SUM(invoice face) counts those five faces twice. 28 invoices joined to 27 payments yield 33 rows — 27 attachments plus 6 NULL misses — and the desk pre-folds payments per run before joining.",
+      notes: [
+        { choice: 0, why: "Joins duplicate rows exactly when the relationship is one-to-many — five faces' worth here, small enough to hide and big enough to fail a reconciliation." },
+        { choice: 3, why: "#25 is the partial (4,000 of 6,148) — its disease is underpayment, not duplication." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "dd-mcq-26",
+      prompt: "The census keeps only service families with at least ten metered lines. Where does that threshold live?",
+      choices: ["WHERE COUNT(*) >= 10", "HAVING COUNT(*) >= 10 — group-level facts filter after the fold", "ORDER BY COUNT(*) >= 10", "LIMIT 10"],
+      answer: 1,
+      why: "The ten-line floor is a fact about a family's fold, not about any one metered line — WHERE errors (the aggregate does not exist pre-fold) and HAVING is the clause that speaks group. Row-level windows — a month, a status — stay in WHERE, applied before the fold.",
+      notes: [
+        { choice: 0, why: "A WHERE over an aggregate errors out — the fold has not happened yet when WHERE runs." },
+        { choice: 2, why: "ORDER BY sorts, it never filters — the census would list every family with the violators on top." },
+        { choice: 3, why: "LIMIT truncates output rows — a completely different cut that keeps the wrong families and drops the right ones arbitrarily." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "dd-mcq-27",
+      prompt: "NTILE(4) tiles the 16 orgs by lifetime burn, ordered descending. What does tile 4 hold?",
+      choices: ["The 4 smallest orgs — tiles ascend", "The 4 largest — Alice, Emma, Grace, Maya — 22,121.70, the 63.5% concentration in tile form", "16% of the burn — tiles are value-balanced", "An empty tile — the base is too skewed"],
+      answer: 1,
+      why: "16 orgs / 4 tiles = 4 orgs each, and with the fold ordered by burn descending, tile 4 is the four power orgs holding 22,121.70 of 34,833.28 — a quarter of the orgs, nearly two-thirds of the burn. Tiles are count-balanced, never value-balanced.",
+      notes: [
+        { choice: 0, why: "Tiles number from the first ORDER BY value — DESC puts the top in tile 4; ASC would put it in tile 1. State the ORDER BY with the tile." },
+        { choice: 2, why: "That is the share a value-balanced portfolio would show; consumption bases are the opposite — the skew IS the story." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "dd-mcq-28",
+      prompt: "Which anti-join shapes survive NULLs when listing runs with no settlement — and which one is a trap?",
+      choices: ["NOT IN is safe; the others trap", "LEFT JOIN … IS NULL and NOT EXISTS are NULL-safe; NOT IN silently dies on one NULL", "All three are NULL-safe in SQLite", "CROSS JOIN with a filter is the safe one"],
+      answer: 1,
+      why: "The never-collected list — 6 runs, 15,217.00 — comes from LEFT JOIN + IS NULL: the NULL payload IS the miss signal, so the shape is immune. NOT EXISTS asks a question (no row matches) rather than comparing values, so NULLs cannot poison it. NOT IN breaks: one NULL in the list and every row goes UNKNOWN.",
+      notes: [
+        { choice: 0, why: "Inverted — NOT IN is the trap; a NULL in the compared list voids the whole predicate." },
+        { choice: 2, why: "The three-valued logic is standard SQL, not a SQLite quirk — no engine leniency saves NOT IN." },
+        { choice: 3, why: "CROSS JOIN + WHERE re-implements the inner join, which cannot represent misses at all." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "dd-mcq-29",
+      prompt: "A late metered row lands in closed month 2024-06. Under the watermark contract, what is republished?",
+      choices: [
+        "Nothing — closed months are immutable",
+        "Only the 2024-06 cell",
+        "The 2024-06 cell and everything derived from it — month burn, running totals, quarter rolls, the 34,833.28 TOTAL",
+        "The whole calendar from scratch, watermark ignored",
+      ],
+      answer: 2,
+      why: "The watermark — max metered timestamp processed — defines finality: a row arriving before it restates the month it belongs to, and that month's burn feeds every roll-up above it — the running walk, the quarter, the calendar TOTAL. What does not move: months after the watermark, and stacks that never received the line. Republishes carry a restated-months note — silent rewrites of closed invoices are how usage businesses lose trust.",
+      notes: [
+        { choice: 0, why: "Immutability is the goal, but the watermark's whole job is defining which months may still move — 2024-06 just did." },
+        { choice: 1, why: "The month cell alone is a half-restatement: every roll-up derived from it is now stale and inconsistent with its own parts." },
+        { choice: 3, why: "Rebuilding everything is what the watermark exists to prevent — finality before the watermark is the contract's point." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "dd-mcq-30",
+      prompt: "The tier census CASE bands lifetime burn: core at 3,000-plus, growth at 2,000-plus, else longtail. A teammate writes the growth arm FIRST. What ships?",
+      choices: [
+        "Same census — arms are order-independent",
+        "Core orgs swallowed into growth — 4 orgs at 22,121.70 misfiled, the 63.5% read becomes fiction, query still valid",
+        "A syntax error — arms must ascend",
+        "Only the longtail arm fires",
+      ],
+      answer: 1,
+      why: "CASE takes the first matching arm: growth-at-2,000 checked first captures every org at 2,000-plus — the four core orgs included — and the census prints 5 growth / 0 core while still reconciling perfectly to 16 orgs and 34,833.28. Band arithmetic hides arm-order bugs; only the tier counts expose them. Order arms high-to-low, always.",
+      notes: [
+        { choice: 0, why: "Order-dependence is CASE's contract — first match wins; the two orderings classify the borderline orgs differently." },
+        { choice: 2, why: "It compiles clean — silent misclassification is the danger, which is why the census asserts the 4 / 1 / 11 split." },
+        { choice: 3, why: "Longtail is the ELSE — it still catches everything below 2,000; only the middle and top swap." },
+      ],
+      difficulty: "hard",
+    },
+  ],
+
+  cases: [
+    {
+      id: "cs-dd-1",
+      tier: "medium",
+      topic: "j3",
+      universe: "month-close",
+      title: "The service-family burn stack",
+      brief:
+        "Datadog-flavored brief on the storefront db: month-end close opens with the service-family burn stack — for each billable family, the billing periods it touched, the metered units, and the spend it billed — and the desk reconciles the stack against the calendar before anything ships. Probed facts: 34,833.28 total across 7 families; Audio leads at 46 periods / 97 units / 11,744.01, then Wearables 23 / 53 / 6,929.12, Video 30 / 61 / 5,198.41, Electronics 40 / 85 / 4,818.61. Spend folds from units × unit_price per metered line — never units alone — and the desk reads biggest spend first, one row per family, so the stack can be summed against the calendar in one pass.",
+      ask: "Return each service family with its distinct billing periods, metered units and billed spend to 2 decimals, biggest spend first.",
+      template:
+        "SELECT p.category AS service_family,\n       COUNT({1}) AS periods_touched,\n       SUM(oi.quantity) AS metered_units,\n       ROUND(SUM(oi.quantity * oi.{2}), {3}) AS billed\nFROM order_items oi\nJOIN orders o ON o.id = oi.order_id\nJOIN products p ON p.id = oi.product_id\nGROUP BY p.category\nORDER BY billed {4};",
+      slots: [
+        {
+          answer: "DISTINCT o.id",
+          kind: "keyword",
+          label: "the period de-duplicator",
+          why: "An org-month metering several lines in one family must count once: COUNT(DISTINCT o.id) reads 46 for Audio, not the 51 metered lines underneath. Dropping DISTINCT double-counts every multi-line period.",
+        },
+        {
+          answer: "unit_price",
+          kind: "keyword",
+          label: "the price column",
+          why: "Spend is units × unit_price per metered line — Audio's 97 units price into 11,744.01. Multiplying quantity by itself squares the usage and invents money that was never metered.",
+        },
+        {
+          answer: "2",
+          kind: "number",
+          label: "the money precision",
+          noVerify: true,
+          why: "Money reports to 2 decimals — Audio's 11744.01, not 11744. ROUND(…, 1) truncates the cent and the stack stops reconciling with the 34,833.28 calendar at the close.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-spend-first direction",
+          why: "The close reads biggest family on top: Audio 11,744.01 down to Fitness 863.91. ASC would open the reconciliation on the smallest line and hide the family that dominates the bill.",
+        },
+      ],
+      distractors: ["o.id", "ASC", "SUM", "1"],
+      walkthrough:
+        "A three-table chain, folded once. Metered lines join to their billing period (o.id) and their service family (p.category), and GROUP BY category folds 251 lines into 7 rows where COUNT(DISTINCT o.id) reads touched periods (46 / 23 / 30 / 40 / 54 / 22 / 13), SUM(quantity) reads units (97 / 53 / 61 / 85 / 121 / 54 / 27), and the weighted fold prices them into spend (11,744.01 / 6,929.12 / 5,198.41 / 4,818.61 / 3,294.29 / 1,984.93 / 863.91) — all straight from the probed family crowns. The grain discipline is the audit: 51 Audio lines fold to 46 distinct periods because some org-months metered more than one line — the DISTINCT is what keeps a period a period. The distractors fail honestly: o.id without DISTINCT prints line counts and inflates every multi-line family; quantity in the price slot squares the usage; SUM in the fold slot is a syntax break; 1 in the precision slot truncates cents so the stack no longer sums to the 34,833.28 calendar; ASC buries the lead family. Units and dollars are two different columns of one truth — the desk reads both, and only one of them is money.",
+    },
+    {
+      id: "cs-dd-2",
+      tier: "hard",
+      topic: "t6",
+      universe: "pricing",
+      title: "The segment-baseline burn screen",
+      brief:
+        "Datadog-flavored brief on the storefront db: the capacity review wants the spike screen — org-periods ranked by how far they burned above their REGION's average — so 'noisy tenant' calls go out with the baseline stated, not vibes. Probed facts: segment baselines are US 383.48, EU 335.32, APAC 313.66, LATAM 426.22 per period; the largest single period bills 1,088.44 (Farid Nasser, APAC) — a 774.78 gap over baseline — and the EU record is Chloe Dubois at 945.21. The screen keeps the top 8 by gap, ranked with ROW_NUMBER so every org-period owns exactly one position, and the partition column is region: a per-org baseline would zero out every one-period org and flag nothing.",
+      ask: "Return the top 8 org-periods by gap over their regional baseline, with the baseline, the gap, and a unique rank per row.",
+      template:
+        "WITH burn AS (\n  SELECT c.name AS org,\n         c.region AS segment,\n         o.total AS burn,\n         AVG(o.total) OVER (PARTITION BY {1}) AS segment_baseline\n  FROM orders o\n  JOIN customers c ON c.id = o.customer_id\n)\nSELECT org,\n       segment,\n       ROUND(burn, 2) AS period_burn,\n       ROUND(segment_baseline, 2) AS segment_baseline,\n       ROUND(burn - segment_baseline, 2) AS gap,\n       ROW_NUMBER() OVER (ORDER BY burn - segment_baseline {2}, org) AS burn_rank\nFROM burn\nORDER BY burn_rank\nLIMIT {3};",
+      slots: [
+        {
+          answer: "c.region",
+          kind: "keyword",
+          label: "the baseline population",
+          why: "PARTITION BY c.region stamps every row with its segment's average — US 383.48, APAC 313.66. Partitioning by org instead makes each org compete against itself and zeroes the gap for every one-period tenant.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-gap-first direction",
+          why: "Spikes sort top-down: Farid Nasser's 1,088.44 against APAC's 313.66 leads at a 774.78 gap. ASC would surface the deepest UNDER-baseline periods and the review would chase discounts, not capacity.",
+        },
+        {
+          answer: "8",
+          kind: "number",
+          label: "the screen depth",
+          why: "The review reads a top-8 board — burn_rank 1 through 8, one position per org-period. Deepening the cut drags in periods hovering a few dollars over baseline and buries the calls that matter.",
+        },
+      ],
+      distractors: ["o.total", "o.customer_id", "ASC", "5"],
+      walkthrough:
+        "Two stages: stamp the baselines, then rank the gaps. The CTE joins all 103 org-periods to their org and stamps AVG(total) OVER (PARTITION BY c.region) — four baseline values, US 383.48 / EU 335.32 / APAC 313.66 / LATAM 426.22, identical on every row of their partition. The outer query rounds the level, the baseline and the gap, then ROW_NUMBER() OVER (ORDER BY gap DESC, org) gives every org-period a unique position — the Farid Nasser 1,088.44 month leads with a 774.78 gap, Chloe Dubois's 945.21 follows at 609.89 — and LIMIT 8 publishes the board. The distractors each break a different way: PARTITION BY o.total makes every distinct burn its own baseline (gaps collapse toward zero and the screen flags noise); PARTITION BY o.customer_id self-baselines every org, zeroing the gap for all one-period tenants; ASC inverts the screen into an under-burn report; LIMIT 5 silently drops ranks 6–8, including Emma Wilson's second flagged month at 402.31. The window's contract is what makes this reviewable: every org-period keeps its row, the baseline is visible next to the burn, and the partition column is named — because a spike defined against the wrong population is just a number with a story attached.",
+    },
+    {
+      id: "cs-dd-3",
+      tier: "medium",
+      topic: "q5",
+      universe: "growth",
+      title: "The tenant concentration census",
+      brief:
+        "Growth memo on the storefront db: the board deck's concentration page re-derives the tenant tiers from raw periods — no cached rolls. Fold lifetime burn per monitored org in a derived table, then band: core at 3,000-plus lifetime (the concentration threshold), growth at 2,000-plus, longtail below. Probed shape: 4 core orgs carry 22,121.70 of the 34,833.28 base — the 63.5% headline — growth is 1 org at 2,667.93, longtail is 11 orgs at 10,043.65, and the three tiers must reconcile to 16 orgs and 34,833.28 or the page does not ship.",
+      ask: "Return the tier census: per tier the org count and lifetime burn to 2 decimals, biggest burn first, every tier kept.",
+      template:
+        "SELECT CASE\n         WHEN burn_to_date >= {1} THEN 'core'\n         WHEN burn_to_date >= 2000 THEN 'growth'\n         ELSE 'longtail'\n       END AS tier,\n       COUNT(*) AS orgs,\n       ROUND(SUM(burn_to_date), 2) AS burn\nFROM (\n  SELECT customer_id,\n         SUM(total) AS burn_to_date\n  FROM orders\n  GROUP BY customer_id\n) lifetime\nGROUP BY tier\nHAVING COUNT(*) >= {2}\nORDER BY burn {3};",
+      slots: [
+        {
+          answer: "3000",
+          kind: "number",
+          noVerify: true,
+          label: "the core threshold",
+          why: "The 3,000 line is the concentration threshold the board reads — 4 orgs cross it here. Dropping to 2,000 merges Chloe Dubois's 2,667.93 into core and the headline flips to 71.2%, a real figure of a different question.",
+        },
+        {
+          answer: "1",
+          kind: "number",
+          label: "the keep-every-tier floor",
+          why: "The HAVING floor sits at 1 so all three tiers survive — 4 core, 1 growth, 11 longtail. A census that drops its smallest bucket hides the hollow middle while the totals still reconcile.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-burn-first direction",
+          why: "The deck reads core on top: 22,121.70 down to longtail's 10,043.65 and growth's 2,667.93. ASC opens the page on the smallest tier and buries the concentration story it exists to tell.",
+        },
+      ],
+      distractors: ["2000", "4", "ASC"],
+      walkthrough:
+        "Two stages, two grains. Stage one folds 103 periods into 16 org rows (SELECT customer_id, SUM(total) … GROUP BY customer_id) — lifetime burn per tenant. Stage two CASE-bands those folds: 3,000-plus catches Alice Chen (24 periods, 7,262.35), Emma Wilson (17, 6,640.56), Grace Kim (14, 4,574.23) and Maya Patel (13, 3,644.56) — 4 core orgs, 22,121.70, the 63.5% concentration read; the 2,000-plus arm catches exactly Chloe Dubois (2,667.93); the ELSE catches the 11-org long tail at 10,043.65. The floor in HAVING sits at 1 — keep every tier; a census that drops its smallest bucket hides the middle's hollowing. The distractors each break differently: 2000 in the threshold slot merges Chloe into core (5 orgs / 24,789.63) and the headline flips from 63.5% to 71.2% — a real number answering a different question; 4 in the floor slot deletes the growth tier from the page entirely; ASC opens the board on longtail. State the threshold, keep the buckets, reconcile to 16 orgs and 34,833.28 — the concentration story is the tier arithmetic.",
+    },
+    {
+      id: "cs-dd-4",
+      tier: "easy",
+      topic: "s6",
+      universe: "pricing",
+      title: "The period-band census",
+      brief:
+        "Pricing review memo on the storefront db: before touching list prices, the desk bands the 103 billing periods by size — flagship at 500-plus (the enterprise reads), scale at 200–499.99, steady below — so every threshold debate starts from the same census. Probed shape: 25 flagship periods worth 17,379.43, 40 scale periods worth 13,306.84, 38 steady periods worth 4,147.01 — the three bands reconcile to 103 periods and 34,833.28. Bands are CASE arms evaluated top-down: the 500 line must be checked before the 200 line, or flagship dissolves into scale.",
+      ask: "Return the band census: per band the period count and burn to 2 decimals, biggest burn first, all bands kept.",
+      template:
+        "SELECT CASE\n         WHEN total >= {1} THEN 'flagship'\n         WHEN total >= 200 THEN 'scale'\n         ELSE 'steady'\n       END AS period_band,\n       COUNT(*) AS periods,\n       ROUND(SUM(total), 2) AS burn\nFROM orders\nGROUP BY period_band\nHAVING COUNT(*) >= {2}\nORDER BY burn {3};",
+      slots: [
+        {
+          answer: "500",
+          kind: "number",
+          noVerify: true,
+          label: "the flagship threshold",
+          why: "500 splits the head from the middle: 25 periods bill 500-plus, worth 17,379.43. Move it to 1,000 and the top band hollows; the desk's threshold debate is literally this number.",
+        },
+        {
+          answer: "25",
+          kind: "number",
+          label: "the keep-every-band floor",
+          why: "The HAVING floor sits at 25 — the smallest band — so all three buckets survive and the reconciliation to 103 is visible. A floor of 40 deletes the flagship row: the band the pricing debate is actually about.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-burn-first direction",
+          why: "The census reads flagship first: 17,379.43, then scale 13,306.84, then steady 4,147.01. ASC inverts the read and opens the page on the band that matters least to the review.",
+        },
+      ],
+      distractors: ["1000", "40", "ASC"],
+      walkthrough:
+        "One fold, three arms. The CASE stamps each of the 103 periods with its band, GROUP BY folds the stamps, and the census reads 25 / 40 / 38 periods carrying 17,379.43 / 13,306.84 / 4,147.01 — sum back to 34,833.28 before it ships. The HAVING floor sits at 25, the smallest band, so the page keeps all three buckets — the keep-every-band rule that makes the reconciliation visible on the page itself. The distractors each fail differently: 1000 in the flagship slot shrinks the top band and invents a hollow catalog head; 40 in the floor slot deletes the flagship row — the band the debate is about; ASC inverts the read. And the trap the census exists for is arm order: swap the 500 and 200 arms and flagship periods re-file as scale with totals that still reconcile — only the band counts (25 / 40 / 38) expose it. A CASE is a decision list, not a set of options; order IS the semantics.",
+    },
+    {
+      id: "cs-dd-5",
+      tier: "medium",
+      topic: "j5",
+      universe: "refund-audit",
+      title: "The never-collected runs",
+      brief:
+        "Billing-desk memo on the storefront db: dunning goes out this week, and the desk prices exposure with the anti-join — billing runs LEFT JOINed to their settlements, keeping the runs with no payment row at all. Probed: 6 never-collected runs carrying 15,217.00 — and the status split is the story: 5 open runs (13,461.00) plus ONE run marked paid with zero settlement rows (#28, 1,756.00, the standing anomaly). Runs settle in INTEGER cents — 1,521,700 of them here — so the dollar read divides by 100.0, and the exposure denominator is all 28 runs, not the moved ones.",
+      ask: "Return the never-collected census: per run status, the run count and balance in dollars to 2 decimals, biggest balance first.",
+      template:
+        "SELECT i.status AS run_state,\n       COUNT(*) AS runs,\n       ROUND(SUM(i.amount_cents) / {1}, 2) AS balance_usd\nFROM invoices i\nLEFT JOIN payments p ON p.invoice_id = i.id\nWHERE {2} IS NULL\nGROUP BY run_state\nHAVING COUNT(*) >= {3}\nORDER BY balance_usd {4};",
+      slots: [
+        {
+          answer: "100.0",
+          kind: "keyword",
+          label: "the cents-to-dollars promoter",
+          why: "INTEGER cents / 100.0 promotes to real arithmetic: 1,346,100 cents reads 13,461.00. The .0 is the whole fix — integer / integer truncates, and 1000.0 would move three decimal places.",
+        },
+        {
+          answer: "p.id",
+          kind: "keyword",
+          label: "the anti-join miss signal",
+          why: "LEFT JOIN pays out NULL payloads for the 6 runs with no settlement; p.id IS NULL is the miss test. i.id IS NULL matches nothing — invoices always have ids — and the exposure silently reads zero.",
+        },
+        {
+          answer: "1",
+          kind: "number",
+          label: "the keep-both-arms floor",
+          why: "The HAVING floor at 1 keeps both status arms — 5 open (13,461.00) and 1 paid (1,756.00). Raise it to 2 and the paid-but-unmoved run — the morning's first call — vanishes from its own report.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-balance-first direction",
+          why: "The desk reads the open balance on top: 13,461.00 before the 1,756.00 anomaly. ASC buries the real exposure under the one-row curiosity.",
+        },
+      ],
+      distractors: ["1000.0", "i.id", "ASC", "2"],
+      walkthrough:
+        "The anti-join is the query: LEFT JOIN payments ON invoice_id, keep WHERE p.id IS NULL — the NULL payload IS the miss. Six runs survive: five open (13,461.00) and one paid-with-no-cash (#28 at 1,756.00) — the mirror of void-with-cash #11, and the reason the census groups by status instead of printing one lump: the two arms have different owners. The cents rule holds to the end: SUM(amount_cents) stays exact, divides by 100.0 once, rounds for humans — 1,346,100 cents prints 13,461.00. The floor at 1 keeps both arms; drop the arm and the anomaly hides inside its own report. The distractors each break: 1000.0 shifts three decimal places and the desk dunns for 1,346.10; i.id IS NULL matches nothing and exposure reads zero; ASC buries the open balance; 2 in the floor slot deletes the paid-but-unmoved row. Denominator discipline closes the memo: 6 of 28 runs, 15,217.00 of 86,977.00 billed — say both, every time.",
+    },
+    {
+      id: "cs-dd-6",
+      tier: "hard",
+      topic: "x3",
+      universe: "month-close",
+      title: "The calendar stack with the TOTAL row",
+      brief:
+        "Close-night memo on the storefront db: the burn calendar ships as one board — fourteen month rows, then a TOTAL row appended by UNION ALL so the desk reads detail and grand total in one result set. Probed: 2024-01 opens at 3,731.97, 2024-07 floors at 1,193.86, 2025-02 closes the calendar at 2,390.53, and the TOTAL row must read 103 periods and 34,833.28 — the same figure the family stacks reconcile to. Month keys are SUBSTR(created_at, 1, 7) — year plus zero-padded month, or January 2024 merges with January 2025 — and the HAVING floor sits at the quietest month so no bucket is silently dropped from the spine.",
+      ask: "Return the stacked board: per-month run counts and burn to 2 decimals, then a TOTAL row, ordered by period.",
+      template:
+        "SELECT SUBSTR(created_at, 1, {1}) AS period,\n       COUNT(*) AS runs,\n       ROUND(SUM(total), 2) AS burn\nFROM orders\nGROUP BY period\nHAVING COUNT(*) >= {2}\nUNION ALL\nSELECT {3}, COUNT(*), ROUND(SUM(total), 2)\nFROM orders\nORDER BY period;",
+      slots: [
+        {
+          answer: "7",
+          kind: "number",
+          noVerify: true,
+          label: "the '%Y-%m' spine width",
+          why: "Seven characters is year plus zero-padded month — 14 calendar keys. A width of 10 keys the spine on raw timestamps and explodes 14 rows into 103; a width of 4 merges each January with its sibling.",
+        },
+        {
+          answer: "6",
+          kind: "number",
+          label: "the keep-every-month floor",
+          why: "The quietest months run 6 periods (2024-06, 2024-11, 2025-01), so the HAVING floor at 6 keeps all fourteen buckets on the spine. A floor of 8 erases the quiet months — and the calendar still sums, the lie no census catches.",
+        },
+        {
+          answer: "'TOTAL'",
+          kind: "keyword",
+          label: "the grand-row label",
+          why: "The second arm folds the whole table with no GROUP BY and labels it 'TOTAL' — 103 / 34,833.28. The label is load-bearing: the reconciliation greps for it, and 'TOTAL' sorts after '2025-02' so the row lands last.",
+        },
+      ],
+      distractors: ["10", "8", "'GRAND'", "TOTAL"],
+      walkthrough:
+        "Two arms, one board. Arm one buckets the 103 periods by SUBSTR(created_at, 1, 7) — fourteen '%Y-%m' keys from 2024-01 to 2025-02 — folding to counts (8 / 9 / 8 …) and burns (3,731.97 peak, 1,193.86 floor at 2024-07, 2,390.53 last). Arm two folds the whole table once more with no GROUP BY and labels it 'TOTAL' — 103 / 34,833.28, the figure every other close artifact reconciles to. UNION ALL appends; UNION would dedupe whole rows and could eat a month that happens to tie. ORDER BY period sorts the stack — '2' sorts before 'T', so the TOTAL row lands last, exactly where the close reads it. The distractors each break a different way: a width of 10 keys the spine on raw timestamps and explodes 14 rows into 103; 8 floors away the three six-run months; 'GRAND' relabels the row the reconciliation greps for; unquoted TOTAL is a column reference that errors. The floor at 6 is the quiet integrity check: a calendar whose quietest months can vanish without the total moving is a calendar that lies by omission.",
+    },
+  ],
+
+  problems: [
+    { slug: "net-revenue-retention", why: "The registry-tagged cohort fold: this cohort's burn this period versus the same cohort last period — the NRR walk a consumption CFO reads instead of a logo count." },
+    { slug: "product-sales-analysis-ii", why: "Per-fold volume reads across a service catalog — the warm-up join-and-aggregate every Datadog screen opens with before the baseline logic starts." },
+    { slug: "unique-orders-and-customers-per-month", why: "Two-grain monthly census: billing periods AND distinct orgs per month — load versus installed base, the census behind every capacity claim." },
+    { slug: "friday-purchase-iii", why: "Month-bucketed usage folds — the burn-calendar idiom where '%Y-%m' versus '%m' is the difference between a trend and two years merged into one lie." },
+    { slug: "average-selling-price", why: "Per-unit economics across a catalog — the join-then-weigh pattern that prices metered units into family spend, 97 units into 11,744.01." },
+    { slug: "weather-type-in-each-country", why: "CASE-classified reads per segment — the overage-band and tier-classification shape the billing desk ships with every pricing review." },
+    { slug: "the-category-of-each-member-in-the-store", why: "Tier labels from conditional folds — which orgs land in which usage band, computed in one pass with the empty-arm discipline this catalog demands." },
+    { slug: "portfolio-weights", why: "Each org's share of total burn — the concentration read behind the 63.5%-from-3,000-plus headline, computed as a window share with the whole base as denominator." },
+    { slug: "class-performance", why: "Row-level values against their group average — the segment-baseline shape of this kit's spike screen, one window, every row kept." },
+    { slug: "gl-reconciliation", why: "Ledger-grade reconciliation — counts and sums agreeing between systems, the culture that closes the burn stack against the calendar every month." },
+    { slug: "week-over-week-churn", why: "LAG-classified movement reads — the burn walk that separates expansion from contraction before the renewal call goes out." },
+    { slug: "cohort-retention-matrix", why: "Cohort grids of repeat burn — 2 one-period orgs against 4 embedded at 10-plus periods, the retention curve the CS team staffs against." },
+    { slug: "orders-with-maximum-quantity-above-average", why: "Above-average screens via subquery — the empty-inner-query trap in textbook clothing, and the follow-up every Datadog panel is fishing for." },
+    { slug: "usage-tier-percentiles", why: "PERCENT_RANK tiles over usage — where an org sits in the consumption distribution, the fairer read when the base skews 63.5% to a handful of tenants." },
+    { slug: "immediate-food-delivery-ii", why: "A conditional-count ratio with the denominator as the test — validated periods over all periods, stated out loud before the fold." },
+    { slug: "customers-who-never-order", why: "The dormant-tenant anti-join: orgs with zero billing periods. On this db the honest answer is 0 — and proving a confident zero is the analyst's job." },
+    { slug: "late-arriving-restatement", why: "The watermark discipline reliability analytics lives on: a late metered row restates a closed period's burn, and the republish contract — what moves, what stays final — is the exact shape this problem drills." },
+    { slug: "keep-latest-dedupe", why: "ROW_NUMBER dedupe with a deterministic tiebreak — the restated metered-row problem: duplicate (org, family, day) keys must resolve to one row the same way every replay." },
+    { slug: "server-utilization-time", why: "Span-versus-sum uptime math — the infra-monitoring native fold: billable coverage computed from intervals, the same span discipline usage billing prices host-hours with." },
+    { slug: "calculate-parking-fees-and-duration", why: "CEIL-based usage billing — duration metered, rounded up to the billing unit, priced per unit: the purest usage-economics drill in the band." },
+    { slug: "find-zombie-sessions", why: "Stale-session detection — the telemetry-hygiene read: orgs whose feeds promise activity the backend never confirms, the counterpart of a dunning-queue row." },
+    { slug: "growth-accounting", why: "LAG-classified movement — new / expansion / contraction / churn buckets per org: the decomposition behind every NRR bridge a consumption CFO reads." },
+    { slug: "mrr-waterfall", why: "LAG waterfall of revenue movement — month-over-month deltas decomposed into their causes, the burn walk with attribution attached." },
+    { slug: "dau-wau-stickiness", why: "Rolling-window engagement ratios — weekly actives over monthly with stated denominators: the instrumented-telemetry cousin of billing-period coverage." },
+    { slug: "transaction-velocity", why: "Burst screens over event streams — orgs whose metered rows spike against their own baseline, the anomaly-hunt shape the capacity review runs weekly." },
+    { slug: "duplicate-charge-pairs", why: "Self-join pair sweep with a strict-pair predicate — duplicate settlement rows sharing amount and day, each pair once, never a row with itself." },
+    { slug: "group-sold-products-by-the-date", why: "GROUP_CONCAT folds per day — service lineups as one reproducible string cell per bucket, the lineage read pricing reviews ask for." },
+    { slug: "team-scores-in-football-tournament", why: "Stacked per-entity boards via UNION ALL — detail arms plus computed standings, the append-with-a-contract shape the close's TOTAL row uses." },
+    { slug: "bank-account-summary", why: "LEFT JOIN coverage arms — settled versus never-moved per account, the NULL-payload discipline behind the 6 never-collected runs." },
+    { slug: "running-total-for-different-genders", why: "Running totals per segment — cumulative folds that restart at each partition boundary, the month-to-date burn walk with its frame pinned." },
+    { slug: "product-price-at-a-given-date", why: "As-of pricing — the list price in force at a moment, the restatement-safe read when catalogs change under a closed billing period." },
+    { slug: "rfm-segmentation", why: "NTILE tiles over recency / frequency / monetary folds — tenant health tiering for the CS org, count-balanced tiles on a deliberately skewed base." },
+  ],
+};

@@ -657,9 +657,9 @@ function CompaniesIndex({ onPick, solvedOf }: { onPick: (company: string) => voi
 /* Main view                                                           */
 /* ------------------------------------------------------------------ */
 
-export function LeetCodeView({ initialTopic }: { initialTopic?: string }) {
+export function LeetCodeView({ initialTopic, initialSlug }: { initialTopic?: string; initialSlug?: string }) {
   const xpEvents = useProgress((s) => s.xpEvents);
-  const [sel, setSel] = useState<string | null>(null);
+  const [sel, setSel] = useState<string | null>(initialSlug ?? null);
   const [tab, setTab] = useState<Tab>("problems");
   const [topic, setTopic] = useState<string>(initialTopic ?? "All");
   const [diff, setDiff] = useState<Diff>("All");

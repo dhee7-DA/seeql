@@ -1,0 +1,1120 @@
+// LinkedIn — kit 8 of the Streaming & Social domain (Batch D).
+// The professional-graph company: feed engagement, connection graphs and the
+// job-application funnel its data teams live in. Pool provenance: LinkedIn
+// carries 5 registry mentions — 4 tagged sql rows (employees-earning-more-
+// than-their-managers, number-of-calls-between-two-persons, sessionize-events,
+// all-people-report-to-the-given-manager) plus the slug-bearing
+// linkedin-power-creators — ALL 5 are used first in topics and problems, and
+// the remaining 11 problem slots are theme-curated from the SQL band
+// (graph self-joins, recursion, anti-joins, ratio reads, trend buckets),
+// stated per spec. Case studies run on db/custom.db with probed figures from
+// scripts/company-facts.md (orders = professional interactions,
+// orders.status = interaction fate, orders.total = weighted engagement score,
+// customers = members, regions = industry-graph cohorts, invoices =
+// applications with amount_cents = requisition pipeline value in INTEGER
+// cents, payments = recruiter responses — mappings declared in-world, no
+// invented telemetry numbers).
+//
+// EXPANDED to the 3x kit (batch D expansion, append-only): 6 brief paras,
+// 5 day-in-life beats, 12 metrics, 15 topics, 24 theory (t1-t24), 30 MCQs,
+// 6 cases (cs-li-3..6 added on topic families t5/s6/q2/x2 — distinct from
+// the original t7/j5), 32 problems. The 5 tagged sql rows stay consumed by
+// the original pool; the 16 appended problems and all new topic slugs are
+// theme-curated from the theme menu in scripts/company-pools.md (sql rows
+// only). New-case figures come from scripts/company-facts.md; the finance
+// mapping is declared in-world: invoices/payments/expenses/ledger carry
+// INTEGER cents (dollar read = amount / 100.0).
+
+import type { CompanyKit } from "../types";
+
+export const linkedinKit: CompanyKit = {
+  id: "linkedin",
+  domainId: "media",
+  name: "LinkedIn",
+  tagline: "The professional graph: feed, hiring, retention",
+  accent: "text-sky-200",
+
+  brief: [
+    "LinkedIn is the professional graph — the company whose product IS a network: every connection, endorsement and feed reaction is an edge in a dataset the hiring economy runs on. The unit of analysis is the **professional interaction**, stamped with a member, a fate — {emerald:landed} (connection accepted, thread completed), in recruiter review, awaiting response, {rose:withdrawn} — and a weighted engagement score. Everything the business decides — which feed ranking ships, which requisitions stall, where member retention bends — hangs on queries that fold interactions into the {violet:application funnel}, the funnel into hiring-latency curves, and the graph into reach. The SQL reality is graph- and latency-shaped: the questions that decide roadmap are 'how far does this member's network reach' and 'how long does an application sit unanswered'.",
+    "The data org runs three engines. Feed analytics reads the engagement spine — interactions by fate, trend-walked month over month, with the population stated before any share is computed. Talent analytics owns the hiring funnel: **28 applications against 27 recruiter-response rows** — six applications with no response at all, worth **$15,217 of pipeline sitting unanswered**, one of them reading {emerald:advanced} while carrying no response row, which is the reconciliations team's verified anomaly. And the Economic Graph group works the structure: connection self-joins, reporting-hierarchy recursion, second-degree reach. *An analyst here who cannot say 'per what?' about their own funnel stage is feeding the benchmark slide, not the roadmap.*",
+    "Interview screens are graph- and window-heavy, more than any non-social domain. A typical loop opens with a fold (interactions per member per month), escalates into a **self-join** — member-to-member calls, reports-to-manager chains, creator-tier gates — and lands on either an anti-join ({rose:the unanswered pipeline}, LEFT JOIN + IS NULL with the WHERE-collapse trap loaded) or a LAG-driven trend walk (month-over-month deltas where NULL on the first row is the definition, not a bug). The follow-ups are definition probes: 'is that share of members or of interactions?', 'what happens to a member with one interaction?', 'does a withdrawn application count in the denominator?'. Candidates who narrate the partition and the denominator out loud consistently outperform.",
+    "Preparation strategy: this kit consumes **all 5 of LinkedIn's registry mentions** — the manager-pay self-join, the calls-between-members census, the sessionize-events work-spell build, the recursive reporting-line walk and the Power Creators tier read — then theme-curates 11 more from the SQL band that mirror the company's known question themes: graph pairs, hierarchy recursion, funnel CASE folds, ratio reads and trend buckets. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {violet:engagement trend walk} (a LAG over month buckets with honest first-row NULLs), the other rebuilds the {rose:unanswered-application pipeline} (an anti-join whose six rows reconcile to $15,217). The storefront mapping is declared, not hidden — invoices are applications, payments are recruiter responses, cents are divided by 100.0 — because making the stand-in explicit is itself the habit LinkedIn's screens reward.",
+    "Under the dashboard layer sits the platform reality, and it prices every read. The money side is integer cents end to end — the house read is `amount_cents / 100.0`, and the bare /100 integer form is the one that eats odd cents the day the pipeline carries any. Reconciliations keeps three standing tripwires on the board: #11 {rose:withdrawn-but-answered} at 925.00, #28 advanced-but-unanswered at 1,756.00, and one partial settlement of 4,000.00 against a 6,148.00 requisition. The completion stamp (`shipped_at`) rides on **82 of 103 interactions** at a 2.98-day average cycle, and five applications carry split recruiter responses — *so the response join pre-aggregates, or the application grain silently doubles*.",
+    "Preparation at full depth: the kit now runs **fifteen topics, twenty-four theory drills, thirty MCQs and six audited case studies** on the storefront db. The two originals rebuild the {violet:engagement trend walk} and the unanswered-application pipeline; the four additions are a **power-networker leaderboard** (RANK over a four-way tie at 4 interactions), the {amber:interaction-weight tier census} (a CASE fold whose shares reconcile to 100), an out-engage-the-average screen (a scalar-subquery bar the query prints beside every row) and a one-scan morning census (FILTER branches counting the 103 / 82 / 2.98 story in a single pass). The 32-problem pool keeps LinkedIn's 5 tagged rows first, then theme-curates the rest — two-hop reach, mutual-pair checks, span-of-control folds, rolling frames, profile-hygiene screens and percentile tiers among them. The bar to clear before the loop: *state the denominator before the share, and reconcile every multi-branch total against the raw COUNT*.",
+  ],
+
+  dayInLife: [
+    "**08:15 —** The engagement pulse. The analyst opens the feed dashboards: interactions by fate, and — the number that gates the morning — the {emerald:landed share}: **52 of 103 interactions landed, 50.5%**, with the {rose:withdrawal share} (7 interactions, 6.8%) beside it as the trust line. The first query of the day is almost always the trend walk: month buckets via SUBSTR, engagement folded, LAG carrying last month beside this one — with the first row's NULL understood as 'no prior month', never as zero. A trough is the day's first fire, and the analyst who can isolate WHICH cohort went quiet before the growth review pings owns the standup.",
+    "**11:30 —** Graph and funnel deep work. Talent ops wants the **unanswered-application census** rerun — applications LEFT JOIN responses, IS NULL detection, cents divided by 100.0 — with the one {emerald:advanced}-but-unanswered row flagged for reconciliations, because a paid application with no response row is either a bug or a lawsuit waiting for a query. The Economic Graph group wants the **reporting-line walk** (WITH RECURSIVE down the manager chain) and the pair census rebuilt without double-counting orientations. Each ask is a join, a window and an argument about grain — members versus interactions, applications versus responses. The query gets written twice: once to answer, once with the definition printed beside it.",
+    "**15:00 —** Stakeholder cycles. The hiring ops review: **6 applications unanswered, $15,217 of requisition value** — five {amber:awaiting}, one reading advanced with no response row — priced biggest-first, with the response-latency curve (**28.4-day average, 13-to-84 spread**) beside it. Feed ranking gets the month walk: **3,731.97 engagement points in January against 2,047.43 in June**, deltas explained, not just drawn. The afternoon's job is closing loops: yesterday's silent cohort becomes next week's re-engagement list, and every number that leaves the desk carries its denominator with it.",
+    "**17:30 —** The writeup ritual. The EOD note is one screen: which cohort went quiet, which requisitions crossed the unanswered bar, which graph read survived the orientation check. Query definitions get pinned next to the numbers — talent ops re-runs them blind, so the SQL is the contract. The best-prepared candidate knows the rhythm: LinkedIn SQL exists to defend **graph and funnel numbers under grain stress**, and the anti-join plus the LAG walk are the tools the defense is built with.",
+    "**21:00 —** The after-hours close. The books reconcile first: ledger debits and credits both fold to **181,080 cents, delta zero** — the one check that signs the close, and a single GROUP BY away if anyone doubts it. Then the response ledger: five split applications re-aggregated to one row apiece, the {rose:unanswered six} re-priced at 15,217.00, and the partial settlement (4,000.00 of 6,148.00) left flagged for tomorrow's follow-up call. The last query of the night is a keep-latest pass over the interaction log — ROW_NUMBER over stamp order, rank 1 only — because tomorrow's boards fold the deduped layer, not the raw one. *The night shift inherits queries, not mysteries.*",
+  ],
+
+  metrics: [
+    { name: "Feed engagement rate", what: "Landed interactions ÷ all interactions — 52 of 103 (50.5%) here. The feed's headline, a conditional SUM over the full population with the denominator stated before the division." },
+    { name: "Unanswered pipeline", what: "Applications with no recruiter-response row: 6 of 28, worth $15,217. The talent-ops number that decides follow-up staffing — computed over ALL applications, not the answered ones." },
+    { name: "Response latency", what: "Days from application to first recruiter response — 28.4 average, 13-to-84 spread on the answered set. The hiring-clock curve whose slow tail is the follow-up interview." },
+    { name: "MoM engagement delta", what: "This month's engagement score minus last month's, via LAG over the month spine — 3,731.97 in January down to 2,047.43 by June. First-row NULL is the definition, not a bug." },
+    { name: "Graph reach", what: "Second-degree connections per member via self-joined edges — the Economic Graph read that powers 'people you may know' and every growth projection built on it." },
+    { name: "Cohort breadth", what: "Interactions and distinct members per industry-graph cohort — 45 interactions from 8 members in the biggest. The concentration read that keeps one power networker from impersonating a market." },
+    { name: "Withdrawal share", what: "Withdrawn interactions ÷ all interactions — 7 of 103 (6.8%). The trust signal: rising withdrawal means the funnel is leaking before the response clock even starts." },
+    { name: "Creator-tier census", what: "Members clearing the Power Creator gates — followers plus output, self-joined. The tier read where the threshold row (the boundary member) is the entire interview." },
+    { name: "Split-response fan-out", what: "Applications carried by multiple recruiter-response rows — 5 of 28 here. The grain audit: join responses raw and 22 answered applications read as 27 rows; pre-aggregate per application or every downstream rate re-weights." },
+    { name: "Settlement clock", what: "Days from application to payment on the settled set — 28.4 average with a 13-to-84 spread over 20 paid applications. The finance twin of response latency; AVG's silent NULL-skip is why the label says 'per settled application'." },
+    { name: "Response rail mix", what: "Recruiter responses by rail — 16 card touches worth 37,364.00 against 11 wires worth 32,248.00. The mix read that decides which follow-up automation ships first, cents divided by 100.0 before any print." },
+    { name: "Book balance", what: "Ledger debits minus credits — 181,080 on both sides, delta 0. The close's signature check: one GROUP BY, one zero, and any non-zero delta kills the release before a dashboard ships." },
+  ],
+
+  topics: [
+    {
+      name: "Folding the interaction log",
+      why: "Everything at LinkedIn starts by folding the interaction spine: interactions per member per month, applications per requisition, responses per recruiter. The screens warm up with GROUP BY + HAVING at event scale, and the trap is always the same — counting event rows when the business object is a person. The followers census is this fold with a social accent.",
+      slugs: ["find-followers-count", "unique-orders-and-customers-per-month", "percentage-of-users-attended-a-contest"],
+    },
+    {
+      name: "Connection-graph self-joins",
+      why: "The graph IS the product: member-to-member calls, reports-to-manager pay gaps, creator tiers gated on follower counts. These problems drill the self-join grammar — two aliases of one table, paired rows, orientation handled deliberately — that LinkedIn asks whenever a relationship, not a row, is the unit. Three of the kit's five tagged mentions live here, and the tie between them is the interview.",
+      slugs: ["employees-earning-more-than-their-managers", "number-of-calls-between-two-persons", "linkedin-power-creators"],
+    },
+    {
+      name: "Reporting-hierarchy recursion",
+      why: "Org chains are trees: everyone below a given manager, the full line to the top, the requisition families under a leader. The WITH RECURSIVE grammar walks them in one query — the tagged all-people-report-to-the-given-manager is the canonical drill, and the curated pair extends it to full hierarchies and deep org walks that no fixed number of self-joins can reach.",
+      slugs: ["all-people-report-to-the-given-manager", "ceo-subordinate-hierarchy", "analyze-organization-hierarchy"],
+    },
+    {
+      name: "Feed-rail windows",
+      why: "The feed is a per-member rail: most recent interactions, latest activity per connection, the second-most-recent event the follow-up always asks for. MAX-joined-back breaks on timestamp ties; the surviving answer is a partitioned ROW_NUMBER with a deterministic tie-break. The one-activity member edge case — a ladder with a single rung — is the probe that ends loops.",
+      slugs: ["second-most-recent-activity", "the-most-recent-three-orders", "active-users"],
+    },
+    {
+      name: "Application funnels with CASE",
+      why: "Interaction fate is a funnel: landed, in review, awaiting response, withdrawn — and the census must reconcile to 100 over a stated population. CASE-driven conditional SUMs are the grammar, with two classic traps: filtering the stage in WHERE (denominator drift) and letting the ELSE arm swallow a stage. The trio covers the share fold, the per-surface ratio and the classification gate.",
+      slugs: ["immediate-food-delivery-i", "ads-performance", "the-winner-university"],
+    },
+    {
+      name: "Response-latency date math",
+      why: "Hiring latency is LAG and JULIANDAY math: days from application to first response, the confirmation second-day gate, the longest silence before a follow-up. The 28.4-day average with a 13-to-84 spread is the business reality — and the date grammar (half-open intervals, once-at-the-edge rounding) is what makes the curve trustworthy.",
+      slugs: ["users-that-actively-request-confirmation-messages", "second-day-confirmation", "biggest-window-between-events"],
+    },
+    {
+      name: "Acceptance-rate ratios",
+      why: "The graph's health reads are ratios: invitation acceptance, confirmation rate, engagement per impression. Each is a denominator argument before it is a number — the 100.0-before-division fix and the NULL-coalesce zero-fill are drilled until the honest per-invitation base is a reflex, because a rate whose denominator drifted reads exactly as healthy as one that didn't.",
+      slugs: ["friend-requests-i-overall-acceptance-rate", "confirmation-rate", "queries-quality-and-percentage"],
+    },
+    {
+      name: "Work-spell sessionization",
+      why: "Professional activity comes in spells — bursts of feed engagement and application pushes separated by quiet gaps. Gaps-and-islands sessionization (the tagged sessionize-events is the industrial version) turns the log into spells, and spell counts per member are the intensity metric retention reports on. LAG the gap, flag the break, run the island key: the three-stage build LinkedIn loves to ask.",
+      slugs: ["sessionize-events", "report-contiguous-dates", "find-loyal-customers"],
+    },
+    {
+      name: "Unanswered-pipeline anti-joins",
+      why: "The talent funnel's live edge is the anti-join: applications with no response row, members gone quiet past the reconnection bar. The shape (LEFT JOIN + IS NULL, or NOT EXISTS) matters even where the never-interacted count returns zero — the day it isn't zero is the day the query is already written, and the WHERE-on-right-column collapse is the trap that hides the answer.",
+      slugs: ["customers-who-never-order", "dormant-reactivation", "sellers-with-no-sales"],
+    },
+    {
+      name: "Trend walks & month buckets",
+      why: "The engagement trend is a month-bucketed walk — 14 months from 2024-01 to 2025-02, the January peak of 3,731.97 against the July trough of 1,193.86 — and every delta is LAG over that spine. '%Y-%m' bucketing, 30-day activity windows and latest-login folds are the three tools; the first-row NULL and the year-collision bucket are the two follow-ups.",
+      slugs: ["monthly-transactions-i", "user-activity-for-the-past-30-days-i", "the-latest-login-in-2020"],
+    },
+    {
+      name: "Second-degree reach & shared pairs",
+      why: "The Economic Graph's headline number is reach: who is two hops from whom, and which member pairs share the most connections. These problems drill the two-hop grammar — chained joins, pair keys, shared-count folds — where the whole difficulty is keeping orientations and distinctness honest while the path length grows. The shared-followers pair read is 'people you may know' in miniature.",
+      slugs: ["popularity-percentage", "strong-friendship", "all-the-pairs-with-the-maximum-number-of-common-followers"],
+    },
+    {
+      name: "Span-of-control census",
+      why: "Reporting lines are a fold, not just a walk: direct reports per manager, managers past a span bar, average pay per reporting group. The screens pair the recursive walk with a GROUP BY over the manager key, and the trap is the same one the interaction log has — counting edges when the business object is a person. The span census is where hierarchy meets HAVING.",
+      slugs: ["the-number-of-employees-which-report-to-each-employee", "managers-with-at-least-5-direct-reports", "average-salary-of-departments"],
+    },
+    {
+      name: "Rolling frames & pacing",
+      why: "Feed and campaign health are rolling reads: a 7-day engagement average, cumulative spend against a pacing bar, the running total the finance partner wants beside every month. Window frames — ROWS versus RANGE, running SUM OVER — are the grammar, and the frame choice quietly changes which rows count as 'recent'. The 2.98-day interaction cycle makes week-scale windows the first place drift shows.",
+      slugs: ["budget-pacing", "rolling-average-steps", "restaurant-growth"],
+    },
+    {
+      name: "Profile-hygiene screens",
+      why: "A professional graph is only as good as its profiles: null or blank fields, malformed emails, mis-keyed stamps. The data-quality screens here are COUNT(col) versus COUNT(*) censuses, NULL-arm CASE branches and pattern guards — the drills that decide whether a funnel number is a metric or a rumor. LinkedIn's anomaly tickets (#28-style) start life as exactly these screens.",
+      slugs: ["null-blank-audit", "invalid-tweets-ii", "books-with-null-ratings"],
+    },
+    {
+      name: "Percentile tiers & segmentation",
+      why: "Member activity is tiered, not averaged: the top percentile of networkers, the usage tiers the product team prices against, the segment cuts that survive a board review. PERCENT_RANK, NTILE and DENSE_RANK build those tiers, and the interview is the boundary — which member lands in the top decile of a 16-member panel and what the tie does to the cut. Concentration claims (63.5% from the top spenders) live or die on this grammar.",
+      slugs: ["usage-tier-percentiles", "rfm-segmentation", "top-percentile-fraud"],
+    },
+  ],
+
+  theory: [
+    {
+      id: "li-t1",
+      q: "Build the 'people you may know' seed: each member's most recent interaction with a connection. Walk me through the window — and why MAX-joined-back is the wrong first answer.",
+      a: "The shape is a per-member argmax: ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY created_at DESC, id DESC) = 1 over the interaction log. Two details carry it. The partition is the member — one independent ladder per person, 16 ladders, not one global sort whose LIMIT 1 serves a single member. The ORDER BY ends with id DESC, a deterministic tie-break, because interactions can share a date and MAX(created_at) joined back returns BOTH same-date rows — the rail doubles and every downstream count doubles with it. The edge case the interviewer waits for: a member with a single interaction still gets a row — the ladder has one rung and rank 1 is it. Partition, ordering, tie-break, edge case: say all four out loud and the rail is defined, not just written. At LinkedIn the follow-up is always the SECOND-most-recent — same window, rank 2, and the one-interaction member correctly drops out because their ladder has no second rung.",
+      tag: "windows",
+    },
+    {
+      id: "li-t2",
+      q: "You're comparing each member's engagement to their connections' — a member-to-member self-join. How do you keep the pairing from double-counting?",
+      a: "Two aliases of one table, one canonical rule. The raw join — interactions a JOIN interactions b ON a.partner_id = b.partner_id or worse, a.member = b.member — emits both orientations of every pair and every row paired with itself: (A,B) and (B,A) count the relationship twice, and (A,A) is noise the census never asked for. The canonical fix is an asymmetric comparison on the pair key: a.customer_id < b.customer_id — one orientation, no self-pairs — and the count per pair becomes trustworthy. Symmetric pairs that ARE the business question (mutual connections, two-way calls) use the mirror form: a.x = b.y AND a.y = b.x with the same < dedupe on ids. The tagged calls-between-members census is this exact drill, and the senior tell is stating orientation policy out loud BEFORE the join — because a graph metric that counts (A,B) and (B,A) separately doesn't just inflate, it breaks every downstream percentage built on it.",
+      tag: "joins",
+    },
+    {
+      id: "li-t3",
+      q: "The funnel census must show landed, in-review, awaiting and withdrawn with shares. Why is the CASE fold written over the whole population, and what does a WHERE filter do to the shares?",
+      a: "The census is one conditional aggregate: SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) beside COUNT(*), folding the SAME rows, so shares are shares of the true population — 52 of 103 landed (50.5), 30 in review (29.1), 14 awaiting (13.6), 7 withdrawn (6.8). Put status = 'delivered' in WHERE and the denominator drifts to the numerator's population — every stage reads 100% and the funnel declares total victory exactly where the pipeline should worry. The ELSE arm is the second trap: it names the exhaust stage (withdrawn), and pointing it at a surviving stage silently merges two stages into one number that reconciles to nothing. Fold-first, filter never: the stage is a column you compute, not a row you delete. That discipline is the difference between LinkedIn's funnel board and a benchmark slide nobody can reproduce.",
+      tag: "aggregation",
+    },
+    {
+      id: "li-t4",
+      q: "The unanswered-application census is applications LEFT JOIN responses WHERE response.id IS NULL. A teammate 'fixes' it by adding WHERE applications.status = 'open'. What happens to the census?",
+      a: "Two silent effects, both wrong. The status filter sits in WHERE against the joined result: it can't resurrect the six unmatched rows — the LEFT JOIN's NULL payloads already failed the IS NULL arm... wait, they PASSED it — the real damage is different: the status predicate is applied to the anti-join's survivors, and application #28 reads 'advanced' while having no response row, so the filter deletes exactly the anomaly the census exists to surface, shipping a 5-row list where the truth is 6. And semantically the teammate conflated two definitions: open-status applications (6, worth $19,609) and no-response applications (6, worth $15,217) are different populations that merely agree on count here — the partial-payment application is open but answered, and #28 is answered-by-status but unanswered-by-data. The fix: keep the anti-join pure (IS NULL in WHERE), report both counts side by side, and flag the discrepancy rows explicitly. On this db that's not a corner case — it's row #28, and reconciliations has a ticket with its name on it.",
+      tag: "joins",
+    },
+    {
+      id: "li-t5",
+      q: "Correlated subquery: 'interactions scoring above that member's own average interaction.' How does it run, and what happens for a member with one interaction?",
+      a: "WHERE i.score > (SELECT AVG(o.total) FROM orders o WHERE o.customer_id = i.customer_id) — the inner fold re-runs per outer row, scoped to that member's own history. Cost is one aggregation per member, fine at this scale, a window rewrite at graph scale (AVG(total) OVER (PARTITION BY customer_id) computes every member's average in one pass). The edge case IS the interview: a one-interaction member's average IS their interaction, so score > own-average is never true — they drop out, correctly, because 'above their typical' is undefined for a single observation. The silent-empty cousin: if the inner query carries its own filter (say, this quarter only), a member with no qualifying rows yields a NULL scalar, the comparison is UNKNOWN, and the row vanishes without an error. Saying who the inner fold covers, and what NULL does on the boundary, is the whole follow-up — and on a network of lurkers and power users, single-interaction members are the population, not the exception.",
+      tag: "subqueries",
+    },
+    {
+      id: "li-t6",
+      q: "A report filters 'members whose interaction count beats the platform average member'. Which clause does the average live in — WHERE or HAVING — and where are SELECT aliases actually born?",
+      a: "Two grains, two homes. Per-MEMBER gating ('more than 4 interactions') is HAVING COUNT(*) > 4 — a judgment on folded groups, after GROUP BY. The PLATFORM average is a different grain: a scalar subquery — HAVING COUNT(*) > (SELECT AVG(cnt) FROM (SELECT COUNT(*) cnt FROM orders GROUP BY customer_id)) — because the comparison target is computed across all members, not carried per row. The alias point is the pipeline order: FROM, WHERE, GROUP BY, HAVING, SELECT, ORDER BY. Aliases are born at SELECT, so they exist for ORDER BY but never for WHERE; SQLite pragmatically resolves them in GROUP BY and HAVING too, but the portable habit is writing the underlying expression everywhere except ORDER BY. The senior tell is staging the average in a CTE with its grain named — 'average interactions per member across all 16' — instead of nesting three levels of parentheses and hoping the engine guesses your population.",
+      tag: "pipeline",
+    },
+    {
+      id: "li-t7",
+      q: "The trend walk: engagement per month, last month carried beside this one. How does LAG behave on the first month, and why is the walk staged in a CTE before any filtering?",
+      a: "LAG(engagement) OVER (ORDER BY month) reads the previous row of the partition; on 2024-01 there IS no previous month, so the carry is NULL — and that NULL is the definition working, not a bug to coalesce. COALESCE(prev, 0) would print January's delta as 3,731.97 minus zero, inventing a record-setting growth month out of the calendar's edge; the honest walk prints NULL and says 'no prior month'. The staging rule is pipeline order: windows evaluate at the SELECT stage, so a same-level WHERE can't see the LAG alias — filter month-over-month deltas in an OUTER query over a CTE, or the query errors, or worse, the filter gets pushed INTO the CTE and silently changes what LAG compares (filter the months first and January's predecessor disappears, shifting every delta). Stage the spine, walk it, filter outside — the 28.4-day latency curve and the MoM deltas both hang on that order.",
+      tag: "windows",
+    },
+    {
+      id: "li-t8",
+      q: "The application log has 28 rows, 27 response rows and amounts stored in INTEGER cents. What's your data-quality policy before the pipeline census ships?",
+      a: "Audit before aggregate, and state the policy per column. Unit policy first: amount_cents is INTEGER cents — SUM(i.amount_cents) / 100.0 for dollars, never / 100, which truncates odd cents in integer division and quietly underprices the pipeline. Match policy second: applications-to-responses is one-to-MANY here (split responses exist — five applications carry multiple response rows), so the join pre-aggregates responses per application in a derived table or the fan-out double-counts every split. Reconciliation third: the census must prove 6 + 22 = 28 — answered plus unanswered equals total — and the anomaly arm flags the two lifecycle breaks the db carries: #11 withdrawn-but-answered ($925.00) and #28 advanced-but-unanswered ($1,756.00). Finally the COUNT(col) versus COUNT(*) scan: response rows with NULL timestamps count differently, and the disclosure ('responded applications only') is the difference between a metric and a rumor. Thirty seconds of policy, shipped once, survives every audit after.",
+      tag: "data-quality",
+    },
+    {
+      id: "li-t9",
+      q: "The growth desk wants a rolling 7-day engagement average beside every interaction. Someone ships it with SUM(total) OVER (ORDER BY created_at ROWS BETWEEN 6 PRECEDING AND CURRENT ROW). What's wrong with that frame — and when is ROWS actually the right call?",
+      a: "ROWS counts rows, not days: six preceding INTERACTIONS can span three hours or three weeks, and on a log where one member fired 24 interactions and another fired once, the '7-day' average is a 7-row average wearing a calendar's name. The honest frame is RANGE BETWEEN 6 PRECEDING AND CURRENT ROW on an ORDER BY over the date — RANGE groups peer rows (same-day interactions move together) and respects the calendar. ROWS is the right call only when the unit genuinely is rows: the 'last 7 interactions' rail, or a per-member spell where gaps are the signal. The tell an interviewer listens for: does the candidate say what the frame is framed ON — rows or values — before writing either? On this db the distinction is not academic: same-day interactions are common, so the two frames return different numbers on real rows, and only one of them is the metric the desk asked for.",
+      tag: "windows",
+    },
+    {
+      id: "li-t10",
+      q: "The close memo wants one report: answered applications stacked over unanswered ones, each arm labeled, with a grand-total row. Walk me through the set-op shape — and why plain UNION is the wrong keyword here.",
+      a: "Three SELECTs in a chain. The answered arm counts applications with a response row (22 of them, 66,443.00 plus the void-but-answered 925.00), the unanswered arm counts the LEFT JOIN + IS NULL six (15,217.00), and each arm carries a literal side label — 'answered', 'unanswered' — because after a set op only the column list survives, not the arm's identity. The bottom arm is the x3 move: a UNION ALL branch with 'TOTAL' and the whole-funnel numbers (28 applications, 86,977.00). Plain UNION is wrong for two reasons. Semantically, it dedupes — and a dedupe over arms that can't collide today is a silent promise that if they EVER collide, a row vanishes and the reconciliation breaks in production, not in review. Practically, it hides fan-out bugs: the day the response join doubles a row, UNION quietly eats the duplicate and the close still reads balanced. UNION ALL states intent — these are deliberately separate populations — and every reconciliation survives. The label literal is not decoration; it is the only thing that makes a stacked result auditable.",
+      tag: "set-ops",
+    },
+    {
+      id: "li-t11",
+      q: "A teammate filters the application census with WHERE status <> 'open' and calls it 'everyone not waiting on us'. Defend or attack — and give the NULL policy that makes the call safe.",
+      a: "Attack the sentence, keep a version of the query. <> against a column drops NULL rows as surely as it drops 'open' rows — three-valued logic: status = NULL is UNKNOWN, UNKNOWN fails WHERE, and rows vanish without an error. On THIS db the census survives because status carries no NULLs across its 28 rows, so the filter returns paid plus void — 22 applications — not one row more or less; the trap is that the same query ships to a table where a backfill leaves status NULL and the census shrinks silently. The policy that makes it safe: a NULL audit before any <> or NOT IN filter (COUNT(*) WHERE status IS NULL — expect zero, assert zero), and a stated rule that lifecycle columns are NOT NULL by contract, so three-valued logic never gets a vote. If the contract can't be asserted, write WHERE status <> 'open' OR status IS NULL — and make whoever wrote the NULLs explain them out loud. Filtering around UNKNOWN is how pipelines lose rows at 2am with nothing to page.",
+      tag: "nulls",
+    },
+    {
+      id: "li-t12",
+      q: "The dashboard shows 'distinct members per month' computed after a per-member window was applied, and the numbers collapsed. What happened — and what does that teach about DISTINCT's place in the pipeline?",
+      a: "DISTINCT ran after the window and destroyed the ladder. Windows are computed at the SELECT stage over the full partition — ROW_NUMBER per member, 103 rows with ranks 1..24 riding beside them — and then DISTINCT collapses the OUTPUT to unique rows, which after a rank column is nearly every row again; or worse, the dedupe eats exactly the rows the partition existed to keep. The pipeline order is the lesson: FROM, WHERE, GROUP BY, HAVING, SELECT (windows born here), DISTINCT, ORDER BY. A window and a same-level DISTINCT are almost always a design smell. 'Distinct members per month' is a fold — GROUP BY month with COUNT(DISTINCT customer_id), 14 buckets, done — not a rail with a dedupe bolted on. 'Latest interaction per member' is a rail — ROW_NUMBER = 1 staged in a CTE, filtered outside — and DISTINCT never touches it. Say the stage order out loud, and the dashboard stops collapsing: folds fold, rails rank, and neither borrows the other's machinery.",
+      tag: "pipeline",
+    },
+    {
+      id: "li-t13",
+      q: "Same query, two scales: this 103-row storefront and a billion-edge interaction graph. What changes in how you write it — and what instinct stays?",
+      a: "What changes is where the reduction happens. At 103 rows you can join raw and fold late, wrap columns in functions, and let the engine brute-force; at graph scale every instinct inverts. Wrap created_at in SUBSTR or julianday inside a WHERE and the index on that column is dead — sargability means the predicate reshapes the column, so the planner scans. A response join left raw fans 27 rows over 22 applications and re-weights every average — at scale that is a shuffle you pay for on every run, so fold-then-join (pre-aggregate responses per application) stops being style and becomes load control. Correlated subqueries re-run per outer row; the window rewrite — AVG(total) OVER (PARTITION BY customer_id) — makes one pass. What stays is the honesty: the grain you declare, the denominator you state, the reconciliation you ship. Performance work at LinkedIn scale is mostly the same discipline at higher stakes — reduce early, keep the fold obvious, and never let a silent fan-out decide what 'average' means.",
+      tag: "performance",
+    },
+    {
+      id: "li-t14",
+      q: "Someone computes response latency as paid_on - issued_on and gets zero everywhere. What happened, and how do you date-math your way to the 28.4-day settlement curve?",
+      a: "SQLite saw two TEXT values and subtracted numerically: '2024-01-04' - '2024-01-01' coerces each side to a number — 2024 minus 2024 — and returns 0. The date grammar is explicit or it is wrong: julianday(paid_on) - julianday(issued_on) yields float days (3.0 for the three-day gap), and on date-only stamps the result is whole days. That is the engine under the settlement curve — 28.4 days average, fastest 13, slowest 84, over the 20 settled applications — and under the completion-stamp read (2.98 days over the 82 stamped interactions). The follow-ups an interviewer loads: AVG skips NULL diffs silently, so the 2.98 rides on 82 rows while a COUNT(*) beside it says 103 — the disclosure is part of the metric's name; and month math is a different tool — '%Y-%m' bucketing for spines, julianday for gaps, DATE arithmetic for boundaries. Say which tool answers which question, and the calendar stops lying by zero.",
+      tag: "dates",
+    },
+    {
+      id: "li-t15",
+      q: "Your landed-share KPI reads 50.5%. The VP asks: per what? Give the full definition — population, numerator, exclusions — and why the withdrawal share rides beside it.",
+      a: "Per interaction, all fates in. The numerator is interactions whose fate is landed — status 'delivered', 52 rows; the denominator is ALL 103 logged interactions including the 7 withdrawn and the 14 still pending. Exclusions: none — that is the point. The moment the denominator becomes 'interactions that could have landed' (delivered plus shipped, say), the share jumps to 52 of 82 and the KPI is lying by definition, because withdrawn interactions ARE the funnel's leakage and excluding them launders it. The withdrawal share — 7 of 103, 6.8% — rides beside the landed share precisely so the pair can't be gamed independently: a rising withdrawal rate with a flat landed share means the funnel is leaking before the response clock even starts, and a report that hides one hides the other. Every KPI card here prints its denominator under the number; the sentence '52 of 103' is the metric, and 50.5 is just its rounding.",
+      tag: "kpi",
+    },
+    {
+      id: "li-t16",
+      q: "'Members who have responded to at least one application.' Give me three shapes — IN, EXISTS, JOIN — and argue which ships.",
+      a: "IN (SELECT customer_id FROM payments): readable, but the NULL policy lives in the subquery — one NULL in the list and NOT IN (the negative twin) silently returns nothing; the positive form is safer but the habit is a loaded gun. EXISTS (SELECT 1 FROM payments p WHERE p.customer_id = m.id): the semi-join — short-circuits on first match, immune to NULLs in the projected list, and it never double-counts the outer row no matter how many responses exist (five applications carry split responses here — EXISTS doesn't care, JOIN does). The JOIN shape needs DISTINCT or a fold, because responses are one-to-many and the raw join returns 27 rows for 22 applications — the member list doubles exactly where the splits are. Which ships: EXISTS for membership questions whenever the right side can fan out; IN when the set is small, literal, and NULL-free by contract; JOIN only when the response attributes themselves are the payload. The three shapes agree on THIS db and diverge the day the data grows — ship the one whose failure mode you can explain.",
+      tag: "subqueries",
+    },
+    {
+      id: "li-t17",
+      q: "The activity leaderboard shows counts 24, 17, 14, 13, 5, then four members tied at 4. Rank them — and tell me what the NEXT member's rank is under ROW_NUMBER, RANK and DENSE_RANK, and which you'd ship.",
+      a: "The ladder: RANK gives 1, 2, 3, 4, 5, then 6, 6, 6, 6 on the four-way tie at 4 interactions — and the next member (3 interactions) lands at rank 10, because RANK skips the three occupied positions. DENSE_RANK gives 6, 6, 6, 6 then 7 — no gap; ties share, neighbors touch. ROW_NUMBER breaks the tie arbitrarily (or by your tie-break) and hands out 6, 7, 8, 9 — four members wearing four different ranks for identical output. Which ships depends on what the board claims: RANK is the honest one when rank means 'how many members are strictly ahead of you' — the next member IS the 10th person, and pretending 7th flattens the gap the tie creates. DENSE_RANK fits tier lists — the four ARE tier 6, period. ROW_NUMBER fits pick-one-per-position rails, and only with a stated tie-break (engagement DESC, then id). On a 16-member panel where a quarter of the population ties, the choice is not cosmetic: it changes every top-N cut downstream, and the interviewer knows it.",
+      tag: "windows",
+    },
+    {
+      id: "li-t18",
+      q: "The close checklist wants interaction fate, completion stamps and latency in ONE scan. How does FILTER (WHERE) change what you can ship — and what does the branch structure have to guarantee?",
+      a: "FILTER turns one scan into a census: COUNT(*) AS interactions, then COUNT(*) FILTER (WHERE status = 'delivered') AS landed, another arm for cancelled, another for the completion stamp IS NOT NULL, and the AVG over julianday deltas carrying the same stamp predicate — 103, 52, 7, 82, 2.98 days, one row, one pass. The guarantee the structure must make: FILTER predicates are branch definitions, not row filters — every arm sees the SAME 103 rows, so the census can't drift the way a WHERE-per-metric pipeline does (five sequential scans, five chances for a population to shift). The branches should reconcile: 52 + 30 + 14 + 7 = 103 for the fates, 82 stamped plus 21 unstamped = 103 — and if an arm's numbers stop summing to the whole, the query didn't break, the data did, which is exactly what the close exists to catch. The discipline: same-scan branches, stated populations, a reconciliation printed beside the census. One pass, every counter, zero drift — that is what FILTER buys.",
+      tag: "aggregation",
+    },
+    {
+      id: "li-t19",
+      q: "The confirmation-rate read coalesces unmatched members to zero acceptance. When is COALESCE the business definition, and when is it a fabricated number?",
+      a: "It is the definition when zero is the truth about the population: a member with invitations and no acceptances has a real 0.0 acceptance rate, and the LEFT JOIN's NULL payload is the ABSENCE of a matching row, not the absence of a value — COALESCE(accepted, 0) translates 'no rows' into the correct floor. It is a fabrication when the NULL means NOT-YET or NOT-APPLICABLE: coalescing an application's missing response date to zero days, or a first-month LAG to zero growth, manufactures a measurement of something that never happened — January doesn't grow 3,731.97 over nothing, and an unanswered application isn't responded to in 0 days. The policy: name what the NULL MEANS before choosing its floor. Absence-of-rows for a rate over an eligible population → zero-fill and disclose. Absence-of-event on a timestamp → keep the NULL, print it as 'no response yet', and let the anti-join count it. The danger read is the ratio whose DENOMINATOR got the COALESCE — a 0/0 printed as 0.0 looks identical to a real zero and doubles the lie. Every zero-fill ships with a sentence saying what it is filling.",
+      tag: "nulls",
+    },
+    {
+      id: "li-t20",
+      q: "Walk me through WITH RECURSIVE on 'everyone below this manager' — the anchor, the step, the termination — and the two ways it bites.",
+      a: "Three parts. The anchor: the seed rows — the given manager's direct reports. The recursive member: a SELECT joining the CTE to the table on manager_id = the prior level, each pass emitting the next ring of the tree. Termination: when the recursive member returns zero rows, the walk stops — no explicit depth needed, and that is the elegance over chained self-joins, which only ever reach a fixed depth. The two bites: infinite loops, when the data has a cycle (a manager reporting to their own report — bad data, unbounded walk), guarded by a depth counter or a visited check; and double-counting, when a row joins the CTE from two paths (shared managers) — the walk emits the person once per path, so the census needs DISTINCT or a path-aware key. On the reporting-line drill the shape is: one manager, their whole subtree, one query — and the follow-up is always 'add level numbers', which is the depth column doing double duty as both guard and output. Recursion is how LinkedIn reads orgs; fixed self-joins are how it guesses them.",
+      tag: "recursion",
+    },
+    {
+      id: "li-t21",
+      q: "The unanswered-application census in three shapes: LEFT JOIN + IS NULL, NOT EXISTS, NOT IN. Same six rows — so which ships, and what breaks the other two?",
+      a: "All three return the same six on THIS data, which is exactly why the choice gets made out loud. LEFT JOIN + IS NULL is the visible one: the unmatched rows ride along with NULL payloads, the census can print the applications' own columns beside the emptiness, and the failure mode is the WHERE-collapse — add a predicate on the right table's column and the LEFT JOIN silently becomes INNER, the six vanish, and the query still runs. NOT EXISTS is the safest to ship: correlated, short-circuits, immune to NULLs entirely, nothing on the right side can leak into the output — its cost is readability for reviewers raised on joins. NOT IN is the landmine: one NULL in the subquery's list and the whole NOT IN evaluates to UNKNOWN for every row — the census returns ZERO rows, silently, on data that is merely messy rather than wrong. Ship NOT EXISTS or the disciplined LEFT JOIN (IS NULL alone in WHERE, right-table predicates in ON); reserve NOT IN for lists you can prove NULL-free. The six-row census is small; on a billion-edge graph the shape you chose is the empty dashboard or the pager.",
+      tag: "joins",
+    },
+    {
+      id: "li-t22",
+      q: "The same 103 interactions produce two averages: 338.19 per interaction and 2,177.08 per member. Both are true. Explain how — and what breaks when a dashboard mixes them.",
+      a: "Two grains, two denominators, one dataset. Per-interaction: SUM(total) over 103 rows divided by 103 — 338.19, the average WEIGHT of a single interaction, the number the feed-quality team reads. Per-member: the same 34,833.28 folded to 16 members first, then averaged — 2,177.08, the average member's lifetime engagement, the number the growth team reads. Both honest; not interchangeable. The break comes when a dashboard computes one and labels it the other: a member-level target (2,177.08) judged against per-interaction actuals (338.19) reads as catastrophic; per-interaction benchmarks applied to whale members (Alice Chen at 7,262.35) read as miracles. The concentration read makes it worse — 63.5% of engagement comes from members over the 3,000 lifetime bar, so member-level averages are dragged by a tail the interaction-level average never sees. The discipline that survives the interview: every number ships with its grain in the label — 'per interaction', 'per member', 'per landed interaction' — and any query mixing grains does the fold in a CTE with the grain named in the alias.",
+      tag: "grain",
+    },
+    {
+      id: "li-t23",
+      q: "The engagement trend spans 2024-01 to 2025-02. What does '%Y-%m' bucketing guarantee, what does it NOT guarantee, and what happens to the walk when a month has zero interactions?",
+      a: "It guarantees keys that sort chronologically as text — '2024-01' through '2025-02', 14 buckets, no year collision, which is why '%m' alone (12 buckets, years folded) and '%Y' alone (2 buckets, months erased) are both wrong for a 14-month walk. What it does NOT guarantee: continuity. The bucket list is built FROM the data — a month with zero interactions produces no bucket, and the LAG walk over the surviving rows silently compares December to October while calling it month-over-month. The fix is a spine: a calendar CTE (or recursive month generator) LEFT JOINed to the folds, so every month exists and the quiet months read 0 or NULL honestly. The second gap is boundaries: '%Y-%m' buckets on the string's first seven characters — timestamps with time components still land correctly, but a half-open-interval mistake (BETWEEN on the last day) double- or under-counts the edge. The walk is only as honest as its spine: 14 buckets, stated, contiguous — or the deltas are fiction with a calendar's accent.",
+      tag: "dates",
+    },
+    {
+      id: "li-t24",
+      q: "The close ships three reconciliation checks as queries. Name them, their expected values on this db, and what a non-zero result means.",
+      a: "First, the funnel reconciliation: answered plus unanswered must equal total — 22 plus 6 equals 28 applications, and the dollar arms (66,443.00 answered, 15,217.00 unanswered) must sum to the pipeline, with the void-but-answered 925.00 riding in the answered arm or the books don't close. Second, the split-response check: applications with multiple response rows — expected exactly 5 — folded to one row apiece before any join; if that count changes without a ticket, the application grain is fanning and every downstream rate is re-weighted. Third, the book balance: ledger debits minus credits — expected 181,080 minus 181,080, delta exactly 0; a non-zero delta means an entry landed on one side only, and nothing ships until it is found. The meta-rule: reconciliation checks are SHIPPED queries, not vibes — each one returns a row whose expected value is written in the memo, and the close is the diff between expectation and result. A non-zero doesn't mean the query is wrong; it means the data is, and the close's whole job is catching that before a dashboard launders it.",
+      tag: "data-quality",
+    },
+  ],
+
+  mcqs: [
+    {
+      id: "li-mcq-1",
+      prompt: "The interaction log has 103 rows from 16 members. Which expression returns 16 — the member count the growth team keys on?",
+      choices: [
+        "COUNT(*)",
+        "COUNT(DISTINCT customer_id)",
+        "COUNT(shipped_at)",
+        "COUNT(status)",
+      ],
+      answer: 1,
+      why: "COUNT(DISTINCT customer_id) folds 103 interaction rows back to the 16 people behind them — the member count every cohort and retention metric is built on.",
+      notes: [
+        { choice: 0, why: "COUNT(*) is the interaction count — 103. That's load, not network; reporting it as 'members' inflates the base by the repeat-actor factor." },
+        { choice: 2, why: "COUNT(shipped_at) counts non-NULL completion stamps — 82 on this db. That's 'closed interactions', a third thing, not the audience." },
+        { choice: 3, why: "COUNT(status) counts non-NULL statuses — every row, so 103. Status is never NULL, so this COUNT distinguishes nothing." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "li-mcq-2",
+      prompt: "28 applications, 27 recruiter-response rows. The census counts applications with no response via LEFT JOIN + IS NULL. A teammate adds AND i.status = 'paid' to the same WHERE. What ships?",
+      choices: [
+        "All six unanswered applications — status and response presence are independent",
+        "Nothing — no application passes both predicates",
+        "Only #28 — the census collapses from 6 rows and $15,217 to 1 row and $1,756",
+        "The query errors on the mixed predicates",
+      ],
+      answer: 2,
+      why: "The predicates compose on the same rows. #28 is paid AND unanswered, so it passes both — but the five open unanswered applications fail the added status filter. The census ships 1 row instead of 6: the $15,217 pipeline becomes a $1,756 fragment, and the reconciliation (6 + 22 = 28) quietly stops closing.",
+      notes: [
+        { choice: 0, why: "The predicates don't run as separate reports — adding a status filter changes WHO survives, and the open-but-unanswered majority drops." },
+        { choice: 1, why: "Inverted — #28 IS paid, so it passes the added filter. The census keeps the anomaly and loses the five open applications, not the other way around." },
+        { choice: 3, why: "Mixed WHERE predicates are perfectly legal SQL — that's the danger. The census ships, just answering a different question." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "li-mcq-3",
+      prompt: "Response latency: 28.4-day average with a 13-to-84 spread. The report needs days from application to FIRST response. Applications can carry multiple response rows. Which build is correct?",
+      choices: [
+        "JULIANDAY(p.paid_on) - JULIANDAY(i.issued_on) after a raw LEFT JOIN",
+        "Pre-aggregate MIN(paid_on) per application in a derived table, then diff once per application",
+        "JULIANDAY(MAX(paid_on)) - JULIANDAY(issued_on)",
+        "AVG of all response diffs",
+      ],
+      answer: 1,
+      why: "Split responses (five applications carry multiple rows) mean a raw join fans the application grain and the diff computes per response ROW, double-weighting split applications. MIN(paid_on) per application first — the FIRST response — then one diff per application keeps the grain honest and the 28.4-day curve trustworthy.",
+      notes: [
+        { choice: 0, why: "The raw join multiplies applications by their response rows — the latency distribution silently re-weights toward split applications." },
+        { choice: 2, why: "MAX is the LAST response — the slowest-touch read, a different metric wearing the same name." },
+        { choice: 3, why: "Averaging per-row diffs answers 'average response gap', not 'days to first response' — the funnel's clock is the first touch." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "li-mcq-4",
+      prompt: "The trend walk computes engagement per month, then filters to months where the MoM delta is negative. Why must the filter live in an outer query over the staged monthly spine?",
+      choices: [
+        "LAG is not allowed inside CTEs",
+        "Windows evaluate at the SELECT stage — a same-level WHERE runs first, so the delta alias doesn't exist yet",
+        "WHERE cannot contain negative comparisons",
+        "The CTE caches results for performance",
+      ],
+      answer: 1,
+      why: "Logical evaluation runs FROM → WHERE → GROUP BY → SELECT — where windows are computed — → ORDER BY. A WHERE referencing the LAG delta is a 'no such column' error; staging the spine in a CTE, walking the LAG, then filtering outside is the shape.",
+      notes: [
+        { choice: 0, why: "LAG in a CTE is perfectly legal — the staging exists for pipeline-order reasons, not permission." },
+        { choice: 2, why: "WHERE takes full arithmetic including negatives — the failure is alias visibility, not expression power." },
+        { choice: 3, why: "Performance may improve as a side effect, but the outer filter is required for CORRECTNESS — the same-level filter is an error, not a slow query." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "li-mcq-5",
+      prompt: "julianday(created_at) - julianday(LAG(created_at) OVER (PARTITION BY customer_id ORDER BY created_at)) — for which row is the result NULL?",
+      choices: [
+        "Each member's first interaction — no previous row exists in the partition",
+        "Interactions still awaiting response — status is 'pending'",
+        "Every row — LAG without an explicit frame returns NULL",
+        "Interactions on the log's first date only",
+      ],
+      answer: 0,
+      why: "LAG has nothing to look back at on the partition's first row, so the gap is NULL — which is why the trend walk prints NULL for January and says 'no prior month' instead of coalescing a fake zero.",
+      notes: [
+        { choice: 1, why: "The gap runs on created_at, the interaction time — the pending status is a different column and a different definition entirely." },
+        { choice: 2, why: "LAG is fully legal with a bare OVER; only the partition's first row lacks a previous value." },
+        { choice: 3, why: "The log's first date matters for one member only — per-partition firsts produce the NULLs, and there are 16 of those." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "li-mcq-6",
+      prompt: "The pipeline report stores requisition value in INTEGER cents. Which expression prices it in dollars correctly?",
+      choices: [
+        "SUM(amount_cents) / 100",
+        "ROUND(SUM(amount_cents) / 100.0, 2)",
+        "CAST(SUM(amount_cents) AS REAL) / 100",
+        "SUM(amount_cents) * 0.01",
+      ],
+      answer: 1,
+      why: "Divide by 100.0 (REAL division) and round once at the display edge — $15,217.00 prints as the probed figure. Integer division by 100 truncates odd cents; the other shapes work numerically but skip the stated rounding contract.",
+      notes: [
+        { choice: 0, why: "INTEGER / INTEGER in SQLite is integer division — 15217 cents would print 152, and every odd-cent application loses its cents silently." },
+        { choice: 2, why: "Numerically right but rounds nothing — the deliverable specifies 2 decimals, and 'works' isn't the contract." },
+        { choice: 3, why: "* 0.01 computes the same value — but the shape invites float drift across systems and skips the explicit /100.0 the unit policy states." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "li-mcq-7",
+      prompt: "A member-to-member call census joins the log to itself. Which predicate makes each pair count exactly once?",
+      choices: [
+        "a.customer_id = b.customer_id",
+        "a.customer_id < b.customer_id",
+        "a.customer_id != b.customer_id",
+        "a.call_date = b.call_date",
+      ],
+      answer: 1,
+      why: "The asymmetric < keeps one orientation of each pair and drops self-pairs — (A,B) survives, (B,A) and (A,A) don't. Equality joins the row to itself; inequality still emits both orientations; date equality pairs unrelated members.",
+      notes: [
+        { choice: 0, why: "Self-equality pairs every member with themselves — the census counts 16 non-relationships." },
+        { choice: 2, why: "Inequality removes self-pairs but keeps BOTH orientations — every relationship double-counts and the graph inflates." },
+        { choice: 3, why: "Date equality pairs whoever acted that day — a coincidence, not a relationship." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "li-mcq-8",
+      prompt: "The engagement trend buckets interactions by month over 14 months (2024-01 through 2025-02). Which bucket expression is calendar-safe?",
+      choices: [
+        "STRFTIME('%m', created_at)",
+        "STRFTIME('%Y-%m', created_at)",
+        "SUBSTR(created_at, 6, 2)",
+        "created_at",
+      ],
+      answer: 1,
+      why: "'%Y-%m' prints '2024-01' … '2025-02' — 14 distinct buckets that sort chronologically as text. Month-only variants collapse February-2024 and February-2025 into one bucket; the raw date is day-grain, not month-grain.",
+      notes: [
+        { choice: 0, why: "'%m' drops the year — the 14-month trend folds into 12 buckets and the year-over-year story disappears." },
+        { choice: 2, why: "SUBSTR 6,2 extracts the same month-only slice — same fold, same loss, just string surgery." },
+        { choice: 3, why: "The raw created_at is one bucket per DAY — hundreds of buckets where the trend expects 14. Grain, stated first, chooses the expression." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "li-mcq-9",
+      prompt: "Applications LEFT JOIN responses, then someone adds WHERE responses.recruiter_id IS NOT NULL 'to clean it up'. What now?",
+      choices: [
+        "Same rows, cleaner output",
+        "Only answered applications survive — the anti-join's whole point is deleted",
+        "Only unanswered applications survive",
+        "The query errors on the NULL check",
+      ],
+      answer: 1,
+      why: "Unmatched applications carry NULL recruiter_id and fail IS NOT NULL, so every unanswered row is discarded — the LEFT JOIN silently became INNER and the unanswered-pipeline census now reports the answered pile as if it were the whole funnel. Predicates on the right table belong in ON, or the collapse must be a stated decision.",
+      notes: [
+        { choice: 0, why: "The predicate deletes exactly the rows the LEFT JOIN existed to keep — the census's population changed, invisibly." },
+        { choice: 2, why: "The inverse would need IS NULL — and IS NOT NULL keeps the matched (answered) side, the opposite of the census." },
+        { choice: 3, why: "IS NOT NULL is perfectly legal — that's the danger. The census ships, just answering the opposite question." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "li-mcq-10",
+      prompt: "Karma per interaction averages 338.1879611650485. The dashboard needs 338.19. Which shape is correct?",
+      choices: [
+        "ROUND(AVG(total), 2)",
+        "CAST(AVG(total) AS INTEGER)",
+        "ROUND(AVG(total))",
+        "SUBSTR(AVG(total), 1, 6)",
+      ],
+      answer: 0,
+      why: "ROUND to 2 decimal places at the display edge — the one place rounding belongs. The pipeline carries full precision; only the print is rounded.",
+      notes: [
+        { choice: 1, why: "CAST to INTEGER truncates to 338 — a 0.19-point leak per interaction, compounded across every aggregate built on top." },
+        { choice: 2, why: "ROUND without a digit count rounds to integer — 338, not the two decimals the dashboard specifies." },
+        { choice: 3, why: "SUBSTR string-slices to '338.18' — truncation disguised as rounding, and the cell is now TEXT that downstream arithmetic mishandles." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "li-mcq-11",
+      prompt: "The growth deck needs TOTAL network engagement across all 103 interactions. Which expression returns 34,833.28?",
+      choices: [
+        "ROUND(SUM(total), 2)",
+        "ROUND(AVG(total), 2)",
+        "COUNT(total)",
+        "MAX(total)",
+      ],
+      answer: 0,
+      why: "SUM(total) folds the weighted engagement score across every interaction — 34,833.28 over 103 rows. AVG returns the 338.19 per-interaction read, COUNT returns 103, MAX returns the single biggest score.",
+      notes: [
+        { choice: 1, why: "AVG(total) is 338.19 — the per-interaction average wearing a total's name; off by two orders of magnitude and by definition." },
+        { choice: 2, why: "COUNT(total) is 103 — a population, not a score; totals count nothing." },
+        { choice: 3, why: "MAX(total) is 1,088.44 — the heaviest single interaction, useful for outliers, useless as a network total." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "li-mcq-12",
+      prompt: "Landed share must print 50.5 — 52 of 103, one decimal. Which shape computes it correctly?",
+      choices: [
+        "ROUND(100.0 * SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) / COUNT(*), 1)",
+        "ROUND(100 * SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) / COUNT(*), 1)",
+        "ROUND(SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) / COUNT(*) * 100, 1)",
+        "COUNT(status = 'delivered') / COUNT(*)",
+      ],
+      answer: 0,
+      why: "100.0 forces REAL division before the ratio: 5200.0 / 103 = 50.485…, rounded to 50.5. The other shapes divide integers first — 52/103 truncates to 0 — and print 0.0 or 50 depending on where the 100 sits.",
+      notes: [
+        { choice: 1, why: "The 100 multiplies the numerator to 5200 but INTEGER / INTEGER still truncates: 5200/103 = 50, so this prints 50.0 — a whole-number share that never saw a decimal." },
+        { choice: 2, why: "Division runs left to right: 52/103 = 0 before the *100 ever applies — the classic zero-share bug, one rounding away from invisible." },
+        { choice: 3, why: "COUNT(status = 'delivered') counts non-NULL boolean results — every row — so this is 103/103 = 1.0, a 100% share built from a counting mistake." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "li-mcq-13",
+      prompt: "28 applications, 27 recruiter-response rows, 5 applications carrying split responses. How many rows does `invoices LEFT JOIN payments ON p.invoice_id = i.id` return?",
+      choices: [
+        "28",
+        "33",
+        "27",
+        "22",
+      ],
+      answer: 1,
+      why: "22 applications have at least one response — 17 with a single row, 5 with two — so the matched side contributes 27 rows; the 6 unanswered contribute one NULL-payload row each. 27 + 6 = 33.",
+      notes: [
+        { choice: 0, why: "28 is the application count — the join returns one row PER MATCH plus one per unmatched application, and splits add rows rather than collapsing them." },
+        { choice: 2, why: "27 is the response count — the matched side alone; it forgets the 6 NULL-payload rows that are the whole point of the LEFT JOIN." },
+        { choice: 3, why: "22 is the count of answered APPLICATIONS — the truth the raw join obscures; counting the join's rows reports 33 and re-weights every split." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "li-mcq-14",
+      prompt: "Settlement days = paid_on - issued_on in someone's draft and every row reads 0. What's the fix?",
+      choices: [
+        "julianday(p.paid_on) - julianday(i.issued_on)",
+        "p.paid_on - i.issued_on + 0",
+        "DATEDIFF('day', i.issued_on, p.paid_on)",
+        "CAST(p.paid_on AS INTEGER) - CAST(i.issued_on AS INTEGER)",
+      ],
+      answer: 0,
+      why: "The stamps are TEXT; SQLite subtracts them numerically — 2024 minus 2024 — and returns 0. julianday() converts each stamp to a float day count first, and the difference is real days.",
+      notes: [
+        { choice: 1, why: "Adding zero changes nothing — the coercion happens at the subtraction, before the +0 ever applies." },
+        { choice: 2, why: "DATEDIFF is another dialect's function — SQLite has no such builtin; the query errors, which at least is louder than a silent zero." },
+        { choice: 3, why: "CAST to INTEGER keeps the same numeric coercion — '2024-01-04' becomes 2024, and the difference is still 0." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "li-mcq-15",
+      prompt: "The activity ladder runs 24, 17, 14, 13, 5, then four members tied at 4. Under RANK() OVER (ORDER BY COUNT(*) DESC), what rank does the next member (3 interactions) get?",
+      choices: [
+        "6",
+        "7",
+        "10",
+        "11",
+      ],
+      answer: 2,
+      why: "RANK gives the four-way tie 6, 6, 6, 6, then skips the three occupied positions — the next member is rank 10. Gaps after ties are RANK's signature, and they are the honest read of 'how many members are strictly ahead'.",
+      notes: [
+        { choice: 0, why: "6 is the TIED rank — the next member shares nothing with the four sitting at 4 interactions." },
+        { choice: 1, why: "7 is DENSE_RANK's answer — no gap after the tie; true about position, false about people ahead." },
+        { choice: 3, why: "11 counts all ten rows above plus one — but the four ties SKIP four rank numbers, which is exactly what RANK's 10 encodes." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "li-mcq-16",
+      prompt: "The reconnection list — members with no interaction in 30 days — uses NOT IN (SELECT customer_id FROM recent_activity). One recent_activity row has a NULL customer_id. What ships?",
+      choices: [
+        "The list, minus that member",
+        "An empty list — silently",
+        "An error",
+        "All members",
+      ],
+      answer: 1,
+      why: "x NOT IN (list with NULL) can never be TRUE: the comparison is UNKNOWN when the list contains NULL, so WHERE keeps nothing. The anti-join returns zero rows with no error — the silent-empty failure that reads as 'everyone reconnected'.",
+      notes: [
+        { choice: 0, why: "NULL isn't a member to exclude — it poisons the whole predicate, not one row of the list." },
+        { choice: 2, why: "Silently is the danger: no error, no warning, a valid-looking empty result the re-engagement team reads as good news." },
+        { choice: 3, why: "The inverse trap — that's what a NULL inside an IN list can produce for outer filters; NOT IN's failure mode is the empty set, not the full one." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "li-mcq-17",
+      prompt: "The close must prove the ledger balances. Which check returns the expected zero-delta row?",
+      choices: [
+        "SELECT SUM(CASE WHEN side = 'debit' THEN amount_cents ELSE 0 END) - SUM(CASE WHEN side = 'credit' THEN amount_cents ELSE 0 END) AS delta FROM ledger_entries",
+        "SELECT ABS(SUM(amount_cents)) AS delta FROM ledger_entries",
+        "SELECT COUNT(*) AS delta FROM ledger_entries",
+        "SELECT SUM(amount_cents) AS delta FROM ledger_entries GROUP BY side",
+      ],
+      answer: 0,
+      why: "Two conditional SUMs over the same rows — debits 181,080 minus credits 181,080 — fold to one row carrying delta 0, the signature the close ships with.",
+      notes: [
+        { choice: 1, why: "ABS folds the NET — 0 here, but ABS would also print 0 for a ledger 10,000 out of balance in each direction; it can't distinguish balanced from symmetric." },
+        { choice: 2, why: "COUNT is 80 entries — a population, not a balance; it reads 80 on a ledger that's wildly out of balance." },
+        { choice: 3, why: "GROUP BY side returns TWO rows (one per side) — a comparison the reader does by eye, which is exactly what the close refuses to ask of anyone." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "li-mcq-18",
+      prompt: "Alice Chen carries 7,262.35 engagement of the network's 34,833.28. Which expression prints her share at 20.85?",
+      choices: [
+        "ROUND(100.0 * 7262.35 / 34833.28, 2)",
+        "ROUND(7262.35 / 34833.28, 2)",
+        "ROUND(100 * 7262.35 / 34833.28, 2)",
+        "7262.35 / 34833.28 * 100.0",
+      ],
+      answer: 0,
+      why: "100.0 before the division keeps the math REAL end to end, and ROUND(…, 2) is the display contract — 20.85. The other shapes print 0.21 (share, not percent), 20 (integer division), or an unrounded 20.8514…",
+      notes: [
+        { choice: 1, why: "That's the share as a fraction — 0.21 — a percent sign away from the deliverable, and wrong by a factor of 100." },
+        { choice: 2, why: "100 (INTEGER) makes the numerator 726,235 but 726235/34833 truncates at the integer division — 20, not 20.85." },
+        { choice: 3, why: "Numerically 20.8514…, but the shape skips the stated ROUND — the dashboard specifies 2 decimals, and 'about right' isn't the contract." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "li-mcq-19",
+      prompt: "The talent desk filters WHERE status <> 'open' on 28 applications (6 open, 21 paid, 1 void). How many rows survive?",
+      choices: [
+        "22",
+        "28",
+        "6",
+        "0",
+      ],
+      answer: 0,
+      why: "Paid (21) plus void (1) = 22 — everything that isn't waiting on the desk. Status carries no NULLs on this table, so three-valued logic never bites; the count is safe to read as 'not open'.",
+      notes: [
+        { choice: 1, why: "28 would mean the filter did nothing — <> excludes the 6 open rows." },
+        { choice: 2, why: "6 is the population the filter EXCLUDES — reading the predicate backwards is the classic misread." },
+        { choice: 3, why: "Zero would need the filter to fail for every row — it doesn't; status is never NULL here, so every row is cleanly open-or-not." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "li-mcq-20",
+      prompt: "Application #28 reads paid but has no response row. Which census surfaces it?",
+      choices: [
+        "SELECT COUNT(*) FROM invoices WHERE status = 'paid'",
+        "Anti-join: LEFT JOIN payments … WHERE p.id IS NULL, reported beside the status census",
+        "GROUP BY status with the paid row flagged",
+        "INNER JOIN payments on invoice_id",
+      ],
+      answer: 1,
+      why: "Only the anti-join reads the DATA against the STATUS: #28 passes the status census (paid) and fails the response census (no row) — the gap between the two censuses IS the anomaly. The raw status fold reports 21 paid and moves on.",
+      notes: [
+        { choice: 0, why: "That census counts 21 paid applications and buries #28 inside them — status self-reports, data doesn't." },
+        { choice: 2, why: "GROUP BY status shows the distribution, not the contradiction — #28 looks identical to the 20 honestly-answered paid applications." },
+        { choice: 3, why: "INNER JOIN keeps only applications WITH responses — #28 is exactly the row it deletes; the anomaly census must keep what the join drops." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "li-mcq-21",
+      prompt: "One-scan census: which arm counts withdrawn interactions (status 'cancelled') alongside everything else in the same pass?",
+      choices: [
+        "COUNT(*) FILTER (WHERE status = 'cancelled')",
+        "COUNT(status = 'cancelled')",
+        "COUNT(*) WHERE status = 'cancelled'",
+        "MAX(CASE WHEN status = 'cancelled' THEN 1 END)",
+      ],
+      answer: 0,
+      why: "FILTER (WHERE …) is the aggregate clause built for multi-branch censuses — each arm sees the same rows, one scan, no drift. 7 of 103 withdrawn, folded beside 52 landed in the same SELECT.",
+      notes: [
+        { choice: 1, why: "COUNT(status = 'cancelled') counts non-NULL booleans — the comparison is always 1 or 0, never NULL, so this returns 103." },
+        { choice: 2, why: "WHERE is a clause of the SELECT, not of COUNT — this is a syntax error, and the census ships nothing." },
+        { choice: 3, why: "MAX of the boolean arm is 1 if ANY interaction was withdrawn — presence, not count; the census reads 1 instead of 7." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "li-mcq-22",
+      prompt: "Why does WHERE total > AVG(total) fail, and what's the minimal fix?",
+      choices: [
+        "Aggregates can't run in WHERE — the average belongs in HAVING or a staged CTE/derived table",
+        "It doesn't fail — it returns the wrong rows",
+        "AVG needs an alias first",
+        "WHERE can't compare REAL values",
+      ],
+      answer: 0,
+      why: "WHERE evaluates before aggregates exist — the pipeline folds in GROUP BY, after WHERE has already filtered. The average over the population must be staged (subquery, CTE) or the comparison must live at the group grain (HAVING).",
+      notes: [
+        { choice: 1, why: "It fails to plan — 'misuse of aggregate' — the engine refuses before any rows move." },
+        { choice: 2, why: "An alias wouldn't help — the problem is STAGE order, not naming; AVG(total) is illegal in WHERE however it's spelled." },
+        { choice: 3, why: "WHERE compares REALs happily — the failure is aggregate placement, nothing about types." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "li-mcq-23",
+      prompt: "AVG(julianday(shipped_at) - julianday(created_at)) over ALL 103 orders vs over the 82 with a stamp — same 2.98. Does the WHERE come off?",
+      choices: [
+        "No — AVG skips NULL diffs either way, but the WHERE stays because the census beside it (82, not 103) is the disclosure",
+        "Yes — the average is identical so the filter is dead weight",
+        "No — without WHERE the average returns NULL",
+        "Yes — but round to 3 decimals to compensate",
+      ],
+      answer: 0,
+      why: "julianday(NULL) is NULL, the diff is NULL, and AVG ignores NULLs — so both runs fold 2.98 over the same 82 real diffs. The WHERE exists so COUNT(*) and the label say '82 stamped' — the population IS part of the metric.",
+      notes: [
+        { choice: 1, why: "The number matches; the METRIC doesn't — an unlabeled average over 'all rows' claims a population of 103 it didn't measure." },
+        { choice: 2, why: "AVG skipping NULLs is precisely why this is wrong — it never returns NULL while any row has a value." },
+        { choice: 3, why: "Rounding compensates for nothing — the issue is the stated population, not decimal places." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "li-mcq-24",
+      prompt: "Application #25: 6,148.00 requisition value, 4,000.00 in responses. Which read flags short settlements like this one?",
+      choices: [
+        "Group payments per application, then HAVING SUM(p.amount_cents) < i.amount_cents",
+        "LEFT JOIN payments WHERE p.id IS NULL",
+        "WHERE status = 'void'",
+        "HAVING COUNT(p.id) > 1",
+      ],
+      answer: 0,
+      why: "Short settlement means responses EXIST but don't cover the value — the fold needs the paid sum beside the requisition value and a HAVING comparison: 4,000.00 against 6,148.00. The anti-join can't see it (there ARE rows), and status alone can't tell short from untouched.",
+      notes: [
+        { choice: 1, why: "IS NULL catches NO-response applications — #25 has one; the anti-join sails past the partial." },
+        { choice: 2, why: "Void is a lifecycle state, not a settlement gap — #25 is open, and a void filter finds the wrong row entirely." },
+        { choice: 3, why: "COUNT > 1 finds the five SPLIT applications — #25 has a single response row; splits and shortfalls are different anomalies." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "li-mcq-25",
+      prompt: "The creator-program seed list: members whose lifetime engagement beats the average MEMBER (2,177.08 — the per-member fold of 34,833.28 over 16). Which clause carries the bar?",
+      choices: [
+        "HAVING SUM(o.total) > (SELECT AVG(spend) FROM (…per-member fold…))",
+        "WHERE total > 2177.08",
+        "ORDER BY engagement DESC LIMIT 5",
+        "HAVING COUNT(*) > 2177.08",
+      ],
+      answer: 0,
+      why: "The bar is a fold over a fold — per-member sums averaged — so it lives in a scalar subquery compared at the member grain inside HAVING. Five of 16 members clear it.",
+      notes: [
+        { choice: 1, why: "WHERE total > 2177.08 filters INTERACTIONS, not members — each interaction clears or doesn't individually; a different population entirely." },
+        { choice: 2, why: "LIMIT 5 is a cut, not a bar — it assumes exactly five qualify and ships whatever five happen to be there." },
+        { choice: 3, why: "COUNT(*) is interaction count — no member has 2,177 interactions; this HAVING keeps nothing." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "li-mcq-26",
+      prompt: "A member has two interactions stamped the same day. The 'latest interaction per member' rail uses MAX(created_at) joined back. What ships?",
+      choices: [
+        "One row per member",
+        "Both same-day rows — the rail doubles for that member",
+        "An error on the join",
+        "A random one of the two",
+      ],
+      answer: 1,
+      why: "MAX(created_at) returns the shared value; joining back on equality matches BOTH rows — the member's rail has two rungs and every downstream count doubles with it. The fix is ROW_NUMBER with a deterministic tie-break (created_at DESC, id DESC) = 1.",
+      notes: [
+        { choice: 0, why: "That's the intent, not the behavior — equality join-back keeps every row that shares the max." },
+        { choice: 2, why: "The join is perfectly legal — that's the danger; it ships, just with a doubled rail." },
+        { choice: 3, why: "Nothing random: BOTH rows return, deterministically — worse than random, because the doubling looks like real activity." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "li-mcq-27",
+      prompt: "The dashboard needs the member ROW holding the single heaviest interaction (1,088.44) — name and score together. Which shape ships it?",
+      choices: [
+        "ORDER BY total DESC LIMIT 1 (with the member joined)",
+        "SELECT MAX(total) FROM orders",
+        "SELECT total FROM orders WHERE total = MAX(total)",
+        "ORDER BY total ASC LIMIT 1",
+      ],
+      answer: 0,
+      why: "The deliverable is a ROW — member and score — so the sort-and-cut serves it: ORDER BY total DESC LIMIT 1 returns the heaviest interaction with its member attached.",
+      notes: [
+        { choice: 1, why: "MAX(total) returns 1088.44 — the value, no member; the name needs a join-back, which is the second query the analyst ends up writing anyway." },
+        { choice: 2, why: "Aggregates can't appear in WHERE — this errors before it ships anything." },
+        { choice: 3, why: "ASC serves the LIGHTEST interaction (25.47) — a correct query answering the opposite question." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "li-mcq-28",
+      prompt: "The open-status census reads 6 applications worth 19,609.00; the no-response census reads 6 worth 15,217.00. Why do two '6s' carry different dollars?",
+      choices: [
+        "They're different populations that coincide in count — #25 is open-but-answered (6,148.00, partially settled), #28 is answered-by-status-but-unanswered (1,756.00)",
+        "Rounding drift between the two queries",
+        "The open census double-counts splits",
+        "They're the same applications; one query has a bug",
+      ],
+      answer: 0,
+      why: "Status (lifecycle) and response presence (data) are independent axes: #25 is open with a partial 4,000.00 response on file, #28 is paid with no response row at all. Same count, different membership, different dollars — and both censuses are correct.",
+      notes: [
+        { choice: 1, why: "Both totals are exact cents folds — 19,609.00 and 15,217.00 reconcile to the probed figures; nothing rounded." },
+        { choice: 2, why: "The open census counts applications once each — splits live in payments, not in the invoice fold." },
+        { choice: 3, why: "Neither query has a bug — that's the lesson; two honest definitions legitimately disagree, which is why the label 'open' never substitutes for the anti-join." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "li-mcq-29",
+      prompt: "The silence board wants the longest quiet window PAST each member's last interaction. Which window carries it?",
+      choices: [
+        "LEAD(created_at) OVER (PARTITION BY customer_id ORDER BY created_at) — the forward look",
+        "LAG(created_at) OVER (PARTITION BY customer_id ORDER BY created_at)",
+        "MAX(created_at) OVER ()",
+        "ROW_NUMBER() OVER (ORDER BY created_at)",
+      ],
+      answer: 0,
+      why: "The gap AFTER the last interaction is current-minus-NEXT — LEAD's geometry; on the final row LEAD returns NULL, the honest 'still quiet'. LAG measures the silence BEHIND each interaction and can't see past the log's edge.",
+      notes: [
+        { choice: 1, why: "LAG looks backward — its gaps end at the member's last interaction, and the trailing silence stays invisible to it." },
+        { choice: 2, why: "MAX OVER () is one number for everyone — the log's last stamp, not a per-member window into their own quiet." },
+        { choice: 3, why: "ROW_NUMBER orders rows, measures nothing — no gap falls out of a row index." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "li-mcq-30",
+      prompt: "The per-member activity ladder: ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY created_at DESC, id DESC). Why is the id DESC term there?",
+      choices: [
+        "Deterministic tie-break — same-day interactions get a stable order, so the 'latest' rung is reproducible",
+        "To sort by member id too",
+        "Required syntax for PARTITION BY",
+        "It reverses the partition order",
+      ],
+      answer: 0,
+      why: "created_at can tie; without a second key the engine's order among ties is unspecified — the rail can flip between runs. id DESC pins the choice, so rank 1 is the same row every time the query runs.",
+      notes: [
+        { choice: 1, why: "The partition is already per-member — ordering by member id inside a member's partition is a no-op." },
+        { choice: 2, why: "PARTITION BY requires nothing after it — the tie-break is a correctness choice, not grammar." },
+        { choice: 3, why: "The tie-break orders ROWS within the partition — the partition's membership is fixed by PARTITION BY and untouched." },
+      ],
+      difficulty: "medium",
+    },
+  ],
+
+  cases: [
+    {
+      id: "cs-li-1",
+      tier: "medium",
+      topic: "t7",
+      universe: "growth",
+      title: "The engagement trend walk",
+      brief:
+        "Growth memo, first Monday: the feed review reads the engagement trend as a walk — month buckets on a 14-month spine (2024-01 through 2025-02), each month's engagement score carried beside the prior month's, deltas explained rather than drawn. The db mapping is declared: orders are professional interactions, orders.total is the weighted engagement score, and months come from SUBSTR(created_at, 1, 7). Probed facts: the panel opens at its **peak — 3,731.97 on 8 January interactions** — runs 3,609.64, 2,617.08, 2,468.91, 2,910.31 through May, and reaches June at 2,047.43 on just 6 touches; the log's global trough (1,193.86, July) sits just outside the H1 panel. January carries no prior month — its LAG is NULL by definition, and the walk prints that honestly.",
+      ask: "Walk the first six months of the engagement trend: month, interaction count, engagement score (2 decimals) and prior-month engagement — chronological, LAG carrying the month before.",
+      template:
+        "WITH monthly AS (\n  SELECT SUBSTR(created_at, 1, 7) AS month,\n         COUNT(*) AS touches,\n         ROUND(SUM({2}), 2) AS engagement\n  FROM orders\n  GROUP BY month\n)\nSELECT month,\n       touches,\n       engagement,\n       {1}(engagement) OVER (ORDER BY month) AS prev_engagement\nFROM monthly\nORDER BY month\nLIMIT {3};",
+      slots: [
+        {
+          answer: "LAG",
+          kind: "keyword",
+          label: "the prior-month lookback",
+          why: "LAG(engagement) reads the previous row of the month-ordered partition — January's carry is NULL because no month precedes it, and that NULL is the definition. LEAD points forward and hands every month its SUCCESSOR; FIRST_VALUE anchors every row to January and flattens the walk into a constant.",
+        },
+        {
+          answer: "total",
+          kind: "keyword",
+          label: "the engagement fold",
+          why: "Engagement is SUM(total): each interaction's weighted score adds up per month. SUM(quantity) references no column on orders and errors; SUM(*) isn't a fold. COUNT would count interactions and call it engagement — a different metric wearing the same column name.",
+        },
+        {
+          answer: "6",
+          kind: "number",
+          label: "the H1 panel cut",
+          why: "The memo fixes the walk at the first six months — and the cut is self-verifying: June's interaction count IS 6, so the LIMIT constant appears as a result cell. A cut of 5 stops at May and misses June's trough-forming 6-touch month; a cut of 7 walks into July's 1,193.86 floor.",
+        },
+      ],
+      distractors: ["LEAD", "FIRST_VALUE", "quantity", "*", "5", "7"],
+      walkthrough:
+        "Stage the spine, walk it, cut it — in that order, and the order is the lesson. The CTE folds the 103 interactions into 14 month buckets: SUBSTR(created_at, 1, 7) prints the calendar key, COUNT(*) is touches, ROUND(SUM(total), 2) is the engagement score. The outer walk stamps prev_engagement with LAG over the month-ordered rows — January carries NULL (no prior month; coalescing it to zero would manufacture a record growth month out of the calendar's edge), then 3,731.97, 3,609.64, 2,617.08, 2,468.91 beside February through June's 3,609.64, 2,617.08, 2,468.91, 2,910.31, 2,047.43. LIMIT 6 keeps the H1 panel, and June's own touch count — 6 — is the cut made visible. The distractors each break a different joint: LEAD turns every carry into next month's value and the walk reads backwards; FIRST_VALUE pins January's 3,731.97 on every row — a walk that never moves; quantity isn't a column on orders and errors; SUM(*) isn't a fold; cuts of 5 or 7 trim or extend the panel and change the story the review reads. Stage, walk, cut — and never coalesce the calendar's edge.",
+    },
+    {
+      id: "cs-li-2",
+      tier: "hard",
+      topic: "j5",
+      universe: "funnel",
+      title: "Applications with no response",
+      brief:
+        "Talent-ops memo, 9am: the funnel says an advanced application has been responded to — the data disagrees in exactly six places. Applications LEFT JOIN recruiter responses: six applications carry no response row at all, worth **$15,217 of requisition value** (five {amber:awaiting}, and one — #28 — reading {emerald:advanced} with no response on file, the reconciliations team's verified anomaly; a seventh, #11, is withdrawn but answered at $925.00). The db mapping is declared: invoices are applications, payments are recruiter responses (five applications carry split responses, so the join pre-aggregates or it fans out), amount_cents is INTEGER cents divided by 100.0. The census must reconcile: 6 unanswered + 22 answered = 28, or the net has a hole.",
+      ask: "Return the unanswered applications: application id, requisition number, status and requisition value in dollars (2 decimals) — biggest value first, all six.",
+      template:
+        "SELECT i.id AS application_id,\n       i.number AS requisition,\n       i.status,\n       ROUND(i.amount_cents / 100.0, 2) AS requisition_value\nFROM invoices i\nLEFT JOIN payments p ON p.invoice_id = {1}\nWHERE p.id IS {2}\nORDER BY requisition_value {3}\nLIMIT {4};",
+      slots: [
+        {
+          answer: "i.id",
+          kind: "keyword",
+          label: "the application join key",
+          why: "The response joins on p.invoice_id = i.id — application identity. Joining on p.invoice_id = p.invoice_id matches every response to every application (a 756-row cross product whose NULL-payload side is empty); joining on i.customer_id matches responses to the wrong member entirely.",
+        },
+        {
+          answer: "NULL",
+          kind: "keyword",
+          label: "the unanswered detector",
+          why: "IS NULL keeps exactly the applications the LEFT JOIN failed to match — the six with no response row. IS NOT NULL inverts the census to the answered 22; IS 0 matches nothing and ships an empty report that looks like good news.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-exposure-first direction",
+          why: "Follow-up staffing starts where the exposure is: 4,937.00 on top, 873.00 at the bottom. ASC would open the review with the smallest balance — a correct query answering the opposite question.",
+        },
+        {
+          answer: "6",
+          kind: "number",
+          label: "the census cut",
+          noVerify: true,
+          why: "The memo asks for all six unanswered applications, so the LIMIT is the census size — a deliverable constant that never appears in the projected columns. The reconciliation lives elsewhere: 6 unanswered + 22 answered must equal 28 applications, and the walkthrough proves it.",
+        },
+      ],
+      distractors: ["p.invoice_id", "i.customer_id", "NOT NULL", "ASC", "3"],
+      walkthrough:
+        "An anti-join with the grain guarded. The derived risk is fan-out — five applications carry split responses — so the LEFT JOIN runs application-to-response on p.invoice_id = i.id, and IS NULL detects the unmatched: exactly six applications with no response row, 24 / 26 / 27 / 21 / 18 plus #28 — the one reading advanced with no response on file, the anomaly reconciliations already has ticketed. The cents policy is not decoration: amount_cents / 100.0 with ROUND at the print prices the pipeline 4,937.00, 3,562.00, 2,794.00, 1,756.00, 1,295.00, 873.00 — six rows that sum to the probed $15,217, reconciling 6 unanswered against 22 answered for the full 28. DESC orders by exposure because staffing follows money. The distractors each break a different joint: p.invoice_id = p.invoice_id matches everything to everything — every application finds a response and the census ships empty; i.customer_id joins the wrong graph and returns a plausible-looking wrong six; IS NOT NULL serves the answered 22; ASC buries the biggest exposure; LIMIT 3 truncates the census and the reconciliation quietly stops closing. Six rows, one anomaly named, one total proven — that's the 9am census.",
+    },
+    {
+      id: "cs-li-3",
+      tier: "medium",
+      topic: "t5",
+      universe: "growth",
+      title: "The power-networker leaderboard",
+      brief:
+        "Growth memo, program review: the creator-program seed list is the activity leaderboard, and the network's shape makes ties the whole story. Probed facts: Alice Chen leads at **24 interactions and 7,262.35 engagement**, Emma Wilson follows at 17, and after the 5-interaction rung the ladder flattens — FOUR members tied at 4 interactions each (Pedro Alvarez 1,686.17, Keiko Sato 1,098.60, Isabella Rossi 985.65, Noah Meyer 737.68), then Farid Nasser and Hiro Tanaka tied again at 3. The db mapping is declared: orders are professional interactions, orders.total is the weighted engagement score, customers are members. The board trusts any repeat habit: members with at least 3 interactions qualify — 11 of 16 — and the ranking must state its tie policy, because the gap the four-way tie creates is ON the board.",
+      ask: "Return the qualifying members: name, interaction count, lifetime engagement (2 decimals) and activity rank — RANK over interactions descending, ties broken by engagement descending, all eleven.",
+      template:
+        "SELECT c.name AS member,\n       COUNT(*) AS interactions,\n       ROUND(SUM(o.total), 2) AS engagement,\n       {1}() OVER (ORDER BY COUNT(*) DESC) AS activity_rank\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nGROUP BY o.customer_id\nHAVING COUNT(*) >= {2}\nORDER BY activity_rank, engagement {3}\nLIMIT {4};",
+      slots: [
+        {
+          answer: "RANK",
+          kind: "keyword",
+          label: "the tie-aware rank",
+          why: "RANK gives the four-way tie 6, 6, 6, 6, then skips three positions: the 3-interaction pair lands at rank 10, the honest count of who sits strictly ahead. DENSE_RANK hands them 7 and erases the gap; ROW_NUMBER invents 6, 7, 8, 9 — four members wearing different ranks for identical output.",
+        },
+        {
+          answer: "3",
+          kind: "number",
+          label: "the repeat-habit floor",
+          why: "The memo fixes the qualifying bar at 3 interactions: 11 of 16 members clear it, and the bar's own value appears as a result cell — Farid Nasser and Hiro Tanaka sit exactly at 3, the pair that exposes the post-tie gap. A floor of 4 trims the board to 9 and hides the gap the tie creates; a floor of 9 keeps only the four marathoners.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the tie-break direction",
+          why: "Within every tied rank, engagement orders heaviest-first: the 4-block reads Pedro 1,686.17, Keiko 1,098.60, Isabella 985.65, Noah 737.68, and the 3-block reads Farid 1,458.97 before Hiro 829.09. ASC would call first what the business would call last.",
+        },
+        {
+          answer: "11",
+          kind: "number",
+          label: "the board cut",
+          noVerify: true,
+          why: "The memo asks for all eleven qualifying members, so the LIMIT is the census size — a deliverable constant that never appears in the projected columns. The reconciliation lives elsewhere: 11 qualifying plus 5 below the bar equals 16 members.",
+        },
+      ],
+      distractors: ["DENSE_RANK", "ROW_NUMBER", "ASC", "4", "9"],
+      walkthrough:
+        "Rank the habit, and let the tie's gap show. The shape folds 103 interactions to one row per member (GROUP BY customer_id), the HAVING floor keeps the 11 members at 3+ interactions, and the window stamps activity_rank with RANK over the interaction count descending. The read: Alice Chen 24 / 7,262.35 at rank 1, Emma Wilson 17 / 6,640.56, Grace Kim 14 / 4,574.23, Maya Patel 13 / 3,644.56, Chloe Dubois 5 / 2,667.93 — then the block the memo shipped for: four members at 4 interactions sharing rank 6 (1,686.17, 1,098.60, 985.65, 737.68 inside the tie) — and the proof the floor at 3 buys: Farid Nasser 1,458.97 and Hiro Tanaka 829.09 at rank 10, ten because RANK skips the three occupied positions. The distractors each break a different joint: DENSE_RANK relabels the pair rank 7 — the gap the tie creates vanishes and the board undercounts the field above them; ROW_NUMBER breaks the tie arbitrarily (6, 7, 8, 9) and the seed list becomes engine-dependent; a floor of 4 trims the board to 9 rows and the rank-10 pair never appears — the case for RANK goes invisible; a floor of 9 keeps the four marathoners only; ASC inside the ties reads 737.68 before 1,686.17 — the seed list inverted. RANK, stated tie-break, honest gap: that's the leaderboard.",
+    },
+    {
+      id: "cs-li-4",
+      tier: "easy",
+      topic: "s6",
+      universe: "growth",
+      title: "The interaction-weight tier census",
+      brief:
+        "Product memo, tier review: the feed team reads interaction quality in three weights — high-signal, core, ambient — and the census must reconcile: counts sum to 103, shares to 100. The db mapping is declared: orders are professional interactions, orders.total is the weighted engagement score (average 338.19, heaviest single interaction 1,088.44). The probed cut: the high-signal bar sits at 500 and the core bar at 200 — and the weights tell the concentration story the desk actually ships: 25 high-signal interactions carry 17,379.43 of engagement, nearly half the network's 34,833.28 on a quarter of the log. The ELSE arm is the exhaust stage: it must catch ambient, the everyday weight, or two tiers silently merge.",
+      ask: "Return the three interaction tiers with counts and share of all interactions (1 decimal), biggest tier first.",
+      template:
+        "SELECT CASE WHEN o.total >= {1} THEN 'high-signal'\n         WHEN o.total >= {2} THEN '{3}'\n         ELSE 'ambient' END AS tier,\n       COUNT(*) AS interactions,\n       ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 1) AS share_pct\nFROM orders o\nGROUP BY tier\nORDER BY interactions {4};",
+      slots: [
+        {
+          answer: "500",
+          kind: "number",
+          label: "the high-signal bar",
+          noVerify: true,
+          why: "The memo fixes high-signal at 500+: 25 interactions clear it and carry 17,379.43 — half the engagement on a quarter of the log. A bar of 600 thins the tier to 20 and the concentration story reads weaker than it is; the bar is a deliverable constant, stated in the memo, not derived.",
+        },
+        {
+          answer: "200",
+          kind: "number",
+          label: "the core bar",
+          noVerify: true,
+          why: "Core is 200-499.99: 40 interactions, 38.8% — the biggest tier by count. At 250 the tier shrinks to 34 and ambient swells to 44; at 150 it bloats to 48 and the 'core' label covers budget interactions the desk doesn't mean.",
+        },
+        {
+          answer: "core",
+          kind: "keyword",
+          label: "the middle tier's label",
+          why: "The label IS the group key: rename the middle arm 'ambient' and it collides with the ELSE arm — 78 interactions fold into one row, the census ships two tiers, and the shares still read 100, which is what makes the merge dangerous.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-tier-first direction",
+          why: "The board opens on core (40, 38.8%), then ambient (38, 36.9%), then high-signal (25, 24.3%). ASC opens on the smallest tier — a concentration board that leads with its footnote.",
+        },
+      ],
+      distractors: ["600", "250", "ambient", "ASC", "150"],
+      walkthrough:
+        "One fold, three branches, one denominator. The CASE bands every interaction by its weighted score — 500+ high-signal, 200+ core, everything else ambient; GROUP BY tier folds the 103 interactions into three rows; SUM(COUNT(*)) OVER () carries the grand total into every row so each share is a share of the whole log. DESC orders the read: core 40 (38.8), ambient 38 (36.9), high-signal 25 (24.3) — and the tier engagement sums tell the concentration story: 17,379.43 in high-signal against 4,147.01 in ambient. The shares reconcile to 100 because the branches partition the population. The distractors each commit a different census crime: 600 in the high-signal arm thins the tier to 20 and pushes 5 interactions down to core; 250 shrinks core to 34 and swells ambient to 44 — the mix story shifts without a single row changing; 'ambient' as the middle label collides with the ELSE arm and folds 78 interactions into one row — a two-tier census whose shares still read 100; 150 bloats core to 48; ASC leads the board with the 25-row footnote. The label is the group key — relabeling is refolding.",
+    },
+    {
+      id: "cs-li-5",
+      tier: "hard",
+      topic: "q2",
+      universe: "growth",
+      title: "The out-engage-the-average screen",
+      brief:
+        "Growth memo, creator-program screen: the seed list is members whose lifetime engagement beats the average MEMBER — not the average interaction, a distinction the program's budget lives on. The bar is computed inside the query and printed beside every row: 34,833.28 of network engagement folded to 16 members first, then averaged — **2,177.08 per member**. Probed facts: Alice Chen leads at **7,262.35 over 24 interactions**; the heaviest single interaction is 1,088.44 and the per-interaction average is 338.19 — a different grain the screen deliberately does not use. The deliverable is the qualifying list, biggest engagement first, with the bar riding in its own column so the review sees the line every row was judged against.",
+      ask: "Return members whose lifetime engagement clears the per-member average: name, engagement (2 decimals), interaction count, and the average-member bar beside each row — biggest engagement first.",
+      template:
+        "SELECT c.name AS member,\n       ROUND(SUM(o.total), 2) AS engagement,\n       COUNT(*) AS interactions,\n       ROUND((SELECT AVG(spend) FROM (SELECT SUM(total) AS spend FROM orders GROUP BY customer_id)), 2) AS member_avg\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nGROUP BY o.customer_id\nHAVING SUM(o.total) {1} {2}\nORDER BY engagement {3};",
+      slots: [
+        {
+          answer: ">",
+          kind: "keyword",
+          label: "the clears-the-bar operator",
+          why: "The screen is strictly ABOVE the average: SUM(o.total) > 2177.08. '<' serves the eleven members below the bar — the quiet majority wearing a seed list's name — and '=' keeps nobody, because no member sits exactly on the average.",
+        },
+        {
+          answer: "2177.08",
+          kind: "number",
+          label: "the per-member bar",
+          why: "The bar is the average of per-member lifetime engagement — 34,833.28 over 16 members — and the query PRINTS it in member_avg on every row, so the screen shows the line it draws. A bar of 1,500 admits 6 members (1,686.17 joins); a bar of 4,000 keeps 3 — the bar's reach is visible in the row count, not silent.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-engagement-first direction",
+          why: "The seed list opens where the program starts: Alice Chen 7,262.35. ASC opens on Chloe Dubois 2,667.93 — the weakest qualifier leading the review.",
+        },
+      ],
+      distractors: ["<", "=", "ASC", "0"],
+      walkthrough:
+        "A scalar subquery as a bar, and the bar printed as a receipt. The inner folds run once: per-member lifetime engagement (16 rows), averaged to 2,177.08 and stamped into member_avg on every output row — the screen always shows the line it draws. The outer query folds 103 interactions per member, HAVING SUM(o.total) > 2,177.08 keeps the five qualifiers — Alice Chen 7,262.35 / 24 interactions, Emma Wilson 6,640.56 / 17, Grace Kim 4,574.23 / 14, Maya Patel 3,644.56 / 13, Chloe Dubois 2,667.93 / 5 — five of sixteen members, which is the concentration read the program funds against. DESC orders the review heaviest-first. The distractors each break a different joint: '<' inverts the screen into the quiet eleven; '=' keeps zero rows — no member sits exactly on the average, and an empty seed list still looks like a valid run; ASC opens the review on the weakest qualifier; a bar of 0 admits all sixteen — the screen stops screening. Five rows, one printed bar, one grain sentence: the average MEMBER, not the average interaction.",
+    },
+    {
+      id: "cs-li-6",
+      tier: "medium",
+      topic: "x2",
+      universe: "month-close",
+      title: "The one-scan morning census",
+      brief:
+        "Month-close memo, day 2: the close checklist wants the morning pulse in ONE scan — fate counters, the stamp census, the cycle average — zero sequential passes, because the close runs this fold against every board the desk owns. The db mapping is declared: orders are professional interactions, shipped_at is the completion stamp. Probed facts: 103 interactions logged; 52 landed and 7 withdrawn — the **50.5%** headline share; **82 carry a completion stamp and average a 2.98-day cycle**; the close flags slow cycles past 3.5 days. One row, seven numbers, one pass — and the branch counts must reconcile (52 + 30 + 14 + 7 = 103; 82 + 21 = 103) or the close doesn't sign.",
+      ask: "Return one census row: total interactions, landed, withdrawn, completion-stamped, average cycle days (2 decimals), landed share (1 decimal) and cycles slower than 3.5 days.",
+      template:
+        "SELECT COUNT(*) AS interactions,\n       COUNT(*) FILTER (WHERE g.status = 'delivered') AS landed,\n       COUNT(*) FILTER (WHERE g.status = '{1}') AS withdrawn,\n       COUNT(*) FILTER (WHERE g.stamp IS NOT NULL) AS stamped,\n       ROUND({2}(julianday(g.stamp) - julianday(g.created)) FILTER (WHERE g.stamp IS NOT NULL), 2) AS avg_days,\n       ROUND(100.0 * COUNT(*) FILTER (WHERE g.status = 'delivered') / COUNT(*), {3}) AS landed_share,\n       COUNT(*) FILTER (WHERE julianday(g.stamp) - julianday(g.created) > {4}) AS slow_cycle\nFROM (SELECT o.status AS status, o.created_at AS created, o.{5} AS stamp FROM orders o) g;",
+      slots: [
+        {
+          answer: "cancelled",
+          kind: "keyword",
+          label: "the withdrawn fate",
+          why: "The withdrawn arm counts the 7 cancelled interactions. Point it at 'pending' and the arm counts the 14 awaiting instead — the trust line reads double while the fate census reads 52/30/14/0, a reconciliation that visibly breaks.",
+        },
+        {
+          answer: "AVG",
+          kind: "keyword",
+          label: "the cycle fold",
+          why: "The close wants the AVERAGE stamp-to-completion cycle: 2.98 days over the 82 stamped. MAX returns 4.0 — the worst day wearing an average's name; SUM returns 244 — cumulative days, not a cycle.",
+        },
+        {
+          answer: "1",
+          kind: "number",
+          label: "the share precision",
+          noVerify: true,
+          why: "One decimal matches the facts-file shares — 50.5. Two decimals prints 50.49; zero rounds the headline to 50 and the trust line to 7-percent integers the dashboard spec doesn't carry.",
+        },
+        {
+          answer: "3.5",
+          kind: "number",
+          label: "the slow-cycle bar",
+          noVerify: true,
+          why: "The memo fixes the slow lane at 3.5 days: 25 stamped interactions clear it and get flagged for the close. A bar of 0 flags all 82 — the whole pipeline 'slow'; 2.5 flags 55, more than double the true queue.",
+        },
+        {
+          answer: "shipped_at",
+          kind: "keyword",
+          label: "the completion stamp column",
+          why: "The stamp is shipped_at — non-NULL on exactly the 82 interactions that entered the pipeline. created_at is never NULL: stamped would read 103 and the cycle math would subtract a date from itself, 0.0 days — a census declaring instant completion.",
+        },
+      ],
+      distractors: ["pending", "created_at", "status", "MAX", "0", "2.5"],
+      walkthrough:
+        "One scan, seven counters, one receipt. The derived table stages status, created_at and the stamp once; COUNT(*) counts the 103 interactions; the FILTER branches each see the same rows — 52 delivered, 7 cancelled, 82 stamped (52 + 30 + 14 + 7 = 103 by fate, 82 + 21 = 103 by stamp, both reconciliations close); the AVG over the same stamp predicate folds 2.98 days, skipping the 21 NULL diffs — which is why the FILTER clause repeats on both the count and the average: same population, stated twice on purpose; the landed share prints 50.5 at the facts-file precision; the slow lane counts 25 cycles past 3.5 days. The distractors each break a different joint: 'pending' in the withdrawn arm counts the 14 awaiting — the trust line doubles and the fate census reads 52/30/14/0, a reconciliation that visibly breaks; created_at as the stamp is never NULL — stamped reads 103 and the cycle math subtracts a date from itself, 0.0 days, instant completion; status feeds TEXT into julianday and the census collapses to zeros and a NULL average; MAX reports 4.0, the worst day; 0 flags all 82 as slow; 2.5 flags 55. The close signs because every branch reconciles against 103.",
+    },
+  ],
+
+  problems: [
+    { slug: "employees-earning-more-than-their-managers", why: "LinkedIn's tagged pay-band self-join: each member compared to their manager across one table with two aliases — the reporting-graph drill in its canonical form." },
+    { slug: "number-of-calls-between-two-persons", why: "LinkedIn's tagged pair census: calls between members folded per pair with orientation handled — the graph-edge grammar the connection metrics are built on." },
+    { slug: "sessionize-events", why: "LinkedIn's tagged sessionizer: gap-thresholded grouping of an event log into work spells — the intensity metric retention reports on, LAG to island key." },
+    { slug: "all-people-report-to-the-given-manager", why: "LinkedIn's tagged hierarchy walk: WITH RECURSIVE down the reporting line — everyone below a manager in one query, no fixed join depth." },
+    { slug: "linkedin-power-creators", why: "The slug-bearing creator-tier read: members gated on follower and output thresholds via self-join — the Power Creator census, where the boundary member is the whole test." },
+    { slug: "second-most-recent-activity", why: "The famous argmax with its one-activity edge case: second-most-recent interaction per member — the feed-rail grammar every follow-up probes." },
+    { slug: "the-most-recent-three-orders", why: "Per-member latest-3 via partitioned ROW_NUMBER — the 'recent activity' rail with a depth cut and a deterministic tie-break." },
+    { slug: "friend-requests-i-overall-acceptance-rate", why: "The acceptance-rate read: accepted over sent with the denominator stated — invitation-funnel math in its cleanest graded form." },
+    { slug: "confirmation-rate", why: "LEFT JOIN + rounded share where unmatched members coalesce to zero — the confirmation metric with its NULL policy baked into the shape." },
+    { slug: "customers-who-never-order", why: "The anti-join in textbook form: accounts with no activity — the unanswered-pipeline census's shape, taught where the count is honest about being zero." },
+    { slug: "dormant-reactivation", why: "NOT EXISTS over a reconnection window — the dormant-member variant of the silence read, pointed at who's worth an InMail." },
+    { slug: "monthly-transactions-i", why: "Month-bucket totals with a status-conditional count alongside — the engagement calendar the trend walk opens with, '%Y-%m' and all." },
+    { slug: "the-latest-login-in-2020", why: "Last-touch recency folded per member with a year gate — the 'last active' read, deduped to one row per person." },
+    { slug: "biggest-window-between-events", why: "LEAD's finest hour: the longest quiet window per member — the forward-looking twin of the LAG gap read, pointing past the last interaction." },
+    { slug: "percentage-of-users-attended-a-contest", why: "Participation share of a cohort that showed up at least once — the activation rate where the denominator is every eligible member, not the eager ones." },
+    { slug: "rank-scores", why: "Pure RANK semantics on ties — the 1,1,3 pattern said out loud before any leaderboard, tier list or 'top voices' rail ships." },
+    { slug: "symmetric-pairs", why: "EXISTS with the mirror predicate: connections that point both ways — the mutual-connection read, where orientation policy decides whether a pair exists at all." },
+    { slug: "friends-with-no-mutual-friends", why: "The mutual anti-join: relationships whose two ends share nothing — the graph-hygiene read that finds the edges worth pruning or recommending around." },
+    { slug: "first-and-last-call-on-the-same-day", why: "MIN and MAX folded per pair per day — the call census at day grain, the boundary read on when the workday's first and last touch happened." },
+    { slug: "users-with-two-purchases-within-seven-days", why: "Two touches inside a window — the double-engagement detector the re-engagement list starts from, with the 7-day boundary drawn once and stated." },
+    { slug: "tree-node", why: "Root, leaf or inner node per row — the reporting tree classified in one CASE: org heads, ICs, and the managers in between." },
+    { slug: "consecutive-numbers", why: "LAG spotting consecutive runs — the streak grammar behind 'active N days in a row', the retention habit read LinkedIn's boards love." },
+    { slug: "rising-temperature", why: "Date-join to the previous day: today against yesterday — the day-over-day delta read that seeds every 'are we trending up' dashboard." },
+    { slug: "second-highest-salary", why: "The runner-up read with its empty-set edge: second place when first is tied — the leaderboard boundary question in its purest form." },
+    { slug: "department-highest-salary", why: "Top member per cohort via subquery-plus-join — the per-cohort champion fold where the tie and the grain both have to be stated." },
+    { slug: "game-play-analysis-iv", why: "Share of members whose FIRST interaction happened same-day — the activation rate, denominator all signups, numerator the ones the funnel kept." },
+    { slug: "find-the-team-size", why: "COUNT OVER a partition carried back onto every row — team size beside each teammate, the window-as-lookup move behind cohort annotations." },
+    { slug: "find-the-missing-ids", why: "WITH RECURSIVE over the id spine — the gap detector that proves requisition numbering has no holes, recursion as audit rather than walk." },
+    { slug: "find-bursty-behavior", why: "Peak against average per member — the burstiness read that separates the power networker's cadence from a single viral day." },
+    { slug: "dau-wau-stickiness", why: "Daily actives over weekly actives — the stickiness ratio whose two populations must come from the same window or the ratio invents engagement." },
+    { slug: "keep-latest-dedupe", why: "ROW_NUMBER over ingest order, rank 1 kept — the dedupe pass the interaction log gets before any board folds it, ties broken deterministically." },
+    { slug: "second-degree-follower", why: "The second-degree read: followers of followers — reach beyond the first hop, the query shape behind every 'people you may know' candidate list." },
+  ],
+};

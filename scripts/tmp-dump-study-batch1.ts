@@ -1,21 +1,23 @@
-// Dump dive mechanics (title, difficulty, approach, statement) for the batch-1 sections
+// Dump dive mechanics (title, difficulty, approach, statement) for the batch-5 sections
 // so study-guide path whys are grounded in real dive content.
 import { SQL50_SECTIONS } from '../src/lib/leetcode/sections';
 import { LC_SQL_CONTENT, lcSqlDive } from '../src/lib/leetcode/content/content';
 
 const BATCH = new Set([
-  'premium-warmups',
-  'premium-community',
-  'premium-content',
-  'premium-time',
-  'premium-money',
-  'premium-finales',
-  'premium2-games',
-  'premium2-rankings',
-  'premium2-market',
-  'premium2-orders',
-  'premium2-finals',
-  'premium2-users',
+  'analytics-funnels',
+  'premium5-trends',
+  'premium5-system',
+  'premium5-league',
+  'premium5-graph',
+  'premium5-market',
+  'premium5-finales',
+  'free-classics',
+  'free-windows',
+  'free-formats',
+  'free-org',
+  'free-pairs',
+  'final-habits',
+  'final-ops',
 ]);
 
 const diveBySlug = new Map<string, any>();
