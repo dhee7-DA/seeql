@@ -1,0 +1,13 @@
+import { Database } from "bun:sqlite";
+const db = new Database("/home/z/my-project/db/custom.db", { readonly: true });
+const q = (s: string) => { try { return db.query(s).all(); } catch (e) { return "ERR: " + (e as Error).message; } };
+const show = (l: string, s: string) => { console.log("### " + l); console.log(JSON.stringify(q(s))); console.log(); };
+show("2024-07 basket", `SELECT STRFTIME('%Y-%m',created_at) AS month, COUNT(*) AS checkouts, ROUND(AVG(total),2) AS avg_basket, ROUND(SUM(total),2) AS revenue FROM orders GROUP BY month HAVING month='2024-07'`);
+show("months below basket mean (count)", `SELECT COUNT(*) AS below FROM (SELECT STRFTIME('%Y-%m',created_at) AS month, AVG(total) AS b FROM orders GROUP BY month) WHERE b <= (SELECT AVG(total) FROM orders)`);
+show("shipped-variant rows (temu-4 distractor prose)", `SELECT c.name, c.region, COUNT(o.id) AS in_transit FROM customers c LEFT JOIN orders o ON o.customer_id=c.id AND o.status='shipped' GROUP BY c.name HAVING COUNT(o.id) <= 1 ORDER BY in_transit ASC LIMIT 8`);
+show("void settlement days (gett-4 prose)", `SELECT i.id, JULIANDAY(MIN(p.paid_on))-JULIANDAY(i.issued_on) AS days FROM invoices i JOIN payments p ON p.invoice_id=i.id WHERE i.status='void' GROUP BY i.id`);
+show("paid split invoices first-vs-last gap (gett-4 prose)", `SELECT i.id, ROUND(JULIANDAY(MIN(p.paid_on))-JULIANDAY(i.issued_on),1) AS first_leg, ROUND(JULIANDAY(MAX(p.paid_on))-JULIANDAY(i.issued_on),1) AS last_leg FROM invoices i JOIN payments p ON p.invoice_id=i.id WHERE i.status='paid' GROUP BY i.id HAVING COUNT(*)>1 ORDER BY i.id LIMIT 6`);
+show("slowest 84 detail (gett-4 prose)", `SELECT i.id, i.number, JULIANDAY(MIN(p.paid_on))-JULIANDAY(i.issued_on) AS days FROM invoices i JOIN payments p ON p.invoice_id=i.id WHERE i.status='paid' GROUP BY i.id ORDER BY days DESC LIMIT 2`);
+show("temu 2024-07 mix", `SELECT status, COUNT(*) FROM orders WHERE STRFTIME('%Y-%m',created_at)='2024-07' GROUP BY status`);
+show("LATAM region rows", `SELECT c.region, COUNT(*) AS carts, ROUND(SUM(o.total),2) AS revenue FROM orders o JOIN customers c ON c.id=o.customer_id GROUP BY c.region HAVING c.region='LATAM'`);
+db.close();

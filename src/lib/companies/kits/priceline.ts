@@ -24,6 +24,8 @@ export const pricelineKit: CompanyKit = {
     "The data org is packaging-shaped. The attach team lives on the component fold: the widest family rides on **54 of 103** bookings while the richest family books **11744.01** of value on 46 — widest attach and fattest value are different families, and every deck says so. The trip-state funnel reads 52 {emerald:completed} travels, 30 in-trip, 14 {amber:pending} in the booking window and 7 {rose:cancelled} — 6.8% of demand that never traveled. Finance owns the settlement stack, where partner money moves as integer cents across 28 invoices and 27 payments.",
     "The SQL screens are live-db and attach-ruthless. You will be asked for a bundle read — units, value and distinct bookings per family — and the trap is grain: 251 components fold through the join until COUNT(*) counts components and calls them bookings. You will be asked for a bundle-depth ladder — single-family versus two-family versus three-plus — and the trap is the fold that defines depth. Anti-join drills return **zero rows** here (every unit and every booker has transacted), and the component price ceiling sits at **199.99**, so premium-band filters come back empty by construction.",
     "Prep the way the screens run: conditional folds and `COUNT(DISTINCT …)` until a bundle census is one query with the denominator printed; joins plus aggregates until per-booking and per-family reads survive the fan-out; window ranks for the deal boards; julianday for the **2.98-day** average booking-to-travel lead; month buckets via `SUBSTR(created_at, 1, 7)` across 2024-01 to 2025-02. Then rehearse the two sentences the interviewer grades: *a component is a line, a booking is a PNR — and depth, attach and value are three different folds over the same rows*.",
+    "The money org runs on the settlement stack, and its discipline is integer-cents honesty: 28 partner invoices meet 27 payments, the card rail carries 16 payments worth **37364** against 11 wire transfers worth 32248, and every bill sits on flat 30-day terms — paid books average **28.4 days** issue-to-payment with a 13-to-84 spread. The reconciliation queue is small but sharp: one {rose:void}-but-paid bill (925), one paid bill with no payment rows (1756), five split-settlement bills, and one refundable holding at 4000-paid of a 6148 charge, while 6 open books carry **15217** of unpaid exposure. Supply economics are concentrated — the top partner holds **32%** of component revenue and the top two hold 58.7% — so a single feed outage at one partner rewrites the attach board.",
+    "Prep in four passes that mirror the screens. Pass one is grain: fold 251 components to 103 bookings with `COUNT(DISTINCT …)` until attach (54 of 103 for the widest family), depth (40/34/29) and value-per-basket are three queries you never blur. Pass two is the window tier: RANK ties on the deal boards, LAG/LEAD re-booking cadence, running totals with explicit frames. Pass three is the settlement tier: LEFT JOIN coverage classification, `COALESCE` on the unpaid arm, cents divided by 100.0 exactly once at the edge. Pass four is mock discipline — *state the denominator, print the base, name the fold; the interviewer grades the sentence, and the query just has to agree with it*.",
   ],
 
   dayInLife: [
@@ -31,6 +33,7 @@ export const pricelineKit: CompanyKit = {
     "**11:15 —** Deep work: the bundle-depth ladder. Fold components to booking grain — `COUNT(DISTINCT family)` per booking — and the buckets land at 40 multi-family bookings worth 20537.11, 34 two-family worth 10928.62, 29 single-family worth 3367.55. The instinct being trained: depth is a definition, so the fold is written down before the buckets are counted.",
     "**14:30 —** Partner review: the settlement stack in cents — card 16 payments worth 37364 against wire 11 worth 32248 — with the {rose:void}-but-paid batch (925) flagged before the tie-out, and one refundable settlement sitting 4000-paid of a 6148 bill. Revenue management wants the cancellation haircut on the forecast slide: 6.8% of bookings never travel.",
     "**17:45 —** EOD writeup: the attach note ships with definitions attached — attach as distinct bookings per family, depth as distinct families per booking, lead time as julianday on completed travel only (**2.98** days) — and the data-quality queue takes the double-logged partner feed rows for a `ROW_NUMBER` dedupe. The note goes out; the denominators ride along.",
+    "**21:15 —** Week-close tie-out from home: the ledger trial balance prints **181080** debits against 181080 credits — delta 0 — with cash netting 44196 and receivables holding 16440 against next month's Express Deal drop. The dedupe queue is clear, the {emerald:attach} note is staged for the morning send, and the 2025-02 pace tile (7 bookings, 2390.53) is already in the deck. *Last one out audits the denominators.*",
   ],
 
   metrics: [
@@ -42,6 +45,10 @@ export const pricelineKit: CompanyKit = {
     { name: "Booking-to-travel lead", what: "julianday(travel) minus julianday(booking) on the 82 completed-or-underway bookings — 2.98 days average, range 2 to 4. The window a cross-sell nudge actually has." },
     { name: "Booker concentration", what: "Share of booking value from bookers above a lifetime threshold — 63.5% at the 3000 line. Even a deals brand has whales, and packaging knows their bundles." },
     { name: "Average booking value", what: "Mean booking total — 338.19 network, 383.48 in the richest market, 313.66 in the busiest one. Bundle mix shifts show up here before they reach the margin calls." },
+    { name: "Unpaid settlement exposure", what: "Invoices carrying zero payment rows over all invoices — 6 books worth 15217. The AR pile the ops desk works every Monday; every attach forecast quietly assumes this money lands." },
+    { name: "Settlement cycle", what: "Days from invoice issue to first payment on paid books — 28.4 average, 13 fastest, 84 slowest, against flat 30-day terms. Drift past the terms window is a partner-health signal, not a rounding note." },
+    { name: "Supply concentration", what: "Share of component revenue from the top partner — 32%, with the top two at 58.7%. One feed outage at either partner rewrites the attach board before packaging refreshes it." },
+    { name: "Payment rail mix", what: "Payments by method — card 16 worth 37364 against wire 11 worth 32248. Rail drift shows up here before finance asks why settlement timing moved." },
   ],
 
   topics: [
@@ -95,6 +102,31 @@ export const pricelineKit: CompanyKit = {
       why: "Packaging targets whales: spend-tier ladders over lifetime value, spend histograms, RFM tiles. The 63.5% concentration line is computed exactly this way — folded per booker, then bucketed.",
       slugs: ["customer-purchasing-behavior-analysis", "spend-histogram", "rfm-segmentation"],
     },
+    {
+      name: "Set-op stack reads",
+      why: "Completed and cancelled pace stacked in one pack, paid and unpaid settlement arms in one census — UNION ALL appends without a dedupe pass and EXCEPT is the diff that isolates the unpaid arm. Stacks fail loudly here, which is the point.",
+      slugs: ["monthly-transactions-ii", "count-salary-categories", "league-statistics"],
+    },
+    {
+      name: "EXISTS & NOT EXISTS arms",
+      why: "Zero-attach checks that never fold: NOT EXISTS keeps the partner row with no sold inventory and survives the NULLs that poison NOT IN. On this db the honest result is often zero rows — recognizing that is the drill.",
+      slugs: ["ad-free-sessions", "number-of-accounts-that-did-not-stream", "dormant-reactivation"],
+    },
+    {
+      name: "Argmax & latest-state folds",
+      why: "The Express Deal board shows the LATEST package per unit and revenue wants the most-frequent family per booker — argmax-over-time folds, tie-broken deterministically, not first-come reads.",
+      slugs: ["the-most-recent-orders-for-each-product", "most-frequently-ordered-product-per-customer", "product-sales-analysis-iv"],
+    },
+    {
+      name: "CASE pivots & weekday cuts",
+      why: "Pace by weekday, status-by-month matrices, conditional deal flags — CASE both branches in place and pivots rows into columns. The ELSE clause is the difference between a zero and a blank cell.",
+      slugs: ["sales-by-day-of-the-week", "weather-type-in-each-country", "calculate-special-bonus"],
+    },
+    {
+      name: "Name & text hygiene",
+      why: "Booker names arrive mixed-case into the CRM, deal titles carry padding, market keys drift on case — text shaping happens before the join, or the attach board grows phantom families.",
+      slugs: ["fix-names-in-a-table", "fix-product-name-format", "invalid-tweets"],
+    },
   ],
 
   theory: [
@@ -145,6 +177,102 @@ export const pricelineKit: CompanyKit = {
       q: "One partner feed double-logs components, and finance just found a void invoice carrying a payment. How do you keep both from poisoning attach reads?",
       a: "Dedupe on a natural key, reconcile states against evidence. For the feed: ROW_NUMBER() OVER (PARTITION BY booking, component, event_time ORDER BY ingested_at DESC, id DESC) and keep rn = 1 — with the tiebreak stated, because 'latest' needs a deterministic definition when timestamps tie. For finance: conditional counts that cross-examine status against payment rows surface the void-but-paid invoice (925 on this db) and the paid-with-no-payments case (1756) before the tie-out, and the cents discipline — integer cents over 100.0 — keeps the money honest. The habit being graded: row counts are claims, keys and evidence are truth, and an attach number shipped from a deduped, reconciled base is the only one worth defending.",
       tag: "quality",
+    },
+    {
+      id: "priceline-t9",
+      q: "Finance wants the completed-travel arm and the cancelled arm stacked in one result. UNION, UNION ALL, or something else — and what does the stack exist to surface?",
+      a: "UNION ALL, and the reason is diagnostic: the two arms are disjoint by construction (a booking is traveled or cancelled, never both), so the stack should append 82 + 7 = 89 rows with no dedupe pass. UNION costs a sort and silently collapses any row that appears twice — and a duplicate across arms is exactly the bug you want to SEE, not hide: it means a booking is carrying two contradictory states. EXCEPT is the third tool: invoices EXCEPT the settled set isolates the unpaid arm — 6 books, 15217 — without a LEFT JOIN in sight. I say the row counts out loud before the query runs: arms disjoint, stack appends, dedupe is a smell. A stack that comes back shorter than its arms' sum has a WHERE clause doing surgery nobody approved.",
+      tag: "set-ops",
+    },
+    {
+      id: "priceline-t10",
+      q: "Anti-join for 'families no booking ever attaches': NOT IN, NOT EXISTS, or LEFT JOIN / IS NULL — and which NULL trap bites hardest?",
+      a: "NOT EXISTS first, LEFT JOIN / IS NULL second, NOT IN last and only with a NOT NULL guarantee. The trap: NOT IN (SELECT product_id FROM order_items) returns the FULL list forever if one row of the subquery is NULL — every comparison against NULL is unknown, so no row proves absence, and the result is empty while looking perfectly executed. On this db that trap is invisible precisely because the anti-join is honestly empty (every unit and every booker has transacted), so 'zero rows' is the right answer and NOT IN happens to print it for the wrong reason. The discipline: NOT EXISTS correlates on the key, survives NULLs, and states intent — 'keep the family for which no component row exists'. I also print the subquery's NULL count before trusting any NOT IN a teammate wrote.",
+      tag: "subqueries",
+    },
+    {
+      id: "priceline-t11",
+      q: "The finance pack wants a running settlement total across the payment feed ordered by paid_on, and two payments share a date. What does the frame need to be?",
+      a: "SUM(amount_cents) OVER (ORDER BY paid_on ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) — the ROWS keyword is the whole fix. The default frame is RANGE … CURRENT ROW, and RANGE treats ORDER BY peers as one unit: same-day payments jump into the running total together, so the line on the chart leaps by a full day's money and nobody can explain the step. ROWS moves one physical row at a time; with same-day rows the intra-day order is then arbitrary, so I add a deterministic tiebreak (id) to the ORDER BY and say so in the note. On this feed the money is integer cents — the running total folds raw cents and converts once at the edge, not per row. The trap I name out loud: 'it looks fine' on distinct dates and breaks exactly on the tie, which is the day the deck ships.",
+      tag: "windows",
+    },
+    {
+      id: "priceline-t12",
+      q: "Growth wants re-booking cadence per booker: days between consecutive bookings. Write the fold and tell me what the first booking prints.",
+      a: "julianday(created_at) - julianday(LAG(created_at) OVER (PARTITION BY customer_id ORDER BY created_at)) — partitioned per booker so cadence never crosses accounts, ordered by booking time so 'previous' means earlier in the traveler's own timeline. The first booking per booker prints NULL: LAG's default is NULL, julianday(NULL) is NULL, the difference NULLs — and that is CORRECT, not dirty; a first booking has no cadence. COALESCE it to 0 only if the deck demands a placeholder, and then say the 0 is manufactured. On this db the whales make the fold interesting: Alice Chen's 24 bookings give 23 gaps, Emma Wilson's 17 give 16 — I print the n-1 arithmetic beside the average so nobody wonders why the booker count shrank. The average cadence feeds the winback window; the NULL arms define it.",
+      tag: "windows",
+    },
+    {
+      id: "priceline-t13",
+      q: "The itinerary view needs each booking's component list as one cell — 'Keyboard, Speaker, Hub'. What are the GROUP_CONCAT traps?",
+      a: "Three, and all of them bite in review. First, order: GROUP_CONCAT(p.name) with no ORDER BY inside the aggregate returns members in an arbitrary order — the same booking prints different itineraries on refresh, so I stage the sort (ORDER BY inside GROUP_CONCAT on SQLite 3.44+, or a ordered subquery beneath it). Second, the separator: default is a comma with no space, which reads fine until a component name carries its own comma — then the cell is unparseable and I switch to '; '. Third, the fan-out: the concat runs on whatever rows the join produced, so a double-logged component prints twice — the dedupe (ROW_NUMBER over the natural key) happens BEFORE the concat or the itinerary is evidence of the feed bug. On 251 components over 103 bookings the cell is short; on the 13-booking whale account it is a paragraph, and length limits get checked once, at the edge.",
+      tag: "aggregation",
+    },
+    {
+      id: "priceline-t14",
+      q: "One query, one pass: bookings, traveled, pending, cancelled, share. Why FILTER (WHERE) instead of a SUM(CASE) ladder — and where does each still lose?",
+      a: "COUNT(*) FILTER (WHERE shipped_at IS NOT NULL) reads as the census it is: one scan of 103 bookings, four named buckets — 82 traveled, 14 pending, 7 cancelled — and ROUND(100.0 * traveled / COUNT(*), 1) = 79.6 printed beside its base. SUM(CASE WHEN … THEN 1 ELSE 0 END) is the portable twin and folds identically; I ship FILTER when the dialect allows because the bucket name lives in the SELECT, not buried in a CASE arm. Where each loses: FILTER with DISTINCT inside gets dialect-fussy, and the CASE ladder's classic failure is the missing ELSE — COUNT(CASE WHEN status = 'cancelled' THEN 1 END) counts cancellations honestly, but the same shape feeding SUM prints NULL for empty buckets. Whichever I ship, every booking sits in exactly one bucket and all 103 stay in the denominator — the census is the definition.",
+      tag: "aggregation",
+    },
+    {
+      id: "priceline-t15",
+      q: "Pivot status by month: one row per month key, columns for booked and lost. Where does the missing ELSE go wrong?",
+      a: "SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) — the ELSE 0 is not decoration, it is the difference between a zero and a blank. Without it, every non-cancelled row yields NULL; SUM over an all-NULL bucket is NULL, and the July cell — 2 cancellations on 1193.86 of value, the soft month — prints as empty, which finance reads as 'no data' instead of 'no cancellations'. The COUNT variant is the subtle one: COUNT(CASE WHEN … THEN 1 END) is safe (COUNT skips NULLs and 0 would be wrong there), but COUNT(CASE WHEN … THEN 1 ELSE 0 END) counts EVERY row including the zeros — the ladder inverts and every month reads fully cancelled. So the rule I write in the pack header: SUM wants ELSE 0, COUNT wants no ELSE, and one audit query proves which shape the column uses before the deck ships.",
+      tag: "case",
+    },
+    {
+      id: "priceline-t16",
+      q: "The packaging pack stages three folds: components to booking grain, booking to depth bucket, bucket to the board. CTEs or nested subqueries — and what does each buy?",
+      a: "WITH components AS (fold 251 lines to one row per booking: value, family depth), depth AS (CASE-bucket the 40/34/29 ladder), board AS (order and gate) — three named stages, each independently runnable, each reviewable against its definition. The CTE buys three things a nested one-liner cannot: the grain of every stage is written down (booking, then bucket, then board — the 2.4-lines-per-booking fan-out dies at stage one, where it belongs), the reviewer diffs the definition against the query stage by stage, and debugging isolates the broken fold instead of the whole expression. Nested subqueries earn their place only when the inner fold is one scalar (a benchmark, a threshold). On this pack the definitions ARE the product — depth is COUNT(DISTINCT family) per booking, stated once in stage one and inherited by everything downstream — and a named stage is the only way a definition survives review.",
+      tag: "ctes",
+    },
+    {
+      id: "priceline-t17",
+      q: "The exec deck prints 64687 for settled partner money. Walk the cents-to-dollars discipline end to end.",
+      a: "Raw columns carry integer cents (amount_cents on invoices and payments); the pack prints dollars after exactly one conversion. The pipeline: fold raw cents with SUM — the paid arm's 25 payment rows settle to 6468700 cents — divide by 100.0 once (the .0 enters before the slash or integer division floors it), ROUND once at the edge, and the deck prints 64687 — matching the ledger, the audit and the slide to the cent. The failures I audit for: dividing per row and summing rounded pennies (drifts from the ledger by construction), converting twice (925 prints as 9.25), converting never (raw cents read as dollars and every figure inflates 100x), and integer division anywhere in the chain (6468700 / 100 floors silently when both sides are integers). One conversion, one rounding, at the edge — and the probe query that proves it lives in the pack's header comment.",
+      tag: "money",
+    },
+    {
+      id: "priceline-t18",
+      q: "The monthly pace query went from instant to slow on the full booking history. What do you reach for first?",
+      a: "Sargability. The pack reads WHERE SUBSTR(created_at, 1, 7) = '2024-01' — a function wrapped around the column, which no index can see through, so every month bucket is a full scan. The rewrite is a half-open range: created_at >= '2024-01-01' AND created_at < '2024-02-01' — index-usable and spill-proof at the month edge (no BETWEEN end-date guessing about timestamps carrying time components). The SUBSTR bucket stays, but as the GROUP BY key for display, not the filter. Second look: the GROUP BY key and the range predicate share the same column, so a composite index on (created_at) covers both; third look is the fold itself — 251 component lines joined per booking is fan-out the engine pays for twice if I aggregate at the wrong stage. Performance here is a grain decision before it is an index decision.",
+      tag: "performance",
+    },
+    {
+      id: "priceline-t19",
+      q: "Attach lands at two numbers in one deck: 54 of 103 bookings and 74 of 103. Both teams claim 'correct'. What happened and what do you ship?",
+      a: "Two definitions wearing one name. 54 of 103 is family attach — bookings carrying the widest family (Accessories); 74 of 103 is bundle attach — bookings carrying 2+ families. Both folds are honest; the slide that says 'attach rate' with no definition is the lie. What I ship: a definition registry — attach is COUNT(DISTINCT order_id) over a stated scope, the scope is printed beside every number, and 'attach' without its scope does not pass review. The reason this matters commercially: 54 of 103 sells the cross-sell matrix (which family rides with which), 74 of 103 sells the bundling story (how far packages reach) — and a meeting that mixes them concludes that Accessories is 71% of the bundle business, which no fold on this db supports. The number is never the metric; the fold plus the denominator is.",
+      tag: "kpi",
+    },
+    {
+      id: "priceline-t20",
+      q: "Network AOV is 338.19 but the market AOVs read 383.48, 335.32 and 313.66. Why doesn't the network number sit between them the way people expect?",
+      a: "Because AOV is an orders-weighted mean, not an average of market rates: 34833.28 over 103 bookings is 338.19, and the weights are booking counts — EU's 45 bookings at 335.32 dominate the blend, US's 19 at 383.48 pull up, APAC's 37 at 313.66 pull down. The number people expect (the mean of market AOVs, 364.67 across the four markets) is average-of-ratios — it hands LATAM's 2 bookings the same weight as EU's 45, which is why it drifts 26 points high. Both are computable; only one is the revenue-true read. The rule I state in the pack: every per-market rate prints its n beside it (45, 37, 19, 2), and the network line is the ratio of totals, never the total of ratios. When someone wants the unweighted market view, it ships under its own name — 'mean market AOV' — not as the network KPI.",
+      tag: "math",
+    },
+    {
+      id: "priceline-t21",
+      q: "The unpaid settlement arm prints NULL money. Where does COALESCE go, and what does NULLIF protect?",
+      a: "COALESCE belongs at the fold, guarding the arm's aggregate: COALESCE(SUM(p.amount_cents), 0) prints 0 for the 6 unpaid books instead of a blank finance reads as 'missing data'. SUM(COALESCE(p.amount_cents, 0)) prints the same number here, but it reads as data repair — pretending the NULL was a zero — while guarding the fold states the intent: 'no payment rows means no settled money'. NULLIF protects the OTHER end: share math like 100.0 * paid / NULLIF(bills, 0) turns a zero denominator into NULL instead of a division error — the arm goes blank honestly rather than crashing the pack. The pairing rule I ship: COALESCE for absent money, NULLIF for absent denominators, and a note on every arm that prints 0 saying whether the 0 was measured or manufactured. On this db the unpaid arm is 6 books and 15217 — the NULL arms are where the exposure lives.",
+      tag: "nulls",
+    },
+    {
+      id: "priceline-t22",
+      q: "A family with 2 bookings shows 100% attach and tops the family board. What is the honest fix?",
+      a: "Gate after the fold and print the base beside every rate. The 100% is real but meaningless — 2 of 2 beats 54 of 103 on any rate column, and the packaging decision that follows the board would bet the quarter on a family whose evidence is two bookings. The fix is HAVING COUNT(DISTINCT oi.order_id) >= 10 — a floor set in writing, applied AFTER the fold (WHERE cannot see the aggregate it needs to gate), with the minimum stated in the deck so the gate is a policy, not a fudge. Fitness rides 13 bookings here and stays visible; a 2-booking family drops to an 'emerging' annex where thin samples belong. The companion discipline: no rate column ships without its denominator — 100% (2/2) reads very differently printed as 100% (2 of 2) next to 52.4% (54 of 103). Sample size is not noise around the metric; on a board, it IS part of the metric.",
+      tag: "pipeline",
+    },
+    {
+      id: "priceline-t23",
+      q: "The January pace pack must not spill February bookings into the bucket. Where do month filters usually leak?",
+      a: "Three leaks, in order of how often I see them. First, BETWEEN '2024-01-01' AND '2024-01-31' — a timestamp on Jan 31 with a time component (31T14:00) falls OUTSIDE the closed interval, silently dropping late-month bookings; the fix is the half-open range created_at >= '2024-01-01' AND created_at < '2024-02-01'. Second, filtering on the display bucket: WHERE SUBSTR(created_at, 1, 7) = '2024-01' bucketizes correctly but defeats the index — the bucket is for GROUP BY, the range is for WHERE. Third, timezone drift: the db stores UTC and the market reads local, so a booking at 2024-02-01T00:30 UTC is still January in some markets — the pack declares which clock it uses or the edge days disagree bucket to bucket. On this db the window runs 2024-01 to 2025-02 and the 14-bucket trend is the pace story; a leak at either edge moves two buckets and nobody notices until the YoY compare.",
+      tag: "dates",
+    },
+    {
+      id: "priceline-t24",
+      q: "Which two families ride together most on the same booking? Sketch the fold and the dedupe.",
+      a: "A self-join on shared bookings: FROM order_items oi1 JOIN order_items oi2 ON oi1.order_id = oi2.order_id JOIN the product table twice for family keys, WHERE oi1.category < oi2.category, then COUNT(DISTINCT oi1.order_id) per pair. The strict inequality is the dedupe — it keeps exactly one direction per pair, so (Audio, Accessories) and (Accessories, Audio) cannot both count; oi1.category <> oi2.category removes self-pairs but keeps BOTH directions and double-counts, and DISTINCT on the pair hides the symmetry instead of removing it. COUNT DISTINCT on the booking key keeps the fan-out honest: a booking with three Accessories lines still contributes one ride per pair. The output is the cross-sell matrix packaging prices from — and on this db the widest-attach family (54 bookings) is where the matrix gets read first, because the pairs that ride on the most baskets are the bundles the Express Deal engine assembles next.",
+      tag: "joins",
     },
   ],
 
@@ -319,6 +447,346 @@ export const pricelineKit: CompanyKit = {
       ],
       difficulty: "hard",
     },
+    {
+      id: "priceline-mcq-11",
+      prompt: "The week-close pack stacks the completed-travel arm (82 bookings) over the cancelled arm (7). Which operator keeps every row of both arms?",
+      choices: [
+        "UNION — it dedupes the stack safely",
+        "UNION ALL — appends both arms untouched",
+        "INTERSECT — keeps the rows the arms share",
+        "FULL OUTER JOIN — the only way to stack",
+      ],
+      answer: 1,
+      why: "The arms are disjoint by construction, so UNION ALL appends 82 + 7 = 89 rows with no dedupe pass. A duplicate across arms is a state bug you WANT to see — UNION would silently hide it.",
+      notes: [
+        { choice: 0, why: "UNION costs a sort and would erase a genuine double-log — the one failure the stack exists to surface. Safe-looking, wrong by design." },
+        { choice: 2, why: "Disjoint arms intersect to zero rows — the pack goes blank and the meeting reads it as 'no cancellations'." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "priceline-mcq-12",
+      prompt: "EXCEPT direction: SELECT id FROM invoices EXCEPT SELECT invoice_id FROM payments returns —",
+      choices: [
+        "the bills with no settlement — the 6-book unpaid arm",
+        "the payments with no bill",
+        "both sides stacked in one result",
+        "an error — EXCEPT needs identical column counts",
+      ],
+      answer: 0,
+      why: "EXCEPT keeps left-side rows absent from the right: invoices never paid — 6 books carrying 15217 of exposure, isolated without a LEFT JOIN.",
+      notes: [
+        { choice: 1, why: "That's the reverse direction — every payment here attaches to a bill, so payments EXCEPT invoices prints zero." },
+        { choice: 3, why: "EXCEPT requires matching column COUNTS, not identical schemas — one column per side runs fine." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "priceline-mcq-13",
+      prompt: "On a LEFT JOIN of invoices to payments, COUNT(p.id) per status prints —",
+      choices: [
+        "every bill, including the unpaid ones",
+        "only bills that carry at least one payment row",
+        "always the same as COUNT(*)",
+        "the total settled money",
+      ],
+      answer: 1,
+      why: "COUNT(column) skips NULLs — the 6 unpaid books drop out, printing 20/1/1 payment-bearing bills where COUNT(*) prints 21/6/1.",
+      notes: [
+        { choice: 0, why: "That's COUNT(i.id) or COUNT(*) — the NULL-extended rows still carry an invoice id, so they count either way." },
+        { choice: 2, why: "Identical only when every bill has exactly one payment — here five split-settlement bills carry two rows and one paid bill carries none." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "priceline-mcq-14",
+      prompt: "WHERE product_id NOT IN (SELECT product_id FROM order_items) returns zero families — every family HAS sold. If one order_items.product_id were NULL, the query would print…",
+      choices: [
+        "the same families as before",
+        "zero rows — NOT IN against a list holding NULL is never true",
+        "an error at parse time",
+        "only the families tied to the NULL row",
+      ],
+      answer: 1,
+      why: "x NOT IN (…, NULL) can't prove absence — the comparison against NULL is unknown, so WHERE drops every row. NOT EXISTS is the NULL-proof anti-join.",
+      notes: [
+        { choice: 0, why: "One NULL poisons the whole list, not just itself — the result isn't 'mostly right', it's empty while looking executed." },
+        { choice: 2, why: "It parses and runs fine — that's the trap: silence where data should be, with no error to flag it." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "priceline-mcq-15",
+      prompt: "Running settlement total ordered by paid_on; two payments share a date. SUM(amount_cents) OVER (ORDER BY paid_on) with no frame clause —",
+      choices: [
+        "uses RANGE by default — same-day payments jump into the total together",
+        "uses ROWS by default — one row at a time",
+        "errors — the frame clause is mandatory",
+        "averages the tied rows",
+      ],
+      answer: 0,
+      why: "The default frame is RANGE … CURRENT ROW: ORDER BY peers move as one unit, so the running total leaps by the whole day's money. Write ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW for row-at-a-time.",
+      notes: [
+        { choice: 1, why: "ROWS must be written explicitly — the default is RANGE, and the tie is exactly where the two diverge." },
+        { choice: 2, why: "The frame is optional — which is precisely why the default behavior ships unnoticed into decks." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "priceline-mcq-16",
+      prompt: "Re-booking cadence: julianday(created_at) - julianday(LAG(created_at) OVER (PARTITION BY customer_id ORDER BY created_at)). The booker's FIRST booking prints…",
+      choices: [
+        "0 — LAG defaults to the current row",
+        "NULL — there is no previous booking, and the diff correctly NULLs",
+        "the network average cadence",
+        "an error — LAG requires a frame clause",
+      ],
+      answer: 1,
+      why: "LAG's default is NULL, julianday(NULL) is NULL, the difference NULLs — correct, not dirty: a first booking has no cadence. COALESCE only if the deck demands a placeholder.",
+      notes: [
+        { choice: 0, why: "The default is NULL, not self — a 0-day cadence would fake a same-day re-booker out of nothing." },
+        { choice: 3, why: "LAG needs PARTITION BY / ORDER BY semantics, not a frame clause — it runs exactly as written." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "priceline-mcq-17",
+      prompt: "Status-by-month pivot: SUM(CASE WHEN status = 'cancelled' THEN 1 END) — no ELSE. What prints for a month with no cancellations?",
+      choices: [
+        "0",
+        "NULL — the ELSE defaults to NULL and SUM of an all-NULL bucket is NULL",
+        "the month's total bookings",
+        "an error",
+      ],
+      answer: 1,
+      why: "Without ELSE every non-cancelled row yields NULL; SUM over an all-NULL bucket is NULL and the cell goes blank. Write ELSE 0 and the zero is a zero.",
+      notes: [
+        { choice: 0, why: "That's what ELSE 0 gives you. Without it the zero is a NULL in a SUM's clothing — finance reads 'no data'." },
+        { choice: 2, why: "SUM ignores NULLs entirely — it never falls back to counting the month's rows." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "priceline-mcq-18",
+      prompt: "The pace query reads WHERE SUBSTR(created_at, 1, 7) = '2024-01' and crawls on the full history. The first fix is:",
+      choices: [
+        "add an index on SUBSTR(created_at, 1, 7)",
+        "rewrite sargable: created_at >= '2024-01-01' AND created_at < '2024-02-01'",
+        "SELECT * to warm the page cache",
+        "move the filter into HAVING",
+      ],
+      answer: 1,
+      why: "A function wrapped around the column defeats the index; the half-open range keeps it usable and is spill-proof at the month edge. The SUBSTR bucket stays as the GROUP BY key, not the filter.",
+      notes: [
+        { choice: 0, why: "An expression index can work, but it bakes the bucket key into the schema — the range rewrite is free and portable." },
+        { choice: 3, why: "HAVING runs after the fold — it can't shrink the scan, only the result set." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "priceline-mcq-19",
+      prompt: "Network AOV is 338.19; market AOVs read 383.48 (US), 335.32 (EU), 313.66 (APAC), 426.22 (LATAM). The mean of those four is 364.67. Why does the network print 338.19?",
+      choices: [
+        "338.19 is wrong — recompute it",
+        "AOV is an orders-weighted mean — EU's 45 bookings dominate, while the 364.67 average-of-ratios weights LATAM's 2 bookings like EU's 45",
+        "the network KPI should be the median market's AOV",
+        "LATAM must be excluded from the network fold",
+      ],
+      answer: 1,
+      why: "34833.28 over 103 bookings is 338.19 — ratio of totals, orders-weighted. The 364.67 is the total of ratios, a different metric wearing the same name.",
+      notes: [
+        { choice: 0, why: "The network fold is the weighted one and it's right — the mismatch is the average-of-ratios artifact, not an error." },
+        { choice: 2, why: "Medians hide the mix entirely — the point is that ratio-of-averages and average-of-ratios answer different questions." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "priceline-mcq-20",
+      prompt: "SELECT s.name, RANK() OVER (ORDER BY SUM(oi.quantity * oi.unit_price) DESC) FROM … GROUP BY s.id — the portability review flags:",
+      choices: [
+        "nothing — grouped windows are universal SQL",
+        "window aggregates over GROUP BY are dialect-shaped — stage the fold in a derived table or CTE and rank over it",
+        "RANK cannot order by a money expression",
+        "GROUP BY must come after the window function",
+      ],
+      answer: 1,
+      why: "SQLite accepts it; staging the fold — FROM (SELECT s.name, SUM(…) AS revenue … GROUP BY s.id) b with RANK over b.revenue — makes the rank grain explicit and the query portable.",
+      notes: [
+        { choice: 0, why: "It runs here — and breaks the day the stack moves engines. The staged form costs one CTE and survives migration." },
+        { choice: 2, why: "RANK orders by any sortable expression — the issue is where the aggregate lives, not its type." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "priceline-mcq-21",
+      prompt: "Month keys built as STRFTIME('%Y-%m', created_at) sort correctly as text because…",
+      choices: [
+        "SQLite special-cases date strings in ORDER BY",
+        "the keys are zero-padded fixed-width ISO shapes — '2024-10' < '2025-02' lexicographically",
+        "ORDER BY silently casts them to dates",
+        "they don't — month keys need a numeric sort column",
+      ],
+      answer: 1,
+      why: "Fixed-width zero-padded keys sort as text in calendar order — that's why the pack uses 'YYYY-MM' and never 'M-YYYY'.",
+      notes: [
+        { choice: 2, why: "No cast happens — the whole trick is that the text IS the sort key once the shape is zero-padded." },
+        { choice: 0, why: "Dates get no special sort — only the padded shape makes text order equal calendar order." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "priceline-mcq-22",
+      prompt: "One-pass trip census: traveled, pending, cancelled, share. The fragment that reads best is…",
+      choices: [
+        "COUNT(*) FILTER (WHERE shipped_at IS NOT NULL)",
+        "SUM(shipped_at)",
+        "COUNT FILTER shipped_at",
+        "MAX(shipped_at IS NOT NULL)",
+      ],
+      answer: 0,
+      why: "COUNT(*) FILTER (WHERE …) names the bucket in the SELECT — one scan of 103 bookings, four censuses, no CASE ladder to audit.",
+      notes: [
+        { choice: 1, why: "SUM over a timestamp adds dates together — a number no slide can explain." },
+        { choice: 3, why: "Booleans don't MAX into a census — 1 is not a booking count, it's the truth value of one row." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "priceline-mcq-23",
+      prompt: "The itinerary cell needs each booking's components as one string. GROUP_CONCAT(p.name) — the trap is…",
+      choices: [
+        "it errors beyond five components",
+        "member order is not guaranteed without an ORDER BY inside the aggregate",
+        "it only works on numeric columns",
+        "it deduplicates by default",
+      ],
+      answer: 1,
+      why: "Default comma separator, arbitrary order — the same booking can print a different itinerary on every refresh. Stage the sort deterministically.",
+      notes: [
+        { choice: 3, why: "Duplicates survive — a double-logged component prints twice, which is how feed dupes surface in the cell." },
+        { choice: 0, why: "No such cap — the real limits are the separator and the order, both fixable in the query." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "priceline-mcq-24",
+      prompt: "The unpaid settlement arm's money prints NULL. Which fragment prints 0?",
+      choices: [
+        "SUM(p.amount_cents)",
+        "SUM(COALESCE(p.amount_cents, 0))",
+        "COUNT(p.amount_cents)",
+        "AVG(p.amount_cents)",
+      ],
+      answer: 1,
+      why: "COALESCE turns each NULL into 0 before the fold — SUM of zeros is 0. The bare SUM of an all-NULL bucket is NULL.",
+      notes: [
+        { choice: 0, why: "SUM skips NULLs and returns NULL when nothing remains — the blank cell finance reads as a missing value, not an unpaid bill." },
+        { choice: 2, why: "COUNT prints rows (1 on the partially-paid book), not money — the right shape, the wrong unit." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "priceline-mcq-25",
+      prompt: "Family pairs on the same booking: the self-join oi1 × oi2 ON oi1.order_id = oi2.order_id double-counts every pair. The dedupe is:",
+      choices: [
+        "DISTINCT on the pair columns",
+        "oi1.category < oi2.category — one canonical direction per pair",
+        "GROUP BY oi1 only",
+        "WHERE oi1.id <> oi2.id",
+      ],
+      answer: 1,
+      why: "The strict inequality keeps exactly one direction per pair; <> still yields both (a,b) and (b,a), so counts double exactly as before.",
+      notes: [
+        { choice: 3, why: "<> removes self-pairs but keeps both orderings — the double-count survives untouched." },
+        { choice: 0, why: "DISTINCT hides the symmetry instead of removing it — and collapses genuine duplicates you may want counted." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "priceline-mcq-26",
+      prompt: "Settled money per arm prints once for the exec deck. Where does ROUND go?",
+      choices: [
+        "ROUND each payment before SUM",
+        "SUM the cents, divide by 100.0, ROUND once at the edge",
+        "ROUND twice for safety",
+        "ROUND in the spreadsheet, never in SQL",
+      ],
+      answer: 1,
+      why: "Fold raw cents, convert once, round once — 64687 prints identically in the query, the audit and the slide.",
+      notes: [
+        { choice: 0, why: "Per-row rounding before the fold drifts from the ledger by construction — the audit compares cells, not vibes." },
+        { choice: 2, why: "Double rounding repairs nothing and can move a half-cent boundary the wrong way." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "priceline-mcq-27",
+      prompt: "A family with 2 bookings shows 100% attach and tops the board. The honest fix is:",
+      choices: [
+        "celebrate — 100% is 100%",
+        "gate in HAVING on a minimum basket count and print the base beside every rate",
+        "delete thin families from the table",
+        "multiply the rate by units sold",
+      ],
+      answer: 1,
+      why: "Thin-sample rates top boards by construction. The gate belongs after the fold — HAVING COUNT(DISTINCT oi.order_id) >= 10 — with the floor stated in the deck; Fitness rides 13 bookings and stays visible.",
+      notes: [
+        { choice: 0, why: "2 of 2 is not 54 of 103 — the packaging call that follows the board needs the base printed beside the rate." },
+        { choice: 3, why: "Units change the metric, not the sample size — the thin-family problem survives the multiplication." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "priceline-mcq-28",
+      prompt: "28 invoices, 27 payments, every payment attaches to a bill, 6 bills carry no payment. Invoices FULL OUTER JOIN payments returns how many rows?",
+      choices: [
+        "28",
+        "27",
+        "33 — 27 matched pairs plus 6 invoice-only NULL arms",
+        "55 — every invoice against every payment",
+      ],
+      answer: 2,
+      why: "Each payment matches exactly one bill (27 rows); the 6 unpaid bills extend with NULLs (6 rows) — 33. Five split bills contribute two payment rows each, which is why 27 > 22 paying bills.",
+      notes: [
+        { choice: 0, why: "28 counts bills only and forgets the payment fan-out — five split-settlement bills each contribute a second row." },
+        { choice: 3, why: "That's a CROSS JOIN — the equality key collapses it to matches plus NULL arms, not a product." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "priceline-mcq-29",
+      prompt: "A partner feed double-logs rows. The dedupe that survives review is:",
+      choices: [
+        "ROW_NUMBER() OVER (ORDER BY id), keep rn = 1",
+        "ROW_NUMBER() OVER (PARTITION BY booking, component, event_time ORDER BY ingested_at DESC, id DESC), keep rn = 1",
+        "SELECT DISTINCT *",
+        "GROUP BY every column",
+      ],
+      answer: 1,
+      why: "Partition on the NATURAL key — what makes a row the same event — and order by ingestion with an id tiebreak, so 'latest' is deterministic even when timestamps tie.",
+      notes: [
+        { choice: 0, why: "Ordering by id alone keeps an arbitrary row per TABLE, not per event — it dedupes nothing the feed cares about." },
+        { choice: 2, why: "DISTINCT * only drops byte-identical rows — a re-logged event with a fresh ingestion stamp survives as a 'different' row." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "priceline-mcq-30",
+      prompt: "The board claims 52.4% attach for the widest family — 54 of 103 bookings. Which fold produced that number?",
+      choices: [
+        "SUM(oi.quantity) / 103",
+        "COUNT(*) / 103 on the joined component rows",
+        "COUNT(DISTINCT oi.order_id) for the family over all 103 bookings",
+        "54 / COUNT(DISTINCT customer_id)",
+      ],
+      answer: 2,
+      why: "Attach is distinct bookings carrying the family over ALL bookings — the DISTINCT folds the fan-out back from 121 unit-rides to 54 bookings.",
+      notes: [
+        { choice: 1, why: "COUNT(*) on the fan-out counts component rows — 121 rides, not 54 bookings; the board overstates attach 2.2x." },
+        { choice: 3, why: "The denominator drifts to 16 bookers — attach is a booking-share, not a booker-share; different KPI, different name." },
+      ],
+      difficulty: "hard",
+    },
   ],
 
   cases: [
@@ -419,6 +887,156 @@ export const pricelineKit: CompanyKit = {
       walkthrough:
         "A two-stage fold where stage one defines the metric. The derived table folds 251 components to booking grain: SUM(quantity * unit_price) is booking value, COUNT(DISTINCT p.category) is family depth — DISTINCT is the whole definition, because lines-per-booking averages 2.4 and would smear depth across component count. GROUP BY o.id lands one row per booking; the outer query CASE-buckets depth into 3+, two and single — 40 bookings worth 20537.11, 34 worth 10928.62, 29 worth 3367.55 — and orders fattest-first. The distractors each rewrite a rung: ALL (or any non-DISTINCT fold) recounts lines as families and repopulates the ladder, the wrong join key collapses it to 16 phantom single-family rows, a threshold of 1 swallows every booking into multi, ROUND to 0 prints whole units of money, and ASC reads the ladder from its smallest rung. Define depth once, at booking grain, in writing — then bucket.",
     },
+    {
+      id: "cs-priceline-3",
+      tier: "easy",
+      topic: "j4",
+      universe: "refund-audit",
+      title: "The settlement coverage stack",
+      brief:
+        "Priceline-flavored brief on the storefront db (invoices = partner settlement bills, payments = settled money, both in integer cents): the refund audit opens with coverage — every bill LEFT JOIN its payments, folded per status, so the unpaid arm shows up instead of vanishing. Probed on the db: 28 bills meet 27 payments. The paid arm is 21 bills carrying 25 payment rows (five split-settlement bills pay in two rows) settled to 64687 dollars — the difference from the 66443 billed is one paid book with no payment rows at all (1756). The open arm is 6 books, only 1 carrying a payment — the 6148 refundable holding at 4000-paid — and the void arm is the single {rose:void}-but-paid exception, 925 settled. The audit's headline: 6 books, 15217, no settlement at all.",
+      ask: "Return per settlement status: distinct bills, attached payment rows, and settled money in dollars (2dp) — biggest bill count first.",
+      template:
+        "SELECT i.status,\n       COUNT(DISTINCT {1}) AS bills,\n       COUNT(p.id) AS payment_rows,\n       ROUND(SUM(p.amount_cents) / {2}, 2) AS settled_dollars\nFROM invoices i\n{3} JOIN payments p ON p.invoice_id = i.id\nGROUP BY i.status\nORDER BY bills {4};",
+      slots: [
+        {
+          answer: "i.id",
+          kind: "keyword",
+          label: "the bill counter",
+          why: "COUNT(DISTINCT i.id) folds the fan-out back to distinct bills — 21 paid books, not the 25 payment rows their splits produce. COUNT(p.id) in that slot prints payment rows as bills and the void arm reads as a phantom.",
+        },
+        {
+          answer: "100.0",
+          kind: "number",
+          label: "the cents divisor",
+          noVerify: true,
+          why: "Amounts live as integer cents; settled money prints after one division — 64687 dollars settled on the paid arm. Dividing by 10 publishes 6468.7, a number no ledger cell backs.",
+        },
+        {
+          answer: "LEFT",
+          kind: "keyword",
+          label: "the coverage join",
+          why: "The audit keeps bills with NO settlement: LEFT JOIN holds the 6 open books. INNER JOIN collapses the open arm to the single partially-paid bill and hides the 6-book 15217 exposure before any filter runs.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-arm-first order",
+          why: "21, 6, 1 — the paid arm leads and the single void bill trails. ASC would open the review on the 925 exception instead of the settled base.",
+        },
+      ],
+      distractors: ["p.id", "*", "10", "INNER", "ASC"],
+      walkthrough:
+        "A coverage fold where the join type IS the question. LEFT JOIN keeps all 28 bills; the unpaid five-plus-partial arm survives as NULL-extended rows. Three counters read three truths: COUNT(DISTINCT i.id) folds the fan-out to distinct bills (21 paid, 6 open, 1 void), COUNT(p.id) counts attached payment rows (25/1/1 — the five split bills pay twice), and SUM(p.amount_cents)/100.0 settles the money (64687/40/925 — payment money never fans, so no dedupe needed). The trap sitting right next to the answer: SUM(i.amount_cents) on this fanned grain double-counts the five split bills and prints 91383 where 66443 is billed — invoiced money must fold on the bill grain, settled money folds fine here. INNER JOIN erases the exposure the audit was called to find; the divisor moves every dollar by an order of magnitude; ASC leads with the exception instead of the base. State the grain per column; the audit restates it in the tie-out.",
+    },
+    {
+      id: "cs-priceline-4",
+      tier: "medium",
+      topic: "t4",
+      universe: "growth",
+      title: "The booking pace pack",
+      brief:
+        "Priceline-flavored brief on the storefront db (orders = bookings): growth reads pace in month buckets across the full window, 2024-01 to 2025-02 — bookings, value, and the {rose:cancelled} haircut per bucket, chronological. Probed on the db: 14 buckets from 2024-01 (8 bookings, 3731.97, 1 cancelled) through 2025-02 (7, 2390.53, 0). The soft month is 2024-07 — 8 bookings, 1193.86, 2 lost — and the strongest are 2024-02 and 2024-09 at 9 bookings. The pack ships gated: buckets carrying at least 7 bookings, so the three 6-booking months (2024-06, 2024-11, 2025-01) drop to the trend note instead of reading as a slump. Every bucket keeps its cancelled count so the 6.8% network haircut stays visible bucket by bucket.",
+      ask: "Return per month key: bookings, booking value (2dp), and cancelled count — chronological, gated to months carrying at least 7 bookings.",
+      template:
+        "SELECT STRFTIME('%Y-%m', o.created_at) AS month_key,\n       COUNT(*) AS bookings,\n       ROUND(SUM(o.total), 2) AS value,\n       SUM(CASE WHEN o.status = '{1}' THEN 1 ELSE 0 END) AS lost\nFROM orders o\nGROUP BY month_key\nHAVING COUNT(*) >= {2}\nORDER BY month_key {3};",
+      slots: [
+        {
+          answer: "cancelled",
+          kind: "keyword",
+          label: "the lost arm",
+          why: "The lost arm is status = 'cancelled' — 7 bookings network-wide. 'shipped' counts bookings mid-or-post travel (30 of them) as lost and the pack reads backwards; 'pending' reads demand-in-window as failure.",
+        },
+        {
+          answer: "7",
+          kind: "number",
+          label: "the pace gate",
+          why: "The gate keeps the 11 buckets carrying at least 7 bookings and drops the three 6-booking months to the trend note. At 6 the gate admits everyone and the pack reads flat; at 9 only the two 9-booking months survive and the story vanishes.",
+        },
+        {
+          answer: "ASC",
+          kind: "keyword",
+          label: "the chronological order",
+          why: "Pace reads forward: 2024-01 through 2025-02, the zero-padded keys sorting correctly as text. DESC opens the deck on the newest month and reads the trend backwards.",
+        },
+      ],
+      distractors: ["shipped", "pending", "6", "9", "DESC"],
+      walkthrough:
+        "A bucketing fold where the gate and the arm are policy. STRFTIME('%Y-%m', created_at) builds the zero-padded month key that sorts correctly as text; COUNT(*) folds 103 bookings into 11 gated buckets of 7-plus; ROUND(SUM(o.total), 2) is bucket value — 2024-01 lands at 3731.97, the soft 2024-07 at 1193.86 — and the CASE arm counts cancellations per bucket (1, 0, 1, 0, 0, 2, 0, 0, 0, 0, 0) so the 6.8% haircut stays visible. The gate is HAVING, not WHERE: it filters the folded bucket, and at 7 it drops exactly the three 6-booking months while 2024-04's 7 rides on the line. The distractors each move a decision: 'shipped' recasts in-trip demand as losses, 'pending' recasts the booking window as failure, 6 admits the whole window and flattens the trend, 9 leaves two buckets and no story, DESC reads the year backwards. Gate after the fold, arm by name, chronological — the pace pack is three decisions wearing one query.",
+    },
+    {
+      id: "cs-priceline-5",
+      tier: "medium",
+      topic: "t5",
+      universe: "supplier",
+      title: "The partner breadth board",
+      brief:
+        "Priceline-flavored brief on the storefront db (suppliers = supply partners, products = bookable units, order_items = sold components): the supply board ranks all 6 partners by catalog breadth — distinct units listed — with component revenue beside it, widest breadth first. Probed on the db: four partners list 3 units each — Nordic Gadgets (11130.25 revenue), Midwest Hardware (9294.93), Shenzhen Electro (3049.07), Pacific Textiles (2980.15) — and share rank 1; Alpine Audio (4765.63) and Andes Naturals (3613.25) list 2 each at rank 5. Ties must share rungs and skip consumed slots: 1, 1, 1, 1, then 5, 5 — and revenue breaks the presentation order inside each rung, so the fattest partner reads first. The concentration line rides on the same board: the top partner holds 32% of component revenue.",
+      ask: "Return all 6 partners as: breadth rank, partner name, component revenue (2dp) — rank first, revenue breaking ties.",
+      template:
+        "SELECT {2}() OVER (ORDER BY b.listings DESC) AS breadth_rank,\n       b.name,\n       b.revenue\nFROM (SELECT s.name,\n             COUNT(DISTINCT p.id) AS listings,\n             ROUND(SUM(oi.quantity * oi.unit_price), {1}) AS revenue\n      FROM suppliers s\n      JOIN products p ON p.{3} = s.id\n      JOIN order_items oi ON oi.product_id = p.id\n      GROUP BY s.id) b\nORDER BY breadth_rank, revenue DESC;",
+      slots: [
+        {
+          answer: "2",
+          kind: "number",
+          label: "the money precision",
+          noVerify: true,
+          why: "Revenue prints to 2dp — 11130.25, 9294.93 — the shape every money cell on the board carries. ROUND to 1 publishes 11130.3, a number no ledger or slide shows.",
+        },
+        {
+          answer: "RANK",
+          kind: "keyword",
+          label: "the tie policy",
+          why: "Four partners tie at breadth 3: RANK shares the rung and skips — 1, 1, 1, 1, then 5, 5. ROW_NUMBER invents an order among equals; DENSE_RANK prints 1, 1, 1, 1, 2, 2 and hides how many partners sit above.",
+        },
+        {
+          answer: "supplier_id",
+          kind: "keyword",
+          label: "the supply key",
+          why: "Units reach partners through p.supplier_id = s.id. Joining p.id = s.id pairs product ids against partner ids — Nordic's 11130.25 lands on the wrong rows and the board misprices every partner.",
+        },
+      ],
+      distractors: ["ROW_NUMBER", "DENSE_RANK", "id", "1"],
+      walkthrough:
+        "A two-stage fold where stage one fixes the grain and stage two fixes the tie policy. The derived table folds each partner's sales: COUNT(DISTINCT p.id) is breadth — DISTINCT because the order_items join fans each unit to its sold lines, and without it breadth counts sales, not listings — and ROUND(SUM(oi.quantity * oi.unit_price), 2) is component revenue, 11130.25 at the top. The outer query ranks: RANK() OVER (ORDER BY b.listings DESC) shares rungs among the four 3-unit partners and skips to 5 for the two 2-unit partners; the board's ORDER BY then breaks each rung by revenue so Nordic reads first. The distractors each corrupt a rung: ROW_NUMBER prints 1 through 6 and manufactures an order among equals, DENSE_RANK prints 2 where 5 belongs and hides the tie's depth, the wrong join key re-parents every unit, and the 1dp round publishes revenue no other slide carries. Breadth is a definition, ties are a policy — the board prints both decisions.",
+    },
+    {
+      id: "cs-priceline-6",
+      tier: "hard",
+      topic: "q6",
+      universe: "growth",
+      title: "The whale winback CTE",
+      brief:
+        "Priceline-flavored brief on the storefront db (customers = bookers, orders = bookings): growth builds the winback list — bookers whose lifetime spend crosses 3000 AND who book at least 4 times — fattest first. Probed on the db: exactly 4 of 16 bookers qualify — Alice Chen (EU, 24 bookings, 7262.35), Emma Wilson (US, 17, 6640.56), Grace Kim (APAC, 14, 4574.23), Maya Patel (APAC, 13, 3644.56) — the four whales behind the **63.5%** concentration line. The frequency gate looks idle today (every whale carries 13-plus bookings) but it is a guardrail: gates compose, so a one-time 3000-plus splurge can never enter the winback as the window fills. The list must fold lifetime spend at booker grain in a named CTE — the definition the winback target is priced against — then gate and order.",
+      ask: "Return qualifying bookers as: name, region, bookings, lifetime spend (2dp) — fattest spend first.",
+      template:
+        "WITH booker_spend AS (\n  SELECT c.name, c.region, COUNT(*) AS bookings, SUM(o.total) AS lifetime_spend\n  FROM customers c\n  JOIN orders o ON o.customer_id = c.id\n  GROUP BY c.id)\nSELECT name, region, bookings, ROUND(lifetime_spend, 2) AS spend\nFROM booker_spend\nWHERE lifetime_spend >= {1} AND bookings >= {2}\nORDER BY lifetime_spend {3};",
+      slots: [
+        {
+          answer: "3000",
+          kind: "number",
+          label: "the spend floor",
+          noVerify: true,
+          why: "The 3000 line is the concentration threshold the 63.5% KPI is computed against — 4 of 16 bookers clear it. At 2000 the list grows a fifth name (2667.93); at 4500 it drops Maya and the APAC whales thin to one.",
+        },
+        {
+          answer: "4",
+          kind: "number",
+          label: "the frequency gate",
+          noVerify: true,
+          why: "The guardrail: today's four whales carry 24, 17, 14 and 13 bookings, so the gate looks idle — but composed with the spend floor it keeps any future one-time 3000-plus splurge off the winback list. At 15 only two whales survive; at 20, one.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the fattest-first order",
+          why: "The winback works top-down: 7262.35, 6640.56, 4574.23, 3644.56. ASC leads with Maya — the smallest whale — and the outreach budget reads upside down.",
+        },
+      ],
+      distractors: ["2000", "4500", "15", "20", "ASC"],
+      walkthrough:
+        "A staged definition with two gates that compose. Stage one, the CTE, folds 103 bookings to booker grain — COUNT(*) is bookings, SUM(o.total) is lifetime spend, GROUP BY c.id lands one row per booker — because the winback target is priced against a definition, not an expression. Stage two applies both gates: spend >= 3000 AND bookings >= 4 keeps exactly Alice, Emma, Grace and Maya. The distractors each rewrite the list: 2000 admits the 2667.93 booker the 3000 line exists to exclude, 4500 drops Maya and rewrites the APAC story, 15 cuts the list to Alice and Emma, 20 leaves one whale and no program, and ASC inverts the budget order. The teaching point is the composition: either gate alone passes names the pair rejects, and the pair is only honest because both floors are stated in writing. Fold at the definition's grain, gate on stated floors, order by the money — then the winback list survives the review it was built for.",
+    },
   ],
 
   problems: [
@@ -438,5 +1056,21 @@ export const pricelineKit: CompanyKit = {
     { slug: "customer-who-visited-but-did-not-transact", why: "Bookers who compared but never booked — the abandoned-basket read behind re-marketing, anti-join shaped." },
     { slug: "find-churn-risk-customers", why: "Lapsed high-value bookers — the whale winback list: lifetime value folded first, recency gate second." },
     { slug: "bank-account-summary", why: "Per-account deposit and withdrawal folds — the refundable-settlement ledger: money in, money out, net per book." },
+    { slug: "top-travellers", why: "Per-traveller distance ladders from trip lines — the booker lifetime-value board: fold per booker, rank, keep the ties honest." },
+    { slug: "trips-and-users", why: "Trip joins with per-market cancellation shares — the market-quality read: US 5.3% versus APAC 8.1% cancelled, computed with the denominator printed." },
+    { slug: "consecutive-available-seats", why: "Adjacency via self-join — the room/seat stacking read: which bookable units can be bundled side-by-side in one package." },
+    { slug: "biggest-window-between-events", why: "LEAD across a booker's events — the gap between consecutive bookings, the cadence signal the winback window is sized from." },
+    { slug: "total-traveled-distance", why: "Conditional SUM over trip rows — the per-booker traveled-value fold: money moved by travellers who actually flew." },
+    { slug: "customer-placing-the-largest-number-of-orders", why: "Argmax over booking counts — the frequency-whale read: 24 bookings for the top account, tie-broken deterministically." },
+    { slug: "list-the-products-ordered-in-a-period", why: "Period-filtered demand folds — the February 2025 window read: which families moved inside a stated month, whole window in the denominator." },
+    { slug: "the-airport-with-the-most-flights", why: "Stacked sides via UNION ALL — the departures-and-arrivals fold in one result: package components counted from both ends of the trip." },
+    { slug: "number-of-rich-customers", why: "Conditional-count whale census — the 3000-plus booker fold: 4 of 16, the list the winback program prices." },
+    { slug: "customers-who-never-order", why: "The base anti-join drill — on this db it returns zero, and recognizing that zero is the honest answer is the exercise." },
+    { slug: "average-time-of-process-per-machine", why: "Per-unit latency folds — the booking-to-travel lead by inventory: 2.98 days network, folded per bookable unit." },
+    { slug: "the-latest-login-in-2020", why: "Latest-state per entity with a date gate — the most recent booking per booker inside the window, recency defined deterministically." },
+    { slug: "maximum-transaction-each-day", why: "Per-day argmax over money — the peak-booking-day read: which day's biggest booking carried the month." },
+    { slug: "find-the-team-size", why: "Group-size windows that keep every row — the party-size read: each booking tagged with its own component count, fan-out intact." },
+    { slug: "confirmation-rate", why: "Per-entity rate ratios with round-to-2 — the confirmation-share shape: rates per market with the base folded beside them." },
+    { slug: "number-of-times-a-driver-was-a-passenger", why: "LEFT JOIN both directions — the roles-a-row-plays read: units as the anchor component versus the attached one, counted without fan-out." },
   ],
 };

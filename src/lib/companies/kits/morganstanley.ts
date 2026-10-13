@@ -32,6 +32,8 @@ export const morganstanleyKit: CompanyKit = {
     "The money tables are the desk's spine. `invoices` are the client fee billings — 28 on the book, of which 21 settled exact for 66443.00, 6 sit open at 19609.00, and 1 went void at 925.00. `payments` are the fee receipts on two rails — card, the retail brokerage debit rail (16 receipts for 37364.00), and wire, the institutional rail (11 for 32248.00) — and `ledger_entries` is the double-entry book where every settled dollar posts twice, integer cents, dollar read always cents / 100.0. The daily proof: **181080.00 debits against 181080.00 credits across 80 entries, delta 0** — and the fee-receivable watch carries **6 billings / 15217.00** against flat 30-day terms.",
     "The SQL screens are book-rollup screens. A warm-up fold (fee billings per household, receipts per rail), then the two questions this firm is famous for: the {sky:advisor-book board} — households ranked by billing frequency within booking market, lifetime billed beside, ties shared on purpose — and the {rose:fee-receivable watch} — a LEFT-join anti-join where the interesting rows are the billings with no receipt at all, plus the pair-read that catches a void billing which still drew its **925.00**. Follow-ups probe the denominator ('booked flows or billed fees?') and the tie policy ('who shares rung 3, and says who?').",
     "Prep the way the screens run. Drill per-household folds and the window grammar that ranks them (`PARTITION BY` the market, ties shared on purpose), as-of reads for the fee schedule in force at billing time, month buckets via `SUBSTR(issued_on, 1, 7)` across the 2024-01 to 2025-02 window, and settlement-lag math — the book's settled billings average **28.4 days** to first receipt against fastest 13 and slowest 84. Then practice the sentence that gets hired: *the book is billed, the book is received, and those are two different numbers until the rail proves otherwise.*",
+    "**The economics under the book.** Morgan Stanley's wealth engine bills relationships, not transactions, and the db's four booking markets carry it: EU leads with 45 booked flows for 15089.23, APAC follows at 37 / 11605.45, US runs 19 / 7286.16, LATAM trails at 2 / 852.44. The cost base reads like a branch network — {orange:Rent} at 14 entries / 16800.00 dwarfs Ads (14 / 4570.00), Travel (3 / 2521.00) and Tools (5 / 1525.00) — so platform scale, not headcount heroics, is what the expense fold proves. The book's shape is the risk story: spenders over the 3000 line hold **63.5%** of booked value, the busiest household runs **24 flows / 7262.35**, and every fee billed waits out flat 30-day terms before the 28.4-day average settlement actually lands. *Margin at this firm is a timing question as much as a volume one.*",
+    "**Prep the way the screens layer.** Week one: folds — per-household billing folds, per-rail receipt folds, the coverage census (21 exact / 65612.00, 1 partial, 6 none / 15217.00) until `GROUP BY` + `HAVING` is reflex. Week two: windows — `PARTITION BY` market boards, {violet:RANK-with-ties} as a signed policy, LAG walks over the probed 2024-02 to 2025-02 billing months. Week three: as-of joins and anti-joins — the schedule in force at billing time, the 6-billing watch, the void-but-received **925.00**. Week four: say it out loud — the ledger's **181080.00 against 181080.00, delta 0** proof closes interviews — *claims bill, receipts settle, and the books prove both.*",
   ],
 
   dayInLife: [
@@ -39,6 +41,7 @@ export const morganstanleyKit: CompanyKit = {
     "**10:30 —** deep work: the advisor-book board. Households folded to lifetime billed, ranked by billing frequency {emerald:within booking market} — a `PARTITION BY region` board where two households at two billings share rung 3 by design, and the tiebreak column is the one the advisor will defend. Beside it, the concentration read: the 3000-plus tier holding **63.5%** of booked value. The instinct being trained: rank the relationships, not the noise.",
     "**13:30 —** the collections sit-down: the fee-receivable watch — **6 billings / 15217.00** — aged against flat 30-day terms (min 30, max 30; the terms are a definition, not a distribution), with settlement lag beside it: 20 settled billings, **28.4 days** average, fastest 13, slowest 84. The watch's awkward member gets named out loud: a paid-status billing with no receipt row is in the list, and the void-but-received **925.00** is not — *membership is evidence, not status.*",
     "**16:30 —** stakeholder cycle: the platform review — cost lines against plan, Rent at 14 entries / **16800.00**, Ads at 14 / **4570.00** — then the EOD writeup, where every board ships with its definitions attached: what counts as billed, who stays in the base, which rung ties share. Tomorrow's ask is queued: an as-of join so the fee schedule in force at billing time, not today's, prices the dispute. *The read goes out; the denominators travel with it.*",
+    "**21:40 —** the night proof. The day's posts are in and the ledger gets re-proved before the batch window closes: **181080.00 debits against 181080.00 credits, delta 0** across 80 entries, receipt census still 27 rows — card 16 / 37364.00, wire 11 / 32248.00 — and the cash book's 69612.00 debit fold still cross-foots to the penny. Then the surveillance sweep queues tomorrow's work: a `HAVING`-guarded scan for billings whose receipt pattern reads wrong, the 4000.00-of-6148.00 partial flagged for the morning advisor call, *and the watch list already sitting in the collections lead's inbox before the markets open.*",
   ],
 
   metrics: [
@@ -50,6 +53,10 @@ export const morganstanleyKit: CompanyKit = {
     { name: "Coverage census", what: "Billings by settlement coverage — 21 exact (65612.00), 1 partial (4000.00 of 6148.00), 6 none (15217.00). The partial is the interesting row: open AND received." },
     { name: "Settlement lag", what: "Days from billing to first receipt on settled billings — 20 billings, 28.4 days average, fastest 13, slowest 84. The tempo read behind every collections promise." },
     { name: "Book concentration", what: "Share of booked value from households over a lifetime line — 63.5% from the 3000-plus tier, top household 24 flows for 7262.35. Tells the desk how thin the book's base is." },
+    { name: "Split-receipt census", what: "27 receipt rows over 22 receiving billings — five split-plan billings (refs 1, 5, 12, 19, 22) carry two receipt rows each. The fan-out that makes a naive COUNT(*) print 33 settled billings on a 28-billing book." },
+    { name: "Void-but-received exposure", what: "One void billing drew a receipt: 925.00 against a cancelled claim. Detected only by pairing state with evidence — the status column alone hides the hit." },
+    { name: "Paid-claim gap", what: "Billing 28 sits in paid status with zero receipt rows — 1756.00 of claim without evidence. The paid-status census overstates the collected book by exactly this." },
+    { name: "Rail-to-cash cross-foot", what: "Card 37364.00 + wire 32248.00 = 69612.00, tying to the cash account's debit fold (net 44196.00). When the rails stop footinging to cash, the desk stops guessing and starts paging." },
   ],
 
   topics: [
@@ -103,6 +110,31 @@ export const morganstanleyKit: CompanyKit = {
       why: "The books of record are evidence: journal-gap detection (no missing entries, ever), balance rollforwards and snapshot-delta reads keep the ledger provable — and NULL handling decides what 'no receipt' honestly means.",
       slugs: ["journal-gap-detection", "balance-rollforward", "snapshot-delta-detect"],
     },
+    {
+      name: "Settlement rails & latency",
+      why: "Two rails, two tempos: card is the retail debit rail (16 receipts / 37364.00), wire the institutional rail (11 / 32248.00), and settlement lag runs 13 to 84 days around a 28.4-day average. Date-math drills — day-over-day joins, two-events-in-a-window, golden-hour buckets — are exactly the latency muscle.",
+      slugs: ["rising-temperature", "users-with-two-purchases-within-seven-days", "find-golden-hour-customers"],
+    },
+    {
+      name: "Split receipts & duplicate evidence",
+      why: "Five split-plan billings fan 27 receipt rows over 22 receiving relationships — the join grain that makes counts lie. Duplicate-pair drills (same-billing receipt pairs, repeated claims, symmetric matches) train the eye that catches double counting before the deck ships it.",
+      slugs: ["duplicate-charge-pairs", "duplicate-emails", "symmetric-pairs"],
+    },
+    {
+      name: "Household tiers & percentiles",
+      why: "Fee schedules segment the book: which quartile a household's lifetime billed lands in decides the invoice and the call order. NTILE buckets, PERCENT_RANK ladders and spend histograms are the segmentation drills the platform review quotes.",
+      slugs: ["rfm-segmentation", "usage-tier-percentiles", "spend-histogram"],
+    },
+    {
+      name: "Surveillance & anomaly screens",
+      why: "Institutional markets runs surveillance next to every board: amount z-scores over receipt series, HAVING-guarded structuring screens, pair-window wash checks. The desk's question is always the same — which rows pattern wrong, and by how much in dollars.",
+      slugs: ["amount-anomaly-zscore", "structuring-detection", "wash-trade-detection"],
+    },
+    {
+      name: "Credit & provision reads",
+      why: "The wealth book has a credit side: expected-credit-loss weighted provisions, delinquency bucket pivots and vintage default curves are how lending-adjacent balances are provisioned — the same evidence-over-status discipline the receivable watch teaches.",
+      slugs: ["expected-credit-loss", "delinquency-buckets", "vintage-default-curves"],
+    },
   ],
 
   theory: [
@@ -153,6 +185,102 @@ export const morganstanleyKit: CompanyKit = {
       q: "Controls flagged a void billing that still received 925.00 and a paid billing with no receipt. What's your policy for breaks like these?",
       a: "Detect, quantify, route — evidence over claims, always. Detect by pairing state with receipt presence: void AND a receipt exists (925.00), paid AND no receipt (1756.00) — a one-pass census with FILTER (WHERE …) counts both arms on the same join so nobody reruns five queries at close. Quantify in dollars; adjectives don't route work. Route to the desk that owns the fix; never delete, never silently re-status. Then reconcile to the books of record — the ledger still proves 181080.00 against 181080.00, delta 0, because double-entry records what happened, and the journal sequence proves nothing was edited out. That's exactly why the trial balance alone is never sufficient evidence of correctness.",
       tag: "quality",
+    },
+    {
+      id: "ms-t9",
+      q: "The platform review wants a rolling three-month receipt census. How do window frames change the answer, and which frame do you ship?",
+      a: "Explicitly. The moment a window has an ORDER BY, SQL applies a default frame — RANGE UNBOUNDED PRECEDING TO CURRENT ROW — which for our receipt rails means 'every receipt from the start of time up to my peer group', a running total, not a three-month window. To get the rolling census the review asked for I write the frame out loud: ROWS BETWEEN 2 PRECEDING AND CURRENT ROW over month-bucketed receipt folds, cross-footing card and wire to the 69612.00 the cash book expects. The distinction bites on ties: RANGE includes peer rows with equal ORDER BY values, ROWS counts physical rows, and on a book where several billings share a month bucket that difference changes the census. I name the frame in the walkthrough so the next analyst doesn't inherit a running sum that looks like a rolling one.",
+      tag: "frames",
+    },
+    {
+      id: "ms-t10",
+      q: "For the month-over-month billing walk, why LAG instead of a self-join on the previous month?",
+      a: "Because the walk is one fold, not two. LAG(SUM(amount_cents)) OVER (ORDER BY month) computes the previous month inside the same pass over the monthly CTE — one scan, one sort, and the first row honestly prints NULL because it has no prior. A self-join of the monthly fold to itself on month = month - 1 doubles the scan, needs calendar arithmetic to build the join key (and 'previous month' is a definition, not an increment, across year boundaries), and still drops the first month via the inner join or fakes it with a LEFT JOIN plus COALESCE — a zero that invents a base month. On this book the walk runs 13 billing months, 2024-02 through 2025-02, peaking at 11085.00 in 2025-01 (+2255.00 MoM) before falling 2973.00 into February. NULL at the head of that walk is the definition; a self-join makes you argue it into existence.",
+      tag: "windows",
+    },
+    {
+      id: "ms-t11",
+      q: "You stack a card-rail report and a wire-rail report with UNION. The row count drops. What happened?",
+      a: "UNION deduplicates; UNION ALL appends. The rail stack's arms are folded per billing month — if card and wire ever print the same month with the same dollar fold, UNION silently collapses them into one row and the desk's receipts stop footinging to the 69612.00 cash fold. UNION ALL is the honest append: every arm's rows survive, arm labels included, and the total cross-foots. I reach for bare UNION only when the requirement literally says 'distinct rows across both arms' — and even then I say out loud what dedupe means here: identical month-plus-dollars rows are usually different receipts that happen to agree, not duplicates to be cleaned. Set semantics are a claim about the world; on a book of record I default to bag semantics and dedupe on purpose, never by accident.",
+      tag: "setops",
+    },
+    {
+      id: "ms-t12",
+      q: "The close deck wants a receipt table with a grand-total row. How do you build it, and why not GROUP BY with a NULL key?",
+      a: "As a UNION ALL stack: per-rail folds from payments grouped by method — card 37364.00, wire 32248.00 — plus a literal 'TOTAL' arm that folds across all methods for 69612.00. SQLite has no GROUP BY ROLLUP, so the stack is the native shape, and the literal label is what keeps the total row from being mistaken for a rail. The NULL-key trick (GROUP BY method then UNION a NULL-method fold) technically works but prints a row whose membership nobody can defend at close: is NULL a rail, a bucket for unmapped receipts, or the total? The discipline is the same one the ledger uses — every printed line names itself. When the deck's total has to tie to the cash book's 69612.00 debit fold, the label IS the audit trail.",
+      tag: "setops",
+    },
+    {
+      id: "ms-t13",
+      q: "The growth review wants each household's lifetime billed beside the book's average billing. Correlated subquery or derived table — and what's the performance story?",
+      a: "Derived, always, when the benchmark is book-wide. (SELECT AVG(amount_cents) FROM invoices) is a constant over the 28-billing book — 3106.32 probed — so it should be computed once and inlined, not re-evaluated per household row. A correlated subquery referencing the outer household re-runs the average semantics per row; on this book it happens to return the same constant (the correlation isn't actually used), but the plan carries the re-evaluation shape, and the moment someone edits the inner query to 'average per market' it silently becomes a different benchmark per row. On an 11-household fold nobody notices; on a book-sized fold the pattern pages the DBA. Eight households clear the 3106.32 line here — the derived shape keeps the benchmark a single, auditable number in the walkthrough.",
+      tag: "subqueries",
+    },
+    {
+      id: "ms-t14",
+      q: "A colleague's NOT IN check for 'households with no billings' returns zero rows — but they expected some. What's the first thing you check?",
+      a: "NULLs in the subquery's select list. NOT IN over a list containing NULL is structurally broken: x NOT IN (1, 2, NULL) can never be true, because the comparison is x <> 1 AND x <> 2 AND x <> NULL, and unknown poisons the AND — the whole predicate goes unknown and the row drops. The book's own anti-joins all dodge this by keying on non-nullable ids (payments.invoice_id), which is why the fee-receivable watch works as LEFT JOIN + IS NULL. My order of preference: NOT EXISTS first (NULL-safe by construction, reads as the business question), the LEFT JOIN anti-join second (it gives you the right-side columns for free), NOT IN last and only over columns declared NOT NULL. The zero-rows result wasn't wrong SQL — it was an unprovable predicate.",
+      tag: "subqueries",
+    },
+    {
+      id: "ms-t15",
+      q: "A junior's settlement report prints received amounts like 40 instead of 4000.00. What SQL habit produced that?",
+      a: "Integer division. Money in this book lives in invoices/payments/ledger as INTEGER cents — the dollar read is always amount_cents / 100.0, and dropping the '.0' makes SQLite divide integers: 400000 / 100 happens to print 4000 (clean), but any odd-cent fold truncates — the book's average billing 310632 cents / 100 prints 3106, silently losing the .32 on every row. The habit that scales: keep cents until the edge, convert once with a real (100.0), ROUND at the presentation boundary, and never mix — a fold that divides by 100 in a CTE and again outside has quartered the book. The 4000.00-of-6148.00 partial is the desk's favorite proof: print it as 40-of-61 and the collections meeting argues about a different receivable than the one that exists.",
+      tag: "types",
+    },
+    {
+      id: "ms-t16",
+      q: "Your book board groups by the alias 'month' and works in SQLite. Why might that be a problem anyway?",
+      a: "Because alias resolution in GROUP BY is a dialect feature, not a guarantee. SQLite resolves output aliases in GROUP BY and HAVING (so GROUP BY month after SELECT SUBSTR(issued_on, 1, 7) AS month folds monthly), but the SQL standard — and several engines — only promises input columns there, and ORDER BY is where aliases are universally safe. The portable form spells the expression in GROUP BY and keeps the alias for display; the readable form notes the dialect in a comment. The related SQLite generosity I refuse to lean on: bare columns in an aggregate query. GROUP BY i.status while selecting i.number compiles fine and picks an arbitrary row's number — the billing-state fold (paid 21 / 66443.00, open 6 / 19609.00, void 1 / 925.00) is real, but the name beside it is noise. Fold on keys you can defend.",
+      tag: "aggregation",
+    },
+    {
+      id: "ms-t17",
+      q: "On the billing-to-receipt LEFT JOIN, three counts disagree: 28, 27, 22. Say what each one is and which the desk may quote.",
+      a: "All three are true; they measure different things. COUNT(*) over the join is 28 rows — every billing survives the LEFT JOIN, no-receipt ones included. COUNT(p.id) is 27 — the receipt rows that actually matched, five split-plan billings contributing a second row each. COUNT(DISTINCT i.id) is 22 — the billings that ever received a dollar: 21 exact plus the 4000.00-of-6148.00 partial. The desk may quote any of them IF the label travels: 28 billings on the book, 27 receipt rows across two rails, 22 relationships with receipt evidence. What's never allowed is the unlabeled fold — 'the settled count' — because that's where 33 (the join's row count) or 21 (status-paid) sneaks in as a denominator. Grain is a citation, not a detail.",
+      tag: "aggregation",
+    },
+    {
+      id: "ms-t18",
+      q: "Close night, five minutes: management wants the count of void billings that drew receipts AND paid billings with none. How do you deliver both in one query?",
+      a: "One pass with FILTER (WHERE …), which counts conditional arms on the same join without rerunning anything: COUNT(*) FILTER (WHERE i.status = 'void' AND p.id IS NOT NULL) catches the void-but-received 925.00; COUNT(*) FILTER (WHERE i.status = 'paid' AND p.id IS NULL) catches the paid-claim gap at 1756.00. One join, one fold, two honest arms — versus five ad-hoc queries at close that each rebuild the join and drift. The FILTER discipline also documents itself: the arm's predicate IS the definition of the break, so the numbers route themselves — 925.00 to the ops queue that reverses the receipt, 1756.00 to the collections lead who either finds the receipt or re-states the status. And the ledger still proves 181080.00 against 181080.00 while both anomalies sit open — double-entry records what happened; reconciliation is what decides whether it should have.",
+      tag: "quality",
+    },
+    {
+      id: "ms-t19",
+      q: "The fee-schedule team wants households cut into quartiles by lifetime billed. NTILE, PERCENT_RANK or CASE bands — pick and defend.",
+      a: "NTILE(4) OVER (ORDER BY lifetime_billed) when the requirement is 'four equal-count groups' — it guarantees bucket sizes regardless of dollar gaps, which is what an advisor-coverage model wants. PERCENT_RANK when the requirement is 'where does this household sit in the book' — it prints 0..1 against lifetime billed and survives odd book sizes, but it's a position, not an assignment. CASE bands when the schedule itself defines the boundaries — fee tiers are contractual dollar lines, not statistical cuts, and a band that moves with the book's shape would re-tier a household without anyone signing it. The concentration read ties it together: the 3000-plus tier holds 63.5% of booked value, so equal-count quartiles and dollar bands disagree violently at the top — and which one you ship is a business decision, not a SQL one.",
+      tag: "windows",
+    },
+    {
+      id: "ms-t20",
+      q: "In the receipt census, why does the no-receipt arm print NULL until you wrap the SUM — and is 0.00 even honest there?",
+      a: "SUM(p.amount_cents) over a billing with no matched receipt rows aggregates the empty set, and SQL's aggregate-over-empty is NULL, not zero — so the census prints NULL until you wrap it: COALESCE(SUM(p.amount_cents), 0). Whether 0.00 is honest is the second half: for 'received' it is — the household genuinely received nothing, and 0.00 keeps the column numeric so downstream folds don't NULL-poison. For anything derived from receipt rows — an average receipt size, a settlement lag — zero would be a lie; the no-receipt watch has no lag, not a zero-day lag. So the policy I state in every walkthrough: COALESCE sums and counts that mean 'none happened'; leave NULL standing on measures that mean 'cannot be computed', and let the report show the gap. The 6-billing / 15217.00 watch is that gap, printed on purpose.",
+      tag: "nulls",
+    },
+    {
+      id: "ms-t21",
+      q: "A fee dispute says the household was billed under yesterday's schedule. How do you build the as-of join that proves or kills the claim?",
+      a: "Point-in-time logic: for each billing, pick the schedule row whose effective_from is the greatest one not after the billing's issue date — a correlated (SELECT MAX(effective_from) FROM fee_schedule s WHERE s.effective_from <= i.issued_on AND s.tier = c.tier) keyed into a join, or ROW_NUMBER() OVER (PARTITION BY household ORDER BY effective_from DESC) = 1 over the pre-filtered candidate set. The bugs that lose disputes: joining on 'latest schedule overall' (today's, not billing-day's — exactly the claim the household is disputing), forgetting the tier/partition key so another household's schedule leaks in, and tie-breaking equal effective_from rows by anything but a documented rule. The desk's sentence: the schedule in force at billing time is a fact about that day; every other version is an opinion. Same discipline the product-price-at-a-given-date drill teaches.",
+      tag: "dates",
+    },
+    {
+      id: "ms-t22",
+      q: "The advisor-book board is 'fine on 28 billings' — how do you argue index design before the book is 28 million rows?",
+      a: "By naming the access paths the boards share. Every census in this kit joins payments to invoices on invoice_id and customers on id — the anti-join's LEFT JOIN probe and the coverage fold both look up payments by invoice_id, so an index on payments(invoice_id) turns the watch's build from a full scan per billing into a seek; a covering index on payments(invoice_id, amount_cents, method) lets the rail folds (card 37364.00 / wire 32248.00) come out of the index without touching the table. EXPLAIN QUERY PLAN is the habit: look for SCAN versus SEARCH on the inner side of the join, and remember the anti-join pays the index toll too — 'billings with no receipt' is only cheap if receipts are seekable. The instinct to sell: indexes are how a definition stays cheap as the book grows; correctness is how it stays true. Both are design decisions made before close night.",
+      tag: "performance",
+    },
+    {
+      id: "ms-t23",
+      q: "The board ranks within market, but the print order is wrong — advisors see another market's rung 1 first. Window ORDER BY versus outer ORDER BY: who wins?",
+      a: "They're two different sentences. The window's ORDER BY (inside OVER) only decides how rank numbers are assigned within each PARTITION — it never sorts the output. The outer ORDER BY decides what prints first; if it's absent, row order is whatever the plan produced, which looks authoritative and isn't. The board that ships: RANK() OVER (PARTITION BY region ORDER BY COUNT(*) DESC) AS book_rank, then an outer ORDER BY region, book_rank — so every market opens on its own rung 1 and the tie policy (shared rungs, the next rank skipping) reads top-down per market. The trap worth naming: adding DESC inside the window while forgetting the outer clause 'fixes' the numbers and leaves the print order arbitrary — the board is numerically honest and visually scrambled, which is worse, because nobody re-checks a board that looks sorted.",
+      tag: "windows",
+    },
+    {
+      id: "ms-t24",
+      q: "Two boards both print '6 billings outstanding' — the open-status census and the no-receipt watch. How do you keep the org from quoting them interchangeably?",
+      a: "By making the denominator a named, owned artifact. The open census is a status claim: 6 billings / 19609.00 that the billing system calls open. The watch is an evidence read: 6 billings / 15217.00 with no receipt row in payments — same count, different sets, 4392.00 apart, because one open billing took a 4000.00 partial (evidence: out of the watch) and one paid-status billing has no receipt (claim only: in the watch). The governance that works: every board ships with a one-line definition — membership rule, base table, grain, timestamp — and the KPI owner signs it; decks that drop the definition get bounced at review, not footnoted. That's the interview sentence this kit drills: open is a claim, unreceived is evidence, and the gap between them is exactly two anomalies — 925.00 received on a void, 1756.00 claimed without a receipt.",
+      tag: "kpi",
     },
   ],
 
@@ -327,6 +455,346 @@ export const morganstanleyKit: CompanyKit = {
       ],
       difficulty: "hard",
     },
+    {
+      id: "ms-mcq-11",
+      prompt: "The receipt census counts receipt rows per billing over a billings-LEFT-JOIN-payments fold. What does COUNT(p.id) print for a no-receipt billing?",
+      choices: [
+        "1 — every billing gets a row",
+        "0 — no receipt row matched, so the count of matched ids is zero",
+        "NULL — the count can't evaluate",
+        "27 — the census folds at book level",
+      ],
+      answer: 1,
+      why: "COUNT(col) counts non-NULL values of the joined column. With no matching receipt row, p.id is NULL on every row of that billing's group — the count is 0, which is exactly the census the desk wants beside the 15217.00 watch.",
+      notes: [
+        { choice: 0, why: "That's COUNT(*) — it counts the billing row the LEFT JOIN kept, printing 1 for billings with zero receipts and quietly inflating every census that trusts it." },
+        { choice: 2, why: "Aggregates over empty sets return NULL for SUM, but COUNT always returns a number — 0. 'NULL count' confuses the two behaviors and breaks the coverage fold downstream." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "ms-mcq-12",
+      prompt: "In the same census, why wrap the receipts fold as ROUND(COALESCE(SUM(p.amount_cents), 0) / 100.0, 2)?",
+      choices: [
+        "COALESCE converts cents to dollars",
+        "SUM over a billing with no receipt rows returns NULL; COALESCE prints the honest 0.00 instead",
+        "COALESCE deduplicates split-plan receipt rows",
+        "ROUND requires a non-NULL first argument or it errors",
+      ],
+      answer: 1,
+      why: "SUM over an empty group is NULL, not zero. COALESCE(…, 0) keeps the received column numeric — 0.00 for the 6-billing watch — so downstream folds don't NULL-poison, and cents still convert at the edge with / 100.0.",
+      notes: [
+        { choice: 0, why: "Division by 100.0 converts; COALESCE only substitutes a fallback. Crediting COALESCE with unit conversion is how integer-cents discipline quietly erodes." },
+        { choice: 2, why: "Split-plan billings carry two receipt rows and COALESCE never dedupes — the 5 split billings (refs 1, 5, 12, 19, 22) still sum both receipts, which is exactly what 'received' means." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "ms-mcq-13",
+      prompt: "The close deck stacks a card-rail fold and a wire-rail fold, plus a TOTAL arm. Which set operator is correct?",
+      choices: [
+        "UNION — duplicates across rails must be cleaned",
+        "UNION ALL — every arm's rows survive, so the stack still foots to 69612.00",
+        "INTERSECT — only rails present in both arms should print",
+        "EXCEPT — wire rows already counted in card drop out",
+      ],
+      answer: 1,
+      why: "UNION ALL appends without deduplicating: card 37364.00 + wire 32248.00 + TOTAL 69612.00 all survive. Bare UNION collapses any two arms that print identical rows — a silent row loss the cash cross-foot would catch only at close.",
+      notes: [
+        { choice: 0, why: "Rail arms with the same month-and-dollars are different receipts that happen to agree, not duplicates — UNION deletes real rows and the deck's total stops footinging to the cash book's fold." },
+        { choice: 2, why: "INTERSECT keeps rows present in BOTH arms — the opposite of a stack. On rails that rarely agree to the penny, it prints an empty report with a straight face." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "ms-mcq-14",
+      prompt: "The platform review wants a ROLLING three-month receipt census over month-bucketed rows. Which window specification delivers it?",
+      choices: [
+        "SUM(receipts) OVER (ORDER BY month) — the default is rolling",
+        "SUM(receipts) OVER (ORDER BY month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)",
+        "SUM(receipts) OVER (PARTITION BY month)",
+        "SUM(receipts) OVER ()",
+      ],
+      answer: 1,
+      why: "The default frame with an ORDER BY is RANGE UNBOUNDED PRECEDING TO CURRENT ROW — a running total since the first bucket, not a three-month window. The explicit ROWS frame is the only spec that prints the rolling census the review asked for.",
+      notes: [
+        { choice: 0, why: "'Default' here means running-total-from-the-beginning — a census that grows every month and looks plausible right up until someone checks month 12 against the cash fold." },
+        { choice: 2, why: "PARTITION BY month gives every month its own partition, so each row's window is just itself — the census dissolves into the raw monthly folds." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "ms-mcq-15",
+      prompt: "The billing-trend walk starts at 2024-02 — the first billing month. What does its mom_delta print, and why?",
+      choices: [
+        "0.00 — no change from the prior month",
+        "NULL — LAG has no prior row, and that IS the definition",
+        "The month's own billed amount — LAG wraps to itself",
+        "-11085.00 — the walk treats the first month as a drop from peak",
+      ],
+      answer: 1,
+      why: "LAG(cents) OVER (ORDER BY month) is NULL on the first row — there is no previous month to subtract. AVG skips that NULL rather than treating it as zero, which is why the walk's average delta is computed over 12 deltas, not 13.",
+      notes: [
+        { choice: 0, why: "COALESCE-ing the first delta to 0.00 invents a base month — the walk then claims stability at the exact point where the book's history starts, and the deck's first row is fiction." },
+        { choice: 2, why: "LAG never wraps. That value would mean 'the book grew by itself', and every downstream MoM chart inherits the impossible base." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "ms-mcq-16",
+      prompt: "A junior writes SUM(amount_cents) / 100 for dollars and the average billing prints 3106 instead of 3106.32. The bug:",
+      choices: [
+        "ROUND was missing — wrap the whole fold in ROUND(x)",
+        "Integer division: / 100 on integers truncates; the dollar read is / 100.0",
+        "AVG was applied after the division instead of before",
+        "The cents column needs CAST to TEXT first",
+      ],
+      answer: 1,
+      why: "Both operands are integers, so SQLite divides in integer arithmetic and floors: 310632 cents / 100 = 3106. The kit's rule — money is integer cents, the dollar read is ALWAYS amount_cents / 100.0, ROUND at the presentation edge — exists because of exactly this bug.",
+      notes: [
+        { choice: 0, why: "ROUND can't recover the digits integer division already destroyed — the .32 is gone before ROUND ever sees the value. The fix is the real divisor, not cosmetic rounding." },
+        { choice: 2, why: "Order isn't the issue: AVG(amount_cents)/100 and AVG(amount_cents/100) both truncate when the division is integer arithmetic. The divisor's type decides." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "ms-mcq-17",
+      prompt: "Each household's lifetime billed must sit beside the book's AVERAGE BILLING (a single constant, 3106.32). Which shape computes the benchmark once?",
+      choices: [
+        "A correlated subquery referencing the outer household inside the average",
+        "A scalar subquery: (SELECT AVG(amount_cents) / 100.0 FROM invoices) — constant over the book",
+        "AVG(lifetime_billed) over the household fold — same thing, cheaper",
+        "A CROSS JOIN to the invoices table, averaged per row",
+      ],
+      answer: 1,
+      why: "The benchmark is book-wide, so it's a constant: one scalar subquery, computed once, comparable against every household's fold in HAVING. The average BILLING (3106.32) is not the average household — conflating them is the denominator error the review probes first.",
+      notes: [
+        { choice: 0, why: "The correlation isn't used — but the shape now re-evaluates per row and invites an 'average per market' edit that silently becomes a different benchmark per row. Derived or scalar, once." },
+        { choice: 2, why: "AVG over household folds averages HOUSEHOLDS (7907.00 over 11), not billings (3106.32 over 28) — a different number that changes which households clear the bar. The review asked for the billing benchmark." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "ms-mcq-18",
+      prompt: "A colleague's 'households with no billings' check uses NOT IN (SELECT customer_id FROM invoices) and returns nothing. First suspect?",
+      choices: [
+        "The outer query has no GROUP BY",
+        "A NULL in the subquery's select list poisons NOT IN — the predicate can never be true",
+        "NOT IN needs DISTINCT to work",
+        "The customers table is empty",
+      ],
+      answer: 1,
+      why: "x NOT IN (1, 2, NULL) is x <> 1 AND x <> 2 AND x <> NULL — the unknown comparison poisons the AND, every row goes unknown, and the result is zero rows. NULL-safe forms: NOT EXISTS, or the LEFT JOIN anti-join this kit's watch is built on.",
+      notes: [
+        { choice: 1, why: "Right family, wrong fix — DISTINCT changes multiplicity, not NULL semantics. The watch works because it keys on p.invoice_id and tests IS NULL after a LEFT JOIN, never because of IN." },
+        { choice: 2, why: "GROUP BY has nothing to do with NOT IN evaluation. Diagnosing NULL semantics is the muscle; reaching for clause shuffles is how the bug survives review." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "ms-mcq-19",
+      prompt: "The fee-schedule team wants four equal-COUNT household groups by lifetime billed. Which window assigns them?",
+      choices: [
+        "NTILE(4) OVER (ORDER BY lifetime_billed)",
+        "NTILE(lifetime_billed) OVER (ORDER BY 4)",
+        "WIDTH_BUCKET(lifetime_billed, 0, 30000, 4)",
+        "ROUND(4.0 * lifetime_billed / SUM(lifetime_billed) OVER ())",
+      ],
+      answer: 0,
+      why: "NTILE(n) OVER (ORDER BY …) divides the rows into n equal-count buckets by the ordering — the definition of 'four equal-count groups'. Equal-count is a book-shape claim; dollar bands are a different requirement the CASE ladder handles.",
+      notes: [
+        { choice: 1, why: "NTILE takes a constant bucket count; handed a dollar column it errors. And ORDER BY 4 orders by the constant 4 — every row ties, so the buckets are assigned arbitrarily." },
+        { choice: 3, why: "That's a share of the book, not a bucket assignment — it prints 0.19, not 'tier 2', and the fee schedule can't invoice a proportion." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "ms-mcq-20",
+      prompt: "A fee dispute needs the schedule IN FORCE on the billing's issue date. Which read proves it?",
+      choices: [
+        "Join the household to today's latest schedule row",
+        "Pick the schedule row with MAX(effective_from) among those <= the billing's issued_on",
+        "Average every schedule row touching the household",
+        "Filter schedules to those issued in the same month",
+      ],
+      answer: 1,
+      why: "As-of logic: the greatest effective_from not after the billing's issue date is the schedule in force THAT day — a correlated MAX or a ROW_NUMBER() = 1 over the pre-filtered candidates. Joining today's latest schedule proves the disputant's point for them.",
+      notes: [
+        { choice: 0, why: "That's the exact bug the dispute alleges — pricing a past billing on today's schedule. Point-in-time truth beats current-state convenience every time the desk is audited." },
+        { choice: 2, why: "Averaging schedules invents a rate nobody signed. Disputes are settled by the row that was in force, not by interpolation across the ones that weren't." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "ms-mcq-21",
+      prompt: "The growth board takes 'the top four above-average relationships'. The HAVING already filtered the fold. What finishes the query?",
+      choices: [
+        "LIMIT 4 — after ORDER BY lifetime_billed DESC, or the four rows are arbitrary",
+        "TOP 4 — SQL Server syntax works everywhere",
+        "WHERE ROWNUM <= 4 — applied before the fold",
+        "HAVING RANK() <= 4 — windows run after HAVING anyway",
+      ],
+      answer: 0,
+      why: "LIMIT caps the printed rows after ordering: ORDER BY lifetime_billed DESC LIMIT 4 is deterministic. Without the ORDER BY, LIMIT 4 hands the board whichever four rows the plan produced first — on an advisor deck, that's four random relationships.",
+      notes: [
+        { choice: 1, why: "TOP is dialect, not SQL — SQLite errors. And even where it parses, the ordering clause carries the determinism, not the cap keyword." },
+        { choice: 3, why: "Window functions compute after HAVING, but you can't filter on them in the same SELECT — RANK needs a derived table or CTE before any rank filter applies." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "ms-mcq-22",
+      prompt: "The partial-payment read keeps billings whose receipts sum UNDER the billed amount. Where does SUM(p.amount_cents) < i.amount_cents live?",
+      choices: [
+        "WHERE — it's just a comparison",
+        "HAVING — the comparison reads a fold, which exists only after GROUP BY",
+        "ORDER BY — comparisons sort the shortfalls",
+        "ON — the join condition itself",
+      ],
+      answer: 1,
+      why: "The predicate references an aggregate over the join, so it gates GROUPS: HAVING. The 4000.00-of-6148.00 partial survives it; the 21 exact billings (receipts = billed) fail the strict < and drop — which is the read's definition working.",
+      notes: [
+        { choice: 0, why: "WHERE runs before rows are folded — the SUM doesn't exist yet. Most engines reject it outright; the ones that tolerate it are computing something else entirely." },
+        { choice: 3, why: "Putting the comparison in ON changes which receipts JOIN, not which billings print — the fold then runs on a crippled join and the 'partial' label is meaningless." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "ms-mcq-23",
+      prompt: "Which pair of expressions both build the billing-month key '2025-01' from a '2025-01-14 …' date?",
+      choices: [
+        "SUBSTR(issued_on, 1, 7) and STRFTIME('%Y-%m', issued_on)",
+        "SUBSTR(issued_on, 1, 7) and STRFTIME(issued_on, '%Y-%m')",
+        "SUBSTR(issued_on, 0, 7) and STRFTIME('%Y-%m', issued_on)",
+        "SUBSTR(issued_on, 1, 7) and DATE(issued_on, 'month')",
+      ],
+      answer: 0,
+      why: "SUBSTR slices characters 1-7 ('YYYY-MM'); STRFTIME with the format FIRST prints the same key. Both sort correctly as text, which is why the 2024-02 to 2025-02 walk buckets cleanly either way.",
+      notes: [
+        { choice: 1, why: "STRFTIME's arguments are swapped — the format string comes first. Called with the date first it returns NULL, and every billing lands in one NULL bucket." },
+        { choice: 2, why: "SUBSTR is 1-indexed: position 0 grabs seven characters ending at '5-01-1' — a mangled key that sorts wrong and splits months. Off-by-one on the bucket key poisons the whole walk." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "ms-mcq-24",
+      prompt: "A board ranks households within market via RANK() OVER (PARTITION BY region ORDER BY COUNT(*) DESC), but prints scrambled. The fix:",
+      choices: [
+        "Move the ORDER BY outside the OVER",
+        "Add an outer ORDER BY region, book_rank — the window's ORDER BY never sorts the output",
+        "Replace RANK with ROW_NUMBER — it prints in order",
+        "Add DESC inside the OVER and remove the partition",
+      ],
+      answer: 1,
+      why: "The window's ORDER BY assigns rank numbers; the outer ORDER BY decides what prints first. They're independent sentences — the board needs both, and the outer clause is what every market's rung 1 lands on top.",
+      notes: [
+        { choice: 0, why: "There IS no 'outside the OVER' version of the window's order — removing it breaks the ranks. The missing piece is a second, outer ORDER BY, not a relocation." },
+        { choice: 2, why: "ROW_NUMBER changes the tie policy, not the print order — ties stop sharing rungs AND the rows stay scrambled. Two regressions for the price of one edit." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "ms-mcq-25",
+      prompt: "Find the five split-plan billings by pairing their two receipt rows. Which self-join is correct?",
+      choices: [
+        "p1.invoice_id = p2.invoice_id",
+        "p1.invoice_id = p2.invoice_id AND p1.id < p2.id",
+        "p1.invoice_id = p2.invoice_id AND p1.id <> p2.id",
+        "p1.id = p2.id",
+      ],
+      answer: 1,
+      why: "Pair on shared billing, then canonicalize with p1.id < p2.id: each split billing prints exactly one pair row. The five splits (refs 1, 5, 12, 19, 22) surface cleanly instead of as mirrored duplicates.",
+      notes: [
+        { choice: 0, why: "Equality alone matches every row to itself first — each split prints its self-pair plus the mirror pair (a→b and b→a). The count triples and the 'pairs' read is unquotable." },
+        { choice: 2, why: "<> kills self-pairs but keeps both orientations — a→b AND b→a both print. The audit asks for each pair once; canonical ordering is the discipline." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "ms-mcq-26",
+      prompt: "In the coverage census, the CASE checks 'received IS NULL' FIRST. What happens if the partial test comes first instead?",
+      choices: [
+        "Nothing — CASE arms are independent",
+        "The 6 no-receipt billings mislabel as 'exact': received < amount_cents is NULL-true for them, so they fall to ELSE",
+        "The query errors — NULL can't be compared",
+        "The partial row prints twice",
+      ],
+      answer: 1,
+      why: "CASE evaluates arms in order. For no-receipt billings, received is NULL, so received < amount_cents is unknown — not true — and the row skips to ELSE, labeled 'exact'. The watch (6 / 15217.00) would vanish into the exact class (now 27 / 80829.00) — the exact misclassification the arm order exists to prevent.",
+      notes: [
+        { choice: 0, why: "Arms are sequential, not independent — order IS semantics when NULL comparisons are involved. The IS NULL arm first is load-bearing." },
+        { choice: 2, why: "NULL comparisons don't error, they return unknown — which is precisely why the misclassification is silent. Silent is worse than loud in a census." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "ms-mcq-27",
+      prompt: "GROUP BY month works in SQLite after SELECT SUBSTR(issued_on, 1, 7) AS month. Why does the desk still spell the expression in GROUP BY on shared code?",
+      choices: [
+        "SQLite silently rewrites aliases anyway — spelling it is faster",
+        "Alias-in-GROUP-BY is a dialect courtesy, not a guarantee — spelling the expression is portable and self-documenting",
+        "Aliases are only legal in ORDER BY everywhere",
+        "The expression is shorter than the alias",
+      ],
+      answer: 1,
+      why: "SQLite resolves output aliases in GROUP BY, but the standard only promises input columns there — port across engines and the alias may stop resolving. Spelling SUBSTR(issued_on, 1, 7) costs nothing and tells the reader the fold key without a scroll up.",
+      notes: [
+        { choice: 0, why: "'It works here' is how dialect creep ships. The walk's month buckets must survive the next engine migration — the expression, not the alias, is the contract." },
+        { choice: 2, why: "Aliases ARE universally legal in ORDER BY — that's the clause where they're safe. Overgeneralizing that rule to GROUP BY is the bug, not the rule itself." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "ms-mcq-28",
+      prompt: "Billings LEFT-JOINed to receipts print 33 rows (5 split billings carry 2 receipt rows). What does SUM(i.amount_cents) / 100.0 over that join print?",
+      choices: [
+        "86977.00 — the book's honest billed total",
+        "86052.00 — the ledger's posted revenue fold",
+        "111917.00 — the 24940.00 of split billings counted twice",
+        "65612.00 — the exact-coverage total",
+      ],
+      answer: 2,
+      why: "The join's grain is receipt rows: the five split billings (4860.00 + 5284.00 + 4723.00 + 5614.00 + 4459.00 = 24940.00) contribute a second billed row each, so the fold prints 86977.00 + 24940.00 = 111917.00. Pre-aggregate receipts to billing grain before joining, or the billed total lies by exactly the split amount.",
+      notes: [
+        { choice: 0, why: "That's SUM over the 28-billing base — true only before the join. The fan-out is the whole point: joins decide grain, and the fold follows the join." },
+        { choice: 1, why: "86052.00 is the ledger's revenue fold — which excludes the 925.00 void. Quoting a third number from a fourth grain is how close meetings start arguing about which book is 'the' book." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "ms-mcq-29",
+      prompt: "How many billings on this book have EVER received a dollar?",
+      choices: [
+        "27 — one per receipt row",
+        "28 — the whole book eventually settles",
+        "22 — 21 exact-coverage billings plus the 4000.00-of-6148.00 partial",
+        "21 — the paid-status count",
+      ],
+      answer: 2,
+      why: "COUNT(DISTINCT i.id) over the join: 21 exact billings plus the open partial that took a 4000.00 receipt = 22 relationships with receipt evidence. The 33-row join, 27 receipt rows, and 22 distinct billings are three different counts — this is the only one that answers 'ever received'.",
+      notes: [
+        { choice: 0, why: "27 is receipt ROWS — five split billings contribute two each, so rows overcount relationships by exactly five." },
+        { choice: 3, why: "21 is status-paid, but one paid billing (1756.00) has no receipt while one VOID billing received its 925.00 — status claims and receipt evidence disagree in both directions." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "ms-mcq-30",
+      prompt: "Close night, one query: count the void billings that drew a receipt AND the paid billings with none. Which shape returns both arms in one pass?",
+      choices: [
+        "Two queries UNIONed on the billing id",
+        "COUNT(*) FILTER (WHERE status='void' AND p.id IS NOT NULL) and COUNT(*) FILTER (WHERE status='paid' AND p.id IS NULL) over one LEFT JOIN",
+        "GROUP BY status and read the two counts off the fold",
+        "A CASE pivot over payments only",
+      ],
+      answer: 1,
+      why: "FILTER (WHERE …) counts conditional arms on the same join: the void-but-received arm catches 925.00, the paid-no-receipt arm catches 1756.00. One join, one pass, both breaks — and each arm's predicate IS the definition, so the counts route themselves.",
+      notes: [
+        { choice: 0, why: "UNION of two queries rebuilds the join twice and invites drift — close night's five ad-hoc queries are exactly how the two arms stop agreeing on the definition." },
+        { choice: 2, why: "GROUP BY status folds every billing into its claim state — it can never test receipt presence against status, which is the entire question. The break lives in the PAIR, not the status." },
+      ],
+      difficulty: "hard",
+    },
   ],
 
   cases: [
@@ -406,6 +874,176 @@ export const morganstanleyKit: CompanyKit = {
       walkthrough:
         "A watchlist is an anti-join with an opinion about order. FROM invoices LEFT JOIN payments ON p.invoice_id = i.id keeps every billing and attaches whatever receipts exist; WHERE p.id IS NULL keeps exactly the billings where no receipt matched — the definition of never-received, 6 billings carrying 15217.00. The LEFT JOIN is load-bearing: an inner join would drop the very rows the meeting is about, because billings without receipts match nothing. ORDER BY billed DESC is the working order — biggest exposure first. The result's membership is the lesson: a paid-status billing at 1756.00 sits on the list because status is a claim and the receipt census is evidence, while an open billing with a 4000.00 partial against 6148.00 stays off because it has evidence. The distractors fail honestly: joining on id pairs receipts to same-numbered billings and silently shrinks the watch, customer_id isn't a payments column, status duplicates the state column, and ASC turns the desk's hour into a bottom-up crawl. The habit being graded: the IS NULL arm IS the definition, and the order is part of the deliverable.",
     },
+    {
+      id: "cs-ms-3",
+      tier: "hard",
+      topic: "t7",
+      universe: "month-close",
+      title: "The billing-trend walk",
+      brief:
+        "Morgan Stanley-flavored memo on the storefront db (invoices = client fee billings): the platform review wants the billing-trend walk — monthly billed dollars with the month-over-month delta beside each bucket, so the close can defend the peaks before the CFO finds them. Probed facts: the book bills across **13 monthly buckets, 2024-02 through 2025-02**; the walk peaks at **11085.00 in 2025-01 (+2255.00 MoM)** and drops **-2973.00** into February. The first bucket's delta prints **NULL** — no prior month exists, and the desk reads that NULL as the definition, never as a zero. The walk is one fold with a LAG inside it; every number in the delta column must trace to the bucket beside it.",
+      ask: "Return the walk: month, billed (2dp), prev_billed (2dp), mom_delta (2dp) — chronological, first bucket's delta NULL.",
+      template:
+        "WITH monthly AS (\n  SELECT SUBSTR({1}, 1, 7) AS month,\n         SUM(amount_cents) AS cents\n  FROM invoices\n  GROUP BY month\n),\nlagged AS (\n  SELECT month, cents,\n         {2}(cents) OVER ({3} month) AS prev_cents\n  FROM monthly\n)\nSELECT month,\n       ROUND(cents / 100.0, 2) AS billed,\n       ROUND(prev_cents / 100.0, 2) AS prev_billed,\n       ROUND((cents - prev_cents) / 100.0, 2) AS mom_delta\nFROM lagged\nORDER BY {4};",
+      slots: [
+        {
+          answer: "issued_on",
+          kind: "keyword",
+          label: "the billing date column",
+          why: "The walk buckets by when the fee was ISSUED — invoices.issued_on. Bucket by anything else (due_on is the payment window, not the billing event) and the calendar the CFO defends is a different book.",
+        },
+        {
+          answer: "LAG",
+          kind: "keyword",
+          label: "the previous-bucket anchor",
+          why: "LAG(cents) carries the prior month's fold into the current row — one pass, no self-join. LEAD points the wrong way (the delta would describe the FUTURE month), and ROW_NUMBER takes no argument at all.",
+        },
+        {
+          answer: "ORDER BY",
+          kind: "keyword",
+          label: "the walk's chronology inside OVER",
+          why: "LAG needs to know which row is 'previous' — OVER (ORDER BY month) defines it. PARTITION BY month would isolate every month into its own partition, making every prev_cents NULL and every delta NULL with it.",
+        },
+        {
+          answer: "month",
+          kind: "keyword",
+          label: "the print order",
+          why: "The walk reads chronologically: ORDER BY month. Order by cents and the walk scrambles into a value leaderboard — the trend, the thing the review is defending, stops existing as a shape.",
+        },
+      ],
+      distractors: ["LEAD", "ROW_NUMBER", "PARTITION BY", "paid_on", "cents"],
+      walkthrough:
+        "A trend walk is a fold, a chronology, and a NULL policy — in that order. The monthly CTE buckets 28 billings into 13 months by SUBSTR(issued_on, 1, 7); the lagged CTE carries LAG(cents) OVER (ORDER BY month) so each row holds its predecessor; the outer SELECT converts cents at the /100.0 edge and prints billed, prev_billed, mom_delta. The numbers to quote: the walk opens 2024-02 at 7003.00 with a NULL delta (no prior month — the definition, not a zero), peaks 2025-01 at 11085.00 (+2255.00 MoM), and gives back -2973.00 into 2025-02. The distractors all break it honestly: LEAD points the window the other way so every delta describes the future; ROW_NUMBER(cents) is an argument-count error — ranking functions take no fold; PARTITION BY month strands every month alone, NULLing the entire delta column; paid_on isn't an invoices column (it lives on payments); and ordering the print by cents turns the walk into a leaderboard. The habit being graded: the anchor clause inside OVER is the definition of 'previous', and the NULL head row is the walk's proof it isn't faked.",
+    },
+    {
+      id: "cs-ms-4",
+      tier: "easy",
+      topic: "j4",
+      universe: "fraud",
+      title: "The split-plan receipt census",
+      brief:
+        "Morgan Stanley-flavored memo on the storefront db (payments = fee receipts, invoices = fee billings): the fraud spot-check opens on the receipt census — every billing beside its receipt evidence, no-receipt rows KEPT in the print, because the census is where double-counting and phantom claims show up first. Probed facts: **28 billings** carry **27 receipt rows**; **five split-plan billings (refs 1, 5, 12, 19, 22) carry two receipt rows each** — 4860.00, 5284.00, 4723.00, 5614.00, 4459.00; the partial **INV-2025-025** prints received 4000.00 against billed 6148.00; six billings keep their row with zero receipts. The void-but-received **925.00** shows up honestly in this census: state void, receipt_rows 1 — evidence, printed.",
+      ask: "Return the census: billing ref, state, receipt rows, received (2dp), billed (2dp) — biggest receipts first.",
+      template:
+        "SELECT i.number AS billing_ref,\n       i.status AS state,\n       COUNT(p.id) AS receipt_rows,\n       ROUND(COALESCE({1}(p.amount_cents), 0) / 100.0, 2) AS received,\n       ROUND(i.amount_cents / 100.0, 2) AS billed\nFROM invoices i\nLEFT JOIN payments p ON p.invoice_id = i.{2}\nGROUP BY i.{3}\nORDER BY received {4};",
+      slots: [
+        {
+          answer: "SUM",
+          kind: "keyword",
+          label: "the receipts fold",
+          why: "Received means dollars — SUM(p.amount_cents) per billing. COUNT would print row tallies as dollars, MAX would print only the biggest receipt and hide the 4000.00+1615.00-style splits that are the census's whole point.",
+        },
+        {
+          answer: "id",
+          kind: "keyword",
+          label: "the join key (billing side)",
+          why: "A receipt points at its billing's primary key: p.invoice_id = i.id. Join on anything else and receipts attach to strangers — or, on a text key like number, to nothing at all, and every census number collapses to zero.",
+        },
+        {
+          answer: "number",
+          kind: "keyword",
+          label: "the census grain",
+          why: "GROUP BY i.number is one row per billing — the grain the desk reads refs from. Group by i.status and 28 billings fold into 3 claim states, erasing the per-billing evidence the spot-check exists to print.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the review order",
+          why: "DESC headlines the biggest receipts — the fraud sweep works top-down. ASC opens on the 0.00 no-receipt rows and burns the review's first minutes on the emptiest evidence.",
+        },
+      ],
+      distractors: ["COUNT", "MAX", "amount_cents", "status", "method", "ASC"],
+      walkthrough:
+        "A census is a LEFT JOIN that refuses to drop the empty rows. FROM invoices LEFT JOIN payments ON p.invoice_id = i.id keeps all 28 billings and attaches their receipts; GROUP BY i.number folds one row per billing; COUNT(p.id) reads 0, 1, or 2 — and the 2s are exactly the five split-plan billings (refs 1, 5, 12, 19, 22), the fan-out that makes naive joins double-count; COALESCE(SUM(p.amount_cents), 0) prints 0.00 for the six no-receipt billings instead of a NULL that downstream folds would choke on. The money rows to name: the partial INV-2025-025 prints received 4000.00 against billed 6148.00 — open AND partially received, evidence in two tables; the void-but-received 925.00 prints state void, receipt_rows 1 — the fraud read that no status-only report can produce. The distractors fail honestly: COUNT as the dollar fold prints tallies where dollars belong, MAX hides all but the biggest receipt, amount_cents in the join or the grain pairs receipts with numbers or folds by amount, status re-folds the census into three claims, method isn't an invoices column, and ASC reverses the review order. The habit being graded: keep the empty rows on purpose, count evidence at the grain you print.",
+    },
+    {
+      id: "cs-ms-5",
+      tier: "medium",
+      topic: "s6",
+      universe: "refund-audit",
+      title: "The coverage census",
+      brief:
+        "Morgan Stanley-flavored memo on the storefront db (billings = fee billings, receipts = fee receipts): the refund-adjacent audit wants the coverage census — every billing classified by what its receipts actually prove: **exact** (receipts equal billed), **partial** (receipts under billed), **no receipt** (nothing ever matched). Probed facts: **21 exact / 65612.00**, **1 partial — 4000.00 of 6148.00**, **6 no receipt / 15217.00**. The census is evidence across two tables, never a status string: the open-status census (6 / 19609.00) and this no-receipt class (6 / 15217.00) share a count and not a single member, because one open billing took a partial and one paid-status billing has no receipt at all.",
+      ask: "Return the census: coverage class, billings, billed (2dp) — biggest class first.",
+      template:
+        "WITH per_billing AS (\n  SELECT i.id,\n         i.status,\n         i.amount_cents,\n         SUM(p.amount_cents) AS received\n  FROM invoices i\n  LEFT JOIN payments p ON p.invoice_id = i.id\n  GROUP BY i.id\n)\nSELECT CASE\n         WHEN received IS NULL THEN {1}\n         WHEN received < amount_cents THEN {2}\n         ELSE {3}\n       END AS coverage,\n       COUNT(*) AS billings,\n       ROUND(SUM(amount_cents) / 100.0, 2) AS billed\nFROM per_billing\nGROUP BY {4}\nORDER BY billed DESC;",
+      slots: [
+        {
+          answer: "'no receipt'",
+          kind: "keyword",
+          label: "the empty-evidence arm",
+          why: "received IS NULL is the LEFT JOIN's signature for 'no receipt row ever matched' — the 6-billing / 15217.00 watch. This arm MUST come first: for these rows, received < amount_cents is NULL-unknown and would fall through to ELSE, mislabeling the watch as exact.",
+        },
+        {
+          answer: "'partial'",
+          kind: "keyword",
+          label: "the under-received arm",
+          why: "received < amount_cents catches the billing whose receipts started but didn't finish — the single 4000.00-of-6148.00 row. This is the census's interesting member: open AND received, invisible to any status-only read.",
+        },
+        {
+          answer: "'exact'",
+          kind: "keyword",
+          label: "the settled arm",
+          why: "ELSE covers receipts equal to billed — the 21 exact billings / 65612.00 (including the void-but-received 925.00, whose evidence is real even though its claim is cancelled). ELSE is the honest default because NULL comparisons never land here by accident.",
+        },
+        {
+          answer: "coverage",
+          kind: "keyword",
+          label: "the class fold",
+          why: "GROUP BY coverage folds the CASE's output into three classes. Group by received and every distinct receipt value becomes its own class — 20 rows of singleton buckets that the audit can't quote; group by status and the census counts claims, not evidence.",
+        },
+      ],
+      distractors: ["'paid'", "'open'", "received", "status"],
+      walkthrough:
+        "A census is a fold at the right grain, then a CASE whose arm order IS the definition. Stage one: the per_billing CTE folds receipts to billing grain — LEFT JOIN keeps all 28 billings, SUM(p.amount_cents) is NULL exactly where no receipt matched, and GROUP BY i.id keeps the fold honest at one row per billing (the 27 receipt rows over 22 receiving billings collapse correctly, splits included). Stage two: the CASE reads evidence — received IS NULL is 'no receipt' and MUST be first, because received < amount_cents is unknown for those rows and would silently drop them into ELSE; received < amount_cents is 'partial' (the lone 4000.00-of-6148.00); ELSE is 'exact' (21 billings / 65612.00). Fold by coverage and the census prints 21 / 65612.00, 6 / 15217.00, 1 / 6148.00. The distractors mislabel with claim states ('paid', 'open' — statuses, not evidence), or break the fold (received as a class key scatters the census into singleton value buckets; status re-folds by claim and the audit is counting assertions again). The habit being graded: arm order encodes NULL semantics, and the class you print is only as honest as the grain you folded.",
+    },
+    {
+      id: "cs-ms-6",
+      tier: "hard",
+      topic: "q2",
+      universe: "growth",
+      title: "The above-average book",
+      brief:
+        "Morgan Stanley-flavored memo on the storefront db (invoices = client fee billings, customers = client households): the growth review wants the households whose lifetime billed beats the book's AVERAGE BILLING — not the average household, a denominator trap the review probes deliberately. Probed facts: 28 billings worth **86977.00**, average billing **3106.32**; **eight households** clear that line; the board takes the **top four** — Alice Chen (EU, 5 billings, 26629.00), Emma Wilson (US, 4, 13384.00), Maya Patel (APAC, 4, 11542.00), Grace Kim (APAC, 3, 9071.00). The benchmark lives in a scalar subquery so it is computed once, printed nowhere twice, and argued by nobody.",
+      ask: "Return the board: household, market, billings, lifetime_billed (2dp) — the top four above-average relationships, biggest first.",
+      template:
+        "SELECT c.name AS household,\n       c.region AS market,\n       COUNT(*) AS billings,\n       ROUND(SUM(i.amount_cents) / 100.0, 2) AS lifetime_billed\nFROM invoices i\nJOIN customers c ON c.{1} = i.customer_id\nGROUP BY i.{2}\nHAVING SUM(i.amount_cents) / 100.0 >\n       (SELECT {3}(amount_cents) / 100.0 FROM invoices)\nORDER BY lifetime_billed {4}\nLIMIT {5};",
+      slots: [
+        {
+          answer: "id",
+          kind: "keyword",
+          label: "the household key",
+          why: "The join runs c.id = i.customer_id: every billing attaches to its billing household. Join on c.name or c.region and the equality compares text to an integer id — no match, no board, and the empty deck looks like a quiet book.",
+        },
+        {
+          answer: "customer_id",
+          kind: "keyword",
+          label: "the relationship grain",
+          why: "GROUP BY i.customer_id folds one row per household — the relationship grain the advisor conversation runs on. Fold by i.status and the board counts claim states; fold by i.amount_cents and every distinct billing becomes its own 'household'.",
+        },
+        {
+          answer: "AVG",
+          kind: "keyword",
+          label: "the benchmark function",
+          why: "The review said average billing: AVG(amount_cents) / 100.0 = 3106.32. SUM would raise the bar to 86977.00 and clear nobody; the average HOUSEHOLD (7907.00) is a different benchmark that cuts the board differently — the denominator is the ask.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the board order",
+          why: "DESC prints the biggest relationship first — Alice Chen at 26629.00 tops the deck. ASC opens the board on the smallest above-average household and the growth review reads it upside down.",
+        },
+        {
+          answer: "4",
+          kind: "number",
+          label: "the board cap",
+          why: "The review takes the top four above-average relationships — LIMIT 4 after the ORDER BY, so the cap is deterministic. Eight households clear the 3106.32 line; the cap decides how many the deck carries.",
+        },
+      ],
+      distractors: ["region", "name", "SUM", "due_on", "ASC", "3"],
+      walkthrough:
+        "An above-average board is a fold, a benchmark computed once, and a cap that means something. The join attaches each of the 28 billings to its household (c.id = i.customer_id); GROUP BY i.customer_id folds per relationship — COUNT(*) as billings, SUM(amount_cents)/100.0 as lifetime billed; the scalar subquery (SELECT AVG(amount_cents) / 100.0 FROM invoices) computes the book benchmark exactly once — 3106.32 over 28 billings worth 86977.00 — and HAVING keeps the eight households whose lifetime billed clears it; ORDER BY lifetime_billed DESC then LIMIT 4 prints the top four: Alice Chen 26629.00, Emma Wilson 13384.00, Maya Patel 11542.00, Grace Kim 9071.00. The traps are all in the distractors: c.region or c.name compares text to an id and empties the board; SUM as the benchmark raises the bar to 86977.00 — a bar nobody clears — and the deck reads as churn; grouping on i.due_on re-folds the book by payment window, a different relationship model entirely; ASC inverts the board; LIMIT 3 truncates Grace Kim and the review argues over a household that exists but isn't printed. The habit being graded: the benchmark is a named constant with a stated grain, and every denominator on the board — average billing, not average household — is the ask.",
+    },
   ],
 
   problems: [
@@ -425,5 +1063,21 @@ export const morganstanleyKit: CompanyKit = {
     { slug: "customer-purchasing-behavior-analysis", why: "Spend-tier bands over lifetime value: the household-band read the fee schedule prices against — tiers are definitions someone owns." },
     { slug: "risk-based-pricing", why: "Band join between value and schedule ranges: risk-based fee assignment in SQL — the boundary join where tier disputes are settled." },
     { slug: "product-price-at-a-given-date", why: "The price that WAS live at event time, not today's: as-of logic is exactly how fee-schedule disputes are proved at the desk." },
+    { slug: "combine-two-tables", why: "LEFT JOIN the household card onto the base and keep the NULLs: billings with no receipt still owe the desk a row — the LEFT JOIN reflex behind every census this kit runs." },
+    { slug: "customers-who-never-order", why: "The anti-join that proves a negative: households with zero billings — this book carries none, and the drill is proving that with evidence instead of assuming it." },
+    { slug: "sales-person", why: "Counts that must survive NULLs across a join: sales with zero orders maps to advisors with zero split-plan billings — the census shape the fraud spot-check reads weekly." },
+    { slug: "rank-scores", why: "RANK over folded scores with shared rungs: the book board's tie policy, drilled on a leaderboard where ties are visible and the next rank skips." },
+    { slug: "find-the-team-size", why: "COUNT(*) OVER (PARTITION BY …): the market book-size column that rides beside every household row — each relationship labeled with the size of the book it competes in." },
+    { slug: "project-employees-iii", why: "Windows over joins without losing the outer row: receipt evidence beside each billing, window-style — the census and the rank in one pass." },
+    { slug: "confirmation-rate", why: "COALESCE-guarded rates across a LEFT JOIN: the receipt-rate read where a missing receipt must print as zero evidence, not vanish from the denominator." },
+    { slug: "average-salary-of-departments", why: "Group fold versus global benchmark: the household-versus-book-average compare — exactly the scalar-subquery shape the above-average board runs on." },
+    { slug: "managers-with-at-least-5-direct-reports", why: "HAVING against a subquery benchmark: the minimum-scale gate the advisor-team boards carry — folds that clear a line computed from the same book." },
+    { slug: "department-highest-salary", why: "Argmax per group via subquery or window: the biggest billing per booking market, ties and all — the desk's top-of-market read in textbook form." },
+    { slug: "count-salary-categories", why: "CASE/UNION ALL buckets including the empty ones: the coverage census shaped so no class silently disappears — zero-bucket discipline the close deck lives by." },
+    { slug: "monthly-transactions-i", why: "Month buckets with SUBSTR keys and state filters: the billing-calendar fold behind the trend walk — 13 buckets, states preserved, denominators stated." },
+    { slug: "the-latest-login-in-2020", why: "SUBSTR-based period filters with type care: the 'billings issued in window' screens the month-close runs — string keys sliced honestly." },
+    { slug: "capital-gain-loss", why: "CASE WHEN money math over per-position folds: realized-versus-billed arithmetic the wealth book runs daily, cents handled as cents until the edge." },
+    { slug: "nth-highest-salary", why: "OFFSET into a sorted fold: the second-largest billing read — NULL when the rung doesn't exist, exactly like the desk's second-biggest relationship question." },
+    { slug: "restaurant-growth", why: "7-day ROWS frames over dated receipts: the rolling receipt census the platform review reads every Monday — the frame written out loud, not defaulted." },
   ],
 };

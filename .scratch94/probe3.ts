@@ -1,0 +1,13 @@
+import { Database } from "bun:sqlite";
+const db = new Database("/home/z/my-project/db/custom.db", { readonly: true });
+const q = (s: string) => { try { return db.query(s).all(); } catch (e) { return "ERR: " + (e as Error).message; } };
+const show = (l: string, s: string) => { console.log("### " + l); console.log(JSON.stringify(q(s))); console.log(); };
+show("mean of account-average baskets", `SELECT ROUND(AVG(b),2) AS mean_of_accounts FROM (SELECT customer_id, AVG(total) AS b FROM orders GROUP BY customer_id)`);
+show("accounts below mean-of-accounts", `SELECT COUNT(*) AS below FROM (SELECT customer_id FROM orders GROUP BY customer_id HAVING AVG(total) < (SELECT AVG(b) FROM (SELECT AVG(total) AS b FROM orders GROUP BY customer_id)))`);
+show("whale share", `SELECT ROUND(100.0 * 7262.35 / 34833.28, 1) AS whale_share`);
+show("settle avg on LAST leg (MAX-based)", `SELECT COUNT(*) AS bills, ROUND(AVG(d),1) AS avg_last FROM (SELECT i.id, JULIANDAY(MAX(p.paid_on))-JULIANDAY(i.issued_on) AS d FROM invoices i JOIN payments p ON p.invoice_id=i.id WHERE i.status='paid' GROUP BY i.id)`);
+show("acc latency US (proxied)", `SELECT c.region, COUNT(*) AS carts FROM orders o JOIN customers c ON c.id=o.customer_id GROUP BY c.region`);
+show("EU unpaid ids (gett-3 prose)", `SELECT i.id, c.region, i.amount_cents, i.status FROM invoices i JOIN customers c ON c.id=i.customer_id LEFT JOIN payments p ON p.invoice_id=i.id WHERE p.id IS NULL ORDER BY i.id`);
+show("temu delivered-only accounts fanout (temu-4 prose)", `SELECT COUNT(*) AS thin FROM (SELECT c.id FROM customers c LEFT JOIN orders o ON o.customer_id=c.id AND o.status='delivered' GROUP BY c.id HAVING COUNT(o.id)<=1)`);
+show("card legs on split invoices (gett-5 prose)", `SELECT COUNT(*) AS legs, COUNT(DISTINCT invoice_id) AS billings, SUM(amount_cents) AS cents FROM payments WHERE method='card'`);
+db.close();
