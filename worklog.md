@@ -6230,3 +6230,19 @@ Stage Summary:
 - Universe: 8 domains × 14 companies = 112/112 live. 40 flagship + wave-5 + wave-6 all at 3x volume; wave-7 at standard volume (3x candidate for a future wave). Assessment layer (mock rounds + mastery quizzes) live.
 - Toward 20-25/domain: now 14/domain; next waves repeat the recipe (+3/domain per wave via ~24 single-kit agent runs).
 - Next options: wave-8 (+3/domain → 17), 3x-expand the 24 wave-7 kits, COMPANY_TAG_ALIASES name normalization, menu re-order (user sign-off pending).
+
+---
+Task ID: 95
+Agent: Super Z (main agent)
+Task: 3x-expand all 24 wave-7 kits to full volume (brief 6/dayInLife 4/metrics 12/topics 15/theory 24/mcqs 30/cases 6/problems 32), append-only.
+
+Work Log:
+- Baseline verified: 112 kits, probe ALL PASS, tree clean.
+- Batched single-kit agents (8 at a time); ~50% died at report deadlines but left work on disk — swept up with per-kit state checks (scripts/kit-state.ts built for this) then smaller finisher agents (mcqs-only, cases+problems-only) for partials: discord (3 sweeps), tripcom (2), ubs/dropbox/nubank/yassir/ing/canva/chime/blablacar/sephora (1-2 each).
+- Hand-fixed: cs-chime-4 marker {1} used twice (GROUP BY p.{1} → GROUP BY rail alias; verified alias semantics + distractor folds on live db first).
+- Probe fixes by hand: zalando topic slug plural→singular (customer-who-visited-but-did-not-transact), chime problem slug typo running→rolling-7d-actives.
+- Removed agent temp probes (scripts/tmp-probe-95*, tmp-indrive/).
+
+Stage Summary:
+- ALL 112 kits now at full 3x volume. Case-audit sweep: 112/112 ALL PASS. Probe ALL PASS: 3,025 problems / 2,128 theory / 2,660 MCQs / 532 cases (was 2,641/1,744/2,180/436). tsc clean (only pre-existing windows-track noise), eslint clean.
+- Next: wave-8 (+3/domain → 17/domain = 136 kits), then wave-9 (→ 20/domain = 160 kits).
