@@ -1,7 +1,7 @@
 // Company Interview Universe — types. Client-safe.
 //
-// The universe is organized as DOMAINS (industries) × 17 companies
-// each (136-company matrix). Every company carries a KIT: everything that company asks in SQL
+// The universe is organized as DOMAINS (industries) × 20 companies
+// each (160-company matrix). Every company carries a KIT: everything that company asks in SQL
 // interviews, wrapped in the day-to-day business context its data teams
 // actually live in. Kits land domain by domain (see worklog); the registry
 // always lists the full matrix so the structure is visible

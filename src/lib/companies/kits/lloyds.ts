@@ -1,0 +1,450 @@
+// Lloyds Bank — Wave-9 (Task 98-lloyds), banking domain, 0 tagged LC — theme-curated;
+// facts from scripts/company-facts.md (probed 2026-10-12). Standard wave-8 volume.
+// The UK's biggest retail bank: the black-horse high-street network, the current
+// accounts & mortgages engine (Halifax / Bank of Scotland siblings), and the
+// group-wide story of a digital-first pivot — branch closures, app-first money,
+// PPI legacy resolved, motor-finance review era, cost programs. Distinct from
+// barclays (the UK sibling but IB-heavy) and santander (multi-country): THIS kit
+// is the single-market domestic retail read.
+// Storefront db mapping (banking-honest, kept consistent across every section):
+//   customers = personal-banking customers (region = the four UK franchise
+//     clusters carried as the db's EU/APAC/US/LATAM codes — EU the England &
+//     Wales heartland, APAC Scotland, US the dense metro cluster, LATAM the thin
+//     offshore/Channel-Islands pilot book),
+//   orders = transactions (REAL dollars — delivered = settled clean 52, shipped =
+//     captured-and-settling 30 with shipped_at as the settlement stamp, pending =
+//     awaiting capture 14, cancelled = declined/reversed 7),
+//   order_items = itemized lines, products = the product shelf (current accounts,
+//     mortgages, savings, cards across the seven family codes; max shelf price
+//     199.99 — the premium band is empty and the kit says so),
+//   suppliers = six mortgage-intermediary & processing partners (sandbox names),
+//   invoices = statement cycles (28; INTEGER pence — the dollar read is always
+//     amount_cents / 100.0), payments = payment rails (card = the instant
+//     Faster-Payments-style rail, wire = the direct-debit/Bacs-style rail),
+//   expenses = opex (the branch network), ledger_entries = the GL.
+// Pool provenance: company-pools.md carries NO Lloyds section (0 tagged rows) —
+// all 10 topic slug sets and all 16 problems are theme-curated from the theme
+// menu's sql rows (no w*/d*/f* rows) and say so.
+// Case figures: scripts/company-facts.md only, probe-verified cell-for-cell by
+// scripts/tmp-probe-98-lloyds.ts (deleted after use); every slot mechanically
+// audited by scripts/case-audit.ts.
+// NOTE for the wave-9 registry wiring agent: lloyds is NOT yet in registry
+// COMPANY_META — wire id "lloyds", domainId "banking", name "Lloyds Bank",
+// tagline "UK retail banking at mass scale: mortgages, apps, branch economics",
+// accent "text-emerald-300" (unused by all 17 banking siblings).
+
+import type { CompanyKit } from "../types";
+
+export const lloydsKit: CompanyKit = {
+  id: "lloyds",
+  domainId: "banking",
+  name: "Lloyds Bank",
+  tagline: "UK retail banking at mass scale: mortgages, apps, branch economics",
+  accent: "text-emerald-300",
+
+  brief: [
+    "**Lloyds Bank** is the UK's biggest retail bank — the black horse on the high street, the current-accounts-and-mortgages engine that also runs {sky:Halifax} and Bank of Scotland, and a franchise several years into a {emerald:digital-first} pivot that has closed branches and moved everyday money into the app. This kit reads the storefront db as that domestic retail book: 16 customers across the four region clusters, 103 transactions worth **34833.28** (avg 338.19, spread 25.47 to 1088.44), and 251 itemized lines behind them. The status map is fixed and every read hangs off it: delivered = settled clean (52, 50.5%), shipped = captured-and-settling with shipped_at as the settlement stamp (30), pending = awaiting capture (14), cancelled = {rose:declined or reversed} (7, 6.8%). A transaction placed is not a transaction kept — the decline share differs by region, and the denominator question is the interview.",
+    "The money sits one layer down, in INTEGER pence — the dollar read is always `amount_cents / 100.0`. Invoices are the 28 statement cycles the retail book bills on (21 paid exact for 66443.00, 6 open at 19609.00, 1 void at 925.00); payments clear them on two rails — {amber:card}, the instant Faster-Payments-style rail (16 legs / 37364.00), and {violet:wire}, the direct-debit/Bacs-style rail (11 / 32248.00) — and the two mixtures must tie to the cash book. Expenses are the branch-network cost lines the Group's cost programs argue about (Rent at 14 flat 1200.00 lease lines), and ledger_entries is the double-entry book of record: **181080.00 debits against 181080.00 credits, delta 0** across 80 entries. The house rule: *a status column claims, a rail leg proves* — settlement evidence beats labels, which is the data-quality culture the motor-finance review era hardened.",
+    "Interview screens are census-then-denominator. A typical loop opens with a **two-grain census** — EU runs 45 transactions from just 8 customers (intensity 5.6) while the US runs 19 from 2 (9.5) — then escalates into a rate where the interviewer asks the denominator out loud (*'does a declined transaction count in your base?'*), then into the relationship ladder where four customers sit tied at 4 transactions and rank semantics become a business decision. The settlement clock is the favourite timestamp probe: **82 of 103** rows carry the stamp, averaging **2.98 days** in a 2–4 day spread, and the 21 unstamped rows are *a population definition, not a cleanup job*. Candidates who state the status filter and the denominator before writing SQL are the ones who get callbacks.",
+    "Preparation strategy: the pools file carries **no Lloyds section** — zero tagged rows — so all sixteen problems and every topic slug here are **theme-curated** to this kit's known screen shapes: status-aware settlement counts, two-grain censuses, honest-denominator rates, CASE banding, the 14-month transaction spine and the cents-safe billing layer. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {amber:branch cost footing} the Group cost program opens with, the other rebuilds the {rose:no-evidence watchlist} the review era runs at every close. The bar to clear: *state the population and the denominator before you compute anything* — then make every status census reconcile to 103 and every money fold tie back to the GL by construction.",
+  ],
+
+  dayInLife: [
+    "**08:15 —** The day starts with the proof, not the dashboard. A retail-banking analyst opens the morning pack: the ledger tie-out must read **181080.00 against 181080.00, delta 0** across the 80 GL entries, then the one-pass status census — 52 settled clean + 30 settling + 14 awaiting + 7 declined = **103 by construction**; a branch that fails that identity is *the day's first incident*, not a rounding note. The rail census follows — {amber:card} 16 legs / 37364.00, wire 11 / 32248.00 — cross-footed against the cash book, and if the 2.98-day settlement clock drifts off its 2–4 band, the ops queue gets pulled before the regional call.",
+    "**11:30 —** Midday is the deep-dive block. The cost pack refreshes first: the branch-network fold reads {rose:Rent} at 14 flat 1200.00 lines, Ads at 14 / 4570.00, and the month buckets that peak at **3210.00** in 2024-08 — the read the Group cost program actually argues with. Then the concentration cut for the relationship team: **63.5%** of the book sits with customers whose lifetime spend crosses 3,000 (71.2% above 2,000), and the ladder above the four-way tie at 4 transactions gets its rank policy re-stated. Each ask is a join, a conditional aggregate and one judgment call about statuses — *the analyst writes the query twice: once to answer, once with the definition spelled out so the number survives the pipeline-review argument*.",
+    "**15:30 —** The afternoon tilts to the close. The no-evidence watchlist refreshes before a single dunning letter goes out: **6 statement cycles worth 15217.00** with zero rail legs — including cycle #28, status {rose:paid} at 1756.00 with nothing behind it, the claim-without-evidence row the review era taught everyone to hunt. The coverage census ships beside it — **21 exact (65612.00), 1 partial (4000.00 of 6148.00), 6 none** — with its denominator on the slide, because *a coverage number without its population is a rumor*. The day ends the way every close does: the ledger proof, the watchlist, the definitions — or tomorrow starts with an incident.",
+  ],
+
+  metrics: [
+    { name: "Transaction book", what: "Value and count of customer transactions: 103 worth 34833.28, average 338.19 against a 25.47 to 1088.44 spread. The headline every retail read starts from — and the spread IS the tiering story." },
+    { name: "Settlement status mix", what: "Delivered = settled clean (52, 50.5%), shipped = captured-and-settling (30, 29.1%), pending = awaiting capture (14, 13.6%), cancelled = declined/reversed (7, 6.8%). Four branches that must reconcile to 103 by construction." },
+    { name: "Settlement clock", what: "created_at to shipped_at over the 82 stamped transactions: 2.98-day average, range 2 to 4. The population ships with the number — the 21 unstamped rows have no cycle yet and must not dilute it." },
+    { name: "Decline share by region", what: "Declined/reversed transactions ÷ ALL placed in the region: APAC 8.1%, EU 6.7%, US 5.3%, LATAM 0%. The denominator is placements — the first thing any interviewer checks." },
+    { name: "Statement-cycle book", what: "28 cycles billed on flat 30-day terms: 21 paid exact for 66443.00, 6 open at 19609.00, 1 void at 925.00. Coverage reads 21 exact / 1 partial (4000.00 of 6148.00) / 6 none (15217.00)." },
+    { name: "Rail mix", what: "Settlement legs per rail — card (instant Faster-Payments-style) 16 legs / 37364.00, wire (direct-debit/Bacs-style) 11 / 32248.00. 27 legs covering 22 distinct cycles: five cycles ride two legs each." },
+    { name: "Branch cost lines", what: "Opex by category: Rent 14 entries / 16800.00 (flat 1200.00 lease lines), Ads 14 / 4570.00, Travel 3 / 2521.00, Tools 5 / 1525.00 — monthly buckets peaking at 3210.00 in 2024-08. The cost program's home read." },
+    { name: "Ledger proof delta", what: "Total debits minus total credits across the 80-entry GL: 181080.00 against 181080.00, delta 0. Cash runs 69612.00 in / 25416.00 out; a nonzero delta pages the close, not a footnote." },
+  ],
+
+  topics: [
+    {
+      name: "Status-aware settlement counts",
+      why: "Every retail read at Lloyds starts from the status map — settled clean, settling, awaiting capture, declined/reversed — and each stage is a conditional count over a status or timestamp. The trap is calling a settling transaction 'settled': 30 versus 52 on this book, and the whole kept-value story moves.",
+      slugs: ["immediate-food-delivery-i", "monthly-transactions-i", "percentage-of-users-attended-a-contest"],
+    },
+    {
+      name: "Two-grain customer censuses",
+      why: "Transactions and customers are different grains of the same join, and every regional census here reports both: EU runs 45 transactions from 8 customers while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count"],
+    },
+    {
+      name: "Joining the shelf to the book",
+      why: "Product-level reporting means attaching shelf attributes — the current accounts, mortgages, savings and cards families — to every transaction line through joins that can be missing or stale. Lloyds' follow-up is always about what survives: does a line whose product row went missing still count in the family fold?",
+      slugs: ["combine-two-tables", "product-sales-analysis-i", "replace-employee-id-with-unique-identifier"],
+    },
+    {
+      name: "Intermediary folds & concentration",
+      why: "The mortgage story is an intermediary story: six partner firms carry the shelf, and concentration reads (63.5% of the book from 3,000-plus customers) decide where the relationship teams go. GROUP BY folds with HAVING gates and per-partner totals are the exact drills.",
+      slugs: ["product-sales-analysis-ii", "top-earners", "classes-more-than-5-students"],
+    },
+    {
+      name: "Ranking the relationship ladder",
+      why: "Ladders are rank-window reporting where ties are guaranteed — four customers sit at 4 transactions on this book, right under the 24/17/14/13/5 run of the heavy Relationships. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer customers, not syntax.",
+      slugs: ["rank-scores", "second-highest-salary", "department-top-three-salaries"],
+    },
+    {
+      name: "Anti-joins & missing evidence",
+      why: "The review era's core skill: find the rows with NO evidence behind them. Cycles with no rail leg, customers with no transactions (this db's confident zero — proving it is part of the job), partners with no activity. The LEFT JOIN + IS NULL shape and its NOT EXISTS twin are the watchlist's grammar.",
+      slugs: ["customers-who-never-order", "sellers-with-no-sales", "employees-with-missing-information"],
+    },
+    {
+      name: "Rates with honest denominators",
+      why: "Decline shares, settlement percentages, adoption rates — the retail ratios punish integer division and careless filters. The house habit: 100.0 before the division, the denominator's population decided BEFORE the ratio, rounding only at the very end.",
+      slugs: ["queries-quality-and-percentage", "confirmation-rate", "average-selling-price"],
+    },
+    {
+      name: "CASE banding & risk tiers",
+      why: "Retail banking bands everything — ticket-size tiers, risk buckets, premier-versus-standard treatment — and each band is a CASE arm with fixed, published edges. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the risk report, and a reordered WHEN quietly re-bands the book.",
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "triangle-judgement"],
+    },
+    {
+      name: "Month spines & date math",
+      why: "The 14-month transaction spine (2024-01 to 2025-02) is the trend read's home turf: month buckets via STRFTIME or SUBSTR, half-open windows that never drop month-end traffic, and julianday clocks rounded once. Settlement latency, not terms, is where the interesting date math lives here.",
+      slugs: ["the-latest-login-in-2020", "list-the-products-ordered-in-a-period", "rising-temperature"],
+    },
+    {
+      name: "Cents discipline & the GL",
+      why: "Retail is a cents game: cycles, rails and opex carry INTEGER pence, so every dollar read is amount_cents / 100.0 and the missing .0 is how a 1200.00 lease line prints as 12. The GL proof — 181080.00 against 181080.00, delta 0 — is the close's final gate, and reconciliation reads are the closest thing this kit has to a finance round.",
+      slugs: ["trial-balance-check", "bank-account-summary-ii", "npv-queries"],
+    },
+  ],
+
+  theory: [
+    {
+      id: "lloyds-t1",
+      q: "You report statement cycles with their settlement legs — LEFT JOIN or INNER JOIN, and what breaks if you then filter a payments column in WHERE?",
+      a: "Decide from the survival rule the question implies. A settled-value report joins cycles to their rail legs: a leg with no cycle is corruption, so INNER is honest — and worth a data-quality flag, not a silent inner join. The watchlist report must be LEFT from invoices: the cycles with no rail leg ARE the answer, arriving with NULL leg columns — on this db that is 6 cycles worth 15217.00, one of which claims paid status with zero legs. The classic break: filtering p.method = 'card' in WHERE after the LEFT JOIN kills every NULL-payload cycle row — the LEFT quietly became an INNER and the uncollected exposure vanished from the very report that exists to show it. The fix is moving the predicate into ON, or accepting inner semantics deliberately and saying so. 'LEFT JOIN is safer' is the wrong answer; join type is a decision about who survives, and at a retail bank the unmatched side is where the review-era exposure lives.",
+      tag: "joins",
+    },
+    {
+      id: "lloyds-t2",
+      q: "The relationship ladder ranks customers by transaction count, and four customers tie at 4. RANK, DENSE_RANK or ROW_NUMBER — and who decides?",
+      a: "The rank trio is a business decision about shared rungs and gaps, and the interviewer wants you to say that out loud. On this book the ladder above the tie runs 24, 17, 14, 13, 5 transactions, then four customers tied at 4: RANK gives them the same rung and skips — the tie consumes ranks 6 through 9 and the next distinct count (3) lands on 10, implying phantom positions that do not exist. DENSE_RANK shares rungs without gaps — 6, 6, 6, 6, then 7. ROW_NUMBER splits the tie arbitrarily, a silent judgment about which relationship manager's book looks bigger. The wrong answer is picking a function; the right answer is picking a policy — shared rungs for peer customers (RANK or DENSE_RANK), or an explicitly named tie-breaker such as lifetime spend, then customer id, written into the query comment. Premier letters go out by ladder position: the semantics ARE the treatment.",
+      tag: "windows",
+    },
+    {
+      id: "lloyds-t3",
+      q: "The region census shows EU 45 transactions from 8 customers and the US 19 from 2. Why do the columns disagree, and what does each mean to the business?",
+      a: "They disagree because they count at different grains. COUNT(*) counts transaction rows after the join — one row per transaction, so a customer with 24 transactions contributes 24. COUNT(DISTINCT customer_id) folds repeats back to people — EU's 45 collapse to 8 customers. Neither is wrong: transactions measure load on the rails and the branch network, customers measure the installed base, and the ratio between them is the intensity signal the retail bank actually manages — 5.6 transactions per EU customer versus 9.5 in the US, which says the US book is thin and concentrated while EU's is broad. The trap that catches candidates is a third grain: join order_items for the itemized lines and COUNT(*) silently counts lines, not transactions — 251 of them. Saying 'one row per what?' for every COUNT in the query is the habit the panel grades; on a 16-customer book the two grains diverge fast.",
+      tag: "aggregation",
+    },
+    {
+      id: "lloyds-t4",
+      q: "shipped_at is NULL until a transaction settles. What is your policy for the settlement-clock report, and how do NULLs behave in the aggregates it uses?",
+      a: "Policy first: only settled and settling transactions carry a stamp, so the clock measures creation-to-settlement for the 82 of 103 rows that have one — averaging 2.98 days, range 2 to 4 — and the population ships in the report title. Then mechanics: AVG ignores NULLs, so AVG over ALL transactions returns the stamped-only average over a silently shrunken population — a real number wearing the wrong name, and the reason the WHERE shipped_at IS NOT NULL line exists even when the printed number does not change. COUNT(shipped_at) counts the stamped subset; the gap between it and COUNT(*) is exactly the 14 awaiting-capture plus 7 declined-or-reversed rows, which is a feature, not a bug. What is never acceptable is IFNULL-ing the latency to zero to 'fix' the average — that invents same-day settlements for captures that have not happened. The 21 unstamped rows are a population definition, not a cleanup job.",
+      tag: "nulls",
+    },
+    {
+      id: "lloyds-t5",
+      q: "The decline-share read needs regional cancelled counts, placed denominators, and a floor of 20 transactions per region. Where does each piece live, and why does the wrong clause either error or lie?",
+      a: "Three placements, one pipeline. The decline flag is a row-level fact — CASE WHEN status = 'cancelled' folds to 1/0 inside the aggregate, in SELECT, after WHERE has already chosen the population. The share needs both sides in one fold: 100.0 * SUM(flag) / COUNT(*) GROUP BY region — filter the declined rows out in WHERE and the denominator stops counting placements, turning the share into nonsense. The 100.0 sits before the division so the arithmetic is real before truncation; EU reads 6.7, not 6. The twenty-transaction floor is a group-level fact — HAVING COUNT(*) >= 20 after GROUP BY; placing it in WHERE errors because COUNT does not exist before groups form, and on this book the floor keeps exactly EU (45) and APAC (37). The order — FROM, WHERE, GROUP BY, HAVING, SELECT, ORDER BY — is not trivia; it is the difference between a share and an error. Place every piece by asking: is this a fact about one transaction, or about a region?",
+      tag: "pipeline",
+    },
+    {
+      id: "lloyds-t6",
+      q: "WHERE total > (SELECT AVG(total) FROM orders) — what is that scalar subquery allowed to return, and what happens when the inner fold comes back empty?",
+      a: "A scalar subquery is contractually 0-or-1 rows, 1 column. One row drives the comparison; zero rows return NULL — not an error — and total > NULL is UNKNOWN, so the above-average report silently returns nothing while looking valid. On the full book it is theoretical — 103 transactions always produce the 338.19 mean — but on staging tables filtered to one region, one month or one status, the empty-inner bug ships regularly, and the above-average filter is exactly where it hides. The correlated cousin — compare each transaction to ITS region's average — re-runs per outer row and answers a different question: 'above my cluster's average' is a US story (383.48 average against 313.66 in APAC) that the platform mean would miss entirely. The strong candidate states the inner fold's population and its empty-case behavior unprompted, because that is the follow-up the panel is fishing for.",
+      tag: "subqueries",
+    },
+    {
+      id: "lloyds-t7",
+      q: "Statement cycles bill on flat 30-day terms and transactions arrive with TEXT timestamps. How do you bucket by month, measure the settlement clock, and read the first row of the LAG?",
+      a: "Three moves. The spine: STRFTIME('%Y-%m', created_at) — or SUBSTR(created_at, 1, 7) on fixed-width ISO text — gives the month buckets every trend read hangs on; '%m' alone merges January 2024 with January 2025 and the trend becomes fiction. The clock: JULIANDAY(shipped_at) - JULIANDAY(created_at) returns fractional days — this book's 2.98-day average is exactly that, rounded once at the end, never per row. Windows: half-open intervals — created_at >= '2025-01-01' AND < '2025-02-01' — because BETWEEN on the last day silently drops month-end traffic, which is precisely when retail money moves. The LAG: on a month-ordered spine the first row's prior value is NULL — the baseline, reported as NULL or labelled, never coalesced to zero, which would read as a flat month. Terms are fixed 30 days on every cycle here, so a due-date fold has no tenor variance to debug — the interesting latency is settlement, not terms.",
+      tag: "dates",
+    },
+    {
+      id: "lloyds-t8",
+      q: "Finance says a statement cycle is 'paid' but the payments table has no rows for it. Walk me through the reconciliation query you write first — and the money rule you never break.",
+      a: "First the anti-join: invoices LEFT JOIN payments, grouped per cycle, keeping the zero-leg rows — on this db that returns 6 cycles worth 15217.00, and one of them (#28, 1756.00) is marked paid with zero legs: a status that lies. The mirror image sits on the other side — void cycle #11 carries a 925.00 leg, a void that settled — which is why the coverage census, not the status column, is the ledger of record: 21 exact for 65612.00, 1 partial (4000.00 of 6148.00), 6 none. Both error modes reconcile to row-level evidence, not to vibes. The money rule: cycles and rails carry INTEGER pence, so every dollar read is amount_cents / 100.0 — the missing .0 quietly eats pence on every odd-cent row. And the close ships only when the GL proof lands: 181080.00 debits against 181080.00 credits across 80 entries, delta 0. A nonzero delta pages the close; a status mismatch gets a ticket and a row-level query.",
+      tag: "quality",
+    },
+  ],
+
+  mcqs: [
+    {
+      id: "lloyds-mcq-1",
+      prompt: "A transaction row's status reads 'shipped'. In this kit's settlement map, what happened?",
+      choices: [
+        "Settled clean — the money is done moving",
+        "Captured and settling — the settlement stamp is on it, but it is not clean yet",
+        "Declined or reversed by risk controls",
+        "Awaiting capture — nothing has moved yet",
+      ],
+      answer: 1,
+      why: "The stage map is fixed: shipped = captured-and-settling (30 of 103 transactions), with shipped_at as the settlement stamp. Settled clean is 'delivered' — 52 rows.",
+      notes: [
+        { choice: 0, why: "Settled clean is 'delivered' — 52 transactions. Calling the 30 settling rows settled inflates the clean book before settlement finishes." },
+        { choice: 3, why: "Awaiting capture is 'pending' — 14 rows with no stamp, no latency, no settlement. Pending is 'not yet', and it stays in the denominator." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "lloyds-mcq-2",
+      prompt: "EU ran 45 transactions, 3 of them declined or reversed. What is the region's decline share?",
+      choices: [
+        "3 / 42 — declined over kept = 7.1%",
+        "3 / 45 — declined over ALL placed = 6.7%",
+        "45 / 3 — placements per decline",
+        "3 / 103 — declined over the whole book = 2.9%",
+      ],
+      answer: 1,
+      why: "The house definition: declined ÷ ALL transactions placed in the region. EU reads 6.7 — and the placed denominator is the first thing an interviewer checks.",
+      notes: [
+        { choice: 0, why: "Dividing by kept demand shrinks the base and inflates the share to 7.1 — the declined rows are exactly the rows that must stay in the denominator." },
+        { choice: 3, why: "The platform-wide denominator dilutes a regional read into 2.9. The census is per region — 45 placements, not 103." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "lloyds-mcq-3",
+      prompt: "The region census must show transactions AND distinct customers side by side. EU reads 45 transactions from 8 customers. Which column pair does that?",
+      choices: [
+        "COUNT(*) and COUNT(DISTINCT customer_id)",
+        "COUNT(*) and COUNT(customer_id)",
+        "SUM(total) and COUNT(*)",
+        "COUNT(DISTINCT region) and COUNT(*)",
+      ],
+      answer: 0,
+      why: "COUNT(*) counts transaction rows (45); COUNT(DISTINCT customer_id) folds repeats back to customers (8). The gap — 5.6 per customer — is the intensity read.",
+      notes: [
+        { choice: 1, why: "COUNT(customer_id) counts non-NULL FKs — 45 again, since every transaction carries a customer. Without DISTINCT both columns read 45 and the coverage story disappears." },
+        { choice: 3, why: "COUNT(DISTINCT region) counts clusters, not customers — a third grain nobody asked for. The census is transactions AND customers." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "lloyds-mcq-4",
+      prompt: "Card legs are 16 of the 27 rail legs. Which expression prints the card share, 59.3?",
+      choices: [
+        "ROUND(100 * 16 / 27, 1)",
+        "ROUND(100.0 * 16 / 27, 1)",
+        "ROUND(16 / 27, 1) * 100",
+        "ROUND(100.0, 1) * 16 / 27",
+      ],
+      answer: 1,
+      why: "100.0 * 16 / 27 promotes to real arithmetic BEFORE the division and rounds once at the end: 59.3. Every other shape truncates or rounds at the wrong stage.",
+      notes: [
+        { choice: 0, why: "Integer ÷ integer in SQLite truncates: 1600/27 = 59, and the share prints 59.0. The .0 is the whole fix — promote before you divide." },
+        { choice: 2, why: "16/27 truncates to 0 before ROUND ever sees it, so the expression prints 0. Scaling after rounding (choice 3's cousin) drifts to 60.0 — both are stage errors." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "lloyds-mcq-5",
+      prompt: "The relationship read keeps only customers carrying at least 10 transactions. Where does the threshold live?",
+      choices: [
+        "WHERE COUNT(*) >= 10, before GROUP BY",
+        "GROUP BY customer_id HAVING COUNT(*) >= 10",
+        "WHERE transactions >= 10 on the raw table",
+        "HAVING COUNT(*) >= 10 placed before GROUP BY",
+      ],
+      answer: 1,
+      why: "A transaction-count floor is a group-level fact: groups must exist before they can be judged, so HAVING follows GROUP BY. On this book only the ladder customers — 24, 17, 14, 13 — clear 10.",
+      notes: [
+        { choice: 0, why: "COUNT(*) does not exist at WHERE time — no groups have formed. The engine's rejection is the pipeline-order lesson itself." },
+        { choice: 2, why: "There is no 'transactions' column on the raw orders table — the count only materializes at the fold. Same error, different disguise." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "lloyds-mcq-6",
+      prompt: "The no-evidence watchlist: invoices LEFT JOIN payments, GROUP BY cycle, WHERE pay.id IS NULL. What does it return on this db?",
+      choices: [
+        "28 cycles — every statement cycle",
+        "22 cycles — the ones with a rail leg",
+        "6 cycles worth 15217.00 — the ones with no leg at all",
+        "1 cycle — the paid-status lie",
+      ],
+      answer: 2,
+      why: "The anti-join keeps the unmatched left rows: 6 cycles / 15217.00 — and one of them, #28, claims 'paid' at 1756.00 with zero legs. 22 is the settled complement.",
+      notes: [
+        { choice: 1, why: "That's the IS NOT NULL read — the settled side. Flip the predicate and you have shipped the opposite list to the review committee." },
+        { choice: 3, why: "#28 is IN the six, not the only one — the other five are open cycles (873.00 to 4937.00). Void #11 is NOT on the list: it actually settled 925.00 on one leg." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "lloyds-mcq-7",
+      prompt: "The settlement clock must read 2.98 days over the 82 stamped transactions. Which WHERE clause belongs in the report?",
+      choices: [
+        "None — AVG skips NULLs anyway, so the number comes out right regardless",
+        "WHERE shipped_at IS NOT NULL — the population, stated",
+        "WHERE status = 'shipped'",
+        "WHERE shipped_at > 0",
+      ],
+      answer: 1,
+      why: "The no-WHERE version prints the same 2.98 over a silently unnamed 82-row population — a real number wearing the wrong name. Stating the population is the review's bar.",
+      notes: [
+        { choice: 0, why: "The number matches and the report still fails review — an unnamed population is exactly the silent-shrink failure the NULL policy exists to prevent." },
+        { choice: 2, why: "status = 'shipped' keeps only the 30 in-flight rows and drops the 52 settled ones — a different cohort and a different clock wearing the same title." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "lloyds-mcq-8",
+      prompt: "A staging table's decline list uses customer_id NOT IN (SELECT customer_id FROM transactions WHERE status = 'cancelled') and returns ZERO rows. First suspicion?",
+      choices: [
+        "No customer ever transacted — the zero is correct",
+        "One NULL customer_id in the subquery poisons every NOT IN comparison — the whole result silently empties",
+        "NOT IN cannot take a subquery; it needs a literal list",
+        "The outer query needs DISTINCT before the comparison works",
+      ],
+      answer: 1,
+      why: "x NOT IN (…) is UNKNOWN the moment a NULL enters the comparison — one NULL in the subquery makes every row UNKNOWN and the list empties while looking valid. Policy: EXISTS for existence tests, and never NOT IN over an unguarded column.",
+      notes: [
+        { choice: 0, why: "A confident zero is sometimes right — the clean core db has no NULL customer_ids. But staging tables are exactly where NULLs sneak in, and empty lists ship from there." },
+        { choice: 2, why: "NOT IN takes subqueries fine. The failure is not syntax, it is three-valued logic." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "lloyds-mcq-9",
+      prompt: "A month-close stack puts declined transactions under kept transactions in one layout, built with UNION. A reviewer says one month's row vanished. Diagnosis?",
+      choices: [
+        "UNION ALL is only a performance choice — the results would be identical",
+        "The branches forgot the distinguishing column, so two identical rows (same month, same counts) collapsed — UNION dedups whole rows silently",
+        "UNION truncates the stack to the first branch's row count",
+        "UNION cannot stack two SELECTs over the same table",
+      ],
+      answer: 1,
+      why: "UNION dedups whole rows across branches. Two branches that emit byte-identical rows — same month, same counts, no status or branch label — collapse into one, and the close loses a month with no error anywhere. The discipline: UNION ALL plus a comment stating WHY duplicates are impossible.",
+      notes: [
+        { choice: 0, why: "The dedup is not free decoration — it deletes rows. On a stack where a legitimate tie exists, UNION is the bug." },
+        { choice: 2, why: "UNION never truncates by count. It collapses only exact duplicate rows — which is worse, because nothing announces the loss." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "lloyds-mcq-10",
+      prompt: "Statuses run 52 / 30 / 14 / 7 over 103 transactions. Which expression does NOT return the 7 declined?",
+      choices: [
+        "SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END)",
+        "COUNT(*) FILTER (WHERE status = 'cancelled')",
+        "COUNT(status = 'cancelled')",
+        "AVG(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) * COUNT(*)",
+      ],
+      answer: 2,
+      why: "SQLite evaluates status = 'cancelled' to 0/1 per row — and COUNT counts NON-NULL values, so all 103 rows count: it returns 103, not 7. SUM over the flag, the FILTER clause and the AVG-times-COUNT identity all isolate the 1s correctly.",
+      notes: [
+        { choice: 0, why: "SUM over the 1/0 indicator IS the decline count — the portable conditional-count idiom, and the pre-3.30 replacement for FILTER." },
+        { choice: 1, why: "FILTER (WHERE …) is one-pass conditional counting — 7 here, computed in the same scan as its sibling aggregates; the censuses reconcile to 103 by construction." },
+      ],
+      difficulty: "hard",
+    },
+  ],
+
+  cases: [
+    {
+      id: "cs-lloyds-1",
+      tier: "easy",
+      topic: "x3",
+      universe: "expense",
+      title: "The branch cost footing",
+      brief:
+        "Lloyds-flavored brief on the storefront db: the Group cost program opens every quarter with the branch-network cost pack, and the pack's rule is that the category lines must foot to the ledger. Probed facts: 36 opex lines fold into four categories — Rent 14 entries / 16800.00 (fourteen flat 1200.00 branch-lease lines), Ads 14 / 4570.00, Travel 3 / 2521.00, Tools 5 / 1525.00 — for a 25416.00 total that ties to the GL's operating_expenses debit fold of 25416.00 (80-entry ledger, 181080.00 = 181080.00). Finance wants one deliverable: each category with its entry count and spend, plus a TOTAL footing row, biggest line first — the footing row leading the read so nobody mistakes a category line for the whole.",
+      ask: "Return each cost line with its entry count and spend to 2 decimals, plus a TOTAL footing row, biggest first (footing row leads).",
+      template:
+        "SELECT category, {1}(*) AS entries, ROUND({2}(amount_cents) / 100.0, 2) AS spend\nFROM expenses\nGROUP BY category\nUNION ALL\nSELECT {3}, COUNT(*), ROUND(SUM(amount_cents) / 100.0, 2)\nFROM expenses\nORDER BY spend {4};",
+      slots: [
+        {
+          answer: "COUNT",
+          kind: "keyword",
+          label: "the per-line counter",
+          why: "COUNT(*) counts the opex rows folded into each category — Rent 14, Ads 14, Travel 3, Tools 5. SUM(*), AVG(*) and MAX(*) are not SQL: only COUNT takes the star, so the wrong chip errors instead of lying.",
+        },
+        {
+          answer: "SUM",
+          kind: "keyword",
+          label: "the spend folder",
+          why: "SUM(amount_cents) folds the pence per category — Rent 1680000 pence prints 16800.00 after the /100.0 dollar read. MAX would print the single biggest line (Rent's 1200.00), not the category total; MIN and AVG read smaller wrong numbers still.",
+        },
+        {
+          answer: "'TOTAL'",
+          kind: "keyword",
+          label: "the footing label",
+          why: "The grand row is labelled 'TOTAL' so every reader knows row one is the footing, not a fifth category. 'ALL' would relabel it mid-quarter and break every diff against last month's pack — the label is part of the deliverable.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-first direction",
+          why: "DESC leads with the footing row (25416.00) and then Rent (16800.00) — the line the cost program argues about. ASC flips the read so Tools at 1525.00 opens the pack, burying the headline under the tail.",
+        },
+      ],
+      distractors: ["MAX", "MIN", "AVG", "ASC", "'ALL'"],
+      walkthrough:
+        "Two populations, one layout. The branch fold groups 36 opex lines by category and prices them in one expression — SUM(amount_cents) / 100.0, the cents-to-dollars promotion the whole finance layer hangs on — reading Rent 14 / 16800.00, Ads 14 / 4570.00, Travel 3 / 2521.00, Tools 5 / 1525.00. The UNION ALL'd second branch folds the WHOLE table with no GROUP BY: COUNT(*) reads 36 and SUM reads 25416.00, so the TOTAL row is an independent footing check — if a category edit ever double-counts, the stack stops tying to the GL's operating_expenses fold of 25416.00 and the pack refuses to ship. The distractors each break differently: MAX or MIN in the counter slot is not SQL (only COUNT takes the star); in the spend slot MAX prints the single biggest line — Rent's 1200.00, not 16800.00 — and AVG prints per-entry means; 'ALL' relabels the footing row; ASC flips the read so the smallest line opens the pack. The ordering is deterministic because no two categories tie on spend.",
+    },
+    {
+      id: "cs-lloyds-2",
+      tier: "medium",
+      topic: "j4",
+      universe: "refund-audit",
+      title: "The no-evidence watchlist",
+      brief:
+        "Lloyds-flavored brief on the storefront db: in the motor-finance review era the watchword is evidence — every settlement must show a rail leg, and the review committee wants the statement cycles that claim money with nothing behind them. Probed facts: 28 statement cycles on the book (21 paid exact for 66443.00, 6 open at 19609.00, 1 void at 925.00); the coverage census reads 21 exact / 65612.00, 1 partial (4000.00 of 6148.00), and 6 cycles with no rail leg at all, worth 15217.00. One of the six claims 'paid' (cycle #28, 1756.00) — a status with zero legs, exactly the claim-without-evidence pattern the era is about. The watchlist ships biggest-first, each row carrying its zero-leg count as proof.",
+      ask: "Return each no-evidence cycle with its id, status, amount to 2 decimals and zero-leg proof, biggest amount first.",
+      template:
+        "SELECT i.id AS statement_id,\n       i.status,\n       ROUND(i.amount_cents / {1}, 2) AS amount,\n       {2}(p.id) AS rail_legs\nFROM invoices i\n{3} JOIN payments p ON p.invoice_id = i.id\nWHERE p.id IS NULL\nGROUP BY i.id\nORDER BY amount {4};",
+      slots: [
+        {
+          answer: "100.0",
+          kind: "number",
+          label: "the pence divider",
+          noVerify: true,
+          why: "Statement cycles carry INTEGER pence — cycle 24's 493700 pence prints 4937.00 only after the /100.0 real-division promotion. These watchlist amounts happen to be whole dollars, so the integer-division leak hides here; the .0 is still policy, not decoration.",
+        },
+        {
+          answer: "COUNT",
+          kind: "keyword",
+          label: "the zero-leg proof",
+          why: "COUNT(p.id) counts the matched legs per cycle — 0 on every watchlist row, which is the evidence the committee asked for. SUM or MAX over the all-NULL right side prints NULL, not 0, and a NULL proof column reads as missing data.",
+        },
+        {
+          answer: "LEFT",
+          kind: "keyword",
+          label: "the survivor rule",
+          why: "LEFT JOIN keeps all 28 cycles and lets the WHERE pick the unmatched six. INNER would keep matched rows only — the watchlist would arrive empty, the worst possible thing to hand a review committee. RIGHT flips to the payments side, which has no unmatched rows at all.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-first order",
+          why: "DESC leads with cycle 24 at 4937.00 — the biggest uncollected exposure. ASC would open on the 873.00 tail and bury the headline the committee acts on first.",
+        },
+      ],
+      distractors: ["INNER", "RIGHT", "ASC", "SUM", "MAX", "1000"],
+      walkthrough:
+        "An anti-join with a proof column. The LEFT JOIN keeps all 28 statement cycles; WHERE p.id IS NULL keeps only the six with no rail leg, and GROUP BY i.id folds each cycle to one row where COUNT(p.id) reads 0 — the zero-leg proof. The watchlist reads: cycle 24 open at 4937.00, 26 open at 3562.00, 27 open at 2794.00, then #28 — status 'paid' at 1756.00 with zero legs, the claim-without-evidence row — then 21 open at 1295.00 and 18 open at 873.00. The amounts foot to 15217.00, tying to the AR anti-join figure, of which 13461.00 is the open cohort and 1756.00 the paid-status lie. The near-misses stay OFF the list, and the walkthrough says why: #25 is partial (4000.00 of 6148.00 settled — it has a leg) and void #11 actually settled 925.00 (one leg) — both drop out of the IS NULL sieve. The distractors: INNER empties the list (matched rows only); RIGHT flips to the payments side and returns nothing; SUM or MAX in the proof slot print NULL instead of 0; 1000 mis-scales every amount; ASC buries the headline.",
+    },
+  ],
+
+  problems: [
+    { slug: "immediate-food-delivery-ii", why: "The settlement-promptness share: transactions that settled within the promised window versus late ones — a conditional rate over a timestamp comparison, the same shape as the settlement-clock screens." },
+    { slug: "customer-placing-the-largest-number-of-orders", why: "The volume-argmax read: who transacts most, decided on a grouped count — the customer-side twin of the relationship ladder, where the 24-transaction anchor sits." },
+    { slug: "game-play-analysis-iv", why: "First-event cohort logic: customers whose FIRST transaction landed in the window — the digital-first migration cohort definition, computed not asserted." },
+    { slug: "active-businesses", why: "One-pass status censuses: settled, settling, awaiting, declined in a single scan whose branches must reconcile to 103. Four sequential queries drift; one pass cannot." },
+    { slug: "total-traveled-distance", why: "Conditional SUM over a flag — settled-value versus declined-value splits, the same CASE-SUM muscle as the decline map." },
+    { slug: "fix-names-in-a-table", why: "Customer-name hygiene before any join: the personal-banking book arrives title-case-broken, and 'acme corp' versus 'Acme Corp' silently splits one customer into two." },
+    { slug: "fix-product-name-format", why: "Shelf-name normalization on the product feed — the current-accounts/mortgages/savings/cards catalog must join clean or the family folds double-count." },
+    { slug: "monthly-transactions-ii", why: "Declined-versus-kept month packets via UNION — the two-population report the retail book ships monthly, stitched not joined." },
+    { slug: "count-salary-categories", why: "Ticket-band census with UNION ALL totals — the 25.47-to-1088.44 spread banded into tiers whose grand row must reconcile against COUNT(*)." },
+    { slug: "managers-with-at-least-5-direct-reports", why: "HAVING-gated subquery — intermediaries with 3+ shelf listings, customers with 10+ transactions: the gating pattern before any concentration read ships." },
+    { slug: "orders-with-maximum-quantity-above-average", why: "Above-average line reads: which transactions carry itemized lines beyond the book's average — the two-stage fold behind the premium-ticket screens." },
+    { slug: "students-and-examinations", why: "Three-table coverage census — customer × shelf × transactions: which customers touched which product families, the cross-sell read the retail side runs weekly." },
+    { slug: "the-most-recent-three-orders", why: "Per-customer latest-3 via window — the relationship manager's recent-activity rail: ROW_NUMBER with a PARTITION and a deterministic tie-break." },
+    { slug: "movie-rating", why: "The multi-part report: argmax by one rule, per-person aggregates by another — composition under pressure for the screen's final act." },
+    { slug: "market-analysis-i", why: "New-in-window joins — customers whose first transaction predates or postdates the digital pivot: the before-or-after fork the migration story asks weekly." },
+    { slug: "customer-order-frequency", why: "HAVING frequency gates — recurring monthly behavior on the transaction book: the direct-debit rhythm read that decides which customers get which treatment." },
+  ],
+};

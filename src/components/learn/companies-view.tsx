@@ -419,7 +419,7 @@ function UniverseHome({ onOpen }: { onOpen: (domainId: string) => void }) {
           <h2 className="text-base font-bold tracking-tight text-zinc-100">Company Interview Universe</h2>
         </div>
         <p className="mt-2 text-xs leading-relaxed text-zinc-400">
-          Eight industries, seventeen companies each, and — for every company with a live kit — everything they ask in SQL interviews:
+          Eight industries, twenty companies each, and — for every company with a live kit — everything they ask in SQL interviews:
           the business brief, a day in their data team, the KPIs they live by, the topics to master, written theory, MCQs, case studies and a
           curated problem pool. {totalKits} of {totalCompanies} kits live so far — new kits land domain by domain.
         </p>
