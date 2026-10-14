@@ -6544,3 +6544,20 @@ Stage Summary:
 - Universe: 8 domains × 17 companies = 136/136 kits live, ALL at full 3x volume (wave-8 authored at standard volume — 3x-expansion is a future wave, mirroring the wave-7 pattern).
 - Pre-existing quality-audit/schema-meta breakage fixed; prod build green for the first time.
 - Next options: wave-9 (+3/domain → 20/domain = 160 kits), 3x-expand the 24 wave-8 kits, COMPANY_TAG_ALIASES name normalization, menu re-order (user sign-off pending).
+
+---
+Task ID: 97 (post-wave-8 recovery)
+Agent: Super Z (main agent)
+Task: Resume after context break — verify wave-8 finisher state, report.
+
+Work Log:
+- Read worklog tail: wave-8 (Task 96) complete per orchestrator entry; all finisher kit agents (incl. the last 4: monzo / n26 / bnpparibas / +getyourguide-emirates batch) had logged passing gates.
+- Verified on disk: 136 kit files, registry COMPANY_KITS = 136 entries, probe ALL PASS (3,409 problems / 2,320 theory / 2,900 MCQs / 580 cases).
+- FOUND REGRESSION: kit case-audit failed 5/18 on last-wave kits ("no such table: invoices", "no such column: shipped_at"). Root cause: db/custom.db was overwritten at 04:50 UTC by the session bootstrap's Prisma push (DATABASE_URL=file:db/custom.db; prisma schema has only 5 models) — wiped the 9-table storefront db the whole content universe is authored against. Git status confirmed db modified; git HEAD held the verified rich db.
+- Fix: git restore db/custom.db (9 tables, 103 orders, 28 invoices, shipped_at back). No code changes needed.
+- Re-ran ALL gates: kit audit 580/580 PASS (easy=142 medium=276 hard=162 — exact match to orchestrator's gate); curriculum audit 2,529 pass / 0 fail (182 skipped = write/schema path; the earlier 568 fails were purely the reduced db); probe ALL PASS.
+- Live check: dev server 200; POST /api/query over invoices returns 28 rows via the restored db.
+
+Stage Summary:
+- Wave-8 stands complete: 8 domains x 17 companies = 136/136 kits, prod build green, every audit green after the db restore.
+- WARNING for future sessions: session bootstrap runs Prisma push against db/custom.db and will AGAIN reduce it to 5 tables. If kit/curriculum case audits suddenly fail with "no such table/column", run: git restore db/custom.db — then re-run audits. (Do NOT "fix" kits or curriculum content for the 5-table schema.)
