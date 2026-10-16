@@ -6,10 +6,10 @@ import { lcBySlug, LC_ALL } from "../src/lib/leetcode/registry";
 let fail = 0;
 const bad = (m: string) => { console.log("FAIL:", m); fail++; };
 
-// 1. matrix: every domain has 20 companies (160-company universe), every company has meta
+// 1. matrix: every domain has 26 companies (208-company universe), every company has meta
 const ids = new Set<string>();
 for (const d of COMPANY_DOMAINS) {
-  if (d.companies.length !== 20) bad(`domain ${d.id} has ${d.companies.length} companies`);
+  if (d.companies.length !== 26) bad(`domain ${d.id} has ${d.companies.length} companies`);
   for (const c of d.companies) {
     if (ids.has(c)) bad(`duplicate company id ${c}`);
     ids.add(c);

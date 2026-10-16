@@ -1,5 +1,5 @@
-// Company Interview Universe — the registry. 8 domains × 20 companies =
-// the 160-company matrix (40 flagship + 24 wave-5 + 24 wave-6 + 24 wave-7 + 24 wave-8 + 24 wave-9).
+// Company Interview Universe — the registry. 8 domains × 26 companies =
+// the 208-company matrix (40 flagship + 24 wave-5 + 24 wave-6 + 24 wave-7 + 24 wave-8 + 24 wave-9 + 24 wave-10 + 24 wave-11).
 // Kit authoring lands in waves; a company without an authored kit yet shows
 // as "kit in build". Company picks follow interview-report frequency
 // (community-sourced tags on the SQL band) + domain diversity, not personal
@@ -167,6 +167,56 @@ import { getyourguideKit } from "./kits/getyourguide";
 import { deutscheKit } from "./kits/deutsche";
 import { bnpparibasKit } from "./kits/bnpparibas";
 import { standardcharteredKit } from "./kits/standardchartered";
+// wave-10 (24 kits, 8 domains × 3)
+import { sheinKit } from "./kits/shein";
+import { mercariKit } from "./kits/mercari";
+import { neweggKit } from "./kits/newegg";
+import { sixtKit } from "./kits/sixt";
+import { voiKit } from "./kits/voi";
+import { beatKit } from "./kits/beat";
+import { tumblrKit } from "./kits/tumblr";
+import { vimeoKit } from "./kits/vimeo";
+import { audibleKit } from "./kits/audible";
+import { tinkKit } from "./kits/tink";
+import { fireblocksKit } from "./kits/fireblocks";
+import { brexKit } from "./kits/brex";
+import { blueapronKit } from "./kits/blueapron";
+import { waitroseKit } from "./kits/waitrose";
+import { dunkinKit } from "./kits/dunkin";
+import { radissonKit } from "./kits/radisson";
+import { vuelingKit } from "./kits/vueling";
+import { flixKit } from "./kits/flix";
+import { rabobankKit } from "./kits/rabobank";
+import { bmoKit } from "./kits/bmo";
+import { natwestKit } from "./kits/natwest";
+import { linearKit } from "./kits/linear";
+import { gongKit } from "./kits/gong";
+import { retoolKit } from "./kits/retool";
+// wave-11 (24 kits, 8 domains x 3)
+import {bestbuyKit} from "./kits/bestbuy";
+import {ikeaKit} from "./kits/ikea";
+import {zaraKit} from "./kits/zara";
+import {avisKit} from "./kits/avis";
+import {enterpriseKit} from "./kits/enterprise";
+import {getaroundKit} from "./kits/getaround";
+import {soundcloudKit} from "./kits/soundcloud";
+import {threadsKit} from "./kits/threads";
+import {goodreadsKit} from "./kits/goodreads";
+import {afterpayKit} from "./kits/afterpay";
+import {paytmKit} from "./kits/paytm";
+import {venmoKit} from "./kits/venmo";
+import {burgerkingKit} from "./kits/burgerking";
+import {chickfilaKit} from "./kits/chickfila";
+import {aldiKit} from "./kits/aldi";
+import {skyscannerKit} from "./kits/skyscanner";
+import {easyjetKit} from "./kits/easyjet";
+import {ihgKit} from "./kits/ihg";
+import {sbiKit} from "./kits/sbi";
+import {axisbankKit} from "./kits/axisbank";
+import {usbankKit} from "./kits/usbank";
+import {intercomKit} from "./kits/intercom";
+import {segmentKit} from "./kits/segment";
+import {mailchimpKit} from "./kits/mailchimp";
 
 /** Display meta for one company slot in the matrix (kit may come later). */
 export interface CompanyMeta {
@@ -181,56 +231,56 @@ export const COMPANY_DOMAINS: CompanyDomain[] = [
     name: "E-commerce & Marketplace",
     blurb:
       "Catalogs, carts, fulfillment and returns at hundred-million-order scale — the richest SQL interview territory there is.",
-    companies: ["amazon", "flipkart", "alibaba", "shopify", "ebay", "walmart", "etsy", "myntra", "target", "wayfair", "temu", "zalando", "chewy", "sephora", "costco", "rakuten", "mercadolibre", "coupang", "noon", "asos"],
+    companies: ["amazon", "flipkart", "alibaba", "shopify", "ebay", "walmart", "etsy", "myntra", "target", "wayfair", "temu", "zalando", "chewy", "sephora", "costco", "rakuten", "mercadolibre", "coupang", "noon", "asos", "shein", "mercari", "newegg", "bestbuy", "ikea", "zara"],
   },
   {
     id: "mobility",
     name: "Ride-hailing & Mobility",
     blurb:
       "Trips, drivers, surge windows and ETA math — two-sided marketplaces where every row has a timestamp and a geography.",
-    companies: ["uber", "lyft", "ola", "bolt", "grab", "didi", "careem", "lime", "gett", "freenow", "via", "indrive", "blablacar", "yassir", "gojek", "turo", "zipcar", "cabify", "yango", "hertz"],
+    companies: ["uber", "lyft", "ola", "bolt", "grab", "didi", "careem", "lime", "gett", "freenow", "via", "indrive", "blablacar", "yassir", "gojek", "turo", "zipcar", "cabify", "yango", "hertz", "sixt", "voi", "beat", "avis", "enterprise", "getaround"],
   },
   {
     id: "media",
     name: "Streaming & Social",
     blurb:
       "Watch time, feeds, engagement streaks and content funnels — the home of session-level window-function questions.",
-    companies: ["netflix", "spotify", "youtube", "meta", "tiktok", "reddit", "pinterest", "linkedin", "twitch", "snapchat", "twitter", "discord", "bumble", "duolingo", "quora", "telegram", "substack", "strava", "whatsapp", "medium"],
+    companies: ["netflix", "spotify", "youtube", "meta", "tiktok", "reddit", "pinterest", "linkedin", "twitch", "snapchat", "twitter", "discord", "bumble", "duolingo", "quora", "telegram", "substack", "strava", "whatsapp", "medium", "tumblr", "vimeo", "audible", "soundcloud", "threads", "goodreads"],
   },
   {
     id: "fintech",
     name: "Fintech & Payments",
     blurb:
       "Ledgers, authorizations, settlement and fraud — money movement where correctness outranks cleverness.",
-    companies: ["stripe", "paypal", "visa", "revolut", "block", "adyen", "wise", "robinhood", "klarna", "coinbase", "plaid", "nubank", "chime", "ramp", "monzo", "affirm", "n26", "sofi", "marqeta", "remitly"],
+    companies: ["stripe", "paypal", "visa", "revolut", "block", "adyen", "wise", "robinhood", "klarna", "coinbase", "plaid", "nubank", "chime", "ramp", "monzo", "affirm", "n26", "sofi", "marqeta", "remitly", "tink", "fireblocks", "brex", "afterpay", "paytm", "venmo"],
   },
   {
     id: "food",
     name: "Food & Quick-commerce",
     blurb:
       "Orders, couriers, delivery SLAs and dark stores — sub-30-minute logistics squeezed through GROUP BY.",
-    companies: ["doordash", "swiggy", "zomato", "instacart", "deliveroo", "grubhub", "justeat", "dominos", "starbucks", "mcdonalds", "hellofresh", "wolt", "blinkit", "zepto", "gopuff", "chipotle", "subway", "tesco", "kroger", "kfc"],
+    companies: ["doordash", "swiggy", "zomato", "instacart", "deliveroo", "grubhub", "justeat", "dominos", "starbucks", "mcdonalds", "hellofresh", "wolt", "blinkit", "zepto", "gopuff", "chipotle", "subway", "tesco", "kroger", "kfc", "blueapron", "waitrose", "dunkin", "burgerking", "chickfila", "aldi"],
   },
   {
     id: "travel",
     name: "Travel & Hospitality",
     blurb:
       "Searches, bookings, cancellations and seasonal occupancy — long funnels with heavy drop-off between steps.",
-    companies: ["airbnb", "booking", "expedia", "oyo", "makemytrip", "agoda", "marriott", "ryanair", "priceline", "trivago", "southwest", "tripcom", "hilton", "trainline", "hyatt", "emirates", "getyourguide", "delta", "accor", "amtrak"],
+    companies: ["airbnb", "booking", "expedia", "oyo", "makemytrip", "agoda", "marriott", "ryanair", "priceline", "trivago", "southwest", "tripcom", "hilton", "trainline", "hyatt", "emirates", "getyourguide", "delta", "accor", "amtrak", "radisson", "vueling", "flix", "skyscanner", "easyjet", "ihg"],
   },
   {
     id: "banking",
     name: "Banking & Capital Markets",
     blurb:
       "Accounts, balances, transactions and regulatory counts — the traditional finance screen, precise and unforgiving.",
-    companies: ["goldman", "jpmorgan", "capitalone", "wellsfargo", "hsbc", "amex", "citi", "barclays", "bofa", "morganstanley", "santander", "ubs", "ing", "icici", "deutsche", "bnpparibas", "standardchartered", "hdfc", "lloyds", "mufg"],
+    companies: ["goldman", "jpmorgan", "capitalone", "wellsfargo", "hsbc", "amex", "citi", "barclays", "bofa", "morganstanley", "santander", "ubs", "ing", "icici", "deutsche", "bnpparibas", "standardchartered", "hdfc", "lloyds", "mufg", "rabobank", "bmo", "natwest", "sbi", "axisbank", "usbank"],
   },
   {
     id: "saas",
     name: "SaaS & Enterprise",
     blurb:
       "Subscriptions, retention cohorts, churn and ARR movements — recurring revenue measured in windows.",
-    companies: ["salesforce", "slack", "zoom", "atlassian", "snowflake", "hubspot", "datadog", "twilio", "servicenow", "notion", "mongodb", "dropbox", "zendesk", "canva", "asana", "figma", "gitlab", "databricks", "airtable", "miro"],
+    companies: ["salesforce", "slack", "zoom", "atlassian", "snowflake", "hubspot", "datadog", "twilio", "servicenow", "notion", "mongodb", "dropbox", "zendesk", "canva", "asana", "figma", "gitlab", "databricks", "airtable", "miro", "linear", "gong", "retool", "intercom", "segment", "mailchimp"],
   },
 ];
 
@@ -441,10 +491,60 @@ export const COMPANY_META: Record<string, CompanyMeta> = {
   databricks: { id: "databricks", name: "Databricks", tagline: "Lakehouse consumption economics: DBUs, Delta, Unity Catalog" },
   airtable: { id: "airtable", name: "Airtable", tagline: "The database for everyone: bases, records, automation runs" },
   miro: { id: "miro", name: "Miro", tagline: "Visual collaboration: boards, workshops, seat expansion" },
+  // wave-10
+  shein: { id: "shein", name: "SHEIN", tagline: "Micro-batch drops, cart-size economics, cross-border speed" },
+  mercari: { id: "mercari", name: "Mercari", tagline: "Japan's C2C app marketplace: seller liquidity, trust scores, the flat take rate" },
+  newegg: { id: "newegg", name: "Newegg", tagline: "PC-builder commerce: spec ladders, combo deals, the RMA desk" },
+  sixt: { id: "sixt", name: "SIXT", tagline: "Premium car rental: fleet turnover, station P&L, the orange counter" },
+  voi: { id: "voi", name: "Voi", tagline: "European e-scooter cities: permits, utilization, charging swaps" },
+  beat: { id: "beat", name: "BEAT", tagline: "Greek ride-hail: rating gates, dense-city liquidity, surge windows" },
+  tumblr: { id: "tumblr", name: "Tumblr", tagline: "The reblog graph: fandom depth, Post+ and the ad load" },
+  vimeo: { id: "vimeo", name: "Vimeo", tagline: "Pro-grade video hosting: the plan ladder, the bandwidth bill, the OTT book" },
+  audible: { id: "audible", name: "Audible", tagline: "Credit-bank economics: rollover credits, listening depth, catalog churn" },
+  tink: { id: "tink", name: "Tink", tagline: "European open-banking rails: coverage, aggregation, payment initiation" },
+  fireblocks: { id: "fireblocks", name: "Fireblocks", tagline: "Digital-asset custody & the settlement network: vaults, quorums, rails" },
+  brex: { id: "brex", name: "Brex", tagline: "Startup corporate cards: limit underwriting, policy controls, bill pay" },
+  blueapron: { id: "blueapron", name: "Blue Apron", tagline: "Weekly box economics at per-portion grain" },
+  waitrose: { id: "waitrose", name: "Waitrose", tagline: "Premium UK grocery: own-brand mix, myWaitrose, branches" },
+  dunkin: { id: "dunkin", name: "Dunkin'", tagline: "Value daypart ladders, drive-thru windows, franchise royalties" },
+  radisson: { id: "radisson", name: "Radisson", tagline: "The Blu ladder and the Rewards book" },
+  vueling: { id: "vueling", name: "Vueling", tagline: "Barcelona's low-fare hub: attach rates and fare-family ladders" },
+  flix: { id: "flix", name: "FlixBus", tagline: "Green intercity coach network: partner fleets, seat-km yield, dynamic fares" },
+  rabobank: { id: "rabobank", name: "Rabobank", tagline: "The food & agri cooperative bank: corridors, seasons, member capital" },
+  bmo: { id: "bmo", name: "BMO", tagline: "The US-Canada cross-border bank: corridor books, commercial lending, integration synergy" },
+  natwest: { id: "natwest", name: "NatWest", tagline: "UK commercial banking: business books, app-first retail, the rate-reset cycle" },
+  linear: { id: "linear", name: "Linear", tagline: "Issue tracking at cycle speed: triage, velocity, seats" },
+  gong: { id: "gong", name: "Gong", tagline: "Revenue intelligence: deal risk, engagement, forecast calls" },
+  retool: { id: "retool", name: "Retool", tagline: "Internal tools in hours: apps on live data, seat expansion, governance" },
+  // wave-11
+  bestbuy: { id: "bestbuy", name: "Best Buy", tagline: "Big-ticket electronics retail: attach economics, price-match windows, member tiers" },
+  ikea: { id: "ikea", name: "IKEA", tagline: "Flat-pack retail: range discipline, stock cover, the pickup funnel" },
+  zara: { id: "zara", name: "Zara", tagline: "Design-to-shelf in two weeks: drop clocks, sell-through speed, markdown windows" },
+  avis: { id: "avis", name: "Avis", tagline: "We Try Harder SQL: the reservation funnel, no-show leak and fleet-partner book" },
+  enterprise: { id: "enterprise", name: "Enterprise", tagline: "Neighborhood branches, corporate accounts: branch P&L, replacement billing" },
+  getaround: { id: "getaround", name: "Getaround", tagline: "Instant-key car sharing: utilization, host earnings, no-show economics" },
+  soundcloud: { id: "soundcloud", name: "SoundCloud", tagline: "Creator-first audio: plays-to-payout funnels, Next Pro tiers, royalty rails" },
+  threads: { id: "threads", name: "Threads", tagline: "Growth-loop velocity on the Instagram graph: ramp, retention, creator rollout" },
+  goodreads: { id: "goodreads", name: "Goodreads", tagline: "Reading depth by SQL: shelf funnels, challenge ladders, publisher benches" },
+  afterpay: { id: "afterpay", name: "Afterpay", tagline: "The 4-pay installment clock: approval funnel, merchant fees, split rails" },
+  paytm: { id: "paytm", name: "Paytm", tagline: "Wallet + UPI rails at super-app scale: bill-pay, recharge, QR acquiring" },
+  venmo: { id: "venmo", name: "Venmo", tagline: "Split-the-bill SQL: split legs, balance float, feed engagement" },
+  burgerking: { id: "burgerking", name: "Burger King", tagline: "Franchisee economics at the flame grill: royalties, remittances, coupon traffic" },
+  chickfila: { id: "chickfila", name: "Chick-fil-A", tagline: "Drive-thru density: six-day weeks, sixteen SKUs, per-unit revenue" },
+  aldi: { id: "aldi", name: "ALDI", tagline: "Hard-discount leanness: one-deep aisles, own-label concentration, basket depth" },
+  skyscanner: { id: "skyscanner", name: "Skyscanner", tagline: "Flight metasearch: query-to-click funnels, partner share, fare-alert pulse" },
+  easyjet: { id: "easyjet", name: "easyJet", tagline: "Ancillary attach by SQL: fee bands, fare classes, the unbundled P&L" },
+  ihg: { id: "ihg", name: "IHG", tagline: "The franchise lever: rate bands, RevPAR folds, royalty checks" },
+  sbi: { id: "sbi", name: "SBI", tagline: "Public-sector banking at scale: branch censuses, priority-sector books, the deposit spine" },
+  axisbank: { id: "axisbank", name: "Axis Bank", tagline: "Cards and retail-lending growth, read through limit bands and the dunning book" },
+  usbank: { id: "usbank", name: "U.S. Bank", tagline: "The regional network bank: branch markets, rails discipline, settlement coverage" },
+  intercom: { id: "intercom", name: "Intercom", tagline: "Customer messaging SQL: resolution funnels, Fin containment, honest denominators" },
+  segment: { id: "segment", name: "Segment", tagline: "One source, many destinations: MTU billing and schema discipline" },
+  mailchimp: { id: "mailchimp", name: "Mailchimp", tagline: "Email marketing by SQL: send funnels, contact tiers, deliverability denominators" },
 };
 
-/** Authored kits — keyed by company id. ALL 160 slots live: 40 flagship
- *  (batches A–I) + 24 wave-5 + 24 wave-6 + 24 wave-7 + 24 wave-8 + 24 wave-9 additions. */
+/** Authored kits — keyed by company id. ALL 208 slots live: 40 flagship
+ *  (batches A–I) + 24 wave-5 + 24 wave-6 + 24 wave-7 + 24 wave-8 + 24 wave-9 + 24 wave-10 + 24 wave-11 additions. */
 export const COMPANY_KITS: Record<string, CompanyKit> = {
   amazon: amazonKit,
   flipkart: flipkartKit,
@@ -616,6 +716,56 @@ export const COMPANY_KITS: Record<string, CompanyKit> = {
   databricks: databricksKit,
   airtable: airtableKit,
   miro: miroKit,
+  // wave-10
+  shein: sheinKit,
+  mercari: mercariKit,
+  newegg: neweggKit,
+  sixt: sixtKit,
+  voi: voiKit,
+  beat: beatKit,
+  tumblr: tumblrKit,
+  vimeo: vimeoKit,
+  audible: audibleKit,
+  tink: tinkKit,
+  fireblocks: fireblocksKit,
+  brex: brexKit,
+  blueapron: blueapronKit,
+  waitrose: waitroseKit,
+  dunkin: dunkinKit,
+  radisson: radissonKit,
+  vueling: vuelingKit,
+  flix: flixKit,
+  rabobank: rabobankKit,
+  bmo: bmoKit,
+  natwest: natwestKit,
+  linear: linearKit,
+  gong: gongKit,
+  retool: retoolKit,
+  // wave-11
+  bestbuy: bestbuyKit,
+  ikea: ikeaKit,
+  zara: zaraKit,
+  avis: avisKit,
+  enterprise: enterpriseKit,
+  getaround: getaroundKit,
+  soundcloud: soundcloudKit,
+  threads: threadsKit,
+  goodreads: goodreadsKit,
+  afterpay: afterpayKit,
+  paytm: paytmKit,
+  venmo: venmoKit,
+  burgerking: burgerkingKit,
+  chickfila: chickfilaKit,
+  aldi: aldiKit,
+  skyscanner: skyscannerKit,
+  easyjet: easyjetKit,
+  ihg: ihgKit,
+  sbi: sbiKit,
+  axisbank: axisbankKit,
+  usbank: usbankKit,
+  intercom: intercomKit,
+  segment: segmentKit,
+  mailchimp: mailchimpKit,
 };
 
 export const companyKit = (id: string): CompanyKit | undefined => COMPANY_KITS[id];
