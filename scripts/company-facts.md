@@ -469,3 +469,66 @@ anomalies: void-but-paid #11 (925.00), paid-no-payments #28 (1756.00), 5 split-p
 | 22 | paid | 4459 | 2 | 4459 |
 | 25 | open | 6148 | 1 | 4000 |
 | 28 | paid | 1756 | 0 | 0 |
+
+### Probe-derived canonical cells — wave-8+9 agent dumps (canonicalized 2026-10-16)
+
+Every figure below was probe-derived by a wave-8/9 kit agent against this db and flagged
+for canonicalization in its worklog note. Cells marked **re-verified** were re-probed
+2026-10-16; the rest are transcribed verbatim from the verifying agent's note. Kit names
+are provenance, not usage restrictions — any kit may quote these.
+
+#### Money-read conventions (read this first)
+- Finance tables (`invoices.amount_cents`, `payments.amount_cents`, `expenses.amount`, `ledger_entries.amount`) store **INTEGER cents**; every dollar figure in this file is the `/100.0` read. Example (accor): Rent 16,800.00 = 1,680,000 raw cents. Example (asos): the paid book 66,443.00 = 6,644,300 raw cents. Rupee kits (hdfc) use the identical convention in paise: 6,561,200 paise prints as 65,612.00.
+- `orders.total` and `order_items.unit_price` are **REAL dollars** already — no fold needed.
+- ROUND ambiguity (n26): every statement-group cent sum on this book is a whole multiple, so a bare-column `ROUND(col, 2)` cents-fold can silently reproduce the dollar digits. Prefer the `/100.0` read or a fixed display fold; avoid bare-column ROUND as a case slot.
+
+#### Invoice / payments cells
+- Paid book — **re-verified 2026-10-16**: 21 paid invoices, SUM 66,443.00 (6,644,300 cents), AVG 3,163.95 (316,395.24 cents). (standardchartered's note said "≈3,164 cents" — units slip; the true read is ≈3,164 **dollars**.)
+- Payments — **re-verified 2026-10-16**: 27 payment rows, SUM 69,612.00 (6,961,200 cents — ties to the ledger cash credit), AVG payment row 2,578.22 (257,822.22 cents).
+- Paid-status settled legs (n26) = **64,687.00** = 65,612.00 exact-covered − 925.00 void-but-debited leg (#11).
+- Coverage census bucket composition (remitly/hdfc): exact = **21** because void-but-debited #11 (925.00) folds IN and paid-status-no-payments #28 (1,756.00) folds OUT; none = 6 statements / 15,217.00; partial = 1 (4,000.00 of 6,148.00, invoice #25).
+- Dunning blocks beyond the 6/15,217 aggregate (monzo): no-payment open statements **18/873.00, 21/1,295.00, 24/4,937.00, 26/3,562.00, 27/2,794.00**.
+- Never-remitted per-status split (kfc): open cohort **5 statements / 13,461.00** vs the single paid lie **#28 / 1,756.00**.
+- Split-rail statements (hdfc): **5** invoice cycles settle on BOTH card and wire legs.
+- Settlement clock (standardchartered/mufg): 28.4 avg / 13 fastest / 84 slowest settlement days; 22 statements carry legs, 20 of the paid book settle with legs.
+- Above-line invoice count (figma): **12** invoices above the line-price ceiling band.
+
+#### Order / line cells
+- Basket depth (asos): 251 lines / 103 orders = **2.44** lines per order; max line quantity **3**.
+- Total participant units (getyourguide) — **re-verified 2026-10-16**: **498** units across the 251 lines.
+- Seat-band fold (figma) — threshold re-derived 2026-10-16: `unit_price < 55` arm **268 units @ 31.01 avg line price**, `>= 55` arm **230 units @ 115.85**.
+- Top-customer order ladder (cabify): **24 / 17 / 14 / 13 / 5** with a three-way tie at 4 below.
+- 5-trip household ladder cells (kroger): probe-derived, cells live in the kroger case SQL (cs-kroger-*).
+- Per-supplier units and per-month LATAM/region revenue splits (mercadolibre): probe-only, not canonical.
+
+#### Region / status / fleet cells
+- Per-region status census with abandoned-share column (tesco): probe-derived via the tesco case SQL (cs-tesco-*).
+- Aisle×band revenue fold (tesco): Audio/standard **11,744.01 @ 100** … Apparel **1,384.15 / 600.78** (standard vs promo band).
+- Corridor lead-time × rider-coverage grid (amtrak): **36/8, 29/5, 15/2, 2/1** (latency / customers per region).
+- Delivered-only per-fleet fare books (yango): Nordic **3,711.42**, Alpine **3,013.61** (17 completed rides each).
+- Per-category big-ticket fold, threshold 500.00 (yango): Rent **14** / Ads **0** / Travel **1** / Tools **0** line counts.
+- LATAM flows (mufg): the 2 LATAM orders are BOTH delivered — the missing cells in the status×region grid are zeros.
+- Per-market funded-only latency counts (sofi): **36 / 29 / 15 / 2**.
+- 3,000-line cohort foot (marqeta): **22,121.70 over 68 of 103 batches**; the 13-row status×market census with PARTITION loads exists only inside the facts grid above.
+- Fare-family revenue beyond the top-12 combos (delta): APAC Video **1,051.64**; LATAM Audio **357.51** (Wearables/Video 0).
+- Market-by-tier folio fold (accor; feet exactly to the region books 15,089.23 / 11,605.45 / 7,286.16 / 852.44): EU midscale **12,032.44 @ 79.7%** + economy **3,056.79 @ 20.3%**; APAC **8,611.42 @ 74.2%** + **2,994.03 @ 25.8%**; US **5,335.40 @ 73.2%** + **1,950.76 @ 26.8%**; LATAM **626.25 @ 73.5%** + **226.19 @ 26.5%**. Premium arm is EMPTY (ladder tops out at 199.99 — mercadolibre confirms max).
+- Per-zone settled-only customers (hdfc, stamped-only filter): EU **8** / APAC **5** / US **2** / LATAM **1**.
+
+#### Supplier / product / cohort cells
+- Trusted-bench avg_price grain (miro): the 139.66/72-style cells are **AVG over supplier rows**, NOT lines-weighted (lines-weighted gives 133.55/62.59). State the grain explicitly when slotting.
+- Per-creator usage-line counts (miro): Nordic **43**, Alpine **40**; five-logo ladder foot **24,789.63 = 71.2%** band boundary.
+- Per-partner line-vs-SKU counts (kroger): Nordic **43/3**, Midwest **56/3**, Alpine **40/2**, Andes **25/2**, Shenzhen **47/3**, Pacific **40/3**.
+- Per-workload-family line records (databricks): Audio **51**, Wearables **25**, Video **32**, Electronics **44**, Accessories **62**, Apparel **24**, Fitness **13**; blended per-unit rates Audio **121.07** vs Accessories **27.23**.
+- Category-pair co-usage (airtable): **27 raw pairs** incl. **6 multi-SKU diagonals**; Fitness diagonal impossible at 1 SKU. Usage-ladder tie structure behind RANK drills: **36×2, 30×3, 21×3**.
+- ≥5-product member cohort (sofi): **24 / 17 / 14 / 13 / 5** vs the 6.44 mean (exactly 4 above). Statement leg distribution: 0 legs ×6, 1 leg ×17, 2 legs ×5 (of 28 invoices).
+
+#### Open gaps (wanted by agents, still absent from this file)
+- Per-market billing-basis burn split (committed vs on-demand dollars, not counts) — databricks.
+- Per-market attach split for the 54-of-103 Accessories-family attach — accor.
+- Per-rail corridor attribution (card vs wire legs per region) — hdfc/mufg/cabify.
+- Per-batch rail attribution (which funding leg settled which statement) — marqeta.
+- Per-division tender-rail split — kroger. Per-statement charge-rail split at invoice grain — cabify.
+- Per-ride fare counts above the 338.19 mean — yango. Per-partner journey counts — amtrak.
+- Per-supplier settlement-coverage cut — mercadolibre. Per-market fire-clock split (fired-vs-completed shares) — kfc.
+- Per-workspace board/collaborator usage-line splits — miro (db cannot express board-type granularity; usage telemetry stays at line grain).
+- Per-corridor or per-month settlement-day split — standardchartered.

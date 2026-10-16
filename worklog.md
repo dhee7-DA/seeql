@@ -7002,3 +7002,20 @@ Work Log:
 Stage Summary:
 - Universe: 8 domains × 20 companies = 160/160 kits live, all at standard volume (3x-expansion remains a future wave).
 - Next options: 3x-expand the 48 wave-8+9 kits, wave-10 (+3/domain → 23/domain = 184 kits), COMPANY_TAG_ALIASES name normalization, menu re-order (user sign-off pending).
+
+---
+Task ID: 99
+Agent: Super Z (main agent)
+Task: Facts-file dump — canonicalize the ~40 wave-8/9 probe-derived numbers into scripts/company-facts.md; db health guard.
+
+Work Log:
+- State re-sync found the session summary overstated progress: repo is at wave-9 complete (160 kits, 8×20), worklog ended at Task 98; no wave-10/11, no 3x on wave-8+9 kits, no facts dump. Proceeded against the real state.
+- db/custom.db found mid-bootstrap (6 tables, storefront analytics tables missing — probe-companies.ts is a static content probe so it passed regardless). Re-seeded via src/lib/sample-db resetDatabase() + resetWorlds(): storefront bit-exact (16/6/16/103/251/28/27/36/80) + 14 world tables. `M db/custom.db` is additive seed drift, expected on boot.
+- Mined ALL wave-8/9 "Facts gaps for next dump" notes from worklog (25 notes, kit-attributed via awk on Task ID headers).
+- Wrote ONE tmp verification probe (scripts/tmp-facts-verify.ts, deleted after): paid book = 21 invoices / 66,443.00 / avg 3,163.95 (standardchartered's note said "≈3,164 cents" — units slip, true read is dollars); payments = 27 rows / 69,612.00 / avg 2,578.22 (ties to ledger cash credit); units 498/251 re-verified; seat-band fold threshold re-derived = unit_price < 55 vs >= 55 → 268 @ 31.01 / 230 @ 115.85.
+- Appended "Probe-derived canonical cells — wave-8+9 agent dumps" to scripts/company-facts.md (471 → 534 lines): money-read conventions (cents vs dollars, ROUND ambiguity), invoice/payments cells, order/line cells, region/status/fleet cells, supplier/cohort cells — all kit-attributed, re-verified cells marked; plus an "Open gaps" list (still-absent cuts future kits wanted).
+
+Stage Summary:
+- scripts/company-facts.md now carries the wave-8+9 canonical cells — future kits may quote them legally.
+- db/custom.db healthy again; tmp probe + part-file deleted; only company-facts.md + worklog + db touched.
+- Next: Task 100 = wave-10 (+3/domain → 23 = 184 kits), then wave-11 (→ 26 = 208), then 3x on the 48 wave-8+9 standard kits.
