@@ -8179,3 +8179,17 @@ Work Log:
 Stage Summary:
 - Workspace state recovered and improved: db back to 24 tables; strip rebuilt with the approved codegen architecture (strip = ~1 KB constants, not 23 MB registry); strip live on landing + playground + learn with companies deep link; build pipeline keeps counts fresh via prebuild. Preview re-delivered via Complete.
 - IMPORTANT BACKLOG NOTES from rollback: (1) Task-103 3x expansion regressed from 208/208 to 93/208 kits — 115 kits need re-expansion (Task 107, large authoring effort); (2) approved backlog stands: mock interview mode, learn-flow company picker, full-universe theory/MCQ audit; (3) HEAD commit message is cosmetically stale (says 184 companies; tree holds 208 with 93 expanded) — documented here instead of amending.
+
+---
+Task ID: 106-b
+Agent: orchestrator (main)
+Task: "i cant see the blob" — diagnose missing SeeQ buddy after preview re-delivery.
+
+Work Log:
+- Verified app integrity end to end: all bloub/seeq module files present, imports resolve; production build green (22 pages prerendered); SSR landing HTML contains the SeeQ stage markup + universe strip; client chunks contain seeql.buddy persistence keys. App ships the blob correctly — the miss was client-side.
+- Root cause analysis: the floating buddy renders only after hydration (mounted-gated portal), and a persisted collapsed state (seeql.buddy.collapsed="1") shows a 44px ink dot on zinc-950 — effectively invisible on the dark page.
+- Fix: collapsed chip now renders with an emerald ring, soft emerald glow halo and a faint backdrop disc so the minimized buddy stays findable at any parking spot (seeq-buddy.tsx, tsc clean).
+- Also noted: landing/live-sandbox.tsx + query-playback.tsx carry pre-existing type errors from the rollback's mixed file versions — zero importers (orphaned legacy), build unaffected.
+
+Stage Summary:
+- Build verified green; blob code confirmed shipped in SSR HTML and client bundles; collapsed-buddy visibility fixed (commit 24a2632). Preview re-delivered. If the user still cannot see the buddy after a hard refresh, next suspect is a stale platform build cache.
