@@ -8210,3 +8210,19 @@ Work Log:
 
 Stage Summary:
 - EasyUI is a strong fit and is now part of the component toolbox. Live changes visible on re-delivery: liquid sound toggle in all three headers, rolling-digit universe strip on landing/playground/learn. Toolbox ready for follow-ups: pill-navigation (learn subnav/domain tabs), slide-pagination (lesson prev/next, company list pages), unfold-accordion (theory cards), magnetic-button (landing CTAs). Attribution: EasyUI © Suraj Maurya, open source — components vendored under copy-paste ownership.
+
+---
+Task ID: 108
+Agent: orchestrator (main)
+Task: "i dont think any buttons are working" — diagnose and fix app-wide dead buttons.
+
+Work Log:
+- Ruled out the EasyUI commit as the cause: clean-browser E2E on the production build showed zero console errors, hydration clean, nav scroll / playground nav / strip CTA / LiquidToggle sound switch (aria-label flips) all responsive. next-themes useTheme without a provider is safe (returns {setTheme:noop, themes:[]}).
+- Reproduced the real bug with a headless browser: fresh user (empty localStorage) → click strip CTA "Explore all 208 →" → learn view mounts → 900ms later the onboarding tour auto-starts on ANY learn view, including deep links. Its full-screen overlay (fixed inset-0 z-[70], 72% black box-shadow dim) swallowed every click — Playwright: "Element is covered by div.fixed.inset-0". Step 0 targets data-tour="hero-cta" which does not exist on the companies view, so the spotlight sat at -9999 and the card at top:-9999: a dark page with no visible tour UI and no responsive buttons. Exactly "i dont think any buttons are working".
+- Fix 1 (learn-app.tsx): deepLinkedRef set inside the seeql:nav listener; the tour's 900ms auto-start timer bails when a deep-link destination (companies/roadmap/lesson/seeq) or any nav event arrived. User wants their destination, not a modal tour.
+- Fix 2 (onboarding-tour.tsx): missing-target case now centers the card in the viewport instead of leaving card+spotlight at -9999 — the tour can never again read as a bare dim layer; Esc/click/skip stay operable.
+- Test-harness lesson: agent-browser open between same-origin hash URLs does NOT reload the SPA (hashchange only) — first Test B run was contaminated (view stayed companies from Test A, no remount). Genuine fresh-load rerun: tour opens on plain #learn as intended.
+- Gates: tsc 0 errors in both touched files; prod build green after killing the headless browser + stale next start (two OOM 137 kills were memory pressure, not code); headless E2E: (A) #learn?view=companies fresh → no tour, Expand-all-modules toggles, Amazon chip navigates; (B) plain #learn fresh → tour opens with visible card "One tap to continue"; (C) landing → strip CTA → Company Interview Universe interactive, screenshot captured.
+
+Stage Summary:
+- Root cause was never the buttons — it was the guided tour modalizing deep-link arrivals. Committed 7416c21. Tour now only auto-starts on the learn home for first-run visitors; deep links land straight on their destination; missing-target tours render an operable centered card. Note for future deploys: kill agent-browser + stray next servers before bun run build — the sandbox OOMs at ~4GB with Chromium + next dev (:3000 platform watcher) + next start + Turbopack all alive.
