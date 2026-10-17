@@ -552,7 +552,12 @@ export function SeeqBuddy() {
             className={
               "block cursor-grab touch-none select-none rounded-full outline-none transition-[width,height] duration-300 focus-visible:ring-2 focus-visible:ring-emerald-400/60 active:cursor-grabbing " +
               (dragging ? "" : "hover:scale-105 ") +
-              (collapsed ? "h-11 w-11" : "h-28 w-28 sm:h-32 sm:w-32")
+              (collapsed
+                ? // Minimized chip must stay FINDABLE: ink-on-zinc-950 otherwise
+                  // vanishes against the dark page. A hairline emerald ring,
+                  // soft emerald glow and a faint disc mark the parking spot.
+                  "h-11 w-11 ring-1 ring-emerald-400/80 bg-zinc-950/70 shadow-[0_0_0_4px_rgba(16,185,129,0.14),0_8px_20px_rgba(0,0,0,0.55)] backdrop-blur-sm"
+                : "h-28 w-28 sm:h-32 sm:w-32")
             }
           >
             {/* No backdrop disc — the bot sits straight on the app. The eye
