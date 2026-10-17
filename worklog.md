@@ -8193,3 +8193,20 @@ Work Log:
 
 Stage Summary:
 - Build verified green; blob code confirmed shipped in SSR HTML and client bundles; collapsed-buddy visibility fixed (commit 24a2632). Preview re-delivered. If the user still cannot see the buddy after a hard refresh, next suspect is a stale platform build cache.
+
+---
+Task ID: 107
+Agent: orchestrator (main)
+Task: Evaluate easyui.site and integrate its animated UI components into SeeQL.
+
+Work Log:
+- Evaluated EasyUI (Surajmaurya1/easyui): open-source, 123 React components distributed via the shadcn GitHub registry; stack = React + TS + Tailwind + shadcn + Framer Motion (exact match with ours). NOT the legacy jQuery EasyUI (jeasyui.com).
+- shadcn CLI route hung in-sandbox (network/prompt); fell back to direct raw.githubusercontent fetch of registry.json + component sources — consistent with the library's copy-paste-ownership philosophy. Registry deps for all picks: framer-motion + lucide-react only, both already installed (zero new npm packages).
+- Installed 6 components into src/components/ui/ (imports normalized to @/lib + @/lib/motion-tokens): animated-number (Apple-grade rolling digit columns), liquid-toggle (SVG metaball blob switch), magnetic-button, pill-navigation, slide-pagination, unfold-accordion — plus src/lib/motion-tokens.ts (EasyUI spring/ease tokens, Apple HIG-tuned).
+- Adapted liquid-toggle to our stack: next-themes useTheme (resolvedTheme ?? 'dark') replaces EasyUI's standalone theme context; bg-surface/text-text-muted/text-text-secondary tokens mapped to zinc; focus-ring replaced with our emerald focus-visible ring.
+- Wired two surfaces: (1) SoundToggle now renders LiquidToggle (emerald #34d399 blob, role="switch" aria-checked, external {className} API unchanged, hydration contract preserved); (2) UniverseStrip cells render AnimatedNumber with a hydration-safe mount count-up (values start 0 on server+client, flip to real totals on rAF after mount — digits roll up on first paint).
+- Dropped orphaned easyui useTheme helper (zero importers) in a cleanup commit.
+- Gates: bunx tsc → 0 errors in all 10 touched files; bun run build → compiled successfully, 22 pages prerendered. Commits: 1338443 + cleanup.
+
+Stage Summary:
+- EasyUI is a strong fit and is now part of the component toolbox. Live changes visible on re-delivery: liquid sound toggle in all three headers, rolling-digit universe strip on landing/playground/learn. Toolbox ready for follow-ups: pill-navigation (learn subnav/domain tabs), slide-pagination (lesson prev/next, company list pages), unfold-accordion (theory cards), magnetic-button (landing CTAs). Attribution: EasyUI © Suraj Maurya, open source — components vendored under copy-paste ownership.
