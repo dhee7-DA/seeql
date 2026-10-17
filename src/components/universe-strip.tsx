@@ -6,7 +6,14 @@
 // (scripts/gen-universe-counts.ts → lib/generated/universe-counts.ts) so this
 // component costs a few hundred bytes instead of the full kit registry, and
 // can never drift out of sync with the kits themselves.
+//
+// The cells render through EasyUI's AnimatedNumber (rolling digit columns on
+// spring physics): values start at 0 on both server and client (hydration-
+// identical), then flip to the real totals on mount so the strip counts
+// itself up the first time you see it.
+import { useEffect, useState } from "react";
 import { UNIVERSE_COUNTS } from "@/lib/generated/universe-counts";
+import { AnimatedNumber } from "@/components/ui/animated-number";
 
 /** Deterministic thousands separator — deliberately not toLocaleString, so
     server and client render byte-identical output (no hydration mismatch). */
@@ -22,6 +29,12 @@ const CELLS: { label: string; value: number }[] = [
 ];
 
 export function UniverseStrip() {
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setShown(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
   return (
     <div className="border-b border-zinc-800/80 bg-zinc-950">
       <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-2.5 sm:px-6">
@@ -34,7 +47,10 @@ export function UniverseStrip() {
         </span>
         {CELLS.map((cell) => (
           <span key={cell.label} className="flex items-baseline gap-1.5 text-[12px]">
-            <span className="tnum text-[13px] font-semibold text-zinc-100">{fmt(cell.value)}</span>
+            <AnimatedNumber
+              value={shown ? cell.value : 0}
+              className="text-[13px] font-semibold text-zinc-100"
+            />
             <span className="text-zinc-500">{cell.label}</span>
           </span>
         ))}
