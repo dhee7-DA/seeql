@@ -8159,3 +8159,23 @@ Work Log:
 
 Stage Summary:
 - beat.ts final: theory 24 (t1-t24), mcqs 30, cases 6 (cs-beat-1..6: easy/medium/easy/medium/medium/hard; topics j7, s6, t5, q5, x2, x3; universes supplier, pricing, growth, month-close, expense, refund-audit), problems 32 (61 distinct slugs total, zero topic overlap), brief 6 paras, dayInLife 4, metrics 12, topics 15. All gates green. Facts gaps wanted: per-rail corridor attribution (card vs wire legs per region) and per-month rail split (already listed); per-rider class-mix cells for the loyalty read; invoice-level issue-date list so aging buckets can be slotted as verified cells.
+
+---
+Task ID: 106
+Agent: orchestrator (main)
+Task: Fix "preview is not loading correctly" — diagnose sandbox rollback, recover state, rebuild universal strip on build-time codegen (approved Task A), re-deliver preview.
+
+Work Log:
+- Diagnosed rollback: HEAD is the amended Task-100 commit whose TREE actually holds 208 kit files (93 of them 3x-expanded) + all Task-103 wave work — only the commit MESSAGE is stale ("184-company matrix"). Post-rollback session commits (Task-103 completion to all 208, facts dump, Task-105 strip commit 5f79dff) are gone from this sandbox's history; strip files were absent from disk.
+- Found db/custom.db regressed to 6 tables (healthy = 23-24). Restored via git restore --source=73b3b3f -- db/custom.db → verified 24 tables. This runtime-data breakage was the likely "preview not loading correctly" cause alongside the lost strip.
+- Re-probed universe for true baseline: 208 companies · 8 domains · 4,817 problems · 3,152 theory · 3,940 MCQs · 788 cases (93/208 kits expanded, 115 at base — see Task 107 backlog note).
+- Task A (strip bundle fix) implemented as approved: scripts/gen-universe-counts.ts imports the registry and generates src/lib/generated/universe-counts.ts (six constants, ~1 KB, deterministic, idempotent). src/components/universe-strip.tsx now imports the generated file — zero kit-registry bytes pulled into the first-paint bundle; numbers can never drift (rebuild regenerates).
+- Wired package.json: prebuild hook (bun run gen:counts before next build), gen:counts, check:strip scripts.
+- Rebuilt strip UI (emerald pulse dot, "The universe" label, six tnum cells, deterministic regex thousands-separator — no toLocaleString/hydration risk, "Explore all 208 →" CTA → #learn?view=companies + scrollTo top).
+- Mounted strip on all three views: landing.tsx (after </header>, before hero), page.tsx playground shell (after </header>, before #playground-main), page.tsx learn shell (before <LearnApp />). Added companiesDeep effect (#learn?view=companies → seeql:nav {kind:"companies"}) alongside existing seeq/roadmap/lesson deep links; learn-app already handles kind:"companies" (nav union line 85, switch line 603).
+- Added scripts/check-strip-counts.ts gate: registry-derived totals vs generated file, exit 1 with key-level mismatch report on drift.
+- Gates: check-strip-counts "ALL PASS" (208/8/4817/3152/3940/788); codegen re-run byte-stable; case-audit spot checks axisbank 6/6 + paytm 2/2 pass; bunx tsc → 0 errors in all touched files (universe-strip.tsx, universe-counts.ts, gen + check scripts, page.tsx, landing.tsx); total workspace tsc count 434, all pre-existing in legacy scripts/ + a handful of untouched src/ files (funnel/quality routes, leetcode content) — non-blocking, next.config sets typescript.ignoreBuildErrors=true.
+
+Stage Summary:
+- Workspace state recovered and improved: db back to 24 tables; strip rebuilt with the approved codegen architecture (strip = ~1 KB constants, not 23 MB registry); strip live on landing + playground + learn with companies deep link; build pipeline keeps counts fresh via prebuild. Preview re-delivered via Complete.
+- IMPORTANT BACKLOG NOTES from rollback: (1) Task-103 3x expansion regressed from 208/208 to 93/208 kits — 115 kits need re-expansion (Task 107, large authoring effort); (2) approved backlog stands: mock interview mode, learn-flow company picker, full-universe theory/MCQ audit; (3) HEAD commit message is cosmetically stale (says 184 companies; tree holds 208 with 93 expanded) — documented here instead of amending.

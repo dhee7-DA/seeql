@@ -21,6 +21,7 @@ import { SoundToggle } from "@/components/sound-toggle";
 import { BloubBot, type BloubCommand } from "@/components/bloub/bloub-bot";
 import type { StateId } from "@/components/bloub/states";
 import { HeroDemo } from "@/components/landing/hero-demo";
+import { UniverseStrip } from "@/components/universe-strip";
 import { Icon3D, type Icon3DName } from "@/components/learn/ui/icon3d";
 import { LESSONS, MODULES } from "@/lib/curriculum/lessons";
 import { LEVELS } from "@/lib/curriculum/gamification";
@@ -332,6 +333,7 @@ export function Landing({
           </nav>
         )}
       </header>
+      <UniverseStrip />
 
       {/* hero — AB: eyebrow rule, giant black mono headline, body, ink CTA */}
       <section className="border-b border-zinc-800">

@@ -55,6 +55,7 @@ import { SampleGallery } from "@/components/sample-gallery";
 import { clauseAtOffset, findClauses, spanOf, type ClauseKind } from "@/lib/sql-clauses";
 import { Landing } from "@/components/landing";
 import { LearnApp } from "@/components/learn/learn-app";
+import { UniverseStrip } from "@/components/universe-strip";
 import { SeeqBuddy } from "@/components/learn/seeq-buddy";
 import { useProgress } from "@/lib/curriculum/progress";
 import { MISSIONS } from "@/lib/missions";
@@ -501,6 +502,7 @@ function PlaygroundView({
           </div>
         </div>
       </header>
+      <UniverseStrip />
 
       {/* main */}
       <main id="playground-main" className="mx-auto w-full max-w-7xl flex-1 px-4 py-5">
@@ -1009,6 +1011,14 @@ export default function Home() {
       window.dispatchEvent(new CustomEvent("seeql:nav", { detail: { kind: "lesson", id: lessonDeepId } }));
     }
   }, [lessonDeepId]);
+  // #learn?view=companies — the universal strip's "Explore all 208 →" CTA and
+  // any external company-universe link land straight on the companies view.
+  const companiesDeep = learnDeepParams?.get("view") === "companies";
+  useEffect(() => {
+    if (companiesDeep) {
+      window.dispatchEvent(new CustomEvent("seeql:nav", { detail: { kind: "companies" } }));
+    }
+  }, [companiesDeep]);
 
   // SeeQ mounts at the app ROOT, so the buddy is on every view — landing,
   // playground and learn — and one instance survives mode switches: park him
@@ -1058,6 +1068,7 @@ export default function Home() {
               </div>
             </div>
           </header>
+          <UniverseStrip />
           <LearnApp />
           <footer className="mt-auto border-t border-zinc-800/80">
             <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3 text-[11px] text-zinc-600 sm:px-6">
