@@ -161,13 +161,27 @@ export function OnboardingTour({
   // Position the tooltip under (or over) the spotlight, clamped to viewport.
   // Runs in rAF for the same reason as the measure pass above.
   useEffect(() => {
-    if (!open || !rect) return;
+    if (!open) return;
     const raf = requestAnimationFrame(() => {
       const tip = tipRef.current;
       if (!tip) return;
       const h = tip.offsetHeight;
       const vw = window.innerWidth;
       const vh = window.innerHeight;
+      // Missing target (view switched underneath, or a step anchored to a
+      // view that is not mounted): center the card so the tour never reads
+      // as a bare dim layer with no visible UI. The missing-target
+      // auto-advance usually resolves this within ~250ms; this keeps the
+      // in-between frames operable — the card is on screen, Esc works, and
+      // a click lands on the card instead of "the page went dark".
+      if (!rect) {
+        setTipPos({
+          top: Math.max(12, vh / 2 - h / 2),
+          left: Math.max(12, (vw - TOOLTIP_W) / 2),
+          below: true,
+        });
+        return;
+      }
       const below = rect.bottom + 12 + h < vh - 12;
       const top = below ? rect.bottom + 14 : Math.max(12, rect.top - h - 14);
       const left = Math.min(Math.max(12, rect.left + rect.width / 2 - TOOLTIP_W / 2), vw - TOOLTIP_W - 12);

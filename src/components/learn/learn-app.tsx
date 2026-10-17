@@ -609,6 +609,10 @@ function ViewBody({
 
 export function LearnApp() {
   const [view, setView] = useState<View>({ kind: "overview" });
+  // Set when a seeql:nav event arrives (deep links: companies/roadmap/lesson/
+  // seeq, plus header nav). A user who arrived with an explicit destination
+  // wants that destination — never the onboarding tour on top of it.
+  const deepLinkedRef = useRef(false);
 
   // Every view change lands at the top of the new view. On narrow viewports
   // the sidebar renders BELOW the content, so a rail tap swaps the view
@@ -622,10 +626,18 @@ export function LearnApp() {
 
   // Guided tour — auto-starts once for first-run visitors (the seen flag is
   // written on close, complete or skipped); the sidebar Tour chip replays it.
+  // Deep-link arrivals are exempt: the tour's steps target the learn home, so
+  // starting it over #learn?view=companies (strip CTA) or a lesson link dims
+  // the requested page behind a modal whose spotlight has nothing to point
+  // at — the page reads as dead. Child effects flush before this parent's
+  // timeout, so a mount-time deep-link dispatch is already recorded here.
   const [tourStep, setTourStep] = useState<number | null>(null);
   useEffect(() => {
     if (tourSeen()) return;
-    const t = setTimeout(() => setTourStep(0), 900);
+    const t = setTimeout(() => {
+      if (deepLinkedRef.current) return;
+      setTourStep(0);
+    }, 900);
     return () => clearTimeout(t);
   }, []);
   const closeTour = () => {
@@ -677,6 +689,7 @@ export function LearnApp() {
     const onNav = (e: Event) => {
       const detail = (e as CustomEvent<{ kind?: View["kind"]; id?: string }>).detail;
       if (!detail?.kind) return;
+      deepLinkedRef.current = true;
       setView(detail.kind === "lesson" && detail.id ? { kind: "lesson", id: detail.id } : ({ kind: detail.kind } as View));
       window.scrollTo({ top: 0 });
     };
