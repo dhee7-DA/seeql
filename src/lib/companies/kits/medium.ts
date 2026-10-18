@@ -10,7 +10,7 @@
 // stated populations, two-grain market censuses, tie-heavy engagement ladders, the 14-month
 // billing spine, and the statement coverage ledger that sits under "active-paid". Pool provenance:
 // company-pools.md carries NO Medium section — 0 tagged rows — so all 10 topic slug sets and all
-// 16 problems are theme-curated from the pools file's SQL rows and say so. Case briefs quote probed
+// 32 problems are theme-curated from the pools file's SQL rows and say so. Case briefs quote probed
 // figures from scripts/company-facts.md (probed 2026-10-12); every case slot is mechanically
 // verified against db/custom.db by scripts/case-audit.ts.
 
@@ -27,7 +27,7 @@ export const mediumKit: CompanyKit = {
     "**Medium** is the long-form reading and writing platform — millions of stories behind a metered paywall: non-members get a handful of free reads, members pay 5 a month for unlimited access, and the Partner Program pays writers from the member pool by member read time, not by clicks. Publications host stables of writers; tags and the clap/highlight engagement layer decide what surfaces. This kit maps the storefront db onto that world: the 16 customers rows are members (region = market), the 103 orders are membership billing periods worth **34,833.28**, and the 251 order_items rows are engagement line records — quantity = read units, unit_price = the per-unit earnings bucket that flows to writers. The status map is fixed: delivered = {emerald:active-paid month} (52, 50.5%), shipped = {sky:metered window open} (30, 29.1%), pending = trial awaiting payment (14, 13.6%), cancelled = {rose:lapsed} (7, 6.8%).",
     "The data org runs three loops and they read the same spine at different grains. Paywall growth watches the meter: a period books at created_at, and `shipped_at` is stamped the day the member's metered window actually opens — **82 of 103 periods** carry the stamp, opening at a **2.98-day** average with a 2–4 day spread, while the 14 trials have none yet (a population definition, not a cleanup job). The partner-program pod owns the read-time economics: engagement lines fold into publication earnings — the top publication carries 32% of the pool — and every payout question starts from member read time, not story clicks. Money sits one layer down: statements and legs in INTEGER cents, where the dollar read is `amount_cents / 100.0` — card rails moved 37,364 across 16 settlements, wire rails 32,248 across 11. Concentration is the third story: **63.5%** of the book sits with members whose lifetime spend crosses 3,000 (71.2% above 2,000) — one heavy reader lapsing moves a quarter.",
     "Interview screens are census-then-denominator, with a paywall twist. A typical loop opens with a **two-grain market census** — EU runs 45 periods from just 8 members (intensity 5.6) while the US runs 19 from 2 (9.5) — then escalates into a rate where the interviewer asks the denominator out loud (*'does a trial period count in your base?'*), then into the engagement ladder where four members sit tied at 4 periods and rank semantics become a payout-policy call. Late rounds walk the {sky:14-month billing spine} (2024-01 to 2025-02) with `LAG` deltas and probe the first row's NULL, or dip into the statement book where a paid-status statement with zero settlement rows (#28, 1,756.00) is waiting to be caught. Candidates who state the status filter and the denominator before writing SQL are the ones who get callbacks.",
-    "Preparation strategy: the pools file carries no Medium section — 0 tagged rows — so all sixteen problems and every topic slug here are **theme-curated** to this kit's known screen shapes: paywall censuses, two-grain market reads, tie-heavy ladders, earnings-per-unit CASE bands, month-spine walks and the cents-safe billing book. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {emerald:paywall status census} growth ops opens Monday with, the other rebuilds the {sky:statement coverage ledger} finance reads at every close. The bar to clear: *state the definition and the denominator before you compute anything* — then make every status census reconcile to 103 by construction, and every coverage fold foot to the 28-statement book.",
+    "Preparation strategy: the pools file carries no Medium section — 0 tagged rows — so all thirty-two problems and every topic slug here are **theme-curated** to this kit's known screen shapes: paywall censuses, two-grain market reads, tie-heavy ladders, earnings-per-unit CASE bands, month-spine walks and the cents-safe billing book. Do the topics in order, then run the **six case studies** on the live storefront db: the {emerald:paywall status census} growth ops opens Monday with, the {sky:statement coverage ledger} finance reads at every close, the engagement ladder with its four-way tie handled honestly, the partner-program publication fold, the membership-tier band audit, and the lapsed-member roster the winback pod mails from. This expanded kit is built for spaced practice rather than one sitting — run each case, then re-run it a week later from a blank editor; *the second pass is where recall actually forms*. The bar to clear: *state the definition and the denominator before you compute anything* — then make every status census reconcile to 103 by construction, and every coverage fold foot to the 28-statement book.",
   ],
 
   dayInLife: [
@@ -51,22 +51,22 @@ export const mediumKit: CompanyKit = {
     {
       name: "Paywall funnel counts",
       why: "Every Medium growth screen opens with the meter: periods booked, active-paid months, metered windows open, trials pending, lapsed members. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling a metered-open period 'paid' — 30 versus 52 on this db.",
-      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest"],
+      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "analyze-subscription-conversion", "group-sold-products-by-the-date"],
     },
     {
       name: "Two-grain member censuses",
       why: "Periods and members are different grains of the same join, and every census here reports both: EU runs 45 periods from 8 members while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "cohort-repeat-revenue", "basket-depth-aov"],
     },
     {
       name: "Joining members to periods",
       why: "Members carry market and signup date; periods inherit them through joins, and the join type decides who survives. A period without a member is corruption; a member without periods is whitespace — though on this db the anti-join returns a confident zero, and proving it is part of the job.",
-      slugs: ["combine-two-tables", "product-sales-analysis-i", "employee-bonus"],
+      slugs: ["combine-two-tables", "product-sales-analysis-i", "employee-bonus", "find-the-team-size"],
     },
     {
       name: "Read-time leaderboards",
       why: "Partner-program reporting is rank-window work: top publications by earnings, top members by read depth, and ties are guaranteed — four members sit at 4 periods each on this db. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a payout policy, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "second-highest-salary", "rfm-segmentation"],
     },
     {
       name: "Tier banding with CASE",
@@ -76,7 +76,7 @@ export const mediumKit: CompanyKit = {
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month billing spine (2024-01 to 2025-02) is the growth call's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine", "net-revenue-retention", "rolling-7d-actives", "running-total-for-different-genders"],
     },
     {
       name: "Coverage set algebra",
@@ -96,7 +96,7 @@ export const mediumKit: CompanyKit = {
     {
       name: "Billing & cents discipline",
       why: "Billed is not settled — the finance tables (28 statements, 27 legs, INTEGER cents) are where the member world meets money. Every dollar read is amount_cents / 100.0, and the exact/partial/none coverage split (21 / 1 / 6) is one CASE away.",
-      slugs: ["bank-account-summary-ii", "monthly-transactions-ii", "products-worth-over-invoices"],
+      slugs: ["bank-account-summary-ii", "monthly-transactions-ii", "products-worth-over-invoices", "mrr-waterfall", "ar-aging-schedule", "deferred-revenue"],
     },
   ],
 
@@ -148,6 +148,102 @@ export const mediumKit: CompanyKit = {
       q: "Finance says a billing statement is 'paid' but the payments table has no rows for it. Walk me through the reconciliation query you write first — and the money rule you never break while writing it.",
       a: "First the anti-join: statements LEFT JOIN payments, keep p.id IS NULL — on this db that returns 6 statements worth 15,217, and one of them (#28, 1,756.00) is marked 'paid' with zero settlement rows: a status that lies, which is why payment rows are the ledger of record and the status column is a claim. Then the anomaly flip: a void statement WITH a payment row (this db has one, #11 at 925.00) never appears in that anti-join — the two error modes are mirrors, and both reconcile to the row-level anomaly list, not to vibes. The money rule: statements and legs carry INTEGER cents, so every dollar read is amount_cents / 100.0 — the missing .0 turns a 1,756.00 print into 1,756 and quietly eats cents on every odd-cent row. Reconciliation culture here: the coverage split must read 21 exact / 1 partial (4,000 of 6,148) / 6 never-collected, and the ledger trial balance must land at 181,080 debits against 181,080 credits — delta zero, or the close does not ship.",
       tag: "quality",
+    },
+    {
+      id: "medium-t9",
+      q: "A retried ingestion duplicated some member rows. Walk me through the keep-latest dedupe you write — and the tie-breaker question you must answer before it is safe.",
+      a: "ROW_NUMBER() OVER (PARTITION BY natural_key ORDER BY updated_at DESC, id DESC) AS rn, keep rn = 1. Two decisions make it safe: the natural key (the ingested id, or the business key if ids collide across retries) and the tie-breaker — when two copies share an updated_at, the freshest is undefined unless id DESC settles it. Detect first with GROUP BY the key HAVING COUNT(*) > 1 so the repair has a receipt, then filter rn > 1. On this core db every member row is unique — the shape exists for the staging tables where pipeline retries actually land, and the same three lines guard engagement-line double-counts that would silently double a writer's payout.",
+      tag: "windows",
+    },
+    {
+      id: "medium-t10",
+      q: "Periods, members, engagement lines — the census counts three things over the same two tables. Which COUNT do you reach for in each, and what does each number mean to the business?",
+      a: "COUNT(*) at the period grain reads 103 booked billing periods — load and billing momentum. COUNT(DISTINCT customer_id) folds the repeats back to members — 16 platform-wide, 8 in EU against its 45 periods — which is coverage and installed base. Join order_items and COUNT(*) silently becomes 251 engagement lines, a third grain: read depth. The ratios only mean something once the grains are named: 45/8 = 5.6 periods per member is EU's intensity signal, 251/103 = 2.44 lines per period is read depth. The habit being graded is saying 'one row per what?' out loud for every COUNT before you defend the number.",
+      tag: "aggregation",
+    },
+    {
+      id: "medium-t11",
+      q: "The winback exclusion needs members with no lapsed periods. IN, NOT IN, EXISTS, NOT EXISTS — which is safe here, and what is the trap?",
+      a: "NOT EXISTS is the safe shape: it is correlated, NULL-immune, and reads as the sentence the business asked for. NOT IN over a subquery that returns even one NULL customer_id turns every comparison UNKNOWN and the winback list silently empties — a report that parses fine and ships wrong. IN is fine for positive existence tests. On this clean core db every orders.customer_id is populated, so NOT IN works today — and staging tables are exactly where it detonates. The db's own anti-join returns a confident zero never-billing members (all 16 appear in the period table somewhere); proving that zero, then choosing the NULL-safe shape for staging, is the complete answer.",
+      tag: "subqueries",
+    },
+    {
+      id: "medium-t12",
+      q: "Period-open latency: how do you compute the average, state the population, and build the day buckets — and why do the buckets reconcile to the population?",
+      a: "Population first: only the 82 of 103 periods with a shipped_at stamp have a latency — the 14 trials have no window yet, and that is a definition, not missing data. AVG(julianday(shipped_at) - julianday(created_at)) over that population reads 2.98 days. Buckets: CAST(julianday(shipped_at) - julianday(created_at) AS INT) — on this db every latency is an exact whole-day 2, 3 or 4, so the buckets read 27 / 30 / 25 and foot to 82 by construction. State the population in the report title, and never COALESCE a NULL latency to zero to 'fix' the average — that invents same-day opens for windows that never opened.",
+      tag: "dates",
+    },
+    {
+      id: "medium-t13",
+      q: "Finance wants the never-settled statement numbers that are NOT falsely marked paid. Which set operator, and what does each wrong one return?",
+      a: "EXCEPT: the left set is the 6 never-settled numbers, the right set is the paid-status numbers, and EXCEPT keeps left rows that never appear on the right — 5 honest open numbers (INV-2025-024, INV-2025-026, INV-2025-027, INV-2024-021, INV-2024-018). The paid-status #28 (1,756.00 with zero legs) drops out of the list because it IS in the right set — and it is exactly the anomaly the ledger chases on its own row-level walk. INTERSECT returns #28 alone (the in-both set), UNION merges everything back together, and both answer a different question. Set operators dedupe whole rows by default — harmless here because statement numbers are unique, and worth saying out loud.",
+      tag: "setops",
+    },
+    {
+      id: "medium-t14",
+      q: "Market names arrive from a partner feed as 'eu ', 'EU', 'Eu'. What breaks, and how do you normalize before the census joins?",
+      a: "GROUP BY on raw text splits one market into three buckets — the census stops reconciling to 103 and the intensity read (EU 45-from-8) becomes three smaller, wrongER reads. Normalize at the edge, once: TRIM then UPPER into a staging column (or better, normalize on load) so every downstream join and fold sees one canonical 'EU'. The same hygiene applies to GROUP_CONCAT rosters — decide the separator (the default comma breaks the moment a name contains one) and, pre-3.44, order the fold through an ordered subquery because GROUP_CONCAT order is not guaranteed. Cleaning text in SQL without breaking the key you group on later is the skill the screen checks.",
+      tag: "strings",
+    },
+    {
+      id: "medium-t15",
+      q: "Membership tiers band periods at 100 / 250 / 500 total. Walk me through writing the CASE so the band report cannot silently re-band.",
+      a: "Ordered, exhaustive arms straight from the pricing page, most-specific first: WHEN total >= 500 THEN 'studio', WHEN total >= 250 THEN 'premium', WHEN total >= 100 THEN 'standard', ELSE 'starter' — on this db that reads 25 / 34 / 29 / 15 periods and foots to 103. The ELSE is the exhaustiveness guarantee: delete an arm instead and those periods print NULL tiers, the band counts stop footing, and nothing errors. Edge discipline: every bound is half-open in intent — a 499.99 period is premium, a 500.00 period is studio — and there are no exact-edge totals on this book to mask an off-by-one. Reordering the WHEN arms is the quiet bug: the first matching arm wins, so the same bands in the wrong order re-band the base without a single error.",
+      tag: "case",
+    },
+    {
+      id: "medium-t16",
+      q: "Annotate every period row with its market's book value, without collapsing rows. Why a window and not GROUP BY?",
+      a: "SUM(total) OVER (PARTITION BY region) computes each market's fold once and stamps it on every row: all 45 EU periods carry EU's 15,089.23 book, all 103 rows survive. GROUP BY would return 4 rows and destroy the roster columns — member, status, period id — the memo needs beside the annotation. The two shapes answer different asks: 'one row per market' is a GROUP BY question; 'every row, annotated' is a window question. The same shape powers team-size enrichment and per-publication pool size on the partner-program side, and the cost is one extra pass rather than a join.",
+      tag: "windows",
+    },
+    {
+      id: "medium-t17",
+      q: "Find the statements that settled on two legs. Why is a self-join the tool, and what does the p2.id > p1.id guard buy you?",
+      a: "The payments table meets itself on invoice_id — same statement, two leg rows — so the pairing lives inside one table. Without an orientation guard every pair prints twice (A,B and B,A); p2.id > p1.id keeps exactly one row per unordered pair and the strict inequality rules out the self-pair. The method comparison (rail_1 <> rail_2) then classifies splits, and on this book the 5 two-leg statements (1, 5, 12, 19, 22) all turn out cross-rail, each footing exactly to its billed amount. Swap the guard to >= and the 5 self-pairs walk in as phantom 'splits' — the false positive the sweep exists to rule out.",
+      tag: "joins",
+    },
+    {
+      id: "medium-t18",
+      q: "How do you detect duplicate engagement lines before they inflate the payout fold — detect AND repair?",
+      a: "Detect at the line's natural key: GROUP BY order_id, product_id HAVING COUNT(*) > 1 — that is the duplicate-emails shape and it produces the receipt finance can look at. Repair with the window dedupe: ROW_NUMBER() OVER (PARTITION BY order_id, product_id ORDER BY id DESC) and keep rn = 1, never a bare DELETE that removes both copies. The payout fold SUM(quantity * unit_price) is exactly where a duplicated line silently doubles writer money: the honest fold foots to 34,833.28 over 251 lines, and every reconciliation starts by proving that population. Detection without a keep-newest tie-breaker is half the job; the other half is writing the tie-breaker down.",
+      tag: "quality",
+    },
+    {
+      id: "medium-t19",
+      q: "The ops board wants category rows plus a labelled TOTAL row in one result. How do you build it, and why that way?",
+      a: "Two branches over the same table, stacked with UNION ALL: the detail branch GROUP BY category (Rent 16,800 / Ads 4,570 / Tools 1,525 / Travel 2,521 in cents), the TOTAL branch re-scanning the unfiltered table with a literal 'TOTAL' label — 36 entries, 25,416.00. UNION ALL, never UNION: the branches cannot collide here, and ALL states that argument instead of asking a dedupe pass to silently enforce it. The outer ORDER BY sorts the stack (the TOTAL row carries the biggest cents and floats to the top). Keep the arithmetic in INTEGER cents end to end and divide by 100.0 only at the display layer — the grand row is where a hundredfold inflation hides best.",
+      tag: "aggregation",
+    },
+    {
+      id: "medium-t20",
+      q: "COALESCE, IFNULL, NULLIF — three NULL tools. Where does each earn its keep in the coverage fold and the share calculation?",
+      a: "COALESCE(SUM(legs), 0) makes the settled column a total function: the 6 never-settled statements read 0 and classify into 'no payment' instead of drifting into 'partial' as NULLs. IFNULL is the two-argument twin — same job, shorter signature. NULLIF(x, 0) guards division: the platform-wide lapsed share divides by COUNT(*) which cannot be 0 here, but a per-market share on a staging slice can be — NULLIF turns the division-by-zero error into a NULL you then label honestly. The policy line interviewers wait for: COALESCE is for reporting defaults; it is never for laundering meaning — a NULL latency or NULL delta means something, and zeroing it erases the meaning.",
+      tag: "nulls",
+    },
+    {
+      id: "medium-t21",
+      q: "The month-over-month pulse needs monthly folds, then a window over the folds. Why stage in a CTE instead of one flat query?",
+      a: "Because window output is not visible to WHERE or to sibling expressions in the same SELECT — the fold and the LAG cannot legally live in one layer. The CTE computes the 14 monthly folds once (SUBSTR(created_at,1,7) month key, COUNT(*), SUM(total)); the outer SELECT layers LAG(cycles) OVER (ORDER BY month) and the delta over the folded grain. One fold, one window layer, and the pipeline reads top-down: FROM, fold, window, cut. Nested derived tables work too but read bottom-up, which is exactly the wrong direction for a reviewer under close pressure. On the spine the first row's LAG is NULL by definition — the CTE boundary is also where you decide to label it 'baseline' rather than coalesce it.",
+      tag: "pipeline",
+    },
+    {
+      id: "medium-t22",
+      q: "Growth wants a 3-month rolling booked-value average over the spine. Write the frame, and explain ROWS versus RANGE here.",
+      a: "AVG(booked) OVER (ORDER BY month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) — a three-row frame over the monthly fold. Spine months are unique, so ROWS and RANGE agree row-for-row here; they diverge when the ORDER BY key ties — RANGE absorbs all peers into one step (calendar-true on duplicate timestamps), ROWS counts rows and needs a tie-breaker to be deterministic. Say which you chose and why; that sentence is the interview. And narrate the edges: the first two rows have partial windows, so either label them honestly or accept that a '3-month average' over one row is just that row wearing a trend name.",
+      tag: "windows",
+    },
+    {
+      id: "medium-t23",
+      q: "The period mean is 338.19; the mean of per-member averages is 370.15. Which belongs on the slide, and what is the trap?",
+      a: "They answer different questions, so the slide names the grain. 338.19 is the period-grain mean — 34,833.28 over 103 periods — where heavy members' 24 periods weigh 24 times, dragging the mean toward the heavy side. 370.15 is the member-grain mean — the average of the 16 per-member averages — where every member weighs once, a member-experience read. The trap is averaging averages silently: (SUM of member means)/16 is NOT SUM(total)/SUM(n) — it is a different statistic that happens to be computable. Pick by question: billing momentum and funnel reads take the period grain; winback and member-experience reads take the member grain — and the slide says which.",
+      tag: "aggregation",
+    },
+    {
+      id: "medium-t24",
+      q: "A staging month with zero bookings drops out of the GROUP BY spine and the trend lies by omission. How do you guarantee a continuous 14-month spine?",
+      a: "A recursive CTE date spine: seed the minimum month, add one month per iteration until the maximum, LEFT JOIN the folds onto the spine, COALESCE the counts and sums to 0. On this db every spine month carries 6 to 9 periods, so the omission never shows — but filter to one status or slice to a staging table and a zero-month vanishes, and the chart invents a smooth decline where the truth is a gap. Zero-fill is the honesty rule for every trend the paywall publishes: the same rule fills the funnel's empty stages and the band report's empty tiers. The audit question that catches it: does every row count foot, and are the month buckets consecutive?",
+      tag: "dates",
     },
   ],
 
@@ -272,6 +368,246 @@ export const mediumKit: CompanyKit = {
       ],
       difficulty: "hard",
     },
+    {
+      id: "medium-mcq-11",
+      prompt: "Growth ops says the paywall is carrying '44 open meters'. The status census reads 52 delivered, 30 shipped, 14 pending, 7 cancelled. Which two arms are they counting?",
+      choices: ["delivered + pending — paid months plus trials", "shipped + pending — metered windows open plus trials awaiting payment", "delivered + shipped — every period that has reached the meter", "shipped + cancelled — open windows plus lapsed"],
+      answer: 1,
+      why: "Shipped = metered window currently open (30) and pending = trial awaiting payment (14) — together the 44 periods where money has not settled at month end. Delivered is the settled core (52), whose meter has closed; cancelled is the 7 lapsed, out of the funnel entirely.",
+      notes: [
+        { choice: 0, why: "Trials are not meters — a pending period carries no shipped_at stamp at all. Folding trials into 'open meters' invents windows that never opened." },
+        { choice: 2, why: "Delivered is a completed paid month — its meter already closed. Counting it as 'open' double-counts the funnel and reads 96, not 44." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "medium-mcq-12",
+      prompt: "The billing spine runs 2024-01 to 2025-02. A colleague buckets periods with SUBSTR(created_at, 6, 2) AS month. What does the trend chart show?",
+      choices: ["14 monthly buckets, one per spine month", "12 buckets — January 2024 and January 2025 merge into one '01' bucket", "13 buckets — February is dropped as malformed", "One bucket — SUBSTR returns NULL on TEXT timestamps"],
+      answer: 1,
+      why: "SUBSTR(created_at, 6, 2) keeps only the month digits '01'..'12' and amputates the year, so the 14 spine months fold into 12 buckets — January 2024's 3,731.97 merges with January 2025's 1,669.50 and the trend becomes fiction. The spine key is SUBSTR(created_at, 1, 7): year plus zero-padded month.",
+      notes: [
+        { choice: 0, why: "14 buckets require the 7-character '%Y-%m' key. The 6-character month key cannot distinguish the two Januaries it merges." },
+        { choice: 2, why: "Nothing is malformed — SQLite groups '01' twice without complaint. The damage is silent mis-merging, not an error." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "medium-mcq-13",
+      prompt: "'Members who never billed' runs customers LEFT JOIN orders ... WHERE o.id IS NULL and returns ZERO rows on the core db. The honest read?",
+      choices: ["The query is broken — every membership base has at least one never-billed member", "Zero is the answer: all 16 members carry at least one period — whitespace is proven absent, not assumed", "LEFT JOIN cannot return zero rows; switch to NOT IN", "The join key is wrong — customers.id never matches anything"],
+      answer: 1,
+      why: "On this db every one of the 16 members appears in orders at least once, so the anti-join legitimately returns nothing. A confident zero is a result — the analyst's job is to prove it (count both sides) and to re-prove it on staging tables, where one NULL customer_id can turn a real cohort into a fake zero.",
+      notes: [
+        { choice: 0, why: "This is exactly the reflex the screen tests: treating an empty result as a bug instead of auditing the population. Zero is the db's truth here." },
+        { choice: 2, why: "LEFT JOIN + IS NULL returns zero rows whenever no unmatched rows exist. NOT IN would be the fragile version, not the fix." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "medium-mcq-14",
+      prompt: "The census joins orders to order_items for read-unit context, then reports COUNT(*) per market as 'periods'. Platform-wide the true period count is 103. What does the query actually count?",
+      choices: ["103 — the join is one-to-one", "251 — one row per engagement line; the join fans periods out to lines", "16 — one row per member", "It errors — COUNT(*) is ambiguous after a join"],
+      answer: 1,
+      why: "order_items fans each period out to its engagement lines — 251 platform-wide, averaging 2.44 per period — so COUNT(*) counts lines, not periods. Touching that table is legitimate for SUM(quantity), the read-units fold; the census must count at the period grain and keep the line join out of it.",
+      notes: [
+        { choice: 0, why: "Joins multiply when the right side repeats — no clause collapses the fan-out back. The 103 becomes 251 the moment the join lands." },
+        { choice: 2, why: "16 is the member grain, reached with COUNT(DISTINCT customer_id). Adding customers does not change what COUNT(*) counts after the line fan-out." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "medium-mcq-15",
+      prompt: "The concentration memo needs the single heaviest billing period on the book. Which query returns it?",
+      choices: ["SELECT MAX(COUNT(*)) FROM orders", "SELECT id, total FROM orders ORDER BY total DESC LIMIT 1", "SELECT id, total FROM orders WHERE total = AVG(total)", "SELECT customer_id FROM orders GROUP BY customer_id LIMIT 1"],
+      answer: 1,
+      why: "ORDER BY total DESC LIMIT 1 is the argmax shape — it lands on the 1,088.44 period. The alternatives aggregate without grouping, compare every row to the mean, or return an arbitrary group's first row — none of them is 'the biggest single period'.",
+      notes: [
+        { choice: 0, why: "MAX(COUNT(*)) nests an aggregate without GROUP BY — a syntax error, and even the intended form returns the max period COUNT (24), not the heaviest value." },
+        { choice: 2, why: "total = AVG(total) is the exactly-average cohort (nobody hits 338.19 exactly) — a filter, not an argmax." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "medium-mcq-16",
+      prompt: "Concentration: 63.5% of the book sits with members whose lifetime spend crosses 3,000. How many members does HAVING SUM(total) >= 3000 keep?",
+      choices: ["1", "4", "8", "16"],
+      answer: 1,
+      why: "The lifetime ladder reads 7,262.35 / 6,640.56 / 4,574.23 / 3,644.56 — exactly four members clear 3,000, and their 22,121.70 is the 63.5% concentration cohort. The next member sits at 2,667.93 and drops; the floor is a value floor, not a count floor.",
+      notes: [
+        { choice: 2, why: "8 is close to the members above the mean PERIOD COUNT — a different cut on a different column. Concentration is judged on value." },
+        { choice: 0, why: "The heaviest member (24 periods, 7,262.35) heads the cohort but is not the whole body — three more clear the floor behind them." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "medium-mcq-17",
+      prompt: "Growth wants Q1-2024 only (January through March). Which WHERE clause keeps March 31's late-night bookings?",
+      choices: ["WHERE created_at BETWEEN '2024-01-01' AND '2024-03-31'", "WHERE created_at >= '2024-01-01' AND created_at < '2024-04-01'", "WHERE SUBSTR(created_at,1,7) IN ('2024-01','2024-02')", "WHERE created_at LIKE '2024-0%'"],
+      answer: 1,
+      why: "Half-open intervals — >= Jan 1 AND < Apr 1 — keep every timestamp on March 31 including 23:59:59. BETWEEN '2024-03-31' compares against that day-prefix as midnight, so the last night's bookings sort after it and vanish — and month-end is exactly when metered windows roll over.",
+      notes: [
+        { choice: 0, why: "BETWEEN is inclusive at both ends, but '2024-03-31' means '2024-03-31 00:00:00' — the day itself is amputated from below." },
+        { choice: 2, why: "Drops March entirely — a quarter is three months, and the missing month is invisible unless you reconcile counts to the platform census." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "medium-mcq-18",
+      prompt: "The month-over-month delta column reads NULL for 2024-01 and a stakeholder asks you to 'fix' it to 0. What do you answer?",
+      choices: ["Coalesce it — a NULL in a delta column is always a bug", "Keep the NULL: January 2024 has no prior month on the spine, so no delta exists — a 0 would claim 'flat', which the data cannot say", "Drop the first row — the trend starts in February anyway", "Replace NULL with the month's own value — self-comparison is the honest baseline"],
+      answer: 1,
+      why: "LAG over the 14-month spine returns NULL on the first row because no prior row exists — that is the definition of a baseline, not a defect. Zero would print 'no change' for a month whose change is undefined; the spine opens at 3,731.97 and every later delta is judged against that anchor.",
+      notes: [
+        { choice: 2, why: "Deleting the edge row hides the opening level — the deck loses the anchor, and the reader cannot tell a truncated spine from a flat start." },
+        { choice: 3, why: "Self-comparison makes every first row read 0% — indistinguishable from a genuinely flat month, which is the exact lie the fix would tell." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "medium-mcq-19",
+      prompt: "The engagement ladder under a HAVING COUNT(*) >= 4 floor keeps 24, 17, 14, 13, 5, then four members tied at 4. Under which function pair is the OUTPUT identical — and why?",
+      choices: ["RANK and DENSE_RANK — the tie block sits at the bottom, so the gap RANK would leave never materializes", "RANK and ROW_NUMBER — no ties survive the floor", "DENSE_RANK and ROW_NUMBER — both are gapless by construction", "All three agree — ties never change ranks when ORDER BY is deterministic"],
+      answer: 0,
+      why: "RANK only skips when a LATER distinct value exists to receive the skipped rank. With the tie at the bottom, RANK prints 1,2,3,4,5,6,6,6,6 — identical to DENSE_RANK. Lower the floor to 3 and the two 3-period members expose the difference: RANK 10,10 versus DENSE_RANK 7,7.",
+      notes: [
+        { choice: 1, why: "Four members tie at 4 — the floor does not remove ties, it removes everything AFTER them, which is exactly why RANK and DENSE_RANK converge." },
+        { choice: 2, why: "ROW_NUMBER splits the four-way tie arbitrarily as 6,7,8,9 — never identical when a tie exists." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "medium-mcq-20",
+      prompt: "SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) prints the 14 trial periods. A teammate deletes the ELSE 0 branch. What does the count become?",
+      choices: ["14 — CASE without ELSE yields NULL on non-matches, and SUM ignores NULLs", "89 — non-matching rows count as 1", "0 — a missing ELSE makes the whole aggregate NULL", "Parse error — ELSE is mandatory in SQLite"],
+      answer: 0,
+      why: "CASE returns NULL when no arm fires and no ELSE exists; SUM skips NULL inputs, so the pending count stays 14. The subtlety worth saying out loud: the same deletion poisons everything downstream that expects a 0 — a flag column of NULLs breaks ratios and window sums that the 0/1 version survives.",
+      notes: [
+        { choice: 1, why: "Only rows matching an arm contribute. Non-matches are NULL, not 1 — the flag never counts the other 89 periods." },
+        { choice: 2, why: "Aggregates skip NULL inputs rather than turning NULL — SUM only returns NULL when EVERY input is NULL." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "medium-mcq-21",
+      prompt: "A split settlement leg stores 236,150 cents. ROUND(amount_cents / 100, 2) prints 2,361.00 but the true value is 2,361.50. Why?",
+      choices: ["ROUND rounds down when the second decimal is 5", "INTEGER / INTEGER is integer division in SQLite — the cents truncate before ROUND sees them; the real divider is amount_cents / 100.0", "The column is TEXT and SQLite coerces it to a whole number", "236,150 is stored wrong — the leg should have been 236,100"],
+      answer: 1,
+      why: "SQLite's / between two integers is integer division: 236150/100 truncates to 2361 and ROUND cannot recover the 50 cents already lost. Dividing by the REAL literal 100.0 promotes the arithmetic first. The db's split legs (statements 12 and 22) settle at half-hundred values — exactly where the truncation bites.",
+      notes: [
+        { choice: 0, why: "The damage happens before ROUND is called — truncation, not rounding. No rounding mode can restore digits that never existed." },
+        { choice: 2, why: "amount_cents is INTEGER; the coercion story hides the real issue, which is the operator's type rule, not the storage." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "medium-mcq-22",
+      prompt: "The winback roster runs GROUP_CONCAT(c.name) per market over lapsed periods. Alice Chen lapses three times in EU. What does the EU roster cell show — and the one-token fix?",
+      choices: ["'Alice Chen' once — GROUP_CONCAT dedups by default", "'Alice Chen,Alice Chen,Alice Chen' — GROUP_CONCAT concatenates every row; GROUP_CONCAT(DISTINCT c.name) is the fix", "NULL — three identical values collapse to NULL", "'Alice Chen' — SQLite errors on repeated values"],
+      answer: 1,
+      why: "GROUP_CONCAT folds every row's value with a comma separator — three lapsed periods print the same name three times. The DISTINCT variant folds to the distinct lapsed members: EU just Alice Chen, APAC 'Maya Patel,Keiko Sato', US 'Emma Wilson' — 4 people from the 7 lapsed periods.",
+      notes: [
+        { choice: 0, why: "Dedup is never the default — COUNT needs DISTINCT explicitly and so does GROUP_CONCAT. The repetition is data: she really lapsed three times." },
+        { choice: 2, why: "Aggregates never collapse valid text to NULL; they skip NULL inputs, and 'Alice Chen' is not NULL." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "medium-mcq-23",
+      prompt: "'Members beating their own average' runs WHERE total > (SELECT AVG(total) FROM orders o2 WHERE o2.customer_id = o.customer_id). What is the cost profile, and the set-based fix at scale?",
+      choices: ["One scan — the optimizer hoists the subquery", "The subquery re-runs per outer row; the fix folds per-member averages once in a CTE (or AVG() OVER (PARTITION BY customer_id)) and joins back", "Correlated subqueries are always faster — fewer rows touched", "The fix is DISTINCT — duplicates are the cost problem"],
+      answer: 1,
+      why: "The correlation re-executes the inner AVG once per outer period — 103 evaluations here, millions at partner-program scale. A GROUP BY customer_id CTE computes each baseline once; AVG(total) OVER (PARTITION BY customer_id) attaches it without collapsing rows. Same answer, one pass.",
+      notes: [
+        { choice: 0, why: "Only a decorrelating optimizer hoists — never assume it. Narrate the per-row re-run; that narration IS the interview answer." },
+        { choice: 2, why: "Backwards: correlation trades repetition for expressiveness — clarity on small data, a scalability problem at partner-pool scale." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "medium-mcq-24",
+      prompt: "A running book total runs SUM(total) OVER (ORDER BY created_at). Two periods share the same created_at timestamp. What does the default frame do?",
+      choices: ["ROWS semantics — each row accumulates separately in arbitrary tie order", "RANGE semantics — tied timestamps are peers: the frame absorbs all of them at once and both rows print the same running total through the tie", "The query errors — ORDER BY keys must be unique for window frames", "The later rowid wins; SQLite breaks ties silently by rowid"],
+      answer: 1,
+      why: "The default frame is RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW, and RANGE treats ORDER BY peers as one step — both tied periods print the total including each other. Switch to ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW (plus an id tie-breaker) to accumulate row by row deterministically.",
+      notes: [
+        { choice: 0, why: "That is explicit-ROWS behavior, not the default. The silent surprise IS that the default is RANGE." },
+        { choice: 3, why: "SQLite does not secretly re-order the frame; peers are peers until you change the frame or add a tie-breaker to the ORDER BY." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "medium-mcq-25",
+      prompt: "Month-close wants the never-settled statement numbers EXCLUDING the one falsely marked paid. 6 statements never settled; #28 (1,756.00) carries status 'paid'. Which query returns the 5 honest opens?",
+      choices: ["never_settled INTERSECT paid_status", "never_settled EXCEPT paid_status", "never_settled UNION paid_status", "never_settled WHERE number NOT LIKE 'INV-2025%'"],
+      answer: 1,
+      why: "EXCEPT keeps left-side rows absent from the right: 6 never-settled minus the paid-status #28 leaves the 5 open numbers (INV-2025-024/026/027, INV-2024-021/018). #28 is the anomaly the ledger chases separately, not a member of the honest list.",
+      notes: [
+        { choice: 0, why: "INTERSECT answers 'in both' — here that is precisely the lying statement you are excluding, returned alone." },
+        { choice: 2, why: "UNION merges both sides — the anomaly walks back in, the opposite of the ask." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "medium-mcq-26",
+      prompt: "A retried pipeline ingested some member rows twice. Keep the freshest copy per member. Which snippet is the keep-latest dedupe?",
+      choices: ["SELECT DISTINCT customer_id FROM members", "ROW_NUMBER() OVER (PARTITION BY natural_key ORDER BY updated_at DESC) rn ... WHERE rn = 1", "GROUP BY customer_id HAVING COUNT(*) > 1, then DELETE both copies", "RANK() OVER (ORDER BY updated_at DESC) = 1"],
+      answer: 1,
+      why: "ROW_NUMBER per natural key, newest first, keep rn = 1 — exactly one survivor per key and it is the freshest ingest. The GROUP BY form detects duplicates but deleting both copies destroys good data; RANK ranks globally, not per key; DISTINCT collapses columns and loses the row entirely.",
+      notes: [
+        { choice: 0, why: "DISTINCT deduplicates values, not copies-with-history — you lose every attribute of the row you were trying to keep." },
+        { choice: 2, why: "Detection is half the job. A deletion with no keep-newest tie-breaker is the bug this drill exists to prevent." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "medium-mcq-27",
+      prompt: "The split-rail sweep self-joins payments on invoice_id to find two-leg statements. Why must the join carry p2.id > p1.id on top of the statement key?",
+      choices: ["It speeds the join by pre-sorting legs", "Without it every pair prints twice in both orientations (A,B and B,A) — and the strict inequality also rules out a leg pairing with itself", "It filters NULL legs that would crash the fold", "It enforces that both legs use the same payment method"],
+      answer: 1,
+      why: "An unguarded self-join pairs every leg with every leg on the same statement: each split reports twice, and the self-pair reports once more with >=. The orientation guard p2.id > p1.id keeps exactly one row per unordered pair — the 5 split statements (1, 5, 12, 19, 22). Cross-rail versus same-rail is decided separately by comparing methods.",
+      notes: [
+        { choice: 0, why: "The guard changes the RESULT, not the plan — 5 rows instead of 10 (15 with >=). Performance is not the point; correctness is." },
+        { choice: 3, why: "Method comparison is the fraud test in the WHERE clause. The orientation guard is pure pair-deduplication and knows nothing about rails." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "medium-mcq-28",
+      prompt: "On a one-market staging table, 'periods above the platform average' returns zero rows — but the market has expensive periods. First diagnosis?",
+      choices: ["The market genuinely has no above-average periods", "The staging fold is empty or filtered: the scalar subquery returned NULL, total > NULL is UNKNOWN, and every row silently dropped — audit the inner AVG's population first", "AVG over REAL totals is unsupported; CAST the column", "The WHERE clause needs DISTINCT to compare fairly"],
+      answer: 1,
+      why: "A scalar subquery over an empty or fully-filtered fold returns NULL, and any comparison with NULL is UNKNOWN — the report empties while parsing fine. On the full book the mean is 338.19 and the above-average cohort is real; on staging, state the inner population and its empty case before trusting an empty result.",
+      notes: [
+        { choice: 0, why: "Possible on a deliberately cheap slice — but 'empty because TRUE' is the conclusion you reach after auditing the subquery, never the assumption you start from." },
+        { choice: 2, why: "AVG over REAL is bread-and-butter SQLite. The failure is three-valued logic, not typing." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "medium-mcq-29",
+      prompt: "The market memo wants every period row annotated with its market's book value, all 103 rows intact. Which shape delivers it?",
+      choices: ["GROUP BY region with the annotation in SELECT", "SUM(total) OVER (PARTITION BY region) — the window folds and stamps without collapsing rows", "A CROSS JOIN of orders to regions, filtered later", "DISTINCT region, total — one row per market is fine"],
+      answer: 1,
+      why: "SUM(total) OVER (PARTITION BY region) computes each market's fold once and stamps every row: all 45 EU periods carry EU's 15,089.23, and the 103 rows survive. GROUP BY answers 'one row per market' — a different ask that destroys the roster columns the memo needs.",
+      notes: [
+        { choice: 0, why: "GROUP BY delivers 4 rows — period id, member and status are gone, which is exactly the collapse the memo ruled out." },
+        { choice: 2, why: "A cross join multiplies 103 x 4 and only becomes correct with an equality filter — which is a join wearing a disguise, at worse cost." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "medium-mcq-30",
+      prompt: "Period-open latency averages 2.98 days over the 82 stamped periods; the bucket report reads 27 / 30 / 25 for days 2 / 3 / 4. Why do the buckets foot to 82 while no bucket shows a 2.98?",
+      choices: ["CAST rounds each latency to the nearest day, so buckets and average disagree", "Every latency is an exact whole-day 2, 3 or 4, so the buckets count them cleanly — the 2.98 average lives BETWEEN buckets, a property of the population, not of any row", "The 21 unstamped periods quietly fill a missing bucket", "The buckets are wrong — they should read 28 / 30 / 24 to average 2.98"],
+      answer: 1,
+      why: "julianday diffs on this db are whole days — 27 periods open at day 2, 30 at day 3, 25 at day 4 — so CAST truncates nothing and the buckets foot to 82 by construction. The 2.98 is a population-level average: no single period runs 2.98 days, and expecting it in a bucket is a grain confusion.",
+      notes: [
+        { choice: 0, why: "Nothing rounds — the diffs are already whole days. And even with fractional diffs, CAST truncates toward zero; it does not round." },
+        { choice: 2, why: "Unstamped periods have NULL latency and land in no bucket — COUNT over the bucket query proves the 82-row population, which is the audit." },
+      ],
+      difficulty: "medium",
+    },
   ],
 
   cases: [
@@ -370,6 +706,148 @@ export const mediumKit: CompanyKit = {
       walkthrough:
         "Two stages: fold settlement legs per statement, then classify. The CTE LEFT JOINs payments to invoices on the statement key, folds each statement's settled cents with the /100.0 dollar read, and COALESCEs the no-leg statements to 0 so the classification is a total function: settled = billed reads 'exact' (21 statements foots to 65,612 — the fully-settled paid book plus the void-but-settled #11 at 925.00), settled = 0 reads 'no payment' (6 statements worth 15,217, including the paid-status #28 at 1,756.00 whose zero legs are the lie the anti-join exists to catch), and everything else reads 'partial' (exactly #25, 4,000 of 6,148). The buckets reconcile to the 28-statement book by construction. The distractors fail honestly: p.id or i.amount_cents (or a NULL key) in the join slot mis-keys the fold and the buckets blur or empty; NULL in the fallback turns the 6 never-settled statements into NULL settled and re-buckets them as partial; 1 in the divider reads raw cents and every billed total inflates a hundredfold; 'paid' or 'void' in the label slot reprints the bucket names and the ledger stops speaking the finance vocabulary.",
     },
+    {
+      id: "cs-medium-3",
+      tier: "medium",
+      topic: "t5",
+      universe: "growth",
+      title: "The engagement ladder",
+      brief:
+        "Growth-board brief, in-world: the partner-program review opens with the member engagement ladder — billing periods per member, ranked, with ties handled by the board's published policy (shared rungs, no phantom gaps). Probed on the storefront db: the ladder runs 24 / 17 / 14 / 13 / 5, then FOUR members tied at 4 periods, then two at 3. The floor in the query keeps everyone at 3 or more, so the tie block is followed by a real, distinct count — the exact configuration where rank semantics become visible in the output. Eleven members survive the floor.",
+      ask: "Return member name, period count, and a shared-rung, gap-free ladder rank for every member with at least 3 periods, heaviest first.",
+      template:
+        "SELECT c.name AS member,\n       COUNT(*) AS periods,\n       {1}() OVER (ORDER BY COUNT(*) {2}) AS ladder_rank\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nGROUP BY o.customer_id\nHAVING COUNT(*) >= {3}\nORDER BY ladder_rank, member;",
+      slots: [
+        {
+          answer: "DENSE_RANK",
+          kind: "keyword",
+          label: "the shared-rung, gap-free ranker",
+          why: "DENSE_RANK gives the four 4-period members rank 6 and the two 3-period members rank 7 — shared rungs, no gaps, the board's published policy. RANK would stamp the 3s as rank 10, implying five phantom ladder positions between 7 and 9 that no member occupies.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the heaviest-first direction",
+          why: "A ladder ranks from the top: the window ORDER BY runs descending so the 24-period member takes rank 1. ASC would crown the two 3-period members and bury the heavy readers the payout review actually argues about.",
+        },
+        {
+          answer: "3",
+          kind: "number",
+          label: "the ladder floor",
+          why: "HAVING COUNT(*) >= 3 keeps eleven members — 24, 17, 14, 13, 5, the four-way tie at 4, and the two 3s whose ranks expose the tie policy. The threshold judges a per-member aggregate, which is why it lives in HAVING, not WHERE.",
+        },
+      ],
+      distractors: ["RANK", "ROW_NUMBER", "ASC", "5"],
+      walkthrough:
+        "A census, a floor, and a ladder. GROUP BY o.customer_id folds 103 periods into 16 members; HAVING COUNT(*) >= 3 keeps eleven — Alice Chen 24, Emma Wilson 17, Grace Kim 14, Maya Patel 13, Chloe Dubois 5, the four-way tie at 4 (Pedro Alvarez, Noah Meyer, Keiko Sato, Isabella Rossi), and the two 3s (Hiro Tanaka, Farid Nasser). The window ranks the folded counts: DENSE_RANK packs the tie as 6,6,6,6 and hands the 3s rank 7 — shared rungs, no invented strata, which is the payout-policy reason the board publishes the function in its own docs. RANK would print 10,10 for the 3s (phantom ranks 8 and 9), ROW_NUMBER would split the four-way tie arbitrarily — a silent judgment about whose winback pod gets the credit — and ASC would hand rank 1 to the lightest members. When a ladder feeds payout eligibility, the function IS the policy.",
+    },
+    {
+      id: "cs-medium-4",
+      tier: "medium",
+      topic: "j7",
+      universe: "supplier",
+      title: "The publication payout fold",
+      brief:
+        "Partner-program brief, in-world: the payout meeting reads publications, not stories — engagement lines fold through the story catalog up to the six partner publications that host the writers. Probed on the storefront db: the six-fold reads Nordic Gadgets AB 11,130.25 / Midwest Hardware Co 9,294.93 / Alpine Audio GmbH 4,765.63 / Andes Naturals SA 3,613.25 / Shenzhen Electro 3,049.07 / Pacific Textiles 2,980.15, footing to the 34,833.28 pool — Nordic alone carries 31.9%, the '32%' concentration stat the pod quotes. The memo's cut keeps every publication earning 4,000 or more, which lands three.",
+      ask: "Return each publication with its engagement-line count, read units and folded earnings in dollars to 2 decimals, for publications earning at least 4,000, biggest earnings first.",
+      template:
+        "SELECT s.name AS publication,\n       COUNT(*) AS lines,\n       {1}(oi.quantity) AS read_units,\n       ROUND(SUM(oi.quantity * oi.unit_price), 2) AS earnings\nFROM order_items oi\nJOIN products p ON p.id = oi.product_id\nJOIN suppliers s ON s.id = {2}\nGROUP BY s.name\nHAVING SUM(oi.quantity * oi.unit_price) >= {3}\nORDER BY earnings DESC;",
+      slots: [
+        {
+          answer: "SUM",
+          kind: "keyword",
+          label: "the read-units adder",
+          why: "Read units fold with SUM(oi.quantity): Nordic 82, Midwest 109, Alpine 77. COUNT would print the line counts (43 / 56 / 40) in a column named units — load wearing a depth label, and the payout math that uses the column divides by the wrong population.",
+        },
+        {
+          answer: "p.supplier_id",
+          kind: "keyword",
+          label: "the catalog-to-partner key",
+          why: "Stories attach to their publication through s.id = p.supplier_id. s.id = p.id pairs products with whatever partner happens to share their row number — the fold scatters across the wrong publishers and every earnings figure is fiction that still foots to something.",
+        },
+        {
+          answer: "4000",
+          kind: "number",
+          label: "the payout-meeting cut",
+          noVerify: true,
+          why: "The memo's floor keeps Nordic 11,130.25, Midwest 9,294.93 and Alpine 4,765.63 — three publications, 25,190.81 of the pool. Lower it to 3,000 and Andes walks in at 3,613.25; the meeting's agenda is defined by where this bar sits.",
+        },
+      ],
+      distractors: ["COUNT", "MAX", "p.id", "3000"],
+      walkthrough:
+        "A two-hop fold at partner grain. order_items joins products (each engagement line knows its story), products join suppliers (each story knows its publication), and GROUP BY s.name folds 251 lines into six partner rows. The earnings column is the payout base — SUM(quantity x unit_price) — and the six folds foot to 34,833.28, which is the reconciliation the meeting opens with: Nordic 11,130.25 (43 lines, 82 units), Midwest 9,294.93 (56 / 109), Alpine 4,765.63 (40 / 77), Andes 3,613.25, Shenzhen 3,049.07, Pacific 2,980.15. HAVING judges the folded earnings — a group-level fact that cannot live in WHERE — and the 4,000 floor keeps exactly three. The distractors fail honestly: COUNT in the units slot prints line counts wearing a units name; MAX prints one line's biggest quantity; p.id mis-keys the second hop and scatters the fold; 3000 silently re-invites Andes onto an agenda built for three.",
+    },
+    {
+      id: "cs-medium-5",
+      tier: "medium",
+      topic: "s6",
+      universe: "pricing",
+      title: "The membership-tier band audit",
+      brief:
+        "Pricing-review brief, in-world: the pricing page publishes four membership tiers with fixed edges — starter under 100, standard from 100, premium from 250, studio from 500 — and the review re-bands the actual billing periods against those published edges to prove the page and the book agree. Probed on the storefront db: the four bands read studio 25 periods / 17,379.43, premium 34 / 11,938.70, standard 29 / 4,646.49, starter 15 / 868.66 — footing to 103 periods and the 34,833.28 book by construction. No period lands exactly on an edge, so the bands are clean; the CASE arms must still be ordered most-specific first or the audit re-bands everything.",
+      ask: "Return each tier with its period count, booked value to 2 decimals, and its share of periods to 1 decimal, biggest booked value first.",
+      template:
+        "SELECT CASE WHEN total >= {1} THEN 'studio'\n            WHEN total >= 250 THEN 'premium'\n            WHEN total >= 100 THEN 'standard'\n            ELSE 'starter' END AS tier,\n       COUNT(*) AS periods,\n       ROUND({2}(total), 2) AS booked,\n       ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 1) AS period_share\nFROM orders\nGROUP BY tier\nORDER BY booked {3};",
+      slots: [
+        {
+          answer: "500",
+          kind: "number",
+          label: "the studio edge",
+          noVerify: true,
+          why: "The pricing page's top edge is 500: 25 periods at 17,379.43 land in studio. Move the edge to 250 and the first two arms overlap — premium fires for nobody, the 59 big periods all read studio, and the audit stops reconciling with the published page.",
+        },
+        {
+          answer: "SUM",
+          kind: "keyword",
+          label: "the booked-value fold",
+          why: "Booked value per band is the fold SUM(total): 17,379.43 / 11,938.70 / 4,646.49 / 868.66. AVG would print a per-period mean inside a column the deck reads as value, and the band totals would stop footing to 34,833.28.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-band-first direction",
+          why: "The review reads the biggest band first: studio 17,379.43 on top, down to starter's 868.66. ASC opens the deck on the 15 smallest periods — a correct query presenting the tail as the headline.",
+        },
+      ],
+      distractors: ["250", "AVG", "MAX", "ASC"],
+      walkthrough:
+        "Classify, fold, share. The CASE arms run most-specific first — >= 500 studio, >= 250 premium, >= 100 standard, ELSE starter — and GROUP BY tier folds 103 periods into four bands: studio 25 / 17,379.43, premium 34 / 11,938.70, standard 29 / 4,646.49, starter 15 / 868.66. The share column divides each band's count by the grand COUNT via SUM(COUNT(*)) OVER () — the grouped-query form of a grand total — printing 24.3 / 33.0 / 28.2 / 14.6, and the four shares foot to 100.1 with the rounding, which the deck states rather than hides. The band counts foot to 103 and the booked column to 34,833.28: two reconciliations, by construction. The distractors fail honestly: 250 in the edge slot makes the first two arms overlap so premium empties and studio absorbs 59 periods; AVG turns value into a per-period mean and the footing breaks; MAX prints each band's single biggest period as its 'value'; ASC inverts the read so the deck opens on the tail.",
+    },
+    {
+      id: "cs-medium-6",
+      tier: "easy",
+      topic: "x1",
+      universe: "growth",
+      title: "The lapsed-member roster",
+      brief:
+        "Winback-pod brief, in-world: before billing sends a single reminder, the lifecycle pod wants the lapsed roster by market — who lapsed, how many lapsed periods the market carries, and how many actual people that is, because the mail merge sends to people, not periods. Probed on the storefront db: 7 lapsed periods across exactly 4 members — EU's 3 lapsed periods are ALL Alice Chen (the 24-period heavy reader, three times over), APAC's 3 split between Maya Patel (2) and Keiko Sato (1), and the US carries Emma Wilson once. LATAM is clean. The roster reads biggest lapsed load first, alphabetical within ties.",
+      ask: "Return each market with its lapsed-period count, distinct lapsed-member count, and the member names folded into one cell, biggest lapsed load first.",
+      template:
+        "SELECT c.region AS market,\n       COUNT(*) AS lapsed_periods,\n       COUNT(DISTINCT c.name) AS lapsed_members,\n       {1}(DISTINCT c.name) AS member_roster\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nWHERE o.status = {2}\nGROUP BY c.region\nORDER BY lapsed_periods {3}, market;",
+      slots: [
+        {
+          answer: "GROUP_CONCAT",
+          kind: "keyword",
+          label: "the roster folder",
+          why: "GROUP_CONCAT folds the member names into one cell per market — 'Maya Patel,Keiko Sato' for APAC. SUM over text returns a meaningless 0.0, COUNT would print a number in a names column, and the mail merge needs the actual list.",
+        },
+        {
+          answer: "'cancelled'",
+          kind: "keyword",
+          label: "the lapsed filter",
+          why: "Cancelled = lapsed in the stage map: 7 periods. 'delivered' would roster the 52 active-paid months — the exact population a winback email must never touch — and 'pending' would mail the 14 trials instead.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-load-first direction",
+          why: "The pod works the biggest lapsed load first: EU and APAC (3 periods each) ahead of the US (1). ASC would open the queue on the single-US-member row and bury the Alice Chen cluster the pod argues about most.",
+        },
+      ],
+      distractors: ["SUM", "COUNT", "'delivered'", "ASC"],
+      walkthrough:
+        "One scan, one roster. The WHERE keeps the 7 cancelled periods, GROUP BY c.region folds them into three markets — EU 3 periods / 1 member / 'Alice Chen', APAC 3 / 2 / 'Maya Patel,Keiko Sato', US 1 / 1 / 'Emma Wilson' — and the two-grain columns do the teaching: EU carries 3 lapsed periods from ONE member (the heavy reader lapsing three times over — the concentration risk in miniature), APAC 3 from two, US 1 from one. DISTINCT inside the GROUP_CONCAT is the difference between a roster and a period log: without it, EU's cell reads 'Alice Chen,Alice Chen,Alice Chen' and the mail merge sends her three copies. The counts foot to 7 periods and 4 members — two reconciliations for the price of one scan. The distractors fail honestly: SUM over names prints 0.0 in a names column, COUNT prints numbers where the merge needs text, 'delivered' rosters the active-paid book (52 periods), and ASC inverts the queue.",
+    },
   ],
 
   problems: [
@@ -389,5 +867,21 @@ export const mediumKit: CompanyKit = {
     { slug: "dau-wau-stickiness", why: "DAU/WAU stickiness is the daily-reading habit metric — a trailing-window ratio whose denominator definition is the whole interview." },
     { slug: "null-blank-audit", why: "Story metadata hygiene: untitled or untagged catalog rows silently split reads in every per-story report — the audit that runs before any vertical cut." },
     { slug: "week-over-week-churn", why: "LAG churn: lapsed members week over week is the winback trigger — a lag-flag shape the retention pod ships every Monday." },
+    { slug: "trial-to-paid-funnel", why: "The meter's stage counts with the denominator stated: trial-to-paid is the paywall funnel in miniature, and the interviewer's first question is always what the base holds." },
+    { slug: "analyze-subscription-conversion", why: "Trial to active-paid with the conversion rate computed, not eyeballed — the activation read the paywall team quotes in every growth review." },
+    { slug: "group-sold-products-by-the-date", why: "Reads folded per day with GROUP_CONCAT-style lists — the daily-catalog view behind the 'what the membership read this week' digest." },
+    { slug: "cohort-repeat-revenue", why: "Repeat-buyer revenue at two grains — the exact shape of this kit's concentration story, where 63.5% of the book sits with four members." },
+    { slug: "basket-depth-aov", why: "Lines per period and value per period are Medium's depth reads (251 lines over 103 periods) — a ratio drill whose denominators decide the payout story." },
+    { slug: "rfm-segmentation", why: "Recency-frequency-value banding of members — the segmentation pass behind every winback tier and the 'heavy reader lapsing' alert." },
+    { slug: "second-highest-salary", why: "Second-highest publication earnings: the tie trap on a ladder this platform quotes constantly — DENSE_RANK or MAX-below-MAX, said out loud." },
+    { slug: "find-the-team-size", why: "Publication stables enriched onto every story without collapsing rows — COUNT() OVER (PARTITION BY ...) is the partner-program's shape." },
+    { slug: "net-revenue-retention", why: "NRR over the month spine: retained, expanded and lapsed value month over month — the LAG walk the billing review actually runs." },
+    { slug: "rolling-7d-actives", why: "Rolling weekly reading windows over the booking stream — frame discipline (ROWS vs RANGE) on a spine whose timestamps can tie." },
+    { slug: "running-total-for-different-genders", why: "Running book value per segment over the month spine — the cumulative read growth shows beside the LAG deltas." },
+    { slug: "mrr-waterfall", why: "New, retained and lapsed value bridging month to month — the subscription waterfall in storefront-db clothes, cents-safe throughout." },
+    { slug: "ar-aging-schedule", why: "Statements bucketed by age outstanding — the dunning calendar's source query, and this kit's 28-statement book is the practice ledger." },
+    { slug: "deferred-revenue", why: "Booked versus earned across metered windows — the timing question the paywall model is built on, drilled as a fold with the denominator named." },
+    { slug: "count-salary-categories", why: "CASE bands that must print empty tiers as zero — the studio-tier-is-empty lesson generalized, exactly this kit's band audit shape." },
+    { slug: "find-golden-hour-customers", why: "Which members' windows open in the golden span — a latency-window screen this kit's 2.98-day norm turns into a population-definition question." },
   ],
 };
