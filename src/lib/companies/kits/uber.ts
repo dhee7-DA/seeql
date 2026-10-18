@@ -2,14 +2,21 @@
 // The two-sided mobility marketplace: trips, driver supply, surge windows
 // and ETAs — where every request is a timestamped row and every rate has a
 // denominator an interviewer will ask about. Pool provenance: 17 tagged sql
-// rows (Uber tags) drive 15 of the 16 problems and most topic slugs; the
+// rows (Uber tags) drive 15 of the 16 base problems and most topic slugs; the
 // fills (trips-and-users, product-sales-analysis-ii, daily-leads-and-partners,
 // students-and-examinations, number-of-times-a-driver-was-a-passenger,
 // consecutive-available-seats, department-top-three-salaries,
 // the-latest-login-in-2020, null-blank-audit, find-latest-salaries,
 // second-highest-salary, weather-type-in-each-country,
-// team-scores-in-football-tournament) are theme-curated to Uber's known
-// screen themes. Case studies run on the storefront db with probed figures
+// team-scores-in-football-tournament, then the extension's
+// uber-first-transaction, hopper-company-queries-i, hopper-company-queries-ii,
+// user-activity-for-the-past-30-days-i, second-day-confirmation,
+// friend-requests-i-overall-acceptance-rate, find-top-performing-driver,
+// calculate-special-bonus, bikes-last-time-used,
+// the-number-of-passengers-in-each-bus-i, sessionize-events,
+// biggest-window-between-events, report-contiguous-dates,
+// monthly-transactions-i, median-time-to-convert, game-play-analysis-v) are
+// theme-curated to Uber's known screen themes. Case studies run on the storefront db with probed figures
 // from scripts/company-facts.md, mapped honestly: orders = ride requests,
 // customers = riders, products = ride tiers, suppliers = fleet partners,
 // order_items = fare lines, shipped_at = completion timestamp.
@@ -27,7 +34,8 @@ export const uberKit: CompanyKit = {
     "Uber is the world's largest mobility marketplace — the company that turned 'car arrives in minutes' into an expectation across **hundreds of cities**, and then kept stacking surfaces on the same trip event: ride tiers from **UberX to Comfort to XL**, upfront pricing, {amber:surge} multipliers, pool-style sharing, and the delivery and freight businesses that grew on top. The core object never changed: a trip request that is matched to a driver supply unit, priced, {emerald:completed} or {rose:cancelled}, and timestamped at every step. That means every analyst here works with rates whose denominators are contested (completion rate is completed trips ÷ REQUESTED trips — not ÷ matched, not ÷ completed), two-sided counts that blur unless you name the grain (trips versus riders versus drivers), and timestamp math (ETA, wait time, trip duration) that lives on text timestamps until you make it numeric.",
     "The data org is a hybrid of **centralized analytics and embedded teams**: city operations, marketplace (the matching and pricing engine), driver product, rider product, and the experimentation platform all read from lakehouse trip event streams. The operating rhythm is city-shaped — a regional ops lead opens the day with a {sky:completion-and-supply} dashboard, and 'why did APAC's completion share dip' is a question someone will be asked to answer in SQL before the second coffee. Freshness is a visible thing: {amber:surge} and supply heatmaps run near-real-time, while finance-adjacent reads (fare lines, partner settlements) run on a slower, reconciled cadence. The interviewer across the table has almost certainly owned a city-level metric through a surge spike, and their questions carry that weather.",
     "Interview style is marketplace-flavored and denominator-obsessed. A screen typically opens with a warm-up join (attach riders to their trips), escalates into a conditional aggregation with a status rule ({sky:completion rate} by region, {rose:cancellation share} by hour), then either a window question (rank cities by weekly trips, rolling 7-day actives) or a rate question where the trap is **integer division** or a `WHERE` clause that silently shrinks the denominator. Follow-ups are spoken out loud: 'does a cancelled request count in your denominator?', 'is that per trip or per rider?', 'what happens at 3am when no trips completed?'. Candidates who narrate grain, filter placement and denominator before writing SQL consistently outperform — the interviewers are listening for the habit.",
-    "Preparation strategy: this kit leans on the **17 Uber-tagged sql rows** in the band — rate queries, confirmation-rate COALESCE reads, self-join process-time math, rank semantics, rolling-actives windows, keep-latest dedupe — plus a small theme-curated fill (trips-and-users, the canonical ride-hailing screen, leads the curated picks). The two case studies run on the live storefront db, mapped honestly onto mobility: `orders` are ride requests, customers are riders, products are ride tiers, suppliers are fleet partners, `order_items` are fare lines, and `shipped_at` is the completion timestamp. One case rebuilds the region {emerald:completion} map ops reviews open with; the other rebuilds the completion-latency read that feeds fleet-partner SLA conversations. Both are mechanically audited against the probed db figures.",
+    "Preparation strategy: this kit leans on the **17 Uber-tagged sql rows** in the band — rate queries, confirmation-rate COALESCE reads, self-join process-time math, rank semantics, rolling-actives windows, keep-latest dedupe — plus a theme-curated fill (trips-and-users, the canonical ride-hailing screen, leads the curated picks; the extension adds first-transaction cohort reads, working-driver censuses, acceptance-rate ratios, sessionization and lapse-window drills). The **32-problem pool** and the topic map below are the daily reps; the **six case studies** run on the live storefront db, mapped honestly onto mobility: `orders` are ride requests, customers are riders, products are ride tiers, suppliers are fleet partners, `order_items` are fare lines, and `shipped_at` is the completion timestamp. In order they rebuild: the region {emerald:completion} map ops reviews open with, the completion-latency read that feeds fleet-partner SLA conversations, the one-scan fate census the dashboard budget allows, the month-over-month completion pulse with its LAG baseline, the fare stack with its reconciling TOTAL row, and the zero-cancel tier bench supply pods lean on before experiments — all mechanically audited against the probed db figures.",
+    "This expanded kit is built for spaced practice rather than one sitting. **Thirty MCQs** take the denominator traps one at a time — integer division, WHERE-shrunk denominators, distinct-versus-row counts — and the **twenty-four theory answers** rehearse the grain-and-population narration out loud, because at Uber the narration IS the deliverable. Run each case on the live storefront database, then re-run it a week later from a blank editor — *the second pass is where recall actually forms*. Pair the cases with the problem pool and treat the walkthroughs as the real content: they narrate the failure each wrong chip causes, which is exactly the muscle the 'does a cancelled request count in your denominator?' follow-up tests.",
   ],
 
   dayInLife: [
@@ -52,47 +60,47 @@ export const uberKit: CompanyKit = {
     {
       name: "Trip-grain aggregation",
       why: "Everything at Uber starts by folding requests into per-region, per-hour, per-tier aggregates without letting cancelled demand pollute the total. The trap is grain drift: joining fare lines fans trips out, and COUNT(*) stops counting trips the moment the join lands.",
-      slugs: ["average-selling-price", "percentage-of-users-attended-a-contest", "product-sales-analysis-ii"],
+      slugs: ["average-selling-price", "percentage-of-users-attended-a-contest", "product-sales-analysis-ii", "hopper-company-queries-ii"],
     },
     {
       name: "Completion & cancellation rates",
       why: "Completion rate is completed ÷ REQUESTED — the denominator is the whole test, and the 100.0-before-division habit is what keeps the share honest. Trips-and-users is the canonical ride-hailing screen here: cancellation share by city with exclusions, where one careless filter moves the denominator.",
-      slugs: ["queries-quality-and-percentage", "confirmation-rate", "trips-and-users"],
+      slugs: ["queries-quality-and-percentage", "confirmation-rate", "trips-and-users", "user-activity-for-the-past-30-days-i", "second-day-confirmation"],
     },
     {
       name: "Two-sided market censuses",
       why: "'Trips AND riders per region' is the opening read of every ops review — and the trap is counting both at the same grain. COUNT(*) counts trip rows; COUNT(DISTINCT rider_id) counts people; the gap between the columns is the intensity signal city leads argue about.",
-      slugs: ["market-analysis-i", "daily-leads-and-partners", "students-and-examinations"],
+      slugs: ["market-analysis-i", "daily-leads-and-partners", "students-and-examinations", "hopper-company-queries-i", "friend-requests-i-overall-acceptance-rate"],
     },
     {
       name: "Trip-fate CASE logic",
       why: "Requested, completed, cancelled, unfulfilled — trip fate is a CASE branch inside a SUM, not four queries. Conditional counting over a 1/0 flag is how completion and cancellation shares fold at the same grain as COUNT(*), and the ELSE arm's width is the audit.",
-      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "capital-gain-loss"],
+      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "capital-gain-loss", "monthly-transactions-i"],
     },
     {
       name: "Pairing supply with demand (self-joins)",
       why: "Wait-time and duration questions pair two events of the same trip — request with completion, shift start with shift end — and that is a self-join with role-named aliases and an id ordering rule. Average-time-of-process-per-machine is this exact shape: paired timestamps folded to a duration.",
-      slugs: ["average-time-of-process-per-machine", "number-of-times-a-driver-was-a-passenger", "consecutive-available-seats"],
+      slugs: ["average-time-of-process-per-machine", "number-of-times-a-driver-was-a-passenger", "consecutive-available-seats", "the-number-of-passengers-in-each-bus-i", "median-time-to-convert"],
     },
     {
       name: "Leaderboards & running capacity",
       why: "City leaderboards, top tiers by trips, running supply against a capacity bar — ranking windows and running sums. Last-person-to-fit-in-the-bus is the queue-capacity shape: a cumulative counter that trips over exactly where supply meets demand.",
-      slugs: ["rank-scores", "last-person-to-fit-in-the-bus", "department-top-three-salaries"],
+      slugs: ["rank-scores", "last-person-to-fit-in-the-bus", "department-top-three-salaries", "find-top-performing-driver"],
     },
     {
       name: "Rolling windows & stickiness",
       why: "Growth reads here are trailing-window reads: rolling 7-day actives, DAU/WAU stickiness, streak persistence across surfaces. COUNT(DISTINCT) inside a window frame, and the discipline of one-rider-counts-once, is the muscle these three drill.",
-      slugs: ["rolling-7d-actives", "dau-wau-stickiness", "user-purchase-platform"],
+      slugs: ["rolling-7d-actives", "dau-wau-stickiness", "user-purchase-platform", "biggest-window-between-events", "report-contiguous-dates", "game-play-analysis-v"],
     },
     {
       name: "As-of pricing & golden windows",
       why: "Surge means price is a function of time: which multiplier was in force at request moment is an as-of lookup, and 'first trip inside the golden hour' is a date-math cohort gate. Both are two-stage timestamp questions where the inner fold's population matters.",
-      slugs: ["product-price-at-a-given-date", "find-golden-hour-customers", "the-latest-login-in-2020"],
+      slugs: ["product-price-at-a-given-date", "find-golden-hour-customers", "the-latest-login-in-2020", "uber-first-transaction"],
     },
     {
       name: "Event-stream hygiene: dedupe & NULL policy",
       why: "Trip events double-fire and retry; completion timestamps are NULL until the trip ends. Keep-latest dedupe with a deterministic tie-break, plus a stated NULL policy — report, coalesce, or exclude with a reason — is the data-quality layer every dashboard here stands on.",
-      slugs: ["keep-latest-dedupe", "null-blank-audit", "find-latest-salaries"],
+      slugs: ["keep-latest-dedupe", "null-blank-audit", "find-latest-salaries", "calculate-special-bonus", "bikes-last-time-used", "sessionize-events"],
     },
     {
       name: "Escalation shapes: subqueries & set ops",
@@ -149,6 +157,102 @@ export const uberKit: CompanyKit = {
       q: "Trip event streams double-fire on retries. How do you dedupe to one row per trip without losing the latest state — and how do you prove the dedupe didn't eat real trips?",
       a: "Two moves, then the proof. Detection: GROUP BY trip_id HAVING COUNT(*) > 1 is the cheapest duplicate census in SQL — run it before anything else and put the number in the ticket. Collapse: ROW_NUMBER() OVER (PARTITION BY trip_id ORDER BY event_at DESC, event_id DESC) = 1 keeps the latest state per trip, and the event_id tie-break is the part interviewers wait for — two events sharing a timestamp is the norm on retry storms, and without the tie-break 'latest' is engine-arbitrary. But collapsing is a decision, not a default: if the stream carries genuine state transitions (requested → matched → completed), folding them loses the funnel — so first ask whether the duplicates are retries of the SAME state or DISTINCT states, and keep the transitions if the funnel needs them. The proof is two counts: COUNT(*) before versus after, and COUNT(*) versus COUNT(DISTINCT trip_id) — if they diverge unexpectedly, the dedupe ate real trips. Cheap, boring, run every time; that's what makes it a habit instead of a hope.",
       tag: "quality",
+    },
+    {
+      id: "uber-t9",
+      q: "The surge-night board runs a cumulative fare column with SUM(total) OVER (ORDER BY created_at). Two requests share a created_at second and the cumulative jumps twice at once. What happened, and what's the fix?",
+      a: "The default frame with ORDER BY is RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW, and RANGE includes PEERS — every row sharing the ordering value enters the running sum together, so the total absorbs both tied requests in one step. On a month spine that's invisible (months never tie); at request grain ties are guaranteed the moment two riders book in the same second. The fix is saying the frame out loud: ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW walks strictly row by row, and a deterministic secondary sort (created_at, then id) makes the walk reproducible. The deeper habit: any cumulative column on event-grain data should declare ROWS unless peers-sharing-the-step is genuinely the business meaning — surge-night payouts are row-by-row, not peer-by-peer.",
+      tag: "windows",
+    },
+    {
+      id: "uber-t10",
+      q: "Ops wants completed, on-trip, awaiting and cancelled counts on one dashboard row. Four queries or one — and what does the one-query version buy beyond speed?",
+      a: "One query, two ways: COUNT(*) FILTER (WHERE status = '…') per branch, or the portable twin SUM(CASE WHEN status = '…' THEN 1 ELSE 0 END). Speed is the smaller win. The real prize is the shared denominator: all branches fold from the same 103 rows, so they must reconcile — 52 + 30 + 14 + 7 = 103 by construction, and a branch that doesn't fit the census is a data bug the dashboard announces on its own. Four separate queries each carry their own WHERE clause, and four independently-drifting filters are exactly how a status taxonomy forks between dashboards. The follow-up to expect: 'what happens when a new status appears?' — the ELSE-width question, and the reason the reconciling total stays in the panel.",
+      tag: "aggregation",
+    },
+    {
+      id: "uber-t11",
+      q: "A fare packet stacks per-region fares with a TOTAL row underneath. UNION or UNION ALL — and what must reconcile before the packet ships?",
+      a: "UNION ALL. The TOTAL branch is a different population from the region branches by construction, so dedupe is wasted work today and a mask tomorrow: if a definition bug ever made a branch collide with the total, UNION would silently delete the evidence and the packet would still balance. The discipline is column position and type — both branches project the same shape (label, fares) because set ops match positionally, not by name — and the literal 'TOTAL' label so the audit row is self-documenting. Then the reconciliation: the TOTAL row must equal the sum of the branches to the cent (on this db 34833.28 across EU, APAC, US and LATAM), and a one-unit mismatch is a bug in the stack, not rounding. At Uber the packet goes to people who will add the branches up in their heads — let the query do the addition first.",
+      tag: "set-ops",
+    },
+    {
+      id: "uber-t12",
+      q: "Two monthly request snapshots land in staging a month apart. How do you answer 'which tiers had requests then but none now' — and when is EXCEPT the wrong tool?",
+      a: "EXCEPT is the set-level diff: SELECT tier FROM snapshot_old EXCEPT SELECT tier FROM snapshot_new returns exactly the tiers present then and absent now — no join gymnastics, no fan-out, the intent reading straight off the page. INTERSECT is the mirror for 'active in both'. Two caveats to state: set operations deduplicate both inputs first, so a duplicated row inside one snapshot vanishes silently — if duplicates are the anomaly you're hunting, the row-honest tool is a LEFT JOIN … IS NULL anti-join on the full multiset; and both branches must share column count and compatible types. The Uber-flavored version: 'tiers that carried requests in 2024 but none in 2025' is one row on this db — a catalog-hygiene finding, and EXCEPT states it in two SELECTs.",
+      tag: "set-ops",
+    },
+    {
+      id: "uber-t13",
+      q: "When does a WITH (CTE) stop being style and become the only way a query is reviewable — give the marketplace-shaped answer.",
+      a: "The moment the read has two grains and a business name. 'Repeat riders, then their fare share' is unwriteable as one flat SELECT: stage the per-rider fold (GROUP BY rider, HAVING 2+ requests) as a named CTE, then join the fare lines against it. Three concrete buys at Uber: readability — a chain named monthly, repeat_riders, fare_share reads like the ops process instead of a Russian-doll subquery; reuse — one CTE feeds several downstream references, so the completed-set definition is written once and can't fork; and auditability — naming a CTE repeat_riders forces the 2+-requests definition into the open where the reviewer can see it, which is the whole culture when a metric's denominator is contested. The performance note stays honest: CTEs are logical staging, not guaranteed materialization — filter early inside each step, and the two-grain query stays cheap.",
+      tag: "ctes",
+    },
+    {
+      id: "uber-t14",
+      q: "'Requests priced above MY region's average' — walk me through the correlated subquery, why it's expensive, and the set-based rewrite.",
+      a: "The correlated form nests a fold that references the outer row: WHERE o.total > (SELECT AVG(i.total) FROM orders i JOIN customers ic ON ic.id = i.customer_id WHERE ic.region = oc.region). That reference to the outer region is what makes it correlated — the inner fold re-runs once per outer row, O(outer × inner) unless the engine decorrelates. The set-based rewrite stages per-region averages once — a derived table or CTE grouping region + AVG(total), joined back on region — same answer, one pass, and the join-back makes the benchmark auditable (you can SELECT it and eyeball all four regional averages: EU 335.32, APAC 313.66, US 383.48, LATAM 426.22 on this db). The trap worth naming: the correlated form answers a different question than the scalar one-shot 'above the platform average' — mixing them is how a pricing read silently changes its population.",
+      tag: "subqueries",
+    },
+    {
+      id: "uber-t15",
+      q: "The board wants each region's share of platform requests. How do you compute shares with a window — and what does the denominator decision change?",
+      a: "Fold first, share second: GROUP BY region folds the requests, then the window SUM(COUNT(*)) OVER () — an empty OVER is the whole platform — stamps the grand total (103) onto every row, and the share is one 100.0-promoted division away: EU 45/103 = 43.7%, APAC 35.9%, US 18.4%, LATAM 1.9%. PARTITION BY region instead would stamp each region's own total on its rows — 'share of my region' is a different metric with a different name, which is exactly the trap: the OVER clause's contents ARE the denominator decision. Two disciplines to narrate: the 100.0 goes before the division or small shares truncate to zero; and the shares must sum to 100 within rounding — a stack that doesn't is the built-in audit that catches a fan-out or a filter that shrank one branch's population but not the rest.",
+      tag: "windows",
+    },
+    {
+      id: "uber-t16",
+      q: "You add LAG(completed) OVER (ORDER BY month) to the demand pulse and the first row's delta is NULL. Coalesce it to zero?",
+      a: "No — NULL is the honest answer to 'what was the month before the first month?', and it isn't a value anyone should launder. Three disciplines around the walk: the boundary — the first row's LAG is NULL by definition, so label it 'baseline' in the report instead of coalescing a fake 0 that reads as growth-from-nothing; the sign — current minus prior is the convention, decided once (a flipped subtraction turns the steepest completion fade into a phantom surge); and the staging — window output isn't visible to WHERE or to sibling expressions in the same SELECT, so the LAG lives in a CTE and the delta/pct arithmetic runs in the outer query. On this db the walk reads 5 → 8 → 5 → 7 → 8 → 4 over the first six months: the June fade from 8 to 4 is the row the narrative quotes, and it's quotable because the baseline column is trustworthy.",
+      tag: "windows",
+    },
+    {
+      id: "uber-t17",
+      q: "Fare bands for the pricing memo: under 200, 200-to-399, 400-to-799, 800-plus. What makes a CASE banding survive the pricing review?",
+      a: "Four properties. Exhaustive: every request lands in exactly one band — the top-down cascade (>= 800 first, then >= 400, then >= 200, ELSE the floor) leaves no hole and no silent NULL band. Bounded at the stated edge: '200-to-399' means >= 200 AND < 400, and the boundary request at exactly 400 belongs to the band whose name says so — the half-open convention written once, everywhere. Reconciling: the band counts must sum to COUNT(*) — 38 + 31 + 30 + 4 = 103 on this db — and the reconciliation IS the audit that catches a hole. Honest about empties: if a band were empty it must print 0, not vanish, because a missing row reads as a lie of omission in a pricing deck. The examiner's follow-up is always the boundary: 'where does the 400.00 fare go?' — and the strong answer is a definition, stated before the query, not whatever the CASE happened to do.",
+      tag: "case-when",
+    },
+    {
+      id: "uber-t18",
+      q: "COUNT(*) FILTER (WHERE …) versus SUM(CASE WHEN … THEN 1 ELSE 0 END) — when do you reach for each, and what do they share?",
+      a: "They compute the same conditional count from the same rows; the choice is portability and readability. FILTER (WHERE …) is the SQL-standard form — each aggregate carries its own row predicate, the intent reads cleanly, and four branches on one dashboard row stay visually parallel. SUM(CASE …) is the portable twin that runs on every engine and composes further — the same CASE expression can carry the band label, the flag and the sum in one pass. What they share is the property that matters at Uber: numerator and denominator fold from the same rows, so a completion share built as SUM(flag)/COUNT(*) cannot drift — the cancelled requests stay in the denominator by construction. The failure each prevents: filter-then-count, where the WHERE shrinks the population before the numerator exists and every region reads 100%.",
+      tag: "aggregation",
+    },
+    {
+      id: "uber-t19",
+      q: "Driver payouts and fare lines keep money in integer cents. Where do the numeric bugs bite, and what's the rounding policy you state in review?",
+      a: "Three bite points. Scale: a payout of 92500 cents is 925.00, and amount_cents / 100 is integer division — 925 flat, the cents gone; divide by 100.0, once, at the presentation edge. Mid-pipeline rounding: ROUND inside the calculation discards precision a later SUM still needed — round only what a human reads, at the end. Float drift: fare REALs are IEEE doubles, so compare money with a tolerance or keep it in integer cents until the last step. The policy, stated in one sentence: aggregate in cents, convert once, round at the edge — and prove it with a reconciliation (the ledger's trial balance closes at 181,080 debits against 181,080 credits, delta zero, which is only checkable because nothing was rounded away en route). A payout number that survives that chain is a number driver support can defend on the phone.",
+      tag: "numbers",
+    },
+    {
+      id: "uber-t20",
+      q: "'Riders who never claimed the promo' — walk me through every anti-join shape and the failure mode each carries.",
+      a: "Three shapes, one trap. NOT IN (SELECT rider_id FROM claims): readable, and landmined — one NULL rider_id in the claim list makes every comparison UNKNOWN and the whole result silently empties; usable only when the inner column is provably NOT NULL. NOT EXISTS (SELECT 1 FROM claims c WHERE c.rider_id = r.id): the NULL-proof existence probe — it short-circuits on the first match and three-valued logic can't poison it; this is the default reflex. LEFT JOIN claims c ON c.rider_id = r.id WHERE c.id IS NULL: the row-honest shape that also shows HOW MANY claims almost matched, and it generalizes to the anti-joins with extra conditions in ON. The habits being graded: run the count both ways when paranoia is cheap, and be able to say what a confident zero means — on this db every rider has claimed something, so the zero is a finding, not a bug.",
+      tag: "joins",
+    },
+    {
+      id: "uber-t21",
+      q: "The nightly region rollup got slow after someone 'optimized' the month filter to SUBSTR(created_at, 1, 7) = '2025-02'. Diagnose.",
+      a: "The rewrite wrapped the indexed column in a function, and a function-wrapped predicate can't use the index — every row gets scanned and sliced. The sargable twin is the half-open range: created_at >= '2025-02-01' AND created_at < '2025-03-01' — same rows, index-usable, and it composes across month ends without boundary judgment. The wider habit list that keeps the rollup cheap: filter early inside each CTE so later stages carry fewer rows; name columns instead of SELECT * so unread payloads stop crossing the wire; probe with LIMIT before committing to the full run; and aggregate on the smallest table that answers the question rather than joining first and filtering after. The tell in the story: 'optimized' changes that touch the column instead of the range are usually de-optimizations — EXPLAIN before and after is the thirty-second proof.",
+      tag: "performance",
+    },
+    {
+      id: "uber-t22",
+      q: "'The priciest request per region' — give me the three shapes, and how each behaves when two requests tie.",
+      a: "Window argmax: ROW_NUMBER() OVER (PARTITION BY region ORDER BY total DESC, id) = 1 inside a CTE — one deterministic row per region because the second key breaks the tie; on this db APAC owns the platform maximum (1088.44) and no region ties, but the tie-break is what makes the query reproducible tomorrow. Join-back on the maximum: join to a per-region MAX(total) derived table — honest, but it returns BOTH tied requests, a feature when the ask is 'all co-leaders' and noise when the ask is one row per region. Correlated filter: WHERE total = (SELECT MAX(…) for that region) — same tie behavior as the join-back at per-row re-evaluation cost. Naming the divergence — ROW_NUMBER decides, join-back reports, correlated simplifies — is the complete answer; choosing silently is how a leaderboard becomes engine-arbitrary.",
+      tag: "windows",
+    },
+    {
+      id: "uber-t23",
+      q: "The cohort grid needs month offsets between a rider's first-request month and every later month. Why does naive month subtraction fail, and what's the base-12 fix?",
+      a: "Months are a base-12 clock. STRFTIME('%m', m) - STRFTIME('%m', first) goes negative every time the cohort crosses New Year — February 2025 versus November 2024 computes 2 − 11 = −9, and the retention matrix silently folds backwards exactly when winter demand matters. The fix is integer arithmetic on both components: (STRFTIME('%Y', m) − STRFTIME('%Y', first)) * 12 + (STRFTIME('%m', m) − STRFTIME('%m', first)) — years become ×12, months add the remainder, and the same pair computes 3. JULIANDAY diffs return DAYS, which is the right tool for the completion-latency read and the wrong one for a cohort grid — dividing by 30 drifts the columns across leap months. Say why the offset exists at all: it's the column spine of the cohort matrix, and a spine that bends at December breaks every number hung on it.",
+      tag: "dates",
+    },
+    {
+      id: "uber-t24",
+      q: "In the ops review you're asked for 'the completion rate'. What do you pin down before writing a single clause?",
+      a: "The definition, in writing, before the FROM clause. Four decisions: the numerator's set (delivered-status, or delivered plus the on-trip statuses that carry a completion stamp — 52 versus 82 on this db, a 30-point swing hiding in one adjective); the denominator (ALL placed requests — cancelled and awaiting stay in, or the rate reads 100% forever); the grain (per region, per hour, per tier — the same query at three grains is three different stories); and the window (this month, trailing 7 days, lifetime). Then the discipline move: encode it in the query — numerator as SUM(CASE …), denominator as COUNT(*) over the same fold, 100.0 before the division — and print the definition in the column alias. The strong candidate says 'completed means both completed statuses, over all placed requests, per region, this month' out loud before typing; the interviewer is grading the sentence, not the syntax.",
+      tag: "metrics",
     },
   ],
 
@@ -318,6 +422,346 @@ export const uberKit: CompanyKit = {
       ],
       difficulty: "medium",
     },
+    {
+      id: "uber-mcq-11",
+      prompt: "February 2024 logged 9 requests. The growth read needs every request row stamped with its own month's total — no GROUP BY collapse. Which expression adds that column?",
+      choices: [
+        "COUNT(*) OVER (PARTITION BY SUBSTR(created_at, 1, 7))",
+        "COUNT(*) GROUP BY SUBSTR(created_at, 1, 7)",
+        "SUM(created_at) OVER (PARTITION BY month)",
+        "COUNT(DISTINCT created_at) OVER ()",
+      ],
+      answer: 0,
+      why: "COUNT(*) OVER (PARTITION BY month-key) is window enrichment: every row keeps its identity and gains its partition's count — February's 9 stamped on each of February's rows. GROUP BY would collapse the rows the enrichment is meant to decorate.",
+      notes: [
+        { choice: 1, why: "GROUP BY folds 9 rows into 1 — the enrichment read needs all 9 rows, each carrying the 9. Collapsing is a different query shape, not a variant." },
+        { choice: 2, why: "SUM(created_at) adds date strings — meaningless arithmetic. The partition counter counts rows; it never adds timestamps." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "uber-mcq-12",
+      prompt: "Which expression buckets request timestamps into month keys that sort correctly across the 2024→2025 boundary?",
+      choices: [
+        "STRFTIME('%m', created_at)",
+        "SUBSTR(created_at, 6, 2)",
+        "STRFTIME('%Y-%m', created_at)",
+        "STRFTIME('%Y', created_at)",
+      ],
+      answer: 2,
+      why: "'%Y-%m' yields '2024-12' then '2025-01' — 14 monotonically sortable buckets on this db. '%m' alone merges the two Januaries; SUBSTR(6,2) is the month fragment with the same defect; '%Y' collapses everything into two buckets.",
+      notes: [
+        { choice: 0, why: "'%m' prints '01'…'12' with no year — January 2024 and January 2025 fold into one bucket and the demand spine quietly doubles its Januaries." },
+        { choice: 3, why: "A year-only spine is a two-point 'trend' — 2024 versus 2025. Real monthly reads need the month attached." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "uber-mcq-13",
+      prompt: "Completion latency runs 2, 3 or 4 days (27 / 30 / 25 trips). Which CASE band counts the 2-day checkouts?",
+      choices: [
+        "SUM(CASE WHEN JULIANDAY(shipped_at) - JULIANDAY(created_at) <= 2 THEN 1 ELSE 0 END)",
+        "COUNT(JULIANDAY(shipped_at) - JULIANDAY(created_at) = 2)",
+        "SUM(CASE WHEN JULIANDAY(shipped_at) - JULIANDAY(created_at) = 2 END)",
+        "AVG(CASE WHEN latency <= 2 THEN 1 ELSE 0 END)",
+      ],
+      answer: 0,
+      why: "The 1/0 flag inside SUM counts the band — 27 trips — over the same rows whose COUNT(*) counts everything. The boundary decision (<= 2 vs = 2) is policy; write it, don't inherit it.",
+      notes: [
+        { choice: 1, why: "COUNT(expr) counts non-NULL results, and a boolean comparison returns 1 or 0 — never NULL — so this counts all 82 completed trips, not the 2-day band." },
+        { choice: 3, why: "AVG of a 0/1 flag is the SHARE of the band, not its count — 32.9%, a different metric wearing the same query shape." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "uber-mcq-14",
+      prompt: "The staffing memo wants requests by weekday. Monday carries 20 of the 103 requests. Which predicate isolates it?",
+      choices: [
+        "STRFTIME('%w', created_at) = 1",
+        "STRFTIME('%w', created_at) = '1'",
+        "STRFTIME('%W', created_at) = '1'",
+        "created_at LIKE '%-1'",
+      ],
+      answer: 1,
+      why: "STRFTIME returns TEXT, so the comparison needs a string: '1' is Monday in the %w convention (0 = Sunday). Monday's 20 requests are the heaviest weekday on this db.",
+      notes: [
+        { choice: 0, why: "Comparing TEXT to the integer 1 fails in strict engines — SQLite may coerce, but the habit leaks: '%w' emits '0'…'6' as strings, match them as strings." },
+        { choice: 2, why: "%W is the week-of-year number, not the weekday — '1' matches the second week of every year, which is a very different census." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "uber-mcq-15",
+      prompt: "Monthly requests run 8, 9, 8, 7, 8, 6, … How many months carry 8 or more requests, and which clause keeps them?",
+      choices: [
+        "6 months — GROUP BY month HAVING COUNT(*) >= 8",
+        "8 months — WHERE COUNT(*) >= 8 before grouping",
+        "6 months — ORDER BY COUNT(*) DESC LIMIT 6",
+        "14 months — HAVING applies only to percentages",
+      ],
+      answer: 0,
+      why: "Six months qualify: 2024-01 (8), 02 (9), 03 (8), 05 (8), 07 (8), 09 (9) — the rest run 6 or 7. The threshold judges a per-month aggregate, so it lives in HAVING after GROUP BY.",
+      notes: [
+        { choice: 2, why: "ORDER BY + LIMIT 6 is a top-6 leaderboard — the 6th and 7th months it keeps carry 7 requests and don't meet the bar. Threshold and top-N are different asks." },
+        { choice: 1, why: "WHERE cannot see COUNT(*) at all — groups don't exist before GROUP BY. The engine rejects it, which is the pipeline order teaching itself." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "uber-mcq-16",
+      prompt: "The board slide needs each region's share of all 103 requests beside its count (EU 45 → 43.7%). Which window computes the denominator?",
+      choices: [
+        "SUM(COUNT(*)) OVER ()",
+        "SUM(COUNT(*)) OVER (PARTITION BY c.region)",
+        "COUNT(*) OVER (ORDER BY c.region)",
+        "MAX(COUNT(*)) OVER ()",
+      ],
+      answer: 0,
+      why: "An empty OVER () is the whole platform: the grand total 103 stamped on every row, making the share one 100.0-promoted division away. The OVER clause's contents ARE the denominator decision.",
+      notes: [
+        { choice: 1, why: "PARTITION BY region stamps each region's own total on its rows — EU would read 45/45 = 100%. True, and useless: that's 'share of my region', not 'share of platform'." },
+        { choice: 3, why: "MAX over the fold is the biggest region's count (45) — shares against the biggest region, a concentration lens, not the platform share the board asked for." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "uber-mcq-17",
+      prompt: "The month spine runs LAG(requests) OVER (ORDER BY month) and 2024-01 — the first row — shows NULL in the prev column. What's the right move?",
+      choices: [
+        "COALESCE it to 0 so the column is numeric",
+        "Leave NULL and label it 'baseline' — there is no month before the first",
+        "Drop the first row with WHERE prev IS NOT NULL",
+        "Replace LAG with LEAD so the first row gets a value",
+      ],
+      answer: 1,
+      why: "The first month genuinely has no predecessor — NULL is the honest answer, and a coalesced 0 fabricates infinite growth from nothing. Filtering the row away or flipping to LEAD changes the population and the metric's meaning.",
+      notes: [
+        { choice: 0, why: "0 reads as 'the month before had zero requests' — a fake 300% jump in February. Baseline is a label, not a zero." },
+        { choice: 3, why: "LEAD looks forward: every 'prev' becomes next month's value and the LAST row NULLs out — the walk now describes the future, not the past." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "uber-mcq-18",
+      prompt: "Trip events double-fire on retries; two rows can share trip_id AND event timestamp. Which dedupe keeps exactly one row per trip, deterministically?",
+      choices: [
+        "SELECT DISTINCT trip_id, status FROM events",
+        "ROW_NUMBER() OVER (PARTITION BY trip_id ORDER BY event_at DESC) = 1",
+        "ROW_NUMBER() OVER (PARTITION BY trip_id ORDER BY event_at DESC, event_id DESC) = 1",
+        "GROUP BY trip_id and take MAX(status)",
+      ],
+      answer: 2,
+      why: "The event_id tie-break is the whole answer: retries share timestamps by construction, so ordering by timestamp alone leaves 'latest' engine-arbitrary. Adding a unique column makes the survivor reproducible.",
+      notes: [
+        { choice: 0, why: "DISTINCT collapses only fully-identical rows — two retry rows differing in any column both survive, and the census doubles anyway." },
+        { choice: 3, why: "MAX(status) is text-max ('shipped' beats 'pending' alphabetically), not latest-state — and the payload columns around it come from nowhere in particular." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "uber-mcq-19",
+      prompt: "Trust wants ride tiers with ZERO cancelled requests — without trusting any status pre-filter. Which shape finds them NULL-proof?",
+      choices: [
+        "WHERE p.id NOT IN (SELECT product_id FROM orders WHERE status = 'cancelled')",
+        "WHERE NOT EXISTS (SELECT 1 FROM order_items ci JOIN orders co ON co.id = ci.order_id WHERE ci.product_id = p.id AND co.status = 'cancelled')",
+        "WHERE p.id NOT LIKE '%cancelled%'",
+        "HAVING SUM(status = 'cancelled') = 0 without a join",
+      ],
+      answer: 1,
+      why: "NOT EXISTS is the NULL-proof anti-join: it short-circuits on the first cancelled line and can't be poisoned by a stray NULL key. On this db it keeps 7 of the 16 tiers — the zero-cancel bench.",
+      notes: [
+        { choice: 0, why: "NOT IN dies on NULLs — one NULL product_id in the subquery empties the whole result while looking valid. The classic anti-join landmine." },
+        { choice: 3, why: "No join means no cancelled rows to fold — status lives on orders, and HAVING without the join counts nothing about cancels." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "uber-mcq-20",
+      prompt: "WHERE fare > (SELECT AVG(fare) FROM staging_night) returns ZERO rows on a filtered staging table. First diagnosis?",
+      choices: [
+        "No request exceeded the average — the zero is correct",
+        "The inner fold came back empty, the scalar yields NULL, and fare > NULL is UNKNOWN — the report empties silently",
+        "The comparison operator needs to be >=, not >",
+        "Scalar subqueries cannot sit inside a comparison",
+      ],
+      answer: 1,
+      why: "A scalar subquery is contractually 0-or-1 rows; zero rows yield NULL, and every comparison against NULL is UNKNOWN — the above-average read ships empty with no error. On filtered staging (one city, one surge window) the empty inner fold is the norm, not the exception.",
+      notes: [
+        { choice: 0, why: "A confident zero is sometimes right — but the staging-table failure mode ships silent empties weekly, and 'it ran' is not a verification." },
+        { choice: 2, why: "Loosening to >= doesn't survive a NULL either — UNKNOWN is UNKNOWN in every comparison operator. The fix is guarding the inner fold's population." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "uber-mcq-21",
+      prompt: "'Requests priced above their OWN region's average' — what makes this query correlated, and what does it cost?",
+      choices: [
+        "The inner AVG references the outer row's region, so it re-runs per outer row",
+        "AVG is an aggregate, and aggregates are always per-row",
+        "Nothing — SQLite computes it once and reuses the value",
+        "It only works with a GROUP BY in the outer query",
+      ],
+      answer: 0,
+      why: "WHERE o.total > (SELECT AVG(i.total) … WHERE i.region = o.region) — the inner query touching o.region is what makes it correlated: one inner fold per outer row unless the engine decorrelates. The set-based rewrite stages per-region averages once and joins back.",
+      notes: [
+        { choice: 2, why: "Only UNcorrelated subqueries compute once. The region reference per row is exactly what forces re-evaluation — and the join-back is the fix because it isn't free." },
+        { choice: 3, why: "It runs fine without one. The GROUP BY rewrite isn't required — it's the scalable shape, which is a different claim." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "uber-mcq-22",
+      prompt: "Which set operation answers 'tiers that carried requests in 2024 but NONE in 2025' — exactly one tier on this db?",
+      choices: [
+        "UNION of the two year-censuses",
+        "INTERSECT of the two year-censuses",
+        "EXCEPT: 2024-tier set EXCEPT 2025-tier set",
+        "A CROSS JOIN of tiers to years, filtered",
+      ],
+      answer: 2,
+      why: "EXCEPT returns rows in the left set and not the right — present in 2024, absent in 2025: Bluetooth Speaker Mini, the one tier that went dark. UNION merges, INTERSECT keeps the overlap, and a CROSS JOIN pairs everything with everything.",
+      notes: [
+        { choice: 1, why: "INTERSECT answers 'active in BOTH years' — 15 tiers, the opposite of the churn question." },
+        { choice: 3, why: "A cross join multiplies first and filters after — it works but states the question backwards, and the fan-out cost scales with the product of both sets." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "uber-mcq-23",
+      prompt: "A fare packet must print per-region fares plus a reconciling TOTAL row (34833.28) in one result set. Which operator — and why that one?",
+      choices: [
+        "UNION — dedupes the branches so the total is clean",
+        "UNION ALL — the TOTAL branch is a different population; dedupe would only mask a definition bug",
+        "JOIN — attaches the total row to each region row",
+        "EXCEPT — subtracts the branches from the total",
+      ],
+      answer: 1,
+      why: "Region rows and the TOTAL row are disjoint populations, so UNION ALL is pure append — cheap and honest. UNION's dedupe is wasted work that would also silently delete a row if a bug ever made a branch collide with the total.",
+      notes: [
+        { choice: 0, why: "The dedupe never fires on disjoint branches — but when a definition bug makes two branches identical, UNION deletes the evidence instead of surfacing it. That's the hazard." },
+        { choice: 2, why: "A JOIN fans the total across every region row — the packet reads four 34833.28s. Stacking needs a set op, not a join." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "uber-mcq-24",
+      prompt: "The trust audit wants each region's fate vocabulary as one cell — and LATAM's cell reads just 'delivered'. Which fold produces that?",
+      choices: [
+        "GROUP_CONCAT(DISTINCT o.status) with GROUP BY region",
+        "STRING_AGG(o.status) with DISTINCT regions only",
+        "LISTAGG over a window with PARTITION BY region",
+        "MAX(o.status) per region — the latest fate alphabetically",
+      ],
+      answer: 0,
+      why: "GROUP_CONCAT(DISTINCT …) folds the region's distinct fate values into one comma-joined cell — EU/APAC/US read all four fates, LATAM only 'delivered' (its two requests both completed). The roster IS the audit: a missing fate is a missing population.",
+      notes: [
+        { choice: 3, why: "MAX picks 'shipped' for three regions and 'delivered' for LATAM — one fate per region, the other three invisible. Vocabulary audits need the whole roster, not the alphabet's winner." },
+        { choice: 1, why: "Wrong function for the engine, and the DISTINCT placement matters: it must dedupe the STATUS values inside the fold, not the regions outside it." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "uber-mcq-25",
+      prompt: "The dashboard budget allows ONE query for the fate census: completed 52, on-trip 30, awaiting 14, cancelled 7. Which construct prints all four in one row?",
+      choices: [
+        "Four GROUP BY queries stitched in the dashboard",
+        "COUNT(*) FILTER (WHERE status = '…') — one branch per fate, same SELECT",
+        "GROUP BY status — one row per fate",
+        "A window with PARTITION BY status",
+      ],
+      answer: 1,
+      why: "FILTER (WHERE …) is per-aggregate: each COUNT keeps only its own rows, all four computed in the same scan — and the branches must reconcile to COUNT(*) = 103, the audit the panel checks before publishing.",
+      notes: [
+        { choice: 2, why: "GROUP BY status returns a COLUMN of four rows, not the single dashboard row with four named columns that reconciles in one glance." },
+        { choice: 3, why: "PARTITION BY status keeps every row and attaches its fate's count — an enrichment, not a census; the dashboard row still has to be built from it." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "uber-mcq-26",
+      prompt: "Fare bands: under 200 (38 requests), 200–399 (31), 400–799 (30), 800-plus (4). Which CASE guarantees no request lands in a silent fifth band?",
+      choices: [
+        "CASE WHEN total < 200 THEN 'floor' WHEN total < 400 THEN 'core' WHEN total < 800 THEN 'high' END",
+        "CASE WHEN total >= 800 THEN 'premium' WHEN total >= 400 THEN 'high' WHEN total >= 200 THEN 'core' ELSE 'floor' END",
+        "CASE WHEN total > 800 THEN 'premium' ELSE 'floor' END — bands are just two",
+        "IF(total >= 400, 'high', 'low')",
+      ],
+      answer: 1,
+      why: "Top-down cascading thresholds with a catch-all ELSE are exhaustive by construction — 4 + 30 + 31 + 38 = 103, the reconciliation that proves no band leaked. A fare at exactly 800 belongs to 'premium', which is now a stated definition.",
+      notes: [
+        { choice: 0, why: "A fare of 1088.44 matches no arm (not < 200, < 400, or < 800) and falls out NULL — the silent fifth band that makes every band total refuse to reconcile." },
+        { choice: 2, why: "Collapsing to two bands answers a different memo — and the ELSE swallows the 200-to-799 core where 61 of 103 requests live." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "uber-mcq-27",
+      prompt: "A driver payout row shows amount_cents = 486000. Which expression prints 4860.00 without losing a cent?",
+      choices: [
+        "amount_cents / 100",
+        "amount_cents / 100.0",
+        "ROUND(amount_cents / 100)",
+        "CAST(amount_cents AS TEXT) || '00'",
+      ],
+      answer: 1,
+      why: "Dividing by 100.0 promotes real arithmetic before the division: 486000 → 4860.0. The integer / 100 truncates — and every payout whose cents aren't a multiple of 100 loses money silently, which is how settlement reconciliations quietly stop balancing.",
+      notes: [
+        { choice: 2, why: "ROUND of an already-truncated integer rounds nothing — the cents are gone before ROUND sees the value. The .0 must precede the division." },
+        { choice: 3, why: "Text concatenation appends zeros — it doesn't divide. 486000 || '00' is a string that no SUM will ever accept." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "uber-mcq-28",
+      prompt: "The partner earnings view must list ALL fleet partners — the two trusted ones with earnings, the rest at zero. Which join shape zero-fills the untrusted partners without dropping them?",
+      choices: [
+        "INNER JOIN through the catalog — unmatched partners are noise",
+        "LEFT JOIN with the trust gate in the ON clause, COALESCE(SUM(…), 0) for display",
+        "CROSS JOIN partners to earnings, filtered by rating",
+        "UNION of two SELECTs, one per rating band",
+      ],
+      answer: 1,
+      why: "The LEFT JOIN keeps every partner row; the rating gate lives in ON so untrusted partners survive with NULL payload columns, and COALESCE turns the NULL fold into a display zero. Filtering the gate in WHERE would silently delete the partners the view exists to list.",
+      notes: [
+        { choice: 0, why: "INNER deletes exactly the four partners the bench view must show at zero — the report reads 'two partners exist', which is the wrong census." },
+        { choice: 2, why: "CROSS JOIN pairs every partner with every earnings row — the fan-out doubles nothing honestly and the rating filter in WHERE drops rows again." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "uber-mcq-29",
+      prompt: "'The priciest request per region, one row each.' Two requests in one region tie at the top. Which shape returns exactly one deterministic row per region?",
+      choices: [
+        "ROW_NUMBER() OVER (PARTITION BY region ORDER BY total DESC, id) = 1",
+        "JOIN to a per-region MAX(total) derived table",
+        "WHERE total = (SELECT MAX(total) FROM orders)",
+        "ORDER BY total DESC LIMIT 4 — one per region by luck",
+      ],
+      answer: 0,
+      why: "ROW_NUMBER with a named tie-break (total DESC, then id) decides: one row per region, reproducible tomorrow. The join-back and the correlated form return BOTH tied requests; the LIMIT form breaks on every tie and every population change.",
+      notes: [
+        { choice: 1, why: "The join-back is honest but reports co-leaders — two rows for a tied region. 'Report all ties' is a different ask; own it explicitly or pick ROW_NUMBER." },
+        { choice: 2, why: "That compares against the PLATFORM maximum (1088.44) — one row total, not one per region. The population of the inner fold is the whole question." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "uber-mcq-30",
+      prompt: "The nightly rollup filters February with SUBSTR(created_at, 1, 7) = '2025-02' and the plan shows a full scan. What's the sargable twin?",
+      choices: [
+        "created_at BETWEEN '2025-02-01' AND '2025-02-28'",
+        "created_at >= '2025-02-01' AND created_at < '2025-03-01'",
+        "LIKE '2025-02%' on the raw column",
+        "CAST(created_at AS TEXT) LIKE '2025-02%'",
+      ],
+      answer: 1,
+      why: "The half-open range compares the bare column to constants — index-usable, same rows, no boundary judgment at month end. Wrapping the column in SUBSTR (or LIKE on the raw value) forces the engine to slice every row before comparing.",
+      notes: [
+        { choice: 0, why: "BETWEEN drops nothing here only because the column carries no time-of-day — add '2025-02-28 23:59:59' traffic and the last night of February silently vanishes. The range shape is safe by construction." },
+        { choice: 2, why: "LIKE with a leading constant can sometimes use an index, but it's still a string scan of every value — and it re-introduces the format dependency the SUBSTR version had." },
+      ],
+      difficulty: "medium",
+    },
   ],
 
   cases: [
@@ -404,6 +848,172 @@ export const uberKit: CompanyKit = {
       walkthrough:
         "A latency read where the population statement IS the metric. The WHERE IS NOT NULL guard keeps the 82 trips that carry a completion timestamp — uncompleted trips have no latency YET, and saying so out loud is the difference between a definition and a silent filter. JULIANDAY(completion) - JULIANDAY(request) yields fractional days, folded once per region and rounded at the END: LATAM 3.50 (2 trips — thin, and the walkthrough says so), US 3.07 (15), EU 2.94 (36), APAC 2.93 (29), against the 2.98 overall average and the 2-to-4 range. DESC puts the slowest region first, which is where the fleet-supply conversation starts. The traps the distractors encode: MIN instead of AVG crowns the single fastest trip as a 'regional average'; DATEDIFF is a MySQL reflex that doesn't exist in this engine; IS NOT TRUE inverts the guard and keeps only the NULL rows — a census of trips that never completed, all latencies NULL. Small-region averages ride on two rows: read LATAM with its count visible, never alone.",
     },
+    {
+      id: "cs-uber-3",
+      tier: "easy",
+      topic: "x2",
+      universe: "funnel",
+      title: "The one-scan fate census",
+      brief:
+        "Uber-flavored case on the storefront db (orders = ride requests): the ops dashboard budget allows exactly ONE query per panel, and the fate census is that query — completed, on-trip, awaiting-match and cancelled counts printed in one row, branches reconciling to the placed total by construction. Probed facts: 103 placed requests fold to 52 completed (delivered-status), 30 on-trip (shipped-status), 14 awaiting (pending) and 7 cancelled — 52 + 30 + 14 + 7 = 103, the identity the panel checks before it publishes. The status literals are the ledger's vocabulary; 'completed' and 'open' are not status values in this store, and a wrong literal zero-fills its branch silently.",
+      ask: "Return one row: completed, on-trip, awaiting, cancelled and placed request counts from a single pass.",
+      template:
+        "SELECT COUNT(*) FILTER (WHERE o.status = {2}) AS completed,\n       COUNT(*) FILTER (WHERE o.status = {3}) AS on_trip,\n       COUNT(*) FILTER (WHERE o.status = {4}) AS awaiting,\n       COUNT(*) {1} (WHERE o.status = 'cancelled') AS cancelled,\n       {5}(*) AS placed\nFROM orders o;",
+      slots: [
+        {
+          answer: "FILTER",
+          kind: "keyword",
+          label: "the per-branch row gate",
+          why: "FILTER (WHERE …) lets each COUNT keep only its own rows — the cancelled branch keeps the 7. WHERE in that position is a syntax error, and SUM can't take the (WHERE …) arm at all: FILTER is the per-aggregate gate the one-scan census is built on.",
+        },
+        {
+          answer: "'delivered'",
+          kind: "keyword",
+          label: "the completed literal",
+          why: "Completed requests are status 'delivered' — 52 of 103. 'completed' is not a status value in this ledger: the branch fills with zeros and the panel quietly reports that nothing ever completes.",
+        },
+        {
+          answer: "'shipped'",
+          kind: "keyword",
+          label: "the on-trip literal",
+          why: "On-trip requests are status 'shipped' — 30. The distractor literal 'open' zeroes the branch and the in-flight population vanishes from a panel that exists to watch it.",
+        },
+        {
+          answer: "'pending'",
+          kind: "keyword",
+          label: "the awaiting literal",
+          why: "Awaiting-match requests are status 'pending' — 14, the supply-gap population city leads argue about. Any other literal zero-fills the arm and the census no longer sums to 103.",
+        },
+        {
+          answer: "COUNT",
+          kind: "keyword",
+          label: "the placed-total counter",
+          why: "COUNT(*) over the whole table is the reconciling denominator — 103. SUM(*) is not SQL, and MAX(*) would report one row; the identity 52 + 30 + 14 + 7 = 103 is what makes the panel self-auditing.",
+        },
+      ],
+      distractors: ["'completed'", "'open'", "'cancelled'", "SUM", "WHERE", "MAX"],
+      walkthrough:
+        "One scan, five cells, one identity. FILTER (WHERE …) gives each COUNT its own row predicate inside the same SELECT — the standard way to print a whole fate census without four passes: delivered keeps 52, shipped keeps 30, pending keeps 14, cancelled keeps 7, and the bare COUNT(*) prints the placed total 103, so the panel's own arithmetic (52 + 30 + 14 + 7 = 103) is the audit that runs before anyone reads the numbers. The chip traps each break differently: 'completed' and 'open' are not status values in this store — their branches fill with zeros and the census stops reconciling, which is exactly the silent failure the placed total exists to catch; 'cancelled' in the completed slot flips the branch to 7 and the panel reports a 7% completion platform; SUM or WHERE in the FILTER slot are syntax errors (only COUNT/AVG/SUM take the FILTER arm — and the census needs counting, not adding); MAX(*) errors outright. The in-world lesson: the dashboard budget is one query, and the one query carries its own reconciliation.",
+    },
+    {
+      id: "cs-uber-4",
+      tier: "medium",
+      topic: "t7",
+      universe: "growth",
+      title: "The completion pulse, month over month",
+      brief:
+        "Growth-board case on the storefront db: the weekly review opens with the completion pulse — each month's completed-trip count beside the prior month's, so the fade the narrative quotes is visible without a second query. Probed facts: the 14-month spine (2024-01 to 2025-02) folds to completed counts 5, 8, 5, 7, 8, 4 over the first six months — the May-to-June drop from 8 to 4 is the steepest fade on the board and the row the deck quotes. The completed set is fixed once: both statuses that carry a completion stamp (delivered and shipped), so 82 of the 103 requests have a pulse; pending and cancelled have none by definition. The first month's prior column is honestly NULL — no baseline exists.",
+      ask: "Return the first six months with requests, completed trips, and the prior month's completed count beside each.",
+      template:
+        "WITH monthly AS (\n  SELECT SUBSTR(created_at, 1, 7) AS month,\n         COUNT(*) AS requests,\n         SUM(CASE WHEN shipped_at IS NOT NULL THEN 1 ELSE 0 END) AS completed\n  FROM orders\n  GROUP BY month\n)\nSELECT month,\n       requests,\n       completed,\n       {1}(completed) OVER (ORDER BY month) AS prev_completed\nFROM monthly\nORDER BY month {2}\nLIMIT {3};",
+      slots: [
+        {
+          answer: "LAG",
+          kind: "keyword",
+          label: "the prior-month reader",
+          why: "LAG(completed) walks the folded months backwards one row — February's prev is January's 5. LEAD reads forward and would hand February March's count, silently re-labeling the future as history; the first month's NULL is the honest 'no baseline'.",
+        },
+        {
+          answer: "ASC",
+          kind: "keyword",
+          label: "the chronological direction",
+          why: "A month-over-month pulse is chronological: ASC keeps 2024-01 on top so each row compares against the row above it. DESC presents the newest month first with its baseline BELOW it — the numbers survive, the story reads backwards.",
+        },
+        {
+          answer: "6",
+          kind: "number",
+          label: "the opener cut",
+          noVerify: true,
+          why: "LIMIT 6 returns the first six months — the run the deck opens with, ending on the 8-to-4 May-June fade. The cut keeps the pulse readable; the full 14-row spine belongs to the appendix.",
+        },
+      ],
+      distractors: ["LEAD", "DESC", "3", "SUM"],
+      walkthrough:
+        "Staged windows over a folded spine. The CTE folds 103 requests into 14 monthly rows with two aggregates each — COUNT(*) for demand (8, 9, 8, 7, 8, 6 …) and the conditional SUM for completions (5, 8, 5, 7, 8, 4), both computed from the same rows so the two columns can never disagree about population. The outer query layers the window: LAG(completed) OVER (ORDER BY month) brings January's 5 into February's row and February's 8 into March's, and the first month stays NULL by design — no prior row, no baseline, no invented zero. The June row is the story: 4 completed against May's 8, the steepest fade on the board, quotable because the baseline column is trustworthy. The chip traps: LEAD reads the future (February's 'prev' would be March's 5); DESC tells the story backwards; SUM in the window slot piles a running total into the baseline column; LIMIT 3 amputates the fade the memo quotes. Windows run after GROUP BY — that is why LAG can walk an aggregate at all, and the two-stage shape is what keeps the walk honest.",
+    },
+    {
+      id: "cs-uber-5",
+      tier: "medium",
+      topic: "x3",
+      universe: "growth",
+      title: "The fare stack with the TOTAL row",
+      brief:
+        "Board-packet case on the storefront db: the finance partner wants the fare book stacked — per-region fare revenue plus one reconciling TOTAL row, one query, no spreadsheet arithmetic. Probed facts: 103 requests bill 34833.28 in total; the regional split runs EU 15089.23, APAC 11605.45, US 7286.16, LATAM 852.44 — so the four branches must sum to the TOTAL to the cent, and the packet is ordered biggest-fare-first with TOTAL on top as the headline. The TOTAL branch folds the UNFILTERED table — no region filter, no GROUP BY — because the headline is the whole book, not the sum of a filtered subset. UNION ALL is the operator: the branches are different populations, and a dedupe pass would only mask a definition bug.",
+      ask: "Return the regional fare stack with a labelled TOTAL row, biggest fares first.",
+      template:
+        "SELECT c.region,\n       ROUND({1}(o.total), 2) AS fares\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nGROUP BY c.region\n{2}\nSELECT {3}, ROUND(SUM(total), 2)\nFROM orders\nORDER BY fares {4};",
+      slots: [
+        {
+          answer: "SUM",
+          kind: "keyword",
+          label: "the fare adder",
+          why: "SUM(o.total) adds the fare value per region — EU's 15089.23. COUNT would print the request counts (45, 37, 19, 2) wearing a fare name, and the stack would read like a census instead of a bill.",
+        },
+        {
+          answer: "UNION ALL",
+          kind: "keyword",
+          label: "the stacker",
+          why: "UNION ALL concatenates the TOTAL branch onto the region rows with no dedupe pass — the honest append for a stack where every row belongs. EXCEPT would return only the detail rows and drop the headline the packet exists to lead with.",
+        },
+        {
+          answer: "'TOTAL'",
+          kind: "keyword",
+          label: "the headline label",
+          why: "The literal 'TOTAL' brands the grand row so the packet is self-documenting — 34833.28 next to TOTAL is the reconciliation the finance partner checks first. An unlabeled NULL region would read as a mystery fifth region.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-first order",
+          why: "The packet reads the headline down: TOTAL 34833.28, then EU 15089.23, APAC 11605.45, US 7286.16, LATAM 852.44. ASC would float LATAM's two-request footnote to the top of a board deck.",
+        },
+      ],
+      distractors: ["COUNT", "AVG", "EXCEPT", "ASC", "'ALL'"],
+      walkthrough:
+        "Two branches, one stack, one reconciliation. The detail branch folds 103 requests per region — SUM(o.total) prints EU 15089.23, APAC 11605.45, US 7286.16, LATAM 852.44; the TOTAL branch re-scans the unfiltered orders table with no GROUP BY and prints 34833.28 under the 'TOTAL' label — and the finance partner's check is that 15089.23 + 11605.45 + 7286.16 + 852.44 equals the headline to the cent. ORDER BY fares DESC floats TOTAL to the top because the biggest number in the stack is the whole book. The chip traps each break a different promise: COUNT in the fare slot prints row counts as money — the packet becomes a census wearing a bill's name; AVG prints the regional average fare instead of the regional total and the stack understates itself by an order of magnitude; EXCEPT returns only the detail rows, silently deleting the headline; 'ALL' relabels the grand row so the packet's vocabulary forks from every report that joins to it; ASC opens the deck on LATAM's 852.44. UNION ALL with a reconciling TOTAL is the cheapest audit in analytics: the query checks itself.",
+    },
+    {
+      id: "cs-uber-6",
+      tier: "hard",
+      topic: "q3",
+      universe: "catalog",
+      title: "Tiers that never cancel",
+      brief:
+        "Trust-and-supply case on the storefront db: before the next tier-mix experiment, the supply pod wants the zero-cancel bench — ride tiers that have NEVER sat under a cancelled request — because those tiers are where supply can be leaned on without the cancellation tax. Probed facts: 7 of the 16 tiers qualify, led by Wireless Mouse M3 at 18 requests and 4K Webcam Pro at 17; the other 9 tiers carry at least one cancel. The definition is an anti-join at heart: keep tiers for which NO cancelled request exists — expressed NULL-proof with NOT EXISTS over the fare lines joined to their requests, because a status pre-filter or a NOT IN over a nullable key can silently empty the read. The cut keeps the three busiest zero-cancel tiers.",
+      ask: "Return the three busiest tiers with zero cancelled requests: tier name and request count.",
+      template:
+        "SELECT p.name,\n       COUNT(*) AS requests\nFROM products p\nJOIN order_items oi ON oi.product_id = p.id\nJOIN orders o ON o.id = oi.order_id\nWHERE NOT {1} (\n  SELECT 1\n  FROM order_items ci\n  JOIN orders co ON co.id = ci.order_id\n  WHERE ci.product_id = p.id AND co.status = {2}\n)\nGROUP BY p.id\nORDER BY requests {3}\nLIMIT {4};",
+      slots: [
+        {
+          answer: "EXISTS",
+          kind: "keyword",
+          label: "the existence probe",
+          why: "NOT EXISTS asks 'does even ONE cancelled request exist for this tier?' — it short-circuits on the first match and survives NULL keys. NOT IN over a nullable product_id list can poison every comparison and empty the read while looking valid.",
+        },
+        {
+          answer: "'cancelled'",
+          kind: "keyword",
+          label: "the fate under test",
+          why: "The bench excludes tiers with a CANCELLED request — 9 tiers fall out on this db. Testing 'completed' instead would exclude nearly every tier (all 16 carry completions) and the bench reads empty.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the busiest-first order",
+          why: "The supply pod leans on the busiest zero-cancel tiers first: Mouse M3 at 18, Webcam Pro at 17, Ring Light at 15. ASC would open on the thinnest bench members — a correct query aimed at the wrong end of the decision.",
+        },
+        {
+          answer: "3",
+          kind: "number",
+          label: "the bench cut",
+          noVerify: true,
+          why: "The ask is the three busiest — LIMIT 3 keeps exactly Mouse M3 (18), 4K Webcam Pro (17) and Ring Light 14\" (15) from the seven-tier bench. The full bench of 7 belongs in the appendix, not the decision memo.",
+        },
+      ],
+      distractors: ["IN", "'completed'", "ASC", "5"],
+      walkthrough:
+        "An anti-join wearing a supply question. The outer query counts every fare line per tier; the NOT EXISTS arm probes whether even one cancelled request sits under that tier — the correlated reference ci.product_id = p.id is what makes the probe per-tier, and the short-circuit is what makes it cheap. Seven of sixteen tiers survive: Mouse M3 (18 requests), 4K Webcam Pro (17), Ring Light (15) lead the bench that DESC and LIMIT 3 serve to the decision memo. The definitional point the interviewer probes: the anti-join must run over the REQUESTS table (via fare lines), not over a pre-filtered copy — 'never cancelled' is a property of the full request log, and pre-filtering is how 'never' quietly becomes 'never in the rows I kept'. The chip traps: IN instead of EXISTS inverts the membership semantics (NOT IN over a list carrying a NULL empties the whole result — the landmine this shape exists to avoid); 'completed' as the fate under test excludes nearly every tier and the bench reads empty; ASC serves the thinnest bench members first; LIMIT 5 dilutes the cut. Count the bench before the experiment: seven tiers, 103 requests minus the 27 that rode cancelled-carrying tiers — that denominator math is the next interviewer question.",
+    },
   ],
 
   problems: [
@@ -423,5 +1033,21 @@ export const uberKit: CompanyKit = {
     { slug: "user-purchase-platform", why: "Streak persistence across two surfaces — rider behavior that survives context switches, streak windows and all. Tagged Uber." },
     { slug: "find-golden-hour-customers", why: "First-event timing gates — riders whose first trip landed inside the golden window, date math plus cohort definition. Tagged Uber." },
     { slug: "keep-latest-dedupe", why: "ROW_NUMBER keep-latest with a deterministic tie-break — one row per trip from a retry-heavy event stream. Tagged Uber." },
+    { slug: "uber-first-transaction", why: "The first-transaction screen by name: ROW_NUMBER over (ride date, request id) picks each rider's maiden trip with the tie-break INSIDE the window — the cohort gate behind every first-ride promo. Theme-curated (no Uber tag on the registry row)." },
+    { slug: "hopper-company-queries-i", why: "The working-driver census with an 'on or before the first' boundary rule — a driver counts only when join_date lands on or before the month's first day, the fleet-availability edge city ops computes monthly. Theme-curated." },
+    { slug: "hopper-company-queries-ii", why: "The same census escalated to economics: average ride distance and duration per month over working drivers only — a rate whose denominator is defined by a boundary rule, not a filter. Theme-curated." },
+    { slug: "user-activity-for-the-past-30-days-i", why: "Approved-request share inside a 30-day window — the windowed completion-rate drill where the denominator's filter is stated before the ratio is computed. Theme-curated." },
+    { slug: "second-day-confirmation", why: "Onboarding follow-through with LEAD over timestamps: did the invite get confirmed within 48 hours, per cohort — the funnel-latency read driver-activation teams run weekly. Theme-curated." },
+    { slug: "friend-requests-i-overall-acceptance-rate", why: "An acceptance rate where BOTH sides fold to DISTINCT pairs first — match-acceptance math that punishes raw row counts, the two-sided-census ratio in miniature. Theme-curated." },
+    { slug: "find-top-performing-driver", why: "On-time-rate argmax behind a five-run qualification gate — driver leaderboards done honestly: filter to eligible drivers first, then take the top, never the reverse order. Theme-curated." },
+    { slug: "calculate-special-bonus", why: "A bonus rule that must keep NULL employees at full salary — incentive math where 'no bonus row' means pay as-is, not zero, and IS NULL thinking is the whole screen. Theme-curated." },
+    { slug: "bikes-last-time-used", why: "Fleet recency by MAX(end_time) per asset — micromobility's rebalancing read: which bikes went unused longest, computed from timestamps, never from trip ids. Theme-curated." },
+    { slug: "the-number-of-passengers-in-each-bus-i", why: "Every rider boards the earliest bus at or after their arrival — supply-to-demand pairing under an as-of rule, the queue shape behind dispatch and pickup windows. Theme-curated." },
+    { slug: "sessionize-events", why: "Sessionization by time gap with LAG — turning a raw rider event stream into one row per ride session, the pipeline step every trip metric silently assumes. Theme-curated." },
+    { slug: "biggest-window-between-events", why: "The biggest gap between consecutive events via LEAD — rider lapse detection: the longest silence between trips is a churn signal, and window date math is how it's measured. Theme-curated." },
+    { slug: "report-contiguous-dates", why: "Gaps-and-islands over days — scattered cancellations become contiguous outage windows city ops can own, the streak shape behind surge post-mortems. Theme-curated." },
+    { slug: "monthly-transactions-i", why: "A month-by-month census where cancelled requests still count in one column and their money in another — refund-and-credit accounting at month grain, CASE branches folding in one pass. Theme-curated." },
+    { slug: "median-time-to-convert", why: "Median time-to-convert behind a cohort gate — ETA-style latency where the median, not the mean, is the honest center, and the emulation over ordered rows is the skill. Theme-curated." },
+    { slug: "game-play-analysis-v", why: "Day-1 return share: of the riders whose first trip landed on a given day, what share came back the next — activation rate with the first-event fold as the denominator. Theme-curated." },
   ],
 };

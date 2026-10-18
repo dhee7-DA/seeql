@@ -30,7 +30,7 @@ export const whatsappKit: CompanyKit = {
     "**WhatsApp** is the world's largest messenger — one-to-one chats, groups, voice notes, Status and Communities at a scale where the user count stops being a marketing number and becomes a rounding fact of the internet. The product is famously ad-free, but the business has a real monetization engine: the WhatsApp Business Platform (the Business API), where businesses hold conversations with people through BSP partners and pay per conversation — message templates split into Utility, Marketing and Authentication tiers, click-to-WhatsApp ads open threads from the feed, and catalogs turn chats into checkout. This kit maps the storefront db onto that world: the 16 customers rows are business accounts (region = market), the 103 orders are business conversations worth **34,833.28**, and the 251 order_items rows are conversation line records — quantity = message units, unit_price = the per-conversation rate by tier. The status map is fixed: delivered = {emerald:completed billable} (52, 50.5%), shipped = inside the {sky:24h window} (30, 29.1%), pending = queued template (14, 13.6%), cancelled = {rose:opted out} (7, 6.8%).",
     "The data org runs three loops and they read the same spine at different grains. Messaging growth watches the session telemetry: a conversation books at created_at, and `shipped_at` is stamped the moment the 24h window actually opens — **82 of 103 conversations** carry the stamp, opening at a **2.98-day** average with a 2–4 day spread, while the 14 queued templates have none yet (a population definition, not a cleanup job). The monetization pod owns tier mix and rates: line records carry the tier family, and every rate question starts from completed billable conversations, not conversations started. Money sits one layer down: invoices and payments in INTEGER cents, where the dollar read is `amount_cents / 100.0` — card rails moved 37,364 across 16 settlements, wire rails 32,248 across 11. Concentration is the third story: **63.5%** of the book sits with accounts whose lifetime spend crosses 3,000 (71.2% above 2,000) — one enterprise account churning moves a quarter.",
     "Interview screens are census-then-denominator, with a messaging twist. A typical loop opens with a **two-grain market census** — EU runs 45 conversations from just 8 accounts (intensity 5.6) while the US runs 19 from 2 (9.5) — then escalates into a rate where the interviewer asks the denominator out loud (*'does a queued template count in your base?'*), then into the engagement leaderboard where four accounts sit tied at 4 conversations and rank semantics become a policy call about peer enterprise logos. Late rounds walk the {sky:14-month conversation spine} (2024-01 to 2025-02) with `LAG` deltas and probe the first row's NULL, or dip into the BSP billing book where a paid-status invoice with zero settlement rows (#28, 1,756.00) is waiting to be caught. Candidates who state the status filter and the denominator before writing SQL are the ones who get callbacks.",
-    "Preparation strategy: the pools file carries no WhatsApp section — 0 tagged rows — so all sixteen problems and every topic slug here are **theme-curated** to this kit's known screen shapes: status censuses, two-grain market reads, tie-heavy leaderboards, tier CASE bands, partition-share windows and the cents-safe billing spine. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {emerald:trusted-BSP bench} audit the partner team runs before each quarterly review, the other rebuilds the {sky:tier-mix share board} the growth read presents per market. The bar to clear: *state the definition and the denominator before you compute anything* — then make every status census reconcile to 103 by construction, and every market's tier shares foot to 100.",
+    "Preparation strategy: the pools file carries no WhatsApp section — 0 tagged rows — so all thirty-two problems and every topic slug here are **theme-curated** to this kit's known screen shapes: status censuses, two-grain market reads, tie-heavy leaderboards, tier CASE bands, partition-share windows and the cents-safe billing spine. Do the topics in order, then run the six case studies on the live storefront db: the {emerald:trusted-BSP bench} audit the partner team runs before each quarterly review, the {sky:tier-mix share board} the growth read presents per market, the {rose:never-settled account list} billing takes into the close, the one-pass {violet:status census} the morning dashboard asserts itself with, the {orange:jump on the conversation spine} the growth call narrates from, and the {emerald:settlement rails census} the cash-forecast memo quotes. The bar to clear: *state the definition and the denominator before you compute anything* — then make every status census reconcile to 103 by construction, and every market's tier shares foot to 100. This expanded kit is built for spaced practice rather than one sitting: run each case once, then re-run it a week later from a blank editor — *the second pass is where recall actually forms*.",
   ],
 
   dayInLife: [
@@ -54,12 +54,12 @@ export const whatsappKit: CompanyKit = {
     {
       name: "Conversation status censuses",
       why: "Every WhatsApp monetization screen opens with the funnel: conversations opened, windows actually opened (shipped_at stamped), completed billable. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling an active-window thread 'billable' — 30 versus 52 on this db.",
-      slugs: ["immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "active-businesses"],
+      slugs: ["immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "active-businesses", "funnel-step-conversion", "email-engagement-funnel", "find-zombie-sessions", "median-time-to-convert"],
     },
     {
       name: "Two-grain market censuses",
       why: "Conversations and business accounts are different grains of the same join, and every census here reports both: EU runs 45 conversations from 8 accounts while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is volume and which is coverage — is the habit being graded.",
-      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "find-followers-count"],
+      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "find-followers-count", "popularity-percentage"],
     },
     {
       name: "Joining accounts to conversations",
@@ -84,7 +84,7 @@ export const whatsappKit: CompanyKit = {
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month conversation spine (2024-01 to 2025-02) is the growth call's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) and jump (+1,158.21 into August) named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "movie-rating"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "movie-rating", "rolling-7d-actives", "new-users-daily-count", "sessionize-events", "find-bursty-behavior", "second-most-recent-activity", "growth-accounting", "median-time-to-convert"],
     },
     {
       name: "Nested folds & tier gates",
@@ -94,12 +94,12 @@ export const whatsappKit: CompanyKit = {
     {
       name: "Set ops & opt-out anti-joins",
       why: "Board packets stack populations — active-window threads under opted-out threads, this quarter beside last — and EXCEPT answers 'which billed accounts never settled'. The opt-out read is the anti-join: threads blocked before the window opened never bill, and on the finance side the unpaid-invoice anti-join returns a real 6 rows worth 15,217, not a zero.",
-      slugs: ["customers-who-never-order", "monthly-transactions-ii", "find-churn-risk-customers"],
+      slugs: ["customers-who-never-order", "monthly-transactions-ii", "find-churn-risk-customers", "dormant-reactivation", "winback-recovery"],
     },
     {
       name: "Billing rails & cents discipline",
       why: "Opened is not billed, billed is not collected — the finance tables (28 invoices, 27 payments, INTEGER cents) are where the messaging world meets money. Every dollar read is amount_cents / 100.0, the rails split card versus wire, and the exact/partial/none coverage split (21 / 1 / 6) is one CASE away.",
-      slugs: ["bank-account-summary-ii", "products-worth-over-invoices", "number-of-rich-customers"],
+      slugs: ["bank-account-summary-ii", "products-worth-over-invoices", "number-of-rich-customers", "ar-aging-schedule", "generate-the-invoice", "duplicate-charge-pairs"],
     },
   ],
 
@@ -151,6 +151,102 @@ export const whatsappKit: CompanyKit = {
       q: "Finance says an invoice is 'paid' but the payments table has no rows for it. Walk me through the reconciliation query you write first — and the money rule you never break while writing it.",
       a: "First the anti-join: invoices LEFT JOIN payments, keep p.id IS NULL — on this db that returns 6 invoices worth 15,217, and one of them (#28, 1,756.00) is marked 'paid' with zero settlement rows: a status that lies, which is why payment rows are the ledger of record and the status column is a claim. Then the anomaly flip: a void invoice WITH a payment row (this db has one, #11 at 925.00) never appears in that anti-join — the two error modes are mirrors, and both reconcile to the row-level anomaly list, not to vibes. The money rule: invoices and payments carry INTEGER cents, so every dollar read is amount_cents / 100.0 — the missing .0 turns a 1,756.00 print into 1,756 and quietly eats cents on every odd-cent row. Reconciliation culture here: the coverage split must read 21 exact / 1 partial (4,000 of 6,148) / 6 never-collected, the rails must foot card 37,364 plus wire 32,248, and the ledger trial balance must land at 181,080 debits against 181,080 credits — delta zero, or the close does not ship.",
       tag: "quality",
+    },
+    {
+      id: "whatsapp-t9",
+      q: "Walk me through the three counts — COUNT(*), COUNT(shipped_at) and COUNT(DISTINCT customer_id) — on the conversations table, and the story each tells the business.",
+      a: "COUNT(*) counts rows: 103 conversations opened, no exceptions — the denominator every rate gets judged against. COUNT(shipped_at) counts non-NULL window-open stamps: 82 threads whose 24h window actually opened — the gap to COUNT(*) is exactly the 14 queued templates plus 7 opted-out threads, so the gap itself is a queue-and-trust read. COUNT(DISTINCT customer_id) folds the 103 conversations back to 16 business accounts — the installed base behind the volume. Three counts, three grains: threads, opened threads, logos. The trap is letting one query imply all three: a dashboard that labels COUNT(*) 'accounts active' is a 6× lie. On this db the counts are 103, 82 and 16 — and a strong candidate can say, unprompted, which one the slide in front of them is actually showing.",
+      tag: "aggregation",
+    },
+    {
+      id: "whatsapp-t10",
+      q: "You need message-unit detail beside conversation-level billed totals. How do you join order_items for the line records without triple-counting the book?",
+      a: "Name the two grains and never aggregate across them in one expression. The conversation grain (orders) holds the billed total — 34,833.28 over 103 rows; the line-record grain (order_items) holds 251 rows of message units at per-conversation tier rates. Join them for detail and SUM(o.total) on the joined rows re-adds each conversation's value once per line — 103,244.55 on this db, roughly triple the book. The fixes: aggregate at the conversation grain FIRST (CTE or derived table), then join the fold to line detail; or aggregate at the line grain (SUM(quantity × unit_price)) and never touch orders.total in the same query. On the Business API the error has a literal price tag, because the per-conversation rate multiplies at exactly one of those grains. 'One row per what?' is the whole defense.",
+      tag: "joins",
+    },
+    {
+      id: "whatsapp-t11",
+      q: "When do you reach for a window with PARTITION BY instead of GROUP BY in the messaging reporting?",
+      a: "When the row must survive. GROUP BY folds: 103 conversations become 16 per-account rows, and every other column must be an aggregate or disappear. PARTITION BY annotates: COUNT(*) OVER (PARTITION BY customer_id) stamps every conversation with its account's total — 24 beside each of the top account's threads — while rows stay intact. The messaging reads that need the annotated shape: each conversation beside its account's running billed value, each thread beside its market's average, each account beside its market's conversation count. The decision test is 'does the output keep one row per conversation?' If yes, windows; if the deliverable IS the fold, GROUP BY. They compose: GROUP BY builds the per-market fold, then a window over the fold computes tier-mix shares — which is exactly the share-board shape this kit's case runs.",
+      tag: "windows",
+    },
+    {
+      id: "whatsapp-t12",
+      q: "Growth wants month-over-month billed deltas and a 'two consecutive down months' flag on the conversation spine. Where do LAG and LEAD each belong, and what do you do about the edge rows?",
+      a: "LAG reads the previous row — this month versus last, the delta column, the fade detection; LEAD reads the next — 'what happened the month after the spike', the forward view for post-mortems. Both return NULL at the edges: the first month has no prior, the last has no next, and the policy is to report the NULL as 'baseline', never to coalesce it to zero — a zero delta on the spine's first row reads as a flat month that never happened, and a two-down-months streak checker that sees an invented 0 will fire on fake data. The flag itself stacks in a second staging step: compute deltas in a CTE (window output is not visible to WHERE in the same SELECT), then a window counts consecutive negative deltas — gaps-and-islands over the red rows. One structural requirement: the spine must be complete. A missing month silently shifts every LAG pair, so build it from a calendar dimension or prove the gaps away first.",
+      tag: "windows",
+    },
+    {
+      id: "whatsapp-t13",
+      q: "STRFTIME, julianday and the half-open window — how do you slice the conversation calendar on TEXT timestamps without losing threads at the edges?",
+      a: "Three tools, three jobs. Bucketing: STRFTIME('%Y-%m', created_at) — year plus zero-padded month, 14 spine buckets on this db; '%m' alone merges January 2024 with January 2025 and the trend becomes fiction. Calendar math: julianday(shipped_at) − julianday(created_at) — the window-open latency, 2.98 days on this db's 82 stamped threads; julianday converts TEXT stamps to float days so subtraction is honest arithmetic, and string subtraction starts lying at month boundaries ('10' minus '9' is fine; '2024-10-01' minus '2024-09-30' is not a number at all). Range filters: half-open windows — created_at >= '2024-01-01' AND created_at < '2024-04-01' — because BETWEEN against '2024-03-31' drops everything after midnight, and quarter-end is exactly when click-to-WhatsApp campaigns land their push. The quiet dependency: string comparison only works because ISO dates sort lexicographically — any non-ISO format in the column poisons every range filter silently.",
+      tag: "dates",
+    },
+    {
+      id: "whatsapp-t14",
+      q: "COALESCE, IFNULL and NULLIF — give the policy for each on the Business Platform's telemetry, with one place each earns its keep.",
+      a: "COALESCE walks a fallback list — the display policy: COALESCE(shipped_at, 'awaiting window') prints an honest sentinel for the 14 queued templates instead of a blank that reads as broken. IFNULL is the two-argument twin — same job, shorter; reach for COALESCE when the fallback chain is real. NULLIF is the opposite move: it returns NULL when the two agree — the divide-by-zero guard. Every per-account ratio in this kit (conversations per account, billed per thread) is one zero-conversation account away from division by zero, and NULLIF(denominator, 0) turns that into a NULL the dashboard labels 'n/a' instead of an infinity in a board deck. The policy line that separates a strong candidate: COALESCE and IFNULL change what MISSING data displays as; NULLIF manufactures a missing value to protect a computation. They are not interchangeable, and 'I coalesce everything to zero' is the answer that ends the screen — a queued template is not a zero-day conversation; it is no conversation yet.",
+      tag: "nulls",
+    },
+    {
+      id: "whatsapp-t15",
+      q: "Billing asks 'which business accounts have never settled a single statement?' — walk me through the set-operation shape, and where the naive version lies.",
+      a: "Two folds, one difference. Branch one: fold invoices per account to (account, billed). Branch two: the same fold restricted to accounts that appear behind a settlement — an IN subquery walking payments → invoices → customer ids. EXCEPT subtracts the second set from the first, and on this db three accounts survive: Hiro Tanaka 1,756 (the #28 paid-status lie), Chloe Dubois 1,295, Pedro Alvarez 873. The lie lives in the shapes: EXCEPT compares whole TUPLES, so branch two must carry identical columns and identical fold semantics — a branch that sums only SETTLED invoices produces different dollar figures, and partially-settled accounts (Emma: 4 statements, 3 settled) silently survive a dunning list they do not belong on. The alternative shapes: NOT EXISTS for the NULL-safe probe, or a LEFT JOIN + IS NULL at invoice grain. UNION answers 'who ever touched billing at all' and INTERSECT answers 'who settled' — the operator choice IS the business question.",
+      tag: "set-ops",
+    },
+    {
+      id: "whatsapp-t16",
+      q: "The tier-mix board needs billed value per market×tier, then each cell's share of ITS market. How do you stage that so the shares foot to 100 per market?",
+      a: "Fold first, share second. The CTE joins line records → conversations → accounts → tier products and folds the market×tier grid to billed value per cell. The outer SELECT computes share = 100.0 × billed_value / SUM(billed_value) OVER (PARTITION BY market): the window recomputes each market's book inside its partition, so every market's shares sum to 100 by construction — no second query, no HAVING gymnastics. The two mistakes that break the foot: ORDER BY inside the window instead of PARTITION BY (a running sum as denominator — shares climb cell by cell toward nonsense), and partitioning by tier instead of market (each family's share of the whole PLATFORM — the global mix, not the market mix the board priced against). The multiplier needs the .0 — 100.0 before the division — or integer arithmetic truncates the first decimal off every share. This is the exact shape of the tier-mix case in this kit: fold, partition, divide, and the foot-check is the deck's receipt.",
+      tag: "ctes",
+    },
+    {
+      id: "whatsapp-t17",
+      q: "EXISTS, IN, or a derived table — pick one for 'accounts with at least one opted-out thread' and defend it.",
+      a: "EXISTS, and the defense is threefold. Semantics: the ask is an existence probe — at least ONE cancelled row — which is what EXISTS(short-circuits on the first match) answers; IN materializes the whole status list and compares membership. NULL safety: EXISTS never trips on NULLs; NOT IN over a column that ever carries one returns an empty result silently — the staging-table failure mode this kit's screens drill, and an empty trust-and-safety report is the worst possible failure mode for a trust-and-safety report. Scale behavior: the semi-join shape lets the engine probe an index instead of building a list. The derived table wins when the subquery is itself an aggregation — 'accounts with 2+ opted-out threads' needs GROUP BY customer_id HAVING COUNT(*) >= 2 staged first. So the honest answer names the boundary: existence → EXISTS; aggregated property → derived table or CTE; IN → small static lists only. 'They all work' is true and beside the point.",
+      tag: "subqueries",
+    },
+    {
+      id: "whatsapp-t18",
+      q: "How does GROUP BY treat NULLs — and why does the status census still reconcile to 103 by construction?",
+      a: "GROUP BY treats NULL as its own group: all NULL values fold into one bucket — which is why a window-open census (grouping by shipped_at presence) puts the 21 unstamped threads in one visible 'no window yet' group instead of scattering them across markets. The status census reconciles because status is NOT NULL: every one of the 103 conversations carries exactly one of the four stage labels, so the conditional counts partition the table with no remainder — 52 + 30 + 14 + 7 = 103 by construction, not by audit luck. The two census traps: a typo'd arm ('deliverd') doesn't error — it silently prints 0 and the total comes up 51, so the reconciliation identity IS the typo alarm; and COUNT(column) instead of COUNT(*) shrinks the denominator on sparse columns and breaks the identity. The strong answer states the identity out loud — arms exhaustive, ELSE 0, COUNT(*) denominator — because that identity is what lets three dashboard tiles share one number without drifting.",
+      tag: "groupby",
+    },
+    {
+      id: "whatsapp-t19",
+      q: "The engagement leaderboard needs a top-5 cut. What does LIMIT do to a tie, and how do you cut a top-N fairly?",
+      a: "LIMIT is positional and blind to ties: ORDER BY conversations DESC LIMIT 5 keeps the accounts at 24, 17, 14, 13 and 5 — and the four accounts tied at 4 are simply absent, with no say in which five logos 'won'. If two accounts tie ON the cut boundary, LIMIT picks one arbitrarily by whatever order the plan found — a silent judgment call about which enterprise logo gets the named solutions engineer. The fair cuts: rank windows — RANK() OVER (ORDER BY conversations DESC) <= 5 keeps tied peers on shared rungs, so a boundary tie visibly admits six accounts; or an explicit, named tie-breaker — ORDER BY conversations DESC, account ASC LIMIT 5 — deterministic and states its politics. What never passes review: LIMIT without ORDER BY (undefined), or LIMIT with a silent tie. On a messenger leaderboard the tie IS the story; the cut should be able to say out loud what it does with one.",
+      tag: "pipeline",
+    },
+    {
+      id: "whatsapp-t20",
+      q: "EU and APAC both have 3 opted-out threads. Same numerator — why does the review treat the markets differently, and how do you compute the share so it survives scrutiny?",
+      a: "Because the denominator is the story: 3 of 45 conversations in EU is 6.7%, 3 of 37 in APAC is 8.1% — APAC's opt-out posture is worse per thread, and the raw counts hide exactly that. Construction rules: state the denominator BEFORE computing (all conversations opened, including queued templates — the house rule from the window-open read), force real arithmetic with 100.0 * numerator / COUNT(*) so integer division cannot truncate 6.7 to 6, and round at the display edge, not inside the ratio. Then the honesty layer: small denominators get caveats — LATAM's 0% opt-out share is 0 of 2, arithmetic not safety — and the census identity backs the number (arms exhaustive, reconciles to 103 by construction). The follow-up is always 'what changed your denominator?' — computing opt-out share over ACTIVE threads only, for instance, deletes the very threads that opted out and quietly flatters every market.",
+      tag: "ratios",
+    },
+    {
+      id: "whatsapp-t21",
+      q: "Template names and account keys arrive messy — ' order_update ', 'ORDER-UPDATE'. What's the SQL hygiene kit, and which fields must never be cleaned after the fold?",
+      a: "The kit: TRIM for padding, UPPER or LOWER for case-folding, REPLACE for separators and junk characters, LENGTH for the template-body caps the API enforces — and the order matters: trim, then fold, then join or group. The invariant: any column used as a JOIN or GROUP BY key gets normalized on BOTH sides in the same vocabulary — joining a template registry's name to the send log fails silently if one side is 'Order_Update' and the other 'order-update', because string equality is byte equality. Display columns can keep their case; key columns cannot. The rule that trips candidates: never clean AFTER the fold — GROUP BY ran on the un-normalized keys, so ' Order_Update ' and 'order_update' are already two rows and the template-performance read is quietly split. The test: re-run the distinct count after hygiene — if COUNT(DISTINCT LOWER(TRIM(name))) is smaller than COUNT(DISTINCT name), you had split keys, and every historical number grouped on the raw column inherits the split.",
+      tag: "strings",
+    },
+    {
+      id: "whatsapp-t22",
+      q: "One-pass censuses: FILTER (WHERE …), SUM(CASE WHEN …), and GROUP BY — when does each win on the conversation tables, and can they coexist?",
+      a: "GROUP BY wins when the output shape is rows-per-group and nothing needs to sit beside the groups — the market×status detail read. The two conditional-aggregation shapes win when every count must share one row — the morning census the dashboard tiles all divide by: SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) is the portable classic; COUNT(*) FILTER (WHERE status = 'delivered') is the modern SQLite/Postgres form that states the predicate as a predicate — same numbers, more legible definition, and it composes with ROUND and division without nesting CASE inside CASE. They coexist freely in one SELECT, and the choice is house style plus engine support. The discipline both shapes demand: arms exhaustive (ELSE 0), denominators COUNT(*), and the reconciliation identity — 52 + 30 + 14 + 7 = 103 — checked in the same query. A census that can't prove its own arms are exhaustive is a screenshot, not a metric.",
+      tag: "filters",
+    },
+    {
+      id: "whatsapp-t23",
+      q: "How do you version a metric definition like 'completed billable' so three dashboards don't drift into three different revenue numbers?",
+      a: "Treat the definition as a table, not a vibe. The registry entry states: the grain (one row per conversation), the filter (status = 'delivered' — NOT 'not cancelled', which quietly admits the 30 active windows and 14 queued templates), the denominator it reports against (all 103 opened, not just stamped), and the owner. Every dashboard queries the registry's canonical fold — or the table it materializes — instead of re-deriving the filter from memory, which is where drift is born: someone writes status != 'cancelled', the number moves from 52 to 96, and three teams present for a week before anyone notices the revenue lens tripled. The audit query reconciles on every run: the four stage arms must sum to COUNT(*) — 52 + 30 + 14 + 7 = 103 by construction — and any miss is an incident, not a rounding note. Version changes are announced, dated, and run side-by-side for a cycle, because 'completed billable' moving its definition silently invalidates every trend line that quoted it.",
+      tag: "quality",
+    },
+    {
+      id: "whatsapp-t24",
+      q: "Cumulative billed value, rolling average, and the tie problem: build both from the same window, and explain when the default frame betrays you.",
+      a: "Same walk, different frames. Cumulative: SUM(total) OVER (PARTITION BY customer_id ORDER BY created_at) — the default frame RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW accumulates from the account's first conversation. Rolling average: AVG(total) OVER (PARTITION BY customer_id ORDER BY created_at ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) — the frame must be stated, because the default never stops looking backwards. The betrayal is RANGE vs ROWS: RANGE includes PEERS — rows tied on the ORDER BY key enter the cumulative together, so two conversations sharing a created_at second jump the running total twice at once; ROWS walks strictly one row at a time. On a month spine ties are rare; at conversation grain, click-to-WhatsApp bursts make them guaranteed, and the honest choice is ROWS (or accepting that a burst is one simultaneous event). The expert flourish: with a date axis, RANGE peers 7 DAYS back while ROWS peers 7 ROWS back — if a day is missing, only one of those is the trend the stakeholder asked for.",
+      tag: "windows",
     },
   ],
 
@@ -275,6 +371,341 @@ export const whatsappKit: CompanyKit = {
       ],
       difficulty: "hard",
     },
+    {
+      id: "whatsapp-mcq-11",
+      prompt: "The morning dashboard needs all four stage counts — 52 billable, 30 active windows, 14 queued, 7 opted out — in ONE row from ONE scan. Which pattern delivers that shape?",
+      choices: [
+        "Four separate GROUP BY status queries pasted side by side",
+        "Four SUM(CASE WHEN status = … THEN 1 ELSE 0 END) columns in a single SELECT",
+        "COUNT(DISTINCT status) beside COUNT(*)",
+        "GROUP BY status with COUNT(*)",
+      ],
+      answer: 1,
+      why: "Conditional aggregation folds each status into its own column in one pass — the one-row census shape the tiles share, with the reconciliation identity visible (52 + 30 + 14 + 7 = 103). GROUP BY status computes the same numbers as four ROWS, which then have to be pivoted by hand.",
+      notes: [
+        { choice: 3, why: "Correct counts, wrong shape: four rows that a dashboard then transposes. The ask fixed the shape — one row — and conditional aggregation is the tool that obeys." },
+        { choice: 2, why: "COUNT(DISTINCT status) counts status labels (4), not conversations per status. A column count wearing a census name." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "whatsapp-mcq-12",
+      prompt: "Billing wants the single most expensive conversation, and two threads can tie at the top of the book. Which read returns the NUMBER safely regardless of ties?",
+      choices: [
+        "SELECT MAX(total) FROM orders",
+        "SELECT id, total FROM orders ORDER BY total DESC LIMIT 1",
+        "SELECT id, total FROM orders WHERE total = MAX(total)",
+        "SELECT TOP 1 total FROM orders",
+      ],
+      answer: 0,
+      why: "MAX(total) aggregates to the value itself — ties change nothing about the number. ORDER BY … LIMIT 1 returns one arbitrary row among tied peaks (fine for 'show me A thread', wrong when you promised THE value), and an aggregate inside a row-level WHERE is a syntax error.",
+      notes: [
+        { choice: 1, why: "LIMIT 1 works until the tie: SQLite then picks one arbitrarily — you presented one thread as THE peak when two share it. For a row, add a named tie-breaker and say so." },
+        { choice: 3, why: "TOP is SQL Server syntax — SQLite errors on sight. Engine vocabulary is part of the screen." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "whatsapp-mcq-13",
+      prompt: "The conversation trend must bucket 2024-01 and 2025-01 into DIFFERENT months. Which key does that?",
+      choices: [
+        "STRFTIME('%m', created_at)",
+        "STRFTIME('%Y-%m', created_at)",
+        "STRFTIME('%Y', created_at)",
+        "UPPER(created_at)",
+      ],
+      answer: 1,
+      why: "Year plus zero-padded month — '%Y-%m' — yields 14 distinct spine buckets on this db from 2024-01 to 2025-02. '%m' alone merges the two Januarys into one fake bucket; '%Y' collapses the spine to two rows.",
+      notes: [
+        { choice: 0, why: "The '%m' trap: Jan 2024 and Jan 2025 fold together, the trend doubles some months and invents a 13-month year." },
+        { choice: 2, why: "A year key is a 2-bucket chart — the seasonality the growth call needs is erased." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "whatsapp-mcq-14",
+      prompt: "Billing prints dollars from INTEGER-cent money. Why is the house read amount_cents / 100.0 and not amount_cents / 100?",
+      choices: [
+        "Identical today — cents are always whole dollars, so the .0 is decoration",
+        "/ between two INTEGERs truncates the sub-dollar remainder — harmless on this book's whole-dollar rows, silently wrong the day an odd-cent settlement lands",
+        "/ 100 rounds to the nearest dollar",
+        "SQLite cannot divide two INTEGERs",
+      ],
+      answer: 1,
+      why: "Integer ÷ integer is integer division: 12,349 cents prints 123, not 123.49. On this db every ledger sum happens to be a whole multiple of 100, so the bug is invisible today — which is exactly why the /100.0 convention is drilled: the discipline has to hold before the data turns odd.",
+      notes: [
+        { choice: 0, why: "True today, and that is the trap — the convention exists for the odd-cent settlement that arrives next quarter, not for the rows that made the rule." },
+        { choice: 2, why: "Nothing rounds: integer division discards. 12,399 / 100 is 123, not 124 — ROUND is a separate, later step." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "whatsapp-mcq-15",
+      prompt: "The BSP partner review counts Nordic Gadgets' tier products. The suppliers → products → order_items chain folds 43 line records touching Nordic products. Which expression reads 3 — the true product count?",
+      choices: [
+        "COUNT(oi.id)",
+        "COUNT(DISTINCT p.id)",
+        "COUNT(DISTINCT oi.id)",
+        "SUM(p.id)",
+      ],
+      answer: 1,
+      why: "The line-record grain fans each product out to every conversation line that references it — 43 rows covering 3 tier products. COUNT(DISTINCT p.id) folds back to the catalog; everything counting oi rows reports messaging volume wearing a product-count name.",
+      notes: [
+        { choice: 0, why: "43 — one per line record. A real number answering 'how active is this partner's product', not 'how wide is its catalog'." },
+        { choice: 3, why: "SUM over ids adds key values — a meaningless figure that changes when a product re-registers. Aggregates over keys are category errors." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "whatsapp-mcq-16",
+      prompt: "The pricing page bands conversation rates with a CASE — Utility, Marketing, Authentication arms — but omits the ELSE. What lands in the fourth band?",
+      choices: [
+        "Rows matching no arm are dropped from the result",
+        "Rows matching no arm return NULL — a fourth, unnamed band that COUNTs as a hole in the rate card",
+        "SQLite raises an error at compile time",
+        "The first arm's value is reused for unmatched rows",
+      ],
+      answer: 1,
+      why: "CASE with no ELSE returns NULL on no-match — so any rate not caught by the three arms becomes an invisible fourth tier. The band census shows a NULL band with its own count, and the billed forecast is short by exactly that population.",
+      notes: [
+        { choice: 0, why: "Nothing is dropped — the row survives with NULL in the band column. Silent NULL bands are worse than dropped rows: they pass every COUNT that isn't looking." },
+        { choice: 2, why: "No error — NULL-on-no-match is standard CASE semantics. The hole is silent, which is why exhaustive arms are a review gate." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "whatsapp-mcq-17",
+      prompt: "Count Q1 conversations — January 1 through March 31, quarter-end push included. Which WHERE clause keeps them all?",
+      choices: [
+        "WHERE created_at BETWEEN '2024-01-01' AND '2024-03-31'",
+        "WHERE created_at >= '2024-01-01' AND created_at < '2024-04-01'",
+        "WHERE MONTH(created_at) BETWEEN 1 AND 3",
+        "WHERE created_at LIKE '2024-0%'",
+      ],
+      answer: 1,
+      why: "Timestamps carry a time-of-day, so '2024-03-31' as an upper bound excludes everything after midnight — exactly when quarter-end CTWA campaigns land their push. The half-open range [Jan 1, Apr 1) keeps all of March including its final hours.",
+      notes: [
+        { choice: 0, why: "BETWEEN is inclusive on both ends against a bare date string — '2024-03-31T18:22' sorts after '2024-03-31' and drops out of the bucket silently." },
+        { choice: 3, why: "The pattern matches April through September too — '2024-0%' is a coincidence of digits, not a calendar. It over-counts by six months." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "whatsapp-mcq-18",
+      prompt: "The billed-value spine opens at 2024-01 (3,731.97) and its delta column reads NULL for that first row. What ships?",
+      choices: [
+        "COALESCE it to 0 so the chart has no gaps",
+        "Report it as NULL / 'baseline' — there is no prior month to differ from",
+        "Drop the row so the chart starts at February",
+        "Fill it with the average delta across the spine",
+      ],
+      answer: 1,
+      why: "The first month's delta is NULL by definition — no prior row, no baseline, no change. Coalescing to 0 invents a flat January and corrupts every downstream 'streak of down months' check that treats 0 as a real reading.",
+      notes: [
+        { choice: 0, why: "0 is a factual claim — 'no change' — about a month that had nothing to change against. This is exactly how fake flat months are born." },
+        { choice: 2, why: "Dropping the row amputates January's 3,731.97 and shifts every LAG pair — the spine no longer reconciles to 13 buckets or to 103 conversations." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "whatsapp-mcq-19",
+      prompt: "Billing's dunning draft uses a LEFT JOIN from invoices to payments but returns only 22 statements — the 6 never-collected are gone. What happened?",
+      choices: [
+        "The LEFT JOIN is buggy — it dropped unmatched rows",
+        "A WHERE on a payments column (like p.method = 'card') filtered the NULL payloads away, silently downgrading the LEFT JOIN to an INNER JOIN",
+        "GROUP BY collapsed the 6 unmatched rows into one",
+        "Statements with no payments cannot appear in any join",
+      ],
+      answer: 1,
+      why: "The classic silent downgrade: a WHERE predicate on the right table's column kills every NULL-payload row (NULL = anything is UNKNOWN), and 28 − 6 = 22 is exactly the inner-join result. The fix is moving the predicate into the ON clause — or testing p.id IS NULL when the dunning rows are the point.",
+      notes: [
+        { choice: 3, why: "Backwards — unmatched rows are precisely what a LEFT JOIN preserves; they arrive with NULL right-side columns. Deleting them is the WHERE's doing, not the join's." },
+        { choice: 0, why: "The join behaved exactly as written. The WHERE clause did the damage; fixing the join type would only hide the filter that caused it." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "whatsapp-mcq-20",
+      prompt: "The partner newsletter wants each market's BSP partners folded into one comma-separated cell. Which aggregate turns partner ROWS into that string?",
+      choices: [
+        "CONCAT(s.name, ',')",
+        "GROUP_CONCAT(DISTINCT s.name)",
+        "STRING_AGG(s.name, ',')",
+        "s.name || ','",
+      ],
+      answer: 1,
+      why: "GROUP_CONCAT is SQLite's row-to-string fold: GROUP_CONCAT(DISTINCT s.name) per market returns the partner list as one cell. CONCAT and || join values inside a single row's expression — they cannot fold six partner rows into one.",
+      notes: [
+        { choice: 2, why: "STRING_AGG is the Postgres/standard name — SQLite answers to GROUP_CONCAT. The vocabulary trip between engines is the point of the question." },
+        { choice: 0, why: "CONCAT operates per row — it appends a comma to each partner name individually, producing six strings, not one." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "whatsapp-mcq-21",
+      prompt: "Settlement days = issue-to-payment. Five statements settled on TWO legs (two payment rows, different days). Which read keeps the average honest at 28.4 days over the 20 statements that carry legs?",
+      choices: [
+        "AVG(julianday(p.paid_on) − julianday(i.issued_on)) over the invoices ⋈ payments join",
+        "First fold to the FIRST leg per statement — MIN(p.paid_on) — then average the per-statement days",
+        "AVG over payments rows only, ignoring statements with no legs",
+        "Use MAX(p.paid_on) so no statement is ever underestimated",
+      ],
+      answer: 1,
+      why: "The join fans each two-leg statement into two rows, so the naive join average weights those five statements twice — their second legs dragging the number. Folding to MIN(paid_on) restores the statement grain first; then the average reads time-to-first-settlement, which is what the 28.4 figure names.",
+      notes: [
+        { choice: 0, why: "27 payment rows over 22 statements-with-legs — the five split statements contribute two rows each and the average drifts toward their later legs. A grain bug, not a rounding issue." },
+        { choice: 3, why: "MAX measures 'when did we finish collecting' — the dunning clock, not time to first settlement. Naming the metric pins the fold." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "whatsapp-mcq-22",
+      prompt: "A teammate joins order_items to fetch message-unit detail and reports total billed value as 103,244.55 — nearly triple the book's 34,833.28. Diagnosis?",
+      choices: [
+        "order_items.total carries a different rate scale",
+        "The join fanned each conversation out to its line records — SUM(o.total) then re-added each conversation's value once per line (251 lines over 103 conversations)",
+        "SUM ignores NULL totals, inflating the rest",
+        "Rounding accumulated across the 251 rows",
+      ],
+      answer: 1,
+      why: "Joining the line-record grain multiplies each conversation row by its line count, and SUM over the fattened rows re-adds each conversation's value per line — the ~3× inflation. Aggregate at the conversation grain BEFORE joining for detail, or fold at the line grain (quantity × unit_price) and never touch orders.total in the same query.",
+      notes: [
+        { choice: 2, why: "Totals are NOT NULL — NULL handling changes nothing here. The inflation factor is the fan-out, which is structural, not value-dependent." },
+        { choice: 3, why: "This book's cent sums land on whole multiples; a 3× jump is a shape problem, not floating-point noise. Rounding never triples anything." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "whatsapp-mcq-23",
+      prompt: "A template publish pipeline double-booked an approval — same template key, same approved_at, different id. Which fragment keeps exactly the latest approved version?",
+      choices: [
+        "SELECT DISTINCT template_key, approved_at FROM templates",
+        "ROW_NUMBER() OVER (PARTITION BY template_key, approved_at ORDER BY id DESC) = 1 — keep rn = 1",
+        "GROUP BY template_key HAVING COUNT(*) > 1, then delete both copies",
+        "ROW_NUMBER() OVER (ORDER BY approved_at) = 1",
+      ],
+      answer: 1,
+      why: "PARTITION BY the natural key (template + approval moment) with ORDER BY id DESC numbers each duplicate group newest-first; keeping rn = 1 removes exactly one copy and keeps the approval history intact. DISTINCT collapses copies into a projection, and the HAVING approach flags groups but a delete keyed on it removes BOTH copies.",
+      notes: [
+        { choice: 0, why: "DISTINCT dedupes the projection, not the table — and destroys every column you didn't project. It reports; it never repairs." },
+        { choice: 2, why: "COUNT(*) > 1 finds the groups, but the delete that follows loses the template entirely — the catalog now has a hole where an approved version lived." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "whatsapp-mcq-24",
+      prompt: "The monthly conversation ladder reads 9, 9, 8, 8, 8, 8, 7, 7, 7, 7, 6, 6, 6. What rank do the 6-conversation months carry under RANK()?",
+      choices: ["9", "11", "6", "4"],
+      answer: 1,
+      why: "RANK shares rungs and skips: the two 9s take ranks 1–2, the four 8s take 3–6, the four 7s take 7–10 — so the first 6 lands on rank 11, and all three 6-conversation months share it. DENSE_RANK would say 4; ROW_NUMBER would split them 11, 12, 13.",
+      notes: [
+        { choice: 3, why: "That is DENSE_RANK — no gaps, the 6s are the 4th tier. The gap version (RANK) is what the board prints, and the skipped rungs equal the tied rows above." },
+        { choice: 0, why: "9 is the LAST rank the 7-block occupies, not the next rung handed out. Off-by-one on the tie block is the classic leaderboard bug." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "whatsapp-mcq-25",
+      prompt: "COUNT(*) FILTER (WHERE status = 'delivered') — what does the FILTER clause buy over SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END)?",
+      choices: [
+        "It is faster because it skips the CASE compiler",
+        "Same count, cleaner statement of intent — the predicate lives inside the aggregate, so one scan carries many labeled counts without nested CASE logic",
+        "It excludes NULL statuses from the denominator",
+        "It returns one row per status instead of one column",
+      ],
+      answer: 1,
+      why: "FILTER is conditional aggregation with the condition attached to the aggregate: COUNT(*) FILTER (WHERE …) counts matching rows in the same pass, and the numbers match the CASE-SUM version exactly. What it buys is legibility — the metric's definition reads as a predicate, not as arithmetic sleight-of-hand.",
+      notes: [
+        { choice: 2, why: "NULL status rows fail the predicate in BOTH shapes equally — FILTER changes readability, not NULL semantics." },
+        { choice: 3, why: "One row per status is GROUP BY's job. FILTER stacks COLUMNS into one row — the census shape the dashboard wants." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "whatsapp-mcq-26",
+      prompt: "The market×status grid must show LATAM's opted-out column. LATAM has 0 opt-outs. Which construction prints the 0 instead of dropping the cell?",
+      choices: [
+        "GROUP BY c.region, o.status — unobserved combos just don't appear",
+        "Conditional aggregation: SUM(CASE WHEN o.status = 'cancelled' THEN 1 ELSE 0 END) per market — every market row carries every status column, zeros included",
+        "INNER JOIN from a statuses list to conversations, then COALESCE the misses",
+        "HAVING SUM(CASE …) IS NOT NULL",
+      ],
+      answer: 1,
+      why: "GROUP BY region, status enumerates only OBSERVED pairs — LATAM-cancelled never occurred, so the row vanishes and the grid lies by omission. The pivot shape fixes the columns up front, and ELSE 0 turns 'no such rows' into an honest 0.",
+      notes: [
+        { choice: 2, why: "INNER JOIN deletes exactly the empty combos you promised to show — COALESCE never sees a row to fix. The fix is the arm set, not the join." },
+        { choice: 3, why: "SUM of zero rows returns 0, not NULL — the filter removes nothing and adds nothing. The columns had to exist first; HAVING is downstream of the whole problem." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "whatsapp-mcq-27",
+      prompt: "The dashboard walks cumulative billed value per account. Which clause makes the running total RESTART for each new account?",
+      choices: [
+        "ORDER BY created_at",
+        "PARTITION BY customer_id",
+        "GROUP BY customer_id",
+        "ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW",
+      ],
+      answer: 1,
+      why: "PARTITION BY customer_id gives every account its own window: the running SUM accumulates within it and resets at the next account. Without it, one global walk mixes every account's billing into a single platform-wide running total.",
+      notes: [
+        { choice: 0, why: "ORDER BY sets the walk's direction and order INSIDE each partition — it never scopes one. Direction without scope is the half-built window." },
+        { choice: 3, why: "That frame fixes ROWS-vs-RANGE tie behavior within a partition; it does not create partitions. Frame and partition are different dials." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "whatsapp-mcq-28",
+      prompt: "The dashboard prints the window-open stamp as text; queued templates have no stamp yet. Which display line is honest?",
+      choices: [
+        "COALESCE(shipped_at, 'awaiting window')",
+        "COALESCE(shipped_at, '1970-01-01')",
+        "COALESCE(julianday(shipped_at), 0)",
+        "COALESCE(shipped_at, created_at)",
+      ],
+      answer: 0,
+      why: "The stamp is missing, and 'missing' has a name: a readable sentinel that says the delivery queue owns these rows. Epoch dates and 0-day latencies invent data points; falling back to created_at claims a window the pipeline never opened.",
+      notes: [
+        { choice: 1, why: "1970 sorts first and, if it leaks into arithmetic, computes a ~19,000-day latency — sentinel dates poison every average they touch." },
+        { choice: 3, why: "created_at is the booking, not the window-open — this claims every queued template opened instantly, which is the exact lie the latency metric exists to catch." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "whatsapp-mcq-29",
+      prompt: "SELECT COUNT(*) FROM orders WHERE total > (SELECT AVG(total) FROM orders) — what does it return on this book (mean 338.19)?",
+      choices: [
+        "0 — no conversation beats a mean that includes it",
+        "42 — the conversations strictly above the mean",
+        "103 — every row compares true against an average",
+        "NULL — a scalar subquery cannot feed a comparison",
+      ],
+      answer: 1,
+      why: "42 of 103 conversations clear the 338.19 mean — the right-skew read: a few enterprise threads (up to 1,088.44) drag the mean above where most conversations sit, yet 42 rows still clear it. The scalar subquery returns exactly one value, so the comparison is well-formed.",
+      notes: [
+        { choice: 0, why: "That is the median confusion — the mean sits ABOVE most conversations precisely because the big threads pull it; 42 rows remain above it. Right-skew, not paradox." },
+        { choice: 2, why: "Strict > excludes every conversation at or below 338.19 — 61 of them. The comparison is per-row against one constant, not a blanket true." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "whatsapp-mcq-30",
+      prompt: "On the conversations table, COUNT(*) returns 103 and COUNT(shipped_at) returns 82. What is the 21-row gap?",
+      choices: [
+        "Opted-out threads only",
+        "Conversations with no window-open stamp yet — the 14 queued templates plus the 7 opted-out threads",
+        "Duplicate pipeline retries",
+        "Queued templates only",
+      ],
+      answer: 1,
+      why: "COUNT(*) counts rows; COUNT(shipped_at) counts non-NULL stamps — the 21 unstamped rows are exactly the 14 queued plus the 7 opted-out (a blocked thread never opens a window either). The gap is a population read: queue plus trust waste, in one number.",
+      notes: [
+        { choice: 3, why: "Queued alone is 14 — the opted-out 7 also lack stamps. Half the answer is a whole-category miss." },
+        { choice: 2, why: "Retries would appear as duplicate rows WITH stamps — they inflate both counts equally and never open a gap between the two COUNTs." },
+      ],
+      difficulty: "easy",
+    },
   ],
 
   cases: [
@@ -368,6 +799,152 @@ export const whatsappKit: CompanyKit = {
       walkthrough:
         "Two stages: fold the market×tier grid, then share it within each market. The CTE joins line records to conversations to accounts to tier products and folds 23 market×family cells — billed value rounded to cents. The outer SELECT divides each cell by SUM(billed_value) OVER (PARTITION BY market): each market's book recomputed inside the window, so shares foot to 100 per market by construction. The probed board reads: APAC Audio 5,162.40 is 44.5% of the APAC book, EU Audio 5,102.40 is 33.8% of a bigger EU book, EU Wearables 3,886.30 is 25.8%, US Video 1,885.98 is 25.9%, and the tail runs to EU Fitness 346.08 at 2.3% — while LATAM's tiny 852.44 book concentrates 55% into Electronics alone. The distractors each break differently: 10 or 1000 in the multiplier rescales every share off 100; ORDER BY in the frame turns the market total into a running sum so shares climb cell by cell; tier_family in the partition key computes family shares of the whole platform — the global mix, not the market mix; c.region is out of scope past the CTE and errors; ASC reads the deck bottom-up. The board's rule holds: tier mix is a per-market claim, so the window must carry the market partition — and the shares must foot to 100 or the deck goes back.",
     },
+    {
+      id: "cs-whatsapp-3",
+      tier: "medium",
+      topic: "s4",
+      universe: "month-close",
+      title: "The never-settled account list",
+      brief:
+        "Month-close brief, in-world: BSP billing wants the account-grain dunning read — which business accounts have NEVER settled a single statement, whatever their invoice count. Probed on the storefront db: 11 accounts carry invoices; 8 of them have at least one settlement leg on the rails, and 3 have never touched the rails at all — Hiro Tanaka (1,756 billed, the #28 paid-status lie), Chloe Dubois (1,295, one open statement) and Pedro Alvarez (873, one open statement). The read is a set difference: billed accounts EXCEPT settled accounts, and the branches must carry identical shapes or the EXCEPT compares apples to sums.",
+      ask:
+        "Return account name and total billed dollars for every account with invoices but zero settled statements, biggest balance first.",
+      template:
+        "SELECT c.name AS account,\n       SUM(i.amount_cents) / 100.0 AS billed_dollars\nFROM customers c\nJOIN invoices i ON i.customer_id = c.id\nGROUP BY c.id, c.name\n{1}\nSELECT c.name AS account,\n       SUM(i.amount_cents) / 100.0 AS billed_dollars\nFROM customers c\nJOIN invoices i ON i.customer_id = c.id\nWHERE c.id IN (\n  SELECT i2.customer_id FROM invoices i2\n  JOIN payments p ON p.invoice_id = {2}\n)\nGROUP BY c.id, c.name\nORDER BY billed_dollars {3};",
+      slots: [
+        {
+          answer: "EXCEPT",
+          kind: "keyword",
+          label: "the different-set operator",
+          why: "EXCEPT keeps the first branch's rows minus the second's — billed-but-never-settled. UNION would merge both populations into one 11-row list, and INTERSECT returns the opposite account: the 8 that did settle.",
+        },
+        {
+          answer: "i2.id",
+          kind: "keyword",
+          label: "the settlement edge",
+          why: "payments.invoice_id = i2.id is the honest statement-to-settlement edge; the subquery then projects the CUSTOMER ids behind settled statements. Wiring the edge to c.id instead references an alias the subquery cannot see and the query errors on sight.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-balance-first direction",
+          why: "The dunning read opens on the biggest never-settled balance: Hiro 1,756, Chloe 1,295, Pedro 873. ASC would lead with the smallest and bury the paid-status anomaly at the bottom.",
+        },
+      ],
+      distractors: ["UNION", "INTERSECT", "c.id", "ASC"],
+      walkthrough:
+        "A set difference with an anomaly at the top. Branch one folds all 11 invoiced accounts to (name, billed) at cents-safe precision; branch two folds only the accounts that appear behind a settled statement — the IN subquery walks payments → invoices → customer ids. EXCEPT subtracts the second set from the first and three rows survive: Hiro Tanaka 1,756 (whose #28 invoice is marked 'paid' with zero settlement rows — the status that lies, now visible at account grain), Chloe Dubois 1,295 and Pedro Alvarez 873. The subtlety the audit enforces: both branches must project IDENTICAL shapes — same two columns, same fold — because EXCEPT compares whole tuples; a branch that sums only settled invoices would produce different dollar figures and the difference would silently keep partially-settled accounts like Emma Wilson (4 statements, 3 settled) on a dunning list they do not belong on. UNION returns all 11 accounts merged; INTERSECT returns the settled 8; the wrong edge errors. Three accounts, 3,924 dollars, one status lie — the read billing takes into the close.",
+    },
+    {
+      id: "cs-whatsapp-4",
+      tier: "easy",
+      topic: "x2",
+      universe: "funnel",
+      title: "The one-pass status census",
+      brief:
+        "Funnel brief, in-world: the morning dashboard opens with the status census — all four conversation stages counted in one pass so no tile can drift from another. Probed on the storefront db: 103 conversations total — 52 completed billable (50.5%), 30 active 24h windows, 14 queued templates, 7 opted-out threads. The census ships with an assertion: the completed-billable count must equal 52, because that figure is the revenue denominator three other tiles divide by — if the census disagrees with itself, the dashboard does not ship. FILTER clauses keep every count on one scan of the same 103-row book.",
+      ask:
+        "Return one row: total conversations, the four stage counts, with an assertion that completed billable equals 52.",
+      template:
+        "SELECT COUNT(*) AS conversations,\n       COUNT(*) FILTER (WHERE status = {1}) AS completed_billable,\n       COUNT(*) FILTER (WHERE status = 'shipped') AS active_windows,\n       COUNT(*) FILTER (WHERE status = 'pending') AS queued_templates,\n       COUNT(*) FILTER (WHERE status = 'cancelled') AS opted_out\nFROM orders\n{2} COUNT(*) FILTER (WHERE status = 'delivered') = {3};",
+      slots: [
+        {
+          answer: "'delivered'",
+          kind: "keyword",
+          label: "the billable-stage literal",
+          why: "Completed billable is status 'delivered' — 52 conversations. 'shipped' recounts the 30 active windows as billable and the revenue lens reads 30 against invoices that do not exist yet.",
+        },
+        {
+          answer: "HAVING",
+          kind: "keyword",
+          label: "the census assertion clause",
+          why: "The pin judges an aggregate — COUNT(*) FILTER (…) — so it lives in HAVING, which SQLite honors even without GROUP BY (the whole table is one group). WHERE cannot judge an aggregate; the query would not compile.",
+        },
+        {
+          answer: "52",
+          kind: "number",
+          label: "the headline pin",
+          why: "The assertion pins completed billable at 52 — the figure in the result cell AND the denominator the completion-rate tile quotes. Pin it to 30 and the census returns nothing while looking valid: the assertion did its job by refusing to ship a wrong census.",
+        },
+      ],
+      distractors: ["'shipped'", "WHERE", "30", "ASC"],
+      walkthrough:
+        "One scan, five numbers, one contract. The FILTER clauses count each stage in the same pass — conversations 103, completed billable 52, active windows 30, queued templates 14, opted-out 7 — and the arms are exhaustive, so the four stage counts reconcile to 103 by construction: 52 + 30 + 14 + 7 = 103. The HAVING pin is the census's self-check: with no GROUP BY, SQLite treats the table as one group, and HAVING COUNT(*) FILTER (WHERE status = 'delivered') = 52 passes only when the book says what the dashboard promises. 'shipped' in the billable literal rebrands the 30 active windows as revenue; WHERE in the assertion slot errors because aggregates do not exist at row-filter time; 30 pins the census to a claim it cannot satisfy and the query returns zero rows — a loud failure, which is exactly what an assertion is for. One pass, one denominator, one contract between the census and every tile that divides by it.",
+    },
+    {
+      id: "cs-whatsapp-5",
+      tier: "hard",
+      topic: "t7",
+      universe: "growth",
+      title: "The jump on the conversation spine",
+      brief:
+        "Growth-board brief, in-world: the 14-month conversation spine runs 2024-01 to 2025-02, and the deck's narrative hangs on ONE row — the biggest month-over-month jump in billed value. Probed on the storefront db: the spine opens at 3,731.97 in January 2024 and troughs at 1,193.86 in July; August lands at 2,352.07, so the July→August jump reads +1,158.21 — the largest delta on the spine, and the row the growth call quotes when it claims the template relaunch worked. LAG carries the prior month; the first row's delta is NULL by definition and MAX simply walks past it.",
+      ask:
+        "Return the month with the largest month-over-month jump in billed value: month, billed, prior month's billed, and the delta to 2 decimals.",
+      template:
+        "WITH monthly AS (\n  SELECT STRFTIME('%Y-%m', created_at) AS month,\n         COUNT(*) AS conversations,\n         ROUND(SUM(total), 2) AS billed\n  FROM orders\n  GROUP BY month\n),\nwalk AS (\n  SELECT month, conversations, billed,\n         {1}(billed) OVER (ORDER BY month) AS prev_billed\n  FROM monthly\n),\ndeltas AS (\n  SELECT month, billed, prev_billed,\n         ROUND(billed - prev_billed, {3}) AS delta\n  FROM walk\n)\nSELECT month, billed, prev_billed, delta\nFROM deltas\nWHERE delta = (SELECT {2}(delta) FROM deltas);",
+      slots: [
+        {
+          answer: "LAG",
+          kind: "keyword",
+          label: "the prior-month reader",
+          why: "LAG(billed) walks the window backwards one row — August's prev_billed is July's 1,193.86. LEAD reads forward and hands August September's count, re-labeling the future as history; every delta on the spine would silently re-point.",
+        },
+        {
+          answer: "MAX",
+          kind: "keyword",
+          label: "the biggest-jump picker",
+          why: "The scalar subquery folds the spine to its largest delta — +1,158.21, the July→August jump. MIN would return the biggest DECLINE instead (−862.88 into June) and the deck would narrate a collapse as its headline.",
+        },
+        {
+          answer: "2",
+          kind: "number",
+          noVerify: true,
+          label: "the delta precision",
+          why: "Deltas print to cents like the book they subtract: ROUND(…, 2) keeps +1,158.21 exact. One decimal prints 1,158.2 and the delta stops footsing against the two billed cells it came from.",
+        },
+      ],
+      distractors: ["LEAD", "MIN", "1", "0"],
+      walkthrough:
+        "Three staged grains, one headline row. The monthly CTE folds 103 conversations into 14 monthly buckets (STRFTIME month key, COUNT, cents-precise billed); the walk CTE layers LAG(billed) OVER (ORDER BY month) so each month carries its predecessor; the deltas CTE subtracts and rounds — window output is not visible to sibling expressions, which is why the arithmetic waits for its own staging step. The outer SELECT keeps the row whose delta equals the spine's maximum: (SELECT MAX(delta) FROM deltas) returns one scalar, +1,158.21, and exactly one row matches — 2024-08, billed 2,352.07, prev 1,193.86. The first month's delta is NULL by design (no prior row, no baseline), and MAX ignores NULLs, so the baseline row competes for nothing. LEAD would read the future and the 'jump' would land on a different month; MIN would crown the −862.88 June fade; anything non-aggregate in the scalar slot errors on sight. One row, one claim, one honest NULL at the edge — the growth call rests on a query that can name its own baseline.",
+    },
+    {
+      id: "cs-whatsapp-6",
+      tier: "medium",
+      topic: "l8",
+      universe: "month-close",
+      title: "The settlement rails census",
+      brief:
+        "Month-close brief, in-world: the cash-forecast memo opens with the rails census — settlement count and settled dollars per payment rail, because card and wire behave differently on both speed and size. Probed on the storefront db: 27 settlement rows in two rails — card carries 16 settlements worth 37,364.00, wire carries 11 worth 32,248.00. Card wins on count, wire wins on size (average wire settlement 2,931.64 versus card's 2,335.25) — the mix behind every reminder-priority argument. The census folds at the rail grain from the INTEGER-cent ledger, and the dollar read is amount_cents / 100.0.",
+      ask:
+        "Return each settlement rail with its settlement count and settled dollars, biggest settled value first.",
+      template:
+        "SELECT {1},\n       COUNT(*) AS settlements,\n       SUM(amount_cents) / 100.0 AS settled_dollars,\n       ROUND(AVG(amount_cents) / 100.0, {2}) AS avg_settlement\nFROM payments\nGROUP BY method\nORDER BY settled_dollars {3};",
+      slots: [
+        {
+          answer: "method",
+          kind: "keyword",
+          label: "the rail column",
+          why: "The fold key is the method column — the rail each settlement rode. Any other token in the SELECT's first position either errors or replaces the rail name with a constant, and the memo loses the row labels it groups by.",
+        },
+        {
+          answer: "2",
+          kind: "number",
+          noVerify: true,
+          label: "the money precision",
+          why: "Averages print to cents like the ledger they summarize: ROUND(…, 2) keeps card's 2,335.25 and wire's 2,931.64. One decimal rounds the cents away and the memo stops reconciling with the billing book on the same slide.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-rail-first direction",
+          why: "The memo reads card 37,364.00 above wire 32,248.00 — biggest settled value first. ASC would lead with wire and invert the 'which rail moves the money' story the count column is about to complicate.",
+        },
+      ],
+      distractors: ["rail", "ASC", "1", "0"],
+      walkthrough:
+        "One fold, two rails, one discipline. GROUP BY method folds 27 settlement rows into two buckets; COUNT(*) reads the settlement counts (card 16, wire 11), SUM(amount_cents) / 100.0 reads settled dollars (37,364.00 and 32,248.00) with the .0 keeping the division real — the house cents rule — and the rounded per-settlement averages expose the crossover the memo exists to argue: card averages 2,335.25 across its 16 settlements while wire averages 2,931.64 across its 11, so 11 wires move nearly as much money as 16 cards. ORDER BY settled_dollars DESC puts card on top. 'rail' is not a column this table owns (the column is method); one decimal in the average rounds the cents away and the memo stops footing; ASC flips the memo's lead. Two rows, one grain, one divisor — the census that every cash-forecast argument in the close quotes first.",
+    },
   ],
 
   problems: [
@@ -387,5 +964,21 @@ export const whatsappKit: CompanyKit = {
     { slug: "roas-by-campaign", why: "Click-to-WhatsApp campaigns are judged on revenue per unit of spend — ROAS folds conversation value back onto campaign ids, a join-aggregate with a business rule attached." },
     { slug: "customers-who-bought-a-and-b-not-c", why: "Tier-mix screening: accounts that run Utility AND Marketing templates but never Authentication — conditional aggregation over three flags, the tier-adoption screen." },
     { slug: "week-over-week-churn", why: "Opt-outs arrive in bursts after a bad send. Week-over-week churn with LAG over a weekly pivot is the trust-and-safety trend the send-volume policy reacts to." },
+    { slug: "funnel-step-conversion", why: "Stage-to-stage conversion with stated populations — thread opened, window opened, completed billable. The CTWA funnel discipline every WhatsApp monetization screen opens with." },
+    { slug: "email-engagement-funnel", why: "Template → read → reply is the messaging funnel in miniature — multi-stage engagement counting where each step's denominator is the previous step's survivors." },
+    { slug: "find-zombie-sessions", why: "24h windows that never closed — stale sessions are the queued-template leak in session form. The freshness anti-join that keeps the window telemetry honest." },
+    { slug: "median-time-to-convert", why: "Median time from first thread to contract — conversion latency at the right center (not the mean the whale accounts drag). Percentile thinking over the account spine." },
+    { slug: "rolling-7d-actives", why: "The rolling-weekly actives curve — the engagement pulse growth pins above every other chart. A date spine plus a window, built from scratch on demand in screens." },
+    { slug: "new-users-daily-count", why: "First-conversation dates by day — the activation curve for new business accounts. Date-bucketed counting is the warm-up half of every cohort screen here." },
+    { slug: "sessionize-events", why: "Bursting a message stream into sessions is literally what the 24h window is — gap-threshold sessionization over event stamps, the platform's own unit rebuilt in SQL." },
+    { slug: "find-bursty-behavior", why: "Bursty senders — accounts whose traffic spikes off their baseline — are both a capacity signal and an abuse screen. Variance-aware flags over the send log." },
+    { slug: "second-most-recent-activity", why: "Each account's second-newest thread via a ranked window — the 'prior conversation' read behind cadence and re-engagement analysis, plus the LIMIT-OFFSET tie trap." },
+    { slug: "growth-accounting", why: "New, retained, resurrected and churned accounts per month — LAG over the month spine, the quick-and-dirty view behind the quarterly messaging growth board." },
+    { slug: "dormant-reactivation", why: "Accounts that went quiet and came back — the resurrection cohort. First-event CTEs plus a gap check, the template-relaunch proof point." },
+    { slug: "winback-recovery", why: "Churned-account winback needs the churned list first — an anti-join with a freshness window, then the recovery count. The lifecycle pod's weekly mail runs on this shape." },
+    { slug: "ar-aging-schedule", why: "AR aging buckets from issued_on against the close date — cents-safe CASE banding that turns the dunning list into a calendar the BSP billing pod can act on." },
+    { slug: "generate-the-invoice", why: "Invoice assembly from line detail — folding conversation lines into a statement at the right grain, the exact monthly BSP billing job." },
+    { slug: "duplicate-charge-pairs", why: "Duplicate settlement legs — pipeline retries double-billing a statement — detected by pairing on natural keys. The reconciliation anomaly walk in miniature." },
+    { slug: "popularity-percentage", why: "The share of accounts connected to the average account — a ratio with a stated denominator and the 100.0 discipline. Two-grain census math in percentage clothing." },
   ],
 };
