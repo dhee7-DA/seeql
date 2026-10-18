@@ -12,6 +12,9 @@
 // orders = deliveries, shipped_at = delivery timestamp, region = delivery
 // zone (mumbai/seoul/berlin stand-ins for metro grids), invoices/payments =
 // merchant settlements in integer cents.
+// Extended (R4-E): bank widened to 30 MCQs / 24 theory / 6 cases / 32 problems —
+// cases 3-6 and problems 17-32 probed on the live storefront db (all figures
+// cited in briefs are query-verified).
 
 import type { CompanyKit } from "../types";
 
@@ -27,6 +30,7 @@ export const swiggyKit: CompanyKit = {
     "The data org runs on city and zone grids. Growth teams read the **monthly demand curve** — where the trough sits, which months carry the cancellations; supply teams balance rider hours against order minutes per zone through the {orange:dinner Rush}; Instamart teams own dark-store fill rates and stock-versus-sold freshness; finance reconciles merchant settlements in **integer cents** on 30-day terms. The culture is SQL-first: a city review opens with a query, the monthly business review ships every headline with its SQL attached, and a mis-defined denominator is treated as an incident.",
     "Interviews screen for the **two-grain census** (deliveries AND diners per zone), month-bucket seasonality with honest aggregates, conditional counting for **kept demand**, and the settlement-side money math: invoices held in cents, partial payments detected with LEFT JOINs, split settlements folded only after coverage is classified. Expect the rank trio with tie rules for city and SKU leaderboards, and expect to say which population every filter leaves — *in-flight orders have no delivery timestamp yet*, and the interviewer wants that sentence unprompted.",
     "To prep: drill `STRFTIME` month buckets until '%Y-%m' versus '%m' is a reflex, `julianday` diffs between order and delivery timestamps, running sums for capacity, and one-pass FILTER censuses under a query budget. Practice narrating **grain, filter, denominator, sort** before writing — and rehearse the reconciliation habit: branch totals must add back to the placed whole, because *a census that doesn't reconcile is a rumor with columns*.",
+    "This expanded kit is built for spaced practice rather than one sitting. **Six case studies** now span the asks Swiggy screens on most: the trough-month demand board, the one-pass zone census, the weekday demand leaderboard with ties respected, the partner GMV chain through the merchant grid, the status-payload fold for the pack audit, and the Instamart depth board that ranks stock cover within each category. Run each on the live storefront database, then re-run a week later from a blank editor — *the second pass is where recall actually forms*. Pair the cases with the **32-problem pool** and the theory bank below, and treat the walkthroughs as the real content: they narrate the failure each wrong chip causes, which is exactly the muscle the *'what population is that over?'* follow-up tests.",
   ],
 
   dayInLife: [
@@ -148,6 +152,102 @@ export const swiggyKit: CompanyKit = {
       q: "Finance flags the settlement pack: one invoice is void but has a payment against it, another is paid with zero payment rows. How do you build the reconciliation that catches both — and what does integer-cents discipline add?",
       a: "Coverage classification first: invoices LEFT JOIN grouped payments, then a CASE on the relationship — no payment rows, paid less than amount (partial), paid equal (exact), and the cross-check that catches the anomalies: status = 'void' with payment rows, or status = 'paid' with none. On this db that query surfaces the void-but-paid invoice #11 at 925.00 and the paid-no-payments #28 at 1756.00, plus five split-settlement invoices and one partial (4000 of 6148) — verified row-level facts, not folklore. Split settlements must NOT be deduped blindly: two genuine part-payments folded into one hide a shortfall, so classify coverage before any collapse. The cents discipline rides on every step: these tables hold INTEGER cents, so every dollar read is amount / 100.0 — divide by integer 100 and the truncation quietly eats the paise, and a trial-balance eye (debits equal credits, delta 0) closes the pack.",
       tag: "quality",
+    },
+    {
+      id: "swiggy-t9",
+      q: "Walk me through the two-grain census — deliveries AND diners per zone — and what each count decides for the city GM.",
+      a: "Two counts, two grains, one fold after the delivery-to-diner join. COUNT(*) counts delivery rows — the physical load on the rider network: EU 45, APAC 37, US 19, LATAM 2 on this db. COUNT(DISTINCT customer_id) folds repeat demand back to audience size: 8, 5, 2, 1 — and the ratio between the columns is the intensity signal, EU running 5.6 orders per diner. The GM supplies riders off the first column and sizes acquisition off the second; collapsing either into the other is how a new-user frontier gets staffed like a repeat-heavy metro. The trap: join further to order_items and COUNT(*) counts 251 line items — say 'one row per what?' for every COUNT and the census stays honest.",
+      tag: "aggregation",
+    },
+    {
+      id: "swiggy-t10",
+      q: "Merchant settlements fold invoices against payments. Where does the fold break when an invoice was settled in two parts — and what's the safe grain?",
+      a: "The danger grain is the JOIN's: invoices LEFT JOIN payments multiplies each invoice by its payment count — five invoices on this db carry two payment rows each — and any SUM taken after the join at the wrong side doubles the invoice money. The safe fold is staged: GROUP BY the invoice first (fold payments per invoice into settled cents), then compare at invoice grain — or aggregate only the invoice-side columns with COUNT(DISTINCT i.id) and SUM(i.amount_cents) held at one row per invoice. Say the rule as a grain: 'money folds at invoice grain, payment rows fold first.' The split-settlement read — did the two parts sum to the bill — is a per-invoice question, never a row-level one.",
+      tag: "joins",
+    },
+    {
+      id: "swiggy-t11",
+      q: "Build the settlement reconciliation that classifies coverage — exact, partial, none — and catches a void-but-paid invoice. What does each branch mean, and what must you NOT dedupe?",
+      a: "LEFT JOIN keeps all 28 invoices, then a CASE on the relationship: COUNT(p.id) = 0 → 'none' (6 invoices, $15,217 including the paid-no-payments anomaly #28 at $1,756), SUM(p.amount_cents) = i.amount_cents → 'exact' (21 invoices), anything else → 'partial' (exactly one, $4,000 of $6,148). The cross-check that catches anomalies rides in the same fold: status = 'void' with payment rows (invoice #11, $925) and status = 'paid' with none. What you must NOT dedupe: split settlements — five invoices pay in two genuine parts, and collapsing rows before classification hides both the split and the shortfall it might carry. Classify coverage first, fold second, and the trial-balance eye (debits equal credits, delta 0) closes the pack.",
+      tag: "quality",
+    },
+    {
+      id: "swiggy-t12",
+      q: "Where do NULLs survive each pipeline stage — and what does a NULL rider_id do to an INNER JOIN census?",
+      a: "Stage by stage. ON: NULL keys never match — a delivery row with a NULL rider_id vanishes from an INNER JOIN to riders, silently shrinking the census. WHERE: NULL fails both = and !=, so 'not cancelled' needs OR status IS NULL. GROUP BY: NULLs are a legal key and fold into one group — 21 orders with NULL shipped_at become a single honest bucket on this db. DISTINCT: keeps one NULL. Aggregates: COUNT(*) keeps the row, COUNT(rider_id) skips it, AVG quietly narrows its population. The Swiggy policy sentence: in-flight orders have no delivery timestamp yet — exclude them from latency WITH that sentence, never by COALESCE, which launders missing riders and missing deliveries into fake zeros.",
+      tag: "nulls",
+    },
+    {
+      id: "swiggy-t13",
+      q: "Rush-hour capacity is a running sum. Write the frame, and tell me when the default frame betrays the burst.",
+      a: "SUM(demand_minutes) OVER (ORDER BY minute ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) — explicit ROWS, because the default frame is RANGE and RANGE includes ordering PEERS: minute-buckets tied at the same timestamp enter the total together, so the coverage line jumps in burst-sized steps exactly when a rain burst lands. ROWS is row-true — one row per step, deterministic, which is what a rider-supply plan needs. When the axis is calendar dates with gaps, neither frame is calendar-true; that's a date-spine join, not a frame tweak. The interview point is knowing the default exists and stating which frame the metric means before the plan ships on it.",
+      tag: "windows",
+    },
+    {
+      id: "swiggy-t14",
+      q: "The promise team wants latency tiers — p50 and p90 — over completed deliveries. How do you build them without leaving SQL?",
+      a: "Stage the per-delivery latency in a CTE — JULIANDAY(shipped_at) − JULIANDAY(created_at) over the 82 completed rows only — then tier it: NTILE(4) OVER (ORDER BY latency, id) cuts quartiles (tiles of 20/20/21/21 on this db), PERCENT_RANK gives the continuous 0-to-1 read, and p50/p90 fall out of the tier boundaries. The population sentence is part of the deliverable: 'latency distribution of completed deliveries — pending and cancelled have no latency and are out of scope.' And put a deterministic tie-breaker in the window ORDER BY, because NTILE must place tied latencies somewhere and the tier boundaries should not move between runs. Fold first, tier second — the window can't live in the same SELECT as the aggregate.",
+      tag: "windows",
+    },
+    {
+      id: "swiggy-t15",
+      q: "'Merchants with at least one delivered order in February' — EXISTS, IN, or JOIN, and why does the answer change at scale?",
+      a: "EXISTS is the scale answer: a semi-join that stops at the first matching row, never fans out, and is NULL-safe — a listing with a NULL merchant_id simply doesn't exist in the check. IN is fine for small static lists, but NOT IN against a set containing NULL can never be TRUE — one stray key empties the report silently. A JOIN is the wrong tool for membership: a merchant with 40 February orders multiplies the outer rows 40 times, and the DISTINCT you'd bolt on is a smell that says 'I joined to test existence.' State it as a population claim — EXISTS asks 'does a match exist', JOIN asks 'how many matches' — and the follow-up ('now count their orders') tells you when to switch deliberately.",
+      tag: "subqueries",
+    },
+    {
+      id: "swiggy-t16",
+      q: "Build the weekday demand curve and the weekend split for rider-shift staffing. What are the STRFTIME('%w') traps?",
+      a: "STRFTIME('%w', created_at) returns TEXT '0'–'6' with '0' as SUNDAY — trap one: the weekend test is IN ('0', '6'), and misreading '0' as Monday shifts the whole staffing plan a day. Trap two: type — IN (0, 6) with numerics matches nothing against text codes, so the weekend branch silently reads zero. Trap three: label the output — a bare '1' column ships misread; CASE the codes into day names in the same pass. On this db the split reads 24 weekend versus 79 weekday of 103 orders, with Monday ('1') the single biggest day at 20. The hour cousin '%H' behaves the same — TEXT, zero-padded, sortable as strings — and on a date-grain db every hour reads '00', which is itself the lesson: bucket grammar is only as honest as the event grain behind it.",
+      tag: "dates",
+    },
+    {
+      id: "swiggy-t17",
+      q: "Instamart stock-versus-sold per SKU: where does the fan-out live, and what does the remaining tail decide?",
+      a: "Stock lives on the product row; sold lives on order lines; the join is products to order_items and the fan-out is the danger — COUNT(*) counts lines, not units, so the fold is SUM(oi.quantity) grouped per SKU. Remaining = stock − SUM(quantity): Noise-Canceling Headset reads 60 stocked, 46 sold, 14 remaining — the reorder signal — while Bluetooth Speaker Mini reads 210 stocked, 21 sold, 189 remaining — the slow tail flagged for markdown or transfer. A negative remaining is oversold-against-shelf: a data incident, not a rounding quirk. And the hygiene footnote: every SKU on this db has sold at least once, so the never-moved set is honestly empty — the analyst who reports the empty set instead of inventing a tail is the one the Instamart review trusts.",
+      tag: "joins",
+    },
+    {
+      id: "swiggy-t18",
+      q: "Take rate is commission ÷ GMV. Why is the average of per-order rates the wrong fold, and what is the right one?",
+      a: "Because averaging ratios weights every order equally while money is what compounds: AVG(fee/total) counts a $4.99 snack as much as a $200 group cart, but SUM(commission) ÷ SUM(total) weights by the denominator — the blended rate finance actually banks. Whenever denominators vary, the two folds disagree, and delivery baskets vary a lot, so the gap is real, directional, and unauditable. The same law governs kept demand: cancellation share is conditional sums over the PLACED whole, never the average of per-zone shares — small zones would outweigh big ones and the city read would drift. Name the fold out loud — 'ratio of sums, weighted by the denominator' — and every rate on the board inherits the discipline.",
+      tag: "aggregation",
+    },
+    {
+      id: "swiggy-t19",
+      q: "Why can't WHERE see a window function, and how do you stage 'each zone's two biggest months' correctly?",
+      a: "Evaluation order: FROM, WHERE, GROUP BY, HAVING, SELECT — where the window layer paints — then ORDER BY. When WHERE runs, no window output exists, so WHERE rank <= 2 is a syntax error, not a style choice. The staging move: a CTE (or derived table) folds zone-months and computes RANK() OVER (PARTITION BY zone ORDER BY orders DESC); the outer query then filters rn <= 2. The same two-step carries LAG deltas, running sums, any window-shaped filter. It isn't ceremony — it's the grammar teaching that windows are a presentation-layer computation over an already-folded set, and the interviewer is listening for the CTE reflex, not the memorized pattern.",
+      tag: "pipeline",
+    },
+    {
+      id: "swiggy-t20",
+      q: "The promo pack needs the demand curve zero-filled — quiet months must print 0, not vanish. Build it.",
+      a: "Aggregation only reports buckets that exist, so build the buckets first: a month spine — a recursive CTE walking 2024-01 through 2025-02, or a dimension table — LEFT JOINed to the facts, then COALESCE(SUM(total), 0) over the payload. The network curve on this db happens to fill all 14 months, but break by zone and the holes appear: LATAM placed no 2025 orders, so a per-zone curve without a spine silently hides a whole quiet year. A missing row in a promo deck is a lie by omission — 'no data' at best, 'no demand' at worst, and only one is a decision. Spine, LEFT JOIN, COALESCE, plus the reconciliation check that spine rows minus fact rows equals the empty count.",
+      tag: "dates",
+    },
+    {
+      id: "swiggy-t21",
+      q: "UNION, UNION ALL, EXCEPT, INTERSECT — give me the Swiggy read for each.",
+      a: "UNION ALL stacks without dedupe — census branches and TOTAL rows, where every row belongs and a distinct pass is pure cost with a side of row-deletion risk. UNION dedupes — right when two overlapping feeds report the same order and you want one row per thing. EXCEPT is set difference and the drift read: the 12 months of 2024 EXCEPT the 2 months of 2025 answers 'which months have no 2025 presence' — on this db it returns twelve honest rows. INTERSECT is the overlap — months live in both years. All four fold at column-shape grain and treat NULLs as equal members, which makes them safer than NOT IN for presence logic. The ritual is reconciliation: stacked branches must add back to the placed whole.",
+      tag: "setops",
+    },
+    {
+      id: "swiggy-t22",
+      q: "The scalar subquery's empty-inner contract — when does it bite in city reporting?",
+      a: "The contract is 0-or-1 rows, 1 column; zero rows yield NULL, and every comparison against NULL is UNKNOWN — the report empties silently, no error, no warning. It bites when the inner fold's population can go empty: scope the network-AOV baseline (338.19 on this db) to a window or a zone with no demand, and HAVING AVG(total) > (SELECT …) passes nothing while the run log looks clean. Guards are explicit: keep the baseline unfiltered when the definition says 'network', or COALESCE((SELECT …), 0) with a documented fallback. The correlated cousin re-runs per outer row and answers a different question — 'each zone against the others' — at a different cost; knowing which one the business asked for is the whole answer.",
+      tag: "subqueries",
+    },
+    {
+      id: "swiggy-t23",
+      q: "A leaderboard must be reproducible across refreshes. What determinism discipline do you apply before it ships?",
+      a: "Total order first: every ORDER BY that feeds a ranking or a page boundary ends with a unique key — metric DESC, then id ASC — because ties otherwise resolve to the engine's sort mood and page two shuffles between refreshes. Then the tie policy as an owned decision: ROW_NUMBER when exactly N rows must appear, RANK or DENSE_RANK when tied entities should share a rung — the weekday board on this db has a three-way tie at 16 orders, and DENSE_RANK is what keeps them together at rank 3 instead of splitting them 3-4-5. Finally the audit trail: the query ships with the board so the next analyst re-runs the definition, not a memory. Determinism is what lets a number survive 'how do you know?'",
+      tag: "quality",
+    },
+    {
+      id: "swiggy-t24",
+      q: "The commission schedule changed in March; the ask is February's take rate. How do you read history honestly?",
+      a: "As-of joins with half-open validity intervals: JOIN schedules s ON s.merchant_id = o.merchant_id AND s.valid_from <= o.created_at AND (s.valid_to > o.created_at OR s.valid_to IS NULL) — start inclusive, end exclusive, so each order instant matches exactly one schedule and adjacent changes never double-match. Joining the 'current' row fabricates history: March's rate silently overwrites February's orders and the take-rate trend becomes fiction with a straight face. The trap is joining on the entity key alone — the key picks the row SET, the interval picks the MOMENT. And the population sentence rides on every as-of read: which schedule version, as of when, for which orders — in the metric name, not the Slack thread.",
+      tag: "joins",
     },
   ],
 
@@ -322,6 +422,341 @@ export const swiggyKit: CompanyKit = {
       ],
       difficulty: "hard",
     },
+    {
+      id: "swiggy-mcq-11",
+      prompt: "The APAC zone census reads 37 deliveries and 5 distinct diners. Which pair of expressions produces both columns — and what does the gap mean for rider planning?",
+      choices: [
+        "COUNT(*) and COUNT(customer_id) — both always agree after a join",
+        "COUNT(*) counts delivery rows (37); COUNT(DISTINCT customer_id) folds repeat demand back to people (5) — the gap is order intensity per diner",
+        "COUNT(DISTINCT customer_id) reads 37 because DISTINCT runs after the join",
+        "COUNT(*) reads 5 because GROUP BY zone dedupes diners",
+      ],
+      answer: 1,
+      why: "COUNT(*) counts joined rows — one per delivery; COUNT(DISTINCT customer_id) collapses repeat demand to audience size. 37 deliveries from 5 diners is 7.4 orders per diner — a repeat-heavy metro that needs surge-capable rider posture, not new-user acquisition spend.",
+      notes: [
+        { choice: 2, why: "DISTINCT folds at the value level: a diner's seven orders collapse to one value — exactly why it reads 5, not 37." },
+        { choice: 3, why: "GROUP BY folds zones, not diners. One row per zone, and COUNT(*) inside it counts that zone's delivery rows." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "swiggy-mcq-12",
+      prompt: "Weekday demand reads: Mon 20, Fri 18, Sun 16, Tue 16, Wed 16, Thu 9, Sat 8. What does DENSE_RANK() OVER (ORDER BY COUNT(*) DESC) give the Thursday row?",
+      choices: ["3", "4", "6", "7"],
+      answer: 1,
+      why: "DENSE_RANK shares rungs without gaps: 20 → rank 1, 18 → rank 2, the three-way tie at 16 all take rank 3, and Thursday's 9 is the fourth DISTINCT value — rank 4. RANK would say 6 (it skips the two tied positions), and reading ranks as row numbers says 7 — the tier count and the position count are different questions.",
+      notes: [
+        { choice: 0, why: "3 is the tied trio's rank — Thursday shares nothing with them at 9 orders. That's the DENSE_RANK answer for Sun/Tue/Wed, not for Thursday." },
+        { choice: 2, why: "That's RANK: ties share 3, and the next distinct value skips to 6 — the two phantom positions make Thursday look worse than it is." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "swiggy-mcq-13",
+      prompt: "Invoices LEFT JOIN payments runs 28 invoices into 33 rows — 5 invoices settled in two parts. What happens to `SUM(i.amount_cents)` taken straight off the joined rows?",
+      choices: [
+        "Nothing — SUM is join-proof",
+        "It over-counts by the 5 split invoices' amounts — the invoice side doubled with every extra payment row",
+        "It drops the 5 split invoices entirely",
+        "It converts the cents to dollars",
+      ],
+      answer: 1,
+      why: "The join fans each split invoice into two rows, and SUM at the joined grain counts its amount twice — the billed total inflates by exactly the five split settlements. Fold payments per invoice first (GROUP BY the invoice), then take invoice-side sums at one row per invoice — money folds at invoice grain.",
+      notes: [
+        { choice: 0, why: "SUM is only join-proof at a grain the join didn't touch. The invoice side multiplied; its SUM multiplied with it." },
+        { choice: 2, why: "LEFT JOIN never deletes — it duplicates. The over-count, not a loss, is the settlement pack's signature bug." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "swiggy-mcq-14",
+      prompt: "The coverage classifier runs over all 28 invoices: 21 settle exact, 6 have no payments. What lands in the CASE's ELSE branch, and how many rows?",
+      choices: [
+        "'exact' — the unclassified remainder defaults to settled",
+        "'partial' — 1 row: the invoice with money in but short ($4,000 of $6,148)",
+        "'partial' — 7 rows: every invoice without a full match",
+        "NULL — ELSE without a WHEN yields NULL",
+      ],
+      answer: 1,
+      why: "The two WHEN branches catch no-payments (COUNT(p.id) = 0) and exact settlement (SUM = billed); ELSE is the remainder — money in but short. On this db exactly one invoice sits there, which is why a partial count of 7 means the WHEN branches are written wrong, not that the data changed.",
+      notes: [
+        { choice: 0, why: "Defaulting the remainder to 'exact' launders shortfalls into clean settlements — the close overstates collected AR by the partial's unpaid $2,148." },
+        { choice: 2, why: "The no-payment branch already caught 6; if they reach ELSE, COUNT(p.id) = 0 was written wrong (probably COUNT(*) — which counts the NULL-payload row itself)." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "swiggy-mcq-15",
+      prompt: "Finance suspects a void invoice carries a settlement. Which query finds 'void status WITH payment rows' across the pack?",
+      choices: [
+        "WHERE status = 'void' AND amount_cents > 0 — void invoices hold money",
+        "WHERE status = 'void' AND EXISTS (SELECT 1 FROM payments p WHERE p.invoice_id = i.id) — the anomaly is the PAIR, not the amount",
+        "HAVING status = 'void' AND COUNT(payments) > 0 without GROUP BY",
+        "WHERE payment_id IS NOT NULL — the join already dropped voids",
+      ],
+      answer: 1,
+      why: "The anomaly is a relationship: a void invoice with at least one payment row (invoice #11, $925.00 on this db). EXISTS asks exactly that question — does a match exist — without fanning out or tripping on NULLs. Any query that starts by dropping void rows can never find the pair.",
+      notes: [
+        { choice: 0, why: "Every void invoice holds its billed amount — the status is the claim that's wrong, not the cents. The amount predicate matches all of them and finds nothing." },
+        { choice: 3, why: "That's the trap: filter voids out first and the anomaly is deleted before it can be seen. Existence checks come BEFORE population filters." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "swiggy-mcq-16",
+      prompt: "Settlement days = JULIANDAY(paid_on) − JULIANDAY(issued_on). The pack claims '13 fastest, 84 slowest'. Which expression computes the per-invoice figure the ranking needs?",
+      choices: [
+        "ROUND(paid_on - issued_on) — text dates subtract cleanly",
+        "CAST(JULIANDAY(paid_on) - JULIANDAY(issued_on) AS INTEGER) per invoice, aggregated after",
+        "STRFTIME('%d', paid_on) - STRFTIME('%d', issued_on) — day-of-month diff",
+        "AVG(paid_on, issued_on) — the midpoint is the settlement point",
+      ],
+      answer: 1,
+      why: "JULIANDAY turns TEXT timestamps into fractional day numbers whose diff is real elapsed days; per-invoice, rounded once, aggregated after. Text subtraction is string math, STRFTIME('%d') diffs day-of-month (a 31-day gap reads 0), and AVG of two dates is a midpoint, not a duration.",
+      notes: [
+        { choice: 0, why: "Text subtraction would coerce '2025-03-01' - '2025-02-01' into a numeric parse of '2025' — a wrong number with a straight face." },
+        { choice: 2, why: "Day-of-month diffs collapse month boundaries: Feb 1 to Mar 1 reads 0. Only the julianday (or Julian-date) axis measures elapsed time." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "swiggy-mcq-17",
+      prompt: "Dark-store stock-versus-sold joins products to order_items (one SKU on many lines). The Headset reads 60 stocked, 46 sold, 14 remaining. Which fold computes 'sold' correctly?",
+      choices: [
+        "COUNT(*) per product — lines equal units",
+        "SUM(oi.quantity) per product — units live on the line, one row per unit sold",
+        "SUM(p.stock) − COUNT(oi.id) — stock minus purchase lines",
+        "AVG(oi.quantity) — the average line size is the sold count",
+      ],
+      answer: 1,
+      why: "Quantity lives on each order line, so units sold is SUM(quantity) grouped per SKU — 46 for the Headset. COUNT(*) counts LINES (a line of 3 units counts 1), and the remaining figure would inflate; the reorder signal dies quietly.",
+      notes: [
+        { choice: 0, why: "Lines ≠ units whenever baskets hold multiples of one SKU. The Instamart read that confuses them orders stock twice for family-sized baskets." },
+        { choice: 2, why: "Stock is on the product row (60) and subtracting line COUNTS from it mixes grains — 60 − lines is a number with no meaning." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "swiggy-mcq-18",
+      prompt: "Rider assignments can be missing — rider_id is NULL on unassigned orders. The ops pack prints 'assigned rider' and must not show gaps as names. Which expression prints 'Unassigned' instead?",
+      choices: [
+        "CAST(rider_id AS TEXT) — NULLs become the text 'NULL'",
+        "COALESCE(rider_name, 'Unassigned') — the display-edge fallback for a missing value",
+        "TRIM(rider_name) — trims the emptiness away",
+        "rider_name OR 'Unassigned' — boolean fallback",
+      ],
+      answer: 1,
+      why: "COALESCE returns the first non-NULL argument — the standard display-edge fallback for a legitimately missing value. The key word is display: COALESCE belongs at the OUTPUT edge, never inside the pipeline, where substituting 'Unassigned' for NULL would make unassigned orders join like assigned ones.",
+      notes: [
+        { choice: 0, why: "CAST(NULL AS TEXT) is still NULL — no cast produces the string 'NULL'. The fallback function is COALESCE (or IFNULL in SQLite)." },
+        { choice: 3, why: "OR is a boolean operator — NULL OR 'Unassigned' doesn't concatenate; it evaluates to NULL or a boolean, never the fallback string." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "swiggy-mcq-19",
+      prompt: "A pipeline retry double-loaded some delivery events — identical rows twice. Which shape keeps ONE copy per event, deterministically?",
+      choices: [
+        "SELECT DISTINCT * — dedupes the whole table in place",
+        "ROW_NUMBER() OVER (PARTITION BY event_key ORDER BY updated_at DESC) and keep rn = 1 — newest ingest wins, with a unique tie-breaker",
+        "GROUP BY event_key — folding is deduping",
+        "WHERE updated_at IS NOT NULL — retries carry NULL timestamps",
+      ],
+      answer: 1,
+      why: "The window dedupe numbers duplicates newest-first per natural key and the keep-rn-1 filter retains exactly one — deterministic, and the ORDER BY (updated_at, then a unique id) makes the winner reproducible. DISTINCT * only works when rows are byte-identical and offers no policy for which copy survives.",
+      notes: [
+        { choice: 0, why: "DISTINCT * fails the moment the copies differ in one column (a retry timestamp) — and it never states WHICH row is the truth." },
+        { choice: 2, why: "GROUP BY event_key collapses duplicates but picks survivor columns by engine mood — SQLite's bare-column rule, not a dedupe policy. Name the keep-newest rule explicitly." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "swiggy-mcq-20",
+      prompt: "`GROUP_CONCAT(DISTINCT status)` per zone prints EU 'pending,shipped,cancelled,delivered' but APAC 'delivered,shipped,pending,cancelled'. What do you tell the stakeholder who wants the strings sorted?",
+      choices: [
+        "Add ORDER BY inside GROUP_CONCAT — SQL guarantees per-zone alphabetical order",
+        "GROUP_CONCAT(DISTINCT …) has no guaranteed order — the string proves which states EXIST per zone (set evidence), not their sequence; sort outside SQL or don't parse it",
+        "The zones genuinely differ — APAC is missing a status",
+        "CAST the statuses to INTEGER first — numeric sorting fixes the fold",
+      ],
+      answer: 1,
+      why: "SQLite's GROUP_CONCAT concatenates in whatever order rows visit the fold; DISTINCT does not sort. EU and APAC hold the SAME four statuses in different walk orders — the column is set evidence, not sequence. Anything order-sensitive happens in the app layer, and the pack says so.",
+      notes: [
+        { choice: 0, why: "SQLite has no ORDER BY inside GROUP_CONCAT — and even where a dialect supports it, building logic on concat order is the smell under review." },
+        { choice: 2, why: "Compare as sets: both zones show all four statuses. The difference is walk order, which carries zero business meaning." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "swiggy-mcq-21",
+      prompt: "`SELECT STRFTIME('%Y-%m', created_at) AS month, SUM(total), (SELECT AVG(total) FROM orders) AS network_aov FROM orders GROUP BY month` — every row's network_aov reads 338.19. Bug?",
+      choices: [
+        "Yes — the subquery should vary by month; scope it to the month",
+        "No — it's UNCORRELATED: it folds the whole table once (34833.28 ÷ 103) and every month row reads the same baseline; a shared constant column is the point",
+        "Yes — scalar subqueries can't live in SELECT; move it to HAVING",
+        "No coincidence — it equals every monthly average by definition",
+      ],
+      answer: 1,
+      why: "An uncorrelated scalar subquery executes once and every outer row prints the same scalar — that's the desired shape: each month's demand beside the network baseline, no join, no fan-out. It's only a bug if the ask was 'each month vs the OTHERS' average' — a correlated fold with a different cost profile.",
+      notes: [
+        { choice: 0, why: "Scoping the baseline per month destroys the network number the growth brief requested — a different metric wearing the same column name." },
+        { choice: 2, why: "Scalar subqueries are standard in SELECT — that's where baseline columns live. HAVING filters groups; it doesn't display constants." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "swiggy-mcq-22",
+      prompt: "Which shape finds the months that carried demand in 2024 but have NO 2025 presence — and what does it return on this db?",
+      choices: [
+        "INTERSECT of the two years' month lists — overlap is drift",
+        "SELECT month-2024 EXCEPT SELECT month-2025 — set difference; on this db it returns 12 rows, because every 2024 month ran and only January–February carried 2025 demand",
+        "LEFT JOIN the two lists on month WHERE the 2025 side IS NULL — illegal across years",
+        "GROUP BY month HAVING COUNT(*) = 0 — folds materialize absent groups",
+      ],
+      answer: 1,
+      why: "EXCEPT is set difference: 2024's twelve month-keys minus 2025's two — twelve rows survive, the honest drift read. No joins, no NULL traps. The count itself is the finding: every 2024 month-key lacks a 2025 twin, because the 2025 log has only opened two months — the read is calendar-true where a '%m' fold would have merged the years and hidden the gap entirely.",
+      notes: [
+        { choice: 0, why: "INTERSECT answers the opposite question — months present in BOTH years (January and February here). Drift is difference, not overlap." },
+        { choice: 3, why: "GROUP BY folds existing rows only — a month with no orders never forms a group. Absence needs set logic or an anti-join, never a fold." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "swiggy-mcq-23",
+      prompt: "NTILE(4) OVER (ORDER BY latency, id) tiers the 82 completed deliveries. How wide are the tiles, and why the id in the ORDER BY?",
+      choices: [
+        "Exactly 20 each — tiles are fixed-width",
+        "21/21/20/20 — NTILE front-loads the remainder (82 = 4×20 + 2, so the first two tiles absorb it); the id tie-breaker keeps the boundaries reproducible between runs",
+        "20/20/21/21 — the remainder goes to the last tiles",
+        "Width depends on latency spread — wide spreads make wide tiles",
+      ],
+      answer: 1,
+      why: "NTILE divides 82 rows into 4 tiles as evenly as possible and front-loads the remainder: 21, 21, 20, 20 on this db — probed. Tied latencies must still LAND somewhere; without a unique tie-breaker the boundary assignment isn't reproducible and the p50 boundary moves between refreshes. Tile width is a row-count property, never a spread property.",
+      notes: [
+        { choice: 0, why: "82 doesn't divide by 4 — the remainder lands somewhere, and NTILE puts it in the EARLY tiles. 'Exactly 20 each' miscounts the board's own arithmetic." },
+        { choice: 2, why: "Back-loading the remainder is the intuition, not the spec — NTILE hands the extra rows to the first tiles. Check the engine, don't assume." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "swiggy-mcq-24",
+      prompt: "STRFTIME('%w', created_at) buckets the demand curve. Which test catches the weekend, and what does it read on this db?",
+      choices: [
+        "IN (0, 6) — numerics; the weekend reads 24 orders",
+        "IN ('0', '6') — TEXT codes, Sunday-first; the weekend reads 24 of 103 orders (16 Sunday + 8 Saturday) against 79 weekday",
+        "IN ('6', '7') — Monday-first numbering",
+        "BETWEEN '1' AND '5' — the weekend is the complement",
+      ],
+      answer: 1,
+      why: "'%w' returns TEXT '0'–'6' with '0' as SUNDAY, so the weekend test is IN ('0', '6') and it reads 24 orders — Sunday 16 plus Saturday 8 — against 79 weekday. The traps are type (IN (0,6) matches nothing against text) and convention ('0' is Sunday, not Monday — misread it and every rider shift plan drifts a day).",
+      notes: [
+        { choice: 0, why: "Type trap: '0' = 0 is a type mismatch in SQL, so the numeric list matches nothing and the branch reads zero — the silent empty that ships as 'no weekend demand'." },
+        { choice: 3, why: "BETWEEN '1' AND '5' catches MONDAY-FRIDAY — the weekday base, not the weekend. The complement test must still be written as the complement." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "swiggy-mcq-25",
+      prompt: "Kept share: 52 of 103 placed orders delivered. Which expression prints 50.49 — and what does the alternative print?",
+      choices: [
+        "ROUND(100 * SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) / COUNT(*), 2) — prints 50.49",
+        "ROUND(100.0 * SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) / COUNT(*), 2) — prints 50.49; the 100-variant prints 50.0 by integer division",
+        "ROUND(SUM(...) / COUNT(*), 2) * 100 — prints 50.49",
+        "AVG(status = 'delivered') * 100 — prints 50.49",
+      ],
+      answer: 1,
+      why: "In SQLite, 100 * int / int divides as integers: 100 * 52 = 5200, ÷ 103 → 50 — the .49 is truncated before ROUND ever sees it. The 100.0 divisor forces real division and the two-decimal read survives. The house habit: 100.0 before the division, ROUND only at the edge.",
+      notes: [
+        { choice: 0, why: "That's the trap version: the integer division already happened inside — 50.0 ships with two fake decimal places, and every zone share drifts down." },
+        { choice: 2, why: "Rounding AFTER the division can't recover the truncated decimals — the damage is inside the fold. Multiply the float first or don't divide." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "swiggy-mcq-26",
+      prompt: "The zone-level demand curve must print LATAM's silent 2025 as a 0 row, not a missing row. Which build does it?",
+      choices: [
+        "GROUP BY zone, month — folds create every group",
+        "A month spine (recursive CTE or dimension) LEFT JOINed to the facts, COALESCE(SUM(total), 0) — the spine guarantees the row, the join supplies the zeros",
+        "COALESCE(SUM(total), 0) without a spine — the fallback fills the gaps",
+        "HAVING SUM(total) IS NULL — keeps the empty months",
+      ],
+      answer: 1,
+      why: "Aggregation only reports buckets that exist — LATAM placed no 2025 orders, so no group forms and nothing inside the fold can resurrect it. The spine supplies the row skeleton, the LEFT JOIN keeps it alive with NULL payload, and COALESCE prints the honest 0. Spine rows minus fact rows = the empty count, and the pack reconciles.",
+      notes: [
+        { choice: 0, why: "GROUP BY folds existing rows only — that's the bug being fixed, not the fix." },
+        { choice: 2, why: "COALESCE acts on values in EXISTING rows; a missing group has no row to coalesce. The spine must exist BEFORE the fold." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "swiggy-mcq-27",
+      prompt: "Take rate: partner A charges 30% on 100 orders averaging $10; partner B charges 10% on 3 orders averaging $2000. AVG(per-order rate) vs SUM(fees) ÷ SUM(GMV) — which is the real blended rate, and why?",
+      choices: [
+        "AVG(per-order rate) — every order counts once",
+        "SUM(fees) ÷ SUM(GMV) — the ratio of sums weights by money: A contributes $300 of $4600 GMV, B $600, so the blend is 19.6%, not 20%",
+        "They always agree — rates are rates",
+        "MAX(per-order rate) — the top partner sets the take",
+      ],
+      answer: 1,
+      why: "Averaging ratios weights every ORDER equally; money compounds by SUM(fees) ÷ SUM(GMV). Here A's 30% sits on $1000 GMV ($300) and B's 10% on $6000 ($600): the blended take is 900 ÷ 7000 = 12.9% — nowhere near the 20% the average of rates reports. The marketplace banks the ratio of sums.",
+      notes: [
+        { choice: 0, why: "That's the average-of-ratios trap: partner B's three giant orders count as three votes, and the blended rate inflates toward whichever partner has small denominators." },
+        { choice: 3, why: "MAX is one partner's rate, not a blend. Every rate on the board should carry its fold: 'ratio of sums, weighted by the denominator.'" },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "swiggy-mcq-28",
+      prompt: "The settlement pack reports '27 payments across 8 merchants'. Which pair of expressions produces both numbers from the same fold — and why must they differ?",
+      choices: [
+        "COUNT(*) and COUNT(*) — they must agree",
+        "COUNT(p.id) counts payment rows (27); COUNT(DISTINCT i.customer_id) folds repeat and split settlements back to distinct merchants (8) — the gap IS the multi-payment picture",
+        "COUNT(*) and SUM(1) — identical by definition",
+        "COUNT(p.id) and COUNT(i.id) — the join makes them differ",
+      ],
+      answer: 1,
+      why: "After the invoice-payment join, COUNT(p.id) counts the 27 payment rows while COUNT(DISTINCT i.customer_id) folds them back to the 8 merchants who actually paid — 22 invoices behind those 27 rows, five of them split in two parts. Both numbers are true; each answers a different grain question, and the gap is exactly the split-settlement population finance wants named.",
+      notes: [
+        { choice: 0, why: "If they agreed, either the splits don't exist or one count is wrong. Two grains, two numbers, one reconciliation story." },
+        { choice: 3, why: "COUNT(p.id) and COUNT(i.id) on MATCHED rows agree (both sides non-NULL) — the divergence needs DISTINCT, not two columns." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "swiggy-mcq-29",
+      prompt: "'Merchants with at least one delivered order in February' — the teammate JOINs merchants to February orders and counts. The report shows one merchant 40 times. Diagnosis and fix?",
+      choices: [
+        "The join is broken — switch to LEFT JOIN",
+        "A JOIN answers 'how many matches' — it fanned out; membership wants a semi-join: EXISTS (SELECT 1 FROM orders o WHERE o.merchant_id = m.id AND …) which stops at the first match",
+        "Add LIMIT 1 per merchant",
+        "COUNT(DISTINCT *) fixes the fan-out",
+      ],
+      answer: 1,
+      why: "JOIN multiplies: a merchant with 40 February deliveries contributes 40 rows, and the DISTINCT you'd bolt on is the smell that says 'I joined to test existence'. EXISTS is the semi-join — first match wins, no fan-out, NULL-safe — and it's the shape that stays honest at marketplace scale.",
+      notes: [
+        { choice: 0, why: "LEFT JOIN changes WHO survives, not HOW OFTEN they appear — the 40 rows stay 40 rows. Fan-out is an existence-vs-count question." },
+        { choice: 2, why: "LIMIT caps the whole result set, not per-group. The per-merchant cap is a window job — or better, the semi-join that never fanned out at all." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "swiggy-mcq-30",
+      prompt: "The close ships when the ledger reconciles. `SELECT SUM(debit_cents), SUM(credit_cents) FROM ledger_entries` reads 18,108,000 / 18,108,000. What does delta 0 prove — and what does it NOT prove?",
+      choices: [
+        "Everything — balanced sums mean the books are correct",
+        "Only that total debits equal total credits — the pack CLOSES; it does not prove each ENTRY or each ACCOUNT is right — a mis-posted pair (debit to cash, credit to revenue, wrong amounts offsetting elsewhere) still balances",
+        "That every account's debits equal its credits — the SUM is per-account",
+        "That payments match invoices — the ledger is the AR proof",
+      ],
+      answer: 1,
+      why: "Delta 0 is the closure condition: the two-sided fold balances. It is necessary, not sufficient — offsetting errors cancel inside the SUM, so account-level breaks need the per-account GROUP BY (debit and credit folded per account, compared against expectations) and entry-level breaks need the trial listing. Balance proves arithmetic; it never proves postings.",
+      notes: [
+        { choice: 0, why: "That's the compliance trap: two wrong entries that offset still produce delta 0. Closure is the first gate, not the audit." },
+        { choice: 2, why: "The bare SUM folds across ALL accounts — cash can carry a $5,000 break while another account offsets it. Per-account granularity is a separate query." },
+      ],
+      difficulty: "hard",
+    },
   ],
 
   cases: [
@@ -402,6 +837,160 @@ export const swiggyKit: CompanyKit = {
       walkthrough:
         "One scan, four zones, branches that reconcile. The join attaches all 103 orders to their diner's zone; COUNT(*) holds the placed load (45/37/19/2) while three COUNT(*) FILTER branches fold statuses inside the same GROUP BY — delivered (24/21/5/2), pending (6/5/3/0), cancelled (3/3/1/0) — and the silence between branches and placed is the in-transit column: 12 in EU, 8 in APAC, 10 in US, 0 in LATAM. That gap is the census honesty check: branches plus shipped must equal placed, and a pack that can't show it is guessing. The distractors map to real report bugs: 'shipped' in the completed branch promotes in-transit to done — EU reads 36 instead of 24; 'void' (an invoice status) zeroes a branch and hides 7 real cancellations; ASC opens the post-mortem on LATAM's two deliveries. One pass, one population, reconciling branches — the query-budget habit the ops lead demanded, and the reason this census survives the review.",
     },
+    {
+      id: "cs-swiggy-3",
+      tier: "medium",
+      topic: "t5",
+      universe: "growth",
+      title: "The weekday demand leaderboard",
+      brief:
+        "Swiggy-flavored brief on the storefront db: the rider-shift plan needs the demand leaderboard by weekday — 'rank me the days, ties respected: three days sharing a rank must STAY together, not split 3-4-5 by engine mood, and any day carrying fewer than 9 orders gets no dedicated tier.' Definition fixed: weekday = STRFTIME('%w') TEXT codes with '0' as Sunday; rank = DENSE_RANK over the folded counts, busiest first; the threshold keeps the tiered days only. Probed on the db: Monday '1' leads at 20 orders, Friday '5' follows at 18, and Sunday '0', Tuesday '2', Wednesday '3' tie at 16 — Thursday '9' scrapes in at rank 4, and Saturday '8' falls below the cut.",
+      ask: "Return weekday code, order count, and a no-gap demand rank for every weekday with at least 9 orders, busiest first.",
+      template:
+        "SELECT STRFTIME('%w', created_at) AS weekday,\n       COUNT(*) AS orders,\n       {1}() OVER (ORDER BY COUNT(*) {2}) AS demand_rank\nFROM orders\nGROUP BY weekday\nHAVING COUNT(*) >= {3}\nORDER BY demand_rank, weekday;",
+      slots: [
+        {
+          answer: "DENSE_RANK",
+          kind: "keyword",
+          label: "the no-gap tier function",
+          why: "DENSE_RANK gives Monday 1, Friday 2, and the tied trio at 16 a shared rank 3 — tiers without gaps. RANK would jump the next value to 6, printing phantom rungs no weekday occupies; ROW_NUMBER would split the tie 3-4-5 arbitrarily.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the busiest-first direction",
+          why: "Ranking demand means the biggest count is tier 1, so the window ORDER BY runs descending. ASC would crown Saturday's 8 as rank 1 — a correct query answering the opposite question, and the shift plan would staff the quietest day.",
+        },
+        {
+          answer: "9",
+          kind: "number",
+          label: "the busy-tier threshold",
+          why: "HAVING COUNT(*) >= 9 keeps six weekdays — the tied trio at 16, plus Thursday's 9 that scrapes in — and that survivor is what makes the rank function visible: after the tie, DENSE_RANK reads 4 where RANK reads 6. Saturday's 8 falls below the cut, and 9 appears in the result cells it filters on.",
+        },
+      ],
+      distractors: ["ROW_NUMBER", "RANK", "ASC"],
+      walkthrough:
+        "A census, a threshold, and a tier that respects ties. STRFTIME('%w') folds 103 orders into seven weekday buckets — TEXT codes, Sunday '0' — and COUNT(*) is the demand counter: 20, 18, 16, 16, 16, 9, 8. HAVING — not WHERE — carries the threshold because the folded count only exists after the fold; >= 9 keeps six rows and drops Saturday. The window ranks the counts: DENSE_RANK packs the three-way tie at 16 into one shared rung — 1, 2, 3, 3, 3, then 4 for Thursday — which is the whole point: RANK would stamp 1, 2, 3, 3, 3 and jump to 6, printing phantom rungs no weekday occupies, and ROW_NUMBER would split the tie 3-4-5 as if rider demand could break a tie. The Thursday row is where the two rankers disagree — the survivor after a tie is what makes gaps visible. ORDER BY demand_rank, weekday breaks the TIED rows' display order deterministically (0, 2, 3) without breaking the tie itself. When the shift plan says 'tiered days', DENSE_RANK is the function that doesn't fabricate strata.",
+    },
+    {
+      id: "cs-swiggy-4",
+      tier: "easy",
+      topic: "j3",
+      universe: "supplier",
+      title: "The partner GMV chain",
+      brief:
+        "Swiggy-flavored brief on the storefront db: the partner review walks the merchant grid — 'top three partners by GMV, with their delivered-order counts, so we know who carries the basket and who carries the frequency.' The chain is orders → order_items → products → suppliers (merchant partners), revenue lives at line-item grain as unit_price × quantity, and order counts must fold back with COUNT(DISTINCT o.id) or the fan-out lies. Probed on the db: Nordic Gadgets AB leads value at 11130.25 across 38 orders, Midwest Hardware Co is second at 9294.93 — with 45 orders, the most of anyone — and Alpine Audio GmbH third at 4765.63 across 34. Frequency leader and value leader are different partners; that's the story.",
+      ask: "Return partner, distinct order count, and line-item GMV for the top three partners by GMV, biggest first.",
+      template:
+        "SELECT s.name AS partner,\n       COUNT(DISTINCT o.id) AS orders,\n       {1}(oi.unit_price * oi.quantity) AS gmv\nFROM orders o\nJOIN order_items oi ON oi.order_id = o.id\nJOIN products p ON p.id = {2}\nJOIN suppliers s ON {3} = p.supplier_id\nGROUP BY s.id\nORDER BY gmv {4}\nLIMIT {5};",
+      slots: [
+        {
+          answer: "SUM",
+          kind: "keyword",
+          label: "the revenue adder",
+          why: "GMV is SUM(unit_price × quantity) folded per partner — Nordic reads 11130.25. COUNT would print a row count wearing a money name, and the partner review would rank merchants by line volume instead of rupee value.",
+        },
+        {
+          answer: "oi.product_id",
+          kind: "keyword",
+          label: "the catalog join key",
+          why: "order_items attach to products on oi.product_id = p.id. o.id here would join items to orders AGAIN — the wrong key, a silently scrambled chain, and the GMV column becomes noise.",
+        },
+        {
+          answer: "s.id",
+          kind: "keyword",
+          label: "the partner join key",
+          why: "suppliers attach on s.id = p.supplier_id. p.supplier_id on both sides is a tautology — every supplier matches every product row, the fan-out explodes, and the GMV inflates into fiction.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-first direction",
+          why: "The review wants the value leaders: DESC puts Nordic's 11130.25 on top. ASC would open on Pacific Textiles' 2980.15 — the quietest partner leading a review about the heaviest.",
+        },
+        {
+          answer: "3",
+          kind: "number",
+          label: "the leaderboard cut",
+          noVerify: true,
+          why: "LIMIT 3 keeps exactly the podium — Nordic 11130.25, Midwest 9294.93, Alpine 4765.63 — the top three the review asked for. Probed: together they carry 25190.81 of the 34833.28 total line-item GMV, 72.3% of the marketplace.",
+        },
+      ],
+      distractors: ["COUNT", "o.id", "p.supplier_id", "ASC", "5"],
+      walkthrough:
+        "A four-table chain with a fold at every hop. The joins walk orders → order_items (line grain), → products (catalog), → suppliers (partner); the fold is SUM(unit_price × quantity) at line grain — 11130.25 for Nordic — while order volume folds back to order grain with COUNT(DISTINCT o.id), because the join fans every order into its line items and a bare COUNT(*) counts lines. The headline writes itself: Midwest leads frequency at 45 orders but Nordic leads value at 11130.25 — two argmaxes on one chain, both true, each at its own grain. ORDER BY gmv DESC + LIMIT 3 is the podium cut. The traps are the chain classics: COUNT in the money slot ranks by line count; o.id in the catalog slot re-joins the wrong pair; p.supplier_id = p.supplier_id is a tautology that explodes the fan-out; ASC crowns the quietest partner; LIMIT 5 dilutes a podium ask. Grain per fold, key per hop — that's the whole discipline.",
+    },
+    {
+      id: "cs-swiggy-5",
+      tier: "medium",
+      topic: "x1",
+      universe: "funnel",
+      title: "The status payload fold",
+      brief:
+        "Swiggy-flavored brief on the storefront db: the pack audit wants each zone's status vocabulary as ONE cell — 'per zone, the distinct statuses that actually occurred, biggest load first — it's a payload for the app to render, not a census to parse.' Definition fixed: GROUP_CONCAT(DISTINCT status) folds the zone's distinct status values into a comma string; the audit only asserts which states EXIST per zone, never their sequence — SQLite's fold order is engine mood. Probed on the db: EU (45 orders), APAC (37) and US (19) each show all four statuses — pending, shipped, cancelled, delivered in varying walk order; LATAM (2 orders) shows only 'delivered', the clean-zone signal. One pass, one string per zone.",
+      ask: "Return zone, order count, and the distinct-status payload per zone — biggest load first.",
+      template:
+        "SELECT c.region AS zone,\n       COUNT(*) AS orders,\n       {1}(DISTINCT o.status) AS states\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nGROUP BY c.region\n{2} COUNT(*) {3};",
+      slots: [
+        {
+          answer: "GROUP_CONCAT",
+          kind: "keyword",
+          label: "the string folder",
+          why: "GROUP_CONCAT folds the zone's distinct statuses into one payload cell — LATAM reads just 'delivered'. SUM on text yields 0, a number wearing a payload's name, and the audit loses every state it was meant to catch.",
+        },
+        {
+          answer: "ORDER BY",
+          kind: "keyword",
+          label: "the read order",
+          why: "ORDER BY COUNT(*) sorts the finished fold — biggest load first. A second GROUP BY is a syntax error here, and the two-fold confusion is exactly what the one-scan budget forbids.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-first direction",
+          why: "The audit opens on the heaviest zone: DESC puts EU's 45 on top. ASC would lead with LATAM's two deliveries — a clean zone heading a pack about where states pile up.",
+        },
+      ],
+      distractors: ["SUM", "GROUP BY", "ASC"],
+      walkthrough:
+        "One scan, one string per zone, one honesty rule. The join attaches all 103 orders to their zone; COUNT(*) holds the load (45, 37, 19, 2) while GROUP_CONCAT(DISTINCT o.status) folds each zone's distinct statuses into a single payload — EU, APAC and US render all four states in engine-mood order ('pending,shipped,cancelled,delivered' versus 'delivered,shipped,pending,cancelled' — same set, different walk), and LATAM reads 'delivered' alone, the clean-zone signal an analyst can state as set evidence. ORDER BY COUNT(*) DESC leads the pack with the heaviest zone. The rules the walkthrough enforces: the string proves which states EXIST, never their sequence — the app sorts, SQL folds; SUM over text is a zero wearing a payload's name; and the census stays one pass because the fold, the sort and the read happen over one GROUP BY. Set evidence, payload semantics, biggest first — that's the audit.",
+    },
+    {
+      id: "cs-swiggy-6",
+      tier: "hard",
+      topic: "t6",
+      universe: "inventory",
+      title: "The Instamart depth board",
+      brief:
+        "Swiggy-flavored brief on the storefront db: the Instamart review needs the deepest-cover SKU per dark-store category — 'one row per category: the SKU with the most units remaining on shelf, ranked WITHIN its category so seven categories each crown one champion.' Definition fixed: stage the stock-versus-sold fold in a CTE (sold = SUM(oi.quantity) per SKU), remaining = stock − sold, then RANK() OVER (PARTITION BY category ORDER BY remaining DESC) — one partition per category, deepest first. Probed on the db: the seven champions are Fitness Band X2 (Wearables, 65 remaining), Ring Light 14\" (Video, 120), Bluetooth Speaker Mini (Audio, 189), Yoga Mat Eco 6mm (Fitness, 193), Wireless Mouse M3 (Electronics, 264), Running Socks 3-pack (Apparel, 367) and HDMI 2.1 Cable 2m (Accessories, 462) — the slowest-moving tail leads its category by a wide margin.",
+      ask: "Return name, category, stock, sold, remaining, and the within-category depth rank for every SKU — champions first, thinnest cover first.",
+      template:
+        "WITH ps AS (\n  SELECT p.name, p.category, p.stock, {1}(oi.quantity) AS sold\n  FROM products p\n  JOIN order_items oi ON oi.product_id = p.id\n  GROUP BY p.id\n)\nSELECT name, category, stock, sold,\n       stock - sold AS remaining,\n       RANK() OVER ({2} BY category ORDER BY stock - sold DESC) AS depth_rank\nFROM ps\nORDER BY depth_rank, remaining\nLIMIT {3};",
+      slots: [
+        {
+          answer: "SUM",
+          kind: "keyword",
+          label: "the units-sold fold",
+          why: "Units live on the line, so sold = SUM(oi.quantity) per SKU — 46 for the Headset. COUNT would count LINES (a 3-unit basket counts once) and every remaining figure would inflate; the reorder signal dies quietly.",
+        },
+        {
+          answer: "PARTITION",
+          kind: "keyword",
+          label: "the per-category boundary",
+          why: "PARTITION BY category restarts the rank per category so seven champions emerge — one per shelf. ORDER BY alone ranks all 16 SKUs globally and six categories would never see their deepest SKU named.",
+        },
+        {
+          answer: "7",
+          kind: "number",
+          label: "the champion cut",
+          noVerify: true,
+          why: "LIMIT 7 keeps exactly the rank-1 row of each of the seven categories — the champions. Probed: their remaining cover spans 65 (Fitness Band X2) to 462 (HDMI 2.1 Cable), and the spread IS the rebalancing story.",
+        },
+      ],
+      distractors: ["COUNT", "ORDER", "4"],
+      walkthrough:
+        "Two stages: fold, then partition-rank. The CTE walks products → order_items and folds SUM(oi.quantity) per SKU — line grain folded to SKU grain, the Instamart stock-versus-sold fold; remaining = stock − sold computes at SKU grain (Bluetooth Speaker Mini: 210 − 21 = 189). The outer query ranks WITHIN each category — RANK() OVER (PARTITION BY category ORDER BY remaining DESC) — so Wearables crowns Fitness Band X2 at 65 while Accessories crowns HDMI 2.1 Cable at 462: seven partitions, seven champions, and the spread between them is the transfer list. ORDER BY depth_rank, remaining ASC surfaces the champions with the thinnest cover first — the morning fire list. COUNT in the fold would count lines, not units; ORDER in the window slot ranks globally and six categories lose their champion; LIMIT 4 keeps only a third of the shelf. Fold at SKU grain, rank at category grain, cut per ask — the two-stage discipline the board exists to teach.",
+    },
   ],
 
   problems: [
@@ -421,5 +1010,21 @@ export const swiggyKit: CompanyKit = {
     { slug: "bank-account-summary-ii", why: "Merchant settlement folds per partner — money in, money out, net per store, integer cents handled honestly with the 100.0 divisor." },
     { slug: "most-frequently-ordered-product-per-customer", why: "Each diner's repeat favorite — argmax with a deterministic tie-break, the personalization input for the home feed." },
     { slug: "the-most-recent-orders-for-each-product", why: "Most recent order per SKU — Instamart freshness reading: when did this item last move off the dark-store shelf." },
+    { slug: "last-person-to-fit-in-the-bus", why: "Running-sum capacity at row grain: order the demand, accumulate the weight, cut at the limit — the rider-bag question verbatim, cumulative by construction." },
+    { slug: "game-play-analysis-iii", why: "Cumulative totals per player with a running SUM window — Rush-hour coverage math: how much demand the online fleet has absorbed so far, row by row." },
+    { slug: "the-latest-login-in-2020", why: "Argmax inside a bounded window — the most recent event per diner within a fixed year: the 'latest before cutoff' shape the month-close audits use." },
+    { slug: "user-activity-for-the-past-30-days-i", why: "Windowed activity counts with a date spine — the 30-day rolling read the city packs open with, boundaries half-open by habit." },
+    { slug: "list-the-products-ordered-in-a-period", why: "Period-bounded existence sets — SKUs that moved inside a window only: the Instamart freshness cut, half-open intervals drilled." },
+    { slug: "queries-quality-and-percentage", why: "Two ratios in one query with rounding at the edge — the kept-share and cancellation-share math, 100.0 before the division." },
+    { slug: "rank-scores", why: "Pure RANK semantics on ties — the vocabulary check before the weekday leaderboard: say the 1,2,3,3,3 pattern out loud." },
+    { slug: "department-top-three-salaries", why: "The hard screen closer: DENSE_RANK per group, join back for names — 'top three per zone' with the CTE staging reflex." },
+    { slug: "second-highest-salary", why: "The famous tie trap: LIMIT/OFFSET breaks on duplicates — the metro leaderboard question where the second rung must survive ties." },
+    { slug: "employee-bonus", why: "NULL as the answer: 'bonus under the threshold' must still include NULLs — the unassigned-rider and missing-settlement read in one drill." },
+    { slug: "calculate-special-bonus", why: "COALESCE-guarded conditional values per row — the display-edge fallback discipline: guard the output, never the pipeline." },
+    { slug: "combine-two-tables", why: "The LEFT JOIN warm-up: dimension data that must survive with NULL payloads — diners joined to orders where the order side can be missing." },
+    { slug: "sellers-with-no-sales", why: "Zero-sales partners in a window — the merchant-hygiene anti-join; on this db the honest answer is an empty set, and reporting that IS the drill." },
+    { slug: "customer-who-visited-but-did-not-transact", why: "Visited-but-never-ordered via LEFT JOIN + IS NULL — the registered-diner audit: this db has zero such diners, and saying so cleanly is the test." },
+    { slug: "number-of-rich-customers", why: "Conditional counting over a threshold — 'dinners above the basket line' per zone: HAVING-judged aggregates with the placed denominator intact." },
+    { slug: "trial-balance-check", why: "Debits versus credits folded to delta 0 — the settlement pack's closure gate, and the lesson that balance proves arithmetic, not postings." },
   ],
 };

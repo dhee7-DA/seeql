@@ -11,6 +11,9 @@
 // suppliers = merchant partners. On this training db latency is stored in
 // DAYS (avg 2.98, range 2..4) — the same julianday shape that reads minutes
 // on production event streams.
+// Extended (R4-E): bank widened to 30 MCQs / 24 theory / 6 cases / 32 problems —
+// cases 3-6 and problems 17-32 probed on the live storefront db (all figures
+// cited in briefs are query-verified).
 
 import type { CompanyKit } from "../types";
 
@@ -26,6 +29,7 @@ export const doordashKit: CompanyKit = {
     "The data org is logistics-first. Supply-demand teams balance Dasher hours against order minutes per zone; **ETA science** owns the promise itself; new-vertical teams (grocery, convenience, alcohol) run funnels that end in a doorstep handoff. The culture is SQL-first: a zone review opens with a query, an experiment readout is a query with a definition attached, and the event stream — `placed, assigned, picked up, delivered, cancelled` — is the raw material every dashboard folds. The reflex being hired for is stitching event timestamps into per-delivery funnels and folding them per zone **without letting the grain blur**.",
     "Interviews screen for exactly that. Expect cancellation-share math where the denominator is **placed orders** (never the kept subset), latency averages over the population that actually has a delivery timestamp — and the sentence '*in-flight orders have no latency yet*' said out loud. Expect two-grain censuses (deliveries AND diners per zone), merchant-partner joins, leaderboard windows with tie rules, and basket-value ratios where the scalar-subquery baseline is the network average. The interviewers are listening for the narrate-then-write habit: **grain, filter, denominator, sort** — stated before the first keystroke.",
     "To prep: drill conditional aggregation (`SUM(CASE WHEN …)` and `COUNT FILTER`), the rank trio with tie-breakers, `julianday`-style diffs between timestamps, and anti-joins for demand hygiene. Practice saying which population each WHERE leaves — this db trains it honestly: **103 deliveries, 82 of them with a delivery timestamp**, average latency **2.98 days** (the same query shape reads ~34 minutes on production minute-grain events), and 7 cancelled orders whose share of each zone is the interview's favorite trap.",
+    "This expanded kit is built for spaced practice rather than one sitting. **Six case studies** now span the asks DoorDash screens on most: the zone latency board, the zones-above-network-basket read, the monthly demand pulse, the weekend-surge pivot behind Peak Pay planning, the month-close completion audit over a half-open window, and the per-zone month-over-month pace pack built on `LAG`. Run each on the live storefront database, then re-run a week later from a blank editor — *the second pass is where recall actually forms*. Pair the cases with the **32-problem pool** and the theory bank below, and treat the walkthroughs as the real content: they narrate the failure each wrong chip causes, which is exactly the muscle the *'what population is that over?'* follow-up tests.",
   ],
 
   dayInLife: [
@@ -55,7 +59,7 @@ export const doordashKit: CompanyKit = {
     {
       name: "Kept demand & cancellation math",
       why: "The marketplace's most-watched ratio is kept ÷ placed, and it is a conditional count before it is a percentage: SUM(CASE WHEN status = 'cancelled' …) over the same rows that COUNT(*) divides. Drill it until placing the status filter in the wrong clause feels physically wrong — that filter move is the denominator-drift bug that ruins cancellation maps.",
-      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "monthly-transactions-i"],
+      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "monthly-transactions-i", "unique-orders-and-customers-per-month"],
     },
     {
       name: "Dasher supply & running sums",
@@ -80,7 +84,7 @@ export const doordashKit: CompanyKit = {
     {
       name: "Merchant partner joins",
       why: "Supply-side reporting attaches every order to its merchant partner — supplier tables joined through product catalogs — and asks what survives: does a partner with zero delivered orders appear in the revenue table? INNER versus LEFT is a decision about who survives, and this kit drills it as one.",
-      slugs: ["combine-two-tables", "product-sales-analysis-i", "replace-employee-id-with-unique-identifier"],
+      slugs: ["combine-two-tables", "product-sales-analysis-i", "replace-employee-id-with-unique-identifier", "customers-who-never-order"],
     },
     {
       name: "Zone leaderboards & the rank trio",
@@ -147,6 +151,102 @@ export const doordashKit: CompanyKit = {
       q: "Before a zone dashboard ships, you get ten minutes of query review. What are the two-grain and fan-out checks you run every time?",
       a: "Two checks, run as reflexes. One-grain-per-COUNT: after any join, ask 'one row per what?' out loud — joining deliveries to line items fans 103 orders into 251 rows, COUNT(*) silently starts counting line items, and every downstream AOV divides by the wrong thing; COUNT(DISTINCT o.id) folds the fan-out back, or fold per order in a derived table first. Reconciliation: the branch totals must add back to the whole — delivered plus shipped plus pending plus cancelled equals COUNT(*) of placed, and a one-pass census whose FILTER branches don't reconcile is lying in a column you didn't print. The duplicate check rides along: GROUP BY the natural key HAVING COUNT(*) > 1 before any leaderboard ships, because a double-loaded event doubles a zone's demand and halves its latency in the same stroke. Boring, cheap, always run — that is what makes the dashboard trustworthy.",
       tag: "quality",
+    },
+    {
+      id: "doordash-t9",
+      q: "Walk me through building the zone census — deliveries AND diners per zone — and tell me what each column means to the supply team.",
+      a: "Two counts, two grains, one fold. COUNT(*) after the delivery-to-diner join counts delivery rows — the load the rider network physically moves: EU 45, APAC 37, US 19, LATAM 2 on this db. COUNT(DISTINCT customer_id) folds repeat demand back to audience size: 8, 5, 2, 1. Neither is wrong; the ratio between them is the intensity signal — EU runs 5.6 orders per diner, a repeat-heavy metro that needs different rider posture than a new-user frontier. The trap that catches candidates is a third count: join to order_items and COUNT(*) silently counts line items (251, not 103). Saying 'one row per what?' for every COUNT in the query is the habit the interviewer is grading.",
+      tag: "aggregation",
+    },
+    {
+      id: "doordash-t10",
+      q: "Partner GMV runs suppliers → products → order_items → orders. Where do the fan-outs live, and what folds safely at each hop?",
+      a: "Revenue lives at line-item grain, so SUM(oi.unit_price * oi.quantity) folds safely through the whole chain — Nordic Gadgets reads 11130.25 across 38 orders. The danger is counting: COUNT(*) counts line items, not orders, so order volume must be COUNT(DISTINCT o.id) — that's how Midwest Hardware leads orders (45) while Nordic leads value (11130.25 vs 9294.93). Two argmaxes on the same chain disagree because they measure different grains. State the fold grain out loud at each hop — 'line grain for money, order grain for counts' — and the join discipline becomes mechanical instead of hopeful.",
+      tag: "joins",
+    },
+    {
+      id: "doordash-t11",
+      q: "Rider capacity is a running sum of demand minutes. Write the frame — and tell me when the default frame lies.",
+      a: "SUM(demand_minutes) OVER (ORDER BY minute ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) — explicit ROWS, because the default frame is RANGE, and RANGE includes ordering PEERS: two minute-buckets tied at the same timestamp enter the total together, so the coverage line steps in burst-sized jumps exactly where Rush demand clusters. ROWS is row-true: one row per step, deterministic. When the axis is dates with gaps, neither frame is calendar-true — that's a date-spine join, not a frame flag. The interview point is knowing the default exists and saying which frame the metric means before the deck ships.",
+      tag: "windows",
+    },
+    {
+      id: "doordash-t12",
+      q: "Where do NULLs survive each pipeline stage — ON, WHERE, GROUP BY, DISTINCT, aggregates? Walk me through a delivery row with a NULL shipped_at.",
+      a: "Five stages, five behaviors. ON: NULL join keys never match — an order with a NULL diner id vanishes from an INNER JOIN silently. WHERE: NULL fails every comparison, both = and !=, so 'not cancelled' must be written status != 'cancelled' OR status IS NULL. GROUP BY: NULLs are legal keys and fold into one group of their own — 21 NULL-shipped_at orders become a single honest bucket. DISTINCT: keeps exactly one NULL. Aggregates: COUNT(*) keeps the row, COUNT(shipped_at) skips it, AVG silently narrows its population. The policy that survives review: name the population every filter leaves, and probe NULLs deliberately instead of discovering them in production.",
+      tag: "nulls",
+    },
+    {
+      id: "doordash-t13",
+      q: "PARTITION BY enrichment versus GROUP BY collapse — when does each serve the pipeline, and what happens to row count under each?",
+      a: "COUNT(*) OVER (PARTITION BY dasher_id, day) computes each partition's fold but paints it onto every row — 103 deliveries in, 103 rows out, each now carrying its Dasher's day count as a passenger column; the delivery-grain pipeline keeps flowing. GROUP BY dasher_id, day collapses to one row per partition — right for a per-Dasher summary, fatal for a per-delivery pipeline that still needs the rows. The composition rule: enrich with windows first, fold with GROUP BY later — or stage the fold in a CTE and layer windows over it. The reflex question is always row count: 'how many rows survive this clause?' — if the answer surprises you, you picked the wrong tool.",
+      tag: "windows",
+    },
+    {
+      id: "doordash-t14",
+      q: "The promise team wants latency tiers — p50 and p90 — over completed deliveries. How do you build them in SQL, and what sentence rides on the result?",
+      a: "Stage the per-delivery latency first — JULIANDAY(shipped_at) − JULIANDAY(created_at) over the 82 completed rows only — then NTILE(4) OVER (ORDER BY latency) cuts quartiles and PERCENT_RANK gives the continuous 0-to-1 read; p50 is the tile-2 boundary, p90 the 0.9 percentile row. The population sentence is the deliverable: 'latency distribution of completed deliveries — pending and cancelled orders have no latency and are out of scope.' And add a deterministic tie-breaker to the window ORDER BY (latency, id), because NTILE must place tied rows somewhere and the tier boundaries should not move between runs. Aggregate first in a CTE, tier second — the window can't sit inside the same SELECT as the fold.",
+      tag: "windows",
+    },
+    {
+      id: "doordash-t15",
+      q: "'Merchants with at least one delivered order in February' — do you reach for EXISTS, IN, or a JOIN, and why?",
+      a: "EXISTS is the scale-safe answer: it's a semi-join that stops at the first matching row, never fans out, and treats NULL keys honestly — a product with NULL merchant_id simply doesn't exist in the check. IN works on small static lists but the NOT IN variant is the classic silent-empty bug: one NULL in the subquery and every row fails. A JOIN is the wrong tool for membership: a partner with 40 February orders multiplies the outer rows 40 times, and the DISTINCT you then need is a smell that says 'I joined to test existence.' Say the difference as a population claim — EXISTS asks 'does a match exist', JOIN asks 'how many matches are there' — and the follow-up question chooses the tool.",
+      tag: "subqueries",
+    },
+    {
+      id: "doordash-t16",
+      q: "Build the weekday demand curve and the weekend split for Peak Pay planning. What are the STRFTIME('%w') traps?",
+      a: "STRFTIME('%w', created_at) returns '0' through '6' as TEXT — and '0' is SUNDAY, not Monday, which is the first trap: the weekend test is IN ('0', '6') and it reads 24 of 103 orders versus 79 weekday. Second trap: the values are strings — IN (0, 6) with numerics matches nothing, because '0' = 0 is a type mismatch, not a comparison. Third: label the output — a leaderboard of bare weekday codes ships misread (Monday is '1'); CASE the codes into names in the same pass. The pivot itself is conditional counting: SUM(CASE WHEN STRFTIME('%w', …) IN ('0','6') THEN 1 ELSE 0 END) AS weekend_orders beside its weekday twin, branches summing back to COUNT(*).",
+      tag: "dates",
+    },
+    {
+      id: "doordash-t17",
+      q: "Dark-store stock versus sold per SKU — where's the fan-out, and what does 'remaining' mean when the number goes negative?",
+      a: "Stock lives on the product row, sold lives on order lines, so the join is products to order_items and the fan-out is the danger: one SKU on many lines means COUNT(*) counts lines, not units — the fold is SUM(oi.quantity). Remaining = stock − SUM(quantity): Noise-Canceling Headset reads 60 stocked, 46 sold, 14 remaining — the reorder signal — while Bluetooth Speaker Mini reads 210 stocked, 21 sold, 189 remaining — the slow tail an Instamart review flags for markdown or transfer. A negative remaining means oversold against shelf, a data-integrity incident, not a math curiosity. And the hygiene check rides along: every product on this db has sold at least once, so the never-ordered set is honestly empty — report the zero, don't invent demand.",
+      tag: "joins",
+    },
+    {
+      id: "doordash-t18",
+      q: "Take rate is fees ÷ GMV. Why is AVG(per-order rate) the wrong fold, and what is the right one?",
+      a: "Because it's an average of ratios instead of a ratio of sums: AVG(fee/total) weights a $4.99 snack order exactly as heavily as a $200 group cart, while SUM(fees) ÷ SUM(total) weights by money — the blended rate the finance partner actually banks. Whenever denominators vary, the two folds disagree, and the gap widens with basket variance — which delivery baskets have plenty of. The same rule governs kept demand: the marketplace's cancellation share is conditional sums over the PLACED whole, never the average of per-zone shares — small zones would outweigh big ones. Name it out loud: 'ratio of sums, weighted by the denominator' is the house fold for every rate on this board.",
+      tag: "aggregation",
+    },
+    {
+      id: "doordash-t19",
+      q: "Why can't WHERE see a window function, and how do you stage around it when the ask is 'top three zones per month'?",
+      a: "Because of the evaluation order: FROM, WHERE, GROUP BY, HAVING, SELECT — where the window layer paints — then ORDER BY. When WHERE runs, no window output exists yet, so RANK() in WHERE is a syntax error, not a style choice. The staging move is a CTE or derived table: the inner query folds per month and computes RANK() OVER (PARTITION BY month ORDER BY orders DESC), and the outer query filters rn <= 3. The same two-step carries LAG deltas, running sums, any window-shaped filter. It isn't ceremony — it's the grammar teaching you that windows are a presentation-layer computation over an already-folded set.",
+      tag: "pipeline",
+    },
+    {
+      id: "doordash-t20",
+      q: "The promo pack needs the demand curve zero-filled — quiet months must print 0, not vanish. How do you build that?",
+      a: "Aggregation only reports buckets that exist, so build the buckets first: a month spine (a recursive CTE walking 2024-01 through 2025-02, or a dimension table) LEFT JOINed to the facts, then COALESCE(SUM(total), 0) over the joined payload. The full-network curve on this db happens to have all 14 months populated — but break it by zone and the holes appear: LATAM placed no 2025 orders at all, so a per-zone curve without a spine silently hides the zone's quiet year. A missing row is a lie by omission in a promo deck: the stakeholder reads the chart as 'no data' at best and 'no demand' at worst — and only one of those is a decision. Spine, LEFT JOIN, COALESCE, and the reconciliation check that spine rows minus fact rows equals the empty count.",
+      tag: "dates",
+    },
+    {
+      id: "doordash-t21",
+      q: "UNION, UNION ALL, EXCEPT, INTERSECT — give me the marketplace read for each.",
+      a: "UNION ALL stacks without dedupe — the census branches and TOTAL rows, where every row belongs and a distinct pass would be pure cost with a side of row-deletion risk. UNION is the deduped union — right when two overlapping sources report the same entity and you want one row per thing. EXCEPT is set difference and the churn read: January's zone set EXCEPT February's answers 'who went quiet' — on this db it returns nothing, because all four zones delivered in both months, and the honest answer is the empty set. INTERSECT is the overlap — zones live in both windows. All four fold at column-shape grain, and they treat NULLs as equal members, which makes them safer than NOT IN for presence logic.",
+      tag: "setops",
+    },
+    {
+      id: "doordash-t22",
+      q: "The scalar subquery's empty-inner contract — when does it bite in marketplace reporting?",
+      a: "The contract is 0-or-1 rows, 1 column; zero rows yield NULL, and every comparison against NULL is UNKNOWN — so the report empties silently, no error, no warning. It bites the moment the inner fold's population can go empty: scope the network-basket baseline to a February window with no orders, or to a zone with no demand, and HAVING AVG(total) > (SELECT …) passes nothing while looking like a clean run. Guards are explicit: keep the baseline unfiltered when the definition says 'network', or COALESCE((SELECT …), 0) with a documented fallback. The correlated cousin re-runs per outer row and answers a different question — 'each zone vs the others' — at a different cost; knowing which one the business asked for is the whole answer.",
+      tag: "subqueries",
+    },
+    {
+      id: "doordash-t23",
+      q: "A leaderboard must be reproducible across runs and refreshes. What determinism discipline do you apply before it ships?",
+      a: "Total order first: every ORDER BY that feeds a ranking or a page boundary ends with a unique key — metric DESC, then id ASC — because ties otherwise resolve to the engine's sort mood and page two shuffles between refreshes. Then the tie policy as an owned decision: ROW_NUMBER when exactly N partners must appear (bonus pays N), RANK or DENSE_RANK when tied partners should share a rung — and the 'top-8 returns 9 rows' bug is that policy leaking, not a query defect. Finally the audit trail: the query that produced the board ships with the board, so the next analyst re-runs the definition rather than re-deriving it. Determinism isn't perfectionism — it's what makes a number survivable under 'how do you know?'",
+      tag: "quality",
+    },
+    {
+      id: "doordash-t24",
+      q: "The commission schedule changed in March; the ask is February's take rate. How do you read history honestly?",
+      a: "As-of joins with half-open validity intervals: JOIN rates r ON r.partner_id = o.partner_id AND r.valid_from <= o.created_at AND (r.valid_to > o.created_at OR r.valid_to IS NULL) — start inclusive, end exclusive, so each order instant matches exactly one schedule and adjacent changes never double-match. Joining the 'current' row fabricates history: March's rate would silently overwrite February's, and the take-rate trend becomes fiction with a straight face. The trap is joining on the entity key alone — the key picks the row SET, the interval picks the moment. And the population sentence rides on every as-of read: which schedule version, as of when, for which orders — stated in the metric name, not the Slack thread.",
+      tag: "joins",
     },
   ],
 
@@ -316,6 +416,346 @@ export const doordashKit: CompanyKit = {
       ],
       difficulty: "hard",
     },
+    {
+      id: "doordash-mcq-11",
+      prompt: "The zone census reads EU: 45 deliveries but only 8 distinct diners. Which pair of expressions produces both columns honestly — and what does the 45 ÷ 8 gap tell the supply team?",
+      choices: [
+        "COUNT(*) and COUNT(customer_id) — both count rows, so they always agree",
+        "COUNT(*) counts delivery rows (45); COUNT(DISTINCT customer_id) folds repeat demand back to people (8) — the gap is order intensity per diner",
+        "COUNT(DISTINCT customer_id) reads 45 because DISTINCT applies after the join fans out",
+        "COUNT(*) reads 8 because GROUP BY region dedupes customers first",
+      ],
+      answer: 1,
+      why: "COUNT(*) counts joined rows — one per delivery; COUNT(DISTINCT customer_id) collapses repeat demand back to people. 45 deliveries from 8 diners is a 5.6-orders-per-diner intensity signal — the number the supply team uses to plan rider posture for repeat-heavy zones versus new-user frontiers.",
+      notes: [
+        { choice: 2, why: "DISTINCT folds duplicates at the VALUE level: customer 1's five orders collapse to one value, which is exactly why the expression reads 8, not 45." },
+        { choice: 3, why: "GROUP BY folds zones, not diners — one row per zone, and COUNT(*) inside it counts that zone's delivery rows. Deduping customers is the DISTINCT aggregate's job." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "doordash-mcq-12",
+      prompt: "A teammate folds orders with `GROUP BY shipped_at` and gets 83 groups: 82 single-timestamp groups plus one crowd. What is the crowd?",
+      choices: [
+        "A join fan-out bug — dedupe it with DISTINCT",
+        "The 21 orders with NULL shipped_at — GROUP BY keeps NULLs as one group of their own",
+        "Cancelled orders — they group separately by business policy",
+        "A timezone artifact — pre-dawn timestamps collapse into one bucket",
+      ],
+      answer: 1,
+      why: "NULLs are legal GROUP BY keys: all 21 orders without a delivery timestamp (14 pending, 7 cancelled) fold into one NULL group. That crowd IS the in-flight-plus-lost picture — reading the group count as 'delivery days' is the misread this drill prevents.",
+      notes: [
+        { choice: 0, why: "No join here — a single-table GROUP BY cannot fan out. The extra group is data, not duplication." },
+        { choice: 3, why: "Timezones don't create groups; NULL keys do. Check what the group's KEY actually is before theorizing." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "doordash-mcq-13",
+      prompt: "Cancellation share by zone is cancelled ÷ PLACED. A teammate writes `WHERE status = 'cancelled'` and then `COUNT(*) / COUNT(*)`. What ships?",
+      choices: [
+        "The right shares — the filter isolates cancellations cleanly",
+        "100% for every zone — the denominator shrank to the numerator's population",
+        "0% everywhere — cancelled rows never survive the filter",
+        "NULL — the division is degenerate",
+      ],
+      answer: 1,
+      why: "Filter cancelled rows first and COUNT(*) counts ONLY cancelled orders in numerator and denominator — every zone reads 100%. The placed denominator must live in the same fold: SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) ÷ COUNT(*), with no WHERE on status anywhere.",
+      notes: [
+        { choice: 2, why: "The rows survive — that's the bug: they're ALL that survives. The filter doesn't delete cancellations; it deletes everything else." },
+        { choice: 0, why: "A ratio needs its denominator from a DIFFERENT population than the numerator. Same-population division is always 1 — the filter made the metric tautological." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "doordash-mcq-14",
+      prompt: "The demand tracker smooths order counts with `AVG(orders) OVER (ORDER BY day ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)`. On the FIRST row of the month, how many days feed the average — and what does that mean for the trend line?",
+      choices: [
+        "Seven — the frame is always seven rows wide",
+        "One — the frame truncates at the partition's start, so the early trend rides on thin data",
+        "Six — the current row is never inside the frame",
+        "The whole month — window frames ignore partition edges",
+      ],
+      answer: 1,
+      why: "Frames truncate at the partition edge: day 1's '7-day' average is really a 1-day average, day 2's is 2-wide, and only day 7 onward is truly 7. The early trend line is thin-data theater — the honest deck annotates it or the honest analyst says so before the review.",
+      notes: [
+        { choice: 0, why: "That's the frame's MAXIMUM width, not its guarantee. Physical rows must exist; windows don't invent missing days." },
+        { choice: 2, why: "CURRENT ROW is inside the frame — six preceding plus today makes seven when the history exists. Without history it's whatever remains." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "doordash-mcq-15",
+      prompt: "The diner order stream needs a 'next order' column. Which function reads it — and what does the NEWEST order's row get?",
+      choices: [
+        "LAG(created_at) — and the newest order gets the oldest timestamp",
+        "LEAD(created_at) — and the newest order gets NULL, because it has no next order yet",
+        "LEAD(created_at) — and the newest order gets its own timestamp",
+        "Both read forward; they differ only in sort direction",
+      ],
+      answer: 1,
+      why: "LEAD peers one row AHEAD in the window order; the newest order has no successor, so its cell is honestly NULL. LAG would fill a column named 'next order' with history — the mislabel this drill prevents, and the NULL-end tells you which direction the window walked.",
+      notes: [
+        { choice: 0, why: "LAG walks backwards: under LAG it's the OLDEST order that gets NULL, not the newest. Direction and NULL-end are opposite pairs — check both." },
+        { choice: 2, why: "Windows never self-reference — LEAD returns a NEIGHBOR or NULL, never the current row. A copy of created_at in that cell would be a different (broken) function." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "doordash-mcq-16",
+      prompt: "'Diners with no orders in February' is written as `customers LEFT JOIN orders o ON o.customer_id = c.id WHERE o.created_at >= '2025-02-01' AND o.id IS NULL`. What returns?",
+      choices: [
+        "Exactly the February no-order diners",
+        "Always empty — a kept row would need o.id NULL, but then o.created_at is NULL and fails the date filter",
+        "All diners — the two predicates OR together in WHERE",
+        "Only diners whose February orders were cancelled",
+      ],
+      answer: 1,
+      why: "In the LEFT JOIN's NULL payload, o.created_at is NULL too; NULL >= '2025-02-01' is UNKNOWN, so every candidate row dies and the report ships empty no matter the data. The window filter belongs in ON — o.customer_id = c.id AND o.created_at >= '2025-02-01' — with only o.id IS NULL left in WHERE.",
+      notes: [
+        { choice: 0, why: "It can't: the date predicate tests the right table in WHERE — exactly the placement that deletes the NULL rows the anti-join feeds on." },
+        { choice: 3, why: "Cancelled February orders are still February orders — and they'd have o.id NOT NULL, failing the IS NULL half anyway. The bug is upstream of status entirely." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "doordash-mcq-17",
+      prompt: "The cost memo stacks two fixed-cost category rows plus a labelled TOTAL row. Why does the house style say `UNION ALL` here and never plain `UNION`?",
+      choices: [
+        "UNION dedupes across branches and could delete a detail row that happens to match the TOTAL row's values",
+        "They're identical — UNION just reads better in a memo",
+        "UNION ALL is faster because it skips sorting — speed is the only concern",
+        "UNION cannot stack queries with different column counts",
+      ],
+      answer: 0,
+      why: "UNION applies DISTINCT across the stacked result sets; if a detail row's values ever matched the TOTAL row's, it would be silently deleted. In a stack where every row belongs and the grains differ, UNION ALL is the honest concatenation — and the dedupe pass it skips is pure cost.",
+      notes: [
+        { choice: 1, why: "They differ semantically, not just stylistically — the dedupe is a real transformation that can eat legitimate rows." },
+        { choice: 2, why: "The speed gain is real but secondary; the correctness argument — never dedupe a stack of unlike grains — is what the reviewer wants to hear." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "doordash-mcq-18",
+      prompt: "The one-pass zone fold prints EU: delivered 24, shipped 12, pending 6, cancelled 3, placed 45. What check just passed — and what breaks it?",
+      choices: [
+        "A rounding check — totals were verified to be integers",
+        "The reconcile-to-placed check — branch totals must add back to COUNT(*); any filter applied to some branches but not COUNT(*) breaks it",
+        "A primary-key check on the zone column",
+        "An index-usage check — the fold must be one scan",
+      ],
+      answer: 1,
+      why: "Branch totals plus in-transit must reconcile to placed: 24 + 12 + 6 + 3 = 45. The check breaks the moment a WHERE sneaks in front of some branches — say 'completed' gains shipped_at IS NOT NULL while COUNT(*) keeps all rows — and the add-back silently fails by the size of the excluded population.",
+      notes: [
+        { choice: 0, why: "Nothing here rounds — counts are integers by construction. The check is additive: populations, not precision." },
+        { choice: 2, why: "Keys don't reconcile; populations do. The identity is about the fold's rows, not the group label's uniqueness." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "doordash-mcq-19",
+      prompt: "Peak Pay bonuses carry start and end timestamps. Which join finds the bonus that was LIVE when each order was placed?",
+      choices: [
+        "JOIN bonuses b ON b.is_current = 1 — attach today's active bonus to every order",
+        "JOIN bonuses b ON b.start <= o.created_at AND b.end > o.created_at — a half-open as-of interval",
+        "JOIN bonuses b ON STRFTIME('%m', b.start) = STRFTIME('%m', o.created_at) — same-month match",
+        "LEFT JOIN bonuses b ON b.end IS NULL — only bonuses with no end date",
+      ],
+      answer: 1,
+      why: "The as-of interval is half-open — start inclusive, end exclusive — so exactly one live bonus matches each order instant and adjacent bonuses never double-match. Joining 'the current bonus' fabricates history: every historical order reads today's promo, and last quarter's Peak Pay analysis becomes fiction.",
+      notes: [
+        { choice: 2, why: "Month-grain matching double-matches orders inside overlap months and misses boundary orders — the honest shape is an instant interval, not a calendar bucket." },
+        { choice: 3, why: "b.end IS NULL finds open-ended bonuses, not live-at-order-time ones — and the bonus that WAS live in February is precisely one that has since ended." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "doordash-mcq-20",
+      prompt: "`GROUP_CONCAT(DISTINCT status)` per zone prints EU 'pending,shipped,cancelled,delivered' but APAC 'delivered,shipped,pending,cancelled'. What do you tell the stakeholder who wants the strings 'sorted'?",
+      choices: [
+        "Add ORDER BY inside GROUP_CONCAT — SQL guarantees per-zone alphabetical order",
+        "GROUP_CONCAT(DISTINCT …) has no guaranteed order — the string is a payload proving which states EXIST, not their sequence; sort outside SQL or don't parse it",
+        "The zones genuinely differ — APAC is missing a status",
+        "CAST the statuses to INTEGER first — numeric sorting fixes the fold",
+      ],
+      answer: 1,
+      why: "SQLite's GROUP_CONCAT concatenates in whatever order rows visit the fold; DISTINCT does not sort. EU and APAC hold the SAME four statuses in different walk orders — the column is set evidence, not sequence. Anything order-sensitive happens in the app layer, and the walkthrough says so.",
+      notes: [
+        { choice: 0, why: "SQLite has no ORDER BY inside GROUP_CONCAT — and even where a dialect supports it, building logic on concat order is the smell under review." },
+        { choice: 2, why: "Compare as sets: both zones show all four statuses. The difference is walk order, which carries zero business meaning." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "doordash-mcq-21",
+      prompt: "Every delivery row needs its Dasher's running delivery count for the day — WITHOUT collapsing rows. Which shape keeps one row per delivery?",
+      choices: [
+        "GROUP BY dasher_id, day — fold, then join back to deliveries",
+        "COUNT(*) OVER (PARTITION BY dasher_id, day) — the window paints the fold onto every row and keeps the grain",
+        "SELECT DISTINCT dasher_id, day — dedupe to one row per Dasher-day",
+        "A self-join of orders to orders counted with DISTINCT",
+      ],
+      answer: 1,
+      why: "COUNT(*) OVER (PARTITION BY dasher_id, day) computes the fold per partition but attaches it to every row — 103 deliveries in, 103 rows out, each carrying its count as a passenger column. GROUP BY collapses to one row per Dasher-day and loses the delivery rows the pipeline still needs.",
+      notes: [
+        { choice: 0, why: "Fold-and-join-back works but is two moves and a join key to keep consistent; the window is one move — and the interview point is knowing windows keep rows." },
+        { choice: 2, why: "DISTINCT dedupes output rows; it computes no count at all. You'd ship a list of Dasher-days with nothing attached." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "doordash-mcq-22",
+      prompt: "The weekday demand pivot prints six columns — but the Sunday bucket VANISHES on weeks with no Sunday orders. Why, and what's the honest fix?",
+      choices: [
+        "A STRFTIME bug — '%w' sometimes skips '0'",
+        "GROUP BY only folds buckets that exist; build the 7-row weekday spine first and LEFT JOIN the facts onto it, then COALESCE to 0",
+        "Wrap the count in COALESCE(COUNT(*), 0) — that restores missing groups",
+        "Use HAVING COUNT(*) >= 0 to force every bucket to print",
+      ],
+      answer: 1,
+      why: "Aggregation can only report what arrives: no Sunday rows means no Sunday group, and nothing inside the fold can resurrect it. The fix is a bucket spine — a weekday dimension (or recursive CTE) LEFT JOINed to the facts so the missing bucket survives with a printed 0 — and COALESCE handles the NULL payload columns around it.",
+      notes: [
+        { choice: 2, why: "COALESCE acts on values in EXISTING rows; a missing group has no row to coalesce. The spine must exist before the fold." },
+        { choice: 3, why: "HAVING filters groups after the fold — it can't create them. A zero-row bucket never reached HAVING at all." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "doordash-mcq-23",
+      prompt: "`SELECT DISTINCT region FROM customers` on this db — how many rows come back, and what does the query actually assert?",
+      choices: [
+        "103 — one per order",
+        "16 — one per customer",
+        "4 — one per distinct delivery zone; the query asserts the zone VOCABULARY, not volume",
+        "1 — DISTINCT collapses everything to a single row",
+      ],
+      answer: 2,
+      why: "DISTINCT returns the distinct VALUES of the column — EU, APAC, US, LATAM — regardless of whether a zone holds 45 orders or 2. It asserts the dimension's vocabulary, which is why it's the hygiene check for 'did a new zone code just appear in the feed'.",
+      notes: [
+        { choice: 1, why: "16 is the customer count. DISTINCT region doesn't count customers — it dedupes the region values themselves." },
+        { choice: 0, why: "Orders aren't even in the query. And DISTINCT works on values, never on table volume." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "doordash-mcq-24",
+      prompt: "Merchant names arrive from a vendor feed as 'Grill House ' — trailing space — and the join to orders matches nothing. Which predicate finds EVERY padded row before the join breaks?",
+      choices: [
+        "WHERE name LIKE 'Grill%'",
+        "WHERE name != TRIM(name) — the row disagrees with its own trimmed self",
+        "WHERE LENGTH(name) > 10",
+        "WHERE name IS NULL",
+      ],
+      answer: 1,
+      why: "Comparing a value to its own TRIM exposes all padding in one predicate — 'Grill House ' != 'Grill House' is TRUE exactly where the feed is dirty. The durable fix cleans the key once (or joins on TRIM(name) on BOTH sides); re-typing the padded literal into the query is how the bug ships again next feed.",
+      notes: [
+        { choice: 0, why: "That finds one specific merchant and still misses ' Grill House' or a double space. The self-comparison catches the whole class." },
+        { choice: 2, why: "Length thresholds flag honest long names and miss short padded ones. 'Dirty' has a definition: the value differs from its cleaned self." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "doordash-mcq-25",
+      prompt: "The recent-orders rail pages through `ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY created_at)` — and page 2 shows different orders on every refresh. Two orders share created_at. Diagnosis and fix?",
+      choices: [
+        "The window is broken — replace it with LIMIT/OFFSET",
+        "Non-deterministic tie-break: equal created_at gives ROW_NUMBER no stable order — append a unique key (ORDER BY created_at, id DESC) so numbering is reproducible",
+        "NULLs in created_at — COALESCE them to now()",
+        "The partition is wrong — partition by order id instead",
+      ],
+      answer: 1,
+      why: "ROW_NUMBER must number ties SOMEHOW, and without a tie-breaker the engine's choice isn't stable across plans — page boundaries shuffle between refreshes. A unique key appended to the window ORDER BY makes the total order deterministic, which is the difference between pagination and roulette.",
+      notes: [
+        { choice: 0, why: "LIMIT/OFFSET over the same non-deterministic sort shuffles identically — the bug is the ORDER, not the window." },
+        { choice: 2, why: "The colliding rows aren't NULL; they're EQUAL. Coalescing changes nothing — a tie needs a third distinguishing key, not a default value." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "doordash-mcq-26",
+      prompt: "Which two forms count cancelled orders per zone in one pass — and why does the query budget accept both?",
+      choices: [
+        "COUNT(status) and SUM(status)",
+        "COUNT(*) FILTER (WHERE status = 'cancelled') and SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) — same 0/1 flag, same fold, one scan",
+        "COUNT(cancelled) and AVG(status)",
+        "MAX(status = 'cancelled') and MIN(status)",
+      ],
+      answer: 1,
+      why: "Both build the same 0/1 flag over the folded rows and add it up — FILTER is the dedicated syntax, SUM(CASE) the portable twin. Both live INSIDE the aggregate so the placed denominator COUNT(*) stays intact — which is the whole point of one-pass conditional counting under a query budget.",
+      notes: [
+        { choice: 0, why: "COUNT(status) counts non-NULL statuses — all of them — and SUM over text is not a count. The flag must be CONSTRUCTED, not borrowed from the column." },
+        { choice: 3, why: "Boolean MIN/MAX return extremes, not occurrences. Conditional counting needs the 0/1 flag summed over the fold." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "doordash-mcq-27",
+      prompt: "`SELECT region, AVG(total) AS zone_basket, (SELECT AVG(total) FROM orders) AS network_basket … GROUP BY region` — every row's network_basket reads 338.19. Bug?",
+      choices: [
+        "Yes — the subquery should vary by region; add a GROUP BY to it",
+        "No — it's UNCORRELATED: it folds the whole table once and every outer row reads the same scalar; a shared baseline column is the point",
+        "Yes — scalar subqueries can't live in SELECT; move it to HAVING",
+        "No coincidence — it equals every zone average by definition",
+      ],
+      answer: 1,
+      why: "An uncorrelated scalar subquery executes once — 34833.28 ÷ 103 = 338.19 — and every zone row prints that constant beside its own fold. That's the desired shape: zone basket against network basket on one row, no join needed. It's only a bug if the ask was 'each zone vs the OTHERS' average' — that's a correlated fold.",
+      notes: [
+        { choice: 0, why: "Scoping the baseline per region answers a different question — and destroys the network baseline the pricing brief explicitly requested." },
+        { choice: 2, why: "Scalar subqueries are legal — and standard — in SELECT; that's where baseline columns live. HAVING is for filtering groups, not displaying constants." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "doordash-mcq-28",
+      prompt: "The Rush window reads `BETWEEN '18:00' AND '21:00'` and the Night window starts at '21:00'. An order at exactly 21:00:00 shows in BOTH packs. What happened?",
+      choices: [
+        "Timezone drift between the two queries",
+        "BETWEEN is inclusive on BOTH ends — the boundary instant belongs to both intervals; windows must be half-open so each instant lands in exactly one pack",
+        "The Night window should start at 21:01",
+        "Nothing — boundary double-counting is standard practice",
+      ],
+      answer: 1,
+      why: "BETWEEN includes both endpoints, so 21:00:00 satisfies >= '18:00' AND <= '21:00' and equally >= '21:00' — every seam double-counts. Half-open windows (start inclusive, end exclusive) tile the day without overlap or gap, which is what makes Rush + Night + off-peak reconcile to the day's placed total.",
+      notes: [
+        { choice: 2, why: "Starting at 21:01 carves a one-minute gap — orders landing in 21:00:00–21:01:00 vanish from both packs. Overlap became loss, same crime, opposite sign." },
+        { choice: 3, why: "The reconciliation check catches it immediately: the packs sum to placed plus one row per seam. Double-counts are incidents, not conventions." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "doordash-mcq-29",
+      prompt: "`AVG(ROUND(latency, 1))` reads 3.0 on the board; `ROUND(AVG(latency), 1)` reads 2.98. Which is honest — and why do they disagree?",
+      choices: [
+        "Both — rounding is cosmetic and the gap is noise",
+        "ROUND after the aggregate: rounding each diff before averaging bends the mean toward the rounded grid; aggregate over full precision, round the OUTPUT once",
+        "ROUND before the aggregate — per-row rounding is more accurate",
+        "Neither — CAST to INTEGER is the honest form for boards",
+      ],
+      answer: 1,
+      why: "Per-row rounding quantizes the inputs: diffs of 2.96 and 3.04 both become 3.0, and the average of rounded values (3.0) is no longer the average of the latencies (2.98). Precision lost inside the fold can't be recovered outside it — aggregate raw, round once at the display edge.",
+      notes: [
+        { choice: 0, why: "The 0.02 gap is small today and structural forever: the bias direction depends on the data and compounds in every downstream percentile." },
+        { choice: 2, why: "INTEGER casting destroys the fractional day entirely — a '2.98-day average' computed over whole numbers is a different metric wearing the same name." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "doordash-mcq-30",
+      prompt: "Which shape isolates zones that delivered in January but vanished in February — and what does the EMPTY result on this db tell you?",
+      choices: [
+        "INTERSECT of the two months' zone lists — overlap means churn",
+        "January's zone set EXCEPT February's — zones present in January with no February presence; on this db it returns nothing, because all four zones delivered in both months",
+        "A LEFT JOIN of the two lists on region WHERE the February side IS NULL — illegal across months",
+        "GROUP BY region HAVING COUNT(*) = 0 for February — folds materialize absent groups",
+      ],
+      answer: 1,
+      why: "EXCEPT is set difference: January's zone set minus February's — no joins, no NULL traps. On this db the result is empty because EU, APAC, US and LATAM all delivered in both months, and the honest analyst reports the empty set rather than inventing churn. The LEFT JOIN + IS NULL twin is equally legal and equally empty here.",
+      notes: [
+        { choice: 0, why: "INTERSECT answers the opposite question — zones present in BOTH months. Churn is a difference, not an overlap." },
+        { choice: 3, why: "GROUP BY folds existing rows only; a zone with no February orders never forms a group. Absence needs a set difference or an anti-join." },
+      ],
+      difficulty: "hard",
+    },
   ],
 
   cases: [
@@ -390,6 +830,152 @@ export const doordashKit: CompanyKit = {
       walkthrough:
         "Two folds, two grains, one comparison. The outer GROUP BY folds 103 orders into four zone baskets — LATAM 426.22, US 383.48, EU 335.32, APAC 313.66 — while the scalar subquery folds the SAME table once, globally: AVG(total) over all rows = 34833.28 ÷ 103 = 338.19. HAVING judges each zone's folded average against that single number; two zones clear it and ORDER BY DESC hands the pricing team the incentive-ready list. Swap AVG for SUM and the bar becomes 34833.28 — the report empties, no error, just silence. Swap total for customer_id and the bar drops to 8.5 — every zone passes and the 'filter' filters nothing. COUNT builds a bar of 103 and empties it too; ASC flips the story to the weakest baskets. The deliberate no-status-filter in the baseline is the definition: the network priced ALL placed demand, so the comparison must use it — denominator drift works in both directions.",
     },
+    {
+      id: "cs-doordash-3",
+      tier: "medium",
+      topic: "t4",
+      universe: "growth",
+      title: "The monthly demand pulse",
+      brief:
+        "DoorDash-flavored brief on the storefront db: the growth board opens with the demand pulse — 'show me the first six months of the curve: deliveries, distinct diners, and demand value per month, so we can see whether the launch story holds.' Definitions fixed: month = STRFTIME('%Y-%m') on the order timestamp (never '%m' — merged years are fiction), diners = COUNT(DISTINCT customer_id) because repeat demand must fold back to people, value = SUM(total) rounded to two decimals. Probed on the db: 2024-01 opens at 8 deliveries / 5 diners / 3731.97, Feb peaks at 9 / 5 / 3609.64, and the sixth month 2024-06 lands at 6 / 5 / 2047.43.",
+      ask: "Return month, deliveries, diners and demand value for the first six months of the curve, chronological order.",
+      template:
+        "SELECT STRFTIME({1}, created_at) AS month,\n       COUNT(*) AS deliveries,\n       {2}(DISTINCT customer_id) AS diners,\n       ROUND(SUM(total), 2) AS value\nFROM orders\nGROUP BY month\nORDER BY month {3}\nLIMIT {4};",
+      slots: [
+        {
+          answer: "'%Y-%m'",
+          kind: "keyword",
+          label: "the month bucket",
+          why: "'%Y-%m' buckets year-plus-month — '2024-01'. '%m' alone merges January 2024 into January 2025 and the curve becomes fiction; '%Y' collapses everything into two rows.",
+        },
+        {
+          answer: "COUNT",
+          kind: "keyword",
+          label: "the diner counter",
+          why: "COUNT(DISTINCT customer_id) folds repeat demand back to people — 5 diners behind January's 8 deliveries. SUM(DISTINCT customer_id) returns the sum of diner ids, a meaningless number that changes when a diner re-registers.",
+        },
+        {
+          answer: "ASC",
+          kind: "keyword",
+          label: "the chronological direction",
+          why: "A demand pulse reads chronologically — 2024-01 on top so each month compares against the row above. DESC opens the board on 2025-02 and tells the launch story backwards.",
+        },
+        {
+          answer: "6",
+          kind: "number",
+          label: "the opener cut",
+          why: "LIMIT 6 keeps the opening run the board asked for — six rows ending on 2024-06's 6 deliveries and 2047.43. The figure 6 is also the June delivery count sitting in the output, and the fade from 9 (Feb) to 6 (Jun) is the row the narrative quotes.",
+        },
+      ],
+      distractors: ["'%m'", "'%Y'", "SUM", "DESC", "9"],
+      walkthrough:
+        "A pulse is a bucket, two counts at two grains, and a cut. STRFTIME('%Y-%m', created_at) folds 103 orders into 14 clean month buckets; COUNT(*) counts deliveries while COUNT(DISTINCT customer_id) folds each month's repeat demand back to diners — January's 8 deliveries came from 5 diners, March's 8 from 7. ROUND(SUM(total), 2) carries the money at two decimals: 3731.97 opening, 2047.43 by June. ORDER BY month ASC keeps the timeline honest and LIMIT 6 performs the board's cut — the launch run, not the whole curve. The traps are the Swiggy-cousin classics: '%m' merges 2024-01 into 2025-01 and the curve lies by omission; '%Y' collapses to two rows; SUM in the diner slot adds ids instead of counting people; DESC hands the board 2025 first; LIMIT 9 dilutes the cut. Grain per column, direction per story, cut per ask.",
+    },
+    {
+      id: "cs-doordash-4",
+      tier: "medium",
+      topic: "s7",
+      universe: "growth",
+      title: "The weekend-surge pivot",
+      brief:
+        "DoorDash-flavored brief on the storefront db: Peak Pay planning needs the weekend-surge split per zone — 'how much demand lands Saturday-plus-Sunday versus the weekday base? That ratio is where the bonuses go.' Definition fixed: weekend = STRFTIME('%w') of '0' (Sunday) or '6' (Saturday) — SQLite's '%w' counts Sunday as 0, Monday as 1; both branches fold in one pass so the branches add back to placed. Probed on the db: 24 of 103 orders are weekend demand; by zone EU runs 11 weekend / 34 weekday (45 placed), APAC 9 / 28 (37), US 4 / 15 (19), LATAM 0 / 2 (2). EU carries the biggest absolute weekend load.",
+      ask: "Return one row per zone: zone, weekend_orders, weekday_orders, placed — biggest weekend load first.",
+      template:
+        "SELECT c.region AS zone,\n       SUM(CASE WHEN STRFTIME('%w', o.created_at) {1} THEN 1 ELSE 0 END) AS weekend_orders,\n       SUM(CASE WHEN STRFTIME('%w', o.created_at) {2} THEN 1 ELSE 0 END) AS weekday_orders,\n       COUNT(*) AS placed\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nGROUP BY c.region\nORDER BY weekend_orders {3};",
+      slots: [
+        {
+          answer: "IN ('0','6')",
+          kind: "keyword",
+          label: "the weekend test",
+          why: "IN ('0','6') catches Sunday and Saturday — 24 orders network-wide, 11 in EU. The literal must be TEXT ('0','6'): IN (0,6) numerics never matches the string codes, and the branch silently reads zero.",
+        },
+        {
+          answer: "NOT IN ('0','6')",
+          kind: "keyword",
+          label: "the weekday twin",
+          why: "NOT IN ('0','6') is the complement — 79 weekday orders, 34 in EU — and together the branches reconcile to placed: 11 + 34 = 45. '= 5' (Friday only) undercounts the base and the surge ratio doubles for no reason.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-load order",
+          why: "Peak Pay goes where the weekend load is: DESC puts EU's 11 on top. ASC would open the plan on LATAM's zero weekend orders — a zone with no surge to boost.",
+        },
+      ],
+      distractors: ["= '0'", "IN ('1','5')", "ASC"],
+      walkthrough:
+        "One scan, two flags, one reconciliation. STRFTIME('%w', created_at) stamps each order '0'–'6' with Sunday as '0'; the CASE pairs build 0/1 flags inside two SUMs so the fold carries both branches in one pass — weekend 11/9/4/0 and weekday 34/28/15/2 per zone, and every row's branches add back to placed (EU 11 + 34 = 45), the census check that keeps the pivot honest. ORDER BY weekend_orders DESC aims the plan at EU's 11-order surge. The distractors are the real report bugs: '= '0'' narrows the weekend to Sunday only (16 network-wide) and the surge halves; IN ('1','5') reports Monday-plus-Friday as the weekend — 38 orders of fiction; ASC buries the actionable zone under LATAM's zero. And the quiet trap the chips can't show: numeric IN (0,6) matches nothing because '%w' returns text — the branch reads zero and the plan funds nothing.",
+    },
+    {
+      id: "cs-doordash-5",
+      tier: "easy",
+      topic: "t3",
+      universe: "month-close",
+      title: "The February completion audit",
+      brief:
+        "Month-close brief, in-world: the controller needs the February slice of the delivery promise — 'which zones actually COMPLETED deliveries inside the February window, and what latency did they carry? Placed-in-February is a different population; I audit completions.' Definition fixed: completed means shipped_at falls inside the half-open window [2025-02-01, 2025-03-01) — half-open so the March 1 boundary never double-books — and latency = JULIANDAY(shipped_at) − JULIANDAY(created_at) over completed rows only. Probed on the db: exactly 5 deliveries completed in February (EU 3 at 2.67 days avg, APAC 2 at 2.5); January closed 4; and 13 orders placed in 2025, 3 of which still have no delivery timestamp.",
+      ask: "Return zone, completed count, and avg latency in days (2 decimals) for deliveries completed inside the February window — most completions first.",
+      template:
+        "SELECT c.region AS zone,\n       COUNT(*) AS completed,\n       ROUND(AVG(JULIANDAY(o.{1}) - JULIANDAY(o.created_at)), 2) AS avg_days\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nWHERE o.shipped_at >= {2} AND o.shipped_at < {3}\nGROUP BY c.region\nORDER BY completed DESC;",
+      slots: [
+        {
+          answer: "shipped_at",
+          kind: "keyword",
+          label: "the completion timestamp",
+          why: "The audit is over COMPLETIONS, so the window slices shipped_at — the moment the delivery actually happened. Slicing created_at answers 'what was PLACED in February' (a different population) and julianday(status) is NULL everywhere — an empty board.",
+        },
+        {
+          answer: "'2025-02-01'",
+          kind: "keyword",
+          label: "the window floor",
+          why: "The floor is inclusive: '2025-02-01' opens the February window. '2025-01-01' widens it to January+February and the audit reads 9 completions instead of 5.",
+        },
+        {
+          answer: "'2025-03-01'",
+          kind: "keyword",
+          label: "the half-open ceiling",
+          why: "The ceiling is EXCLUSIVE — '< '2025-03-01'' — so March 1 deliveries stay in March and adjacent windows tile without overlap. Using '<= '2025-02-01'' collapses the window to nothing and the board ships empty.",
+        },
+      ],
+      distractors: ["created_at", "status", "'2025-01-01'", "'2025-02-01'"],
+      walkthrough:
+        "A close is a population, a window, and a fold. The join attaches each order to its diner's zone; WHERE slices the COMPLETION timestamp over the half-open February window — >= '2025-02-01' AND < '2025-03-01' — keeping exactly 5 completed deliveries (EU 3, APAC 2; US and LATAM completed none, and their absence is a finding, not an error). AVG over the julianday diff runs on full precision and rounds once: 2.67 and 2.5 — against the network's 2.98 across all 82 completions. ORDER BY completed DESC puts the working zone on top. The traps are the month-close classics: slicing created_at audits placements, not completions; '2025-01-01' silently merges January's 4 into the read; a closed ceiling (<=) either empties the board or double-books the seam. Half-open windows and a named population are what make the number survive the controller's 'how do you know?'",
+    },
+    {
+      id: "cs-doordash-6",
+      tier: "hard",
+      topic: "t7",
+      universe: "month-close",
+      title: "The per-zone pace pack",
+      brief:
+        "Month-close brief, in-world: the ops lead wants each zone's 2025 pace beside its own history — 'per zone, month by month through 2025: deliveries this month, and the month before, so each zone lead sees their own slope, not the network's.' Definition fixed: stage the zone-month fold in a CTE, then walk it with a window PARTITIONED BY zone so each zone's baseline is its own; the 2025 slice comes from a half-open month filter. Probed on the db: APAC ran 2 → 2, EU 3 → 4, US 1 → 1 across 2025-01 → 2025-02 (LATAM placed no 2025 orders at all); the first row of every zone's window is honestly NULL — the window is computed over the FILTERED rows, so December's baseline never enters the 2025 pack.",
+      ask: "Return zone, month, deliveries, and the PRIOR month's deliveries within each zone, for months from 2025-01 onward.",
+      template:
+        "WITH zm AS (\n  SELECT c.region AS zone,\n         STRFTIME('%Y-%m', o.created_at) AS month,\n         COUNT(*) AS deliveries\n  FROM orders o\n  JOIN customers c ON c.id = o.customer_id\n  GROUP BY c.region, month\n)\nSELECT zone, month, deliveries,\n       {1}(deliveries) OVER ({2} BY zone ORDER BY month) AS prev_deliveries\nFROM zm\nWHERE month >= {3}\nORDER BY zone, month;",
+      slots: [
+        {
+          answer: "LAG",
+          kind: "keyword",
+          label: "the prior-month reader",
+          why: "LAG(deliveries) walks each zone's window backwards one row — EU's 2025-02 row reads 3, January's own count. LEAD would read FORWARD and hand February the next month's count (NULL here) — the future re-labeled as history.",
+        },
+        {
+          answer: "PARTITION",
+          kind: "keyword",
+          label: "the per-zone boundary",
+          why: "PARTITION BY zone restarts the window per zone so each lead sees their OWN slope — APAC's 2 → 2, US's 1 → 1. ORDER BY alone would slide the baseline across zone boundaries: US's February would read EU's January count.",
+        },
+        {
+          answer: "'2025-01'",
+          kind: "keyword",
+          label: "the 2025 slice",
+          why: "month >= '2025-01' keeps the six 2025 zone-month rows. '2024-01' drags the whole 14-month history into the pack — and fills every prev_deliveries with real baselines, hiding the filtered-window NULL the ops lead must understand.",
+        },
+      ],
+      distractors: ["LEAD", "SUM", "'2024-01'"],
+      walkthrough:
+        "Two stages, one window, one honest NULL. The CTE folds 103 orders into zone-month buckets — the grain the pack reads; the outer query walks each zone's slice with LAG(deliveries) OVER (PARTITION BY zone ORDER BY month): APAC 2 → 2, EU 3 → 4 (the only zone with a positive slope), US 1 → 1. WHERE month >= '2025-01' filters BEFORE the window paints, which is why every zone's first 2025 row reads NULL — the window computes over the FILTERED rows, so December's baseline never enters the pack; the ops lead reads 'no in-pack baseline', not 'zero demand'. LEAD would read the future; SUM would pile a running total into prev; '2024-01' fills the column with genuine 2024 baselines and buries the lesson the pack exists to teach. Windows over filtered sets: the NULL is the definition, and the walkthrough is where the pack says so.",
+    },
   ],
 
   problems: [
@@ -409,5 +995,21 @@ export const doordashKit: CompanyKit = {
     { slug: "active-businesses", why: "One-pass conditional flags per merchant — how many activity types did this partner fire; the query-budget census habit from the clinic." },
     { slug: "sales-by-day-of-the-week", why: "Daypart demand pivot — weekend surge versus weekday base, the staffing-and-Peak-Pay input computed as a column per day." },
     { slug: "average-selling-price", why: "Weighted price per window — marketplace basket math where the weighting choice changes the answer, a favorite DoorDash follow-up." },
+    { slug: "last-person-to-fit-in-the-bus", why: "Running-sum capacity at row grain: order the demand, accumulate the weight, cut at the limit — the batch-loading twin of the elevator drill, and the Dasher-bag question verbatim." },
+    { slug: "game-play-analysis-iii", why: "Cumulative totals per player with a running SUM window — Rush-hour coverage math: how much demand the online fleet has absorbed so far, updated row by row." },
+    { slug: "the-latest-login-in-2020", why: "Argmax inside a bounded window — the most recent event per diner within a fixed year: the same 'latest before cutoff' shape the month-close completion audit uses." },
+    { slug: "email-engagement-funnel", why: "Open-to-action funnel rates with NULL-tolerant shares — the placed-to-delivered funnel in another costume, denominators decided before the division." },
+    { slug: "ads-funnel", why: "Three-step conditional funnel pivoted into one row per unit — the Dasher-logistics funnel (placed → assigned → delivered) as a column fold." },
+    { slug: "product-sales-analysis-i", why: "Units and revenue folded per product from line items — the line-grain money, order-grain count discipline the partner GMV chain drills." },
+    { slug: "queries-quality-and-percentage", why: "Two ratios in one query with rounding at the edge — the on-time-share and cancellation-share math, 100.0 before the division." },
+    { slug: "daily-leads-and-partners", why: "The two-grain daily census — DISTINCT on one column, COUNT(*) on another — the deliveries-AND-diners shape every zone review opens with." },
+    { slug: "find-followers-count", why: "Distinct-count folds per entity — repeat demand collapsed to audience size, the intensity signal behind rider-supply planning." },
+    { slug: "article-views-ii", why: "Argmax with a tie at the top — two readers tied on views; the leaderboard tie policy DoorDash makes you own." },
+    { slug: "find-stores-with-inventory-imbalance", why: "Per-entity conditional censuses compared across stores — the one-pass branch-fold drill with reconciliation to the placed whole." },
+    { slug: "total-traveled-distance", why: "Window enrichment that keeps every row — per-row state painted by a window function, the PARTITION-keeps-rows lesson in miniature." },
+    { slug: "monthly-transactions-i", why: "Month buckets with a conditional count alongside — '%Y-%m' grammar plus the cancelled column folded inside the same GROUP BY." },
+    { slug: "unique-orders-and-customers-per-month", why: "Orders AND distinct diners per month in one fold — the two-grain monthly pulse, each count at its own grain." },
+    { slug: "customers-who-never-order", why: "The anti-join warm-up: diners with zero orders via LEFT JOIN + IS NULL — on this db the honest answer is an empty set, and saying so IS the drill." },
+    { slug: "the-most-recent-orders-for-each-product", why: "Latest N per group via ROW_NUMBER with a deterministic tie-break — the recent-orders rail, reproducible across refreshes." },
   ],
 };
