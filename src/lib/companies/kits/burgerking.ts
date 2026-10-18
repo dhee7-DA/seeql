@@ -12,7 +12,8 @@
 // INTEGER cents — the dollar read is amount_cents / 100.0; orders.total and order_items.unit_price
 // are REAL dollars. Pool provenance: company-pools.md carries NO Burger King section (0 tagged
 // rows, grep-verified) — all 10 topic slug sets and all 16 problems are theme-curated from the
-// theme menu's sql rows (no w*/d*/f*-initial rows) and say so in brief P4.
+// theme menu's sql rows (no w*/d*/f*-initial rows) and say so in brief P4. Extended wave R6-B:
+// 30 MCQs, 24 theory, 6 cases (s6/j5/q6/j7 added — none used by food siblings), 32 problems.
 // Probe-declared cells (readonly bun:sqlite probes against db/custom.db, nothing written, no files
 // left behind — every other figure quoted here is verbatim from scripts/company-facts.md):
 // (1) DATE-grain census — created_at carries no sub-day resolution: strftime('%H', created_at)
@@ -48,7 +49,7 @@ export const burgerkingKit: CompanyKit = {
     "**Burger King** is the flame-grilled flagship of Restaurant Brands International — nearly 19,000 restaurants and one of the most heavily franchised systems in food, which means the P&L the analysts actually model is the franchisee's, not just the brand's. Every number in the building is a conditional count over the same small set of objects, and this kit maps the storefront db onto that world: the 16 customers rows are **franchisee operator accounts** (region = market), the 103 orders are franchise orders worth **34,833.28**, and the 251 order_items rows are menu line items — quantity = units, unit_price = menu price. The status map is fixed: delivered = {emerald:completed-and-settled} (52, 50.5%), shipped = {sky:fired-and-transmitted} (30, 29.1%), pending = in queue (14, 13.6%), cancelled = {rose:aborted} (7, 6.8%). The 16 products are menu SKUs — the limited-menu discipline is a real strategy here, and the db carries exactly 16.",
     "The data org splits into franchise finance, ops analytics and a small menu-mix pod, and all three read the same spine at different grains. Franchise finance owns the royalty book: **28 statements billed against 27 remittance legs**, where every dollar read is `amount_cents / 100.0` — and the register that opens every close is the **6 statements never remitted, worth 15,217.00** (the open cohort 18/873.00, 21/1,295.00, 24/4,937.00, 26/3,562.00, 27/2,794.00, plus the paid-claim lie #28 at 1,756.00 with zero legs). Remittances ride two rails — card 16 legs / 37,364.00, wire 11 / 32,248.00 — and 5 statements settle on both. The ops pod owns the fire clock: 82 of 103 orders carry the `shipped_at` stamp, averaging **2.98 days** on a 2–4 spread, and the 14 queued orders have no stamp yet (a population definition, not a cleanup job).",
     "Interview screens are census-then-denominator with a franchisee accent. A typical loop opens with a **two-grain market census** — EU runs 45 orders from 8 operator accounts while the US runs 19 from 2 — then escalates into a rate where the interviewer asks the denominator out loud (*'do aborted orders belong in your kept rate?'*), then into the operator ladder where the bench runs 24/17/14/13/5 booked orders with a **four-way tie at 4** and rank semantics become a policy call about peer operators. The menu questions lean on bands: the budget band (< 50) holds 8 SKUs at 32.06 average, the mid band holds 8 at 111.5, and the premium band is {rose:empty} — the ceiling is 199.99. One honesty rule surfaces in every loop: created_at is DATE-grain only — *no hour component exists* — so daypart and coupon reads ship at date grain or not at all.",
-    "Preparation strategy: the pools file carries no Burger King section — **0 tagged rows** — so all sixteen problems and every topic slug here are **theme-curated** to this kit's known screen shapes: fate funnels with stated denominators, two-grain censuses, tie-heavy operator ladders, band CASE folds, cents-safe remittance math and the never-remitted register. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {amber:operator bench ladder} the franchise review opens with, the other rebuilds the {rose:royalty coverage census} finance reads at every close. The bar to clear: *state the definition and the denominator before you compute anything* — then make every fate census reconcile to 103 by construction, and every coverage census to 28.",
+    "Preparation strategy: the pools file carries no Burger King section — **0 tagged rows** — so all thirty-two problems and every topic slug here are **theme-curated** to this kit's known screen shapes: fate funnels with stated denominators, two-grain censuses, tie-heavy operator ladders, band CASE folds, cents-safe remittance math and the never-remitted register. Do the topics in order, then run the six case studies on the live storefront db — built for spaced practice rather than one sitting: the {amber:operator bench ladder} and the {rose:royalty coverage census} open the set, the menu-band CASE fold and the dunning anti-join drill the pricing and close reads, and the coupon-window spine gate and the distribution partner fold cover growth and supply. The bar to clear: *state the definition and the denominator before you compute anything* — then make every fate census reconcile to 103 by construction, and every coverage census to 28.",
   ],
 
   dayInLife: [
@@ -72,27 +73,27 @@ export const burgerkingKit: CompanyKit = {
     {
       name: "Order-fate funnels & kept-rate denominators",
       why: "Every Burger King read starts from the franchise-order fate census: 52 completed-and-settled, 30 fired-and-transmitted, 14 queued, 7 aborted — 103 by construction. The kept rate is a conditional count, and the interviewer's first question is what the denominator holds: queued orders stay in a funnel base and drop out of a completion base, and saying which before writing SQL is the habit being graded.",
-      slugs: ["percentage-of-users-attended-a-contest", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii"],
+      slugs: ["percentage-of-users-attended-a-contest", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "funnel-step-conversion", "basket-depth-aov"],
     },
     {
       name: "Two-grain market censuses",
       why: "Orders and operator accounts are different grains of the same join, and every census here reports both: EU runs 45 orders from 8 operator accounts while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying which column is load and which is coverage — is the habit being graded; the ratio (5.6 versus 9.5 orders per account) is the intensity read that decides where field support flies.",
-      slugs: ["unique-orders-and-customers-per-month", "article-views-ii", "reported-posts"],
+      slugs: ["unique-orders-and-customers-per-month", "article-views-ii", "reported-posts", "growth-accounting"],
     },
     {
       name: "Coupon-window month spines",
       why: "The coupon calendar is Burger King's traffic story, but orders carry no coupon flag — so the honest read is the month spine at date grain: 14 buckets from 2024-01 to 2025-02, launch at 3,731.97, the July trough at 1,193.86. `STRFTIME('%Y-%m', created_at)` is the spine; '%m' alone merges January 2024 with January 2025 and the trend becomes fiction.",
-      slugs: ["list-the-products-ordered-in-a-period", "monthly-transactions-i", "sales-analysis-iii"],
+      slugs: ["list-the-products-ordered-in-a-period", "monthly-transactions-i", "sales-analysis-iii", "ads-funnel", "budget-pacing"],
     },
     {
       name: "Operator leaderboards & tie policy",
       why: "The franchisee bench ranks operator accounts, and ties are guaranteed: the ladder runs 24, 17, 14, 13, 5 booked orders, then FOUR operators tie at 4. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow — a policy about peer franchisees, not syntax. The field team publishes the policy; candidates are asked to defend it.",
-      slugs: ["rank-scores", "top-earners", "top-five-artists"],
+      slugs: ["rank-scores", "top-earners", "top-five-artists", "cohort-retention-matrix"],
     },
     {
       name: "Menu-band CASE folds",
       why: "Menu bands are CASE-classified — the fold splits 16 SKUs into 8 budget (< 50) at 32.06 average and 8 mid (50–200) at 111.5, with the premium arm EMPTY by probe (ceiling 199.99). The arms must be exhaustive and ordered: a hole in the CASE is a hole in the mix story, and a reordered WHEN quietly re-bands the base. An empty arm is a population fact to state, not a bug to patch.",
-      slugs: ["calculate-special-bonus", "triangle-judgement", "the-category-of-each-member-in-the-store"],
+      slugs: ["calculate-special-bonus", "triangle-judgement", "the-category-of-each-member-in-the-store", "credit-utilization-bands", "calculate-product-final-price"],
     },
     {
       name: "Fire-clock latency",
@@ -102,22 +103,22 @@ export const burgerkingKit: CompanyKit = {
     {
       name: "Never-remitted anti-joins",
       why: "The dunning register is the anti-join that runs every close: statements carrying zero remittance legs — 6 rows worth 15,217.00, including paid-claim #28 at 1,756.00, which is why the payments table is the ledger of record and the status column is a claim. Building it honestly (LEFT JOIN plus IS NULL, or NOT EXISTS) and reconciling it against the 22 leg-carrying statements is the exact discipline being graded.",
-      slugs: ["customers-who-never-order", "sellers-with-no-sales", "customer-who-visited-but-did-not-transact"],
+      slugs: ["customers-who-never-order", "sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "find-the-missing-ids"],
     },
     {
       name: "Royalty-coverage CASE classification",
       why: "The coverage census classifies at statement grain — legs equal billed → 'exact' (21, including void-but-remitted #11 at 925.00, which folds in by construction), zero legs → 'never remitted' (6), else 'partial' (1: 4,000.00 of 6,148.00). Classification happens BEFORE any rollup, the buckets must foot to 28, and the two error modes — void-but-remitted, paid-but-never-remitted — are mirrors the census catches and the status column never will.",
-      slugs: ["count-salary-categories", "type-of-triangle", "evaluate-boolean-expression"],
+      slugs: ["count-salary-categories", "type-of-triangle", "evaluate-boolean-expression", "ar-aging-schedule", "delinquency-buckets"],
     },
     {
       name: "Cents-safe money reads",
       why: "Royalty statements and remittance legs bill in INTEGER cents, so every dollar read is amount_cents / 100.0 — the missing .0 turns a 1,756.00 print into 1,756 and eats cents on every odd-cent row. The rails matter too: card legs (16, 37,364.00) versus wire legs (11, 32,248.00) tie to 69,612.00 at the ledger cash credit, and the split-rail statements straddle both.",
-      slugs: ["bank-account-summary-ii", "products-worth-over-invoices", "npv-queries"],
+      slugs: ["bank-account-summary-ii", "products-worth-over-invoices", "npv-queries", "balance-rollforward", "gl-reconciliation", "trial-balance-check", "duplicate-charge-pairs"],
     },
     {
       name: "Concentration & share arithmetic",
       why: "The book concentrates hard: 63.5% of booked value sits with operator accounts whose lifetime spend crosses 3,000 (71.2% above 2,000), and the top distribution partner carries 32% of network revenue (11,130.25) with the top two at 58.7%. Shares are 100.0-multiplied BEFORE the division — SUM of 0/1 flags over COUNT is integer arithmetic, and the abort share truncates to a displayed 0 while APAC actually runs 8.1%.",
-      slugs: ["queries-quality-and-percentage", "ads-performance", "compute-the-rank-as-a-percentage"],
+      slugs: ["queries-quality-and-percentage", "ads-performance", "compute-the-rank-as-a-percentage", "amount-anomaly-zscore"],
     },
   ],
 
@@ -169,6 +170,102 @@ export const burgerkingKit: CompanyKit = {
       q: "Finance says a royalty statement is 'paid' but the remittance rails have no rows for it. Walk me through the reconciliation query you write first — and the money rule you never break while writing it.",
       a: "First the anti-join: invoices LEFT JOIN payments, keep p.invoice_id IS NULL — on this db that returns 6 statements worth 15,217.00, and one of them (#28, 1,756.00) claims status 'paid' with zero settlement legs: a status that lies, which is why payment rows are the ledger of record and the status column is a claim. Then the anomaly flip: a void statement WITH a leg (this db has one, #11 at 925.00) never appears in that anti-join — the two error modes are mirrors, and both reconcile to the coverage census: 21 exact (65,612.00 both sides — void-but-remitted #11 folds in by construction, paid-claim #28 folds out), 1 partial (4,000.00 of 6,148.00), 6 none. The money rule: statements and legs carry INTEGER cents, so every dollar read is amount_cents / 100.0 — bare /100 is integer division that eats cents on odd rows. Then the rails: card legs 16 / 37,364.00 and wire legs 11 / 32,248.00 must tie to the 69,612.00 cash credit, with 5 split-rail statements (1, 5, 12, 19, 22) straddling both. Close culture here: the ledger trial balance must land at 181,080 debits against 181,080 credits — delta zero, or the close does not ship.",
       tag: "quality",
+    },
+    {
+      id: "burgerking-t9",
+      q: "Two analysts write the dunning register: one with LEFT JOIN + IS NULL, one with NOT EXISTS. When do the two shapes disagree, and which do you ship?",
+      a: "On this book they agree: both return the 6 zero-leg statements worth 15,217.00, because payments.invoice_id is NOT NULL by schema, so there is no NULL-leg row for the two shapes to treat differently. They diverge when the joined column can be NULL — LEFT JOIN + IS NULL keeps a leg row whose invoice_id is NULL in the 'matched' bucket, while NOT EXISTS asks the existence question directly and is immune. NOT EXISTS is also the shape that survives staging tables, where NULLs sneak in, and it short-circuits on the first hit. The house default is NOT EXISTS for existence tests, with the LEFT JOIN version kept as the cross-check — when the two disagree on a close, the disagreement IS the finding, and neither ships until you know which population each one read.",
+      tag: "joins",
+    },
+    {
+      id: "burgerking-t10",
+      q: "The ad-fund walk runs SUM(amount_cents) OVER (ORDER BY paid_on) across remittance legs. Two legs settled the same day and the cumulative jumps twice at once. What is happening and what is the fix?",
+      a: "With ORDER BY, the window default frame is RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW, and RANGE includes peers: rows tied on paid_on enter the cumulative together, so the walk steps two legs in one day. The fix is to say the frame out loud — ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW walks strictly leg by leg. Which one is right is a policy question: the finance walk wants per-leg settlement order, so ROWS with a named tie-breaker (leg id) is the honest shape; RANGE is only correct if same-day legs are meant to settle as a batch. On a book where 5 statements settle on both rails and settlement runs 13 to 84 days, ties on paid_on are routine, not edge cases — and the wrong frame quietly redefines the running number every reviewer reads.",
+      tag: "windows",
+    },
+    {
+      id: "burgerking-t11",
+      q: "Franchise ops wants operator accounts tiered into quartiles by booked orders. How do you build the tiers, and what do ties do to them?",
+      a: "NTILE(4) OVER (ORDER BY booked_orders) is the tile fold — it splits the 16 operator rows into four buckets of 4 as evenly as the rows allow, biggest book first. Ties do not break NTILE: it counts rows, not values, so two operators tied at 4 booked orders can land in different quartiles — a defensible tile is still a peer split the franchisee council will argue about, so the tier definition ships with the tie policy named. PERCENT_RANK is the value-based alternative: tied operators share the same percentile, which is the fairer read for peer accounts but no longer guarantees equal-size buckets. The trap to avoid is computing tiers with scalar math — ROUND(4 * rank / 16) — which re-derives NTILE badly and drifts whenever the bench size changes. State which grain the tile counts (rows) and which the percentile measures (values), then let the business pick.",
+      tag: "windows",
+    },
+    {
+      id: "burgerking-t12",
+      q: "The close packet wants one cell listing the never-remitted statement numbers, comma-separated, beside the bucket totals. How do you fold rows into that string, and what breaks?",
+      a: "GROUP_CONCAT is the fold: GROUP_CONCAT(i.id) over the zero-leg statements returns the dunning ids as '18,21,24,26,27,28' inside one cell, and GROUP_CONCAT(i.id ORDER BY i.id) — SQLite supports the ORDER BY inside the aggregate — pins the order so the cell is stable across reruns. The things that break: no ORDER BY means the id order is whatever the scan produced, so the cell shuffles between environments and someone diffs it by eye; no separator argument means the default comma, which is right here but wrong for names; and folding at the wrong grain — grouping by region as well — splits the register into per-market strings whose parts no longer foot to 6. GROUP_CONCAT is a display fold, not a numeric one: it belongs in the presentation layer of the close packet, after the buckets foot to 28, never as the arithmetic that proves them.",
+      tag: "aggregation",
+    },
+    {
+      id: "burgerking-t13",
+      q: "The ops board wants all four fate counts — delivered, shipped, pending, cancelled — in one pass over orders. Compare FILTER (WHERE …) against SUM(CASE …) for that job.",
+      a: "Both shapes produce the four branches in one scan: COUNT(*) FILTER (WHERE status = 'delivered') reads cleanest on SQLite 3.30+, and SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) is the portable twin that runs anywhere. The discipline both enforce is the reconciliation identity: the four branches must sum to COUNT(*) — 52 + 30 + 14 + 7 = 103 — and a branch built with a sloppy predicate is what breaks it. SUM(CASE) without the ELSE silently returns NULL on the branches that never fire, which prints a blank cell instead of a zero; FILTER never does that. Four sequential queries are the anti-pattern: four scans, four chances for a status list to drift, and no identity forcing them to reconcile. One pass, one population, branches that foot by construction — that is the answer the panel listens for.",
+      tag: "aggregation",
+    },
+    {
+      id: "burgerking-t14",
+      q: "Where does COALESCE belong in the dunning register — and where is IFNULL(latency, 0) actively dangerous?",
+      a: "COALESCE belongs on money folds over outer joins: COALESCE(SUM(p.amount_cents), 0) makes a zero-leg statement print remitted 0.00 instead of NULL, so the register's arithmetic — billed, remitted, gap — stays numeric down the column. The danger case is the fire clock: IFNULL(julianday(shipped_at) - julianday(created_at), 0) invents a same-day fire for every queued and aborted order, drags the 2.98-day average toward ~2.37, and poisons the baseline every regional drift alert keys off — a fabricated number wearing the right name. The rule is about what the NULL means: an outer-join NULL is 'nothing settled', so zero is the honest fold; a missing event stamp is 'has not happened', so zero is a lie and the row belongs in a stated-out population instead. Same function, opposite verdicts — the panel wants the reasoning, not a blanket rule.",
+      tag: "nulls",
+    },
+    {
+      id: "burgerking-t15",
+      q: "The bench ladder shares rungs on ties and reads alphabetical within a shared rung. How do you write an ORDER BY that guarantees that, and what does 'stable sort' actually promise here?",
+      a: "Two keys, explicit: ORDER BY booked_orders DESC, operator ASC — the count descends, and within a shared count the operator name breaks the tie alphabetically. Never rely on the database to 'remember' insertion order: SQL result order is undefined without ORDER BY, and a sort is only stable in the sense that the keys you named decide it — SQLite makes no stability promise beyond the columns you list, so the second key must be IN the query, not assumed. The same discipline runs through the close: buckets ordered by statement count DESC with the bucket name as tie-breaker, remittance legs by paid_on then leg id. The follow-up the panel loves: ORDER BY bench_rank, operator after a window function — ranking first, alphabetical second — which is exactly how the published bench avoids two printings of the same ladder disagreeing.",
+      tag: "pipeline",
+    },
+    {
+      id: "burgerking-t16",
+      q: "Growth wants each operator's booked value beside its MARKET's average booked value. Walk me through the correlated-subquery shape and its cost.",
+      a: "The correlated shape re-runs an inner fold per outer row: SELECT c.name, o_value.v, (SELECT AVG(o2.total) FROM orders o2 JOIN customers c2 ON c2.id = o2.customer_id WHERE c2.region = c.region) — the inner query carries a reference to the outer row's region, so for each of the 16 operators SQLite re-folds that market's orders. On 16 rows it is free; on a book of millions it is the classic N+1, and the honest alternatives are a window — AVG(total) OVER (PARTITION BY region) after joining to operators — or a derived table of market averages joined back on region, both of which fold each market once. The behavior difference to state out loud: the window computes every market's average whether you display it or not, the correlated form only computes the markets present in the outer result, and an empty market slice leaves the correlated scalar NULL — which then silently drops from any comparison built on top of it.",
+      tag: "subqueries",
+    },
+    {
+      id: "burgerking-t17",
+      q: "EXISTS, IN, and a JOIN against a DISTINCT subquery all can answer 'which operators booked something last month'. Which do you reach for and why?",
+      a: "EXISTS is the house default: it short-circuits on the first matching order, it is NULL-proof — an IN list containing one NULL turns every NOT IN comparison UNKNOWN and empties the report — and it states the intent (existence) rather than the mechanism. IN with a literal subquery is fine when the list is small, known-NULL-free, and static, but it materializes the whole list and dies on NULLs exactly when staging tables are involved. The JOIN-against-DISTINCT shape is the semi-join you write when the planner needs help or when you also need columns from the matched side — but a plain JOIN without DISTINCT fans the outer rows back out, one per match, and silently double-counts operators who booked twice. The interview answer: name the semantics you want (does at least one row exist?), pick the shape whose failure mode you can state, and on this db prove the edge — the anti-join of the same three shapes must all return the same 6 dunning statements or one of them misread the population.",
+      tag: "subqueries",
+    },
+    {
+      id: "burgerking-t18",
+      q: "Statements settle in 28.4 days on average — fastest 13, slowest 84. How is that latency computed off this schema, and what are the grain traps?",
+      a: "The latency is julianday(paid_on) - julianday(issued_on) folded per statement — the FIRST leg's paid_on if you count settlement from the first remittance, or the leg-level average if you read per rail; saying which is the whole answer, because 5 statements settle on both rails and their two legs land on different days. Fold at statement grain: MIN(paid_on) per invoice for time-to-first-remittance, then AVG over the 22 leg-carrying statements — the 6 zero-leg statements have no latency and must be excluded by a stated population, not silently by a NULL-shrinking AVG. The traps: comparing TEXT dates with bare subtraction works only while the format is uniform ISO — julianday is the explicit cast that survives format drift — and the 84-day tail is a real operator, not an outlier to trim, because the dunning register exists precisely to chase that tail. Averages without the min/max spread are how a 28.4 that looks stable hides a 13-to-84 spread that is not.",
+      tag: "dates",
+    },
+    {
+      id: "burgerking-t19",
+      q: "created_at is DATE-grain, so the daypart read is dead. What is the honest weekday-fold stand-in, and how do you build it?",
+      a: "Say the limitation first — strftime('%H', created_at) reads '00' on all 103 orders, so breakfast-versus-dinner cannot ship at hour grain, and fabricating hours from julianday decimals invents resolution the stamps do not carry. The stand-in is the weekday fold: STRFTIME('%w', created_at) buckets the week 0 (Sunday) through 6 (Saturday), and the traffic story ships as Monday-versus-Saturday instead of dayparts — labeled as a date-grain read, in the title and the footnote. Build it with the same census discipline as everything else: seven buckets, counts foot to 103, revenue foots to 34,833.28, and the ordering is on the numeric cast or the code order 0-6, not on the label text. If the business insists on hour grain, the answer is to request the timestamp feed — not to ship a chart whose x-axis pretends the db knows what time it is.",
+      tag: "dates",
+    },
+    {
+      id: "burgerking-t20",
+      q: "Walk me through writing the menu-band CASE so it cannot silently mis-band a SKU.",
+      a: "Three rules. Exhaustive arms: budget under 50, mid 50 to 200, premium ELSE — the ELSE is what guarantees every one of the 16 SKUs lands somewhere, and the empty premium arm is a population fact to state, not a hole to patch. Ordered predicates: WHEN price < 50 before WHEN price <= 200 — CASE evaluates top-down, so a reordered pair quietly re-bands the 49.00 SKU into mid, and the band counts stop footing to 16 with no error anywhere. Literal-typed bounds: the thresholds are numbers against a REAL column — a text '50' compares by type rules and re-bands everything. Then verify by construction: the band counts must sum to COUNT(*) over products, the averages must reconcile with the quoted 32.06 and 111.5, and the premium arm must print zero rows because the ceiling is 199.99. A band fold that cannot prove those three things is a slide, not a census.",
+      tag: "case",
+    },
+    {
+      id: "burgerking-t21",
+      q: "The board stacks a completed-orders block over a fired-orders block. UNION or UNION ALL — and what does the choice have to do with the 103 reconciliation?",
+      a: "UNION ALL, and the reason is the reconciliation: the fate board exists so the branches foot to 103 by construction — 52 + 30 + 14 + 7 — and UNION dedups whole ROWS silently, so two branches that emit byte-identical rows (same label, same count shape, no distinguishing column) collapse into one and the board loses a row with no error anywhere. The safe pattern is UNION ALL plus either a literal branch label ('completed', 'fired') or a column list that cannot collide, with a comment stating why duplicates are impossible. UNION is only correct when you genuinely want set semantics — dedup across branches is the feature, not decoration. The close-culture version of the same rule: EXCEPT answers 'which orders are in the funnel but never got a stamp', and if an EXCEPT between two branches that should be disjoint returns rows, the branches overlap and the 103 identity is already broken upstream.",
+      tag: "sets",
+    },
+    {
+      id: "burgerking-t22",
+      q: "The rail census says card 37,364.00 plus wire 32,248.00 must tie to the ledger cash credit of 69,612.00. How do you write that tie-out so it cannot lie?",
+      a: "Two folds, one delta: fold payments by method — SUM(amount_cents) / 100.0 over card legs and wire legs, with COUNT(*) beside it so the leg counts 16 and 11 ship with the dollars — then subtract the ledger cash credit and assert the delta is zero in the query's own output: a CASE that prints 'TIE' or the offending delta. The tie-out discipline: every dollar read is amount_cents / 100.0 exactly once — a bare /100 truncates odd cents and a second division eats them back off, and either way the 69,612.00 stops footing while looking plausible. Watch the grain: folding by method at LEG grain then comparing to a statement-grain ledger line only ties because the legs are the ledger — the 5 split-rail statements (1, 5, 12, 19, 22) contribute one leg to each rail, so no statement appears twice on one rail. When the delta is not zero, the census that finds the offending legs — method fold beside per-statement coverage — ships with the close; the number alone does not.",
+      tag: "money",
+    },
+    {
+      id: "burgerking-t23",
+      q: "Why does this team treat the payments table as the ledger of record and the statement status column as a claim? Give the query-level version.",
+      a: "Because the status column is an assertion about the world and the legs are the world. Query-level: the coverage census classifies by leg folds — legs sum to billed is 'exact', zero legs is 'never remitted', else 'partial' — and it catches both mirror-image lies: #28 claims 'paid' at 1,756.00 with zero settlement legs (paid-claim lie), and #11 is 'void' at 925.00 yet carries a leg for exactly 925.00 (void-but-remitted). A status-filtered report ships both lies to the franchisee council; the leg-fold census reconciles 21 exact (65,612.00 both sides, void-but-remitted folding in by construction, paid-claim folding out), 1 partial and 6 none, footing to 28 statements and 86,977.00 billed. The rule generalizes: any column that asserts a state ('paid', 'void', 'settled') is a claim to be tested against the transaction rows that constitute it — and the analyst who reports the claim without the test is the one the close review is hunting for.",
+      tag: "quality",
+    },
+    {
+      id: "burgerking-t24",
+      q: "The market ladder ranks operator accounts within each region, and the global ladder ranks them across the system. How does the window change between the two — and what stays fixed?",
+      a: "Only the partition changes: RANK() OVER (PARTITION BY c.region ORDER BY COUNT(*) DESC) restarts the ladder per market, while dropping the PARTITION BY ranks the whole 16-operator bench against each other. What stays fixed is the fold underneath — GROUP BY o.customer_id still collapses 103 orders to 16 operators, and COUNT(*) still counts orders, not lines — because the classic bug is adding a window and accidentally changing the grain (join order_items for a menu read and the rank silently ranks line counts). The reads answer different questions: the global ladder feeds the concentration story (top four operators carry 63.5% of booked value), the partitioned one feeds field support (EU's 8 accounts rank among themselves, where the 45-order load actually lives). And state the tie policy again per cut — the four-way tie at 4 shares rungs in both ladders, but 'peer within region' and 'peer across the system' are different peer groups, and the published policy names which one it means.",
+      tag: "windows",
     },
   ],
 
@@ -293,6 +390,246 @@ export const burgerkingKit: CompanyKit = {
       ],
       difficulty: "hard",
     },
+    {
+      id: "burgerking-mcq-11",
+      prompt: "AVG(julianday(shipped_at) - julianday(created_at)) runs over ALL 103 orders and returns 2.98. A reviewer says the number is a lie wearing the right name. Why?",
+      choices: ["julianday cannot subtract TEXT dates", "AVG skips the 21 NULL-latency rows, so the average is stamped-only (82 orders) but was reported over the whole book", "2.98 is the median, not the mean", "The 7 cancelled orders drag the average down"],
+      answer: 1,
+      why: "AVG ignores NULLs, so the fold silently computes over the 82 stamped orders and prints a population-free 2.98. The number is real; the population label is the lie — the title must say 'stamped orders only'.",
+      notes: [
+        { choice: 0, why: "julianday() handles ISO text dates fine. The problem is definitional, not a cast failure." },
+        { choice: 3, why: "Cancelled orders have no shipped_at — they are part of the NULL-skipped 21, not a drag on anything. The bias is the silent shrink, not a tail pull." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "burgerking-mcq-12",
+      prompt: "The market board gates at 'at least ten orders'. Where does that predicate live?",
+      choices: ["WHERE COUNT(*) >= 10", "HAVING COUNT(*) >= 10 after GROUP BY region", "ORDER BY COUNT(*) >= 10", "A subquery on region"],
+      answer: 1,
+      why: "The ten-order floor is a group-level fact: groups must exist before COUNT does, so it lands in HAVING after GROUP BY. WHERE errors — aggregates do not exist before groups form.",
+      notes: [
+        { choice: 0, why: "WHERE runs before grouping; COUNT(*) is not yet defined there. This is the pipeline-order error the screens grade first." },
+        { choice: 2, why: "ORDER BY sorts, never filters — the predicate would order the rows by a boolean and keep every market." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "burgerking-mcq-13",
+      prompt: "The bench ladder runs 24, 17, 14, 13, 5 booked orders, then FOUR operators tie at 4. Under RANK, what rank does the next operator (3 orders) carry?",
+      choices: ["7", "10", "6", "9"],
+      answer: 1,
+      why: "RANK shares rungs and skips: the tie occupies ranks 6-9, so the next distinct count lands on 10. DENSE_RANK would say 7; ROW_NUMBER would have already split the tie.",
+      notes: [
+        { choice: 0, why: "7 is the DENSE_RANK answer — shared rungs without gaps. The bench publishes RANK semantics, gaps included, so phantom positions 7-9 are the point." },
+        { choice: 2, why: "6 is inside the tie block — all four 4-order operators share rank 6. The next DISTINCT count cannot land inside the block it follows." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "burgerking-mcq-14",
+      prompt: "EU runs 45 orders from 8 operator accounts; the US runs 19 from 2. Which market gets the field-support visit, and on which read?",
+      choices: ["EU — it has the most orders", "US — 9.5 orders per account versus EU's 5.6, the intensity read", "EU — 8 accounts is the bigger installed base", "Whichever the ORDER BY puts first"],
+      answer: 1,
+      why: "The two-grain census reports load AND coverage; the ratio is the intensity signal. The US concentrates ~9.5 orders on each of 2 accounts — thinner coverage per unit of load, which is exactly where a field visit buys the most.",
+      notes: [
+        { choice: 0, why: "45 orders is load, not intensity. A market can lead on load and still be well covered — the ratio, not the raw count, picks the flight." },
+        { choice: 2, why: "8 accounts is coverage, again without intensity. Both single-column reads ignore the ratio that the two-grain census exists to expose." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "burgerking-mcq-15",
+      prompt: "The coupon flight runs March 1 to May 31. The window filter is BETWEEN '2024-03-01' AND '2024-05-31' at DATE grain. What is the edge risk?",
+      choices: ["None — BETWEEN is inclusive and correct here", "Half-open windows (>= 03-01 AND < 06-01) are the safe shape; BETWEEN on the last boundary silently relies on the stamps carrying no time component", "BETWEEN cannot compare TEXT dates", "The start boundary drops March 1's orders"],
+      answer: 1,
+      why: "At DATE grain BETWEEN happens to work — but it is the fragile shape: one hour component and the last day's orders fall out the back. The house pattern is half-open windows, which survive grain drift by construction.",
+      notes: [
+        { choice: 0, why: "It works today and breaks the day created_at gains a time component. The screens grade the shape, not the current luck." },
+        { choice: 2, why: "BETWEEN compares TEXT fine in ISO order. The risk is boundary inclusiveness against future grain, not type handling." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "burgerking-mcq-16",
+      prompt: "WHERE total > (SELECT AVG(total) FROM orders WHERE region = 'LATAM') — the LATAM staging slice is empty. What does the report return?",
+      choices: ["An error about empty subqueries", "Zero rows silently — the scalar subquery returns NULL and total > NULL is UNKNOWN for every row", "All 103 orders", "Only LATAM orders"],
+      answer: 1,
+      why: "A scalar subquery over an empty fold returns NULL, not an error, and every comparison against NULL is UNKNOWN — the above-average report empties while looking valid. Stating the empty-inner behavior is the unprompted follow-up panels fish for.",
+      notes: [
+        { choice: 0, why: "Empty is the trap: scalar subqueries are contractually 0-or-1 rows, and the 0-row case returns NULL instead of failing loudly." },
+        { choice: 2, why: "UNKNOWN is never true, so nothing passes the filter. An all-rows read would require the opposite bug (NULL-safe comparison)." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "burgerking-mcq-17",
+      prompt: "The menu-mix read joins orders to order_items and COUNT(*) reads 251, not 103. What happened?",
+      choices: ["A fan-out — the join multiplied orders by their menu lines; COUNT(*) now counts lines", "The orders table has 251 rows", "DISTINCT is missing", "251 is the revenue, mislabeled as a count"],
+      answer: 0,
+      why: "251 line items over 103 orders is the 2.44 fan-out: after the join, one row per LINE. COUNT(DISTINCT o.id) recovers the order grain — 'one row per what?' is the habit being graded.",
+      notes: [
+        { choice: 2, why: "DISTINCT on COUNT(*) would dedup whole rows — with the order id included there are no duplicate rows to dedup. The fix is counting the right key, not deduping." },
+        { choice: 3, why: "Booked value is 34,833.28, not 251. The number is a real line count; it is just answering a different question than the ticket census." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "burgerking-mcq-18",
+      prompt: "The top distribution partner carries 11,130.25 of partner-served line revenue and the top two carry 58.7%. How is the 32% share computed so it does not read 0?",
+      choices: ["100 * SUM(flag) / COUNT(*) with integer literals", "100.0 * SUM(line_revenue) OVER () — the multiplier before any division", "ROUND the ratio after dividing integers", "CAST the share to TEXT"],
+      answer: 1,
+      why: "Shares are 100.0-multiplied BEFORE the division: SUM of 0/1 flags over COUNT is integer arithmetic and truncates toward zero — the abort share reads a displayed 0 while APAC actually runs 8.1%. The .0 is arithmetic type, not rounding.",
+      notes: [
+        { choice: 0, why: "That is exactly the truncating shape — integer division first, then the 100 lands on an already-truncated 0." },
+        { choice: 2, why: "ROUND is presentation and happens after the damage. The truncation happens inside the division itself." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "burgerking-mcq-19",
+      prompt: "Settlement latency averages 28.4 days, fastest 13, slowest 84. Which fold computes time-to-first-remittance per statement?",
+      choices: ["julianday(paid_on) - julianday(issued_on) per payment leg, averaged over legs", "julianday(MIN(p.paid_on)) - julianday(i.issued_on) grouped per invoice, over the 22 leg-carrying statements", "AVG(due_on - issued_on)", "COUNT(paid_on) per invoice"],
+      answer: 1,
+      why: "Time-to-first-remittance folds MIN(paid_on) per statement — the first leg — then averages over the statements that have legs. The 6 zero-leg statements have no latency and are excluded by a stated population, not a silent NULL-shrink.",
+      notes: [
+        { choice: 0, why: "That averages every leg — the 5 split-rail statements contribute two latencies each, which is a per-rail read, not time-to-first-remittance." },
+        { choice: 2, why: "due_on is a contractual date, not a settlement event — that fold measures terms, not behavior. The 28.4-versus-net-30 gap is the whole story." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "burgerking-mcq-20",
+      prompt: "Two shapes return the dunning register: invoices LEFT JOIN payments ... WHERE p.id IS NULL, and WHERE NOT EXISTS (SELECT 1 FROM payments p WHERE p.invoice_id = i.id). When do they disagree?",
+      choices: ["Never — they are always identical", "Only when the joined column can be NULL — a NULL invoice_id leg stays 'unmatched' for the LEFT JOIN but is handled cleanly by NOT EXISTS", "LEFT JOIN is faster so they disagree on performance, not results", "NOT EXISTS cannot reference the outer table"],
+      answer: 1,
+      why: "On this clean core both return the same 6 statements. They diverge on NULL-able join keys: LEFT JOIN + IS NULL buckets NULL-key legs as unmatched, while NOT EXISTS asks existence directly and is immune. House default: NOT EXISTS.",
+      notes: [
+        { choice: 0, why: "Identical HERE is verified — and verified here is not identical everywhere. Staging tables are where the two shapes split." },
+        { choice: 2, why: "The question is semantics, not speed. EXISTS short-circuits, but the agreement question is about what each shape counts." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "burgerking-mcq-21",
+      prompt: "The royalty coverage outer runs a FULL OUTER JOIN and the orphan arm (legs with no statement) returns zero rows. What does that empty arm prove?",
+      choices: ["The query is broken — an outer join arm should never be empty", "The leg side reconciles: every one of the 27 legs points at a statement, so the register is complete in both directions", "There are no payments in the db", "The orphan arm is where cancelled statements go"],
+      answer: 1,
+      why: "The FULL OUTER runs both directions: the statement arm finds the 6 never-remitted, and the leg arm is the proof there is no orphan remittance — a confident zero you can defend because the query shape could have caught one.",
+      notes: [
+        { choice: 0, why: "An empty outer arm is a RECONCILIATION, not a failure. The audit value of the arm is precisely that it could have been non-empty." },
+        { choice: 2, why: "27 legs exist across two rails. The arm is empty because none is orphaned, not because the table is empty." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "burgerking-mcq-22",
+      prompt: "The ad-fund walk computes SUM(amount_cents) OVER (ORDER BY paid_on). Two legs settled the same day and the cumulative jumps for both at once. Fix?",
+      choices: ["Change SUM to COUNT", "Write the frame explicitly: ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW — the default RANGE includes paid_on peers", "Add DISTINCT to the SUM", "ORDER BY paid_on DESC"],
+      answer: 1,
+      why: "With ORDER BY the default frame is RANGE, and RANGE includes peers — tied rows enter the cumulative together. ROWS walks strictly leg by leg; on a book where same-day settlements are routine, the frame is the definition.",
+      notes: [
+        { choice: 2, why: "DISTINCT dedups values, not rows — and on cents sums it would actively corrupt the walk. The semantics live in the frame clause." },
+        { choice: 3, why: "Reversing the order changes which direction the walk runs, not how ties behave. The peer-jump is a RANGE property." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "burgerking-mcq-23",
+      prompt: "In the coverage census, COALESCE(SUM(p.amount_cents), 0) guards the zero-leg statements. What does the register print for #28's remitted cell without that guard?",
+      choices: ["0.00 — SUM returns zero for no rows", "NULL — SUM over zero matched rows is NULL, so the cell prints blank and the dollar math above it dies", "1,756.00 — billed flows through", "The query errors"],
+      answer: 1,
+      why: "SUM of an empty set is NULL, not zero — the remitted cell prints blank and every gap/balance computation built on it inherits the NULL. COALESCE folds the no-leg case to 0 so the register stays numeric down the column.",
+      notes: [
+        { choice: 0, why: "That is COUNT's behavior, not SUM's. Confusing the two is exactly how blank remitted cells reach the close packet." },
+        { choice: 2, why: "Billed is a different column; nothing 'flows through' an aggregate over no rows. The guard is about the fold, not the carry." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "burgerking-mcq-24",
+      prompt: "A teammate rewrites the band CASE with WHEN price <= 200 THEN 'mid band' BEFORE WHEN price < 50 THEN 'budget band'. What happens to the 49.00 SKU?",
+      choices: ["It stays in budget — CASE arms commute", "It lands in mid band — CASE evaluates top-down, so the reordered pair re-bands everything under 200 into mid", "It errors — arms must be ascending", "It falls to the premium ELSE"],
+      answer: 1,
+      why: "CASE is ordered evaluation: the first true arm wins, and 49.00 <= 200 fires the mid arm before the budget arm is ever tested. The band counts stop footing to the quoted 8/8/0 mix with no error anywhere.",
+      notes: [
+        { choice: 0, why: "Arms commute only when the predicates are disjoint. Overlapping bounds make order semantic — this is the silent re-band." },
+        { choice: 3, why: "49.00 <= 200 is true, so the ELSE never runs. The damage is budget-to-mid leakage, not a premium misprint." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "burgerking-mcq-25",
+      prompt: "The one-pass fate census returns 52, 30, 14, 7 as four SUM(CASE …) branches. What identity proves it in one assertion?",
+      choices: ["Each branch is even", "The four branches sum to COUNT(*) — 103", "The branches are all under 60", "MAX(branch) - MIN(branch) < 50"],
+      answer: 1,
+      why: "The reconciliation identity is branches sum to COUNT(*) — 52 + 30 + 14 + 7 = 103 by construction. A sloppy predicate breaks the identity, which is what makes one-pass censuses self-checking.",
+      notes: [
+        { choice: 2, why: "Magnitude bounds are coincidences of this db, not invariants. The identity holds for any status split; the bounds do not." },
+        { choice: 3, why: "Spread checks measure the story, not the census. Only the sum-to-population identity can catch a drifted status list." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "burgerking-mcq-26",
+      prompt: "COUNT(*) over orders reads 103; COUNT(DISTINCT customer_id) reads 16. What is the third number a menu read would produce, and what does it count?",
+      choices: ["498 — units pulled, from SUM(quantity) over order_items", "251 — operator accounts, from the join", "14 — months, from the spine", "34,833.28 — dollars"],
+      answer: 0,
+      why: "The menu read adds two more grains: 251 lines (COUNT(*) over order_items) and 498 units (SUM(quantity), max 3 on a line). Each grain answers a different question — demand events, basket depth, kitchen pull.",
+      notes: [
+        { choice: 1, why: "251 is line count, not accounts — accounts are the DISTINCT customer fold at 16. Mixing these two up is the classic fan-out read." },
+        { choice: 3, why: "Dollars are an aggregate, not a count — and it belongs to the money spine, not the menu census." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "burgerking-mcq-27",
+      prompt: "Marketing claims the July coupon flight 'lifted traffic' and points at the 8 July orders. What can this db honestly say about lift?",
+      choices: ["The 8 orders prove the lift", "Nothing causal — there is no coupon flag on orders, so lift is a controlled-experiment read; the db supports the month spine, not attribution", "July's 1,193.86 trough proves negative lift", "Compare July to June and divide"],
+      answer: 1,
+      why: "There is no coupon column on orders — any flight attribution would be an assertion, not a measurement. The honest deliverable is the month spine (July 1,193.86 on 8 orders, launch 3,731.97) labeled as descriptive; lift needs an experiment or a flag that does not exist here.",
+      notes: [
+        { choice: 2, why: "A trough beside a flight is exactly the kind of coincidence the spine exists to contextualize — it cannot separate the flight from seasonality on 8 orders." },
+        { choice: 3, why: "Month-over-month ratios are still descriptive reads; the causal word 'lift' is what the db cannot support." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "burgerking-mcq-28",
+      prompt: "The close packet claims the ledger trial balance reads 181,080 against 181,080. What is the query-level meaning of 'delta zero', and what does a non-zero delta forbid?",
+      choices: ["SUM(debits) - SUM(credits) = 0 — a non-zero delta forbids shipping the close until the offending entries are found", "COUNT(debits) = COUNT(credits)", "The ledger has 181,080 rows on each side", "MAX equals MIN on both sides"],
+      answer: 0,
+      why: "Delta zero is the folded identity: total debits equal total credits to the cent. Close culture here is binary — the close ships at delta zero or becomes tomorrow's incident, and the offending entries ship WITH the delta, not after it.",
+      notes: [
+        { choice: 1, why: "Row counts can tie while dollars do not — money folds, not row folds, are what a trial balance asserts." },
+        { choice: 2, why: "181,080 is a dollar total, not a row count. Reading totals as counts is the cents-blind misread this kit exists to kill." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "burgerking-mcq-29",
+      prompt: "The intensity crown: which query safely names the operator with the most booked orders, given the ladder's known ties further down?",
+      choices: ["ORDER BY COUNT(*) DESC LIMIT 1", "A subquery guard — WHERE COUNT(*) = (SELECT MAX over the fold) — which returns ALL rows tied at the max, then a named tie-breaker if one must win", "ROW_NUMBER() = 1", "MAX(customer_id)"],
+      answer: 1,
+      why: "LIMIT 1 splits any tie at the top arbitrarily; the guarded-max shape returns every row tied at the crown and forces the tie-breaker to be a named policy. On this db the crown is unique at 24 — but the same ladder ties four ways at 4, and the habit must survive contact with ties.",
+      notes: [
+        { choice: 2, why: "ROW_NUMBER picks one row before the policy is named — the arbitrary split the bench review forbids. Same failure as LIMIT 1, fancier." },
+        { choice: 3, why: "MAX over an id is not an order count — it answers 'highest id', a different question entirely." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "burgerking-mcq-30",
+      prompt: "The board prints the average order as 338.19. A refactor replaces ROUND(AVG(total), 2) with CAST(AVG(total) AS INTEGER). What does the board show?",
+      choices: ["338.19 — the cast is cosmetic", "338 — the cast truncates, and every money cell loses its cents; money cells round, they never cast", "338.2 — the cast rounds to 1 decimal", "An error — AVG cannot be cast"],
+      answer: 1,
+      why: "CAST to INTEGER truncates the fractional part: 338.19 becomes 338, and across a book of odd-cent totals the board drifts from every reconciliation keyed to the cents-safe fold. Rounding is ROUND's job; casting is a type change, not a display choice.",
+      notes: [
+        { choice: 0, why: "The cast is exactly not cosmetic — it deletes the cents column-wide. Same family of bug as the bare /100 integer division." },
+        { choice: 2, why: "CAST AS INTEGER never rounds — SQLite truncates toward zero. 338.2 would be ROUND(...,1)'s output." },
+      ],
+      difficulty: "medium",
+    },
   ],
 
   cases: [
@@ -391,6 +728,175 @@ export const burgerkingKit: CompanyKit = {
       walkthrough:
         "Two stages: fold legs per statement, then classify and roll up. The CTE runs the FULL OUTER — every one of the 28 statements survives, every leg survives, and the orphan arm (legs with no statement) is empty by probe, which is the leg-side reconciliation. Classification at statement grain: legs sum to billed → 'exact' (21 — void-but-remitted #11 at 925.00 lands here because its one leg matches its billed cents), legs at zero → 'never remitted' (6 — the dunning register, including paid-claim #28 at 1,756.00 whose status lies), else 'partial' (1 — #25 at 4,000.00 of 6,148.00). The outer SELECT rolls each bucket to count and dollars via the /100.0 read: exact 21 / 65,612.00 / 65,612.00, never remitted 6 / 15,217.00 / 0.00, partial 1 / 6,148.00 / 4,000.00 — footing to the probed AR lines, and the billed column sums to the 86,977.00 statement book. The distractors each break differently: INNER and CROSS evaporate the six never-remitted statements — the register the case exists to find — while RIGHT keeps the legs and drops the statements; MAX scalar-folds the zero-leg guard to NULL so the register's remitted cell prints blank; 'paid' relabels the census by claim and hides the exact error the legs caught; ASC opens the close on the partial; 10 as the divider inflates every dollar cell tenfold. The close rule holds: buckets must foot to 28 statements and the rails' 69,612.00 must tie to the cash credit, or the trial balance — 181,080 against 181,080 — does not ship at delta zero.",
     },
+    {
+      id: "cs-burgerking-3",
+      tier: "easy",
+      topic: "s6",
+      universe: "pricing",
+      title: "The menu-band CASE fold",
+      brief:
+        "Pricing memo on the storefront db: the menu-mix pod re-cuts the band fold for the franchisee council — 16 SKUs classified into budget (< 50), mid (50 to 200) and premium (>= 200), with count and average price per band. The probed fold: budget band 8 SKUs averaging 32.06 (14.99 floor, 49.00 ceiling), mid band 8 SKUs averaging 111.5 (59.99 to 199.99), and the premium band EMPTY — the menu's price ceiling is 199.99, so the empty arm is a population fact the slide must state, not a bug to patch. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the mix story, and a reordered WHEN quietly re-bands the 49.00 SKU.",
+      ask: "Return each price band with SKU count and average price to 2 decimals, biggest average first — the empty premium arm named, the band counts footing to 16.",
+      template:
+        "SELECT CASE WHEN price < {1} THEN 'budget band'\n              WHEN price <= {2} THEN 'mid band'\n              ELSE 'premium band' END AS band,\n       COUNT(*) AS skus,\n       ROUND({3}(price), 2) AS avg_price\nFROM products\nGROUP BY {4};",
+      slots: [
+        {
+          answer: "50",
+          kind: "number",
+          noVerify: true,
+          label: "the budget ceiling",
+          why: "The budget band is price < 50 — 8 SKUs averaging 32.06, topping out at 49.00. Move the threshold and the band re-draws: 100 swallows the 59.99 SKUs into budget and the quoted 32.06 average is gone.",
+        },
+        {
+          answer: "200",
+          kind: "number",
+          noVerify: true,
+          label: "the premium floor",
+          why: "The mid band runs 50 to 200, and the ELSE catches 200-plus — empty on this menu because the ceiling is 199.99. Tighten to 100 and the 100-to-199.99 SKUs fall into premium, inventing a tier the menu does not carry.",
+        },
+        {
+          answer: "AVG",
+          kind: "keyword",
+          label: "the band average",
+          why: "Average price per band is the fold — 32.06 and 111.5. SUM prints band totals (244.42 / 256.49-ish) wearing an avg_price label, and COUNT prints row counts: right shape, wrong measure.",
+        },
+        {
+          answer: "band",
+          kind: "keyword",
+          label: "the band grain",
+          why: "GROUP BY band folds 16 SKUs to band rows — the CASE alias. GROUP BY price scatters to one row per SKU (16 rows, no bands) and GROUP BY category re-folds by menu family (7 rows): right tables, wrong universe.",
+        },
+      ],
+      distractors: ["MAX", "COUNT", "ASC", "0"],
+      walkthrough:
+        "One CASE, one fold, one stated empty arm. The CASE evaluates top-down: price < 50 fires budget first, price <= 200 fires mid second, and the ELSE catches 200-plus — which is why the arms' ORDER is semantic: rewrite it mid-first and the 49.00 SKU lands in mid before budget is ever tested. The fold reads 16 SKUs into three arms: budget band 8 SKUs at 32.06 (ceiling 49.00), mid band 8 at 111.5 (59.99 to 199.99), premium band zero rows — the empty arm is the slide's footnote, because the limited-menu discipline tops out at 199.99 and pretending otherwise manufactures a tier. The distractors each break differently: MAX as the average prints ceiling prices (49 / 199.99) under an avg_price label and the 32.06 the council quotes is gone; COUNT prints 8 / 8 row counts where averages belong; ASC in any expression position is a syntax error; 0 as the budget ceiling folds every SKU into mid — one arm eats the mix and the band story is a single row. The read the pod takes: two bands, eight SKUs each, a 3.5x average gap — value band versus core band, premium absent by construction.",
+    },
+    {
+      id: "cs-burgerking-4",
+      tier: "medium",
+      topic: "j5",
+      universe: "month-close",
+      title: "The dunning anti-join",
+      brief:
+        "Month-close brief on the storefront db from franchise finance: before a single reminder goes out, the dunning register refreshes — royalty statements carrying ZERO remittance legs. The probed register: 6 statements worth 15,217.00 — #24 (4,937.00), #26 (3,562.00), #27 (2,794.00), #21 (1,295.00), #18 (873.00), all status 'open', plus #28 (1,756.00), which claims status 'paid' with zero legs: a status that lies, and the reason the payments table is the ledger of record. The register reads biggest exposure first, and every dollar read is amount_cents / 100.0 — INTEGER cents, exactly once.",
+      ask: "Return each never-remitted statement with id, claimed status and billed dollars to 2 decimals, biggest exposure first.",
+      template:
+        "SELECT i.id AS statement_id,\n       i.status AS claim,\n       ROUND(i.amount_cents / {4}, 2) AS billed\nFROM invoices i\nLEFT JOIN payments p ON {1}\nWHERE p.id IS {2}\nORDER BY billed {3};",
+      slots: [
+        {
+          answer: "p.invoice_id = i.id",
+          kind: "keyword",
+          label: "the remittance stitch",
+          why: "Legs reference their statement by invoice_id, so the stitch is p.invoice_id = i.id. Stitch on p.id = i.id and legs pair with whatever statement shares their row number — #28's phantom payment is the tell that the stitch is wrong.",
+        },
+        {
+          answer: "NULL",
+          kind: "keyword",
+          label: "the unmatched arm",
+          why: "IS NULL keeps the zero-leg statements — the whole register. IS NOT NULL flips the query into the 22 leg-carrying statements, the exact complement, and the dunning list silently becomes a paid list.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-exposure-first direction",
+          why: "The chase list opens on #24 at 4,937.00 — the biggest single chase. ASC opens on #18 at 873.00: a correct register aimed at the wrong end of the queue.",
+        },
+        {
+          answer: "100.0",
+          kind: "number",
+          noVerify: true,
+          label: "the cents divider",
+          why: "Statements bill in INTEGER cents; /100.0 is the dollar read that prints 4,937.00. Bare 100 keeps integer arithmetic and eats cents on every odd-cent row; 10 prints a tenfold register.",
+        },
+      ],
+      distractors: ["p.id = i.id", "NOT NULL", "ASC", "10"],
+      walkthrough:
+        "An anti-join is a stitch, a null test and a direction. The stitch attaches each statement to its remittance legs by invoice_id; the IS NULL arm keeps the statements the stitch never matched — 6 of 28, worth 15,217.00 — and the direction opens the chase list on the biggest exposure: #24 at 4,937.00, then 3,562.00, 2,794.00, 1,756.00, 1,295.00, 873.00. Five rows claim 'open' and one (#28 at 1,756.00) claims 'paid' with zero legs — the status column is a claim, the legs are the ledger, and that one row is why the register reads the payments table instead of the status field. The distractors each break differently: p.id = i.id stitches legs to whatever statement shares their row number — most statements find a phantom match and the register collapses to a fragment; NOT NULL flips the arm and the dunning list becomes the 22 paid statements, its exact complement; ASC opens the chase on the 873.00 tail; 10 as the cents divider prints a tenfold register the ledger catch-file rejects instantly. The cross-check the close requires: the register's 6 must foot against the coverage census — 21 exact + 1 partial + 6 none = 28 — or the anti-join misread its population.",
+    },
+    {
+      id: "cs-burgerking-5",
+      tier: "medium",
+      topic: "q6",
+      universe: "growth",
+      title: "The coupon-window spine gate",
+      brief:
+        "Growth memo on the storefront db: the calendar team wants the busy months isolated for the coupon-flight proposal — months whose order volume beats the spine's own average, so the flight lands on months that already carry traffic. The month spine reads at DATE grain (created_at carries no hour — say so): 14 buckets from 2024-01 to 2025-02, launch month 3,731.97 on 8 orders, February and September peaking at 9 orders, July troughing at 1,193.86. The average month on this spine carries about 7.4 orders, so the gate must be computed INSIDE the query — a staging CTE first, the average folded from the spine itself, never hard-coded.",
+      ask: "Return each month whose order count exceeds the spine-wide average order count, with month, order count and booked value to 2 decimals, calendar order.",
+      template:
+        "WITH spine AS (\n  SELECT STRFTIME('%Y-%m', created_at) AS month,\n         COUNT(*) AS orders,\n         ROUND(SUM(total), {4}) AS booked_value\n  FROM orders\n  GROUP BY {1}\n)\nSELECT month, orders, booked_value\nFROM spine\nWHERE {3} > (SELECT {2}(orders) FROM spine)\nORDER BY month;",
+      slots: [
+        {
+          answer: "month",
+          kind: "keyword",
+          label: "the spine grain",
+          why: "GROUP BY month folds 103 orders into the 14-month spine — '%Y-%m' keeps January 2024 and January 2025 apart. GROUP BY status re-folds into 4 fate rows and the calendar is gone; GROUP BY 0 collapses everything into one row.",
+        },
+        {
+          answer: "AVG",
+          kind: "keyword",
+          label: "the spine's own baseline",
+          why: "The gate is 'beats the average month', so the inner fold is AVG over the spine — about 7.4. MAX gates at the best month (9) and returns nothing; SUM gates above 103 and the report empties.",
+        },
+        {
+          answer: "orders",
+          kind: "keyword",
+          label: "the gated column",
+          why: "The flight buys traffic, so the gate rides order count: 8 and 9 beat the baseline, 6 and 7 do not. Gating booked_value answers a pricing question — 2024-07 passes on value logic that its 8 orders fail on traffic logic.",
+        },
+        {
+          answer: "2",
+          kind: "number",
+          noVerify: true,
+          label: "the value precision",
+          why: "Booked value ships to 2 decimals — 3,731.97, 1,193.86. ROUND(…, 0) flattens the spine to integers and the cells stop reconciling with every other money read in the deck.",
+        },
+      ],
+      distractors: ["SUM", "MAX", "status", "0"],
+      walkthrough:
+        "A gate is a baseline computed where it lives. The CTE folds 103 orders into the 14-month spine — 2024-01 through 2025-02 — because the calendar team reads months, not days, and created_at is DATE-grain anyway. The outer query then gates the spine against its OWN average: (SELECT AVG(orders) FROM spine) folds the 14 buckets to roughly 7.4, and six months clear it — 2024-01 (8 orders / 3,731.97), 2024-02 (9 / 3,609.64), 2024-03 (8 / 2,617.08), 2024-05 (8 / 2,910.31), 2024-07 (8 / 1,193.86), 2024-09 (9 / 3,116.04). The June–July trough is the honest headline: 2024-07 clears the volume gate with 8 orders while carrying the smallest booked value on the spine — volume without value, exactly the month a discount flight would make worse. The distractors each break differently: SUM as the baseline gates above 103 total orders and the report empties while looking valid; MAX gates above the best month (9) — nothing can pass, silently; GROUP BY status discards the calendar for a fate census; 0 as the value precision flattens 3,731.97 to 3,732 and the spine stops footing with the money deck. And the subquery's population is stated by construction: the average folds the SPINE (14 months), not the raw 103 orders — gate the baseline to the wrong grain and the cutoff drifts.",
+    },
+    {
+      id: "cs-burgerking-6",
+      tier: "hard",
+      topic: "j7",
+      universe: "supplier",
+      title: "The distribution partner fold",
+      brief:
+        "Supply brief on the storefront db: the six distribution partners (suppliers) each carry a slice of the 16-SKU menu, and the supply review ranks them by partner-served line revenue — units pulled through their SKUs, SKU count beside it — before the distribution-contract renegotiation. The probed fold, biggest first: Nordic Gadgets AB (EU) 3 SKUs / 82 units / 11,130.25, Midwest Hardware Co (US) 3 / 109 / 9,294.93, Alpine Audio GmbH (EU) 2 / 77 / 4,765.63, Andes Naturals SA (LATAM) 2 / 51 / 3,613.25, Shenzhen Electro (APAC) 3 / 99 / 3,049.07, Pacific Textiles (APAC) 3 / 80 / 2,980.15. The concentration headline: the top partner carries 32% of partner-served line revenue and the top two 58.7%.",
+      ask: "Return each distribution partner with its market, SKU count, units pulled and partner-served line revenue to 2 decimals, biggest revenue first.",
+      template:
+        "SELECT s.name AS partner,\n       s.region AS market,\n       COUNT(DISTINCT p.id) AS skus,\n       {3}(oi.quantity) AS units,\n       ROUND(SUM(oi.quantity * oi.unit_price), {4}) AS line_revenue\nFROM suppliers s\nJOIN products p ON {1}\nJOIN order_items oi ON oi.product_id = p.id\nGROUP BY {2};",
+      slots: [
+        {
+          answer: "p.supplier_id = s.id",
+          kind: "keyword",
+          label: "the supply stitch",
+          why: "SKUs reference their distribution partner by supplier_id, so the stitch is p.supplier_id = s.id. Stitch on s.id = s.id and every product pairs with every partner — all six partners inherit all 16 SKUs and the concentration story is fiction.",
+        },
+        {
+          answer: "s.id",
+          kind: "keyword",
+          label: "the partner grain",
+          why: "GROUP BY s.id folds to one row per partner — 6 rows, the contract grain. GROUP BY p.category re-folds by menu family (7 rows of no-partner) and GROUP BY 0 collapses the bench into one row.",
+        },
+        {
+          answer: "SUM",
+          kind: "keyword",
+          label: "the units pull",
+          why: "Units pulled is SUM(oi.quantity) — 82 for Nordic, 109 for Midwest. COUNT counts menu LINES (the 2.44 fan-out) and MAX reads the biggest single line quantity (3): right table, wrong measure.",
+        },
+        {
+          answer: "2",
+          kind: "number",
+          noVerify: true,
+          label: "the revenue precision",
+          why: "Partner revenue ships to 2 decimals — 11,130.25 against 2,980.15. ROUND(…, 0) prints integers and the 32% share the contract memo quotes stops reconciling with the cells beneath it.",
+        },
+      ],
+      distractors: ["s.id = s.id", "p.category", "COUNT", "0"],
+      walkthrough:
+        "A supply fold is two stitches and two measures. The first stitch attaches each of the 16 SKUs to its distribution partner by supplier_id; the second rides the menu lines through product_id, so each partner's row is the units and line revenue that flowed through ITS SKUs. The fold reads: Nordic Gadgets AB 3 SKUs / 82 units / 11,130.25, Midwest Hardware Co 3 / 109 / 9,294.93, Alpine Audio GmbH 2 / 77 / 4,765.63, Andes Naturals SA 2 / 51 / 3,613.25, Shenzhen Electro 3 / 99 / 3,049.07, Pacific Textiles 3 / 80 / 2,980.15 — and the concentration read falls out of the ranking: the top partner carries 32% of partner-served line revenue, the top two 58.7%, which is the dependence the renegotiation is about. The volume-versus-value split is the ops read: Midwest pulls the most units (109) and still lands second — its SKUs are the traffic family — while Nordic converts fewer units into a third more revenue. The distractors each break differently: s.id = s.id cross-joins partners to SKUs, so every partner inherits all 16 SKUs and the fold reads six identical 16-SKU rows; p.category in the stitch or the fold key re-grains the bench by menu family and the partners vanish; COUNT in the units slot counts lines (the fan-out) instead of units; 0 as the precision flattens 11,130.25 to 11130 and the memo's share arithmetic loses its footing. State the fold grain out loud — one row per partner, units from lines, dollars from the line's own price — and the contract table holds.",
+    },
   ],
 
   problems: [
@@ -410,5 +916,21 @@ export const burgerkingKit: CompanyKit = {
     { slug: "employee-bonus", why: "CASE-guarded bonus math — co-op payouts computed only where the legs exist. The guard-else-zero shape is how ad-fund accruals are written here." },
     { slug: "game-play-analysis-i", why: "First order per operator account — the onboarding cohort anchor. MIN-over-window per account is the shape every franchisee ramp read starts from." },
     { slug: "average-selling-price", why: "Weighted menu price per window — band mix shifts the average even when prices never change. The 32.06-versus-111.5 band story is this weighting discipline at db scale." },
+    { slug: "funnel-step-conversion", why: "Fate-to-fate conversion with the denominator stated — delivered-over-booked is the kept-rate fold, and this problem drills the conditional rate without letting the base drift." },
+    { slug: "basket-depth-aov", why: "Lines per ticket beside average order value is the 2.44 fan-out read — basket depth separates the density story from the price story, and this problem drills both grains in one fold." },
+    { slug: "growth-accounting", why: "New versus returning operator accounts per market is the growth memo's opening table — the intensity read that decides whether growth is broadening or concentrating on this book." },
+    { slug: "ads-funnel", why: "The ad-fund spend has to trace to coupon-window traffic — a staged funnel over the month spine, which is exactly the coupon-window read this kit ships at date grain." },
+    { slug: "budget-pacing", why: "Ad-fund co-op opex pacing against the flight calendar — spend-to-date versus plan is the pacing fold the marketing review opens with before a single coupon flight is approved." },
+    { slug: "cohort-retention-matrix", why: "Operator accounts cohorted by first-order month, retained by repeat bookings — the franchisee ramp read that turns the 16-account bench into a retention story." },
+    { slug: "credit-utilization-bands", why: "Band-classified utilization with exhaustive ordered arms — the exact CASE discipline the menu-band fold demands, drilled on a different table so the shape transfers." },
+    { slug: "calculate-product-final-price", why: "Final price after conditional adjustments — menu pricing with CASE-guarded modifiers, the same guard-else-shape the band fold and ad-fund accruals use." },
+    { slug: "find-the-missing-ids", why: "Which ids never appear on the far side — the dunning register's engine. This problem drills the anti-join that returns the 6 never-remitted statements at practice scale." },
+    { slug: "ar-aging-schedule", why: "Receivables bucketed by age is the chase list formalized — 15,217.00 of never-remitted royalties aging into dunning tiers is exactly this problem's shape on the statements table." },
+    { slug: "delinquency-buckets", why: "Classification before rollup — buckets that must foot to the population. The coverage census (21 exact / 1 partial / 6 none) is this problem's discipline wearing royalty clothes." },
+    { slug: "balance-rollforward", why: "Opening balance plus movements equals closing — the remittance rails' 69,612.00 rolling against the ledger cash credit, with the delta asserted in the query's own output." },
+    { slug: "gl-reconciliation", why: "Two ledgers, one delta — the 181,080-against-181,080 trial balance made a drill. This problem is close culture: reconcile or the close does not ship." },
+    { slug: "trial-balance-check", why: "Debits equal credits to the cent, computed, not assumed — the delta-zero gate that ends every Burger King close, drilled until writing it is reflex." },
+    { slug: "duplicate-charge-pairs", why: "The same statement settling twice — the split-rail read at practice scale. Five statements carry 1 card + 1 wire leg, and telling a split from a double-tap is this problem's exact skill." },
+    { slug: "amount-anomaly-zscore", why: "Statistical outliers over the statement book — the void-but-remitted 925.00 and the paid-claim 1,756.00 are the anomalies this fold is built to surface before the walk goes line by line." },
   ],
 };
