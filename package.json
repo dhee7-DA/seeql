@@ -3,7 +3,7 @@
   "version": "0.2.1",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3000 2>&1 | tee dev.log",
+    "dev": "[ -f .next/standalone/server.js ] || bun run build; NODE_ENV=production bun .next/standalone/server.js 2>&1 | tee dev.log",
     "prebuild": "bun run gen:counts",
     "build": "next build && cp -r .next/static .next/standalone/.next/ && cp -r public .next/standalone/",
     "gen:counts": "bun scripts/gen-universe-counts.ts",
