@@ -54,7 +54,8 @@ import { StageInspector } from "@/components/stage-inspector";
 import { SampleGallery } from "@/components/sample-gallery";
 import { clauseAtOffset, findClauses, spanOf, type ClauseKind } from "@/lib/sql-clauses";
 import { Landing } from "@/components/landing";
-import { HeaderRank, LearnApp } from "@/components/learn/learn-app";
+import { HeaderRank, HeaderTourButton, LearnApp } from "@/components/learn/learn-app";
+import { SearchButton } from "@/components/learn/command-palette";
 import { UniverseStrip } from "@/components/universe-strip";
 import { SeeqBuddy } from "@/components/learn/seeq-buddy";
 import { useProgress } from "@/lib/curriculum/progress";
@@ -1039,6 +1040,10 @@ export default function Home() {
                 {/* XP + daily-streak flame — the shared ledger is one economy,
                     so universe answers light these up exactly like lessons. */}
                 <HeaderRank />
+                {/* ⌘K palette + replayable tour — the two "where was I / where
+                    is anything" affordances, visible on every learn view. */}
+                <SearchButton />
+                <HeaderTourButton />
                 {/* SeeQ playground — the mascot's own section. The mini bot is a
                     live one: its capsule eyes track your cursor app-wide. */}
                 <button

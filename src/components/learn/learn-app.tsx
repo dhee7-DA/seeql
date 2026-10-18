@@ -11,6 +11,7 @@ import {
   ChevronDown,
   ChevronsDownUp,
   ChevronsUpDown,
+  Compass,
   Download,
   Flame,
   GraduationCap,
@@ -28,6 +29,7 @@ import { cn } from "@/lib/utils";
 import { LessonView } from "./lesson-view";
 import { ExamView } from "./exam-view";
 import { ReviewDeck } from "./review";
+import { CommandPalette } from "./command-palette";
 import { RoadmapTrack } from "./roadmap-track";
 import { DataExplorer } from "./data-explorer";
 import { MixedQuiz } from "./mixed-quiz";
@@ -66,7 +68,7 @@ import { OnboardingTour, TourReplayButton, markTourSeen, tourSeen } from "./onbo
 import { BackupError, buildBackup, downloadBackup, importBackupFile } from "@/lib/port";
 import { BAND_BY_MODULE } from "@/lib/leetcode/sections";
 
-type View =
+export type View =
   | { kind: "overview" }
   | { kind: "roadmap" }
   | { kind: "seeq" }
@@ -265,6 +267,62 @@ export function HeaderRank() {
   );
 }
 
+/** Shell-header Tour button with the one-time nudge bubble — catches the
+ *  deep-link arrivals the auto-tour deliberately skips (strip CTA, roadmap,
+ *  lesson, seeq): they never saw the tour, so the button suggests it once. */
+export function HeaderTourButton() {
+  const [seen, setSeen] = useState(true); // SSR-safe: no bubble on first paint
+  const [dismissed, setDismissed] = useState(false);
+  useEffect(() => {
+    setSeen(tourSeen());
+    // tourSeen() lives in localStorage — poll cheaply so the bubble retires
+    // the moment the tour is completed, skipped or closed anywhere.
+    const t = setInterval(() => setSeen(tourSeen()), 1500);
+    return () => clearInterval(t);
+  }, []);
+  const replay = () => {
+    markTourSeen(); // a manual replay clears the nudge for good
+    setSeen(true);
+    window.dispatchEvent(new CustomEvent("seeql:tour-replay"));
+  };
+  return (
+    <div className="relative">
+      <button
+        onClick={replay}
+        data-tour="header-tour"
+        aria-label="Replay the guided tour"
+        title="Replay the guided tour"
+        className="flex min-h-[36px] cursor-pointer items-center gap-1.5 rounded-md border border-zinc-800 px-2.5 py-1.5 text-sm text-zinc-300 transition-colors hover:bg-zinc-900"
+      >
+        <Compass className="h-3.5 w-3.5" />
+        <span className="hidden sm:inline">Tour</span>
+      </button>
+      {!seen && !dismissed && (
+        <div className="absolute right-0 top-full z-50 mt-2 w-60 rounded-lg border border-sky-400/30 bg-zinc-900 p-3 shadow-xl shadow-black/40">
+          <p className="text-xs font-medium text-zinc-100">First time here?</p>
+          <p className="mt-1 text-[11px] leading-relaxed text-zinc-400">
+            Take the 60-second tour — the course, the universe and where everything lives.
+          </p>
+          <div className="mt-2.5 flex items-center gap-2">
+            <button
+              onClick={replay}
+              className="rounded-md bg-sky-400 px-2.5 py-1.5 text-[11px] font-medium text-[var(--brand-ink)] transition-colors hover:bg-sky-300"
+            >
+              Take the tour
+            </button>
+            <button
+              onClick={() => setDismissed(true)}
+              className="rounded-md border border-zinc-700 px-2.5 py-1.5 text-[11px] text-zinc-400 transition-colors hover:text-zinc-200"
+            >
+              Later
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function RankBlock({ xp, level, streak }: { xp: number; level: ReturnType<typeof levelFor>; streak: number }) {
   return (
     <Panel tone="nested" pad={3.5} rounded="lg">
@@ -425,10 +483,15 @@ function OverviewModuleCard({
   );
 }
 
-/** Mobile-only quick nav — the whole registry as one horizontal thumb-scroll. */
+/** Mobile-only quick nav — the whole registry as one horizontal thumb-scroll.
+ *  Sticks under the shell header so navigation is always a thumb-tap away,
+ *  and every chip clears the 44px touch-target bar. */
 function ToolRail({ view, setView }: { view: View; setView: (v: View) => void }) {
   return (
-    <nav aria-label="Quick tools" className="mb-4 flex gap-1.5 overflow-x-auto pb-1 thin-scrollbar lg:hidden">
+    <nav
+      aria-label="Quick tools"
+      className="sticky top-14 z-30 mb-4 -mx-4 flex gap-1.5 overflow-x-auto bg-zinc-950/90 px-4 py-2 backdrop-blur thin-scrollbar lg:hidden"
+    >
       {TOOLS.map((t) => (
         <Btn
           key={t.kind}
@@ -436,6 +499,7 @@ function ToolRail({ view, setView }: { view: View; setView: (v: View) => void })
           active={view.kind === t.kind}
           aria-current={view.kind === t.kind ? "page" : undefined}
           onClick={() => setView({ kind: t.kind } as View)}
+          className="min-h-[44px] shrink-0"
         >
           <t.icon className="h-3 w-3 shrink-0" />
           {t.short}
@@ -759,14 +823,25 @@ export function LearnApp() {
   // handlers, so the setState inside is compliant.
   useEffect(() => {
     const onNav = (e: Event) => {
-      const detail = (e as CustomEvent<{ kind?: View["kind"]; id?: string }>).detail;
+      const detail = (e as CustomEvent<Partial<View> & { kind?: View["kind"]; id?: string }>).detail;
       if (!detail?.kind) return;
       deepLinkedRef.current = true;
-      setView(detail.kind === "lesson" && detail.id ? { kind: "lesson", id: detail.id } : ({ kind: detail.kind } as View));
+      setView(detail.kind === "lesson" && detail.id ? { kind: "lesson", id: detail.id } : ({ ...detail } as View));
       window.scrollTo({ top: 0 });
     };
     window.addEventListener("seeql:nav", onNav);
     return () => window.removeEventListener("seeql:nav", onNav);
+  }, []);
+
+  // The shell header's Tour button replays the tour by event — the tour state
+  // is private to this component, same contract as seeql:nav.
+  useEffect(() => {
+    const onReplay = () => {
+      deepLinkedRef.current = true; // a requested tour is never hijacked mid-navigation
+      setTourStep(0);
+    };
+    window.addEventListener("seeql:tour-replay", onReplay);
+    return () => window.removeEventListener("seeql:tour-replay", onReplay);
   }, []);
   const { xp, level, streak, ctx } = useBadgeWatcher();
   const xpEvents = useProgress((s) => s.xpEvents);
@@ -822,6 +897,7 @@ export function LearnApp() {
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-6 lg:flex-row">
       <CelebrationHost />
+      <CommandPalette />
       <OnboardingTour step={tourStep} setStep={setTourStep} onClose={closeTour} />
       {/* keyboard users can jump straight past the 300px rail */}
       <a
