@@ -8,7 +8,7 @@
 // partners, invoices = rental invoices (fuel and late fees included), payments = charge rails
 // (card vs corporate billing), expenses = fleet opex, ledger_entries = the GL (INTEGER cents — the
 // dollar read is amount_cents / 100.0). Pool provenance: company-pools.md carries NO Hertz section —
-// 0 tagged rows — so all 10 topic slug sets and all 16 problems are theme-curated from the pools
+// 0 tagged rows — so all 10 topic slug sets and all 32 problems are theme-curated from the pools
 // file's Theme menu (sql rows only; no write/schema/finance-band rows) and say so. Case briefs quote
 // probed figures from scripts/company-facts.md (probed 2026-10-12); every case slot is mechanically
 // verified against db/custom.db by scripts/case-audit.ts.
@@ -26,7 +26,7 @@ export const hertzKit: CompanyKit = {
     "**Hertz** is the car-rental network that turned the airport counter into a logistics system — a fleet of vehicle classes rotating across markets, rented by the day, settled at the return lane. The whole business is utilization per unit: a car sitting on the lot between rotations is depreciation with a parking spot, so every number the company manages is a conditional count over rental agreements. This kit maps the storefront db onto that world: the 16 customers rows are renters (region = pickup market), the 103 orders are rental agreements worth **34,833.28**, and the 251 order_items rows are agreement lines — quantity = rental days, unit_price = the daily rate each line locked. The 16 products are bookable vehicle classes (price = day rate, stock = the rotation pool), rolling up to seven fleet families, supplied by 6 fleet/leasing partners. The status map is fixed: delivered = {emerald:returned-and-settled} (52, 50.5%), shipped = {sky:on-rent} (30, 29.1%), pending = reserved-awaiting-pickup (14), cancelled = {rose:no-show} (7, 6.8%).",
     "The data org splits into fleet ops, revenue management (the day-rate and {amber:utilization} desk), a counter-ops pod and a small billing team, and they read the same agreement spine at different grains. An agreement books at created_at, and `shipped_at` is stamped the day the renter actually drives out — **82 of 103 agreements** carry the stamp, averaging **2.98 days** of booking-ahead with a 2–4 day spread, while the 14 reserved rows have none yet (a population definition, not a cleanup job). Money sits one layer down: rental invoices (fuel and late fees included) and payments in INTEGER cents, where the dollar read is `amount_cents / 100.0`. Concentration is the third story: **63.5%** of the book comes from renters whose lifetime spend crosses 3,000 (71.2% above 2,000) — one Gold-plus renter moves a market's month.",
     "Interview screens are census-then-denominator. A typical loop opens with a **two-grain market census** — EU runs 45 agreements from just 8 renters (intensity 5.6) while the US runs 19 from 2 (9.5) — then escalates into a rate where the interviewer asks the denominator question out loud (*'does a no-show count in your base?'*), then into the Gold Plus ladder where FOUR renters sit tied at 4 agreements and rank semantics become a business decision about who gets the upgrade certificate. Late rounds walk the {sky:14-month agreement spine} (2024-01 to 2025-02) with `LAG` deltas and probe the first row's NULL, or open the class census where the widest family turns **121 rental days over 54 agreements** and the fan-out is the test. Candidates who state the status filter and the denominator before writing SQL are the ones who get callbacks.",
-    "Preparation strategy: the pools file carries no Hertz section — zero tagged rows — so all sixteen problems and every topic slug here are **theme-curated** to this kit's known screen shapes: counter-to-return funnels, two-grain counter censuses, tie-heavy Gold ladders, day-rate band CASE and the cents-safe billing spine. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {emerald:fleet-class rotation census} fleet ops opens the quarter with, the other rebuilds the {violet:Gold Plus Rewards ladder} the loyalty desk re-cuts every month. The bar to clear: *state the definition and the denominator before you compute anything* — then make every status census reconcile to 103 by construction.",
+    "Preparation strategy: the pools file carries no Hertz section — zero tagged rows — so all thirty-two problems and every topic slug here are **theme-curated** to this kit's known screen shapes: counter-to-return funnels, two-grain counter censuses, tie-heavy Gold ladders, day-rate band CASE and the cents-safe billing spine. Do the topics in order, then run the six case studies on the live storefront db — the {emerald:fleet-class rotation census} fleet ops opens the quarter with, the {violet:Gold Plus Rewards ladder} the loyalty desk re-cuts every month, the settlement coverage ledger, the family workhorse scan, the never-settled anti-join and the fixed-cost stack. This kit is built for spaced practice rather than one sitting: run each case, then re-run it a week later from a blank editor — *the second pass is where recall actually forms*. The bar to clear: *state the definition and the denominator before you compute anything* — then make every status census reconcile to 103 by construction.",
   ],
 
   dayInLife: [
@@ -50,12 +50,12 @@ export const hertzKit: CompanyKit = {
     {
       name: "Counter-to-return lifecycle counts",
       why: "Every Hertz screen opens with the lifecycle: agreements booked, checked out (shipped_at stamped), returned-and-settled. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling an on-rent agreement 'returned' — 30 versus 52 on this db.",
-      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest"],
+      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "bikes-last-time-used", "hopper-company-queries-i"],
     },
     {
       name: "Two-grain counter censuses",
       why: "Agreements and renters are different grains of the same join, and every market census here reports both: EU runs 45 agreements from 8 renters while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is counter load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "flight-occupancy-and-waitlist-analysis"],
     },
     {
       name: "Joining renters to agreements",
@@ -65,37 +65,37 @@ export const hertzKit: CompanyKit = {
     {
       name: "Fleet-class enrichment",
       why: "Class-level reporting means attaching fleet family and partner attributes to every agreement line — the products-to-order_items join where line quantity is rental days and unit_price is the locked day rate. Hertz's follow-up is always the fan-out: join lines in, and COUNT(*) silently stops counting agreements.",
-      slugs: ["product-sales-analysis-ii", "product-sales-analysis-iii", "sales-analysis-i"],
+      slugs: ["product-sales-analysis-ii", "product-sales-analysis-iii", "sales-analysis-i", "generate-the-invoice", "products-price-for-each-store"],
     },
     {
       name: "Utilization leaderboards",
       why: "Top-class-per-family, hardest-worked vehicle, Gold-tier renters — rotation reporting is leaderboard reporting. Hertz drills the rank trio because ties are guaranteed at counter scale — four renters sit at 4 agreements each on this db — and the LIMIT-1-OFFSET-1 habit breaks on them.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "repeat-purchase-rate", "rfm-segmentation", "year-on-year-growth-rate"],
     },
     {
       name: "Day-rate banding with CASE",
       why: "Fleet classes are CASE-banded — the shelf runs 14.99 shuttle to 199.99 flagship, split 8 mid classes averaging 111.50 against 8 at 32.06 — with fixed edges the rate card publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the revenue forecast, and a reordered WHEN quietly re-bands the fleet.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "calculate-product-final-price", "spend-histogram"],
     },
     {
       name: "Rotation month walks & LAG",
       why: "The 14-month agreement spine (2024-01 to 2025-02) is the revenue-management call's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) and the pre-festive lull named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine", "restaurant-growth", "cohort-retention-matrix"],
     },
     {
       name: "Coverage set algebra",
       why: "Close packets stack populations — settled beside never-settled, this quarter beside last — and EXCEPT answers 'which billed agreements never settled'. UNION dedups whole rows silently, which makes it a correctness question, not a style one; the counter's stack must add up or it does not ship.",
-      slugs: ["team-scores-in-football-tournament", "monthly-transactions-ii", "the-airport-with-the-most-flights"],
+      slugs: ["team-scores-in-football-tournament", "monthly-transactions-ii", "the-airport-with-the-most-flights", "prepayment-detection"],
     },
     {
       name: "One-pass status censuses",
       why: "The ops board gets returned, on-rent, reserved and no-show in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift while the counter is calling.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "sales-by-day-of-the-week"],
     },
     {
       name: "Billing & cents discipline",
       why: "Returned is not settled — the finance tables (28 invoices, 27 payments, INTEGER cents) are where the counter world meets money, fuel and late fees included. Every dollar read is amount_cents / 100.0, and the exact/partial/none coverage split (21 / 1 / 6) is one CASE away.",
-      slugs: ["bank-account-summary-ii", "products-worth-over-invoices", "monthly-transactions-i"],
+      slugs: ["bank-account-summary-ii", "products-worth-over-invoices", "monthly-transactions-i", "ar-aging-schedule", "calculate-parking-fees-and-duration"],
     },
   ],
 
@@ -147,6 +147,102 @@ export const hertzKit: CompanyKit = {
       q: "Billing says an invoice is 'paid' but the payments table has no rows for it. Walk me through the reconciliation query you write first — and the money rule you never break while writing it.",
       a: "First the anti-join: invoices LEFT JOIN payments, keep p.id IS NULL — on this db that returns 6 invoices worth 15,217, and one of them (#28, 1,756.00) is marked 'paid' with zero settlement rows: a status that lies, which is why payment rows are the ledger of record and the status column is a claim. Then the anomaly flip: a void invoice WITH a settlement row (this db has one, #11 at 925.00) never appears in that anti-join — the two error modes are mirrors, and both reconcile to the row-level anomaly list, not to vibes; a partial (#25, 4,000 of 6,148) needs the coverage CASE, not a binary paid flag. The money rule: invoices and payments carry INTEGER cents, so every dollar read is amount_cents / 100.0 — the missing .0 turns a 1,756.00 print into 1,756 and quietly eats cents on every odd-cent row. Reconciliation culture here: the coverage split must read 21 exact / 1 partial / 6 never-collected, and the GL trial balance must land at 181,080 debits against 181,080 credits — delta zero, or the close does not ship.",
       tag: "quality",
+    },
+    {
+      id: "hertz-t9",
+      q: "COUNT(*), COUNT(column), COUNT(DISTINCT column) — walk me through what each counts on the agreement spine, and where mixing them up shows in a Hertz report.",
+      a: "COUNT(*) counts rows: 103 agreements, or 251 lines once order_items joins in. COUNT(column) skips NULLs — COUNT(shipped_at) reads 82, and the 21-row gap to COUNT(*) is exactly the reserved-plus-no-show population, which is a feature when named and a lie when not. COUNT(DISTINCT column) folds repeats: COUNT(DISTINCT customer_id) reads 16 renters, COUNT(DISTINCT order_id) reads 103 agreements after the line-level fan-out. The classic Hertz miss is the utilization report that joins agreement lines for rental days and keeps COUNT(*) — it silently reports 251 lines where the header says agreements. Say 'one row per what?' for every COUNT and the grain stays honest.",
+      tag: "aggregation",
+    },
+    {
+      id: "hertz-t10",
+      q: "How do LAG and LEAD power the month-over-month rotation walk — and where do candidates usually stumble?",
+      a: "LAG(column) OVER (ORDER BY month) puts the prior month's booked value beside the current one — the spine's 3,731.97 opener against each later month's delta; LEAD reads forward. Both leave the boundary row NULL, and that NULL is honest: the first month has no baseline, so its movement is 'unknown', not zero. The two classic stumbles: filtering the window result in WHERE, which fails because windows evaluate in the SELECT stage — stage the LAG in a CTE and filter outside; and forgetting PARTITION BY when the walk is per-market, where one global window smears one market's January into the next market's February.",
+      tag: "windows",
+    },
+    {
+      id: "hertz-t11",
+      q: "UNION versus UNION ALL — when is the dedupe step correct business logic on a counter packet, and when is it a silent bug?",
+      a: "UNION ALL is raw concatenation — cheap, order-preserving, the honest default when branches are logically disjoint: returned agreements stacked under no-shows, this month's settlements beside last month's. UNION adds a distinct pass, and that pass is a business decision: correct when combining overlapping sources where a duplicated row would double-count, and a silent bug when duplicates are the signal — a double-ingested agreement row vanishing into the dedupe is an audit finding, not a convenience. The counter-packet failure mode is two branches emitting byte-identical rows (same market, same counts, no branch label): UNION collapses them, a market disappears, and nothing announces the loss. Default to UNION ALL and reach for UNION only when you can say which duplicated rows you are paying to collapse.",
+      tag: "set-ops",
+    },
+    {
+      id: "hertz-t12",
+      q: "EXCEPT and INTERSECT — which fleet questions do they answer more honestly than a join?",
+      a: "Diff and overlap questions. 'Which classes are in the new rate card but not the old one?' is SELECT class FROM new EXCEPT SELECT class FROM old — no join gymnastics, no fan-out, and the intent reads straight off the page. INTERSECT answers the mirror: families present in both the Q1 and Q2 agreement logs. Two discipline points: set operations deduplicate both inputs first, so EXCEPT silently collapses an internally duplicated feed — if duplicates are the anomaly you are hunting, the row-honest tool is the LEFT JOIN … IS NULL anti-join; and both sides must share column shape. The billing pod's never-settled memo is the cautionary tale: EXCEPT on invoice ids answers 'which ids', but the memo needs status and cents, which only the anti-join's full payload carries.",
+      tag: "set-ops",
+    },
+    {
+      id: "hertz-t13",
+      q: "Your close query has grown to three folds and a rank. How do you stage it so the next analyst can read it?",
+      a: "Name the stages with CTEs, in the order the memo thinks: monthly AS (the month fold), deltas AS (LAG over the folded months), then the outer SELECT that joins names and formats. Each CTE is one fold with one job, and the final query reads like the memo's sentence. The rules: never reference a stage before it is defined, test each stage by running it alone — the month fold should print 14 rows on this db before any LAG touches it — and keep formatting (ROUND, labels) at the edge, not buried in stage two. A derived table does the same job inline; the CTE's advantage is the name and the reuse. What does not survive review is a 40-line nested query whose stage two silently re-folds what stage one already folded.",
+      tag: "ctes",
+    },
+    {
+      id: "hertz-t14",
+      q: "Where do conditional aggregates — FILTER (WHERE …) and SUM(CASE …) — beat writing separate queries on the counter board?",
+      a: "Anywhere one scan must produce many lenses. The close-gate census is the clean example: COUNT(*) FILTER (WHERE status = 'delivered') prints 52 beside its shipped, pending and cancelled siblings, and 52 + 30 + 14 + 7 = 103 by construction — one scan, one identity, no drift. SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) computes the identical number and runs on every engine, which is why it stays the portable twin. The shared denominator is the real prize: no-show share built from sibling CASE branches cannot drift against the total, because the branches partition the same rows. Four separate queries pasted into one board lose that shared grain — and the numbers stop adding up on exactly the slide everyone screenshots.",
+      tag: "case-when",
+    },
+    {
+      id: "hertz-t15",
+      q: "Your share metric divides no-shows by booked agreements. How do you keep it from blowing up or lying when the denominator can be zero or NULL?",
+      a: "Guard the denominator explicitly. The zero case: NULLIF(denominator, 0) turns an empty market into a NULL share instead of a fake 100% or an error — and NULL renders as a gap the dashboard flags, which is the honest outcome for a market with no bookings. The NULL case: COUNT counts non-NULLs, so a denominator built from a nullable column shrinks silently — state the population (checked-out agreements only, 82 of 103) or the share wears the wrong name. What is never acceptable is COALESCE-ing the share to 0 to quiet the chart: zero says 'we booked and none no-showed', NULL says 'no denominator here', and the difference decides whether the reminder cadence moves. The follow-up is AVG of per-row shares versus a ratio of sums — the ratio of sums, weighted by the real denominators, is the answer.",
+      tag: "nulls",
+    },
+    {
+      id: "hertz-t16",
+      q: "Rental duration and late fees — how do you compute them when check-in timestamps drift, and where does the boundary policy matter?",
+      a: "Duration is JULIANDAY(check_in) - JULIANDAY(check_out): fractional days, so a 2.5-day rental is real, and CEIL to whole billable days per the rate card — a rental returned an hour past day three bills day four, unless the grace-period CASE says otherwise. The boundary policy matters at both ends: half-open windows (picked_up >= '2024-03-01' AND picked_up < '2024-04-01') keep the last night's returns in March, where BETWEEN silently drops them, and the month spine STRFTIME('%Y-%m', …) needs the year prefix or Januaries merge. The professional tell is stating the rounding and boundary rules before writing the WHERE clause — late-fee disputes are almost never arithmetic bugs, they are boundary bugs someone promised wouldn't exist.",
+      tag: "dates",
+    },
+    {
+      id: "hertz-t17",
+      q: "A fleet-family card must show one family's classes as a single cell. How do you fold rows into a string without making the output order-dependent?",
+      a: "GROUP_CONCAT is the fold: GROUP_CONCAT(name) over the family's class rows returns the comma-joined list. The discipline is ordering inside the fold — GROUP_CONCAT(name ORDER BY name) or by day rate — because without it the cell's order follows scan order and can flip between refreshes, which reads as a rate-card change when nothing changed. State the separator explicitly when the card spec cares, watch cell length on wide families, and remember the fold happens after grouping, so one row per family is what the outer query sees. The alternative — one row per class on the card — is a product decision, not a SQL one, and saying that out loud scores.",
+      tag: "strings",
+    },
+    {
+      id: "hertz-t18",
+      q: "A staging load delivered 'Delivered' and 'DELIVERED' beside the canonical 'delivered', and a partner shows up twice as 'nordic gadgets ab' and 'Nordic Gadgets AB'. What is your normalization policy?",
+      a: "Case drift splits populations: status = 'delivered' matches only the lowercase rows, so the one-pass census undercounts returned agreements and the 103-identity fails; the mixed-case partner name splits one fleet's book in two and the utilization read silently halves it. The policy is normalize-once-at-the-boundary: fold status literals with UPPER or an explicit CASE map into the closed four-value vocabulary, and canonicalize entity names before any join — LOWER(TRIM(name)) staged in a CTE, or a mapping table for the recurring offenders. Never normalize inside the comparison predicate query-by-query — that is how two reports disagree about the same rows. And keep the vocabulary closed: SELECT DISTINCT status after the load is the two-second check that the census will reconcile.",
+      tag: "casing",
+    },
+    {
+      id: "hertz-t19",
+      q: "Your market census prints 45, 37, 19, 2 by region — how do you audit the grain before the revenue review sees it, and where do GROUP BY mistakes hide?",
+      a: "Grain audit first: say what one row IS — 'one row per pickup market' — then prove the fold key matches: GROUP BY region on the joined renters-and-agreements table. Mistakes hide three places. A join that fans rows (agreement lines joined in) silently changes what COUNT(*) counts — 251 lines, not 103 agreements; a GROUP BY on a column missing from SELECT produces rows you cannot attribute; and grouping by a text column with drifted casing splits one group in two. The committee-facing check is the reconcile: the census must foot to 103 agreements over 16 renters, EU 45-from-8, US 19-from-2, APAC 37, LATAM 2 — and if a fifth bucket or a phantom total appears, the fold key moved. 'One row per what?' is the whole question, asked before and after the query runs.",
+      tag: "groupby",
+    },
+    {
+      id: "hertz-t20",
+      q: "A correlated subquery finds agreements above their own renter's average. When is that the right tool, and when do you pre-fold instead?",
+      a: "The correlated shape — WHERE total > (SELECT AVG(o2.total) FROM orders o2 WHERE o2.customer_id = o.customer_id) — answers 'big for THIS renter' and re-runs the inner fold once per outer row: 103 executions on this db, fine here, painful on a chain-wide table. The pre-fold alternative stages per-renter averages in a derived table or CTE, joins once, and compares at join grain — same answer, one fold, and the plan stays flat as the table grows. Reach for correlated when the inner fold is genuinely per-row and small, or when the predicate cannot be expressed as a join — top-1-per-group semantics. Reach for the pre-fold when the same fold is reused by several columns or the row count is real. And name the empty-inner behavior unprompted: a renter with one agreement has an average equal to that agreement, so they never beat their own average — the definition working, not a bug.",
+      tag: "subqueries",
+    },
+    {
+      id: "hertz-t21",
+      q: "What makes a predicate sargable, and which habits keep a fleet-warehouse query cheap?",
+      a: "Sargable means the predicate can use an index: it compares the bare column to a value. Wrapping the column in a function — STRFTIME('%Y-%m', created_at) = '2024-03' — forces a scan of every agreement row; the sargable twin is the half-open range created_at >= '2024-03-01' AND created_at < '2024-04-01', same rows, index-usable. The habits that compound: filter early inside each CTE so later stages carry fewer rows; name columns instead of SELECT *; probe with LIMIT before committing to the full run; and aggregate on the smallest table that answers the question rather than joining first and filtering after. At fleet scale these are not micro-optimizations — they are the difference between the utilization dashboard rendering before the counter opens and timing out while the market waits.",
+      tag: "performance",
+    },
+    {
+      id: "hertz-t22",
+      q: "In the revenue review you are asked for 'our no-show rate'. What do you pin down before writing SQL?",
+      a: "The definition, in writing, before the FROM clause. Four decisions: the event (bookings made, or bookings that survived to check-out?), the numerator (status = 'cancelled' — 7 on this db), the denominator (all 103 booked, or checked-out only — the two definitions disagree by construction), and the time window (calendar month, trailing quarter, lifetime?). Then the discipline move: encode the definition as a named CTE — no_shows AS (SELECT region, SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) …) — so the SQL IS the definition and the reviewer can audit it instead of arguing with you. The analyst who says 'no-show means cancelled bookings over all bookings, cancelled included in the base, trailing quarter' owns the room; the one who vibes a number re-queries it twice.",
+      tag: "metrics",
+    },
+    {
+      id: "hertz-t23",
+      q: "Why is an average of averages wrong, and what do you compute instead — say, for regional AOV?",
+      a: "Because it weights every group equally regardless of size. On this book the regional AOVs are EU 335.32 (45 agreements), APAC 313.66 (37), US 383.48 (19) and LATAM 426.22 (2) — averaging those four numbers gives 364.67, which describes a counter that does not exist. The true all-agreements AOV is SUM(total)/COUNT(*) over the base rows: 338.19, where LATAM's two contracts barely register. The honest blends are re-aggregation from the base (sum the numerators, divide by the summed denominators) or a weighted average — SUM(aov * n)/SUM(n) — the same arithmetic one level up. The interview move is saying WHERE the weighting lives: an average of averages is only correct when every group has equal counts, and that is a claim you should have to defend, not assume.",
+      tag: "aggregation",
+    },
+    {
+      id: "hertz-t24",
+      q: "Walk me through the logical evaluation order of a SELECT — and name the bug each stage explains.",
+      a: "FROM and JOIN assemble rows; WHERE filters them; GROUP BY folds them; HAVING filters the groups; SELECT computes the output expressions including window functions; ORDER BY sorts; LIMIT cuts. Every classic screen bug is a stage violation: an alias from SELECT referenced in WHERE (it does not exist yet), an aggregate like COUNT(*) in WHERE (groups do not exist yet), a filter on RANK() or LAG() output in WHERE (windows run in SELECT — wrap the query), and the flip side that ORDER BY CAN use SELECT aliases because it runs after them. Half of all 'weird database behavior' complaints at the counter are correct pipeline order meeting wishful thinking. Saying the order out loud before writing is the cheapest debugging tool an analyst has, and it is exactly the narration the interviewer is listening for.",
+      tag: "pipeline",
     },
   ],
 
@@ -271,6 +367,246 @@ export const hertzKit: CompanyKit = {
       ],
       difficulty: "hard",
     },
+    {
+      id: "hertz-mcq-11",
+      prompt: "STRFTIME('%m', created_at) buckets the rotation trend into 12 rows instead of 14. What got lost?",
+      choices: ["Nothing — 12 is the correct bucket count", "The year: January 2024 and January 2025 merged into one '01' bucket", "Two months had no agreements and were dropped", "The buckets are weeks, not months"],
+      answer: 1,
+      why: "'%m' keeps month only; '%Y-%m' keeps the year prefix and yields the true 14 buckets from 2024-01 to 2025-02. The merged January doubles its booked value and the rotation trend becomes fiction.",
+      notes: [
+        { choice: 0, why: "Every month in the window carries agreements — the bug is label collision, not empty months. COUNT(DISTINCT STRFTIME('%Y-%m', created_at)) = 14 is the check." },
+        { choice: 2, why: "'%m' is still a month token — the collision is with LAST year's same month, which is worse than a wrong grain because it looks plausible." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "hertz-mcq-12",
+      prompt: "The quarter memo says 'Q1 only': WHERE created_at BETWEEN '2024-03-01' AND '2024-03-31'. What is wrong?",
+      choices: ["It drops March 31 after midnight — use created_at >= '2024-03-01' AND created_at < '2024-04-01'", "Nothing — BETWEEN is inclusive on both ends", "BETWEEN cannot compare TEXT dates", "It double-counts the first day"],
+      answer: 0,
+      why: "The upper bound '2024-03-31' excludes same-day later timestamps like '2024-03-31 21:40' — the last night's check-outs and returns, exactly when holiday traffic lands. Half-open intervals keep the boundary and compose month to month.",
+      notes: [
+        { choice: 1, why: "BETWEEN IS inclusive of both endpoints — which is the bug: inclusivity of a date-only string cuts the date's own evening." },
+        { choice: 2, why: "ISO-8601 TEXT dates compare correctly lexicographically — that is why the format is a contract." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "hertz-mcq-13",
+      prompt: "The ops board needs returned, on-rent, reserved and no-show in one pass over orders. Which column set does it in a single scan?",
+      choices: ["COUNT(*) FILTER (WHERE status = 'delivered'), … repeated per status", "Four separate queries pasted into one spreadsheet", "COUNT(status = 'delivered')", "SUM(status) GROUP BY status"],
+      answer: 0,
+      why: "FILTER (WHERE …) branches each aggregate independently inside one scan — the one-pass census where 52 + 30 + 14 + 7 = 103 by construction. SUM(CASE WHEN …) is the portable twin.",
+      notes: [
+        { choice: 1, why: "Four sequential queries are four chances to drift — the census exists precisely so the identity holds by construction, not by copy-paste." },
+        { choice: 2, why: "COUNT(expr) counts non-NULLs, and a 0/1 comparison result is never NULL — it counts every row, returning 103 in all four columns." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "hertz-mcq-14",
+      prompt: "The fleet-family card shows one family's classes as 'Sedan, SUV, Premium SUV'. Which fold prints that from the products table?",
+      choices: ["GROUP_CONCAT(name) over the family's class rows", "CONCAT(name) with no GROUP BY", "SUM(name)", "JOIN name INTO one cell"],
+      answer: 0,
+      why: "GROUP_CONCAT folds many rows into one string cell with a comma as the default separator — ORDER BY inside keeps the class list stable across refreshes.",
+      notes: [
+        { choice: 1, why: "Without the aggregate fold there is nothing to concatenate — SQLite's CONCAT joins a fixed argument list, not a column's rows." },
+        { choice: 2, why: "SUM is for numbers; on text SQLite coerces every row to 0 and prints 0. The classic wrong-tool tell." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "hertz-mcq-15",
+      prompt: "Day-rate bands: CASE WHEN unit_price >= 150 THEN 'flagship' WHEN unit_price >= 60 THEN 'mid' END. What returns for the 14.99 shuttle class, and what does that do to the band census?",
+      choices: ["NULL — no arm matches and there is no ELSE, so the class vanishes from every band total", "'economy' — the default arm catches it", "0 — SQLite coerces a failed CASE to zero", "An error — CASE requires ELSE"],
+      answer: 0,
+      why: "A CASE with no ELSE yields NULL on fall-through: the cheap classes drop out of the band P&L and the bands stop reconciling to the rate card's 8-mid / 8-value split. Exhaustive arms are the class-census contract.",
+      notes: [
+        { choice: 1, why: "There is no default arm in SQL CASE — the ELSE clause must be written, or the fall-through is NULL." },
+        { choice: 2, why: "CASE never coerces to 0 — the NULL flows into the group silently, which is exactly why the hole is dangerous." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "hertz-mcq-16",
+      prompt: "A close packet stacks returned agreements under no-show agreements in one layout, built with UNION. A reviewer says one market's row vanished. Diagnosis?",
+      choices: ["UNION ALL is only a performance choice — the results would be identical", "The branches forgot the distinguishing column, so two identical rows (same market, same counts) collapsed — UNION dedups whole rows silently", "UNION truncates the stack to the first branch's row count", "UNION cannot stack two SELECTs over the same table"],
+      answer: 1,
+      why: "UNION dedups whole rows across branches. Two branches that emit byte-identical rows — same market, same counts, no branch label — collapse into one, and the packet loses a market with no error anywhere. The discipline: UNION ALL plus a comment stating WHY duplicates are impossible; the comment is the correctness argument.",
+      notes: [
+        { choice: 0, why: "The dedup is not free decoration — it deletes rows. On stacks where a legitimate total or a repeated count exists, UNION is the bug." },
+        { choice: 2, why: "UNION never truncates by count. It collapses only exact duplicate rows — which is worse, because nothing announces the loss." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "hertz-mcq-17",
+      prompt: "A dashboard walks the book contract by contract: SUM(total) OVER (ORDER BY created_at). Two check-outs share a booking second, and the cumulative 'jumps two agreements at once'. What is happening?",
+      choices: ["The default frame is RANGE — tied rows enter the running sum together; write ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW for a strict contract-by-contract walk", "Rounding accumulated on the tied rows and doubled the step", "LAG should be used instead of SUM for running totals", "The frame must extend to UNBOUNDED FOLLOWING to absorb ties"],
+      answer: 0,
+      why: "With ORDER BY, the default frame is RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW — and RANGE includes peers, so rows tied on created_at join the cumulative in one step. The fix is saying the frame out loud: ROWS walks strictly row by row. On a month spine ties are rare; at agreement grain they are guaranteed.",
+      notes: [
+        { choice: 2, why: "LAG gives the previous row's value, not the running sum — swapping functions changes the metric, not the frame semantics." },
+        { choice: 3, why: "UNBOUNDED FOLLOWING widens the frame to the whole partition — every row would print the grand total, which is a different report, not a fix." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "hertz-mcq-18",
+      prompt: "LAG(total) OVER (PARTITION BY customer_id ORDER BY created_at) reads NULL on a renter's first agreement. The analyst COALESCEs it to 0 to clean the report. What breaks?",
+      choices: ["The first agreement now reads as a jump from a zero prior contract — every renter's real first-booking movement becomes fiction", "Nothing — NULL arithmetic needs a default", "The partition collapses to one row", "LAG stops working after COALESCE"],
+      answer: 0,
+      why: "NULL here means 'baseline — no prior agreement', not zero. Coalesced, the top renter's trend opens with a fake total-minus-zero spike on agreement one, and all 16 renter baselines lie the same way.",
+      notes: [
+        { choice: 1, why: "A default can be legitimate when the business says so — the mistake is making it silently in a cleanup step." },
+        { choice: 2, why: "Partitions are untouched; the damage is interpretive, in the column's meaning." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "hertz-mcq-19",
+      prompt: "Attach the grand book total to every agreement: SUM(total) OVER (). Later the analyst joins order_items in for a per-line report. What happens to the grand total?",
+      choices: ["It fans out — the window now sums over the joined rows, so the 251 agreement lines double-count every contract in the 'grand' figure", "It stays 34,833.28 — windows are join-proof", "It becomes NULL on line rows", "It halves"],
+      answer: 0,
+      why: "Window functions run over the row set in front of them — after the fan-out to 251 lines, SUM(total) OVER () double-counts agreements exactly like any join-fan-out aggregate. Compute the grand total pre-join, in a CTE.",
+      notes: [
+        { choice: 1, why: "No construct is join-proof — the window sees whatever rows the FROM produces. Grain discipline is the analyst's job." },
+        { choice: 2, why: "Nothing NULLs out — the inflated total repeats on every line row, which is worse: it looks authoritative." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "hertz-mcq-20",
+      prompt: "SELECT id, total, total - (SELECT AVG(total) FROM orders) AS gap FROM orders — how many times does the inner AVG run?",
+      choices: ["Once — the subquery is uncorrelated, so 338.19 computes once and every row reuses it", "Once per agreement — 103 executions", "Once per market", "Zero — SQLite rewrites it into a JOIN"],
+      answer: 0,
+      why: "Nothing inside the subquery references the outer row, so it is uncorrelated: one evaluation, and gap reads every agreement against the 338.19 book average.",
+      notes: [
+        { choice: 1, why: "That is the CORRELATED shape — reference o.customer_id inside and the inner fold re-runs per row. Cost and meaning both change." },
+        { choice: 2, why: "No group boundaries exist here — the subquery never sees the outer query, so it cannot re-run per market." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "hertz-mcq-21",
+      prompt: "Find agreements whose value beats their OWN renter's lifetime average. Which shape is right?",
+      choices: ["WHERE total > (SELECT AVG(o2.total) FROM orders o2 WHERE o2.customer_id = o.customer_id)", "WHERE total > (SELECT AVG(total) FROM orders)", "WHERE total > AVG(total)", "HAVING total > AVG(total)"],
+      answer: 0,
+      why: "The inner query references the outer row's customer_id — correlated, re-evaluated per agreement, answering 'big for THIS renter'. That is a different population from 'big for the book'.",
+      notes: [
+        { choice: 1, why: "The uncorrelated version flags agreements above the whole-book 338.19 — plausible output, wrong question." },
+        { choice: 2, why: "An aggregate cannot sit naked in WHERE — it errors. Aggregates live in HAVING or inside a subquery." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "hertz-mcq-22",
+      prompt: "The rotation read stages as WITH class_load AS (SELECT … SUM(…) …) SELECT … — what does the CTE actually buy?",
+      choices: ["A named staging step the outer query can join — same result as a derived table, easier to read and reference twice", "Guaranteed faster execution", "It caches the result for later sessions", "It replaces the need for GROUP BY"],
+      answer: 0,
+      why: "A CTE names an intermediate fold you can join once or twice without repeating the subquery. The win is legibility and reuse — the family census reads as two named stages, not one nested maze.",
+      notes: [
+        { choice: 1, why: "Performance is an engine detail — SQLite may inline or materialize; correctness is identical either way." },
+        { choice: 2, why: "A CTE lives for the duration of the statement only — nothing persists for later sessions." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "hertz-mcq-23",
+      prompt: "The loyalty desk asks for the top 5 renters by agreement count: ORDER BY COUNT(*) DESC LIMIT 5. What lands in the fifth slot?",
+      choices: ["The tie at 4 agreements gets cut arbitrarily — which renters make the cut is engine luck, not policy", "All four tied renters always appear", "An error — LIMIT cannot follow an aggregate", "The query returns 8 rows to keep the ties"],
+      answer: 0,
+      why: "LIMIT slices rows after ordering with no tie awareness — the ladder above the tie is 24, 17, 14, 13, 5, so the cut lands above the tie here, but one rename of 'top 6' drops it into the 4-agreement block and three of four tied renters make it on internal order. An upgrade-certificate list built this way is a coin flip.",
+      notes: [
+        { choice: 1, why: "LIMIT never expands to keep ties — that is RANK() plus a rank filter's behavior, a different query." },
+        { choice: 2, why: "LIMIT follows aggregation fine; the problem is which rows win, not whether the clause parses." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "hertz-mcq-24",
+      prompt: "Never-settled invoices: LEFT JOIN payments … WHERE p.id IS NULL, versus EXCEPT on invoice ids. What does EXCEPT lose here?",
+      choices: ["The invoice columns — EXCEPT compares shaped rows from both sides, so bare ids answer 'which ids', not 'which invoices with status and cents'", "Nothing — the two are identical", "EXCEPT keeps the settled ones", "NULLs — EXCEPT cannot compare NULL"],
+      answer: 0,
+      why: "EXCEPT needs both SELECTs shaped identically and returns only the columns projected — ids alone, unless every column is padded on both sides. The LEFT JOIN anti-join keeps the full invoice row: status, cents, number.",
+      notes: [
+        { choice: 1, why: "Same six ids, different payload — and the dunning memo needs the 15,217 fold, which bare ids cannot carry." },
+        { choice: 3, why: "Set operations treat NULLs as equal to each other — not the loss here." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "hertz-mcq-25",
+      prompt: "Check-out telemetry retries, so an agreement can carry two stamp rows. Page 2 of ORDER BY created_at DESC LIMIT 10 OFFSET 10 keeps duplicating one agreement across pages. Fix?",
+      choices: ["Make the sort deterministic — ORDER BY created_at DESC, id DESC — so page boundaries are stable", "Increase OFFSET", "Use DISTINCT", "Sort by status first"],
+      answer: 0,
+      why: "Ties on created_at leave row order undefined between executions; OFFSET pages then shuffle tied rows across page boundaries. A unique tie-breaker pins the order — and the retry rows themselves need a dedupe-before-count policy.",
+      notes: [
+        { choice: 1, why: "This is not a page-size problem — the boundary moves because the order is unstable, not because OFFSET miscounts." },
+        { choice: 2, why: "DISTINCT on full rows does nothing about sort instability among tied rows." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "hertz-mcq-26",
+      prompt: "Billing wants invoices settled only PARTIALLY: payments folded per invoice, kept where the fold is below the invoice amount. What shape returns exactly one invoice here?",
+      choices: ["Fold payments per invoice_id in a derived table, join to invoices, keep the fold under i.amount_cents", "WHERE p.amount_cents < i.amount_cents on the raw join", "GROUP BY invoices HAVING COUNT(payments) = 1", "A self-join of invoices to invoices"],
+      answer: 0,
+      why: "Five invoices settle in two legs, so row-level comparisons misfire; folding payments to invoice grain first (invoice 25: 4,000 against 6,148) then comparing finds the one partial cleanly.",
+      notes: [
+        { choice: 1, why: "Row-level compare marks every leg of a split settlement 'partial' — five false hits beside the real one." },
+        { choice: 2, why: "Leg count is not coverage: a two-leg FULL settlement also counts 2, and a single-leg underpayment counts 1." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "hertz-mcq-27",
+      prompt: "SELECT DISTINCT status FROM orders returns how many rows, and why does the number matter to the counter census?",
+      choices: ["4 — delivered, shipped, pending, cancelled; the closed vocabulary every census must reconcile to", "103 — one per agreement", "3 — pending is not a real status", "It depends on ORDER BY"],
+      answer: 0,
+      why: "The status vocabulary is exactly four values. A census printing a fifth means staging contamination; one missing means the 103-identity fails — DISTINCT is the cheapest integrity check in the kit.",
+      notes: [
+        { choice: 1, why: "DISTINCT folds the 103 agreement rows down to the vocabulary — that is the point of the check." },
+        { choice: 2, why: "Pending IS the reserved stage — 14 agreements of it. Deleting it from the vocabulary deletes a funnel stage." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "hertz-mcq-28",
+      prompt: "The booking-ahead SLA reads in hours, not days. Which expression converts the booking-to-check-out window?",
+      choices: ["(JULIANDAY(shipped_at) - JULIANDAY(created_at)) * 24", "JULIANDAY(shipped_at - created_at)", "STRFTIME('%H', shipped_at) - STRFTIME('%H', created_at)", "DATEDIFF('hour', created_at, shipped_at)"],
+      answer: 0,
+      why: "JULIANDAY returns fractional days, so the difference is a real number of days — ×24 gives hours. The 2.98-day average becomes ~71.5 hours on the checked-out agreements.",
+      notes: [
+        { choice: 1, why: "JULIANDAY takes one timestamp — subtracting two TEXT strings first is string arithmetic, not a date difference." },
+        { choice: 2, why: "'%H' strips the date: a 2-day window reads as hour-of-day nonsense like 21 − 9." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "hertz-mcq-29",
+      prompt: "Regional AOVs print EU 335.32 (45 agreements), APAC 313.66 (37), US 383.48 (19), LATAM 426.22 (2). Averaging the four numbers gives 364.67 — but the true book AOV is 338.19. Why the gap?",
+      choices: ["The average of averages weights LATAM's 2 agreements as heavily as EU's 45; the true figure re-divides SUM(total) by all 103", "Rounding drift accumulated across the four regions", "The true figure excludes cancelled agreements", "LATAM's AOV is an outlier and should be trimmed first"],
+      answer: 0,
+      why: "An average of averages weights every group equally regardless of size. Re-aggregate from the base — SUM(total)/COUNT(*) over 103 agreements — and LATAM's two contracts barely register: 338.19, not 364.67. The weighted blend SUM(aov * n)/SUM(n) lands on the same number.",
+      notes: [
+        { choice: 1, why: "The regions' AOVs are already rounded — but rounding is cents-level noise; the 26.48 gap is a weighting artifact, not precision loss." },
+        { choice: 2, why: "Cancellation policy changes the population, not the weighting — with the same base both methods still disagree." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "hertz-mcq-30",
+      prompt: "Returned agreements per market for markets with at least ten agreements: WHERE status = 'delivered' and HAVING COUNT(*) >= 10. Why can't both filters live in the same clause?",
+      choices: ["The status rule filters ROWS before grouping; the ten-agreement floor judges GROUPS after it — different stages of the pipeline", "They can — just write HAVING status = 'delivered' AND COUNT(*) >= 10", "The floor belongs in WHERE because it is a number", "Both belong in HAVING; WHERE is only for joins"],
+      answer: 0,
+      why: "WHERE runs before GROUP BY — it discards on-rent, reserved and no-show rows while statuses still exist per row. HAVING runs after the fold, when COUNT(*) exists and statuses do not. On this db the floor keeps EU (45), APAC (37) and the US (19); LATAM's 2 drops out.",
+      notes: [
+        { choice: 1, why: "HAVING status = 'delivered' references a column that no longer exists per group — the engine rejects it, and the rejection is the pipeline-order lesson." },
+        { choice: 2, why: "A number that materializes only at the fold can never be a WHERE fact — there are no counts before groups form." },
+      ],
+      difficulty: "medium",
+    },
   ],
 
   cases: [
@@ -356,6 +692,154 @@ export const hertzKit: CompanyKit = {
       walkthrough:
         "Two stages: fold the book to renters, then rank it. The CTE groups 103 agreements by customer_id and HAVING agreements >= 5 keeps exactly five renters — 24, 17, 14, 13 and 5 agreements — while the four renters tied at 4 fall one short, which is the retention conversation the loyalty desk wanted. The outer query joins back for name and market and ranks by spend DESC: Alice Chen (EU, 24, 7,262.35), Emma Wilson (US, 17, 6,640.56), Grace Kim (APAC, 14, 4,574.23), Maya Patel (APAC, 13, 3,644.56), Chloe Dubois (EU, 5, 2,667.93) — ranks 1 through 5, no ties among spends, so RANK and DENSE_RANK agree here. Chloe is the honest footnote: she clears the agreement floor but sits below the 3,000 spend line behind the 63.5% concentration stat — two definitions, both true, one slide. The distractors each break differently: folding by status builds groups of 52/30/14/7 whose status values never join to customers.id, so the ladder returns zero rows; region is not an orders column and errors outright; 1 as the floor floods the ladder to all 16 renters; 0 does the same and 1 in the precision slot prints 7,262.4; ASC flips the ladder so the smallest book wears rank 1.",
     },
+    {
+      id: "cs-hertz-3",
+      tier: "medium",
+      topic: "s6",
+      universe: "month-close",
+      title: "The settlement coverage ledger",
+      brief:
+        "Hertz-flavored brief on the storefront db: before the dunning draft goes out, billing classifies every rental invoice by settlement coverage — 'exact' (settled in full), 'partial' (money in, short), 'no settlement' (nothing behind it). Probed on the storefront db: 28 invoices, of which 21 settle exact, 6 carry no settlement rows ($15,217 — including the paid-status anomaly #28 at $1,756.00) and 1 sits partial ($6,148 billed, $4,000 settled). Five invoices settle in two legs, so the settled fold must SUM before it compares. Amounts live in the db as INTEGER cents; this ledger prints dollars.",
+      ask: "Return one row per invoice: number, status, billed dollars, settled dollars, and the coverage class.",
+      template:
+        "SELECT i.number,\n       i.status,\n       ROUND(i.amount_cents / {4}, 2) AS billed,\n       ROUND({1}(p.amount_cents) / 100.0, 2) AS settled,\n       CASE\n         WHEN COUNT(p.id) = 0 THEN 'no settlement'\n         WHEN SUM(p.amount_cents) = i.amount_cents THEN 'exact'\n         ELSE {2}\n       END AS coverage\nFROM invoices i\n{3} JOIN payments p ON p.invoice_id = i.id\nGROUP BY i.id, i.number, i.status, i.amount_cents\nORDER BY coverage, billed DESC;",
+      slots: [
+        {
+          answer: "SUM",
+          kind: "keyword",
+          label: "the settled fold",
+          why: "SUM folds each invoice's settlement rows into settled cents — split settlements pay in two legs and must add up to the bill. COUNT would return a leg count (0, 1 or 2) wearing a dollars name and flip every split invoice to the wrong class.",
+        },
+        {
+          answer: "'partial'",
+          kind: "keyword",
+          label: "the short-settlement label",
+          why: "The ELSE branch is the bucket that catches money-in-but-short — invoice #25 at 4,000 of 6,148. Labeling it anything else (or 'exact') folds the one genuinely short invoice into a clean bucket and the close overstates settled AR.",
+        },
+        {
+          answer: "LEFT",
+          kind: "keyword",
+          label: "the invoice-preserving join",
+          why: "LEFT JOIN keeps all 28 invoices, handing the 6 with no settlements a NULL payload that COUNT(p.id) = 0 catches. INNER JOIN silently deletes those 6 rows — including anomaly #28, the paid invoice with no settlements that this ledger exists to expose.",
+        },
+        {
+          answer: "100.0",
+          kind: "number",
+          noVerify: true,
+          label: "the cents divider",
+          why: "Invoices are INTEGER cents, so the dollar read is amount_cents / 100.0 — #28 prints 1,756.00. Divide by 10.0 and every exposure inflates ten-fold; a bare integer 100 truncates odd-cent rows and the footing drifts by cents.",
+        },
+      ],
+      distractors: ["COUNT", "INNER", "exact", "10.0"],
+      walkthrough:
+        "A classification pass at invoice grain. The LEFT JOIN keeps every invoice: 22 match settlement rows, 6 arrive with a NULL payload. GROUP BY i.id folds each invoice's settlements — including the five split-settlement invoices whose two legs must SUM to the billed cents — and the CASE reads like the policy: no settlement rows → 'no settlement' (6 invoices, $15,217, anomaly #28 among them); settlements equal the bill → 'exact' (21 invoices); anything else → 'partial' (exactly one: $6,148 billed, $4,000 settled). Swap SUM for COUNT and the settled column becomes a leg count that can never equal the bill, flipping split invoices to partial; INNER JOIN deletes the six no-settlement rows — the anomaly included; a different ELSE label quietly rebrands the short invoice; 10.0 in the cents slot prints $49,370 where $4,937 belongs. One query, three buckets, and the dunning draft can defend every row.",
+    },
+    {
+      id: "cs-hertz-4",
+      tier: "hard",
+      topic: "t6",
+      universe: "inventory",
+      title: "The family workhorse scan",
+      brief:
+        "Hertz-flavored brief on the storefront db: revenue management tiers the fleet by workload WITHIN each fleet family — the workhorse tier is classes turning 30 or more rental days in the window, ranked inside their family so every family's hardest worker reads first. Probed on the storefront db: 16 classes across 7 families turn 498 rental days over 251 lines; the widest family turns 121 days across 3 classes (47 / 38 / 36), the money family's headset-class runs 46 days on a 60-unit pool, and the single-class tail family turns just 27 — below the tier line, off the scan. Ten classes make the cut; the scan reads family by family, rank 1 first.",
+      ask: "Return each class turning 30+ rental days with its family, rental days, rotation pool, and its rank WITHIN the family, hardest-working first per family.",
+      template:
+        "WITH class_load AS (\n  SELECT p.category AS fleet_family,\n         p.name AS vehicle_class,\n         p.stock AS pool,\n         SUM(oi.quantity) AS rental_days\n  FROM order_items oi\n  JOIN products p ON p.id = oi.product_id\n  GROUP BY p.id\n)\nSELECT fleet_family,\n       vehicle_class,\n       rental_days,\n       pool,\n       RANK() OVER (PARTITION BY fleet_family ORDER BY rental_days {1}) AS family_rank\nFROM class_load\nWHERE rental_days >= {2}\nORDER BY fleet_family, family_rank {3};",
+      slots: [
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the hardest-working-first direction",
+          why: "The workhorse is the class turning the MOST days, so the window ranks rental_days descending inside each family — 47, 38, 36 in the widest family. ASC would crown each family's laziest class as rank 1, a correct query aimed at the wrong end of the lot.",
+        },
+        {
+          answer: "30",
+          kind: "number",
+          label: "the workhorse floor",
+          why: "Thirty or more rental days keeps exactly ten of the sixteen classes — the tier revenue management reads. Twenty sweeps all 16 classes in (the laziest class still turns 21), and 35 drops the tier to five, losing the 30/31-day boundary classes the memo quotes.",
+        },
+        {
+          answer: "ASC",
+          kind: "keyword",
+          label: "the rank-1-first presentation",
+          why: "Within each family the rows must read rank 1, 2, 3 — hardest worker on top. DESC would print each family's tail classes first, and the review would open on the rotation slack instead of the workload.",
+        },
+      ],
+      distractors: ["ASC", "20", "35", "SUM"],
+      walkthrough:
+        "Two stages: fold the fleet to classes, then rank within families. The CTE joins agreement lines to their classes and folds line quantity — rental days — per class: 16 rows from 498 days. The outer query keeps the workhorse tier with WHERE rental_days >= 30 (ten classes survive; the single-class family at 27 days falls off) and ranks with RANK() OVER (PARTITION BY fleet_family ORDER BY rental_days DESC) — the PARTITION BY is the whole point: each family's ladder starts at 1, so the widest family reads 47 / 38 / 36 as ranks 1-2-3, the money family's 46-day headset takes rank 1 on its 60-unit pool, and single-member families read a lonely rank 1. The distractors each break differently: ASC in the rank direction crowns the laziest class per family; 20 floods the scan with all 16 classes and 35 amputates it to five; ASC in the presentation slot prints every family's slack first; SUM anywhere in those slots is an aggregate where a column belongs and the engine refuses. The read: workload concentrates — ten classes carry the tier line, and two families own the top of every ladder they appear in.",
+    },
+    {
+      id: "cs-hertz-5",
+      tier: "easy",
+      topic: "j5",
+      universe: "refund-audit",
+      title: "The never-settled anti-join",
+      brief:
+        "Hertz-flavored brief on the storefront db: before billing sends a single fuel-and-fees statement, the billing pod refreshes the anti-join — every invoice with NO settlement rows behind it, dollars to 2 decimals, biggest exposure first. Probed facts: the anti-join returns 6 invoices worth 15,217 — #24 tops the list at 4,937.00, #26 at 3,562.00, #27 at 2,794.00, #21 at 1,295.00, #18 at 873.00 — and the one the meeting is about: #28, printed 1,756.00, whose status column claims 'paid' over zero settlement rows. Payment rows are the ledger of record; the status column is a claim. The list reads biggest exposure first.",
+      ask: "Return each never-settled invoice with its id, number, status, billed amount in dollars to 2 decimals, and its settlement-leg count.",
+      template:
+        "SELECT i.id,\n       i.number,\n       i.status,\n       ROUND(i.amount_cents / {1}, 2) AS billed,\n       COUNT(p.id) AS settlement_legs\nFROM invoices i\nLEFT JOIN payments p ON p.invoice_id = i.id\nWHERE {2}\nGROUP BY i.id, i.number, i.status, i.amount_cents\nORDER BY {3} DESC;",
+      slots: [
+        {
+          answer: "100.0",
+          kind: "number",
+          noVerify: true,
+          label: "the cents divider",
+          why: "Invoices are INTEGER cents, so the dollar read is amount_cents / 100.0 — #28 prints 1,756.00. Divide by 10.0 and every exposure inflates ten-fold (4,937 becomes 49,370); a bare integer 100 truncates odd-cent rows.",
+        },
+        {
+          answer: "p.id IS NULL",
+          kind: "keyword",
+          label: "the anti-join predicate",
+          why: "The LEFT JOIN hands never-settled invoices a row of NULLs — p.id IS NULL keeps exactly those six. Flipping to p.id IS NOT NULL returns the settled twenty-two instead, and i.id IS NULL keeps nothing: invoice ids are never NULL by construction.",
+        },
+        {
+          answer: "billed",
+          kind: "keyword",
+          label: "the exposure sort",
+          why: "Biggest exposure first: 4,937.00 on top, the 873.00 tail last. Ordering by i.status sorts by the claim — and the claim is exactly what this query exists to distrust — so 'paid' #28 floats to the top on a lie.",
+        },
+      ],
+      distractors: ["10.0", "p.id IS NOT NULL", "i.id IS NULL", "i.status"],
+      walkthrough:
+        "One LEFT JOIN, one NULL predicate, one cents rule. The join walks invoices against their settlements — five invoices settle in two legs, so the payments side fans — and COUNT(p.id) counts legs honestly: zero for the six the memo is about. The WHERE keeps only the rows where the join found nothing: p.id IS NULL, the six never-settled invoices. The dollars come from amount_cents / 100.0, ROUNDed once: 4,937.00, 3,562.00, 2,794.00, 1,756.00, 1,295.00, 873.00 — footing to the 15,217 the memo quotes. The predicate is the whole query: flip it to IS NOT NULL and the settled twenty-two walk in; ask for i.id IS NULL and the list empties because an invoice's own id is never NULL. The distractors each break differently: 10.0 inflates every exposure ten-fold and the footing dies; i.status in the sort trusts the claim column — 'paid' #28 tops the list on exactly the lie the audit exists to catch. The read: #28 is not a collections problem, it is a status-sync incident — settlement rows say never settled, the status column says paid, and the reconciliation reflex is to trust the ledger of record and file the anomaly.",
+    },
+    {
+      id: "cs-hertz-6",
+      tier: "medium",
+      topic: "x3",
+      universe: "expense",
+      title: "The fixed-cost stack",
+      brief:
+        "Spend-report brief, in-world: the ops partner wants the fixed-cost lines (lot leases under Rent, demand-gen under Ads) pulled out of the expense ledger with a grand TOTAL row underneath — one query, one stack, no spreadsheet math. Probed on the storefront db: 36 expenses totaling $25,416; Rent runs 14 entries for $16,800 and Ads 14 for $4,570, so the two fixed lines carry $21,370 of the $25,416 (84.0%) — the airport-concession and demand-gen conversation the revenue review opens with. Finance stores expenses as integer cents, and the TOTAL branch must scan the unfiltered ledger.",
+      ask: "Return entries and dollars per fixed-cost category, plus a labelled TOTAL row for the whole ledger.",
+      template:
+        "SELECT category, COUNT(*) AS entries, ROUND(SUM(amount_cents) / 100.0, 2) AS spend\nFROM expenses\nWHERE category {1} ('Rent', 'Ads')\nGROUP BY category\n{2}\nSELECT 'TOTAL', {3}, ROUND(SUM(amount_cents) / 100.0, 2)\nFROM expenses\nORDER BY spend DESC;",
+      slots: [
+        {
+          answer: "IN",
+          kind: "keyword",
+          label: "the fixed-cost filter",
+          why: "IN ('Rent','Ads') keeps exactly the two fixed lines — 28 of the 36 entries. NOT IN would flip the report to Travel and Tools, the program spend the stakeholder explicitly excluded from this memo.",
+        },
+        {
+          answer: "UNION ALL",
+          kind: "keyword",
+          label: "the stacker",
+          why: "UNION ALL concatenates the TOTAL branch onto the category rows without a dedupe pass — the honest stack for a report where every row belongs. A bare UNION adds a distinct sort for nothing, and EXCEPT would return only the detail rows, dropping the TOTAL the ask requires.",
+        },
+        {
+          answer: "36",
+          kind: "number",
+          label: "the all-in entry count",
+          why: "The TOTAL row must count the whole ledger — 36 expense entries, not the filtered 28 — because its dollars column ($25,416) is the unfiltered grand total. Pinning the count keeps the row honest even if the detail filter upstream changes.",
+        },
+      ],
+      distractors: ["NOT IN", "EXCEPT", "14", "MAX(amount_cents)"],
+      walkthrough:
+        "Two branches, one stack. The detail branch filters to the fixed-cost pair with IN and GROUP BY category folds 28 entries into two rows — Rent 14/$16,800 (lot and concession leases) and Ads 14/$4,570 (demand generation). The TOTAL branch re-scans the unfiltered expenses table: 36 entries and $25,416, so the report shows the fixed lines against the whole ledger ($21,370 fixed = 84.0% of fleet opex) without a second query. UNION ALL is the join between grains — no dedupe, and the outer ORDER BY spend DESC floats the TOTAL row ($25,416.00) to the top. NOT IN serves the program spend instead of the fixed costs; 14 in the TOTAL slot would undercount entries to a single category's worth; MAX(amount_cents) puts the largest single bill in the entries column; EXCEPT returns only the detail rows and quietly deletes the TOTAL. Every distractor breaks a different promise of the memo.",
+    },
   ],
 
   problems: [
@@ -375,5 +859,21 @@ export const hertzKit: CompanyKit = {
     { slug: "gl-reconciliation", why: "Ledger reconciliation with a delta column — the close reflex this kit's GL rewards: debits against credits, delta zero or the close does not ship." },
     { slug: "total-traveled-distance", why: "Conditional SUM over a flag — returned-versus-no-show day splits, the same CASE-SUM muscle as the status census." },
     { slug: "customers-who-never-order", why: "The whitespace anti-join: renters with zero agreements. On this ledger the query returns a confident zero — and proving that zero is the hygiene check itself." },
+    { slug: "repeat-purchase-rate", why: "The repeat-renter read: share of renters with 2+ agreements in a window — the compounding habit behind the Gold Plus ladder and the 63.5% concentration stat." },
+    { slug: "rfm-segmentation", why: "Recency-frequency-monetary bands per renter — the tiering engine the loyalty desk wants when 'Gold' needs edges, not vibes: CASE bands over a folded book." },
+    { slug: "cohort-retention-matrix", why: "Retention by first-rental cohort — which signup vintage comes back to the counter, read as a matrix rather than a headline. The demand-forecast input fleet ops never says out loud." },
+    { slug: "restaurant-growth", why: "Rolling 7-day booked value — the same moving-frame muscle as the weekly utilization trend revenue management opens every Monday call with." },
+    { slug: "year-on-year-growth-rate", why: "Class demand this year against last — the fleet-buying input. YoY at class grain exposes which families are earning their rotation pool and which are parking it." },
+    { slug: "ar-aging-schedule", why: "Never-settled invoices bucketed by age — the dunning ladder billing walks before any fuel-and-fees statement goes out, straight off the 15,217 exposure." },
+    { slug: "prepayment-detection", why: "Prepaid versus pay-at-counter — the cash-flow split that decides which reservations get a guarantee and which get a reminder, via set algebra over the payment rails." },
+    { slug: "generate-the-invoice", why: "Fold agreement lines into one invoice per contract — the billing grain change (lines → invoice) that mirrors lines → agreements everywhere else in this kit." },
+    { slug: "calculate-product-final-price", why: "Base day rate plus fees to a final line price — fuel, late fees and the surcharge CASE layered on without breaking the cents math." },
+    { slug: "products-price-for-each-store", why: "Day rate per class per market — the rate-card read that feeds the banding CASE and the market-level revenue forecast." },
+    { slug: "bikes-last-time-used", why: "Last check-out per unit — the 'when did this car last rotate' query that finds the dead weight sitting on the lot between rotations." },
+    { slug: "flight-occupancy-and-waitlist-analysis", why: "Occupancy against a waitlist — utilization and unmet demand in one query, the exact pairing fleet ops reads when sizing the rotation pool." },
+    { slug: "hopper-company-queries-i", why: "Supply-side availability: units available versus dropped demand — the fleet-partner question restated in this kit's pool vocabulary, with the denominator guarded." },
+    { slug: "sales-by-day-of-the-week", why: "Agreement volume by weekday — the counter-staffing pivot; CASE columns in, ready-line rota out." },
+    { slug: "spend-histogram", why: "Renter spend bands with every bin printed — the histogram discipline behind the 25.47-to-1,088.44 spread read, empty bands included." },
+    { slug: "calculate-parking-fees-and-duration", why: "Duration banded and fee'd — rental days computed, rounded and charged per the rate card; the late-fee dispute query in miniature." },
   ],
 };

@@ -9,7 +9,7 @@
 // card or app-store wire. Read receipts, unread walls, scheduled queues, admin/moderation
 // censuses, tie-heavy channel leaderboards, the 14-month posting spine and Premium billing
 // discipline. Pool provenance: company-pools.md carries NO Telegram section — 0 tagged LC —
-// so all 10 topic slug sets and all 16 problems are theme-curated from the pools file's theme
+// so all 10 topic slug sets and all 32 problems are theme-curated from the pools file's theme
 // menu and say so. Case briefs quote probed figures from scripts/company-facts.md (probed
 // 2026-10-12); every case slot is mechanically verified against db/custom.db by
 // scripts/case-audit.ts.
@@ -27,7 +27,7 @@ export const telegramKit: CompanyKit = {
     "**Telegram** is the cloud-messaging platform where {sky:channels} broadcast to subscriber bases, groups converse thread by thread, and bots automate everything in between — with Premium subscriptions, sticker packs and admin/moderation tooling riding on top. This kit maps the storefront db onto that world: the 16 customers rows are broadcast channels, the 103 orders are channel posts worth **34,833.28** in ad-attributed reach value, and the 251 order_items rows are attachment lines — quantity = copies carried, unit_price = per-attachment value. The status map is fixed: delivered = {emerald:read} (52, 50.5%), shipped = delivered-but-unread (30, 29.1%), pending = scheduled for a later slot (14), cancelled = {rose:deleted} (7, 6.8%).",
     "The data org splits into growth, messaging telemetry and a monetization pod, and all three read the same post spine at different grains. Every post books at created_at, and `shipped_at` is stamped the moment fan-out to the channel completes — **82 of 103 posts** carry the stamp, averaging **2.98 days** to fan out with a 2–4 day spread, and the 14 scheduled posts have none yet (a population definition, not a cleanup job). The unread wall is the product's daily tension: 30 posts sit delivered-but-unread, and whether they belong in a 'seen' denominator is the first question every reviewer asks. Money sits one layer down — Premium invoices and payments in INTEGER cents, where the dollar read is `amount_cents / 100.0` — and concentration is the third story: **63.5%** of the reach book sits with channels whose lifetime value crosses 3,000.",
     "Interview screens are census-then-denominator. A typical loop opens with a **two-grain channel census** — EU runs 45 posts from just 8 channels (intensity 5.6) while the US runs 19 from 2 (9.5) — then escalates into a rate where the interviewer asks the denominator question out loud (*'does a deleted post count in your base?'*), then into the engagement leaderboard where four channels sit tied at 4 posts each and rank semantics become a product decision about the {sky:top-channels} shelf. Late rounds walk the 14-month posting spine (2024-01 to 2025-02) with `LAG` deltas and probe the first row's NULL. Candidates who state the status filter and the denominator before writing SQL are the ones who get callbacks.",
-    "Preparation strategy: the pools file carries no Telegram section — 0 tagged rows — so all sixteen problems and every topic slug here are **theme-curated** to this kit's known screen shapes: read-receipt conditional counts, unread/NULL policy, two-grain censuses, tie-heavy leaderboards, moderation set algebra and the cents-safe Premium spine. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {emerald:moderation census} the admin-tools team opens Monday with, the other rebuilds the {sky:EU channel leaderboard} growth reads for the top-channels shelf. The bar to clear: *state the definition and the denominator before you compute anything* — then make every status census reconcile to 103 by construction.",
+    "Preparation strategy: the pools file carries no Telegram section — 0 tagged rows — so all thirty-two problems and every topic slug here are **theme-curated** to this kit's known screen shapes: read-receipt conditional counts, unread/NULL policy, two-grain censuses, tie-heavy leaderboards, moderation set algebra and the cents-safe Premium spine. This expanded kit is built for spaced practice rather than one sitting. **Six case studies** now span the reads Telegram teams rehearse most: the {emerald:moderation census} the admin-tools team opens Monday with, the {sky:EU channel leaderboard} behind the top-channels shelf, the Premium AR anti-join billing refreshes before a single dunning message, the APAC context read that pins each channel's share of its region, the 14-month posting spine walked with `LAG`, and the Premium settlement stack with its TOTAL row. Run each on the live storefront database, then re-run it a week later from a blank editor — *the second pass is where recall actually forms*. Pair the cases with the **32-problem pool**, the thirty-MCQ bank and the theory bank below. The bar to clear: *state the definition and the denominator before you compute anything* — then make every status census reconcile to 103 by construction.",
   ],
 
   dayInLife: [
@@ -148,6 +148,102 @@ export const telegramKit: CompanyKit = {
       q: "Billing says a Premium invoice is 'paid' but the payments table has no rows for it. Walk me through the reconciliation query you write first — and the money rule you never break while writing it.",
       a: "First the anti-join: invoices LEFT JOIN payments, keep p.id IS NULL — on this db that returns 6 invoices worth 15,217, and one of them (#28, 1,756.00) is marked 'paid' with zero settlement rows: a status that lies, which is why payment rows are the ledger of record and the status column is a claim. Then the anomaly flip: a void invoice WITH a payment row (this db has one, #11 at 925.00) never appears in that anti-join — the two error modes are mirrors, and both reconcile to the row-level anomaly list, not to vibes. The money rule: invoices and payments carry INTEGER cents, so every dollar read is amount_cents / 100.0 — the missing .0 turns a 1,756.00 print into 1,756 and quietly eats cents on every odd-cent Premium renewal. Reconciliation culture here: the coverage split must read 21 exact / 1 partial (4,000 of 6,148) / 6 never-collected, and the ledger trial balance must land at 181,080 debits against 181,080 credits — delta zero, or the close does not ship.",
       tag: "quality",
+    },
+    {
+      id: "telegram-t9",
+      q: "COUNT(*), COUNT(shipped_at) and COUNT(DISTINCT customer_id) — what does each return on the post table, and when does telemetry want each?",
+      a: "Three grains, one table. COUNT(*) counts rows — 103 posts booked, scheduled and deleted included. COUNT(shipped_at) counts non-NULL stamps — 82 posts that finished fanning out — and the 21-row gap (14 scheduled, 7 deleted) is a feature: it is the population still in flight, not dirt. COUNT(DISTINCT customer_id) folds the table back to channels — 16 — which is the coverage number beside the load number. Saying which grain each form counts, out loud, is the habit the panel grades, because every read-rate argument in the building is a denominator argument in disguise.",
+      tag: "aggregation",
+    },
+    {
+      id: "telegram-t10",
+      q: "A reach SUM doubles after you join order_items to orders. Walk me through diagnosing the fan-out and fixing it.",
+      a: "Diagnose by counts: 103 posts alone, 251 attachment lines after the join — the jump IS the fan-out, each post's total repeating once per attachment line. Confirm with GROUP BY order_id HAVING COUNT(*) > 1 to see which posts carry multiple lines. The fix depends on the grain owed: post-grain revenue means pre-aggregating lines per order (SUM by order_id in a CTE) before joining, or staying at line grain and counting entities with COUNT(DISTINCT o.id) while every ratio states its denominator. On this db the careless join inflates the 34,833.28 book by roughly 2.4x — 251 lines over 103 posts — and the wrong number still looks plausible, which is what makes it dangerous.",
+      tag: "joins",
+    },
+    {
+      id: "telegram-t11",
+      q: "When do you stage a WITH (CTE) instead of nesting a subquery — and what does a well-named CTE buy a messaging team?",
+      a: "Three concrete buys. Readability: a chain named monthly, stamped_posts, channel_totals reads like the telemetry pipeline instead of a Russian-doll subquery, and each step is a checkpoint to SELECT from while debugging. Reuse: one CTE feeds several downstream references, so the per-channel fold is written once. Definition-as-code: naming a CTE fanned_out_posts forces the population (shipped_at IS NOT NULL, 82 of 103) to live where the reviewer can see it — which is exactly how the 2.98-day fan-out number survives its review. Filter early inside each step; CTEs are logical staging, not guaranteed materialization.",
+      tag: "ctes",
+    },
+    {
+      id: "telegram-t12",
+      q: "Admin packets stack and diff populations. Where are UNION, UNION ALL and EXCEPT each the honest tool?",
+      a: "UNION ALL concatenates and is the default: the deleted-post census stacked under the scheduled-post census are disjoint populations and every row belongs. UNION adds a distinct pass — correct only when duplicated rows would double-count, and a silent bug when a legitimate repeat (same channel, same counts, no branch label) collapses; that vanishing row is how packets lose channels with no error anywhere. EXCEPT diffs sets: which channels posted but never got deleted into — both inputs dedupe first, so if the duplicate itself is the signal (a double-ingested post), the row-honest diff is a LEFT JOIN … IS NULL anti-join instead. The discipline is saying out loud which duplicates you are paying to collapse.",
+      tag: "set-ops",
+    },
+    {
+      id: "telegram-t13",
+      q: "Where do conditional aggregates — CASE inside SUM and COUNT — beat writing separate queries?",
+      a: "Anywhere one scan must produce many lenses. The status census is the canonical one: SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) per region prints read 52, unread 30, scheduled 14, deleted 7 from 103 posts in a single pass, and the branches reconcile to COUNT(*) by construction — four queries' worth of answers that cannot drift apart because they share one denominator. The same shape builds read-share percentages (the 100.0 fix included), pivot columns, and explicit zero buckets for regions with no deletions. Separate queries stitched in a spreadsheet lose the shared grain, and the numbers stop adding up on exactly the slide everyone screenshots.",
+      tag: "case-when",
+    },
+    {
+      id: "telegram-t14",
+      q: "How do LAG and LEAD power the posting-spine walk — and where do candidates usually stumble?",
+      a: "LAG(column) OVER (ORDER BY month) puts the previous month's count beside the current one — February's 9 next to January's 8; LEAD reads forward and would silently re-label the future as history. The first row's LAG is NULL, and that NULL is honest: no baseline exists, so the first delta is 'unknown', never zero. The two classic stumbles: filtering window output in WHERE, which fails because windows evaluate in the SELECT stage — stage the LAG in a CTE and filter outside; and forgetting PARTITION BY on per-entity series, where one global window smears one region's month into the next region's. Windows over a GROUP BY are legal — the fold happens first, the window walks the folded rows.",
+      tag: "windows",
+    },
+    {
+      id: "telegram-t15",
+      q: "How do you bucket posts into months, cut a quarter without losing its last night, and measure fan-out in days?",
+      a: "The spine: STRFTIME('%Y-%m', created_at) — year plus zero-padded month, 14 buckets here from 2024-01 to 2025-02; '%m' alone merges January 2024 with January 2025 and the trend becomes fiction. The quarter cut: half-open intervals — created_at >= '2024-01-01' AND created_at < '2024-04-01' — because BETWEEN '2024-03-01' AND '2024-03-31' silently drops the last night, and scheduled posts cluster exactly at month boundaries. Fan-out: julianday(shipped_at) − julianday(created_at) over the 82 stamped posts — 2.98 days average, 2-to-4 spread — with the population stated, because AVG ignores NULLs and would quietly report the same number over an unnamed 82-row base. Date bugs are boundary bugs; state the policy before the WHERE clause.",
+      tag: "dates",
+    },
+    {
+      id: "telegram-t16",
+      q: "Money lives in integer cents in the Premium tables. Where do numeric bugs bite, and what is your rounding policy?",
+      a: "Three bite points. Scale: amount_cents = 87300 is $873.00, and amount_cents / 100 is integer division — 873 flat; divide by 100.0 or convert once at the presentation edge. Mid-pipeline rounding: ROUND inside the calculation discards precision a later SUM still needed — round only what a human reads. Float drift: REALs accumulate IEEE error, integer cents don't. The policy I state in reviews: aggregate in cents, convert once, round at the edge — and let the ledger prove it, because the trial balance landing at 181,080 debits against 181,080 credits, delta zero, is only checkable when nothing was rounded away en route.",
+      tag: "numbers",
+    },
+    {
+      id: "telegram-t17",
+      q: "What keeps a telemetry query cheap at messaging-platform scale?",
+      a: "Sargability first: compare the bare column to a value. WHERE SUBSTR(created_at, 1, 7) = '2024-03' scans every row; the half-open range created_at >= '2024-03-01' AND created_at < '2024-04-01' reads the same rows through an index. Then the compounding habits: filter early inside each CTE so later stages carry fewer rows; name columns instead of SELECT *; probe with LIMIT before committing to the full run; and aggregate on the smallest table that answers the question rather than joining first and filtering after. On a platform where every read is a funnel census over millions of posts, these are not micro-optimizations — they are the difference between a dashboard that renders and one that times out during the review.",
+      tag: "performance",
+    },
+    {
+      id: "telegram-t18",
+      q: "In a review you are asked for 'the read rate'. What do you pin down before writing SQL?",
+      a: "The definition, in writing, before the FROM clause. Four decisions: the numerator (status 'delivered' — 52 posts), the denominator (ALL posts booked — 103 — because 'booked' is what the funnel produced; excluding the 30 unread inflates the read to 63.4%, excluding scheduled and deleted inflates it further), the window (calendar month or trailing 30 days), and the deleted-post policy (in the base or out, stated either way). Then the discipline move: encode the definition as a named CTE so the SQL IS the definition and the reviewer audits it instead of arguing with you. The analyst who says 'read means delivered over booked, deleted included, trailing month' owns the room.",
+      tag: "metrics",
+    },
+    {
+      id: "telegram-t19",
+      q: "How do NULLs behave in filters, joins and aggregates — and what is the NULL policy for scheduled posts?",
+      a: "Three behaviors to narrate. In filters, NULL fails both x = value and x != value — WHERE status != 'deleted' silently drops NULL-status rows; add OR status IS NULL if they should survive. In joins, NULL keys never match: a post with no channel vanishes from an INNER JOIN and survives a LEFT JOIN only on the left. In aggregates, NULL inputs are ignored — AVG over all posts returns the fanned-out-only 2.98-day average over an unnamed 82-row base, and COUNT(shipped_at) shrinks to 82 while COUNT(*) stays 103. The policy for scheduled posts: they are 'not yet', never zero — report them as their own bucket, never IFNULL their latency to 0, and treat NOT IN over an unguarded column as a bug (one NULL empties the result; NOT EXISTS is the safe shape).",
+      tag: "nulls",
+    },
+    {
+      id: "telegram-t20",
+      q: "Walk me through the logical evaluation order of a SELECT — and name the bug each stage explains.",
+      a: "FROM and JOIN assemble rows; WHERE filters them; GROUP BY folds them; HAVING filters groups; SELECT computes output expressions including windows; ORDER BY sorts; LIMIT cuts. Every classic screen bug is a stage violation: an alias referenced in WHERE (it does not exist yet), COUNT(*) in WHERE (groups do not exist yet), a filter on LAG output in WHERE (windows run in SELECT — wrap the query), and the flip side that ORDER BY can use SELECT aliases because it runs after them. The less-known sibling: a SELECT alias is also invisible to its sibling expressions, which is why a spine's delta repeats the LAG instead of referencing prev_posts. Saying the order out loud before writing is the cheapest debugging tool an analyst has.",
+      tag: "pipeline",
+    },
+    {
+      id: "telegram-t21",
+      q: "IN (SELECT …) versus EXISTS versus a derived table — which do you reach for on the messaging graph, and what is the empty-inner contract?",
+      a: "EXISTS is an existence probe — it short-circuits on the first match and never trips on NULLs, which is why NOT EXISTS is the safe anti-join; NOT IN over a column carrying one NULL silently empties the report. IN is a membership test, fine for small static sets. A derived table is neither — it stages a new grain (per-channel post counts, per-month buckets) the outer query joins to, exactly like the tier-gate reads: fold, then judge against the fold. The contract to state unprompted: a scalar subquery returns 0-or-1 rows, and zero rows yield NULL — so an above-average gate over an empty staging fold passes nobody while looking valid. On filtered staging tables that bug ships regularly; the strong candidate names the inner fold's population and its empty case.",
+      tag: "subqueries",
+    },
+    {
+      id: "telegram-t22",
+      q: "A stakeholder says the telemetry dashboard moved overnight. Which SQL checks do you run in the first ten minutes?",
+      a: "Five, in order. Freshness: MAX(created_at) per source table — a feed that stopped at 02:00 explains most surprises alone. Volume: today's row count versus the 7-day average, because a half-loaded feed halves every downstream number. Keys: GROUP BY the natural key HAVING COUNT(*) > 1 for pipeline-retry duplicates. Orphans: an anti-join of fact keys against the dimension to catch reference-integrity breaks. NULL spikes: COUNT(column) versus COUNT(*) — a column that went 0% to 40% NULL empties every conditional count built on it. On this storefront that ritual is exactly how the paid-no-settlements invoice (#28, 175,600 cents) surfaces: status says paid, payment rows say zero. The deliverable is not 'it looks fine' — it is which check passed and when.",
+      tag: "quality",
+    },
+    {
+      id: "telegram-t23",
+      q: "Why is an average of averages wrong, and what do you compute instead?",
+      a: "Because it weights every group equally regardless of size. The regional intensity reads are EU 5.6 posts per channel (45 over 8), APAC 7.4 (37 over 5), US 9.5 (19 over 2) and LATAM 2.0 (2 over 1) — averaging those four gives 6.13, a platform that does not exist. The honest intensity re-aggregates from the base: 103 posts over 16 channels = 6.44, where LATAM's two posts barely register and EU's 45 carry real weight. The honest blends are re-aggregation from base rows or a weighted average — SUM(intensity * channels) / SUM(channels) — the same arithmetic one level up. The interview move is saying WHERE the weighting lives: equal weights are a claim you should have to defend, not assume.",
+      tag: "aggregation",
+    },
+    {
+      id: "telegram-t24",
+      q: "When is DISTINCT a bug report rather than a feature?",
+      a: "When it is papering over a fan-out nobody diagnosed. SELECT DISTINCT channel_name, post_total FROM … returning sane-looking rows usually means the join multiplied posts by attachment lines and DISTINCT is de-duplicating the damage — while the revenue SUM next to it is still wrong. The honest sequence: notice the DISTINCT, run the counts with and without it, find the multiplicity (GROUP BY the key HAVING COUNT(*) > 1), fix the join or pre-aggregate. Legitimate DISTINCT exists: collapsing a dimension's value set — 16 channels, 4 regions on this db — or de-duplicating a deliberately over-joined enrichment. The tell is intentionality: a DISTINCT you can justify in one sentence is a feature; one you cannot is a bug report filed against your own query.",
+      tag: "joins",
     },
   ],
 
@@ -272,6 +368,291 @@ export const telegramKit: CompanyKit = {
       ],
       difficulty: "hard",
     },
+    {
+      id: "telegram-mcq-11",
+      prompt: "order_items holds 251 attachment lines across the 103 posts. What does `SELECT COUNT(DISTINCT order_id) FROM order_items` return?",
+      choices: ["251 — one per attachment line", "103 — the posts carrying at least one attachment", "16 — the channels", "498 — the copies carried"],
+      answer: 1,
+      why: "DISTINCT folds the line-item fan-out back to the post grain: 103 posts carry at least one attachment. COUNT(*) would count 251 lines — the fan-out is exactly why COUNT and SUM disagree after this join, and why every census here states its grain.",
+      notes: [
+        { choice: 0, why: "251 is COUNT(*)'s answer — the raw line count. DISTINCT is what folds lines back to posts." },
+        { choice: 3, why: "498 is SUM(quantity) — copies carried, a third grain nobody asked for in a post census." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "telegram-mcq-12",
+      prompt: "A telemetry query buckets posts by month: created_at reads '2025-02-11 08:14:00'. What does `SUBSTR(created_at, 1, 7)` return for that row?",
+      choices: ["'2025-2'", "'2025-02'", "'2025-02-11'", "'02-11'"],
+      answer: 1,
+      why: "SUBSTR is character-based and 1-indexed: positions 1 through 7 of an ISO-8601 timestamp are exactly the 'YYYY-MM' bucket. It's the trick behind the 14-month posting spine (2024-01 through 2025-02) every trend read in this kit walks on.",
+      notes: [
+        { choice: 0, why: "SUBSTR slices stored characters — no reformatting happens. The stored string already carries the zero-padded month." },
+        { choice: 2, why: "Positions 1–10 give the full date; length 7 stops right after the month." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "telegram-mcq-13",
+      prompt: "The AR ledger LEFT JOINs payments to invoices; the 6 never-collected invoices show a NULL paid column. The dunning deck wants those displayed as 0. What's the fix?",
+      choices: ["WHERE paid_cents IS NOT NULL", "COALESCE(SUM(p.amount_cents), 0)", "SUM(IFNULL(p.amount_cents, 100))", "Switch to INNER JOIN"],
+      answer: 1,
+      why: "COALESCE wraps the aggregate AFTER it returns: the NULL sum of the 6 no-settlement invoices (1,521,700 cents booked) displays as 0 while the rows stay in the report. Filtering or inner-joining deletes exactly the rows dunning needs; IFNULL inside SUM fabricates settlements.",
+      notes: [
+        { choice: 0, why: "That deletes the never-collected rows from the report — the opposite of showing them with a 0." },
+        { choice: 2, why: "IFNULL inside SUM turns each missing settlement into 100 cents of fake money. Guard the aggregate's result, not its inputs." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "telegram-mcq-14",
+      prompt: "invoices.amount_cents reads 87300 (invoice INV-2024-018). Which expression prints the booked value in dollars?",
+      choices: ["amount_cents / 100", "amount_cents / 100.0", "ROUND(amount_cents)", "CAST(amount_cents AS TEXT) || ' dollars'"],
+      answer: 1,
+      why: "INTEGER / 100 is integer division: 87300/100 = 873. Dividing by the float literal 100.0 forces real division: 873.00. Every Premium read — invoices, payments, the ledger's 181,080-cent trial balance — is integer cents, so the .0 literal is the house rule.",
+      notes: [
+        { choice: 0, why: "873 dollars, not $873.00 — the cents are gone. The .0 literal is the whole fix." },
+        { choice: 3, why: "CAST to TEXT concatenates a label onto the integer; no scale conversion happens at all." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "telegram-mcq-15",
+      prompt: "created_at is TEXT like '2025-02-11 08:14:00'. Does `ORDER BY created_at` give chronological order?",
+      choices: ["Yes — ISO-8601 timestamps sort lexicographically into chronological order while the format stays uniform", "No — text always sorts alphabetically, never chronologically", "Only if you CAST to INTEGER first", "Only with julianday() — text dates are unordered"],
+      answer: 0,
+      why: "The ISO-8601 layout is big-endian — year, then month, then day — so string order and time order coincide. The real risk is format drift (mixed date-only and full-timestamp rows), which is a data-quality question, not an ORDER BY one.",
+      notes: [
+        { choice: 3, why: "julianday is for arithmetic — the 2.98-day fan-out latency — not for ordering uniform ISO strings." },
+        { choice: 1, why: "Alphabetical IS chronological here; that is the entire point of the ISO format. 'Feb 11, 2025' would break it." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "telegram-mcq-16",
+      prompt: "Which query lists the Premium invoices that never collected a settlement row — including the paid-status anomaly #28?",
+      choices: [
+        "SELECT i.number FROM invoices i INNER JOIN payments p ON p.invoice_id = i.id WHERE p.amount_cents IS NULL",
+        "SELECT i.number FROM invoices i LEFT JOIN payments p ON p.invoice_id = i.id WHERE p.id IS NULL",
+        "SELECT i.number FROM invoices WHERE payment_id IS NULL",
+        "SELECT i.number FROM invoices i LEFT JOIN payments p ON p.invoice_id = i.id",
+      ],
+      answer: 1,
+      why: "The anti-join: LEFT JOIN keeps all 28 invoices and hands the 6 unmatched a NULL payload; WHERE p.id IS NULL keeps exactly them — 5 open invoices plus #28, marked paid while carrying zero payment rows. This is the query billing refreshes before a single dunning message goes out.",
+      notes: [
+        { choice: 0, why: "INNER JOIN discards the unmatched rows before the WHERE can see them — the result is empty, since settlement amounts are never NULL." },
+        { choice: 3, why: "The bare LEFT JOIN returns every invoice once per settlement — the 22 matched invoices come along for the ride." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "telegram-mcq-17",
+      prompt: "The spine CTE computes prev_posts with LAG, then you filter: `... FROM monthly WHERE delta < 0`. It fails. Why?",
+      choices: ["LAG cannot appear next to COUNT(*)", "Window output is computed in the SELECT stage — WHERE runs first; stage the window and filter outside", "delta must be re-aliased with AS", "LAG needs PARTITION BY to compute deltas"],
+      answer: 1,
+      why: "Logical evaluation order: WHERE executes before SELECT, and window functions are SELECT-stage work — delta doesn't exist yet at filter time. The fix is the two-step every spine read uses: compute the LAG in a CTE or derived table, apply the threshold outside.",
+      notes: [
+        { choice: 0, why: "LAG over COUNT(*) is legal — windows evaluate after GROUP BY, which is why the spine works at all." },
+        { choice: 3, why: "PARTITION BY is for per-entity series. The posting spine is one global series ordered by month." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "telegram-mcq-18",
+      prompt: "`SELECT COUNT(*) FROM orders WHERE total > (SELECT AVG(total) FROM orders WHERE status = 'pending')` returns 0 — the pending staging fold is empty. What happened?",
+      choices: ["Pending posts have the highest totals, so nothing clears them", "An empty scalar subquery returns NULL; total > NULL is UNKNOWN, so every row fails and the report empties silently", "COUNT(*) cannot run over a comparison", "AVG over an empty set errors and aborts the query"],
+      answer: 1,
+      why: "A scalar subquery contracts to 0-or-1 rows; zero rows yield NULL, and comparisons against NULL are UNKNOWN — the above-average filter passes nobody while looking valid. This is the empty-inner-query bug, and it ships regularly on filtered staging tables.",
+      notes: [
+        { choice: 0, why: "The mechanism is NULL, not a high bar — any empty staging fold produces it, regardless of what the totals would have been." },
+        { choice: 2, why: "AVG of no rows is NULL, not an error — the failure is silent by design, which is exactly what makes it dangerous." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "telegram-mcq-19",
+      prompt: "You join order_items to orders and run AVG(o.total). The db holds 103 posts and 251 attachment lines. What did you actually compute?",
+      choices: ["The true per-post average — joins don't change averages", "An order average weighted by attachment-line count — heavy posts count more than once", "The average line value, not the post average", "NULL — AVG cannot run across a join"],
+      answer: 1,
+      why: "The join fans 103 posts out to 251 lines, so o.total repeats once per attachment and AVG divides by 251, not 103 — multi-attachment posts dominate. Compute the per-post average on orders alone, or pre-aggregate lines per order before averaging.",
+      notes: [
+        { choice: 2, why: "AVG(o.total) still averages the POST total column, just over fanned-out rows; line value would be AVG(unit_price * quantity)." },
+        { choice: 3, why: "Joins don't inject NULLs here — totals are NOT NULL. The distortion is duplication, not NULL drift." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "telegram-mcq-20",
+      prompt: "Contact imports churn: the same channel_id appears many times with different profile states. Which query keeps exactly the freshest row per channel, even when two imports share a timestamp?",
+      choices: [
+        "SELECT DISTINCT channel_id FROM imports",
+        "ROW_NUMBER() OVER (PARTITION BY channel_id ORDER BY updated_at DESC, id DESC) = 1 in a CTE, keep rn = 1",
+        "GROUP BY channel_id with MAX(*)",
+        "ORDER BY updated_at DESC LIMIT 1",
+      ],
+      answer: 1,
+      why: "ROW_NUMBER with a deterministic tie-breaker (id DESC after updated_at) keeps exactly one row per channel even on timestamp ties — the pipeline-safe dedupe. The identity pod runs this shape before any engagement join, because profile states churn.",
+      notes: [
+        { choice: 0, why: "DISTINCT returns one id per channel but drops every other column — the profile state you needed is gone." },
+        { choice: 2, why: "MAX(*) isn't valid SQL, and even MAX(updated_at) joined back returns both rows when timestamps tie." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "telegram-mcq-21",
+      prompt: "A scheduled send fires at '2025-02-28 23:59:59'. Which WHERE clause keeps it in February's cadence read?",
+      choices: [
+        "WHERE created_at BETWEEN '2025-02-01' AND '2025-02-28'",
+        "WHERE created_at >= '2025-02-01' AND created_at < '2025-03-01'",
+        "WHERE SUBSTR(created_at, 6, 2) = '02'",
+        "WHERE MONTH(created_at) = 2",
+      ],
+      answer: 1,
+      why: "The half-open interval [Feb 1, Mar 1) catches every timestamp in the month: '2025-02-28 23:59:59' < '2025-03-01' is TRUE. BETWEEN '2025-02-01' AND '2025-02-28' compares string-wise and drops everything after midnight on the 28th — precisely when scheduled sends cluster.",
+      notes: [
+        { choice: 0, why: "BETWEEN is inclusive on both ends — the last night's posts vanish from February and land in no month at all." },
+        { choice: 2, why: "SUBSTR works but wraps the column in a function — format-fragile and index-hostile. The range comparison is sargable." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "telegram-mcq-22",
+      prompt: "The admin packet wants each region's channel roster as one cell — 'Alice Chen,Chloe Dubois,…' per region. Which fold builds it?",
+      choices: ["GROUP_CONCAT(name) with GROUP BY region", "CONCAT(name) with GROUP BY region", "STRING_AGG is the only aggregate that folds text in SQLite", "SUM(name) with GROUP BY region"],
+      answer: 0,
+      why: "GROUP_CONCAT folds a group's values into one comma-joined string — the roster cell. EU's eight channels become one label the packet can print without a second pass. Plain CONCAT joins fixed arguments per row, and SUM coerces text to 0.",
+      notes: [
+        { choice: 1, why: "CONCAT concatenates its arguments for each row — it never folds a group of rows into one value." },
+        { choice: 3, why: "SUM over text yields 0 — arithmetic cannot fold names." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "telegram-mcq-23",
+      prompt: "The census reads 52 read, 30 unread, 14 scheduled, 7 deleted of 103. In the same one-pass scan, what does `COUNT(*) FILTER (WHERE status = 'delivered')` compute?",
+      choices: ["52", "51", "82", "0 — FILTER needs a GROUP BY"],
+      answer: 0,
+      why: "FILTER (WHERE …) is a conditional count: rows failing the predicate aren't counted for that aggregate — the 52 read posts, beside the 103 total from COUNT(*). It's the cleaner twin of SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END): one scan, per-status buckets, no drift.",
+      notes: [
+        { choice: 1, why: "51 is what the negated predicate counts — status <> 'delivered'. The FILTER selects the rows IN the count." },
+        { choice: 3, why: "FILTER is an aggregate modifier, not a grouping rule — it works with or without GROUP BY." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "telegram-mcq-24",
+      prompt: "Engagement screen: posts whose reach beats THEIR OWN channel's average. Which shape re-evaluates per outer row — and what replaces it at scale?",
+      choices: [
+        "A correlated subquery re-runs per post; AVG(total) OVER (PARTITION BY customer_id) computes each channel's average once and keeps every row",
+        "GROUP BY channel with HAVING total > AVG(total)",
+        "A CROSS JOIN of posts to channels",
+        "DISTINCT on (channel_id, total)",
+      ],
+      answer: 0,
+      why: "The correlated form compares each post to a per-channel average recomputed row by row — correct, but it re-scans per outer row. The window partition computes every channel's average once and keeps every row, which is exactly the enrichment shape telemetry ships on.",
+      notes: [
+        { choice: 1, why: "HAVING judges groups, not rows — it cannot keep individual above-average posts; it filters whole channels." },
+        { choice: 2, why: "CROSS JOIN pairs every post with every channel — a fan-out, not a filter." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "telegram-mcq-25",
+      prompt: "The cadence read filters `WHERE SUBSTR(created_at, 1, 7) = '2024-03'` and times out on the full post table. What's the sargable twin?",
+      choices: [
+        "WHERE created_at LIKE '2024-03%'",
+        "WHERE created_at >= '2024-03-01' AND created_at < '2024-04-01'",
+        "WHERE CAST(created_at AS DATE) BETWEEN '2024-03-01' AND '2024-03-31'",
+        "Add an index on SUBSTR(created_at, 1, 7)",
+      ],
+      answer: 1,
+      why: "Wrapping the column in a function forces a scan of every row; the half-open range compares the bare column and can use an index — same rows, same boundary semantics (the last night of March included), a fraction of the cost. Sargability is a functional-index conversation you rarely get to have.",
+      notes: [
+        { choice: 0, why: "LIKE still applies a pattern over the raw column — closer, but not a range; the half-open interval is the professional default." },
+        { choice: 2, why: "CAST wraps the column again, and BETWEEN still drops the last night of the month." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "telegram-mcq-26",
+      prompt: "Admin packets diff two scheduled-post feeds: Feed A carries 30 post ids, two of them exact duplicates of each other; Feed B carries 25 ids and shares 20 with A. What does `SELECT id FROM a EXCEPT SELECT id FROM b` return?",
+      choices: ["10 rows", "8 rows — EXCEPT deduplicates A first, so the internal duplicate collapses before the diff", "12 rows — duplicates count twice", "An error — EXCEPT requires unique keys"],
+      answer: 1,
+      why: "EXCEPT is a set operation: both inputs are deduplicated first — A's 28 distinct ids minus the 20 shared = 8. If the duplicate ingest itself is the anomaly being hunted, the row-honest diff is a LEFT JOIN … IS NULL anti-join on the full multiset, not EXCEPT.",
+      notes: [
+        { choice: 0, why: "10 is the multiset answer. Sets collapse duplicates before comparing: 28 distinct − 20 shared = 8." },
+        { choice: 3, why: "EXCEPT happily takes duplicates — that is exactly the behavior being tested. No uniqueness requirement exists." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "telegram-mcq-27",
+      prompt: "The ledger closes at debits 181,080 and credits 181,080, delta zero. Which rounding policy makes that provable in SQL?",
+      choices: [
+        "Round every intermediate SUM to 2 decimals so the ledger looks tidy",
+        "Aggregate in integer cents, convert to dollars once at the presentation edge, round only what a human reads",
+        "Store dollars as REAL and round at the end",
+        "TRUNCATE every amount before summing",
+      ],
+      answer: 1,
+      why: "Cents are integers — summing them is exact, so a trial balance that lands at 181,080 against 181,080 is proof, not luck. Mid-pipeline rounding discards precision a later SUM still needed; the /100.0 conversion happens once, at the edge, on what a human reads.",
+      notes: [
+        { choice: 0, why: "Rounding mid-pipeline is how ledgers stop reconciling — the delta becomes your bug, discovered during the close." },
+        { choice: 2, why: "REAL dollars accumulate IEEE drift across millions of rows; integer cents don't drift." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "telegram-mcq-28",
+      prompt: "Tier banding: `CASE WHEN total < 100 THEN 'boost' WHEN total < 3000 THEN 'standard' ELSE 'flagship' END`. A 1,088.44 post lands as 'standard' and the deck is wrong. Why?",
+      choices: [
+        "CASE requires an ELSE on every branch",
+        "CASE arms evaluate top-down and stop at the first match — the arm order doesn't match the published tier edges",
+        "Comparing REAL to INTEGER fails silently",
+        "CASE cannot appear outside WHERE",
+      ],
+      answer: 1,
+      why: "First match wins: 1,088.44 clears the < 3000 arm before any flagship tier can fire. Banding bugs are almost always arm order — the fix is publishing the edges in one direction (free, standard, flagship) and testing the boundary values, not adding more arms.",
+      notes: [
+        { choice: 0, why: "ELSE is optional — it defaults to NULL. A missing ELSE hides rows; it doesn't mis-band them." },
+        { choice: 2, why: "SQLite compares numeric storage classes fine. The arm order is the entire story." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "telegram-mcq-29",
+      prompt: "`LAG(COUNT(*)) OVER (ORDER BY month)` on a GROUP BY month query runs fine and returns the prior month's post count. Why is that legal?",
+      choices: [
+        "It isn't — window functions cannot sit on aggregates; the result is undefined",
+        "Windows evaluate after GROUP BY, so each window sees one row per month with COUNT(*) already folded",
+        "SQLite silently rewrites the window as a self-join",
+        "LAG only works on INTEGER columns and COUNT returns INTEGER",
+      ],
+      answer: 1,
+      why: "The pipeline folds rows in GROUP BY first; the window stage then walks the folded rows — one per month — so LAG reads the previous month's count. That ordering is exactly why the posting spine computes deltas without staging a second CTE.",
+      notes: [
+        { choice: 0, why: "Aggregate-then-window is the supported order — it's how every grouped trend read in this kit is written." },
+        { choice: 2, why: "No rewrite happens; the logical pipeline (GROUP BY, then windows) is the guarantee you're standing on." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "telegram-mcq-30",
+      prompt: "A growth analyst argues: 'EU runs 5.6 posts per channel (45/8), APAC 7.4 (37/5), US 9.5 (19/2), LATAM 2.0 (2/1) — so the platform average is the mean of those four.' What's wrong?",
+      choices: [
+        "Nothing — regional intensities average cleanly",
+        "It's an average of averages: each region weighted equally regardless of size; the honest platform read re-aggregates from the base — 103 posts over 16 channels = 6.44",
+        "The per-region ratios are computed wrong",
+        "6.44 is the median, not the mean",
+      ],
+      answer: 1,
+      why: "The four-region mean weights LATAM's 2-post book as heavily as EU's 45-post book — it averages to 6.13, describing a platform that doesn't exist. The honest intensity is SUM(posts)/SUM(channels) over the base rows: 103/16 = 6.44, the exact fold this kit quotes — and the bar exactly four channels clear.",
+      notes: [
+        { choice: 2, why: "The regional ratios are right — the crime is blending them unweighted." },
+        { choice: 3, why: "6.44 is the arithmetic fold over the base, not a median of anything." },
+      ],
+      difficulty: "hard",
+    },
   ],
 
   cases: [
@@ -357,6 +738,148 @@ export const telegramKit: CompanyKit = {
       walkthrough:
         "Two stages: fold the roster, then rank it. The CTE joins channels to posts, keeps the EU rows — 45 posts from 8 channels — and folds per channel: COUNT(o.id) reads posts and ROUND(SUM(o.total), 2) reads reach to the cent, reconciling to the 15,089.23 EU total. The outer SELECT ranks by posts DESC under the published RANK policy: Alice Chen 24 posts / 7,262.35 takes rank 1, Chloe Dubois 5 / 2,667.93 rank 2, then the three-way tie at 4 — Isabella Rossi, Noah Meyer, Pedro Alvarez sharing rank 3 and consuming ranks 3 through 5 — so Dmitri Volkov's 2 posts land on 6 and the two 1-post shelves share 7. The tie block IS the story: a shelf that hides the gap between rank 3 and rank 6 is hiding that three channels posted identically. The distractors each break differently: DENSE_RANK silently compresses the ladder (Dmitri to 4, the 1-post shelves to 5) and misstates the published policy; ROW_NUMBER hands the tied trio arbitrary positions; ASC flips the shelf so 705.39 outranks 7,262.35; 1 or 0 in the precision slot truncates the cent read (7262.4 / 7262) and the roster stops footing to 15,089.23.",
     },
+    {
+      id: "cs-telegram-3",
+      tier: "medium",
+      topic: "j5",
+      universe: "month-close",
+      title: "The Premium AR anti-join",
+      brief:
+        "Month-close brief, in-world: the monetization pod refreshes the Premium AR anti-join before a single dunning message goes out — every subscription invoice that has never collected a settlement row, status claims notwithstanding. Probed on the storefront db: 28 invoices carry 8,697,700 cents of booked value; 22 match settlement rows, and 6 never collected — 5 sitting open plus the paid-status anomaly #28 at 175,600 cents (a status that lies; settlement rows are the ledger of record). The six hold 1,521,700 cents ($15,217) of claimed-but-unbanked Premium value. Amounts live in the db as integer cents; this read prints cents.",
+      ask: "Return one row: how many Premium invoices have never collected a settlement, and their total booked value in cents.",
+      template:
+        "SELECT COUNT(*) AS never_collected,\n       {1}(i.amount_cents) AS cents_booked\nFROM invoices i\n{2} JOIN payments p ON p.invoice_id = i.id\nWHERE {3};",
+      slots: [
+        {
+          answer: "SUM",
+          kind: "keyword",
+          label: "the booked-value adder",
+          why: "SUM folds the six unmatched invoices' amount_cents into the 1,521,700 total. COUNT would print 6 — a row count wearing a cents name — and the dunning queue would quote a six-cent book instead of $15,217.",
+        },
+        {
+          answer: "LEFT",
+          kind: "keyword",
+          label: "the invoice-preserving join",
+          why: "LEFT JOIN keeps all 28 invoices and hands the 6 unmatched a NULL payload for WHERE to catch. INNER JOIN deletes them before the WHERE can see them — anomaly #28 included — and the report reads clean while 15,217 sits unbanked.",
+        },
+        {
+          answer: "p.id IS NULL",
+          kind: "keyword",
+          label: "the unmatched-row filter",
+          why: "The NULL payload IS the signal: no settlement row ever matched, so p.id is NULL on exactly the 6 never-collected invoices. Filtering i.id IS NULL matches nothing — ids are never NULL — and returns an empty report that reads as good news.",
+        },
+      ],
+      distractors: ["COUNT", "INNER", "i.id IS NULL", "'open'"],
+      walkthrough:
+        "The anti-join is the AR ritual: invoices LEFT JOIN payments keeps every invoice; the 22 that settled carry payload rows, the 6 that never collected carry NULLs, and WHERE p.id IS NULL keeps exactly those — 5 open invoices plus #28, which claims 'paid' while carrying zero settlement rows. That status-versus-ledger gap is why settlement rows are the ledger of record and the status column is a claim. SUM(i.amount_cents) folds the six booked values — 87,300 + 129,500 + 493,700 + 356,200 + 279,400 + 175,600 — into 1,521,700 cents, the figure billing quotes before any dunning message goes out. The distractors each break the ritual differently: COUNT prints 6, a count wearing a cents name; INNER JOIN deletes the six rows and reports a clean book that isn't; i.id IS NULL filters on a column that can never be NULL and returns nothing; and WHERE 'open' is a truthy-string gamble that empties the set. One query, one honest number, and the close can defend every cent.",
+    },
+    {
+      id: "cs-telegram-4",
+      tier: "medium",
+      topic: "t7",
+      universe: "growth",
+      title: "The posting-spine walk",
+      brief:
+        "Growth-board brief, in-world: the review walks the posting spine — each month's broadcast count with the prior month's beside it — so the cadence narrative writes itself from the table. Probed on the storefront db: 14 months of posts from 2024-01 to 2025-02 over 103 posts; the spine opens at 8, jumps to 9 in Feb 2024, and the first six months run 8 → 9 → 8 → 7 → 8 → 6, with the May→June fade costing -2 posts. LAG carries the prior month; the first row's prev is honestly NULL — no baseline exists. Windows over a GROUP BY are legal here because the fold happens first and the window walks the folded rows.",
+      ask: "Return the first six months of the posting spine: month, post count, and the prior month's count.",
+      template:
+        "SELECT SUBSTR(created_at, 1, 7) AS month,\n       COUNT(*) AS posts,\n       {1}(COUNT(*)) OVER (ORDER BY SUBSTR(created_at, 1, 7)) AS prev_posts\nFROM orders\nGROUP BY month\nORDER BY month {2}\nLIMIT {3};",
+      slots: [
+        {
+          answer: "LAG",
+          kind: "keyword",
+          label: "the prior-month reader",
+          why: "LAG(COUNT(*)) walks the folded months backwards one row — February's prev_posts is January's 8. LEAD reads forward and hands February March's count, silently re-labeling the future as history; the first row's NULL is the honest 'no baseline'.",
+        },
+        {
+          answer: "ASC",
+          kind: "keyword",
+          label: "the chronological direction",
+          why: "A spine walk is chronological: ASC keeps 2024-01 on top so each row compares against the row above it. DESC presents the newest month first with its baseline underneath — the numbers survive, the story doesn't.",
+        },
+        {
+          answer: "6",
+          kind: "number",
+          label: "the opener cut",
+          why: "LIMIT 6 returns the opening run the deck quotes — 8 → 9 → 8 → 7 → 8 → 6 — ending on the May→June fade of -2. The figure 6 is also June's post count sitting in the output, and the fade is the row the narrative cites.",
+        },
+      ],
+      distractors: ["LEAD", "DESC", "3"],
+      walkthrough:
+        "A fold, then a walk. GROUP BY month folds 103 posts into 14 monthly buckets via the SUBSTR month key; COUNT(*) is the cadence counter; and because windows evaluate after GROUP BY, LAG(COUNT(*)) OVER (ORDER BY month) legally reads the previous folded row — January 8, February 9 with prev 8, then 8, 7, 8, 6 across the first six months, verified on the live db. The first row's prev_posts is NULL by design: no prior month, no baseline, no invented zero. The two-step matters — the window can't be filtered in WHERE (it doesn't exist yet at filter time), which is why spine reads stage their deltas outside the fold. LEAD would read the future, so February's baseline becomes March's 8; DESC tells the story backwards; LIMIT 3 amputates the fade the memo quotes. Every chip changes what the cadence review would conclude.",
+    },
+    {
+      id: "cs-telegram-5",
+      tier: "medium",
+      topic: "t6",
+      universe: "growth",
+      title: "The APAC context read",
+      brief:
+        "Growth brief, in-world: the regional pod reads APAC channel by channel, but no shelf row means anything without its regional context — each channel's broadcast load beside the region's total, and the share of the region that channel carries. Probed on the storefront db: APAC runs 37 posts from 5 channels — Grace Kim 14, Maya Patel 13, Keiko Sato 4, Farid Nasser 3, Hiro Tanaka 3 — so the top two shelves carry 27 of 37 regional posts (73.0%). SUM(COUNT(*)) OVER (PARTITION BY region) is the context engine: the fold happens per channel, the window re-aggregates per region without collapsing rows.",
+      ask: "Return the five APAC channels with post count, the region's total posts, and each channel's share of the region to 1 decimal.",
+      template:
+        "SELECT c.name AS channel,\n       c.region AS region,\n       COUNT(*) AS posts,\n       SUM(COUNT(*)) OVER (PARTITION BY c.region) AS region_posts,\n       ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (PARTITION BY c.region), {1}) AS share_pct\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nGROUP BY c.id\nORDER BY region, posts {2}\nLIMIT {3};",
+      slots: [
+        {
+          answer: "1",
+          kind: "number",
+          noVerify: true,
+          label: "the share precision",
+          why: "Shares report to 1 decimal — Grace Kim's 37.8. ROUND(…, 2) prints 37.84 and the cells stop reconciling with the 1-dp concentration figures (63.5% of the book) the pod quotes on the same slide.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-first direction",
+          why: "The shelf reads biggest load first: 14, 13, 4, 3, 3. ASC buries Grace Kim — 37.8% of the region — at the bottom of her own context read.",
+        },
+        {
+          answer: "5",
+          kind: "number",
+          noVerify: true,
+          label: "the regional cut",
+          why: "LIMIT 5 is exactly the APAC roster: the region sorts first alphabetically and its five channels occupy rows one through five — a complete regional cut, not an arbitrary one. The same query re-scoped is a one-word change.",
+        },
+      ],
+      distractors: ["ASC", "3", "2"],
+      walkthrough:
+        "Two aggregates, two grains, one row each. GROUP BY c.id folds 103 posts into 16 channel rows; the window then re-aggregates the folded counts per region — SUM(COUNT(*)) OVER (PARTITION BY c.region) stamps every APAC row with the region's 37 without collapsing the shelf back to one row, which is the whole point of the partition window. The share divides each channel's count by that regional context: Grace Kim 14/37 = 37.8%, Maya Patel 35.1%, Keiko Sato 10.8%, and the two 3-post shelves at 8.1% each — the concentration pair (73.0% in two channels) the regional pod manages. ORDER BY region, posts DESC with LIMIT 5 lands exactly the APAC cut because APAC sorts first alphabetically. The chips each break the read: ASC reorders the shelf so the 3-post tail leads; 3 amputates the roster mid-region; 2 shifts the shares to two decimals and the slide stops footing with the 1-dp house numbers.",
+    },
+    {
+      id: "cs-telegram-6",
+      tier: "medium",
+      topic: "x3",
+      universe: "month-close",
+      title: "The Premium settlement stack",
+      brief:
+        "Month-close brief, in-world: the finance readout wants the Premium book stacked by invoice status — paid, open, void — with a labelled TOTAL row underneath, one query, no spreadsheet math. Probed on the storefront db: 28 invoices carry 8,697,700 cents of booked value; 21 read paid (6,644,300), 6 sit open (1,960,900) and 1 is void (92,500 — the void-but-settled anomaly #11, which carries a settlement row despite its status). The TOTAL branch must scan the unfiltered invoice table so the stack foots to the full 8,697,700 no matter what the detail branch filters.",
+      ask: "Return runs and booked cents per invoice status, plus a labelled TOTAL row for the whole Premium book.",
+      template:
+        "SELECT status,\n       COUNT(*) AS runs,\n       SUM(amount_cents) AS cents\nFROM invoices\nGROUP BY status\n{1}\nSELECT {2}, {3}, SUM(amount_cents)\nFROM invoices\nORDER BY cents DESC;",
+      slots: [
+        {
+          answer: "UNION ALL",
+          kind: "keyword",
+          label: "the stacker",
+          why: "UNION ALL concatenates the TOTAL branch onto the status rows without a dedupe pass — the honest stack for a report where every row belongs. EXCEPT would return only the detail rows, deleting the TOTAL the ask requires, and INTERSECT of disjoint branches is an empty stack.",
+        },
+        {
+          answer: "'TOTAL'",
+          kind: "keyword",
+          label: "the grand-row label",
+          why: "The label makes the branch self-describing — a row that says TOTAL, 28, 8,697,700. Any status-looking label (like 'open') reads as a second census row and double-counts the eye, even though the numbers differ.",
+        },
+        {
+          answer: "28",
+          kind: "number",
+          label: "the all-in run count",
+          why: "The TOTAL row must count the whole book — 28 invoices, not the 21 paid — because its cents column (8,697,700) is the unfiltered grand total. Pinning the count keeps the row honest even if the detail filter upstream changes.",
+        },
+      ],
+      distractors: ["EXCEPT", "INTERSECT", "'open'", "21"],
+      walkthrough:
+        "Two branches, one stack. The detail branch folds 28 invoices into three status rows — paid 21 / 6,644,300, open 6 / 1,960,900, void 1 / 92,500 — and the TOTAL branch re-scans the unfiltered invoices table: 28 runs, 8,697,700 cents, so the readout shows the statuses against the whole book without a second query. UNION ALL is the join between grains — no dedupe pass — and the outer ORDER BY cents DESC floats the TOTAL row to the top, then paid, open, void. The void row is the anomaly the close walks: #11 carries 92,500 cents of settlement despite its void status, which is why status is a claim and settlement rows are the ledger. The distractors each break a different promise: EXCEPT returns only the detail rows and quietly deletes the TOTAL; INTERSECT intersects disjoint branches into an empty stack; 'open' in the label slot prints a second open-looking row and the eye double-counts; 21 undercounts the runs column to the paid tier's size while the cents still claim the whole book.",
+    },
   ],
 
   problems: [
@@ -376,5 +899,21 @@ export const telegramKit: CompanyKit = {
     { slug: "bank-account-summary-ii", why: "The Premium billing rollup: per-user credits and debits in INTEGER cents. The /100.0 rule makes this exact practice for the settlement true-up reports." },
     { slug: "invalid-tweets", why: "Message-length validation before any join: captions and display names that breach limits break downstream parsers — text hygiene is a Telegram intake gate." },
     { slug: "keep-latest-dedupe", why: "Contact imports collide and profile states churn — keeping the latest row per user is the ROW_NUMBER dedupe the identity pod runs before any engagement join." },
+    { slug: "find-customer-referee", why: "Referee-less rows are the unread-wall drill: NULL fails = comparisons, and the report must say 'no referee' without dropping the channel. Telegram screens open here." },
+    { slug: "books-with-null-ratings", why: "Ratings that never arrived are read receipts that never landed — AVG and COUNT shrink silently. This problem rehearses naming the population before quoting the number." },
+    { slug: "invalid-tweets-ii", why: "The stricter caption gate: length plus content rules validated before any join — intake hygiene for bot-mediated posts at platform scale." },
+    { slug: "daily-leads-and-partners", why: "Two grains in one daily row — posts and channels active — the census shape telemetry opens every standup with, drilled at practice scale." },
+    { slug: "number-of-rich-customers", why: "Channels clearing a reach threshold per month: distinct counting with a stated bar — the concentration read behind the 63.5% headline." },
+    { slug: "top-earners", why: "The top shelf by value: max-with-ties and the LIMIT-1 trap — exactly how the top-channels card gets built and argued over." },
+    { slug: "department-top-three-salaries", why: "Top three per region with a join back for names — the leaderboard escalation, with a NULL-group twist that mirrors region-less channels." },
+    { slug: "movie-rating", why: "A two-part report — argmax by one rule, aggregates by another — the composition test behind every engagement readout in the review." },
+    { slug: "customers-who-never-order", why: "The dead-shelf anti-join. On this db the answer is a confident zero, and proving the zero — not assuming it — is part of the job." },
+    { slug: "team-scores-in-football-tournament", why: "Standings folded with conditional wins/draws/losses — the moderation-census shape: conditional counts whose branches must reconcile to the total." },
+    { slug: "managers-with-at-least-5-direct-reports", why: "Fold per channel, judge against a tier — HAVING on a derived count, the tier-gate escalation every Telegram screen runs before the leaderboard." },
+    { slug: "orders-with-maximum-quantity-above-average", why: "Attachments above the platform mean — nested folds where the empty-inner-query answer is expected unprompted, exactly the t6/telemetry follow-up." },
+    { slug: "average-time-of-process-per-machine", why: "Fan-out latency per channel: AVG over stamped posts only, with the population definition shipping beside the number — the 2.98-day norm in miniature." },
+    { slug: "second-day-confirmation", why: "Receipts confirmed on day two — first-event-then-return logic, the read-receipt funnel in miniature and the drill behind delivery-promise reads." },
+    { slug: "monthly-transactions-ii", why: "Premium renewals per month split by status with zero-buckets printed — the billing census the finance pod ships monthly, in INTEGER cents." },
+    { slug: "products-worth-over-invoices", why: "Media-format value versus the Premium book: formats whose cumulative value clears an invoice — set comparison at two grains, the monetization pod's cross-check." },
   ],
 };
