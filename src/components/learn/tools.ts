@@ -13,6 +13,7 @@ import {
   CalendarDays,
   Code2,
   Dumbbell,
+  Brain,
   Crosshair,
   Eye,
   FileStack,
@@ -53,6 +54,7 @@ export type ToolKind =
   | "perf"
   | "interview"
   | "companies"
+  | "recall"
   | "studio"
   | "explain"
   | "mastery"
@@ -87,6 +89,7 @@ export const TOOLS: ToolDef[] = [
   { kind: "drills", icon: Dumbbell, label: "Keyword drills", note: "every keyword, six angles", short: "Drills", section: "toolbox" },
   { kind: "practice", icon: Crosshair, label: "Keyword Practice", note: "the whole course, per keyword", short: "Practice", section: "toolbox" },
   { kind: "mixed", icon: FlaskConical, label: "Mixed quiz", note: "10 from the whole course", short: "Quiz", section: "toolbox" },
+  { kind: "recall", icon: Brain, label: "Review deck", note: "misses resurface, ladder runs", short: "Recall", section: "toolbox" },
   { kind: "blitz", icon: Zap, label: "Blitz mode", note: "90 seconds, all engines", short: "Blitz", section: "toolbox" },
   { kind: "cases", icon: FileStack, label: "Case files", note: "rebuild real stakeholder queries", short: "Cases", section: "toolbox" },
   { kind: "sandbox", icon: FileUp, label: "CSV sandbox", note: "bring your own data", short: "CSV", section: "toolbox" },

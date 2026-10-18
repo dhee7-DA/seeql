@@ -1,18 +1,29 @@
 "use client";
 
 // Assessment layer for the Company Universe: per-kit mock interview rounds and
-// per-domain mastery quizzes. Deliberately zero-XP / zero-progress-writes —
-// these simulate the interview screen itself, so they never touch the practice
-// ledger. The mock round mirrors a real phone screen's shape: 6 mixed-difficulty
+// per-domain mastery quizzes. The timed screen itself stays XP-free while it
+// runs — you against the clock — but everything counts the moment it lands:
+//
+//   • every mock MCQ answer mirrors into the shared practice ledger through
+//     useUniverse (accuracy + the 1d→3d→7d→14d review ladder, same as lessons)
+//   • theory self-marks bank one-time XP tiers and feed the same ladder
+//   • finishing a run banks a completion bonus; a 70%+ run adds a strong bonus
+//   • the mastery quiz pays the standard MCQ XP (first-try bonus included)
+//     and its domain result banks a once-a-day completion XP
+//
+// The mock round mirrors a real phone screen's shape: 6 mixed-difficulty
 // MCQs + 2 walk-me-through theory questions under a 12-minute clock. The
 // mastery quiz samples every live kit in a domain, round-robin, for a broad
 // recall check with a per-company breakdown.
 
-import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, CheckCircle2, Clock, RotateCcw, Trophy, XCircle } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ArrowRight, CheckCircle2, Clock, RotateCcw, Trophy, XCircle, Zap } from "lucide-react";
 import { companyKit } from "@/lib/companies/registry";
 import type { CompanyDomain, CompanyKit } from "@/lib/companies/types";
 import type { Mcq } from "@/lib/curriculum/types";
+import { useProgress } from "@/lib/curriculum/progress";
+import { XP } from "@/lib/curriculum/gamification";
+import { useUniverse } from "@/lib/universe/progress";
 import { Btn, Panel } from "./ui/kit";
 import { cn } from "@/lib/utils";
 
@@ -54,6 +65,8 @@ export function MockRound({ kit }: { kit: CompanyKit }) {
   const [marks, setMarks] = useState<Record<number, TheoryMark>>({});
   const [revealed, setRevealed] = useState<Record<number, boolean>>({});
   const [left, setLeft] = useState(12 * 60);
+  const [bankedXp, setBankedXp] = useState<number | null>(null);
+  const bankedRef = useRef(false);
 
   const round = useMemo(() => {
     return { mcqs: pickMockMcqs(kit.mcqs), theory: shuffle(kit.theory).slice(0, 2) };
@@ -90,8 +103,30 @@ export function MockRound({ kit }: { kit: CompanyKit }) {
     setMarks({});
     setRevealed({});
     setLeft(12 * 60);
+    setBankedXp(null);
+    bankedRef.current = false;
   };
   const next = () => (idx + 1 >= total ? setPhase("done") : setIdx((v) => v + 1));
+
+  // Bank the run exactly once — both paths to "done" (final question and the
+  // clock expiring) funnel through this effect. XP mirrors into the shared
+  // ledger via saveMock; misses are already on the ladder from recordMockMcq.
+  useEffect(() => {
+    if (phase !== "done" || bankedRef.current) return;
+    bankedRef.current = true;
+    const banked = useUniverse.getState().saveMock({
+      kitIds: [kit.id],
+      label: `${kit.name} screen`,
+      mcqScore,
+      mcqTotal: round.mcqs.length,
+      theoryScore,
+      theoryTotal: round.theory.length,
+      pct,
+      durationSec: 12 * 60 - left,
+    });
+    setBankedXp(banked);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase]);
 
   const verdict =
     pct >= 70
@@ -118,13 +153,14 @@ export function MockRound({ kit }: { kit: CompanyKit }) {
         <div className="mt-4 space-y-3">
           <p className="text-sm leading-relaxed text-zinc-300">
             A timed blend of {round.mcqs.length} multiple-choice questions and {round.theory.length} written theory
-            questions drawn from this kit — the closest thing here to the real 30-minute screen. No XP, no progress
-            tracking: this one is just you against the clock.
+            questions drawn from this kit — the closest thing here to the real 30-minute screen. The clock is real,
+            but nothing is wasted: every answer feeds your accuracy, the review ladder and your readiness.
           </p>
           <ul className="space-y-1.5 text-xs leading-relaxed text-zinc-400">
             <li>• <span className="text-zinc-200">12 minutes</span> total; the clock turns red under two.</li>
             <li>• MCQs grade themselves; theory answers are <span className="text-zinc-200">self-marked</span> against the model answer.</li>
-            <li>• 70%+ reads as a hiring signal, 50–69% solid-with-gaps, below that keep drilling.</li>
+            <li>• Misses join the review deck and come back in <span className="text-zinc-200">1, 3, then 7 days</span> — exactly like lesson questions.</li>
+            <li>• Finishing banks <span className="text-zinc-200">+{XP.mock} XP</span>; a 70%+ run adds <span className="text-zinc-200">+{XP.mockStrongBonus}</span> as a hiring-signal bonus.</li>
           </ul>
           <Btn variant="primary" onClick={start}>
             Start the clock <ArrowRight className="ml-1 inline h-3.5 w-3.5" />
@@ -155,7 +191,13 @@ export function MockRound({ kit }: { kit: CompanyKit }) {
                     <button
                       key={ci}
                       disabled={done}
-                      onClick={() => setPicks((p) => ({ ...p, [current.q.id]: ci }))}
+                      onClick={() => {
+                        // one record per question — the disabled state makes
+                        // a second click impossible, but stay honest anyway
+                        if (picks[current.q.id] === undefined)
+                          useUniverse.getState().recordMockMcq(kit.id, current.q.id, ci === current.q.answer);
+                        setPicks((p) => ({ ...p, [current.q.id]: ci }));
+                      }}
                       className={cn(
                         "flex w-full items-start gap-2 rounded-lg border px-3 py-2 text-left text-xs leading-relaxed transition-colors",
                         !done && "border-zinc-700 bg-zinc-900 text-zinc-300 hover:border-zinc-500",
@@ -205,7 +247,13 @@ export function MockRound({ kit }: { kit: CompanyKit }) {
                     {([1, 0.5, 0] as TheoryMark[]).map((v) => (
                       <button
                         key={v}
-                        onClick={() => setMarks((m) => ({ ...m, [current.n]: v }))}
+                        onClick={() => {
+                          // only the FIRST mark feeds the ledger — re-marks
+                          // stay a local choice, best-of wins across runs
+                          if (marks[current.n] === undefined)
+                            useUniverse.getState().recordTheory(kit.id, current.q.id, v);
+                          setMarks((m) => ({ ...m, [current.n]: v }));
+                        }}
                         className={cn(
                           "rounded-md border px-2 py-1 transition-colors",
                           marks[current.n] === v ? "border-sky-400/50 bg-sky-400/10 text-sky-200" : "border-zinc-700 bg-zinc-900 text-zinc-300 hover:border-zinc-500"
@@ -253,6 +301,18 @@ export function MockRound({ kit }: { kit: CompanyKit }) {
               <div className="mt-0.5 text-base font-semibold text-zinc-100">{theoryScore}/{round.theory.length}</div>
             </div>
           </div>
+          {bankedXp !== null && (
+            <div className="flex items-center gap-2 rounded-lg border border-amber-400/25 bg-amber-400/[0.06] px-3 py-2 text-xs text-amber-200">
+              <Zap className="h-3.5 w-3.5" />
+              {bankedXp > 0 ? (
+                <span>
+                  Banked <span className="font-semibold">+{bankedXp} XP</span> · misses joined the review deck
+                </span>
+              ) : (
+                <span>Run logged — already banked, so no double XP.</span>
+              )}
+            </div>
+          )}
           <Btn variant="soft" onClick={() => { setSeed((s) => s + 1); setPhase("intro"); }}>
             <RotateCcw className="mr-1 inline h-3.5 w-3.5" /> New mock round
           </Btn>
@@ -286,14 +346,34 @@ export function MasteryQuiz({ domain }: { domain: CompanyDomain }) {
 
   const pick = (c: number) => {
     if (!cur || picked !== null) return;
+    const ok = c === cur.mcq.answer;
     setPicked(c);
-    setResults((r) => [...r, { kitId: cur.kit.id, kitName: cur.kit.name, ok: c === cur.mcq.answer }]);
+    setResults((r) => [...r, { kitId: cur.kit.id, kitName: cur.kit.name, ok }]);
+    // same XP convention as the course's McqCard: first attempt pays, repeats
+    // never double-pay, misses feed the Leitner deck and the SR ladder
+    const store = useProgress.getState();
+    const isFirst = store.recordMcqCheck(cur.mcq.id, ok);
+    store.scheduleReview(`mcq:${cur.mcq.id}`, ok);
+    if (ok) {
+      store.awardXp(`mcq:${cur.mcq.id}`, XP.mcq);
+      if (isFirst) store.awardXp(`mcqfirst:${cur.mcq.id}`, XP.mcqFirstBonus);
+    } else {
+      store.recordMiss(cur.mcq.id);
+    }
   };
   const restart = () => {
     setSeed((s) => s + 1);
     setI(0);
     setPicked(null);
     setResults([]);
+  };
+
+  const finishAndBank = () => {
+    if (i + 1 >= quiz.length) {
+      useUniverse.getState().recordDomainQuiz(domain.id, Math.round((score / Math.max(1, quiz.length)) * 100));
+    }
+    setPicked(null);
+    setI((v) => v + 1);
   };
 
   const tally = useMemo(() => {
@@ -320,6 +400,12 @@ export function MasteryQuiz({ domain }: { domain: CompanyDomain }) {
       {finished ? (
         <div className="mt-4 space-y-3">
           <div className="text-2xl font-bold text-zinc-50">{score}/{quiz.length} <span className="text-sm font-medium text-zinc-400">({Math.round((score / Math.max(1, quiz.length)) * 100)}%)</span></div>
+          <div className="flex items-center gap-2 rounded-lg border border-amber-400/25 bg-amber-400/[0.06] px-3 py-2 text-xs text-amber-200">
+            <Zap className="h-3.5 w-3.5" />
+            <span>
+              +{XP.domainQuiz} domain XP banked for today · misses from this run are waiting in the review deck
+            </span>
+          </div>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             {tally.map((t) => (
               <div key={t.name} className="rounded-lg border border-zinc-800 bg-zinc-900/60 p-2.5 text-xs">
@@ -378,8 +464,11 @@ export function MasteryQuiz({ domain }: { domain: CompanyDomain }) {
                   ))}
               </div>
             )}
-            <div className="mt-4 flex justify-end">
-              <Btn variant="primary" disabled={picked === null} onClick={() => { setPicked(null); setI((v) => v + 1); }}>
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
+              <p className="text-[11px] leading-snug text-zinc-500">
+                Answers count: kit accuracy, XP and the review deck all update as you go.
+              </p>
+              <Btn variant="primary" disabled={picked === null} onClick={finishAndBank}>
                 {i + 1 >= quiz.length ? "See result" : "Next"} <ArrowRight className="ml-1 inline h-3.5 w-3.5" />
               </Btn>
             </div>

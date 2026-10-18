@@ -13,6 +13,13 @@ export const XP = {
   caseFirstBonus: 6,
   examPass: 60,
   lessonBonus: 50,
+  // universe layer — completion bonuses only: the timed screen itself stays
+  // XP-free while it runs (you against the clock), then banks on the report.
+  mock: 25,
+  mockStrongBonus: 15,
+  theory: 4,
+  theoryHalf: 2,
+  domainQuiz: 10,
 } as const;
 
 export type Difficulty = "easy" | "medium" | "hard";
@@ -124,6 +131,15 @@ export interface BadgeCtx {
   puzzleStreak: number;
   /** how many calendar months had every day solved */
   perfectMonths: number;
+  // universe layer (mock screens, theory, targeting)
+  /** completed mock screens (per-kit + omni) */
+  mocks: number;
+  /** best overall % across all completed mocks */
+  mockBestPct: number;
+  /** a company is currently targeted */
+  targetSet: boolean;
+  /** kit MCQs answered correct (kit tab + mock runs combined, deduped) */
+  universeCorrect: number;
 }
 
 export interface Badge {
@@ -205,5 +221,36 @@ export const BADGES: Badge[] = [
     title: "Perfect Month",
     desc: "Solve every daily puzzle in a calendar month",
     test: (c) => c.perfectMonths >= 1,
+  },
+  // universe badges — the 208-company layer
+  {
+    id: "first-mock",
+    title: "Screen Rookie",
+    desc: "Finish your first company mock screen",
+    test: (c) => c.mocks >= 1,
+  },
+  {
+    id: "mock-5",
+    title: "Mock Veteran",
+    desc: "Finish 5 mock screens",
+    test: (c) => c.mocks >= 5,
+  },
+  {
+    id: "mock-70",
+    title: "Hiring Signal",
+    desc: "Score 70%+ on a mock screen",
+    test: (c) => c.mockBestPct >= 70,
+  },
+  {
+    id: "targeted",
+    title: "Locked In",
+    desc: "Target a company and start its readiness track",
+    test: (c) => c.targetSet,
+  },
+  {
+    id: "universe-100",
+    title: "Universe 100",
+    desc: "Answer 100 universe MCQs correctly",
+    test: (c) => c.universeCorrect >= 100,
   },
 ];

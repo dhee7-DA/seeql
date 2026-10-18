@@ -21,6 +21,7 @@ export function McqCard({
   index,
   reviewMode = false,
   examMode = false,
+  ladderKey,
   onAnswered,
 }: {
   mcq: Mcq;
@@ -31,6 +32,9 @@ export function McqCard({
   /** Exam mode: zero XP, feedback withheld until submit, misses still feed
    *  the review deck. */
   examMode?: boolean;
+  /** Spaced-repetition ladder resurfacing: zero XP, zero ledger writes — the
+   *  answer only advances (or resets) the ladder card named by this key. */
+  ladderKey?: string;
   onAnswered?: (correct: boolean) => void;
 }) {
   const [picked, setPicked] = useState<number | null>(null);
@@ -59,6 +63,15 @@ export function McqCard({
     if (examMode) {
       store.recordMcqCheck(mcq.id, ok);
       if (!ok) store.recordMiss(mcq.id);
+      onAnswered?.(ok);
+      return;
+    }
+
+    // Ladder resurfacing (review deck "Scheduled" tab): the card's own ladder
+    // advances — corrects move 1d→3d→7d→14d, misses come back tomorrow. No
+    // XP, no accuracy writes: the original attempt already banked those.
+    if (ladderKey) {
+      useProgress.getState().scheduleReview(ladderKey, ok);
       onAnswered?.(ok);
       return;
     }

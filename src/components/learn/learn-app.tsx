@@ -12,18 +12,22 @@ import {
   ChevronsDownUp,
   ChevronsUpDown,
   Download,
+  Flame,
   GraduationCap,
   RotateCcw,
   Swords,
   Upload,
+  Zap,
 } from "lucide-react";
 import { LESSONS, MODULES } from "@/lib/curriculum/lessons";
 import { useProgress } from "@/lib/curriculum/progress";
 import { BADGES, currentStreak, levelFor, totalXp } from "@/lib/curriculum/gamification";
+import { useUniverse, universeMcqCorrect } from "@/lib/universe/progress";
 import { monthPerfect, monthsInLedger, puzzleStreak } from "@/lib/curriculum/daily";
 import { cn } from "@/lib/utils";
 import { LessonView } from "./lesson-view";
 import { ExamView } from "./exam-view";
+import { ReviewDeck } from "./review";
 import { RoadmapTrack } from "./roadmap-track";
 import { DataExplorer } from "./data-explorer";
 import { MixedQuiz } from "./mixed-quiz";
@@ -90,7 +94,8 @@ type View =
   | { kind: "mentor" }
   | { kind: "sandbox" }
   | { kind: "notebook" }
-  | { kind: "lc"; topic?: string; slug?: string };
+  | { kind: "lc"; topic?: string; slug?: string }
+  | { kind: "recall" };
 
 // Drift guard — the registry in tools.ts must name every non-lesson view
 // (and vice versa). A compile error here means: update tools.ts too.
@@ -151,6 +156,9 @@ function useBadgeWatcher() {
   const puzzleDone = useProgress((s) => s.puzzleDone);
   const backlogDone = useProgress((s) => s.backlogDone);
   const freezes = useProgress((s) => s.freezes);
+  const universeMocks = useUniverse((s) => s.mocks);
+  const universeMockMcq = useUniverse((s) => s.mockMcq);
+  const universeTarget = useUniverse((s) => s.target);
   const prevLevel = useRef(-1);
   const ready = useRef(false);
 
@@ -169,8 +177,30 @@ function useBadgeWatcher() {
     const months = new Set([...monthsInLedger(puzzleDone), ...monthsInLedger(backlogDone)]);
     let perfectMonths = 0;
     for (const mk of months) if (monthPerfect(puzzleDone, backlogDone, mk)) perfectMonths++;
-    return { lessonsDone, problemsSolved, mcqsCorrect, perfectQuizzes, puzzlesDone, puzzleStreak: puzzleStreakNow, perfectMonths };
-  }, [xpEvents, mcqAttempts, puzzleDone, backlogDone, freezes]);
+    // universe layer — kit MCQs correct (tab side, deduped) + mock-screen side;
+    // the same question answered in both places counts once (BadgeCtx contract)
+    const universeTabCorrect = universeMcqCorrect(mcqAttempts);
+    let universeMockOnly = 0;
+    for (const [key, a] of Object.entries(universeMockMcq)) {
+      if (!a.correct) continue;
+      const mcqId = key.split(":")[2];
+      if (mcqId && mcqAttempts[mcqId]?.correct) continue;
+      universeMockOnly += 1;
+    }
+    return {
+      lessonsDone,
+      problemsSolved,
+      mcqsCorrect,
+      perfectQuizzes,
+      puzzlesDone,
+      puzzleStreak: puzzleStreakNow,
+      perfectMonths,
+      mocks: universeMocks.length,
+      mockBestPct: universeMocks.reduce((b, m) => Math.max(b, m.pct), 0),
+      targetSet: universeTarget !== null,
+      universeCorrect: universeTabCorrect + universeMockOnly,
+    };
+  }, [xpEvents, mcqAttempts, puzzleDone, backlogDone, freezes, universeMocks, universeMockMcq, universeTarget]);
 
   const streak = useMemo(() => currentStreak({ xpByDay, dailyGoal }), [xpByDay, dailyGoal]);
 
@@ -195,6 +225,42 @@ function useBadgeWatcher() {
   }, [ctx, xp, streak, level]);
 
   return { xp, level, streak, ctx };
+}
+
+/** Shell-header rank chips — the always-visible XP total and the daily-streak
+ *  flame, mounted in the app header (page.tsx) so gamification is present on
+ *  EVERY learn view, not just the overview sidebar. Subscribes directly to
+ *  the shared ledger, so universe XP banks light it up too. */
+export function HeaderRank() {
+  const xpEvents = useProgress((s) => s.xpEvents);
+  const xpByDay = useProgress((s) => s.xpByDay);
+  const dailyGoal = useProgress((s) => s.dailyGoal);
+  const xp = useMemo(() => totalXp({ xpEvents }), [xpEvents]);
+  const streak = useMemo(() => currentStreak({ xpByDay, dailyGoal }), [xpByDay, dailyGoal]);
+  return (
+    <div className="flex items-center gap-1.5" aria-label={`Total XP ${xp}, streak ${streak} days`}>
+      <span
+        className="flex items-center gap-1 rounded-md border border-amber-400/25 bg-amber-400/[0.08] px-2 py-1 text-[11px] font-semibold text-amber-200"
+        title="Total XP — every correct answer, mock and lesson banks here"
+      >
+        <Zap className="h-3 w-3" />
+        <span className="tnum">{xp.toLocaleString()}</span>
+        <span className="hidden text-amber-200/70 sm:inline">XP</span>
+      </span>
+      <span
+        className={cn(
+          "flex items-center gap-1 rounded-md border px-2 py-1 text-[11px] font-semibold",
+          streak > 0
+            ? "border-orange-400/25 bg-orange-400/[0.08] text-orange-200"
+            : "border-zinc-800 bg-zinc-900 text-zinc-500",
+        )}
+        title={streak > 0 ? `${streak}-day streak — hit your daily goal to keep it alive` : "Hit your daily goal to start a streak"}
+      >
+        <Flame className={cn("h-3 w-3", streak === 0 && "opacity-50 grayscale")} />
+        <span className="tnum">{streak > 0 ? `${streak}d` : "—"}</span>
+      </span>
+    </div>
+  );
 }
 
 function RankBlock({ xp, level, streak }: { xp: number; level: ReturnType<typeof levelFor>; streak: number }) {
@@ -600,6 +666,8 @@ function ViewBody({
       return <QueryNotebook />;
     case "lc":
       return <LeetCodeView key={`${view.topic ?? "lc"}:${view.slug ?? ""}`} initialTopic={view.topic} initialSlug={view.slug} />;
+    case "recall":
+      return <ReviewDeck />;
     case "companies":
       return <CompaniesView initialDomain={view.domain} initialCompany={view.company} openLc={(slug) => openLc(undefined, slug)} />;
     default:
