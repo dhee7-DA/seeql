@@ -2,7 +2,7 @@
 // UK/EU food delivery with a rider-supply spine: shift-covered zones, a
 // delivery promise measured in SLA compliance, and a Plus subscription layer
 // billed like clockwork. Pool provenance: Deliveroo has 0 tagged rows in the
-// band — all 16 problems and 30 topic slugs are THEME-CURATED from the sql
+// band — all 32 problems and the topic spine below are THEME-CURATED from the sql
 // rows in scripts/company-pools.md to Deliveroo's known screen themes (the
 // Hopper driver trio for rider-supply censuses, the overlapping-shifts pair
 // for roster math, subscription/AR reads for Plus billing). Case studies run
@@ -25,7 +25,8 @@ export const deliverooKit: CompanyKit = {
     "Deliveroo is the UK/EU-headquartered food delivery network built on a three-sided promise: restaurants cook, riders ride, customers eat inside a delivery window. The company's signature artifacts are the **rider shift model** (supply booked in advance, zones covered by rostered riders rather than pure gig flocking), the **delivery SLA** (the promise the app quotes is a compliance number someone owns), and **Deliveroo Plus**, the subscription layer that turns delivery fees into recurring billing. The analytics reality every analyst internalizes: an order is a promise with timestamps at both ends — placed and dropped — and on this kit's proxy ledger **82 of 103** orders carry a drop timestamp while 14 sit pending and 7 cancelled. Latency across the 82 completes averages **2.98 days** inside a 2-to-4 range, and the zone split is where the SLA conversation starts: LATAM 3.50, US 3.07, EU 2.94, APAC 2.93.",
     "The data org runs zone-shaped ops plus a product layer. Zone leads open on delivery health: orders placed versus dropped versus cancelled (this ledger: 52 delivered, 30 shipped, 14 pending, 7 cancelled — a **6.8% cancellation share**), drop latency against promise, and rider supply versus order flow. The subscription side runs on billing hygiene: 28 invoices on this ledger split into 21 paid ($66,443.00), 6 open ($19,609.00) and 1 void ($925.00), with settlement running about **28.4 days** from issue on paid invoices — and the `reconciliation anomalies` table (a void-but-paid invoice at $925.00, a paid invoice with zero payment rows) is exactly the kind of truth SQL has to catch. Partner health rounds it out: the 4.5-plus rating bench holds 2 of 6 restaurant partners, and the demand trend buckets into **14 months** from 2024-01 to 2025-02.",
     "Interview style is compliance-flavored and denominator-first. A screen typically opens with a warm-up join (attach zones to their orders, partners to their plate lines), escalates into conditional aggregation with a status or SLA rule ({emerald:within-promise} shares, cancellation rates with exclusions), then either an interval question (**overlapping shifts, concurrent deliveries** — the roster math riders actually live) or a rate question where the trap is integer division, a filter that shrinks the denominator, or a census written as three queries instead of one. Follow-ups are spoken out loud: 'does a cancelled order count in your denominator?', 'is that promise inclusive of the boundary?', 'what happens to a rider who covered zero orders?'. Candidates who narrate **population and boundary** before writing SQL consistently outperform.",
-    "Preparation strategy: Deliveroo has no tagged rows in the band, so this kit is theme-curated — every problem mirrors a workflow Deliveroo screens are known to probe: the `immediate-food-delivery` pair for kept-share denominators, the Hopper trio for rider-supply censuses (monthly spines, per-driver rates, city bucketing), the overlapping-shifts pair for roster intervals, and the subscription/AR reads for Plus billing. The two case studies run on the live storefront db, mapped honestly onto delivery: orders are delivery orders, `shipped_at` is the rider drop-off timestamp, suppliers are restaurant partners, invoices and payments are Plus billing runs and settlements. One case rebuilds the SLA census the zone review opens with; the other rebuilds the Plus settlement census the month-close demands. Both are mechanically audited against the probed db figures.",
+    "Preparation strategy: Deliveroo has no tagged rows in the band, so this kit is theme-curated — every problem mirrors a workflow Deliveroo screens are known to probe: the `immediate-food-delivery` pair for kept-share denominators, the Hopper trio for rider-supply censuses (monthly spines, per-driver rates, city bucketing), the overlapping-shifts pair for roster intervals, and the subscription/AR reads for Plus billing. The six case studies run on the live storefront db, mapped honestly onto delivery: orders are delivery orders, `shipped_at` is the rider drop-off timestamp, suppliers are restaurant partners, invoices and payments are Plus billing runs and settlements. They rebuild the six asks the screens rotate through: the SLA census the zone review opens with, the Plus settlement census the month-close demands, the two-grain zone census, the month-over-month demand pulse, the above-average basket review, and the zone-fate pivot. All are mechanically audited against the probed db figures.",
+    "This expanded kit is built for spaced practice rather than one sitting. **Six case studies** now span the asks Deliveroo screens rehearse most: the three-day promise census, the Plus billing settlement census, the two-grain zone census, the demand pulse into the July trough, the above-average basket review, and the zone-fate pivot. Run each on the live storefront database, then re-run it a week later from a blank editor — *the second pass is where recall actually forms*. Pair the cases with the **32-problem pool** and the theory bank below, and treat the walkthroughs as the real content: they narrate the failure each wrong chip causes, which is exactly the muscle the population-and-boundary follow-ups test.",
   ],
 
   dayInLife: [
@@ -50,32 +51,32 @@ export const deliverooKit: CompanyKit = {
     {
       name: "Order-fate & kept shares",
       why: "Every Deliveroo read starts from order fate: delivered, shipped, pending, cancelled — folded with a CASE flag so kept-shares and cancellation shares share one denominator. The immediate-food-delivery pair is this exact muscle in textbook clothing.",
-      slugs: ["immediate-food-delivery-ii", "immediate-food-delivery-i", "queries-quality-and-percentage"],
+      slugs: ["immediate-food-delivery-ii", "immediate-food-delivery-i", "queries-quality-and-percentage", "immediate-food-delivery-iii"],
     },
     {
       name: "Rider shift interval math",
       why: "Rosters are intervals: overlapping shifts, concurrent coverage, span-versus-sum on logged hours. The overlapping-shifts pair is the interview shape — self-joins on start/end boundaries where off-by-one inclusivity decides who gets paid.",
-      slugs: ["find-overlapping-shifts", "find-overlapping-shifts-ii", "employee-task-duration-and-concurrent-tasks"],
+      slugs: ["find-overlapping-shifts", "find-overlapping-shifts-ii", "employee-task-duration-and-concurrent-tasks", "calculate-orders-within-each-interval"],
     },
     {
       name: "Rider-supply censuses",
       why: "Supply reads are monthly spines: riders signed up versus riders active, per-zone headcounts, last-active stamps for the fleet. The Hopper trio drills the signup-to-activity pipeline Deliveroo supply teams live in.",
-      slugs: ["hopper-company-queries-i", "daily-leads-and-partners", "bikes-last-time-used"],
+      slugs: ["hopper-company-queries-i", "daily-leads-and-partners", "bikes-last-time-used", "find-the-team-size", "second-highest-salary"],
     },
     {
       name: "Cancellation & acceptance rates",
       why: "Two-sided rates with exclusions — cancellation share with banned accounts removed, acceptance rate where unmatched ids coalesce to zero. Trips-and-users is the canonical screen; confirmation-rate is its LEFT JOIN cousin.",
-      slugs: ["trips-and-users", "confirmation-rate", "hopper-company-queries-ii"],
+      slugs: ["trips-and-users", "confirmation-rate", "hopper-company-queries-ii", "monthly-transactions-ii", "percentage-of-users-attended-a-contest"],
     },
     {
       name: "Latency & idle windows",
       why: "Latency pairs two timestamps of one order; idle windows measure the gap between an order landing and the next. Date-diff durations and LEAD-based gap reads decide where rider supply leans against demand.",
-      slugs: ["average-time-of-process-per-machine", "find-golden-hour-customers", "biggest-window-between-events"],
+      slugs: ["average-time-of-process-per-machine", "find-golden-hour-customers", "biggest-window-between-events", "game-play-analysis-v"],
     },
     {
       name: "Partner growth & rolling demand",
       why: "The demand trend is a rolling read: 7-day average daily revenue for the restaurant-partner review, month buckets for the close, trailing actives for zones. The 2024-01 peak ($3,731.97) against the 2024-07 trough is the shape these smooth.",
-      slugs: ["restaurant-growth", "monthly-transactions-i", "rolling-7d-actives"],
+      slugs: ["restaurant-growth", "monthly-transactions-i", "rolling-7d-actives", "sales-by-day-of-the-week", "friday-purchases-i", "unique-orders-and-customers-per-month", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "Plus subscription & billing reads",
@@ -85,17 +86,17 @@ export const deliverooKit: CompanyKit = {
     {
       name: "Winback & churn",
       why: "Subscriber churn shows up as billing gaps, not app deletes: week-over-week churn reads, dormant reactivation risk, winback windows. The discipline is defining churn from BILLING events, where the NULLs are the signal.",
-      slugs: ["winback-recovery", "week-over-week-churn", "dormant-reactivation"],
+      slugs: ["winback-recovery", "week-over-week-churn", "dormant-reactivation", "customer-order-frequency"],
     },
     {
       name: "NULL policy & fleet hygiene",
       why: "The drop timestamp is NULL until the order lands; rider records carry holes that COUNT(col) silently skips. NULL audits, COUNT-col-versus-star drift, and keep-latest dedupe are the hygiene layer every compliance dashboard stands on.",
-      slugs: ["null-blank-audit", "books-with-null-ratings", "keep-latest-dedupe"],
+      slugs: ["null-blank-audit", "books-with-null-ratings", "keep-latest-dedupe", "duplicate-emails", "employees-with-missing-information"],
     },
     {
       name: "Escalation shapes: set ops & CASE",
       why: "Screens close with composed asks: UNION-ALL stacks that stitch two populations into one table, CASE buckets that classify in one pass, status pivots. The escalation is composition — a census that would take three queries becomes one.",
-      slugs: ["team-scores-in-football-tournament", "count-salary-categories", "weather-type-in-each-country"],
+      slugs: ["team-scores-in-football-tournament", "count-salary-categories", "weather-type-in-each-country", "transactions-per-visit-histogram", "running-total-for-different-genders"],
     },
   ],
 
@@ -146,6 +147,102 @@ export const deliverooKit: CompanyKit = {
       id: "deliveroo-t8",
       q: "Billing runs can carry anomalies — a void invoice holding a payment row, a paid invoice holding none. How do you census invoice state in one pass, and how do you prove the census caught the anomalies?",
       a: "One pass, conditional arms. The census shape is FILTER (WHERE …) over the invoice table: COUNT(*) for the population, then per-state COUNT and SUM arms — paid, open, void — each with its value folded in the same scan. On this ledger that returns 28 invoices, 21 paid at $66,443.00, 6 open at $19,609.00, 1 void at $925.00 — and the proof the census caught the anomalies is the reconciliation check: a void invoice HOLDING a payment row (the $925.00 case) can't be found by averaging, only by joining payments to invoices and comparing status against the existence of settlement rows. The COUNT-then-SUM discipline matters because COUNT(col) skips NULLs silently — a payment table with NULL amounts would shrink the value arms without shrinking the count arms, and the census would disagree with itself. One scan, every state, anomalies chased by join — that's the month-close shape, and the three-queries-and-a-spreadsheet habit it replaces is how anomalies survive to the board.",
+      tag: "quality",
+    },
+    {
+      id: "deliveroo-t9",
+      q: "Which rostered zones logged shifts that covered zero orders? When is LEFT JOIN the honest shape, and what does an INNER join do to that question?",
+      a: "The spine is the supply table, not the order table: start FROM shifts, LEFT JOIN orders on the zone-and-window match, and keep the arm WHERE the order id IS NULL — those are the zero-coverage zones, the rows an INNER join deletes before you ever see them. INNER joins answer demand-shaped questions (attach the zone to every order); LEFT joins answer supply-shaped questions (who showed up for nothing), because the interesting rows are precisely the unmatched ones. On this ledger every order resolves to a zone, so both shapes agree on demand reads — which is exactly why the interviewer wants you to reason about the shape instead of trusting the data to expose the difference. The companion discipline: an anti-join is LEFT JOIN + IS NULL or NOT EXISTS; NOT IN over a nullable id list poisons the whole predicate and returns nothing.",
+      tag: "joins",
+    },
+    {
+      id: "deliveroo-t10",
+      q: "Weekly zone volumes tie constantly on a 103-order ledger. Walk me through what RANK, DENSE_RANK and ROW_NUMBER print on a tie, and how you'd pull 'second place' honestly.",
+      a: "On a tie RANK repeats the rung and skips (1, 2, 2, 4), DENSE_RANK repeats without skipping (1, 2, 2, 3), and ROW_NUMBER numbers arbitrarily (1, 2, 3) unless you add a deterministic tie-breaker. The zone leaderboard gets DENSE_RANK — 'who's second' means the second distinct volume, and a skipped rung manufactures a phantom zone nobody staffs. For 'second place' specifically, ORDER BY … LIMIT 1 OFFSET 1 is the trap: it returns the second ROW, which is an arbitrary member of a tie, not the second VALUE. The honest pattern is DENSE_RANK = 2 in a subquery — or accept that two zones can share second and the staffing answer is 'both'. Ties aren't an edge case here; on 103 orders across 6 zones they're the norm, and the function choice IS the tie policy.",
+      tag: "windows",
+    },
+    {
+      id: "deliveroo-t11",
+      q: "The shift handover wants order fate, SLA buckets and spend exposure in one screen. How do you build a one-pass census, and how do you prove it reconciles?",
+      a: "One scan, conditional arms: COUNT(*) FILTER (WHERE …) per state — or SUM(CASE WHEN … THEN 1 ELSE 0 END) — beside a bare COUNT(*) as the anchor. The proof is the sum-back rule: the status arms must add to 103 (52 + 30 + 14 + 7), the SLA arms to the 82 completed, and if an arm total comes up one short, a state is falling through an ELSE nobody wrote. FILTER beats three separate queries because every arm shares one population read once — no drift between scans, no data fix landing mid-census. The discipline reviewers check: name the population in the query's comment or its title, because a census without its population sentence is a number looking for a definition.",
+      tag: "aggregation",
+    },
+    {
+      id: "deliveroo-t12",
+      q: "Your chase list query uses partner_id NOT IN (SELECT id FROM partners WHERE tier = 'A') and returns nothing. The partner table has one row with a NULL id. What happened?",
+      a: "NOT IN over a list containing NULL poisons the predicate: for every outer row, x != NULL evaluates to UNKNOWN, never false, so no row survives the filter — the query runs clean and ships an empty report. That's the most dangerous failure mode in SQL: not an error, a silent zero. The fixes are structural: exclude the NULLs in the inner query (WHERE id IS NOT NULL), or use NOT EXISTS / LEFT JOIN + IS NULL, which evaluate existence per row and are immune to the NULL. I default to NOT EXISTS for correctness under NULLs and because the optimizer handles it well. The interview follow-up is always 'why did it return empty instead of erroring' — because tri-valued logic says UNKNOWN, and WHERE keeps only TRUE.",
+      tag: "nulls",
+    },
+    {
+      id: "deliveroo-t13",
+      q: "Can a WHERE clause use a column alias defined in the SELECT? Walk me through why, and where the alias does work.",
+      a: "No — and the reason is the logical evaluation order: FROM, WHERE, GROUP BY, HAVING, SELECT, ORDER BY. The alias is born in SELECT, so WHERE (which runs before SELECT) has never heard of it; the engine throws 'no such column'. ORDER BY is the one clause that runs after SELECT, which is why ORDER BY revenue works while WHERE revenue > 0 doesn't. The placement rule that follows: row predicates filter on raw columns (o.shipped_at IS NOT NULL, not the alias), group predicates live in HAVING, and display-level sorting can use aliases freely. The subtlety worth naming out loud: some engines loosen this, but SQLite doesn't — and writing to the standard order means the query survives the migration when Deliveroo's zone tooling moves warehouses.",
+      tag: "pipeline",
+    },
+    {
+      id: "deliveroo-t14",
+      q: "Beyond the network-average basket: how would you find orders above their OWN zone's average, and what does that cost compared to the scalar version?",
+      a: "That's the correlated subquery: WHERE o.total > (SELECT AVG(i.total) FROM orders i JOIN customers c ON c.id = i.customer_id WHERE c.region = zone-of-o) — the inner fold re-runs per outer row, because the average it needs depends on which row you're standing on. It answers a different question than the scalar version: 42 baskets clear the network's 338.19, but 'above MY zone's average' is a per-zone bar — LATAM's 2-order zone is judged against its own tiny fold, EU against its 45. The cost is real: conceptually N inner scans, though modern planners cache or decorrelate. The habit I'd demonstrate: state which population each fold covers, write the uncorrelated version first as a baseline, then correlate and diff the two answers — the gap between them is the zone effect, which is the actual business story.",
+      tag: "subqueries",
+    },
+    {
+      id: "deliveroo-t15",
+      q: "Two clocks run through this business: when an order was placed and when the rider dropped it. How do you bucket demand on one and service on the other without mixing them?",
+      a: "Demand buckets on created_at: STRFTIME('%Y-%m', created_at) for the month spine — 2024-01's 3,731.97 down to 2024-07's 1,193.86 — or SUBSTR(created_at, 1, 7) on this fixed-width ISO text, which is faster and just as honest. Service buckets on shipped_at: completion aging, SLA windows, the drop-time heatmap. Mixing the clocks is the silent killer — a 'monthly demand' read bucketed on shipped_at quietly re-keys 21 orders to their completion month and drags one NULL month into the spine, because pending and cancelled never complete. '%m' alone is the other trap: January 2024 and January 2025 both bucket '01' and fuse into a phantom spike on a ledger spanning 2024-01 to 2025-02. State which clock a KPI reads, put it in the metric name if you have to, and keep the two spines separate in the warehouse.",
+      tag: "dates",
+    },
+    {
+      id: "deliveroo-t16",
+      q: "Two feeds write invoice statuses: one 'paid', one 'Paid'. How do you make the settlement census robust to casing, and how do you stop it regressing?",
+      a: "Normalize at the comparison edge: LOWER(status) = 'paid' — or UPPER both sides — so text equality stops caring about the feed's fashion. Case-sensitive equality is the silent census killer: status = 'paid' matches 21 invoices while 'Paid' rows fall out, and the count arm reads 21 against a value arm that still sums their cents — a report that disagrees with itself row by row. The stronger fix is upstream: one canonical status vocabulary in the warehouse, with the raw feed values kept in a provenance column. And the regression guard is a reconciliation arm: COUNT(*) FILTER (WHERE status NOT IN ('paid','open','void')) must read zero — the moment a new casing variant lands, the census flags its own blind spot instead of quietly shrinking.",
+      tag: "quality",
+    },
+    {
+      id: "deliveroo-t17",
+      q: "The growth deck wants month-over-month revenue change. Walk me through the LAG shape and what the first row should print.",
+      a: "Stage the monthly fold in a CTE (SUBSTR month key, ROUND(SUM(total), 2)), then in the outer query read LAG(revenue) OVER (ORDER BY month) beside the current value and divide the delta by the same LAG: 2024-01's 3,731.97 opens the spine, February's 3,609.64 is -3.3%, and the fade into the 2024-07 trough prints -41.7% — the row the narrative quotes. The first month prints NULL, and that NULL is the honest answer: no prior row exists, so no percentage exists. What I refuse is COALESCE-ing it to zero — a fake 0% first delta reads as a flat start and gets quoted by someone. Two mechanical notes: the window can't see the CTE's alias problems because the fold is already done, and ORDER BY month ASC keeps the story chronological — DESC tells it backwards and the deltas re-anchor to the wrong baseline.",
+      tag: "windows",
+    },
+    {
+      id: "deliveroo-t18",
+      q: "Rider shifts are logged as (rider, zone, start, end) rows. How do you find overlapping shift pairs, and why does the query need an id comparison?",
+      a: "The self-join: FROM shifts a JOIN shifts b ON a.rider = b.rider AND a.start < b.end AND b.start < a.end — strict inequalities on both sides, because a shift ending 18:00 and one starting 18:00 is a legal handoff, not double coverage. The a.id < b.id guard is what makes the result a LIST OF PAIRS: without it, every qualifying pair appears twice (A,B and B,A) and each shift pairs with itself (a.start < a.end is true), tripling the apparent conflict count. The interview layer is boundary semantics — the strictness decision is a payroll policy ('who gets paid for the touching minute?'), so say it out loud and let the ops owner sign it. On this kit's ledger there's no shift table, which is exactly why the shape is drilled as theory: the interviewer wants the predicate from memory, with the inclusive-versus-strict decision narrated.",
+      tag: "joins",
+    },
+    {
+      id: "deliveroo-t19",
+      q: "The ops printout wants each order's plates as one comma-joined cell. How does GROUP_CONCAT behave, and what do you tell the person who wants the items in a guaranteed order?",
+      a: "GROUP_CONCAT(p.name, ', ') folds one order's plate lines into a single cell — the 103-to-251 fan-out collapses back to order grain, one row per order, manifest attached. The honest caveat: the concatenation order is engine-arbitrary unless the aggregate itself carries an ORDER BY (a recent-SQLite feature) or you sort in a staged subquery first — so if the floor lead needs pick sequence, don't promise it from a bare GROUP_CONCAT. Two size caveats ride along: the cell length grows with the basket, and a NULL name contributes an empty slot rather than erroring — decide whether NULLs belong in a manifest at all. The deeper lesson is grain: GROUP_CONCAT is the read-side twin of the fold discipline — it takes you from line grain back to order grain without losing the detail, which is exactly what the printout is for.",
+      tag: "aggregation",
+    },
+    {
+      id: "deliveroo-t20",
+      q: "The dinner board wants the within-promise rows and the late chase list in ONE table with a bucket column, plus a total row. How do you stack that?",
+      a: "UNION ALL, three branches: the within-promise census, the late chase list — each SELECT projecting the same columns, including a literal bucket label ('within' / 'late') — and a third branch for the TOTAL row labelled with a literal, scanning the unfiltered population. UNION ALL is the only honest stack here: it concatenates without a dedupe pass, and every row belongs. A bare UNION sorts and dedupes — two zones that happen to produce identical rows would silently collapse into one, shrinking the chase list by a row nobody missed. The contract each branch must honor is column count and type alignment — the literal labels carry the grain into the output. And ORDER BY after the stack sorts the combined result, which is how the TOTAL row floats to the top or the chase list sorts by exposure.",
+      tag: "sets",
+    },
+    {
+      id: "deliveroo-t21",
+      q: "After joining orders to plate lines, COUNT(*) reads 251 but the board says 103 orders. What's the discipline that keeps both numbers true in one query?",
+      a: "Announce the grain of every count before you trust it: COUNT(*) on the joined rows reads 251 plate lines; COUNT(DISTINCT o.id) folds back to 103 orders; COUNT(DISTINCT o.customer_id) folds further to 16 people. All three are true at once, and the zone census that quotes '45 deliveries from 8 EU buyers' is exactly this pair at region grain. The failure mode is one number wearing another's name: a completion rate computed over DISTINCT customers, or an order count quoted from a line-item fold — both off by the fan-out factor (about 2.44 lines per order on this ledger). The habit: 'one row per what?' before every COUNT, and when two grains must coexist, compute them as separate expressions in the same fold rather than joining a folded table back and re-fanning it.",
+      tag: "aggregation",
+    },
+    {
+      id: "deliveroo-t22",
+      q: "Partner names arrive from feeds in three casings ('nordic gadgets ab', 'NORDIC GADGETS AB', 'Nordic Gadgets AB'). How do you make the partner bench group them as one supplier?",
+      a: "Group on a normalized key, not the raw text: GROUP BY UPPER(TRIM(name)) — or better, group by supplier_id where one exists and display the canonical name, because ids don't have fashion. TRIM first: trailing spaces make 'Nordic Gadgets AB ' a different string from 'Nordic Gadgets AB', and casing normalization alone won't merge them. The display layer picks one representative (MIN(name) or the id-matched canonical row) so the bench prints one spelling while tolerating three. The honest long-term answer is upstream: fix the feed or maintain a crosswalk table, because string normalization is a per-query tax you pay forever. In a screen, the sentence that lands is: 'text keys group by exact bytes — normalize before grouping, and prefer a surrogate key the moment one exists.'",
+      tag: "strings",
+    },
+    {
+      id: "deliveroo-t23",
+      q: "The compliance pack wants a running late-count by month AND the network total on every row. One query, two frames — how?",
+      a: "Two windows over the same fold. The running count: SUM(late) OVER (ORDER BY month ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) — the explicit ROWS frame makes it row-exact, growing one row at a time. The network total: SUM(late) OVER () — an empty OVER() means the whole partition, every row carries the same 25 late orders. The frame vocabulary is the whole answer: the default frame with ORDER BY is RANGE … CURRENT ROW, and RANGE includes ORDER-BY peers — tie months jump together, which is correct for rank-flavored reads and wrong for a row-exact running total. Say the three frames out loud — running (ROWS to CURRENT ROW), total (empty OVER), peer-aware (RANGE default) — and the interviewer stops asking, because that sentence is the entire concept.",
+      tag: "windows",
+    },
+    {
+      id: "deliveroo-t24",
+      q: "Yesterday's zone census said 82 completed orders; today's says 81. How do you find the difference, and what does the answer usually turn out to be?",
+      a: "A two-sided diff, not a gut search: yesterday's census is a snapshot, so the practical version on live data is re-derive both populations with their definitions attached — completed = shipped_at IS NOT NULL — and diff the member lists on the key (order ids present yesterday, absent today). In a warehouse you'd query the snapshot tables directly; in a screen you narrate the shape: full outer join the two id lists, keep the NULL arms, and the drifting row identifies itself. What it usually turns out to be is a definition moving, not data: a status reclassification, a late-arriving drop timestamp landing, a filter quietly changing the population. That's why the census carries its WHERE clause in the title — the reconciliation isn't just 'which row moved' but 'which definition moved', and the second question is the one that stops it recurring.",
       tag: "quality",
     },
   ],
@@ -321,6 +418,346 @@ export const deliverooKit: CompanyKit = {
       ],
       difficulty: "easy",
     },
+    {
+      id: "deliveroo-mcq-11",
+      prompt: "Rider supply asks: which rostered zones logged shifts that covered ZERO orders. The shift rows are the spine. Which join shape finds them?",
+      choices: [
+        "INNER JOIN shifts to orders — matched rows only",
+        "LEFT JOIN shifts to orders, keep WHERE order_id IS NULL",
+        "RIGHT JOIN orders to shifts",
+        "CROSS JOIN shifts and orders, COUNT the pairs",
+      ],
+      answer: 1,
+      why: "The zero-coverage rows are exactly the unmatched ones, so the anti-join shape — LEFT JOIN + IS NULL — is the only honest read. INNER deletes precisely the population the question hunts for.",
+      notes: [
+        { choice: 0, why: "INNER keeps only shifts that covered orders — the report would show full coverage everywhere, the opposite of the audit's purpose." },
+        { choice: 3, why: "A cross join multiplies every shift by every order — a coverage MATRIX, not a list of uncovered zones, and 103× the rows to prove it." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "deliveroo-mcq-12",
+      prompt: "The zone review wants ONE row per region: deliveries AND buyers. EU reads 45 deliveries from 8 buyers. Which pair of counters produces that row?",
+      choices: [
+        "COUNT(*) and COUNT(o.customer_id)",
+        "COUNT(*) and COUNT(DISTINCT o.customer_id)",
+        "SUM(o.total) and COUNT(o.customer_id)",
+        "COUNT(DISTINCT o.id) and COUNT(*)",
+      ],
+      answer: 1,
+      why: "Two grains, one fold: COUNT(*) counts deliveries (45), COUNT(DISTINCT o.customer_id) folds repeat orders back to people (8). Plain COUNT(o.customer_id) reads 45 too — every joined row carries a non-null customer id — so both columns would lie identically.",
+      notes: [
+        { choice: 0, why: "Without DISTINCT the buyer column mirrors the delivery column — 45 and 45 — and repeat demand (8 people driving 45 orders) stays invisible." },
+        { choice: 2, why: "SUM(o.total) is dollars wearing a counter's name — the review asked for heads and rows, and the revenue fold belongs in its own column." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "deliveroo-mcq-13",
+      prompt: "'Zones whose cancellation share tops 5%' — where does the share threshold live, given cancel share = 100.0*SUM(cancel-flag)/COUNT(*) per region?",
+      choices: [
+        "WHERE, filtering rows before the fold",
+        "HAVING, after the GROUP BY forms regions",
+        "ORDER BY, sorting the share descending",
+        "LIMIT, cutting to zones above 5%",
+      ],
+      answer: 1,
+      why: "The share is a group fact: it exists only after GROUP BY region folds placed and cancelled orders together, so the threshold goes in HAVING. WHERE runs before groups exist — the share literally can't be evaluated there.",
+      notes: [
+        { choice: 0, why: "Filtering cancelled rows first shrinks every region's denominator to its numerator — 100% everywhere, and a WHERE holding an aggregate errors outright." },
+        { choice: 2, why: "ORDER BY sorts, never filters — the sub-5% zones stay in the result, just rearranged." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "deliveroo-mcq-14",
+      prompt: "Drop latency is JULIANDAY(shipped_at) - JULIANDAY(created_at), and the network average prints 2.98 days. Where does ROUND belong?",
+      choices: [
+        "Around each row's delta, then average",
+        "Around the final AVG, once",
+        "Inside the WHERE clause on the delta",
+        "In the GROUP BY expression",
+      ],
+      answer: 1,
+      why: "JULIANDAY returns fractional days; averaging 82 fractional deltas gives 2.98 and rounding once at the display edge keeps the mean honest. Rounding per row flattens every 2.7-day delivery to 3.0 and drifts the compliance average upward.",
+      notes: [
+        { choice: 0, why: "Per-row rounding invents whole-day latencies — the average of rounded rows is a different (coarser) number, and the 2.98 the zone board quotes disappears." },
+        { choice: 2, why: "WHERE compares, it doesn't format — ROUND there is either a syntax-level misuse or a filter that silently drops fractional-day rows." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "deliveroo-mcq-15",
+      prompt: "The partner chase list uses id NOT IN (SELECT partner_id FROM ...). The inner list comes back with one NULL. What ships?",
+      choices: [
+        "The list, minus NULL partners",
+        "An empty report — every comparison turns UNKNOWN",
+        "An error naming the NULL row",
+        "The list with NULLs sorted last",
+      ],
+      answer: 1,
+      why: "x NOT IN (…, NULL) can never be TRUE: x != NULL is UNKNOWN, so WHERE keeps nothing. The chase list empties silently — no error, no warning — the most dangerous failure shape in the toolkit.",
+      notes: [
+        { choice: 0, why: "SQL doesn't 'skip' NULLs in NOT IN — that's COUNT's behavior. Here the NULL poisons every row's comparison." },
+        { choice: 2, why: "The engine evaluates per row and returns UNKNOWN — it never flags the NULL. Only a population guard (IS NOT NULL) or NOT EXISTS fixes it." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "deliveroo-mcq-16",
+      prompt: "The dinner board wants within-promise orders and the late chase list stacked into ONE table with a bucket label column. Which operator?",
+      choices: [
+        "UNION — it dedupes the stack",
+        "UNION ALL — it concatenates both branches",
+        "INTERSECT — common rows of both",
+        "EXCEPT — rows in the first, not the second",
+      ],
+      answer: 1,
+      why: "UNION ALL concatenates the within-promise census and the late chase list without a dedupe pass — every row belongs in the report. UNION sorts and dedupes, and two zones producing identical rows would silently collapse into one.",
+      notes: [
+        { choice: 0, why: "UNION's dedupe is a correctness hazard here: identical (region, count) rows from different buckets vanish, and the chase list shrinks unnoticed." },
+        { choice: 2, why: "INTERSECT returns rows present in BOTH queries — a completely different question; the two buckets are disjoint by definition, so it returns nothing." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "deliveroo-mcq-17",
+      prompt: "The ops printout folds each order's plates into one cell: GROUP_CONCAT(p.name, ', '). What ordering guarantee does the cell content carry?",
+      choices: [
+        "Alphabetical by product name",
+        "None — arbitrary unless the query sorts explicitly",
+        "Primary-key order, always",
+        "The GROUP BY column's order",
+      ],
+      answer: 1,
+      why: "A bare GROUP_CONCAT concatenates in whatever order the engine visits the rows — no contract. If the manifest needs pick sequence, sort in a staged subquery or use the aggregate's own ORDER BY clause; promising order from a bare fold is a bug report waiting to happen.",
+      notes: [
+        { choice: 0, why: "Nothing sorts unless told — alphabetical-looking output is coincidence of row visitation, and it breaks the first time the plan changes." },
+        { choice: 2, why: "Row visitation is not key order — the planner is free to reorder scans, and id-ordered cells are an assumption, not a guarantee." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "deliveroo-mcq-18",
+      prompt: "The demand pulse uses LAG(revenue) OVER (ORDER BY month) for month-over-month change. What should the FIRST month (2024-01) print as its percentage change?",
+      choices: [
+        "0% — the baseline is itself",
+        "NULL — there is no prior month, and the honest report shows it",
+        "A giant positive — baseline zero",
+        "An error — LAG has nothing to read",
+      ],
+      answer: 1,
+      why: "LAG with no prior row returns NULL, and the delta math propagates it: NULL means 'no baseline', which is the truthful read for the opening month. The 3,731.97 opener is a starting point, not a change.",
+      notes: [
+        { choice: 0, why: "COALESCE-ing to 0% fakes a flat start — someone quotes it as 'stable January' and the deck inherits a lie." },
+        { choice: 2, why: "A zero baseline doesn't produce a giant number — it produces NULL again (division by zero), which is the universe agreeing with the honest answer." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "deliveroo-mcq-19",
+      prompt: "A teammate wraps the latency fold as AVG(COALESCE(JULIANDAY(shipped_at) - JULIANDAY(created_at), 0)) so 'nothing is missing'. What happens to the zone SLA read?",
+      choices: [
+        "Nothing — COALESCE is safe hygiene",
+        "The 21 open orders inject fake 0-day latencies and drag zone averages toward zero — compliance flatters itself",
+        "Averages ignore the zeros anyway",
+        "The query errors on the type mix",
+      ],
+      answer: 1,
+      why: "COALESCE invents 0-day latency for the 14 pending and 7 cancelled — orders with NO latency yet — and the average drops. LATAM's 3.50 reads closer to 3.0 and the promise looks kept when it was never tested. The population guard (WHERE shipped_at IS NOT NULL) is the fix, not the decoration.",
+      notes: [
+        { choice: 0, why: "A default that means 'not finished yet' is not a latency — this is the exact fake-zero that makes compliance numbers unauditable." },
+        { choice: 2, why: "AVG skips NULLs, not zeros — the whole point of the COALESCE was to manufacture zeros, and zeros count in every average." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "deliveroo-mcq-20",
+      prompt: "orders joins its plate lines in order_items: 103 orders fan into 251 lines. On the joined rows, which expression counts ORDERS?",
+      choices: [
+        "COUNT(*)",
+        "COUNT(DISTINCT o.id)",
+        "COUNT(DISTINCT oi.id)",
+        "SUM(1)",
+      ],
+      answer: 1,
+      why: "COUNT(*) counts joined rows — 251 plate lines. COUNT(DISTINCT o.id) folds the fan-out back to 103 orders, the grain the board quotes. COUNT(DISTINCT oi.id) counts the lines again under a different alias — the same wrong 251.",
+      notes: [
+        { choice: 2, why: "Distinct line ids ≠ distinct orders — every plate line has its own id, so this is COUNT(*) in disguise." },
+        { choice: 3, why: "SUM(1) adds one per joined row — a slower COUNT(*), still 251. Arithmetic can't undo a fan-out; DISTINCT on the order key can." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "deliveroo-mcq-21",
+      prompt: "The zone board wants ONE row per region with four status columns — delivered, shipped, pending, cancelled. Which shape builds it in one scan?",
+      choices: [
+        "Four separate GROUP BY status queries, pasted side by side",
+        "GROUP BY region with a FILTER (WHERE status = …) arm per status",
+        "GROUP BY status only",
+        "A self-join of orders to orders on status",
+      ],
+      answer: 1,
+      why: "Conditional arms share one scan and one population: APAC reads 21/8/5/3 in a single row, and the arms can be summed back to the region's 37 as a reconciliation. Four queries drift the moment any filter differs by a clause.",
+      notes: [
+        { choice: 2, why: "GROUP BY status produces four rows of one column — a transpose, not a pivot; the zone grain disappears entirely." },
+        { choice: 3, why: "Self-joining on status pairs every delivered row with every shipped row — a cartesian explosion wearing a pivot's name." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "deliveroo-mcq-22",
+      prompt: "'Second-busiest zone by weekly orders' — a teammate writes ORDER BY COUNT(*) DESC LIMIT 1 OFFSET 1. On a ledger where weekly volumes tie, when does that lie?",
+      choices: [
+        "Never — OFFSET is the standard second-place idiom",
+        "Whenever a tie straddles the cut — it returns the second ROW, not the second VALUE",
+        "Only when zones have NULL names",
+        "Only on ASC sorts",
+      ],
+      answer: 1,
+      why: "OFFSET walks rows, not ranks: two zones tied at the top make the 'second row' an arbitrary member of the tie, and the real second-highest value is invisible. DENSE_RANK = 2 in a subquery is the tie-proof answer — or the admission that second place is shared.",
+      notes: [
+        { choice: 0, why: "The idiom works only on tie-free data. Weekly zone volumes land within an order of each other constantly — this is the tie case, not the exception." },
+        { choice: 3, why: "Ties bite both directions; ASC OFFSET 1 returns an arbitrary member of the SMALLEST tie — same bug, quieter end of the board." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "deliveroo-mcq-23",
+      prompt: "Cumulative delivered orders per zone across the month spine: SUM(COUNT(*)) OVER (PARTITION BY region ORDER BY month). What does the DEFAULT frame include at each row?",
+      choices: [
+        "The whole partition — a flat total on every row",
+        "RANGE UNBOUNDED PRECEDING TO CURRENT ROW — months accumulate, and peers (tied months) ride together",
+        "Only the current row",
+        "Nothing — nested aggregates are illegal",
+      ],
+      answer: 1,
+      why: "With ORDER BY, the default frame is RANGE … CURRENT ROW: the running total grows month by month, but RANGE folds ORDER-BY PEERS — two rows tied on the ordering value jump together. Explicit ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW makes it row-exact.",
+      notes: [
+        { choice: 0, why: "A flat total is the empty OVER() frame — the default is not 'everything', it's 'everything up to now, including peers'." },
+        { choice: 3, why: "SUM(COUNT(*)) OVER (…) is legal and common — the aggregate folds first, the window rides the folded rows. It errors only without the OVER." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "deliveroo-mcq-24",
+      prompt: "Two billing feeds write invoice status: 'paid' and 'Paid'. Which comparison settles BOTH spellings in the census?",
+      choices: [
+        "status = 'paid'",
+        "LOWER(status) = 'paid'",
+        "status = 'Paid'",
+        "UPPER(status) = 'paid'",
+      ],
+      answer: 1,
+      why: "Normalize the column to one case and compare against the matching literal: LOWER(status) = 'paid' catches both feeds. UPPER(status) = 'paid' can never match — 'PAID' ≠ 'paid' — a normalization that normalizes the wrong side only.",
+      notes: [
+        { choice: 0, why: "Exact equality silently drops the 'Paid' rows — the settled count shrinks while the value arm (hardcoded elsewhere) still sums their cents, and the census disagrees with itself." },
+        { choice: 3, why: "UPPER produces 'PAID'; comparing against lowercase 'paid' matches nothing. Both sides must land on the same case — column normalized, literal matched to it." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "deliveroo-mcq-25",
+      prompt: "The partner bench folds 251 plate lines into per-supplier revenue. The revenue column must print 11,130.25. Which fold prints it?",
+      choices: [
+        "SUM(oi.unit_price * oi.quantity) over the joined lines",
+        "SUM(oi.unit_price)",
+        "SUM(oi.quantity)",
+        "AVG(oi.unit_price) * COUNT(*)",
+      ],
+      answer: 0,
+      why: "Revenue is line value — price times quantity, summed across the fan-out: 11,130.25. SUM(oi.quantity) is unit volume, SUM(oi.unit_price) adds prices as if they were quantities, and AVG×COUNT multiplies a mean by a line count — none is money.",
+      notes: [
+        { choice: 1, why: "Adding unit prices across lines double-counts every repeat line's price — a number that looks like money and isn't." },
+        { choice: 2, why: "That's the units-sold fold — the supply read, not the revenue read. Two columns, two questions, same lines." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "deliveroo-mcq-26",
+      prompt: "Two rider shifts: A 17:00–20:00, B 20:00–22:00 — a legal handoff. Your overlap self-join must also carry a.id < b.id. Why?",
+      choices: [
+        "It speeds up the join",
+        "Without it every pair appears twice (A,B and B,A) and each shift pairs with itself",
+        "It's required syntax for self-joins",
+        "It filters NULL shift ids",
+      ],
+      answer: 1,
+      why: "A self-join is unordered: the overlap predicate matches both directions, and a.start < a.end is true within a single shift, so each row pairs with itself. a.id < b.id keeps exactly one representative per pair — the difference between a conflict list and a tripled one.",
+      notes: [
+        { choice: 0, why: "The guard is correctness, not performance — the doubled count it prevents is a payroll incident, not a slow query." },
+        { choice: 3, why: "NULL handling is unrelated — the predicate compares start/end timestamps, and the id filter's job is pair dedupe." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "deliveroo-mcq-27",
+      prompt: "Baskets above MY zone's average use a correlated subquery. The inner fold scans a zone with zero orders. What does the outer query return for that zone's rows?",
+      choices: [
+        "An error — empty subqueries are illegal",
+        "Nothing — the scalar subquery yields NULL, total > NULL is UNKNOWN, the rows drop",
+        "All rows — the comparison defaults to true",
+        "Zero — the comparison defaults to false",
+      ],
+      answer: 1,
+      why: "A scalar subquery over an empty population yields NULL — not an error — and any comparison with NULL is UNKNOWN, so WHERE keeps nothing. The report ships empty silently, which is why the population statement ('zone has orders') belongs in the definition.",
+      notes: [
+        { choice: 2, why: "SQL never 'defaults to true' — UNKNOWN and FALSE behave identically in WHERE. Silent emptiness is the trap, not a permissive engine." },
+        { choice: 0, why: "Zero rows is legal for a scalar subquery (0-or-1 row contract) — the danger is precisely that it doesn't error." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "deliveroo-mcq-28",
+      prompt: "The partner review's zone leaderboard: SELECT c.region, SUM(o.total) AS revenue … GROUP BY c.region. Which ORDER BY puts EU's 15,089.23 on row one?",
+      choices: [
+        "ORDER BY c.region ASC",
+        "ORDER BY revenue DESC",
+        "ORDER BY revenue",
+        "ORDER BY COUNT(*) DESC",
+      ],
+      answer: 1,
+      why: "Revenue leaderboard means biggest first: ORDER BY revenue DESC. Bare 'ORDER BY revenue' is ascending — LATAM's 852.44 crowns the board — and region sorts alphabetically, putting APAC first by spelling, not value.",
+      notes: [
+        { choice: 2, why: "Default sort direction is ASC — a correct column with the opposite business meaning, and the smallest zone leads the meeting." },
+        { choice: 3, why: "That's the volume leaderboard — EU 45 orders does lead it, but by luck; the ask was revenue, and US (19 orders, 7,286.16) vs APAC (37, 11,605.45) prove the two boards disagree." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "deliveroo-mcq-29",
+      prompt: "The compliance pack wants a running late-count by month AND the network total (25) on EVERY row. Which window sums the whole table on each row?",
+      choices: [
+        "SUM(late) OVER (ORDER BY month ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)",
+        "SUM(late) OVER ()",
+        "SUM(late) OVER (PARTITION BY month)",
+        "SUM(late) OVER (ORDER BY month RANGE BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)",
+      ],
+      answer: 1,
+      why: "The empty OVER() is the whole-partition frame: every row carries the same 25. The running frame (choice 0) grows to 25 only on the last row — right for a trend column, wrong for a total column. PARTITION BY month resets the sum per month.",
+      notes: [
+        { choice: 0, why: "That's the running total the pack ALSO wants — two columns, two frames: ROWS … CURRENT ROW for the trend, empty OVER() for the constant total." },
+        { choice: 3, why: "A frame starting at CURRENT ROW drops everything before it — a forward-only sum that reads 0 on early months. The total frame must span both ends." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "deliveroo-mcq-30",
+      prompt: "The spend review attaches rider-ops expense categories to orders and SUM(o.total) suddenly reads 2.4x the 34,833.28 book. What's the correct fix that keeps per-line detail?",
+      choices: [
+        "Fold orders to the line grain in a derived table, then join the fold",
+        "Add DISTINCT to the SELECT",
+        "Replace SUM with AVG",
+        "Drop the join and report order totals alone",
+      ],
+      answer: 0,
+      why: "The join fanned each order across its expense/plate lines, repeating o.total per line — SUM now counts the same order 2.44 times on average. Fold one side to the shared grain first (derived table of order_id + its lines), then join; the fan-out disappears and the detail survives inside the fold.",
+      notes: [
+        { choice: 1, why: "DISTINCT collapses only exact duplicate ROWS — repeated order totals across different lines differ in other columns and survive, so the inflation stays." },
+        { choice: 2, why: "AVG divides by the fanned row count — a smaller wrong number, not the book. The fix is grain, not arithmetic." },
+      ],
+      difficulty: "medium",
+    },
   ],
 
   cases: [
@@ -400,7 +837,175 @@ export const deliverooKit: CompanyKit = {
       distractors: ["'Paid'", "'void'", "* 100.0", "amount", "'settled'"],
       walkthrough:
         "A one-pass census where FILTER (WHERE …) keeps every arm on the same population: 28 invoices scanned once, each arm filtering its own rows inside the scan — 21 settled at $66,443.00, 6 unsettled at $19,609.00, counts and values from the same pass so they can never drift apart the way three separate queries do. The traps the distractors encode: 'Paid' with a capital P matches nothing — status text is case-sensitive, and the count arm would read 0 while the hardcoded value arm still reads 66,443.00, a self-contradicting census; 'void' swaps the unsettled arm onto the one void invoice and hides the six genuinely open ones; '* 100.0' multiplies pennies into a number a hundred million times too big; 'amount' is not a column (it's amount_cents) and errors the value arm; and 'settled' is a label, not a status — the census reads zero everywhere it should read 21. The close quotes dollars, so the cents-to-dollars division is float — integer division would truncate pennies into fiction, and this is exactly the arithmetic the reconciliation table exists to catch.",
-      },
+    },
+    {
+      id: "cs-deliveroo-3",
+      tier: "medium",
+      topic: "j7",
+      universe: "growth",
+      title: "The two-grain zone census",
+      brief:
+        "Growth-board brief, Deliveroo-flavored on the storefront db (orders = delivery orders, customers = registered households, region = zone): every zone review opens with the two-grain census — deliveries AND buyers per zone in one row — because a zone can gain orders while losing people, and only the column pair says which. Probed fold: EU 45 deliveries from 8 buyers for 15,089.23, APAC 37 from 5 for 11,605.45, US 19 from 2 for 7,286.16, LATAM 2 from 1 for 852.44. The buyers counter is the test: 103 orders come from just 16 buyers, so the counter must fold repeat demand back to people — EU's 8 buyers driving 45 deliveries is the density story the review exists to discuss.",
+      ask: "Return one row per zone: region, deliveries, buyers, revenue (2 decimals) — biggest revenue first.",
+      template:
+        "SELECT c.region,\n       COUNT(*) AS orders,\n       COUNT({1} o.customer_id) AS buyers,\n       ROUND(SUM({2}), {3}) AS revenue\nFROM orders o\nJOIN customers c ON {4}\nGROUP BY c.region\nORDER BY revenue {5}",
+      slots: [
+        {
+          answer: "DISTINCT",
+          kind: "keyword",
+          label: "the buyer fold",
+          why: "COUNT(DISTINCT o.customer_id) folds repeat orders back to people: 8, 5, 2, 1. A bare COUNT(o.customer_id) reads 45, 37, 19, 2 — a mirror of the deliveries column, because every joined row carries a non-null customer id, and repeat demand stays invisible.",
+        },
+        {
+          answer: "o.total",
+          kind: "keyword",
+          label: "the revenue fold",
+          why: "Revenue is the order total summed per zone — EU 15,089.23. SUM(1) counts rows twice over (45 again), a counter wearing a dollar name; the fold column decides whether the column is money or a row count.",
+        },
+        {
+          answer: "2",
+          kind: "number",
+          label: "the money rounding",
+          noVerify: true,
+          why: "The close quotes dollars and cents: ROUND(SUM(o.total), 2) prints 15,089.23. One digit prints 15,089.2 — a penny of every figure quietly wrong across the whole deck, which is how rounding errors become reconciliation breaks.",
+        },
+        {
+          answer: "c.id = o.customer_id",
+          kind: "keyword",
+          label: "the zone stitch",
+          why: "Orders reference households by customer_id, so the stitch is c.id = o.customer_id. Join on c.id = o.id and orders pair with whatever household shares their row id — zones read plausible and completely wrong, with no error anywhere.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-first direction",
+          why: "The review opens at the top: EU 15,089.23 first. ASC crowns LATAM's 852.44 — a correct query that spends the meeting on the smallest zone.",
+        },
+      ],
+      distractors: ["SUM", "COUNT", "1", "c.id = o.id", "ASC"],
+      walkthrough:
+        "Two grains, one fold, one stitch. The join attaches each order to its household's zone — every order matches, all 103 survive — and GROUP BY region folds them into four rows. The deliveries counter is COUNT(*): 45, 37, 19, 2. The buyers counter is the test of the case: COUNT(DISTINCT o.customer_id) folds repeat demand back to people — EU 8, APAC 5, US 2, LATAM 1 — where a bare COUNT(o.customer_id) mirrors the deliveries column exactly, because no joined row carries a NULL customer id. Revenue folds SUM(o.total) rounded once to cents: 15,089.23, 11,605.45, 7,286.16, 852.44. The distractors encode the classic failures: SUM or COUNT in the fold slots turn money into row counts or error outright; 1 as the fold counts rows instead of dollars; a rounding of 1 prints 15,089.2 — pennies wrong everywhere; the wrong stitch (c.id = o.id) pairs zones with whatever household shares the order's row id, producing plausible-looking garbage; and ASC opens the review at the bottom of the board.",
+    },
+    {
+      id: "cs-deliveroo-4",
+      tier: "medium",
+      topic: "t7",
+      universe: "growth",
+      title: "The demand pulse into the trough",
+      brief:
+        "Growth-deck brief, Deliveroo-flavored on the storefront db: the review wants the monthly demand pulse — each month's revenue beside the prior month's, with the percentage change — so the narrative writes itself from the table. Probed fold: fourteen months, 2024-01 opening at 3,731.97, February 3,609.64 (-3.3%), March 2,617.08 (-27.5%), down to the 2024-07 trough at 1,193.86 — a -41.7% collapse from June that IS the row the deck quotes. LAG carries the prior month; the first month's change is honestly NULL — no baseline exists, and the deck says so rather than printing a fake flat start.",
+      ask: "Return month, revenue, the prior month's revenue, and the month-over-month percentage change for the first six months.",
+      template:
+        "WITH monthly AS (\n  SELECT SUBSTR(created_at, 1, 7) AS month,\n         ROUND(SUM(total), 2) AS revenue\n  FROM orders\n  GROUP BY month\n)\nSELECT month,\n       revenue,\n       {1}(revenue) OVER (ORDER BY month) AS prev_revenue,\n       ROUND(100.0 * (revenue - LAG(revenue) OVER (ORDER BY month))\n             / LAG(revenue) OVER (ORDER BY month), {2}) AS mom_pct\nFROM monthly\nORDER BY month {3}\nLIMIT {4};",
+      slots: [
+        {
+          answer: "LAG",
+          kind: "keyword",
+          label: "the prior-month reader",
+          why: "LAG(revenue) walks the window backwards one row — February's prev is January's 3,731.97. LEAD reads forward and hands February March's number, silently re-labeling the future as history; the first row's NULL is the honest 'no baseline'.",
+        },
+        {
+          answer: "1",
+          kind: "number",
+          label: "the change rounding",
+          noVerify: true,
+          why: "Percent changes print at one decimal: -3.3, -27.5, -41.7. Two decimals (-3.28) manufactures precision the input month folds never carried — and the deck's headline numbers stop matching the appendix.",
+        },
+        {
+          answer: "ASC",
+          kind: "keyword",
+          label: "the chronological direction",
+          why: "A month-over-month read is chronological: ASC keeps 2024-01 on top so each row compares against the row above it. DESC presents the newest month with its baseline BELOW it — the numbers survive, the story doesn't.",
+        },
+        {
+          answer: "6",
+          kind: "number",
+          label: "the opener cut",
+          noVerify: true,
+          why: "LIMIT 6 returns the first six months — the run the deck opens with, ending on the -41.7% June-to-July fade into the 1,193.86 trough. The figure 6 is also June's month index in the spine's sixth row — the fade is the row the narrative quotes.",
+        },
+      ],
+      distractors: ["LEAD", "2", "DESC", "13"],
+      walkthrough:
+        "Staged windows over a monthly fold. The CTE buckets 103 orders into fourteen month keys (SUBSTR on the fixed-width ISO text, ROUND once) and folds revenue: 3,731.97 opening, down to 1,193.86 at the 2024-07 trough. The outer query reads each month beside its neighbor: LAG(revenue) OVER (ORDER BY month) brings January into February's row, and the percentage divides the delta by that same LAG — -3.3% for the February dip, -27.5% for March, then -5.7, +17.9, -29.6 and the -41.7 collapse into the trough. The first month is NULL by design: no prior row, no baseline, no invented zero — the deck prints '—' and says so. The two-step matters because window output isn't visible to sibling expressions in the same SELECT: the CTE stages the grain, the outer SELECT layers the windows. LEAD reads the future (February's prev becomes March's 2,617.08), a 2-decimal rounding manufactures precision, DESC tells the story backwards, and LIMIT 13 amputates nothing but hides the cut the deck actually quotes.",
+    },
+    {
+      id: "cs-deliveroo-5",
+      tier: "medium",
+      topic: "q2",
+      universe: "pricing",
+      title: "The above-average basket review",
+      brief:
+        "Pricing-review brief, Deliveroo-flavored on the storefront db: the fee team judges every basket against the network's own average — computed, never hardcoded, because the average moves with the book. Probed fold: 103 orders averaging 338.19; the baskets above that bar number 42, worth 24,309.68 — 69.8% of the 34,833.28 book carried by 40.8% of the orders. The scalar subquery is the shape under test: fold the whole book once, judge every row against the single number, and know what happens when the inner fold scans an empty population — NULL, not an error, and every comparison goes UNKNOWN.",
+      ask: "Return one row: big_baskets (orders above the network average), their value, and their share of the whole book.",
+      template:
+        "SELECT COUNT(*) AS big_baskets,\n       ROUND(SUM({1}), 2) AS value,\n       ROUND(100.0 * SUM(total) / (SELECT SUM(total) FROM orders), {2}) AS book_share\nFROM orders\nWHERE total > (SELECT {3}(total) FROM orders);",
+      slots: [
+        {
+          answer: "total",
+          kind: "keyword",
+          label: "the value column",
+          why: "The baskets' value folds o.total — 24,309.68 across the 42 above-average orders. There is no price column on orders: the fold names the money column or the query errors, and the fee review ships as a screenshot of an error.",
+        },
+        {
+          answer: "1",
+          kind: "number",
+          label: "the share rounding",
+          noVerify: true,
+          why: "The share prints 69.8 at one decimal. A zero-decimal round prints 70 — a rounding that manufactures a whole point of book share, which is exactly the drift a fee review can't afford.",
+        },
+        {
+          answer: "AVG",
+          kind: "keyword",
+          label: "the baseline fold",
+          why: "The baseline is the network's average basket: 34,833.28 over 103 = 338.19. AVG is the definition; MAX leaves nothing above it (empty report), COUNT returns 103 and the 'above-average' bar becomes 'total > 103' — a different question with a different answer.",
+        },
+      ],
+      distractors: ["MAX", "price", "0", "COUNT"],
+      walkthrough:
+        "One fold defines the bar; another judges every row against it. The inner SELECT AVG(total) FROM orders scans the whole book once — 34,833.28 over 103 = 338.19 — and the outer WHERE keeps the 42 baskets above that line, worth 24,309.68. The share column re-folds the whole book a second time (SELECT SUM(total) FROM orders) so the ratio is self-contained: 24,309.68 of 34,833.28 = 69.8%, the concentration number the fee conversation opens with. The distractors encode the failures: MAX as the baseline leaves zero rows (nothing beats the maximum — the report ships empty and honest about nothing); 'price' names a column orders doesn't have; a 0-decimal round prints 70.0 and quietly inflates the share; and COUNT as the baseline compares baskets to 103 — an order count wearing a threshold's name, keeping a wholly different set. The scalar subquery contract — one column, 0-or-1 rows, NULL on empty — is what the walkthrough leaves behind.",
+    },
+    {
+      id: "cs-deliveroo-6",
+      tier: "medium",
+      topic: "s7",
+      universe: "funnel",
+      title: "The zone-fate pivot",
+      brief:
+        "Funnel brief, Deliveroo-flavored on the storefront db: the zone board reads order fate as a pivot — one row per zone, four status columns — because the intervention targets the bucket, not the average. Probed fold: EU runs 24 delivered / 12 shipped / 6 pending / 3 cancelled of 45; APAC 21 / 8 / 5 / 3 of 37; US 5 / 10 / 3 / 1 of 19 — the only zone where shipped OUTruns delivered — and LATAM 2 / 0 / 0 / 0 of 2. The pivot must scan once and classify in flight: a CASE arm per status over one population, ordered by volume, biggest first.",
+      ask: "Return one row per zone: delivered, shipped, pending, cancelled, placed — biggest placed-count first.",
+      template:
+        "SELECT c.region,\n       SUM(CASE WHEN o.status = {1} THEN 1 ELSE 0 END) AS delivered,\n       SUM(CASE WHEN o.status = {2} THEN 1 ELSE 0 END) AS shipped,\n       SUM(CASE WHEN o.status = 'pending' THEN 1 ELSE 0 END) AS pending,\n       SUM(CASE WHEN o.status = 'cancelled' THEN 1 ELSE 0 END) AS cancelled,\n       COUNT(*) AS placed\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nGROUP BY c.region\nORDER BY {3} {4}",
+      slots: [
+        {
+          answer: "'delivered'",
+          kind: "keyword",
+          label: "the delivered arm",
+          why: "The delivered column counts status 'delivered' — 24 in EU, 21 in APAC. 'Delivered' with a capital D matches nothing: text equality is case-sensitive, and the whole column reads 0 while the placed column still reads 45 — a pivot that contradicts itself.",
+        },
+        {
+          answer: "'shipped'",
+          kind: "keyword",
+          label: "the shipped arm",
+          why: "Shipped is its own status — 30 network-wide, and US's 10 shipped against 5 delivered is the story of the pivot: the only zone where the in-flight queue outnumbers completes. Swap the arm to 'cancelled' and the queue column starts counting lost orders.",
+        },
+        {
+          answer: "placed",
+          kind: "keyword",
+          label: "the volume sort key",
+          why: "The board reads biggest first: ORDER BY placed puts EU's 45 on row one. Sorting by the region name orders zones alphabetically — APAC first by spelling, LATAM's 2-order zone sandwiched between giants — a different meeting entirely.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-first direction",
+          why: "DESC serves the intervention order: EU, APAC, US, LATAM. ASC opens on LATAM's 2 orders — a correct query aimed at the quietest corner of the map.",
+        },
+      ],
+      distractors: ["'Delivered'", "'cancelled'", "region", "ASC"],
+      walkthrough:
+        "A pivot is one scan, one population, one CASE per column. The join attaches zones, GROUP BY region forms four groups, and each SUM(CASE …) arm counts its own status inside the fold — EU 24/12/6/3 of 45, APAC 21/8/5/3 of 37, US 5/10/3/1 of 19, LATAM 2/0/0/0 of 2 — with the four arms summing back to placed as the reconciliation. ORDER BY placed DESC reads the board intervention-first. The distractors encode the classic pivot failures: 'Delivered' capital-D zeroes an entire column while placed stays honest — a self-contradicting table; 'cancelled' in the shipped arm hides the in-flight queue inside the lost-order count, and the US story (10 shipped, 5 delivered) evaporates; ORDER BY region sorts by spelling instead of volume; and ASC opens on the quietest zone. The pivot's discipline: every arm filters inside the aggregate, so the population never shrinks — which is exactly what a WHERE-first census would have destroyed.",
+    },
   ],
 
   problems: [
@@ -420,5 +1025,21 @@ export const deliverooKit: CompanyKit = {
     { slug: "bikes-last-time-used", why: "MAX per group for last-active stamps — fleet hygiene: which riders (and bikes) went quiet. Curated pick." },
     { slug: "server-utilization-time", why: "Span versus summed intervals — logged shift hours versus wall-clock span, the payroll reconciliation read. Curated pick." },
     { slug: "winback-recovery", why: "Winback-window reactivation — lapsed subscribers who returned inside the window, churn reads built on billing events. Curated pick." },
+    { slug: "immediate-food-delivery-iii", why: "Instant-promise share per month — the kept-share read bucketed at month grain, the compliance trend the zone reviews quote. Curated pick." },
+    { slug: "unique-orders-and-customers-per-month", why: "Two counters, one fold: orders AND customers per month — the two-grain discipline every zone census here is built on. Curated pick." },
+    { slug: "sales-by-day-of-the-week", why: "Pivot volume by weekday — the lunch-crest and dinner-rush staffing curve, computed as CASE/strftime columns, not vibes. Curated pick." },
+    { slug: "customer-placing-the-largest-number-of-orders", why: "Argmax per group with a tie problem — the repeat-demand champion, and the drill that proves LIMIT-OFFSET can't break ties. Curated pick." },
+    { slug: "percentage-of-users-attended-a-contest", why: "Share with the 100.0-before-division fix and a distinct denominator — the rate shape behind every cancellation read. Curated pick." },
+    { slug: "calculate-orders-within-each-interval", why: "Interval-bucketed counts — promise windows and coverage bands folded in one pass, the roster-math sibling of the SLA census. Curated pick." },
+    { slug: "game-play-analysis-v", why: "First-event-then-return retention — the repeat-order clock: who placed a first delivery and came back inside the window. Curated pick." },
+    { slug: "find-the-team-size", why: "COUNT() OVER (PARTITION BY …) enrichment — zone rider load attached to every shift row without collapsing rows. Curated pick." },
+    { slug: "second-highest-salary", why: "Second place without LIMIT-OFFSET — the tie-proof leaderboard drill for zone and partner boards. Curated pick." },
+    { slug: "duplicate-emails", why: "GROUP BY + HAVING duplicate detection — the detect half of roster dedupe, where a rider registered twice. Curated pick." },
+    { slug: "employees-with-missing-information", why: "Symmetric LEFT JOIN NULL hunt — roster rows missing their payroll twin, fleet hygiene at row grain. Curated pick." },
+    { slug: "friday-purchases-i", why: "Weekend-window demand reads — the Friday-to-Sunday surge Deliveroo rosters for, bucketed honestly. Curated pick." },
+    { slug: "running-total-for-different-genders", why: "Running sums across populations with a grand-total row — the cumulative demand spine the close quotes. Curated pick." },
+    { slug: "customer-order-frequency", why: "Frequency bands per customer — the winback segmentation: one-order households vs the regulars, banded not averaged. Curated pick." },
+    { slug: "transactions-per-visit-histogram", why: "Zero-filled histogram — empty bins print 0, the honest funnel read when a zone simply had no dinner rush. Curated pick." },
+    { slug: "monthly-transactions-ii", why: "Monthly totals with an exclusion filter — the cancelled-excluded revenue spine, where the denominator story is the whole test. Curated pick." },
   ],
 };

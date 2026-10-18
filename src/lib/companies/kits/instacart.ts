@@ -4,7 +4,7 @@
 // 'lines picked' and 'batches kept' two different grains. Pool provenance:
 // 2 tagged sql rows (Instacart tags) — most-frequently-ordered-product-per-
 // customer and channel-ltv-vs-cac — lead the problem list and topic slugs;
-// the other 14 problems and remaining slugs are THEME-CURATED from the sql
+// the other 30 problems and remaining slugs are THEME-CURATED from the sql
 // rows in scripts/company-pools.md to Instacart's known screen themes
 // (basket depth, catalog argmax, store inventory, re-order cohorts).
 // Case studies run on the storefront db with probed figures from
@@ -26,7 +26,8 @@ export const instacartKit: CompanyKit = {
     "Instacart is the grocery marketplace where a customer's order becomes a shopper's batch: pick the items from a partner store's shelves, check out, and drop at the door. The unit of work is the **BATCH** — one order, many basket lines, one gig — and the analytics reality follows: every meaningful fold starts at basket grain and everything item-level (**251 basket lines** on this ledger) must be folded back to it without drift. Basket size is the company's heartbeat: 251 lines across 103 batches, an average basket value of **338.19** against a 25.47-to-1,088.44 spread, and best-seller reads that distinguish units picked (**47** for the top catalog item) from lines picked (24) — a two-grain distinction interviewers probe relentlessly.",
     "The data org splits into batch ops (acceptance, fill, drop times by zone), catalog and retail-partner analytics (which stores and items move the basket — the top partner store holds **11,130.25** of this ledger's GMV, **32%**), and customer growth (repeat and re-order behavior, where the 3,000-plus spenders hold **63.5%** of revenue). Zone-shaped dashboards open the day; catalog deep-dives fill the midday; the gig side of the marketplace — batch acceptance and shopper economics — keeps a denominator on every rate. *The interviewer across the table has almost certainly owned a basket-size or fill-rate metric through a week where the mix shifted, and their questions carry that weather.*",
     "Interview style is catalog-flavored and grain-obsessed. A screen typically opens with a warm-up join (attach basket lines to batches and catalog items), escalates into a fold with a grain rule (**units versus lines, baskets versus customers**), then either an argmax question (most-frequently-ordered item per customer, top store by GMV) or a rate question where the trap is integer division, fan-out, or a HAVING-versus-WHERE misplacement. Follow-ups are spoken out loud: '*is that units or lines?*', 'does that denominator include unaccepted batches?', 'above the average of WHAT population?'. Candidates who narrate grain and population before writing SQL consistently outperform.",
-    "Preparation strategy: the band carries 2 Instacart-tagged sql rows — `most-frequently-ordered-product-per-customer` and `channel-ltv-vs-cac` — and both lead this kit because they are real Instacart screens (per-customer argmax; personal-clock trailing value). The other 14 problems are theme-curated from the band's sql rows to Instacart's known probes: basket-depth-aov, repeat-purchase-rate, find-stores-with-inventory-imbalance, weeks-of-supply, rfm-segmentation. The two case studies run on the live storefront db, mapped honestly onto grocery: orders are batches, `order_items` are basket lines, products are catalog items, suppliers are partner stores. One case rebuilds the batch best-seller read (a three-table chain); the other rebuilds the above-average-basket census for the pricing review. Both are mechanically audited against the probed db figures.",
+    "Preparation strategy: the band carries 2 Instacart-tagged sql rows — `most-frequently-ordered-product-per-customer` and `channel-ltv-vs-cac` — and both lead this kit because they are real Instacart screens (per-customer argmax; personal-clock trailing value). The other 14 problems are theme-curated from the band's sql rows to Instacart's known probes: basket-depth-aov, repeat-purchase-rate, find-stores-with-inventory-imbalance, weeks-of-supply, rfm-segmentation. The two case studies run on the live storefront db, mapped honestly onto grocery: orders are batches, `order_items` are basket lines, products are catalog items, suppliers are partner stores. One case rebuilds the batch best-seller read (a three-table chain); the other rebuilds the above-average-basket census for the pricing review. Two more extend those drills — a weekend-readiness GMV pivot and a units-rank leaderboard that keeps its tie — and two open new screens: a per-store one-pass fill census and a zone-coverage anti-join. All are mechanically audited against the probed db figures.",
+    "This expanded kit is built for spaced practice rather than one sitting. **Six case studies** now span the asks Instacart's batch-ops floor and catalog pods rehearse: the batch best-seller (a three-table chain with a units crown), the above-average-basket census for pricing, a weekend-readiness GMV pivot, a units-rank leaderboard that keeps the 36-unit tie riding together, a per-store one-pass fill census with `FILTER`, and a zone-coverage anti-join that finds the 12 of 16 catalog items LATAM never picked. Run each on the live storefront database, then re-run it a week later from a blank editor — *the second pass is where recall actually forms*. Pair the cases with the **32-problem pool** and the theory bank below, and treat the walkthroughs as the real content: they narrate the failure each wrong chip causes, which is exactly the muscle the '*is that units or lines?*' follow-up tests.",
   ],
 
   dayInLife: [
@@ -51,27 +52,27 @@ export const instacartKit: CompanyKit = {
     {
       name: "Batch-grain aggregation",
       why: "Everything at Instacart starts by folding basket lines back to batches without letting the fan-out lie. The trap is grain drift: joining lines fans batches out, and COUNT(*) stops counting batches the moment the join lands — DISTINCT is the fold.",
-      slugs: ["basket-depth-aov", "product-sales-analysis-ii", "customer-placing-the-largest-number-of-orders"],
+      slugs: ["basket-depth-aov", "product-sales-analysis-ii", "customer-placing-the-largest-number-of-orders", "customer-order-frequency"],
     },
     {
       name: "Units-versus-lines folds",
       why: "Catalog reads split into two grains — units picked (SUM(quantity)) versus lines picked (COUNT(*)) — and interviewers force the distinction: 47 units over 24 lines for this ledger's top item. Per-item folds with join-aggregate discipline are the daily bread.",
-      slugs: ["product-sales-analysis-iii", "students-and-examinations", "warehouse-manager"],
+      slugs: ["product-sales-analysis-iii", "students-and-examinations", "warehouse-manager", "orders-with-maximum-quantity-above-average"],
     },
     {
       name: "Catalog argmax & best-sellers",
       why: "Most-frequently-ordered item per customer, most recent order per item, best seller per period — argmax is THE Instacart shape, and the tagged row here is the real screen. The trap is ties and the ROW_NUMBER-versus-MAX choice.",
-      slugs: ["most-frequently-ordered-product-per-customer", "the-most-recent-orders-for-each-product", "product-sales-analysis-iv"],
+      slugs: ["most-frequently-ordered-product-per-customer", "the-most-recent-orders-for-each-product", "product-sales-analysis-iv", "the-most-recent-three-orders"],
     },
     {
       name: "Basket completeness & gaps",
       why: "Recipes are membership sets: customers who bought A and B but not C, relational-division reads for full-basket buyers, restock reviews for items that stopped selling. Conditional membership and anti-joins decide promo targeting.",
-      slugs: ["customers-who-bought-a-and-b-not-c", "customers-who-bought-all-products", "sellers-with-no-sales"],
+      slugs: ["customers-who-bought-a-and-b-not-c", "customers-who-bought-all-products", "sellers-with-no-sales", "customers-who-never-order", "customer-who-visited-but-did-not-transact"],
     },
     {
       name: "Re-order & repeat reads",
       why: "Grocery retention is re-ordering: repeat-purchase rates, two-purchases-within-seven-days windows, revenue cohorts. The 63.5% revenue concentration from big spenders is why this family gets screen time every cycle.",
-      slugs: ["repeat-purchase-rate", "users-with-two-purchases-within-seven-days", "cohort-repeat-revenue"],
+      slugs: ["repeat-purchase-rate", "users-with-two-purchases-within-seven-days", "cohort-repeat-revenue", "game-play-analysis-v"],
     },
     {
       name: "Partner-store economics",
@@ -81,22 +82,22 @@ export const instacartKit: CompanyKit = {
     {
       name: "Shop windows & weekday rhythm",
       why: "Grocery demand is a calendar thing: the weekly shop, the 30-day activity window, weekday pivots. Period listings and day-of-week folds decide staffing and promo timing — and the window's boundaries are the trap.",
-      slugs: ["list-the-products-ordered-in-a-period", "sales-by-day-of-the-week", "user-activity-for-the-past-30-days-i"],
+      slugs: ["list-the-products-ordered-in-a-period", "sales-by-day-of-the-week", "user-activity-for-the-past-30-days-i", "friday-purchases-i", "user-activity-for-the-past-30-days-ii", "monthly-transactions-ii"],
     },
     {
       name: "Customer value tiers",
       why: "Basket value tiers, RFM tiles, channel value at the customer's personal clock — the tagged channel-ltv-vs-cac row is the real screen. NTILE buckets and trailing-window revenue folds decide who gets the nudges.",
-      slugs: ["rfm-segmentation", "channel-ltv-vs-cac", "spend-histogram"],
+      slugs: ["rfm-segmentation", "channel-ltv-vs-cac", "spend-histogram", "number-of-rich-customers", "compute-the-rank-as-a-percentage"],
     },
     {
       name: "Growth cohorts & stickiness",
       why: "New-customer counts, retention matrices, growth accounting — the weekly-active discipline of grocery growth teams. One customer's ten batches count once, and the cohort clock starts at the FIRST batch, not the calendar's.",
-      slugs: ["cohort-retention-matrix", "new-users-daily-count", "growth-accounting"],
+      slugs: ["cohort-retention-matrix", "new-users-daily-count", "growth-accounting", "dau-wau-stickiness"],
     },
     {
       name: "Escalation shapes: subqueries & CASE",
       why: "Screens close with composed asks: above-average reads via scalar subqueries, first-batch status checks in CASE, market-entry comparisons. The escalation is composition — two populations and a fence in one query, no panic.",
-      slugs: ["immediate-food-delivery-i", "second-highest-salary", "market-analysis-i"],
+      slugs: ["immediate-food-delivery-i", "second-highest-salary", "market-analysis-i", "keep-latest-dedupe", "calculate-special-bonus", "the-number-of-users-that-are-eligible-for-discount", "recyclable-and-low-fat-products"],
     },
   ],
 
@@ -148,6 +149,102 @@ export const instacartKit: CompanyKit = {
       q: "Batch event streams double-fire on retries, and catalog items get re-listed under new ids. How do you dedupe to one row per batch without losing the latest state — and how do you prove the dedupe didn't eat real batches?",
       a: "Two moves, then the proof. Detection: GROUP BY batch_id HAVING COUNT(*) > 1 is the cheapest duplicate census in SQL — run it before anything else and put the number in the ticket. Collapse: ROW_NUMBER() OVER (PARTITION BY batch_id ORDER BY event_at DESC, event_id DESC) = 1 keeps the latest state per batch, and the event_id tie-break is the part interviewers wait for — two events sharing a timestamp is the norm on retry storms, and without the tie-break 'latest' is engine-arbitrary. But collapsing is a decision, not a default: if the stream carries genuine state transitions (accepted → picked → delivered), folding them loses the funnel — so first ask whether the duplicates are retries of the SAME state or DISTINCT states, and keep the transitions if the funnel needs them. Re-listed items are the second dedupe: keep the newest listing per catalog item with the same ROW_NUMBER shape, and carry the id map, or GMV splits across ghosts. The proof is two counts before versus after — cheap, boring, run every time.",
       tag: "quality",
+    },
+    {
+      id: "instacart-t9",
+      q: "Store economics need a two-hop chain: basket lines → catalog items → partner stores. Where does that chain's grain live, and how do you fold it honestly?",
+      a: "The chain fans out twice — lines are already a fan-out of batches, and the product-to-store hop adds store attributes per line — so everything you aggregate after it lives at LINE grain. Units per store is SUM(quantity) over the folded lines; batches touched per store is COUNT(DISTINCT order_id), never COUNT(*), or a four-line basket quadruples the batch count. Money is the trap: SUM(o.total) after the chain repeats every batch total once per line, so store GMV must come from SUM(oi.unit_price * oi.quantity) at line grain — which ties to the network 34,833.28 only because line-grain money is the honest money here. Say the grain per stage — lines fold to stores, batches stay DISTINCT, money stays line-grain — and the chain survives the follow-up.",
+      tag: "joins",
+    },
+    {
+      id: "instacart-t10",
+      q: "RFM needs customers bucketed into five spend tiers. How do NTILE and percentile ranks differ, and which do you hand the growth deck?",
+      a: "NTILE(5) OVER (ORDER BY spend) cuts the sorted customers into five near-equal buckets — tile 5 is the top fifth by COUNT, not by value, and ties straddle tile edges arbitrarily. A percentile rank (rank ÷ count, scaled) answers a different question: where THIS customer sits relative to everyone. The deck usually wants both flavors named: NTILE for 'who is in the top fifth of customers', percentile for 'this customer outspends 91% of the base'. The Instacart caveat: spend folds must be per-customer FIRST (a CTE folding 103 batches to 16 customers), because windowing raw batch rows tiles batches, not people. And ties at a tile boundary are a business call — two customers with equal spend landing in tiles 4 and 5 generates the follow-up meeting.",
+      tag: "windows",
+    },
+    {
+      id: "instacart-t11",
+      q: "The pick-audit needs units and lines side by side per category. Build the fold, and state the invariant that proves it didn't drift.",
+      a: "One pass, two aggregates: COUNT(*) AS lines and SUM(quantity) AS units, grouped per category — lines count basket rows, units count shelf demand, and the strip prints both under honest names. The invariant: units >= lines in every row, because each line carries at least one unit; a category where units < lines means the fold is broken (a wrong column in the SUM, or a join that duplicated lines with fractional quantities). Network-wide the tie-out is SUM(quantity) over 251 lines against the per-category folds summing back to it. The two-grain discipline is the interview's real question — 'is that units or lines?' — and the strong answer binds each number to its aggregate form before quoting it.",
+      tag: "aggregation",
+    },
+    {
+      id: "instacart-t12",
+      q: "Store rows carry an optional sub_region, and shopper payouts carry NULL bonus fields. What is your display policy for NULLs in a partner report?",
+      a: "Two policies, stated separately. For identifiers and groupings, NULL is data: a store with no sub_region still appears in the store census — GROUP BY keeps the NULL group, and 'unzoned' is a truthful label, not a bug to scrub. For display fields, COALESCE(sub_region, '—') or COALESCE(bonus, 0) makes the report readable — but the COALESCE belongs at the display layer, with the raw column intact underneath, because a zeroed bonus reads as 'earned zero' in the gig review when the truth is 'not yet paid'. What you never do is COALESCE a join key or a filter input — NULL keys never match, and faking them welds wrong rows together. Say which layer each decision lives in and the report survives its audit.",
+      tag: "nulls",
+    },
+    {
+      id: "instacart-t13",
+      q: "The weekly shop trend folds batches by STRFTIME('%Y-%m', created_at). Why does ORDER BY month work here but ORDER BY month-name break, and what is the alias rule?",
+      a: "STRFTIME('%Y-%m') emits zero-padded keys whose LEXICOGRAPHIC order IS chronological order — '2024-01' sorts before '2024-10' before '2025-02' — so ORDER BY month is safe. Switch the key to a month name ('Jan', 'Feb') and text order breaks: 'Apr' sorts before 'Jan'. The alias rule rides along: SQLite resolves SELECT aliases in GROUP BY, HAVING and ORDER BY (they evaluate at or after the SELECT list), but never in WHERE — WHERE month = '2024-01' errors because the alias doesn't exist yet, and the fix is repeating the STRFTIME expression or staging the fold in a CTE. The deep point: sorting correctness depends on the KEY format, not the clause — pick a key whose text order means something.",
+      tag: "pipeline",
+    },
+    {
+      id: "instacart-t14",
+      q: "'Customers whose baskets contained every item in the recipe set' — relational division. How do you build it, and why does the obvious join-count version lie?",
+      a: "Relational division is a double-negative: NOT EXISTS (an item in the recipe set that this customer never bought). FROM customers c WHERE NOT EXISTS (FROM recipe_items r WHERE NOT EXISTS (FROM order_items oi JOIN orders o ... WHERE o.customer_id = c.id AND oi.product_id = r.item_id)) — every recipe item is covered by some basket line of theirs. The obvious version — joining and counting DISTINCT items bought >= recipe size — lies the moment a customer bought the same item across many batches or an item OUTSIDE the recipe: the count clears the threshold without full coverage. Say the two-layer NOT EXISTS out loud, note that duplicates don't fool it (EXISTS is membership, not counting), and the query survives the 'what if they bought item X twice?' follow-up that kills the count version.",
+      tag: "subqueries",
+    },
+    {
+      id: "instacart-t15",
+      q: "Channel value must be measured on the customer's personal clock, not the calendar's. What does that query look like, and why does the distinction matter?",
+      a: "The personal clock anchors every window at the customer's FIRST batch: JOIN to a per-customer CTE holding MIN(created_at) as cohort_start, then fold channel events where created_at >= cohort_start AND created_at < date(cohort_start, '+90 days') — each customer's own 90 days, not the quarter the calendar happened to draw. The calendar version silently mixes tenured and brand-new customers: a January cohort's 'first 90 days' includes March, when they were already veterans. The distinction matters because retention and channel-payback curves are definitions of TIME, and mixing clocks flattens the curve you're trying to read. The follow-up — 'which clock did you use?' — is answered by naming the anchor: first batch, per customer, computed once in a CTE.",
+      tag: "dates",
+    },
+    {
+      id: "instacart-t16",
+      q: "Before the batch board ships, how do you prove the line-level folds tie to the batch-level truth?",
+      a: "A two-sided diff at two grains. Line side: COUNT(*) over order_items is 251. Batch side: COUNT(DISTINCT order_id) over the same table is 103, and COUNT(*) over orders is 103 too — the two must match, or the join lost or duplicated batches. Money ties the same way: SUM(total) over orders (34,833.28) versus SUM(unit_price * quantity) over lines — equal only when line-grain money reconciles to batch-grain money, which on this ledger it does. Then per-zone: the zone fold's batch counts must sum back to 103, and its line counts to 251. Where a diff is nonzero, bisect by status or by day. Shipping the tie-out line ('251 lines, 103 batches, 2.44 lines per batch, money ties both ways, delta 0') is what ends the ops meeting.",
+      tag: "quality",
+    },
+    {
+      id: "instacart-t17",
+      q: "One partner store holds 32% of network GMV. How do you compute and present concentration without tripping the fan-out?",
+      a: "Fold GMV per store at line grain — SUM(oi.unit_price * oi.quantity) over the lines-to-products-to-stores chain — then divide each store's fold by the network total (11,130.25 of 34,833.28 = 32% for the top store) with 100.0-before-division. Present the share beside its denominator: '32% of network GMV' and '11,130.25 of 34,833.28' travel together, because a share without its base is a rumor. The fan-out traps: never SUM(o.total) after the chain (batch totals repeat per line), and never compute the denominator from a filtered query — the 34,833.28 must come from ALL batches, the same population the shares claim to partition. A concentration read where the shares sum to 101% has a denominator drift; check that sum before the deck ships.",
+      tag: "groupby",
+    },
+    {
+      id: "instacart-t18",
+      q: "Catalog names arrive as 'ORGANIC avocado', 'organic avocado ', and 'Organic Avocado'. How do you normalize discovery reads without losing the organic flag?",
+      a: "Split the two concerns. The flag is categorical data — extract it deliberately (a CASE on UPPER(name) LIKE '%ORGANIC%' into an is_organic column, or better, a proper attribute column) so it survives normalization; folding it into spelling cleanup loses a filter the business queries daily. The name is a join/display key — UPPER(TRIM(name)) for matching, a separately-built display label for presentation, because 'the same item under three spellings' splits its units across three best-seller rows and the crown goes to a ghost. The receipt is a before/after COUNT(DISTINCT normalized_name): three spellings collapsing to one is the proof, and it goes in the migration ticket. Never let the display layer's casing leak back into the GROUP BY — one canonical key, applied symmetrically.",
+      tag: "strings",
+    },
+    {
+      id: "instacart-t19",
+      q: "Substitutions complicate item attribution: a line for item A may have been fulfilled with item B. Which item does the best-seller fold count, and how does the join decide?",
+      a: "The line's product_id is the DEMAND record — the customer asked for A — so best-seller folds count A even when B landed in the bag; B's units are a fulfillment fact, not a demand fact. The fold joins lines to products on product_id and never consults a substitution mapping for the crown; a substitution-aware read is a SEPARATE query that joins the mapping table and reports B's units under 'fulfilled-as', clearly labeled. Mixing the two — coalescing B into the fold — inflates whichever item happens to be the common substitute and quietly deflates the requested item, moving the crown without moving demand. The interview question under this is always 'which grain is the metric about?': demand reads the request, ops reads the fulfillment, and a report that blends them is lying to one of its two audiences.",
+      tag: "joins",
+    },
+    {
+      id: "instacart-t20",
+      q: "Re-order rhythm: 'days between consecutive batches per customer'. Which window builds it, and what breaks on the first order or on same-day doubles?",
+      a: "LAG over the customer's own timeline: LAG(created_at) OVER (PARTITION BY customer_id ORDER BY created_at, id) staged per row, then JULIANDAY(created_at) - JULIANDAY(prev) gives the gap — 0.0 for a same-day double, NULL for the customer's first batch where no prior exists. The NULL is honest ('no gap yet'), not a hole to COALESCE; the 0.0 is real data (two shops in one day) that a daily-grain read would hide. The id in the window ORDER BY is the tie-break that makes 'consecutive' deterministic when timestamps collide. And the partition is the whole point: without PARTITION BY customer_id the gaps run across customers and measure nothing. Average the gaps only over customers with at least two batches, and say that population out loud.",
+      tag: "windows",
+    },
+    {
+      id: "instacart-t21",
+      q: "Store economics quote an 'average selling price' per item. Why does AVG(price) and SUM(revenue)/SUM(units) disagree, and which is the honest one?",
+      a: "AVG(price) averages the CATALOG rows — each price once, whether it sold 47 units or none — a price-list statistic. SUM(unit_price * quantity) / SUM(quantity) weights every price by the units that actually moved at it — the realized per-unit economics, and the number pricing reviews mean by 'average selling price'. On a mix-shifted week the two diverge exactly when the heavy-volume items carry below-average prices, which is the interesting case, not the error case. The Instacart discipline: name the weighting out loud — 'per listing' versus 'per unit picked' — and never let a report quote one under the other's name. The follow-up 'what happens when a promo reprices half the volume?' is answered by the weighted form and invisible to the simple mean.",
+      tag: "aggregation",
+    },
+    {
+      id: "instacart-t22",
+      q: "The catalog review wants both crowns in one strip — the units-best item AND the lines-best item, labelled. How do you stack them honestly?",
+      a: "Two branches, one UNION ALL. Each branch is the same fold at a different crown: SUM(quantity) ranked for the units-best, COUNT(*) ranked for the lines-best, each LIMIT 1, each carrying a literal label column ('units_crown' / 'lines_crown'). UNION ALL is the honest stack — every row belongs, so no dedupe pass; a bare UNION would collapse the two rows if they ever carried identical values, deleting a crown. The label column is what makes the stack readable: without it, two item-name rows with two numbers answer no question. Positional discipline applies — same column count, same types — and the tie rule from the rank trio rides along: a ties-at-the-top week returns two rows per crown, and the strip says so instead of choosing.",
+      tag: "pipeline",
+    },
+    {
+      id: "instacart-t23",
+      q: "Replenishment asks 'weeks of supply' per item. How do you fold a trailing pick velocity into a cover number, and where does the window boundary bite?",
+      a: "Two folds. Velocity: SUM(quantity) over the trailing window — created_at >= date('now', '-28 days') AND < 'now' — divided by 4 gives weekly pick rate per item. Cover: current stock divided by that weekly rate, the weeks the shelf holds at present demand. The boundary bites twice: the half-open upper bound ('< now', never BETWEEN) keeps the freshest picks without double-counting the edge instant, and the window is the same length for every item — a 'trailing 28 days' that quietly varies by item makes covers incomparable. Items with zero velocity divide by zero: report them as 'no recent demand' (NULL cover, or a stated infinite), never as 0 weeks — zero cover reads as 'out of stock today', a different fire. State the window and the velocity convention in the report header; cover numbers without their velocity window are rumors.",
+      tag: "dates",
+    },
+    {
+      id: "instacart-t24",
+      q: "The gig side reports batch acceptance rate: accepted ÷ offered. Which exclusions are legitimate, and what does a WHERE filter do to the rate?",
+      a: "The denominator is every batch OFFERED — accepted, rejected, timed-out, cancelled — because acceptance rate is a statement about the supply side's willingness. Legitimate exclusions remove population members from BOTH sides symmetrically: test accounts, duplicate offer events (deduped to one offer per batch), or a zone excluded from the pilot — each shrinks numerator and denominator together and the rate stays comparable. A WHERE status = 'accepted' before the fold shrinks the denominator to the numerator's own population and every zone reads 100% — a definition change wearing an optimization's clothes, the exact trap trips-and-users drills. If the business wants 'acceptance rate among decided offers', that is a DIFFERENT metric with its own name; build it as a second column beside the honest one, never as a silent filter. Rates inherit their meaning entirely from the denominator's population statement.",
+      tag: "aggregation",
     },
   ],
 
@@ -322,6 +419,346 @@ export const instacartKit: CompanyKit = {
       ],
       difficulty: "easy",
     },
+    {
+      id: "instacart-mcq-11",
+      prompt: "The category pod folds demand per zone AND category: GROUP BY c.region, p.category over the full line chain. What is the output grain?",
+      choices: [
+        "One row per zone — the first column dominates",
+        "One row per zone-category pair that has demand — 23 of the 28 possible pairs on this ledger",
+        "One row per category — the last column wins",
+        "One row per basket line — grouping can't fold joins",
+      ],
+      answer: 1,
+      why: "Multi-column GROUP BY folds on the tuple: one row per distinct (zone, category) with at least one line — 23 here, since five zone-category combinations never sold. The pairing is the coverage map; the column order only affects presentation.",
+      notes: [
+        { choice: 2, why: "Neither column 'wins' — the tuple is the key. If you wanted category-only rows, group by category alone and lose the zone split." },
+        { choice: 3, why: "GROUP BY exists precisely to fold joined rows. The 251-line fan-out is the input; the pair census is the output." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "instacart-mcq-12",
+      prompt: "The staffing sheet wants seven weekday COLUMNS (Sun through Sat) of batch value. Why build it as SUM(CASE WHEN STRFTIME('%w', created_at) = '0' THEN total ELSE 0 END) per column instead of GROUP BY the weekday?",
+      choices: [
+        "CASE is faster than GROUP BY",
+        "Stakeholders read columns side by side on one row — the pivot is conditional aggregation; GROUP BY would stack seven ROWS they must eye-track",
+        "GROUP BY cannot use STRFTIME",
+        "CASE avoids NULLs",
+      ],
+      answer: 1,
+      why: "A pivot is a presentation decision executed with conditional aggregation: one scan, seven labeled columns, one shared population. GROUP BY the weekday is the same data as seven rows — correct, but not the shape the staffing sheet reads.",
+      notes: [
+        { choice: 2, why: "GROUP BY happily folds on STRFTIME output — the difference is output SHAPE, not capability." },
+        { choice: 3, why: "The ELSE 0 arm manages NULLs for SUM, but NULL management isn't why the pivot exists. Shape is." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "instacart-mcq-13",
+      prompt: "Growth asks 'how many distinct customers ordered this month?' over the batch table. Which count is the honest fold — and what does it refuse to do?",
+      choices: [
+        "COUNT(customer_id) — it skips duplicates automatically",
+        "COUNT(DISTINCT customer_id) — repeat batches fold back to people; it refuses to inflate the audience with volume",
+        "COUNT(*) — every batch is a customer",
+        "SUM(customer_id) — ids sum to the row count",
+      ],
+      answer: 1,
+      why: "COUNT(DISTINCT customer_id) is the audience grain: one customer's ten batches count once. COUNT(customer_id) skips only NULLs — with a NOT NULL key it counts every batch row, reporting volume as audience.",
+      notes: [
+        { choice: 0, why: "COUNT(col) never dedupes — it counts non-NULL values. The DISTINCT keyword is the fold; without it you're counting batches." },
+        { choice: 3, why: "Summing ids is a meaningless number that changes if a customer re-registers. Magnitude sanity: audience counts are smaller than batch counts here, never larger." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "instacart-mcq-14",
+      prompt: "The merchant pod wants each partner store's catalog categories folded into one cell — 'Accessories, Audio'. Which expression does it in SQLite?",
+      choices: [
+        "GROUP_CONCAT(DISTINCT p.category)",
+        "STRING_AGG(DISTINCT p.category, ', ')",
+        "CONCAT(p.category, ', ')",
+        "LISTAGG(p.category) WITHIN GROUP (ORDER BY p.category)",
+      ],
+      answer: 0,
+      why: "GROUP_CONCAT is SQLite's fold-to-string aggregate, and DISTINCT stops a store with three Audio items from printing 'Audio, Audio, Audio'. The other three are Postgres/Oracle shapes — right idea, wrong dialect.",
+      notes: [
+        { choice: 1, why: "STRING_AGG is Postgres. Portability cuts both ways: know the engine you're on, and know which name travels." },
+        { choice: 2, why: "CONCAT works within one row. Folding many rows into one cell requires an aggregate — that's the entire distinction." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "instacart-mcq-15",
+      prompt: "The batch board's fill-rate numerator: COUNT(shipped_at) over the 103-batch table. What does it return, and under what name does that number lie?",
+      choices: [
+        "103 — COUNT never skips",
+        "82 — COUNT skips NULL drop timestamps; it lies if labeled 'batches processed'",
+        "NULL — the column has NULLs",
+        "21 — it counts the missing ones",
+      ],
+      answer: 1,
+      why: "COUNT(col) counts non-NULL values: 82 of 103 batches carry a drop timestamp (52 delivered + 30 shipped). As the fill-rate numerator that's correct; labeled 'batches processed' it silently erases the 21-batch pending-plus-cancelled queue.",
+      notes: [
+        { choice: 0, why: "COUNT(*) is the form that never skips. COUNT(column) skipping NULLs is precisely the population choice being made here — deliberately." },
+        { choice: 3, why: "Counting the missing takes COUNT(*) - COUNT(shipped_at) = 21 — a different column with a different name ('not yet dropped'), never a swap of names." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "instacart-mcq-16",
+      prompt: "Drop latency: ROUND(JULIANDAY(shipped_at) - JULIANDAY(created_at), 1) per row, then AVG — versus AVG of the raw diff, rounded once. Why does the ledger's 2.98 average belong to the second form?",
+      choices: [
+        "JULIANDAY can't be rounded per row",
+        "Per-row rounding shifts each latency by up to half a tick before the average — the mean of rounded values drifts from the rounded mean; round once at the end",
+        "The two agree on any dataset",
+        "AVG requires integers",
+      ],
+      answer: 1,
+      why: "Rounding is order-dependent: each per-row ROUND moves that row's value up to 0.05 days and the moves don't cancel. Keep every intermediate at full precision, round the final aggregate once, and the 2.98 ties to the zone splits (2.93 to 3.50).",
+      notes: [
+        { choice: 2, why: "They drift on any real dataset with fractional days — systematically, not randomly. A close review ties figures to 2 decimals and the drift shows." },
+        { choice: 3, why: "AVG returns REAL for REAL inputs. The issue is when rounding happens, not what the function accepts." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "instacart-mcq-17",
+      prompt: "To bound the weekly-shop window you wrote WHERE created_at <= '2024-01-31'. Which batches silently leave the week?",
+      choices: [
+        "None — the bound covers all of Jan 31",
+        "Every Jan-31 timestamp — '2024-01-31 00:00:00' sorts AFTER the string '2024-01-31', so <= drops it",
+        "Only evening batches on Jan 31",
+        "The first batch of February",
+      ],
+      answer: 1,
+      why: "TEXT comparison is character-by-character: the full timestamp shares its prefix with the day string and then continues — so it compares GREATER and the <= excludes it. Half-open bounds fix it: >= '2024-01-01' AND < '2024-02-01'.",
+      notes: [
+        { choice: 0, why: "That's DATE-type intuition, and TEXT timestamps break exactly this intuition. The silent exclusion is why period folds use '< first of next period'." },
+        { choice: 2, why: "Time-of-day never gets compared — the whole day exits at once. Every Jan-31 batch vanishes together, which is what makes the hole obvious in hindsight." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "instacart-mcq-18",
+      prompt: "'Top eight customers by batches placed' — the counts run 24, 17, 14, 13, 5, then FOUR customers tied at 4. What does ORDER BY n DESC LIMIT 8 return?",
+      choices: [
+        "Eight rows — an arbitrary 8 of the 11 customers at or above the cut",
+        "Eight rows, always the same eight",
+        "Eleven rows — LIMIT expands to ties",
+        "An error — ties break LIMIT",
+      ],
+      answer: 0,
+      why: "The cut lands inside the 4-way tie at 4: five unique counts above, eleven customers at-or-above, LIMIT keeps eight — which eight depends on scan order, not business logic. State a tie-break or return all tied customers and say so.",
+      notes: [
+        { choice: 1, why: "Deterministic-looking output is the trap — the same query can return a different 8-subset after a re-run. Ties make LIMIT a coin flip." },
+        { choice: 2, why: "LIMIT never expands. Some engines offer WITH TIES; SQLite doesn't, so the tie handling must be explicit in your query." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "instacart-mcq-19",
+      prompt: "Running GMV per store by month: SUM(revenue) OVER (ORDER BY month) with no PARTITION BY. What did you build?",
+      choices: [
+        "Six running totals, one per store",
+        "One network-wide running total that crosses store boundaries — no store's row shows its own cumulative",
+        "An error — SUM OVER requires a partition",
+        "A monthly average across stores",
+      ],
+      answer: 1,
+      why: "Without PARTITION BY store_id the window is one series over all rows: a store's April 'running total' contains every store's months. PARTITION BY s.id restarts the accumulation per store — the concentration read the partner pod actually reads.",
+      notes: [
+        { choice: 0, why: "That's what the partition would give. The tell: a store's 'running total' exceeding its full-period GMV means the series never reset." },
+        { choice: 2, why: "PARTITION BY is optional syntax — omitting it is legal and silently global. The bugs that compile are the ones that ship." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "instacart-mcq-20",
+      prompt: "Per-store fold: SUM(CASE WHEN status = 'cancelled' THEN 1 END) — no ELSE. What does a store with zero cancellations print in that column?",
+      choices: [
+        "0",
+        "NULL — non-matching rows contribute NULL, and SUM over all-NULL yields NULL",
+        "It errors — CASE requires ELSE",
+        "The network's cancellation count",
+      ],
+      answer: 1,
+      why: "CASE without ELSE yields NULL for non-matching rows; a group with no 1s sums to NULL, and the store census prints a hole where a zero belongs. Write ELSE 0 — a clean store's zero is a finding, not a gap.",
+      notes: [
+        { choice: 0, why: "That's what ELSE 0 provides — which is exactly why the arm matters. The NULL isn't a bug in CASE; it's the default you didn't choose." },
+        { choice: 2, why: "ELSE is optional syntax. The failure is silent: a NULL cell that renders as a blank line in the store review." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "instacart-mcq-21",
+      prompt: "Re-order pairs: FROM orders a JOIN orders b ON a.customer_id = b.customer_id AND b.created_at > a.created_at AND JULIANDAY(b.created_at) - JULIANDAY(a.created_at) <= 7. Why the strict > ?",
+      choices: [
+        "It counts each within-7-days pair once — a symmetric condition counts both orientations and doubles the 11 pairs",
+        "Self-joins require asymmetric conditions syntactically",
+        "It removes same-day re-orders from the pair set",
+        "It's a performance hint",
+      ],
+      answer: 0,
+      why: "A self-join matches in both directions unless an asymmetric condition picks one orientation. Strict > keeps exactly one row per pair — 11 repeat-demand pairs on this ledger; drop the direction and every pair returns twice, doubling the re-order signal.",
+      notes: [
+        { choice: 2, why: "Same-day pairs survive the JULIANDAY diff of 0 — the strict > kills only the REVERSED orientation, not the same-day forward one." },
+        { choice: 3, why: "The direction halves the row count because correctness demands it. A faster query returning 22 pairs is still wrong." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "instacart-mcq-22",
+      prompt: "SELECT STRFTIME('%Y-%m', created_at) AS month, COUNT(*) AS batches FROM orders GROUP BY month HAVING batches >= 8 — does the HAVING clause work in SQLite?",
+      choices: [
+        "Yes — HAVING evaluates after groups and the SELECT list, so SQLite resolves the alias",
+        "No — HAVING can only reference fully-written aggregates",
+        "No — HAVING needs a WHERE twin",
+        "Yes, but only when the alias is also the GROUP BY key",
+      ],
+      answer: 0,
+      why: "SQLite resolves SELECT aliases in HAVING (and GROUP BY and ORDER BY) because those stages run at or after the SELECT list — the same leniency that makes WHERE month = '2024-01' fail. This keeps the six months with 8-or-more batches, ties included.",
+      notes: [
+        { choice: 1, why: "That's the strict-engine rule — Postgres demands HAVING COUNT(*) >= 8. Know your dialect; the portable form spells the aggregate out." },
+        { choice: 3, why: "Alias resolution in HAVING doesn't depend on the grouping key — any SELECT alias resolves. Two separate leniencies, both active here." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "instacart-mcq-23",
+      prompt: "'Batches above MY zone's average basket' versus 'above the network average' — which query answers the first, and what does it cost?",
+      choices: [
+        "The same scalar subquery — the average is the average",
+        "A correlated subquery: WHERE o.total > (SELECT AVG(i.total) FROM orders i JOIN customers ic ON ic.id = i.customer_id WHERE ic.region = oc.region) — the inner fold re-runs per outer row",
+        "A GROUP BY zone with HAVING",
+        "AVG(total) OVER () attached to every row",
+      ],
+      answer: 1,
+      why: "The fence's population is the question: the correlated subquery re-folds per customer's zone and answers 'above MY zone's fence', at one-fold-per-row cost — fine on 103 batches, a different conversation at scale. The window alternative (AVG(total) OVER (PARTITION BY zone)) computes it once per zone in one pass.",
+      notes: [
+        { choice: 0, why: "The network fence is exactly what the correlated version does NOT compute — 'above average' is meaningless until you say whose average." },
+        { choice: 2, why: "GROUP BY/HAVING folds to zones, killing the per-batch rows the census needs. Folding and fencing are different stages — windows or subqueries fence; GROUP BY collapses." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "instacart-mcq-24",
+      prompt: "After joining batches to basket lines, SUM(o.total) prints 103,244.55 but the network GMV is 34,833.28. What happened?",
+      choices: [
+        "The join found batches finance doesn't know about",
+        "Each batch total repeated once per basket line (251 lines over 103 batches) — batch-grain money must be summed before the join, or re-expressed as line-grain unit_price * quantity",
+        "Floating-point drift accumulated",
+        "SUM dropped rows",
+      ],
+      answer: 1,
+      why: "The fan-out multiplies: every batch total rides on each of its lines, roughly tripling the sum. Both honest fixes land on 34,833.28 — aggregate per batch first, or sum line-grain money. The number didn't drift; the grain did.",
+      notes: [
+        { choice: 2, why: "REAL arithmetic at this scale loses nothing near 103k — the 3x gap is structural. A magnitude sanity-check catches fan-out inflation instantly." },
+        { choice: 3, why: "SUM can only shrink via NULLs. Inflation means the same money was counted more than once — always a join-grain story." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "instacart-mcq-25",
+      prompt: "'The two most recent batches per customer': a join-back on MAX(created_at) per customer. How many rows per customer does it return?",
+      choices: [
+        "Two — MAX finds the second-latest too",
+        "One — MAX is a single value; the second-most-recent is structurally unreachable by a join-back",
+        "All of them",
+        "Zero for one-batch customers",
+      ],
+      answer: 1,
+      why: "MAX(created_at) resolves to one timestamp per customer, and the join-back keeps only the row matching it. Top-N per group needs ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY created_at DESC, id DESC) staged in a CTE, filtered rn <= 2 outside.",
+      notes: [
+        { choice: 0, why: "There is no 'second MAX' inside MAX. The second-latest needs a ranking — or an anti-join against the first-latest, which the window replaces." },
+        { choice: 2, why: "The join-back does filter — on equality with the max. That equality is exactly what amputates everything but the newest row." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "instacart-mcq-26",
+      prompt: "Weekend-average basket: AVG(CASE WHEN STRFTIME('%w', created_at) IN ('0','6') THEN total ELSE 0 END) versus the same CASE with ELSE dropped. What changes?",
+      choices: [
+        "Nothing — AVG treats zeros and NULLs the same",
+        "With ELSE 0, the weekday batches enter the average as zeros and deflate it; without ELSE they're NULL and AVG skips them, giving the true weekend mean",
+        "The ELSE-less version errors",
+        "ELSE is required for AVG",
+      ],
+      answer: 1,
+      why: "AVG divides its sum by the count of non-NULL inputs: zeros count as data and pull the mean down; NULLs exit both. ELSE 0 turns a weekend-filtered average into an all-week average wearing a weekend label — the single most common conditional-aggregate bug.",
+      notes: [
+        { choice: 0, why: "Zeros and NULLs are opposites in AVG. The zero version's denominator is 103; the NULL version's is 24 — different metrics, same query shape." },
+        { choice: 2, why: "The ELSE-less CASE is legal — it yields NULLs, which is exactly the behavior the weekend-only read needs." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "instacart-mcq-27",
+      prompt: "Week-over-week fill-share change: LAG(fill_pct) OVER (ORDER BY week) where fill_pct is the SELECT alias holding the conditional ratio. Why does it fail, and what fixes it?",
+      choices: [
+        "Window expressions can't see sibling SELECT aliases — repeat the full share expression inside LAG, or stage the weekly fold in a CTE and apply LAG outside",
+        "LAG can't coexist with GROUP BY",
+        "LAG requires PARTITION BY",
+        "The alias must be quoted",
+      ],
+      answer: 0,
+      why: "Expressions in one SELECT list can't reference each other's aliases — LAG needs the underlying expression, not the label. Repeating the CASE-SUM ratio inside LAG works but is unreadable; the CTE stages the fold once and LAG reads the staged column. The WHERE-versus-alias rule, one stage later.",
+      notes: [
+        { choice: 1, why: "LAG and GROUP BY coexist fine — the aggregate folds per group, the window reads the grouped result. The failure is alias visibility, not coexistence." },
+        { choice: 2, why: "PARTITION BY controls where the window restarts, never whether the function parses." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "instacart-mcq-28",
+      prompt: "The demand trend must print every week of the year — including weeks with zero batches, should a quiet one land. What does the query need?",
+      choices: [
+        "A calendar spine: a generated week list LEFT JOINed to the batch fold, with COALESCE turning unmatched weeks into zeros",
+        "A GROUP BY with an extra flag",
+        "Nothing — GROUP BY prints empty groups as zeros",
+        "An INNER JOIN to a dates table",
+      ],
+      answer: 0,
+      why: "GROUP BY folds rows that exist; a week with no batches produces no group. The spine supplies the missing keys, the LEFT JOIN carries the fold, and COALESCE(sum, 0) prints the honest zero — silence and zero are different findings.",
+      notes: [
+        { choice: 1, why: "No flag materializes a group from zero rows. Missing periods are a data-shape problem — supply the keys." },
+        { choice: 3, why: "INNER JOIN deletes exactly the unmatched spine weeks the report exists to show. The join type IS the zero-fill policy." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "instacart-mcq-29",
+      prompt: "The second-best-seller read: ORDER BY units DESC LIMIT 1 OFFSET 1. The board shows 47 then 46 — when does this query lie?",
+      choices: [
+        "When two items tie at the second-best units — OFFSET picks one arbitrarily and hides the tie (and this catalog has a 36-unit two-way tie one rung below)",
+        "Always — OFFSET is deprecated",
+        "When units are rounded",
+        "It never lies if the ORDER BY is deterministic",
+      ],
+      answer: 0,
+      why: "OFFSET-1 assumes the runner-up is unique. Today's 46 is unique — but the 36-unit tie sits at rung 4, and the trap transfers the moment the crown shifts or the ranking key changes. DENSE_RANK = 2 returns both silver items; 'both' is the honest second place.",
+      notes: [
+        { choice: 3, why: "Deterministic ordering fixes WHICH row OFFSET grabs, not whether one row can answer a tied question. The tie lives in the data." },
+        { choice: 2, why: "Rounding is downstream of ties — and can even create them. Either way the rank-based cut is the fix." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "instacart-mcq-30",
+      prompt: "The ops floor says the 'typical basket' feels smaller than the 338.19 AOV. How do you produce the number they mean in SQLite?",
+      choices: [
+        "Recompute AOV without the largest batch",
+        "Fake a median: ORDER BY total LIMIT 1 OFFSET (COUNT(*) - 1) / 2 over a subquery — the 52nd of 103 sorted baskets, 285.10",
+        "AVG of the bottom half",
+        "MODE is built in",
+      ],
+      answer: 1,
+      why: "'Typical' is a median statement, and SQLite has no MEDIAN(): the OFFSET trick over a subquery lands on the middle basket — 285.10 against the 338.19 mean, the gap being the 1,088.44 tail's pull. Quote the pair beside min/max and the skew explains itself.",
+      notes: [
+        { choice: 0, why: "Trimming the max changes the mean's population — a different, unstated metric. The floor means median, so compute the median and name it." },
+        { choice: 2, why: "An average of half the data is neither mean nor median — a third number nobody quoted. Definitions first, arithmetic second." },
+      ],
+      difficulty: "hard",
+    },
   ],
 
   cases: [
@@ -409,6 +846,152 @@ export const instacartKit: CompanyKit = {
       walkthrough:
         "A scalar-subquery census where the fence's population is the whole test. The inner fold (SELECT AVG(total) FROM orders) computes 338.19 over ALL 103 batches — no filter had touched it, which is the point: a WHERE applied to the inner fold would silently move the fence and every downstream share with it. The outer WHERE total > fence keeps 42 batches; COUNT(*) prints the count, SUM(total) folds their GMV, and dividing by the second scalar fold (the full 34,833.28) with 100.0-before-division yields 69.79% — two-fifths of the baskets carrying over two-thirds of the value. The traps the distractors encode: '<' flips to the 61-basket small-basket side, '<>' unions both sides into all 103 and a share of 100, MAX(total) prints 1,088.44 (a basket value) where a count belongs, and rounding to 0 prints 70 — smoothing away the 0.21 the pricing review was built to see. Fences compute; they don't memorize.",
       },
+    {
+      id: "cs-instacart-3",
+      tier: "medium",
+      topic: "s7",
+      universe: "growth",
+      title: "The weekend-readiness pivot",
+      brief:
+        "Growth-board brief, in-world: shopper staffing is planned around the weekly shop, so the demand slide needs the batch value split into weekend versus weekday COLUMNS — one row, two lenses, one shared population of batches. Probed on the storefront db (orders = grocery batches): weekend (STRFTIME '%w' 0 and 6 — Sunday and Saturday) carries 7,664.06 of GMV and weekday carries 27,169.22, a 22.0% weekend share. The pivot is conditional aggregation: every column is a SUM over a CASE arm, every arm reads the same 103 batches, and the two columns must add back to 34,833.28 — the free tie-out that proves no batch was counted twice.",
+      ask: "Return one row: weekend batch value, weekday batch value, and the weekend share of GMV.",
+      template:
+        "SELECT SUM(CASE WHEN STRFTIME('%w', o.created_at) {1} ('0', '6') THEN o.total {2} 0 END) AS weekend_value,\n       SUM(CASE WHEN STRFTIME('%w', o.created_at) NOT IN ('0', '6') THEN o.total ELSE 0 END) AS weekday_value,\n       ROUND(100.0 * SUM(CASE WHEN STRFTIME('%w', o.created_at) IN ({3}, '6') THEN o.total ELSE 0 END) / SUM(o.total), 1) AS weekend_pct\nFROM orders o;",
+      slots: [
+        {
+          answer: "IN",
+          kind: "keyword",
+          label: "the weekend membership test",
+          why: "IN ('0', '6') catches BOTH weekend days in one predicate — the two batch-value columns are exact complements. NOT IN swaps the columns (weekend becomes 27,169.22), and '=' cannot take a list — the pivot stops compiling.",
+        },
+        {
+          answer: "ELSE",
+          kind: "keyword",
+          label: "the zero arm",
+          why: "ELSE 0 gives non-weekend rows a zero contribution, so SUM folds only weekend money. Without the arm non-weekend rows yield NULL — SUM skips NULLs so the value survives, but the ELSE is what makes the CASE's population explicit and keeps the column audit-proof.",
+        },
+        {
+          answer: "'0'",
+          kind: "keyword",
+          label: "the Sunday key",
+          why: "SQLite numbers weekdays Sunday-zero: '0' is Sunday, '6' is Saturday, and the weekend pair is ('0','6'). Swapping in '1' silently moves Monday into the weekend and Monday is this ledger's biggest day — the share jumps while the label still says weekend.",
+        },
+      ],
+      distractors: ["NOT IN", "=", "THEN", "'7'", "WHEN"],
+      walkthrough:
+        "A pivot where the columns are two arms of one scan. The weekend arm: STRFTIME('%w') IN ('0','6') flags Sunday and Saturday batches, ELSE 0 zeroes the rest, and SUM folds 7,664.06 of weekend GMV. The weekday arm is the exact complement — NOT IN — folding 27,169.22, and the built-in tie-out is that the two columns sum to the network's 34,833.28. The share column rides a third arm: weekend GMV over SUM(o.total) with 100.0-before-division, 22.0% — staffing math the shopper-scheduling sheet consumes directly. The dangerous chips: NOT IN mirrors the columns (the weekend becomes the biggest-shopping day), '=' breaks the list syntax, and the Sunday key is where the silent lie lives — SQLite numbers Sunday '0', so a '1' for Monday quietly inflates the weekend by this ledger's heaviest day. One row, one scan, two complements that must sum to the total.",
+      },
+    {
+      id: "cs-instacart-4",
+      tier: "medium",
+      topic: "t5",
+      universe: "catalog",
+      title: "The units-rank leaderboard",
+      brief:
+        "Catalog brief, in-world: the best-seller board ranks catalog items by UNITS picked, and the tie rule is stamped before the query — items at the same rung ride together, because the top-five RUNGS are the board, not a headcount. Probed on the storefront db (order_items = basket lines, quantity = units per line): Desk Mat Extended leads at 47 units with Noise-Canceling Headset one behind at 46, then a 38, then a two-way TIE at 36 units (Laptop Stand Aluminum over 19 lines, Wireless Mouse M3 over 18 — the units crown ignores the lines crown), with Running Socks 3-pack at 33 closing rung 5. DENSE_RANK keeps the 36-tie as one rung so both items share rank 4.",
+      ask: "Return item, units, and a no-gap units rank for every item in the top five rungs, best rank first.",
+      template:
+        "WITH ranked AS (\n  SELECT p.name,\n         SUM(oi.quantity) AS units,\n         {1}() OVER (ORDER BY SUM(oi.quantity) {2}) AS units_rank\n  FROM order_items oi\n  JOIN products p ON p.id = oi.product_id\n  GROUP BY p.id\n)\nSELECT name, units, units_rank\nFROM ranked\nWHERE units_rank <= {3}\nORDER BY units_rank, name;",
+      slots: [
+        {
+          answer: "DENSE_RANK",
+          kind: "keyword",
+          label: "the no-gap rung function",
+          why: "DENSE_RANK stamps the two 36-unit items BOTH rank 4 and hands the 33-unit socks rank 5 — ties share a rung, no rung is skipped. RANK stamps the socks rank 6, and the rung cut deletes them; ROW_NUMBER splits the 36-tie arbitrarily, so one of the tied items falls off the board by scan order.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the most-units-first direction",
+          why: "The board ranks from most units down, so the window ORDER BY runs descending — 47 units takes rung 1. ASC would crown the thinnest item rung 1 and push the Desk Mat to the bottom rungs: a correct-looking query answering the opposite question.",
+        },
+        {
+          answer: "5",
+          kind: "number",
+          label: "the top-five-rung cut",
+          why: "WHERE units_rank <= 5 keeps every item at the top five rungs — six items, with the 36-tie riding together at rank 4 and the socks holding rank 5. The cut is on RANK RUNGS, not row counts: that is the tie rule made SQL, and rank 5's presence in the output is the cut made visible.",
+        },
+      ],
+      distractors: ["RANK", "ROW_NUMBER", "ASC", "3"],
+      walkthrough:
+        "A leaderboard where the tie rule is the whole board. The CTE folds basket lines per item with SUM(quantity) — 47, 46, 38, 36, 36, 33 down the top — and DENSE_RANK() OVER (ORDER BY SUM(quantity) DESC) stamps rungs over the folded units: the 36-unit pair shares rank 4 and Running Socks holds rank 5 with no gap anywhere. WHERE units_rank <= 5 keeps all six items. The two broken chips fail differently: RANK stamps the socks rank 6 — the gap where ranks would live if the tie split — and the rung cut deletes a legitimate board item; ROW_NUMBER numbers the 36-tie 4-and-5 by scan order, so one arbitrary item survives and its equal falls off. ASC inverts the board entirely. And note what the tie contains: Laptop Stand's 36 units came on 19 lines, Wireless Mouse's on 18 — the units crown packs more demand per line, which is exactly the two-grain story the catalog review tells. When the brief says 'top five rungs', DENSE_RANK plus a rank-cut is the shape that keeps ties honest.",
+      },
+    {
+      id: "cs-instacart-5",
+      tier: "medium",
+      topic: "x2",
+      universe: "supplier",
+      title: "The per-store fill census",
+      brief:
+        "Supplier brief, in-world: the partner-ops review needs a one-pass census per retail partner store — batches touched, delivered batches, basket lines, units picked, and the delivered share — computed in a single scan so every column shares the same join and the same population. Probed on the storefront db (suppliers = partner stores, order_items = basket lines, the chain lines → catalog → stores → batches): Midwest Hardware Co touches 45 batches (20 delivered) over 56 lines and 109 units; Shenzhen Electro 41 batches (23 delivered) over 47 lines and 99 units; Nordic 38/17/43/82; Pacific 35/17/40/80; Alpine 34/17/40/77; Andes 25/12/25/51. Delivered share spans 44.4% to 56.1% — and batches-touched must be COUNT(DISTINCT), because a multi-line basket fans out.",
+      ask: "Return store, batches touched, delivered batches, lines, units, and delivered share — busiest store first.",
+      template:
+        "SELECT s.name,\n       COUNT(DISTINCT o.id) AS batches,\n       COUNT(DISTINCT o.id) {1} (WHERE o.status = 'delivered') AS delivered,\n       COUNT(*) AS lines,\n       SUM({2}) AS units,\n       ROUND(100.0 * COUNT(DISTINCT o.id) FILTER (WHERE o.status = 'delivered') / {3}, 1) AS deliv_share\nFROM order_items oi\nJOIN products p ON p.id = oi.product_id\nJOIN suppliers s ON s.id = p.supplier_id\nJOIN orders o ON o.id = oi.order_id\nGROUP BY s.id\nORDER BY units {4};",
+      slots: [
+        {
+          answer: "FILTER",
+          kind: "keyword",
+          label: "the one-pass conditional counter",
+          why: "COUNT(DISTINCT o.id) FILTER (WHERE ...) counts delivered batches in the same scan as the total — the conditional census that keeps both counts on one population. WHERE alone would end the whole SELECT, and SUM/CASE cannot wrap a DISTINCT count cleanly.",
+        },
+        {
+          answer: "oi.quantity",
+          kind: "keyword",
+          label: "the units column",
+          why: "SUM(oi.quantity) folds units picked per store — 109 for Midwest, the shelf-demand grain. SUM(oi.id) would sum line ids into a meaningless five-digit number, and SUM(p.price) sums list prices — a different economic quantity wearing a units name.",
+        },
+        {
+          answer: "COUNT(DISTINCT o.id)",
+          kind: "keyword",
+          label: "the delivered-share denominator",
+          why: "The share is delivered batches ÷ batches TOUCHED — both COUNT(DISTINCT o.id) over the same fold, 20/45 = 44.4% for Midwest. COUNT(*) as the denominator divides by basket LINES: every multi-line batch deflates the share, and a store's fill rate becomes a function of basket depth.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the busiest-first direction",
+          why: "The review opens on the heaviest store, so units order descending — Midwest's 109 on top. ASC would open on Andes' 51 and read the roster backwards.",
+        },
+      ],
+      distractors: ["WHERE", "oi.id", "COUNT(*)", "ASC"],
+      walkthrough:
+        "One scan, five grains, one census. The four-table chain folds per store: COUNT(DISTINCT o.id) touches 45 batches for Midwest (a multi-line basket counts once), the FILTER clause counts 20 of them delivered in the same scan, COUNT(*) is honest LINES (56), and SUM(quantity) is UNITS (109) — each column a different grain, each labeled. The delivered share divides the FILTER count by the same DISTINCT batch count: 44.4%, beside Shenzhen's 56.1% — a spread the ops review reads as store-level execution difference, computed on one shared population. The denominator chip is where the census dies: COUNT(*) counts 56 LINES, so Midwest's share becomes 20/56 = 35.7% — deflated by exactly the multi-line batches the DISTINCT fold exists to protect. SUM(oi.id) prints garbage where units belong, and ASC reads the roster smallest-first. Six stores, one scan, and every column reconciles to the same 251 lines and 103 batches.",
+      },
+    {
+      id: "cs-instacart-6",
+      tier: "hard",
+      topic: "j5",
+      universe: "catalog",
+      title: "The zone-coverage gap",
+      brief:
+        "Catalog brief, in-world: assortment planning wants the coverage map — which catalog items have NEVER been picked in a given fulfillment zone — because a coverage gap is a silent listing problem, not a demand verdict. Probed on the storefront db (region = fulfillment zone via the ordering customer): LATAM never picked 12 of the 16 catalog items — the Noise-Canceling Headset (24 network picks), Laptop Stand Aluminum (19), HDMI 2.1 Cable 2m (19) among them — while the US never picked exactly one (Yoga Mat Eco 6mm, 13 picks). The fold is per item with a conditional LATAM line counter and a HAVING zero-floor: HAVING is the clause that can see the fold; WHERE cannot.",
+      ask: "Return item and network picks for every catalog item never picked in LATAM, most-picked first.",
+      template:
+        "SELECT p.name,\n       COUNT(DISTINCT oi.order_id) AS picks,\n       SUM(CASE WHEN c.region = {1} THEN 1 ELSE 0 END) AS zone_lines\nFROM order_items oi\nJOIN products p ON p.id = oi.product_id\nJOIN orders o ON o.id = oi.order_id\nJOIN customers c ON c.id = o.customer_id\nGROUP BY p.id\n{2} zone_lines = {3}\nORDER BY picks DESC;",
+      slots: [
+        {
+          answer: "'LATAM'",
+          kind: "keyword",
+          label: "the zone under audit",
+          why: "The CASE arm counts lines whose customer zone is LATAM — the zone the coverage audit targets. 'US' answers a different question (and returns one item, Yoga Mat Eco 6mm, against LATAM's twelve): the zone literal IS the report's scope.",
+        },
+        {
+          answer: "HAVING",
+          kind: "keyword",
+          label: "the group-level zero floor",
+          why: "zone_lines is a per-item aggregate — it exists only after GROUP BY p.id folds the lines, so the zero test belongs in HAVING. WHERE runs before groups form, cannot see the alias, and errors out: the pipeline order teaching itself.",
+        },
+        {
+          answer: "0",
+          kind: "number",
+          label: "the never-picked floor",
+          why: "HAVING zone_lines = 0 keeps exactly the items with no LATAM line — the 12-item coverage gap, every row printing zone_lines 0 as its own receipt. A floor of 1 flips the census to items picked EXACTLY once there — a different report with a different action.",
+        },
+      ],
+      distractors: ["'US'", "WHERE", "1", "AND"],
+      walkthrough:
+        "An anti-join in conditional-aggregate clothing. The four-table chain fans 251 lines out with their zones, GROUP BY p.id folds them per item, and the CASE arm turns 'customer zone = LATAM' into a 1/0 counter that SUM folds into zone_lines. HAVING zone_lines = 0 keeps the twelve items LATAM never picked — led by the Noise-Canceling Headset at 24 network picks, a best-seller shaped item with zero presence in a whole zone, which is precisely the silent listing gap assortment review exists to catch. The contrast row is the point: run the same query with 'US' and one item survives (Yoga Mat Eco 6mm) — coverage is a per-zone question, never a network one. WHERE in place of HAVING errors on the alias (no groups exist yet), the '1' floor flips the census to exactly-once items, and AND is a syntax break after GROUP BY. Twelve rows, each carrying zone_lines = 0 as the receipt that it belongs.",
+      },
   ],
 
   problems: [
@@ -428,5 +1011,21 @@ export const instacartKit: CompanyKit = {
     { slug: "rfm-segmentation", why: "NTILE basket-value tiers — the recency-frequency-monetary segmentation that decides who gets the nudges. Curated pick." },
     { slug: "cohort-repeat-revenue", why: "Revenue tracked by acquisition cohort — the concentration read behind the 63.5% big-spender share. Curated pick." },
     { slug: "returns-rate-by-category", why: "LEFT JOIN refund rate per category — the substitution-and-refund read that flags which catalog categories disappoint. Curated pick." },
+    { slug: "orders-with-maximum-quantity-above-average", why: "Basket lines above the average pick quantity — scalar subquery plus a floor on the units grain. Curated pick." },
+    { slug: "the-most-recent-three-orders", why: "Top-N recency per customer — the two-most-recent-batches screen with ROW_NUMBER over the MAX join-back. Curated pick." },
+    { slug: "customer-order-frequency", why: "Batches per customer per period — the frequency histogram growth reads before any retention push. Curated pick." },
+    { slug: "customers-who-never-order", why: "Registered-but-dormant users via anti-join — the signup-to-first-basket leak in one query. Curated pick." },
+    { slug: "customer-who-visited-but-did-not-transact", why: "Browsed the aisle, never built a basket — the discovery-surface abandonment read. Curated pick." },
+    { slug: "number-of-rich-customers", why: "Big-spender census at customer grain — the 63.5% concentration read behind the value tiers. Curated pick." },
+    { slug: "game-play-analysis-v", why: "Day-1 return cohorts via first-event CTE — the order-again-tomorrow retention gate. Curated pick." },
+    { slug: "user-activity-for-the-past-30-days-ii", why: "30-day activity with window tails — the trailing-window boundary read the weekly-shop board lives on. Curated pick." },
+    { slug: "friday-purchases-i", why: "Weekday-window demand comparison — the Friday-versus-rest split shopper staffing is planned from. Curated pick." },
+    { slug: "monthly-transactions-ii", why: "Month buckets with cancelled amounts excluded — the demand close's conditional-aggregation escalation. Curated pick." },
+    { slug: "keep-latest-dedupe", why: "ROW_NUMBER keep-latest dedupe with a tie-breaker — the double-fired batch-event stream, collapsed and proven. Curated pick." },
+    { slug: "calculate-special-bonus", why: "COALESCE the shopper payout: NULL bonus fields still print — display policy in one query. Curated pick." },
+    { slug: "the-number-of-users-that-are-eligible-for-discount", why: "NULL-safe promo eligibility — a conditional read where one NULL flips the population. Curated pick." },
+    { slug: "recyclable-and-low-fat-products", why: "Two-flag catalog filtering — the organic/conventional attribute screen on the storefront catalog. Curated pick." },
+    { slug: "compute-the-rank-as-a-percentage", why: "Percentile-rank arithmetic — the RFM tier math that says who outspends whom, computed not guessed. Curated pick." },
+    { slug: "dau-wau-stickiness", why: "Daily-over-weekly active ratio — the stickiness read behind grocery growth cohorts. Curated pick." },
   ],
 };
