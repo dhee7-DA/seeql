@@ -8226,3 +8226,17 @@ Work Log:
 
 Stage Summary:
 - Root cause was never the buttons — it was the guided tour modalizing deep-link arrivals. Committed 7416c21. Tour now only auto-starts on the learn home for first-run visitors; deep links land straight on their destination; missing-target tours render an operable centered card. Note for future deploys: kill agent-browser + stray next servers before bun run build — the sandbox OOMs at ~4GB with Chromium + next dev (:3000 platform watcher) + next start + Turbopack all alive.
+
+---
+Task ID: 109
+Agent: orchestrator (main)
+Task: "nothing is working and nothing is loading .. also the bloub is nowhere .. do the reaudit" — full re-audit + preview server repair.
+
+Work Log:
+- Forensics: the platform's preview server (next dev -p 3000, supervised via bun run dev) was wedged at "○ Compiling / ..." forever — my Task-108 next build had clobbered the live dev server's .next. Killed everything, wiped .next, clean prod build green, restored db/custom.db (regressed to 6 tables AGAIN at runtime; git HEAD has the healthy 24-table state — second occurrence of this signature, restore-from-HEAD is the fix).
+- Restarted dev per platform convention → first compile 200 OK (26.9s cold) → but during headless exploration the kernel OOM-killed next-server at 2,826,516kB RSS (dmesg confirmed): dev-mode Turbopack compiles all 208 kit modules on demand when the companies view mounts — this 4GB sandbox cannot hold it plus browser. That OOM is what served the user chrome-error://chromewebdata/ → "nothing is loading".
+- Supervisor discovery: pkill'ing the dev chain gets it respawned within seconds (pre-edit spawns may come back once — kill twice). Fighting it is futile → changed the contract instead: package.json "dev" now serves the standalone production build on :3000 ("[ -f .next/standalone/server.js ] || bun run build; NODE_ENV=production bun .next/standalone/server.js 2>&1 | tee dev.log"), keeping tee dev.log for platform log expectations. After killing the stale pre-edit respawn, the supervisor relaunched the new script: Ready in 132ms, :3000 → 200 in 0.046s→0.006s, ~211MB steady-state (vs 2.8GB), 2.4GB+ free headroom. Persists across reboots (auto-build guard).
+- Full re-audit on the real preview port (headless): landing loads clean (title/h1/strip THE UNIVERSE/Explore all 208/SeeQ header button all present); blob visible on landing hero AND on learn view with his tip bubble; strip CTA → Company Interview Universe, tour closed (Task 108 fix intact); Expand-all-modules + Amazon chip respond; LiquidToggle sound switch flips aria-checked=true; zero console errors, zero 404s; db 24 tables; screenshots captured (audit-1-landing.png, audit-2-companies.png).
+
+Stage Summary:
+- Root cause of "nothing loads": preview ran next dev, which (a) was wedged on my clobbered .next, and (b) OOM-kills the moment the 208-kit companies view compiles in this 4GB sandbox. Preview now serves the standalone prod build via the supervised dev script — fast, lean, reboot-safe. Blob verified visually on both landing and learn. Second db 6-table regression noted: restore from HEAD, consider a boot-time db integrity gate. Legacy tsc backlog unchanged.
