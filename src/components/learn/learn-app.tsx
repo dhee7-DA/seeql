@@ -52,6 +52,7 @@ import { GauntletView } from "./gauntlet-view";
 import { KeywordPractice } from "./keyword-practice";
 import { LeetCodeView } from "./leetcode-view";
 import { CompaniesView } from "./companies-view";
+import { MockHq } from "./mock-hq";
 import { gauntletFor } from "@/lib/curriculum/gauntlet";
 import { ActivityStrip, MasteryGrid } from "./progress-cards";
 import { CelebrationHost, celebrate } from "./celebrate";
@@ -87,6 +88,7 @@ type View =
   | { kind: "mastery" }
   | { kind: "interview" }
   | { kind: "companies"; domain?: string; company?: string }
+  | { kind: "mocks" }
   | { kind: "studio" }
   | { kind: "explain" }
   | { kind: "perf"; sql?: string; tab?: "pipeline" | "workbench" | "detective" }
@@ -670,6 +672,8 @@ function ViewBody({
       return <ReviewDeck />;
     case "companies":
       return <CompaniesView initialDomain={view.domain} initialCompany={view.company} openLc={(slug) => openLc(undefined, slug)} />;
+    case "mocks":
+      return <MockHq />;
     default:
       return <Overview xp={xp} level={level} streak={streak} ctx={ctx} openLesson={openLesson} onOpenLc={() => openLc("SQL")} />;
   }

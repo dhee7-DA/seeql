@@ -15,6 +15,7 @@ import {
   Check,
   ChevronRight,
   Code2,
+  Crosshair,
   FileStack,
   Gauge,
   Hammer,
@@ -31,6 +32,8 @@ import type { CompanyKit } from "@/lib/companies/types";
 import type { Mcq } from "@/lib/curriculum/types";
 import { lcBySlug } from "@/lib/leetcode/registry";
 import { useProgress } from "@/lib/curriculum/progress";
+import { computeReadiness, type StudyStep } from "@/lib/universe/readiness";
+import { useUniverse } from "@/lib/universe/progress";
 import { McqCard } from "./mcq";
 import { CaseFileCard } from "./case-files";
 import { MockRound, MasteryQuiz } from "./companies-quiz";
@@ -79,12 +82,116 @@ function diffColor(d: string): string {
   return d === "Easy" ? "text-emerald-400" : d === "Medium" ? "text-amber-400" : "text-rose-400";
 }
 
+/* ---------------- readiness track (the targeted-company study plan) -------- */
+
+const STEP_ICON: Record<StudyStep["kind"], React.ComponentType<{ className?: string }>> = {
+  slug: Map,
+  mcq: ListChecks,
+  theory: MessagesSquare,
+  mock: Timer,
+  done: Check,
+};
+
+/** Readiness % — coverage 40 / MCQ 30 / theory 15 / mock 15 — plus the
+ *  highest-impact plan, each step jumping to the kit tab that serves it. */
+function ReadinessPanel({ kit, onJump }: { kit: CompanyKit; onJump: (tab: CompanyTab) => void }) {
+  const xpEvents = useProgress((s) => s.xpEvents);
+  const mcqAttempts = useProgress((s) => s.mcqAttempts);
+  const mockMcq = useUniverse((s) => s.mockMcq);
+  const theoryMarks = useUniverse((s) => s.theoryMarks);
+  const mocks = useUniverse((s) => s.mocks);
+
+  const readiness = useMemo(
+    () => computeReadiness(kit, { xpEvents, mcqAttempts }, { mockMcq, theoryMarks, mocks }),
+    [kit, xpEvents, mcqAttempts, mockMcq, theoryMarks, mocks],
+  );
+
+  const tone = (p: number) =>
+    p >= 0.8 ? "bg-emerald-400" : p >= 0.4 ? "bg-amber-400" : p > 0 ? "bg-rose-400" : "bg-zinc-700";
+
+  const parts = [
+    { key: "coverage", pct: readiness.parts.coverage.pct, label: readiness.parts.coverage.label, detail: `${readiness.parts.coverage.done}/${readiness.parts.coverage.total} solved · 40%` },
+    { key: "mcq", pct: readiness.parts.mcq.pct, label: readiness.parts.mcq.label, detail: `${readiness.parts.mcq.correct}/${readiness.parts.mcq.total} correct · 30%` },
+    { key: "theory", pct: readiness.parts.theory.pct, label: readiness.parts.theory.label, detail: `${readiness.parts.theory.nailed}/${readiness.parts.theory.total} nailed · 15%` },
+    { key: "mock", pct: readiness.parts.mock.pct, label: readiness.parts.mock.label, detail: readiness.parts.mock.best === null ? "no run yet · 15%" : `best ${readiness.parts.mock.best}% · 15%` },
+  ];
+
+  return (
+    <Panel className="border-sky-400/20">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Crosshair className="h-4 w-4 text-sky-300" />
+          <h3 className="text-sm font-semibold text-zinc-100">Readiness — {kit.name} screen</h3>
+        </div>
+        <div className="flex items-baseline gap-1.5">
+          <span className="tnum font-display text-2xl font-bold text-zinc-50">{readiness.pct}%</span>
+          <span className="text-[11px] text-zinc-500">· 70% reads as a hiring signal</span>
+        </div>
+      </div>
+
+      <div className="mt-2.5 h-2 overflow-hidden rounded-full bg-zinc-800">
+        <div
+          className={cn("h-full rounded-full transition-all duration-500", readiness.pct >= 70 ? "bg-emerald-400" : readiness.pct >= 40 ? "bg-amber-400" : "bg-rose-400")}
+          style={{ width: `${readiness.pct}%` }}
+        />
+      </div>
+
+      <div className="mt-4 grid gap-2 sm:grid-cols-2">
+        {parts.map((p) => (
+          <div key={p.key} className="rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2.5">
+            <div className="flex items-center justify-between gap-2 text-[11px]">
+              <span className="truncate text-zinc-300" title={p.label}>{p.label}</span>
+              <span className="tnum shrink-0 font-mono text-zinc-500">{Math.round(p.pct * 100)}%</span>
+            </div>
+            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-zinc-800">
+              <div className={cn("h-full rounded-full transition-all duration-500", tone(p.pct))} style={{ width: `${Math.round(p.pct * 100)}%` }} />
+            </div>
+            <p className="mt-1 text-[10px] text-zinc-500">{p.detail}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-4">
+        <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-zinc-600">Your plan — highest impact first</p>
+        <div className="mt-2 space-y-1.5">
+          {readiness.plan.map((step, i) => {
+            const Icon = STEP_ICON[step.kind];
+            return (
+              <div
+                key={`${step.kind}-${i}`}
+                className={cn(
+                  "flex items-start gap-2.5 rounded-lg border px-3 py-2.5",
+                  step.kind === "done" ? "border-emerald-500/30 bg-emerald-500/[0.06]" : "border-zinc-800 bg-zinc-950",
+                )}
+              >
+                <Icon className={cn("mt-0.5 h-3.5 w-3.5 shrink-0", step.kind === "done" ? "text-emerald-300" : "text-sky-300")} />
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-medium text-zinc-100">{step.title}</p>
+                  <p className="mt-0.5 text-[11px] leading-relaxed text-zinc-500">{step.why}</p>
+                </div>
+                {step.tab && (
+                  <Btn variant="soft" onClick={() => onJump(step.tab as CompanyTab)} aria-label={`Open ${step.title}`}>
+                    Open <ChevronRight className="ml-0.5 inline h-3 w-3" />
+                  </Btn>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </Panel>
+  );
+}
+
 /* ---------------- level 3: the company kit page ---------------- */
 
 function CompanyPage({ kit, onBack, openLc }: { kit: CompanyKit; onBack: () => void; openLc: (slug: string) => void }) {
   const [tab, setTab] = useState<CompanyTab>("brief");
   const [openTheory, setOpenTheory] = useState<string | null>(kit.theory[0]?.id ?? null);
   const xpEvents = useProgress((s) => s.xpEvents);
+  const target = useUniverse((s) => s.target);
+  const setTarget = useUniverse((s) => s.setTarget);
+  const targeted = target === kit.id;
 
   const solvedProblems = useMemo(
     () => kit.problems.filter((p) => xpEvents[`lc:${p.slug}`] !== undefined).length,
@@ -115,7 +222,30 @@ function CompanyPage({ kit, onBack, openLc }: { kit: CompanyKit; onBack: () => v
             <span className="rounded-md border border-zinc-800 px-2 py-1">{kit.cases.length} cases</span>
           </div>
         </div>
+        <div className="mt-3 border-t border-zinc-800/70 pt-3">
+          <button
+            onClick={() => setTarget(targeted ? null : kit.id)}
+            aria-pressed={targeted}
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors",
+              targeted
+                ? "border-sky-400/40 bg-sky-400/10 text-sky-200"
+                : "border-zinc-700 bg-zinc-900 text-zinc-300 hover:border-zinc-500",
+            )}
+            title={targeted ? "Release the target — your readiness track for this kit pauses" : `Set ${kit.name} as your target — this page becomes your readiness tracker`}
+          >
+            <Crosshair className={cn("h-3.5 w-3.5", targeted && "text-sky-300")} />
+            {targeted ? "Targeted — readiness tracking on" : `Targeting ${kit.name}?`}
+          </button>
+          <p className="mt-1.5 text-[11px] leading-relaxed text-zinc-500">
+            {targeted
+              ? "Every solve, MCQ, theory mark and mock run now feeds the readiness number below."
+              : "Set it as your target and the kit builds you a readiness score plus a study plan that updates itself."}
+          </p>
+        </div>
       </Panel>
+
+      {targeted && <ReadinessPanel kit={kit} onJump={setTab} />}
 
       {/* tab strip */}
       <div className="flex flex-wrap gap-1.5" role="tablist" aria-label={`${kit.name} kit sections`}>
@@ -410,9 +540,26 @@ function DomainPage({ domainId, onBack, onOpen }: { domainId: string; onBack: ()
 function UniverseHome({ onOpen }: { onOpen: (domainId: string) => void }) {
   const totalKits = COMPANY_DOMAINS.reduce((n, d) => n + d.companies.filter(isKitLive).length, 0);
   const totalCompanies = COMPANY_DOMAINS.reduce((n, d) => n + d.companies.length, 0);
+  const target = useUniverse((s) => s.target);
+  const targetKit = target ? companyKit(target) : undefined;
 
   return (
     <div className="space-y-4">
+      {targetKit && (
+        <button onClick={() => onOpen(targetKit.domainId)} className="block w-full text-left" aria-label={`Open your targeted kit ${targetKit.name}`}>
+          <Panel className="border-sky-400/25 transition-colors hover:border-sky-400/50">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Crosshair className="h-4 w-4 text-sky-300" />
+                <span className="text-sm font-semibold text-zinc-100">
+                  Targeting {targetKit.name} — readiness track live
+                </span>
+              </div>
+              <span className="text-[11px] text-sky-300/80">open the kit →</span>
+            </div>
+          </Panel>
+        </button>
+      )}
       <Panel>
         <div className="flex items-center gap-2">
           <Building2 className="h-4 w-4 text-sky-300" />
