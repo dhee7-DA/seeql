@@ -8298,3 +8298,20 @@ Stage Summary:
 - Both kits DONE at full depth: slack 30/24/6/32, snowflake 30/24/6/32; all 12 case studies pass the mechanical audit (each audited immediately after authoring); all 32 new problem slugs verified against scripts/band-slugs.txt (0 invalid, 0 duplicates), ids unique, no existing entries modified (append-only + topic-slug weaving + prose count update only).
 - Two authoring iterations: (1) an Edit mishap briefly ate the `cases: [` opener in snowflake.ts — caught and restored within the same pass, tsc confirmed clean; (2) cs-snow-5 first draft had 2 slots (audit minimum 3) — restructured to add the window-direction ASC slot, then green. noVerify slots kept at 1 per case (cap 3).
 - Anomalies noted: probe checks corrected two stale facts — the renewal-count tie at 4 is FOUR-way (facts note said three-way) and the invoices⋈payments LEFT JOIN grain is 33 pairs / 28 runs (theory t19 says 35/22; untouched per append-only rule). db untouched (readonly). No git commit (orchestrator's job).
+
+---
+Task ID: r8 (orchestrator)
+Agent: orchestrator (main)
+Task: Round 8 — extend 10 kits (jpmorgan deutsche salesforce zoom mercadolibre standardchartered slack snowflake costco rakuten) to full depth
+
+Work Log:
+- Pre-flight: found db/custom.db regressed to 6 tables AND committed regressed in d622094; located last healthy version (3716d5a, 24 tables, 103 orders), restored, committed as 7e212c3.
+- Wave 1 (5 parallel agents): r8-a finished both kits; r8-b/c/d/e hit the ~10-min hard cut ("context deadline exceeded") but still delivered salesforce, zoom, mercadolibre, standardchartered complete + slack mcqs, snowflake theory, costco mcq+theory; rakuten untouched.
+- Verified 6 complete kits independently (case-audit 6/6 each, tsc 0 errors) → checkpoint commit 064a818 (179/208 full).
+- Wave 2 (2 parallel finishers): r8-f1 finished slack (+16t/+4c/+16p) + snowflake (+20m/+4c/+16p); r8-f2 finished costco (+4c/+16p) + rakuten (full expansion).
+- Verification: all 10 kits 30/24/6/32, case-audit 6/6, tsc 0 errors; full audit 183 OK / 0 fails.
+
+Stage Summary:
+- 183/208 full, 25 base kits remain (figma gitlab coupang noon hdfc lloyds mufg databricks miro shein mercari newegg rabobank bmo natwest linear gong retool ikea zara sbi usbank intercom segment mailchimp).
+- Reliability finding: 5 parallel agents → 4/5 hard-cut; 2 parallel → both clean. Round 9 tries 3 parallel as middle ground.
+- Commit chain: 7e212c3 (db fix) → 064a818 (r8 checkpoint) → d52c869 (r8 complete).
