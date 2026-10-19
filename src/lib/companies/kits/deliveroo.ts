@@ -56,7 +56,7 @@ export const deliverooKit: CompanyKit = {
     {
       name: "Rider shift interval math",
       why: "Rosters are intervals: overlapping shifts, concurrent coverage, span-versus-sum on logged hours. The overlapping-shifts pair is the interview shape — self-joins on start/end boundaries where off-by-one inclusivity decides who gets paid.",
-      slugs: ["find-overlapping-shifts", "find-overlapping-shifts-ii", "employee-task-duration-and-concurrent-tasks", "calculate-orders-within-each-interval"],
+      slugs: ["find-overlapping-shifts", "find-overlapping-shifts-ii", "employee-task-duration-and-concurrent-tasks", "calculate-orders-within-each-interval", "server-utilization-time"],
     },
     {
       name: "Rider-supply censuses",
@@ -66,7 +66,7 @@ export const deliverooKit: CompanyKit = {
     {
       name: "Cancellation & acceptance rates",
       why: "Two-sided rates with exclusions — cancellation share with banned accounts removed, acceptance rate where unmatched ids coalesce to zero. Trips-and-users is the canonical screen; confirmation-rate is its LEFT JOIN cousin.",
-      slugs: ["trips-and-users", "confirmation-rate", "hopper-company-queries-ii", "monthly-transactions-ii", "percentage-of-users-attended-a-contest"],
+      slugs: ["trips-and-users", "confirmation-rate", "hopper-company-queries-ii", "monthly-transactions-ii", "percentage-of-users-attended-a-contest", "hopper-company-queries-iii"],
     },
     {
       name: "Latency & idle windows",

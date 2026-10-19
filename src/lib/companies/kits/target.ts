@@ -29,7 +29,7 @@ export const targetKit: CompanyKit = {
     "**Target** is the US big-box retailer that made the store itself the fulfillment node — **Drive Up**, Order Pickup and same-day networks turned 1,900+ parking lots into the last mile, while {rose:Circle} membership and Circle Week drive the promo calendar. The analyst's grain stack mirrors the storefront: member households place baskets, baskets scan as lines, lines carry SKUs from owned-brand vendors. On this kit's proxy db the census reads **16 member households**, **103 baskets** fanning into **251 scanned lines**, $34,833.28 total demand at an average basket of **$338.19** — a db you can hold in your head, shaped exactly like the omnichannel read you'd run at HQ.",
     "The data org lives on the fulfillment clock. Status is the funnel: **52 delivered**, **30 shipped**, **14 pending**, {rose:7 cancelled} — and `shipped_at` is non-NULL for exactly **82 of 103 baskets**, averaging **2.98 days** to fulfill with a 2-to-4 day range. The same-day promise is a distribution, not a slogan: the US cluster runs slowest at **3.07 days** across 15 fulfilled baskets while APAC leads at 2.93 over 29, and an analyst who can't narrate *which population a latency average covers* (fulfilled only — pending baskets have no latency YET) gets exposed in the first round. *The store-vs-ship split is a CASE expression away, and interviewers know it.*",
     "Interview style is omnichannel-flavored and denominator-first. Screens open with a warm-up join (baskets to member households, lines to SKUs), escalate into a threshold census (repeat {emerald:Circle} members — 14 of 16 households here have 2+ baskets), then land on the two Target signatures: a **region SLA board** (fulfilled counts, latency to 2 decimals, within-SLA tallies, slowest cluster first) or a **promo-month read** (Circle Week months where basket count held but revenue collapsed — July 2024 did 8 baskets for 1193.86, the year's worst, with 2 cancellations). Follow-ups are spoken: 'is that per basket or per household?', 'does a cancelled basket count in your placed base?', 'what does your SLA gate exclude?'",
-    "Preparation strategy: Target carries **3 tagged problems** in this app's registry (store-inventory imbalance, product-table reshuffle, basket depth & AOV) — all three lead the problem pool and anchor the topic list. The rest is theme-curated from the band: SLA date math, kept-basket rates, region leaderboards, promo windows, cents discipline on the settlement tables (invoices and payments store INTEGER cents — the dollar read is `amount_cents / 100.0`). The two case studies run on the live db: one rebuilds the **region SLA board** fulfillment ops opens every morning, the other rebuilds the **promo-month miss** read that opens the month-close deck. Both are mechanically audited against the probed figures.",
+    "Preparation strategy: Target carries **3 tagged problems** in this app's registry (store-inventory imbalance, product-table reshuffle, basket depth & AOV) — all three lead the problem pool and anchor the topic list. The rest is theme-curated from the band: SLA date math, kept-basket rates, region leaderboards, promo windows, cents discipline on the settlement tables (invoices and payments store INTEGER cents — the dollar read is `amount_cents / 100.0`). The six case studies run on the live db — built for spaced practice rather than one sitting: one rebuilds the **region SLA board** fulfillment ops opens every morning, another rebuilds the **promo-month miss** read that opens the month-close deck. All six are mechanically audited against the probed figures.",
     "The settlement layer is where the economics get audited, and it reads like a control chart: **28 invoices against 27 payment legs**, a ledger tying at 181080.00 on both sides, and a coverage census with teeth — 21 exact settlements worth 65612.00, 1 partial parked at 4000.00 of 6148.00, and **6 with no payment at all (15217.00)**. The anomaly classes are folklore here: a {rose:void-but-paid} invoice (925.00), a paid invoice with zero payment legs (1756.00 — proof that status is not truth), five split settlements with two legs each, and four odd-cent legs (236150 and 222950 cents) that keep the `amount_cents / 100.0` discipline live. Terms run a flat **30 days** but the paid book settles in 28.4 on average (fastest 13, slowest 84), across rails that split 16 card legs at 37364.00 against 11 wires at 32248.00. *An analyst who prints cents as dollars, or trusts a status column over a join, is a candidate the close cannot use.*",
     "Preparation for the senior rounds is a **four-week ladder**. Week one: census grains and kept-basket denominators — the two-grain reads until `COUNT(*)` vs `COUNT(DISTINCT customer_id)` is reflex. Week two: windows — the {sky:region SLA board} with its 15-basket gate, tie-proof ranking, LAG walks down the month spine. Week three: settlement cents — coverage pivots, split-leg hunts, the anti-join worklist that catches the paid-but-unpaid invoice. Week four: rebuild all six case studies from memory and say every denominator out loud. The problem pool below maps onto that ladder in study order, and every figure in it traces to the probed db — *if you can't name the population behind a number, you're not ready to defend it.*",
   ],
@@ -61,7 +61,7 @@ export const targetKit: CompanyKit = {
     {
       name: "The same-day clock: date math",
       why: "Target's whole fulfillment story is a duration: `JULIANDAY(shipped_at) − JULIANDAY(created_at)` on the 82 fulfilled baskets, bucketed by cluster and compared to the 3-day promise. Screens drill the mechanics — strftime buckets, date diffs, the NULL-until-fulfilled population — because an analyst who averages latency over all 103 rows has silently averaged over rows that don't have the second timestamp yet.",
-      slugs: ["find-golden-hour-customers", "convert-date-format", "the-latest-login-in-2020"],
+      slugs: ["find-golden-hour-customers", "convert-date-format", "the-latest-login-in-2020", "product-price-at-a-given-date"],
     },
     {
       name: "Status pipelines and kept demand",
@@ -86,12 +86,12 @@ export const targetKit: CompanyKit = {
     {
       name: "Region boards and ranking windows",
       why: "The ops review opens with cluster leaderboards — fulfillment pace, basket counts, kept shares — ranked and tie-proofed. RANK vs DENSE_RANK vs ROW_NUMBER is not trivia here: monthly basket counts tie five ways in 2024 (8, 8, 8, 8, 8), and a board that splits ties silently invents a ranking nobody agreed to.",
-      slugs: ["rank-scores", "sort-the-olympic-table", "department-top-three-salaries"],
+      slugs: ["rank-scores", "sort-the-olympic-table", "department-top-three-salaries", "report-contiguous-dates", "top-travellers", "department-highest-salary"],
     },
     {
       name: "The two-grain census",
       why: "Baskets AND households per cluster is the opening read of the omnichannel review — and the trap is counting both at one grain. COUNT(*) counts baskets (103); COUNT(DISTINCT customer_id) counts households (16); the gap is visit intensity, which is the number store ops actually manages.",
-      slugs: ["daily-leads-and-partners", "students-and-examinations", "customer-placing-the-largest-number-of-orders"],
+      slugs: ["daily-leads-and-partners", "students-and-examinations", "customer-placing-the-largest-number-of-orders", "combine-two-tables", "project-employees-i", "article-views-ii"],
     },
     {
       name: "Promo windows and event reads",
@@ -106,7 +106,7 @@ export const targetKit: CompanyKit = {
     {
       name: "Reshaping the shelf: pivots and hygiene",
       why: "Two of the three tagged Target rows are reshape problems, and that's not an accident — planogram thinking is pivot thinking. Rearranging attributes into columns, normalizing SKU names before a join, reformatting crosstabs: the drills that turn a raw catalog dump into the board the merchant review reads.",
-      slugs: ["rearrange-products-table", "reformat-department-table", "fix-product-name-format"],
+      slugs: ["rearrange-products-table", "reformat-department-table", "fix-product-name-format", "keep-latest-dedupe", "invalid-tweets"],
     },
     {
       name: "Set-op stacks for the close",
@@ -131,7 +131,7 @@ export const targetKit: CompanyKit = {
     {
       name: "Zero-fill buckets and histograms",
       why: "Basket-size bands and latency ladders die quietly on empty arms: GROUP BY only reports buckets that exist, so the >=200 premium band (empty at a 199.99 ceiling) and the zero cancelled arm in the big-ticket census (25 baskets at 500+, none cancelled) vanish and the deck reads a gap as no demand. Zero-fill — a bucket spine LEFT JOINed to the data, or CASE arms that count zero honestly — keeps the distribution's shape truthful.",
-      slugs: ["create-a-session-bar-chart", "calculate-orders-within-each-interval", "count-salary-categories"],
+      slugs: ["create-a-session-bar-chart", "calculate-orders-within-each-interval", "count-salary-categories", "unique-orders-and-customers-per-month", "customer-order-frequency", "monthly-transactions-i", "bank-account-summary-ii", "average-time-of-process-per-machine", "triangle-judgement", "weather-type-in-each-country", "biggest-single-number"],
     },
   ],
 

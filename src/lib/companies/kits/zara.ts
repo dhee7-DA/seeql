@@ -72,12 +72,12 @@ export const zaraKit: CompanyKit = {
     {
       name: "Two-grain market censuses",
       why: "Batches and markets are different grains of the same join: EU runs 45 batches from 8 markets (5.6 per market) while the US runs 19 from 2 (9.5). COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which column is load and which is coverage — is the habit being graded. The ratio decides whether a market is broadening or concentrating.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count", "find-bursty-behavior", "rolling-7d-actives"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count", "find-bursty-behavior", "rolling-7d-actives", "sales-analysis-iii", "percentage-of-users-attended-a-contest", "immediate-food-delivery-i", "capital-gain-loss", "game-play-analysis-i", "combine-two-tables", "confirmation-rate", "group-sold-products-by-the-date"],
     },
     {
       name: "Ticket ladders with CASE",
       why: "Zara's price architecture is a ladder, not a continuum: the ticket fold splits 16 SKUs into 8 budget at 32.06 and 8 mid at 111.50, and the >= 200 premium arm is honestly empty — the ladder tops out at 199.99. Arms must be exhaustive and ordered: a hole in the CASE is a hole in the ladder, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["calculate-special-bonus", "weather-type-in-each-country", "count-salary-categories", "usage-tier-percentiles", "spend-histogram"],
+      slugs: ["calculate-special-bonus", "weather-type-in-each-country", "count-salary-categories", "usage-tier-percentiles", "spend-histogram", "number-of-employees-who-met-the-target"],
     },
     {
       name: "Markdown gates & HAVING floors",
@@ -92,17 +92,17 @@ export const zaraKit: CompanyKit = {
     {
       name: "Drop cadence calendars",
       why: "The 14-month drop spine (2024-01 to 2025-02) is the cadence call's home turf: 6 to 9 batches a month, trough months named, markdown-clearing windows defended in the same breath — July and November each carry 2 of the 7 cleared batches. STRFTIME builds the spine and LAG walks it; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["monthly-transactions-i", "list-the-products-ordered-in-a-period", "user-activity-for-the-past-30-days-i", "year-on-year-growth-rate", "friday-purchases-i", "seasonal-sales-analysis"],
+      slugs: ["monthly-transactions-i", "list-the-products-ordered-in-a-period", "user-activity-for-the-past-30-days-i", "year-on-year-growth-rate", "friday-purchases-i", "seasonal-sales-analysis", "same-day-sale", "product-price-at-a-given-date"],
     },
     {
       name: "Sell-through leaderboards",
       why: "Leaderboards are rank-window reporting where ties are guaranteed — the batch ladder runs 24, 17, 14, 13, 5 and then FOUR markets sit tied at 4. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer markets, not syntax. The panel asks you to pick one and defend it.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "premier-league-table-ranking"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "premier-league-table-ranking", "customer-placing-the-largest-number-of-orders", "customers-with-strictly-increasing-purchases", "the-most-recent-orders-for-each-product", "top-travellers"],
     },
     {
       name: "Settlement set algebra",
       why: "Board packets stack populations — in-transit under markdown-cleared, this month beside last — and EXCEPT answers 'which sold batches never stamped a settlement'. UNION dedups whole rows silently, which makes it a correctness question, not a style one. The settlement anti-join (6 never-settled statements worth 15,217.00) is the same algebra pointed at money.",
-      slugs: ["team-scores-in-football-tournament", "monthly-transactions-ii", "movie-rating", "customers-who-bought-all-products"],
+      slugs: ["team-scores-in-football-tournament", "monthly-transactions-ii", "movie-rating", "customers-who-bought-all-products", "find-churn-risk-customers"],
     },
     {
       name: "Cents-safe settlement reads",

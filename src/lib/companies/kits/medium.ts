@@ -51,42 +51,42 @@ export const mediumKit: CompanyKit = {
     {
       name: "Paywall funnel counts",
       why: "Every Medium growth screen opens with the meter: periods booked, active-paid months, metered windows open, trials pending, lapsed members. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling a metered-open period 'paid' — 30 versus 52 on this db.",
-      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "analyze-subscription-conversion", "group-sold-products-by-the-date"],
+      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "analyze-subscription-conversion", "group-sold-products-by-the-date", "game-play-analysis-iv", "monthly-transactions-i", "products-with-three-or-more-orders-in-two-consecutive-years"],
     },
     {
       name: "Two-grain member censuses",
       why: "Periods and members are different grains of the same join, and every census here reports both: EU runs 45 periods from 8 members while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "cohort-repeat-revenue", "basket-depth-aov"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "cohort-repeat-revenue", "basket-depth-aov", "find-followers-count", "article-views-ii", "user-purchase-platform"],
     },
     {
       name: "Joining members to periods",
       why: "Members carry market and signup date; periods inherit them through joins, and the join type decides who survives. A period without a member is corruption; a member without periods is whitespace — though on this db the anti-join returns a confident zero, and proving it is part of the job.",
-      slugs: ["combine-two-tables", "product-sales-analysis-i", "employee-bonus", "find-the-team-size"],
+      slugs: ["combine-two-tables", "product-sales-analysis-i", "employee-bonus", "find-the-team-size", "movie-rating", "sellers-with-no-sales"],
     },
     {
       name: "Read-time leaderboards",
       why: "Partner-program reporting is rank-window work: top publications by earnings, top members by read depth, and ties are guaranteed — four members sit at 4 periods each on this db. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a payout policy, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "second-highest-salary", "rfm-segmentation"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "second-highest-salary", "rfm-segmentation", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "Tier banding with CASE",
       why: "Membership tiers and earnings-per-unit buckets are CASE-classified with fixed edges the pricing page publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the payout report, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "immediate-food-delivery-ii"],
     },
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month billing spine (2024-01 to 2025-02) is the growth call's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine", "net-revenue-retention", "rolling-7d-actives", "running-total-for-different-genders"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine", "net-revenue-retention", "rolling-7d-actives", "running-total-for-different-genders", "number-of-comments-per-post", "dau-wau-stickiness", "null-blank-audit", "week-over-week-churn"],
     },
     {
       name: "Coverage set algebra",
       why: "Board packets stack populations — metered under lapsed, this quarter beside last — and EXCEPT answers 'which trials never converted'. UNION dedups whole rows silently, which makes it a correctness question, not a style one.",
-      slugs: ["team-scores-in-football-tournament", "the-airport-with-the-most-flights", "customers-who-never-order"],
+      slugs: ["team-scores-in-football-tournament", "the-airport-with-the-most-flights", "customers-who-never-order", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "Above-the-mean gates",
       why: "Screens escalate into staging: fold per-member period counts, then judge them against a computed platform mean (6.44 here — exactly four logos clear it). Scalar, correlated and derived shapes each carry an empty-inner-query answer you are expected to give unprompted.",
-      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments"],
+      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments", "confirmation-rate"],
     },
     {
       name: "One-pass status censuses",

@@ -54,17 +54,17 @@ export const doordashKit: CompanyKit = {
     {
       name: "The two-grain zone census",
       why: "'Deliveries AND diners per zone' opens every DoorDash zone review, and the trap is counting both at one grain: COUNT(*) counts delivery rows, COUNT(DISTINCT customer_id) folds repeat demand back to people. The gap between the columns is the intensity signal — a zone with heavy repeat diners needs different supply than one living off new orders.",
-      slugs: ["daily-leads-and-partners", "find-followers-count", "article-views-ii"],
+      slugs: ["daily-leads-and-partners", "find-followers-count", "article-views-ii", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "Kept demand & cancellation math",
       why: "The marketplace's most-watched ratio is kept ÷ placed, and it is a conditional count before it is a percentage: SUM(CASE WHEN status = 'cancelled' …) over the same rows that COUNT(*) divides. Drill it until placing the status filter in the wrong clause feels physically wrong — that filter move is the denominator-drift bug that ruins cancellation maps.",
-      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "monthly-transactions-i", "unique-orders-and-customers-per-month"],
+      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "monthly-transactions-i", "unique-orders-and-customers-per-month", "sales-by-day-of-the-week", "average-selling-price"],
     },
     {
       name: "Dasher supply & running sums",
       why: "Batch economics is capacity math: how many orders fit a run before the bag is full, how many minutes of demand does the online fleet cover. Running totals and cumulative windows answer it — and the door-dash twist is that capacity questions are always cumulative, never point-in-time.",
-      slugs: ["last-person-to-fit-in-the-elevator", "last-person-to-fit-in-the-bus", "game-play-analysis-iii"],
+      slugs: ["last-person-to-fit-in-the-elevator", "last-person-to-fit-in-the-bus", "game-play-analysis-iii", "average-time-of-process-per-machine"],
     },
     {
       name: "Golden hours & date math",
@@ -84,17 +84,17 @@ export const doordashKit: CompanyKit = {
     {
       name: "Merchant partner joins",
       why: "Supply-side reporting attaches every order to its merchant partner — supplier tables joined through product catalogs — and asks what survives: does a partner with zero delivered orders appear in the revenue table? INNER versus LEFT is a decision about who survives, and this kit drills it as one.",
-      slugs: ["combine-two-tables", "product-sales-analysis-i", "replace-employee-id-with-unique-identifier", "customers-who-never-order"],
+      slugs: ["combine-two-tables", "product-sales-analysis-i", "replace-employee-id-with-unique-identifier", "customers-who-never-order", "most-frequently-ordered-product-per-customer"],
     },
     {
       name: "Zone leaderboards & the rank trio",
       why: "Top zones by latency, top merchants by delivered volume, worst suburbs by cancellation — logistics reporting is leaderboard reporting, and ties are everywhere when many zones share metrics. ROW_NUMBER, RANK and DENSE_RANK differ exactly at ties, and LIMIT-boundary ties are the classic 'why does my top-8 return 9 rows' bug.",
-      slugs: ["rank-scores", "department-top-three-salaries", "second-highest-salary"],
+      slugs: ["rank-scores", "department-top-three-salaries", "second-highest-salary", "the-most-recent-three-orders"],
     },
     {
       name: "Rates with honest denominators",
       why: "On-time share, cancellation share, confirmation rate — DoorDash's ratios punish integer division and careless filters. The house habit: 100.0 before the division, the denominator's population decided before the ratio, ROUND only at the very end.",
-      slugs: ["queries-quality-and-percentage", "confirmation-rate", "percentage-of-users-attended-a-contest"],
+      slugs: ["queries-quality-and-percentage", "confirmation-rate", "percentage-of-users-attended-a-contest", "trips-and-users"],
     },
     {
       name: "One-pass censuses under a query budget",

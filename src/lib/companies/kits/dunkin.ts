@@ -59,7 +59,7 @@ export const dunkinKit: CompanyKit = {
     {
       name: "Stage census & the pickup stamp",
       why: "Every Dunkin' screen opens with the funnel: transactions placed, completed, in flight, awaiting pickup, voided. Each stage is a conditional count over a status or a stamp, and the interviewer's first question is what the denominator holds — calling the 30 in-flight transactions completed inflates the close rate before a single handoff happens.",
-      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "percentage-of-users-attended-a-contest"],
+      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "trial-to-paid-funnel", "average-selling-price", "monthly-transactions-i"],
     },
     {
       name: "Two-grain market censuses",
@@ -69,7 +69,7 @@ export const dunkinKit: CompanyKit = {
     {
       name: "Item lines — the fan-out join",
       why: "One transaction fans into item lines — 103 transactions into 251 lines — and every count changes grain the moment you join order_items. Dunkin' drills this first because beverage attach lives at the line grain: a coffee plus a bagel is two lines on one transaction, and COUNT(*) after the fan-out counts lines, not visits.",
-      slugs: ["product-sales-analysis-ii", "combine-two-tables", "replace-employee-id-with-unique-identifier"],
+      slugs: ["product-sales-analysis-ii", "combine-two-tables", "replace-employee-id-with-unique-identifier", "customers-who-bought-a-and-b-not-c", "game-play-analysis-iv"],
     },
     {
       name: "Value-ladder banding with CASE",
@@ -79,7 +79,7 @@ export const dunkinKit: CompanyKit = {
     {
       name: "Argmax & the usual order",
       why: "The app merchandises per guest and prep sets pars per SKU — both are argmax problems. Each guest's usual order, the most-pulled menu item per market: RANK or ROW_NUMBER over a per-group fold, with a tie-breaker named, because 'the usual' that silently picks an arbitrary row erodes loyalty-app trust.",
-      slugs: ["most-frequently-ordered-product-per-customer", "the-most-recent-orders-for-each-product", "product-sales-analysis-iv"],
+      slugs: ["most-frequently-ordered-product-per-customer", "the-most-recent-orders-for-each-product", "product-sales-analysis-iv", "list-the-products-ordered-in-a-period", "customer-placing-the-largest-number-of-orders", "queries-quality-and-percentage", "second-highest-salary"],
     },
     {
       name: "Visit leaderboards & the rank trio",
@@ -89,22 +89,22 @@ export const dunkinKit: CompanyKit = {
     {
       name: "Run streaks & month walks",
       why: "The loyalty app thinks in streaks — consecutive-day runs are the habit metric — and the ops review walks the 14-month transaction spine (2024-01 to 2025-02) with LAG deltas. Both are window moves over ordered timestamps, and the first row of any walk is NULL by definition — the baseline, never a zero.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "active-users", "sessionize-events"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "active-users", "sessionize-events", "employee-bonus", "restaurant-growth"],
     },
     {
       name: "Settlement cents & the anti-join reflex",
       why: "Completed is not settled — the franchise tables (28 invoices, 27 payments, INTEGER cents) are where the coffee world meets money, and every dollar read divides by 100.0 exactly once. The exposure read is an anti-join: 6 statements with no settlement = 15,217.00, one of them marked paid — a status filter misses it, an anti-join doesn't.",
-      slugs: ["customers-who-never-order", "bank-account-summary-ii", "number-of-accounts-that-did-not-stream"],
+      slugs: ["customers-who-never-order", "bank-account-summary-ii", "number-of-accounts-that-did-not-stream", "sellers-with-no-sales", "products-worth-over-invoices"],
     },
     {
       name: "One-pass censuses for the huddle board",
       why: "The window board ships as ONE scan: completed, in flight, awaiting, voided plus average ticket, four branches reconciling to COUNT(*) = 103. FILTER (WHERE …) and SUM(CASE …) build it in a single pass; four sequential queries are four chances to drift out of reconciliation before the 08:00 huddle.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "top-travellers", "team-scores-in-football-tournament"],
     },
     {
       name: "NULLs & the honest dead-end",
       why: "The 14 awaiting transactions carry no pickup stamp, and `created_at` is date-only — so latency pools exclude them by definition and the AM-daypart split cannot be computed at all. Screens here drill NULL-safe filters, COUNT(column) versus COUNT(*), and the answer that wins the room: naming what the schema cannot say instead of coalescing a zero over it.",
-      slugs: ["find-customer-referee", "books-with-null-ratings", "confirmation-rate"],
+      slugs: ["find-customer-referee", "books-with-null-ratings", "confirmation-rate", "sales-analysis-iii"],
     },
   ],
 

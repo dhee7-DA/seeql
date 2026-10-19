@@ -62,17 +62,17 @@ export const threadsKit: CompanyKit = {
     {
       name: "LAG month walks",
       why: "The 14-month spine is this team's home screen: prior month beside current, delta rounded, first row NULL by definition — the baseline, never a zero. The traps being graded are direction (DESC quietly redefines 'prior' as 'later') and the COALESCE-to-zero lie. Year-on-year shapes and biggest-gap windows ride the same walk mechanics.",
-      slugs: ["year-on-year-growth-rate", "biggest-window-between-events", "week-over-week-churn"],
+      slugs: ["year-on-year-growth-rate", "biggest-window-between-events", "week-over-week-churn", "find-churn-risk-customers"],
     },
     {
       name: "Two-grain growth censuses",
       why: "Periods and accounts are different grains of the same join, and every census here reports both: EU runs 45 periods from 8 accounts while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying which column is load and which is coverage — is the habit being graded. The ratio (9.5 versus 5.6) is the intensity read that decides where the loop compounds.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count", "product-sales-analysis-ii", "sales-analysis-i", "queries-quality-and-percentage", "classes-more-than-5-students", "game-play-analysis-i", "immediate-food-delivery-ii", "combine-two-tables", "confirmation-rate"],
     },
     {
       name: "Activation & funnel rates",
       why: "The fate census is Threads' heartbeat: loop-closed, in-flight, onboarding, dormant — and every rate on top of it is a denominator argument. Trials stay in a conversion base and drop out of a cycle-time base, and the panel wants you to say which before writing SQL. Funnel-step conversion over graph-imported accounts is the exact shape.",
-      slugs: ["trial-to-paid-funnel", "funnel-step-conversion", "percentage-of-users-attended-a-contest"],
+      slugs: ["trial-to-paid-funnel", "funnel-step-conversion", "percentage-of-users-attended-a-contest", "first-last-touch-attribution", "ab-test-conversion-lift"],
     },
     {
       name: "Growth accounting & status walks",
@@ -82,12 +82,12 @@ export const threadsKit: CompanyKit = {
     {
       name: "Cohort retention & stickiness",
       why: "A graph-imported account either loops daily or lapses — DAU/WAU stickiness and rolling 7-day actives are how the loop's health is read, and cohort matrices are how the ramp's monthly vintages are judged. Every one of these is a window or a self-join over the same timestamp spine the walk uses.",
-      slugs: ["cohort-retention-matrix", "dau-wau-stickiness", "rolling-7d-actives", "active-users"],
+      slugs: ["cohort-retention-matrix", "dau-wau-stickiness", "rolling-7d-actives", "active-users", "net-revenue-retention", "ltv-cac-payback", "winback-recovery", "basket-depth-aov"],
     },
     {
       name: "Velocity leaderboards & tie policy",
       why: "Rank windows with guaranteed ties: the order ladder runs 24, 17, 14, 13, 5 and then FOUR accounts sit at 4 periods each. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow — a policy about peer accounts, not syntax. Percentile tiles and RFM bands are the same trio pointed at segmentation.",
-      slugs: ["rank-scores", "usage-tier-percentiles", "rfm-segmentation"],
+      slugs: ["rank-scores", "usage-tier-percentiles", "rfm-segmentation", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "Engagement bands with CASE",

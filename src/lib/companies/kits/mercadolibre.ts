@@ -51,7 +51,7 @@ export const mercadolibreKit: CompanyKit = {
     {
       name: "Dispatch funnel counts",
       why: "Mercado Envios is the operation's spine: a purchase books at created_at and earns its dispatch stamp at shipped_at — 82 of 103 stamped, 14 pending without one. Every funnel read is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling an in-transit purchase delivered — 30 versus 52 on this db.",
-      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "funnel-step-conversion", "immediate-food-delivery-ii", "same-day-sale"],
+      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "funnel-step-conversion", "immediate-food-delivery-ii", "same-day-sale", "find-the-team-size", "repeat-purchase-rate", "fix-names-in-a-table"],
     },
     {
       name: "Two-grain buyer censuses",
@@ -61,37 +61,37 @@ export const mercadolibreKit: CompanyKit = {
     {
       name: "Joining listings to carts",
       why: "The catalog spine runs official stores → listings → cart lines → purchases, and the join type decides who survives. A cart line without a listing is corruption; a listing without a cart line would be dead stock — though on this db the anti-join returns a confident zero, and proving it is part of the job. Line-grain revenue (unit_price × quantity) versus header-grain totals is the second trap: fold the wrong grain and GMV drifts.",
-      slugs: ["product-sales-analysis-ii", "students-and-examinations", "average-selling-price", "recyclable-and-low-fat-products", "warehouse-manager", "weeks-of-supply"],
+      slugs: ["product-sales-analysis-ii", "students-and-examinations", "average-selling-price", "recyclable-and-low-fat-products", "warehouse-manager", "weeks-of-supply", "product-sales-analysis-i"],
     },
     {
       name: "Best-seller leaderboards",
       why: "The catalog team ranks listings by units moved and the ladder is tie-heavy — two listings at 36 units, three at 30, three more at 21 — while the buyer board has four buyers tied at 4 purchases each. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer listings, not syntax.",
-      slugs: ["rank-scores", "top-earners", "most-frequently-ordered-product-per-customer", "the-most-recent-orders-for-each-product", "the-most-recent-three-orders"],
+      slugs: ["rank-scores", "top-earners", "most-frequently-ordered-product-per-customer", "the-most-recent-orders-for-each-product", "the-most-recent-three-orders", "basket-depth-aov"],
     },
     {
       name: "Price-band CASE tiers",
       why: "Listings band into classic and premium brackets with fixed edges the category page publishes — 8 classic listings averaging 32.06, 8 mid-band at 111.5, and the 200-plus premium band is EMPTY on this snapshot with the top listing at 199.99. Proving a band is empty is as important as filling one: the CASE arms must be exhaustive and ordered, because a hole in the arms is a hole in the forecast.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "calculate-product-final-price"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "calculate-product-final-price", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month purchase spine (2024-01 to 2025-02) is the growth call's home turf: the book opens at 3,731.97 and troughs at 1,193.86 in July 2024. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "year-on-year-growth-rate", "restaurant-growth"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "year-on-year-growth-rate", "restaurant-growth", "combine-two-tables", "employee-bonus", "fix-product-name-format", "null-blank-audit"],
     },
     {
       name: "Coverage set algebra",
       why: "Board packets stack populations — dispatched under cancelled, this quarter beside last — and EXCEPT answers 'which listings never sold' (a confident zero here, since all 16 moved). UNION dedups whole rows silently, which makes it a correctness question, not a style one.",
-      slugs: ["team-scores-in-football-tournament", "the-airport-with-the-most-flights", "customers-who-never-order", "sellers-with-no-sales", "customer-who-visited-but-did-not-transact"],
+      slugs: ["team-scores-in-football-tournament", "the-airport-with-the-most-flights", "customers-who-never-order", "sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "Nested folds & tier gates",
       why: "Screens escalate into staging: fold per-buyer purchase counts, then judge them against a computed platform mean. Scalar, correlated and derived shapes each carry an empty-inner-query answer you are expected to give unprompted.",
-      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments", "users-with-two-purchases-within-seven-days", "customers-with-strictly-increasing-purchases"],
+      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments", "users-with-two-purchases-within-seven-days", "customers-with-strictly-increasing-purchases", "group-sold-products-by-the-date"],
     },
     {
       name: "One-pass status censuses",
       why: "The ops board needs delivered, shipped, pending and cancelled in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "friday-purchases-i"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "friday-purchases-i", "sales-analysis-iii"],
     },
     {
       name: "Pago billing & cents discipline",

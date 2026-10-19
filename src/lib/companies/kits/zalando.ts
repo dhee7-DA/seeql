@@ -28,7 +28,7 @@ export const zalandoKit: CompanyKit = {
     "**Zalando** is Europe's fashion marketplace — and its data grain is the drop, not the shelf: partner brands win homepage slots, members fill baskets across sizes, and the fulfillment network stamps every basket with a dispatch scan. On this kit's proxy db the census reads **16 member households**, **103 baskets** fanning into **251 scanned lines**, $34,833.28 total demand at an average basket of **$338.19** — supplied by **6 partner brands** across 16 SKUs, shaped exactly like the brand-book read a Berlin analyst runs before the drop calendar locks.",
     "The data org reads the business as clusters and clocks. The {sky:EU} home market carries **45 baskets** from 8 buyers for 15089.23 at a 335.32 average, and the dispatch clock averages **2.98 days** over the 82 baskets carrying `shipped_at` (EU 2.94 over 36, APAC 2.93 over 29). Status is the funnel: **52 delivered**, **30 shipped**, **14 pending**, {rose:7 cancelled} — and because this is fashion, the cancel line is the size-fit story: EU cancels at **6.7%** of placed baskets while APAC runs 8.1%. *An analyst who can't say which population a latency average covers — fulfilled only, 82 of 103 — doesn't get past the warm-up.*",
     "Interview style is drop-flavored and denominator-first. Screens open with a warm-up join (baskets to members, lines to SKUs, SKUs to partner brands), escalate into a rate with a stated denominator (kept baskets, size-fit cancels per placed), then land on the two Zalando signatures: a **drop-calendar ladder** (rank 2024's months by basket count — February and September tie at 9, four months tie at 8, so the tie rule IS the question) or a **partner-brand board** (assortment floors and demand floors with a HAVING gate). Follow-ups are spoken: 'is that per basket or per member?', 'which brands does the floor drop?', 'does a cancelled basket sit in your placed base?'",
-    "Preparation strategy: Zalando carries **0 tagged LC problems** in this app's registry — the pool is theme-curated from the SQL band: drop-window date math, kept-basket rates, tie-proof ranking windows, partner-brand revenue folds, and cents discipline on the settlement tables (invoices and payments store INTEGER cents — the dollar read is `amount_cents / 100.0`). The two case studies run on the live db: one rebuilds the **partner-brand board** the category team argues with, the other rebuilds the **drop-calendar ladder** the planning sync ships from. Both are mechanically audited against the probed figures.",
+    "Preparation strategy: Zalando carries **0 tagged LC problems** in this app's registry — the pool is theme-curated from the SQL band: drop-window date math, kept-basket rates, tie-proof ranking windows, partner-brand revenue folds, and cents discipline on the settlement tables (invoices and payments store INTEGER cents — the dollar read is `amount_cents / 100.0`). The six case studies run on the live db — built for spaced practice rather than one sitting: one rebuilds the **partner-brand board** the category team argues with, another rebuilds the **drop-calendar ladder** the planning sync ships from. All six are mechanically audited against the probed figures.",
     "The money layer is the same discipline at cent grain, and the close is where the screens get honest. The settlement book reads 28 invoices against 27 payments — 21 settled exact for 66443.00, 6 open at 19609.00, 1 void at 925.00 — and coverage splits it finer: **21 exact / 1 partial / 6 none**, the partial a 4000.00 rail against a 6148.00 bill, the none-arm **15217.00 of exposure**. Rails split card-versus-wire, 16 card settlements at 37364.00 against 11 wires at 32248.00, and settlement runs **28.4 days against flat 30-day terms** — fastest 13, slowest 84. The anomaly classes are on file: a {rose:void-but-paid} invoice at 925.00, a paid invoice with zero rails at 1756.00, five split-settlement bills whose two rails are structure, not duplicates. The trial balance ties at **181080 on both sides** — *the close does not pass until it does*.",
     "Preparation, second pass: the kit now runs four laps over one db. Lap one is censuses — status arms, two-grain counts, band maps — where every branch must reconcile to `COUNT(*)` (52 + 30 + 14 + 7 = 103). Lap two is rates and ladders — kept-share with the denominator fixed, DENSE_RANK drop ladders with the tiebreak stated. Lap three is shapes — a staged CTE feeding a share board, a set-op stack labeled with source literals, a benchmark subquery against the 338.19 average basket. Lap four is the anomaly hunt, and the db's honest limits are part of it: the premium band is {rose:empty} at the 199.99 ceiling, every SKU has scanned, every member has ordered — *saying 'this anti-join returns nothing, by data' outranks shipping a dashboard of thin air*. The full pack — **24 theory items, 30 MCQs, 6 audited cases, 32 problems** — is the rehearsal space; the interview is where the denominators get defended.",
   ],
@@ -59,7 +59,7 @@ export const zalandoKit: CompanyKit = {
     {
       name: "The drop calendar: date math",
       why: "Zalando plans in drop windows, and every drop read is a duration or a bucket: `JULIANDAY(shipped_at) − JULIANDAY(created_at)` on the 82 fulfilled baskets, month keys via STRFTIME for the cadence ladder. Screens drill the mechanics because an analyst who buckets unfulfilled baskets has silently mixed two populations — the calendar is a population question before it is a date question.",
-      slugs: ["find-golden-hour-customers", "convert-date-format", "the-latest-login-in-2020"],
+      slugs: ["find-golden-hour-customers", "convert-date-format", "the-latest-login-in-2020", "product-price-at-a-given-date", "seasonal-sales-analysis", "year-on-year-growth-rate", "total-sales-amount-by-year"],
     },
     {
       name: "Kept-basket pipelines",
@@ -69,7 +69,7 @@ export const zalandoKit: CompanyKit = {
     {
       name: "Partner-brand revenue folds",
       why: "The brand board is a three-table fold — brands to SKUs to scanned lines — and the category team reads revenue to 2 decimals beside share of the 34833.28 book. The drills pair a revenue SUM with a join-then-aggregate shape; the trap is line grain leaking into brand grain, where a fold over 251 lines stops being a brand number.",
-      slugs: ["sales-analysis-i", "average-selling-price", "products-worth-over-invoices"],
+      slugs: ["sales-analysis-i", "average-selling-price", "products-worth-over-invoices", "combine-two-tables", "article-views-i", "project-employees-iii", "game-play-analysis-iv", "sales-person", "weather-type-in-each-country", "triangle-judgement"],
     },
     {
       name: "Size-fit rates with honest denominators",
@@ -84,7 +84,7 @@ export const zalandoKit: CompanyKit = {
     {
       name: "The two-grain census",
       why: "Baskets AND members per cluster is the opening read of the marketplace review — and the trap is counting both at one grain. COUNT(*) counts baskets (45 in EU); COUNT(DISTINCT customer_id) counts members (8); the gap is basket intensity, which is the number the partner team actually manages.",
-      slugs: ["daily-leads-and-partners", "students-and-examinations", "unique-orders-and-customers-per-month"],
+      slugs: ["daily-leads-and-partners", "students-and-examinations", "unique-orders-and-customers-per-month", "percentage-of-users-attended-a-contest", "find-the-team-size", "group-sold-products-by-the-date", "calculate-orders-within-each-interval"],
     },
     {
       name: "Assortment argmax",
@@ -99,22 +99,22 @@ export const zalandoKit: CompanyKit = {
     {
       name: "Member concentration and whales",
       why: "Top members carry the book: spenders over 3000 lifetime dollars hold 63.5% of demand, and the top household sits at 24 baskets while the median member sits at 3-or-4. The drills pair a spend histogram with a grouped argmax — the two queries the CRM lead asks for before every tier recalibration.",
-      slugs: ["spend-histogram", "winning-candidate", "customer-placing-the-largest-number-of-orders"],
+      slugs: ["spend-histogram", "winning-candidate", "customer-placing-the-largest-number-of-orders", "investments-in-2016"],
     },
     {
       name: "Cents and settlement hygiene",
       why: "Brand settlements store INTEGER cents — the dollar read is `amount_cents / 100.0`, and the .0 placement is the standing bug in every fold. The drills pair the cents promotion with a CASE-band census, because the finance close reads the same settlement tables the brand board does, and the two must reconcile to the cent.",
-      slugs: ["bank-account-summary-ii", "trial-balance-check", "count-salary-categories"],
+      slugs: ["bank-account-summary-ii", "trial-balance-check", "count-salary-categories", "recyclable-and-low-fat-products", "find-customers-with-positive-revenue-this-year", "fix-product-name-format"],
     },
     {
       name: "Set-op stacks and anti-join shapes",
       why: "The close stacks censuses — demand rows under settlement rows, exception rows under the base — and set operators align branches by POSITION, not by name; one reordered column mislabels a whole block. The dark-side reads are set algebra too: which partner brands never scanned, which invoices never saw a rail. The drill is knowing when UNION's dedupe silently merges coincidentally-equal rows and when EXCEPT disagrees with NOT EXISTS on multiplicity.",
-      slugs: ["movie-rating", "find-the-missing-ids", "customer-who-visited-but-did-not-transact"],
+      slugs: ["movie-rating", "find-the-missing-ids", "customer-who-visited-but-did-not-transact", "customers-who-never-order", "sellers-with-no-sales", "customers-who-bought-all-products"],
     },
     {
       name: "Running demand and window frames",
       why: "Cadence reads ride running totals and rolling averages down the month spine — and the default frame (RANGE UNBOUNDED PRECEDING TO CURRENT ROW) folds same-key peers into one step, which is right on month grain and a silent lie at row grain. The drills force the frame decision: a rolling-7 read, a cumulative fold, and the trap where a filtered spine makes LAG reach back two months and call it one.",
-      slugs: ["restaurant-growth", "find-cumulative-salary-of-an-employee", "rolling-average-steps"],
+      slugs: ["restaurant-growth", "find-cumulative-salary-of-an-employee", "rolling-average-steps", "department-top-three-salaries", "last-person-to-fit-in-the-elevator", "game-play-analysis-v", "customers-with-strictly-increasing-purchases", "second-highest-salary", "human-traffic-of-stadium", "customers-with-maximum-number-of-transactions-on-consecutive-days"],
     },
     {
       name: "Benchmark subqueries and staged boards",
@@ -124,12 +124,12 @@ export const zalandoKit: CompanyKit = {
     {
       name: "Seasonal demand z-scores",
       why: "Drop planning asks 'how abnormal was July' — and a z-score is a denominator argument wearing statistics: which population sets the mean and the spread (all 14 months gross, or kept-only), and does the baseline month belong. The drills train burst detection and velocity reads, the shape behind flagging a month whose demand left the seasonal band.",
-      slugs: ["amount-anomaly-zscore", "find-bursty-behavior", "transaction-velocity"],
+      slugs: ["amount-anomaly-zscore", "find-bursty-behavior", "transaction-velocity", "active-users", "suspicious-bank-account-transactions"],
     },
     {
       name: "Sell-through and size-curve cover",
       why: "The size-curve story is a cover read: units remaining per SKU (stock minus scanned demand), the thin band that triggers re-orders, the deep band that frees cash. The drills pair a cover census with a weeks-of-supply fold — the two queries the buying team argues with before the size curve is rebalanced.",
-      slugs: ["weeks-of-supply", "warehouse-manager", "basket-depth-aov"],
+      slugs: ["weeks-of-supply", "warehouse-manager", "basket-depth-aov", "duplicate-charge-pairs"],
     },
   ],
 

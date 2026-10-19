@@ -55,22 +55,22 @@ export const amazonKit: CompanyKit = {
     {
       name: "Aggregation: GROUP BY as a business question",
       why: "Revenue by category, orders by region, units by fulfillment center — the retail readout is a wall of GROUP BYs. Amazon probes whether you can move grain deliberately (orders → per-customer totals → per-region averages) instead of hoping the engine guesses.",
-      slugs: ["product-sales-analysis-ii", "group-sold-products-by-the-date", "classes-more-than-5-students"],
+      slugs: ["product-sales-analysis-ii", "group-sold-products-by-the-date", "classes-more-than-5-students", "most-frequently-ordered-product-per-customer"],
     },
     {
       name: "Conditional counting & HAVING thresholds",
       why: "'Delivered on time', 'met the monthly target', 'ordered at least twice' — Amazon's metrics are conditional counts wrapped in thresholds. The HAVING-judged derived quantity is their signature escalation from a plain GROUP BY.",
-      slugs: ["immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "number-of-employees-who-met-the-target"],
+      slugs: ["immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "number-of-employees-who-met-the-target", "find-the-team-size"],
     },
     {
       name: "Anti-joins & missing-data reads",
       why: "Catalog hygiene is a real Amazon workflow: products with zero views, customers who signed up but never ordered, SKUs missing from the feed. The LEFT JOIN + IS NULL shape (and its NOT EXISTS twin) shows up in nearly every screen.",
-      slugs: ["customers-who-never-order", "employees-whose-manager-left-the-company", "employees-with-missing-information"],
+      slugs: ["customers-who-never-order", "employees-whose-manager-left-the-company", "employees-with-missing-information", "product-sales-analysis-iii", "customers-who-bought-a-and-b-not-c", "sellers-with-no-sales"],
     },
     {
       name: "Window ranking & the tie traps",
       why: "Top three salaries per department, second-highest price, per-customer order ranks — Amazon loves ranking because ties expose who knows ROW_NUMBER vs RANK vs DENSE_RANK. The LIMIT-1-OFFSET-1 candidate fails the tie follow-up; the window candidate passes.",
-      slugs: ["rank-scores", "department-top-three-salaries", "second-highest-salary"],
+      slugs: ["rank-scores", "department-top-three-salaries", "second-highest-salary", "last-person-to-fit-in-the-bus"],
     },
     {
       name: "NULL policy: the LEFT JOIN payload",
@@ -80,17 +80,17 @@ export const amazonKit: CompanyKit = {
     {
       name: "String hygiene & normalization",
       why: "Vendor feeds arrive with inconsistent casing, padded names and junk formats. Fix-the-name and format-the-catalog questions test whether you can clean text in SQL — UPPER/LOWER, TRIM, CONCAT, SUBSTRING — without breaking the join key you'll group on later.",
-      slugs: ["fix-names-in-a-table", "fix-product-name-format", "patients-with-a-condition"],
+      slugs: ["fix-names-in-a-table", "fix-product-name-format", "patients-with-a-condition", "duplicate-emails"],
     },
     {
       name: "Ratios, rates & rounded shares",
       why: "Confirmation rate, query quality percentage, average selling price — Amazon asks ratios because ratios punish sloppy aggregation. Multiply by 100.0 before dividing, decide the denominator's filter BEFORE the ratio, and round at the end.",
-      slugs: ["queries-quality-and-percentage", "average-selling-price", "confirmation-rate"],
+      slugs: ["queries-quality-and-percentage", "average-selling-price", "confirmation-rate", "roas-by-campaign"],
     },
     {
       name: "Hierarchies & self-joins",
       why: "Manager chains, reporting lines, org trees — the employee table is Amazon's favorite self-join playground, from 'who has at least five direct reports' to 'who reports up to this VP'. Every one is a self-join with a scope rule attached.",
-      slugs: ["managers-with-at-least-5-direct-reports", "the-number-of-employees-which-report-to-each-employee", "all-people-report-to-the-given-manager"],
+      slugs: ["managers-with-at-least-5-direct-reports", "the-number-of-employees-which-report-to-each-employee", "all-people-report-to-the-given-manager", "game-play-analysis-v"],
     },
     {
       name: "Multi-part reports & argmax reads",
@@ -110,7 +110,7 @@ export const amazonKit: CompanyKit = {
     {
       name: "Pivot reads & conditional columns",
       why: "Stakeholders read columns, not row dumps: units by weekday for staffing, per-status buckets in one pass, CASE labels that translate codes into business words. The pivot is CASE WHEN plus conditional aggregation — one scan, many lenses, one shared denominator.",
-      slugs: ["sales-by-day-of-the-week", "reformat-department-table", "weather-type-in-each-country"],
+      slugs: ["sales-by-day-of-the-week", "reformat-department-table", "weather-type-in-each-country", "immediate-food-delivery-i"],
     },
     {
       name: "Zero-fill & empty-bucket honesty",

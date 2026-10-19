@@ -64,27 +64,27 @@ export const goodreadsKit: CompanyKit = {
     {
       name: "Shelf-status funnels",
       why: "Every Goodreads growth screen opens with the shelf funnel: periods booked, reading windows opened, challenge months finished. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling a window-in-flight period 'finished' — 30 versus 52 on this db — and the second trap is the to-read backlog: 14 periods that stay in a conversion base and drop out of a latency base.",
-      slugs: ["trial-to-paid-funnel", "percentage-of-users-attended-a-contest", "user-activity-for-the-past-30-days-ii"],
+      slugs: ["trial-to-paid-funnel", "percentage-of-users-attended-a-contest", "user-activity-for-the-past-30-days-ii", "classes-more-than-5-students"],
     },
     {
       name: "Two-grain reader censuses",
       why: "Periods and readers are different grains of the same join, and every census here reports both: EU runs 45 periods from 8 readers while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which column is reading load and which is installed base — is the habit being graded. The ratio (5.6 versus 9.5) is the intensity signal that decides whether the community is broadening or concentrating.",
-      slugs: ["unique-orders-and-customers-per-month", "the-number-of-employees-which-report-to-each-employee", "number-of-rich-customers"],
+      slugs: ["unique-orders-and-customers-per-month", "the-number-of-employees-which-report-to-each-employee", "number-of-rich-customers", "customers-who-bought-all-products"],
     },
     {
       name: "Review depth & rating NULLs",
       why: "Goodreads is ratings: the average-rating histogram is the community's first chart, and its gaps are NULLs. COUNT(column) versus COUNT(*) decides whether unrated editions vanish silently, and COALESCE turns a missing review-confirmation into an explicit rate instead of a hole. The panel wants the NULL policy stated before the histogram ships — a confident zero you did not verify is how metadata audits die in review.",
-      slugs: ["ratings-histogram", "books-with-null-ratings", "confirmation-rate"],
+      slugs: ["ratings-histogram", "books-with-null-ratings", "confirmation-rate", "immediate-food-delivery-ii", "basket-depth-aov", "repeat-purchase-rate"],
     },
     {
       name: "Challenge leaderboards & ties",
       why: "Leaderboards are rank-window reporting where ties are guaranteed — four readers sit at 4 periods each on this db, and the ladder above them runs 24, 17, 14, 13, 5. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer readers, not syntax. The most-shelved titles ladder carries the same problem at edition grain — a 36-pair and two three-way ties — so the policy gets defended twice per screen.",
-      slugs: ["rank-scores", "top-earners", "group-employees-of-the-same-salary"],
+      slugs: ["rank-scores", "top-earners", "group-employees-of-the-same-salary", "product-sales-analysis-ii", "customer-placing-the-largest-number-of-orders", "keep-latest-dedupe"],
     },
     {
       name: "Edition bands with CASE",
       why: "Edition tiers are CASE-classified — the shelf-band fold splits 251 lines into 268 sub-55 mass-market books (31.01 average) and 230 premium books (115.85), and genre families band the same way. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the edition forecast, and a reordered WHEN quietly re-bands the base. Interviewers probe the arm that swallows rows by moving the boundary one cent.",
-      slugs: ["triangle-judgement", "calculate-special-bonus", "the-category-of-each-member-in-the-store"],
+      slugs: ["triangle-judgement", "calculate-special-bonus", "the-category-of-each-member-in-the-store", "capital-gain-loss", "rfm-segmentation", "cohort-retention-matrix"],
     },
     {
       name: "Challenge spines & LAG deltas",
@@ -94,12 +94,12 @@ export const goodreadsKit: CompanyKit = {
     {
       name: "Shelf set algebra",
       why: "Board packets stack populations — finished readers above abandoned shelves, this quarter beside last — and EXCEPT answers 'which booked periods never opened a window'. UNION dedups whole rows silently, which makes it a correctness question, not a style one: two stacked branches that emit identical reader rows collapse and the board loses a reader with no error anywhere.",
-      slugs: ["movie-rating", "team-scores-in-football-tournament", "the-airport-with-the-most-flights"],
+      slugs: ["movie-rating", "team-scores-in-football-tournament", "the-airport-with-the-most-flights", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "The unshelved & unpopular (anti-joins)",
       why: "Catalog work is anti-join work: editions with no shelf events, sellers with no sales, readers with no recent periods — the dormant lists that drive re-engagement. The trap is the confident zero: on this db every edition and every reader appears somewhere (never-ordered = 0 on both), so the honest answer proves the zero before reporting it. LEFT JOIN with IS NULL is the shape; a WHERE filter on the right table after the LEFT quietly turns it INNER and kills the list.",
-      slugs: ["unpopular-books", "sellers-with-no-sales", "customers-who-never-order"],
+      slugs: ["unpopular-books", "sellers-with-no-sales", "customers-who-never-order", "sales-analysis-i", "combine-two-tables"],
     },
     {
       name: "Nested reader gates",

@@ -69,22 +69,22 @@ export const rabobankKit: CompanyKit = {
     {
       name: "Two-grain corridor censuses",
       why: "Flows and clients are different grains of the same join, and every corridor census here reports both: the EU book runs 45 flows from 8 clients while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "immediate-food-delivery-ii", "orders-with-maximum-quantity-above-average", "active-businesses", "confirmation-rate", "find-zombie-sessions"],
     },
     {
       name: "Client joins & survival rules",
       why: "Clients carry corridor and onboarding date; flows inherit them through joins, and the join type decides who survives. A flow without a client row is corruption; a client without flows is rural whitespace — though on this db the anti-join returns a confident zero (all 16 clients appear in the book), and proving that zero is part of the job.",
-      slugs: ["combine-two-tables", "employees-with-missing-information", "sales-analysis-ii", "dormant-reactivation"],
+      slugs: ["combine-two-tables", "employees-with-missing-information", "sales-analysis-ii", "dormant-reactivation", "customers-who-never-order", "customers-who-bought-a-and-b-not-c", "null-blank-audit"],
     },
     {
       name: "Client ladders & rank policy",
       why: "Relationship reviews rank clients by flow count where ties are guaranteed — the ladder runs 24, 17, 14, 13, 5, then FOUR clients tied at 4. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer relationships, not syntax.",
-      slugs: ["rank-scores", "top-earners", "find-the-team-size", "chargeback-rate-ranking"],
+      slugs: ["rank-scores", "top-earners", "find-the-team-size", "chargeback-rate-ranking", "managers-with-at-least-5-direct-reports"],
     },
     {
       name: "Season banding with CASE",
       why: "The agri book lives on seasons: booked value cut into quarter arms is how the corridor desk sees planting-versus-harvest pressure. The arms must be exhaustive and ordered — a missing month in a BETWEEN arm silently NULLs a quarter instead of printing zero, and a hole in the CASE is a hole in the season board.",
-      slugs: ["seasonal-sales-analysis", "weather-type-in-each-country", "the-category-of-each-member-in-the-store", "credit-utilization-bands", "calculate-orders-within-each-interval"],
+      slugs: ["seasonal-sales-analysis", "weather-type-in-each-country", "the-category-of-each-member-in-the-store", "credit-utilization-bands", "calculate-orders-within-each-interval", "calculate-special-bonus", "count-salary-categories", "monthly-transactions-ii"],
     },
     {
       name: "The value-date clock",
@@ -109,7 +109,7 @@ export const rabobankKit: CompanyKit = {
     {
       name: "The book of record & the close",
       why: "The ledger is the book of record — 80 entries, 181,080.00 debits against 181,080.00 credits, delta zero — and every close report must tie back to it. Screens here probe whether you can stage a fold, classify it, and prove the tie-out; a number that can't reach the GL is a rumor, not a read.",
-      slugs: ["trial-balance-check", "gl-reconciliation", "balance-rollforward", "journal-gap-detection", "suspicious-bank-account-transactions", "wash-trade-detection"],
+      slugs: ["trial-balance-check", "gl-reconciliation", "balance-rollforward", "journal-gap-detection", "suspicious-bank-account-transactions", "wash-trade-detection", "transaction-velocity", "delinquency-buckets", "structuring-detection", "vintage-default-curves"],
     },
   ],
 

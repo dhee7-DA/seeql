@@ -56,7 +56,7 @@ export const ihgKit: CompanyKit = {
 
   dayInLife: [
     "**08:10 —** The day opens on the pace board before standup. The analyst runs the one-pass stay-fate census first — 52 completed and closed, 30 in-house, 14 awaiting arrival, 7 {rose:cancelled or no-show} = **103 by construction** — because any branch that fails that identity is an incident, not a rounding note. Then the arrival clock: **2.98 days** average booking-to-check-in over the 82 stamped stays, with the regional drift map beside it (LATAM 3.5 slowest on just 2 stamps, APAC 2.93 quickest on 29). July and November each carry 2 of the 7 cancellations — if a third cancellation lands in either month, the franchisee scorecard call moves before the revenue review does.",
-    "**11:40 —** Midday is property work. The estate scorecard re-cuts: Nordic Gadgets AB on 43 folio lines and **11,130.25** (32% of the book), Midwest Hardware Co on 56 lines — the volume crown — while Andes Naturals SA runs 25 lines and 3,613.25; the per-property line counts (43 / 56 / 40 / 25 / 47 / 40) are the workload read the area directors argue about. Then the {amber:rate×volume band fold}: 268 economy rooms at 31.01 against 230 upscale rooms at 115.85, re-cut market by market — the US book averages 383.48 a stay on only 19 stays, so band mix and market mix get separated before anyone says 'RevPAR' out loud. The guest ladder underneath reads 24 / 17 / 14 / 13 / 5 stays with a three-way tie at 4 — rank semantics get named, not shrugged at.",
+    "**11:40 —** Midday is property work. The estate scorecard re-cuts: Nordic Gadgets AB on 43 folio lines and **11,130.25** (32% of the book), Midwest Hardware Co on 56 lines — the volume crown — while Andes Naturals SA runs 25 lines and 3,613.25; the per-property line counts (43 / 56 / 40 / 25 / 47 / 40) are the workload read the area directors argue about. Then the {amber:rate×volume band fold}: 268 economy rooms at 31.01 against 230 upscale rooms at 115.85, re-cut market by market — the US book averages 383.48 a stay on only 19 stays, so band mix and market mix get separated before anyone says 'RevPAR' out loud. The guest ladder underneath reads 24 / 17 / 14 / 13 / 5 stays with a four-way tie at 4 — rank semantics get named, not shrugged at.",
     "**15:30 —** The afternoon tilts to the fee desk. The {rose:never-remitted} chase list refreshes first — 6 statements worth **15,217.00**: 5 open at 13,461.00, plus paid-status #28 at 1,756.00 with zero remittance legs, a status that lies — while the mirror anomaly (#11, void but remitted at 925.00) gets walked line by line, never averaged away. The rails split goes into the pack: card auto-debit 16 legs / 37,364.00 versus wire remittance 11 legs / 32,248.00, settlement averaging 28.4 days against flat 30-day terms. The day ends the way every close does: the ledger trial balance must read **181,080 against 181,080**, delta zero — {emerald:the close ships} or tomorrow starts with an incident.",
   ],
 
@@ -75,37 +75,37 @@ export const ihgKit: CompanyKit = {
     {
       name: "Folio-line grain folds",
       why: "Everything at IHG starts with the folio: 251 order_items lines fold up to 103 stays and 498 rooms, and every screen audits which grain you actually counted. Fold line records to room-type grain (revenue, rooms, distinct stays) and the fan-out trap — COUNT(*) after the join counts lines and calls them stays — becomes muscle memory.",
-      slugs: ["sales-analysis-i", "product-sales-analysis-ii", "most-frequently-ordered-product-per-customer", "group-sold-products-by-the-date", "find-the-team-size"],
+      slugs: ["sales-analysis-i", "product-sales-analysis-ii", "most-frequently-ordered-product-per-customer", "group-sold-products-by-the-date", "find-the-team-size", "classes-more-than-5-students"],
     },
     {
       name: "Rate bands & the RevPAR fold",
       why: "The rate×volume read is a CASE band over folio-line rates: at the 55.00 edge the estate splits into 268 economy rooms at 31.01 and 230 upscale rooms at 115.85. Arms must be exhaustive, ordered and edge-stated — moving the edge to 50 flips two folio lines (five rooms) across the boundary, and a hole in the CASE is a hole in the royalty story.",
-      slugs: ["count-salary-categories", "calculate-special-bonus", "immediate-food-delivery-i", "product-price-at-a-given-date", "list-the-products-ordered-in-a-period"],
+      slugs: ["count-salary-categories", "calculate-special-bonus", "immediate-food-delivery-i", "product-price-at-a-given-date", "list-the-products-ordered-in-a-period", "confirmation-rate", "immediate-food-delivery-ii"],
     },
     {
       name: "One Rewards tier ladders",
       why: "Tiering is fold-then-classify: per-guest lifetime value first (the top guest runs 7,262.35 over 24 stays), tier bands second. Tier the raw stay rows and you tier folio lines, not guests — the fan-out bug in its most expensive costume. Ladders with ceilings (second-highest, top-N) are the supporting drills.",
-      slugs: ["top-earners", "second-highest-salary", "winning-candidate", "department-top-three-salaries", "game-play-analysis-iv"],
+      slugs: ["top-earners", "second-highest-salary", "winning-candidate", "department-top-three-salaries", "game-play-analysis-iv", "top-travellers", "customer-placing-the-largest-number-of-orders", "employees-with-missing-information"],
     },
     {
       name: "The booking-to-check-in clock",
       why: "The arrival clock runs created_at to shipped_at over the 82 of 103 stays that carry the stamp, averaging 2.98 days — and the interviewer's first question is what the denominator holds. julianday arithmetic with the stamp filter stated out loud is the shape being graded; the 14 awaiting-arrival stays stay in the funnel but out of the clock.",
-      slugs: ["average-time-of-process-per-machine", "find-golden-hour-customers", "second-day-confirmation"],
+      slugs: ["average-time-of-process-per-machine", "find-golden-hour-customers", "second-day-confirmation", "sales-by-day-of-the-week"],
     },
     {
       name: "Two-grain market censuses",
       why: "Markets are read at two grains at once: EU books 45 stays from 8 accounts while the US books 19 from 2 — load versus coverage, and the ratio (5.6 versus 9.5) is the intensity signal. COUNT(*) beside COUNT(DISTINCT customer_id), plus month-bucket twins of the same pair, is the habit the census screens grade.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count", "sellers-with-no-sales"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count", "sellers-with-no-sales", "percentage-of-users-attended-a-contest"],
     },
     {
       name: "Month pace walks",
       why: "The 14-month stay spine (2024-01 to 2025-02) is the pace call's home turf: prior month beside current, deltas rounded, the July trough (1,193.86) and the +1,158.21 jump into August named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero — and churned stays concentrate in July and November.",
-      slugs: ["week-over-week-churn", "biggest-window-between-events", "year-on-year-growth-rate", "active-users"],
+      slugs: ["week-over-week-churn", "biggest-window-between-events", "year-on-year-growth-rate", "active-users", "combine-two-tables", "find-churn-risk-customers", "null-blank-audit"],
     },
     {
       name: "Set algebra on the estate",
       why: "Board packets stack populations — markets won beside markets merely present, remitted statements beside the never-remitted chase list — and UNION/EXCEPT answer which is which. UNION dedups whole rows silently, which makes it a correctness question; EXCEPT is the anti-join's set-op twin pointed at the estate.",
-      slugs: ["movie-rating", "team-scores-in-football-tournament", "the-airport-with-the-most-flights"],
+      slugs: ["movie-rating", "team-scores-in-football-tournament", "the-airport-with-the-most-flights", "average-selling-price", "consecutive-available-seats"],
     },
     {
       name: "Nested property gates",
@@ -115,7 +115,7 @@ export const ihgKit: CompanyKit = {
     {
       name: "One-pass status censuses",
       why: "The ops board gets completed, in-house, awaiting-arrival and cancelled in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift. The reconciliation identity is the correctness argument.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "number-of-employees-who-met-the-target", "weather-type-in-each-country"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "number-of-employees-who-met-the-target", "weather-type-in-each-country", "capital-gain-loss"],
     },
     {
       name: "Royalty statements & cents discipline",
@@ -502,7 +502,7 @@ export const ihgKit: CompanyKit = {
     },
     {
       id: "ihg-mcq-20",
-      prompt: "The guest ladder runs 24 / 17 / 14 / 13 / 5 stays, then a three-way tie at 4. Why does 'top 5 guests by stays' (LIMIT 5) survive the tie without controversy?",
+      prompt: "The guest ladder runs 24 / 17 / 14 / 13 / 5 stays, then a four-way tie at 4. Why does 'top 5 guests by stays' (LIMIT 5) survive the tie without controversy?",
       choices: ["It doesn't — every LIMIT over a tie is ambiguous", "The tie sits entirely below the cut: five distinct stay counts fill the top five slots, so LIMIT 5 returns a deterministic set", "SQLite breaks ties alphabetically, which is deterministic", "The tie is impossible — stay counts are unique per guest"],
       answer: 1,
       why: "The top five values are 24, 17, 14, 13 and 5 — no value at the cut is shared, so LIMIT 5 returns exactly those guests regardless of tie-break. The ambiguity would begin at LIMIT 7, where the three 4-stay guests contend for the sixth and seventh slots.",

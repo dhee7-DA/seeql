@@ -55,7 +55,7 @@ export const aldiKit: CompanyKit = {
     "**ALDI** runs the leanest shelf in mainstream grocery — a hard discounter whose range is a deliberately narrow few thousand SKUs where a full-spectrum supermarket stocks thirty thousand, sold without background music, elaborate fixtures or a meaningful advertising budget. Leanness is not a constraint here; it is the commercial thesis. Every SKU must earn its slot by throughput, and the ~90% own-label share means the supplier list is short, deep and strategically precious — a negotiation with one partner moves whole aisles. This kit maps the storefront db onto that world: the 16 products rows ARE the curated assortment, the 6 suppliers rows are the own-label partners who make everything, the 103 orders are baskets worth **34,833.28**, and the 251 order_items rows are basket lines — quantity = units, unit_price = the line price paid. The basket-fate map is fixed: delivered = {emerald:paid and out the door} (52, 50.5%), shipped = {sky:curbside run dispatched} (30, 29.1%, shipped_at = the dispatch stamp), pending = basket being picked (14, 13.6%), cancelled = {rose:abandoned} (7, 6.8%).",
     "The data org is small and the questions are lean with it. Assortment analytics owns the range review: aisle productivity folds (Audio turns **11,744.01** from just 3 SKUs; one-SKU Fitness still moves 27 units for 863.91), and the price-band audit — 8 budget SKUs averaging **32.06** against 8 mid-band at 111.5, ceiling 199.99 with the premium band provably EMPTY. Supply analytics owns the partner book: six own-label partners carry the entire shelf, the top two hold 32% and 26.7% of the book, and the trusted bench at rating 4.5-plus is {amber:exactly two of six} (Nordic 4.6, Alpine 4.8). Ops owns the dispatch clock — 82 of 103 baskets carry the shipped_at stamp, averaging **2.98 days** with a 2–4 spread. Finance ops closes the settlement spine: 28 supplier statements and 27 legs in INTEGER cents, where the dollar read is `amount_cents / 100.0`.",
     "Interview screens are census-then-denominator, leanness-flavored. A typical loop opens with a **two-grain market read** — one bucket runs 45 baskets from just 8 shoppers (intensity 5.6) while another runs 19 from 2 (9.5) — then escalates into a rate where the interviewer asks the denominator out loud (*'does an abandoned basket count in your base?'*), then into the throughput ladder where tie blocks at 36, 30 and 21 units make rank semantics a shelf-slot policy, not syntax. Late rounds band the range at a price line with `CASE`, walk the {sky:14-month trading spine} (2024-01 to 2025-02, July trough 1,193.86) with `LAG` deltas, or audit the settlement book where a paid-status statement with zero legs (#28, 1,756.00) is the standing trap. Candidates who state the definition and the denominator before writing SQL are the ones who get callbacks.",
-    "Preparation strategy: the pools file carries no ALDI section — **0 tagged rows** — so all sixteen problems and every topic slug here are **theme-curated** to this kit's known screen shapes: basket-fate censuses, two-grain shopper reads, aisle productivity folds, honest-tie throughput ladders, partner-dependency windows and the cents-safe settlement spine. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {emerald:one-deep aisle census} the range review opens with, the other rebuilds the {amber:partner-dependency ladder} buying walks into every negotiation. The bar to clear: *state the definition and the denominator before you compute anything* — then make every basket-fate census reconcile to 103 by construction.",
+    "Preparation strategy: the pools file carries no ALDI section — **0 tagged rows** — so all thirty-two problems and every topic slug here are **theme-curated** to this kit's known screen shapes: basket-fate censuses, two-grain shopper reads, aisle productivity folds, honest-tie throughput ladders, partner-dependency windows and the cents-safe settlement spine. Do the topics in order, then run all six case studies on the live storefront db: one rebuilds the {emerald:one-deep aisle census} the range review opens with, the other rebuilds the {amber:partner-dependency ladder} buying walks into every negotiation, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The bar to clear: *state the definition and the denominator before you compute anything* — then make every basket-fate census reconcile to 103 by construction.",
     "Round three is where the lean format shows its teeth. The screens stop asking what and start asking **how many passes**: a fate census rebuilt as one scan with {sky:FILTER} (WHERE …) arms instead of four grouped queries that can drift between runs, a below-average trough audit staged through a derived table so the fold's grain is pinned — one row per month — before any comparison runs, and a co-occurrence read where basket pairs must be canonicalized on `a.id < b.id` or every pair prints twice. Set ops enter here too: `UNION ALL` stacks the fate arms without touching them, while a bare `UNION` dedupes whole rows and can silently collapse tied arms the census meant to keep. The leanness thread never breaks — on a 16-SKU shelf a duplicated pair row is not noise, it is a finding.",
     "Preparation at depth means drilling the shapes the standard kit only introduces. Run every census twice — once grouped, once one-pass with {emerald:FILTER} — and reconcile both to the same 103 baskets before trusting either; stage every ladder in a CTE or derived table and say the grain out loud (`one row per partner`, `one row per month`); practice the confident empty result — the premium band above 199.99, the never-ordered SKU — until *'this returns zero rows and that is the finding'* is a reflex, not a defense. Then sit with the two numbers that look like failures and are actually the story: the **6 never-settled statements worth 15,217**, and the 4-line trolley ceiling holding 23 of the 103 baskets. Senior loops grade the analyst who holds a lean denominator and a rich fold in one query without letting either drift.",
   ],
@@ -86,42 +86,42 @@ export const aldiKit: CompanyKit = {
     {
       name: "Basket-fate conditional counting",
       why: "Every ALDI trading read starts from the same fold: paid-and-out, dispatched, picking, abandoned — one status column, four business meanings. Each branch is a conditional count, and the interviewer's first question is what the denominator holds. The trap is calling a dispatched curbside run 'paid and out' — 30 versus 52 on this db.",
-      slugs: ["immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "monthly-transactions-i"],
+      slugs: ["immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "monthly-transactions-i", "sales-by-day-of-the-week", "tasks-count-in-the-weekend"],
     },
     {
       name: "Two-grain shopper reads",
       why: "Baskets and shoppers are different grains of the same join, and every market census here reports both: one bucket runs 45 baskets from 8 shoppers while another runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying which column is load and which is coverage — is the habit being graded; the ratio (5.6 versus 9.5) is the intensity read that decides where a lean format can actually grow.",
-      slugs: ["unique-orders-and-customers-per-month", "number-of-rich-customers", "sales-analysis-i"],
+      slugs: ["unique-orders-and-customers-per-month", "number-of-rich-customers", "sales-analysis-i", "basket-depth-aov", "customers-who-never-order", "most-frequently-ordered-product-per-customer", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "Assortment HAVING gates",
       why: "Leanness is policed with group-level gates: which SKUs turn at least 30 units, which baskets carry at least 4 lines, which members reordered often enough to keep a slot. A throughput floor is a group-level fact — it lives in HAVING after GROUP BY, and the candidate who puts it in WHERE has written a syntax error that also fails the interview. The gate IS the range-review question.",
-      slugs: ["classes-more-than-5-students", "article-views-ii", "customer-order-frequency"],
+      slugs: ["classes-more-than-5-students", "article-views-ii", "customer-order-frequency", "winning-candidate", "find-churn-risk-customers"],
     },
     {
       name: "Aisle productivity joins",
       why: "The one-deep census joins the 16-SKU products table to its 251 basket lines and folds to seven aisles — SKUs beside units beside baskets-touched beside revenue. Two grains per row is the point: Audio's 97 units from 3 SKUs against Accessories' 121 units from 3 is the difference between revenue-heavy and traffic-heavy aisles, and fan-out (46 baskets versus 54) is what slotting decisions actually read.",
-      slugs: ["product-sales-analysis-i", "average-selling-price", "top-travellers"],
+      slugs: ["product-sales-analysis-i", "average-selling-price", "top-travellers", "sales-analysis-iii", "list-the-products-ordered-in-a-period"],
     },
     {
       name: "Throughput ladders with honest ties",
       why: "The units ladder runs 47, 46, 38, then a two-way tie at 36 and a three-way tie at 30 — tie blocks are guaranteed at this scale, and RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow. At ALDI this is a shelf-slot policy: tied SKUs share a rung and the next distinct count skips, and the analyst defends the choice in the range review, not the syntax doc.",
-      slugs: ["rank-scores", "top-earners", "group-employees-of-the-same-salary"],
+      slugs: ["rank-scores", "top-earners", "group-employees-of-the-same-salary", "customer-placing-the-largest-number-of-orders", "user-activity-for-the-past-30-days-ii"],
     },
     {
       name: "Price-line CASE bands",
       why: "The range splits at price lines — 8 budget SKUs averaging 32.06 against 8 mid-band at 111.5 — and the arms must be exhaustive and ordered, because a hole in the CASE is a hole in the band audit and a reordered WHEN quietly re-bands the base. The premium band above 199.99 must be reported EMPTY, not silently dropped: proving the emptiness is part of the read.",
-      slugs: ["calculate-special-bonus", "the-winner-university", "the-category-of-each-member-in-the-store"],
+      slugs: ["calculate-special-bonus", "the-winner-university", "the-category-of-each-member-in-the-store", "repeat-purchase-rate", "gl-reconciliation", "rfm-segmentation"],
     },
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month trading spine (2024-01 to 2025-02) is the lean-seasonality call's home turf: prior month beside current, delta rounded, the July trough (1,193.86, with 2 of the 7 cancellations) and the November dip (1,648.80, also 2 cancellations) named. LAG drives the walk; the first row's NULL is the baseline by definition, never a coalesced zero.",
-      slugs: ["biggest-window-between-events", "year-on-year-growth-rate", "second-day-confirmation"],
+      slugs: ["biggest-window-between-events", "year-on-year-growth-rate", "second-day-confirmation", "maximum-transaction-each-day", "growth-accounting", "null-blank-audit"],
     },
     {
       name: "Running-share windows",
       why: "The partner-dependency ladder is a window over an aggregate: fold revenue per partner, then SUM(revenue) OVER (ORDER BY revenue DESC) beside the whole-book denominator to print share and cumulative share on one row. The cumulative read — 32 → 58.6 → 72.3 — is the negotiation slide, and the default RANGE frame's treatment of tied revenues is a policy the analyst must state before the walk runs.",
-      slugs: ["running-total-for-different-genders", "last-person-to-fit-in-the-bus", "game-play-analysis-iii"],
+      slugs: ["running-total-for-different-genders", "last-person-to-fit-in-the-bus", "game-play-analysis-iii", "product-sales-analysis-ii", "rolling-average-steps", "restaurant-growth", "ar-aging-schedule"],
     },
     {
       name: "Staged folds & computed bars",
@@ -131,17 +131,17 @@ export const aldiKit: CompanyKit = {
     {
       name: "Cents-safe settlement math",
       why: "Own-label means the settlement book IS the supplier relationship: 28 statements and 27 legs in INTEGER cents, where every dollar read is amount_cents / 100.0. The exact/partial/none coverage split (21 / 1 / 6) is one CASE away, the rails matter (card 16 legs / 37,364.00, wire 11 / 32,248.00), and the missing .0 is how a settlement quietly leaks cents on every odd-cent line.",
-      slugs: ["bank-account-summary-ii", "products-worth-over-invoices", "monthly-transactions-ii"],
+      slugs: ["bank-account-summary-ii", "products-worth-over-invoices", "monthly-transactions-ii", "immediate-food-delivery-ii"],
     },
     {
       name: "One-pass FILTER censuses",
       why: "Month-close needs four counts and two money folds over the same book at one timestamp; four grouped queries can drift apart on a book that just took a posting. FILTER (WHERE …) arms fold every census cell in one scan — one population, one read point — and the close demands that contract. The drill: rebuild a grouped report as one pass, then reconcile the two to the same 103 baskets before trusting either.",
-      slugs: ["active-businesses", "find-books-with-no-available-copies", "snaps-analysis"],
+      slugs: ["active-businesses", "find-books-with-no-available-copies", "snaps-analysis", "product-price-at-a-given-date"],
     },
     {
       name: "Set-op stack reports",
       why: "Some packs append rather than fold: a fate stack, a TOTAL row under a folded book, two cohorts side by side. UNION ALL preserves every stacked row; a bare UNION silently dedupes and can collapse tied arms the census meant to keep — and a stack that stops footing is the bug that hides best. INTERSECT and EXCEPT answer the overlap family: who bought A and also B, who never came back.",
-      slugs: ["the-airport-with-the-most-flights", "league-statistics", "friend-requests-ii-who-has-the-most-friends"],
+      slugs: ["the-airport-with-the-most-flights", "league-statistics", "friend-requests-ii-who-has-the-most-friends", "trial-balance-check", "bank-account-summary"],
     },
     {
       name: "Derived-table staging",
@@ -151,12 +151,12 @@ export const aldiKit: CompanyKit = {
     {
       name: "Pair self-joins & co-occurrence",
       why: "Which categories share a basket is the adjacency question behind slotting: pair the 251 basket lines to themselves on order_id and fold. The discipline is canonicalization — a.id < b.id — or every pair prints twice and the diagonal pollutes the read; the probed census carries 27 raw pairs with 6 multi-SKU diagonals, and the mirrored duplicates are exactly what the inequality exists to kill.",
-      slugs: ["most-common-course-pairs", "symmetric-pairs", "strong-friendship"],
+      slugs: ["most-common-course-pairs", "symmetric-pairs", "strong-friendship", "unpopular-books", "count-apples-and-oranges", "count-salary-categories"],
     },
     {
       name: "Shelf-label text hygiene",
       why: "Names arrive with stray casing and whitespace, and a join on a dirty label forks the aisle census into phantom aisles — 'audio' and 'Audio ' group separately and the 7-aisle fold reads 9. TRIM, UPPER, SUBSTR and LENGTH are the canonicalization pass, run at read time in a staged layer on a read-only book. The month spine's SUBSTR(created_at, 1, 7) is the same family doing date work.",
-      slugs: ["fix-product-name-format", "invalid-tweets", "fix-names-in-a-table"],
+      slugs: ["fix-product-name-format", "invalid-tweets", "fix-names-in-a-table", "group-sold-products-by-the-date", "calculate-orders-within-each-interval"],
     },
   ],
 

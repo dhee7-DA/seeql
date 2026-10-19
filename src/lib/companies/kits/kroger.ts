@@ -57,17 +57,17 @@ export const krogerKit: CompanyKit = {
     {
       name: "Trip-fate funnels",
       why: "Every Kroger fulfillment screen opens with the trip-fate map: trips booked, dispatched (shipped_at stamped), completed at the door. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling a dispatched pickup order 'completed' — 30 versus 52 on this db.",
-      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "funnel-step-conversion", "immediate-food-delivery-iii", "human-traffic-of-stadium"],
+      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "funnel-step-conversion", "immediate-food-delivery-iii", "human-traffic-of-stadium", "most-frequently-ordered-product-per-customer", "sales-by-day-of-the-week", "customer-placing-the-largest-number-of-orders", "fix-product-name-format", "count-student-number-in-departments", "second-highest-salary"],
     },
     {
       name: "Two-grain market censuses",
       why: "Trips and households are different grains of the same join, and every census here reports both: the EU bucket runs 45 trips from 8 households while the US bucket runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count", "user-purchase-platform", "find-the-median"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count", "user-purchase-platform", "find-the-median", "customer-order-frequency"],
     },
     {
       name: "Baskets joined to households",
       why: "Households carry region and sign-up date; trips inherit them through joins, and the join type decides who survives. A trip without a household is corruption; a household without trips is whitespace — though on this db the anti-join returns a confident zero, and proving it is part of the job.",
-      slugs: ["combine-two-tables", "product-sales-analysis-i", "employee-bonus", "warehouse-manager", "restaurant-growth"],
+      slugs: ["combine-two-tables", "product-sales-analysis-i", "employee-bonus", "warehouse-manager", "restaurant-growth", "sellers-with-no-sales"],
     },
     {
       name: "Plus Card value ladders",
@@ -77,7 +77,7 @@ export const krogerKit: CompanyKit = {
     {
       name: "Shelf price bands with CASE",
       why: "Shelf tiers are CASE-classified — budget, mid, premium — with fixed edges the tag prints. The arms must be exhaustive and ordered, and the premium band is EMPTY on this db (max shelf price 199.99): proving a band is empty honestly is exactly the discipline the CASE exercise grades.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "calculate-product-final-price", "transactions-per-visit-histogram"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "calculate-product-final-price", "transactions-per-visit-histogram", "ratings-histogram"],
     },
     {
       name: "The dispatch clock",
@@ -87,17 +87,17 @@ export const krogerKit: CompanyKit = {
     {
       name: "Assortment coverage algebra",
       why: "Board packets stack populations — households that bought the own-brand item beside households that only bought national brands — and EXCEPT answers 'which households never touched the private label'. UNION dedups whole rows silently, which makes it a correctness question, not a style one.",
-      slugs: ["team-scores-in-football-tournament", "the-airport-with-the-most-flights", "customers-who-never-order"],
+      slugs: ["team-scores-in-football-tournament", "the-airport-with-the-most-flights", "customers-who-never-order", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "Household gates & nested folds",
       why: "Screens escalate into staging: fold per-household trip counts, then judge them against a computed platform mean (6.44 trips — exactly four households clear it). Scalar, correlated and derived shapes each carry an empty-inner-query answer you are expected to give unprompted.",
-      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments"],
+      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments", "group-sold-products-by-the-date"],
     },
     {
       name: "One-pass trip censuses",
       why: "The ops board gets completed, dispatched, picking and abandoned in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "friday-purchases-i"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "friday-purchases-i", "queries-quality-and-percentage", "last-person-to-fit-in-the-elevator"],
     },
     {
       name: "Cents-safe settlement math",

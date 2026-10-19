@@ -56,17 +56,17 @@ export const quoraKit: CompanyKit = {
     {
       name: "The ask graph: first joins & counts",
       why: "Every Quora story starts with a first session, and every board starts with a count: sessions per user, first-pickup attribution, answers per batch. This trio drills the first-event fold, the distinct-viewer count and the duration roll-up that the ask-to-answer health screens are built from.",
-      slugs: ["article-views-i", "game-play-analysis-i", "find-followers-count", "find-the-quiet-students-in-all-exams"],
+      slugs: ["article-views-i", "game-play-analysis-i", "find-followers-count", "find-the-quiet-students-in-all-exams", "the-category-of-each-member-in-the-store"],
     },
     {
       name: "Two-grain censuses",
       why: "'Sessions AND users per cohort' is the opening read of every Quora business review — and the trap is counting both at the same grain. COUNT(*) counts session rows; COUNT(DISTINCT customer_id) counts people. The trio drills exactly this census, monthly and daily, until the two-grain discipline is reflexive.",
-      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "article-views-ii", "actors-and-directors-who-cooperated-at-least-three-times"],
+      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "article-views-ii", "actors-and-directors-who-cooperated-at-least-three-times", "finding-the-topic-of-each-post", "find-trending-hashtags", "same-day-sale", "market-analysis-i", "students-and-examinations", "customer-order-frequency", "calculate-orders-within-each-interval"],
     },
     {
       name: "Upvote & quality signals",
       why: "Upvotes and downvotes are the crowd's quality signal, and every quality read is a conditional count or a rate. These drills cover flagged counts, per-item quality percentages and the 100.0-before-division habit that keeps Quora's quality shares honest.",
-      slugs: ["reported-posts", "ads-performance", "queries-quality-and-percentage", "find-books-with-polarized-opinions", "number-of-comments-per-post"],
+      slugs: ["reported-posts", "ads-performance", "queries-quality-and-percentage", "find-books-with-polarized-opinions", "number-of-comments-per-post", "keep-latest-dedupe", "books-with-null-ratings"],
     },
     {
       name: "Answer-rate ratios",
@@ -81,7 +81,7 @@ export const quoraKit: CompanyKit = {
     {
       name: "Writer leaderboards: ranking windows",
       why: "Top writers by engagement, top families by answers, second-highest per cohort — Quora reporting is leaderboard reporting, and ties are everywhere once 16 users share 103 sessions. The trio drills RANK, DENSE_RANK and ROW_NUMBER until the 1,2,3,4,4,6 pattern is a spoken reflex.",
-      slugs: ["rank-scores", "top-five-artists", "department-top-three-salaries"],
+      slugs: ["rank-scores", "top-five-artists", "department-top-three-salaries", "winning-candidate", "customer-placing-the-largest-number-of-orders", "most-frequently-ordered-product-per-customer", "the-most-recent-three-orders"],
     },
     {
       name: "Return visits & digest windows",
@@ -96,7 +96,7 @@ export const quoraKit: CompanyKit = {
     {
       name: "Streaks & consecutive-day habits",
       why: "Writing habits are streaks: users who show up day after day, and the day the ladder breaks. The trio is the gaps-and-islands canon — the longest streak, the 15-day wall, the consecutive-period actives read that the retention board's headline hangs on.",
-      slugs: ["longest-winning-streak", "active-users", "fifteen-days-of-learning"],
+      slugs: ["longest-winning-streak", "active-users", "fifteen-days-of-learning", "new-users-daily-count", "find-zombie-sessions"],
     },
     {
       name: "Digest funnels & Quora+ conversion",

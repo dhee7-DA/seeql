@@ -63,7 +63,7 @@ export const bmoKit: CompanyKit = {
     {
       name: "Corridor fate counts",
       why: "Every BMO corridor screen opens with the fate census: flows booked, stamped in flight, settled to final. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling an in-flight flow 'settled' — 30 versus 52 on this db.",
-      slugs: ["funnel-step-conversion", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "prepayment-detection", "top-percentile-fraud"],
+      slugs: ["funnel-step-conversion", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "prepayment-detection", "top-percentile-fraud", "suspicious-bank-account-transactions", "settlement-fails-aging"],
     },
     {
       name: "Two-grain corridor censuses",
@@ -78,17 +78,17 @@ export const bmoKit: CompanyKit = {
     {
       name: "Concentration ladders",
       why: "Client concentration is rank-window reporting where ties are guaranteed — the ladder runs 24, 17, 14, 13, 5 flows, then a four-way tie at 4. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer relationships, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "premier-league-table-ranking", "chargeback-rate-ranking"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "premier-league-table-ranking", "chargeback-rate-ranking", "vintage-default-curves", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "Exposure banding with CASE",
       why: "Client tiers and watch buckets are CASE-classified — mid-market, corporate, specialty — with fixed edges the credit memo publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the exposure report, and a reordered WHEN quietly re-bands the book.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "structuring-detection", "fifo-inventory-cogs"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "structuring-detection", "fifo-inventory-cogs", "delinquency-buckets", "expected-credit-loss", "fx-exposure-report", "credit-utilization-bands", "risk-based-pricing"],
     },
     {
       name: "Aging & delinquency buckets",
       why: "The commercial book ages in buckets — current, 1-30, 31-60, 90-plus — and every workout conversation starts from a bucketed fold. Bucket edges are CASE arms or interval joins, and the bucket a flow lands in is only as honest as the boundary math.",
-      slugs: ["calculate-orders-within-each-interval", "spend-histogram", "transaction-velocity", "point-in-time-asof"],
+      slugs: ["calculate-orders-within-each-interval", "spend-histogram", "transaction-velocity", "point-in-time-asof", "countries-you-can-safely-invest-in", "ar-aging-schedule"],
     },
     {
       name: "Coverage anti-joins",
@@ -98,12 +98,12 @@ export const bmoKit: CompanyKit = {
     {
       name: "Ledger discipline & trial balance",
       why: "Every close ships with a proof: debits against credits, delta zero — 181,080 against 181,080 across 80 entries on this db. Rollforwards, reconciliation folds and gap detection are the queries that make the books provable, and the integration makes them non-optional.",
-      slugs: ["gl-reconciliation", "balance-rollforward", "journal-gap-detection"],
+      slugs: ["gl-reconciliation", "balance-rollforward", "journal-gap-detection", "delinquency-roll-rates", "trial-balance-check"],
     },
     {
       name: "Value-date clocks & LAG deltas",
       why: "The 14-month flow spine (2024-01 to 2025-02) is the corridor call's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) and jump (+1,158.21 into August) named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["average-time-of-process-per-machine", "biggest-window-between-events", "second-day-confirmation", "late-arriving-restatement"],
+      slugs: ["average-time-of-process-per-machine", "biggest-window-between-events", "second-day-confirmation", "late-arriving-restatement", "loan-amortization-schedule"],
     },
     {
       name: "Cents-safe statement folds",

@@ -48,7 +48,7 @@ export const amtrakKit: CompanyKit = {
     "**Amtrak** is America's national rail operator — the company that runs **Acela** and Northeast Regional over the Northeast Corridor, threads overnight sleeper routes across the country, and publishes on-time performance its host railroads co-author. The operator reality shapes the data: Amtrak sells reserved seats over tracks it mostly does not own, so every punctuality and yield number is read at the mercy of a host-railroad handoff. This kit maps the storefront db onto that world: the 16 customers rows are {sky:Guest Rewards} riders, the 103 orders are booked journeys worth **34,833.28**, and the 251 order_items rows are reservation component lines — fares, upgrades, ancillaries. The fate map is fixed: delivered = completed-and-settled (52, 50.5%), shipped = in-progress with shipped_at as the departure stamp (30, 29.1%), pending = booked-awaiting-departure (14), cancelled = {rose:cancelled reservations} (7, 6.8%).",
     "The data org splits into {emerald:corridor ops}, revenue management and a small settlement-accounting pod, and all three read the same reservation spine at different grains. A journey books at created_at; shipped_at is stamped when it departs — **82 of 103 journeys** carry the stamp, averaging **2.98 days** of booking lead with a 2–4 day spread, and the 14 awaiting rows have none yet (a population definition, not a cleanup job). Corridor lead times diverge honestly: EU 2.94, APAC 2.93, US 3.07, LATAM 3.5 days over stamped journeys only. Money sits one layer down: settlement statements, legs, opex and the GL in INTEGER cents, so the dollar read is `amount_cents / 100.0` — *the missing .0 is how a reconciliation fires*.",
     "Interview screens are census-then-denominator. A typical loop opens with the **two-grain corridor census** — the NEC reads 45 booked journeys from 8 riders while the US long-distance book reads 19 from 2 — then escalates into a rate where the interviewer asks the denominator out loud (*'do cancelled reservations count in your base?'*), then into the rider ladder where four riders sit tied at 4 journeys and rank semantics become a loyalty-policy decision. Late rounds walk the {sky:14-month booking spine} (2024-01 to 2025-02) with LAG deltas and probe the first row's NULL. Candidates who state the status filter and the denominator before writing SQL are the ones who get callbacks.",
-    "Preparation strategy: the pools file carries no Amtrak section, so all sixteen problems and every topic slug here are **theme-curated** to this kit's known screen shapes — departure funnels, two-grain corridor censuses, {rose:cancellation shares}, tie-heavy rider ladders, lead-time clocks and the cents-safe settlement spine. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {emerald:corridor departure census} corridor ops opens with, the other rebuilds the {amber:opex close stack} the comptroller signs. The bar to clear: *state the population and the denominator before you compute anything* — then make every fate census reconcile to 103 by construction.",
+    "Preparation strategy: the pools file carries no Amtrak section, so all thirty-two problems and every topic slug here are **theme-curated** to this kit's known screen shapes — departure funnels, two-grain corridor censuses, {rose:cancellation shares}, tie-heavy rider ladders, lead-time clocks and the cents-safe settlement spine. Do the topics in order, then run all six case studies on the live storefront db: one rebuilds the {emerald:corridor departure census} corridor ops opens with, the other rebuilds the {amber:opex close stack} the comptroller signs, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The bar to clear: *state the population and the denominator before you compute anything* — then make every fate census reconcile to 103 by construction.",
     "Money at this operator sits in the settlement book, and the expansion cases drill it at statement grain. Statements and legs are INTEGER cents — the dollar read is `amount_cents / 100.0` — and the coverage census is honest about its composition: the 21 exact folds IN the void-but-debited statement (#11, 925.00) and folds OUT the paid-status statement with zero legs (#28, 1,756.00), because legs are the ledger and status is a claim. The zero-leg chase list runs **6 statements worth 15,217.00** — 5 open at 13,461.00 (the dunning blocks: 873.00, 1,295.00, 4,937.00, 3,562.00, 2,794.00) plus the one {rose:paid-status lie} — and the rails split 16 card legs worth 37,364.00 against 11 wire legs worth 32,248.00. *Reconciliation at this shop is an identity, not a vibe*: 21 exact + 1 partial + 6 none = 28, or the close does not ship.",
     "How to prep against the expanded kit: six case files now — the original corridor departure census (j7) and opex close stack (x3) are joined by the **14-month booking spine** (t3), the {rose:cancellation map} (s6), the **zero-leg chase list** (j5) and the {sky:Guest Rewards ladder} (t5) — and you run every one against the live storefront db until each census reconciles by construction. Theory runs t1–t24 and MCQs 1–30, both pushed past the original syllabus into window frames, set-op diffs, fan-out arithmetic and sargability instincts. The problems stay **theme-curated** (the pools file still carries no Amtrak section — 0 tagged rows), and the two figures this kit probed beyond the facts file — 42 journeys above the 338.19 mean, 103,244.55 of fan-out-inflated value — are declared in the header comment. *State the population and the denominator first; the SQL is the easy part.*",
   ],
@@ -79,42 +79,42 @@ export const amtrakKit: CompanyKit = {
     {
       name: "The departure funnel",
       why: "Every Amtrak screen opens with the reservation book: journeys booked, departure-stamped, completed-and-settled, cancelled. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling an in-progress journey 'completed' — 30 versus 52 on this db.",
-      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest"],
+      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "immediate-food-delivery-ii", "orders-with-maximum-quantity-above-average", "classes-more-than-5-students"],
     },
     {
       name: "Two-grain corridor censuses",
       why: "Journeys and riders are different grains of the same join, and every corridor census here reports both: the NEC runs 45 booked journeys from 8 riders while the US long-distance book runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "managers-with-at-least-5-direct-reports", "top-travellers"],
     },
     {
       name: "Joining riders to journeys",
       why: "Riders carry corridor and created_at; journeys inherit them through joins, and the join type decides who survives. A journey without a rider is corruption; a rider without journeys is whitespace — though on this db the anti-join returns a confident zero, and proving it is part of the job.",
-      slugs: ["combine-two-tables", "product-sales-analysis-i", "replace-employee-id-with-unique-identifier"],
+      slugs: ["combine-two-tables", "product-sales-analysis-i", "replace-employee-id-with-unique-identifier", "project-employees-i", "maximum-transaction-each-day"],
     },
     {
       name: "Class mix & CASE banding",
       why: "Coach, Business, Sleeper, Acela First — the class ladder is CASE-classified at every yield review, with fixed edges the fare page publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the load forecast, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "type-of-triangle"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "type-of-triangle", "game-play-analysis-iv", "ratings-histogram"],
     },
     {
       name: "Booking lead-time clocks",
       why: "Lead time is julianday arithmetic over a stamp that only departed journeys carry, and the corridor cut (2.94 / 2.93 / 3.07 / 3.5) is an operational planning input, not a vanity metric. Amtrak drills date filtering here too — journeys booked in a window, latest booking per rider — because advance-purchase windows drive the yield curve.",
-      slugs: ["average-time-of-process-per-machine", "list-the-products-ordered-in-a-period", "the-latest-login-in-2020"],
+      slugs: ["average-time-of-process-per-machine", "list-the-products-ordered-in-a-period", "the-latest-login-in-2020", "sales-analysis-iii", "find-total-time-spent-by-each-employee"],
     },
     {
       name: "Rider leaderboards",
       why: "The Guest Rewards ladder ranks riders by journeys and lifetime spend, and ties are guaranteed — four riders sit at 4 journeys each on this db, behind the 24, 17, 14, 13, 5 rungs. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a loyalty policy, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "second-highest-salary", "top-five-artists", "group-employees-of-the-same-salary", "compute-the-rank-as-a-percentage"],
     },
     {
       name: "Anti-joins on the settlement book",
       why: "Booked is not settled: the finance tables are where the operator world meets money, and the 6 never-collected statements worth 15,217 ARE an anti-join. The LEFT JOIN + IS NULL shape (and its NOT EXISTS twin) shows up in most screens as the 'who do we dunning-call first' question — and the mirror anomaly (a void statement WITH a leg) is why the status column never gets trusted alone.",
-      slugs: ["customers-who-never-order", "sellers-with-no-sales", "employees-with-missing-information"],
+      slugs: ["customers-who-never-order", "sellers-with-no-sales", "employees-with-missing-information", "employee-bonus", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "One-pass censuses",
       why: "The ops board gets completed, in-progress, awaiting and cancelled in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "queries-quality-and-percentage", "trips-and-users", "npv-queries"],
     },
     {
       name: "Cents discipline & coverage",
@@ -124,32 +124,32 @@ export const amtrakKit: CompanyKit = {
     {
       name: "Windows over the corridor spine",
       why: "Corridor reporting keeps every row while adding context: each rider beside their ladder position, each journey beside the load around it. Window COUNT and gap reads — the biggest spacing between a rider's touches, the running math behind capacity walks — are the shapes Amtrak uses to find the repeat-riding habit and the dormant rider.",
-      slugs: ["biggest-window-between-events", "find-the-team-size", "last-person-to-fit-in-the-bus"],
+      slugs: ["biggest-window-between-events", "find-the-team-size", "last-person-to-fit-in-the-bus", "product-sales-analysis-ii", "report-contiguous-dates", "average-selling-price"],
     },
     {
       name: "Window frames & running math",
       why: "The yield deck runs cumulative booked value and rolling reads over the month spine, and the frame decides what 'running' means: the default RANGE frame pulls tied rows into the step together, while an explicit ROWS BETWEEN walks strictly row by row. Amtrak drills the moving-versus-cumulative distinction here — a 3-month rolling read and a season-to-date walk are one frame clause apart, and the wrong frame ships a different trendline under the same title.",
-      slugs: ["last-person-to-fit-in-the-elevator", "find-cumulative-salary-of-an-employee", "running-total-for-different-genders"],
+      slugs: ["last-person-to-fit-in-the-elevator", "find-cumulative-salary-of-an-employee", "running-total-for-different-genders", "hopper-company-queries-i"],
     },
     {
       name: "Set ops on the close book",
       why: "The settlement pod diffs SETS, not sums: paid-status claims EXCEPT statements-with-legs is how the paid lie (#28) surfaces, and INTERSECT answers the who-settled read. UNION stacks the close packet's labeled sections, and the discipline is the same — set ops compare whole rows, so the branch shapes must match or the diff lies by omission.",
-      slugs: ["movie-rating", "count-salary-categories", "the-airport-with-the-most-flights"],
+      slugs: ["movie-rating", "count-salary-categories", "the-airport-with-the-most-flights", "sales-by-day-of-the-week"],
     },
     {
       name: "Grain discipline & DISTINCT",
       why: "Journeys, riders and component lines are three grains of one reservation spine, and the census you owe decides the fold: COUNT(*) at journey grain, COUNT(DISTINCT customer_id) at rider grain, and the lines grain is where money numbers double. The drills here harden the instinct — DISTINCT is a fold-back to a declared grain, not dedupe decoration.",
-      slugs: ["article-views-i", "the-users-that-are-eligible-for-discount", "employees-with-deductions"],
+      slugs: ["article-views-i", "the-users-that-are-eligible-for-discount", "employees-with-deductions", "customer-placing-the-largest-number-of-orders", "the-number-of-employees-which-report-to-each-employee"],
     },
     {
       name: "Text shaping on rider identifiers",
       why: "Guest Rewards extracts arrive dirty — names in odd cases, product labels padded, emails that fail a simple pattern — and every join downstream inherits the mess. The t1 text funcs (UPPER, TRIM, SUBSTR, LENGTH) clean identifiers before any census, and this shop treats that shaping as pipeline hygiene, not cosmetics: a mismatched key is a silent anti-join.",
-      slugs: ["fix-names-in-a-table", "fix-product-name-format", "invalid-tweets"],
+      slugs: ["fix-names-in-a-table", "fix-product-name-format", "invalid-tweets", "not-boring-movies", "duplicate-emails"],
     },
     {
       name: "Date math in the advance-purchase window",
       why: "Lead time is julianday arithmetic, but the operational reads are windows: riders whose second booking lands within seven days of the first, touches before a golden-hour cutoff, confirmation requests inside a deadline. These are the booking-window screens revenue management runs weekly, and each one is a date-math comparison wearing a funnel costume.",
-      slugs: ["users-with-two-purchases-within-seven-days", "find-golden-hour-customers", "users-that-actively-request-confirmation-messages"],
+      slugs: ["users-with-two-purchases-within-seven-days", "find-golden-hour-customers", "users-that-actively-request-confirmation-messages", "confirmation-rate"],
     },
   ],
 

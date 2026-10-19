@@ -36,7 +36,7 @@ export const notionKit: CompanyKit = {
     "**Notion** is the connected workspace — docs, wikis, projects and databases in one product that grows bottom-up: a single user starts a workspace, a team adopts it, seats expand. The analytics reality is the *activation ledger*: which workspaces crossed from signup to sustained use, and which are silently going dark. On this storefront db the mapping is honest: 16 workspaces generate 103 usage periods folded from 251 editor-event lines, and the status mix reads like the PLG funnel it is — 52 {emerald:activated} (50.5%), 30 onboarded-activation-pending (29.1%), 14 {amber:evaluating on trial} (13.6%), 7 {rose:churned} (6.8%).",
     "The data org splits three ways. Product analytics owns the activation folds: editor-event lines joined to the template catalog and aggregated per period — the top template family logs **97 uses** worth 11,744.01 of usage value, the broadest family touches 54 distinct periods. Growth owns expansion: the depth ladder runs 24, 17, 14, 13, 5 periods deep before a quartet of workspaces ties at 4, and **63.5%** of usage value sits above the 3,000 line — the expansion cohort every board deck prices. Billing owns the seat book: 28 `invoices` against 27 `payments`, INTEGER cents throughout, with 6 never-settled bills worth 15,217 — one of them (#28, 1,756.00) claims {emerald:paid} with zero settlement rows behind it.",
     "Interview style is activation-then-denominator, then the expansion join. A screen opens with a two-grain census (EU carries 45 usage periods from just 8 workspaces; the US, 19 from 2), escalates into a conditional-count activation rate with the denominator asked out loud ('do {rose:churned} workspaces sit in your base?'), then the leaderboard — where RANK's shared rungs decide whether four tied workspaces get one rank or four. Follow-ups probe the month spine (2024-01 opens at 8 periods and **3,731.97** of usage value; 2024-07 floors at 1,193.86) and the cents rule on every seat bill.",
-    "Preparation strategy: the pools carry exactly **2 cross-tagged rows for Notion** (feature-adoption-windows, plan-migration-paths) — both lead this kit's topics and problem list, and the rest is theme-curated to known PLG screens: activation censuses, expansion ladders, template funnels, dormancy anti-joins and seat-billing reconciliation. Then run both case studies on the live db: one rebuilds the activation leaderboard growth reviews on Mondays, the other rebuilds the modal-month usage spine the calendar view is drawn from. The bar to clear: state the **denominator**, the join's survival rule, and the **cents rule** before you compute anything.",
+    "Preparation strategy: the pools carry exactly **2 cross-tagged rows for Notion** (feature-adoption-windows, plan-migration-paths) — both lead this kit's topics and problem list, and the rest is theme-curated to known PLG screens: activation censuses, expansion ladders, template funnels, dormancy anti-joins and seat-billing reconciliation. Then run all six case studies on the live db — built for spaced practice rather than one sitting: one rebuilds the activation leaderboard growth reviews on Mondays, another rebuilds the modal-month usage spine the calendar view is drawn from. The bar to clear: state the **denominator**, the join's survival rule, and the **cents rule** before you compute anything.",
     "The monetization ledger is where the org's three hands meet, and its economics are unusually clean. Seat bills are issued on uniform {sky:30-day terms} — the issue-to-due window reads 30, min 30, max 30 — and settled bills actually clear in **28.4 days** on average (fastest 13, slowest 84), so cash lands almost exactly on terms. The settlement mix is the economics: 21 bills settle {emerald:exact} worth 65,612, one settles partial (4,000 against a 6,148 bill), 6 carry no settlement rows at all (15,217) — and the rails split between `card` (16 payments, 37,364) and `wire` (11 payments, 32,248), which is why the billing join keys on invoice id and aggregates the many-side before any money math.",
     "Preparation roadmap for the expanded kit, in four passes: *census first* — two-grain counts per cohort (EU 45 periods from 8 workspaces) until the fold is reflex; *rate second* — conditional counting with the denominator named (52 of 103, never 52 of 89); *windows third* — RANK ties at 4 periods and LAG walks anchored on 2024-01's 3,731.97; *money last* — cents discipline, coverage classes, the dunning anti-join. Then sit all six case studies: the activation leaderboard, the modal-month spine, the cohort value census, the settlement classifier, the month-over-month walk and the dunning list. The bar is unchanged — **denominator**, survival rule, `cents rule` — say all three before you compute anything.",
   ],
@@ -68,7 +68,7 @@ export const notionKit: CompanyKit = {
     {
       name: "Workspace activation censuses",
       why: "Every Notion screen opens with a fold: usage periods, workspaces, editor events — grouped and counted without letting the grain blur. COUNT(*) counts periods, COUNT(DISTINCT customer_id) counts workspaces; 103 periods come from just 16 workspaces, and the census is where candidates prove which grain they're standing on.",
-      slugs: ["unique-orders-and-customers-per-month", "find-followers-count", "article-views-ii"],
+      slugs: ["unique-orders-and-customers-per-month", "find-followers-count", "article-views-ii", "number-of-rich-customers", "queries-quality-and-percentage", "average-time-of-process-per-machine", "classes-more-than-5-students", "list-the-products-ordered-in-a-period"],
     },
     {
       name: "Activation-rate conditional counting",
@@ -78,7 +78,7 @@ export const notionKit: CompanyKit = {
     {
       name: "Joining workspaces to usage",
       why: "Usage inherits workspace attributes through joins to the workspaces table, and the join type decides who survives: a period with no workspace is corruption; a workspace with no period is a dormancy signal. Choosing INNER versus LEFT is a business statement.",
-      slugs: ["combine-two-tables", "top-travellers", "employees-with-missing-information"],
+      slugs: ["combine-two-tables", "top-travellers", "employees-with-missing-information", "movie-rating", "reported-posts"],
     },
     {
       name: "Template funnels & per-template value",
@@ -98,7 +98,7 @@ export const notionKit: CompanyKit = {
     {
       name: "Dormancy & churn anti-joins",
       why: "Silence reads are anti-joins: workspaces with no recent period, seat bills with no payments (6 on this db). On this db the no-usage workspace anti-join returns 0 — and proving a confident zero is the job. The survival rule of the join IS the query.",
-      slugs: ["number-of-accounts-that-did-not-stream", "customer-who-visited-but-did-not-transact", "dormant-reactivation"],
+      slugs: ["number-of-accounts-that-did-not-stream", "customer-who-visited-but-did-not-transact", "dormant-reactivation", "customers-who-never-order"],
     },
     {
       name: "Growth leaderboards & tie policy",
@@ -108,17 +108,17 @@ export const notionKit: CompanyKit = {
     {
       name: "Adoption windows & LAG transitions",
       why: "The two tagged Notion rows live here: adoption windows measure the gap between signup and sustained use, and plan-migration paths are LAG transitions across a workspace's state history. Both are window-function work — ordered, partitioned, NULL-aware.",
-      slugs: ["feature-adoption-windows", "plan-migration-paths", "biggest-window-between-events"],
+      slugs: ["feature-adoption-windows", "plan-migration-paths", "biggest-window-between-events", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "Seat billing & cents discipline",
       why: "Usage is not revenue until the seat book closes: 28 invoices against 27 payments, INTEGER cents throughout, coverage classified exact / partial / none. The billing join is where PLG interviews land — and where the cents rule (`/ 100.0`) gets graded.",
-      slugs: ["bank-account-summary-ii", "monthly-transactions-ii", "keep-latest-dedupe"],
+      slugs: ["bank-account-summary-ii", "monthly-transactions-ii", "keep-latest-dedupe", "products-worth-over-invoices"],
     },
     {
       name: "CASE-driven funnel pivots",
       why: "The weekly funnel review reads all four states side by side in one pass — activated, onboarded, evaluating, churned as columns, not four queries. SUM(CASE WHEN status …) is the idiom, and a missing ELSE quietly returns NULL instead of 0. The audit habit: the pivot's columns must sum back to the 103-period base.",
-      slugs: ["daily-leads-and-partners", "actors-and-directors-who-cooperated-at-least-three-times", "count-salary-categories"],
+      slugs: ["daily-leads-and-partners", "actors-and-directors-who-cooperated-at-least-three-times", "count-salary-categories", "null-blank-audit"],
     },
     {
       name: "Set-op segment comparisons",
@@ -133,12 +133,12 @@ export const notionKit: CompanyKit = {
     {
       name: "Stickiness & rolling cohorts",
       why: "PLG health is ratio work over time: DAU/WAU-style stickiness, rolling 7-day actives, cohort retention matrices. The kit's two-grain reads extend naturally — the trap is a rolling window that double-counts repeat usage instead of folding it.",
-      slugs: ["dau-wau-stickiness", "rolling-7d-actives", "cohort-retention-matrix"],
+      slugs: ["dau-wau-stickiness", "rolling-7d-actives", "cohort-retention-matrix", "user-activity-for-the-past-30-days-ii", "growth-accounting", "week-over-week-churn"],
     },
     {
       name: "Trial-to-paid conversion math",
       why: "The evaluating-on-trial state (14 periods on this db) exists to be converted. Median-time-to-convert, winback recovery and stage-to-stage conversion are LAG-and-conditional work over the same funnel spine — the queries the growth team prices every experiment on.",
-      slugs: ["trial-to-paid-funnel", "median-time-to-convert", "winback-recovery"],
+      slugs: ["trial-to-paid-funnel", "median-time-to-convert", "winback-recovery", "email-engagement-funnel", "funnel-step-conversion", "ab-test-conversion-lift"],
     },
   ],
 

@@ -59,7 +59,7 @@ export const sofiKit: CompanyKit = {
     {
       name: "Origination funnel counts",
       why: "Every SoFi lending screen opens with the funnel: originations booked, funded (shipped_at stamped), performing at term. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling a disbursing loan 'performing' — 30 versus 52 on this db.",
-      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "ads-funnel", "analyze-subscription-conversion", "game-play-analysis-v"],
+      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "ads-funnel", "analyze-subscription-conversion", "game-play-analysis-v", "funnel-step-conversion"],
     },
     {
       name: "Two-grain member censuses",
@@ -79,12 +79,12 @@ export const sofiKit: CompanyKit = {
     {
       name: "Risk-based pricing & tier bands",
       why: "Loan pricing is banded — risk tiers, autopay discounts, fixed versus variable — and bands are CASE-classified with fixed edges the rate sheet publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the priced book, and a reordered WHEN quietly re-bands every borrower. The premium band on this db is honestly empty (max ticket 199.99), and proving a band is empty is a valid answer.",
-      slugs: ["risk-based-pricing", "weather-type-in-each-country", "count-salary-categories", "calculate-salaries", "calculate-compressed-mean"],
+      slugs: ["risk-based-pricing", "weather-type-in-each-country", "count-salary-categories", "calculate-salaries", "calculate-compressed-mean", "cohort-retention-matrix", "dormant-reactivation", "rfm-segmentation"],
     },
     {
       name: "Vintage cohorts & month spines",
       why: "Credit committees read the book by origination month: 14 buckets from 2024-01 to 2025-02, each vintage's size and quality side by side. Monthly folds with date-grain keys are the raw material — and the July trough (1,193.86) versus the January open (3,731.97) is the conversation starter.",
-      slugs: ["vintage-default-curves", "immediate-food-delivery-ii", "monthly-transactions-i", "budget-pacing", "calculate-orders-within-each-interval"],
+      slugs: ["vintage-default-curves", "immediate-food-delivery-ii", "monthly-transactions-i", "budget-pacing", "calculate-orders-within-each-interval", "delinquency-buckets", "delinquency-roll-rates", "expected-credit-loss", "credit-utilization-bands", "amount-anomaly-zscore", "top-percentile-fraud", "structuring-detection"],
     },
     {
       name: "Funding-stamp date math",
@@ -99,12 +99,12 @@ export const sofiKit: CompanyKit = {
     {
       name: "Amortization, accrual & recursion",
       why: "Loan servicing is recursive by nature: an amortization schedule steps balance, interest and principal month by month; daily interest accrual walks a date spine. WITH RECURSIVE and running-total windows are how these schedules get built — the closest a generalist SQL screen gets to credit math.",
-      slugs: ["loan-amortization-schedule", "daily-balance-interest", "find-the-missing-ids"],
+      slugs: ["loan-amortization-schedule", "daily-balance-interest", "find-the-missing-ids", "gl-reconciliation", "trial-balance-check", "portfolio-weights", "portfolio-concentration-hhi"],
     },
     {
       name: "Cents discipline & servicing folds",
       why: "Performing is not collected — the finance tables (28 statements, 27 payment legs, INTEGER cents) are where the member world meets money. Every dollar read is amount_cents / 100.0, and the exact/partial/none coverage split (21 / 1 / 6) is one CASE away from the dunning list.",
-      slugs: ["bank-account-summary-ii", "monthly-transactions-ii", "products-worth-over-invoices", "ar-aging-schedule", "balance-rollforward", "account-balance", "bank-account-summary"],
+      slugs: ["bank-account-summary-ii", "monthly-transactions-ii", "products-worth-over-invoices", "ar-aging-schedule", "balance-rollforward", "account-balance", "bank-account-summary", "duplicate-charge-pairs"],
     },
   ],
 

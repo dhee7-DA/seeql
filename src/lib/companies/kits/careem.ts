@@ -32,7 +32,7 @@ export const careemKit: CompanyKit = {
     "Careem is the MENA region's super-app — the Dubai-born platform that built ride-hailing across a region where cards were rare and cash was king, then stacked Careem Food, Quik deliveries and Careem Pay onto the same captain-and-customer base before selling to Uber in a deal that valued the brand at **$3.1 billion**. The operating object is a service request that could be a ride, a meal or a parcel: requested, matched to a captain, priced, {emerald:completed} or {rose:cancelled}, timestamped at every hop. Super-app reality makes one habit non-negotiable: verticals share the ledger, so every count needs its grain named — requests versus customers versus fare lines. On this kit's proxy ledger that's 103 requests, 82 carrying a completion timestamp (52 delivered-status + 30 shipped-status), and 251 fare lines fanning out underneath — *three grains, one table*.",
     "The data org runs on the settlement clock. Captains earn per service and settle through an invoicing book where every row is INTEGER cents — `SUM(amount_cents) / 100.0`, never `/100`, or the fils vanish to truncation. Careem Pay rails split into wallet-style and card-style flows (probed: 16 card settlements worth 37,364.00, 11 wire settlements worth 32,248.00), and the reconciliation culture is strict: the ledger's trial balance ties to the fils (181,080 debit = 181,080 credit, delta 0), a {rose:void-but-paid} invoice (925.00) is an incident, and a partially settled invoice (4,000.00 of 6,148.00) is a follow-up with a name on it. Analysts who can walk payments back to invoices back to captains in one query are the ones the finance partners call first.",
     "Interviews are super-app-flavored: cross-vertical, cents-precise, and grain-obsessed. A screen opens with a warm-up join (attach captains to their service requests), escalates into a conditional aggregation with a status rule ({emerald:completion} share by region, {rose:cancellation} share by vertical), then either a settlement-chain query (payments → invoices → captains), a window question (rank captains by weekly earnings, LAG the acceptance-rate drift) or a funnel read (install → first order → second vertical). Follow-ups are spoken aloud: 'is that per request or per captain?', 'does a pending request sit in your denominator?', 'what does an unmatched settlement row mean here?' — because in a super-app an unmatched row is either a bug or a business line nobody onboarded yet.",
-    "Preparation strategy: this kit is **theme-curated** from the SQL band — {sky:0 tagged LC} rows exist for Careem, so the 16 problems and 30 topic slugs were hand-picked from the theme menu to mirror its screens: cross-vertical folds, captain economics, wallet math in cents, funnels and cohorts, timestamp hygiene. The two case studies run on the live storefront db: one rebuilds the {emerald:Careem Pay} settlement census finance closes the month with, the other rebuilds the captain settlement chain (payments → invoices → captains) that turns raw settlement rows into per-captain payout views. Both are mechanically audited against probed figures — 103 requests, 82 completed, 27 settlement flows, 28 invoices, and a books-tie at 181,080.",
+    "Preparation strategy: this kit is **theme-curated** from the SQL band — {sky:0 tagged LC} rows exist for Careem, so the 16 problems and 30 topic slugs were hand-picked from the theme menu to mirror its screens: cross-vertical folds, captain economics, wallet math in cents, funnels and cohorts, timestamp hygiene. The six case studies run on the live storefront db: one rebuilds the {emerald:Careem Pay} settlement census finance closes the month with, the other rebuilds the captain settlement chain (payments → invoices → captains) that turns raw settlement rows into per-captain payout views, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... Both are mechanically audited against probed figures — 103 requests, 82 completed, 27 settlement flows, 28 invoices, and a books-tie at 181,080.",
     "The expansion goes deeper, not wider: {violet:sixteen more theory answers}, twenty more screen MCQs and four more case files covering the moves the first paragraphs only named — window frames that decide whether a running Pay balance double-counts tied days, {rose:anti-joins} that turn the 15,217.00 of settlement-less invoices into a chase list with owners, `UNION ALL` stacks that append the labelled TOTAL row, and staged CTE folds that pre-collapse the five split-payment invoices before a census reads them. The four new case files climb the module ladder — a date-bucketed latency census (t4), an anti-join receivables chase (j5), a ranked fleet-partner podium (t5) and a CASE-classified coverage census (s6) — each one mechanically audited against the probed ledger, number slots included.",
     "Preparation strategy for the full kit: rehearse in the order the topic list prints, then drill under clock. The **24 theory answers** are the spoken layer — say them out loud until the grain rule, the cents rule and the spine rule come out reflexively. The **30 MCQs** are trap rehearsal: every wrong option is a real production bug pattern (integer division, NOT IN over a NULL, RANGE-frame peers, alias visibility), so read every note even on a right answer. The **6 case files** run on the live storefront db — rebuild each query twice, once for the answer and once for the *why* of every chip you rejected. And the 32 problems are the stamina block: super-app SQL is exactly this — folds over shared ledgers with the denominator named and the fils still alive at the display edge.",
   ],
@@ -84,7 +84,7 @@ export const careemKit: CompanyKit = {
     {
       name: "Acceptance & confirmation rates",
       why: "Acceptance rate is offered → accepted with unmatched captains COALESCE'd to zero and labeled; confirmation rate is the same shape one hop later. The 100.0-before-division habit and the stated denominator are the whole test.",
-      slugs: ["confirmation-rate", "second-day-confirmation", "queries-quality-and-percentage"],
+      slugs: ["confirmation-rate", "second-day-confirmation", "queries-quality-and-percentage", "duplicate-charge-pairs", "convert-date-format"],
     },
     {
       name: "Captain–customer symmetry (joins)",
@@ -94,7 +94,7 @@ export const careemKit: CompanyKit = {
     {
       name: "Super-app funnel",
       why: "The growth story is the second vertical: install → first request → first Food order → Pay activated. Funnel-step-conversion drills the stage ratios, and two-purchases-within-seven-days is the repeat-behavior gate that defines an activated user.",
-      slugs: ["funnel-step-conversion", "email-engagement-funnel", "users-with-two-purchases-within-seven-days"],
+      slugs: ["funnel-step-conversion", "email-engagement-funnel", "users-with-two-purchases-within-seven-days", "repeat-purchase-rate"],
     },
     {
       name: "Cohorts & retention",
@@ -104,37 +104,37 @@ export const careemKit: CompanyKit = {
     {
       name: "Timestamp hygiene: dedupe & NULL policy",
       why: "Completion timestamps are NULL until the request ends (21 of 103 rows here) and event streams retry. Keep-latest dedupe with a deterministic tie-break plus a stated NULL policy — report, coalesce, or exclude with a reason — is the layer every dashboard stands on.",
-      slugs: ["keep-latest-dedupe", "null-blank-audit", "the-latest-login-in-2020"],
+      slugs: ["keep-latest-dedupe", "null-blank-audit", "the-latest-login-in-2020", "average-time-of-process-per-machine"],
     },
     {
       name: "Set ops & CASE escalation",
       why: "Screens close with composition: UNION stacks that build a bucketed report in one query, CASE branches that classify coverage (exact / partial / untouched), set ops that stitch verticals into one view. Two grains in one query, no panic.",
-      slugs: ["count-salary-categories", "weather-type-in-each-country", "team-scores-in-football-tournament"],
+      slugs: ["count-salary-categories", "weather-type-in-each-country", "team-scores-in-football-tournament", "ar-aging-schedule"],
     },
     {
       name: "Window frames & running balances",
       why: "Careem Pay's daily view and the payout leaderboard both live on ordered windows: running settled balances by day, trailing-week earnings per captain, share-of-partition reads. The frame is the whole test — the default RANGE frame rides with ordering peers, so three days tied at the same daily total make the first tied day's cell jump by 3x until you write ROWS explicitly.",
-      slugs: ["find-cumulative-salary-of-an-employee", "running-total-for-different-genders", "restaurant-growth"],
+      slugs: ["find-cumulative-salary-of-an-employee", "running-total-for-different-genders", "restaurant-growth", "hopper-company-queries-i", "bank-account-summary", "rolling-7d-actives", "rank-scores", "sessionize-events", "trial-balance-check", "second-day-verification"],
     },
     {
       name: "Anti-joins & chase lists",
       why: "Every receivables follow-up is an anti-join: 6 invoices carry no settlement flow at all (15,217.00 outstanding), and the chase list is LEFT JOIN + IS NULL, not a hunch. The trap that makes the drill worth it: NOT IN over a subquery that returns one NULL empties the whole list — and on this ledger the orders-side anti-join returns 0 (every customer ordered), so receivables is where the shape actually bites.",
-      slugs: ["sellers-with-no-sales", "customers-who-never-order", "find-churn-risk-customers"],
+      slugs: ["sellers-with-no-sales", "customers-who-never-order", "find-churn-risk-customers", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "Reporting stacks & period composition",
       why: "The month-close deck is composed, not grouped: card row, wire row, then a labelled TOTAL row stacked with UNION ALL — and period splits that read one way per branch. League-statistics and monthly-transactions-ii drill the two-orientation fold; the airport exercise is the busiest-node argmax that picks the week's top vertical.",
-      slugs: ["monthly-transactions-ii", "league-statistics", "the-airport-with-the-most-flights"],
+      slugs: ["monthly-transactions-ii", "league-statistics", "the-airport-with-the-most-flights", "group-sold-products-by-the-date", "maximum-transaction-each-day", "suspicious-bank-account-transactions"],
     },
     {
       name: "Derived tables & staged folds",
       why: "Split payments (five invoices here carry two settlement rows) break naive folds — summing invoice cents across a fan-out double-counts every split invoice. The fix is staging: fold payments per invoice in a derived table or CTE first, THEN classify and group. Second-highest-salary and market-analysis-i drill exactly the stage-then-compare shape.",
-      slugs: ["second-highest-salary", "managers-with-at-least-5-direct-reports", "market-analysis-i"],
+      slugs: ["second-highest-salary", "managers-with-at-least-5-direct-reports", "market-analysis-i", "uber-first-transaction", "find-the-team-size", "basket-depth-aov"],
     },
     {
       name: "LAG & LEAD: drift and gaps",
       why: "Acceptance-rate drift, status transitions between consecutive requests, and dead-air gaps between a captain's services are all LAG/LEAD reads: the previous row brought INTO the current row. Week-over-week churn is the retention twin — same function, business question flipped from supply to demand.",
-      slugs: ["biggest-window-between-events", "consecutive-transactions-with-increasing-amounts", "week-over-week-churn"],
+      slugs: ["biggest-window-between-events", "consecutive-transactions-with-increasing-amounts", "week-over-week-churn", "hopper-company-queries-ii", "growth-accounting", "amount-anomaly-zscore"],
     },
   ],
 

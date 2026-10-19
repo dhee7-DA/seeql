@@ -33,7 +33,7 @@ export const blablacarKit: CompanyKit = {
     "**BlaBlaCar** is the long-distance carpooling marketplace: a driver publishes an intercity ride, riders book **individual seats** against that seat inventory, and the trip closes at check-in. The analytics unit is the booking, and on this kit's proxy ledger it reads 103 seat bookings worth **34,833.28** (average 338.19) across 16 riders, with 251 seat lines fanning underneath — 2.4 seat lines per booking, the load factor of a published ride. The status map is the publish-to-book funnel itself: 52 {emerald:checked in} (50.5%), 30 en route (29.1%), 14 still awaiting driver confirmation (13.6%), 7 {rose:no-shows} (6.8%).",
     "Two reads define the analyst job here. The {amber:corridor census}: ops reviews open with a single-scan fold per city cluster — bookings, checked-in, no-shows, fare volume in one GROUP BY (EU: 45 bookings, 24 checked-in, 3 no-shows, **15,089.23**) — because the same fold runs every morning across the corridor map. The {sky:check-in window}: 82 of 103 bookings carry a check-in stamp and booking-to-check-in averages **2.98 days** (range 2..4) — *booking lead time, riders reserving seats before travel day, not trip duration; frame it that way or the number lies*. The corridor ladder reads APAC 2.93 fastest, EU 2.94, US 3.07, LATAM 3.5.",
     "Interviews are funnel-first, lead-time-flavored, cents-precise. A screen opens with a warm-up join (attach seat lines to their booking), escalates into a conditional fold (`SUM(CASE WHEN …)` is the house idiom), then lands on a denominator test: checked-in ÷ ALL booked, awaiting and no-shows included, or the funnel flatters itself. Settlement rounds go through the payout books: 28 `invoices` against 27 `payments`, INTEGER cents read as `amount_cents / 100.0`, 6 unsettled claims worth 15,217.00, one of them — #28, 1,756.00 — *marked paid with zero settlement rows*, its mirror #11 void-but-paid at 925.00. Follow-ups are spoken aloud: 'is that per booking or per seat line?', 'does an awaiting booking sit in your denominator?'",
-    "Preparation strategy: BlaBlaCar has **0 tagged LC** rows in this app's pool, so the kit is **theme-curated** — all 30 topic slugs and 16 problems are hand-picked from the theme menu to mirror carpool screens: publish-to-book funnels, seat pairing, check-in lead time, no-show bands, month spines, payout AR. Then run both case studies on the live db: one rebuilds the {amber:booking-month no-show pivot} the trust review reads, the other rebuilds the {sky:payout coverage board} the settlement desk closes the month with. The bar to clear: name the grain, state the denominator, and gate the NULLs deliberately before you compute anything.",
+    "Preparation strategy: BlaBlaCar has **0 tagged LC** rows in this app's pool, so the kit is **theme-curated** — all 30 topic slugs and 16 problems are hand-picked from the theme menu to mirror carpool screens: publish-to-book funnels, seat pairing, check-in lead time, no-show bands, month spines, payout AR. Then run all six case studies on the live db: one rebuilds the {amber:booking-month no-show pivot} the trust review reads, the other rebuilds the {sky:payout coverage board} the settlement desk closes the month with, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The bar to clear: name the grain, state the denominator, and gate the NULLs deliberately before you compute anything.",
     "Two more ledgers frame the economics. On the supply side, driver cohorts carry the seat book with a heavy top: **Nordic Gadgets AB at 32%** of billed value with Midwest Hardware Co at 26.7% behind it — more than half the corridor supply rides on two cohorts — while the tail splits thin (Shenzhen Electro 8.8%, Pacific Textiles 8.6%), which is why every cohort read ships with a {violet:share column} beside the revenue rank. Every listed cohort carries at least one booked seat — the {emerald:publish rate} is a proven 6 of 6, an anti-join zero verified rather than assumed. On the cost side the ops book runs 36 expense lines worth 25,416.00, of which {orange:Rent} alone is 14 lines and 16,800.00. And the fare catalog is barbell-shaped — 8 budget tiers averaging 32.06, 8 mid tiers averaging 111.5 up to the 199.99 ceiling — with a premium band at 200-plus that is *empty by design*: an empty band is a finding, and the honest census prints the hole instead of padding it.",
     "Prep roadmap for the deep cuts: sequence the work the way the screens stack. Week one, rebuild the {amber:two-grain census} — bookings AND distinct riders per cluster — then the {sky:settlement-speed} read, where the payout clock runs issue-to-FIRST-payment: 28.4 days on average, fastest 13, slowest 84, against uniform 30-day terms. Week two, the stack and the sweep: the ops-cost rollup with its {violet:TOTAL banner} computed by UNION ALL, and the never-settled anti-join where claim #28 sits *marked paid with zero settlement rows at 1,756.00*. Week three, the boards: the cohort leaderboard where three cohorts tie at 3 listings and the tie policy IS the answer, then the corridor ladder whose averages exist only for the 82 stamped bookings. Then rehearse the failure modes by name — NOT IN against a NULL-carrying set, a WHERE on the right table that silently converts a LEFT JOIN, frame peers that double a running sum — *because at this level the basics are assumed; the screen is hunting for the analyst who states populations before results*.",
   ],
@@ -64,12 +64,12 @@ export const blablacarKit: CompanyKit = {
     {
       name: "Publish-to-book funnels",
       why: "Every corridor review opens with the funnel: bookings published, checked-in, en route, awaiting, no-show — counted per cluster without letting the seat-line fan-out double anything. BlaBlaCar drills which grain the query stands on before any aggregate runs, because a rate computed at seat-line grain prices a seat, not a booking.",
-      slugs: ["percentage-of-users-attended-a-contest", "immediate-food-delivery-ii", "customer-placing-the-largest-number-of-orders"],
+      slugs: ["percentage-of-users-attended-a-contest", "immediate-food-delivery-ii", "customer-placing-the-largest-number-of-orders", "average-selling-price"],
     },
     {
       name: "One-pass conditional folds",
       why: "The census runs every morning, so it runs in ONE scan: SUM(CASE WHEN …) arms per status with branch totals that reconcile back to COUNT(*). BlaBlaCar treats the fold as standing infrastructure — four scans cost four table reads where one conditional fold costs one, and one fold guarantees every arm describes the same 103 bookings.",
-      slugs: ["active-businesses", "find-stores-with-inventory-imbalance", "find-books-with-polarized-opinions"],
+      slugs: ["active-businesses", "find-stores-with-inventory-imbalance", "find-books-with-polarized-opinions", "top-travellers", "number-of-times-a-driver-was-a-passenger", "capital-gain-loss", "reformat-department-table"],
     },
     {
       name: "Check-in windows & lead time",
@@ -79,12 +79,12 @@ export const blablacarKit: CompanyKit = {
     {
       name: "Seat inventory & capacity pairing",
       why: "Carpooling is capacity math: seats against bookings, adjacent seats for pairs, a car that fills or doesn't. Self-joins on contiguous availability and running-capacity windows are the screen's physical layer — the shapes behind 'can this published ride absorb tonight's demand?'",
-      slugs: ["consecutive-available-seats", "last-person-to-fit-in-the-bus", "exchange-seats"],
+      slugs: ["consecutive-available-seats", "last-person-to-fit-in-the-bus", "exchange-seats", "trips-and-users", "last-person-to-fit-in-the-elevator", "the-most-recent-three-orders", "find-the-start-and-end-number-of-continuous-ranges", "project-employees-i"],
     },
     {
       name: "No-show bands & CASE tiers",
       why: "Trust reporting is a CASE over behavior bands — checked-in, awaiting, no-show — and the arms carry contracts: the awaiting arm fires BEFORE any lag comparison, the ELSE is exhaustive by design, and the boundary booking lands where the spec says it lands.",
-      slugs: ["the-category-of-each-member-in-the-store", "weather-type-in-each-country", "calculate-special-bonus"],
+      slugs: ["the-category-of-each-member-in-the-store", "weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories"],
     },
     {
       name: "Corridor leaderboards",
@@ -94,7 +94,7 @@ export const blablacarKit: CompanyKit = {
     {
       name: "Month spines & trend reads",
       why: "Service reviews run on the calendar: bookings per month on the 2024-01..2025-02 spine (14 buckets), the 1,193.86 July trough against the 3,731.97 January open. '%Y-%m' builds the spine, half-open windows cut quarters without losing the boundary night.",
-      slugs: ["monthly-transactions-i", "hopper-company-queries-i", "unique-orders-and-customers-per-month"],
+      slugs: ["monthly-transactions-i", "hopper-company-queries-i", "unique-orders-and-customers-per-month", "sales-by-day-of-the-week"],
     },
     {
       name: "Rates with honest denominators",
@@ -104,7 +104,7 @@ export const blablacarKit: CompanyKit = {
     {
       name: "Manifest folds & GROUP_CONCAT",
       why: "A published ride's manifest is rows: which riders, which pickup points, in what order. GROUP_CONCAT folds the manifest into one cell per booking — the roster read the driver's app shows — and drills the separator/ordering discipline that keeps a folded string readable.",
-      slugs: ["group-sold-products-by-the-date", "find-cities-in-each-state", "concatenate-the-name-and-the-profession"],
+      slugs: ["group-sold-products-by-the-date", "find-cities-in-each-state", "concatenate-the-name-and-the-profession", "find-the-team-size"],
     },
     {
       name: "Settlement & cents discipline",
@@ -119,22 +119,22 @@ export const blablacarKit: CompanyKit = {
     {
       name: "Above-average fare screens",
       why: "Screens escalate into nested logic: which riders' average fare beats the platform's 338.19 line, which corridors clear the global mean. The shape is a fold staged inside a comparison — and the follow-up that separates candidates is what the screen returns when the inner fold is empty: a NULL from a scalar, an empty set from IN, or a silent zero if someone coalesced, each a different report.",
-      slugs: ["orders-with-maximum-quantity-above-average", "find-expensive-cities", "market-analysis-i"],
+      slugs: ["orders-with-maximum-quantity-above-average", "find-expensive-cities", "market-analysis-i", "employee-bonus"],
     },
     {
       name: "Settlement speed & payout aging",
       why: "The payout clock runs issue-to-FIRST-payment over the settled book: 20 claims averaging 28.4 days, fastest 13, slowest 84, against uniform 30-day terms. Aging reads are julianday deltas against a reference date that is a policy choice — and MIN(paid_on), never MAX, or the five split-settlement claims poison the average with their second tranches.",
-      slugs: ["ar-aging-schedule", "settlement-fails-aging", "users-that-actively-request-confirmation-messages"],
+      slugs: ["ar-aging-schedule", "settlement-fails-aging", "users-that-actively-request-confirmation-messages", "customers-who-never-order", "game-play-analysis-iv", "maximum-transaction-each-day"],
     },
     {
       name: "Grand-total stacks & rail splits",
       why: "Month-close ships one result set: detail arms per category, a TOTAL banner appended by UNION ALL. The drill: UNION dedupes where ALL appends — a collapsed duplicate row breaks the tie-out — arms must match column for column, the banner is computed by the same fold that built the arms (25,416.00 on this book), and the ORDER BY at the stack's foot sorts the whole result, banner included.",
-      slugs: ["monthly-transactions-ii", "count-apples-and-oranges", "odd-and-even-transactions"],
+      slugs: ["monthly-transactions-ii", "count-apples-and-oranges", "odd-and-even-transactions", "second-highest-salary"],
     },
     {
       name: "Cohort concentration & share",
       why: "Cohort reads ship with a share column: Nordic Gadgets AB 11,130.25 is 32% of the 34,833.28 book, and the denominator stays the FULL book even when the board is floored at 3,049.07. Window shares compute over surviving rows; the honest version stages the total separately — the staging move this kit's hardest screens turn on.",
-      slugs: ["portfolio-weights", "portfolio-concentration-hhi", "compute-the-rank-as-a-percentage"],
+      slugs: ["portfolio-weights", "portfolio-concentration-hhi", "compute-the-rank-as-a-percentage", "product-sales-analysis-ii"],
     },
   ],
 

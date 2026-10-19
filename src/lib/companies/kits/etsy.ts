@@ -22,7 +22,7 @@ export const etsyKit: CompanyKit = {
     "**Etsy** is the handmade-and-vintage marketplace — a two-sided economy where sellers open shops, stock them with listings, and the platform's health is read through {amber:GMS} (gross merchandise sales) flowing between them. The analytics grain stack is the whole job: GMS folds from line items, shops hold listings, listings carry price and freshness, buyers carry repeat behavior. On this kit's proxy storefront the census reads **6 shops behind 16 listings**, **103 purchases** fanning into 251 line items, and $34,833.28 total GMS at an average basket of **$338.19** — small enough to hold in your head, shaped exactly like the real thing.",
     "The data org is seller-obsessed by design: marketplace-health analytics watch listing freshness and shop churn, growth analytics watch repeat-buyer cohorts, and trust-and-safety watches review quality. The buysider and sellsider meet in every query — 'GMS per active listing' is a two-hop fold (shops → listings → line items), 'repeat-buyer rate' is a per-buyer census with a threshold, and the demand clock runs on `created_at` → `shipped_at`: **82 of 103 purchases carry a dispatch timestamp**, averaging **2.98 days** to ship. *Freshness is a seller-side KPI here the way latency is a logistics KPI elsewhere* — a stale listing is a shop that stopped trying, and the dashboards say so.",
     "Interview style is marketplace-flavored and grain-first. A screen opens with a warm-up join (attach purchases to buyers, listings to shops), escalates into a threshold census ({emerald:repeat buyers} with 2+ purchases — 14 of 16 shoppers on this db), then lands on either a ranking window (GMS leaderboard, tie-proofed) or a two-sided anti-join (shops with no sales this quarter, buyers who browsed but never bought). Follow-ups are spoken out loud: *'is that per purchase or per buyer?'*, 'does a cancelled purchase count in your denominator?', 'what makes a listing fresh?' — and the interviewers are grading whether you state the grain before you divide.",
-    "Preparation strategy: Etsy has **zero tagged problems** in this app's registry, so the kit is fully theme-curated — sixteen problems and ten topics drawn from the band to mirror known Etsy screen themes: GMS-at-the-listing-grain folds, seller anti-joins, freshness and recency reads, repeat-cohort math, review hygiene. The two case studies run on the live db: one rebuilds the {amber:GMS leaderboard} the marketplace review opens with (ranked, tie-aware), the other rebuilds the {emerald:repeat-buyer census} growth teams live by. Both are mechanically audited against the probed figures.",
+    "Preparation strategy: Etsy has **zero tagged problems** in this app's registry, so the kit is fully theme-curated — thirty-two problems and ten topics drawn from the band to mirror known Etsy screen themes: GMS-at-the-listing-grain folds, seller anti-joins, freshness and recency reads, repeat-cohort math, review hygiene. The six case studies run on the live db: one rebuilds the {amber:GMS leaderboard} the marketplace review opens with (ranked, tie-aware), the other rebuilds the {emerald:repeat-buyer census} growth teams live by, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... Both are mechanically audited against the probed figures.",
     "Behind the demand read sits a billing stack most candidates never reach: Etsy charges its sellers — listing fees, transaction cuts, payment processing — so {rose:invoices}, {rose:payments} and the expense tables are first-class analytics surfaces, not finance's private corner. On this proxy ledger that reads **28 invoices against 27 payments**, money stored as INTEGER cents so every dollar view is `amount_cents / 100.0`, and an AR anti-join finds **6 invoices carrying no payment at all** — 15217 in exposure, one of them (invoice 25) partially settled at 4000 of 6148. The reconciliation habit — void-but-paid, paid-with-no-rows, split settlements — is the same muscle trust-and-safety applies to reviews and ops applies to dispatch, which is exactly why the screen drills it.",
     "Treat the expanded bank as spaced practice, not a cram sheet. The case files now span the asks marketplace teams rehearse most — the {amber:GMS leaderboard} at listing and shop grain, the {emerald:repeat-buyer census}, the two-hop GMS-per-shop fold, a `LAG`-driven month-over-month pulse, a settlement-coverage census that classifies every invoice in one pass, and the whale-concentration read growth opens its QBR with — each rebuildable on the live db from a blank editor. *Run it, break it, re-run it a week later* — the second pass is where grain discipline sticks. Pair the six cases with the thirty-two-problem pool and the twenty-four theory items, and read every walkthrough for the failure the wrong chip causes, because the follow-up in an Etsy screen is always some version of *how do you know?*",
   ],
@@ -59,17 +59,17 @@ export const etsyKit: CompanyKit = {
     {
       name: "The two-grain census",
       why: "'Purchases AND buyers per shop' is the opening read of the marketplace review — and the trap is counting both at the same grain. COUNT(*) counts purchase rows; COUNT(DISTINCT customer_id) counts people; the gap is buying intensity, which is the number growth actually manages.",
-      slugs: ["daily-leads-and-partners", "students-and-examinations", "market-analysis-i"],
+      slugs: ["daily-leads-and-partners", "students-and-examinations", "market-analysis-i", "unique-orders-and-customers-per-month", "customer-order-frequency", "find-customers-with-positive-revenue-this-year"],
     },
     {
       name: "Seller-side anti-joins",
       why: "Marketplace health is read from the silent side: shops whose listings never sold, buyers who browsed but never bought, listings with no demand in a window. LEFT JOIN + IS NULL (and its NOT EXISTS twin) is the shape — and the NOT IN NULL trap is the follow-up that ends screens.",
-      slugs: ["sellers-with-no-sales", "customers-who-never-order", "customer-who-visited-but-did-not-transact"],
+      slugs: ["sellers-with-no-sales", "customers-who-never-order", "customer-who-visited-but-did-not-transact", "combine-two-tables"],
     },
     {
       name: "Repeat buyers and loyalty",
       why: "Etsy's growth story is repeat demand: buyers with 2+ purchases, cohorts whose repeat revenue compounds, purchase streaks that survive seasons. The census shape is a per-buyer fold with a HAVING threshold — and the discipline is deciding whether cancelled purchases count before the fold, not after.",
-      slugs: ["repeat-purchase-rate", "cohort-repeat-revenue", "find-loyal-customers"],
+      slugs: ["repeat-purchase-rate", "cohort-repeat-revenue", "find-loyal-customers", "customers-who-bought-all-products"],
     },
     {
       name: "Listing freshness and recency",
@@ -79,17 +79,17 @@ export const etsyKit: CompanyKit = {
     {
       name: "Rates with honest denominators",
       why: "Take rates, repeat rates, kept-purchase shares — Etsy's ratios punish integer division and careless filters. The house habit: 100.0 before the division, the denominator's population decided BEFORE the ratio, rounding only at the very end.",
-      slugs: ["queries-quality-and-percentage", "confirmation-rate", "average-selling-price"],
+      slugs: ["queries-quality-and-percentage", "confirmation-rate", "average-selling-price", "ads-performance"],
     },
     {
       name: "Reviews and text hygiene",
       why: "Trust is data here: review ratings fold into histograms and per-shop averages, and listing titles arrive messy. String reshaping — case normalization, SUBSTR extraction, domain pulls — is the warm-up because a join on a dirty title is a silent fan-out nobody catches until the census doubles.",
-      slugs: ["ratings-histogram", "fix-product-name-format", "find-all-unique-email-domains"],
+      slugs: ["ratings-histogram", "fix-product-name-format", "find-all-unique-email-domains", "product-sales-analysis-iii", "immediate-food-delivery-i"],
     },
     {
       name: "Ranking windows for seller boards",
       why: "Shop leaderboards, top listings per category, second-highest-priced listing in a shop — marketplace reporting is leaderboard reporting. Ties are everywhere when listings share price points, so the rank trio and the tie-break habit are reflexes, not trivia.",
-      slugs: ["rank-scores", "department-top-three-salaries", "second-highest-salary"],
+      slugs: ["rank-scores", "department-top-three-salaries", "second-highest-salary", "department-highest-salary", "nth-highest-salary"],
     },
     {
       name: "Composition: multi-part asks",
@@ -109,7 +109,7 @@ export const etsyKit: CompanyKit = {
     {
       name: "Set ops: stacked seller reports",
       why: "Marketplace health boards stack populations — shops with sales over shops without, paid invoices over open ones — and set operators are the honest glue. UNION ALL keeps every row and tells the truth about overlap; a bare UNION silently dedupes shops that appear in both arms. Column order binds by position, so arm one and arm two must agree on shape before they agree on meaning.",
-      slugs: ["monthly-transactions-ii", "team-scores-in-football-tournament", "count-salary-categories"],
+      slugs: ["monthly-transactions-ii", "team-scores-in-football-tournament", "count-salary-categories", "list-the-products-ordered-in-a-period"],
     },
     {
       name: "Subquery shapes beyond the scalar",
@@ -119,12 +119,12 @@ export const etsyKit: CompanyKit = {
     {
       name: "Dispatch clocks and date math",
       why: "Latency math is date math: julianday diffs that average 2.98 days, seven-day repeat windows, month-boundary filters that quietly drop the last evening's purchases. The traps all live in the edges — timestamp strings that compare lexically, BETWEEN that loses the boundary day, LAG's first row reading NULL. Etsy's freshness and latency reads run in exactly these edges.",
-      slugs: ["users-with-two-purchases-within-seven-days", "find-golden-hour-customers", "rising-temperature"],
+      slugs: ["users-with-two-purchases-within-seven-days", "find-golden-hour-customers", "rising-temperature", "sales-by-day-of-the-week", "average-time-of-process-per-machine", "user-activity-for-the-past-30-days-i", "calculate-orders-within-each-interval"],
     },
     {
       name: "Data quality audits",
       why: "Before any marketplace metric ships, someone asks what the NULLs mean: reviews not yet left, listings never repriced, shipped_at blank until dispatch. One-pass audits — null/blank censuses, COUNT(col) versus COUNT(*) gaps, keep-latest dedupes — are the hygiene layer under every KPI on the wall. The analyst who narrates the NULL policy owns the number; the one who doesn't inherits the argument.",
-      slugs: ["null-blank-audit", "books-with-null-ratings", "find-customer-referee"],
+      slugs: ["null-blank-audit", "books-with-null-ratings", "find-customer-referee", "keep-latest-dedupe", "invalid-tweets"],
     },
   ],
 

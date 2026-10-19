@@ -85,7 +85,7 @@ export const bookingKit: CompanyKit = {
     {
       name: "Argmax & top-N per property",
       why: "Latest reservation per listing, most-booked room per guest, best-reviewed three per property — argmax at scale is ROW_NUMBER over a partition, with the id tie-break that makes 'latest' deterministic.",
-      slugs: ["most-frequently-ordered-product-per-customer", "the-most-recent-orders-for-each-product", "highest-grade-for-each-student", "top-travellers", "the-most-recent-three-orders", "game-play-analysis-v"],
+      slugs: ["most-frequently-ordered-product-per-customer", "the-most-recent-orders-for-each-product", "highest-grade-for-each-student", "top-travellers", "the-most-recent-three-orders", "game-play-analysis-v", "department-top-three-salaries"],
     },
     {
       name: "Weekday & season buckets",

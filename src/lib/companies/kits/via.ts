@@ -29,7 +29,7 @@ export const viaKit: CompanyKit = {
     "Via is the transit-tech company that rebuilt fixed-route public transport as dynamic pooling — shuttles that bend their route to pick up riders heading the same way, sold as software and operations to cities and transit authorities. The unit of value is not a solo ride but a **shared vehicle**: utilization is the business model, and every analytics question bends toward it. On this kit's proxy ledger that's 103 pooled requests worth **34,833.28** (average 338.19) across 16 riders, with 251 passenger legs fanning underneath — *2.4 legs per request, which is the pooling shape itself expressed as a join*. The status map is the request lifecycle: 52 {emerald:completed} with a completion ping (50.5%), 30 en-route (29.1%), 14 waiting for a pool (13.6%), 7 {rose:no-show} cancellations (6.8%).",
     "Two reads define the analyst job here. The {amber:one-pass census}: ops reviews open with a single-scan fold per zone — requests, completed, no-shows, fare revenue in the same GROUP BY — because a query budget is a real constraint when the same fold runs every morning (EU: 45 requests, 24 completed, 3 no-shows, 15,089.23 billed). The {sky:completion-window read}: 82 of 103 requests carry a completion ping, lag averaging **2.98 days** on the proxy clock (range 2..4), and the zone ladder reads APAC 2.93 fastest, EU 2.94, US 3.07, LATAM 3.5 — the on-time conversation starts the moment a zone's average drifts. Utilization denominators are drilled early: completed ÷ ALL booked requests, waiting requests included, or the pooling story flatters itself.",
     "Interviews are utilization-first, one-pass-flavored, cents-precise. A screen opens with a warm-up join (attach passenger legs to their request), escalates into a conditional aggregation with a status rule — often as `FILTER (WHERE …)`, the one-scan idiom this kit's census is built on — then lands on either a completion-window read (JULIANDAY lag with the NULL policy stated) or a municipal-billing read (28 `invoices` against 27 `payments`, INTEGER cents, 6 unpaid worth 15,217.00, one claiming *paid with zero settlement rows*). Follow-ups are spoken aloud: *'is that per request or per leg?'*, 'does a waiting request sit in your denominator?', 'what happens to a request with no ping in the on-time band?'",
-    "Preparation strategy: Via has **0 tagged LC** rows in this app's pool, so the kit is **theme-curated** — all 30 topic slugs and 16 problems are hand-picked from the theme menu to mirror transit-tech screens: pooling censuses, capacity pairing, completion windows, on-time bands, month spines, municipal AR. Then run both case studies on the live db: one rebuilds the {amber:one-pass pooling census} ops reviews open with, the other rebuilds the {sky:zone completion-lag read} the on-time review is built on. The bar to clear: name the grain, state the denominator, and gate the NULLs deliberately before you compute anything.",
+    "Preparation strategy: Via has **0 tagged LC** rows in this app's pool, so the kit is **theme-curated** — all 62 topic slugs and 32 problems are hand-picked from the theme menu to mirror transit-tech screens: pooling censuses, capacity pairing, completion windows, on-time bands, month spines, municipal AR. Then run all six case studies on the live db — built for spaced practice rather than one sitting: one rebuilds the {amber:one-pass pooling census} ops reviews open with, another rebuilds the {sky:zone completion-lag read} the on-time review is built on. The bar to clear: name the grain, state the denominator, and gate the NULLs deliberately before you compute anything.",
     "Via's economics are contract-shaped, and the ledger shows it. The company sells *pooling as a service* to cities and transit authorities — software plus fleet operations under municipal terms — which is why the billing side of this kit behaves like a public-sector book: 28 `invoices` against 27 `payments`, every value in **INTEGER cents**, a flat 30-day issue-to-due window on every bill (30 average, 30 min, 30 max — no negotiated outliers), and settlement arriving on two rails: {amber:card} 16 flows worth 37,364.00 against {sky:wire} 11 flows worth 32,248.00 — 27 settlements totaling 69,612.00. The margin lever is utilization, so supply concentrates: the top fleet partner carries **32% of billed volume** (11,130.25) and the next 26.7% — a two-partner majority that turns the concentration fold into a renewal-risk board. Demand concentrates too: 63.5% of revenue comes from riders whose lifetime spend crosses 3,000 — a small base of heavy regulars, exactly the profile municipal pooled services build around.",
     "Preparation roadmap: treat the case-study set as a four-week arc and rebuild each query from a blank editor. Week 1, grain and denominators — write the one-pass zone census until the arms reconcile without thinking (requests 103, completed 52, no-shows 7, revenue 34,833.28). Week 2, windows and frames — the zone lag ladder (APAC 2.93 to LATAM 3.5), then the seat-pair census and a running-capacity frame, saying the frame bounds out loud. Week 3, the billing book — the settlement rail stack, the coverage census (21 exact, 1 partial, 6 untouched) and the **15,217.00 chase list**, all at {emerald:cents discipline}: `/ 100.0` at the display edge, never integer division. Week 4, query-budget rehearsal — every deliverable in *one pass*, populations named in headers, boundaries stated. The gates to clear every time: name the grain, state the denominator, gate the NULLs before the average, reconcile the arms back to `COUNT(*)`.",
   ],
@@ -61,12 +61,12 @@ export const viaKit: CompanyKit = {
     {
       name: "Pooled-request censuses",
       why: "Transit ops opens every review with a fold: requests per zone, per corridor, per day — counted without letting the leg fan-out double the numbers. COUNT(*) on the request table counts requests; after joining legs it counts legs; Via drills which grain the query is standing on before any aggregate runs.",
-      slugs: ["percentage-of-users-attended-a-contest", "find-followers-count", "product-sales-analysis-ii"],
+      slugs: ["percentage-of-users-attended-a-contest", "find-followers-count", "product-sales-analysis-ii", "trips-and-users", "combine-two-tables", "average-selling-price", "sales-analysis-ii"],
     },
     {
       name: "One-pass status censuses",
       why: "Query budgets are real when the same fold runs every morning: requests, completed, no-shows and revenue in ONE scan. Conditional aggregation — FILTER (WHERE …), SUM(CASE …), AVG over 1/0 flags — is the idiom, with branch totals that must reconcile back to COUNT(*).",
-      slugs: ["active-businesses", "find-stores-with-inventory-imbalance", "number-of-rich-customers"],
+      slugs: ["active-businesses", "find-stores-with-inventory-imbalance", "number-of-rich-customers", "dau-wau-stickiness", "rolling-7d-actives"],
     },
     {
       name: "Completion windows & lag",
@@ -76,12 +76,12 @@ export const viaKit: CompanyKit = {
     {
       name: "Zone utilization & capacity",
       why: "Utilization is capacity math: seats versus riders, pools that fill, vehicles that pair. Self-joins on contiguous availability and running-capacity windows are the screen's physical layer — the shapes behind 'can this zone's fleet serve tonight's demand?'",
-      slugs: ["last-person-to-fit-in-the-bus", "consecutive-available-seats", "flight-occupancy-and-waitlist-analysis"],
+      slugs: ["last-person-to-fit-in-the-bus", "consecutive-available-seats", "flight-occupancy-and-waitlist-analysis", "duplicate-charge-pairs"],
     },
     {
       name: "On-time tiers & CASE bands",
       why: "On-time reporting is a CASE over lag bands — within window, outside, no ping — and the arms carry contracts: the no-ping arm fires BEFORE any lag comparison, the ELSE is exhaustive by design, and the boundary row (exactly 3.0 days) lands where the spec says it lands.",
-      slugs: ["immediate-food-delivery-ii", "calculate-orders-within-each-interval", "the-category-of-each-member-in-the-store"],
+      slugs: ["immediate-food-delivery-ii", "calculate-orders-within-each-interval", "the-category-of-each-member-in-the-store", "count-salary-categories"],
     },
     {
       name: "Utilization leaderboards",
@@ -96,7 +96,7 @@ export const viaKit: CompanyKit = {
     {
       name: "Month spines & trend reads",
       why: "Service reviews run on the calendar: requests per month on the 2024-01..2025-02 spine (14 buckets), the 1,193.86 trough in July against the 3,731.97 January open. '%Y-%m' builds the spine, half-open windows cut periods without losing the boundary night.",
-      slugs: ["monthly-transactions-i", "hopper-company-queries-i", "friday-purchase-iii"],
+      slugs: ["monthly-transactions-i", "hopper-company-queries-i", "friday-purchase-iii", "top-travellers", "product-price-at-a-given-date", "report-contiguous-dates", "budget-pacing", "biggest-window-between-events", "funnel-step-conversion"],
     },
     {
       name: "Rates with honest denominators",
@@ -106,7 +106,7 @@ export const viaKit: CompanyKit = {
     {
       name: "Manifest folds & GROUP_CONCAT",
       why: "A pool's manifest is rows: which riders, which pickup points, in what order. GROUP_CONCAT folds the manifest into one cell per request — the roster read dispatch uses — and drills the separator/ordering discipline that keeps a folded string readable.",
-      slugs: ["group-sold-products-by-the-date", "find-cities-in-each-state", "concatenate-the-name-and-the-profession"],
+      slugs: ["group-sold-products-by-the-date", "find-cities-in-each-state", "concatenate-the-name-and-the-profession", "employees-with-missing-information", "keep-latest-dedupe", "null-blank-audit"],
     },
     {
       name: "Set-op report stacks",

@@ -29,7 +29,7 @@ export const citiKit: CompanyKit = {
     "Citi is the global bank — consumer cards and retail books on one side, treasury services and markets on the other, wired together across corridors that never all close at once: **EU, APAC, US, LATAM**. The bank's edge is the plumbing — moving value across borders and proving it landed — so the numbers that matter are counts against confirmations and positions against proofs. On this book: 16 counterparties spread across the four corridors, with the two biggest carrying **63.5%** of value, and 103 booked flows worth **34833.28** with the largest single corridor relation at 24 flows for **7262.35**. The cultural rule every analyst absorbs in week one: *a position that cannot be folded back to the books is an opinion*, and opinions do not clear across borders.",
     "The data org sits on the rails. Every booked confirmation carries an amount the settlement rails must clear — card, the consumer card rail (16 hits for **37364.00**), and wire, the treasury rail that carries the cross-border flow (11 for **32248.00**) — and every settled dollar posts twice into the double-entry ledger, debit and credit, stored as integer cents with the dollar read always `cents / 100.0`. The daily proof is mechanical: **181080.00 debits against 181080.00 credits across 80 ledger entries, delta 0**. The coverage census reads 21 confirmations settled exact, 1 partial (4000.00 against 6148.00), 6 with no rail hit — 22 books touched by a rail, 6 untouched carrying **15217.00** of exposure against flat 30-day terms.",
     "Interview style is corridor-minded and control-first. Screens open with a one-pass census — rail counts and values in a single fold, no self-joins, no second scan — then escalate into the guards this bank is known for: a `HAVING` wall over counts ({amber:the structuring pattern}), a CASE coverage ladder whose boundary a reviewer will argue, an anti-join that defines which corridors have no rail presence at all. Follow-ups are about populations and clocks: 'does that share use settled or booked value?', 'which corridor's close does that timestamp belong to?'. Candidates who state the filter's population and the fold's grain before writing SQL do well; *a cross-border number with a silent population assumption is how correspondent banks get embarrassed.*",
-    "Preparation strategy: Citi has **0 tagged problems** in this app's band — the pool is theme-curated to its known question families: rail censuses, coverage CASE ladders, threshold `HAVING` walls, corridor anti-joins, running treasury positions and honest-denominator share math (provenance stated per problem). Do the topics in order, then run both case studies on the live storefront database: one rebuilds the {sky:two-rail census} the ops review opens with, the other rebuilds the {emerald:position sheet} treasury defends at the close.",
+    "Preparation strategy: Citi has **0 tagged problems** in this app's band — the pool is theme-curated to its known question families: rail censuses, coverage CASE ladders, threshold `HAVING` walls, corridor anti-joins, running treasury positions and honest-denominator share math (provenance stated per problem). Do the topics in order, then run all six case studies on the live storefront database: one rebuilds the {sky:two-rail census} the ops review opens with, the other rebuilds the {emerald:position sheet} treasury defends at the close, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting...",
     "The deep book is where the screens live. Five confirmations clear across **two rails each** — books 1, 5, 12, 19, 22, with #19's **5614.00** riding two legs of 2807.00 — which is why rail rows read 27 while books touched read 22, and why every fold states its grain before it states its number. The anomaly ledger is small and famous: a {rose:void} confirmation that cleared 925.00 anyway, and a paid one with no rail hit at all (1756.00 booked, zero legs) — status and settlement presence are different facts, and the trial balance absorbs both, still proving 181080.00 against 181080.00. The rail mix is itself a read: wire is **46.3%** of settled value, and the corridor leads quote the pair, never either rail alone.",
     "Preparation past the base kit goes deeper, not wider: the expansion topics drill set-op stitching (UNION ALL, EXCEPT diffs), self-join pair screens, GROUP_CONCAT audit trails, two-sided outer-join reads and corridor-relative thresholds — the senior shapes this bank's leads actually write. The case roster now runs **cs-citi-3** (the wire rail walk), **cs-citi-4** (the split-book screen), **cs-citi-5** (the coverage ladder re-staged) and **cs-citi-6** (the cost calendar's peak month) — each audited against the live storefront db, every figure probed, every distractor consequence-checked. The cents rule never relaxes: money is INTEGER cents, the dollar read is `cents / 100.0`, and a number that cannot show its fold does not clear.",
   ],
@@ -61,7 +61,7 @@ export const citiKit: CompanyKit = {
     {
       name: "One-pass rail censuses",
       why: "The overnight handover artifact is a single fold: rail counts and values computed in one scan with conditional aggregation, no second pass, no self-join. Screens drill FILTER-style conditional folds because the desk re-runs this census end-to-end before anything ships — and a census that needs three queries is a census that drifts.",
-      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "percentage-of-users-attended-a-contest"],
+      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "percentage-of-users-attended-a-contest", "gl-reconciliation", "dormant-reactivation", "transaction-velocity"],
     },
     {
       name: "Two-rail settlement folds",
@@ -71,32 +71,32 @@ export const citiKit: CompanyKit = {
     {
       name: "Treasury running positions",
       why: "The cash position is a running sum over posted entries, and the desk reads it as a walk — current balance beside prior balance, deltas visible. Window frames decide whether same-timestamp postings double-count, and the interviewer wants the frame stated out loud before the query runs.",
-      slugs: ["account-balance", "running-total-for-different-genders", "game-play-analysis-iii"],
+      slugs: ["account-balance", "running-total-for-different-genders", "game-play-analysis-iii", "trial-balance-check", "find-cumulative-salary-of-an-employee"],
     },
     {
       name: "Wire-coverage anti-joins",
       why: "The no-cover list — 6 confirmations, 15217.00 — is a LEFT JOIN plus an IS NULL on the join key, and it is the most-quoted shape in the building. Screens escalate it: NOT EXISTS twins, WHERE-placement traps that silently convert the anti-join back to an inner fold and delete the corridor's exposure report.",
-      slugs: ["customers-who-never-order", "sellers-with-no-sales", "find-churn-risk-customers"],
+      slugs: ["customers-who-never-order", "sellers-with-no-sales", "find-churn-risk-customers", "fx-exposure-report"],
     },
     {
       name: "Threshold walls (HAVING guards)",
       why: "Citi's signature screen judges counts after the fold: small-ticket walls, minimum-activity floors, materiality lines on positions. The grammar is HAVING because the threshold is a group property, and the interviewer checks whether your boundary operator and your population statement survive a compliance read.",
-      slugs: ["structuring-detection", "customer-order-frequency", "find-cities-in-each-state-ii"],
+      slugs: ["structuring-detection", "customer-order-frequency", "find-cities-in-each-state-ii", "movie-rating", "classes-more-than-5-students"],
     },
     {
       name: "CASE-classified coverage",
       why: "Coverage is a definition, not a vibe: exact when the folded rail value equals the booking, partial when it does not, none when no rail ever hit. That ladder is a CASE over a LEFT join folded per confirmation — exhaustive arms, deliberate boundaries — and the census it produces (21 / 1 / 6) routes every exception to its owner.",
-      slugs: ["loan-types", "count-salary-categories", "monthly-transactions-ii"],
+      slugs: ["loan-types", "count-salary-categories", "monthly-transactions-ii", "delinquency-buckets", "ads-performance", "weather-type-in-each-country"],
     },
     {
       name: "Corridor calendars and date math",
       why: "Aging, T+ windows and corridor closes make date arithmetic a daily tool on a book that never sleeps. The recurring traps are all here: BETWEEN dropping the last night of a window, STRFTIME buckets that merge years, and an aging read whose population quietly excludes the very rows it is naming.",
-      slugs: ["settlement-fails-aging", "friday-purchases-i", "users-with-two-purchases-within-seven-days"],
+      slugs: ["settlement-fails-aging", "friday-purchases-i", "users-with-two-purchases-within-seven-days", "restaurant-growth", "product-price-at-a-given-date", "human-traffic-of-stadium", "rising-temperature"],
     },
     {
       name: "Rank ladders for the dealing room",
       why: "Exposure ladders, VaR-style percentile cuts and top-counterparty lists are leaderboard questions wearing a suit. The rank trio decides who shares a rung and what the next rung is called — and ties in money amounts are common enough that LIMIT-with-OFFSET instincts break publicly.",
-      slugs: ["value-at-risk", "rank-scores", "department-top-three-salaries"],
+      slugs: ["value-at-risk", "rank-scores", "department-top-three-salaries", "market-analysis-ii"],
     },
     {
       name: "NULL policy across books",
@@ -106,7 +106,7 @@ export const citiKit: CompanyKit = {
     {
       name: "Concentration and honest shares",
       why: "Corridor shares, wire share of settled value, counterparty concentration — every ratio here sits one integer division away from printing zero. The house habit: 100.0 before the division, the denominator's population (booked or settled?) decided before the ratio, rounding only at the very end.",
-      slugs: ["portfolio-concentration-hhi", "queries-quality-and-percentage", "countries-you-can-safely-invest-in"],
+      slugs: ["portfolio-concentration-hhi", "queries-quality-and-percentage", "countries-you-can-safely-invest-in", "consecutive-numbers"],
     },
     {
       name: "Set-op stitching (UNION & EXCEPT)",
@@ -116,22 +116,22 @@ export const citiKit: CompanyKit = {
     {
       name: "Self-join pair screens",
       why: "Duplicate-settlement surveillance pairs rail rows against each other — same amount, same method, ordered so each pair prints once under a strict id comparison. The same shape catches consecutive postings and same-day twins; get the pairing predicate wrong and every duplicate reports twice, which is its own false alarm.",
-      slugs: ["most-common-course-pairs", "consecutive-available-seats", "apples-and-oranges"],
+      slugs: ["most-common-course-pairs", "consecutive-available-seats", "apples-and-oranges", "duplicate-charge-pairs", "employees-earning-more-than-their-managers", "immediate-food-delivery-ii"],
     },
     {
       name: "GROUP_CONCAT audit trails",
       why: "The evidence pack folds each book's memos into one cell — GROUP_CONCAT with a stated separator — so a reviewer reads a book's history without paging. The traps are silent ones: NULL memos drop out of the fold (a book reads shorter and looks complete), and row order inside the fold is not guaranteed unless you make it so.",
-      slugs: ["group-sold-products-by-the-date", "find-cities-in-each-state", "friendly-movies-streamed-last-month"],
+      slugs: ["group-sold-products-by-the-date", "find-cities-in-each-state", "friendly-movies-streamed-last-month", "average-selling-price"],
     },
     {
       name: "Outer-join two-sided reads",
       why: "Reconciliation wants both misses at once: books with no rail (6 here, 15217.00) and rails with no book — none on this db, and proving that negative is the point. RIGHT/FULL OUTER with coalesced keys reads both sides in one scan; a LEFT-join-only version structurally cannot see the other side's orphans.",
-      slugs: ["top-travellers", "market-analysis-i", "students-with-invalid-departments"],
+      slugs: ["top-travellers", "market-analysis-i", "students-with-invalid-departments", "exchange-seats"],
     },
     {
       name: "Corridor-relative thresholds",
       why: "'Above the corridor's own average' is a correlated read — LATAM's two-flow book cannot be judged on a book-wide line — and materiality screens stage through CTEs so the fold, the screen and the proof share one definition. The scalar trap rides along: an empty inner fold returns NULL, and every comparison against NULL flags nothing.",
-      slugs: ["managers-with-at-least-5-direct-reports", "second-highest-salary", "employees-whose-manager-left-the-company"],
+      slugs: ["managers-with-at-least-5-direct-reports", "second-highest-salary", "employees-whose-manager-left-the-company", "biggest-single-number"],
     },
   ],
 

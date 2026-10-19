@@ -57,47 +57,47 @@ export const marqetaKit: CompanyKit = {
     {
       name: "Authorization status funnels",
       why: "Every issuing-ops screen opens with the lifecycle: batches booked, cleared-and-settled, authorized-in-flight, pending-JIT, declined. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling an in-flight batch settled — 30 versus 52 on this db.",
-      slugs: ["immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "trial-to-paid-funnel", "ads-funnel", "funnel-step-conversion"],
+      slugs: ["immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "trial-to-paid-funnel", "ads-funnel", "funnel-step-conversion", "immediate-food-delivery-ii", "monthly-transactions-i"],
     },
     {
       name: "Two-grain program censuses",
       why: "Batches and clients are different grains of the same join, and every census here reports both: EU runs 45 batches from 8 clients while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is funding load and which is installed base — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "basket-depth-aov", "rfm-segmentation", "cohort-retention-matrix"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "basket-depth-aov", "rfm-segmentation", "cohort-retention-matrix", "managers-with-at-least-5-direct-reports"],
     },
     {
       name: "Joining programs to authorizations",
       why: "Clients carry region and created_at; batches inherit them through joins, and the join type decides who survives. A batch without a client is corruption; a client without batches is a dormant program — though on this db the anti-join returns a confident zero, and proving it is part of the job.",
-      slugs: ["combine-two-tables", "sales-analysis-i", "employee-bonus", "dormant-reactivation"],
+      slugs: ["combine-two-tables", "sales-analysis-i", "employee-bonus", "dormant-reactivation", "market-analysis-i"],
     },
     {
       name: "Decline rates with honest denominators",
       why: "The JIT decline share is cancelled ÷ ALL batches, and two failure modes ship weekly: integer division truncating 6.8 to 6, and a WHERE filter shrinking the denominator to the numerator's population. The house habit is 100.0 before the divide and the denominator decided in the same fold as the numerator.",
-      slugs: ["queries-quality-and-percentage", "average-selling-price", "confirmation-rate", "amount-anomaly-zscore"],
+      slugs: ["queries-quality-and-percentage", "average-selling-price", "confirmation-rate", "amount-anomaly-zscore", "card-launch-success", "group-sold-products-by-the-date"],
     },
     {
       name: "Spend ladders & ranking windows",
       why: "The client velocity ladder runs 24, 17, 14, 13, 5 — then FOUR clients sit tied at 4 batches on this db. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which on an issuing platform is a policy about which programs get the next risk review, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "structuring-detection"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "structuring-detection", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "Control banding with CASE",
       why: "Spend limits, velocity tiers and single-use versus refresh-token programs are CASE-classified with edges the program contract publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the risk forecast, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "credit-utilization-bands", "delinquency-buckets", "expected-credit-loss"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "credit-utilization-bands", "delinquency-buckets", "expected-credit-loss", "transaction-velocity", "the-most-recent-orders-for-each-product", "active-users"],
     },
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month settlement spine (2024-01 to 2025-02) is the ops call's home turf: volume booked per month, declines per month, and the step delta — the book troughs at 1,193.86 in July 2024 and jumps +1,158.21 into August. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine", "budget-pacing"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine", "budget-pacing", "top-percentile-fraud", "game-play-analysis-iv"],
     },
     {
       name: "Anti-joins & coverage gaps",
       why: "Never-funded statements ARE the answer — the 6 statements worth 15,217 that no funding leg ever touched are the dunning list. The LEFT JOIN + IS NULL shape (and its NOT EXISTS twin) is a daily issuing-ops query, and the client-side anti-join returning a confident zero is itself a report you must be able to defend.",
-      slugs: ["sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "find-churn-risk-customers"],
+      slugs: ["sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "find-churn-risk-customers", "customers-who-never-order"],
     },
     {
       name: "One-pass status censuses",
       why: "The ops board gets settled, in-flight, pending and declined in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift out of reconciliation.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "last-person-to-fit-in-the-bus"],
     },
     {
       name: "Cents discipline on funding legs",

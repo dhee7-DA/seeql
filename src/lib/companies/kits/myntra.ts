@@ -23,7 +23,7 @@ export const myntraKit: CompanyKit = {
     "**Myntra** is India's largest fashion e-commerce platform — the company that turned drop events into a national sport, where an End-of-Reason-Sale-style window compresses weeks of demand into days and the wishlist is a leading indicator the business watches before the cart is. Fashion analytics is bursty by nature: demand arrives in {violet:drop} spikes, sizes and returns are first-class facts of the catalog, and markdown math decides whether an event made money. On this kit's proxy storefront the census reads **103 carts folding into 251 line items**, $34,833.28 total GMV at an average cart of **$338.19** (biggest single cart 1088.44), with **7 carts cancelled — 6.8% of placements** — the leak fashion funnels are managed on.",
     "The data org is event-shaped: category analytics (apparel, footwear, accessories) sit next to drop-ops, growth and returns analytics, and the calendar is the spine — the monthly fold runs **2024-01 (8 carts, 3731.97)** to 2025-02 (7 carts, 2390.53) with a trough at 2024-07 (1193.86, the pre-drop lull the calendar always shows). The demand clock runs `created_at → shipped_at`: **82 of 103 carts carry a dispatch timestamp**, averaging **2.98 days** — fast fashion means fast fulfillment, and the latency tile sits next to the {rose:return-rate} tile on every dashboard. Category velocity is the other daily read: Accessories move 121 units, Apparel 54, and the style mix decides what the next drop stocks.",
     "Interview style is funnel-flavored and denominator-first. A screen opens with a warm-up join (attach styles to carts, carts to shoppers), escalates into a threshold or tier census ({sky:cart-value tiers}, {emerald:repeat shoppers} with 2+ purchases), then lands on either a window question (drop-to-drop momentum, style leaderboards) or a funnel read where the grain is the test — wishlist-to-cart conversion is a distinct-buyer ratio, and the interviewer checks whether your join fanned the buyers out. Follow-ups are spoken out loud: *'does a cancelled cart count in your denominator?'*, 'is that per cart or per shopper?', 'what window defines \"during the drop\"?' — and half-open intervals are the expected answer.",
-    "Preparation strategy: Myntra has **zero tagged problems** in this app's registry, so the kit is fully theme-curated — sixteen problems and ten topics drawn from the band to mirror known Myntra screen themes: drop-window folds, funnel conversion, return shares, shopper segmentation, style leaderboards, markdown math. The two case studies run on the live db: one rebuilds the {sky:cart-tier census} pricing reviews open with (a CASE fold at a fixed boundary), the other rebuilds the {violet:drop-momentum read} — month-over-month revenue deltas with the first month's NULL handled honestly. Both are mechanically audited against the probed figures.",
+    "Preparation strategy: Myntra has **zero tagged problems** in this app's registry, so the kit is fully theme-curated — thirty-two problems and ten topics drawn from the band to mirror known Myntra screen themes: drop-window folds, funnel conversion, return shares, shopper segmentation, style leaderboards, markdown math. The six case studies run on the live db: one rebuilds the {sky:cart-tier census} pricing reviews open with (a CASE fold at a fixed boundary), the other rebuilds the {violet:drop-momentum read} — month-over-month revenue deltas with the first month's NULL handled honestly, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... Both are mechanically audited against the probed figures.",
     "Under the dashboard layer sits the platform reality, and it shapes every query you write here. Drop reads run on the event store, where carts and cart lines land as TEXT timestamps; the settlement spine runs beside them — **28 invoices and 27 payments** keyed to the order book, with money stored as INTEGER cents, so the dollar read is `amount_cents / 100.0`, and the missing .0 is how a 6148-cent invoice once printed as 61 dollars — a 48-cent leak on one row that a reconciliation query caught. The rails split {sky:card} (16 payments, 373.64) from {violet:wire} (11 payments, 322.48), and the month-close pack closes only when debits and credits tie — **181080 against 181080, delta zero** — with the anomalies tabled, not averaged: a void-but-paid invoice is a finding, not a rounding quirk.",
     "Preparation at full depth: the kit now runs **fifteen topics, twenty-four theory drills, thirty MCQs and six audited case studies** on the storefront db. The two original cases rebuild the {sky:cart-tier census} and the {violet:drop-momentum read}; the four additions walk the style-family buy-sheet (a two-hop fold where the units crown and the revenue crown land on different families), the tie-proofed style leaderboard (RANK where two styles share rung 4 and three share rung 8), the one-pass drop census (FILTER branches that reconcile 52 + 30 + 14 + 7 to 103) and the loyal-shopper fold (a derived table gating the nine shoppers with 4-plus carts). The 32-problem pool stays theme-curated — Myntra has zero registry tags in this app — stretching from UNION-stitched event packets to cents-safe settlement folds and style-feed string hygiene. The bar to clear before the interview: state every rate's denominator out loud, and reconcile every multi-branch census against a `COUNT(*)`.",
   ],
@@ -55,27 +55,27 @@ export const myntraKit: CompanyKit = {
     {
       name: "Drop-window demand folds",
       why: "Myntra's demand is bursty: an event window compresses weeks into days, and every drop read is a GROUP BY with a half-open date filter and a status rule attached. The trap is the window edge — BETWEEN on the last day loses the drop's biggest night.",
-      slugs: ["list-the-products-ordered-in-a-period", "product-sales-analysis-iii", "seasonal-sales-analysis"],
+      slugs: ["list-the-products-ordered-in-a-period", "product-sales-analysis-iii", "seasonal-sales-analysis", "product-sales-analysis-i", "sales-analysis-i"],
     },
     {
       name: "The two-grain census",
       why: "'Carts AND shoppers per category' is the opening read of every category review — and the trap is counting both at the same grain. COUNT(*) counts cart rows; COUNT(DISTINCT customer_id) counts people; the gap is shopping intensity, the number category leads argue about.",
-      slugs: ["daily-leads-and-partners", "students-and-examinations", "market-analysis-i"],
+      slugs: ["daily-leads-and-partners", "students-and-examinations", "market-analysis-i", "queries-quality-and-percentage"],
     },
     {
       name: "Wishlist-to-cart funnel conversion",
       why: "The funnel is Myntra's signature read: wishlist → cart → order, each stage a distinct-shopper count. The grain discipline is everything — a shopper with five wishlisted styles counts ONCE at the wishlist stage, and a careless join fans them back out.",
-      slugs: ["funnel-step-conversion", "email-engagement-funnel", "ads-funnel"],
+      slugs: ["funnel-step-conversion", "email-engagement-funnel", "ads-funnel", "find-product-recommendation-pairs", "unique-orders-and-customers-per-month"],
     },
     {
       name: "Return and cancellation shares",
       why: "Returns and cancellations are first-class leaks in fashion, and each has its own denominator: cancellations divide by PLACED (all 103), returns divide by DELIVERED (only the 52 that could come back). Conditional-count ratios where the population statement is the metric.",
-      slugs: ["immediate-food-delivery-ii", "returns-rate-by-category", "monthly-transactions-ii"],
+      slugs: ["immediate-food-delivery-ii", "returns-rate-by-category", "monthly-transactions-ii", "classes-more-than-5-students"],
     },
     {
       name: "Repeat shoppers and trajectories",
       why: "Fashion loyalty is repeat behavior inside event windows: shoppers with 2+ purchases in a drop week, spend trajectories that rise season over season, cohorts that come back at full price. Per-shopper folds with thresholds — computed, not asserted.",
-      slugs: ["users-with-two-purchases-within-seven-days", "find-loyal-customers", "customers-with-strictly-increasing-purchases"],
+      slugs: ["users-with-two-purchases-within-seven-days", "find-loyal-customers", "customers-with-strictly-increasing-purchases", "confirmation-rate"],
     },
     {
       name: "Shopper segmentation",
@@ -85,37 +85,37 @@ export const myntraKit: CompanyKit = {
     {
       name: "Style leaderboards",
       why: "Top styles per category, best-selling size runs, the drop's best performers — fashion reporting is leaderboard reporting with ties everywhere (three styles tie at 21 units on this db). The rank trio and the deterministic tie-break are reflexes, not trivia.",
-      slugs: ["department-top-three-salaries", "rank-scores", "product-sales-analysis-v"],
+      slugs: ["department-top-three-salaries", "rank-scores", "product-sales-analysis-v", "percentage-of-users-attended-a-contest", "the-most-recent-three-orders", "top-earners"],
     },
     {
       name: "As-of pricing and markdown math",
       why: "Price is a function of the drop calendar: which markdown was in force at cart moment is an as-of lookup, before-during-after price comparisons are period folds, and the boundary cart (exactly 400) is premium because the predicate says so.",
-      slugs: ["product-price-at-a-given-date", "product-sales-analysis-iv", "second-highest-salary"],
+      slugs: ["product-price-at-a-given-date", "product-sales-analysis-iv", "second-highest-salary", "average-selling-price"],
     },
     {
       name: "Drop-calendar date math",
       why: "The calendar is the spine: month buckets via STRFTIME or SUBSTR, golden-hour cohorts (who bought in the first hours of a drop), trailing activity windows after acquisition. Half-open intervals and stated reference dates are the house rules.",
-      slugs: ["the-latest-login-in-2020", "find-golden-hour-customers", "user-activity-for-the-past-30-days-i"],
+      slugs: ["the-latest-login-in-2020", "find-golden-hour-customers", "user-activity-for-the-past-30-days-i", "game-play-analysis-iv", "sales-by-day-of-the-week"],
     },
     {
       name: "NULL policy and catalog hygiene",
       why: "Wishlists can be empty, sizes can be NULL, shipments are NULL until dispatch — 21 of 103 carts here. Myntra screens check whether you treat NULL as data to report, coalesce to zero for display, or exclude with a stated reason; the audit habit is reporting the hole, not laundering it.",
-      slugs: ["null-blank-audit", "books-with-null-ratings", "employee-bonus"],
+      slugs: ["null-blank-audit", "books-with-null-ratings", "employee-bonus", "combine-two-tables"],
     },
     {
       name: "The event-packet stack (set ops)",
       why: "Drop wrap reporting stitches three disjoint windows — before, during, after — into one pack, and the set-op choice decides whether the pack survives an argument. UNION ALL's no-dedupe cheapness and column-position discipline are the tested moves; a stack that silently dedupes or misaligns columns reads as two different businesses.",
-      slugs: ["count-salary-categories", "monthly-transactions-i", "team-scores-in-football-tournament"],
+      slugs: ["count-salary-categories", "monthly-transactions-i", "team-scores-in-football-tournament", "product-sales-analysis-ii"],
     },
     {
       name: "One-pass war-room censuses",
       why: "The drop board refreshes on a query budget: the status census, the shopper census and the premium-gate census each get one scan, not five sequential passes. Conditional aggregation — COUNT(*) FILTER (WHERE …) with branch totals that must reconcile to COUNT(*) — is the shape, and the reconciliation identity IS the audit.",
-      slugs: ["active-businesses", "number-of-rich-customers", "find-stores-with-inventory-imbalance"],
+      slugs: ["active-businesses", "number-of-rich-customers", "find-stores-with-inventory-imbalance", "immediate-food-delivery-i"],
     },
     {
       name: "Nested reads: cohorts and crowns",
       why: "Screens escalate into nested logic: which shoppers' FIRST cart landed in the drop window, which styles beat the platform-average cart, which family crowns the revenue ladder. IN, EXISTS, scalar and derived shapes each carry a cost profile and an empty-inner-query failure mode — the follow-up is always 'what does this return if the inside is empty?'",
-      slugs: ["department-highest-salary", "managers-with-at-least-5-direct-reports", "investments-in-2016"],
+      slugs: ["department-highest-salary", "managers-with-at-least-5-direct-reports", "investments-in-2016", "most-frequently-ordered-product-per-customer"],
     },
     {
       name: "Money math on the settlement spine",
@@ -125,7 +125,7 @@ export const myntraKit: CompanyKit = {
     {
       name: "Style-feed string hygiene",
       why: "Style titles and shopper names arrive messy: mixed case, ALL CAPS, email domains buried in free text. Myntra screens warm up with string reshaping — case normalization, SUBSTR extraction, LIKE validation — because a join on a dirty key is a silent fan-out nobody catches until the census doubles.",
-      slugs: ["fix-product-name-format", "fix-names-in-a-table", "find-all-unique-email-domains"],
+      slugs: ["fix-product-name-format", "fix-names-in-a-table", "find-all-unique-email-domains", "customer-who-visited-but-did-not-transact"],
     },
   ],
 

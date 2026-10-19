@@ -64,17 +64,17 @@ export const ingKit: CompanyKit = {
     {
       name: "Household & account folds",
       why: "Retail banking reads households, not rows: billings, batches and balances GROUP BY book, with LEFT JOIN shapes that keep empty accounts visible — the fold the tie-back rule is built on.",
-      slugs: ["bank-account-summary-ii", "combine-two-tables", "find-the-team-size"],
+      slugs: ["bank-account-summary-ii", "combine-two-tables", "find-the-team-size", "trial-balance-check"],
     },
     {
       name: "Screening bands & thresholds",
       why: "The compliance census is a CASE ladder: legs bucketed under, between and over the lines per rail. Band edges are definitions — BETWEEN is inclusive, and a leg sitting on the line moves bands and counts.",
-      slugs: ["structuring-detection", "suspicious-bank-account-transactions", "spend-histogram"],
+      slugs: ["structuring-detection", "suspicious-bank-account-transactions", "spend-histogram", "expected-credit-loss", "ar-aging-schedule"],
     },
     {
       name: "Settlement rails",
       why: "Two rails, 27 legs, one cross-foot: card 16 / 37364.00 against wire 11 / 32248.00. Velocity bursts, duplicate-pair screens and rate rankings are how the payments desk watches the rails behave.",
-      slugs: ["transaction-velocity", "duplicate-charge-pairs", "chargeback-rate-ranking"],
+      slugs: ["transaction-velocity", "duplicate-charge-pairs", "chargeback-rate-ranking", "gl-reconciliation", "keep-latest-dedupe", "confirmation-rate"],
     },
     {
       name: "State pivots & CASE ladders",
@@ -84,22 +84,22 @@ export const ingKit: CompanyKit = {
     {
       name: "Anti-joins & the uncollected book",
       why: "The watch is a missing rail hit, not a status word: LEFT JOIN with the IS NULL arm finds the 6 billings / 15217.00 that no settlement ever touched — and the open-status census is not the same set.",
-      slugs: ["customers-who-never-order", "sellers-with-no-sales", "find-churn-risk-customers"],
+      slugs: ["customers-who-never-order", "sellers-with-no-sales", "find-churn-risk-customers", "customer-who-visited-but-did-not-transact", "countries-you-can-safely-invest-in"],
     },
     {
       name: "Month spines & scenario reads",
       why: "Scenarios live on calendar spines: strftime month buckets across 2024-01 to 2025-02, dated folds and period filters are how the scenario team slices the book — one '%Y-%m' key at a time.",
-      slugs: ["friday-purchase-iii", "monthly-transactions-i", "list-the-products-ordered-in-a-period"],
+      slugs: ["friday-purchase-iii", "monthly-transactions-i", "list-the-products-ordered-in-a-period", "movie-rating"],
     },
     {
       name: "NULL policy & data hygiene",
       why: "Data-first means NULL-first: a missing rail hit is information, an empty fold prints NULL not zero, and the audits that catch blanks before stakeholders do are the floor's daily hygiene.",
-      slugs: ["null-blank-audit", "find-customer-referee", "employees-with-missing-information"],
+      slugs: ["null-blank-audit", "find-customer-referee", "employees-with-missing-information", "loan-amortization-schedule", "daily-balance-interest"],
     },
     {
       name: "Running balances",
       why: "Accounts are running stories: balance walks over ordered events, running totals and cumulative windows are the drills behind every account-level read the service desks quote.",
-      slugs: ["account-balance", "running-total-for-different-genders", "last-person-to-fit-in-the-elevator"],
+      slugs: ["account-balance", "running-total-for-different-genders", "last-person-to-fit-in-the-elevator", "balance-rollforward"],
     },
     {
       name: "Payment cadence",
@@ -114,27 +114,27 @@ export const ingKit: CompanyKit = {
     {
       name: "Settlement-date math & cadence",
       why: "Days-to-settle is the scenario engine's collections assumption: julianday arithmetic from issue to first payment (28.4 days average against flat 30-day terms), weekday lags and burst lines on the rails. Date math here is a KPI definition, not a syntax drill — the population (settled, evidenced) travels with every number.",
-      slugs: ["users-that-actively-request-confirmation-messages", "biggest-window-between-events", "second-day-confirmation"],
+      slugs: ["users-that-actively-request-confirmation-messages", "biggest-window-between-events", "second-day-confirmation", "amount-anomaly-zscore", "second-most-recent-activity"],
     },
     {
       name: "Fraud velocity & ramping screens",
       why: "Velocity is a per-rail gap census: LAG down each rail's timeline, a published burst line, and the quiet-tail mirror for lulls. Ramping screens — amounts climbing leg over leg — and rolling windows are how the desk watches behavior instead of single tickets.",
-      slugs: ["rolling-7d-actives", "consecutive-transactions-with-increasing-amounts", "find-golden-hour-customers"],
+      slugs: ["rolling-7d-actives", "consecutive-transactions-with-increasing-amounts", "find-golden-hour-customers", "delinquency-roll-rates", "journal-gap-detection", "settlement-fails-aging", "top-percentile-fraud"],
     },
     {
       name: "Dormancy & the reactivation watch",
       why: "Dormancy is recency evidence: no rail hit inside the policy window, found by NOT EXISTS rather than a status word — the same grammar as the no-leg watch pointed at accounts. The watch pairs with reactivation: households just inside the line are the winback list.",
-      slugs: ["find-zombie-sessions", "week-over-week-churn", "winback-recovery"],
+      slugs: ["find-zombie-sessions", "week-over-week-churn", "winback-recovery", "circular-transfers", "dormant-reactivation"],
     },
     {
       name: "Set ops & stacked boards",
       why: "Board packs stack populations: two leaderboards in one report, a census with its TOTAL row, states side by side. The traps are silent — UNION dedups whole rows, arms must align column-for-column, and the compound's ORDER BY belongs at the end.",
-      slugs: ["monthly-transactions-ii", "count-apples-and-oranges", "customers-who-bought-a-and-b-not-c"],
+      slugs: ["monthly-transactions-ii", "count-apples-and-oranges", "customers-who-bought-a-and-b-not-c", "funnel-step-conversion"],
     },
     {
       name: "Subquery shapes & staged scenarios",
       why: "Scenario reporting escalates into staging: fold first, judge against a computed benchmark second. Scalar, IN, EXISTS and derived-table shapes each carry a population definition — and the staged CTE is the house preference because the definition becomes reviewable.",
-      slugs: ["second-highest-salary", "investments-in-2016", "department-highest-salary"],
+      slugs: ["second-highest-salary", "investments-in-2016", "department-highest-salary", "active-users"],
     },
   ],
 

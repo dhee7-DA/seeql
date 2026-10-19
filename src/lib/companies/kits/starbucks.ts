@@ -115,17 +115,17 @@ export const starbucksKit: CompanyKit = {
     {
       name: "Rewards frequency & repeat visits",
       why: "Starbucks Rewards is a frequency machine, and the first screen is always the visit fold: transactions per member, banded, gated with HAVING. The trap is grain — COUNT(*) counts transactions, COUNT(DISTINCT customer_id) folds repeat demand back to people, and the gap between them is visit intensity per member.",
-      slugs: ["repeat-purchase-rate", "find-loyal-customers", "customer-order-frequency"],
+      slugs: ["repeat-purchase-rate", "find-loyal-customers", "customer-order-frequency", "sales-by-day-of-the-week", "find-golden-hour-customers", "average-time-of-process-per-machine", "not-boring-movies", "biggest-single-number", "bank-account-summary-ii"],
     },
     {
       name: "Kept demand & cancellation math",
       why: "The loyalty board's most-watched ratio is kept ÷ placed, and it is a conditional count before it is a percentage: SUM(CASE WHEN status = 'cancelled' …) over the same rows COUNT(*) divides. On this db that reads 7 of 103 = 6.8% — drill it until putting the status filter in the wrong clause feels physically wrong.",
-      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "monthly-transactions-i"],
+      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "monthly-transactions-i", "ads-performance"],
     },
     {
       name: "Two-grain market census",
       why: "'Transactions AND members per market' opens every Starbucks market review: 45 transactions from 8 EU members, 37 from 5 APAC members, 19 from 2 US members. Two columns at two grains in one SELECT is the house census, and mixing the grains is the classic bug.",
-      slugs: ["daily-leads-and-partners", "find-followers-count", "article-views-ii"],
+      slugs: ["daily-leads-and-partners", "find-followers-count", "article-views-ii", "product-sales-analysis-ii", "sales-analysis-i", "project-employees-i", "employee-bonus", "combine-two-tables", "investments-in-2016", "trips-and-users", "project-employees-ii"],
     },
     {
       name: "Personalization windows",
@@ -140,12 +140,12 @@ export const starbucksKit: CompanyKit = {
     {
       name: "Leaderboards & the rank trio",
       why: "Top markets by demand, top SKUs by attach, worst stores by cancellation — loyalty reporting is leaderboard reporting, and ties are everywhere. ROW_NUMBER, RANK and DENSE_RANK differ exactly at ties, and LIMIT-boundary ties are the classic 'why does my top-8 return 9 rows' bug.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "top-travellers"],
     },
     {
       name: "Rates with honest denominators",
       why: "Redemption load, repeat-visit share, offer conversion — Starbucks ratios punish integer division and careless filters. The house habit: 100.0 before the division, the denominator's population decided before the ratio, ROUND only at the very end.",
-      slugs: ["percentage-of-users-attended-a-contest", "queries-quality-and-percentage", "confirmation-rate"],
+      slugs: ["percentage-of-users-attended-a-contest", "queries-quality-and-percentage", "confirmation-rate", "fix-names-in-a-table"],
     },
     {
       name: "Dormant members & settlement anti-joins",
@@ -155,7 +155,7 @@ export const starbucksKit: CompanyKit = {
     {
       name: "Ticket baselines & scalar subqueries",
       why: "'Markets above the network ticket' is the favorite shape: the outer query folds 103 transactions into market tickets (LATAM 426.22, US 383.48) while a scalar subquery folds the same table once, globally — 338.19. HAVING judges each market against that single number, and the denominator you choose is the definition.",
-      slugs: ["market-analysis-i", "game-play-analysis-iv", "find-expensive-cities"],
+      slugs: ["market-analysis-i", "game-play-analysis-iv", "find-expensive-cities", "employees-earning-more-than-their-managers", "actors-and-directors-who-cooperated-at-least-three-times"],
     },
     {
       name: "One-pass status folds",
@@ -175,7 +175,7 @@ export const starbucksKit: CompanyKit = {
     {
       name: "Frequency floors & HAVING gates",
       why: "Frequency is gated, not averaged: the VIP tier at 14+ visits keeps Alice (24), Emma (17) and Grace (14) while Maya sits at 13 on the sidewalk, and the sourcing floor at 4,000.00 keeps exactly three partners. HAVING filters the fold after it exists; WHERE filters rows before it — swap them and the gate either errors or quietly redefines the cohort.",
-      slugs: ["classes-more-than-5-students", "number-of-employees-who-met-the-target", "customer-placing-the-largest-number-of-orders"],
+      slugs: ["classes-more-than-5-students", "number-of-employees-who-met-the-target", "customer-placing-the-largest-number-of-orders", "rfm-segmentation"],
     },
     {
       name: "Staged census CTEs",

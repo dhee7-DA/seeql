@@ -57,7 +57,7 @@ export const usbankKit: CompanyKit = {
     {
       name: "Branch-market censuses",
       why: "Every regional read here reports two grains at once: cycles are load, relationships are coverage, and the ratio between them is the depth signal (US 19 cycles from 2 relationships against EU 45 from 8). COUNT(*) beside COUNT(DISTINCT customer_id) — and saying which column is which — is the reflex being graded before any harder query is written.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count", "portfolio-weights", "customer-order-frequency"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count", "portfolio-weights", "customer-order-frequency", "product-sales-analysis-ii", "sales-analysis-i", "article-views-ii", "classes-more-than-5-students", "find-total-time-spent-by-each-employee", "list-the-products-ordered-in-a-period", "combine-two-tables", "confirmation-rate", "number-of-rich-customers", "duplicate-charge-pairs"],
     },
     {
       name: "Rails discipline (card vs wire)",
@@ -77,7 +77,7 @@ export const usbankKit: CompanyKit = {
     {
       name: "In-market leaderboards",
       why: "The market-depth deck ranks relationships inside each market, and ties are guaranteed: EU has a three-way tie at 4 cycles (Isabella Rossi, Noah Meyer, Pedro Alvarez) and APAC a two-way tie at 3. RANK shares rungs and skips (the next EU relationship lands on rank 6), DENSE_RANK shares rungs without gaps, ROW_NUMBER splits peers arbitrarily — a policy about peer relationships, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "the-most-recent-three-orders"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "the-most-recent-three-orders", "uber-first-transaction", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "Tier bands with CASE",
@@ -87,7 +87,7 @@ export const usbankKit: CompanyKit = {
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month spine (2024-01 to 2025-02) is the close deck's home turf: booked dollars walk from 3,731.97 down to the 1,193.86 July trough, jump +1,158.21 into August, and the cancelled column spikes in the same months (July 2, November 2). LAG drives the walk; the first row's NULL is the baseline, never a zero.",
-      slugs: ["biggest-window-between-events", "year-on-year-growth-rate", "game-play-analysis-i", "cohort-repeat-revenue", "fx-exposure-report"],
+      slugs: ["biggest-window-between-events", "year-on-year-growth-rate", "game-play-analysis-i", "cohort-repeat-revenue", "fx-exposure-report", "employees-with-missing-information"],
     },
     {
       name: "Coverage set algebra",
@@ -102,7 +102,7 @@ export const usbankKit: CompanyKit = {
     {
       name: "Concentration & share math",
       why: "Concentration is the regional bank's risk lens: 63.5% of the booked book rides relationships spending 3,000-plus lifetime (71.2% above 2,000), and shares are ratios with stated denominators. The 100.0 multiplier goes BEFORE the division or integer truncation flattens every share to zero — and chargeback-rate reads at the acquiring desk use the same honest-denominator shape.",
-      slugs: ["percentage-of-users-attended-a-contest", "queries-quality-and-percentage", "card-launch-success", "portfolio-concentration-hhi"],
+      slugs: ["percentage-of-users-attended-a-contest", "queries-quality-and-percentage", "card-launch-success", "portfolio-concentration-hhi", "countries-you-can-safely-invest-in", "chargeback-rate-ranking", "structuring-detection"],
     },
   ],
 

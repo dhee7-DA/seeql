@@ -28,7 +28,7 @@ export const zendeskKit: CompanyKit = {
     "**Zendesk** is support SaaS in its purest form: a ticket pipeline sold to accounts that either get answered fast or escalate loudly. The analytics reality is the *support ledger* — which tickets carry a first response, which are silently aging past SLA, and which accounts are quietly piling backlog. On this storefront db the mapping is honest: 16 support accounts generate 103 ticket periods folded from 251 ticket-event lines, worth 34,833.28 of billed contract value at a 338.19 average. The pipeline mix reads like the SLA funnel it is — 52 {emerald:resolved} (50.5%), 30 responded-awaiting-resolution (29.1%), 14 {amber:unresponded — SLA clock running} (13.6%), 7 {rose:closed invalid} (6.8%).",
     "The data org splits three ways. The SLA desk owns response latency: 82 of 103 periods carry a first-response stamp, averaging **2.98 days** from open to first response with a 2-to-4 range — the US cohort the slowest at 3.07, APAC the fastest at 2.93. Workload analytics owns the account census: the two-grain read (EU carries 45 ticket periods from just 8 accounts; the US, 19 from 2) and the concentration read — **63.5%** of billed value sits above the 3,000 line, the expansion cohort every renewals deck prices. Billing owns the contract book: 28 `invoices` against 27 `payments`, INTEGER cents throughout, with 6 never-settled bills worth 15,217 — one of them (#28, 1,756.00) claims {emerald:paid} with zero settlement rows behind it.",
     "Interview style is census-then-denominator, then the latency join. A screen opens with a two-grain census (EU: 45 periods from 8 accounts — intensity 5.6; US: 19 from 2), escalates into a conditional-count first-response rate with the denominator asked out loud ('do {amber:unresponded} tickets sit in your base?'), then the backlog read — where `COUNT(shipped_at)` against `COUNT(*)` IS the unanswered queue. Follow-ups probe the month spine (2024-01 opens at 8 periods and **3,731.97** of billed value; 2024-07 floors at 1,193.86) and the cents rule on every contract bill.",
-    "Preparation strategy: the pools carry **0 tagged rows for Zendesk** — every one of this kit's 46 slugs is theme-curated to known support-desk screens: two-grain ticket censuses, first-response ratios, latency math on JULIANDAY, backlog anti-joins and contract-billing reconciliation. Then run both case studies on the live db: one rebuilds the first-response latency spine the SLA desk reviews monthly, the other rebuilds the regional support-health matrix the QBR is drawn from. The bar to clear: state the **denominator**, the join's survival rule, and the **cents rule** before you compute anything.",
+    "Preparation strategy: the pools carry **0 tagged rows for Zendesk** — every one of this kit's 46 slugs is theme-curated to known support-desk screens: two-grain ticket censuses, first-response ratios, latency math on JULIANDAY, backlog anti-joins and contract-billing reconciliation. Then run all six case studies on the live db — built for spaced practice rather than one sitting: one rebuilds the first-response latency spine the SLA desk reviews monthly, another rebuilds the regional support-health matrix the QBR is drawn from. The bar to clear: state the **denominator**, the join's survival rule, and the **cents rule** before you compute anything.",
     "Health is read in the tails, not the means. A 2.98-day average first response tells the desk almost nothing about the 14 tickets nobody has touched — so the deeper reviews track {rose:reopen rate} (resolved tickets that come back within a named window, divided by the 52 resolved — the premature-close tax), backlog aging (the unresponded queue bucketed 2, 3, 4-plus days against that 2.98 average), and the {violet:CSAT low-tail} — the share of surveys scoring 2 or worse, because *a 4.x mean hides the exact customers who churn*. The billing ledger carries the same shape: 21 exact settlements, 1 partial at 4,000 of 6,148, 6 never-collected — **a distribution, not a number**, which is precisely how the desk reads satisfaction.",
     "The deeper screens go past the census. Expect window frames (a rolling billed-value spine across the 14 months), set-op stacks (the {rose:escalation list} folding 14 unresponded with 7 closed-invalid — and whether `UNION` is the honest fold there), the silent zero of a `NOT IN` that meets a NULL, and one-pass censuses with `FILTER (WHERE …)`. The four new case files drill exactly those moves: the event-mix census per plan category, the 3,000-line concentration fold — 4 heavy accounts holding **63.5%** of billed value — the second-half movement walk, and the one-pass settlement census (28 bills, 6 unbacked, 1 partial). *Same bar as always: name the denominator before the number.*",
   ],
@@ -79,22 +79,22 @@ export const zendeskKit: CompanyKit = {
     {
       name: "The ticket calendar",
       why: "Ticket volume is calendar arithmetic: STRFTIME('%Y-%m') buckets over periods against the 3,731.97 peak and the 1,193.86 floor. Zendesk drills the month-bucket idiom because every staffing chart hangs on that spine — and a '%m'-without-year fold merges two Januaries into one lie.",
-      slugs: ["monthly-transactions-i", "the-latest-login-in-2020", "tasks-count-in-the-weekend"],
+      slugs: ["monthly-transactions-i", "the-latest-login-in-2020", "tasks-count-in-the-weekend", "first-and-last-call-on-the-same-day"],
     },
     {
       name: "Agent-workload two-grain reads",
       why: "Support capacity is a two-sided read: periods per account (depth) against accounts per cohort (spread). The two-grain shapes here — event lines per account, accounts per region, depth-versus-breadth ratios — are how staffing gets measured without double-counting.",
-      slugs: ["find-the-team-size", "linkedin-power-creators", "calculate-compressed-mean"],
+      slugs: ["find-the-team-size", "linkedin-power-creators", "calculate-compressed-mean", "median-time-to-convert"],
     },
     {
       name: "Backlog & silence anti-joins",
       why: "Silence reads are anti-joins: accounts with no recent period, contract bills with no payments (6 on this db). On this db the never-used-account anti-join returns 0 — and proving a confident zero is the job. The survival rule of the join IS the query.",
-      slugs: ["customer-who-visited-but-did-not-transact", "find-the-quiet-students-in-all-exams", "unpopular-books"],
+      slugs: ["customer-who-visited-but-did-not-transact", "find-the-quiet-students-in-all-exams", "unpopular-books", "find-churn-risk-customers", "customers-who-bought-a-and-b-not-c", "customers-who-bought-all-products"],
     },
     {
       name: "Workload leaderboards & tie policy",
       why: "Desk boards rank months and accounts by load, and ties are real: four months sit at exactly 8 periods. RANK and friends are a business decision about shared rungs, not syntax trivia — every board ships with its tie policy named.",
-      slugs: ["rank-scores", "find-active-users", "group-employees-of-the-same-salary"],
+      slugs: ["rank-scores", "find-active-users", "group-employees-of-the-same-salary", "restaurant-growth", "running-total-for-different-genders", "biggest-window-between-events", "second-most-recent-activity", "department-highest-salary", "find-the-start-and-end-number-of-continuous-ranges", "account-balance"],
     },
     {
       name: "Plan upgrades & LAG transitions",
@@ -104,7 +104,7 @@ export const zendeskKit: CompanyKit = {
     {
       name: "Contract billing & cents discipline",
       why: "Support is not revenue until the contract book closes: 28 invoices against 27 payments, INTEGER cents throughout, coverage classified exact / partial / none. The billing join is where support-SaaS interviews land — and where the cents rule (`/ 100.0`) gets graded.",
-      slugs: ["bank-account-summary-ii", "monthly-transactions-ii", "count-salary-categories"],
+      slugs: ["bank-account-summary-ii", "monthly-transactions-ii", "count-salary-categories", "mrr-waterfall", "net-revenue-retention", "trial-to-paid-funnel", "analyze-subscription-conversion", "basket-depth-aov", "repeat-purchase-rate", "usage-tier-percentiles", "gl-reconciliation", "ar-aging-schedule", "snapshot-delta-detect"],
     },
     {
       name: "Backlog-aging buckets",
@@ -119,17 +119,17 @@ export const zendeskKit: CompanyKit = {
     {
       name: "Agent-scorecard pivots",
       why: "Desk scorecards are pivots: pipeline states turned into side-by-side columns per account or month, so a stakeholder reads one row instead of four filters. The row-to-column shapes here — reformat folds, day-of-week bands, seasonal CASE splits — are the reporting grammar every QBR slide is built from.",
-      slugs: ["reformat-department-table", "sales-by-day-of-the-week", "seasonal-sales-analysis"],
+      slugs: ["reformat-department-table", "sales-by-day-of-the-week", "seasonal-sales-analysis", "keep-latest-dedupe", "null-blank-audit", "books-with-null-ratings", "employees-with-missing-information"],
     },
     {
       name: "CSAT tails & histograms",
       why: "Satisfaction is a distribution, and the low tail is the whole story: histograms and bar-chart folds per score band beat any average the survey tool prints. The bucket-count shapes here — rating histograms, spend bands, session bar charts — are how the desk builds its low-tail read without a stats package.",
-      slugs: ["ratings-histogram", "spend-histogram", "create-a-session-bar-chart"],
+      slugs: ["ratings-histogram", "spend-histogram", "create-a-session-bar-chart", "immediate-food-delivery-ii", "active-businesses", "group-sold-products-by-the-date"],
     },
     {
       name: "Concurrency & shift overlap",
       why: "Coverage questions are overlap questions: which agent-hours collide with ticket arrivals, how many events run concurrent, where the shift map leaves the queue uncovered. Interval-overlap SQL — shifted starts, task spans, sessionization — is the analyst's staffing calculus, and it is where date math stops being cosmetic.",
-      slugs: ["find-overlapping-shifts", "employee-task-duration-and-concurrent-tasks", "sessionize-events"],
+      slugs: ["find-overlapping-shifts", "employee-task-duration-and-concurrent-tasks", "sessionize-events", "dau-wau-stickiness", "week-over-week-churn", "find-peak-calling-hours-for-each-city"],
     },
   ],
 

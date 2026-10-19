@@ -50,7 +50,7 @@ export const subwayKit: CompanyKit = {
     {
       name: "Two-grain territory censuses",
       why: "Every Subway supply review opens with 'POs AND units per territory', and the trap is counting both at one grain: COUNT(*) counts PO rows, COUNT(DISTINCT customer_id) folds repeats back to units — EU reads 45 POs from 8 units that way. The gap between the columns is the intensity signal that drives route and staffing calls.",
-      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "number-of-rich-customers", "top-travellers", "count-student-number-in-departments", "group-sold-products-by-the-date"],
+      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "number-of-rich-customers", "top-travellers", "count-student-number-in-departments", "group-sold-products-by-the-date", "list-the-products-ordered-in-a-period", "queries-quality-and-percentage", "confirmation-rate"],
     },
     {
       name: "Received vs refused demand",
@@ -60,12 +60,12 @@ export const subwayKit: CompanyKit = {
     {
       name: "Unit joins & whitespace",
       why: "Units carry territory and city; POs inherit them through joins, and the join type decides who survives. A PO without a unit is corruption; a unit without POs is a dark store — though on this db the anti-join returns a confident zero (all 16 units order), and proving that zero is part of the audit.",
-      slugs: ["combine-two-tables", "customers-who-never-order", "employee-bonus", "customer-who-visited-but-did-not-transact"],
+      slugs: ["combine-two-tables", "customers-who-never-order", "employee-bonus", "customer-who-visited-but-did-not-transact", "customers-who-bought-a-and-b-not-c", "fix-product-name-format", "sellers-with-no-sales", "find-churn-risk-customers"],
     },
     {
       name: "Franchisee leaderboards",
       why: "Leaderboards rank units by routed POs with guaranteed ties — four units sit at 4 POs each on this db, under a ladder that runs 24, 17, 14, 13, 5. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer franchisees, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "nth-highest-salary"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "nth-highest-salary", "restaurant-growth", "most-frequently-ordered-product-per-customer", "customer-placing-the-largest-number-of-orders", "the-most-recent-three-orders", "last-person-to-fit-in-the-bus"],
     },
     {
       name: "SKU bands with CASE",
@@ -75,7 +75,7 @@ export const subwayKit: CompanyKit = {
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month PO spine (2024-01 to 2025-02) is the franchise council's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) and swing (+1,158.21 into August, -1,326.87 into November) named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine", "monthly-transactions-i", "customers-with-strictly-increasing-purchases", "rising-temperature"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine", "monthly-transactions-i", "customers-with-strictly-increasing-purchases", "rising-temperature", "product-price-at-a-given-date"],
     },
     {
       name: "Coverage set algebra",
@@ -85,12 +85,12 @@ export const subwayKit: CompanyKit = {
     {
       name: "Nested folds & tier gates",
       why: "Screens escalate into staging: fold per-unit PO value, then judge it against a computed network mean (338.19 here). Scalar, correlated and derived shapes each carry an empty-inner-query answer you are expected to give unprompted.",
-      slugs: ["second-highest-salary", "winning-candidate", "game-play-analysis-iv"],
+      slugs: ["second-highest-salary", "winning-candidate", "game-play-analysis-iv", "repeat-purchase-rate", "basket-depth-aov"],
     },
     {
       name: "One-pass status censuses",
       why: "The ops board gets received, in-transit, staged and refused in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift.",
-      slugs: ["sales-by-day-of-the-week", "find-stores-with-inventory-imbalance", "calculate-orders-within-each-interval", "consecutive-numbers", "not-boring-movies", "big-countries"],
+      slugs: ["sales-by-day-of-the-week", "find-stores-with-inventory-imbalance", "calculate-orders-within-each-interval", "consecutive-numbers", "not-boring-movies", "big-countries", "duplicate-emails"],
     },
     {
       name: "Royalty cents discipline",

@@ -65,22 +65,22 @@ export const skyscannerKit: CompanyKit = {
     {
       name: "Query-fate funnels",
       why: "Every Skyscanner read starts at the session: flown, ticketed, price-watched or abandoned, each a conditional count over a status or a timestamp. The trap is the denominator — 82 of 103 sessions carry the ticketing stamp, and the 14 price-watch rows belong in a watch-completion base, not a conversion base. Say the population out loud before writing the share.",
-      slugs: ["immediate-food-delivery-i", "trial-to-paid-funnel", "percentage-of-users-attended-a-contest", "first-last-touch-attribution", "sessionize-events"],
+      slugs: ["immediate-food-delivery-i", "trial-to-paid-funnel", "percentage-of-users-attended-a-contest", "first-last-touch-attribution", "sessionize-events", "roas-by-campaign"],
     },
     {
       name: "Two-grain market censuses",
       why: "Sessions and traveler accounts are different grains of the same join: the US runs 19 sessions from just 2 accounts while the EU runs 45 from 8. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying which column is load and which is coverage — is the habit the panel grades. The intensity ratio (9.5 versus 5.6) is how a sourcing argument gets won.",
-      slugs: ["unique-orders-and-customers-per-month", "top-travellers", "number-of-rich-customers", "dau-wau-stickiness"],
+      slugs: ["unique-orders-and-customers-per-month", "top-travellers", "number-of-rich-customers", "dau-wau-stickiness", "sales-analysis-i", "queries-quality-and-percentage", "classes-more-than-5-students", "game-play-analysis-i", "immediate-food-delivery-ii", "combine-two-tables", "confirmation-rate", "market-analysis-i", "trips-and-users"],
     },
     {
       name: "Ticketing clocks",
       why: "created_at opens the session, shipped_at stamps the ticket, and julianday arithmetic averages the delta over the 82 stamped rows only — 2.98 days with a 2-4 spread. The 21 unstamped sessions (14 price-watch, 7 abandoned) have no clock yet, and averaging them in is the classic silent-dilution bug. DATE() instead of julianday() coerces the delta to a nonsense number.",
-      slugs: ["average-time-of-process-per-machine", "second-day-verification", "users-with-two-purchases-within-seven-days", "immediate-food-delivery-iii", "find-golden-hour-customers"],
+      slugs: ["average-time-of-process-per-machine", "second-day-verification", "users-with-two-purchases-within-seven-days", "immediate-food-delivery-iii", "find-golden-hour-customers", "basket-depth-aov", "repeat-purchase-rate", "cohort-repeat-revenue", "growth-accounting"],
     },
     {
       name: "Fare ladders & tie policy",
       why: "Route SKUs rank by seats sold with ties guaranteed — two SKUs sit at 36 seats, three at 30, three at 21. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer routes, not syntax. Publish the tie policy or the fare-board review relitigates it every month.",
-      slugs: ["rank-scores", "top-earners", "second-most-recent-activity", "the-most-recent-orders-for-each-product", "usage-tier-percentiles"],
+      slugs: ["rank-scores", "top-earners", "second-most-recent-activity", "the-most-recent-orders-for-each-product", "usage-tier-percentiles", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "CASE fare-family bands",
@@ -90,7 +90,7 @@ export const skyscannerKit: CompanyKit = {
     {
       name: "Fare-watch month walks",
       why: "The 14-month session spine (2024-01 to 2025-02) is where demand pacing gets defended: prior month beside current, delta rounded, the trough (1,193.86 in July) and rebound named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero. Abandoned sessions cluster in July and November, 2 each of 7.",
-      slugs: ["second-day-confirmation", "year-on-year-growth-rate", "biggest-window-between-events", "rolling-average-steps", "list-the-products-ordered-in-a-period"],
+      slugs: ["second-day-confirmation", "year-on-year-growth-rate", "biggest-window-between-events", "rolling-average-steps", "list-the-products-ordered-in-a-period", "keep-latest-dedupe"],
     },
     {
       name: "Partner anti-joins & coverage algebra",

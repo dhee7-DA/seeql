@@ -64,17 +64,17 @@ export const natwestKit: CompanyKit = {
     {
       name: "Two-grain corridor censuses",
       why: "Flows and clients are different grains of the same join, and every corridor census here reports both: EU runs 45 flows from 8 clients while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count", "confirmation-rate", "queries-quality-and-percentage", "average-selling-price", "active-businesses", "number-of-rich-customers", "find-the-team-size"],
     },
     {
       name: "Joining clients to the book",
       why: "Corridor, vintage and segment ride on the customer row, and every flow inherits them through joins that can be missing or stale. NatWest's follow-up is always about what survives: does a flow whose client row went missing still count in the corridor fold — and is that silence a query bug or a data incident?",
-      slugs: ["combine-two-tables", "product-sales-analysis-i", "replace-employee-id-with-unique-identifier", "journal-gap-detection"],
+      slugs: ["combine-two-tables", "product-sales-analysis-i", "replace-employee-id-with-unique-identifier", "journal-gap-detection", "customers-who-never-order", "sellers-with-no-sales", "fix-names-in-a-table", "movie-rating"],
     },
     {
       name: "Concentration & exposure ladders",
       why: "The commercial story is a concentration story: 63.5% of the book sits with 3,000-plus clients (71.2% above 2,000), and the correspondent bench carries the shelf six partners wide. GROUP BY folds with HAVING gates and per-partner totals are the exact drills — the ladder is where credit asks 'what happens if this one walks?'",
-      slugs: ["product-sales-analysis-ii", "top-earners", "classes-more-than-5-students"],
+      slugs: ["product-sales-analysis-ii", "top-earners", "classes-more-than-5-students", "portfolio-weights"],
     },
     {
       name: "Scalar thresholds & big-ticket screens",
@@ -89,17 +89,17 @@ export const natwestKit: CompanyKit = {
     {
       name: "Ranking the relationship ladder",
       why: "Ladders are rank-window reporting where ties are guaranteed — four clients sit at 4 flows on this book, right under the 24/17/14/13/5 run. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer relationships, not syntax.",
-      slugs: ["rank-scores", "department-top-three-salaries", "the-most-recent-three-orders", "chargeback-rate-ranking"],
+      slugs: ["rank-scores", "department-top-three-salaries", "the-most-recent-three-orders", "chargeback-rate-ranking", "customer-placing-the-largest-number-of-orders", "biggest-window-between-events"],
     },
     {
       name: "CASE banding & reset tiers",
       why: "The reset cycle bands everything — ticket tiers, reset windows, premier-versus-standard treatment — and each band is a CASE arm with fixed, published edges. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the reset forecast, and a reordered WHEN quietly re-bands the book.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "triangle-judgement", "delinquency-buckets", "credit-utilization-bands"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "triangle-judgement", "delinquency-buckets", "credit-utilization-bands", "count-salary-categories", "monthly-transactions-ii"],
     },
     {
       name: "Reset calendars & month spines",
       why: "The 14-month flow spine (2024-01 to 2025-02) is where the reset calendar lives: month buckets via SUBSTR or STRFTIME, half-open windows that never drop month-end bookings, and julianday clocks rounded once. Value-date latency, not terms, is where the interesting date math sits here.",
-      slugs: ["the-latest-login-in-2020", "list-the-products-ordered-in-a-period", "rising-temperature", "vintage-default-curves", "prepayment-detection", "daily-balance-interest", "point-in-time-asof"],
+      slugs: ["the-latest-login-in-2020", "list-the-products-ordered-in-a-period", "rising-temperature", "vintage-default-curves", "prepayment-detection", "daily-balance-interest", "point-in-time-asof", "product-price-at-a-given-date"],
     },
     {
       name: "Cents discipline & the GL",

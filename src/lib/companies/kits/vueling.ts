@@ -52,32 +52,32 @@ export const vuelingKit: CompanyKit = {
     {
       name: "Ancillary attach censuses",
       why: "The attach team's Monday read is a family fold: units, distinct bookings and value per fare family, in one pass. SUM(quantity), COUNT(DISTINCT order_id) and SUM(quantity * unit_price) are three different folds over the same 251 lines — and the interviewer grades which one each column claims. The drill is two-grain honesty: 121 units across 54 bookings is a different sentence than 121 bookings.",
-      slugs: ["product-sales-analysis-ii", "daily-leads-and-partners", "number-of-rich-customers", "average-selling-price", "keep-latest-dedupe"],
+      slugs: ["product-sales-analysis-ii", "daily-leads-and-partners", "number-of-rich-customers", "average-selling-price", "keep-latest-dedupe", "immediate-food-delivery-ii", "customer-order-frequency"],
     },
     {
       name: "Fare-family ladder bands",
       why: "The ladder is a CASE ladder — Basic below the 55 line, Optima and above above it, premium empty at the 199.99 ceiling — and every booking line must land in exactly one arm. Ordered, exhaustive WHENs are the graded part: a hole in the CASE is a hole in the mix deck, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["calculate-orders-within-each-interval", "the-category-of-each-member-in-the-store", "spend-histogram", "weather-type-in-each-country"],
+      slugs: ["calculate-orders-within-each-interval", "the-category-of-each-member-in-the-store", "spend-histogram", "weather-type-in-each-country", "monthly-transactions-ii", "calculate-parking-fees-and-duration", "exchange-seats"],
     },
     {
       name: "Ticketing-state funnels",
       why: "Booked to ticketed to departed to kept: each stage is a conditional count over status or the departure stamp, and the funnel's denominator is the whole interview. Held-not-ticketed (14) is 'not yet', refunded (7) is 'never' — collapsing either into the other is the classic mis-defined funnel this kit hunts.",
-      slugs: ["funnel-step-conversion", "trial-to-paid-funnel", "percentage-of-users-attended-a-contest", "confirmation-rate", "second-day-confirmation", "second-day-verification"],
+      slugs: ["funnel-step-conversion", "trial-to-paid-funnel", "percentage-of-users-attended-a-contest", "confirmation-rate", "second-day-confirmation", "second-day-verification", "find-churn-risk-customers", "customers-who-never-order"],
     },
     {
       name: "Two-grain market censuses",
       why: "The Barcelona-hub read reports bookings AND passengers per market: EU runs 45 bookings from 8 passengers while the US runs 19 from 2 — intensity 5.6 against 9.5. COUNT(*) beside COUNT(DISTINCT customer_id), and saying out loud which column is load and which is coverage, is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "students-and-examinations", "top-earners", "immediate-food-delivery-i"],
+      slugs: ["unique-orders-and-customers-per-month", "students-and-examinations", "top-earners", "immediate-food-delivery-i", "flight-occupancy-and-waitlist-analysis", "product-sales-analysis-i", "sales-analysis-i", "combine-two-tables", "the-airport-with-the-most-flights"],
     },
     {
       name: "Route & partner value boards",
       why: "Handling partners and fare families both rank on folded value, and the boards are window ranks over GROUP BY folds — with the rank computed after any gate, not before. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung; on a partner board a shared rung is a negotiation fact, not syntax.",
-      slugs: ["rank-scores", "compute-the-rank-as-a-percentage", "department-top-three-salaries", "trips-and-users", "total-traveled-distance"],
+      slugs: ["rank-scores", "compute-the-rank-as-a-percentage", "department-top-three-salaries", "trips-and-users", "total-traveled-distance", "second-highest-salary", "customer-placing-the-largest-number-of-orders", "biggest-window-between-events"],
     },
     {
       name: "Departure lead-time math",
       why: "The upsell window is julianday(departure) minus julianday(booking) on the 82 stamped bookings — 2.98 days, 2-to-4 spread. Timestamp-pair arithmetic with the population stated (stamped only; the 21 unstamped have no lead) is the exact drill, and duration-billed ancillaries use the same machinery.",
-      slugs: ["average-time-of-process-per-machine", "find-golden-hour-customers", "users-that-actively-request-confirmation-messages", "median-time-to-convert"],
+      slugs: ["average-time-of-process-per-machine", "find-golden-hour-customers", "users-that-actively-request-confirmation-messages", "median-time-to-convert", "server-utilization-time"],
     },
     {
       name: "Mediterranean seasonality",

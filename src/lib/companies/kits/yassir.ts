@@ -42,7 +42,7 @@ export const yassirKit: CompanyKit = {
     "**Yassir** is the MENA super-app: rides, delivery and fintech living in one wallet, where the same customer hails a ride, orders groceries and pays both from the same balance. The analytics unit is the job request, and on this kit's proxy ledger it reads 103 job requests worth **34,833.28** (average 338.19) across 16 customers, with 251 job legs fanning underneath — multi-stop jobs across the verticals. The status map is the job funnel: 52 {emerald:completed} (50.5%), 30 en route (29.1%), 14 still awaiting acceptance (13.6%), 7 {rose:customer-cancelled} (6.8%).",
     "Two reads define the analyst job here. The {amber:one-pass cluster census}: city ops opens with a single-scan fold per city cluster — jobs, moving, awaiting, cancelled, volume in one GROUP BY (EU: 45 jobs, 36 moving, 6 awaiting, 3 cancelled, **15,089.23**) — because the same fold runs every morning in every launch city. The {sky:supply-side read}: six driver cohorts carry capacity, the top cohort takes 32% of settled volume (11,130.25) and the top two 58.7% — concentration is a supply-risk conversation, not trivia. The close stamp runs on a batched ops clock: 2.98-day average over the 82 stamped jobs, range 2..4.",
     "Interviews are funnel-first, one-pass-flavored, cents-precise. A screen opens with a warm-up join (attach job legs to their request), escalates into a conditional fold (`SUM(CASE WHEN …)` is the house idiom), then lands on a rate where the denominator is the whole test: moving ÷ ALL posted jobs, awaiting and cancelled included, or the funnel flatters itself. Fintech rounds go through the books: 28 `invoices` against 27 `payments`, INTEGER cents read as `amount_cents / 100.0`, 6 unpaid claims worth 15,217.00, one of them — #28, 1,756.00 — *marked paid with zero settlement rows*. Follow-ups are spoken aloud: 'is that per job or per leg?', 'does an awaiting job sit in your denominator?'",
-    "Preparation strategy: Yassir has **0 tagged LC** rows in this app's pool, so the kit is **theme-curated** — all 30 topic slugs and 16 problems are hand-picked from the theme menu to mirror super-app screens: job funnels, cluster censuses, tier crowns, cohort earnings, launch pacing, settlement AR. Then run both case studies on the live db: one rebuilds the {amber:city ops stack} the ops board reads, the other rebuilds the {sky:driver-cohort earnings fold} the supply desk orders payouts from. The bar to clear: name the grain, state the denominator, and gate the NULLs deliberately before you compute anything.",
+    "Preparation strategy: Yassir has **0 tagged LC** rows in this app's pool, so the kit is **theme-curated** — all 58 topic slugs and 32 problems are hand-picked from the theme menu to mirror super-app screens: job funnels, cluster censuses, tier crowns, cohort earnings, launch pacing, settlement AR. Then run all six case studies on the live db — built for spaced practice rather than one sitting: one rebuilds the {amber:city ops stack} the ops board reads, another rebuilds the {sky:driver-cohort earnings fold} the supply desk orders payouts from. The bar to clear: name the grain, state the denominator, and gate the NULLs deliberately before you compute anything.",
     "The wallet spine is the third business and it audits differently. Settlements ride two rails — `card` 16 payments worth **37,364.00**, `wire` the other 11 worth 32,248.00 — on uniform {sky:30-day terms} that actually clear in **28.4 days** (fastest 13, slowest 84). The exception pile is the risk file: 6 claims with zero settlement rows worth 15,217.00, one void-but-paid at 925.00, one partial at 4,000.00 of 6,148.00. The books still tie — 181,080 debits against 181,080 credits — so *every anomaly is classification, never balance*.",
     "Preparation roadmap for the expanded kit, four passes: run the one-pass cluster census (EU 45 jobs / 36 moving / 6 awaiting / 3 cancelled) until `SUM(CASE WHEN …)` is reflex; drill set ops — UNION ALL stacks, EXCEPT sweeps — because a super-app is always diffing two verticals' books; then windows, LAG pacing on the 14-month spine and frames that survive ties; then money — cents discipline across 28 claims against 27 settlements. Sit all six case studies: the {amber:ops stack}, the {sky:cohort-earnings fold}, the coverage classifier, the pacing walk, the above-mean fare screen, the rails census. The bar is unchanged — **name the grain, state the denominator, gate the NULLs** — *before you compute anything*.",
   ],
@@ -73,17 +73,17 @@ export const yassirKit: CompanyKit = {
     {
       name: "Super-app job funnels",
       why: "Every city review opens with the funnel: requests posted, moving, awaiting, cancelled — counted per cluster without letting the leg fan-out double anything. Yassir drills which grain the query stands on before any aggregate runs, because a rate computed at leg grain prices a leg, not a job.",
-      slugs: ["percentage-of-users-attended-a-contest", "immediate-food-delivery-i", "daily-leads-and-partners"],
+      slugs: ["percentage-of-users-attended-a-contest", "immediate-food-delivery-i", "daily-leads-and-partners", "transactions-per-visit-histogram", "funnel-step-conversion"],
     },
     {
       name: "One-pass FILTER censuses",
       why: "The census runs every morning, so it runs in ONE scan: FILTER (WHERE …) arms per status with branch totals that reconcile back to COUNT(*). Yassir treats the fold as standing infrastructure — five scans cost five table reads where one conditional fold costs one, and one fold guarantees every arm describes the same 103 jobs.",
-      slugs: ["active-businesses", "find-stores-with-inventory-imbalance", "number-of-rich-customers"],
+      slugs: ["active-businesses", "find-stores-with-inventory-imbalance", "number-of-rich-customers", "immediate-food-delivery-ii"],
     },
     {
       name: "Cluster joins & two-sided keys",
       why: "Customers post jobs in one table and drivers answer in the flow — attaching a job to its cluster is an FK join whose wrong key silently cross-products. The drills pair tables where a missing side (a customer with no jobs, a cohort with no accepts) is a finding to prove, not noise to drop.",
-      slugs: ["trips-and-users", "combine-two-tables", "employees-with-missing-information"],
+      slugs: ["trips-and-users", "combine-two-tables", "employees-with-missing-information", "product-sales-analysis-ii", "customer-who-visited-but-did-not-transact", "friend-requests-i-overall-acceptance-rate"],
     },
     {
       name: "Rates with honest denominators",
@@ -93,7 +93,7 @@ export const yassirKit: CompanyKit = {
     {
       name: "Cohort leaderboards",
       why: "Rank driver cohorts by settled volume or legs and ties are waiting — this ledger ties at 4, 3 and 2. The rank trio is a policy conversation: DENSE_RANK for peer ladders, RANK for rungs-with-gaps, ROW_NUMBER only behind a named deterministic tie-breaker.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "top-percentile-fraud"],
     },
     {
       name: "Tier bands & CASE tiers",
@@ -138,12 +138,12 @@ export const yassirKit: CompanyKit = {
     {
       name: "Streaks, gaps & dormancy",
       why: "Rider habit is streak-shaped: consecutive active days on the wallet, gaps between jobs, the quiet stretch that precedes churn. Gaps-and-islands and LAG/LEAD chains turn the job ledger into retention intelligence — the reads the engagement team runs before any push notification goes out.",
-      slugs: ["user-purchase-platform", "report-contiguous-dates", "longest-winning-streak"],
+      slugs: ["user-purchase-platform", "report-contiguous-dates", "longest-winning-streak", "top-travellers", "dau-wau-stickiness", "rolling-7d-actives", "second-most-recent-activity", "restaurant-growth"],
     },
     {
       name: "Identity & catalog hygiene",
       why: "A MENA super-app onboards riders and drivers across three scripts and a dozen cities; names, tier labels and vendor strings arrive messy. The hygiene drills — case folding, trimming, pattern gates on identifiers — are the KYC-grade cleaning every payout and invoice join depends on.",
-      slugs: ["fix-names-in-a-table", "invalid-tweets", "fix-product-name-format"],
+      slugs: ["fix-names-in-a-table", "invalid-tweets", "fix-product-name-format", "keep-latest-dedupe", "null-blank-audit"],
     },
   ],
 

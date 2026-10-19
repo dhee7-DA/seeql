@@ -49,7 +49,7 @@ export const afterpayKit: CompanyKit = {
     "**Afterpay** is the BNPL pioneer that fixed the clock at **four installments over six weeks** — no interest, no application forms, approval decided at the checkout in seconds because there is no traditional credit check to run. Revenue is a merchant fee on every financed checkout plus capped late fees on missed debits, so the whole P&L is a claim about *schedules actually paying on time*. This kit maps the storefront db onto that world: 16 shoppers, **103 financed checkouts worth 34,833.28**, and 251 installment lines carrying 498 scheduled consumer debits — SUM(quantity × unit_price) foots to the checkout book to the cent. The stage map is fixed: delivered = {emerald:fully settled} (52, 50.5%), shipped = live mid-clock (30, 29.1%), pending = approved-not-activated (14, 13.6%), cancelled = {rose:declined at the gate} (7, 6.8%).",
     "The data org splits into credit policy, merchant partnerships and settlement ops, and all three read the same schedule spine at different grains. Credit policy owns the activation stamp: a checkout books at created_at and shipped_at stamps the day the schedule goes live — **82 of 103 checkouts** carry it, averaging a **2.98-day** approval-to-activation with a 2–4 day spread, while the 14 not-yet-activated rows are a population definition, not a cleanup job. Settlement ops owns the rails: card legs are {rose:consumer debits} (16 legs, 37,364.00), wire legs are {sky:merchant settlements} (11 legs, 32,248.00), and the two sides meet on the same statement. Money columns are INTEGER cents; the dollar read is `amount_cents / 100.0`.",
     "Interview screens are funnel-then-denominator with an installment-clock accent. A loop opens with the **stage census** — one CASE fold, four buckets, reconciling to 103 by construction — then asks the denominator out loud (*'does a declined checkout sit in the approval base?'*), then goes two-grain: EU runs 45 schedules from 8 shoppers while the US runs 19 from 2, and the 6.44 schedules-per-shopper mean clears exactly four logos. Late rounds band tickets (the mid band averages 111.50 against budget's 32.06 and the {amber:200-plus band the 4-pay ladder most wants is empty}) or walk the {violet:merchant fee base} — Nordic Gadgets AB and Midwest Hardware Co hold **58.7%** of it — and candidates who state the stage map, the denominator and the rail before writing SQL are the ones who get callbacks.",
-    "Preparation strategy: company-pools.md carries no Afterpay section — **0 tagged rows** — so all sixteen problems and every topic slug here are **theme-curated** to this kit's known screen shapes: stage censuses with honest denominators, two-grain shopper counts, ticket-band CASE ladders, merchant fee attribution, split-rail statement reconciliation and the cents-safe settlement books. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {violet:approval funnel census} risk policy reviews after every decline-rate move, the other rebuilds the {orange:merchant fee book} partnerships refreshes before every renewal call. The bar to clear: *state the stage map, the denominator and the rail before you compute anything* — then make every stage census reconcile to 103 by construction.",
+    "Preparation strategy: company-pools.md carries no Afterpay section — **0 tagged rows** — so all thirty-two problems and every topic slug here are **theme-curated** to this kit's known screen shapes: stage censuses with honest denominators, two-grain shopper counts, ticket-band CASE ladders, merchant fee attribution, split-rail statement reconciliation and the cents-safe settlement books. Do the topics in order, then run all six case studies on the live storefront db: one rebuilds the {violet:approval funnel census} risk policy reviews after every decline-rate move, the other rebuilds the {orange:merchant fee book} partnerships refreshes before every renewal call, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The bar to clear: *state the stage map, the denominator and the rail before you compute anything* — then make every stage census reconcile to 103 by construction.",
     "Settlement side, the deep blocks. Past the census the screens go reconciliation-first: the {violet:coverage census} — 21 exact (65,612.00 both sides), 1 partial (#25: 4,000.00 of 6,148.00), 6 never-collected (15,217.00) — only reconciles once the mirror anomalies are understood, void-but-debited #11 folding IN and paid-lie #28 folding OUT. The rail census rides the same page: {rose:card legs} are consumer debits (16 legs, 37,364.00), {sky:wire legs} are merchant settlements (11 legs, 32,248.00), and 5 statements settle on both. The money rule is non-negotiable: finance tables store INTEGER cents, so every dollar read is `amount_cents / 100.0` — and the close ships only when the ledger reads **181,080 against 181,080**, delta zero.",
     "How to prep for the senior loop: the sixteen theory items and twenty new MCQs below go past the census into pipeline-order traps, window frames, set-op stacks, subquery shapes and the cents-versus-dollars rounding policy — the questions that separate a report-writer from a reconciliation owner. Four new case studies extend the board: a single-table {emerald:rail census}, the {amber:settlement clock} dunning keys off, the {violet:financed-dollars ladder} partnerships quotes, and the full coverage-census rebuild. Run them after the originals — *the originals teach the map, these teach the mirror* — and keep the one habit the whole kit grades: state the stage map, the denominator and the rail before you compute anything.",
   ],
@@ -80,52 +80,52 @@ export const afterpayKit: CompanyKit = {
     {
       name: "Approval funnel counts",
       why: "The stage census is Afterpay's heartbeat: fully settled, live mid-clock, not-yet-activated, declined — each a conditional count over a status or timestamp, reconciling to 103 by construction. The trap is calling a live schedule 'paid' — 30 versus 52 — and the second trap is the denominator: declines sit in an approval-rate base and drop out of a settlement base, and the panel wants you to say which before writing SQL.",
-      slugs: ["trial-to-paid-funnel", "percentage-of-users-attended-a-contest", "create-a-session-bar-chart"],
+      slugs: ["trial-to-paid-funnel", "percentage-of-users-attended-a-contest", "create-a-session-bar-chart", "consecutive-transactions-with-increasing-amounts", "customers-with-strictly-increasing-purchases", "confirmation-rate"],
     },
     {
       name: "Two-grain shopper censuses",
       why: "Checkouts and shoppers are different grains of the same join, and every census reports both: EU runs 45 checkouts from 8 shoppers while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which column is load and which is coverage — is the habit being graded; the ratio (5.6 versus 9.5) is the market-intensity read that decides where the 4-pay rollout leans next.",
-      slugs: ["unique-orders-and-customers-per-month", "number-of-rich-customers", "top-earners"],
+      slugs: ["unique-orders-and-customers-per-month", "number-of-rich-customers", "top-earners", "investments-in-2016", "portfolio-weights"],
     },
     {
       name: "The activation clock",
       why: "A checkout books at created_at and the schedule goes live at shipped_at — 82 of 103 stamped, 2.98 days average, 2–4 spread. julianday arithmetic with the stamp filter stated is the shape being graded; the 14 not-yet-activated rows must be excluded by definition, never by silence, because an average that silently shrinks its population is a real number wearing the wrong name.",
-      slugs: ["average-time-of-process-per-machine", "users-with-two-purchases-within-seven-days", "biggest-window-between-events"],
+      slugs: ["average-time-of-process-per-machine", "users-with-two-purchases-within-seven-days", "biggest-window-between-events", "loan-amortization-schedule"],
     },
     {
       name: "Ticket bands with CASE",
       why: "The rate card lives in CASE folds: budget under 50 (8 SKUs at 32.06), mid 50–200 (8 at 111.50), and a 200-plus arm that is provably empty on this catalog. Arms must be exhaustive and ordered — a hole in the CASE is a hole in the fee model, and a reordered WHEN quietly re-bands the book the merchant deck quotes.",
-      slugs: ["calculate-special-bonus", "the-category-of-each-member-in-the-store", "count-salary-categories"],
+      slugs: ["calculate-special-bonus", "the-category-of-each-member-in-the-store", "count-salary-categories", "basket-depth-aov", "card-launch-success", "gl-reconciliation"],
     },
     {
       name: "Merchant fee attribution",
       why: "Afterpay's fee base is financed GMV per merchant partner, which means a three-table chain — installment lines to catalog to merchant — folded per partner. Nordic Gadgets AB reads 11,130.25 (32%) and the top two hold 58.7%, so join hygiene at the product and supplier keys is literally revenue hygiene.",
-      slugs: ["sales-analysis-i", "product-sales-analysis-ii", "average-selling-price"],
+      slugs: ["sales-analysis-i", "product-sales-analysis-ii", "average-selling-price", "combine-two-tables", "number-of-calls-between-two-persons", "market-analysis-i", "top-travellers"],
     },
     {
       name: "Schedule leaderboards & ties",
       why: "The repeat-schedule ladder runs 24, 17, 14, 13, 5 checkouts with a four-way tie at 4 underneath, and rank semantics decide who shares a rung. RANK, DENSE_RANK and ROW_NUMBER differ in shared rungs and gaps — a policy about peer shoppers and winback budgets, not syntax, and the interviewer expects the policy named out loud.",
-      slugs: ["rank-scores", "group-employees-of-the-same-salary", "compute-the-rank-as-a-percentage"],
+      slugs: ["rank-scores", "group-employees-of-the-same-salary", "compute-the-rank-as-a-percentage", "second-highest-salary", "keep-latest-dedupe"],
     },
     {
       name: "Coverage set algebra",
       why: "Dunning stacks populations — statements with no legs against statements with legs, consumer-debit sets against merchant-settlement sets — and EXCEPT answers 'which billed statements never collected a debit' while UNION dedups whole rows silently. The 6-statement / 15,217.00 anti-join is the same algebra pointed at money.",
-      slugs: ["team-scores-in-football-tournament", "the-airport-with-the-most-flights", "customers-who-never-order"],
+      slugs: ["team-scores-in-football-tournament", "the-airport-with-the-most-flights", "customers-who-never-order", "sales-analysis-ii", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "One-pass stage censuses",
       why: "The ops board gets all four stages in ONE scan — FILTER (WHERE …) branches per aggregate and SUM(CASE …) is the portable twin. Four sequential queries are four chances to drift, and the branches-sum-to-COUNT(*) identity is the correctness argument the reconciliation review listens for.",
-      slugs: ["active-businesses", "user-activity-for-the-past-30-days-ii", "number-of-employees-who-met-the-target"],
+      slugs: ["active-businesses", "user-activity-for-the-past-30-days-ii", "number-of-employees-who-met-the-target", "uber-first-transaction"],
     },
     {
       name: "Statement legs & cents discipline",
       why: "Billed is not settled — 28 statements against 27 legs in INTEGER cents, dollar read amount_cents / 100.0. The exact/partial/none fold (21 / 1 / 6) is one CASE away, and a bare-column ROUND can silently reproduce dollar digits because every cent sum on this book is a whole multiple — prefer the /100.0 read and say the units out loud.",
-      slugs: ["bank-account-summary-ii", "trial-balance-check", "monthly-transactions-i"],
+      slugs: ["bank-account-summary-ii", "trial-balance-check", "monthly-transactions-i", "expected-credit-loss"],
     },
     {
       name: "Month buckets & the book spine",
       why: "The 14-month spine (2024-01 to 2025-02) is where the schedule book gets read as a trend: 3,731.97 opening, the 1,193.86 July trough, both cancellations-heavy months sitting exactly on the dips. STRFTIME('%Y-%m') buckets, half-open window edges, a calendar spine when a month must exist even with no checkouts — and two spines, approval and activation, never mixed in one chart.",
-      slugs: ["list-the-products-ordered-in-a-period", "hopper-company-queries-i", "the-latest-login-in-2020"],
+      slugs: ["list-the-products-ordered-in-a-period", "hopper-company-queries-i", "the-latest-login-in-2020", "hopper-company-queries-ii", "orders-with-maximum-quantity-above-average", "median-employee-salary"],
     },
     {
       name: "Settlement aging & the clock",
@@ -140,17 +140,17 @@ export const afterpayKit: CompanyKit = {
     {
       name: "Rolling & running balances",
       why: "The collections dashboard is a running story: cumulative settled dollars across the 14 months, rolling checkout counts per market, balance rollforwards that open where last month closed. Window aggregates without PARTITION BY — the frame IS the answer — and the trap is the default RANGE frame swallowing tied dates, which on a 27-leg ledger with same-day settlements happens more than once.",
-      slugs: ["balance-rollforward", "running-total-for-different-genders", "rolling-7d-actives"],
+      slugs: ["balance-rollforward", "running-total-for-different-genders", "rolling-7d-actives", "bank-account-summary", "classes-more-than-5-students", "manager-of-the-largest-department"],
     },
     {
       name: "NULL policy & hygiene audits",
       why: "This book's NULLs are definitional — shipped_at is NULL until activation, #28's paid status sits on zero legs — so hygiene queries must classify, not delete. Audits that surface missing values, malformed records and stale rows are the muscle; the instinct to prove a zero instead of asserting one is exactly what the data-quality review grades.",
-      slugs: ["null-blank-audit", "employees-with-missing-information", "invalid-tweets"],
+      slugs: ["null-blank-audit", "employees-with-missing-information", "invalid-tweets", "employee-bonus", "sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "number-of-accounts-that-did-not-stream", "books-with-null-ratings"],
     },
     {
       name: "Ticket distribution cuts",
       why: "Beyond averages: NTILE quartiles over the 103-checkout book, spend histograms, percentile ranks on the shopper ladder — the distribution cut that shows what the 2.98-day clock and the 338.19 mean both hide. Interviewers push from 'what is the average' to 'what does the average hide', and these are the operators that answer.",
-      slugs: ["usage-tier-percentiles", "spend-histogram", "value-at-risk"],
+      slugs: ["usage-tier-percentiles", "spend-histogram", "value-at-risk", "calculate-compressed-mean"],
     },
   ],
 

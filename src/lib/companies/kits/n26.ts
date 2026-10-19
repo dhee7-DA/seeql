@@ -62,17 +62,17 @@ export const n26Kit: CompanyKit = {
     {
       name: "Honest-denominator decline shares",
       why: "Decline rate is the KPI risk lives by, and it is a ratio whose denominator is the whole interview: 7 declines of 103 booked is 6.8%, and APAC's 8.1% against the US's 5.3% only means something if both share the base. Integer division and dropped statuses are how these reports quietly lie.",
-      slugs: ["queries-quality-and-percentage", "ads-performance", "hopper-company-queries-ii", "customer-order-frequency", "structuring-detection"],
+      slugs: ["queries-quality-and-percentage", "ads-performance", "hopper-company-queries-ii", "customer-order-frequency", "structuring-detection", "transaction-velocity", "amount-anomaly-zscore", "chargeback-rate-ranking", "spend-histogram", "top-percentile-fraud"],
     },
     {
       name: "Statements, legs and LEFT JOINs",
       why: "Monthly statements carry the claim; settlement legs carry the truth, and the join type decides who survives: a leg without a statement is corruption, a statement without legs is the dunning queue. The 5 legless open statements plus paid-status #28 are exactly the rows a careless INNER JOIN erases.",
-      slugs: ["combine-two-tables", "bank-account-summary-ii", "employees-with-missing-information", "bank-account-summary", "balance-rollforward"],
+      slugs: ["combine-two-tables", "bank-account-summary-ii", "employees-with-missing-information", "bank-account-summary", "balance-rollforward", "duplicate-charge-pairs"],
     },
     {
       name: "Anti-joins: the untouched queue",
       why: "The dunning list is an anti-join — statements whose invoice id never appears in payments — worth 15,217 across 6 cycles on this db. N26 candidates are graded on keeping the unmatched rows alive and on proving the zero when the anti-join legitimately comes back empty.",
-      slugs: ["customers-who-never-order", "dormant-reactivation", "sellers-with-no-sales", "prepayment-detection"],
+      slugs: ["customers-who-never-order", "dormant-reactivation", "sellers-with-no-sales", "prepayment-detection", "portfolio-concentration-hhi", "number-of-accounts-that-did-not-stream", "find-churn-risk-customers", "fx-exposure-report"],
     },
     {
       name: "Cents-safe money folds",
@@ -82,7 +82,7 @@ export const n26Kit: CompanyKit = {
     {
       name: "Coverage CASE: exact / partial / none",
       why: "The coverage census classifies every statement — 21 exact, 1 partial (4,000.00 of 6,148.00), 6 with nothing — and the classification must key on settled money, not on the status column that claims 'paid'. Exhaustive, ordered CASE arms are how the money desk ships it.",
-      slugs: ["weather-type-in-each-country", "the-winner-university", "delinquency-buckets", "ar-aging-schedule"],
+      slugs: ["weather-type-in-each-country", "the-winner-university", "delinquency-buckets", "ar-aging-schedule", "the-category-of-each-member-in-the-store"],
     },
     {
       name: "One-pass FILTER censuses",
@@ -92,17 +92,17 @@ export const n26Kit: CompanyKit = {
     {
       name: "Settlement clocks & month spines",
       why: "The 14-month transaction spine (2024-01 to 2025-02) carries the trend reads, and the settlement clock — 2.98 days average over the 82 stamped, 28.4 days average on the 20 paid statements — is date math where the population is the point. Half-open windows and '%Y-%m' keys are the graded habits.",
-      slugs: ["list-the-products-ordered-in-a-period", "rising-temperature", "users-with-two-purchases-within-seven-days", "consecutive-transactions-with-increasing-amounts", "wash-trade-detection", "settlement-fails-aging"],
+      slugs: ["list-the-products-ordered-in-a-period", "rising-temperature", "users-with-two-purchases-within-seven-days", "consecutive-transactions-with-increasing-amounts", "wash-trade-detection", "settlement-fails-aging", "daily-balance-interest"],
     },
     {
       name: "Ranking & the tier ladder",
       why: "Spend leaderboards rank accounts where ties are guaranteed — four accounts sit at 4 transactions each under the 24, 17, 14, 13, 5 ladder — and the Standard → Smart → You → Metal tier ladder is a banding policy, not a sort. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung, which is a customer-facing decision.",
-      slugs: ["rank-scores", "second-highest-salary", "credit-utilization-bands", "card-launch-success"],
+      slugs: ["rank-scores", "second-highest-salary", "credit-utilization-bands", "card-launch-success", "the-latest-login-in-2020", "account-balance", "department-top-three-salaries"],
     },
     {
       name: "KYC & name hygiene",
       why: "Accounts open through VideoIdent with names and emails typed by humans, and a split identity is a broken join: 'acme' versus 'Acme' silently halves one customer. String shaping — case, trim, length, pattern guards — is data-quality SQL the onboarding funnel runs daily.",
-      slugs: ["fix-names-in-a-table", "invalid-tweets", "find-users-with-valid-e-mails"],
+      slugs: ["fix-names-in-a-table", "invalid-tweets", "find-users-with-valid-e-mails", "find-all-unique-email-domains"],
     },
   ],
 

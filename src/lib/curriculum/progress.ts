@@ -84,10 +84,15 @@ export interface ProgressState {
   backlogDone: Record<string, number>;
   /** streak-freeze tokens held (earned at 7-day puzzle milestones, cap 2) */
   freezes: number;
+  /** weekly XP target (null = not set) — read by the overview weekly-goal
+   *  picker; setting it pays no XP of its own */
+  weeklyGoalXp: number | null;
   awardXp: (key: string, amount: number) => boolean;
   recordMcqCheck: (id: string, correct: boolean) => boolean;
   markLessonDone: (id: string) => boolean;
   setDailyGoal: (n: number) => void;
+  /** set the weekly XP target (null clears it) — pure preference, no rewards */
+  setWeeklyGoalXp: (n: number | null) => void;
   unlockBadge: (id: string) => boolean;
   /** tally a practice-lab answer into the skill ledger */
   recordSkill: (skill: string, correct: boolean) => void;
@@ -155,6 +160,7 @@ export const useProgress = create<ProgressState>()(
       puzzleDone: {},
       backlogDone: {},
       freezes: 1,
+      weeklyGoalXp: null,
 
       awardXp: (key, amount) => {
         if (get().xpEvents[key] !== undefined) return false;
@@ -188,6 +194,8 @@ export const useProgress = create<ProgressState>()(
       },
 
       setDailyGoal: (n) => set({ dailyGoal: n }),
+
+      setWeeklyGoalXp: (n) => set({ weeklyGoalXp: n }),
 
       unlockBadge: (id) => {
         if (get().badges[id] !== undefined) return false;
@@ -325,6 +333,7 @@ export const useProgress = create<ProgressState>()(
           puzzleDone: {},
           backlogDone: {},
           freezes: 1,
+          weeklyGoalXp: null,
         }),
     }),
     { name: "sql-visualizer-learn-v1" },

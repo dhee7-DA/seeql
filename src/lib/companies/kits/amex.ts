@@ -28,7 +28,7 @@ export const amexKit: CompanyKit = {
     "American Express is the closed loop — founded in **1850**, and unlike every other network it is issuer, acquirer and scheme at once: the cardmember carries the Platinum or **Centurion**, the merchant bills through Amex, and Amex carries the receivable in between. The business model is spend-centric — annual-fee membership economics plus a discount rate on every booked event — so the number the firm lives on is not transaction count but **spend**: 16 cardmembers generating **103 spend events worth 34833.28** on this book, with the top member alone carrying 24 of them for **7262.35**. The cultural rule follows the model: a member is a tenure and a balance, not a row — categorize spend wrong and the fee-waiver logic misfires; age the book wrong and the delinquency watch misses the account it exists to catch.",
     "The data org sits inside the loop. Every member-account billing lands as a receivable; every settlement clears it on one of two rails — card, the premium card rail (16 hits for **37364.00**), and wire, the partner-and-corporate rail (11 for **32248.00**) — and every settled dollar posts twice into the double-entry ledger, debit and credit, stored as integer cents with the dollar read always `cents / 100.0`. The daily proof is the fold: **181080.00 debits against 181080.00 credits across 80 ledger entries, delta 0** — and the coverage census reads 21 billings settled exact, 1 partial (4000.00 against 6148.00), 6 with no rail hit at all. The receivables watch those six — **15217.00** — age against flat 30-day terms.",
     "Interview style is spend-centric and boundary-exact. Screens walk from a warm-up rail fold into the two questions this firm is famous for: a {violet:spend-categorization CASE ladder} (which tier, which band, which fee logic — with the boundary someone will argue about) and the {rose:delinquency watch} — a LEFT-join coverage classification where the interesting rows are the ones with no settlement row at all. Follow-ups probe the denominator ('is that share of booked value or settled value?') and the units ('cents or dollars?'). Candidates who narrate grain, units and boundary operators before writing SQL do well; *on a premium book, a mis-banded member is a relationship problem, not a rounding error.*",
-    "Preparation strategy: Amex has **0 tagged problems** in this app's band — the pool is theme-curated to its known question families: rail folds, coverage CASE ladders, member-tier rankings, anti-join watchlists, honest-denominator share math and cents-precision proofs (provenance stated per problem). Do the topics in order, then run both case studies on the live storefront database: one rebuilds the {rose:delinquency watch} the card-operations team works every morning, the other rebuilds the {violet:member spend ladder} the membership team ranks quarterly.",
+    "Preparation strategy: Amex has **0 tagged problems** in this app's band — the pool is theme-curated to its known question families: rail folds, coverage CASE ladders, member-tier rankings, anti-join watchlists, honest-denominator share math and cents-precision proofs (provenance stated per problem). Do the topics in order, then run all six case studies on the live storefront database: one rebuilds the {rose:delinquency watch} the card-operations team works every morning, the other rebuilds the {violet:member spend ladder} the membership team ranks quarterly, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting...",
     "Follow the map and the book splits by region: EU carries 45 events worth 15089.23 from 8 members, APAC 37 worth 11605.45 from 5, US 19 worth 7286.16 from just **2 members** at the richest ticket in the book — 383.48 — and LATAM 2 worth 852.44 from one. Pace is metronomic: **6 to 9 events** every month from 2024-01 through 2025-02, the loudest bucket 2024-01 at 8 events and 3731.97, single tickets ranging 25.47 to 1088.44 around a 338.19 average. Concentration is the standing headline — members over the 3000.00 lifetime line carry **63.5%** of book value — *a premium book is a short list wearing a large number.*",
     "This expansion widens the aperture to the moves the close actually runs. Set ops that diff two censuses of the same book; `LAG` walks that hand each month its predecessor's delta; self-joins that pair the {sky:split settlements} — five billings carrying one card hit and one wire hit each — without fanning the fold; FILTER censuses that count both rails in one pass; window frames that decide whether a balance walk steps entry by entry or folds peers. Same rule as ever, deeper water: *the definition ships before the syntax, and the boundary operator is quoted in the review.*",
   ],
@@ -60,7 +60,7 @@ export const amexKit: CompanyKit = {
     {
       name: "Spend folds at the billing grain",
       why: "Every morning read folds settlement rows onto the billings they clear — counts and values per rail, per status, per day. The trap is baked into the book: 27 rail hits against 28 billings means the fold's input is not the population the stakeholder assumes, and the interviewer listens for whether you count rows or billings before you sum.",
-      slugs: ["products-worth-over-invoices", "number-of-rich-customers", "top-earners"],
+      slugs: ["products-worth-over-invoices", "number-of-rich-customers", "top-earners", "journal-gap-detection"],
     },
     {
       name: "The two-rail settlement split",
@@ -70,7 +70,7 @@ export const amexKit: CompanyKit = {
     {
       name: "The delinquency CASE ladder",
       why: "Coverage is a definition: exact when the folded settlement equals the booking, partial when it does not, no cover when no rail ever hit. That ladder is a CASE over a LEFT join folded per billing — and this firm argues about boundaries the way it argues about fee bands, so the arms must be exhaustive and deliberate.",
-      slugs: ["loan-types", "delinquency-buckets", "count-salary-categories"],
+      slugs: ["loan-types", "delinquency-buckets", "count-salary-categories", "amount-anomaly-zscore"],
     },
     {
       name: "Member ladders and rank windows",
@@ -100,12 +100,12 @@ export const amexKit: CompanyKit = {
     {
       name: "Cents precision and the balanced proof",
       why: "Money in the finance tables is INTEGER cents — the dollar read is cents / 100.0 and every precision bug in the building is a variant of forgetting that. The trial-balance fold (181080.00 = 181080.00, delta 0) is the cheapest audit in SQL and the habit the screens reward most.",
-      slugs: ["trial-balance-check", "odd-and-even-transactions", "bank-account-summary"],
+      slugs: ["trial-balance-check", "odd-and-even-transactions", "bank-account-summary", "account-balance"],
     },
     {
       name: "Spend histograms and tier buckets",
       why: "Fee tiers and spend bands are bucket questions: CASE bands over booked spend, histograms over ticket size, tier assignment with the boundary documented. The interviewer checks whether your bands tile the line without gaps and whether the exactly-at-the-boundary member lands where the fee schedule says.",
-      slugs: ["spend-histogram", "customer-purchasing-behavior-analysis", "the-category-of-each-member-in-the-store"],
+      slugs: ["spend-histogram", "customer-purchasing-behavior-analysis", "the-category-of-each-member-in-the-store", "ar-aging-schedule"],
     },
     {
       name: "Set ops & the reconciliation stack",
@@ -120,17 +120,17 @@ export const amexKit: CompanyKit = {
     {
       name: "LAG/LEAD movement walks",
       why: "Movement reporting here is deltas, not levels: month-over-month billing walks, week-over-week churn, roll-forward waterfalls where each line explains the move from the last. LAG hands every row its predecessor and the edge rows go NULL by definition — a delta column that never shows a NULL is hiding its first row.",
-      slugs: ["week-over-week-churn", "mrr-waterfall", "growth-accounting"],
+      slugs: ["week-over-week-churn", "mrr-waterfall", "growth-accounting", "balance-rollforward"],
     },
     {
       name: "Split-pair self-joins",
       why: "Five billings settle across two rails — one card hit and one wire hit each — and pairing those rows without fanning the fold is a self-join with a canonical key: same billing, strictly ordered row ids, so (A, B) and (B, A) collapse to one pair. The same shape finds duplicate rail hits and mutual relationships.",
-      slugs: ["apples-and-oranges", "average-time-of-process-per-machine", "circular-transfers"],
+      slugs: ["apples-and-oranges", "average-time-of-process-per-machine", "circular-transfers", "duplicate-charge-pairs", "keep-latest-dedupe"],
     },
     {
       name: "One-pass censuses & conditional folds",
       why: "The close wants censuses in one scan: exact settlements, partials, no-covers, both rails — columns that cross-foot to the booked population. FILTER (WHERE …) counts conditionals without a re-scan, the conditional SUM/CASE ladder is its twin, and the cross-foot identity is the proof the census is exhaustive.",
-      slugs: ["snaps-analysis", "total-traveled-distance", "employees-with-deductions"],
+      slugs: ["snaps-analysis", "total-traveled-distance", "employees-with-deductions", "gl-reconciliation"],
     },
   ],
 

@@ -73,22 +73,22 @@ export const burgerkingKit: CompanyKit = {
     {
       name: "Order-fate funnels & kept-rate denominators",
       why: "Every Burger King read starts from the franchise-order fate census: 52 completed-and-settled, 30 fired-and-transmitted, 14 queued, 7 aborted — 103 by construction. The kept rate is a conditional count, and the interviewer's first question is what the denominator holds: queued orders stay in a funnel base and drop out of a completion base, and saying which before writing SQL is the habit being graded.",
-      slugs: ["percentage-of-users-attended-a-contest", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "funnel-step-conversion", "basket-depth-aov"],
+      slugs: ["percentage-of-users-attended-a-contest", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "funnel-step-conversion", "basket-depth-aov", "classes-more-than-5-students", "immediate-food-delivery-ii", "bank-account-summary", "average-selling-price"],
     },
     {
       name: "Two-grain market censuses",
       why: "Orders and operator accounts are different grains of the same join, and every census here reports both: EU runs 45 orders from 8 operator accounts while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying which column is load and which is coverage — is the habit being graded; the ratio (5.6 versus 9.5 orders per account) is the intensity read that decides where field support flies.",
-      slugs: ["unique-orders-and-customers-per-month", "article-views-ii", "reported-posts", "growth-accounting"],
+      slugs: ["unique-orders-and-customers-per-month", "article-views-ii", "reported-posts", "growth-accounting", "customer-order-frequency", "number-of-rich-customers"],
     },
     {
       name: "Coupon-window month spines",
       why: "The coupon calendar is Burger King's traffic story, but orders carry no coupon flag — so the honest read is the month spine at date grain: 14 buckets from 2024-01 to 2025-02, launch at 3,731.97, the July trough at 1,193.86. `STRFTIME('%Y-%m', created_at)` is the spine; '%m' alone merges January 2024 with January 2025 and the trend becomes fiction.",
-      slugs: ["list-the-products-ordered-in-a-period", "monthly-transactions-i", "sales-analysis-iii", "ads-funnel", "budget-pacing"],
+      slugs: ["list-the-products-ordered-in-a-period", "monthly-transactions-i", "sales-analysis-iii", "ads-funnel", "budget-pacing", "sales-by-day-of-the-week"],
     },
     {
       name: "Operator leaderboards & tie policy",
       why: "The franchisee bench ranks operator accounts, and ties are guaranteed: the ladder runs 24, 17, 14, 13, 5 booked orders, then FOUR operators tie at 4. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow — a policy about peer franchisees, not syntax. The field team publishes the policy; candidates are asked to defend it.",
-      slugs: ["rank-scores", "top-earners", "top-five-artists", "cohort-retention-matrix"],
+      slugs: ["rank-scores", "top-earners", "top-five-artists", "cohort-retention-matrix", "product-sales-analysis-ii"],
     },
     {
       name: "Menu-band CASE folds",
@@ -103,7 +103,7 @@ export const burgerkingKit: CompanyKit = {
     {
       name: "Never-remitted anti-joins",
       why: "The dunning register is the anti-join that runs every close: statements carrying zero remittance legs — 6 rows worth 15,217.00, including paid-claim #28 at 1,756.00, which is why the payments table is the ledger of record and the status column is a claim. Building it honestly (LEFT JOIN plus IS NULL, or NOT EXISTS) and reconciling it against the 22 leg-carrying statements is the exact discipline being graded.",
-      slugs: ["customers-who-never-order", "sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "find-the-missing-ids"],
+      slugs: ["customers-who-never-order", "sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "find-the-missing-ids", "product-sales-analysis-i", "sales-analysis-ii", "combine-two-tables", "employee-bonus"],
     },
     {
       name: "Royalty-coverage CASE classification",
@@ -118,7 +118,7 @@ export const burgerkingKit: CompanyKit = {
     {
       name: "Concentration & share arithmetic",
       why: "The book concentrates hard: 63.5% of booked value sits with operator accounts whose lifetime spend crosses 3,000 (71.2% above 2,000), and the top distribution partner carries 32% of network revenue (11,130.25) with the top two at 58.7%. Shares are 100.0-multiplied BEFORE the division — SUM of 0/1 flags over COUNT is integer arithmetic, and the abort share truncates to a displayed 0 while APAC actually runs 8.1%.",
-      slugs: ["queries-quality-and-percentage", "ads-performance", "compute-the-rank-as-a-percentage", "amount-anomaly-zscore"],
+      slugs: ["queries-quality-and-percentage", "ads-performance", "compute-the-rank-as-a-percentage", "amount-anomaly-zscore", "sales-analysis-i", "customer-placing-the-largest-number-of-orders", "most-frequently-ordered-product-per-customer"],
     },
   ],
 

@@ -56,7 +56,7 @@ export const southwestKit: CompanyKit = {
     {
       name: "Load-state conditional counts",
       why: "Every load read is a conditional census — booked, flown, pending, scrubbed, share — folded in one pass. FILTER (WHERE …) and SUM(CASE …) over status are the exact drills; the denominator discipline is the graded part.",
-      slugs: ["flight-occupancy-and-waitlist-analysis", "immediate-food-delivery-ii", "monthly-transactions-ii"],
+      slugs: ["flight-occupancy-and-waitlist-analysis", "immediate-food-delivery-ii", "monthly-transactions-ii", "average-selling-price", "confirmation-rate", "number-of-rich-customers", "ratings-histogram", "percentage-of-users-attended-a-contest", "queries-quality-and-percentage", "group-sold-products-by-the-date"],
     },
     {
       name: "Ancillary attach folds",
@@ -71,12 +71,12 @@ export const southwestKit: CompanyKit = {
     {
       name: "Per-base ranking windows",
       why: "The flagship loyalty board is top earner PER crew base — ROW_NUMBER with PARTITION BY, thresholds, and tie policy stated. Ranking drills with partitions and shared rungs are the exact shapes.",
-      slugs: ["rank-scores", "department-top-three-salaries", "compute-the-rank-as-a-percentage"],
+      slugs: ["rank-scores", "department-top-three-salaries", "compute-the-rank-as-a-percentage", "the-most-recent-three-orders", "maximum-transaction-each-day"],
     },
     {
       name: "Rapid Rewards tier ladders",
       why: "Tiers are spend ladders over lifetime value — bucketed, tiled, classified. CASE-tier and RFM drills mirror the A-List/A-List Preferred cut the loyalty team re-runs every reload.",
-      slugs: ["customer-purchasing-behavior-analysis", "the-category-of-each-member-in-the-store", "rfm-segmentation"],
+      slugs: ["customer-purchasing-behavior-analysis", "the-category-of-each-member-in-the-store", "rfm-segmentation", "employees-with-deductions"],
     },
     {
       name: "Boarding & seat logic",
@@ -91,7 +91,7 @@ export const southwestKit: CompanyKit = {
     {
       name: "Turn billing & utilization",
       why: "Ancillaries bill by duration and turns are timed: duration-billed fees, span-versus-sum utilization, average process time per aircraft. Timestamp-pair arithmetic with CEIL-style billing rules is the drill.",
-      slugs: ["calculate-parking-fees-and-duration", "server-utilization-time", "average-time-of-process-per-machine"],
+      slugs: ["calculate-parking-fees-and-duration", "server-utilization-time", "average-time-of-process-per-machine", "product-price-at-a-given-date", "active-users", "create-a-session-bar-chart"],
     },
     {
       name: "Redemption coverage sweeps",
@@ -101,7 +101,7 @@ export const southwestKit: CompanyKit = {
     {
       name: "Zero-attach anti-joins",
       why: "A SKU family that never attaches, a base with no takers — the anti-join is the leak detector. On this db every member and SKU has moved, so the drill includes knowing when zero is the true answer.",
-      slugs: ["sellers-with-no-sales", "find-churn-risk-customers", "unpopular-books"],
+      slugs: ["sellers-with-no-sales", "find-churn-risk-customers", "unpopular-books", "trips-and-users", "employee-bonus", "hopper-company-queries-ii"],
     },
     {
       name: "Set-op state boards",

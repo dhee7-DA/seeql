@@ -59,7 +59,7 @@ export const stripeKit: CompanyKit = {
     {
       name: "Month buckets & status-aware counts",
       why: "Settlement calendars are month-bucketed: SUBSTR(paid_on, 1, 7) folds payouts into '2024-03'-style keys with a conditional count of exceptions riding in the same fold. Stripe probes whether the status rule and the total come from one scan — branches that must reconcile to COUNT(*) before the report ships.",
-      slugs: ["monthly-transactions-i", "list-the-products-ordered-in-a-period", "the-latest-login-in-2020", "deferred-revenue", "prepayment-detection"],
+      slugs: ["monthly-transactions-i", "list-the-products-ordered-in-a-period", "the-latest-login-in-2020", "deferred-revenue", "prepayment-detection", "maximum-transaction-each-day", "second-highest-salary", "the-most-recent-three-orders"],
     },
     {
       name: "Ledger reconciliation & balance walks",

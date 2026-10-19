@@ -29,7 +29,7 @@ export const twitchKit: CompanyKit = {
     "Twitch is live streaming at firehose scale — millions of channels broadcasting right now, an audience that arrives and leaves by the second, and a chat that is the product as much as the video is. The unit of analysis is not the campaign or the catalog: it is the **live session**, stamped with a viewer, a cohort, a state — {emerald:watched-to-end}, {sky:still live}, queued in lobby, or {rose:dropped mid-stream}. Everything the business decides — where moderation goes, which raids get amplified, what the sub funnel did this hour — hangs on queries that fold chat-line batches into session states, sessions into **cohort health**, and cohorts into the monetization story. The SQL reality is live-ops shaped: bursty, state-aware, and allergic to stale denominators.",
     "The data org runs on three engines. Live telemetry folds the chat firehose — **251 chat-line batches** against **103 sessions** on the audit db — into the velocity boards live ops watches minute by minute. Monetization analytics reads the sub ledger: charges issued, converted, opened, retracted — with amounts stored as INTEGER cents, so `amount_cents / 100.0` is a reflex, not a cleanup. And the creator group watches **cohort censuses**: sessions and watch-time per viewer cohort, where *a cohort with 2 sessions and a cohort with 45 are not the same story* — sampling floors exist because a thin cohort's average is one person's afternoon.",
     "Interview screens are concurrency- and funnel-heavy. A typical loop opens with a fold (chat lines per session, sessions per cohort), escalates into a **window ranking** — the chat-velocity leaderboard where ties share a rung — and lands on either a CASE census of session states or a threshold read ('which sessions beat the average watch-time?'). The follow-ups are definition probes: *per what?* — lines or bursts, sessions or viewers, charged or settled. Candidates who say the grain out loud and keep the cents as cents until the display edge consistently outperform.",
-    "Preparation strategy: this kit leads with **Twitch's one tagged registry problem** (usage-tier-percentiles — PERCENT_RANK tiering, the percentile read behind CCV tier boards) and theme-curates the rest from the SQL band's live-shaped material: concurrency intervals, sessionization, streak actives, burst detection, the viewers-turned-streamers gate. Then run both case studies on the live storefront db: one rebuilds the {violet:chat-velocity leaderboard} (a RANK with an honest tie block), the other rebuilds the {emerald:sub-funnel census} (a CASE fold over charge states, cents to dollars at the edge). The storefront mapping is declared, not hidden — orders are sessions, order totals are watch-time units, regions are the four tracked viewer cohorts — because making the stand-in explicit is itself the habit live-ops SQL rewards.",
+    "Preparation strategy: this kit leads with **Twitch's one tagged registry problem** (usage-tier-percentiles — PERCENT_RANK tiering, the percentile read behind CCV tier boards) and theme-curates the rest from the SQL band's live-shaped material: concurrency intervals, sessionization, streak actives, burst detection, the viewers-turned-streamers gate. Then run all six case studies on the live storefront db — built for spaced practice rather than one sitting: one rebuilds the {violet:chat-velocity leaderboard} (a RANK with an honest tie block), another rebuilds the {emerald:sub-funnel census} (a CASE fold over charge states, cents to dollars at the edge). The storefront mapping is declared, not hidden — orders are sessions, order totals are watch-time units, regions are the four tracked viewer cohorts — because making the stand-in explicit is itself the habit live-ops SQL rewards.",
     "Follow the money and the org splits into three ledgers. The partner ledger folds line items through products into content-partner credits: {violet:Nordic Gadgets AB} carries **$11,130.25 — 32%** of all credited watch units, Midwest Hardware Co $9,294.93 (26.7%), so two partners out of six clear 58.7% and every partner-side number ships with a concentration footnote. The sub ledger splits into rails — **card 16 payments / $37,364.00** against wire 11 / $32,248.00 — and then into the coverage census: **21 invoices exact ($65,612.00)**, 1 partial ($4,000.00 of $6,148.00), 6 untouched ($15,217.00), with the standing anomalies as the fraud probes (#11 void-but-paid at $925.00, #28 paid with zero payment rows). Terms are flat 30 days across the book while settlement averages 28.4 days (13 fastest, 84 slowest); ops spend is a rent story — Rent 14 entries / $16,800 with the 2024-08 peak at $3,210 — against Ads at $4,570. And viewer-side, *viewers whose lifetime watch crosses the top-spender bar carry 63.5% of all units* — the audience is a concentrated pyramid, and the queries that describe it say so out loud.",
     "Preparation roadmap, four weeks. Week 1 — fold drills until the grain question is reflexive: batch lines vs sessions (`SUM(quantity)` vs `COUNT(*)`), viewers vs sessions (`COUNT(DISTINCT customer_id)` — EU is 8 viewers on 45 sessions, not 45), and the cents-to-dollars edge with ROUND at the display line only. Week 2 — windows and ties: RANK with a stated tie policy, LAG pacing reads, ROWS-vs-RANGE frames, and the {orange:NTILE} tiering behind usage-tier-percentiles. Week 3 — report stacks: CASE censuses that reconcile to 103, UNION ALL banners with a TOTAL row, GROUP_CONCAT manifests with a named separator, and the anti-joins that surface the {rose:unpaid} six. Week 4 — case-study rehearsal on the live db: the two launch cases plus the four expansion files, timed, with the walkthrough habit — *definition, population, fold, reconciliation* — spoken aloud every time. The gate list is short and non-negotiable: every number carries its denominator, every fold states its grain, every string fold names its separator.",
   ],
@@ -66,7 +66,7 @@ export const twitchKit: CompanyKit = {
     {
       name: "Leaderboard ranking & ties",
       why: "Chat velocity, watch-time, gift volume — live reporting is leaderboard reporting, and ties are everywhere when hundreds of sessions sit near the same count. The tagged usage-tier-percentiles adds the percentile read CCV tiering runs on. The rank trio is drilled until the 1,2,3,3,3,3,3,3 tie block is a spoken reflex, not a lookup.",
-      slugs: ["rank-scores", "usage-tier-percentiles", "compute-the-rank-as-a-percentage"],
+      slugs: ["rank-scores", "usage-tier-percentiles", "compute-the-rank-as-a-percentage", "game-play-analysis-v", "trial-to-paid-funnel", "cohort-retention-matrix", "growth-accounting", "winback-recovery", "dormant-reactivation", "chargeback-rate-ranking", "mrr-waterfall"],
     },
     {
       name: "PARTITION BY session math",
@@ -76,7 +76,7 @@ export const twitchKit: CompanyKit = {
     {
       name: "Graph joins: viewers, partners, raids",
       why: "The live graph is relational: viewer-to-viewer raid reach is a two-hop join, partner-to-partner earnings comparisons are the out-earning shape, and confirmation reads gate whether a raid actually landed. These drills cover the join grammar Twitch screens use when the question is 'who reached whom, and did it confirm?'",
-      slugs: ["confirmation-rate", "second-degree-follower", "employees-earning-more-than-their-managers"],
+      slugs: ["confirmation-rate", "second-degree-follower", "employees-earning-more-than-their-managers", "find-followers-count", "employee-task-duration-and-concurrent-tasks", "duplicate-charge-pairs"],
     },
     {
       name: "Chat-health gates (HAVING)",
@@ -86,12 +86,12 @@ export const twitchKit: CompanyKit = {
     {
       name: "Sub funnels with CASE",
       why: "Charge state is a funnel: settled, open invite, retracted — and the census must reconcile against COUNT(*) over the whole charge table. CASE-driven conditional aggregates are the grammar, with the two classic traps: filtering the funnel stage in WHERE (denominator drift) and letting the ELSE arm swallow a stage. The curated trio covers tier banding, gift eligibility and the partner-program gate.",
-      slugs: ["the-category-of-each-member-in-the-store", "calculate-special-bonus", "the-winner-university"],
+      slugs: ["the-category-of-each-member-in-the-store", "calculate-special-bonus", "the-winner-university", "median-time-to-convert", "funnel-step-conversion"],
     },
     {
       name: "Streaks & consecutive-day sessions",
       why: "Habit is the product: viewers who show up day after day are the ones subs follow. Consecutive-day logic — LAG flags, streak islands, the five-day-active gate — is drilled until 'is this streak real?' has a query, not a vibe. The curated trio is the streak canon: the consecutive gate, the winning-streak islands and the LAG pair.",
-      slugs: ["active-users", "longest-winning-streak", "consecutive-numbers"],
+      slugs: ["active-users", "longest-winning-streak", "consecutive-numbers", "find-zombie-sessions", "viewers-turned-streamers", "sessionize-events", "find-bursty-behavior", "find-peak-calling-hours-for-each-city", "rolling-7d-actives", "dau-wau-stickiness", "calculate-compressed-mean", "week-over-week-churn", "find-users-with-persistent-behavior-patterns"],
     },
     {
       name: "Threshold subqueries",
@@ -106,22 +106,22 @@ export const twitchKit: CompanyKit = {
     {
       name: "Data quality on the firehose",
       why: "A firehose ships dirt: NULL stamps on sessions that never ended cleanly, blank memos, duplicate bursts from retried clients. The never-stamped census on this db is 21 sessions (14 queued + 7 dropped) — knowing NULL is a state, not a zero, is the discipline. The curated trio drills the NULL audit, the NULL-safe filter and the COUNT-column-vs-star distinction.",
-      slugs: ["null-blank-audit", "find-customer-referee", "books-with-null-ratings"],
+      slugs: ["null-blank-audit", "find-customer-referee", "books-with-null-ratings", "keep-latest-dedupe"],
     },
     {
       name: "Set-op report stacks",
       why: "The month-close pack is a stack: the session fold on one arm, the charge fold on another, a TOTAL banner row glued on with UNION ALL. INTERSECT and EXCEPT answer the reach questions — who raided AND subscribed, who raided but never converted. The trio drills duplicate semantics (UNION's silent collapse), the banner pattern and direction-of-EXCEPT reading, which is where set-op reports go wrong.",
-      slugs: ["duplicate-emails", "biggest-single-number", "customers-who-bought-a-and-b-not-c"],
+      slugs: ["duplicate-emails", "biggest-single-number", "customers-who-bought-a-and-b-not-c", "gl-reconciliation", "late-arriving-restatement"],
     },
     {
       name: "Derived tables & staged folds",
       why: "Twitch's fan-out rule — fold, then join — needs a place to put the fold: a derived table in FROM or a CTE above. The trio covers the staged-fold canon: a priced fold that must not double-count (average-selling-price), a histogram built before it is binned (transactions-per-visit-histogram), and a month fold that classifies while it aggregates (monthly-transactions-ii). Candidates who stage folds deliberately stop shipping batch-grain boards.",
-      slugs: ["average-selling-price", "transactions-per-visit-histogram", "monthly-transactions-ii"],
+      slugs: ["average-selling-price", "transactions-per-visit-histogram", "monthly-transactions-ii", "find-loyal-customers"],
     },
     {
       name: "Existence gates & anti-joins",
       why: "The live graph has quiet corners: creators with no sessions, visitors who browsed the lobby and never watched, viewers with no open invite. Anti-joins surface them — and the classic NOT IN + NULL trap can blank the whole worklist. The trio drills the anti-join from both sides of the marketplace metaphor plus the visited-but-did-not-transact shape live ops runs on lobby traffic.",
-      slugs: ["customers-who-never-order", "sellers-with-no-sales", "customer-who-visited-but-did-not-transact"],
+      slugs: ["customers-who-never-order", "sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "number-of-accounts-that-did-not-stream", "find-churn-risk-customers"],
     },
     {
       name: "Running frames & gap math",

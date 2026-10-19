@@ -33,7 +33,7 @@ export const twilioKit: CompanyKit = {
     "Twilio is the CPaaS layer under the internet's customer conversations — SMS, voice, WhatsApp and email exposed as metered APIs where every call is a billable event and every status callback is a delivery fact. The analytics reality is traffic assurance: volumes by channel, {emerald:delivered} versus {rose:failed}, and the per-account billing that follows the meter. On this storefront db the mapping is honest: 16 messaging accounts generate 103 billing periods worth **34,833.28**, folded from 251 metered lines; the status mix behaves like the delivery ledger it is — 52 delivered (50.5%), 30 sent in flight (29.1%), 14 queued (13.6%), 7 failed before delivery (6.8%).",
     "The data org splits three ways. Usage analytics owns the volume folds: metered lines joined to channel products and aggregated per billing period (one channel's lines bill **11,744.01**, another 6,929.12 — units times `unit_price`, never units alone). Billing analytics owns the per-account runs — 28 `invoices` against 27 `payments`, INTEGER cents throughout — where the AR anti-join is a standing artifact: 6 never-settled bills worth 15,217, and one of them (#28, 1,756.00) claims {emerald:paid} with zero settlement rows behind it. Delivery analytics owns the status mix per region: APAC runs the highest failure share at 8.1%, LATAM the lowest at 0.",
     "Interview style is rate-then-denominator, then the billing join. A screen opens with a two-grain census (EU carries 45 billing periods from just 8 accounts; the US, 19 from 2), escalates into a conditional-count delivery rate with the denominator asked out loud ('does a {rose:failed} message count in your base?'), and lands on the money question — which accounts have bills with no payments behind them, and what does `amount_cents / 100.0` actually print. Follow-ups probe the anti-join's shape and the CASE arm ordering that separates exact settlements from partials. Candidates who state the denominator before computing are the ones who get callbacks.",
-    "Preparation strategy: the registry tags zero SQL problems for Twilio — this kit is **0 tagged LC, theme-curated**: all 30 topic slugs and 16 problems are chosen to mirror known CPaaS screens — delivery-rate counting, channel mixes, per-account usage billing, dunning anti-joins and settlement coverage. Then run both case studies on the live db: one rebuilds the dunning anti-join the billing desk runs before reminders go out, the other rebuilds the settlement-coverage census finance closes the month with. The bar to clear: state the denominator, the join's survival rule, and the cents rule before you compute anything.",
+    "Preparation strategy: the registry tags zero SQL problems for Twilio — this kit is **0 tagged LC, theme-curated**: all 61 topic slugs and 32 problems are chosen to mirror known CPaaS screens — delivery-rate counting, channel mixes, per-account usage billing, dunning anti-joins and settlement coverage. Then run all six case studies on the live db — built for spaced practice rather than one sitting: one rebuilds the dunning anti-join the billing desk runs before reminders go out, another rebuilds the settlement-coverage census finance closes the month with. The bar to clear: state the denominator, the join's survival rule, and the cents rule before you compute anything.",
     "The senior screens go one layer past the anti-join. Windows keep every row while ranking and walking: per-region latency leaderboards against the **2.98-day** platform average, and month-over-month walks where a LAG column prints each delta — the {rose:November sag} of -1,326.87 against August's +1,158.21 rebound. One-pass censuses fold the whole status mix in a single scan via `FILTER (WHERE …)` — 103 periods, 52 delivered, 7 failed — and set ops close the loop on trust: an EXCEPT sweep proves claimed status against the settlement ledger, where 21 bills claim {emerald:paid} and exactly **one** (#28) has no payment rows behind it.",
     "Prep beyond the anti-join is three rebuilds on the live db. The walk: a LAG delta spine over the 14 monthly buckets, the first row reading NULL because January has no prior. The census: one `FILTER (WHERE …)` pass printing 103 periods, 52 {emerald:delivered}, 7 {rose:failed}, and the 50.5 share they imply. The ledger proof: debit and credit folds of **181,080** cents each — a delta of zero that proves balance, not correctness. Each rebuild ends the same way: state the grain, the survival rule and the cents rule out loud, *because a number is only as defensible as the denominator behind it.*",
   ],
@@ -65,17 +65,17 @@ export const twilioKit: CompanyKit = {
     {
       name: "Traffic-volume censuses",
       why: "Every Twilio screen opens with a fold: billing periods, messaging accounts, metered lines — grouped and counted without letting the grain blur. COUNT(*) counts periods, COUNT(DISTINCT customer_id) counts accounts; 103 periods come from just 16 accounts, and the census is where candidates prove which grain they're standing on.",
-      slugs: ["product-sales-analysis-ii", "unique-orders-and-customers-per-month", "find-followers-count"],
+      slugs: ["product-sales-analysis-ii", "unique-orders-and-customers-per-month", "find-followers-count", "number-of-rich-customers", "queries-quality-and-percentage", "active-businesses"],
     },
     {
       name: "Delivery-status conditional counting",
       why: "Delivered, sent, queued, failed — every rate here is a conditional count over a status flag, and the interviewer's first question is 'what's in the denominator?'. SUM(CASE WHEN status …) over ALL periods is the shape that survives scrutiny.",
-      slugs: ["immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "confirmation-rate"],
+      slugs: ["immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "confirmation-rate", "weather-type-in-each-country"],
     },
     {
       name: "Joining accounts to traffic",
       why: "Traffic inherits account attributes through joins to the accounts table, and the join type decides who survives: a period with no account is corruption; an account with no traffic is a silent customer. Choosing INNER versus LEFT is a business statement.",
-      slugs: ["combine-two-tables", "sales-analysis-i", "top-travellers"],
+      slugs: ["combine-two-tables", "sales-analysis-i", "top-travellers", "game-play-analysis-i", "daily-leads-and-partners", "employee-bonus"],
     },
     {
       name: "Channel mix & per-product usage",
@@ -100,7 +100,7 @@ export const twilioKit: CompanyKit = {
     {
       name: "Throughput & latency windows",
       why: "Delivery performance is a ranking question: longest calls per account, slowest delivery paths, throughput leaderboards with honest ties. RANK and friends are a business decision about shared rungs, not syntax trivia.",
-      slugs: ["find-longest-calls", "average-time-of-process-per-machine", "rank-scores"],
+      slugs: ["find-longest-calls", "average-time-of-process-per-machine", "rank-scores", "customer-placing-the-largest-number-of-orders", "most-frequently-ordered-product-per-customer", "second-most-recent-activity", "biggest-window-between-events"],
     },
     {
       name: "Subquery screens",
@@ -110,17 +110,17 @@ export const twilioKit: CompanyKit = {
     {
       name: "Billing anomalies & cents discipline",
       why: "The row-level anomaly list is the source of truth: a void bill WITH a payment (#11, 925.00), a paid bill with none (#28, 1,756.00), one partial at 4,000 of 6,148. Every dollar read is amount_cents / 100.0 — the missing .0 eats cents on every odd-cent bill.",
-      slugs: ["duplicate-charge-pairs", "ar-aging-schedule", "monthly-transactions-ii"],
+      slugs: ["duplicate-charge-pairs", "ar-aging-schedule", "monthly-transactions-ii", "chargeback-rate-ranking"],
     },
     {
       name: "Recurring usage & continuity",
       why: "CPaaS revenue is recurring by design: an account that metered traffic last month and again this month is the healthy account, and consecutive-month detection is the query that proves it. Screens ask for accounts whose usage recurred month over month, and the honest failure modes are a silent INNER join or a month spine that merges two years into one bucket.",
-      slugs: ["customer-order-frequency", "find-loyal-customers", "report-contiguous-dates"],
+      slugs: ["customer-order-frequency", "find-loyal-customers", "report-contiguous-dates", "user-activity-for-the-past-30-days-i"],
     },
     {
       name: "E.164 & identity hygiene",
       why: "Every destination number, sender ID and webhook identifier is text, and the delivery ledger only reconciles when identities are canonical. Screens drill SUBSTR/REPLACE/UPPER shaping and format assertions — length checks, leading-plus checks — the CPaaS-native version of data-quality filtering.",
-      slugs: ["fix-names-in-a-table", "fix-product-name-format", "find-users-with-valid-e-mails"],
+      slugs: ["fix-names-in-a-table", "fix-product-name-format", "find-users-with-valid-e-mails", "null-blank-audit", "keep-latest-dedupe"],
     },
     {
       name: "Call-pair self-joins",
@@ -135,7 +135,7 @@ export const twilioKit: CompanyKit = {
     {
       name: "Dormancy & winback reads",
       why: "A messaging account that went quiet is a churn signal, and the winback list is a gap query: biggest window between events, last-activity ranking, reactivation after silence. These reads keep every anti-join honest about WHO survived and WHEN they left — the dunning list's traffic-side twin.",
-      slugs: ["find-churn-risk-customers", "dormant-reactivation", "winback-recovery"],
+      slugs: ["find-churn-risk-customers", "dormant-reactivation", "winback-recovery", "transactions-per-visit-histogram"],
     },
   ],
 

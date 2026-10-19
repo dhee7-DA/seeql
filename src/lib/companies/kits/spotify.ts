@@ -49,7 +49,7 @@ export const spotifyKit: CompanyKit = {
     {
       name: "Folding stream events",
       why: "Everything starts by folding the play log: sessions per listener, streams per track, listeners per week. Spotify screens warm up with GROUP BY + HAVING at event scale, and the trap is grain — counting event rows when the business object is a listener. The per-listener census (who holds the most sessions) is the warm-up before any window appears.",
-      slugs: ["customer-placing-the-largest-number-of-orders", "unique-orders-and-customers-per-month", "percentage-of-users-attended-a-contest"],
+      slugs: ["customer-placing-the-largest-number-of-orders", "unique-orders-and-customers-per-month", "percentage-of-users-attended-a-contest", "user-purchase-platform", "group-sold-products-by-the-date", "game-play-analysis-iv"],
     },
     {
       name: "Track & artist leaderboards",
@@ -64,22 +64,22 @@ export const spotifyKit: CompanyKit = {
     {
       name: "LAG gaps & streak counting",
       why: "The signature Spotify build: LAG the previous session, flag the break in the day chain, run a windowed SUM to stamp streak ids, fold. Growth accounting — the tagged problem here — is the same LAG grammar applied to monthly status instead of daily dates, and both drill the window-before-WHERE pipeline order.",
-      slugs: ["growth-accounting", "biggest-window-between-events", "find-loyal-customers"],
+      slugs: ["growth-accounting", "biggest-window-between-events", "find-loyal-customers", "count-artist-occurrences-on-spotify-ranking-list", "the-latest-login-in-2020", "customers-with-maximum-number-of-transactions-on-consecutive-days"],
     },
     {
       name: "Lapse & winback windows",
       why: "Churn is defined in gap language: days since last session, judged against the winback bar. The tagged churn-risk and winback-recovery problems are the exact reads — anti-joins over quiet windows and recovery rates over lapsed populations — and the dormant-reactivation variant is the same shape pointed at re-engagement.",
-      slugs: ["winback-recovery", "find-churn-risk-customers", "dormant-reactivation"],
+      slugs: ["winback-recovery", "find-churn-risk-customers", "dormant-reactivation", "number-of-accounts-that-did-not-stream", "trial-to-paid-funnel"],
     },
     {
       name: "Conversion & duration math",
       why: "The free-to-premium funnel reports MEDIAN time-to-convert — not the mean, which stragglers drag — and duration reads (average session length, time between events) test julianday arithmetic with rounding discipline. The median-emulation problem is the tagged interview classic; the duration folds are its supporting cast.",
-      slugs: ["median-time-to-convert", "average-time-of-process-per-machine", "users-with-two-purchases-within-seven-days"],
+      slugs: ["median-time-to-convert", "average-time-of-process-per-machine", "users-with-two-purchases-within-seven-days", "first-last-touch-attribution", "email-engagement-funnel"],
     },
     {
       name: "Rolling actives & cohorts",
       why: "Stickiness is a trailing window: rolling 7-day actives, DAU over WAU, new-listener counts by first-ever session. These drills teach the rolling COUNT DISTINCT shape and the first-occurrence gate — the two builds behind every engagement dashboard Spotify ships weekly.",
-      slugs: ["dau-wau-stickiness", "rolling-7d-actives", "new-users-daily-count"],
+      slugs: ["dau-wau-stickiness", "rolling-7d-actives", "new-users-daily-count", "sessionize-events", "find-bursty-behavior", "user-activity-for-the-past-30-days-i", "find-active-users", "week-over-week-churn", "friendly-movies-streamed-last-month", "find-zombie-sessions"],
     },
     {
       name: "CASE walls for listener tiers",

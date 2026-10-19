@@ -107,17 +107,17 @@ export const zeptoKit: CompanyKit = {
     {
       name: "Dark-store densification census",
       why: "Densification is two grains in one row: baskets AND households per cluster — 45 from 8 EU households, 19 from 2 US ones. The census is the density argument, and mixing COUNT(*) with COUNT(DISTINCT customer_id) is the classic bug the interviewer plants before the promo money moves.",
-      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "find-followers-count"],
+      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "find-followers-count", "immediate-food-delivery-ii", "queries-quality-and-percentage", "the-number-of-users-that-are-eligible-for-discount", "find-stores-with-inventory-imbalance", "classes-more-than-5-students", "number-of-rich-customers", "biggest-single-number", "confirmation-rate"],
     },
     {
       name: "Retention baskets & repeat demand",
       why: "Retention is a ladder, not a rate: 2 one-basket households at the bottom, Alice Chen at 24 baskets / 7,262.35 at the top. Screens drill repeat-rate folds over the placed denominator and frequency gates (HAVING COUNT(*) >= N) — the tier definitions the CRM spends against.",
-      slugs: ["repeat-purchase-rate", "customer-order-frequency", "cohort-retention-matrix"],
+      slugs: ["repeat-purchase-rate", "customer-order-frequency", "cohort-retention-matrix", "winback-recovery", "tasks-count-in-the-weekend"],
     },
     {
       name: "Promo burn & spend pacing",
       why: "Promo burn is a running-sum problem: Ads at 4,570 of 25,416 total spend, month peaks at 3,210, and every campaign's cumulative curve against its budget. Screens drill running totals and pacing breaches — the fold that says 'stop spending' before the finance close says it for you.",
-      slugs: ["budget-pacing", "monthly-transactions-i", "roas-by-campaign"],
+      slugs: ["budget-pacing", "monthly-transactions-i", "roas-by-campaign", "funnel-step-conversion"],
     },
     {
       name: "Month walks & LAG",
@@ -127,7 +127,7 @@ export const zeptoKit: CompanyKit = {
     {
       name: "Basket depth & lines",
       why: "Depth is the retention-basket lever: 251 lines over 103 baskets = 2.44, with the 26 one-line baskets as the threshold-conversion target. Screens drill folds at order grain and the fan-out guard — join to lines and every count inflates ~2.44x unless DISTINCT or a pre-fold is applied.",
-      slugs: ["basket-depth-aov", "most-frequently-ordered-product-per-customer", "group-sold-products-by-the-date"],
+      slugs: ["basket-depth-aov", "most-frequently-ordered-product-per-customer", "group-sold-products-by-the-date", "sales-analysis-ii"],
     },
     {
       name: "Multi-day ops windows",
@@ -137,17 +137,17 @@ export const zeptoKit: CompanyKit = {
     {
       name: "Settlement anti-joins",
       why: "The anomaly ledger is anti-join country: 6 statements with no payment = 15,217.00, #28 marked paid with zero payment rows, #11 void-but-paid at 925.00. Status filters see none of it — LEFT JOIN … IS NULL and NOT EXISTS until reflex, and NOT IN against a nullable key is the silent queue-emptier.",
-      slugs: ["customers-who-never-order", "number-of-accounts-that-did-not-stream", "dormant-reactivation"],
+      slugs: ["customers-who-never-order", "number-of-accounts-that-did-not-stream", "dormant-reactivation", "find-churn-risk-customers", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "Rank trio & top-N boards",
       why: "Growth boards rank everything: households by lifetime spend (7,262.35 down to 444.80), clusters by above-baseline count (18/13/10). ROW_NUMBER, RANK and DENSE_RANK differ exactly at ties, and the promo team's top-N cut is where LIMIT-boundary ties turn into duplicate rows.",
-      slugs: ["rank-scores", "department-top-three-salaries", "the-most-recent-three-orders"],
+      slugs: ["rank-scores", "department-top-three-salaries", "the-most-recent-three-orders", "restaurant-growth", "last-person-to-fit-in-the-bus", "longest-winning-streak", "top-earners"],
     },
     {
       name: "Funnel CASE arms",
       why: "The funnel is CASE arms over one population: 52 delivered / 30 shipped / 14 pending / 7 cancelled, branch totals reconciling to 103. Screens drill the full-arm discipline (ELSE 0, because a missing ELSE prints NULL where a real zero belongs) and the immediate-delivery share shapes Zepto runs on every new cohort.",
-      slugs: ["immediate-food-delivery-i", "loan-types", "calculate-orders-within-each-interval"],
+      slugs: ["immediate-food-delivery-i", "loan-types", "calculate-orders-within-each-interval", "weather-type-in-each-country"],
     },
     {
       name: "Window frames & the burn curve",
@@ -167,12 +167,12 @@ export const zeptoKit: CompanyKit = {
     {
       name: "Text shapes & name drift",
       why: "Cluster names and SKU labels arrive dirty — case drift, stray spaces, mixed formats — and every GROUP BY on a raw string silently splits one cluster into two. Screens drill UPPER/LOWER/TRIM normalization and SUBSTR slicing until reshaping text before the fold is reflex.",
-      slugs: ["fix-names-in-a-table", "fix-product-name-format", "invalid-tweets"],
+      slugs: ["fix-names-in-a-table", "fix-product-name-format", "invalid-tweets", "keep-latest-dedupe", "employees-with-missing-information"],
     },
     {
       name: "Settlement velocity & date math",
       why: "Statements pay in 28.4 days against flat 30-day terms — fastest 13, slowest 84 — and the aging fold is date arithmetic: issue-to-paid deltas, due dates from DATE(issued_on, '+30 days'), and a reference date pinned from MAX(paid_on). The tail is the negotiation story, and only date math at the right grain finds it.",
-      slugs: ["leetflex-banned-accounts", "users-that-actively-request-confirmation-messages", "first-and-last-call-on-the-same-day"],
+      slugs: ["leetflex-banned-accounts", "users-that-actively-request-confirmation-messages", "first-and-last-call-on-the-same-day", "transaction-velocity"],
     },
   ],
 

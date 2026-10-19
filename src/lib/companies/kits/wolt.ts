@@ -101,12 +101,12 @@ export const woltKit: CompanyKit = {
     {
       name: "City clusters at two grains",
       why: "The first Wolt screen is the two-grain census: baskets AND households per cluster in one row — 45 baskets from 8 EU households, 19 from 2 US ones. The trap is grain: COUNT(*) counts baskets, COUNT(DISTINCT customer_id) folds repeat demand back to people, and the interviewer is grading whether you know which column is which.",
-      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "find-followers-count"],
+      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "find-followers-count", "sales-analysis-ii", "trips-and-users", "hopper-company-queries-iii"],
     },
     {
       name: "Basket-value baselines",
       why: "Every cluster read is judged against the network baseline: 34,833.28 over 103 baskets = 338.19. Screens drill the scalar-subquery shape — fold the whole book once, then judge each cluster's average against it — because the denominator you fold IS the definition being graded.",
-      slugs: ["market-analysis-i", "find-expensive-cities", "basket-depth-aov"],
+      slugs: ["market-analysis-i", "find-expensive-cities", "basket-depth-aov", "dormant-reactivation"],
     },
     {
       name: "Status funnel & kept demand",
@@ -121,7 +121,7 @@ export const woltKit: CompanyKit = {
     {
       name: "Refund & settlement anti-joins",
       why: "Settlement ops lives on absence: 6 statements with no payment row = 15,217.00, and one of them (#28) is marked paid — a status filter misses it, an anti-join doesn't. LEFT JOIN … IS NULL and NOT EXISTS until reflex, and never NOT IN against a nullable key.",
-      slugs: ["customers-who-never-order", "sellers-with-no-sales", "number-of-accounts-that-did-not-stream"],
+      slugs: ["customers-who-never-order", "sellers-with-no-sales", "number-of-accounts-that-did-not-stream", "find-churn-risk-customers", "keep-latest-dedupe", "customer-who-visited-but-did-not-transact"],
     },
     {
       name: "Market-basket breadth",
@@ -131,17 +131,17 @@ export const woltKit: CompanyKit = {
     {
       name: "Shift windows & streaks",
       why: "Courier shifts are interval data: gaps between baskets, consecutive active stretches, windows that must not overlap. Screens drill gaps-and-islands shapes and window-between-events reads — the routing-health questions Wolt asks about its fleet every week.",
-      slugs: ["find-loyal-customers", "biggest-window-between-events", "sessionize-events"],
+      slugs: ["find-loyal-customers", "biggest-window-between-events", "sessionize-events", "active-users", "find-bursty-behavior", "rolling-average-steps"],
     },
     {
       name: "Cluster leaderboards & the rank trio",
       why: "City reviews are leaderboard reporting: clusters ranked by basket value (15,089.23 / 11,605.45 / 7,286.16), SKUs ranked by velocity. ROW_NUMBER, RANK and DENSE_RANK differ exactly at ties, and LIMIT-boundary ties are the classic 'why does my top-3 return 4 rows' bug.",
-      slugs: ["rank-scores", "top-earners", "the-most-recent-three-orders"],
+      slugs: ["rank-scores", "top-earners", "the-most-recent-three-orders", "customer-placing-the-largest-number-of-orders", "the-most-recent-orders-for-each-product", "top-travellers", "report-contiguous-dates", "maximum-transaction-each-day", "second-most-recent-activity", "median-employee-salary", "uber-first-transaction"],
     },
     {
       name: "Demand calendars & month buckets",
       why: "Demand is placed-time: SUBSTR(created_at, 1, 7) builds the month spine (2024-01's 3,731.97 peak down to 2024-07's 1,193.86 trough) without a calendar table. Screens drill the bucket key and the honesty rule — bucket on created_at for demand, shipped_at for service, and never confuse the two.",
-      slugs: ["monthly-transactions-i", "restaurant-growth", "user-activity-for-the-past-30-days-i"],
+      slugs: ["monthly-transactions-i", "restaurant-growth", "user-activity-for-the-past-30-days-i", "product-price-at-a-given-date"],
     },
     {
       name: "One-pass censuses",
@@ -171,7 +171,7 @@ export const woltKit: CompanyKit = {
     {
       name: "Basket bands & histogram cuts",
       why: "Pricing reads demand in bands, not averages: snack runs, weeknight regulars, group feasts. CASE ladders and bucket histograms turn 103 baskets into a fee conversation, and the band edges are definitions — >= versus > decides where the 100.00 basket lands. Zero-filled ladders extend the same thinking to cohorts the funnel wants printed even when they come back empty.",
-      slugs: ["calculate-orders-within-each-interval", "spend-histogram", "transactions-per-visit-histogram"],
+      slugs: ["calculate-orders-within-each-interval", "spend-histogram", "transactions-per-visit-histogram", "average-time-of-process-per-machine", "queries-quality-and-percentage", "group-sold-products-by-the-date", "average-selling-price", "immediate-food-delivery-iii", "orders-with-maximum-quantity-above-average", "sales-by-day-of-the-week", "the-category-of-each-member-in-the-store"],
     },
   ],
 

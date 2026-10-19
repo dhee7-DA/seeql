@@ -38,7 +38,7 @@ export const linkedinKit: CompanyKit = {
     "LinkedIn is the professional graph — the company whose product IS a network: every connection, endorsement and feed reaction is an edge in a dataset the hiring economy runs on. The unit of analysis is the **professional interaction**, stamped with a member, a fate — {emerald:landed} (connection accepted, thread completed), in recruiter review, awaiting response, {rose:withdrawn} — and a weighted engagement score. Everything the business decides — which feed ranking ships, which requisitions stall, where member retention bends — hangs on queries that fold interactions into the {violet:application funnel}, the funnel into hiring-latency curves, and the graph into reach. The SQL reality is graph- and latency-shaped: the questions that decide roadmap are 'how far does this member's network reach' and 'how long does an application sit unanswered'.",
     "The data org runs three engines. Feed analytics reads the engagement spine — interactions by fate, trend-walked month over month, with the population stated before any share is computed. Talent analytics owns the hiring funnel: **28 applications against 27 recruiter-response rows** — six applications with no response at all, worth **$15,217 of pipeline sitting unanswered**, one of them reading {emerald:advanced} while carrying no response row, which is the reconciliations team's verified anomaly. And the Economic Graph group works the structure: connection self-joins, reporting-hierarchy recursion, second-degree reach. *An analyst here who cannot say 'per what?' about their own funnel stage is feeding the benchmark slide, not the roadmap.*",
     "Interview screens are graph- and window-heavy, more than any non-social domain. A typical loop opens with a fold (interactions per member per month), escalates into a **self-join** — member-to-member calls, reports-to-manager chains, creator-tier gates — and lands on either an anti-join ({rose:the unanswered pipeline}, LEFT JOIN + IS NULL with the WHERE-collapse trap loaded) or a LAG-driven trend walk (month-over-month deltas where NULL on the first row is the definition, not a bug). The follow-ups are definition probes: 'is that share of members or of interactions?', 'what happens to a member with one interaction?', 'does a withdrawn application count in the denominator?'. Candidates who narrate the partition and the denominator out loud consistently outperform.",
-    "Preparation strategy: this kit consumes **all 5 of LinkedIn's registry mentions** — the manager-pay self-join, the calls-between-members census, the sessionize-events work-spell build, the recursive reporting-line walk and the Power Creators tier read — then theme-curates 11 more from the SQL band that mirror the company's known question themes: graph pairs, hierarchy recursion, funnel CASE folds, ratio reads and trend buckets. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {violet:engagement trend walk} (a LAG over month buckets with honest first-row NULLs), the other rebuilds the {rose:unanswered-application pipeline} (an anti-join whose six rows reconcile to $15,217). The storefront mapping is declared, not hidden — invoices are applications, payments are recruiter responses, cents are divided by 100.0 — because making the stand-in explicit is itself the habit LinkedIn's screens reward.",
+    "Preparation strategy: this kit consumes **all 5 of LinkedIn's registry mentions** — the manager-pay self-join, the calls-between-members census, the sessionize-events work-spell build, the recursive reporting-line walk and the Power Creators tier read — then theme-curates 11 more from the SQL band that mirror the company's known question themes: graph pairs, hierarchy recursion, funnel CASE folds, ratio reads and trend buckets. Do the topics in order, then run all six case studies on the live storefront db: one rebuilds the {violet:engagement trend walk} (a LAG over month buckets with honest first-row NULLs), the other rebuilds the {rose:unanswered-application pipeline} (an anti-join whose six rows reconcile to $15,217), with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The storefront mapping is declared, not hidden — invoices are applications, payments are recruiter responses, cents are divided by 100.0 — because making the stand-in explicit is itself the habit LinkedIn's screens reward.",
     "Under the dashboard layer sits the platform reality, and it prices every read. The money side is integer cents end to end — the house read is `amount_cents / 100.0`, and the bare /100 integer form is the one that eats odd cents the day the pipeline carries any. Reconciliations keeps three standing tripwires on the board: #11 {rose:withdrawn-but-answered} at 925.00, #28 advanced-but-unanswered at 1,756.00, and one partial settlement of 4,000.00 against a 6,148.00 requisition. The completion stamp (`shipped_at`) rides on **82 of 103 interactions** at a 2.98-day average cycle, and five applications carry split recruiter responses — *so the response join pre-aggregates, or the application grain silently doubles*.",
     "Preparation at full depth: the kit now runs **fifteen topics, twenty-four theory drills, thirty MCQs and six audited case studies** on the storefront db. The two originals rebuild the {violet:engagement trend walk} and the unanswered-application pipeline; the four additions are a **power-networker leaderboard** (RANK over a four-way tie at 4 interactions), the {amber:interaction-weight tier census} (a CASE fold whose shares reconcile to 100), an out-engage-the-average screen (a scalar-subquery bar the query prints beside every row) and a one-scan morning census (FILTER branches counting the 103 / 82 / 2.98 story in a single pass). The 32-problem pool keeps LinkedIn's 5 tagged rows first, then theme-curates the rest — two-hop reach, mutual-pair checks, span-of-control folds, rolling frames, profile-hygiene screens and percentile tiers among them. The bar to clear before the loop: *state the denominator before the share, and reconcile every multi-branch total against the raw COUNT*.",
   ],
@@ -70,12 +70,12 @@ export const linkedinKit: CompanyKit = {
     {
       name: "Folding the interaction log",
       why: "Everything at LinkedIn starts by folding the interaction spine: interactions per member per month, applications per requisition, responses per recruiter. The screens warm up with GROUP BY + HAVING at event scale, and the trap is always the same — counting event rows when the business object is a person. The followers census is this fold with a social accent.",
-      slugs: ["find-followers-count", "unique-orders-and-customers-per-month", "percentage-of-users-attended-a-contest"],
+      slugs: ["find-followers-count", "unique-orders-and-customers-per-month", "percentage-of-users-attended-a-contest", "department-highest-salary"],
     },
     {
       name: "Connection-graph self-joins",
       why: "The graph IS the product: member-to-member calls, reports-to-manager pay gaps, creator tiers gated on follower counts. These problems drill the self-join grammar — two aliases of one table, paired rows, orientation handled deliberately — that LinkedIn asks whenever a relationship, not a row, is the unit. Three of the kit's five tagged mentions live here, and the tie between them is the interview.",
-      slugs: ["employees-earning-more-than-their-managers", "number-of-calls-between-two-persons", "linkedin-power-creators"],
+      slugs: ["employees-earning-more-than-their-managers", "number-of-calls-between-two-persons", "linkedin-power-creators", "dau-wau-stickiness"],
     },
     {
       name: "Reporting-hierarchy recursion",
@@ -85,7 +85,7 @@ export const linkedinKit: CompanyKit = {
     {
       name: "Feed-rail windows",
       why: "The feed is a per-member rail: most recent interactions, latest activity per connection, the second-most-recent event the follow-up always asks for. MAX-joined-back breaks on timestamp ties; the surviving answer is a partitioned ROW_NUMBER with a deterministic tie-break. The one-activity member edge case — a ladder with a single rung — is the probe that ends loops.",
-      slugs: ["second-most-recent-activity", "the-most-recent-three-orders", "active-users"],
+      slugs: ["second-most-recent-activity", "the-most-recent-three-orders", "active-users", "keep-latest-dedupe"],
     },
     {
       name: "Application funnels with CASE",
@@ -95,37 +95,37 @@ export const linkedinKit: CompanyKit = {
     {
       name: "Response-latency date math",
       why: "Hiring latency is LAG and JULIANDAY math: days from application to first response, the confirmation second-day gate, the longest silence before a follow-up. The 28.4-day average with a 13-to-84 spread is the business reality — and the date grammar (half-open intervals, once-at-the-edge rounding) is what makes the curve trustworthy.",
-      slugs: ["users-that-actively-request-confirmation-messages", "second-day-confirmation", "biggest-window-between-events"],
+      slugs: ["users-that-actively-request-confirmation-messages", "second-day-confirmation", "biggest-window-between-events", "rising-temperature"],
     },
     {
       name: "Acceptance-rate ratios",
       why: "The graph's health reads are ratios: invitation acceptance, confirmation rate, engagement per impression. Each is a denominator argument before it is a number — the 100.0-before-division fix and the NULL-coalesce zero-fill are drilled until the honest per-invitation base is a reflex, because a rate whose denominator drifted reads exactly as healthy as one that didn't.",
-      slugs: ["friend-requests-i-overall-acceptance-rate", "confirmation-rate", "queries-quality-and-percentage"],
+      slugs: ["friend-requests-i-overall-acceptance-rate", "confirmation-rate", "queries-quality-and-percentage", "consecutive-numbers"],
     },
     {
       name: "Work-spell sessionization",
       why: "Professional activity comes in spells — bursts of feed engagement and application pushes separated by quiet gaps. Gaps-and-islands sessionization (the tagged sessionize-events is the industrial version) turns the log into spells, and spell counts per member are the intensity metric retention reports on. LAG the gap, flag the break, run the island key: the three-stage build LinkedIn loves to ask.",
-      slugs: ["sessionize-events", "report-contiguous-dates", "find-loyal-customers"],
+      slugs: ["sessionize-events", "report-contiguous-dates", "find-loyal-customers", "find-bursty-behavior"],
     },
     {
       name: "Unanswered-pipeline anti-joins",
       why: "The talent funnel's live edge is the anti-join: applications with no response row, members gone quiet past the reconnection bar. The shape (LEFT JOIN + IS NULL, or NOT EXISTS) matters even where the never-interacted count returns zero — the day it isn't zero is the day the query is already written, and the WHERE-on-right-column collapse is the trap that hides the answer.",
-      slugs: ["customers-who-never-order", "dormant-reactivation", "sellers-with-no-sales"],
+      slugs: ["customers-who-never-order", "dormant-reactivation", "sellers-with-no-sales", "friends-with-no-mutual-friends", "first-and-last-call-on-the-same-day", "tree-node"],
     },
     {
       name: "Trend walks & month buckets",
       why: "The engagement trend is a month-bucketed walk — 14 months from 2024-01 to 2025-02, the January peak of 3,731.97 against the July trough of 1,193.86 — and every delta is LAG over that spine. '%Y-%m' bucketing, 30-day activity windows and latest-login folds are the three tools; the first-row NULL and the year-collision bucket are the two follow-ups.",
-      slugs: ["monthly-transactions-i", "user-activity-for-the-past-30-days-i", "the-latest-login-in-2020"],
+      slugs: ["monthly-transactions-i", "user-activity-for-the-past-30-days-i", "the-latest-login-in-2020", "game-play-analysis-iv"],
     },
     {
       name: "Second-degree reach & shared pairs",
       why: "The Economic Graph's headline number is reach: who is two hops from whom, and which member pairs share the most connections. These problems drill the two-hop grammar — chained joins, pair keys, shared-count folds — where the whole difficulty is keeping orientations and distinctness honest while the path length grows. The shared-followers pair read is 'people you may know' in miniature.",
-      slugs: ["popularity-percentage", "strong-friendship", "all-the-pairs-with-the-maximum-number-of-common-followers"],
+      slugs: ["popularity-percentage", "strong-friendship", "all-the-pairs-with-the-maximum-number-of-common-followers", "symmetric-pairs", "users-with-two-purchases-within-seven-days", "second-degree-follower"],
     },
     {
       name: "Span-of-control census",
       why: "Reporting lines are a fold, not just a walk: direct reports per manager, managers past a span bar, average pay per reporting group. The screens pair the recursive walk with a GROUP BY over the manager key, and the trap is the same one the interaction log has — counting edges when the business object is a person. The span census is where hierarchy meets HAVING.",
-      slugs: ["the-number-of-employees-which-report-to-each-employee", "managers-with-at-least-5-direct-reports", "average-salary-of-departments"],
+      slugs: ["the-number-of-employees-which-report-to-each-employee", "managers-with-at-least-5-direct-reports", "average-salary-of-departments", "find-the-team-size"],
     },
     {
       name: "Rolling frames & pacing",
@@ -135,12 +135,12 @@ export const linkedinKit: CompanyKit = {
     {
       name: "Profile-hygiene screens",
       why: "A professional graph is only as good as its profiles: null or blank fields, malformed emails, mis-keyed stamps. The data-quality screens here are COUNT(col) versus COUNT(*) censuses, NULL-arm CASE branches and pattern guards — the drills that decide whether a funnel number is a metric or a rumor. LinkedIn's anomaly tickets (#28-style) start life as exactly these screens.",
-      slugs: ["null-blank-audit", "invalid-tweets-ii", "books-with-null-ratings"],
+      slugs: ["null-blank-audit", "invalid-tweets-ii", "books-with-null-ratings", "find-the-missing-ids"],
     },
     {
       name: "Percentile tiers & segmentation",
       why: "Member activity is tiered, not averaged: the top percentile of networkers, the usage tiers the product team prices against, the segment cuts that survive a board review. PERCENT_RANK, NTILE and DENSE_RANK build those tiers, and the interview is the boundary — which member lands in the top decile of a 16-member panel and what the tie does to the cut. Concentration claims (63.5% from the top spenders) live or die on this grammar.",
-      slugs: ["usage-tier-percentiles", "rfm-segmentation", "top-percentile-fraud"],
+      slugs: ["usage-tier-percentiles", "rfm-segmentation", "top-percentile-fraud", "rank-scores", "second-highest-salary"],
     },
   ],
 

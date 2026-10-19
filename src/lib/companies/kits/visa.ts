@@ -55,7 +55,7 @@ export const visaKit: CompanyKit = {
     {
       name: "Auth-to-settlement joins",
       why: "Authorizations and settlements live in different tables and must be reconciled row by row: every settlement traces to an auth, and the auths with no settlement yet ARE the open exposure. Visa screens drill join type as a survival decision — INNER for the matched money story, LEFT from the auth side to keep the not-yet-captured tail visible.",
-      slugs: ["bank-account-summary-ii", "combine-two-tables", "product-sales-analysis-i", "keep-latest-dedupe", "prepayment-detection"],
+      slugs: ["bank-account-summary-ii", "combine-two-tables", "product-sales-analysis-i", "keep-latest-dedupe", "prepayment-detection", "duplicate-charge-pairs"],
     },
     {
       name: "Rates with honest denominators",
@@ -70,7 +70,7 @@ export const visaKit: CompanyKit = {
     {
       name: "Volume aggregation at network scale",
       why: "Billions of authorizations a day means every read is a fold: attempts and value per day, per market, per ticket band. The screens check whether you can aggregate without letting declined attempts pollute settled-value totals — two populations, one GROUP BY, stated out loud.",
-      slugs: ["group-sold-products-by-the-date", "monthly-transactions-i", "classes-more-than-5-students", "balance-rollforward", "suspicious-bank-account-transactions", "expected-credit-loss"],
+      slugs: ["group-sold-products-by-the-date", "monthly-transactions-i", "classes-more-than-5-students", "balance-rollforward", "suspicious-bank-account-transactions", "expected-credit-loss", "transaction-velocity", "amount-anomaly-zscore", "top-percentile-fraud", "structuring-detection"],
     },
     {
       name: "Decline ladders & ranking windows",
@@ -80,7 +80,7 @@ export const visaKit: CompanyKit = {
     {
       name: "Unmatched-settlement anti-joins",
       why: "Reconciliation is anti-join work: authorizations with no settlement row, accounts with no activity, expected files that never landed. The LEFT JOIN + IS NULL shape (and its NOT EXISTS twin) shows up in most screens as the 'find the exposure' question.",
-      slugs: ["customers-who-never-order", "sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "settlement-fails-aging", "ar-aging-schedule", "journal-gap-detection"],
+      slugs: ["customers-who-never-order", "sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "settlement-fails-aging", "ar-aging-schedule", "journal-gap-detection", "trial-balance-check", "gl-reconciliation"],
     },
     {
       name: "NULL policy on pending authorizations",
@@ -95,7 +95,7 @@ export const visaKit: CompanyKit = {
     {
       name: "The two-grain census",
       why: "'Transactions AND distinct credentials per market' is the opening read of every network review — and the trap is counting both at the same grain. COUNT(*) counts attempts; COUNT(DISTINCT credential) counts instruments; the gap is the intensity signal.",
-      slugs: ["daily-leads-and-partners", "find-followers-count", "students-and-examinations"],
+      slugs: ["daily-leads-and-partners", "find-followers-count", "students-and-examinations", "immediate-food-delivery-ii"],
     },
   ],
 

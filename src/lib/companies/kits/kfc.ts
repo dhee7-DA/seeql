@@ -51,12 +51,12 @@ export const kfcKit: CompanyKit = {
     {
       name: "Digital order funnels",
       why: "Every KFC digital screen opens with the funnel: orders booked, fired (shipped_at stamped), completed. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling a fired order 'completed' — 30 versus 52 on this db.",
-      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "funnel-step-conversion"],
+      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "funnel-step-conversion", "most-frequently-ordered-product-per-customer"],
     },
     {
       name: "Two-grain market censuses",
       why: "Orders and guests are different grains of the same join, and every census here reports both: EU runs 45 orders from 8 guests while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "customer-order-frequency", "trips-and-users", "find-loyal-customers"],
     },
     {
       name: "Joining guests to orders",
@@ -66,37 +66,37 @@ export const kfcKit: CompanyKit = {
     {
       name: "Guest leaderboards",
       why: "Leaderboards are rank-window reporting where ties are guaranteed — four guests sit at 4 orders each on this db, under a ladder that runs 24, 17, 14, 13, 5. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer guests, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "second-highest-salary"],
     },
     {
       name: "Bucket-band menus with CASE",
       why: "The menu is engineered in bands — budget sides, core buckets, premium drops — and the band fold is a CASE histogram: budget 8 SKUs at 32.06 average, core 8 at 111.5, premium empty at max price 199.99. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the mix forecast, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "spend-histogram", "count-salary-categories"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "spend-histogram", "count-salary-categories", "average-selling-price", "repeat-purchase-rate"],
     },
     {
       name: "Month walks & LAG momentum",
       why: "The 14-month order spine (2024-01 to 2025-02) is the growth call's home turf: prior month beside current, delta rounded, the 1,193.86 July trough named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero to coalesce away.",
-      slugs: ["restaurant-growth", "monthly-transactions-i", "biggest-window-between-events"],
+      slugs: ["restaurant-growth", "monthly-transactions-i", "biggest-window-between-events", "fix-product-name-format"],
     },
     {
       name: "Franchisee settlement coverage",
       why: "Billed is not remitted — the franchise ledger (28 statements, 27 remittance legs, INTEGER cents) is where the store world meets money. The exact/partial/none coverage split (21 / 1 / 6) is one LEFT JOIN and one CASE away, and the anti-join's 6 never-remitted statements worth 15,217 feed the dunning calendar.",
-      slugs: ["customers-who-never-order", "sellers-with-no-sales", "count-student-number-in-departments"],
+      slugs: ["customers-who-never-order", "sellers-with-no-sales", "count-student-number-in-departments", "duplicate-charge-pairs"],
     },
     {
       name: "Nested folds & tier gates",
       why: "Screens escalate into staging: fold per-guest order counts, then judge them against a computed platform mean (6.44 here — exactly four guests clear it). Scalar, correlated and derived shapes each carry an empty-inner-query answer you are expected to give unprompted.",
-      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments"],
+      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments", "percentage-of-users-attended-a-contest", "confirmation-rate", "basket-depth-aov"],
     },
     {
       name: "One-pass status censuses",
       why: "The ops board gets completed, fired, queued and aborted in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "top-travellers", "queries-quality-and-percentage"],
     },
     {
       name: "Cents-safe billing discipline",
       why: "Royalty statements and remittances carry INTEGER cents, so every dollar read is amount_cents / 100.0 — the missing .0 turns a 1,756.00 print into 1,756 and quietly eats cents on every odd-cent row. Tender-rail folds (card 16 legs / 37,364 versus wire 11 / 32,248) are the daily reconciliation reads.",
-      slugs: ["monthly-transactions-ii", "products-worth-over-invoices", "bank-account-summary-ii"],
+      slugs: ["monthly-transactions-ii", "products-worth-over-invoices", "bank-account-summary-ii", "group-sold-products-by-the-date"],
     },
   ],
 

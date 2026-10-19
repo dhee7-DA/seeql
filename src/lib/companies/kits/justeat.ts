@@ -112,17 +112,17 @@ export const justeatKit: CompanyKit = {
     {
       name: "Cancellation shares, honest denominators",
       why: "7 cancelled of 103 placed reads 6.8% — but only against the full placed population. Screens drill the conditional-count fold (SUM(CASE WHEN status = 'cancelled' …) ÷ COUNT(*)) until placing the status filter in WHERE feels physically wrong, because that filter is the denominator-drift bug.",
-      slugs: ["percentage-of-users-attended-a-contest", "confirmation-rate", "reported-posts-ii"],
+      slugs: ["percentage-of-users-attended-a-contest", "confirmation-rate", "reported-posts-ii", "trips-and-users"],
     },
     {
       name: "Settlement cycles on integer cents",
       why: "Partner money is invoices and payments in INTEGER cents — 28 invoices (21 paid / 6 open / 1 void), 27 payment rows. Screens drill date-filtered transaction folds and join-summaries where forgetting the /100.0 ships a 100x settlement number that survives every eyeball.",
-      slugs: ["monthly-transactions-i", "monthly-transactions-ii", "bank-account-summary-ii"],
+      slugs: ["monthly-transactions-i", "monthly-transactions-ii", "bank-account-summary-ii", "recyclable-and-low-fat-products"],
     },
     {
       name: "Anti-joins: partners with no settlement",
       why: "Six settlement requests totalling 15,217 dollars have no payment row — the unpaid-AR census is a pure anti-join, and the db's fan-out (split payments on five invoices) makes it non-trivial. NOT EXISTS and LEFT JOIN … IS NULL are the shapes; NOT IN over a nullable column is the silent-kill to unlearn.",
-      slugs: ["sellers-with-no-sales", "customers-who-never-order", "dormant-reactivation"],
+      slugs: ["sellers-with-no-sales", "customers-who-never-order", "dormant-reactivation", "customer-who-visited-but-did-not-transact", "sales-person"],
     },
     {
       name: "Two-grain market census",
@@ -132,12 +132,12 @@ export const justeatKit: CompanyKit = {
     {
       name: "Month buckets & seasonal curves",
       why: "The seasonal read is STRFTIME('%Y-%m', created_at): 14 buckets from 2024-01 to 2025-02, January's 3,731.97 peak against July's 1,193.86 trough. Screens drill date-filtered aggregation and period-boundary logic — the demand curve is the backdrop every marketplace KPI is read against.",
-      slugs: ["list-the-products-ordered-in-a-period", "the-latest-login-in-2020", "user-activity-for-the-past-30-days-i"],
+      slugs: ["list-the-products-ordered-in-a-period", "the-latest-login-in-2020", "user-activity-for-the-past-30-days-i", "product-sales-analysis-iii", "second-most-recent-activity"],
     },
     {
       name: "Partner leaderboards",
       why: "Top partners by delivered revenue (Nordic 11,130.25 down to Pacific 2,980.15) are ranking-window work: RANK with a visible rank column, deterministic tiebreakers, and the honest admission that RANK, DENSE_RANK and ROW_NUMBER differ exactly when ties arrive.",
-      slugs: ["rank-scores", "sales-analysis-i", "top-travellers"],
+      slugs: ["rank-scores", "sales-analysis-i", "top-travellers", "customer-placing-the-largest-number-of-orders", "department-top-three-salaries"],
     },
     {
       name: "Catalog hygiene: text & NULL guards",
@@ -147,12 +147,12 @@ export const justeatKit: CompanyKit = {
     {
       name: "CASE pivots & daypart folds",
       why: "The service census, the daypart demand curve and the market × status grid are all CASE pivots: conditional counts in one pass, branch totals reconciling to COUNT(*). The marketplace-only model runs lean — one query per answer is the budget, and CASE is how it's paid.",
-      slugs: ["weather-type-in-each-country", "reformat-department-table", "sales-by-day-of-the-week"],
+      slugs: ["weather-type-in-each-country", "reformat-department-table", "sales-by-day-of-the-week", "find-loyal-customers"],
     },
     {
       name: "Window frames & running totals",
       why: "Demand curves are cumulative reads: running GMV across the 14 month buckets, trailing order counts, frames that say ROWS BETWEEN. The screens push past RANK into frame territory where the frame clause IS the arithmetic — and the analyst who can't say what their frame includes is guessing. Just Eat reads the market week as a running total, not a bar chart.",
-      slugs: ["rolling-7d-actives", "biggest-window-between-events", "report-contiguous-dates"],
+      slugs: ["rolling-7d-actives", "biggest-window-between-events", "report-contiguous-dates", "product-sales-analysis-ii", "user-activity-for-the-past-30-days-ii", "last-person-to-fit-in-the-bus"],
     },
     {
       name: "Set ops: stacked service reports",
@@ -172,7 +172,7 @@ export const justeatKit: CompanyKit = {
     {
       name: "Grand totals & one-pass censuses",
       why: "The marketplace runs lean: one query per answer, even when the answer needs a grand-total row or five branch counts at once. GROUP_CONCAT folds a partner's menu into one display cell, FILTER (WHERE …) counts branches in a single pass, and the branch totals must reconcile to COUNT(*) — the reconciliation IS the health check.",
-      slugs: ["group-sold-products-by-the-date", "count-salary-categories", "transactions-per-visit-histogram"],
+      slugs: ["group-sold-products-by-the-date", "count-salary-categories", "transactions-per-visit-histogram", "customer-order-frequency", "most-frequently-ordered-product-per-customer"],
     },
   ],
 

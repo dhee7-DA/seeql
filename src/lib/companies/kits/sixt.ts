@@ -58,22 +58,22 @@ export const sixtKit: CompanyKit = {
     {
       name: "Two-grain station censuses",
       why: "Contracts and renters are different grains of the same join, and every market census here reports both: EU runs 45 contracts from 8 renters while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is station load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "article-views-ii", "number-of-rich-customers", "daily-leads-and-partners", "classes-more-than-5-students"],
+      slugs: ["unique-orders-and-customers-per-month", "article-views-ii", "number-of-rich-customers", "daily-leads-and-partners", "classes-more-than-5-students", "queries-quality-and-percentage", "average-selling-price", "list-the-products-ordered-in-a-period", "find-stores-with-inventory-imbalance", "immediate-food-delivery-ii"],
     },
     {
       name: "Joining renters to contracts",
       why: "Renters carry region and created_at; contracts inherit them through joins, and the join type decides who survives. A contract without a renter is corruption; a renter without contracts is whitespace — though on this db the anti-join returns a confident zero, and proving that zero is part of the job.",
-      slugs: ["combine-two-tables", "employees-with-missing-information", "customers-who-never-order", "count-student-number-in-departments", "customer-who-visited-but-did-not-transact", "dormant-reactivation"],
+      slugs: ["combine-two-tables", "employees-with-missing-information", "customers-who-never-order", "count-student-number-in-departments", "customer-who-visited-but-did-not-transact", "dormant-reactivation", "keep-latest-dedupe", "null-blank-audit", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "Fleet-class enrichment & the line fan-out",
       why: "Class-level reporting means attaching fleet family, day rate and pool size to every contract line — the products-to-order_items join where line quantity is rental days and unit_price is the locked per-day rate. SIXT's follow-up is always the fan-out: join lines in, and COUNT(*) silently stops counting contracts.",
-      slugs: ["product-sales-analysis-ii", "product-sales-analysis-iii", "sales-analysis-i"],
+      slugs: ["product-sales-analysis-ii", "product-sales-analysis-iii", "sales-analysis-i", "trips-and-users", "total-traveled-distance"],
     },
     {
       name: "Turnover leaderboards & tie policy",
       why: "Top-class-per-family, hardest-worked vehicle, One-tier renters — rotation reporting is leaderboard reporting. SIXT drills the rank trio because ties are guaranteed at station scale — four renters sit at 4 contracts each on this db — and the LIMIT-1-OFFSET-1 habit breaks on them.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "find-top-performing-driver", "compute-the-rank-as-a-percentage"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "find-top-performing-driver", "compute-the-rank-as-a-percentage", "customer-placing-the-largest-number-of-orders", "most-frequently-ordered-product-per-customer", "the-most-recent-three-orders"],
     },
     {
       name: "Day-rate banding with CASE",
@@ -98,7 +98,7 @@ export const sixtKit: CompanyKit = {
     {
       name: "Claims & cents discipline",
       why: "Returned is not settled — the finance tables (28 statements, 27 settlement rows, INTEGER cents) are where the rental world meets money, damage and fuel fees included. Every dollar read is amount_cents / 100.0, and the exact/partial/none coverage split (21 / 1 / 6) is one CASE away.",
-      slugs: ["bank-account-summary-ii", "monthly-transactions-i", "ar-aging-schedule", "delinquency-buckets", "monthly-transactions-ii", "deferred-revenue"],
+      slugs: ["bank-account-summary-ii", "monthly-transactions-i", "ar-aging-schedule", "delinquency-buckets", "monthly-transactions-ii", "deferred-revenue", "gl-reconciliation", "weeks-of-supply", "duplicate-charge-pairs"],
     },
   ],
 

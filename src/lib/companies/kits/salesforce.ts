@@ -64,7 +64,7 @@ export const salesforceKit: CompanyKit = {
     {
       name: "Rep & territory leaderboards",
       why: "Leaderboards are rank-window reporting where ties are guaranteed — four accounts sit at 4 deals each on this db, and two reps share every crowded rung. RANK, DENSE_RANK and ROW_NUMBER are a business decision about who shares a rung, not syntax trivia.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "second-highest-salary", "nth-highest-salary", "compute-the-rank-as-a-percentage", "find-the-team-size"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "second-highest-salary", "nth-highest-salary", "compute-the-rank-as-a-percentage", "find-the-team-size", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "Forecast categories with CASE",
@@ -74,7 +74,7 @@ export const salesforceKit: CompanyKit = {
     {
       name: "ARR movement waterfalls (LAG)",
       why: "The ARR walk — new, expansion, contraction, churn — is a LAG over a month spine, classified per movement. The first row returns NULL by definition and the classification logic must say so, or every quarter-one report starts with a phantom drop.",
-      slugs: ["mrr-waterfall", "growth-accounting", "week-over-week-churn", "balance-rollforward", "find-cumulative-salary-of-an-employee"],
+      slugs: ["mrr-waterfall", "growth-accounting", "week-over-week-churn", "balance-rollforward", "find-cumulative-salary-of-an-employee", "customers-who-never-order"],
     },
     {
       name: "Retention cohorts & repeat deals",
@@ -84,7 +84,7 @@ export const salesforceKit: CompanyKit = {
     {
       name: "Concentration & account sizing",
       why: "When 63.5% of value sits with 3,000-plus accounts, concentration reads decide coverage models. Share-of-total windows, NTILE quintiles and spend tiers turn a deal table into a portfolio view — and the denominator is always total ARR.",
-      slugs: ["portfolio-weights", "rfm-segmentation", "customer-purchasing-behavior-analysis", "average-salary-of-departments"],
+      slugs: ["portfolio-weights", "rfm-segmentation", "customer-purchasing-behavior-analysis", "average-salary-of-departments", "queries-quality-and-percentage"],
     },
     {
       name: "Subquery screens & quota gates",

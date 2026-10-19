@@ -52,7 +52,7 @@ export const wellsfargoKit: CompanyKit = {
     {
       name: "Reconciliation folds & the trial balance",
       why: "Wells Fargo's first instinct is the identity: debits equal credits, branch counts sum to the total, both sides of a tie printed side by side. Conditional SUMs over 1/0 flags are the daily bread — a fold that can't prove it reconciled is a fold that didn't finish.",
-      slugs: ["trial-balance-check", "balance-rollforward", "gl-reconciliation", "account-balance", "deferred-revenue"],
+      slugs: ["trial-balance-check", "balance-rollforward", "gl-reconciliation", "account-balance", "deferred-revenue", "ar-aging-schedule", "journal-gap-detection"],
     },
     {
       name: "LEFT JOIN coverage reads",

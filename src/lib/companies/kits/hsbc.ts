@@ -53,12 +53,12 @@ export const hsbcKit: CompanyKit = {
     {
       name: "Corridor chains across three tables",
       why: "Every corridor read is a chain — client → facility → settlement — and the chain's grain is the whole test: one join row is a client-facility-settlement triple, and COUNTs at three different grains disagree the moment a client repeats. HSBC opens screens here because global reporting lives or dies on join discipline.",
-      slugs: ["number-of-trusted-contacts-of-a-customer", "students-and-examinations", "top-competitors", "customers-who-never-order"],
+      slugs: ["number-of-trusted-contacts-of-a-customer", "students-and-examinations", "top-competitors", "customers-who-never-order", "circular-transfers"],
     },
     {
       name: "Settlement stacks & grand totals",
       why: "Global close reporting stitches populations into one layout — per-account detail plus a TOTAL row — with UNION ALL, not UNION: the grand row must survive, and column positions must line up or the stack silently mislabels two businesses. Branch totals reconciling to the grand row is the audit the close runs on itself.",
-      slugs: ["count-salary-categories", "team-scores-in-football-tournament", "monthly-transactions-ii"],
+      slugs: ["count-salary-categories", "team-scores-in-football-tournament", "monthly-transactions-ii", "settlement-fails-aging"],
     },
     {
       name: "Set ops across markets",
@@ -73,7 +73,7 @@ export const hsbcKit: CompanyKit = {
     {
       name: "Running balances across the day",
       why: "Settlement ops thinks in running money: the cash account's balance as hits land, cumulative flow per corridor, cumulative settled value per market. Frame discipline — ROWS vs RANGE — decides whether the running total matches the auditor's replay of the day.",
-      slugs: ["account-balance", "game-play-analysis-iii", "last-person-to-fit-in-the-elevator"],
+      slugs: ["account-balance", "game-play-analysis-iii", "last-person-to-fit-in-the-elevator", "balance-rollforward"],
     },
     {
       name: "LAG & LEAD flow deltas",
@@ -93,7 +93,7 @@ export const hsbcKit: CompanyKit = {
     {
       name: "FX & as-of joins",
       why: "Multi-currency quoting is as-of discipline: which rate was in force at settlement time, not at report time. Point-in-time joins and latest-rate lookups are the FX muscle — and the classic failure is joining to today's rate, restating yesterday's flows in a currency they never traded in.",
-      slugs: ["fx-exposure-report", "product-price-at-a-given-date", "point-in-time-asof"],
+      slugs: ["fx-exposure-report", "product-price-at-a-given-date", "point-in-time-asof", "duplicate-charge-pairs"],
     },
     {
       name: "Money math on integer cents",

@@ -57,12 +57,12 @@ export const tripcomKit: CompanyKit = {
     {
       name: "Funnel-stage censuses",
       why: "The trading board is a one-pass census: booked, completed, in-trip, pending, cancelled, share — every booking in exactly one conditional bucket, all of them in the denominator. The drills are conditional folds and share math; the graded part is the denominator staying whole.",
-      slugs: ["immediate-food-delivery-i", "queries-quality-and-percentage", "percentage-of-users-attended-a-contest"],
+      slugs: ["immediate-food-delivery-i", "queries-quality-and-percentage", "percentage-of-users-attended-a-contest", "funnel-step-conversion", "email-engagement-funnel", "median-time-to-convert", "keep-latest-dedupe", "ab-test-conversion-lift", "ab-sample-ratio-mismatch", "average-selling-price", "count-student-number-in-departments", "group-sold-products-by-the-date"],
     },
     {
       name: "Market demand folds",
       why: "The region grid folds bookings by market — count, value, distinct travelers per region — without letting the segment join inflate any of it. Per-family demand folds and period-filtered reads are the exact shape the market team ships daily.",
-      slugs: ["product-sales-analysis-ii", "sales-analysis-i", "list-the-products-ordered-in-a-period"],
+      slugs: ["product-sales-analysis-ii", "sales-analysis-i", "list-the-products-ordered-in-a-period", "point-in-time-asof"],
     },
     {
       name: "Cross-sell pairing",
@@ -72,7 +72,7 @@ export const tripcomKit: CompanyKit = {
     {
       name: "Cancellation clocks",
       why: "Booking-to-travel is julianday math over completed journeys only — 2.98 days average, range 2 to 4 — and the 21 never-traveled bookings must NULL out, not fabricate. Process-latency folds and date-window drills are the clock's toolkit.",
-      slugs: ["average-time-of-process-per-machine", "find-golden-hour-customers", "users-with-two-purchases-within-seven-days"],
+      slugs: ["average-time-of-process-per-machine", "find-golden-hour-customers", "users-with-two-purchases-within-seven-days", "basket-depth-aov", "product-price-at-a-given-date"],
     },
     {
       name: "Supply-partner boards",
@@ -92,7 +92,7 @@ export const tripcomKit: CompanyKit = {
     {
       name: "Zero-attach anti-joins",
       why: "A partner no booking ever touches, a traveler who browsed and never booked — the anti-join is the funnel leak detector. On this db every unit and traveler has transacted, so part of the drill is recognizing when zero is the true answer.",
-      slugs: ["sellers-with-no-sales", "customers-who-never-order", "find-churn-risk-customers"],
+      slugs: ["sellers-with-no-sales", "customers-who-never-order", "find-churn-risk-customers", "product-sales-analysis-iii", "sales-analysis-iii", "employee-bonus", "customer-who-visited-but-did-not-transact", "students-and-examinations", "sales-analysis-ii", "the-airport-with-the-most-flights"],
     },
     {
       name: "Month-bucket pace",
@@ -102,7 +102,7 @@ export const tripcomKit: CompanyKit = {
     {
       name: "Reranking & recency boards",
       why: "Recent-booking trackers and partner ladders are window ranks where recency needs a deterministic tiebreak and ties need a stated policy. Rank and top-N drills with tie handling are exactly what the boards ask.",
-      slugs: ["the-most-recent-three-orders", "second-most-recent-activity", "department-top-three-salaries"],
+      slugs: ["the-most-recent-three-orders", "second-most-recent-activity", "department-top-three-salaries", "top-travellers", "biggest-window-between-events", "maximum-transaction-each-day", "last-person-to-fit-in-the-bus"],
     },
     {
       name: "Settlement set-op stacks",

@@ -50,7 +50,7 @@ export const hertzKit: CompanyKit = {
     {
       name: "Counter-to-return lifecycle counts",
       why: "Every Hertz screen opens with the lifecycle: agreements booked, checked out (shipped_at stamped), returned-and-settled. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling an on-rent agreement 'returned' — 30 versus 52 on this db.",
-      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "bikes-last-time-used", "hopper-company-queries-i"],
+      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "bikes-last-time-used", "hopper-company-queries-i", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "Two-grain counter censuses",
@@ -65,7 +65,7 @@ export const hertzKit: CompanyKit = {
     {
       name: "Fleet-class enrichment",
       why: "Class-level reporting means attaching fleet family and partner attributes to every agreement line — the products-to-order_items join where line quantity is rental days and unit_price is the locked day rate. Hertz's follow-up is always the fan-out: join lines in, and COUNT(*) silently stops counting agreements.",
-      slugs: ["product-sales-analysis-ii", "product-sales-analysis-iii", "sales-analysis-i", "generate-the-invoice", "products-price-for-each-store"],
+      slugs: ["product-sales-analysis-ii", "product-sales-analysis-iii", "sales-analysis-i", "generate-the-invoice", "products-price-for-each-store", "immediate-food-delivery-ii", "confirmation-rate", "average-selling-price", "trips-and-users", "list-the-products-ordered-in-a-period", "duplicate-charge-pairs"],
     },
     {
       name: "Utilization leaderboards",
@@ -75,27 +75,27 @@ export const hertzKit: CompanyKit = {
     {
       name: "Day-rate banding with CASE",
       why: "Fleet classes are CASE-banded — the shelf runs 14.99 shuttle to 199.99 flagship, split 8 mid classes averaging 111.50 against 8 at 32.06 — with fixed edges the rate card publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the revenue forecast, and a reordered WHEN quietly re-bands the fleet.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "calculate-product-final-price", "spend-histogram"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "calculate-product-final-price", "spend-histogram", "most-frequently-ordered-product-per-customer", "the-most-recent-three-orders", "gl-reconciliation"],
     },
     {
       name: "Rotation month walks & LAG",
       why: "The 14-month agreement spine (2024-01 to 2025-02) is the revenue-management call's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) and the pre-festive lull named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine", "restaurant-growth", "cohort-retention-matrix"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine", "restaurant-growth", "cohort-retention-matrix", "null-blank-audit"],
     },
     {
       name: "Coverage set algebra",
       why: "Close packets stack populations — settled beside never-settled, this quarter beside last — and EXCEPT answers 'which billed agreements never settled'. UNION dedups whole rows silently, which makes it a correctness question, not a style one; the counter's stack must add up or it does not ship.",
-      slugs: ["team-scores-in-football-tournament", "monthly-transactions-ii", "the-airport-with-the-most-flights", "prepayment-detection"],
+      slugs: ["team-scores-in-football-tournament", "monthly-transactions-ii", "the-airport-with-the-most-flights", "prepayment-detection", "customers-who-bought-a-and-b-not-c", "customers-who-never-order"],
     },
     {
       name: "One-pass status censuses",
       why: "The ops board gets returned, on-rent, reserved and no-show in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift while the counter is calling.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "sales-by-day-of-the-week"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "sales-by-day-of-the-week", "queries-quality-and-percentage", "total-traveled-distance"],
     },
     {
       name: "Billing & cents discipline",
       why: "Returned is not settled — the finance tables (28 invoices, 27 payments, INTEGER cents) are where the counter world meets money, fuel and late fees included. Every dollar read is amount_cents / 100.0, and the exact/partial/none coverage split (21 / 1 / 6) is one CASE away.",
-      slugs: ["bank-account-summary-ii", "products-worth-over-invoices", "monthly-transactions-i", "ar-aging-schedule", "calculate-parking-fees-and-duration"],
+      slugs: ["bank-account-summary-ii", "products-worth-over-invoices", "monthly-transactions-i", "ar-aging-schedule", "calculate-parking-fees-and-duration", "keep-latest-dedupe"],
     },
   ],
 

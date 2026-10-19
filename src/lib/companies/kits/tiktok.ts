@@ -60,12 +60,12 @@ export const tiktokKit: CompanyKit = {
     {
       name: "Velocity & participation",
       why: "Events per user is the intensity signal: who watches most, what share of users participate at all, how sticky the loop is. The velocity reads are argmax-on-counts and participation shares — grouped folds where the grain is the whole question.",
-      slugs: ["customer-placing-the-largest-number-of-orders", "percentage-of-users-attended-a-contest", "dau-wau-stickiness", "find-users-with-high-token-usage", "leetcodify-similar-friends"],
+      slugs: ["customer-placing-the-largest-number-of-orders", "percentage-of-users-attended-a-contest", "dau-wau-stickiness", "find-users-with-high-token-usage", "leetcodify-similar-friends", "number-of-comments-per-post"],
     },
     {
       name: "Bursts & sessions",
       why: "A session is stitched from an ordered stream: LAG for the gap, a threshold for the cut, then per-session metrics. Burst detection compares peak buckets against the average — TikTok's rhythm reads all start with time-bucketed folds and two-stage windows.",
-      slugs: ["sessionize-events", "find-bursty-behavior", "count-the-number-of-experiments", "human-traffic-of-stadium"],
+      slugs: ["sessionize-events", "find-bursty-behavior", "count-the-number-of-experiments", "human-traffic-of-stadium", "create-a-session-bar-chart"],
     },
     {
       name: "Streaks & consecutive engagement",

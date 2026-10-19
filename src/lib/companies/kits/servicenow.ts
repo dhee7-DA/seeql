@@ -26,7 +26,7 @@ export const servicenowKit: CompanyKit = {
     "**ServiceNow** is the workflow layer of the enterprise — ITSM first (incident, problem, change), then HR, security and customer service, all running on one task-based data model where every record is a ticket with a state, an assignee and a clock. The analytics reality is *assurance under SLA*: how much is open, how old is it, and did we beat the clock. On this storefront db the mapping is honest: 16 enterprise accounts raise 103 incident tickets folded from 251 work-log lines, and the status mix reads like a resolution ledger — 52 {emerald:resolved} (50.5%), 30 fix-applied-in-verification (29.1%), 14 {amber:awaiting requester} (13.6%), 7 {rose:closed unresolved} (6.8%).",
     "The data org splits three ways. Service-ops analytics owns the volume folds: work-log lines joined to catalog items and aggregated per ticket — the busiest catalog family carries 121 lines across 54 tickets, the highest-billing family closes 97 lines worth **11,744.01**. Delivery analytics owns the aging math: 82 of 103 tickets carry a work-completion stamp, averaging **2.98 days** from raise to fix, range 2 to 4 — and the other 21 are the backlog the review actually argues about. Billing analytics owns the account book: 28 `invoices` against 27 `payments`, INTEGER cents throughout, with 6 never-settled bills worth 15,217 — one of them (#28, 1,756.00) claims {emerald:paid} with zero settlement rows behind it.",
     "Interview style is aging-then-denominator, then the reconciliation join. A screen opens with a two-grain census (EU carries 45 tickets from just 8 accounts; the US, 19 from 2), escalates into a conditional-count resolution rate with the denominator asked out loud ('does an {rose:unresolved} ticket sit in your base?'), then the aging board — `julianday(shipped_at) - julianday(created_at)` with the NULL policy stated before the average is computed. Follow-ups probe the anti-join that finds tickets with no work logged, and why RANK's shared rungs matter when four accounts tie. Candidates who state the population before computing are the ones who get callbacks.",
-    "Preparation strategy: the registry tags zero SQL problems for ServiceNow — this kit is **0 tagged LC, theme-curated**: all 30 topic slugs and 16 problems mirror known ITSM screens — ticket censuses, resolution-rate counting, catalog demand, aging windows, backlog anti-joins and billing reconciliation. Then run both case studies on the live db: one rebuilds the aging board the service review opens with, the other rebuilds the resolution-funnel census leadership signs the quarter with. The bar to clear: state the **denominator**, the join's survival rule, and the **cents rule** before you compute anything.",
+    "Preparation strategy: the registry tags zero SQL problems for ServiceNow — this kit is **0 tagged LC, theme-curated**: all 62 topic slugs and 32 problems mirror known ITSM screens — ticket censuses, resolution-rate counting, catalog demand, aging windows, backlog anti-joins and billing reconciliation. Then run all six case studies on the live db — built for spaced practice rather than one sitting: one rebuilds the aging board the service review opens with, another rebuilds the resolution-funnel census leadership signs the quarter with. The bar to clear: state the **denominator**, the join's survival rule, and the **cents rule** before you compute anything.",
     "**The economics under the queue** explain the interview's obsession with concentration. Lifetime ticket value is **34,833.28** across the 103 raised, averaging 338.19 — and it piles up fast: 63.5% of value sits with accounts above the 3,000 lifetime line, 71.2% above 2,000. Territory tells the same story at another grain — EU bills 15,089.23 from 8 accounts, APAC 11,605.45 from 5, the US 7,286.16 from just 2, LATAM 852.44 from 1 — so a `GROUP BY region` and a `COUNT(DISTINCT customer_id)` are two different claims about the same map. The billing book closes the loop: 28 invoices, 66,443 settled in full against 15,217 never touched, card settlements (16 worth 37,364) edging wire (11 worth 32,248), and a ledger tying out at 181,080 on both sides — {violet:revenue} only balances because every anomaly (#25's partial 4,000 of 6,148, #28's paid-with-nothing) is chased to the row.",
     "Preparation now runs in two passes. **Pass one** is the denominator gym: rebuild the resolution census (52 of 103), the two-grain territory fold (EU 45 from 8, US 19 from 2), and the stamped-only aging board (82 tickets at 2.98 days) until each ships with its population stated in a comment. **Pass two** is the case gauntlet — six rebuilds spanning the four added families: a scalar-subquery above-average screen, the month-bucketed incident calendar, a `DENSE_RANK()` leaderboard with its tie policy argued aloud, and a one-pass `FILTER` census of the invoice book. The upgrade this expansion drills is *consequence thinking*: every distractor you reject should break for a reason you can name — a swapped denominator, a merged year, a shared rung, a missed cent.",
   ],
@@ -68,7 +68,7 @@ export const servicenowKit: CompanyKit = {
     {
       name: "Joining accounts to incidents",
       why: "Tickets inherit account attributes through joins to the accounts table, and the join type decides who survives: a ticket with no account is corruption; an account with no ticket is a silent customer. Choosing INNER versus LEFT is a business statement.",
-      slugs: ["combine-two-tables", "top-travellers", "employees-with-missing-information"],
+      slugs: ["combine-two-tables", "top-travellers", "employees-with-missing-information", "movie-rating", "daily-leads-and-partners", "game-play-analysis-iv", "article-views-i", "sales-analysis-ii"],
     },
     {
       name: "Catalog demand & per-item effort",
@@ -78,7 +78,7 @@ export const servicenowKit: CompanyKit = {
     {
       name: "The incident calendar",
       why: "Loads are calendar arithmetic: STRFTIME('%Y-%m') buckets over tickets against the 3,731.97-effort peak and the 1,193.86 floor. ServiceNow drills the month-bucket idiom because every staffing chart hangs on that spine — and a '%m'-without-year fold merges two years into one lie.",
-      slugs: ["monthly-transactions-i", "the-latest-login-in-2020", "tasks-count-in-the-weekend"],
+      slugs: ["monthly-transactions-i", "the-latest-login-in-2020", "tasks-count-in-the-weekend", "product-price-at-a-given-date"],
     },
     {
       name: "Aging & SLA latency math",
@@ -113,12 +113,12 @@ export const servicenowKit: CompanyKit = {
     {
       name: "CASE pivots & band maps",
       why: "Every board this org ships is a CASE pivot: statuses into funnel stages, ticket ages into breach bands, weekdays into load columns. The salary-categories shape — CASE bands folded into a census — is the aging-band query in textbook clothing, and the weekday pivot is how every staffing chart in the review deck gets built.",
-      slugs: ["count-salary-categories", "sales-by-day-of-the-week", "weather-type-in-each-country"],
+      slugs: ["count-salary-categories", "sales-by-day-of-the-week", "weather-type-in-each-country", "confirmation-rate", "customer-order-frequency", "immediate-food-delivery-i", "monthly-transactions-ii", "not-boring-movies", "group-sold-products-by-the-date", "number-of-rich-customers", "team-scores-in-football-tournament"],
     },
     {
       name: "Consecutive-day streaks",
       why: "Availability language is streak language: how many consecutive days did a territory stay clear of {rose:closed-unresolved} tickets, and on which date did the chain break. Contiguous-date folding — the gaps-and-islands trick of ordering days and subtracting row numbers — is the advanced shape behind every uptime chart ops publishes.",
-      slugs: ["report-contiguous-dates", "patients-with-a-condition", "game-play-analysis-v"],
+      slugs: ["report-contiguous-dates", "patients-with-a-condition", "game-play-analysis-v", "customer-placing-the-largest-number-of-orders", "biggest-window-between-events", "user-activity-for-the-past-30-days-i"],
     },
     {
       name: "Latest-per-key reads",

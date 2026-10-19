@@ -30,7 +30,7 @@ export const sephoraKit: CompanyKit = {
     "**Sephora** is beauty retail's omnichannel flagship — stores that double as sampling counters, a {rose:Beauty Insider} program that tiers shoppers into *Insider, VIB and Rouge*, and a fulfillment network where every basket carries a store-bin-vs-ship decision. The analyst's grain stack maps honestly onto the training db: customers are Insider member households, `orders` are baskets (picked into a store bin or shipped), order_items are scanned lines, products are SKUs, and suppliers are the brand vendors behind them. Probed scale: **16 member households** placing 103 baskets that fan into **251 scanned lines** — about 2.44 lines per basket, the sampling story in one ratio — worth 34833.28 at an average basket of **$338.19**.",
     "The data org lives on the dispatch clock. Status is the funnel: 52 delivered, 30 shipped, 14 pending and {rose:7 cancelled} — and `shipped_at` is non-NULL for exactly **82 of 103 baskets**, averaging **2.98 days** from placement to dispatch with a 2-to-4-day range. Clusters pace differently — US 3.07 days over 15 dispatched baskets, EU 2.94 over 36, APAC 2.93 over 29, LATAM 3.5 over just 2 — and an analyst who can't say *which population a latency average covers* (dispatched only; a pending basket has no latency YET) gets caught in round one. Every bins-vs-ship debate is a CASE expression away, and interviewers know it.",
     "Interview style is loyalty-first and denominator-ruthless. Screens warm up on a join (baskets to member households), escalate into a threshold census — **14 of 16 households** carry 2+ baskets and the top four hold **63.5%** of all demand — then land on the two Sephora signatures: an *Insider tier ladder* (lifetime spend folded per household, banded into tiers, concentration printed beside its denominator) or a *replenishment census* (the thin-stock trio sitting at 14, 15 and 17 units of cover). Follow-ups are spoken: 'is that per basket or per member?', 'does a cancelled basket stay in your placed base?', 'what population does that average cover?'",
-    "Preparation strategy: Sephora carries **0 tagged problems** in this app's registry, so every slug below is theme-curated from the SQL band to mirror the workflows its screens actually probe — loyalty banding, kept-basket rates, replenishment cover, cents discipline on the settlement tables (invoices and payments store INTEGER cents; the dollar read is `amount_cents / 100.0`). The two case studies run on the live db: one rebuilds the **market-cluster basket board** the growth review opens with, the other rebuilds the **dispatch-state pivot** ops reads each morning. Both are mechanically audited against probed figures.",
+    "Preparation strategy: Sephora carries **0 tagged problems** in this app's registry, so every slug below is theme-curated from the SQL band to mirror the workflows its screens actually probe — loyalty banding, kept-basket rates, replenishment cover, cents discipline on the settlement tables (invoices and payments store INTEGER cents; the dollar read is `amount_cents / 100.0`). The six case studies run on the live db — built for spaced practice rather than one sitting: one rebuilds the **market-cluster basket board** the growth review opens with, another rebuilds the **dispatch-state pivot** ops reads each morning. All six are mechanically audited against probed figures.",
     "Under the counter sits a settlement stack most candidates never reach. Brand-vendor bills live in {rose:invoices} and settle through `payments` — **28 bills against 27 payment rows**, money stored as INTEGER cents so every dollar view is `amount_cents / 100.0`. The rails split card versus wire (16 card payouts worth 37364 against 11 wires worth 32248), the open book stands at 19609.00 across 6 bills, and the zero-payment anti-join holds 6 bills — 15217.00 of exposure, one of them paid in status and silent in payments. Paid bills settle in **28.4 days against 30-day terms** (fastest 13, slowest 84), and the ledger cross-foots at 181080 debits against 181080 credits — *the reconciliation habit Sephora screens actually grade*.",
     "Prep the expanded bank in two passes. First pass: grain discipline — the six case files now cover the cluster board, the dispatch pivot, the promo-month pace spine, the settlement-speed ladder, the store-bin day manifest and the shelf-band census, each rebuilt from a blank editor against the live db. Second pass: the follow-up drills — twenty-four theory items and thirty MCQs that push past syntax into *population statements* (`COUNT(shipped_at)` vs `COUNT(*)`, latency over the 82, settle speed over the 20), window frames, set-op semantics and the KPIs the loyalty reviews are built from — {violet:tier mix}, {violet:cross-sell attach}, {violet:points liability}. *Run every case twice, a week apart — the second pass is where the denominator habits stick.*",
   ],
@@ -71,12 +71,12 @@ export const sephoraKit: CompanyKit = {
     {
       name: "Sampling depth and cross-sell",
       why: "Sampling is attach: 2.44 lines per basket, and the widest-attach family riding on 54 of 103 baskets is not the fattest — value and depth are different folds over the same rows. Co-occurrence pairs and A-and-B-but-not-C screens are how the counter team decides what sits beside the till.",
-      slugs: ["customers-who-bought-a-and-b-not-c", "find-product-recommendation-pairs", "sales-analysis-ii"],
+      slugs: ["customers-who-bought-a-and-b-not-c", "find-product-recommendation-pairs", "sales-analysis-ii", "duplicate-emails"],
     },
     {
       name: "Repeat members and lapse risk",
       why: "14 of 16 households order again — and the whole loyalty economics case rests on which ones stop. Repeat-rate folds, churn anti-joins and reactivation screens are the exact drills, and on this db the anti-joins come back empty, so recognizing when zero is the true answer is part of the test.",
-      slugs: ["repeat-purchase-rate", "find-churn-risk-customers", "dormant-reactivation"],
+      slugs: ["repeat-purchase-rate", "find-churn-risk-customers", "dormant-reactivation", "monthly-transactions-ii", "weather-type-in-each-country"],
     },
     {
       name: "Replenishment and stock cover",
@@ -86,12 +86,12 @@ export const sephoraKit: CompanyKit = {
     {
       name: "Cluster boards and ranking",
       why: "The growth review opens on cluster leaderboards — baskets, revenue, average basket — ranked and tie-proofed. RANK vs DENSE_RANK vs ROW_NUMBER is not trivia here: monthly basket counts tie five ways in 2024 (8, 8, 8, 8, 8), and a board that splits ties silently invents a ranking nobody agreed to.",
-      slugs: ["rank-scores", "department-top-three-salaries", "sort-the-olympic-table"],
+      slugs: ["rank-scores", "department-top-three-salaries", "sort-the-olympic-table", "top-earners", "customer-placing-the-largest-number-of-orders", "the-most-recent-three-orders", "top-travellers", "most-frequently-ordered-product-per-customer", "maximum-transaction-each-day", "the-most-recent-orders-for-each-product"],
     },
     {
       name: "Two grains, one census",
       why: "Baskets AND households per cluster is the opening read — and the trap is counting both at one grain. COUNT(*) counts baskets (103); COUNT(DISTINCT customer_id) counts households (16); the gap is visit intensity, the number the loyalty team actually manages.",
-      slugs: ["number-of-rich-customers", "daily-leads-and-partners", "article-views-ii"],
+      slugs: ["number-of-rich-customers", "daily-leads-and-partners", "article-views-ii", "unique-orders-and-customers-per-month", "product-sales-analysis-i", "product-sales-analysis-ii", "sales-analysis-iii", "combine-two-tables", "employee-bonus", "customer-order-frequency", "ratings-histogram", "find-books-with-polarized-opinions", "group-sold-products-by-the-date", "bank-account-summary", "create-a-session-bar-chart", "average-selling-price", "average-salary-of-departments", "the-number-of-users-that-are-eligible-for-discount", "game-play-analysis-i", "sales-by-day-of-the-week", "trips-and-users", "game-play-analysis-iv"],
     },
     {
       name: "Basket depth and blended AOV",
@@ -106,7 +106,7 @@ export const sephoraKit: CompanyKit = {
     {
       name: "Promo windows and month spines",
       why: "Beauty events are windows, not moods: half-open date predicates decide which baskets count as event baskets, and month spines via SUBSTR drive the pace read. The classic BETWEEN-on-the-last-day bug is a standing interview question, and January's 3731.97 peak versus July's 1193.86 floor is the seasonality story the spine tells.",
-      slugs: ["list-the-products-ordered-in-a-period", "monthly-transactions-i", "user-activity-for-the-past-30-days-i"],
+      slugs: ["list-the-products-ordered-in-a-period", "monthly-transactions-i", "user-activity-for-the-past-30-days-i", "same-day-sale"],
     },
     {
       name: "Set-op stacks on the funnel",
@@ -126,7 +126,7 @@ export const sephoraKit: CompanyKit = {
     {
       name: "NULL policy and fallback guards",
       why: "shipped_at is NULL for 21 of 103 baskets and the gaps are information: COALESCE decisions (fall back to created_at, or leave the hole?), NULL-safe counts, and census hygiene. The screen grades whether a fallback is a stated policy or a silent rewrite of the metric.",
-      slugs: ["books-with-null-ratings", "null-blank-audit", "analyze-subscription-conversion"],
+      slugs: ["books-with-null-ratings", "null-blank-audit", "analyze-subscription-conversion", "fix-product-name-format"],
     },
     {
       name: "Partition windows and the lapse clock",

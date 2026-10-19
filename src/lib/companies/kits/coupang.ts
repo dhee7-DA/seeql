@@ -54,7 +54,7 @@ export const coupangKit: CompanyKit = {
     {
       name: "Rocket funnel counts",
       why: "Every Coupang screen opens with the funnel: orders placed, dispatched (shipped_at stamped), arrived. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling a dispatched order 'arrived' — 30 versus 52 on this db.",
-      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest"],
+      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "immediate-food-delivery-ii", "game-play-analysis-iv"],
     },
     {
       name: "Two-grain market censuses",
@@ -64,27 +64,27 @@ export const coupangKit: CompanyKit = {
     {
       name: "Joining listings to demand",
       why: "Seller and category reporting means attaching listing and seller attributes to every order line — a three-table chain where the join type decides who survives. The follow-up is always about survival: does a line whose listing is missing from the catalog appear in the revenue fold, and does a seller with zero lines still make the bench?",
-      slugs: ["product-sales-analysis-i", "combine-two-tables", "sales-analysis-i"],
+      slugs: ["product-sales-analysis-i", "combine-two-tables", "sales-analysis-i", "most-frequently-ordered-product-per-customer", "group-sold-products-by-the-date"],
     },
     {
       name: "Dispatch latency & date math",
       why: "The dawn promise is a timestamp subtraction: julianday(shipped_at) - julianday(created_at) over the 82 stamped orders, 2.98 days on average. Coupang drills the population guard — 21 orders have no stamp and no cycle — plus the window discipline of half-open intervals around dispatch cutoffs.",
-      slugs: ["average-time-of-process-per-machine", "users-with-two-purchases-within-seven-days", "list-the-products-ordered-in-a-period"],
+      slugs: ["average-time-of-process-per-machine", "users-with-two-purchases-within-seven-days", "list-the-products-ordered-in-a-period", "product-sales-analysis-ii"],
     },
     {
       name: "Best-seller ladders & ties",
       why: "The units ladder runs 47, 46, 38, then a two-way tie at 36 and a three-way tie at 30 — ties are guaranteed at listing grain, so RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow. That is a policy about peer listings, not syntax, and the LIMIT-1-OFFSET-1 habit breaks on it.",
-      slugs: ["rank-scores", "department-top-three-salaries", "the-most-recent-orders-for-each-product"],
+      slugs: ["rank-scores", "department-top-three-salaries", "the-most-recent-orders-for-each-product", "find-churn-risk-customers", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "Settlement anti-joins",
       why: "A seller settlement statement with no payment rows is the money story of the marketplace — 6 statements worth 15,217 on this db. The LEFT JOIN + IS NULL shape (and its NOT EXISTS twin) is how the dunning list gets built; the never-ordered reads here return a confident zero, and proving that zero is part of the job.",
-      slugs: ["sellers-with-no-sales", "employees-with-missing-information", "customers-who-never-order"],
+      slugs: ["sellers-with-no-sales", "employees-with-missing-information", "customers-who-never-order", "unpopular-books", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "CASE bands & the empty premium tier",
       why: "Listing price bands are CASE-classified — budget (8 listings, 32.06 average) and mid (8 listings, 111.5 average) both exist, but the premium band (200-plus) is provably EMPTY at a 199.99 max. A zero bucket that must still print is the hardest CASE discipline there is, and UNION ALL zero-bucket drills are exactly this shape.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "average-selling-price"],
     },
     {
       name: "Honest denominators & shares",
@@ -94,12 +94,12 @@ export const coupangKit: CompanyKit = {
     {
       name: "The demand spine: month walks",
       why: "The 14-month demand spine (2024-01 to 2025-02) is the growth call's home turf: per-month order counts and GMV with LAG deltas, troughs named (July's 1,193.86), aborts clustered (2 each in July and November of the 7 total). LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["consecutive-numbers", "transaction-velocity", "friday-purchase-iii"],
+      slugs: ["consecutive-numbers", "transaction-velocity", "friday-purchase-iii", "dormant-reactivation", "fix-product-name-format", "monthly-transactions-i"],
     },
     {
       name: "Settlement cents discipline",
       why: "Arrived is not settled — the finance tables (28 invoices, 27 payments, INTEGER cents) are where the marketplace world meets money. Every dollar read is amount_cents / 100.0, the exact/partial/none coverage split (21 / 1 / 6) is one CASE away, and the trial balance must land at 181,080 against 181,080.",
-      slugs: ["bank-account-summary-ii", "monthly-transactions-ii", "products-worth-over-invoices"],
+      slugs: ["bank-account-summary-ii", "monthly-transactions-ii", "products-worth-over-invoices", "trial-balance-check", "find-stores-with-inventory-imbalance"],
     },
   ],
 

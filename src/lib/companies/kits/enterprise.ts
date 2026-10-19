@@ -70,42 +70,42 @@ export const enterpriseKit: CompanyKit = {
     {
       name: "Repeat-account depth",
       why: "The depth ladder is Enterprise's corporate health read: 2 accounts at depth 1, 3 at 2, 2 at 3, 4 at 4, 1 at 5, then the national tier at 13/14/17/24. Every cohort, winback and account-review agenda starts from this fold, and the exactly-versus-at-least distinction (4 accounts at depth 4, 9 at 4-plus) is the classic ladder trap.",
-      slugs: ["repeat-purchase-rate", "find-loyal-customers", "cohort-repeat-revenue", "rfm-segmentation", "dormant-reactivation", "customers-with-strictly-increasing-purchases"],
+      slugs: ["repeat-purchase-rate", "find-loyal-customers", "cohort-repeat-revenue", "rfm-segmentation", "dormant-reactivation", "customers-with-strictly-increasing-purchases", "second-highest-salary"],
     },
     {
       name: "Agreement fate counting",
       why: "Every dispatch rate, no-show share and returned share is a conditional count over a status or timestamp, and the interviewer asks the denominator out loud — 'do the 14 reservations count in your base?'. The trap is calling an on-rent agreement returned: 30 versus 52 on this db, and the share flips by half.",
-      slugs: ["percentage-of-users-attended-a-contest", "immediate-food-delivery-i", "number-of-employees-who-met-the-target", "hopper-company-queries-ii", "flight-occupancy-and-waitlist-analysis"],
+      slugs: ["percentage-of-users-attended-a-contest", "immediate-food-delivery-i", "number-of-employees-who-met-the-target", "hopper-company-queries-ii", "flight-occupancy-and-waitlist-analysis", "product-sales-analysis-ii", "confirmation-rate"],
     },
     {
       name: "Account-to-agreement joins",
       why: "Accounts carry region and created_at; agreements inherit the branch market through the join, and the join type decides who survives. An agreement without an account is corruption; an account without agreements is whitespace — though on this db the anti-join returns a confident zero (all 16 accounts appear), and proving that zero is part of the job.",
-      slugs: ["combine-two-tables", "replace-employee-id-with-unique-identifier", "employees-with-missing-information", "duplicate-emails"],
+      slugs: ["combine-two-tables", "replace-employee-id-with-unique-identifier", "employees-with-missing-information", "duplicate-emails", "sales-analysis-i"],
     },
     {
       name: "Day-rate bands with CASE",
       why: "Vehicle classes are CASE-banded — the shelf runs 14.99 economy to 199.99 flagship, split 8 mid classes averaging 111.50 against 8 budget classes at 32.06 — with fixed edges the rate card publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the branch revenue forecast, and a reordered WHEN quietly re-bands the fleet.",
-      slugs: ["calculate-special-bonus", "weather-type-in-each-country", "count-salary-categories", "orders-with-maximum-quantity-above-average"],
+      slugs: ["calculate-special-bonus", "weather-type-in-each-country", "count-salary-categories", "orders-with-maximum-quantity-above-average", "immediate-food-delivery-ii"],
     },
     {
       name: "Depth gates & HAVING floors",
       why: "Account tiering is a group-level gate: which accounts carry at least N agreements, which branch markets carry at least N bookings. The floor lives in HAVING after the fold — WHERE cannot see a COUNT that has not formed — and the 13-agreement gate is exactly how the national-account tier gets isolated from the retail tail that tops out at 5.",
-      slugs: ["classes-more-than-5-students", "managers-with-at-least-5-direct-reports", "find-users-with-high-token-usage", "department-top-three-salaries", "nth-highest-salary"],
+      slugs: ["classes-more-than-5-students", "managers-with-at-least-5-direct-reports", "find-users-with-high-token-usage", "department-top-three-salaries", "nth-highest-salary", "customer-placing-the-largest-number-of-orders", "average-salary-of-departments"],
     },
     {
       name: "Dispatch clocks & month walks",
       why: "The booking-ahead clock (created_at to shipped_at, 82 stamped of 103, 2.98-day average) and the 14-month agreement spine (2024-01 to 2025-02) are the same date discipline: julianday arithmetic over a stated population, then LAG deltas where the first row is NULL by definition. The walk names the trough (1,193.86 in July) and the jump (+1,158.21 into August) — branch seasonality defended one delta at a time.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "users-with-two-purchases-within-seven-days", "calculate-orders-within-each-interval"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "users-with-two-purchases-within-seven-days", "calculate-orders-within-each-interval", "growth-accounting"],
     },
     {
       name: "Rail & coverage set algebra",
       why: "Close packets stack populations — billed beside settled, wire beside card — and EXCEPT answers 'which billed statements never settled' with the direction AS the question: A-EXCEPT-B is not B-EXCEPT-A. UNION dedups whole rows silently, which makes it a correctness question, not a style one; the branch packet must add up or it does not ship.",
-      slugs: ["team-scores-in-football-tournament", "monthly-transactions-ii", "the-airport-with-the-most-flights", "ar-aging-schedule"],
+      slugs: ["team-scores-in-football-tournament", "monthly-transactions-ii", "the-airport-with-the-most-flights", "ar-aging-schedule", "customers-who-never-order"],
     },
     {
       name: "One-pass fate censuses",
       why: "The ops board gets returned, on-rent, reserved and no-show in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift while the branch is calling for its board.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "rolling-7d-actives", "bikes-last-time-used"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "rolling-7d-actives", "bikes-last-time-used", "queries-quality-and-percentage", "capital-gain-loss", "top-travellers"],
     },
     {
       name: "Billing & cents discipline",

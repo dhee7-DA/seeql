@@ -57,12 +57,12 @@ export const bnpparibasKit: CompanyKit = {
     {
       name: "Settled-vs-booked censuses",
       why: "Every BNP screen opens with the funnel: flows booked, value-date stamped, settled and confirmed. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling an in-flight flow 'settled' — 30 versus 52 on this db.",
-      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "maximum-transaction-each-day"],
+      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "maximum-transaction-each-day", "structuring-detection", "suspicious-bank-account-transactions", "amount-anomaly-zscore", "wash-trade-detection"],
     },
     {
       name: "Two-grain corridor folds",
       why: "Flows and counterparties are different grains of the same join, and every corridor census here reports both: the EU book runs 45 flows from 8 counterparties while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "chargeback-rate-ranking"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "chargeback-rate-ranking", "journal-gap-detection"],
     },
     {
       name: "Counterparty joins & survival",
@@ -72,17 +72,17 @@ export const bnpparibasKit: CompanyKit = {
     {
       name: "Settlement-fail anti-joins",
       why: "The fail watchlist is an anti-join: receivables LEFT JOINed to settlement legs, kept only when the leg never lands — 6 never-collected worth 15,217 on this db. Writing it with NOT IN over an unguarded column empties the watchlist silently, which is how a control function ships a false all-clear.",
-      slugs: ["customers-who-never-order", "sellers-with-no-sales", "find-churn-risk-customers", "prepayment-detection"],
+      slugs: ["customers-who-never-order", "sellers-with-no-sales", "find-churn-risk-customers", "prepayment-detection", "settlement-fails-aging"],
     },
     {
       name: "Client-book leaderboards",
       why: "Coverage reviews rank counterparties by flow count where ties are guaranteed — the ladder runs 24, 17, 14, 13, 5, then FOUR counterparties tied at 4. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer coverage, not syntax.",
-      slugs: ["rank-scores", "top-earners", "find-the-team-size", "credit-utilization-bands", "top-percentile-fraud"],
+      slugs: ["rank-scores", "top-earners", "find-the-team-size", "credit-utilization-bands", "top-percentile-fraud", "keep-latest-dedupe"],
     },
     {
       name: "The T+2 settlement clock",
       why: "Settlement lag is julianday(shipped_at) - julianday(created_at) over stamped flows: 2.98 days average inside a 2–4 band, 3.07 in the US against 2.93 in APAC. Duration math over two timestamps — with the unstamped 21 rows excluded by a stated filter, never silently skipped.",
-      slugs: ["average-time-of-process-per-machine", "rising-temperature", "users-with-two-purchases-within-seven-days", "consecutive-transactions-with-increasing-amounts", "sessionize-events"],
+      slugs: ["average-time-of-process-per-machine", "rising-temperature", "users-with-two-purchases-within-seven-days", "consecutive-transactions-with-increasing-amounts", "sessionize-events", "expected-credit-loss"],
     },
     {
       name: "Regulatory month spines",
@@ -92,12 +92,12 @@ export const bnpparibasKit: CompanyKit = {
     {
       name: "CASE ladders: tenor, coverage, delinquency",
       why: "Banking classifications are CASE ladders — 30-day documentary tenor versus aging buckets, exact versus partial versus no settlement. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the provision, and a reordered WHEN quietly re-buckets the exposure.",
-      slugs: ["delinquency-buckets", "loan-types", "weather-type-in-each-country", "risk-based-pricing", "delinquency-roll-rates"],
+      slugs: ["delinquency-buckets", "loan-types", "weather-type-in-each-country", "risk-based-pricing", "delinquency-roll-rates", "ar-aging-schedule", "fx-exposure-report"],
     },
     {
       name: "Books of record & cents discipline",
       why: "Status is a claim; the settlement legs and the ledger are evidence. Receivables and legs carry INTEGER cents — the dollar read is amount_cents / 100.0 — and the trial balance must land 181,080 against 181,080, delta zero. Reconciliation queries are how a universal bank proves the close.",
-      slugs: ["trial-balance-check", "gl-reconciliation", "bank-account-summary-ii", "loan-amortization-schedule", "realized-pnl-average-cost"],
+      slugs: ["trial-balance-check", "gl-reconciliation", "bank-account-summary-ii", "loan-amortization-schedule", "realized-pnl-average-cost", "balance-rollforward", "daily-balance-interest", "snapshot-delta-detect"],
     },
     {
       name: "Threshold gates & nested folds",

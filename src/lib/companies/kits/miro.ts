@@ -52,12 +52,12 @@ export const miroKit: CompanyKit = {
     {
       name: "Team-month fate funnels",
       why: "Every Miro growth screen opens with the fate funnel: periods booked, opened (shipped_at stamped), billed to term, washed out. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling a period-open row 'active-billed' — 30 versus 52 on this db.",
-      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-ii", "funnel-step-conversion", "new-users-daily-count", "winback-recovery"],
+      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-ii", "funnel-step-conversion", "new-users-daily-count", "winback-recovery", "immediate-food-delivery-i", "average-time-of-process-per-machine"],
     },
     {
       name: "Two-grain workspace censuses",
       why: "Periods and workspaces are different grains of the same join, and every census here reports both: EU runs 45 periods from 8 workspaces while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "number-of-rich-customers", "article-views-ii", "dau-wau-stickiness", "find-bursty-behavior"],
+      slugs: ["unique-orders-and-customers-per-month", "number-of-rich-customers", "article-views-ii", "dau-wau-stickiness", "find-bursty-behavior", "find-followers-count"],
     },
     {
       name: "Workspaces to periods",
@@ -67,17 +67,17 @@ export const miroKit: CompanyKit = {
     {
       name: "Collaboration leaderboards",
       why: "Leaderboards are rank-window reporting where ties are guaranteed — four workspaces sit at 4 team-months each on this db, and the ladder above them runs 24, 17, 14, 13, 5. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer workspaces, not syntax.",
-      slugs: ["rank-scores", "top-travellers", "second-highest-salary", "usage-tier-percentiles"],
+      slugs: ["rank-scores", "top-travellers", "second-highest-salary", "usage-tier-percentiles", "customer-placing-the-largest-number-of-orders", "department-top-three-salaries", "user-activity-for-the-past-30-days-ii", "feature-adoption-windows"],
     },
     {
       name: "Plan-tier CASE banding",
       why: "Workspace tiers are CASE-classified — enterprise, business, starter, free — with fixed edges the pricing page publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the expansion forecast, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["weather-type-in-each-country", "the-category-of-each-member-in-the-store", "loan-types", "rfm-segmentation"],
+      slugs: ["weather-type-in-each-country", "the-category-of-each-member-in-the-store", "loan-types", "rfm-segmentation", "net-revenue-retention"],
     },
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month period spine (2024-01 to 2025-02) is the growth call's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) and jump (+1,158.21 into August) named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["growth-accounting", "biggest-window-between-events", "second-day-confirmation", "sessionize-events", "week-over-week-churn"],
+      slugs: ["growth-accounting", "biggest-window-between-events", "second-day-confirmation", "sessionize-events", "week-over-week-churn", "game-play-analysis-iv", "bank-account-summary"],
     },
     {
       name: "Cohort set algebra",
@@ -87,12 +87,12 @@ export const miroKit: CompanyKit = {
     {
       name: "Seat-expansion nested folds",
       why: "Screens escalate into staging: fold per-workspace period counts, then judge them against a computed platform mean — exactly four logos clear it on this db. Scalar, correlated and derived shapes each carry an empty-inner-query answer you are expected to give unprompted.",
-      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "market-analysis-i", "mrr-waterfall"],
+      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "market-analysis-i", "mrr-waterfall", "percentage-of-users-attended-a-contest", "confirmation-rate"],
     },
     {
       name: "One-pass FILTER censuses",
       why: "The ops board gets active-billed, period-open, trial and churned in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-i", "rolling-7d-actives"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-i", "rolling-7d-actives", "queries-quality-and-percentage"],
     },
     {
       name: "Billing & cents discipline",

@@ -57,7 +57,7 @@ export const hdfcKit: CompanyKit = {
     {
       name: "Settled-versus-captured counting",
       why: "Every HDFC cards screen opens with the fate chain: authorized, captured, settled clean, declined. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling a captured transaction 'settled' — 30 versus 52 on this db — and the second trap is dividing by the settled book instead of the placed book.",
-      slugs: ["immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "trial-to-paid-funnel", "game-play-analysis-v"],
+      slugs: ["immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "trial-to-paid-funnel", "game-play-analysis-v", "loan-amortization-schedule", "settlement-fails-aging", "suspicious-bank-account-transactions", "customer-order-frequency"],
     },
     {
       name: "Two-grain zone censuses",
@@ -72,7 +72,7 @@ export const hdfcKit: CompanyKit = {
     {
       name: "The merchant-acquirer bench",
       why: "Card spend lands through acquiring partners, and the bench report is a joins-plus-aggregates fold: listings per partner, settled spend routed through each, the partnership-quality floor that decides who stays on the shelf. The grain trap is terminal lines versus SKUs — one SKU can ring through dozens of terminals.",
-      slugs: ["product-sales-analysis-i", "average-selling-price", "find-stores-with-inventory-imbalance", "product-price-at-a-given-date", "product-sales-analysis-iii", "group-sold-products-by-the-date"],
+      slugs: ["product-sales-analysis-i", "average-selling-price", "find-stores-with-inventory-imbalance", "product-price-at-a-given-date", "product-sales-analysis-iii", "group-sold-products-by-the-date", "top-percentile-fraud"],
     },
     {
       name: "Statement cycles & the debit ledger",
@@ -82,22 +82,22 @@ export const hdfcKit: CompanyKit = {
     {
       name: "Risk buckets with CASE",
       why: "Card-risk reporting is CASE-classified — decline bands, utilization tiers, DPD buckets — with fixed edges the risk committee publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the risk report, and a reordered WHEN quietly re-buckets the book.",
-      slugs: ["delinquency-buckets", "credit-utilization-bands", "weather-type-in-each-country", "count-salary-categories"],
+      slugs: ["delinquency-buckets", "credit-utilization-bands", "weather-type-in-each-country", "count-salary-categories", "daily-balance-interest", "risk-based-pricing", "expected-credit-loss", "ar-aging-schedule", "calculate-orders-within-each-interval"],
     },
     {
       name: "Fraud & anomaly screens",
       why: "HDFC's fraud screens hunt patterns in flows: velocity spikes, structuring under reporting walls, duplicate charge pairs, anomaly z-scores. Each is a conditional aggregate with a stated population — and the interviewer checks whether your screen's denominator includes what your alert excludes.",
-      slugs: ["structuring-detection", "amount-anomaly-zscore", "duplicate-charge-pairs", "active-users"],
+      slugs: ["structuring-detection", "amount-anomaly-zscore", "duplicate-charge-pairs", "active-users", "transaction-velocity"],
     },
     {
       name: "The customer-value ladder",
       why: "Premier-desk reporting ranks households by lifetime spend where ties are guaranteed — four customers sit at 4 transactions each on this db, and the ladder above them runs 24, 17, 14, 13, 5. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer households, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "second-highest-salary", "the-number-of-employees-which-report-to-each-employee"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "second-highest-salary", "the-number-of-employees-which-report-to-each-employee", "chargeback-rate-ranking"],
     },
     {
       name: "Month spines & capture-lag math",
       why: "The 14-month transaction spine (2024-01 to 2025-02) is the portfolio call's home turf, and the capture clock is julianday(shipped_at) - julianday(created_at) over the 82 stamped rows. LAG drives the walk — the trough (1,193.86 in July) and the first row's NULL are both definitions, never zeros.",
-      slugs: ["biggest-window-between-events", "average-time-of-process-per-machine", "the-latest-login-in-2020", "rising-temperature", "sales-by-day-of-the-week", "report-contiguous-dates"],
+      slugs: ["biggest-window-between-events", "average-time-of-process-per-machine", "the-latest-login-in-2020", "rising-temperature", "sales-by-day-of-the-week", "report-contiguous-dates", "customers-who-never-order", "consecutive-transactions-with-increasing-amounts"],
     },
     {
       name: "GL discipline & the close",

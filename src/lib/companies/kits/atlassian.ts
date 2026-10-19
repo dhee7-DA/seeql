@@ -22,7 +22,7 @@ export const atlassianKit: CompanyKit = {
     "Atlassian is the dev-tool platform behind Jira, Confluence, Jira Service Management, Bitbucket and Trello — sold seat-first, adopted team by team, and monetized through a plan ladder that customers migrate up (and occasionally down). The analytics reality is adoption breadth over depth: a tenant with **500 purchased seats and 40 weekly active** ones is the {rose:churn} story Atlassian's data org exists to see first. On this storefront db the mapping is direct — 16 tenants carry 103 subscription months with 251 seat/usage lines underneath; statuses read like an issue lifecycle (52 delivered, 30 shipped, 14 pending, 7 cancelled), and the product families behave like the product lines they are: Accessories touches **54 of the 103 months** (broad adoption), Audio books **11,744.01 of the 34,833.28** (deep monetization).",
     "The data org splits across growth, product and monetization analytics. Growth models the seat-adoption funnel — purchased seats to activated seats to weekly-active teams — and {violet:cross-product attach} (does a Jira tenant ever open Confluence?). Product analytics owns issue-flow velocity: created, triaged, resolved, the funnel every delivery metric hangs on. Monetization runs the plan ladder and the billing runs: 28 `invoices` against 27 payment rows, with 6 billing runs that {rose:never collected} — **15,217** sitting unresolved — and one partial payment (**4,000 against a 6,148 invoice**) that the reconciliation queries flag by name.",
     "Interview style is funnel-then-definition, twice over: **the adoption funnel AND the money funnel**. A screen walks from a warm-up join to a per-product-family fold (usage lines, distinct tenants, revenue in one `GROUP BY`), then escalates into a `LEFT JOIN` coverage read or a `LAG` transition question — plan migrations, sprint-over-sprint velocity. Follow-ups probe survival: 'does a tenant with an open invoice count as active?', 'is that adoption rate per purchased seat or per activated seat?' *State the denominator twice and you're already ahead.*",
-    "Preparation strategy: the registry tags exactly two sql rows for Atlassian (`deferred-revenue`, `plan-migration-paths`) — both drilled in this kit's topics. The rest of the pool is theme-curated around its known screens: seat censuses, issue-funnel conditional counts, adoption windows, **billing-run coverage**. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the product-family adoption fold its growth reviews open with, the other rebuilds the billing-run coverage read its finance close runs every month.",
+    "Preparation strategy: the registry tags exactly two sql rows for Atlassian (`deferred-revenue`, `plan-migration-paths`) — both drilled in this kit's topics. The rest of the pool is theme-curated around its known screens: seat censuses, issue-funnel conditional counts, adoption windows, **billing-run coverage**. Do the topics in order, then run all six case studies on the live storefront db: one rebuilds the product-family adoption fold its growth reviews open with, the other rebuilds the billing-run coverage read its finance close runs every month, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting...",
     "Beyond the two funnels sits the third: the {sky:marketplace layer}. App vendors attach to the platform the way suppliers attach to this db — six of them, from Nordic Gadgets AB's **11,130.25 (32% of the 34,833.28 book)** down to Pacific Textiles at 2,980.15 — and the vendor read is the kit's two-grain census again: revenue share per vendor, listings per vendor, and the {emerald:trusted bench} where rating >= 4.5 leaves exactly two standing (Nordic 4.6, Alpine 4.8). Screens borrow the shape constantly: 'rank vendors by revenue, then tell me which ones the trust filter keeps' is a join-aggregate-then-HAVING question wearing a business card.",
     "The deepest prep layer is the reconciliation anomaly table — the shapes that make finance's sweep a fraud case: a void invoice a payment row touched anyway (**925.00 on #11**), a paid invoice with zero payment rows (**1,756.00 on #28**), five invoices settling on both card and wire legs (#1, #5, #12, #19, #22), and the one partial (**4,000 against 6,148**). *Every funnel read has a reconciliation twin, and the twin is where the lies live.* Run this kit's cases against the live db, keep denominators stated, and treat the anomaly census as a weekly habit — the analyst who can flag a void-but-debited run on sight is the one who gets handed the close.",
   ],
@@ -53,12 +53,12 @@ export const atlassianKit: CompanyKit = {
     {
       name: "Tenant and seat censuses",
       why: "Every growth review opens with a two-grain census: subscription months AND tenants per family or region. COUNT(*) counts months; COUNT(DISTINCT customer_id) counts tenants — Accessories' 54 touched months collapse to 14 tenants. The kit's first case study rebuilds this fold, and screens probe whether you can hold both grains without fanning the join.",
-      slugs: ["daily-leads-and-partners", "find-followers-count", "product-sales-analysis-ii"],
+      slugs: ["daily-leads-and-partners", "find-followers-count", "product-sales-analysis-ii", "game-play-analysis-iv", "investments-in-2016", "managers-with-at-least-5-direct-reports"],
     },
     {
       name: "Issue-funnel conditional counts",
       why: "The issue funnel is all conditional counting: created, resolved, cancelled — branches of one population. A resolution rate computed over the wrong denominator (all issues vs issues with a resolution) is not a small error; it's a different delivery story. Atlassian drills SUM-over-flag until the denominator question is reflexive.",
-      slugs: ["immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "number-of-rich-customers"],
+      slugs: ["immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "number-of-rich-customers", "confirmation-rate", "monthly-transactions-i"],
     },
     {
       name: "Join enrichment across the product graph",
@@ -78,22 +78,22 @@ export const atlassianKit: CompanyKit = {
     {
       name: "Velocity leaderboards",
       why: "Deployment velocity and issue throughput are leaderboard reporting: top teams per family, second-fastest per tier. Atlassian drills the rank trio because ties are routine and the LIMIT-1-OFFSET-1 habit silently drops them.",
-      slugs: ["rank-scores", "department-top-three-salaries", "the-most-recent-three-orders"],
+      slugs: ["rank-scores", "department-top-three-salaries", "the-most-recent-three-orders", "second-highest-salary"],
     },
     {
       name: "Billing runs and deferred revenue",
       why: "The tagged deferred-revenue problem is Atlassian's money grammar: revenue recognized over the months a subscription covers, not when the invoice lands. On this db the billing layer is 28 invoices and 27 payments — folds that demand cents-safe arithmetic and status-aware filters.",
-      slugs: ["deferred-revenue", "bank-account-summary-ii", "monthly-transactions-ii"],
+      slugs: ["deferred-revenue", "bank-account-summary-ii", "monthly-transactions-ii", "active-businesses"],
     },
     {
       name: "Coverage reads with LEFT JOIN",
       why: "Seats purchased with no activation, invoices with no payment, tenants with no second product — coverage is a LEFT JOIN + IS NULL census. On this db it's honest: 6 billing runs never collected, 15,217 outstanding. The trap is filtering the right table in WHERE and silently downgrading to an INNER.",
-      slugs: ["bank-account-summary", "count-student-number-in-departments", "number-of-times-a-driver-was-a-passenger"],
+      slugs: ["bank-account-summary", "count-student-number-in-departments", "number-of-times-a-driver-was-a-passenger", "sales-analysis-ii", "market-analysis-i"],
     },
     {
       name: "Deployment cadence and date math",
       why: "Velocity is calendar arithmetic: releases within 7 days, latest deploy per team, activity inside a contract month. Atlassian screens probe the interval edges — BETWEEN on a boundary loses the last day, and the missing sprint reads as a stall that isn't there.",
-      slugs: ["users-with-two-purchases-within-seven-days", "the-latest-login-in-2020", "list-the-products-ordered-in-a-period"],
+      slugs: ["users-with-two-purchases-within-seven-days", "the-latest-login-in-2020", "list-the-products-ordered-in-a-period", "user-activity-for-the-past-30-days-i", "maximum-transaction-each-day", "product-price-at-a-given-date"],
     },
     {
       name: "Tracker hygiene",
@@ -103,12 +103,12 @@ export const atlassianKit: CompanyKit = {
     {
       name: "Marketplace vendor economics",
       why: "The vendor read is a two-table fold: products to suppliers, then revenue per vendor with a share-of-book percentage — Nordic's 32% against Midwest's 26.7%. Atlassian screens borrow it for marketplace-app analytics ('which vendors earn their listing, and which clear the trust bar'), and the trap is the share denominator: the full book, not the filtered subset.",
-      slugs: ["average-selling-price", "sales-person", "queries-quality-and-percentage"],
+      slugs: ["average-selling-price", "sales-person", "queries-quality-and-percentage", "sales-analysis-iii", "group-sold-products-by-the-date"],
     },
     {
       name: "Set-op reconciliations",
       why: "Cross-product attach is a set question wearing a join costume: tenants active in family A INTERSECT family B, EXCEPT the ones who never opened the second product. Set ops make the populations explicit, and the audit question 'did the union dedup or not' is the difference between a census and an inflated one.",
-      slugs: ["customers-who-bought-a-and-b-not-c", "symmetric-pairs", "movie-rating"],
+      slugs: ["customers-who-bought-a-and-b-not-c", "symmetric-pairs", "movie-rating", "customers-who-never-order"],
     },
     {
       name: "CASE-segmented lifecycle reports",
@@ -118,7 +118,7 @@ export const atlassianKit: CompanyKit = {
     {
       name: "Per-group freshest-state reads",
       why: "Dashboards want the latest state per subject: newest subscription month per tenant, most-ordered family per buyer, freshest deploy per team. Atlassian screens probe whether you prune with ROW_NUMBER or guess with MAX-plus-join — and whether the tie at the top silently doubles your rows.",
-      slugs: ["the-most-recent-orders-for-each-product", "highest-grade-for-each-student", "most-frequently-ordered-product-per-customer"],
+      slugs: ["the-most-recent-orders-for-each-product", "highest-grade-for-each-student", "most-frequently-ordered-product-per-customer", "department-highest-salary"],
     },
     {
       name: "Usage-line banding and histograms",

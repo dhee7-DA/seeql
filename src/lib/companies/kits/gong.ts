@@ -53,12 +53,12 @@ export const gongKit: CompanyKit = {
     {
       name: "Engagement funnels & conditional counts",
       why: "Every Gong screen opens with the funnel: periods booked, stamped as engaged, renewed to term. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling an in-flight period 'billed' — 30 versus 52 on this db.",
-      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "sessionize-events", "users-with-two-purchases-within-seven-days"],
+      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "sessionize-events", "users-with-two-purchases-within-seven-days", "immediate-food-delivery-i", "dau-wau-stickiness"],
     },
     {
       name: "Two-grain market censuses",
       why: "Periods and accounts are different grains of the same join, and every census here reports both: EU runs 45 periods from 8 accounts while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "number-of-rich-customers", "basket-depth-aov", "rolling-7d-actives"],
+      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "number-of-rich-customers", "basket-depth-aov", "rolling-7d-actives", "customer-order-frequency", "customers-who-bought-all-products"],
     },
     {
       name: "Joining accounts to activity",
@@ -68,17 +68,17 @@ export const gongKit: CompanyKit = {
     {
       name: "Account leaderboards & ties",
       why: "Leaderboards are rank-window reporting where ties are guaranteed — four accounts sit at 4 periods each on this db, and the ladder above them runs 24, 17, 14, 13, 5. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer accounts, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "premier-league-table-ranking", "second-highest-salary"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "premier-league-table-ranking", "second-highest-salary", "feature-adoption-windows", "keep-latest-dedupe"],
     },
     {
       name: "Deal-risk banding with CASE",
       why: "Risk tiers are CASE-classified — at-risk, watch, healthy — with fixed edges the methodology publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the risk report, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "find-churn-risk-customers", "top-percentile-fraud", "rfm-segmentation"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "find-churn-risk-customers", "top-percentile-fraud", "rfm-segmentation", "net-revenue-retention", "ltv-cac-payback", "cohort-retention-matrix", "winback-recovery"],
     },
     {
       name: "Forecast spine & LAG deltas",
       why: "The 14-month booking spine (2024-01 to 2025-02) is the forecast call's home turf: prior month beside current, delta rounded, the 3,731.97 January peak and the 1,193.86 July trough named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine", "year-on-year-growth-rate", "customers-with-strictly-increasing-purchases", "sales-by-day-of-the-week"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine", "year-on-year-growth-rate", "customers-with-strictly-increasing-purchases", "sales-by-day-of-the-week", "fix-names-in-a-table", "mrr-waterfall", "week-over-week-churn", "growth-accounting", "null-blank-audit"],
     },
     {
       name: "Coverage set algebra",
@@ -88,7 +88,7 @@ export const gongKit: CompanyKit = {
     {
       name: "Nested folds & tier gates",
       why: "Screens escalate into staging: fold per-account period counts, then judge them against a computed platform mean (6.44 here — exactly four accounts clear it). Scalar, correlated and derived shapes each carry an empty-inner-query answer you are expected to give unprompted.",
-      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments", "repeat-purchase-rate"],
+      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments", "repeat-purchase-rate", "median-time-to-convert"],
     },
     {
       name: "One-pass status censuses",

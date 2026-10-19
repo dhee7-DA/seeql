@@ -62,12 +62,12 @@ export const paytmKit: CompanyKit = {
     {
       name: "Rail folds & conditional counts",
       why: "Every rails read at Paytm is a fold with a conditional inside: legs per rail, dollars per method, split statements per market. The denominator rides on every one — 27 legs is not 27 statements, and the wallet share is 16 of 27 legs, not of dollars, until someone says which. Conditional aggregation over the method column is the shape being graded.",
-      slugs: ["number-of-rich-customers", "monthly-transactions-ii", "count-salary-categories", "monthly-transactions-i"],
+      slugs: ["number-of-rich-customers", "monthly-transactions-ii", "count-salary-categories", "monthly-transactions-i", "queries-quality-and-percentage", "classes-more-than-5-students", "confirmation-rate", "average-selling-price", "immediate-food-delivery-ii", "bank-account-summary", "list-the-products-ordered-in-a-period", "spend-histogram"],
     },
     {
       name: "Two-grain market censuses",
       why: "Transactions and wallet accounts are different grains of the same join, and every market report here shows both: EU runs 45 transactions from 8 accounts while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying which column is load and which is coverage — is the habit being graded. The ratio (5.6 versus 9.5) is the intensity read that decides where acquiring pushes next.",
-      slugs: ["unique-orders-and-customers-per-month", "article-views-ii", "students-and-examinations", "active-users"],
+      slugs: ["unique-orders-and-customers-per-month", "article-views-ii", "students-and-examinations", "active-users", "product-sales-analysis-ii", "sales-analysis-i", "capital-gain-loss", "combine-two-tables", "trips-and-users"],
     },
     {
       name: "Bill-pay fate funnels",
@@ -77,12 +77,12 @@ export const paytmKit: CompanyKit = {
     {
       name: "Whale & biller leaderboards",
       why: "Leaderboards are rank-window reporting where ties are guaranteed — four wallet accounts sit at 4 transactions each on this db, and the ladder above them runs 24, 17, 14, 13, 5 with the top account at 7,262.35. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer accounts, not syntax. Paytm's growth board publishes the policy; candidates are asked to defend it.",
-      slugs: ["rank-scores", "top-earners", "group-employees-of-the-same-salary", "top-travellers", "compute-the-rank-as-a-percentage"],
+      slugs: ["rank-scores", "top-earners", "group-employees-of-the-same-salary", "top-travellers", "compute-the-rank-as-a-percentage", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "CASE rail pivots",
       why: "The market-by-rail close pivot is CASE work: wallet dollars, bank/UPI dollars and a leg count per market, with arms that must be exhaustive and ordered. A reordered WHEN quietly re-buckets the book, a 'WIRE' literal matches nothing, and the empty arm must sum to a real zero (US reads 11,738.00 against 0.00) rather than a NULL. Arm order is the whole answer.",
-      slugs: ["calculate-special-bonus", "the-category-of-each-member-in-the-store", "loan-types", "credit-utilization-bands"],
+      slugs: ["calculate-special-bonus", "the-category-of-each-member-in-the-store", "loan-types", "credit-utilization-bands", "number-of-employees-who-met-the-target"],
     },
     {
       name: "Month walks & LAG deltas",
@@ -92,7 +92,7 @@ export const paytmKit: CompanyKit = {
     {
       name: "Coverage set algebra",
       why: "Board packets stack populations — wallet-rail legs beside bank/UPI legs, this quarter beside last — and UNION answers by stacking while deduping whole rows silently, which makes it a correctness question. EXCEPT answers 'which settled statements never rode the wallet rail'. The dunning anti-join (6 legless statements worth 15,217.00) is the same algebra pointed at money.",
-      slugs: ["team-scores-in-football-tournament", "the-airport-with-the-most-flights", "league-statistics", "customers-who-never-order"],
+      slugs: ["team-scores-in-football-tournament", "the-airport-with-the-most-flights", "league-statistics", "customers-who-never-order", "sellers-with-no-sales"],
     },
     {
       name: "Nested gates & staging",

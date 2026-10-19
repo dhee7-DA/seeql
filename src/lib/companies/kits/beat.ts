@@ -38,7 +38,7 @@ export const beatKit: CompanyKit = {
     "**BEAT** — Taxibeat — is the Greek ride-hail that grew out of Athens' taxi queues into a two-sided marketplace across Greece and Latin America, built on one blunt mechanism: riders and drivers rate each other, and the ratings gate who gets matched at all. The analytics object is the matched ride, and this kit maps the storefront db onto that world: the 16 customers rows are riders (region = market bucket), the 103 orders are rides worth **34,833.28** (average **338.19** against a 25.47 to 1,088.44 spread), and the 251 order_items rows are ride lines — quantity = distance/time units, unit_price = the rate the line locked — **498 units** across the book. The status map is fixed: delivered = {emerald:completed} (52, 50.5%), shipped = {sky:in-ride} with shipped_at as the ride-start stamp (30, 29.1%), pending = matching (14, 13.6%), cancelled = {rose:abandoned} (7, 6.8%).",
     "The data org splits into a supply-liquidity pod (rides per active driver, the matching queue, rating distributions), city ops (density and surge reads per market) and a small finance pod that settles corporate accounts and city statements. A ride books at created_at and `shipped_at` stamps the moment the ride actually starts — **82 of 103 rides** carry the stamp, averaging **2.98 days** of dispatch-to-start lag on the proxy clock (range 2–4), while the 14 still-matching rides have none yet (a population definition, not a cleanup job). Money sits one layer down: corporate statements and settlement rails in INTEGER cents, where the euro read is `amount_cents / 100.0` — and **6 statements worth 15,217.00** have no settlement legs behind them at all.",
     "Interview screens are liquidity-first. A loop opens with the **two-grain density census** — the EU market runs **45 rides from just 8 riders (5.6 per rider)** while the US runs **19 from 2 (9.5)** — then escalates into the {amber:rating gate}: only fleet partners rated **4.5** and above receive matched rides, which bars Midwest Hardware Co at 4.4 despite it carrying 26.7% of the book, and the interviewer wants the survival rule stated before any SQL. Late rounds walk the {sky:surge window} spine — 14 monthly buckets from 2024-01 to 2025-02, the book opening at 3,731.97, troughing at 1,193.86 in July — and probe denominators out loud (*'does an abandoned unlock sit in your completion base?'*). Candidates who state the population before the query are the ones who get the callback.",
-    "Preparation strategy: the pools file carries no BEAT section — **zero tagged rows** — so all sixteen problems and every topic slug here are **theme-curated** to this kit's known screen shapes: match funnels, density censuses, rating-gated supply folds, surge-band CASE pivots and the cents-safe settlement spine. Do the topics in order, then run **both case studies** on the live storefront db: one rebuilds the {emerald:rating-gated fare book} the supply pod reviews every Monday, the other rebuilds the {violet:surge-window census} city ops reads before the demand meeting. The bar to clear: *state which population you are measuring — booked, matched, started or completed — before you compute anything*, then make every status census reconcile to 103 by construction.",
+    "Preparation strategy: the pools file carries no BEAT section — **zero tagged rows** — so all thirty-two problems and every topic slug here are **theme-curated** to this kit's known screen shapes: match funnels, density censuses, rating-gated supply folds, surge-band CASE pivots and the cents-safe settlement spine. Do the topics in order, then run **all six case studies** on the live storefront db: one rebuilds the {emerald:rating-gated fare book} the supply pod reviews every Monday, the other rebuilds the {violet:surge-window census} city ops reads before the demand meeting, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The bar to clear: *state which population you are measuring — booked, matched, started or completed — before you compute anything*, then make every status census reconcile to 103 by construction.",
     "The metric wall holds twelve numbers and every one carries its denominator in the name. Concentration is the quiet one: riders whose lifetime spend clears 3,000.00 carry **63.5%** of the whole book, and the two-ride LATAM market still books an average **426.22** a ride — *thinnest coverage, richest tickets*. The fare-band read is honest about limits: 8 budget classes average 32.06 against 8 mid-band classes at 111.5, and the premium band at 200 and up is empty — top price in the catalog is 199.99, so any premium-mix ask gets re-scoped, not faked. The money walls sit beside the demand walls: card rails carry 16 settlement legs / 37,364.00 against wire's 11 / 32,248.00, and city opex runs **25,416.00** with Rent alone at 66.1% — *the numbers a Monday close actually opens on*.",
     "Stretch prep goes three places the first pass didn't. Set ops first: the board packet stacks populations — UNION ALL for the grand-total row, EXCEPT for who never showed up — and the dedup a bare UNION does silently is a correctness question, not a style one. Percentiles and pairing screens second: NTILE fare cuts and the self-join duplicate screen are how the finance pod hunts double-billed lines. Then run all four new case studies on the live storefront db — {emerald:the settlement coverage census}, {sky:the contraction register} off the month spine, {violet:the rail mix} with its TOTAL row, {amber:the latency floor} by market. The bar does not move: *state the population, reconcile every fold to 34,833.28 by construction, and let the TOTAL row prove the stack*.",
   ],
@@ -69,47 +69,47 @@ export const beatKit: CompanyKit = {
     {
       name: "Match-funnel counts",
       why: "Every BEAT screen opens with the funnel: rides booked, matched (left pending), started (shipped_at stamped), completed. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling an in-ride trip 'completed' — 30 versus 52 on this db — and the follow-up is always the 21 rides that never started at all.",
-      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "funnel-step-conversion"],
+      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "funnel-step-conversion", "dau-wau-stickiness", "uber-first-transaction", "customers-who-bought-all-products", "new-users-daily-count"],
     },
     {
       name: "Two-grain density censuses",
       why: "Rides and riders are different grains of the same join, and density economics reports both: EU runs 45 rides from 8 riders while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is fleet load and which is rider coverage — is the habit being graded. The ratio between them is the intensity read that decides where surge windows actually bite.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "hopper-company-queries-ii", "active-users", "running-total-for-different-genders", "users-with-two-purchases-within-seven-days"],
     },
     {
       name: "Rating-gated supply joins",
       why: "Fleet partners carry the rating that gates matching, and rides inherit supply through joins whose type decides who survives. A ride without a partner is corruption; a gate-eligible partner with no matched rides is a supply hole — and the LEFT JOIN that proves it is one WHERE-clause slip away from silently becoming an INNER. On this db the never-riding anti-join returns a confident zero, and proving that zero is part of the job.",
-      slugs: ["combine-two-tables", "employee-bonus", "sales-analysis-ii"],
+      slugs: ["combine-two-tables", "employee-bonus", "sales-analysis-ii", "maximum-transaction-each-day"],
     },
     {
       name: "Ride-line fan-out: units × rate",
       why: "Line-level reporting attaches ride class and locked rate to every ride line — the products-to-order_items join where quantity is distance/time units and unit_price is the rate. BEAT's follow-up is always the fan-out: join lines in and COUNT(*) silently stops counting rides — 103 rides become 251 lines and 498 units, three grains wearing one query.",
-      slugs: ["product-sales-analysis-ii", "product-sales-analysis-iii", "queries-quality-and-percentage"],
+      slugs: ["product-sales-analysis-ii", "product-sales-analysis-iii", "queries-quality-and-percentage", "confirmation-rate", "trips-and-users", "list-the-products-ordered-in-a-period"],
     },
     {
       name: "Fleet leaderboards & ties",
       why: "Hardest-working partner, heaviest rider, top market by units — supply reporting is leaderboard reporting. BEAT drills the rank trio because ties are guaranteed at marketplace scale — four riders sit at 4 rides each on this db under a 24/17/14/13/5 ladder — and the LIMIT-1-OFFSET-1 habit breaks exactly there, handing a bonus to whichever rider the engine happened to list first.",
-      slugs: ["rank-scores", "top-travellers", "department-top-three-salaries"],
+      slugs: ["rank-scores", "top-travellers", "department-top-three-salaries", "customer-placing-the-largest-number-of-orders", "most-frequently-ordered-product-per-customer"],
     },
     {
       name: "Surge-band classification (CASE)",
       why: "Demand regimes are CASE-shaped: months fold into peak, standard and surge-watch bands at fixed thresholds, and every ride inherits a window. The arms must be exhaustive and ordered — a hole in the CASE is a hole in the demand forecast, a reordered WHEN quietly re-bands the book, and a month priced by the wrong regime is revenue left on the table.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "the-category-of-each-member-in-the-store"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "the-category-of-each-member-in-the-store", "average-selling-price", "gl-reconciliation", "restaurant-growth"],
     },
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month ride spine (2024-01 to 2025-02) is the demand meeting's home turf: prior month beside current, delta rounded, the 1,193.86 July trough and the +1,158.21 jump into August named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero — and the spine gets verified against the data, not assumed from a seasonality story.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine", "game-play-analysis-iv", "year-on-year-growth-rate", "hopper-company-queries-i"],
     },
     {
       name: "One-pass status censuses",
       why: "The ops board gets completed, in-ride, matching and abandoned in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift while the supply standup is waiting on one number.",
-      slugs: ["active-businesses", "count-salary-categories", "create-a-session-bar-chart"],
+      slugs: ["active-businesses", "count-salary-categories", "create-a-session-bar-chart", "server-utilization-time"],
     },
     {
       name: "Coverage set algebra",
       why: "Board packets stack populations — never-settled statements beside fully settled ones, this month beside last — and the never-matched anti-join is the supply pod's first query at every review. UNION dedups whole rows silently, which makes it a correctness question, not a style one; a stacked packet that loses a row is a fleet that looks busier than it is.",
-      slugs: ["customers-who-never-order", "movie-rating", "the-airport-with-the-most-flights"],
+      slugs: ["customers-who-never-order", "movie-rating", "the-airport-with-the-most-flights", "seasonal-sales-analysis"],
     },
     {
       name: "Settlement & cents discipline",
@@ -124,22 +124,22 @@ export const beatKit: CompanyKit = {
     {
       name: "Median & percentile cuts",
       why: "Fare distributions are not means: the 338.19 average hides a 25.47 to 1,088.44 spread, and percentile cuts are how the pricing pod sees the skew. NTILE, PERCENT_RANK and the median-by-window drill turn 'average fare' into 'where the middle of the book actually sits'. BEAT drills them because surge decisions live in the tails of the fare curve, not at its mean.",
-      slugs: ["median-employee-salary", "station-median", "second-most-recent-activity"],
+      slugs: ["median-employee-salary", "station-median", "second-most-recent-activity", "rolling-7d-actives", "median-time-to-convert"],
     },
     {
       name: "Pairing screens (self-joins)",
       why: "Double-billed lines, twin legs on one statement, driver-also-rider checks — the finance pod's favorite screens are self-joins with an asymmetric key (a.id < b.id) so each pair counts once. The skill is keeping the pairing predicate honest: drop the inequality and every row pairs with itself; forget the mirror rule and the same pair counts twice. On this book the split-rail statements — five cycles settling on BOTH card and wire — are exactly the pairs a self-join surfaces.",
-      slugs: ["symmetric-pairs", "most-common-course-pairs", "number-of-times-a-driver-was-a-passenger"],
+      slugs: ["symmetric-pairs", "most-common-course-pairs", "number-of-times-a-driver-was-a-passenger", "keep-latest-dedupe", "bank-account-summary", "duplicate-charge-pairs"],
     },
     {
       name: "Membership & semi-joins (EXISTS/IN)",
       why: "The never-settled anti-join has three spellings — LEFT JOIN … IS NULL, NOT EXISTS, NOT IN — and they do not behave identically once NULLs join the list. BEAT drills the semi-join shapes because supply-hole and settlement-hole questions are membership questions: who IS in the gated bench, who is NOT in the settled book. Choosing the pattern out loud, with its NULL semantics and its fan-out behavior, is exactly what the follow-up is fishing for.",
-      slugs: ["number-of-accounts-that-did-not-stream", "ad-free-sessions", "students-with-invalid-departments"],
+      slugs: ["number-of-accounts-that-did-not-stream", "ad-free-sessions", "students-with-invalid-departments", "customers-who-bought-a-and-b-not-c", "books-with-null-ratings"],
     },
     {
       name: "Demand histograms & buckets",
       why: "Ride value does not distribute evenly, so city ops reads histograms, not just means: fare bands, spend buckets, sessions per rider. The bucket edges are a contract — fixed CASE bands or NTILE quantiles — and zero-fill matters, because a band with no rides is a finding, not a hole in the query. Bucket edges chosen after seeing the data is how a surge story gets manufactured.",
-      slugs: ["spend-histogram", "transactions-per-visit-histogram", "count-the-number-of-experiments"],
+      slugs: ["spend-histogram", "transactions-per-visit-histogram", "count-the-number-of-experiments", "calculate-parking-fees-and-duration", "ratings-histogram"],
     },
   ],
 

@@ -62,7 +62,7 @@ export const ikeaKit: CompanyKit = {
     {
       name: "Range-width censuses",
       why: "Everything here starts from the fold: 16 articles, 7 families, and a governed range means 'articles per family' is a GROUP BY the range board actually fights over. Flipkart-scale marketplaces count everything; IKEA counts a curated range, so the census questions are about which articles qualify and how the fold reconciles to 16.",
-      slugs: ["product-sales-analysis-ii", "classes-more-than-5-students", "find-followers-count", "count-student-number-in-departments", "customer-who-visited-but-did-not-transact"],
+      slugs: ["product-sales-analysis-ii", "classes-more-than-5-students", "find-followers-count", "count-student-number-in-departments", "customer-who-visited-but-did-not-transact", "group-sold-products-by-the-date"],
     },
     {
       name: "Stock-vs-sold cover reads",
@@ -72,12 +72,12 @@ export const ikeaKit: CompanyKit = {
     {
       name: "Pickup-funnel rates",
       why: "The status map is the funnel: collected, in transit, awaiting pickup, abandoned — and every rate (cancellation share, pickup share) is a conditional count with the denominator decided before the ratio. The trap is calling an in-transit purchase 'collected' — 30 versus 52 on this db — and the second trap is the base: awaiting-pickup rows stay in funnel bases and drop out of latency bases.",
-      slugs: ["funnel-step-conversion", "immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "user-activity-for-the-past-30-days-ii", "biggest-window-between-events"],
+      slugs: ["funnel-step-conversion", "immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "user-activity-for-the-past-30-days-ii", "biggest-window-between-events", "basket-depth-aov", "repeat-purchase-rate", "returns-rate-by-category"],
     },
     {
       name: "Family enrichment joins",
       why: "Article-level reporting means attaching family, supplier and shelf price to every flat-pack line — joins across the range and demand tables where the grain can silently shift from lines to orders. IKEA's follow-up is always survival: does an article missing its family mapping still appear in the revenue report, and at what grain does COUNT(*) now count?",
-      slugs: ["product-sales-analysis-i", "sales-analysis-i", "combine-two-tables", "most-frequently-ordered-product-per-customer"],
+      slugs: ["product-sales-analysis-i", "sales-analysis-i", "combine-two-tables", "most-frequently-ordered-product-per-customer", "fix-product-name-format", "sales-person"],
     },
     {
       name: "The two-grain member census",
@@ -87,22 +87,22 @@ export const ikeaKit: CompanyKit = {
     {
       name: "Ranking the range",
       why: "Top-article-per-family, second-price-per-band, best-selling ladder — range reporting is leaderboard reporting on a 16-article range where ties are guaranteed: the sold ladder ties at 36 twice, at 30 three times, at 21 three times. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung, and on a curated range that is a policy about peer articles, not syntax.",
-      slugs: ["rank-scores", "second-highest-salary", "department-top-three-salaries", "nth-highest-salary", "orders-with-maximum-quantity-above-average"],
+      slugs: ["rank-scores", "second-highest-salary", "department-top-three-salaries", "nth-highest-salary", "orders-with-maximum-quantity-above-average", "department-highest-salary", "top-earners"],
     },
     {
       name: "CASE bands on the price ladder",
       why: "The shelf splits at a fixed boundary — 8 mid articles at 111.50 average against 8 budget articles at 32.06, with the premium arm honestly empty at the 199.99 ceiling. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the buying ladder, and a reordered WHEN quietly re-bands the shelf.",
-      slugs: ["calculate-special-bonus", "weather-type-in-each-country", "count-salary-categories", "average-selling-price", "occupations-pivot"],
+      slugs: ["calculate-special-bonus", "weather-type-in-each-country", "count-salary-categories", "average-selling-price", "occupations-pivot", "rfm-segmentation", "the-most-recent-three-orders"],
     },
     {
       name: "Basket pairing & co-purchase",
       why: "Flat-pack sells in projects: the pairing census self-joins line items inside one basket and counts which families ride together — 27 raw pairings exist, Audio×Accessories sticks at 30, and the canonicalization predicate is what keeps every pair counted once. The A-and-B-but-not-C shape is the real merchandising question, in interview clothing.",
-      slugs: ["customers-who-bought-a-and-b-not-c", "most-common-course-pairs", "symmetric-pairs"],
+      slugs: ["customers-who-bought-a-and-b-not-c", "most-common-course-pairs", "symmetric-pairs", "customer-purchasing-behavior-analysis", "calculate-orders-within-each-interval", "budget-pacing", "customers-who-never-order"],
     },
     {
       name: "The purchase calendar spine",
       why: "The 14-month spine (2024-01 to 2025-02) is where seasonality lives: the 1,193.86 July trough, the 3,731.97 January peak, and the 2-cancelled months (July and November) that the abandoned-purchase review quotes. STRFTIME buckets on TEXT timestamps, half-open windows that don't lose the last night, and a stated population are the drills.",
-      slugs: ["monthly-transactions-i", "list-the-products-ordered-in-a-period", "user-activity-for-the-past-30-days-i", "products-with-three-or-more-orders-in-two-consecutive-years", "total-sales-amount-by-year", "restaurant-growth"],
+      slugs: ["monthly-transactions-i", "list-the-products-ordered-in-a-period", "user-activity-for-the-past-30-days-i", "products-with-three-or-more-orders-in-two-consecutive-years", "total-sales-amount-by-year", "restaurant-growth", "monthly-transactions-ii"],
     },
     {
       name: "Statement & cents discipline",

@@ -57,32 +57,32 @@ export const tumblrKit: CompanyKit = {
     {
       name: "Two-grain market censuses",
       why: "Cycles and users are different grains of the same join, and every census here reports both: EU runs 45 cycles from 8 users while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "bank-account-summary"],
     },
     {
       name: "Joining users to cycles",
       why: "Users carry market and signup date; cycles inherit them through joins, and the join type decides who survives. A cycle without a user is corruption; a user without cycles is a lapsed lurker — though on this db the anti-join returns a confident zero, and proving it is part of the job.",
-      slugs: ["combine-two-tables", "sales-analysis-i", "employee-bonus"],
+      slugs: ["combine-two-tables", "sales-analysis-i", "employee-bonus", "game-play-analysis-i", "article-views-ii", "find-followers-count", "reported-posts", "reported-posts-ii", "find-churn-risk-customers"],
     },
     {
       name: "Fandom ladders & rank policy",
       why: "Fandom leaderboards are rank-window reporting where ties are guaranteed — four users sit at 4 cycles each on this db, and the ladder above them runs 24, 17, 14, 13, 5. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a community policy, not syntax. Tumblr ships tier badges; encoding the tie rule is a product decision you will be asked to write.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "second-highest-salary-ii"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "second-highest-salary-ii", "customer-placing-the-largest-number-of-orders", "consecutive-transactions-with-increasing-amounts"],
     },
     {
       name: "Note-line depth & co-engagement",
       why: "Engagement depth lives at the line grain: 251 note lines across 103 cycles, and the co-engagement read — which feature SKUs get engaged inside the same cycle — is a self-join over lines sharing an order. The three-grain trap (cycles versus users versus lines) is exactly what the 2.44-lines-per-cycle ratio exists to teach.",
-      slugs: ["number-of-comments-per-post", "most-frequently-ordered-product-per-customer", "students-and-examinations", "find-trending-hashtags"],
+      slugs: ["number-of-comments-per-post", "most-frequently-ordered-product-per-customer", "students-and-examinations", "find-trending-hashtags", "user-activity-for-the-past-30-days-ii", "active-users", "dau-wau-stickiness", "duplicate-charge-pairs"],
     },
     {
       name: "CASE banding for tiers & ad load",
       why: "Post+ tiers, ad-free passes and Blaze boost bands are CASE-classified with fixed edges the pricing page publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the ad-load forecast, and a reordered WHEN quietly re-bands every user.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "ad-free-sessions"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "ad-free-sessions", "growth-accounting"],
     },
     {
       name: "Month spines & calendar buckets",
       why: "The 14-month cycle spine (2024-01 to 2025-02) is the trend call's home turf — SUBSTR(created_at, 1, 7) over buckets carrying 6–9 cycles each. '%m' alone merges January 2024 with January 2025; half-open date windows keep the last night's cycles; the calendar is where heatmap screens go wrong.",
-      slugs: ["convert-date-format", "the-latest-login-in-2020", "rising-temperature", "cohort-retention-matrix", "week-over-week-churn"],
+      slugs: ["convert-date-format", "the-latest-login-in-2020", "rising-temperature", "cohort-retention-matrix", "week-over-week-churn", "null-blank-audit", "invalid-tweets"],
     },
     {
       name: "Windows over the reblog stream",

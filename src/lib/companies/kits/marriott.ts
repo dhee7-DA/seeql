@@ -95,7 +95,7 @@ export const marriottKit: CompanyKit = {
     {
       name: "NULL & data-quality discipline",
       why: "A NULL check-in is a business state — not yet arrived — and COUNT(col) versus COUNT(*) is the difference between an honest completion rate and a 100% fairy tale. Null audits and NULL-safe filters keep the portfolio read defensible.",
-      slugs: ["books-with-null-ratings", "null-blank-audit", "find-customer-referee"],
+      slugs: ["books-with-null-ratings", "null-blank-audit", "find-customer-referee", "number-of-rich-customers"],
     },
     {
       name: "Settlement & ledger reads",
@@ -115,7 +115,7 @@ export const marriottKit: CompanyKit = {
     {
       name: "Latest-state & argmax reads",
       why: "The most recent booking per room category, the top-selling category per market — argmax shapes that a `MAX` join fumbles whenever two rows tie on the timestamp. Window picks with deterministic tiebreakers are the reliable build, and ties are real on this db.",
-      slugs: ["the-most-recent-orders-for-each-product", "most-frequently-ordered-product-per-customer", "highest-grade-for-each-student"],
+      slugs: ["the-most-recent-orders-for-each-product", "most-frequently-ordered-product-per-customer", "highest-grade-for-each-student", "top-travellers"],
     },
     {
       name: "Share-of-portfolio windows",

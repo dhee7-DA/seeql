@@ -50,7 +50,7 @@ export const jpmorganKit: CompanyKit = {
     {
       name: "Folds on the consumer book",
       why: "The consumer read starts with GROUP BY folds: activity per account, spend per month, counts per bucket. JPMorgan screens drill the two-grain habit early — volume (COUNT(*)) and value (SUM of cents, read in dollars) are different numbers about the same rows, and the interviewer listens for which one you are quoting.",
-      slugs: ["number-of-rich-customers", "monthly-transactions-i", "unique-orders-and-customers-per-month", "deferred-revenue", "maximum-transaction-each-day"],
+      slugs: ["number-of-rich-customers", "monthly-transactions-i", "unique-orders-and-customers-per-month", "deferred-revenue", "maximum-transaction-each-day", "transaction-velocity"],
     },
     {
       name: "Rails and confirmations joins",
@@ -75,12 +75,12 @@ export const jpmorganKit: CompanyKit = {
     {
       name: "Running balances and walks",
       why: "Deposits and cost books are read as walks: running balance per account, cumulative spend per month. Window running sums with explicit frames — and the frame discipline that keeps same-timestamp rows from double-counting — is the daily muscle here.",
-      slugs: ["account-balance", "restaurant-growth", "running-total-for-different-genders", "balance-rollforward", "loan-amortization-schedule"],
+      slugs: ["account-balance", "restaurant-growth", "running-total-for-different-genders", "balance-rollforward", "loan-amortization-schedule", "trial-balance-check", "daily-balance-interest"],
     },
     {
       name: "LAG and LEAD state transitions",
       why: "Movement analysis is LAG/LEAD work: month-over-month deltas, transaction-to-transaction checks, status flips between cycles. The window's ORDER BY is the direction of time and the display's ORDER BY is not — screens love the gap between the two.",
-      slugs: ["consecutive-transactions-with-increasing-amounts", "second-day-confirmation", "growth-accounting", "second-most-recent-activity"],
+      slugs: ["consecutive-transactions-with-increasing-amounts", "second-day-confirmation", "growth-accounting", "second-most-recent-activity", "monthly-transactions-ii", "suspicious-bank-account-transactions"],
     },
     {
       name: "Rates with honest denominators",
@@ -90,7 +90,7 @@ export const jpmorganKit: CompanyKit = {
     {
       name: "HAVING walls and threshold screens",
       why: "The structuring-detection pattern is the firm's signature screen: fold small-ticket counts per customer, then judge the fold against a review wall in HAVING. WHERE cannot see the count, ON fires pre-fold, and the wall's threshold is a printed constant someone signed off on.",
-      slugs: ["structuring-detection", "customer-order-frequency", "managers-with-at-least-5-direct-reports", "value-at-risk", "wash-trade-detection"],
+      slugs: ["structuring-detection", "customer-order-frequency", "managers-with-at-least-5-direct-reports", "value-at-risk", "wash-trade-detection", "countries-you-can-safely-invest-in"],
     },
     {
       name: "KYC-grade text hygiene",

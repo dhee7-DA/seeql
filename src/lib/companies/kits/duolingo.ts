@@ -42,7 +42,7 @@ export const duolingoKit: CompanyKit = {
     "Duolingo is the gamified learning app — the daily lesson is the product's atomic unit and the streak is its retention engine. The unit of analysis is the **learning session**: one learner, one sitting, one outcome — {emerald:lesson completed}, {sky:practice-hub only}, started but unfinished, or {rose:abandoned}. Everything the product teams argue about — whether the XP rework lifted real completion, which cohort lets streaks die, why July cooled — hangs on queries that fold **251 exercise batches** into **103 learning sessions** from **16 learners** across four learner regions, with a **34,833.28** XP book behind them. The population behind every ratio gets stated before it's believed.",
     "The data org runs three engines. Session telemetry folds the exercise-batch log into the lesson-health boards the curriculum team reads at 08:15 sharp. Streak analytics runs the sync math: **82 of 103 sessions carry a completion-sync stamp**, a **2.98-day average** session-to-sync lag with a 2–4 day range on the audit clock — the storefront stand-in runs a slower clock than Duolingo's same-day sync, and the kit reports the probed figures as probed — and the unstamped 21 are the unfinished-plus-abandoned tail, reported as a state, never as zero. Monetization reads Super & gem billing, where amounts live as INTEGER cents and `amount_cents / 100.0` at the display edge is house style — card rails ran **16 payments / $37,364.00** against wire rails at **11 / $32,248.00**, and the ledger ties at **181,080 = 181,080** every close.",
     "Interview screens are leaderboard- and census-shaped. A typical loop opens with a fold (exercises per session, sessions per learner — `SUM(quantity)`, not `COUNT(*)`, because batches carry retries), escalates into a **tie-aware RANK leaderboard** — pack XP folded in a CTE, ranked, ties sharing a rank and the next rank skipping — and lands on either a one-pass **outcome census** whose four arms must reconcile to 103 or a threshold subquery (*which sessions beat the book-wide XP mean?*). The follow-ups are definition probes: per what — batches or exercises, sessions or learners, RANK or DENSE_RANK when two packs tie? Candidates who state the denominator and the tie rule consistently outperform.",
-    "Preparation strategy: Duolingo has **no tagged registry problems**, so this kit theme-curates all sixteen — the streak ladders (longest streak, the 15-day wall), the XP leaderboard canon, the free-to-Super conversion funnel and the quiet-learner anti-joins. Then run both case studies on the live storefront db: one rebuilds the {violet:pack-XP leaderboard} (RANK over a folded CTE, gated at the 30-XP line, ties sharing ranks 4 and 8), the other rebuilds the {emerald:streak-outcome stack} (per-outcome folds plus a UNION ALL grand total). The storefront mapping is declared, not hidden — orders are sessions, totals are XP, regions are learner regions — because making the stand-in explicit is itself the habit this screen rewards.",
+    "Preparation strategy: Duolingo has **no tagged registry problems**, so this kit theme-curates all sixteen — the streak ladders (longest streak, the 15-day wall), the XP leaderboard canon, the free-to-Super conversion funnel and the quiet-learner anti-joins. Then run all six case studies on the live storefront db: one rebuilds the {violet:pack-XP leaderboard} (RANK over a folded CTE, gated at the 30-XP line, ties sharing ranks 4 and 8), the other rebuilds the {emerald:streak-outcome stack} (per-outcome folds plus a UNION ALL grand total), with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The storefront mapping is declared, not hidden — orders are sessions, totals are XP, regions are learner regions — because making the stand-in explicit is itself the habit this screen rewards.",
     "The screens' deeper half is definitional, and the expansion tier probes four KPI builds end to end. The {orange:streak-length distribution} — consecutive-session islands folded per learner, reported as a shape, never just a max. The {pink:daily-goal completion} share, whose denominator is active learner-days, not enrolled learners. The `lesson-start-to-finish` funnel — 103 started, 52 finished, **50.5%**, with the 51 exits split practice-only 30 / unfinished 14 / abandoned 7 and reconciling by construction. And the {violet:league promotion cut}, where top-3 meets its tie rule at the boundary and ROW_NUMBER-versus-RANK decides whether a tied learner promotes, loses to a coin flip, or overfills the league. Every one of these is a definition fight before it is a query fight — *the denominator is the answer's first half*.",
     "Preparation, round two, runs the four expansion cases on the live db. The {emerald:regional streak-health fold} — join, fold, gate at the 19-session floor, order by average XP. The {sky:cold-transition walk} — LAG over the 103-session log, 16 learners, 16 labeled first sessions, a 1.0-day cold line. The {amber:spend census} — CASE buckets over the cents ledger in honest dollars, 16,800 fixed against 4,570 growth. And the {violet:completion funnel} — a derived per-learner table printing 16 / 103 / 52 / 50.5 in cells, not prose. Then drill the trap tier in the theory bank: window frames, set-op dedupe, the NOT IN NULL poisoning, integer division on cents, the half-open interval. The mock-loop habit stands — state the grain, print the tie rule, carry the denominator — because the expansion screens grade the definitions as hard as the syntax.",
   ],
@@ -73,12 +73,12 @@ export const duolingoKit: CompanyKit = {
     {
       name: "First lessons & session counts",
       why: "Every learner story starts with a first session, and every board starts with a count: sessions per learner, first-session attribution, minutes per sitting. The curated trio drills the first-login fold, the distinct-viewer count and the duration roll-up that opens Duolingo's lesson-health screens.",
-      slugs: ["game-play-analysis-i", "article-views-i", "find-total-time-spent-by-each-employee"],
+      slugs: ["game-play-analysis-i", "article-views-i", "find-total-time-spent-by-each-employee", "game-play-analysis-iv", "dau-wau-stickiness", "group-sold-products-by-the-date"],
     },
     {
       name: "Streak ladders & islands",
       why: "A streak is a gaps-and-islands problem: consecutive practice days forming an island, the break day splitting it. The curated trio is the canon — the longest winning streak, the 15-day activity wall and the loyal-customer islands read the retention board's headline hangs on.",
-      slugs: ["longest-winning-streak", "fifteen-days-of-learning", "find-loyal-customers"],
+      slugs: ["longest-winning-streak", "fifteen-days-of-learning", "find-loyal-customers", "movie-rating", "net-revenue-retention"],
     },
     {
       name: "XP censuses & conditional counts",
@@ -98,22 +98,22 @@ export const duolingoKit: CompanyKit = {
     {
       name: "Super conversion & experiments",
       why: "Free-to-Super is a funnel the experimentation team ships weekly: step conversion, A/B lift against a control split, and how long learners sit before converting. The trio drills the funnel-step grammar, the conversion-lift ratio and the median-time-to-convert read.",
-      slugs: ["funnel-step-conversion", "ab-test-conversion-lift", "median-time-to-convert"],
+      slugs: ["funnel-step-conversion", "ab-test-conversion-lift", "median-time-to-convert", "trial-to-paid-funnel", "email-engagement-funnel"],
     },
     {
       name: "Sync stamps & NULL repair",
       why: "Unstamped sessions are the streak board's blind spot: NULL sync stamps on the unfinished tail, missing attributes on legacy rows, dropped batches leaving gaps. The trio drills the forward-fill repair, the missing-info join and the NULL/trim/length arms that keep the session log trustworthy.",
-      slugs: ["change-null-values-in-a-table-to-the-previous-value", "employees-with-missing-information", "invalid-tweets-ii"],
+      slugs: ["change-null-values-in-a-table-to-the-previous-value", "employees-with-missing-information", "invalid-tweets-ii", "null-blank-audit", "duplicate-charge-pairs"],
     },
     {
       name: "Quiet-learner anti-joins",
       why: "Streak risk is defined by absence: learners with sessions but no completed lesson, quiet students across every exam, accounts that never streamed. The trio drills the anti-join shapes — visited-but-didn't, quiet-student NOT EXISTS, never-streamed — that the streak-freeze team lives in.",
-      slugs: ["customer-who-visited-but-did-not-transact", "find-the-quiet-students-in-all-exams", "number-of-accounts-that-did-not-stream"],
+      slugs: ["customer-who-visited-but-did-not-transact", "find-the-quiet-students-in-all-exams", "number-of-accounts-that-did-not-stream", "last-person-to-fit-in-the-elevator", "students-and-examinations"],
     },
     {
       name: "Rolling actives & stickiness",
       why: "Streak health reads trailing-window shaped: 7-day actives, rolling averages that smooth the daily noise, and growth framed as current vs trailing periods. The trio drills the rolling distinct count, the RANGE-frame average and the trailing-period growth read.",
-      slugs: ["rolling-7d-actives", "rolling-average-steps", "restaurant-growth"],
+      slugs: ["rolling-7d-actives", "rolling-average-steps", "restaurant-growth", "users-with-two-purchases-within-seven-days", "active-users", "feature-adoption-windows"],
     },
     {
       name: "XP threshold subqueries",
@@ -123,17 +123,17 @@ export const duolingoKit: CompanyKit = {
     {
       name: "Session spacing & recency",
       why: "Streak risk is a spacing read: how far apart a learner's sessions land, and how stale the latest one has gone. The trio drills the LEAD gap walk between events, the latest-session-in-period filter and the second-most-recent argmax that powers the cold-learner queue.",
-      slugs: ["biggest-window-between-events", "the-latest-login-in-2020", "second-most-recent-activity"],
+      slugs: ["biggest-window-between-events", "the-latest-login-in-2020", "second-most-recent-activity", "keep-latest-dedupe", "report-contiguous-dates"],
     },
     {
       name: "League tables & promotion cuts",
       why: "Leagues are top-N boards with a cut line, and the cut is where tie rules earn their keep: two learners at rank 3 either both promote, or one loses to a coin flip. The trio drills per-group top-N with DENSE_RANK, rate-ranked boards with a HAVING floor, and the home-and-away UNION that assembles a full league table.",
-      slugs: ["department-top-three-salaries", "chargeback-rate-ranking", "team-scores-in-football-tournament"],
+      slugs: ["department-top-three-salaries", "chargeback-rate-ranking", "team-scores-in-football-tournament", "most-frequently-ordered-product-per-customer"],
     },
     {
       name: "Learner movement & growth accounting",
       why: "The retention org reads movement, not snapshots: who is new, returning, resurrected, gone. The trio drills the LAG status-transition walk, the winback-recovery rate and the NOT EXISTS dormant pool that feeds winback targeting.",
-      slugs: ["growth-accounting", "winback-recovery", "dormant-reactivation"],
+      slugs: ["growth-accounting", "winback-recovery", "dormant-reactivation", "mrr-waterfall"],
     },
     {
       name: "Zero-bucket histograms & tiles",
@@ -143,7 +143,7 @@ export const duolingoKit: CompanyKit = {
     {
       name: "Multi-arm conditions & experiment hygiene",
       why: "Curriculum asks compound questions — learners who finished unit A and unit B but quit unit C — and experimentation asks whether the split itself is honest. The trio drills the conditional-aggregation AND/AND/NOT pattern, the sample-ratio check that guards every A/B read and the COALESCE confirmation-rate fold.",
-      slugs: ["customers-who-bought-a-and-b-not-c", "ab-sample-ratio-mismatch", "confirmation-rate"],
+      slugs: ["customers-who-bought-a-and-b-not-c", "ab-sample-ratio-mismatch", "confirmation-rate", "analyze-subscription-conversion", "cohort-retention-matrix", "week-over-week-churn", "find-students-with-study-spiral-pattern", "immediate-food-delivery-ii", "user-purchase-platform", "find-users-with-persistent-behavior-patterns"],
     },
   ],
 

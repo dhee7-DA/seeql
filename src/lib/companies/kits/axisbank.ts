@@ -62,7 +62,7 @@ export const axisbankKit: CompanyKit = {
     "**Axis Bank** is one of India's largest private-sector universal banks — a retail franchise whose growth engine runs on cards and retail lending: issue the card, watch the swipe book compound, set the limit, and collect on time. Every analyst here learns the same two truths early. First, *the limit is a band, not a number* — customers are managed in spend-based bands (mass, preferred, priority), and every portfolio read is a ladder over lifetime booked spend with the band floors drawn in. Second, **a status column is a claim; a settlement leg is evidence** — a statement marked paid with zero legs on the rails is still a due. On this training db the mapping is honest: the 16 customers rows are card/loan customers across four market codes (EU / APAC / US / LATAM), the 103 orders are statement cycles worth **34,833.28** (average ticket 338.19 against a 25.47 to 1,088.44 spread), and the 251 order_items rows are transaction lines — quantity = swipes on the line, unit_price = per-swipe amount. The status map is fixed: delivered = {emerald:posted-and-closed clean} (52, 50.5%), shipped = closed-and-settling (30, 29.1%), pending = open cycle, still accruing (14, 13.6%), cancelled = {rose:declined/reversed} (7, 6.8%).",
     "The data org splits into cards portfolio analytics, retail-lending risk, and a collections pod, all reading one cycle spine at different grains. A cycle books at created_at and shipped_at stamps the day it actually closed and settled — **82 of 103 cycles** carry the stamp, averaging a 2.98-day close lag with a 2–4 day spread; the 14 open cycles have none yet (a population definition, not a cleanup job). Money sits one layer down in INTEGER paise, where the rupee read is `amount_cents / 100.0`: 28 card statements — 21 paid for 66,443, 6 open at 19,609, 1 void at 925 — clear on two rails, the {emerald:card rail} (16 POS/auto-debit legs for 37,364) and the wire rail (11 NEFT-style legs for 32,248), with five statements settled on split plans crossing both. The book of record ties: **181,080 debits against 181,080 credits across 80 ledger entries, delta 0** — *a market number that can't tie back to the books is a rumor, not a read.*",
     "Interview screens are census-then-denominator with two Axis signatures. The first is the {violet:limit-band ladder}: rank customers by lifetime booked spend, dense-ranked, cut at a band floor — the four customers above 3,000 carry **22,121.70 (63.5% of the book)**, the 2,000-plus cohort foots to **24,789.63 (71.2%)**, and the cycle-count ladder runs 24 / 17 / 14 / 13 / 5 with a four-way tie at 4 that turns rank semantics into a policy argument. The second is the {rose:dunning register}: statements with ZERO payment legs, membership by rail evidence — 6 statements / 15,217.00, splitting into an open cohort of 5 / 13,461.00 and one paid-status lie (#28, 1,756.00, no leg ever moved), while the mirror anomaly (void-but-debited #11, 925.00) stays off-book. Follow-ups probe the denominator out loud: *'does an open cycle count in your close-lag base?'*, 'is that share per cycle or per customer?'",
-    "Preparation strategy: the pools file carries no Axis Bank section — **0 tagged sql rows** — so every topic slug and all sixteen problems here are **theme-curated** to this kit's known screen shapes: statement-cycle folds, limit-band ladders, spend-based segmentation, the collections anti-join, rails, and the rupee-safe ledger tie-out. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {violet:limit-band ladder} the cards portfolio review opens with, the other rebuilds the {rose:dunning register} the collections huddle works from. The bar to clear: *state the band floor and the denominator before you compute anything* — then make every fate census reconcile to 103 by construction, and every paise fold divide by 100.0 exactly once.",
+    "Preparation strategy: the pools file carries no Axis Bank section — **0 tagged sql rows** — so every topic slug and all thirty-two problems here are **theme-curated** to this kit's known screen shapes: statement-cycle folds, limit-band ladders, spend-based segmentation, the collections anti-join, rails, and the rupee-safe ledger tie-out. Do the topics in order, then run all six case studies on the live storefront db: one rebuilds the {violet:limit-band ladder} the cards portfolio review opens with, the other rebuilds the {rose:dunning register} the collections huddle works from, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The bar to clear: *state the band floor and the denominator before you compute anything* — then make every fate census reconcile to 103 by construction, and every paise fold divide by 100.0 exactly once.",
     "There is a third reader of the same spine: the risk pod, and it reads for {rose:stress}. Declines are thin on this book — **7 of 103 cycles, a 6.8% share** — but they concentrate: APAC runs 8.1%, EU 6.7%, US 5.3%, LATAM a clean 0 across its 2 cycles. The grid habit matters as much as the numbers: the status-by-market census only prints observed combinations, so LATAM's missing pending-and-cancelled cells are *absent rows, not zero rows* — a census that assumes the zero is a census that miscounts. Forensics stays evidence-first: the void-but-debited #11 (925.00) and the paid-status lie #28 (1,756.00) are mirrored anomalies, 5 statements settle on split plans across both rails, and the settlement clock reads **28.4 days** against flat 30-day terms (fastest 13, slowest 84) — the clock is where prepayment and stress both show up first.",
     "The senior screens assume the warm-ups are done and go one layer deeper: window frames (a running settled-dues walk on the default `RANGE` frame quietly pulls tied stamps into one step — say which frame you meant), set logic (the dunning and recovered registers ship as one packet, and the follow-up is always *why UNION here and not UNION ALL*), subquery shapes (above-average gate, derived stage, correlated per-market mean — different costs, different empty-case behaviors), and fan-out, the silent killer: join transaction lines under statement cycles and the SUM near-triples the book, so *fold first, then join*. Prepare by rebuilding the four new case files on the live db, then re-cutting each one with a different denominator — **if you can say what would change and why, you are interview-ready.**",
   ],
@@ -93,27 +93,27 @@ export const axisbankKit: CompanyKit = {
     {
       name: "Statement-cycle aggregation",
       why: "The cards book folds one way: statement cycles grouped by month and market, with declined demand either in or out by definition. Axis screens open with a GROUP BY that must state its status rule out loud — the 2024-01 to 2025-02 spine (8 cycles / 3,731.97 opening, trough 1,193.86 in July) is where every warm-up lands.",
-      slugs: ["monthly-transactions-i", "group-sold-products-by-the-date", "product-sales-analysis-ii"],
+      slugs: ["monthly-transactions-i", "group-sold-products-by-the-date", "product-sales-analysis-ii", "basket-depth-aov"],
     },
     {
       name: "The two-grain market census",
       why: "'Cycles AND customers per market' is the opening read of every Axis portfolio review — and the trap is counting both at the same grain. COUNT(*) counts cycles; COUNT(DISTINCT customer_id) counts relationships; the gap between them (EU 45-from-8 = 5.6, US 19-from-2 = 9.5) is the intensity signal the limit desk actually manages.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count", "managers-with-at-least-5-direct-reports", "journal-gap-detection"],
     },
     {
       name: "Spend-based segmentation with CASE",
       why: "The mass / preferred / priority bands are CASE-classified over lifetime spend, and transaction lines band into micro-ticket and big-ticket arms the same way. The arms must be exhaustive and ordered — a hole in the CASE is a customer with no band, and a reordered WHEN quietly re-bands the book.",
-      slugs: ["calculate-special-bonus", "weather-type-in-each-country", "spend-histogram"],
+      slugs: ["calculate-special-bonus", "weather-type-in-each-country", "spend-histogram", "delinquency-buckets", "gl-reconciliation", "transaction-velocity", "maximum-transaction-each-day"],
     },
     {
       name: "Limit-band ladders (rank windows)",
       why: "The limit proxy is lifetime booked spend, and the ladder over it is rank-window reporting: the cycle-count ladder runs 24 / 17 / 14 / 13 / 5 with a four-way tie at 4, so RANK, DENSE_RANK and ROW_NUMBER genuinely diverge. Axis drills the trio because who shares a rung is a policy about peer relationships, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "credit-utilization-bands", "second-highest-salary"],
     },
     {
       name: "The collections anti-join",
       why: "The dunning register is defined by absence: statements with ZERO settlement legs, found by LEFT JOIN + IS NULL (or its NOT EXISTS twin). The status column lies on both edges — a paid statement with no legs is on the register, a void statement with a leg is off it — so the anti-join arm IS the metric.",
-      slugs: ["customers-who-never-order", "find-churn-risk-customers", "dormant-reactivation"],
+      slugs: ["customers-who-never-order", "find-churn-risk-customers", "dormant-reactivation", "customer-who-visited-but-did-not-transact", "sellers-with-no-sales"],
     },
     {
       name: "Rails: settlement legs and the fold",
@@ -123,47 +123,47 @@ export const axisbankKit: CompanyKit = {
     {
       name: "Rates with honest denominators",
       why: "Decline shares, settlement rates, utilization percentages — Axis ratios punish integer division and careless filters. The house habit: 100.0 before the division, the denominator's population decided BEFORE the ratio (booked, not settled), and rounding only at the very end.",
-      slugs: ["queries-quality-and-percentage", "confirmation-rate", "card-launch-success"],
+      slugs: ["queries-quality-and-percentage", "confirmation-rate", "card-launch-success", "immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "chargeback-rate-ranking"],
     },
     {
       name: "Cycle clocks and date math",
       why: "The close lag is julianday(shipped_at) - julianday(created_at) over stamped cycles — 82 of 103, 2.98 days — and every windowed read (latest payment in the cycle year, two purchases inside seven days) lives on half-open intervals. BETWEEN on a close boundary silently drops the last night's settlements.",
-      slugs: ["average-time-of-process-per-machine", "the-latest-login-in-2020", "find-golden-hour-customers"],
+      slugs: ["average-time-of-process-per-machine", "the-latest-login-in-2020", "find-golden-hour-customers", "keep-latest-dedupe", "suspicious-bank-account-transactions", "delinquency-roll-rates"],
     },
     {
       name: "One-pass fate censuses",
       why: "The portfolio board gets posted, settling, open and declined in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift; the branch sums reconciling to COUNT(*) is the correctness argument.",
-      slugs: ["active-businesses", "immediate-food-delivery-i", "number-of-rich-customers"],
+      slugs: ["active-businesses", "immediate-food-delivery-i", "number-of-rich-customers", "capital-gain-loss"],
     },
     {
       name: "LAG walks across the cycle spine",
       why: "The month-close walk runs the 14-month spine with LAG deltas — the book opens at 3,731.97, troughs at 1,193.86 in July, and the first row's prior value is NULL by definition (baseline, never zero). Declined cycles concentrate where the walk says they do — two each in July and November of the seven.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "year-on-year-growth-rate"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "year-on-year-growth-rate", "game-play-analysis-iv", "uber-first-transaction"],
     },
     {
       name: "The co-brand bench fold",
       why: "Partners sit one join away from the transaction grain, and the bench review folds listings, lines and booked volume per partner in one pass — Nordic Gadgets AB reads 11,130.25 on 3 listings and 43 lines, and the trusted cut (rating 4.5-plus) drops the same fold to two partners. The screen is whether you can run products through the bench to lines without fanning the money out.",
-      slugs: ["average-selling-price", "warehouse-manager", "sales-person"],
+      slugs: ["average-selling-price", "warehouse-manager", "sales-person", "daily-balance-interest", "customers-with-maximum-number-of-transactions-on-consecutive-days"],
     },
     {
       name: "Nested gates and argmax guards",
       why: "Above-average gates and top-of-book reads run as scalar and IN subqueries: relationships beating the 6.44-cycle platform mean, the single biggest statement, the partner with the most settled lines. Axis probes the empty-inner behavior and the NULL-poisoned NOT IN until you state the inner fold's population unprompted.",
-      slugs: ["department-highest-salary", "orders-with-maximum-quantity-above-average", "winning-candidate"],
+      slugs: ["department-highest-salary", "orders-with-maximum-quantity-above-average", "winning-candidate", "customer-placing-the-largest-number-of-orders", "most-frequently-ordered-product-per-customer", "the-most-recent-three-orders"],
     },
     {
       name: "Set-operation registers",
       why: "Month-close packets stack books that are computed differently — dunning beside recovered, declined beside kept — and set ops are that grammar. UNION dedups whole rows, UNION ALL keeps the packet honest behind a book-label column, INTERSECT finds the 5 split-rail statements, and EXCEPT's direction is the anomaly pair.",
-      slugs: ["count-salary-categories", "league-statistics", "team-scores-in-football-tournament"],
+      slugs: ["count-salary-categories", "league-statistics", "team-scores-in-football-tournament", "structuring-detection", "duplicate-charge-pairs", "same-day-sale"],
     },
     {
       name: "Running books and window frames",
       why: "The settled-dues walk and the cumulative cycle book are running aggregates, and the frame decides whether tied stamps enter together or row by row — the default RANGE frame shares a step, ROWS BETWEEN makes each row its own. Axis drills frames because a walk that disagrees with the statement fold by one leg is a reconciliation incident.",
-      slugs: ["account-balance", "find-cumulative-salary-of-an-employee", "rolling-average-steps"],
+      slugs: ["account-balance", "find-cumulative-salary-of-an-employee", "rolling-average-steps", "balance-rollforward", "vintage-default-curves"],
     },
     {
       name: "Recency, aging and intervals",
       why: "Collections works in intervals: re-swipe windows, aging buckets pinned to a reference date, cadence gaps between a customer's cycles. The discipline is half-open bounds — BETWEEN drops the boundary night, and the boundary is exactly where due dates and auto-debit legs land.",
-      slugs: ["users-with-two-purchases-within-seven-days", "leetflex-banned-accounts", "customer-order-frequency"],
+      slugs: ["users-with-two-purchases-within-seven-days", "leetflex-banned-accounts", "customer-order-frequency", "trial-balance-check"],
     },
   ],
 

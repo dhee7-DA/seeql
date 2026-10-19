@@ -29,7 +29,7 @@ export const canvaKit: CompanyKit = {
     "**Canva** is design SaaS at consumer scale: templates that pull teams in, collaboration that keeps them, and usage that either deepens or goes dark. The analytics reality is the *adoption ledger* — which teams keep publishing, which templates actually get used, and which drafts silently die. On this storefront db the mapping is honest: 16 design teams generate 103 design cycles folded from 251 template-use lines, worth 34,833.28 of billed value at a 338.19 average. The engagement mix reads like the adoption funnel it is — 52 {emerald:published} (50.5%), 30 exported-awaiting-review (29.1%), 14 {amber:still drafting} (13.6%), 7 {rose:abandoned} (6.8%).",
     "The data org splits three ways. Adoption analytics owns the template fold: the top family logs **97 uses** worth 11,744.01, the broadest family's lines touch 54 distinct cycles — gallery decisions price on that census. Growth owns engagement depth: the cycle ladder runs 24, 17, 14, 13 deep before a four-way tie at 4, and **63.5%** of billed value sits above the 3,000 line — the expansion cohort every board deck prices. Monetization owns the tier ladder: 8 education-friendly templates average 32.06, 8 pro templates average 111.5, and the premium band above 200 is empty — the catalog ceiling is 199.99, so tier memos state the ceiling honestly. Billing owns the team book: 28 `invoices` against 27 `payments`, INTEGER cents throughout, with 6 never-settled bills worth 15,217 — one of them (#28, 1,756.00) claims {emerald:paid} with zero settlement rows behind it.",
     "Interview style is census-then-denominator, then the template join. A screen opens with a two-grain census (EU carries 45 design cycles from just 8 teams; the US, 19 from 2), escalates into a conditional-count publish rate with the denominator asked out loud ('do {rose:abandoned} cycles sit in your base?'), then the family board — where uses and uses-times-list-price must both appear, because 'the gallery is popular' means nothing until uses price into value. Follow-ups probe the month spine (2024-01 opens at 8 cycles and **3,731.97** of billed value; 2024-07 floors at 1,193.86) and the cents rule on every team bill.",
-    "Preparation strategy: the pools carry **0 tagged rows for Canva** — every one of this kit's 46 slugs is theme-curated to known design-SaaS screens: two-grain team censuses, template-family folds, adoption floors, tier banding and team-billing reconciliation. Then run both case studies on the live db: one rebuilds the template-variety board the growth review runs on Mondays, the other rebuilds the one-pass family census the catalog review is drawn from. The bar to clear: state the **denominator**, the join's survival rule, and the **cents rule** before you compute anything.",
+    "Preparation strategy: the pools carry **0 tagged rows for Canva** — every one of this kit's 46 slugs is theme-curated to known design-SaaS screens: two-grain team censuses, template-family folds, adoption floors, tier banding and team-billing reconciliation. Then run all six case studies on the live db: one rebuilds the template-variety board the growth review runs on Mondays, the other rebuilds the one-pass family census the catalog review is drawn from, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The bar to clear: state the **denominator**, the join's survival rule, and the **cents rule** before you compute anything.",
     "The expanded screens push past folds into the **time and shape** tools. Windows run the adoption spine: `LAG` month deltas across the 3,731.97-peak / 1,193.86-floor walk, running totals that accumulate to 34,833.28, quartiles over the seven-family gallery — with the frame question attached (RANGE's peer-inclusion versus ROWS' hard row count). Set ops stack the boards: the 52 {emerald:published} and 30 exported censuses ride a `UNION ALL` pair, and `EXCEPT` finds the teams active one month and silent the next. Subquery shapes get the same drill: scalar comparisons against the 338.19 account mean, `NOT IN` lists a single NULL silences, correlated per-cohort reads. *The panel is not collecting syntax — it is watching whether the shape matches the question's grain.*",
     "The new KPI definitions are graded like syntax, so learn them cold. The {emerald:template-to-publish funnel} is created → stamped → published — 103 → 82 → 52 — and every stage rate names its denominator out loud. {sky:Team-seat expansion} reads the depth ladder (24, 17, 14, 13, then four teams tied at 4): expansion is movement up the ladder, not new logos. The {amber:print attach rate} has no print table on this db — the honest proxy is family fan-out (the Accessories family touches 54 of 103 cycles), named as a proxy in the memo. {violet:Free-to-paid conversion} prices the tier split — 8 education-friendly templates at 32.06 average against 8 pro at 111.5, ceiling 199.99 — and guards its empty-cohort divisions with `NULLIF`. *Definitions first, SQL second — the panels ask for the metric before they ask for the query.*",
   ],
@@ -60,37 +60,37 @@ export const canvaKit: CompanyKit = {
     {
       name: "Adoption censuses & floors",
       why: "Every Canva screen opens with a fold: use lines, design cycles, teams — grouped, counted and gated without letting the grain blur. COUNT(*) counts lines, COUNT(DISTINCT customer_id) counts teams; 251 lines come from just 103 cycles across 16 teams, and HAVING floors decide which families or teams are 'real adoption'.",
-      slugs: ["article-views-ii", "classes-more-than-5-students", "activity-participants"],
+      slugs: ["article-views-ii", "classes-more-than-5-students", "activity-participants", "customers-who-bought-all-products", "active-users"],
     },
     {
       name: "Publish-rate conditional counts",
       why: "Published, exported, drafting, abandoned — every rate here is a conditional count over an engagement state, and the interviewer's first question is 'what's in the denominator?'. SUM(CASE WHEN status …) over ALL cycles, with the 100.0 before the division, is the shape that survives scrutiny.",
-      slugs: ["immediate-food-delivery-i", "friend-requests-i-overall-acceptance-rate", "get-highest-answer-rate-question"],
+      slugs: ["immediate-food-delivery-i", "friend-requests-i-overall-acceptance-rate", "get-highest-answer-rate-question", "trial-to-paid-funnel", "email-engagement-funnel", "analyze-subscription-conversion", "occupations-pivot"],
     },
     {
       name: "Joining teams to design cycles",
       why: "Design cycles inherit team attributes through joins to the teams table, and the join type decides who survives: a cycle with no team is corruption; a team with no cycle is an idle seat. Choosing INNER versus LEFT is a business statement about the installed base.",
-      slugs: ["combine-two-tables", "top-travellers", "product-sales-analysis-i"],
+      slugs: ["combine-two-tables", "top-travellers", "product-sales-analysis-i", "viewers-turned-streamers"],
     },
     {
       name: "Per-template value folds",
       why: "Use lines carry template SKUs and list prices, and the gallery story is a join-then-weigh fold: quantity × unit_price per line, the top family logging 97 uses worth 11,744.01. The per-family census is what gets a template featured, repriced or retired.",
-      slugs: ["product-sales-analysis-iii", "products-worth-over-invoices", "average-selling-price"],
+      slugs: ["product-sales-analysis-iii", "products-worth-over-invoices", "average-selling-price", "feature-adoption-windows"],
     },
     {
       name: "The design calendar",
       why: "Design activity is calendar arithmetic: STRFTIME('%Y-%m') buckets over cycles against the 3,731.97 peak and the 1,193.86 floor. Canva drills the month-bucket idiom because every launch chart hangs on that spine — and a '%m'-without-year fold merges two Januaries into one lie.",
-      slugs: ["monthly-transactions-i", "user-activity-for-the-past-30-days-i", "the-latest-login-in-2020"],
+      slugs: ["monthly-transactions-i", "user-activity-for-the-past-30-days-i", "the-latest-login-in-2020", "cohort-retention-matrix", "median-time-to-convert", "plan-migration-paths"],
     },
     {
       name: "Engagement depth & variety",
       why: "Collaboration is a two-sided read: cycles per team (depth) against distinct templates per team (variety). The shapes here — lines per cycle, templates per team, depth-versus-breadth ratios — separate the teams that deep-dive one template from the teams exploring the whole gallery.",
-      slugs: ["students-and-examinations", "find-the-team-size", "user-activity-for-the-past-30-days-ii"],
+      slugs: ["students-and-examinations", "find-the-team-size", "user-activity-for-the-past-30-days-ii", "ltv-cac-payback", "basket-depth-aov", "ab-test-conversion-lift"],
     },
     {
       name: "Dormant teams & abandoned drafts",
       why: "Silence reads are anti-joins: teams with no recent cycle, team bills with no payments (6 on this db). On this db the never-used-team anti-join returns 0 — and proving a confident zero is the job. The survival rule of the join IS the query.",
-      slugs: ["customer-who-visited-but-did-not-transact", "customers-who-never-order", "dormant-reactivation"],
+      slugs: ["customer-who-visited-but-did-not-transact", "customers-who-never-order", "dormant-reactivation", "winback-recovery", "the-most-recent-orders-for-each-product"],
     },
     {
       name: "Adoption leaderboards & tie policy",
@@ -100,27 +100,27 @@ export const canvaKit: CompanyKit = {
     {
       name: "Education-vs-pro tiering",
       why: "The catalog splits into education-friendly and pro tiers by price, and every tier memo is a CASE band with the boundaries stated out loud. The honest wrinkle: the premium band above 200 is empty — the ceiling is 199.99 — so tiering work is about proving a band's void, not inventing one.",
-      slugs: ["the-category-of-each-member-in-the-store", "the-winner-university", "calculate-special-bonus"],
+      slugs: ["the-category-of-each-member-in-the-store", "the-winner-university", "calculate-special-bonus", "funnel-step-conversion", "dau-wau-stickiness", "rfm-segmentation", "usage-tier-percentiles"],
     },
     {
       name: "Team billing & cents discipline",
       why: "Design usage is not revenue until the team book closes: 28 invoices against 27 payments, INTEGER cents throughout, coverage classified exact / partial / none. The billing join is where design-SaaS interviews land — and where the cents rule (`/ 100.0`) gets graded.",
-      slugs: ["bank-account-summary-ii", "ar-aging-schedule", "account-balance"],
+      slugs: ["bank-account-summary-ii", "ar-aging-schedule", "account-balance", "net-revenue-retention"],
     },
     {
       name: "Window frames & running math",
       why: "Expansion reads are temporal: running billed value down the 14-month spine, 7-day rolling publish curves, LAG deltas against the 3,731.97 peak. Frames decide what each row's window sees — the default RANGE frame silently includes peers, and a tie in the ORDER BY column double-counts rows into every running total. Canva drills ROWS versus RANGE because an expansion walk that absorbs a peer month is a number the board repeats for a quarter.",
-      slugs: ["restaurant-growth", "find-cumulative-salary-of-an-employee", "rolling-average-steps"],
+      slugs: ["restaurant-growth", "find-cumulative-salary-of-an-employee", "rolling-average-steps", "growth-accounting", "repeat-purchase-rate", "rolling-7d-actives", "sessionize-events", "mrr-waterfall", "week-over-week-churn"],
     },
     {
       name: "Set-op boards",
       why: "Two censuses, one board: published (52) and exported-awaiting-review (30) fold into stacked reports, and the stacking op is a business statement. UNION ALL keeps both arms and any accidental overlap; UNION dedupes and hides the overlap — the difference between an auditable stack (82 stamped rows) and a quietly collapsed one. EXCEPT and INTERSECT answer the movement questions: which teams were active last month but silent this one.",
-      slugs: ["monthly-transactions-ii", "league-statistics", "count-salary-categories"],
+      slugs: ["monthly-transactions-ii", "league-statistics", "count-salary-categories", "keep-latest-dedupe"],
     },
     {
       name: "Subquery shapes",
       why: "Screens escalate from folds to comparisons: which design cycles price above the 338.19 account average, which templates clear their family's mean, which teams carry any abandoned cycle. Each shape — scalar, IN, EXISTS, correlated — carries its own population and its own cost, and the NOT IN version dies silently when the inner fold returns one NULL. Choosing the shape is choosing the question's population; the syntax is the easy part.",
-      slugs: ["orders-with-maximum-quantity-above-average", "second-highest-salary", "managers-with-at-least-5-direct-reports"],
+      slugs: ["orders-with-maximum-quantity-above-average", "second-highest-salary", "managers-with-at-least-5-direct-reports", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "Catalog text hygiene",
@@ -130,7 +130,7 @@ export const canvaKit: CompanyKit = {
     {
       name: "Date math & freshness",
       why: "Freshness reads are date arithmetic: which teams published within seven days of their invite, which cycled the day after a template launch, which weekday the gallery moves on. The traps are arithmetic-shaped — 'date minus date' on TEXT columns coerces to zero, and '+7 days' modifiers chain differently than people expect. On a db where latency averages 2.98 days, a wrong date idiom doesn't error — it prints a confident zero.",
-      slugs: ["rising-temperature", "users-with-two-purchases-within-seven-days", "tasks-count-in-the-weekend"],
+      slugs: ["rising-temperature", "users-with-two-purchases-within-seven-days", "tasks-count-in-the-weekend", "find-zombie-sessions"],
     },
   ],
 

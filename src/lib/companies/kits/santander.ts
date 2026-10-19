@@ -124,7 +124,7 @@ export const santanderKit: CompanyKit = {
     {
       name: "Concentration & share-of-book",
       why: "The average billing runs 3106.32 and 12 of 28 sit above it — concentration is a first-class read. Share-of-partition windows, HHI folds and distinct big-ticket censuses are the tools the market reviews quote.",
-      slugs: ["portfolio-weights", "portfolio-concentration-hhi", "number-of-rich-customers"],
+      slugs: ["portfolio-weights", "portfolio-concentration-hhi", "number-of-rich-customers", "monthly-transactions-i"],
     },
     {
       name: "Dormancy & reactivation screens",

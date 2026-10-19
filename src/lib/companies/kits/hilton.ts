@@ -55,7 +55,7 @@ export const hiltonKit: CompanyKit = {
     {
       name: "Honors tier CASE rolls",
       why: "The ladder is a CASE roll over folded lifetime value: Diamond at 3000+, Gold at 2000+, Member below — heads, value and share per tier. Conditional-bonus and tier-classification drills are the exact shapes; the graded part is folding at guest grain before tiering.",
-      slugs: ["calculate-special-bonus", "the-category-of-each-member-in-the-store", "count-salary-categories"],
+      slugs: ["calculate-special-bonus", "the-category-of-each-member-in-the-store", "count-salary-categories", "immediate-food-delivery-ii", "calculate-orders-within-each-interval"],
     },
     {
       name: "Stay-night folds",
@@ -85,17 +85,17 @@ export const hiltonKit: CompanyKit = {
     {
       name: "Settlement coverage ledgers",
       why: "Owner bills are settlement reads: every invoice LEFT JOIN its payments, coverage classified exact, partial or none — 21 exact, 1 partial at 4000 of 6148, 6 with nothing. LEFT JOIN folds with NULL arms are the drill, cents over 100.0 the discipline.",
-      slugs: ["bank-account-summary", "bank-account-summary-ii", "combine-two-tables"],
+      slugs: ["bank-account-summary", "bank-account-summary-ii", "combine-two-tables", "null-blank-audit"],
     },
     {
       name: "Market mix & shares",
       why: "Market shares and completion rates are ratios over stated denominators — the 100.0 sits before the slash or the number is wrong. Share drills train the exact habit the owner deck grades.",
-      slugs: ["percentage-of-users-attended-a-contest", "card-launch-success", "portfolio-weights"],
+      slugs: ["percentage-of-users-attended-a-contest", "card-launch-success", "portfolio-weights", "number-of-rich-customers"],
     },
     {
       name: "Stay clocks & lead time",
       why: "Booking-to-checkout is julianday math over completed-or-underway stays only — 2.98 days average, range 2 to 4 — and the 21 open folios must NULL out, not fabricate. Process-latency and day-offset drills are the clock's toolkit.",
-      slugs: ["average-time-of-process-per-machine", "rising-temperature", "find-golden-hour-customers"],
+      slugs: ["average-time-of-process-per-machine", "rising-temperature", "find-golden-hour-customers", "sales-by-day-of-the-week"],
     },
     {
       name: "Whale ladders & tiles",
@@ -105,7 +105,7 @@ export const hiltonKit: CompanyKit = {
     {
       name: "Set ops & versus reads",
       why: "Portfolio reviews live on comparisons: markets with waived folios versus markets without, folio states that owe money versus states that don't. `EXCEPT`, `UNION ALL` stacks and the dedup-versus-concatenate choice are the grammar of 'versus' — and LATAM's zero-waived record is exactly what a set difference surfaces.",
-      slugs: ["monthly-transactions-ii", "team-scores-in-football-tournament", "league-statistics"],
+      slugs: ["monthly-transactions-ii", "team-scores-in-football-tournament", "league-statistics", "type-of-triangle", "group-employees-of-the-same-salary", "keep-latest-dedupe"],
     },
     {
       name: "Window frames & rolling pace",
@@ -115,12 +115,12 @@ export const hiltonKit: CompanyKit = {
     {
       name: "Rebooking clocks & LAG reads",
       why: "The loyalty question is interval-shaped: how long since this guest's last stay, and is the gap stretching? `LAG`/`LEAD` over per-guest booking sequences and biggest-window reads are how the rebooking offer gets timed — and why the first row's NULL lookback is information.",
-      slugs: ["biggest-window-between-events", "second-day-confirmation", "growth-accounting"],
+      slugs: ["biggest-window-between-events", "second-day-confirmation", "growth-accounting", "find-overbooked-employees"],
     },
     {
       name: "Latest-state & argmax picks",
       why: "Rate-parity and inventory questions ask for each room class's most recent booking and each market's top-selling class. A `MAX` join fumbles when two bookings tie on the timestamp — window picks with a deterministic tiebreaker are the reliable build, and ties are real on this db.",
-      slugs: ["the-most-recent-orders-for-each-product", "most-frequently-ordered-product-per-customer", "highest-grade-for-each-student"],
+      slugs: ["the-most-recent-orders-for-each-product", "most-frequently-ordered-product-per-customer", "highest-grade-for-each-student", "product-price-at-a-given-date", "sales-analysis-ii", "plan-migration-paths"],
     },
     {
       name: "Cents-side discipline",

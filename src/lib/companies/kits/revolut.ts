@@ -53,7 +53,7 @@ export const revolutKit: CompanyKit = {
     {
       name: "Money in motion, month by month",
       why: "Every growth review opens on the monthly spine: transactions, value and failures per month, per market. The fold is a GROUP BY over a date bucket with a status rule attached — and the screen checks whether failed attempts pollute your spend total or your count stays population-honest.",
-      slugs: ["monthly-transactions-i", "list-the-products-ordered-in-a-period", "user-activity-for-the-past-30-days-i", "growth-accounting", "mrr-waterfall", "net-revenue-retention"],
+      slugs: ["monthly-transactions-i", "list-the-products-ordered-in-a-period", "user-activity-for-the-past-30-days-i", "growth-accounting", "mrr-waterfall", "net-revenue-retention", "daily-balance-interest"],
     },
     {
       name: "FX & latest-rate joins",
@@ -63,7 +63,7 @@ export const revolutKit: CompanyKit = {
     {
       name: "P2P graphs & mutual pairs",
       why: "Instant P2P is a graph: A sent B and B sent A within a window is a mutual pair — a self-join with symmetric conditions and a canonicalization habit (least/greatest ordering) so pairs don't double-count. Revolut screens this shape because the same machinery powers both social features and ring-detection risk work.",
-      slugs: ["circular-transfers", "symmetric-pairs", "number-of-calls-between-two-persons"],
+      slugs: ["circular-transfers", "symmetric-pairs", "number-of-calls-between-two-persons", "credit-utilization-bands", "delinquency-buckets"],
     },
     {
       name: "Dormancy & reactivation",
@@ -73,12 +73,12 @@ export const revolutKit: CompanyKit = {
     {
       name: "Coverage & partial settlements",
       why: "Money received against money billed is the reconciliation heart: exact, partial or nothing, per mandate. The LEFT JOIN is mandatory — the mandates with no payment rows are the exposure — and the fan-out from multi-payment mandates is the trap that silently inflates every count.",
-      slugs: ["employee-bonus", "bank-account-summary-ii", "combine-two-tables"],
+      slugs: ["employee-bonus", "bank-account-summary-ii", "combine-two-tables", "trial-balance-check"],
     },
     {
       name: "Plan-tier CASE logic",
       why: "Standard through Ultra is a CASE classification before it is anything else: tier bands, migration labels, A/B arms. Revolut screens exhaustive CASE arms and the pivot — tiers as columns, accounts as rows — because the growth deck reads tier×market grids, not raw event logs.",
-      slugs: ["count-salary-categories", "the-category-of-each-member-in-the-store", "loan-types", "analyze-subscription-conversion", "trial-to-paid-funnel", "rfm-segmentation"],
+      slugs: ["count-salary-categories", "the-category-of-each-member-in-the-store", "loan-types", "analyze-subscription-conversion", "trial-to-paid-funnel", "rfm-segmentation", "monthly-transactions-ii", "cohort-retention-matrix", "plan-migration-paths"],
     },
     {
       name: "Spend leaderboards & ranking windows",

@@ -67,27 +67,27 @@ export const easyjetKit: CompanyKit = {
     {
       name: "Fee-band CASE folds",
       why: "easyJet's fare classes are CASE arms: sub-55 fees ride basic, 55-and-over ride flex, and the band fold (268 seats at 31.01 versus 230 at 115.85) is the carrier's most re-cut query. Arms must be exhaustive and ordered — a hole in the CASE is a hole in the fare book, and a reordered WHEN quietly re-bands the base. NULL prices falling into a catch-all ELSE is the standing data-quality trap.",
-      slugs: ["exchange-seats", "calculate-special-bonus", "the-category-of-each-member-in-the-store"],
+      slugs: ["exchange-seats", "calculate-special-bonus", "the-category-of-each-member-in-the-store", "most-frequently-ordered-product-per-customer", "average-selling-price", "calculate-parking-fees-and-duration"],
     },
     {
       name: "Attach-rate line folds",
       why: "Ancillary analytics lives on order_items: units and fee value folded per family, per market, per booking. The join from bookings to lines fans out, so every fold must state its grain — 251 lines, 498 units or DISTINCT bookings are three different answers to one question. Lines per booking (2.44) is the attach headline and it is a ratio of two different counts.",
-      slugs: ["product-sales-analysis-iii", "basket-depth-aov", "repeat-purchase-rate", "users-with-two-purchases-within-seven-days"],
+      slugs: ["product-sales-analysis-iii", "basket-depth-aov", "repeat-purchase-rate", "users-with-two-purchases-within-seven-days", "queries-quality-and-percentage", "confirmation-rate"],
     },
     {
       name: "Booking-state censuses",
       why: "The load read is a conditional census — booked, flown, in-window, cancelled, share — folded in one pass over status and timestamps. The trap is filtering the denominator: drop the 7 cancelled before the fold and the 79.6% flown share inflates to a number the network never earned. FILTER (WHERE …) and SUM(CASE …) are the exact drills.",
-      slugs: ["flight-occupancy-and-waitlist-analysis", "immediate-food-delivery-i", "number-of-rich-customers", "trips-and-users", "user-activity-for-the-past-30-days-i", "same-day-sale"],
+      slugs: ["flight-occupancy-and-waitlist-analysis", "immediate-food-delivery-i", "number-of-rich-customers", "trips-and-users", "user-activity-for-the-past-30-days-i", "same-day-sale", "immediate-food-delivery-ii", "top-travellers", "find-users-with-high-token-usage"],
     },
     {
       name: "Two-grain market censuses",
       why: "Bookings and passengers are different grains of the same join — every market census here reports both: EU runs 45 bookings from 8 passengers while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id), and saying which column is load and which is coverage, is the habit being graded; the ratio is the intensity read that decides where ancillary offers get pushed.",
-      slugs: ["article-views-ii", "students-and-examinations", "sales-by-day-of-the-week", "the-number-of-passengers-in-each-bus-i", "the-number-of-passengers-in-each-bus-ii", "big-countries"],
+      slugs: ["article-views-ii", "students-and-examinations", "sales-by-day-of-the-week", "the-number-of-passengers-in-each-bus-i", "the-number-of-passengers-in-each-bus-ii", "big-countries", "classes-more-than-5-students"],
     },
     {
       name: "Attach boards & rank policy",
       why: "The attach board ranks families by units — 121, 97, 85, 61, 54, 53, 27 — a ladder with no ties today and guaranteed ties tomorrow as families converge. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer families, not syntax. easyJet's own pricing boards publish the tie policy; candidates are asked to defend it.",
-      slugs: ["top-five-artists", "compute-the-rank-as-a-percentage", "sort-the-olympic-table", "the-airport-with-the-most-flights", "the-most-recent-orders-for-each-product", "the-most-recent-three-orders"],
+      slugs: ["top-five-artists", "compute-the-rank-as-a-percentage", "sort-the-olympic-table", "the-airport-with-the-most-flights", "the-most-recent-orders-for-each-product", "the-most-recent-three-orders", "product-sales-analysis-ii", "top-earners"],
     },
     {
       name: "Booking-pace walks & LAG",
@@ -97,17 +97,17 @@ export const easyjetKit: CompanyKit = {
     {
       name: "Ratio discipline",
       why: "easyJet screens are ratio culture: attach rates, basic shares, flown percentages — each a fold over a stated denominator with real division. The 100.0 multiplier sits BEFORE the slash or integer division truncates the attach share toward zero and the board reads flat. Naming the numerator and denominator out loud is the graded move.",
-      slugs: ["ads-performance", "friend-requests-i-overall-acceptance-rate", "low-quality-problems", "user-purchase-platform"],
+      slugs: ["ads-performance", "friend-requests-i-overall-acceptance-rate", "low-quality-problems", "user-purchase-platform", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "Zero-attach anti-joins",
       why: "A passenger who books a seat but never attaches a bag, a family with no takers — the anti-join is the ancillary team's leak detector. On this db every passenger and every SKU has moved, so the drill includes proving that a confident zero is the true answer rather than a broken join. NOT EXISTS versus LEFT JOIN … IS NULL versus NOT IN is a three-way argument the panel expects you to referee.",
-      slugs: ["customer-who-visited-but-did-not-transact", "number-of-accounts-that-did-not-stream", "students-with-invalid-departments"],
+      slugs: ["customer-who-visited-but-did-not-transact", "number-of-accounts-that-did-not-stream", "students-with-invalid-departments", "sales-analysis-i", "combine-two-tables"],
     },
     {
       name: "Nested fee gates",
       why: "Screens escalate into staging: fold per-passenger fee totals, then judge them against a computed platform mean (the 338.19 average booking). Scalar, correlated and derived shapes each carry an empty-inner-query answer you are expected to give unprompted. Ancillary targeting is exactly this: which passengers ride above the platform's fee curve.",
-      slugs: ["second-highest-salary", "investments-in-2016", "game-play-analysis-iv", "orders-with-maximum-quantity-above-average"],
+      slugs: ["second-highest-salary", "investments-in-2016", "game-play-analysis-iv", "orders-with-maximum-quantity-above-average", "group-sold-products-by-the-date"],
     },
     {
       name: "Statements & cents discipline",

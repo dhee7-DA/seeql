@@ -55,7 +55,7 @@ export const deltaKit: CompanyKit = {
     {
       name: "Itinerary-fate counts",
       why: "Every Delta ops screen opens with the fate census: itineraries booked, flown-and-settled, airborne with wheels-off stamped, scrubbed. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling an airborne itinerary 'flown' — 30 versus 52 on this db.",
-      slugs: ["immediate-food-delivery-i", "trial-to-paid-funnel", "percentage-of-users-attended-a-contest", "flight-occupancy-and-waitlist-analysis", "rolling-7d-actives"],
+      slugs: ["immediate-food-delivery-i", "trial-to-paid-funnel", "percentage-of-users-attended-a-contest", "flight-occupancy-and-waitlist-analysis", "rolling-7d-actives", "immediate-food-delivery-ii", "classes-more-than-5-students", "find-the-team-size"],
     },
     {
       name: "Two-grain market censuses",
@@ -65,37 +65,37 @@ export const deltaKit: CompanyKit = {
     {
       name: "Joining members to itineraries",
       why: "Members carry market and enrollment; itineraries inherit them through joins, and the join type decides who survives. An itinerary without a member is corruption; a member without itineraries is whitespace — though on this db the anti-join returns a confident zero, and proving it is part of the job.",
-      slugs: ["combine-two-tables", "employee-bonus", "replace-employee-id-with-unique-identifier", "trips-and-users"],
+      slugs: ["combine-two-tables", "employee-bonus", "replace-employee-id-with-unique-identifier", "trips-and-users", "sales-analysis-i", "market-analysis-i"],
     },
     {
       name: "SkyMiles frequency ladders",
       why: "Loyalty tiering is rank-window reporting where ties are guaranteed — four members sit at 4 itineraries each on this db, and the ladder above them runs 24, 17, 14, 13, 5. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer flyers, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "top-travellers", "customer-order-frequency", "cohort-repeat-revenue"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "top-travellers", "customer-order-frequency", "cohort-repeat-revenue", "product-sales-analysis-ii", "second-highest-salary", "budget-pacing"],
     },
     {
       name: "Fare-band CASE ladders",
       why: "Cabin bands are CASE-classified — the db's fare products top out at a 199.99 flagship and the premium band above 200 is empty, which is exactly the honest-boundary question Delta asks. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the yield forecast, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "calculate-product-final-price"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "calculate-product-final-price", "average-selling-price"],
     },
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month booking spine (2024-01 to 2025-02) is the network review's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) and jump (+1,158.21 into August) named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine", "sessionize-events", "consecutive-available-seats", "calculate-orders-within-each-interval"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine", "sessionize-events", "consecutive-available-seats", "calculate-orders-within-each-interval", "game-play-analysis-iv"],
     },
     {
       name: "One-pass FILTER censuses",
       why: "The ops board gets flown-and-settled, airborne, awaiting and scrubbed in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift while the departure bank moves.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "find-peak-calling-hours-for-each-city"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "find-peak-calling-hours-for-each-city", "confirmation-rate", "not-boring-movies", "last-person-to-fit-in-the-elevator"],
     },
     {
       name: "Fare-family mix pivots",
       why: "Revenue management reads booked value per market split across fare-product families — a CASE pivot with one arm per family and a total column that must foot to the market book. Wide pivots die on missing ELSE arms and swapped family literals, so the drill is arm discipline, not syntax.",
-      slugs: ["reformat-department-table", "sales-by-day-of-the-week", "primary-department-for-each-employee", "the-most-recent-orders-for-each-product"],
+      slugs: ["reformat-department-table", "sales-by-day-of-the-week", "primary-department-for-each-employee", "the-most-recent-orders-for-each-product", "group-sold-products-by-the-date"],
     },
     {
       name: "Anti-joins & never-flown reads",
       why: "Loyalty hygiene is a real workflow: members who never flew, statements with no settlement leg, fare products that never left the shelf. The LEFT JOIN + IS NULL shape (and NOT EXISTS twin) shows up in most screens as the 'find the dead cohort' question — with the honest caveat that never-booked members return a confident zero on this db.",
-      slugs: ["customers-who-never-order", "sellers-with-no-sales", "find-churn-risk-customers"],
+      slugs: ["customers-who-never-order", "sellers-with-no-sales", "find-churn-risk-customers", "customers-who-bought-a-and-b-not-c", "duplicate-emails"],
     },
     {
       name: "Settlement & cents discipline",

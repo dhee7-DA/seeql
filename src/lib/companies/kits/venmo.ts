@@ -32,7 +32,7 @@ export const venmoKit: CompanyKit = {
   brief: [
     "**Venmo** is the social payments app — one request, many legs, and a feed where the split itself is the product. The analytics reality is a graph, not a ledger: a Friday dinner is one request that fans out into per-payer legs, a rent split recurs monthly, and a meaningful share of money sits parked in balance float between request and settlement. This kit maps the storefront db onto that world: the 16 customers rows are P2P accounts, the 103 orders are payment flows worth 34,833.28, and the 251 order_items rows are split legs — quantity = payers on the leg, unit_price = the per-payer amount, for **498 payer slots** in total. The status map is fixed: delivered = {emerald:settled to balance} (52, 50.5%), shipped = settling (30, 29.1%) with shipped_at as the settlement stamp, pending = parked in {amber:balance float} (14, 13.6%), cancelled = {rose:declined or expired} (7, 6.8%).",
     "The data org splits into growth (feed and graph analytics), payments ops (rails and float), and a small finance pod reading merchant-profile statements — all three walk the same flow spine at different grains. The graph heartbeat is the payer-band fold: **93 legs ride solo** (one payer, 93 slots) while **158 legs are true splits** carrying 405 of the 498 payer slots — 62.9% of legs, 81.3% of the people, and 86 of 103 flows touch at least one multi-payer leg. The clock is the second story: a flow opens at created_at and settles at shipped_at — **82 of 103 flows** carry the stamp, averaging **2.98 days** request-to-settle with a 2–4 spread, while the 14 float rows have none (a population definition, not a cleanup job). Money sits one layer down: statements and rail legs in INTEGER cents, where the dollar read is `amount_cents / 100.0`.",
-    "Interview screens are census-then-denominator with a graph accent. A typical loop opens with a **two-grain flow census** — EU runs 45 flows from just 8 accounts (intensity 5.6) while the US runs 19 from 2 (9.5) — then escalates into the split band where the interviewer asks what `SUM(quantity)` actually counts (*'is that legs or people?'* — 251 versus 498, the whole test), then into the request ladder where the top accounts run 24, 17, 14, 13, 5 flows and three accounts tie at 4, making rank semantics a policy call about peer accounts. Rails close the loop: {sky:instant debit} (card) carries **16 legs / 37,364.00** against bank transfer (wire) 11 / 32,248.00 — and five merchant statements settle on BOTH rails, which is where the feed's split logic meets money.",
+    "Interview screens are census-then-denominator with a graph accent. A typical loop opens with a **two-grain flow census** — EU runs 45 flows from just 8 accounts (intensity 5.6) while the US runs 19 from 2 (9.5) — then escalates into the split band where the interviewer asks what `SUM(quantity)` actually counts (*'is that legs or people?'* — 251 versus 498, the whole test), then into the request ladder where the top accounts run 24, 17, 14, 13, 5 flows and four accounts tie at 4, making rank semantics a policy call about peer accounts. Rails close the loop: {sky:instant debit} (card) carries **16 legs / 37,364.00** against bank transfer (wire) 11 / 32,248.00 — and five merchant statements settle on BOTH rails, which is where the feed's split logic meets money.",
     "Preparation strategy: the pools file carries no Venmo section — **0 tagged rows** — so all thirty-two problems and every topic slug here are **theme-curated** to this kit's known screen shapes: payer-band CASE folds, split-graph conditional counts, co-split pair queries, request-to-settle clocks, rank ladders with ties, and the cents-safe statement spine. Do the topics in order, then run all six case studies on the live storefront db, spaced across a week rather than one sitting: the {violet:payer-band census} the growth board opens with, the {emerald:rail-roster walk} payments ops reads at every close, the payer-slot month walk, the one-pass fate census, the never-collected dunning queue, and the request ladder with its tie-block policy call. The bar to clear: *state the population and the denominator before you compute anything* — then make every fate census reconcile to 103 by construction.",
   ],
 
@@ -50,19 +50,19 @@ export const venmoKit: CompanyKit = {
     { name: "Balance float census", what: "14 pending flows parked between request and settlement — EU 6, APAC 5, US 3, LATAM 0 — against 52 settled, 30 settling and 7 declined, reconciling to 103 by construction. Float is stored value waiting to happen; its census is a conditional count, and its aging is a dated filter." },
     { name: "Rail mix", what: "Instant debit (card) 16 legs / 37,364.00 against bank transfer (wire) 11 legs / 32,248.00, with five merchant statements settling on both rails. The rails read decides where instant-transfer fee revenue lives and where settlement risk concentrates." },
     { name: "Statement coverage", what: "Merchant-profile statements versus the legs that settled them: 21 exact (65,612.00 both sides), 1 partial (4,000.00 of 6,148.00), 6 never-collected worth 15,217.00 — against a 28.4-day average settlement, fastest 13, slowest 84. The AR anti-join finance refreshes every close." },
-    { name: "Feed-graph intensity", what: "Flows per account: EU 45-from-8 (5.6) versus US 19-from-2 (9.5); the request ladder runs 24, 17, 14, 13, 5 with a three-way tie at 4; 63.5% of the book sits with accounts over 3,000 lifetime. One lost power account moves the graph." },
+    { name: "Feed-graph intensity", what: "Flows per account: EU 45-from-8 (5.6) versus US 19-from-2 (9.5); the request ladder runs 24, 17, 14, 13, 5 with a four-way tie at 4; 63.5% of the book sits with accounts over 3,000 lifetime. One lost power account moves the graph." },
   ],
 
   topics: [
     {
       name: "Payer-band CASE folds",
       why: "The split band is Venmo's first-class citizen: every leg is quantity = 1 (solo) or quantity >= 2 (a split), and the growth board's headline chart is that fold — 93 solo legs against 158 split legs. The arms must be exhaustive and ordered, because a hole in the CASE is a hole in the engagement story, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["calculate-special-bonus", "type-of-triangle", "evaluate-boolean-expression", "credit-utilization-bands", "average-selling-price"],
+      slugs: ["calculate-special-bonus", "type-of-triangle", "evaluate-boolean-expression", "credit-utilization-bands", "average-selling-price", "number-of-employees-who-met-the-target", "chargeback-rate-ranking"],
     },
     {
       name: "Split-graph conditional counts",
       why: "'Who paid what' is a conditional count: COUNT(DISTINCT CASE WHEN quantity >= 2 THEN order_id END) turns legs into split-touching flows — 86 of 103. The trap is grain: COUNT(*) counts legs (251), COUNT(DISTINCT o.id) counts flows (103), SUM(quantity) counts people (498) — three honest numbers that answer three different questions, and the interviewer wants you to say which one you are shipping.",
-      slugs: ["number-of-rich-customers", "unique-orders-and-customers-per-month", "actors-and-directors-who-cooperated-at-least-three-times", "customer-who-visited-but-did-not-transact", "active-users"],
+      slugs: ["number-of-rich-customers", "unique-orders-and-customers-per-month", "actors-and-directors-who-cooperated-at-least-three-times", "customer-who-visited-but-did-not-transact", "active-users", "product-sales-analysis-ii", "sales-analysis-i", "percentage-of-users-attended-a-contest", "classes-more-than-5-students", "combine-two-tables", "confirmation-rate", "game-play-analysis-i"],
     },
     {
       name: "Co-split pair graphs",
@@ -72,12 +72,12 @@ export const venmoKit: CompanyKit = {
     {
       name: "Request-to-settle clocks",
       why: "Every ops screen opens with the clock: request raised at created_at, settlement stamped at shipped_at, delta averaged over stamped rows only — 82 of 103, 2.98 days. Each stage is a conditional count or average over a timestamp, and the first interview question is what the denominator holds — the 14 float rows have no stamp by definition, not by error.",
-      slugs: ["average-time-of-process-per-machine", "immediate-food-delivery-ii", "users-with-two-purchases-within-seven-days", "convert-date-format"],
+      slugs: ["average-time-of-process-per-machine", "immediate-food-delivery-ii", "users-with-two-purchases-within-seven-days", "convert-date-format", "repeat-purchase-rate"],
     },
     {
       name: "Request ladders & rank ties",
-      why: "The power-account ladder runs 24, 17, 14, 13, 5 flows and then THREE accounts tie at 4 — RANK, DENSE_RANK and ROW_NUMBER disagree about shared rungs and gaps, and on a social feed a leaderboard policy about ties is a product statement. Venmo's own growth reviews publish the policy; candidates are asked to defend it.",
-      slugs: ["rank-scores", "top-earners", "compute-the-rank-as-a-percentage"],
+      why: "The power-account ladder runs 24, 17, 14, 13, 5 flows and then FOUR accounts tie at 4 — RANK, DENSE_RANK and ROW_NUMBER disagree about shared rungs and gaps, and on a social feed a leaderboard policy about ties is a product statement. Venmo's own growth reviews publish the policy; candidates are asked to defend it.",
+      slugs: ["rank-scores", "top-earners", "compute-the-rank-as-a-percentage", "customer-placing-the-largest-number-of-orders", "top-travellers", "account-balance"],
     },
     {
       name: "Float & fate censuses",
@@ -87,12 +87,12 @@ export const venmoKit: CompanyKit = {
     {
       name: "Rails & statement reads",
       why: "Money lives one layer down: 28 merchant statements against 27 rail legs, card = instant debit (16 / 37,364.00) and wire = bank transfer (11 / 32,248.00), INTEGER cents everywhere. Coverage is one CASE away — 21 exact, 1 partial, 6 none — and the rails matter because five statements settle on both rails at once.",
-      slugs: ["monthly-transactions-ii", "bank-account-summary-ii", "transaction-velocity", "ar-aging-schedule", "deferred-revenue", "queries-quality-and-percentage"],
+      slugs: ["monthly-transactions-ii", "bank-account-summary-ii", "transaction-velocity", "ar-aging-schedule", "deferred-revenue", "queries-quality-and-percentage", "capital-gain-loss"],
     },
     {
       name: "Month walks & feed trends",
       why: "The 14-month flow spine (2024-01 to 2025-02) is the engagement call's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) and jump (+1,158.21 into August) named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero. Declined requests concentrate in July and November, 2 each of 7.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "count-the-number-of-experiments", "monthly-transactions-i", "consecutive-numbers"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "count-the-number-of-experiments", "monthly-transactions-i", "consecutive-numbers", "customers-who-never-order", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "Nested staging & gates",
@@ -115,8 +115,8 @@ export const venmoKit: CompanyKit = {
     },
     {
       id: "venmo-t2",
-      q: "The request ladder runs 24, 17, 14, 13, 5 flows, then THREE accounts tie at 4. RANK, DENSE_RANK or ROW_NUMBER — and who decides?",
-      a: "The rank trio is a business decision about shared rungs and gaps, and the interviewer wants you to say that out loud. RANK gives tied counts the same rank and skips — on this db the three-way tie consumes ranks 6 through 8 and the next distinct count (3) lands on 9, implying phantom positions that do not exist. DENSE_RANK shares rungs without gaps — the tie reads 6, 6, 6 and the next distinct count is 7. ROW_NUMBER splits ties arbitrarily, which is a silent judgment call about whose account gets the growth pod's attention first. There is a second layer Venmo candidates get asked: the same tie problem shows up inside a running balance walk — SUM OVER (ORDER BY created_at) uses a default RANGE frame, so flows tied on the same timestamp enter the cumulative together. The wrong answer is picking a function; the right answer is picking a policy — shared rungs for peer accounts, or an explicitly named tie-breaker like created_at then id — and writing it in the query comment.",
+      q: "The request ladder runs 24, 17, 14, 13, 5 flows, then FOUR accounts tie at 4. RANK, DENSE_RANK or ROW_NUMBER — and who decides?",
+      a: "The rank trio is a business decision about shared rungs and gaps, and the interviewer wants you to say that out loud. RANK gives tied counts the same rank and skips — on this db the four-way tie consumes ranks 6 through 9 and the next distinct count (3) lands on 10, implying phantom positions that do not exist. DENSE_RANK shares rungs without gaps — the tie reads 6, 6, 6, 6 and the next distinct count is 7. ROW_NUMBER splits ties arbitrarily, which is a silent judgment call about whose account gets the growth pod's attention first. There is a second layer Venmo candidates get asked: the same tie problem shows up inside a running balance walk — SUM OVER (ORDER BY created_at) uses a default RANGE frame, so flows tied on the same timestamp enter the cumulative together. The wrong answer is picking a function; the right answer is picking a policy — shared rungs for peer accounts, or an explicitly named tie-breaker like created_at then id — and writing it in the query comment.",
       tag: "windows",
     },
     {
@@ -316,13 +316,13 @@ export const venmoKit: CompanyKit = {
     },
     {
       id: "venmo-mcq-6",
-      prompt: "The request ladder runs 24, 17, 14, 13, 5 flows, then THREE accounts tie at 4. Under RANK, what rank do the 3-flow accounts carry?",
-      choices: ["9", "7", "8", "6"],
+      prompt: "The request ladder runs 24, 17, 14, 13, 5 flows, then FOUR accounts tie at 4. Under RANK, what rank do the 3-flow accounts carry?",
+      choices: ["10", "7", "8", "6"],
       answer: 0,
-      why: "RANK shares rungs and then skips: 1, 2, 3, 4, 5, then the three-way tie consumes ranks 6 through 8, so the next distinct count (3 flows) lands on 9. Both 3-flow accounts share rank 9.",
+      why: "RANK shares rungs and then skips: 1, 2, 3, 4, 5, then the four-way tie consumes ranks 6 through 9, so the next distinct count (3 flows) lands on 10. Both 3-flow accounts share rank 10.",
       notes: [
         { choice: 1, why: "7 is the DENSE_RANK answer — shared rungs without gaps. The growth board's published policy is RANK semantics, gaps included." },
-        { choice: 2, why: "8 is the LAST rank the tie block occupies, not the next one handed out. Off-by-one on the tie block is the classic leaderboard bug." },
+        { choice: 2, why: "8 sits inside the tie block (ranks 6 through 9), not the next rank handed out. Off-by-one on the tie block is the classic leaderboard bug." },
       ],
       difficulty: "medium",
     },

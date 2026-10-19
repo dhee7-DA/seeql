@@ -63,32 +63,32 @@ export const morganstanleyKit: CompanyKit = {
     {
       name: "Household book rollups",
       why: "The advisor book IS a rollup: lifetime billed per household, receipts beside each name, and a LEFT JOIN that keeps households honest when a billing has no receipt. Bonus-style left joins and top-by-value boards are the core drills.",
-      slugs: ["employee-bonus", "top-travellers", "bank-account-summary-ii"],
+      slugs: ["employee-bonus", "top-travellers", "bank-account-summary-ii", "combine-two-tables", "sales-person"],
     },
     {
       name: "Fee-billing states",
       why: "Billings live in states — paid, open, void — and the desk counts them separately without letting any state leak out of the denominator. CASE classification and HAVING-gated frequency folds are the daily shape.",
-      slugs: ["weather-type-in-each-country", "customer-order-frequency", "immediate-food-delivery-iii"],
+      slugs: ["weather-type-in-each-country", "customer-order-frequency", "immediate-food-delivery-iii", "managers-with-at-least-5-direct-reports"],
     },
     {
       name: "Book concentration & shares",
       why: "A wealth book is read as weights: each household's share of billed value, the concentration index, and how much sits above a lifetime line — 63.5% over 3000 here. Share-of-partition windows are the exact muscle.",
-      slugs: ["portfolio-weights", "portfolio-concentration-hhi", "percentage-of-users-attended-a-contest"],
+      slugs: ["portfolio-weights", "portfolio-concentration-hhi", "percentage-of-users-attended-a-contest", "find-the-team-size"],
     },
     {
       name: "AUM-movement windows",
       why: "Flows and balances are read through windows: peak activity per day, second-largest relationships, top earners by value — ranking and argmax boards the desk reviews every morning.",
-      slugs: ["maximum-transaction-each-day", "second-highest-salary", "top-earners"],
+      slugs: ["maximum-transaction-each-day", "second-highest-salary", "top-earners", "rank-scores", "project-employees-iii", "department-highest-salary"],
     },
     {
       name: "Fee schedules & tiers",
       why: "Advisory fees are tiered, and the tier a household lands in decides the invoice: CASE ladders over folded value, spend-band classification, and risk-based band joins where the boundary operator is the dispute.",
-      slugs: ["the-category-of-each-member-in-the-store", "customer-purchasing-behavior-analysis", "risk-based-pricing"],
+      slugs: ["the-category-of-each-member-in-the-store", "customer-purchasing-behavior-analysis", "risk-based-pricing", "customers-who-never-order", "count-salary-categories"],
     },
     {
       name: "As-of & point-in-time reads",
       why: "Fee disputes are settled with the schedule that WAS in force at billing time, not today's — as-of price logic, point-in-time joins and latest-rate lookups are exactly how the desk proves it.",
-      slugs: ["product-price-at-a-given-date", "point-in-time-asof", "fx-exposure-report"],
+      slugs: ["product-price-at-a-given-date", "point-in-time-asof", "fx-exposure-report", "confirmation-rate", "the-latest-login-in-2020"],
     },
     {
       name: "Net flows & running cash",
@@ -113,22 +113,22 @@ export const morganstanleyKit: CompanyKit = {
     {
       name: "Settlement rails & latency",
       why: "Two rails, two tempos: card is the retail debit rail (16 receipts / 37364.00), wire the institutional rail (11 / 32248.00), and settlement lag runs 13 to 84 days around a 28.4-day average. Date-math drills — day-over-day joins, two-events-in-a-window, golden-hour buckets — are exactly the latency muscle.",
-      slugs: ["rising-temperature", "users-with-two-purchases-within-seven-days", "find-golden-hour-customers"],
+      slugs: ["rising-temperature", "users-with-two-purchases-within-seven-days", "find-golden-hour-customers", "restaurant-growth"],
     },
     {
       name: "Split receipts & duplicate evidence",
       why: "Five split-plan billings fan 27 receipt rows over 22 receiving relationships — the join grain that makes counts lie. Duplicate-pair drills (same-billing receipt pairs, repeated claims, symmetric matches) train the eye that catches double counting before the deck ships it.",
-      slugs: ["duplicate-charge-pairs", "duplicate-emails", "symmetric-pairs"],
+      slugs: ["duplicate-charge-pairs", "duplicate-emails", "symmetric-pairs", "monthly-transactions-i"],
     },
     {
       name: "Household tiers & percentiles",
       why: "Fee schedules segment the book: which quartile a household's lifetime billed lands in decides the invoice and the call order. NTILE buckets, PERCENT_RANK ladders and spend histograms are the segmentation drills the platform review quotes.",
-      slugs: ["rfm-segmentation", "usage-tier-percentiles", "spend-histogram"],
+      slugs: ["rfm-segmentation", "usage-tier-percentiles", "spend-histogram", "average-salary-of-departments", "nth-highest-salary"],
     },
     {
       name: "Surveillance & anomaly screens",
       why: "Institutional markets runs surveillance next to every board: amount z-scores over receipt series, HAVING-guarded structuring screens, pair-window wash checks. The desk's question is always the same — which rows pattern wrong, and by how much in dollars.",
-      slugs: ["amount-anomaly-zscore", "structuring-detection", "wash-trade-detection"],
+      slugs: ["amount-anomaly-zscore", "structuring-detection", "wash-trade-detection", "capital-gain-loss"],
     },
     {
       name: "Credit & provision reads",

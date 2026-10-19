@@ -70,17 +70,17 @@ export const trainlineKit: CompanyKit = {
     {
       name: "Month-over-month pace walks",
       why: "The trading pack reads momentum, not levels: bookings minus LAG(bookings) per month, first row NULL as data. LAG-flag and window-between drills are the exact machinery behind the pace walk and the gap-to-next-journey reads.",
-      slugs: ["consecutive-transactions-with-increasing-amounts", "biggest-window-between-events", "find-consistently-improving-employees"],
+      slugs: ["consecutive-transactions-with-increasing-amounts", "biggest-window-between-events", "find-consistently-improving-employees", "product-price-at-a-given-date", "same-day-sale"],
     },
     {
       name: "Operator settlement ledgers",
       why: "Operator money moves as integer cents across 28 bills and 27 legs; coverage is every invoice LEFT JOIN its payments, classified exact, partial or none. LEFT JOIN folds with a zero arm are the drill — 6 books here settle nothing at all.",
-      slugs: ["bank-account-summary", "combine-two-tables", "count-student-number-in-departments"],
+      slugs: ["bank-account-summary", "combine-two-tables", "count-student-number-in-departments", "trips-and-users", "hopper-company-queries-ii", "the-airport-with-the-most-flights", "total-traveled-distance", "students-and-examinations", "settlement-fails-aging", "gl-reconciliation"],
     },
     {
       name: "Unsettled-book anti-joins",
       why: "The refund worklist is the anti-join: bills with no payment leg, partners with no moved demand. On this db the invoice-side worklist runs 6 books, while traveler- and fare-type anti-joins return zero — knowing when zero is the true answer is part of the drill.",
-      slugs: ["sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "number-of-accounts-that-did-not-stream"],
+      slugs: ["sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "number-of-accounts-that-did-not-stream", "find-churn-risk-customers", "customers-who-bought-a-and-b-not-c", "customers-who-bought-all-products"],
     },
     {
       name: "Journey-state shares",
@@ -100,17 +100,17 @@ export const trainlineKit: CompanyKit = {
     {
       name: "Fare-ladder tiles & histograms",
       why: "The fare ladder is read as distributions: budget under 50, standard 50 to 200, premium empty — then value histograms and bar-chart buckets per market. Histogram and bar-chart drills are how the fare-mix slide gets built honestly.",
-      slugs: ["spend-histogram", "create-a-session-bar-chart", "ratings-histogram"],
+      slugs: ["spend-histogram", "create-a-session-bar-chart", "ratings-histogram", "confirmation-rate", "average-selling-price", "group-sold-products-by-the-date", "sales-by-day-of-the-week", "count-the-number-of-experiments", "calculate-orders-within-each-interval", "users-with-two-purchases-within-seven-days", "returns-rate-by-category"],
     },
     {
       name: "Booking clocks & lead windows",
       why: "Booking-to-travel is julianday math over the 82 stamped journeys only — 2.98 days average, 2 to 4 — and the 21 unstamped rows must NULL out, not fabricate. Process-latency and date-offset drills are the clock's toolkit.",
-      slugs: ["average-time-of-process-per-machine", "find-golden-hour-customers", "users-that-actively-request-confirmation-messages"],
+      slugs: ["average-time-of-process-per-machine", "find-golden-hour-customers", "users-that-actively-request-confirmation-messages", "new-users-daily-count"],
     },
     {
       name: "Window frames & running math",
       why: "Cumulative revenue-to-date and trailing pace walks need explicit frames — ROWS BETWEEN — not the default frame, which silently pulls every peer on a tied order key into the running sum. The settlement walk and the trailing three-month pace both live here; the drills are cumulative-sum and frame-control shapes.",
-      slugs: ["find-cumulative-salary-of-an-employee", "running-total-for-different-genders", "restaurant-growth"],
+      slugs: ["find-cumulative-salary-of-an-employee", "running-total-for-different-genders", "restaurant-growth", "top-travellers", "the-most-recent-three-orders", "last-person-to-fit-in-the-bus", "maximum-transaction-each-day", "basket-depth-aov"],
     },
     {
       name: "Set-op stacks",
@@ -125,12 +125,12 @@ export const trainlineKit: CompanyKit = {
     {
       name: "NULL policy & fallbacks",
       why: "The 21 unstamped bookings are a policy, not a bug: NULL-blind aggregates, COALESCE for display only, and forward-fill only where the business says carry-forward. The drills separate counting rows from counting values — the exact instinct that keeps awaiting-travel out of the completion share.",
-      slugs: ["find-customer-referee", "books-with-null-ratings", "change-null-values-in-a-table-to-the-previous-value"],
+      slugs: ["find-customer-referee", "books-with-null-ratings", "change-null-values-in-a-table-to-the-previous-value", "employees-with-missing-information", "fix-product-name-format", "keep-latest-dedupe", "null-blank-audit"],
     },
     {
       name: "Seat pairs & self-joins",
       why: "Adjacent-seat reads and corridor-pair demand — which two route families ride together on one booking — are self-join folds over the same segment rows. The drills pair rows deliberately: consecutive seats, mirrored legs, shared itineraries, without letting the pairing explode the fold.",
-      slugs: ["consecutive-available-seats", "tree-node", "most-common-course-pairs"],
+      slugs: ["consecutive-available-seats", "tree-node", "most-common-course-pairs", "symmetric-pairs", "find-overlapping-shifts"],
     },
   ],
 

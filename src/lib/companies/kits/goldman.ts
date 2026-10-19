@@ -49,7 +49,7 @@ export const goldmanKit: CompanyKit = {
     {
       name: "Folds at the confirmation grain",
       why: "Every morning read here starts by folding settlement rows onto the confirmations they clear — counts and values per status, per rail, per day. The trap is baked into the books: 27 settlements against 28 confirmations means the fold's input is not the population the stakeholder assumes, and the interviewer listens for whether you count rows or confirmations before you sum.",
-      slugs: ["products-worth-over-invoices", "monthly-transactions-i", "number-of-rich-customers"],
+      slugs: ["products-worth-over-invoices", "monthly-transactions-i", "number-of-rich-customers", "wash-trade-detection"],
     },
     {
       name: "Cash-application joins",
@@ -64,7 +64,7 @@ export const goldmanKit: CompanyKit = {
     {
       name: "CASE-classified coverage",
       why: "Coverage is a definition, not a vibe: exact when the folded settlement value equals the booked amount, partial when it does not, none when no rail ever hit. That classification is a CASE arm ladder folded per confirmation, and the interviewer checks whether your arms are exhaustive and your boundary operators deliberate.",
-      slugs: ["count-salary-categories", "loan-types", "monthly-transactions-ii"],
+      slugs: ["count-salary-categories", "loan-types", "monthly-transactions-ii", "ar-aging-schedule"],
     },
     {
       name: "Risk ladders and rank windows",
@@ -84,7 +84,7 @@ export const goldmanKit: CompanyKit = {
     {
       name: "Balance walks and running positions",
       why: "The cash position is a running sum over posted entries, and the desk reads it as a walk — current balance beside prior balance, deltas visible. Window frames decide whether ties double-count, and the interviewer wants the frame stated out loud before the query runs.",
-      slugs: ["account-balance", "running-total-for-different-genders", "gl-reconciliation"],
+      slugs: ["account-balance", "running-total-for-different-genders", "gl-reconciliation", "balance-rollforward"],
     },
     {
       name: "Settlement-calendar date math",

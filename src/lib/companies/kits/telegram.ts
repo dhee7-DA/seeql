@@ -56,7 +56,7 @@ export const telegramKit: CompanyKit = {
     {
       name: "Unread walls & NULL policy",
       why: "Scheduled posts carry no shipped_at and no read state, so the telemetry tables are full of meaningful NULLs. COUNT(shipped_at) versus COUNT(*) is the gap between fanned-out and booked posts — 82 versus 103 here — and AVG over a NULL-bearing column silently shrinks its population. Writing NULL policy down before writing SQL is the habit being graded.",
-      slugs: ["find-customer-referee", "books-with-null-ratings", "invalid-tweets-ii"],
+      slugs: ["find-customer-referee", "books-with-null-ratings", "invalid-tweets-ii", "invalid-tweets", "keep-latest-dedupe"],
     },
     {
       name: "Two-grain channel censuses",
@@ -66,7 +66,7 @@ export const telegramKit: CompanyKit = {
     {
       name: "Joining channels to posts",
       why: "Channels carry region and created_at; posts inherit them through joins, and the join type decides who survives. A post with no channel is corruption; a channel with no posts is a dead shelf — though on this db the anti-join returns a confident zero, and proving it is part of the job.",
-      slugs: ["combine-two-tables", "sales-analysis-i", "employee-bonus"],
+      slugs: ["combine-two-tables", "sales-analysis-i", "employee-bonus", "reported-posts-ii", "number-of-comments-per-post", "find-followers-count", "article-views-i"],
     },
     {
       name: "Engagement leaderboards",
@@ -86,12 +86,12 @@ export const telegramKit: CompanyKit = {
     {
       name: "Nested folds & tier gates",
       why: "Screens escalate into staging: fold per-channel post counts, then judge them against a computed platform mean (6.44 here — exactly four channels clear it). Scalar, correlated and derived shapes each carry an empty-inner-query answer you are expected to give unprompted.",
-      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments"],
+      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments", "trial-to-paid-funnel"],
     },
     {
       name: "One-pass status censuses",
       why: "The admin board gets read, unread, scheduled and deleted in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "ad-free-sessions"],
     },
     {
       name: "Premium billing & cents discipline",

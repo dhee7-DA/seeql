@@ -64,12 +64,12 @@ export const neweggKit: CompanyKit = {
     {
       name: "Two-grain market censuses",
       why: "Checkouts and builders are different grains of the same join, and every census here reports both: EU runs 45 checkouts from 8 builders while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "customers-with-strictly-increasing-purchases"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "customers-with-strictly-increasing-purchases", "find-stores-with-inventory-imbalance", "returns-rate-by-category", "repeat-purchase-rate", "rfm-segmentation"],
     },
     {
       name: "Joining SKUs to carts",
       why: "Cart lines inherit family and price through the products join, and the join type decides who survives. A cart line with no SKU row is corruption; a SKU with no cart line would be dead shelf — on this db the anti-join returns a confident zero, and proving it is part of the job.",
-      slugs: ["product-sales-analysis-i", "product-sales-analysis-ii", "combine-two-tables", "fifo-inventory-cogs", "scd2-build"],
+      slugs: ["product-sales-analysis-i", "product-sales-analysis-ii", "combine-two-tables", "fifo-inventory-cogs", "scd2-build", "product-sales-analysis-iii", "customers-who-never-order"],
     },
     {
       name: "Spec-band laddering with CASE",
@@ -79,12 +79,12 @@ export const neweggKit: CompanyKit = {
     {
       name: "Combo-basket reads",
       why: "A build cart is a combo candidate, and the combo pod reads baskets at line grain: 251 lines over 103 builds, never more than 3 of one line, families stacked inside one checkout. Conditional aggregation over line pairs — who bought the board AND the card but not the cooler — is exactly the combo-eligibility query.",
-      slugs: ["basket-depth-aov", "customers-who-bought-a-and-b-not-c", "group-sold-products-by-the-date"],
+      slugs: ["basket-depth-aov", "customers-who-bought-a-and-b-not-c", "group-sold-products-by-the-date", "duplicate-charge-pairs"],
     },
     {
       name: "Best-seller leaderboards",
       why: "The units ladder is tie-heavy by construction: two SKUs at 36 units, then three-way ties at 30 and at 21. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow — a merchandising policy about peer SKUs, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "second-highest-salary", "premier-league-table-ranking"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "second-highest-salary", "premier-league-table-ranking", "customer-placing-the-largest-number-of-orders", "most-frequently-ordered-product-per-customer"],
     },
     {
       name: "Distributor bench economics",
@@ -94,7 +94,7 @@ export const neweggKit: CompanyKit = {
     {
       name: "Month spine walks",
       why: "The 14-month checkout spine (2024-01 to 2025-02) is the trading call's home turf: the book opens at 3,731.97, troughs at 1,193.86 in July, then jumps +1,158.21 into August while the steepest drop, -1,326.87, lands in November. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["biggest-window-between-events", "last-person-to-fit-in-the-elevator", "friday-purchase-iii", "seasonal-sales-analysis", "year-on-year-growth-rate"],
+      slugs: ["biggest-window-between-events", "last-person-to-fit-in-the-elevator", "friday-purchase-iii", "seasonal-sales-analysis", "year-on-year-growth-rate", "recyclable-and-low-fat-products", "keep-latest-dedupe", "null-blank-audit"],
     },
     {
       name: "Coverage set algebra",
@@ -104,7 +104,7 @@ export const neweggKit: CompanyKit = {
     {
       name: "Cents-safe settlement reads",
       why: "Claimed is not settled — the finance tables (28 invoices, 27 payments, INTEGER cents) are where the builder world meets money. Every dollar read is amount_cents / 100.0, the 28.4-day settlement clock (13 fastest, 84 slowest) is one date diff away, and the exact/partial/none coverage split (21 / 1 / 6) is one CASE from the register.",
-      slugs: ["bank-account-summary-ii", "products-worth-over-invoices", "ar-aging-schedule", "balance-rollforward", "trial-balance-check"],
+      slugs: ["bank-account-summary-ii", "products-worth-over-invoices", "ar-aging-schedule", "balance-rollforward", "trial-balance-check", "weeks-of-supply", "settlement-fails-aging", "warehouse-manager", "delinquency-buckets"],
     },
   ],
 
@@ -951,7 +951,7 @@ export const neweggKit: CompanyKit = {
     { slug: "duplicate-charge-pairs", why: "Five statements settle on BOTH card and wire legs — pairing legs per statement is how finance proves the split was intentional, not double-billing. Self-join over shared keys." },
     { slug: "keep-latest-dedupe", why: "Price-list revisions arrive as one row per repricing; keep-latest dedupe is how the shelf shows one price per SKU. ROW_NUMBER = 1 over a per-key ordering." },
     { slug: "null-blank-audit", why: "Spec sheets arrive half-filled; the null-and-blank audit across columns is the catalog pod's ingestion gate before a SKU goes live." },
-    { slug: "repeat-purchase-rate", why: "Builders repeat — the ladder runs 24, 17, 14, 13, 5 with a three-way tie at 4 below. Share of builders with 2-plus checkouts is the retention read." },
+    { slug: "repeat-purchase-rate", why: "Builders repeat — the ladder runs 24, 17, 14, 13, 5 with a four-way tie at 4 below. Share of builders with 2-plus checkouts is the retention read." },
     { slug: "rfm-segmentation", why: "Builder segmentation on recency, frequency, money — NTILE bands over 16 builders — drives who sees the next combo-deal email and who gets the winback." },
     { slug: "warehouse-manager", why: "The warehouse fold: units per SKU joined back to the shelf, stock beside sold. The join-and-aggregate shape behind every inventory count here." },
     { slug: "product-price-at-a-given-date", why: "As-of shelf pricing: the price in force when a cart landed, not today's — the slowly-changing-dimension instinct every price audit and open-box repricing assumes." },

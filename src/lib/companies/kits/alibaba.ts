@@ -18,9 +18,9 @@ export const alibabaKit: CompanyKit = {
     "Alibaba operates the planet's largest commerce complex — **Taobao**'s vast consumer marketplace, **Tmall**'s brand-flagship tier, and the logistics and payments rails underneath them. Its signature event, **Singles' Day (11.11)**, moves a year's worth of Western retail through the pipeline in roughly a day, and the analytics culture is built around that rhythm: {orange:GMV} dashboards update in near-real-time, seller league tables recompute hourly, and category-mix reports decide where next quarter's traffic subsidies land. Every analyst here works in numbers at a scale where *one mis-joined table is a nine-figure mistake*, so precision habits — grain narration, denominator discipline, rounding at the end — are treated as professional basics, not differentiators.",
     "The data org is deep and platform-shaped. Teams own verticals (marketplace, logistics via **Cainiao**, payments, cloud, entertainment), and each vertical's analyst sits close to the business line they measure. The marketplace teams in particular live on a **three-table reality**: transaction lines join to `products`, `products` join to `sellers`, and every interesting question — seller concentration, category crowns, commission exposure — is a walk down that chain. During 11.11 war rooms, the same chain gets sliced by hour and by province; between events, the same chain produces the quarterly category-mix deck the strategy team argues over.",
     "Interview style is chain-fluent and definition-precise. Screens typically open with a two-table warm-up, then walk the item → product → seller chain with an aggregate attached, and land on either a **share-of-total** computation, a `CASE`-classified bucket report, or a per-group top-N with tie handling. Follow-ups drill definitions: *'is that share of GMV or of order count?'*, *'what happens to your denominator when a product has no seller record?'*. The interviewer is checking whether your reasoning survives the join chain — candidates who state the grain at each hop outperform candidates who pattern-match.",
-    "Preparation strategy: Alibaba has **no tagged pool** in this app's registry, so the kit curates **sixteen problems** around its known themes — the seller chain, {orange:GMV} arithmetic, concentration reads, `CASE` buckets and pivot walls. Work the topics in order, then run both case studies on the live storefront db: one rebuilds the **seller-concentration read** its marketplace reviews open with, the other rebuilds the category-crown report that decides subsidy winners.",
+    "Preparation strategy: Alibaba has **no tagged pool** in this app's registry, so the kit curates **thirty-two problems** around its known themes — the seller chain, {orange:GMV} arithmetic, concentration reads, `CASE` buckets and pivot walls. Work the topics in order, then run all six case studies on the live storefront db: one rebuilds the **seller-concentration read** its marketplace reviews open with, the other rebuilds the category-crown report that decides subsidy winners, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting...",
     "The analyst's remit stretches past the marketplace itself, and the deeper material reflects that. Cainiao waybill feeds make created-to-shipped latency a daily SLA read — the probed storefront shows a **2.98-day average across 82 shipped orders**, range 2–4 — while Alimama's ad auctions turn every campaign into a ROAS ratio and **88VIP** membership turns every GMV total into a members-versus-everyone split. Underneath the commerce sits settlement: invoices issued, payments landing by card or wire, and an AR census — {emerald:exact}, {amber:partial}, {rose:unpaid} — that the marketplace analyst runs as fluently as any finance hire. The habit this builds is census discipline: one pass over the book, conditional counts per state, no subtotal left unexplained.",
-    "Senior loops add staging and time, and this expanded kit rehearses both: a `CTE` that builds seller-month revenue before a ranking lands on it, a `LAG` delta that turns the monthly GMV line into a growth story, a window frame that accumulates revenue through the sale without double-counting the current bucket, and set-operation stacks that glue segment reports into one wall. The kit now carries **thirty-two curated problems and six case files** on the live storefront db — the first sixteen problems and two cases cover the core chain work, and the additions push into frames, deltas, one-pass censuses, and *the cents-versus-dollars ledger reads its settlement teams live in*.",
+    "Senior loops add staging and time, and this expanded kit rehearses both: a `CTE` that builds seller-month revenue before a ranking lands on it, a `LAG` delta that turns the monthly GMV line into a growth story, a window frame that accumulates revenue through the sale without double-counting the current bucket, and set-operation stacks that glue segment reports into one wall. The kit now carries **thirty-two curated problems and six case files** on the live storefront db — the first thirty-two problems and two cases cover the core chain work, and the additions push into frames, deltas, one-pass censuses, and *the cents-versus-dollars ledger reads its settlement teams live in*.",
   ],
 
   dayInLife: [
@@ -54,7 +54,7 @@ export const alibabaKit: CompanyKit = {
     {
       name: "GMV arithmetic & rounding",
       why: "Revenue per unit, weighted prices, commission bases — GMV questions are ratio questions with money attached. Alibaba drills the multiply-by-100-before-dividing habit and rounding only at the very end, because premature ROUND compounds into wrong subsidy math.",
-      slugs: ["average-selling-price", "queries-quality-and-percentage", "basket-depth-aov"],
+      slugs: ["average-selling-price", "queries-quality-and-percentage", "basket-depth-aov", "confirmation-rate", "percentage-of-users-attended-a-contest", "ads-performance"],
     },
     {
       name: "Concentration & top-N reads",
@@ -64,12 +64,12 @@ export const alibabaKit: CompanyKit = {
     {
       name: "CASE for classification axes",
       why: "Seller tiers, price bands, region buckets — Alibaba's reports classify before they count. CASE WHEN as a GROUP BY axis is a signature shape here, and the interview version checks whether your bucket edges are half-open and exhaustive.",
-      slugs: ["count-salary-categories", "type-of-triangle", "create-a-session-bar-chart"],
+      slugs: ["count-salary-categories", "type-of-triangle", "create-a-session-bar-chart", "sales-analysis-i", "tree-node"],
     },
     {
       name: "Scalar subqueries as denominators",
       why: "Share-of-total is the platform's most common percentage: the total lives in a scalar subquery (or window) while the numerator aggregates per group. Alibaba probes whether your denominator is the comparison set the business actually means.",
-      slugs: ["orders-with-maximum-quantity-above-average", "number-of-rich-customers", "the-winner-university"],
+      slugs: ["orders-with-maximum-quantity-above-average", "number-of-rich-customers", "the-winner-university", "product-sales-analysis-ii", "the-most-recent-orders-for-each-product"],
     },
     {
       name: "Group properties & HAVING thresholds",
@@ -79,7 +79,7 @@ export const alibabaKit: CompanyKit = {
     {
       name: "NULL-safe aggregation on the chain",
       why: "A product with no seller, a line with no product, a rating never left — the chain is full of legitimate NULLs. Alibaba screens check whether you report them as their own bucket, coalesce them for display, or exclude them with a stated reason.",
-      slugs: ["employee-bonus", "books-with-null-ratings", "bank-account-summary-ii"],
+      slugs: ["employee-bonus", "books-with-null-ratings", "bank-account-summary-ii", "product-price-at-a-given-date", "customers-who-never-order"],
     },
     {
       name: "Pivot & unpivot for category walls",
@@ -104,12 +104,12 @@ export const alibabaKit: CompanyKit = {
     {
       name: "CTE staging for seller-month builds",
       why: "Senior screens refuse the one-SELECT answer: build seller × month revenue in a CTE, then rank, threshold, or delta on top of it. The staging layer keeps every intermediate grain visible and reviewable — which is exactly how the marketplace's own dashboards are layered.",
-      slugs: ["market-analysis-i", "game-play-analysis-iv", "customers-who-bought-a-and-b-not-c"],
+      slugs: ["market-analysis-i", "game-play-analysis-iv", "customers-who-bought-a-and-b-not-c", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "LAG/LEAD: period-over-period reads",
       why: "The growth deck's MoM arrows are LAG deltas over a month-ordered fold, and reorder-latency reads are LEAD gaps between events. The probes: what the first row returns (NULL — report it, don't zero it), and why the window's ORDER BY must match the report's.",
-      slugs: ["biggest-window-between-events", "second-day-confirmation", "consecutive-transactions-with-increasing-amounts"],
+      slugs: ["biggest-window-between-events", "second-day-confirmation", "consecutive-transactions-with-increasing-amounts", "group-sold-products-by-the-date"],
     },
     {
       name: "Window frames & running math",

@@ -27,7 +27,7 @@ export const temuKit: CompanyKit = {
     "**Temu** is the extreme-value marketplace that turned shopping into a game: countdown **flash events**, cart-building rewards, free-shipping thresholds and daily check-in streaks — a growth machine where the funnel IS the product and every session is nudged toward checkout. The analyst's grain stack maps cleanly onto this kit's proxy storefront: **16 accounts** place **103 checkouts** that fan into **251 cart lines**, totaling $34,833.28 at an average basket of **$338.19**. Small enough to hold in your head; shaped exactly like the funnel read you'd run for the growth team — placed, staged, converted, cancelled, with a denominator for every stage.",
     "The funnel is read off `status`: **52 delivered**, **30 shipped**, **14 pending**, {rose:7 cancelled} — and the conversion story lives in the gaps between stages. The signature Temu read is the **low-AOV cohort**: accounts whose average basket sits below the platform-wide 338.19 — **9 of 16 accounts** qualify, with a floor of **184.42** (account 14, four checkouts) — and the twist the cohort always carries: *low basket does not mean low frequency*, because the cohort holds the 24-checkout whale (account 1, averaging 302.60) and a 14-checkout regular. The fulfillment clock closes the loop: `shipped_at` non-NULL on **82 of 103 checkouts**, **2.98 days** average, 2-to-4 range — the delivery promise the gamified checkout wrote a check for.",
     "Interview style is funnel-flavored and pivot-heavy. Screens open with a warm-up join (checkouts to accounts), escalate into a **stage pivot** — delivered/shipped/pending/cancelled as columns, region or cohort as rows, SUM(CASE …) arms stacked — then land on either a **threshold census with a HAVING gate** (the low-AOV cohort, the repeat cohort, the 3+-checkout accounts) or a **flash-event read** (which month spiked, did the spike convert, what did the tie at 9 checkouts do to the leaderboard). Follow-ups are spoken out loud: 'is that per checkout or per account?', 'what population does your conversion denominator cover?', 'your LIMIT cut — what happens at a tie?'",
-    "Preparation strategy: Temu carries **zero tagged problems** in this app's registry, so the kit is fully theme-curated — sixteen problems and ten topics drawn from the band to mirror known Temu screen themes: funnel-stage conversion ratios, visit-to-order anti-joins, burst detection around events, below-average cohort censuses, status pivots, stickiness and retention grids. The two case studies run on the live db: one rebuilds the **stage-by-region pivot** the funnel review opens with, the other rebuilds the **low-AOV cohort census** growth lives by — floor, whale and all. Both are mechanically audited against the probed figures.",
+    "Preparation strategy: Temu carries **zero tagged problems** in this app's registry, so the kit is fully theme-curated — thirty-two problems and ten topics drawn from the band to mirror known Temu screen themes: funnel-stage conversion ratios, visit-to-order anti-joins, burst detection around events, below-average cohort censuses, status pivots, stickiness and retention grids. The six case studies run on the live db — built for spaced practice rather than one sitting: one rebuilds the **stage-by-region pivot** the funnel review opens with, another rebuilds the **low-AOV cohort census** growth lives by — floor, whale and all. All six are mechanically audited against the probed figures.",
     "Now read the money org, because Temu's funnel has a back office. Settlement runs on `invoices` and `payments` — 28 invoices and 27 payments, amounts stored as INTEGER cents, so every dollar read is `amount_cents / 100.0` and the whole booked book is **$86,977.00**: {emerald:21 paid} for 66,443.00, {amber:6 open} for 19,609.00, {rose:1 void} for 925.00 — and the void one collected (invoice #11), while #28 is paid with zero payments rows and #25 sits partial at 4,000 of 6,148. Coverage classifies every invoice: **21 exact** (65,612.00), **1 partial**, **6 unpaid** (15,217.00). The rails split **card 16 payments / 37,364.00** vs **wire 11 / 32,248.00**, cross-footing to 69,612.00 — which ties exactly to the cash account's debit column in the ledger. The supply side concentrates just as hard: **6 sourcing partners**, with Nordic Gadgets AB at **11,130.25 (32%)** and Midwest Hardware at **9,294.93 (26.7%)** — *the top two carry 58.7% of everything shipped*.",
     "Preparation is a four-week arc with a gate list. Week one: funnel denominators — the stage pivot, the 52/30/14/7 split, placed-vs-kept language. Week two: cohort censuses — the below-338.19 cohort, the 24-checkout whale at 302.60, HAVING against a global mean with the threshold quoted. Week three: the money side — cents discipline, the coverage census via LEFT JOIN fold, the #11/#28/#25 anomalies by name. Week four: windows and set-op stacks — tie policy on the 9-checkout months, RANGE-vs-ROWS peer math, the UNION ALL banner contract. Gate every artifact before it ships: *denominator stated, ROUND at the display edge only, tie-break written in the query*. The screens reward candidates who volunteer those three gates unprompted — that is the Temu hire signal.",
   ],
@@ -64,12 +64,12 @@ export const temuKit: CompanyKit = {
     {
       name: "Visit-to-order anti-joins",
       why: "The gamified funnel's biggest leak is the session that never checks out: accounts who browsed but never bought, listings with zero demand, carts abandoned before placement. LEFT JOIN + IS NULL and NOT EXISTS are the shapes — and the NOT IN NULL trap is the standing follow-up, because one NULL in the subquery silently reports a perfect funnel.",
-      slugs: ["customer-who-visited-but-did-not-transact", "transactions-per-visit-histogram", "create-a-session-bar-chart"],
+      slugs: ["customer-who-visited-but-did-not-transact", "transactions-per-visit-histogram", "create-a-session-bar-chart", "sales-analysis-ii", "trips-and-users"],
     },
     {
       name: "Flash events and burst reads",
       why: "Flash events create spikes, and the read is always 'burst vs baseline': which day or month jumped, by how much, and did it convert. New-actives-per-day and burst-detection drills pair a daily census with a threshold — the exact shape of 'did the countdown move the numbers, or just the noise'.",
-      slugs: ["find-bursty-behavior", "new-users-daily-count", "user-activity-for-the-past-30-days-ii"],
+      slugs: ["find-bursty-behavior", "new-users-daily-count", "user-activity-for-the-past-30-days-ii", "the-number-of-employees-which-report-to-each-employee"],
     },
     {
       name: "Low-AOV cohorts and basket math",
@@ -79,12 +79,12 @@ export const temuKit: CompanyKit = {
     {
       name: "Stage pivots and CASE arms",
       why: "The funnel review reads stages as columns: delivered/shipped/pending/cancelled per row, SUM(CASE …) arms stacked side by side. The drills are pivot-shaped — reformatting row-wise stages into columns, per-group conditional flags — and the trap is arm order plus label drift: a column that quietly counts the wrong stage is a board that lies politely.",
-      slugs: ["reformat-department-table", "weather-type-in-each-country", "triangle-judgement"],
+      slugs: ["reformat-department-table", "weather-type-in-each-country", "triangle-judgement", "number-of-employees-who-met-the-target", "immediate-food-delivery-ii", "confirmation-rate", "average-salary-of-departments", "bank-account-summary-ii", "find-the-team-size", "active-businesses", "number-of-rich-customers", "percentage-of-users-attended-a-contest", "classes-more-than-5-students"],
     },
     {
       name: "Leaderboards and ladders",
       why: "Gamification runs on leaderboards, and leaderboards run on rank functions — with tie policy decided BEFORE the deck. The 9-checkout months tie, the 4-checkout accounts tie three ways in the low-AOV cohort; RANK vs DENSE_RANK vs ROW_NUMBER is the difference between a ladder players trust and one that splits ties silently.",
-      slugs: ["top-earners", "compute-the-rank-as-a-percentage", "group-employees-of-the-same-salary"],
+      slugs: ["top-earners", "compute-the-rank-as-a-percentage", "group-employees-of-the-same-salary", "rank-scores", "maximum-transaction-each-day"],
     },
     {
       name: "Streaks, repeats and loyal cohorts",
@@ -109,7 +109,7 @@ export const temuKit: CompanyKit = {
     {
       name: "Supplier concentration and sourcing folds",
       why: "The supply side is where Temu's risk lives: 6 partners, top two at 58.7% of revenue. The drill is the two-hop fold — suppliers through listings through cart lines — with COUNT(DISTINCT order_id) beside SUM(quantity * unit_price) so the orders-touched grain never blurs into the line-fan-out grain.",
-      slugs: ["sellers-with-no-sales", "employees-with-missing-information", "find-stores-with-inventory-imbalance"],
+      slugs: ["sellers-with-no-sales", "employees-with-missing-information", "find-stores-with-inventory-imbalance", "npv-queries"],
     },
     {
       name: "Cart-line catalog economics",

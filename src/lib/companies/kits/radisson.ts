@@ -64,27 +64,27 @@ export const radissonKit: CompanyKit = {
     {
       name: "Two-grain market censuses",
       why: "Stays and guests are different grains of the same join, and every market census here reports both: EU runs 45 stays from 8 guests while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying which column is demand and which is installed base — is the habit being graded. The intensity ratio between them is the franchise-development read.",
-      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "number-of-rich-customers"],
+      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "number-of-rich-customers", "immediate-food-delivery-ii", "confirmation-rate", "orders-with-maximum-quantity-above-average"],
     },
     {
       name: "Folio-line folds",
       why: "Every portfolio read folds folio lines to stay grain: room-nights, value and DISTINCT stays per room product — 251 lines over 103 stays, 498 room-nights, and the fold that survives is the one that deduplicates. Line-grain counts silently multiply per-stay demand and are the classic fan-out trap in hotel reporting.",
-      slugs: ["product-sales-analysis-ii", "product-sales-analysis-iii", "most-frequently-ordered-product-per-customer", "average-selling-price", "basket-depth-aov", "transactions-per-visit-histogram"],
+      slugs: ["product-sales-analysis-ii", "product-sales-analysis-iii", "most-frequently-ordered-product-per-customer", "average-selling-price", "basket-depth-aov", "transactions-per-visit-histogram", "managers-with-at-least-5-direct-reports", "fix-names-in-a-table"],
     },
     {
       name: "Guest enrichment joins",
       why: "Guests carry market and join date; stays inherit them through joins, and the join type decides who survives. A stay without a guest is corruption; a guest without stays is whitespace — though on this db the anti-join returns a confident zero, and proving that zero is part of the job.",
-      slugs: ["combine-two-tables", "sales-analysis-i", "employee-bonus"],
+      slugs: ["combine-two-tables", "sales-analysis-i", "employee-bonus", "product-sales-analysis-i", "sales-person", "game-play-analysis-iv", "total-traveled-distance", "students-and-examinations"],
     },
     {
       name: "Rate-ladder CASE bands",
       why: "The Park Plaza → Blu → Collection ladder is a CASE classification over posted rate — 268 room-nights below the 55 line, 230 above, premium tip empty at 199.99. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the rate card, and a reordered WHEN quietly re-bands the book.",
-      slugs: ["calculate-special-bonus", "the-category-of-each-member-in-the-store", "count-salary-categories", "spend-histogram"],
+      slugs: ["calculate-special-bonus", "the-category-of-each-member-in-the-store", "count-salary-categories", "spend-histogram", "triangle-judgement", "team-scores-in-football-tournament"],
     },
     {
       name: "Rewards ladders & rank ties",
       why: "Leaderboards are rank-window reporting where ties are guaranteed — the guest ladder runs 24, 17, 14, 13, 5 and then four guests sit tied at 4 stays. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a loyalty policy about peer guests, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "repeat-purchase-rate", "rfm-segmentation", "customers-with-strictly-increasing-purchases"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "repeat-purchase-rate", "rfm-segmentation", "customers-with-strictly-increasing-purchases", "second-highest-salary", "customer-placing-the-largest-number-of-orders", "top-travellers"],
     },
     {
       name: "Pace & calendar spines",
@@ -99,7 +99,7 @@ export const radissonKit: CompanyKit = {
     {
       name: "Settlement coverage anti-joins",
       why: "The fee desk's daily read is statements without settlements: 6 worth 15,217, plus the mirrors — a void statement WITH a settlement row and a paid-status statement with none. LEFT JOIN + IS NULL (and the NOT EXISTS twin) is the shape, and the coverage split 21 / 1 / 6 is its report.",
-      slugs: ["customers-who-never-order", "sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "dormant-reactivation", "winback-recovery"],
+      slugs: ["customers-who-never-order", "sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "dormant-reactivation", "winback-recovery", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "One-pass occupancy censuses",

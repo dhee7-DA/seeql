@@ -59,12 +59,12 @@ export const retoolKit: CompanyKit = {
     {
       name: "Two-grain workspace censuses",
       why: "Periods and workspaces are different grains of the same join, and every census here reports both: EU runs 45 periods from 8 workspaces while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "popularity-percentage", "customer-placing-the-largest-number-of-orders"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "popularity-percentage", "customer-placing-the-largest-number-of-orders", "percentage-of-users-attended-a-contest", "immediate-food-delivery-ii", "find-users-with-high-token-usage", "customer-order-frequency"],
     },
     {
       name: "Workspaces joined to activity",
       why: "Workspace accounts carry region and created_at; periods inherit them through joins, and the join type decides who survives. A period without a workspace is corruption; a workspace without periods is whitespace — though on this db the anti-join returns a confident zero, and proving it is part of the job.",
-      slugs: ["combine-two-tables", "sales-analysis-i", "employee-bonus", "activity-participants", "customer-who-visited-but-did-not-transact", "dormant-reactivation"],
+      slugs: ["combine-two-tables", "sales-analysis-i", "employee-bonus", "activity-participants", "customer-who-visited-but-did-not-transact", "dormant-reactivation", "week-over-week-churn", "customers-who-bought-all-products", "dau-wau-stickiness"],
     },
     {
       name: "Power-user leaderboards & ties",
@@ -79,7 +79,7 @@ export const retoolKit: CompanyKit = {
     {
       name: "Billing spine & LAG deltas",
       why: "The 14-month billing spine (2024-01 to 2025-02) is the close call's home turf: prior month beside current, delta rounded, the 3,731.97 January peak and the 1,193.86 July trough named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine", "consecutive-transactions-with-increasing-amounts", "customers-with-strictly-increasing-purchases"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine", "consecutive-transactions-with-increasing-amounts", "customers-with-strictly-increasing-purchases", "fix-names-in-a-table", "usage-tier-percentiles", "net-revenue-retention", "mrr-waterfall", "growth-accounting", "cohort-retention-matrix", "keep-latest-dedupe", "null-blank-audit"],
     },
     {
       name: "Coverage set algebra",
@@ -89,7 +89,7 @@ export const retoolKit: CompanyKit = {
     {
       name: "Nested folds & seat gates",
       why: "Screens escalate into staging: fold per-workspace period counts, then judge them against a computed platform mean (6.44 here — exactly four workspaces clear it). Scalar, correlated and derived shapes each carry an empty-inner-query answer you are expected to give unprompted.",
-      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments", "the-latest-login-in-2020", "calculate-orders-within-each-interval"],
+      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments", "the-latest-login-in-2020", "calculate-orders-within-each-interval", "duplicate-charge-pairs"],
     },
     {
       name: "One-pass FILTER censuses",

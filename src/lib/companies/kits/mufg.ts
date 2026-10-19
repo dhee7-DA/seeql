@@ -61,12 +61,12 @@ export const mufgKit: CompanyKit = {
     {
       name: "Corridor flow censuses",
       why: "Every MUFG screen opens with the two-grain census: flows booked AND counterparties covered, per corridor. Europe runs 45 flows from 8 counterparties while the Americas runs 19 from 2 — COUNT(*) beside COUNT(DISTINCT customer_id), and saying out loud which is load and which is coverage, is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "journal-gap-detection", "value-at-risk"],
     },
     {
       name: "Settled-vs-booked funnel",
       why: "The funnel is the desk's heartbeat: flows booked, value-date stamped, settled to final. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling an in-flight flow 'settled' — 30 versus 52 on this book.",
-      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest"],
+      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "structuring-detection", "suspicious-bank-account-transactions", "snapshot-delta-detect"],
     },
     {
       name: "Counterparty joins & survival",
@@ -76,17 +76,17 @@ export const mufgKit: CompanyKit = {
     {
       name: "Fail watchlists & anti-joins",
       why: "The settlement-fail watchlist is an anti-join: fee statements LEFT JOINed to settlement legs, kept only when the leg never lands — 6 never-collected worth 15,217 on this book. Writing it with NOT IN over an unguarded column empties the watchlist silently, which is how a control function ships a false all-clear.",
-      slugs: ["customers-who-never-order", "sales-person", "customer-who-visited-but-did-not-transact", "chargeback-rate-ranking", "consecutive-transactions-with-increasing-amounts", "amount-anomaly-zscore"],
+      slugs: ["customers-who-never-order", "sales-person", "customer-who-visited-but-did-not-transact", "chargeback-rate-ranking", "consecutive-transactions-with-increasing-amounts", "amount-anomaly-zscore", "settlement-fails-aging"],
     },
     {
       name: "Exposure ladders",
       why: "Coverage reviews rank counterparties by flow count where ties are guaranteed — the ladder runs 24, 17, 14, 13, 5, then FOUR counterparties tied at 4. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer coverage, not syntax.",
-      slugs: ["rank-scores", "top-earners", "find-the-team-size", "credit-utilization-bands", "portfolio-concentration-hhi", "portfolio-weights"],
+      slugs: ["rank-scores", "top-earners", "find-the-team-size", "credit-utilization-bands", "portfolio-concentration-hhi", "portfolio-weights", "keep-latest-dedupe", "fx-exposure-report"],
     },
     {
       name: "The settlement clock",
       why: "Settlement lag is julianday(shipped_at) - julianday(created_at) over stamped flows: 2.98 days average inside a 2–4 band, 3.07 in the Americas against 2.93 on the home corridor. Duration math over two timestamps — with the unstamped 21 rows excluded by a stated filter, never silently skipped.",
-      slugs: ["average-time-of-process-per-machine", "biggest-window-between-events", "second-day-confirmation", "prepayment-detection", "second-most-recent-activity"],
+      slugs: ["average-time-of-process-per-machine", "biggest-window-between-events", "second-day-confirmation", "prepayment-detection", "second-most-recent-activity", "expected-credit-loss", "risk-based-pricing"],
     },
     {
       name: "Regulatory month spines",
@@ -96,7 +96,7 @@ export const mufgKit: CompanyKit = {
     {
       name: "CASE ladders: status, fate, coverage",
       why: "Banking classifications are CASE ladders — settled versus in-flight versus busted, exact versus partial versus never-collected, 30-day tenor versus aging buckets. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the pack, and a reordered WHEN quietly re-buckets the book.",
-      slugs: ["delinquency-buckets", "loan-types", "weather-type-in-each-country", "delinquency-roll-rates", "vintage-default-curves"],
+      slugs: ["delinquency-buckets", "loan-types", "weather-type-in-each-country", "delinquency-roll-rates", "vintage-default-curves", "ar-aging-schedule", "transaction-velocity"],
     },
     {
       name: "Trust-partner bench folds",
@@ -106,7 +106,7 @@ export const mufgKit: CompanyKit = {
     {
       name: "Books of record & yen-cents discipline",
       why: "Status is a claim; the settlement legs and the ledger are evidence. Statements and legs carry INTEGER yen-cents — the yen read is amount_cents / 100.0 — and the trial balance must land 181,080 against 181,080, delta zero. Reconciliation queries are how a megabank proves the close.",
-      slugs: ["trial-balance-check", "gl-reconciliation", "monthly-transactions-ii", "account-balance", "deferred-revenue"],
+      slugs: ["trial-balance-check", "gl-reconciliation", "monthly-transactions-ii", "account-balance", "deferred-revenue", "daily-balance-interest", "balance-rollforward"],
     },
   ],
 

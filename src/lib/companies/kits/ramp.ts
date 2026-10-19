@@ -40,7 +40,7 @@ export const rampKit: CompanyKit = {
     "Ramp is the corporate card and spend-management platform — every swipe policy-checked, every vendor invoice chased, every dollar of savings detected and claimed. The analytics reality is an audit engine wearing a growth badge: every transaction either reconciles, waits on a receipt, or declines, and the vendor book behind it is where the savings live. On this storefront db the mapping is honest: `orders` are card transactions (103 of them), order_items are the receipt line items inside a transaction (251 — about 2.4 lines each), customers are cardholders, and suppliers are the vendors the card spend lands on. Transaction outcomes mirror the status mix exactly: **52 reconciled** (50.5%), **30 posted-awaiting-receipt** (29.1%), **14 awaiting approval** (13.6%), **7 declined** (6.8%) — and shipped_at is the receipt timestamp, populated only for the 82 transactions that cleared.",
     "The data org splits into spend, vendor ops, and finance. Spend owns the policy layer: 16 catalog lines with per-swipe limits, the priciest capping at **$199.99** — the premium band (>= $200) is empty, and that emptiness is the policy story. Vendor ops owns the book: 28 vendor invoices worth $86,977.00 against 27 settlement legs, INTEGER cents end to end, with the standing contradictions — invoice #11 is {rose:void} yet carries a $925.00 settlement leg, #28 reads {emerald:paid} with nothing behind it ($1,756.00), and one invoice sits {amber:partial} at $4,000.00 of $6,148.00. Finance owns the rails: card settlements run 16 legs for **$37,364.00**, bank/ACH 11 for $32,248.00, and five invoices settle in two legs (1, 5, 12, 19, 22). Opex rides alongside: 36 spend lines worth $25,416.00, Rent 14 lines / $16,800.00 leading.",
     "Interview style is vendor-first, then the concentration. A screen opens with a conditional count (reconciled share — *of all transactions, or only the 82 with receipts?*), moves to the chain read (receipt lines → catalog → vendors, where one wrong join key pairs spend with the wrong vendor), escalates into per-vendor scorecards where {emerald:share-of-book} is a derived-table join away, and lands on the `FILTER (WHERE …)` census: total lines, biggest line, category splits in a single scan. The graded habits: state the denominator, resolve the grain before averaging, and never let a {rose:declined} swipe into a spend total.",
-    "Preparation: the registry tags zero SQL problems for Ramp — this kit is **0 tagged LC, theme-curated**: all 30 topic slugs and 16 problems are chosen to mirror spend-management screens — vendor chains, policy CASE bands, out-of-policy anti-joins, opex censuses and LAG walks. Then run both case studies on the live db: one rebuilds the {emerald:opex census} finance closes the month with (36 lines / $25,416.00 / biggest line $1,680.00), the other rebuilds the {violet:vendor concentration board} the savings team pitches from ($11,130.25 / 32% leading). Say the denominator, the join chain and the grain out loud before you compute — at a spend-management company, the grain is the savings.",
+    "Preparation: the registry tags zero SQL problems for Ramp — this kit is **0 tagged LC, theme-curated**: all 76 topic slugs and 32 problems are chosen to mirror spend-management screens — vendor chains, policy CASE bands, out-of-policy anti-joins, opex censuses and LAG walks. Then run all six case studies on the live db — built for spaced practice rather than one sitting: one rebuilds the {emerald:opex census} finance closes the month with (36 lines / $25,416.00 / biggest line $1,680.00), another rebuilds the {violet:vendor concentration board} the savings team pitches from ($11,130.25 / 32% leading). Say the denominator, the join chain and the grain out loud before you compute — at a spend-management company, the grain is the savings.",
     "The kit's second half goes deeper on the same spend book. The {violet:burn walk} stages a monthly fold over the opex table — *14 dense months, 2024-01 through 2025-02, no holes* — and rides a LAG delta down the spine: 2024-01 opens at $1,719.00 with an honestly NULL delta, and 2024-08 peaks at $3,210.00, just $14.16 over July's $1,794.00. The velocity ladder ranks cardholders by swipe count — 24, 17, 14, 13 at the top — then hits the tie band the rank functions fight over: **four cardholders share 4 swipes**, and RANK, ROW_NUMBER and DENSE_RANK print three different answers for it. The {sky:rail stack} reconciles the settlement book in one UNION ALL — card 16 legs / $37,364.00, wire 11 / $32,248.00, with a TOTAL row that must read 27 legs / **$69,612.00** — while the region scorecard splits the program: EU leads at $15,089.23 across 45 swipes, yet the smallest book, the US at $7,286.16, carries the biggest tickets at $383.48 average.",
     "Senior-round prep is rehearsal on the live db with denominators said out loud. Rebuild all four new cases end to end: does your burn walk open on 2024-01 with a **NULL delta**, or did you COALESCE the anchor into a fake zero? Does the velocity ladder still tie at rank 6 — and can you say which rank function you picked and why? Does the rail stack fold back — 16 + 11 = 27 legs, $37,364.00 + $32,248.00 = $69,612.00 — before the packet ships? The reflexes they grade are Ramp's own: cents stay INTEGER until one `/100.0` at the display edge, every census reconciles to `COUNT(*)`, every rate names its denominator (declines are 7 of **103 swipes**, not 7 of the 96 approved), and every anomaly carries a route — *a void invoice with a settlement leg is a risk page, a paid invoice with no legs is an engineering ticket, and routing them is part of the answer*.",
   ],
@@ -71,12 +71,12 @@ export const rampKit: CompanyKit = {
     {
       name: "Transaction folds & conditional counts",
       why: "Every spend read is a fold with a conditional count inside: transactions per day, declined per vendor, reconciled per cardholder. The denominator question rides on every one — COUNT(*) over all transactions versus the receipted subset is the difference between a reconciliation rate and a clearance rate.",
-      slugs: ["number-of-rich-customers", "sales-analysis-i", "percentage-of-users-attended-a-contest"],
+      slugs: ["number-of-rich-customers", "sales-analysis-i", "percentage-of-users-attended-a-contest", "calculate-product-final-price", "spend-histogram", "orders-with-maximum-quantity-above-average", "confirmation-rate"],
     },
     {
       name: "Vendor chain joins: lines → catalog → vendors",
       why: "Vendor analytics is a three-hop chain: receipt lines attach to transactions, catalog lines carry the vendor. One wrong join key pairs spend with the wrong vendor and every concentration number downstream inherits the fiction — the chain is where Ramp's screens test join discipline hardest.",
-      slugs: ["sales-analysis-ii", "top-travellers", "bank-account-summary-ii"],
+      slugs: ["sales-analysis-ii", "top-travellers", "bank-account-summary-ii", "deferred-revenue", "point-in-time-asof", "employees-project-allocation", "find-overbooked-employees", "duplicate-charge-pairs", "symmetric-pairs"],
     },
     {
       name: "Spend ratios & policy gates",
@@ -86,12 +86,12 @@ export const rampKit: CompanyKit = {
     {
       name: "Out-of-policy anti-joins",
       why: "Savings detection starts as an anti-join: transactions with no receipt, vendors with no spend this quarter, invoices with no settlement leg. LEFT JOIN + IS NULL (or NOT EXISTS) is the shape, and the trap is filtering the joined table in WHERE — which converts the join and deletes exactly the savings you were hunting.",
-      slugs: ["sales-person", "page-recommendations", "students-with-invalid-departments"],
+      slugs: ["sales-person", "page-recommendations", "students-with-invalid-departments", "structuring-detection", "amount-anomaly-zscore", "top-percentile-fraud", "sellers-with-no-sales", "transaction-velocity", "delinquency-buckets", "suspicious-bank-account-transactions"],
     },
     {
       name: "NULL policy: missing receipts & blank legs",
       why: "Receipt timestamps are NULL until the chase closes, and invoice #28 is paid with no settlement leg at all. COUNT(column) versus COUNT(*) diverges exactly there, and AVG silently skips the pending queue — the policy is a stated decision, not a default.",
-      slugs: ["invalid-tweets", "find-customer-referee", "employees-with-missing-information"],
+      slugs: ["invalid-tweets", "find-customer-referee", "employees-with-missing-information", "keep-latest-dedupe"],
     },
     {
       name: "Receipt clocks & interval logic",
@@ -106,7 +106,7 @@ export const rampKit: CompanyKit = {
     {
       name: "LAG/LEAD burn walks",
       why: "The burn walk is LAG-shaped: this month's opex minus last month's, the 2024-08 peak explained line by line. The first row's NULL delta is part of the story — no prior month, no delta — and hand-waving it to zero mislabels the baseline the finance review quotes.",
-      slugs: ["consecutive-transactions-with-increasing-amounts", "week-over-week-churn", "mrr-waterfall"],
+      slugs: ["consecutive-transactions-with-increasing-amounts", "week-over-week-churn", "mrr-waterfall", "customer-purchasing-behavior-analysis", "rfm-segmentation", "repeat-purchase-rate", "ltv-cac-payback"],
     },
     {
       name: "Policy CASE bands",
@@ -121,7 +121,7 @@ export const rampKit: CompanyKit = {
     {
       name: "Window frames & running burn",
       why: "Running settled dollars and cumulative burn are how ops watches a cycle drain — SUM(...) OVER (ORDER BY ...) with a frame decision underneath. The default frame is RANGE, which folds ORDER BY peers together; on the month fold the keys are unique so RANGE and ROWS coincide, and knowing WHY they coincide — instead of assuming they always do — is the senior tell this topic drills.",
-      slugs: ["account-balance", "find-cumulative-salary-of-an-employee", "rolling-average-steps"],
+      slugs: ["account-balance", "find-cumulative-salary-of-an-employee", "rolling-average-steps", "second-highest-salary", "maximum-transaction-each-day"],
     },
     {
       name: "Set-op report stitching",
@@ -141,7 +141,7 @@ export const rampKit: CompanyKit = {
     {
       name: "CTE staging & the coverage ladder",
       why: "The AR ladder stages the per-invoice leg fold once and CASEs it three ways — exact 21 / partial 1 / none 6 — because the fold is computed once and read three times. Staging is how multi-arm reports stay one scan with one definition of 'settled', and how the reconcile-to-28 check gets a single place to live.",
-      slugs: ["investments-in-2016", "department-highest-salary", "managers-with-at-least-5-direct-reports"],
+      slugs: ["investments-in-2016", "department-highest-salary", "managers-with-at-least-5-direct-reports", "ar-aging-schedule", "trial-balance-check", "gl-reconciliation", "journal-gap-detection", "balance-rollforward", "settlement-fails-aging", "late-arriving-restatement"],
     },
   ],
 

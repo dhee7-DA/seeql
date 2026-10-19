@@ -56,7 +56,7 @@ export const linearKit: CompanyKit = {
     {
       name: "Cycle-time clocks",
       why: "Every Linear analytics screen opens with the clock: period opened at created_at, seat-change stamped at shipped_at, delta averaged over stamped rows only. Each stage is a conditional count or average over a timestamp, and the interviewer's first question is what the denominator holds — 82 stamped of 103 booked, with the 14 trials excluded by definition. julianday arithmetic with a stated population is the shape being graded.",
-      slugs: ["average-time-of-process-per-machine", "find-golden-hour-customers", "users-with-two-purchases-within-seven-days", "median-time-to-convert", "sessionize-events", "calculate-orders-within-each-interval"],
+      slugs: ["average-time-of-process-per-machine", "find-golden-hour-customers", "users-with-two-purchases-within-seven-days", "median-time-to-convert", "sessionize-events", "calculate-orders-within-each-interval", "classes-more-than-5-students"],
     },
     {
       name: "Two-grain workspace censuses",
@@ -66,27 +66,27 @@ export const linearKit: CompanyKit = {
     {
       name: "Triage funnels & stage rates",
       why: "The fate census is Linear's heartbeat: active-billed, expansion-in-flight, trial, churned — each a conditional count over a status or timestamp. The trap is calling an in-flight period 'active' — 30 versus 52 on this db — and the second trap is the denominator: trials stay in a conversion base and drop out of a cycle-time base, and the panel wants you to say which before writing SQL.",
-      slugs: ["trial-to-paid-funnel", "funnel-step-conversion", "percentage-of-users-attended-a-contest", "dau-wau-stickiness", "same-day-sale"],
+      slugs: ["trial-to-paid-funnel", "funnel-step-conversion", "percentage-of-users-attended-a-contest", "dau-wau-stickiness", "same-day-sale", "immediate-food-delivery-ii", "confirmation-rate"],
     },
     {
       name: "Throughput leaderboards",
       why: "Leaderboards are rank-window reporting where ties are guaranteed — four workspaces sit at 4 periods each on this db, and the ladder above them runs 24, 17, 14, 13, 5. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer workspaces, not syntax. Linear's own insights boards publish the policy; candidates are asked to defend it.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "find-loyal-customers"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "find-loyal-customers", "product-sales-analysis-ii", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "Seat bands with CASE",
       why: "Seat tiers are CASE-classified — the seat-band fold splits 251 lines into 268 sub-55 starter seats and 230 growth seats, and plan SKUs band into free/standard/business/enterprise the same way. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the expansion story, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["calculate-special-bonus", "weather-type-in-each-country", "count-salary-categories", "rfm-segmentation", "usage-tier-percentiles", "spend-histogram"],
+      slugs: ["calculate-special-bonus", "weather-type-in-each-country", "count-salary-categories", "rfm-segmentation", "usage-tier-percentiles", "spend-histogram", "net-revenue-retention"],
     },
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month period spine (2024-01 to 2025-02) is the velocity call's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) and jump (+1,158.21 into August) named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero. Churned periods concentrate in July and November, 2 each of 7, and the walk is how that pattern gets defended.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "year-on-year-growth-rate", "rolling-7d-actives", "find-bursty-behavior", "cohort-repeat-revenue"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "year-on-year-growth-rate", "rolling-7d-actives", "find-bursty-behavior", "cohort-repeat-revenue", "combine-two-tables", "find-churn-risk-customers", "mrr-waterfall", "growth-accounting"],
     },
     {
       name: "Coverage set algebra",
       why: "Board packets stack populations — expansion-in-flight under churned, this quarter beside last — and EXCEPT answers 'which billed workspaces never stamped a seat change'. UNION dedups whole rows silently, which makes it a correctness question, not a style one. The billing anti-join (6 never-collected statements) is the same algebra pointed at money.",
-      slugs: ["team-scores-in-football-tournament", "the-airport-with-the-most-flights", "customers-who-never-order", "winback-recovery", "customers-who-bought-a-and-b-not-c"],
+      slugs: ["team-scores-in-football-tournament", "the-airport-with-the-most-flights", "customers-who-never-order", "winback-recovery", "customers-who-bought-a-and-b-not-c", "sales-analysis-i"],
     },
     {
       name: "Nested throughput gates",
@@ -96,7 +96,7 @@ export const linearKit: CompanyKit = {
     {
       name: "One-pass fate censuses",
       why: "The ops board gets active-billed, in-flight, trial and churned in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift. The reconciliation identity (branches sum to COUNT(*)) is the correctness argument the panel listens for.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "queries-quality-and-percentage", "capital-gain-loss", "find-users-with-high-token-usage"],
     },
     {
       name: "Billing & cents discipline",

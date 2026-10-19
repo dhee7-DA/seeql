@@ -28,7 +28,7 @@ export const ebayKit: CompanyKit = {
     "**eBay** is the original online marketplace — a quarter-century of auctions, fixed-price listings and the trust machinery (ratings, guarantees, returns) that lets strangers trade at scale. Its data shape is distinct from first-party retail: eBay doesn't own the inventory, sellers do, so every analytical question is **two-sided** — buyer demand on one side, seller supply and reputation on the other. The tables reflect it: listings (with their sellers), transactions, feedback events, and the bridge tables between them. An analyst here spends the day moving between the two sides of that graph, and the SQL is correspondingly join-heavy: per-seller leaderboards, trust-tier censuses, and the famous {rose:'sellers with no sales'} anti-join family.",
     "The data org pairs a long-tenured analytics culture with modern platform investment. Category teams (motors, fashion, collectibles, electronics) own their demand reads; trust teams own the feedback and disputes graphs; pricing and search-relevance teams live on experiment readouts. Because the marketplace is two-sided, a recurring analytical discipline is **population honesty**: when you report seller performance, which sellers are IN the report — *everyone with a listing, or only those with a transaction?* eBay's screens test exactly that instinct, because a leaderboard that silently drops {rose:never-sold sellers} changes the business conclusion it feeds.",
     "Interview style is classic and drill-heavy — eBay's tagged pool in interview-prep circles is one of the deepest anywhere, and this app's registry carries **19** of them. Screens run the canon: sales-analysis joins, per-group top-N with ties, anti-joins for the never-transacted, `CASE` classifications, and rounded-rate arithmetic. The interviewers are fluent in the follow-ups: *'what if two sellers tie on the boundary?'*, 'does your percentage divide by placed or completed?', 'your `INNER JOIN` — did the missing sellers vanish on purpose?'. Candidates who know the canon AND narrate the grain consistently outperform.",
-    "Preparation strategy: this is the kit to drill canon problems on — **sixteen of eBay's tagged problems** are curated below, spanning the full arc from first join to window escalation. Work the topics in order, then run both case studies on the live storefront db: one rebuilds the {emerald:trusted-seller bench} report its trust reviews open with, the other rebuilds the {amber:price-band ladder} its category teams ship to merchandising.",
+    "Preparation strategy: this is the kit to drill canon problems on — **sixteen of eBay's tagged problems** are curated below, spanning the full arc from first join to window escalation. Work the topics in order, then run all six case studies on the live storefront db: one rebuilds the {emerald:trusted-seller bench} report its trust reviews open with, the other rebuilds the {amber:price-band ladder} its category teams ship to merchandising, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting...",
     "The finance machinery is the quieter half of the marketplace and the sharper half of the SQL. eBay moved payments in-house (managed payments), so the settlement pipeline — invoices issued, payments settled, final-value fees taken, refunds routed — is internal data now, and its reconciliation discipline is exactly what the storefront db models: **28 invoices against 27 payment rows**, where the coverage census finds {emerald:21 exact}, one partial (4,000.00 of 6,148.00), and {rose:six invoices with no payment row at all} — including one marked 'paid' with zero payment rows behind it. The ledger's trial balance (**debits 181080 = credits 181080, delta 0**) proves the books fold; *it does not prove they're clean*. Analysts here learn two habits from that table pair: every money column is integer cents until divided by 100.0, and every 'paid' claim is checked against the rows that back it.",
     "Preparation strategy at full depth: the kit now spans the whole arc — **fifteen topics** from first join to clinic moves, **twenty-four theory questions**, **thirty graded MCQs**, and **six case studies** on the live storefront db. The four new cases extend the topic families: a tie-honest buyer leaderboard (ranking windows), the ship-latency read by region (date math), the unpaid-invoice sweep (the finance anti-join), and the month-over-month revenue delta (`LAG` over a staged monthly fold). Work the topics in order, then the new theory — pipeline order, window frames, set verbs, NULL policy, performance instincts — and run all six cases against the db until the population question ('who is IN this report?') is reflex. The interviewers' follow-ups never change; the prepared candidate has already answered them inside the query.",
   ],
@@ -64,7 +64,7 @@ export const ebayKit: CompanyKit = {
     {
       name: "Seller leaderboards & the volume argmax",
       why: "Top seller by transactions, best-rated per category, most listings moved — leaderboard reads are eBay's signature. The drill is choosing the fold key deliberately and resisting LIMIT until the sort is honest.",
-      slugs: ["sales-analysis-ii", "customer-placing-the-largest-number-of-orders", "rank-scores"],
+      slugs: ["sales-analysis-ii", "customer-placing-the-largest-number-of-orders", "rank-scores", "repeat-purchase-rate"],
     },
     {
       name: "Per-group top-N and the tie-proof cut",
@@ -84,12 +84,12 @@ export const ebayKit: CompanyKit = {
     {
       name: "CASE classification & trust tiers",
       why: "Trusted / standard / watch tiers, price bands, condition buckets — eBay's reports classify before they count. The CASE-when GROUP BY axis is a signature shape, and the bucket edges must be half-open and exhaustive.",
-      slugs: ["tree-node", "count-salary-categories", "type-of-triangle"],
+      slugs: ["tree-node", "count-salary-categories", "type-of-triangle", "weather-type-in-each-country", "rfm-segmentation"],
     },
     {
       name: "Ratios & rounded shares",
       why: "Confirmation rates, sold-through percentages, dispute rates per thousand — eBay's ratios punish integer division and drifting denominators. The house habit: 100.0 (or 1000.0) before the division, population fixed before the ratio, ROUND last.",
-      slugs: ["queries-quality-and-percentage", "percentage-of-users-attended-a-contest", "average-selling-price"],
+      slugs: ["queries-quality-and-percentage", "percentage-of-users-attended-a-contest", "average-selling-price", "basket-depth-aov"],
     },
     {
       name: "Range joins & banded comparisons",
@@ -119,17 +119,17 @@ export const ebayKit: CompanyKit = {
     {
       name: "Set thinking: stacks, overlaps and differences",
       why: "Two-sided marketplaces are set-shaped: the buyer leaderboard and the seller leaderboard are different populations over the same events. UNION ALL stacks honest raw legs, UNION dedupes (and lies by a row when one account is both), INTERSECT finds the overlap, EXCEPT finds who's missing. eBay drills the set verbs because 'which population is NOT in this report' is the trust question written in SQL.",
-      slugs: ["movie-rating", "monthly-transactions-ii", "customers-who-bought-a-and-b-not-c"],
+      slugs: ["movie-rating", "monthly-transactions-ii", "customers-who-bought-a-and-b-not-c", "keep-latest-dedupe"],
     },
     {
       name: "Subqueries & WITH staging",
       why: "The escalation tier: compare each order to the marketplace-wide AOV (a scalar subquery), find buyers whose spend crosses a threshold (IN/EXISTS), stage a monthly fold before ranking it (derived table or CTE). eBay's mid-screens assume you can nest without losing the population, and the follow-up is always 'what does the inner query return?' — narrate it before you nest it.",
-      slugs: ["market-analysis-i", "game-play-analysis-iv", "immediate-food-delivery-ii"],
+      slugs: ["market-analysis-i", "game-play-analysis-iv", "immediate-food-delivery-ii", "product-sales-analysis-ii"],
     },
     {
       name: "One-pass censuses & string folds",
       why: "Operational reports count four statuses, three bands and two populations in a single scan — FILTER (WHERE) and SUM(CASE) are the one-pass forms, and GROUP_CONCAT folds a seller's catalog into one cell for the merch sheet. The drill is keeping every metric on the SAME fold and population, so the census's columns can't quietly disagree with each other.",
-      slugs: ["group-sold-products-by-the-date", "reformat-department-table", "null-blank-audit"],
+      slugs: ["group-sold-products-by-the-date", "reformat-department-table", "null-blank-audit", "article-views-i"],
     },
   ],
 

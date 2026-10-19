@@ -85,17 +85,17 @@ export const gopuffKit: CompanyKit = {
     {
       name: "Picks vs deliveries — the fan-out join",
       why: "One delivery fans into pick lines — 103 deliveries into 251 picks — and every downstream count changes grain the moment you join order_items. Gopuff screens open here because the pick fan-out is the first place a candidate's COUNT stops meaning what they think it means.",
-      slugs: ["product-sales-analysis-i", "combine-two-tables", "replace-employee-id-with-unique-identifier", "product-sales-analysis-iv", "product-sales-analysis-v", "customers-who-bought-all-products"],
+      slugs: ["product-sales-analysis-i", "combine-two-tables", "replace-employee-id-with-unique-identifier", "product-sales-analysis-iv", "product-sales-analysis-v", "customers-who-bought-all-products", "customers-who-bought-a-and-b-not-c", "movie-rating"],
     },
     {
       name: "The delivery funnel & kept demand",
       why: "The funnel is four numerators over one population: 52 delivered, 30 shipped, 14 pending, 7 cancelled. The cancel-share read (6.8% network-wide, 8.1% APAC) is a conditional count — SUM over a 1/0 flag beside COUNT(*) — and filtering status in WHERE first silently zeroes every cluster's denominator.",
-      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "customer-who-visited-but-did-not-transact"],
+      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "customer-who-visited-but-did-not-transact", "immediate-food-delivery-iii"],
     },
     {
       name: "Cloud clusters at two grains",
       why: "Every ops review opens with the two-grain census: deliveries AND customers per cluster in one row — 45 from 8 in the EU, 19 from 2 in the US. COUNT(*) counts rows, COUNT(DISTINCT customer_id) folds repeat demand back to people, and the interviewer grades whether you know which column is which.",
-      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "find-followers-count"],
+      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "find-followers-count", "queries-quality-and-percentage"],
     },
     {
       name: "Basket-value baselines & minimums",
@@ -110,27 +110,27 @@ export const gopuffKit: CompanyKit = {
     {
       name: "Supplier concentration & the bench",
       why: "The clouds buy inventory outright, so supplier risk is balance-sheet risk: Nordic Gadgets AB at 32% of shelf revenue, Midwest at 26.7%, and a trusted bench cut at rating 4.5+. Screens drill per-supplier folds with a listings count that must survive the pick fan-out — COUNT(DISTINCT p.id), not COUNT(*).",
-      slugs: ["sales-analysis-ii", "products-worth-over-invoices", "sellers-with-no-sales", "sales-analysis-iii"],
+      slugs: ["sales-analysis-ii", "products-worth-over-invoices", "sellers-with-no-sales", "sales-analysis-iii", "group-sold-products-by-the-date", "trial-balance-check"],
     },
     {
       name: "Rank trio for shelf leaderboards",
       why: "Shelf reporting is leaderboard reporting: SKUs by velocity, clusters by basket value. The units ladder ties constantly — two SKUs at 36 picks, three at 30 — and ROW_NUMBER, RANK and DENSE_RANK differ exactly there. Gopuff drills the trio until the tie policy is a sentence you say out loud.",
-      slugs: ["rank-scores", "top-earners", "second-highest-salary", "the-most-recent-three-orders", "second-most-recent-activity"],
+      slugs: ["rank-scores", "top-earners", "second-highest-salary", "the-most-recent-three-orders", "second-most-recent-activity", "product-sales-analysis-ii", "keep-latest-dedupe"],
     },
     {
       name: "Month buckets & the replenishment spine",
       why: "The clouds reorder on a monthly cadence, and the buying calendar hangs on the month spine: STRFTIME('%Y-%m', created_at) over placed deliveries, 2024-01's 3,731.97 down to 2024-07's 1,193.86 trough. The house rule: bucket demand on placed-time, service on completion-time, and never confuse the two clocks.",
-      slugs: ["monthly-transactions-i", "restaurant-growth", "the-latest-login-in-2020", "product-price-at-a-given-date"],
+      slugs: ["monthly-transactions-i", "restaurant-growth", "the-latest-login-in-2020", "product-price-at-a-given-date", "most-frequently-ordered-product-per-customer", "spend-histogram", "average-time-of-process-per-machine", "orders-with-maximum-quantity-above-average"],
     },
     {
       name: "One-pass censuses for shift handover",
       why: "Delivery-partner shifts hand over on one screen: the whole funnel, the aging buckets and the thin-shelf list, each in a single scan. FILTER (WHERE …) and conditional SUM build the census in one pass, with branch totals that must reconcile to COUNT(*) = 103 before the board ships.",
-      slugs: ["active-businesses", "ratings-histogram", "count-the-number-of-experiments", "occupations-pivot", "calculate-special-bonus"],
+      slugs: ["active-businesses", "ratings-histogram", "count-the-number-of-experiments", "occupations-pivot", "calculate-special-bonus", "top-travellers"],
     },
     {
       name: "Settlement cents & the anti-join reflex",
       why: "Settlement ops lives on absence: 6 statements with no payment row = 15,217.00, and one of them (#28) is marked paid — a status filter misses it, an anti-join doesn't. Money is INTEGER cents, so every dollar read divides by 100.0 exactly once, at the display edge.",
-      slugs: ["customers-who-never-order", "number-of-accounts-that-did-not-stream", "bank-account-summary-ii", "bank-account-summary"],
+      slugs: ["customers-who-never-order", "number-of-accounts-that-did-not-stream", "bank-account-summary-ii", "bank-account-summary", "trips-and-users"],
     },
   ],
 

@@ -27,7 +27,7 @@ export const dropboxKit: CompanyKit = {
     "**Dropbox** is storage SaaS in its purest form: seats on a sync engine, sold to teams that either fill their footprint or quietly vanish. The analytics reality is the *utilization ledger* — which workspaces are actively syncing, which are provisioned but dark, and which deactivated outright. On this storefront db the mapping is honest: 16 team workspaces generate 103 seat periods folded from 251 storage-line items, worth 34,833.28 of billed value at a 338.19 average. The status mix reads like a license funnel — 52 {emerald:active} (50.5%), 30 provisioned-sync-pending (29.1%), 14 {amber:awaiting provisioning} (13.6%), 7 {rose:deactivated} (6.8%).",
     "The data org splits three ways. Infra analytics owns provisioning: 82 of 103 periods carry a stamp, averaging **2.98 days** from order to provisioned with a 2-to-4 range — the US cohort the slowest at 3.07. Growth owns the footprint ladder: storage lines per workspace run 50, 46, 34, 30, 14, 13, 10 before a three-way tie at 8, and **63.5%** of billed value sits above the 3,000 line — the expansion cohort every board deck prices. Billing owns the seat book: 28 `invoices` against 27 `payments`, INTEGER cents throughout, with 6 never-settled bills worth 15,217 — one of them (#28, 1,756.00) claims {emerald:paid} with zero settlement rows behind it.",
     "Interview style is census-then-denominator, then the footprint join. A screen opens with a two-grain census (EU carries 45 seat periods from just 8 workspaces; the US, 19 from 2), escalates into a conditional-count utilization rate with the denominator asked out loud ('do {rose:deactivated} periods sit in your base?'), then the footprint board — where the storage-line ladder, not the period ladder, is the load metric. Follow-ups probe the month spine (2024-01 opens at 8 periods and **3,731.97** of billed value; 2024-07 floors at 1,193.86) and the cents rule on every seat bill.",
-    "Preparation strategy: the pools carry **0 tagged rows for Dropbox** — every one of this kit's 46 slugs is theme-curated to known storage-SaaS screens: two-grain seat censuses, utilization ratios, footprint ladders, dormancy anti-joins and seat-billing reconciliation. Then run both case studies on the live db: one rebuilds the storage-footprint board infra reviews on Mondays, the other rebuilds the plan-band pricing memo the catalog team prices from. The bar to clear: state the **denominator**, the join's survival rule, and the **cents rule** before you compute anything.",
+    "Preparation strategy: the pools carry **0 tagged rows for Dropbox** — every one of this kit's 46 slugs is theme-curated to known storage-SaaS screens: two-grain seat censuses, utilization ratios, footprint ladders, dormancy anti-joins and seat-billing reconciliation. Then run all six case studies on the live db: one rebuilds the storage-footprint board infra reviews on Mondays, the other rebuilds the plan-band pricing memo the catalog team prices from, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The bar to clear: state the **denominator**, the join's survival rule, and the **cents rule** before you compute anything.",
     "Under the seat ledger sits the billing spine, and it carries one house rule every storage-SaaS close lives by: money is stored as INTEGER cents, so the dollar read is `amount_cents / 100.0` — skip the `.0` and every odd-cent bill quietly leaks its change. The objects are small enough to memorize and dirty enough to matter: 28 seat bills against 27 settlement rows, coverage split **21 exact / 1 partial / 6 never-collected** — the partial settled 4,000 of 6,148, the six silent bills carry 15,217 — with rails split card 16 payments / 37,364 against wire 11 / 32,248. Settlement runs **28.4 days** against flat 30-day terms, fastest 13, slowest 84 — *the slowest bill is 54 days past terms before anyone says the word dunning*. The anomalies are mirrors, and both reconcile: bill #28 claims {emerald:paid} with zero settlement rows behind it, {rose:void} bill #11 carries one settlement (925.00), and the ledger still ties 181,080 = 181,080.",
     "At full depth this kit runs **fifteen topics, twenty-four theory drills, thirty MCQs and six audited case studies** on the storefront db. The two originals rebuild the storage-footprint board infra reviews on Mondays and the plan-band pricing memo the catalog team prices from; the four additions walk the seat-billing month spine ({sky:LAG} deltas from the 2024-07 floor at 1,193.86), the {rose:dark-SKU} anti-join (plan SKUs with no storage lines in the trailing month), the one-pass regional utilization census (`FILTER` counts with the denominator printed in the same row) and the peak-workspace argmax board (per-workspace folds joined back to their own maxima). The 32-problem pool stays theme-curated — Dropbox carries **0 tagged rows** in the registry — and the bar to clear is unchanged: *state the grain, the denominator and the cents rule before you compute anything.*",
   ],
@@ -58,32 +58,32 @@ export const dropboxKit: CompanyKit = {
     {
       name: "Seat-census grains",
       why: "Every Dropbox screen opens with a fold: storage lines, seat periods, workspaces — grouped and counted without letting the grain blur. COUNT(*) counts lines, COUNT(DISTINCT customer_id) counts workspaces; 251 lines come from just 103 periods across 16 workspaces, and the census is where candidates prove which grain they're standing on.",
-      slugs: ["daily-leads-and-partners", "find-followers-count", "books-with-null-ratings"],
+      slugs: ["daily-leads-and-partners", "find-followers-count", "books-with-null-ratings", "customers-who-bought-all-products", "net-revenue-retention", "active-users", "cohort-retention-matrix", "unique-orders-and-customers-per-month"],
     },
     {
       name: "License-utilization ratios",
       why: "Active, provisioned, awaiting, deactivated — every utilization rate here is a conditional count over a license state, and the interviewer's first question is 'what's in the denominator?'. SUM(CASE WHEN status …) over ALL periods, with the 100.0 before the division, is the shape that survives scrutiny.",
-      slugs: ["immediate-food-delivery-ii", "hopper-company-queries-ii", "friend-requests-i-overall-acceptance-rate"],
+      slugs: ["immediate-food-delivery-ii", "hopper-company-queries-ii", "friend-requests-i-overall-acceptance-rate", "trial-to-paid-funnel", "analyze-subscription-conversion", "repeat-purchase-rate", "server-utilization-time", "confirmation-rate"],
     },
     {
       name: "Joining workspaces to seat periods",
       why: "Seat periods inherit workspace attributes through joins to the workspaces table, and the join type decides who survives: a period with no workspace is corruption; a workspace with no period is a dormant license. Choosing INNER versus LEFT is a business statement.",
-      slugs: ["employee-bonus", "replace-employee-id-with-unique-identifier", "sales-person"],
+      slugs: ["employee-bonus", "replace-employee-id-with-unique-identifier", "sales-person", "customers-who-bought-a-and-b-not-c", "dormant-reactivation"],
     },
     {
       name: "Per-SKU storage value folds",
       why: "Storage lines carry plan SKUs and per-line prices, and the footprint story is a join-then-weigh fold: quantity × unit_price per line, billed value rolled per workspace (the top workspace carries 7,262.35 on 50 lines). The per-SKU census is what gets a plan repriced or retired.",
-      slugs: ["product-sales-analysis-ii", "products-worth-over-invoices", "average-selling-price"],
+      slugs: ["product-sales-analysis-ii", "products-worth-over-invoices", "average-selling-price", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "The usage calendar",
       why: "Seat usage is calendar arithmetic: STRFTIME('%Y-%m') buckets over periods against the 3,731.97 peak and the 1,193.86 floor. Dropbox drills the month-bucket idiom because every capacity chart hangs on that spine — and a '%m'-without-year fold merges two Januaries into one lie.",
-      slugs: ["monthly-transactions-i", "the-latest-login-in-2020", "user-activity-for-the-past-30-days-i"],
+      slugs: ["monthly-transactions-i", "the-latest-login-in-2020", "user-activity-for-the-past-30-days-i", "mrr-waterfall", "plan-migration-paths", "growth-accounting", "median-time-to-convert"],
     },
     {
       name: "Seat-count two-grain reads",
       why: "Storage SaaS growth is a two-sided read: periods per workspace (depth) against workspaces per cohort (spread). The two-grain shapes here — seat counts, active-workspace counts, depth-versus-breadth ratios — are how expansion gets measured without double-counting.",
-      slugs: ["find-the-team-size", "number-of-times-a-driver-was-a-passenger", "count-student-number-in-departments"],
+      slugs: ["find-the-team-size", "number-of-times-a-driver-was-a-passenger", "count-student-number-in-departments", "basket-depth-aov", "new-users-daily-count"],
     },
     {
       name: "Dormancy & deactivated anti-joins",
@@ -93,12 +93,12 @@ export const dropboxKit: CompanyKit = {
     {
       name: "Footprint leaderboards & tie policy",
       why: "Infra boards rank workspaces by storage lines, and ties are real: three workspaces sit at exactly 8 lines. RANK and friends are a business decision about shared rungs, not syntax trivia — every board ships with its tie policy named.",
-      slugs: ["rank-scores", "second-most-recent-activity", "department-top-three-salaries"],
+      slugs: ["rank-scores", "second-most-recent-activity", "department-top-three-salaries", "usage-tier-percentiles"],
     },
     {
       name: "Sync-gap windows & LAG transitions",
       why: "Provisioning gaps and usage decay are window work: the gap between a workspace's sync events, the drift between consecutive periods — ordered, partitioned, NULL-aware. The 2.98-day provisioning average is itself a LAG-shaped read from order stamp to provision stamp.",
-      slugs: ["biggest-window-between-events", "find-emotionally-consistent-users", "second-day-confirmation"],
+      slugs: ["biggest-window-between-events", "find-emotionally-consistent-users", "second-day-confirmation", "dau-wau-stickiness", "week-over-week-churn", "null-blank-audit", "rolling-7d-actives"],
     },
     {
       name: "Seat billing & cents discipline",
@@ -108,27 +108,27 @@ export const dropboxKit: CompanyKit = {
     {
       name: "Payment rails & method folds",
       why: "Settlements arrive on two rails — card (16 payments, 37,364) and wire (11, 32,248) — and the finance pod folds the seat book per rail before any close conversation. The trap is grain: five bills were settled in two rows, so a naive join to payments double-counts bill money. Fold payments first, then talk rails.",
-      slugs: ["monthly-transactions-ii", "number-of-rich-customers", "queries-quality-and-percentage"],
+      slugs: ["monthly-transactions-ii", "number-of-rich-customers", "queries-quality-and-percentage", "winback-recovery"],
     },
     {
       name: "CASE-band cohort screens",
       why: "License states and plan bands are CASE classifications all the way down — the pricing memo bands the catalog at 50 and 200, and settlement-age screens bucket bills the same way. Dropbox drills the exhaustive-arm, ordered-WHEN shape because a hole in the CASE is a hole in the cohort.",
-      slugs: ["weather-type-in-each-country", "type-of-triangle", "delinquency-buckets"],
+      slugs: ["weather-type-in-each-country", "type-of-triangle", "delinquency-buckets", "spend-histogram"],
     },
     {
       name: "Set-op state stacks",
       why: "State boards stack arm censuses — an active stack, a provisioned stack, a deactivated stack — and month-close appends a TOTAL row by UNION ALL. UNION's dedupe pass is not decoration: two arms with identical rows collapse silently, and the stack stops reconciling with the fold.",
-      slugs: ["team-scores-in-football-tournament", "the-airport-with-the-most-flights", "league-statistics"],
+      slugs: ["team-scores-in-football-tournament", "the-airport-with-the-most-flights", "league-statistics", "keep-latest-dedupe"],
     },
     {
       name: "Subquery shapes on the workspace tree",
       why: "The expansion screens are subquery work: workspaces above the platform mean, second-heaviest footprints, latest-period lookups. Scalar, correlated and IN shapes answer different questions at different costs — and the empty-inner-query bug ships exactly when a filtered staging table comes back empty.",
-      slugs: ["managers-with-at-least-5-direct-reports", "second-highest-salary", "game-play-analysis-iv"],
+      slugs: ["managers-with-at-least-5-direct-reports", "second-highest-salary", "game-play-analysis-iv", "active-businesses"],
     },
     {
       name: "Date math & renewal windows",
       why: "Renewal and provisioning windows are half-open ranges — BETWEEN '2024-03-31' silently drops the last night's syncs, and month-end is exactly when renewals land. The 2.98-day provisioning average is julianday arithmetic over stamped periods only, and the decimals are the story.",
-      slugs: ["rising-temperature", "users-that-actively-request-confirmation-messages", "friday-purchases-i"],
+      slugs: ["rising-temperature", "users-that-actively-request-confirmation-messages", "friday-purchases-i", "users-with-two-purchases-within-seven-days", "find-zombie-sessions"],
     },
   ],
 

@@ -48,12 +48,12 @@ export const costcoKit: CompanyKit = {
     {
       name: "The renewal base: repeat reads at the member grain",
       why: "Costco's P&L stands on the membership fee, so the screens drill repeat mechanics at the member grain: baskets per member, members with 2+ baskets, frequency ladders. The drill is grouped counting with a stated population — 14 of 16 members place 2+ baskets, and a median-of-baskets answer flunks that population question every time.",
-      slugs: ["repeat-purchase-rate", "customer-order-frequency", "find-loyal-customers", "customer-placing-the-largest-number-of-orders", "customers-with-strictly-increasing-purchases", "customers-with-maximum-number-of-transactions-on-consecutive-days"],
+      slugs: ["repeat-purchase-rate", "customer-order-frequency", "find-loyal-customers", "customer-placing-the-largest-number-of-orders", "customers-with-strictly-increasing-purchases", "customers-with-maximum-number-of-transactions-on-consecutive-days", "percentage-of-users-attended-a-contest", "group-sold-products-by-the-date"],
     },
     {
       name: "Bulk-basket depth and AOV",
       why: "Warehouse baskets run fat, and the screens test whether you can fold the case-line grain back honestly: 251 lines over 103 baskets, average ticket 338.19. Basket depth and AOV are the pallet-turnover story, and both break on fan-out unless a DISTINCT rejoins the fold before the ratio prints.",
-      slugs: ["basket-depth-aov", "top-earners", "number-of-rich-customers", "average-selling-price", "nth-highest-salary"],
+      slugs: ["basket-depth-aov", "top-earners", "number-of-rich-customers", "average-selling-price", "nth-highest-salary", "ar-aging-schedule"],
     },
     {
       name: "Tier banding with CASE",

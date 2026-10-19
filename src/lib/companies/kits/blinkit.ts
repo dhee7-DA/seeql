@@ -110,12 +110,12 @@ export const blinkitKit: CompanyKit = {
     {
       name: "Basket depth & lines per basket",
       why: "Blinkit's unit economics are basket-shaped: 251 lines over 103 baskets = 2.44, but the histogram (26/29/25/23 by line count) is what the threshold team actually moves. Screens drill the fold at order grain — COUNT(*) of lines per basket, then re-folding the histogram — because folding at line grain is the classic 2.4x census bug.",
-      slugs: ["basket-depth-aov", "customer-order-frequency", "most-frequently-ordered-product-per-customer"],
+      slugs: ["basket-depth-aov", "customer-order-frequency", "most-frequently-ordered-product-per-customer", "rfm-segmentation", "repeat-purchase-rate", "roas-by-campaign"],
     },
     {
       name: "Availability & thin shelves",
       why: "The dark-store promise dies at the shelf: remaining cover = stock minus units sold, folded per SKU and gated at a threshold (3 SKUs at 14/15/17 on this db). Screens drill the staged fold — aggregate lines per SKU in a derived table, then filter and rank — because gating before the fold ranks lines, not shelves.",
-      slugs: ["find-stores-with-inventory-imbalance", "warehouse-manager", "weeks-of-supply"],
+      slugs: ["find-stores-with-inventory-imbalance", "warehouse-manager", "weeks-of-supply", "group-sold-products-by-the-date", "user-activity-for-the-past-30-days-i"],
     },
     {
       name: "Dark-store clusters at two grains",
@@ -125,12 +125,12 @@ export const blinkitKit: CompanyKit = {
     {
       name: "Funnel & kept demand",
       why: "The status funnel is four numerators over one population: 52 delivered, 30 shipped, 14 pending, 7 cancelled. Kept-demand share is a conditional count — SUM(CASE WHEN status = 'cancelled' …) over COUNT(*) — and the 14 {amber:pending} baskets are a restock population the churn board must never absorb.",
-      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "drop-type-1-orders-for-customers-with-type-0-orders"],
+      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "drop-type-1-orders-for-customers-with-type-0-orders", "product-sales-analysis-v", "ar-aging-schedule"],
     },
     {
       name: "Price bands & CASE histograms",
       why: "The shelf is banded: 8 budget SKUs at 32.06 average, 8 mid at 111.50, premium >= 200 empty at max 199.99. Screens drill the CASE band fold with the ELSE arm treated as a finding — an empty band on this db is a real fact about the assortment, and candidates who 'fix' it with a COALESCE have misunderstood the shelf.",
-      slugs: ["spend-histogram", "create-a-session-bar-chart", "the-category-of-each-member-in-the-store"],
+      slugs: ["spend-histogram", "create-a-session-bar-chart", "the-category-of-each-member-in-the-store", "average-selling-price", "maximum-transaction-each-day"],
     },
     {
       name: "Rank trio & shelf boards",
@@ -140,32 +140,32 @@ export const blinkitKit: CompanyKit = {
     {
       name: "One-pass censuses",
       why: "Standups are query-budgeted: the funnel, the band histogram and the cluster census each get one pass. FILTER (WHERE …) and conditional SUM build the whole 52/30/14/7 picture in a single scan, with branch totals that must reconcile to COUNT(*) = 103 before the board ships.",
-      slugs: ["active-businesses", "ratings-histogram", "count-the-number-of-experiments"],
+      slugs: ["active-businesses", "ratings-histogram", "count-the-number-of-experiments", "trial-balance-check"],
     },
     {
       name: "Vendor mix & concentration",
       why: "Six vendors carry the shelf, and two of them — Nordic Gadgets AB (32%) and Midwest Hardware Co (26.7%) — carry over half the revenue. Screens drill revenue-per-vendor folds through products and order_items, and the share math that prints 100.0 * fold / total, rounded once at the end.",
-      slugs: ["sales-analysis-i", "product-sales-analysis-ii", "products-worth-over-invoices"],
+      slugs: ["sales-analysis-i", "product-sales-analysis-ii", "products-worth-over-invoices", "product-sales-analysis-iii", "percentage-of-users-attended-a-contest"],
     },
     {
       name: "Demand calendars",
       why: "Dark stores live on the demand curve: month spines via SUBSTR(created_at, 1, 7) — 2024-01's 3,731.97 peak down to 2024-07's 1,193.86 trough — and day-of-week pivots for staffing. Screens drill the bucket key and the honesty rule: bucket on created_at for demand, never on the completion timestamp.",
-      slugs: ["monthly-transactions-i", "sales-by-day-of-the-week", "list-the-products-ordered-in-a-period"],
+      slugs: ["monthly-transactions-i", "sales-by-day-of-the-week", "list-the-products-ordered-in-a-period", "tasks-count-in-the-weekend"],
     },
     {
       name: "Settlement anti-joins",
       why: "The billing spine is where the money hides: 6 statements with no payment = 15,217.00, and #28 is marked {emerald:paid} with zero payment rows — invisible to any status filter. LEFT JOIN … IS NULL and NOT EXISTS until reflex; NOT IN against a nullable key is the silent queue-emptier the screens love.",
-      slugs: ["customers-who-never-order", "sellers-with-no-sales", "number-of-accounts-that-did-not-stream"],
+      slugs: ["customers-who-never-order", "sellers-with-no-sales", "number-of-accounts-that-did-not-stream", "customers-who-bought-a-and-b-not-c", "combine-two-tables", "customer-who-visited-but-did-not-transact"],
     },
     {
       name: "Sequenced demand: LAG, LEAD & rolling windows",
       why: "The demand calendar is read as a sequence: month over month, week over week, each month compared to its predecessor. LAG/LEAD and rolling frames are how the growth team sees momentum — and the first-row NULL, the gap in the month spine, and the RANGE-vs-ROWS default frame are the three traps every screen plants. Drill them until the delta query writes itself.",
-      slugs: ["restaurant-growth", "week-over-week-churn", "biggest-window-between-events"],
+      slugs: ["restaurant-growth", "week-over-week-churn", "biggest-window-between-events", "game-play-analysis-iv"],
     },
     {
       name: "Baselines & scalar subqueries",
       why: "Half of Blinkit's questions are 'above or below the network baseline': baskets above average quantity, clusters above network AOV, SKUs above average cover. The scalar subquery folds the baseline once and judges every row against it — the screens drill the shape, the placement (WHERE vs SELECT), and the failure where the baseline accidentally becomes correlated.",
-      slugs: ["orders-with-maximum-quantity-above-average", "find-expensive-cities", "winning-candidate"],
+      slugs: ["orders-with-maximum-quantity-above-average", "find-expensive-cities", "winning-candidate", "consecutive-numbers"],
     },
     {
       name: "Set ops & stack reports",
@@ -175,12 +175,12 @@ export const blinkitKit: CompanyKit = {
     {
       name: "NULL policy & COALESCE guards",
       why: "The db is honest about what hasn't happened: 21 baskets have no completion timestamp, 6 statements have no settlement, and the queue is made of absences. COALESCE/NULLIF/IFNULL are policy decisions, not decorations — every screen asks where you defaulted a NULL, why, and what the board prints instead. The house rule: never let a default impersonate a fact.",
-      slugs: ["books-with-null-ratings", "null-blank-audit", "find-customer-referee"],
+      slugs: ["books-with-null-ratings", "null-blank-audit", "find-customer-referee", "settlement-fails-aging"],
     },
     {
       name: "Staged CTEs & multi-step folds",
       why: "The heavy boards are built in stages: fold payments per statement, then classify; rank per category, then filter to the podium; dedupe to the latest settlement, then reconcile. WITH (and derived tables) make each step nameable and testable — the screens reward queries whose stages read like the memo.",
-      slugs: ["department-top-three-salaries", "keep-latest-dedupe", "customers-with-strictly-increasing-purchases"],
+      slugs: ["department-top-three-salaries", "keep-latest-dedupe", "customers-with-strictly-increasing-purchases", "queries-quality-and-percentage"],
     },
   ],
 

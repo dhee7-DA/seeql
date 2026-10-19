@@ -30,9 +30,9 @@ export const coinbaseKit: CompanyKit = {
     "Coinbase is the exchange where retail and institutional flow meets crypto markets — order books on one side, custody vaults on the other, and a settlement layer that has to prove every trade cleared. The analytics reality is two ledgers glued together: the trading ledger (orders, fills, notionals) and the custody ledger (units held, units moved, debits equaling credits). On this storefront db the mapping is honest: `orders` are trade orders (103 of them worth **$34,833.28**, averaging $338.19), order_items are fills (251 lines where quantity × unit_price is the notional), products are listed assets grouped into 7 asset classes, suppliers are custody venues, and products.stock is the custody balance in units. Settlement objects — `invoices` and `payments` — are INTEGER cents; the dollar read is `amount_cents / 100.0`.",
     "The data org splits into market data, custody ops, and the finance desk that reconciles both. Market data owns the volume folds: one asset class trades **$11,744.01** of notional on 97 units while the quietest does $863.91 on 27 — and the units-versus-dollars distinction is the first thing a screen tests. Custody ops owns the position census: 16 assets, balances from 40 units of the flagship to 500 of the settlement workhorse, with the {violet:deep-custody} cut (balances ≥ 100 units) separating whale inventory from retail float. Finance owns the exceptions the exchange never wants: settlement #11 is {rose:void} yet carries a $925.00 payment, #28 reads {emerald:paid} with no settlement leg at all ($1,756.00), and one venue settled $4,000.00 against a $6,148.00 invoice — {amber:partial}, open, and watched.",
     "Interview style is grain-then-rank, then the reconciliation. A screen opens with a fold (notional per asset class — `SUM(quantity * unit_price)` over fills, never a count of rows wearing a dollar costume), moves to a leaderboard (rank the classes, and *what happens to RANK when two classes tie?*), escalates into a census where FILTER or CASE counts positions in one pass, and lands on custody-versus-traded: units held against units moved, joined without letting the fill fan-out inflate a single position. Candidates who say **'one row per what?'** before every COUNT are the ones who get callbacks.",
-    "Preparation: the registry tags zero SQL problems for Coinbase — this kit is **0 tagged LC, theme-curated**: all 30 topic slugs and 16 problems are chosen to mirror exchange screens — notional folds, tie-aware rankings, running balances, custody censuses and month-bucket volume calendars. Then run both case studies on the live db: one rebuilds the {violet:custody census} asset ops runs before the daily position meeting (per class: assets, deep positions, traded units — Accessories leading at **121** units), the other rebuilds the {emerald:class leaderboard} the growth deck ships (Audio $11,744.01 ranked first through Fitness $863.91). Say the grain, the tie rule and the cents rule before you compute anything — at an exchange, all three are load-bearing.",
+    "Preparation: the registry tags zero SQL problems for Coinbase — this kit is **0 tagged LC, theme-curated**: all 30 topic slugs and 16 problems are chosen to mirror exchange screens — notional folds, tie-aware rankings, running balances, custody censuses and month-bucket volume calendars. Then run all six case studies on the live db: one rebuilds the {violet:custody census} asset ops runs before the daily position meeting (per class: assets, deep positions, traded units — Accessories leading at **121** units), the other rebuilds the {emerald:class leaderboard} the growth deck ships (Audio $11,744, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting...01 ranked first through Fitness $863.91). Say the grain, the tie rule and the cents rule before you compute anything — at an exchange, all three are load-bearing.",
     "Follow the money sideways and the venue economics appear. Six custody venues list the book's 16 assets, and concentration is the risk line: Nordic Gadgets AB carries **32%** of notional ($11,130.25) and Midwest Hardware Co another **26.7%** ($9,294.93) — a top-two share of 58.7% — while the {violet:trusted bench} (rating ≥ 4.5) holds just Nordic (4.6) and Alpine Audio (4.8). The settlement book runs 28 invoices worth **$86,977.00** — 21 paid ($66,443.00), 6 open ($19,609.00), 1 void ($925.00) — moved over two rails: {emerald:card} 16 legs / $37,364.00 against {sky:wire} 11 legs / $32,248.00, a $69,612.00 cross-foot that must equal the cash account's debits. Terms are 30 days flat, settled invoices take 28.4 days on average (13 fastest, 84 slowest), and the overhead calendar peaks in 2024-08 at $3,210.00 against a $16,800.00 full-year rent line.",
-    "Preparation roadmap: four weeks, three gates. Week 1, folds and grains — notional per class, per venue, per month, saying *'one row per what?'* before every COUNT. Week 2, ranks and windows — leaderboards with stated tie policies, running settlement walks with explicit frames, LAG deltas with deterministic sorts. Week 3, the settlement stack — build the {amber:UNION ALL grand-total} report, the {emerald:coverage census} (21 exact / 1 partial / 6 with no leg), and the ledger tie ($181,080 = $181,080, delta $0.00) until each ships with its own cross-foot. Week 4, both case studies on the live db plus the venue-fold drill (gate the listings floor and prove the boundary flips). The three gates every answer passes before it leaves your mouth: the grain is named, the divisor is `100.0`, the gate value is probed one step either side.",
+    "Preparation roadmap: four weeks, three gates. Week 1, folds and grains — notional per class, per venue, per month, saying *'one row per what?'* before every COUNT. Week 2, ranks and windows — leaderboards with stated tie policies, running settlement walks with explicit frames, LAG deltas with deterministic sorts. Week 3, the settlement stack — build the {amber:UNION ALL grand-total} report, the {emerald:coverage census} (21 exact / 1 partial / 6 with no leg), and the ledger tie ($181,080 = $181,080, delta $0.00) until each ships with its own cross-foot. Week 4, all six case studies on the live db plus the venue-fold drill (gate the listings floor and prove the boundary flips). The three gates every answer passes before it leaves your mouth: the grain is named, the divisor is `100.0`, the gate value is probed one step either side.",
   ],
 
   dayInLife: [
@@ -62,12 +62,12 @@ export const coinbaseKit: CompanyKit = {
     {
       name: "Notional folds over fills",
       why: "Every volume claim here is a fold over fills: SUM(quantity × unit_price), grouped by asset or class. The trap is the fan-out — joins multiply fill rows, and a fold over the wrong grain prints dollars that don't reconcile. Coinbase drills the fold before it lets you rank.",
-      slugs: ["products-worth-over-invoices", "number-of-rich-customers", "top-earners"],
+      slugs: ["products-worth-over-invoices", "number-of-rich-customers", "top-earners", "customer-order-frequency", "find-third-transaction"],
     },
     {
       name: "Tie-aware ranking with RANK & DENSE_RANK",
       why: "Leaderboards are the exchange's native output — and ties are native too. RANK leaves gaps after a tie, DENSE_RANK doesn't, ROW_NUMBER deals arbitrary order; on a volume leaderboard the difference changes which class the deck calls 'second'. The tie rule is a footnote that must be chosen, not defaulted.",
-      slugs: ["rank-scores", "second-highest-salary", "department-top-three-salaries"],
+      slugs: ["rank-scores", "second-highest-salary", "department-top-three-salaries", "amount-anomaly-zscore", "customers-with-maximum-number-of-transactions-on-consecutive-days", "compute-the-rank-as-a-percentage"],
     },
     {
       name: "Custody censuses with FILTER",
@@ -77,37 +77,37 @@ export const coinbaseKit: CompanyKit = {
     {
       name: "Class chains: orders → fills → assets",
       why: "Asset analytics is a chain join: fills attach to assets, assets roll up to classes. The join keys are the interview — one wrong column and the chain silently pairs fills with the wrong class, and every fold downstream inherits the fiction.",
-      slugs: ["product-sales-analysis-ii", "product-sales-analysis-iii", "most-frequently-ordered-product-per-customer"],
+      slugs: ["product-sales-analysis-ii", "product-sales-analysis-iii", "most-frequently-ordered-product-per-customer", "investments-in-2016", "duplicate-charge-pairs"],
     },
     {
       name: "Argmax: biggest fill per day",
       why: "'What was the largest trade today?' is argmax over a fold — and the naive MAX-join-back doubles rows on ties while ROW_NUMBER picks one arbitrarily unless the tie-break is stated. Maximum-per-day shapes feed the tape, the risk alerts and the client recaps.",
-      slugs: ["maximum-transaction-each-day", "the-first-day-of-the-maximum-recorded-temperature-in-each-city", "find-longest-calls"],
+      slugs: ["maximum-transaction-each-day", "the-first-day-of-the-maximum-recorded-temperature-in-each-city", "find-longest-calls", "customer-placing-the-largest-number-of-orders", "first-and-last-call-on-the-same-day"],
     },
     {
       name: "Running balances & frames",
       why: "Custody balances are walks: units in, units out, running position after each fill. Window frames (ROWS/RANGE) and running sums are the mechanics, and the frame choice — default vs explicit — decides whether the walk includes the current row or starts before it.",
-      slugs: ["account-balance", "game-play-analysis-iii", "running-total-for-different-genders"],
+      slugs: ["account-balance", "game-play-analysis-iii", "running-total-for-different-genders", "daily-balance-interest"],
     },
     {
       name: "Two-sided reads & pivots",
       why: "Taker versus maker, buys versus sells, weekday versus weekend — exchange reads compare two measures of the same population side by side. Self-joins, CASE pivots and conditional sums all do it; the interview is which shape keeps the grain stable.",
-      slugs: ["apples-and-oranges", "reformat-department-table", "sales-by-day-of-the-week"],
+      slugs: ["apples-and-oranges", "reformat-department-table", "sales-by-day-of-the-week", "circular-transfers"],
     },
     {
       name: "Fee tiers & honest ratios",
       why: "Fee share, maker ratio, class concentration — every rate is a ratio over a fold, and both failure modes are graded: INTEGER 100 truncating small shares to zero, and a WHERE that shrinks the denominator to the numerator's population. Weighted averages (notional-weighted price) are the advanced cut.",
-      slugs: ["average-selling-price", "card-launch-success", "countries-you-can-safely-invest-in"],
+      slugs: ["average-selling-price", "card-launch-success", "countries-you-can-safely-invest-in", "queries-quality-and-percentage", "chargeback-rate-ranking", "calculate-compressed-mean"],
     },
     {
       name: "Volatility windows: LAG price moves",
       why: "Market data lives on deltas: this fill versus the previous one, this month's volume versus last. LAG/LEAD over ordered fills and month buckets are the mechanics, and the deterministic ORDER BY (price, then id) is what keeps a delta meaningful when rows share a timestamp.",
-      slugs: ["year-on-year-growth-rate", "biggest-window-between-events", "rolling-average-steps"],
+      slugs: ["year-on-year-growth-rate", "biggest-window-between-events", "rolling-average-steps", "consecutive-transactions-with-increasing-amounts"],
     },
     {
       name: "Calendar spines & WITH RECURSIVE",
       why: "Volume calendars need every day present — including the days nothing traded, which a plain GROUP BY erases. Generating the spine and LEFT-joining activity onto it is the shape WITH RECURSIVE teaches, and the zero-fill discipline is the interview's actual subject.",
-      slugs: ["find-the-missing-ids", "total-sales-amount-by-year", "find-the-subtasks-that-did-not-execute"],
+      slugs: ["find-the-missing-ids", "total-sales-amount-by-year", "find-the-subtasks-that-did-not-execute", "friday-purchases-ii"],
     },
     {
       name: "Venue folds & concentration",
@@ -117,12 +117,12 @@ export const coinbaseKit: CompanyKit = {
     {
       name: "Settlement stacks & grand totals",
       why: "The settlement report is a stack: per-status fold (paid 21 / $66,443.00, open 6 / $19,609.00, void 1 / $925.00) UNION ALL a re-folded TOTAL row (28 / $86,977.00) that leads the board by sort key. UNION ALL vs UNION is the contract — the banner must never be subject to a dedupe — and the TOTAL branch folds the table, not the stack, so the check can't re-derive its own answer.",
-      slugs: ["monthly-transactions-ii", "bank-account-summary", "gl-reconciliation"],
+      slugs: ["monthly-transactions-ii", "bank-account-summary", "gl-reconciliation", "cohort-repeat-revenue"],
     },
     {
       name: "Month buckets & HAVING gates",
       why: "Volume calendars bucket by STRFTIME('%Y-%m', created_at) — 14 months, 6–9 orders each — and the desk's questions are gated: 'months with 9+ orders' keeps exactly 2024-02 ($3,609.64) and 2024-09 ($3,116.04). The gate lives in HAVING because it judges the fold, and a threshold near a boundary is probed one step either side before it ships.",
-      slugs: ["list-the-products-ordered-in-a-period", "monthly-transactions-i", "unique-orders-and-customers-per-month"],
+      slugs: ["list-the-products-ordered-in-a-period", "monthly-transactions-i", "unique-orders-and-customers-per-month", "calculate-orders-within-each-interval"],
     },
     {
       name: "Coverage censuses & anti-join holes",

@@ -51,12 +51,12 @@ export const olaKit: CompanyKit = {
     {
       name: "Two-grain demand reads",
       why: "'Bookings AND riders per city' is the opening read of every Ola pod review — network load versus audience size. COUNT(*) counts booking rows; COUNT(DISTINCT rider_id) counts people, and the gap between them is ride intensity per rider. Confusing the two grains is the single most common junior bug here.",
-      slugs: ["students-and-examinations", "daily-leads-and-partners", "find-followers-count"],
+      slugs: ["students-and-examinations", "daily-leads-and-partners", "find-followers-count", "product-sales-analysis-i"],
     },
     {
       name: "Completion shares & conditional counts",
       why: "A booking can complete, stay underway, wait unmatched, or cancel — and every headline Ola reports is one slice ÷ the right denominator. SUM(CASE WHEN …) and COUNT FILTER (WHERE …) are the daily muscles, and the interviewer always asks what your denominator includes.",
-      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "weather-type-in-each-country"],
+      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "weather-type-in-each-country", "monthly-transactions-i", "queries-quality-and-percentage", "confirmation-rate", "average-selling-price"],
     },
     {
       name: "Attaching riders to the trip store",
@@ -66,7 +66,7 @@ export const olaKit: CompanyKit = {
     {
       name: "Anti-joins for collections & dormant supply",
       why: "Corporate statements with no settlement, fleet partners whose categories never moved, riders who registered and never booked — the 'find what's missing' reads are anti-joins. On collections the unmatched rows ARE the money: 6 unpaid statements worth 15217 on this db.",
-      slugs: ["sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "find-churn-risk-customers", "customers-who-bought-a-and-b-not-c"],
+      slugs: ["sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "find-churn-risk-customers", "customers-who-bought-a-and-b-not-c", "customers-who-never-order"],
     },
     {
       name: "City & category leaderboards",

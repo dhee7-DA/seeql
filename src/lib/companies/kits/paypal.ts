@@ -60,7 +60,7 @@ export const paypalKit: CompanyKit = {
     {
       name: "Month buckets & status-aware counts",
       why: "Payout calendars bucket by SUBSTR(paid_on, 1, 7) with a status-conditional count riding in the same fold. PayPal drills single-scan censuses — branches that must reconcile to COUNT(*) — because the wallet report ships daily, not quarterly, and a two-scan drift shows up as two truths.",
-      slugs: ["monthly-transactions-i", "count-the-number-of-experiments", "the-latest-login-in-2020", "delinquency-buckets"],
+      slugs: ["monthly-transactions-i", "count-the-number-of-experiments", "the-latest-login-in-2020", "delinquency-buckets", "spend-histogram"],
     },
     {
       name: "Split tenders & self-joins",

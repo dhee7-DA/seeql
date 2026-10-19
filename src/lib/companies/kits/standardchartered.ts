@@ -62,17 +62,17 @@ export const standardcharteredKit: CompanyKit = {
     {
       name: "Two-grain corridor censuses",
       why: "Transactions and clients are different grains of the same join, and every census here reports both: EU runs 45 transactions from 8 clients while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "chargeback-rate-ranking", "delinquency-buckets"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "chargeback-rate-ranking", "delinquency-buckets", "classes-more-than-5-students", "find-the-team-size", "confirmation-rate", "bank-account-summary"],
     },
     {
       name: "Joining clients to transactions",
       why: "Clients carry corridor and created_at; transactions inherit them through joins, and the join type decides who survives. A transaction without a client is corruption; a client without transactions is whitespace — though on this db the anti-join returns a confident zero, and proving that zero is part of the job.",
-      slugs: ["combine-two-tables", "replace-employee-id-with-unique-identifier", "top-travellers", "dormant-reactivation"],
+      slugs: ["combine-two-tables", "replace-employee-id-with-unique-identifier", "top-travellers", "dormant-reactivation", "customers-who-never-order", "sales-analysis-iii", "customers-who-bought-a-and-b-not-c", "sellers-with-no-sales", "game-play-analysis-iv"],
     },
     {
       name: "Counterparty exposure ladders",
       why: "Exporter exposure ladders are rank-window reporting where ties are guaranteed — the client ladder runs 24, 17, 14, 13, 5 transactions, then four clients tied at 4. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer counterparties, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "portfolio-concentration-hhi"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "portfolio-concentration-hhi", "fx-exposure-report"],
     },
     {
       name: "Doc-status banding with CASE",
@@ -82,7 +82,7 @@ export const standardcharteredKit: CompanyKit = {
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month transaction spine (2024-01 to 2025-02) is the corridor desk's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) and jump (+1,158.21 into August) named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["biggest-window-between-events", "second-day-confirmation", "year-on-year-growth-rate", "balance-rollforward"],
+      slugs: ["biggest-window-between-events", "second-day-confirmation", "year-on-year-growth-rate", "balance-rollforward", "customer-placing-the-largest-number-of-orders", "product-price-at-a-given-date", "keep-latest-dedupe", "null-blank-audit"],
     },
     {
       name: "Coverage set algebra",
@@ -92,7 +92,7 @@ export const standardcharteredKit: CompanyKit = {
     {
       name: "Nested folds & thresholds",
       why: "Screens escalate into staging: fold per-client transaction counts, then judge them against a computed platform bar the interviewer never states numerically. Scalar, correlated and derived shapes each carry an empty-inner-query answer you are expected to give unprompted.",
-      slugs: ["managers-with-at-least-5-direct-reports", "second-highest-salary", "department-highest-salary", "expected-credit-loss", "structuring-detection"],
+      slugs: ["managers-with-at-least-5-direct-reports", "second-highest-salary", "department-highest-salary", "expected-credit-loss", "structuring-detection", "transaction-velocity"],
     },
     {
       name: "One-pass status censuses",
@@ -102,7 +102,7 @@ export const standardcharteredKit: CompanyKit = {
     {
       name: "Billing & cents discipline",
       why: "Billed is not collected — the finance tables (28 fee invoices, 27 settlements, INTEGER cents) are where the corridor world meets money. Every dollar read is amount_cents / 100.0, and the exact/partial/none coverage split (21 / 1 / 6) is one CASE away.",
-      slugs: ["bank-account-summary-ii", "monthly-transactions-i", "trial-balance-check", "ar-aging-schedule", "gl-reconciliation", "journal-gap-detection"],
+      slugs: ["bank-account-summary-ii", "monthly-transactions-i", "trial-balance-check", "ar-aging-schedule", "gl-reconciliation", "journal-gap-detection", "trial-to-paid-funnel"],
     },
   ],
 

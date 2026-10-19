@@ -36,7 +36,7 @@ export const discordKit: CompanyKit = {
     "Discord is the community layer of the internet — servers that behave like towns, voice rooms that behave like kitchens, and a Nitro subscription that pays for all of it. The unit of analysis is the **open session**: one member, one period, one outcome — {emerald:voice room joined & completed}, {sky:text-and-forum only}, lurking, or {rose:disconnected}. Everything the product teams argue about — whether the voice redesign lifted real participation, which cohort lurks instead of talks, why July cooled — hangs on queries that fold **251 activity batches** into **103 open sessions** from **16 members** across four market cohorts, and the population behind every ratio gets stated before it's believed.",
     "The data org runs three engines. Session telemetry folds the activity-batch log into the server-health boards the voice team reads at 08:20 sharp. Verification & retention runs the gap math: **82 of 103 sessions carry a member-verification stamp**, a **2.98-day average** join-to-verified window with a 2–4 day range — and the unstamped 21 are the lurking-plus-dropped tail, reported as a state, never as zero. Monetization reads Nitro & Server-Boost billing, where amounts live as INTEGER cents and `amount_cents / 100.0` at the display edge is house style — card rails ran **16 payments / $37,364.00** against wire rails at **11 / $32,248.00**, and the ledger ties at **181,080 = 181,080** every close.",
     "Interview screens are fold-and-window shaped. A typical loop opens with a fold (events per session, sessions per cohort — `SUM(quantity)`, not `COUNT(*)`, because batches carry retries), escalates into a **LAG gap read** over each member's session partition, and lands on either a one-pass **FILTER census** whose four arms must reconcile to 103 or a threshold subquery (*who's still active past the mean cadence?*). The follow-ups are definition probes: per what — batches or events, sessions or members, calendar months or rolling 28s? Candidates who state the denominator and keep the census unfiltered consistently outperform.",
-    "Preparation strategy: Discord has **no tagged registry problems**, so this kit theme-curates all sixteen — the session census and first-join canon, streak ladders (`longest-winning-streak`, `fifteen-days-of-learning`), retention cohorts, the Nitro conversion funnel and the silent-majority anti-joins. Then run both case studies on the live storefront db: one rebuilds the {violet:heavy-habit cohort screen} (a derived per-member fold gated above the **6.44** mean cadence — 4 members carrying **63.5%** of demand), the other rebuilds the {emerald:one-pass engagement census} (FILTER arms per outcome, counts that must reconcile). The storefront mapping is declared, not hidden — orders are open sessions, totals are engagement units, regions are market cohorts — because making the stand-in explicit is itself the habit this screen rewards.",
+    "Preparation strategy: Discord has **no tagged registry problems**, so this kit theme-curates all sixteen — the session census and first-join canon, streak ladders (`longest-winning-streak`, `fifteen-days-of-learning`), retention cohorts, the Nitro conversion funnel and the silent-majority anti-joins. Then run all six case studies on the live storefront db: one rebuilds the {violet:heavy-habit cohort screen} (a derived per-member fold gated above the **6.44** mean cadence — 4 members carrying **63.5%** of demand), the other rebuilds the {emerald:one-pass engagement census} (FILTER arms per outcome, counts that must reconcile). The storefront mapping is declared, not hidden — orders are open sessions, totals are engagement units, regions are market cohorts — because making the stand-in explicit is itself the habit this screen rewards.",
     "Under the engagement layer sits the money, billed as Nitro & Server-Boost subscriptions in integer cents — `amount_cents / 100.0` at the display edge, never a bare /100. The book is 28 invoices: 21 {emerald:paid} for $66,443.00, 6 open for $19,609.00, 1 void for $925.00, and the coverage fold is the close's spine — 21 exact, 1 partial (4,000 of 6,148), 6 never paid. Card rails carried 16 payments worth $37,364.00 against wire's 11 / $32,248.00, settlement averages **28.4 days** against flat 30-day terms, and the anomalies register stays live: a {rose:void-but-paid} invoice at 925.00, a paid invoice with zero payment rows at 1,756.00. *The ledger still ties 181,080 = 181,080 at every close — reconciliation is the sign-off, not a formality.*",
     "At full depth the kit runs **fifteen topics, twenty-four theory drills, thirty MCQs and six audited case studies** on the storefront db. The originals rebuild the {violet:heavy-habit cohort screen} and the one-pass engagement census; the four additions walk the month-over-month engagement trend (LAG deltas with the July cool-off as the gate), the bot-partner load board (a four-table join folded per integration partner), the Nitro SKU tier census (CASE bands over the product catalog) and the billing outlier screen (a scalar-subquery average printed beside every qualifying invoice). The 32-problem pool stays theme-curated — Discord carries no tagged registry rows — with month-bucket trend walks, set-op digests, leaderboard ties and NULL-safe anti-joins added on top. The bar is unchanged: *state the denominator, keep the census unfiltered, and reconcile every multi-branch total or the board doesn't ship.*",
   ],
@@ -67,12 +67,12 @@ export const discordKit: CompanyKit = {
     {
       name: "First joins & session counts",
       why: "Every member story starts with a first session, and every board starts with a count: periods per member, first-session attribution, minutes per open. The curated trio drills the first-login fold, the distinct-viewer count and the duration roll-up that opens Discord's server-health screens.",
-      slugs: ["game-play-analysis-i", "article-views-i", "find-total-time-spent-by-each-employee"],
+      slugs: ["game-play-analysis-i", "article-views-i", "find-total-time-spent-by-each-employee", "dau-wau-stickiness", "average-time-of-process-per-machine", "active-users"],
     },
     {
       name: "Return-visit gap math",
       why: "Comeback behavior is window math: LAG over each member's session partition, julianday deltas, the first open's NULL kept as no-previous-session. The trio covers the biggest-gap read, the second-day return and the day+1 comparison that re-engagement alerts hang on.",
-      slugs: ["biggest-window-between-events", "second-day-confirmation", "rising-temperature"],
+      slugs: ["biggest-window-between-events", "second-day-confirmation", "rising-temperature", "mrr-waterfall"],
     },
     {
       name: "Streak ladders & consecutive days",
@@ -82,17 +82,17 @@ export const discordKit: CompanyKit = {
     {
       name: "Retention cohorts & growth accounting",
       why: "Server retention reads cohort-shaped: which join month keeps its actives, how churn moves week over week, how new minus resurrect minus churn nets to the growth story. The trio is the exact grammar the community team's monthly deck is written in.",
-      slugs: ["cohort-retention-matrix", "week-over-week-churn", "growth-accounting"],
+      slugs: ["cohort-retention-matrix", "week-over-week-churn", "growth-accounting", "find-churn-risk-customers", "duplicate-charge-pairs"],
     },
     {
       name: "Nitro conversion funnel",
       why: "Free-to-Nitro is a funnel: trial started, feature used, subscription period paid. These drills build the step-conversion grammar — stage counts, trial-to-paid ratios, subscription-conversion joins — with the denominator at every step stated out loud.",
-      slugs: ["funnel-step-conversion", "trial-to-paid-funnel", "analyze-subscription-conversion"],
+      slugs: ["funnel-step-conversion", "trial-to-paid-funnel", "analyze-subscription-conversion", "reported-posts-ii"],
     },
     {
       name: "One-pass censuses",
       why: "The engagement census counts all four session outcomes in one pass — voice, text, lurking, dropped — and COUNT(CASE …)/FILTER arms are the grammar. The literal snaps census is this read; the trio adds the target-met conditional and the zero-available gate that census reports lean on.",
-      slugs: ["snaps-analysis", "number-of-employees-who-met-the-target", "find-books-with-no-available-copies"],
+      slugs: ["snaps-analysis", "number-of-employees-who-met-the-target", "find-books-with-no-available-copies", "immediate-food-delivery-ii", "immediate-food-delivery-i"],
     },
     {
       name: "Surface-split pivots",
@@ -102,12 +102,12 @@ export const discordKit: CompanyKit = {
     {
       name: "Histograms & buckets",
       why: "Events-per-session distributions ship as bar charts: sessions bucketed by event count, engagement by band, orders by interval. These drills cover the bucket grammar — CASE ladders, interval gates, histogram folds — where the bucket edges are the whole audit.",
-      slugs: ["create-a-session-bar-chart", "calculate-orders-within-each-interval", "spend-histogram"],
+      slugs: ["create-a-session-bar-chart", "calculate-orders-within-each-interval", "spend-histogram", "transactions-per-visit-histogram"],
     },
     {
       name: "Silent-majority anti-joins",
       why: "Lurkers are defined by absence: members with sessions but no voice events, accounts that never streamed, visitors who never transacted. The trio drills the anti-join shapes — NOT EXISTS, LEFT JOIN IS NULL, visited-but-didn't — that the onboarding team lives in.",
-      slugs: ["customer-who-visited-but-did-not-transact", "ad-free-sessions", "number-of-accounts-that-did-not-stream"],
+      slugs: ["customer-who-visited-but-did-not-transact", "ad-free-sessions", "number-of-accounts-that-did-not-stream", "customers-who-bought-a-and-b-not-c", "sellers-with-no-sales"],
     },
     {
       name: "Threshold subqueries",
@@ -117,22 +117,22 @@ export const discordKit: CompanyKit = {
     {
       name: "Month buckets & trend walks",
       why: "The engagement book reads month over month — fourteen buckets from 2024-01 to 2025-02, a January peak of 3,731.97 and a July cool-off of 1,193.86. The trio drills the calendar grammar the trend walk needs: '%Y-%m' keys, latest-in-window picks and 30-day rolling windows with the boundaries stated.",
-      slugs: ["monthly-transactions-i", "the-latest-login-in-2020", "user-activity-for-the-past-30-days-i"],
+      slugs: ["monthly-transactions-i", "the-latest-login-in-2020", "user-activity-for-the-past-30-days-i", "users-with-two-purchases-within-seven-days", "rolling-7d-actives"],
     },
     {
       name: "Set ops for stitched digests",
       why: "Digests stitch populations: voice-completed sessions plus stamped sessions, this month's actives plus last quarter's whales. UNION's dedupe hides double-qualified members while UNION ALL preserves them, and EXCEPT diffs two boards as sets. The trio covers the column-position discipline and the zero-bucket stitch that keeps digests honest.",
-      slugs: ["movie-rating", "count-salary-categories", "monthly-transactions-ii"],
+      slugs: ["movie-rating", "count-salary-categories", "monthly-transactions-ii", "keep-latest-dedupe", "duplicate-emails"],
     },
     {
       name: "Leaderboards & tie behavior",
       why: "Top members by cadence, top SKUs by events, top partners by engagement — Discord reporting is leaderboard reporting, and ties are everywhere once sixteen members share 103 sessions. The trio drills RANK, DENSE_RANK and ROW_NUMBER until the 1,2,3,4,4,6 gap pattern is a spoken reflex, then adds the top-N-per-group cut.",
-      slugs: ["rank-scores", "top-five-artists", "department-top-three-salaries"],
+      slugs: ["rank-scores", "top-five-artists", "department-top-three-salaries", "most-frequently-ordered-product-per-customer"],
     },
     {
       name: "NULL arms & fallback policy",
       why: "Members without boosts, sessions without stamps, payments without invoices — the LEFT JOIN NULL arm is half the platform's truth. The trio drills combine-tables-style outer joins, the COALESCE bonus guard and the confirmation-rate pattern where the fallback is a stated policy, never an accident.",
-      slugs: ["combine-two-tables", "employee-bonus", "confirmation-rate"],
+      slugs: ["combine-two-tables", "employee-bonus", "confirmation-rate", "number-of-calls-between-two-persons"],
     },
     {
       name: "Fold-then-join instincts",

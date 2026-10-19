@@ -67,12 +67,12 @@ export const segmentKit: CompanyKit = {
     {
       name: "Destination fan-out folds",
       why: "The leg grain is Segment's home grain: order_items joined to plan SKUs and destination integrations, folded per integration into legs, distinct periods fanned, volume and revenue. The habit being graded is the two-grain pairing — Midwest runs 56 legs into 45 periods while Andes runs 25 into 25 — because a census that reports one grain while the stakeholder asked for the other is a wrong number wearing the right column names.",
-      slugs: ["product-sales-analysis-ii", "sales-analysis-i", "most-frequently-ordered-product-per-customer", "the-most-recent-orders-for-each-product", "customers-who-bought-a-and-b-not-c"],
+      slugs: ["product-sales-analysis-ii", "sales-analysis-i", "most-frequently-ordered-product-per-customer", "the-most-recent-orders-for-each-product", "customers-who-bought-a-and-b-not-c", "product-sales-analysis-iii", "sales-analysis-ii", "game-play-analysis-i", "combine-two-tables"],
     },
     {
       name: "Volume bands with CASE",
       why: "MTU tiers are CASE-classified: the band fold splits 498 volume units into 268 on sub-55 starter rates and 230 on high-throughput rates, and plan SKUs band into families the same way. The arms must be exhaustive and ordered — 133 legs plus 118 legs must reconcile to 251, or a hole in the CASE is a hole in the pricing story — and a reordered WHEN quietly re-bands the base.",
-      slugs: ["the-category-of-each-member-in-the-store", "loan-types", "count-salary-categories", "usage-tier-percentiles", "the-number-of-users-that-are-eligible-for-discount", "dynamic-pivoting-of-a-table"],
+      slugs: ["the-category-of-each-member-in-the-store", "loan-types", "count-salary-categories", "usage-tier-percentiles", "the-number-of-users-that-are-eligible-for-discount", "dynamic-pivoting-of-a-table", "trial-to-paid-funnel", "net-revenue-retention", "mrr-waterfall", "growth-accounting"],
     },
     {
       name: "Schema hygiene & validation",
@@ -87,12 +87,12 @@ export const segmentKit: CompanyKit = {
     {
       name: "Fan-out share windows",
       why: "Every leg carries a share of its period's volume — SUM(quantity) OVER (PARTITION BY order_id) — and every destination sits on a ladder where ties are guaranteed: Pacific Textiles and Alpine Audio GmbH both carry 40 legs, so RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung. Window counting (find-the-team-size shape) beside each leg row is exactly how the fan-out burden reads without collapsing the grain.",
-      slugs: ["find-the-team-size", "rank-scores", "compute-the-rank-as-a-percentage", "portfolio-concentration-hhi"],
+      slugs: ["find-the-team-size", "rank-scores", "compute-the-rank-as-a-percentage", "portfolio-concentration-hhi", "classes-more-than-5-students", "immediate-food-delivery-ii", "find-users-with-high-token-usage", "confirmation-rate", "find-total-time-spent-by-each-employee"],
     },
     {
       name: "Volume spines & month walks",
       why: "The 14-month period spine (2024-01 to 2025-02) is the volume trend's home turf: peak 3,731.97 in January, trough 1,193.86 in July with 2 of the 7 drops, recovery to 2,352.07 in August. Prior month beside current with LAG, first row NULL as baseline, and a two-grain walk (periods AND distinct workspaces per month) are the standard asks — each one a fold whose denominator must be stated out loud.",
-      slugs: ["unique-orders-and-customers-per-month", "list-the-products-ordered-in-a-period", "year-on-year-growth-rate", "rolling-7d-actives", "consecutive-transactions-with-increasing-amounts", "find-bursty-behavior"],
+      slugs: ["unique-orders-and-customers-per-month", "list-the-products-ordered-in-a-period", "year-on-year-growth-rate", "rolling-7d-actives", "consecutive-transactions-with-increasing-amounts", "find-bursty-behavior", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "Unwired legs & anti-joins",

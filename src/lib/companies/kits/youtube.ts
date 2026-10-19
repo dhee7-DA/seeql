@@ -61,7 +61,7 @@ export const youtubeKit: CompanyKit = {
     {
       name: "Event-to-channel enrichment",
       why: "Channel reporting means attaching creator attributes to every event — a join chain from events through videos to channels where the mapping can be stale. YouTube's follow-up is always about grain: after the chain, is COUNT(*) still counting events, or something else?",
-      slugs: ["combine-two-tables", "product-sales-analysis-i", "replace-employee-id-with-unique-identifier", "viewers-turned-streamers"],
+      slugs: ["combine-two-tables", "product-sales-analysis-i", "replace-employee-id-with-unique-identifier", "viewers-turned-streamers", "movie-rating"],
     },
     {
       name: "Recommendation-surface ladders",

@@ -61,7 +61,7 @@ export const trivagoKit: CompanyKit = {
     {
       name: "Click-out funnel conversion",
       why: "The funnel is searched, compared, clicked out, booked — and every stage share needs its stage denominator. Funnel pivots and per-stage conversion drills are the exact shapes the conversion team ships weekly.",
-      slugs: ["funnel-step-conversion", "ads-funnel", "email-engagement-funnel"],
+      slugs: ["funnel-step-conversion", "ads-funnel", "email-engagement-funnel", "user-activity-for-the-past-30-days-ii"],
     },
     {
       name: "Advertiser bid performance",
@@ -76,7 +76,7 @@ export const trivagoKit: CompanyKit = {
     {
       name: "Zero-click anti-joins",
       why: "A searcher who compared but never booked, an advertiser with impressions and no conversions — the anti-join is the leak detector. On this db everything transacted, so the drill includes shipping zero as the true answer.",
-      slugs: ["customer-who-visited-but-did-not-transact", "ad-free-sessions", "number-of-accounts-that-did-not-stream"],
+      slugs: ["customer-who-visited-but-did-not-transact", "ad-free-sessions", "number-of-accounts-that-did-not-stream", "product-sales-analysis-ii", "product-sales-analysis-iii", "daily-leads-and-partners"],
     },
     {
       name: "Duplicate-offer dedupe",
@@ -91,7 +91,7 @@ export const trivagoKit: CompanyKit = {
     {
       name: "Median & percentile rates",
       why: "Mean booked rate (338.19) hides skew; the median and percentile cuts are the honest market reads. Median-emulation and PERCENTILE-style drills matter because SQLite ships no MEDIAN.",
-      slugs: ["median-time-to-convert", "station-median", "find-the-median"],
+      slugs: ["median-time-to-convert", "station-median", "find-the-median", "maximum-transaction-each-day", "the-most-recent-three-orders", "second-highest-salary", "the-latest-login-in-2020", "top-earners"],
     },
     {
       name: "Market-benchmark subqueries",
@@ -126,7 +126,7 @@ export const trivagoKit: CompanyKit = {
     {
       name: "Concentration & share windows",
       why: "Value concentrates hard: 63.5% of booking value above the 3000 lifetime line, the lead advertiser at 32% of placement value. Share-over-total window folds and HHI-style concentration reads are the board's favorite asks — rows kept, shares printed.",
-      slugs: ["portfolio-weights", "portfolio-concentration-hhi", "top-travellers"],
+      slugs: ["portfolio-weights", "portfolio-concentration-hhi", "top-travellers", "immediate-food-delivery-i", "immediate-food-delivery-ii", "list-the-products-ordered-in-a-period", "unique-orders-and-customers-per-month", "active-businesses", "sales-by-day-of-the-week", "find-total-time-spent-by-each-employee"],
     },
   ],
 

@@ -54,7 +54,7 @@ export const whatsappKit: CompanyKit = {
     {
       name: "Conversation status censuses",
       why: "Every WhatsApp monetization screen opens with the funnel: conversations opened, windows actually opened (shipped_at stamped), completed billable. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling an active-window thread 'billable' — 30 versus 52 on this db.",
-      slugs: ["immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "active-businesses", "funnel-step-conversion", "email-engagement-funnel", "find-zombie-sessions", "median-time-to-convert"],
+      slugs: ["immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "active-businesses", "funnel-step-conversion", "email-engagement-funnel", "find-zombie-sessions", "median-time-to-convert", "user-activity-for-the-past-30-days-i", "user-activity-for-the-past-30-days-ii", "dau-wau-stickiness", "active-users", "ads-funnel", "roas-by-campaign", "week-over-week-churn"],
     },
     {
       name: "Two-grain market censuses",
@@ -64,17 +64,17 @@ export const whatsappKit: CompanyKit = {
     {
       name: "Joining accounts to conversations",
       why: "Accounts carry market and created_at; conversations inherit them through joins, and the join type decides who survives. A conversation without an account row is corruption; an account without conversations is whitespace — though on this db the anti-join returns a confident zero, and proving it is part of the job.",
-      slugs: ["combine-two-tables", "replace-employee-id-with-unique-identifier", "students-and-examinations"],
+      slugs: ["combine-two-tables", "replace-employee-id-with-unique-identifier", "students-and-examinations", "number-of-comments-per-post", "reported-posts", "reported-posts-ii"],
     },
     {
       name: "Engagement leaderboards",
       why: "Account engagement is rank-window reporting where ties are guaranteed — four accounts sit at 4 conversations each on this db, and the ladder above them runs 24, 17, 14, 13, 5. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer enterprise logos, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "the-latest-login-in-2020"],
     },
     {
       name: "Tier banding with CASE",
       why: "Conversation tiers are CASE-classified — Utility, Marketing, Authentication — with fixed edges the pricing page publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the billed forecast, and a reordered WHEN quietly re-bands the base the API prices against.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "trial-to-paid-funnel"],
     },
     {
       name: "Tier-mix shares with partition windows",
@@ -84,7 +84,7 @@ export const whatsappKit: CompanyKit = {
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month conversation spine (2024-01 to 2025-02) is the growth call's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) and jump (+1,158.21 into August) named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "movie-rating", "rolling-7d-actives", "new-users-daily-count", "sessionize-events", "find-bursty-behavior", "second-most-recent-activity", "growth-accounting", "median-time-to-convert"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "movie-rating", "rolling-7d-actives", "new-users-daily-count", "sessionize-events", "find-bursty-behavior", "second-most-recent-activity", "growth-accounting", "median-time-to-convert", "invalid-tweets", "find-users-with-valid-e-mails", "keep-latest-dedupe"],
     },
     {
       name: "Nested folds & tier gates",
@@ -94,7 +94,7 @@ export const whatsappKit: CompanyKit = {
     {
       name: "Set ops & opt-out anti-joins",
       why: "Board packets stack populations — active-window threads under opted-out threads, this quarter beside last — and EXCEPT answers 'which billed accounts never settled'. The opt-out read is the anti-join: threads blocked before the window opened never bill, and on the finance side the unpaid-invoice anti-join returns a real 6 rows worth 15,217, not a zero.",
-      slugs: ["customers-who-never-order", "monthly-transactions-ii", "find-churn-risk-customers", "dormant-reactivation", "winback-recovery"],
+      slugs: ["customers-who-never-order", "monthly-transactions-ii", "find-churn-risk-customers", "dormant-reactivation", "winback-recovery", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "Billing rails & cents discipline",

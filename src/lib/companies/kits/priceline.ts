@@ -70,12 +70,12 @@ export const pricelineKit: CompanyKit = {
     {
       name: "Attach-share ratio math",
       why: "Attach shares, completion percentages and per-market rates are ratios over stated denominators — the 100.0 must sit before the slash. Each drill is a fold over a base the reviewer will ask you to print beside it.",
-      slugs: ["queries-quality-and-percentage", "percentage-of-users-attended-a-contest", "card-launch-success"],
+      slugs: ["queries-quality-and-percentage", "percentage-of-users-attended-a-contest", "card-launch-success", "list-the-products-ordered-in-a-period", "number-of-rich-customers", "average-time-of-process-per-machine", "find-the-team-size", "confirmation-rate"],
     },
     {
       name: "Zero-attach anti-joins",
       why: "A supply family no booking ever attaches, a partner with no sold inventory — the anti-join is the packaging leak detector. On this db every unit and booker has transacted, so the drill includes recognizing when zero is the true answer.",
-      slugs: ["sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "find-churn-risk-customers"],
+      slugs: ["sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "find-churn-risk-customers", "trips-and-users", "total-traveled-distance", "the-airport-with-the-most-flights", "number-of-times-a-driver-was-a-passenger"],
     },
     {
       name: "Refundable coverage ledgers",
@@ -95,7 +95,7 @@ export const pricelineKit: CompanyKit = {
     {
       name: "Deal boards & ranking",
       why: "Express Deal boards, top-booker lists and recent-package trackers are window ranks over folded aggregates — with ties that must share rungs honestly and recency defined deterministically.",
-      slugs: ["rank-scores", "top-earners", "the-most-recent-three-orders"],
+      slugs: ["rank-scores", "top-earners", "the-most-recent-three-orders", "top-travellers", "consecutive-available-seats", "biggest-window-between-events", "customer-placing-the-largest-number-of-orders", "the-latest-login-in-2020", "maximum-transaction-each-day"],
     },
     {
       name: "Booker spend ladders",
@@ -110,7 +110,7 @@ export const pricelineKit: CompanyKit = {
     {
       name: "EXISTS & NOT EXISTS arms",
       why: "Zero-attach checks that never fold: NOT EXISTS keeps the partner row with no sold inventory and survives the NULLs that poison NOT IN. On this db the honest result is often zero rows — recognizing that is the drill.",
-      slugs: ["ad-free-sessions", "number-of-accounts-that-did-not-stream", "dormant-reactivation"],
+      slugs: ["ad-free-sessions", "number-of-accounts-that-did-not-stream", "dormant-reactivation", "customers-who-never-order"],
     },
     {
       name: "Argmax & latest-state folds",

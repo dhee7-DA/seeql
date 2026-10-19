@@ -63,12 +63,12 @@ export const bofaKit: CompanyKit = {
     {
       name: "Account-opening funnel",
       why: "BofA's consumer story is a funnel: application, opened, funded, active — and every stage leaks. Conversion reads are stage pivots with honest per-stage denominators, plus the anti-join for households that started and never funded.",
-      slugs: ["funnel-step-conversion", "customer-who-visited-but-did-not-transact", "email-engagement-funnel"],
+      slugs: ["funnel-step-conversion", "customer-who-visited-but-did-not-transact", "email-engagement-funnel", "capital-gain-loss", "settlement-fails-aging"],
     },
     {
       name: "Card-vs-wire rail folds",
       why: "The rail census is a daily GROUP BY: settlements and dollars per rail, cross-footed to the cash book. Method-mix folds, threshold counts and per-day maxima are the muscle this census drills.",
-      slugs: ["monthly-transactions-i", "number-of-rich-customers", "maximum-transaction-each-day"],
+      slugs: ["monthly-transactions-i", "number-of-rich-customers", "maximum-transaction-each-day", "customer-order-frequency"],
     },
     {
       name: "Overdraft & fee math",
@@ -78,32 +78,32 @@ export const bofaKit: CompanyKit = {
     {
       name: "Statement-state folds",
       why: "Billings live in states — paid, open, void — and consumer reads must count them separately without letting any state leak out of the denominator. Conditional aggregation over status is the daily fold.",
-      slugs: ["immediate-food-delivery-ii", "immediate-food-delivery-i", "calculate-orders-within-each-interval"],
+      slugs: ["immediate-food-delivery-ii", "immediate-food-delivery-i", "calculate-orders-within-each-interval", "daily-balance-interest"],
     },
     {
       name: "Household rollups & concentration",
       why: "A household is a tenure and a balance, not a row: lifetime folds per household, frequency leaders, and spend-band histograms decide where the card team spends its quarter.",
-      slugs: ["customer-purchasing-behavior-analysis", "customer-placing-the-largest-number-of-orders", "spend-histogram"],
+      slugs: ["customer-purchasing-behavior-analysis", "customer-placing-the-largest-number-of-orders", "spend-histogram", "bank-account-summary"],
     },
     {
       name: "Card-portfolio boards",
       why: "Household boards and 'most recent three events' surfaces are window functions over folded groups. Ties are real — two households at two billings share a rung — so RANK versus ROW_NUMBER is a policy, not syntax.",
-      slugs: ["rank-scores", "the-most-recent-three-orders", "second-most-recent-activity"],
+      slugs: ["rank-scores", "the-most-recent-three-orders", "second-most-recent-activity", "monthly-transactions-ii", "chargeback-rate-ranking"],
     },
     {
       name: "Statement-cycle buckets",
       why: "Statement cycles run monthly and the monthly trend is the deck's spine: bookings, value and reversals per cycle key, plus the weekday cadence the branch network staffs against.",
-      slugs: ["unique-orders-and-customers-per-month", "list-the-products-ordered-in-a-period", "sales-by-day-of-the-week"],
+      slugs: ["unique-orders-and-customers-per-month", "list-the-products-ordered-in-a-period", "sales-by-day-of-the-week", "top-percentile-fraud", "structuring-detection"],
     },
     {
       name: "Break feeds & duplicate rails",
       why: "Rails double-hit and feeds re-log: duplicate-charge pairs, keep-latest dedupes and null audits are the data-quality drills this bank grades hardest — a bad rail row becomes a bad cash number.",
-      slugs: ["duplicate-charge-pairs", "keep-latest-dedupe", "null-blank-audit"],
+      slugs: ["duplicate-charge-pairs", "keep-latest-dedupe", "null-blank-audit", "gl-reconciliation"],
     },
     {
       name: "Running balances & accruals",
       why: "Balances walk: running sums over ledger motion, cumulative folds by segment, and elevator-style capacity sums are the accrual math behind every deposit-product read.",
-      slugs: ["account-balance", "running-total-for-different-genders", "last-person-to-fit-in-the-elevator"],
+      slugs: ["account-balance", "running-total-for-different-genders", "last-person-to-fit-in-the-elevator", "trial-balance-check", "balance-rollforward"],
     },
     {
       name: "NULL discipline at the teller line",
@@ -113,7 +113,7 @@ export const bofaKit: CompanyKit = {
     {
       name: "Benchmark & percentile screens",
       why: "Consumer reads constantly ask 'above the book's average' — which billing outsizes the 31.06 mean, which household outsaves the base. Scalar subqueries, per-group maxima and second-highest shapes are exactly those benchmark drills, and each one hides a denominator choice.",
-      slugs: ["orders-with-maximum-quantity-above-average", "employees-earning-more-than-their-managers", "second-highest-salary"],
+      slugs: ["orders-with-maximum-quantity-above-average", "employees-earning-more-than-their-managers", "second-highest-salary", "suspicious-bank-account-transactions"],
     },
     {
       name: "Book-vs-book set ops",
@@ -128,7 +128,7 @@ export const bofaKit: CompanyKit = {
     {
       name: "Streak & burst detection",
       why: "The fraud and engagement desks both read motion: consecutive increasing amounts, two hits inside a week, bursty cadence. LAG/LEAD over ordered events turns a transaction feed into a behavior story — the muscle behind velocity monitoring.",
-      slugs: ["consecutive-transactions-with-increasing-amounts", "users-with-two-purchases-within-seven-days", "find-bursty-behavior"],
+      slugs: ["consecutive-transactions-with-increasing-amounts", "users-with-two-purchases-within-seven-days", "find-bursty-behavior", "ar-aging-schedule", "transaction-velocity", "prepayment-detection"],
     },
     {
       name: "Fee ladders & CASE branches",

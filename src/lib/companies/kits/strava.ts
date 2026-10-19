@@ -53,27 +53,27 @@ export const stravaKit: CompanyKit = {
     {
       name: "Two-grain market censuses",
       why: "Uploads and athletes are different grains of the same join, and every census here reports both: EU logs 45 uploads from 8 athletes while the US logs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "popularity-percentage"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "popularity-percentage", "bank-account-summary"],
     },
     {
       name: "Joining athletes to uploads",
       why: "Athletes carry market and signup date; uploads inherit them through joins, and the join type decides who survives. An upload without an athlete is corruption; an athlete without uploads is lapsed — though on this db the anti-join returns a confident zero, and proving that zero is part of the job.",
-      slugs: ["combine-two-tables", "sales-analysis-i", "employee-bonus", "find-the-team-size"],
+      slugs: ["combine-two-tables", "sales-analysis-i", "employee-bonus", "find-the-team-size", "game-play-analysis-i", "article-views-ii", "find-followers-count", "number-of-comments-per-post", "reported-posts", "reported-posts-ii", "find-churn-risk-customers", "game-play-analysis-iv"],
     },
     {
       name: "Segment leaderboards & rank policy",
       why: "Leaderboards are rank-window reporting where ties are guaranteed — four athletes sit at 4 uploads each on this db, and the ladder above them runs 24, 17, 14, 13, 5. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer athletes, not syntax. Strava athletes live on segment boards; the KOM tie policy is a product decision you will be asked to encode.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "top-percentile-fraud", "friend-requests-ii-who-has-the-most-friends", "compute-the-rank-as-a-percentage"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "top-percentile-fraud", "friend-requests-ii-who-has-the-most-friends", "compute-the-rank-as-a-percentage", "customer-placing-the-largest-number-of-orders", "consecutive-transactions-with-increasing-amounts"],
     },
     {
       name: "Effort banding with CASE",
       why: "Pace and power buckets are CASE-classified — recovery, tempo, threshold — with fixed edges the training page publishes, and subscription tiers band the same way. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the training-load report, and a reordered WHEN quietly re-bands every athlete.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "create-a-session-bar-chart"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "create-a-session-bar-chart", "growth-accounting"],
     },
     {
       name: "Gear chains: partners to SKUs to line records",
       why: "Gear is a three-table genealogy — brand partner, catalog SKU, then the split/lap line records that reference it — and the audit questions all run that chain. Which partner's gear carries the community's effort, at what listings count, is the quarterly partnerships read; the join path decides whether you count SKUs or line records.",
-      slugs: ["students-and-examinations", "sales-person", "number-of-trusted-contacts-of-a-customer", "the-most-recent-orders-for-each-product", "average-selling-price"],
+      slugs: ["students-and-examinations", "sales-person", "number-of-trusted-contacts-of-a-customer", "the-most-recent-orders-for-each-product", "average-selling-price", "null-blank-audit"],
     },
     {
       name: "Month spines & calendar buckets",
@@ -83,7 +83,7 @@ export const stravaKit: CompanyKit = {
     {
       name: "Windows over the activity stream",
       why: "Engagement is window math: month-over-month upload deltas with LAG, running effort totals per athlete, rolling averages over training weeks. The first row's LAG is NULL by definition — the baseline, never a zero — and frame semantics decide whether a cumulative effort walk steps row by row or absorbs tied timestamps in one jump.",
-      slugs: ["biggest-window-between-events", "running-total-for-different-genders", "rolling-average-steps", "second-most-recent-activity", "week-over-week-churn", "consecutive-numbers"],
+      slugs: ["biggest-window-between-events", "running-total-for-different-genders", "rolling-average-steps", "second-most-recent-activity", "week-over-week-churn", "consecutive-numbers", "user-activity-for-the-past-30-days-ii", "active-users", "dau-wau-stickiness"],
     },
     {
       name: "Set ops & the grand-total stack",

@@ -26,7 +26,7 @@ export const plaidKit: CompanyKit = {
     "Plaid is the plumbing between 8,000+ fintech apps and thousands of banks — the moment a user connects an account, Plaid's APIs authenticate, verify and stream the data both sides run on. The analytics reality is reliability engineering wearing a fintech badge: every session either completes, stalls, or abandons, and the company's whole reputation is the difference. On this storefront db the mapping is honest: `orders` are link sessions (103 of them), order_items are endpoint calls inside those sessions (251 — a session averages ~2.4 calls), products are API endpoints, and suppliers are the institutions those endpoints run against. Session outcomes mirror the status mix exactly: **52 verified** (50.5%), **30 linked** (29.1%), **14 pending** (13.6%), **7 abandoned** (6.8%) — and shipped_at is the completion timestamp, populated only for the 82 sessions that got there.",
     "The data org splits into API reliability, partner engineering, and the billing desk. Reliability owns the funnel: conversion cut by region (APAC sessions abandon at **8.1%**, EU 6.7%, US 5.3%, LATAM 0) and by institution — one institution carries **56 endpoint calls from 45 sessions**, the quietest 25 from 25. Partner engineering owns the latency clock: JULIANDAY(shipped_at) minus JULIANDAY(created_at) averages **2.98 days** across a tight 2-to-4-day range — the verification SLA every partner contract quotes. Billing owns the money side: 28 usage invoices against 27 settlement batches, INTEGER cents, with the standing exceptions — invoice #11 is {rose:void} yet carries a $925.00 settlement, #28 reads {emerald:paid} with no settlement batch behind it ($1,756.00), and one app is {amber:partial} at $4,000.00 of $6,148.00.",
     "Interview style is rate-then-denominator, then the chain. A screen opens with a conditional count (verified share — *of all sessions, or only the ones that reached a terminal state?*), moves to the three-hop chain (`orders` → `order_items` → `suppliers`, where one wrong join key pairs a session with the wrong bank), escalates into per-institution scorecards where ties need an explicit tie-break, and lands on the LAG walk: month-over-month session volume, deltas explained, first-row NULL acknowledged. The graded habits: state the denominator, resolve the tie, and never let a NULL completion timestamp into an average latency.",
-    "Preparation: the registry tags zero SQL problems for Plaid — this kit is **0 tagged LC, theme-curated**: all 30 topic slugs and 16 problems are chosen to mirror reliability screens — conversion funnels, chain joins, per-institution ratios, latency math and rolling windows. Then run both case studies on the live db: one rebuilds the {emerald:institution scorecard} reliability ships to the bank partnerships meeting (Midwest 56 calls / 45 sessions leading), the other rebuilds the {violet:session-volume walk} the board deck charts month over month. Say the denominator, the join chain and the NULL policy out loud before you compute — at an API company, all three are the product.",
+    "Preparation: the registry tags zero SQL problems for Plaid — this kit is **0 tagged LC, theme-curated**: all 62 topic slugs and 32 problems are chosen to mirror reliability screens — conversion funnels, chain joins, per-institution ratios, latency math and rolling windows. Then run all six case studies on the live db — built for spaced practice rather than one sitting: one rebuilds the {emerald:institution scorecard} reliability ships to the bank partnerships meeting (Midwest 56 calls / 45 sessions leading), another rebuilds the {violet:session-volume walk} the board deck charts month over month. Say the denominator, the join chain and the NULL policy out loud before you compute — at an API company, all three are the product.",
     "Follow the money and the org makes sense. Reliability is free until it bills: every session an app runs is usage, usage becomes an invoice, and 28 invoices settle through 27 payment batches in INTEGER cents — the mismatch (5 invoices settled across two batches, 1 partial at $4,000.00 of $6,148.00) is the reconciliation surface the billing desk lives on. The standing anomalies are named, not rumored: invoice #11 is {rose:void} yet carries a $925.00 settlement, #28 reads {emerald:paid} with no batch behind it ($1,756.00), and the open AR census reads 6 invoices, $15,217.00 billed, $0.00 settled. Concentration closes the loop: the top institution carries 32% of endpoint book value, the top two 58.7% — {amber:institution risk} is a concentration metric before it is a latency metric.",
     "The roadmap runs wide before deep. First the 15 topic families in order — the new five (set-op stacks, subquery shapes, self-join pairing, concentration shares, sequence flags) are the wave-6 additions and they are where the fresh cases draw. Then rebuild all six case files on the live db: the {emerald:institution scorecard} (chain + tie-break), the {violet:volume walk} (LAG + honest first row), the outcome census (CASE arms in order), the settlement census (LEFT JOIN + batch math), the one-pass FILTER scorecard, and the above-average endpoints (correlated scalar). Finishing move: recite the denominator for every number you printed — 52 of 103, 21 of 28, 6 of 14 months — *at an API company the denominator is the contract, and the contract is the product.*",
   ],
@@ -58,12 +58,12 @@ export const plaidKit: CompanyKit = {
     {
       name: "Session folds & conditional counts",
       why: "Every reliability read is a fold with a conditional count inside: sessions per day, error-flagged sessions per app, outcomes per institution. The denominator question rides on every one — COUNT(*) over all sessions versus the terminal subset is the difference between a conversion rate and a resolution rate.",
-      slugs: ["reported-posts", "daily-leads-and-partners", "user-activity-for-the-past-30-days-ii"],
+      slugs: ["reported-posts", "daily-leads-and-partners", "user-activity-for-the-past-30-days-ii", "confirmation-rate", "find-the-team-size", "classes-more-than-5-students", "immediate-food-delivery-ii", "list-the-products-ordered-in-a-period", "average-time-of-process-per-machine", "group-sold-products-by-the-date", "count-the-number-of-experiments", "bank-account-summary-ii", "create-a-session-bar-chart", "average-salary-of-departments", "game-play-analysis-iii"],
     },
     {
       name: "Chain joins: sessions → endpoints → institutions",
       why: "Institution analytics is a three-hop chain: endpoint calls attach to sessions, endpoints belong to institutions. One wrong join key pairs a session with the wrong bank and every per-institution metric downstream inherits the fiction — the chain is where Plaid's screens test join discipline hardest.",
-      slugs: ["students-and-examinations", "number-of-trusted-contacts-of-a-customer", "count-artist-occurrences-on-spotify-ranking-list"],
+      slugs: ["students-and-examinations", "number-of-trusted-contacts-of-a-customer", "count-artist-occurrences-on-spotify-ranking-list", "sales-analysis-iii"],
     },
     {
       name: "Per-institution ratios & rates",
@@ -73,12 +73,12 @@ export const plaidKit: CompanyKit = {
     {
       name: "Silent-failure anti-joins",
       why: "A session that opened but fired no completed endpoint call is the incident anti-join: sessions with no successful call row. LEFT JOIN + IS NULL (or NOT EXISTS) is the shape, and the trap is filtering the right table in WHERE — which converts the join and deletes exactly the failures you were hunting.",
-      slugs: ["customer-who-visited-but-did-not-transact", "ad-free-sessions", "students-with-invalid-departments"],
+      slugs: ["customer-who-visited-but-did-not-transact", "ad-free-sessions", "students-with-invalid-departments", "sellers-with-no-sales"],
     },
     {
       name: "NULL policy: missing fields & blank arms",
       why: "Staging data arrives half-filled: missing completion timestamps, blank referral fields, NULL ratings. COUNT(column) versus COUNT(*) diverges exactly there, and the policy — audit, report, or guard — is a stated decision, not a default. Plaid screens test whether NULLs are treated as findings or noise.",
-      slugs: ["employees-with-missing-information", "books-with-null-ratings", "find-customer-referee"],
+      slugs: ["employees-with-missing-information", "books-with-null-ratings", "find-customer-referee", "find-the-missing-ids"],
     },
     {
       name: "Latency math & interval logic",
@@ -118,7 +118,7 @@ export const plaidKit: CompanyKit = {
     {
       name: "Self-joins & pairing",
       why: "Endpoints pair with endpoints inside the same institution (p1.supplier_id = p2.supplier_id AND p1.id < p2.id), sessions chain to their successors. The self-join's whole discipline is the strict inequality — it kills mirror pairs — and the alias hygiene that keeps the two copies of the table from blurring into one.",
-      slugs: ["tree-node", "consecutive-available-seats", "number-of-calls-between-two-persons"],
+      slugs: ["tree-node", "consecutive-available-seats", "number-of-calls-between-two-persons", "duplicate-emails"],
     },
     {
       name: "Concentration: shares & top-of-book",
@@ -128,7 +128,7 @@ export const plaidKit: CompanyKit = {
     {
       name: "Streaks, gaps & sequence flags",
       why: "Reliability is temporal shape: consecutive months above tier, gaps between endpoint calls, runs of improving latency. LAG-compare flags (this row vs previous), LEAD gap math, and islands-and-gaps classification are the mechanics — and the first row of every walk is the trap.",
-      slugs: ["consecutive-transactions-with-increasing-amounts", "biggest-window-between-events", "sessionize-events"],
+      slugs: ["consecutive-transactions-with-increasing-amounts", "biggest-window-between-events", "sessionize-events", "rank-scores"],
     },
   ],
 

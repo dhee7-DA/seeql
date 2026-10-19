@@ -29,7 +29,7 @@ export const twitterKit: CompanyKit = {
     "X is the firehose: every second a timeline is rendered, an engagement event lands, a cascade either ignites or dies, and an ad either delivers or doesn't. The unit of analysis is the **tweet**, stamped with an author account, an audience cohort and a lifecycle state — {emerald:timeline-delivered}, {sky:cascading via fan-out}, queued by the scheduler, or {rose:deleted/withdrawn}. Everything the business decides — what trends, which campaigns paced, where inauthentic amplification clusters — hangs on queries that fold engagement batches into tweet lifecycles, lifecycles into **cohort censuses**, and cohorts into the ads ledger. The SQL reality is firehose-shaped: the grain changes three times between raw events and the board, and the candidate who can't say which grain a number is in has already failed the screen.",
     "The data org runs three engines. Feed telemetry folds the engagement log — 251 engagement-event batches against **103 tweets** from 16 author accounts on the audit db — into the impression boards: **338.19 average impressions per tweet**, with the above-bar read deciding what counts as viral. Growth analytics runs the cohort census: tweets and accounts per audience cohort, where *45 tweets from 8 accounts is a different object from 19 from 2* — concentration is the story, not noise. And the ads group reads campaign billing, where amounts are INTEGER cents, `amount_cents / 100.0` is the only legal conversion, and **21 settled campaigns ($66,443.00)** against 6 open ($19,609.00) is the delivery ledger's first line.",
     "Interview screens are funnel- and fan-out-heavy. A typical loop opens with a fold (engagement events per tweet, tweets per cohort), escalates into a **threshold subquery** — which tweets beat the firehose average, computed once over the whole population — and lands on either a **fan-out census** (events and distinct tweets per cohort, ratio computed from the same fold) or an ads pacing read (running spend against a daily budget). The follow-ups are definition probes: *per what?* — events or batches, tweets or accounts, impressions delivered or impressions cascaded. Candidates who narrate the fold-then-join order and keep the denominator stated consistently outperform.",
-    "Preparation strategy: this kit leads with **Twitter's one tagged registry problem** (invalid-tweets — the length-validation read behind every compose box) and theme-curates the rest from the SQL band's feed-shaped material: trending-hashtag tokenizers, follower-graph joins, ads performance and pacing, engagement-velocity bursts, experiment-ratio integrity. Then run both case studies on the live storefront db: one rebuilds the {violet:viral-bar census} (a scalar-subquery threshold plus a cohort gate), the other rebuilds the {sky:cascade fan-out census} (a 3-table chain with the ratio computed honestly). The storefront mapping is declared, not hidden — orders are tweets, order totals are impressions, regions are the four audience cohorts — because making the stand-in explicit is itself the habit this screen rewards.",
+    "Preparation strategy: this kit leads with **Twitter's one tagged registry problem** (invalid-tweets — the length-validation read behind every compose box) and theme-curates the rest from the SQL band's feed-shaped material: trending-hashtag tokenizers, follower-graph joins, ads performance and pacing, engagement-velocity bursts, experiment-ratio integrity. Then run all six case studies on the live storefront db — built for spaced practice rather than one sitting: one rebuilds the {violet:viral-bar census} (a scalar-subquery threshold plus a cohort gate), another rebuilds the {sky:cascade fan-out census} (a 3-table chain with the ratio computed honestly). The storefront mapping is declared, not hidden — orders are tweets, order totals are impressions, regions are the four audience cohorts — because making the stand-in explicit is itself the habit this screen rewards.",
     "Follow the money and the org diagram agrees. The ads group owns the campaign ledger — **$66,443.00 settled across 21 campaigns** against 6 open at $19,609.00 and 1 voided at $925.00 — and the rails the money moves on split: {sky:card} carries 16 payments / $37,364.00 while {violet:wire} carries 11 / $32,248.00, each rail with its own reconciliation rhythm under the *28.4-day average settlement* (13 fastest, 84 slowest). Receivables is the lever nobody glamorizes: **6 campaigns carry no payment rows at all — $15,217.00** — and one sits partial at 4,000 of 6,148, which is why split-payment reads exist. The books close clean — `ledger_entries` balances **181,080 debits against 181,080 credits** — and the cost side pairs {amber:Rent $16,800 across 14 entries} with {rose:Ads $4,570 across 14}: the platform spends more on seats than on demand, the ratio a firehose business defends in every budget review.",
     "Preparation roadmap: run the ladder in study order and don't skip rungs. Start at the tagged compose-box rule ({pink:invalid-tweets}) and the impression-census trio, because every later query assumes the fold; then the threshold-subquery and cohort-gate rung — the viral bar (338.19) is the interview's first screen; then windows, set ops, date math, anti-joins and the text rungs. The six case studies on the storefront db are the dress rehearsal, each a different SQL family: the {violet:viral-bar census} (scalar subquery), the {sky:cascade fan-out} (3-table join), the {amber:cohort leaderboard cut} (window rank), the {rose:billing-state ledger} (CASE), the {orange:fan-out calendar} (date math) and the {emerald:partner-share census} (derived table). Drill the 30 MCQs for the trap taxonomy — integer division, fan-out denominators, HAVING/WHERE order, NULL policy — and the 24 theory answers for the vocabulary. *The candidate who can state the grain of every number on the page has already passed half the loop.*",
   ],
@@ -61,22 +61,22 @@ export const twitterKit: CompanyKit = {
     {
       name: "Impression counting & follower census",
       why: "Everything at X starts with a count: views per tweet, followers per account, distinct readers per article-shaped object. The curated trio drills the distinct-view fold, the view roll-up and the follower census that every audience board opens with.",
-      slugs: ["find-followers-count", "article-views-i", "article-views-ii"],
+      slugs: ["find-followers-count", "article-views-i", "article-views-ii", "confirmation-rate", "immediate-food-delivery-ii", "average-selling-price", "bank-account-summary-ii", "group-sold-products-by-the-date"],
     },
     {
       name: "Firehose aggregates & quality ratios",
       why: "The feed board is ratios at scale: engagement quality per tweet, top posters by volume, heavy-usage accounts for API audits. These drills cover the percentage fold, the top-N volume read and the usage-threshold census — each with the denominator stated.",
-      slugs: ["queries-quality-and-percentage", "top-earners", "find-users-with-high-token-usage"],
+      slugs: ["queries-quality-and-percentage", "top-earners", "find-users-with-high-token-usage", "transaction-velocity"],
     },
     {
       name: "Follower-graph joins",
       why: "The social graph is relational: replies per tweet, pairs of accounts with shared followers, mutual-graph reads. The curated trio drills the reply-census join, the common-follower pairing and the mutual-friend gate — the exact shapes 'who sees this cascade' queries are built from.",
-      slugs: ["number-of-comments-per-post", "all-the-pairs-with-the-maximum-number-of-common-followers", "strong-friendship"],
+      slugs: ["number-of-comments-per-post", "all-the-pairs-with-the-maximum-number-of-common-followers", "strong-friendship", "find-trending-hashtags-ii", "reported-posts-ii", "second-degree-follower", "game-play-analysis-iv", "number-of-calls-between-two-persons", "actors-and-directors-who-cooperated-at-least-three-times"],
     },
     {
       name: "Ads delivery & ROAS",
       why: "The ads ledger is ratio-shaped: CTR per placement, funnel stages per campaign, return per dollar. The curated trio is the ads canon — the performance ratio, the impression-to-click funnel and the ROAS fold — with the denominator trap in every one of them.",
-      slugs: ["ads-performance", "ads-funnel", "roas-by-campaign"],
+      slugs: ["ads-performance", "ads-funnel", "roas-by-campaign", "ab-sample-ratio-mismatch"],
     },
     {
       name: "Budget pacing & running sums",
@@ -101,7 +101,7 @@ export const twitterKit: CompanyKit = {
     {
       name: "The 14-month firehose calendar",
       why: "Feed trends are calendar-shaped: 14 months from 2024-01 to 2025-02, weekday posting patterns, dual leaderboards (most-posting author AND most-engaged tweet). The trio drills date formatting, weekday filters and the UNION-shaped double leaderboard.",
-      slugs: ["convert-date-format", "friday-purchases-i", "movie-rating"],
+      slugs: ["convert-date-format", "friday-purchases-i", "movie-rating", "product-price-at-a-given-date"],
     },
     {
       name: "Dedupe & integrity at scale",
@@ -116,7 +116,7 @@ export const twitterKit: CompanyKit = {
     {
       name: "Ranking windows & tier bands",
       why: "Trending is a window problem: rank within cohort, take the top band, keep ties honest. The trio drills the pure ranking ladder, the second-recent-activity RANK cut and the consecutive-day active read — the shapes behind every leaderboard cut this kit's case studies grade.",
-      slugs: ["rank-scores", "second-most-recent-activity", "active-users"],
+      slugs: ["rank-scores", "second-most-recent-activity", "active-users", "compute-the-rank-as-a-percentage", "top-five-artists", "user-activity-for-the-past-30-days-ii", "department-top-three-salaries", "consecutive-transactions-with-increasing-amounts", "biggest-window-between-events", "second-highest-salary"],
     },
     {
       name: "Date math & re-engagement",
@@ -126,7 +126,7 @@ export const twitterKit: CompanyKit = {
     {
       name: "Anti-joins & silence reads",
       why: "The uncomfortable censuses are the anti-joins: accounts that visited and never engaged, partners that billed nothing, sessions with zero ads. The trio drills the visited-but-didn't-transact shape, the sellers-without-sales fold and the ad-free session read — the quiet arms this kit's integrity memos live in.",
-      slugs: ["customer-who-visited-but-did-not-transact", "sellers-with-no-sales", "ad-free-sessions"],
+      slugs: ["customer-who-visited-but-did-not-transact", "sellers-with-no-sales", "ad-free-sessions", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "Text reshaping beyond the compose box",

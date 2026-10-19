@@ -52,12 +52,12 @@ export const figmaKit: CompanyKit = {
     {
       name: "The viewer-to-editor funnel",
       why: "Figma monetizes editor seats while viewers ride free, so the headline funnel is signed org → seats live → renewed to term, each stage a conditional count over a status or timestamp. The interviewer's first question is what the denominator holds, and the trap is calling an activated renewal 'renewed' — 30 live versus 52 kept on this db. This problem family drills the share-with-stated-denominator shape the funnel report uses every single week.",
-      slugs: ["funnel-step-conversion", "trial-to-paid-funnel", "email-engagement-funnel", "game-play-analysis-v", "median-time-to-convert", "find-loyal-customers"],
+      slugs: ["funnel-step-conversion", "trial-to-paid-funnel", "email-engagement-funnel", "game-play-analysis-v", "median-time-to-convert", "find-loyal-customers", "unique-orders-and-customers-per-month", "dau-wau-stickiness"],
     },
     {
       name: "Two-grain org censuses",
       why: "Renewals and organizations are different grains of the same join, and every census here reports both: EU runs 45 renewals from 8 orgs while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded. The 5.6-versus-9.5 intensity gap is the sentence that gets quoted in the review.",
-      slugs: ["daily-leads-and-partners", "find-followers-count", "students-and-examinations", "number-of-comments-per-post"],
+      slugs: ["daily-leads-and-partners", "find-followers-count", "students-and-examinations", "number-of-comments-per-post", "number-of-rich-customers"],
     },
     {
       name: "Joining orgs to renewals",
@@ -67,27 +67,27 @@ export const figmaKit: CompanyKit = {
     {
       name: "Adoption leaderboards",
       why: "Leaderboards are rank-window reporting where ties are guaranteed — four orgs sit at 4 renewals each on this db, and the ladder above them runs 24, 17, 14, 13, 5. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer orgs, not syntax. Design-system adoption boards get published from these queries, so the tie policy ships with the query comment.",
-      slugs: ["rank-scores", "compute-the-rank-as-a-percentage", "group-employees-of-the-same-salary", "customer-placing-the-largest-number-of-orders", "second-most-recent-activity"],
+      slugs: ["rank-scores", "compute-the-rank-as-a-percentage", "group-employees-of-the-same-salary", "customer-placing-the-largest-number-of-orders", "second-most-recent-activity", "department-top-three-salaries", "biggest-window-between-events", "keep-latest-dedupe"],
     },
     {
       name: "Seat bands with CASE",
       why: "The pricing page publishes per-seat list bands and every seat line must land in exactly one — starter, editor, premium — with the arms exhaustive and ordered. A hole in the CASE is a hole in the revenue mix, and a reordered WHEN quietly re-bands the base. On this db the premium arm stays honestly empty — max list price 199.99 — and an empty arm you can explain beats a band that invents revenue.",
-      slugs: ["the-category-of-each-member-in-the-store", "type-of-triangle", "loan-types", "count-salary-categories", "consecutive-available-seats"],
+      slugs: ["the-category-of-each-member-in-the-store", "type-of-triangle", "loan-types", "count-salary-categories", "consecutive-available-seats", "percentage-of-users-attended-a-contest", "net-revenue-retention", "average-selling-price"],
     },
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month renewal spine (2024-01 to 2025-02) is the growth call's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) and jump (+1,158.21 into August) named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero. The same walk powers the ARR bridge finance reads at every close.",
-      slugs: ["consecutive-numbers", "year-on-year-growth-rate", "mrr-waterfall", "rolling-7d-actives", "cohort-repeat-revenue"],
+      slugs: ["consecutive-numbers", "year-on-year-growth-rate", "mrr-waterfall", "rolling-7d-actives", "cohort-repeat-revenue", "employee-bonus", "calculate-special-bonus", "growth-accounting", "null-blank-audit"],
     },
     {
       name: "Coverage set algebra",
       why: "Board packets stack populations — activated under revoked, this quarter beside last — and EXCEPT answers 'which signed orgs never activated'. UNION dedups whole rows silently, which makes it a correctness question, not a style one. On this db the never-renewed anti-join is a confident zero, and stating that with proof is the credibility move.",
-      slugs: ["monthly-transactions-ii", "league-statistics", "customers-who-never-order", "sales-analysis-iii", "customers-who-bought-all-products"],
+      slugs: ["monthly-transactions-ii", "league-statistics", "customers-who-never-order", "sales-analysis-iii", "customers-who-bought-all-products", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "Above-average gates",
       why: "Screens escalate into staging: fold per-org renewal books, then judge them against a computed platform mean — the gate that catches the same five orgs as the 2,000 concentration line. Scalar, correlated and derived shapes each carry an empty-inner-query answer you are expected to give unprompted. The month-close AR list is the same shape: every invoice above the paid-average line.",
-      slugs: ["find-expensive-cities", "second-highest-salary", "game-play-analysis-iv"],
+      slugs: ["find-expensive-cities", "second-highest-salary", "game-play-analysis-iv", "group-sold-products-by-the-date"],
     },
     {
       name: "One-pass status censuses",

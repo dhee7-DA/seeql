@@ -57,7 +57,7 @@ export const intercomKit: CompanyKit = {
     {
       name: "Resolution funnels & stage rates",
       why: "The fate map — open, served-in-flight, resolved, closed-without-resolution — is one CASE away in every dashboard, and each stage is a conditional count over a status or timestamp. The trap is calling a served period 'resolved' — 30 versus 52 on this db — and the second trap is the base: the never-served stay in a booked-base rate (50.5) and drop out of a served-base rate (63.4), and the panel wants you to say which before writing SQL.",
-      slugs: ["funnel-step-conversion", "trial-to-paid-funnel", "email-engagement-funnel", "repeat-purchase-rate", "week-over-week-churn"],
+      slugs: ["funnel-step-conversion", "trial-to-paid-funnel", "email-engagement-funnel", "repeat-purchase-rate", "week-over-week-churn", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "Two-grain workspace censuses",
@@ -67,7 +67,7 @@ export const intercomKit: CompanyKit = {
     {
       name: "Queue-clear clocks",
       why: "Every latency screen here runs on the stamp: a conversation opens at created_at, clears the queue at shipped_at, and the clock averages over stamped rows only. Each stage is a julianday delta with a stated population — 82 stamped of 103 booked, the 14 open excluded by definition. Writing the delta without naming the population is exactly how a 2.98-day number gets misquoted in the exec review.",
-      slugs: ["average-time-of-process-per-machine", "first-and-last-call-on-the-same-day", "users-with-two-purchases-within-seven-days", "median-time-to-convert", "calculate-orders-within-each-interval", "second-day-confirmation"],
+      slugs: ["average-time-of-process-per-machine", "first-and-last-call-on-the-same-day", "users-with-two-purchases-within-seven-days", "median-time-to-convert", "calculate-orders-within-each-interval", "second-day-confirmation", "find-churn-risk-customers"],
     },
     {
       name: "Denominator discipline",
@@ -77,27 +77,27 @@ export const intercomKit: CompanyKit = {
     {
       name: "Seat bands with CASE",
       why: "Seat tiers are CASE-classified — the band fold splits 251 lines into 268 sub-55 Fin-first seats and 230 expert seats, and plan SKUs band into essential/advanced/expert the same way. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the containment story, and a reordered WHEN quietly re-bands the base. The threshold is load-bearing — real line prices sit either side of the 55 cut.",
-      slugs: ["calculate-special-bonus", "count-salary-categories", "loan-types", "usage-tier-percentiles", "spend-histogram", "orders-with-maximum-quantity-above-average"],
+      slugs: ["calculate-special-bonus", "count-salary-categories", "loan-types", "usage-tier-percentiles", "spend-histogram", "orders-with-maximum-quantity-above-average", "net-revenue-retention", "the-most-recent-three-orders"],
     },
     {
       name: "Containment leaderboards",
       why: "Leaderboards are rank-window reporting where ties are guaranteed — four workspaces sit at 4 periods each on this db, and the ladder above them runs 24, 17, 14, 13, 5. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer workspaces, not syntax. The support pod publishes the policy on its boards; candidates are asked to defend it.",
-      slugs: ["rank-scores", "department-top-three-salaries", "group-employees-of-the-same-salary", "premier-league-table-ranking", "second-highest-salary"],
+      slugs: ["rank-scores", "department-top-three-salaries", "group-employees-of-the-same-salary", "premier-league-table-ranking", "second-highest-salary", "product-sales-analysis-ii", "keep-latest-dedupe"],
     },
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month period spine (2024-01 to 2025-02) is the volume call's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) and the abandonment spikes (2 in July, 2 in November) named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero. The spine is also where STRFTIME buckets get built, and '%m' alone would merge January 2024 into January 2025.",
-      slugs: ["biggest-window-between-events", "year-on-year-growth-rate", "consecutive-transactions-with-increasing-amounts", "the-latest-login-in-2020"],
+      slugs: ["biggest-window-between-events", "year-on-year-growth-rate", "consecutive-transactions-with-increasing-amounts", "the-latest-login-in-2020", "classes-more-than-5-students", "combine-two-tables", "mrr-waterfall", "growth-accounting", "most-frequently-ordered-product-per-customer"],
     },
     {
       name: "One-pass fate censuses",
       why: "The ops board wants open, served, resolved and abandoned in ONE scan — 14, 30, 52, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift. The reconciliation identity (branches sum to COUNT(*)) is the correctness argument the panel listens for.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "snaps-analysis", "sessionize-events"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "snaps-analysis", "sessionize-events", "find-users-with-high-token-usage"],
     },
     {
       name: "Coverage set algebra",
       why: "Board packets stack populations — served-in-flight under abandoned, this quarter beside last — and EXCEPT answers 'which billed workspaces never cleared the queue'. UNION dedups whole rows silently, which makes it a correctness question, not a style one. The billing anti-join (6 never-collected statements worth 15,217.00) is the same algebra pointed at money.",
-      slugs: ["league-statistics", "customers-who-never-order", "dormant-reactivation"],
+      slugs: ["league-statistics", "customers-who-never-order", "dormant-reactivation", "sales-analysis-i"],
     },
     {
       name: "Billing rails & cents discipline",

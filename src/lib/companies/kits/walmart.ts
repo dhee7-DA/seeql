@@ -26,7 +26,7 @@ export const walmartKit: CompanyKit = {
     "**Walmart** is the world's largest retailer by revenue — and its defining analytics problem is that every unit of demand can be served two ways: pulled from a store shelf the same day, or picked in a fulfillment center and shipped. That fork is visible in the data: every order is a row with a status clock (`created_at → shipped_at`), and the distance between those timestamps is the {sky:fulfillment latency} the whole supply chain is managed on. On this kit's proxy storefront the census reads **103 orders folding into 251 line items**, $34,833.28 total GMV, and an average basket of **$338.19** — with 6 marketplace sellers behind 16 base listings, which is exactly the 1P-shelf-versus-3P-seller mix a Walmart marketplace analyst reconciles weekly.",
     "The data org runs like the supply chain: category analytics (electronics, apparel, home) sit next to supply-chain, marketplace-seller operations and store-ops analytics, all reading order streams that must reconcile between the point-of-sale side and the e-commerce side. The fulfillment clock is the watched artifact: **82 of 103 orders carry a fulfillment timestamp**, 21 sit {amber:pending} or {rose:cancelled}, and the shipped population averages **2.98 days** from placement to dispatch (range 2–4). *Freshness is a visible, discussed thing* — the morning question is never 'is the data there' but 'did last night's orders land and does the fulfillment ledger tie out'.",
     "Interview style is omnichannel-flavored and denominator-first. A screen opens with a warm-up join (attach sellers to listings, carts to shoppers), escalates into status-aware aggregation (kept demand versus cancelled, delivered versus in-flight), then lands on either a window question (rank sellers by GMV, tie-proofed) or an inventory read where the fold is `stock − sold` and the cutoff is a business definition. Follow-ups are spoken out loud: *'does a cancelled cart count in your denominator?'*, 'is that share per order or per shopper?', 'what does your shelf census do with a listing that never sold?' — and on this db the honest answer to that last one is **zero**: every listing has moved, so dead-stock anti-joins are a shape to know, not a result to ship.",
-    "Preparation strategy: the problem pool leads with the **9 Walmart-tagged sql rows** in this app's band — buyer-volume argmax, two-grain monthly censuses, store-imbalance reads, FIFO layers, basket-depth math — then fills 7 theme-curated slots (window sale folds, weighted ASP, weeks-of-supply cover, returns shares). The two case studies run on the live db: one rebuilds the {emerald:marketplace seller mix} the seller-ops review opens with, the other rebuilds the {amber:reorder census} inventory turns run on. Both are mechanically audited against the probed figures — and both reward saying the denominator out loud before the division.",
+    "Preparation strategy: the problem pool leads with the **9 Walmart-tagged sql rows** in this app's band — buyer-volume argmax, two-grain monthly censuses, store-imbalance reads, FIFO layers, basket-depth math — then fills 7 theme-curated slots (window sale folds, weighted ASP, weeks-of-supply cover, returns shares). The six case studies run on the live db — built for spaced practice rather than one sitting: one rebuilds the {emerald:marketplace seller mix} the seller-ops review opens with, another rebuilds the {amber:reorder census} inventory turns run on. All six are mechanically audited against the probed figures — and each rewards saying the denominator out loud before the division.",
     "The finance-adjacent reads are the same discipline at a smaller grain: the storefront's invoices, payments, expenses and ledger tables store money as INTEGER cents, so the dollar read is always `amount_cents / 100.0`, and the reconciliation pack is known-anomaly hunting, not confirmatory summing. The pack has teeth — **28 invoices against 27 payments**, a trial balance that ties at 181080.00 on both sides, and four anomaly classes on file: a {rose:void-but-paid} invoice (925.00), a paid invoice with zero payment rows (1756.00), five split-settlement invoices carrying two payment rows each, and one partial at 4000.00 of 6148.00. AR shows **6 open invoices worth 19609.00**, the same 6 with no payment at all (15217.00), settling in **28.4 days against flat 30-day terms** — and a candidate who prints those cents as dollars without the divide is a candidate the close cannot trust.",
     "Past the warm-ups, senior rounds stop asking for joins and start asking for shapes. A set-op stack tests whether your two branches line up column-for-column; a derived-table ask stages per-cart folds before classifying them; a momentum ask rides `LAG(revenue) OVER (ORDER BY month)` down the month spine — and the trap is always the same one wearing new clothes: *the population you filtered away was load-bearing* (gate the spine and {amber:2024-01}'s baseline vanishes; drop cancelled carts and your denominator lies). The db's honest limits are part of the test: the ≥200 premium band is {rose:empty} at a 199.99 ceiling, no listing has zero demand, and saying 'this anti-join returns nothing, by data' outranks shipping a dead-stock dashboard of thin air. Stage the fold, classify in one pass, name the denominator — that is the whole senior screen.",
   ],
@@ -58,7 +58,7 @@ export const walmartKit: CompanyKit = {
     {
       name: "Omnichannel demand folds",
       why: "Every Walmart read starts by folding carts into per-day, per-category, per-region aggregates without letting cancelled demand pollute the total. The trap is grain drift: joining line items fans 103 carts into 251 rows, and COUNT(*) stops counting carts the moment the join lands.",
-      slugs: ["group-sold-products-by-the-date", "product-sales-analysis-ii", "list-the-products-ordered-in-a-period"],
+      slugs: ["group-sold-products-by-the-date", "product-sales-analysis-ii", "list-the-products-ordered-in-a-period", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "The two-grain census",
@@ -83,7 +83,7 @@ export const walmartKit: CompanyKit = {
     {
       name: "Leaderboards and running totals",
       why: "Top sellers by GMV, most-recent orders per listing, the running GMV tracker across the retail calendar — ranking windows and running sums. Ties are everywhere when listings share price points, so the rank trio and the window frame are reflexes, not trivia.",
-      slugs: ["rank-scores", "the-most-recent-orders-for-each-product", "last-person-to-fit-in-the-elevator"],
+      slugs: ["rank-scores", "the-most-recent-orders-for-each-product", "last-person-to-fit-in-the-elevator", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "One-pass censuses",
@@ -93,7 +93,7 @@ export const walmartKit: CompanyKit = {
     {
       name: "NULL policy on the fulfillment clock",
       why: "shipped_at is NULL until dispatch — 21 of 103 carts here. Walmart screens check whether you treat that NULL as data to report, coalesce to zero for display, or exclude with a stated reason; COUNT(shipped_at) = 82 versus COUNT(*) = 103 is a definition, not a bug.",
-      slugs: ["employee-bonus", "calculate-special-bonus", "books-with-null-ratings"],
+      slugs: ["employee-bonus", "calculate-special-bonus", "books-with-null-ratings", "fix-product-name-format"],
     },
     {
       name: "Date math across the retail calendar",
@@ -103,7 +103,7 @@ export const walmartKit: CompanyKit = {
     {
       name: "Money math on integer cents",
       why: "Finance tables here — invoices, payments, expenses, ledger — keep money in integer cents, so every dollar read is amount_cents / 100.0 and every ratio sits one misplaced integer away from a truncation leak. AR reads and reconciliation folds are the closest thing this kit has to a finance round.",
-      slugs: ["trial-balance-check", "bank-account-summary-ii", "ar-aging-schedule"],
+      slugs: ["trial-balance-check", "bank-account-summary-ii", "ar-aging-schedule", "fifo-inventory-cogs"],
     },
     {
       name: "Set-op stacks for the close",
@@ -128,7 +128,7 @@ export const walmartKit: CompanyKit = {
     {
       name: "Zero-fill buckets and histograms",
       why: "Basket-size histograms and latency-band reads die quietly on empty buckets: GROUP BY only reports buckets that exist, so a band with zero carts vanishes and the deck reads a gap as no demand. Zero-fill — a spine of buckets LEFT JOINed to the data, or UNION ALL'd TOTAL rows — keeps the shape of the distribution honest. Walmart's merch decks read these histograms weekly, so the fill discipline is screened hard.",
-      slugs: ["transactions-per-visit-histogram", "count-salary-categories", "calculate-orders-within-each-interval"],
+      slugs: ["transactions-per-visit-histogram", "count-salary-categories", "calculate-orders-within-each-interval", "unique-orders-and-customers-per-month", "apples-and-oranges", "rearrange-products-table", "customer-order-frequency", "average-selling-price", "returns-rate-by-category", "queries-quality-and-percentage", "sales-by-day-of-the-week"],
     },
   ],
 

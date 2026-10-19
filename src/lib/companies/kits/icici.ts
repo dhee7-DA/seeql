@@ -79,7 +79,7 @@ export const iciciKit: CompanyKit = {
     {
       name: "Card-portfolio health",
       why: "The card rail is the retail engine: velocity bursts, duplicate-charge pair screens and chargeback-style rate rankings are how the cards desk watches 16 legs a close behave. Portfolio health is read at leg grain — a billing can ride both rails, so the rail view and the billing view are different truths that must both tie.",
-      slugs: ["transaction-velocity", "duplicate-charge-pairs", "chargeback-rate-ranking"],
+      slugs: ["transaction-velocity", "duplicate-charge-pairs", "chargeback-rate-ranking", "circular-transfers", "investments-in-2016"],
     },
     {
       name: "UPI-scale flow cadence",
@@ -89,62 +89,62 @@ export const iciciKit: CompanyKit = {
     {
       name: "Coverage & partial settlements",
       why: "A billing can be open AND received: the 4000.00 leg against the 6148.00 balance is the case study every circle review cites. Coverage folds legs per billing and compares to billed — the classification is computed from evidence, never stored as a status.",
-      slugs: ["bank-account-summary", "monthly-transactions-ii", "immediate-food-delivery-ii"],
+      slugs: ["bank-account-summary", "monthly-transactions-ii", "immediate-food-delivery-ii", "settlement-fails-aging", "expected-credit-loss"],
     },
     {
       name: "Branch & opex cost lines",
       why: "Branches are the cost story: category folds over opex lines (Rent at 14 lines / 16800.00), pacing against plan and month-bucketed spend peaking 3210.00 in 2024-08 are the reads behind every branch-footprint conversation. Count-only reads flatten the story — 14 Rent lines and 14 Ads lines are wildly different dollars.",
-      slugs: ["spend-histogram", "budget-pacing", "friday-purchase-iii"],
+      slugs: ["spend-histogram", "budget-pacing", "friday-purchase-iii", "growth-accounting"],
     },
     {
       name: "Anomaly & fraud screens",
       why: "Settlement hygiene pairs state with evidence: void-but-drawn, paid-unmoved, amount outliers. Sliding-window checks, z-score amount screens and percentile-ranked suspicion are the screens that catch the 925.00 break before the regulator's read does.",
-      slugs: ["suspicious-bank-account-transactions", "amount-anomaly-zscore", "top-percentile-fraud"],
+      slugs: ["suspicious-bank-account-transactions", "amount-anomaly-zscore", "top-percentile-fraud", "journal-gap-detection", "rfm-segmentation", "symmetric-pairs"],
     },
     {
       name: "Branch audit trails & reconciliation",
       why: "The ledger ties or nothing ships: trial-balance folds (181080.00 against 181080.00, delta 0), ledger-versus-rail reconciliation and balance rollforwards are the proof drills behind every close call. The trail records what happened — including mistakes — so the trial balance alone is never proof of correctness.",
-      slugs: ["trial-balance-check", "gl-reconciliation", "balance-rollforward"],
+      slugs: ["trial-balance-check", "gl-reconciliation", "balance-rollforward", "daily-balance-interest", "week-over-week-churn"],
     },
     {
       name: "Collections & delinquency watch",
       why: "Fee receivables age like credit exposures: days-past-terms buckets, aging schedules and vintage default curves are the language the collections desk runs in — built on the no-leg anti-join (6 billings / 15217.00) and flat 30-day terms.",
-      slugs: ["delinquency-buckets", "ar-aging-schedule", "vintage-default-curves"],
+      slugs: ["delinquency-buckets", "ar-aging-schedule", "vintage-default-curves", "credit-utilization-bands", "fx-exposure-report"],
     },
     {
       name: "Circle window boards",
       why: "Circles compete for the review's attention: top billings per circle, most-recent cycles per client and per-partition counts are the boards the monthly read ships — each circle ranked within itself, never one global ladder where EU owns every rung.",
-      slugs: ["department-top-three-salaries", "the-most-recent-three-orders", "find-the-team-size"],
+      slugs: ["department-top-three-salaries", "the-most-recent-three-orders", "find-the-team-size", "structuring-detection", "second-most-recent-activity"],
     },
     {
       name: "Client activity & cadence",
       why: "Relationship managers read households, not events: repeat-fee frequencies, loyal-client screens and completion-rate reads decide who gets the call — and the 24-event household is exactly the record this drill finds first.",
-      slugs: ["customer-order-frequency", "find-loyal-customers", "confirmation-rate"],
+      slugs: ["customer-order-frequency", "find-loyal-customers", "confirmation-rate", "risk-based-pricing"],
     },
     {
       name: "Window frames & running folds",
       why: "Balance rollforwards and collected-to-date columns are running folds, and the default frame (RANGE … CURRENT ROW) has opinions about ties: same-day legs move together. The cash book's {emerald:69612.00} debit fold is the proof surface — ROWS versus RANGE decides whether the trail reads leg by leg or day by day. Frame choice is a definition, not a style.",
-      slugs: ["find-cumulative-salary-of-an-employee", "running-total-for-different-genders", "restaurant-growth"],
+      slugs: ["find-cumulative-salary-of-an-employee", "running-total-for-different-genders", "restaurant-growth", "delinquency-roll-rates", "loan-amortization-schedule", "split-adjusted-position", "account-balance", "rolling-7d-actives"],
     },
     {
       name: "Set ops & the audit stack",
       why: "The close pack stacks folds at two grains — per-rail census plus a TOTAL banner — and compares circle lists across states. UNION ALL appends without the dedupe sort; INTERSECT/EXCEPT answer set membership, with NULLs comparing equal (unlike NOT IN). The rail stack — card 16 / wire 11 / TOTAL 27 legs, **69612.00** — is the canonical drill.",
-      slugs: ["count-salary-categories", "league-statistics", "movie-rating"],
+      slugs: ["count-salary-categories", "league-statistics", "movie-rating", "customers-who-bought-all-products"],
     },
     {
       name: "Staged CTE reads",
       why: "The settlement clock, the KYC funnel and the dedupe all need a first stage — fold legs per billing, one row per client, keep-latest per household — before the outer fold. CTEs name that stage so the review can audit it; nested one-liners hide the exact fold the numbers depend on. Staging earlier than fashion suggests is this bank's instinct.",
-      slugs: ["market-analysis-i", "second-highest-salary", "managers-with-at-least-5-direct-reports"],
+      slugs: ["market-analysis-i", "second-highest-salary", "managers-with-at-least-5-direct-reports", "portfolio-concentration-hhi", "keep-latest-dedupe"],
     },
     {
       name: "NULL policy & fallback arms",
       why: "A no-leg billing folds to NULL, not zero — and the watchlist (6 billings / **15217.00**) only exists if the LEFT JOIN's NULL arm is handled on purpose. COALESCE at the fold, COUNT(right key) beside COUNT(*), and a NOT IN list with one NULL emptying the whole read: the three habits that keep censuses honest here.",
-      slugs: ["find-customer-referee", "books-with-null-ratings", "analyze-subscription-conversion"],
+      slugs: ["find-customer-referee", "books-with-null-ratings", "analyze-subscription-conversion", "wash-trade-detection", "null-blank-audit", "consecutive-transactions-with-increasing-amounts"],
     },
     {
       name: "Calendar math & weekday rails",
       why: "Retail flow breathes on weekdays and month-ends: %Y-%m buckets for cohorts, %w for the weekend-rails read, julianday diffs for the settlement clock (**28.4 days** against flat 30-day terms). The traps are knowable: %M is minutes, malformed dates NULL silently through date functions, and text comparison only works because the keys are ISO.",
-      slugs: ["convert-date-format", "rising-temperature", "tasks-count-in-the-weekend"],
+      slugs: ["convert-date-format", "rising-temperature", "tasks-count-in-the-weekend", "find-the-missing-ids", "median-time-to-convert", "cohort-retention-matrix", "year-on-year-growth-rate"],
     },
   ],
 

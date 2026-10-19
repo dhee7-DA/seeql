@@ -75,12 +75,12 @@ export const ubsKit: CompanyKit = {
     {
       name: "Whale boards & concentration",
       why: "A wealth house manages concentration risk on purpose: top billings per center, share-of-book windows and percentile cuts are how the risk committee reads exposure — each booking center ranked within itself, never one global ladder.",
-      slugs: ["portfolio-concentration-hhi", "department-top-three-salaries", "value-at-risk"],
+      slugs: ["portfolio-concentration-hhi", "department-top-three-salaries", "value-at-risk", "max-drawdown", "beta-benchmark", "split-adjusted-position", "realized-pnl-average-cost", "dividend-income-calendar", "fx-exposure-report", "prepayment-detection", "deferred-revenue", "loan-amortization-schedule", "bank-account-summary-ii", "npv-queries", "investments-in-2016", "capital-gain-loss"],
     },
     {
       name: "Rails & settlement legs",
       why: "Settlement is leg-level: five billings ride two rails each, so leg counts and billing counts disagree by exactly the split plans. Velocity bursts per rail, duplicate-pair screens and rate rankings are the rails desk's daily reads.",
-      slugs: ["transaction-velocity", "duplicate-charge-pairs", "circular-transfers"],
+      slugs: ["transaction-velocity", "duplicate-charge-pairs", "circular-transfers", "dormant-reactivation"],
     },
     {
       name: "Anomaly screens",
@@ -90,7 +90,7 @@ export const ubsKit: CompanyKit = {
     {
       name: "Books of record & reconciliation",
       why: "The ledger ties or nothing ships: trial-balance folds (181080.00 against 181080.00, delta 0), ledger-versus-rail reconciliation and balance rollforwards are the proof drills behind every close call.",
-      slugs: ["trial-balance-check", "gl-reconciliation", "balance-rollforward"],
+      slugs: ["trial-balance-check", "gl-reconciliation", "balance-rollforward", "settlement-fails-aging", "journal-gap-detection", "ar-aging-schedule", "find-customers-with-positive-revenue-this-year"],
     },
     {
       name: "Wealth-book KPIs",
@@ -100,7 +100,7 @@ export const ubsKit: CompanyKit = {
     {
       name: "Credit & counterparty watch",
       why: "Fee receivables age like credit exposures: days-past-terms buckets, utilization-style bands and weighted-loss folds are the language the collections desk borrows from credit risk — built on the same no-leg anti-join.",
-      slugs: ["delinquency-buckets", "credit-utilization-bands", "expected-credit-loss"],
+      slugs: ["delinquency-buckets", "credit-utilization-bands", "expected-credit-loss", "delinquency-roll-rates", "wash-trade-detection", "risk-based-pricing", "chargeback-rate-ranking", "structuring-detection", "vintage-default-curves"],
     },
     {
       name: "Household activity & cadence",
@@ -120,12 +120,12 @@ export const ubsKit: CompanyKit = {
     {
       name: "Month spines & trend buckets",
       why: "Every trend page here buckets on the 'YYYY-MM' key — SUBSTR of the event date, width 7 — and the flat 6-to-9 monthly pace is the metronome every claimed spike is tested against. The spine discipline matters as much as the key: months ride the axis even when quiet, and a '%Y' key (or '%M' by accident) dissolves the calendar.",
-      slugs: ["unique-orders-and-customers-per-month", "monthly-transactions-i", "hopper-company-queries-i"],
+      slugs: ["unique-orders-and-customers-per-month", "monthly-transactions-i", "hopper-company-queries-i", "daily-balance-interest", "second-most-recent-activity", "account-balance", "maximum-transaction-each-day", "uber-first-transaction", "product-price-at-a-given-date", "median-employee-salary"],
     },
     {
       name: "LAG walks & movement reads",
       why: "Movement reporting at a merged house is deltas, not levels: month-over-month opex walks, roll-forward waterfalls, status-transition reads where each line explains the move from the last. LAG hands every row its predecessor, the edge rows go NULL by definition, and the walk must be staged before any WHERE trims the predecessor away — a delta column that never shows a first-row NULL is hiding its baseline.",
-      slugs: ["year-on-year-growth-rate", "week-over-week-churn", "mrr-waterfall"],
+      slugs: ["year-on-year-growth-rate", "week-over-week-churn", "mrr-waterfall", "find-churn-risk-customers"],
     },
     {
       name: "Integration audit trails",

@@ -25,7 +25,7 @@ export const hubspotKit: CompanyKit = {
     "HubSpot is the inbound CRM that gave the industry its funnel vocabulary — Marketing Hub, Sales Hub and Service Hub stitched together by lifecycle stages: subscriber, lead, {orange:MQL}, {orange:SQL}, opportunity, customer. The analyst reality underneath the brand is that every revenue number is a stage-aware conditional count: a deal is not pipeline until its stage says so, and 'win rate' is a population definition before it is a percentage. This kit maps that world honestly onto the storefront db: companies are accounts (16), deals are orders (**103** worth 34,833.28), quoted line items are order_items (251), and the stage map is fixed — delivered = {emerald:closed-won} (52, 50.5%), cancelled = {rose:closed-lost} (7, 6.8%), pending = engaged evaluation (14), shipped = contract out for signature (30).",
     "The data org thinks in objects and grains. The companies object (16 rows) carries region and city; the deals pipeline (103) carries stage, amount and two timestamps that matter — `created_at` when the deal entered, `shipped_at` when the contract went out for signature, NULL until it does. Line items (251) are the quoted SKUs that turn a deal into money, and the billing tables (28 invoices, 27 payments, INTEGER cents) are where closed-won meets collected. Concentration is real: **63.5%** of lifetime value sits with accounts whose spend crosses 3,000 (71.2% above 2,000), and the repeat-deal curve runs 2 one-and-done accounts, 9 at 2–4 deals, 1 at 5, and 4 embedded at 10 or more.",
     "Interview screens are census-then-denominator. A typical loop opens with a **two-grain territory census** — EU carries 45 deals from just 8 companies; the US, 19 from 2 — then escalates into a stage-aware rate where the interviewer asks the denominator question out loud ('does a {rose:closed-lost} deal count in your base?'), then into the engagement leaderboard where four companies are tied at 4 deals and rank semantics become a business decision. Follow-ups probe the first row of a LAG walk and the month spine (2024-01 to 2025-02, 14 buckets). Candidates who state the stage filter and the denominator before writing SQL are the ones who get callbacks.",
-    "Preparation strategy: the registry tags 3 SQL problems for HubSpot (`daily-leads-and-partners`, `ltv-cac-payback`, `first-last-touch-attribution`) — they lead the pool, and the remaining topic slugs and problems are theme-curated to known screen shapes: two-grain censuses, conditional-count win rates, leaderboard ties, unit economics and attribution. Then run both case studies on the live db: one rebuilds the territory pipeline census sales ops opens Monday with, the other rebuilds the engagement leaderboard with its shared rungs. The bar to clear: state the *stage definition* and the *denominator* before you compute anything.",
+    "Preparation strategy: the registry tags 3 SQL problems for HubSpot (`daily-leads-and-partners`, `ltv-cac-payback`, `first-last-touch-attribution`) — they lead the pool, and the remaining topic slugs and problems are theme-curated to known screen shapes: two-grain censuses, conditional-count win rates, leaderboard ties, unit economics and attribution. Then run all six case studies on the live db: one rebuilds the territory pipeline census sales ops opens Monday with, the other rebuilds the engagement leaderboard with its shared rungs, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The bar to clear: state the *stage definition* and the *denominator* before you compute anything.",
     "Under the CRM sits the billing spine, and it carries one house rule: money is stored as INTEGER cents, so the dollar read is `amount_cents / 100.0` — the missing `.0` is how every odd-cent row quietly leaks its change. The finance objects are small enough to memorize (28 invoices, 27 payments) and dirty enough to matter: a {rose:void-but-paid} invoice (#11, 925.00), *a paid-status invoice with zero settlement rows* (#28, 1,756.00), five split-payment invoices and one partial (4,000 of 6,148 settled). Reconciliation here is row-level, not vibes: the coverage split must read **21 exact / 1 partial / 6 never-collected**, and the ledger's trial balance must land at **181,080 debits against 181,080 credits** — delta zero, or the close does not ship.",
     "Preparation at full depth: the kit now runs **fifteen topics, twenty-four theory drills, thirty MCQs and six audited case studies** on the storefront db. The two originals rebuild the territory census and the engagement leaderboard; the four additions walk a deal-size band census (`CASE` arms at the 500/100 boundary), the above-average account tier (a derived fold judged against a computed platform mean), the month-over-month revenue walk (`LAG` on the `%Y-%m` spine) and the stage census with its {emerald:TOTAL} row appended by UNION ALL. The 32-problem pool keeps the registry's 3 tagged rows up front and curates the rest to CRM screen shapes. The bar to clear: *state the stage definition and the denominator before you compute anything* — then make every stacked total reconcile against a COUNT(*).",
   ],
@@ -57,32 +57,32 @@ export const hubspotKit: CompanyKit = {
     {
       name: "Pipeline census aggregation",
       why: "Every HubSpot screen opens with a census: deals entered and companies covered per territory, per month, per owner. It is GROUP BY work at two grains, and the trap is letting closed-lost deals pollute a pipeline total — the stage rule rides on every fold.",
-      slugs: ["daily-leads-and-partners", "list-the-products-ordered-in-a-period", "unique-orders-and-customers-per-month"],
+      slugs: ["daily-leads-and-partners", "list-the-products-ordered-in-a-period", "unique-orders-and-customers-per-month", "maximum-transaction-each-day"],
     },
     {
       name: "Stage-aware counting & win rates",
       why: "Closed-won, closed-lost, engaged — every rate here is a conditional count over a stage flag, and the interviewer's first question is 'what's in the denominator?'. SUM(CASE WHEN stage …) over ALL entered deals is the shape that survives scrutiny.",
-      slugs: ["immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "monthly-transactions-i"],
+      slugs: ["immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "monthly-transactions-i", "repeat-purchase-rate", "confirmation-rate", "department-highest-salary", "league-statistics"],
     },
     {
       name: "Joining companies to deals",
       why: "Deals inherit territory and account attributes through joins to the companies object, and the join type decides who survives: a deal with no company is corruption; a company with no deals is whitespace. Choosing INNER versus LEFT is a business statement.",
-      slugs: ["combine-two-tables", "sales-analysis-i", "top-travellers"],
+      slugs: ["combine-two-tables", "sales-analysis-i", "top-travellers", "customer-who-visited-but-did-not-transact", "employee-bonus"],
     },
     {
       name: "Engagement leaderboards",
       why: "Leaderboards are rank-window reporting where ties are guaranteed — four companies sit at 4 deals each on this db. RANK, DENSE_RANK and ROW_NUMBER are a business decision about who shares a rung, not syntax trivia.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "Deal scoring with CASE",
       why: "HubSpot's deal scores and lifecycle grading are CASE-classified buckets: hot/warm/cold, deal-size bands, engagement tiers. The arms must be exhaustive and ordered — a hole in the CASE is a hole in the forecast.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "triangle-judgement"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "triangle-judgement", "find-churn-risk-customers", "average-selling-price"],
     },
     {
       name: "Lifetime value & payback",
       why: "The registry-tagged unit-economics problem lives here: lifetime spend per account against acquisition cost, payback in periods. On this db the lifetime ladder runs from 7,262.35 down to 444.8 — the LTV question is always a two-stage fold.",
-      slugs: ["ltv-cac-payback", "customer-purchasing-behavior-analysis", "channel-ltv-vs-cac"],
+      slugs: ["ltv-cac-payback", "customer-purchasing-behavior-analysis", "channel-ltv-vs-cac", "dormant-reactivation", "generate-the-invoice"],
     },
     {
       name: "Attribution & first-touch",
@@ -97,7 +97,7 @@ export const hubspotKit: CompanyKit = {
     {
       name: "Subquery screens & quota gates",
       why: "Screens escalate into nested logic: deals above the company average, accounts clearing a deal-count threshold, logos covering every product line. Scalar, IN, EXISTS and HAVING-gated shapes each carry an empty-inner-query answer you are expected to give unprompted.",
-      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "customers-who-bought-all-products"],
+      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "customers-who-bought-all-products", "product-price-at-a-given-date"],
     },
     {
       name: "Billing & cents discipline",
@@ -107,22 +107,22 @@ export const hubspotKit: CompanyKit = {
     {
       name: "Stage-set algebra (UNION & EXCEPT)",
       why: "Board packets stack populations side by side — won deals and lost deals in one layout, the stage census with a TOTAL row appended. EXCEPT is the set-difference read when ops asks which won accounts finance never billed. The traps are silent: UNION dedups whole rows, and branches folded at different grains stack into fiction.",
-      slugs: ["team-scores-in-football-tournament", "count-salary-categories", "the-airport-with-the-most-flights"],
+      slugs: ["team-scores-in-football-tournament", "count-salary-categories", "the-airport-with-the-most-flights", "customers-who-never-order"],
     },
     {
       name: "Two-stage folds: derived tables & CTEs",
       why: "The screens escalate into staging: fold per-account deal counts, then judge them against a computed platform mean; fold per-territory means, then join back for names. Each stage's population must be statable in one sentence — a fold you cannot name is a fold you cannot defend.",
-      slugs: ["average-salary-of-departments", "last-person-to-fit-in-the-elevator", "median-employee-salary"],
+      slugs: ["average-salary-of-departments", "last-person-to-fit-in-the-elevator", "median-employee-salary", "students-and-examinations", "find-the-team-size", "users-with-two-purchases-within-seven-days"],
     },
     {
       name: "Month-over-month walks: LAG & LEAD",
       why: "The 14-month revenue spine (2024-01 to 2025-02) is the forecast call's home turf: prior month beside current, delta rounded, trough and jump named. LAG drives the walk, LEAD powers the deal-velocity reads, and edge rows are NULL by definition — the baseline, never a zero.",
-      slugs: ["biggest-window-between-events", "consecutive-transactions-with-increasing-amounts", "second-day-confirmation"],
+      slugs: ["biggest-window-between-events", "consecutive-transactions-with-increasing-amounts", "second-day-confirmation", "growth-accounting", "customers-with-strictly-increasing-purchases"],
     },
     {
       name: "One-pass censuses: FILTER & conditional counts",
       why: "The ops board gets delivered, shipped, pending and cancelled in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate and SUM(CASE …) is the portable twin. Four sequential queries drift; one pass cannot.",
-      slugs: ["active-businesses", "total-traveled-distance", "create-a-session-bar-chart"],
+      slugs: ["active-businesses", "total-traveled-distance", "create-a-session-bar-chart", "queries-quality-and-percentage"],
     },
     {
       name: "String shaping & export hygiene",

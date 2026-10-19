@@ -101,12 +101,12 @@ export const hellofreshKit: CompanyKit = {
     {
       name: "Box cadence & frequency",
       why: "HelloFresh is a cadence business, and the first screen is always the box fold: boxes per subscriber, banded, gated with HAVING. The trap is grain — COUNT(*) counts boxes, COUNT(DISTINCT customer_id) folds repeat demand back to people, and the gap between them is boxes per subscriber per window.",
-      slugs: ["customer-order-frequency", "repeat-purchase-rate", "customer-placing-the-largest-number-of-orders"],
+      slugs: ["customer-order-frequency", "repeat-purchase-rate", "customer-placing-the-largest-number-of-orders", "classes-more-than-5-students"],
     },
     {
       name: "Skip, pause & kept demand",
       why: "The lifecycle board's most-watched ratio is kept ÷ placed, and it is a conditional count before it is a percentage: SUM(CASE WHEN status = 'cancelled' …) over the same rows COUNT(*) divides. On this db that reads 7 of 103 = 6.8% — and the 14 pending boxes are a separate {amber:queued} population the board must never merge into churn.",
-      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "drop-type-1-orders-for-customers-with-type-0-orders"],
+      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "drop-type-1-orders-for-customers-with-type-0-orders", "percentage-of-users-attended-a-contest", "average-selling-price", "capital-gain-loss", "ads-performance"],
     },
     {
       name: "Subscriber census, two grains",
@@ -116,17 +116,17 @@ export const hellofreshKit: CompanyKit = {
     {
       name: "Churn windows & winback math",
       why: "Churn is a window, not an event: subscribers whose last box is N weeks old, winback offers for the ones inside the reachable gap. Screens drill date diffs, first/last-event subqueries and the golden-window cohort — the retention inputs computed, not asserted.",
-      slugs: ["find-churn-risk-customers", "find-golden-hour-customers", "users-with-two-purchases-within-seven-days"],
+      slugs: ["find-churn-risk-customers", "find-golden-hour-customers", "users-with-two-purchases-within-seven-days", "week-over-week-churn", "fix-product-name-format"],
     },
     {
       name: "Dunning & settlement anti-joins",
       why: "Billing ops lives on anti-joins: renewal statements with no settlement, settlements with no statement. On this db every subscriber has ordered (never-ordered = 0 — the subscriber anti-join is empty), so the honest drill is billing: 6 statements, 15,217.00, anomaly #28 included — LEFT JOIN … IS NULL and NOT EXISTS until reflex.",
-      slugs: ["customers-who-never-order", "sellers-with-no-sales", "number-of-accounts-that-did-not-stream"],
+      slugs: ["customers-who-never-order", "sellers-with-no-sales", "number-of-accounts-that-did-not-stream", "sales-analysis-ii", "customer-who-visited-but-did-not-transact"],
     },
     {
       name: "Plan mix & CASE buckets",
       why: "Plans are bands, and the plan fold is a CASE histogram: family versus veg versus quick-lunch maps to CASE WHEN total bands, with the band edge as a definition nobody moves mid-quarter. Screens drill the fold until the ELSE arm's absence reads as a finding, not a bug.",
-      slugs: ["the-category-of-each-member-in-the-store", "loan-types", "spend-histogram"],
+      slugs: ["the-category-of-each-member-in-the-store", "loan-types", "spend-histogram", "not-boring-movies", "transactions-per-visit-histogram"],
     },
     {
       name: "Week buckets & cohort ladders",
@@ -136,7 +136,7 @@ export const hellofreshKit: CompanyKit = {
     {
       name: "Ladders & the rank trio",
       why: "Top subscribers by lifetime value, worst markets by skip rate, next-box prediction lists — lifecycle reporting is leaderboard reporting, and ties are everywhere. ROW_NUMBER, RANK and DENSE_RANK differ exactly at ties, and LIMIT-boundary ties are the classic 'why does my top-5 return 6 rows' bug.",
-      slugs: ["rank-scores", "top-earners", "customers-with-strictly-increasing-purchases"],
+      slugs: ["rank-scores", "top-earners", "customers-with-strictly-increasing-purchases", "friend-requests-i-overall-acceptance-rate"],
     },
     {
       name: "Box-value baselines & scalar subqueries",
@@ -151,7 +151,7 @@ export const hellofreshKit: CompanyKit = {
     {
       name: "Ingredient supply & partner rollups",
       why: "The supply fold chains partners → recipe SKUs → box lines: revenue per partner is a three-table JOIN whose SUM must multiply line value before it aggregates. Argmax shapes ride the same chain — each subscriber's most-ordered recipe, each cohort's peak week — and the tie policy is part of the definition, not a footnote.",
-      slugs: ["top-travellers", "most-frequently-ordered-product-per-customer", "highest-grade-for-each-student"],
+      slugs: ["top-travellers", "most-frequently-ordered-product-per-customer", "highest-grade-for-each-student", "find-the-team-size", "list-the-products-ordered-in-a-period", "second-highest-salary"],
     },
     {
       name: "Set ops & the demand stack",
@@ -166,12 +166,12 @@ export const hellofreshKit: CompanyKit = {
     {
       name: "LEAD/LAG & the pause detector",
       why: "The pause between boxes is LAG: days since this subscriber's previous settlement or delivery, partitioned per person, ordered by event time. First-row NULLs are the design decision — COALESCE or filter — thresholds turn gaps into watchlists, and consecutive-increase flags are the plan-upgrade signal.",
-      slugs: ["biggest-window-between-events", "second-day-confirmation", "consecutive-transactions-with-increasing-amounts"],
+      slugs: ["biggest-window-between-events", "second-day-confirmation", "consecutive-transactions-with-increasing-amounts", "user-activity-for-the-past-30-days-ii"],
     },
     {
       name: "Data quality & NULL policy",
       why: "Billing data punishes optimism: COALESCE defaults on partner ratings, keep-latest dedupe on plan and address changes, COUNT DISTINCT to prove the person grain before any rate divides by it. The house rule — every fold states its NULL arm — is drilled as reflex, not policy memo.",
-      slugs: ["confirmation-rate", "find-latest-salaries", "employees-with-deductions"],
+      slugs: ["confirmation-rate", "find-latest-salaries", "employees-with-deductions", "the-latest-login-in-2020", "keep-latest-dedupe", "product-price-at-a-given-date"],
     },
   ],
 

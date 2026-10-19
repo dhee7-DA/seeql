@@ -64,7 +64,7 @@ export const metaKit: CompanyKit = {
     {
       name: "Streaks & consecutive-day habits",
       why: "Habit is the product: users active N days running, sessions on consecutive dates, platform-hopping streaks. Gaps-and-islands machinery — ROW_NUMBER against the date, GROUP BY the difference — is how Meta counts streaks, and the tie/ordering rules decide who counts.",
-      slugs: ["active-users", "report-contiguous-dates", "user-purchase-platform"],
+      slugs: ["active-users", "report-contiguous-dates", "user-purchase-platform", "budget-pacing"],
     },
     {
       name: "Experiment ratios & honest denominators",
@@ -79,7 +79,7 @@ export const metaKit: CompanyKit = {
     {
       name: "Gaps & islands in event streams",
       why: "Persistent behavior patterns, spiral patterns, consecutive-day islands — Meta's hardest screens stage an event stream, flag boundaries with LAG or ROW_NUMBER, and regroup. The two-stage shape (window in an inner query, gate outside) is the house pattern for every 'how long did the habit last' question.",
-      slugs: ["find-users-with-persistent-behavior-patterns", "find-students-with-study-spiral-pattern", "sessionize-events"],
+      slugs: ["find-users-with-persistent-behavior-patterns", "find-students-with-study-spiral-pattern", "sessionize-events", "find-emotionally-consistent-users"],
     },
     {
       name: "Reached but never engaged (anti-joins)",

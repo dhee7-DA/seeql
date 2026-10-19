@@ -59,27 +59,27 @@ export const remitlyKit: CompanyKit = {
     {
       name: "Two-grain corridor censuses",
       why: "Transfers and senders are different grains of the same join, and every census here reports both: EU runs 45 transfers from 8 senders while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "students-and-examinations", "maximum-transaction-each-day"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "students-and-examinations", "maximum-transaction-each-day", "number-of-rich-customers", "classes-more-than-5-students", "active-businesses", "monthly-transactions-i", "immediate-food-delivery-ii", "group-sold-products-by-the-date", "customer-order-frequency"],
     },
     {
       name: "Sender-to-transfer join hygiene",
       why: "Senders carry region and created_at; transfers inherit them through joins, and the join type decides who survives. A transfer without a sender is corruption; a sender without transfers is a signup leak — though on this db the anti-join returns a confident zero, and proving it is part of the job.",
-      slugs: ["combine-two-tables", "employees-with-missing-information", "employee-bonus", "duplicate-charge-pairs"],
+      slugs: ["combine-two-tables", "employees-with-missing-information", "employee-bonus", "duplicate-charge-pairs", "customers-who-never-order", "sellers-with-no-sales", "find-followers-count", "movie-rating", "find-churn-risk-customers", "fix-names-in-a-table"],
     },
     {
       name: "Payout-partner economics",
       why: "Partner-level reporting attaches every transfer line to its payout partner through the tier catalog — joins across products and order_items where the money is quantity × unit_price folded per partner. The bench read is the interview classic: revenue, listing count and rating side by side, with the strongest partner at 11,130.25.",
-      slugs: ["sales-analysis-i", "top-travellers", "average-selling-price", "fx-exposure-report"],
+      slugs: ["sales-analysis-i", "top-travellers", "average-selling-price", "fx-exposure-report", "npv-queries"],
     },
     {
       name: "Sender value ladders",
       why: "Concentration is ladder reporting: the top of the book runs 7,262.35, 6,640.56, 4,574.23, 3,644.56, 2,667.93 across senders with 24, 17, 14, 13 and 5 transfers — then four senders tie at 4. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer senders, not syntax.",
-      slugs: ["rank-scores", "department-top-three-salaries", "find-the-team-size", "transaction-velocity"],
+      slugs: ["rank-scores", "department-top-three-salaries", "find-the-team-size", "transaction-velocity", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "Speed-tier banding with CASE",
       why: "Delivery tiers are CASE-classified — fee bands, speed promises, delivery methods — with fixed edges the pricing page publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the corridor P&L, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "capital-gain-loss", "chargeback-rate-ranking"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "capital-gain-loss", "chargeback-rate-ranking", "trial-to-paid-funnel"],
     },
     {
       name: "Funding-rail set ops",

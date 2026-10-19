@@ -80,12 +80,12 @@ export const blueapronKit: CompanyKit = {
     {
       name: "Box cadence & the order ladder",
       why: "Blue Apron is a cadence business, and the first screen is always the ladder: box cycles per household, banded, gated with HAVING. The trap is grain — COUNT(*) counts cycles, COUNT(DISTINCT customer_id) folds repeat demand back to the 16 households, and the gap between them is boxes per household per window.",
-      slugs: ["customer-order-frequency", "repeat-purchase-rate", "customer-placing-the-largest-number-of-orders"],
+      slugs: ["customer-order-frequency", "repeat-purchase-rate", "customer-placing-the-largest-number-of-orders", "basket-depth-aov"],
     },
     {
       name: "Pause, skip & kept demand",
       why: "The lifecycle board's most-watched pair is {amber:paused} 14 beside {rose:skipped} 7 of 103 placed, and both are conditional counts before they are percentages: SUM(CASE WHEN status = …) over the same COUNT(*) that divides. Screens drill the split until nobody merges a winnable pause into a churn verdict — and until kept-demand shares quote the placed denominator out loud.",
-      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "week-over-week-churn"],
+      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "week-over-week-churn", "immediate-food-delivery-iii", "duplicate-charge-pairs", "monthly-transactions-i"],
     },
     {
       name: "The two-grain census",
@@ -95,7 +95,7 @@ export const blueapronKit: CompanyKit = {
     {
       name: "Pause windows & reactivation",
       why: "A paused household is winback inventory with a clock on it: pause durations, two-purchases-within-a-window style re-engagement tests, and the dormant list before the pause becomes a skip. Screens drill date-diff windows, first/last-event subqueries and the anti-join that finds households reachable but untouched.",
-      slugs: ["users-with-two-purchases-within-seven-days", "find-churn-risk-customers", "dormant-reactivation"],
+      slugs: ["users-with-two-purchases-within-seven-days", "find-churn-risk-customers", "dormant-reactivation", "cohort-retention-matrix", "net-revenue-retention", "gl-reconciliation"],
     },
     {
       name: "Billing anti-joins & the dunning queue",
@@ -105,22 +105,22 @@ export const blueapronKit: CompanyKit = {
     {
       name: "Box economics & CASE bands",
       why: "Plans and portion bands are CASE histograms: the per-portion fold reads 268 budget portions at 31.01 against 230 family portions at 115.85, and the band edge is a published definition. Screens drill the CASE arm until the ELSE arm's absence reads as a finding — an empty premium band means the ladder tops out, not that the query is broken.",
-      slugs: ["the-category-of-each-member-in-the-store", "spend-histogram", "calculate-orders-within-each-interval"],
+      slugs: ["the-category-of-each-member-in-the-store", "spend-histogram", "calculate-orders-within-each-interval", "mrr-waterfall", "weather-type-in-each-country"],
     },
     {
       name: "Portion ladders & the rank trio",
       why: "The recipe portion ladder runs 47 down to 21 with ties everywhere — 36 twice, 30 three times, 21 three times — and ladder reporting is leaderboard reporting. ROW_NUMBER, RANK and DENSE_RANK differ exactly at those ties, and 'why does my top-10 return 12 recipes' is the tie policy you were supposed to state before the query ran.",
-      slugs: ["rank-scores", "top-earners", "usage-tier-percentiles"],
+      slugs: ["rank-scores", "top-earners", "usage-tier-percentiles", "keep-latest-dedupe"],
     },
     {
       name: "Menu-family economics & the supply join",
       why: "The supply fold chains farm partners → recipe SKUs → box lines, and per-portion economics is a join-and-ratio fold: realized per-portion price against list, value per partner, each household's most-cooked recipe. The argmax shapes ride the same chain, and the tie policy is part of the definition, not a footnote.",
-      slugs: ["average-selling-price", "top-travellers", "most-frequently-ordered-product-per-customer"],
+      slugs: ["average-selling-price", "top-travellers", "most-frequently-ordered-product-per-customer", "confirmation-rate", "group-sold-products-by-the-date"],
     },
     {
       name: "Waste ledgers & running math",
       why: "Surplus is stock minus boxed, and the ledger must stage the per-recipe fold before it rolls to families — exactly the two-stage shape derived tables and CTEs exist for. Screens drill cumulative portion staging, running-capacity gates and the frame semantics that decide whether a tie jumps the running total.",
-      slugs: ["game-play-analysis-iii", "find-cumulative-salary-of-an-employee", "last-person-to-fit-in-the-elevator"],
+      slugs: ["game-play-analysis-iii", "find-cumulative-salary-of-an-employee", "last-person-to-fit-in-the-elevator", "bank-account-summary-ii"],
     },
     {
       name: "Data quality & the NULL pantry",

@@ -58,7 +58,7 @@ export const flixKit: CompanyKit = {
     {
       name: "The booking funnel",
       why: "Every FlixBus screen opens with the booking book: journeys booked, departure-stamped, traveled-and-settled, refunded. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling a ticketed-in-flight booking 'traveled' — 30 versus 52 on this db.",
-      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "funnel-step-conversion", "second-day-verification"],
+      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "funnel-step-conversion", "second-day-verification", "immediate-food-delivery-ii", "report-contiguous-dates", "find-the-team-size"],
     },
     {
       name: "Two-grain market censuses",
@@ -73,32 +73,32 @@ export const flixKit: CompanyKit = {
     {
       name: "Fare-band CASE ladders",
       why: "Dynamic pricing prints fare bands that move with demand, and the yield review CASE-classifies every seat line at fixed edges — below the 55 line, above it. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the yield forecast, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "the-category-of-each-member-in-the-store", "average-selling-price"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "the-category-of-each-member-in-the-store", "average-selling-price", "net-revenue-retention"],
     },
     {
       name: "Booking lead-time clocks",
       why: "Lead time is julianday arithmetic over a stamp that only departed journeys carry, and the market cut (2.94 / 2.93 / 3.07 / 3.5) is a network-planning input, not a vanity metric. FlixBus drills date filtering here too — bookings made in a window, latest booking per passenger — because advance-purchase windows drive the yield curve.",
-      slugs: ["average-time-of-process-per-machine", "list-the-products-ordered-in-a-period", "the-latest-login-in-2020", "median-time-to-convert", "second-day-confirmation"],
+      slugs: ["average-time-of-process-per-machine", "list-the-products-ordered-in-a-period", "the-latest-login-in-2020", "median-time-to-convert", "second-day-confirmation", "confirmation-rate", "biggest-window-between-events", "keep-latest-dedupe"],
     },
     {
       name: "Yield leaderboards & tie policy",
       why: "The passenger ladder ranks riders by bookings and lifetime spend, and ties are guaranteed — four passengers sit at 4 bookings each on this db, behind the 24, 17, 14, 13, 5 rungs. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a loyalty policy, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "users-with-two-purchases-within-seven-days"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "users-with-two-purchases-within-seven-days", "second-highest-salary"],
     },
     {
       name: "Frequency gates & HAVING floors",
       why: "Network planning only staffs markets that clear a frequency floor, and partner reviews only seat operators that clear a SKU-depth floor — both are group-level facts that live in HAVING. The trap is intuition about counts: on this db a ten-booking floor keeps EU (45), APAC (37) and US (19) and drops LATAM's 2, and no operator carries more than 3 route SKUs, so any floor above 3 empties the bench.",
-      slugs: ["classes-more-than-5-students", "managers-with-at-least-5-direct-reports", "customer-placing-the-largest-number-of-orders", "calculate-orders-within-each-interval"],
+      slugs: ["classes-more-than-5-students", "managers-with-at-least-5-direct-reports", "customer-placing-the-largest-number-of-orders", "calculate-orders-within-each-interval", "sales-by-day-of-the-week", "employees-earning-more-than-their-managers"],
     },
     {
       name: "Anti-joins on the settlement book",
       why: "Booked is not settled: the finance tables are where the network world meets money, and the 6 never-collected statements worth 15,217 ARE an anti-join. The LEFT JOIN + IS NULL shape (and its NOT EXISTS twin) shows up in most screens as the 'which partner do we call first' question — and the mirror anomaly (a void statement WITH a leg) is why the status column never gets trusted alone.",
-      slugs: ["customers-who-never-order", "sellers-with-no-sales", "employees-with-missing-information", "ar-aging-schedule"],
+      slugs: ["customers-who-never-order", "sellers-with-no-sales", "employees-with-missing-information", "ar-aging-schedule", "game-play-analysis-iv", "customers-who-bought-a-and-b-not-c", "null-blank-audit"],
     },
     {
       name: "One-pass network censuses",
       why: "The ops board gets traveled, in-flight, held and refunded in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "hopper-company-queries-i", "the-number-of-passengers-in-each-bus-i", "the-number-of-passengers-in-each-bus-ii", "consecutive-available-seats"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "hopper-company-queries-i", "the-number-of-passengers-in-each-bus-i", "the-number-of-passengers-in-each-bus-ii", "consecutive-available-seats", "queries-quality-and-percentage", "last-person-to-fit-in-the-bus", "not-boring-movies"],
     },
     {
       name: "Cents discipline & settlement coverage",

@@ -35,7 +35,7 @@ export const freenowKit: CompanyKit = {
     "FREE NOW is Europe's multi-mobility super-app — the taxi-first platform (born of the BMW–Daimler JV) that stacked private-hire, e-scooters, e-mopeds and more into one app and licenses its way city by city. The operating reality is a {amber:mix problem}: the same rider base books different vehicle classes with different economics, so every count needs its vertical named before it means anything. On this kit's proxy ledger that's 103 rides worth **34,833.28** (average 338.19) across 16 riders and 251 fare lines, split across seven service families. The status map is the ride lifecycle: 52 {emerald:completed} with a completion ping (50.5%), 30 driver-en-route (29.1%), 14 awaiting match (13.6%), 7 {rose:cancelled} (6.8%) — and the drilled habit is *completed ÷ ALL booked*, never ÷ resolved.",
     "Two reads define the analyst job here. The {amber:mix read}: the busiest family by billable units is NOT the revenue leader — one family moves 121 units for 3,294.29 while another moves 97 for **11,744.01** — so volume and value land on different verticals and the census must carry both columns. The {sky:market read}: Europe is the core — EU carries 45 rides from 8 riders and 15,089.23 billed — while the other regions read like pilot books (APAC 37 rides from 5, US 19 from 2, LATAM just 2 from 1), each with its own average ticket (US 383.48, LATAM 426.22, EU 335.32, APAC 313.66). Completion lag on the proxy clock averages **2.98 days** over the 82 pinged rides, fastest in APAC at 2.93 — the supply-side clock that decides whether a city's fleet keeps its promises.",
     "Interviews are mix-first, grain-obsessed, cents-precise. A screen opens with a warm-up join (attach fare lines to their service family), escalates into a conditional aggregation with a status rule (completion share by market, cancelled share by month), then lands on either a supply read (which families or markets have no completed rides at all — and the confidence to print a verified zero) or a billing read (28 `invoices` against 27 `payments`, INTEGER cents, 6 unsettled worth 15,217.00, one of which *claims paid with zero settlement rows*). Follow-ups are spoken aloud: *'is that per ride or per rider?'*, *'does the weekend filter use %w or a date BETWEEN?'*, *'what does an unmatched settlement row mean for the city P&L?'*",
-    "Preparation strategy: FREE NOW has **0 tagged LC** rows in this app's pool, so the kit is **theme-curated** — all 30 topic slugs and 16 problems are hand-picked from the theme menu to mirror super-app screens: vertical folds, market censuses, supply anti-joins, weekend date math, capacity pairing, tie-proofed leaderboards. Then run both case studies on the live db: one rebuilds the {amber:vertical revenue census} the city GM deck opens with, the other rebuilds the {emerald:rider activity leaderboard} with its tie policy made explicit. The bar to clear: name the vertical, state the denominator, and respect the cents rule before you compute anything.",
+    "Preparation strategy: FREE NOW has **0 tagged LC** rows in this app's pool, so the kit is **theme-curated** — all 30 topic slugs and 16 problems are hand-picked from the theme menu to mirror super-app screens: vertical folds, market censuses, supply anti-joins, weekend date math, capacity pairing, tie-proofed leaderboards. Then run all six case studies on the live db: one rebuilds the {amber:vertical revenue census} the city GM deck opens with, the other rebuilds the {emerald:rider activity leaderboard} with its tie policy made explicit, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The bar to clear: name the vertical, state the denominator, and respect the cents rule before you compute anything.",
     "The money side runs on a {amber:billing book} the ride ledger must reconcile against: 28 `invoices` worth **86,977.00**, settled by 27 payment legs across 22 distinct bills — five bills pay in two splits — on two rails: card moves 16 legs / 37,364.00 (53.7% of settled value), wire 11 / 32,248.00. The coverage census is what the close quotes verbatim: 21 bills exact (65,612.00), 6 with no settlement rows at all (15,217.00), 1 partial (invoice #25, 4,000.00 of 6,148.00) — and settlement averages **28.4 days** (fastest 13, slowest 84) against flat 30-day terms. Partners and costs frame the economics: two fleet partners carry the book (Nordic Gadgets AB 32%, Midwest Hardware Co 26.7% — 58.6 between them), while the ops cost stack is 36 lines / 25,416.00 with {rose:Rent} at 14 lines / 16,800.00 (66.1% of it). *Every one of those numbers has a denominator, and the interviewer wants it named.*",
     "Preparation roadmap, four passes. Pass one is the grain ladder: rebuild the mix census (units AND dollars per family) and the market census (45 rides from 8 EU riders) until quoting the grain is reflex. Pass two is the status layer: conditional counts over {emerald:completed} and {rose:cancelled} with denominators fixed before ratios, then the CASE pivot per market. Pass three is the billing book: anti-joins for the 6 unsettled bills, the cents rule (`amount_cents / 100.0`), coverage classes, and the #28 claim-paid-no-rows anomaly. Pass four is windows and pace: DENSE_RANK leaderboards with a named tie policy, LAG walks over the **14-month spine**, then rebuild all six case studies from the chip bank under time. *The bar is constant across passes: name the vertical, state the denominator, respect the cents.*",
   ],
@@ -67,22 +67,22 @@ export const freenowKit: CompanyKit = {
     {
       name: "Multi-vertical revenue folds",
       why: "One app, seven service families — every revenue question here is a fold over fare lines joined to their family, with quantity and price multiplied honestly. FREE NOW probes whether you can carry units AND dollars in one census without letting either column become a count of the other.",
-      slugs: ["product-sales-analysis-ii", "sales-analysis-i", "top-earners"],
+      slugs: ["product-sales-analysis-ii", "sales-analysis-i", "top-earners", "average-selling-price"],
     },
     {
       name: "City & market censuses",
       why: "City-by-city licensing means the market census is the operating map: rides AND riders per market, load versus audience. COUNT(*) counts ride rows, COUNT(DISTINCT customer_id) counts people — EU's 45 rides collapse to 8 riders and the intensity gap is the story the launch review opens with.",
-      slugs: ["daily-leads-and-partners", "find-cities-in-each-state", "unique-orders-and-customers-per-month"],
+      slugs: ["daily-leads-and-partners", "find-cities-in-each-state", "unique-orders-and-customers-per-month", "customer-order-frequency"],
     },
     {
       name: "Ride-state conditional counting",
       why: "Completed, en-route, awaiting match, cancelled — every rate is a conditional count over a status flag, and the first question out loud is 'what's in the denominator?'. SUM(CASE WHEN status …) over ALL booked rides survives scrutiny; filtering first is denominator drift.",
-      slugs: ["immediate-food-delivery-ii", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest"],
+      slugs: ["immediate-food-delivery-ii", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "trips-and-users", "total-sales-amount-by-year"],
     },
     {
       name: "Supply-side anti-joins",
       why: "Driver supply is the two-sided constraint: families or markets with no completed rides, services with zero demand. The LEFT JOIN + IS NULL shape (and its NOT EXISTS twin) is the screen's signature — including the confidence to print a verified zero when the anti-join comes back empty.",
-      slugs: ["sellers-with-no-sales", "customers-who-never-order", "find-churn-risk-customers"],
+      slugs: ["sellers-with-no-sales", "customers-who-never-order", "find-churn-risk-customers", "consecutive-numbers"],
     },
     {
       name: "Ranking ladders & shared rungs",
@@ -92,32 +92,32 @@ export const freenowKit: CompanyKit = {
     {
       name: "Rates & honest denominators",
       why: "Completion shares, cancellation percentages, per-rider intensity — super-app ratios punish integer division and careless filters. The house habit: 100.0 before the division, the denominator's population decided BEFORE the ratio, rounding only at the very end.",
-      slugs: ["queries-quality-and-percentage", "confirmation-rate", "card-launch-success"],
+      slugs: ["queries-quality-and-percentage", "confirmation-rate", "card-launch-success", "sales-analysis-iii", "ads-performance", "user-activity-for-the-past-30-days-i"],
     },
     {
       name: "Weekend-surge date math",
       why: "Surge planning lives on the calendar: weekend rides versus weekday, month buckets on the 2024-01..2025-02 spine, latest ride before a cutoff. STRFTIME('%w') classifies ride days; '%Y-%m' builds the trend; half-open intervals keep the boundary night from vanishing.",
-      slugs: ["monthly-transactions-i", "tasks-count-in-the-weekend", "the-latest-login-in-2020"],
+      slugs: ["monthly-transactions-i", "tasks-count-in-the-weekend", "the-latest-login-in-2020", "keep-latest-dedupe", "monthly-transactions-ii"],
     },
     {
       name: "NULL-safe supply reads",
       why: "A ride awaiting match has no completion ping; a service with no bookings has no lines. FREE NOW screens check whether you treat NULL as a state to report, coalesce for display, or exclude with a stated reason — deliberately, because a supply read that silently shrank its population is a number wearing the wrong name.",
-      slugs: ["employee-bonus", "books-with-null-ratings", "combine-two-tables"],
+      slugs: ["employee-bonus", "books-with-null-ratings", "combine-two-tables", "number-of-employees-who-met-the-target"],
     },
     {
       name: "Capacity & pairing reads",
       why: "Multi-mobility ops is capacity math: seats available versus riders waiting, vehicles that can be paired, pools that fit. Self-joins and running-capacity windows are the screen's physical layer — the query shapes behind 'can this fleet serve this city tonight?'",
-      slugs: ["consecutive-available-seats", "last-person-to-fit-in-the-bus", "the-number-of-passengers-in-each-bus-i"],
+      slugs: ["consecutive-available-seats", "last-person-to-fit-in-the-bus", "the-number-of-passengers-in-each-bus-i", "human-traffic-of-stadium"],
     },
     {
       name: "Argmax & latest-per-group",
       why: "Every ops review closes with a per-group argmax: each market's priciest ride, each rider's most recent booking, each family's top service. FREE NOW drills the argmax shapes because bare-MAX join-backs double rows on ties — and ties are everywhere on a super-app ledger.",
-      slugs: ["most-frequently-ordered-product-per-customer", "the-most-recent-orders-for-each-product", "uber-first-transaction"],
+      slugs: ["most-frequently-ordered-product-per-customer", "the-most-recent-orders-for-each-product", "uber-first-transaction", "product-sales-analysis-iii", "article-views-ii"],
     },
     {
       name: "Settlement rails & billing books",
       why: "Multi-mobility billing settles on rails and in books: card legs beside wire legs, invoice folds beside payment folds, INTEGER cents everywhere. FREE NOW screens the rail census and the coverage classes because a city P&L that cannot reconcile its own settlement legs is a P&L nobody signs.",
-      slugs: ["bank-account-summary-ii", "duplicate-charge-pairs", "gl-reconciliation"],
+      slugs: ["bank-account-summary-ii", "duplicate-charge-pairs", "gl-reconciliation", "list-the-products-ordered-in-a-period", "average-time-of-process-per-machine", "game-play-analysis-iv"],
     },
     {
       name: "Cost stacks & opex folds",
@@ -132,7 +132,7 @@ export const freenowKit: CompanyKit = {
     {
       name: "Status pivots & board shapes",
       why: "The market health board is a pivot: completed, awaiting and cancelled per market in one row, percentages beside counts. Reformatting folds into columns — by weekday, by status, by weather-style CASE arms — is the board-builder's toolkit, and every arm needs its denominator named.",
-      slugs: ["reformat-department-table", "sales-by-day-of-the-week", "weather-type-in-each-country"],
+      slugs: ["reformat-department-table", "sales-by-day-of-the-week", "weather-type-in-each-country", "classes-more-than-5-students"],
     },
     {
       name: "Partner dependency & concentration",

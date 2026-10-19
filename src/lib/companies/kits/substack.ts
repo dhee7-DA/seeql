@@ -49,7 +49,7 @@ export const substackKit: CompanyKit = {
     {
       name: "Send-funnel counts",
       why: "Every Substack growth screen opens with the funnel: posts booked, sent (shipped_at stamped), landed. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling an in-flight send 'landed' — 30 versus 52 on this db.",
-      slugs: ["trial-to-paid-funnel", "funnel-step-conversion", "immediate-food-delivery-i"],
+      slugs: ["trial-to-paid-funnel", "funnel-step-conversion", "immediate-food-delivery-i", "email-engagement-funnel"],
     },
     {
       name: "Two-grain publication censuses",
@@ -59,7 +59,7 @@ export const substackKit: CompanyKit = {
     {
       name: "Joining publications to posts",
       why: "Publications carry region and created_at; posts inherit them through joins, and the join type decides who survives. A post without a publication is corruption; a publication without posts is a dormant blog — though on this db the anti-join returns a confident zero, and proving it is part of the job.",
-      slugs: ["combine-two-tables", "sales-analysis-ii", "employee-bonus"],
+      slugs: ["combine-two-tables", "sales-analysis-ii", "employee-bonus", "article-views-ii", "find-followers-count", "number-of-comments-per-post"],
     },
     {
       name: "Cadence leaderboards",
@@ -69,12 +69,12 @@ export const substackKit: CompanyKit = {
     {
       name: "Tier banding with CASE",
       why: "Subscription tiers are CASE-classified — paid, free, founding — with fixed edges the pricing page publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the revenue forecast, and a reordered WHEN quietly re-bands the list.",
-      slugs: ["triangle-judgement", "weather-type-in-each-country", "the-category-of-each-member-in-the-store"],
+      slugs: ["triangle-judgement", "weather-type-in-each-country", "the-category-of-each-member-in-the-store", "analyze-subscription-conversion", "winback-recovery", "cohort-retention-matrix", "growth-accounting", "net-revenue-retention", "ltv-cac-payback", "mrr-waterfall"],
     },
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month publishing spine (2024-01 to 2025-02) is the growth call's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) and jump (+1,158.21 into August) named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["biggest-window-between-events", "second-day-confirmation", "year-on-year-growth-rate"],
+      slugs: ["biggest-window-between-events", "second-day-confirmation", "year-on-year-growth-rate", "invalid-tweets", "fix-names-in-a-table"],
     },
     {
       name: "Coverage set algebra",
@@ -89,7 +89,7 @@ export const substackKit: CompanyKit = {
     {
       name: "One-pass status censuses",
       why: "The ops board gets landed, in-flight, scheduled and killed in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "snaps-analysis"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "snaps-analysis", "week-over-week-churn", "dau-wau-stickiness", "rolling-7d-actives"],
     },
     {
       name: "Payout rails & cents discipline",

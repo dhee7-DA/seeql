@@ -82,7 +82,7 @@ export const zomatoKit: CompanyKit = {
     {
       name: "Month buckets & demand trend",
       why: "The monthly close lives on STRFTIME buckets — 14 of them on this ledger, 2024-01 to 2025-02 — and the classic bug is '%m' merging January 2024 with January 2025 into one phantom bucket. Bucket, then rank, then carry cancellations alongside.",
-      slugs: ["monthly-transactions-i", "list-the-products-ordered-in-a-period", "unique-orders-and-customers-per-month", "monthly-transactions-ii"],
+      slugs: ["monthly-transactions-i", "list-the-products-ordered-in-a-period", "unique-orders-and-customers-per-month", "monthly-transactions-ii", "restaurant-growth"],
     },
     {
       name: "Repeat-order cohorts",

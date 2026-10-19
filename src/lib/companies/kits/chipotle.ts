@@ -55,7 +55,7 @@ export const chipotleKit: CompanyKit = {
     {
       name: "Ticket stages & the funnel counts",
       why: "Every Chipotle screen opens with the funnel: tickets placed, served, staged, queued, 86'd. Each stage is a conditional count over a status, and the interviewer's first question is what the denominator holds — 52 served and 30 staged are different stages of the same line, and calling staged tickets served inflates the close rate before a single bowl lands.",
-      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "customer-order-frequency", "immediate-food-delivery-iii", "not-boring-movies"],
+      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "customer-order-frequency", "immediate-food-delivery-iii", "not-boring-movies", "trial-to-paid-funnel"],
     },
     {
       name: "Two-grain market censuses",
@@ -90,7 +90,7 @@ export const chipotleKit: CompanyKit = {
     {
       name: "One-pass censuses for the huddle board",
       why: "The line board ships as ONE scan: served, staged, queued, 86'd plus average ticket, four branches reconciling to COUNT(*). FILTER (WHERE …) and SUM(CASE …) build it in a single pass; four sequential queries are four chances to drift out of reconciliation before the 9:15 huddle.",
-      slugs: ["active-businesses", "ratings-histogram", "create-a-session-bar-chart", "group-sold-products-by-the-date", "user-activity-for-the-past-30-days-i"],
+      slugs: ["active-businesses", "ratings-histogram", "create-a-session-bar-chart", "group-sold-products-by-the-date", "user-activity-for-the-past-30-days-i", "big-countries"],
     },
     {
       name: "NULLs & the honest dead-end",

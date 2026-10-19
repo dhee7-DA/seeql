@@ -35,7 +35,7 @@ export const chimeKit: CompanyKit = {
     "Chime is the fee-free neobank — direct deposits land, SpotMe spots the gap, the Credit Builder card builds the file, and the whole product is engineered so members never pay for the privilege. The analytics reality is engagement engineering wearing a banking badge: every funding event either lands, settles, or reverses, and the repayment book behind the advances is the margin. On this storefront db the mapping is honest: `orders` are member funding events (103 of them), order_items are the allocation lines inside an event (251 — about 2.4 lines each), customers are members, and suppliers are the funding rails the deposits ride in on. Event outcomes mirror the status mix exactly: **52 landed** (50.5%), **30 settling** (29.1%), **14 pending** (13.6%), **7 reversed** (6.8%) — and shipped_at is the settlement timestamp, populated only for the 82 events that got there.",
     "The data org splits into engagement, risk, and the money-movement desk. Engagement owns the member funnel: EU members ran 45 events from 8 accounts, APAC 37 from 5, US 19 from 2, LATAM 2 from 1, and funding concentrates hard — **63.5%** of volume from members whose lifetime funding crosses $3,000. Risk owns the ladder: 28 statement cycles against 27 repayment legs, INTEGER cents end to end, with the standing contradictions — cycle #11 is {rose:void} yet carries a $925.00 repayment leg, #28 reads {emerald:paid} with nothing behind it ($1,756.00), and one statement sits {amber:partial} at $4,000.00 of $6,148.00. Money movement owns the rails: instant card repayments run 16 legs for **$37,364.00**, manual ACH 11 for $32,248.00, and five cycles repay in two legs (1, 5, 12, 19, 22).",
     "Interview style is denominator-first, then the backlog. A screen opens with a conditional count (landed share — *of all events, or only the 82 that settled?*), moves to the two-table read (repayment legs joined onto statement cycles, where one wrong key pairs a leg with the wrong cycle), escalates into the {emerald:anti-join} — statements carrying zero legs — where the collections queue lives, and lands on the leaderboard: members ranked by funding volume with an explicit tie-break. The graded habits: state the denominator, keep the `LEFT JOIN` alive, and never let a void-with-a-leg hide inside a paid average.",
-    "Preparation: the registry tags zero SQL problems for Chime — this kit is **0 tagged LC, theme-curated**: all 30 topic slugs and 16 problems are chosen to mirror deposit-engagement and repayment-coverage screens — conditional folds, anti-joins for untouched statements, NULL policies for missing settlement timestamps, month walks and leaderboards. Then run both case studies on the live db: one rebuilds the {emerald:repayment backlog} census credit ops ships weekly (6 statements / $15,217.00 untouched), the other rebuilds the {violet:member funding leaderboard} the engagement review opens with ($7,262.35 leading). Say the denominator, the join key and the NULL policy out loud before you compute — at a fee-free bank, the spreadsheets are the fees.",
+    "Preparation: the registry tags zero SQL problems for Chime — this kit is **0 tagged LC, theme-curated**: all 30 topic slugs and 16 problems are chosen to mirror deposit-engagement and repayment-coverage screens — conditional folds, anti-joins for untouched statements, NULL policies for missing settlement timestamps, month walks and leaderboards. Then run all six case studies on the live db: one rebuilds the {emerald:repayment backlog} census credit ops ships weekly (6 statements / $15,217.00 untouched), the other rebuilds the {violet:member funding leaderboard} the engagement review opens with ($7,262.35 leading). Say the denominator, the join key and the NULL policy out loud before you compute — at a fee-free bank, the spreadsheets are the fees.",
     "Beyond the funding book sits the Credit Builder desk, and it reads the same tables with a risk lens. The card is reserve-backed, so the interesting column isn't credit — it's discipline: {violet:utilization bands}, repayment coverage, and the {sky:Credit Builder} funnel that graduates thin-file members into a real file. On this db the repayment ladder IS that program's proxy: 28 statement cycles against 27 legs on two rails, and a coverage census that must classify exact / partial / none without letting a {rose:void}-but-repaid cycle or a paid-but-unmoved one launder the number. *The risk team's rule of thumb: a KPI is a definition before it is a query* — direct-deposit attach, SpotMe repayment rate, NSF incidence and member transaction frequency all get argued at the denominator before anyone writes SQL, and the theory section below drills exactly those arguments.",
     "Prep the mechanics, not the trivia. The convention to say out loud before any fintech query: `invoices`, `payments`, `expenses` and `ledger_entries` are **INTEGER cents** — fold in cents, divide by 100.0 exactly once at the display edge, and never CAST the sum to INTEGER before dividing (the $34,833.28 book truncates to a **338** average under cast-then-divide). The screens are live db, not whiteboard: one two-table read with a deliberate id-coincidence trap, one anti-join that must keep the legless, one leaderboard with a named tie-break — and the close, the GL tie-out where {emerald:debits 181,080} equals {emerald:credits 181,080} and *a delta that isn't zero is the whole interview*. Rebuild all six case files below until the fills are reflexive; then run them again and narrate the denominator before every count.",
   ],
@@ -66,12 +66,12 @@ export const chimeKit: CompanyKit = {
     {
       name: "Funding-event folds & conditional counts",
       why: "Every engagement read at Chime is a fold with a conditional count inside: events per day, landed per rail, reversed per member. The denominator question rides on every one — COUNT(*) over all events versus the settled subset is the difference between a landed rate and a settlement rate.",
-      slugs: ["user-activity-for-the-past-30-days-ii", "article-views-ii", "game-play-analysis-i"],
+      slugs: ["user-activity-for-the-past-30-days-ii", "article-views-ii", "game-play-analysis-i", "maximum-transaction-each-day"],
     },
     {
       name: "Two-table reads: legs onto statements",
       why: "Repayment analytics is a two-table read: legs carry the statement's foreign key, statements carry the status and the billed amount. One wrong join key pairs a leg with the wrong statement and every coverage number downstream inherits the fiction — the id-coincidence trap (leg id equals cycle id) is exactly the silent mis-pairing Chime screens hunt.",
-      slugs: ["replace-employee-id-with-unique-identifier", "employee-bonus", "product-price-at-a-given-date"],
+      slugs: ["replace-employee-id-with-unique-identifier", "employee-bonus", "product-price-at-a-given-date", "number-of-accounts-that-did-not-stream", "duplicate-charge-pairs", "journal-gap-detection", "circular-transfers"],
     },
     {
       name: "Untouched-statement anti-joins",
@@ -81,27 +81,27 @@ export const chimeKit: CompanyKit = {
     {
       name: "NULL policy: void legs & missing settlements",
       why: "Statement #11 is void with a leg; #28 is paid with none. SUM over missing legs is NULL, not zero, and COUNT(column) versus COUNT(*) diverges exactly there. The policy — audit, report, or guard — is a stated decision, not a default.",
-      slugs: ["employees-with-missing-information", "books-with-null-ratings", "find-customer-referee"],
+      slugs: ["employees-with-missing-information", "books-with-null-ratings", "find-customer-referee", "null-blank-audit"],
     },
     {
       name: "Settlement clocks & interval logic",
       why: "The deposit-to-settlement clock is date arithmetic: JULIANDAY deltas per event, events overlapping payroll windows, advances whose repay lag by days. The NULL settlement timestamp is the standing trap — pending is not slow, and averaging over it fabricates the SLA breach.",
-      slugs: ["rising-temperature", "users-that-actively-request-confirmation-messages", "calculate-parking-fees-and-duration"],
+      slugs: ["rising-temperature", "users-that-actively-request-confirmation-messages", "calculate-parking-fees-and-duration", "median-time-to-convert"],
     },
     {
       name: "Funding calendars & month spines",
       why: "The book runs on calendar buckets: events per month via SUBSTR, payroll windows, statements issued in a period. Half-open intervals and month keys are the mechanics, and the midnight boundary is where two 'identical' engagement reports disagree.",
-      slugs: ["monthly-transactions-i", "friday-purchase-iii", "list-the-products-ordered-in-a-period"],
+      slugs: ["monthly-transactions-i", "friday-purchase-iii", "list-the-products-ordered-in-a-period", "users-with-two-purchases-within-seven-days"],
     },
     {
       name: "LAG/LEAD volume walks",
       why: "The volume walk is LAG-shaped: this month's funding events minus last month's, the first row's NULL delta part of the story — no prior month, no delta. Hand-waving it to zero mislabels the baseline the engagement review quotes.",
-      slugs: ["week-over-week-churn", "consecutive-numbers", "year-on-year-growth-rate"],
+      slugs: ["week-over-week-churn", "consecutive-numbers", "year-on-year-growth-rate", "growth-accounting"],
     },
     {
       name: "Coverage CASE bands",
       why: "The coverage ladder is CASE arms evaluated in order: no legs first, exact only when settled equals billed, partial is the ELSE. Arm ordering matters — a statement the earlier arms don't catch lands in the ELSE by definition — and Chime's screens test whether the ELSE is a contract or a leak.",
-      slugs: ["loan-types", "count-salary-categories", "weather-type-in-each-country"],
+      slugs: ["loan-types", "count-salary-categories", "weather-type-in-each-country", "credit-utilization-bands", "suspicious-bank-account-transactions", "delinquency-buckets", "consecutive-transactions-with-increasing-amounts", "structuring-detection", "find-third-transaction", "ar-aging-schedule"],
     },
     {
       name: "Leaderboards & per-group argmax",
@@ -116,27 +116,27 @@ export const chimeKit: CompanyKit = {
     {
       name: "Window frames & running balances",
       why: "The funding position walk is a frame question: cumulative volume per member, trailing-event exposure for SpotMe limits, running repayment totals per rail. The default frame is RANGE — same-key peers join the frame together — and same-day payroll batches are exactly the ties that make a 'running total' jump. ROWS versus RANGE is the difference between a per-event walk and a per-day fold, and the screens hide a tie in the data on purpose.",
-      slugs: ["find-cumulative-salary-of-an-employee", "account-balance", "running-total-for-different-genders"],
+      slugs: ["find-cumulative-salary-of-an-employee", "account-balance", "running-total-for-different-genders", "balance-rollforward", "daily-balance-interest", "bank-account-summary", "bank-account-summary-ii", "biggest-window-between-events", "trial-balance-check"],
     },
     {
       name: "Set ops on the money rails",
       why: "Card and wire legs are two populations that report side by side: stack the rail censuses with UNION ALL, diff rail coverage with EXCEPT, and keep the arms column-aligned. UNION's dedup is the trap — two arms folding to the same (rail, month, count) tuple collapse into one row and a repayment census silently loses a leg. At a two-rail bank, set ops are the reconciliation grammar.",
-      slugs: ["league-statistics", "count-apples-and-oranges", "tournament-winners"],
+      slugs: ["league-statistics", "count-apples-and-oranges", "tournament-winners", "keep-latest-dedupe"],
     },
     {
       name: "Derived tables & staged folds",
       why: "The cleanest per-member reads stage a fold in FROM — one row per member — then compare in the outer query: the whale-share read (63.5% of volume from the $3,000-plus cohort) is exactly a derived fold under a conditional sum. A derived table runs once, unlike the correlated cousin that re-runs per outer row, and it demands an alias the way a CTE demands a name. Chime's harder screens hand you a 'compare each member to the book' prompt and grade the staging.",
-      slugs: ["game-play-analysis-iv", "second-highest-salary", "orders-with-maximum-quantity-above-average"],
+      slugs: ["game-play-analysis-iv", "second-highest-salary", "orders-with-maximum-quantity-above-average", "transaction-velocity", "cohort-retention-matrix"],
     },
     {
       name: "Percentile tiles & rolling averages",
       why: "Funding tiers are window work: NTILE and PERCENT_RANK cut the member book into whale / mid / long-tail bands the engagement review prices differently, and a rolling landed-deposit average needs a frame that stays honest across quiet days. The trap is the tie — PERCENT_RANK shares peer values, and the tier a member lands on can be an artifact of the ORDER BY. Say the frame out loud before the tile.",
-      slugs: ["usage-tier-percentiles", "top-percentile-fraud", "rolling-average-steps"],
+      slugs: ["usage-tier-percentiles", "top-percentile-fraud", "rolling-average-steps", "delinquency-roll-rates", "restaurant-growth", "rolling-7d-actives"],
     },
     {
       name: "Streaks, gaps & deposit cadence",
       why: "Payroll cadence is islands work: consecutive landed-deposit days per member, the biggest quiet window between events (LEAD), burst sessionization when a member funds three times in an hour. The gaps-and-islands shape — ROW_NUMBER minus date, then group — is the same move whether the unit is days or events, and it feeds the dormancy and winback cohorts directly.",
-      slugs: ["report-contiguous-dates", "sessionize-events", "find-the-start-and-end-number-of-continuous-ranges"],
+      slugs: ["report-contiguous-dates", "sessionize-events", "find-the-start-and-end-number-of-continuous-ranges", "monthly-transactions-ii", "winback-recovery", "basket-depth-aov"],
     },
   ],
 

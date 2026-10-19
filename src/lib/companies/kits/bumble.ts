@@ -31,7 +31,7 @@ export const bumbleKit: CompanyKit = {
     "Bumble is the women-first dating app — the match is the product's atomic unit and the 24-hour first-move window is its ticking clock. The unit of analysis is the **match**: one member pair, one window, one outcome — {emerald:opener sent & replied}, {sky:opener sent & unanswered}, sitting unopened, or {rose:expired unopened}. Everything the product teams argue about — whether a prompt redesign lifted real conversations, which cohort lets matches die in the window, why July cooled — hangs on queries that fold **251 in-match event batches** into **103 matches** from **16 members** across four market cohorts, with a **$34,833.28** engagement book behind them. The population behind every ratio gets stated before it's believed.",
     "The data org runs three engines. Match telemetry folds the event-batch log into the conversation-health boards the messaging team reads at 08:20 sharp. First-move analytics runs the window math: **82 of 103 matches carry a first-move stamp**, a **2.98-day average** match-to-opener lag with a 2–4 day range on the audit clock — the storefront stand-in runs a slower clock than Bumble's live 24-hour window, and the kit reports the probed figures as probed — and the unstamped 21 are the unopened-plus-expired tail, reported as a state, never as zero. Monetization reads Premium & Boost billing, where amounts live as INTEGER cents and `amount_cents / 100.0` at the display edge is house style — card rails ran **16 payments / $37,364.00** against wire rails at **11 / $32,248.00**, and the ledger ties at **181,080 = 181,080** every close.",
     "Interview screens are funnel- and window-shaped. A typical loop opens with a fold (events per match, matches per cohort — `SUM(quantity)`, not `COUNT(*)`, because batches carry retries), escalates into a **cohort fold with a HAVING gate** — which market cohorts clear the volume floor, and what does the opener lag read per market — and lands on either a **CASE band board** (first-moves bucketed inside vs outside the response window) or a threshold subquery (*who messaged back within 7 days of the opener?*). The follow-ups are definition probes: per what — batches or events, matches or members, calendar days or the live 24-hour window? Candidates who state the denominator and keep the census unfiltered consistently outperform.",
-    "Preparation strategy: Bumble has **no tagged registry problems**, so this kit theme-curates all sixteen — golden-hour openers, reply-window pair scans, the Premium trial funnel and the matched-but-never-messaged anti-joins. Then run both case studies on the live storefront db: one rebuilds the {violet:cohort first-move funnel} (a join-and-fold with a HAVING gate — EU, APAC and US survive the floor, LATAM does not), the other rebuilds the {emerald:response-window board} (CASE bands over the 82 stamped matches — inside 48 hours vs the slow lane). The storefront mapping is declared, not hidden — orders are matches, totals are engagement units, regions are market cohorts — because making the stand-in explicit is itself the habit this screen rewards.",
+    "Preparation strategy: Bumble has **no tagged registry problems**, so this kit theme-curates all sixteen — golden-hour openers, reply-window pair scans, the Premium trial funnel and the matched-but-never-messaged anti-joins. Then run all six case studies on the live storefront db: one rebuilds the {violet:cohort first-move funnel} (a join-and-fold with a HAVING gate — EU, APAC and US survive the floor, LATAM does not), the other rebuilds the {emerald:response-window board} (CASE bands over the 82 stamped matches — inside 48 hours vs the slow lane), with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The storefront mapping is declared, not hidden — orders are matches, totals are engagement units, regions are market cohorts — because making the stand-in explicit is itself the habit this screen rewards.",
     // --- 3x expansion (Task 95): brief paras 5-6, dayInLife beat 4, metrics 9-12, topics 11-15,
     // theory t9-t24, mcqs 11-30, cases cs-bumble-3..6, problems 17-32 — appended below; every
     // pre-existing entry stays byte-identical. Same facts source, same pool provenance (theme-curated).
@@ -80,7 +80,7 @@ export const bumbleKit: CompanyKit = {
     {
       name: "Premium & Boost conversion funnels",
       why: "Free-to-Premium is a funnel: match made, feature used, subscription paid. These drills build the step-conversion grammar — engagement funnels, ad-path funnels and the median-time-to-convert read that prices how long members sit before upgrading.",
-      slugs: ["email-engagement-funnel", "ads-funnel", "median-time-to-convert"],
+      slugs: ["email-engagement-funnel", "ads-funnel", "median-time-to-convert", "trial-to-paid-funnel", "analyze-subscription-conversion"],
     },
     {
       name: "Match cohorts & winback",
@@ -95,7 +95,7 @@ export const bumbleKit: CompanyKit = {
     {
       name: "Silent-match anti-joins",
       why: "Expired matches are defined by absence: members with matches but no first move, accounts that never opened a chat. The trio drills the anti-join shapes — visited-but-didn't, quiet-student NOT EXISTS, never-streamed — that the window-mechanics team lives in.",
-      slugs: ["customer-who-visited-but-did-not-transact", "find-churn-risk-customers", "number-of-accounts-that-did-not-stream"],
+      slugs: ["customer-who-visited-but-did-not-transact", "find-churn-risk-customers", "number-of-accounts-that-did-not-stream", "transactions-per-visit-histogram"],
     },
     {
       name: "Billing & settlement discipline",
@@ -115,7 +115,7 @@ export const bumbleKit: CompanyKit = {
     {
       name: "Swipe-session stickiness",
       why: "Session stickiness is a set ratio — distinct daily actives over distinct weekly actives — and Bumble's growth wall reads it per market cohort, because a sticky cohort converts Boost impressions into sessions while a lurky one just re-bills. The trio drills the trailing-window fold, the rolling distinct count and the consecutive-day streak scan the habit boards are cut from.",
-      slugs: ["dau-wau-stickiness", "rolling-7d-actives", "active-users"],
+      slugs: ["dau-wau-stickiness", "rolling-7d-actives", "active-users", "friend-requests-ii-who-has-the-most-friends"],
     },
     {
       name: "Acceptance & reply rates",
@@ -125,7 +125,7 @@ export const bumbleKit: CompanyKit = {
     {
       name: "Rank ladders & Nth probes",
       why: "Leaderboards and Nth-ranked probes are where tie policy gets honest — RANK, DENSE_RANK or ROW_NUMBER, and what prints when the podium is short. The trio drills the gap-ranking board, the per-cohort argmax and the second-place read that must return NULL, not zero, when only one member qualifies.",
-      slugs: ["second-highest-salary", "department-highest-salary", "rank-scores"],
+      slugs: ["second-highest-salary", "department-highest-salary", "rank-scores", "number-of-comments-per-post"],
     },
     {
       name: "Running totals & rolling windows",

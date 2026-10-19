@@ -26,7 +26,7 @@ export const mongodbKit: CompanyKit = {
     "**MongoDB** sells the database developers already chose — and Atlas, its managed cloud, turns every deployment into a consumption meter. The analytics reality is fleet assurance: how many clusters are healthy, how fast they come up, what each organization actually burns. On this storefront db the mapping is honest: 16 Atlas organizations run 103 clusters metered across 251 ops/storage lines, and the lifecycle mix reads like a fleet dashboard — 52 {emerald:running} (50.5%), 30 scaling (29.1%), 14 {amber:provisioning} (13.6%), 7 {rose:terminated} (6.8%). The conversion story rides the same ledger: **63.5%** of usage value sits above the 3,000 line — the free-tier-to-paid question every earnings call asks.",
     "The data org splits three ways. Usage analytics owns the metered folds: ops lines joined to instance sizes and aggregated per cluster — the top instance-size family logs **97 lines** worth 11,744.01, the broadest family touches 54 distinct clusters. Capacity owns lifecycle and time-to-ready: 82 of 103 clusters carry a ready-since stamp, averaging **2.98 days** from creation to first heartbeat, range 2 to 4 — and the 21 without stamps are provisioning-plus-terminated, the fleet's honest backlog. The support-and-billing desk owns 28 cases against 27 settlements, INTEGER cents throughout: 6 never-settled bills worth 15,217, one of them (#28, 1,756.00) claiming {emerald:paid} with zero settlement rows — and its mirror twin, a void bill (#11, 925.00) WITH a payment row.",
     "Interview style is census-then-denominator, then the support join. A screen opens with a one-pass lifecycle census — `COUNT(*) FILTER (WHERE …)` — because five separate queries is five chances to disagree; escalates into a two-grain footprint read (EU carries 45 clusters from just 8 orgs; the US, 19 from 2); then the support desk: cases with no settlement behind them (the anti-join), and settlement speed — 20 settled cases in **28.4 days** on average, fastest 13, slowest 84, against uniform 30-day terms. Candidates who state the population before computing are the ones who get callbacks.",
-    "Preparation strategy: the registry tags zero SQL problems for MongoDB — this kit is **0 tagged LC, theme-curated**: all 30 topic slugs and 16 problems mirror known Atlas screens — fleet censuses, lifecycle conditional counting, instance-size pricing, conversion concentration, support anti-joins and bill reconciliation. Then run both case studies on the live db: one rebuilds the one-pass cluster-state census the fleet dashboard is drawn from, the other rebuilds the region billing census capacity closes the month with. The bar to clear: state the **denominator**, the join's survival rule, and the **cents rule** before you compute anything.",
+    "Preparation strategy: the registry tags zero SQL problems for MongoDB — this kit is **0 tagged LC, theme-curated**: all 30 topic slugs and 16 problems mirror known Atlas screens — fleet censuses, lifecycle conditional counting, instance-size pricing, conversion concentration, support anti-joins and bill reconciliation. Then run all six case studies on the live db: one rebuilds the one-pass cluster-state census the fleet dashboard is drawn from, the other rebuilds the region billing census capacity closes the month with, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The bar to clear: state the **denominator**, the join's survival rule, and the **cents rule** before you compute anything.",
     "The economics underneath the fleet are a billing engine, and the org reads it three ways. The bill base is **28 invoices** in INTEGER cents — 21 settled worth 66,443, 6 {amber:open} worth 19,609, 1 {rose:void} at 925 — settled by 27 payment rows split across two rails: card 16 for 37,364, wire 11 for 32,248. Settlement runs *fast on average, slow at the tail*: 20 settled bills clear in **28.4 days** on average (fastest 13, slowest 84) against uniform 30-day terms — the average hides the breach tail. The expense side is 36 lines totaling 25,416, with Rent alone at 16,800 — about two-thirds of spend — against Ads 4,570, Travel 2,521, Tools 1,525. And the whole story closes on a proof: ledger debits **181,080** against credits 181,080, delta 0, cash netting 44,196 and AR 16,440 — *the trial balance is the receipt that the meter, the bill and the books agree.*",
     "Preparation roadmap for the expanded kit: run the **15 topics** in study order — census folds and conditional counting first, then the join-survival rules, the calendar spine, CASE bands and scalar subqueries — then drill **24 theory** questions and 30 MCQs before touching the 6 case files, which now end in two {sky:hard} builds: the collections calendar (month buckets over pre-aggregated settlements, where one bill can carry two settlement rows) and the above-average burn screen (a scalar subquery whose empty case is part of the answer). Every figure here is probe-backed — the **2.98-day** time-to-ready, the 63.5% concentration line, the 15,217 of AR — so there is no excuse for inventing a number. The bar to clear is unchanged: *state the denominator, the join's survival rule and the cents rule before you compute anything* — now also for the money tables, not just the fleet.",
   ],
@@ -58,27 +58,27 @@ export const mongodbKit: CompanyKit = {
     {
       name: "Cluster & org censuses",
       why: "Every MongoDB screen opens with a fold: clusters, orgs, metered lines — grouped and counted without letting the grain blur. COUNT(*) counts clusters, COUNT(DISTINCT customer_id) counts orgs; 103 clusters come from just 16 orgs, and the census is where candidates prove which grain they're standing on.",
-      slugs: ["product-sales-analysis-ii", "find-followers-count", "top-earners"],
+      slugs: ["product-sales-analysis-ii", "find-followers-count", "top-earners", "unique-orders-and-customers-per-month", "the-latest-login-in-2020", "article-views-ii", "reformat-department-table", "group-sold-products-by-the-date"],
     },
     {
       name: "Lifecycle-state conditional counting",
       why: "Running, scaling, provisioning, terminated — every rate here is a conditional count over a lifecycle flag, and the interviewer's first question is 'what's in the denominator?'. One-pass FILTER censuses and SUM(CASE WHEN …) folds are the shapes that survive scrutiny.",
-      slugs: ["count-salary-categories", "calculate-orders-within-each-interval", "weather-type-in-each-country"],
+      slugs: ["count-salary-categories", "calculate-orders-within-each-interval", "weather-type-in-each-country", "immediate-food-delivery-i", "immediate-food-delivery-ii"],
     },
     {
       name: "Joining orgs to clusters",
       why: "Clusters inherit org attributes through joins to the orgs table, and the join type decides who survives: a cluster with no org is corruption; an org with no cluster is a free-tier signup that never converted. Choosing INNER versus LEFT is a business statement.",
-      slugs: ["employee-bonus", "sales-analysis-ii", "confirmation-rate"],
+      slugs: ["employee-bonus", "sales-analysis-ii", "confirmation-rate", "combine-two-tables"],
     },
     {
       name: "Instance-size & storage mix",
       why: "Metered lines carry instance sizes, and the catalog story is a join-then-weigh fold: lines × unit_price per line, the top family burning 11,744.01 on 97 lines. The per-size census is what capacity planning and pricing pages are built on — and the premium band (200-plus) is empty here, which is itself a finding.",
-      slugs: ["average-selling-price", "product-sales-analysis-iii", "rearrange-products-table"],
+      slugs: ["average-selling-price", "product-sales-analysis-iii", "rearrange-products-table", "department-top-three-salaries", "top-travellers"],
     },
     {
       name: "The usage-billing calendar",
       why: "Burn is calendar arithmetic: STRFTIME('%Y-%m') buckets over clusters against the 3,731.97 peak and the 1,193.86 floor. MongoDB drills the month-bucket idiom because every cost-trend chart hangs on that spine — and a '%m'-without-year fold merges two years into one lie.",
-      slugs: ["friday-purchases-i", "monthly-transactions-i", "convert-date-format"],
+      slugs: ["friday-purchases-i", "monthly-transactions-i", "convert-date-format", "average-time-of-process-per-machine"],
     },
     {
       name: "Conversion & spend concentration",
@@ -98,7 +98,7 @@ export const mongodbKit: CompanyKit = {
     {
       name: "Above-average spend screens",
       why: "Screens escalate into nested logic: clusters above the platform-average burn, orgs clearing a spend threshold. Scalar and HAVING-gated shapes each carry an empty-inner-query answer you are expected to give unprompted — the silent-zero-rows bug ships on staging tables.",
-      slugs: ["orders-with-maximum-quantity-above-average", "find-expensive-cities", "department-highest-salary"],
+      slugs: ["orders-with-maximum-quantity-above-average", "find-expensive-cities", "department-highest-salary", "classes-more-than-5-students", "product-price-at-a-given-date"],
     },
     {
       name: "Bills, support cases & cents discipline",
@@ -108,12 +108,12 @@ export const mongodbKit: CompanyKit = {
     {
       name: "AR aging & collections",
       why: "The money side has its own silence: 6 bills worth 15,217 have no settlement rows, and the newest aging bucket (2025-02: 3 bills, 8,112, zero settled) is recency, not fraud. Anti-joins over the bill tables, concentration cuts and per-bill ratios are how the collections desk works — with the #28 mirror anomaly as the standing edge case.",
-      slugs: ["sellers-with-no-sales", "market-analysis-i", "queries-quality-and-percentage"],
+      slugs: ["sellers-with-no-sales", "market-analysis-i", "queries-quality-and-percentage", "sales-person", "percentage-of-users-attended-a-contest"],
     },
     {
       name: "The billing calendar & date math",
       why: "Bills live on a calendar: issued_on buckets from 2024-02 to 2025-02, uniform 30-day terms, settlement windows 13 to 84 days. The month-bucket idiom ('%Y-%m', never bare '%m' — it merges the two Februaries) and date-window filters are the spine of every aging and trend report this desk ships.",
-      slugs: ["sales-analysis-iii", "list-the-products-ordered-in-a-period", "fix-product-name-format"],
+      slugs: ["sales-analysis-iii", "list-the-products-ordered-in-a-period", "fix-product-name-format", "primary-department-for-each-employee"],
     },
     {
       name: "Windows over the fleet",
@@ -123,7 +123,7 @@ export const mongodbKit: CompanyKit = {
     {
       name: "Set ops & reconciliation stacks",
       why: "Month close stacks views: a running-clusters cut UNION ALL a terminated cut, EXCEPT for rows on one side of the ledger only. Set ops are the reconciliation grammar — but UNION's dedupe pass hides overlap, and column-order drift silently corrupts an EXCEPT diff.",
-      slugs: ["team-scores-in-football-tournament", "movie-rating", "capital-gain-loss"],
+      slugs: ["team-scores-in-football-tournament", "movie-rating", "capital-gain-loss", "duplicate-emails", "fix-names-in-a-table"],
     },
     {
       name: "Subquery shapes on the org tree",

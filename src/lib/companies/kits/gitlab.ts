@@ -50,7 +50,7 @@ export const gitlabKit: CompanyKit = {
     {
       name: "Pipeline status funnels",
       why: "Every GitLab growth screen opens with the funnel: renewals booked, go-live stamped, renewed to term. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling a running renewal 'renewed' — 30 versus 52 on this db.",
-      slugs: ["trial-to-paid-funnel", "funnel-step-conversion", "percentage-of-users-attended-a-contest", "active-users", "find-users-with-persistent-behavior-patterns", "second-day-confirmation", "immediate-food-delivery-ii", "analyze-subscription-conversion"],
+      slugs: ["trial-to-paid-funnel", "funnel-step-conversion", "percentage-of-users-attended-a-contest", "active-users", "find-users-with-persistent-behavior-patterns", "second-day-confirmation", "immediate-food-delivery-ii", "analyze-subscription-conversion", "ar-aging-schedule"],
     },
     {
       name: "Two-grain namespace censuses",
@@ -65,17 +65,17 @@ export const gitlabKit: CompanyKit = {
     {
       name: "Leaderboards & tie policy",
       why: "Leaderboards are rank-window reporting where ties are guaranteed — four namespaces sit at 4 renewals each on this db, and the ladder above them runs 24, 17, 14, 13, 5. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer accounts, not syntax.",
-      slugs: ["rank-scores", "department-top-three-salaries", "top-earners", "the-most-recent-three-orders"],
+      slugs: ["rank-scores", "department-top-three-salaries", "top-earners", "the-most-recent-three-orders", "feature-adoption-windows"],
     },
     {
       name: "Tier banding with CASE",
       why: "Seat tiers are CASE-classified — Free, Premium, Ultimate — with fixed edges the pricing page publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the forecast, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["weather-type-in-each-country", "count-salary-categories", "the-category-of-each-member-in-the-store", "user-purchase-platform", "plan-migration-paths"],
+      slugs: ["weather-type-in-each-country", "count-salary-categories", "the-category-of-each-member-in-the-store", "user-purchase-platform", "plan-migration-paths", "net-revenue-retention", "usage-tier-percentiles"],
     },
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month renewal spine (2024-01 to 2025-02) is the growth call's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) and jump (+1,158.21 into August) named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["mrr-waterfall", "year-on-year-growth-rate", "biggest-window-between-events", "rolling-7d-actives", "customers-with-strictly-increasing-purchases"],
+      slugs: ["mrr-waterfall", "year-on-year-growth-rate", "biggest-window-between-events", "rolling-7d-actives", "customers-with-strictly-increasing-purchases", "growth-accounting"],
     },
     {
       name: "Coverage set algebra",

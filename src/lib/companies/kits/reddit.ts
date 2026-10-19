@@ -34,7 +34,7 @@ export const redditKit: CompanyKit = {
     "Reddit is the internet's conversation layer — hundreds of thousands of communities (subreddits) where every post lives or dies by the vote. The unit of analysis is not the campaign or the session: it is the **post**, stamped with an author, a community and a fate — {emerald:front-paged}, climbing, sitting in new, or {rose:removed by mods}. Everything the business decides — which communities get resourced, where the moderators are drowning, which cohorts are thriving — hangs on queries that fold votes into post fates, fates into **cohort health**, and cohorts into the karma economy. The SQL reality is cohort- and ratio-shaped: the questions that decide staffing are 'which subreddit is growing' and 'what share of posts actually survived the queue'.",
     "The data org splits into three engines. Engagement telemetry folds the vote log — posts, comments, upvote batches — into the health boards community teams read every morning. Moderation analytics runs the {rose:removal-rate} and {violet:reported-share} reads that decide where mod tooling goes next. And the growth group watches **cohort censuses**: posts per cohort, authors per cohort, karma per cohort — with the population stated before any share is computed, because a subreddit with 2 posts and a subreddit with 45 are not the same story. *An analyst here who cannot say 'per what?' for their own metric is food for the comment section.*",
     "Interview screens are cohort- and funnel-heavy. A typical loop opens with a fold (posts per subreddit cohort, comments per thread), escalates into a **self-join** — comment-to-parent threading, author-to-author pairings — and lands on either a CASE-driven {violet:vote funnel} (delivered / shipped / pending / removed with shares that must reconcile to 100) or a ranked leaderboard with **tie behavior** on the boundary. The follow-ups are definition probes: 'is that share of posts or of authors?', 'what happens to a cohort with one post?', 'does a removed post count in the denominator?'. Candidates who narrate the GROUP BY grain and the denominator out loud consistently outperform.",
-    "Preparation strategy: this kit consumes **all 3 of Reddit's tagged registry problems** — the reported-posts census, the comments-per-post self-join and the reported-posts-ii ratio read — then theme-curates the rest from the SQL band's conversation-shaped material: cohort thresholds, threading self-joins, reply-tree recursion, cadence gaps and trend buckets. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {violet:subreddit cohort health board} (a JOIN + HAVING floor), the other rebuilds the upvote leaderboard (a RANK with an honest tie gap). The storefront mapping is declared, not hidden — orders are posts, order totals are karma, regions are the four tracked cohort shards — because making the stand-in explicit is itself the habit Reddit's screens reward.",
+    "Preparation strategy: this kit consumes **all 3 of Reddit's tagged registry problems** — the reported-posts census, the comments-per-post self-join and the reported-posts-ii ratio read — then theme-curates the rest from the SQL band's conversation-shaped material: cohort thresholds, threading self-joins, reply-tree recursion, cadence gaps and trend buckets. Do the topics in order, then run all six case studies on the live storefront db — built for spaced practice rather than one sitting: one rebuilds the {violet:subreddit cohort health board} (a JOIN + HAVING floor), another rebuilds the upvote leaderboard (a RANK with an honest tie gap). The storefront mapping is declared, not hidden — orders are posts, order totals are karma, regions are the four tracked cohort shards — because making the stand-in explicit is itself the habit Reddit's screens reward.",
     "Under the dashboard layer sits the platform reality, and it prices every read. The vote log lands as batched events — 103 posts carrying 251 comment events — so fold-before-join is not style, it is load control. The money side is the ads business: advertiser billing sits in the finance tables as **INTEGER cents**, and the house read is `amount_cents / 100.0` — skip the .0 and a 19,609-cent open-AR invoice prints as 196 instead of 196.09, the truncation the reconciliation layer exists to catch (a void-but-paid invoice at 925.00 and a partial settlement of 4,000 against 6,148 are the standing tripwires here). The promotion pipeline carries its own honesty rule: `shipped_at` is the front-page stamp, non-NULL on 82 of 103 posts and averaging a **2.98-day climb** — *and the stamp, not the status label, is what the latency metrics fold over.*",
     "Preparation at full depth: the kit now runs **fifteen topics, twenty-four theory drills, thirty MCQs and six audited case studies** on the storefront db. The two originals rebuild the cohort health board and the upvote leaderboard; the four additions walk a **comeback-gap board** (LAG-staged silences behind a posting-habit floor), the labeled fate census (a CASE fold whose shares reconcile to 100), a trust-and-safety **karma outlier screen** (posts above the 338.19 site bar, with the bar printed beside every row) and a one-scan close census (FILTER branches counting the 103 / 82 / 2.98 story in a single pass). The 32-problem pool keeps Reddit's 3 tagged rows first, then theme-curates the rest — bursty-posting detection, DAU/WAU stickiness, keep-latest dedupes, trending-term reads and cents-safe AR folds among them. The bar to clear before the interview: *state the denominator before you compute the share*, and reconcile every multi-branch total against a `COUNT(*)`.",
   ],
@@ -71,12 +71,12 @@ export const redditKit: CompanyKit = {
     {
       name: "Subreddit cohort censuses",
       why: "Cohort health is a threshold read: which communities clear a participation bar, which authors carry a vertical, which cohorts deserve the floor treatment. These problems drill the census grammar — participation shares, size gates, top-poster argmaxes — that Reddit asks whenever a 2-post cohort tries to pass for a trend.",
-      slugs: ["percentage-of-users-attended-a-contest", "classes-more-than-5-students", "customer-placing-the-largest-number-of-orders"],
+      slugs: ["percentage-of-users-attended-a-contest", "classes-more-than-5-students", "customer-placing-the-largest-number-of-orders", "cohort-retention-matrix", "growth-accounting", "top-percentile-fraud"],
     },
     {
       name: "Comment-depth self-joins",
       why: "A comment replies to a comment that replies to a post — the thread is a tree, and the depth count is a self-join. Reddit drills it because moderation and ranking both key on depth: a 40-comment chain is a different object from 40 top-level replies. The tagged comments-per-post is the canonical drill; tree-node and the follower pair are the graph siblings.",
-      slugs: ["number-of-comments-per-post", "tree-node", "second-degree-follower"],
+      slugs: ["number-of-comments-per-post", "tree-node", "second-degree-follower", "daily-leads-and-partners", "game-play-analysis-i", "find-trending-hashtags"],
     },
     {
       name: "Moderation ratio reads",
@@ -86,7 +86,7 @@ export const redditKit: CompanyKit = {
     {
       name: "Vote funnels with CASE",
       why: "Post fate is a funnel: front-paged, climbing, sitting in new, removed — and the census must reconcile to 100. CASE-driven conditional SUMs are the grammar, with the two classic traps: filtering the funnel stage in WHERE (denominator drift) and letting the ELSE arm swallow a stage silently. The curated trio covers the share fold, the per-surface ratio and the classification wall.",
-      slugs: ["immediate-food-delivery-i", "ads-performance", "weather-type-in-each-country"],
+      slugs: ["immediate-food-delivery-i", "ads-performance", "weather-type-in-each-country", "median-time-to-convert"],
     },
     {
       name: "Posting cadence & gaps",
@@ -96,12 +96,12 @@ export const redditKit: CompanyKit = {
     {
       name: "Thread leaderboards & ties",
       why: "Top threads by upvotes, top authors by karma, the second-most-upvoted post per cohort — Reddit reporting is leaderboard reporting, and ties are everywhere when hundreds of threads sit near the same count. The rank trio (RANK, DENSE_RANK, ROW_NUMBER) is drilled until the 1,2,3,4,4,6 gap pattern is a spoken reflex, not a lookup.",
-      slugs: ["rank-scores", "top-five-artists", "department-top-three-salaries"],
+      slugs: ["rank-scores", "top-five-artists", "department-top-three-salaries", "the-most-recent-three-orders", "second-most-recent-activity", "the-most-recent-orders-for-each-product", "restaurant-growth", "human-traffic-of-stadium"],
     },
     {
       name: "Ghost-post anti-joins",
       why: "The empty-result discipline: cohorts with no posts in a window, authors gone quiet past the reactivation bar, accounts that never posted at all. On this db the never-posted census returns ZERO — every author has posts — and knowing that cold is itself the test: the anti-join shape matters even when the count is 0, because the day it isn't zero is the day the query is already written.",
-      slugs: ["customers-who-never-order", "dormant-reactivation", "number-of-accounts-that-did-not-stream"],
+      slugs: ["customers-who-never-order", "dormant-reactivation", "number-of-accounts-that-did-not-stream", "customers-who-bought-all-products"],
     },
     {
       name: "Reply-tree recursion",
@@ -111,12 +111,12 @@ export const redditKit: CompanyKit = {
     {
       name: "Engagement trend buckets",
       why: "The engagement trend is a month-bucketed fold — 14 months of posts and karma from 2024-01 to 2025-02, with the January peak of 3,731.97 karma and the July trough of 1,193.86 anchoring the story. '%Y-%m' bucketing, latest-activity folds and 30-day windows are the three tools; the year-collision trap (month-only buckets folding two Februaries) is the follow-up.",
-      slugs: ["monthly-transactions-i", "the-latest-login-in-2020", "user-activity-for-the-past-30-days-i"],
+      slugs: ["monthly-transactions-i", "the-latest-login-in-2020", "user-activity-for-the-past-30-days-i", "dau-wau-stickiness", "rolling-7d-actives", "find-bursty-behavior", "sessionize-events"],
     },
     {
       name: "One-pass moderation censuses",
       why: "The dashboards are query-budgeted: the fate census, the stamp census and the slow-lane census each get one scan, not three sequential passes. FILTER (WHERE …) and conditional SUM count every branch in a single fold, and the audit is that branch counts reconcile to COUNT(*) — 52 + 30 + 14 + 7 must equal 103. The kit's close case builds the whole promotion picture in one pass.",
-      slugs: ["active-businesses", "find-stores-with-inventory-imbalance", "number-of-rich-customers"],
+      slugs: ["active-businesses", "find-stores-with-inventory-imbalance", "number-of-rich-customers", "not-boring-movies"],
     },
     {
       name: "Subquery shapes under the fold",

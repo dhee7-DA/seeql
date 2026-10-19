@@ -71,27 +71,27 @@ export const mercariKit: CompanyKit = {
     {
       name: "Two-grain market censuses",
       why: "Markets report at two grains simultaneously: EU runs 45 purchases from 8 accounts, the US 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is demand and which is coverage — is the reflex. The intensity ratio (9.5 versus 5.6) is the market-maturity signal hiding between the columns.",
-      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "students-and-examinations", "cohort-repeat-revenue", "user-purchase-platform", "game-play-analysis-v"],
+      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "students-and-examinations", "cohort-repeat-revenue", "user-purchase-platform", "game-play-analysis-v", "customer-order-frequency", "users-with-two-purchases-within-seven-days"],
     },
     {
       name: "Joining buyers to the seller bench",
       why: "Purchase lines carry no seller, no trust score, no market — everything joins through listings and the seller table, and the join type decides who survives. A line with no listing is corruption; a listing with no sale is dead supply — though on this db the anti-join returns a confident zero (all 16 listings sold), and proving that zero is part of the job.",
-      slugs: ["sales-analysis-i", "combine-two-tables", "top-travellers", "find-the-team-size"],
+      slugs: ["sales-analysis-i", "combine-two-tables", "top-travellers", "find-the-team-size", "product-sales-analysis-iii"],
     },
     {
       name: "Trust ladders & tie policy",
-      why: "Seller reviews rank accounts by rating and by revenue, and buyer ladders tie — 24, 17, 14, 13, 5 purchases with a three-way tie at 4 below. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which on a trust ladder is a policy about peer sellers, not syntax.",
-      slugs: ["rank-scores", "ratings-histogram", "department-top-three-salaries", "chargeback-rate-ranking"],
+      why: "Seller reviews rank accounts by rating and by revenue, and buyer ladders tie — 24, 17, 14, 13, 5 purchases with a four-way tie at 4 below. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which on a trust ladder is a policy about peer sellers, not syntax.",
+      slugs: ["rank-scores", "ratings-histogram", "department-top-three-salaries", "chargeback-rate-ranking", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "Flat take-rate arithmetic",
       why: "The fee book is a flat 10% of GMV, so every fee read is a multiplication with a rounding rule — and every ratio read (cancel share, repeat rate, promoted-listing lift) punishes integer division. The house habit: 100.0 (or the rate) before the division, population fixed before the ratio, ROUND last.",
-      slugs: ["queries-quality-and-percentage", "percentage-of-users-attended-a-contest", "ads-performance"],
+      slugs: ["queries-quality-and-percentage", "percentage-of-users-attended-a-contest", "ads-performance", "average-selling-price", "confirmation-rate", "basket-depth-aov", "repeat-purchase-rate", "returns-rate-by-category"],
     },
     {
       name: "CASE banding & the ask ladder",
       why: "Listing asks band into budget (8 SKUs averaging 32.06) and mid (8 at 111.5), with the premium ladder honestly empty — the catalog tops out at 199.99. CASE arms must be exhaustive and ordered; a hole in the CASE is a hole in the folio, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "type-of-triangle"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "type-of-triangle", "find-churn-risk-customers", "rfm-segmentation"],
     },
     {
       name: "Liquidity subquery gates",
@@ -101,17 +101,17 @@ export const mercariKit: CompanyKit = {
     {
       name: "Cadence & month buckets",
       why: "The 14-month purchase spine (2024-01 to 2025-02, every month 6-9 purchases) is the C2C cadence read: STRFTIME or SUBSTR month keys, half-open windows that never drop the last night of a month, and '%m' traps that merge January 2024 into January 2025. Cadence analytics is date discipline.",
-      slugs: ["list-the-products-ordered-in-a-period", "the-latest-login-in-2020", "find-golden-hour-customers", "rolling-7d-actives", "dau-wau-stickiness", "find-bursty-behavior", "calculate-orders-within-each-interval"],
+      slugs: ["list-the-products-ordered-in-a-period", "the-latest-login-in-2020", "find-golden-hour-customers", "rolling-7d-actives", "dau-wau-stickiness", "find-bursty-behavior", "calculate-orders-within-each-interval", "most-frequently-ordered-product-per-customer", "monthly-transactions-ii", "sales-by-day-of-the-week"],
     },
     {
       name: "Anti-joins & the never-remitted",
       why: "Marketplace hygiene runs on anti-joins: accounts that never bought, listings that never sold, statements no rail ever touched. On this db the account and listing anti-joins return a confident zero, while the settlement anti-join returns 6 statements worth 15,217 — proving which zero you have IS the deliverable.",
-      slugs: ["customers-who-never-order", "sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "wash-trade-detection", "top-percentile-fraud", "suspicious-bank-account-transactions", "winback-recovery", "ar-aging-schedule"],
+      slugs: ["customers-who-never-order", "sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "wash-trade-detection", "top-percentile-fraud", "suspicious-bank-account-transactions", "winback-recovery", "ar-aging-schedule", "fix-product-name-format"],
     },
     {
       name: "One-pass status censuses",
       why: "The ops board gets delivered, in-transit, paid-awaiting-ship and cancelled in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift. Query budget is a real constraint on marketplace-review nights.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "bank-account-summary-ii"],
     },
   ],
 
@@ -124,8 +124,8 @@ export const mercariKit: CompanyKit = {
     },
     {
       id: "mercari-t2",
-      q: "The buyer ladder runs 24, 17, 14, 13, 5 purchases — then a three-way tie at 4. RANK, DENSE_RANK or ROW_NUMBER — and who decides?",
-      a: "The rank trio is a business decision about shared rungs and gaps, and the interviewer wants you to say that out loud. RANK gives tied counts the same rank and skips — the ladder reads 1 through 5, then the three-way tie consumes ranks 6 through 8, and the next distinct count lands on 9, implying two phantom positions that do not exist. DENSE_RANK shares rungs without gaps — the tie reads 6, 6, 6 and the next account is 7. ROW_NUMBER splits ties arbitrarily, which is a silent judgment call about which account gets the re-buy nudge first. The wrong answer is picking a function; the right answer is picking a policy — shared rungs for peer accounts (RANK or DENSE_RANK), or an explicitly named tie-breaker like created_at, then id — and writing it in the query comment. On a C2C trust ladder the same question bites twice: rank sellers by rating and you will tie the moment two accounts share a score, so the tie-breaker policy is a trust-and-safety decision, not a SQL footnote.",
+      q: "The buyer ladder runs 24, 17, 14, 13, 5 purchases — then a four-way tie at 4. RANK, DENSE_RANK or ROW_NUMBER — and who decides?",
+      a: "The rank trio is a business decision about shared rungs and gaps, and the interviewer wants you to say that out loud. RANK gives tied counts the same rank and skips — the ladder reads 1 through 5, then the four-way tie consumes ranks 6 through 9, and the next distinct count lands on 10, implying three phantom positions that do not exist. DENSE_RANK shares rungs without gaps — the tie reads 6, 6, 6, 6 and the next account is 7. ROW_NUMBER splits ties arbitrarily, which is a silent judgment call about which account gets the re-buy nudge first. The wrong answer is picking a function; the right answer is picking a policy — shared rungs for peer accounts (RANK or DENSE_RANK), or an explicitly named tie-breaker like created_at, then id — and writing it in the query comment. On a C2C trust ladder the same question bites twice: rank sellers by rating and you will tie the moment two accounts share a score, so the tie-breaker policy is a trust-and-safety decision, not a SQL footnote.",
       tag: "windows",
     },
     {
@@ -961,7 +961,7 @@ export const mercariKit: CompanyKit = {
     { slug: "average-selling-price", why: "Weighted ASP per listing — price times units over units, across a join. C2C asks move constantly, so the naive average of ask prices lies; this is the weighted fold that does not, and it is the base under every take-rate read." },
     { slug: "confirmation-rate", why: "Trust scores with honest denominators: confirmed ÷ total, with NULLs folded deliberately. Mercari's trust floor (2 of 6 sellers at 4.5-plus) lives or dies on the same COALESCE-and-count discipline." },
     { slug: "customer-order-frequency", why: "Re-buy cadence: accounts with 2-plus purchases in a window. The HAVING-gate shape behind the repeat-buyer rate (14 of 16 here) that growth reads as the healthiest C2C signal there is." },
-    { slug: "customer-placing-the-largest-number-of-orders", why: "The re-buy ladder argmax — this book's ladder runs 24, 17, 14, 13, 5 with a three-way tie at 4. Finding the top buyer is easy; handling the tie is the interview." },
+    { slug: "customer-placing-the-largest-number-of-orders", why: "The re-buy ladder argmax — this book's ladder runs 24, 17, 14, 13, 5 with a four-way tie at 4. Finding the top buyer is easy; handling the tie is the interview." },
     { slug: "most-frequently-ordered-product-per-customer", why: "Per-account favorite listing — the personalization read. Argmax inside a group with ties that need a stated policy, exactly what a C2C feed ranks on." },
     { slug: "bank-account-summary-ii", why: "Cents-safe monthly folds with credits and debits beside each other. INTEGER cents and the /100.0 rule make this exact practice for the seller fee statements' true-up reads." },
     { slug: "monthly-transactions-ii", why: "The transferred-versus-not census with EXCEPT — the never-settled statement list (6 statements, 15,217) is this exact set algebra, run against the rails before every seller payout batch." },

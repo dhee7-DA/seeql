@@ -26,7 +26,7 @@ export const blockKit: CompanyKit = {
     "Block builds the tooling that turns a counter, a phone and a card reader into a business: **Square**'s register and POS rails move card-present money for millions of sellers, **Square Loans** underwrites the sellers themselves off their own transaction streams, and the **Cash App** wallet serves the consumer side. The analyst's lens is the seller, end to end — **GMV per seller**, catalog depth, basket size, dispute rates — and then one level down, the seller's own books: what the business earned, what it spent, and whether the two reconcile. That two-layer view is the company's actual product promise: the platform knows the seller's money well enough to lend against it, so the SQL that proves a number is the same SQL that prices a loan.",
     "The data org splits along that seam. Seller analytics owns the commerce surface: per-seller GMV rollups across the catalog-to-line-item chain, basket and attachment reads, top-seller ladders with ties admitted. Risk and underwriting own the money-integrity surface: settlement completeness, {rose:chargeback} and dispute rates, AR aging on the billing book. Finance owns the books — and the schema shows it: every money column (billing, settlements, operating spend, ledger) is **INTEGER cents**, so 16800 rent cents print as 168.00 dollars only after an explicit `/100.0`, and the ledger's closing proof is a {emerald:zero-delta} check (**181,080** cents of debits against 181,080 of credits) that runs before any dashboard ships.",
     "Interview style is seller-grounded and cents-aware. A typical screen walks from a warm-up join to a commerce fold (GMV per seller across **three tables** — the **fan-out** between transactions, line items and listings is the trap), then escalates into either a `CASE`-band census (ticket-size bands, spend categories) or an anti-join (listings that never rang up, sellers with idle catalogs). Follow-ups probe units and populations out loud: *'is that cents or dollars?'*, 'does your denominator include the sellers who did not sell this month?'. Candidates who state the grain of every COUNT before writing it consistently outperform.",
-    "Preparation strategy: the registry tags one problem for Block (`chargeback-rate-ranking`) — start there, because {rose:dispute-rate} math is the platform's risk spine. The rest of the pool is theme-curated from the SQL band toward the seller workflows: register folds, basket and AOV math, catalog joins, seller anti-joins, ranking ladders, and cents-safe bookkeeping reads. Then run both case studies on the live storefront db: one rebuilds the **operating-spend census** the seller's books close on, the other rebuilds the **GMV-per-seller rollup** the platform's commerce review opens with.",
+    "Preparation strategy: the registry tags one problem for Block (`chargeback-rate-ranking`) — start there, because {rose:dispute-rate} math is the platform's risk spine. The rest of the pool is theme-curated from the SQL band toward the seller workflows: register folds, basket and AOV math, catalog joins, seller anti-joins, ranking ladders, and cents-safe bookkeeping reads. Then run all six case studies on the live storefront db: one rebuilds the **operating-spend census** the seller's books close on, the other rebuilds the **GMV-per-seller rollup** the platform's commerce review opens with, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting...",
     "The second interview lane is the money-integrity surface, and it has its own canon. Settlement completeness first: 27 payment legs on two rails — 16 card legs worth **$37,364.00** and 11 wire legs worth $32,248.00 — must tie to the ledger's 69,612.00 cash credit, and the coverage census reads 21 exact, 1 partial ({amber:4,000.00 of a 6,148.00 statement}), 6 never-settled worth 15,217.00. Then the two standing anomalies the risk team quotes from memory: statement #11 is {rose:void} with a live 925.00 leg, #28 is {emerald:paid} with zero legs — *labels are claims; legs are evidence*. A candidate who can narrate those two rows without notes is demonstrating the exact skill the underwriting model depends on.",
     "Round two of prep drills the money-read conventions until they are reflexes: every fold in cents, one /100.0 at the display edge, `JULIANDAY` for any duration (raw TEXT stamps subtract to 0 — the **2.98-day** ship average exists only after conversion). Then run all six case studies on the live db and re-derive each figure from the probe before trusting it: the region×category grid (23 combos, **APAC Audio 5162.4** at 44.5% of its region), the status census (82 {emerald:fulfilled} of 103 tickets), the 14-month revenue spine with LAG deltas, and the six listings priced above the catalog's **71.78** average. The habit the whole kit rewards: state the grain, state the units, then let the number argue.",
   ],
@@ -57,12 +57,12 @@ export const blockKit: CompanyKit = {
     {
       name: "The register fold",
       why: "A day of commerce is a fold: line items grouped by transaction date, stitched or summed, per seller or per store. Square screens open here because the fold is where grain dies — COUNT versus SUM versus COUNT(DISTINCT transaction) over a 251-row line-item stream is the first fork in every read.",
-      slugs: ["group-sold-products-by-the-date", "product-sales-analysis-ii", "top-earners"],
+      slugs: ["group-sold-products-by-the-date", "product-sales-analysis-ii", "top-earners", "monthly-transactions-i", "warehouse-manager", "maximum-transaction-each-day", "active-businesses", "customer-order-frequency", "unique-orders-and-customers-per-month"],
     },
     {
       name: "Basket & ticket math",
       why: "Average basket, items per basket, value per line — the merchant's dashboard is ratios over two grains. The tested habit: aggregate each grain first (value fold, transaction count), then divide with a REAL numerator, because a per-row division or an integer division turns the AOV into noise.",
-      slugs: ["basket-depth-aov", "sales-analysis-i", "percentage-of-users-attended-a-contest"],
+      slugs: ["basket-depth-aov", "sales-analysis-i", "percentage-of-users-attended-a-contest", "ar-aging-schedule"],
     },
     {
       name: "Catalog joins (listings to sales)",
@@ -72,22 +72,22 @@ export const blockKit: CompanyKit = {
     {
       name: "Idle-catalog anti-joins",
       why: "Catalog hygiene is a platform workflow: listings that never rang up, sellers with no sales in the window, buyers who browsed but never bought. The LEFT JOIN + IS NULL shape (and its NOT EXISTS twin) is the 'find the idle inventory' question — and on a healthy platform, zero results is itself the finding.",
-      slugs: ["sellers-with-no-sales", "customers-who-never-order", "customer-who-visited-but-did-not-transact"],
+      slugs: ["sellers-with-no-sales", "customers-who-never-order", "customer-who-visited-but-did-not-transact", "find-churn-risk-customers", "sales-analysis-ii"],
     },
     {
       name: "Top-seller ladders & ranking windows",
       why: "The commerce deck leads with ladders: top sellers by GPV, top listings by units, per-category crowns. Ties are everywhere at real price points, so the rank trio — with a deterministic tie-break and an explicit ties-share-a-rung decision — is the drilled reflex.",
-      slugs: ["rank-scores", "department-top-three-salaries", "second-highest-salary"],
+      slugs: ["rank-scores", "department-top-three-salaries", "second-highest-salary", "product-sales-analysis-iv", "average-selling-price"],
     },
     {
       name: "CASE banding for ticket tiers",
       why: "Merchandising thinks in bands: budget shelf, mid shelf, premium shelf; small tickets vs large. The CASE census — bands as groups, count and average per band, boundary arms exhaustive — is the tested shape, and the boundary placement is a business decision someone must own.",
-      slugs: ["count-salary-categories", "calculate-orders-within-each-interval", "spend-histogram"],
+      slugs: ["count-salary-categories", "calculate-orders-within-each-interval", "spend-histogram", "rfm-segmentation"],
     },
     {
       name: "Dispute & ratio gates",
       why: "Dispute rates are ratios with a survival rule: rate per seller, but only sellers above a volume gate — a HAVING after the rate, not a WHERE before it. Square drills the ratio-plus-gate shape because ungated rates read noise as risk.",
-      slugs: ["chargeback-rate-ranking", "low-quality-problems", "returns-rate-by-category"],
+      slugs: ["chargeback-rate-ranking", "low-quality-problems", "returns-rate-by-category", "card-launch-success"],
     },
     {
       name: "NULL policy on open tickets",
@@ -97,37 +97,37 @@ export const blockKit: CompanyKit = {
     {
       name: "Set ops for the books",
       why: "Month-close stitches populations into one deliverable: card-rail vs transfer-rail settlements, spend-in vs spend-out packets. UNION ALL's no-dedupe cheapness and the column-position discipline are the tested reflexes — a packet that silently dedupes masks the double-count the close exists to catch.",
-      slugs: ["monthly-transactions-ii", "team-scores-in-football-tournament", "count-apples-and-oranges"],
+      slugs: ["monthly-transactions-ii", "team-scores-in-football-tournament", "count-apples-and-oranges", "number-of-rich-customers"],
     },
     {
       name: "Cents-safe money math",
       why: "Every money column in the billing, settlement, expense and ledger tables is INTEGER cents — 16800 rent cents, 37364 card-settlement cents — so every dollar read is amount_cents / 100.0 and every ratio sits one forgotten .0 away from a truncation leak. Reconciliation reads (trial-balance eyes, per-account folds) are the kit's finance round.",
-      slugs: ["trial-balance-check", "bank-account-summary-ii", "total-traveled-distance"],
+      slugs: ["trial-balance-check", "bank-account-summary-ii", "total-traveled-distance", "the-number-of-users-that-are-eligible-for-discount"],
     },
     {
       name: "Running totals & window frames",
       why: "Cumulative GMV to date and the running ledger balance are the dashboard's two spine charts, and both are window frames: SUM() OVER (ORDER BY date) with the frame declared. The drill is frame literacy — RANGE folds peers together, ROWS folds row by row, and the difference shows up the moment two register events share a timestamp.",
-      slugs: ["account-balance", "game-play-analysis-iii", "find-cumulative-salary-of-an-employee"],
+      slugs: ["account-balance", "game-play-analysis-iii", "find-cumulative-salary-of-an-employee", "balance-rollforward", "bank-account-summary"],
     },
     {
       name: "Seller cadence & recency clocks",
       why: "Cadence is the seller-health signal underwriting reads: days between orders, repeat-purchase windows, most-recent activity per listing. The drills pair date math (JULIANDAY deltas, seven-day repeat windows) with argmax windows that must break ties deterministically.",
-      slugs: ["average-time-of-process-per-machine", "users-with-two-purchases-within-seven-days", "the-most-recent-orders-for-each-product"],
+      slugs: ["average-time-of-process-per-machine", "users-with-two-purchases-within-seven-days", "the-most-recent-orders-for-each-product", "sales-analysis-iii", "repeat-purchase-rate"],
     },
     {
       name: "Loan-book & velocity risk",
       why: "Square Loans underwrites off the transaction stream, so the risk lane's two drills are the loan-book fold (amortization schedules, NPV of a payment stream) and the velocity scan (bursts of consecutive activity on a card rail). Both are staged reads: a WITH spine, then windows or recursion on top.",
-      slugs: ["loan-amortization-schedule", "npv-queries", "transaction-velocity"],
+      slugs: ["loan-amortization-schedule", "npv-queries", "transaction-velocity", "suspicious-bank-account-transactions"],
     },
     {
       name: "Staged subqueries & derived folds",
       why: "Deeper reads stage a fold and compare against it: who beats their cohort's average, who came back the day after install. The drill is subquery hygiene — scalar for one number, derived for a staged fold, EXISTS for presence — plus knowing which shape the planner runs once versus per row.",
-      slugs: ["market-analysis-i", "game-play-analysis-iv", "managers-with-at-least-5-direct-reports"],
+      slugs: ["market-analysis-i", "game-play-analysis-iv", "managers-with-at-least-5-direct-reports", "sales-by-day-of-the-week", "same-day-sale"],
     },
     {
       name: "Catalog hygiene & dedupe passes",
       why: "Catalogs rot: duplicate listings, missing attributes, stale latest records. The drills are the dedupe census (GROUP BY … HAVING COUNT(*) > 1), the LEFT JOIN completeness check, and the keep-only-latest fold that feeds every current-catalog view.",
-      slugs: ["duplicate-emails", "employees-with-missing-information", "find-latest-salaries"],
+      slugs: ["duplicate-emails", "employees-with-missing-information", "find-latest-salaries", "product-price-at-a-given-date"],
     },
   ],
 

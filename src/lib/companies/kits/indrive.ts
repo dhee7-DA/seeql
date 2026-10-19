@@ -41,7 +41,7 @@ export const indriveKit: CompanyKit = {
     "**inDrive** is the peer-to-peer ride-hailing marketplace where the rider names the price first: a {amber:fixed-fare offer} goes out to nearby drivers, a driver accepts, and the trip runs at the posted number. The analytics spine is the offer-accept funnel, and on this kit's proxy ledger it reads 103 posted offers worth **34,833.28** (average 338.19) across 16 riders, with 251 trip legs fanning underneath — 2.4 legs per offer. The status map is the funnel itself: 52 {emerald:completed} at the offered fare (50.5%), 30 en route (29.1%), 14 still awaiting a driver (13.6%), 7 {rose:expired unaccepted} (6.8%).",
     "Two reads define the analyst job here. The {amber:one-pass cluster census}: city ops opens with a single-scan fold per city cluster — offers, accepted, awaiting, expired, fare volume in one GROUP BY (EU: 45 offers, 36 accepted, 6 awaiting, 3 expired, **15,089.23** billed) — because the same fold runs every morning in every launch city. The {sky:supply-side read}: six driver cohorts carry accept capacity, and the top cohort takes 32% of billed volume (11,130.25) — concentration is a supply-risk conversation, not trivia. The launch board runs on a pacing bar: a city counts when its month carries eight-plus offers; LATAM's two-offer pilot (852.44) stays off the board.",
     "Interviews are funnel-first, one-pass-flavored, cents-precise. A screen opens with a warm-up join (attach trip legs to their offer), escalates into a conditional fold — usually `SUM(CASE WHEN …)` or `FILTER (WHERE …)` — then lands on a rate where the denominator is the whole test: accepted ÷ ALL posted offers, awaiting and expired included, or the funnel flatters itself. Settlement rounds go through the books: 28 `invoices` against 27 `payments`, INTEGER cents read as `amount_cents / 100.0`, 6 unsettled claims worth 15,217.00, one of them — #28, 1,756.00 — *marked paid with zero settlement rows*. Follow-ups are spoken aloud: *'is that per offer or per leg?'*, 'does an awaiting offer sit in your denominator?'",
-    "Preparation strategy: inDrive has **0 tagged LC** rows in this app's pool, so the kit is **theme-curated** — all 30 topic slugs and 16 problems are hand-picked from the theme menu to mirror fare-offering screens: offer-accept funnels, launch-month pacing, HAVING floors, class fare ceilings, driver-cohort earnings. Then run both case studies on the live db: one rebuilds the {amber:offer-accept funnel} city ops opens with, the other rebuilds the {sky:launch pacing board} the expansion team reads monthly. The bar to clear: name the grain, state the denominator, and gate the NULLs deliberately before you compute anything.",
+    "Preparation strategy: inDrive has **0 tagged LC** rows in this app's pool, so the kit is **theme-curated** — all 30 topic slugs and 16 problems are hand-picked from the theme menu to mirror fare-offering screens: offer-accept funnels, launch-month pacing, HAVING floors, class fare ceilings, driver-cohort earnings. Then run all six case studies on the live db: one rebuilds the {amber:offer-accept funnel} city ops opens with, the other rebuilds the {sky:launch pacing board} the expansion team reads monthly, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The bar to clear: name the grain, state the denominator, and gate the NULLs deliberately before you compute anything.",
     "Under the marketplace sit the money books, and they run on INTEGER cents: 28 `invoices` (city billing claims) against 27 `payments` (driver settlement rows), every dollar read as `amount_cents / 100.0`. The coverage census: 21 settled exact (65,612.00), 1 partial (4,000 of 6,148.00), 6 with zero settlement rows (15,217.00) — one of them, #28 at 1,756.00, {rose:marked paid with no rows behind it}, mirror to void-but-paid #11 at 925.00. Settlement runs **28.4 days against 30-day terms** (fastest 13, slowest 84), rails split card 37,364.00 against wire 32,248.00, and the trial balance ties 181,080 = 181,080 — the invariant every close prints before anyone goes home.",
     "How to prep, in four passes. Pass one: the {amber:cluster census} — one-scan conditional folds with reconciling arms, at offer grain, denominators stated before the ratio. Pass two: windows — the rank trio's tie policy on a ledger that ties at 4, 3 and 2 orders, LAG walks whose first row stays NULL, frames named out loud. Pass three: the books — the {sky:settlement queue} rebuilt as an anti-join, cents converted once at the display edge, status columns treated as claims until the rows agree. Pass four: run all six case files on the live db, then say the triple — *grain, denominator, NULL policy* — before writing a single SELECT. Candidates who do this walk into the screen already speaking the interviewer's vocabulary.",
   ],
@@ -72,17 +72,17 @@ export const indriveKit: CompanyKit = {
     {
       name: "Offer-accept funnels",
       why: "Every city review opens with the funnel: offers posted, accepted (en route + completed), awaiting, expired — counted per cluster without letting the leg fan-out double anything. inDrive drills which grain the query stands on before any aggregate runs, because a rate computed at leg grain prices a leg, not an offer.",
-      slugs: ["percentage-of-users-attended-a-contest", "immediate-food-delivery-i", "number-of-rich-customers"],
+      slugs: ["percentage-of-users-attended-a-contest", "immediate-food-delivery-i", "number-of-rich-customers", "npv-queries", "top-percentile-fraud"],
     },
     {
       name: "One-pass conditional folds",
       why: "The census runs every morning, so it runs in ONE scan: SUM(CASE WHEN …) arms per status with branch totals that reconcile back to COUNT(*). inDrive treats the fold as standing infrastructure — four scans cost four table reads where one conditional fold costs one, and one fold guarantees every arm describes the same 103 offers.",
-      slugs: ["active-businesses", "find-stores-with-inventory-imbalance", "find-books-with-polarized-opinions"],
+      slugs: ["active-businesses", "find-stores-with-inventory-imbalance", "find-books-with-polarized-opinions", "not-boring-movies", "trial-balance-check"],
     },
     {
       name: "Cluster joins & two-sided keys",
       why: "Riders post offers in one table and drivers answer in the flow — attaching an offer to its cluster is an FK join whose wrong key silently cross-products. The drills pair tables where a missing side (a rider with no offers, a cohort with no accepts) is a finding to prove, not noise to drop.",
-      slugs: ["trips-and-users", "combine-two-tables", "employees-with-missing-information"],
+      slugs: ["trips-and-users", "combine-two-tables", "employees-with-missing-information", "sellers-with-no-sales", "sales-analysis-ii", "recyclable-and-low-fat-products", "customer-who-visited-but-did-not-transact"],
     },
     {
       name: "Rates with honest denominators",
@@ -92,57 +92,57 @@ export const indriveKit: CompanyKit = {
     {
       name: "HAVING gates & pilot floors",
       why: "Launch boards gate on volume: clusters (or months) below the floor stay off the board, and the floor is a business number — the US cluster's 19 offers IS the floor in this kit's case. WHERE can't see the fold, so the gate is HAVING, and the threshold is stated next to the gate.",
-      slugs: ["classes-more-than-5-students", "number-of-employees-who-met-the-target", "article-views-ii"],
+      slugs: ["classes-more-than-5-students", "number-of-employees-who-met-the-target", "article-views-ii", "customer-placing-the-largest-number-of-orders", "unique-orders-and-customers-per-month", "students-with-invalid-departments", "group-sold-products-by-the-date"],
     },
     {
       name: "Month spines & launch pacing",
       why: "Expansion reads calendars: offers per launch month on the 2024-01..2025-02 spine (14 buckets), the 1,193.86 July trough against the 3,731.97 January open. '%Y-%m' builds the spine; '%m' alone folds January 2024 into January 2025 and the pacing curve becomes fiction.",
-      slugs: ["monthly-transactions-i", "hopper-company-queries-i", "list-the-products-ordered-in-a-period"],
+      slugs: ["monthly-transactions-i", "hopper-company-queries-i", "list-the-products-ordered-in-a-period", "sales-by-day-of-the-week", "find-the-missing-ids"],
     },
     {
       name: "Class bands & CASE tiers",
       why: "The fleet prices in ceilings: 8 budget classes under 50 (avg 32.06), 8 mid classes to 199.99 (avg 111.50), and the premium band above 200 empty by design. CASE tiering — with the boundary row landing where the spec says — is how the board reads the shelf without inventing a premium story.",
-      slugs: ["triangle-judgement", "the-category-of-each-member-in-the-store", "count-salary-categories"],
+      slugs: ["triangle-judgement", "the-category-of-each-member-in-the-store", "count-salary-categories", "weather-type-in-each-country"],
     },
     {
       name: "Driver-cohort leaderboards",
       why: "Rank cohorts by accepted volume or earnings and ties are waiting — this ledger ties at 4, 3 and 2 orders. The rank trio is a policy conversation: DENSE_RANK for peer ladders, RANK for rungs-with-gaps, ROW_NUMBER only behind a named deterministic tie-breaker.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "second-highest-salary"],
     },
     {
       name: "Trip-close windows",
       why: "The close stamp lands on the batched ops clock: JULIANDAY(close) - JULIANDAY(posted) over the 82 stamped offers, 2.98-day average, 2..4 range. The drill is the NULL gate — an unstamped offer has no lag, not zero lag — and the window boundary that decides 'inside' versus 'outside' the clock.",
-      slugs: ["average-time-of-process-per-machine", "find-golden-hour-customers", "users-with-two-purchases-within-seven-days"],
+      slugs: ["average-time-of-process-per-machine", "find-golden-hour-customers", "users-with-two-purchases-within-seven-days", "biggest-window-between-events"],
     },
     {
       name: "Settlement & cents discipline",
       why: "Driver payouts and city billing live in INTEGER cents: every dollar read is amount_cents / 100.0, and the missing .0 floors every odd-cent bill. The reconciliation culture is row-level: 6 unsettled claims (15,217.00), one void-but-paid (925.00), one paid with zero settlement rows (1,756.00).",
-      slugs: ["bank-account-summary-ii", "customer-order-frequency", "generate-the-invoice"],
+      slugs: ["bank-account-summary-ii", "customer-order-frequency", "generate-the-invoice", "sales-person"],
     },
     {
       name: "Set-op stitching & reconciliation boards",
       why: "City ops stitches boards: the accepted census stacked on the expired census, labeled per arm, and the stitched result must reassemble the 103-offer base or the report is hiding a drift. UNION ALL is the stitch — UNION's dedupe silently merges legitimately identical rows from two different populations — and EXCEPT answers the mirror question (who posted but never completed). The drills stack two SELECTs with a literal label column and make the column contract explicit.",
-      slugs: ["monthly-transactions-ii", "league-statistics", "count-apples-and-oranges"],
+      slugs: ["monthly-transactions-ii", "league-statistics", "count-apples-and-oranges", "sales-analysis-iii", "customers-who-never-order"],
     },
     {
       name: "Window frames & running math",
       why: "The rolling reads — running fare volume across the month spine, rolling demand curves at day grain — live or die on the frame clause: the default RANGE frame lumps ordering peers into one jump the moment the spine carries ties. The drills force the frame decision (ROWS versus RANGE), the running-sum shape, and the moving average whose edge rows stay NULL-honest. inDrive's morning board runs these windows daily; a silent default frame is a curve that lies politely.",
-      slugs: ["find-cumulative-salary-of-an-employee", "running-total-for-different-genders", "restaurant-growth"],
+      slugs: ["find-cumulative-salary-of-an-employee", "running-total-for-different-genders", "restaurant-growth", "product-sales-analysis-ii", "sales-analysis-i", "daily-leads-and-partners"],
     },
     {
       name: "Subquery shapes & scalar benchmarks",
       why: "Screens escalate from the fold to the benchmark: each cluster against the ledger-wide average, each offer against its class ceiling, each rider against the pilot floor — comparisons WHERE and HAVING cannot do inline. The drills move through the shapes — scalar benchmarks, IN-lists built from folds, EXISTS tests, derived tables staged once — and each shape's failure mode, from the multi-row scalar error to the silent NULL drop. Knowing which shape to reach for is the interview's real question.",
-      slugs: ["department-highest-salary", "game-play-analysis-iv", "managers-with-at-least-5-direct-reports"],
+      slugs: ["department-highest-salary", "game-play-analysis-iv", "managers-with-at-least-5-direct-reports", "fix-names-in-a-table", "find-churn-risk-customers"],
     },
     {
       name: "NULL policy & empty-set edges",
       why: "Launch cities make empty sets routine: a staging city folds to zero offers, a rider's first month has no prior to lag from, an unstamped offer has no latency. The drills pin the empty-set rules — COUNT returns 0, SUM and AVG return NULL, x/0 returns NULL silently in SQLite — and the display-versus-measure COALESCE discipline. The candidate who can say what a hole MEANS (no data, not zero) is the one whose dashboards don't lie at the edges.",
-      slugs: ["replace-employee-id-with-unique-identifier", "the-latest-login-in-2020", "biggest-single-number"],
+      slugs: ["replace-employee-id-with-unique-identifier", "the-latest-login-in-2020", "biggest-single-number", "top-travellers", "calculate-special-bonus", "employee-bonus", "students-and-examinations"],
     },
     {
       name: "KPI definitions & rate governance",
       why: "inDrive's KPI wall is definition-heavy: response rate, completion-of-accepted, expiry share — each a named denominator, and each one a trap when the label drifts. The drills compute rates where the denominator is the whole test (ads-style CTR shapes, confirmation rates, funnel-step conversion) and force the habit of printing the denominator beside every rate. The company twist: at a fixed-fare marketplace the funnel flatters itself the moment awaiting offers leave the denominator.",
-      slugs: ["ads-performance", "reported-posts-ii", "funnel-step-conversion"],
+      slugs: ["ads-performance", "reported-posts-ii", "funnel-step-conversion", "average-salary-of-departments", "second-most-recent-activity"],
     },
   ],
 

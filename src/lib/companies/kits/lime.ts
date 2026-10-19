@@ -32,7 +32,7 @@ export const limeKit: CompanyKit = {
     "Lime is the micromobility company that put shared scooters and bikes on city sidewalks at global scale — short trips of a kilometer or three, priced by the minute, replenished nightly, and entirely hostage to one artifact most riders never see: the {sky:city permit}. Every market Lime operates in is a negotiated, metered, revocable contract, which makes its data org equal parts fleet ops and civic accounting. The core object is a ride: unlocked, ridden, {emerald:completed} with a telemetry ping or {rose:cancelled}, timestamped at every hop. On this kit's proxy ledger that's 103 rides of which 82 carry a completion ping — 14 {sky:pending}, 7 {rose:cancelled} — and completion rate is completed ÷ UNLOCKED, with the 21 ping-less rides being either stuck vehicles or open compliance questions, never silent zeros.",
     "The data org is city-shaped on both sides of the ledger. Fleet side: vehicle utilization (rides per active vehicle per day), rebalancing sweeps, charging cycles, and a telemetry hygiene problem scooters make uniquely nasty — vehicles that stop pinging ({sky:zombie fleet}) need a stated NULL policy, not a shrug. Civic side: permit fees and compliance filings settle through an invoicing book where every row is INTEGER cents — `SUM(amount_cents) / 100.0`, never `/100` — and the reconciliation culture is strict: the trial balance ties to the cent (181,080 debit = 181,080 credit), a {rose:void-but-paid} permit invoice (925.00) is an incident with a city on it, and a partially settled fee (4,000.00 of 6,148.00) is a follow-up with a deadline. Depot rent is the biggest opex line (14 entries, 16,800.00), which tells you the unit economics conversation starts with parking, not scooters.",
     "Interviews are micromobility-flavored: short-ride grain, utilization denominators, and permit-compliance reads. A screen opens with a warm-up join (attach rides to their city), escalates into a conditional aggregation with a status rule ({emerald:completion} share by city, {rose:cancellation} share by month), then either a month-bucket trend (STRFTIME over the 2024-01..2025-02 span), a window question (rank cities by weekly rides, rolling 7-day actives) or a compliance query (permit invoices with zero settlements — a LEFT JOIN + IS NULL anti-join). Follow-ups are spoken aloud: 'is that per ride or per vehicle?', 'does an unlocked-but-unclosed ride sit in your denominator?', 'what does an unpaid permit mean for next quarter's launch?' — because in micromobility an unpaid fee is an existential risk wearing a receipt.",
-    "Preparation strategy: this kit is **theme-curated** from the SQL band — {sky:0 tagged LC} rows exist for Lime, so the 16 problems and 30 topic slugs were hand-picked from the theme menu to mirror its screens: ride-grain folds, utilization math, availability islands, zombie telemetry, permit ledgers, retention windows. The two case studies run on the live storefront db: one rebuilds the **monthly ride ledger** city ops reviews (volume against the 8-ride bar, close-lag per month), the other rebuilds the {amber:permit-compliance} census that lists which cities still owe fees. Both are mechanically audited against probed figures — 103 rides, 82 completed, latency averaging 2.98 days (range 2..4), and 6 permit invoices holding 15,217.00 outstanding.",
+    "Preparation strategy: this kit is **theme-curated** from the SQL band — {sky:0 tagged LC} rows exist for Lime, so the 16 problems and 30 topic slugs were hand-picked from the theme menu to mirror its screens: ride-grain folds, utilization math, availability islands, zombie telemetry, permit ledgers, retention windows. The six case studies run on the live storefront db: one rebuilds the **monthly ride ledger** city ops reviews (volume against the 8-ride bar, close-lag per month), the other rebuilds the {amber:permit-compliance} census that lists which cities still owe fees, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... Both are mechanically audited against probed figures — 103 rides, 82 completed, latency averaging 2.98 days (range 2..4), and 6 permit invoices holding 15,217.00 outstanding.",
     "The fleet itself is a vendor story the data org tracks weekly: 6 hardware vendors supply the 16-model catalog, and concentration is the standing risk — Nordic Gadgets AB carries **32%** of fare revenue (11,130.25) with Midwest Hardware Co at 26.7% (9,294.93), so one recall or firmware regression reshapes the whole deployment. Vendor quality lives on a 3.9–4.8 rating spread where only two vendors clear the {emerald:4.5 trusted bench}. The catalog's price structure matters as much: 8 budget models (avg 32.06) against 8 mid-band (avg 111.50), topping out at 199.99 — *there is no premium band*, which is why utilization, not ticket size, is the lever every fleet decision pulls. Fare-line grain keeps it honest: 251 `order_items` lines over 103 rides, and the ~2.4x fan-out is the number that catches any revenue SUM joined at the wrong grain.",
     "The stakeholder calendar runs on three rhythms. Weekly, the growth board reads the region mix — EU 45 rides / 15,089.23, APAC 37 / 11,605.45, US 19 / 7,286.16, LATAM 2 / 852.44 — against concentration: four riders above 3,000.00 lifetime carry {amber:63.5%} of ride value, so 'the fleet' is really four relationships and a long tail. Monthly, the close walks the civic side: 28 permit fees against 27 settlements, {emerald:21 exact} / 1 partial / 6 untouched, settlement velocity averaging **28.4 days** against fixed 30-day terms with an 84-day slowest straggler. Quarterly, the expense book gets its say — 36 entries where depot {rose:Rent} leads at 16,800.00 across 14 filings — because parking, not scooters, is the cost center the margin story starts from. The analyst who can fold all three rhythms into one audit-ready query chain is the one this org promotes.",
   ],
@@ -64,47 +64,47 @@ export const limeKit: CompanyKit = {
     {
       name: "Ride-grain aggregation",
       why: "Everything starts by folding rides into per-city, per-month, per-vehicle-model counts without letting the fare-line join change the grain: 103 rides become 251 fare lines once items attach. COUNT(*) versus COUNT(DISTINCT ride_id) is the difference between a ride census and a line-item census.",
-      slugs: ["product-sales-analysis-ii", "unique-orders-and-customers-per-month", "percentage-of-users-attended-a-contest"],
+      slugs: ["product-sales-analysis-ii", "unique-orders-and-customers-per-month", "percentage-of-users-attended-a-contest", "customers-who-bought-a-and-b-not-c", "active-users"],
     },
     {
       name: "Fleet utilization folds",
       why: "Micromobility economics live on utilization: rides per active vehicle, rebalance distance per sweep, top-performing vehicles by trips. Server-utilization-time is the utilization fold in its purest form; parking-fees-and-duration is the metered-duration shape scooters price by.",
-      slugs: ["server-utilization-time", "find-top-performing-driver", "calculate-parking-fees-and-duration"],
+      slugs: ["server-utilization-time", "find-top-performing-driver", "calculate-parking-fees-and-duration", "total-traveled-distance", "median-time-to-convert"],
     },
     {
       name: "Dock & vehicle availability",
       why: "Availability is a timeline question: which vehicles sat consecutive-ready, which docks filled, which capacity bar the next rider would have tripped. Consecutive-available-seats is the contiguous-run shape; last-person-to-fit-in-the-bus is the running-capacity gate.",
-      slugs: ["consecutive-available-seats", "consecutive-available-seats-ii", "last-person-to-fit-in-the-bus"],
+      slugs: ["consecutive-available-seats", "consecutive-available-seats-ii", "last-person-to-fit-in-the-bus", "bikes-last-time-used"],
     },
     {
       name: "Ride-length buckets & histograms",
       why: "Minute-priced revenue means the bucket mix is the money: session-bar charts of ride lengths, spend histograms, rating distributions per city. Three bucket drills, one habit — CASE arms that partition a continuous value without losing rows.",
-      slugs: ["create-a-session-bar-chart", "spend-histogram", "ratings-histogram"],
+      slugs: ["create-a-session-bar-chart", "spend-histogram", "ratings-histogram", "transactions-per-visit-histogram"],
     },
     {
       name: "Completion & close-lag reads",
       why: "Close lag is unlock-to-ping on completed rides only — avg 2.98 days on the proxy ledger, 2-to-4 range — and the paired-timestamp math (JULIANDAY deltas, machine-style process pairing) is the muscle. The rate queries ride the same 100.0-before-division discipline.",
-      slugs: ["average-time-of-process-per-machine", "queries-quality-and-percentage", "user-activity-for-the-past-30-days-i"],
+      slugs: ["average-time-of-process-per-machine", "queries-quality-and-percentage", "user-activity-for-the-past-30-days-i", "duplicate-charge-pairs"],
     },
     {
       name: "City permits & the compliance ledger",
       why: "Permits are Lime's license to exist: aging schedules for outstanding fees, gap detection in the filing sequence, reconciliation of the civic books. The AR-aging and GL-reconciliation shapes are exactly the month-close queries city finance runs.",
-      slugs: ["ar-aging-schedule", "journal-gap-detection", "gl-reconciliation"],
+      slugs: ["ar-aging-schedule", "journal-gap-detection", "gl-reconciliation", "report-contiguous-dates"],
     },
     {
       name: "Zombie fleet & telemetry hygiene",
       why: "Scooters stop pinging — the zombie census needs a stated staleness window and a NULL policy, not vibes. Keep-latest dedupe with a deterministic tie-break rebuilds one ping per ride from a retry-heavy stream; the blank audit catches the rest.",
-      slugs: ["find-zombie-sessions", "keep-latest-dedupe", "null-blank-audit"],
+      slugs: ["find-zombie-sessions", "keep-latest-dedupe", "null-blank-audit", "the-most-recent-orders-for-each-product"],
     },
     {
       name: "Rider retention windows",
       why: "Rider reads are trailing-window reads: rolling 7-day actives, DAU/WAU stickiness across cities, last-ride recency per rider. One rider's ten rides count once — the rolling-distinct discipline these three drill.",
-      slugs: ["rolling-7d-actives", "dau-wau-stickiness", "the-latest-login-in-2020"],
+      slugs: ["rolling-7d-actives", "dau-wau-stickiness", "the-latest-login-in-2020", "sessionize-events", "first-and-last-call-on-the-same-day"],
     },
     {
       name: "CASE triage on ride fates",
       why: "Unlocked, completed, pending, cancelled — ride fate is a CASE branch inside a SUM, not four queries. Conditional counting over a 1/0 flag folds completion and cancellation shares at the same grain as COUNT(*), and the ELSE arm's width is the audit.",
-      slugs: ["immediate-food-delivery-i", "count-salary-categories", "weather-type-in-each-country"],
+      slugs: ["immediate-food-delivery-i", "count-salary-categories", "weather-type-in-each-country", "settlement-fails-aging", "team-scores-in-football-tournament", "league-statistics"],
     },
     {
       name: "Demand bursts & weekend curves",
@@ -124,17 +124,17 @@ export const limeKit: CompanyKit = {
     {
       name: "Deep subqueries & CTE staging",
       why: "The rides-per-active-vehicle ratio and the cancellation-rate gates both stage through subqueries and CTEs: fold first, then gate, then join back for names. The Hopper driver queries are the ride-industry canon for exactly this fold-then-ratio shape Lime screens love.",
-      slugs: ["hopper-company-queries-i", "hopper-company-queries-ii", "game-play-analysis-iv"],
+      slugs: ["hopper-company-queries-i", "hopper-company-queries-ii", "game-play-analysis-iv", "trips-and-users"],
     },
     {
       name: "Rolling windows & frame math",
       why: "Utilization and rider activity are trailing-window reads: rolling 7-day ride value, rolling actives, cumulative rides per city. Frame choice (ROWS versus the default RANGE) is the difference between a true 7-day window and a peers-inclusive accident that double-counts tied days.",
-      slugs: ["restaurant-growth", "rolling-average-steps", "find-cumulative-salary-of-an-employee"],
+      slugs: ["restaurant-growth", "rolling-average-steps", "find-cumulative-salary-of-an-employee", "maximum-transaction-each-day", "biggest-window-between-events"],
     },
     {
       name: "Pricing tiers & band rules",
       why: "Minute-priced fares ride on rule stacks: best-rule discounts, tier classification, price bands that gate which vehicle model a market deploys (the catalog tops out at 199.99 — the premium band is empty). Band joins and CASE-tier folds are the pricing-desk queries.",
-      slugs: ["the-category-of-each-member-in-the-store", "calculate-product-final-price", "risk-based-pricing"],
+      slugs: ["the-category-of-each-member-in-the-store", "calculate-product-final-price", "risk-based-pricing", "most-frequently-ordered-product-per-customer"],
     },
   ],
 

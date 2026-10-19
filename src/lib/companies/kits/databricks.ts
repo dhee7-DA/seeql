@@ -59,12 +59,12 @@ export const databricksKit: CompanyKit = {
     {
       name: "Consumption-period censuses",
       why: "Every Databricks review opens with a fold: periods, accounts, burn — grouped and counted without letting the grain blur. COUNT(*) counts consumption periods, COUNT(DISTINCT customer_id) counts workspace accounts; the calendar's 103 periods come from just 16 accounts, and the census is where candidates prove they know which grain they're standing on.",
-      slugs: ["product-sales-analysis-ii", "unique-orders-and-customers-per-month", "find-followers-count", "dau-wau-stickiness", "users-with-two-purchases-within-seven-days"],
+      slugs: ["product-sales-analysis-ii", "unique-orders-and-customers-per-month", "find-followers-count", "dau-wau-stickiness", "users-with-two-purchases-within-seven-days", "product-sales-analysis-iii"],
     },
     {
       name: "The burn calendar",
       why: "Consumption is calendar arithmetic: month buckets over created_at, then trend reads against the 3,731.97 peak and the 1,193.86 trough. Databricks screens drill the '%Y-%m' spine because every burn chart in the business hangs on it — and a '%m'-without-year fold merges January 2024 with January 2025 into one lie.",
-      slugs: ["monthly-transactions-i", "the-latest-login-in-2020", "user-activity-for-the-past-30-days-i", "sessionize-events", "rolling-7d-actives", "rolling-average-steps"],
+      slugs: ["monthly-transactions-i", "the-latest-login-in-2020", "user-activity-for-the-past-30-days-i", "sessionize-events", "rolling-7d-actives", "rolling-average-steps", "customers-who-never-order", "orders-with-maximum-quantity-above-average", "find-the-missing-ids", "employees-with-missing-information"],
     },
     {
       name: "Workload-line joins",
@@ -74,27 +74,27 @@ export const databricksKit: CompanyKit = {
     {
       name: "Concentration and skew",
       why: "63.5% of the book sits with accounts over 3,000 lifetime — skew is the business model, and screens make you compute it: top accounts, their share of the whole, the count behind the share. The denominator is the entire test; a concentration ratio over the wrong base flatters nobody honestly.",
-      slugs: ["number-of-rich-customers", "top-earners", "winning-candidate", "portfolio-concentration-hhi"],
+      slugs: ["number-of-rich-customers", "top-earners", "winning-candidate", "portfolio-concentration-hhi", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "Blended-rate economics",
       why: "Per-DBU rate cards are weighted folds: burn divided by units, per family, per tier — Audio's 11,744.01 on 97 units reads a very different rate than Accessories' 3,294.29 on 121. Ratio shapes with honest numerators and denominators are the pricing-screen grammar.",
-      slugs: ["average-selling-price", "queries-quality-and-percentage", "low-quality-problems"],
+      slugs: ["average-selling-price", "queries-quality-and-percentage", "low-quality-problems", "percentage-of-users-attended-a-contest"],
     },
     {
       name: "One-pass fate censuses",
       why: "The ops board gets committed, on-demand, queued and killed in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "find-bursty-behavior"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "find-bursty-behavior", "immediate-food-delivery-i"],
     },
     {
       name: "CASE banding & billing-basis mixes",
       why: "Billing basis is CASE-classified — committed, on-demand, queued, killed — with the arms pivoting into columns for the CFO's mix board. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the revenue story, and a reordered WHEN quietly re-labels the base.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "spend-histogram"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "spend-histogram", "bank-account-summary", "fix-names-in-a-table", "transaction-velocity"],
     },
     {
       name: "Share-of-book windows",
       why: "Market shares are window reads: each period's burn beside its market's total via SUM() OVER (PARTITION BY cloud_market), or each account's share of the 34,833.28 book. Databricks drills the partition idiom because consumption shares are computed at line grain and defended at board grain.",
-      slugs: ["find-the-team-size", "portfolio-weights", "project-employees-iii", "compute-the-rank-as-a-percentage", "usage-tier-percentiles"],
+      slugs: ["find-the-team-size", "portfolio-weights", "project-employees-iii", "compute-the-rank-as-a-percentage", "usage-tier-percentiles", "rank-scores"],
     },
     {
       name: "Billing & cents discipline",
@@ -104,7 +104,7 @@ export const databricksKit: CompanyKit = {
     {
       name: "Late data, watermarks & governance",
       why: "A lakehouse whose customers bill off the same feeds the dashboards read treats late data as a first-class event: a watermark per feed, restated periods instead of silent appends, and keep-latest dedupe on the staging tables. Governance closes the kit because Unity Catalog's audit trails are queries too — who touched what, and which rows changed after the fact.",
-      slugs: ["keep-latest-dedupe", "snapshot-delta-detect", "null-blank-audit", "week-over-week-churn", "second-day-confirmation"],
+      slugs: ["keep-latest-dedupe", "snapshot-delta-detect", "null-blank-audit", "week-over-week-churn", "second-day-confirmation", "late-arriving-restatement", "average-time-of-process-per-machine"],
     },
   ],
 

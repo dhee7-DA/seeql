@@ -53,7 +53,7 @@ export const airtableKit: CompanyKit = {
     "**Airtable** is the no-code connected-apps platform — the product that put a relational database in front of everyone and made the base the unit of work: tables, fields, views and records, stitched together by linked records and set in motion by scripts, automations and the API. Monetization rides seats and usage, so every growth number in the building is a conditional count over the same small object set. This kit maps the storefront db onto that world: the 16 customers rows are workspace accounts, the 103 orders are base activity periods worth **34,833.28**, and the 251 order_items rows are usage line records — records created, automation runs, API call packs, where quantity = units and unit_price = the per-unit rate. The status map is fixed: delivered = {emerald:active-billed} (52, 50.5%), shipped = {sky:current period} (30, 29.1%, shipped_at = the period-open stamp), pending = trial or pending upgrade (14, 13.6%), cancelled = {rose:downgraded} (7, 6.8%).",
     "The data org splits into growth, usage monetization and a small enterprise-governance pod, and all three read the same spine at different grains. Usage telemetry is the heartbeat: a period books at created_at, and `shipped_at` is stamped the day the period actually opens — **82 of 103 periods** carry the stamp, averaging **2.98 days** booking-to-open with a 2–4 day spread, and the 14 trial rows have none yet (a population definition, not a cleanup job). Money sits one layer down: 28 billing statements and 27 payment legs in INTEGER cents, where the dollar read is `amount_cents / 100.0`. Concentration is the third story: **63.5%** of billed value sits with workspaces whose lifetime spend crosses 3,000 (71.2% above 2,000) — one lost logo moves a quarter.",
     "Interview screens are census-then-denominator, base-flavored. A typical loop opens with a **two-grain market census** — EU runs 45 periods from just 8 workspaces (intensity 5.6) while the US runs 19 from 2 (9.5) — then escalates into a rate where the interviewer asks the denominator out loud (*'does a downgraded period count in your base?'*), then into the usage ladder where three SKUs sit tied at 30 units and rank semantics become a business decision. Late rounds walk the {sky:14-month period spine} (2024-01 to 2025-02) with `LAG` deltas and probe the first row's NULL, or pivot the fate grid with `CASE` arms that must reconcile to 103 by construction. Candidates who state the status filter and the denominator before writing SQL are the ones who get callbacks.",
-    "Preparation strategy: the pools file carries no Airtable section — no tagged rows at all — so all sixteen problems and every topic slug here are **theme-curated** to this kit's known screen shapes: activation funnels, two-grain workspace censuses, tie-heavy usage ladders, `CASE` fate pivots and the cents-safe billing spine. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {emerald:workspace-month fate pivot} growth ops opens Monday with, the other rebuilds the {violet:linked-usage pair census} the template team runs before shipping a new base template. The bar to clear: *state the definition and the denominator before you compute anything* — then make every status census reconcile to 103 by construction.",
+    "Preparation strategy: the pools file carries no Airtable section — no tagged rows at all — so all thirty-two problems and every topic slug here are **theme-curated** to this kit's known screen shapes: activation funnels, two-grain workspace censuses, tie-heavy usage ladders, `CASE` fate pivots and the cents-safe billing spine. Do the topics in order, then run all six case studies on the live storefront db: one rebuilds the {emerald:workspace-month fate pivot} growth ops opens Monday with, the other rebuilds the {violet:linked-usage pair census} the template team runs before shipping a new base template, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The bar to clear: *state the definition and the denominator before you compute anything* — then make every status census reconcile to 103 by construction.",
     "The finance tables are where the workspace world stops being fun and starts being owed. The 28 billing statements and 27 settlement legs sit in INTEGER cents — the dollar read is always `amount_cents / 100.0` — and the coverage census splits them **21 exact, 1 partial (4,000.00 of 6,148.00) and 6 never-collected worth 15,217.00**. The status column is a claim, not a ledger: statement #28 is marked {rose:paid} with zero settlement legs (1,756.00) while #11 is void yet carries a 925.00 leg — mirror-image errors that both land on the row-level anomaly list. The ledger referees the close: debits foot to 181,080 against 181,080, delta zero — *the close ships or the incident starts*.",
     "Deeper rounds change the stack: the screens escalate into **anti-joins** (the dunning list, the never-active census) and **window frames and staged subqueries** (ROWS versus RANGE on the running book, scalar gates, derived tables), then land on cohort reads where the denominator memo outranks the fold. Work the five new topics in order, then run the four appended cases on the live db — the {amber:dunning anti-join} billing closes with, the {violet:usage-ladder tie census} the template team ranks with, the mean-of-means pricing gate, and the board-walk step column. The bar is unchanged: *state the population and the denominator before you compute anything* — then make every census reconcile, 103 periods, 28 statements, 27 legs, by construction.",
   ],
@@ -84,12 +84,12 @@ export const airtableKit: CompanyKit = {
     {
       name: "Trial-to-paid activation funnels",
       why: "Every Airtable growth screen opens with the funnel: period booked, trial parked, period opened (shipped_at stamped), billed to term. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling a current period 'active-billed' — 30 versus 52 on this db.",
-      slugs: ["trial-to-paid-funnel", "funnel-step-conversion", "game-play-analysis-iv"],
+      slugs: ["trial-to-paid-funnel", "funnel-step-conversion", "game-play-analysis-iv", "immediate-food-delivery-i", "consecutive-numbers", "ar-aging-schedule"],
     },
     {
       name: "Two-grain workspace censuses",
       why: "Periods and workspaces are different grains of the same join, and every census here reports both: EU runs 45 periods from 8 workspaces while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "find-followers-count", "students-and-examinations"],
+      slugs: ["unique-orders-and-customers-per-month", "find-followers-count", "students-and-examinations", "customer-order-frequency"],
     },
     {
       name: "Workspaces joined to base activity",
@@ -99,17 +99,17 @@ export const airtableKit: CompanyKit = {
     {
       name: "Usage leaderboards & rank ties",
       why: "Usage-based expansion is leaderboard reporting: which plan SKUs and add-on packs carry the usage units. The ladder on this db ties constantly — 36 and 36, then 30 three times, then 21 three times — and RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung, which is a policy about peer SKUs, not syntax.",
-      slugs: ["rank-scores", "top-earners", "second-highest-salary"],
+      slugs: ["rank-scores", "top-earners", "second-highest-salary", "keep-latest-dedupe"],
     },
     {
       name: "Plan-tier banding with CASE",
       why: "Workspaces sit on Free, Team, Business and Enterprise with add-on packs riding alongside, and every tier read is CASE-classified with fixed edges the pricing page publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the forecast, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "the-category-of-each-member-in-the-store"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "the-category-of-each-member-in-the-store", "net-revenue-retention", "repeat-purchase-rate", "trial-balance-check", "count-salary-categories"],
     },
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month period spine (2024-01 to 2025-02) is the growth call's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) and jump (+1,158.21 into August) named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "running-total-for-different-genders"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "running-total-for-different-genders", "mrr-waterfall", "null-blank-audit", "snapshot-delta-detect"],
     },
     {
       name: "Set algebra for segment stacks",
@@ -119,7 +119,7 @@ export const airtableKit: CompanyKit = {
     {
       name: "Nested folds & usage gates",
       why: "Screens escalate into staging: fold per-workspace period counts, then judge them against a computed platform mean (6.44 here — exactly four logos clear it). Scalar, correlated and derived shapes each carry an empty-inner-query answer you are expected to give unprompted.",
-      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments"],
+      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments", "percentage-of-users-attended-a-contest"],
     },
     {
       name: "One-pass status censuses",
@@ -134,27 +134,27 @@ export const airtableKit: CompanyKit = {
     {
       name: "Anti-join dunning & never-active censuses",
       why: "The AR read the close runs first is an anti-join: statements LEFT JOIN payments, keep the NULL side — 6 statements worth 15,217.00, one of them marked paid with zero legs. The same shape hunts never-active workspaces (a confident zero on this db, but proving it is the exercise) and dormant bases before a winback. The trap is filtering a status in WHERE after the LEFT JOIN and silently inner-joining the whitespace away.",
-      slugs: ["find-churn-risk-customers", "sellers-with-no-sales", "customer-who-visited-but-did-not-transact"],
+      slugs: ["find-churn-risk-customers", "sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "customers-who-never-order", "winback-recovery", "dormant-reactivation"],
     },
     {
       name: "Window frames & running books",
       why: "SUM(total) OVER (ORDER BY booked_at) looks like a running total until two periods tie on the order key — the default RANGE frame absorbs peers in one step and the cumulative double-jumps. Writing the frame out loud (ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW, or a 3-row moving average over the 14-month spine) is the difference between a book that walks and one that lurches. Frames are policy: the board reads a walk, not a jump.",
-      slugs: ["last-person-to-fit-in-the-elevator", "find-cumulative-salary-of-an-employee", "account-balance"],
+      slugs: ["last-person-to-fit-in-the-elevator", "find-cumulative-salary-of-an-employee", "account-balance", "rolling-7d-actives"],
     },
     {
       name: "Subquery shapes & empty inner queries",
       why: "Scalar, correlated and derived subqueries answer different questions at different costs, and each carries an empty-inner-query failure mode that ships silently: a scalar gate returns NULL and the comparison empties the report; a correlated gate re-runs per outer row and hides it. The staged shape — fold once in a derived table or CTE, judge it outside — is what the pricing screens actually want. Stating what the inner fold returns when it matches nothing is the unprompted follow-up.",
-      slugs: ["department-highest-salary", "employees-whose-manager-left-the-company", "investments-in-2016"],
+      slugs: ["department-highest-salary", "employees-whose-manager-left-the-company", "investments-in-2016", "deferred-revenue", "basket-depth-aov", "transaction-velocity"],
     },
     {
       name: "Cohort stickiness & retention reads",
       why: "Expansion is judged on cohorts, not totals: stickiness ratios over workspace activity, growth accounting that classifies each workspace-month as new, retained or resurrected, and retention matrices that read the fade. Every one is a conditional count over a window with the cohort month as the spine — and the denominator is the cohort size, never the platform base. The interview version is always 'which cohort, which window, stated first'.",
-      slugs: ["dau-wau-stickiness", "growth-accounting", "cohort-retention-matrix"],
+      slugs: ["dau-wau-stickiness", "growth-accounting", "cohort-retention-matrix", "ltv-cac-payback", "find-the-team-size", "restaurant-growth"],
     },
     {
       name: "Calendar math & clock-edge filters",
       why: "The period spine is TEXT timestamps, so date work is string surgery with sharp edges: `STRFTIME('%Y-%m', created_at)` builds the 14-bucket month key, half-open intervals (`>= '2024-01-01' AND < '2024-02-01'`) keep month-end bookings that BETWEEN drops, and weekday or seven-day-window reads need date arithmetic that survives the TEXT format. The clock edge is exactly where upgrade-driven periods land — precisely the bookings a sloppy predicate loses.",
-      slugs: ["sales-by-day-of-the-week", "find-golden-hour-customers", "users-with-two-purchases-within-seven-days"],
+      slugs: ["sales-by-day-of-the-week", "find-golden-hour-customers", "users-with-two-purchases-within-seven-days", "plan-migration-paths", "fix-names-in-a-table", "group-sold-products-by-the-date"],
     },
   ],
 

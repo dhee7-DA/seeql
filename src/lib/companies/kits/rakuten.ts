@@ -53,7 +53,7 @@ export const rakutenKit: CompanyKit = {
     {
       name: "Two-grain member censuses",
       why: "Orders and members are different grains of the same join, and every census here reports both: EU runs 45 orders from 8 members while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "find-loyal-customers"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "find-loyal-customers", "immediate-food-delivery-ii", "confirmation-rate"],
     },
     {
       name: "Joining members, merchants and listings",
@@ -73,7 +73,7 @@ export const rakutenKit: CompanyKit = {
     {
       name: "The 14-month order spine",
       why: "The 2024-01 to 2025-02 order spine is the merchandising call's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) and jump (+1,158.21 into August) named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "year-on-year-growth-rate", "report-contiguous-dates"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "year-on-year-growth-rate", "report-contiguous-dates", "fix-names-in-a-table"],
     },
     {
       name: "Coverage set algebra",
@@ -93,7 +93,7 @@ export const rakutenKit: CompanyKit = {
     {
       name: "Billing & cents discipline",
       why: "Completed is not settled — the finance tables (28 invoices, 27 payments, INTEGER cents) are where the member world meets money. Every dollar read is amount_cents / 100.0, and the exact/partial/none coverage split (21 / 1 / 6) is one CASE away.",
-      slugs: ["bank-account-summary-ii", "monthly-transactions-ii", "products-worth-over-invoices", "gl-reconciliation", "monthly-transactions-i"],
+      slugs: ["bank-account-summary-ii", "monthly-transactions-ii", "products-worth-over-invoices", "gl-reconciliation", "monthly-transactions-i", "repeat-purchase-rate", "rfm-segmentation", "basket-depth-aov"],
     },
   ],
 

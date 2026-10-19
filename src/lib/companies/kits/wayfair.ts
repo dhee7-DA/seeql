@@ -26,7 +26,7 @@ export const wayfairKit: CompanyKit = {
     "**Wayfair** is the pure-drop-ship home-goods platform: the website is the shelf, **suppliers hold the inventory**, and the platform's job is demand, casting and logistics. Every product page — a *cast* in the house vocabulary — is a promise a vendor fulfills, which means the analytics grain stack runs vendor-first: vendors hold casts, casts carry price, orders fan into unit lines, lines trace back to exactly one vendor. On this kit's proxy db the census reads **6 vendors behind 16 casts**, **103 orders** fanning into 251 unit lines, and $34,833.28 of demand at an average ticket of **$338.19** — a db small enough to hold in your head, shaped exactly like the supplier read you'd run in the Boston office.",
     "Concentration is the number the supplier review opens with: the top vendor books **11130.25** — **32%** of platform demand — and the top two clear 58% together, so one vendor's hiccup is a platform event. Big-ticket is the other obsession: **25 of 103 orders** sit at 500-or-more total and only **9 of those have delivered**, which is the drop-ship delivery risk in one sentence — *the highest-value promises are the ones still in flight*. The fulfillment clock reads `shipped_at` → non-NULL on **82 of 103 orders** (52 delivered + 30 shipped), averaging **2.98 days**, range 2-to-4 — and the 14 pending orders are exactly where a vendor-sourcing delay shows up first.",
     "Interview style is supplier-flavored and chain-literate. Screens open with a warm-up two-table join (orders to customers), escalate into the **drop-ship chain** — orders → unit lines → casts → vendors, three joins, one honest fold — then land on either a vendor scorecard (revenue, units, rating, share of platform) or a threshold census with the NULL trap attached ('vendors with no sales this quarter' is the classic, and `NOT IN` with a NULL in the subquery is the answer that ends the round). Follow-ups are spoken: 'is that revenue per cast or per vendor?', 'does a cancelled order count in your placed base?', 'what does your rating gate exclude?'",
-    "Preparation strategy: Wayfair carries **zero tagged problems** in this app's registry, so the kit is fully theme-curated — sixteen problems and ten topics drawn from the band to mirror known Wayfair screen themes: vendor scorecard folds, three-table drop-ship chains, dormant-vendor anti-joins, big-ticket banding, cast hygiene, settlement math on the cents tables. The two case studies run on the live db: one rebuilds the **vendor scorecard** the supplier review opens with (chain join, rating gate, revenue-ranked), the other rebuilds the **big-ticket band census** merch and logistics argue over. Both are mechanically audited against the probed figures.",
+    "Preparation strategy: Wayfair carries **zero tagged problems** in this app's registry, so the kit is fully theme-curated — thirty-two problems and ten topics drawn from the band to mirror known Wayfair screen themes: vendor scorecard folds, three-table drop-ship chains, dormant-vendor anti-joins, big-ticket banding, cast hygiene, settlement math on the cents tables. The six case studies run on the live db — built for spaced practice rather than one sitting: one rebuilds the **vendor scorecard** the supplier review opens with (chain join, rating gate, revenue-ranked), another rebuilds the **big-ticket band census** merch and logistics argue over. All six are mechanically audited against the probed figures.",
     "The economics behind the chain are worth stating because every senior screen circles back to them: the platform books **$34,833.28** of demand but owns almost none of the inventory behind it, so margin is a *take-rate on flow* and risk is a promise someone else fulfills. The dollar weight sits at the top of the ticket ladder — the 25 big-ticket orders carry **17379.43** of the book, just under half the platform's dollars on a quarter of its orders — while vendor concentration puts 32% of demand through one vendor. Below the storefront sits the settlement layer with its own clock: invoices keep INTEGER cents, AR reads 6 open invoices worth 19609.00 with the unpaid anti-join at 15217.00, and paid invoices settle in 28.4 days against flat 30-day terms — {amber:fastest 13, slowest 84}. Card rails carry 16 payments against 11 wires, and the ledger ties at 181080.00 on both sides — the quiet numbers that decide whether a close ships.",
     "Preparation for the expanded kit is a sequencing problem, and the roadmap is explicit. *Week one is the chain*: drill the vendor fold until Nordic reads **11130.25 over 82 units through 43 lines** without notes, then the band definitions (500-plus is 25 orders, 9 delivered) and the latency population (82 of 103 orders, averaging 2.98 days across a 27/30/25 split at 2/3/4 days). Week two is the money: cents discipline via `amount_cents / 100.0`, the coverage census (21 exact, 1 partial at 4000 of 6148, 6 unpaid worth 15217.00), and the anomaly classes — a {rose:void-but-paid} invoice at 925.00 and a paid invoice with zero payment rows at 1756.00. From there the new material takes over: theory t9 through t24 go deeper on frames, set-ops and staging; mcq 11 through 30 drill the traps; and cases 3 through 6 move off familiar ground — the {emerald:replenishment census}, the settlement rails stack, the momentum walk, the category-avg ladder. Narrate the denominator of every number above and the screen is yours.",
   ],
@@ -63,12 +63,12 @@ export const wayfairKit: CompanyKit = {
     {
       name: "Dormant-vendor anti-joins",
       why: "Drop-ship health is read from the silent side: vendors whose casts never sold, casts with no demand in a window, customers who browsed but never bought. LEFT JOIN + IS NULL (and its NOT EXISTS twin) is the shape — and the NOT IN NULL trap is the follow-up that ends screens, because one NULL in the subquery empties the report and an empty report looks like good news.",
-      slugs: ["sellers-with-no-sales", "customers-who-never-order", "customer-who-visited-but-did-not-transact"],
+      slugs: ["sellers-with-no-sales", "customers-who-never-order", "customer-who-visited-but-did-not-transact", "customers-who-bought-all-products"],
     },
     {
       name: "Big-ticket bands and thresholds",
       why: "The 500-plus ticket is where Wayfair's margin and its delivery risk both live — 25 orders, 9 delivered. Banding is CASE work: threshold arms in the right order, ELSE as the catch-all, and a threshold that actually matches the business (the premium PRICE band at 200 is empty on this db — max cast price 199.99 — which is the trap the band census is designed to catch).",
-      slugs: ["number-of-rich-customers", "calculate-orders-within-each-interval", "the-category-of-each-member-in-the-store"],
+      slugs: ["number-of-rich-customers", "calculate-orders-within-each-interval", "the-category-of-each-member-in-the-store", "amount-anomaly-zscore"],
     },
     {
       name: "The delivery clock on big tickets",
@@ -88,7 +88,7 @@ export const wayfairKit: CompanyKit = {
     {
       name: "Drop-ship chain joins",
       why: "The three-table chain is THE Wayfair join: vendors to casts on supplier_id, casts to lines on product_id, and the interview is whether you can keep the chain straight while a fold rides on it. Two-hop warm-ups graduate to four-table capstones; wrong-key joins fan out quietly and the vendor census doubles.",
-      slugs: ["count-artist-occurrences-on-spotify-ranking-list", "combine-two-tables", "top-competitors"],
+      slugs: ["count-artist-occurrences-on-spotify-ranking-list", "combine-two-tables", "top-competitors", "product-sales-analysis-i"],
     },
     {
       name: "Warehouse and stock folds",
@@ -98,12 +98,12 @@ export const wayfairKit: CompanyKit = {
     {
       name: "Ranking windows for vendor boards",
       why: "Vendor podiums, top casts per vendor, second-priciest cast in a category — supplier reporting is leaderboard reporting. The rank trio and the tie-break habit are reflexes here, and the argmax-via-window is the difference between a podium and a LIMIT 1 that splits ties arbitrarily.",
-      slugs: ["department-top-three-salaries", "second-highest-salary", "the-most-recent-orders-for-each-product"],
+      slugs: ["department-top-three-salaries", "second-highest-salary", "the-most-recent-orders-for-each-product", "customer-placing-the-largest-number-of-orders", "most-frequently-ordered-product-per-customer", "restaurant-growth"],
     },
     {
       name: "Settlement money math",
       why: "Vendors get paid on invoices, and on this db those tables keep money as INTEGER cents — every dollar read is amount_cents / 100.0. Reconciliation folds (coverage classification, split-payment detection, month-bucketed aging) are the closest thing this kit has to a finance round, and the anomalies are real: a void invoice that collected, a paid invoice with no payments.",
-      slugs: ["trial-balance-check", "bank-account-summary-ii", "monthly-transactions-i"],
+      slugs: ["trial-balance-check", "bank-account-summary-ii", "monthly-transactions-i", "weeks-of-supply", "ar-aging-schedule", "generate-the-invoice", "products-worth-over-invoices"],
     },
     {
       name: "Month spines and momentum walks",
@@ -113,7 +113,7 @@ export const wayfairKit: CompanyKit = {
     {
       name: "One-pass FILTER censuses",
       why: "Dashboards here are query-budgeted: the status census (52 delivered, 30 shipped, 14 pending, 7 cancelled) and the big-ticket read (20 of 25 handed off) must each come out of ONE scan, not four. FILTER (WHERE ...) branches and conditional SUMs build the whole picture per group, and the branch totals must reconcile to COUNT(*) or the census is lying somewhere.",
-      slugs: ["active-businesses", "count-salary-categories", "transactions-per-visit-histogram"],
+      slugs: ["active-businesses", "count-salary-categories", "transactions-per-visit-histogram", "list-the-products-ordered-in-a-period", "customer-order-frequency", "sales-by-day-of-the-week", "unique-orders-and-customers-per-month", "spend-histogram", "immediate-food-delivery-i"],
     },
     {
       name: "Grand-total stacks and UNION banners",

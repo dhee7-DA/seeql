@@ -91,7 +91,7 @@ export const lyftKit: CompanyKit = {
     {
       name: "Refunds, credits & conditional money",
       why: "Refund rate is refunded ÷ COMPLETED — only completed rides can be refunded, so the denominator is a definition, not a default. Conditional SUMs over money columns, month-bucketed with the cancelled count alongside, are the finance-adjacent folds this team ships weekly.",
-      slugs: ["monthly-transactions-i", "capital-gain-loss", "total-traveled-distance", "calculate-special-bonus"],
+      slugs: ["monthly-transactions-i", "capital-gain-loss", "total-traveled-distance", "calculate-special-bonus", "immediate-food-delivery-ii"],
     },
     {
       name: "Prime-time date math",
@@ -101,7 +101,7 @@ export const lyftKit: CompanyKit = {
     {
       name: "Set ops & one-pass censuses",
       why: "Report packets stitch two populations into one layout — completed rides and cancelled rides stacked, per-month branches aligned — and dashboards get one pass, not four scans. UNION ALL discipline and CASE-branch censuses that reconcile to COUNT(*) are the close-out skills.",
-      slugs: ["team-scores-in-football-tournament", "monthly-transactions-ii", "active-businesses", "customer-order-frequency"],
+      slugs: ["team-scores-in-football-tournament", "monthly-transactions-ii", "active-businesses", "customer-order-frequency", "number-of-times-a-driver-was-a-passenger"],
     },
   ],
 

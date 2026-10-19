@@ -26,7 +26,7 @@ export const asosKit: CompanyKit = {
     "**ASOS** is the UK-born global fashion retailer for twenty-somethings — own brands (ASOS DESIGN, Topshop) sitting beside thousands of boutique partners on **ASOS Marketplace**, an app-first funnel, a Premier delivery subscription, and a drop cadence that pushes new styles live every week. Fashion e-commerce has a signature data problem: orders placed and orders kept are different numbers, because sizing and fit drive returns at rates no other vertical sees. This kit maps the storefront db onto that world: 16 customers are shoppers (region = market), 103 orders are fashion orders worth **34,833.28**, and 251 order_items rows are order lines — quantity = units, unit_price = line price, the raw material of a size curve. The status map is fixed: delivered = {emerald:kept-and-settled} (52, 50.5%), shipped = dispatched (30, 29.1%, shipped_at as the warehouse dispatch stamp), pending = in the pick-pack queue (14), cancelled = {rose:abandoned pre-dispatch} (7, 6.8%).",
     "The data org splits into trading, customer/growth, a returns-and-fit pod, and finance ops — all reading the same spine at different grains. Trading lives on the order book: **34,833.28** across 103 orders, average 338.19 against a 25.47 to 1,088.44 spread, with concentration the board actually manages — **63.5%** of revenue from shoppers whose lifetime spend crosses 3,000 (71.2% above 2,000). The dispatch funnel is the ops heartbeat: 82 of 103 orders carry a `shipped_at` stamp, averaging **2.98 days** from order to warehouse dispatch with a 2–4 day spread; the 14 pending rows have no stamp yet — a population definition, not a cleanup job. Money sits one layer down: 28 invoices are brand settlement statements and 27 payments are settlement legs, all in INTEGER cents where the dollar read is `amount_cents / 100.0`.",
     "Interview screens are census-then-denominator. A loop opens with a **two-grain market census** — EU runs 45 orders from 8 shoppers (335.32 AOV) while the US runs 19 from 2 (383.48) — then escalates into a rate where the interviewer asks the denominator question out loud (*'does an abandoned order count in your base?'*), then into the units ladder where the size curve guarantees ties — three SKUs tied at 30 units — and rank semantics become a merchandising policy. Late rounds walk the {sky:14-month order spine} (2024-01 to 2025-02) with `LAG` deltas, or descend into the settlement layer where a paid-status statement with zero settlement legs (#28, 1,756.00) is waiting as the reconciliation trap. Candidates who state the status filter and the denominator before writing SQL are the ones who get callbacks.",
-    "Preparation strategy: the pools file carries no ASOS section — 0 tagged rows — so all sixteen problems and every topic slug here are **theme-curated** to this kit's known screen shapes: basket depth, return-share conditional counts, size-curve ranking with ties, drop-cadence month walks and the cents-safe settlement spine. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {emerald:assortment weight census} trading reads every Monday, the other rebuilds the {rose:settlement coverage census} finance ops runs at every close. The bar to clear: *state the definition and the denominator before you compute anything* — then make every status census reconcile to 103 by construction.",
+    "Preparation strategy: the pools file carries no ASOS section — 0 tagged rows — so all thirty-two problems and every topic slug here are **theme-curated** to this kit's known screen shapes: basket depth, return-share conditional counts, size-curve ranking with ties, drop-cadence month walks and the cents-safe settlement spine. Do the topics in order, then run all six case studies on the live storefront db: one rebuilds the {emerald:assortment weight census} trading reads every Monday, the other rebuilds the {rose:settlement coverage census} finance ops runs at every close, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The bar to clear: *state the definition and the denominator before you compute anything* — then make every status census reconcile to 103 by construction.",
     "Money is its own beat, and the settlement pod runs it on four tables — 28 statements, 27 legs, 36 expenses, 80 ledger entries, all INTEGER cents — where the read is reconciliation, not reporting: 21 statements settled in full (65,612), 1 partial (4,000 of 6,148), and **6 never-settled worth 15,217**, with the row-level rogues on top — #11 void-but-settled at 925.00 and #28 paid-status with zero legs at 1,756.00, *a status that lies*. Five statement cycles settle on both card and wire legs Klarna-style, so the pod pre-folds `payments` to statement grain before any join. The gate never moves: {emerald:181,080 debits} against 181,080 credits, delta zero — *or the close does not ship*.",
     "The senior rounds go deeper than the day-one screen, and this expansion tracks them: {sky:window frames} on the order spine — where tied `created_at` seconds make RANGE versus ROWS a correctness question — plus set-op stacks for the trading pack, anti-join idiom choice for the chase lists, fan-out discipline for anything touching settlement legs, and the weighted-versus-simple grain check (*the trusted bench's 139.66 average is a partner-row mean, not a lines-weighted read*). The attach economy gets its own definition: 54 of 103 orders carry an Accessories line, and the size-curve ladder guarantees ties — **three SKUs at 30 units** — so rank policy is merchandising law. Run the four appended cases on the live db — the size-curve ladder, the pre-dispatch loss list, the dispatch clock, the above-the-mean price ladder — and keep the day-one bar: state the population, state the denominator, reconcile by construction.",
   ],
@@ -57,32 +57,32 @@ export const asosKit: CompanyKit = {
     {
       name: "Basket depth & line economics",
       why: "A fashion order is not a product — it is a basket of size-curve lines, and every basket-depth question here is a two-grain count over order_items. ASOS screens open with lines-versus-orders: 251 lines over 103 orders, and the trap is COUNT(*) reading lines when the ask was orders.",
-      slugs: ["product-sales-analysis-ii", "sales-analysis-i", "number-of-rich-customers"],
+      slugs: ["product-sales-analysis-ii", "sales-analysis-i", "number-of-rich-customers", "basket-depth-aov", "most-frequently-ordered-product-per-customer", "group-sold-products-by-the-date", "products-worth-over-invoices"],
     },
     {
       name: "Returns, refusals & cancellation shares",
       why: "Fashion's returns economy starts pre-dispatch: 7 of 103 orders abandoned before the warehouse touches them, concentrated by market (APAC 8.1%, EU 6.7%). Every kept-rate and abandon-share screen here is a conditional count where the interviewer's first question is what the denominator holds.",
-      slugs: ["immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "immediate-food-delivery-iii"],
+      slugs: ["immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "immediate-food-delivery-iii", "average-salary-of-departments", "count-student-number-in-departments"],
     },
     {
       name: "Repeat purchase & frequency",
       why: "App-first fashion lives on repeat rates: the top shopper books 24 of 103 orders while two shoppers booked exactly one. Frequency screens drill HAVING gates and per-shopper folds — the same shape as 'which shoppers ordered in consecutive months'.",
-      slugs: ["repeat-purchase-rate", "customer-order-frequency", "confirmation-rate"],
+      slugs: ["repeat-purchase-rate", "customer-order-frequency", "confirmation-rate", "top-travellers", "users-with-two-purchases-within-seven-days"],
     },
     {
       name: "Spend tiers & shopper segmentation",
       why: "Concentration is the board metric — 63.5% of revenue from 3,000-plus spenders — and tier bands are CASE-classified with fixed edges the CRM publishes. The arms must be exhaustive and ordered; a hole in the CASE is a hole in the segmentation, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["rfm-segmentation", "spend-histogram", "count-salary-categories"],
+      slugs: ["rfm-segmentation", "spend-histogram", "count-salary-categories", "cohort-repeat-revenue", "weather-type-in-each-country"],
     },
     {
       name: "Best-seller ladders & ranking",
       why: "Size curves guarantee ties: the units ladder runs 47, 46, 38, then a pair at 36 and three SKUs tied at 30. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow — which is a merchandising policy about peer SKUs, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "customer-placing-the-largest-number-of-orders", "duplicate-charge-pairs"],
     },
     {
       name: "Drop cadence & month walks",
       why: "Drops make the calendar the spine: 14 monthly buckets from 2024-01 to 2025-02, each carrying 6–9 orders, with the July trough at 1,193.86. Month walks (LAG deltas), period filters and half-open windows are how trading reads whether a drop landed.",
-      slugs: ["unique-orders-and-customers-per-month", "list-the-products-ordered-in-a-period", "monthly-transactions-i"],
+      slugs: ["unique-orders-and-customers-per-month", "list-the-products-ordered-in-a-period", "monthly-transactions-i", "maximum-transaction-each-day"],
     },
     {
       name: "Catalog-to-demand joins",
@@ -92,12 +92,12 @@ export const asosKit: CompanyKit = {
     {
       name: "NULL policy on dispatch",
       why: "shipped_at is NULL until the warehouse stamps it — 14 pending orders sit in pick-pack with no latency to average. ASOS screens check whether you treat that NULL as data to report, coalesce to zero for display, or exclude with a stated reason — deliberately, not by accident.",
-      slugs: ["employee-bonus", "calculate-special-bonus", "books-with-null-ratings"],
+      slugs: ["employee-bonus", "calculate-special-bonus", "books-with-null-ratings", "average-time-of-process-per-machine", "null-blank-audit"],
     },
     {
       name: "Ratios with honest denominators",
       why: "AOV per market (383.48 US versus 335.32 EU), kept rates, abandon shares — fashion ratios punish integer division and careless filters. The house habit: 100.0 before the division, the denominator's filter decided BEFORE the ratio, and rounding only at the very end.",
-      slugs: ["queries-quality-and-percentage", "average-selling-price", "immediate-food-delivery-ii"],
+      slugs: ["queries-quality-and-percentage", "average-selling-price", "immediate-food-delivery-ii", "returns-rate-by-category", "user-activity-for-the-past-30-days-i", "product-sales-analysis-iii", "median-employee-salary"],
     },
     {
       name: "Settlement money in cents",
@@ -107,22 +107,22 @@ export const asosKit: CompanyKit = {
     {
       name: "Window frames & trailing GMV",
       why: "Running sums and moving averages smooth the 14-month spine, and the frame IS the metric: a trailing average and a cumulative walk answer different questions, and drop-night ties on created_at decide whether the frame walks ROWS or pulls peers with RANGE. The first rows of a trailing frame compute over short windows — charting them at full weight invents trend at the left edge.",
-      slugs: ["find-cumulative-salary-of-an-employee", "rolling-average-steps", "restaurant-growth"],
+      slugs: ["find-cumulative-salary-of-an-employee", "rolling-average-steps", "restaurant-growth", "bank-account-summary", "last-person-to-fit-in-the-bus"],
     },
     {
       name: "Anti-join idiom lab",
       why: "The chase lists here are anti-joins — statements with no legs, shoppers with no kept basket — and there are three idioms with different NULL behavior: LEFT JOIN … IS NULL, NOT EXISTS, NOT IN. Picking one is a correctness statement, and proving a confident zero (never-ordered SKUs = 0 on this db) is part of the job.",
-      slugs: ["sales-person", "customer-who-visited-but-did-not-transact", "find-churn-risk-customers"],
+      slugs: ["sales-person", "customer-who-visited-but-did-not-transact", "find-churn-risk-customers", "customers-who-never-order", "sales-analysis-ii"],
     },
     {
       name: "Set-op stacks for the trading pack",
       why: "Board packets stack populations — kept beside dispatched, this drop beside last — and UNION's silent whole-row dedup is a correctness question, not a style one: two byte-identical branch rows collapse and a statement vanishes with no error anywhere. One ORDER BY, at the end, sorts the combined set.",
-      slugs: ["movie-rating", "the-airport-with-the-most-flights", "league-statistics"],
+      slugs: ["movie-rating", "the-airport-with-the-most-flights", "league-statistics", "fix-product-name-format", "keep-latest-dedupe"],
     },
     {
       name: "Nested folds & platform means",
       why: "Screens escalate into staging: SKUs priced above the book mean (6 of 16 clear the 71.78 mean), orders beside their shopper's own average. Scalar, correlated and derived shapes each carry an empty-inner-query answer — NULL, not an error — you are expected to give unprompted.",
-      slugs: ["second-highest-salary", "orders-with-maximum-quantity-above-average", "market-analysis-i"],
+      slugs: ["second-highest-salary", "orders-with-maximum-quantity-above-average", "market-analysis-i", "product-price-at-a-given-date"],
     },
     {
       name: "One-pass funnel censuses",

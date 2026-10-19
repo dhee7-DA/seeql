@@ -3,7 +3,7 @@
 // Learn shell — sidebar (module, rank, streak, lessons) + lesson content.
 // A watcher effect converts progress into badges and level-up celebrations.
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   ArrowRight,
@@ -58,6 +58,10 @@ import { MockHq } from "./mock-hq";
 import { gauntletFor } from "@/lib/curriculum/gauntlet";
 import { ActivityStrip, MasteryGrid } from "./progress-cards";
 import { CelebrationHost, celebrate } from "./celebrate";
+import { RankUpCard, type RankUpInfo } from "./rank-up";
+import { WeeklyGoalPicker } from "./weekly-goal";
+import { CompanyLeaderboard } from "./company-leaderboard";
+import { playCue } from "@/lib/sound";
 import { CORE_AND_TOOLBOX, LAB_TOOLS, TOOLS, type ToolKind } from "./tools";
 import { Btn, Chip, Panel, ProgressBar, SectionLabel, ToolRow } from "./ui/kit";
 import { Icon3D } from "./ui/icon3d";
@@ -165,6 +169,10 @@ function useBadgeWatcher() {
   const universeTarget = useUniverse((s) => s.target);
   const prevLevel = useRef(-1);
   const ready = useRef(false);
+  // rank-up card state — a flat centered celebration raised when XP crosses a
+  // rank boundary (the small toast stack stays for badges only)
+  const [rankUp, setRankUp] = useState<RankUpInfo | null>(null);
+  const dismissRankUp = useCallback(() => setRankUp(null), []);
 
   const xp = useMemo(() => totalXp({ xpEvents }), [xpEvents]);
   const level = levelFor(xp);
@@ -209,6 +217,10 @@ function useBadgeWatcher() {
   const streak = useMemo(() => currentStreak({ xpByDay, dailyGoal }), [xpByDay, dailyGoal]);
 
   useEffect(() => {
+    // hydration guard: wait for the persisted ledger to land, THEN pin the
+    // starting rank — otherwise a returning Analyst II would "cross" from the
+    // empty pre-hydration level 0 and get a phantom rank-up on every load.
+    if (!useProgress.persist.hasHydrated()) return;
     if (!ready.current) {
       ready.current = true;
       prevLevel.current = level.index;
@@ -223,12 +235,15 @@ function useBadgeWatcher() {
       }
     }
     if (level.index > prevLevel.current) {
-      celebrate({ kind: "level", title: `Level up — ${level.title}`, sub: `Rank ${level.index + 1} of 6` });
+      // the flat rank-up card replaces the old level toast (same levelup cue);
+      // its footer names the next rung so the ladder stays visible
+      playCue("levelup");
+      setRankUp({ title: level.title, nextInXp: level.next === null ? null : Math.max(0, level.next - xp) });
       prevLevel.current = level.index;
     }
   }, [ctx, xp, streak, level]);
 
-  return { xp, level, streak, ctx };
+  return { xp, level, streak, ctx, rankUp, dismissRankUp };
 }
 
 /** Shell-header rank chips — the always-visible XP total and the daily-streak
@@ -621,6 +636,10 @@ function Overview({
         <MasteryGrid onOpenLesson={openLesson} />
       </div>
 
+      {/* weekly goal + sharpest companies — the stat cluster's floor */}
+      <WeeklyGoalPicker />
+      <CompanyLeaderboard />
+
       <Panel rounded="lg" className="mt-6">
         <h3 className="flex items-center gap-2.5 font-display text-sm font-semibold text-zinc-100">
           <Icon3D name="trophy" size={24} />
@@ -843,7 +862,7 @@ export function LearnApp() {
     window.addEventListener("seeql:tour-replay", onReplay);
     return () => window.removeEventListener("seeql:tour-replay", onReplay);
   }, []);
-  const { xp, level, streak, ctx } = useBadgeWatcher();
+  const { xp, level, streak, ctx, rankUp, dismissRankUp } = useBadgeWatcher();
   const xpEvents = useProgress((s) => s.xpEvents);
   const exams = useProgress((s) => s.exams);
   const resetAll = useProgress((s) => s.resetAll);
@@ -897,6 +916,7 @@ export function LearnApp() {
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-6 lg:flex-row">
       <CelebrationHost />
+      <RankUpCard info={rankUp} onDismiss={dismissRankUp} />
       <CommandPalette />
       <OnboardingTour step={tourStep} setStep={setTourStep} onClose={closeTour} />
       {/* keyboard users can jump straight past the 300px rail */}

@@ -38,7 +38,7 @@ export const robinhoodKit: CompanyKit = {
     "Robinhood is retail trading at consumer scale: order tickets in, fills out, engagement looped back into the next trade. The data org reads like the product — funnel analytics on acquisition and first trades, engagement analytics on session rhythm, and a settlement spine that still has to balance to the penny. On this app's storefront db the mapping is one-to-one: `orders` are order tickets (103 of them across 16 accounts), `order_items` are fill legs (251), customers are accounts, and the money spine is `invoices` as settlement batches (28), payments as cash movements for fills (27 rows covering 22 batches), with `ledger_entries` the clearing ledger (80 rows, debits $181,080 equal to credits $181,080). Tickets carry REAL dollars; the spine is INTEGER cents — every spine dollar read is `amount_cents / 100.0`.",
     "The funnel numbers the growth team lives in: of 103 tickets, **52 delivered** fills (50.5%), 30 shipped through routing (29.1%), 14 pending (13.6%), 7 cancelled (6.8%) — and shares must sum to 100 or the page is broken. Engagement is a distribution, not an average: 2 accounts traded once and stopped, 3 traded twice, 4 hit four tickets, and four power accounts ran 13, 14, 17 and 24 tickets — with **63.5%** of notional coming from accounts whose lifetime spend crosses $3,000. The {sky:fill clock}: 82 tickets carry a fill timestamp, averaging **2.98 days** ticket-to-fill, range 2 to 4 — the 21 without one (pending + cancelled) never entered that average, and saying so out loud is the interview.",
     "The settlement spine is where fintech rigor shows: **21 exact** batches ($65,612.00), **1 partial** (#25, $4,000.00 of $6,148.00), **6 with no cash movement** ($15,217.00), a {rose:void}-batch-with-cash (#11, $925.00), and a paid batch with no movement (#28, $1,756.00). Interview style mirrors the loop: a fold with a definition attached (fill rate — 82 of 103, denominator stated), a window over the engagement leaderboard, an anti-join for the un-moved batches, and a census whose branches must reconcile to 103 or 28 before it ships. Rounding lands once; {violet:100.0} precedes every division; the NULL policy is stated, not implied.",
-    "Preparation: the registry tags 2 Robinhood SQL problems and both land in this kit's problems; the remaining slots are theme-curated from the SQL band — funnel steps, streaks, leaderboards, retention cohorts — because that is what the screens probe. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {emerald:fill-status census} the weekly funnel page opens with (52 / 30 / 14 / 7 of 103, shares at 1 decimal), the other rebuilds the {violet:engagement leaderboard} retention reads every Monday — accounts ranked by ticket count with lifetime notional (Alice Chen, 24 tickets, $7,262.35 on top). Say the units and the denominator out loud before you compute anything; in retail trading the funnel IS the interview.",
+    "Preparation: the registry tags 2 Robinhood SQL problems and both land in this kit's problems; the remaining slots are theme-curated from the SQL band — funnel steps, streaks, leaderboards, retention cohorts — because that is what the screens probe. Do the topics in order, then run all six case studies on the live storefront db — built for spaced practice rather than one sitting: one rebuilds the {emerald:fill-status census} the weekly funnel page opens with (52 / 30 / 14 / 7 of 103, shares at 1 decimal), another rebuilds the {violet:engagement leaderboard} retention reads every Monday — accounts ranked by ticket count with lifetime notional (Alice Chen, 24 tickets, $7,262.35 on top). Say the units and the denominator out loud before you compute anything; in retail trading the funnel IS the interview.",
     "The money spine gets its own expansion reads. The rails stack: **card 16 movements / $37,364.00** against wire 11 / $32,248.00, appended with a `TOTAL` row — 27 movements, $69,612.00 — because treasury reads the whole book before the split. The coverage census folds cash against face per batch: 21 exact ($65,612.00), 1 partial (#25, $4,000.00 of $6,148.00), 6 unmoved ($15,217.00) — classes that must reconcile to 28. The anomaly board carries two standing rows — a {rose:void-but-moved} batch (#11, $925.00) and a {sky:paid-but-unmoved} one (#28, $1,756.00) — while five batches (#1, 5, 12, 19, 22) settle in two legs apiece, exactly the installment shape the leg census isolates.",
     "The deeper rounds go past the census: window frames that absorb tied timestamps, set ops (`UNION ALL` stacks and the dedupe tax `UNION` pays), derived-table staging — fold per batch, *then* classify — and anomaly triage, where the answer is a definition, not a number. Prep the same way: run the four new cases on the live db — regional notional rollup, leg census, {violet:anomaly board}, {sky:rails stack} — each rebuilt from slots, each figure a verified result cell. Keep the zero-delta contract taped to the monitor: debits $181,080.00 equal credits $181,080.00, or the page does not ship.",
   ],
@@ -75,7 +75,7 @@ export const robinhoodKit: CompanyKit = {
     {
       name: "The fill funnel & honest shares",
       why: "The weekly funnel page is a conditional aggregate: fills, cancels and their shares from one scan, with the denominator (103 tickets) stated. Both failure modes are graded here — integer division (100 must be 100.0) and denominator drift (the WHERE that filters the numerator's population out of the denominator).",
-      slugs: ["queries-quality-and-percentage", "funnel-step-conversion", "confirmation-rate"],
+      slugs: ["queries-quality-and-percentage", "funnel-step-conversion", "confirmation-rate", "bank-account-summary-ii", "bank-account-summary", "number-of-rich-customers", "spend-histogram"],
     },
     {
       name: "Session engagement windows",
@@ -85,7 +85,7 @@ export const robinhoodKit: CompanyKit = {
     {
       name: "First-trade funnels & day-one retention",
       why: "The first trade is the product: did the account come back? Day-2 return queries (second-day confirmation, next-day login), first-event detection and step conversion are the drills — and the follow-up is always the edge case: what does the funnel do when a cohort's step is empty?",
-      slugs: ["second-day-confirmation", "game-play-analysis-iv", "new-users-daily-count"],
+      slugs: ["second-day-confirmation", "game-play-analysis-iv", "new-users-daily-count", "chargeback-rate-ranking", "transaction-velocity", "suspicious-bank-account-transactions"],
     },
     {
       name: "Streaks & consecutive sessions",
@@ -95,7 +95,7 @@ export const robinhoodKit: CompanyKit = {
     {
       name: "Leaderboards & ranking",
       why: "The engagement leaderboard ranks accounts by ticket count with notional alongside — ROW_NUMBER for boards, DENSE_RANK for tiers, PERCENT_RANK for where-am-I views. The craft is the deterministic tiebreak: two accounts at the same count must rank the same way on every run.",
-      slugs: ["rank-scores", "usage-tier-percentiles", "compute-the-rank-as-a-percentage"],
+      slugs: ["rank-scores", "usage-tier-percentiles", "compute-the-rank-as-a-percentage", "uber-first-transaction"],
     },
     {
       name: "Argmax & latest tickets",
@@ -105,12 +105,12 @@ export const robinhoodKit: CompanyKit = {
     {
       name: "Notional economics",
       why: "Frequency without money is noise: notional per ticket, realized gain/loss framing, weighted averages across fills. The drills mix REAL-dollar folds on tickets with the cents discipline of the settlement spine — two unit systems in one analyst, stated out loud.",
-      slugs: ["average-selling-price", "top-travellers", "capital-gain-loss"],
+      slugs: ["average-selling-price", "top-travellers", "capital-gain-loss", "realized-pnl-average-cost", "split-adjusted-position", "portfolio-concentration-hhi", "portfolio-weights", "customer-who-visited-but-did-not-transact"],
     },
     {
       name: "NULL policy & data quality on fills",
       why: "21 of 103 tickets carry no fill timestamp — pending and cancelled — and they silently drop out of every latency average. The drills: NULL-safe filters, COUNT(column) versus COUNT(*), and the null/blank audit that keeps the funnel page honest before it ships.",
-      slugs: ["find-customer-referee", "null-blank-audit", "books-with-null-ratings"],
+      slugs: ["find-customer-referee", "null-blank-audit", "books-with-null-ratings", "duplicate-charge-pairs"],
     },
     {
       name: "Cohorts & retention",

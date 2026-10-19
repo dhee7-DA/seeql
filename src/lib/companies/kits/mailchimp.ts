@@ -68,32 +68,32 @@ export const mailchimpKit: CompanyKit = {
     {
       name: "Send-funnel fate counts",
       why: "Every Mailchimp screen starts here: a billing period stages, a campaign goes out, the period bills or dies — staged 103, sent 82, billed 52, and each stage is a conditional count over the same base. The graded skill is keeping the arms exhaustive (billed + in flight + awaiting + unsubscribed = staged) and never calling an in-flight send 'billed' — 30 versus 52 on this db is the trap.",
-      slugs: ["email-engagement-funnel", "funnel-step-conversion", "ads-funnel", "median-time-to-convert", "analyze-subscription-conversion"],
+      slugs: ["email-engagement-funnel", "funnel-step-conversion", "ads-funnel", "median-time-to-convert", "analyze-subscription-conversion", "trial-to-paid-funnel", "customers-who-never-order", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "Two-grain market censuses",
       why: "Periods and accounts are different grains of the same join, and every census reports both: EU runs 45 periods from 8 accounts while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying which column is load and which is coverage — is the habit being graded; the ratio (5.6 versus 9.5 periods per account) is the concentration read that steers market spend.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count", "find-all-unique-email-domains"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count", "find-all-unique-email-domains", "percentage-of-users-attended-a-contest", "confirmation-rate"],
     },
     {
       name: "Deliverability denominators",
       why: "Send-through is a rate with a fought-over denominator: 82 of 103 only if the base keeps the awaiting and unsubscribed rows; drop them and the rate inflates to 92.1% without a single extra send. Rates die from silent filtering, so the panel asks the population out loud before looking at the number — the same discipline open rates and click rates live and die by.",
-      slugs: ["queries-quality-and-percentage", "friend-requests-i-overall-acceptance-rate", "ab-test-conversion-lift", "ab-sample-ratio-mismatch", "dau-wau-stickiness", "second-day-confirmation"],
+      slugs: ["queries-quality-and-percentage", "friend-requests-i-overall-acceptance-rate", "ab-test-conversion-lift", "ab-sample-ratio-mismatch", "dau-wau-stickiness", "second-day-confirmation", "immediate-food-delivery-ii"],
     },
     {
       name: "Contact-tier bands with CASE",
       why: "Contact tiers are CASE-classified: the band fold splits 251 lines into 268 sub-55 contacts and 230 at 55-plus, and plan SKUs band into free/essentials/standard/premium the same way. Arms must be exhaustive and ordered — a hole in the CASE is a hole in the tier story, and a reordered WHEN quietly re-bands the base the pricing page prints.",
-      slugs: ["the-category-of-each-member-in-the-store", "loan-types", "calculate-orders-within-each-interval", "rfm-segmentation", "plan-migration-paths"],
+      slugs: ["the-category-of-each-member-in-the-store", "loan-types", "calculate-orders-within-each-interval", "rfm-segmentation", "plan-migration-paths", "net-revenue-retention"],
     },
     {
       name: "Cadence leaderboards",
       why: "Send-cadence boards are rank-window reporting where ties are guaranteed — the ladder runs 24, 17, 14, 13, 5 periods, then FOUR accounts tie at 4. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer accounts, not syntax; NTILE cuts the same base into usage tiers when the board wants quartiles instead of ladders.",
-      slugs: ["rank-scores", "top-travellers", "usage-tier-percentiles", "compute-the-rank-as-a-percentage"],
+      slugs: ["rank-scores", "top-travellers", "usage-tier-percentiles", "compute-the-rank-as-a-percentage", "product-sales-analysis-ii"],
     },
     {
       name: "Audience-growth walks",
       why: "The 14-month spine (2024-01 to 2025-02) is the growth call's home turf: monthly contact adds walk 51 in February down to the 22-contact July trough, an 18-contact rebound into August, and the running base closes at 498. LAG drives the walk and the first row's delta is NULL by definition — the baseline, never a zero. Week-over-week churn and cohort offsets are the same walk pointed at loss instead of adds.",
-      slugs: ["week-over-week-churn", "biggest-window-between-events", "growth-accounting", "winback-recovery", "dormant-reactivation"],
+      slugs: ["week-over-week-churn", "biggest-window-between-events", "growth-accounting", "winback-recovery", "dormant-reactivation", "first-last-touch-attribution", "combine-two-tables", "find-churn-risk-customers"],
     },
     {
       name: "Statement coverage set algebra",
@@ -103,12 +103,12 @@ export const mailchimpKit: CompanyKit = {
     {
       name: "Nested tier gates",
       why: "Screens escalate into staging: fold per-account period counts, then judge them against a computed platform mean (6.44 here — exactly four accounts clear it). Scalar, correlated and derived shapes each carry an empty-inner-query answer you are expected to give unprompted, because a tier gate over a filtered staging slice that returns nothing is how nurture lists silently ship empty.",
-      slugs: ["second-highest-salary", "market-analysis-i", "game-play-analysis-iv"],
+      slugs: ["second-highest-salary", "market-analysis-i", "game-play-analysis-iv", "classes-more-than-5-students"],
     },
     {
       name: "One-pass funnel censuses",
       why: "The ops board wants staged, sent, billed, in-flight and awaiting in ONE scan — FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift. The correctness argument the panel listens for is the reconciliation identity: the branches plus the unsubscribed residual must sum back to the staged base.",
-      slugs: ["active-businesses", "snaps-analysis", "find-stores-with-inventory-imbalance", "rolling-7d-actives", "sales-by-day-of-the-week"],
+      slugs: ["active-businesses", "snaps-analysis", "find-stores-with-inventory-imbalance", "rolling-7d-actives", "sales-by-day-of-the-week", "find-users-with-high-token-usage", "sales-analysis-i", "capital-gain-loss"],
     },
     {
       name: "Rails & cents discipline",

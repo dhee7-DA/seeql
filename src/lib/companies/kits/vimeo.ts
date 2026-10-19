@@ -55,17 +55,17 @@ export const vimeoKit: CompanyKit = {
     {
       name: "Trial-to-paid funnel counts",
       why: "Every Vimeo growth screen opens with the funnel: cycles booked, stamped (shipped_at carrying the plan change), active to term. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling an in-flight upgrade 'active' — 30 versus 52 on this db.",
-      slugs: ["trial-to-paid-funnel", "funnel-step-conversion", "immediate-food-delivery-i", "game-play-analysis-iv", "immediate-food-delivery-ii"],
+      slugs: ["trial-to-paid-funnel", "funnel-step-conversion", "immediate-food-delivery-i", "game-play-analysis-iv", "immediate-food-delivery-ii", "median-time-to-convert", "email-engagement-funnel"],
     },
     {
       name: "Two-grain account censuses",
       why: "Cycles and accounts are different grains of the same join, and every census here reports both: EU runs 45 cycles from 8 accounts while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count", "students-and-examinations"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count", "students-and-examinations", "group-sold-products-by-the-date"],
     },
     {
       name: "Joining accounts to cycles",
       why: "Accounts carry region and created_at; cycles inherit them through joins, and the join type decides who survives. A cycle without an account is corruption; an account without cycles is a dormant signup — though on this db the anti-join returns a confident zero, and proving it is part of the job.",
-      slugs: ["combine-two-tables", "sales-analysis-ii", "employee-bonus", "customer-who-visited-but-did-not-transact", "sellers-with-no-sales", "confirmation-rate"],
+      slugs: ["combine-two-tables", "sales-analysis-ii", "employee-bonus", "customer-who-visited-but-did-not-transact", "sellers-with-no-sales", "confirmation-rate", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "Upgrade leaderboards",
@@ -75,12 +75,12 @@ export const vimeoKit: CompanyKit = {
     {
       name: "Plan-band CASE logic",
       why: "Plan tiers are CASE-classified — the Basic-to-Enterprise ladder with fixed edges the pricing page publishes, and the 55-line usage split (268 units at 31.01 average line price versus 230 at 115.85) is the canonical fold. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the forecast, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["weather-type-in-each-country", "the-category-of-each-member-in-the-store", "calculate-special-bonus", "count-salary-categories", "product-sales-analysis-i", "average-selling-price"],
+      slugs: ["weather-type-in-each-country", "the-category-of-each-member-in-the-store", "calculate-special-bonus", "count-salary-categories", "product-sales-analysis-i", "average-selling-price", "analyze-subscription-conversion", "plan-migration-paths", "mrr-waterfall", "net-revenue-retention", "usage-tier-percentiles", "cohort-retention-matrix", "winback-recovery"],
     },
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month billing spine (2024-01 to 2025-02) is the growth call's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) and jump (+1,158.21 into August) named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "year-on-year-growth-rate", "movie-rating", "capital-gain-loss"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "year-on-year-growth-rate", "movie-rating", "capital-gain-loss", "invalid-tweets", "fix-names-in-a-table"],
     },
     {
       name: "Coverage set algebra",
@@ -95,7 +95,7 @@ export const vimeoKit: CompanyKit = {
     {
       name: "One-pass status censuses",
       why: "The ops board gets active, upgrading, trial and churned in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "week-over-week-churn", "dau-wau-stickiness", "rolling-7d-actives"],
     },
     {
       name: "Billing & cents discipline",

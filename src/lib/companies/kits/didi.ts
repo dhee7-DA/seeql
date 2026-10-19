@@ -31,7 +31,7 @@ export const didiKit: CompanyKit = {
     "DiDi is the ride-hailing giant of Asia and Latin America — the company that out-scaled Uber in China, absorbed Uber's China business, and now moves hundreds of millions of riders across didichuxing services from Express to Premier to Bus, plus Latin American operations where city-by-city share battles are won on supply. The core object is the same as any mobility marketplace: a trip request that is matched to a driver-partner, priced, {emerald:completed} or {rose:cancelled}, and timestamped at every hop. What makes DiDi DiDi is the safety layer: every trip carries safety flags, in-app audio records, and a {amber:24/7 safety-ops} floor whose analysts write SQL at 3am about trips that never reached a completion timestamp. On this kit's proxy ledger that reality shows up as 103 trip requests of which only 82 carry a completion timestamp — 14 {sky:pending}, 7 {rose:cancelled} — and completion rate is completed ÷ REQUESTED, never completed ÷ completed.",
     "The data org is built around the two-sided clock: driver-side teams (utilization, earnings, churn) and rider-side teams (demand, ETA, completion) read the same trip event streams but from opposite ends. Fleet partners supply vehicles and settle through an invoicing book where every settlement row is INTEGER cents — `SUM(amount_cents) / 100.0`, not `/100`, or the cents vanish to integer-division truncation. The rhythm is city-shaped and shift-shaped: morning is the completion-and-supply map, midday is driver-utilization deep dives (trips per active driver, online hours versus trip-bearing hours), and the safety floor's {rose:cancelled}-flag triage runs around the clock because a cancelled trip at 2am in the rain is a brand event, not a row.",
     "Interviews are marketplace-flavored and denominator-obsessed, with a safety-ops accent. A screen opens with a warm-up join (attach driver-partners to their trips), escalates into a conditional aggregation with a status rule ({emerald:completion} share by region, {rose:cancellation} share by hour), then a window question (rank cities by weekly trips, LAG the week-over-week cancellation drift) or a rate question where the entire test is whether your `WHERE` clause silently shrank the denominator. Follow-ups are spoken aloud: 'does a pending request count in your denominator?', 'per trip or per driver?', 'what happened to the 21 requests with no completion timestamp?'. Candidates who narrate grain and population before writing SQL are the ones who advance.",
-    "Preparation strategy: this kit is **theme-curated** from the SQL band — {sky:0 tagged LC} rows exist for DiDi, so the 16 problems and 30 topic slugs were hand-picked from the theme menu to mirror its screens: two-sided trip censuses, driver-side folds, suspension and safety-flag ops, rolling windows, timestamp hygiene. The two case studies run on the live storefront db: one rebuilds the driver-utilization leaderboard fleet ops opens with, the other rebuilds the one-pass safety triage census the {amber:safety floor} runs every shift. Both are mechanically audited against probed db figures — 103 requests, 82 completed, 14 pending, 7 {rose:cancelled}, latency averaging 2.98 days across a 2-to-4-day window.",
+    "Preparation strategy: this kit is **theme-curated** from the SQL band — {sky:0 tagged LC} rows exist for DiDi, so the 16 problems and 30 topic slugs were hand-picked from the theme menu to mirror its screens: two-sided trip censuses, driver-side folds, suspension and safety-flag ops, rolling windows, timestamp hygiene. The six case studies run on the live storefront db: one rebuilds the driver-utilization leaderboard fleet ops opens with, the other rebuilds the one-pass safety triage census the {amber:safety floor} runs every shift, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... Both are mechanically audited against probed db figures — 103 requests, 82 completed, 14 pending, 7 {rose:cancelled}, latency averaging 2.98 days across a 2-to-4-day window.",
     "DiDi's surface is multi-product — {sky:Express}, {amber:Premier}, DiDi Bus, Food, autonomous pilots — but the event spine underneath is one trip ledger, which is why the proxy ledger here carries 251 fare lines against 103 requests and sixteen service tiers instead of one product table. Tier reads are band reads: the catalog splits 8 budget tiers under 50 and 8 mid tiers up to 199.99, and the {rose:premium} band at 200-plus is EMPTY — a premium census returns zero groups, and the honest move is showing the hole with `MAX(price)` beside it, not padding the report. Interviewers love that exact corner: 'your band query returned nothing — empty band or broken filter?' The only passing answer shows the boundary evidence and lets the data plead its case.",
     "Under the trips sits the money, and the money is disciplined: fleet-partner settlements run through an invoice book of **28 settlement lines** — 21 paid, 6 open, 1 void — cleared by 27 payment rows (16 card, 11 wire) and closed against a ledger that ties at 181,080 cents on both sides, delta zero. Every figure in that book is an INTEGER-cent column, so every read is `SUM(amount_cents) / 100.0`, and the month-close sweep is a reconciliation sweep: one partial settlement (4,000 of 6,148 on line 25), one status-paid line with zero payment rows, one void line that accepted money. Screens increasingly end there — *not* 'write a join' but 'prove the books agree' — and the candidates who advance treat reconciliation as a query shape with a denominator, not a chore.",
   ],
@@ -63,32 +63,32 @@ export const didiKit: CompanyKit = {
     {
       name: "Trip-grain aggregation",
       why: "Everything at DiDi starts by folding trip requests into per-region, per-city, per-tier aggregates without letting cancelled demand pollute the total. The trap is grain drift: joining fare lines fans 103 trips out to 251 rows, and COUNT(*) stops counting trips the moment the join lands.",
-      slugs: ["product-sales-analysis-ii", "percentage-of-users-attended-a-contest", "unique-orders-and-customers-per-month"],
+      slugs: ["product-sales-analysis-ii", "percentage-of-users-attended-a-contest", "unique-orders-and-customers-per-month", "employees-with-deductions"],
     },
     {
       name: "Completion & cancellation rates",
       why: "Completion rate is completed ÷ REQUESTED — the denominator is the whole test, and the 100.0-before-division habit keeps the share honest. Trips-and-users is the canonical ride-hailing screen: cancellation share by city with exclusions, where one careless filter moves the denominator.",
-      slugs: ["queries-quality-and-percentage", "confirmation-rate", "immediate-food-delivery-ii"],
+      slugs: ["queries-quality-and-percentage", "confirmation-rate", "immediate-food-delivery-ii", "trips-and-users", "hopper-company-queries-ii", "hopper-company-queries-iii"],
     },
     {
       name: "Driver-side utilization folds",
       why: "DiDi's edge is driver economics: trips per active driver, online versus trip-bearing hours, shift overlap. Server-utilization-time is the utilization fold in its purest form, and overlapping-shifts is the paired-interval shape shift analytics runs on.",
-      slugs: ["server-utilization-time", "find-overlapping-shifts", "average-time-of-process-per-machine"],
+      slugs: ["server-utilization-time", "find-overlapping-shifts", "average-time-of-process-per-machine", "duplicate-charge-pairs", "investments-in-2016"],
     },
     {
       name: "Trip-fate CASE logic",
       why: "Requested, completed, pending, cancelled — trip fate is a CASE branch inside a SUM, not four queries. Conditional counting over a 1/0 flag folds completion and cancellation shares at the same grain as COUNT(*), and the ELSE arm's width is the audit.",
-      slugs: ["immediate-food-delivery-i", "capital-gain-loss", "count-salary-categories"],
+      slugs: ["immediate-food-delivery-i", "capital-gain-loss", "count-salary-categories", "number-of-times-a-driver-was-a-passenger", "structuring-detection", "amount-anomaly-zscore", "average-selling-price", "find-the-team-size", "not-boring-movies", "suspicious-bank-account-transactions"],
     },
     {
       name: "Safety flags & suspensions",
       why: "The safety floor lives on flag censuses and suspension windows: which accounts got banned, for how long, and which flagged trips overlapped a suspension. Leetflex-banned-accounts is the interval-overlap shape of an enforcement check; reported-posts is the flag-triage warm-up.",
-      slugs: ["leetflex-banned-accounts", "reported-posts", "find-churn-risk-customers"],
+      slugs: ["leetflex-banned-accounts", "reported-posts", "find-churn-risk-customers", "hopper-company-queries-i"],
     },
     {
       name: "Leaderboards & rank ties",
       why: "City leaderboards, top tiers by trips, most recent trips per driver — ranking windows where ties are the rule, not the exception. RANK versus DENSE_RANK is a business decision about who shares a rung, and the-most-recent-three-orders is the per-entity top-N shape.",
-      slugs: ["rank-scores", "the-most-recent-three-orders", "top-travellers"],
+      slugs: ["rank-scores", "the-most-recent-three-orders", "top-travellers", "find-top-performing-driver", "top-percentile-fraud", "the-number-of-passengers-in-each-bus-i", "customers-who-bought-a-and-b-not-c", "last-person-to-fit-in-the-bus"],
     },
     {
       name: "Demand bursts & velocity",
@@ -98,12 +98,12 @@ export const didiKit: CompanyKit = {
     {
       name: "Rolling windows & stickiness",
       why: "Growth reads here are trailing-window reads: rolling 7-day actives, DAU/WAU stickiness, running sums across the 2024-01..2025-02 span. COUNT(DISTINCT) inside a window frame and one-rider-counts-once is the muscle these three drill.",
-      slugs: ["rolling-7d-actives", "dau-wau-stickiness", "game-play-analysis-iii"],
+      slugs: ["rolling-7d-actives", "dau-wau-stickiness", "game-play-analysis-iii", "active-businesses", "restaurant-growth"],
     },
     {
       name: "Timestamp hygiene: NULL policy & dedupe",
       why: "Completion timestamps are NULL until the trip ends — 21 of 103 rows on the proxy ledger — and trip events retry. A stated NULL policy (report, coalesce, or exclude with a reason) plus keep-latest dedupe with a deterministic tie-break is the data-quality layer every dashboard stands on.",
-      slugs: ["keep-latest-dedupe", "null-blank-audit", "the-latest-login-in-2020"],
+      slugs: ["keep-latest-dedupe", "null-blank-audit", "the-latest-login-in-2020", "point-in-time-asof"],
     },
     {
       name: "Escalation shapes: subqueries & set ops",
@@ -113,12 +113,12 @@ export const didiKit: CompanyKit = {
     {
       name: "Fare-line fan-out & product mix",
       why: "The trip-to-fare-line join is where trip grain dies: 103 requests become 251 lines the moment order_items lands, and every product-mix read (which tiers ride along, which regions attach what) is built on that join. Product Sales Analysis III drills the per-period product fold; Products Worth Over Invoices drills folding value through a join without losing the grain.",
-      slugs: ["product-sales-analysis-iii", "products-worth-over-invoices", "most-frequently-ordered-product-per-customer"],
+      slugs: ["product-sales-analysis-iii", "products-worth-over-invoices", "most-frequently-ordered-product-per-customer", "market-analysis-i"],
     },
     {
       name: "Supply-spine LEFT JOINs",
       why: "Demand reads join from trips outward; supply reads join from the driver spine inward with LEFT JOIN — and the unmatched rows ARE the story (partners with zero completed trips this week). On this proxy ledger every partner has driven, so the anti-join returns zero rows — which is itself the lesson: the shape must be right even when the data doesn't reward it.",
-      slugs: ["combine-two-tables", "count-student-number-in-departments", "employees-with-missing-information"],
+      slugs: ["combine-two-tables", "count-student-number-in-departments", "employees-with-missing-information", "total-traveled-distance"],
     },
     {
       name: "Set-op report stitching",
@@ -128,12 +128,12 @@ export const didiKit: CompanyKit = {
     {
       name: "Calendar slices & weekday demand",
       why: "Demand has a weekly heartbeat — weekday commutes, weekend leisure — and ops slices it with date filters and weekday buckets over the 2024-01..2025-02 span. User Activity for the Past 30 Days I drills the trailing-window filter, Tasks Count in the Weekend the weekday slice, Convert Date Format the presentation edge where timestamps become report labels.",
-      slugs: ["user-activity-for-the-past-30-days-i", "tasks-count-in-the-weekend", "convert-date-format"],
+      slugs: ["user-activity-for-the-past-30-days-i", "tasks-count-in-the-weekend", "convert-date-format", "find-drivers-with-improved-fuel-efficiency", "user-activity-for-the-past-30-days-ii"],
     },
     {
       name: "Latest-state & argmax reads",
       why: "Half of ops is 'what is the current state' — the latest fare line per tier, the most recent request per driver, the last activity per account — and the latest-row fold is a keep-latest pattern with the tie-break discipline the event stream demands. The Most Recent Orders for Each Product is the per-entity argmax shape; Find Latest Salaries and Bikes Last Time Used are the dedupe-and-max warm-ups.",
-      slugs: ["the-most-recent-orders-for-each-product", "find-latest-salaries", "bikes-last-time-used"],
+      slugs: ["the-most-recent-orders-for-each-product", "find-latest-salaries", "bikes-last-time-used", "number-of-calls-between-two-persons", "first-and-last-call-on-the-same-day"],
     },
   ],
 

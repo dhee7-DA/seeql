@@ -63,17 +63,17 @@ export const deutscheKit: CompanyKit = {
     {
       name: "Settlement-state filters",
       why: "52 settled, 30 in flight, 14 pending, 7 fallen — and the fallen share differs by corridor (APAC 8.1%, EU 6.7%, US 5.3%). Status-aware filters, honest denominators and conditional counts are the difference between a census and a vibe on the trade book.",
-      slugs: ["recyclable-and-low-fat-products", "not-boring-movies", "weather-type-in-each-country", "delinquency-roll-rates"],
+      slugs: ["recyclable-and-low-fat-products", "not-boring-movies", "weather-type-in-each-country", "delinquency-roll-rates", "transaction-velocity"],
     },
     {
       name: "Coverage & partial settlements",
       why: "A receivable can be open AND received — the 4000.00 leg against the 6148.00 balance is the case study the break desk cites. Coverage folds settlement legs per receivable and compares to billed; the classification is computed, never stored.",
-      slugs: ["bank-account-summary", "number-of-times-a-driver-was-a-passenger", "calculate-orders-within-each-interval", "deferred-revenue", "expected-credit-loss"],
+      slugs: ["bank-account-summary", "number-of-times-a-driver-was-a-passenger", "calculate-orders-within-each-interval", "deferred-revenue", "expected-credit-loss", "bank-account-summary-ii", "account-balance"],
     },
     {
       name: "Break hunts & no-leg anti-joins",
       why: "The bank's daily control is pairing state with evidence: a receivable claiming paid with no rail hit, a void that still drew cash. LEFT JOIN ... IS NULL and EXISTS screens are how the 15217.00 no-leg book and the 1756.00 paid-unmoved receivable surface — and how they stay surfaced.",
-      slugs: ["customers-who-never-order", "employees-with-missing-information", "books-with-null-ratings", "journal-gap-detection"],
+      slugs: ["customers-who-never-order", "employees-with-missing-information", "books-with-null-ratings", "journal-gap-detection", "duplicate-charge-pairs", "amount-anomaly-zscore", "structuring-detection"],
     },
     {
       name: "The T+2 settlement clock",
@@ -83,12 +83,12 @@ export const deutscheKit: CompanyKit = {
     {
       name: "Corridor whale boards (windows)",
       why: "Exposure is read per corridor, never one global ladder: each corridor's biggest receivables ranked within its own book, rung by rung. RANK with PARTITION BY, per-corridor top-N and share-of-book windows are how the concentration review reads single-counterparty risk.",
-      slugs: ["rank-scores", "department-top-three-salaries", "the-most-recent-three-orders", "scd2-build", "loan-amortization-schedule"],
+      slugs: ["rank-scores", "department-top-three-salaries", "the-most-recent-three-orders", "scd2-build", "loan-amortization-schedule", "fx-exposure-report", "suspicious-bank-account-transactions", "second-most-recent-activity"],
     },
     {
       name: "Regulatory month buckets",
       why: "Every regulatory trend buckets on the 'YYYY-MM' key — SUBSTR of the event date, width 7 — over a book that runs 2024-01 to 2025-02 at a flat 6-to-9 events a month. The spine discipline matters: months ride the axis even when quiet, and a '%Y' (or '%M' by accident) key dissolves the calendar the regulator expects.",
-      slugs: ["monthly-transactions-i", "unique-orders-and-customers-per-month", "user-activity-for-the-past-30-days-i", "snapshot-delta-detect", "vintage-default-curves", "dividend-income-calendar"],
+      slugs: ["monthly-transactions-i", "unique-orders-and-customers-per-month", "user-activity-for-the-past-30-days-i", "snapshot-delta-detect", "vintage-default-curves", "dividend-income-calendar", "maximum-transaction-each-day"],
     },
     {
       name: "One-pass censuses",
@@ -98,7 +98,7 @@ export const deutscheKit: CompanyKit = {
     {
       name: "Stacked censuses & set ops",
       why: "Two feeds describe one book — the receivables ledger that claims and the rail feed that proves. UNION ALL stacks censuses that are disjoint by construction (the clearing arm beside the wire arm), EXCEPT stands one census against another and hands back exactly the misfits; matching column shapes comes first, the cross-foot argues second.",
-      slugs: ["count-salary-categories", "team-scores-in-football-tournament", "monthly-transactions-ii"],
+      slugs: ["count-salary-categories", "team-scores-in-football-tournament", "monthly-transactions-ii", "gl-reconciliation", "trial-balance-check"],
     },
     {
       name: "LAG walks & movement reads",

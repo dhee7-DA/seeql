@@ -55,7 +55,7 @@ export const swiggyKit: CompanyKit = {
     {
       name: "The two-grain zone census",
       why: "'Deliveries AND diners per zone' opens every city review — and the trap is counting both at one grain. COUNT(*) counts delivery rows; COUNT(DISTINCT customer_id) folds repeat demand back to people; the gap between them is the intensity signal that separates a heavy-repeat metro from a new-user frontier.",
-      slugs: ["daily-leads-and-partners", "find-followers-count", "article-views-ii"],
+      slugs: ["daily-leads-and-partners", "find-followers-count", "article-views-ii", "trips-and-users", "sales-by-day-of-the-week", "unique-orders-and-customers-per-month"],
     },
     {
       name: "Kept demand & cancellation math",
@@ -80,7 +80,7 @@ export const swiggyKit: CompanyKit = {
     {
       name: "City & SKU leaderboards",
       why: "Top zones by kept demand, top merchants by delivered volume, worst months by cancellations — logistics reporting is leaderboard reporting, and ties are everywhere when many zones share metrics. ROW_NUMBER, RANK and DENSE_RANK differ exactly at ties, and the tie policy is a business decision someone must own.",
-      slugs: ["rank-scores", "department-top-three-salaries", "second-highest-salary"],
+      slugs: ["rank-scores", "department-top-three-salaries", "second-highest-salary", "customer-placing-the-largest-number-of-orders", "most-frequently-ordered-product-per-customer", "the-most-recent-orders-for-each-product"],
     },
     {
       name: "NULL policy on in-flight orders",
@@ -95,7 +95,7 @@ export const swiggyKit: CompanyKit = {
     {
       name: "Dark-store stock & imbalance reads",
       why: "Instamart runs on forward-stocked dark stores, so the daily read is stock versus sold per SKU and imbalance across stores: which pools are lopsided before the dinner Rush. The drills are one-pass conditional censuses where branch totals must reconcile to COUNT(*).",
-      slugs: ["find-stores-with-inventory-imbalance", "active-businesses", "number-of-rich-customers"],
+      slugs: ["find-stores-with-inventory-imbalance", "active-businesses", "number-of-rich-customers", "find-golden-hour-customers"],
     },
     {
       name: "Merchant settlement cycles",

@@ -27,7 +27,7 @@ export const nubankKit: CompanyKit = {
     "Nubank is the neobank that pulled a hundred million LatAm customers out of branch banking — credit cards first, then accounts, lending and the Pix instant-rail era on top. The analytics reality is a credit book wearing a growth badge: every authorization either posts, clears, or declines, and the delinquency ladder behind it is the margin. On this storefront db the mapping is honest: `orders` are card authorizations (103 of them), order_items are the line items inside those authorizations (251 — about 2.4 lines each), customers are account holders, suppliers are merchants, and products are card plans. Authorization outcomes mirror the status mix exactly: **52 posted** (50.5%), **30 clearing** (29.1%), **14 open** (13.6%), **7 declined** (6.8%) — and shipped_at is the settlement timestamp, populated only for the 82 authorizations that got there.",
     "The data org splits into credit risk, payments, and growth. Credit risk owns the ladder: 28 billing cycles against 27 settlement legs, INTEGER cents end to end, with the standing contradictions — cycle #11 is {rose:void} yet carries a $925.00 settlement leg, #28 reads {emerald:paid} with no leg behind it ($1,756.00), and one cycle sits {amber:partial} at $4,000.00 of $6,148.00. Payments owns the rails: card legs run 16 for **$37,364.00**, Pix-era wire legs 11 for **$32,248.00**, five cycles settle in two legs (1, 5, 12, 19, 22), and accounts-receivable carries **6 untouched cycles worth $15,217.00**. Growth owns the funnel: EU 45 authorizations from 8 holders, APAC 37 from 5, US 19 from 2, LATAM 2 from 1.",
     "Interview style is denominator-first, then the ladder. A screen opens with a conditional count (posted share — *of all authorizations, or only the 82 that settled?*), moves to the two-table read (settlement legs joined onto billing cycles, where one wrong key pairs a leg with the wrong cycle), escalates into the CASE ladder — exact, partial, no legs — where arm order is the whole answer, and lands on the walk: month-over-month authorization volume with LAG, first-row NULL acknowledged. The graded habits: state the denominator, order the CASE arms, and never let a void-with-a-leg hide inside a paid average.",
-    "Preparation: the registry tags zero SQL problems for Nubank — this kit is **0 tagged LC, theme-curated**: all 30 topic slugs and 16 problems are chosen to mirror credit-risk and settlement screens — coverage ladders, rail folds, delinquency CASE bands, anti-joins for untouched cycles and rolling exposure windows. Then run both case studies on the live db: one rebuilds the {violet:settlement-rail scorecard} the payments desk ships weekly (card 16 legs / $37,364.00 leading), the other rebuilds the {emerald:coverage ladder} credit risk presents at the committee (21 exact / 1 partial / 6 no legs). Say the denominator, the join key and the CASE arm order out loud before you compute — at a credit book, all three are the margin.",
+    "Preparation: the registry tags zero SQL problems for Nubank — this kit is **0 tagged LC, theme-curated**: all 77 topic slugs and 32 problems are chosen to mirror credit-risk and settlement screens — coverage ladders, rail folds, delinquency CASE bands, anti-joins for untouched cycles and rolling exposure windows. Then run all six case studies on the live db — built for spaced practice rather than one sitting: one rebuilds the {violet:settlement-rail scorecard} the payments desk ships weekly (card 16 legs / $37,364.00 leading), another rebuilds the {emerald:coverage ladder} credit risk presents at the committee (21 exact / 1 partial / 6 no legs). Say the denominator, the join key and the CASE arm order out loud before you compute — at a credit book, all three are the margin.",
     "The margin stack tells you where the screens will drill. Revolving exposure is the product: the {amber:open book} carries **$19,609.00** across 6 cycles, with #25 sitting *partial* at $4,000.00 of $6,148.00 — the delinquency ladder in miniature. Cost of risk prints as behavior first: **7 declines** (6.8%) are the hard losses, and the standing exceptions — void #11 with its $925.00 leg, paid #28 with nothing behind it — are how a credit book lies to itself. Rails carry different tickets (**card $2,335.25 vs wire $2,931.64** average), and opex is two-thirds fixed — Rent $16,800.00 of $25,416.00. Every one of those numbers is a CASE arm, a denominator, or a fold; that is not a coincidence, it is the interview.",
     "Preparation scales by level, and the ladder is public. Juniors get single folds — a rail scorecard, a month bucket, a cents-correct `SUM(amount_cents) / 100.0`. Mid-levels get the two-stage builds: the coverage census (21 / 1 / 6), the first-leg settlement clock, a board whose parts reconcile to the whole. Seniors get the {violet:definition fight} — *approval share over all authorizations or only the settled 82, revolving exposure over the open book or the whole billed book* — and the expectation is that you state the denominator, ship the query, and hand over the reconciliation that proves it. Rehearse out loud: the join key (`p.invoice_id`, never the id coincidence), the CASE arm order (no legs, exact, ELSE partial), and the cents promotion — at this book those three habits are the margin, and the screens grade all three.",
   ],
@@ -58,12 +58,12 @@ export const nubankKit: CompanyKit = {
     {
       name: "Authorization folds & conditional counts",
       why: "Every funnel read at Nubank is a fold with a conditional count inside: authorizations per day, declined per merchant, posted per plan. The denominator question rides on every one — COUNT(*) over all authorizations versus the settled subset is the difference between an approval rate and a posting rate.",
-      slugs: ["number-of-rich-customers", "reported-posts", "find-total-time-spent-by-each-employee"],
+      slugs: ["number-of-rich-customers", "reported-posts", "find-total-time-spent-by-each-employee", "percentage-of-users-attended-a-contest", "queries-quality-and-percentage", "average-salary-of-departments", "find-the-team-size", "unique-orders-and-customers-per-month", "bank-account-summary", "confirmation-rate", "spend-histogram", "customer-order-frequency", "immediate-food-delivery-i", "group-sold-products-by-the-date"],
     },
     {
       name: "Two-table reads: legs onto cycles",
       why: "Settlement analytics is a two-table read: legs carry the cycle's foreign key, cycles carry the status and the billed amount. One wrong join key pairs a leg with the wrong cycle and every coverage number downstream inherits the fiction — and the id-coincidence trap (payment id equals invoice id) is exactly the silent mis-pairing Nubank screens hunt.",
-      slugs: ["bank-account-summary-ii", "npv-queries", "employee-bonus"],
+      slugs: ["bank-account-summary-ii", "npv-queries", "employee-bonus", "combine-two-tables", "card-launch-success"],
     },
     {
       name: "Per-merchant & per-holder scorecards",
@@ -88,7 +88,7 @@ export const nubankKit: CompanyKit = {
     {
       name: "Billing calendars & month spines",
       why: "The book runs on calendar buckets: authorizations per month via SUBSTR, terms windows, cycles issued in a period. Half-open intervals and month keys are the mechanics, and the midnight boundary is where two 'identical' close reports disagree.",
-      slugs: ["friday-purchase-iii", "monthly-transactions-i", "list-the-products-ordered-in-a-period"],
+      slugs: ["friday-purchase-iii", "monthly-transactions-i", "list-the-products-ordered-in-a-period", "customer-placing-the-largest-number-of-orders", "running-total-for-different-genders", "account-balance", "maximum-transaction-each-day", "first-and-last-call-on-the-same-day", "the-most-recent-three-orders", "product-price-at-a-given-date", "total-sales-amount-by-year"],
     },
     {
       name: "LAG/LEAD settlement walks",
@@ -103,7 +103,7 @@ export const nubankKit: CompanyKit = {
     {
       name: "Ranking the exposure book",
       why: "Risk reads rankings: worst cycles first, exposure bands, vintage curves. RANK versus DENSE_RANK over real ties, PARTITION BY resets per segment, and a deterministic tie-break are what keep the watchlist stable between the render and the meeting.",
-      slugs: ["rank-scores", "delinquency-buckets", "vintage-default-curves"],
+      slugs: ["rank-scores", "delinquency-buckets", "vintage-default-curves", "capital-gain-loss", "portfolio-concentration-hhi"],
     },
     {
       name: "Window frames & running balances",
@@ -113,7 +113,7 @@ export const nubankKit: CompanyKit = {
     {
       name: "Set-op stacks & reconciliations",
       why: "Close reports are stacks: category lines UNION ALL'd into a labelled TOTAL row, paid legs stacked beside open exposure, two rails folded into one board. UNION deduplicates — a silent row-killer when two legs legitimately match — and UNION ALL is the reconciliation-safe default. The craft is keeping every branch's grain and column list identical so the stack sums back to its parts.",
-      slugs: ["movie-rating", "odd-and-even-transactions", "same-day-sale"],
+      slugs: ["movie-rating", "odd-and-even-transactions", "same-day-sale", "trial-balance-check", "gl-reconciliation", "products-worth-over-invoices"],
     },
     {
       name: "Subquery shapes: scalar, EXISTS, derived",
@@ -123,12 +123,12 @@ export const nubankKit: CompanyKit = {
     {
       name: "CASE pivots & spend reshapes",
       why: "Committee packs read sideways: rails as columns, delinquency bands as columns, weekday settlement calendars as columns. Every pivot is conditional aggregation — SUM(CASE WHEN …) with an arm per column — and the ELSE is where spend silently disappears. The screens drill pivots because every board the committee ships is one.",
-      slugs: ["reformat-department-table", "sales-by-day-of-the-week", "occupations-pivot"],
+      slugs: ["reformat-department-table", "sales-by-day-of-the-week", "occupations-pivot", "team-scores-in-football-tournament", "count-salary-categories", "weather-type-in-each-country"],
     },
     {
       name: "Risk KPIs: utilization, roll rates, vintage",
       why: "The credit book lives on defined ratios: utilization against the line, roll rates between delinquency buckets, vintage curves per cohort month. Each is a CASE band plus a stated denominator, and each is exactly where an interview asks you to define the KPI before computing it. Say the band edges and the denominator out loud first; after that the query is arithmetic.",
-      slugs: ["credit-utilization-bands", "delinquency-roll-rates", "expected-credit-loss"],
+      slugs: ["credit-utilization-bands", "delinquency-roll-rates", "expected-credit-loss", "create-a-session-bar-chart", "suspicious-bank-account-transactions", "user-activity-for-the-past-30-days-i"],
     },
   ],
 

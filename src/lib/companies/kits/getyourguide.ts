@@ -48,12 +48,12 @@ export const getyourguideKit: CompanyKit = {
     {
       name: "Booking funnel counts",
       why: "Every GetYourGuide demand screen opens with the funnel: bookings placed, travel-dates stamped (operated), experiences completed. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling an operated booking 'completed' — 30 versus 52 on this db.",
-      slugs: ["trial-to-paid-funnel", "funnel-step-conversion", "immediate-food-delivery-i", "customer-who-visited-but-did-not-transact", "sales-by-day-of-the-week"],
+      slugs: ["trial-to-paid-funnel", "funnel-step-conversion", "immediate-food-delivery-i", "customer-who-visited-but-did-not-transact", "sales-by-day-of-the-week", "game-play-analysis-iv"],
     },
     {
       name: "Two-grain market censuses",
       why: "Bookings and travelers are different grains of the same join, and every market census here reports both: EU runs 45 bookings from 8 travelers while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "the-number-of-passengers-in-each-bus-i", "activity-participants"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "the-number-of-passengers-in-each-bus-i", "activity-participants", "students-and-examinations"],
     },
     {
       name: "Joining travelers to bookings",
@@ -68,12 +68,12 @@ export const getyourguideKit: CompanyKit = {
     {
       name: "Operator leaderboards",
       why: "Supply reviews rank partners by payout value and review rating, where the ladder runs 11,130.25 down to 2,980.15 and the 4.5-plus bench holds exactly two logos. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer operators, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "ltv-cac-payback"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "ltv-cac-payback", "keep-latest-dedupe"],
     },
     {
       name: "Seasonality: month spines & LAG",
       why: "The 14-month demand spine (2024-01 to 2025-02) is the demand call's home turf: prior month beside current, delta rounded, the January peak (3,731.97) and July trough (1,193.86) named from the data, not from a summer-peak assumption. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["monthly-transactions-i", "hopper-company-queries-i", "year-on-year-growth-rate", "restaurant-growth", "market-analysis-ii", "friday-purchases-i"],
+      slugs: ["monthly-transactions-i", "hopper-company-queries-i", "year-on-year-growth-rate", "restaurant-growth", "market-analysis-ii", "friday-purchases-i", "null-blank-audit"],
     },
     {
       name: "Cancellation slices with CASE",
@@ -83,12 +83,12 @@ export const getyourguideKit: CompanyKit = {
     {
       name: "Coverage set algebra",
       why: "Board packets stack populations — operated under completed, this season beside last — and EXCEPT answers 'which travelers never completed an experience'. UNION dedups whole rows silently, which makes it a correctness question, not a style one.",
-      slugs: ["team-scores-in-football-tournament", "the-airport-with-the-most-flights", "customers-who-never-order", "customers-who-bought-all-products", "find-churn-risk-customers"],
+      slugs: ["team-scores-in-football-tournament", "the-airport-with-the-most-flights", "customers-who-never-order", "customers-who-bought-all-products", "find-churn-risk-customers", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "One-pass status censuses",
       why: "The ops board gets completed, operated, awaiting-confirmation and cancelled in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "confirmation-rate", "percentage-of-users-attended-a-contest", "trips-and-users", "top-travellers", "last-person-to-fit-in-the-bus", "median-time-to-convert", "queries-quality-and-percentage"],
     },
     {
       name: "Payout & cents discipline",

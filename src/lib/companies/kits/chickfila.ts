@@ -70,37 +70,37 @@ export const chickfilaKit: CompanyKit = {
     {
       name: "Handoff clocks & queue aging",
       why: "Every ops screen opens with the clock: transaction placed at created_at, handoff stamped at shipped_at, delta averaged over stamped rows only. Each stage is a conditional count or average over a timestamp, and the first question is what the denominator holds — 82 stamped of 103 placed, with the 14 placed-ahead rows excluded by definition. julianday arithmetic with a stated population is the shape being graded.",
-      slugs: ["average-time-of-process-per-machine", "find-total-time-spent-by-each-employee", "find-golden-hour-customers", "calculate-orders-within-each-interval", "consecutive-available-seats", "deferred-revenue"],
+      slugs: ["average-time-of-process-per-machine", "find-total-time-spent-by-each-employee", "find-golden-hour-customers", "calculate-orders-within-each-interval", "consecutive-available-seats", "deferred-revenue", "immediate-food-delivery-i"],
     },
     {
       name: "The Sunday zero-check",
       why: "The system closes every Sunday, so the weekday census is a correctness instrument: STRFTIME('%w', created_at) buckets the week 0–6 and the 0 row must hard-zero in production. This training db reads 16 Sunday transactions — the artifact gets named, not scrubbed — and the census exists so the zero is trusted the day it lands. Format-code discipline ('%w' is not '%d' is not '%Y') is the trap being graded.",
-      slugs: ["tasks-count-in-the-weekend", "report-contiguous-dates", "the-latest-login-in-2020", "friday-purchases-i", "find-bursty-behavior"],
+      slugs: ["tasks-count-in-the-weekend", "report-contiguous-dates", "the-latest-login-in-2020", "friday-purchases-i", "find-bursty-behavior", "winning-candidate", "spend-histogram"],
     },
     {
       name: "Two-grain market censuses",
       why: "Transactions and members are different grains of the same join, and every census here reports both: EU runs 45 transactions from 8 members while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying which column is load and which is coverage — is the habit being graded; the ratio is the intensity signal that decides whether growth is broadening or concentrating.",
-      slugs: ["students-and-examinations", "unique-orders-and-customers-per-month", "article-views-ii", "dormant-reactivation", "find-customers-with-positive-revenue-this-year"],
+      slugs: ["students-and-examinations", "unique-orders-and-customers-per-month", "article-views-ii", "dormant-reactivation", "find-customers-with-positive-revenue-this-year", "users-that-actively-request-confirmation-messages"],
     },
     {
       name: "Menu density ladders",
       why: "The chain's whole strategy is revenue per unit, so the ladder is a ratio fold: line revenue beside units pulled, per family and per SKU. Average-selling-price is the exact shape — revenue divided by units with the fold grain named — and rank windows turn the ladder into a board. The trap is folding catalog price instead of line price: on this db the two disagree on every one of the 251 lines.",
-      slugs: ["average-selling-price", "queries-quality-and-percentage", "rank-scores", "fifo-inventory-cogs"],
+      slugs: ["average-selling-price", "queries-quality-and-percentage", "rank-scores", "fifo-inventory-cogs", "product-sales-analysis-iii", "card-launch-success", "rolling-average-steps", "roas-by-campaign"],
     },
     {
       name: "CASE-banded menu tiers",
       why: "Menu lines band into sides-and-drinks versus entrées-and-combos with one CASE fold — 268 lines under 55 (31.01 average) against 230 at 115.85 — and loyalty tier cuts read the same way. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the band story, and a reordered WHEN quietly re-bands the base. Members tier into Chick-fil-A One bands by the same shape.",
-      slugs: ["the-category-of-each-member-in-the-store", "type-of-triangle", "calculate-special-bonus", "customer-purchasing-behavior-analysis"],
+      slugs: ["the-category-of-each-member-in-the-store", "type-of-triangle", "calculate-special-bonus", "customer-purchasing-behavior-analysis", "immediate-food-delivery-iii", "sales-analysis-iii", "the-most-recent-orders-for-each-product", "usage-tier-percentiles", "cohort-repeat-revenue"],
     },
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month transaction spine (2024-01 to 2025-02) is the demand call's home turf: prior month beside current, delta rounded, trough named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero. Cancelled transactions concentrate in July and November, 2 each of 7, and the walk is how that pattern gets defended to the council.",
-      slugs: ["hopper-company-queries-i", "consecutive-transactions-with-increasing-amounts", "find-consistently-improving-employees"],
+      slugs: ["hopper-company-queries-i", "consecutive-transactions-with-increasing-amounts", "find-consistently-improving-employees", "count-student-number-in-departments"],
     },
     {
       name: "Loyalty frequency ladders",
       why: "Chick-fil-A One is a frequency business: the visit ladder runs 24, 17, 14, 13, 5 and then a four-way tie at 4, and tier logic lives in repeat behavior. Gaps-and-islands reads — consecutive visits, strictly increasing baskets — separate the regulars from the one-timers. The tie handling is a policy question about peer members, not syntax.",
-      slugs: ["game-play-analysis-i", "customer-order-frequency", "customers-with-strictly-increasing-purchases", "dau-wau-stickiness", "find-loyal-customers", "find-churn-risk-customers", "game-play-analysis-ii"],
+      slugs: ["game-play-analysis-i", "customer-order-frequency", "customers-with-strictly-increasing-purchases", "dau-wau-stickiness", "find-loyal-customers", "find-churn-risk-customers", "game-play-analysis-ii", "products-with-three-or-more-orders-in-two-consecutive-years"],
     },
     {
       name: "Set-stack fate boards",
@@ -110,7 +110,7 @@ export const chickfilaKit: CompanyKit = {
     {
       name: "One-pass censuses",
       why: "The ops board gets all four fates in ONE scan — FILTER (WHERE …) branches per aggregate and SUM(CASE …) is the portable twin; four sequential queries are four ways to drift. Attach reads ride the same shape: how many tickets carry the launch item, how many touch two families but skip the drink. The reconciliation identity (branches sum to COUNT(*)) is the correctness argument the panel listens for.",
-      slugs: ["find-stores-with-inventory-imbalance", "count-the-number-of-experiments", "number-of-rich-customers"],
+      slugs: ["find-stores-with-inventory-imbalance", "count-the-number-of-experiments", "number-of-rich-customers", "customers-who-bought-all-products"],
     },
     {
       name: "Cents-safe settlement rails",

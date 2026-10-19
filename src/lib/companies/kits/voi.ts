@@ -63,27 +63,27 @@ export const voiKit: CompanyKit = {
     {
       name: "Two-grain market censuses",
       why: "Rides and riders are different grains of the same join, and every market census here reports both: EU runs 45 rides from 8 riders while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is fleet load and which is rider coverage — is the habit being graded. The ratio between them is the utilization-intensity read the tender appendix quotes.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "classes-more-than-5-students", "customer-order-frequency", "cohort-repeat-revenue"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "classes-more-than-5-students", "customer-order-frequency", "cohort-repeat-revenue", "percentage-of-users-attended-a-contest", "confirmation-rate", "average-selling-price", "rolling-7d-actives", "dau-wau-stickiness", "server-utilization-time", "bank-account-summary", "list-the-products-ordered-in-a-period"],
     },
     {
       name: "Joining riders to rides",
       why: "Riders carry region and created_at; rides inherit them through joins, and the join type decides who survives. A ride without a rider is corruption; a rider without rides is dormant-base whitespace — though on this db the anti-join returns a confident zero, and proving that zero is part of the job.",
-      slugs: ["combine-two-tables", "employee-bonus", "sales-analysis-i", "count-student-number-in-departments", "customer-who-visited-but-did-not-transact", "dormant-reactivation"],
+      slugs: ["combine-two-tables", "employee-bonus", "sales-analysis-i", "count-student-number-in-departments", "customer-who-visited-but-did-not-transact", "dormant-reactivation", "trips-and-users", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "Ride-line fan-out: minutes × rate",
       why: "Line-level reporting means attaching model, pass family and per-minute rate to every ride line — the products-to-order_items join where quantity is minutes and unit_price is the locked rate. Voi's follow-up is always the fan-out: join lines in and COUNT(*) silently stops counting rides — 103 rides become 251 lines and 498 minutes, three grains wearing one query.",
-      slugs: ["product-sales-analysis-ii", "product-sales-analysis-iii", "queries-quality-and-percentage", "basket-depth-aov"],
+      slugs: ["product-sales-analysis-ii", "product-sales-analysis-iii", "queries-quality-and-percentage", "basket-depth-aov", "keep-latest-dedupe"],
     },
     {
       name: "Utilization leaderboards",
       why: "Hardest-working scooter model, heaviest rider, top market by minutes — utilization reporting is leaderboard reporting. Voi drills the rank trio because ties are guaranteed at fleet scale — four riders sit at 4 rides each on this db under a 24/17/14/13/5 ladder — and the LIMIT-1-OFFSET-1 habit breaks exactly on ties.",
-      slugs: ["rank-scores", "top-earners", "find-top-performing-driver", "compute-the-rank-as-a-percentage"],
+      slugs: ["rank-scores", "top-earners", "find-top-performing-driver", "compute-the-rank-as-a-percentage", "customer-placing-the-largest-number-of-orders", "most-frequently-ordered-product-per-customer"],
     },
     {
       name: "Per-minute rate bands (CASE)",
       why: "The rate card is CASE-shaped: lines lock a per-minute rate and the book splits at the 55 line — 268 minutes under it at a 31.01 average line price, 230 over it at 115.85. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the revenue forecast, and a reordered WHEN quietly re-bands the fleet.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "the-category-of-each-member-in-the-store", "credit-utilization-bands"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "the-category-of-each-member-in-the-store", "credit-utilization-bands", "calculate-parking-fees-and-duration"],
     },
     {
       name: "Ride-pace month walks & LAG",
@@ -103,7 +103,7 @@ export const voiKit: CompanyKit = {
     {
       name: "City billing & cents discipline",
       why: "Completed is not settled — the finance tables (28 statements, 27 settlement legs, INTEGER cents) are where the permit world meets money. Every euro read is amount_cents / 100.0, the exact/partial/none coverage split (21 / 1 / 6) is one CASE away, and the 30-day terms clock (28.4-day average settlement) is the civic-credit read.",
-      slugs: ["bank-account-summary-ii", "ar-aging-schedule", "monthly-transactions-ii", "monthly-transactions-i", "budget-pacing"],
+      slugs: ["bank-account-summary-ii", "ar-aging-schedule", "monthly-transactions-ii", "monthly-transactions-i", "budget-pacing", "gl-reconciliation", "duplicate-charge-pairs"],
     },
   ],
 

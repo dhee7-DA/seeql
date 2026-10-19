@@ -52,22 +52,22 @@ export const noonKit: CompanyKit = {
     {
       name: "Two-grain market censuses",
       why: "Every market review at noon opens with orders AND shoppers per bucket — KSA runs 45 orders from 8 shoppers while the cross-border lane runs 2 from 1, and the two grains tell different stories (network load versus audience). COUNT(*) beside COUNT(DISTINCT customer_id), with the ratio named out loud, is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "find-loyal-customers", "users-with-two-purchases-within-seven-days"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "find-loyal-customers", "users-with-two-purchases-within-seven-days", "monthly-transactions-i"],
     },
     {
       name: "Status-aware order funnels",
       why: "Orders here live four lives — delivered clean (52), out with the courier (30), awaiting fulfillment (14), COD-refused/aborted (7) — and every kept-rate, refusal-share and dispatch count is a conditional count over those states. The interviewer's first question is always what the denominator holds; the second is whether your filter ran before the fold.",
-      slugs: ["immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "trial-to-paid-funnel", "second-day-confirmation"],
+      slugs: ["immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "trial-to-paid-funnel", "second-day-confirmation", "fix-product-name-format", "find-all-unique-email-domains", "null-blank-audit"],
     },
     {
       name: "CASE classification & banding",
       why: "Market tiers, refusal classes and settlement coverage (exact / partial / none) are all CASE-classified in one pass over the same tables. Exhaustive, ordered arms matter: a hole in the CASE is a hole in the close, and the lone partial statement (4,000 of 6,148) is exactly the row a reordered WHEN mislabels.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "managers-with-at-least-5-direct-reports", "duplicate-charge-pairs"],
     },
     {
       name: "Joining shoppers, listings and sellers",
       why: "Listing-level reporting stitches three tables — orders to order lines to listings to sellers — and the join type decides who survives the report. An order with no shopper is corruption; a seller with no demand is a bench decision; the join choice IS the business statement.",
-      slugs: ["combine-two-tables", "product-sales-analysis-i", "sales-analysis-ii", "customer-purchasing-behavior-analysis", "customers-who-bought-a-and-b-not-c"],
+      slugs: ["combine-two-tables", "product-sales-analysis-i", "sales-analysis-ii", "customer-purchasing-behavior-analysis", "customers-who-bought-a-and-b-not-c", "product-sales-analysis-ii", "game-play-analysis-iv", "employee-bonus", "market-analysis-i"],
     },
     {
       name: "Seller settlements & cents discipline",
@@ -82,12 +82,12 @@ export const noonKit: CompanyKit = {
     {
       name: "Ranking windows & tie policy",
       why: "The repeat-purchase ladder runs 24, 17, 14, 13, 5 orders — then FOUR shoppers tied at 4. RANK, DENSE_RANK and ROW_NUMBER disagree about shared rungs and gaps, and at 16 shoppers the ties are the story, not the edge case; the tie-breaker you name is the policy you ship.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "rfm-segmentation", "usage-tier-percentiles", "find-bursty-behavior", "rolling-7d-actives"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "rfm-segmentation", "usage-tier-percentiles", "find-bursty-behavior", "rolling-7d-actives", "basket-depth-aov", "repeat-purchase-rate", "most-frequently-ordered-product-per-customer", "second-highest-salary", "cohort-retention-matrix"],
     },
     {
       name: "Month walks & the dispatch clock",
       why: "The 14-month spine (2024-01 to 2025-02) drives every trend read, and dispatch latency — 2.98 days over 82 stamped orders — is JULIANDAY arithmetic on TEXT timestamps. Half-open windows and stated conventions are the discipline; BETWEEN silently loses the boundary night.",
-      slugs: ["the-latest-login-in-2020", "list-the-products-ordered-in-a-period", "user-activity-for-the-past-30-days-i", "friday-purchases-i", "same-day-sale", "calculate-orders-within-each-interval", "sessionize-events", "find-golden-hour-customers"],
+      slugs: ["the-latest-login-in-2020", "list-the-products-ordered-in-a-period", "user-activity-for-the-past-30-days-i", "friday-purchases-i", "same-day-sale", "calculate-orders-within-each-interval", "sessionize-events", "find-golden-hour-customers", "transaction-velocity"],
     },
     {
       name: "Rates with honest denominators",

@@ -25,7 +25,7 @@ export const affirmKit: CompanyKit = {
     "**Affirm** is the buy-now-pay-later layer that underwrites a purchase while the checkout is still spinning — Pay in 4 biweekly at 0% APR for smaller baskets, interest-bearing monthly installments for the big ones — and earns on merchant fees plus interest, so every number in the building is a claim about *a payment schedule actually paying*. This kit maps the storefront db onto that world: 16 shoppers, 103 financed checkouts worth **34,833.28** in GMV, 251 financed lines across a 16-SKU catalog sold through 6 merchant partners. The lifecycle map is fixed: delivered = {emerald:paid in full} (52, 50.5%), shipped = funded and amortizing (30, 29.1%), pending = approved but not yet funded (14), cancelled = {rose:cancelled or returned} (7, 6.8%).",
     "The data org splits into credit risk, merchant analytics, and the collections pod both depend on. A checkout books at `created_at` and funds on `shipped_at` — the funding stamp, the day money moved to the merchant — and **82 of 103 checkouts** carry it, averaging 2.98 days to fund with a 2–4 day spread; the 14 pending rows have no stamp yet, which is a population definition, not a cleanup job. Statements sit one layer down: 28 billing statements cut on uniform 30-day terms, installment dollars landing against them in INTEGER cents, so the dollar read is `amount_cents / 100.0`. Concentration is the underwriting story: **63.5%** of GMV comes from the four shoppers whose lifetime spend crosses 3,000 (71.2% above 2,000) — one lost borrower moves the book.",
     "Interview screens are definition-first, because at a lender every number is a claim about money. A loop opens with a **two-grain census** — the US runs 19 checkouts from just 2 shoppers at a 383.48 average ticket while EU runs 45 from 8 — then escalates into a rate where the interviewer asks the denominator out loud (*'does a cancelled checkout sit in your approval base?'*), then into ticket mix: the mid band (50–200) holds 8 SKUs averaging 111.5 against budget's 8 at 32.06, and the 200-plus premium band is {rose:empty} — nothing on this catalog out-tickets the 199.99 Smart Watch S. Candidates who state the status filter, the denominator and the cents rule before writing SQL are the ones who get callbacks.",
-    "Preparation strategy: company-pools.md carries no Affirm section — 0 tagged LC rows — so all sixteen problems and every topic slug here are **theme-curated** to this kit's known screen shapes: checkout funnels with honest denominators, merchant GMV attribution, ticket-band CASE tiers, funding-spine LAG walks and the cents-safe statement books. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {sky:financed-basket census} merchant analytics ships each month, the other rebuilds the {amber:uncollected-exposure list} collections reviews every Monday. The bar to clear: *state the definition, the denominator and the units before you compute anything* — then make every lifecycle census reconcile to 103 by construction.",
+    "Preparation strategy: company-pools.md carries no Affirm section — 0 tagged LC rows — so all thirty-two problems and every topic slug here are **theme-curated** to this kit's known screen shapes: checkout funnels with honest denominators, merchant GMV attribution, ticket-band CASE tiers, funding-spine LAG walks and the cents-safe statement books. Do the topics in order, then run all six case studies on the live storefront db: one rebuilds the {sky:financed-basket census} merchant analytics ships each month, the other rebuilds the {amber:uncollected-exposure list} collections reviews every Monday, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The bar to clear: *state the definition, the denominator and the units before you compute anything* — then make every lifecycle census reconcile to 103 by construction.",
     "Round-two screens go past the funnel and into the book's mechanics. The **55.00 seat-band fold** splits the 498 financed units into 268 below the line at a 31.01 average line price against 230 above it at 115.85 — volume versus ticket in one CASE; the 14-month GMV spine gets walked with `LAG`, where only three months (3,731.97 / 3,609.64 / 3,116.04) clear the 3,000 line; and a one-pass `FILTER` census prints the statement book — 21 paid for 66,443.00, 6 open for 19,609.00, {rose:1 void for 925.00} — in a single scan. The follow-ups never change: what population, what denominator, what units.",
     "Preparation for the expanded kit: the fifteen topics now run from funnel counts through statement-leg ledgers — do them in order, then work all six cases on the live storefront db, because four are rebuild-the-query drills whose distractor chips fail honestly (`ROUND` arms that re-print the cents, a `LAG` walk that flips to `LEAD` and inverts every move, a `PARTITION BY` that kills the walk's priors). The sixteen original problems stay; sixteen more stage the deeper reads — rails, legs, provision shapes, dedupe policy. *The bar does not move with the volume*: state the definition, the denominator and the units before you compute anything, and reconcile by construction — 103 checkouts, 28 statements, 498 units, 181,080 against 181,080.",
   ],
@@ -56,7 +56,7 @@ export const affirmKit: CompanyKit = {
     {
       name: "Checkout funnel counts",
       why: "Every Affirm screen opens with the lifecycle: checkouts booked, funded (shipped_at stamped), paid in full at term end. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling an amortizing checkout 'paid in full' — 30 versus 52 on this db.",
-      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-ii", "percentage-of-users-attended-a-contest"],
+      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "immediate-food-delivery-i", "loan-amortization-schedule", "funnel-step-conversion"],
     },
     {
       name: "Two-grain borrower censuses",
@@ -71,32 +71,32 @@ export const affirmKit: CompanyKit = {
     {
       name: "Ticket banding with CASE",
       why: "Affirm underwrites on ticket size, and the catalog bands cleanly: mid (50–200) holds 8 SKUs averaging 111.5 against budget's 8 at 32.06, while the 200-plus premium band is empty — the 199.99 Smart Watch S is the ceiling. The CASE arms must be exhaustive and ordered; a hole in the banding is a hole in the exposure map.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "the-category-of-each-member-in-the-store"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "the-category-of-each-member-in-the-store", "fix-names-in-a-table", "delinquency-buckets", "amount-anomaly-zscore"],
     },
     {
       name: "Concentration ladders",
       why: "The borrower ladder is steep: 24, 17, 14, 13 checkouts, then a long tail where four shoppers sit tied at 4 each. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow — and on a book where four logos carry 63.5% of GMV, rank semantics are a credit conversation, not syntax.",
-      slugs: ["rank-scores", "top-earners", "second-highest-salary"],
+      slugs: ["rank-scores", "top-earners", "second-highest-salary", "product-sales-analysis-ii", "chargeback-rate-ranking"],
     },
     {
       name: "Funding spine & LAG deltas",
       why: "The 14-month funding spine (2024-01 to 2025-02) is the monthly business review's home turf: GMV booked per month, prior month beside current, the 1,193.86 July trough and the +1,158.21 jump into August named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine", "confirmation-rate", "delinquency-roll-rates", "null-blank-audit"],
     },
     {
       name: "Coverage set algebra",
       why: "Risk packets stack populations — funded under paid-in-full, this month beside last — and EXCEPT answers 'which funded checkouts never reached term'. UNION dedups whole rows silently, which makes it a correctness question, not a style one; one collapsed row is one borrower missing from the packet.",
-      slugs: ["team-scores-in-football-tournament", "customers-who-never-order", "monthly-transactions-ii"],
+      slugs: ["team-scores-in-football-tournament", "customers-who-never-order", "monthly-transactions-ii", "customers-who-bought-a-and-b-not-c", "find-churn-risk-customers"],
     },
     {
       name: "Big-ticket thresholds",
       why: "Underwriting screens compare one checkout against a number computed from the whole book — the 338.19 average ticket — via a scalar subquery in WHERE. The contract is zero-or-one rows: zero yields NULL and a silently-empty report, and saying that unprompted is the follow-up the panel is fishing for.",
-      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "find-expensive-cities"],
+      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "find-expensive-cities", "customer-placing-the-largest-number-of-orders", "daily-balance-interest"],
     },
     {
       name: "One-pass lifecycle censuses",
       why: "The ops board gets paid-in-full, amortizing, pending and cancelled in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift before the review starts.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "count-salary-categories"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "count-salary-categories", "npv-queries", "expected-credit-loss"],
     },
     {
       name: "Statements, cents & settlement",
@@ -107,27 +107,27 @@ export const affirmKit: CompanyKit = {
     {
       name: "Seat-band ticket folds",
       why: "The canonical 55-line fold splits 498 financed units into 268 below the line at a 31.01 average line price and 230 above at 115.85 — one CASE, two arms, the volume-versus-ticket argument in a single scan. Underwriting lives on these folds: arms must be exhaustive, and the AVG grain (per financed line, not units-weighted) has to be stated out loud or the 31.01 stops reconciling with every other slide in the deck.",
-      slugs: ["loan-types", "risk-based-pricing", "customer-purchasing-behavior-analysis"],
+      slugs: ["loan-types", "risk-based-pricing", "customer-purchasing-behavior-analysis", "average-selling-price", "credit-utilization-bands", "basket-depth-aov"],
     },
     {
       name: "Derived-table staging",
       why: "Threshold reads that compare a fold against a bar — the three months above 3,000 (3,731.97 / 3,609.64 / 3,116.04) — need the monthly fold staged before the filter can see it. Derived tables teach the grain discipline: WHERE runs before the fold exists, so the bar sits outside the staging SELECT (or in HAVING), and the staged fold is a thing you can audit row by row.",
-      slugs: ["market-analysis-i", "investments-in-2016", "median-employee-salary"],
+      slugs: ["market-analysis-i", "investments-in-2016", "median-employee-salary", "trips-and-users", "transaction-velocity"],
     },
     {
       name: "Month-over-month opex walks",
       why: "The expense book is INTEGER cents on 36 rows, and its monthly spine (1,440.00 floor to the 3,210.00 August ceiling) is where LAG deltas get audited: the +1,416.00 move into August against July's 1,794.00 is the line the close narrates. Cents discipline rides along on every fold — /100.0 before ROUND, never after — and the first month's move stays NULL because the baseline is not a zero.",
-      slugs: ["mrr-waterfall", "week-over-week-churn", "year-on-year-growth-rate"],
+      slugs: ["mrr-waterfall", "week-over-week-churn", "year-on-year-growth-rate", "bank-account-summary", "repeat-purchase-rate"],
     },
     {
       name: "Statement-leg ledgers",
       why: "Statements carry zero, one or two installment legs — 6 / 17 / 5 across the 28 — and five cycles settle on BOTH card and wire. Leg counts are the ledger-of-record view: a paid status with zero legs (#28, 1,756.00) is a lie the leg census catches, and the never-remitted split (5 open statements, 13,461.00 versus the single 1,756.00 paid lie) is how collections frames the same book.",
-      slugs: ["number-of-calls-between-two-persons", "duplicate-charge-pairs", "ar-aging-schedule"],
+      slugs: ["number-of-calls-between-two-persons", "duplicate-charge-pairs", "ar-aging-schedule", "gl-reconciliation", "trial-balance-check"],
     },
     {
       name: "Method-rail mixes",
       why: "Installment rails split card versus wire — 16 legs for 37,364.00 against 11 for 32,248.00 — and the mix feeds settlement forecasting on the 28.4-day clock. GROUP BY method with the cents read is the easy half; the interview twist is the five split-rail cycles that ride both rails, which is why per-statement leg attribution stays a standing ask.",
-      slugs: ["card-launch-success", "ads-performance", "top-travellers"],
+      slugs: ["card-launch-success", "ads-performance", "top-travellers", "department-highest-salary", "top-percentile-fraud"],
     },
   ],
 

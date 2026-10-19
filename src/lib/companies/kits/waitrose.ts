@@ -37,13 +37,13 @@ export const waitroseKit: CompanyKit = {
   brief: [
     "**Waitrose** is the UK's premium grocer — an employee-owned branch estate where the shop is a quality statement and the basket is the unit of trade. Two own-brand ladders anchor the range: {amber:Essential Waitrose} holds the value shelf and **Waitrose No.1** sits at the premium counter, and premiumization — walking every trolley up that ladder — is the commercial number branch teams live by. This kit maps the storefront db onto that world: the 16 customers rows are shoppers (region = the four market buckets), the 103 orders are baskets worth **34,833.28**, and the 251 order_items rows are basket lines — quantity = units, unit_price = the line price actually paid. The status map is fixed: delivered = {emerald:completed basket} (52, 50.5%), shipped = {sky:in flight} (30, 29.1%, shipped_at = the checkout stamp), pending = trolley awaiting payment (14, 13.6%), cancelled = {rose:abandoned} (7, 6.8%).",
     "The data org splits the way the branch P&L does. Commercial analysts own the range: own-brand share and the **premium-line mix** — at the published 55 price line the book splits 268 Essential units averaging 31.01 against 230 No.1 units averaging 115.85, and No.1 lines carry **26,605.51 of the 34,833.28 book (76.4%)**. Loyalty and CRM own {sky:myWaitrose}: **63.5%** of revenue sits with households whose lifetime spend crosses 3,000 (71.2% above 2,000), so one lapsed top-tier household moves a market. Branch ops own the trolley-to-in-flight flow — **82 of 103** baskets carry the checkout stamp, averaging **2.98 days** created-to-checkout with a 2–4 day spread. Finance ops own the settlement book: 28 wholesale statements and 27 tender legs in INTEGER pence, where the sterling read is `amount_cents / 100.0` — the missing .0 is how a settlement quietly leaks pence on every odd-penny line.",
-    "Interview screens are **census-then-denominator**, premium-grocer flavored. A typical loop opens with a **two-grain market read** — EU runs 45 baskets from 8 shoppers while the US runs 19 from 2 — then escalates into a rate where the interviewer asks the denominator out loud (*'does an abandoned trolley count in your base?'*), then into the **loyalty ladder** where three households sit tied at 4 baskets and rank semantics become a business decision. Late rounds band the range at the **No.1 line** with `CASE`, or walk the {sky:14-month trading spine} (2024-01 to 2025-02) with `LAG` deltas and probe the first row's NULL. Candidates who state the status filter and the denominator before writing SQL are the ones who get callbacks.",
+    "Interview screens are **census-then-denominator**, premium-grocer flavored. A typical loop opens with a **two-grain market read** — EU runs 45 baskets from 8 shoppers while the US runs 19 from 2 — then escalates into a rate where the interviewer asks the denominator out loud (*'does an abandoned trolley count in your base?'*), then into the **loyalty ladder** where four households sit tied at 4 baskets and rank semantics become a business decision. Late rounds band the range at the **No.1 line** with `CASE`, or walk the {sky:14-month trading spine} (2024-01 to 2025-02) with `LAG` deltas and probe the first row's NULL. Candidates who state the status filter and the denominator before writing SQL are the ones who get callbacks.",
     "Preparation strategy: the pools file carries no Waitrose section — **0 tagged rows**, none SQL-graded — so all thirty-two problems and every topic slug here are **theme-curated** to this kit's known screen shapes: premium-mix censuses, loyalty spend-band folds, CASE tier work at the 55 line, and the pence-safe settlement spine. Do the topics in order, then run the **six case studies** on the live storefront db, spaced across the week rather than in one sitting: the **premium-mix census** commercial opens the Monday trade meeting with, the **myWaitrose ladder** the CRM pod reads before every voucher drop, the **14-month book pulse** the growth review walks, the **never-settled exposure ledger** finance closes on, the **one-pass till census** the 08:15 huddle runs, and the **farm-partner bench** sourcing negotiates from. This expanded kit is built for spaced practice: run each case once to pass it, then re-run it a week later from a blank editor — *the second pass is where recall actually forms*. The bar to clear: *state the definition and the denominator before you compute anything* — then make every status census reconcile to 103 by construction.",
   ],
 
   dayInLife: [
     "**08:15 —** The day starts with the overnight in-flight read. A branch-ops analyst opens the trading dashboard before the morning meeting: did overnight baskets get their `shipped_at` checkout stamps, is any trolley aging while awaiting payment, does the one-pass status census reconcile — 52 completed + 30 in flight + 14 awaiting payment + 7 abandoned = **103 by construction**? A branch that fails that identity is *the day's first incident*, not a rounding note. If checkout latency drifts off the **2.98-day** norm — the market reads run EU 2.94, APAC 2.93, US 3.07 — the trolley-recovery queue gets pulled before the trade read ships.",
-    "**11:30 —** Midday is the premiumization read. The commercial pod wants the premium-mix census refreshed — No.1 units versus Essentials per market, with EU's **100 No.1 units against 99 Essentials** flagged as *the only premium-majority market* — and a buyer wants aisle revenue re-cut against the 8-SKU price bands (Essential shelf averaging **32.06**, mid range 111.5, ceiling 199.99). The myWaitrose desk wants the ladder re-ranked with the **three-way tie at 4 baskets** handled honestly — shared rungs, named policy. Each ask is a join, a conditional aggregate and one judgment call about statuses; the analyst writes the query twice — *once to answer, once with the definition spelled out so the number survives the trade-meeting argument*.",
+    "**11:30 —** Midday is the premiumization read. The commercial pod wants the premium-mix census refreshed — No.1 units versus Essentials per market, with EU's **100 No.1 units against 99 Essentials** flagged as *the only premium-majority market* — and a buyer wants aisle revenue re-cut against the 8-SKU price bands (Essential shelf averaging **32.06**, mid range 111.5, ceiling 199.99). The myWaitrose desk wants the ladder re-ranked with the **four-way tie at 4 baskets** handled honestly — shared rungs, named policy. Each ask is a join, a conditional aggregate and one judgment call about statuses; the analyst writes the query twice — *once to answer, once with the definition spelled out so the number survives the trade-meeting argument*.",
     "**15:30 —** The afternoon tilts toward the settlement book and branch opex. The AR anti-join refreshes first — **6 never-settled statements worth 15,217** — before supplier services sends a single reminder; the coverage split reads **21 exact, 1 partial** (4,000 of 6,148 settled) and feeds the dunning draft; and the anomaly list gets walked line by line: a void-but-settled statement (#11, 925.00) and a paid-status statement with zero tender legs (#28, 1,756.00). Branch P&L closes the loop — Rent 14 entries at **16,800**, Ads 4,570, Tools 1,525, Travel 2,521 — and the day ends the way every close does: the ledger trial balance must read **181,080 against 181,080**, delta zero — {emerald:the close ships} or tomorrow starts with an incident.",
   ],
 
@@ -72,27 +72,27 @@ export const waitroseKit: CompanyKit = {
     {
       name: "Joining shelves to baskets",
       why: "Premium-mix reporting means attaching category, farm partner and shelf price to every basket line — joins across the product and demand tables where the mapping is the point. Waitrose's follow-up is always about survival: does a line missing its SKU row still count in the aisle fold, and which join type answers honestly?",
-      slugs: ["product-sales-analysis-i", "combine-two-tables", "replace-employee-id-with-unique-identifier", "product-sales-analysis-iii", "customers-who-bought-all-products", "warehouse-manager"],
+      slugs: ["product-sales-analysis-i", "combine-two-tables", "replace-employee-id-with-unique-identifier", "product-sales-analysis-iii", "customers-who-bought-all-products", "warehouse-manager", "customers-who-never-order", "find-churn-risk-customers", "customer-who-visited-but-did-not-transact"],
     },
     {
       name: "Counter & aisle revenue folds",
       why: "Aisle revenue is the commercial heartbeat: fold basket lines by category, round to the penny, and rank. The audits here drill exactly the join-then-aggregate shape the Monday pack is built from — with the discipline that 251 lines fold into 103 baskets (2.44 lines per basket), not the other way round.",
-      slugs: ["sales-analysis-i", "product-sales-analysis-ii", "students-and-examinations", "orders-with-maximum-quantity-above-average"],
+      slugs: ["sales-analysis-i", "product-sales-analysis-ii", "students-and-examinations", "orders-with-maximum-quantity-above-average", "basket-depth-aov", "repeat-purchase-rate", "rfm-segmentation"],
     },
     {
       name: "One-pass status censuses",
       why: "The ops board gets completed, in flight, awaiting payment and abandoned in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift. This kit's theory rounds drill the census on both spellings.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "transactions-per-visit-histogram", "running-total-for-different-genders"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "transactions-per-visit-histogram", "running-total-for-different-genders", "immediate-food-delivery-ii", "average-selling-price", "sales-by-day-of-the-week", "returns-rate-by-category", "bank-account-summary-ii"],
     },
     {
       name: "CASE banding the range",
       why: "The range is banded — Essential on the value shelf, No.1 at the premium counter, with the 55 line as the published split — and every premiumization read is a CASE classification with fixed edges the range plan publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the premium-mix census, and loyalty tiers band the same way.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "the-category-of-each-member-in-the-store", "count-salary-categories"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "the-category-of-each-member-in-the-store", "count-salary-categories", "monthly-transactions-ii"],
     },
     {
       name: "Ranking the loyalty ladder",
-      why: "Top shoppers by basket count and lifetime spend is leaderboard reporting where ties are guaranteed — three households sit at 4 baskets on this db, and the ladder above them runs 24, 17, 14, 13, 5. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer households, not syntax.",
-      slugs: ["rank-scores", "top-earners", "second-highest-salary", "department-top-three-salaries", "find-loyal-customers"],
+      why: "Top shoppers by basket count and lifetime spend is leaderboard reporting where ties are guaranteed — four households sit at 4 baskets on this db, and the ladder above them runs 24, 17, 14, 13, 5. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer households, not syntax.",
+      slugs: ["rank-scores", "top-earners", "second-highest-salary", "department-top-three-salaries", "find-loyal-customers", "customer-placing-the-largest-number-of-orders", "most-frequently-ordered-product-per-customer"],
     },
     {
       name: "NULL policy at the checkout stamp",
@@ -102,12 +102,12 @@ export const waitroseKit: CompanyKit = {
     {
       name: "Trading windows & date math",
       why: "Trading windows make date arithmetic a daily tool: units moved in a period, the last shop before a range change, baskets inside a seasonal-event window. Waitrose probes half-open intervals — BETWEEN on timestamps loses the last night of the window, and seasonal peaks land exactly there.",
-      slugs: ["list-the-products-ordered-in-a-period", "the-latest-login-in-2020", "find-golden-hour-customers", "active-users", "report-contiguous-dates"],
+      slugs: ["list-the-products-ordered-in-a-period", "the-latest-login-in-2020", "find-golden-hour-customers", "active-users", "report-contiguous-dates", "product-price-at-a-given-date"],
     },
     {
       name: "Settlement & the pence read",
       why: "Wholesale is not settled until the tender legs land — the finance tables (28 statements, 27 legs, INTEGER pence) are where the shelf world meets money. Every sterling read is amount_cents / 100.0, and the exact/partial/none coverage split (21 / 1 / 6) is one CASE away. The GL angle: trial balance in, delta zero out.",
-      slugs: ["products-worth-over-invoices", "trial-balance-check", "gl-reconciliation"],
+      slugs: ["products-worth-over-invoices", "trial-balance-check", "gl-reconciliation", "weeks-of-supply"],
     },
   ],
 
@@ -121,7 +121,7 @@ export const waitroseKit: CompanyKit = {
     {
       id: "waitrose-t2",
       q: "Three myWaitrose households sit tied at 4 baskets on the frequency ladder. RANK, DENSE_RANK or ROW_NUMBER — and who decides?",
-      a: "The rank trio is a business decision about shared rungs and gaps, and the interviewer wants you to say that out loud. RANK gives tied counts the same rank and skips — on this db the ladder is 24, 17, 14, 13, 5, then the three-way tie at 4 consuming ranks 6 through 8, and the next distinct count (3) lands on 9, implying two phantom positions that do not exist. DENSE_RANK shares rungs without gaps — the tie reads 6, 6, 6 and the next distinct count is 7. ROW_NUMBER splits ties arbitrarily, which is a silent judgment call about whose household gets the next voucher drop. The wrong answer is picking a function; the right answer is picking a policy — shared rungs for peer households (RANK or DENSE_RANK), or an explicitly named tie-breaker like created_at, then id — and writing it in the query comment. At Waitrose the ladder drives the seasonal voucher calendar, so a phantom gap quietly reshapes who counts as a top-tier shopper.",
+      a: "The rank trio is a business decision about shared rungs and gaps, and the interviewer wants you to say that out loud. RANK gives tied counts the same rank and skips — on this db the ladder is 24, 17, 14, 13, 5, then the four-way tie at 4 consuming ranks 6 through 9, and the next distinct count (3) lands on 10, implying two phantom positions that do not exist. DENSE_RANK shares rungs without gaps — the tie reads 6, 6, 6, 6 and the next distinct count is 7. ROW_NUMBER splits ties arbitrarily, which is a silent judgment call about whose household gets the next voucher drop. The wrong answer is picking a function; the right answer is picking a policy — shared rungs for peer households (RANK or DENSE_RANK), or an explicitly named tie-breaker like created_at, then id — and writing it in the query comment. At Waitrose the ladder drives the seasonal voucher calendar, so a phantom gap quietly reshapes who counts as a top-tier shopper.",
       tag: "windows",
     },
     {
@@ -336,7 +336,7 @@ export const waitroseKit: CompanyKit = {
       prompt: "The loyalty frequency ladder runs 24, 17, 14, 13, 5 baskets, then THREE households tied at 4. Under RANK, what rank do the two 3-basket households carry?",
       choices: ["9", "7", "8", "6"],
       answer: 0,
-      why: "RANK shares rungs and then skips: 1, 2, 3, 4, 5, then the three-way tie consumes ranks 6 through 8, so the next distinct count lands on 9. Both 3-basket households share rank 9.",
+      why: "RANK shares rungs and then skips: 1, 2, 3, 4, 5, then the four-way tie consumes ranks 6 through 9, so the next distinct count lands on 10. Both 3-basket households share rank 10.",
       notes: [
         { choice: 1, why: "7 is the DENSE_RANK answer — shared rungs without gaps. The myWaitrose desk's published policy is RANK semantics, gaps included." },
         { choice: 2, why: "8 is the LAST rank the tie block occupies, not the next one handed out. Off-by-one on the tie block is the classic leaderboard bug." },
@@ -429,12 +429,12 @@ export const waitroseKit: CompanyKit = {
     },
     {
       id: "waitrose-mcq-15",
-      prompt: "The myWaitrose desk re-publishes the frequency ladder with shared rungs and no gaps: 24, 17, 14, 13, 5 baskets, then three households tied at 4. Under DENSE_RANK, what does the next household (3 baskets) carry?",
+      prompt: "The myWaitrose desk re-publishes the frequency ladder with shared rungs and no gaps: 24, 17, 14, 13, 5 baskets, then four households tied at 4. Under DENSE_RANK, what does the next household (3 baskets) carry?",
       choices: ["9", "7", "6", "5"],
       answer: 1,
-      why: "DENSE_RANK gives tied rows the same rank and never skips: the 4-basket tie is rank 6 three times, so the next distinct count lands on 7. The no-gap property is the tier guarantee — no phantom positions between rungs.",
+      why: "DENSE_RANK gives tied rows the same rank and never skips: the 4-basket tie is rank 6 four times, so the next distinct count lands on 7. The no-gap property is the tier guarantee — no phantom positions between rungs.",
       notes: [
-        { choice: 0, why: "That is RANK's answer — it consumes ranks 6, 7, 8 on the tie and skips to 9. Gaps are RANK semantics; the desk asked for no gaps." },
+        { choice: 0, why: "That is RANK's answer — it consumes ranks 6, 7, 8, 9 on the tie and skips to 10. Gaps are RANK semantics; the desk asked for no gaps." },
         { choice: 2, why: "6 is the tie's own rank, not the next one handed out. Off-by-one on the tie block is the classic leaderboard bug." },
       ],
       difficulty: "medium",

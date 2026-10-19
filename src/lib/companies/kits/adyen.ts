@@ -36,7 +36,7 @@ export const adyenKit: CompanyKit = {
     "Adyen is the single-stack payments platform enterprise merchants route their volume through — one platform owns authorization, {emerald:settlement} and payout instead of stitching a gateway, an acquirer and a processor together. That architecture is why its data is one continuous money movement: authorization attempts land in settlement batches, batches clear against the ledger, and the ledger has to prove debits equal credits. On this app's storefront db the mapping is one-to-one: `invoices` are settlement batches (28 of them), `payments` are authorization attempts (27 rows covering 22 batches — five batches draw two attempts), and `ledger_entries` is the clearing ledger (80 rows, debits $181,080 equal to credits $181,080). Money columns are INTEGER cents; every dollar read is `amount_cents / 100.0`.",
     "The data org splits into product analytics, risk, and the team this kit is really about: settlement operations. The daily bread is the {rose:exception queue} — the db's verified anomalies are exactly what a gateway ops analyst meets before coffee: a {rose:void}-but-attempted batch (#11, $925.00), a paid batch with no attempt behind it (#28, $1,756.00), five split-attempt batches (**#1, #5, #12, #19, #22**), and one {amber:partial} attempt ($4,000.00 of a $6,148.00 batch). Coverage is the standing read: **21 exact, 1 partial, 6 with no attempt** — and unattempted exposure prices at $15,217.00. An analyst here doesn't 'run reports'; they prove every attempt reconciles to a batch, and when it doesn't, the diff query names the batch in minutes.",
     "Interview style is correctness over cleverness, with a distinctly gateway flavor: the screens love the {violet:single-pass census} — one scan, every class counted via `FILTER (WHERE …)`, counts forced to reconcile — and the per-route fold (card rail vs wire rail attempts) where the denominator is the whole test. A typical hour opens with a fold over money, escalates into attempt coverage (which batches never drew an attempt — and what filtering the wrong table in WHERE does to your `LEFT JOIN`), then closes on a latency or ledger question where rounding discipline (**100.0** before the division, ROUND once at the end) is graded, not assumed.",
-    "Preparation: the registry tags 4 Adyen SQL problems and all 4 land in this kit's topics; the remaining slots are theme-curated from the SQL band — attempt-velocity buckets, ledger walks, duplicate-attempt scans, honest ratios — because that is what the screens probe. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {violet:one-pass batch census} settlement ops ships in every close packet (21 settled / $66,443.00, 6 open / $19,609.00, 1 void / $925.00 — reconciling to 28), the other rebuilds the 9am {rose:exposure sweep} — batches with no attempt behind them, 6 worth $15,217.00, split by status. Say the units and the denominator out loud before you compute anything; at a gateway, cents and coverage ARE the interview.",
+    "Preparation: the registry tags 4 Adyen SQL problems and all 4 land in this kit's topics; the remaining slots are theme-curated from the SQL band — attempt-velocity buckets, ledger walks, duplicate-attempt scans, honest ratios — because that is what the screens probe. Do the topics in order, then run all six case studies on the live storefront db: one rebuilds the {violet:one-pass batch census} settlement ops ships in every close packet (21 settled / $66,443.00, 6 open / $19,609.00, 1 void / $925.00 — reconciling to 28), the other rebuilds the 9am {rose:exposure sweep} — batches with no attempt behind them, 6 worth $15,217.00, split by status. Say the units and the denominator out loud before you compute anything; at a gateway, cents and coverage ARE the interview.",
     "The kit's second half goes deeper, not wider, on the same money movement. The {violet:issuance walk} stages a monthly fold over batch issuance — 13 months from 2024-02 through 2025-02, peaking at **$11,085.00 in 2025-01** — and rides a `LAG` delta down the spine, first row honestly NULL. The coverage census grows a fourth class: the {rose:paid-no-attempt} contradiction (#28, booked paid with zero attempts behind it) gets its own CASE arm instead of hiding inside the generic class. The split register folds attempts per batch and gates at exactly 2 — batches #1, #5, #12, #19, #22, all five reconciling to the penny. And the settlement-clock leaderboard ranks the 20 paid-with-attempt batches fastest-first — fastest 13 days, slowest 84 — straight into a 25-day tie band where 7 batches share one rank and RANK, ROW_NUMBER and DENSE_RANK finally disagree.",
     "Senior-round prep is rehearsal on the live db plus denominators said out loud. Rebuild all four new cases end to end: does your walk read **−$2,973.00** for 2025-02, or did you flip the subtraction? Do the census's four classes still reconcile to 28 batches and $86,977.00? Did the register gate at exactly 2 — the same query as 'at least 2' on this data, and the wrong habit? Can you say which rank function you picked, and why the 25-day band agrees? The reflexes they grade are the gateway's: cents stay INTEGER until one `/100.0` at the display edge, every census reconciles to `COUNT(*)`, every rate names its denominator (unattempted is 6 of 28 batches, not 6 of 22 attempted ones), and every anomaly carries a route — {rose:paid-no-attempt} goes to engineering, the {amber:open} unattempted go to collections.",
   ],
@@ -68,7 +68,7 @@ export const adyenKit: CompanyKit = {
     {
       name: "Folds over money movement",
       why: "Every headline at a gateway is a fold over a money column: attempted dollars per rail, batches per status, debits minus credits per account. The cents rule sharpens it — amounts are INTEGER cents, so SUM(amount_cents) / 100.0 is the dollar read and integer division is the standing truncation trap. Adyen drills whether you can fold money without leaking it.",
-      slugs: ["number-of-rich-customers", "top-earners", "products-worth-over-invoices"],
+      slugs: ["number-of-rich-customers", "top-earners", "products-worth-over-invoices", "deferred-revenue"],
     },
     {
       name: "Route mix & per-route fees",
@@ -83,12 +83,12 @@ export const adyenKit: CompanyKit = {
     {
       name: "Attempt velocity & burst rules",
       why: "Risk runs velocity rules in fixed time buckets: attempts per minute per merchant, bursts flagged before a human looks. Bucket-then-count is the shape, and the follow-up is always the edge case: what does an empty bucket return, and does your rule fire on it or silently pass it?",
-      slugs: ["transaction-velocity", "count-the-number-of-experiments", "users-with-two-purchases-within-seven-days"],
+      slugs: ["transaction-velocity", "count-the-number-of-experiments", "users-with-two-purchases-within-seven-days", "ar-aging-schedule", "delinquency-buckets"],
     },
     {
       name: "Ledger reconciliation & balance walks",
       why: "The clearing ledger is double-entry: every debit has a credit, the trial balance must read zero ($181,080 = $181,080 here), and the per-account nets (cash $44,196, receivables $16,440) feed the close. Balance walks and delta queries are how you localize a break — one fold per side, then the difference, then the account that drifted.",
-      slugs: ["gl-reconciliation", "trial-balance-check", "total-traveled-distance"],
+      slugs: ["gl-reconciliation", "trial-balance-check", "total-traveled-distance", "daily-balance-interest"],
     },
     {
       name: "Snapshot deltas & FULL OUTER reads",
@@ -98,42 +98,42 @@ export const adyenKit: CompanyKit = {
     {
       name: "Duplicate & split attempt scans",
       why: "Five batches on the db draw two attempts each — split attempts — and the same self-join that finds them finds duplicate attempts. The craft is canonicalization: p1.id < p2.id keeps one pair per unordered match, while <> double-counts both orientations and bare equality fans out to every peer including itself.",
-      slugs: ["duplicate-charge-pairs", "symmetric-pairs", "most-common-course-pairs"],
+      slugs: ["duplicate-charge-pairs", "symmetric-pairs", "most-common-course-pairs", "journal-gap-detection"],
     },
     {
       name: "Month buckets & settlement calendars",
       why: "Settlement calendars are month-bucketed: SUBSTR(paid_on, 1, 7) folds attempts into '2024-03'-style keys with a conditional count of exceptions riding in the same fold. The gateway probes whether the status rule and the total come from one scan — branches that must reconcile before the report ships.",
-      slugs: ["monthly-transactions-i", "the-latest-login-in-2020", "user-activity-for-the-past-30-days-i"],
+      slugs: ["monthly-transactions-i", "the-latest-login-in-2020", "user-activity-for-the-past-30-days-i", "settlement-fails-aging"],
     },
     {
       name: "Honest ratios & rounded shares",
       why: "Authorization rates, coverage shares, dispute rates — every rate here is a conditional sum over a count, and both failure modes are graded: integer division (100 must be 100.0) and denominator drift (the WHERE that filters the numerator's population out of the denominator). Round once, at the end, at the display edge.",
-      slugs: ["queries-quality-and-percentage", "confirmation-rate", "card-launch-success"],
+      slugs: ["queries-quality-and-percentage", "confirmation-rate", "card-launch-success", "second-highest-salary"],
     },
     {
       name: "One-pass censuses: FILTER & CASE",
       why: "The close packet wants the whole batch book in one row — one scan, one column per class, `FILTER (WHERE …)` doing the branching. The CASE census is the row-per-class sibling, and both shapes must reconcile to COUNT(*) (28 batches here) before anyone reads them. COUNT on an empty class returns 0; SUM returns NULL — know which your packet needs.",
-      slugs: ["count-salary-categories", "odd-and-even-transactions", "spend-histogram"],
+      slugs: ["count-salary-categories", "odd-and-even-transactions", "spend-histogram", "expected-credit-loss"],
     },
     {
       name: "Window frames & running balances",
       why: "Running attempted-dollars and cumulative settlement positions are how ops watches a day drain — and the default window frame (RANGE) silently folds ORDER BY peers together, which matters the moment split attempts share a paid_on. ROWS-versus-RANGE, deterministic tiebreaks, and 'which running total did you mean' are the interview surface here.",
-      slugs: ["account-balance", "find-cumulative-salary-of-an-employee", "rolling-average-steps"],
+      slugs: ["account-balance", "find-cumulative-salary-of-an-employee", "rolling-average-steps", "balance-rollforward"],
     },
     {
       name: "Calendar spines & trailing windows",
       why: "Months with zero issuance vanish from GROUP BY walks — the book's first batch is 2024-02, and 2024-01 simply doesn't exist as a group — so MoM deltas across a hole read as fake cliffs. WITH RECURSIVE month spines, LEFT-joined zero-fills and 7-day trailing frames are how the walk stays honest across the calendar.",
-      slugs: ["restaurant-growth", "find-the-missing-ids", "friday-purchases-i"],
+      slugs: ["restaurant-growth", "find-the-missing-ids", "friday-purchases-i", "amount-anomaly-zscore", "structuring-detection", "suspicious-bank-account-transactions", "consecutive-transactions-with-increasing-amounts", "mrr-waterfall"],
     },
     {
       name: "Set-op report stitching",
       why: "The close packet stitches per-route rows and a grand-total row into one result — UNION ALL, never UNION, whose silent dedupe can make a genuine repeat vanish while the packet still reconciles. EXCEPT is the rail-vs-book diff in set form, and its direction IS the question.",
-      slugs: ["monthly-transactions-ii", "count-apples-and-oranges", "league-statistics"],
+      slugs: ["monthly-transactions-ii", "count-apples-and-oranges", "league-statistics", "keep-latest-dedupe"],
     },
     {
       name: "Latest-state & argmax reads",
       why: "'First attempt per batch', 'largest attempt per day', 'latest address per merchant' — every one is an argmax with a tie policy, and the bare MAX-join-back returns BOTH tied rows and silently doubles every downstream count. The settlement clock (first attempt, 28.4-day average) is this exact decision.",
-      slugs: ["bikes-last-time-used", "the-most-recent-orders-for-each-product", "product-price-at-a-given-date"],
+      slugs: ["bikes-last-time-used", "the-most-recent-orders-for-each-product", "product-price-at-a-given-date", "maximum-transaction-each-day", "late-arriving-restatement"],
     },
     {
       name: "CTE staging & deep subqueries",

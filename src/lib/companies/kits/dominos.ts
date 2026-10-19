@@ -111,12 +111,12 @@ export const dominosKit: CompanyKit = {
     {
       name: "Peak-hour demand curves",
       why: "The dinner rush is a distribution shift, and the daypart pivot (sales-by-day-of-week shapes) is how staffing gets written. Screens drill weekday folds, bursty-behavior detection and weekend filters — demand curves computed from timestamps, not asserted from folklore.",
-      slugs: ["sales-by-day-of-the-week", "find-bursty-behavior", "tasks-count-in-the-weekend"],
+      slugs: ["sales-by-day-of-the-week", "find-bursty-behavior", "tasks-count-in-the-weekend", "restaurant-growth", "active-businesses"],
     },
     {
       name: "Oven-queue capacity & running sums",
       why: "First-party delivery means the store owns its queue: how many open orders the oven can carry before promise risk compounds. Running totals and cumulative windows answer it — capacity questions are cumulative, never point-in-time, and the last-person-to-fit shape is the pure drill.",
-      slugs: ["last-person-to-fit-in-the-bus", "game-play-analysis-iii", "budget-pacing"],
+      slugs: ["last-person-to-fit-in-the-bus", "game-play-analysis-iii", "budget-pacing", "biggest-window-between-events", "running-total-for-different-genders"],
     },
     {
       name: "Kept demand: placed vs baked",
@@ -126,27 +126,27 @@ export const dominosKit: CompanyKit = {
     {
       name: "Month buckets & the trough calendar",
       why: "The trough calendar (three months at 6 orders each) anchors promo and prep planning. Screens drill STRFTIME month buckets, date-filtered aggregation and period boundaries — 2024-01 to 2025-02, string-sorted, with thin months found by a HAVING gate rather than eyeballed.",
-      slugs: ["list-the-products-ordered-in-a-period", "the-latest-login-in-2020", "convert-date-format"],
+      slugs: ["list-the-products-ordered-in-a-period", "the-latest-login-in-2020", "convert-date-format", "calculate-orders-within-each-interval", "unique-orders-and-customers-per-month", "user-activity-for-the-past-30-days-i"],
     },
     {
       name: "Ranking stores & menus",
       why: "Store leaderboards, menu best-sellers, the rank trio with visible tie handling — operations reporting is leaderboard reporting. ROW_NUMBER, RANK and DENSE_RANK differ exactly at ties, and a top-N that returns N+1 rows is a tie policy the business hasn't made.",
-      slugs: ["rank-scores", "top-earners", "highest-grade-for-each-student"],
+      slugs: ["rank-scores", "top-earners", "highest-grade-for-each-student", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "Fan-out & basket depth",
       why: "251 lines over 103 orders means every join to order_items changes the grain: counts become lines, AOVs drift, sums double-count. Screens drill the basket-depth fold and line-grain aggregation — GROUP_CONCAT rolls and per-order pivots included — until the 2.44 fan-out is a reflex, not a surprise.",
-      slugs: ["basket-depth-aov", "product-sales-analysis-ii", "group-sold-products-by-the-date"],
+      slugs: ["basket-depth-aov", "product-sales-analysis-ii", "group-sold-products-by-the-date", "customer-order-frequency", "the-most-recent-orders-for-each-product"],
     },
     {
       name: "Honest rates & percentage math",
       why: "Promise hit rate, cancellation share, completion share — operator ratios punish integer division and careless filters. The house habit: 100.0 before the division, the denominator announced before the ratio, ROUND only at the very end.",
-      slugs: ["percentage-of-users-attended-a-contest", "queries-quality-and-percentage", "confirmation-rate"],
+      slugs: ["percentage-of-users-attended-a-contest", "queries-quality-and-percentage", "confirmation-rate", "repeat-purchase-rate"],
     },
     {
       name: "NULL discipline on the delivery clock",
       why: "shipped_at is NULL until the door knocks, and the promise board lives or dies on NULL policy: COUNT(col) vs COUNT(*), AVG over completed only, COALESCE refused where a zero would lie. Screens drill the null-audit shapes — the data-quality bench every operator query runs before it ships.",
-      slugs: ["null-blank-audit", "books-with-null-ratings", "employees-with-missing-information"],
+      slugs: ["null-blank-audit", "books-with-null-ratings", "employees-with-missing-information", "find-books-with-no-available-copies"],
     },
     {
       name: "Stacked boards: UNION & grand totals",
@@ -156,12 +156,12 @@ export const dominosKit: CompanyKit = {
     {
       name: "Staged builds: CTEs & subqueries",
       why: "The concentration board is a two-stage build: fold partner revenue in a CTE, then compare each partner to the network total — 11,130.25 against the fold reads Nordic's 32% share. Screens drill staging discipline: name the fold once, reference it twice, keep the baseline's population visible in the SQL.",
-      slugs: ["managers-with-at-least-5-direct-reports", "second-highest-salary", "market-analysis-i"],
+      slugs: ["managers-with-at-least-5-direct-reports", "second-highest-salary", "market-analysis-i", "orders-with-maximum-quantity-above-average", "find-stores-with-inventory-imbalance"],
     },
     {
       name: "Menu-name hygiene: text & codes",
       why: "Prep sheets group by item name, and a trailing space or case flip splits one family into two — the sheet under-provisions while the totals look fine. The drill is TRIM/UPPER/SUBSTR/LENGTH discipline on group keys, the same read-time normalization habit that keeps SUBSTR(created_at,1,7) buckets honest.",
-      slugs: ["fix-names-in-a-table", "fix-product-name-format", "invalid-tweets"],
+      slugs: ["fix-names-in-a-table", "fix-product-name-format", "invalid-tweets", "spend-histogram"],
     },
     {
       name: "Pairing & overlap: self-joins",

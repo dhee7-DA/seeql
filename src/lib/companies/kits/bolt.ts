@@ -53,12 +53,12 @@ export const boltKit: CompanyKit = {
     {
       name: "CASE classification for fare rules",
       why: "The price catalog is rule-shaped: standard tier, budget tier, promotional, each with its own boundary. CASE WHEN is the daily classifier, and the screens check exhaustiveness — a boundary at exactly the threshold, an ELSE that catches everything below, and no silent third band pricing can't explain.",
-      slugs: ["calculate-special-bonus", "weather-type-in-each-country", "the-category-of-each-member-in-the-store", "sales-analysis-ii"],
+      slugs: ["calculate-special-bonus", "weather-type-in-each-country", "the-category-of-each-member-in-the-store", "sales-analysis-ii", "average-selling-price"],
     },
     {
       name: "Stacked packets with UNION ALL",
       why: "Month-close and regulator packets stitch populations into one deliverable: this-month versus last-month, cancelled versus kept, per-city blocks stacked into one table. Bolt drills UNION ALL's no-dedupe cheapness and the column-position discipline that keeps a stack type-safe — a packet that silently dedupes or misaligns columns reads as two different businesses.",
-      slugs: ["team-scores-in-football-tournament", "monthly-transactions-ii", "count-salary-categories"],
+      slugs: ["team-scores-in-football-tournament", "monthly-transactions-ii", "count-salary-categories", "keep-latest-dedupe"],
     },
     {
       name: "Low-cost leaderboards",
@@ -68,7 +68,7 @@ export const boltKit: CompanyKit = {
     {
       name: "Rates with honest denominators",
       why: "Completion rates, take rates, ad-spend ratios — Bolt's ratios punish integer division and careless filters. The house habit: 100.0 before the division, the denominator's filter decided BEFORE the ratio, and rounding only at the end. The follow-up is always 'what's in the denominator?' — because a regulator may read the answer.",
-      slugs: ["ads-performance", "hopper-company-queries-ii", "card-launch-success", "queries-quality-and-percentage"],
+      slugs: ["ads-performance", "hopper-company-queries-ii", "card-launch-success", "queries-quality-and-percentage", "confirmation-rate"],
     },
     {
       name: "Joining rides, food & scooters",

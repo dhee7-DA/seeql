@@ -29,7 +29,7 @@ export const accorKit: CompanyKit = {
     "**Accor** is Europe's largest hotel group — a Paris-headquartered portfolio of 45-plus brands that runs the ladder from Ibis at the economy base through Novotel and Mercure at midscale to Sofitel, Pullman and Raffles at the top. The strategic fact that shapes every analyst's day: Accor owns almost none of it. The model is asset-light — franchise and management contracts — so the revenue story is fees billed to property owners, and every folio line a guest generates feeds a base fee, an incentive fee and a marketing-fund contribution. This kit maps the storefront db onto that world: the 16 customers rows are ALL-Accor members, the 103 orders are stays worth **34,833.28**, and the 251 order_items rows are folio lines — quantity = units, unit_price = unit rate. The status map is fixed: delivered = {emerald:completed} (52, 50.5%), shipped = {sky:in-house} with shipped_at as the check-in stamp (30, 29.1%), pending = awaiting arrival (14), cancelled = {rose:cancelled} (7, 6.8%).",
     "The data org reads the portfolio the way the P&L is structured. The brand teams read demand at tier grain — **338.19** per stay network-wide, 383.48 in the richest market on only 19 stays, 335.32 in the busiest on 45. The loyalty desk owns the {sky:ALL-Accor} read: fold per-member lifetime value first, tier second — the four 3,000-plus members (7,262.35, 6,640.56, 4,574.23, 3,644.56) hold **63.5%** of stay value, and the 2,000-plus crowd reaches only 71.2%, so one mid-band member owns the gap. The fee desk moves owner money across 28 invoices and 27 payments in {rose:INTEGER cents} — every dollar read is `amount_cents / 100.0` — and the settlement split is memorized: 21 exact, 1 partial (4,000 of 6,148), 6 never-settled worth 15,217, with the two named anomalies (a void bill carrying a 925 settlement, a paid-status bill with zero settlement rows) walked line by line, never averaged away.",
     "Interview screens are census-then-denominator, hotel-flavored. A loop opens with a **two-grain market census** — EU runs 45 stays from 8 members (intensity 5.6) while the US runs 19 from 2 (9.5) — then hits the folio fan-out, where `COUNT(*)` after the join counts 251 folio lines and calls them stays; then escalates into a tier ladder and the rank-semantics argument (the member ladder runs 24, 17, 14, 13, 5 with a four-way tie at 4). The traps are stated out loud here: every member and every room product has transacted, so anti-join drills return a **confident zero**, and the rate ceiling sits at **199.99**, so any premium-band filter comes back empty *by construction* — proving the zero is the job, not a bug.",
-    "Preparation strategy: the pools file carries no Accor section — 0 tagged rows — so all sixteen problems and every topic slug here are **theme-curated** to this kit's known screen shapes: stay-status funnels, two-grain censuses, folio-line folds, tier CASE rolls, fee-book coverage and the cents-safe settlement spine. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {amber:network opex roll-up} the fee desk foots at every close, the other rebuilds the {violet:brand-tier ladder board} portfolio reviews open with. The bar to clear: *state the definition and the denominator before you compute anything* — then make every status census reconcile to 103 by construction, and every tier fold reconcile to the market books it claims to summarize.",
+    "Preparation strategy: the pools file carries no Accor section — 0 tagged rows — so all thirty-two problems and every topic slug here are **theme-curated** to this kit's known screen shapes: stay-status funnels, two-grain censuses, folio-line folds, tier CASE rolls, fee-book coverage and the cents-safe settlement spine. Do the topics in order, then run all six case studies on the live storefront db: one rebuilds the {amber:network opex roll-up} the fee desk foots at every close, the other rebuilds the {violet:brand-tier ladder board} portfolio reviews open with, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The bar to clear: *state the definition and the denominator before you compute anything* — then make every status census reconcile to 103 by construction, and every tier fold reconcile to the market books it claims to summarize.",
     "**The deeper operational read**: the arrival corridor and the settlement clock are the two loops the desk re-runs daily. Latency is regional — stamped stays average **2.94 days** in the EU (36 stays) and 2.93 in APAC (29), but the US book of 15 runs 3.07 and LATAM's 2 print 3.5 — small-N, headline-eligible, which is why the corridor board prints counts beside averages. Owner money runs the mirror: terms are a uniform 30 days on all 28 bills (issue-to-due reads 30/30/30, so aging math is a `date(issued_on, '+30 days')` walk), the paid book settles in **28.4 days** on average (13 fastest, 84 slowest), and 5 bills — 1, 5, 12, 19, 22 — settle on two payment legs, so folds run per statement, never per leg. The dunning queue under the 6-bill headline splits as 873.00, 1,295.00, 4,937.00, 3,562.00 and 2,794.00 — *no dunning letter quotes an average where a bill should be*.",
     "Prep extension for the deeper screens: the census-then-denominator loop is table stakes here — the follow-up rounds drill **window frames**, set-operation drift and three-valued logic until they are reflexes, because the panels escalate past the standard boards fast. Run every read twice against the live storefront db: once with the fold you would ship, once as a `COUNT(*)` audit that proves the grain you claim (103 stays, 251 folio lines, 16 members — never a number you cannot re-derive). Then take the four new case families in order — the one-pass {amber:FILTER census}, the {violet:LAG pace walk}, the staged concentration board, the never-remitted anti-join — and hold every fold to the close bar: *a board ships only when its pieces reconcile to the canonical figures, 63.5 and 71.2 included, by construction*.",
   ],
@@ -60,17 +60,17 @@ export const accorKit: CompanyKit = {
     {
       name: "Stay-status funnels",
       why: "Every Accor screen opens with the reservation lifecycle: booked, checked-in (shipped_at stamped), completed, cancelled. Each stage is a conditional count over a status or timestamp, and the first question out loud is what the denominator holds. The trap is calling an in-house stay 'completed' — 30 versus 52 on this db.",
-      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest"],
+      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "immediate-food-delivery-ii", "game-play-analysis-iv", "uber-first-transaction"],
     },
     {
       name: "Two-grain market censuses",
       why: "Stays and members are different grains of the same join, and every market census here reports both: EU runs 45 stays from 8 members while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying which column is demand and which is installed base — is the habit being graded.",
-      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "number-of-rich-customers"],
+      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "number-of-rich-customers", "find-golden-hour-customers", "most-common-course-pairs"],
     },
     {
       name: "Folio-line folds",
       why: "Every portfolio read folds folio lines to stay grain: value, units and DISTINCT stays per brand-tier product — 251 lines over 103 stays, and the fold that survives is the one that deduplicates. Line-grain counts silently multiply per-stay demand and are the classic fan-out trap in hotel reporting.",
-      slugs: ["product-sales-analysis-ii", "product-sales-analysis-iii", "most-frequently-ordered-product-per-customer"],
+      slugs: ["product-sales-analysis-ii", "product-sales-analysis-iii", "most-frequently-ordered-product-per-customer", "median-employee-salary"],
     },
     {
       name: "Member enrichment joins",
@@ -80,7 +80,7 @@ export const accorKit: CompanyKit = {
     {
       name: "ALL-Accor tier ladder with CASE",
       why: "Member tiers are CASE-classified over folded lifetime spend — the four 3,000-plus members hold 63.5% of stay value, the 2,000-plus band only 71.2%. The graded move is folding at member grain BEFORE tiering: tier raw stay rows and you tier folio lines, not people.",
-      slugs: ["calculate-special-bonus", "loan-types", "the-category-of-each-member-in-the-store"],
+      slugs: ["calculate-special-bonus", "loan-types", "the-category-of-each-member-in-the-store", "spend-histogram"],
     },
     {
       name: "Loyalty leaderboards & rank ties",
@@ -95,32 +95,32 @@ export const accorKit: CompanyKit = {
     {
       name: "Settlement coverage anti-joins",
       why: "The fee desk's daily read is bills without settlements: 6 invoices worth 15,217, plus the mirrors — a void bill WITH a settlement row and a paid-status bill with none. LEFT JOIN + IS NULL (and the NOT EXISTS twin) is the shape, and the coverage split 21 / 1 / 6 is its report.",
-      slugs: ["customers-who-never-order", "sellers-with-no-sales", "number-of-accounts-that-did-not-stream"],
+      slugs: ["customers-who-never-order", "sellers-with-no-sales", "number-of-accounts-that-did-not-stream", "sales-analysis-ii", "count-student-number-in-departments", "customers-who-bought-a-and-b-not-c", "consecutive-available-seats"],
     },
     {
       name: "Calendar spines & booking windows",
       why: "The 14-month stay spine (2024-01 to 2025-02) is the pace board's home turf: month buckets via SUBSTR(created_at,1,7), the 3,731.97 January open, the 1,193.86 July trough with 2 of the 7 cancellations, and half-open date windows that don't drop the last night of a season.",
-      slugs: ["monthly-transactions-i", "list-the-products-ordered-in-a-period", "the-latest-login-in-2020"],
+      slugs: ["monthly-transactions-i", "list-the-products-ordered-in-a-period", "the-latest-login-in-2020", "maximum-transaction-each-day", "bank-account-summary", "sales-by-day-of-the-week", "transactions-per-visit-histogram", "report-contiguous-dates", "human-traffic-of-stadium"],
     },
     {
       name: "One-pass status censuses",
       why: "The ops board gets completed, in-house, awaiting and cancelled in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift out of reconciliation.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "user-activity-for-the-past-30-days-i", "trips-and-users"],
     },
     {
       name: "Window frames & running totals",
       why: "Running totals power the pace board, the cumulative-value walk and the concentration curve — and the default frame is the trap: with ORDER BY, RANGE includes peers, so rows tied on the sort key enter the running sum together. Hotel data ties constantly at check-in stamps, so the discipline is writing ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW when the walk must be strictly row-by-row.",
-      slugs: ["game-play-analysis-iii", "budget-pacing", "last-person-to-fit-in-the-elevator"],
+      slugs: ["game-play-analysis-iii", "budget-pacing", "last-person-to-fit-in-the-elevator", "last-person-to-fit-in-the-bus"],
     },
     {
       name: "Set-operation stacks",
       why: "Close packets and census stacks live on UNION ALL — completed folio value stacked under cancelled, category folds stacked under a TOTAL footer. The graded edge is UNION's silent whole-row dedup, and the INTERSECT/EXCEPT twins that answer 'which members appear in both books / one but not the other' without an anti-join.",
-      slugs: ["team-scores-in-football-tournament", "count-salary-categories", "movie-rating"],
+      slugs: ["team-scores-in-football-tournament", "count-salary-categories", "movie-rating", "group-sold-products-by-the-date", "fix-product-name-format", "users-with-two-purchases-within-seven-days"],
     },
     {
       name: "Argmax & per-group tops",
       why: "Latest stay per member, peak folio night per property, top rate band per market — every per-group-top read is an argmax, and the naive GROUP BY + MAX collapses the row identity. ROW_NUMBER over a partition picks the row and needs a stated tie-breaker, because arrival seconds collide in hotel data.",
-      slugs: ["highest-grade-for-each-student", "the-most-recent-orders-for-each-product", "product-sales-analysis-iv"],
+      slugs: ["highest-grade-for-each-student", "the-most-recent-orders-for-each-product", "product-sales-analysis-iv", "product-price-at-a-given-date", "customer-placing-the-largest-number-of-orders", "queries-quality-and-percentage", "find-the-team-size", "confirmation-rate", "second-highest-salary", "number-of-calls-between-two-persons"],
     },
     {
       name: "NULL policy & three-valued logic",
@@ -130,7 +130,7 @@ export const accorKit: CompanyKit = {
     {
       name: "Growth walks & prior-period deltas",
       why: "Every trend read here is LAG: month-over-month pace, week-over-week arrivals, member-over-member ladder deltas. The graded moves are the NULL first row (baseline, never zero), the ORDER BY inside the window, and what happens when the bucket expression changes under your feet.",
-      slugs: ["biggest-window-between-events", "second-day-confirmation", "consecutive-transactions-with-increasing-amounts"],
+      slugs: ["biggest-window-between-events", "second-day-confirmation", "consecutive-transactions-with-increasing-amounts", "hopper-company-queries-ii"],
     },
   ],
 

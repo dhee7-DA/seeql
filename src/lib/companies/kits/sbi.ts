@@ -69,12 +69,12 @@ export const sbiKit: CompanyKit = {
     {
       name: "Two-grain circle censuses",
       why: "Events and holders are different grains of the same join, and every circle census reports both: EU runs 45 events from 8 holders while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which column is load and which is coverage — is the habit being graded. The ratio (5.6 versus 9.5) is the intensity read that decides where the next verification desk goes.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count", "customers-who-never-order"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count", "customers-who-never-order", "bank-account-summary", "students-and-examinations"],
     },
     {
       name: "The disbursement clock",
       why: "A sanction books at created_at and shipped_at stamps the day cash actually moved — the branch network's service clock. Each stage is a julianday delta averaged over the 82 stamped rows only, with the 14 unstamped YONO applications excluded by definition. Date arithmetic with a stated population is the shape being graded; the silent-shrink version is the bug being hunted.",
-      slugs: ["average-time-of-process-per-machine", "find-golden-hour-customers", "users-with-two-purchases-within-seven-days", "settlement-fails-aging", "customers-with-maximum-number-of-transactions-on-consecutive-days"],
+      slugs: ["average-time-of-process-per-machine", "find-golden-hour-customers", "users-with-two-purchases-within-seven-days", "settlement-fails-aging", "customers-with-maximum-number-of-transactions-on-consecutive-days", "gl-reconciliation", "trial-balance-check", "balance-rollforward", "customer-purchasing-behavior-analysis", "loan-types"],
     },
     {
       name: "Withdrawal & funnel rates",
@@ -89,12 +89,12 @@ export const sbiKit: CompanyKit = {
     {
       name: "The deposit spine & LAG walks",
       why: "The 14-month mobilization spine (2024-01 to 2025-02) is the trend call's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) and jump (+1,158.21 into August) named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero. Withdrawn applications concentrate in July and November, 2 each of 7, and the walk is how that pattern gets defended.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "year-on-year-growth-rate", "vintage-default-curves", "daily-balance-interest"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "year-on-year-growth-rate", "vintage-default-curves", "daily-balance-interest", "running-total-for-different-genders", "maximum-transaction-each-day", "the-most-recent-orders-for-each-product", "second-highest-salary", "median-employee-salary"],
     },
     {
       name: "Holder ladders & rank semantics",
       why: "Concentration reporting is rank-window work where ties are guaranteed — four holders sit at 4 events each on this db, under a ladder that runs 24, 17, 14, 13, 5. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer holders, not syntax. The premier-desk list publishes the policy; candidates are asked to defend it.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "portfolio-concentration-hhi"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "portfolio-concentration-hhi", "portfolio-weights"],
     },
     {
       name: "Statements, advices & the two rails",
@@ -109,7 +109,7 @@ export const sbiKit: CompanyKit = {
     {
       name: "Nested gates & HAVING floors",
       why: "Screens escalate into staging: fold per-holder event counts, then judge them against a computed platform mean (6.44 here — exactly four holders clear it). Scalar, correlated and derived shapes each carry an empty-inner-query answer you are expected to give unprompted. Verification targeting is exactly this: which holders run above the network's cadence.",
-      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments", "suspicious-bank-account-transactions", "top-percentile-fraud"],
+      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments", "suspicious-bank-account-transactions", "top-percentile-fraud", "delinquency-buckets", "duplicate-charge-pairs", "amount-anomaly-zscore", "delinquency-roll-rates"],
     },
   ],
 

@@ -54,7 +54,7 @@ export const tescoKit: CompanyKit = {
     {
       name: "Basket-status conditional counting",
       why: "Every Tesco trade read starts from the same fold: completed, out for delivery, awaiting pickup, abandoned — one status column, four business meanings. Each branch is a conditional count, and the interviewer's first question is what the denominator holds. The trap is calling an out-for-delivery order 'completed' — 30 versus 52 on this db.",
-      slugs: ["immediate-food-delivery-i", "monthly-transactions-i", "percentage-of-users-attended-a-contest", "immediate-food-delivery-iii", "human-traffic-of-stadium"],
+      slugs: ["immediate-food-delivery-i", "monthly-transactions-i", "percentage-of-users-attended-a-contest", "immediate-food-delivery-iii", "human-traffic-of-stadium", "returns-rate-by-category", "immediate-food-delivery-ii", "average-selling-price", "sales-by-day-of-the-week", "bank-account-summary-ii"],
     },
     {
       name: "Two-grain store reads",
@@ -64,12 +64,12 @@ export const tescoKit: CompanyKit = {
     {
       name: "Shelf-to-basket joins",
       why: "Aisle reporting means attaching category, supplier and shelf price to every basket line — joins across the product and demand tables where the mapping is the point. Tesco's follow-up is always about survival: does a SKU missing its supplier row still count in the aisle fold, and which join type answers honestly?",
-      slugs: ["product-sales-analysis-i", "combine-two-tables", "replace-employee-id-with-unique-identifier", "warehouse-manager"],
+      slugs: ["product-sales-analysis-i", "combine-two-tables", "replace-employee-id-with-unique-identifier", "warehouse-manager", "customers-who-never-order", "find-churn-risk-customers", "customer-who-visited-but-did-not-transact"],
     },
     {
       name: "Aisle revenue folds",
       why: "Category revenue is the commercial heartbeat: fold basket lines by aisle, round to the penny, and rank. The audits here drill exactly the join-then-aggregate shape the Monday pack is built from — with the discipline that 251 lines fold into 103 baskets, not the other way round.",
-      slugs: ["sales-analysis-i", "product-sales-analysis-ii", "students-and-examinations", "fifo-inventory-cogs"],
+      slugs: ["sales-analysis-i", "product-sales-analysis-ii", "students-and-examinations", "fifo-inventory-cogs", "basket-depth-aov", "repeat-purchase-rate", "rfm-segmentation", "weeks-of-supply"],
     },
     {
       name: "One-pass FILTER censuses",
@@ -79,12 +79,12 @@ export const tescoKit: CompanyKit = {
     {
       name: "CASE banding on the shelf",
       why: "The range is banded — value under 50, standard at 50-plus, the premium band provably empty — and every price-tier read is a CASE classification with fixed edges the pricing page publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the promo forecast.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "the-winner-university", "calculate-product-final-price", "count-salary-categories", "transactions-per-visit-histogram"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "the-winner-university", "calculate-product-final-price", "count-salary-categories", "transactions-per-visit-histogram", "monthly-transactions-ii"],
     },
     {
       name: "Ranking the Clubcard ladder",
       why: "Top members by basket count and lifetime spend is leaderboard reporting where ties are guaranteed — four members sit at 4 baskets on this db, and the ladder above them runs 24, 17, 14, 13, 5. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer households, not syntax.",
-      slugs: ["rank-scores", "department-top-three-salaries", "second-highest-salary", "compute-the-rank-as-a-percentage", "usage-tier-percentiles", "the-most-recent-three-orders", "second-most-recent-activity"],
+      slugs: ["rank-scores", "department-top-three-salaries", "second-highest-salary", "compute-the-rank-as-a-percentage", "usage-tier-percentiles", "the-most-recent-three-orders", "second-most-recent-activity", "customer-placing-the-largest-number-of-orders", "most-frequently-ordered-product-per-customer"],
     },
     {
       name: "NULL policy at the dispatch stamp",
@@ -94,7 +94,7 @@ export const tescoKit: CompanyKit = {
     {
       name: "Promo windows & date math",
       why: "Promo windows make date arithmetic a daily tool: units moved in a period, the last shop before a price change, baskets inside the Clubcard Prices window. Tesco probes half-open intervals — BETWEEN on timestamps loses the last night of the promo.",
-      slugs: ["list-the-products-ordered-in-a-period", "the-latest-login-in-2020", "users-with-two-purchases-within-seven-days", "seasonal-sales-analysis", "friday-purchases-i", "calculate-orders-within-each-interval"],
+      slugs: ["list-the-products-ordered-in-a-period", "the-latest-login-in-2020", "users-with-two-purchases-within-seven-days", "seasonal-sales-analysis", "friday-purchases-i", "calculate-orders-within-each-interval", "product-price-at-a-given-date"],
     },
     {
       name: "Basket folds & shelf-label hygiene",

@@ -27,7 +27,7 @@ export const gettKit: CompanyKit = {
     "Gett is the B2B side of ride-hailing — the company that built corporate ground travel as a product, where rides are booked against **corporate accounts** with cost centers and settle through {sky:monthly invoicing} instead of card fares. That changes the analytics object: the unit of value is not a tap-and-go consumer ride but a billable ride attached to an account a travel manager defends in a budget review. On this kit's proxy ledger that's 103 rides worth **34,833.28** (average 338.19, spread 25.47 to 1,088.44) across 16 corporate accounts and 251 billed ride lines. The status map is the ride lifecycle: 52 {emerald:completed} with a completion ping (50.5%), 30 in-trip (29.1%), 14 awaiting dispatch (13.6%), and 7 {rose:cancelled} (6.8%) — and the habit that gets drilled early is *completed ÷ ALL booked*, never ÷ resolved.",
     "The data org splits three ways. Account analytics owns the {amber:rollups}: every ride rolls up to an account, and the read every travel review opens with is two-grain — rides AND accounts per region (EU carries 45 rides from just 8 accounts; the US, 19 from 2). The biggest single account is **Alice Chen at 24 rides and 7,262.35 billed**, and concentration is a standing board question: 63.5% of billed spend sits with the accounts over 3,000 lifetime. Ground-ops owns the SLA reads: 82 of 103 rides carry a completion ping, lag averaging **2.98 days** on the proxy clock (range 2..4). Billing ops owns the monthly invoice book — 28 `invoices` against 27 `payments`, INTEGER cents throughout — where 6 bills worth 15,217.00 sit unsettled and one of them (#28, 1,756.00) claims paid with zero settlement rows behind it.",
     "Interviews are rollup-first, denominator-obsessed, cents-precise. A screen opens with a warm-up join (attach rides to their corporate account), escalates into a conditional aggregation with a status rule (completion share by region, cancelled share by month), then lands on either an SLA read (completion lag with the NULL policy stated) or a billing read (which accounts have invoices with no payments behind them, and what `amount_cents / 100.0` actually prints). Follow-ups are spoken aloud: *'is that per ride or per account?'*, *'does a pending ride sit in your denominator?'*, *'a voided invoice with a payment on it — what is that?'* — because in corporate travel an unmatched settlement row is a reconciliation incident, not a rounding note.",
-    "Preparation strategy: Gett has **0 tagged LC** rows in this app's pool, so the kit is **theme-curated** — all 30 topic slugs and 16 problems are hand-picked from the theme menu to mirror corporate-mobility screens: rollups, two-grain censuses, latency math, invoice books in cents, anti-joins, tie-proofed leaderboards. Then run both case studies on the live db: one rebuilds the {amber:account billing rollup} the month-close opens with, the other rebuilds the {rose:settlement-status census} billing ops runs before the anomaly review. The bar to clear: state the denominator, the join's survival rule, and the cents rule before you compute anything.",
+    "Preparation strategy: Gett has **0 tagged LC** rows in this app's pool, so the kit is **theme-curated** — all 30 topic slugs and 16 problems are hand-picked from the theme menu to mirror corporate-mobility screens: rollups, two-grain censuses, latency math, invoice books in cents, anti-joins, tie-proofed leaderboards. Then run all six case studies on the live db: one rebuilds the {amber:account billing rollup} the month-close opens with, the other rebuilds the {rose:settlement-status census} billing ops runs before the anomaly review, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The bar to clear: state the denominator, the join's survival rule, and the cents rule before you compute anything.",
     "Two more ledgers frame the economics. On the supply side, fleet partners carry the book with a heavy top: **Nordic Gadgets AB at 32%** of billed value with Midwest Hardware Co at 26.7% behind it — more than half the ground supply rides on two partners — while the tail splits thin (Shenzhen Electro 8.8%, Pacific Textiles 8.6%), which is why every partner read ships with a share column beside the revenue rank. On the cost side, the ops book runs 36 expense lines worth 25,416.00, of which {amber:Rent} alone is 14 lines and 16,800.00; and the fare catalog is barbell-shaped — 8 budget classes averaging 32.06, 8 standard classes averaging 111.5 up to the 199.99 ceiling, and a {rose:premium} band at 200-plus that is **empty**. An empty band is a finding: the honest census prints the hole beside `MAX(price)` instead of padding it.",
     "Prep roadmap for the deep cuts: sequence the work the way the screens stack. Week one, rebuild the fold family at two grains — the {amber:account billing rollup} with its HAVING floor, then the region pivot where every ride fate becomes its own conditional column. Week two, the money shapes: the settlement census in cents, the unpaid-bills anti-join, and the {sky:pace walk} where `LAG` turns 14 monthly buckets into 13 deltas. Week three, the boards: a one-pass `FILTER` census over the ops book and the fleet-partner share board staged on a derived table. Then rehearse the failure modes by name — integer division, filter-drifted denominators, `NOT IN` against a NULL-carrying set, ties without a policy — *because at this level the basics are assumed; the screen is hunting for the analyst who states populations before results*.",
   ],
@@ -59,12 +59,12 @@ export const gettKit: CompanyKit = {
     {
       name: "Rider-to-account rollups",
       why: "Corporate travel bills to accounts, so the fundamental fold here is rides → account → spend: GROUP BY the account, sum the fare, count the rides. Gett probes whether you can run that rollup without letting the grain blur — one row per account, not per ride, not per billed line.",
-      slugs: ["customer-placing-the-largest-number-of-orders", "top-travellers", "product-sales-analysis-ii"],
+      slugs: ["customer-placing-the-largest-number-of-orders", "top-travellers", "product-sales-analysis-ii", "median-time-to-convert"],
     },
     {
       name: "Two-grain account censuses",
       why: "'Rides AND accounts per region' is the opening read of every travel review here — and the trap is counting both at the same grain. COUNT(*) counts ride rows; COUNT(DISTINCT customer_id) counts accounts; EU's 45 rides collapse to 8 accounts and the 5.6-per-account intensity is the actual story.",
-      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "find-followers-count"],
+      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "find-followers-count", "find-loyal-customers"],
     },
     {
       name: "Completion latency & date math",
@@ -74,42 +74,42 @@ export const gettKit: CompanyKit = {
     {
       name: "Conditional counting on ride states",
       why: "Completed, in-trip, awaiting, cancelled — every rate here is a conditional count over a status flag, and the interviewer's first question is 'what's in the denominator?'. SUM(CASE WHEN status …) over ALL booked rides is the shape that survives scrutiny; filtering first is denominator drift.",
-      slugs: ["immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "confirmation-rate"],
+      slugs: ["immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "confirmation-rate", "trips-and-users"],
     },
     {
       name: "Monthly invoicing & integer cents",
       why: "The corporate invoice book keeps money in INTEGER cents — 28 invoices, 27 payments — so every dollar read is `amount_cents / 100.0` and every ratio sits one misplaced integer away from a truncation leak. Cents-safe folds (per-account statements, settlement counts, rails) are the closest thing this kit has to a finance round.",
-      slugs: ["trial-balance-check", "bank-account-summary-ii", "monthly-transactions-i"],
+      slugs: ["trial-balance-check", "bank-account-summary-ii", "monthly-transactions-i", "winback-recovery"],
     },
     {
       name: "Unsettled-invoice anti-joins",
       why: "The dunning list IS an anti-join: invoices LEFT JOIN payments, keep the NULLs — 6 bills worth 15,217.00, one claiming paid with zero rows. The follow-up nobody expects: proving a confident zero (this db has 0 never-ordered accounts), because an empty anti-join is a finding, not a failure.",
-      slugs: ["customers-who-never-order", "sellers-with-no-sales", "number-of-accounts-that-did-not-stream"],
+      slugs: ["customers-who-never-order", "sellers-with-no-sales", "number-of-accounts-that-did-not-stream", "employees-with-missing-information"],
     },
     {
       name: "Account leaderboards & tie policy",
       why: "Rank accounts by rides and a four-way tie at 4 rides is waiting for you — this db ties at 4, 3 and 2. Gett drills the rank trio because the business question 'do tied accounts share a rung?' is a policy decision, and LIMIT-with-OFFSET habits break silently on it.",
-      slugs: ["rank-scores", "department-top-three-salaries", "second-highest-salary"],
+      slugs: ["rank-scores", "department-top-three-salaries", "second-highest-salary", "dormant-reactivation"],
     },
     {
       name: "NULL policy on in-flight rides",
       why: "A ride awaiting completion has no completion ping — shipped_at IS NULL is a state, not a bug. Gett screens check whether you treat NULL as data to report, coalesce to zero for display, or exclude with a stated reason — deliberately, because an SLA average that silently shrank its population is a number wearing the wrong name.",
-      slugs: ["employee-bonus", "calculate-special-bonus", "books-with-null-ratings"],
+      slugs: ["employee-bonus", "calculate-special-bonus", "books-with-null-ratings", "find-churn-risk-customers"],
     },
     {
       name: "Honest-denominator ride rates",
       why: "Completion shares, cancellation percentages, per-account intensity — Gett's ratios punish integer division and careless filters. The house habit: 100.0 before the division, the denominator's population decided BEFORE the ratio, rounding only at the very end.",
-      slugs: ["queries-quality-and-percentage", "average-selling-price", "hopper-company-queries-ii"],
+      slugs: ["queries-quality-and-percentage", "average-selling-price", "hopper-company-queries-ii", "trial-to-paid-funnel", "chargeback-rate-ranking"],
     },
     {
       name: "Above-average & first-ride screens",
       why: "Screens escalate into nested logic: which accounts beat the platform's average fare, which riders' FIRST ride landed in the corporate program, which classes clear a volume bar. The follow-up that separates candidates: what does the above-average filter return if the inner fold is empty?",
-      slugs: ["orders-with-maximum-quantity-above-average", "game-play-analysis-iv", "market-analysis-i"],
+      slugs: ["orders-with-maximum-quantity-above-average", "game-play-analysis-iv", "market-analysis-i", "dau-wau-stickiness"],
     },
     {
       name: "Month-over-month pace walks",
       why: "The billing curve is read as a walk: 14 monthly buckets from 2024-01 to 2025-02, each month's revenue set against the one before it with LAG. Gett drills the edges that break walks — the first row's NULL delta, gate-skipped months that make a delta span two steps, and LEAD flipping every sign on the board.",
-      slugs: ["year-on-year-growth-rate", "rising-temperature", "rolling-average-steps"],
+      slugs: ["year-on-year-growth-rate", "rising-temperature", "rolling-average-steps", "week-over-week-churn", "growth-accounting", "mrr-waterfall"],
     },
     {
       name: "Fate pivots & one-pass censuses",
@@ -119,7 +119,7 @@ export const gettKit: CompanyKit = {
     {
       name: "Fleet-partner concentration & shares",
       why: "Partner reads ship with a share column: Nordic Gadgets AB 11,130.25 is 32% of the 34,833.28 book, and that math — 100.0 times the partner fold over the full-book total — is where derived-table staging and CROSS JOIN totals earn their keep. Share of total is the shape; deciding the denominator's population is the debate.",
-      slugs: ["portfolio-concentration-hhi", "compute-the-rank-as-a-percentage", "popularity-percentage"],
+      slugs: ["portfolio-concentration-hhi", "compute-the-rank-as-a-percentage", "popularity-percentage", "funnel-step-conversion"],
     },
     {
       name: "Stacked totals & set-op stitching",
@@ -129,7 +129,7 @@ export const gettKit: CompanyKit = {
     {
       name: "Self-join pairing & duplicate hunts",
       why: "Five invoices on this book carry two settlement rows each — splits that are legitimate — but the same self-join shape hunts the pairing bugs that are not: duplicate charge legs, adjacent-ride windows, symmetric relationships. Gett drills the strict-inequality self-join that pairs each row with its neighbors without doubling the population or pairing a row with itself.",
-      slugs: ["consecutive-numbers", "symmetric-pairs", "number-of-calls-between-two-persons"],
+      slugs: ["consecutive-numbers", "symmetric-pairs", "number-of-calls-between-two-persons", "duplicate-charge-pairs", "rolling-7d-actives"],
     },
   ],
 

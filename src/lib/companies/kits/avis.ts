@@ -40,7 +40,7 @@ export const avisKit: CompanyKit = {
     "**Avis** is the airport-counter network that turned being number two into a strategy — *'We Try Harder'* is a service contract the data org runs like an SLA. The business is a reservation-to-pickup funnel wearing a fleet: every agreement is booked before it earns, the gap between booking and {orange:vehicle-out} is dead latency, and the bookings that never show are fleet hours nobody can bill. This kit maps the storefront db onto that world: the 16 customers rows are renters (region = pickup market), the 103 orders are rental agreements worth **34,833.28**, and the 251 order_items rows are agreement lines — quantity = rental days, unit_price = the daily rate each line locked. The 16 products are bookable vehicle classes supplied by 6 fleet/leasing partners. The status map is fixed: delivered = returned-and-settled (52, 50.5%), shipped = on-rent (30, 29.1%), pending = reserved (14, 13.6%), cancelled = {rose:no-show} (7, 6.8%).",
     "The data org splits into reservation ops (the funnel desk), fleet revenue management (the day-rate and utilization seat) and a small settlement pod, and they read the same agreement spine at different grains. The heartbeat is the reservation clock: an agreement books at created_at and `shipped_at` stamps the day the renter drives out — **82 of 103 agreements** carry the stamp, averaging **2.98 days** booking-ahead with a 2–4 day spread, while the 14 reserved rows have none yet (a population definition, not a cleanup job). The leak is the second story: 7 agreements die as no-shows and the share is not flat — *APAC runs 8.1% against the US's 5.3%* — which is why the reminder-cadence budget is a per-market decision. Money sits one layer down: rental statements and card legs in INTEGER cents, where the dollar read is `amount_cents / 100.0`.",
     "Interview screens are funnel-then-denominator with a concentration accent. A typical loop opens with a **two-grain market census** — EU runs 45 agreements from just 8 renters (intensity 5.6) while the US runs 19 from 2 (9.5) — then escalates into a rate where the interviewer asks the denominator out loud (*'does a no-show count in your pickup rate?'*), then into the partner ledger where the 3-table chain ends in fleet-partner concentration: Nordic Gadgets AB turns 32% of the book and Midwest Hardware Co 26.7% — a two-partner majority. Late rounds walk the {sky:14-month agreement spine} (2024-01 to 2025-02) with `LAG` deltas and probe the first row's NULL, or run the one-pass fate census where the {violet:FILTER branches} must reconcile to 103 by construction. Candidates who state the stamp filter and the denominator before writing SQL are the ones who get callbacks.",
-    "Preparation strategy: the pools file carries no Avis section — **0 tagged rows** — so all sixteen problems and every topic slug here are **theme-curated** to this kit's known screen shapes: reservation funnels, no-show censuses, partner-ledger chains, tie-heavy concentration ladders and the cents-safe statement spine. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {rose:no-show census} the counter standup opens with, the other rebuilds the {amber:fleet-partner ledger} revenue management re-cuts monthly. The bar to clear: *state the stamp filter and the denominator before you compute anything* — then make every fate census reconcile to 103 by construction.",
+    "Preparation strategy: the pools file carries no Avis section — **0 tagged rows** — so all thirty-two problems and every topic slug here are **theme-curated** to this kit's known screen shapes: reservation funnels, no-show censuses, partner-ledger chains, tie-heavy concentration ladders and the cents-safe statement spine. Do the topics in order, then run all six case studies on the live storefront db: one rebuilds the {rose:no-show census} the counter standup opens with, the other rebuilds the {amber:fleet-partner ledger} revenue management re-cuts monthly, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The bar to clear: *state the stamp filter and the denominator before you compute anything* — then make every fate census reconcile to 103 by construction.",
     "The settlement pod runs the money half of the counter and reads the same funnel through INTEGER cents: 28 rental statements against 27 payment legs, where the dollar read is always `amount_cents / 100.0`. The rails split cleanly — {sky:card legs} (16 legs, 37,364.00) serve the counter's walk-up traffic while {violet:wire legs} (11 legs, 32,248.00) serve corporate accounts — and **5 statements settle on both rails**, which is why rail attribution is a per-leg join, never a per-statement guess. Coverage is the pod's scoreboard: 21 exact settlements (65,612.00 both sides), 1 partial (4,000.00 of 6,148.00), 6 never-collected worth 15,217.00 — net-30 terms against a 28.4-day average settlement clock, fastest 13, slowest 84. The anomalies are named, not averaged: a void statement that still debited (#11, 925.00) and a paid-status statement with zero legs behind it (#28, 1,756.00) — *the status column is a claim; the payment rows are the ledger*.",
     "The expansion screens drill the same funnel-then-denominator habit deeper, so prep that way: rebuild the **14-month spine** first (2024-01 to 2025-02, trough 1,193.86 in July against the 3,731.97 open), then the {amber:renter-intensity census} (US 9.5 agreements per renter against EU's 5.6 — intensity is inverse to renter count), then the four-way tie on the renter ladder — four renters at 4 agreements each, where RANK, DENSE_RANK and ROW_NUMBER disagree about who shares a rung. The four new case files cover exactly those: a trusted-bench vet (Nordic 4.6 and Alpine 4.8 are the only ratings at 4.5-plus), the July trough read, the intensity census and the shared-rung ladder. *State the denominator, the stamp filter and the grain before you write the SELECT* — and the cents rule never sleeps: `amount_cents / 100.0`, or the odd-cent rows eat you.",
   ],
@@ -71,37 +71,37 @@ export const avisKit: CompanyKit = {
     {
       name: "The reservation-to-pickup funnel",
       why: "Every Avis screen opens with the funnel: agreements booked, vehicle-out stamped (shipped_at), returned-and-settled — each stage a conditional count over a status or timestamp. The trap is calling an on-rent agreement 'returned' — 30 versus 52 on this db — and the second trap is the denominator: reserved rows stay in a pickup-rate base and drop out of a booking-ahead base, and the panel wants you to say which before writing SQL.",
-      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest"],
+      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "immediate-food-delivery-ii", "funnel-step-conversion", "average-time-of-process-per-machine", "analyze-subscription-conversion"],
     },
     {
       name: "Two-grain counter censuses",
       why: "Agreements and renters are different grains of the same join, and every market census here reports both: EU runs 45 agreements from 8 renters while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which column is counter load and which is renter coverage — is the habit being graded. The ratio (5.6 versus 9.5) is the intensity read that decides where the ready line grows.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count", "find-golden-hour-customers"],
     },
     {
       name: "Whitespace & no-show anti-joins",
       why: "The no-show follow-up list is an anti-join — reservations left-joined to their vehicle-out stamps, keeping the NULL side — and so is every never-rented cohort read. Join type decides who survives: an agreement without a renter is corruption; a renter without agreements is whitespace. On this db the renter anti-join returns a confident zero, and proving that zero is part of the job — on staging tables it would be the answer.",
-      slugs: ["combine-two-tables", "employee-bonus", "replace-employee-id-with-unique-identifier"],
+      slugs: ["combine-two-tables", "employee-bonus", "replace-employee-id-with-unique-identifier", "books-with-null-ratings"],
     },
     {
       name: "Partner-ledger chains",
       why: "Fleet-partner reporting is a 3-table chain — agreement lines to the vehicle class each booked, the class to the partner that fleets it — and Avis's concentration story lives at the end of it: Nordic turns 32% of the 34,833.28 book, Midwest 26.7%. The follow-up is always the fan-out: join lines in and COUNT(*) silently stops counting agreements — it counts lines, 251 of them, and sums rental days you never asked for.",
-      slugs: ["product-sales-analysis-ii", "product-sales-analysis-iii", "sales-analysis-i"],
+      slugs: ["product-sales-analysis-ii", "product-sales-analysis-iii", "sales-analysis-i", "classes-more-than-5-students", "students-and-examinations"],
     },
     {
       name: "Concentration leaderboards",
       why: "Top-partner-per-region, hardest-worked class, Preferred-tier renters — concentration reporting is leaderboard reporting, and ties are guaranteed at counter scale: four renters sit at 4 agreements each on this db. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer renters, not syntax — and the LIMIT-1-OFFSET-1 habit breaks on exactly these ties.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "number-of-employees-who-met-the-target", "customer-placing-the-largest-number-of-orders", "top-travellers"],
     },
     {
       name: "Day-rate bands with CASE",
       why: "Vehicle classes are CASE-banded — the rate card runs a 14.99 shuttle class to a 199.99 flagship, split 8 mid classes averaging 111.50 against 8 at 32.06 — with fixed edges the pricing desk publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the revenue forecast, and a reordered WHEN quietly re-bands the fleet.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "find-churn-risk-customers", "net-revenue-retention", "maximum-transaction-each-day"],
     },
     {
       name: "Booking-ahead month walks & LAG",
       why: "The 14-month agreement spine (2024-01 to 2025-02) is the revenue-management call's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) named against the 3,731.97 open. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero. The no-show story rides the same spine: July and November carry 2 cancellations each, and the walk is how that pattern gets defended.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "year-on-year-growth-rate"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "year-on-year-growth-rate", "growth-accounting", "hopper-company-queries-ii"],
     },
     {
       name: "Coverage set algebra",
@@ -111,7 +111,7 @@ export const avisKit: CompanyKit = {
     {
       name: "One-pass fate censuses",
       why: "The ops board gets returned, on-rent, reserved and no-show in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift while the counter is calling. The reconciliation identity (branches sum to COUNT(*)) is the correctness argument the panel listens for.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "capital-gain-loss", "find-users-with-high-token-usage", "recyclable-and-low-fat-products"],
     },
     {
       name: "Billing & cents discipline",
@@ -121,17 +121,17 @@ export const avisKit: CompanyKit = {
     {
       name: "Window frames & running totals",
       why: "The pickup dashboard runs cumulative reads — bookings-to-date, booked value rolling — and the frame decides whether tied timestamps walk together or step apart. SQLite's default frame with ORDER BY is RANGE, so two agreements sharing a booking second jump the running total in one step; naming ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW out loud is the discipline. Frames also restart at every PARTITION BY, which is how a per-market running total stays a per-market total.",
-      slugs: ["last-person-to-fit-in-the-bus", "find-cumulative-salary-of-an-employee", "game-play-analysis-iii"],
+      slugs: ["last-person-to-fit-in-the-bus", "find-cumulative-salary-of-an-employee", "game-play-analysis-iii", "list-the-products-ordered-in-a-period", "users-with-two-purchases-within-seven-days", "calculate-orders-within-each-interval"],
     },
     {
       name: "Self-joins & pairing logic",
       why: "Counter ops pairs the table with itself: two bookings from the same market inside 48 hours, consecutive stamps on one vehicle class, renters sharing a pickup window. A self-join without an ordering guard (a.id < b.id) reports every pair twice plus the degenerate self-pair, and the ops board doubles its incident count. Half the skill is deciding what a pair IS before writing the ON clause.",
-      slugs: ["consecutive-available-seats", "tree-node", "symmetric-pairs"],
+      slugs: ["consecutive-available-seats", "tree-node", "symmetric-pairs", "managers-with-at-least-5-direct-reports"],
     },
     {
       name: "Nested gates & semi-joins",
       why: "Below-the-line reads go nested: renters whose lifetime spend crosses the Preferred bar, markets whose no-show count beats the fleet-wide mean, classes priced above the rate-card median. EXISTS answers 'at least one' and stops at the first match; IN materializes a list and inherits the NULL-poisoning trap; a scalar subquery in SELECT re-runs per row. Picking the shape is the answer — the SQL is transcription.",
-      slugs: ["game-play-analysis-iv", "market-analysis-i", "investments-in-2016"],
+      slugs: ["game-play-analysis-iv", "market-analysis-i", "investments-in-2016", "confirmation-rate", "trips-and-users", "returns-rate-by-category", "actors-and-directors-who-cooperated-at-least-three-times"],
     },
     {
       name: "Grand-total stacks & labelled tails",
@@ -141,7 +141,7 @@ export const avisKit: CompanyKit = {
     {
       name: "Text discipline & readable counters",
       why: "Counter exports are read by humans at 06:00 — renter names title-cased for the loyalty mail-merge, class lists folded into one cell per partner, month keys as zero-padded text. GROUP_CONCAT folds rows into a string whose member order is not guaranteed on this build, and format drift is a data-quality bug the panel expects you to catch before the export does.",
-      slugs: ["group-sold-products-by-the-date", "fix-names-in-a-table", "invalid-tweets"],
+      slugs: ["group-sold-products-by-the-date", "fix-names-in-a-table", "invalid-tweets", "queries-quality-and-percentage", "find-cities-in-each-state", "find-the-team-size", "bikes-last-time-used"],
     },
   ],
 

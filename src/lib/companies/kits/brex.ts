@@ -57,7 +57,7 @@ export const brexKit: CompanyKit = {
     {
       name: "Cycle outcome counts",
       why: "Every Brex screen opens with the cycle funnel: booked, stamped, settled, declined. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling an in-flight cycle settled — 30 versus 52 on this db.",
-      slugs: ["number-of-rich-customers", "sales-analysis-i", "percentage-of-users-attended-a-contest", "customers-with-maximum-number-of-transactions-on-consecutive-days", "users-with-two-purchases-within-seven-days", "find-third-transaction"],
+      slugs: ["number-of-rich-customers", "sales-analysis-i", "percentage-of-users-attended-a-contest", "customers-with-maximum-number-of-transactions-on-consecutive-days", "users-with-two-purchases-within-seven-days", "find-third-transaction", "ar-aging-schedule", "amount-anomaly-zscore", "structuring-detection"],
     },
     {
       name: "Two-grain cohort censuses",
@@ -72,32 +72,32 @@ export const brexKit: CompanyKit = {
     {
       name: "Limit ladders & CASE bands",
       why: "Underwriting bands are CASE arms evaluated in order: budget under 50, mid to the 200 ceiling, premium beyond. The edges are the argument — a SKU priced exactly 199.99 lands in mid, and a reordered WHEN quietly re-bands the book. The premium arm never fires on this db, and the empty arm IS the ceiling story.",
-      slugs: ["type-of-triangle", "calculate-special-bonus", "weather-type-in-each-country", "maximize-items"],
+      slugs: ["type-of-triangle", "calculate-special-bonus", "weather-type-in-each-country", "maximize-items", "gl-reconciliation", "credit-utilization-bands"],
     },
     {
       name: "Underwriting gates & HAVING floors",
       why: "Limit policy is group-level: which accounts carry at least ten cycles, which merchants clear a spend floor. The threshold lives in HAVING after the fold — putting it in WHERE errors, and putting a row-level filter there silently re-populates the gate.",
-      slugs: ["managers-with-at-least-5-direct-reports", "classes-more-than-5-students", "actors-and-directors-who-cooperated-at-least-three-times", "consecutive-numbers"],
+      slugs: ["managers-with-at-least-5-direct-reports", "classes-more-than-5-students", "actors-and-directors-who-cooperated-at-least-three-times", "consecutive-numbers", "trial-balance-check", "ltv-cac-payback"],
     },
     {
       name: "Statement-coverage anti-joins",
       why: "The no-leg watchlist — 6 statements worth 15,217.00 — is a LEFT JOIN plus an IS NULL on the rail key. Screens escalate it: NOT EXISTS twins, WHERE-placement traps that convert the anti-join back to an inner fold and delete exactly the exposure you were hunting.",
-      slugs: ["customers-who-never-order", "sellers-with-no-sales", "students-with-invalid-departments", "prepayment-detection", "customer-who-visited-but-did-not-transact"],
+      slugs: ["customers-who-never-order", "sellers-with-no-sales", "students-with-invalid-departments", "prepayment-detection", "customer-who-visited-but-did-not-transact", "null-blank-audit"],
     },
     {
       name: "Billing calendars & month keys",
       why: "The cycle spine buckets by SUBSTR(created_at, 1, 7) — 14 months, 2024-01 to 2025-02, 6–9 cycles each. Half-open windows and zero-padded month keys are the mechanics; '%m' alone merging Januaries across years is the trap that turns a trend into fiction.",
-      slugs: ["monthly-transactions-i", "list-the-products-ordered-in-a-period", "user-activity-for-the-past-30-days-i", "delinquency-buckets"],
+      slugs: ["monthly-transactions-i", "list-the-products-ordered-in-a-period", "user-activity-for-the-past-30-days-i", "delinquency-buckets", "spend-histogram"],
     },
     {
       name: "Running folds & reward accruals",
       why: "Rewards economics read as running math: settled dollars accruing over the statement spine, cash-back pacing against a cycle window. SUM(...) OVER (ORDER BY ...) with a stated frame is the shape, and the frame decision — peers folded or row-by-row — is a correctness question, not style.",
-      slugs: ["find-cumulative-salary-of-an-employee", "last-person-to-fit-in-the-bus", "account-balance", "daily-balance-interest", "deferred-revenue", "mrr-waterfall"],
+      slugs: ["find-cumulative-salary-of-an-employee", "last-person-to-fit-in-the-bus", "account-balance", "daily-balance-interest", "deferred-revenue", "mrr-waterfall", "card-launch-success", "budget-pacing", "balance-rollforward"],
     },
     {
       name: "Rank semantics on the cohort ladder",
       why: "The account ladder runs 24, 17, 14, 13, 5 cycles, then FOUR accounts tie at 4 — and the rank trio disagrees about who shares a rung and whether gaps follow. RANK, DENSE_RANK and ROW_NUMBER are a policy about peer startups, not syntax.",
-      slugs: ["rank-scores", "second-highest-salary", "department-top-three-salaries"],
+      slugs: ["rank-scores", "second-highest-salary", "department-top-three-salaries", "keep-latest-dedupe", "chargeback-rate-ranking"],
     },
     {
       name: "Bill-pay set algebra",

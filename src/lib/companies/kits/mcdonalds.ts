@@ -110,32 +110,32 @@ export const mcdonaldsKit: CompanyKit = {
     {
       name: "Order states & kept demand",
       why: "The ops board's most-watched ratio is kept ÷ placed, and it is a conditional count before it is a percentage: SUM(CASE WHEN status = 'cancelled' …) over the same rows COUNT(*) divides. On this db that reads 7 of 103 = 6.8% — drill it until putting the status filter in the wrong clause feels physically wrong.",
-      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "monthly-transactions-i"],
+      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "monthly-transactions-i", "basket-depth-aov", "number-of-rich-customers", "the-most-recent-three-orders"],
     },
     {
       name: "Market census, two grains",
       why: "'Transactions AND accounts per market' opens every ops review: 45 transactions from 8 EU accounts, 19 from 2 US accounts. The two columns at two grains in one SELECT is the house census, and mixing the grains is the classic bug — COUNT(*) counts transactions, COUNT(DISTINCT customer_id) counts people.",
-      slugs: ["daily-leads-and-partners", "find-followers-count", "unique-orders-and-customers-per-month"],
+      slugs: ["daily-leads-and-partners", "find-followers-count", "unique-orders-and-customers-per-month", "the-number-of-employees-which-report-to-each-employee", "find-loyal-customers"],
     },
     {
       name: "CASE pivots & one-pass boards",
       why: "The franchise ops room is query-budgeted: the market board gets ONE scan. CASE WHEN branches inside SUM build the placed / delivered / cancelled / in-transit columns in a single pass, and the branch totals must reconcile to COUNT(*) — the reconciliation IS the correctness test.",
-      slugs: ["reformat-department-table", "rearrange-products-table", "weather-type-in-each-country"],
+      slugs: ["reformat-department-table", "rearrange-products-table", "weather-type-in-each-country", "bank-account-summary"],
     },
     {
       name: "Menu-mix & price bands",
       why: "The menu is engineered in bands, and the band fold is a CASE histogram: value (< 50) 8 SKUs @ 32.06, core (50-200) 8 @ 111.5, premium empty at max price 199.99. Screens drill the band edge as a definition — moving 200 to 199 'to make the premium band exist' is the trap the interviewer plants.",
-      slugs: ["spend-histogram", "product-price-at-a-given-date", "the-category-of-each-member-in-the-store"],
+      slugs: ["spend-histogram", "product-price-at-a-given-date", "the-category-of-each-member-in-the-store", "ratings-histogram", "maximum-transaction-each-day"],
     },
     {
       name: "Store velocity & service latency",
       why: "Velocity is a latency fold: julianday(shipped_at) - julianday(created_at) over the 82 completed of 103 placed, avg 2.98 days, US 3.07 slowest among big markets. Per-store averages and top-performer gates drill the same shape the drive-thru timer reports.",
-      slugs: ["average-time-of-process-per-machine", "find-top-performing-driver", "trips-and-users"],
+      slugs: ["average-time-of-process-per-machine", "find-top-performing-driver", "trips-and-users", "customer-placing-the-largest-number-of-orders", "find-total-time-spent-by-each-employee"],
     },
     {
       name: "Promo windows & date math",
       why: "Promos live in windows, and the lift read is date math before it is a ratio: transactions inside the window vs outside, repeat visits within N days, daypart pivots. Screens drill the boundary — >= vs > on the window edge decides which demand the promo gets credit for.",
-      slugs: ["find-golden-hour-customers", "users-with-two-purchases-within-seven-days", "friday-purchases-i"],
+      slugs: ["find-golden-hour-customers", "users-with-two-purchases-within-seven-days", "friday-purchases-i", "transactions-per-visit-histogram"],
     },
     {
       name: "Leaderboards & the rank trio",
@@ -145,7 +145,7 @@ export const mcdonaldsKit: CompanyKit = {
     {
       name: "Joins across the franchise chain",
       why: "Partner revenue and menu attach fold through the chain — partners → menu SKUs → line items — and the fan-out discipline is the graded skill: 103 transactions fan into 251 lines, so COUNT(*) and SUM(o.total) drift unless the grain is pinned. INNER versus LEFT is a decision about who survives the board.",
-      slugs: ["combine-two-tables", "average-selling-price", "product-sales-analysis-i"],
+      slugs: ["combine-two-tables", "average-selling-price", "product-sales-analysis-i", "count-student-number-in-departments"],
     },
     {
       name: "Rates with honest denominators",
@@ -165,17 +165,17 @@ export const mcdonaldsKit: CompanyKit = {
     {
       name: "AR chase & the unpaid book",
       why: "The chase list is a pure anti-join: 6 invoices / 15,217.00 survive a LEFT JOIN … IS NULL against payments, including a status-'paid' row no payment ever touched. Drilling the rows that DIDN'T happen — sellers with no sales, visitors who never transacted — is how the chase reflex is built.",
-      slugs: ["sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "find-churn-risk-customers"],
+      slugs: ["sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "find-churn-risk-customers", "employee-bonus", "sales-analysis-ii"],
     },
     {
       name: "Coverage classes & staged folds",
       why: "The coverage census (exact 21 / partial 1 / none 6) cannot be judged inside the payment scan: you stage per-invoice paid sums in a CTE, LEFT JOIN them onto invoices, then classify with CASE. Two-stage builds are the house shape whenever an aggregate must meet its own base row.",
-      slugs: ["game-play-analysis-iv", "investments-in-2016", "market-analysis-i"],
+      slugs: ["game-play-analysis-iv", "investments-in-2016", "market-analysis-i", "product-sales-analysis-iii"],
     },
     {
       name: "Expense seasons & month buckets",
       why: "Expense burn is seasonal and promo-driven, so the month spine is STRFTIME('%Y-%m') with a materiality gate: HAVING COUNT(*) >= 3 keeps the eight 3-line months and surfaces the 3,210.00 August peak. Bucketing drills boundary discipline — '%m' alone merges Februarys across years into one fake season.",
-      slugs: ["list-the-products-ordered-in-a-period", "customer-order-frequency", "number-of-employees-who-met-the-target"],
+      slugs: ["list-the-products-ordered-in-a-period", "customer-order-frequency", "number-of-employees-who-met-the-target", "sales-by-day-of-the-week", "classes-more-than-5-students", "article-views-ii"],
     },
     {
       name: "Manifests & text folds",

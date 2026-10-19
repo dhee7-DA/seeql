@@ -25,7 +25,7 @@ export const asanaKit: CompanyKit = {
     "**Asana** is the work-management platform that turned coordination into a graph — tasks roll up to projects, projects into portfolios, portfolios into goals, and cross-team dependencies stitch the work across every team in a workspace. It monetizes seat by seat, so every growth number in the building is a conditional count over the same small set of objects. This kit maps the storefront db onto that world: the 16 customers rows are workspaces, the 103 orders are subscription renewals worth **34,833.28**, and the 251 order_items rows are seat lines — quantity = seats, unit_price = per-seat price. The status map is fixed: delivered = {emerald:renewed} (52, 50.5%), shipped = {sky:activated} (30, 29.1%), pending = rollout scheduled (14), cancelled = {rose:churned} (7, 6.8%).",
     "The data org splits into growth, monetization and a small billing-analytics pod, and they read the same spine at different grains. The activation funnel is the heartbeat: a renewal books at created_at, and `shipped_at` is stamped the day the workspace actually goes live — **82 of 103 renewals** carry the stamp, averaging **2.98 days** to activate with a 2–4 day spread, and the 14 pending rows have none yet (a population definition, not a cleanup job). Money sits one layer down: invoices and payments in INTEGER cents, where the dollar read is `amount_cents / 100.0`. Concentration is the third story: **63.5%** of the book sits with workspaces whose lifetime spend crosses 3,000 (71.2% above 2,000) — one lost logo moves a quarter.",
     "Interview screens are census-then-denominator. A typical loop opens with a **two-grain workspace census** — EU runs 45 renewals from just 8 workspaces (intensity 5.6) while the US runs 19 from 2 (9.5) — then escalates into a rate where the interviewer asks the denominator question out loud (*'does a churned renewal count in your base?'*), then into the engagement leaderboard where four workspaces sit tied at 4 renewals and rank semantics become a business decision. Late rounds walk the {sky:14-month renewal spine} (2024-01 to 2025-02) with `LAG` deltas and probe the first row's NULL. Candidates who state the status filter and the denominator before writing SQL are the ones who get callbacks.",
-    "Preparation strategy: the pools file carries no Asana section — fewer than 2 tagged rows, none SQL-graded — so all sixteen problems and every topic slug here are **theme-curated** to this kit's known screen shapes: activation funnels, two-grain censuses, tie-heavy leaderboards, CASE tier bands and the cents-safe billing spine. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {emerald:activation census} growth ops opens Monday with, the other rebuilds the {sky:renewal ARR walk} finance reads at every close. The bar to clear: *state the definition and the denominator before you compute anything* — then make every status census reconcile to 103 by construction.",
+    "Preparation strategy: the pools file carries no Asana section — fewer than 2 tagged rows, none SQL-graded — so all thirty-two problems and every topic slug here are **theme-curated** to this kit's known screen shapes: activation funnels, two-grain censuses, tie-heavy leaderboards, CASE tier bands and the cents-safe billing spine. Do the topics in order, then run all six case studies on the live storefront db: one rebuilds the {emerald:activation census} growth ops opens Monday with, the other rebuilds the {sky:renewal ARR walk} finance reads at every close, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The bar to clear: *state the definition and the denominator before you compute anything* — then make every status census reconcile to 103 by construction.",
     "Money is its own beat, and the billing pod runs it on four tables — 28 invoices, 27 payments, 36 expenses, 80 ledger entries, all INTEGER cents — where the Monday read is reconciliation, not reporting: 21 exact settlements, 1 partial (4,000 of 6,148), 6 never-collected worth **15,217**, plus the row-level rogues — #11 void-but-debited at 925.00 and #28 paid-with-no-legs at 1,756.00. Five statement cycles settle on both card and wire legs, so the pod pre-aggregates `payments` before any join — *a fan-out you don't fold is money you invented*. The gate never moves: {emerald:181,080 debits} against {emerald:181,080 credits}, delta zero, or the close does not ship.",
     "The senior rounds go deeper than the day-one screen, and this expansion tracks them: {sky:window frames} for the trailing-ARR reads, {rose:set-op} stacks for board packets, anti-join idiom choice for the AR chases, fan-out discipline for anything touching `payments`, and the seats-versus-renewals grain check that keeps expansion math honest — **2.44 lines per renewal**, max line quantity 3. Run the four appended cases on the live db — the ladder rebuild, the never-remitted chase list, the close-day census, the seat-band fold — and keep the day-one bar: *state the population, state the denominator, reconcile by construction*.",
   ],
@@ -56,7 +56,7 @@ export const asanaKit: CompanyKit = {
     {
       name: "Activation funnel counts",
       why: "Every Asana growth screen opens with the funnel: renewals booked, activated (shipped_at stamped), renewed to term. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling an activated renewal 'renewed' — 30 versus 52 on this db.",
-      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest"],
+      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "immediate-food-delivery-ii", "funnel-step-conversion", "find-the-team-size"],
     },
     {
       name: "Two-grain workspace censuses",
@@ -66,22 +66,22 @@ export const asanaKit: CompanyKit = {
     {
       name: "Joining workspaces to renewals",
       why: "Workspaces carry region and created_at; renewals inherit them through joins, and the join type decides who survives. A renewal without a workspace is corruption; a workspace without renewals is whitespace — though on this db the anti-join returns a confident zero, and proving it is part of the job.",
-      slugs: ["combine-two-tables", "sales-analysis-i", "employee-bonus"],
+      slugs: ["combine-two-tables", "sales-analysis-i", "employee-bonus", "market-analysis-i"],
     },
     {
       name: "Engagement leaderboards",
       why: "Leaderboards are rank-window reporting where ties are guaranteed — four workspaces sit at 4 renewals each on this db, and the ladder above them runs 24, 17, 14, 13, 5. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer workspaces, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "compute-the-rank-as-a-percentage"],
     },
     {
       name: "Tier banding with CASE",
       why: "Workspace tiers are CASE-classified — enterprise, advanced, starter — with fixed edges the pricing page publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the forecast, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "net-revenue-retention", "the-most-recent-three-orders", "spend-histogram"],
     },
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month renewal spine (2024-01 to 2025-02) is the growth call's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) and jump (+1,158.21 into August) named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine", "consecutive-transactions-with-increasing-amounts"],
     },
     {
       name: "Coverage set algebra",
@@ -91,7 +91,7 @@ export const asanaKit: CompanyKit = {
     {
       name: "Nested folds & tier gates",
       why: "Screens escalate into staging: fold per-workspace renewal counts, then judge them against a computed platform mean (6.44 here — exactly four logos clear it). Scalar, correlated and derived shapes each carry an empty-inner-query answer you are expected to give unprompted.",
-      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments"],
+      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments", "confirmation-rate"],
     },
     {
       name: "One-pass status censuses",
@@ -106,22 +106,22 @@ export const asanaKit: CompanyKit = {
     {
       name: "Window frames & trailing ARR",
       why: "Running sums and moving averages are how growth smooths the 14-month spine — and the frame IS the metric: a 3-month trailing average and a cumulative walk answer different questions. The first rows of a trailing frame compute over short windows, and the candidate who charts them at full weight invents trend at the left edge.",
-      slugs: ["find-cumulative-salary-of-an-employee", "budget-pacing", "last-person-to-fit-in-the-bus"],
+      slugs: ["find-cumulative-salary-of-an-employee", "budget-pacing", "last-person-to-fit-in-the-bus", "running-total-for-different-genders"],
     },
     {
       name: "As-of & date-math reads",
       why: "Price-as-of-activation, two renewals within seven days, golden-hour onboarding — timestamp deltas with half-open windows are the senior screens. BETWEEN's last-night trap lives here, and ISO TEXT ordering is what makes the range form both sargable and correct.",
-      slugs: ["product-price-at-a-given-date", "users-with-two-purchases-within-seven-days", "find-golden-hour-customers"],
+      slugs: ["product-price-at-a-given-date", "users-with-two-purchases-within-seven-days", "find-golden-hour-customers", "fix-names-in-a-table"],
     },
     {
       name: "Anti-join idiom lab",
       why: "The AR chase is an anti-join, and there are three idioms — LEFT JOIN IS NULL, NOT EXISTS, NOT IN — with different NULL behavior and different review stories. Picking one is a correctness statement, and proving a confident zero (never-renewing workspaces) is part of the job.",
-      slugs: ["sales-person", "sellers-with-no-sales", "employees-with-missing-information"],
+      slugs: ["sales-person", "sellers-with-no-sales", "employees-with-missing-information", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "Fan-out & pre-aggregation",
       why: "Five statement cycles settle on both card and wire legs — join payments raw and SUM invents money. The drill is sequencing: pre-aggregate the many side per key, then join, then verify the join's COUNT against the left table before trusting any SUM.",
-      slugs: ["average-selling-price", "find-stores-with-inventory-imbalance", "warehouse-manager"],
+      slugs: ["average-selling-price", "find-stores-with-inventory-imbalance", "warehouse-manager", "portfolio-concentration-hhi", "most-common-course-pairs", "count-student-number-in-departments", "symmetric-pairs"],
     },
     {
       name: "Cohort activation & seat walks",

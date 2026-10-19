@@ -35,7 +35,7 @@ export const wiseKit: CompanyKit = {
     "Wise moves money across borders at the mid-market rate, and its whole brand is that the numbers are visible: the fee is quoted before the transfer, the clock is promised, the corridor volume is public. Data org follows the promise — pricing and fee-transparency analytics on one side, treasury and settlement operations on the other, and both live in the same spine. On this app's storefront db the mapping is one-to-one: `invoices` are transfer legs (28 of them — the settlement batches money clears against), `payments` are transfer completions (27 rows covering 22 legs — five legs complete in two parts), and `ledger_entries` is the multi-currency clearing ledger (80 rows, debits $181,080 equal to credits $181,080). Money columns are INTEGER cents; every dollar read is `amount_cents / 100.0`.",
     "The real work is the exception queue and the clock. The db's verified anomalies are exactly what a transfers-pod analyst meets daily: a {rose:void}-but-completed leg (#11, $925.00), a leg the book calls paid with no completion behind it (#28, $1,756.00), five split-completion legs (#1, #5, #12, #19, #22), and one {amber:partial} completion ($4,000.00 of a $6,148.00 leg). Coverage reads 21 exact / 1 partial / 6 none, with $15,217.00 outstanding. The clock reads **28.4 days** mandate-to-completion on average — fastest **13**, slowest **84** — computed on first completion only, because a split leg must not pay the SLA twice.",
     "Interview style rewards the transfer-pod reflexes: {sky:corridor folds} (the db's card rail plays the instant corridor with **16 completions / $37,364.00**, the wire rail plays the cross-border corridor with 11 / $32,248.00), completion-clock math (`JULIANDAY` deltas, half-open windows, ROUND once), and honest fee ratios where the denominator is the whole test. A typical hour opens with a corridor fold, escalates into coverage (which legs never completed — and what filtering the wrong table in WHERE does to your `LEFT JOIN`), then closes on a one-pass census or a rate question where cents discipline (**100.0** before the division) is graded, not assumed.",
-    "Preparation: the registry tags 2 Wise SQL problems and both land in this kit's topics; the remaining slots are theme-curated from the SQL band — SLA clocks, rate-as-of joins, dormant-leg sweeps, stacked packets — because that is what the screens probe. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {violet:completion clock} the SLA board reads every Monday (20 paid legs averaging 28.4 days, 13-to-84 spread), the other rebuilds the {emerald:corridor packet} the transparency page ships — every corridor with count, volume and average ticket, plus a labelled grand-total row (27 / $69,612.00). Say the units and the denominator out loud before you compute anything; in this business the fee quote IS the interview.",
+    "Preparation: the registry tags 2 Wise SQL problems and both land in this kit's topics; the remaining slots are theme-curated from the SQL band — SLA clocks, rate-as-of joins, dormant-leg sweeps, stacked packets — because that is what the screens probe. Do the topics in order, then run all six case studies on the live storefront db — built for spaced practice rather than one sitting: one rebuilds the {violet:completion clock} the SLA board reads every Monday (20 paid legs averaging 28.4 days, 13-to-84 spread), another rebuilds the {emerald:corridor packet} the transparency page ships — every corridor with count, volume and average ticket, plus a labelled grand-total row (27 / $69,612.00). Say the units and the denominator out loud before you compute anything; in this business the fee quote IS the interview.",
     "The reconciliation cadence is the culture. The gold-set anomalies — the {rose:void}-but-completed leg (#11, $925.00), the paid-but-never-completed leg (#28, $1,756.00), the five split-completion legs (#1, #5, #12, #19, #22), the {amber:partial} at $4,000.00 of $6,148.00 — are not surprises; they are *fixtures*: pinned regression queries that must return exactly one row each, every close. The trial balance (**debits $181,080 = credits $181,080, delta $0.00**) gates every dashboard, and the rail-file cross-check (card **16 / $37,364.00** against wire **11 / $32,248.00**) gates every corridor report. New analysts inherit the fixtures before they inherit the dashboards — at Wise you earn dashboard rights by proving your queries reproduce the known breaks.",
     "The screens scale with level, and the axis is always the same: who owns the definition. Juniors get single-fold asks — a corridor fold, a month bucket, a cents-correct `SUM(amount_cents) / 100.0`. Mid-levels get the two-stage builds — the coverage census (21 exact / 1 partial / 6 none), the first-completion clock, a packet whose parts must reconcile to the whole. Seniors get the *definition fight*: outstanding over all legs or completed legs, first completion or last — and the expectation is that you state the denominator, ship the query, and hand over the fixture that proves it. Prep ends the same way every mock ends here: units said out loud, and *the customer can check this math* as the closing line.",
   ],
@@ -87,12 +87,12 @@ export const wiseKit: CompanyKit = {
     {
       name: "FX exposure & as-of rate joins",
       why: "Cross-border money is quoted against rates that move: normalizing a leg means joining the latest rate at-or-before its timestamp — the as-of join. Product-price-at-a-given-date and point-in-time SCD2 shapes are the drills, and the rule is absolute: no rate from after the transfer may touch the number.",
-      slugs: ["fx-exposure-report", "product-price-at-a-given-date", "point-in-time-asof"],
+      slugs: ["fx-exposure-report", "product-price-at-a-given-date", "point-in-time-asof", "trips-and-users"],
     },
     {
       name: "Circular flows & mutual pairs",
       why: "Money sometimes comes back: two accounts moving funds to each other inside a window is a pattern the risk team reads as circulation. Mutual-pair detection — canonicalized with a < so each pair counts once — is the same craft as duplicate-completion scans, and the epoch window is the trap.",
-      slugs: ["circular-transfers", "symmetric-pairs", "strong-friendship"],
+      slugs: ["circular-transfers", "symmetric-pairs", "strong-friendship", "amount-anomaly-zscore", "structuring-detection", "transaction-velocity", "suspicious-bank-account-transactions", "chargeback-rate-ranking"],
     },
     {
       name: "Fee transparency: honest ratios",
@@ -112,12 +112,12 @@ export const wiseKit: CompanyKit = {
     {
       name: "The clearing ledger & balance walks",
       why: "The multi-currency ledger is double-entry: every debit has a credit, the trial balance must read zero ($181,080 = $181,080 here), and the per-account nets (cash $44,196, receivables $16,440) feed the close. Balance walks and rollforwards are how you localize a break — one fold per side, then the difference, then the account that drifted.",
-      slugs: ["trial-balance-check", "balance-rollforward", "total-traveled-distance"],
+      slugs: ["trial-balance-check", "balance-rollforward", "total-traveled-distance", "gl-reconciliation", "ar-aging-schedule", "settlement-fails-aging", "journal-gap-detection"],
     },
     {
       name: "Ranking & tiles on the book",
       why: "Fee bands and premium tiers are ranking questions: which completions sit in the top decile of ticket size, which corridors rank by share of the book, which tickets earn which band. ROW_NUMBER, RANK and DENSE_RANK differ exactly where the money ties, and a transparency company reports tiles that must tile the whole book — a rank gap is a coverage claim, so you pick the function deliberately and say which one you used.",
-      slugs: ["rank-scores", "compute-the-rank-as-a-percentage", "top-percentile-fraud"],
+      slugs: ["rank-scores", "compute-the-rank-as-a-percentage", "top-percentile-fraud", "second-highest-salary", "account-balance", "second-most-recent-activity"],
     },
     {
       name: "Running totals & rolling completions",
@@ -127,12 +127,12 @@ export const wiseKit: CompanyKit = {
     {
       name: "NULL policy at the display edge",
       why: "Legs that never completed arrive as NULL payloads, and the pod's rule is classify mid-pipeline, coalesce at the edge: a COALESCE(SUM(...), 0) placed too early launders a missing completion into a clean zero somebody will act on. Carry-forward shapes — last known rate, last known status — are the same discipline in the other direction: never let a NULL masquerade as a value the book actually held.",
-      slugs: ["books-with-null-ratings", "change-null-values-in-a-table-to-the-previous-value", "calculate-special-bonus"],
+      slugs: ["books-with-null-ratings", "change-null-values-in-a-table-to-the-previous-value", "calculate-special-bonus", "keep-latest-dedupe", "null-blank-audit"],
     },
     {
       name: "One-pass censuses & CASE pivots",
       why: "The coverage census (21 exact / 1 partial / 6 none) is one scan, not three: conditional aggregation — CASE arms inside COUNT and SUM — must produce branches that reconcile to a plain COUNT(*) before the report ships. Pivot shapes extend it: status rows into columns, a grid the transparency page prints without a second pass, each branch carrying its own named definition.",
-      slugs: ["create-a-session-bar-chart", "count-salary-categories", "sales-by-day-of-the-week"],
+      slugs: ["create-a-session-bar-chart", "count-salary-categories", "sales-by-day-of-the-week", "league-statistics", "monthly-transactions-ii", "unique-orders-and-customers-per-month"],
     },
     {
       name: "Subquery shapes above the average",

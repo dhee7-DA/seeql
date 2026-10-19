@@ -55,17 +55,17 @@ export const turoKit: CompanyKit = {
     {
       name: "Two-grain trip censuses",
       why: "Trips and guests are different grains of the same join: EU runs 45 trips from just 8 guests while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and naming which is load and which is coverage — is the habit every census here grades.",
-      slugs: ["students-and-examinations", "find-followers-count", "unique-orders-and-customers-per-month", "user-activity-for-the-past-30-days-i", "human-traffic-of-stadium", "the-airport-with-the-most-flights"],
+      slugs: ["students-and-examinations", "find-followers-count", "unique-orders-and-customers-per-month", "user-activity-for-the-past-30-days-i", "human-traffic-of-stadium", "the-airport-with-the-most-flights", "confirmation-rate", "immediate-food-delivery-ii", "average-selling-price", "queries-quality-and-percentage", "rolling-7d-actives", "dau-wau-stickiness", "week-over-week-churn", "spend-histogram"],
     },
     {
       name: "Joining guests to trips",
       why: "Guests carry region and join date; trips inherit them through joins, and the join type decides who survives. A trip without a guest is corruption; a guest without trips is dormant demand — on this db the anti-join returns a confident zero, and proving the zero is part of the job.",
-      slugs: ["combine-two-tables", "employee-bonus", "sales-analysis-i", "top-travellers", "sellers-with-no-sales"],
+      slugs: ["combine-two-tables", "employee-bonus", "sales-analysis-i", "top-travellers", "sellers-with-no-sales", "trips-and-users", "hopper-company-queries-ii", "find-churn-risk-customers"],
     },
     {
       name: "Ranking windows & tie policy",
       why: "Leaderboards here are rank-window reporting with guaranteed ties — the guest ladder runs 24, 17, 14, 13, 5 and then four guests sit tied at 4 trips. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer guests, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "second-highest-salary", "second-most-recent-activity", "the-most-recent-orders-for-each-product", "customers-with-strictly-increasing-purchases"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "second-highest-salary", "second-most-recent-activity", "the-most-recent-orders-for-each-product", "customers-with-strictly-increasing-purchases", "cohort-retention-matrix", "bikes-last-time-used"],
     },
     {
       name: "Class banding with CASE",
@@ -75,7 +75,7 @@ export const turoKit: CompanyKit = {
     {
       name: "Lead-time math on timestamps",
       why: "The checkout clock — booking to key handover — is julianday arithmetic over text timestamps: 82 stamped checkouts averaging 2.98 days with a 2–4 day spread. The NULL policy ships with the number, because the 21 stamp-less trips have no clock and must not dilute the average.",
-      slugs: ["average-time-of-process-per-machine", "users-with-two-purchases-within-seven-days", "rising-temperature", "sales-by-day-of-the-week"],
+      slugs: ["average-time-of-process-per-machine", "users-with-two-purchases-within-seven-days", "rising-temperature", "sales-by-day-of-the-week", "keep-latest-dedupe", "null-blank-audit"],
     },
     {
       name: "Month spine & LAG walk",
@@ -95,7 +95,7 @@ export const turoKit: CompanyKit = {
     {
       name: "Settlement books & cents discipline",
       why: "Completed is not paid out — the settlement tables (28 invoices, 27 payments, INTEGER cents) are where the trip world meets money. Every dollar read is amount_cents / 100.0, and the exact/partial/none coverage split (21 / 1 / 6) is one CASE away.",
-      slugs: ["bank-account-summary-ii", "account-balance", "ar-aging-schedule"],
+      slugs: ["bank-account-summary-ii", "account-balance", "ar-aging-schedule", "duplicate-charge-pairs"],
     },
   ],
 

@@ -59,47 +59,47 @@ export const getaroundKit: CompanyKit = {
     {
       name: "Instant-unlock funnel counts",
       why: "Getaround's funnel is booking → app unlock → completed, and every stage is a conditional count over a status or timestamp. The trap is calling an on-trip unlock 'completed' — 30 versus 52 on this db — and the interviewer's first question is always what the denominator holds. Trips that never unlock (14 pending, 7 no-show) are the interesting rows, not noise.",
-      slugs: ["percentage-of-users-attended-a-contest", "trial-to-paid-funnel", "immediate-food-delivery-i", "funnel-step-conversion", "game-play-analysis-v"],
+      slugs: ["percentage-of-users-attended-a-contest", "trial-to-paid-funnel", "immediate-food-delivery-i", "funnel-step-conversion", "game-play-analysis-v", "classes-more-than-5-students", "game-play-analysis-iv"],
     },
     {
       name: "Two-grain market censuses",
       why: "Trips and accounts are different grains of the same join, and every census here reports both: EU runs 45 trips from just 8 accounts while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and naming which is load and which is coverage — is the habit every census here grades. The ratio (5.6 versus 9.5) is the intensity read that decides where unlock-support hours go.",
-      slugs: ["unique-orders-and-customers-per-month", "number-of-rich-customers", "students-and-examinations", "dau-wau-stickiness", "repeat-purchase-rate"],
+      slugs: ["unique-orders-and-customers-per-month", "number-of-rich-customers", "students-and-examinations", "dau-wau-stickiness", "repeat-purchase-rate", "trips-and-users"],
     },
     {
       name: "Utilization ladders & tie policy",
       why: "The per-listing ladder is rank-window reporting where ties are structural — booked days run 47, 46, 38, then two listings tie at 36 and three at 30, and further down three tie at 21. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer cars, not syntax. Fleet ops publishes the policy; candidates are asked to defend it.",
-      slugs: ["rank-scores", "top-earners", "group-employees-of-the-same-salary", "second-most-recent-activity"],
+      slugs: ["rank-scores", "top-earners", "group-employees-of-the-same-salary", "second-most-recent-activity", "product-sales-analysis-iii", "bank-account-summary"],
     },
     {
       name: "Booked-day folds",
       why: "Utilization lives in order_items: quantity is booked days, so SUM(quantity) per listing turns 251 lines into the 498-day fleet read, and quantity × unit_price turns it into earnings. The trap is grain drift — COUNT(*) counts lines, COUNT(DISTINCT order_id) counts trips, and only the SUM counts days. Saying 'one row per what?' for every fold is the habit being graded.",
-      slugs: ["product-sales-analysis-ii", "sales-analysis-i", "queries-quality-and-percentage", "game-play-analysis-iii", "total-traveled-distance", "keep-latest-dedupe"],
+      slugs: ["product-sales-analysis-ii", "sales-analysis-i", "queries-quality-and-percentage", "game-play-analysis-iii", "total-traveled-distance", "keep-latest-dedupe", "list-the-products-ordered-in-a-period", "group-sold-products-by-the-date"],
     },
     {
       name: "Unlock-lead math on timestamps",
       why: "The booking-to-unlock clock — created_at to shipped_at — is julianday arithmetic over text timestamps: 82 stamped unlocks averaging 2.98 days with a 2–4 day spread. The NULL policy ships with the number, because the 21 stamp-less trips have no clock and must not dilute the average. The regional cut (US 3.07, APAC 2.93) is where drift alerts live.",
-      slugs: ["average-time-of-process-per-machine", "users-with-two-purchases-within-seven-days", "game-play-analysis-i", "median-time-to-convert"],
+      slugs: ["average-time-of-process-per-machine", "users-with-two-purchases-within-seven-days", "game-play-analysis-i", "median-time-to-convert", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "No-show bands with CASE",
       why: "No-show fees, claim tiers and day-rate bands are CASE-classified with fixed edges — the trip lines split 268 units at a 31.01 average line rate against 230 at 115.85, and a premium 200-plus price arm is honestly empty (max list rate 199.99). The arms must be exhaustive and ordered: a hole in the CASE is a hole in the trust census, and the empty band is a finding, not padding.",
-      slugs: ["calculate-special-bonus", "the-winner-university", "evaluate-boolean-expression", "ratings-histogram", "customer-purchasing-behavior-analysis"],
+      slugs: ["calculate-special-bonus", "the-winner-university", "evaluate-boolean-expression", "ratings-histogram", "customer-purchasing-behavior-analysis", "confirmation-rate", "average-selling-price", "immediate-food-delivery-ii"],
     },
     {
       name: "Month spine & LAG walk",
       why: "The 14-month trip spine (2024-01 to 2025-02) is the demand board's home turf: the book opens at 3,731.97, troughs at 1,193.86 in July, and the biggest single-month jump is +1,158.21 into August. LAG drives the walk and the first row is NULL by definition — the baseline, never a zero. No-shows cluster in the same walk: July and November carry 2 each of the 7.",
-      slugs: ["hopper-company-queries-i", "biggest-window-between-events", "second-day-confirmation", "week-over-week-churn", "cohort-retention-matrix"],
+      slugs: ["hopper-company-queries-i", "biggest-window-between-events", "second-day-confirmation", "week-over-week-churn", "cohort-retention-matrix", "combine-two-tables", "sellers-with-no-sales"],
     },
     {
       name: "Coverage set algebra",
       why: "Board packets stack populations — completed under no-show, this quarter beside last — and EXCEPT answers 'which booked accounts never stamped an unlock'. UNION dedups whole rows silently, which makes it a correctness question, not a style one. The payout anti-join (6 never-settled statements) is the same algebra pointed at money.",
-      slugs: ["team-scores-in-football-tournament", "monthly-transactions-ii", "customers-who-never-order", "customer-who-visited-but-did-not-transact", "number-of-times-a-driver-was-a-passenger"],
+      slugs: ["team-scores-in-football-tournament", "monthly-transactions-ii", "customers-who-never-order", "customer-who-visited-but-did-not-transact", "number-of-times-a-driver-was-a-passenger", "market-analysis-i"],
     },
     {
       name: "One-pass fate censuses",
       why: "The ops board gets completed, on-trip, unlock-pending and no-show in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift. The reconciliation identity (branches sum to COUNT(*)) is the correctness argument the panel listens for.",
-      slugs: ["active-businesses", "count-the-number-of-experiments", "create-a-session-bar-chart"],
+      slugs: ["active-businesses", "count-the-number-of-experiments", "create-a-session-bar-chart", "capital-gain-loss"],
     },
     {
       name: "Payout books & cents discipline",

@@ -49,47 +49,47 @@ export const emiratesKit: CompanyKit = {
     {
       name: "Load-state conditional counts",
       why: "Every load read at Emirates is a conditional census — booked, flown, pending, scrubbed, share — folded over status in one pass, 82 of 103 flown. The graded part is the denominator: a WHERE that drops scrubbed rows before the fold prints a load factor the network never earned. FILTER (WHERE …) and SUM(CASE …) are the exact drills.",
-      slugs: ["immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "recyclable-and-low-fat-products"],
+      slugs: ["immediate-food-delivery-i", "percentage-of-users-attended-a-contest", "recyclable-and-low-fat-products", "flight-occupancy-and-waitlist-analysis", "customers-who-never-order", "immediate-food-delivery-ii"],
     },
     {
       name: "Hub joins: members to PNRs",
       why: "PNRs inherit their market and member through joins, and the join type decides who survives. A PNR without a member is corruption; a member without a PNR is whitespace — though on this db the anti-join returns a confident zero, and proving that zero is part of the job. The WHERE-after-LEFT-JOIN trap kills the NULL-payload rows silently.",
-      slugs: ["combine-two-tables", "employee-bonus", "replace-employee-id-with-unique-identifier"],
+      slugs: ["combine-two-tables", "employee-bonus", "replace-employee-id-with-unique-identifier", "average-time-of-process-per-machine"],
     },
     {
       name: "Two-grain market censuses",
       why: "Markets report at two grains at once: EU books 45 PNRs from 8 members while the US books 19 from 2 — load and coverage in one row. COUNT(*) beside COUNT(DISTINCT customer_id) is the habit, and the 251 ancillary lines are the fan-out trap that makes COUNT(*) count SKUs and call them members.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "customer-order-frequency", "find-churn-risk-customers"],
     },
     {
       name: "Yield & basket folds",
       why: "Yield is value per unit of demand: per-PNR totals, per-market averages, per-family attach. Every one of those is a join plus an aggregate where the fold's grain is the whole question — average-selling-price's join-through-facts shape is precisely how Emirates screens probe whether you can carry revenue through a chain without counting lines twice.",
-      slugs: ["average-selling-price", "sales-person", "students-and-examinations"],
+      slugs: ["average-selling-price", "sales-person", "students-and-examinations", "trips-and-users", "fix-names-in-a-table"],
     },
     {
       name: "Skywards frequency boards",
       why: "The loyalty ladder is rank-window reporting where ties are guaranteed — four members sit at 4 bookings each on this db, and the ladder above them runs 24, 17, 14, 13, 5. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, and that is a policy about peer members, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "customer-placing-the-largest-number-of-orders"],
     },
     {
       name: "Cabin banding with CASE",
       why: "Cabin mix — First, Business, Economy — is CASE-classified per market with fixed edges the commercial team publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the cabin forecast, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["weather-type-in-each-country", "type-of-triangle", "calculate-special-bonus"],
+      slugs: ["weather-type-in-each-country", "type-of-triangle", "calculate-special-bonus", "most-frequently-ordered-product-per-customer"],
     },
     {
       name: "Month spine & LAG walks",
       why: "The 14-month booking spine (2024-01 to 2025-02, 6–9 PNRs every month) is the demand call's home turf: prior month beside current, trough (1,193.86 in July 2024) and jump named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["biggest-window-between-events", "second-day-confirmation", "monthly-transactions-i"],
+      slugs: ["biggest-window-between-events", "second-day-confirmation", "monthly-transactions-i", "orders-with-maximum-quantity-above-average", "sales-by-day-of-the-week"],
     },
     {
       name: "Premium tier gates",
       why: "Screens escalate into staging: fold per-member totals, then judge each PNR against a computed network mean (338.19 here). Scalar, correlated and derived subquery shapes each carry an empty-inner-query answer you are expected to give unprompted — the premium gate is exactly where that bug ships.",
-      slugs: ["second-highest-salary", "managers-with-at-least-5-direct-reports", "find-expensive-cities"],
+      slugs: ["second-highest-salary", "managers-with-at-least-5-direct-reports", "find-expensive-cities", "group-employees-of-the-same-salary"],
     },
     {
       name: "One-pass status censuses",
       why: "The ops board gets completed, airborne, pending and scrubbed in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift off the identity.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "top-travellers", "last-person-to-fit-in-the-bus"],
     },
     {
       name: "Settlement & cents discipline",

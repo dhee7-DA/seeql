@@ -59,27 +59,27 @@ export const sheinKit: CompanyKit = {
     {
       name: "Cart-line folding & attach counts",
       why: "Every SHEIN merch screen opens by folding 251 cart lines into per-family reads — units, revenue, and the attach count that matters most: distinct carts touched. The trap is grain drift: COUNT(*) counts line rows (the add-on family has 62 lines but only 54 carts), and the interviewer grades whether you can hold units, lines and carts apart in one query.",
-      slugs: ["sales-analysis-i", "percentage-of-users-attended-a-contest", "number-of-rich-customers", "basket-depth-aov"],
+      slugs: ["sales-analysis-i", "percentage-of-users-attended-a-contest", "number-of-rich-customers", "basket-depth-aov", "transactions-per-visit-histogram"],
     },
     {
       name: "Two-grain market censuses",
       why: "Markets report at two grains simultaneously: EU runs 45 checkouts from 8 shoppers, the US 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is demand and which is coverage — is the habit being graded. The intensity ratio (9.5 versus 5.6) is the market-maturity signal hiding between the columns.",
-      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "students-and-examinations", "repeat-purchase-rate", "find-loyal-customers"],
+      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "students-and-examinations", "repeat-purchase-rate", "find-loyal-customers", "queries-quality-and-percentage", "confirmation-rate", "average-selling-price", "customer-order-frequency", "classes-more-than-5-students", "find-stores-with-inventory-imbalance", "bank-account-summary-ii"],
     },
     {
       name: "Joining carts to the drop catalog",
       why: "Cart lines carry no family, no list price, no vendor — everything joins through `products`, and the join type decides who survives. A line with no SKU is corruption; a SKU with no lines is a drop that missed — though on this db the anti-join returns a confident zero, and proving that zero is part of the job.",
-      slugs: ["combine-two-tables", "product-sales-analysis-i", "replace-employee-id-with-unique-identifier"],
+      slugs: ["combine-two-tables", "product-sales-analysis-i", "replace-employee-id-with-unique-identifier", "product-sales-analysis-ii", "product-sales-analysis-iii"],
     },
     {
       name: "Best-seller ladders & tie policy",
-      why: "Drop reporting is leaderboard reporting: top families by revenue, top SKUs by units, top shoppers by carts — and the cart ladder here runs 24, 17, 14, 13, 5 with a three-way tie at 4. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a merchandising policy, not syntax.",
+      why: "Drop reporting is leaderboard reporting: top families by revenue, top SKUs by units, top shoppers by carts — and the cart ladder here runs 24, 17, 14, 13, 5 with a four-way tie at 4. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a merchandising policy, not syntax.",
       slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "rfm-segmentation", "usage-tier-percentiles"],
     },
     {
       name: "Promo banding with CASE",
       why: "SHEIN's pricing page is a CASE statement: budget under the 50 list edge, core at or above, premium theoretically 200-plus (empty here — the ladder tops out at 199.99). Arms must be exhaustive and ordered; a hole in the CASE is a hole in the folio, and the banding key — list price, never the repriced line ticket — is the follow-up that separates candidates.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "type-of-triangle", "calculate-product-final-price", "the-number-of-users-that-are-eligible-for-discount"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "type-of-triangle", "calculate-product-final-price", "the-number-of-users-that-are-eligible-for-discount", "monthly-transactions-ii"],
     },
     {
       name: "Subquery rate gates",
@@ -89,17 +89,17 @@ export const sheinKit: CompanyKit = {
     {
       name: "Drop cadence & month buckets",
       why: "The 14-month drop spine (2024-01 to 2025-02, every month 6-9 checkouts) is the cadence read: STRFTIME or SUBSTR month keys, half-open windows that never drop the last night of a drop, and '%m' traps that merge January 2024 into January 2025. Cadence analytics is date discipline.",
-      slugs: ["the-latest-login-in-2020", "list-the-products-ordered-in-a-period", "count-the-number-of-experiments", "same-day-sale", "sales-by-day-of-the-week"],
+      slugs: ["the-latest-login-in-2020", "list-the-products-ordered-in-a-period", "count-the-number-of-experiments", "same-day-sale", "sales-by-day-of-the-week", "product-price-at-a-given-date"],
     },
     {
       name: "LAG walks on the drop spine",
       why: "Month-over-month GMV walks are LAG over the month spine — the book opens at 3,731.97, troughs at 1,193.86 in July, jumps +1,158.21 into August. The first row's delta is NULL by definition: the baseline, never a zero to coalesce. LEAD flips every sign; SUM builds a running total instead of a step.",
-      slugs: ["biggest-window-between-events", "second-day-confirmation", "average-time-of-process-per-machine", "users-with-two-purchases-within-seven-days", "median-time-to-convert", "year-on-year-growth-rate"],
+      slugs: ["biggest-window-between-events", "second-day-confirmation", "average-time-of-process-per-machine", "users-with-two-purchases-within-seven-days", "median-time-to-convert", "year-on-year-growth-rate", "customer-placing-the-largest-number-of-orders", "most-frequently-ordered-product-per-customer", "fix-product-name-format"],
     },
     {
       name: "Anti-joins & the confident zero",
       why: "Catalog and checkout hygiene runs on anti-joins: shoppers who never checked out, SKUs that never sold, statements no rail ever touched. On this db the product and shopper anti-joins return a confident zero — all 16 SKUs and shoppers appear somewhere — while the settlement anti-join returns 6 statements worth 15,217. Proving which zero you have is the deliverable.",
-      slugs: ["customers-who-never-order", "sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "customers-who-bought-a-and-b-not-c", "ar-aging-schedule"],
+      slugs: ["customers-who-never-order", "sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "customers-who-bought-a-and-b-not-c", "ar-aging-schedule", "find-churn-risk-customers"],
     },
     {
       name: "One-pass censuses & FILTER branches",
@@ -117,8 +117,8 @@ export const sheinKit: CompanyKit = {
     },
     {
       id: "shein-t2",
-      q: "The repeat-cart ladder runs 24, 17, 14, 13, 5 — then a three-way tie at 4 carts. RANK, DENSE_RANK or ROW_NUMBER — and who decides?",
-      a: "The rank trio is a business decision about shared rungs and gaps, and the interviewer wants you to say that out loud. RANK gives tied counts the same rank and skips — the ladder reads 1 through 5, then the three-way tie consumes ranks 6 through 8, and the next distinct count lands on 9, implying two phantom positions that do not exist. DENSE_RANK shares rungs without gaps — the tie reads 6, 6, 6 and the next shopper is 7. ROW_NUMBER splits ties arbitrarily, which is a silent judgment call about whose shopper gets the win-back budget first. The wrong answer is picking a function; the right answer is picking a policy — shared rungs for peer shoppers (RANK or DENSE_RANK), or an explicitly named tie-breaker like created_at, then id — and writing it in the query comment. On a drop leaderboard where hundreds of SKUs share price points, ties are the norm, not the edge case: the LIMIT-with-OFFSET habit breaks exactly there.",
+      q: "The repeat-cart ladder runs 24, 17, 14, 13, 5 — then a four-way tie at 4 carts. RANK, DENSE_RANK or ROW_NUMBER — and who decides?",
+      a: "The rank trio is a business decision about shared rungs and gaps, and the interviewer wants you to say that out loud. RANK gives tied counts the same rank and skips — the ladder reads 1 through 5, then the four-way tie consumes ranks 6 through 9, and the next distinct count lands on 10, implying two phantom positions that do not exist. DENSE_RANK shares rungs without gaps — the tie reads 6, 6, 6, 6 and the next shopper is 7. ROW_NUMBER splits ties arbitrarily, which is a silent judgment call about whose shopper gets the win-back budget first. The wrong answer is picking a function; the right answer is picking a policy — shared rungs for peer shoppers (RANK or DENSE_RANK), or an explicitly named tie-breaker like created_at, then id — and writing it in the query comment. On a drop leaderboard where hundreds of SKUs share price points, ties are the norm, not the edge case: the LIMIT-with-OFFSET habit breaks exactly there.",
       tag: "windows",
     },
     {

@@ -53,17 +53,17 @@ export const zipcarKit: CompanyKit = {
     {
       name: "Two-grain pod censuses",
       why: "Reservations and members are different grains of the same join, and every census here reports both: EU runs 45 reservations from 8 members while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "user-activity-for-the-past-30-days-i"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "user-activity-for-the-past-30-days-i", "immediate-food-delivery-ii", "monthly-transactions-i"],
     },
     {
       name: "Joining members to reservations",
       why: "Members carry region and created_at; reservations inherit them through joins, and the join type decides who survives. A reservation without a member is corruption; a member without reservations is whitespace — though on this db the anti-join returns a confident zero, and proving that zero is part of the job.",
-      slugs: ["combine-two-tables", "employee-bonus", "top-travellers", "find-churn-risk-customers"],
+      slugs: ["combine-two-tables", "employee-bonus", "top-travellers", "find-churn-risk-customers", "customers-who-bought-a-and-b-not-c", "sellers-with-no-sales", "number-of-times-a-driver-was-a-passenger", "game-play-analysis-iv"],
     },
     {
       name: "Utilization leaderboards",
       why: "The utilization ladder ranks members by reservations and ties are guaranteed — four members sit at 4 on this db, under a ladder of 24, 17, 14, 13, 5. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer members, not syntax.",
-      slugs: ["rank-scores", "find-the-team-size", "top-earners", "flight-occupancy-and-waitlist-analysis"],
+      slugs: ["rank-scores", "find-the-team-size", "top-earners", "flight-occupancy-and-waitlist-analysis", "second-highest-salary", "most-frequently-ordered-product-per-customer", "customer-placing-the-largest-number-of-orders", "last-person-to-fit-in-the-elevator"],
     },
     {
       name: "Plan tiering with CASE",
@@ -73,7 +73,7 @@ export const zipcarKit: CompanyKit = {
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month reservation spine (2024-01 to 2025-02) is the demand review's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) and jump (+1,158.21 into August) named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["growth-accounting", "biggest-window-between-events", "restaurant-growth", "cohort-retention-matrix", "mrr-waterfall", "deferred-revenue"],
+      slugs: ["growth-accounting", "biggest-window-between-events", "restaurant-growth", "cohort-retention-matrix", "mrr-waterfall", "deferred-revenue", "employees-with-missing-information", "find-users-with-valid-e-mails"],
     },
     {
       name: "Set-algebra coverage stacks",
@@ -88,7 +88,7 @@ export const zipcarKit: CompanyKit = {
     {
       name: "One-pass status censuses",
       why: "The ops board gets completed, underway, reserved and no-show in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "calculate-orders-within-each-interval", "find-zombie-sessions"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "calculate-orders-within-each-interval", "find-zombie-sessions", "rolling-7d-actives", "dau-wau-stickiness"],
     },
     {
       name: "Billing & cents discipline",

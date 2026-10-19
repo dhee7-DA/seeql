@@ -24,7 +24,7 @@ export const datadogKit: CompanyKit = {
     "Datadog is the observability platform whose revenue model is metered truth: infrastructure monitoring per host-hour, APM per span, logs per ingested GB — customers buy the telemetry and the invoice IS the usage curve. The analytics reality is {violet:consumption economics}: burn per service family, spend versus baseline, and the concentration story every usage business lives on. On this storefront db the mapping is honest: 16 monitored orgs generate 103 billing periods worth **34,833.28**, folded from 251 metered lines across 7 service families; the calendar runs 2024-01 to 2025-02 with a **3,731.97** burn peak and a **1,193.86** floor, and 63.5% of lifetime consumption sits with orgs whose spend crosses the 3,000 line — *the skew a consumption CFO watches instead of logins*.",
     "The data org models the platform from the inside. Usage analytics owns the burn fold: metered lines joined to service families and aggregated per billing period — units times `unit_price`, never units alone. Billing desk owns the runs: 28 `invoices` against 27 `payments`, 21 exact, 1 partial (4,000 of 6,148), 6 {rose:never-collected} — with the ledger-grade rule that a burn stack must sum back to the calendar before it ships. Reliability analytics owns restatements: late-arriving metered rows are a first-class event when customers are billed on the same feeds the dashboards read. Segment baselines anchor every anomaly call: the average period bills 383.48 in the US, 335.32 in the EU, 313.66 in APAC, 426.22 in LATAM.",
     "Interview style is economy-of-folds. A screen walks from a warm-up join to a per-family burn fold (units, spend, one GROUP BY), then escalates into a **baseline screen** — which org-months burned above their region's average, and by how much — or a concentration ratio where the denominator is the whole base. Follow-ups probe units and skew: 'is that spend compute or storage?', 'what share of the base is your top decile — and is that healthy?', 'why is the premium band (200-plus) empty on this catalog — max price 199.99?' Candidates who narrate the fold before the filter do well; Datadog's data teams think in *GROUP BY economics, not dashboards*.",
-    "Preparation strategy: the registry tags exactly one sql row for Datadog (`net-revenue-retention`) — it leads the pool, and the rest of the 30 topic slugs and 16 problems are theme-curated to known screens: burn calendars, overage bands, segment baselines, AR reconciliation. Then run both case studies on the live db: one rebuilds the service-family burn stack the close reconciles against the calendar, the other rebuilds the segment-baseline screen that flags org-months burning above their region. The bar to clear: state the fold's unit (units or dollars) and the baseline's population before you compute anything.",
+    "Preparation strategy: the registry tags exactly one sql row for Datadog (`net-revenue-retention`) — it leads the pool, and the rest of the 30 topic slugs and 16 problems are theme-curated to known screens: burn calendars, overage bands, segment baselines, AR reconciliation. Then run all six case studies on the live db: one rebuilds the service-family burn stack the close reconciles against the calendar, the other rebuilds the segment-baseline screen that flags org-months burning above their region, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The bar to clear: state the fold's unit (units or dollars) and the baseline's population before you compute anything.",
     "The expansion reads go past the fold. Window frames price the running burn — `SUM(burn) OVER (ORDER BY month)` defaults to a RANGE frame, so tied order keys ride together and the running total jumps. Set ops stack the close: the rails read (card 16 settlements / 37,364.00, wire 11 / 32,248.00) appends a **TOTAL row — 27 movements, 69,612.00** — and UNION's dedupe tax is a live bug class there. Derived staging carries the tier census — fold lifetime burn per org, *then* band it — and anomaly triage stays row-level: a {rose:void} run carrying a 925.00 settlement (#11), a paid run carrying none (#28, 1,756.00). Every read names its {violet:grain, frame and denominator} before it computes.",
     "Preparation for the deeper rounds mirrors the base kit: the five new topics run window frames, set ops, derived gates, collection aging and text hygiene — 15 fresh slugs, still theme-curated because the registry tags exactly one Datadog sql row. Then run the four new cases on the live db: the {violet:tenant concentration census} — 4 core orgs holding 22,121.70, the 63.5% read, derived-table staged — the period-band census (25 flagship periods at 500-plus), the never-collected anti-join (**6 runs, 15,217.00**, one of them a *paid* run with no settlement rows), and the calendar stack whose `TOTAL` row must land on 34,833.28. The bar is unchanged: state the grain, the frame and the denominator — *then* let the query talk.",
   ],
@@ -56,32 +56,32 @@ export const datadogKit: CompanyKit = {
     {
       name: "Usage censuses",
       why: "Every Datadog review opens with a fold: billing periods, monitored orgs, metered lines — grouped and counted without letting the grain blur. COUNT(*) counts periods, COUNT(DISTINCT customer_id) counts orgs; the calendar's 103 periods come from just 16 accounts, and the census is where candidates prove they know which grain they're standing on.",
-      slugs: ["product-sales-analysis-ii", "unique-orders-and-customers-per-month", "find-followers-count"],
+      slugs: ["product-sales-analysis-ii", "unique-orders-and-customers-per-month", "find-followers-count", "late-arriving-restatement", "dau-wau-stickiness", "rfm-segmentation"],
     },
     {
       name: "The burn calendar",
       why: "Consumption is calendar arithmetic: STRFTIME('%Y-%m') buckets over billing periods, then trend reads against the 3,731.97 peak and the 1,193.86 floor. Datadog drills the month-bucket idiom because every burn chart hangs on that spine — and a '%m'-without-year fold merges two years into one lie.",
-      slugs: ["friday-purchase-iii", "monthly-transactions-i", "the-latest-login-in-2020"],
+      slugs: ["friday-purchase-iii", "monthly-transactions-i", "the-latest-login-in-2020", "growth-accounting", "mrr-waterfall"],
     },
     {
       name: "Service-family joins & unit pricing",
       why: "Metered lines carry no family names — the compute-vs-storage split is a join to the service catalog plus a weighted fold (units × unit_price). Datadog drills the join-then-weigh pattern because average-selling-price questions are exactly how per-unit family economics get compared.",
-      slugs: ["average-selling-price", "product-sales-analysis-i", "top-travellers"],
+      slugs: ["average-selling-price", "product-sales-analysis-i", "top-travellers", "team-scores-in-football-tournament"],
     },
     {
       name: "Overage bands with CASE",
       why: "Usage tiers and overage classification are CASE work: which orgs crossed their band, which SKUs price mid versus budget, and what to do with an empty premium arm (this catalog tops out at 199.99). The arms must be exhaustive and ordered — a hole in the CASE is a hole in the invoice.",
-      slugs: ["weather-type-in-each-country", "the-category-of-each-member-in-the-store", "calculate-orders-within-each-interval"],
+      slugs: ["weather-type-in-each-country", "the-category-of-each-member-in-the-store", "calculate-orders-within-each-interval", "immediate-food-delivery-ii", "calculate-parking-fees-and-duration"],
     },
     {
       name: "NRR & cohort revenue",
       why: "The registry-tagged problem is the consumption business's north star: this cohort's revenue this period versus the same cohort last period. NRR is a two-stage cohort fold — and the repeat-burn curve on this db (2 one-period orgs, 4 embedded at 10-plus periods) is its shape.",
-      slugs: ["net-revenue-retention", "cohort-retention-matrix", "week-over-week-churn"],
+      slugs: ["net-revenue-retention", "cohort-retention-matrix", "week-over-week-churn", "transaction-velocity"],
     },
     {
       name: "Baselines & spike screens",
       why: "'Is this burn anomalous?' is always a window question: each period against its segment's average via AVG() OVER (PARTITION BY region). Choosing the partition column is the business decision — region baseline flags noisy tenants; an org baseline flags nothing but rounding.",
-      slugs: ["class-performance", "rolling-average-steps", "find-bursty-behavior"],
+      slugs: ["class-performance", "rolling-average-steps", "find-bursty-behavior", "server-utilization-time"],
     },
     {
       name: "Concentration & tenant sizing",
@@ -91,7 +91,7 @@ export const datadogKit: CompanyKit = {
     {
       name: "Billing-run reconciliation",
       why: "Usage billing is a reconciliation discipline: 28 invoices against 27 payments, coverage classified exact / partial / none, and the row-level anomaly list (a void run WITH a payment, a paid run with none) as the source of truth. Counts and sums must agree between systems or the query that shows which rows disagree is the deliverable.",
-      slugs: ["gl-reconciliation", "bank-account-summary-ii", "trial-balance-check"],
+      slugs: ["gl-reconciliation", "bank-account-summary-ii", "trial-balance-check", "product-price-at-a-given-date"],
     },
     {
       name: "Subquery gates",
@@ -101,22 +101,22 @@ export const datadogKit: CompanyKit = {
     {
       name: "Dormant orgs & churn screens",
       why: "A monitored org that stops sending telemetry is a renewal risk long before the renewal date. Anti-joins and dormancy reads (zero-period orgs, one-and-done tenants — 2 of 16 here) are the early-warning queries, and proving a confident zero or a named list is the analyst's job.",
-      slugs: ["find-churn-risk-customers", "dormant-reactivation", "customers-who-never-order"],
+      slugs: ["find-churn-risk-customers", "dormant-reactivation", "customers-who-never-order", "duplicate-charge-pairs"],
     },
     {
       name: "Window frames & running burn",
       why: "Cumulative burn and trailing reads are frame decisions, not just ORDER BY: SQLite's default RANGE frame absorbs ORDER BY peers, so a running total silently jumps by the whole tie block the moment the sort key repeats. Datadog drills ROWS BETWEEN discipline because the month-to-date fold and the burn walk are the two queries the close re-derives every night.",
-      slugs: ["find-cumulative-salary-of-an-employee", "restaurant-growth", "last-person-to-fit-in-the-elevator"],
+      slugs: ["find-cumulative-salary-of-an-employee", "restaurant-growth", "last-person-to-fit-in-the-elevator", "bank-account-summary", "running-total-for-different-genders"],
     },
     {
       name: "Stacked close boards (set ops)",
       why: "The close ships appended boards — fourteen month rows plus a TOTAL row, open arms next to settled arms — and UNION ALL is the honest append while UNION pays a dedupe tax that can silently merge two legitimately distinct rows. Column contracts (same count, same order, compatible types) and one stack-wide ORDER BY are the drill.",
-      slugs: ["monthly-transactions-ii", "movie-rating", "count-salary-categories"],
+      slugs: ["monthly-transactions-ii", "movie-rating", "count-salary-categories", "keep-latest-dedupe"],
     },
     {
       name: "Derived staging & relational gates",
       why: "Classify-after-fold needs a staged fold — lifetime burn per org computed in a derived table, THEN banded — because SQLite cannot group by an aggregate. The relational-division gate (orgs that used every service family) is the multi-product adoption read that separates embedded tenants from single-family ones.",
-      slugs: ["department-highest-salary", "customers-who-bought-all-products", "game-play-analysis-iv"],
+      slugs: ["department-highest-salary", "customers-who-bought-all-products", "game-play-analysis-iv", "group-sold-products-by-the-date"],
     },
     {
       name: "Collection aging & settlement cycles",

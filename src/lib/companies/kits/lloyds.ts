@@ -70,42 +70,42 @@ export const lloydsKit: CompanyKit = {
     {
       name: "Status-aware settlement counts",
       why: "Every retail read at Lloyds starts from the status map — settled clean, settling, awaiting capture, declined/reversed — and each stage is a conditional count over a status or timestamp. The trap is calling a settling transaction 'settled': 30 versus 52 on this book, and the whole kept-value story moves.",
-      slugs: ["immediate-food-delivery-i", "monthly-transactions-i", "percentage-of-users-attended-a-contest", "prepayment-detection"],
+      slugs: ["immediate-food-delivery-i", "monthly-transactions-i", "percentage-of-users-attended-a-contest", "prepayment-detection", "immediate-food-delivery-ii", "customer-order-frequency"],
     },
     {
       name: "Two-grain customer censuses",
       why: "Transactions and customers are different grains of the same join, and every regional census here reports both: EU runs 45 transactions from 8 customers while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "find-followers-count", "active-businesses", "managers-with-at-least-5-direct-reports"],
     },
     {
       name: "Joining the shelf to the book",
       why: "Product-level reporting means attaching shelf attributes — the current accounts, mortgages, savings and cards families — to every transaction line through joins that can be missing or stale. Lloyds' follow-up is always about what survives: does a line whose product row went missing still count in the family fold?",
-      slugs: ["combine-two-tables", "product-sales-analysis-i", "replace-employee-id-with-unique-identifier", "point-in-time-asof"],
+      slugs: ["combine-two-tables", "product-sales-analysis-i", "replace-employee-id-with-unique-identifier", "point-in-time-asof", "students-and-examinations", "movie-rating", "market-analysis-i"],
     },
     {
       name: "Intermediary folds & concentration",
       why: "The mortgage story is an intermediary story: six partner firms carry the shelf, and concentration reads (63.5% of the book from 3,000-plus customers) decide where the relationship teams go. GROUP BY folds with HAVING gates and per-partner totals are the exact drills.",
-      slugs: ["product-sales-analysis-ii", "top-earners", "classes-more-than-5-students"],
+      slugs: ["product-sales-analysis-ii", "top-earners", "classes-more-than-5-students", "total-traveled-distance"],
     },
     {
       name: "Ranking the relationship ladder",
       why: "Ladders are rank-window reporting where ties are guaranteed — four customers sit at 4 transactions on this book, right under the 24/17/14/13/5 run of the heavy Relationships. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer customers, not syntax.",
-      slugs: ["rank-scores", "second-highest-salary", "department-top-three-salaries", "chargeback-rate-ranking"],
+      slugs: ["rank-scores", "second-highest-salary", "department-top-three-salaries", "chargeback-rate-ranking", "customer-placing-the-largest-number-of-orders", "monthly-transactions-ii"],
     },
     {
       name: "Anti-joins & missing evidence",
       why: "The review era's core skill: find the rows with NO evidence behind them. Cycles with no rail leg, customers with no transactions (this db's confident zero — proving it is part of the job), partners with no activity. The LEFT JOIN + IS NULL shape and its NOT EXISTS twin are the watchlist's grammar.",
-      slugs: ["customers-who-never-order", "sellers-with-no-sales", "employees-with-missing-information", "settlement-fails-aging", "suspicious-bank-account-transactions"],
+      slugs: ["customers-who-never-order", "sellers-with-no-sales", "employees-with-missing-information", "settlement-fails-aging", "suspicious-bank-account-transactions", "fix-names-in-a-table"],
     },
     {
       name: "Rates with honest denominators",
       why: "Decline shares, settlement percentages, adoption rates — the retail ratios punish integer division and careless filters. The house habit: 100.0 before the division, the denominator's population decided BEFORE the ratio, rounding only at the very end.",
-      slugs: ["queries-quality-and-percentage", "confirmation-rate", "average-selling-price", "risk-based-pricing"],
+      slugs: ["queries-quality-and-percentage", "confirmation-rate", "average-selling-price", "risk-based-pricing", "fix-product-name-format"],
     },
     {
       name: "CASE banding & risk tiers",
       why: "Retail banking bands everything — ticket-size tiers, risk buckets, premier-versus-standard treatment — and each band is a CASE arm with fixed, published edges. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the risk report, and a reordered WHEN quietly re-bands the book.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "triangle-judgement", "delinquency-buckets", "credit-utilization-bands", "structuring-detection"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "triangle-judgement", "delinquency-buckets", "credit-utilization-bands", "structuring-detection", "count-salary-categories", "the-most-recent-three-orders"],
     },
     {
       name: "Month spines & date math",
@@ -115,7 +115,7 @@ export const lloydsKit: CompanyKit = {
     {
       name: "Cents discipline & the GL",
       why: "Retail is a cents game: cycles, rails and opex carry INTEGER pence, so every dollar read is amount_cents / 100.0 and the missing .0 is how a 1200.00 lease line prints as 12. The GL proof — 181080.00 against 181080.00, delta 0 — is the close's final gate, and reconciliation reads are the closest thing this kit has to a finance round.",
-      slugs: ["trial-balance-check", "bank-account-summary-ii", "npv-queries", "ar-aging-schedule", "account-balance", "balance-rollforward", "gl-reconciliation", "journal-gap-detection"],
+      slugs: ["trial-balance-check", "bank-account-summary-ii", "npv-queries", "ar-aging-schedule", "account-balance", "balance-rollforward", "gl-reconciliation", "journal-gap-detection", "game-play-analysis-iv", "orders-with-maximum-quantity-above-average"],
     },
   ],
 

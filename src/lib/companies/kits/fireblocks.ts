@@ -58,12 +58,12 @@ export const fireblocksKit: CompanyKit = {
     {
       name: "Transfer-fate conditional counts",
       why: "Every Fireblocks custody screen opens with the fate census: cycles booked, settled (delivered), broadcast with the stamp, awaiting quorum, rejected. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling an in-flight transfer 'settled' — 30 versus 52 on this db.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "immediate-food-delivery-i", "settlement-fails-aging"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "immediate-food-delivery-i", "settlement-fails-aging", "game-play-analysis-iv"],
     },
     {
       name: "Two-grain market censuses",
       why: "Transfer cycles and institutional clients are different grains of the same join, and every census here reports both: EU runs 45 cycles from 8 clients while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "fx-exposure-report"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "fx-exposure-report", "investments-in-2016"],
     },
     {
       name: "Joining clients to transfer cycles",
@@ -73,12 +73,12 @@ export const fireblocksKit: CompanyKit = {
     {
       name: "Liquidity-partner leaderboards",
       why: "Exchange partners are ranked by routed value — Nordic 11,130.25 leads Midwest 9,294.93 with a 47-line Shenzhen bench below — and rank semantics are a policy about peer venues. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is exactly the argument a counterparty review settles out loud.",
-      slugs: ["rank-scores", "top-earners", "second-highest-salary", "portfolio-concentration-hhi", "nth-highest-salary", "second-highest-salary-ii"],
+      slugs: ["rank-scores", "top-earners", "second-highest-salary", "portfolio-concentration-hhi", "nth-highest-salary", "second-highest-salary-ii", "find-churn-risk-customers"],
     },
     {
       name: "Quorum banding with CASE",
       why: "Workspace tiers and approval policies are CASE-classified — cold-storage, trading, treasury — with fixed edges the policy engine publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the vault register, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "type-of-triangle", "odd-and-even-transactions"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "type-of-triangle", "odd-and-even-transactions", "transaction-velocity"],
     },
     {
       name: "Broadcast clocks & LAG walks",
@@ -88,22 +88,22 @@ export const fireblocksKit: CompanyKit = {
     {
       name: "Reachability set algebra",
       why: "Network packs stack populations — settled under rejected, this quarter beside last — and EXCEPT answers 'which signed clients never broadcast a transfer'. UNION dedups whole rows silently, which makes it a correctness question, not a style one; a failover runbook that loses a client to a silent dedup is an audit finding.",
-      slugs: ["customers-who-never-order", "the-airport-with-the-most-flights", "team-scores-in-football-tournament", "circular-transfers"],
+      slugs: ["customers-who-never-order", "the-airport-with-the-most-flights", "team-scores-in-football-tournament", "circular-transfers", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "Cohort subqueries & quorum gates",
       why: "Screens escalate into staging: fold per-client cycle counts, then judge them against a computed platform mean (6.44 here — exactly four clients clear it), or gate a partner bench with a HAVING-derived IN-list the way the network pod does. Scalar, correlated and derived shapes each carry an empty-inner-query answer you are expected to give unprompted.",
-      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments", "point-in-time-asof"],
+      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments", "point-in-time-asof", "percentage-of-users-attended-a-contest", "confirmation-rate", "countries-you-can-safely-invest-in"],
     },
     {
       name: "Fee-statement cents discipline",
       why: "Settled is not collected — the finance tables (28 fee statements, 27 settlement legs, INTEGER cents) are where the custody world meets money. Every dollar read is amount_cents / 100.0, and the exact/partial/none coverage split (21 / 1 / 6) is one CASE away from the billing desk's Monday read.",
-      slugs: ["bank-account-summary-ii", "monthly-transactions-ii", "products-worth-over-invoices", "monthly-transactions-i", "journal-gap-detection", "trial-balance-check", "the-blunder"],
+      slugs: ["bank-account-summary-ii", "monthly-transactions-ii", "products-worth-over-invoices", "monthly-transactions-i", "journal-gap-detection", "trial-balance-check", "the-blunder", "suspicious-bank-account-transactions"],
     },
     {
       name: "Manifest folds & GROUP_CONCAT",
       why: "The counterparty review ships a per-partner asset manifest — the exact SKUs each venue routes — and GROUP_CONCAT is where the join fan-out becomes visible in a string cell: a partner folds to 3 deduplicated SKU names while its transfer lines number 43. DISTINCT inside the fold, separator discipline and row-order caveats are the craft.",
-      slugs: ["group-sold-products-by-the-date", "find-cities-in-each-state", "concatenate-the-name-and-the-profession"],
+      slugs: ["group-sold-products-by-the-date", "find-cities-in-each-state", "concatenate-the-name-and-the-profession", "customer-placing-the-largest-number-of-orders", "customer-order-frequency", "find-followers-count"],
     },
   ],
 
@@ -117,7 +117,7 @@ export const fireblocksKit: CompanyKit = {
     {
       id: "fireblocks-t2",
       q: "The client-activity ladder runs 24, 17, 14, 13, 5 transfer cycles, then THREE clients tie at 4. RANK, DENSE_RANK or ROW_NUMBER — and who decides?",
-      a: "The rank trio is a business decision about shared rungs and gaps, and the interviewer wants you to say that out loud. RANK gives tied counts the same rank and skips — on this db the ladder is 24, 17, 14, 13, 5, then the three-way tie at 4 consuming ranks 6 through 8, and the next distinct count (3) lands on 9, implying two phantom positions that do not exist. DENSE_RANK shares rungs without gaps — the tie reads 6, 6, 6 and the next distinct count is 7. ROW_NUMBER splits ties arbitrarily, which is a silent judgment call about which client's coverage engineer gets staffed first. The wrong answer is picking a function; the right answer is picking a policy — shared rungs for peer clients (RANK or DENSE_RANK), or an explicitly named tie-breaker like created_at, then id — and writing it in the query comment. On a concentration-driven book this is not cosmetics: the rung order decides whose coverage review moves up the calendar, and a reranked board that shuffles between renders is how trust in the analytics org dies.",
+      a: "The rank trio is a business decision about shared rungs and gaps, and the interviewer wants you to say that out loud. RANK gives tied counts the same rank and skips — on this db the ladder is 24, 17, 14, 13, 5, then the four-way tie at 4 consuming ranks 6 through 9, and the next distinct count (3) lands on 10, implying three phantom positions that do not exist. DENSE_RANK shares rungs without gaps — the tie reads 6, 6, 6, 6 and the next distinct count is 7. ROW_NUMBER splits ties arbitrarily, which is a silent judgment call about which client's coverage engineer gets staffed first. The wrong answer is picking a function; the right answer is picking a policy — shared rungs for peer clients (RANK or DENSE_RANK), or an explicitly named tie-breaker like created_at, then id — and writing it in the query comment. On a concentration-driven book this is not cosmetics: the rung order decides whose coverage review moves up the calendar, and a reranked board that shuffles between renders is how trust in the analytics org dies.",
       tag: "windows",
     },
     {
@@ -320,7 +320,7 @@ export const fireblocksKit: CompanyKit = {
       prompt: "The client-activity ladder runs 24, 17, 14, 13, 5 cycles, then THREE clients tie at 4. Under RANK, what rank does the next distinct count (3 cycles) carry?",
       choices: ["9", "6", "8", "7"],
       answer: 0,
-      why: "RANK shares rungs and then skips: 1, 2, 3, 4, 5, then the three-way tie at 4 consumes ranks 6 through 8, so the next distinct count lands on 9. All 3-cycle clients share rank 9.",
+      why: "RANK shares rungs and then skips: 1, 2, 3, 4, 5, then the four-way tie at 4 consumes ranks 6 through 9, so the next distinct count lands on 10. All 3-cycle clients share rank 10.",
       notes: [
         { choice: 1, why: "6 is the DENSE_RANK answer — shared rungs without gaps. The board's published policy is RANK semantics, gaps included." },
         { choice: 2, why: "8 is the LAST rank the tie block occupies, not the next one handed out. Off-by-one on the tie block is the classic leaderboard bug." },

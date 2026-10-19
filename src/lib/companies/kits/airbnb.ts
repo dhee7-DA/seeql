@@ -55,12 +55,12 @@ export const airbnbKit: CompanyKit = {
     {
       name: "Funnel step conversion",
       why: "The search→book→check-out funnel is Airbnb's master measurement, and step conversion is a conditional-count pivot over stage events with honest per-stage denominators. Every demand review and every ranking experiment reads through this shape.",
-      slugs: ["funnel-step-conversion", "ads-funnel", "email-engagement-funnel"],
+      slugs: ["funnel-step-conversion", "ads-funnel", "email-engagement-funnel", "active-users"],
     },
     {
       name: "Two-grain counting",
       why: "Bookings and guests are different grains that disagree on purpose: 45 EU bookings fold to 8 guests. Analysts who can't hold both counts in one query can't produce the intensity reads the marketplace runs on.",
-      slugs: ["percentage-of-users-attended-a-contest", "find-followers-count", "product-sales-analysis-iii"],
+      slugs: ["percentage-of-users-attended-a-contest", "find-followers-count", "product-sales-analysis-iii", "trips-and-users"],
     },
     {
       name: "Conversion shares & ratios",
@@ -70,7 +70,7 @@ export const airbnbKit: CompanyKit = {
     {
       name: "Keep-latest dedupe",
       why: "Booking and listing events arrive duplicated under retries and client replays; the funnel counts only stay honest if 'latest event wins' is deterministic — ROW_NUMBER with a timestamp plus id tie-break, not a bare MAX.",
-      slugs: ["keep-latest-dedupe", "find-latest-salaries", "product-price-at-a-given-date"],
+      slugs: ["keep-latest-dedupe", "find-latest-salaries", "product-price-at-a-given-date", "point-in-time-asof"],
     },
     {
       name: "Median & typical-guest math",

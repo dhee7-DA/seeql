@@ -53,7 +53,7 @@ export const capitaloneKit: CompanyKit = {
     {
       name: "Aggregation over the credit book",
       why: "Every Capital One screen opens by folding rows into business objects: settlements per rail, facilities per status, dollars per bucket. The bank probes whether you can aggregate without losing the population — a fold that silently drops a status or double-counts a split settlement is a loss-number error, not a style issue.",
-      slugs: ["product-sales-analysis-ii", "sales-analysis-i", "top-earners", "transaction-velocity", "daily-balance-interest"],
+      slugs: ["product-sales-analysis-ii", "sales-analysis-i", "top-earners", "transaction-velocity", "daily-balance-interest", "settlement-fails-aging"],
     },
     {
       name: "Two-grain censuses",
@@ -63,17 +63,17 @@ export const capitaloneKit: CompanyKit = {
     {
       name: "Status-aware conditional counts",
       why: "Paid, open, void — the credit book's statuses behave like COD cancellations do at a marketplace: exclude them wrongly and the exposure is wrong. Conditional counting (SUM over a 1/0 CASE flag, COUNT FILTER) keeps numerator and denominator folded from the same rows, which is exactly what the triage case in this kit builds.",
-      slugs: ["immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "product-sales-analysis-iii", "prepayment-detection"],
+      slugs: ["immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "product-sales-analysis-iii", "prepayment-detection", "ar-aging-schedule", "risk-based-pricing"],
     },
     {
       name: "Join enrichment across borrower and facility",
       why: "Facility-level reporting means attaching borrower attributes — market, name, status — to every settlement row. The join is N:1 here, but the habit that matters is asking what survives: does a settlement whose facility is void still appear in the funded total? (It did — that's anomaly #11.)",
-      slugs: ["combine-two-tables", "product-sales-analysis-i", "sales-analysis-ii", "bank-account-summary"],
+      slugs: ["combine-two-tables", "product-sales-analysis-i", "sales-analysis-ii", "bank-account-summary", "duplicate-charge-pairs", "keep-latest-dedupe"],
     },
     {
       name: "DPD buckets & CASE segmentation",
       why: "Delinquency work is CASE work: days-past-due arms that must be exhaustive and non-overlapping, because a bucket boundary that double-counts or drops a day silently moves loss between buckets. The tagged problem delinquency-buckets is the exact muscle; the bank's follow-up is always 'which arm catches the boundary value?'",
-      slugs: ["delinquency-buckets", "count-salary-categories", "the-category-of-each-member-in-the-store", "loan-types", "usage-tier-percentiles"],
+      slugs: ["delinquency-buckets", "count-salary-categories", "the-category-of-each-member-in-the-store", "loan-types", "usage-tier-percentiles", "credit-utilization-bands"],
     },
     {
       name: "Vintage curves & running sums",
@@ -88,7 +88,7 @@ export const capitaloneKit: CompanyKit = {
     {
       name: "Honest-denominator rates",
       why: "Card share of settled value, coverage rates, latency distributions — every ratio here punishes integer division and careless filters. The house habit: 100.0 before the division, the population decided before the ratio, rounding only at the very end — card is 37364 of 69612 settled dollars, and the share is meaningless if the denominator drifts.",
-      slugs: ["queries-quality-and-percentage", "confirmation-rate", "average-selling-price", "amount-anomaly-zscore"],
+      slugs: ["queries-quality-and-percentage", "confirmation-rate", "average-selling-price", "amount-anomaly-zscore", "delinquency-roll-rates"],
     },
     {
       name: "Anti-joins: exposure without coverage",

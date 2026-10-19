@@ -33,7 +33,7 @@ export const audibleKit: CompanyKit = {
     "**Audible** is subscription audio: members pay a monthly fee, the fee mints an entitlement of credits, and credits convert into audiobooks — a library members feel they own rather than rent. Every growth number in the building is a conditional count over the same small object set. This kit maps the storefront db onto that world: the 16 customers rows are members, the 103 orders are membership/billing cycles worth **34,833.28**, and the 251 order_items rows are credit/redemption lines — quantity = credits pulled, unit_price = the per-title a-la-carte price. The status map is fixed: delivered = {emerald:active paid month} (52, 50.5%), shipped = {sky:plan-change in flight} (30, 29.1%), pending = trial (14), cancelled = {rose:churned} (7, 6.8%).",
     "The data org runs three pods on the same spine. Growth reads the trial-to-paid funnel and the listening-depth cohorts — 251 redemption lines across 103 cycles is **2.44 lines per cycle**, 498 titles pulled. Monetization owns the credit economics: a plan-change cycle stamps shipped_at the day the new plan goes live, and **82 of 103 cycles** carry the stamp — a **2.98-day** plan-to-live average with a 2–4 day spread, while the 14 trials have none yet (a population definition, not a cleanup job). Catalog owns the shelf: the Plus catalog (the always-included budget band) versus the a-la-carte premium titles, and the publisher bench that supplies both. Money sits one layer down: statements and settlement legs in INTEGER cents, where the dollar read is `amount_cents / 100.0` — and concentration is the third story: **63.5%** of the book sits with members whose lifetime spend crosses 3,000 (71.2% above 2,000).",
     "Interview screens are census-then-denominator. A typical loop opens with a **two-grain member census** — EU runs 45 cycles from just 8 members (intensity 5.6) while the US runs 19 from 2 (9.5) — then escalates into a rate where the interviewer asks the denominator question out loud (*'does a trial cycle count in your base?'*), then into the listening leaderboard where four members sit tied at 4 cycles and rank semantics become a business decision. Late rounds walk the {sky:14-month cycle spine} (2024-01 to 2025-02) with `LAG` deltas — the **1,193.86** July trough, the +1,158.21 jump into August — and probe the first row's NULL. Candidates who state the status filter and the denominator before writing SQL are the ones who get callbacks.",
-    "Preparation strategy: the pools file carries no Audible section — zero tagged rows — so all sixteen problems and every topic slug here are **theme-curated** to this kit's known screen shapes: credit-funnel censuses, two-grain member reads, tie-heavy listening leaderboards, plan-band CASE logic and the cents-safe statement spine. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {rose:credit-float register} the billing pod opens Monday with, the other rebuilds the {violet:premium a-la-carte bench} acquisitions reads before every title buy. The bar to clear: *state the definition and the denominator before you compute anything* — then make every status census reconcile to 103 by construction.",
+    "Preparation strategy: the pools file carries no Audible section — zero tagged rows — so all thirty-two problems and every topic slug here are **theme-curated** to this kit's known screen shapes: credit-funnel censuses, two-grain member reads, tie-heavy listening leaderboards, plan-band CASE logic and the cents-safe statement spine. Do the topics in order, then run all six case studies on the live storefront db: one rebuilds the {rose:credit-float register} the billing pod opens Monday with, the other rebuilds the {violet:premium a-la-carte bench} acquisitions reads before every title buy, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The bar to clear: *state the definition and the denominator before you compute anything* — then make every status census reconcile to 103 by construction.",
     "The third pod is platform ops, and its db read is the expense-and-ledger spine: **36 expense rows worth 25,416** — Rent runs 14 lines at 16,800, more than Ads (4,570), Travel (2,521) and Tools (1,525) combined — while `ledger_entries` folds to a hard close gate of **181,080 debits against 181,080 credits**, cash netting 44,196 and accounts receivable 16,440. The rails story lives one table over: card carries 16 settlement legs for 37,364.00 against wire's 11 legs for 32,248.00, and five statements settle on BOTH rails — the split-settlement pattern a self-join surfaces before any close. *Ops reads this db like a P&L with row-level receipts*, and every dollar figure is still `amount_cents / 100.0`.",
     "Late-round screens go deeper than the census: window frames (`ROWS` versus the default `RANGE`, three-month trailing averages over the cycle spine), percentile tiles that band listening depth into equal tiers, `GROUP_CONCAT` shelf lists folded per member, and staging-table dedupe where keep-latest ROW_NUMBER logic decides which plan row is truth. The prep path mirrors it: run the four case studies on the live db — the two-grain market census, the redemption leaderboard, the {violet:plus-shelf band split} and the Q4 month walk — then rehearse the performance and data-quality answers out loud. *The bar never moves: definition, denominator, then SQL* — every senior loop here ends with 'what population is this number over?', and the candidate who answers before typing wins the room.",
   ],
@@ -64,7 +64,7 @@ export const audibleKit: CompanyKit = {
     {
       name: "Trial-to-paid funnel counts",
       why: "Every Audible growth screen opens with the funnel: cycles booked, plans live (shipped_at stamped), active paid months. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling a plan-change in flight 'active' — 30 versus 52 on this db.",
-      slugs: ["trial-to-paid-funnel", "funnel-step-conversion", "immediate-food-delivery-i"],
+      slugs: ["trial-to-paid-funnel", "funnel-step-conversion", "immediate-food-delivery-i", "most-frequently-ordered-product-per-customer", "ar-aging-schedule", "first-last-touch-attribution"],
     },
     {
       name: "Two-grain member censuses",
@@ -79,32 +79,32 @@ export const audibleKit: CompanyKit = {
     {
       name: "Listening leaderboards",
       why: "Leaderboards are rank-window reporting where ties are guaranteed — four members sit at 4 cycles each on this db, and the ladder above them runs 24, 17, 14, 13, 5. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about power listeners, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "rolling-7d-actives", "feature-adoption-windows"],
     },
     {
       name: "Plan banding with CASE",
       why: "Plan tiers are CASE-classified — premium, standard, trial offer — with fixed edges the pricing page publishes, and the a-la-carte shelf reads the same way at the title level. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the entitlement forecast, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "the-category-of-each-member-in-the-store"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "the-category-of-each-member-in-the-store", "winback-recovery", "trial-balance-check", "credit-utilization-bands", "gl-reconciliation"],
     },
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month cycle spine (2024-01 to 2025-02) is the growth call's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) and jump (+1,158.21 into August) named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "year-on-year-growth-rate"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "year-on-year-growth-rate", "week-over-week-churn", "growth-accounting", "null-blank-audit", "mrr-waterfall"],
     },
     {
       name: "Coverage set algebra",
       why: "Board packets stack populations — active under churned, this quarter beside last — and EXCEPT answers 'which booked cycles never went live'. UNION dedups whole rows silently, which makes it a correctness question, not a style one.",
-      slugs: ["team-scores-in-football-tournament", "the-airport-with-the-most-flights", "customers-who-never-order"],
+      slugs: ["team-scores-in-football-tournament", "the-airport-with-the-most-flights", "customers-who-never-order", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "Nested folds & cohort gates",
       why: "Screens escalate into staging: fold per-member cycle counts, then judge them against a computed platform mean (6.44 here — exactly four members clear it). Scalar, correlated and derived shapes each carry an empty-inner-query answer you are expected to give unprompted.",
-      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments"],
+      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments", "median-time-to-convert", "cohort-retention-matrix"],
     },
     {
       name: "One-pass status censuses",
       why: "The ops board gets active, in-flight, trial and churned in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "find-churn-risk-customers"],
     },
     {
       name: "Statement rails & cents discipline",
@@ -114,7 +114,7 @@ export const audibleKit: CompanyKit = {
     {
       name: "Window frames & running math",
       why: "Cumulative credit-bank value and trailing listening averages are frame questions: the default RANGE frame pulls tie rows into the running sum, ROWS walks strictly row by row, and a three-month trailing average needs an explicit frame on the month spine. Audible's trend decks are full of running math, and the frame is where the numbers quietly lie.",
-      slugs: ["find-cumulative-salary-of-an-employee", "rolling-average-steps", "running-total-for-different-genders"],
+      slugs: ["find-cumulative-salary-of-an-employee", "rolling-average-steps", "running-total-for-different-genders", "dau-wau-stickiness", "amount-anomaly-zscore"],
     },
     {
       name: "Grand-total stacks & rollups",
@@ -124,17 +124,17 @@ export const audibleKit: CompanyKit = {
     {
       name: "Ratio gates & share math",
       why: "Churn share by market (8.1% APAC down to 0 LATAM) and premium-shelf share of revenue are ratio reads: 100.0 before the division, ROUND after, and the rate gate itself lives in HAVING because the denominator only exists post-fold. Screens love asking why the rate column can't be referenced in WHERE.",
-      slugs: ["percentage-of-users-attended-a-contest", "ads-performance", "hopper-company-queries-ii"],
+      slugs: ["percentage-of-users-attended-a-contest", "ads-performance", "hopper-company-queries-ii", "deferred-revenue", "ab-test-conversion-lift", "roas-by-campaign", "ltv-cac-payback"],
     },
     {
       name: "Percentile bands & tiles",
       why: "Listening-depth tiers are percentile cuts: NTILE buckets members into equal tiers, PERCENT_RANK locates a member's depth against the 2.44-lines-per-cycle norm, and the tile edges are where the offer tiers get drawn. The interview question is always who lands on a boundary — and what the tie policy there is.",
-      slugs: ["top-percentile-fraud", "rfm-segmentation", "station-median"],
+      slugs: ["top-percentile-fraud", "rfm-segmentation", "station-median", "usage-tier-percentiles", "basket-depth-aov", "delinquency-buckets"],
     },
     {
       name: "Duplicate detection & dedupe",
       why: "Staging imports breed double-charged members and re-imported cycles; the screens test GROUP BY/HAVING COUNT(*) > 1 census shapes and keep-latest ROW_NUMBER dedupe that decides which row is truth. Audible's billing pod runs this drill every close before the credit-float register is trusted.",
-      slugs: ["duplicate-emails", "keep-latest-dedupe", "find-latest-salaries"],
+      slugs: ["duplicate-emails", "keep-latest-dedupe", "find-latest-salaries", "net-revenue-retention", "duplicate-charge-pairs", "customers-who-bought-all-products", "find-loyal-customers"],
     },
   ],
 

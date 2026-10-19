@@ -55,27 +55,27 @@ export const yangoKit: CompanyKit = {
     {
       name: "Two-grain city censuses",
       why: "Rides and riders are different grains of the same join, and every launch-city review reports both: EU runs 45 rides from 8 riders while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is demand load and which is rider coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "cohort-repeat-revenue", "find-bursty-behavior"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "cohort-repeat-revenue", "find-bursty-behavior", "average-selling-price", "confirmation-rate", "immediate-food-delivery-ii", "find-golden-hour-customers", "monthly-transactions-i", "rolling-7d-actives", "dau-wau-stickiness", "active-users"],
     },
     {
       name: "Joining riders to fare lines",
       why: "Riders carry city bucket and signup date; rides inherit them through joins, and fare lines live one join deeper in order_items. A ride without a rider is corruption, a rider without rides is whitespace — and joining the fare-line table without care fans every total out, 251 lines against 103 rides.",
-      slugs: ["combine-two-tables", "product-sales-analysis-ii", "sales-analysis-i"],
+      slugs: ["combine-two-tables", "product-sales-analysis-ii", "sales-analysis-i", "trips-and-users", "hopper-company-queries-ii", "number-of-times-a-driver-was-a-passenger"],
     },
     {
       name: "Rider-frequency ladders",
       why: "The frequency leaderboard is rank-window reporting where ties are guaranteed — four riders sit at 4 rides each on this db, and the ladder above them runs 24, 17, 14, 13, 5. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about who gets the next promo wave, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "customer-order-frequency", "users-with-two-purchases-within-seven-days"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "customer-order-frequency", "users-with-two-purchases-within-seven-days", "top-travellers", "most-frequently-ordered-product-per-customer"],
     },
     {
       name: "Service-class CASE bands",
       why: "Economy, Business and Delivery classes are CASE-classified with fixed edges the rider app publishes, and launch budgets get cut along the same bands. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the class P&L, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "the-category-of-each-member-in-the-store"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "the-category-of-each-member-in-the-store", "count-salary-categories"],
     },
     {
       name: "Launch-calendar walks",
       why: "The 14-month ride spine (2024-01 to 2025-02) is the launch review's home turf: prior month beside current, delta rounded, trough (1,193.86 in July 2024) named out loud. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine", "new-users-daily-count", "median-time-to-convert", "find-bursty-behavior", "users-with-two-purchases-within-seven-days"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine", "new-users-daily-count", "median-time-to-convert", "find-bursty-behavior", "users-with-two-purchases-within-seven-days", "fix-names-in-a-table", "keep-latest-dedupe"],
     },
     {
       name: "Launch-packet set algebra",

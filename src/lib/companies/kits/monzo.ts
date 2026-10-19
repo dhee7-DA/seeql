@@ -53,7 +53,7 @@ export const monzoKit: CompanyKit = {
     {
       name: "Authorization funnels & honest denominators",
       why: "Every Monzo screen opens with the money funnel: authorizations booked, settled with a stamp, declined by the fraud stack. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling a pre-auth 'settled' — 14 versus 82 on this db.",
-      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "find-third-transaction", "structuring-detection"],
+      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "find-third-transaction", "structuring-detection", "suspicious-bank-account-transactions", "bank-account-summary", "monthly-transactions-i", "settlement-fails-aging"],
     },
     {
       name: "Two-grain market censuses",
@@ -68,22 +68,22 @@ export const monzoKit: CompanyKit = {
     {
       name: "Tie-heavy engagement ladders",
       why: "Ladders are rank-window reporting where ties are guaranteed — four holders sit at 4 authorizations each on this db, and the ladder above them runs 24, 17, 14, 13, 5. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about who gets the paid-tier call first.",
-      slugs: ["rank-scores", "top-earners", "the-most-recent-three-orders", "rfm-segmentation"],
+      slugs: ["rank-scores", "top-earners", "the-most-recent-three-orders", "rfm-segmentation", "find-churn-risk-customers"],
     },
     {
       name: "Tier banding with CASE",
       why: "Paid tiers are CASE-classified — Plus, Perks, Max — with fixed edges the pricing page publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the tier P&L, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["the-winner-university", "the-category-of-each-member-in-the-store", "weather-type-in-each-country", "delinquency-buckets", "ar-aging-schedule"],
+      slugs: ["the-winner-university", "the-category-of-each-member-in-the-store", "weather-type-in-each-country", "delinquency-buckets", "ar-aging-schedule", "customer-placing-the-largest-number-of-orders", "dormant-reactivation", "duplicate-charge-pairs", "keep-latest-dedupe", "trial-balance-check"],
     },
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month spend spine (2024-01 to 2025-02) is the money review's home turf: prior month beside current, delta rounded, the 1,193.86 July trough named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["biggest-window-between-events", "average-time-of-process-per-machine", "second-day-confirmation", "maximum-transaction-each-day", "late-arriving-restatement", "consecutive-transactions-with-increasing-amounts", "customers-with-strictly-increasing-purchases"],
+      slugs: ["biggest-window-between-events", "average-time-of-process-per-machine", "second-day-confirmation", "maximum-transaction-each-day", "late-arriving-restatement", "consecutive-transactions-with-increasing-amounts", "customers-with-strictly-increasing-purchases", "amount-anomaly-zscore", "fix-names-in-a-table", "null-blank-audit"],
     },
     {
       name: "Coverage set algebra",
       why: "Close packets stack populations — settled under declined, this month beside last — and EXCEPT answers 'which funded bills never settled clean'. UNION dedups whole rows silently, which makes it a correctness question, not a style one.",
-      slugs: ["team-scores-in-football-tournament", "the-airport-with-the-most-flights", "league-statistics"],
+      slugs: ["team-scores-in-football-tournament", "the-airport-with-the-most-flights", "league-statistics", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "Nested folds & average gates",
@@ -93,7 +93,7 @@ export const monzoKit: CompanyKit = {
     {
       name: "One-pass status censuses",
       why: "The ops board gets settled, stamped, pre-auth and declined in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift.",
-      slugs: ["active-businesses", "find-stores-with-inventory-imbalance", "calculate-orders-within-each-interval", "odd-and-even-transactions"],
+      slugs: ["active-businesses", "find-stores-with-inventory-imbalance", "calculate-orders-within-each-interval", "odd-and-even-transactions", "queries-quality-and-percentage", "total-traveled-distance"],
     },
     {
       name: "Billing & cents discipline",

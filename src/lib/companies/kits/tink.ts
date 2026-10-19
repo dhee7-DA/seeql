@@ -61,32 +61,32 @@ export const tinkKit: CompanyKit = {
     {
       name: "Connection-fate conditional counts",
       why: "Every Tink connectivity screen opens with the fate census: cycles booked, live (delivered), onboarded with the go-live stamp, in KYC, revoked. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling an onboarded cycle 'live' — 30 versus 52 on this db.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "count-salary-categories", "median-time-to-convert", "dau-wau-stickiness"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "count-salary-categories", "median-time-to-convert", "dau-wau-stickiness", "percentage-of-users-attended-a-contest", "immediate-food-delivery-i", "customer-order-frequency", "confirmation-rate", "not-boring-movies"],
     },
     {
       name: "Two-grain market censuses",
       why: "Agreement cycles and clients are different grains of the same join, and every census here reports both: EU runs 45 cycles from 8 clients while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "rolling-7d-actives", "cohort-retention-matrix"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "rolling-7d-actives", "cohort-retention-matrix", "user-activity-for-the-past-30-days-ii", "investments-in-2016"],
     },
     {
       name: "Joining clients to agreement cycles",
       why: "Clients carry market and created_at; agreement cycles inherit them through joins, and the join type decides who survives. A cycle without a client row is corruption; a client without cycles is whitespace — though on this db the anti-join returns a confident zero, and proving that zero is part of the job.",
-      slugs: ["combine-two-tables", "sales-analysis-i", "employee-bonus", "late-arriving-restatement"],
+      slugs: ["combine-two-tables", "sales-analysis-i", "employee-bonus", "late-arriving-restatement", "sales-analysis-ii", "customers-who-bought-a-and-b-not-c", "game-play-analysis-iv", "find-followers-count"],
     },
     {
       name: "Bank-coverage leaderboards",
       why: "Connectivity partners are ranked by processed value — Nordic 11,130.25 leads Midwest 9,294.93 with a 40-line Shenzhen bench below — and rank semantics are a policy about peer banks. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is exactly the argument a coverage review settles out loud.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "point-in-time-asof", "scd2-build"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "point-in-time-asof", "scd2-build", "second-highest-salary", "top-travellers"],
     },
     {
       name: "Product-family banding with CASE",
       why: "The API product shelf — aggregation, payment initiation, data enrichment — is CASE-classified into families with fixed edges the PSD2 register publishes. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the coverage register, and a reordered WHEN quietly re-bands the base.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "type-of-triangle", "mrr-waterfall", "deferred-revenue"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "type-of-triangle", "mrr-waterfall", "deferred-revenue", "number-of-employees-who-met-the-target"],
     },
     {
       name: "Go-live clocks & LAG walks",
       why: "The go-live clock (created_at → shipped_at, 2.98-day average over the 82 stamped) and the 14-month cycle spine (2024-01 to 2025-02) are the latency call's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) and jump (+1,158.21 into August) named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine", "journal-gap-detection"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "average-time-of-process-per-machine", "journal-gap-detection", "product-price-at-a-given-date"],
     },
     {
       name: "Reachability set algebra",
@@ -96,7 +96,7 @@ export const tinkKit: CompanyKit = {
     {
       name: "Cohort subqueries & tier gates",
       why: "Screens escalate into staging: fold per-client cycle counts, then judge them against a computed platform mean (6.44 here — exactly four clients clear it), or gate a bench with a HAVING-derived IN-list the way the coverage pod does. Scalar, correlated and derived shapes each carry an empty-inner-query answer you are expected to give unprompted.",
-      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments", "growth-accounting", "net-revenue-retention"],
+      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments", "growth-accounting", "net-revenue-retention", "trial-to-paid-funnel"],
     },
     {
       name: "Usage-billing cents discipline",

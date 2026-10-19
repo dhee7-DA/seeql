@@ -56,7 +56,7 @@ export const bestbuyKit: CompanyKit = {
     "**Best Buy** is North America's big-ticket electronics retailer — the blue-box floor where laptops, TVs, audio and wearables sell beside a counter of cables, cases and protection plans that can out-earn the box they ride in on. The economics are attach economics: the margin lives less in the headline SKU and more in what lands beside it — the HDMI cable with the TV, the mouse with the laptop, the two-year plan with everything. This kit maps the storefront db onto that floor: the 16 customers rows are {sky:My Best Buy member accounts}, the 103 orders are **register transactions worth 34,833.28**, and the 251 order_items rows are scanned line SKUs — quantity = units on the line, unit_price = shelf price. The status map is fixed: delivered = {emerald:completed and kept} (52, 50.5%), shipped = fulfilled in flight (30, 29.1%), pending = awaiting payment capture (14, 13.6%), cancelled = {rose:voided at the register} (7, 6.8%).",
     "The merchandising org runs on two folds. The attach fold is first: every scanned line splits at the **55-dollar attach bar** — sub-55 counter add-ons move **268 units at a 31.01 average** line price against 230 big-ticket units at 115.85, and while 88 of 103 transactions ride at least one add-on, 67 touch both bands (bands are line-grain, and a basket can ride both). The shelf ladder is second: 8 SKUs average 111.50 in the mid band (50 to 200) and 8 average 32.06 under 50 — the premium arm above 200 is honestly empty, the ladder tops out at 199.99, and price-match reads live inside those edges. Money sits one layer down: financing statements and tender legs store INTEGER cents, where the dollar read is `amount_cents / 100.0`.",
     "Interview screens are attach-then-price-match with a policy accent. A typical loop opens with a two-grain census — the {amber:Audio crown} moves 97 units for 11,744.01 across 46 transactions while Accessories touches 54 of the 103 tickets — then escalates into a price-match read: which SKUs sit inside the match window, which lines transacted above or below the 70.89 line-average, and *'what does the match do to the margin?'* is asked out loud before you write SQL. Late rounds walk the {violet:14-month promo spine} (2024-01 to 2025-02) with LAG deltas around the July trough (1,193.86) and the November promo bump, or audit the financing book — 28 statements against 27 tender legs, where paid-status #28 (1,756.00) carries zero legs: the phantom adjustment every refund sweep hunts.",
-    "Preparation strategy: the pools file carries no Best Buy section — **0 tagged rows** — so all sixteen problems and every topic slug here are **theme-curated** to this kit's known screen shapes: attach folds, price-band CASE work, member RFM tiers, as-of price-match reads, promo-calendar walks and the cents-safe statement spine. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {emerald:attach-bar census} merchandising opens every Monday with, the other rebuilds the {rose:phantom-adjustment sweep} the refund desk runs before statements close. The bar to clear: *state the bar and the denominator before you compute anything* — then make every fold reconcile to 34,833.28 by construction.",
+    "Preparation strategy: the pools file carries no Best Buy section — **0 tagged rows** — so all thirty-two problems and every topic slug here are **theme-curated** to this kit's known screen shapes: attach folds, price-band CASE work, member RFM tiers, as-of price-match reads, promo-calendar walks and the cents-safe statement spine. Do the topics in order, then run all six case studies on the live storefront db: one rebuilds the {emerald:attach-bar census} merchandising opens every Monday with, the other rebuilds the {rose:phantom-adjustment sweep} the refund desk runs before statements close, with four more rehearsing the same drills at other grains — the kit is built for spaced practice rather than one sitting... The bar to clear: *state the bar and the denominator before you compute anything* — then make every fold reconcile to 34,833.28 by construction.",
     "The data org mirrors the floor plan. Merchandising analytics owns the {amber:attach fold} and the shelf ladder — a Monday-census culture where every band, bar and denominator is quoted before it is computed. Finance ops owns the statement spine: `amount_cents / 100.0` is the house dollar read, and the ledger must land at **181,080 against 181,080** before the close ships. The fulfillment pod owns the ship clock — *2.98 days open-to-dock over the 82 stamped tickets* — and marketing owns the promo calendar, where LAG deltas around the July trough defend every circular dollar. Analysts sit close to the stakeholders who argue with the numbers, which is why the screens grade definitions as hard as syntax.",
     "Senior rounds add depth, not novelty: window frames on the promo spine (why *the default frame is not your trailing average*), set-op audits that must foot to 28 statements, self-joins that canonicalize pairs before they count, and a CTE-staged reconciliation the panel reads like prose. The prep bar for this kit's second half: run every new case on the live db, then answer the theory bank out loud — if you can defend the {emerald:55-dollar bar}, the {violet:14-month spine} and the phantom #28 in one breath each, the loop is yours.",
   ],
@@ -87,32 +87,32 @@ export const bestbuyKit: CompanyKit = {
     {
       name: "Attach-basket folds",
       why: "Every Best Buy margin story is an attach story: the box earns the traffic, the cable earns the quarter. At line grain the sub-55 fold puts 268 units at 31.01 against 230 big-ticket units at 115.85, and at ticket grain 88 of 103 carry an add-on while 67 touch both bands. Conditional counts with stated denominators are the exact skill being graded.",
-      slugs: ["basket-depth-aov", "transactions-per-visit-histogram", "customers-who-bought-a-and-b-not-c"],
+      slugs: ["basket-depth-aov", "transactions-per-visit-histogram", "customers-who-bought-a-and-b-not-c", "find-product-recommendation-pairs"],
     },
     {
       name: "Price-band CASE shelves",
       why: "The shelf is a CASE fold: budget under 50 (8 SKUs at 32.06), mid 50-to-200 (8 at 111.50), premium above 200 honestly empty at the 199.99 ceiling. Merchandising re-bands the shelf every promo cycle — drop the attach bar from 55 to 50 and 5 units migrate bands (263/235) before anyone touches the shelf. Exhaustive, ordered arms are the habit being drilled.",
-      slugs: ["weather-type-in-each-country", "count-salary-categories", "calculate-orders-within-each-interval"],
+      slugs: ["weather-type-in-each-country", "count-salary-categories", "calculate-orders-within-each-interval", "most-frequently-ordered-product-per-customer", "the-most-recent-orders-for-each-product", "average-selling-price"],
     },
     {
       name: "Price-match windows",
       why: "Best Buy matches competitor prices, and the analytics under it is as-of pricing: what did the shelf read on the member's purchase day, and what does it read now. The latest-row-before-date shape answers the first; the best-rule discount fold answers the match itself — shelf, match, floor, take the lowest legal price. The premium band's absence is the ceiling check every match audit runs first.",
-      slugs: ["product-price-at-a-given-date", "calculate-product-final-price", "find-expensive-cities"],
+      slugs: ["product-price-at-a-given-date", "calculate-product-final-price", "find-expensive-cities", "ratings-histogram", "vintage-default-curves"],
     },
     {
       name: "Member tiers & RFM",
       why: "My Best Buy is free at sign-up and paid above it, and every growth deck cuts the 16 member accounts into tiers by recency, frequency and money. On this db the tiers are band folds over lifetime spend — 63.5% of revenue rides members past 3,000 — and RFM tiles are the segmentation drill behind the email calendar. Tier drift is where expansion targeting starts.",
-      slugs: ["rfm-segmentation", "customer-purchasing-behavior-analysis", "usage-tier-percentiles"],
+      slugs: ["rfm-segmentation", "customer-purchasing-behavior-analysis", "usage-tier-percentiles", "customer-order-frequency"],
     },
     {
       name: "Big-ticket leaderboards",
       why: "The member ladder runs 24, 17, 14, 13, 5 transactions with a four-way tie at 4 below — Alice Chen's 24 tickets for 7,262.35 is the crown, and the ladder's shape decides who gets the white-glove treatment. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer members, not syntax. Leaderboards publish a tie rule or they publish arguments.",
-      slugs: ["customer-placing-the-largest-number-of-orders", "top-earners", "number-of-rich-customers"],
+      slugs: ["customer-placing-the-largest-number-of-orders", "top-earners", "number-of-rich-customers", "product-sales-analysis-ii", "second-highest-salary", "rank-scores"],
     },
     {
       name: "Promo-calendar walks",
       why: "The 14-month spine (2024-01 to 2025-02) is the promo calendar's home turf: the book opens at 3,731.97, troughs at 1,193.86 in July, and November's 1,648.80 carries two of the seven voids — Black-Friday traffic that did not convert. LAG drives the walk; the first row is NULL by definition, the baseline, never a zero. Day-of-week folds are the Friday-circular read that decides where the ad money lands.",
-      slugs: ["sales-by-day-of-the-week", "year-on-year-growth-rate", "seasonal-sales-analysis"],
+      slugs: ["sales-by-day-of-the-week", "year-on-year-growth-rate", "seasonal-sales-analysis", "weeks-of-supply", "combine-two-tables", "employees-with-missing-information", "null-blank-audit"],
     },
     {
       name: "Ship-from-store clocks",
@@ -122,32 +122,32 @@ export const bestbuyKit: CompanyKit = {
     {
       name: "Returns & exchange desks",
       why: "The service desk is margin's back door: returns-rate-by-category is the exact read — which families come back and at what share — and showrooming is the visited-but-never-transacted anti-join. On-time-promise shares map onto the pickup window the same way the delivery fold does. Every desk metric is a rate with a denominator somebody on the panel will challenge.",
-      slugs: ["returns-rate-by-category", "customer-who-visited-but-did-not-transact", "immediate-food-delivery-ii"],
+      slugs: ["returns-rate-by-category", "customer-who-visited-but-did-not-transact", "immediate-food-delivery-ii", "confirmation-rate", "customers-who-never-order", "suspicious-bank-account-transactions"],
     },
     {
       name: "Financing statements & tender rails",
       why: "Big tickets ride financing, and the finance tables are where tickets meet money: 28 statements, 27 tender legs, INTEGER cents with the /100.0 dollar read. The rails split card legs (16 / 37,364.00) from financing legs (11 / 32,248.00), and 5 baskets settle on both — the split-tender read is a COUNT DISTINCT away. Delinquency buckets and duplicate-charge guards are the desk's weekly hygiene.",
-      slugs: ["bank-account-summary-ii", "delinquency-buckets", "duplicate-charge-pairs"],
+      slugs: ["bank-account-summary-ii", "delinquency-buckets", "duplicate-charge-pairs", "find-the-team-size", "ar-aging-schedule", "settlement-fails-aging", "unique-orders-and-customers-per-month"],
     },
     {
       name: "One-pass shelf censuses",
       why: "The Monday board wants completed, in-flight, awaiting-capture and voided in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift. The reconciliation identity — branches sum to COUNT(*) — is the correctness argument the panel listens for.",
-      slugs: ["active-businesses", "snaps-analysis", "create-a-session-bar-chart"],
+      slugs: ["active-businesses", "snaps-analysis", "create-a-session-bar-chart", "queries-quality-and-percentage", "recyclable-and-low-fat-products", "not-boring-movies"],
     },
     {
       name: "Vendor scorecards & supplier mix",
       why: "Six brand partners carry the shelf and the fold is unforgiving: Nordic Gadgets moves 82 units into 11,130.25 (32% of the book) while Midwest Hardware moves MORE units — 109 — for 9,294.93, and the trusted bench (rating 4.5-plus) is just Nordic 4.6 and Alpine 4.8 against Pacific's 3.9 floor. Supplier revenue share, listings counts and per-partner line grain are the exact folds the quarterly line review argues over, and the HAVING floor (past the 3,000-dollar line) is how the deck decides who presents.",
-      slugs: ["find-stores-with-inventory-imbalance", "percentage-of-users-attended-a-contest", "warehouse-manager"],
+      slugs: ["find-stores-with-inventory-imbalance", "percentage-of-users-attended-a-contest", "warehouse-manager", "classes-more-than-5-students"],
     },
     {
       name: "Set-op audits & mirror sweeps",
       why: "The refund desk's best audits are directional: paid-status EXCEPT has-a-leg surfaces the phantom #28 at 1,756.00, the swapped arms return the 2 claims whose legs exist without a paid status, and INTERSECT finds the 5 split-rail cycles that settled on both card and wire. UNION ALL stacks are the tender report's backbone — 16 card legs / 37,364.00 against 11 financing legs / 32,248.00 — where a bare UNION's silent dedupe stops the book footing to 27 legs / 69,612.00.",
-      slugs: ["movie-rating", "monthly-transactions-ii", "league-statistics"],
+      slugs: ["movie-rating", "monthly-transactions-ii", "league-statistics", "keep-latest-dedupe"],
     },
     {
       name: "CTE staging & multi-step reads",
       why: "Real reads here are staged: fold legs per statement, classify verdicts, roll the buckets up — 28 statements footing to the book or the close does not ship. WITH turns each stage into a named, commentable, testable sentence; the promo spine's month-bucket fold and the member-concentration ladder are the same habit at different grains. Multi-step reads are how this team ships queries other people can audit.",
-      slugs: ["hopper-company-queries-i", "game-play-analysis-v", "restaurant-growth"],
+      slugs: ["hopper-company-queries-i", "game-play-analysis-v", "restaurant-growth", "list-the-products-ordered-in-a-period", "product-sales-analysis-iii"],
     },
     {
       name: "Ledger folds & trial balance",
@@ -157,7 +157,7 @@ export const bestbuyKit: CompanyKit = {
     {
       name: "Catalog hygiene & text folds",
       why: "The shelf joins on names before it joins on ids: TRIM and UPPER discipline keeps the same box from splitting into two SKUs, SUBSTR slices the month buckets the promo spine rides on, and GROUP_CONCAT prints the one-cell SKU list merchandising eyeballs at attach. Text folds are unglamorous and everywhere — this is the warm-up lane for every other topic in the kit.",
-      slugs: ["find-cities-in-each-state", "find-all-unique-email-domains", "concatenate-the-name-and-the-profession"],
+      slugs: ["find-cities-in-each-state", "find-all-unique-email-domains", "concatenate-the-name-and-the-profession", "sales-analysis-i", "fix-product-name-format", "product-sales-analysis-i", "group-sold-products-by-the-date"],
     },
   ],
 

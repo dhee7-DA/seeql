@@ -101,12 +101,12 @@ export const grubhubKit: CompanyKit = {
     {
       name: "Diner frequency & repeat demand",
       why: "Grubhub's growth engine is reorders, and the first screen is always the frequency fold: orders per diner, banded, gated with HAVING. The trap is grain — COUNT(*) counts orders, COUNT(DISTINCT customer_id) folds repeat demand back to people, and the gap between them is the intensity signal.",
-      slugs: ["customer-order-frequency", "customer-placing-the-largest-number-of-orders", "unique-orders-and-customers-per-month"],
+      slugs: ["customer-order-frequency", "customer-placing-the-largest-number-of-orders", "unique-orders-and-customers-per-month", "report-contiguous-dates", "find-bursty-behavior", "median-employee-salary"],
     },
     {
       name: "Kept demand & cancellation math",
       why: "The marketplace's most-watched ratio is kept ÷ placed, and it is a conditional count before it is a percentage: SUM(CASE WHEN status = 'cancelled' …) over the same rows COUNT(*) divides. On this db that reads 7 of 103 = 6.8% — drill it until putting the status filter in the wrong clause feels physically wrong.",
-      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "monthly-transactions-i"],
+      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "monthly-transactions-i", "most-frequently-ordered-product-per-customer", "immediate-food-delivery-iii", "second-most-recent-activity"],
     },
     {
       name: "The two-grain zone census",
@@ -121,7 +121,7 @@ export const grubhubKit: CompanyKit = {
     {
       name: "Driver batching & running sums",
       why: "Batching is capacity math: how many orders fit a run before the bag is full, how many minutes of demand the online fleet covers. Running totals and cumulative windows answer it — and the marketplace twist is that capacity questions are always cumulative, never point-in-time.",
-      slugs: ["last-person-to-fit-in-the-elevator", "last-person-to-fit-in-the-bus", "game-play-analysis-iii"],
+      slugs: ["last-person-to-fit-in-the-elevator", "last-person-to-fit-in-the-bus", "game-play-analysis-iii", "average-time-of-process-per-machine", "product-price-at-a-given-date", "running-total-for-different-genders", "find-cumulative-salary-of-an-employee"],
     },
     {
       name: "Golden hours & reorder date math",
@@ -131,17 +131,17 @@ export const grubhubKit: CompanyKit = {
     {
       name: "Basket baselines & scalar subqueries",
       why: "'Zones above the network basket' is the favorite shape: the outer query folds 103 orders into zone baskets (LATAM 426.22, US 383.48) while a scalar subquery folds the same table once, globally — 338.19. HAVING judges each zone against that single number, and the denominator you choose is the definition.",
-      slugs: ["market-analysis-i", "game-play-analysis-iv", "investments-in-2016"],
+      slugs: ["market-analysis-i", "game-play-analysis-iv", "investments-in-2016", "orders-with-maximum-quantity-above-average"],
     },
     {
       name: "Leaderboards & the rank trio",
       why: "Top zones by demand, top partners by delivered revenue, worst suburbs by cancellation — marketplace reporting is leaderboard reporting, and ties are everywhere. ROW_NUMBER, RANK and DENSE_RANK differ exactly at ties, and LIMIT-boundary ties are the classic 'why does my top-8 return 9 rows' bug.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "the-most-recent-three-orders"],
     },
     {
       name: "Rates with honest denominators",
       why: "Cancellation share, on-time share, reorder rate — Grubhub's ratios punish integer division and careless filters. The house habit: 100.0 before the division, the denominator's population decided before the ratio, ROUND only at the very end.",
-      slugs: ["percentage-of-users-attended-a-contest", "queries-quality-and-percentage", "confirmation-rate"],
+      slugs: ["percentage-of-users-attended-a-contest", "queries-quality-and-percentage", "confirmation-rate", "trips-and-users", "calculate-compressed-mean"],
     },
     {
       name: "One-pass status folds",
@@ -156,22 +156,22 @@ export const grubhubKit: CompanyKit = {
     {
       name: "Set-op report stitching",
       why: "Close decks stack reports: kept demand over cancelled, zones over months, churn beside win-back. UNION ALL is the cheap stack, UNION silently dedupes identical rows, and EXCEPT's direction decides who survives — 'zones with orders EXCEPT zones with cancellations' is LATAM here, the only zone with a zero. Know which rows each operator keeps before a two-part report ships.",
-      slugs: ["monthly-transactions-ii", "the-airport-with-the-most-flights", "count-salary-categories"],
+      slugs: ["monthly-transactions-ii", "the-airport-with-the-most-flights", "count-salary-categories", "friday-purchases-i", "rolling-average-steps"],
     },
     {
       name: "Month-over-month momentum",
       why: "The growth board reads deltas, not levels: 2024-02's 9 placed orders against 2024-01's 8 is +1, the June dip to 6 is -2, and all 14 months from 2024-01 to 2025-02 carry demand — the spine that proves no empty bucket exists. STRFTIME month slices plus LAG/LEAD build the momentum column; the honest first row is NULL, never zero.",
-      slugs: ["hopper-company-queries-iii", "year-on-year-growth-rate", "biggest-window-between-events"],
+      slugs: ["hopper-company-queries-iii", "year-on-year-growth-rate", "biggest-window-between-events", "sales-by-day-of-the-week"],
     },
     {
       name: "Churn, dormancy & anti-joins",
       why: "Win-back lists are anti-joins: diners whose last order fell out of the window, partners whose settlements went unpaid. On this db the diner-side anti-join reads 0 — every diner ordered — so the real chase list is financial: 6 settlements with no payment row. The drill is the NULL-safe shape: NOT IN against a nullable column empties the list silently; LEFT JOIN … IS NULL and NOT EXISTS don't.",
-      slugs: ["find-churn-risk-customers", "dormant-reactivation", "customer-who-visited-but-did-not-transact"],
+      slugs: ["find-churn-risk-customers", "dormant-reactivation", "customer-who-visited-but-did-not-transact", "maximum-transaction-each-day", "uber-first-transaction"],
     },
     {
       name: "Basket bands & histogram cuts",
       why: "Baskets band cleanly into snack runs (15 orders under 100), weeknight regulars (63 between 100 and 500) and group feasts (25 over 500, averaging 695.18) — a CASE-fold census pricing reads weekly. Histogram thinking extends to zero-filled ladders and spend cuts; the band edges are definitions, and >= versus > decides where the 100.00 basket lands.",
-      slugs: ["calculate-orders-within-each-interval", "spend-histogram", "transactions-per-visit-histogram"],
+      slugs: ["calculate-orders-within-each-interval", "spend-histogram", "transactions-per-visit-histogram", "group-sold-products-by-the-date", "the-category-of-each-member-in-the-store"],
     },
   ],
 

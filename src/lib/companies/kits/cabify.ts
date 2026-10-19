@@ -31,13 +31,13 @@ export const cabifyKit: CompanyKit = {
   brief: [
     "**Cabify** is the Spanish ride-hailing company that bet on quality over volume — founded in Madrid in 2011, running Spain and Latin America (the São Paulo flagship among them) with a tiered fleet: Lite for value, Easy taxi integration, Executive for the premium end, plus sustainability bands, and Cabify Business corporate accounts riding on top. The positioning shows up in the data: drivers onboard as independent fleet partners with quality ratings, ETAs and safety are board-level metrics, and the corporate book is billed on statements, not swipes. This kit maps the storefront db onto that world: 16 riders, 103 trips worth **34,833.28**, and 251 fare lines — quantity = units, `unit_price` = unit rate. The trip-fate map is fixed: delivered = {emerald:completed-and-charged} (52, 50.5%), shipped = in-progress (30, 29.1%), pending = requested-awaiting-driver (14), cancelled = {rose:rider/driver cancel} (7, 6.8%).",
     "The data org splits into city ops, marketplace/supply, and a corporate-account pod that owns Cabify Business, and they read the same trip spine at different grains. A trip books at created_at, and `shipped_at` is stamped when the pickup is dispatched — **82 of 103 trips** carry the stamp; on this db's coarse DAY clock the request-to-dispatch gap averages **2.98 days** with a 2–4 spread (production reads minutes — the sandbox clock is a teaching abstraction), and the regional reads run EU 2.94, APAC 2.93, US 3.07, LATAM 3.5. Money sits one layer down: invoices are the corporate billing statements and payments are the charge legs, both in INTEGER cents where the dollar read is `amount_cents / 100.0`. The two rails tell the corporate-vs-consumer story: card legs — rider charges — are 16 for 37,364.00, while {violet:wire} legs — corporate settlements — are 11 for 32,248.00.",
-    "Interview screens are denominator-first and market-shaped. A typical loop opens with a **two-grain market census** — EU runs 45 trips from just 8 riders (5.6 per rider) while the US pilot runs 19 from 2 (9.5) — then escalates into a rate where the interviewer asks the denominator out loud (*'does an awaiting trip count in your completion base?'*), then into the rider-value ladder where the 24/17/14/13/5 rungs end in a **three-way tie at 4** and rank semantics become a policy decision. Late rounds walk the {sky:14-month trip spine} (2024-01 to 2025-02, opening month 3,731.97, July trough 1,193.86) with LAG deltas, or the fleet-partner quality bench where only 2 of 6 partners clear the 4.5 rating floor. Candidates who state the status filter and the denominator before writing SQL are the ones who get callbacks.",
+    "Interview screens are denominator-first and market-shaped. A typical loop opens with a **two-grain market census** — EU runs 45 trips from just 8 riders (5.6 per rider) while the US pilot runs 19 from 2 (9.5) — then escalates into a rate where the interviewer asks the denominator out loud (*'does an awaiting trip count in your completion base?'*), then into the rider-value ladder where the 24/17/14/13/5 rungs end in a **four-way tie at 4** and rank semantics become a policy decision. Late rounds walk the {sky:14-month trip spine} (2024-01 to 2025-02, opening month 3,731.97, July trough 1,193.86) with LAG deltas, or the fleet-partner quality bench where only 2 of 6 partners clear the 4.5 rating floor. Candidates who state the status filter and the denominator before writing SQL are the ones who get callbacks.",
     "Preparation strategy: the pools file carries no Cabify section — fewer than 2 tagged rows, none SQL-graded — so all thirty-two problems and every topic slug here are **theme-curated** to this kit's known screen shapes: trip-fate conditional counts, two-grain censuses, CASE tier bands, tie-heavy rider ladders, pickup-latency date math and the cents-safe corporate billing spine. Do the topics in order, then run the **six case studies** on the live storefront db: the {emerald:market trip-fate census} city ops opens every week with, the {violet:charge-rail reconciliation stack} finance closes each month with, a month-over-month fare pulse, an above-the-mean rider watchlist, a never-completed winback anti-join, and a market tier fold for the catalog pod — then re-run each from a blank editor a week later, because *the second pass is where recall actually forms*. The bar to clear: *state the definition and the denominator before you compute anything* — then make every trip-fate census reconcile to 103 by construction.",
   ],
 
   dayInLife: [
     "**08:40 —** The day starts with the trip-fate refresh. A city-ops analyst opens the market board before standup: did overnight requests land, does the one-pass fate census reconcile — 52 completed + 30 in-progress + 14 awaiting + 7 cancelled = **103 by construction**? A market whose arms don't foot is *the day's first incident*, not a rounding note. The {rose:cancellation} share goes out by market — APAC 8.1% worst against EU 6.7%, US 5.3%, LATAM clean at 0 — and if pickup-dispatch latency drifts off the **2.98-day** norm on the sandbox clock, the supply queue gets pulled before the ETA review ships.",
-    "**11:30 —** Midday is the quality-and-mix read. The account pod wants the rider-value ladder with the three-way tie at 4 trips handled honestly — shared rungs, named policy; the supply team wants the fleet-partner bench re-cut, only **2 of 6 partners** above the 4.5 rating floor; a market lead wants trips beside riders (EU 45-from-8 versus US 19-from-2) and the tier mix underneath — how much of the book rides **Executive** versus Lite. Each ask is a join, a conditional aggregate and one judgment call about statuses. The analyst writes the query twice — *once to answer, once with the definition spelled out so the number survives the ops-review argument*.",
+    "**11:30 —** Midday is the quality-and-mix read. The account pod wants the rider-value ladder with the four-way tie at 4 trips handled honestly — shared rungs, named policy; the supply team wants the fleet-partner bench re-cut, only **2 of 6 partners** above the 4.5 rating floor; a market lead wants trips beside riders (EU 45-from-8 versus US 19-from-2) and the tier mix underneath — how much of the book rides **Executive** versus Lite. Each ask is a join, a conditional aggregate and one judgment call about statuses. The analyst writes the query twice — *once to answer, once with the definition spelled out so the number survives the ops-review argument*.",
     "**16:00 —** The afternoon tilts to money. The charge-rail stack refreshes first: 16 card legs worth 37,364.00, 11 {violet:wire} legs — the corporate settlements — worth 32,248.00, and the TOTAL row at **27 legs / 69,612.00** that must tie to the cash account's debit footing before billing sends a single reminder. The coverage split reads 21 exact, 1 partial (4,000 of 6,148 settled) and feeds the dunning draft — 6 corporate statements worth 15,217 have no settlement leg at all — while the anomaly list gets walked line by line: a void-but-charged statement (#11, 925.00) and a paid-status statement with zero legs (#28, 1,756.00). The day ends the way every close does: the ledger trial balance must read **181,080 against 181,080**, delta zero — {emerald:the close ships} or tomorrow starts with an incident.",
   ],
 
@@ -56,7 +56,7 @@ export const cabifyKit: CompanyKit = {
     {
       name: "Trip-fate conditional counts",
       why: "Every Cabify ops screen opens with the fate census: requested, dispatched, completed-and-charged, cancelled. Each stage is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling an in-progress trip 'completed' — 30 versus 52 on this db.",
-      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "game-play-analysis-v", "ads-funnel"],
+      slugs: ["immediate-food-delivery-i", "immediate-food-delivery-ii", "percentage-of-users-attended-a-contest", "game-play-analysis-v", "ads-funnel", "customer-placing-the-largest-number-of-orders", "second-highest-salary"],
     },
     {
       name: "Two-grain market censuses",
@@ -66,22 +66,22 @@ export const cabifyKit: CompanyKit = {
     {
       name: "Tier banding with CASE",
       why: "Lite, Easy, Executive and the sustainability bands are CASE-classified — with fixed edges the fare card publishes and a price ladder (14.99 to 199.99) that splits into budget and mid bands, 8 SKUs each. The arms must be exhaustive and ordered: a hole in the CASE is a hole in the revenue forecast.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "customers-who-bought-a-and-b-not-c", "ar-aging-schedule"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "customers-who-bought-a-and-b-not-c", "ar-aging-schedule", "most-frequently-ordered-product-per-customer", "average-selling-price"],
     },
     {
       name: "Rider-value ladders",
       why: "Leaderboards are rank-window reporting where ties are guaranteed — the trip ladder runs 24, 17, 14, 13, 5 and then three riders sit tied at 4 trips on this db. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer riders, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "the-most-recent-three-orders", "find-loyal-customers"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "the-most-recent-three-orders", "find-loyal-customers", "find-churn-risk-customers", "rolling-7d-actives"],
     },
     {
       name: "Pickup-latency date math",
       why: "Request-to-dispatch pairs two timestamps of the same trip, and the pairing is a date-math problem: julianday deltas over stamped trips only, the population stated before the average. Window and recency questions (latest dispatch per market, two requests within seven days) live in the same toolkit.",
-      slugs: ["average-time-of-process-per-machine", "the-latest-login-in-2020", "users-with-two-purchases-within-seven-days", "median-time-to-convert", "sessionize-events"],
+      slugs: ["average-time-of-process-per-machine", "the-latest-login-in-2020", "users-with-two-purchases-within-seven-days", "median-time-to-convert", "sessionize-events", "confirmation-rate", "product-price-at-a-given-date", "duplicate-charge-pairs"],
     },
     {
       name: "Joining riders to trips",
       why: "Riders carry city and market; trips inherit them through joins, and the join type decides who survives. A trip without a rider is corruption; a rider without trips is dormant demand — on this db the anti-join returns a confident zero, and proving that zero is part of the job.",
-      slugs: ["combine-two-tables", "customers-who-never-order", "employee-bonus", "winback-recovery"],
+      slugs: ["combine-two-tables", "customers-who-never-order", "employee-bonus", "winback-recovery", "sellers-with-no-sales"],
     },
     {
       name: "Corporate billing & cents discipline",
@@ -91,12 +91,12 @@ export const cabifyKit: CompanyKit = {
     {
       name: "One-pass fate censuses",
       why: "The ops board gets completed, in-progress, awaiting and cancelled in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift apart.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "group-sold-products-by-the-date"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "group-sold-products-by-the-date", "queries-quality-and-percentage", "trips-and-users", "top-travellers"],
     },
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month trip spine (2024-01 to 2025-02) is the city review's home turf: prior month beside current, delta rounded, trough (1,193.86 in July) and opening month (3,731.97) named. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "list-the-products-ordered-in-a-period", "week-over-week-churn", "budget-pacing"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "list-the-products-ordered-in-a-period", "week-over-week-churn", "budget-pacing", "dau-wau-stickiness", "fix-product-name-format", "null-blank-audit"],
     },
     {
       name: "Nested folds & rider gates",
@@ -318,7 +318,7 @@ export const cabifyKit: CompanyKit = {
       prompt: "The rider-value ladder runs 24, 17, 14, 13, 5 trips, then THREE riders tie at 4. Under RANK, what rank do the two 3-trip riders carry?",
       choices: ["9", "7", "8", "6"],
       answer: 0,
-      why: "RANK shares rungs and then skips: 1, 2, 3, 4, 5, then the three-way tie consumes ranks 6 through 8, so the next distinct count lands on 9. Both 3-trip riders share rank 9.",
+      why: "RANK shares rungs and then skips: 1, 2, 3, 4, 5, then the four-way tie consumes ranks 6 through 9, so the next distinct count lands on 10. Both 3-trip riders share rank 10.",
       notes: [
         { choice: 1, why: "7 is the DENSE_RANK answer — shared rungs without gaps. The board's published policy is RANK semantics, gaps included." },
         { choice: 2, why: "8 is the LAST rank the tie block occupies, not the next one handed out. Off-by-one on the tie block is the classic leaderboard bug." },

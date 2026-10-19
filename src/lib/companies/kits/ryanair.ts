@@ -55,7 +55,7 @@ export const ryanairKit: CompanyKit = {
     {
       name: "Load-state conditional counts",
       why: "Every load read is a conditional census — booked, flown, pending, cancelled, share — folded in one pass. FILTER (WHERE …) and SUM(CASE …) over status are the exact drills; the denominator discipline is the graded part.",
-      slugs: ["flight-occupancy-and-waitlist-analysis", "immediate-food-delivery-ii", "monthly-transactions-ii"],
+      slugs: ["flight-occupancy-and-waitlist-analysis", "immediate-food-delivery-ii", "monthly-transactions-ii", "confirmation-rate", "average-selling-price", "find-the-team-size", "group-sold-products-by-the-date"],
     },
     {
       name: "Ancillary basket folds",
@@ -75,7 +75,7 @@ export const ryanairKit: CompanyKit = {
     {
       name: "Route & yield ranking",
       why: "Route boards, SKU boards and top-passenger lists are window ranks over folded aggregates — with ties that must share rungs honestly and percentages computed against the partition, not the eyeball.",
-      slugs: ["rank-scores", "compute-the-rank-as-a-percentage", "top-earners"],
+      slugs: ["rank-scores", "compute-the-rank-as-a-percentage", "top-earners", "the-most-recent-three-orders", "last-person-to-fit-in-the-bus", "report-contiguous-dates", "human-traffic-of-stadium", "top-travellers"],
     },
     {
       name: "Base & peak-hour demand",
@@ -90,17 +90,17 @@ export const ryanairKit: CompanyKit = {
     {
       name: "Seat maps & self-joins",
       why: "Seat inventory is row-neighborhood logic: consecutive-available seats, seat swaps, consecutive runs. Self-joins and LAG over seat positions are the load-adjacent drills this airline is famous for asking.",
-      slugs: ["consecutive-available-seats", "exchange-seats", "consecutive-numbers"],
+      slugs: ["consecutive-available-seats", "exchange-seats", "consecutive-numbers", "trips-and-users", "game-play-analysis-iv"],
     },
     {
       name: "Zero-attach anti-joins",
       why: "A SKU family that never attaches, a route with no takers — the anti-join is the yield team's leak detector. On this db every product and passenger has moved, so the drill includes knowing when zero is the true answer.",
-      slugs: ["sellers-with-no-sales", "unpopular-books", "find-churn-risk-customers"],
+      slugs: ["sellers-with-no-sales", "unpopular-books", "find-churn-risk-customers", "customers-who-bought-a-and-b-not-c"],
     },
     {
       name: "YoY & seasonality",
       why: "Demand is seasonal and the board thinks in year-over-year deltas: LAG prior-year comparisons, seasonal CASE splits, and multi-year repeat-demand reads are the pace-pack staples.",
-      slugs: ["year-on-year-growth-rate", "seasonal-sales-analysis", "products-with-three-or-more-orders-in-two-consecutive-years"],
+      slugs: ["year-on-year-growth-rate", "seasonal-sales-analysis", "products-with-three-or-more-orders-in-two-consecutive-years", "product-price-at-a-given-date"],
     },
     {
       name: "Settlement & cents discipline",
@@ -120,12 +120,12 @@ export const ryanairKit: CompanyKit = {
     {
       name: "CASE tiering & fare bands",
       why: "The fare ladder is a CASE ladder — budget, mid, premium — with the premium band EMPTY by construction at the 199.99 ceiling, so the honest cut is benchmark position, not band membership. CASE pivots and interval buckets drill one-pass ladders where every PNR lands in exactly one tier.",
-      slugs: ["calculate-orders-within-each-interval", "weather-type-in-each-country", "the-category-of-each-member-in-the-store"],
+      slugs: ["calculate-orders-within-each-interval", "weather-type-in-each-country", "the-category-of-each-member-in-the-store", "calculate-special-bonus", "number-of-employees-who-met-the-target"],
     },
     {
       name: "Running totals & share-of-partition",
       why: "The booking-value walk and the market-share slide are window folds: cumulative SUM over the month keys, value share over the 34833.28 base with the shares summing back to 100. Frames are the graded part — the default RANGE folds peer rows, and a pace walk that jumps two PNRs at once is a frame bug.",
-      slugs: ["running-total-for-different-genders", "portfolio-weights", "find-cumulative-salary-of-an-employee"],
+      slugs: ["running-total-for-different-genders", "portfolio-weights", "find-cumulative-salary-of-an-employee", "investments-in-2016"],
     },
   ],
 

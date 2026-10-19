@@ -115,7 +115,7 @@ export const agodaKit: CompanyKit = {
     {
       name: "Running totals & share-of-partition",
       why: "Pre-stay revenue pacing and market-share slides are cumulative reads: value running up to the total, each market's slice of the booking-value stack. Window frames decide the story — ROWS steps booking by booking while the default RANGE folds peer rows that share a booking day.",
-      slugs: ["find-cumulative-salary-of-an-employee", "running-total-for-different-genders", "portfolio-weights"],
+      slugs: ["find-cumulative-salary-of-an-employee", "running-total-for-different-genders", "portfolio-weights", "second-day-verification"],
     },
     {
       name: "Per-group argmax",
