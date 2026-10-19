@@ -8368,3 +8368,15 @@ Stage Summary:
 - Both kits DONE at full depth: mercari 30/24/6/32, newegg 30/24/6/32; combined case-audit run: cases 12 pass 12 fail 0 (each kit audited immediately after authoring, all first-run green); all 64 new problem slugs verified against scripts/band-slugs.txt, ids unique, no existing entries modified (append-only + topic-slug weaving + prose-count paragraphs only).
 - Anomaly noted (probe vs stale prose): the buyer-ladder tie at 4 purchases is FOUR-way in the db (accounts 9/11/14/16) while existing mercari prose (t2, problems, topics) says "three-way" — the same stale-fact pattern r8-f1 flagged on renewals. New content cites the probed four-way tie (cs-mercari-3 is built so RANK's 6→10 gap stays visible); existing entries left untouched per append-only. Also: the settlement clock over 27 legs reads 29.04 avg (existing newegg topic prose says 28.4 — untouched, append-only); cart-line prices reach 209.68 (past the 199.99 ask ceiling — grain difference called out in cs-newegg-4's brief).
 - db untouched (readonly via bun:sqlite, 24 tables intact). git shows kits/shein.ts modified — not touched by this agent (parallel r10 batch). No git commit (orchestrator's job).
+
+---
+Task ID: r9+r10-count-correction (orchestrator)
+Agent: orchestrator (main)
+Task: correct commit-message count drift
+
+Work Log:
+- Audit script is the single source of truth. True counts: r8 end = 183 OK; r9 checkpoint = 187; r9 complete = 189 (commit message wrongly said 193); r10 checkpoint = 192 (message said 197); after shein mercari newegg = 195 OK / 13 thin (rabobank bmo natwest linear gong retool ikea zara sbi usbank intercom segment mailchimp).
+- All kit-level gates re-verified green at each checkpoint (case-audit 6/6, tsc 0 errors per touched kit).
+
+Stage Summary:
+- Use `bun run scripts/kit-extension-audit.ts | rg -c "^OK"` for progress claims. Do not trust commit-message counts for r9-complete/r10-checkpoint.
