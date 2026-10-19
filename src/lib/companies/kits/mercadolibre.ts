@@ -9,7 +9,7 @@
 // censuses, tie-heavy best-seller ladders, the 14-month purchase spine, classic vs
 // premium price bands, and the Pago coverage split that sits under "collected".
 // Pool provenance: company-pools.md carries NO Mercado Libre section — 0 tagged
-// rows — so all 10 topic slug sets and all 16 problems are theme-curated from the
+// rows — so all 10 topic slug sets and all 32 problems are theme-curated from the
 // pools file's theme menu and say so. Case briefs quote probed figures from
 // scripts/company-facts.md (probed 2026-10-12); every case slot is mechanically
 // verified against db/custom.db by scripts/case-audit.ts.
@@ -27,7 +27,7 @@ export const mercadolibreKit: CompanyKit = {
     "**Mercado Libre** is Latin America's largest commerce ecosystem — a marketplace where listings and catalogs meet Mercado Envios fulfillment and Mercado Pago checkout in one stack, from São Paulo to Mexico City. Every analyst here learns that *'carted' and 'kept' are different numbers*: demand drops between checkout and doorstep, and the whole org reads the same small set of objects at different grains. This kit maps the storefront db onto that world: the 16 customers rows are registered buyers, the 103 orders are purchases worth **34,833.28**, and the 251 order_items rows are cart lines — quantity = units, unit_price = line price. The status map is fixed: delivered = {emerald:at the door} (52, 50.5%), shipped = in transit (30, 29.1%), pending = awaiting dispatch (14), cancelled = {rose:dropped} (7, 6.8%).",
     "The data org splits into marketplace growth, logistics (Envios) and a payments-analytics pod, and they read one spine at different grains. The dispatch funnel is the heartbeat: a purchase books at created_at, and `shipped_at` is stamped the day the truck actually leaves — **82 of 103 purchases** carry the stamp, averaging **2.98 days** to dispatch with a 2–4 day spread, while the 14 pending rows have none yet (a population definition, not a cleanup job). Money sits one layer down in the Pago book: invoices and payments in INTEGER cents, where the dollar read is `amount_cents / 100.0`. Concentration is the third story: **63.5%** of GMV comes from buyers whose lifetime spend crosses 3,000 (71.2% above 2,000) — one lost buyer moves a quarter.",
     "Interview screens are census-then-denominator. A typical loop opens with a **two-grain buyer census** — EU runs 45 purchases from just 8 buyers while the US runs 19 from 2 — then escalates into a rate where the interviewer asks the denominator out loud (*'does a cancelled purchase count in your base?'* — LATAM's cancellation share is 0.0% against APAC's 8.1%), then into the best-seller ladder where three listings sit tied at 30 units and rank semantics become a catalog-policy decision. Regional flavor matters here: LATAM is the micro-market — 2 purchases, 1 buyer, a platform-high **426.22** average order — and interviewers love asking why small-sample rates deserve suspicion. Candidates who state the status filter and the denominator before writing SQL are the ones who get callbacks.",
-    "Preparation strategy: the pools file carries no Mercado Libre section — zero tagged rows — so all sixteen problems and every topic slug here are **theme-curated** to this kit's known screen shapes: dispatch funnels, two-grain censuses, tie-heavy ladders, CASE price bands and the cents-safe Pago spine. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {emerald:official-store revenue census} the commerce team opens every quarter review with, the other rebuilds the {sky:best-seller ladder} the growth board ships every month. The bar to clear: *state the definition and the denominator before you compute anything* — then make every status census reconcile to 103 by construction.",
+    "Preparation strategy: the pools file carries no Mercado Libre section — zero tagged rows — so all thirty-two problems and every topic slug here are **theme-curated** to this kit's known screen shapes: dispatch funnels, two-grain censuses, tie-heavy ladders, CASE price bands and the cents-safe Pago spine. Do the topics in order, then run all six case studies on the live storefront db — built for spaced practice rather than one sitting: the {emerald:official-store revenue census} the commerce team opens every quarter review with, the {sky:best-seller ladder} the growth board ships every month, the band-edge census, the restock floor huddle, the GMV month walk and the corridor dispatch census. The bar to clear: *state the definition and the denominator before you compute anything* — then make every status census reconcile to 103 by construction.",
   ],
 
   dayInLife: [
@@ -51,52 +51,52 @@ export const mercadolibreKit: CompanyKit = {
     {
       name: "Dispatch funnel counts",
       why: "Mercado Envios is the operation's spine: a purchase books at created_at and earns its dispatch stamp at shipped_at — 82 of 103 stamped, 14 pending without one. Every funnel read is a conditional count over a status or timestamp, and the interviewer's first question is what the denominator holds. The trap is calling an in-transit purchase delivered — 30 versus 52 on this db.",
-      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "funnel-step-conversion"],
+      slugs: ["trial-to-paid-funnel", "immediate-food-delivery-i", "funnel-step-conversion", "immediate-food-delivery-ii", "same-day-sale"],
     },
     {
       name: "Two-grain buyer censuses",
       why: "Purchases and buyers are different grains of the same join, and every census here reports both: EU runs 45 purchases from 8 buyers while the US runs 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is load and which is coverage — is the habit being graded.",
-      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers"],
+      slugs: ["unique-orders-and-customers-per-month", "daily-leads-and-partners", "number-of-rich-customers", "customer-order-frequency"],
     },
     {
       name: "Joining listings to carts",
       why: "The catalog spine runs official stores → listings → cart lines → purchases, and the join type decides who survives. A cart line without a listing is corruption; a listing without a cart line would be dead stock — though on this db the anti-join returns a confident zero, and proving it is part of the job. Line-grain revenue (unit_price × quantity) versus header-grain totals is the second trap: fold the wrong grain and GMV drifts.",
-      slugs: ["product-sales-analysis-ii", "students-and-examinations", "average-selling-price"],
+      slugs: ["product-sales-analysis-ii", "students-and-examinations", "average-selling-price", "recyclable-and-low-fat-products", "warehouse-manager", "weeks-of-supply"],
     },
     {
       name: "Best-seller leaderboards",
       why: "The catalog team ranks listings by units moved and the ladder is tie-heavy — two listings at 36 units, three at 30, three more at 21 — while the buyer board has four buyers tied at 4 purchases each. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a policy about peer listings, not syntax.",
-      slugs: ["rank-scores", "top-earners", "most-frequently-ordered-product-per-customer"],
+      slugs: ["rank-scores", "top-earners", "most-frequently-ordered-product-per-customer", "the-most-recent-orders-for-each-product", "the-most-recent-three-orders"],
     },
     {
       name: "Price-band CASE tiers",
       why: "Listings band into classic and premium brackets with fixed edges the category page publishes — 8 classic listings averaging 32.06, 8 mid-band at 111.5, and the 200-plus premium band is EMPTY on this snapshot with the top listing at 199.99. Proving a band is empty is as important as filling one: the CASE arms must be exhaustive and ordered, because a hole in the arms is a hole in the forecast.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "count-salary-categories", "calculate-product-final-price"],
     },
     {
       name: "Month walks & LAG deltas",
       why: "The 14-month purchase spine (2024-01 to 2025-02) is the growth call's home turf: the book opens at 3,731.97 and troughs at 1,193.86 in July 2024. LAG drives the walk; the first row is NULL by definition — the baseline, never a zero.",
-      slugs: ["second-day-confirmation", "biggest-window-between-events", "year-on-year-growth-rate"],
+      slugs: ["second-day-confirmation", "biggest-window-between-events", "year-on-year-growth-rate", "restaurant-growth"],
     },
     {
       name: "Coverage set algebra",
       why: "Board packets stack populations — dispatched under cancelled, this quarter beside last — and EXCEPT answers 'which listings never sold' (a confident zero here, since all 16 moved). UNION dedups whole rows silently, which makes it a correctness question, not a style one.",
-      slugs: ["team-scores-in-football-tournament", "the-airport-with-the-most-flights", "customers-who-never-order"],
+      slugs: ["team-scores-in-football-tournament", "the-airport-with-the-most-flights", "customers-who-never-order", "sellers-with-no-sales", "customer-who-visited-but-did-not-transact"],
     },
     {
       name: "Nested folds & tier gates",
       why: "Screens escalate into staging: fold per-buyer purchase counts, then judge them against a computed platform mean. Scalar, correlated and derived shapes each carry an empty-inner-query answer you are expected to give unprompted.",
-      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments"],
+      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "average-salary-of-departments", "users-with-two-purchases-within-seven-days", "customers-with-strictly-increasing-purchases"],
     },
     {
       name: "One-pass status censuses",
       why: "The ops board needs delivered, shipped, pending and cancelled in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "friday-purchases-i"],
     },
     {
       name: "Pago billing & cents discipline",
       why: "Purchased is not collected — the finance tables (28 invoices, 27 payments, INTEGER cents) are where the marketplace meets money. Every dollar read is amount_cents / 100.0, and the exact/partial/none coverage split (21 / 1 / 6) is one CASE away.",
-      slugs: ["bank-account-summary-ii", "monthly-transactions-ii", "products-worth-over-invoices"],
+      slugs: ["bank-account-summary-ii", "monthly-transactions-ii", "products-worth-over-invoices", "duplicate-charge-pairs"],
     },
   ],
 
@@ -148,6 +148,102 @@ export const mercadolibreKit: CompanyKit = {
       q: "Pago says an invoice is 'paid' but the payments table has no rows for it. Walk me through the reconciliation query you write first — and the money rule you never break while writing it.",
       a: "First the anti-join: invoices LEFT JOIN payments, keep p.id IS NULL — on this db that returns 6 invoices worth 15,217, and one of them (#28, 1,756.00) is marked 'paid' with zero settlement rows: a status that lies, which is why payment rows are the ledger of record and the status column is a claim. Then the anomaly flip: a void invoice WITH a payment row (this db has one, #11 at 925.00) never appears in that anti-join — the two error modes are mirrors, and both reconcile to the row-level anomaly list, not to vibes. The middle ground matters too: invoice #25 is open with 4,000 settled against 6,148 — partial coverage the exact/partial/none split (21 / 1 / 6) must catch in one CASE. The money rule: invoices and payments carry INTEGER cents, so every dollar read is amount_cents / 100.0 — the missing .0 turns a 1,756.00 print into 1,756 and quietly eats cents on every odd-cent row. Reconciliation culture here: the ledger trial balance must land at 181,080 debits against 181,080 credits — delta zero, or the close does not ship.",
       tag: "quality",
+    },
+    {
+      id: "mercadolibre-t9",
+      q: "Before any marketplace census, the panel asks: 'one row per what?' Walk me through how you decide the GROUP BY grain.",
+      a: "The grain is the business deliverable, and the GROUP BY clause is just its SQL spelling. A buyer census folds purchases to people: GROUP BY customer_id turns 103 purchases into 16 buyers, and every selected column must be either the grouping key or an aggregate — anything else is a coin flip. The classic three-grain ladder on this schema: 103 purchases → 251 cart lines → 7 categories, and the panel watches which rung you name before you write. The two habits that pass: say the grain out loud first ('this report is one row per buyer'), and refuse the SQLite laxness where a bare non-grouped column silently prints an arbitrary row's value — on another engine it is an error, and on this one it is a quietly wrong number that renders fine on the slide.",
+      tag: "groupby",
+    },
+    {
+      id: "mercadolibre-t10",
+      q: "When do you reach for a window function instead of GROUP BY — give me the marketplace case where the distinction matters.",
+      a: "When the deliverable needs the fold BESIDE the rows instead of instead of them. The fulfillment pack is the canonical case here: every cart line must carry its purchase's cart depth, so COUNT(*) OVER (PARTITION BY order_id) computes the per-purchase fold and attaches it — 251 lines out, each stamped with its cart's line count. GROUP BY would collapse to 103 rows and destroy the line detail the pack sorts by. Same muscle in the commerce review: every listing row can carry its official store's booked GMV as SUM(value) OVER (PARTITION BY store), so the analyst sees each listing against its store's whole book without a join-back. The rule I say out loud: GROUP BY when the stakeholder wants the summary, windows when they want the rows with context.",
+      tag: "windows",
+    },
+    {
+      id: "mercadolibre-t11",
+      q: "Build me the status census in one pass — and tell me why the branches can never disagree with each other.",
+      a: "One scan, four branches, one denominator. Either COUNT(*) FILTER (WHERE status = 'delivered') per branch — SQLite's standard-syntax form — or the portable twin SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END). Both print 52 kept, 30 in-transit, 14 awaiting, 7 dropped from the same 103 rows, and the identity 52 + 30 + 14 + 7 = 103 holds by construction because the branches partition the same rows: every row lands in exactly one arm. The zero bucket matters too — ELSE 0 keeps a branch honest when a status is empty, instead of letting it vanish and shrinking the row. Four sequential queries are four separate scans with four separate WHERE clauses, and the drift between them is a bug the board screenshot exposes in front of the room.",
+      tag: "case-when",
+    },
+    {
+      id: "mercadolibre-t12",
+      q: "UNION ALL or UNION for the close packet's stacked report — and when does EXCEPT answer a marketplace question better than any join?",
+      a: "UNION ALL when the branches are logically disjoint — this quarter's bookings beside last quarter's, official-store rows above the TOTAL row — because it concatenates without a distinct pass. UNION is a business decision, not hygiene: its dedupe silently deletes rows, and if a 'duplicate' ever appears it is a data incident you want on the incident list, not buried in the operator. EXCEPT is the coverage diff: 'which listings never moved a unit' is SELECT id FROM products EXCEPT SELECT product_id FROM order_items, and on this snapshot it returns a confident zero — all 16 listings sold — which is itself a certified fact. One discipline note: set operators dedupe both inputs first, so if the anomaly you are hunting IS a duplicate row, the row-honest tool is the LEFT JOIN + IS NULL anti-join, not EXCEPT.",
+      tag: "set-ops",
+    },
+    {
+      id: "mercadolibre-t13",
+      q: "The monthly walk stages a CTE before it reads LAG. Why stage at all — what does the CTE buy that a flat query doesn't?",
+      a: "Three concrete buys on this exact shape. Correctness: window functions evaluate in the SELECT stage, so the month fold must exist before LAG can walk it — WITH monthly AS (SELECT STRFTIME('%Y-%m', created_at) AS month, SUM(total) AS gmv … GROUP BY month) is the staging layer that makes the window legal. Reuse: the same monthly CTE feeds the walk, the quarter cuts and the trough narrative without re-writing the fold. Auditability: a named CTE is a definition the reviewer can point at — 'monthly means bookings folded by STRFTIME month key, 14 buckets' — which is how numbers survive the growth-review argument. The habit that comes with it: filter early inside each CTE (status, region, date ranges) so later stages carry fewer rows, and SELECT from the CTE while debugging instead of guessing at the fold.",
+      tag: "ctes",
+    },
+    {
+      id: "mercadolibre-t14",
+      q: "Define the dispatch rate for me — and defend every row you left in the denominator.",
+      a: "Dispatch rate = purchases with a shipped_at stamp ÷ ALL purchases booked: 82 of 103, 79.6%. The defense is the population list: the 14 pending rows stay because 'not yet dispatched' is exactly what the metric watches — deleting them turns the funnel into a status census; the 7 cancelled stay because a dropped purchase is a dispatch failure the rate should feel; the 30 in-transit stay because the stamp is truck-out, not door-step. The interview move is saying the denominator BEFORE the SQL: 'all 103 booked, no status filter, because the metric is top-of-funnel'. The cousin metrics prove the discipline scales: orders-kept rate uses the same denominator with a delivered numerator (52, 50.5%), while time-to-dispatch (2.98 days) uses the OPPOSITE rule — only dispatched purchases, because an undispatched purchase has no latency yet, and a NULL is 'not yet', never a zero.",
+      tag: "metrics",
+    },
+    {
+      id: "mercadolibre-t15",
+      q: "Mercado Pago's tables store money as INTEGER cents. Where do the bugs bite, and what is your rounding policy?",
+      a: "Three bite points and one policy. Scale: a 19,609-cent invoice is 196.09, and amount_cents / 100 is integer division — 196 flat; the .0 (or a CAST) goes in BEFORE the division, every time. Aggregation: SUM in cents stays exact — 2,541,600 cents of expenses — and the division to dollars happens once at the presentation edge, not per row mid-pipeline where rounding discards precision a later SUM still needed. Comparison: floats are IEEE doubles, so money comparisons either stay in integer cents or use a tolerance. The policy I state in reviews: aggregate in cents, convert once, round at the edge — and prove it on the trial balance, which closes at 181,080 against 181,080, delta zero. A ledger that reconciles to the cent is only possible because nothing was rounded away en route.",
+      tag: "numbers",
+    },
+    {
+      id: "mercadolibre-t16",
+      q: "The dispatch-latency report went from instant to slow after a 'small' filter change. What do you check first?",
+      a: "Sargability first: did the filter wrap the timestamp column in a function? SUBSTR(created_at, 1, 7) = '2024-03' forces a scan of every row; the sargable twin is the half-open range created_at >= '2024-03-01' AND created_at < '2024-04-01' — same rows, index-usable. Then the pipeline: filters pushed early into each CTE mean later stages fold fewer rows, and SELECT * payloads you never read stop crossing the wire. The honesty check for this schema: it is small — 103 orders, 251 lines — so these are habits, not firefights; the point interviewers probe is whether the instincts scale when the marketplace does, which is why the answer names the mechanism (function on column kills index use) rather than 'we optimized it'. Probe with LIMIT before the full run; aggregate on the smallest table that answers the question instead of joining first and filtering after.",
+      tag: "performance",
+    },
+    {
+      id: "mercadolibre-t17",
+      q: "A GMV SUM roughly doubles after orders joins order_items. Walk me through the diagnosis and the fix.",
+      a: "Diagnose by counts before touching the SUM: orders alone is 103; the join is 251 — the jump IS the fan-out, one row per cart line. Confirm the multiplier with GROUP BY o.id HAVING COUNT(*) > 1 to see which purchases carry multiple lines, because the inflation is uneven: a single-line purchase survives, a six-line cart repeats its total six times. The fix depends on the grain the stakeholder bought: order-grain GMV pre-aggregates the lines (SUM(unit_price × quantity) GROUP BY order_id in a CTE, then join) so the header total is added exactly once; line-grain analysis keeps the join but counts entities with COUNT(DISTINCT o.id) and never sums the header column. The trap to name out loud: it is not 'a rounding thing' or 'duplicate data' — it is the grain, and the before/after count is the receipt you bring to the review.",
+      tag: "joins",
+    },
+    {
+      id: "mercadolibre-t18",
+      q: "IN, EXISTS, or a derived table — how do you pick when filtering purchases against a computed buyer set?",
+      a: "Start with what the set IS. A small static-ish list — the 4.5-plus official stores — reads as IN (subquery over suppliers). An existence probe — 'has at least one delivered purchase' — is EXISTS, which short-circuits on the first match and never trips on NULLs; its anti-form NOT EXISTS is the NULL-safe dunning shape, because NOT IN over a list containing one NULL returns nothing at all. A computed aggregate set — buyers with 2+ purchases, the repeat-buyer definition — must be a derived table or CTE, because the fold (GROUP BY + HAVING) cannot live inside an IN list, and the outer query needs to join to it at customer grain. The reasoning the panel wants: EXISTS for presence, IN for membership against stable sets, derived tables when the filter itself is an aggregation — and the NULL behavior of each, stated before the db proves it the hard way.",
+      tag: "subqueries",
+    },
+    {
+      id: "mercadolibre-t19",
+      q: "Build the 14-month purchase spine, cut a quarter without losing its last night, and read the first row of the LAG walk.",
+      a: "The spine: STRFTIME('%Y-%m', created_at) — year plus zero-padded month — gives 14 buckets from 2024-01 to 2025-02; '%m' alone would merge January 2024 into January 2025 and the trend becomes fiction. The quarter cut: half-open intervals, created_at >= '2024-01-01' AND created_at < '2024-04-01', because BETWEEN '2024-03-01' AND '2024-03-31' silently drops the last night's bookings — and quarter-end is exactly when LatAm demand lands. The walk: LAG(gmv) OVER (ORDER BY month) puts the prior bucket beside the current one, and the first row's prior value is NULL by definition — the book OPENS at 3,731.97, that is the baseline, and coalescing it to zero would print a fake +100% jump. Then the narrative reads itself: the 1,193.86 July trough, the +1,158.21 recovery into August, each delta rounded to cents.",
+      tag: "dates",
+    },
+    {
+      id: "mercadolibre-t20",
+      q: "How do NULLs behave in GROUP BY buckets, join keys and conditional counts — and what is your display policy for the dispatch funnel?",
+      a: "Three behaviors, three policies. In GROUP BY, SQL groups NULLs together — a NULL category becomes its own bucket, which is why the category census must either filter NULLs out with a stated reason or label the bucket instead of letting it print as an unnamed row. In join keys, NULL never matches anything: a purchase with NULL customer_id would vanish from an INNER JOIN and survive a LEFT JOIN only on the left — worth an integrity check, not a silent join choice. In conditional counts, the trap is shape-dependent: COUNT(status) skips NULLs, COUNT(*) keeps the row, and SUM over NULL latency silently shrinks the population while the average still prints — 2.98 days over 82, not 103. Display policy for the funnel: pending stays 'pending' (a state, not a NULL to fix), shipped_at stays NULL until the truck leaves, and COALESCE is for PRESENTATION — a zero in a display cell, never fed back into the averages.",
+      tag: "nulls",
+    },
+    {
+      id: "mercadolibre-t21",
+      q: "Which indexes would you actually add on this schema, and what makes a predicate able to use one?",
+      a: "Sargable first: an index helps when the predicate compares the bare column to a value — status = 'pending', created_at >= '2024-03-01', customer_id = 7. Wrap the column in a function (SUBSTR, julianday arithmetic) and the index is dead: every row gets scanned. On this schema the honest shortlist is the FK join keys (order_items.order_id, order_items.product_id — the joins run on every census), the status column for the morning funnel scan, and created_at for the month-spine cuts; a composite (status, created_at) covers the funnel's filtered walks. The maturity signal is the honesty about scale: 16 products and 103 orders do not NEED indexes, and saying so — 'I would add these when the marketplace outgrows the sandbox, and here is the measurement I would run first (EXPLAIN QUERY PLAN before/after)' — is the answer that lands, because premature indexing is a write-cost someone else pays.",
+      tag: "indexes",
+    },
+    {
+      id: "mercadolibre-t22",
+      q: "Buyer names arrive from an app export title-case-broken — 'bruno silva' and 'Bruno Silva' are one person. What is the hygiene pass, and where does it live?",
+      a: "Detect the split first, because that is the business damage: GROUP BY the name and HAVING COUNT(*) > 1 on a buyer-dimension fold, or match on the email where the case is stable. Then normalize in a staged layer, not inline everywhere: TRIM the whitespace, UPPER/LOWER with an INITCAP-style expression (UPPER(SUBSTR(name,1,1)) || LOWER(SUBSTR(name,2))) for display, and fold the joins onto a canonical key — the id or the lowercased email — so 'bruno silva' and 'Bruno Silva' can never split a buyer's purchase history across two rows. Where it lives matters as much as the functions: one hygiene CTE at the top of the pipeline, so every downstream fold sees the canonical form, versus fifteen scattered UPPER() calls that drift apart by next quarter. The follow-up the panel loves: names are for humans, keys are for joins — normalize the display, dedupe on the key.",
+      tag: "casing",
+    },
+    {
+      id: "mercadolibre-t23",
+      q: "Why is an average of averages wrong, and what do you compute instead on this marketplace?",
+      a: "Because it weights every group equally regardless of size. The corridor AOVs are EU 335.32 (45 purchases), APAC 313.66 (37), US 383.48 (19), LATAM 426.22 (2) — averaging the four prints 364.67, which describes a marketplace where LATAM's two orders matter as much as EU's forty-five. The true all-purchases AOV is SUM(total)/COUNT(*) over the base rows: 338.19, where the micro-market barely registers. The honest alternatives: re-aggregate from the base (sum the numerators, divide by the summed denominators), or the explicit weighted blend SUM(aov * orders)/SUM(orders) — the same arithmetic one level up. The interview move is naming WHERE the weighting lives: an average of averages is only correct when every group has equal counts, and that is a claim you should have to defend, not assume — especially when the slide exists to argue LATAM's 426.22 is signal.",
+      tag: "metrics",
+    },
+    {
+      id: "mercadolibre-t24",
+      q: "ROWS or RANGE for the moving average on the daily GMV spine — where does the choice decide the number?",
+      a: "When the ORDER BY key has ties or gaps. RANGE (the default when you write ORDER BY with no frame) includes PEERS: two purchases sharing a created_at second enter the running total together — the cumulative 'jumps two purchases at once'; ROWS walks strictly row by row. The subtler bite is gaps: on the daily spine, ROWS BETWEEN 6 PRECEDING AND CURRENT ROW reaches back 6 ROWS — if three days had no bookings, that is 9+ calendar days — so the '7-day' average is quietly wrong. The professional build stages a calendar spine (every date, zero-filled via a LEFT JOIN from a dates CTE), and then the ROWS frame and the calendar agree; RANGE with date-interval arithmetic is the alternative where supported. The complete answer names the data shape first — ties at purchase grain, gaps on the daily spine, neither on the month spine — because the right frame is a property of the axis, not a style preference.",
+      tag: "windows",
     },
   ],
 
@@ -272,6 +368,256 @@ export const mercadolibreKit: CompanyKit = {
       ],
       difficulty: "hard",
     },
+    {
+      id: "mercadolibre-mcq-11",
+      prompt: "The Envios morning manifest folds each dispatch day's basket into one cell — every product name that rode together, comma-separated. Which fold produces it?",
+      choices: ["GROUP_CONCAT(p.name) over rows grouped by the dispatch day", "CONCAT(p.name) over the day's rows", "MAX(p.name) with GROUP BY the day", "STRING_AGG(p.name, ',') — the only aggregate that folds text"],
+      answer: 0,
+      why: "GROUP_CONCAT is SQLite's text fold: it concatenates a group's values into one cell, which is exactly the manifest shape. CONCAT is a row-level function (no fold), MAX returns a single arbitrary-ish extreme value, and STRING_AGG is Postgres vocabulary that does not exist here.",
+      notes: [
+        { choice: 1, why: "CONCAT joins two values within ONE row — it never folds a group. The manifest would need one row per product, which is the opposite of the ask." },
+        { choice: 2, why: "MAX collapses the day to one product name — the manifest would claim every truck carried a single SKU." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "mercadolibre-mcq-12",
+      prompt: "order_items fans 103 purchases into 251 cart lines. After `FROM orders o JOIN order_items ii ON ii.order_id = o.id`, which expression returns the PURCHASE count?",
+      choices: ["COUNT(*)", "COUNT(DISTINCT o.id)", "COUNT(ii.id)", "COUNT(DISTINCT ii.product_id)"],
+      answer: 1,
+      why: "The join fanned the grain out to cart lines, so COUNT(*) counts 251. COUNT(DISTINCT o.id) folds the fan-out back to purchases: 103. Choosing between them IS choosing your grain — the census either measures load (lines) or demand (purchases), and the column name must match the choice.",
+      notes: [
+        { choice: 2, why: "COUNT(ii.id) counts the same 251 lines — the fan-out is the whole problem, and ii.id never repeats so DISTINCT would change nothing." },
+        { choice: 3, why: "COUNT(DISTINCT ii.product_id) counts distinct listings that sold — 16, a third grain nobody asked for. SKU reach is not purchase count." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "mercadolibre-mcq-13",
+      prompt: "A colleague writes `CASE WHEN price < 200 THEN 'signature' WHEN price < 50 THEN 'classic' ELSE 'premium' END` over the catalog. What does it print for the 34.50 Wireless Mouse M3?",
+      choices: ["'classic'", "'signature' — CASE arms evaluate top-down, and 34.50 passes the first arm", "'premium'", "NULL — no arm matches"],
+      answer: 1,
+      why: "CASE stops at the first TRUE arm, and 34.50 < 200 fires before the 50-line is ever tested — every classic listing re-bands as signature and the classic census silently empties. Band CASEs run their edges ascending: 50 first, then 200, ELSE premium.",
+      notes: [
+        { choice: 0, why: "That is the intent, but arm order beats intent. The engine never 'knows' the 50-line was meant to win." },
+        { choice: 3, why: "ELSE is the catch-all — nothing falls through a CASE with an ELSE. Without one, unmatched rows would print NULL, which is a different (and honest) bug." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "mercadolibre-mcq-14",
+      prompt: "Catalog ops asks 'which listings never moved a unit?' You write `SELECT id FROM products EXCEPT SELECT product_id FROM order_items`. What comes back on this snapshot, and what does it certify?",
+      choices: ["16 rows — EXCEPT cannot compare id with product_id", "Zero rows — a certified fact: every one of the 16 listings moved at least one unit", "The 6 official stores with no sales", "Only listings whose stock is zero"],
+      answer: 1,
+      why: "EXCEPT keeps left-side values that never appear on the right — the never-sold set. On this db the result is empty because all 16 listings appear in order_items somewhere; proving that zero with one query IS the catalog-hygiene read. Column names need not match — EXCEPT compares positions and compatible types.",
+      notes: [
+        { choice: 0, why: "The ids compare fine (both INTEGER). A 16-row answer would mean the join between listings and cart lines is broken — worth checking, not assumed." },
+        { choice: 2, why: "Suppliers are not in this query at all — 'stores with no sales' is a different anti-join over a different grain. One question, one set." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "mercadolibre-mcq-15",
+      prompt: "The month spine uses STRFTIME('%Y-%m', created_at) — 14 buckets, 2024-01 through 2025-02. A colleague 'simplifies' it to STRFTIME('%m', created_at) and the trend still renders. What actually broke?",
+      choices: ["Nothing — '%m' is the documented short form of the same key", "January 2024 and January 2025 fold into one '01' bucket — 14 months collapse to 12 and the trend merges two years", "The bucket labels lose their day component", "STRFTIME stops returning TEXT, so ORDER BY breaks"],
+      answer: 2,
+      why: "'%m' emits the month number alone: 2024-01 and 2025-01 both print '01'. The spine folds into 12 undated buckets where February 2025's reading inherits January 2024's baseline — a trend chart that renders and lies. The year must ride inside the key: '%Y-%m'.",
+      notes: [
+        { choice: 0, why: "It renders because the query is valid — that is the trap. Bucket correctness is a data question, not a syntax one." },
+        { choice: 2, why: "There is no day component in '%Y-%m' either; the loss is the YEAR. Bucket labels must be unique at the grain the trend claims." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "mercadolibre-mcq-16",
+      prompt: "The ops board wants kept, in-transit, awaiting and dropped in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. Which shape keeps the branches from drifting?",
+      choices: ["Four sequential queries pasted into the deck", "A correlated subquery re-counting per row", "LIMIT 4 with ORDER BY status", "COUNT(*) FILTER (WHERE status = …) per branch — one pass, one denominator"],
+      answer: 3,
+      why: "FILTER branches each aggregate over the same scan, so all four branches partition the same 103 rows and reconcile by construction — SUM(CASE …) is the portable twin. Four sequential queries are four chances for four WHERE clauses to disagree; the board screenshot is exactly where that drift surfaces.",
+      notes: [
+        { choice: 0, why: "The classic drift bug: someone edits one branch's filter, the other three go stale, and 52 + 30 + 14 + 7 no longer sums to 103." },
+        { choice: 2, why: "LIMIT cuts ROWS, not columns — a census is not a top-N. This shape returns one row per status, not one row with four counts." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "mercadolibre-mcq-17",
+      prompt: "A pipeline retry double-ingested purchase rows. You dedupe with ROW_NUMBER() OVER (PARTITION BY external_ref ORDER BY ingested_at DESC) and keep rn = 1. What is the second ORDER BY key for?",
+      choices: ["Nothing — timestamps cannot tie on retry batches", "A deterministic tie-breaker like id — otherwise which copy survives is engine luck", "The buyer's name, alphabetically", "ROW_NUMBER never ties, so ASC"],
+      answer: 1,
+      why: "ROW_NUMBER must hand out strict 1..n; when two copies share an ingested_at second, the engine picks arbitrarily — 'keep newest' silently becomes 'keep any', and the dedupe is not reproducible. A physical second key (id) makes the surviving row deterministic, which is what a reviewer rerunning the query needs.",
+      notes: [
+        { choice: 0, why: "Retries stamp identical timestamps constantly — that is what a retry is. The tie is the normal case, not the edge case." },
+        { choice: 2, why: "Name is deterministic but semantically random — dedupe keys should be physical (id), not cosmetic (name), so the same row survives every run." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "mercadolibre-mcq-18",
+      prompt: "The Pago dunning list keeps invoices with no settlement rows. Two candidate shapes: `invoice_id NOT IN (SELECT invoice_id FROM payments)` and `invoices LEFT JOIN payments … WHERE p.id IS NULL`. Which is NULL-safe, and why?",
+      choices: ["Both — NULLs are ignored in set comparisons either way", "NOT IN — it short-circuits on the first miss", "The LEFT JOIN + IS NULL anti-join: a NULL in the NOT IN list poisons every comparison, while the join simply never matches on NULL", "Neither — only UNION can compare sets"],
+      answer: 2,
+      why: "x NOT IN (…, NULL) is UNKNOWN for every outer row — one NULL invoice_id in the subquery empties the dunning list while the query looks valid. The LEFT JOIN anti-join never compares against the list at all: unmatched left rows survive with a NULL payload and p.id IS NULL selects them. NOT EXISTS is the other NULL-safe shape.",
+      notes: [
+        { choice: 0, why: "Three-valued logic says otherwise: comparison against NULL is UNKNOWN, and UNKNOWN rows fail WHERE. The empty dunning list is the symptom." },
+        { choice: 1, why: "IN probes membership one value at a time; NOT IN materializes the list and compares every row against ALL of it — including the NULL that ruins everything." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "mercadolibre-mcq-19",
+      prompt: "Booked GMV reads 34,833.28 on orders alone, but the deck's version — orders joined to order_items — prints roughly 2.4x that. Diagnosis?",
+      choices: ["The join fanned 103 purchases into 251 cart lines and SUM(o.total) repeated each purchase total once per line — pre-aggregate lines to order grain, then join", "Rounding accumulated across the join", "The status filter dropped delivered rows", "totals are stored as cents and got doubled on conversion"],
+      answer: 0,
+      why: "The 103 × items-per-order fan-out repeats each header total once per cart line; SUM over the joined rows counts them 251 times. The fix is grain discipline: fold order_items to order grain in a CTE first, or accept the line grain and stop summing the header column.",
+      notes: [
+        { choice: 1, why: "Rounding cannot produce 2.4x — it moves cents. A multiplier-shaped error is a fan-out; a cent-shaped error is arithmetic." },
+        { choice: 3, why: "Cents conversion mistakes move numbers by 100x, not 2.4x — and the header total never went through a conversion here." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "mercadolibre-mcq-20",
+      prompt: "The fulfillment pack wants every cart line to carry its purchase's cart depth — without collapsing the line grain. Which expression does it?",
+      choices: ["GROUP BY order_id with COUNT(*)", "COUNT(*) OVER (PARTITION BY order_id) beside each line", "COUNT(DISTINCT order_id) over the joined table", "A self-join of order_items to itself on order_id"],
+      answer: 1,
+      why: "A window aggregate computes the fold and ATTACHES it: 251 lines out, each stamped with its cart's line count. GROUP BY would collapse to 103 rows and destroy the line detail the pack sorts by; the window keeps the grain and adds the context column.",
+      notes: [
+        { choice: 0, why: "Collapses to one row per purchase — the pack can no longer sort by line. Different deliverable, same table." },
+        { choice: 2, why: "COUNT(DISTINCT order_id) without PARTITION counts purchases globally (103) — a constant on every row, not a per-cart depth." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "mercadolibre-mcq-21",
+      prompt: "Escalation question: 'which buyers cleared 400 on EVERY purchase?' Which shape answers it directly?",
+      choices: ["GROUP BY buyer HAVING MIN(total) > 400", "WHERE total > 400", "GROUP BY buyer HAVING AVG(total) > 400", "WHERE COUNT(total > 400) = COUNT(*)"],
+      answer: 0,
+      why: "MIN over a buyer's carts IS their weakest cart — every cart cleared 400 exactly when MIN(total) > 400. AVG passes the buyer with one 95-cart subsidized by a 900-cart; WHERE deletes the offending rows first and then judges the survivors, which is a different claim wearing the same words.",
+      notes: [
+        { choice: 1, why: "WHERE total > 400 answers 'which purchases cleared 400', not 'which buyers always did' — the buyer with nine big carts and one small one still prints." },
+        { choice: 2, why: "The subsidy trap: (900 + 95) / 2 = 497.5 clears the bar while the 95-cart breaks the rule. MIN is the honest weakest-link aggregate." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "mercadolibre-mcq-22",
+      prompt: "The daily GMV spine has gaps — 103 purchases scattered across 425 calendar days. Which build makes the 7-day moving average calendar-true?",
+      choices: ["AVG(gmv) OVER (ORDER BY day ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) straight on the order rows", "AVG(gmv) OVER () — the frame ignores order anyway", "A calendar-spine CTE (every date, zero-filled) LEFT JOINed to the orders fold, THEN the ROWS frame over the filled spine", "ORDER BY day LIMIT 7"],
+      answer: 2,
+      why: "On a gapped spine, ROWS BETWEEN 6 PRECEDING reaches back 6 ROWS — possibly 60 calendar days — so the '7-day' average is fiction. The zero-filled spine makes every date a row, and then the ROWS frame and the calendar agree. Zero-filling is not cosmetics: a day with no bookings is 0 GMV, not a missing row.",
+      notes: [
+        { choice: 0, why: "This is the default mistake: the frame is syntactically fine and temporally wrong. Six rows back from a Tuesday might be three weeks of quiet." },
+        { choice: 3, why: "LIMIT truncates the output to 7 rows — it computes no average at all. Frames define which rows an aggregate sees; LIMIT defines what prints." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "mercadolibre-mcq-23",
+      prompt: "A slide averages the four corridor AOVs — 335.32 (EU), 313.66 (APAC), 383.48 (US), 426.22 (LATAM) — and prints 364.67. The platform AOV is 338.19. Why the gap?",
+      choices: ["The corridor AOVs are stale", "An average of averages weights every corridor equally — LATAM's 2 purchases weigh as much as EU's 45; re-aggregate from the base rows", "338.19 is a median, not a mean", "The corridors use different currencies"],
+      answer: 1,
+      why: "364.67 describes a marketplace that does not exist: it gives LATAM's two orders the same weight as EU's forty-five. The honest number re-aggregates from the base — SUM(total)/COUNT(*) over all 103 purchases — or blends weights explicitly: SUM(aov * orders)/SUM(orders).",
+      notes: [
+        { choice: 2, why: "A median is a different statistic entirely — and 338.19 is the plain mean over the base rows. The gap is weighting, not statistic choice." },
+        { choice: 3, why: "The book is single-currency. Tempting explanation, wrong diagnosis — the arithmetic error is in the average of averages." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "mercadolibre-mcq-24",
+      prompt: "On the 14-month spine, a colleague swaps the running GMV's implicit RANGE frame for ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW. What changes?",
+      choices: ["Nothing — every month key is unique, so RANGE and ROWS accumulate identically here", "The running total doubles", "RANGE drops NULL months", "ROWS restarts the frame each year"],
+      answer: 0,
+      why: "The RANGE-vs-ROWS distinction only bites when the ORDER BY key has ties (peers enter the frame together). Month keys are unique — one row per bucket — so the two frames agree exactly, and the swap is cosmetic HERE. Knowing when the choice is benign is as testable as knowing when it isn't: purchase-grain walks with tied created_at seconds are where it bites.",
+      notes: [
+        { choice: 1, why: "Doubling is a fan-out symptom, not a frame symptom — no join was touched." },
+        { choice: 3, why: "Frames never reset without PARTITION BY. Swapping RANGE for ROWS changes nothing structural." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "mercadolibre-mcq-25",
+      prompt: "Every settled purchase row must carry its corridor's settled total AND its own share of it. Which pair does it without collapsing rows?",
+      choices: ["GROUP BY region, then join the totals back", "SUM(total) OVER (PARTITION BY region) and 100.0 * total / SUM(total) OVER (PARTITION BY region)", "COUNT(*) OVER () and total / COUNT(*)", "MAX(total) OVER (PARTITION BY region) and total / MAX(total) OVER (PARTITION BY region)"],
+      answer: 1,
+      why: "The partition window computes the corridor fold once and exposes it on every row — the denominator the share needs is sitting right there, and 100.0 goes BEFORE the division so the share is real arithmetic. One pass, row grain preserved, no join-back.",
+      notes: [
+        { choice: 0, why: "Correct but heavier: two passes and a join whose key you must state. The window is the same fold for free — and the interviewer is grading whether you know that." },
+        { choice: 2, why: "COUNT(*) OVER () counts ROWS, not value — the 'share' would divide one order's total by 103 rows instead of the corridor's settled value." },
+      ],
+      difficulty: "hard",
+    },
+    {
+      id: "mercadolibre-mcq-26",
+      prompt: "The Q1 2024 booked-GMV cut must capture every booking through March 31 23:59:59. Which WHERE clause is correct?",
+      choices: ["WHERE created_at BETWEEN '2024-01-01' AND '2024-03-31'", "WHERE created_at >= '2024-01-01' AND created_at < '2024-04-01'", "WHERE created_at LIKE '2024-0[1-3]%'", "WHERE SUBSTR(created_at, 1, 7) <= '2024-03'"],
+      answer: 1,
+      why: "The half-open interval [Jan 1, Apr 1) catches the last second of March with no boundary judgment: '2024-03-31 23:59:59' < '2024-04-01' is TRUE. BETWEEN '2024-03-31' compares string-wise and drops everything after midnight on the 31st — and quarter-end is exactly when LatAm demand lands.",
+      notes: [
+        { choice: 0, why: "BETWEEN is inclusive on both ends: '2024-03-31 23:59:59' > '2024-03-31', so March 31's bookings vanish from the quarter." },
+        { choice: 3, why: "The SUBSTR version is non-sargable (function on the column) and its <= comparison includes '2024-03-01' through '2024-03-31' but also any malformed keys that sort low." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "mercadolibre-mcq-27",
+      prompt: "The trusted-bench read keeps official stores rated 4.5 or better — rating is a column on suppliers. Why does the threshold live in WHERE, not HAVING?",
+      choices: ["rating is a row-level attribute: it filters stores before any fold, and HAVING only sees group results after GROUP BY", "HAVING is slower than WHERE", "HAVING cannot compare REAL numbers", "WHERE cannot reference supplier columns after a join"],
+      answer: 0,
+      why: "The 4.5 bench is a fact about each store row, so it discards rows pre-fold in WHERE — exactly the kit's trusted-bench shape (Nordic 4.6 and Alpine 4.8 in; Midwest 4.4 out). HAVING's turn comes when the threshold judges a group result: a revenue floor, a listing count, a rating AVERAGE.",
+      notes: [
+        { choice: 1, why: "Performance is not the issue — placement is semantics. A row filter in HAVING (when it compiles at all) is the wrong clause for the job." },
+        { choice: 2, why: "HAVING compares REALs fine — 'HAVING AVG(rating) >= 4.5' is the legitimate cousin when the unit of judgment is the GROUP, not the row." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "mercadolibre-mcq-28",
+      prompt: "The close packet stacks this year's settled bookings beside last year's in one layout — the two branches can never overlap. Which operator, and what does the alternative cost?",
+      choices: ["UNION — the safe default", "INTERSECT — it keeps the overlap", "JOIN ON 1=1 — set ops cannot stack shaped reports", "UNION ALL — UNION would pay a distinct pass to dedupe rows that cannot duplicate, and a REAL duplicate would vanish silently instead of being investigated"],
+      answer: 3,
+      why: "Disjoint branches stack with UNION ALL — no dedupe pass, no silent collapse. UNION's distinct step is a business decision, not hygiene: if a duplicate ever DID appear it is a data incident you want to see, and UNION would bury it. The discipline is stating WHY duplicates are impossible in a comment next to the operator.",
+      notes: [
+        { choice: 0, why: "'Safe by default' is the trap: UNION's dedupe deletes rows without announcing it. On stacks where a repeated count is legitimate, UNION is the bug." },
+        { choice: 2, why: "CROSS JOIN pairs every row with every row — multiplication, not stacking. Set operators concatenate shaped branches; joins relate them." },
+      ],
+      difficulty: "easy",
+    },
+    {
+      id: "mercadolibre-mcq-29",
+      prompt: "The one-pass status census has two portable shapes in SQLite. Which pair is equivalent per branch?",
+      choices: [
+        "SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) and COUNT(*) FILTER (WHERE status = 'delivered')",
+        "COUNT(status = 'delivered') and COUNT(*) FILTER (WHERE status = 'delivered')",
+        "SUM(status) and COUNT(status)",
+        "MAX(status = 'delivered') and COUNT(*) FILTER (WHERE status = 'delivered')",
+      ],
+      answer: 0,
+      why: "SUM over 0/1 flags is the conditional count — 52 for delivered — and FILTER (WHERE …) computes the same branch with standard syntax. Both share the same COUNT(*) denominator, which is why sibling branches cannot drift. The census identity 52 + 30 + 14 + 7 = 103 holds in either dialect.",
+      notes: [
+        { choice: 1, why: "COUNT(expr) counts rows where the expression is non-NULL — the 0/1 comparison result is never NULL, so this counts ALL 103 rows. COUNT never evaluates the expression's value." },
+        { choice: 2, why: "SUM over a TEXT status is 0 (SQLite coerces text to 0 in numeric context) and COUNT(status) counts non-NULL text — neither is a conditional count." },
+      ],
+      difficulty: "medium",
+    },
+    {
+      id: "mercadolibre-mcq-30",
+      prompt: "Repeat-buyer GMV: revenue from buyers with 2+ purchases, read at cart-line grain. The panel asks you to defend the shape. Which one composes the two grains correctly?",
+      choices: [
+        "WHERE customer_id IN (SELECT customer_id, COUNT(*) FROM orders GROUP BY customer_id HAVING COUNT(*) >= 2) — one IN list, done",
+        "A derived buyer-grain table (GROUP BY + HAVING COUNT(*) >= 2) that the outer line-item query joins or semi-joins — the aggregate lives in its own layer",
+        "WHERE COUNT(*) >= 2 on the joined orders×items table",
+        "GROUP BY order_id HAVING COUNT(*) >= 2 over order_items",
+      ],
+      answer: 1,
+      why: "Two grains, two layers: the inner fold defines repeat buyers at customer grain (16 buyers → 14 with 2+), the outer layer sums unit_price × quantity over their cart lines. Hiding an aggregate inside an IN list mixes grains in one clause, and COUNT in WHERE references a fold that does not exist yet.",
+      notes: [
+        { choice: 0, why: "An IN list takes ONE column; the two-column subquery is a syntax error — and even one-column form hides the fold where no reviewer can audit the definition." },
+        { choice: 3, why: "That folds cart lines per ORDER (orders with 2+ lines) — a basket-depth read, not a repeat-buyer read. The grain is off by one layer." },
+      ],
+      difficulty: "hard",
+    },
   ],
 
   cases: [
@@ -363,6 +709,148 @@ export const mercadolibreKit: CompanyKit = {
       walkthrough:
         "Two stages: fold the units, then rank them. The CTE joins listings to cart lines, folds SUM(ii.quantity) per product, and the HAVING floor keeps the ten listings at 30 units and above — Desk Mat Extended 47, Noise-Canceling Headset 46, HDMI 2.1 Cable 38, the two-way 36 tie, Running Socks 33, 4K Webcam Pro 31, and the three-way 30 tie. The outer SELECT adds RANK() OVER (ORDER BY units DESC): the 36 tie shares rungs 4 and 5, and the 30 tie reads 8, 8, 8 — with the next rung outside the frame landing on 11, because RANK skips after ties. DENSE_RANK would read the tie 8, 8, 8 and hand 9 to the next listing — a different board than the catalog page publishes; ROW_NUMBER would split three peer listings across 8, 9, 10 by whatever order the engine feels like. The distractors each break differently: COUNT folds line counts, not units; AVG and MAX rank a per-line statistic; DENSE_RANK and ROW_NUMBER change the tie policy in place; 35 in the floor cuts the board to five rows and hides the tie the memo names. Below the line sit the listings the floor hides: Mechanical Keyboard K1 at 28, Yoga Mat Eco 6mm at 27, Smart Watch S at 23, and the three-way 21 tie — the long tail the ladder exists to watch.",
     },
+    {
+      id: "cs-mercadolibre-3",
+      tier: "medium",
+      topic: "s6",
+      universe: "pricing",
+      title: "The band-edge census",
+      brief:
+        "Mercado Libre-flavored memo on the storefront db: the category page publishes two fixed band edges — classic under 50, signature under 200, premium at 200-plus — and the merchandising review opens with the band census: listings and average ticket per band. Probed facts: 16 listings split exactly 8 / 8 — classic averages 32.06 (Wireless Mouse 34.50, USB-C Hub 49.00, Ring Light 39.99 down to HDMI Cable 14.99), signature averages 111.50 (Noise-Canceling Headset 149.99, Studio Desktop Mic 119.00 up to Smart Watch S 199.99) — and the premium band prints NO row: nothing prices at 200-plus on this snapshot, and the absence is the finding. The deck reads cheapest band first.",
+      ask: "Return one row per price band with the listing count and the average ticket to 2 decimals, lowest average first.",
+      template:
+        "SELECT CASE\n         WHEN price < {1} THEN 'classic'\n         WHEN price < {2} THEN 'signature'\n         ELSE 'premium'\n       END AS band,\n       COUNT(*) AS listings,\n       ROUND(AVG(price), 2) AS avg_price\nFROM products\nGROUP BY band\nORDER BY avg_price {3};",
+      slots: [
+        {
+          answer: "50",
+          kind: "number",
+          noVerify: true,
+          label: "the classic-line edge",
+          why: "50 is the category page's published edge: 8 listings sit under it, capped by the USB-C Hub at 49.00. The figure never prints in the census cells — it is policy, not data — but moving it to 60 pulls the 59.99 Bluetooth Speaker into classic and re-weights both averages.",
+        },
+        {
+          answer: "200",
+          kind: "number",
+          noVerify: true,
+          label: "the premium floor",
+          why: "200 is the second published edge, and it matters BECAUSE nothing clears it: the ELSE branch fires for zero listings and the premium band prints no row — the empty-band proof the review cites. Loosening it to 100 re-bands the 89.99 keyboard and the census stops matching the page.",
+        },
+        {
+          answer: "ASC",
+          kind: "keyword",
+          label: "the cheapest-band-first direction",
+          why: "The deck opens on classic (32.06 average) and walks up to signature (111.50). DESC would lead with the premium-leaning band — a correct query presenting the census bottom-up, the exact reversal the merchandising lead flags.",
+        },
+      ],
+      distractors: ["60", "100", "DESC"],
+      walkthrough:
+        "One fold, one CASE, one absence. The CASE arms evaluate top-down — price < 50 first, then price < 200, ELSE premium — which is why the edges MUST ascend: swapped arms re-band every classic listing as signature because 34.50 passes the first test it meets. GROUP BY band folds the 16 listings into two rows: classic 8 at 32.06, signature 8 at 111.50, and the premium band contributes nothing — GROUP BY only produces rows for groups that exist, so an empty band is an ABSENT row, and proving that absence (top listing 199.99, one cent shy) is the census's real finding. The distractors fail honestly: 60 and 100 are plausible-but-unpublished edges that re-weight both averages (60 drags the 59.99 speaker into classic; 100 pushes the keyboard out of signature), and DESC flips the deck to read signature-first. The arms, the edges and the direction are all policy the category page publishes — the query's job is to match it, not to invent it.",
+    },
+    {
+      id: "cs-mercadolibre-4",
+      tier: "easy",
+      topic: "l8",
+      universe: "inventory",
+      title: "The restock floor huddle",
+      brief:
+        "Mercado Libre-flavored memo on the storefront db: the weekly restock huddle scans categories whose thinnest listing sits at or under the 70-unit restock line — the trigger the fulfillment team uses before a listing sells through. Probed facts: 16 listings across 7 categories; the sub-70 floors are Wearables (Smart Watch S at 40 — the hot listing the kit tracks down to 17 remaining after 23 units move), Audio (Studio Desktop Mic at 45) and Video (4K Webcam Pro at exactly 70); every other category's thinnest listing sits at 85 (USB-C Hub) or fatter. The huddle reads thinnest floor first.",
+      ask: "Return each category at or under the restock line with its listing count and its floor stock (the thinnest listing), thinnest first.",
+      template:
+        "SELECT category,\n       COUNT(*) AS listings,\n       MIN({1}) AS floor_stock\nFROM products\nGROUP BY category\nHAVING MIN(stock) <= {2}\nORDER BY floor_stock {3};",
+      slots: [
+        {
+          answer: "stock",
+          kind: "keyword",
+          label: "the floor column",
+          why: "The floor is MIN(stock) — the thinnest listing a category carries. MIN(price) computes the cheapest TICKET instead, a pricing stat wearing an inventory column's name; MIN(id) folds id codes, which is numerically valid and commercially meaningless.",
+        },
+        {
+          answer: "70",
+          kind: "number",
+          label: "the restock line",
+          why: "The huddle's published trigger keeps three categories: Wearables 40, Audio 45, Video 70 — and the 70 itself prints in the cells as Video's floor, the boundary case the trigger exists to catch. Raising the line to 85 drags Electronics (USB-C Hub) into the huddle; the trigger is a policy number, not a guess.",
+        },
+        {
+          answer: "ASC",
+          kind: "keyword",
+          label: "the thinnest-first direction",
+          why: "Thinnest floor first puts Wearables (40) on top — the category the huddle acts on today. DESC would open on Video's 70 and end on the urgent row; the meeting reads top-down, so the order IS the agenda.",
+        },
+      ],
+      distractors: ["85", "id", "45", "DESC"],
+      walkthrough:
+        "A census with a trigger. GROUP BY category folds 16 listings into 7 rows; COUNT(*) reads each category's depth (Wearables 2, Audio 3, Video 2) and MIN(stock) reads the floor — the thinnest listing each category carries. HAVING MIN(stock) <= 70 keeps the three categories the restock line exists to flag: Wearables at 40 (the Smart Watch S book the kit tracks — 40 on the shelf, 23 sold, 17 true remaining), Audio at 45, and Video at exactly 70, the boundary case that proves the line is <= and not <. ORDER BY floor_stock ASC sets the agenda: 40, 45, 70. The distractors each break differently: 85 in the line drags Electronics (USB-C Hub at exactly 85) into the huddle and the agenda stops matching the published trigger; id folds id codes into the floor; 45 tightens the line and silently drops Video — the one category sitting exactly ON the trigger; DESC buries the urgent row under the boundary case. One pass, one policy line, and the floor is a MIN because 'thinnest listing' is the definition, not a guess.",
+    },
+    {
+      id: "cs-mercadolibre-5",
+      tier: "medium",
+      topic: "t7",
+      universe: "growth",
+      title: "The GMV month walk",
+      brief:
+        "Mercado Libre-flavored memo on the storefront db: the growth board's monthly walk puts each month's booked GMV beside the prior month's, with the delta rounded to cents, so the trough and the recovery quote themselves. Probed facts: the 14-month spine opens at 3,731.97 (Jan 2024), slides to the 1,193.86 trough in July 2024, and recovers +1,158.21 into August (2,352.07); 2024's twelve buckets end at 2,101.47 in December after a 1,648.80 November dip. The first LAG row is NULL by definition — no baseline exists for January — and the board wants the 2024 buckets only, chronological, no invented zeros.",
+      ask: "Return month, booked GMV, the prior month's GMV and the delta, for the 2024 buckets, chronological order.",
+      template:
+        "WITH monthly AS (\n  SELECT SUBSTR(created_at, 1, 7) AS month,\n         ROUND(SUM(total), 2) AS gmv\n  FROM orders\n  GROUP BY month\n)\nSELECT month,\n       gmv,\n       {1}(gmv) OVER (ORDER BY month) AS prev_gmv,\n       ROUND(gmv - LAG(gmv) OVER (ORDER BY month), 2) AS delta\nFROM monthly\nWHERE month LIKE {2}\nORDER BY month {3};",
+      slots: [
+        {
+          answer: "LAG",
+          kind: "keyword",
+          label: "the prior-month reader",
+          why: "LAG(gmv) walks the window backwards one bucket — February's prev_gmv is January's 3,731.97. LEAD reads forward and hands February March's number, silently re-labeling the future as history; SUM piles a running total into a column named prev, a different metric wearing the same name.",
+        },
+        {
+          answer: "'2024-%'",
+          kind: "keyword",
+          label: "the year filter",
+          why: "LIKE '2024-%' keeps exactly the twelve 2024 buckets and cuts 2025's February from the walk the board asked for. '%25-%' would leave a single orphan row whose LAG is NULL — a walk with one step and no story.",
+        },
+        {
+          answer: "ASC",
+          kind: "keyword",
+          label: "the chronological direction",
+          why: "A month walk is chronological: ASC keeps January on top so each row's delta reads against the row above. DESC presents December first with its baseline underneath — the numbers survive, the trough-to-recovery narrative does not.",
+        },
+      ],
+      distractors: ["LEAD", "'2025-%'", "DESC", "SUM"],
+      walkthrough:
+        "Stage the grain, then walk it. The CTE folds 103 purchases into 14 monthly buckets with the STRFTIME month key — '%Y-%m', because '%m' alone would merge January 2024 into January 2025 — and rounds each fold to cents. The outer query reads the walk: LAG(gmv) OVER (ORDER BY month) brings January's 3,731.97 into February's row, and the delta divides nothing — it subtracts, rounded: −122.33 into February, −992.56 into March, then the slide bottoming at −853.57 into July's 1,193.86 trough and the +1,158.21 recovery into August. January's prev_gmv and delta are NULL by definition — no prior bucket exists, and that NULL is the honest baseline, not a zero to coalesce into a fake +100% jump. The two-stage build matters: window output is invisible to sibling expressions and WHERE in the same SELECT, so the CTE stages the grain before any window runs. The distractors each break the story differently — LEAD quotes the future, SUM turns prev into a cumulative, the year filter amputates the spine, and DESC tells the trough before the slide that caused it.",
+    },
+    {
+      id: "cs-mercadolibre-6",
+      tier: "hard",
+      topic: "x2",
+      universe: "funnel",
+      title: "The corridor dispatch census",
+      brief:
+        "Mercado Libre-flavored memo on the storefront db: the ops board opens on the corridor dispatch census — booked, settled, dispatched, awaiting and the drop share per corridor in ONE scan. Probed facts: EU books 45 with 24 settled, 36 dispatched (shipped_at stamped), 6 awaiting and a 6.7% drop share; APAC 37 / 21 / 29 / 5 / 8.1%; US 19 / 5 / 15 / 3 / 5.3%; LATAM 2 / 2 / 2 / 0 / flat 0. Two denominators live in one row: settled counts door-confirmed deliveries, dispatched counts the shipped_at stamp — delivered plus in-transit — and each corridor's dispatched + awaiting + dropped must reconcile to booked by construction. The board reads biggest corridor first.",
+      ask: "Return each corridor with booked, settled, dispatched, awaiting and the drop percentage to 1 decimal, biggest corridor first.",
+      template:
+        "SELECT c.region AS corridor,\n       COUNT(*) AS booked,\n       COUNT(*) FILTER (WHERE o.status = {1}) AS settled,\n       COUNT(*) FILTER (WHERE o.{2} IS NOT NULL) AS dispatched,\n       COUNT(*) FILTER (WHERE o.status = 'pending') AS awaiting,\n       ROUND(100.0 * COUNT(*) FILTER (WHERE o.status = 'cancelled') / COUNT(*), 1) AS drop_pct\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nGROUP BY c.region\nORDER BY booked {3};",
+      slots: [
+        {
+          answer: "'delivered'",
+          kind: "keyword",
+          label: "the settled literal",
+          why: "Settled means door-confirmed: status 'delivered', 52 platform-wide, led by EU's 24. 'shipped' would count the 30 in-transit rows as final and every corridor's completion story inflates before the parcel arrives — the exact conflation the stage map forbids.",
+        },
+        {
+          answer: "shipped_at",
+          kind: "keyword",
+          label: "the dispatch stamp column",
+          why: "Dispatched is the shipped_at stamp — truck-out, not door-step: 82 of 103 platform-wide, 36 of EU's 45. created_at IS NOT NULL is always true and would print booked wearing dispatched's name; total IS NOT NULL dies the same way.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-corridor-first direction",
+          why: "The board reads biggest corridor on top: EU 45, APAC 37, US 19, LATAM 2. ASC would open the morning meeting on LATAM's two purchases — a correct query aimed at the wrong end of the board, and the small-sample row is the LAST thing the funnel discussion needs first.",
+        },
+      ],
+      distractors: ["'shipped'", "created_at", "ASC"],
+      walkthrough:
+        "One scan, five branches, two denominators. The join attaches each purchase to its buyer's corridor and GROUP BY folds 103 rows into four; FILTER (WHERE …) branches each count over the same scan, so the branches cannot drift: EU reads booked 45, settled 24, dispatched 36, awaiting 6 — and the reconciliation holds by construction, dispatched 36 + awaiting 6 + dropped 3 = 45, with APAC 29 + 5 + 3 = 37, US 15 + 3 + 1 = 19, LATAM 2 = 2. The drop share divides the cancelled branch by COUNT(*) with 100.0 BEFORE the division — EU 6.7, APAC 8.1, US 5.3, LATAM 0 — the exact numbers the ops board quotes, and the reason APAC leads the address-quality workstream despite booking less than EU. The two stage-columns are the case's hard part: settled counts a STATUS (delivered, door-confirmed) while dispatched counts a TIMESTAMP (shipped_at, truck-out) — same query, two different definitions of 'made it', and conflating them is the funnel bug the stage map exists to prevent. The distractors fail honestly: 'shipped' re-labels in-transit as settled, created_at turns dispatched into booked, and ASC opens the board on the micro-market.",
+    },
   ],
 
   problems: [
@@ -382,5 +870,21 @@ export const mercadolibreKit: CompanyKit = {
     { slug: "fix-product-name-format", why: "Catalog title normalization — the listing names on this db are already clean; the job is learning to keep them that way before any GROUP BY merges variants." },
     { slug: "customers-who-bought-a-and-b-not-c", why: "Cross-listing behavior: which buyers put Audio and Wearables in the same cart but never Accessories — the conditional-aggregation shape behind attach-rate reads." },
     { slug: "null-blank-audit", why: "The listing catalog audit: NULL and blank cells counted per column before any fold, because a blank category on one listing quietly re-buckets the whole category census." },
+    { slug: "immediate-food-delivery-ii", why: "The dispatch-promise share escalated: what fraction of purchases got their Envios stamp on booking day, computed as one conditional ratio — the level-two version of the funnel read the ops board opens with." },
+    { slug: "the-most-recent-orders-for-each-product", why: "Latest purchase per listing — the recency argmax the Envios queue and the re-listing decision both run on, and a ROW_NUMBER-versus-join-back tie drill in marketplace clothing." },
+    { slug: "the-most-recent-three-orders", why: "The top-3 recency cut per buyer: window ranking with a LIMIT that only exists after the window — the compose-then-cut order the fulfillment pack drills." },
+    { slug: "customer-order-frequency", why: "Purchase cadence per buyer: Alice Chen's 24-purchase book against the two one-time buyers is the intensity spread the loyalty team prices, folded per customer." },
+    { slug: "users-with-two-purchases-within-seven-days", why: "The repeat burst: two purchases inside a week is the behavioral signal growth ops treats as activation — self-join or window logic over the purchase spine." },
+    { slug: "customers-with-strictly-increasing-purchases", why: "Escalating basket values per buyer — the up-and-to-the-right read that flags a buyer worth a retention touch, and a strict-inequality window drill." },
+    { slug: "customer-who-visited-but-did-not-transact", why: "Carted but never kept: the kit's whole 'carted and kept are different numbers' thesis as an anti-join — visits (or carts) with no purchase row on the other side." },
+    { slug: "same-day-sale", why: "Booked and dispatched on the same calendar day — the same-day shape behind the Envios speed metric, where the timestamp comparison must respect the half-open day boundary." },
+    { slug: "friday-purchases-i", why: "Weekday demand cycles: purchases folded by day-of-week — the staffing curve the fulfillment centers plan against, pivoted with CASE or STRFTIME." },
+    { slug: "restaurant-growth", why: "The 7-day moving average of booked GMV — the smoothing the growth board reads instead of raw daily noise, and the calendar-spine frame drill in full." },
+    { slug: "calculate-product-final-price", why: "Promo-adjusted listing price: base price plus a conditional adjustment is exactly how campaign pricing lands on the category page — CASE arithmetic on the catalog." },
+    { slug: "recyclable-and-low-fat-products", why: "The two-attribute listing scan: which SKUs carry both flags — the filter-shape behind every 'eligible for program X' catalog pull." },
+    { slug: "warehouse-manager", why: "Inventory cubed by warehouse and SKU: the per-cell stock fold the fulfillment network reports against — SUM over a two-key GROUP BY with zero cells kept honest." },
+    { slug: "weeks-of-supply", why: "Stock cover per listing: units on hand over recent run-rate — the number that decides whether Smart Watch S at 17 remaining is a restock ticket or a stockout incident." },
+    { slug: "duplicate-charge-pairs", why: "Pago double-settlement detection: two payment rows for one invoice inside a window — the self-join pair-matching shape the finance anomaly walk runs every close." },
+    { slug: "sellers-with-no-sales", why: "Official-store whitespace: which of the 6 stores carried no financed demand in the window — the anti-join the commerce team runs before a shelf-space conversation." },
   ],
 };

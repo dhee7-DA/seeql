@@ -25,7 +25,7 @@ export const jpmorganKit: CompanyKit = {
     "JPMorgan Chase runs two businesses at once and the SQL reflects both: **Chase**, the consumer bank — branches, cards, deposits, the biggest consumer book in the country — and the institutional side, where treasury services, markets and payments move value that makes the consumer numbers look like rounding errors. The in-house data platform (**COIN**) and the blockchain rail (**Kinexys**) exist because at this scale the firm's edge is how fast a fact about money becomes a queryable fact. The interview culture follows the same split: you will be asked to fold a consumer book AND to defend an institutional control, *often in the same hour*.",
     "The data org sits close to the books of record. Every booked confirmation carries an amount the settlement rails must clear — card on the consumer read, wire on the institutional one — and every settled dollar posts twice into the double-entry ledger, debit and credit, stored as INTEGER cents with the dollar read always `cents / 100.0`. The rails reconcile to the confirmations before anything publishes: **27 settlement rows against 28 booked confirmations**, card carrying 16 of them for **37364.00** and wire 11 for **32248.00**. Op-cost lines run on a treasury calendar — 36 lines, Rent 16800.00 of a 25416.00 total, a monthly band from 1440.00 to 3210.00 — and the month's walk, this month beside last month, is the artifact treasury actually reviews.",
     "Interview style is threshold-minded and exceptions-first. Screens start with a fold — rail volumes and values, coverage classes, cost buckets by month — then escalate into a guard: a `HAVING` wall that flags counts crossing a review threshold (the {amber:structuring-detection} pattern), a CASE ladder with a boundary someone will argue about, an anti-join that defines {violet:dormancy}. The follow-ups are about denominators and edge rows: 'does that share include the partial?', 'which arm catches exactly 90 days?'. Candidates who state the filter's population and the bucket's boundary before writing SQL do well; *the interviewers have all shipped a report where a boundary was silent and it mattered*.",
-    "Preparation strategy: JPMorgan has **two tagged problems** in this app's band — the country-investment ratio screen and the structuring-detection `HAVING` wall — and the rest of the pool is theme-curated to its known question families: rail folds, CASE buckets, dormancy anti-joins, month walks, LAG transitions and threshold screens (provenance stated per problem). Do the topics in order, then run both case studies on the live storefront database: one rebuilds the {sky:two-rail settlement census} the ops review opens with, the other rebuilds the {amber:op-cost calendar walk} treasury runs every month.",
+    "Preparation strategy: JPMorgan has **two tagged problems** in this app's band — the country-investment ratio screen and the structuring-detection `HAVING` wall — and the rest of the pool is theme-curated to its known question families: rail folds, CASE buckets, dormancy anti-joins, month walks, LAG transitions and threshold screens (provenance stated per problem). Do the topics in order, then run the **six case studies** on the live storefront database: the {sky:two-rail settlement census} the ops review opens with, the {amber:op-cost calendar walk} treasury runs every month, the account-level ledger proof the close signs, the one-pass confirmation census, the structuring wall, and the two-rail concentration board — then re-run each a week later from a blank editor, *the second pass is where recall actually forms*. Pair the cases with the **32-problem pool** and the theory bank below, and treat the walkthroughs as the real content: they narrate the failure each wrong chip causes, which is exactly the muscle the follow-up question tests.",
   ],
 
   dayInLife: [
@@ -50,17 +50,17 @@ export const jpmorganKit: CompanyKit = {
     {
       name: "Folds on the consumer book",
       why: "The consumer read starts with GROUP BY folds: activity per account, spend per month, counts per bucket. JPMorgan screens drill the two-grain habit early — volume (COUNT(*)) and value (SUM of cents, read in dollars) are different numbers about the same rows, and the interviewer listens for which one you are quoting.",
-      slugs: ["number-of-rich-customers", "monthly-transactions-i", "unique-orders-and-customers-per-month"],
+      slugs: ["number-of-rich-customers", "monthly-transactions-i", "unique-orders-and-customers-per-month", "deferred-revenue", "maximum-transaction-each-day"],
     },
     {
       name: "Rails and confirmations joins",
       why: "Every settlement must reconcile to a booked confirmation, so the join is a control before it is an enrichment. The two-table fold — rails folded beside the books they clear — is the opening query of the ops review, and its cardinality (many-to-one) is the reason the totals survive it.",
-      slugs: ["bank-account-summary-ii", "employee-bonus", "combine-two-tables"],
+      slugs: ["bank-account-summary-ii", "employee-bonus", "combine-two-tables", "duplicate-charge-pairs", "keep-latest-dedupe", "circular-transfers"],
     },
     {
       name: "CASE buckets: coverage and delinquency",
       why: "Bucket ladders are everywhere in consumer banking: coverage classes (exact / partial / none), aging buckets, spend tiers. The skill is boundary discipline — first matching arm wins, the ELSE arm is exhaustiveness, and the account sitting exactly on a boundary is the one the review argues about.",
-      slugs: ["count-salary-categories", "delinquency-buckets", "loan-types"],
+      slugs: ["count-salary-categories", "delinquency-buckets", "loan-types", "credit-utilization-bands", "expected-credit-loss", "delinquency-roll-rates"],
     },
     {
       name: "Dormancy anti-joins",
@@ -75,22 +75,22 @@ export const jpmorganKit: CompanyKit = {
     {
       name: "Running balances and walks",
       why: "Deposits and cost books are read as walks: running balance per account, cumulative spend per month. Window running sums with explicit frames — and the frame discipline that keeps same-timestamp rows from double-counting — is the daily muscle here.",
-      slugs: ["account-balance", "restaurant-growth", "running-total-for-different-genders"],
+      slugs: ["account-balance", "restaurant-growth", "running-total-for-different-genders", "balance-rollforward", "loan-amortization-schedule"],
     },
     {
       name: "LAG and LEAD state transitions",
       why: "Movement analysis is LAG/LEAD work: month-over-month deltas, transaction-to-transaction checks, status flips between cycles. The window's ORDER BY is the direction of time and the display's ORDER BY is not — screens love the gap between the two.",
-      slugs: ["consecutive-transactions-with-increasing-amounts", "second-day-confirmation", "growth-accounting"],
+      slugs: ["consecutive-transactions-with-increasing-amounts", "second-day-confirmation", "growth-accounting", "second-most-recent-activity"],
     },
     {
       name: "Rates with honest denominators",
       why: "Acceptance rates, coverage shares, utilization — consumer banking is ratios, and ratios here are 100.0-before-division discipline. The denominator's population is decided before the ratio exists; integer division that prints 0 is the classic shipped bug.",
-      slugs: ["queries-quality-and-percentage", "confirmation-rate", "percentage-of-users-attended-a-contest"],
+      slugs: ["queries-quality-and-percentage", "confirmation-rate", "percentage-of-users-attended-a-contest", "chargeback-rate-ranking", "risk-based-pricing", "portfolio-concentration-hhi"],
     },
     {
       name: "HAVING walls and threshold screens",
       why: "The structuring-detection pattern is the firm's signature screen: fold small-ticket counts per customer, then judge the fold against a review wall in HAVING. WHERE cannot see the count, ON fires pre-fold, and the wall's threshold is a printed constant someone signed off on.",
-      slugs: ["structuring-detection", "customer-order-frequency", "managers-with-at-least-5-direct-reports"],
+      slugs: ["structuring-detection", "customer-order-frequency", "managers-with-at-least-5-direct-reports", "value-at-risk", "wash-trade-detection"],
     },
     {
       name: "KYC-grade text hygiene",
@@ -146,6 +146,102 @@ export const jpmorganKit: CompanyKit = {
       id: "jpm-t8",
       q: "Money is stored as integer cents here. Walk me through every place a precision bug can enter a consumer-bank report.",
       a: "Five doors, one policy. Integer division: amount_cents / 100 truncates — 92500 happens to survive, 486150 prints 4861 and the report is half a dollar light on every odd-cent row; the read is / 100.0, the .0 promoting real arithmetic at the first operation. Unit swaps: dividing a COUNT by 100 because the SUM nearby did — 373.64 where the card book meant 37364.00 — is the signature of copy-pasted arithmetic with the wrong aggregate. Ordering: ROUND only at the display edge; rounding per row then re-summing compounds the drift, and shares computed from rounded parts no longer sum to 100. Population: the fold's denominator decided before the ratio exists — partial covers (4000.00 of 6148.00) in or out of the coverage rate is a definition, printed beside the number. Cross-footing: the cheap test that catches all of it — card 37364.00 plus wire 32248.00 must equal the ledger's cash debit side of 69612.00, and the trial balance's 181080.00-equals-181080.00 proof must hold underneath. The policy: integer cents end to end, one conversion at the edge, one rounding at the edge, and a cross-foot on every report that money will move on. A candidate who enumerates the doors is describing the controls this firm actually runs.",
+      tag: "quality",
+    },
+    {
+      id: "jpm-t9",
+      q: "COUNT(*) versus COUNT(column) versus COUNT(DISTINCT column) — run all three on the confirmations-joined-to-legs result and tell me what each number means.",
+      a: "Four numbers, four different books, one query. Confirmations LEFT JOIN legs returns 33 rows: 27 matched pairs plus the 6 no-leg confirmations carrying NULL payloads. COUNT(*) reads 33 — rows in the result, matched or not. COUNT(p.id) reads 27 — the legs that exist; NULL payloads are invisible to it. COUNT(DISTINCT p.invoice_id) reads 22 — the confirmations the rails actually covered. COUNT(DISTINCT i.id) reads 28 — the whole booked book. The ops review misquotes any of these under the wrong name: '27 confirmations settled' is wrong twice over (27 is legs; 22 is covered confirmations), and the 6-row gap between COUNT(*) and COUNT(p.id) is exactly the receivables watchlist. A candidate who says 'which grain does each form count' out loud is describing the reconciliation, not just syntax.",
+      tag: "aggregation",
+    },
+    {
+      id: "jpm-t10",
+      q: "The concentration board ranks settlement legs per rail. ROW_NUMBER, RANK or DENSE_RANK — and what does each do to a tie?",
+      a: "ROW_NUMBER deals every row a distinct number and breaks ties by whatever the engine chose — deterministic on today's plan, different after a stats refresh, which on a risk board means the crowned counterparty can swap between reruns. RANK gives tied rows the same rung and then skips: two legs tied at the top both read rung 1 and the next reads 3 — honest about the tie, gappy beneath it. DENSE_RANK packs ties with no gaps: 1, 1, then 2 — the tier function when the report counts tiers rather than positions. The house rule is not the function; it is the declared policy: partition by rail, order by amount DESC, and pin a deterministic tiebreaker (leg id) inside the window so the rerun reproduces the board row for row. A board that reshuffles overnight is not a ranking choice — it is a finding.",
+      tag: "windows",
+    },
+    {
+      id: "jpm-t11",
+      q: "The nostro replay steps the cash account leg by leg, and two legs batch-posted at the same timestamp. What does the default window frame do to the walk, and which frame fixes it?",
+      a: "The default frame is RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW, and RANGE treats ORDER BY ties as peers: both same-timestamp legs enter the running balance together, so the replay prints one combined jump where the ledger posts two — and the replay stops matching the books a re-run of the cash fold would produce. The fix is the frame keyword: ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW accumulates row by row, every leg moves the balance once, and the walk ties to the ledger line by line. The expert answer states the contract first — one row, one balance step — and lets the frame follow; ties are routine when rails batch-post, so the keyword is load-bearing, not style. Same discipline on any running SUM here: the deposits book's balance walk and the op-cost cumulative both name their frame explicitly.",
+      tag: "windows",
+    },
+    {
+      id: "jpm-t12",
+      q: "The month packet stacks the settled fold and the unsettled fold into one result with a source label. UNION or UNION ALL — and what does the wrong pick cost?",
+      a: "UNION ALL, always, for this packet. The branches are disjoint by construction — one filters legs that exist, one filters confirmations with none — so a dedupe pass buys nothing and risks plenty: a bare UNION collapses byte-identical rows across branches, and two months with identical counts and values are a coincidence, not a duplicate. The loss announces itself nowhere — the packet just foots short, and the cross-foot against the ledger fails an hour later with no hint which branch ate the row. The shape that ships: each branch carries a literal label column ('settled' / 'unsettled') so every row self-identifies, matching column lists written side by side for visual diffing, and UNION ALL as the glue. Reach for bare UNION only when you can say out loud which duplicated rows you are paying to collapse — at this firm that sentence is usually the sign you are deduping evidence.",
+      tag: "set-ops",
+    },
+    {
+      id: "jpm-t13",
+      q: "Fraud ops wants each counterparty's LATEST settlement leg. Sketch the correlated-scalar version, then say what you would ship instead.",
+      a: "The correlated form reads clean: WHERE p.paid_on = (SELECT MAX(p2.paid_on) FROM payments p2 JOIN invoices i2 ON i2.id = p2.invoice_id WHERE i2.customer_id = i.customer_id) — 'this row IS their latest leg'. It re-evaluates the inner MAX once per outer row, which is fine at demo scale and dies at book scale. What I ship: a derived table folding the latest paid_on per counterparty once (GROUP BY customer_id), joined back one-to-one — set-based, one pass over payments. The follow-up that separates candidates is ties: two legs on the same latest date both satisfy the join-back and the correlated form, so the counterparty appears twice in the 'latest' report; ROW_NUMBER() OVER (PARTITION BY customer ORDER BY paid_on DESC, p.id) with a deterministic tiebreaker returns exactly one. Say which behavior you shipped — 'latest, ties both' and 'latest, one row' are different deliverables the desk will ask for by name.",
+      tag: "subqueries",
+    },
+    {
+      id: "jpm-t14",
+      q: "Duplicate charges: same counterparty, same cents, same day. How do you detect them, dedupe them, and how do you avoid deleting the legitimate split plans?",
+      a: "Detect with a fold: GROUP BY counterparty, amount_cents, paid_on and HAVING COUNT(*) > 1 — the grouping key IS the duplicate definition, so state it before writing it. Dedupe with the window pattern: ROW_NUMBER() OVER (PARTITION BY counterparty, amount_cents, paid_on ORDER BY p.id) numbers each duplicate group, and you keep rn = 1 — the earliest leg — never deleting both copies. The trap that matters here: the five split-plan receivables carry two legs each, and they are NOT duplicates — different amounts, different timestamps, one client arrangement. Partition on the full natural key and the splits survive with rn = 1 and rn = 2; partition on counterparty alone and the dedupe eats half the split legs, which is a reconciliation break you created yourself. The alert queue and the books stay honest only if the definition and the partition key are the same sentence.",
+      tag: "windows",
+    },
+    {
+      id: "jpm-t15",
+      q: "The break desk pairs claims with evidence using EXCEPT. Build both directions and say why set grain keeps the counts honest.",
+      a: "Two folds, two mirrors. The claims fold: SELECT id FROM invoices WHERE status = 'paid' — confirmations that promise settlement. The legs fold: SELECT DISTINCT invoice_id FROM payments — confirmations the rails actually touched. Claims EXCEPT legs hands back the paid-with-no-leg population (the 1756.00 confirmation whose status promises money the rails never moved); legs EXCEPT claims hands back cash that moved with no live claim (the void confirmation's 925.00 leg). Set grain is the quiet win: EXCEPT deduplicates both inputs first, so the five split plans — two legs each — cannot fan the counts, and the result is one row per confirmation no matter how many legs it drew. EXCEPT is also NULL-safe where NOT IN empties the queue on one stray NULL — and an empty break queue at a bank reads as peace when it is blindness. The pair ships together, quantified, routed to the desk that owns each direction.",
+      tag: "set-ops",
+    },
+    {
+      id: "jpm-t16",
+      q: "The rails scan is slow. Walk me through making the predicates sargable and the query cheap.",
+      a: "Sargable means the predicate compares the bare column to a value so an index can serve it. The monthly-bucket habit — SUBSTR(paid_on, 1, 7) = '2025-01' — wraps the column in a function and forces a scan of every settlement row; the sargable twin is the half-open range paid_on >= '2025-01-01' AND paid_on < '2025-02-01', same rows, index-usable. The habits that compound on top: filter early inside each CTE so later folds carry fewer rows (the small-ticket definition belongs in WHERE before the GROUP BY, not after it); name columns instead of SELECT * so payloads you never read stop crossing the wire; probe with LIMIT before committing to the full fold; and aggregate on the smallest table that answers the question rather than joining first and filtering after. On the rails these are not micro-optimizations — they are the difference between the overnight reconciliation finishing and the ops standup starting blind.",
+      tag: "performance",
+    },
+    {
+      id: "jpm-t17",
+      q: "Walk me through the logical evaluation order of a SELECT — and name the artifact each stage violation breaks here.",
+      a: "FROM and JOIN assemble rows; WHERE filters them; GROUP BY folds them; HAVING judges the folds; SELECT computes output expressions including windows; ORDER BY sorts; LIMIT cuts. Every classic screen bug is a stage violation wearing a report's name: an aggregate in WHERE — the structuring wall written as WHERE COUNT(*) >= 5 — fails to compile because folds do not exist yet; a SELECT alias referenced in WHERE — the coverage share filtered by settled_pct — fails because aliases are born in SELECT; a window result filtered in WHERE — the whale board trimmed with WHERE rung <= 2 inline — fails because windows compute in the SELECT stage, so the board stages in a CTE and filters outside. The flip side: ORDER BY CAN use SELECT aliases because it runs after them. The narration is the interview answer — say where each fact becomes true in the engine, because that is the only moment it can be judged.",
+      tag: "pipeline",
+    },
+    {
+      id: "jpm-t18",
+      q: "The deck quotes an 'average settlement' per rail and then averages the two rails' numbers. Why is that wrong, and what do you compute instead?",
+      a: "Because it weights every group equally regardless of size. Card averages 37364.00 over 16 legs — 2335.25 per leg; wire averages 32248.00 over 11 — 2931.64. Averaging those two numbers prints 2633.45, which describes a book where card and wire carry equal weight. They do not: the true blended average over all 27 legs is 69612.00 / 27 = 2578.22, where wire's bigger legs pull harder precisely because the fold weights by legs, not by rails. The honest blends: re-aggregate from the base rows (SUM of values divided by SUM of counts) or a weighted average — SUM(rail_avg * rail_count) / SUM(rail_count) — the same arithmetic one level up. The interview move is naming WHERE the weighting lives: an average of averages is only correct when every group has equal counts, and on two rails with 16 and 11 legs that claim is false on its face.",
+      tag: "aggregation",
+    },
+    {
+      id: "jpm-t19",
+      q: "The mismatch report runs WHERE p.amount_cents <> i.amount_cents and the no-leg confirmations vanish. Explain the three-valued logic and the fix.",
+      a: "SQL predicates return TRUE, FALSE, or UNKNOWN, and WHERE keeps only TRUE. A no-leg confirmation's p.amount_cents is NULL after the LEFT JOIN, and NULL <> anything evaluates to UNKNOWN — so the row fails the filter and the 15217.00 of never-collected confirmations silently exits the mismatch report, the one report whose job is to list them. The same logic empties the NOT IN anti-join when the subquery carries one NULL, and drops rows from WHERE status <> 'cancelled' when status itself is NULL. The fixes, in order of honesty: IS DISTINCT FROM — p.amount_cents IS DISTINCT FROM i.amount_cents is TRUE when exactly one side is NULL; an explicit OR arm — OR p.id IS NULL — that names the no-leg population; or split the report into the matched-mismatch and the anti-join watch. The rule the desk prints: a comparison against NULL is a question with no answer, and a control built on unanswered questions is a blind control.",
+      tag: "nulls",
+    },
+    {
+      id: "jpm-t20",
+      q: "A teammate's rail report returns sane-looking rows only because of a SELECT DISTINCT. When is DISTINCT a bug report?",
+      a: "When it is papering over a fan-out nobody diagnosed. The tell: confirmations joined to legs returning 33 rows, DISTINCTed down to 28 that look clean — while the SUM beside them still double-counts every split leg and the coverage share still divides by the wrong denominator. The honest sequence when you see a DISTINCT: remove it, count what comes back (33 versus 28 — the jump IS the fan-out), find the multiplicity with GROUP BY the key HAVING COUNT(*) > 1, and fix the join or pre-aggregate — fold the legs per confirmation first, then join one-to-one. Legitimate DISTINCT exists here: collapsing the rail name set (card, wire) or the account list in the ledger — a dimension's value set, not a fact's rows. The test is intentionality: a DISTINCT you can justify in one sentence is a feature; one you cannot is a bug report filed against your own query, and the reviewer will file it again in the pack review.",
+      tag: "joins",
+    },
+    {
+      id: "jpm-t21",
+      q: "Give me three ways to answer 'the biggest settlement leg per counterparty' — and how each behaves on ties.",
+      a: "Window argmax: ROW_NUMBER() OVER (PARTITION BY counterparty ORDER BY amount_cents DESC, p.id) = 1 inside a CTE — exactly one row per counterparty even when two legs tie, because the second key breaks the tie deterministically. Join-back on the maximum: fold MAX(amount_cents) per counterparty in a derived table, join back — honest, but it returns BOTH tied legs, which is either a feature (report co-leaders) or double-counted counterparties depending on the ask. Correlated filter: WHERE amount_cents = (SELECT MAX(…) for that counterparty) — the same tie behavior as the join-back with per-row re-evaluation cost. On this book the easy case is a counterparty like Alice Chen with many legs of different sizes; the tie case is where the three shapes diverge, and naming the divergence — ROW_NUMBER decides, join-back reports, correlated simplifies — is the complete answer. Risk boards want the ROW_NUMBER contract stated out loud: one row, declared tiebreak, reproducible rerun.",
+      tag: "windows",
+    },
+    {
+      id: "jpm-t22",
+      q: "Settlement latency feeds a consumer report. How do you compute elapsed days, and why are half-open intervals the boundary policy?",
+      a: "Elapsed days are julianday arithmetic: julianday(paid_on) - julianday(issued_on) parses both TEXT dates into fractional day numbers, so a leg that cleared in 2.5 days prints 2.5 — raw TEXT subtraction coerces each string's leading number (the year) and lands near zero, which is the bug you are avoiding, not a slow path. The boundary policy is half-open ranges: issued_on >= '2025-01-01' AND issued_on < '2025-02-01' keeps every moment of January including the last evening, with no BETWEEN judgment call — BETWEEN '2025-01-01' AND '2025-01-31' string-compares and drops everything after midnight on the 31st, which on a card book is the dinner rush. The discipline the reviewer grades: state the boundary policy before writing the WHERE clause, because date bugs are almost never function bugs — they are boundary bugs, and the disputed transactions live exactly on the boundaries.",
+      tag: "dates",
+    },
+    {
+      id: "jpm-t23",
+      q: "The ops review asks for 'our coverage rate'. What do you pin down before writing SQL?",
+      a: "The definition, in writing, before the FROM clause. Four decisions: the numerator's population — confirmations with at least one settlement leg (22 of 28 on this book), which counts the partial 4000.00-of-6148.00 as covered because legs exist; the denominator — all booked confirmations including the void (28), or live confirmations only (27), and the two definitions disagree by exactly the row the review argues about; the evidence rule — coverage is a rail hit, never the status column, because status is the claim and the legs are the proof; and the window — this cycle, lifetime, or since issue. Then the discipline move: encode the definition as a named CTE — covered AS (SELECT DISTINCT invoice_id FROM payments) — so the SQL IS the definition and the reviewer audits it instead of arguing with you. The number ships with its definition printed beside it: '22 of 28 booked confirmations carry at least one leg; partials count as covered; voids in the denominator'. A rate without that sentence is a rumor.",
+      tag: "metrics",
+    },
+    {
+      id: "jpm-t24",
+      q: "The rails dashboard moved overnight. Which SQL checks do you run in the first ten minutes?",
+      a: "Five, in order. Freshness: MAX(paid_on) per rail — a feed that stopped at 02:00 explains most surprises by itself. Volume: today's settlement count versus the trailing average, because a half-loaded rail halves every downstream number, and the card-versus-wire split tells you which side to page. Keys: GROUP BY counterparty, amount, paid_on HAVING COUNT(*) > 1 for pipeline-retry duplicates — the charge-double that inflates the wire fold. Orphans: the FULL OUTER orphan check, settlements with no confirmation and confirmations with no settlement — the both-directions control. NULL spikes: COUNT(amount_cents) versus COUNT(*) on the joined book — a column that went 0% to 40% NULL will empty every conditional count built on it, and the no-leg watchlist is the first casualty. On this storefront that ritual is exactly how the paid-no-leg confirmation (#28, 1756.00) surfaces: status says paid, leg rows say zero. The deliverable is not 'it looks fine' — it is which check passed, when, and on what population.",
       tag: "quality",
     },
   ],
@@ -747,6 +843,159 @@ export const jpmorganKit: CompanyKit = {
       walkthrough:
         "A walk is a fold plus a window, and the two orders are different things. The fold: STRFTIME('%Y-%m', spent_on) buckets 36 expense lines into 14 month keys, SUM(amount_cents)/100.0 prices each — 1719.00 to open, a 3210.00 peak at 2024-08, 1650.00 to close. The window: LAG(SUM(…)) OVER (ORDER BY the same '%Y-%m' key) reaches one bucket back IN CALENDAR ORDER and parks that total beside the current month — so 2024-09 carries 3210.00 as its prior, the clearest step-down on the walk, and August's own prior reads July's 1794.00, the +1416.00 move the review annotates. The first row's prior_month is NULL: no bucket exists before 2024-01, and NULL is the honest print. The LIMIT 14 is the audit that the spine is complete. Note the trap the display order sets: ORDER BY month DESC would reverse the rows while the window still walks forward — the numbers would not move, but the read would lie, which is why the window's ORDER BY is written out in full and never inherited from the display.",
     },
+    {
+      id: "cs-jpm-3",
+      tier: "medium",
+      topic: "l8",
+      universe: "month-close",
+      title: "The account-level ledger proof",
+      brief:
+        "Month-close brief, in-world: before the pack publishes, the controller folds the double-entry ledger per account — entries, debit side, credit side, net — and reads it biggest debit side first. Probed on the storefront db: ledger_entries holds 80 entries across 4 accounts; accounts_receivable folds 26 entries at 86052.00 debited / 69612.00 credited, cash 27 at 69612.00 / 25416.00, operating_expenses 14 at 25416.00 / 0.00, sales_revenue 13 at 0.00 / 86052.00 — and the grand proof is 181080.00 debits against 181080.00 credits, delta 0. The pack keeps only accounts carrying at least **14** entries, so the sales_revenue fold (13 entries) waits for the revenue review while the pack argues from material books. Money is integer cents; the dollar read is / 100.0.",
+      ask: "Return each account with at least 14 entries: account, entry count, debits and credits in dollars (2 decimals), and net — biggest debit side first.",
+      template:
+        "SELECT account,\n       COUNT(*) AS entries,\n       ROUND({1}(debit_cents) / 100.0, 2) AS debits,\n       ROUND(SUM(credit_cents) / 100.0, 2) AS credits,\n       ROUND((SUM(debit_cents) - SUM(credit_cents)) / 100.0, 2) AS net\nFROM ledger_entries\nGROUP BY account\nHAVING COUNT(*) >= {2}\nORDER BY debits {3};",
+      slots: [
+        {
+          answer: "SUM",
+          kind: "keyword",
+          label: "the debit-side adder",
+          why: "SUM(debit_cents) folds each account's debit rows into the side the trial balance reads — 86052.00 on receivables, 69612.00 on cash. COUNT would return the entry count wearing a dollars name (26, 27), and the pack's cross-foot against the rails would compare row counts to money.",
+        },
+        {
+          answer: "14",
+          kind: "number",
+          label: "the materiality gate",
+          why: "HAVING COUNT(*) >= 14 keeps the three material books — receivables 26, cash 27, operating_expenses exactly 14, which is why 14 is verifiably in the output — and drops sales_revenue's 13-entry fold to the revenue review. The gate judges a folded count, so it lives in HAVING; 13 would wave the sales book back in.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-debit-first direction",
+          why: "The controller reads exposure top-down: receivables 86052.00, cash 69612.00, opex 25416.00. ASC would open the pack on the smallest book and bury the fold the cross-foot actually needs.",
+        },
+      ],
+      distractors: ["COUNT", "13", "ASC", "AVG"],
+      walkthrough:
+        "The close's first query is a fold and a proof. GROUP BY account folds the 80 ledger entries into four account books; SUM(debit_cents)/100.0 and SUM(credit_cents)/100.0 price both sides in dollars, and the net column carries the account's standing — receivables net +16440.00 (billed more than collected this cycle), cash net +44196.00, opex net +25416.00, and sales_revenue net −86052.00 waiting below the gate. The gate is the pack's materiality rule: HAVING COUNT(*) >= 14 keeps accounts whose fold is big enough to argue from, and the boundary is live — operating_expenses sits exactly on 14, which is why the threshold is a printed constant someone signed off, not a vibe. The debits read DESC because the review opens on the biggest exposure. Cross-foot the survivors and the proof holds underneath: 86052.00 + 69612.00 + 25416.00 on the debit side, and the grand ledger still ties at 181080.00 against 181080.00, delta 0. Swap SUM for COUNT and every dollars column becomes a row count; drop the gate to 13 and the pack argues from a book it meant to set aside; flip the sort and the review reads upside down.",
+    },
+    {
+      id: "cs-jpm-4",
+      tier: "easy",
+      topic: "x2",
+      universe: "month-close",
+      title: "The one-pass confirmation census",
+      brief:
+        "Month-close brief, in-world: the ops review opens with the confirmation census, and it ships as ONE query — one scan of the booked confirmations, every state counted in the same pass, so no two queries can disagree about the population. Probed on the storefront db: 28 booked confirmations — 21 carry status 'paid' for 66443.00 billed, 6 sit 'open' for 19609.00, 1 is 'void' at 925.00 — and the surveillance arm flags the large tickets (billed at 5000.00 or more): 2 of the paid book, 1 of the open, none of the void. Status is the claim; the census counts claims first and the evidence pass (which confirmations drew settlement legs) comes next. Values are integer cents read out at / 100.0.",
+      ask: "Return one row per confirmation state: state, count, billed value in dollars (2 decimals), and the count of large tickets (billed at 5000.00+) — all from one scan, biggest billed book first.",
+      template:
+        "SELECT i.status,\n       {1}(*) AS confirmations,\n       ROUND(SUM(i.amount_cents) / 100.0, 2) AS billed,\n       COUNT(*) {2} (WHERE i.amount_cents >= {3}) AS large_book\nFROM invoices i\nGROUP BY i.status\nORDER BY billed {4};",
+      slots: [
+        {
+          answer: "COUNT",
+          kind: "keyword",
+          label: "the state counter",
+          why: "COUNT(*) counts the rows folded into each status — 21 paid, 6 open, 1 void. SUM would try to fold a star and error; the count is the population read, and the SUM beside it is the value read from the same rows.",
+        },
+        {
+          answer: "FILTER",
+          kind: "keyword",
+          label: "the conditional-count keyword",
+          why: "COUNT(*) FILTER (WHERE …) is the one-pass census arm: rows failing the predicate simply don't enter that count, so the large-ticket column rides beside the totals from one scan. Writing the predicate as a plain WHERE would filter the WHOLE census — the state rows would shrink and the totals would lie about the population.",
+        },
+        {
+          answer: "500000",
+          kind: "number",
+          noVerify: true,
+          label: "the large-ticket threshold",
+          why: "The surveillance arm is a printed constant someone signed off: 500000 cents is 5000.00 billed, and at that line the arm reads 2 paid, 1 open, 0 void — the tickets a second reviewer looks at. Lower it and the arm stops being surveillance; raise it and it goes quiet.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-book-first direction",
+          why: "The review opens on the paid book (66443.00 billed), then the open book (19609.00), then the void (925.00). ASC would open on the one-row void and bury the state the review exists to read.",
+        },
+      ],
+      distractors: ["SUM", "WHERE", "200000", "ASC"],
+      walkthrough:
+        "One scan, three state rows, four columns, no second query to disagree with the first. GROUP BY i.status folds the 28 confirmations into their states, and each row carries a pair of readings from the same rows: COUNT(*) is the population (21 / 6 / 1) and SUM(amount_cents)/100.0 is the billed value (66443.00 / 19609.00 / 925.00 — 86977.00 total, the AR debit side plus the void's noise). The fourth column is the census trick: COUNT(*) FILTER (WHERE amount_cents >= 500000) is a conditional count — the 2 paid, 1 open, 0 void large tickets ride beside their state totals from the same scan, so the surveillance arm can never disagree with the census it belongs to. ORDER BY billed DESC makes the review read top-down by exposure. The traps are quiet ones: a plain WHERE instead of FILTER would shrink every state row to its large tickets only — a census of 3 rows claiming to be the book; a threshold of 200000 widens the arm to 20 tickets and the surveillance read dissolves; ASC buries the paid book under the void. The census counts claims; the next query — the coverage join — tests which claims the rails proved.",
+    },
+    {
+      id: "cs-jpm-5",
+      tier: "hard",
+      topic: "j7",
+      universe: "fraud",
+      title: "The structuring wall",
+      brief:
+        "Fraud-surveillance brief, in-world: the financial-crime screen is the firm's signature pattern — fold small-ticket settlement legs per counterparty, then judge the fold against a review wall in HAVING. 'Small ticket' is a printed constant someone signed off: legs under 5000.00 (500000 cents). Probed on the storefront db through the rails (payments joined to confirmations to counterparties): at that line, Alice Chen carries 9 small legs worth 24481.00 and Maya Patel carries 5 worth 11542.00 — the only two counterparties whose small-ticket count reaches the wall of **5**; the next names sit at 3 (Grace Kim, Emma Wilson). The screen returns the flagged book with count and value, so the case review sees both how often and how much.",
+      ask: "Return each counterparty with at least 5 small-ticket legs (under 5000.00): name, small-ticket count, and small-ticket value in dollars (2 decimals) — busiest counterparty first.",
+      template:
+        "SELECT c.name AS counterparty,\n       COUNT(*) AS small_tickets,\n       ROUND(SUM(p.amount_cents) / 100.0, 2) AS small_value\nFROM payments p\nJOIN invoices i ON i.id = p.invoice_id\nJOIN customers c ON c.id = i.{1}\nWHERE p.amount_cents < 500000\nGROUP BY c.name\n{2} COUNT(*) >= {3}\nORDER BY small_tickets {4}, counterparty;",
+      slots: [
+        {
+          answer: "customer_id",
+          kind: "keyword",
+          label: "the counterparty join key",
+          why: "c.id = i.customer_id attaches each confirmation to its counterparty — the reference spine the fold groups by. c.id = i.id pairs counterparties with whichever confirmation shares their row number: rows that join by accident of numbering, counts that mean nothing.",
+        },
+        {
+          answer: "HAVING",
+          kind: "keyword",
+          label: "the post-fold wall",
+          why: "The wall judges a folded count — a group-level fact that does not exist until GROUP BY runs — so it lives in HAVING. WHERE COUNT(*) fails to compile (no groups yet), and an ON-clause threshold fires per joined row pair, silently filtering a different population.",
+        },
+        {
+          answer: "5",
+          kind: "number",
+          label: "the review wall",
+          why: "The wall is 5, and 5 is verifiably in the output — Maya Patel's flagged count. It keeps exactly the two counterparties at or above the line: Alice Chen at 9, Maya Patel at 5 — and drops the 3-leg names (Grace Kim, Emma Wilson) whose counts never crossed. A wall of 9 would flag Alice alone.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the busiest-first direction",
+          why: "The case review reads the flags top-down by count: Alice Chen's 9 small legs open the memo, Maya Patel's 5 follow. ASC would lead with the quietest flagged counterparty and bury the pattern the screen exists to escalate.",
+        },
+      ],
+      distractors: ["id", "WHERE", "9", "ASC"],
+      walkthrough:
+        "The structuring screen is three moves in pipeline order, and each move has exactly one home. The row-level filter comes first: WHERE amount_cents < 500000 keeps the small legs and drops the big ones before any folding — cheap, population-honest, and the definition of 'small ticket' lives here as a printed literal. The fold comes second: the two joins ride the reference spine (each leg to its confirmation, each confirmation to its counterparty), GROUP BY c.name folds the small legs per counterparty, and COUNT(*) is the frequency read while SUM/100.0 is the value read. The wall comes third: HAVING COUNT(*) >= 5 judges the folded count — Alice Chen 9 / 24481.00, Maya Patel 5 / 11542.00 — and the boundary is live, with Grace Kim and Emma Wilson sitting at 3, exactly why the threshold prints beside the results. Swap the join key to i.id and the fold groups an accidental population; write the wall in WHERE and the query stops compiling, which is the grammar teaching you the pipeline; write it in the ON clause and it fires per row pair pre-fold, flagging a different book entirely; drop the wall to a LIMIT and you ship five arbitrary names, not the five-time ones. The screen's output is a case file: counts, values, threshold, definition — everything a reviewer needs to re-run it.",
+    },
+    {
+      id: "cs-jpm-6",
+      tier: "medium",
+      topic: "t5",
+      universe: "month-close",
+      title: "The two-rail concentration board",
+      brief:
+        "Month-close brief, in-world: the risk read opens on concentration — per rail, which counterparties hold the biggest single settlement legs. The board ranks legs WITHIN each rail (card and wire keep separate ladders: 16 legs and 11 legs are different books with different thresholds) and keeps the top two rungs per rail. Probed on the storefront db: card's biggest legs are Emma Wilson at 4015.00 and Olivia Brown at 3076.00; wire's are Alice Chen at 4000.00 and Isabella Rossi at 3896.00 — no ties at the top, so the board's ROW_NUMBER tiebreaker (leg id) never has to arbitrate, and it is pinned anyway so the rerun reproduces the board row for row.",
+      ask: "Return the top-2 legs per rail: rail, counterparty, rung (1 or 2), and leg value in dollars (2 decimals) — rails A-to-Z, rung 1 first within each.",
+      template:
+        "WITH ranked AS (\n  SELECT p.method,\n         c.name AS counterparty,\n         ROW_NUMBER() OVER (PARTITION BY {1} ORDER BY p.amount_cents {2}, p.id) AS rung,\n         ROUND(p.amount_cents / 100.0, 2) AS leg_value\n  FROM payments p\n  JOIN invoices i ON i.id = p.invoice_id\n  JOIN customers c ON c.id = i.customer_id\n)\nSELECT method, counterparty, rung, leg_value\nFROM ranked\nWHERE rung <= {3}\nORDER BY method, rung;",
+      slots: [
+        {
+          answer: "p.method",
+          kind: "keyword",
+          label: "the rail partition",
+          why: "PARTITION BY p.method gives card and wire separate ladders — each rail's rung 1 is its own biggest leg. Partitioning by confirmation id or counterparty would hand every row its own partition: every rung reads 1, the WHERE keeps everything, and the board prints all 27 legs as if each were its own rail.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-first window order",
+          why: "Ranking exposure means the biggest leg is rung 1, so the window's ORDER BY runs descending — 4015.00 leads card, 4000.00 leads wire. ASC crowns each rail's SMALLEST leg: a correct query answering the opposite question, and the concentration review would read the quietest legs as the riskiest.",
+        },
+        {
+          answer: "2",
+          kind: "number",
+          label: "the top-rungs cut",
+          why: "WHERE rung <= 2 keeps the two biggest legs per rail — 4 rows, and 2 is verifiably in the output as the rung column's second value. The cut filters the WINDOW's output, which is why the board stages in a CTE first: rung does not exist until the window computes, and WHERE rung <= 2 written inline fails.",
+        },
+      ],
+      distractors: ["i.id", "ASC", "3", "c.id"],
+      walkthrough:
+        "A concentration board is a window rank staged, then cut. The CTE joins the rails to their confirmations and counterparties — 27 legs, each attached to the name that owns it — and the window does the ranking: PARTITION BY p.method deals the legs into two ladders, ORDER BY amount_cents DESC with p.id as the pinned tiebreaker numbers each ladder biggest-first, and ROW_NUMBER guarantees exactly one rung per number even if two legs ever tie. The outer query cuts with WHERE rung <= 2 — card keeps Emma Wilson's 4015.00 and Olivia Brown's 3076.00, wire keeps Alice Chen's 4000.00 and Isabella Rossi's 3896.00 — and the two-step is not style: window output is SELECT-stage work, invisible to a WHERE written in the same SELECT, so the CTE is the only honest staging. Partition by i.id or c.id and every row becomes its own rung-1 partition — the WHERE keeps all 27 legs and the board prints the whole book wearing a top-2 name; flip the window to ASC and the review crowns the smallest legs; widen the cut to 3 and the board ships six rows where the memo promised four. The board reads rail by rail because risk reads rail by rail — the partition clause IS the business rule.",
+    },
   ],
 
   problems: [
@@ -766,5 +1015,21 @@ export const jpmorganKit: CompanyKit = {
     { slug: "customers-who-never-order", why: "The anti-join watchlist in textbook form — books with no rail hit are this query with the table names swapped." },
     { slug: "suspicious-bank-account-transactions", why: "Sliding-window screening over transaction streams — the surveillance read that pairs with the structuring wall." },
     { slug: "transaction-velocity", why: "Burst detection over timestamps — velocity counts in time buckets, the consumer-fraud twin of the HAVING threshold screen." },
+    { slug: "credit-utilization-bands", why: "CASE tiers over utilization ratios — the card-portfolio banding read: boundary operators are the documented policy, and the account sitting exactly on a line is the one the review argues about." },
+    { slug: "chargeback-rate-ranking", why: "Rate computed per merchant, then ranked — the card-portfolio dispute read where the denominator's population is decided before the ratio exists." },
+    { slug: "duplicate-charge-pairs", why: "Self-joined leg pairs with the ordering trick — each duplicate pair prints once, and the legitimate split plans stay out of the alert queue." },
+    { slug: "expected-credit-loss", why: "Exposure folded per band, weighted by loss factor — the provision arithmetic where integer division and band scoping are the two places it lies." },
+    { slug: "delinquency-roll-rates", why: "State-to-state movement rates between cycles — the LAG read that turns the aging ladder into a flow, exactly how the credit review narrates deterioration." },
+    { slug: "loan-amortization-schedule", why: "Running balance with scheduled draws and payments — the deposits-adjacent walk where the frame discipline keeps every step tied to the books." },
+    { slug: "portfolio-concentration-hhi", why: "Concentration folded from squared shares — the single-counterparty risk number the whale board feeds, computed from shares that must sum to the whole book." },
+    { slug: "value-at-risk", why: "Tail quantiles over a loss distribution — the risk screen where percentile windows and the NULL policy decide what the desk reports as the number." },
+    { slug: "balance-rollforward", why: "Opening balance plus movement lines equals closing — the rollforward identity every consumer report must reproduce before the pack publishes." },
+    { slug: "deferred-revenue", why: "Money received before it is earned — the liability fold that keeps the confirmation book honest about what is billed versus what is banked." },
+    { slug: "keep-latest-dedupe", why: "Keep-newest with a declared tiebreak — the restatement drill when a rail re-sends a leg: the newest copy wins, the removed rows are printed." },
+    { slug: "second-most-recent-activity", why: "Per-counterparty argmax at rank 2 — the 'who lapsed since last cycle' screen the relationship desks live by, tie-breaker declared." },
+    { slug: "maximum-transaction-each-day", why: "Per-day largest leg with tie discipline — the treasury surveillance board: biggest single movement per day, never decided by plan order." },
+    { slug: "risk-based-pricing", why: "Rates joined to risk bands with an as-of rule — the pricing read where the band's own row supplies the factor and the boundary convention is policy." },
+    { slug: "wash-trade-detection", why: "Offsetting-pair detection over one book — the surveillance self-join that flags legs moving against themselves, each pair printed once." },
+    { slug: "circular-transfers", why: "Chain-following over movement legs — the treasury loop check: value that returns to its origin, found with self-joins and set logic, not by eyeball." },
   ],
 };
