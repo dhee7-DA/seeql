@@ -6,10 +6,10 @@
 export const UNIVERSE_COUNTS = {
   "companies": 208,
   "domains": 8,
-  "problems": 6097,
-  "theory": 4448,
-  "mcqs": 5560,
-  "cases": 1108
+  "problems": 6657,
+  "theory": 4992,
+  "mcqs": 6240,
+  "cases": 1248
 } as const;
 
 export type UniverseCountKey = keyof typeof UNIVERSE_COUNTS;
