@@ -77,7 +77,7 @@ export const klarnaKit: CompanyKit = {
     {
       name: "Unpaid exposure: anti-joins & zero-fill LEFT JOINs",
       why: "The unpaid census is the anti-join this business runs daily: plans with no installment row — 6 of them worth $15,217 here. LEFT JOIN + IS NULL is the shape, and the trap is filtering the right table in WHERE, which converts the join to an INNER and deletes exactly the exposure you were hunting.",
-      slugs: ["customers-who-never-order", "sellers-with-no-sales", "bank-account-summary"],
+      slugs: ["customers-who-never-order", "sellers-with-no-sales", "bank-account-summary", "dormant-reactivation"],
     },
     {
       name: "Honest ratios & rounded shares",
@@ -97,7 +97,7 @@ export const klarnaKit: CompanyKit = {
     {
       name: "Ledger walks & reconciliation",
       why: "The ledger is double-entry and the trial balance must read zero ($181,080 = $181,080 here); per-account nets (cash $44,196, receivables $16,440) feed the close. Balance walks and delta queries localize a break — one fold per side, then the difference, then the account that drifted.",
-      slugs: ["gl-reconciliation", "balance-rollforward", "trial-balance-check"],
+      slugs: ["gl-reconciliation", "balance-rollforward", "trial-balance-check", "mrr-waterfall"],
     },
     {
       name: "Set-op packets & coverage censuses",
@@ -1015,6 +1015,5 @@ export const klarnaKit: CompanyKit = {
     { slug: "league-statistics", why: "Home/away branches with CASE verdicts stacked via UNION — the collected/uncollected packet shape, per-branch flags that must sum back to the book." },
     { slug: "count-apples-and-oranges", why: "Per-entity sums across branches with a total row — the rail packet with its TOTAL closer, the exact month-close artifact cs-klarna-6 ships." },
     { slug: "dormant-reactivation", why: "NOT EXISTS dormancy screens — plans with no recent collection aging into dunning; the anti-join family's cadence-aware cousin." },
-    { slug: "transaction-velocity", why: "Time-bucketed bursts — installment counts per day spiking above baseline; the velocity screen the fraud desk runs beside the big-ticket census." },
   ],
 };

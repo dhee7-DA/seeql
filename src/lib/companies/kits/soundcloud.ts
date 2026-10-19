@@ -885,7 +885,7 @@ export const soundcloudKit: CompanyKit = {
     { slug: "balance-rollforward", why: "Opening balance plus movements equals closing — the rollforward spine the payout-run draft stands on, cents exact." },
     { slug: "account-balance", why: "Per-account net of credits and debits — the creator-balance read that fires the payout when it crosses the threshold." },
     { slug: "average-selling-price", why: "Per-unit averages with weighted denominators — the arithmetic behind the 31.01 versus 115.85 rate-card arms." },
-    { slug: "immediate-food-delivery-ii", why: "Share of orders stamped inside the promised window — the conditional-rate shape behind the payout-SLA read." },
     { slug: "game-play-analysis-iv", why: "First event per account anchors every cohort this kit builds — the first-play-to-first-payout anchor via MIN over a partition." },
+    { slug: "feature-adoption-windows", why: "Adoption counted inside a rolling window after first listen — the launch-cohort clock that shares the payout-SLA window shape." },
   ],
 };

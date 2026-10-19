@@ -242,9 +242,9 @@ export const goodreadsKit: CompanyKit = {
     },
     {
       id: "goodreads-t22",
-      q: "The challenge trend buckets periods by month on TEXT timestamps. How do you build the spine, cut a quarter without losing its last night, and read the first row of the LAG?",
-      a: "Three moves. The spine: STRFTIME('%Y-%m', created_at) — year plus zero-padded month, 14 buckets from 2024-01 to 2025-02; '%m' alone merges January 2024 with January 2025 and the trend becomes a 12-row fiction, while '%Y' collapses it to two rows. The quarter window: half-open intervals — created_at >= '2024-01-01' AND created_at < '2024-04-01' — because BETWEEN '2024-03-01' AND '2024-03-31' means midnight on the 31st and silently drops the last night's shelf events, and month-end is exactly when reading windows stamp. The LAG: on a month-ordered spine the first row's prior value is NULL — report it as NULL or label it 'baseline', never coalesce it to zero, which reads as a flat month. The spine's story is concrete: 3,731.97 / 50 books in January down to the 1,193.86 / 22-book July trough — and every cut must still foot: periods to 103, books to 498, spend to 34,833.28.",
-      tag: "dates",
+      q: "Six publisher statements have never settled — and one of them is stamped 'paid' in its status column. How do you find the true never-paid set, and what does the naive status filter do to your averages?",
+      a: "Two moves and a confession. The honest set is the anti-join: LEFT JOIN payments p ON p.invoice_id = i.id WHERE p.id IS NULL — six statements for 15,217.00 (#18, #21, #24, #26, #27 and #28). The confession is that status lies twice: #28 says 'paid' while no payment row exists, so trusting it hides 1,756.00 of dunning, and the naive WHERE status != 'paid' swings the other way — seven statements for 20,534.00 — because one genuinely settled statement never had its status flipped. Averages inherit whichever lie you pick: the true stack averages 2,536.17 per statement while the naive set reads 2,933.43, a 397.26 swing that changes the collections call. IS NULL on the payment anti-join, not the status column, is the source of truth — and the same discipline reads the shelf's NULL stamps everywhere else.",
+      tag: "nulls",
     },
     {
       id: "goodreads-t23",
