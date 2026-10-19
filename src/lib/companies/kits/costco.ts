@@ -24,7 +24,7 @@ export const costcoKit: CompanyKit = {
     "**Costco** is the membership warehouse club that turned bulk into a business model: members pay the {amber:annual fee} for the right to buy pallet-priced goods in case lots, and the fee base — not per-item markup — is where the margin lives. On this kit's proxy db the census reads 16 members placing 103 baskets that fan into **251 case lines**, worth 34833.28 at an average of **338.19** a basket — and the ticket floor of 25.47 says even the smallest run is never a one-item trip. *Nobody crosses the warehouse threshold for one item; the case pack decides the basket.*",
     "The data org maps onto the floor plan — a register feed, a fulfillment scan, a billing ledger. The funnel reads **52 delivered, 30 shipped, 14 pending, 7 cancelled** on `orders`, and the big-and-bulky clock averages **2.98 days** over the 82 baskets carrying `shipped_at` — *pending has no clock yet; it is not late*. Business-member statements settle on two rails (card and wire), and the coverage census reads 21 exact, 1 partial, 6 never-settled — the reconciliation the month-close actually ships.",
     "Screens are grain-first. A warm-up folds case lines back to baskets (251 to 103 — say DISTINCT out loud); the escalation is either a **vendor-bench fold** (revenue through `products` to `suppliers`, gated in HAVING) or a **one-pass census** where the population rule is stated before the CASE arms. Follow-ups are spoken: *'per basket or per case line?'*, 'does a cancelled basket age into your pending pile?', 'which member count does the 2% executive reward quote?'",
-    "Prep starts with the pool's honesty: Costco carries exactly **one tagged problem** in this app's SQL band (`fifo-inventory-cogs` — Walmart and Costco share the tag), so the kit is theme-curated from the theme menu around warehouse workflows: pallet cover, bulk-basket depth, statement-vs-rail reconciliation, member ladders. Money drills are cents drills — statements and rails are INTEGER cents, divided once by `100.0` at the display edge. The two case studies run on the live db: one rebuilds the **vendor bench** the merchandising lead reads at the pallet review, the other the **member ladder** the CRM cuts for the executive-tier mail-merge.",
+    "Prep starts with the pool's honesty: Costco carries exactly **one tagged problem** in this app's SQL band (`fifo-inventory-cogs` — Walmart and Costco share the tag), so the kit is theme-curated from the theme menu around warehouse workflows: pallet cover, bulk-basket depth, statement-vs-rail reconciliation, member ladders. Money drills are cents drills — statements and rails are INTEGER cents, divided once by `100.0` at the display edge. **Six case studies** run on the live db: the **vendor bench** the merchandising lead reads at the pallet review, the **member ladder** the CRM cuts for the executive-tier mail-merge, the one-pass register census, the never-settled dunning stack, the thin-stock trio, and the two-grain renewal pulse. Pair them with the **32-problem pool** for spaced practice rather than one sitting — run each case on the live db, then re-run it a week later from a blank editor; *the second pass is where the denominators stick*.",
   ],
 
   dayInLife: [
@@ -837,6 +837,166 @@ export const costcoKit: CompanyKit = {
       walkthrough:
         "A ladder is a window over a fold, and the tie policy IS the deliverable. GROUP BY c.name folds 103 baskets to 16 members; COUNT(o.id) reproduces the probed frequency census — 24, 17, 14, 13, 5, then four members on 4; DENSE_RANK() OVER (ORDER BY COUNT DESC) shares rung 6 across the tie and keeps the next rung at 7, which is why the file ships DENSE_RANK (RANK would jump the next member to 10 — a rung that implies missing members that do not exist). The cut at LIMIT 9 is deliberate: ranks 1 through 6 occupy exactly nine rows, so the tie block ships whole, ordered inside by lifetime spend (1686.17, 1098.6, 985.65, 737.68). The distractors encode the ladder's classic failures: ASC inverts the ladder onto its one-basket members; c.id in the ON clause cross-joins 103 orders to 16 members — every rung then reads the whole 34833.28 book; SUM(o.total) as the lead sort reorders the file by spend and the frequency story disappears; LIMIT 5 drops the tie rung, LIMIT 10 drags the rank-7 pair halfway in. Fold, rank, sort, cut — four decisions, one ladder the mail-merge can trust.",
     },
+    {
+      id: "cs-costco-3",
+      tier: "medium",
+      topic: "x2",
+      universe: "growth",
+      title: "The one-pass register census",
+      brief:
+        "Register-feed brief, in-world: the club board's top tile is the one-pass census — delivered, shipped, pending and cancelled in a single fold, with the kept-revenue figure beside it, because four separate status queries drift apart on a live feed. Probed on the storefront db (orders = purchase baskets): 103 baskets split 52 delivered / 30 shipped / 14 pending / 7 cancelled; the kept revenue (status <> 'cancelled') folds to 33680.79 of the 34833.28 book, leaving 1152.49 on the cancelled baskets. 'One row, four arms, one scan — the replenishment call reads it before the doors open.'",
+      ask: "Return one row: total baskets, FILTER counts for delivered, shipped and pending, plus kept revenue (non-cancelled) rounded to 2 decimals.",
+      template:
+        "SELECT COUNT(*) AS baskets,\n       COUNT(*) FILTER ({1}) AS delivered,\n       COUNT(*) FILTER ({2}) AS shipped,\n       COUNT(*) FILTER ({3}) AS pending,\n       ROUND(SUM(total) FILTER ({4}), 2) AS kept_revenue\nFROM orders;",
+      slots: [
+        {
+          answer: "WHERE status = 'delivered'",
+          kind: "keyword",
+          label: "the delivered arm",
+          why: "FILTER (WHERE status = 'delivered') scopes this one count to the 52 delivered baskets while every other arm still sees all 103 rows. A bare WHERE clause would shrink the whole census to one status, and the four arms could never share a row again.",
+        },
+        {
+          answer: "WHERE status = 'shipped'",
+          kind: "keyword",
+          label: "the shipped arm",
+          why: "The shipped arm counts its own 30 without disturbing its neighbors — one scan, four independent lenses. Reusing the delivered predicate here would print 52 twice, and the board would catch it only after the replenishment call went out wrong.",
+        },
+        {
+          answer: "WHERE status = 'pending'",
+          kind: "keyword",
+          label: "the pending arm",
+          why: "Pending is 14 — 'not yet scanned', not late. The arm keeps that population visible beside the clock metrics, which is exactly the population note the fulfillment tile carries in its subtitle so the ops forecast never inherits an unnamed backlog.",
+        },
+        {
+          answer: "WHERE status <> 'cancelled'",
+          kind: "keyword",
+          label: "the kept-revenue arm",
+          why: "Kept revenue excludes the 7 cancelled baskets: 33680.79 of the 34833.28 book, with 1152.49 riding outside. The <> arm IS the denominator rule — cancelled stays in the placed census but leaves the revenue fold, and mixing the two is how a deck overstates demand.",
+        },
+      ],
+      distractors: ["WHERE status = 'cancelled'", "WHERE status <> 'delivered'", "WHERE status IS NULL", "WHERE status <> 'shipped'"],
+      walkthrough:
+        "One scan of the register feed, four lenses, one shared population. FILTER (WHERE …) scopes each count to its arm while every arm still sees all 103 rows — the census cannot drift because the arms cannot carry different WHEREs: delivered 52, shipped 30, pending 14, cancelled folded out of the revenue arm at 1152.49, and COUNT(*) stays the whole placed base of 103. The kept-revenue arm is the denominator rule in chip form: status <> 'cancelled' folds 33680.79 of the 34833.28 book, so the cancelled 1152.49 never inflates the replenishment read. Swap any arm's predicate and the census lies in exactly one column — 'cancelled' collapses three arms to 7, IS NULL zeros them out, <> 'delivered' re-labels 51 rows as delivered. The four-pass alternative — one query per status — is how four WHERE clauses drift apart on a live feed; the one-pass shape is the drill.",
+    },
+    {
+      id: "cs-costco-4",
+      tier: "easy",
+      topic: "j5",
+      universe: "month-close",
+      title: "The never-settled dunning stack",
+      brief:
+        "Month-close brief, in-world: the dunning engine fires only on statements with no rail movement, so the close ships a never-settled stack — number, status, cents — ordered biggest balance first. Probed on the storefront db: 28 business-member statements, 22 of them carried by at least one payment row, 6 with no rails at all, worth 15217.00 in cents (493700, 356200, 279400, 175600, 129500, 87300). The stack catches the anomaly: INV-2025-028 sits in it marked 'paid' with zero rails — the ledger's opinion against the rails' fact, 1756.00 of nothing.",
+      ask: "Return the never-settled stack: statement number, ledger status, and amount in cents for the six statements with no payment rows, biggest balance first.",
+      template:
+        "SELECT i.number,\n       i.status,\n       i.amount_cents\nFROM invoices i\n{1} JOIN payments p ON p.invoice_id = i.id\nWHERE p.id {2}\nORDER BY i.amount_cents {3};",
+      slots: [
+        {
+          answer: "LEFT",
+          kind: "keyword",
+          label: "the statement-preserving join",
+          why: "LEFT JOIN keeps all 28 statements and NULL-pads the six without rails; INNER JOIN would discard exactly the population the dunning file hunts, and the stack would ship empty — which reads like a clean close over a 15217.00 hole.",
+        },
+        {
+          answer: "IS NULL",
+          kind: "keyword",
+          label: "the no-rail filter",
+          why: "p.id IS NULL keeps only the unmatched statements — the anti-join signature. IS NOT NULL returns the 22 that DID move: the opposite deliverable wearing identical columns, and the dunning engine would chase members who already settled.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-balance-first order",
+          why: "Collections work the biggest exposure first: INV-2025-024 at 493700 cents leads the file. ASC opens the day on the 87300-cent tail, and the analyst spends the morning on the balances that matter least.",
+        },
+      ],
+      distractors: ["INNER", "IS NOT NULL", "ASC"],
+      walkthrough:
+        "An anti-join is a LEFT JOIN kept honest by a NULL test. LEFT JOIN preserves all 28 statements; the 22 whose rails exist match a payment row, and the 6 without a single settlement arrive NULL-padded — p.id IS NULL keeps exactly those six, worth 15217.00 in cents. The stack itself is the month's story: INV-2025-024 (493700) leads the dunning file, and fourth down sits the anomaly — INV-2025-028, status 'paid', amount 175600, zero rails: the ledger's opinion and the rails' fact disagree, and this query is how the disagreement surfaces before the close signs. INNER JOIN deletes the unmatched side — the stack ships empty and the close reads clean over a hole; IS NOT NULL returns the 22 settled statements wearing the dunning file's name; ASC opens the collections day on the smallest balance. Preserving join, NULL test, biggest-first — three chips, and the never-settled stack is the query.",
+    },
+    {
+      id: "cs-costco-5",
+      tier: "hard",
+      topic: "q5",
+      universe: "inventory",
+      title: "The thin-stock trio",
+      brief:
+        "Inventory brief, in-world: the pallet review opens on cover — stock on hand minus units actually scanned out through case lines — and the reorder screen leads with the thinnest SKUs. Probed on the storefront db (products = SKUs, order_items = case lines): 16 SKUs, all with scanned movement; the thin trio reads 14 units remaining (Noise-Canceling Headset, 60 on hand − 46 scanned), 15 (Studio Desktop Mic, 45 − 30) and 17 (Smart Watch S, 40 − 23), while the next SKU (4K Webcam Pro) holds 39. 'Cover is fold-then-join: units fold at the case-line grain, then reattach per SKU — print the three thinnest.'",
+      ask: "Return the three thinnest SKUs: name, stock on hand, units scanned, and remaining cover, thinnest first.",
+      template:
+        "SELECT p.name,\n       p.stock,\n       COALESCE(m.units, 0) AS units_scanned,\n       p.stock - COALESCE(m.units, 0) AS remaining\nFROM products p\nLEFT JOIN (\n  SELECT product_id, {1}(quantity) AS units\n  FROM order_items\n  GROUP BY product_id\n) m ON m.product_id = {2}\nORDER BY remaining {3}\nLIMIT {4};",
+      slots: [
+        {
+          answer: "SUM",
+          kind: "keyword",
+          label: "the scanned-units fold",
+          why: "The derived table folds case lines per SKU: SUM(quantity) is total units scanned — 46 for the headset, not 46 case lines. COUNT would report the line count wearing a units name, and every multi-quantity case would understate its own drain.",
+        },
+        {
+          answer: "p.id",
+          kind: "keyword",
+          label: "the SKU key on the join-back",
+          why: "The fold is keyed on product_id, so the outer join-back is m.product_id = p.id. p.supplier_id would attach each SKU to whatever fold-row shares a vendor id — plausible-looking rows, silently wrong cover counts, a pallet buy built on noise. And the outer SELECT stays aggregate-free: the fold already did the summing, so SUM(m.units) up here would collapse all 16 SKUs into one mystery row.",
+        },
+        {
+          answer: "ASC",
+          kind: "keyword",
+          label: "the thinnest-first order",
+          why: "The reorder screen reads thinnest cover on top: 14, 15, 17. DESC would lead with the fattest SKU in the building and the pallet buy would start three rows too late — direction is the difference between a fire list and a fat list.",
+        },
+        {
+          answer: "3",
+          kind: "number",
+          label: "the trio cut",
+          noVerify: true,
+          why: "LIMIT 3 keeps exactly the trio the floor team chases — 14, 15, 17 — with 4K Webcam Pro (39 remaining) safely off the fire list. LIMIT 5 drags the mid-pack onto the screen and dilutes the reorder call the meeting exists to make.",
+        },
+      ],
+      distractors: ["COUNT", "p.supplier_id", "DESC", "5"],
+      walkthrough:
+        "Cover is stock minus scanned units, and the scan lives at the case-line grain — so the derived table folds first, then joins back. The inner SELECT groups 251 case lines to one row per SKU: SUM(quantity) is total units scanned (46 for the headset, 30 for the mic), keyed on product_id. The outer LEFT JOIN keeps all 16 SKUs — every one has moved on this book, but the shape matters the day a SKU stalls: the NULL fold lands in COALESCE(m.units, 0) and remaining prints the full stock instead of a blank. ORDER BY remaining ASC leads with the trio the floor team chases — 14, 15, 17 — and LIMIT 3 keeps the fire list at three, with 4K Webcam Pro (39 remaining) safely off it. Fold at the line grain, join back on the SKU key, order thinnest-first: a pallet-buy screen is a three-stage query wearing a clipboard.",
+    },
+    {
+      id: "cs-costco-6",
+      tier: "medium",
+      topic: "t7",
+      universe: "growth",
+      title: "The renewal pulse, two grains",
+      brief:
+        "Growth-board brief, in-world: the renewal pulse reads TWO grains per month — baskets placed and distinct members behind them — because 8 baskets from 5 people is a different story than 8 from 8. Probed on the storefront db: 14 months from 2024-01 to 2025-02; member counts run 5, 5, 7, 6, 6, 5, 5, 5, 7, 6, 5, 4, 5, 6, so the deltas print +2 twice (2024-03 and 2024-09), a December dip to 4 members, and back-to-back +1 recoveries to open 2025. 'Month, baskets, members, and the member delta against the month above — the full spine, oldest first.'",
+      ask: "Return the 14-month renewal spine: month, baskets, distinct members, and the member delta versus the prior month, oldest first.",
+      template:
+        "WITH monthly AS (\n  SELECT SUBSTR(created_at, 1, 7) AS month,\n         COUNT(*) AS baskets,\n         COUNT({1}) AS members\n  FROM orders\n  GROUP BY month\n)\nSELECT month,\n       baskets,\n       members,\n       members - {2}(members) OVER (ORDER BY month) AS member_delta\nFROM monthly\nORDER BY month {3}\nLIMIT {4};",
+      slots: [
+        {
+          answer: "DISTINCT customer_id",
+          kind: "keyword",
+          label: "the member-grain counter",
+          why: "COUNT(DISTINCT customer_id) folds the month's baskets back to people — 5 members behind January's 8 baskets. COUNT(customer_id) counts baskets (the column is never NULL) and the two-grain read collapses into one grain wearing two names.",
+        },
+        {
+          answer: "LAG",
+          kind: "keyword",
+          label: "the prior-month reader",
+          why: "LAG(members) hands each month the row above it: March's delta is 7 − 5 = +2. LEAD would read the future and stamp February with March's gain; SUM would pile a running total into a delta column; the first row's NULL is the honest 'no baseline'.",
+        },
+        {
+          answer: "ASC",
+          kind: "keyword",
+          label: "the chronological spine",
+          why: "A pulse reads oldest-first so each delta compares against the row above. DESC presents the newest month first with its baseline below it — the numbers survive, the story doesn't, and the board reads the recovery before the dip that caused it.",
+        },
+        {
+          answer: "14",
+          kind: "number",
+          label: "the full-spine cut",
+          noVerify: true,
+          why: "Fourteen months run 2024-01 through 2025-02, so LIMIT 14 prints the whole curve — both +2 months, the December dip to 4 members, and the 2025 recovery the deck ends on. LIMIT 12 amputates the recovery; the closing slide loses its argument.",
+        },
+      ],
+      distractors: ["customer_id", "LEAD", "SUM", "DESC", "12"],
+      walkthrough:
+        "The renewal pulse is a two-grain read staged through a CTE. monthly folds 103 baskets into 14 month buckets with two counters: COUNT(*) for baskets, COUNT(DISTINCT customer_id) for members — January's 8 baskets belong to 5 people, and the distinction IS the loyalty story. The outer query keeps every row (windows never collapse them) and LAG(members) OVER (ORDER BY month) hands each month its predecessor: the deltas print 0, +2, −1, 0, −1, 0, 0, +2, −1, −1, −1, +1, +1 — March and September are the +2 acquisition months, December dips to 4 members, and 2025 opens with back-to-back +1s. The first row's NULL is honest: no prior month, no baseline, no invented zero. COUNT(customer_id) would collapse the member grain back to baskets and the pulse would read flat everywhere; LEAD would stamp February with March's gain; DESC tells the story backwards; LIMIT 12 amputates the recovery. Two grains, one window, fourteen rows.",
+    },
   ],
 
   problems: [
@@ -856,5 +1016,21 @@ export const costcoKit: CompanyKit = {
     { slug: "unique-orders-and-customers-per-month", why: "Two grains per month: distinct baskets AND distinct members — the renewal curve needs both, and they are not the same number. Curated fill." },
     { slug: "percentage-of-users-attended-a-contest", why: "Share with the .0 guard: member-penetration rates computed in real arithmetic — the integer-division-proof shape behind every attach read. Curated fill." },
     { slug: "group-sold-products-by-the-date", why: "Pallet manifest per day: GROUP_CONCAT folding a day's SKUs into one comma-joined cell — the receiving-desk read, one string per dock door. Curated fill." },
+    { slug: "customer-order-frequency", why: "Baskets per member bucketed into frequency bands — the distribution behind the renewal census (24 at the top, two members at 1), a grouped count with the member grain stated up front. Curated fill." },
+    { slug: "customer-placing-the-largest-number-of-orders", why: "Argmax at the member grain: who placed the most baskets. This book crowns a 24-basket member cleanly, and the follow-up is the tie policy — what happens when a rung ties at 4. Curated fill." },
+    { slug: "find-loyal-customers", why: "The loyal cut: members clearing a repeat threshold — the executive-tier review's input and the fee-base logic the whole membership P&L stands on. Curated fill." },
+    { slug: "number-of-rich-customers", why: "Members over a spend line — the 3000-dollar executive boundary in miniature, a HAVING census that feeds the 2% reward review and the 63.5% concentration read. Curated fill." },
+    { slug: "average-selling-price", why: "ASP per SKU folds revenue over units — the case-pack pricing read where per-line and per-unit grains disagree, exactly the bulk-basket fan-out trap. Curated fill." },
+    { slug: "count-salary-categories", why: "Spend bands in CASE with empty bands printed — the honest histogram arm: a band with no members must read 0, not vanish from the book. Curated fill." },
+    { slug: "customers-who-never-order", why: "The member anti-join: on this book every member has ordered, so the honest answer is an empty set — and saying so out loud IS the graded answer. Curated fill." },
+    { slug: "monthly-transactions-ii", why: "Monthly census with the cancelled arm carried beside the count — the renewal curve with the 7 cancelled baskets never laundered out of the fold. Curated fill." },
+    { slug: "keep-latest-dedupe", why: "Keep the newest rail when a statement settles twice — pipeline-retry dedupe on payment rows, ROW_NUMBER newest-first with a deterministic tiebreak. Curated fill." },
+    { slug: "list-the-products-ordered-in-a-period", why: "Period-scoped SKU list on half-open date bounds — the reorder-window read where BETWEEN silently drops the boundary day's baskets. Curated fill." },
+    { slug: "report-contiguous-dates", why: "Gaps-and-islands over dates: contiguous runs become reportable windows — the stockout-streak and hot-week shapes the floor team escalates. Curated fill." },
+    { slug: "find-golden-hour-customers", why: "Members whose first basket lands in the early window — first-event logic that seeds the sample-driven conversion story the club floor runs on. Curated fill." },
+    { slug: "users-with-two-purchases-within-seven-days", why: "Repeat inside a 7-day window via LAG — the fast-return signal behind membership habit formation, staged in a CTE before the count. Curated fill." },
+    { slug: "restaurant-growth", why: "Rolling 7-day average over a daily spine — the smoothing frame behind the warehouse's weekly run-rate read, partial edge windows and all. Curated fill." },
+    { slug: "most-frequently-ordered-product-per-customer", why: "Each member's most-ordered SKU — argmax with a tie policy, the personalization seed for the mail-merge and the window-vs-join-back drill. Curated fill." },
+    { slug: "sales-by-day-of-the-week", why: "Weekday pivot of basket volume — CASE columns in, staffing chart out; the Saturday-load read every warehouse schedule is built against. Curated fill." },
   ],
 };

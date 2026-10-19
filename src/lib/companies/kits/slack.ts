@@ -26,7 +26,7 @@ export const slackKit: CompanyKit = {
     "Slack is workplace telemetry: channels, messages, huddles and workflows — and a product culture that treats usage as the truth and license counts as the lagging echo. The analyst reality is that every Slack number is a distinct-count over an event stream: DAU and WAU are `COUNT(DISTINCT user)` at two windows, stickiness is their ratio, activation is a first-event timestamp, and churn is a workspace whose signal went quiet. This kit maps that world honestly onto the storefront db: the **16 customers** are workspaces, the **103 orders** are renewal events (one order = one quarter on the platform), the 251 `order_items` are seat and channel lines, and the status ladder reads pending = trial, shipped = onboarding in flight, {emerald:delivered} = activated, cancelled = churned before activation.",
     "The telemetry stack has three grains and the db carries all three. Workspace grain: the repeat-renewal curve is the {emerald:retention} curve — 2 workspaces with a single renewal, 9 sitting at 2–4, 1 at 5, and 4 embedded accounts at 10+ (13, 14, 17 and 24 renewals). Event grain: the **14-month calendar** (2024-01 to 2025-02) is the activity spine, with a July trough at 1,193.86 that every trend read has to survive. Money grain: 28 renewal invoices and 27 settlements in INTEGER cents — where **6 invoices carrying 15,217 cents** have no settlement row at all, the {rose:churn-risk} queue the collections review reads first.",
     "Interview screens are funnel-shaped and denominator-obsessed. A typical loop walks from an **activation census** (workspaces per lifecycle stage in one pass) into a stickiness or conversion ratio where the two counts must come from the same population, then escalates into either a week-over-week movement (`LAG` across the activity spine, first row NULL by definition) or a {rose:churn-window} read: workspaces whose renewals stopped, invoices without settlements, *status columns that lie*. Follow-ups sound like product reviews: 'does a cancelled-before-activation workspace count in your funnel?', 'is that per workspace or per seat?', 'what does the first row of your LAG return?'",
-    "Preparation strategy: the registry tags only 2 SQL problems for Slack (`feature-adoption-windows`, `trial-to-paid-funnel`) — they lead the pool, and the remaining 30 topic slugs and 16 problems are theme-curated to known screen shapes: activation funnels, rolling distinct counts, streaks and gaps, plan-migration LAG paths and collection anti-joins. Then run both case studies on the live db: one rebuilds the workspace activation ladder growth reviews open with, the other rebuilds the renewal-collection gap finance reads before the board meets. The bar to clear: state **the window, the distinct grain and the denominator** before you compute anything.",
+    "Preparation strategy: the registry tags only 2 SQL problems for Slack (`feature-adoption-windows`, `trial-to-paid-funnel`) — they lead the pool, and the remaining 46 topic slugs and **32 problems** are theme-curated to known screen shapes: activation funnels, rolling distinct counts, streaks and gaps, plan-migration LAG paths and collection anti-joins. This expanded kit is built for spaced practice rather than one sitting. **Six case studies** now span the asks Slack data teams rehearse most: the workspace activation ladder growth reviews open with, the renewal-collection gap finance reads before the board meets, the response-latency board with its sample floor, the tenancy-depth census with its four-way tie, the week-over-week movement walk built on `LAG`, and the anchor-account screen judged by the per-workspace mean. Run each on the live db, then re-run it a week later from a blank editor — *the second pass is where recall actually forms*. The bar to clear: state **the window, the distinct grain and the denominator** before you compute anything.",
   ],
 
   dayInLife: [
@@ -51,27 +51,27 @@ export const slackKit: CompanyKit = {
     {
       name: "Workspace activation counts",
       why: "Activation is a count with a definition: workspaces that reached their first delivered renewal, folded per period. The screen checks whether you can census a lifecycle (trial, onboarding, activated, churned) without letting cancelled events pollute the activated total.",
-      slugs: ["trial-to-paid-funnel", "game-play-analysis-i", "article-views-ii"],
+      slugs: ["trial-to-paid-funnel", "game-play-analysis-i", "article-views-ii", "second-day-confirmation", "friend-requests-ii-who-has-the-most-friends"],
     },
     {
       name: "Activation & message funnels",
       why: "Funnel reporting is chained conditional counts: each step's denominator is the previous step's survivors. Slack screens drill step-to-step conversion because a funnel that silently resets denominators mid-ladder reports a conversion story that never happened.",
-      slugs: ["funnel-step-conversion", "ads-funnel", "email-engagement-funnel"],
+      slugs: ["funnel-step-conversion", "ads-funnel", "email-engagement-funnel", "viewers-turned-streamers", "friend-requests-i-overall-acceptance-rate", "get-highest-answer-rate-question", "number-of-comments-per-post"],
     },
     {
       name: "Adoption windows & feature uptake",
       why: "A feature launch is judged inside a window: uptake among workspaces exposed, conditional averages over a staged population. The registry-tagged adoption-windows shape — conditional AVG over event ladders — is the deliverable feature teams live on.",
-      slugs: ["feature-adoption-windows", "user-activity-for-the-past-30-days-i", "new-users-daily-count"],
+      slugs: ["feature-adoption-windows", "user-activity-for-the-past-30-days-i", "new-users-daily-count", "find-trending-hashtags"],
     },
     {
       name: "Streaks & the retention curve",
       why: "Engagement depth is streaks and curves, not snapshots: consecutive active runs, strictly increasing renewal counts, first-event cohorts joined back. Gaps-and-islands and first-event shapes are how 'engaged workspace' becomes a query instead of an adjective.",
-      slugs: ["active-users", "find-loyal-customers", "customers-with-strictly-increasing-purchases"],
+      slugs: ["active-users", "find-loyal-customers", "customers-with-strictly-increasing-purchases", "cohort-retention-matrix", "biggest-window-between-events", "customers-with-maximum-number-of-transactions-on-consecutive-days"],
     },
     {
       name: "Rolling windows & stickiness",
       why: "DAU/WAU stickiness, rolling 7-day distinct actives and trailing averages are the telemetry toolkit: two distinct-count folds over windows that must be stated, because a rolling window that drifts a day changes the number without changing the dashboard.",
-      slugs: ["dau-wau-stickiness", "rolling-7d-actives", "restaurant-growth"],
+      slugs: ["dau-wau-stickiness", "rolling-7d-actives", "restaurant-growth", "users-with-two-purchases-within-seven-days"],
     },
     {
       name: "Workspace ↔ billing joins",
@@ -81,17 +81,17 @@ export const slackKit: CompanyKit = {
     {
       name: "Lifecycle tiers with CASE",
       why: "Lifecycle ladders are CASE buckets: single-renewal, engaged, expanding, embedded — cut on renewal counts with exhaustive, ordered arms. Ordering matters twice: inside the CASE (first match wins) and in the report (biggest tier first).",
-      slugs: ["the-winner-university", "calculate-orders-within-each-interval", "delinquency-buckets"],
+      slugs: ["the-winner-university", "calculate-orders-within-each-interval", "delinquency-buckets", "create-a-session-bar-chart"],
     },
     {
       name: "Churn-risk anti-joins",
       why: "Churn detection is absence modeling: workspaces with no recent event, renewals with no settlement. LEFT JOIN + IS NULL and its NOT EXISTS twin are the shapes — and the db's 6 unsettled invoices show why the status column cannot be trusted over the payment rows.",
-      slugs: ["find-churn-risk-customers", "customer-who-visited-but-did-not-transact", "dormant-reactivation"],
+      slugs: ["find-churn-risk-customers", "customer-who-visited-but-did-not-transact", "dormant-reactivation", "number-of-accounts-that-did-not-stream", "find-zombie-sessions"],
     },
     {
       name: "First-event subqueries",
       why: "Activation date, first-channel-joined, day-1 cohort membership — every 'first' is a subquery or a window staged before the join back. Screens probe the empty-inner case: a cohort definition that matches nothing must return a confident zero, not a silent hole.",
-      slugs: ["game-play-analysis-iv", "market-analysis-i", "employees-whose-manager-left-the-company"],
+      slugs: ["game-play-analysis-iv", "market-analysis-i", "employees-whose-manager-left-the-company", "game-play-analysis-v", "market-analysis-ii"],
     },
     {
       name: "Movement waterfalls & plan paths",
@@ -147,6 +147,102 @@ export const slackKit: CompanyKit = {
       id: "slack-t8",
       q: "Finance reads 6 renewal invoices with no settlement rows; one of them is statused 'paid'. Which query do you trust, how do you write it, and what does that say about status columns?",
       a: "Trust the payment rows — the anti-join: invoices LEFT JOIN payments ON p.invoice_id = i.id WHERE p.id IS NULL. On this db that returns 6 invoices carrying 15,217 cents, and inside them sits the paid-with-no-payments anomaly: a status column making a claim the ledger never recorded. The mirror anomaly exists too — a void invoice WITH a settlement row (925 cents) — which is why the check runs both directions: settlements without valid invoices, and invoices without settlements. Status columns are assertions by some upstream system; payment rows are events that happened, and reconciliation culture here treats the event stream as the ledger of record. The money rule rides along: amount_cents / 100.0, never /100, or the 15,217 cents prints as 152 and the exposure report loses its cents to integer truncation. The deliverable is the row-level query that shows WHICH invoices disagree — not a summed apology.",
+      tag: "quality",
+    },
+    {
+      id: "slack-t9",
+      q: "Walk me through a weekly active-workspace census you can reconcile against the daily folds — and what you check first when the two disagree.",
+      a: "The weekly fold is COUNT(DISTINCT workspace) over the whole window — a re-dedupe, not a sum. Summing daily distinct counts double-counts every workspace active on two days, so the first reconciliation check is arithmetic: if sum-of-dailies equals the weekly fold, someone deduped twice or the windows drifted. On this spine the fold holds 47 week buckets against a 62-week calendar — the 15 quiet weeks are missing rows, not zeros, and every rolling window computed over the bare fold drifts across them. The strong answer states the three decisions — window (Mon–Sun), grain (workspace, not seat), population (every workspace, not just paying) — and encodes them in a named CTE so the reconciliation query and the board query cannot disagree.",
+      tag: "aggregation",
+    },
+    {
+      id: "slack-t10",
+      q: "One pass has to print the full lifecycle census — trial, onboarding, activated, churned — plus each stage's share of the base. Compare CASE-inside-SUM, FILTER, and four separate queries.",
+      a: "Conditional aggregates are the answer because the census needs a SHARED denominator: the four stages must partition the same 103 renewal events, and rates built from sibling branches cannot drift. FILTER (WHERE status = 'delivered') is the one-pass idiom; SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) is the portable twin; the COUNT(status = 'delivered') shape is the trap — SQLite renders TRUE/FALSE as 1/0, both non-NULL, so it counts every row. Four separate queries lose the shared grain: each carries its own filter set, and the shares stop summing to 100% the day one filter drifts. The audit the reviewer runs: the four branch counts must reconcile to 103 — 52 delivered, 30 shipped, 14 pending, 7 cancelled — before any share is quoted.",
+      tag: "case-when",
+    },
+    {
+      id: "slack-t11",
+      q: "How do you find two workspaces whose members overlap — or two channels sharing the same posters? Walk the self-join and its fan-out cost.",
+      a: "A self-join of the membership table to itself on the member key produces every co-membership pair; order the pair canonically (a.id < b.id) so each pair appears once instead of twice, then GROUP BY the pair and COUNT(DISTINCT member) for the overlap size. The cost is the point: a workspace with m members contributes m² rows to the join before any filter, so at scale you stage per-member sets and filter early, or compute pair overlaps from the pre-aggregated set. The audit habits carry over from any join: after the self-join, ask 'one row per what?' — it is one row per PAIR, not per member, and any SUM over the result must know that. On telemetry data this is the co-engagement read product teams use for 'workspaces like yours' suggestions.",
+      tag: "joins",
+    },
+    {
+      id: "slack-t12",
+      q: "The weekly trend must show a quiet week as a zero, not a gap. Build it — and name what breaks without the spine.",
+      a: "GROUP BY can only fold weeks that exist as rows: on this spine the fold holds 47 week buckets inside a 62-week calendar, so the 15 quiet weeks are absent and the trend line draws a straight line across each hole. The fix is a calendar spine — every week in range, generated with a recursive CTE or sourced from a calendar table — LEFT JOINed to the events, with COALESCE(count, 0) printing the honest zero. What breaks without it: every 7-day rolling window drifts (a ROWS frame slides across missing rows), week-over-week deltas compare non-adjacent weeks, and a moving average silently shortens. The discipline is deciding the fill policy IN the query — spine-plus-COALESCE ships the definition with the number, where a chart-tool patch ships a lie the SQL disagrees with.",
+      tag: "dates",
+    },
+    {
+      id: "slack-t13",
+      q: "Which workspaces renewed in BOTH halves of 2024, and which lapsed after H1? Compare INTERSECT, EXCEPT and the anti-join shapes.",
+      a: "Overlap is INTERSECT: the H1 renewal set ∩ the H2 renewal set returns 10 of the 16 workspaces on this db — the retained core, with no join gymnastics and no fan-out. Lapse is EXCEPT: H1's set minus H2's names the workspaces that went quiet mid-year, a churn read straight off the page. Two disciplines: set operations deduplicate both inputs first, so an internally duplicated feed collapses silently — if the duplicate rows ARE the anomaly, the LEFT JOIN … IS NULL anti-join over the full multiset is the honest tool; and both branches must share column count and compatible types, bound by position. Set-level diffs for snapshot comparisons, anti-joins for row-level forensics — the skill is knowing which question you are answering.",
+      tag: "set-ops",
+    },
+    {
+      id: "slack-t14",
+      q: "Customer success wants engagement quartiles with the embedded accounts landing in tile 1. How do NTILE and CASE tiers differ — and when does each mislead?",
+      a: "NTILE(4) OVER (ORDER BY renewals DESC) stamps tiles 1–4 in the window's ORDER BY sequence: with 16 workspaces and DESC, the first four rows — the embedded accounts at 24, 17, 14 and 13 renewals — take tile 1. NTILE is RELATIVE: every tile holds a quarter of the population no matter what, so a book of shallow accounts still prints a 'top quartile' of shallow ones. CASE tiers are ABSOLUTE definitions — engaged at 2–4 renewals, expanding at 5–9, embedded at 10+ — and they can legitimately come back empty. Mislead modes: NTILE with ASC puts the single-renewal workspaces in tile 1 and the semantics flip with the sort; CASE arms fire in order, so an out-of-order ladder (n >= 2 before n >= 10) silently empties the top tier. Pick by the question: 'top quarter of accounts' is NTILE; 'crossed the ten-renewal line' is CASE.",
+      tag: "windows",
+    },
+    {
+      id: "slack-t15",
+      q: "Channel names arrive from an integration with mixed casing and stray spaces, and the join to the workspace directory misses rows. What is the cleaning pass?",
+      a: "Normalize BOTH sides of the join key in a staged CTE — TRIM(name) to kill padding, UPPER(name) to kill case drift — then join on the normalized keys and keep the raw column alongside for display. The classic failure is cleaning one side only: the match rate halves silently and the census reports missing channels that are present but unnormalized. Match-key hygiene extends further: leading zeroes from one system, '_general' versus 'general' prefixes, full-width characters from CJK integrations — each is a REPLACE or TRIM rule you can unit-test with a before-and-after distinct count. The strong answer never cleans in place for the analysis: it adds the normalized column, reconciles the join census, and leaves the raw feed untouched for the pipeline owner to fix upstream.",
+      tag: "strings",
+    },
+    {
+      id: "slack-t16",
+      q: "Define time-to-first-response for a renewal conversation, in SQL — and say what the boundary rows return.",
+      a: "At the conversation grain: stage MIN(response_time) per thread in a CTE, then the latency is julianday(first_response) − julianday(posted_at) — the same julianday arithmetic that prices this db's 2.98-day average response window, ranging 2 to 4 days. The boundary row is the whole interview question: a thread with NO response yet carries a NULL latency, and that NULL is the aging queue — coalescing it to zero folds 'never answered' into 'instant answer' and the SLA board lies by subtraction. The honest board pairs the average with its population: AVG over the responded threads, COUNT of the NULL threads beside it, both labeled. The shape to avoid is averaging the julianday of NULL — the mean silently shrinks to the responsive population while the dashboard claims coverage it doesn't have.",
+      tag: "dates",
+    },
+    {
+      id: "slack-t17",
+      q: "The response-latency board shows a median next to the mean. Why both — and how do you compute a median in SQL?",
+      a: "Latency distributions skew: a handful of stalled threads pulls the mean up while the median holds the middle workspace, and the GAP between them is the tail's story — report both, with the population named, or the board hides the stall. In SQL the median is an order statistic: SQLite has no PERCENTILE_CONT, so the honest builds are COUNT-plus-offset (order the latencies, index to the middle row, average the two center values when the count is even) or NTILE(4) and read tile 2's boundary. AVG(julianday(replied) − julianday(posted)) is one line; the median costs a stage — a CTE that ranks latencies per region — which is exactly the staging instinct the screen is testing. Saying 'the median is the mean rounded' is the instant-fail answer: one is an average of values, the other is a value selected by rank.",
+      tag: "windows",
+    },
+    {
+      id: "slack-t18",
+      q: "The telemetry scan slows down every month as the event stream grows. What do you check for sargability and early filtering?",
+      a: "Sargability first: a predicate must compare the bare column to a value. WHERE SUBSTR(created_at, 1, 7) = '2024-03' wraps the column and forces a full scan; the sargable twin is created_at >= '2024-03-01' AND created_at < '2024-04-01' — half-open, same rows, index-usable. Then the compounding habits: filter early inside each CTE so later folds carry fewer rows (the 251-line fan-out should never be carried past the stage that drops it); name columns instead of SELECT * so unread payloads stop crossing the wire; probe with LIMIT before committing to the full census; and fold at the smallest table that answers the question instead of joining first and filtering after. On an event stream that doubles yearly these are not micro-optimizations — they are the difference between a board that renders and one that times out during the product review.",
+      tag: "performance",
+    },
+    {
+      id: "slack-t19",
+      q: "A pipeline retry double-ingested message events — same event id, different ingested_at. Detection query, and the keep-newest fix?",
+      a: "Detect at the natural key: GROUP BY event_id HAVING COUNT(*) > 1 — the duplicate count is the incident's size, reported with a key sample. Fix with the window dedupe: ROW_NUMBER() OVER (PARTITION BY event_id ORDER BY ingested_at DESC) = 1 keeps exactly the freshest copy — partitioned on the business key, tiebroken on a real timestamp, never on rowid hope. The senior detail is the rank-function trap: RANK and DENSE_RANK stamp every tied-newest row 1, so a true duplicate survives the rn = 1 filter twice and the dedupe fails silently; ROW_NUMBER numbers duplicates distinctly, which is why it is the only dedupe rank. Every telemetry pipeline retries, so keep-latest is not a cleanup step — it is the ingestion contract, and the audit is a scheduled query, not a one-off apology.",
+      tag: "quality",
+    },
+    {
+      id: "slack-t20",
+      q: "Define 'weekly active workspace' for the operating model. What do you pin down before writing the SQL?",
+      a: "Four decisions, in writing, before the FROM clause. The event: any message, or does a reaction count? (A lurker emoji-ing once a week is a different account than a poster — the definition decides.) The window: Monday–Sunday calendar weeks, or trailing 7-day rolling? They disagree by double digits on spiky workspaces. The grain: workspace or seat — a 50-seat workspace active through one admin is not 50 active seats. The population: every workspace ever provisioned, or only workspaces past activation? Then the discipline move: encode it as a named CTE — active_weeks AS (SELECT workspace, week FROM events GROUP BY 1, 2) — so the SQL IS the definition and the reviewer audits it instead of arguing. The bar in this kit's screens: state the window, the distinct grain and the denominator before computing anything.",
+      tag: "metrics",
+    },
+    {
+      id: "slack-t21",
+      q: "NOT EXISTS, LEFT JOIN … IS NULL, or NOT IN — which do you reach for to build the churn-risk queue, and why?",
+      a: "NOT EXISTS first: the workspaces you want are the ones with NO renewal event in the trailing window, and an existence probe short-circuits on the first match and never trips on NULLs. NOT IN is the trap: x NOT IN (a list containing NULL) can never be TRUE — one stray NULL in the subquery empties the queue silently, and an empty churn queue reads as 'no risk' to everyone who doesn't check. LEFT JOIN … IS NULL is semantically identical to NOT EXISTS and the right choice when you also need columns from the unmatched side — this kit's collection gap is exactly that shape: 6 renewal invoices with no settlement row, 15,217 cents, one of them statused 'paid'. The answer that wins the screen names the failure mode of the runner-up, not just the winner.",
+      tag: "nulls",
+    },
+    {
+      id: "slack-t22",
+      q: "Message events and huddle events live in two tables, and the daily activity report stacks both into one grid. What is the UNION ALL discipline — and what breaks when the branches drift?",
+      a: "Two branches, one stack: the message fold and the huddle fold each GROUP BY day, each carrying a literal discriminator ('message', 'huddle') as a column, stacked by UNION ALL — cheap, order-preserving, no dedupe pass. The contracts: column counts match and types are compatible, bound by POSITION not name (the grid's headers come from the first branch); a literal label in each arm makes every downstream GROUP BY able to split the arms. What breaks: a bare UNION adds a distinct pass that can silently collapse two identical-looking rows from different arms — a double-ingested event vanishes into the dedupe and the audit trail loses it; and a WHERE filter added to one arm but not the other makes the day counts unreconcilable. The audit: the stacked total must equal the sum of both tables' counts, every time.",
+      tag: "set-ops",
+    },
+    {
+      id: "slack-t23",
+      q: "Rolling 7-day active workspaces: ROWS versus RANGE — which is calendar-true, and why does the wrong frame drift?",
+      a: "ROWS BETWEEN 6 PRECEDING AND CURRENT ROW counts physical rows: when quiet weeks have no rows in the fold, the frame shortens and a '7-day' window covers 4 — the metric drifts while the dashboard looks identical. RANGE peers by VALUE of the ORDER BY key, which is calendar-true when one row exists per calendar slot — but the missing slots are exactly the rows that don't exist to peer from. The drift-proof build is the spine: generate every week (or day) in range, LEFT JOIN the events onto it, and let the frame run over a DENSE series — absence becomes a zero row and 6 PRECEDING means six calendar slots again. On this db the fold holds 47 of 62 calendar week buckets — fifteen drift opportunities in one quarter's board. The expert answer states the frame unit and the density assumption together; one without the other is a bug on a schedule.",
+      tag: "windows",
+    },
+    {
+      id: "slack-t24",
+      q: "The DAU number moved overnight and a PM is asking. Which SQL checks do you run in the first ten minutes?",
+      a: "Five, in order. Freshness: MAX(created_at) per source — a feed that stopped at 02:00 explains most surprises alone. Volume: today's event count versus the 7-day average, because a half-loaded feed halves every downstream distinct count. Keys: GROUP BY event_id HAVING COUNT(*) > 1 — a retry double-ingest inflates exactly the workspaces it touched. Orphans: an anti-join of event workspace ids against the workspace table, catching reference-integrity breaks. NULL spikes: COUNT(user_id) versus COUNT(*) — a column that went 0% to 40% NULL empties every distinct fold built on it. The deliverable is not 'it looks fine' — it is which check passed, when it last ran, and the one anomaly with a row sample attached. On this db the same ritual is how the paid-no-payments invoice (#28, 1,756 cents) surfaces: status says paid, settlement rows say zero.",
       tag: "quality",
     },
   ],
@@ -678,6 +774,154 @@ export const slackKit: CompanyKit = {
       walkthrough:
         "An anti-join where the definition is 'absence of a match'. The LEFT JOIN keeps all 28 renewal invoices and attaches settlements where they exist; p.id IS NULL keeps the 6 with none — 15,217 cents, printed honestly as dollars by dividing by 100.0 before rounding: 134.61 across the five open invoices, plus 17.56 for the one statused 'paid' with zero payment rows, the anomaly finance wants named, not smoothed over. The void-but-paid invoice never appears — it HAS a settlement row — which is the whole point: the queue is built on settlement facts, and status columns are claims that get audited, not trusted. The distractors fail loudly: COUNT in the aggregate slot prints row counts as dollars; joining on 1 collapses every settlement onto invoice #1 and floods the queue with 27 false unmatched; probing i.amount_cents for NULL finds none and returns all 28 invoices as churn risk; ASC inverts the queue so the smallest exposure leads. The money rule rides along: INTEGER cents ÷ 100.0 — the missing .0 is how a 152.17-dollar exposure prints as 152 and the board's cents go missing.",
     },
+    {
+      id: "cs-slack-3",
+      tier: "medium",
+      topic: "t3",
+      universe: "growth",
+      title: "The response-latency board",
+      brief:
+        "Slack-flavored brief on the storefront db: the workspace-health review opens with response latency — for each region, how long between a conversation opening (created_at) and its first response landing (shipped_at). Probed facts: 82 of the 103 renewal conversations carry a response event; 21 are still unanswered — they are the aging queue, excluded here by the IS NOT NULL policy, not forgotten. Regional latency on the responded population: LATAM 3.5 days on just 2 conversations, US 3.07 on 15, EU 2.94 on 36, APAC 2.93 on 29. The CS lead's memo: 'show me regions with a real sample — at least 15 responded conversations — slowest first, days to 2 decimals; a 2-conversation average is an anecdote, not a board row.'",
+      ask: "Return each region with its average response latency in days (2 decimals) and its responded-conversation count, for regions with at least 15 responded conversations, slowest first.",
+      template:
+        "SELECT c.region,\n       ROUND({1}(julianday(o.shipped_at) - julianday(o.created_at)), 2) AS avg_days,\n       COUNT(*) AS responded\nFROM orders o\nJOIN customers c ON c.id = o.customer_id\nWHERE o.shipped_at IS NOT {2}\nGROUP BY c.region\nHAVING COUNT(*) >= {3}\nORDER BY avg_days {4};",
+      slots: [
+        {
+          answer: "AVG",
+          kind: "keyword",
+          label: "the latency averager",
+          why: "AVG(julianday(replied) − julianday(posted)) is the mean response window per region — US 3.07, EU 2.94. MAX would print the single worst conversation as the region's latency and the board would read a 4-day region as a 4-day standard.",
+        },
+        {
+          answer: "NULL",
+          kind: "keyword",
+          label: "the unanswered filter",
+          why: "IS NOT NULL keeps only conversations that HAVE a response — the 82 answered of 103. Dropping the NULL policy makes julianday(shipped_at) NULL for the 21 unanswered; AVG ignores them but COUNT(*) counts the rows, and every region's sample inflates with conversations that have no latency to measure.",
+        },
+        {
+          answer: "15",
+          kind: "number",
+          label: "the sample floor",
+          why: "HAVING COUNT(*) >= 15 keeps US (15), EU (36) and APAC (29) and drops LATAM's 2-conversation anecdote. The threshold judges a per-region aggregate, which is why it lives in HAVING — WHERE cannot see COUNT after the fold.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the slowest-first direction",
+          why: "The board leads with the worst latency: US 3.07, EU 2.94, APAC 2.93. ASC would open the review with APAC — the best performer — a correct query aimed at the wrong end of the readout.",
+        },
+      ],
+      distractors: ["MAX", "IS", "ASC", "2"],
+      walkthrough:
+        "A latency census with a sample floor. The join attaches each renewal conversation to its region; the IS NOT NULL policy keeps the 82 conversations that actually have a response event — the 21 unanswered are the aging queue, excluded on purpose and by a policy anyone can quote. julianday(shipped_at) − julianday(created_at) prices each latency in float days, AVG folds them per region, and ROUND(..., 2) prints the board's precision: US 3.07 on 15 conversations, EU 2.94 on 36, APAC 2.93 on 29. HAVING COUNT(*) >= 15 is the sample floor the memo asked for — LATAM's 3.5-day average rests on 2 conversations and drops, which is the difference between a floor and a filter: the floor judges the GROUP's size, not its latency. The distractors each break a different promise: MAX turns the regional average into its worst single conversation; IS in the NULL slot dissolves the unanswered policy and inflates every region's count with conversations that have no latency; 2 in the floor slot lets LATAM's anecdote back onto the board; ASC opens the review with the best region instead of the worst. The habit the reviewer grades: an average is only as honest as the count printed next to it.",
+    },
+    {
+      id: "cs-slack-4",
+      tier: "medium",
+      topic: "j7",
+      universe: "growth",
+      title: "The tenancy-depth census",
+      brief:
+        "Slack-flavored brief on the storefront db: the CS review wants each workspace's renewal count BESIDE its line-item count — depth of tenancy is renewals, but volume of lines is seats and channel activity, and the pair tells expansion from churn-risk faster than either alone. Probed facts: 16 workspaces, 103 renewals, 251 lines; the ladder runs 24 / 17 / 14 / 13 / 5 at the top, then a four-way tie at 4 renewals — Pedro Alvarez (13 lines), Keiko Sato (10), Noah Meyer (8), Isabella Rossi (8). The memo asks for the census at a floor of 4 renewals so the tie stays visible, deepest first, with lines breaking ties.",
+      ask: "Return each workspace with its renewal count and its line-item count, for workspaces with at least 4 renewals, deepest first.",
+      template:
+        "SELECT c.name AS workspace,\n       COUNT(DISTINCT o.id) AS renewals,\n       {1} AS lines\nFROM customers c\nJOIN orders o ON o.customer_id = c.id\nJOIN order_items oi ON oi.order_id = o.id\nGROUP BY c.id, c.name\nHAVING COUNT(DISTINCT o.id) >= {2}\nORDER BY renewals {3}, lines DESC;",
+      slots: [
+        {
+          answer: "COUNT(*)",
+          kind: "keyword",
+          label: "the line counter",
+          why: "After the two joins the result's grain is LINE ITEMS — COUNT(*) counts them: Alice 50 lines on 24 renewals, Emma 46 on 17. COUNT(DISTINCT o.id) in this slot would print the renewal count twice, and the seats story would silently become the tenancy story.",
+        },
+        {
+          answer: "4",
+          kind: "number",
+          label: "the tie-preserving floor",
+          why: "HAVING COUNT(DISTINCT o.id) >= 4 keeps nine workspaces — the ladder down to 5, plus all four members of the 4-renewal tie. The floor judges a per-workspace aggregate after the fold, so it lives in HAVING; and 4 is exactly where the tie sits, which is the row the review wants to argue about.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the deepest-first direction",
+          why: "Deepest tenancy first is descending: Alice 24, Emma 17, Grace 14, Maya 13, Chloe 5, then the tie. ASC would open the review with the 4-renewal bench — a churn-risk read wearing an expansion memo's name.",
+        },
+      ],
+      distractors: ["SUM(oi.quantity)", "ASC", "5"],
+      walkthrough:
+        "Two grains, one census — and a tie kept on purpose. The chain joins workspaces to renewals to line items, and after the second join the grain is LINES: COUNT(*) counts them per workspace (Alice 50, Emma 46, Grace 34, Maya 30, Chloe 14), while COUNT(DISTINCT o.id) holds the renewal grain (24, 17, 14, 13, 5) — printing both is the whole deliverable, because expansion is renewals up AND lines up, and a workspace with 24 renewals on 50 lines reads differently from 4 renewals on 13. HAVING COUNT(DISTINCT o.id) >= 4 keeps nine workspaces, deliberately including the four-way tie at 4 — Pedro 13 lines, Keiko 10, Noah 8, Isabella 8 — and the secondary ORDER BY lines DESC breaks the tie for the eye while RANK would keep it honest for the query. The distractors: SUM(oi.quantity) turns the lines column into consumed units (a different fold that changes every row); 5 in the floor slot amputates the tie the memo asked to see; ASC inverts the read so the churn bench opens the review. The reviewer's bar: name the grain of every count out loud — COUNT(*) counts lines, COUNT(DISTINCT) counts entities, and the census is honest only while the two stay labeled.",
+    },
+    {
+      id: "cs-slack-5",
+      tier: "medium",
+      topic: "t7",
+      universe: "growth",
+      title: "The week-over-week movement walk",
+      brief:
+        "Slack-flavored brief on the storefront db: the product review opens with the week-over-week active-workspace walk — each active week's distinct workspace count, the prior week's count beside it, and the percent change. Probed facts: the fold holds 47 week buckets inside a 62-week calendar; the opening run reads 2024-W01 4 actives, W03 2 (−50.0%), W04 1 (−50.0%), W06 2 (+100.0%), W07 4 (+100.0%), W08 1 (−75.0%), W09 1 (0.0%), W10 4 (+300.0%). The quiet weeks (W02, W05, W11 among them) are absent rows, so LAG reads the previous ACTIVE week — and the first row's movement is honestly NULL: no baseline exists.",
+      ask: "Return the first eight active weeks with their active-workspace count, the prior week's count, and the week-over-week percent change.",
+      template:
+        "WITH weekly AS (\n  SELECT STRFTIME('%Y-W%W', o.created_at) AS week,\n         {1}(DISTINCT o.customer_id) AS active_ws\n  FROM orders o\n  GROUP BY week\n)\nSELECT week,\n       active_ws,\n       LAG(active_ws) OVER (ORDER BY week) AS prev_ws,\n       ROUND(100.0 * (active_ws - LAG(active_ws) OVER (ORDER BY week))\n             / LAG(active_ws) OVER (ORDER BY week), 1) AS wow_pct\nFROM weekly\nORDER BY week {2}\nLIMIT {3};",
+      slots: [
+        {
+          answer: "COUNT",
+          kind: "keyword",
+          label: "the distinct-weekly fold",
+          why: "COUNT(DISTINCT customer_id) folds each week's renewal events back to workspaces — W01's 4 actives from 4 events, W03's 2 from 3. SUM would add workspace IDs together: a number that changes if an account re-registers and means nothing in any review.",
+        },
+        {
+          answer: "ASC",
+          kind: "keyword",
+          label: "the chronological direction",
+          why: "A week-over-week walk is chronological: ASC keeps 2024-W01 on top so each row compares against the row above. DESC presents the newest week first with its baseline below — the numbers survive, the story doesn't.",
+        },
+        {
+          answer: "8",
+          kind: "number",
+          label: "the opener cut",
+          noVerify: true,
+          why: "LIMIT 8 returns the opening run the review quotes — W01 through W10, ending on the +300.0 jump into W10. The eight rows are the deck's opener; the remaining 39 buckets stay behind the cut.",
+        },
+      ],
+      distractors: ["SUM", "DESC", "52", "LEAD"],
+      walkthrough:
+        "Staged windows over a gappy spine. The CTE folds 103 renewal events onto the '%Y-W%W' week spine with COUNT(DISTINCT customer_id) — 47 buckets, because quiet weeks produce no rows — and the outer query walks it: LAG(active_ws) OVER (ORDER BY week) brings the previous ACTIVE week's count into the current row, and the percentage divides the delta by that same LAG. W03's −50.0% is 2 against W01's 4; W07's +100.0% doubles W06's 2 into 4; the +300.0% into W10 is 1 becoming 4. The first row's prev_ws is NULL by design — no prior week, no baseline, no invented zero — and the missing weeks are the subtle part: LAG reads the previous ROW, so after a quiet week the 'week-over-week' delta actually spans two calendar weeks. That is either a bug or a definition; this board's memo says active weeks only, and the walkthrough is where you say it out loud. The distractors each poison a different cell: SUM in the fold prints summed workspace IDs as an actives count; DESC tells the story backwards; LEAD in the walk would read the FUTURE — every prev becomes the next week's number; 52 in the cut returns all 47 buckets and buries the opener. The reviewer's bar: a movement board is only as honest as the row its delta reaches back to.",
+    },
+    {
+      id: "cs-slack-6",
+      tier: "hard",
+      topic: "q6",
+      universe: "growth",
+      title: "The anchor-account screen",
+      brief:
+        "Slack-flavored brief on the storefront db: the growth board wants the anchor accounts — workspaces whose lifetime renewal value beats the per-workspace MEAN, because the mean is where the book splits into anchors and the long tail. Probed facts: 16 workspaces average 2,177.08 lifetime value against the platform's 34,833.28; five clear it — Alice Chen 7,262.35 on 24 renewals, Emma Wilson 6,640.56 on 17, Grace Kim 4,574.23 on 14, Maya Patel 3,644.56 on 13, Chloe Dubois 2,667.93 on 5. The memo is explicit: 'the mean is computed IN the query from the same fold it judges — a typed-in threshold drifts the day the ledger restates.'",
+      ask: "Return the workspaces whose lifetime renewal value beats the per-workspace mean: name, renewal count, and value in dollars (2 decimals), biggest value first.",
+      template:
+        "WITH per_workspace AS (\n  SELECT c.name AS workspace,\n         COUNT(*) AS renewals,\n         SUM(o.total) AS value\n  FROM customers c\n  JOIN orders o ON o.customer_id = c.id\n  GROUP BY c.id, c.name\n)\nSELECT workspace,\n       renewals,\n       ROUND(value, {1}) AS lifetime_value\nFROM per_workspace\nWHERE value > (SELECT {2}(value) FROM per_workspace)\nORDER BY lifetime_value {3};",
+      slots: [
+        {
+          answer: "2",
+          kind: "number",
+          label: "the cents-precision cut",
+          noVerify: true,
+          why: "The anchor board prints to cents — 7,262.35, not 7,262 — because growth reconciles these values against the concentration ledger to the penny. Rounding the display to 0 or 1 decimals is how a board that 'almost' matches the ledger stops being audited at all.",
+        },
+        {
+          answer: "AVG",
+          kind: "keyword",
+          label: "the mean baseline",
+          why: "AVG(value) over the SAME 16-row fold computes the mean in-query — 2,177.08 — so the screen re-derives itself whenever the ledger restates. SUM would set the bar at the whole book (34,833.28) and the screen ships empty; MAX sets it at Alice's 7,262.35 and even the anchor herself fails it.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-anchor-first direction",
+          why: "The board reads anchors first: Alice 7,262.35 down to Chloe 2,667.93. ASC would lead with the smallest account that cleared the bar — a correct query opening the meeting with the weakest finding.",
+        },
+      ],
+      distractors: ["SUM", "MAX", "ASC", "workspace"],
+      walkthrough:
+        "One fold, judged by its own mean. The CTE stages the per-workspace grain: GROUP BY workspace folds 103 renewals into 16 rows carrying COUNT and SUM — Alice 24/7,262.35, Emma 17/6,640.56, down to the single-renewal workspaces. The scalar subquery averages THAT fold from inside the query — 2,177.08 — and the outer WHERE keeps the five rows that clear it, printed to cents and sorted DESC: the anchor bench, 5 of 16 workspaces, is the same cohort that carries the concentration curve's top. The staging matters: the fold exists ONCE, so the baseline and the judged rows can never drift apart — the exact property a typed-in 2,177 would destroy the next time a late renewal restated a value. The distractors each fail a different way: SUM sets the bar at the entire book and the screen ships empty; MAX sets it at the top anchor and even Alice fails her own screen; workspace in the AVG slot averages names into a 0.0 bar and floods the report with all 16 workspaces; ASC inverts the readout. The reviewer's bar: a screen against a derived baseline must compute the baseline from the same fold it filters — anything else is a threshold wearing a definition's clothes.",
+    },
   ],
 
   problems: [
@@ -697,5 +941,21 @@ export const slackKit: CompanyKit = {
     { slug: "the-change-in-global-rankings", why: "Period-over-period deltas — last week's numbers beside this week's, movement made visible instead of memoralized in slides." },
     { slug: "article-views-ii", why: "HAVING-gated weekly census — which periods cleared the activity bar, folded in one GROUP BY, the telemetry pulse check." },
     { slug: "bank-account-summary-ii", why: "Credit/debit folds per holder — the billing-ledger shape behind renewal invoices and settlements, cents handled honestly." },
+    { slug: "second-day-confirmation", why: "Day-2 confirmation with chained denominators — the D2 activation read product reviews open with, each step measured against the previous step's survivors." },
+    { slug: "cohort-retention-matrix", why: "Cohort × period retention grid — the weekly active matrix this kit's telemetry stack folds every Monday, NULL-vs-zero policy included." },
+    { slug: "viewers-turned-streamers", why: "Lurkers who became posters — the read-first-then-contribute conversion that turns channel telemetry into an activation story." },
+    { slug: "number-of-accounts-that-did-not-stream", why: "Workspaces with zero activity in the window — the quiet-account census, absence modeled as data, not as an empty result." },
+    { slug: "friend-requests-i-overall-acceptance-rate", why: "Invite acceptance rate per sender — the workspace-invite funnel, where the acceptance ratio IS the growth metric and NULLs are pending, not zero." },
+    { slug: "friend-requests-ii-who-has-the-most-friends", why: "The most-connected user by distinct count — the channel-membership leaderboard, a COUNT(DISTINCT) fold over a fan-out graph." },
+    { slug: "get-highest-answer-rate-question", why: "Argmax over response rates — which thread got answered fastest, the response-latency culture rendered as a query." },
+    { slug: "number-of-comments-per-post", why: "Thread-reply volume per post — the message-engagement fold that separates broadcast channels from conversations." },
+    { slug: "find-trending-hashtags", why: "Uptake inside a launch window — trending topics are the feature-adoption read in message clothing, conditional counts over a staged population." },
+    { slug: "biggest-window-between-events", why: "The longest quiet gap between events per account — dormancy measured directly, the churn-window read this kit's reviews lead with." },
+    { slug: "find-zombie-sessions", why: "Sessions that never ended — absence of the end event as the anomaly, the same anti-join instinct behind the never-settled queue." },
+    { slug: "users-with-two-purchases-within-seven-days", why: "Two events inside seven days — the stickiness cohort definition, a window plus a distinct count, exactly how DAU/WAU reads get built." },
+    { slug: "customers-with-maximum-number-of-transactions-on-consecutive-days", why: "Consecutive-day event depth per account — streak depth as a query, the gaps-and-islands muscle every engagement metric here needs." },
+    { slug: "game-play-analysis-v", why: "Day-1 retention per login date — first-event cohorts folded and joined back, the activation-date grammar this kit drills in the first-event topic." },
+    { slug: "market-analysis-ii", why: "Accounts whose first event and first transaction land the same day — same-day activation, the trial-to-converted read in its sharpest form." },
+    { slug: "create-a-session-bar-chart", why: "Session counts bucketed by duration band — the huddle-length histogram, zero-filled buckets and all, because empty bands are findings too." },
   ],
 };
