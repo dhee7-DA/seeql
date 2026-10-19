@@ -35,7 +35,7 @@ export const sheinKit: CompanyKit = {
     "**SHEIN** is the ultra-fast-fashion machine: micro-batch drops test demand in days, coupon stacks reprice every cart line at checkout, and cross-border lanes move parcels on a **2.98-day** average dispatch clock. The analysis culture is cart-first — where SHEIN's margins live is not the hero product but the **basket**: 251 cart lines riding in 103 checkouts worth **34,833.28** (2.44 lines per cart, 498 units). This kit maps the storefront db onto that world: 16 fashion SKUs across 7 product families, 6 vendor/factory partners, and a fixed status map — delivered = {emerald:delivered-and-kept} (52, 50.5%), shipped = {sky:in-transit} with `shipped_at` as the dispatch stamp (30, 29.1%), pending = awaiting payment or the warehouse queue (14), cancelled = {rose:abandoned} (7, 6.8%).",
     "The data org splits into growth (drop cadence, market funnels), trading (attach, bands, price ladders) and a settlement pod that reconciles wholesale statements against payment rails. One house fact shapes everything: **every one of the 251 cart lines reprices off the SKU's list price** — coupons, bundle credits and size-curve markdowns all land on `unit_price`, so the line ticket is never the catalog key; banding uses the list price on `products` (8 budget SKUs averaging **32.06**, 8 core SKUs averaging **111.5**, and the premium ladder *empty* — the catalog tops out at 199.99, though 5 repriced line tickets clear the 200 ceiling at checkout, topping at 209.68). Money in the settlement tables is INTEGER cents: the dollar read is `amount_cents / 100.0`.",
     "Interview screens are census-then-denominator, cart-flavored. A loop opens with a **two-grain market census** — EU runs 45 checkouts worth 15,089.23 from 8 shoppers while the US runs 19 from 2 — then escalates into the attach read (the add-on family rides in **54 of 103 carts**, 52.4%, yet books just 3,294.29 while the hero family touches 46 carts and books 11,744.01), then into a rate where the interviewer asks the denominator out loud (*'do abandoned carts sit in your base?'*), then a window walk over the {sky:14-month drop spine} (2024-01 to 2025-02) where the first LAG row is NULL by design. Candidates who state the grain, the banding key and the denominator before writing SQL are the ones who get callbacks.",
-    "Preparation strategy: the pools file carries no SHEIN section — fewer than 2 tagged rows, none SQL-graded — so all sixteen problems and every topic slug here are **theme-curated** to this kit's known screen shapes: cart-line folding, attach censuses, promo-band CASE folds, dispatch-latency NULL policy and cents-safe settlement reads. Do the topics in order, then run both case studies on the live storefront db: one rebuilds the {emerald:cart attach census} merch ops opens Monday with, the other rebuilds the {sky:promo-band folio} pricing quotes at every trading review. The bar to clear: *state the banding key and the denominator before you compute anything* — then make every status census reconcile to 103 by construction.",
+    "Preparation strategy: the pools file carries no SHEIN section — fewer than 2 tagged rows, none SQL-graded — so all thirty-two problems and every topic slug here are **theme-curated** to this kit's known screen shapes: cart-line folding, attach censuses, promo-band CASE folds, dispatch-latency NULL policy and cents-safe settlement reads. Do the topics in order, then run the six case studies on the live storefront db — built for spaced practice rather than one sitting: the {emerald:cart attach census} merch ops opens Monday with, the {sky:promo-band folio} pricing quotes at every trading review, the repeat-cart ladder with its four-way tie, the one-pass status census that must reconcile to 103 by construction, the never-settled dunning queue, and the 14-month GMV spine walk growth reads monthly. The bar to clear: *state the banding key and the denominator before you compute anything* — then make every status census reconcile to 103 by construction.",
   ],
 
   dayInLife: [
@@ -59,12 +59,12 @@ export const sheinKit: CompanyKit = {
     {
       name: "Cart-line folding & attach counts",
       why: "Every SHEIN merch screen opens by folding 251 cart lines into per-family reads — units, revenue, and the attach count that matters most: distinct carts touched. The trap is grain drift: COUNT(*) counts line rows (the add-on family has 62 lines but only 54 carts), and the interviewer grades whether you can hold units, lines and carts apart in one query.",
-      slugs: ["sales-analysis-i", "percentage-of-users-attended-a-contest", "number-of-rich-customers"],
+      slugs: ["sales-analysis-i", "percentage-of-users-attended-a-contest", "number-of-rich-customers", "basket-depth-aov"],
     },
     {
       name: "Two-grain market censuses",
       why: "Markets report at two grains simultaneously: EU runs 45 checkouts from 8 shoppers, the US 19 from 2. COUNT(*) beside COUNT(DISTINCT customer_id) — and saying out loud which is demand and which is coverage — is the habit being graded. The intensity ratio (9.5 versus 5.6) is the market-maturity signal hiding between the columns.",
-      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "students-and-examinations"],
+      slugs: ["daily-leads-and-partners", "unique-orders-and-customers-per-month", "students-and-examinations", "repeat-purchase-rate", "find-loyal-customers"],
     },
     {
       name: "Joining carts to the drop catalog",
@@ -74,37 +74,37 @@ export const sheinKit: CompanyKit = {
     {
       name: "Best-seller ladders & tie policy",
       why: "Drop reporting is leaderboard reporting: top families by revenue, top SKUs by units, top shoppers by carts — and the cart ladder here runs 24, 17, 14, 13, 5 with a three-way tie at 4. RANK, DENSE_RANK and ROW_NUMBER differ in who shares a rung and whether gaps follow, which is a merchandising policy, not syntax.",
-      slugs: ["rank-scores", "top-earners", "department-top-three-salaries"],
+      slugs: ["rank-scores", "top-earners", "department-top-three-salaries", "rfm-segmentation", "usage-tier-percentiles"],
     },
     {
       name: "Promo banding with CASE",
       why: "SHEIN's pricing page is a CASE statement: budget under the 50 list edge, core at or above, premium theoretically 200-plus (empty here — the ladder tops out at 199.99). Arms must be exhaustive and ordered; a hole in the CASE is a hole in the folio, and the banding key — list price, never the repriced line ticket — is the follow-up that separates candidates.",
-      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "type-of-triangle"],
+      slugs: ["weather-type-in-each-country", "calculate-special-bonus", "type-of-triangle", "calculate-product-final-price", "the-number-of-users-that-are-eligible-for-discount"],
     },
     {
       name: "Subquery rate gates",
       why: "Screens escalate into staging: which carts beat the 338.19 platform average, which vendors clear a computed bar, which SKUs out-sell the family mean. Scalar, correlated and derived shapes each carry an empty-inner-query answer you are expected to give unprompted — the above-average filter is where silent zeros ship.",
-      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "market-analysis-i"],
+      slugs: ["managers-with-at-least-5-direct-reports", "orders-with-maximum-quantity-above-average", "market-analysis-i", "top-percentile-fraud"],
     },
     {
       name: "Drop cadence & month buckets",
       why: "The 14-month drop spine (2024-01 to 2025-02, every month 6-9 checkouts) is the cadence read: STRFTIME or SUBSTR month keys, half-open windows that never drop the last night of a drop, and '%m' traps that merge January 2024 into January 2025. Cadence analytics is date discipline.",
-      slugs: ["the-latest-login-in-2020", "list-the-products-ordered-in-a-period", "count-the-number-of-experiments"],
+      slugs: ["the-latest-login-in-2020", "list-the-products-ordered-in-a-period", "count-the-number-of-experiments", "same-day-sale", "sales-by-day-of-the-week"],
     },
     {
       name: "LAG walks on the drop spine",
       why: "Month-over-month GMV walks are LAG over the month spine — the book opens at 3,731.97, troughs at 1,193.86 in July, jumps +1,158.21 into August. The first row's delta is NULL by definition: the baseline, never a zero to coalesce. LEAD flips every sign; SUM builds a running total instead of a step.",
-      slugs: ["biggest-window-between-events", "second-day-confirmation", "average-time-of-process-per-machine"],
+      slugs: ["biggest-window-between-events", "second-day-confirmation", "average-time-of-process-per-machine", "users-with-two-purchases-within-seven-days", "median-time-to-convert", "year-on-year-growth-rate"],
     },
     {
       name: "Anti-joins & the confident zero",
       why: "Catalog and checkout hygiene runs on anti-joins: shoppers who never checked out, SKUs that never sold, statements no rail ever touched. On this db the product and shopper anti-joins return a confident zero — all 16 SKUs and shoppers appear somewhere — while the settlement anti-join returns 6 statements worth 15,217. Proving which zero you have is the deliverable.",
-      slugs: ["customers-who-never-order", "sellers-with-no-sales", "customer-who-visited-but-did-not-transact"],
+      slugs: ["customers-who-never-order", "sellers-with-no-sales", "customer-who-visited-but-did-not-transact", "customers-who-bought-a-and-b-not-c", "ar-aging-schedule"],
     },
     {
       name: "One-pass censuses & FILTER branches",
       why: "The trading board gets delivered, in-transit, pending and abandoned in ONE scan — 52, 30, 14, 7, reconciling to 103 by construction. FILTER (WHERE …) branches per aggregate, SUM(CASE …) is the portable twin, and four sequential queries are four ways to drift. Query budget is a real constraint on drop nights.",
-      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii"],
+      slugs: ["active-businesses", "create-a-session-bar-chart", "user-activity-for-the-past-30-days-ii", "returns-rate-by-category"],
     },
   ],
 
@@ -714,6 +714,159 @@ export const sheinKit: CompanyKit = {
       walkthrough:
         "Two stages: fold the lines, then window the share. The line_book CTE keys every cart line to its market and to the SKU's list band — budget strictly under the 50 edge, core at or above — because all 251 line tickets reprice off list at checkout, the ticket itself is the wrong banding key. The folio CTE folds 251 lines into 8 market-band rows (EU 53 core + 52 budget, APAC 40 + 48, US 23 + 30, LATAM 2 + 3), and the outer SELECT windows the share: SUM(band_value) OVER (PARTITION BY market) divides each band by its own market so each pair sums to 100. The deck reads exactly the probed folio — EU core 12,032.44 at 79.7 against budget 3,056.79 at 20.3; APAC 74.2 / 25.8; US 73.2 / 26.8; LATAM 73.5 / 26.5 — and the pattern is the story: the budget band fills carts (APAC runs 48 budget lines against 40 core; EU splits 52/53) while the core band pays for them, holding roughly three quarters of value in every market. The premium list ladder is empty — the catalog tops out at 199.99 — though 5 repriced line tickets (8 units, 1,640.37) clear the 200 list ceiling at checkout. The distractors each break differently: >= flips every band so the folio inverts while still summing to 100; 'core' in both CASE arms merges each market to one row and halves the grid; PARTITION BY band answers each band's share across markets instead of each market's internal mix; 1 in the threshold slot pushes every line into budget and 1 in the precision slot truncates revenue to one decimal; ASC leads the deck with the smallest share; COUNT in any slot references a column that does not exist. The discipline: band on the list, share within the market, and say which key the banding used.",
     },
+    {
+      id: "cs-shein-3",
+      tier: "medium",
+      topic: "t5",
+      universe: "growth",
+      title: "The repeat-cart ladder",
+      brief:
+        "SHEIN-flavored brief on the storefront db: growth's weekly read opens with the repeat-cart ladder — every shopper ranked by checkouts placed, so the win-back calendar and the VIP coupon tiers come off one board. Probed facts: the 103 checkouts come from 16 shoppers, and the ladder reads 24, 17, 14, 13, 5 — Alice Chen 24 carts booking 7,262.35, Emma Wilson 17 / 6,640.56, Grace Kim 14 / 4,574.23, Maya Patel 13 / 3,644.56, Chloe Dubois 5 / 2,667.93 — then a FOUR-way tie at 4 carts (Isabella Rossi 985.65, Keiko Sato 1,098.60, Noah Meyer 737.68, Pedro Alvarez 1,686.17) and two shoppers at 3 (Farid Nasser 1,458.97, Hiro Tanaka 829.09). Merch's published policy is RANK with gaps: the tie holds rung 6 four times and the next rung is 10, not 7. The floor is 3-plus carts so the tie block and the gap both stay on the board. The deck reads biggest cart count first.",
+      ask: "Return each shopper with market, cart count, booked value to 2 decimals, plus both rank policies — RANK with gaps and DENSE_RANK without — computed over cart count, biggest cart count first.",
+      template:
+        "WITH ladder AS (\n  SELECT c.name AS shopper,\n         c.region AS market,\n         COUNT(o.id) AS carts,\n         ROUND(SUM(o.total), 2) AS booked\n  FROM orders o\n  JOIN customers c ON c.id = o.customer_id\n  GROUP BY c.id\n)\nSELECT shopper,\n       market,\n       carts,\n       booked,\n       {2}() OVER (ORDER BY carts DESC) AS rung_gap,\n       DENSE_RANK() OVER (ORDER BY carts DESC) AS rung_ties\nFROM ladder\nWHERE carts >= {1}\nORDER BY carts {3}, shopper;",
+      slots: [
+        {
+          answer: "3",
+          kind: "number",
+          label: "the ladder floor",
+          why: "The floor keeps every rung the policy debate needs — the four-way tie at 4 AND the two 3-cart shoppers whose rows expose the gap (RANK jumps to 10 where DENSE_RANK reads 7). Raise the floor to 4 and the gap disappears from the board entirely: both columns agree and the tie policy looks like a non-issue.",
+        },
+        {
+          answer: "RANK",
+          kind: "keyword",
+          label: "the gap-preserving policy",
+          why: "Merch's published policy is RANK with gaps: after the four-way tie at rung 6 the next rung is 10 — five shoppers sit above the tie, so tied rung 6 costs three rungs. ROW_NUMBER hands the tie an arbitrary 6-7-8-9 and DENSE_RANK compresses the next rung to 7; neither is the board growth ships.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-cart-first direction",
+          why: "The deck reads Alice Chen's 24 carts on top, down to the 3-cart tail. ASC opens the board on Hiro Tanaka's 829.09 — a correct ladder aimed at the wrong end, and the VIP coupon tiering reads bottom-up instead of top-down.",
+        },
+      ],
+      distractors: ["4", "ROW_NUMBER", "DENSE_RANK", "ASC"],
+      walkthrough:
+        "Fold carts per shopper first, then rank twice. The ladder CTE joins checkouts to shoppers and groups by shopper: 16 shoppers, 103 carts, with ROUND(SUM(o.total), 2) carrying booked value beside the count — Alice Chen 24 / 7,262.35 down to Hiro Tanaka 3 / 829.09. The floor WHERE carts >= 3 keeps 11 of the 16 shoppers, deliberately including the two 3-cart rows: they are the whole tie-policy lesson, because RANK and DENSE_RANK only disagree when a gap follows a tie. The two windows share one ORDER BY carts DESC, so the tie block reads deterministically: the four 4-cart shoppers all take rung 6 in both columns, then the 3-cart pair splits them — RANK 10, DENSE_RANK 7. That 10-versus-7 is merch's published policy: a shopper who ties at 4 carts sits behind three phantom rungs under the gap rule, which is exactly how the win-back tier treats near-miss VIPs. The distractors each break differently: 4 in the floor slot keeps 9 rows and hides the gap so both rank columns agree — the trap that makes the case look trivial; ROW_NUMBER in the policy slot prints 6-7-8-9 across the tie, an ordering no one signed off and one that shuffles with the plan; DENSE_RANK in the policy slot compresses the next rung to 7 and quietly promotes the 3-cart tail; ASC flips the board so the coupon tiers read bottom-up. One fold, two policies, one stated floor — and say out loud which rung the tie costs.",
+    },
+    {
+      id: "cs-shein-4",
+      tier: "easy",
+      topic: "x2",
+      universe: "month-close",
+      title: "The one-pass status census",
+      brief:
+        "SHEIN-flavored brief on the storefront db: the close opens with the trading board's non-negotiable — delivered, in-transit, pending and abandoned per market in ONE scan, because four sequential queries are four ways to drift off the 103 identity. Probed facts: the census reads EU 45 checkouts (24 kept / 12 in-transit / 6 awaiting / 3 abandoned, kept value 6,656.18, share 53.3), APAC 37 (21 / 8 / 5 / 3, kept value 6,617.68, share 56.8), US 19 (5 / 10 / 3 / 1, kept value 1,444.77, share 26.3) and LATAM 2 (both kept, value 852.44, share 100.0). Platform-wide the branches reconcile 52 + 30 + 14 + 7 = 103 by construction — a branch that breaks that identity is the day's first incident. The board reads biggest market first, and the US row is the one ops circles: only 26.3 percent kept, with 10 of 19 carts still in transit.",
+      ask: "Return each market with its checkout count, kept / in-transit / awaiting / abandoned counts, kept value to 2 decimals and kept share of the market to 1 decimal, biggest market first.",
+      template:
+        "WITH census AS (\n  SELECT c.region AS market,\n         COUNT(*) AS checkouts,\n         COUNT(*) FILTER (WHERE o.status = {1}) AS kept,\n         COUNT(*) FILTER (WHERE o.status = {2}) AS in_transit,\n         COUNT(*) FILTER (WHERE o.status = 'pending') AS awaiting,\n         COUNT(*) FILTER (WHERE o.status = 'cancelled') AS abandoned,\n         ROUND(SUM(o.total) FILTER (WHERE o.status = 'delivered'), 2) AS kept_value\n  FROM orders o\n  JOIN customers c ON c.id = o.customer_id\n  GROUP BY c.region\n)\nSELECT market,\n       checkouts,\n       kept,\n       in_transit,\n       awaiting,\n       abandoned,\n       kept_value,\n       ROUND({3} * kept / checkouts, 1) AS kept_share\nFROM census\nORDER BY checkouts {4};",
+      slots: [
+        {
+          answer: "'delivered'",
+          kind: "keyword",
+          label: "the kept status literal",
+          why: "'Kept' is the status-filtered conditional count: o.status = 'delivered', the 52 delivered-and-kept checkouts. 'kept' itself is not a status on the book — the FILTER would silently count zero — and 'shipped' would label in-transit carts as revenue landed.",
+        },
+        {
+          answer: "'shipped'",
+          kind: "keyword",
+          label: "the in-transit literal",
+          why: "In-transit is the 'shipped' branch — 30 carts platform-wide with shipped_at as the dispatch stamp — never the 'cancelled' arm, which is the 7 abandoned carts. Swap them and the board reports abandoned carts as parcels on the water.",
+        },
+        {
+          answer: "100.0",
+          kind: "number",
+          label: "the percent multiplier",
+          why: "Shares print as percent: 100.0 * kept / checkouts gives EU 53.3 and LATAM its full 100.0 on a 2-checkout denominator. Drop the multiplier and the board prints fractions (0.533) that nobody can reconcile against the quoted 52-of-103 kept rate.",
+        },
+        {
+          answer: "DESC",
+          kind: "keyword",
+          label: "the biggest-market-first direction",
+          why: "The board reads EU 45, APAC 37, US 19, LATAM 2 — biggest market first, the US row third where ops circles the 26.3 percent. ASC buries the US under LATAM's confident-looking 100.0, a two-cart denominator that flatters to deceive.",
+        },
+      ],
+      distractors: ["pending", "10.0", "ASC", "cancelled"],
+      walkthrough:
+        "One scan, four FILTER branches, one identity. The census CTE groups all 103 checkouts by market and counts each status branch in the same pass: COUNT(*) FILTER (WHERE o.status = 'delivered') is kept, 'shipped' is in-transit, 'pending' is awaiting, 'cancelled' is abandoned — EU 24/12/6/3, APAC 21/8/5/3, US 5/10/3/1, LATAM 2/0/0/0. Add each market's branches and you get 45, 37, 19, 2; add the markets and you get 103 — the reconciliation is by construction, which is why the close ships this query and not four sequels. The outer SELECT carries the money and the rate: kept_value sums order total only over the delivered branch (EU 6,656.18 / APAC 6,617.68 / US 1,444.77 / LATAM 852.44), and kept_share windows nothing — it divides kept by the market's own checkout count, times 100.0, rounded to one decimal: 53.3, 56.8, 26.3, 100.0. The story the deck tells: LATAM's 100.0 is a two-cart denominator, the US 26.3 is the real operational fire with 10 of 19 carts in transit, and APAC quietly keeps more than the EU. The distractors each corrupt a different branch: 'pending' in the kept slot zeroes every market's kept count; 'cancelled' in the in-transit slot rewrites abandoned carts as parcels; 10.0 in the multiplier prints 5.3 and 10.0 where 53.3 and 100.0 belong; ASC flips the board and hides the US row under the LATAM flatterer. Census in one pass, denominators out loud, 103 or it does not ship.",
+    },
+    {
+      id: "cs-shein-5",
+      tier: "medium",
+      topic: "j5",
+      universe: "month-close",
+      title: "The never-settled dunning queue",
+      brief:
+        "SHEIN-flavored brief on the storefront db: before any dunning email goes out, the settlement pod refreshes its anti-join — wholesale statements that NO payment rail ever touched. Probed facts: exactly 6 statements worth 15,217.00 in total have zero settlement legs — INV-2025-024 Emma Wilson US open 4,937.00 (2025-01-08, the biggest exposure), INV-2025-026 Liam O'Brien EU open 3,562.00, INV-2025-027 Isabella Rossi EU open 2,794.00, INV-2025-028 Hiro Tanaka APAC paid 1,756.00, INV-2024-021 Chloe Dubois EU open 1,295.00 and INV-2024-018 Pedro Alvarez EU open 873.00 (2024-10-29, the oldest). The queue reads biggest owed first. Two rows get walked line by line in every review: #28 is paid-STATUS with zero legs — a status that lies — and the EU lane carries four of the six, so the dunning batch starts there. Statements that DO carry a leg (even void #11 at 925.00) are reconciliations, not dunning.",
+      ask: "Return each never-settled statement with its number, shopper, lane, status, issue date and owed amount in dollars to 2 decimals, biggest owed first.",
+      template:
+        "SELECT i.number AS statement,\n       c.name AS shopper,\n       c.region AS lane,\n       i.status,\n       i.issued_on,\n       ROUND(i.amount_cents / {4}, 2) AS owed\nFROM invoices i\nJOIN customers c ON c.id = i.customer_id\nLEFT JOIN payments p ON p.invoice_id = {1}\nWHERE p.id {2} {3}\nORDER BY owed DESC;",
+      slots: [
+        {
+          answer: "i.id",
+          kind: "keyword",
+          label: "the anti-join key",
+          why: "The LEFT JOIN must ride the statement's own id: ON p.invoice_id = i.id keeps every statement and attaches its legs, leaving NULL payloads where no rail ever touched. p.invoice_id = p.id compares a payment's reference to its own id — a pairing that means nothing — and i.customer_id ties legs to the shopper column instead.",
+        },
+        {
+          answer: "IS",
+          kind: "keyword",
+          label: "the unmatched test",
+          why: "Unmatched legs leave p.id NULL, and NULL needs the IS test: p.id IS NULL selects exactly the never-settled rows. p.id = NULL evaluates to NULL for every row — even the ones you want — and the queue silently empties to zero rows.",
+        },
+        {
+          answer: "NULL",
+          kind: "keyword",
+          label: "the no-leg marker",
+          why: "The anti-join's answer set is the NULL payload from the LEFT JOIN — statements with zero settlement legs. NOT NULL here flips to the opposite queue: every statement a rail HAS touched, the reconciliation list including void #11, not the dunning list.",
+        },
+        {
+          answer: "100.0",
+          kind: "number",
+          label: "the cents divisor",
+          noVerify: true,
+          why: "Invoice money is INTEGER cents — the house read is amount_cents / 100.0, printing Emma Wilson's 493,700 cents as 4,937.00. Divide by 10.0 and every figure inflates tenfold; the dunning letter quotes 49,370.00 and the pod's copy stops reconciling with the 15,217.00 queue total.",
+        },
+      ],
+      distractors: ["NOT NULL", "=", "c.id", "10.0"],
+      walkthrough:
+        "A LEFT JOIN anti-join, then a cents-safe fold. Join statements to shoppers INNER — every statement has an owner — then LEFT JOIN payments ON p.invoice_id = i.id: statements with legs carry their payment rows, the never-settled six carry NULL payloads, and WHERE p.id IS NULL keeps exactly those. Six statements survive, biggest first because the ORDER BY owed DESC is hardcoded: Emma Wilson's INV-2025-024 at 4,937.00 opens the batch, down to Pedro Alvarez's 873.00 from 2024-10-29, the oldest. The pad is INTEGER cents, so owed = ROUND(amount_cents / 100.0, 2) — 493,700 cents prints 4,937.00, 87,300 prints 873.00, and the six rows cross-foot to 15,217.00, the number the pod quotes in every review. The rows that make it interesting: INV-2025-028 is paid-STATUS with zero legs — a status that lies, so dunning proceeds on legs, not labels; and the EU lane holds four of the six (3,562.00 + 2,794.00 + 1,295.00 + 873.00), which is where the batch starts. The distractors each break differently: c.id in the join key slot pairs legs to customers and returns an unexplainable queue; = in the test slot turns the WHERE into p.id = NULL, which is NULL for every row and silently empties the queue — the classic anti-join kill; NOT NULL in the marker slot flips to the settled list, void #11 included; 10.0 in the divisor slot inflates every figure tenfold and breaks the 15,217.00 cross-foot. LEFT JOIN for coverage, IS NULL for the miss, cents over one hundred, biggest first — that is the dunning refresh.",
+    },
+    {
+      id: "cs-shein-6",
+      tier: "hard",
+      topic: "t7",
+      universe: "growth",
+      title: "The GMV spine walk",
+      brief:
+        "SHEIN-flavored brief on the storefront db: growth's monthly board deck opens with the GMV spine walk — every month of the 14-month drop spine (2024-01 to 2025-02) with its month-over-month step, so cadence arguments start from one query. Probed facts: the book opens at 3,731.97 in 2024-01 with a NULL step — the baseline row, not a zero; the spine sags through spring (-992.56 into 2024-03), troughs at 1,193.86 in 2024-07, then jumps +1,158.21 into August's 2,352.07; the steepest single step is -1,326.87 into 2024-11 (1,648.80), and the walk closes at 2,390.53 in 2025-02 on a +721.03 step. The month key is the '%Y-%m' STRFTIME format — the '%m' shortcut is the known trap that merges January 2024 into January 2025 and silently deletes a month from the spine. The deck reads oldest month first, and the first row's NULL step is quoted as-is in the appendix, never coalesced to zero.",
+      ask: "Return the monthly spine with GMV to 2 decimals, the previous month's GMV beside it, and the month-over-month step to 2 decimals, oldest month first.",
+      template:
+        "WITH spine AS (\n  SELECT STRFTIME({3}, o.created_at) AS month,\n         ROUND(SUM(o.total), 2) AS gmv\n  FROM orders o\n  GROUP BY month\n), steps AS (\n  SELECT month,\n         gmv,\n         {1}(gmv) OVER (ORDER BY month) AS prev_gmv\n  FROM spine\n)\nSELECT month,\n       gmv,\n       prev_gmv,\n       ROUND(gmv - prev_gmv, 2) AS step\nFROM steps\nORDER BY month {2};",
+      slots: [
+        {
+          answer: "LAG",
+          kind: "keyword",
+          label: "the backward-looking offset",
+          why: "A step is this month minus LAST month: LAG(gmv) OVER (ORDER BY month) reaches back one row and leaves the first row NULL — the baseline by definition. LEAD reaches forward and flips every sign; SUM(gmv) OVER (…) builds a running total, a different board entirely.",
+        },
+        {
+          answer: "ASC",
+          kind: "keyword",
+          label: "the oldest-first spine direction",
+          why: "The walk reads chronologically — 2024-01's 3,731.97 opens the deck and the 2025-02 close lands last, so the trough and rebound read left to right. DESC tells the same story backwards and puts the NULL baseline at the bottom, where nobody expects a baseline.",
+        },
+        {
+          answer: "'%Y-%m'",
+          kind: "keyword",
+          label: "the month key format",
+          why: "The spine key must carry the year: '%Y-%m' gives 14 distinct months from 2024-01 to 2025-02. '%m' alone merges January 2024 into January 2025 (3,731.97 + 1,669.50 into one 5,401.47 '01' row) — the spine prints 12 rows, every LAG step across the year boundary is fiction, and nothing errors.",
+        },
+      ],
+      distractors: ["LEAD", "DESC", "%m", "SUM"],
+      walkthrough:
+        "Two stages: fold the calendar, then step it. The spine CTE folds all 103 checkouts into 14 monthly GMV rows keyed by STRFTIME('%Y-%m', created_at) — the year in the key is what keeps January 2024 and January 2025 apart. The steps CTE adds LAG(gmv) OVER (ORDER BY month): each month now carries its predecessor, 2024-01's prev_gmv is NULL because there is no December 2023 to reach back to, and the outer SELECT prints the step as ROUND(gmv - prev_gmv, 2) — -122.33 into February, -992.56 into March, the -853.57 slide into the July trough at 1,193.86, the +1,158.21 August rebound to 2,352.07, the -1,326.87 November slump, and the +721.03 close at 2,390.53. The first row's NULL is quoted, never coalesced: a zero would make the opening month look like it lost 3,731.97 overnight. The '%m' trap deserves the horror story it gets — the query still runs, the spine shrinks to 12 rows, and every step across the December-January boundary compares a month against a merged Frankenstein key; cadence decks have shipped with it. The distractors each break differently: LEAD flips every sign and moves the NULL to December 2025-02's row; SUM builds a cumulative 23,632.42-ish running total instead of steps; DESC walks the spine backwards with the baseline at the bottom; '%m' merges the two Januaries and deletes a month from the board. Fold on the year-aware key, step with LAG, read oldest first, and quote the NULL as the baseline it is.",
+    },
   ],
 
   problems: [
@@ -733,5 +886,21 @@ export const sheinKit: CompanyKit = {
     { slug: "bank-account-summary-ii", why: "Cents-safe monthly folds with credits and debits beside each other. INTEGER cents and the /100.0 rule make this exact practice for the settlement statements' true-up reads." },
     { slug: "monthly-transactions-ii", why: "The transferred-versus-not census with EXCEPT — the never-settled statement list (6 statements, 15,217) is this exact set algebra, run against the rails before every dunning batch." },
     { slug: "fix-product-name-format", why: "SKU title hygiene before any join: drop listings arrive case-broken, and 'skims dupe dress' versus 'Skims Dupe Dress' silently splits one SKU into two in every family census." },
+    { slug: "basket-depth-aov", why: "Lines per cart and basket value are the kit's opening metric — 251 lines over 103 carts at 2.44 depth. This problem drills the per-cart fold that decides whether a micro-batch drop actually worked." },
+    { slug: "returns-rate-by-category", why: "The per-family returns lens with the denominator stated out loud — abandoned and pending carts excluded or not. Fast-fashion margins live or die on exactly this conditional-rate discipline." },
+    { slug: "repeat-purchase-rate", why: "Share of shoppers with 2-plus carts — the repeat read growth reports beside the two-grain market census (EU 45 checkouts from 8 shoppers). Denominator choice is the whole interview." },
+    { slug: "rfm-segmentation", why: "Recency-frequency-monetary tiering of the 16-shopper book: Alice Chen's 24 carts at 7,262.35 against the long tail is exactly the segment split behind SHEIN's VIP coupon tiers." },
+    { slug: "users-with-two-purchases-within-seven-days", why: "Repeat carts inside a 7-day window — the impulse-repurchase shape that flash-sale follow-ups are built on. Date-diff joins with NULL-safe edges, drilled on drop-cadence data." },
+    { slug: "same-day-sale", why: "Same-day conversion reads: did the drop day itself book, or did carts leak into the week after? The flash-sale window check, run per drop rather than per month." },
+    { slug: "find-loyal-customers", why: "The loyalty census across the shopper base — coverage reads that pair with the repeat-cart ladder and its four-way tie at 4 carts, where the tie policy is a business decision." },
+    { slug: "calculate-product-final-price", why: "Coupon-stack repricing arithmetic — every one of the 251 cart lines reprices off the SKU's list at checkout, so final-price math is SHEIN's home turf, not a corner case." },
+    { slug: "the-number-of-users-that-are-eligible-for-discount", why: "Coupon-eligibility gates — the promo-band edge (list under the 50 coupon line) as a filter with its denominator stated. The banding-key question in eligibility clothing." },
+    { slug: "sales-by-day-of-the-week", why: "Day-of-week GMV folds — the drop-calendar read that decides which weekday hosts the next micro-batch drop, sliced from the same created_at spine." },
+    { slug: "median-time-to-convert", why: "Wishlist-to-cart latency where the median beats the mean — one 40x cart skews every average, the same argument as the 25.47-to-1,088.44 AOV spread." },
+    { slug: "year-on-year-growth-rate", why: "YoY steps on the month spine — the growth-deck walk one level up from the LAG month-over-month, with the same NULL-first-row honesty about missing baselines." },
+    { slug: "usage-tier-percentiles", why: "Percentile tiering of shoppers by activity — NTILE and PERCENT_RANK discipline behind the band edges, the same machinery the promo-band folio formalizes with CASE." },
+    { slug: "customers-who-bought-a-and-b-not-c", why: "Basket-combination census with an anti-join arm — attach logic extended to 'rode with, never with', the pairing read merch runs across the 7 product families." },
+    { slug: "ar-aging-schedule", why: "Aging buckets for the dunning queue — the 6 never-settled statements worth 15,217.00 placed into age bands before any email ships, with the paid-status liar #28 kept visible." },
+    { slug: "top-percentile-fraud", why: "Percentile-flag anomaly screens on the rails — the promo-abuse spot-check shape the settlement pod runs beside void-but-legs statement #11 and its 925.00." },
   ],
 };
