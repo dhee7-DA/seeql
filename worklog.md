@@ -8474,3 +8474,21 @@ Stage Summary:
 - Both kits DONE at full depth: intercom 30/24/6/32, segment 30/24/6/32; combined case-audit "cases: 12 pass: 12 fail: 0" — all 8 new cases passed the mechanical audit on their first actual audit run (no repair passes needed; the r11-a brace-eating-anchor trap was avoided by re-emitting the full matched tail in every append).
 - New facts probed this round (readonly via bun:sqlite, 24 tables intact): workspace ladder 24/17/14/13/5 + four-way tie at 4 (Rossi/Sato/Meyer/Alvarez) + 3,3 below + no 6s or 7s in the ladder (which kills naive mean-threshold distractors); latency 27/30/25 at 2/3/4 days; legs-per-supplier-per-status Midwest 22/18/12/4 · Shenzhen 25/19/3/0 · Nordic 18/17/7/1 · Pacific 21/11/4/4 · Alpine 21/10/6/3 · Andes 12/9/4/0 footing 251; EXCEPT probes: shipped-minus-delivered workspaces = 1 (Liam O'Brien), Nordic-not-Midwest periods = 24; same-region pairs workspaces 39 / suppliers 2 (a.id<b.id); settlement clock: paid-statement first-payment avg 28.4 (fastest 13, slowest 84), 3 statements over 30 days; blended rates Audio 121.07 / Accessories 27.23 / platform 34,833.28-over-498 = 69.95; NTILE(4) splits: workspace tie 3-in-tile-2/1-in-tile-3, destination ladder tiles 2/2/1/1 with Pacific/Alpine split; Q1-2024 25 periods 9,958.69; spine walk first 7 months -3.3/-27.5/-5.7/+17.9/-29.6/-41.7 into the 1,193.86 trough. db untouched (readonly probes only; case-audit's AUDIT_COPY cleaned up after each run).
 - git also shows kits/mailchimp.ts modified — parallel batch agent, not touched by this agent. Diff on my two files limited to appended entries + 8 topic-slug line extensions each + the brief P4 prose-count paragraph (allowed exceptions). No git commit (orchestrator's job).
+
+---
+Task ID: r9-r13 (orchestrator finale)
+Agent: orchestrator (main)
+Task: Rounds 9–13 — extend the final 35 thin kits; universe reaches full depth
+
+Work Log:
+- r9: figma gitlab coupang hdfc (wave 1) + noon lloyds (finisher) — 189/208.
+- r10: mufg databricks miro (repaired audit-ambiguous cs-databricks-5: precision slot replaced with verifiable category-pair slot) + shein (finisher) + mercari newegg — 195/208; count-drift correction note logged.
+- r11: rabobank bmo natwest linear — 199/208; gong/retool agent hard-cut pre-write, relaunched in r12.
+- r12: gong retool ikea zara sbi usbank — 205/208.
+- r13 (finale): intercom segment mailchimp — 208/208.
+- Every kit independently verified: registry counts 30/24/6/32, case-audit 6/6, tsc 0 errors. Full audit: 208 OK, 0 fails, 0 warnings.
+- Precision-slot ban propagated to all agent prompts after cs-databricks-5 (ROUND-precision number slots are unverifiable + ambiguous); later rounds stayed first-run green mostly.
+- universe-counts.ts regenerated (208 · 8 · 6657 · 4992 · 6240 · 1248), check:strip ALL PASS, standalone rebuilt, preview restarted: 200 @ 38ms.
+
+Stage Summary:
+- TASK COMPLETE: all 208 company kits at full depth (30 MCQ / 24 theory / 6 audited cases / 32 problems). Commit chain ends 62d8731 + strip/build commit. db healthy (24 tables). Backlog remaining: none for kit depth; legacy tsc baseline noise and boot-time db integrity gate still open.
