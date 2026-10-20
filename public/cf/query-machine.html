@@ -1,20 +1,22 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<!-- The Query Machine — a Colorfigures figure for SeeQL.
+<!-- The Query Sorting Office — a Colorfigures figure for SeeQL.
      Engine: colorfigures core.js by April Zhu (MIT) — https://april-zhu.com/colorfigures
-     This figure models a SQL SELECT as a hand-inked isometric machine: rows (tiles)
-     drop in from the hopper, pass the clause stations, and land on the output tray.
+     This figure models a SQL SELECT as a hand-inked sorting office: rows are letters
+     (envelopes); they arrive in the mail sack, pass the sorting stations, and land on
+     the delivery tray. The flow line, drum axis and tray/bin coordinates are shared
+     with the earlier Query Machine figure, re-skinned as a postal run.
      The real process it follows (one button = one real step, materials travel real paths):
-       1 scan    source tables -> tiles fall from the hopper into the intake
-       2 filter  WHERE: the sieve shakes; rejects slide off and fall to the reject bin
-       3 distinct DISTINCT: duplicate tiles merge at the hoop with a puff
-       4 group   GROUP BY: tiles drop into the tumbler; it turns; strapped bundles exit
-       5 having  HAVING: the gate; failing bundles tip into the return chute
-       6 project SELECT: the stamp presses a column stripe onto every passing item
-       7 sort    ORDER BY: the gate releases items one at a time, rank numbers up
-       8 limit   LIMIT: the pinch valve; extras bounce back up the return tube
-       9 deliver items ride the out-tube through the chute and fan out on the tray
+       1 scan    FROM: the mail sack feeds letters onto the intake belt
+       2 filter  WHERE: the checker reads each address; mismatches drop into the RTS bin
+       3 distinct DISTINCT: duplicates are spotted at the dup desk; one copy continues
+       4 group   GROUP BY: the pigeonhole carousel turns; letters come out bundled per route
+       5 having  HAVING: the supervisor's gate; failing bundles tip into the return chute
+       6 project SELECT: the postmark press stamps every passing letter
+       7 sort    ORDER BY: the sequencing rack; rank numbers chalked 1-2-3
+       8 limit   LIMIT: the dispatch sack fills; the clasp pinches, extras stay on the shelf
+       9 deliver the sack rides the out-tube through the chute and letters fan out on the tray
 -->
-<title>The Query Machine</title></head><body>
+<title>The Query Sorting Office</title></head><body>
 <script>
 /* ============================================================
    Colorfigures core: projection, shapes, shading, ink, labels, page shell.
@@ -511,16 +513,18 @@ const X_DROP = 46, X_BELT0 = 26, X_BELT1 = 50, BELT_Z = 16;
 const X_STAMP = 44, X_SORT = 34, X_VALVE = 52;
 const CHUTE_EXIT = [58, 14, 15.5];                       // where the out-tube meets the front face
 const TRAY = { x0: 62, x1: 92, y0: 8, y1: 36, h: 6 };    // output tray on the floor
-const BIN  = { x0: 12, x1: 34, y0: 66, y1: 84, h: 10 };  // reject bin (screen-left)
+const BIN  = { x0: 12, x1: 34, y0: 66, y1: 84, h: 10 };  // the RTS bin (screen-left)
 /* stage chip slots on the panel: [y, z, label] — re-filled from the plan */
 const CHIP_W = 8.6, CHIP_H = 5.2;
 
 const STEEL = { l:'#8c9599', m:'#6a7377', d:'#454d51' };
+const CANVAS = { l:'#d8c9a8', m:'#bfae8a', d:'#8a7a5c' };   // mail-sack canvas
+const BRASS  = { l:'#e8d7a4', m:'#c9ae74', d:'#96793f' };   // tag board and fittings
 const RUBBER = { l:'#5a5752', m:'#403d39', d:'#2a2825' };
 const TUBE_M = { l:'#7a8577', m:'#5d6759', d:'#3a4238' };
 const BELT_M = { l:'#4a4a46', m:'#37372f', d:'#24241f' };
 const GREEN = '#43c25c', RED = '#e2483d', AMBER = '#f2b431';
-const SCREEN = '#1d2a26', SCREEN_TX = '#8af0ae';
+const SCREEN = '#2a2f26', SCREEN_TX = '#efe8cf';   // the chalkboard
 const TILE_HUES = ['#3e86d9', '#e2473a', '#f2c230', '#38a565', '#d94f86', '#fbf7ea'];
 
 /* ---------- small helpers (techniques from the reference figures) ---------- */
@@ -598,27 +602,35 @@ function bundlesOf(st) {
   return bs;
 }
 
-/* ---------- row tiles: flat rounded tiles with column ticks, like real rows ---------- */
+/* ---------- row letters: flat envelopes with a stamp corner and address lines ---------- */
 function qmFlat(shape2, ctr, e1, e2, k, m, lw) {
   const T = ([u, v]) => [ctr[0] + u * k * e1[0] + v * k * e2[0], ctr[1] + u * k * e1[1] + v * k * e2[1], ctr[2] + u * k * e1[2] + v * k * e2[2]];
   let s = fill(pd(shape2.map(T)), m.l);
   return { s, T };
 }
-function qmTile(ctr, e1, e2, psi, hue, striped, op) {
+function qmTile(ctr, e1, e2, psi, hue, postmarked, op) {
   const k = 1.15, cs = Math.cos(psi), sn = Math.sin(psi);
   const A = e1, B = e2;
   const E1 = [A[0] * cs + B[0] * sn, A[1] * cs + B[1] * sn, A[2] * cs + B[2] * sn];
   const E2 = [-A[0] * sn + B[0] * cs, -A[1] * sn + B[1] * cs, -A[2] * sn + B[2] * cs];
   const T = ([u, v]) => [ctr[0] + u * k * E1[0] + v * k * E2[0], ctr[1] + u * k * E1[1] + v * k * E2[1], ctr[2] + u * k * E1[2] + v * k * E2[2]];
   const m = matOf(hue);
-  const body = rrUV(-2.5, -2.5, 2.5, 2.5, .8);
-  let s = fill(pd(body.map(T)), m.l);
-  for (const v of [-1.1, .3, 1.7]) s += ink(pd([[-1.6, v], [1.6, v]].map(T), false), .55);
-  if (striped) s += fill(pd([[-2.1, .55], [2.1, .55], [2.1, 1.35], [-2.1, 1.35]].map(T)), '#fbf7ea', 'opacity=".92"');
+  const body = rrUV(-2.6, -1.8, 2.6, 1.8, .5);           // landscape envelope, long side across the belt
+  let s = fill(pd(body.map(T)), '#fbf7ea');
+  // the source table's colour: the stamp square at one end
+  s += fill(pd([[1.15, .45], [2.35, .45], [2.35, 1.55], [1.15, 1.55]].map(T)), m.l);
+  s += ink(pd([[1.15, .45], [2.35, .45], [2.35, 1.55], [1.15, 1.55]].map(T)), .5);
+  // address lines
+  s += ink(pd([[-2.05, -.35], [.55, -.35]].map(T), false), .5);
+  s += ink(pd([[-2.05, -1], [1.1, -1]].map(T), false), .5);
+  // the flap V, from the top corners down to the middle
+  s += ink(pd([[-2.6, 1.8], [0, -.05], [2.6, 1.8]].map(T), false), .7);
   s += ink(pd(body.map(T)), .9);
+  if (postmarked)   // the cancel mark: wavy lines over the stamp corner
+    for (const dy of [.3, -.1]) s += `<path d="${pd([[-1.3, dy], [-.45, dy + .3], [.45, dy - .3], [1.35, dy + .3], [2.3, dy]].map(T), false)}" fill="none" stroke="${INK}" stroke-width=".55" opacity=".7" stroke-linecap="round"/>`;
   return op < 1 ? `<g opacity="${f(op)}">${s}</g>` : s;
 }
-/* a bundle: 2-3 tiles strapped into one stack */
+/* a bundle: envelopes stacked and strapped with a kraft band */
 function qmBundle(ctr, e1, e2, psi, hues, op) {
   const g = 1.5, cs = Math.cos(psi), sn = Math.sin(psi);
   const E1 = [e1[0] * cs + e2[0] * sn, e1[1] * cs + e2[1] * sn, e1[2] * cs + e2[2] * sn];
@@ -626,12 +638,14 @@ function qmBundle(ctr, e1, e2, psi, hues, op) {
   let s = '';
   for (let j = hues.length - 1; j >= 0; j--) s += qmTile(qmAdd3(ctr, [0, 0, j * g * .62]), E1, E2, 0, hues[j], j === hues.length - 1, 1);
   const T = ([u, v]) => [ctr[0] + u * E1[0] + v * E2[0], ctr[1] + u * E1[1] + v * E2[1], ctr[2] + u * E1[2] + v * E2[2]];
-  s += ink(pd([[-2.9, -2.9], [2.9, 2.9]].map(T), false), 1);
+  s += fill(pd([[-.62, -1.95], [.62, -1.95], [.62, 1.95], [-.62, 1.95]].map(T)), CANVAS.l);
+  s += ink(pd([[-.62, -1.95], [.62, -1.95], [.62, 1.95], [-.62, 1.95]].map(T)), .6);
+  s += shape(ellUV(0, 0, .32, .32, 10).map(T), CANVAS.m, .5);
   return op < 1 ? `<g opacity="${f(op)}">${s}</g>` : s;
 }
 const UP = [0, 1, 0], ACROSS = [1, 0, 0];        // flat on the ground: e1 along y, e2 along x
 
-/* ---------- cabinet, hopper, panel ---------- */
+/* ---------- cabinet, sack, tag board ---------- */
 function cabinetFront(m, st) {
   const X = PX(QW);
   let s = '';
@@ -645,7 +659,7 @@ function cabinetFront(m, st) {
   s += ink(pd(qmRingX(QW, RO)), 1.6);
   // control panel plate
   const pnl = on(PX(QW + .15), rrUV(PANEL[0], PANEL[1], PANEL[2], PANEL[3], 3));
-  s += `<path d="${pd(pnl)}${pd(on(PX(QW + .15), rectUV(LCD[0], LCD[1], LCD[2], LCD[3])))}" fill="${mix(tone([1, 0, 0], m), '#ffffff', .6)}" fill-rule="evenodd"/>`;
+  s += `<path d="${pd(pnl)}${pd(on(PX(QW + .15), rectUV(LCD[0], LCD[1], LCD[2], LCD[3])))}" fill="${BRASS.l}" fill-rule="evenodd"/>`;
   s += ink(pd(pnl), 1.3) + ink(pd(on(PX(QW + .15), rectUV(...LCD))), 1.4);
   s += qmScrew(PX(QW + .2), 4.4, 64.6) + qmScrew(PX(QW + .2), 53.6, 64.6) + qmScrew(PX(QW + .2), 4.4, 77.4) + qmScrew(PX(QW + .2), 53.6, 77.4);
   // LCD screen + text
@@ -668,7 +682,7 @@ function lcdLines(st) {
   else if (ph === 'having') { l2 = '-> ' + qmFmt(c.afterHaving != null ? c.afterHaving : c.afterGroup); }
   else if (ph === 'project') { l2 = (p.columns.length) + ' COLS STAMPED'; }
   else if (ph === 'sort') { l2 = (p.orderBy[0] ? (p.orderBy[0].text + ' ' + (p.orderBy[0].direction || '')).slice(0, 22).toUpperCase() : 'RANKING'); }
-  else if (ph === 'limit') { l2 = 'HOLDS ' + (parseInt(p.limit, 10) || 0); }
+  else if (ph === 'limit') { l2 = 'SACK HOLDS ' + (parseInt(p.limit, 10) || 0); }
   else if (ph === 'deliver') { l2 = qmFmt(c.out) + ' ROWS OUT'; }
   else if (ph === 'done') { l2 = qmFmt(c.out) + ' ROWS · ' + (p.ms != null ? p.ms + ' MS' : 'DONE'); }
   if (ph === 'done') col = GREEN;
@@ -679,7 +693,7 @@ function qmTxLCD(l1, l2, col) {
   return `<text transform="${txM(o, Dv(0, -1, 0), Dv(0, 0, -1))}" font-size="2.6" fill="${col}" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-weight="800" letter-spacing=".04em">${l1.slice(0, 13)}</text>`
     + `<text transform="${txM(o2, Dv(0, -1, 0), Dv(0, 0, -1))}" font-size="2" fill="${col}" opacity=".85" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-weight="700" letter-spacing=".02em">${l2.slice(0, 15)}</text>`;
 }
-/* clause chips on the panel: engraved pills, lit while their station works */
+/* clause tags on the board: brass pills, lit while their station works */
 function chipsRow(st, m) {
   const p = st.plan || DEFAULT_PLAN;
   const chips = [];
@@ -699,7 +713,7 @@ function chipsRow(st, m) {
     const y0 = 24 + col, z0 = 74.5 - row * 6.4;
     const lit = st.phase === c.k || (st.phase === 'done' && c.k === 'deliver');
     const active = st.phases.indexOf(c.k) >= 0 && st.phases.indexOf(c.k) <= st.phases.indexOf(st.phase);
-    const bg = lit ? 'var(--accent)' : active ? mix(PALS[st.pal].l, '#ffffff', .55) : '#f4f1e8';
+    const bg = lit ? 'var(--accent)' : active ? mix(PALS[st.pal].l, '#ffffff', .55) : '#f7f0da';
     s += `<g data-act="chip" data-k="${c.k}">`
       + fill(pd(on(PX(QW + .25), rrUV(y0, z0, y0 + w, z0 + CHIP_H, CHIP_H / 2))), bg) + ink(pd(on(PX(QW + .25), rrUV(y0, z0, y0 + w, z0 + CHIP_H, CHIP_H / 2))), .8)
       + `<text transform="${txM(P(QW + .35, y0 + w / 2, z0 + CHIP_H * .42), Dv(0, -1, 0), Dv(0, 0, -1))}" font-size="2.5" fill="${INK}" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-weight="800" letter-spacing=".03em">${c.t}</text></g>`;
@@ -727,31 +741,43 @@ function cabinet(m, st) {
     const tc = mix(sm, '#000000', .5);
     if (syText) {
       body += shape(on(PY(QD + .2), rrUV(14, 30, QW - 14, 58, 5)), mix(sm, '#ffffff', .3), 1.2);
-      body += txY(QW / 2, QD + .3, 48, 'QUERYMATIC', 7.2, tc, 800);
-      body += txY(QW / 2, QD + .3, 39.5, 'ROW-THROUGH', 3.2, tc, 800);
+      body += txY(QW / 2, QD + .3, 48, 'SEEQL POST', 7.2, tc, 800);
+      body += txY(QW / 2, QD + .3, 39.5, 'SORTING OFFICE', 3.2, tc, 800);
     }
     for (let z = 10; z <= 18; z += 2.6) body += `<path d="${pd([[12, QD + .2, z], [QW - 12, QD + .2, z]], false)}" fill="none" stroke="${INK}" stroke-width="1.1" stroke-linecap="round" opacity=".65"/>`;
   }
-  // top spec sticker
+  // top: a shipping label with a postmark
   const tp = PZ(QH + .1);
-  body += shape(on(tp, rrUV(40, 14, 54, 26, 1.5)), '#fbf7ea', .9);
-  for (let k = 0; k < 3; k++) body += ink(pd(on(tp, [[42.5, 17 + k * 2.6], [51.5, 17 + k * 2.6]]), false), k === 2 ? .55 : .7);
+  body += shape(on(tp, rrUV(38, 14, 55, 26, 1.5)), '#fbf7ea', .9);
+  for (let k = 0; k < 3; k++) body += ink(pd(on(tp, [[40, 17.5 + k * 2.4], [47.5, 17.5 + k * 2.4]]), false), k === 2 ? .55 : .7);
+  body += ink(pd(on(tp, ellUV(51.4, 20, 2.5, 2.5, 14)), false), .8);
+  body += ink(pd(on(tp, [[49.6, 20.7], [52.2, 19.9], [50.2, 19.1], [52.7, 18.5]]), false), .6);
   if (fx) body += ink(pd(on(PX(QW), OUTR)), 2.2);
   body += hullInk([...on(PX(0), OUTR), ...on(PX(QW), OUTR)], 2.8);
   return body;
 }
 function hopper(m, st) {
-  const A = on(PZ(QH - 1), rectUV(HOP_A[0], HOP_A[1], HOP_A[2], HOP_A[3]));
-  const B = on(PZ(HOP_H), rectUV(HOP_B[0], HOP_B[1], HOP_B[2], HOP_B[3]));
-  const L0 = on(PZ(HOP_LIP), rectUV(HOP_B[0] - 1, HOP_B[1] - 1, HOP_B[2] + 1, HOP_B[3] + 1));
-  let s = loft(A, B, n => toneI(n, m)) + loft(B, L0, n => toneI(n, m));
-  s += fill(pd(L0), mix(m.l, '#ffffff', .2)) + ink(pd(L0), 1.2);
-  s += hullInk([...A, ...L0], 2.2);
-  // the falling tiles at the mouth, clipped to the throat
-  const mouth = on(PZ(QH + 1.5), rectUV(HOP_A[0] + .5, HOP_A[1] + .5, HOP_A[2] - .5, HOP_A[3] - .5));
-  let inside = fill(pd(mouth), mix(m.d, '#000000', .25));
+  // the mail sack: canvas belly on the roof, cinched neck, open lip
+  const R0 = on(PZ(QH - 2), ellUV(24, 26, 12.5, 11.5, 20));
+  const R1 = on(PZ(QH + 6), ellUV(24, 26, 14.5, 13.5, 20));
+  const R2 = on(PZ(QH + 13), ellUV(24, 26, 11, 10, 20));
+  const R3 = on(PZ(96), ellUV(24, 26, 6.2, 5.8, 20));
+  const LIP = on(PZ(HOP_LIP - 1.5), ellUV(24, 26, 7.4, 7, 20));
+  let s = loft(R0, R1, n => toneI(n, CANVAS)) + loft(R1, R2, n => toneI(n, CANVAS)) + loft(R2, R3, n => toneI(n, CANVAS));
+  s += loft(R3, LIP, n => toneI(n, CANVAS));
+  // rolled cuff, then the dark opening seen through it
+  s += fill(pd(LIP), mix(CANVAS.l, '#ffffff', .25));
+  const OPEN = on(PZ(HOP_LIP - 1.2), ellUV(24, 26, 6.3, 5.9, 20));
+  s += fill(pd(OPEN), mix(CANVAS.d, '#000000', .38));
+  s += ink(pd(LIP), 1.1);
+  s += hullInk([...R0, ...R1, ...R2, ...R3, ...LIP], 2.2);
+  // canvas seams
+  s += ink(pd(on(PZ(QH + 6), arcUV(24, 26, 14.7, -140, -40, 7)), false), .6);
+  s += ink(pd(on(PZ(QH + 2), arcUV(24, 26, 13.1, -30, 60, 6)), false), .55);
+  // letters dropping through the opening, clipped to it
+  let inside = '';
   for (const t of hopperTiles(st)) inside += t;
-  s += clipTo(mouth, inside);
+  s += clipTo(OPEN, inside);
   return s;
 }
 function tray(m, st) {
@@ -777,6 +803,7 @@ function binPart(m, st) {
   let inside = '';
   for (const r of rejectedTiles(st)) inside += r;
   s += clipTo(Bt, inside);
+  if (vis([1, 0, 0])) s += tx(BIN.x1 + .15, (BIN.y0 + BIN.y1) / 2, 4.6, 'RTS', 3.4, INK, 800);
   return s;
 }
 function chuteRails(m) {
@@ -801,16 +828,15 @@ function portholeInterior(st, m) {
     const R1 = qmRingX(56, RO - .6);
     s += fill(pd(R1), '#2b3134');
     s += loft(qmRingX(56, RO - .6), qmRingX(50, RO - .6), n => toneI(n.map(v => [-v[0], -v[1], -v[2]]), STEEL), true);
-    // perforation dots crawling with the drum angle
-    let dots = '';
-    const A = st.drumA, fast = Math.abs(st.drumW || 0) > 7;
-    for (let x = 43; x < 55.4; x += 3.1) for (let i = 0; i < 18; i++) {
-      const a = A * .9 + (i + (x * .37 % 1)) / 18 * 2 * Math.PI, n = [0, Math.cos(a), Math.sin(a)];
-      if (n[1] + n[2] < .1) continue;
-      const q = (da, dx) => [x + dx, CH_Y + (RO - .65) * Math.cos(a + da), CH_Z + (RO - .65) * Math.sin(a + da)];
-      dots += fast ? pd([q(-.22, 0), q(.22, 0)], false) : pd([q(-.03, -.4), q(.03, -.4), q(.03, .4), q(-.03, .4)]);
-    }
-    s += fast ? `<path d="${dots}" fill="none" stroke="#20262a" stroke-width=".8" opacity=".65"/>` : `<path d="${dots}" fill="#20262a"/>`;
+    // carousel mouth: shelf rings + dividers crawling with the drum angle
+    const A = st.drumA;
+    let mring = pd(qmRingX(46.5, RO - .7), false) + pd(qmRingX(52.5, RO - .7), false);
+    s += `<path d="${mring}" fill="none" stroke="#20262a" stroke-width=".7" opacity=".6"/>`;
+    let mdivs = '';
+    for (let i = 0; i < 8; i++) { const a = A * .9 + i * Math.PI / 4, n = [0, Math.cos(a), Math.sin(a)];
+      if (n[1] + n[2] < .05) continue;
+      mdivs += pd([[43.5, CH_Y + (RO - .7) * Math.cos(a), CH_Z + (RO - .7) * Math.sin(a)], [55.3, CH_Y + (RO - .7) * Math.cos(a), CH_Z + (RO - .7) * Math.sin(a)]], false); }
+    s += `<path d="${mdivs}" fill="none" stroke="#20262a" stroke-width=".9" opacity=".75"/>`;
     // two spider arms on the back wall
     if (st.xr < .3) { s += fill(pd(qmRingX(43.5, RO - .7)), toneI([-1, 0, 0], STEEL));
       for (let j = 0; j < 3; j++) { const a = A * .9 + j * 2 * Math.PI / 3;
@@ -854,18 +880,20 @@ function mechanism(st, m, k) {
   // drop tube from the trough end into the drum (or down to the belt)
   if (hasGroup) s += qmTube([[40, CH_Y, 62], [42, CH_Y, 58], [43.5, CH_Y, 53]], 1.5, TUBE_M, true);
   else s += qmTube([[40, CH_Y, 62], [43, CH_Y, 50], [46, CH_Y, 30], [47.5, CH_Y, 21]], 1.5, TUBE_M, true);
-  // the tumbler drum
+  // the pigeonhole carousel (replaces the tumbler)
   if (hasGroup) {
     const R0 = qmRingX(34, DRUM_R), R1 = qmRingX(56, DRUM_R);
-    s += loft(R0, R1, n => toneI(n, STEEL));
-    let dots = '';
-    for (let x = 36; x < 55; x += 3.1) for (let i = 0; i < 22; i++) {
-      const a = st.drumA * .9 + (i + (x * .31 % 1)) / 22 * 2 * Math.PI, n = [0, Math.cos(a), Math.sin(a)];
-      if (n[1] + n[2] < .05) continue;
-      dots += pd([[x, CH_Y + (DRUM_R - .1) * Math.cos(a), CH_Z + (DRUM_R - .1) * Math.sin(a)], [x + 1.4, CH_Y + (DRUM_R - .1) * Math.cos(a), CH_Z + (DRUM_R - .1) * Math.sin(a)]], false);
-    }
-    s += `<path d="${dots}" fill="none" stroke="#20262a" stroke-width=".8" opacity=".7"/>`;
-    s += fill(pd(R0), toneI([-1, 0, 0], STEEL));
+    s += loft(R0, R1, n => toneI(n, WOOD));
+    // shelf rings + radial dividers crawling with the drum angle
+    let rings = '';
+    for (const xx of [37.5, 41.5, 45.5, 49.5, 53.5]) rings += pd(qmRingX(xx, DRUM_R - .2), false);
+    s += `<path d="${rings}" fill="none" stroke="#20262a" stroke-width=".7" opacity=".65"/>`;
+    let divs = '';
+    for (let i = 0; i < 10; i++) { const a = st.drumA * .9 + i * Math.PI / 5, n = [0, Math.cos(a), Math.sin(a)];
+      if (n[1] + n[2] < .02) continue;
+      divs += pd([[34.5, CH_Y + (DRUM_R - .2) * Math.cos(a), CH_Z + (DRUM_R - .2) * Math.sin(a)], [55.5, CH_Y + (DRUM_R - .2) * Math.cos(a), CH_Z + (DRUM_R - .2) * Math.sin(a)]], false); }
+    s += `<path d="${divs}" fill="none" stroke="#20262a" stroke-width=".95" opacity=".8"/>`;
+    s += fill(pd(R0), toneI([-1, 0, 0], WOOD));
     for (let j = 0; j < 3; j++) { const a = st.drumA * .9 + j * 2 * Math.PI / 3;
       s += shape(on(PX(34.2), [[CH_Y + 1.5 * Math.cos(a + .4), CH_Z + 1.5 * Math.sin(a + .4)], [CH_Y + 8.5 * Math.cos(a + .08), CH_Z + 8.5 * Math.sin(a + .08)], [CH_Y + 8.5 * Math.cos(a - .08), CH_Z + 8.5 * Math.sin(a - .08)], [CH_Y + 1.5 * Math.cos(a - .4), CH_Z + 1.5 * Math.sin(a - .4)]]), STEEL.m, .7); }
     s += ink(pd(R0), 1) + hullInk([...R0, ...R1], 1.6) + ink(pd(R1), .9);
@@ -916,18 +944,19 @@ function mechanism(st, m, k) {
 /* ---------- x-ray labels + surface labels ---------- */
 const MECH_TAGS = [
   ['INTAKE',   [18, 28, 72],  -78, -66, 'scan'],
-  ['SIEVE',    [24, CH_Y, 64], -52, -92, 'filter'],
-  ['TUMBLER',  [44, 10, 44],   -46, -70, 'group'],
-  ['GATE',     [48, 28, 24],    88, -76, 'having'],
-  ['PROJECT',  [44, 28, 27],   102, -14, 'project'],
-  ['ORDER',    [34, 28, 21],   -34,  66, 'sort'],
-  ['VALVE',    [46, 12, 12],    34, 104, 'limit'],
+  ['CHECKER',  [24, CH_Y, 64], -52, -92, 'filter'],
+  ['CAROUSEL', [44, 10, 44],   -46, -70, 'group'],
+  ['INSPECT',  [48, 28, 24],    88, -76, 'having'],
+  ['POSTMARK', [44, 28, 27],   102, -14, 'project'],
+  ['SEQUENCE', [34, 28, 21],   -34,  66, 'sort'],
+  ['CLASP',    [46, 12, 12],    34, 104, 'limit'],
   ['TRAY',     [77, 22, 6.5],   46,  54, 'deliver'],
 ];
 const SURFACE_TAGS = [
-  ['HOPPER', [24, 26, HOP_LIP], -66, -50, null],
-  ['PANEL',  [30, 54, 78],       92, -66, null],
-  ['TRAY',   [77, 22, 6.5],      46,  54, 'deliver'],
+  ['SACK',    [24, 26, HOP_LIP + 2], -66, -50, null],
+  ['RTS BIN', [23, 75, 12],          -34, -62, 'filter'],
+  ['BOARD',   [30, 54, 78],           92, -66, null],
+  ['TRAY',    [77, 22, 6.5],          46,  54, 'deliver'],
 ];
 function labelSet(st, k) {
   let s = '';
@@ -945,7 +974,7 @@ function hopperTiles(st, aboveOnly) {
     const t0 = i * .13, t = st.phT - t0;
     if (t < 0) continue;
     const q = Math.min(1, t / .55);
-    const z = 108 - q * 22, op = q >= 1 ? 1 - Math.min(1, (st.phT - t0 - .55) / .25) : 1;
+    const z = 108 - q * 11, op = q >= 1 ? 1 - Math.min(1, (st.phT - t0 - .55) / .25) : 1;
     if (op <= 0) continue;
     if (aboveOnly && z < HOP_LIP - 3) continue;
     if (!aboveOnly && z >= HOP_LIP - 3) continue;
@@ -970,7 +999,7 @@ function rejectedTiles(st) {
       pos = qmLerp3([31.5, 30, 61.5], [23, 73, BIN.h - 2], e);
       pos[2] -= Math.sin(Math.PI * q) * 1.5;
     } else if (st.phases.indexOf('filter') >= 0 && (st.phase === 'done' || st.phases.indexOf(st.phase) > st.phases.indexOf('filter'))) {
-      // spread by order of rejection so no two tiles stack (the bin fills from its back-left corner)
+      // spread by order of rejection so no two letters stack (the bin fills from its back-left corner)
       const j = st.rej.indexOf(i);
       pos = [16.5 + (j % 4) * 5.5, 70 + (j % 3) * 4.5, BIN.h - 2.2];
     }
@@ -1089,7 +1118,7 @@ function scene(st, m) {
   const p = st.plan;
   let s = '';
   // shadows
-  s += castShadow([...on(PX(0), OUTR), ...on(PX(QW), OUTR), ...on(PZ(HOP_LIP), rectUV(HOP_B[0], HOP_B[1], HOP_B[2], HOP_B[3]))]);
+  s += castShadow([...on(PX(0), OUTR), ...on(PX(QW), OUTR), ...on(PZ(QH), ellUV(24, 26, 14.5, 13.5, 14))]);
   s += castShadow([...on(PZ(0), rrUV(TRAY.x0, TRAY.y0, TRAY.x1, TRAY.y1, 2)), ...on(PZ(TRAY.h), rrUV(TRAY.x0, TRAY.y0, TRAY.x1, TRAY.y1, 2))]);
   if (p.where.length) s += castShadow([...on(PZ(0), rrUV(BIN.x0, BIN.y0, BIN.x1, BIN.y1, 2)), ...on(PZ(BIN.h), rrUV(BIN.x0, BIN.y0, BIN.x1, BIN.y1, 2))]);
   // drum shake while spinning fast
@@ -1158,8 +1187,8 @@ function scene(st, m) {
 /* ---------- mount + parent protocol ---------- */
 let ui, st0;
 ui = mountFigure({
-  fig: 'SQ', title: 'The Query Machine', hint: 'run the query — rows become answers; see-through shows the stations',
-  idea: 'A SELECT is a machine: FROM feeds rows in, every clause is a station, the tray holds the result.',
+  fig: 'SQ', title: 'The Query Sorting Office', hint: 'run the query — letters in, answers out; see-through shows the office',
+  idea: 'A SELECT is a mail run: every clause is a sorting step, the tray holds the answer.',
   size: [QW - 14, QD + 26, HOP_LIP + 10], center: [QW / 2, (QD - 12) / 2],
   palette: 'mint',
   state: { plan: DEFAULT_PLAN, phases: stationsOf(DEFAULT_PLAN), phase: 'idle', phT: 0, run: false, paused: false,
@@ -1176,7 +1205,7 @@ ui = mountFigure({
       { label: 'ms', value: st.plan.ms != null ? String(st.plan.ms) : '—', small: true },
     ];
   },
-  buttonsLabel: 'Machine',
+  buttonsLabel: 'Office',
   buttons: [
     { label: 'Run query', onClick: (st, u) => startRun(st, u) },
     { label: 'Step', onClick: (st, u) => stepNext(st, u) },
@@ -1247,13 +1276,13 @@ function recomputeFlow(st) {
   const alive = st.bundles.filter((_, b) => b !== st.killB);
   st.limN = alive.length;
   if (p.limit != null && p.limit !== '') { const L0 = parseInt(p.limit, 10); if (L0 > 0) st.limN = Math.min(alive.length, L0); }
-  // the tray holds the REAL result — one tile per row out (capped at the tray's 8 wells)
+  // the tray holds the REAL result — one letter per row out (capped at the tray's 8 wells)
   if (c.out != null) st.limN = Math.max(0, Math.min(8, Math.round(c.out)));
   st.deliveredCount = 0;
 }
 function startRun(st, u) {
   if (st.run) { st.paused = !st.paused; if (!st.paused) runLoop(); else u.flash('paused — press run to resume'); return; }
-  if (st.plan.error) return u.flash('fix the query first — the machine cannot parse it');
+  if (st.plan.error) return u.flash('fix the query first — the office cannot sort it');
   recomputeFlow(st);
   st.run = true; st.paused = false; st.phase = st.phases[0]; st.phT = 0; st.deliveredCount = 0; st.lastBundles = st.bundles;
   runLoop();

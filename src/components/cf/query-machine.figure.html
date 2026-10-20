@@ -492,8 +492,10 @@ function rejectedTiles(st) {
       const q = Math.min(1, t / 1.15), e = qmSstep(0, 1, q);
       pos = qmLerp3([31.5, 30, 61.5], [23, 73, BIN.h - 2], e);
       pos[2] -= Math.sin(Math.PI * q) * 1.5;
-    } else if (st.phases.indexOf('filter') >= 0 && st.phases.indexOf(st.phase) > st.phases.indexOf('filter')) {
-      pos = [23 + (i % 3) * 3, 73 + (i % 2) * 3, BIN.h - 2.2];
+    } else if (st.phases.indexOf('filter') >= 0 && (st.phase === 'done' || st.phases.indexOf(st.phase) > st.phases.indexOf('filter'))) {
+      // spread by order of rejection so no two tiles stack (the bin fills from its back-left corner)
+      const j = st.rej.indexOf(i);
+      pos = [16.5 + (j % 4) * 5.5, 70 + (j % 3) * 4.5, BIN.h - 2.2];
     }
     if (pos) out.push(qmTile(pos, UP, ACROSS, .5 + i, TILE_HUES[tileHue(st.plan, i)], false, 1));
   }
@@ -768,6 +770,8 @@ function recomputeFlow(st) {
   const alive = st.bundles.filter((_, b) => b !== st.killB);
   st.limN = alive.length;
   if (p.limit != null && p.limit !== '') { const L0 = parseInt(p.limit, 10); if (L0 > 0) st.limN = Math.min(alive.length, L0); }
+  // the tray holds the REAL result — one tile per row out (capped at the tray's 8 wells)
+  if (c.out != null) st.limN = Math.max(0, Math.min(8, Math.round(c.out)));
   st.deliveredCount = 0;
 }
 function startRun(st, u) {
@@ -789,14 +793,13 @@ function runLoop() {
     const dur = PHASESec[st.phase] || 1;
     if (st.phase === 'filter' && st.rej.length) st.rejectedCount = st.rej.length;
     if (st.phase === 'deliver') {
-      const items = st.plan.groupBy.length ? st.bundles.filter((_, b) => b !== st.killB && b < st.limN) : st.keep;
-      st.deliveredCount = Math.min(items.length, Math.floor((st.phT / PHASESec.deliver) * items.length + .35));
+      st.deliveredCount = Math.min(st.limN, Math.floor((st.phT / PHASESec.deliver) * st.limN + .35));
     }
     if (st.phT >= dur) {
       const next = st.phases.indexOf(st.phase) + 1;
       if (next >= st.phases.length) {
         st.run = false; st.loop = false; st.phase = 'done'; st.phT = 0;
-        st.deliveredCount = (st.plan.groupBy.length ? st.bundles.filter((_, b) => b !== st.killB).length : st.keep.length);
+        st.deliveredCount = st.limN;
         ui.flash('done — ' + qmFmt(st.plan.counts.out) + ' rows on the tray', 2200);
         try { parent.postMessage({ type: 'cf:done' }, '*'); } catch (e) {}
         return false;
@@ -818,12 +821,12 @@ function stepNext(st, u) {
   const next = st.phases.indexOf(st.phase) + 1;
   if (next >= st.phases.length) {
     st.phase = 'done'; st.phT = 0;
-    st.deliveredCount = (st.plan.groupBy.length ? st.bundles.filter((_, b) => b !== st.killB).length : st.keep.length);
+    st.deliveredCount = st.limN;
     u.flash('done — ' + qmFmt(st.plan.counts.out) + ' rows on the tray', 2200);
     return;
   }
   st.phase = st.phases[next]; st.phT = .35;
-  if (st.phase === 'deliver') { const items = st.plan.groupBy.length ? st.bundles.filter((_, b) => b !== st.killB && b < st.limN) : st.keep; st.deliveredCount = items.length; }
+  if (st.phase === 'deliver') st.deliveredCount = st.limN;
   u.flash('step — ' + st.phase);
 }
 function toggleXr(st, u) {
