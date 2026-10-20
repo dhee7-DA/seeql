@@ -8575,3 +8575,24 @@ Work Log:
 Stage Summary:
 - The never-built flagship now exists: a simulated 4-stage onsite loop per company (or omni loop day / domain floor), ~30 min, no feedback until the debrief, everything on the record and mirrored into XP, the SR ladder, the mentor desk and the per-company accuracy ledgers.
 - 6 files touched (4 modified + 1 new view + e2e scripts); one real draw bug caught by e2e before ship; one pre-existing ladder-scheduling bug fixed for self-marked cards.
+
+---
+Task ID: colorfigures-1
+Agent: main
+Task: User found colorfigures.vercel.app ("this is how I wanted my SQL query visualizer to be") — study the site AND the skill, then make the SeeQL query visualizer work that way.
+
+Work Log:
+- Chased the URL: user's "colourfigures" 404s (DEPLOYMENT_NOT_FOUND); real site is colorfigures.vercel.app (one l).Played it with agent-browser: washer scenario buttons, See-through x-ray, Labels toggle, wobble slider, 5 swatches, drag views. Screenshots in scripts/colorfigures-research/.
+- Found the SKILL: april-zhu.com/colorfigures — "A skill for Claude", MIT, built on ISO-GLOW/iso-figure. Downloaded + extracted colorfigures.tar.gz (SKILL.md 223 lines, core.js 32KB engine, washer/vending examples, build.py).
+- Studied everything: SKILL.md (painter's order, real-process interaction, thickness-weighted hullInk, ?press= harness), core.js (iso projection, 3-tone shading, feTurbulence wobble filter, mountFigure shell), demo washer srcdoc (see-through = mechanism drawn normal + cabinet ghosted at opacity 1-.8k + mech labels past k>.6).
+- Vendored engine VERBATIM into src/components/cf/ (md5 match) with LICENSE.
+- Built query-machine.figure.html (~850 lines): hopper/FROM, sieve/WHERE (+reject tube to bin), DISTINCT hoop, GROUP BY tumbler with spider arms, HAVING gate, SELECT stamp, ORDER gate with rank numerals, LIMIT pinch valve, out-tube U-turn, chute rails, tray with slots; clause chips light per phase; LCD narrates with real counts; full ?press/?run/?xray/?phase/?err harness.
+- Fixed in QA rounds: st0 TDZ, on-shadowing, mount-before-let, decal/vents/sticker painted under extrude, LCD anchors, chip overflow, hopper clip swallowing falling tiles, x-ray hopper ghosting, label pill overlaps. Captured idle/scan/filter/group/deliver/done/x-ray/mobile/tomato/error shots.
+- React wrapper src/components/cf/query-machine.tsx: iframe /cf/query-machine.html + postMessage (cf:plan/cf:run/cf:ready/cf:done); feeds live plan with REAL stage counts from /api/funnel (baseRows=103 for the default sample) and exec rowCount/durationMs; app Run auto-plays the machine; funnel fetched debounced, cached per sql.
+- Wired into src/app/page.tsx: "Machine" is now the FIRST and DEFAULT playground tab (Factory icon).
+- Rebuilt production (OOM kill first time — old standalone server was hogging RAM; killed 7478, rebuilt green, restarted).
+
+Stage Summary:
+- The user's SQL query visualizer now has a Colorfigures-grade flagship: /#playground opens on the Machine tab; pressing Run plays the query as a hand-inked isometric machine with real row counts at every station; See-through x-rays the operators; Labels annotate them.
+- Commit: "The Query Machine: Colorfigures x SeeQL flagship viz" (6 files: core.js, LICENSE, figure source, built HTML, wrapper, page wiring).
+- Research artifacts (site screenshots, skill package, demo washer srcdoc) kept in scripts/colorfigures-research/ (untracked).
