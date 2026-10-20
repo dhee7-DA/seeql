@@ -8616,3 +8616,22 @@ Work Log:
 Stage Summary:
 - The Query Machine now matches the reference site's full interaction set: hand-inked figure + wobble + 5 palettes + see-through x-ray + labels + REAL orbit (drag/Front view/Turntable).
 - Commit b155cbf (core.js, figure source, built HTML). Stale-serve gotcha documented: standalone serves .next/standalone/public — copy rebuilt public assets there.
+
+---
+Task ID: colorfigures-3
+Agent: main
+Task: Continue from context break — user asked "where can find it?" / "where are we"; finish the approved gap-analysis + verification round vs the colourfigures skill standard.
+
+Work Log:
+- Reference site colourfigures.vercel.app is now dead (Vercel 404); Wayback unreachable — used the locally archived skill (scripts/colorfigures-research/skill/colorfigures/SKILL.md) as the reference standard.
+- Gap analysis vs SKILL.md: figure already implements the full contract (real-process stations, real counts, buttons in order, act() parts, out-of-order flashes, labels, stats, ?params states, postMessage protocol, orbit from task colorfigures-2). The MISSING piece was the skill's mandatory verification round.
+- Ran the headless-Chrome verify round (playwright chromium-1200). Found the recipe: --virtual-time-budget hangs on animated ?run=1 shots at device-scale 2 (expensive per-frame SVG redraw) — works at scale 1; static shots fine at scale 2.
+- Shot states: idle, run-filter (4.2s), run-group (9.5s), done (?tray=1), xray-filter, err, sort. DOM check: data-errors empty, 0 NaN.
+- BUG 1 (narrative): done state showed 2 tiles on the tray while LCD/stats claimed 4 ROWS — deliveredCount was capped by stylized bundle math (alive bundles), never by the real result. FIX: recomputeFlow now overrides limN = clamp(counts.out, 0, 8); deliver/done/step paths use limN directly; deliveredTiles hue fallback covers k >= bundles.length.
+- BUG 2: reject bin rest positions (i%3/i%2) stacked rejects 5 & 7 almost exactly (both tomato hue) -> only 2 of 3 visible; bin also went EMPTY at phase 'done' (stationsOf has no 'done', indexOf=-1 fails the post-filter test). FIX: rest positions spread by rejection order (16.5 + (j%4)*5.5, 70 + (j%3)*4.5); rest condition now includes st.phase === 'done'.
+- Re-verified fixed states: done-v3 shows 4 striped tiles = ROWS OUT 4 + rejects staying in the bin; sort/err/xray states correct. 2 rounds total per skill budget.
+- Deploy gotcha honored: copied rebuilt public/cf/query-machine.html to .next/standalone/public/cf/ (standalone server serves from there); verified live via curl (fix marker present on :3000).
+
+Stage Summary:
+- Query Machine passes the colourfigures verification standard: every drawn stage matches the real process; tray/bin/panel/LCD/stats all agree with the funnel numbers.
+- Files: public/cf/query-machine.html (fixed + rebuilt), .next/standalone/public/cf/query-machine.html (synced), verification scripts qm-verify.sh / qm-verify2.sh, shots in scripts/qm-shots/.
