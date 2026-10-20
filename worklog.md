@@ -8596,3 +8596,23 @@ Stage Summary:
 - The user's SQL query visualizer now has a Colorfigures-grade flagship: /#playground opens on the Machine tab; pressing Run plays the query as a hand-inked isometric machine with real row counts at every station; See-through x-rays the operators; Labels annotate them.
 - Commit: "The Query Machine: Colorfigures x SeeQL flagship viz" (6 files: core.js, LICENSE, figure source, built HTML, wrapper, page wiring).
 - Research artifacts (site screenshots, skill package, demo washer srcdoc) kept in scripts/colorfigures-research/ (untracked).
+
+---
+Task ID: colorfigures-2
+Agent: main
+Task: User asked "where is this query machine located" then approved a fresh audit against the reference site ("yes").
+
+Work Log:
+- Located the machine: public/cf/query-machine.html (served standalone), src/components/cf/query-machine.tsx (iframe+postMessage bridge), mounted in page.tsx "Machine" tab (default).
+- Re-audited the live build: 5 state shots (idle/group/x-ray/done/err) — figure solid, but the site's signature VIEW feature was missing.
+- Root cause found: the live colorfigures site runs a NEWER engine — free YAW/PITCH camera ("drag the figure to turn it", Front view / Turntable buttons, dblclick reset, tone blending while rotating). The vendored skill core was the older fixed-view version.
+- Extracted the site's engine verbatim from the archived washer srcdoc (scripts/colorfigures-research/demo-washer-raw.txt -> site-core-clean.js, 40KB), API-compatible (same mountFigure cfg).
+- Upgraded src/components/cf/core.js + skill folder assets copy; backed up old core to scripts/colorfigures-research/.
+- Orbit-proofed query-machine.figure.html: front face/panel/LCD/chips/porthole glass gated on vis([1,0,0]); side decal gated on vis([0,1,0]) with stricter .3 threshold for txY text (kills edge shear glyphs); NEW back wall (cap + 6 vent slots) gated on vis([-1,0,0]); top sticker stays (always visible); hullInk/shadows yaw-aware via engine.
+- Seeded DEFAULT_PLAN counts (103/78/24/9/4, 1.17 ms) — standalone idle now shows real stats, matching the in-app default sample.
+- Rebuilt via skill build.py -> public/cf/query-machine.html; deployed to .next/standalone/public/ (standalone server serves from there, NOT repo public/ — that was why first verification showed a stale page).
+- Verified with agent-browser: front view pixel-faithful + stats + View row; ?yaw=140/225/318 clean (back wall, cord+plug, tray/bin correct from behind); x-ray from turned angle shows all 8 stations; drag-orbit both directions smooth (mouse drag test); Turntable button spins (pressed state, 18 deg/s); dblclick/arrow keys per engine; no data-errors, no NaN; in-app: Run plays machine with live funnel counts (103/4/1.08ms mid-run).
+
+Stage Summary:
+- The Query Machine now matches the reference site's full interaction set: hand-inked figure + wobble + 5 palettes + see-through x-ray + labels + REAL orbit (drag/Front view/Turntable).
+- Commit b155cbf (core.js, figure source, built HTML). Stale-serve gotcha documented: standalone serves .next/standalone/public — copy rebuilt public assets there.

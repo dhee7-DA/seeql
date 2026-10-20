@@ -1,0 +1,839 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- The Query Machine — a Colorfigures figure for SeeQL.
+     Engine: colorfigures core.js by April Zhu (MIT) — https://april-zhu.com/colorfigures
+     This figure models a SQL SELECT as a hand-inked isometric machine: rows (tiles)
+     drop in from the hopper, pass the clause stations, and land on the output tray.
+     The real process it follows (one button = one real step, materials travel real paths):
+       1 scan    source tables -> tiles fall from the hopper into the intake
+       2 filter  WHERE: the sieve shakes; rejects slide off and fall to the reject bin
+       3 distinct DISTINCT: duplicate tiles merge at the hoop with a puff
+       4 group   GROUP BY: tiles drop into the tumbler; it turns; strapped bundles exit
+       5 having  HAVING: the gate; failing bundles tip into the return chute
+       6 project SELECT: the stamp presses a column stripe onto every passing item
+       7 sort    ORDER BY: the gate releases items one at a time, rank numbers up
+       8 limit   LIMIT: the pinch valve; extras bounce back up the return tube
+       9 deliver items ride the out-tube through the chute and fan out on the tray
+-->
+<title>The Query Machine</title></head><body>
+<script src="core.js"></script>
+<script>
+/* ---------- geometry (x = depth, y = width +y viewer-left, z = up) ---------- */
+const QW = 58, QD = 60, QH = 84, QPL = 5, QRCR = 6;      // cabinet depth, width, height, foot, corner radius
+const OUTR = rrUV(0, QPL, QD, QH, QRCR);                 // body profile in (y,z)
+const CH_Y = 22, CH_Z = 36;                              // porthole / mechanism line centre (y, z)
+const RO = 13.5, RB = 17.5, RG = 10.5, BT = 4;           // porthole opening, bezel, glass radii, bezel depth
+const PANEL = [2, 62, QD - 2, 80];                       // control strip (y0,z0,y1,z1) on the front face
+const LCD = [3, 64.5, 21.5, 77.5];                         // display window
+const CHUTE = [8, 12, 21, 20];                           // chute opening in the front face (y0,z0,y1,z1)
+/* hopper (a truncated pyramid on the top) */
+const HOP_A = [12, 14, 36, 38], HOP_B = [8, 10, 40, 42], HOP_H = 100, HOP_LIP = 102;
+/* stations (x positions along the mechanism line at y = CH_Y) */
+const X_INTAKE = 16, X_SIEVE0 = 17, X_SIEVE1 = 31, X_HOOP = 34.5;
+const X_DRUM0 = 36, X_DRUM1 = 52, DRUM_R = 12;
+const X_DROP = 46, X_BELT0 = 26, X_BELT1 = 50, BELT_Z = 16;
+const X_STAMP = 44, X_SORT = 34, X_VALVE = 52;
+const CHUTE_EXIT = [58, 14, 15.5];                       // where the out-tube meets the front face
+const TRAY = { x0: 62, x1: 92, y0: 8, y1: 36, h: 6 };    // output tray on the floor
+const BIN  = { x0: 12, x1: 34, y0: 66, y1: 84, h: 10 };  // reject bin (screen-left)
+/* stage chip slots on the panel: [y, z, label] — re-filled from the plan */
+const CHIP_W = 8.6, CHIP_H = 5.2;
+
+const STEEL = { l:'#8c9599', m:'#6a7377', d:'#454d51' };
+const RUBBER = { l:'#5a5752', m:'#403d39', d:'#2a2825' };
+const TUBE_M = { l:'#7a8577', m:'#5d6759', d:'#3a4238' };
+const BELT_M = { l:'#4a4a46', m:'#37372f', d:'#24241f' };
+const GREEN = '#43c25c', RED = '#e2483d', AMBER = '#f2b431';
+const SCREEN = '#1d2a26', SCREEN_TX = '#8af0ae';
+const TILE_HUES = ['#3e86d9', '#e2473a', '#f2c230', '#38a565', '#d94f86', '#fbf7ea'];
+
+/* ---------- small helpers (techniques from the reference figures) ---------- */
+function qmSmooth(pts, it) { it = it || 3;
+  for (let k = 0; k < it; k++) { const o = [pts[0]];
+    for (let i = 0; i < pts.length - 1; i++) { const a = pts[i], b = pts[i + 1];
+      o.push(a.map((v, j) => v * .75 + b[j] * .25), a.map((v, j) => v * .25 + b[j] * .75)); }
+    o.push(pts[pts.length - 1]); pts = o; }
+  return pts; }
+function qmTube(pts, r, m, rib) {
+  const q = qmSmooth(pts), d = pd(q, false), sw = w => `style="stroke-width:${f(w)}"`, cap = 'fill="none" stroke-linecap="round" stroke-linejoin="round"';
+  const hl = 'M' + q.map(p => { const [X, Y] = P(...p); return f(X - r * .35) + ' ' + f(Y - r * .35); }).join('L');
+  return `<path d="${d}" ${cap} stroke="${INK}" ${sw(2 * r + 2.4 * INK_K)}/>`
+    + `<path d="${d}" ${cap} stroke="${m.m}" ${sw(2 * r)}/>`
+    + (rib ? `<path d="${d}" ${cap} stroke="${m.d}" ${sw(2 * r)} stroke-dasharray=".45 1.1" opacity=".55"/>` : '')
+    + `<path d="${hl}" ${cap} stroke="${m.l}" ${sw(r * .55)} opacity=".85"/>`; }
+const qmRingX = (x, r, n) => on(PX(x), ellUV(CH_Y, CH_Z, r, r, n || 36));
+const qmAdd3 = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+const qmLerp3 = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t);
+const qmSstep = (a, b, t) => { const k = Math.min(1, Math.max(0, (t - a) / (b - a || 1e-9))); return k * k * (3 - 2 * k); };
+const qmFmt = n => n == null ? '—' : (n >= 10000 ? (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : String(n));
+const qmScrew = (pl, u, v, r) => { r = r || 1.1;
+  return shape(on(pl, ellUV(u, v, r, r, 12)), METAL.m, .7) + ink(pd(on(pl, [[u - r * .7, v - r * .25], [u + r * .7, v + r * .25]]), false), .6); };
+
+/* ---------- the plan: what the machine is set to build ---------- */
+/* st.plan = {
+     statementType, tables:[{name, rows}], where:[text], groupBy:[text], having:[text],
+     orderBy:[{text, direction}], limit, offset, distinct, setOps:[],
+     columns:[{text, alias, aggregation}] (first few), counts:{scan, afterWhere, afterGroup, afterHaving, out},
+     ms, error:{message} | null } */
+const DEFAULT_PLAN = {
+  statementType: 'SELECT',
+  tables: [{ name: 'customers', rows: null }, { name: 'orders', rows: null }],
+  where: ["o.created_at >= '2024-01-01'"], groupBy: ['c.name', 'o.status'],
+  having: ['COUNT(*) > 5'], orderBy: [{ text: 'revenue', direction: 'DESC' }], limit: null,
+  offset: null, distinct: false, setOps: [],
+  columns: [{ text: 'c.name', alias: null }, { text: 'o.status', alias: null },
+            { text: 'COUNT(*)', alias: 'order_count', aggregation: 'COUNT' },
+            { text: 'SUM(o.total)', alias: 'revenue', aggregation: 'SUM' }],
+  counts: { scan: 103, afterWhere: 78, afterGroup: 24, afterHaving: 9, out: 4 },
+  ms: 1.17, error: null,
+};
+
+/* stations actually present, in run order — the machine re-models around them */
+function stationsOf(p) {
+  const s = ['scan'];
+  if (p.where && p.where.length) s.push('filter');
+  if (p.distinct) s.push('distinct');
+  if (p.groupBy && p.groupBy.length) { s.push('group'); if (p.having && p.having.length) s.push('having'); }
+  s.push('project');
+  if (p.orderBy && p.orderBy.length) s.push('sort');
+  if (p.limit != null && p.limit !== '') s.push('limit');
+  s.push('deliver');
+  return s;
+}
+const STAGE_OF = { scan: 'scan', filter: 'filter', distinct: 'distinct', group: 'group', having: 'having', project: 'project', sort: 'sort', limit: 'limit', deliver: 'deliver' };
+const PHASE_LABEL = {
+  scan: 'SCANNING', filter: 'FILTERING', distinct: 'DE-DUPLING', group: 'GROUPING',
+  having: 'GATE KEEPING', project: 'PROJECTING', sort: 'RANKING', limit: 'THROTTLING', deliver: 'DELIVERING', done: 'DONE', idle: 'READY',
+};
+const PHASESec = { scan: 1.7, filter: 1.5, distinct: .9, group: 2.4, having: 1.1, project: 1.3, sort: 1.7, limit: 1.1, deliver: 1.8, done: 0 };
+
+/* representative tiles: 8 row-tiles with hues, and the bundle grouping */
+const TILES_N = 8;
+function tileHue(p, i) { const t = (p.tables && p.tables.length) ? p.tables.length : 2; return i % Math.min(t, TILE_HUES.length - 1); }
+function tileOf(st, i) { return st.tiles[i]; }
+/* bundle plan for the current run: groups of tile indexes (representative) */
+function bundlesOf(st) {
+  if (st.bundles) return st.bundles;             // fixed at run start by recomputeFlow
+  const keep = st.keep || [];                    // tile indexes that passed every filter
+  const g = st.plan.groupBy && st.plan.groupBy.length;
+  if (!g) return keep.map(i => [i]);
+  const per = Math.max(2, Math.ceil(keep.length / 3));
+  const bs = []; for (let i = 0; i < keep.length; i += per) bs.push(keep.slice(i, i + per));
+  return bs;
+}
+
+/* ---------- row tiles: flat rounded tiles with column ticks, like real rows ---------- */
+function qmFlat(shape2, ctr, e1, e2, k, m, lw) {
+  const T = ([u, v]) => [ctr[0] + u * k * e1[0] + v * k * e2[0], ctr[1] + u * k * e1[1] + v * k * e2[1], ctr[2] + u * k * e1[2] + v * k * e2[2]];
+  let s = fill(pd(shape2.map(T)), m.l);
+  return { s, T };
+}
+function qmTile(ctr, e1, e2, psi, hue, striped, op) {
+  const k = 1.15, cs = Math.cos(psi), sn = Math.sin(psi);
+  const A = e1, B = e2;
+  const E1 = [A[0] * cs + B[0] * sn, A[1] * cs + B[1] * sn, A[2] * cs + B[2] * sn];
+  const E2 = [-A[0] * sn + B[0] * cs, -A[1] * sn + B[1] * cs, -A[2] * sn + B[2] * cs];
+  const T = ([u, v]) => [ctr[0] + u * k * E1[0] + v * k * E2[0], ctr[1] + u * k * E1[1] + v * k * E2[1], ctr[2] + u * k * E1[2] + v * k * E2[2]];
+  const m = matOf(hue);
+  const body = rrUV(-2.5, -2.5, 2.5, 2.5, .8);
+  let s = fill(pd(body.map(T)), m.l);
+  for (const v of [-1.1, .3, 1.7]) s += ink(pd([[-1.6, v], [1.6, v]].map(T), false), .55);
+  if (striped) s += fill(pd([[-2.1, .55], [2.1, .55], [2.1, 1.35], [-2.1, 1.35]].map(T)), '#fbf7ea', 'opacity=".92"');
+  s += ink(pd(body.map(T)), .9);
+  return op < 1 ? `<g opacity="${f(op)}">${s}</g>` : s;
+}
+/* a bundle: 2-3 tiles strapped into one stack */
+function qmBundle(ctr, e1, e2, psi, hues, op) {
+  const g = 1.5, cs = Math.cos(psi), sn = Math.sin(psi);
+  const E1 = [e1[0] * cs + e2[0] * sn, e1[1] * cs + e2[1] * sn, e1[2] * cs + e2[2] * sn];
+  const E2 = [-e1[0] * sn + e2[0] * cs, -e1[1] * sn + e2[1] * cs, -e1[2] * sn + e2[2] * cs];
+  let s = '';
+  for (let j = hues.length - 1; j >= 0; j--) s += qmTile(qmAdd3(ctr, [0, 0, j * g * .62]), E1, E2, 0, hues[j], j === hues.length - 1, 1);
+  const T = ([u, v]) => [ctr[0] + u * E1[0] + v * E2[0], ctr[1] + u * E1[1] + v * E2[1], ctr[2] + u * E1[2] + v * E2[2]];
+  s += ink(pd([[-2.9, -2.9], [2.9, 2.9]].map(T), false), 1);
+  return op < 1 ? `<g opacity="${f(op)}">${s}</g>` : s;
+}
+const UP = [0, 1, 0], ACROSS = [1, 0, 0];        // flat on the ground: e1 along y, e2 along x
+
+/* ---------- cabinet, hopper, panel ---------- */
+function cabinetFront(m, st) {
+  const X = PX(QW);
+  let s = '';
+  // porthole interior: the drum mouth (or the drop lane) seen through the hole
+  const inner = portholeInterior(st, m);
+  s += clipTo(qmRingX(QW, RO), inner);
+  // chute opening cavity
+  s += fill(pd(on(X, rectUV(CHUTE[0], CHUTE[1], CHUTE[2], CHUTE[3]))), '#1f1d1a');
+  // front face with its two holes
+  s += `<path d="${pd(on(X, OUTR))}${pd(qmRingX(QW, RO))}${pd(on(X, rectUV(CHUTE[0], CHUTE[1], CHUTE[2], CHUTE[3])))}" fill="${tone([1, 0, 0], m)}" fill-rule="evenodd"/>`;
+  s += ink(pd(qmRingX(QW, RO)), 1.6);
+  // control panel plate
+  const pnl = on(PX(QW + .15), rrUV(PANEL[0], PANEL[1], PANEL[2], PANEL[3], 3));
+  s += `<path d="${pd(pnl)}${pd(on(PX(QW + .15), rectUV(LCD[0], LCD[1], LCD[2], LCD[3])))}" fill="${mix(tone([1, 0, 0], m), '#ffffff', .6)}" fill-rule="evenodd"/>`;
+  s += ink(pd(pnl), 1.3) + ink(pd(on(PX(QW + .15), rectUV(...LCD))), 1.4);
+  s += qmScrew(PX(QW + .2), 4.4, 64.6) + qmScrew(PX(QW + .2), 53.6, 64.6) + qmScrew(PX(QW + .2), 4.4, 77.4) + qmScrew(PX(QW + .2), 53.6, 77.4);
+  // LCD screen + text
+  const lcd = on(PX(QW + .1), rectUV(LCD[0], LCD[1], LCD[2], LCD[3]));
+  s += fill(pd(lcd), SCREEN);
+  s += lcdLines(st);
+  return s;
+}
+function lcdLines(st) {
+  const p = st.plan || DEFAULT_PLAN, ph = st.phase, phT = st.phT || 0;
+  const c = p.counts || {};
+  let l1 = PHASE_LABEL[ph] || 'READY', l2 = '', col = SCREEN_TX;
+  const base = p.tables.map(t => t.name).join(' + ');
+  if (p.error) { l1 = 'PARSE ERROR'; l2 = (p.error.message || 'check the query').slice(0, 26).toUpperCase(); return qmTxLCD(l1, l2, '#ff9a8a'); }
+  if (ph === 'idle') { l2 = base.slice(0, 24).toUpperCase() || 'NO QUERY YET'; }
+  else if (ph === 'scan') { l2 = qmFmt(c.scan) + ' ROWS IN'; }
+  else if (ph === 'filter') { l2 = p.where.length + ' COND -> ' + qmFmt(c.afterWhere); }
+  else if (ph === 'distinct') { l2 = 'DROPS DUPES'; }
+  else if (ph === 'group') { l2 = 'BY ' + p.groupBy.join(',').slice(0, 14).toUpperCase(); }
+  else if (ph === 'having') { l2 = '-> ' + qmFmt(c.afterHaving != null ? c.afterHaving : c.afterGroup); }
+  else if (ph === 'project') { l2 = (p.columns.length) + ' COLS STAMPED'; }
+  else if (ph === 'sort') { l2 = (p.orderBy[0] ? (p.orderBy[0].text + ' ' + (p.orderBy[0].direction || '')).slice(0, 22).toUpperCase() : 'RANKING'); }
+  else if (ph === 'limit') { l2 = 'HOLDS ' + (parseInt(p.limit, 10) || 0); }
+  else if (ph === 'deliver') { l2 = qmFmt(c.out) + ' ROWS OUT'; }
+  else if (ph === 'done') { l2 = qmFmt(c.out) + ' ROWS · ' + (p.ms != null ? p.ms + ' MS' : 'DONE'); }
+  if (ph === 'done') col = GREEN;
+  return qmTxLCD(l1, l2, col);
+}
+function qmTxLCD(l1, l2, col) {
+  const o = P(QW + .3, 12.2, 74.4), o2 = P(QW + .3, 12.2, 69.9);
+  return `<text transform="${txM(o, Dv(0, -1, 0), Dv(0, 0, -1))}" font-size="2.6" fill="${col}" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-weight="800" letter-spacing=".04em">${l1.slice(0, 13)}</text>`
+    + `<text transform="${txM(o2, Dv(0, -1, 0), Dv(0, 0, -1))}" font-size="2" fill="${col}" opacity=".85" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-weight="700" letter-spacing=".02em">${l2.slice(0, 15)}</text>`;
+}
+/* clause chips on the panel: engraved pills, lit while their station works */
+function chipsRow(st, m) {
+  const p = st.plan || DEFAULT_PLAN;
+  const chips = [];
+  chips.push({ k: 'scan', t: 'FROM ' + p.tables.length });
+  if (p.where.length) chips.push({ k: 'filter', t: 'WHERE ' + p.where.length });
+  if (p.distinct) chips.push({ k: 'distinct', t: 'DISTINCT' });
+  if (p.groupBy.length) chips.push({ k: 'group', t: 'GROUP ' + p.groupBy.length });
+  if (p.having.length) chips.push({ k: 'having', t: 'HAVING' });
+  chips.push({ k: 'project', t: 'SELECT ' + p.columns.length });
+  if (p.orderBy.length) chips.push({ k: 'sort', t: 'ORDER ' + (p.orderBy[0].direction || '') });
+  if (p.limit != null && p.limit !== '') chips.push({ k: 'limit', t: 'LIMIT ' + p.limit });
+  let s = '', col = 0, row = 0;
+  for (const c of chips) {
+    const w = Math.max(CHIP_W, c.t.length * 1.5 + 2.2);
+    if (col + w > 30) { col = 0; row++; }
+    if (row > 1) break;
+    const y0 = 24 + col, z0 = 74.5 - row * 6.4;
+    const lit = st.phase === c.k || (st.phase === 'done' && c.k === 'deliver');
+    const active = st.phases.indexOf(c.k) >= 0 && st.phases.indexOf(c.k) <= st.phases.indexOf(st.phase);
+    const bg = lit ? 'var(--accent)' : active ? mix(PALS[st.pal].l, '#ffffff', .55) : '#f4f1e8';
+    s += `<g data-act="chip" data-k="${c.k}">`
+      + fill(pd(on(PX(QW + .25), rrUV(y0, z0, y0 + w, z0 + CHIP_H, CHIP_H / 2))), bg) + ink(pd(on(PX(QW + .25), rrUV(y0, z0, y0 + w, z0 + CHIP_H, CHIP_H / 2))), .8)
+      + `<text transform="${txM(P(QW + .35, y0 + w / 2, z0 + CHIP_H * .42), Dv(0, -1, 0), Dv(0, 0, -1))}" font-size="2.5" fill="${INK}" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-weight="800" letter-spacing=".03em">${c.t}</text></g>`;
+    col += w + 1.4;
+  }
+  return s;
+}
+function cabinet(m, st) {
+  // free camera: each dressed plane draws only while it faces the viewer
+  const fx = vis([1, 0, 0]), bx = vis([-1, 0, 0]);
+  const syDot = ((r) => r[0] + r[1] + r[2])(rotV([0, 1, 0]));
+  const sy = syDot > 1e-6, syText = syDot > .3;   // text needs a decent angle or it shears at the edge
+  let body = '';
+  if (fx) body += cabinetFront(m, st);
+  // outer body first, then the face dressing on top of it
+  body += extrude(OUTR, 0, QW, m);
+  if (bx) {  // the back wall — seen once the figure is turned: plain cap + vent slots
+    const bm = tone([-1, 0, 0], m);
+    body += shape(on(PX(0), OUTR), bm, 1.2);
+    for (let z = 12; z <= 24; z += 2.6) body += `<path d="${pd([[.2, 12, z], [.2, QD - 12, z]], false)}" fill="none" stroke="${INK}" stroke-width="1.1" stroke-linecap="round" opacity=".5"/>`;
+  }
+  if (sy) {
+    // side decal + vents (the +y face is in shade: lighter plate, darker ink)
+    const sm = tone([0, 1, 0], m);
+    const tc = mix(sm, '#000000', .5);
+    if (syText) {
+      body += shape(on(PY(QD + .2), rrUV(14, 30, QW - 14, 58, 5)), mix(sm, '#ffffff', .3), 1.2);
+      body += txY(QW / 2, QD + .3, 48, 'QUERYMATIC', 7.2, tc, 800);
+      body += txY(QW / 2, QD + .3, 39.5, 'ROW-THROUGH', 3.2, tc, 800);
+    }
+    for (let z = 10; z <= 18; z += 2.6) body += `<path d="${pd([[12, QD + .2, z], [QW - 12, QD + .2, z]], false)}" fill="none" stroke="${INK}" stroke-width="1.1" stroke-linecap="round" opacity=".65"/>`;
+  }
+  // top spec sticker
+  const tp = PZ(QH + .1);
+  body += shape(on(tp, rrUV(40, 14, 54, 26, 1.5)), '#fbf7ea', .9);
+  for (let k = 0; k < 3; k++) body += ink(pd(on(tp, [[42.5, 17 + k * 2.6], [51.5, 17 + k * 2.6]]), false), k === 2 ? .55 : .7);
+  if (fx) body += ink(pd(on(PX(QW), OUTR)), 2.2);
+  body += hullInk([...on(PX(0), OUTR), ...on(PX(QW), OUTR)], 2.8);
+  return body;
+}
+function hopper(m, st) {
+  const A = on(PZ(QH - 1), rectUV(HOP_A[0], HOP_A[1], HOP_A[2], HOP_A[3]));
+  const B = on(PZ(HOP_H), rectUV(HOP_B[0], HOP_B[1], HOP_B[2], HOP_B[3]));
+  const L0 = on(PZ(HOP_LIP), rectUV(HOP_B[0] - 1, HOP_B[1] - 1, HOP_B[2] + 1, HOP_B[3] + 1));
+  let s = loft(A, B, n => toneI(n, m)) + loft(B, L0, n => toneI(n, m));
+  s += fill(pd(L0), mix(m.l, '#ffffff', .2)) + ink(pd(L0), 1.2);
+  s += hullInk([...A, ...L0], 2.2);
+  // the falling tiles at the mouth, clipped to the throat
+  const mouth = on(PZ(QH + 1.5), rectUV(HOP_A[0] + .5, HOP_A[1] + .5, HOP_A[2] - .5, HOP_A[3] - .5));
+  let inside = fill(pd(mouth), mix(m.d, '#000000', .25));
+  for (const t of hopperTiles(st)) inside += t;
+  s += clipTo(mouth, inside);
+  return s;
+}
+function tray(m, st) {
+  const T = TRAY, h = T.h;
+  const A = on(PZ(0), rrUV(T.x0, T.y0, T.x1, T.y1, 2)), B = on(PZ(h), rrUV(T.x0, T.y0, T.x1, T.y1, 2));
+  let s = loft(A, B, n => toneI(n, m)) + fill(pd(B), m.l) + ink(pd(B), 1);
+  s += hullInk([...A, ...B], 1.6);
+  // slot ticks the result rows land on
+  for (let i = 0; i < 4; i++) for (let j = 0; j < 2; j++) {
+    const cx = T.x0 + 6.5 + i * 6.4, cy = T.y0 + 7 + j * 11;
+    s += shape(on(PZ(h + .05), ellUV(cx, cy, 2.9, 2.9, 14)), mix(m.l, '#000000', .08), .5);
+  }
+  // delivered result tiles
+  let del = '';
+  for (const d of deliveredTiles(st)) del += d;
+  s += clipTo(on(PZ(h + .2), rrUV(T.x0 - 1, T.y0 - 1, T.x1 + 1, T.y1 + 1, 2)), del);
+  return s;
+}
+function binPart(m, st) {
+  const B = BIN;
+  const A = on(PZ(0), rrUV(B.x0, B.y0, B.x1, B.y1, 2)), Bt = on(PZ(B.h), rrUV(B.x0, B.y0, B.x1, B.y1, 2));
+  let s = loft(A, Bt, n => toneI(n, CERAMIC)) + fill(pd(Bt), CERAMIC.m) + ink(pd(Bt), 1) + hullInk([...A, ...Bt], 1.4);
+  let inside = '';
+  for (const r of rejectedTiles(st)) inside += r;
+  s += clipTo(Bt, inside);
+  return s;
+}
+function chuteRails(m) {
+  const a = [QW + 2.5, CHUTE_EXIT[1], 18], b = [TRAY.x0 - 3, CHUTE_EXIT[1] + 3.5, 8.5];
+  let s = cylX(QW - .5, QW + 2.6, CHUTE_EXIT[1], CHUTE_EXIT[2], 2.2, TUBE_M, toneI, 1, 18);
+  for (const dy of [-1.3, 1.3]) s += rod([a[0], a[1] + dy, a[2]], [b[0], b[1] + dy, b[2]], .5, STEEL, toneI, .7);
+  s += rod([a[0], a[1], a[2] - 2.4], [b[0], b[1], b[2] - 2.4], .5, STEEL, toneI, .7);
+  return s;
+}
+function backBits() {
+  // power cord to the floor behind
+  return qmTube([[-1, 10, 9], [-6, 12, 4], [-11, 18, 1.8]], .8, RUBBER)
+    + box(-13.5, 15, 0, -10.5, 21, 3, RUBBER, toneI, .9);
+}
+
+/* ---------- inside: what the porthole shows (drum mouth / drop lane) ---------- */
+function portholeInterior(st, m) {
+  let s = fill(pd(qmRingX(QW - 1, RO + 2)), '#26221d');
+  const p = st.plan, hasGroup = p.groupBy && p.groupBy.length;
+  if (hasGroup) {
+    // drum mouth at x = 56, just behind the front face
+    const R1 = qmRingX(56, RO - .6);
+    s += fill(pd(R1), '#2b3134');
+    s += loft(qmRingX(56, RO - .6), qmRingX(50, RO - .6), n => toneI(n.map(v => [-v[0], -v[1], -v[2]]), STEEL), true);
+    // perforation dots crawling with the drum angle
+    let dots = '';
+    const A = st.drumA, fast = Math.abs(st.drumW || 0) > 7;
+    for (let x = 43; x < 55.4; x += 3.1) for (let i = 0; i < 18; i++) {
+      const a = A * .9 + (i + (x * .37 % 1)) / 18 * 2 * Math.PI, n = [0, Math.cos(a), Math.sin(a)];
+      if (n[1] + n[2] < .1) continue;
+      const q = (da, dx) => [x + dx, CH_Y + (RO - .65) * Math.cos(a + da), CH_Z + (RO - .65) * Math.sin(a + da)];
+      dots += fast ? pd([q(-.22, 0), q(.22, 0)], false) : pd([q(-.03, -.4), q(.03, -.4), q(.03, .4), q(-.03, .4)]);
+    }
+    s += fast ? `<path d="${dots}" fill="none" stroke="#20262a" stroke-width=".8" opacity=".65"/>` : `<path d="${dots}" fill="#20262a"/>`;
+    // two spider arms on the back wall
+    if (st.xr < .3) { s += fill(pd(qmRingX(43.5, RO - .7)), toneI([-1, 0, 0], STEEL));
+      for (let j = 0; j < 3; j++) { const a = A * .9 + j * 2 * Math.PI / 3;
+        s += shape(on(PX(43.6), [[CH_Y + 1.5 * Math.cos(a + .45), CH_Z + 1.5 * Math.sin(a + .45)], [CH_Y + 9 * Math.cos(a + .1), CH_Z + 9 * Math.sin(a + .1)], [CH_Y + 9 * Math.cos(a - .1), CH_Z + 9 * Math.sin(a - .1)], [CH_Y + 1.5 * Math.cos(a - .45), CH_Z + 1.5 * Math.sin(a - .45)]]), STEEL.m, .7); } }
+    // contents tumbling in the mouth
+    for (const t of drumMouthTiles(st)) s += t;
+    s += ink(pd(qmRingX(56, RO - .6)), .9);
+    s += fill(pd(qmRingX(57.9, RG)), '#cfe9f0', 'opacity=".14"') + `<path d="${pd(on(PX(57.9), arcUV(CH_Y, CH_Z, RG - .8, 40, 110, 6)), false)}" fill="none" stroke="#ffffff" stroke-width="1" opacity=".38" stroke-linecap="round"/>`;
+  } else {
+    // no GROUP: the drop lane runs behind the glass — tiles fall past
+    s += fill(pd(on(PX(QW - 1.5), rrUV(CH_Y - 5, CH_Z - 16, CH_Y + 5, CH_Z + 6, 1))), '#2b3134');
+    for (const t of dropLaneTiles(st)) s += t;
+    s += fill(pd(qmRingX(57.9, RG)), '#cfe9f0', 'opacity=".14"') + `<path d="${pd(on(PX(57.9), arcUV(CH_Y, CH_Z, RG - .8, 40, 110, 6)), false)}" fill="none" stroke="#ffffff" stroke-width="1" opacity=".38" stroke-linecap="round"/>`;
+  }
+  return s;
+}
+
+/* ---------- the mechanism (see-through view) ---------- */
+function mechanism(st, m, k) {
+  const p = st.plan, hasGroup = p.groupBy && p.groupBy.length;
+  let s = '';
+  // intake pipe from the hopper down to the trough
+  s += qmTube([[24, 26, 88], [22, 26, 76], [16, 24, 66], [15, 22, 63.5]], 1.6, TUBE_M, true);
+  // the trough (upper line): two rails, items slide on it
+  for (const dy of [-3.4, 3.4]) s += rod([14, CH_Y + dy, 64.4], [40, CH_Y + dy, 62.6], .55, STEEL, toneI, .8);
+  s += rod([14, CH_Y, 60.8], [40, CH_Y, 59.6], .7, STEEL, toneI, .8);
+  // sieve mesh on the trough when WHERE is present
+  if (p.where.length) {
+    const shake = st.phase === 'filter' ? Math.sin(st.phT * 46) * .5 : 0;
+    s += `<g transform="translate(${f(shake)} 0)">`;
+    let mesh = '';
+    for (let x = X_SIEVE0; x <= X_SIEVE1; x += 1.55) mesh += pd([[x, CH_Y - 3.1, 63.9 - (x - 14) * .045], [x, CH_Y + 3.1, 63.9 - (x - 14) * .045]], false);
+    s += `<path d="${mesh}" fill="none" stroke="${STEEL.d}" stroke-width=".7" opacity=".8"/></g>`;
+  }
+  // DISTINCT hoop
+  if (p.distinct) {
+    s += shape(on(PX(34.5), arcUV(CH_Y, CH_Z + 27, 3.6, -80, 260, 14)), METAL.m, .9);
+    s += ink(pd(on(PX(34.5), arcUV(CH_Y, CH_Z + 27, 3.6, -80, 260, 14)), false), .9);
+    s += tx(34.9, CH_Y - 5.2, CH_Z + 27.5, 'D', 2.2, INK, 800);
+  }
+  // drop tube from the trough end into the drum (or down to the belt)
+  if (hasGroup) s += qmTube([[40, CH_Y, 62], [42, CH_Y, 58], [43.5, CH_Y, 53]], 1.5, TUBE_M, true);
+  else s += qmTube([[40, CH_Y, 62], [43, CH_Y, 50], [46, CH_Y, 30], [47.5, CH_Y, 21]], 1.5, TUBE_M, true);
+  // the tumbler drum
+  if (hasGroup) {
+    const R0 = qmRingX(34, DRUM_R), R1 = qmRingX(56, DRUM_R);
+    s += loft(R0, R1, n => toneI(n, STEEL));
+    let dots = '';
+    for (let x = 36; x < 55; x += 3.1) for (let i = 0; i < 22; i++) {
+      const a = st.drumA * .9 + (i + (x * .31 % 1)) / 22 * 2 * Math.PI, n = [0, Math.cos(a), Math.sin(a)];
+      if (n[1] + n[2] < .05) continue;
+      dots += pd([[x, CH_Y + (DRUM_R - .1) * Math.cos(a), CH_Z + (DRUM_R - .1) * Math.sin(a)], [x + 1.4, CH_Y + (DRUM_R - .1) * Math.cos(a), CH_Z + (DRUM_R - .1) * Math.sin(a)]], false);
+    }
+    s += `<path d="${dots}" fill="none" stroke="#20262a" stroke-width=".8" opacity=".7"/>`;
+    s += fill(pd(R0), toneI([-1, 0, 0], STEEL));
+    for (let j = 0; j < 3; j++) { const a = st.drumA * .9 + j * 2 * Math.PI / 3;
+      s += shape(on(PX(34.2), [[CH_Y + 1.5 * Math.cos(a + .4), CH_Z + 1.5 * Math.sin(a + .4)], [CH_Y + 8.5 * Math.cos(a + .08), CH_Z + 8.5 * Math.sin(a + .08)], [CH_Y + 8.5 * Math.cos(a - .08), CH_Z + 8.5 * Math.sin(a - .08)], [CH_Y + 1.5 * Math.cos(a - .4), CH_Z + 1.5 * Math.sin(a - .4)]]), STEEL.m, .7); }
+    s += ink(pd(R0), 1) + hullInk([...R0, ...R1], 1.6) + ink(pd(R1), .9);
+    // cradle rollers under the drum
+    for (const dx of [40, 50]) for (const sgn of [-1, 1]) {
+      const a = Math.PI * .75 + (sgn > 0 ? 0 : Math.PI / 6);
+      s += cyl(dx, CH_Y + (DRUM_R + 2.4) * Math.cos(a), CH_Z + (DRUM_R + 2.4) * Math.sin(a) - 1.6, CH_Z + (DRUM_R + 2.4) * Math.sin(a) + 1.6, 1.6, METAL, toneI, .8, 12);
+    }
+  }
+  // lower belt + rollers
+  s += cylX(25.2, 26.8, CH_Y, BELT_Z, 3, METAL, toneI, 1, 20);
+  s += cylX(49.2, 50.8, CH_Y, BELT_Z, 3, METAL, toneI, 1, 20);
+  const bl = Math.abs(Math.sin(st.phT * 3.2)) * (st.run ? 1 : 0);
+  s += `<path d="${pd([[26.8, CH_Y - 2.6, BELT_Z + 2.6], [49.2, CH_Y - 2.6, BELT_Z + 2.6], [49.2, CH_Y - 2.6, BELT_Z - 2.6], [26.8, CH_Y - 2.6, BELT_Z - 2.6]])}" fill="${BELT_M.m}"/>`;
+  s += `<path d="${pd([[49.2, CH_Y + 2.6, BELT_Z + 2.6], [26.8, CH_Y + 2.6, BELT_Z + 2.6]])}" fill="none" stroke="${INK}" stroke-width="${f(1 * INK_K)}" stroke-dasharray="${f(1.2 + bl)} ${f(2.4)}" opacity=".5"/>`;
+  s += ink(pd([[26.8, CH_Y - 2.6, BELT_Z + 2.6], [49.2, CH_Y - 2.6, BELT_Z + 2.6], [49.2, CH_Y - 2.6, BELT_Z - 2.6], [26.8, CH_Y - 2.6, BELT_Z - 2.6]]), 1.1);
+  // HAVING gate flap
+  if (p.having.length && hasGroup) {
+    const tipped = st.phase === 'having' ? Math.sin(Math.min(1, st.phT / 1.1) * Math.PI) * .8 : 0;
+    s += `<g transform="rotate(${f(-14 - tipped * 30)} ${f(P(48, CH_Y, BELT_Z + 6)[0])} ${f(P(48, CH_Y, BELT_Z + 6)[1])})">` + shape(on(PX(48), rectUV(CH_Y - 3.2, BELT_Z + 4.5, CH_Y + 3.2, BELT_Z + 6)), METAL.m, .9) + `</g>`;
+  }
+  // SELECT stamping head
+  const press = st.phase === 'project' ? Math.max(0, Math.sin(Math.min(1, st.phT / 1.3) * Math.PI * 3)) : 0;
+  s += cylX(43.2, 44.8, CH_Y, BELT_Z + 8.5 + press * 2.4, 2.6, DARK, toneI, 1, 18);
+  s += box(41.6, CH_Y - 3.6, BELT_Z + 8.2, 46.4, CH_Y + 3.6, BELT_Z + 10.8, DARK, toneI, .9);
+  s += rod([38, CH_Y, BELT_Z + 12.5], [44, CH_Y, BELT_Z + 11.4], .8, METAL, toneI, .8);
+  // ORDER gate + rank
+  if (p.orderBy.length) {
+    s += shape(on(PX(34), rectUV(CH_Y - 3.4, BELT_Z + 5.2, CH_Y + 3.4, BELT_Z + 6.4)), mix(METAL.m, '#000000', .1), .9);
+    s += tx(34.4, CH_Y - 4.6, BELT_Z + 8.6, '1-2-3', 1.7, INK, 800);
+  }
+  // out-tube: U-turn from the belt end to the chute, with the LIMIT pinch valve
+  s += qmTube([[26, CH_Y, 14], [28, 17, 11.5], [36, 14.5, 10.8], [46, 14, 11.5], [53, 14, 13.5], [CHUTE_EXIT[0] - .6, CHUTE_EXIT[1], CHUTE_EXIT[2]]], 1.7, TUBE_M, true);
+  if (p.limit != null && p.limit !== '') {
+    s += cylX(44.4, 46.6, 14 - 3.4, 11.2, 2.2, DARK, toneI, .9, 16);
+    s += cylX(44.4, 46.6, 14 + 3.4, 11.2, 2.2, DARK, toneI, .9, 16);
+    const sq = st.phase === 'limit' ? Math.min(1, st.phT / 1.1) : 0;
+    s += cylX(45 + sq * .4, 46 + sq * .4, 14 - 2.1 + sq, 11.2 + sq, 1.5, RUBBER, toneI, .8, 14);
+    s += cylX(45 + sq * .4, 46 + sq * .4, 14 + 2.1 - sq, 11.2 - sq, 1.5, RUBBER, toneI, .8, 14);
+  }
+  // reject tube down to the bin
+  if (p.where.length) s += qmTube([[31, 30, 61.5], [28, 42, 48], [25, 58, 26], [23, 72, 11]], 1.5, TUBE_M, true);
+  // items riding every path
+  for (const part of pathParts(st, true)) s += part;
+  return s;
+}
+
+/* ---------- x-ray labels + surface labels ---------- */
+const MECH_TAGS = [
+  ['INTAKE',   [18, 28, 72],  -78, -66, 'scan'],
+  ['SIEVE',    [24, CH_Y, 64], -52, -92, 'filter'],
+  ['TUMBLER',  [44, 10, 44],   -46, -70, 'group'],
+  ['GATE',     [48, 28, 24],    88, -76, 'having'],
+  ['PROJECT',  [44, 28, 27],   102, -14, 'project'],
+  ['ORDER',    [34, 28, 21],   -34,  66, 'sort'],
+  ['VALVE',    [46, 12, 12],    34, 104, 'limit'],
+  ['TRAY',     [77, 22, 6.5],   46,  54, 'deliver'],
+];
+const SURFACE_TAGS = [
+  ['HOPPER', [24, 26, HOP_LIP], -66, -50, null],
+  ['PANEL',  [30, 54, 78],       92, -66, null],
+  ['TRAY',   [77, 22, 6.5],      46,  54, 'deliver'],
+];
+function labelSet(st, k) {
+  let s = '';
+  const set = k > .6 ? MECH_TAGS : SURFACE_TAGS;
+  for (const [t, pt, dx, dy, key] of set) s += tag(pt, dx, dy, t, key ? st.phase === key : false);
+  return s;
+}
+
+/* ---------- tile/bundle animation paths ---------- */
+/* representative flow, fixed at run start on st: st.keep, st.rej, st.dup, st.nB, st.killB, st.limN */
+function hopperTiles(st, aboveOnly) {
+  if (st.phase !== 'scan') return [];
+  const out = [];
+  for (let i = 0; i < TILES_N; i++) {
+    const t0 = i * .13, t = st.phT - t0;
+    if (t < 0) continue;
+    const q = Math.min(1, t / .55);
+    const z = 108 - q * 22, op = q >= 1 ? 1 - Math.min(1, (st.phT - t0 - .55) / .25) : 1;
+    if (op <= 0) continue;
+    if (aboveOnly && z < HOP_LIP - 3) continue;
+    if (!aboveOnly && z >= HOP_LIP - 3) continue;
+    const wob = Math.sin(t * 9 + i) * .8;
+    out.push(qmTile([24 + wob, 26, z], UP, ACROSS, .12 + t * .8, TILE_HUES[tileHue(st.plan, i)], false, op));
+  }
+  return out;
+}
+function troughProg(st, i) {   // x position of tile i on the trough (rest slots by phase)
+  const slots = i => 15.5 + i * 1.75;
+  if (st.phase === 'scan') return Math.min(slots(i), 14 + Math.max(0, st.phT - .8 - i * .12) * 22);
+  return slots(i);
+}
+function rejectedTiles(st) {
+  const out = [];
+  for (const i of st.rej) {
+    let pos = null;
+    if (st.phase === 'filter') {
+      const t = st.phT - .35 - (i - st.rej[0]) * .18;
+      if (t < 0) continue;
+      const q = Math.min(1, t / 1.15), e = qmSstep(0, 1, q);
+      pos = qmLerp3([31.5, 30, 61.5], [23, 73, BIN.h - 2], e);
+      pos[2] -= Math.sin(Math.PI * q) * 1.5;
+    } else if (st.phases.indexOf('filter') >= 0 && st.phases.indexOf(st.phase) > st.phases.indexOf('filter')) {
+      pos = [23 + (i % 3) * 3, 73 + (i % 2) * 3, BIN.h - 2.2];
+    }
+    if (pos) out.push(qmTile(pos, UP, ACROSS, .5 + i, TILE_HUES[tileHue(st.plan, i)], false, 1));
+  }
+  return out;
+}
+function drumMouthTiles(st) {
+  const hasGroup = st.plan.groupBy.length > 0;
+  const out = [];
+  if (hasGroup && (st.phase === 'group' || st.phase === 'having')) {
+    if (st.phase === 'group' && st.phT < 1.1) {
+      for (const i of st.keep) {
+        const a = st.drumA * .9 + i * 2.1, r = 6.5;
+        out.push(qmTile([40 + (i % 4) * 4.4, CH_Y + r * Math.cos(a), CH_Z + r * Math.sin(a)], [0, -Math.sin(a), Math.cos(a)], ACROSS, 0, TILE_HUES[tileHue(st.plan, i)], false, 1));
+      }
+    } else {
+      const bs = bundlesOf(st);
+      for (let b = 0; b < bs.length; b++) {
+        if (st.killB != null && b === st.killB) continue;
+        const q = Math.min(1, Math.max(0, (st.phT - 1.2 - b * .25) / .6));
+        const pos = qmLerp3([53, CH_Y, CH_Z - 4], [56, CH_Y - 2, 26], q);
+        out.push(qmBundle(pos, UP, ACROSS, q * .3, bs[b].map(i => TILE_HUES[tileHue(st.plan, i)]), 1));
+      }
+    }
+  }
+  return out;
+}
+function dropLaneTiles(st) {
+  if (st.plan.groupBy.length) return [];
+  if (st.phase !== 'group' && st.phase !== 'distinct' && st.phase !== 'project') return [];
+  const out = [];
+  st.keep.forEach((i, j) => {
+    const t = st.phT * 1.4 - j * .35;
+    if (t < 0 || t > 1) return;
+    const pos = qmLerp3([40, CH_Y, 61], [47.5, CH_Y, 21], qmSstep(0, 1, t));
+    out.push(qmTile(pos, [0, -1, 0], ACROSS, t * 2.4, TILE_HUES[tileHue(st.plan, i)], st.phases.indexOf('project') < st.phases.indexOf(st.phase), 1));
+  });
+  return out;
+}
+function deliveredTiles(st) {
+  const out = [];
+  const n = st.deliveredCount || 0;
+  const bs = st.lastBundles || [];
+  for (let k = 0; k < n && k < 8; k++) {
+    const col = k % 4, row = Math.floor(k / 4) % 2;
+    const cx = TRAY.x0 + 6.5 + col * 6.4, cy = TRAY.y0 + 7 + row * 11;
+    const hue = bs[k] != null ? TILE_HUES[tileHue(st.plan, bs[k][0])] : TILE_HUES[k % 4];
+    out.push(qmTile([cx, cy, TRAY.h + 1.2], UP, ACROSS, (k * .8) % .7 - .3, hue, true, 1));
+  }
+  return out;
+}
+/* every moving item as a byDepth part (x-ray mode draws them all; normal mode only the visible zones) */
+function pathParts(st, xray) {
+  const parts = [];
+  const hasGroup = st.plan.groupBy.length > 0;
+  const ph = st.phase, idx = st.phases.indexOf(ph);
+  // tiles riding the trough (scan/filter/distinct tails)
+  if (xray && (ph === 'scan' || ph === 'filter' || ph === 'distinct')) {
+    st.keep.forEach((i, j) => {
+      let x = troughProg(st, i);
+      if (ph === 'filter') x = Math.min(33 + j * .8, x + Math.max(0, st.phT - .2) * 14);
+      if (ph === 'distinct') x = 33 + j * .8 + Math.min(1.6, Math.max(0, st.phT - .2) * 6);
+      if (st.dup != null && i === st.dup && ph === 'distinct') x = X_HOOP;
+      parts.push({ at: [x, CH_Y, 64.5], svg: qmTile([x, CH_Y, 64.5], [0, -1, 0], ACROSS, .1, TILE_HUES[tileHue(st.plan, i)], false, 1) });
+    });
+    if (ph === 'distinct' && st.dup != null) {
+      const q = Math.min(1, st.phT / .9);
+      if (q < 1) parts.push({ at: [X_HOOP, CH_Y, 66], svg: `<circle cx="${f(P(X_HOOP, CH_Y, CH_Z + 27)[0])}" cy="${f(P(X_HOOP, CH_Y, CH_Z + 27)[1])}" r="${f(2 + q * 6)}" fill="none" stroke="${INK}" stroke-width="${f(1.2 * INK_K * (1 - q))}" opacity="${f(1 - q)}"/>` });
+    }
+  }
+  // bundles/tiles on the belt + out-tube
+  const bs = bundlesOf(st);
+  const beltStages = ['having', 'project', 'sort', 'limit', 'deliver'];
+  if (hasGroup && beltStages.includes(ph)) {
+    bs.forEach((b, bi) => {
+      if (st.killB != null && bi === st.killB && idx > st.phases.indexOf('having')) return;
+      const limOn = st.plan.limit != null && st.plan.limit !== '';
+      if (limOn && bi >= st.limN && idx >= st.phases.indexOf('limit')) {
+        if (ph !== 'limit') return;
+        // held bundles rattle at the valve
+        const bx = 45.5 + Math.sin(st.phT * 22 + bi) * .25;
+        parts.push({ at: [bx, 14, 13], svg: qmBundle([bx, 14, 13.5], [0, -1, 0], ACROSS, .1, b.map(i => TILE_HUES[tileHue(st.plan, i)]), 1) });
+        return;
+      }
+      // belt x per phase: having 56->48, project 48->42, sort 42->35 (queue), limit 35->26 then tube
+      let x = null, z = BELT_Z + 3.6, rank = null;
+      if (ph === 'having') x = 56 - Math.min(1, st.phT / 1.1) * 8 - bi * .3;
+      else if (ph === 'project') x = 48 - Math.min(1, st.phT / 1.3) * 6 - bi * .3;
+      else if (ph === 'sort') {
+        const q = Math.min(1, Math.max(0, st.phT - bi * .45) / .55);
+        x = 42 - q * 7; rank = bi + 1;
+        if (q < 1 && st.phT < bi * .45) x = 42;
+      }
+      else if (ph === 'limit') { const q = Math.min(1, st.phT / 1.1); x = 35 - q * 9 - bi * .4; }
+      else if (ph === 'deliver') {
+        const q = Math.min(1, Math.max(0, (st.phT - bi * .38) / .95));
+        if (q <= 0) { x = 26; }
+        else if (q < 1) {
+          // ride the U-tube then the chute
+          const a = qmLerp3([26, CH_Y, 14], [CHUTE_EXIT[0], CHUTE_EXIT[1], CHUTE_EXIT[2]], qmSstep(0, .55, q));
+          const b2 = qmLerp3([CHUTE_EXIT[0], CHUTE_EXIT[1], CHUTE_EXIT[2]], [TRAY.x0 + 6.5 + (bi % 4) * 6.4, TRAY.y0 + 7 + Math.floor(bi / 4) * 11, TRAY.h + 2.2], qmSstep(.55, 1, q));
+          const pos = q < .55 ? a : b2;
+          parts.push({ at: pos, svg: qmBundle(pos, UP, ACROSS, .15 + Math.sin(q * Math.PI) * .5, b.map(i => TILE_HUES[tileHue(st.plan, i)]), 1) });
+          return;
+        } else return;
+      }
+      if (x != null) parts.push({ at: [x, CH_Y, z], svg: qmBundle([x, CH_Y, z], UP, ACROSS, .08, b.map(i => TILE_HUES[tileHue(st.plan, i)]), 1) + (rank != null ? `<text x="${f(P(x, CH_Y, z + 6.5)[0])}" y="${f(P(x, CH_Y, z + 6.5)[1])}" font-size="${f(4.4 * INK_K)}" fill="${INK}" text-anchor="middle" font-family="ui-monospace,Menlo,monospace" font-weight="800">${rank}</text>` : '') });
+    });
+  }
+  return parts;
+}
+
+/* ---------- scene ---------- */
+function scene(st, m) {
+  const p = st.plan;
+  let s = '';
+  // shadows
+  s += castShadow([...on(PX(0), OUTR), ...on(PX(QW), OUTR), ...on(PZ(HOP_LIP), rectUV(HOP_B[0], HOP_B[1], HOP_B[2], HOP_B[3]))]);
+  s += castShadow([...on(PZ(0), rrUV(TRAY.x0, TRAY.y0, TRAY.x1, TRAY.y1, 2)), ...on(PZ(TRAY.h), rrUV(TRAY.x0, TRAY.y0, TRAY.x1, TRAY.y1, 2))]);
+  if (p.where.length) s += castShadow([...on(PZ(0), rrUV(BIN.x0, BIN.y0, BIN.x1, BIN.y1, 2)), ...on(PZ(BIN.h), rrUV(BIN.x0, BIN.y0, BIN.x1, BIN.y1, 2))]);
+  // drum shake while spinning fast
+  const om = st.run && st.phase === 'group' ? st.drumW : 0, shake = Math.max(0, (Math.abs(om) - 6) / 10);
+  const jx = shake * (.5 * Math.sin(st.phT * 97) + .3 * Math.sin(st.phT * 151)), jy = shake * (.4 * Math.sin(st.phT * 123 + 1));
+  OX += jx; OY += jy;
+  try {
+    s += backBits();
+    // feet
+    s += byDepth([[4, 4], [4, QD - 4], [QW - 4, 4], [QW - 4, QD - 4]].map(([x, y]) => ({ at: [x, y, 0], svg: cyl(x, y, 0, QPL + .5, 2.4, RUBBER, toneI, 1, 14) })));
+    // the cabinet (or its ghost in x-ray)
+    let body = cabinet(m, st);
+    const k = st.xr;
+    const binSvg = p.where.length ? binPart(m, st) : '';
+    const traySvg = tray(m, st);
+    const chuteSvg = chuteRails(m);
+    const hopperSvg = hopper(m, st);
+    if (k > 0) {
+      const far = `<g opacity="${f(.5 * k)}">` + loft(on(PX(0), OUTR), on(PX(QW), OUTR), n => mix(toneI(n.map(v => [-v[0], -v[1], -v[2]]), m), '#f2efe7', .55), true)
+        + fill(pd(on(PX(0), OUTR)), mix(m.d, '#f2efe7', .5)) + `</g>`;
+      s += far + mechanism(st, m, k)
+        + `<g opacity="${f(1 - .8 * k)}">${body}</g>`
+        + `<g opacity="${f(.6 * k)}">` + hullInk([...on(PX(0), OUTR), ...on(PX(QW), OUTR)], 2.8) + `</g>`;
+      s += `<g opacity="${f(1 - .72 * k)}">${hopperSvg}</g>`;
+    } else {
+      s += body;
+      s += hopperSvg;
+      // mounted on the front: chips (front face only — the figure can be turned)
+      if (vis([1, 0, 0])) s += chipsRow(st, m);
+    }
+    // bin, chute, tray (nearer than the body on the right, left of it on the left)
+    s += binSvg + chuteSvg + traySvg;
+    // tiles still in the air above the hopper (open air — nothing occludes them)
+    for (const t of hopperTiles(st, true)) s += t;
+    // items visible outside the cabinet: nothing in normal mode (paths are inside) — flying deliver handled by clip-free draw below
+    if (k <= 0) {
+      // deliver: bundles ride chute + land on tray (drawn openly — outside the cabinet)
+      const bs = bundlesOf(st);
+      if (st.plan.groupBy.length && st.phase === 'deliver') {
+        bs.forEach((b, bi) => {
+          if (st.killB != null && bi === st.killB) return;
+          if (st.limN != null && bi >= st.limN) return;
+          const q = Math.min(1, Math.max(0, (st.phT - bi * .38) / .95));
+          if (q <= 0 || q >= 1) return;
+          const a = qmLerp3([CHUTE_EXIT[0], CHUTE_EXIT[1], CHUTE_EXIT[2]], [TRAY.x0 + 6.5 + (bi % 4) * 6.4, TRAY.y0 + 7 + Math.floor(bi / 4) * 11, TRAY.h + 2.2], qmSstep(0, 1, q));
+          s += qmBundle(a, UP, ACROSS, .15 + Math.sin(q * Math.PI) * .6, b.map(i => TILE_HUES[tileHue(st.plan, i)]), 1);
+        });
+      }
+      if (!st.plan.groupBy.length && st.phase === 'deliver') {
+        st.keep.forEach((i, bi) => {
+          const q = Math.min(1, Math.max(0, (st.phT - bi * .3) / .9));
+          if (q <= 0 || q >= 1) return;
+          const a = qmLerp3([CHUTE_EXIT[0], CHUTE_EXIT[1], CHUTE_EXIT[2]], [TRAY.x0 + 6.5 + (bi % 4) * 6.4, TRAY.y0 + 7 + Math.floor(bi / 4) * 11, TRAY.h + 2.2], qmSstep(0, 1, q));
+          s += qmTile(a, UP, ACROSS, .2 + Math.sin(q * Math.PI) * .6, TILE_HUES[tileHue(st.plan, i)], true, 1);
+        });
+      }
+      // rejected tiles falling outside? they travel inside the reject tube — visible only in x-ray
+    }
+    // porthole glass on top (front face only — the figure can be turned)
+    if (vis([1, 0, 0])) s += fill(pd(qmRingX(QW + .3, RG)), '#cfe9f0', 'opacity=".18" pointer-events="none"');
+    s += labelSet(st, k);
+  } finally { OX -= jx; OY -= jy; }
+  return s;
+}
+
+/* ---------- mount + parent protocol ---------- */
+let ui, st0;
+ui = mountFigure({
+  fig: 'SQ', title: 'The Query Machine', hint: 'run the query — rows become answers; see-through shows the stations',
+  idea: 'A SELECT is a machine: FROM feeds rows in, every clause is a station, the tray holds the result.',
+  size: [QW - 14, QD + 26, HOP_LIP + 10], center: [QW / 2, (QD - 12) / 2],
+  palette: 'mint',
+  state: { plan: DEFAULT_PLAN, phases: stationsOf(DEFAULT_PLAN), phase: 'idle', phT: 0, run: false, paused: false,
+           loop: false, xr: 0, xrTarget: 0, drumA: 0, drumW: 0,
+           keep: [0, 1, 2, 3, 4], rej: [5, 6, 7], dup: null, killB: null, limN: 3,
+           bundles: [[0, 1], [2, 3], [4]], lastBundles: [[0, 1], [2, 3], [4]],
+           deliveredCount: 0, rejectedCount: 0 },
+  scene,
+  stats: st => {
+    const c = st.plan.counts || {};
+    return [
+      { label: 'Rows in', value: qmFmt(c.scan) },
+      { label: 'Rows out', value: qmFmt(c.out) },
+      { label: 'ms', value: st.plan.ms != null ? String(st.plan.ms) : '—', small: true },
+    ];
+  },
+  buttonsLabel: 'Machine',
+  buttons: [
+    { label: 'Run query', onClick: (st, u) => startRun(st, u) },
+    { label: 'Step', onClick: (st, u) => stepNext(st, u) },
+    { label: 'See-through', onClick: (st, u) => toggleXr(st, u) },
+    { label: 'Reset', onClick: (st, u) => resetRun(st, u) },
+  ],
+  acts: {
+    porthole: (st, el, u) => toggleXr(st, u),
+    tray: (st, el, u) => u.flash((st.plan.counts.out != null ? st.plan.counts.out + ' rows' : 'the result set') + ' — every tile is one row of the answer'),
+    chip: (st, el, u) => {
+      const p = st.plan, k = el.dataset.k;
+      const txt = { scan: 'FROM ' + p.tables.map(t => t.name).join(' + '), filter: 'WHERE ' + p.where.join(' AND '),
+        distinct: 'DISTINCT — one of each', group: 'GROUP BY ' + p.groupBy.join(', '), having: 'HAVING ' + p.having.join(' AND '),
+        project: 'SELECT ' + p.columns.slice(0, 3).map(c => c.alias || c.text).join(', '),
+        sort: 'ORDER BY ' + p.orderBy.map(o => o.text + ' ' + (o.direction || '')).join(', '), limit: 'LIMIT ' + p.limit }[k];
+      u.flash(txt ? txt.slice(0, 90) : k);
+    },
+  },
+  params: (st, q) => {
+    if (q.get('xray') === '1') { st.xr = 1; st.xrTarget = 1; }
+    if (q.get('phase') && PHASE_LABEL[q.get('phase')]) {
+      recomputeFlow(st); st.lastBundles = st.bundles;
+      st.phase = q.get('phase'); st.phT = +(+q.get('t') || 0); st.run = st.phase !== 'idle' && st.phase !== 'done';
+      if (st.phase === 'deliver' || st.phase === 'done') st.deliveredCount = st.phase === 'done' ? st.limN : Math.min(st.limN, Math.round((st.phT / 1.8) * st.limN));
+    }
+    if (q.get('tray') === '1' && !q.get('phase')) { recomputeFlow(st); st.phase = 'done'; st.deliveredCount = st.limN; }
+    if (q.get('err') === '1') st.plan = { ...DEFAULT_PLAN, error: { message: 'unknown column o.total_x' } };
+    if (q.get('run') === '1') setTimeout(() => { recomputeFlow(st); startRun(st, ui); }, 80);
+  },
+});
+st0 = ui.st;
+recomputeFlow(st0); st0.lastBundles = st0.bundles;
+
+/* ---- parent protocol: plan in, run/xray in, readiness + errors out ---- */
+window.addEventListener('message', e => {
+  if (e.source !== parent || !e.data || typeof e.data !== 'object') return;
+  const d = e.data;
+  if (d.type === 'cf:plan') {
+    st0.plan = { ...DEFAULT_PLAN, ...d.plan, counts: { ...DEFAULT_PLAN.counts, ...(d.plan.counts || {}) } };
+    st0.phases = stationsOf(st0.plan);
+    resetRun(st0, ui); ui.render();
+  } else if (d.type === 'cf:run') { startRun(st0, ui); ui.render(); }
+  else if (d.type === 'cf:xray') { if ((d.on ? 1 : 0) !== st0.xrTarget) toggleXr(st0, ui); }
+});
+try { parent.postMessage({ type: 'cf:ready' }, '*'); } catch (e) {}
+
+/* ---------- behaviour: one state object, one source of truth ---------- */
+function tick(fn) { let last = performance.now(); ui.animate(() => { const n = performance.now(), dt = Math.min(.05, Math.max(0, (n - last) / 1000)); last = n; return fn(dt); }); }
+function recomputeFlow(st) {
+  const p = st.plan, c = p.counts || {};
+  st.keep = []; for (let i = 0; i < TILES_N; i++) st.keep.push(i);
+  st.rej = [];
+  if (p.where.length) {
+    const keepN = c.scan && c.afterWhere != null ? Math.max(1, Math.min(7, Math.round(TILES_N * c.afterWhere / Math.max(1, c.scan)))) : 5;
+    st.rej = st.keep.slice(keepN); st.keep = st.keep.slice(0, keepN);
+  }
+  st.dup = null;
+  if (p.distinct) { const seen = {}; for (const i of st.keep) { if (seen[tileHue(p, i)] != null) { st.dup = i; break; } seen[tileHue(p, i)] = true; } }
+  const kept = st.keep.filter(i => i !== st.dup);
+  st.phases = stationsOf(p);
+  st.nBundles = p.groupBy.length
+    ? Math.max(2, Math.min(4, Math.round(Math.log2((c.afterGroup ?? 24) + 1))))
+    : 1;
+  const per = Math.max(1, Math.ceil(kept.length / (p.groupBy.length ? 3 : kept.length)));
+  st.bundles = []; for (let i = 0; i < kept.length; i += per) st.bundles.push(kept.slice(i, i + (p.groupBy.length ? per : 1)));
+  st.killB = null;
+  if (p.having.length && p.groupBy.length) st.killB = st.bundles.length - 1;
+  const alive = st.bundles.filter((_, b) => b !== st.killB);
+  st.limN = alive.length;
+  if (p.limit != null && p.limit !== '') { const L0 = parseInt(p.limit, 10); if (L0 > 0) st.limN = Math.min(alive.length, L0); }
+  st.deliveredCount = 0;
+}
+function startRun(st, u) {
+  if (st.run) { st.paused = !st.paused; if (!st.paused) runLoop(); else u.flash('paused — press run to resume'); return; }
+  if (st.plan.error) return u.flash('fix the query first — the machine cannot parse it');
+  recomputeFlow(st);
+  st.run = true; st.paused = false; st.phase = st.phases[0]; st.phT = 0; st.deliveredCount = 0; st.lastBundles = st.bundles;
+  runLoop();
+}
+function runLoop() {
+  if (st0.loop) return;
+  st0.loop = true;
+  tick(dt => {
+    const st = ui.st;
+    if (!st.run || st.paused) { st.loop = false; return false; }
+    st.phT += dt;
+    if (st.phase === 'group') st.drumW = 2.4 + Math.min(1, st.phT / 2.4) * 9; else st.drumW = 0;
+    st.drumA += (st.drumW || 0) * dt;
+    const dur = PHASESec[st.phase] || 1;
+    if (st.phase === 'filter' && st.rej.length) st.rejectedCount = st.rej.length;
+    if (st.phase === 'deliver') {
+      const items = st.plan.groupBy.length ? st.bundles.filter((_, b) => b !== st.killB && b < st.limN) : st.keep;
+      st.deliveredCount = Math.min(items.length, Math.floor((st.phT / PHASESec.deliver) * items.length + .35));
+    }
+    if (st.phT >= dur) {
+      const next = st.phases.indexOf(st.phase) + 1;
+      if (next >= st.phases.length) {
+        st.run = false; st.loop = false; st.phase = 'done'; st.phT = 0;
+        st.deliveredCount = (st.plan.groupBy.length ? st.bundles.filter((_, b) => b !== st.killB).length : st.keep.length);
+        ui.flash('done — ' + qmFmt(st.plan.counts.out) + ' rows on the tray', 2200);
+        try { parent.postMessage({ type: 'cf:done' }, '*'); } catch (e) {}
+        return false;
+      }
+      st.phase = st.phases[next]; st.phT = 0;
+    }
+    return true;
+  });
+}
+function stepNext(st, u) {
+  if (st.run) return u.flash('running — press run to pause first');
+  if (st.plan.error) return u.flash('fix the query first');
+  if (st.phase === 'done' || st.phase === 'idle') {
+    if (st.phase === 'done') { recomputeFlow(st); st.deliveredCount = 0; }
+    recomputeFlow(st); st.lastBundles = st.bundles;
+    st.run = false; st.phase = st.phases[0]; st.phT = 0; u.flash('step 1 — ' + st.phase);
+    return;
+  }
+  const next = st.phases.indexOf(st.phase) + 1;
+  if (next >= st.phases.length) {
+    st.phase = 'done'; st.phT = 0;
+    st.deliveredCount = (st.plan.groupBy.length ? st.bundles.filter((_, b) => b !== st.killB).length : st.keep.length);
+    u.flash('done — ' + qmFmt(st.plan.counts.out) + ' rows on the tray', 2200);
+    return;
+  }
+  st.phase = st.phases[next]; st.phT = .35;
+  if (st.phase === 'deliver') { const items = st.plan.groupBy.length ? st.bundles.filter((_, b) => b !== st.killB && b < st.limN) : st.keep; st.deliveredCount = items.length; }
+  u.flash('step — ' + st.phase);
+}
+function toggleXr(st, u) {
+  const to = st.xrTarget ? 0 : 1;
+  st.xrTarget = to;
+  tick(dt => { st.xr += (to - st.xr) * Math.min(1, dt * 6); if (Math.abs(to - st.xr) < .01) { st.xr = to; return false; } return true; });
+}
+function resetRun(st, u) {
+  st.run = false; st.paused = false; st.loop = false; st.phase = 'idle'; st.phT = 0; st.drumA = 0; st.deliveredCount = 0; st.rejectedCount = 0;
+  recomputeFlow(st); u.render();
+}
+</script>
+</body></html>
