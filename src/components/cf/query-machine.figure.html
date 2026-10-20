@@ -83,8 +83,8 @@ const DEFAULT_PLAN = {
   columns: [{ text: 'c.name', alias: null }, { text: 'o.status', alias: null },
             { text: 'COUNT(*)', alias: 'order_count', aggregation: 'COUNT' },
             { text: 'SUM(o.total)', alias: 'revenue', aggregation: 'SUM' }],
-  counts: { scan: null, afterWhere: null, afterGroup: null, afterHaving: null, out: null },
-  ms: null, error: null,
+  counts: { scan: 103, afterWhere: 78, afterGroup: 24, afterHaving: 9, out: 4 },
+  ms: 1.17, error: null,
 };
 
 /* stations actually present, in run order — the machine re-models around them */
@@ -231,22 +231,35 @@ function chipsRow(st, m) {
   return s;
 }
 function cabinet(m, st) {
+  // free camera: each dressed plane draws only while it faces the viewer
+  const fx = vis([1, 0, 0]), bx = vis([-1, 0, 0]);
+  const syDot = ((r) => r[0] + r[1] + r[2])(rotV([0, 1, 0]));
+  const sy = syDot > 1e-6, syText = syDot > .3;   // text needs a decent angle or it shears at the edge
   let body = '';
-  body += cabinetFront(m, st);
+  if (fx) body += cabinetFront(m, st);
   // outer body first, then the face dressing on top of it
   body += extrude(OUTR, 0, QW, m);
-  // side decal + vents (the +y face is in shade: lighter plate, darker ink)
-  const sm = tone([0, 1, 0], m);
-  const tc = mix(sm, '#000000', .5);
-  body += shape(on(PY(QD + .2), rrUV(14, 30, QW - 14, 58, 5)), mix(sm, '#ffffff', .3), 1.2);
-  body += txY(QW / 2, QD + .3, 48, 'QUERYMATIC', 7.2, tc, 800);
-  body += txY(QW / 2, QD + .3, 39.5, 'ROW-THROUGH', 3.2, tc, 800);
-  for (let z = 10; z <= 18; z += 2.6) body += `<path d="${pd([[12, QD + .2, z], [QW - 12, QD + .2, z]], false)}" fill="none" stroke="${INK}" stroke-width="1.1" stroke-linecap="round" opacity=".65"/>`;
+  if (bx) {  // the back wall — seen once the figure is turned: plain cap + vent slots
+    const bm = tone([-1, 0, 0], m);
+    body += shape(on(PX(0), OUTR), bm, 1.2);
+    for (let z = 12; z <= 24; z += 2.6) body += `<path d="${pd([[.2, 12, z], [.2, QD - 12, z]], false)}" fill="none" stroke="${INK}" stroke-width="1.1" stroke-linecap="round" opacity=".5"/>`;
+  }
+  if (sy) {
+    // side decal + vents (the +y face is in shade: lighter plate, darker ink)
+    const sm = tone([0, 1, 0], m);
+    const tc = mix(sm, '#000000', .5);
+    if (syText) {
+      body += shape(on(PY(QD + .2), rrUV(14, 30, QW - 14, 58, 5)), mix(sm, '#ffffff', .3), 1.2);
+      body += txY(QW / 2, QD + .3, 48, 'QUERYMATIC', 7.2, tc, 800);
+      body += txY(QW / 2, QD + .3, 39.5, 'ROW-THROUGH', 3.2, tc, 800);
+    }
+    for (let z = 10; z <= 18; z += 2.6) body += `<path d="${pd([[12, QD + .2, z], [QW - 12, QD + .2, z]], false)}" fill="none" stroke="${INK}" stroke-width="1.1" stroke-linecap="round" opacity=".65"/>`;
+  }
   // top spec sticker
   const tp = PZ(QH + .1);
   body += shape(on(tp, rrUV(40, 14, 54, 26, 1.5)), '#fbf7ea', .9);
   for (let k = 0; k < 3; k++) body += ink(pd(on(tp, [[42.5, 17 + k * 2.6], [51.5, 17 + k * 2.6]]), false), k === 2 ? .55 : .7);
-  body += ink(pd(on(PX(QW), OUTR)), 2.2);
+  if (fx) body += ink(pd(on(PX(QW), OUTR)), 2.2);
   body += hullInk([...on(PX(0), OUTR), ...on(PX(QW), OUTR)], 2.8);
   return body;
 }
@@ -625,8 +638,8 @@ function scene(st, m) {
     } else {
       s += body;
       s += hopperSvg;
-      // mounted on the front: chips
-      s += chipsRow(st, m);
+      // mounted on the front: chips (front face only — the figure can be turned)
+      if (vis([1, 0, 0])) s += chipsRow(st, m);
     }
     // bin, chute, tray (nearer than the body on the right, left of it on the left)
     s += binSvg + chuteSvg + traySvg;
@@ -656,8 +669,8 @@ function scene(st, m) {
       }
       // rejected tiles falling outside? they travel inside the reject tube — visible only in x-ray
     }
-    // porthole glass on top
-    s += fill(pd(qmRingX(QW + .3, RG)), '#cfe9f0', 'opacity=".18" pointer-events="none"');
+    // porthole glass on top (front face only — the figure can be turned)
+    if (vis([1, 0, 0])) s += fill(pd(qmRingX(QW + .3, RG)), '#cfe9f0', 'opacity=".18" pointer-events="none"');
     s += labelSet(st, k);
   } finally { OX -= jx; OY -= jy; }
   return s;
