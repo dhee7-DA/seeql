@@ -8635,3 +8635,21 @@ Work Log:
 Stage Summary:
 - Query Machine passes the colourfigures verification standard: every drawn stage matches the real process; tray/bin/panel/LCD/stats all agree with the funnel numbers.
 - Files: public/cf/query-machine.html (fixed + rebuilt), .next/standalone/public/cf/query-machine.html (synced), verification scripts qm-verify.sh / qm-verify2.sh, shots in scripts/qm-shots/.
+
+---
+Task ID: colorfigures-4
+Agent: main
+Task: User asked for an ORIGINAL figure instead of the washing machine — "something that matches more with our app".
+
+Work Log:
+- Designed "The Query Sorting Office": a postal-run metaphor matched to SELECT semantics — mail sack = FROM, address checker = WHERE (RTS bin), dup desk = DISTINCT, pigeonhole carousel = GROUP BY, supervisor gate = HAVING, postmark press = SELECT, sequencing rack = ORDER BY, sack clasp = LIMIT, delivery tray = result. Envelopes carry the source-table hue in their stamp corner; postmark cancel appears after projection.
+- Built src/components/cf/query-office.figure.html by re-skinning the verified machine figure: kept every coordinate/behavior (flow line, drum axis, tray/bin, orbit camera, protocol), replaced qmTile with a landscape envelope (same signature — zero call-site changes), qmBundle strap -> kraft band, hopper -> canvas sack (loft rings, rolled cuff, dark opening), drum perforations -> carousel shelf rings + crawling radial dividers, mint LCD -> chalkboard, chip plate -> brass, decals -> SEEQL POST / SORTING OFFICE.
+- Shot round 1 found: the machine's dark throat plate floated visibly on the sack (funnel hid it; a cinched sack doesn't). Fixed: opening clipped to the lip ellipse, letters now fall 108->97 and fade INSIDE the opening (z = 108 - q*11).
+- Shot round 2 found a REGRESSION: tray showed 2 letters (not 4) and the RTS bin emptied at done — the previous session's behavior fixes had been applied to the BUILT file only, not the source. Backported all six fixes to BOTH sources (limN = clamp(counts.out,0,8); deliver/done/step use limN; rejectedTiles spread + done condition). Re-verified: 4 postmarked envelopes on the tray = ROWS OUT 4, 3 rejects stay in the bin.
+- DOM check: data-errors empty; the 22 "NaN" grep hits were base64 noise in the grain filter (verified 0 NaN inside real d/transform/cx/cy attributes).
+- Deploy: office build copied over public/cf/query-machine.html (the bridge's iframe path) so NO server rebuild/restart was needed (restarts risk the gateway-404 issue); standalone copy synced; curl-verified live (title, SEEQL POST, and fix marker all present). Note: NEW filenames 404 on :3000 until next server restart (standalone snapshots public/ at boot) — query-office.html direct URL will activate then.
+- Committed 4 files (office source + build, machine source backport, machine.html = office build).
+
+Stage Summary:
+- The Machine tab now shows The Query Sorting Office — an original SeeQL-owned figure with the same verified real-count behavior and full interaction set (run/step/see-through/reset, orbit, wobble, palettes, labels, params states).
+- Both figure sources now carry the behavior fixes, so future rebuilds cannot regress the tray/bin narrative.
