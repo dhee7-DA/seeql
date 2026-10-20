@@ -49,6 +49,28 @@ export interface DomainQuizRecord {
   lastTs: number;
 }
 
+/** One completed interview-sim loop (the 4-stage onsite simulation).
+ *  Scoring: screening 6 points + coding 2 (1 per passed problem) +
+ *  case 1 (self-mark) + theory 2 (half-credit allowed) = 11 points. */
+export interface InterviewRun {
+  /** "ivw-<ts>" — also the idempotence key for the completion XP. */
+  id: string;
+  ts: number;
+  /** Companies drawn from — length 1 is a company loop, more is a loop day. */
+  kitIds: string[];
+  /** Report headline, e.g. "Amazon loop" / "Loop day · 5 companies". */
+  label: string;
+  screen: { ok: number; n: number };
+  /** Coding problems passed on submit (parked = fail). */
+  coding: { ok: number; n: number };
+  /** Self-marked case debrief (0 | 0.5 | 1). */
+  caseMark: number;
+  theory: { score: number; total: number };
+  /** Overall 0..100 — points earned / 11. */
+  pct: number;
+  durationSec: number;
+}
+
 export interface UniverseState {
   /** `u:<kitId>:<mcqId>` → every mock-screen MCQ answer (screen accuracy). */
   mockMcq: Record<string, { correct: boolean; firstTry: boolean; ts: number }>;
@@ -56,6 +78,8 @@ export interface UniverseState {
   theoryMarks: Record<string, { best: TheoryMark; ts: number }>;
   /** Completed mock screens, newest first (cap 40 — reports, not a ledger). */
   mocks: UniverseMock[];
+  /** Completed interview-sim loops, newest first (cap 20 — debriefs). */
+  interviews: InterviewRun[];
   domainQuiz: Record<string, DomainQuizRecord>;
   /** The targeted company id (seeql targeting / readiness track), or null. */
   target: string | null;
@@ -69,6 +93,9 @@ export interface UniverseState {
    *  Returns the XP actually banked (0 on a re-bank) so the report can show
    *  an honest number. */
   saveMock: (m: Omit<UniverseMock, "id" | "ts">) => number;
+  /** Bank a completed interview-sim loop: history + completion XP (idempotent
+   *  per run). Returns the XP actually banked (0 on a re-bank). */
+  saveInterview: (m: Omit<InterviewRun, "id" | "ts">) => number;
   /** Bank a domain mastery quiz attempt: record + daily completion XP. */
   recordDomainQuiz: (domainId: string, pct: number) => void;
   setTarget: (id: string | null) => void;
@@ -102,6 +129,7 @@ export const useUniverse = create<UniverseState>()(
       mockMcq: {},
       theoryMarks: {},
       mocks: [],
+      interviews: [],
       domainQuiz: {},
       target: null,
       targetSince: null,
@@ -148,6 +176,19 @@ export const useUniverse = create<UniverseState>()(
         return banked;
       },
 
+      saveInterview: (m) => {
+        const id = `ivw-${Date.now()}`;
+        const run: InterviewRun = { ...m, id, ts: Date.now() };
+        set((s) => ({ interviews: [run, ...s.interviews].slice(0, 20) }));
+        // completion bonus — idempotent per run id, same rates as a mock
+        const store = useProgress.getState();
+        let banked = 0;
+        if (store.awardXp(`ivw:${id}`, XP.mock)) banked += XP.mock;
+        if (m.pct >= 70 && store.awardXp(`ivwstrong:${id}`, XP.mockStrongBonus))
+          banked += XP.mockStrongBonus;
+        return banked;
+      },
+
       recordDomainQuiz: (domainId, pct) => {
         const prev = get().domainQuiz[domainId];
         set((s) => ({
@@ -179,6 +220,7 @@ export const useUniverse = create<UniverseState>()(
           mockMcq: {},
           theoryMarks: {},
           mocks: [],
+          interviews: [],
           domainQuiz: {},
           target: null,
           targetSince: null,

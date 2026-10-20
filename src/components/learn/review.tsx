@@ -18,9 +18,12 @@ import { fillsFor } from "@/lib/curriculum/fills";
 import { MAX_BOX, REVIEW_INTERVALS, useProgress } from "@/lib/curriculum/progress";
 import { COMPANY_KITS, companyKit } from "@/lib/companies/registry";
 import type { CompanyKit, TheoryQa } from "@/lib/companies/types";
+import { lcBySlug } from "@/lib/leetcode/registry";
+import { lcSqlDive } from "@/lib/leetcode/content/content";
 import type { Fill, Mcq } from "@/lib/curriculum/types";
 import { McqCard } from "./mcq";
 import { FillCard } from "./fill-blank";
+import { SqlNodes } from "./sql-code";
 import { cn } from "@/lib/utils";
 
 interface Card {
@@ -84,14 +87,16 @@ interface LadderItem {
   due: number;
   step: number;
   lapses: number;
-  kind: "mcq" | "theory";
+  kind: "mcq" | "theory" | "code";
   mcq?: Mcq;
   theory?: TheoryQa;
+  /** For a coding card: the problem to re-solve from memory. */
+  code?: { title: string; statement: string; solution: string };
   /** Where the card came from, e.g. "Lesson 03 · INNER JOIN" or "Amazon kit". */
   origin: string;
 }
 
-const LADDER_RE = /^(mcq|umcq|uthr):(.+)$/;
+const LADDER_RE = /^(mcq|umcq|uthr|ulc):(.+)$/;
 
 function resolveLadder(key: string, catalog: Map<string, { kind: "mcq" | "fill"; mcq?: Mcq; lessonNum: number; lessonTitle: string }>): Omit<LadderItem, "key" | "due" | "step" | "lapses"> | null {
   const m = LADDER_RE.exec(key);
@@ -115,6 +120,20 @@ function resolveLadder(key: string, catalog: Map<string, { kind: "mcq" | "fill";
   if (fam === "umcq") {
     const mcq = kit.mcqs.find((q) => q.id === qid);
     return mcq ? { kind: "mcq", mcq, origin: `${kit.name} mock screen` } : null;
+  }
+  if (fam === "ulc") {
+    // a coding problem parked or missed in the interview loop — re-solve from memory
+    const dive = lcSqlDive(qid);
+    if (!dive) return null;
+    return {
+      kind: "code",
+      code: {
+        title: lcBySlug(qid)?.title ?? qid,
+        statement: dive.statement,
+        solution: dive.code,
+      },
+      origin: `${kit.name} interview loop`,
+    };
   }
   const theory = kit.theory.find((t) => t.id === qid);
   return theory ? { kind: "theory", theory, origin: `${kit.name} theory` } : null;
@@ -171,6 +190,57 @@ function TheoryLadderCard({ theory, onMarked }: { theory: TheoryQa; onMarked: (r
   );
 }
 
+/** A coding card on the ladder: sketch the query from memory, reveal the
+ *  reference, self-mark. Recalled graduates; anything less returns tomorrow. */
+function CodeLadderCard({ code, onMarked }: { code: NonNullable<LadderItem["code"]>; onMarked: (recalled: boolean) => void }) {
+  const [revealed, setRevealed] = useState(false);
+  return (
+    <div className="sheen relative rounded-lg border border-zinc-800 bg-zinc-950 p-4 sm:p-5">
+      <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-zinc-600">Coding · sketch it from memory</p>
+      <p className="mt-2 text-sm font-medium leading-relaxed text-zinc-100">{code.title}</p>
+      <p className="mt-1.5 whitespace-pre-line text-xs leading-relaxed text-zinc-300">{code.statement}</p>
+      <textarea
+        rows={4}
+        placeholder="Write the query as you remember building it — CTEs, joins, the ORDER BY."
+        className="mt-3 w-full rounded-lg border border-zinc-700 bg-zinc-900 p-2.5 text-xs leading-relaxed text-zinc-200 placeholder:text-zinc-600 focus:border-zinc-500 focus:outline-none"
+      />
+      {!revealed ? (
+        <button
+          onClick={() => setRevealed(true)}
+          className="mt-3 rounded-md border border-zinc-700 bg-zinc-900 px-3.5 py-2 text-xs font-medium text-zinc-200 transition-colors hover:bg-zinc-800"
+        >
+          Reveal the reference
+        </button>
+      ) : (
+        <div className="mt-3 space-y-3">
+          <div className="rounded-lg border border-zinc-800 bg-zinc-900/60 p-3 font-mono text-[11px] leading-5 text-zinc-200">
+            <SqlNodes text={code.solution} />
+          </div>
+          <div className="flex flex-wrap items-center gap-2 text-[11px] text-zinc-400">
+            Self-mark:
+            <button
+              onClick={() => onMarked(true)}
+              className="rounded-md border border-emerald-400/40 bg-emerald-400/10 px-2.5 py-1 font-medium text-emerald-200 transition-colors hover:bg-emerald-400/20"
+            >
+              I had it
+            </button>
+            {["Shaky", "Missed it"].map((label) => (
+              <button
+                key={label}
+                onClick={() => onMarked(false)}
+                className="rounded-md border border-zinc-700 bg-zinc-900 px-2.5 py-1 text-zinc-300 transition-colors hover:border-zinc-500"
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <p className="text-[10px] leading-relaxed text-zinc-600">Had it graduates the card — shaky or missed brings it back tomorrow.</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function LadderTab() {
   const catalog = useCatalog();
   const schedule = useProgress((s) => s.reviewSchedule);
@@ -221,6 +291,10 @@ function LadderTab() {
 
   const onMarked = (recalled: boolean) => {
     setAnswered(true);
+    // mcq cards schedule themselves inside McqCard (ladderKey); theory and
+    // coding cards are self-marked, so the reschedule happens here — a nailed
+    // answer graduates the card, anything less sends it back to day 1
+    if (current && current.kind !== "mcq") useProgress.getState().scheduleReview(current.key, recalled);
     if (!recalled) setSessionMisses((n) => n + 1);
   };
 
@@ -280,8 +354,10 @@ function LadderTab() {
 
           {current.kind === "mcq" ? (
             <McqCard key={current.key} mcq={current.mcq!} ladderKey={current.key} onAnswered={onMarked} />
-          ) : (
+          ) : current.kind === "theory" ? (
             <TheoryLadderCard key={current.key} theory={current.theory!} onMarked={onMarked} />
+          ) : (
+            <CodeLadderCard key={current.key} code={current.code!} onMarked={onMarked} />
           )}
 
           {answered && (

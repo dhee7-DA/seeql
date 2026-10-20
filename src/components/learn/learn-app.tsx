@@ -42,6 +42,7 @@ import { ErrorClinic } from "./error-clinic";
 import { QueryGolf } from "./query-golf";
 import { MasteryMap } from "./mastery-map";
 import { InterviewTrack } from "./interview-track";
+import { InterviewSim } from "./interview-sim";
 import { SchemaStudio } from "./schema-studio";
 import { ExplainBack } from "./explain-back";
 import { CheatSheet } from "./cheat-sheet";
@@ -93,6 +94,7 @@ export type View =
   | { kind: "golf" }
   | { kind: "mastery" }
   | { kind: "interview" }
+  | { kind: "sim" }
   | { kind: "companies"; domain?: string; company?: string }
   | { kind: "mocks" }
   | { kind: "studio" }
@@ -735,6 +737,8 @@ function ViewBody({
       return <PerfLab initialSql={view.sql} initialTab={view.tab} onOpenLesson={openLesson} />;
     case "interview":
       return <InterviewTrack />;
+    case "sim":
+      return <InterviewSim openLc={(slug) => openLc(undefined, slug)} />;
     case "studio":
       return <SchemaStudio />;
     case "explain":

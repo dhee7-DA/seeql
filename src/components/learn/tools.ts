@@ -25,6 +25,7 @@ import {
   Ghost,
   LayoutDashboard,
   MessagesSquare,
+  Mic,
   Network,
   NotebookPen,
   Printer,
@@ -54,6 +55,7 @@ export type ToolKind =
   | "golf"
   | "perf"
   | "interview"
+  | "sim"
   | "companies"
   | "mocks"
   | "recall"
@@ -100,6 +102,7 @@ export const TOOLS: ToolDef[] = [
   { kind: "golf", icon: Flag, label: "Query golf", note: "same rows, fewer strokes", short: "Golf", section: "lab" },
   { kind: "perf", icon: Gauge, label: "Performance lab", note: "SCAN vs SEARCH, index stings", short: "Perf", section: "lab" },
   { kind: "interview", icon: Briefcase, label: "Interview prep", note: "the screening classics, graded", short: "Interview", section: "lab" },
+  { kind: "sim", icon: Mic, label: "Interview sim", note: "the full 4-stage onsite loop, on the clock", short: "Sim", section: "lab" },
   { kind: "companies", icon: Building2, label: "Company screens", note: "8 domains × 26 companies, 208 kits", short: "Companies", section: "lab" },
   { kind: "mocks", icon: Timer, label: "Mock HQ", note: "full-hall mock screens, on the clock", short: "Mock", section: "lab" },
   { kind: "studio", icon: Network, label: "Schema studio", note: "spot the design smell", short: "Schema", section: "lab" },
