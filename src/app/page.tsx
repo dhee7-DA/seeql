@@ -13,6 +13,7 @@ import {
   Database,
   DatabaseZap,
   Eraser,
+  Factory,
   Filter,
   GitMerge,
   GraduationCap,
@@ -39,6 +40,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SqlEditor } from "@/components/sql-editor";
+import { QueryMachine } from "@/components/cf/query-machine";
 import { PipelineView } from "@/components/pipeline-view";
 import { JoinsView } from "@/components/joins-view";
 import { BreakdownView } from "@/components/breakdown-view";
@@ -661,8 +663,14 @@ function PlaygroundView({
                   </p>
                 )}
 
-                <Tabs defaultValue="pipeline" className="w-full">
+                <Tabs defaultValue="machine" className="w-full">
                   <TabsList className="h-9 w-full justify-start overflow-x-auto bg-zinc-900 sm:w-auto">
+                    <TabsTrigger
+                      value="machine"
+                      className="gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
+                    >
+                      <Factory className="h-3.5 w-3.5" /> Machine
+                    </TabsTrigger>
                     <TabsTrigger
                       value="pipeline"
                       className="gap-1.5 px-3 text-xs data-[state=active]:bg-zinc-800"
@@ -700,6 +708,16 @@ function PlaygroundView({
                       <Braces className="h-3.5 w-3.5" /> JSON
                     </TabsTrigger>
                   </TabsList>
+                  <TabsContent value="machine" className="mt-3">
+                    <QueryMachine
+                      plan={viewPlan}
+                      exec={exec}
+                      sql={viewPlanSql}
+                      dialect={dialect}
+                      tableCounts={tableCounts}
+                      dataVersion={dataVersion}
+                    />
+                  </TabsContent>
                   <TabsContent value="pipeline" className="mt-3 space-y-3">
                     {viewPlan.statementType === "SELECT" && (
                       <>
