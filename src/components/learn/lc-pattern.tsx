@@ -1,7 +1,7 @@
 "use client";
 
 // Pattern diagram — one small "shape of the query" SVG per problem, keyed by
-// the problem's skill section (12 archetypes cover all 59 sections) and
+// the problem's skill section (12 archetypes cover all 73 sections) and
 // personalized with the problem's real table/column names parsed from the
 // DDL. Same pastel language as the highlighter: the learner sees WHICH
 // family of SQL a problem lives in before reading a word.

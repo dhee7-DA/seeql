@@ -1,9 +1,11 @@
 "use client";
 
-// LeetCode — The Big 300. Registry-driven tracker: topic/difficulty/company
-// filters, full deep-dive reports (statement → breakdown → logic ladder →
-// verified Python solution), company index, and solved-marking that pays XP
-// into the shared ledger (lc:<slug>).
+// LeetCode — The Big Board. Registry-driven tracker: topic/difficulty/company
+// filters, guided paths, timed contests, full deep-dive reports (statement →
+// breakdown → logic ladder → sandbox-graded SQL / code-lab-verified JS),
+// company index, and solve-tracking on the honest ledger: sandbox passes pay
+// full XP, self-claims pay half, and every miss resurfaces on the recall
+// ladder (lcm:<slug>).
 
 import { useMemo, useState } from "react";
 import {
@@ -18,10 +20,13 @@ import {
   FlaskConical,
   Lightbulb,
   ListChecks,
+  NotebookPen,
   Play,
+  Route,
   Search,
   Sparkles,
   Stamp,
+  Timer,
   TriangleAlert,
   TrendingUp,
 } from "lucide-react";
@@ -33,9 +38,21 @@ import {
   lcByCompany,
 } from "@/lib/leetcode/registry";
 import { SQL_ALL_SECTIONS, sqlSectionOf } from "@/lib/leetcode/sections";
+import {
+  DIFF_SPLIT,
+  HONOR_XP,
+  LC_PYTHON_TOTAL,
+  LC_SECTION_COUNT,
+  LC_SQL_TOTAL,
+  LC_TOTAL,
+  isLcSolved,
+  lcClaimKey,
+  lcKeySlug,
+} from "@/lib/leetcode/lc-meta";
 import { lcDeepDive, lcSqlDive } from "@/lib/leetcode/content/content";
 import { lcSqlExpected } from "@/lib/leetcode/content/sql-expected";
 import { gradeSqlResult, type SqlCheckOutcome } from "@/lib/leetcode/sql-check";
+import { addNote } from "@/lib/curriculum/notebook";
 import type { ExecResult } from "@/lib/sql-types";
 import type { LcDifficulty, LcRef, LcSqlDive, LcSqlSchema } from "@/lib/leetcode/types";
 import { LC_XP, lcSolveKey } from "@/lib/leetcode/types";
@@ -44,6 +61,9 @@ import { ResultGrid } from "./result-grid";
 import { useProgress } from "@/lib/curriculum/progress";
 import { celebrate } from "./celebrate";
 import { Btn, Chip, FOCUS_RING, Panel, ProgressBar, SectionLabel } from "./ui/kit";
+import { LcCodeLab } from "./lc-code-lab";
+import { LcPaths } from "./lc-paths";
+import { LcContest } from "./lc-contest";
 import {
   ConstraintList,
   DiveCodeBlock,
@@ -60,7 +80,7 @@ import { PatternDiagram } from "./lc-pattern";
 import { PrimerCard, SectionStudyPanel } from "./lc-primer";
 import { cn } from "@/lib/utils";
 
-type Tab = "problems" | "companies";
+type Tab = "problems" | "paths" | "contest" | "companies";
 type Diff = "All" | LcDifficulty;
 
 /** Section lookup by display title — for group headers + anchors. */
@@ -103,12 +123,15 @@ function ProblemRow({
   p,
   solved,
   hasDeep,
+  retry,
   onOpen,
   first,
 }: {
   p: LcRef;
   solved: boolean;
   hasDeep: boolean;
+  /** on the recall ladder with a live miss — deserves another pass */
+  retry: boolean;
   onOpen: () => void;
   first: boolean;
 }) {
@@ -132,6 +155,11 @@ function ProblemRow({
           {p.companies.slice(0, 3).join(" · ")}
         </span>
       </span>
+      {retry && !solved && (
+        <span className="shrink-0 rounded-full border border-amber-400/30 bg-amber-400/10 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-amber-300">
+          retry
+        </span>
+      )}
       {hasDeep && (
         <span className="hidden shrink-0 rounded-full border border-emerald-400/30 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-emerald-300 sm:block">
           deep-dive
@@ -216,20 +244,26 @@ function SqlSchemaPanel({ schema }: { schema: LcSqlSchema }) {
   );
 }
 
-function SqlPractice({ dive }: { dive: LcSqlDive }) {
+function SqlPractice({ p, dive, onNext }: { p: LcRef; dive: LcSqlDive; onNext?: (slug: string) => void }) {
   const awardXp = useProgress((s) => s.awardXp);
+  const scheduleReview = useProgress((s) => s.scheduleReview);
+  const xpEvents = useProgress((s) => s.xpEvents);
   const solvedAt = useProgress((s) => s.xpEvents[lcSolveKey(dive.slug)]);
   const [sql, setSql] = useState("");
   const [busy, setBusy] = useState(false);
+  const [attempts, setAttempts] = useState(0);
   const [result, setResult] = useState<ExecResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [outcome, setOutcome] = useState<SqlCheckOutcome | null>(null);
+  const [saved, setSaved] = useState(false);
+  const [compare, setCompare] = useState(false);
 
   const run = async (check: boolean) => {
     if (busy || !sql.trim()) return;
     setBusy(true);
     setError(null);
     setOutcome(null);
+    setAttempts((n) => n + 1);
     try {
       const res = await fetch("/api/lc-sql", {
         method: "POST",
@@ -246,8 +280,16 @@ function SqlPractice({ dive }: { dive: LcSqlDive }) {
           if (expected) {
             const oc = gradeSqlResult(data, expected);
             setOutcome(oc);
-            if (oc.status === "pass" && awardXp(lcSolveKey(dive.slug), dive.xp)) {
-              celebrate({ kind: "xp", title: `+${dive.xp} XP — ${dive.slug.replace(/-/g, " ")}`, sub: "SQL 50 · solved in the sandbox" });
+            if (oc.status === "pass") {
+              // every graded problem lives on the recall ladder: a pass
+              // advances 1d → 3d → 7d → 14d, a miss comes back tomorrow
+              if (awardXp(lcSolveKey(dive.slug), dive.xp)) {
+                scheduleReview(`lcm:${dive.slug}`, true);
+                celebrate({ kind: "xp", title: `+${dive.xp} XP — ${p.title}`, sub: "Solved in the sandbox" });
+              }
+            } else {
+              scheduleReview(`lcm:${dive.slug}`, false);
+              setCompare(false);
             }
           }
         }
@@ -261,6 +303,21 @@ function SqlPractice({ dive }: { dive: LcSqlDive }) {
   };
 
   const expected = lcSqlExpected(dive.slug);
+  const passed = outcome?.status === "pass";
+  const sec = sqlSectionOf(dive.slug);
+  const nextInSec = sec
+    ? sec.slugs.find((s) => s !== dive.slug && !isLcSolved(xpEvents, s))
+    : undefined;
+
+  const saveToNotebook = () => {
+    addNote({
+      title: `${p.num}. ${p.title}`,
+      sql,
+      note: `Solved via the SeeQL sandbox — ${dive.approach}. ${attempts} attempt${attempts === 1 ? "" : "s"}, ${result?.rowCount ?? expected?.rows.length ?? 0} row${(result?.rowCount ?? 1) === 1 ? "" : "s"}.`,
+    });
+    setSaved(true);
+  };
+
   return (
     <Panel pad={4} id="dive-sandbox" className="scroll-mt-16">
       <SectionHead
@@ -284,7 +341,8 @@ function SqlPractice({ dive }: { dive: LcSqlDive }) {
         Runs against the seeded schema above inside a rolled-back sandbox — experiment freely.{" "}
         {dive.writeVerify
           ? "Write problem: your statement really mutates the tables, then you'll see rows affected plus the resulting data."
-          : "Ctrl/⌘ + Enter runs."}
+          : "Ctrl/⌘ + Enter runs."}{" "}
+        A miss enrolls the problem on the recall ladder; a pass graduates it.
       </p>
       {expected && (
         <div className="mt-2 flex flex-wrap items-center gap-1.5">
@@ -322,6 +380,11 @@ function SqlPractice({ dive }: { dive: LcSqlDive }) {
         <Btn variant="soft" disabled={busy || !sql.trim()} onClick={() => void run(true)}>
           <Check className="h-3.5 w-3.5" /> Run & check · +{dive.xp} XP
         </Btn>
+        {attempts > 0 && (
+          <span className="tnum self-center font-mono text-[10px] text-zinc-600">
+            {attempts} run{attempts === 1 ? "" : "s"} this visit
+          </span>
+        )}
       </div>
 
       {error && (
@@ -335,7 +398,7 @@ function SqlPractice({ dive }: { dive: LcSqlDive }) {
         <div
           className={cn(
             "mt-3 rounded-lg border p-3",
-            outcome.status === "pass"
+            passed
               ? "border-emerald-400/30 bg-emerald-400/[0.06]"
               : "border-amber-400/30 bg-amber-400/[0.06]",
           )}
@@ -343,7 +406,7 @@ function SqlPractice({ dive }: { dive: LcSqlDive }) {
           <p
             className={cn(
               "font-mono text-[10px] uppercase tracking-wider",
-              outcome.status === "pass" ? "text-emerald-300" : "text-amber-300",
+              passed ? "text-emerald-300" : "text-amber-300",
             )}
           >
             {outcome.title}
@@ -363,6 +426,45 @@ function SqlPractice({ dive }: { dive: LcSqlDive }) {
       {!result && !error && (
         <p className="mt-3 text-[12px] text-zinc-600">Run your query to see the result table here.</p>
       )}
+
+      {/* after the pass — compare approaches, keep the query, keep moving */}
+      {passed && (
+        <div className="mt-4 rounded-lg border border-emerald-400/20 bg-emerald-400/[0.03] p-3.5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-emerald-300">
+              After the pass — make it stick
+            </p>
+            <span className="tnum font-mono text-[10px] text-zinc-600">
+              {result?.durationMs ?? 0} ms · {attempts} run{attempts === 1 ? "" : "s"}
+            </span>
+          </div>
+          <div className="mt-2.5 flex flex-wrap gap-2">
+            <Btn variant="outline" onClick={() => setCompare((v) => !v)}>
+              {compare ? "Hide" : "Compare"} with the model solution
+            </Btn>
+            <Btn variant="outline" onClick={saveToNotebook} disabled={saved}>
+              <NotebookPen className="h-3 w-3" /> {saved ? "Saved to notebook" : "Save to notebook"}
+            </Btn>
+            {nextInSec && onNext && (
+              <Btn variant="soft" onClick={() => onNext(nextInSec)}>
+                Next in section <ChevronRight className="h-3 w-3" />
+              </Btn>
+            )}
+          </div>
+          {compare && (
+            <div className="mt-3 grid gap-3 lg:grid-cols-2">
+              <div>
+                <p className="mb-1 font-mono text-[9.5px] uppercase tracking-[0.14em] text-zinc-500">yours</p>
+                <pre className="thin-scrollbar max-h-64 overflow-auto rounded-md border border-zinc-800 bg-zinc-950 p-2.5 font-mono text-[11px] leading-5 text-zinc-300">{sql}</pre>
+              </div>
+              <div>
+                <p className="mb-1 font-mono text-[9.5px] uppercase tracking-[0.14em] text-zinc-500">model — {dive.approach}</p>
+                <pre className="thin-scrollbar max-h-64 overflow-auto rounded-md border border-zinc-800 bg-zinc-950 p-2.5 font-mono text-[11px] leading-5 text-zinc-300">{dive.code}</pre>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </Panel>
   );
 }
@@ -371,18 +473,24 @@ function SqlPractice({ dive }: { dive: LcSqlDive }) {
 /* Deep-dive detail                                                    */
 /* ------------------------------------------------------------------ */
 
-function LcDetail({ p, onBack }: { p: LcRef; onBack: () => void }) {
+function LcDetail({ p, onBack, onOpen }: { p: LcRef; onBack: () => void; onOpen: (slug: string) => void }) {
   const awardXp = useProgress((s) => s.awardXp);
+  const xpEvents = useProgress((s) => s.xpEvents);
+  const scheduleReview = useProgress((s) => s.scheduleReview);
   const solvedAt = useProgress((s) => s.xpEvents[lcSolveKey(p.slug)]);
+  const claimedAt = useProgress((s) => s.xpEvents[lcClaimKey(p.slug)]);
   const sdive = p.sql ? lcSqlDive(p.slug) : undefined;
   const deep = lcDeepDive(p.slug);
   const dive = sdive ?? deep;
   const xp = LC_XP[p.difficulty];
+  const honorXp = HONOR_XP[p.difficulty];
+  const [confirmClaim, setConfirmClaim] = useState(false);
 
-  const markSolved = () => {
-    if (solvedAt !== undefined) return;
-    if (awardXp(lcSolveKey(p.slug), xp)) {
-      celebrate({ kind: "xp", title: `+${xp} XP — ${p.title}`, sub: "LeetCode Big 300 · solved" });
+  const claimSolved = () => {
+    if (solvedAt !== undefined || claimedAt !== undefined) return;
+    setConfirmClaim(false);
+    if (awardXp(lcClaimKey(p.slug), honorXp)) {
+      celebrate({ kind: "xp", title: `+${honorXp} XP — ${p.title}`, sub: "Self-claimed · verify it in the lab for the other half" });
     }
   };
 
@@ -398,6 +506,7 @@ function LcDetail({ p, onBack }: { p: LcRef; onBack: () => void }) {
           { id: "dive-sandbox", label: "Sandbox", tone: "emerald" },
         ] as const)
       : []),
+    ...(sdive ? [] : deep ? ([{ id: "dive-codelab", label: "Code lab", tone: "cyan" }] as const) : []),
     { id: "dive-solution", label: "Solution", tone: "amber" },
   ];
   const jump = (id: string) =>
@@ -436,8 +545,13 @@ function LcDetail({ p, onBack }: { p: LcRef; onBack: () => void }) {
                 </span>
               )}
               <span className="rounded-md border border-zinc-700 bg-zinc-900/60 px-2 py-0.5 font-mono text-[10px] text-amber-300">
-                +{xp} XP
+                {p.sql ? `+${xp} XP verified` : `+${xp} verified · +${honorXp} claimed`}
               </span>
+              {claimedAt !== undefined && (
+                <span className="rounded-md border border-zinc-600 bg-zinc-900/60 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider text-zinc-400">
+                  self-claimed
+                </span>
+              )}
               {!p.free && (
                 <span className="rounded-md border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[10px] text-amber-300">
                   premium
@@ -454,10 +568,35 @@ function LcDetail({ p, onBack }: { p: LcRef; onBack: () => void }) {
             <span className="flex shrink-0 items-center gap-1.5 rounded-md border border-emerald-400/30 bg-emerald-400/10 px-3 py-1.5 text-[11px] font-medium text-emerald-300">
               <Check className="h-3.5 w-3.5" /> Solved · {solvedAt} XP
             </span>
-          ) : (
-            <Btn variant="primary" onClick={markSolved} className="shrink-0">
-              <Stamp className="h-3.5 w-3.5" /> Mark solved · +{xp} XP
+          ) : p.sql ? (
+            /* a sandbox-graded problem can be verified right here — the
+               primary button jumps to the editor instead of paying honor XP */
+            <Btn variant="primary" onClick={() => jump("dive-sandbox")} className="shrink-0">
+              <FlaskConical className="h-3.5 w-3.5" /> Solve it in the sandbox
             </Btn>
+          ) : (
+            <div className="relative shrink-0">
+              <Btn variant="primary" onClick={() => setConfirmClaim(true)}>
+                <Stamp className="h-3.5 w-3.5" /> Claim solved · +{honorXp} XP
+              </Btn>
+              {confirmClaim && (
+                <div className="absolute right-0 top-full z-20 mt-2 w-64 rounded-lg border border-zinc-700 bg-zinc-900 p-3 shadow-xl shadow-black/40">
+                  <p className="text-xs font-medium text-zinc-100">Solved it yourself, off-app?</p>
+                  <p className="mt-1 text-[11px] leading-relaxed text-zinc-400">
+                    A claim pays {honorXp} XP (half) and the row shows a self-claimed tag. Solving it in the
+                    app later still pays the full {xp} — the honest solve is worth more.
+                  </p>
+                  <div className="mt-2.5 flex items-center gap-2">
+                    <Btn variant="soft" onClick={claimSolved}>
+                      <Stamp className="h-3 w-3" /> I solved it
+                    </Btn>
+                    <Btn variant="outline" onClick={() => setConfirmClaim(false)}>
+                      Cancel
+                    </Btn>
+                  </div>
+                </div>
+              )}
+            </div>
           )}
         </div>
       </Panel>
@@ -483,8 +622,8 @@ function LcDetail({ p, onBack }: { p: LcRef; onBack: () => void }) {
           <SectionLabel>Deep-dive in progress</SectionLabel>
           <p className="mt-2 text-sm leading-relaxed text-zinc-400">
             The full report for this problem ships in a later pass — the registry, companies and
-            solved-tracking are live now. Meanwhile: it appears on {p.lists.join(", ")}, and marking it solved
-            above pays {xp} XP into the same ledger as the rest of the app.
+            solved-tracking are live now. It appears on {p.lists.join(", ")}. A claim above pays {honorXp} XP
+            (half) — if it's a SQL problem elsewhere, the real solve still outranks it.
           </p>
         </Panel>
       ) : (
@@ -555,9 +694,13 @@ function LcDetail({ p, onBack }: { p: LcRef; onBack: () => void }) {
             </Reveal>
           </Panel>
 
-          {/* SQL 50: schema + live sandbox practice (before the solution reveal) */}
+          {/* SQL: schema + live sandbox practice (before the solution reveal) */}
           {sdive && <SqlSchemaPanel schema={sdive.schema} />}
-          {sdive && <SqlPractice dive={sdive} />}
+          {sdive && <SqlPractice p={p} dive={sdive} onNext={onOpen} />}
+
+          {/* Python deep-dive: the code lab — solve it in JS against the real
+              verify cases, pay the full XP, no honor claim needed */}
+          {!sdive && deep && <LcCodeLab p={p} deep={deep} />}
 
           {/* Solution */}
           <Panel pad={4} id="dive-solution" className="scroll-mt-16">
@@ -659,18 +802,32 @@ function CompaniesIndex({ onPick, solvedOf }: { onPick: (company: string) => voi
 
 export function LeetCodeView({ initialTopic, initialSlug }: { initialTopic?: string; initialSlug?: string }) {
   const xpEvents = useProgress((s) => s.xpEvents);
+  const reviewSchedule = useProgress((s) => s.reviewSchedule);
   const [sel, setSel] = useState<string | null>(initialSlug ?? null);
   const [tab, setTab] = useState<Tab>("problems");
   const [topic, setTopic] = useState<string>(initialTopic ?? "All");
   const [diff, setDiff] = useState<Diff>("All");
   const [company, setCompany] = useState<string>("All");
   const [deepOnly, setDeepOnly] = useState(false);
+  const [missesOnly, setMissesOnly] = useState(false);
   const [q, setQ] = useState("");
 
+  // solved = verified (lc:) OR self-claimed (lc-claimed:) — both keys feed
+  // the same board, but the detail view keeps the distinction honest
   const solvedSlugs = useMemo(
-    () => new Set(Object.keys(xpEvents).filter((k) => k.startsWith("lc:")).map((k) => k.slice(3))),
+    () => new Set(Object.keys(xpEvents).map(lcKeySlug).filter((s): s is string => s !== undefined)),
     [xpEvents],
   );
+
+  // problems with a live recall-ladder card that hasn't been solved since —
+  // a miss anywhere (sandbox check, contest submit) enrolls the slug here
+  const retrySlugs = useMemo(() => {
+    const s = new Set<string>();
+    for (const key of Object.keys(reviewSchedule)) {
+      if (key.startsWith("lcm:") && !isLcSolved(xpEvents, key.slice(4))) s.add(key.slice(4));
+    }
+    return s;
+  }, [reviewSchedule, xpEvents]);
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
@@ -679,10 +836,11 @@ export function LeetCodeView({ initialTopic, initialSlug }: { initialTopic?: str
       if (diff !== "All" && p.difficulty !== diff) return false;
       if (company !== "All" && !p.companies.includes(company)) return false;
       if (deepOnly && !LC_DEEP_SLUGS.has(p.slug)) return false;
+      if (missesOnly && !retrySlugs.has(p.slug)) return false;
       if (needle && !`${p.num} ${p.title} ${p.slug}`.toLowerCase().includes(needle)) return false;
       return true;
     });
-  }, [topic, diff, company, deepOnly, q]);
+  }, [topic, diff, company, deepOnly, missesOnly, q, retrySlugs]);
 
   const deepTotal = LC_DEEP_SLUGS.size;
   const solvedTotal = solvedSlugs.size;
@@ -717,36 +875,49 @@ export function LeetCodeView({ initialTopic, initialSlug }: { initialTopic?: str
       <header className="space-y-2">
         <div className="flex items-center gap-2">
           <Code2 className="h-6 w-6 text-emerald-400" />
-          <h1 className="text-2xl font-bold tracking-tight">LeetCode — The Big 300</h1>
+          <h1 className="text-2xl font-bold tracking-tight">LeetCode — The Big Board</h1>
         </div>
         <p className="text-sm text-neutral-500 dark:text-neutral-400">
           Every classic interview problem, deduped from NeetCode 150 (superset of Blind 75), Top Interview 150,
           the SQL 50 and the famous extras — plus an original Data &amp; Finance track for product-analytics
           and finance-role prep. Deep-dives walk the full path — problem → breakdown → logic building →
-          sandbox-graded SQL or engine-verified Python — with the companies that ask each one.
+          sandbox-graded SQL or a code lab against real test cases — with the companies that ask each one.
+          Solves are graded where the app can grade them; everything else is claimed at half XP.
         </p>
+        <div className="flex flex-wrap gap-1.5 pt-0.5">
+          <Chip k="SQL sandbox" v={`${LC_SQL_TOTAL} graded`} />
+          <Chip k="Python dives" v={LC_PYTHON_TOTAL} />
+          <Chip k="skill sections" v={LC_SECTION_COUNT} />
+          <Chip k="Easy / Med / Hard" v={`${DIFF_SPLIT.Easy} / ${DIFF_SPLIT.Medium} / ${DIFF_SPLIT.Hard}`} />
+        </div>
       </header>
 
       {selected ? (
-        <LcDetail p={selected} onBack={() => setSel(null)} />
+        <LcDetail p={selected} onBack={() => setSel(null)} onOpen={(slug) => setSel(slug)} />
       ) : (
         <>
           {/* progress strip + tabs */}
           <Panel pad={3.5}>
             <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-              <div className="flex items-center gap-1.5">
+              <div className="flex flex-wrap items-center gap-1.5">
                 <Btn variant="pill" active={tab === "problems"} onClick={() => setTab("problems")}>
                   <ListChecks className="h-3 w-3" /> Problems
+                </Btn>
+                <Btn variant="pill" active={tab === "paths"} onClick={() => setTab("paths")}>
+                  <Route className="h-3 w-3" /> Paths
+                </Btn>
+                <Btn variant="pill" active={tab === "contest"} onClick={() => setTab("contest")}>
+                  <Timer className="h-3 w-3" /> Timed SQL
                 </Btn>
                 <Btn variant="pill" active={tab === "companies"} onClick={() => setTab("companies")}>
                   <Building2 className="h-3 w-3" /> Companies
                 </Btn>
               </div>
               <span className="tnum font-mono text-[11px] text-zinc-500">
-                {solvedTotal} solved · {deepTotal} deep-dives · {LC_ALL.length} total
+                {solvedTotal} solved · {deepTotal} deep-dives · {LC_TOTAL} total
               </span>
             </div>
-            <ProgressBar value={solvedTotal / LC_ALL.length} className="mt-3" />
+            <ProgressBar value={solvedTotal / LC_TOTAL} className="mt-3" />
           </Panel>
 
           {tab === "companies" ? (
@@ -757,6 +928,10 @@ export function LeetCodeView({ initialTopic, initialSlug }: { initialTopic?: str
                 setTab("problems");
               }}
             />
+          ) : tab === "paths" ? (
+            <LcPaths onOpen={(slug) => setSel(slug)} />
+          ) : tab === "contest" ? (
+            <LcContest />
           ) : (
             <>
               {/* filters */}
@@ -767,7 +942,7 @@ export function LeetCodeView({ initialTopic, initialSlug }: { initialTopic?: str
                     <input
                       value={q}
                       onChange={(e) => setQ(e.target.value)}
-                      placeholder="Search 300 problems…"
+                      placeholder={`Search ${LC_TOTAL} problems…`}
                       aria-label="Search problems"
                       className="w-full rounded-md border border-zinc-800 bg-zinc-950 py-2 pl-8 pr-3 text-xs text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-emerald-400/60"
                     />
@@ -800,6 +975,14 @@ export function LeetCodeView({ initialTopic, initialSlug }: { initialTopic?: str
                     title="Only problems with a full deep-dive report"
                   >
                     Deep-dives only
+                  </Btn>
+                  <Btn
+                    variant="pill"
+                    active={missesOnly}
+                    onClick={() => setMissesOnly((v) => !v)}
+                    title="Only problems you missed and haven't re-solved — they live on the recall ladder"
+                  >
+                    Misses ({retrySlugs.size})
                   </Btn>
                   {topic !== "All" && (
                     <Btn variant="pill" active onClick={() => setTopic("All")}>
@@ -841,7 +1024,11 @@ export function LeetCodeView({ initialTopic, initialSlug }: { initialTopic?: str
               {/* grouped list */}
               {groups.length === 0 ? (
                 <Panel pad={4}>
-                  <p className="text-sm text-zinc-500">Nothing matches those filters.</p>
+                  <p className="text-sm text-zinc-500">
+                    {missesOnly && retrySlugs.size === 0
+                      ? "No misses on the ladder — solve something and fail gloriously, the deck will catch it."
+                      : "Nothing matches those filters."}
+                  </p>
                 </Panel>
               ) : (
                 groups.map(([t, rows]) => {
@@ -868,6 +1055,7 @@ export function LeetCodeView({ initialTopic, initialSlug }: { initialTopic?: str
                             p={p}
                             solved={solvedSlugs.has(p.slug)}
                             hasDeep={LC_DEEP_SLUGS.has(p.slug)}
+                            retry={retrySlugs.has(p.slug)}
                             onOpen={() => setSel(p.slug)}
                             first={i === 0}
                           />

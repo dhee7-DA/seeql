@@ -140,6 +140,19 @@ export interface BadgeCtx {
   targetSet: boolean;
   /** kit MCQs answered correct (kit tab + mock runs combined, deduped) */
   universeCorrect: number;
+  // LeetCode band (verified + self-claimed solves on the lc: ledgers)
+  /** distinct problems solved (verified + self-claimed) */
+  lcSolved: number;
+  /** verified in the sandbox / code lab only */
+  lcVerified: number;
+  /** verified HARD problems — the red dots that count */
+  lcHardVerified: number;
+  /** official SQL 50 study-list problems solved */
+  lcSql50Solved: number;
+  /** SQL skill sections with every problem solved */
+  lcSectionsCleared: number;
+  /** the whole Data & Finance band cleared */
+  lcDatafinCleared: boolean;
 }
 
 export interface Badge {
@@ -252,5 +265,55 @@ export const BADGES: Badge[] = [
     title: "Universe 100",
     desc: "Answer 100 universe MCQs correctly",
     test: (c) => c.universeCorrect >= 100,
+  },
+  // LeetCode band — verified solves pay full XP, self-claims pay half;
+  // every badge below counts the honest ledger the same way
+  {
+    id: "lc-first-blood",
+    title: "First Blood",
+    desc: "Solve your first LeetCode problem",
+    test: (c) => c.lcSolved >= 1,
+  },
+  {
+    id: "lc-sql-50",
+    title: "SQL 50 Club",
+    desc: "Solve the entire official SQL 50 study list",
+    test: (c) => c.lcSql50Solved >= 50,
+  },
+  {
+    id: "lc-25",
+    title: "Board Regular",
+    desc: "Solve 25 LeetCode problems",
+    test: (c) => c.lcSolved >= 25,
+  },
+  {
+    id: "lc-100",
+    title: "Century Board",
+    desc: "Solve 100 LeetCode problems",
+    test: (c) => c.lcSolved >= 100,
+  },
+  {
+    id: "lc-section-sweeper",
+    title: "Section Sweeper",
+    desc: "Clear every problem in one SQL skill section",
+    test: (c) => c.lcSectionsCleared >= 1,
+  },
+  {
+    id: "lc-datafin",
+    title: "DataFin Finisher",
+    desc: "Clear the whole Data & Finance band",
+    test: (c) => c.lcDatafinCleared,
+  },
+  {
+    id: "lc-hard-10",
+    title: "Red Climber",
+    desc: "Verify 10 Hard problems in the sandbox",
+    test: (c) => c.lcHardVerified >= 10,
+  },
+  {
+    id: "lc-show-your-work",
+    title: "Show Your Work",
+    desc: "25 verified solves — graded, not claimed",
+    test: (c) => c.lcVerified >= 25,
   },
 ];

@@ -47,7 +47,9 @@ export interface LcVerifyCase {
   expect: unknown;
 }
 
-/** How the harness wraps args / unwraps results for special signatures. */
+/** How the harness wraps args / unwraps results for special signatures.
+ *  The full vocabulary lives in js-runner.ts (in-app) and scripts/lc-verify.ts
+ *  (offline Python) — the two harnesses must stay in sync. */
 export type LcWrap =
   | "plain" // args are JSON-native, result compared directly
   | "matrix" // plain, but documents that args contain 2-D boards
@@ -56,7 +58,19 @@ export type LcWrap =
   | "listnodeCycle" // arg0 array + arg1 pos → cycled chain; expect bool
   | "listnodeIdx" // arg0 array + arg1 n → chain; result → array
   | "listnodeInPlace" // arg0 array → chain; fn mutates; result → traversed chain
+  | "listnodeArgs" // arg0 array → chain; rest passed through
+  | "listnodeArray" // arg0 array of arrays → many chains; result → array
+  | "listnodeRandom" // spec pairs → nodes with .random; result → pair array
+  | "listnodeChild" // nested arrays → child chains; result → array
+  | "tree" // arg0 array → binary tree; result → level array
+  | "treeTwo" // arg0+arg1 arrays → two trees; rest through
+  | "treeOut" // all args, first built as a tree
+  | "treeCodec" // round-trip through the user's own encode/decode
   | "codec" // round-trip: expect decode(encode(arg0)) === arg0
+  | "inPlace" // fn mutates arg0; result = arg0
+  | "inPlaceArgs" // fn mutates arg0, rest through; result = arg0
+  | "inPlaceK" // fn returns k; result = [k, arg0.slice(0, k)]
+  | "inPlaceKArgs" // fn returns k with extra args; result = [k, prefix]
   | "class"; // arg0 = [[op, arg?], …]; results of non-void ops compared
 
 /** Normalizer applied before comparison (for order-insensitive outputs). */
@@ -68,6 +82,10 @@ export interface LcVerify {
   wrap: LcWrap;
   normalize?: LcNormalize;
   cases: LcVerifyCase[];
+  /** class wrap: op names whose return value is not compared. */
+  voidOps?: string[];
+  /** class wrap: how to build the constructor arg ("tree" → array→tree). */
+  ctorBuild?: "tree";
 }
 
 /** The full deep-dive report for one problem. */

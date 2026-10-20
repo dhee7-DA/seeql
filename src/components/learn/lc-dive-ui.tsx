@@ -6,7 +6,7 @@
 // ORDER orange · WITH fuchsia · CASE lime · window sky), so the visual
 // language a learner meets in the lessons carries over 1:1 into the band.
 //
-// Everything here is a pure function of the dive data: 335 problems get the
+// Everything here is a pure function of the dive data: every problem gets the
 // upgraded UI with zero content-file edits.
 
 import { Fragment, useState, type ReactNode } from "react";

@@ -5,7 +5,7 @@
 // and the spaced-repetition cards coming due, and a one-tap practice
 // round that targets the weakest five.
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Activity, ArrowRight, BellRing, CheckCircle2, Radar as RadarIcon, Sparkles, Target, TrendingUp } from "lucide-react";
 import { Icon3D } from "./ui/icon3d";
@@ -15,6 +15,10 @@ import { useProgress, dueReviews } from "@/lib/curriculum/progress";
 import { COMPANY_KITS } from "@/lib/companies/registry";
 import { kitMcqAccuracy } from "@/lib/universe/progress";
 import { useUniverse } from "@/lib/universe/progress";
+import { LC_ALL, lcBySlug } from "@/lib/leetcode/registry";
+import { SQL_ALL_SECTIONS, sqlSectionOf } from "@/lib/leetcode/sections";
+import { isLcSolved, LC_XP } from "@/lib/leetcode/lc-meta";
+import type { LcRef } from "@/lib/leetcode/types";
 import {
   computeMastery,
   LESSON_SKILLS,
@@ -25,13 +29,150 @@ import {
   type MasteryCell,
 } from "@/lib/curriculum/mastery";
 import type { Mcq } from "@/lib/curriculum/types";
+import { celebrate } from "./celebrate";
 import { cn } from "@/lib/utils";
 import { McqCard } from "./mcq";
 
 const QUEST_SIZE = 5;
+/** The SQL problem quest — three a day, same cleared flag as the MCQ quest. */
+const LC_QUEST_SIZE = 3;
+
+/** Deterministic daily SQL-problem quest: recall-ladder misses first (due
+ *  order), then unsolved problems from your weakest touched SQL section,
+ *  then the next unsolved stops in canonical registry order. */
+function buildLcQuest(
+  xpEvents: Record<string, number>,
+  reviewSchedule: Record<string, { due: number; step: number; lapses: number }>,
+): LcRef[] {
+  const picks: string[] = [];
+  const push = (slug: string) => {
+    if (picks.length < LC_QUEST_SIZE && !picks.includes(slug) && lcBySlug(slug)) picks.push(slug);
+  };
+  // 1) misses on the recall ladder, soonest due first
+  const misses = Object.entries(reviewSchedule)
+    .filter(([k, card]) => k.startsWith("lcm:") && !isLcSolved(xpEvents, k.slice(4)))
+    .sort((a, b) => a[1].due - b[1].due);
+  for (const [k] of misses) push(k.slice(4));
+  // 2) weakest touched SQL section (lowest solved ratio with any signal)
+  if (picks.length < LC_QUEST_SIZE) {
+    const touched = SQL_ALL_SECTIONS.map((sec) => {
+      const done = sec.slugs.filter((s) => isLcSolved(xpEvents, s)).length;
+      return { sec, ratio: done / Math.max(1, sec.slugs.length), done };
+    })
+      .filter((x) => x.done > 0 && x.ratio < 1)
+      .sort((a, b) => a.ratio - b.ratio);
+    outer: for (const t of touched) {
+      for (const s of t.sec.slugs) {
+        if (!isLcSolved(xpEvents, s)) push(s);
+        if (picks.length >= LC_QUEST_SIZE) break outer;
+      }
+    }
+  }
+  // 3) fallback — next unsolved problems in registry order (SQL band first)
+  if (picks.length < LC_QUEST_SIZE) {
+    for (const p of LC_ALL) {
+      if (p.sql && !isLcSolved(xpEvents, p.slug)) push(p.slug);
+      if (picks.length >= LC_QUEST_SIZE) break;
+    }
+  }
+  return picks.map((s) => lcBySlug(s)!).filter(Boolean);
+}
+
+/** The SQL problem quest — three problems a day from the LeetCode band,
+ *  drawn misses-first / weakest-section-second / registry-order-third.
+ *  Solving all three clears the SAME daily flag as the MCQ quest (one
+ *  cleared badge a day — whichever quest you clear first earns it). */
+function LcQuestCard({
+  xpEvents,
+  reviewSchedule,
+  clearedToday,
+  onCleared,
+  onOpen,
+}: {
+  xpEvents: Record<string, number>;
+  reviewSchedule: Record<string, { due: number; step: number; lapses: number }>;
+  clearedToday: boolean;
+  onCleared: () => void;
+  onOpen: (topic?: string, slug?: string) => void;
+}) {
+  const problems = useMemo(() => buildLcQuest(xpEvents, reviewSchedule), [xpEvents, reviewSchedule]);
+  const solvedFlags = problems.map((p) => isLcSolved(xpEvents, p.slug));
+  const done = solvedFlags.filter(Boolean).length;
+  const complete = problems.length > 0 && done === problems.length;
+
+  useEffect(() => {
+    if (complete && !clearedToday) {
+      onCleared();
+      celebrate({ kind: "badge", title: "SQL problem quest cleared", sub: "Today's three — solved" });
+    }
+  }, [complete, clearedToday, onCleared]);
+
+  const diffDot: Record<string, string> = { Easy: "bg-emerald-400", Medium: "bg-amber-400", Hard: "bg-rose-400" };
+
+  return (
+    <div className="sheen mt-5 rounded-lg border border-sky-400/25 bg-sky-400/[0.04] p-4 sm:p-5">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-sky-300">
+          <Target className="h-3.5 w-3.5" /> SQL problem quest — {done}/{problems.length}
+        </p>
+        {(complete || clearedToday) && (
+          <span className="flex items-center gap-1 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-emerald-300">
+            <CheckCircle2 className="h-3 w-3" /> cleared
+          </span>
+        )}
+      </div>
+      {problems.length === 0 ? (
+        <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+          The whole SQL board is solved — the quest has nothing left to draw. Go build something in the
+          playground instead.
+        </p>
+      ) : (
+        <>
+          <p className="mt-2 text-[12px] leading-relaxed text-zinc-500">
+            Three stops from the LeetCode band: your recall-ladder misses first, then the weakest SQL section
+            you have touched, then the next unsolved classics. Solve all three and today&apos;s quest clears.
+          </p>
+          <div className="mt-3 space-y-1.5">
+            {problems.map((p, i) => (
+              <div
+                key={p.slug}
+                className={cn(
+                  "flex items-center gap-2.5 rounded-md border px-3 py-2.5",
+                  solvedFlags[i] ? "border-emerald-400/30 bg-emerald-400/[0.06]" : "border-zinc-800 bg-zinc-900/40",
+                )}
+              >
+                {solvedFlags[i] ? (
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" />
+                ) : (
+                  <span aria-hidden className={cn("h-2 w-2 shrink-0 rounded-full", diffDot[p.difficulty])} />
+                )}
+                <div className="min-w-0 flex-1">
+                  <p className={cn("truncate text-xs font-medium", solvedFlags[i] ? "text-zinc-500 line-through" : "text-zinc-200")}>
+                    #{p.num} {p.title}
+                  </p>
+                  <p className="text-[10px] text-zinc-500">
+                    {p.difficulty} · {sqlSectionOf(p.slug)?.title ?? "classic"} · +{LC_XP[p.difficulty]} XP on first solve
+                  </p>
+                </div>
+                {!solvedFlags[i] && (
+                  <button
+                    type="button"
+                    onClick={() => onOpen(undefined, p.slug)}
+                    className="shrink-0 rounded-md border border-zinc-700 px-2.5 py-1.5 text-[11px] font-medium text-zinc-300 transition-colors hover:bg-zinc-800"
+                  >
+                    Open →
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
 
 function buildQuest(cells: MasteryCell[], schedule: ReturnType<typeof dueReviews>): Mcq[] {
-  // 1) due SR cards first (missed questions coming back around)
   const dueMcqIds = schedule
     .filter((c) => c.key.startsWith("mcq:"))
     .map((c) => c.key.slice(4));
@@ -268,12 +409,13 @@ function useUniverseMock() {
   return useUniverse((s) => s.mockMcq);
 }
 
-export function MasteryMap({ onOpenLesson }: { onOpenLesson: (id: string) => void }) {
+export function MasteryMap({ onOpenLesson, onOpenLc }: { onOpenLesson: (id: string) => void; onOpenLc?: (topic?: string, slug?: string) => void }) {
   const skillAttempts = useProgress((s) => s.skillAttempts);
   const mcqAttempts = useProgress((s) => s.mcqAttempts);
   const reviewSchedule = useProgress((s) => s.reviewSchedule);
   const questDone = useProgress((s) => s.questDone);
   const markQuestDone = useProgress((s) => s.markQuestDone);
+  const xpEvents = useProgress((s) => s.xpEvents);
   const [questIdx, setQuestIdx] = useState(0);
   const [questLive, setQuestLive] = useState(false);
 
@@ -416,6 +558,17 @@ export function MasteryMap({ onOpenLesson }: { onOpenLesson: (id: string) => voi
           </motion.div>
         )}
       </div>
+
+      {/* SQL problem quest — the LeetCode band's three-a-day */}
+      {onOpenLc && (
+        <LcQuestCard
+          xpEvents={xpEvents}
+          reviewSchedule={reviewSchedule}
+          clearedToday={clearedToday}
+          onCleared={markQuestDone}
+          onOpen={onOpenLc}
+        />
+      )}
 
       {/* review cards due */}
       {due.length > 0 && (

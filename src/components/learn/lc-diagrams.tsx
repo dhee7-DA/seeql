@@ -4,7 +4,7 @@
 // Entity boxes (name header + column rows, PK/FK badges) with real
 // relationship connectors drawn from FOREIGN KEY REFERENCES declarations,
 // plus dashed "shared column name" join-hints when no explicit FK exists.
-// Deterministic per schema: all 335 problems get a personalized diagram.
+// Deterministic per schema: every problem gets a personalized diagram.
 
 import { useMemo } from "react";
 

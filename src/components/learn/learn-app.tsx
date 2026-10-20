@@ -62,6 +62,7 @@ import { CelebrationHost, celebrate } from "./celebrate";
 import { RankUpCard, type RankUpInfo } from "./rank-up";
 import { WeeklyGoalPicker } from "./weekly-goal";
 import { CompanyLeaderboard } from "./company-leaderboard";
+import { WindowsTrack } from "./windows-track";
 import { playCue } from "@/lib/sound";
 import { CORE_AND_TOOLBOX, LAB_TOOLS, TOOLS, type ToolKind } from "./tools";
 import { Btn, Chip, Panel, ProgressBar, SectionLabel, ToolRow } from "./ui/kit";
@@ -72,6 +73,7 @@ import { QueryNotebook } from "./query-notebook";
 import { OnboardingTour, TourReplayButton, markTourSeen, tourSeen } from "./onboarding-tour";
 import { BackupError, buildBackup, downloadBackup, importBackupFile } from "@/lib/port";
 import { BAND_BY_MODULE } from "@/lib/leetcode/sections";
+import { lcBadgeStats } from "@/lib/leetcode/lc-meta";
 
 export type View =
   | { kind: "overview" }
@@ -105,6 +107,7 @@ export type View =
   | { kind: "sandbox" }
   | { kind: "notebook" }
   | { kind: "lc"; topic?: string; slug?: string }
+  | { kind: "windows" }
   | { kind: "recall" };
 
 // Drift guard — the registry in tools.ts must name every non-lesson view
@@ -213,6 +216,7 @@ function useBadgeWatcher() {
       mockBestPct: universeMocks.reduce((b, m) => Math.max(b, m.pct), 0),
       targetSet: universeTarget !== null,
       universeCorrect: universeTabCorrect + universeMockOnly,
+      ...lcBadgeStats(xpEvents),
     };
   }, [xpEvents, mcqAttempts, puzzleDone, backlogDone, freezes, universeMocks, universeMockMcq, universeTarget]);
 
@@ -744,7 +748,7 @@ function ViewBody({
     case "explain":
       return <ExplainBack />;
     case "mastery":
-      return <MasteryMap onOpenLesson={openLesson} />;
+      return <MasteryMap onOpenLesson={openLesson} onOpenLc={openLc} />;
     case "sheet":
       return <CheatSheet />;
     case "mentor":
@@ -755,6 +759,8 @@ function ViewBody({
       return <QueryNotebook />;
     case "lc":
       return <LeetCodeView key={`${view.topic ?? "lc"}:${view.slug ?? ""}`} initialTopic={view.topic} initialSlug={view.slug} />;
+    case "windows":
+      return <WindowsTrack openLesson={openLesson} />;
     case "recall":
       return <ReviewDeck />;
     case "companies":

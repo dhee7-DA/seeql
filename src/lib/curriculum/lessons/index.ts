@@ -10,6 +10,7 @@
 // Module 10 (Window Functions Masterclass, lessons 58–63) and
 // Module 11 (Query Performance & Index Design, lesson 64).
 import type { Lesson } from "../types";
+import { LC_SQL50_COUNT, LC_DATAFIN_COUNT, LC_SECTION_COUNT } from "@/lib/leetcode/lc-meta";
 import { lesson01 } from "./lesson-01";
 import { lesson02 } from "./lesson-02";
 import { lesson03 } from "./lesson-03";
@@ -256,7 +257,7 @@ export const MODULES: Array<ModuleInfo & { lessons: Lesson[] }> = [
     title: "LeetCode SQL 50+",
     level: "Interview",
     blurb:
-      "The interview band — no lessons, just SQL problems: the official SQL 50 study list, the free Database extras, three tiers of platform classics from HackerRank and DataLemur, and the LeetCode premium tier — 335 problems across 59 skill sections. Every problem ships a full deep-dive, a seeded schema and live auto-grading in the sandbox; progress here is counted from solved problems, not lessons.",
+      `The interview band — no lessons, just SQL problems: the official SQL 50 study list, the free Database extras, three tiers of platform classics from HackerRank and DataLemur, and the LeetCode premium tier — ${LC_SQL50_COUNT} problems across ${LC_SECTION_COUNT - 12} skill sections. Every problem ships a full deep-dive, a seeded schema and live auto-grading in the sandbox; progress here is counted from solved problems, not lessons.`,
     lessons: [],
   },
   {
@@ -265,7 +266,7 @@ export const MODULES: Array<ModuleInfo & { lessons: Lesson[] }> = [
     title: "Data & Finance SQL",
     level: "Interview",
     blurb:
-      "The domain band — original problems authored for data & finance interview prep, each taught from zero by a concept primer with its own diagram. Product Analytics: DAU/WAU stickiness, growth accounting's four levers, funnel conversion, cohort retention matrices, gap-threshold sessionization and A/B lift. Finance Core: recursive loan amortization, delinquency buckets, portfolio weights, T+2 settlement fails, average-cost realized P&L and ledger reconciliation. Growth & Experiments: WoW churn, median time-to-convert, rolling actives, usage-tier percentiles, sample-ratio mismatch and adoption windows. Markets & Risk: FX exposure, HHI concentration, daily-balance interest accrual, dividend calendars, max drawdown and duplicate-charge detection. Banking & Credit Risk: vintage curves, roll rates, utilization bands, ECL provisioning, rate sheets and prepayment savings. Fraud & AML: structuring, velocity bursts, circular transfers, z-score anomalies, chargeback walls and dormant reactivation. Accounting & Close: trial balance, AR aging, rollforwards, FIFO layers, deferred revenue and journal gaps. Quant Desk: time-weighted return, Sharpe, VaR, beta, split adjustments and wash trades — 48 problems across 8 skill sections, each with a study guide, full deep-dive, seeded schema and live auto-grading.",
+      `The domain band — original problems authored for data & finance interview prep, each taught from zero by a concept primer with its own diagram. Product Analytics: DAU/WAU stickiness, growth accounting's four levers, funnel conversion, cohort retention matrices, gap-threshold sessionization and A/B lift. Finance Core: recursive loan amortization, delinquency buckets, portfolio weights, T+2 settlement fails, average-cost realized P&L and ledger reconciliation. Growth & Experiments: WoW churn, median time-to-convert, rolling actives, usage-tier percentiles, sample-ratio mismatch and adoption windows. Markets & Risk: FX exposure, HHI concentration, daily-balance interest accrual, dividend calendars, max drawdown and duplicate-charge detection. Banking & Credit Risk: vintage curves, roll rates, utilization bands, ECL provisioning, rate sheets and prepayment savings. Fraud & AML: structuring, velocity bursts, circular transfers, z-score anomalies, chargeback walls and dormant reactivation. Accounting & Close: trial balance, AR aging, rollforwards, FIFO layers, deferred revenue and journal gaps. Quant Desk: time-weighted return, Sharpe, VaR, beta, split adjustments and wash trades — ${LC_DATAFIN_COUNT} problems across 12 skill sections, each with a study guide, full deep-dive, seeded schema and live auto-grading.`,
     lessons: [],
   },
 ];

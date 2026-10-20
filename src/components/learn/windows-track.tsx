@@ -13,7 +13,6 @@ import { WINDOW_MCQS, WINDOW_PROBLEMS, windowStats } from "@/lib/curriculum/wind
 import { CASES, CASE_TOPICS, caseTopicLabel, caseUniverseLabel } from "@/lib/curriculum/cases";
 import type { CaseStudy } from "@/lib/curriculum/cases/types";
 import type { Problem } from "@/lib/curriculum/types";
-import { fmt } from "./roadmap-track";
 import { cn } from "@/lib/utils";
 import { McqCard } from "./mcq";
 import { ProblemCard } from "./problem-runner";
@@ -26,6 +25,13 @@ const WINDOW_LESSONS = [
   { id: "lesson-55", label: "Month-over-month", num: 55 },
   { id: "lesson-57", label: "Advanced windows", num: 57 },
 ];
+
+/** Deterministic thousands separator — hydration-safe on both servers. */
+function fmt(n: number): string {
+  const s = String(Math.abs(n));
+  const out = s.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return n < 0 ? `-${out}` : out;
+}
 
 // Concept groups over the 300-MCQ bank — contiguous ranges by construction.
 const GROUPS: Array<{ label: string; from: number; to: number }> = [

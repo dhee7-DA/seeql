@@ -23,6 +23,7 @@ import {
   Frame,
   Gauge,
   Ghost,
+  Layers,
   LayoutDashboard,
   MessagesSquare,
   Mic,
@@ -42,6 +43,7 @@ export type ToolKind =
   | "seeq"
   | "daily"
   | "frames"
+  | "windows"
   | "mentor"
   | "explorer"
   | "library"
@@ -87,6 +89,7 @@ export const TOOLS: ToolDef[] = [
   { kind: "seeq", icon: Ghost, label: "SeeQ playground", note: "dress & place your buddy", short: "SeeQ", section: "toolbox" },
   { kind: "daily", icon: CalendarDays, label: "Daily puzzle", note: "one a day — keep the streak", short: "Daily", section: "toolbox" },
   { kind: "frames", icon: Frame, label: "Window-frame playground", note: "watch the frame slide, live", short: "Frames", section: "toolbox" },
+  { kind: "windows", icon: Layers, label: "Window functions lab", note: "quiz · case files · query gym, all graded", short: "Windows", section: "toolbox" },
   { kind: "mentor", icon: Bot, label: "AI Mentor", note: "tiered hints on your live data", short: "Mentor", section: "lab" },
   { kind: "explorer", icon: Table2, label: "Data explorer", note: "browse the live tables", short: "Data", section: "toolbox" },
   { kind: "library", icon: Shapes, label: "Diagram library", note: "every visual, one wall", short: "Diagrams", section: "toolbox" },
@@ -110,7 +113,7 @@ export const TOOLS: ToolDef[] = [
   { kind: "mastery", icon: Activity, label: "Mastery map", note: "your skills, your daily quest", short: "Mastery", section: "lab" },
   { kind: "sheet", icon: Printer, label: "Cheat sheet", note: "personal revision, prints to PDF", short: "Sheet", section: "lab" },
   { kind: "notebook", icon: NotebookPen, label: "Query notebook", note: "save queries + margin notes", short: "Notes", section: "lab" },
-  { kind: "lc", icon: Code2, label: "LeetCode Big 300", note: "every classic, deep-dived", short: "LC", section: "lab" },
+  { kind: "lc", icon: Code2, label: "LeetCode Big Board", note: "every classic, deep-dived", short: "LC", section: "lab" },
 ];
 
 /** Sidebar group 1: overview + toolbox tools, in registry order. */

@@ -54,6 +54,18 @@ export interface ExamRecord {
   passedAt?: number;
 }
 
+/** One finished LeetCode contest run (Timed SQL tab) — the personal-best
+ *  ledger. Solved/total plus wall time; perfect sweeps pay a daily bonus
+ *  under `lc-contest:<dayKey>` (banked by the contest view, not here). */
+export interface LcContestRun {
+  id: string;
+  at: number;
+  label: string;
+  solved: number;
+  total: number;
+  durationSec: number;
+}
+
 export interface ProgressState {
   xpEvents: Record<string, number>;
   xpByDay: Record<string, number>;
@@ -87,6 +99,8 @@ export interface ProgressState {
   /** weekly XP target (null = not set) — read by the overview weekly-goal
    *  picker; setting it pays no XP of its own */
   weeklyGoalXp: number | null;
+  /** finished contest runs (cap 20) — personal-best source for the LC band */
+  lcContests: LcContestRun[];
   awardXp: (key: string, amount: number) => boolean;
   recordMcqCheck: (id: string, correct: boolean) => boolean;
   markLessonDone: (id: string) => boolean;
@@ -112,6 +126,8 @@ export interface ProgressState {
   markPuzzleDone: () => { ok: boolean; freezeEarned: boolean };
   /** mark a backlog day solved (idempotent, no streak side effects) */
   markBacklogDone: (day: string) => boolean;
+  /** bank a finished contest run (idempotent by run id, newest first, cap 20) */
+  saveContest: (run: LcContestRun) => void;
   resetAll: () => void;
 }
 
@@ -161,6 +177,7 @@ export const useProgress = create<ProgressState>()(
       backlogDone: {},
       freezes: 1,
       weeklyGoalXp: null,
+      lcContests: [],
 
       awardXp: (key, amount) => {
         if (get().xpEvents[key] !== undefined) return false;
@@ -314,6 +331,11 @@ export const useProgress = create<ProgressState>()(
         return true;
       },
 
+      saveContest: (run) => {
+        if (get().lcContests.some((r) => r.id === run.id)) return;
+        set((s) => ({ lcContests: [run, ...(s.lcContests ?? [])].slice(0, 20) }));
+      },
+
       resetAll: () =>
         set({
           xpEvents: {},
@@ -334,6 +356,7 @@ export const useProgress = create<ProgressState>()(
           backlogDone: {},
           freezes: 1,
           weeklyGoalXp: null,
+          lcContests: [],
         }),
     }),
     { name: "sql-visualizer-learn-v1" },

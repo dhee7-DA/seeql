@@ -16,6 +16,7 @@ import { LESSONS, MODULES } from "@/lib/curriculum/lessons";
 import { useProgress } from "@/lib/curriculum/progress";
 import { BADGES, currentStreak, dayKey, levelFor, totalXp } from "@/lib/curriculum/gamification";
 import { monthPerfect, monthsInLedger, puzzleStreak } from "@/lib/curriculum/daily";
+import { lcBadgeStats } from "@/lib/leetcode/lc-meta";
 import { celebrate } from "./celebrate";
 import { flutterBurst } from "./flutter";
 
@@ -55,7 +56,22 @@ export function useMilestoneWatcher() {
     const months = new Set([...monthsInLedger(puzzleDone), ...monthsInLedger(backlogDone)]);
     let perfectMonths = 0;
     for (const mk of months) if (monthPerfect(puzzleDone, backlogDone, mk)) perfectMonths++;
-    return { lessonsDone, problemsSolved, mcqsCorrect, perfectQuizzes, puzzlesDone, puzzleStreak: puzzleStreakNow, perfectMonths };
+    return {
+      lessonsDone,
+      problemsSolved,
+      mcqsCorrect,
+      perfectQuizzes,
+      puzzlesDone,
+      puzzleStreak: puzzleStreakNow,
+      perfectMonths,
+      // universe layer — the playground mount doesn't read the universe store,
+      // so it stays blind to it (badge tests that need it simply never fire here)
+      mocks: 0,
+      mockBestPct: 0,
+      targetSet: false,
+      universeCorrect: 0,
+      ...lcBadgeStats(xpEvents),
+    };
   }, [xpEvents, mcqAttempts, puzzleDone, backlogDone, freezes]);
 
   useEffect(() => {

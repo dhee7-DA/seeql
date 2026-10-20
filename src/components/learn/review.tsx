@@ -96,7 +96,7 @@ interface LadderItem {
   origin: string;
 }
 
-const LADDER_RE = /^(mcq|umcq|uthr|ulc):(.+)$/;
+const LADDER_RE = /^(mcq|umcq|uthr|ulc|lcm):(.+)$/;
 
 function resolveLadder(key: string, catalog: Map<string, { kind: "mcq" | "fill"; mcq?: Mcq; lessonNum: number; lessonTitle: string }>): Omit<LadderItem, "key" | "due" | "step" | "lapses"> | null {
   const m = LADDER_RE.exec(key);
@@ -111,6 +111,21 @@ function resolveLadder(key: string, catalog: Map<string, { kind: "mcq" | "fill";
     const kitQ = KIT_MCQ_CATALOG.get(rest);
     if (kitQ) return { kind: "mcq", mcq: kitQ.mcq, origin: `${kitQ.kit.name} kit` };
     return null;
+  }
+  if (fam === "lcm") {
+    // a LeetCode problem missed (or solved once and scheduled) in the band —
+    // same re-solve-from-memory contract as the interview loop's ulc cards
+    const dive = lcSqlDive(rest);
+    if (!dive) return null;
+    return {
+      kind: "code",
+      code: {
+        title: lcBySlug(rest)?.title ?? rest,
+        statement: dive.statement,
+        solution: dive.code,
+      },
+      origin: "LeetCode deep-dive",
+    };
   }
   const sep = rest.indexOf(":");
   if (sep <= 0) return null;
