@@ -1,20 +1,22 @@
 "use client";
 
 // Predict the Output — reading drills. SQL is read before it is written:
-// show a query against a schema the learner knows, and four candidate result
-// tables — one real (the engine's own output) and three plausible wrong ones
-// (mutated variants of the query, each run for real). Pick the true table.
+// show a query against a schema the learner knows, and three or four
+// candidate result tables — one real (the engine's own output) and the rest
+// plausible wrong ones (mutated variants of the query, each run for real).
+// Pick the true table.
 //
 // Everything is generated at runtime from the problem's own deep-dive: the
 // mutation library is shared with the Follow-up Gauntlet, and only problems
-// where the generator verified 3 DISTINCT distractors enter the pool
-// (DRILL_SLUGS). Zero per-drill authoring, endless content.
+// where the generator verified distinct distractors enter the pool
+// (DRILL_SLUGS: 3 distractors, DRILL2_SLUGS: 2 → 3-candidate drills).
+// Zero per-drill authoring, endless content.
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { BookOpenText, Check, ChevronRight, Play, Shuffle, X } from "lucide-react";
 import { LC_ALL, lcBySlug } from "@/lib/leetcode/registry";
 import { lcSqlDive } from "@/lib/leetcode/content/content";
-import { DRILL_SLUGS } from "@/lib/leetcode/followup-specs";
+import { DRILL2_SLUGS, DRILL_SLUGS } from "@/lib/leetcode/followup-specs";
 import {
   applyFuSpec,
   fuDistractorLabel,
@@ -33,6 +35,8 @@ import { cn } from "@/lib/utils";
 
 const READ_XP = 2;
 const LETTERS = ["A", "B", "C", "D"];
+/** Problems verified with 3 distinct distractors (4-candidate drills). */
+const FULL_POOL = new Set<string>(DRILL_SLUGS);
 
 interface Candidate {
   spec: FuSpec | null; // null = the truth
@@ -55,12 +59,14 @@ async function execSql(slug: string, sql: string): Promise<ExecResult | null> {
   }
 }
 
-/** Build the 4 candidates for a slug; null when the drill can't be built.
+/** Build the candidates for a slug; null when the drill can't be built.
+ *  4-candidate drills for the 3-distractor pool, 3-candidate for the rest.
  *  Calls run SEQUENTIALLY — the lc-sql sandbox reshapes shared tables per
  *  request, so parallel calls can collide (rename/lock) and return errors. */
 async function buildDrill(slug: string): Promise<Candidate[] | null> {
   const dive = lcSqlDive(slug);
   if (!dive) return null;
+  const target = FULL_POOL.has(slug) ? 4 : 3;
   const truthSql = stripComments(dive.code);
   const truth = await execSql(slug, truthSql);
   if (!truth) return null;
@@ -78,7 +84,7 @@ async function buildDrill(slug: string): Promise<Candidate[] | null> {
     seen.add(key);
     out.push({ spec, sql, res, label: fuDistractorLabel(spec) });
   }
-  if (out.length < 4) return null;
+  if (out.length < target) return null;
   // Fisher–Yates so the truth isn't always first
   for (let i = out.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -241,7 +247,8 @@ export function LcPredict() {
   const [best, setBest] = useState(0);
 
   const pool = useMemo(() => {
-    const rows = DRILL_SLUGS.map((s) => lcBySlug(s)).filter((p): p is NonNullable<typeof p> => Boolean(p));
+    const slugs = [...DRILL_SLUGS, ...DRILL2_SLUGS].filter((s, i, a) => a.indexOf(s) === i);
+    const rows = slugs.map((s) => lcBySlug(s)).filter((p): p is NonNullable<typeof p> => Boolean(p));
     return rows.map((p) => ({ p, cleared: xpEvents[readXpKey(p.slug)] !== undefined }));
   }, [xpEvents]);
 
@@ -277,10 +284,10 @@ export function LcPredict() {
           }
         />
         <p className="text-[12.5px] leading-relaxed text-zinc-400">
-          You get the seeded tables and one query — no editor. Four result tables claim to be the output; exactly one is
-          real (the others are engine-run near misses: a dropped WHERE, a swapped ranking function, a missing GROUP BY).
-          Pick the true one. First-correct reads pay +{READ_XP} XP, and the pool grows with every problem the generator
-          verifies. Wrong picks explain exactly which clause betrayed you.
+          You get the seeded tables and one query — no editor. Three or four result tables claim to be the output;
+          exactly one is real (the others are engine-run near misses: a dropped WHERE, a swapped ranking function, a
+          missing GROUP BY). Pick the true one. First-correct reads pay +{READ_XP} XP, and the pool grows with every
+          problem the generator verifies. Wrong picks explain exactly which clause betrayed you.
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           <Btn variant="primary" onClick={nextDrill}>

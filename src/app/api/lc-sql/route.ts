@@ -1,17 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { ensureDatabase } from "@/lib/sample-db";
 import { hasMultipleStatements, splitStatements } from "@/lib/sql-statements";
 import { normalizeCell } from "@/lib/cell";
 import type { CellValue, ExecResult } from "@/lib/sql-types";
 import { lcSqlDive } from "@/lib/leetcode/content/content";
 
-// LeetCode SQL 50 — per-problem sandbox runner.
+// LeetCode SQL — per-problem sandbox runner (bun:sqlite, in-memory).
 //
-// Every request gets the problem's own schema (exact LeetCode-style table
-// names) created + seeded inside a transaction that is ALWAYS rolled back:
-// the storefront db is untouched, the problem's tables are pristine on each
-// run, and two problems that both define an `Employee` table never collide.
+// Every request builds the problem's schema + seed in a FRESH :memory:
+// database and destroys it when the request ends. Consequences:
+//   - the storefront db is never touched (no transactions, no renames);
+//   - two problems that both define an `Employee` table never collide, and
+//     parallel requests cannot collide with each other (the old Prisma
+//     sandbox renamed shared tables per request and forced client-side
+//     sequencing — that whole class of races is gone);
+//   - the engine is the SAME build bun ships everywhere else in this app
+//     (scripts, generator), so build-time verification == runtime grading;
+//   - bun's SQLite compiles in the math extension: SQRT, CEIL, FLOOR, POWER
+//     all exist — the Prisma-bundled SQLite did not (4 problems were
+//     unsolvable under it), and foreign keys stay OFF like the generator's,
+//     which the dangling-manager problems rely on.
 //
 //   POST { slug, sql }  → ExecResult-shaped response
 //   - write problems (DELETE/UPDATE) run the write, then return the dive's
@@ -20,18 +27,26 @@ import { lcSqlDive } from "@/lib/leetcode/content/content";
 const MAX_SQL_LENGTH = 20_000;
 const MAX_ROWS = 1_000;
 
-class SandboxRollback extends Error {
-  constructor() {
-    super("__sandbox_rollback__");
+type SqliteDatabase = {
+  run: (sql: string) => { changes: number; lastInsertRowid: number | bigint };
+  prepare: (sql: string) => { all: () => Record<string, unknown>[] };
+  close: () => void;
+};
+
+// `bun:sqlite` resolved at runtime via an indirect import — hidden from the
+// Next bundler (webpack/turbopack would try to resolve the module at build
+// time; under `bun .next/standalone/server.js` it is a runtime builtin).
+type DatabaseCtor = new (path: string) => SqliteDatabase;
+let Database: DatabaseCtor | null = null;
+async function openSandbox(): Promise<SqliteDatabase> {
+  if (Database === null) {
+    const mod = (await new Function("return import('bun:sqlite')")()) as { Database: DatabaseCtor };
+    Database = mod.Database;
   }
+  return new Database(":memory:");
 }
 
-/** Prisma wraps raw errors in boilerplate — keep the underlying message. */
-function cleanError(raw: string): string {
-  const m = raw.match(/Message: `([^`]+)`/);
-  if (m) return m[1].trim();
-  return raw.replace(/\s*Invalid `prisma\.\$query\w+`\(\) invocation:?\s*/g, "").trim();
-}
+const READ_TYPES = ["SELECT", "WITH", "EXPLAIN", "PRAGMA", "VALUES"];
 
 export async function POST(req: NextRequest) {
   try {
@@ -58,74 +73,43 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    await ensureDatabase();
-
     const started = performance.now();
+    const db = await openSandbox();
     let captured: { columns: string[]; rows: CellValue[][]; changes: number } | null = null;
     let userError: string | null = null;
 
     try {
-      await db.$transaction(
-        async (tx) => {
-          // build the problem's world — exact table names, fresh every run.
-          // SQLite table names are case-insensitive, so a dive's `Products`
-          // collides with the storefront's own `products` — drop any table
-          // the DDL is about to create first. The transaction below is
-          // ALWAYS rolled back, so the persistent schema is untouched.
-          const created = [
-            ...dive.schema.ddl.matchAll(/CREATE TABLE (?:IF NOT EXISTS )?["`[]?([A-Za-z_][\w]*)/gi),
-          ].map((m) => m[1]);
-          if (created.length > 0) {
-            // Park any same-name PERSISTENT table under a shadow name for the
-            // duration of the transaction. ALTER TABLE RENAME rewrites child
-            // FK references, so no dangling constraints ever exist (a DROP
-            // would either fail on FK enforcement or orphan the children).
-            // The transaction below ALWAYS ends in ROLLBACK, which restores
-            // the original name and drops the sandbox tables.
-            let i = 0;
-            for (const name of new Set(created)) {
-              const hit = (await tx.$queryRaw`SELECT name FROM sqlite_master WHERE type = 'table' AND lower(name) = lower(${name})`) as Array<{ name: string }>;
-              if (hit.length > 0) {
-                await tx.$executeRawUnsafe(`ALTER TABLE "${hit[0].name}" RENAME TO "__seeql_shadow_${Date.now()}_${i}"`);
-                i += 1;
-              }
-            }
-          }
-          for (const stmt of splitStatements(dive.schema.ddl)) await tx.$executeRawUnsafe(stmt);
-          for (const stmt of splitStatements(dive.schema.seed)) await tx.$executeRawUnsafe(stmt);
+      // build the problem's world — exact table names, fresh every run
+      for (const stmt of splitStatements(dive.schema.ddl)) db.run(stmt);
+      for (const stmt of splitStatements(dive.schema.seed)) db.run(stmt);
 
-          const before = (await tx.$queryRawUnsafe(`SELECT total_changes() AS c`)) as Array<Record<string, unknown>>;
-          const res = (await tx.$queryRawUnsafe(sql)) as Array<Record<string, unknown>>;
-          const after = (await tx.$queryRawUnsafe(`SELECT total_changes() AS c`)) as Array<Record<string, unknown>>;
-          const affected = Number(after[0].c) - Number(before[0].c);
+      const statementType = (sql.match(/^[a-zA-Z]+/)?.[0] ?? "").toUpperCase();
+      const isWrite = !READ_TYPES.includes(statementType);
 
-          // write problems surface the post-write table state for grading
-          const verify = dive.writeVerify?.replace(/;+\s*$/, "") ?? null;
-          const list = (verify !== null
-            ? (await tx.$queryRawUnsafe(verify))
-            : Array.isArray(res)
-              ? res
-              : []) as Array<Record<string, unknown>>;
-
-          const columns = list.length > 0 ? Object.keys(list[0]) : [];
-          captured = {
-            columns,
-            rows: list.slice(0, MAX_ROWS).map((r) => columns.map((c) => normalizeCell(r[c]))),
-            changes: affected,
-          };
-          throw new SandboxRollback();
-        },
-        { maxWait: 5000, timeout: 15_000 },
-      );
-    } catch (err) {
-      if (err instanceof SandboxRollback) {
-        // expected — the transaction is always rolled back
-      } else if (err instanceof Error && err.message === "Query failed") {
-        userError = "Statement failed";
+      if (isWrite) {
+        const res = db.run(sql);
+        // write problems surface the post-write table state for grading
+        const verify = dive.writeVerify?.replace(/;+\s*$/, "") ?? null;
+        const list = verify !== null ? db.prepare(verify).all() : [];
+        const columns = list.length > 0 ? Object.keys(list[0]) : [];
+        captured = {
+          columns,
+          rows: list.slice(0, MAX_ROWS).map((r) => columns.map((c) => normalizeCell(r[c]))),
+          changes: res.changes,
+        };
       } else {
-        // user statement (or a schema bug) blew up the transaction
-        userError = err instanceof Error ? cleanError(err.message) : "Statement failed";
+        const list = db.prepare(sql).all();
+        const columns = list.length > 0 ? Object.keys(list[0]) : [];
+        captured = {
+          columns,
+          rows: list.slice(0, MAX_ROWS).map((r) => columns.map((c) => normalizeCell(r[c]))),
+          changes: 0,
+        };
       }
+    } catch (err) {
+      userError = err instanceof Error ? err.message : "Statement failed";
+    } finally {
+      db.close();
     }
 
     if (userError !== null) {
@@ -134,7 +118,7 @@ export async function POST(req: NextRequest) {
 
     const got = captured ?? { columns: [], rows: [], changes: 0 };
     const statementType = (sql.match(/^[a-zA-Z]+/)?.[0] ?? "").toUpperCase();
-    const isWrite = !["SELECT", "WITH", "EXPLAIN", "PRAGMA", "VALUES"].includes(statementType);
+    const isWrite = !READ_TYPES.includes(statementType);
     const payload: ExecResult = {
       ok: true,
       statementType,

@@ -31,7 +31,9 @@ export type FuKind =
   | "limit-add" // no LIMIT + ORDER BY → cap at first 3
   | "order-flip" // ASC ↔ DESC — bottom-up presentation
   | "where-not" // NOT (original filter) — the complement set
-  | "distinct-drop"; // SELECT DISTINCT → allow duplicates
+  | "distinct-drop" // SELECT DISTINCT → allow duplicates
+  | "having-add" // GROUP BY without HAVING → gate at COUNT(*) >= 2
+  | "cte-wrap"; // refactor: the whole query into one CTE named result
 
 export interface FuSpec {
   kind: FuKind;
@@ -219,6 +221,24 @@ function mutDistinctDrop(code: string): string | null {
   return `${code.slice(0, i).replace(/\s+$/, "")} ${code.slice(i + "distinct".length).replace(/^\s+/, "")}`;
 }
 
+/** GROUP BY without HAVING → gate the groups at two or more members. */
+function mutHavingAdd(code: string): string | null {
+  if (findTopLevel(code, "having") >= 0) return null;
+  const i = findTopLevel(code, "group\\s+by");
+  if (i < 0) return null;
+  const end = clauseSpan(code, i, CLAUSE_NEXT);
+  return `${code.slice(0, end).replace(/\s+$/, "")} HAVING COUNT(*) >= 2${end === code.length ? "" : " "}${code.slice(end)}`;
+}
+
+/** The universal refactor push: same rows, the pipeline wrapped as a CTE.
+ *  Output-preserving, so the generator promotes it only when the wrapped
+ *  query returns EXACTLY the baseline (order-aware) — never when it drifts. */
+function mutCteWrap(code: string): string | null {
+  const body = code.replace(/;+\s*$/, "").trim();
+  if (!/^(select|with)\b/i.test(body)) return null; // SELECT/WITH pipelines only
+  return `WITH result AS (${body}) SELECT * FROM result`;
+}
+
 /* --- drill-only mutations: plausible WRONG outputs, never follow-ups --- */
 
 function mutHavingDrop(code: string): string | null {
@@ -295,6 +315,8 @@ const STATEMENTS: Record<FuKind, (param?: string) => string> = {
   "order-flip": () => "The interviewer pushes: same numbers, bottom-up — reverse the presentation order.",
   "where-not": () => "The interviewer pushes: give me the complement — everyone the original filter would have excluded.",
   "distinct-drop": () => "The interviewer pushes: drop the DISTINCT — show every raw row, duplicates included.",
+  "having-add": () => "The interviewer pushes: keep only the groups with at least two members — add the HAVING gate.",
+  "cte-wrap": () => "The interviewer pushes: restructure it — same rows, but the whole pipeline lives in one CTE named result.",
 };
 
 const HINTS: Record<FuKind, string> = {
@@ -308,6 +330,8 @@ const HINTS: Record<FuKind, string> = {
   "order-flip": "Swap the direction keyword on every ORDER BY key — the keys themselves stay.",
   "where-not": "NOT (…) inverts the predicate — watch what NULL rows do under NOT.",
   "distinct-drop": "Delete DISTINCT and the engine shows every underlying row it collapsed.",
+  "having-add": "HAVING filters groups after aggregation — COUNT(*) >= 2 keeps groups with two or more rows.",
+  "cte-wrap": "WITH result AS ( …your entire query… ) SELECT * FROM result — the clauses stay in the same order.",
 };
 
 /** Apply a promoted spec to a dive — deterministic on both sides. */
@@ -355,6 +379,12 @@ export function deriveFollowUp(dive: LcSqlDive, spec: FuSpec): FuDerived | null 
     case "distinct-drop":
       sql = mutDistinctDrop(code);
       break;
+    case "having-add":
+      sql = mutHavingAdd(code);
+      break;
+    case "cte-wrap":
+      sql = mutCteWrap(code);
+      break;
   }
   if (!sql) return null;
   const order: FuDerived["order"] = /\border\s+by\b/i.test(sql) && dive.order === "exact" ? "exact" : "any";
@@ -389,6 +419,8 @@ export function fuCandidates(dive: LcSqlDive): FuSpec[] {
   if (dive.order === "exact" && mutOrderFlip(code)) out.push({ kind: "order-flip" });
   if (mutWhereNot(code)) out.push({ kind: "where-not" });
   if (mutDistinctDrop(code)) out.push({ kind: "distinct-drop" });
+  if (mutHavingAdd(code)) out.push({ kind: "having-add" });
+  if (mutCteWrap(code)) out.push({ kind: "cte-wrap" }); // universal fallback
   return out;
 }
 
@@ -418,6 +450,7 @@ export function fuDistractorSpecs(dive: LcSqlDive): FuSpec[] {
   if (dive.order === "exact" && mutDropOrder(code)) out.push({ kind: "order-flip", param: "drop" });
   if (dive.order === "exact" && mutOrderFlip(code)) out.push({ kind: "order-flip" });
   if (mutWhereNot(code)) out.push({ kind: "where-not" });
+  if (mutHavingAdd(code)) out.push({ kind: "having-add" });
   return out;
 }
 
@@ -462,6 +495,8 @@ export function fuDistractorLabel(spec: FuSpec): string {
       return "kept duplicate rows";
     case "where-not":
       return "negated the filter instead";
+    case "having-add":
+      return "gated the groups at two or more members";
     default:
       return "a near miss";
   }

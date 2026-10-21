@@ -4,13 +4,27 @@
 // a different result, stayed meaningful). The runtime re-derives statement,
 // model SQL and grading from these specs via lib/leetcode/followups.ts.
 // DRILL_SLUGS: problems with 3 verified distinct Predict-the-Output
-// distractors — the reading-drill lobby draws from this list only.
+// distractors; DRILL2_SLUGS: 2 verified distractors — the reading-drill
+// lobby draws from both (3-candidate drills for the second pool).
 import type { FuSpec } from "./followups";
 
 export const FU_SPECS: Record<string, FuSpec[]> = {
+  "replace-employee-id-with-unique-identifier": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "product-sales-analysis-i": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
   "product-sales-analysis-ii": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "product-sales-analysis-iii": [
@@ -22,31 +36,74 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
       "kind": "agg-swap"
     }
   ],
+  "employee-bonus": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "students-and-examinations": [
+    {
+      "kind": "having-add"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "combine-two-tables": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
   "employees-earning-more-than-their-managers": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "duplicate-emails": [
     {
       "kind": "having",
       "param": "2"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "customers-who-never-order": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "article-views-i": [
     {
       "kind": "distinct-drop"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "article-views-ii": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "sales-person": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "sales-analysis-i": [
     {
       "kind": "min-max",
       "param": "min"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "sales-analysis-ii": [
@@ -61,6 +118,9 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
     {
       "kind": "having",
       "param": "1"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "not-boring-movies": [
@@ -71,9 +131,69 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
       "kind": "where-not"
     }
   ],
+  "average-selling-price": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "project-employees-i": [
+    {
+      "kind": "having-add"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "percentage-of-users-attended-a-contest": [
+    {
+      "kind": "having-add"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "queries-quality-and-percentage": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "average-time-of-process-per-machine": [
+    {
+      "kind": "having-add"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "managers-with-at-least-5-direct-reports": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "confirmation-rate": [
+    {
+      "kind": "having-add"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "fix-names-in-a-table": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
   "patients-with-a-condition": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "second-highest-salary": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "department-highest-salary": [
@@ -89,12 +209,26 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
     {
       "kind": "rank-swap",
       "param": "DENSE_RANK"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "classes-more-than-5-students": [
     {
       "kind": "having",
       "param": "6"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "group-sold-products-by-the-date": [
+    {
+      "kind": "having-add"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "immediate-food-delivery-ii": [
@@ -106,6 +240,11 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
       "kind": "agg-swap"
     }
   ],
+  "movie-rating": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
   "list-the-products-ordered-in-a-period": [
     {
       "kind": "having",
@@ -115,31 +254,56 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
       "kind": "where-not"
     }
   ],
+  "immediate-food-delivery-i": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
   "number-of-employees-who-met-the-target": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "employees-whose-manager-left-the-company": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "game-play-analysis-iv": [
     {
       "kind": "min-max",
       "param": "max"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "exchange-seats": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "game-play-analysis-v": [
     {
       "kind": "min-max",
       "param": "max"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "investments-in-2016": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "department-top-three-salaries": [
@@ -152,24 +316,64 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
       "param": "4"
     }
   ],
+  "average-salary-of-departments": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "the-number-of-employees-which-report-to-each-employee": [
+    {
+      "kind": "having-add"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
   "primary-department-for-each-employee": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "triangle-judgement": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "capital-gain-loss": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "top-travellers": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "market-analysis-i": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "npv-queries": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "bank-account-summary-ii": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "number-of-calls-between-two-persons": [
@@ -184,12 +388,18 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "employees-with-missing-information": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "game-play-analysis-i": [
     {
       "kind": "min-max",
       "param": "max"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "customer-placing-the-largest-number-of-orders": [
@@ -205,27 +415,70 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
     {
       "kind": "min-max",
       "param": "min"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "actors-and-directors-who-cooperated-at-least-three-times": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "project-employees-ii": [
     {
       "kind": "min-max",
       "param": "min"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "reported-posts": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "daily-leads-and-partners": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "find-followers-count": [
+    {
+      "kind": "having-add"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "find-total-time-spent-by-each-employee": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "having-add"
+    }
+  ],
+  "number-of-rich-customers": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "monthly-transactions-i": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "fix-product-name-format": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "the-latest-login-in-2020": [
@@ -237,9 +490,35 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
       "kind": "where-not"
     }
   ],
+  "reformat-department-table": [
+    {
+      "kind": "having-add"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
   "rearrange-products-table": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "all-people-report-to-the-given-manager": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "invalid-tweets": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "calculate-special-bonus": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "top-earners": [
@@ -251,6 +530,24 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
       "kind": "order-flip"
     }
   ],
+  "station-median": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "company-hierarchy-counts": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "ratings-histogram": [
+    {
+      "kind": "having-add"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
   "top-five-artists": [
     {
       "kind": "agg-swap"
@@ -258,6 +555,11 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
     {
       "kind": "limit-grow",
       "param": "8"
+    }
+  ],
+  "find-the-team-size": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "project-employees-iii": [
@@ -273,31 +575,64 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
     {
       "kind": "top-n",
       "param": "2"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "active-users": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "tree-node": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "consecutive-available-seats": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "rectangle-area": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "number-of-comments-per-post": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "user-activity-for-the-past-30-days-ii": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "customers-who-bought-a-and-b-not-c": [
     {
       "kind": "distinct-drop"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "create-a-session-bar-chart": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "last-person-to-fit-in-the-elevator": [
@@ -312,16 +647,35 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "sellers-with-no-sales": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "type-of-triangle": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "the-blunder": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "station-shortest-longest": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "asian-population": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "challenges": [
@@ -333,41 +687,90 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
       "kind": "order-flip"
     }
   ],
+  "occupations-pivot": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
   "uber-first-transaction": [
     {
       "kind": "top-n",
       "param": "2"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "linkedin-power-creators": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "compressed-mode": [
     {
       "kind": "min-max",
       "param": "min"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "recyclable-and-low-fat-products": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "find-users-with-valid-e-mails": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "weather-type-in-each-country": [
+    {
+      "kind": "having-add"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "activity-participants": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "unique-orders-and-customers-per-month": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "customer-who-visited-but-did-not-transact": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "user-activity-for-the-past-30-days-i": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "having-add"
+    }
+  ],
+  "reported-posts-ii": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "ads-performance": [
@@ -381,6 +784,9 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "active-businesses": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "highest-grade-for-each-student": [
@@ -412,28 +818,53 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
     {
       "kind": "top-n",
       "param": "2"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "customer-order-frequency": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "sales-by-day-of-the-week": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "monthly-transactions-ii": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "biggest-window-between-events": [
     {
       "kind": "top-n",
       "param": "2"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "user-purchase-platform": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "report-contiguous-dates": [
     {
       "kind": "min-max",
       "param": "min"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "second-most-recent-activity": [
@@ -458,21 +889,48 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "countries-you-can-safely-invest-in": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "count-salary-categories": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "the-report": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "top-competitors": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "the-pads": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "placements": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "symmetric-pairs": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "fifteen-days-of-learning": [
@@ -488,16 +946,25 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "card-launch-success": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "ads-funnel": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "spend-histogram": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "second-day-confirmation": [
@@ -518,15 +985,31 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
       "kind": "distinct-drop"
     }
   ],
+  "friend-requests-i-overall-acceptance-rate": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
   "users-that-actively-request-confirmation-messages": [
     {
       "kind": "having",
       "param": "25"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "the-winner-university": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "all-valid-triplets-that-can-represent-a-country": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "products-worth-over-invoices": [
@@ -537,14 +1020,25 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
       "kind": "order-flip"
     }
   ],
+  "find-latest-salaries": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
   "friend-requests-ii-who-has-the-most-friends": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "strong-friendship": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "all-the-pairs-with-the-maximum-number-of-common-followers": [
@@ -577,11 +1071,17 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
     {
       "kind": "limit-grow",
       "param": "4"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "unpopular-books": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "friendly-movies-streamed-last-month": [
@@ -604,11 +1104,17 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "finding-the-topic-of-each-post": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "leetflex-banned-accounts": [
     {
       "kind": "distinct-drop"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "maximum-transaction-each-day": [
@@ -623,11 +1129,17 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "users-with-two-purchases-within-seven-days": [
     {
       "kind": "distinct-drop"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "total-sales-amount-by-year": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "the-first-day-of-the-maximum-recorded-temperature-in-each-city": [
@@ -676,6 +1188,9 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "employees-with-deductions": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "generate-the-invoice": [
@@ -715,6 +1230,9 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
     {
       "kind": "rank-swap",
       "param": "RANK"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "find-the-quiet-students-in-all-exams": [
@@ -729,6 +1247,9 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "students-report-by-geography": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "merge-overlapping-events-in-the-same-hall": [
@@ -743,17 +1264,26 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "employee-task-duration-and-concurrent-tasks": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "game-play-analysis-ii": [
     {
       "kind": "min-max",
       "param": "max"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "game-play-analysis-iii": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "winning-candidate": [
@@ -776,29 +1306,44 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "count-student-number-in-departments": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "shortest-distance-in-a-plane": [
     {
       "kind": "min-max",
       "param": "max"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "shortest-distance-in-a-line": [
     {
       "kind": "min-max",
       "param": "max"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "second-degree-follower": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "new-users-daily-count": [
     {
       "kind": "min-max",
       "param": "max"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "tournament-winners": [
@@ -814,11 +1359,17 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
     {
       "kind": "min-max",
       "param": "min"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "market-analysis-ii": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "page-recommendations": [
@@ -840,17 +1391,31 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "students-with-invalid-departments": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "number-of-trusted-contacts-of-a-customer": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "evaluate-boolean-expression": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "calculate-salaries": [
     {
       "kind": "min-max",
       "param": "min"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "the-most-recent-orders-for-each-product": [
@@ -865,31 +1430,69 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "warehouse-manager": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "find-the-missing-ids": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "count-apples-and-oranges": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "products-price-for-each-store": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "hopper-company-queries-i": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "hopper-company-queries-ii": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "hopper-company-queries-iii": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "find-the-subtasks-that-did-not-execute": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "grand-slam-titles": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "having-add"
+    }
+  ],
+  "find-interview-candidates": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "ad-free-sessions": [
@@ -903,6 +1506,14 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "find-customers-with-positive-revenue-this-year": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "convert-date-format": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "orders-with-maximum-quantity-above-average": [
@@ -922,41 +1533,67 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
       "kind": "order-flip"
     }
   ],
+  "leetcodify-friends-recommendations": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
   "find-cutoff-score-for-each-school": [
     {
       "kind": "min-max",
       "param": "max"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "count-the-number-of-experiments": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "number-of-accounts-that-did-not-stream": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "low-quality-problems": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "accepted-candidates-from-the-interviews": [
     {
       "kind": "min-max",
       "param": "max"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "the-category-of-each-member-in-the-store": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "the-number-of-users-that-are-eligible-for-discount": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "the-users-that-are-eligible-for-discount": [
@@ -965,6 +1602,14 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
     },
     {
       "kind": "distinct-drop"
+    }
+  ],
+  "number-of-times-a-driver-was-a-passenger": [
+    {
+      "kind": "having-add"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "product-sales-analysis-iv": [
@@ -989,57 +1634,113 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
     {
       "kind": "min-max",
       "param": "max"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "the-number-of-passengers-in-each-bus-ii": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "longest-winning-streak": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "the-change-in-global-rankings": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "all-the-matches-of-the-league": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "compute-the-rank-as-a-percentage": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "build-the-equation": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "order-two-columns-independently": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "dynamic-pivoting-of-a-table": [
+    {
+      "kind": "having-add"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "dynamic-unpivoting-of-a-table": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "arrange-table-by-gender": [
     {
       "kind": "min-max",
       "param": "min"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "tasks-count-in-the-weekend": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "calculate-the-influence-of-each-salesperson": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "sort-the-olympic-table": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "change-null-values-in-a-table-to-the-previous-value": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "form-a-chemical-bond": [
@@ -1051,9 +1752,17 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
       "kind": "where-not"
     }
   ],
+  "concatenate-the-name-and-the-profession": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
   "leetcodify-similar-friends": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "the-number-of-seniors-and-juniors-to-join-the-company": [
@@ -1067,27 +1776,47 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "the-number-of-seniors-and-juniors-to-join-the-company-ii": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "customers-with-strictly-increasing-purchases": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "products-with-three-or-more-orders-in-two-consecutive-years": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "count-artist-occurrences-on-spotify-ranking-list": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "immediate-food-delivery-iii": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "bikes-last-time-used": [
     {
       "kind": "min-max",
       "param": "min"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "find-active-users": [
@@ -1099,41 +1828,85 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
       "kind": "order-flip"
     }
   ],
+  "count-occurrences-in-text": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
   "total-traveled-distance": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "calculate-orders-within-each-interval": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "highest-salaries-difference": [
     {
       "kind": "rank-swap",
       "param": "ROW_NUMBER"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "rolling-average-steps": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "market-analysis-iii": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "find-expensive-cities": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "class-performance": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "loan-types": [
+    {
+      "kind": "having-add"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "consecutive-transactions-with-increasing-amounts": [
     {
       "kind": "top-n",
       "param": "2"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "popularity-percentage": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "customers-with-maximum-number-of-transactions-on-consecutive-days": [
@@ -1167,12 +1940,46 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "symmetric-coordinates": [
     {
       "kind": "distinct-drop"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "flight-occupancy-and-waitlist-analysis": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "classifying-triangles-by-lengths": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "binary-tree-nodes": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "snaps-analysis": [
+    {
+      "kind": "having-add"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "manager-of-the-largest-department": [
     {
       "kind": "min-max",
       "param": "min"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "calculate-compressed-mean": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "find-third-transaction": [
@@ -1197,12 +2004,18 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "top-percentile-fraud": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "employees-project-allocation": [
     {
       "kind": "min-max",
       "param": "min"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "find-candidates-for-data-scientist-position": [
@@ -1233,6 +2046,9 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
     {
       "kind": "min-max",
       "param": "max"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "pizza-toppings-cost-analysis": [
@@ -1246,11 +2062,17 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "friends-with-no-mutual-friends": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "find-all-unique-email-domains": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "find-trending-hashtags": [
@@ -1272,6 +2094,17 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "find-bursty-behavior": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "user-activities-within-time-bounds": [
+    {
+      "kind": "having-add"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "friday-purchase-iii": [
@@ -1285,6 +2118,9 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "find-products-with-three-consecutive-digits": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "find-longest-calls": [
@@ -1309,16 +2145,30 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
     {
       "kind": "min-max",
       "param": "min"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "calculate-parking-fees-and-duration": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "second-day-verification": [
     {
       "kind": "distinct-drop"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "invalid-tweets-ii": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "premier-league-table-ranking": [
@@ -1340,12 +2190,26 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "premier-league-table-ranking-iii": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "find-cities-in-each-state": [
+    {
+      "kind": "having-add"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "find-cities-in-each-state-ii": [
     {
       "kind": "having",
       "param": "4"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "second-highest-salary-ii": [
@@ -1358,20 +2222,34 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
       "param": "3"
     }
   ],
+  "ceo-subordinate-hierarchy": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
   "calculate-trapping-rain-water": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "bitwise-user-permissions-analysis": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "find-circular-gift-exchange-chains": [
     {
       "kind": "min-max",
       "param": "max"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "team-dominance-by-pass-success": [
@@ -1395,17 +2273,26 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "year-on-year-growth-rate": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "customer-purchasing-behavior-analysis": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "calculate-product-final-price": [
     {
       "kind": "min-max",
       "param": "min"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "find-top-performing-driver": [
@@ -1415,6 +2302,11 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
     {
       "kind": "limit-grow",
       "param": "4"
+    }
+  ],
+  "find-candidates-for-data-scientist-position-ii": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "find-top-scoring-students": [
@@ -1431,6 +2323,14 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
     {
       "kind": "min-max",
       "param": "min"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "find-overlapping-shifts": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "find-overlapping-shifts-ii": [
@@ -1442,9 +2342,22 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
       "kind": "agg-swap"
     }
   ],
+  "books-with-null-ratings": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
   "first-letter-capitalization": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "nth-highest-salary": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "consecutive-numbers": [
@@ -1458,21 +2371,38 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "rising-temperature": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "find-customer-referee": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "big-countries": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "human-traffic-of-stadium": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "customers-who-bought-all-products": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "restaurant-growth": [
@@ -1486,6 +2416,9 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "find-students-who-improved": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "find-consistently-improving-employees": [
@@ -1501,11 +2434,17 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "first-letter-capitalization-ii": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "find-valid-emails": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "find-invalid-ip-addresses": [
@@ -1520,22 +2459,49 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "find-products-with-valid-serial-numbers": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "dna-pattern-recognition": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "analyze-organization-hierarchy": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "having-add"
+    }
+  ],
+  "analyze-subscription-conversion": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "find-overbooked-employees": [
     {
       "kind": "distinct-drop"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "find-covid-recovery-patients": [
     {
       "kind": "min-max",
       "param": "max"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "find-books-with-no-available-copies": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "find-product-recommendation-pairs": [
@@ -1575,11 +2541,17 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "find-drivers-with-improved-fuel-efficiency": [
     {
       "kind": "where-not"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "dau-wau-stickiness": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "growth-accounting": [
@@ -1593,11 +2565,17 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "funnel-step-conversion": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "cohort-retention-matrix": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "sessionize-events": [
@@ -1643,6 +2621,11 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
       "kind": "order-flip"
     }
   ],
+  "settlement-fails-aging": [
+    {
+      "kind": "cte-wrap"
+    }
+  ],
   "realized-pnl-average-cost": [
     {
       "kind": "agg-swap"
@@ -1685,9 +2668,20 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
       "kind": "order-flip"
     }
   ],
+  "usage-tier-percentiles": [
+    {
+      "kind": "having-add"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
   "ab-sample-ratio-mismatch": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "feature-adoption-windows": [
@@ -1728,6 +2722,9 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "dividend-income-calendar": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "max-drawdown": [
@@ -1759,6 +2756,9 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "delinquency-roll-rates": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "credit-utilization-bands": [
@@ -1781,6 +2781,9 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "risk-based-pricing": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "prepayment-detection": [
@@ -1814,6 +2817,9 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "circular-transfers": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "amount-anomaly-zscore": [
@@ -1827,6 +2833,9 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "chargeback-rate-ranking": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "dormant-reactivation": [
@@ -1889,22 +2898,39 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "time-weighted-return": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "cte-wrap"
+    }
+  ],
+  "sharpe-ratio": [
+    {
+      "kind": "cte-wrap"
     }
   ],
   "value-at-risk": [
     {
       "kind": "min-max",
       "param": "max"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "beta-benchmark": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "split-adjusted-position": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "wash-trade-detection": [
@@ -1927,6 +2953,9 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "plan-migration-paths": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "mrr-waterfall": [
@@ -1957,6 +2986,9 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "winback-recovery": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "roas-by-campaign": [
@@ -1980,6 +3012,9 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "email-engagement-funnel": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "linear-multi-touch": [
@@ -2019,6 +3054,9 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "null-blank-audit": [
     {
       "kind": "agg-swap"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "point-in-time-asof": [
@@ -2032,6 +3070,9 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "scd2-build": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "late-arriving-restatement": [
@@ -2045,11 +3086,17 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "snapshot-delta-detect": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "basket-depth-aov": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "cte-wrap"
     }
   ],
   "repeat-purchase-rate": [
@@ -2181,6 +3228,9 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   "most-common-course-pairs": [
     {
       "kind": "order-flip"
+    },
+    {
+      "kind": "having-add"
     }
   ],
   "find-students-with-study-spiral-pattern": [
@@ -2194,4 +3244,6 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
   ]
 };
 
-export const DRILL_SLUGS: string[] = ["product-sales-analysis-iii","sales-analysis-ii","not-boring-movies","department-highest-salary","immediate-food-delivery-ii","list-the-products-ordered-in-a-period","department-top-three-salaries","number-of-calls-between-two-persons","the-latest-login-in-2020","rearrange-products-table","top-earners","top-five-artists","project-employees-iii","last-person-to-fit-in-the-elevator","customer-who-visited-but-did-not-transact","user-activity-for-the-past-30-days-i","ads-performance","highest-grade-for-each-student","team-scores-in-football-tournament","apples-and-oranges","second-most-recent-activity","transactions-per-visit-histogram","placements","symmetric-pairs","products-worth-over-invoices","friend-requests-ii-who-has-the-most-friends","all-the-pairs-with-the-maximum-number-of-common-followers","page-recommendations-ii","the-airport-with-the-most-flights","friendly-movies-streamed-last-month","the-most-recent-three-orders","finding-the-topic-of-each-post","maximum-transaction-each-day","the-first-day-of-the-maximum-recorded-temperature-in-each-city","first-and-last-call-on-the-same-day","bank-account-summary","league-statistics","generate-the-invoice","trips-and-users","median-employee-salary","find-the-quiet-students-in-all-exams","merge-overlapping-events-in-the-same-hall","find-cumulative-salary-of-an-employee","second-degree-follower","tournament-winners","market-analysis-ii","page-recommendations","the-most-recent-orders-for-each-product","products-price-for-each-store","ad-free-sessions","find-customers-with-positive-revenue-this-year","orders-with-maximum-quantity-above-average","group-employees-of-the-same-salary","the-users-that-are-eligible-for-discount","product-sales-analysis-iv","product-sales-analysis-v","tasks-count-in-the-weekend","form-a-chemical-bond","the-number-of-seniors-and-juniors-to-join-the-company","find-active-users","calculate-orders-within-each-interval","class-performance","customers-with-maximum-number-of-transactions-on-consecutive-days","maximize-items","find-peak-calling-hours-for-each-city","find-third-transaction","top-three-wineries","find-candidates-for-data-scientist-position","friday-purchases-i","pizza-toppings-cost-analysis","find-trending-hashtags","find-trending-hashtags-ii","friday-purchase-iii","find-longest-calls","consecutive-available-seats-ii","premier-league-table-ranking","premier-league-table-ranking-ii","find-cities-in-each-state-ii","second-highest-salary-ii","team-dominance-by-pass-success","longest-team-pass-streak","find-top-performing-driver","find-top-scoring-students","find-overlapping-shifts-ii","first-letter-capitalization","consecutive-numbers","restaurant-growth","find-consistently-improving-employees","first-letter-capitalization-ii","find-invalid-ip-addresses","find-product-recommendation-pairs","find-category-recommendation-pairs","seasonal-sales-analysis","odd-and-even-transactions","sessionize-events","loan-amortization-schedule","realized-pnl-average-cost","gl-reconciliation","week-over-week-churn","rolling-7d-actives","feature-adoption-windows","fx-exposure-report","portfolio-concentration-hhi","daily-balance-interest","duplicate-charge-pairs","vintage-default-curves","credit-utilization-bands","prepayment-detection","structuring-detection","transaction-velocity","amount-anomaly-zscore","dormant-reactivation","trial-balance-check","ar-aging-schedule","fifo-inventory-cogs","deferred-revenue","journal-gap-detection","wash-trade-detection","trial-to-paid-funnel","mrr-waterfall","winback-recovery","roas-by-campaign","first-last-touch-attribution","linear-multi-touch","budget-pacing","channel-ltv-vs-cac","keep-latest-dedupe","point-in-time-asof","late-arriving-restatement","repeat-purchase-rate","rfm-segmentation","weeks-of-supply","returns-rate-by-category","cohort-repeat-revenue","find-users-with-high-token-usage","find-golden-hour-customers","find-churn-risk-customers","find-loyal-customers","find-emotionally-consistent-users","find-users-with-persistent-behavior-patterns","find-stores-with-inventory-imbalance","find-books-with-polarized-opinions","find-zombie-sessions","most-common-course-pairs","find-students-with-study-spiral-pattern"];
+export const DRILL_SLUGS: string[] = ["product-sales-analysis-ii","product-sales-analysis-iii","sales-analysis-ii","not-boring-movies","department-highest-salary","immediate-food-delivery-ii","list-the-products-ordered-in-a-period","department-top-three-salaries","capital-gain-loss","top-travellers","number-of-calls-between-two-persons","game-play-analysis-i","find-total-time-spent-by-each-employee","monthly-transactions-i","fix-product-name-format","the-latest-login-in-2020","rearrange-products-table","top-earners","top-five-artists","project-employees-iii","last-person-to-fit-in-the-elevator","weather-type-in-each-country","customer-who-visited-but-did-not-transact","user-activity-for-the-past-30-days-i","ads-performance","highest-grade-for-each-student","team-scores-in-football-tournament","apples-and-oranges","sales-by-day-of-the-week","monthly-transactions-ii","report-contiguous-dates","second-most-recent-activity","transactions-per-visit-histogram","placements","symmetric-pairs","products-worth-over-invoices","friend-requests-ii-who-has-the-most-friends","all-the-pairs-with-the-maximum-number-of-common-followers","page-recommendations-ii","the-airport-with-the-most-flights","friendly-movies-streamed-last-month","the-most-recent-three-orders","finding-the-topic-of-each-post","maximum-transaction-each-day","total-sales-amount-by-year","the-first-day-of-the-maximum-recorded-temperature-in-each-city","first-and-last-call-on-the-same-day","bank-account-summary","league-statistics","generate-the-invoice","trips-and-users","median-employee-salary","find-the-quiet-students-in-all-exams","merge-overlapping-events-in-the-same-hall","find-cumulative-salary-of-an-employee","count-student-number-in-departments","second-degree-follower","new-users-daily-count","tournament-winners","find-the-start-and-end-number-of-continuous-ranges","market-analysis-ii","page-recommendations","the-most-recent-orders-for-each-product","warehouse-manager","products-price-for-each-store","grand-slam-titles","ad-free-sessions","find-customers-with-positive-revenue-this-year","orders-with-maximum-quantity-above-average","group-employees-of-the-same-salary","count-the-number-of-experiments","the-category-of-each-member-in-the-store","the-users-that-are-eligible-for-discount","product-sales-analysis-iv","product-sales-analysis-v","the-number-of-passengers-in-each-bus-i","longest-winning-streak","tasks-count-in-the-weekend","calculate-the-influence-of-each-salesperson","form-a-chemical-bond","the-number-of-seniors-and-juniors-to-join-the-company","count-artist-occurrences-on-spotify-ranking-list","immediate-food-delivery-iii","bikes-last-time-used","find-active-users","total-traveled-distance","calculate-orders-within-each-interval","class-performance","customers-with-maximum-number-of-transactions-on-consecutive-days","maximize-items","find-peak-calling-hours-for-each-city","find-third-transaction","top-three-wineries","find-candidates-for-data-scientist-position","friday-purchases-i","viewers-turned-streamers","pizza-toppings-cost-analysis","find-all-unique-email-domains","find-trending-hashtags","find-trending-hashtags-ii","friday-purchase-iii","find-longest-calls","consecutive-available-seats-ii","premier-league-table-ranking","premier-league-table-ranking-ii","find-cities-in-each-state-ii","second-highest-salary-ii","team-dominance-by-pass-success","longest-team-pass-streak","customer-purchasing-behavior-analysis","calculate-product-final-price","find-top-performing-driver","find-top-scoring-students","find-overlapping-shifts-ii","first-letter-capitalization","consecutive-numbers","restaurant-growth","find-consistently-improving-employees","first-letter-capitalization-ii","find-invalid-ip-addresses","analyze-organization-hierarchy","find-product-recommendation-pairs","find-category-recommendation-pairs","seasonal-sales-analysis","odd-and-even-transactions","sessionize-events","loan-amortization-schedule","realized-pnl-average-cost","gl-reconciliation","week-over-week-churn","rolling-7d-actives","usage-tier-percentiles","feature-adoption-windows","fx-exposure-report","portfolio-concentration-hhi","daily-balance-interest","duplicate-charge-pairs","vintage-default-curves","delinquency-roll-rates","credit-utilization-bands","prepayment-detection","structuring-detection","transaction-velocity","amount-anomaly-zscore","dormant-reactivation","trial-balance-check","ar-aging-schedule","fifo-inventory-cogs","deferred-revenue","journal-gap-detection","wash-trade-detection","trial-to-paid-funnel","mrr-waterfall","winback-recovery","roas-by-campaign","first-last-touch-attribution","linear-multi-touch","budget-pacing","channel-ltv-vs-cac","keep-latest-dedupe","point-in-time-asof","late-arriving-restatement","snapshot-delta-detect","repeat-purchase-rate","rfm-segmentation","weeks-of-supply","returns-rate-by-category","cohort-repeat-revenue","find-users-with-high-token-usage","find-golden-hour-customers","find-churn-risk-customers","find-loyal-customers","find-emotionally-consistent-users","find-users-with-persistent-behavior-patterns","find-stores-with-inventory-imbalance","find-books-with-polarized-opinions","find-zombie-sessions","most-common-course-pairs","find-students-with-study-spiral-pattern"];
+
+export const DRILL2_SLUGS: string[] = ["students-and-examinations","employees-earning-more-than-their-managers","duplicate-emails","article-views-i","sales-person","sales-analysis-i","sales-analysis-iii","project-employees-i","percentage-of-users-attended-a-contest","average-time-of-process-per-machine","confirmation-rate","patients-with-a-condition","rank-scores","classes-more-than-5-students","group-sold-products-by-the-date","employees-whose-manager-left-the-company","game-play-analysis-v","investments-in-2016","the-number-of-employees-which-report-to-each-employee","primary-department-for-each-employee","market-analysis-i","bank-account-summary-ii","employees-with-missing-information","customer-placing-the-largest-number-of-orders","project-employees-ii","reported-posts","find-followers-count","reformat-department-table","ratings-histogram","product-price-at-a-given-date","active-users","consecutive-available-seats","rectangle-area","number-of-comments-per-post","create-a-session-bar-chart","sellers-with-no-sales","asian-population","challenges","uber-first-transaction","linkedin-power-creators","recyclable-and-low-fat-products","find-users-with-valid-e-mails","active-businesses","most-frequently-ordered-product-per-customer","biggest-window-between-events","countries-you-can-safely-invest-in","top-competitors","fifteen-days-of-learning","card-launch-success","ads-funnel","second-day-confirmation","same-day-sale","users-that-actively-request-confirmation-messages","all-valid-triplets-that-can-represent-a-country","get-highest-answer-rate-question","unpopular-books","account-balance","employees-with-deductions","suspicious-bank-account-transactions","students-report-by-geography","winning-candidate","running-total-for-different-genders","students-with-invalid-departments","find-the-missing-ids","find-the-subtasks-that-did-not-execute","find-cutoff-score-for-each-school","number-of-accounts-that-did-not-stream","low-quality-problems","accepted-candidates-from-the-interviews","the-number-of-users-that-are-eligible-for-discount","number-of-times-a-driver-was-a-passenger","the-number-of-passengers-in-each-bus-ii","all-the-matches-of-the-league","dynamic-pivoting-of-a-table","dynamic-unpivoting-of-a-table","arrange-table-by-gender","sort-the-olympic-table","leetcodify-similar-friends","products-with-three-or-more-orders-in-two-consecutive-years","market-analysis-iii","find-expensive-cities","loan-types","snaps-analysis","top-percentile-fraud","friday-purchases-ii","friends-with-no-mutual-friends","find-bursty-behavior","user-activities-within-time-bounds","find-products-with-three-consecutive-digits","server-utilization-time","invalid-tweets-ii","calculate-trapping-rain-water","bitwise-user-permissions-analysis","year-on-year-growth-rate","rising-temperature","find-customer-referee","big-countries","human-traffic-of-stadium","find-students-who-improved","find-valid-emails","find-products-with-valid-serial-numbers","find-covid-recovery-patients","find-drivers-with-improved-fuel-efficiency","dau-wau-stickiness","growth-accounting","cohort-retention-matrix","ab-test-conversion-lift","delinquency-buckets","portfolio-weights","median-time-to-convert","dividend-income-calendar","max-drawdown","expected-credit-loss","chargeback-rate-ranking","balance-rollforward","net-revenue-retention","ltv-cac-payback","basket-depth-aov","last-person-to-fit-in-the-bus"];
