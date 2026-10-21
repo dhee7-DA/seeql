@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { SqlNodes } from "./sql-code";
 import { cn } from "@/lib/utils";
+import type { LcDifficulty } from "@/lib/leetcode/types";
 
 /* ------------------------------------------------------------------ */
 /* Colourful prose — SQL keywords light up inside body text            */
@@ -371,4 +372,18 @@ export function FollowUpList({ items }: { items: string[] }) {
       ))}
     </ul>
   );
+}
+
+/* ------------------------------------------------------------------ */
+/* DiffDot — difficulty marker shared across the LC band               */
+/* ------------------------------------------------------------------ */
+
+const DIFF_DOT: Record<LcDifficulty, string> = {
+  Easy: "bg-emerald-400",
+  Medium: "bg-amber-400",
+  Hard: "bg-rose-400",
+};
+
+export function DiffDot({ d }: { d: LcDifficulty }) {
+  return <span aria-hidden className={cn("h-2 w-2 shrink-0 rounded-full", DIFF_DOT[d])} />;
 }

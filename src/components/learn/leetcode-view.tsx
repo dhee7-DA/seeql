@@ -10,6 +10,7 @@
 import { useMemo, useState } from "react";
 import {
   BookOpen,
+  BookOpenText,
   Building2,
   Check,
   ChevronLeft,
@@ -26,6 +27,8 @@ import {
   Search,
   Sparkles,
   Stamp,
+  Swords,
+  Target,
   Timer,
   TriangleAlert,
   TrendingUp,
@@ -37,7 +40,21 @@ import {
   LC_TOPICS,
   lcByCompany,
 } from "@/lib/leetcode/registry";
-import { SQL_ALL_SECTIONS, sqlSectionOf } from "@/lib/leetcode/sections";
+import { SQL_ALL_SECTIONS, SQL50_SECTIONS, sqlSectionOf } from "@/lib/leetcode/sections";
+import {
+  FU_SPECS,
+} from "@/lib/leetcode/followup-specs";
+import {
+  SQL_MODS,
+  checkMods,
+  cleanKey,
+  fuXpKey,
+  golfCap,
+  modXpKey,
+  nudgeFunctions,
+  stripComments,
+  type SqlMod,
+} from "@/lib/leetcode/followups";
 import {
   DIFF_SPLIT,
   HONOR_XP,
@@ -64,9 +81,12 @@ import { Btn, Chip, FOCUS_RING, Panel, ProgressBar, SectionLabel } from "./ui/ki
 import { LcCodeLab } from "./lc-code-lab";
 import { LcPaths } from "./lc-paths";
 import { LcContest } from "./lc-contest";
+import { FuGauntlet } from "./lc-followups";
+import { LcPredict } from "./lc-predict";
 import {
   ConstraintList,
   DiveCodeBlock,
+  DiffDot,
   ExampleCards,
   FollowUpList,
   LadderRungs,
@@ -80,17 +100,12 @@ import { PatternDiagram } from "./lc-pattern";
 import { PrimerCard, SectionStudyPanel } from "./lc-primer";
 import { cn } from "@/lib/utils";
 
-type Tab = "problems" | "paths" | "contest" | "companies";
+type Tab = "problems" | "paths" | "contest" | "predict" | "companies";
 type Diff = "All" | LcDifficulty;
 
 /** Section lookup by display title — for group headers + anchors. */
 const SECTION_BY_TITLE = new Map(SQL_ALL_SECTIONS.map((s) => [s.title, s]));
 
-const DIFF_DOT: Record<LcDifficulty, string> = {
-  Easy: "bg-emerald-400",
-  Medium: "bg-amber-400",
-  Hard: "bg-rose-400",
-};
 const DIFF_TEXT: Record<LcDifficulty, string> = {
   Easy: "text-emerald-400",
   Medium: "text-amber-400",
@@ -110,10 +125,6 @@ const STEP_DOT: Record<Tone, string> = {
   emerald: "bg-emerald-400",
   amber: "bg-amber-400",
 };
-
-function DiffDot({ d }: { d: LcDifficulty }) {
-  return <span aria-hidden className={cn("h-2 w-2 shrink-0 rounded-full", DIFF_DOT[d])} />;
-}
 
 /* ------------------------------------------------------------------ */
 /* Hub row                                                             */
@@ -249,9 +260,14 @@ function SqlPractice({ p, dive, onNext }: { p: LcRef; dive: LcSqlDive; onNext?: 
   const scheduleReview = useProgress((s) => s.scheduleReview);
   const xpEvents = useProgress((s) => s.xpEvents);
   const solvedAt = useProgress((s) => s.xpEvents[lcSolveKey(dive.slug)]);
+  const cleanAt = useProgress((s) => s.xpEvents[cleanKey(dive.slug)]);
   const [sql, setSql] = useState("");
   const [busy, setBusy] = useState(false);
   const [attempts, setAttempts] = useState(0);
+  const [fails, setFails] = useState(0);
+  const [nudges, setNudges] = useState(0);
+  const [mods, setMods] = useState<SqlMod[]>([]);
+  const [modBanner, setModBanner] = useState<string | null>(null);
   const [result, setResult] = useState<ExecResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [outcome, setOutcome] = useState<SqlCheckOutcome | null>(null);
@@ -260,6 +276,15 @@ function SqlPractice({ p, dive, onNext }: { p: LcRef; dive: LcSqlDive; onNext?: 
 
   const run = async (check: boolean) => {
     if (busy || !sql.trim()) return;
+    // challenge modifiers gate the graded run — violated mods never reach the engine
+    if (check && mods.length) {
+      const violations = checkMods(sql, mods, golfCap(dive));
+      if (violations.length) {
+        setModBanner(violations.map((v) => v.why).join(" "));
+        return;
+      }
+    }
+    setModBanner(null);
     setBusy(true);
     setError(null);
     setOutcome(null);
@@ -283,13 +308,30 @@ function SqlPractice({ p, dive, onNext }: { p: LcRef; dive: LcSqlDive; onNext?: 
             if (oc.status === "pass") {
               // every graded problem lives on the recall ladder: a pass
               // advances 1d → 3d → 7d → 14d, a miss comes back tomorrow
-              if (awardXp(lcSolveKey(dive.slug), dive.xp)) {
+              const firstSolve = awardXp(lcSolveKey(dive.slug), dive.xp);
+              if (firstSolve) {
                 scheduleReview(`lcm:${dive.slug}`, true);
-                celebrate({ kind: "xp", title: `+${dive.xp} XP — ${p.title}`, sub: "Solved in the sandbox" });
+                // a pass with zero nudges opened pays the clean-solve bonus
+                const clean = nudges === 0 && awardXp(cleanKey(dive.slug), 2);
+                celebrate({
+                  kind: "xp",
+                  title: `+${dive.xp} XP — ${p.title}`,
+                  sub: clean ? "Solved in the sandbox · clean solve, +2 bonus" : "Solved in the sandbox",
+                });
               }
+              // active challenge modifiers pay once each, on any passing run
+              let modBonus = 0;
+              for (const m of mods) if (awardXp(modXpKey(dive.slug, m), 3)) modBonus += 3;
+              if (modBonus > 0)
+                celebrate({
+                  kind: "xp",
+                  title: `+${modBonus} XP — challenge mods cleared`,
+                  sub: SQL_MODS.filter((m) => mods.includes(m.id)).map((m) => m.label).join(" · "),
+                });
             } else {
               scheduleReview(`lcm:${dive.slug}`, false);
               setCompare(false);
+              setFails((n) => n + 1);
             }
           }
         }
@@ -328,7 +370,7 @@ function SqlPractice({ p, dive, onNext }: { p: LcRef; dive: LcSqlDive; onNext?: 
         right={
           solvedAt !== undefined ? (
             <span className="flex items-center gap-1.5 rounded-md border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-1 text-[11px] font-medium text-emerald-300">
-              <Check className="h-3 w-3" /> Solved · {solvedAt} XP
+              <Check className="h-3 w-3" /> Solved · {solvedAt} XP {cleanAt !== undefined && <span className="text-amber-300">· clean</span>}
             </span>
           ) : (
             <span className="rounded-md border border-amber-400/30 bg-amber-400/10 px-2.5 py-1 text-[11px] font-medium text-amber-300">
@@ -365,6 +407,25 @@ function SqlPractice({ p, dive, onNext }: { p: LcRef; dive: LcSqlDive; onNext?: 
           </span>
         </div>
       )}
+      <div className="mt-2 flex flex-wrap items-center gap-1.5">
+        <span className="font-mono text-[9.5px] uppercase tracking-[0.14em] text-zinc-500">challenge mods</span>
+        {SQL_MODS.map((m) => (
+          <Btn
+            key={m.id}
+            variant="pill"
+            active={mods.includes(m.id)}
+            title={`${m.blurb} — pass with it active for a one-time +3 XP`}
+            onClick={() => setMods((cur) => (cur.includes(m.id) ? cur.filter((x) => x !== m.id) : [...cur, m.id]))}
+          >
+            {m.label}
+          </Btn>
+        ))}
+        {mods.includes("golf") && (
+          <span className={cn("tnum font-mono text-[10px]", stripComments(sql).length > golfCap(dive) ? "text-rose-400" : "text-zinc-500")}>
+            {stripComments(sql).length}/{golfCap(dive)} chars
+          </span>
+        )}
+      </div>
       <div className="mt-3">
         <SqlEditor
           value={sql}
@@ -386,6 +447,52 @@ function SqlPractice({ p, dive, onNext }: { p: LcRef; dive: LcSqlDive; onNext?: 
           </span>
         )}
       </div>
+
+      {modBanner && (
+        <div className="mt-3 rounded-lg border border-amber-400/30 bg-amber-400/[0.06] p-3">
+          <p className="font-mono text-[10px] uppercase tracking-wider text-amber-300">Challenge mod violated — the run didn't count</p>
+          <p className="mt-1 text-[12px] leading-relaxed text-zinc-300">{modBanner}</p>
+        </div>
+      )}
+
+      {/* struggle-first nudges: two failed checks unlock the ladder — solve
+          without opening any of them and the pass pays a clean-solve bonus */}
+      {(fails >= 2 || nudges > 0) && nudges < 3 && (
+        <div className="mt-3">
+          <Btn variant="outline" onClick={() => setNudges((n) => n + 1)}>
+            <Lightbulb className="h-3 w-3" />
+            {nudges === 0 ? "Stuck? Nudge me" : nudges === 1 ? "One more nudge" : "Show me the tools"}
+          </Btn>
+        </div>
+      )}
+      {nudges >= 1 && (
+        <div className="mt-2 space-y-1.5">
+          <p className="rounded-md border border-amber-400/20 bg-amber-400/[0.05] p-2 text-[11.5px] leading-relaxed text-amber-200/90">
+            <span className="mr-1.5 font-mono text-[9.5px] uppercase tracking-wider">nudge 1</span>
+            {sec
+              ? `Pattern family — ${sec.title}. ${sec.blurb}`
+              : "Re-read the constraints — the shape is simpler than it looks."}
+          </p>
+          {nudges >= 2 && dive.ladder[1] && (
+            <p className="rounded-md border border-amber-400/20 bg-amber-400/[0.05] p-2 text-[11.5px] leading-relaxed text-amber-200/90">
+              <span className="mr-1.5 font-mono text-[9.5px] uppercase tracking-wider">nudge 2</span>
+              {dive.ladder[1].title}: {dive.ladder[1].body}
+            </p>
+          )}
+          {nudges >= 3 && (
+            <div className="rounded-md border border-amber-400/20 bg-amber-400/[0.05] p-2 text-[11.5px] leading-relaxed text-amber-200/90">
+              <span className="mr-1.5 font-mono text-[9.5px] uppercase tracking-wider">nudge 3 · tools in the model</span>
+              <span className="mt-1 flex flex-wrap gap-1">
+                {nudgeFunctions(dive).map((f) => (
+                  <span key={f} className="rounded border border-amber-400/25 bg-amber-400/[0.08] px-1.5 py-0.5 font-mono text-[10px] text-amber-200">
+                    {f}
+                  </span>
+                ))}
+              </span>
+            </div>
+          )}
+        </div>
+      )}
 
       {error && (
         <div className="mt-3 rounded-lg border border-rose-400/30 bg-rose-400/[0.06] p-3">
@@ -495,6 +602,7 @@ function LcDetail({ p, onBack, onOpen }: { p: LcRef; onBack: () => void; onOpen:
   };
 
   const sec = p.sql ? sqlSectionOf(p.slug) : undefined;
+  const fuCount = sdive ? (FU_SPECS[p.slug]?.length ?? 0) : 0;
   const steps: Array<{ id: string; label: string; tone: Tone }> = [
     { id: "dive-problem", label: "Problem", tone: "sky" },
     ...(sdive?.primer ? ([{ id: "dive-primer", label: "Primer", tone: "amber" }] as const) : []),
@@ -507,6 +615,7 @@ function LcDetail({ p, onBack, onOpen }: { p: LcRef; onBack: () => void; onOpen:
         ] as const)
       : []),
     ...(sdive ? [] : deep ? ([{ id: "dive-codelab", label: "Code lab", tone: "cyan" }] as const) : []),
+    ...(fuCount > 0 ? ([{ id: "dive-gauntlet", label: `Follow-ups (${fuCount})`, tone: "rose" }] as const) : []),
     { id: "dive-solution", label: "Solution", tone: "amber" },
   ];
   const jump = (id: string) =>
@@ -698,6 +807,10 @@ function LcDetail({ p, onBack, onOpen }: { p: LcRef; onBack: () => void; onOpen:
           {sdive && <SqlSchemaPanel schema={sdive.schema} />}
           {sdive && <SqlPractice p={p} dive={sdive} onNext={onOpen} />}
 
+          {/* The Follow-up Gauntlet — verified interviewer push-backs, locked
+              until the base problem passes; same sandbox, same grading */}
+          {sdive && <FuGauntlet p={p} dive={sdive} onNext={onOpen} />}
+
           {/* Python deep-dive: the code lab — solve it in JS against the real
               verify cases, pay the full XP, no honor claim needed */}
           {!sdive && deep && <LcCodeLab p={p} deep={deep} />}
@@ -803,6 +916,7 @@ function CompaniesIndex({ onPick, solvedOf }: { onPick: (company: string) => voi
 export function LeetCodeView({ initialTopic, initialSlug }: { initialTopic?: string; initialSlug?: string }) {
   const xpEvents = useProgress((s) => s.xpEvents);
   const reviewSchedule = useProgress((s) => s.reviewSchedule);
+  const lcContests = useProgress((s) => s.lcContests);
   const [sel, setSel] = useState<string | null>(initialSlug ?? null);
   const [tab, setTab] = useState<Tab>("problems");
   const [topic, setTopic] = useState<string>(initialTopic ?? "All");
@@ -844,6 +958,36 @@ export function LeetCodeView({ initialTopic, initialSlug }: { initialTopic?: str
 
   const deepTotal = LC_DEEP_SLUGS.size;
   const solvedTotal = solvedSlugs.size;
+
+  // Interview readiness — one honest number across everything this band can
+  // verify: SQL 50 completion, section breadth, volume, gauntlet clears,
+  // contest runs banked, reading drills and the clean-solve ratio.
+  const readiness = useMemo(() => {
+    const sqlSolved = new Set<string>();
+    let clean = 0;
+    let fu = 0;
+    let reads = 0;
+    for (const [k, v] of Object.entries(xpEvents)) {
+      if (k.startsWith("lc:") && v > 0) sqlSolved.add(k.slice(3));
+      else if (k.startsWith("lc-clean:")) clean++;
+      else if (k.startsWith("lc-fu:")) fu++;
+      else if (k.startsWith("lc-read:")) reads++;
+    }
+    const sql50All = SQL50_SECTIONS.flatMap((s) => s.slugs);
+    const sql50Done = sql50All.filter((s) => sqlSolved.has(s)).length;
+    const breadth = SQL_ALL_SECTIONS.filter((sec) => sec.slugs.some((s) => sqlSolved.has(s))).length;
+    const parts = [
+      { label: "SQL band", got: sql50Done, max: sql50All.length, w: 30 },
+      { label: "breadth", got: breadth, max: LC_SECTION_COUNT, w: 25 },
+      { label: "volume", got: sqlSolved.size, max: 150, w: 15 },
+      { label: "gauntlet", got: fu, max: 40, w: 10 },
+      { label: "contests", got: lcContests.length, max: 5, w: 10 },
+      { label: "reading", got: reads, max: 30, w: 5 },
+      { label: "clean", got: clean, max: Math.max(sqlSolved.size, 1), w: 5 },
+    ];
+    const score = Math.round(parts.reduce((a, pt) => a + pt.w * Math.min(pt.got / (pt.max || 1), 1), 0));
+    return { score, parts };
+  }, [xpEvents, lcContests]);
 
   // Group the filtered list by display topic — SQL rows group by their SQL 50
   // section (the study plan's seven skill families, in canonical order), not
@@ -909,6 +1053,9 @@ export function LeetCodeView({ initialTopic, initialSlug }: { initialTopic?: str
                 <Btn variant="pill" active={tab === "contest"} onClick={() => setTab("contest")}>
                   <Timer className="h-3 w-3" /> Timed SQL
                 </Btn>
+                <Btn variant="pill" active={tab === "predict"} onClick={() => setTab("predict")}>
+                  <BookOpenText className="h-3 w-3" /> Predict
+                </Btn>
                 <Btn variant="pill" active={tab === "companies"} onClick={() => setTab("companies")}>
                   <Building2 className="h-3 w-3" /> Companies
                 </Btn>
@@ -918,6 +1065,21 @@ export function LeetCodeView({ initialTopic, initialSlug }: { initialTopic?: str
               </span>
             </div>
             <ProgressBar value={solvedTotal / LC_TOTAL} className="mt-3" />
+            <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+              <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-zinc-500">
+                <Target className="h-3 w-3" /> interview readiness
+              </span>
+              <span className="tnum font-mono text-[13px] font-bold text-emerald-300">
+                {readiness.score}
+                <span className="text-zinc-600">/100</span>
+              </span>
+              <div className="h-1.5 w-40 overflow-hidden rounded-full bg-zinc-800" aria-hidden>
+                <div className="h-full rounded-full bg-emerald-400/80 transition-all duration-500" style={{ width: `${readiness.score}%` }} />
+              </div>
+              <span className="tnum font-mono text-[10px] text-zinc-600">
+                {readiness.parts.map((pt) => `${pt.label} ${Math.min(pt.got, pt.max)}/${pt.max}`).join(" · ")}
+              </span>
+            </div>
           </Panel>
 
           {tab === "companies" ? (
@@ -932,6 +1094,8 @@ export function LeetCodeView({ initialTopic, initialSlug }: { initialTopic?: str
             <LcPaths onOpen={(slug) => setSel(slug)} />
           ) : tab === "contest" ? (
             <LcContest />
+          ) : tab === "predict" ? (
+            <LcPredict />
           ) : (
             <>
               {/* filters */}
