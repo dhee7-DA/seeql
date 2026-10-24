@@ -55,6 +55,7 @@ import { GauntletView } from "./gauntlet-view";
 import { KeywordPractice } from "./keyword-practice";
 import { LeetCodeView } from "./leetcode-view";
 import { ReadinessDashboard } from "./readiness-dashboard";
+import { QueryPipeline } from "./query-pipeline";
 import { CompaniesView } from "./companies-view";
 import { MockHq } from "./mock-hq";
 import { gauntletFor } from "@/lib/curriculum/gauntlet";
@@ -79,6 +80,7 @@ import { lcBadgeStats } from "@/lib/leetcode/lc-meta";
 export type View =
   | { kind: "overview" }
   | { kind: "readiness" }
+  | { kind: "pipeline" }
   | { kind: "roadmap" }
   | { kind: "seeq" }
   | { kind: "daily" }
@@ -753,6 +755,8 @@ function ViewBody({
       return <MasteryMap onOpenLesson={openLesson} onOpenLc={openLc} />;
     case "readiness":
       return <ReadinessDashboard onOpenLc={() => openLc()} onOpenLesson={openLesson} />;
+    case "pipeline":
+      return <QueryPipeline />;
     case "sheet":
       return <CheatSheet />;
     case "mentor":

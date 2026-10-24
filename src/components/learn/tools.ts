@@ -40,6 +40,7 @@ import {
 export type ToolKind =
   | "overview"
   | "readiness"
+  | "pipeline"
   | "roadmap"
   | "seeq"
   | "daily"
@@ -87,6 +88,7 @@ export interface ToolDef {
 export const TOOLS: ToolDef[] = [
   { kind: "overview", icon: LayoutDashboard, label: "Course overview", note: "progress & badges", short: "Overview", section: "core" },
   { kind: "readiness", icon: Gauge, label: "Readiness dashboard", note: "all 13 modules, one number", short: "Readiness", section: "core" },
+  { kind: "pipeline", icon: Layers, label: "Query pipeline", note: "watch SELECT execute, phase by phase", short: "Pipeline", section: "toolbox" },
   { kind: "roadmap", icon: Route, label: "30-day sprint", note: "the day-by-day roadmap", short: "Sprint", section: "toolbox" },
   { kind: "seeq", icon: Ghost, label: "SeeQ playground", note: "dress & place your buddy", short: "SeeQ", section: "toolbox" },
   { kind: "daily", icon: CalendarDays, label: "Daily puzzle", note: "one a day — keep the streak", short: "Daily", section: "toolbox" },
