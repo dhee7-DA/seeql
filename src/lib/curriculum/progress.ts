@@ -101,6 +101,9 @@ export interface ProgressState {
   weeklyGoalXp: number | null;
   /** finished contest runs (cap 20) — personal-best source for the LC band */
   lcContests: LcContestRun[];
+  /** dayKey → timestamp today's LC Daily Challenge was verified-solved
+   *  (self-claims don't count — the daily is a verified-only streak) */
+  lcDailyDone: Record<string, number>;
   awardXp: (key: string, amount: number) => boolean;
   recordMcqCheck: (id: string, correct: boolean) => boolean;
   markLessonDone: (id: string) => boolean;
@@ -128,6 +131,8 @@ export interface ProgressState {
   markBacklogDone: (day: string) => boolean;
   /** bank a finished contest run (idempotent by run id, newest first, cap 20) */
   saveContest: (run: LcContestRun) => void;
+  /** mark today's LC Daily Challenge solved (idempotent) */
+  markLcDailyDone: () => boolean;
   resetAll: () => void;
 }
 
@@ -178,6 +183,7 @@ export const useProgress = create<ProgressState>()(
       freezes: 1,
       weeklyGoalXp: null,
       lcContests: [],
+      lcDailyDone: {},
 
       awardXp: (key, amount) => {
         if (get().xpEvents[key] !== undefined) return false;
@@ -336,6 +342,13 @@ export const useProgress = create<ProgressState>()(
         set((s) => ({ lcContests: [run, ...(s.lcContests ?? [])].slice(0, 20) }));
       },
 
+      markLcDailyDone: () => {
+        const k = dayKey();
+        if (get().lcDailyDone[k] !== undefined) return false;
+        set((s) => ({ lcDailyDone: { ...s.lcDailyDone, [k]: Date.now() } }));
+        return true;
+      },
+
       resetAll: () =>
         set({
           xpEvents: {},
@@ -357,6 +370,7 @@ export const useProgress = create<ProgressState>()(
           freezes: 1,
           weeklyGoalXp: null,
           lcContests: [],
+          lcDailyDone: {},
         }),
     }),
     { name: "sql-visualizer-learn-v1" },

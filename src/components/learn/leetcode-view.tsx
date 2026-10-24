@@ -46,6 +46,9 @@ import {
   companySqlTrack,
   trackMix,
 } from "@/lib/leetcode/company-tracks";
+import { lcDailyProblem, lcDailySlug, lcDailyStreak } from "@/lib/leetcode/daily";
+import { coachSqlMiss, type CoachTip } from "@/lib/leetcode/error-coach";
+import { dayKey } from "@/lib/curriculum/gamification";
 import {
   FU_SPECS,
 } from "@/lib/leetcode/followup-specs";
@@ -264,6 +267,7 @@ function SqlSchemaPanel({ schema }: { schema: LcSqlSchema }) {
 function SqlPractice({ p, dive, onNext }: { p: LcRef; dive: LcSqlDive; onNext?: (slug: string) => void }) {
   const awardXp = useProgress((s) => s.awardXp);
   const scheduleReview = useProgress((s) => s.scheduleReview);
+  const markLcDailyDone = useProgress((s) => s.markLcDailyDone);
   const xpEvents = useProgress((s) => s.xpEvents);
   const solvedAt = useProgress((s) => s.xpEvents[lcSolveKey(dive.slug)]);
   const cleanAt = useProgress((s) => s.xpEvents[cleanKey(dive.slug)]);
@@ -277,6 +281,7 @@ function SqlPractice({ p, dive, onNext }: { p: LcRef; dive: LcSqlDive; onNext?: 
   const [result, setResult] = useState<ExecResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [outcome, setOutcome] = useState<SqlCheckOutcome | null>(null);
+  const [coach, setCoach] = useState<CoachTip | null>(null);
   const [saved, setSaved] = useState(false);
   const [compare, setCompare] = useState(false);
 
@@ -294,6 +299,7 @@ function SqlPractice({ p, dive, onNext }: { p: LcRef; dive: LcSqlDive; onNext?: 
     setBusy(true);
     setError(null);
     setOutcome(null);
+    setCoach(null);
     setAttempts((n) => n + 1);
     try {
       const res = await fetch("/api/lc-sql", {
@@ -325,6 +331,15 @@ function SqlPractice({ p, dive, onNext }: { p: LcRef; dive: LcSqlDive; onNext?: 
                   sub: clean ? "Solved in the sandbox · clean solve, +2 bonus" : "Solved in the sandbox",
                 });
               }
+              // LC Daily Challenge — a verified pass of today's seeded problem
+              // banks the day (first solve or not) and pays the +5 daily bonus
+              if (dive.slug === lcDailySlug() && markLcDailyDone() && awardXp(`lc-daily:${dayKey()}`, 5)) {
+                celebrate({
+                  kind: "xp",
+                  title: "+5 XP — daily challenge banked",
+                  sub: "Come back tomorrow to keep the streak alive",
+                });
+              }
               // active challenge modifiers pay once each, on any passing run
               let modBonus = 0;
               for (const m of mods) if (awardXp(modXpKey(dive.slug, m), 3)) modBonus += 3;
@@ -338,6 +353,7 @@ function SqlPractice({ p, dive, onNext }: { p: LcRef; dive: LcSqlDive; onNext?: 
               scheduleReview(`lcm:${dive.slug}`, false);
               setCompare(false);
               setFails((n) => n + 1);
+              setCoach(coachSqlMiss(sql, data, expected));
             }
           }
         }
@@ -525,6 +541,15 @@ function SqlPractice({ p, dive, onNext }: { p: LcRef; dive: LcSqlDive; onNext?: 
             {outcome.title}
           </p>
           <p className="mt-1 text-[12px] leading-relaxed text-zinc-400">{outcome.detail}</p>
+        </div>
+      )}
+
+      {coach && !passed && (
+        <div className="mt-2 rounded-lg border border-sky-400/25 bg-sky-400/[0.05] p-3">
+          <p className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-sky-300">
+            <Lightbulb className="h-3 w-3" /> error coach · {coach.tag}
+          </p>
+          <p className="mt-1 text-[12px] leading-relaxed text-zinc-400">{coach.line}</p>
         </div>
       )}
 
@@ -1079,6 +1104,42 @@ function CompanyTrack({
   );
 }
 
+/* LC Daily Challenge strip                                            */
+/* ------------------------------------------------------------------ */
+
+function LcDailyStrip({ solvedOf, onOpen }: { solvedOf: Set<string>; onOpen: (slug: string) => void }) {
+  const lcDailyDone = useProgress((s) => s.lcDailyDone);
+  const daily = lcDailyProblem();
+  const banked = lcDailyDone[dayKey()] !== undefined;
+  const solved = solvedOf.has(daily.slug);
+  const streak = lcDailyStreak(lcDailyDone);
+  return (
+    <Panel pad={3.5}>
+      <button
+        type="button"
+        onClick={() => onOpen(daily.slug)}
+        className={cn("flex w-full flex-wrap items-center gap-x-3 gap-y-1.5 text-left", FOCUS_RING)}
+      >
+        <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-zinc-500">
+          <Sparkles className="h-3 w-3 text-emerald-400" /> daily challenge
+        </span>
+        <DiffDot d={daily.difficulty} />
+        <span className="min-w-0 flex-1 truncate text-sm font-medium text-zinc-100">{daily.title}</span>
+        {streak > 0 && <span className="tnum shrink-0 font-mono text-[11px] text-amber-300">{streak}-day streak</span>}
+        {banked || solved ? (
+          <span className="flex shrink-0 items-center gap-1 rounded-full bg-emerald-400/10 px-2 py-0.5 text-[10px] font-medium text-emerald-300">
+            <Check className="h-3 w-3" /> {banked ? "banked · +5 XP" : "already solved"}
+          </span>
+        ) : (
+          <span className="shrink-0 rounded-full border border-emerald-400/30 px-2 py-0.5 text-[10px] font-medium text-emerald-300">
+            verify today · +{LC_XP[daily.difficulty]} XP +5 daily
+          </span>
+        )}
+      </button>
+    </Panel>
+  );
+}
+
 /* ------------------------------------------------------------------ */
 /* Main view                                                           */
 /* ------------------------------------------------------------------ */
@@ -1252,6 +1313,8 @@ export function LeetCodeView({ initialTopic, initialSlug }: { initialTopic?: str
               </span>
             </div>
           </Panel>
+
+          <LcDailyStrip solvedOf={solvedSlugs} onOpen={(slug) => setSel(slug)} />
 
           {tab === "companies" ? (
             trackCo ? (
