@@ -120,6 +120,8 @@ import { SQL_FINAL_WAVE_A } from "./sql-final-wave-a";
 import { SQL_FINAL_WAVE_B } from "./sql-final-wave-b";
 import { SQL_BOSS_A } from "./sql-boss-a";
 import { SQL_BOSS_B } from "./sql-boss-b";
+import { SQL_BOSS2_A } from "./sql-boss2-a";
+import { SQL_BOSS2_B } from "./sql-boss2-b";
 
 export const LC_CONTENT: LcDeepDive[] = [
   ...ARRAYS,
@@ -244,6 +246,8 @@ export const LC_SQL_CONTENT: LcSqlDive[] = [
   ...SQL_FINAL_WAVE_B,
   ...SQL_BOSS_A,
   ...SQL_BOSS_B,
+  ...SQL_BOSS2_A,
+  ...SQL_BOSS2_B,
 ];
 
 const bySlug = new Map(LC_CONTENT.map((d) => [d.slug, d]));

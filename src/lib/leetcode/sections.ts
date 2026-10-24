@@ -1772,6 +1772,20 @@ export const SQL50_SECTIONS: LcSection[] = [
       "cohort-week-retention-grid",
     ],
   },
+  {
+    id: "boss2",
+    title: "Boss Level II — Time & Money",
+    blurb:
+      "Six original time-series and finance problems: running-VWAP breach detection, cash runway classification, cross-midnight shift pay with a night differential, effective-dated rate blending, bilateral netting for settlement and fill-forward price staleness over a recursive minute spine.",
+    slugs: [
+      "vwap-deviation-first-breach",
+      "runway-months-by-burn",
+      "midnight-shift-pay-split",
+      "blended-rate-over-effective-dates",
+      "bilateral-netting-settlement",
+      "price-fill-forward-staleness",
+    ],
+  },
 ];
 
 /** Flat solving order — every SQL 50 problem exactly once. */

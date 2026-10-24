@@ -3294,6 +3294,58 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
     {
       "kind": "order-flip"
     }
+  ],
+
+  "vwap-deviation-first-breach": [
+    {
+      "kind": "where-not"
+    },
+    {
+      "kind": "top-n",
+      "param": "2"
+    }
+  ],
+  "runway-months-by-burn": [
+    {
+      "kind": "where-not"
+    },
+    {
+      "kind": "having"
+    }
+  ],
+  "midnight-shift-pay-split": [
+    {
+      "kind": "agg-swap"
+    },
+    {
+      "kind": "having-add"
+    }
+  ],
+  "blended-rate-over-effective-dates": [
+    {
+      "kind": "agg-swap"
+    },
+    {
+      "kind": "having-add"
+    }
+  ],
+  "bilateral-netting-settlement": [
+    {
+      "kind": "agg-swap"
+    },
+    {
+      "kind": "where-not"
+    }
+  ],
+  "price-fill-forward-staleness": [
+    {
+      "kind": "min-max",
+      "param": "min"
+    },
+    {
+      "kind": "top-n",
+      "param": "2"
+    }
   ]
 };
 

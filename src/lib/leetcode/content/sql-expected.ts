@@ -12459,6 +12459,391 @@ export const SQL_EXPECTED: LcSqlExpected[] = [
       ]
     ],
     "order": "exact"
+  },
+  {
+    "slug": "peak-concurrent-attendance",
+    "columns": [
+      "peak_concurrent",
+      "since"
+    ],
+    "rows": [
+      [
+        5,
+        "2025-03-03 11:45"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "median-order-value-by-region",
+    "columns": [
+      "region",
+      "median_value"
+    ],
+    "rows": [
+      [
+        "east",
+        30
+      ],
+      [
+        "north",
+        120
+      ],
+      [
+        "south",
+        67.5
+      ],
+      [
+        "west",
+        999
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "streak-week-bonus-ladder",
+    "columns": [
+      "customer_id",
+      "best_streak",
+      "total_bonus"
+    ],
+    "rows": [
+      [
+        1,
+        5,
+        120
+      ],
+      [
+        2,
+        3,
+        50
+      ],
+      [
+        3,
+        3,
+        50
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "approval-chain-audit",
+    "columns": [
+      "ticket_id",
+      "chain_depth",
+      "top_emp_id"
+    ],
+    "rows": [
+      [
+        101,
+        1,
+        1
+      ],
+      [
+        102,
+        2,
+        1
+      ],
+      [
+        103,
+        4,
+        1
+      ],
+      [
+        104,
+        5,
+        1
+      ],
+      [
+        105,
+        10,
+        null
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "summary-drift-audit",
+    "columns": [
+      "store_id",
+      "day",
+      "fact_total",
+      "summary_total",
+      "kind"
+    ],
+    "rows": [
+      [
+        1,
+        "2025-03-02",
+        500,
+        450,
+        "drift"
+      ],
+      [
+        2,
+        "2025-03-03",
+        200,
+        null,
+        "missing"
+      ],
+      [
+        3,
+        "2025-03-03",
+        200,
+        400,
+        "drift"
+      ],
+      [
+        2,
+        "2025-03-04",
+        340,
+        null,
+        "missing"
+      ],
+      [
+        2,
+        "2025-03-05",
+        null,
+        120,
+        "orphan"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "cohort-week-retention-grid",
+    "columns": [
+      "cohort_month",
+      "users",
+      "w0",
+      "w1",
+      "w2",
+      "w3"
+    ],
+    "rows": [
+      [
+        "2025-01",
+        3,
+        100,
+        33.3,
+        66.7,
+        33.3
+      ],
+      [
+        "2025-02",
+        3,
+        100,
+        33.3,
+        66.7,
+        0
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "vwap-deviation-first-breach",
+    "columns": [
+      "symbol",
+      "day",
+      "first_breach_at",
+      "dev_pct"
+    ],
+    "rows": [
+      [
+        "AAC",
+        "2025-01-06",
+        "2025-01-06 09:10",
+        2.61
+      ],
+      [
+        "BBX",
+        "2025-01-07",
+        "2025-01-07 10:05",
+        2.44
+      ],
+      [
+        "CCC",
+        "2025-01-06",
+        "2025-01-06 11:10",
+        3.99
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "runway-months-by-burn",
+    "columns": [
+      "company",
+      "balance",
+      "avg_burn",
+      "runway_months",
+      "status"
+    ],
+    "rows": [
+      [
+        "Acme",
+        780000,
+        30000,
+        26,
+        "comfortable"
+      ],
+      [
+        "Globex",
+        105000,
+        25000,
+        4.2,
+        "critical"
+      ],
+      [
+        "Hooli",
+        100000,
+        null,
+        null,
+        "profitable"
+      ],
+      [
+        "Initech",
+        -140000,
+        37500,
+        null,
+        "exhausted"
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "midnight-shift-pay-split",
+    "columns": [
+      "employee",
+      "total_pay"
+    ],
+    "rows": [
+      [
+        "Ana",
+        360
+      ],
+      [
+        "Ben",
+        135
+      ],
+      [
+        "Cy",
+        615
+      ],
+      [
+        "Dia",
+        180
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "blended-rate-over-effective-dates",
+    "columns": [
+      "facility",
+      "blended_rate",
+      "days_uncovered"
+    ],
+    "rows": [
+      [
+        "F1",
+        9.27,
+        0
+      ],
+      [
+        "F2",
+        9.49,
+        19
+      ],
+      [
+        "F3",
+        5,
+        0
+      ],
+      [
+        "F4",
+        4.71,
+        39
+      ],
+      [
+        "F5",
+        5.51,
+        0
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "bilateral-netting-settlement",
+    "columns": [
+      "payer",
+      "payee",
+      "net_amount"
+    ],
+    "rows": [
+      [
+        "Acme",
+        "Globex",
+        850
+      ],
+      [
+        "Acme",
+        "Hooli",
+        60
+      ],
+      [
+        "Globex",
+        "Hooli",
+        35
+      ],
+      [
+        "Initech",
+        "Umbrella",
+        299.5
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "price-fill-forward-staleness",
+    "columns": [
+      "symbol",
+      "last_price",
+      "stale_minutes",
+      "max_gap",
+      "tick_count"
+    ],
+    "rows": [
+      [
+        "AAA",
+        100.5,
+        4,
+        29,
+        3
+      ],
+      [
+        "BBB",
+        51.25,
+        49,
+        49,
+        11
+      ],
+      [
+        "CCC",
+        42.25,
+        0,
+        58,
+        2
+      ],
+      [
+        "DDD",
+        77,
+        14,
+        24,
+        3
+      ]
+    ],
+    "order": "exact"
   }
 ];
 
