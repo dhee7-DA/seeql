@@ -8722,3 +8722,16 @@ Stage Summary:
 - The lc-sql sandbox is now a per-request in-memory bun:sqlite db: build-time verification == runtime grading, math functions available, FK semantics match the generator, and the old shared-table concurrency hazard is structurally gone.
 - Known follow-ups: the global toolbox "Predict the output" tool vs the LC tab name collision (flagged in round 2, still open); 3 no-follow-up problems are honest zeros; the client sequential-call pattern could be relaxed to parallel now, left as-is.
 - Key files: src/lib/leetcode/{followups,followup-specs}.ts, src/app/api/lc-sql/route.ts, src/components/learn/lc-predict.tsx, scripts/{lc-followups-gen,lc-baseline-sweep,lc-round3-probe}.ts
+
+---
+Task ID: lc-status
+Agent: Super Z (main agent)
+Task: "so what now?" — verify the shipped round-2/3 LeetCode work is still live and healthy after the context break.
+
+Work Log:
+- Reloaded state from worklog + git: round 2 (e306661) and round 3 (b0c8da2) both committed, working tree clean.
+- Health: root 200, /api/lc-sql responding. Manifest re-counted: 756 follow-ups on 416/419 problems; Predict pool 298 (179 four-option + 119 three-option) — matches round-3 records.
+- Browser E2E: Big Board renders all 5 tabs (Problems/Paths/Timed SQL/Predict/Companies), INTERVIEW READINESS meter renders, problem detail shows Follow-ups (2) step chip + No subqueries / Code golf challenge mods. Screenshot scripts/shots/lc-status-check.png. Browser closed after (OOM hygiene).
+
+Stage Summary:
+- All approved round-2/3 features verified live in the deployed build. No code changes this pass. Open options reported to user: polish items (toolbox Predict rename, Companies pseudo-tags, parallel lc-sql calls), next content round (212 registry-only placeholders), or user free-play on the new surfaces.
