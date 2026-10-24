@@ -384,4 +384,33 @@ LIMIT 5;`,
     },
   ],
   takeaway: "Tables split facts apart on purpose: foreign keys store the thread, and JOIN … ON reunites it at query time — one output row for every pair of rows that satisfies the match rule, carrying columns from both sides.",
+  deep: [
+    {
+      kind: "mind",
+      text: "Foreign keys store a relationship **as a number, not as a copy**. When order 7 belongs to customer 3, the orders row does not clone Alice's name and city — it carries the single fact `customer_id = 3`. That's why the data lives apart: one customer row is the authority, and 24 order rows point at it. A JOIN is the query-time act of following those pointers — reuniting the split facts for exactly the duration of one answer. Nothing is merged, nothing is saved; the reunion exists only inside your result set. Once you internalize that, joins stop feeling like magic glue and become what they are: a bulk VLOOKUP executed for every row of the left table, with the index doing the seeking.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT c.name, o.total FROM customers c JOIN orders o ON o.customer_id = c.id",
+      steps: [
+        "**Read the left side** — the planner picks the smaller or better-indexed table as the outer loop: here, 16 customer rows.",
+        "**Seek per row** — for each customer, it probes orders by `customer_id` (the plan says `SEARCH orders` when an index exists; `SCAN` when not, as in this seed).",
+        "**Emit pairs** — every (customer, order) pair that satisfies the ON test becomes one output row: 16 customers × their 24, 17, 14 … orders = 103 rows, because every customer has at least one order in this seed.",
+        "**Project** — only then are the requested columns pulled; the join never materializes whole tables, just the pairs' needed fields.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"JOIN merges the tables into one big table that lives somewhere in the database.\"",
+      truth: "A join is a **virtual, per-query act** — nothing is stored. Two people can run different joins on the same tables simultaneously and neither sees the other's result. The tables remain untouched; only the answer is assembled.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "A customer with zero orders", r: "Inner join drops them silently — this seed has none (every customer ordered at least once), but the moment one appears, INNER JOIN hides it. That's LEFT JOIN's job (lesson 12)." },
+        { c: "Two customers, same name", r: "Names are not keys. Joining on name instead of id can fuse two different people into one row — join on the foreign key, which the schema guarantees to be exact." },
+        { c: "An order whose customer_id points nowhere", r: "An orphan row. With the FK constraint on (this seed) it cannot exist; without it, the inner join silently drops it — a data-quality hole you'd only find by joining back." },
+        { c: "Joining on a float column", r: "Floats that print identically can differ in the last bits; ON a.price = b.price can miss. Money lives in cents here precisely so joins hit exact integers." },
+      ],
+    },  ],
 };

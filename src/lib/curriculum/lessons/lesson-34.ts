@@ -568,4 +568,33 @@ GROUP BY b.label ORDER BY MIN(b.lo);   -- small 8 · medium 30 · large 40 · ju
     },
   ],
   takeaway: "RIGHT is LEFT read backwards, FULL keeps both sides (the 115-row audit), CROSS generates the grid on purpose, and non-equi joins match on ranges — every shape is now yours, with the bounds discipline that keeps fanout out.",
+  deep: [
+    {
+      kind: "mind",
+      text: "INNER and LEFT cover 95% of work; the remaining shapes exist for the **remaining 5% of questions**. RIGHT JOIN is LEFT JOIN with the tables swapped (preserve the right population) — SQLite makes you rewrite it as a LEFT, which is why left-first habit matters. FULL OUTER preserves BOTH populations, each padding the other's absences — the \"show me everything and mark who's missing\" audit. CROSS JOIN is the deliberate explosion: every pair, no ON clause, n×m rows — 16 products × 6 suppliers = 96 combos, the honest backbone for grid reports and price-matrix comparisons. Non-equi joins (ON a.x BETWEEN b.lo AND b.hi) generalize the machinery beyond equality — and inherit fan-out in its most dramatic form.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT p.name, s.name FROM products p CROSS JOIN suppliers s",
+      steps: [
+        "**No ON, no pruning** — the nested loop emits every combination: 16 outer rows × 6 inner rows = 96. The join IS the product; the filter would come later, in WHERE, if wanted.",
+        "**RIGHT by rewrite** — SQLite's RIGHT JOIN support arrived late; the portable form flips the tables: A RIGHT JOIN B ≡ B LEFT JOIN A. Reading right-joins as \"swapped lefts\" keeps one mental model.",
+        "**FULL OUTER mechanics** — match pairs emit once; unmatched lefts pad right columns with NULL; unmatched rights pad left columns. Two pad sources, one result — the audit's microscope.",
+        "**Non-equi cost** — range conditions can't use hash probes: nested loops with per-pair tests, 251 × 103 at worst. Bounds discipline (narrowing ranges, staging) keeps it survivable.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"FULL OUTER JOIN and UNION of two LEFT JOINs are the same.\"",
+      truth: "The UNION rewrite (A LEFT JOIN B UNION A RIGHT JOIN B) approximates it but **can drop matched pairs' duplicates** or double them depending on UNION vs UNION ALL — correctness depends on the data, which is exactly what you don't want in an edge-case tool. Use the real FULL OUTER where the engine has one; here, stage it explicitly.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Accidental cross join", r: "Comma-FROM with a WHERE typo, or an ON that's always true (1 = 1 pasted in) — the result set silently multiplies: 251 × 103 = 25,853 rows here. Row-count sanity checks exist for this." },
+        { c: "CROSS JOIN as a generator", r: "The legit use: months × regions grids so empty cells appear as 0 instead of vanishing. 14 months × 4 regions = 56 spine rows — the LEFT JOIN onto facts fills the rest." },
+        { c: "Non-equi fan-out", r: "A BETWEEN join where one row's range swallows 50 rows yields 50 output rows from 1 — sums inflate exactly like lesson 15's trap, times fifty. Range joins demand narrow, non-overlapping bounds." },
+        { c: "RIGHT JOIN readability", r: "Right-joins read backwards to most humans; reviewers mis-eyetrack them. Rewrite as LEFT — same plan, same rows, fewer confused code reviews." },
+      ],
+    },  ],
 };

@@ -535,4 +535,33 @@ FROM products WHERE id IN (1, 2, 13);
     },
   ],
   takeaway: "Scalar functions reshape one value at a time — SUBSTR/INSTR slice by 1-based position, CAST changes type (truncating, not rounding), and COALESCE finally makes the NULL decision lesson 4 promised.",
+  deep: [
+    {
+      kind: "mind",
+      text: "Scalar functions are **row-local machines**: no other rows involved, no stages, no grain — one value in, one value out, applied per row. That makes them the safest tools in SQL and the easiest to reason about: whatever the row had, the function rewrites it in place. The discipline they demand is *type honesty*: SUBSTR sees text, arithmetic sees numbers, and the seed's money-in-cents design exists so you never ask floats to be exact. The second discipline is **NULL physics** — almost every scalar function returns NULL when fed NULL. LENGTH(NULL) is NULL, not 0; UPPER(NULL) is NULL. NULL is not an empty string, not zero, not an opinion: it is \"unknown\", and unknown propagates. COALESCE is the one sanctioned way to decide what unknown becomes.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT UPPER(SUBSTR(name, 1, INSTR(name, ' ') - 1)) FROM customers",
+      steps: [
+        "**Innermost first** — INSTR finds the space's position per name; SUBSTR cuts to just before it; UPPER capitalizes. Functions compose inside-out like arithmetic.",
+        "**Per-row cost** — the engine evaluates the chain for each of the 16 customer rows. No indexes apply (see lesson 64): functions on columns are invisible to the planner's b-trees.",
+        "**NULL short-circuit** — had any name been NULL, INSTR(NULL, ' ') is NULL, SUBSTR(NULL, …) is NULL, UPPER(NULL) is NULL — the whole chain returns NULL without erroring.",
+        "**Result type** — everything here is TEXT. Mixing a numeric into a text context makes SQLite coerce (and often hides a bug); CAST is how you state intent instead of hoping.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"An empty string and NULL are the same thing — both mean 'nothing here'.\"",
+      truth: "An empty string is a **known value of zero length**; NULL is **absence of a value**. LENGTH('') is 0, LENGTH(NULL) is NULL. Filters behave differently too: WHERE col = '' matches empties but never NULLs. Conflating them corrupts both counts and joins.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "CAST(199.99 AS INTEGER)", r: "SQLite **truncates toward zero** → 199, it does not round. Rounding is ROUND()'s job; CAST is a type change, not an arithmetic opinion." },
+        { c: "SUBSTR past the end", r: "SUBSTR('ab', 5, 2) returns '' (empty), not an error. Text functions are forgiving about boundaries — which is exactly why silent-empty bugs survive." },
+        { c: "INSTR finds nothing", r: "INSTR returns 0 when absent; SUBSTR(name, 1, 0-1) = SUBSTR(name, 1, -1) then slices weirdly. Guard with a CASE when the needle may be missing." },
+        { c: "COALESCE with all-NULL inputs", r: "COALESCE(NULL, NULL) is NULL — the promise is 'first NON-NULL', not 'never NULL'. Give the last argument a real default: COALESCE(nick, name, '?')." },
+      ],
+    },  ],
 };

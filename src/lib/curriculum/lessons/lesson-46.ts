@@ -437,4 +437,33 @@ ALTER TABLE suppliers RENAME TO vendors;`,
     },
   ],
   takeaway: "ALTER edits the contract one operation at a time — ADD COLUMN backfills via its default, RENAME re-labels, DROP removes — while type and constraint changes need the full rebuild dance, and DROP TABLE outside a sandbox is the least reversible statement in SQL.",
+  deep: [
+    {
+      kind: "mind",
+      text: "Schema evolution is **surgery on a living patient**: ALTER TABLE performs the small, safe operations (ADD COLUMN, RENAME) while readers keep reading; DROP TABLE is the amputation that everything referencing the lost limb must survive. The discipline is knowing what's cheap and what's not: ADD COLUMN with a DEFAULT is metadata-instant in SQLite (existing rows logically carry the default); changing a column's TYPE or dropping a column triggers the heavier rewrite path. And DROP's blast radius is the schema graph — views that select from the table, FKs that point at it, indexes that live on it. The migration mindset: write the new state, copy the data, swap the names, keep the old table until the app proves itself — reversibility over tidiness.",
+    },
+    {
+      kind: "engine",
+      title: "you run ALTER TABLE products ADD COLUMN discontinued INTEGER NOT NULL DEFAULT 0",
+      steps: [
+        "**Metadata path** — SQLite adds the column to the schema record; because a DEFAULT exists, no per-row rewrite happens. The table is \"wider\" immediately for all readers.",
+        "**Read semantics** — existing rows now report discontinued = 0 logically, though nothing was physically rewritten. SELECT * returns the new shape; old prepared statements invalidate.",
+        "**RENAME ripples** — ALTER TABLE … RENAME updates references inside the same database (views, FKs) — a rare automatic migration, and the reason renames are safer than they look.",
+        "**DROP ceremony** — DROP TABLE products removes the table plus its indexes; sqlite_master shrinks. Inside this sandbox it all rolls back — rehearsal before production surgery.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"ALTER TABLE is dangerous, so I should export, recreate, and reimport the table for any change.\"",
+      truth: "That ceremony is the **heavy path** — reserved for what ALTER genuinely can't do (type changes, constraint additions on SQLite). For ADD/RENAME/DROP COLUMN the engine's own path is atomic, fast, and doesn't risk a copy-step losing rows. Match the tool's weight to the operation's weight.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "ADD COLUMN NOT NULL without DEFAULT", r: "Refused on a non-empty table: existing rows can't satisfy the new rule. The escape is DEFAULT (a value for history) or the full rewrite path with a backfill step." },
+        { c: "DROP COLUMN with dependents", r: "An index or view referencing the column blocks the drop (SQLite refuses rather than cascading). Drop dependents in order — dependency trees prune leaf-first." },
+        { c: "Renaming into collisions", r: "RENAME to an existing name errors; RENAME TO the same name \"succeeds\" as a no-op. Migration scripts run twice — write them idempotent." },
+        { c: "The dropped-table shadow", r: "Views and triggers over a dropped table become zombies that error on use. DROP the dependents first, or accept the archaeology ticket later." },
+      ],
+    },  ],
 };

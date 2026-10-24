@@ -459,4 +459,33 @@ ORDER BY (region = 'TOTAL'), spend DESC;
     },
   ],
   takeaway: "GROUP_CONCAT folds a group into one TEXT cell (mind DISTINCT's no-separator rule and the unspecified order), FILTER splits counts in one pass, and the UNION ALL stack hand-builds the TOTAL row SQLite's missing ROLLUP would give you.",
+  deep: [
+    {
+      kind: "mind",
+      text: "GROUP_CONCAT is the **reverse telescope**: many rows fold into one text value — the only aggregate in the core toolkit whose output is not a number. It answers the \"show me the list\" report: which categories does this supplier feed, which products sat in that order. Its two disciplines: the fold **loses order guarantees** (SQLite concatenates in scan order unless you stage rows in a sorted subquery first), and the fold **needs a delimiter you chose deliberately** — commas inside data wreck naive joins. Pair it with the grand-total stack (aggregate OVER ()) and you get the report pattern: detail rows, subtotal rows, one total row — one query, no spreadsheet handiwork.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT supplier_id, GROUP_CONCAT(name, ', ') FROM products GROUP BY supplier_id",
+      steps: [
+        "**Group scan** — 16 products fold into 6 supplier buckets; the aggregate accumulates a text buffer per bucket, appending ', '-separated names as rows arrive.",
+        "**Order caveat** — the buffer's order follows arrival, not intent. Wrap the source in ORDER BY (a sorted subquery/CTE) when the list's order is part of the deliverable.",
+        "**Grand-total layer** — COUNT(*) OVER () alongside GROUP_CONCAT stamps every row with the whole-set size: detail and summary in one result set, no UNION needed.",
+        "**Output type** — one TEXT cell per group; long lists hit length limits in some engines (SQLite is generous, Postgres's string_agg too, but report UIs are not). Truncate deliberately.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"GROUP_CONCAT preserves row order — it concatenates alphabetically (or by id).\"",
+      truth: "The standard provides **no order guarantee**. SQLite usually arrives in scan/rowid order and looks stable — until a plan change reorders the scan and your report's lists shuffle. Deterministic lists need a sorted stage feeding the fold.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Delimiters inside the data", r: "Product names containing ', ' split ambiguously downstream. Choose delimiters that cannot occur (' | ') or export structured formats instead of inventing syntax." },
+        { c: "NULL members", r: "GROUP_CONCAT skips NULLs entirely — they neither appear nor leave a placeholder. A list of five rows with two NULLs reports three entries; is that the count your consumer expects?" },
+        { c: "Empty groups can't exist", r: "Groups form FROM rows, so GROUP_CONCAT never returns NULL for a formed group (only for an all-NULL input column in some engines). Edge: distinguishing \"no members\" from \"no group\" matters in reports." },
+        { c: "The 2× fan-out trap", r: "GROUP_CONCAT after a join inherits the join's fan-out: joined-to-items, each product name repeats per line. Fold at the right grain or the list duplicates — same disease as lesson 15, new symptom." },
+      ],
+    },  ],
 };

@@ -481,4 +481,33 @@ RETURNING id, price;   -- 5 products re-priced: K1 82.79, Studio Mic 114.24, …
     },
   ],
   takeaway: "UPDATE = assignments over a filtered scan: expressions read the row's old values, CASE branches per row, UPDATE … FROM pulls companion data from other tables — and the affected count is your first line of defense.",
+  deep: [
+    {
+      kind: "mind",
+      text: "UPDATE is a **read-modify-write executed for every row the WHERE admits** — and its two disciplines are both about scope. First: the WHERE is the whole ballgame. The seed makes 2 of 16 customers inactive (holding 6 orders between them); `UPDATE customers SET active = 0 WHERE region = 'APAC'` and `UPDATE customers SET active = 0` differ by 5 rows versus 16 — the forgotten WHERE is the most expensive typo in data work. Second: the SET expressions are evaluated **per row against that row's current values**, which makes self-reading updates legal and powerful (`SET total = total * 1.1`, `SET stock = stock - 5`) — the row is its own reference. Changes() tells you the blast radius after the fact; run the SELECT twin of your WHERE BEFORE the write, never after regret.",
+    },
+    {
+      kind: "engine",
+      title: "you run UPDATE customers SET active = 0 WHERE region = 'APAC'",
+      steps: [
+        "**Target pass** — the engine resolves WHERE first: 5 APAC customers form the target set. Nothing is written yet.",
+        "**Per-row rewrite** — for each target row, SET evaluates against current values; active = 0 is constant, but stock = stock - 5 would read each row's own stock.",
+        "**Constraint check** — the new row image is validated (NOT NULL, CHECK, FK targets); a violation aborts the statement — and inside this course's sandbox, the transaction rolls back wholesale.",
+        "**Count** — changes() reports 5. If the count disagrees with the SELECT twin of the WHERE, stop and re-read — the write already happened.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"UPDATE is safe because I can run it again if I get it wrong.\"",
+      truth: "UPDATE is **not idempotent for non-idempotent expressions**: stock = stock - 5 subtracts AGAIN on rerun. The rerun fantasy is why the discipline is transaction + SELECT-twin + changes()-check — not optimism.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "SET with a subquery returning 2 rows", r: "A scalar SET can't consume a multi-row result — error. Aggregate inside the subquery (SELECT MAX(…) …) or restructure; the error is the engine refusing ambiguity." },
+        { c: "UPDATE … FROM (join-update)", r: "SQLite supports UPDATE … FROM: join targets onto the updated table. The fan-out law follows — if FROM produces two source rows per target, the update is ambiguous and one wins arbitrarily. Pre-fold the FROM." },
+        { c: "Self-reading expression order", r: "SET columns are assigned conceptually simultaneously from OLD values: swap via SET a = b, b = a works in one statement. Sequential-expectation bugs come from assuming per-column sequencing." },
+        { c: "Zero-row UPDATE", r: "changes() = 0 is a verdict: the WHERE matched nothing (typo? wrong status? already applied?). An update that \"worked\" and touched nothing is usually the bug, not the success." },
+      ],
+    },  ],
 };

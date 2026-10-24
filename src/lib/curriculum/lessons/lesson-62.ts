@@ -126,4 +126,33 @@ FROM n WHERE 100.0 * run / grand >= 80;   -- the 80/20 detector`,
   problems: probBank("l62", PROBS),
   takeaway:
     "NTILE cuts equal-count bands, the share idiom partitions the pie, PERCENT_RANK and CUME_DIST place rows in the distribution, and the Pareto column measures concentration — positional cuts answer 'who', value cuts answer 'how much', and good reports label which they promise.",
+  deep: [
+    {
+      kind: "mind",
+      text: "Distribution windows replace \"rank 7 of 103\" with **\"where on the curve\"**: NTILE(n) deals ordered rows into n near-equal buckets (quartiles, deciles), PERCENT_RANK computes (rank−1)/(n−1) — the 0..1 ladder with its floor at exactly 0 — and CUME_DIST computes the at-or-below share (÷ n), the curve that includes peers and lands exactly on 1.0. The three disagree by design: quartile membership is count-forced, PERCENT_RANK is rank-fraction, CUME_DIST is share-of-population. \"Top quartile by spend\" and \"top 1% by CUME_DIST\" are different sentences that overlap without coinciding — the analyst's job is picking the definition the question meant, then saying it out loud in the report.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT id, total, NTILE(4) OVER (ORDER BY total, id) AS quartile, ROUND(CUME_DIST() OVER (ORDER BY total), 4) AS cum FROM orders",
+      steps: [
+        "**Deal the tiles** — NTILE(4) over 103 ordered rows: buckets of 26/26/26/25 (the remainder spreads across the earliest buckets). Count-forced by definition.",
+        "**The rank curve** — PERCENT_RANK = (rank−1)/(n−1): the cheapest row is exactly 0.0, the richest is (103−1)/(103−1) = 1.0 minus its own ties… peers share the value, so the top of the curve approaches 1 and only touches it when the top row is untied.",
+        "**The share curve** — CUME_DIST = at-or-below ÷ n: ties ride one point, the maximum row sits at exactly 1.0. Ties included is the definitional difference from PERCENT_RANK.",
+        "**Crossing discipline** — \"the median\" = the row where CUME_DIST first reaches ≥ 0.5. With even n the crossing is the upper median — say which you computed; both are defensible, silence is not.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"Top quartile = top 25% of value.\"",
+      truth: "NTILE quartiles split the **COUNT of rows**, not the SUM of value: the top quartile here is the 26 biggest orders, which may hold 60% of revenue. \"Top 25% of revenue\" is a cumulative-SUM-over-running-total computation — a different query wearing a similar name.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "NTILE with a remainder", r: "103 into 4 leaves 3: the FIRST three buckets take the extra row. Bucket sizes 26/26/26/25 — downstream \"equal quarters\" claims need the footnote." },
+        { c: "Ties across tile walls", r: "Two identical totals can straddle buckets 1 and 2 — NTILE is count-blind to value ties. If peers must travel together, the bucketing needs CUME_DIST thresholds instead." },
+        { c: "PERCENT_RANK on a tie at top", r: "Two rows share the max rank n: both sit at (n−1)/(n−1) = 1.0? No — both share rank n−1+1… compute it: the curve tops BELOW 1.0 when ties ride the maximum. CUME_DIST is the curve that always reaches exactly 1." },
+        { c: "Pareto reads", r: "Sort by total DESC, running SUM OVER () ÷ grand total: the cumulative share curve shows how few orders carry how much revenue — the 80/20 check, built from this lesson's parts." },
+      ],
+    },  ],
 };

@@ -423,4 +423,33 @@ WHERE rn = 1 ORDER BY total DESC;   -- Farid #74 1088.44 … 16 rows`,
     },
   ],
   takeaway: "OVER computes across rows without collapsing them — ROW_NUMBER for unique positions, RANK for leaderboards with gaps, DENSE_RANK for gapless tiers, PARTITION BY for a league per group, and top-N-per-group always filters OUTSIDE the window.",
+  deep: [
+    {
+      kind: "mind",
+      text: "A window function is an aggregate that **refuses to collapse**. GROUP BY trades detail for the summary — 103 orders become 4 status rows; a window OVER the same data keeps all 103 rows AND adds the summary as a new column. The OVER clause defines a *stage* over the surviving rows: PARTITION BY draws stage boundaries, ORDER BY sequences rows inside the stage, and the function computes per row against its stage-mates. This is the shift from \"one answer per bucket\" to \"one answer per row, aware of its bucket\" — the entire family (rank, offsets, frames, distribution) is the same machinery with different functions bolted on.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT id, status, RANK() OVER (PARTITION BY status ORDER BY total DESC) FROM orders",
+      steps: [
+        "**Timing** — the window pass runs AFTER WHERE and GROUP BY: it sees the surviving rows, not the tables. A WHERE can never filter on a window's output — that's what the outer-query/CTE layer is for.",
+        "**Stage cutting** — PARTITION BY status deals the 103 rows into four stages: 52 delivered, 30 shipped, 14 pending, 7 cancelled. Every function restarts at each boundary.",
+        "**Sequencing** — inside each stage, ORDER BY total DESC lines rows up; RANK reads the line: ties share a rank and skip after (1, 1, 3…), ROW_NUMBER never ties (1, 2, 3…), DENSE_RANK shares without skipping.",
+        "**Stamping** — each row keeps its own data plus its stage rank; nothing collapsed. The output is still 103 rows — the leaderboard now lives alongside the facts.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"ROW_NUMBER, RANK and DENSE_RANK are interchangeable — they all number rows.\"",
+      truth: "They encode **three different tie contracts**: ROW_NUMBER breaks ties arbitrarily (unstable without a deterministic tiebreak), RANK skips after ties, DENSE_RANK neither skips nor repeats gaps. Picking by habit instead of contract is how \"the top-3 query returns 4 rows\" bug reports start.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Non-deterministic tiebreaks", r: "OVER (ORDER BY total) with tied totals can rank those ties differently every run — page 2 of a paginated leaderboard may repeat or skip a row. Always add the id as the final tiebreak." },
+        { c: "Window in WHERE", r: "WHERE RANK() OVER … is a syntax error by design — windows run after WHERE. Filter on ranks via a CTE or subquery layer: number inside, filter outside." },
+        { c: "Empty partition", r: "A stage with one row gives every ranking function 1 — but RANK on an empty OVER () across the whole set still numbers from 1. Edge: your \"rank 2\" can simply not exist in small stages." },
+        { c: "PARTITION BY a NULL", r: "NULLs form their OWN stage — they don't vanish like in joins or comparisons. Five NULL-status rows would produce a coherent NULL-stage leaderboard all by themselves." },
+      ],
+    },  ],
 };

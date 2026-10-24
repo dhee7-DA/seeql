@@ -372,4 +372,33 @@ FROM ( /* …staging joined to customers for the name… */ ) t;
     },
   ],
   takeaway: "Stage (UNION ALL, signed), walk (SUM OVER, ordered, partitioned per customer), present — the three-layer skeleton behind every balance statement ever emailed.",
+  deep: [
+    {
+      kind: "mind",
+      text: "An account statement is **time plus accumulation**: rows in chronological order, each carrying the balance after its event. The window form — SUM(amount) OVER (PARTITION BY account ORDER BY entry_date, id) — is the whole trick: partition is the account boundary, order is the timeline, and the ORDER-BY'd SUM becomes the snowball. Two details separate a toy from a bank-grade statement: the **tiebreak** (same-day entries post in id order; without it the statement re-shuffles between runs) and the **sign discipline** (debits and credits as signed values, or a CASE that signs them — mixing unsigned columns with subtraction logic mid-window is where balances go wrong). The seed's ledger carries 80 entries; the walk should reconcile to the raw SUM exactly — equality is the receipt.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT entry_date, account, debit_cents - credit_cents, SUM(debit_cents - credit_cents) OVER (PARTITION BY account ORDER BY entry_date, id) AS balance FROM ledger_entries",
+      steps: [
+        "**Sign per row** — the signed delta (debit − credit) normalizes the two-column ledger into one additive stream. Positive = owed grows; negative = payment lands.",
+        "**Stage + timeline** — PARTITION BY account isolates each account's walk; ORDER BY entry_date, id fixes same-day posting order deterministically.",
+        "**Implicit frame** — ORDER BY inside OVER defaults the frame to 'start through current row': the running balance. The engine accumulates in one sort plus one pass — no self-join.",
+        "**Reconcile** — final row's balance must equal SUM(delta) over the whole account. It always will, mathematically — the check is that YOUR delta expression matches the business's signing convention.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"Running balance needs a cursor or application code — SQL can't keep state row to row.\"",
+      truth: "The window IS the state: the frame 'preceding through current' encodes everything accumulated so far. The pre-window idiom (correlated subquery summing all prior rows) computes the same thing at O(n²); ORDER-BY'd SUM is O(n log n) and reads like the statement it produces.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Same-timestamp events", r: "Opening and closing entry on one date: without the id tiebreak, their post-order is arbitrary and the EOD balance can differ run to run. (date, id) is the deterministic spine." },
+        { c: "Reverse signing", r: "If the ledger stores credits as negatives already, debit - credit double-negates. Read the schema's convention FIRST — the walk is trivial; the sign contract is the exam." },
+        { c: "Multi-account walk", r: "Forget the PARTITION and one account's balance opens with another's history. The partition is the wall between wallets." },
+        { c: "Backdated entries", r: "An entry inserted with an OLD date lands mid-walk — every later balance shifts. That's correct double-entry behavior, but any cached statement is now stale: statements are derived, never stored." },
+      ],
+    },  ],
 };

@@ -309,4 +309,33 @@ LIMIT 5;`,
     },
   ],
   takeaway: "A chain is just foreign keys read aloud — one JOIN … ON per hop, built and sanity-checked one join at a time, with many-to-one hops leaving the row count untouched.",
+  deep: [
+    {
+      kind: "mind",
+      text: "A three-table chain is **two joins wearing a trench coat**. The schema fact you exploit: foreign keys point one hop each, so an answer spanning three tables is built hop by hop — order_items knows its order, orders knows its customer. Chain them and the grain of the FINAL result is decided by the LAST fan-out you allow in. items→orders multiplies 251 ways to 251 rows (each item has one order); orders→customers multiplies nothing further (each order has one customer). The chain's output stays at item grain — 251 rows — because the later hops were many-to-one. Name the grain out loud before you aggregate, and three-table queries lose their fear.",
+    },
+    {
+      kind: "engine",
+      title: "you run FROM order_items oi JOIN orders o ON … JOIN customers c ON …",
+      steps: [
+        "**Join order choice** — the planner reorders freely: it may start from the 251 item rows and probe upward, or from 16 customers downward. The ON conditions are the same; the cost is not.",
+        "**Intermediate grain** — after hop one the working set is 251 rows at item grain; after hop two, still 251 (customers add columns, not rows). Intermediates are never materialized for you — but their sizes set the cost.",
+        "**Column resolution** — three tables have three `id` columns; unqualified `id` is an ambiguity error. Aliases (oi, o, c) are not style — they are the disambiguator.",
+        "**Filter placement** — a WHERE on customer region prunes earliest if applied during the customer hop. The engine does this automatically; your job is to not re-block it with a correlated shape it can't see through.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"The FROM order determines the join order, so I must list the biggest table first.\"",
+      truth: "The planner **reorders inner joins** based on statistics and indexes. FROM order matters for readability (and for outer joins' semantics), not for inner-join performance. Write the chain in the order the story reads; let the engine pick the loop.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Skipping a hop", r: "There is no orders→products FK — you cannot join two hops apart without the middle table. The chain is the schema; missing links are errors, not optimizations." },
+        { c: "Two FKs to the same table", r: "If order_items also had shipper_id → shippers, you'd join shippers twice under two aliases. Each FK is its own hop with its own alias." },
+        { c: "Aggregating mid-chain", r: "\"Revenue per customer\" wants customer grain: join all three, GROUP BY customer at the end. Folding customers too early (GROUP BY then join) is the aggregate-first fix of lesson 16 — different tool, different grain." },
+        { c: "LEFT in the middle of a chain", r: "A LEFT JOIN followed by an INNER JOIN can silently demote the LEFT's preserved NULLs (the WHERE on the right table's column kills them). Check every hop's preservation survives the next." },
+      ],
+    },  ],
 };

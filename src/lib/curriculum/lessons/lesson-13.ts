@@ -340,4 +340,33 @@ ORDER BY p.name;`,
     },
   ],
   takeaway: "An anti-join is three pieces — LEFT JOIN, the qualifying condition inside ON, and WHERE right-id IS NULL — and when the test spans two hops, pre-filter into a subquery rather than trusting NOT IN around NULLs.",
+  deep: [
+    {
+      kind: "mind",
+      text: "The anti-join answers **\"who never…?\"** — and its shape is a LEFT JOIN whose right side you demand to be absent: LEFT JOIN … WHERE right.id IS NULL. The preserved-and-padded row is the fingerprint of non-existence; the IS NULL test selects exactly the rows the INNER JOIN would have kept out. Every \"customers with no delivered orders\", \"products never sold\", \"invoices without payments\" question is this one pattern. This seed's honest twist: run it and you get ZERO rows — every customer has orders and every product has sold. That empty result is not a broken query; it is a finding. An anti-join returning nothing says \"the hole you were hunting does not exist\", and that is often exactly what an auditor needs in writing.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT c.id FROM customers c LEFT JOIN orders o ON o.customer_id = c.id AND o.status = 'pending' WHERE o.id IS NULL",
+      steps: [
+        "**Scope in ON, not WHERE** — the pending-filter lives in the ON clause, so customers with no PENDING orders are padded (kept), not dropped.",
+        "**Pair or pad** — customers with pending orders emit their pairs; the rest emit one NULL-padded row each.",
+        "**The filter** — WHERE o.id IS NULL keeps only pads: customers whose pending-order seek found nothing. The engine may implement this as a hash anti-join — same answer, no intermediate materialization.",
+        "**Return** — the result is the complement of the INNER JOIN's population: \"customers minus customers-with-pending\". In this seed that set is empty — the check itself is the deliverable.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"NOT EXISTS and LEFT JOIN … IS NULL are different results.\"",
+      truth: "For this shape they return the **same rows** — NOT IN is the one that betrays you: a single NULL in the subquery's column makes NOT IN return nothing at all. Anti-join by NOT EXISTS (or the LEFT JOIN shape) is NULL-safe by construction.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "The filter in WHERE instead of ON", r: "WHERE o.status = 'pending' after the join drops the pads first — the anti-join returns everyone, wrongly. Filter-the-evidence lives in ON; filter-the-population lives in WHERE." },
+        { c: "Testing IS NULL on a nullable column", r: "Test the join KEY (o.id) — it's NOT NULL by contract, so NULL there means \"pad row\" unambiguously. o.shipped_at IS NULL is ambiguous: pad row, or a real order that hasn't shipped?" },
+        { c: "Anti-join on both sides of a union", r: "\"Customers with no orders\" is the complement of \"customers with orders\" — the two counts must sum to 16. Reconciling a set with its complement catches most anti-join typos." },
+        { c: "Empty anti-join dismissed as a bug", r: "Zero rows is a verdict, not an error. This seed's \"products never ordered\" is genuinely empty — say so in the report instead of re-running until something appears." },
+      ],
+    },  ],
 };

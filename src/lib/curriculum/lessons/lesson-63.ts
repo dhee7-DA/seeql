@@ -126,4 +126,33 @@ FROM w JOIN a ON a.month = w.month ORDER BY w.month;`,
   problems: probBank("l63", PROBS),
   takeaway:
     "The pattern library is six moves — scope, rank, offset, frame, distribute, compose — arranged into islands, sessions, dedupes, ladders and boards. Name every stage, honor the edges, and know when plain GROUP BY beats a window.",
+  deep: [
+    {
+      kind: "mind",
+      text: "The pattern library is where the family becomes **analysis**: gaps-and-islands (turn \"consecutive\" into a groupable id: global row number minus within-group row number is constant per run), sessionization (a gap threshold flags session starts; the running sum of flags is the session id), YoY ladders (LAG partitioned by year over the month spine), and the mixed board where stages stack: fold, sequence, then compare. The unifying habit: **decompose the pattern into window primitives** — every \"hard\" analysis here is two or three of the family's tools in a row, each in its own CTE layer, each auditable. If a pattern feels un-writable, the decomposition is wrong — no pattern in this lesson needs a correlated subquery or a cursor.",
+    },
+    {
+      kind: "engine",
+      title: "you run the gaps-and-islands decomposition over order days",
+      steps: [
+        "**Sequence globally** — DISTINCT order days, numbered by ROW_NUMBER: rn assigns each day its global position (84 days in the seed).",
+        "**Sequence within group** — for each status-run (or any grouping key), a second ROW_NUMBER partitions and numbers within the run.",
+        "**The island id** — rn_global − rn_local is CONSTANT inside a run and changes at every gap: the arithmetic trick that turns \"consecutive-ness\" into a GROUP BY key.",
+        "**Fold the islands** — GROUP BY the island id: per-run MIN/MAX/COUNT answers \"how long was the streak, when did it start\" — the analysis falls out of the id, not from more windowing.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"Gaps-and-islands needs a procedural loop — check each row against the previous, start a new group when it breaks.\"",
+      truth: "That loop, written as a cursor, is the pre-window idiom — and it's slower, unparallelizable, and stateful. The two-row-number subtraction IS the loop, unfolded: the engine does the walk in one sort-plus-pass, and the \"state\" is just the difference of two sequences.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Sessionization threshold semantics", r: "\"Gap > 30 min starts a session\" vs \"≥ 30\": exactly-30-minute gaps are the contract edge — write the comparison deliberately and test it with a synthetic exactly-at-threshold pair." },
+        { c: "YoY with sparse months", r: "LAG(revenue, 12) over OBSERVED months pairs this June with the 12th PRIOR OBSERVED month — not last June. The month spine (lesson 49) plus PARTITION BY year keeps the calendar honest." },
+        { c: "Islands on ties", r: "Two same-status rows sharing a timestamp: the id tiebreak inside BOTH row numbers keeps the island walk deterministic. Tiebreaks are load-bearing in every pattern here." },
+        { c: "Mixed-grain boards", r: "The final board mixes order-grain stamps with month-grain ladders: stage each grain in its own CTE, join on the shared key. One query, two grains, no fan-out — the course's grain discipline, now in window form." },
+      ],
+    },  ],
 };

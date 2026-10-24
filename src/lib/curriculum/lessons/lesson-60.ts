@@ -105,4 +105,33 @@ ORDER BY customer_id, created_at, id;   -- NULL on their first order`,
   problems: probBank("l60", PROBS),
   takeaway:
     "LAG and LEAD move one decision — 'previous' or 'next at this position' — into the sort spec; defaults own the edges, partitions own the timelines, and deltas, gaps, streaks and YoY ladders are all that one fetch wearing different math.",
+  deep: [
+    {
+      kind: "mind",
+      text: "LAG and LEAD are the family's **memory**: they read another row of the same stage onto the current row — LAG looks back, LEAD forward, and the offset says how far. Every \"delta, gap, streak, consecutive-runs\" analysis starts here, because comparison needs two rows on one row. The three-argument form — LAG(col, offset, default) — is where mastery shows: the default replaces the boundary NULL (first row's \"previous\" becomes 0 instead of NULL), which matters the moment the value feeds arithmetic. And the sort spec is the timeline, full stop: LAG over (ORDER BY created_at, id) reads the previous CHRONOLOGICAL order; over (ORDER BY total) reads the previous-RICHER one — both legal, utterly different analyses.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT customer_id, created_at, total, LAG(created_at, 1) OVER (PARTITION BY customer_id ORDER BY created_at, id) AS prev_at FROM orders",
+      steps: [
+        "**Stage + timeline** — per customer, orders sorted chronologically. LAG's \"previous\" is defined BY this sort — the engine materializes each stage in order, then slides a window of neighbors.",
+        "**Neighbor fetch** — row k reads row k−1's created_at; row 1 of each stage reads nothing and yields NULL (or the three-argument default).",
+        "**Delta assembly** — the difference (created_at − prev_at) computes per row in the same SELECT: the gap-to-next-purchase input, no self-join.",
+        "**Boundary semantics** — the first row's NULL is information (\"no prior purchase\"), the three-argument 0 is a computation convenience (\"treat as epoch\"). Choose per consumer — streak logic and gap averages read them differently.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"LAG(total, 2) reads two columns back, or the total two rows up in the table's storage order.\"",
+      truth: "It reads the value **two positions back in the OVER's sort spec** — no storage order, no columns. Without ORDER BY in OVER, \"previous\" is undefined and most engines reject LAG outright. The sort spec is the memory's address line.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Streak counting", r: "Consecutive-buyer streaks: flag current-vs-previous (CASE WHEN same month THEN 0 ELSE 1), then SUM the flags OVER (ORDER BY …) — the running count of resets IS the streak id (lesson 63 formalizes this)." },
+        { c: "LEAD loses the last row", r: "Delta-to-next-purchase via LEAD is NULL on each customer's final order — structurally. Reports averaging gaps must decide: exclude (honest) or coalesce-to-zero (a lie that inflates frequency)." },
+        { c: "LAG across the partition edge", r: "Partitions firewall the memory: customer 2's first row does NOT read customer 1's last. If your \"previous\" crosses wallets, you wanted no partition — and now the business meaning is different." },
+        { c: "Same-timestamp neighbors", r: "Two orders at one timestamp: (created_at, id) makes \"previous\" deterministic; created_at alone flips a coin. Every LAG on real data needs the tiebreak — this is Windows IV's determinism duty, returning." },
+      ],
+    },  ],
 };

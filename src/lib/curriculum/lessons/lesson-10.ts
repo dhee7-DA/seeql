@@ -316,4 +316,33 @@ ORDER BY o.total DESC;`,
     },
   ],
   takeaway: "INNER JOIN keeps exactly the pairs where ON is true — unmatched rows vanish silently, one left row repeats once per match, and both tables owning id and name make alias-and-qualify non-negotiable.",
+  deep: [
+    {
+      kind: "mind",
+      text: "An inner join is a **multiplication machine with a filter bolted on**. Conceptually the engine forms every left-row × right-row combination — 16 customers × 103 orders is 1,648 candidate pairs — then keeps only the pairs that satisfy ON. The join's row count is therefore not \"rows of A\" or \"rows of B\" but \"matching pairs\", and when one left row matches many right rows, the left row **repeats**. That repetition is the fan-out: orders joined to order_items yields 251 rows from 103, because the average order has ~2.4 lines. Any aggregate you compute downstream inherits that grain — which is why lesson 16 exists.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT * FROM orders o JOIN order_items oi ON oi.order_id = o.id",
+      steps: [
+        "**Candidate space** — nested loop: 103 outer orders, each conceptually against 251 item rows; the ON test prunes to matching pairs.",
+        "**Match resolution** — order 1's three item rows become three output rows carrying identical order columns and different item columns; nothing is deduplicated.",
+        "**Cost shape** — with no index on order_id this is O(103 × 251) ≈ 25,853 comparisons; the plan shows `SCAN oi` inside the loop. Add the index and each probe becomes a descent.",
+        "**Row budget** — the result's grain is \"line items\" (251 rows), not orders. The engine is honest about this; the bug is always downstream, in an aggregate that assumed order grain.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"INNER JOIN returns the intersection — rows that exist in both tables.\"",
+      truth: "It returns **matching pairs**, not rows. A row with five matches appears five times; a row with none appears zero times. \"Intersection\" thinking breaks the moment fan-out enters — count the pairs, not the tables.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Duplicate join keys on both sides", r: "3 left rows × 4 right rows sharing one key = 12 output rows. The multiplicative rule never rounds down — it is the most expensive surprise in reporting SQL." },
+        { c: "NULL in a join column", r: "NULL = NULL is not true (three-valued logic), so NULL keys match nothing in an inner join — including their twins. Rows with NULL keys vanish." },
+        { c: "Joining on the wrong alias", r: "ON o.customer_id = o.id compiles fine and returns near-junk — always name both sides from their own tables and read the ON aloud as a sentence." },
+        { c: "Self-referencing fan-out", r: "customers joined to customers on region (a.id < b.id) yields 39 pairs from 16 people — C(5,2)=10 for APAC, 28 for EU, 1 for US, 0 for LATAM's solo member. Self-joins are just joins with the same table twice." },
+      ],
+    },  ],
 };

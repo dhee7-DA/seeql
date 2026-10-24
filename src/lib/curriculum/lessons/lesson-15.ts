@@ -323,4 +323,33 @@ ORDER BY spend DESC;`,
     },
   ],
   takeaway: "Join first, collapse second: GROUP BY the primary key and display the name, filter groups with HAVING — and after any LEFT JOIN count the right side's id, because COUNT(*) turns every true zero into one.",
+  deep: [
+    {
+      kind: "mind",
+      text: "Aggregates over a join inherit the **join's grain, not the table's** — that single sentence is the whole lesson. Join customers to orders (many-to-one) and revenue per region is safe: each order row survives exactly once. Join orders to order_items and then SUM orders.total, and every order's total is paid once per line item — the 251-line fan-out re-charges 103 orders' totals by ~2.4× on average. The COUNT trap is the same disease in mild form: after LEFT JOIN, COUNT(*) counts pad rows but COUNT(o.id) counts matches. The fix is not \"be careful\" — it is structural: aggregate at the grain you report (distinct keys, pre-aggregated stages, or the aggregate-first shape of lesson 16).",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT c.region, SUM(o.total) FROM customers c JOIN orders o ON … GROUP BY c.region",
+      steps: [
+        "**Join phase** — the engine materializes the pair set at order grain: 103 rows, each customer's columns repeated onto their orders.",
+        "**Group phase** — GROUP BY region folds the 103 pairs into 4 stage buckets (APAC 5, EU 8, US 2, LATAM 1 customers — but order counts, not customer counts, drive the sums).",
+        "**Aggregate phase** — SUM runs per bucket over order totals: no fan-out, because the join was many-to-one toward orders. The number is honest.",
+        "**The counterfactual** — swap the join for orders ⋈ order_items and SUM(o.total): the same SUM now runs over 251 rows where order totals repeat per line. Revenue ≈ 2.4× truth — the engine did nothing wrong; the grain was wrong.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"COUNT(*) after a LEFT JOIN counts the left table's rows.\"",
+      truth: "It counts **output rows** — a customer with three orders contributes three, a customer with none contributes one (the pad). Count the left table's KEY (COUNT(c.id)) to count population, or COUNT(o.id) to count matches.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "SUM over a duplicated money column", r: "The fan-out double-charge: 34,833.28 of true revenue becomes ~84,000 through the items join. Any \"revenue looks inflated\" bug report starts here." },
+        { c: "DISTINCT as a bandage", r: "COUNT(DISTINCT o.id) fixes counts but not SUMs — there is no SUM(DISTINCT total) that survives repeated identical totals. Distinct treats the symptom and hides the shape." },
+        { c: "Averaging averages", r: "AVG(per-customer averages) ≠ overall average: customer 1's 24 orders outweigh LATAM's lone buyer in the true mean but count equally in the average-of-averages. Weight or re-aggregate at raw grain." },
+        { c: "Two many-to-one hops", r: "items→orders→customers stays at 251 rows: safe for SUM(oi.quantity*oi.unit_price) per region. Fan-out is per hop; two safe hops make a safe chain." },
+      ],
+    },  ],
 };

@@ -383,4 +383,33 @@ WHERE i.status = 'void';
     },
   ],
   takeaway: "The trial balance proves bookkeeping; reconciliation proves truth — anti-join the claims against the evidence, name every cent of the gap, and fix forward with balanced entries.",
+  deep: [
+    {
+      kind: "mind",
+      text: "Double-entry reconciliation is the **virus scan of the books**: every event posts equal debits and credits, so total debits − total credits must be exactly zero, and any sub-ledger's net must tie to the control account. The seed's 80 ledger entries should reconcile — the lesson deliberately plants a ghost payment and a refund owed so the drill finds REAL mismatches, not textbook ones. The SQL shape is group-and-compare: per account (or per document), SUM(debits) vs SUM(credits) vs the upstream source (invoice total, payment total), then a HAVING or WHERE that keeps only the disagreements. Reconciliation queries are the rare reports where the empty result is the goal — you build the query hoping it returns nothing, forever.",
+    },
+    {
+      kind: "engine",
+      title: "you run the per-invoice paid-vs-billed reconciliation",
+      steps: [
+        "**Two-sided staging** — one CTE sums billed (invoices), one sums paid (payments), keyed on the document. Both folds must be at the SAME grain: per invoice.",
+        "**Full-outer shape** — LEFT JOIN from billed keeps unbilled-for payments invisible... which is why the lesson joins both directions (or uses FULL OUTER): the ghost payment exists in payments but has no invoice row — only a right-preserving shape can see it.",
+        "**Diff and filter** — computed delta = billed − paid; WHERE delta ≠ 0 (or paid > billed, owed < 0) keeps only disagreements. The healthy books make this empty.",
+        "**Verdict** — each surviving row IS a finding: the ghost payment (paid, no invoice) and the refund owed (billed, overpaid). Findings get IDs attached — reconciliation output is an action list, not a dashboard.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"If the books balance in total, they're right — the grand total tie is the audit.\"",
+      truth: "Total debits = total credits is **necessary, nowhere near sufficient**: two wrong entries that cancel still tie globally. The audit power is in the SUB-ledger ties — per invoice, per account, per month — where compensating errors can't hide behind each other.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "The ghost payment", r: "A payment whose invoice_id points at nothing (or whose invoice was deleted): only the payment-side-preserving join sees it. INNER-join reconciliations are structurally blind to one-sided errors." },
+        { c: "Refund as negative", r: "Refunds post as negative payments or reverse entries. SUM handles either — but a naive SUM(paid) > billed test flags legitimate refunds as overpayments. Know the sign convention before the query." },
+        { c: "Timing boundaries", r: "An invoice issued Mar 31, paid Apr 2: monthly reconciliation must define the cutoff (cash-basis vs accrual). Both are defensible; running one and reporting the other is not." },
+        { c: "Float creeping in", r: "One REAL column in a cents world re-drifts the whole reconciliation. The diff ≠ 0 test on floats needs epsilon gymnastics; on INTEGER cents it's exact. Representation is the audit's foundation." },
+      ],
+    },  ],
 };

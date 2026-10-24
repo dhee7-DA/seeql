@@ -202,4 +202,18 @@ export const lesson36: Lesson = {
     },
   ],
   takeaway: "Every cross-table brief picks its join by what it must keep: inner for matches, LEFT+IS NULL for the missing, self-join for pairs — and totals stay honest by summing the table that owns the column.",
+  deep: [
+    {
+      kind: "mind",
+      text: "A case study is **requirements engineering in miniature**: the brief arrives in stakeholder language and your job is to translate it into Module 2's join shapes — inner matching, LEFT preservation, anti-joins and honest aggregates — retention, region mates and the COUNT trap, all on two-table queries. The professional habit this trains: before any SQL, restate each ask as a shape (\"that's a filter\", \"that's a fold at month grain\", \"that's a preservation problem\") and name the grain of the promised output. Most wrong answers in real analyst work are not syntax errors; they are right answers to a slightly different question — the translation step is where they die. Work the brief top to bottom, reconcile every number you can against another (count vs sum, detail vs summary), and treat any mismatch as a finding, not a nuisance.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "The ask behind the ask", r: "\"How many customers do we have?\" often means \"how many can we market to\" — the active flag, the region filter, the dedupe. Ask which population the stakeholder means; the SQL is easy once the noun is exact." },
+        { c: "Empty results are findings", r: "A brief that expects holes may find none (this seed's anti-joins return zero rows). Report \"checked, none found\" with the query attached — silence in the result set is evidence too." },
+        { c: "Grain mixing in one report", r: "Customer counts beside order sums in one table: stage each grain in its own CTE and join on the shared dimension. One query, two grains, no fan-out — the case studies quietly drill this every time." },
+        { c: "The reproducibility test", r: "Hard-code the as-of date, avoid date('now'), and keep every number re-derivable from the seed. A founder-facing snapshot that can't be re-run and matched is a screenshot, not a report." },
+      ],
+    },  ],
 };

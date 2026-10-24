@@ -1758,6 +1758,20 @@ export const SQL50_SECTIONS: LcSection[] = [
       ],
     },
   },
+  {
+    id: "boss",
+    title: "Boss Level — The Endgame Wall",
+    blurb:
+      "Six original hard problems that stack the whole course: sweep-line concurrency, median emulation, streak islands over a week spine, recursive chains with a cycle guard, two-sided reconciliation and a cohort retention grid.",
+    slugs: [
+      "peak-concurrent-attendance",
+      "median-order-value-by-region",
+      "streak-week-bonus-ladder",
+      "approval-chain-audit",
+      "summary-drift-audit",
+      "cohort-week-retention-grid",
+    ],
+  },
 ];
 
 /** Flat solving order — every SQL 50 problem exactly once. */

@@ -166,7 +166,7 @@ export const FILLS_BY_LESSON: Record<number, Fill[]> = {
       id: "l54-f2",
       prompt:
         "Turn days-late into buckets with the CASE ladder. Write the first rung: everything not late yet — due today or in the future — is current.",
-      template: "SELECT CASE\n         WHEN days_late <= 0 THEN 'current'\n         WHEN days_late <= 30 THEN '1-30'\n         WHEN days_late <= 60 THEN '31-60'\n         WHEN days_late <= 90 THEN '61-90'\n         ELSE '90+' END AS bucket\nFROM (\n  SELECT CAST(julianday('2025-03-15') - julianday(due_on) AS INTEGER) AS days_late\n  FROM invoices WHERE status = 'open'\n);",
+      template: "SELECT CASE\n         WHEN days_late {1} 0 THEN 'current'\n         WHEN days_late <= 30 THEN '1-30'\n         WHEN days_late <= 60 THEN '31-60'\n         WHEN days_late <= 90 THEN '61-90'\n         ELSE '90+' END AS bucket\nFROM (\n  SELECT CAST(julianday('2025-03-15') - julianday(due_on) AS INTEGER) AS days_late\n  FROM invoices WHERE status = 'open'\n);",
       chips: ["<=", "=", "<", ">="],
       answers: ["<="],
       why: "<= 0, not = 0 — an invoice due tomorrow is not late today, and negative days (future due dates) must flow into current too. CASE stops at the first true test, so each later rung inherits the earlier bounds for free.",

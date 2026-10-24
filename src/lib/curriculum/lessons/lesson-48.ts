@@ -403,4 +403,33 @@ SELECT * FROM orders WHERE customer_id = 1;
     },
   ],
   takeaway: "EXPLAIN QUERY PLAN is the engine's confession — SCAN means sweep, SEARCH USING INDEX means descent — and CREATE INDEX (plain, composite by leftmost prefix, UNIQUE as a constraint) is how you buy the descent, paid for on every future write.",
+  deep: [
+    {
+      kind: "mind",
+      text: "An index is a **paid-for shortcut**: a second, sorted structure (b-tree) over chosen columns that turns full-table sweeps into targeted descents — bought with extra storage and a tax on every write. This seed's secret is that it starts with ZERO secondary indexes yet is not slow at 103 rows: the rowid/INTEGER PRIMARY KEY is already a free b-tree, so id lookups SEARCH while status lookups SCAN. EXPLAIN QUERY PLAN is how you stop guessing and start reading: the detail column names the access method per step — SCAN (sweep) versus SEARCH (descent) — plus temp b-trees for sorts and \"USING COVERING INDEX\" when the index alone can answer. The module-11 discipline starts here: measure → design → verify, with EQP as the contract between you and the planner.",
+    },
+    {
+      kind: "engine",
+      title: "you run EXPLAIN QUERY PLAN SELECT * FROM orders WHERE status = 'shipped'",
+      steps: [
+        "**Plan, not rows** — EQP returns the planner's intended step list; nothing executes. It's the map, not the trip.",
+        "**Read the verb** — \"SCAN orders\" = every row tested (103 here). \"SEARCH orders USING INDEX idx\" = b-tree descent to the qualifying range. The verb IS the verdict.",
+        "**The counter-proof** — EQP the same query with WHERE id = 42: \"SEARCH … USING INTEGER PRIMARY KEY (rowid=?)\" — the free index you never had to build.",
+        "**CREATE INDEX idx_orders_status** — rerun EQP: the SCAN became \"SEARCH … USING INDEX\". Same rows back, different path — and every future INSERT to orders now maintains that extra tree. That's the whole trade, visible in three queries.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"Add an index on every column you might filter — speed is free.\"",
+      truth: "Each index is **storage plus a per-write maintenance tax**, and the planner can only use ONE index per table access in most plans — five single-column indexes on orders don't compose into a five-column filter; a composite can. Index design is choosing bets, not buying insurance on everything.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Functions on the column", r: "WHERE SUBSTR(created_at,1,7) = '2024-06' can't use an index on created_at — the function hides the raw value. Rewrite as a range: >= '2024-06-01' AND < '2024-07-01' (module 11's rewrite drill)." },
+        { c: "Low-selectivity columns", r: "An index on status (4 distinct values over 103 rows) may still be ignored: reading half the table via the index is slower than sweeping. Selectivity is the planner's math, not your intuition's." },
+        { c: "Leading-wildcard LIKE", r: "LIKE '%a%' cannot descend any b-tree (it doesn't know the prefix). 'a%' CAN use an index on that column — the leading wildcard is the boundary." },
+        { c: "The plan changed", r: "EQP output differs after ANALYZE, data growth, or version upgrades — plans are decisions, not laws. Re-read EQP when volumes shift by orders of magnitude." },
+      ],
+    },  ],
 };

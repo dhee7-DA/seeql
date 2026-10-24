@@ -16,8 +16,10 @@ import { FILLS_BY_LESSON as M6 } from "./m06";
 import { FILLS_BY_LESSON as M7 } from "./m07";
 import { FILLS_BY_LESSON as M8 } from "./m08";
 import { FILLS_BY_LESSON as M9 } from "./m09";
+import { FILLS_BY_LESSON as M10 } from "./m10";
+import { FILLS_BY_LESSON as M11 } from "./m11";
 
-const BY_LESSON: Array<Record<number, Fill[]>> = [M1, M2, M3, M4, M5, M6, M7, M8, M9];
+const BY_LESSON: Array<Record<number, Fill[]>> = [M1, M2, M3, M4, M5, M6, M7, M8, M9, M10, M11];
 
 const INDEX = new Map<number, Fill[]>();
 for (const mod of BY_LESSON) {

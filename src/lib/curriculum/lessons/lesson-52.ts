@@ -381,4 +381,33 @@ ORDER BY outstanding DESC;
     },
   ],
   takeaway: "Finance SQL is module-1 SQL wearing a suit: integer cents, status-aware sums, outstanding = invoice − payments — and the void invoice waiting to punish the unfiltered SUM.",
+  deep: [
+    {
+      kind: "mind",
+      text: "The books are a **second schema wearing accounting rules**: invoices (what we billed), payments (what arrived), expenses (what went out), ledger_entries (the double-entry spine). The one engineering decision that makes it finance-grade: **money is INTEGER cents**. Binary floats cannot represent 0.1 exactly, so float money drifts — a few cents here, a rounding reversal there — and reconciliation dies quietly. amount_cents is 128450, not 1284.50: addition is exact, joins are exact, audits are exact, and the $ formatting happens once, at the presentation edge. The other discipline is that every table has a DATE OF RECORD (issued_on, paid_on, spent_on) separate from any operational status — revenue recognition and cash arrival are different events on different days.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT i.number, i.amount_cents, COALESCE(SUM(p.amount_cents), 0) AS paid FROM invoices i LEFT JOIN payments p ON p.invoice_id = i.id GROUP BY i.id",
+      steps: [
+        "**Population first** — invoices drive the report: LEFT JOIN keeps all 27 billing records (21 paid, 6 open), even those no payment has touched.",
+        "**Exact accumulation** — SUM over INTEGER cents: no float drift, ever. The COALESCE wrapper turns the unpaid invoice's NULL into 0 — arithmetic's NULL guard.",
+        "**Status is derived** — 'open' vs 'paid' is computed from paid-vs-billed (or stored and reconciled against the payments join — the lesson's drill does exactly this cross-check).",
+        "**Presentation edge** — divide by 100.0 ONCE, at the outermost SELECT. Formatting inside the aggregation layer is how units get mixed and cents get double-counted.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"Money is a decimal number — REAL/DOUBLE is fine for amounts.\"",
+      truth: "IEEE-754 floats store binary fractions: 0.1 is a repeating expansion, and sums of \"clean\" cents come out as 69611.99999….INTEGER cents make every add exact by construction. The universal rule of money in databases: integers until the display layer.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Rounding in the middle", r: "ROUND(paid/100, 2) per payment THEN summing introduces per-row drift that never reconciles. Round once, at the end, from exact cents." },
+        { c: "Overpayments", r: "SUM(paid) > amount_cents for one invoice: the LEFT JOIN + comparison surfaces it — credit balances are findings, not noise." },
+        { c: "Date of record vs arrival", r: "JOIN payments ON invoice and filter paid_on's month: you report CASH months. Filter issued_on: BILLING months. Both are right; mixing them in one query is not." },
+        { c: "The invoice with no payments", r: "INNER JOIN silently drops unpaid invoices — the 6 open ones vanish from \"total billed\". The population you're studying decides LEFT vs INNER, again." },
+      ],
+    },  ],
 };

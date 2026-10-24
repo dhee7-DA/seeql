@@ -432,4 +432,33 @@ FROM monthly ORDER BY mon;
     },
   ],
   takeaway: "LAG/LEAD read neighbors (first/last row gets NULL), SUM OVER accumulates to a running total whose last row equals the plain SUM, frames slide the window, and NTILE buckets the field — the dashboard pair, built from scratch.",
+  deep: [
+    {
+      kind: "mind",
+      text: "Offset and running windows answer **\"relative to where I stand\"**: LAG peeks backward, LEAD forward, and an ORDER-BY'd OVER turns any SUM into a snowball. The order you give OVER is not cosmetic — it IS the timeline. Change the sort spec and every \"previous\" and \"running\" value re-wires silently. That sensitivity is the family's power and its hazard: running totals demand chronological order (tiebreak by id for same-timestamp rows), per-entity resets demand the PARTITION, and forgetting either yields a number that runs or resets wrongly *without any error*. Windows fail loudly in syntax, silently in semantics — the sort spec is where the silence lives.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT customer_id, created_at, total, SUM(total) OVER (PARTITION BY customer_id ORDER BY created_at, id) AS run FROM orders",
+      steps: [
+        "**Stage + timeline** — customers are stages; created_at-then-id is each stage's timeline. The engine sorts each stage once, then walks it.",
+        "**Running accumulation** — with ORDER BY present, SUM's default frame ends at the CURRENT ROW: row k's sum covers stage rows 1..k. That implicit frame is why ORDER BY alone turns summary into snowball.",
+        "**Offset lookups** — LAG(created_at) reads the sorted neighbor one back; the FIRST row of each stage has no neighbor and yields NULL — the honest \"nothing before this\".",
+        "**Reset semantics** — crossing a partition boundary restarts both the accumulation and the neighbor: customer 2's first row does not inherit customer 1's snowball or NULLs from customer 1's last row.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"Running totals need a self-join or a subquery with a correlated sum.\"",
+      truth: "The pre-window idiom was exactly that — O(n²) and unreadable. SUM OVER (ORDER BY …) expresses intent in one line and the engine runs it in one sort plus one pass. The correlated-subquery version still works; it's just the horse-drawn carriage.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Missing tiebreak in the timeline", r: "Two orders on the same timestamp: LAG may pick either, the running sum folds them in arbitrary order, paginations shift run to run. (created_at, id) is the deterministic spine." },
+        { c: "LEAD on the last row", r: "Symmetric to LAG's first-row NULL: the final row's LEAD is NULL. Deltas computed with LEAD lose their last data point by construction — plan the report around it." },
+        { c: "LAG without OVER's ORDER BY", r: "LAG(revenue) OVER () is an error — \"previous\" is meaningless without a sequence. The error is the engine doing you a favor." },
+        { c: "PARTITION BY NULL keys", r: "Rows with NULL customer_id form one stage and accumulate together — fine if NULL means \"one unknown customer\", wrong if NULLs are unrelated. COALESCE the key or pre-filter." },
+      ],
+    },  ],
 };

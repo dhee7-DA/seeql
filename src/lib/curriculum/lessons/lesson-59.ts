@@ -132,4 +132,33 @@ ORDER BY created_at;   -- 2024-05-12 and 2024-10-13 hold triplets`,
   problems: probBank("l59", PROBS),
   takeaway:
     "Five shapes cover the ranking world: number-then-filter for top-N, recency picks for dedupe, a conscious tie contract (RANK / DENSE_RANK / ROW_NUMBER), relative-standing fractions, and rn > 1 as the surplus detector — every sort spec tiebroken, every filter one layer out.",
+  deep: [
+    {
+      kind: "mind",
+      text: "The ranking playbook is **three named shapes**: top-N-per-group (number inside a CTE, filter rn <= N outside), dedupe-to-latest (number newest-first, keep rn = 1), and the tie-contract choice (ROW_NUMBER breaks ties arbitrarily, RANK skips, DENSE_RANK packs). The two-layer shape is not ceremony — it is the clause-order law from Windows IV made into a pattern: WHERE cannot see window output, so the number-then-filter sandwich is THE portable idiom. The playbook's quiet superpower is replacing fragile alternatives: the \"GROUP BY customer + MAX(created_at) + re-join\" dance for latest-per-group produces wrong rows when timestamps tie, while rn = 1 with a deterministic tiebreak is stable by construction.",
+    },
+    {
+      kind: "engine",
+      title: "you run WITH n AS (… ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY total DESC, id) AS rn …) SELECT * FROM n WHERE rn <= 3",
+      steps: [
+        "**Inner pass** — the CTE stamps all 103 orders with their within-customer rank: customer 1's 24 orders become ranks 1..24, ordered by total DESC with the id tiebreak.",
+        "**Outer filter** — WHERE rn <= 3 runs in the outer query where rn is an ordinary column: the clause-order law is satisfied by layering, not by syntax tricks.",
+        "**The tie contract pays off** — two orders tied at the same total get ids as arbiter: every run returns the SAME three rows. Without the tiebreak, pagination and exports flip coins.",
+        "**Shape generalization** — rn = 1 dedupes; rn BETWEEN 4 AND 6 pages; rn = 1 per (customer, month) answers first-order-per-month. One sandwich, many fillings.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"LIMIT N per group — just GROUP BY and LIMIT, right?\"",
+      truth: "GROUP BY + LIMIT applies LIMIT to the GROUPS, not within them — \"top 3 per customer\" returns 3 rows total, not 48. There is no LIMIT-inside-group syntax in SQL; the rank-sandwich is the standard, engine-portable answer.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "\"Top 3\" that returns 4 rows", r: "That's RANK, not a bug: ties at rank 3 all survive. If the business wants EXACTLY three per group, the contract is ROW_NUMBER — say which you promised before the stakeholder says it louder." },
+        { c: "Dedupe without a deterministic tiebreak", r: "rn = 1 over ties picks an arbitrary survivor per run — the \"deleted\" row reappears tomorrow. Order by (created_at DESC, id DESC): the dedupe becomes reproducible." },
+        { c: "Filtering in the same layer", r: "WHERE rn <= 3 must be OUTSIDE the window's SELECT — putting it in the same query is the parser error that teaches clause order. A derived table or CTE is the door." },
+        { c: "DENSE_RANK for pagination", r: "Pages built on ROW_NUMBER skip nothing; pages built on RANK leave holes after ties (rank 3 missing → page shows 2 rows). Choose the contract the UI expects — usually ROW_NUMBER for page math, DENSE_RANK for display." },
+      ],
+    },  ],
 };

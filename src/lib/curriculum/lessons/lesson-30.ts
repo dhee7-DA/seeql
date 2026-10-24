@@ -400,4 +400,33 @@ FROM orders GROUP BY y ORDER BY y;
     },
   ],
   takeaway: "ISO-TEXT dates sort themselves; strftime slices them into buckets, julianday measures the gaps, and bucket-plus-count is the skeleton every trend report grows from.",
+  deep: [
+    {
+      kind: "mind",
+      text: "Dates in this course are **ISO-8601 text** — '2024-01-15' — and that is a feature: text sorts chronologically, SUBSTR slices it into year ('2024-01-15' → '2024'), month ('2024-01'), and day buckets, and SQLite's date functions read it natively. Bucketing time is the analyst's core move: revenue is a number, but *revenue per month* is a decision — and the bucket choice (day? month? rolling 7?) IS the analysis. The seed gives 14 months of history across 84 distinct order days, so day-grain views are sparse and month-grain views are honest. When a date question feels hard, the failure is almost always the grain: name the bucket before you write the GROUP BY.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT SUBSTR(created_at, 1, 7) AS month, SUM(total) FROM orders GROUP BY month",
+      steps: [
+        "**Slice** — SUBSTR reads the first 7 characters of each created_at: '2024-01-15 09:…' becomes '2024-01'. Pure text work, no calendar math yet.",
+        "**Fold** — GROUP BY the slice collapses 103 timestamped rows into 14 month rows; each timestamp belongs to exactly one bucket because the slice is deterministic.",
+        "**Compare honestly** — date('2024-01-31', '+1 month') shows the engine's calendar brain: it does NOT produce '2024-02-31' (no such day); it spills to '2024-03-02'. Date arithmetic respects the calendar, string slicing does not — know which one you're using.",
+        "**Order** — the ISO text sorts chronologically for free. The day you start formatting dates ('Jan 2024') in the DATA, sorting dies; format in the presentation layer, keep the column raw.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"Dates are numbers, so created_at = '2024-01-15' and '2024-1-15' are the same day.\"",
+      truth: "As TEXT they are different strings — and only the **ISO format sorts and compares correctly**. '2024-1-5' sorts after '2024-11-01' textually. The zero-padded ISO shape is not a style choice; it is the storage contract that makes text dates behave.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Month-end + 1 month", r: "Jan 31 + 1 month → Feb 31 doesn't exist → the engine lands on Mar 2 (overflow spills). Month-end arithmetic needs deliberate clamping if you want Feb 28/29 semantics." },
+        { c: "julianday differences", r: "julianday('2024-01-16') - julianday('2024-01-15') = 1.0 exactly — the honest day-gap tool. Integer days, fractional parts for times; the aging ladders of module 9 are built on it." },
+        { c: "Timestamps with time parts", r: "'2024-01-15 09:30:00' still slices by SUBSTR for buckets, but equality tests ('2024-01-15' = created_at) fail — the time suffix. Use ranges: >= day AND < day+1." },
+        { c: "Leap-year math", r: "date('2024-02-29', '+1 year') = '2025-03-01' — the spill rule again. Calendar edge cases are not bugs to fix; they are semantics to document." },
+      ],
+    },  ],
 };

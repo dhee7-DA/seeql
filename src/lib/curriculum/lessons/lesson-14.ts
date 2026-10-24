@@ -363,4 +363,33 @@ ORDER BY c1.region, pair_a;`,
     },
   ],
   takeaway: "A self-join lists one table twice under two aliases; `c1.id < c2.id` removes self-pairs and mirror duplicates in a single comparison, and the same three lines pair any table that shares a key.",
+  deep: [
+    {
+      kind: "mind",
+      text: "A self-join is **one table wearing two name tags**. The rows of customers become two independent populations — \"a\" and \"b\" — because the question needs *pairs from one set*: who shares my region, which orders are older than which, which invoices mirror each other. The aliases are not cosmetics; they are the only thing keeping the two roles apart. The classic discipline is the asymmetric pair test `a.id < b.id`: it keeps each unordered pair exactly once and forbids self-pairing. Drop the inequality and every pair doubles (a,b) and (b,a) while (a,a) sneaks in too — 39 true region pairs become 88 rows of noise. Self-joins are where alias discipline stops being style and becomes correctness.",
+    },
+    {
+      kind: "engine",
+      title: "you run FROM customers a JOIN customers b ON a.region = b.region AND a.id < b.id",
+      steps: [
+        "**Two passes over one table** — the engine scans customers as \"a\" and, per a-row, scans it again as \"b\". One physical table, two logical roles; 16 × 16 = 256 candidate pairs.",
+        "**ON prunes** — region equality keeps same-region pairs (5 APAC, 8 EU, 2 US, 1 LATAM members), and `a.id < b.id` kills mirrors and self-pairs.",
+        "**Emit** — 10 + 28 + 1 + 0 = 39 rows, each a unique unordered pair. The count C(n,2) per region is your reconciliation check.",
+        "**Cost warning** — self-joins scale quadratically without indexes: 256 pairs here is trivial, 100k × 100k is not. The ON columns need indexes in production.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"You can't join a table to itself — SQL will complain about the duplicate name.\"",
+      truth: "SQL only complains if you **reuse the same alias**. Two distinct aliases make the engine treat it as two independent row sources; the \"same table\" restriction exists only in your head, not in the engine's.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Forgetting the inequality", r: "Without `a.id < b.id`, every pair appears twice (a,b) and (b,a), plus 16 self-pairs (a,a): 39 becomes 94. The pair count doubles and pollutes — the inequality is the dedupe." },
+        { c: "Using ≠ instead of <", r: "`a.id <> b.id` still allows both directions — 78 rows. The directionless pair needs a directionless test: order the ids and keep one orientation." },
+        { c: "Pairs across a hierarchy", r: "Employee → manager is a self-join on reports_to = e.id. Managers are also employees, so LEFT JOIN from employees to their manager keeps the CEO's NULL — preservation matters inside the org chart too." },
+        { c: "Three-role self-join", r: "\"Customers in the same city as someone in the same region as…\" chains a.id < b.id AND b.city = c.city — legal, but read it aloud or the roles blur. Name tags exist to be read." },
+      ],
+    },  ],
 };

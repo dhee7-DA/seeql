@@ -383,4 +383,33 @@ FROM monthly;
     },
   ],
   takeaway: "Bucket, peek, compute, smooth — LAG gives every month its history, the frame gives it perspective, and the void filter keeps both honest.",
+  deep: [
+    {
+      kind: "mind",
+      text: "Month-over-month growth is **a delta wearing percentages**: LAG hands you last month's revenue on this month's row, and the growth expression is (this − last) / last × 100. The fraction is where honesty lives: the FIRST month has no previous — LAG yields NULL, the growth is NULL, and that NULL is the correct answer (\"no basis for comparison\"), not a bug to COALESCE into fake zeros. Percent-vs-absolute is the other judgment: +$200 on a $500 month is +40% and on a $37,000 base is +0.5% — same dollars, different story. The seed's 14 months include the $3,731.97 peak of 2024-01; the growth curve around it is exactly the kind of narrative stakeholders actually read.",
+    },
+    {
+      kind: "engine",
+      title: "you run the MoM growth over monthly revenue",
+      steps: [
+        "**Fold to months** — GROUP BY SUBSTR(created_at,1,7): 103 orders → 14 revenue rows. The growth layer only makes sense on this staged grain.",
+        "**Pair via LAG** — LAG(revenue) OVER (ORDER BY month): each row now carries its predecessor. The window's order is the timeline — same discipline as lesson 32's snowballs.",
+        "**Delta and ratio** — revenue − prev is exact (integer-free floats but deterministic); dividing by prev needs the NULL guard for month one: NULLIF(prev, 0) prevents divide-by-zero on empty months too.",
+        "**Read the curve** — 13 non-NULL growth values. The first month's NULL is structural: a 14-month series yields 13 growth points. Any report showing 14 is lying somewhere.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"Growth = this month − last month. The percentage is decoration.\"",
+      truth: "The percentage is the **story**, the absolute is the scale: −$1,200 from a $1,400 base is a collapse; −$1,200 on $37,000 is noise. Reports that show only one of the two systematically mislead — show both, or know exactly which question you're answering.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Divide by zero months", r: "A month with $0 revenue makes growth undefined: NULLIF(last, 0) returns NULL instead of erroring. An empty month is a finding; a crashed query is not." },
+        { c: "The missing-month problem", r: "LAG over the OBSERVED months pairs June against July if May had no sales — the timeline must be the month SPINE (lesson 49's recursion), not the months that happened to have data." },
+        { c: "Partial first/last months", r: "If the data starts mid-January, January's revenue is structurally low and its growth garbage. Trim partial edge months or annotate them — honest series have honest edges." },
+        { c: "Moving-average antidote", r: "One big month whipsaws the growth curve; AVG(revenue) OVER (ORDER BY month ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) smooths it — the lesson's antidote pairing." },
+      ],
+    },  ],
 };

@@ -33,6 +33,10 @@ export const lesson40: Lesson = {
       kind: "tip",
       text: "Half-open bands [lo, hi) are what let the ladder's counts be trusted: 8 + 4 + 4 = 16 products, no doubles at the seams, no gaps. The moment a band closes both ends, boundary rows multiply.",
     },
+    {
+      kind: "p",
+      text: "The debrief: this one-pager is the module-6 skill check — the exotic shapes doing real work. String aggregation produced the readable summary rows, the grand-total stack layered subtotals under detail without a UNION in sight, RIGHT/FULL OUTER preserved populations that INNER would have dropped, and the non-equi range join mapped items into price bands without a single equality. The executive takeaway matters as much as the SQL: every “unusual” shape here exists to answer a question the common shapes answer badly or not at all. When a reviewer asks “why FULL OUTER here?”, the answer is a population — “because rows with no match are the finding” — never “because it's fancier”. Expert SQL is judged by the fit between shape and question.",
+    },
   ],
   mcqs: [
     {
@@ -187,4 +191,18 @@ export const lesson40: Lesson = {
     },
   ],
   takeaway: "The one-pager is Module 6 assembled: FILTER for the consistent census, GROUP_CONCAT for the folded footprint, UNION ALL for the grand total, VALUES for the typed ladder and CROSS JOIN for the coverage grid — every number provable, every spell chosen on purpose.",
+  deep: [
+    {
+      kind: "mind",
+      text: "A case study is **requirements engineering in miniature**: the brief arrives in stakeholder language and your job is to translate it into Module 6's expert shapes — string aggregation, grand-total stacks and every join variant — the executive one-pager, where exotic shapes answer questions common ones can't. The professional habit this trains: before any SQL, restate each ask as a shape (\"that's a filter\", \"that's a fold at month grain\", \"that's a preservation problem\") and name the grain of the promised output. Most wrong answers in real analyst work are not syntax errors; they are right answers to a slightly different question — the translation step is where they die. Work the brief top to bottom, reconcile every number you can against another (count vs sum, detail vs summary), and treat any mismatch as a finding, not a nuisance.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "The ask behind the ask", r: "\"How many customers do we have?\" often means \"how many can we market to\" — the active flag, the region filter, the dedupe. Ask which population the stakeholder means; the SQL is easy once the noun is exact." },
+        { c: "Empty results are findings", r: "A brief that expects holes may find none (this seed's anti-joins return zero rows). Report \"checked, none found\" with the query attached — silence in the result set is evidence too." },
+        { c: "Grain mixing in one report", r: "Customer counts beside order sums in one table: stage each grain in its own CTE and join on the shared dimension. One query, two grains, no fan-out — the case studies quietly drill this every time." },
+        { c: "The reproducibility test", r: "Hard-code the as-of date, avoid date('now'), and keep every number re-derivable from the seed. A founder-facing snapshot that can't be re-run and matched is a screenshot, not a report." },
+      ],
+    },  ],
 };

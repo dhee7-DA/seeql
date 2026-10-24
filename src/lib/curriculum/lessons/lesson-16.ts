@@ -338,4 +338,33 @@ LIMIT 10;`,
     },
   ],
   takeaway: "A one-to-many join replicates the one side's values, so aggregate the many side per key before summing one-side columns — and run the pre-flight checklist (keys, multiplication, unmatched rows, GROUP BY id, COUNT(column)) before any joined aggregate ships.",
+  deep: [
+    {
+      kind: "mind",
+      text: "The capstone's one idea: **the join decides the grain, the aggregate must pay for it**. The fan-out trap and the aggregate-first fix are the same coin's two faces. Trap: join orders to order_items, SUM(o.total) — 3×-style inflation because order dollars repeat per line. Fix: fold order_items to order grain FIRST (one row per order), THEN join. The aggregate-first shape is not an optimization trick; it is the only arithmetic that is true. When a stakeholder's \"revenue is wrong\" ticket lands, the debugging order is: state the intended grain, count the actual rows at each stage, find the hop that multiplied, and re-stage the aggregate to before that hop.",
+    },
+    {
+      kind: "engine",
+      title: "you run the aggregate-first fix",
+      steps: [
+        "**Stage one (fold)** — FROM order_items GROUP BY order_id: 251 lines become ≤103 rows, each carrying that order's true line sum. Grain: orders.",
+        "**Stage two (reunite)** — JOIN orders ON id: one-to-one now; the totals repeat ZERO times. SUM over the joined result equals SUM over order_items — the reconciliation that proves the fix.",
+        "**Stage three (report)** — GROUP BY the reporting dimension (region, month, status) at the grain you promised. Every layer has one job and one grain.",
+        "**The audit** — compare SUM at stage one vs stage three; equality is the receipt. When they differ, a hop multiplied between them — find it before anyone asks.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"The fan-out is the database's fault — the join is buggy.\"",
+      truth: "The join is **doing exactly what the keys say**: one order really does have three lines. The bug is asking an order-grain question of a line-grain result. The schema is honest; the query's grain assumption was not.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Fan-out hidden by coincidence", r: "One-line orders dominate in small samples and the inflated SUM looks plausible. The error grows with lines-per-order — test on the fan-out-heaviest order before trusting any joined SUM." },
+        { c: "Two fixes that disagree", r: "SUM(DISTINCT total) and aggregate-first agree ONLY when no two orders share a total. Seed data with duplicate totals silently breaks the DISTINCT bandage — another reason it's not a fix." },
+        { c: "Counting things that were never rows", r: "\"Orders per region\" after joining items counts LINES per region unless the fold happened first. Name the noun (orders? lines?) in the ticket, then build to its grain." },
+        { c: "The report that must mix grains", r: "Order count AND line count in one report: two CTEs, one per grain, joined on the shared dimension. Mixing grains in one query without staging is how the 3× bug ships." },
+      ],
+    },  ],
 };

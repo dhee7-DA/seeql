@@ -399,4 +399,33 @@ COMMIT;   -- both happened, or (on error / ROLLBACK) neither`,
     },
   ],
   takeaway: "Upsert is insert with a collision plan — DO NOTHING, or DO UPDATE where bare columns read the old row and excluded reads the candidate; transactions wrap it all in all-or-nothing, which is exactly the promise this course's sandbox makes on every run.",
+  deep: [
+    {
+      kind: "mind",
+      text: "UPSERT resolves the **race between \"insert\" and \"already there\"**: ON CONFLICT (key) DO UPDATE turns the constraint violation from an error into a fork — new rows insert, existing rows update, one statement, no round-trip. The DO UPDATE arm reads the colliding row as the `excluded.` table's twin: SET stock = stock + excluded.stock adds the NEW shipment to the OLD shelf. Around it sits the transaction: BEGIN … COMMIT is the all-or-nothing envelope that makes multi-step writes atomic — and this course's entire grading sandbox is built on the same primitive (every write lesson runs inside a transaction that always rolls back). Atomicity is not a performance feature; it is the difference between \"half a migration\" and \"a migration\".",
+    },
+    {
+      kind: "engine",
+      title: "you run INSERT INTO products (id, name, …) VALUES (3, 'Widget', …) ON CONFLICT(id) DO UPDATE SET stock = stock + excluded.stock",
+      steps: [
+        "**Try the insert** — the engine attempts the ordinary INSERT path; constraints evaluate as usual.",
+        "**Conflict fork** — product 3 exists → the PK violation fires, but the ON CONFLICT clause catches it: instead of erroring, the DO UPDATE arm runs for THAT row only.",
+        "**excluded semantics** — inside DO UPDATE, `excluded` is the row you TRIED to insert; bare `stock` is the row on disk. stock + excluded.stock is old-plus-new in one expression.",
+        "**Envelope** — run inside BEGIN/COMMIT and either the whole sequence lands or none of it did. The sandbox wraps every lesson write and always rolls back — atomicity as a teaching instrument.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"UPSERT means MERGE — I can update some columns and insert others conditionally with WHEN logic.\"",
+      truth: "The fork is binary (insert OR update) and keyed by the conflict target. Anything fancier — conditional column sets, multiple branches — is a CTE pattern (UPDATE … WHERE EXISTS / INSERT WHERE NOT EXISTS) or app logic. The simplicity is the feature: one key, one fork, no races.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Wrong conflict target", r: "ON CONFLICT (id) when the collision is on a UNIQUE(number) index → uncaught violation, error anyway. The target must name the actual constraint that fires." },
+        { c: "DO NOTHING vs DO UPDATE", r: "DO NOTHING is the silent twin: dedupe imports without touching survivors. Choosing between them is a business decision (keep first? add stock?) — not a syntax preference." },
+        { c: "Rollback discipline", r: "Inside BEGIN, an error normally aborts the transaction — but this sandbox ROLLBACKs deliberately. In production, catch, decide, ROLLBACK or COMMIT; never assume half-committed is a state that exists." },
+        { c: "Non-idempotent upserts", r: "stock = stock + excluded.stock ADDS on every replay — replaying the same shipment file doubles stock. Idempotent upserts SET stock = excluded.stock (keep latest) when replay-safety matters more than accumulation." },
+      ],
+    },  ],
 };

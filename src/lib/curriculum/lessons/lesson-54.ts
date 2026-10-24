@@ -399,4 +399,33 @@ FROM ( /* …the same detail… */ );
     },
   ],
   takeaway: "Freeze the AS OF date, compute days-late with julianday, net to outstanding, then let the CASE ladder sort risk — tall for charts, wide for the Monday meeting, and Pedro's phone number first.",
+  deep: [
+    {
+      kind: "mind",
+      text: "AR aging is the **collections prioritizer**: for every open invoice, how many days past due, bucketed into the ladder 0 / 1–30 / 31–60 / 61–90 / 90+. Two moves build it: the day count (julianday(today) − julianday(due_on), truncated to INTEGER — an invoice due tomorrow is NEGATIVE days, not zero) and the CASE ladder whose rungs are ordered least-first so each inherits the earlier bounds (CASE stops at the first true test — the ladder is cumulative by construction). The 6 open invoices in the seed become the collections call sheet; everyone else's money is already in the door. The aging report is where SQL meets cash flow directly: which bucket sums to how much decides who gets called first.",
+    },
+    {
+      kind: "engine",
+      title: "you run the aging ladder over open invoices",
+      steps: [
+        "**Population** — WHERE status = 'open': 6 invoices. Aging runs on OPEN money only; paid invoices would all be ≤ 0 days and drown the signal.",
+        "**Day math** — julianday('2025-03-15') − julianday(due_on) is exact float days; CAST to INTEGER truncates toward zero — 2.9 days late becomes 2, and future dues go negative.",
+        "**Ladder** — CASE WHEN days <= 0 THEN 'current' WHEN <= 30 THEN '1-30' … the first true rung wins; each later rung implicitly assumes all earlier failed. Order of rungs IS the logic.",
+        "**The pivot** — SUM by bucket (CASE per bucket or the lesson's GROUP BY) turns the call sheet into the exposure table: dollars at risk per lateness tier, the shape credit teams actually read.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"Days late = today − due_date, rounded.\"",
+      truth: "Rounding is the wrong verb: an invoice 0.9 days late is CURRENT, not 1 day. **Truncate toward zero** so partial days don't graduate buckets early — and note that due-TOMORROW is negative days, which the ≤ 0 first rung must catch as 'current', not leak into '1-30'.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "The 'as of' date", r: "Hard-code it ('2025-03-15' in the drills) or parameterize it — but NEVER use date('now'): the report must be reproducible; a moving today makes two runs disagree and audits impossible." },
+        { c: "Paid-but-reopened", r: "A payment that arrives then a refund issued: status flips back. Aging trusts status — if the status pipeline lags, the ladder lies. Reconcile status vs payments like lesson 52 taught." },
+        { c: "Ladder gaps", r: "WHEN days <= 30 / WHEN days <= 90 with no 31-60 rung silently folds 40-day invoices into '90+' heirs... no wait, into the 90 rung. Every gap in the ladder is a bucket that steals from its neighbors — rung order and completeness both matter." },
+        { c: "Negative days in the report", r: "'Current' should INCLUDE future-due invoices: the ≤ 0 rung catches negatives. Filter days >= 0 and you evict not-yet-due money from the exposure table — a quiet understatement." },
+      ],
+    },  ],
 };

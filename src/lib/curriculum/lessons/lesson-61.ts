@@ -134,4 +134,33 @@ ORDER BY created_at, id;   -- the day's total minus this order`,
   problems: probBank("l61", PROBS),
   takeaway:
     "Partition bounds the stage, ORDER BY sequences it, the frame slices it — spell the third dial and running, rolling, centered, forward and self-exclusive columns are all one window call with different bounds.",
+  deep: [
+    {
+      kind: "mind",
+      text: "The frame is the window's **third knob**: not \"which stage\" (partition) or \"which order\" (sort spec) but **which slice of the stage the aggregate sees per row**. The default frame — RANGE from UNBOUNDED PRECEDING to CURRENT ROW — is why ORDER BY'd SUM runs at all, and why it Betrays you twice: once by folding same-value peers (RANGE compares VALUES), once by making LAST_VALUE equal the current row (the frame ends WHERE YOU STAND). The full grammar — ROWS/RANGE/GROUPS, BETWEEN x PRECEDING AND y FOLLOWING, EXCLUDE — is one sentence pattern with a vocabulary. The bank-ledger vs day-batch distinction is the canonical example: ROWS posts row-by-row (each order separate), RANGE batches value-ties (same-day orders post together) — same query shape, one keyword apart, different money.",
+    },
+    {
+      kind: "engine",
+      title: "you run SUM(total) OVER (ORDER BY created_at, id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)",
+      steps: [
+        "**Default frame check** — ORDER BY present, frame unspecified: RANGE UNBOUNDED PRECEDING → CURRENT ROW. On 84 distinct days carrying 103 orders, 19 same-day pairs fold — the \"running\" total jumps at date boundaries.",
+        "**ROWS vs RANGE** — ROWS counts physical rows: each of the 103 posts separately (bank statement). RANGE includes all PEERS of the current sort value: same-day orders batch (daily settlement). One keyword, two ledgers.",
+        "**The LAST_VALUE trap** — default frame ends at CURRENT ROW, so LAST_VALUE(total) = total: the function can only see to the frame's edge. ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING widens its view to the whole stage.",
+        "**Rolling frames** — ROWS BETWEEN 6 PRECEDING AND CURRENT ROW is the 7-row roller; the current row is IN its own frame (off-by-one is the classic: 7 PRECEDING spans eight rows).",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"ROWS and RANGE are interchangeable when there are no ties — why learn both?\"",
+      truth: "There are **always ties eventually**: 84 days, 103 orders, 19 shared dates in this seed alone. The bug ships on the dataset you didn't test. ROWS is \"physical rows\", RANGE is \"value peers\" — learn both, default to explicit, and never trust \"no ties in my data\" as a frame strategy.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Frame without ORDER BY", r: "The default frame with NO sort spec is the whole partition — SUM OVER () sums everything. The frame knobs only exist relative to the timeline; no timeline, no slice." },
+        { c: "RANGE with numeric offsets", r: "RANGE BETWEEN 7 PRECEDING … compares VALUES (7 units of the sort column, e.g. days), not rows — a rolling 7-DAY window on a date column. Legal, powerful, and utterly different from 7 ROWS." },
+        { c: "EXCLUDE CURRENT ROW", r: "The frame grammar can exclude the current row — the \"everyone but me\" average (peer comparison without self-influence). Rarely needed, unforgettable once seen." },
+        { c: "First/last aggregates", r: "FIRST_VALUE/LAST_VALUE are frame-scoped reads; NTH_VALUE needs the n-th row to exist INSIDE the frame. Early rows legitimately yield NULL — structural, not failure." },
+      ],
+    },  ],
 };

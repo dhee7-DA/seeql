@@ -446,4 +446,33 @@ RETURNING id, name;   -- 2 rows: the two apparel items, re-priced`,
     },
   ],
   takeaway: "INSERT is a contract: an explicit column list bound to values positionally — omitted columns take their DEFAULT, INTEGER PRIMARY KEY assigns itself, and RETURNING makes the write show its work.",
+  deep: [
+    {
+      kind: "mind",
+      text: "INSERT is a **column-list contract**: you name the columns you're providing, bind values positionally, and every column you OMIT takes its own default — which is NULL unless the schema says otherwise. The contract reading matters more than the syntax: `INSERT INTO orders (customer_id, status, total, created_at)` is a promise \"I am supplying exactly these four\"; the engine verifies types and constraints against the promise, and id — the INTEGER PRIMARY KEY — assigns itself. RETURNING (SQLite 3.35+) closes the loop: the write shows its work, handing back the generated ids and defaults so the app doesn't guess. Every mass-import bug story starts with someone trusting positional VALUES without the explicit column list.",
+    },
+    {
+      kind: "engine",
+      title: "you run INSERT INTO products (name, category, price, stock, supplier_id) VALUES ('Widget', 'tools', 19.99, 5, 2) RETURNING id, stock",
+      steps: [
+        "**Parse & bind** — the column list (5 names) must match the VALUES tuple (5 values); a mismatch is an immediate error, before any constraint fires.",
+        "**Default fill** — omitted columns (id) take defaults: INTEGER PRIMARY KEY allocates max(rowid)+1; NOT NULL columns without defaults would reject the row here.",
+        "**Constraint pass** — CHECKs, NOT NULLs, and the FK supplier_id → suppliers(id) are verified; a bad supplier_id aborts the statement atomically.",
+        "**RETURNING** — the engine streams back the stored row (post-defaults): id 17, stock 5. Read-before-you-believe, now built into the write.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"INSERT INTO orders VALUES (…) without a column list is fine — it's shorter.\"",
+      truth: "The bare form binds positionally against the **table's current column order** — one ALTER TABLE or a schema drift later, silently wrong columns get filled. The explicit list is not verbosity; it's the version-proof form.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Omitting a NOT NULL column", r: "Reject: the default is NULL and the constraint refuses. The error names the column — read it, don't shotgun a value in." },
+        { c: "Multi-row VALUES", r: "INSERT … VALUES (…), (…) is one statement, one transaction, one constraint pass per row — and it fails ATOMICALLY here (this course runs it rolled back). Partial imports can't leak." },
+        { c: "INSERT … SELECT", r: "The VALUES tuple can be a whole SELECT — copying rows is still the same contract. Fan-out applies: the SELECT's grain is what lands in the table." },
+        { c: "Explicit id collisions", r: "Force id = 5 twice and the second INSERT hits the PK constraint. Also: explicit rowids above the auto-counter shift future auto-allocation — know the interaction before hand-seeding ids." },
+      ],
+    },  ],
 };

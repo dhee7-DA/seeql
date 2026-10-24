@@ -471,4 +471,33 @@ SELECT name, type FROM sqlite_master WHERE name = 'coupons';   -- table | view |
     },
   ],
   takeaway: "CREATE TABLE is the moment you legislate: PK for identity, NOT NULL and UNIQUE for honesty, DEFAULT for convenience, CHECK for value rules, REFERENCES for the fence — and pragma_table_info is how you read the law back.",
+  deep: [
+    {
+      kind: "mind",
+      text: "CREATE TABLE is the moment the database **learns what a lie looks like**: every constraint you declare converts a future class of bad data from \"silently accepted\" into \"loudly rejected\". The storefront's contract: INTEGER PRIMARY KEY (the rowid — a free b-tree, lesson 48's topic), NOT NULL on every fact, DEFAULTs for optional flags (active = 1), REAL for prices this coarse, and INTEGER cents where exactness matters (invoices.amount_cents — float money is how accounting bugs breed). FKs (REFERENCES suppliers(id)) declare the graph. Constraint design is requirements engineering in disguise: each one is a sentence like \"an order cannot exist without a customer\" — written once, enforced forever, by the only witness that never gets tired.",
+    },
+    {
+      kind: "engine",
+      title: "you run CREATE TABLE products (…, supplier_id INTEGER NOT NULL REFERENCES suppliers(id))",
+      steps: [
+        "**Schema write** — the definition lands in sqlite_master; the table exists with zero rows. Types here are AFFINITIES (TEXT/INTEGER/REAL) — SQLite still stores what you give it, coerced politely.",
+        "**Constraint compilation** — NOT NULL / CHECK / DEFAULT / FK become per-write checks from now on; the cost is paid on every INSERT/UPDATE, not at creation.",
+        "**FK wiring** — REFERENCES records the graph edge; whether it ENFORCES depends on the connection's PRAGMA foreign_keys (lesson 43's fence) — the declaration is the option, the pragma is the switch.",
+        "**The rollback** — DDL in this sandbox also runs in the rolled-back transaction: you can CREATE, test, and vanish. Schema experiments are cheap; production schema changes are not.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"I can add constraints later when the data grows up — start loose, tighten over time.\"",
+      truth: "Bad data **arrives faster than refactor plans**: loose tables accumulate rows that violate the constraints you meant to add, and tightening then requires cleaning history you can't fully see. Declare the lie-detectors at birth; ALTER is for the exceptions.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "REAL money", r: "0.1 + 0.2 ≠ 0.3 in binary floats; SUM over float money drifts. The invoice/expense tables store INTEGER cents — exactness by representation, not by rounding luck." },
+        { c: "INTEGER PRIMARY KEY ≠ rowid alias", r: "Only INTEGER PRIMARY KEY aliases the rowid (free lookups); a TEXT pk or a composite pk builds a separate index instead. The id choice has a performance shape, not just a style." },
+        { c: "UNIQUE vs PK", r: "A table can have one PK and many UNIQUEs (invoice.number is UNIQUE, id is PK). Both create indexes; both reject duplicates — PK is identity, UNIQUE is a business rule." },
+        { c: "CHECK with functions", r: "CHECK (length(number) = 8) runs per write and can't reference other tables. It's the right tool for shape rules; \"valid supplier\" needs the FK, not a CHECK." },
+      ],
+    },  ],
 };

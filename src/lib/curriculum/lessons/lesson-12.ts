@@ -331,4 +331,33 @@ ORDER BY c.name;`,
     },
   ],
   takeaway: "LEFT JOIN keeps every left row and NULL-fills the right side when no match exists — and conditions on the right table belong in ON when the unmatched rows must survive, because in WHERE they silently collapse the LEFT JOIN back into an INNER JOIN.",
+  deep: [
+    {
+      kind: "mind",
+      text: "LEFT JOIN is a **preservation contract**: every row of the left table appears, matched or not — unmatched left rows survive with NULL filling every right-table column. The mental flip from INNER: the left table is the *population you are studying*, the right table is *evidence you're attaching*. Flipping the tables flips the study. In this seed orders LEFT JOIN shipments-style checks surface naturally: 21 orders have shipped_at IS NULL, and NULL-shipped rows are exactly the ones an INNER JOIN on a shipment table would have erased. LEFT JOIN turns \"show me the matches\" into \"show me the population, and let absence be visible as NULL.\"",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT c.name, o.id FROM customers c LEFT JOIN orders o ON o.customer_id = c.id",
+      steps: [
+        "**Left pass** — all 16 customers are queued first; they are the contract. RIGHT side rows are only retrieved on demand.",
+        "**Match or pad** — each customer either finds its orders (24 for customer 1) or, finding none, emits ONE row with o.* all NULL. Unmatched left rows are never dropped — they are padded.",
+        "**Count check** — the result has ≥ 103 rows (one per matching pair) plus one pad row per zero-match customer. In this seed: exactly 103, since every customer has orders — run the LEFT JOIN and the count proves the preservation.",
+        "**NULL meaning** — a NULL in o.id now carries information: \"this customer has no orders\". The NULL is the answer, not a defect.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"LEFT JOIN is the safe join — I'll use it everywhere and lose nothing.\"",
+      truth: "LEFT JOIN trades drop-risk for **NULL-risk**: every right-side column can now be NULL, and any downstream expression (SUM of NULLs, comparisons, counts) must be NULL-aware. INNER drops rows; LEFT drops certainty. Choose per question, not per fear.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "WHERE on the right table's column", r: "WHERE o.status = 'delivered' silently demotes the LEFT JOIN to INNER: pad rows have NULL status, NULL = 'delivered' is not true, and the preserved customer vanishes. The test belongs in the ON clause." },
+        { c: "COUNT(*) vs COUNT(right column)", r: "After a LEFT JOIN, COUNT(*) counts pad rows (a customer with no orders counts as 1) but COUNT(o.id) counts matches only (0). The pair is the honest way to show both population and coverage." },
+        { c: "Chained LEFT JOINs", r: "Each hop's preservation is independent; a later INNER JOIN or a WHERE on any right column can retroactively kill earlier pads. Audit the whole chain, not the first hop." },
+        { c: "LEFT JOIN where the right side is unique", r: "If the right table's key is unique, LEFT JOIN behaves like a lookup: 103 orders each find ≤ 1 invoice row, fan-out impossible. Preservation still applies; multiplication can't." },
+      ],
+    },  ],
 };

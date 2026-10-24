@@ -32,6 +32,10 @@ export const lesson35: Lesson = {
     },
     { kind: "diagram", figure: "l35-question-to-sql" },
     { kind: "diagram", figure: "l35-clause-order" },
+    {
+      kind: "p",
+      text: "The debrief: look at what the brief actually tested. Six asks, six tools, zero joins — and every answer came from naming the shape before writing the SQL. The founder's note is the analyst's daily reality: questions arrive in business language, and your first move is always translation — “how many cities” is COUNT(DISTINCT), “how deep is the warehouse” is SUM, “which categories are crowded” is a GROUP BY with a HAVING gate on the aggregate. Notice also what the single-table constraint bought you: no fan-out traps, no NULL-filled gaps, no grain decisions. Module 1's toolkit is small enough to hold in your head and honest enough to trust on day one — the next case studies will add joins, and with them, the grain discipline this course keeps returning to.",
+    },
   ],
   mcqs: [
     {
@@ -201,4 +205,18 @@ export const lesson35: Lesson = {
     },
   ],
   takeaway: "A brief becomes SQL by naming each ask's shape — filter, collapse, dedupe, bucket — and the six asks of a first-week report use six different spells from one module.",
+  deep: [
+    {
+      kind: "mind",
+      text: "A case study is **requirements engineering in miniature**: the brief arrives in stakeholder language and your job is to translate it into Module 1's shapes — filters, collapses, sorts and buckets — no joins, one table at a time, and every number live-graded against the real store. The professional habit this trains: before any SQL, restate each ask as a shape (\"that's a filter\", \"that's a fold at month grain\", \"that's a preservation problem\") and name the grain of the promised output. Most wrong answers in real analyst work are not syntax errors; they are right answers to a slightly different question — the translation step is where they die. Work the brief top to bottom, reconcile every number you can against another (count vs sum, detail vs summary), and treat any mismatch as a finding, not a nuisance.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "The ask behind the ask", r: "\"How many customers do we have?\" often means \"how many can we market to\" — the active flag, the region filter, the dedupe. Ask which population the stakeholder means; the SQL is easy once the noun is exact." },
+        { c: "Empty results are findings", r: "A brief that expects holes may find none (this seed's anti-joins return zero rows). Report \"checked, none found\" with the query attached — silence in the result set is evidence too." },
+        { c: "Grain mixing in one report", r: "Customer counts beside order sums in one table: stage each grain in its own CTE and join on the shared dimension. One query, two grains, no fan-out — the case studies quietly drill this every time." },
+        { c: "The reproducibility test", r: "Hard-code the as-of date, avoid date('now'), and keep every number re-derivable from the seed. A founder-facing snapshot that can't be re-run and matched is a screenshot, not a report." },
+      ],
+    },  ],
 };

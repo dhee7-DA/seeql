@@ -461,4 +461,33 @@ RETURNING id;`,
     },
   ],
   takeaway: "DELETE removes whole rows behind a full-power WHERE, RETURNING is the receipt — and the foreign-key fence means children leave before their parents, which is why real systems soft-delete business objects.",
+  deep: [
+    {
+      kind: "mind",
+      text: "DELETE is UPDATE's twin with a harsher failure mode: rows **leave the database**. The WHERE discipline is identical — target first, twin-SELECT, changes()-check — but there is no \"soft\" version of a deletion. The lesson's third idea is the **foreign-key fence**: references FROM other tables make deletion a graph operation, not a row operation. Deleting a customer who holds orders either fails (FK enforcement ON) or orphans 24 order rows (OFF) — both outcomes are data-model statements. The production-grade pattern is not \"delete harder\"; it's the soft-delete flag (active = 0 — the seed already carries 2 such customers) or the staged purge: children first, parents last, one transaction.",
+    },
+    {
+      kind: "engine",
+      title: "you run DELETE FROM orders WHERE status = 'cancelled'",
+      steps: [
+        "**Target pass** — WHERE resolves to the 7 cancelled orders. As with UPDATE: nothing is gone yet, and the SELECT twin of the WHERE previews the victims exactly.",
+        "**FK scan** — for each victim the engine checks inbound references (nothing references orders here, so the fence doesn't fire; invoices referenced by payments would).",
+        "**Row removal** — victims leave the b-tree; indexes on the table update in the same statement. The rollback sandbox then undoes it all — you saw the count without the loss.",
+        "**Count** — changes() = 7. Any surprise in this number IS the incident report; reconcile before committing for real.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"DELETE FROM orders clears space immediately.\"",
+      truth: "Freed pages typically go to the **freelist for reuse**, not back to the OS (and without VACUUM the file size doesn't shrink). Deleting 90% of a table then querying it can even be SLOWER until repack — deletion is a data operation, not a defrag tool.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "FK enforcement OFF", r: "SQLite defaults to OFF per connection: the DELETE succeeds and leaves orphaned children silently. This course's lessons show both worlds — in production, decide deliberately and set PRAGMA foreign_keys = ON." },
+        { c: "ON DELETE cascade", r: "A schema that declares ON DELETE CASCADE makes parent deletes sweep children automatically. Powerful, invisible, and terrifying in bulk — cascade chains have eaten more data than most hackers." },
+        { c: "DELETE with JOIN", r: "Standard SQL deletes from ONE table; multi-table purges stage the victims: DELETE WHERE id IN (SELECT … FROM join). The staged form is also where you preview with SELECT first — same query, verb swapped." },
+        { c: "TRUNCATE envy", r: "SQLite has no TRUNCATE; DELETE FROM tbl (no WHERE) is row-by-row. For full resets the course's resetDatabase() simply recreates tables — often the cheaper contract." },
+      ],
+    },  ],
 };

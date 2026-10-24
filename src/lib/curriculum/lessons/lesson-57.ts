@@ -404,4 +404,33 @@ ORDER BY z DESC;
     },
   ],
   takeaway: "CUME_DIST for standings, the two-averages identity for spread, z-scores for outliers — and an explicit frame whenever LAST_VALUE enters the room.",
+  deep: [
+    {
+      kind: "mind",
+      text: "The advanced window tier answers **\"where do I stand in the distribution?\"** — not ranked 1..n, but positioned on a 0-to-1 curve. CUME_DIST gives the share of rows at-or-below you (denominator: n, the whole stage); PERCENT_RANK gives (rank−1)/(n−1), the cheapest row sitting at exactly 0. From the curve, statistics fall out: the median is the 0.5 crossing, quartiles are the 0.25/0.75 crossings, and a z-score — (x − mean) / stddev — turns \"August looks big\" into \"August is 3.3 sigma out\", a sentence a risk committee can act on. The tier's habit of mind: raw rank is for leaderboards, distribution position is for \"is this NORMAL?\" — and the second question is where finance lives.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT id, total, ROUND(100.0 * CUME_DIST() OVER (ORDER BY total), 1) AS pctile FROM orders",
+      steps: [
+        "**Order the stage** — the curve needs the sort spec: totals ascending. Ties share one curve point (peers included — at-or-below counts them together).",
+        "**Curve math** — CUME_DIST = rows at-or-below ÷ n. The maximum row hits exactly 1.0; the minimum sits at (count of its ties) ÷ n — ABOVE zero, unlike PERCENT_RANK's 0.0 floor.",
+        "**The crossings** — WHERE the curve crosses 0.5 is the median of the 103 totals (from the row just past halfway); 0.25/0.75 crossings give quartiles without NTILE's equal-count forcing.",
+        "**Z-scores** — AVG and a hand-rolled stddev (the sqrt of AVG(x²) − mean²) as window columns, then (total − mean) / stddev per row. |z| > 3 is the outlier flag the lesson hunts for.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"CUME_DIST and PERCENT_RANK are the same curve shifted a little — pick either.\"",
+      truth: "They answer different questions with different denominators: CUME_DIST = **at-or-below share (÷ n)**, starts above 0, hits exactly 1; PERCENT_RANK = **rank fraction (÷ n−1)**, starts at exactly 0, tops out below 1. Median-hunting via \"the 0.5 crossing\" gives different rows on the two curves — the choice is a definition, not a preference.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Ties on the curve", r: "Equal totals share ONE CUME_DIST value — peers included by definition. If your report splits tied rows into different percentiles, you've joined ROW_NUMBER to a curve that didn't ask for it." },
+        { c: "stddev by hand", r: "SQLite has no STDDEV built-in: the E[x²] − E[x]² identity computes population stddev in two window aggregates. Sample stddev (n−1) needs the correction factor — decide which your report promises." },
+        { c: "Small-stage sigma", r: "With 4 rows, \"3 sigma\" is nearly unreachable — the curves are too coarse. Distribution flags need stage sizes; state n next to every z-score or the threshold is theater." },
+        { c: "Skewed distributions", r: "Z-scores assume roughly symmetric shapes: revenue is usually right-skewed, so \"3 sigma\" fires differently on totals vs log(totals). The flag is a sentence opener, not a verdict." },
+      ],
+    },  ],
 };

@@ -3241,6 +3241,59 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
     {
       "kind": "agg-swap"
     }
+  ],
+
+  "peak-concurrent-attendance": [
+    {
+      "kind": "min-max",
+      "param": "min"
+    },
+    {
+      "kind": "agg-swap"
+    }
+  ],
+  "median-order-value-by-region": [
+    {
+      "kind": "order-flip"
+    },
+    {
+      "kind": "having-add"
+    }
+  ],
+  "streak-week-bonus-ladder": [
+    {
+      "kind": "having",
+      "param": "1"
+    },
+    {
+      "kind": "min-max",
+      "param": "min"
+    }
+  ],
+  "approval-chain-audit": [
+    {
+      "kind": "order-flip"
+    },
+    {
+      "kind": "min-max",
+      "param": "min"
+    }
+  ],
+  "summary-drift-audit": [
+    {
+      "kind": "order-flip"
+    },
+    {
+      "kind": "agg-swap"
+    }
+  ],
+  "cohort-week-retention-grid": [
+    {
+      "kind": "having-add"
+    },
+    {
+      "kind": "order-flip"
+    }
   ]
 };
 

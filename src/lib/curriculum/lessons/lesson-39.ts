@@ -186,4 +186,18 @@ export const lesson39: Lesson = {
     },
   ],
   takeaway: "The calendar brief is pure Module 5: '%Y-%m' builds sortable buckets, staged sums + OVER build the running line, julianday does the date math, LAG measures rhythm, NTILE splits the distribution.",
+  deep: [
+    {
+      kind: "mind",
+      text: "A case study is **requirements engineering in miniature**: the brief arrives in stakeholder language and your job is to translate it into Module 5's function toolkit — text reshaping, calendar slicing and the first window stamps — the ops calendar brief, where every ask is a bucket or an offset. The professional habit this trains: before any SQL, restate each ask as a shape (\"that's a filter\", \"that's a fold at month grain\", \"that's a preservation problem\") and name the grain of the promised output. Most wrong answers in real analyst work are not syntax errors; they are right answers to a slightly different question — the translation step is where they die. Work the brief top to bottom, reconcile every number you can against another (count vs sum, detail vs summary), and treat any mismatch as a finding, not a nuisance.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "The ask behind the ask", r: "\"How many customers do we have?\" often means \"how many can we market to\" — the active flag, the region filter, the dedupe. Ask which population the stakeholder means; the SQL is easy once the noun is exact." },
+        { c: "Empty results are findings", r: "A brief that expects holes may find none (this seed's anti-joins return zero rows). Report \"checked, none found\" with the query attached — silence in the result set is evidence too." },
+        { c: "Grain mixing in one report", r: "Customer counts beside order sums in one table: stage each grain in its own CTE and join on the shared dimension. One query, two grains, no fan-out — the case studies quietly drill this every time." },
+        { c: "The reproducibility test", r: "Hard-code the as-of date, avoid date('now'), and keep every number re-derivable from the seed. A founder-facing snapshot that can't be re-run and matched is a screenshot, not a report." },
+      ],
+    },  ],
 };

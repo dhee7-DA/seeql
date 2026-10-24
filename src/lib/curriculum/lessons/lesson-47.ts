@@ -412,4 +412,33 @@ SELECT revenue FROM category_revenue WHERE category = 'Audio';   -- 11744.01`,
     },
   ],
   takeaway: "A view is a named query the engine re-runs per use — filters compose through it, views stack by inlining, changing it is DROP + CREATE, and its convenience is vertical: one definition, many readers, zero free speed.",
+  deep: [
+    {
+      kind: "mind",
+      text: "A view is a **named query, not a named table**: CREATE VIEW saves the SELECT under a callable name and stores nothing but the definition. Every SELECT from the view re-runs the query — always current, never stale, never duplicated. The value is vocabulary: once `customer_balances` exists, the team says \"join customer_balances\" instead of \"join payments, invoices, subtract, coalesce…\" — the join logic is written once, audited once, and every consumer inherits the correctness. Views are also a safety tool: grant access to the view, not the base tables, and sensitive columns never leave the vault. The cost is equally real: a view over a view over a join can hide a 6-table fan-out behind an innocent name — depth discipline is part of view hygiene.",
+    },
+    {
+      kind: "engine",
+      title: "you run CREATE VIEW open_invoices AS SELECT … FROM invoices WHERE status = 'open'  — then SELECT COUNT(*) FROM open_invoices",
+      steps: [
+        "**Definition storage** — the CREATE stores SQL text (parsed) in sqlite_master. No data moves; the view is a macro, not a snapshot.",
+        "**Query-time expansion** — SELECT FROM open_invoices rewrites to the underlying SELECT, then optimizes THROUGH it: predicates on the view push down into the base tables when possible.",
+        "**Freshness for free** — because nothing is materialized, an INSERT to invoices is instantly visible in the view. The trade: every read pays the query's cost again.",
+        "**The sandbox** — the CREATE VIEW itself runs inside the rolled-back transaction: the view vanishes after the lesson, like everything else in the write path here.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"Views are slow because they re-run every time — a table snapshot would be faster.\"",
+      truth: "Views re-run, yes — but the optimizer sees THROUGH them, and most view queries are cheap. Snapshots (materialized tables) are faster to read and WRONG the moment base data moves: you've traded correctness for latency. Materialize only with a refresh strategy you actually own.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "View over a fan-out join", r: "The innocent-looking view name hides a 3× SUM inflation (lesson 15/16's disease). Views need the same grain audit as queries — the name \"balances\" doesn't sanitize the join inside." },
+        { c: "Nested views", r: "View on view on view reads fine and plans deep: each layer inlines until the \"simple select\" is a six-table monster. Two layers is a convention worth having." },
+        { c: "Column-list drift", r: "CREATE VIEW v AS SELECT * FROM t: an ALTER on t changes the view's shape silently. Column lists in view definitions are the version-proof form — same rule as INSERT." },
+        { c: "Modifying through a view", r: "Simple single-table views are updatable in SQLite; joined views are not. Don't design around write-through views — the base table is the write API." },
+      ],
+    },  ],
 };

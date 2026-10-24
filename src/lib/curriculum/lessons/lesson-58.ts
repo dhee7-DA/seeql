@@ -114,4 +114,33 @@ LIMIT 5;   -- totals are unique on this store, but the id tiebreaker costs nothi
   problems: probBank("l58", PROBS),
   takeaway:
     "Windows run after WHERE and GROUP BY, over whatever rows survived — the partition is a stage boundary, the sort spec turns aggregates into running ones, and determinism inside OVER is your responsibility, not the engine's.",
+  deep: [
+    {
+      kind: "mind",
+      text: "This masterclass starts the family from zero: **OVER is a scope declaration**. The empty form — OVER () — says \"the whole surviving row set is my stage\"; PARTITION BY cuts stages; ORDER BY sequences within a stage. Every window call is the same three-part sentence, and reading a query means parsing that sentence per function. The evaluation timing is the other foundation: windows run AFTER WHERE and GROUP BY — they see surviving (possibly grouped) rows — which is why \"filter on rank\" needs an outer layer, and why a window over a GROUP BY (\"rank the months\") ranks the GROUPS, not the raw rows. Master this one lesson's mental model and the next five are just new functions bolted to the same scope machine.",
+    },
+    {
+      kind: "engine",
+      title: "you run SELECT SUBSTR(created_at,1,7) AS month, SUM(total) AS revenue, RANK() OVER (ORDER BY SUM(total) DESC) AS rk FROM orders GROUP BY month",
+      steps: [
+        "**Fold first** — GROUP BY month collapses 103 orders into 14 rows; this happens BEFORE the window pass, by the standard clause order.",
+        "**Window sees groups** — RANK's stage is the 14 grouped rows, not 103: the ranking \"SUM(total) DESC\" reads the ALREADY-aggregated revenue. Windows over aggregates are natural once timing is internalized.",
+        "**Stamp, don't collapse** — the output keeps all 14 rows, each with rank attached. The leaderboard and the data share one result set — no self-join, no CTE round-trip.",
+        "**The 103-row stamp** — the same machinery with COUNT(*) OVER (PARTITION BY status) stamps group SIZE onto every raw row: 52/30/14/7 travel with their member rows. One machinery, two grains, both honest.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"Window functions are just aggregates with extra syntax — SUM is SUM.\"",
+      truth: "The semantics diverge at the output contract: GROUP BY **collapses** (n rows in, one per group out), a window **stamps** (n rows in, n rows out, summary as a passenger column). Confusing them is how \"where did my 103 rows go?\" happens — the collapse is opt-in for windows, which is precisely their power.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Window in WHERE", r: "Rejected by the parser — not a style rule but the clause-order contract: WHERE runs before the window pass, so it cannot see the window's output. The CTE/outer-SELECT filter is the shape, in every engine." },
+        { c: "PARTITION BY an aggregate", r: "PARTITION BY SUM(total) after GROUP BY is legal and occasionally meaningful — stages formed from group-level values. Readability suffers; stage with a CTE unless the one-liner earns its keep." },
+        { c: "Multiple windows, one query", r: "Each OVER is independent: rank by revenue AND count per status in the same SELECT — two scope sentences, evaluated in their own passes. Name columns carefully; the stage each column saw is not visible in the output." },
+        { c: "Determinism duty", r: "OVER (ORDER BY total) with tied totals is an unstable sort — the engine owes you no tie order. Every ranking that feeds pagination, dedupe, or export needs the id tiebreak. Non-determinism is YOUR bug, not the engine's." },
+      ],
+    },  ],
 };

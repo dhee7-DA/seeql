@@ -29,6 +29,10 @@ export const lesson50: Lesson = {
       kind: "tip",
       text: "Incident discipline is the real syllabus here: the census (task 1) is not filler — it's how you'll KNOW the fix worked. The numbers it prints (52 delivered, 30 shipped, 14 pending, 7 cancelled) are the 'before' picture; the write steps change it on purpose. In production you'd re-run the census after committing, inside one transaction.",
     },
+    {
+      kind: "p",
+      text: "The debrief: a data-fix ticket is where the write verbs meet professional paranoia. Every mutation in this brief ran inside a transaction that could be rolled back — and that is not a testing convenience, it is the production pattern: BEGIN, preview with the SELECT twin of the WHERE, apply the UPDATE or UPSERT, verify changes() against the expected count, then COMMIT or ROLLBACK on any surprise. The ticket's subtle lesson is ordering: fix the child rows before the parents change their keys, stage the dedupe before the FK gets enforced, and never let a DELETE see data your SELECT hasn't previewed. Speed is nothing here; the audit trail is everything — a fix that can't show its work is a rumor, not a repair.",
+    },
   ],
   mcqs: [
     {
@@ -185,4 +189,18 @@ export const lesson50: Lesson = {
     },
   ],
   takeaway: "An incident runs read → insert → update → delete → upsert in that order — baseline first, children before parents, deltas merged not trusted — and every write here was real, verified, and rolled back, which is the sandbox's whole gift.",
+  deep: [
+    {
+      kind: "mind",
+      text: "A case study is **requirements engineering in miniature**: the brief arrives in stakeholder language and your job is to translate it into the write verbs under transactional discipline — INSERT, UPDATE, UPSERT and the staged DELETE — preview before every write, reconcile changes() after, roll back on any surprise. The professional habit this trains: before any SQL, restate each ask as a shape (\"that's a filter\", \"that's a fold at month grain\", \"that's a preservation problem\") and name the grain of the promised output. Most wrong answers in real analyst work are not syntax errors; they are right answers to a slightly different question — the translation step is where they die. Work the brief top to bottom, reconcile every number you can against another (count vs sum, detail vs summary), and treat any mismatch as a finding, not a nuisance.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "The ask behind the ask", r: "\"How many customers do we have?\" often means \"how many can we market to\" — the active flag, the region filter, the dedupe. Ask which population the stakeholder means; the SQL is easy once the noun is exact." },
+        { c: "Empty results are findings", r: "A brief that expects holes may find none (this seed's anti-joins return zero rows). Report \"checked, none found\" with the query attached — silence in the result set is evidence too." },
+        { c: "Grain mixing in one report", r: "Customer counts beside order sums in one table: stage each grain in its own CTE and join on the shared dimension. One query, two grains, no fan-out — the case studies quietly drill this every time." },
+        { c: "The reproducibility test", r: "Hard-code the as-of date, avoid date('now'), and keep every number re-derivable from the seed. A founder-facing snapshot that can't be re-run and matched is a screenshot, not a report." },
+      ],
+    },  ],
 };

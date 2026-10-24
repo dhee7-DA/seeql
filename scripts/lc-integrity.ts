@@ -49,4 +49,4 @@ if (errs.length) {
   for (const e of errs) console.error("  - " + e);
   process.exit(1);
 }
-console.log("INTEGRITY OK — 359/359 registry rows have deep dives, no dupes, xp correct");
+console.log(`INTEGRITY OK — ${LC_ALL.length}/${LC_ALL.length} registry rows have deep dives, no dupes, xp correct`);

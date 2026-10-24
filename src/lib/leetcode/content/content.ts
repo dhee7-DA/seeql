@@ -118,6 +118,8 @@ import { SQL_DF_RETAIL_A } from "./sql-df-retail-a";
 import { SQL_DF_RETAIL_B } from "./sql-df-retail-b";
 import { SQL_FINAL_WAVE_A } from "./sql-final-wave-a";
 import { SQL_FINAL_WAVE_B } from "./sql-final-wave-b";
+import { SQL_BOSS_A } from "./sql-boss-a";
+import { SQL_BOSS_B } from "./sql-boss-b";
 
 export const LC_CONTENT: LcDeepDive[] = [
   ...ARRAYS,
@@ -240,6 +242,8 @@ export const LC_SQL_CONTENT: LcSqlDive[] = [
   ...SQL_DF_RETAIL_B,
   ...SQL_FINAL_WAVE_A,
   ...SQL_FINAL_WAVE_B,
+  ...SQL_BOSS_A,
+  ...SQL_BOSS_B,
 ];
 
 const bySlug = new Map(LC_CONTENT.map((d) => [d.slug, d]));

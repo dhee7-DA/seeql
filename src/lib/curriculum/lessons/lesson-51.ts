@@ -29,6 +29,10 @@ export const lesson51: Lesson = {
       kind: "tip",
       text: "The order here is the analytics-engineer's habit: build the VIEW first so every later task can reference one definition of 'monthly revenue'; audit with a READ before promising targets; add the INDEX for the filter you know the dashboard runs. In production each statement would live in a checked-in migration file — the sandbox's rollback is the rehearsal, the migration is the opening night.",
     },
+    {
+      kind: "p",
+      text: "The debrief: building a reporting layer is schema engineering with an audience. Each view in this brief froze one definition — open invoices, customer balances, the month spine — so every downstream report inherits the logic instead of re-deriving (and re-breaking) it. Notice the layering: base tables, then views that encode one business definition each, then reports that compose them; when a definition changes (what counts as “open”?), you edit ONE view and every report updates. The discipline that keeps this honest is grain: each view documents what one row IS, and compositions that mix grains stage their aggregates first. The reporting layer is the team's shared vocabulary — views are how SQL learns to say things once.",
+    },
   ],
   mcqs: [
     {
@@ -192,4 +196,18 @@ export const lesson51: Lesson = {
     },
   ],
   takeaway: "A reporting layer is built, not wished for: the view names the query once, the recursive spine keeps reports honest across empty months, constraints make bad staging rows impossible, the index buys the dashboard's filter — and sqlite_master is how you prove the layer exists.",
+  deep: [
+    {
+      kind: "mind",
+      text: "A case study is **requirements engineering in miniature**: the brief arrives in stakeholder language and your job is to translate it into view design as vocabulary — one business definition per view, composed into reports — the reporting layer brief, where grain documentation keeps every layer honest. The professional habit this trains: before any SQL, restate each ask as a shape (\"that's a filter\", \"that's a fold at month grain\", \"that's a preservation problem\") and name the grain of the promised output. Most wrong answers in real analyst work are not syntax errors; they are right answers to a slightly different question — the translation step is where they die. Work the brief top to bottom, reconcile every number you can against another (count vs sum, detail vs summary), and treat any mismatch as a finding, not a nuisance.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "The ask behind the ask", r: "\"How many customers do we have?\" often means \"how many can we market to\" — the active flag, the region filter, the dedupe. Ask which population the stakeholder means; the SQL is easy once the noun is exact." },
+        { c: "Empty results are findings", r: "A brief that expects holes may find none (this seed's anti-joins return zero rows). Report \"checked, none found\" with the query attached — silence in the result set is evidence too." },
+        { c: "Grain mixing in one report", r: "Customer counts beside order sums in one table: stage each grain in its own CTE and join on the shared dimension. One query, two grains, no fan-out — the case studies quietly drill this every time." },
+        { c: "The reproducibility test", r: "Hard-code the as-of date, avoid date('now'), and keep every number re-derivable from the seed. A founder-facing snapshot that can't be re-run and matched is a screenshot, not a report." },
+      ],
+    },  ],
 };

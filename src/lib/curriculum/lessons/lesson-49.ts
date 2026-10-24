@@ -430,4 +430,33 @@ GROUP BY label ORDER BY label;`,
     },
   ],
   takeaway: "WITH RECURSIVE = anchor once, step on the last batch, guard decides when to stop — generators for sequences and calendar spines, walks for hierarchies, and always the bound that makes the loop end.",
+  deep: [
+    {
+      kind: "mind",
+      text: "WITH RECURSIVE is SQL's **loop**: an anchor query seeds the working set, a recursive step reads the working set and emits the next generation, and the engine iterates until a pass emits nothing. The spine pattern — one row per month from a start date — generates the calendar a report needs when some months have no data (LEFT JOIN facts onto the spine so gaps show as zeros, not absences). The walk pattern — org charts, bill-of-materials, transit hops — follows foreign keys generation by generation. Two disciplines keep recursion safe: the **termination** must be structural (each step must consume progress — counter, depth, or shrinking set), and the **recursion direction** must be explicit (UNION ALL keeps duplicates and speed; UNION dedupes at a cost).",
+    },
+    {
+      kind: "engine",
+      title: "you run WITH RECURSIVE m(month) AS (SELECT '2024-01' UNION ALL SELECT date(m.month, '+1 month') FROM m WHERE m.month < '2025-02') SELECT * FROM m",
+      steps: [
+        "**Anchor** — the first SELECT emits '2024-01' into the queue. One row, iteration zero.",
+        "**Step** — the recursive SELECT reads the queue and emits date(+1 month) per row while the guard holds. '2024-02' joins the queue; the engine repeats.",
+        "**Termination** — the WHERE stops the march at '2025-02': the next pass would emit nothing, so iteration ends. 14 rows for 14 months — count is the receipt.",
+        "**The infinite-loop cousin** — drop the guard and the queue never empties: the engine runs until a limit fires. Every recursive CTE needs its exit condition written like a promise, not an afterthought.",
+      ],
+    },
+    {
+      kind: "myth",
+      myth: "\"Recursive CTEs are for tree-walking only — a calendar can just be generated in the app.\"",
+      truth: "Both halves are wrong: recursion is a **general generator** (calendars, sequences, grids), and generating the spine IN SQL keeps the report one self-contained query — the app-side version scatters the grain decision across languages. The spine belongs with the facts it will be joined to.",
+    },
+    {
+      kind: "edge",
+      items: [
+        { c: "Missing termination guard", r: "The classic infinite loop: SQL_ROW_LIMIT/timeout fires, or in worse engines, disk does. Guard columns (depth + 1, date < end) are non-negotiable." },
+        { c: "UNION vs UNION ALL in recursion", r: "UNION dedupes each generation — required for some graph walks to terminate, wasteful for calendars where rows are unique anyway. Know which your shape needs." },
+        { c: "Cycles in the data", r: "A circular org chart (A reports to B reports to A) loops forever under UNION ALL. Depth caps and visited-tracking are the standard armor." },
+        { c: "Joining the spine to facts", r: "LEFT JOIN facts ON month so empty months survive as rows — INNER JOIN erases exactly the gaps the spine existed to reveal. The join direction is the analysis." },
+      ],
+    },  ],
 };
