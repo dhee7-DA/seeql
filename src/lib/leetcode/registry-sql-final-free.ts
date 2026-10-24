@@ -8,9 +8,9 @@ import type { LcRow } from "./row";
 
 export const SQL_FINAL_FREE: LcRow[] = [
   // FREE CLASSICS — the canonical traps: NULL referees, consecutive runs, OR gates
-  [177, "nth-highest-salary", "Nth Highest Salary", 1, "SQL · OFFSET|DENSE_RANK", "SQL 50+", "LeetCode"],
+  [177, "nth-highest-salary", "Nth Highest Salary", 1, "SQL · OFFSET|DENSE_RANK", "SQL 50+", "LeetCode|Microsoft"],
   [180, "consecutive-numbers", "Consecutive Numbers", 1, "SQL · LAG|Consecutive runs", "SQL 50+", "LeetCode"],
-  [197, "rising-temperature", "Rising Temperature", 0, "SQL · Day-1 join|LAG", "SQL 50+", "LeetCode"],
+  [197, "rising-temperature", "Rising Temperature", 0, "SQL · Day-1 join|LAG", "SQL 50+", "LeetCode|Microsoft"],
   [584, "find-customer-referee", "Find Customer Referee", 0, "SQL · NULL-safe filter|IS NULL", "SQL 50+", "LeetCode"],
   [595, "big-countries", "Big Countries", 0, "SQL · OR gate|Thresholds", "SQL 50+", "LeetCode"],
   // FREE WINDOWS & GROWTH — stadium islands, division, rolling cafes, gains

@@ -33,7 +33,7 @@ export const SQL_MORE: LcRow[] = [
   // EXTRA — STRINGS & CASE
   [1683, "invalid-tweets", "Invalid Tweets", 0, "SQL · Strings", "SQL 50+", "Twitter|Meta"],
   [1873, "calculate-special-bonus", "Calculate Special Bonus", 0, "SQL · CASE WHEN", "SQL 50+", "Amazon|Deloitte"],
-  [627, "swap-salary", "Swap Salary", 0, "SQL · UPDATE|CASE WHEN", "SQL 50+", "Amazon|Bloomberg"],
+  [627, "swap-salary", "Swap Salary", 0, "SQL · UPDATE|CASE WHEN", "SQL 50+", "Amazon|Bloomberg|Microsoft"],
   // PLATFORM CLASSICS (HackerRank / DataLemur-flavored, re-authored)
   [9501, "top-earners", "Top Earners", 0, "SQL · Aggregation", "SQL 50+", "HackerRank classic"],
   [9502, "station-median", "Median of the Station Latitudes", 1, "SQL · Percentile|Windows", "SQL 50+", "HackerRank classic"],

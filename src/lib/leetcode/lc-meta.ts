@@ -100,11 +100,22 @@ export function lcBadgeStats(xpEvents: Record<string, number>): LcBadgeStats {
 /* Contest helpers                                                     */
 /* ------------------------------------------------------------------ */
 
-/** Companies with a deep enough pool to host a timed run — pseudo-tags
- *  ("LeetCode Premium", "HackerRank classic") excluded. */
-export const CONTEST_COMPANIES: Array<{ name: string; count: number }> = LC_COMPANIES.filter(
-  (c) => c.count >= 12 && !/premium|hackerrank/i.test(c.name),
-);
+/** Companies with a deep enough SQL pool to host a timed run — a Company
+ *  run pulls 5 problems from the company's SQL-only pool (contestSet gates
+ *  on p.sql), so eligibility is judged on that pool, not the total tag
+ *  count (Microsoft's 63 tags carried just 1 SQL problem and could not
+ *  fill a run). Needs 8+ SQL problems: the 5 slots plus seed variety.
+ *  Pseudo-tags ("LeetCode Premium", "HackerRank classic") excluded. */
+export const CONTEST_COMPANIES: Array<{ name: string; count: number }> = (() => {
+  const sqlCount = new Map<string, number>();
+  for (const p of LC_ALL) {
+    if (!p.sql) continue;
+    for (const c of p.companies) sqlCount.set(c, (sqlCount.get(c) ?? 0) + 1);
+  }
+  return LC_COMPANIES
+    .filter((c) => (sqlCount.get(c.name) ?? 0) >= 8 && !/premium|hackerrank|datalemur/i.test(c.name))
+    .map((c) => ({ name: c.name, count: sqlCount.get(c.name) ?? 0 }));
+})();
 
 /** Companies surfaced in the Problems filter + the Company index. The
  *  pseudo-tags are problem SOURCES, not interviewers — showing them as

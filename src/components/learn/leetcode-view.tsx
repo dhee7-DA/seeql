@@ -41,6 +41,12 @@ import {
 } from "@/lib/leetcode/registry";
 import { SQL_ALL_SECTIONS, SQL50_SECTIONS, sqlSectionOf } from "@/lib/leetcode/sections";
 import {
+  TRACK_COMPANIES,
+  companyFlavor,
+  companySqlTrack,
+  trackMix,
+} from "@/lib/leetcode/company-tracks";
+import {
   FU_SPECS,
 } from "@/lib/leetcode/followup-specs";
 import {
@@ -857,8 +863,59 @@ function LcDetail({ p, onBack, onOpen }: { p: LcRef; onBack: () => void; onOpen:
 /* ------------------------------------------------------------------ */
 
 function CompaniesIndex({ onPick, solvedOf }: { onPick: (company: string) => void; solvedOf: Set<string> }) {
+  const tracks = TRACK_COMPANIES.map((name) => {
+    const problems = companySqlTrack(name);
+    return { name, total: problems.length, done: problems.filter((p) => solvedOf.has(p.slug)).length, mix: trackMix(problems) };
+  });
   return (
     <div className="space-y-5">
+      <Panel pad={4}>
+        <div className="flex items-center gap-2">
+          <Route className="h-5 w-5 text-emerald-400" />
+          <h2 className="text-lg font-semibold">Company tracks</h2>
+        </div>
+        <p className="mt-1 text-[13px] leading-relaxed text-zinc-500">
+          Eight employers with deep enough SQL pools get a guided track — every SQL problem they are publicly
+          known to ask, ordered easy → hard, progress kept on the honest ledger. Every other company in the
+          index below opens a track too.
+        </p>
+      </Panel>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {tracks.map((t) => {
+          const pct = t.total ? Math.round((t.done / t.total) * 100) : 0;
+          return (
+            <button
+              key={t.name}
+              type="button"
+              onClick={() => onPick(t.name)}
+              className={cn(
+                "rounded-xl border border-black/10 bg-zinc-900/40 p-4 text-left transition-colors hover:border-emerald-400/40 dark:border-white/10",
+                FOCUS_RING,
+              )}
+            >
+              <div className="flex items-center gap-2">
+                <Building2 className="h-4 w-4 shrink-0 text-emerald-400" />
+                <span className="truncate text-sm font-semibold text-zinc-100">{t.name}</span>
+                <span className="tnum ml-auto shrink-0 font-mono text-[11px] text-zinc-500">
+                  {t.done}/{t.total} SQL
+                </span>
+              </div>
+              <p className="mt-2 text-[12px] leading-relaxed text-zinc-500">{companyFlavor(t.name)}</p>
+              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-zinc-800" aria-hidden>
+                <div className="h-full rounded-full bg-emerald-400/80 transition-all duration-500" style={{ width: `${pct}%` }} />
+              </div>
+              <div className="mt-2 flex items-center gap-3 font-mono text-[10px] text-zinc-600">
+                <span>{t.mix.easy} easy</span>
+                <span>{t.mix.medium} med</span>
+                <span>{t.mix.hard} hard</span>
+                {pct === 100 && t.total > 0 && (
+                  <span className="ml-auto rounded-full bg-emerald-400/10 px-2 py-0.5 font-medium text-emerald-300">cleared</span>
+                )}
+              </div>
+            </button>
+          );
+        })}
+      </div>
       <Panel pad={4}>
         <div className="flex items-center gap-2">
           <Building2 className="h-5 w-5 text-emerald-400" />
@@ -909,6 +966,119 @@ function CompaniesIndex({ onPick, solvedOf }: { onPick: (company: string) => voi
   );
 }
 
+/* Company track — one employer's SQL pool as an ordered path              */
+/* ------------------------------------------------------------------ */
+
+function CompanyTrack({
+  name,
+  solvedOf,
+  onBack,
+  onBrowse,
+  onOpen,
+}: {
+  name: string;
+  solvedOf: Set<string>;
+  onBack: () => void;
+  onBrowse: (company: string) => void;
+  onOpen: (slug: string) => void;
+}) {
+  const problems = companySqlTrack(name);
+  const done = problems.filter((p) => solvedOf.has(p.slug)).length;
+  const pct = problems.length ? Math.round((done / problems.length) * 100) : 0;
+  const mix = trackMix(problems);
+  const inSet = lcByCompany(name).length;
+  return (
+    <div className="space-y-4">
+      <Panel pad={4}>
+        <button
+          type="button"
+          onClick={onBack}
+          className={cn(
+            "inline-flex items-center gap-1 text-[11px] font-medium text-zinc-500 transition-colors hover:text-emerald-300",
+            FOCUS_RING,
+          )}
+        >
+          <ChevronLeft className="h-3.5 w-3.5" /> All companies
+        </button>
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <Building2 className="h-5 w-5 text-emerald-400" />
+          <h2 className="text-lg font-semibold text-zinc-100">{name} — SQL track</h2>
+          {pct === 100 && problems.length > 0 && (
+            <span className="rounded-full bg-emerald-400/10 px-2 py-0.5 text-[10px] font-medium text-emerald-300">cleared</span>
+          )}
+        </div>
+        <p className="mt-1 text-[13px] leading-relaxed text-zinc-500">{companyFlavor(name)}</p>
+        <div className="mt-3 flex items-center gap-3">
+          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-zinc-800" aria-hidden>
+            <div className="h-full rounded-full bg-emerald-400/80 transition-all duration-500" style={{ width: `${pct}%` }} />
+          </div>
+          <span className="tnum shrink-0 font-mono text-[11px] text-zinc-500">
+            {done}/{problems.length} solved · {pct}%
+          </span>
+        </div>
+        <div className="mt-2 flex flex-wrap items-center gap-3 font-mono text-[10px] text-zinc-600">
+          <span>{mix.easy} easy</span>
+          <span>{mix.medium} medium</span>
+          <span>{mix.hard} hard</span>
+          <span>· {inSet} tagged in set (incl. code labs)</span>
+        </div>
+      </Panel>
+      {problems.length === 0 ? (
+        <Panel pad={4}>
+          <p className="text-[13px] text-zinc-500">
+            No SQL problems tagged for {name} yet — the pool is community-sourced and this employer has not
+            surfaced enough public SQL reports. Try the Problems tab filter for their code-lab set.
+          </p>
+        </Panel>
+      ) : (
+        <div className="overflow-hidden rounded-xl border border-black/10 dark:border-white/10">
+          {problems.map((p, i) => {
+            const solved = solvedOf.has(p.slug);
+            return (
+              <button
+                key={p.slug}
+                type="button"
+                onClick={() => onOpen(p.slug)}
+                className={cn(
+                  "flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-emerald-400/[0.04]",
+                  FOCUS_RING,
+                  i > 0 && "border-t border-black/5 dark:border-white/5",
+                )}
+              >
+                <span className="tnum w-8 shrink-0 font-mono text-[11px] text-zinc-600">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <DiffDot d={p.difficulty} />
+                <span className="min-w-0 flex-1">
+                  <span className={cn("block truncate text-sm font-medium", solved ? "text-zinc-500" : "text-zinc-100")}>
+                    {p.title}
+                  </span>
+                  <span className="mt-0.5 block truncate text-[10px] text-zinc-500">{p.topics.slice(0, 2).join(" · ")}</span>
+                </span>
+                {solved && <Check className="h-3.5 w-3.5 shrink-0 text-emerald-400" />}
+                <span className="tnum hidden shrink-0 font-mono text-[10px] text-zinc-600 sm:block">#{p.num}</span>
+                <ChevronRight className="h-3.5 w-3.5 shrink-0 text-zinc-600" />
+              </button>
+            );
+          })}
+        </div>
+      )}
+      <div className="flex justify-center pb-2">
+        <button
+          type="button"
+          onClick={() => onBrowse(name)}
+          className={cn(
+            "inline-flex items-center gap-1.5 rounded-md border border-black/10 px-3 py-1.5 text-[11px] font-medium text-zinc-400 transition-colors hover:border-emerald-400/40 hover:text-emerald-300 dark:border-white/10",
+            FOCUS_RING,
+          )}
+        >
+          Browse all {inSet} in set (incl. code labs) <ChevronRight className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 /* ------------------------------------------------------------------ */
 /* Main view                                                           */
 /* ------------------------------------------------------------------ */
@@ -922,6 +1092,7 @@ export function LeetCodeView({ initialTopic, initialSlug }: { initialTopic?: str
   const [topic, setTopic] = useState<string>(initialTopic ?? "All");
   const [diff, setDiff] = useState<Diff>("All");
   const [company, setCompany] = useState<string>("All");
+  const [trackCo, setTrackCo] = useState<string | null>(null);
   const [deepOnly, setDeepOnly] = useState(false);
   const [missesOnly, setMissesOnly] = useState(false);
   const [q, setQ] = useState("");
@@ -1083,13 +1254,20 @@ export function LeetCodeView({ initialTopic, initialSlug }: { initialTopic?: str
           </Panel>
 
           {tab === "companies" ? (
-            <CompaniesIndex
-              solvedOf={solvedSlugs}
-              onPick={(c) => {
-                setCompany(c);
-                setTab("problems");
-              }}
-            />
+            trackCo ? (
+              <CompanyTrack
+                name={trackCo}
+                solvedOf={solvedSlugs}
+                onBack={() => setTrackCo(null)}
+                onBrowse={(c) => {
+                  setCompany(c);
+                  setTab("problems");
+                }}
+                onOpen={(slug) => setSel(slug)}
+              />
+            ) : (
+              <CompaniesIndex solvedOf={solvedSlugs} onPick={(c) => setTrackCo(c)} />
+            )
           ) : tab === "paths" ? (
             <LcPaths onOpen={(slug) => setSel(slug)} />
           ) : tab === "contest" ? (
