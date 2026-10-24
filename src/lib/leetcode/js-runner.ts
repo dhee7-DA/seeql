@@ -34,7 +34,10 @@ const TIMEOUT_MS = 3000;
 
 /* The worker source. Deliberately NO template literals inside — this whole
  * blob is itself a template literal on the main thread. */
-const WORKER_SRC = String.raw`
+/** Exported for offline probes (scripts/lc-js-probe.ts) — the exact source
+ *  the browser Blob worker evaluates, so offline verification exercises the
+ *  real harness, not a re-implementation. */
+export const WORKER_SRC = String.raw`
 "use strict";
 
 class ListNode {
@@ -174,7 +177,7 @@ self.onmessage = function (event) {
 
   var scope;
   try {
-    var codecPart = spec.wrap === "codec"
+    var codecPart = spec.wrap === "codec" || spec.wrap === "treeCodec"
       ? ", encode: (typeof encode === 'function' && encode !== self.encode) ? encode : (typeof encFn !== 'undefined' ? encFn : undefined)" +
         ", decode: (typeof decode === 'function' && decode !== self.decode) ? decode : (typeof decFn !== 'undefined' ? decFn : undefined)"
       : "";
@@ -188,11 +191,11 @@ self.onmessage = function (event) {
   }
 
   var userFn = scope.F;
-  if (typeof userFn !== "function" && spec.wrap !== "codec") {
+  if (typeof userFn !== "function" && spec.wrap !== "codec" && spec.wrap !== "treeCodec") {
     self.postMessage({ ok: false, passed: 0, total: spec.cases.length, error: "Define a function named " + spec.fn + " (function " + spec.fn + "(...) { ... }).", results: [] });
     return;
   }
-  if (spec.wrap === "codec" && (typeof scope.encode !== "function" || typeof scope.decode !== "function")) {
+  if ((spec.wrap === "codec" || spec.wrap === "treeCodec") && (typeof scope.encode !== "function" || typeof scope.decode !== "function")) {
     self.postMessage({ ok: false, passed: 0, total: spec.cases.length, error: "Codec problems need both encode(strs) and decode(s) defined.", results: [] });
     return;
   }
@@ -214,11 +217,18 @@ self.onmessage = function (event) {
         case "listnodeCycle":
           out = userFn(toChainCycle(args[0], args[1]));
           break;
-        case "listnodeIdx":
+        case "listnodeIdx": {
+          // fn RECEIVES the chain and RETURNS the (possibly null) new head —
+          // an empty-list result must win over the stale chain reference
+          var chainIdx = toChain(args[0]);
+          var retIdx = userFn(chainIdx, args[1]);
+          out = toArray(retIdx instanceof ListNode ? retIdx : null);
+          break;
+        }
         case "listnodeInPlace": {
           var chain = toChain(args[0]);
-          var ret = spec.wrap === "listnodeIdx" ? userFn(chain, args[1]) : userFn(chain);
-          out = toArray(ret instanceof ListNode ? ret : chain);
+          userFn(chain);
+          out = toArray(chain);
           break;
         }
         case "listnodeArgs": {

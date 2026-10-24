@@ -61,8 +61,9 @@ async function execSql(slug: string, sql: string): Promise<ExecResult | null> {
 
 /** Build the candidates for a slug; null when the drill can't be built.
  *  4-candidate drills for the 3-distractor pool, 3-candidate for the rest.
- *  Calls run SEQUENTIALLY — the lc-sql sandbox reshapes shared tables per
- *  request, so parallel calls can collide (rename/lock) and return errors. */
+ *  Calls run in PARALLEL — the lc-sql route gives each request its own
+ *  :memory: sandbox, so nothing collides. Distractor specs were verified
+ *  distinct at build time; the dedup here is belt-and-suspenders. */
 async function buildDrill(slug: string): Promise<Candidate[] | null> {
   const dive = lcSqlDive(slug);
   if (!dive) return null;
@@ -70,19 +71,20 @@ async function buildDrill(slug: string): Promise<Candidate[] | null> {
   const truthSql = stripComments(dive.code);
   const truth = await execSql(slug, truthSql);
   if (!truth) return null;
+  const specSqls = fuDistractorSpecs(dive)
+    .map((spec) => ({ spec, sql: applyFuSpec(dive, spec) }))
+    .filter((s): s is { spec: FuSpec; sql: string } => s.sql !== null);
+  const specRes = await Promise.all(specSqls.map((s) => execSql(slug, s.sql)));
   const seen = new Set<string>([JSON.stringify(truth.rows)]);
   const out: Candidate[] = [{ spec: null, sql: truthSql, res: truth, label: "the query's real output" }];
-  for (const spec of fuDistractorSpecs(dive)) {
-    if (out.length >= 4) break;
-    const sql = applyFuSpec(dive, spec);
-    if (!sql) continue;
-    const res = await execSql(slug, sql);
+  for (let i = 0; i < specSqls.length && out.length < 4; i++) {
+    const res = specRes[i];
     if (!res) continue;
     const key = JSON.stringify(res.rows);
     if (seen.has(key)) continue;
     if (res.rows.length < 1 || res.rows.length > 60) continue;
     seen.add(key);
-    out.push({ spec, sql, res, label: fuDistractorLabel(spec) });
+    out.push({ spec: specSqls[i].spec, sql: specSqls[i].sql, res, label: fuDistractorLabel(specSqls[i].spec) });
   }
   if (out.length < target) return null;
   // Fisher–Yates so the truth isn't always first
@@ -111,13 +113,14 @@ function DrillCard({ slug, onDone, onNext }: { slug: string; onDone: (right: boo
   }, [slug]);
 
   // the source tables, straight from the sandbox — the drill's open book
-  // (sequential: the lc-sql sandbox is single-writer per moment)
+  // (parallel: each lc-sql request gets its own :memory: sandbox now)
   useEffect(() => {
     let alive = true;
     const tables = [...dive.schema.ddl.matchAll(/CREATE TABLE (?:IF NOT EXISTS )?["']?(\w+)["']?/gi)].map((m) => m[1]);
     void (async () => {
-      const rows: Array<{ name: string; res: ExecResult | null }> = [];
-      for (const name of tables) rows.push({ name, res: await execSql(slug, `SELECT * FROM ${name}`) });
+      const rows = await Promise.all(
+        tables.map(async (name) => ({ name, res: await execSql(slug, `SELECT * FROM ${name}`) })),
+      );
       if (alive) setTableData(rows);
     })();
     return () => {

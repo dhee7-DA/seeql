@@ -100,7 +100,7 @@ export const TOOLS: ToolDef[] = [
   { kind: "blitz", icon: Zap, label: "Blitz mode", note: "90 seconds, all engines", short: "Blitz", section: "toolbox" },
   { kind: "cases", icon: FileStack, label: "Case files", note: "rebuild real stakeholder queries", short: "Cases", section: "toolbox" },
   { kind: "sandbox", icon: FileUp, label: "CSV sandbox", note: "bring your own data", short: "CSV", section: "toolbox" },
-  { kind: "predict", icon: Eye, label: "Predict the output", note: "freeze the grid before it runs", short: "Predict", section: "lab" },
+  { kind: "predict", icon: Eye, label: "Predict the grid", note: "freeze the grid before it runs", short: "Predict", section: "lab" },
   { kind: "clinic", icon: Bug, label: "Error clinic", note: "diagnose real bugs, loud & silent", short: "Clinic", section: "lab" },
   { kind: "golf", icon: Flag, label: "Query golf", note: "same rows, fewer strokes", short: "Golf", section: "lab" },
   { kind: "perf", icon: Gauge, label: "Performance lab", note: "SCAN vs SEARCH, index stings", short: "Perf", section: "lab" },

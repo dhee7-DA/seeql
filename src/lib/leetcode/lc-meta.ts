@@ -106,6 +106,13 @@ export const CONTEST_COMPANIES: Array<{ name: string; count: number }> = LC_COMP
   (c) => c.count >= 12 && !/premium|hackerrank/i.test(c.name),
 );
 
+/** Companies surfaced in the Problems filter + the Company index. The
+ *  pseudo-tags are problem SOURCES, not interviewers — showing them as
+ *  filter options implied you could screen "by LeetCode Premium". */
+export const LC_FILTER_COMPANIES: Array<{ name: string; count: number }> = LC_COMPANIES.filter(
+  (c) => !/premium|hackerrank/i.test(c.name),
+);
+
 /** Deterministic PRNG (mulberry32) — seeded shuffles so a given run id
  *  always re-derives the same problem set. */
 export function seededRandom(seed: number): () => number {

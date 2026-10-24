@@ -166,7 +166,7 @@ export function PredictView() {
       <p className="flex items-center gap-2 font-mono text-xs text-zinc-500">
         <Eye className="h-3.5 w-3.5" /> {PREDICTS.length} CHALLENGES · MENTAL EXECUTION
       </p>
-      <h1 className="mt-2 flex items-center gap-3 font-display text-3xl font-semibold tracking-[-0.02em] text-zinc-50"><Icon3D name="eye" size={40} />Predict the output</h1>
+      <h1 className="mt-2 flex items-center gap-3 font-display text-3xl font-semibold tracking-[-0.02em] text-zinc-50"><Icon3D name="eye" size={40} />Predict the grid</h1>
       <p className="mt-3 text-[15px] leading-7 text-zinc-400">
         Read the query, freeze the grid you expect — before the engine runs. The wrong options are the mistakes
         everyone actually makes: the = NULL myth, fanout counting, forgotten filters. Prediction first, run second:

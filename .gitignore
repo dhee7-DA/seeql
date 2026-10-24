@@ -75,3 +75,4 @@ qa-shots/
 
 # 3D icon pipeline intermediates (stills regenerate via scripts/gen-3d-icons.mjs)
 scripts/3dicon-ref/
+.lc-verify/

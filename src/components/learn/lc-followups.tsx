@@ -43,22 +43,24 @@ function FuCard({ p, dive, spec, idx }: { p: LcRef; dive: LcSqlDive; spec: FuSpe
     setBusy(true);
     setOutcome(null);
     try {
-      // sequential — the lc-sql sandbox reshapes shared tables per request,
-      // so parallel calls can collide and return spurious errors
-      const uRes = await fetch("/api/lc-sql", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug: dive.slug, sql }) });
+      // the lc-sql route now runs each request in its own :memory: sandbox,
+      // so user + model queries can go out in parallel safely
+      const [uRes, mRes] = await Promise.all([
+        fetch("/api/lc-sql", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug: dive.slug, sql }) }),
+        fetch("/api/lc-sql", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug: dive.slug, sql: derived.modelSql }) }),
+      ]);
       const u = (await uRes.json()) as ExecResult | { ok: false; error: string };
       if (!u.ok) {
         setOutcome({ status: "error", title: "Query error", detail: "error" in u ? u.error : "Query failed" });
         setResult(null);
         return;
       }
-      setResult(u);
-      const mRes = await fetch("/api/lc-sql", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug: dive.slug, sql: derived.modelSql }) });
       const m = (await mRes.json()) as ExecResult | { ok: false; error: string };
       if (!m.ok) {
         setOutcome({ status: "error", title: "Grader error", detail: "The follow-up's model query failed — report this one." });
         return;
       }
+      setResult(u);
       const oc = gradeSqlResult(u, { slug: dive.slug, columns: m.columns, rows: m.rows, order: derived.order });
       setOutcome(oc);
       if (oc.status === "pass" && awardXp(fuXpKey(dive.slug, idx), FU_XP)) {

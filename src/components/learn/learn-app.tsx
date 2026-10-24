@@ -1080,7 +1080,7 @@ export function LearnApp() {
                           );
                         })}
                         <button
-                          onClick={() => setView({ kind: "lc", topic: "SQL" })}
+                          onClick={() => setView({ kind: "lc" })}
                           className={cn(
                             "relative flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left transition-colors",
                             view.kind === "lc" ? "bg-emerald-400/[0.09]" : "hover:bg-zinc-900",

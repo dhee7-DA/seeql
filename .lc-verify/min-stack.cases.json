@@ -1,1 +1,0 @@
-[{"args":[[["push",-2],["push",0],["push",-3],["getMin"],["pop"],["top"],["getMin"]]]},{"args":[[["push",3],["push",3],["getMin"],["pop"],["getMin"]]]}]

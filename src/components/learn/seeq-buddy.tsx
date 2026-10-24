@@ -55,7 +55,7 @@ const TIPS: string[] = [
   "JOIN order does not matter to the planner — but clear aliases matter to your future self.",
   "Window functions keep every row while adding aggregates. The drills cover them from six angles.",
   "The Data explorer is a sandbox. Breaking things there is free — and honestly encouraged.",
-  "Finished a lesson? Predict the output next: freeze the grid before it runs.",
+  "Finished a lesson? Predict the grid next: freeze the grid before it runs.",
   "Slow query in the Performance lab? Add the index it suggests and watch SCAN collapse into SEARCH.",
   "The SeeQ playground lives in the top header — dress me in any shape, colour or mood.",
 ];

@@ -9,6 +9,27 @@ import { SLIDING } from "./sliding";
 import { STACK } from "./stack";
 import { BINARY_SEARCH } from "./binary-search";
 import { LINKED_LIST } from "./linked-list";
+import { ARRAYS_2 } from "./arrays-2";
+import { TWO_POINTERS_2 } from "./two-pointers-2";
+import { STACK_2 } from "./stack-2";
+import { BINARY_SEARCH_2 } from "./binary-search-2";
+import { LINKED_LIST_2 } from "./linked-list-2";
+import { TREES } from "./trees";
+import { TREES_2 } from "./trees-2";
+import { TRIES } from "./tries";
+import { GRAPHS } from "./graphs";
+import { GRAPHS_2 } from "./graphs-2";
+import { ADVANCED_GRAPHS } from "./advanced-graphs";
+import { BACKTRACKING } from "./backtracking";
+import { DP_1D } from "./dp-1d";
+import { DP_2D } from "./dp-2d";
+import { GREEDY } from "./greedy";
+import { HEAP } from "./heap";
+import { INTERVALS } from "./intervals";
+import { MATH_GEOMETRY } from "./math-geometry";
+import { BIT_MANIP } from "./bit-manip";
+import { STRINGS } from "./strings";
+import { MISC } from "./misc";
 import { SQL_SELECT } from "./sql-select";
 import { SQL_JOINS } from "./sql-joins";
 import { SQL_AGG } from "./sql-agg";
@@ -105,6 +126,27 @@ export const LC_CONTENT: LcDeepDive[] = [
   ...STACK,
   ...BINARY_SEARCH,
   ...LINKED_LIST,
+  ...ARRAYS_2,
+  ...TWO_POINTERS_2,
+  ...STACK_2,
+  ...BINARY_SEARCH_2,
+  ...LINKED_LIST_2,
+  ...TREES,
+  ...TREES_2,
+  ...TRIES,
+  ...GRAPHS,
+  ...GRAPHS_2,
+  ...ADVANCED_GRAPHS,
+  ...BACKTRACKING,
+  ...DP_1D,
+  ...DP_2D,
+  ...GREEDY,
+  ...HEAP,
+  ...INTERVALS,
+  ...MATH_GEOMETRY,
+  ...BIT_MANIP,
+  ...STRINGS,
+  ...MISC,
 ];
 
 /** SQL deep-dives — the SQL 50, the expansion batches and the premium tier,

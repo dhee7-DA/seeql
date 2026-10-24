@@ -35,7 +35,6 @@ import {
 } from "lucide-react";
 import {
   LC_ALL,
-  LC_COMPANIES,
   LC_DEEP_SLUGS,
   LC_TOPICS,
   lcByCompany,
@@ -58,6 +57,7 @@ import {
 import {
   DIFF_SPLIT,
   HONOR_XP,
+  LC_FILTER_COMPANIES,
   LC_PYTHON_TOTAL,
   LC_SECTION_COUNT,
   LC_SQL_TOTAL,
@@ -871,7 +871,7 @@ function CompaniesIndex({ onPick, solvedOf }: { onPick: (company: string) => voi
         </p>
       </Panel>
       <div className="overflow-hidden rounded-xl border border-black/10 dark:border-white/10">
-        {LC_COMPANIES.map((c, i) => {
+        {LC_FILTER_COMPANIES.map((c, i) => {
           const problems = lcByCompany(c.name);
           const done = problems.filter((p) => solvedOf.has(p.slug)).length;
           return (
@@ -1118,7 +1118,7 @@ export function LeetCodeView({ initialTopic, initialSlug }: { initialTopic?: str
                     className="shrink-0 rounded-md border border-zinc-800 bg-zinc-950 px-2 py-2 text-xs text-zinc-300 focus:outline-none focus:ring-1 focus:ring-emerald-400/60"
                   >
                     <option value="All">All companies</option>
-                    {LC_COMPANIES.map((c) => (
+                    {LC_FILTER_COMPANIES.map((c) => (
                       <option key={c.name} value={c.name}>
                         {c.name} ({c.count})
                       </option>
