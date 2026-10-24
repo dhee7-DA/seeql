@@ -54,6 +54,7 @@ import { SeeqView } from "./seeq-view";
 import { GauntletView } from "./gauntlet-view";
 import { KeywordPractice } from "./keyword-practice";
 import { LeetCodeView } from "./leetcode-view";
+import { ReadinessDashboard } from "./readiness-dashboard";
 import { CompaniesView } from "./companies-view";
 import { MockHq } from "./mock-hq";
 import { gauntletFor } from "@/lib/curriculum/gauntlet";
@@ -77,6 +78,7 @@ import { lcBadgeStats } from "@/lib/leetcode/lc-meta";
 
 export type View =
   | { kind: "overview" }
+  | { kind: "readiness" }
   | { kind: "roadmap" }
   | { kind: "seeq" }
   | { kind: "daily" }
@@ -749,6 +751,8 @@ function ViewBody({
       return <ExplainBack />;
     case "mastery":
       return <MasteryMap onOpenLesson={openLesson} onOpenLc={openLc} />;
+    case "readiness":
+      return <ReadinessDashboard onOpenLc={() => openLc()} onOpenLesson={openLesson} />;
     case "sheet":
       return <CheatSheet />;
     case "mentor":
