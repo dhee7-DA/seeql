@@ -1,0 +1,373 @@
+
+## accounts roster
+  {"account_id":1,"holder_name":"Marcus Chen","account_type":"checking","branch":"NYC","opened_date":"2025-11-12","tier":"premium"}
+  {"account_id":2,"holder_name":"Dana Okafor","account_type":"savings","branch":"NYC","opened_date":"2025-11-28","tier":"private"}
+  {"account_id":3,"holder_name":"Viktor Lindqvist","account_type":"checking","branch":"London","opened_date":"2025-12-05","tier":"premium"}
+  {"account_id":4,"holder_name":"Lucia Ferrari","account_type":"credit","branch":"London","opened_date":"2025-12-19","tier":"premium"}
+  {"account_id":5,"holder_name":"Amara Nwosu","account_type":"checking","branch":"Singapore","opened_date":"2026-01-08","tier":"premium"}
+  {"account_id":6,"holder_name":"Omar Haddad","account_type":"savings","branch":"Dubai","opened_date":"2026-01-15","tier":"standard"}
+  {"account_id":7,"holder_name":"Grace Tan","account_type":"checking","branch":"Singapore","opened_date":"2026-01-22","tier":"premium"}
+  {"account_id":8,"holder_name":"Noah Feldman","account_type":"checking","branch":"NYC","opened_date":"2026-02-02","tier":"standard"}
+  {"account_id":9,"holder_name":"Elena Volkova","account_type":"savings","branch":"London","opened_date":"2026-02-10","tier":"standard"}
+  {"account_id":10,"holder_name":"Jack Mulrooney","account_type":"credit","branch":"NYC","opened_date":"2026-02-18","tier":"premium"}
+  {"account_id":11,"holder_name":"Ines Cardoso","account_type":"savings","branch":"Singapore","opened_date":"2026-03-06","tier":"standard"}
+  {"account_id":12,"holder_name":"Fatima Al-Rashid","account_type":"checking","branch":"Dubai","opened_date":"2026-03-20","tier":"standard"}
+
+## per-account POSTED debit vol + fee + txn count + credits
+  {"account_id":2,"debit_vol":1250000,"fee":0,"credit_vol":120500,"rows_":3}
+  {"account_id":1,"debit_vol":461700,"fee":7572.9,"credit_vol":103800,"rows_":7}
+  {"account_id":4,"debit_vol":214700,"fee":3541.8,"credit_vol":9800,"rows_":4}
+  {"account_id":7,"debit_vol":101200,"fee":1659.4,"credit_vol":0,"rows_":8}
+  {"account_id":5,"debit_vol":101200,"fee":1659.4,"credit_vol":0,"rows_":8}
+  {"account_id":10,"debit_vol":81900,"fee":1598.2,"credit_vol":45900,"rows_":3}
+  {"account_id":6,"debit_vol":77900,"fee":1602.5,"credit_vol":0,"rows_":2}
+  {"account_id":9,"debit_vol":19500,"fee":197.3,"credit_vol":0,"rows_":3}
+  {"account_id":8,"debit_vol":19500,"fee":197.3,"credit_vol":2983000,"rows_":6}
+  {"account_id":3,"debit_vol":13600,"fee":81.6,"credit_vol":0,"rows_":2}
+  {"account_id":12,"debit_vol":12900,"fee":193.5,"credit_vol":0,"rows_":1}
+
+## posted debit vol ranked RANK/DENSE
+  {"account_id":2,"vol":1250000,"r":1,"dr":1}
+  {"account_id":1,"vol":461700,"r":2,"dr":2}
+  {"account_id":4,"vol":214700,"r":3,"dr":3}
+  {"account_id":5,"vol":101200,"r":4,"dr":4}
+  {"account_id":7,"vol":101200,"r":4,"dr":4}
+  {"account_id":10,"vol":81900,"r":6,"dr":5}
+  {"account_id":6,"vol":77900,"r":7,"dr":6}
+  {"account_id":8,"vol":19500,"r":8,"dr":7}
+  {"account_id":9,"vol":19500,"r":8,"dr":7}
+  {"account_id":3,"vol":13600,"r":10,"dr":8}
+  {"account_id":12,"vol":12900,"r":11,"dr":9}
+
+## per-account recency/frequency/monetary (posted debits, vs 2026-07-01)
+  {"account_id":2,"freq":2,"last_txn":"2026-06-15","recency_days":16,"monetary":1250000}
+  {"account_id":1,"freq":5,"last_txn":"2026-04-22","recency_days":70,"monetary":461700}
+  {"account_id":4,"freq":3,"last_txn":"2026-06-21","recency_days":10,"monetary":214700}
+  {"account_id":7,"freq":8,"last_txn":"2026-06-02","recency_days":29,"monetary":101200}
+  {"account_id":5,"freq":8,"last_txn":"2026-05-23","recency_days":39,"monetary":101200}
+  {"account_id":10,"freq":2,"last_txn":"2026-04-18","recency_days":74,"monetary":81900}
+  {"account_id":6,"freq":2,"last_txn":"2026-05-27","recency_days":35,"monetary":77900}
+  {"account_id":9,"freq":3,"last_txn":"2026-05-04","recency_days":58,"monetary":19500}
+  {"account_id":8,"freq":3,"last_txn":"2026-03-15","recency_days":108,"monetary":19500}
+  {"account_id":3,"freq":2,"last_txn":"2026-01-19","recency_days":163,"monetary":13600}
+  {"account_id":12,"freq":1,"last_txn":"2026-01-30","recency_days":152,"monetary":12900}
+
+## daily posted debit (all)
+  {"txn_date":"2026-01-09","vol":12900,"n":1}
+  {"txn_date":"2026-01-15","vol":19900,"n":1}
+  {"txn_date":"2026-01-19","vol":13600,"n":2}
+  {"txn_date":"2026-01-27","vol":24900,"n":1}
+  {"txn_date":"2026-01-30","vol":12900,"n":1}
+  {"txn_date":"2026-02-06","vol":12900,"n":1}
+  {"txn_date":"2026-02-11","vol":12900,"n":1}
+  {"txn_date":"2026-02-14","vol":62000,"n":1}
+  {"txn_date":"2026-02-21","vol":8900,"n":1}
+  {"txn_date":"2026-02-25","vol":45900,"n":1}
+  {"txn_date":"2026-02-26","vol":8900,"n":1}
+  {"txn_date":"2026-02-27","vol":159000,"n":1}
+  {"txn_date":"2026-03-02","vol":12700,"n":2}
+  {"txn_date":"2026-03-05","vol":250000,"n":1}
+  {"txn_date":"2026-03-07","vol":15900,"n":1}
+  {"txn_date":"2026-03-09","vol":8500,"n":1}
+  {"txn_date":"2026-03-11","vol":249000,"n":1}
+  {"txn_date":"2026-03-14","vol":15900,"n":1}
+  {"txn_date":"2026-03-15","vol":6800,"n":1}
+  {"txn_date":"2026-03-20","vol":4900,"n":1}
+  {"txn_date":"2026-03-25","vol":4900,"n":1}
+  {"txn_date":"2026-03-28","vol":9800,"n":1}
+  {"txn_date":"2026-04-06","vol":4200,"n":1}
+  {"txn_date":"2026-04-08","vol":24900,"n":1}
+  {"txn_date":"2026-04-12","vol":24900,"n":1}
+  {"txn_date":"2026-04-18","vol":62000,"n":1}
+  {"txn_date":"2026-04-22","vol":129000,"n":1}
+  {"txn_date":"2026-04-27","vol":7900,"n":1}
+  {"txn_date":"2026-04-30","vol":7900,"n":1}
+  {"txn_date":"2026-05-04","vol":6800,"n":1}
+  {"txn_date":"2026-05-09","vol":21900,"n":1}
+  {"txn_date":"2026-05-18","vol":21900,"n":1}
+  {"txn_date":"2026-05-23","vol":3900,"n":1}
+  {"txn_date":"2026-05-27","vol":15900,"n":1}
+  {"txn_date":"2026-06-02","vol":3900,"n":1}
+  {"txn_date":"2026-06-15","vol":1000000,"n":1}
+  {"txn_date":"2026-06-21","vol":45900,"n":1}
+
+## daily volumes DENSE_RANKED top 12
+  {"txn_date":"2026-06-15","vol":1000000,"dr":1}
+  {"txn_date":"2026-03-05","vol":250000,"dr":2}
+  {"txn_date":"2026-03-11","vol":249000,"dr":3}
+  {"txn_date":"2026-02-27","vol":159000,"dr":4}
+  {"txn_date":"2026-04-22","vol":129000,"dr":5}
+  {"txn_date":"2026-02-14","vol":62000,"dr":6}
+  {"txn_date":"2026-04-18","vol":62000,"dr":6}
+  {"txn_date":"2026-02-25","vol":45900,"dr":7}
+  {"txn_date":"2026-06-21","vol":45900,"dr":7}
+  {"txn_date":"2026-01-27","vol":24900,"dr":8}
+  {"txn_date":"2026-04-08","vol":24900,"dr":8}
+  {"txn_date":"2026-04-12","vol":24900,"dr":8}
+  {"txn_date":"2026-05-09","vol":21900,"dr":9}
+  {"txn_date":"2026-05-18","vol":21900,"dr":9}
+
+## monthly posted debit + credit
+  {"m":"2026-01","debits":84200,"credits":0}
+  {"m":"2026-02","debits":310500,"credits":0}
+  {"m":"2026-03","debits":578400,"credits":0}
+  {"m":"2026-04","debits":260800,"credits":120500}
+  {"m":"2026-05","debits":70400,"credits":3142500}
+  {"m":"2026-06","debits":1049800,"credits":0}
+
+## per-merchant posted debit vol + fee + txns
+  {"merchant_id":13,"name":"ShieldLine Insurance","category":"Insurance","txns":1,"vol":1000000,"fee":0}
+  {"merchant_id":9,"name":"Voltix Electronics","category":"Electronics","txns":5,"vol":344600,"fee":5455.8}
+  {"merchant_id":5,"name":"Bella Cucina","category":"Dining","txns":3,"vol":179100,"fee":2686.5}
+  {"merchant_id":10,"name":"GadgetHub","category":"Electronics","txns":3,"vol":158800,"fee":2858.4}
+  {"merchant_id":8,"name":"Hotel Meridian","category":"Travel","txns":3,"vol":148900,"fee":3151.8}
+  {"merchant_id":7,"name":"SkyLine Airways","category":"Travel","txns":3,"vol":95700,"fee":2105.4}
+  {"merchant_id":1,"name":"FreshCart Markets","category":"Grocery","txns":4,"vol":43200,"fee":475.2}
+  {"merchant_id":4,"name":"Umami House","category":"Dining","txns":4,"vol":40900,"fee":613.5}
+  {"merchant_id":11,"name":"CityPower Utility","category":"Utilities","txns":4,"vol":24300,"fee":145.8}
+  {"merchant_id":3,"name":"Daily Pantry","category":"Grocery","txns":2,"vol":21800,"fee":291.4}
+  {"merchant_id":2,"name":"GreenLine Grocers","category":"Grocery","txns":2,"vol":21400,"fee":235.4}
+  {"merchant_id":6,"name":"Taco Ring","category":"Dining","txns":2,"vol":14700,"fee":220.5}
+  {"merchant_id":12,"name":"AquaFlow Water","category":"Utilities","txns":2,"vol":10700,"fee":64.2}
+  {"merchant_id":14,"name":"Solstice Cruises","category":"Travel","txns":0,"vol":null,"fee":null}
+
+## fee revenue by category (posted debits)
+  {"category":"Electronics","fee":8314.2,"txns":8}
+  {"category":"Travel","fee":5257.2,"txns":6}
+  {"category":"Dining","fee":3520.5,"txns":9}
+  {"category":"Grocery","fee":1002,"txns":8}
+  {"category":"Utilities","fee":210,"txns":6}
+  {"category":"Insurance","fee":0,"txns":1}
+
+## per-account x category spend (posted debits)
+  {"account_id":1,"category":"Electronics","vol":423900}
+  {"account_id":1,"category":"Travel","vol":24900}
+  {"account_id":1,"category":"Grocery","vol":12900}
+  {"account_id":2,"category":"Insurance","vol":1000000}
+  {"account_id":3,"category":"Utilities","vol":13600}
+  {"account_id":4,"category":"Dining","vol":168800}
+  {"account_id":4,"category":"Travel","vol":45900}
+  {"account_id":5,"category":"Electronics","vol":29800}
+  {"account_id":5,"category":"Travel","vol":24900}
+  {"account_id":5,"category":"Grocery","vol":21800}
+  {"account_id":5,"category":"Dining","vol":20800}
+  {"account_id":5,"category":"Utilities","vol":3900}
+  {"account_id":6,"category":"Travel","vol":62000}
+  {"account_id":6,"category":"Dining","vol":15900}
+  {"account_id":7,"category":"Electronics","vol":29800}
+  {"account_id":7,"category":"Travel","vol":24900}
+  {"account_id":7,"category":"Grocery","vol":21800}
+  {"account_id":7,"category":"Dining","vol":20800}
+  {"account_id":7,"category":"Utilities","vol":3900}
+  {"account_id":8,"category":"Grocery","vol":8500}
+  {"account_id":8,"category":"Utilities","vol":6800}
+  {"account_id":8,"category":"Dining","vol":4200}
+  {"account_id":9,"category":"Grocery","vol":8500}
+  {"account_id":9,"category":"Utilities","vol":6800}
+  {"account_id":9,"category":"Dining","vol":4200}
+  {"account_id":10,"category":"Travel","vol":62000}
+  {"account_id":10,"category":"Electronics","vol":19900}
+  {"account_id":12,"category":"Grocery","vol":12900}
+
+## channel census
+  {"channel":"card","n":40,"debit_vol":1104100}
+  {"channel":"atm","n":3,"debit_vol":0}
+  {"channel":"wire","n":2,"debit_vol":1250000}
+  {"channel":"ach","n":2,"debit_vol":0}
+
+## rewards rows detail
+  {"txn_id":4,"account_id":1,"amount_cents":249000,"reward_cents":2500}
+  {"txn_id":16,"account_id":4,"amount_cents":159000,"reward_cents":1600}
+  {"txn_id":5,"account_id":1,"amount_cents":129000,"reward_cents":1290}
+  {"txn_id":3,"account_id":1,"amount_cents":45900,"reward_cents":900}
+  {"txn_id":20,"account_id":4,"amount_cents":45900,"reward_cents":900}
+  {"txn_id":53,"account_id":10,"amount_cents":62000,"reward_cents":620}
+  {"txn_id":2,"account_id":1,"amount_cents":24900,"reward_cents":500}
+  {"txn_id":25,"account_id":5,"amount_cents":24900,"reward_cents":500}
+  {"txn_id":36,"account_id":7,"amount_cents":24900,"reward_cents":500}
+  {"txn_id":50,"account_id":10,"amount_cents":19900,"reward_cents":400}
+  {"txn_id":31,"account_id":6,"amount_cents":15900,"reward_cents":300}
+
+## per-account reward totals (posted)
+  {"account_id":1,"n":4,"total_reward":5190}
+  {"account_id":4,"n":2,"total_reward":2500}
+  {"account_id":10,"n":2,"total_reward":1020}
+  {"account_id":7,"n":1,"total_reward":500}
+  {"account_id":5,"n":1,"total_reward":500}
+  {"account_id":6,"n":1,"total_reward":300}
+
+## auth results per account
+  {"account_id":1,"approved":5,"declined":1}
+  {"account_id":2,"approved":4,"declined":0}
+  {"account_id":3,"approved":1,"declined":0}
+  {"account_id":4,"approved":2,"declined":4}
+  {"account_id":5,"approved":4,"declined":0}
+  {"account_id":6,"approved":0,"declined":1}
+  {"account_id":7,"approved":4,"declined":0}
+  {"account_id":8,"approved":1,"declined":1}
+  {"account_id":9,"approved":1,"declined":1}
+  {"account_id":10,"approved":3,"declined":1}
+  {"account_id":12,"approved":1,"declined":1}
+
+## decline reasons
+  {"decline_reason":"limit-exceeded","n":4,"accounts":"4,4,4,4"}
+  {"decline_reason":"insufficient-funds","n":4,"accounts":"8,12,6,9"}
+  {"decline_reason":"fraud-suspect","n":2,"accounts":"1,10"}
+
+## auths per account detail
+  {"auth_id":1,"account_id":1,"auth_ts":1784538000,"merchant_id":1,"amount_cents":3200,"result":"approved","decline_reason":null}
+  {"auth_id":2,"account_id":1,"auth_ts":1784538090,"merchant_id":4,"amount_cents":5400,"result":"approved","decline_reason":null}
+  {"auth_id":3,"account_id":1,"auth_ts":1784538300,"merchant_id":3,"amount_cents":8900,"result":"approved","decline_reason":null}
+  {"auth_id":4,"account_id":1,"auth_ts":1784541000,"merchant_id":9,"amount_cents":199000,"result":"declined","decline_reason":"fraud-suspect"}
+  {"auth_id":5,"account_id":3,"auth_ts":1784546100,"merchant_id":11,"amount_cents":6800,"result":"approved","decline_reason":null}
+  {"auth_id":6,"account_id":2,"auth_ts":1784541600,"merchant_id":2,"amount_cents":8900,"result":"approved","decline_reason":null}
+  {"auth_id":7,"account_id":5,"auth_ts":1784543400,"merchant_id":1,"amount_cents":12900,"result":"approved","decline_reason":null}
+  {"auth_id":8,"account_id":7,"auth_ts":1784539500,"merchant_id":2,"amount_cents":12900,"result":"approved","decline_reason":null}
+  {"auth_id":9,"account_id":9,"auth_ts":1784545200,"merchant_id":5,"amount_cents":4200,"result":"approved","decline_reason":null}
+  {"auth_id":10,"account_id":10,"auth_ts":1784560600,"merchant_id":10,"amount_cents":159000,"result":"declined","decline_reason":"fraud-suspect"}
+  {"auth_id":11,"account_id":12,"auth_ts":1784561400,"merchant_id":3,"amount_cents":12900,"result":"approved","decline_reason":null}
+  {"auth_id":12,"account_id":4,"auth_ts":1784635200,"merchant_id":5,"amount_cents":189000,"result":"declined","decline_reason":"limit-exceeded"}
+  {"auth_id":13,"account_id":4,"auth_ts":1784635290,"merchant_id":5,"amount_cents":189000,"result":"declined","decline_reason":"limit-exceeded"}
+  {"auth_id":14,"account_id":4,"auth_ts":1784635380,"merchant_id":5,"amount_cents":189000,"result":"declined","decline_reason":"limit-exceeded"}
+  {"auth_id":15,"account_id":4,"auth_ts":1784635470,"merchant_id":5,"amount_cents":189000,"result":"declined","decline_reason":"limit-exceeded"}
+  {"auth_id":16,"account_id":4,"auth_ts":1784635600,"merchant_id":6,"amount_cents":12900,"result":"approved","decline_reason":null}
+  {"auth_id":17,"account_id":2,"auth_ts":1784643300,"merchant_id":3,"amount_cents":12900,"result":"approved","decline_reason":null}
+  {"auth_id":18,"account_id":5,"auth_ts":1784628900,"merchant_id":6,"amount_cents":4900,"result":"approved","decline_reason":null}
+  {"auth_id":19,"account_id":7,"auth_ts":1784627000,"merchant_id":8,"amount_cents":24900,"result":"approved","decline_reason":null}
+  {"auth_id":20,"account_id":8,"auth_ts":1784634900,"merchant_id":9,"amount_cents":500000,"result":"declined","decline_reason":"insufficient-funds"}
+  {"auth_id":21,"account_id":10,"auth_ts":1784650900,"merchant_id":7,"amount_cents":45900,"result":"approved","decline_reason":null}
+  {"auth_id":22,"account_id":12,"auth_ts":1784643300,"merchant_id":6,"amount_cents":9900,"result":"declined","decline_reason":"insufficient-funds"}
+  {"auth_id":23,"account_id":1,"auth_ts":1784710200,"merchant_id":2,"amount_cents":4500,"result":"approved","decline_reason":null}
+  {"auth_id":24,"account_id":1,"auth_ts":1784710290,"merchant_id":1,"amount_cents":12900,"result":"approved","decline_reason":null}
+  {"auth_id":25,"account_id":6,"auth_ts":1784723100,"merchant_id":8,"amount_cents":45000,"result":"declined","decline_reason":"insufficient-funds"}
+  {"auth_id":26,"account_id":5,"auth_ts":1784715800,"merchant_id":9,"amount_cents":7900,"result":"approved","decline_reason":null}
+  {"auth_id":27,"account_id":7,"auth_ts":1784714000,"merchant_id":12,"amount_cents":3900,"result":"approved","decline_reason":null}
+  {"auth_id":28,"account_id":8,"auth_ts":1784712400,"merchant_id":1,"amount_cents":8500,"result":"approved","decline_reason":null}
+  {"auth_id":29,"account_id":9,"auth_ts":1784719300,"merchant_id":9,"amount_cents":19900,"result":"declined","decline_reason":"insufficient-funds"}
+  {"auth_id":30,"account_id":10,"auth_ts":1784730600,"merchant_id":9,"amount_cents":19900,"result":"approved","decline_reason":null}
+  {"auth_id":31,"account_id":2,"auth_ts":1784733400,"merchant_id":6,"amount_cents":2500,"result":"approved","decline_reason":null}
+  {"auth_id":32,"account_id":4,"auth_ts":1784802000,"merchant_id":7,"amount_cents":24900,"result":"approved","decline_reason":null}
+  {"auth_id":33,"account_id":2,"auth_ts":1784804800,"merchant_id":11,"amount_cents":6800,"result":"approved","decline_reason":null}
+  {"auth_id":34,"account_id":5,"auth_ts":1784801900,"merchant_id":10,"amount_cents":21900,"result":"approved","decline_reason":null}
+  {"auth_id":35,"account_id":7,"auth_ts":1784797800,"merchant_id":3,"amount_cents":8900,"result":"approved","decline_reason":null}
+  {"auth_id":36,"account_id":10,"auth_ts":1784818800,"merchant_id":9,"amount_cents":28900,"result":"approved","decline_reason":null}
+
+## high-amount declined auths
+  {"account_id":8,"amount_cents":500000,"decline_reason":"insufficient-funds","d":"2026-07-21"}
+  {"account_id":1,"amount_cents":199000,"decline_reason":"fraud-suspect","d":"2026-07-20"}
+  {"account_id":4,"amount_cents":189000,"decline_reason":"limit-exceeded","d":"2026-07-21"}
+  {"account_id":4,"amount_cents":189000,"decline_reason":"limit-exceeded","d":"2026-07-21"}
+  {"account_id":4,"amount_cents":189000,"decline_reason":"limit-exceeded","d":"2026-07-21"}
+  {"account_id":4,"amount_cents":189000,"decline_reason":"limit-exceeded","d":"2026-07-21"}
+  {"account_id":10,"amount_cents":159000,"decline_reason":"fraud-suspect","d":"2026-07-20"}
+  {"account_id":6,"amount_cents":45000,"decline_reason":"insufficient-funds","d":"2026-07-22"}
+
+## transfers detail
+  {"transfer_id":1,"from_account":1,"to_account":2,"transfer_date":"2026-01-20","amount_cents":200000,"status":"settled"}
+  {"transfer_id":2,"from_account":2,"to_account":6,"transfer_date":"2026-02-08","amount_cents":500000,"status":"settled"}
+  {"transfer_id":3,"from_account":2,"to_account":6,"transfer_date":"2026-03-21","amount_cents":750000,"status":"settled"}
+  {"transfer_id":4,"from_account":4,"to_account":9,"transfer_date":"2026-02-13","amount_cents":30000,"status":"settled"}
+  {"transfer_id":5,"from_account":10,"to_account":4,"transfer_date":"2026-03-06","amount_cents":60000,"status":"settled"}
+  {"transfer_id":6,"from_account":12,"to_account":6,"transfer_date":"2026-04-05","amount_cents":25000,"status":"settled"}
+  {"transfer_id":7,"from_account":3,"to_account":9,"transfer_date":"2026-04-16","amount_cents":18000,"status":"settled"}
+  {"transfer_id":8,"from_account":7,"to_account":5,"transfer_date":"2026-05-02","amount_cents":40000,"status":"settled"}
+  {"transfer_id":9,"from_account":2,"to_account":11,"transfer_date":"2026-05-15","amount_cents":150000,"status":"settled"}
+  {"transfer_id":10,"from_account":4,"to_account":4,"transfer_date":"2026-05-25","amount_cents":90000,"status":"settled"}
+  {"transfer_id":11,"from_account":5,"to_account":12,"transfer_date":"2026-06-04","amount_cents":25000,"status":"settled"}
+  {"transfer_id":12,"from_account":6,"to_account":12,"transfer_date":"2026-01-28","amount_cents":40000,"status":"failed"}
+  {"transfer_id":13,"from_account":1,"to_account":3,"transfer_date":"2026-03-12","amount_cents":55000,"status":"failed"}
+  {"transfer_id":14,"from_account":9,"to_account":8,"transfer_date":"2026-06-10","amount_cents":20000,"status":"pending"}
+
+## transfer lanes
+  {"from_account":2,"to_account":6,"n":2,"total":1250000}
+  {"from_account":1,"to_account":2,"n":1,"total":200000}
+  {"from_account":2,"to_account":11,"n":1,"total":150000}
+  {"from_account":4,"to_account":4,"n":1,"total":90000}
+  {"from_account":10,"to_account":4,"n":1,"total":60000}
+  {"from_account":1,"to_account":3,"n":1,"total":55000}
+  {"from_account":7,"to_account":5,"n":1,"total":40000}
+  {"from_account":6,"to_account":12,"n":1,"total":40000}
+  {"from_account":4,"to_account":9,"n":1,"total":30000}
+  {"from_account":12,"to_account":6,"n":1,"total":25000}
+  {"from_account":5,"to_account":12,"n":1,"total":25000}
+  {"from_account":9,"to_account":8,"n":1,"total":20000}
+  {"from_account":3,"to_account":9,"n":1,"total":18000}
+
+## transfers per account (as sender / receiver, settled)
+  {"account_id":1,"sent_n":1,"sent_vol":200000,"recv_n":0,"recv_vol":null}
+  {"account_id":2,"sent_n":3,"sent_vol":1400000,"recv_n":1,"recv_vol":200000}
+  {"account_id":3,"sent_n":1,"sent_vol":18000,"recv_n":0,"recv_vol":null}
+  {"account_id":4,"sent_n":2,"sent_vol":120000,"recv_n":2,"recv_vol":150000}
+  {"account_id":5,"sent_n":1,"sent_vol":25000,"recv_n":1,"recv_vol":40000}
+  {"account_id":6,"sent_n":0,"sent_vol":null,"recv_n":3,"recv_vol":1275000}
+  {"account_id":7,"sent_n":1,"sent_vol":40000,"recv_n":0,"recv_vol":null}
+  {"account_id":8,"sent_n":0,"sent_vol":null,"recv_n":0,"recv_vol":null}
+  {"account_id":9,"sent_n":0,"sent_vol":null,"recv_n":2,"recv_vol":48000}
+  {"account_id":10,"sent_n":1,"sent_vol":60000,"recv_n":0,"recv_vol":null}
+  {"account_id":11,"sent_n":0,"sent_vol":null,"recv_n":1,"recv_vol":150000}
+  {"account_id":12,"sent_n":1,"sent_vol":25000,"recv_n":1,"recv_vol":25000}
+
+## alerts detail
+  {"alert_id":1,"account_id":4,"alert_date":"2026-07-21","alert_type":"velocity","severity":"medium","status":"open"}
+  {"alert_id":2,"account_id":4,"alert_date":"2026-07-23","alert_type":"geo","severity":"low","status":"closed-false"}
+  {"alert_id":3,"account_id":8,"alert_date":"2026-05-12","alert_type":"structuring","severity":"high","status":"open"}
+  {"alert_id":4,"account_id":8,"alert_date":"2026-07-19","alert_type":"dark-web","severity":"medium","status":"investigating"}
+  {"alert_id":5,"account_id":8,"alert_date":"2026-03-03","alert_type":"high-value","severity":"medium","status":"closed-confirmed"}
+  {"alert_id":6,"account_id":2,"alert_date":"2026-06-16","alert_type":"high-value","severity":"low","status":"closed-false"}
+  {"alert_id":7,"account_id":2,"alert_date":"2026-02-21","alert_type":"geo","severity":"medium","status":"open"}
+  {"alert_id":8,"account_id":10,"alert_date":"2026-04-19","alert_type":"geo","severity":"medium","status":"investigating"}
+  {"alert_id":9,"account_id":10,"alert_date":"2026-06-12","alert_type":"high-value","severity":"low","status":"open"}
+  {"alert_id":10,"account_id":6,"alert_date":"2026-05-28","alert_type":"high-value","severity":"medium","status":"open"}
+  {"alert_id":11,"account_id":11,"alert_date":"2026-06-30","alert_type":"dark-web","severity":"high","status":"investigating"}
+  {"alert_id":12,"account_id":9,"alert_date":"2026-07-22","alert_type":"velocity","severity":"low","status":"closed-confirmed"}
+
+## alerts per account with holder
+  {"account_id":8,"holder_name":"Noah Feldman","n":3,"open_n":1,"high_n":1}
+  {"account_id":2,"holder_name":"Dana Okafor","n":2,"open_n":1,"high_n":0}
+  {"account_id":4,"holder_name":"Lucia Ferrari","n":2,"open_n":1,"high_n":0}
+  {"account_id":10,"holder_name":"Jack Mulrooney","n":2,"open_n":1,"high_n":0}
+  {"account_id":6,"holder_name":"Omar Haddad","n":1,"open_n":1,"high_n":0}
+  {"account_id":9,"holder_name":"Elena Volkova","n":1,"open_n":0,"high_n":0}
+  {"account_id":11,"holder_name":"Ines Cardoso","n":1,"open_n":0,"high_n":1}
+  {"account_id":1,"holder_name":"Marcus Chen","n":0,"open_n":null,"high_n":null}
+  {"account_id":3,"holder_name":"Viktor Lindqvist","n":0,"open_n":null,"high_n":null}
+  {"account_id":5,"holder_name":"Amara Nwosu","n":0,"open_n":null,"high_n":null}
+  {"account_id":7,"holder_name":"Grace Tan","n":0,"open_n":null,"high_n":null}
+  {"account_id":12,"holder_name":"Fatima Al-Rashid","n":0,"open_n":null,"high_n":null}
+
+## accounts by branch x type
+  {"branch":"Dubai","account_type":"checking","n":1}
+  {"branch":"Dubai","account_type":"savings","n":1}
+  {"branch":"London","account_type":"checking","n":1}
+  {"branch":"London","account_type":"credit","n":1}
+  {"branch":"London","account_type":"savings","n":1}
+  {"branch":"NYC","account_type":"checking","n":2}
+  {"branch":"NYC","account_type":"credit","n":1}
+  {"branch":"NYC","account_type":"savings","n":1}
+  {"branch":"Singapore","account_type":"checking","n":2}
+  {"branch":"Singapore","account_type":"savings","n":1}
+
+## net flow per account (posted: credits - debits)
+  {"account_id":8,"net":2963500}
+  {"account_id":12,"net":-12900}
+  {"account_id":3,"net":-13600}
+  {"account_id":9,"net":-19500}
+  {"account_id":10,"net":-36000}
+  {"account_id":6,"net":-77900}
+  {"account_id":7,"net":-101200}
+  {"account_id":5,"net":-101200}
+  {"account_id":4,"net":-204900}
+  {"account_id":1,"net":-357900}
+  {"account_id":2,"net":-1129500}
+
+## biggest posted debits top 8
+  {"txn_id":10,"account_id":2,"merchant_id":13,"txn_date":"2026-06-15","amount_cents":1000000,"channel":"wire"}
+  {"txn_id":11,"account_id":2,"merchant_id":null,"txn_date":"2026-03-05","amount_cents":250000,"channel":"wire"}
+  {"txn_id":4,"account_id":1,"merchant_id":9,"txn_date":"2026-03-11","amount_cents":249000,"channel":"card"}
+  {"txn_id":16,"account_id":4,"merchant_id":5,"txn_date":"2026-02-27","amount_cents":159000,"channel":"card"}
+  {"txn_id":5,"account_id":1,"merchant_id":10,"txn_date":"2026-04-22","amount_cents":129000,"channel":"card"}
+  {"txn_id":29,"account_id":6,"merchant_id":8,"txn_date":"2026-02-14","amount_cents":62000,"channel":"card"}
+  {"txn_id":53,"account_id":10,"merchant_id":8,"txn_date":"2026-04-18","amount_cents":62000,"channel":"card"}
+  {"txn_id":3,"account_id":1,"merchant_id":9,"txn_date":"2026-02-25","amount_cents":45900,"channel":"card"}
+
+FACT SHEET COMPLETE
