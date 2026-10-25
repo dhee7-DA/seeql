@@ -1,0 +1,203 @@
+
+## customer order/line counts (all statuses)
+  {"customer_id":1,"orders":8,"lines":17}
+  {"customer_id":2,"orders":6,"lines":12}
+  {"customer_id":3,"orders":7,"lines":15}
+  {"customer_id":4,"orders":5,"lines":8}
+  {"customer_id":5,"orders":5,"lines":10}
+  {"customer_id":6,"orders":4,"lines":6}
+  {"customer_id":7,"orders":5,"lines":10}
+  {"customer_id":8,"orders":4,"lines":8}
+  {"customer_id":9,"orders":4,"lines":7}
+  {"customer_id":10,"orders":4,"lines":8}
+  {"customer_id":11,"orders":0,"lines":0}
+  {"customer_id":12,"orders":4,"lines":7}
+
+## per-customer DELIVERED gross + net + orders + last/first order
+  {"customer_id":1,"dorders":8,"gross":201000,"net":199500,"first_o":"2026-03-04","last_o":"2026-07-15"}
+  {"customer_id":3,"dorders":7,"gross":195400,"net":195400,"first_o":"2026-03-08","last_o":"2026-07-21"}
+  {"customer_id":7,"dorders":5,"gross":106000,"net":98000,"first_o":"2026-03-26","last_o":"2026-07-12"}
+  {"customer_id":5,"dorders":5,"gross":106000,"net":98000,"first_o":"2026-03-15","last_o":"2026-07-08"}
+  {"customer_id":2,"dorders":4,"gross":70200,"net":69200,"first_o":"2026-03-05","last_o":"2026-07-02"}
+  {"customer_id":12,"dorders":4,"gross":55300,"net":54500,"first_o":"2026-04-18","last_o":"2026-08-20"}
+  {"customer_id":4,"dorders":3,"gross":35200,"net":35200,"first_o":"2026-03-12","last_o":"2026-06-15"}
+  {"customer_id":10,"dorders":3,"gross":34200,"net":34200,"first_o":"2026-04-15","last_o":"2026-08-12"}
+  {"customer_id":9,"dorders":3,"gross":32300,"net":32300,"first_o":"2026-04-12","last_o":"2026-06-18"}
+  {"customer_id":8,"dorders":3,"gross":32300,"net":32300,"first_o":"2026-03-30","last_o":"2026-06-14"}
+  {"customer_id":6,"dorders":2,"gross":17600,"net":17600,"first_o":"2026-03-22","last_o":"2026-06-06"}
+
+## delivered revenue by day (top 8)
+  {"order_date":"2026-03-08","gross":42700,"n":1}
+  {"order_date":"2026-04-09","gross":34700,"n":1}
+  {"order_date":"2026-05-14","gross":30700,"n":1}
+  {"order_date":"2026-06-27","gross":29800,"n":1}
+  {"order_date":"2026-06-01","gross":28800,"n":1}
+  {"order_date":"2026-03-19","gross":28600,"n":1}
+  {"order_date":"2026-07-21","gross":27800,"n":1}
+  {"order_date":"2026-07-15","gross":25800,"n":1}
+
+## category units + gross (delivered)
+  {"category":"Audio","units":24,"gross":294600,"margin":127100}
+  {"category":"Wearables","units":15,"gross":192500,"margin":81200}
+  {"category":"Video","units":17,"gross":171300,"margin":78100}
+  {"category":"Accessories","units":21,"gross":123900,"margin":62300}
+  {"category":"Smart Home","units":28,"gross":103200,"margin":55400}
+
+## per-product units + gross (delivered, top 14)
+  {"product_id":1,"name":"Pulse Wireless Headphones","category":"Audio","units":17,"gross":219300}
+  {"product_id":8,"name":"Apex Smartwatch","category":"Wearables","units":4,"gross":77600}
+  {"product_id":13,"name":"Nova Smart Bulb","category":"Smart Home","units":26,"gross":75400}
+  {"product_id":5,"name":"CinePro Action Cam","category":"Video","units":3,"gross":74700}
+  {"product_id":7,"name":"FitBand Flex 2","category":"Wearables","units":9,"gross":71100}
+  {"product_id":11,"name":"Type-Pro Keyboard","category":"Accessories","units":7,"gross":69300}
+  {"product_id":10,"name":"Glide Wireless Mouse","category":"Accessories","units":14,"gross":54600}
+  {"product_id":6,"name":"StreamRing Light","category":"Video","units":10,"gross":49000}
+  {"product_id":4,"name":"Vista 4K Webcam","category":"Video","units":4,"gross":47600}
+  {"product_id":2,"name":"Storm Bluetooth Speaker","category":"Audio","units":5,"gross":44500}
+  {"product_id":9,"name":"Sleep Tracker Ring","category":"Wearables","units":2,"gross":43800}
+  {"product_id":3,"name":"Echo Studio Mic","category":"Audio","units":2,"gross":30800}
+  {"product_id":14,"name":"Sentry Door Cam","category":"Smart Home","units":2,"gross":27800}
+
+## monthly delivered gross
+  {"m":"2026-03","gross":181600,"n":9}
+  {"m":"2026-04","gross":141400,"n":8}
+  {"m":"2026-05","gross":167100,"n":9}
+  {"m":"2026-06","gross":214600,"n":12}
+  {"m":"2026-07","gross":132700,"n":6}
+  {"m":"2026-08","gross":48100,"n":3}
+
+## region delivered gross (customers)
+  {"region":"US","n":17,"gross":377200}
+  {"region":"EU","n":16,"gross":297100}
+  {"region":"APAC","n":7,"gross":123600}
+  {"region":"LATAM","n":7,"gross":87600}
+
+## event funnels per customer (07-20..23)
+  {"customer_id":1,"views":6,"carts":3,"checkouts":2}
+  {"customer_id":2,"views":2,"carts":5,"checkouts":3}
+  {"customer_id":3,"views":4,"carts":2,"checkouts":2}
+  {"customer_id":4,"views":4,"carts":0,"checkouts":0}
+  {"customer_id":5,"views":4,"carts":2,"checkouts":2}
+  {"customer_id":6,"views":2,"carts":1,"checkouts":0}
+  {"customer_id":7,"views":3,"carts":2,"checkouts":2}
+  {"customer_id":8,"views":3,"carts":1,"checkouts":0}
+  {"customer_id":9,"views":3,"carts":1,"checkouts":0}
+  {"customer_id":10,"views":1,"carts":1,"checkouts":0}
+  {"customer_id":11,"views":7,"carts":0,"checkouts":0}
+  {"customer_id":12,"views":3,"carts":1,"checkouts":0}
+
+## AOV per customer (delivered, revenue/own orders)
+  {"customer_id":3,"gross":195400,"n":7,"aov":27914.29}
+  {"customer_id":1,"gross":201000,"n":8,"aov":25125}
+  {"customer_id":7,"gross":106000,"n":5,"aov":21200}
+  {"customer_id":5,"gross":106000,"n":5,"aov":21200}
+  {"customer_id":2,"gross":70200,"n":4,"aov":17550}
+  {"customer_id":12,"gross":55300,"n":4,"aov":13825}
+  {"customer_id":4,"gross":35200,"n":3,"aov":11733.33}
+  {"customer_id":10,"gross":34200,"n":3,"aov":11400}
+  {"customer_id":9,"gross":32300,"n":3,"aov":10766.67}
+  {"customer_id":8,"gross":32300,"n":3,"aov":10766.67}
+  {"customer_id":6,"gross":17600,"n":2,"aov":8800}
+
+## discount totals per customer (delivered)
+  {"customer_id":7,"rows_":4,"total_disc":8000}
+  {"customer_id":5,"rows_":4,"total_disc":8000}
+  {"customer_id":1,"rows_":1,"total_disc":1500}
+  {"customer_id":2,"rows_":1,"total_disc":1000}
+  {"customer_id":12,"rows_":1,"total_disc":800}
+
+## returns per customer
+  {"customer_id":3,"n":5,"returned_value":78400}
+  {"customer_id":5,"n":3,"returned_value":19700}
+  {"customer_id":7,"n":2,"returned_value":11800}
+  {"customer_id":8,"n":1,"returned_value":13900}
+  {"customer_id":1,"n":1,"returned_value":8700}
+
+## sessions per customer (1800s gap cutoff)
+  {"customer_id":1,"sessions":4}
+  {"customer_id":2,"sessions":3}
+  {"customer_id":3,"sessions":4}
+  {"customer_id":4,"sessions":3}
+  {"customer_id":5,"sessions":4}
+  {"customer_id":6,"sessions":2}
+  {"customer_id":7,"sessions":3}
+  {"customer_id":8,"sessions":3}
+  {"customer_id":9,"sessions":3}
+  {"customer_id":10,"sessions":1}
+  {"customer_id":11,"sessions":4}
+  {"customer_id":12,"sessions":3}
+
+## event counts per customer per day
+  {"customer_id":1,"d":"2026-07-20","n":5}
+  {"customer_id":1,"d":"2026-07-21","n":4}
+  {"customer_id":1,"d":"2026-07-22","n":2}
+  {"customer_id":2,"d":"2026-07-20","n":3}
+  {"customer_id":2,"d":"2026-07-21","n":5}
+  {"customer_id":2,"d":"2026-07-22","n":2}
+  {"customer_id":3,"d":"2026-07-20","n":1}
+  {"customer_id":3,"d":"2026-07-21","n":2}
+  {"customer_id":3,"d":"2026-07-22","n":4}
+  {"customer_id":3,"d":"2026-07-23","n":1}
+  {"customer_id":4,"d":"2026-07-20","n":2}
+  {"customer_id":4,"d":"2026-07-21","n":1}
+  {"customer_id":4,"d":"2026-07-22","n":1}
+  {"customer_id":5,"d":"2026-07-20","n":3}
+  {"customer_id":5,"d":"2026-07-21","n":2}
+  {"customer_id":5,"d":"2026-07-22","n":1}
+  {"customer_id":5,"d":"2026-07-23","n":2}
+  {"customer_id":6,"d":"2026-07-20","n":1}
+  {"customer_id":6,"d":"2026-07-22","n":2}
+  {"customer_id":7,"d":"2026-07-20","n":3}
+  {"customer_id":7,"d":"2026-07-21","n":3}
+  {"customer_id":7,"d":"2026-07-22","n":1}
+  {"customer_id":8,"d":"2026-07-20","n":1}
+  {"customer_id":8,"d":"2026-07-21","n":1}
+  {"customer_id":8,"d":"2026-07-22","n":2}
+  {"customer_id":9,"d":"2026-07-20","n":2}
+  {"customer_id":9,"d":"2026-07-21","n":1}
+  {"customer_id":9,"d":"2026-07-22","n":1}
+  {"customer_id":10,"d":"2026-07-21","n":2}
+  {"customer_id":11,"d":"2026-07-20","n":2}
+  {"customer_id":11,"d":"2026-07-21","n":2}
+  {"customer_id":11,"d":"2026-07-22","n":2}
+  {"customer_id":11,"d":"2026-07-23","n":1}
+  {"customer_id":12,"d":"2026-07-20","n":1}
+  {"customer_id":12,"d":"2026-07-21","n":2}
+  {"customer_id":12,"d":"2026-07-22","n":1}
+
+## quantity distribution
+  {"quantity":1,"n":99}
+  {"quantity":2,"n":7}
+  {"quantity":3,"n":2}
+
+## orders per customer (any status) ranked
+  {"customer_id":1,"n":8}
+  {"customer_id":3,"n":7}
+  {"customer_id":2,"n":6}
+  {"customer_id":4,"n":5}
+  {"customer_id":5,"n":5}
+  {"customer_id":7,"n":5}
+  {"customer_id":6,"n":4}
+  {"customer_id":8,"n":4}
+  {"customer_id":9,"n":4}
+  {"customer_id":10,"n":4}
+  {"customer_id":12,"n":4}
+
+## distinct cities / pages
+  {"cities":12,"pages":15,"regions":4}
+
+## category per-customer spend (delivered, C1 sample)
+  {"category":"Wearables","gross":61700}
+  {"category":"Video","gross":54700}
+  {"category":"Accessories","gross":35400}
+  {"category":"Audio","gross":34700}
+  {"category":"Smart Home","gross":14500}
+
+## product margin rate sample (for MCQs)
+  {"product_id":13,"name":"Nova Smart Bulb","price_cents":2900,"cost_cents":1200,"margin_pct":58.6}
+  {"product_id":6,"name":"StreamRing Light","price_cents":4900,"cost_cents":2100,"margin_pct":57.1}
+  {"product_id":10,"name":"Glide Wireless Mouse","price_cents":3900,"cost_cents":1700,"margin_pct":56.4}
+  {"product_id":12,"name":"USB-C Hub","price_cents":5900,"cost_cents":2900,"margin_pct":50.8}
+  {"product_id":7,"name":"FitBand Flex 2","price_cents":7900,"cost_cents":3900,"margin_pct":50.6}
+
+FACT SHEET COMPLETE

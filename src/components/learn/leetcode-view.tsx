@@ -19,6 +19,7 @@ import {
   Compass,
   Database,
   FlaskConical,
+  Layers,
   Lightbulb,
   ListChecks,
   NotebookPen,
@@ -92,6 +93,7 @@ import { LcPaths } from "./lc-paths";
 import { LcContest } from "./lc-contest";
 import { FuGauntlet } from "./lc-followups";
 import { LcPredict } from "./lc-predict";
+import { DomainsView } from "./lc-domains";
 import {
   ConstraintList,
   DiveCodeBlock,
@@ -109,7 +111,7 @@ import { PatternDiagram } from "./lc-pattern";
 import { PrimerCard, SectionStudyPanel } from "./lc-primer";
 import { cn } from "@/lib/utils";
 
-type Tab = "problems" | "paths" | "contest" | "predict" | "companies";
+type Tab = "problems" | "paths" | "contest" | "predict" | "companies" | "domains";
 type Diff = "All" | LcDifficulty;
 
 /** Section lookup by display title — for group headers + anchors. */
@@ -1396,6 +1398,9 @@ export function LeetCodeView({ initialTopic, initialSlug }: { initialTopic?: str
                 <Btn variant="pill" active={tab === "companies"} onClick={() => setTab("companies")}>
                   <Building2 className="h-3 w-3" /> Companies
                 </Btn>
+                <Btn variant="pill" active={tab === "domains"} onClick={() => setTab("domains")}>
+                  <Layers className="h-3 w-3" /> Domains
+                </Btn>
               </div>
               <span className="tnum font-mono text-[11px] text-zinc-500">
                 {solvedTotal} solved · {deepTotal} deep-dives · {LC_TOTAL} total
@@ -1442,6 +1447,8 @@ export function LeetCodeView({ initialTopic, initialSlug }: { initialTopic?: str
             <LcContest />
           ) : tab === "predict" ? (
             <LcPredict />
+          ) : tab === "domains" ? (
+            <DomainsView />
           ) : (
             <>
               {/* filters */}

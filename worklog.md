@@ -8881,3 +8881,26 @@ Stage Summary:
 - Round 8 shipped: the Boss Gauntlet turns the 18-boss wall into a timed interview simulator with honest tiered XP; Predict drills now pay streak milestones; every company track reads as warm-up → core screens → the wall.
 - Known follow-ups: gauntlet runs are session-only (no persistence — deliberate, tiers are the durable record); the streak chip hides "reward at N" once all milestones are banked; Boss Level IV (if ever authored) joins the gauntlet automatically via the registry derivation.
 - Key files: src/components/learn/{lc-gauntlet,lc-predict,leetcode-view}.tsx, scripts/{r8-e2e.sh,ensure-server.sh}, scripts/shots/r8-*.png
+
+---
+Task ID: lc-round9
+Agent: main
+Task: Domain Mastery pilot — Retail & RFM pack (60 queries + 60 MCQs + 60 cases, engine-verified, Domains tab)
+
+Work Log:
+- User-approved design (AskUserQuestion): pilot-first cadence, DataFin domain set, mix of real employers + fictional carriers, full engine verification, sixth Big Board pill, one domain per round.
+- Pilot domain = Retail & RFM. Companies: Amazon/Walmart/eBay/Shopify (real, registry-sourced flavor) + Northwind Goods/Kartly (fictional, carry the heavy cases).
+- ONE shared world seed (dm-retail-schema.ts + dm-retail-seed.ts): 6 tables, 12 customers, 14 products, 56 orders, 108 order_items, 72 events, 12 returns. EVERY planted fact probe-verified first (scripts/r9-dm-probe.ts): C5=C7 mirror tie (106000 gross / 98000 net), bonus C8=C9 tie (32300), daily 8900 tie (04-15 vs 05-25), rich mirror day-ties (20800 ×8, 22800 ×3), C11 never-orders-but-browses, USB-C Hub never sold, 3 snapshot-price drift rows, 11 discounted rows, C1 2700s session gap, C2 4-cart burst, C3 5 returns, LATAM=2. Two seed fixes caught by probes before content cited them: items 107→108 (order 132 shipped empty — unintended trap), C3 returns 3→5.
+- Content (180 items, all citing only probed facts): dm-retail-queries.ts 60 (20/20/20) · dm-retail-mcqs.ts 60 (30 output-kind with truthQuery+3 mutants, 30 concept grounded in facts) · dm-retail-cases.ts 60 × 2 engine-graded steps (120 step queries). Statements name the planted traps (net-vs-gross wall, DENSE vs RANK ties, session gap split, GROUP_CONCAT tie register).
+- scripts/r9-dm-verify.ts = the generator/verifier: fresh :memory: db per run, executes every solution/mutant/step, asserts the ≤60-row contract, asserts output-MCQ 4-way DISTINCT outputs (caught 6 mutant collisions — m02/m07/m19 row-cap/m40/m54 ×2, all fixed), formats option strings into dm-expected.ts (210 keys, GENERATED — never hand-edit), plus 9 spot checks against probe facts. ALL VERIFIED.
+- Architecture: domain-packs.ts (DmPack types, DM_PACKS registry, DM_MCQ_XP 4/6/9, DM_CASE_XP 8/12/18, dmQueryXp = LC_XP, ledger keys dm:<pack>:q|m|c:*, DM_BANDS warm-up/core screens/the wall); /api/dm-sql (inline-schema exec, read-only, mirrors lc-sql engine exactly incl. plan:null); lc-domains.tsx (DomainsView: pack header + progress 0/180, company tiles with ORIGINAL badges, primer accordion, three band-sectioned banks — QueryCard runner, McqCard with deterministic seeded shuffle so the answer position varies, CaseCard 2-step runners with reveal-solution).
+- leetcode-view.tsx: Tab += "domains", Layers-icon pill after Companies, renders DomainsView.
+- Caught during build: q39 initially returned all 46 delivered orders instead of the max-tied six (rank filter added); ExecResult needs plan:null; SqlEditor takes onVisualize (no onSubmit/placeholder); Btn variants are primary/soft/outline/ghost/pill; ResultGrid takes data={{columns,rows}}.
+- Gates: tsc src 159 (= baseline, 0 new), eslint clean on all 10 touched files, build clean, integrity 687/687, public in sync, dm-sql API smoke returns [[47]].
+- E2E (scripts/r9-e2e.sh): Domains pill → pack header + "0/180" chip + 2 fictional-company badges → 3 sections + 9 band pills → opened q01, typed the solution, Run & check → PASS verdict + chip 1/180 (ledger paid) → MCQ card shows query code + 4 options, pick renders explain. Screenshots scripts/shots/r9-domains-{pack,mcq}.png.
+
+Stage Summary:
+- Round 9 shipped: Domain Mastery is live — the Retail & RFM pack turns 180 engine-verified items (60 queries + 60 MCQs + 60 two-step cases) into the sixth Big Board tab, all on one probe-verified shared dataset with the honest-ledger XP economics.
+- Replication recipe for the next domains (Finance Core, Fraud & AML, SaaS…): schema+seed → probe → author content citing probed facts → extend r9-dm-verify.ts expectations → add pack to DM_PACKS. The UI/API generalize as-is (DM_PACKS[0] is the only hardcoded bit — switch to a pack selector when pack 2 lands).
+- Known follow-ups: DomainsView hardcodes PACK = DM_PACKS[0] (single-pack view; make it a list→detail when the second domain arrives); gauntlet runs remain session-only; the pack's XP totals are not yet folded into the readiness score.
+- Key files: src/lib/leetcode/domain-packs.ts, src/lib/leetcode/content/dm-retail-{schema,seed,queries,mcqs,cases,expected}.ts, src/app/api/dm-sql/route.ts, src/components/learn/lc-domains.tsx, scripts/r9-{dm-probe,facts,dm-verify,e2e}.*
