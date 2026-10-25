@@ -1066,6 +1066,15 @@ function CompaniesIndex({ onPick, solvedOf }: { onPick: (company: string) => voi
 /* Company track — one employer's SQL pool as an ordered path              */
 /* ------------------------------------------------------------------ */
 
+/** The track's three stages. Grouping by difficulty band gives every track
+ *  a readable arc — warm-up, the screens that decide it, then the wall —
+ *  each with its own progress meter. */
+const TRACK_BANDS: Array<{ key: "Easy" | "Medium" | "Hard"; label: string; blurb: string }> = [
+  { key: "Easy", label: "warm-up", blurb: "single-table reads — learn the company's flavor" },
+  { key: "Medium", label: "core screens", blurb: "joins, windows, funnels — the rounds that decide it" },
+  { key: "Hard", label: "the wall", blurb: "multi-step reasoning — asked when they mean it" },
+];
+
 function CompanyTrack({
   name,
   solvedOf,
@@ -1128,34 +1137,58 @@ function CompanyTrack({
           </p>
         </Panel>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-black/10 dark:border-white/10">
-          {problems.map((p, i) => {
-            const solved = solvedOf.has(p.slug);
+        <div className="space-y-4">
+          {TRACK_BANDS.map((band) => {
+            const rows = problems.filter((p) => p.difficulty === band.key);
+            if (rows.length === 0) return null;
+            const bdone = rows.filter((p) => solvedOf.has(p.slug)).length;
+            const bpct = Math.round((bdone / rows.length) * 100);
             return (
-              <button
-                key={p.slug}
-                type="button"
-                onClick={() => onOpen(p.slug)}
-                className={cn(
-                  "flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-emerald-400/[0.04]",
-                  FOCUS_RING,
-                  i > 0 && "border-t border-black/5 dark:border-white/5",
-                )}
-              >
-                <span className="tnum w-8 shrink-0 font-mono text-[11px] text-zinc-600">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <DiffDot d={p.difficulty} />
-                <span className="min-w-0 flex-1">
-                  <span className={cn("block truncate text-sm font-medium", solved ? "text-zinc-500" : "text-zinc-100")}>
-                    {p.title}
-                  </span>
-                  <span className="mt-0.5 block truncate text-[10px] text-zinc-500">{p.topics.slice(0, 2).join(" · ")}</span>
-                </span>
-                {solved && <Check className="h-3.5 w-3.5 shrink-0 text-emerald-400" />}
-                <span className="tnum hidden shrink-0 font-mono text-[10px] text-zinc-600 sm:block">#{p.num}</span>
-                <ChevronRight className="h-3.5 w-3.5 shrink-0 text-zinc-600" />
-              </button>
+              <section key={band.key}>
+                <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1 px-1">
+                  <h3 className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-zinc-400">{band.label}</h3>
+                  <span className="min-w-0 flex-1 truncate text-[11px] text-zinc-600">{band.blurb}</span>
+                  <div className="flex items-center gap-2">
+                    <div className="h-1 w-16 overflow-hidden rounded-full bg-zinc-800" aria-hidden>
+                      <div className="h-full rounded-full bg-emerald-400/80 transition-all duration-500" style={{ width: `${bpct}%` }} />
+                    </div>
+                    <span className="tnum font-mono text-[10px] text-zinc-500">
+                      {bdone}/{rows.length}
+                    </span>
+                  </div>
+                </div>
+                <div className="overflow-hidden rounded-xl border border-black/10 dark:border-white/10">
+                  {rows.map((p, i) => {
+                    const solved = solvedOf.has(p.slug);
+                    return (
+                      <button
+                        key={p.slug}
+                        type="button"
+                        onClick={() => onOpen(p.slug)}
+                        className={cn(
+                          "flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-emerald-400/[0.04]",
+                          FOCUS_RING,
+                          i > 0 && "border-t border-black/5 dark:border-white/5",
+                        )}
+                      >
+                        <span className="tnum w-8 shrink-0 font-mono text-[11px] text-zinc-600">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <DiffDot d={p.difficulty} />
+                        <span className="min-w-0 flex-1">
+                          <span className={cn("block truncate text-sm font-medium", solved ? "text-zinc-500" : "text-zinc-100")}>
+                            {p.title}
+                          </span>
+                          <span className="mt-0.5 block truncate text-[10px] text-zinc-500">{p.topics.slice(0, 2).join(" · ")}</span>
+                        </span>
+                        {solved && <Check className="h-3.5 w-3.5 shrink-0 text-emerald-400" />}
+                        <span className="tnum hidden shrink-0 font-mono text-[10px] text-zinc-600 sm:block">#{p.num}</span>
+                        <ChevronRight className="h-3.5 w-3.5 shrink-0 text-zinc-600" />
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
             );
           })}
         </div>

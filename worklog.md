@@ -8862,3 +8862,22 @@ Work Log:
 Stage Summary:
 - Round-7 follow-up list fully closed: Boss Level III now serves 4-candidate Predict drills like Boss I/II.
 - GOTCHA (new): this sandbox reaps detached processes between tool calls — never assume the server survives; batch live checks and lead with ensure-server.sh.
+
+---
+Task ID: lc-round8
+Agent: main
+Task: Boss Gauntlet (timed 18-boss reading run), Predict streak rewards, company tracks per band
+
+Work Log:
+- lc-predict.tsx refactored into a reusable drill engine: exported buildDrill/Candidate/LETTERS and extracted DrillTables/DrillQuery/CandidateGrid — one implementation, shared with the gauntlet (no drift). LcPredict gains a Drills | Boss Gauntlet mode toggle and streak milestones (3→+5, 5→+10, 10→+25 XP, ledger keys predict-streak-N, chip shows "reward at N" skipping banked ones).
+- New lc-gauntlet.tsx: 18 boss problems derived from the registry (lists start with "SQL · Boss Level", sorted by num → Level I→III), 75s per round, clock freezes on commit, timeout reveals truth + auto-advances after 2.6s, first-correct read XP still pays per problem, run tiers Bronze 12/Silver 15/Gold 18 (+15/+25/+50 XP, one-time ledger keys). Structure: run controller owns phase/results/lastRun; each round is a keyed child (GauntletRound key={slug}) so deal/timer/pick state resets by remount — no reset-effects.
+- Lint-driven fixes worth remembering: reading refs during render is now an error (react-hooks/refs) — run summary had to be state, not a ref; synchronous setState in effect bodies is flagged (react-hooks/set-state-in-effect) — fixed via keyed-child remount + derived `expired` instead of stored reveal state; effect cleanups cancel setTimeout refs (time-up auto-advance lives in timeoutRef, cancelled on unmount so a stale advance can never write the ledger after navigation).
+- leetcode-view.tsx CompanyTrack: flat list → three band sections (TRACK_BANDS: warm-up/core screens/the wall) each with blurb + per-band progress meter + per-band numbering; empty bands skipped; header mix line unchanged.
+- Gates: tsc src 159 (= baseline), eslint clean on all three files, build clean, integrity 687/687, public in sync, root 200.
+- E2E (scripts/r8-e2e.sh + focused re-runs): mode pills render; chip reads "0/310 read · streak 0 · best 0 · reward at 3"; briefing shows "18 rounds · 75s each" + 3 tier cards; round 1/18 = #9001 Peak Concurrent Attendance with live clock (71s) and 3-4 candidates; pick → verdict + "Next round"; Amazon track renders warm-up/core screens/the wall with per-band counters. GOTCHA re-confirmed: "Companies" matches module-13 nav AND the LC tab — selectors must take the LAST in main.
+- Sandbox note: user processes are reaped between tool sessions; scripts/ensure-server.sh (start-if-down + poll) now leads every batched live check, and r8-e2e.sh restarts the server itself (stale in-memory build after rebuild).
+
+Stage Summary:
+- Round 8 shipped: the Boss Gauntlet turns the 18-boss wall into a timed interview simulator with honest tiered XP; Predict drills now pay streak milestones; every company track reads as warm-up → core screens → the wall.
+- Known follow-ups: gauntlet runs are session-only (no persistence — deliberate, tiers are the durable record); the streak chip hides "reward at N" once all milestones are banked; Boss Level IV (if ever authored) joins the gauntlet automatically via the registry derivation.
+- Key files: src/components/learn/{lc-gauntlet,lc-predict,leetcode-view}.tsx, scripts/{r8-e2e.sh,ensure-server.sh}, scripts/shots/r8-*.png
