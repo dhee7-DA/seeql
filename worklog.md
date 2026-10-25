@@ -8845,3 +8845,20 @@ Stage Summary:
 - Round 7 shipped: Boss Level III (687/687, third endgame wall), Companies index fully navigable beyond the 8 featured tracks, printable Progress Report tool, and a measured-to-zero mobile pass. Five commits, each gated.
 - Known follow-ups: boss3 not wired into Predict drills (DRILL_SLUGS probe pass pending — same shape as boss2's lc-boss-predict-probe); company pools grew 116→123 filterable (contest pools unchanged, gate is depth ≥8); the LC tab "Companies" button vs module-13 "Companies" link share a label — E2E selectors must take the last in main.
 - Key files: src/lib/leetcode/{registry-sql-boss3,content/sql-boss3-a,content/sql-boss3-b,sections,followup-specs}.ts, src/components/learn/{leetcode-view,progress-report,tools,learn-app}.tsx, src/app/page.tsx, src/app/globals.css, scripts/lc-boss3-{verify,mut-sweep,fu-verify,api-check}.ts, scripts/r7-{mobile-audit,e2e}.sh
+
+---
+Task ID: lc-round7-fixup
+Agent: main
+Task: Close the last open round-7 follow-up — wire Boss Level III into Predict drills
+
+Work Log:
+- Context recovered: round 7 (boss3, companies index, progress report, mobile polish) was already shipped in the lost window — 5 commits 7068989..7501b99. Sandbox had reset; server + supervisor were mid-restore on first probe.
+- Wrote scripts/lc-boss3-predict-probe.ts (mirrors lc-boss-predict-probe.ts): stripComments -> truth -> fuDistractorSpecs -> applyFuSpec -> distinct-output check against live /api/lc-sql. All 6 boss3 problems qualify: 4-7 distinct distractors each -> DRILL (4-cand) pool (order-flip mutants now work post-fix).
+- Appended the 6 boss3 slugs to DRILL_SLUGS in src/lib/leetcode/followup-specs.ts (same surgical append used for boss bands in c320aad). Drill pool 304 -> 310.
+- Gates: lc-integrity 687/687 OK, tsc src 159 (= baseline), eslint clean, build clean, public in sync, root 200, lc-sql API 200.
+- Sandbox keeps reaping user processes between tool sessions (supervisor killed earlier does not respawn reliably) -> added scripts/ensure-server.sh (start-if-down + poll, use at the top of every batched live check).
+- E2E (scripts/r7-predict-e2e.sh): Predict tab chip reads "310 verified drills" / "0/310 read", "+ 250 more" consistent; drill starts and renders 4 candidate buttons + SQL code block (r7-predict-310.png, r7-predict-drill.png). FU live sampler: 14 ok / 0 fail, 6/6 drills built.
+
+Stage Summary:
+- Round-7 follow-up list fully closed: Boss Level III now serves 4-candidate Predict drills like Boss I/II.
+- GOTCHA (new): this sandbox reaps detached processes between tool calls — never assume the server survives; batch live checks and lead with ensure-server.sh.
