@@ -24,6 +24,11 @@ import { DM_FIN_SEED } from "./content/dm-fin-seed";
 import { DM_FIN_QUERIES } from "./content/dm-fin-queries";
 import { DM_FIN_MCQS } from "./content/dm-fin-mcqs";
 import { DM_FIN_CASES } from "./content/dm-fin-cases";
+import { DM_FRAUD_SCHEMA } from "./content/dm-fraud-schema";
+import { DM_FRAUD_SEED } from "./content/dm-fraud-seed";
+import { DM_FRAUD_QUERIES } from "./content/dm-fraud-queries";
+import { DM_FRAUD_MCQS } from "./content/dm-fraud-mcqs";
+import { DM_FRAUD_CASES } from "./content/dm-fraud-cases";
 
 export type DmDifficulty = "Easy" | "Medium" | "Hard";
 
@@ -165,6 +170,43 @@ export const DM_PACKS: DmPack[] = [
     queries: DM_FIN_QUERIES,
     mcqs: DM_FIN_MCQS,
     cases: DM_FIN_CASES,
+  },
+  {
+    id: "fraud-aml",
+    title: "Fraud & AML",
+    tagline: "P2P mule rings, device trust, velocity and the SAR workflow — the fraud analytics stack on one shared dataset.",
+    companies: [
+      { name: "PayPal", real: true, blurb: "P2P at scale — dispute books, net-flow asymmetry and boundary screens" },
+      { name: "Block", real: true, blurb: "Seller-side risk — velocity pairs, fail funnels and risk-share reporting" },
+      { name: "Wise", real: true, blurb: "Cross-border wallets — drift audits, tie registries and hand-off joins" },
+      { name: "Revolut", real: true, blurb: "Superapp banking — country champions, SAR dossiers and RFM cuts" },
+      { name: "Aegis Risk", real: false, blurb: "Fictional risk vendor carrying the heavier case studies" },
+      { name: "Velttrum Pay", real: false, blurb: "Fictional P2P wallet — session forensics and ring detection" },
+    ],
+    schema: { ...DM_FRAUD_SCHEMA, seed: DM_FRAUD_SEED },
+    primer: {
+      hook: "Every fraud and AML team runs the same core loop: what moved, from which device, at what cadence, and which of it rings the bell. This pack teaches the SQL that answers all four on one shared dataset.",
+      concept: [
+        "Money starts at the transfer grain. A P2P row is one peer-to-peer event with a direction (sender to receiver), a rail (wallet, card or bank), a status lifecycle (settled, pending, failed, reversed) and a 0-100 risk_score where HIGH RISK means >= 80. Almost every real question filters status first — pending and failed rows never became money, and reversed rows were money once but are not now. The second discipline is direction: sent volume and received volume are different leaderboards that disagree spectacularly here — the network's biggest sender is also its biggest net LOSER, while a suspended user with almost no sends pools the most.",
+        "Layering is the AML pattern this pack plants: a mule ring fans OUT one day (one sender, four receivers, each leg 490000 — just under the 500000 enhanced-review line) and fans IN the next (those four each send 480000 to one beneficiary, a 10000 skim per leg). The SQL is two GROUP BY detectors — sender+day with COUNT(DISTINCT receiver) >= 3, receiver+day with COUNT(DISTINCT sender) >= 3 — and a hand-off JOIN that stitches the two days into a paper trail. Boundary semantics carry the whole story: eight legs duck under the line, exactly one wire crosses it, and >= versus > is the difference between catching the ring and missing it.",
+        "Account takeover runs on a second clock: LOGIN telemetry in epoch seconds. Credential stuffing shows up as rapid-fire failures (self-join each failure to later failures within 300 seconds — five failures 60s apart make ten pairs on their own); impossible travel shows up as a country flip faster than physics allows (one pair sits EXACTLY on the 3600-second rule — inclusive thresholds are a real analyst decision); and sessionization cuts the timeline into visits with a gap cutoff (LAG + running SUM of gap flags). All three are planted with edges on the threshold lines.",
+        "Enforcement rounds it out. Disputes carry their own amount — three partial claims drift from the transfer they cite, and the join-back audit prices the gap. Cases run a lifecycle (open, investigating, closed-false, closed-confirmed) with closed_date NULL until closed and a sar_filed flag for the regulator. And the honest-zero rule applies doubly: the dormant user with zero sends, zero receives and zero logins only appears if your JOINs keep her — yet she still owns an open case.",
+      ],
+      glossary: [
+        { term: "mule ring", def: "a fan-out then fan-in chain that launders money through intermediate wallets" },
+        { term: "EDD line", def: "the 500000-cent enhanced-due-diligence threshold — legs at 490000 duck under it" },
+        { term: "structuring / smurfing", def: "slicing one big movement into many just-under-the-line transfers" },
+        { term: "risk_score", def: "0-100 model output per transfer; HIGH RISK means >= 80" },
+        { term: "credential stuffing", def: "rapid-fire failed logins from one account — the velocity signature" },
+        { term: "impossible travel", def: "logins from distant countries within a window too short to travel" },
+        { term: "session gap", def: "an inter-login gap over 1800 seconds starts a new session" },
+        { term: "SAR", def: "Suspicious Activity Report — the filing a compliance team owes the regulator" },
+        { term: "honest zero", def: "a LEFT JOIN + COALESCE that shows 0 for the dormant user or never-used device" },
+      ],
+    },
+    queries: DM_FRAUD_QUERIES,
+    mcqs: DM_FRAUD_MCQS,
+    cases: DM_FRAUD_CASES,
   },
 ];
 

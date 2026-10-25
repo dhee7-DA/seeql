@@ -1,0 +1,409 @@
+
+## users roster
+  {"user_id":1,"handle":"Priya Raman","country":"US","kyc_tier":"enhanced","joined_date":"2025-10-14","status":"active"}
+  {"user_id":2,"handle":"Marcel Osei","country":"UK","kyc_tier":"enhanced","joined_date":"2025-10-30","status":"active"}
+  {"user_id":3,"handle":"Tessa Grant","country":"US","kyc_tier":"verified","joined_date":"2025-11-11","status":"active"}
+  {"user_id":4,"handle":"Leo Fontaine","country":"US","kyc_tier":"verified","joined_date":"2025-11-26","status":"active"}
+  {"user_id":5,"handle":"Wei Lin Tan","country":"SG","kyc_tier":"verified","joined_date":"2025-12-09","status":"active"}
+  {"user_id":6,"handle":"Gwen Halloway","country":"UK","kyc_tier":"verified","joined_date":"2025-12-23","status":"active"}
+  {"user_id":7,"handle":"Farah Yusof","country":"SG","kyc_tier":"verified","joined_date":"2026-01-07","status":"active"}
+  {"user_id":8,"handle":"Jonah Reyes","country":"US","kyc_tier":"basic","joined_date":"2026-01-20","status":"active"}
+  {"user_id":9,"handle":"Ravi Chandra","country":"UK","kyc_tier":"verified","joined_date":"2026-02-03","status":"suspended"}
+  {"user_id":10,"handle":"Felix Arden","country":"US","kyc_tier":"enhanced","joined_date":"2026-02-17","status":"active"}
+  {"user_id":11,"handle":"Imogen Cole","country":"UK","kyc_tier":"basic","joined_date":"2026-03-04","status":"limited"}
+  {"user_id":12,"handle":"Kenji Sato","country":"SG","kyc_tier":"basic","joined_date":"2026-03-18","status":"active"}
+
+## devices roster
+  {"device_id":1,"user_id":1,"label":"Priya phone","os":"iOS","first_seen":"2025-10-14","trusted":1}
+  {"device_id":2,"user_id":1,"label":"Priya laptop","os":"Web","first_seen":"2025-10-16","trusted":1}
+  {"device_id":3,"user_id":2,"label":"Marcel phone","os":"Android","first_seen":"2025-10-30","trusted":0}
+  {"device_id":4,"user_id":4,"label":"Leo phone","os":"Android","first_seen":"2025-11-26","trusted":0}
+  {"device_id":5,"user_id":5,"label":"Wei Lin phone","os":"iOS","first_seen":"2025-12-09","trusted":1}
+  {"device_id":6,"user_id":6,"label":"Gwen laptop","os":"Web","first_seen":"2025-12-23","trusted":1}
+  {"device_id":7,"user_id":7,"label":"Farah phone","os":"iOS","first_seen":"2026-01-07","trusted":1}
+  {"device_id":8,"user_id":8,"label":"Jonah laptop","os":"Web","first_seen":"2026-01-20","trusted":0}
+  {"device_id":9,"user_id":9,"label":"Ravi phone","os":"iOS","first_seen":"2026-02-03","trusted":0}
+  {"device_id":10,"user_id":10,"label":"Felix phone","os":"iOS","first_seen":"2026-02-17","trusted":1}
+  {"device_id":11,"user_id":11,"label":"Imogen phone","os":"Android","first_seen":"2026-03-04","trusted":1}
+  {"device_id":12,"user_id":12,"label":"Kenji phone","os":"iOS","first_seen":"2026-03-18","trusted":1}
+  {"device_id":13,"user_id":3,"label":"Tessa phone","os":"Android","first_seen":"2025-11-11","trusted":1}
+  {"device_id":14,"user_id":6,"label":"Gwen tablet","os":"iOS","first_seen":"2026-01-11","trusted":1}
+
+## per-user SETTLED sent vol + count + received vol
+  {"user_id":1,"sent_vol":83700,"sent_n":3,"recv_vol":94400,"recv_n":8}
+  {"user_id":2,"sent_vol":2015000,"sent_n":6,"recv_vol":30700,"recv_n":3}
+  {"user_id":3,"sent_vol":13600,"sent_n":2,"recv_vol":126100,"recv_n":7}
+  {"user_id":4,"sent_vol":30000,"sent_n":1,"recv_vol":9800,"recv_n":2}
+  {"user_id":5,"sent_vol":581200,"sent_n":9,"recv_vol":517200,"recv_n":5}
+  {"user_id":6,"sent_vol":526800,"sent_n":4,"recv_vol":1564700,"recv_n":5}
+  {"user_id":7,"sent_vol":581200,"sent_n":9,"recv_vol":512000,"recv_n":2}
+  {"user_id":8,"sent_vol":19500,"sent_n":3,"recv_vol":15800,"recv_n":2}
+  {"user_id":9,"sent_vol":19500,"sent_n":3,"recv_vol":1965900,"recv_n":5}
+  {"user_id":10,"sent_vol":1035700,"sent_n":3,"recv_vol":43800,"recv_n":2}
+  {"user_id":11,"sent_vol":0,"sent_n":0,"recv_vol":0,"recv_n":0}
+  {"user_id":12,"sent_vol":511800,"sent_n":3,"recv_vol":537600,"recv_n":5}
+
+## sent ranked RANK/DENSE (settled)
+  {"u":2,"vol":2015000,"r":1,"dr":1}
+  {"u":10,"vol":1035700,"r":2,"dr":2}
+  {"u":5,"vol":581200,"r":3,"dr":3}
+  {"u":7,"vol":581200,"r":3,"dr":3}
+  {"u":6,"vol":526800,"r":5,"dr":4}
+  {"u":12,"vol":511800,"r":6,"dr":5}
+  {"u":1,"vol":83700,"r":7,"dr":6}
+  {"u":4,"vol":30000,"r":8,"dr":7}
+  {"u":8,"vol":19500,"r":9,"dr":8}
+  {"u":9,"vol":19500,"r":9,"dr":8}
+  {"u":3,"vol":13600,"r":11,"dr":9}
+
+## received ranked RANK/DENSE (settled)
+  {"u":9,"vol":1965900,"r":1,"dr":1}
+  {"u":6,"vol":1564700,"r":2,"dr":2}
+  {"u":12,"vol":537600,"r":3,"dr":3}
+  {"u":5,"vol":517200,"r":4,"dr":4}
+  {"u":7,"vol":512000,"r":5,"dr":5}
+  {"u":3,"vol":126100,"r":6,"dr":6}
+  {"u":1,"vol":94400,"r":7,"dr":7}
+  {"u":10,"vol":43800,"r":8,"dr":8}
+  {"u":2,"vol":30700,"r":9,"dr":9}
+  {"u":8,"vol":15800,"r":10,"dr":10}
+  {"u":4,"vol":9800,"r":11,"dr":11}
+
+## daily settled sent volume (all 37)
+  {"p2p_date":"2026-01-09","vol":12900,"n":1}
+  {"p2p_date":"2026-01-12","vol":15000,"n":1}
+  {"p2p_date":"2026-01-15","vol":28900,"n":1}
+  {"p2p_date":"2026-01-19","vol":13600,"n":2}
+  {"p2p_date":"2026-01-20","vol":20000,"n":1}
+  {"p2p_date":"2026-01-27","vol":24900,"n":1}
+  {"p2p_date":"2026-02-06","vol":12900,"n":1}
+  {"p2p_date":"2026-02-08","vol":35000,"n":1}
+  {"p2p_date":"2026-02-11","vol":12900,"n":1}
+  {"p2p_date":"2026-02-13","vol":30000,"n":1}
+  {"p2p_date":"2026-02-14","vol":22000,"n":1}
+  {"p2p_date":"2026-02-17","vol":6800,"n":1}
+  {"p2p_date":"2026-02-21","vol":8900,"n":1}
+  {"p2p_date":"2026-02-25","vol":45900,"n":1}
+  {"p2p_date":"2026-02-26","vol":8900,"n":1}
+  {"p2p_date":"2026-03-02","vol":12700,"n":2}
+  {"p2p_date":"2026-03-03","vol":9800,"n":1}
+  {"p2p_date":"2026-03-07","vol":15900,"n":1}
+  {"p2p_date":"2026-03-09","vol":8500,"n":1}
+  {"p2p_date":"2026-03-14","vol":15900,"n":1}
+  {"p2p_date":"2026-03-15","vol":6800,"n":1}
+  {"p2p_date":"2026-03-20","vol":4900,"n":1}
+  {"p2p_date":"2026-03-21","vol":22000,"n":1}
+  {"p2p_date":"2026-03-25","vol":4900,"n":1}
+  {"p2p_date":"2026-04-02","vol":1960000,"n":4}
+  {"p2p_date":"2026-04-03","vol":1920000,"n":4}
+  {"p2p_date":"2026-04-06","vol":4200,"n":1}
+  {"p2p_date":"2026-04-08","vol":24900,"n":1}
+  {"p2p_date":"2026-04-12","vol":24900,"n":1}
+  {"p2p_date":"2026-04-27","vol":7900,"n":1}
+  {"p2p_date":"2026-04-30","vol":7900,"n":1}
+  {"p2p_date":"2026-05-04","vol":6800,"n":1}
+  {"p2p_date":"2026-05-09","vol":21900,"n":1}
+  {"p2p_date":"2026-05-18","vol":21900,"n":1}
+  {"p2p_date":"2026-05-23","vol":13700,"n":2}
+  {"p2p_date":"2026-06-02","vol":3900,"n":1}
+  {"p2p_date":"2026-06-15","vol":1000000,"n":1}
+
+## daily volume DENSE top 10
+  {"p2p_date":"2026-04-02","vol":1960000,"dr":1}
+  {"p2p_date":"2026-04-03","vol":1920000,"dr":2}
+  {"p2p_date":"2026-06-15","vol":1000000,"dr":3}
+  {"p2p_date":"2026-02-25","vol":45900,"dr":4}
+  {"p2p_date":"2026-02-08","vol":35000,"dr":5}
+  {"p2p_date":"2026-02-13","vol":30000,"dr":6}
+  {"p2p_date":"2026-01-15","vol":28900,"dr":7}
+  {"p2p_date":"2026-01-27","vol":24900,"dr":8}
+  {"p2p_date":"2026-04-08","vol":24900,"dr":8}
+  {"p2p_date":"2026-04-12","vol":24900,"dr":8}
+  {"p2p_date":"2026-02-14","vol":22000,"dr":9}
+  {"p2p_date":"2026-03-21","vol":22000,"dr":9}
+  {"p2p_date":"2026-05-09","vol":21900,"dr":10}
+  {"p2p_date":"2026-05-18","vol":21900,"dr":10}
+
+## monthly settled sent
+  {"m":"2026-01","vol":115300,"n":7}
+  {"m":"2026-02","vol":183300,"n":9}
+  {"m":"2026-03","vol":101400,"n":10}
+  {"m":"2026-04","vol":3949800,"n":13}
+  {"m":"2026-05","vol":64300,"n":5}
+  {"m":"2026-06","vol":1003900,"n":2}
+
+## channel mix (all rows + settled only)
+  {"channel":"bank","n_all":3,"n_settled":2,"settled_vol":1028900,"avg_risk_settled":51.5}
+  {"channel":"card","n_all":26,"n_settled":21,"settled_vol":359600,"avg_risk_settled":14.8}
+  {"channel":"wallet","n_all":27,"n_settled":23,"settled_vol":4029500,"avg_risk_settled":38.9}
+
+## non-settled rows detail
+  {"p2p_id":47,"sender_id":12,"receiver_id":6,"p2p_date":"2026-01-28","amount_cents":40000,"channel":"bank","status":"failed","risk_score":25}
+  {"p2p_id":48,"sender_id":1,"receiver_id":3,"p2p_date":"2026-03-12","amount_cents":55000,"channel":"wallet","status":"failed","risk_score":20}
+  {"p2p_id":49,"sender_id":3,"receiver_id":8,"p2p_date":"2026-02-21","amount_cents":26000,"channel":"card","status":"failed","risk_score":18}
+  {"p2p_id":50,"sender_id":6,"receiver_id":12,"p2p_date":"2026-05-19","amount_cents":31000,"channel":"wallet","status":"failed","risk_score":15}
+  {"p2p_id":51,"sender_id":4,"receiver_id":9,"p2p_date":"2026-04-04","amount_cents":25000,"channel":"card","status":"failed","risk_score":82}
+  {"p2p_id":52,"sender_id":1,"receiver_id":10,"p2p_date":"2026-06-24","amount_cents":19900,"channel":"card","status":"pending","risk_score":22}
+  {"p2p_id":53,"sender_id":3,"receiver_id":7,"p2p_date":"2026-04-10","amount_cents":7300,"channel":"card","status":"pending","risk_score":18}
+  {"p2p_id":54,"sender_id":12,"receiver_id":8,"p2p_date":"2026-06-10","amount_cents":20000,"channel":"wallet","status":"pending","risk_score":15}
+  {"p2p_id":55,"sender_id":4,"receiver_id":8,"p2p_date":"2026-03-18","amount_cents":45000,"channel":"wallet","status":"reversed","risk_score":55}
+  {"p2p_id":56,"sender_id":10,"receiver_id":9,"p2p_date":"2026-06-11","amount_cents":159000,"channel":"card","status":"reversed","risk_score":85}
+
+## high-risk rows (>=80)
+  {"p2p_id":23,"sender_id":2,"receiver_id":5,"p2p_date":"2026-04-02","amount_cents":490000,"risk_score":92}
+  {"p2p_id":24,"sender_id":2,"receiver_id":6,"p2p_date":"2026-04-02","amount_cents":490000,"risk_score":92}
+  {"p2p_id":25,"sender_id":2,"receiver_id":7,"p2p_date":"2026-04-02","amount_cents":490000,"risk_score":92}
+  {"p2p_id":26,"sender_id":2,"receiver_id":12,"p2p_date":"2026-04-02","amount_cents":490000,"risk_score":92}
+  {"p2p_id":27,"sender_id":5,"receiver_id":9,"p2p_date":"2026-04-03","amount_cents":480000,"risk_score":95}
+  {"p2p_id":28,"sender_id":6,"receiver_id":9,"p2p_date":"2026-04-03","amount_cents":480000,"risk_score":95}
+  {"p2p_id":29,"sender_id":7,"receiver_id":9,"p2p_date":"2026-04-03","amount_cents":480000,"risk_score":95}
+  {"p2p_id":30,"sender_id":12,"receiver_id":9,"p2p_date":"2026-04-03","amount_cents":480000,"risk_score":95}
+  {"p2p_id":31,"sender_id":10,"receiver_id":6,"p2p_date":"2026-06-15","amount_cents":1000000,"risk_score":88}
+  {"p2p_id":51,"sender_id":4,"receiver_id":9,"p2p_date":"2026-04-04","amount_cents":25000,"risk_score":82}
+  {"p2p_id":56,"sender_id":10,"receiver_id":9,"p2p_date":"2026-06-11","amount_cents":159000,"risk_score":85}
+
+## risk buckets
+  {"bucket":"30-79","n":3,"vol":58600}
+  {"bucket":"80+","n":11,"vol":5064000}
+  {"bucket":"<30","n":42,"vol":723600}
+
+## mirror rows U5
+  {"p2p_id":1,"receiver_id":1,"p2p_date":"2026-02-06","amount_cents":12900,"channel":"wallet"}
+  {"p2p_id":2,"receiver_id":2,"p2p_date":"2026-02-21","amount_cents":8900,"channel":"wallet"}
+  {"p2p_id":3,"receiver_id":3,"p2p_date":"2026-03-07","amount_cents":15900,"channel":"card"}
+  {"p2p_id":4,"receiver_id":4,"p2p_date":"2026-03-20","amount_cents":4900,"channel":"card"}
+  {"p2p_id":5,"receiver_id":6,"p2p_date":"2026-04-08","amount_cents":24900,"channel":"card"}
+  {"p2p_id":6,"receiver_id":8,"p2p_date":"2026-04-27","amount_cents":7900,"channel":"card"}
+  {"p2p_id":7,"receiver_id":10,"p2p_date":"2026-05-09","amount_cents":21900,"channel":"card"}
+  {"p2p_id":8,"receiver_id":12,"p2p_date":"2026-05-23","amount_cents":3900,"channel":"wallet"}
+  {"p2p_id":27,"receiver_id":9,"p2p_date":"2026-04-03","amount_cents":480000,"channel":"wallet"}
+
+## mirror rows U7
+  {"p2p_id":9,"receiver_id":1,"p2p_date":"2026-02-11","amount_cents":12900,"channel":"wallet"}
+  {"p2p_id":10,"receiver_id":2,"p2p_date":"2026-02-26","amount_cents":8900,"channel":"wallet"}
+  {"p2p_id":11,"receiver_id":3,"p2p_date":"2026-03-14","amount_cents":15900,"channel":"card"}
+  {"p2p_id":12,"receiver_id":4,"p2p_date":"2026-03-25","amount_cents":4900,"channel":"card"}
+  {"p2p_id":13,"receiver_id":6,"p2p_date":"2026-04-12","amount_cents":24900,"channel":"card"}
+  {"p2p_id":14,"receiver_id":8,"p2p_date":"2026-04-30","amount_cents":7900,"channel":"card"}
+  {"p2p_id":15,"receiver_id":10,"p2p_date":"2026-05-18","amount_cents":21900,"channel":"card"}
+  {"p2p_id":16,"receiver_id":12,"p2p_date":"2026-06-02","amount_cents":3900,"channel":"wallet"}
+  {"p2p_id":29,"receiver_id":9,"p2p_date":"2026-04-03","amount_cents":480000,"channel":"wallet"}
+
+## mirror rows U8 + U9
+  {"p2p_id":17,"sender_id":8,"receiver_id":1,"p2p_date":"2026-03-02","amount_cents":8500,"channel":"wallet"}
+  {"p2p_id":18,"sender_id":8,"receiver_id":3,"p2p_date":"2026-03-02","amount_cents":4200,"channel":"card"}
+  {"p2p_id":19,"sender_id":8,"receiver_id":5,"p2p_date":"2026-03-15","amount_cents":6800,"channel":"wallet"}
+  {"p2p_id":20,"sender_id":9,"receiver_id":1,"p2p_date":"2026-03-09","amount_cents":8500,"channel":"wallet"}
+  {"p2p_id":21,"sender_id":9,"receiver_id":3,"p2p_date":"2026-04-06","amount_cents":4200,"channel":"card"}
+  {"p2p_id":22,"sender_id":9,"receiver_id":5,"p2p_date":"2026-05-04","amount_cents":6800,"channel":"wallet"}
+
+## logins per user (+sessions 1800s)
+  {"user_id":1,"logins":7,"sessions":5}
+  {"user_id":2,"logins":10,"sessions":10}
+  {"user_id":3,"logins":1,"sessions":1}
+  {"user_id":4,"logins":8,"sessions":3}
+  {"user_id":5,"logins":9,"sessions":9}
+  {"user_id":6,"logins":5,"sessions":5}
+  {"user_id":7,"logins":8,"sessions":8}
+  {"user_id":8,"logins":5,"sessions":5}
+  {"user_id":9,"logins":4,"sessions":3}
+  {"user_id":10,"logins":8,"sessions":8}
+  {"user_id":11,"logins":0,"sessions":0}
+  {"user_id":12,"logins":7,"sessions":7}
+
+## logins per user per day
+  {"user_id":1,"d":"2026-07-20","n":4,"fails":0}
+  {"user_id":1,"d":"2026-07-22","n":2,"fails":0}
+  {"user_id":1,"d":"2026-07-23","n":1,"fails":0}
+  {"user_id":2,"d":"2026-07-20","n":2,"fails":0}
+  {"user_id":2,"d":"2026-07-21","n":3,"fails":0}
+  {"user_id":2,"d":"2026-07-22","n":3,"fails":0}
+  {"user_id":2,"d":"2026-07-23","n":2,"fails":0}
+  {"user_id":3,"d":"2026-07-20","n":1,"fails":0}
+  {"user_id":4,"d":"2026-07-20","n":1,"fails":0}
+  {"user_id":4,"d":"2026-07-21","n":6,"fails":5}
+  {"user_id":4,"d":"2026-07-23","n":1,"fails":0}
+  {"user_id":5,"d":"2026-07-20","n":3,"fails":0}
+  {"user_id":5,"d":"2026-07-21","n":3,"fails":0}
+  {"user_id":5,"d":"2026-07-22","n":1,"fails":0}
+  {"user_id":5,"d":"2026-07-23","n":2,"fails":0}
+  {"user_id":6,"d":"2026-07-20","n":2,"fails":0}
+  {"user_id":6,"d":"2026-07-21","n":1,"fails":0}
+  {"user_id":6,"d":"2026-07-22","n":1,"fails":1}
+  {"user_id":6,"d":"2026-07-23","n":1,"fails":0}
+  {"user_id":7,"d":"2026-07-20","n":2,"fails":0}
+  {"user_id":7,"d":"2026-07-21","n":2,"fails":0}
+  {"user_id":7,"d":"2026-07-22","n":2,"fails":0}
+  {"user_id":7,"d":"2026-07-23","n":2,"fails":0}
+  {"user_id":8,"d":"2026-07-20","n":1,"fails":0}
+  {"user_id":8,"d":"2026-07-21","n":2,"fails":1}
+  {"user_id":8,"d":"2026-07-22","n":1,"fails":0}
+  {"user_id":8,"d":"2026-07-23","n":1,"fails":0}
+  {"user_id":9,"d":"2026-07-20","n":1,"fails":0}
+  {"user_id":9,"d":"2026-07-22","n":2,"fails":2}
+  {"user_id":9,"d":"2026-07-23","n":1,"fails":0}
+  {"user_id":10,"d":"2026-07-20","n":3,"fails":0}
+  {"user_id":10,"d":"2026-07-21","n":3,"fails":0}
+  {"user_id":10,"d":"2026-07-22","n":1,"fails":0}
+  {"user_id":10,"d":"2026-07-23","n":1,"fails":0}
+  {"user_id":12,"d":"2026-07-20","n":2,"fails":0}
+  {"user_id":12,"d":"2026-07-21","n":2,"fails":1}
+  {"user_id":12,"d":"2026-07-22","n":2,"fails":0}
+  {"user_id":12,"d":"2026-07-23","n":1,"fails":0}
+
+## logins per device
+  {"device_id":1,"user_id":1,"label":"Priya phone","trusted":1,"uses":6}
+  {"device_id":2,"user_id":1,"label":"Priya laptop","trusted":1,"uses":1}
+  {"device_id":3,"user_id":2,"label":"Marcel phone","trusted":0,"uses":10}
+  {"device_id":4,"user_id":4,"label":"Leo phone","trusted":0,"uses":8}
+  {"device_id":5,"user_id":5,"label":"Wei Lin phone","trusted":1,"uses":9}
+  {"device_id":6,"user_id":6,"label":"Gwen laptop","trusted":1,"uses":5}
+  {"device_id":7,"user_id":7,"label":"Farah phone","trusted":1,"uses":8}
+  {"device_id":8,"user_id":8,"label":"Jonah laptop","trusted":0,"uses":5}
+  {"device_id":9,"user_id":9,"label":"Ravi phone","trusted":0,"uses":4}
+  {"device_id":10,"user_id":10,"label":"Felix phone","trusted":1,"uses":8}
+  {"device_id":11,"user_id":11,"label":"Imogen phone","trusted":1,"uses":0}
+  {"device_id":12,"user_id":12,"label":"Kenji phone","trusted":1,"uses":7}
+  {"device_id":13,"user_id":3,"label":"Tessa phone","trusted":1,"uses":1}
+  {"device_id":14,"user_id":6,"label":"Gwen tablet","trusted":1,"uses":0}
+
+## per-user device count
+  {"user_id":1,"devices":2}
+  {"user_id":2,"devices":1}
+  {"user_id":3,"devices":1}
+  {"user_id":4,"devices":1}
+  {"user_id":5,"devices":1}
+  {"user_id":6,"devices":2}
+  {"user_id":7,"devices":1}
+  {"user_id":8,"devices":1}
+  {"user_id":9,"devices":1}
+  {"user_id":10,"devices":1}
+  {"user_id":11,"devices":1}
+  {"user_id":12,"devices":1}
+
+## U1 full timeline
+  {"login_id":1,"device_id":1,"ip_country":"US","login_ts":1784538000,"result":"success","fail_reason":null,"gap_prev":null}
+  {"login_id":2,"device_id":2,"ip_country":"US","login_ts":1784538090,"result":"success","fail_reason":null,"gap_prev":90}
+  {"login_id":3,"device_id":1,"ip_country":"US","login_ts":1784538300,"result":"success","fail_reason":null,"gap_prev":210}
+  {"login_id":4,"device_id":1,"ip_country":"US","login_ts":1784541000,"result":"success","fail_reason":null,"gap_prev":2700}
+  {"login_id":45,"device_id":1,"ip_country":"US","login_ts":1784710800,"result":"success","fail_reason":null,"gap_prev":169800}
+  {"login_id":46,"device_id":1,"ip_country":"SG","login_ts":1784714400,"result":"success","fail_reason":null,"gap_prev":3600}
+  {"login_id":60,"device_id":1,"ip_country":"US","login_ts":1784803200,"result":"success","fail_reason":null,"gap_prev":88800}
+
+## U4 07-21 burst
+  {"login_id":26,"ip_country":"NG","login_ts":1784635200,"result":"failed","fail_reason":"wrong-password","gap_prev":null}
+  {"login_id":27,"ip_country":"NG","login_ts":1784635260,"result":"failed","fail_reason":"wrong-password","gap_prev":60}
+  {"login_id":28,"ip_country":"NG","login_ts":1784635320,"result":"failed","fail_reason":"wrong-password","gap_prev":60}
+  {"login_id":29,"ip_country":"NG","login_ts":1784635380,"result":"failed","fail_reason":"wrong-password","gap_prev":60}
+  {"login_id":30,"ip_country":"NG","login_ts":1784635440,"result":"failed","fail_reason":"wrong-password","gap_prev":60}
+  {"login_id":31,"ip_country":"NG","login_ts":1784635640,"result":"success","fail_reason":null,"gap_prev":200}
+
+## disputes joined to p2p
+  {"dispute_id":1,"claimant":8,"p2p_id":17,"claim":8500,"actual":8500,"sender_id":8,"receiver_id":1,"p2p_date":"2026-03-02","reason":"unauthorized","status":"open","filed_date":"2026-03-20"}
+  {"dispute_id":2,"claimant":8,"p2p_id":18,"claim":4200,"actual":4200,"sender_id":8,"receiver_id":3,"p2p_date":"2026-03-02","reason":"unauthorized","status":"won","filed_date":"2026-03-22"}
+  {"dispute_id":3,"claimant":8,"p2p_id":19,"claim":6800,"actual":6800,"sender_id":8,"receiver_id":5,"p2p_date":"2026-03-15","reason":"unauthorized","status":"lost","filed_date":"2026-03-25"}
+  {"dispute_id":4,"claimant":1,"p2p_id":42,"claim":20000,"actual":24900,"sender_id":1,"receiver_id":6,"p2p_date":"2026-01-27","reason":"item-not-received","status":"won","filed_date":"2026-02-10"}
+  {"dispute_id":5,"claimant":4,"p2p_id":44,"claim":27000,"actual":30000,"sender_id":4,"receiver_id":12,"p2p_date":"2026-02-13","reason":"item-not-received","status":"lost","filed_date":"2026-03-01"}
+  {"dispute_id":6,"claimant":12,"p2p_id":45,"claim":22000,"actual":22000,"sender_id":12,"receiver_id":7,"p2p_date":"2026-03-21","reason":"other","status":"open","filed_date":"2026-04-01"}
+  {"dispute_id":7,"claimant":12,"p2p_id":46,"claim":9800,"actual":9800,"sender_id":12,"receiver_id":1,"p2p_date":"2026-05-23","reason":"duplicate","status":"lost","filed_date":"2026-06-01"}
+  {"dispute_id":8,"claimant":3,"p2p_id":32,"claim":6800,"actual":6800,"sender_id":3,"receiver_id":5,"p2p_date":"2026-01-19","reason":"duplicate","status":"cancelled","filed_date":"2026-01-25"}
+  {"dispute_id":9,"claimant":5,"p2p_id":1,"claim":12900,"actual":12900,"sender_id":5,"receiver_id":1,"p2p_date":"2026-02-06","reason":"unauthorized","status":"open","filed_date":"2026-02-15"}
+  {"dispute_id":10,"claimant":7,"p2p_id":9,"claim":12900,"actual":12900,"sender_id":7,"receiver_id":1,"p2p_date":"2026-02-11","reason":"unauthorized","status":"open","filed_date":"2026-02-20"}
+  {"dispute_id":11,"claimant":6,"p2p_id":36,"claim":15000,"actual":15000,"sender_id":6,"receiver_id":1,"p2p_date":"2026-01-12","reason":"unauthorized","status":"won","filed_date":"2026-01-30"}
+  {"dispute_id":12,"claimant":10,"p2p_id":39,"claim":25000,"actual":28900,"sender_id":10,"receiver_id":3,"p2p_date":"2026-01-15","reason":"item-not-received","status":"cancelled","filed_date":"2026-02-01"}
+
+## dispute claimants
+  {"user_id":8,"n":3}
+  {"user_id":12,"n":2}
+  {"user_id":1,"n":1}
+  {"user_id":3,"n":1}
+  {"user_id":4,"n":1}
+  {"user_id":5,"n":1}
+  {"user_id":6,"n":1}
+  {"user_id":7,"n":1}
+  {"user_id":10,"n":1}
+
+## cases roster
+  {"case_id":1,"user_id":2,"case_type":"aml","severity":"high","status":"investigating","opened_date":"2026-04-05","closed_date":null,"sar_filed":1}
+  {"case_id":2,"user_id":2,"case_type":"aml","severity":"medium","status":"open","opened_date":"2026-04-20","closed_date":null,"sar_filed":1}
+  {"case_id":3,"user_id":2,"case_type":"fraud","severity":"low","status":"closed-false","opened_date":"2026-02-10","closed_date":"2026-02-28","sar_filed":0}
+  {"case_id":4,"user_id":9,"case_type":"aml","severity":"high","status":"open","opened_date":"2026-04-08","closed_date":null,"sar_filed":1}
+  {"case_id":5,"user_id":9,"case_type":"fraud","severity":"medium","status":"closed-confirmed","opened_date":"2026-06-12","closed_date":"2026-06-20","sar_filed":0}
+  {"case_id":6,"user_id":4,"case_type":"fraud","severity":"medium","status":"open","opened_date":"2026-07-21","closed_date":null,"sar_filed":0}
+  {"case_id":7,"user_id":4,"case_type":"fraud","severity":"low","status":"closed-false","opened_date":"2026-03-20","closed_date":"2026-04-02","sar_filed":0}
+  {"case_id":8,"user_id":11,"case_type":"kyc","severity":"medium","status":"investigating","opened_date":"2026-06-30","closed_date":null,"sar_filed":0}
+  {"case_id":9,"user_id":8,"case_type":"fraud","severity":"high","status":"open","opened_date":"2026-03-21","closed_date":null,"sar_filed":0}
+  {"case_id":10,"user_id":8,"case_type":"fraud","severity":"medium","status":"closed-confirmed","opened_date":"2026-04-02","closed_date":"2026-04-15","sar_filed":0}
+  {"case_id":11,"user_id":1,"case_type":"fraud","severity":"low","status":"open","opened_date":"2026-07-23","closed_date":null,"sar_filed":0}
+  {"case_id":12,"user_id":6,"case_type":"abuse","severity":"low","status":"open","opened_date":"2026-05-11","closed_date":null,"sar_filed":0}
+
+## cases per user
+  {"user_id":2,"handle":"Marcel Osei","n":3,"sars":2}
+  {"user_id":4,"handle":"Leo Fontaine","n":2,"sars":0}
+  {"user_id":8,"handle":"Jonah Reyes","n":2,"sars":0}
+  {"user_id":9,"handle":"Ravi Chandra","n":2,"sars":1}
+  {"user_id":1,"handle":"Priya Raman","n":1,"sars":0}
+  {"user_id":6,"handle":"Gwen Halloway","n":1,"sars":0}
+  {"user_id":11,"handle":"Imogen Cole","n":1,"sars":0}
+
+## U1 sessions detail (1800s)
+  {"login_ts":1784538000,"sess":1}
+  {"login_ts":1784538090,"sess":1}
+  {"login_ts":1784538300,"sess":1}
+  {"login_ts":1784541000,"sess":2}
+  {"login_ts":1784710800,"sess":3}
+  {"login_ts":1784714400,"sess":4}
+  {"login_ts":1784803200,"sess":5}
+
+## velocity pairs (failed<=300s)
+  {"user_id":4,"a_id":26,"b_id":27,"gap":60}
+  {"user_id":4,"a_id":26,"b_id":28,"gap":120}
+  {"user_id":4,"a_id":26,"b_id":29,"gap":180}
+  {"user_id":4,"a_id":26,"b_id":30,"gap":240}
+  {"user_id":4,"a_id":27,"b_id":28,"gap":60}
+  {"user_id":4,"a_id":27,"b_id":29,"gap":120}
+  {"user_id":4,"a_id":27,"b_id":30,"gap":180}
+  {"user_id":4,"a_id":28,"b_id":29,"gap":60}
+  {"user_id":4,"a_id":28,"b_id":30,"gap":120}
+  {"user_id":4,"a_id":29,"b_id":30,"gap":60}
+  {"user_id":9,"a_id":55,"b_id":56,"gap":60}
+
+## users joined login geo spread
+  {"user_id":1,"countries":2,"geos":"US,SG"}
+  {"user_id":4,"countries":2,"geos":"US,NG"}
+  {"user_id":9,"countries":2,"geos":"SG,RU"}
+  {"user_id":2,"countries":1,"geos":"SG"}
+  {"user_id":3,"countries":1,"geos":"SG"}
+  {"user_id":5,"countries":1,"geos":"SG"}
+  {"user_id":6,"countries":1,"geos":"UK"}
+  {"user_id":7,"countries":1,"geos":"SG"}
+  {"user_id":8,"countries":1,"geos":"US"}
+  {"user_id":10,"countries":1,"geos":"US"}
+  {"user_id":12,"countries":1,"geos":"SG"}
+
+## biggest settled single transfers
+  {"p2p_id":31,"sender_id":10,"receiver_id":6,"p2p_date":"2026-06-15","amount_cents":1000000,"channel":"bank","risk_score":88}
+  {"p2p_id":23,"sender_id":2,"receiver_id":5,"p2p_date":"2026-04-02","amount_cents":490000,"channel":"wallet","risk_score":92}
+  {"p2p_id":24,"sender_id":2,"receiver_id":6,"p2p_date":"2026-04-02","amount_cents":490000,"channel":"wallet","risk_score":92}
+  {"p2p_id":25,"sender_id":2,"receiver_id":7,"p2p_date":"2026-04-02","amount_cents":490000,"channel":"wallet","risk_score":92}
+  {"p2p_id":26,"sender_id":2,"receiver_id":12,"p2p_date":"2026-04-02","amount_cents":490000,"channel":"wallet","risk_score":92}
+  {"p2p_id":27,"sender_id":5,"receiver_id":9,"p2p_date":"2026-04-03","amount_cents":480000,"channel":"wallet","risk_score":95}
+  {"p2p_id":28,"sender_id":6,"receiver_id":9,"p2p_date":"2026-04-03","amount_cents":480000,"channel":"wallet","risk_score":95}
+  {"p2p_id":29,"sender_id":7,"receiver_id":9,"p2p_date":"2026-04-03","amount_cents":480000,"channel":"wallet","risk_score":95}
+  {"p2p_id":30,"sender_id":12,"receiver_id":9,"p2p_date":"2026-04-03","amount_cents":480000,"channel":"wallet","risk_score":95}
+  {"p2p_id":43,"sender_id":1,"receiver_id":9,"p2p_date":"2026-02-25","amount_cents":45900,"channel":"card","risk_score":20}
+
+## per-user max single send
+  {"sender_id":10,"biggest":1000000,"n":3}
+  {"sender_id":2,"biggest":490000,"n":6}
+  {"sender_id":12,"biggest":480000,"n":3}
+  {"sender_id":7,"biggest":480000,"n":9}
+  {"sender_id":6,"biggest":480000,"n":4}
+  {"sender_id":5,"biggest":480000,"n":9}
+  {"sender_id":1,"biggest":45900,"n":3}
+  {"sender_id":4,"biggest":30000,"n":1}
+  {"sender_id":9,"biggest":8500,"n":3}
+  {"sender_id":8,"biggest":8500,"n":3}
+  {"sender_id":3,"biggest":6800,"n":2}
+
+fact sheet complete

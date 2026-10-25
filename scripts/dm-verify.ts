@@ -132,6 +132,22 @@ spot("finance-core:q:q58", (o) => o.rows[0][0] === "NYC" && o.rows[0][1] === 453
 spot("finance-core:c:c22:1", (o) => o.rows.length === 1 && o.rows[0][0] === 101200 && o.rows[0][1] === 1659.4, "A5 mirror 101200 / 1659.4");
 spot("finance-core:c:c22:2", (o) => o.rows.length === 1 && o.rows[0][0] === 101200 && o.rows[0][1] === 1659.4, "A7 mirror identical");
 spot("finance-core:c:c60:2", (o) => o.rows.length === 1 && o.rows[0][6] === 2963500, "dossier net 2963500");
+// fraud-aml (round 11 facts)
+spot("fraud-aml:q:q01", (o) => o.rows.length === 1 && o.rows[0][0] === 46, "settled = 46");
+spot("fraud-aml:q:q13", (o) => o.rows.length === 1 && o.rows[0][0] === 5418000, "settled total 5418000");
+spot("fraud-aml:q:q21", (o) => o.rows.length === 11 && o.rows[0][0] === 2 && o.rows[0][1] === 2015000, "U2 leads 2015000");
+spot("fraud-aml:q:q24", (o) => o.rows.length === 12 && o.rows.some((r) => r[0] === 11 && r[1] === 0), "U11 honest zero");
+spot("fraud-aml:q:q33", (o) => o.rows[0][0] === "wallet" && o.rows[0][2] === 4029500, "wallet volume 4029500");
+spot("fraud-aml:q:q41", (o) => o.rows.length === 1 && o.rows[0][5] === 3600, "impossible pair on the 3600 line");
+spot("fraud-aml:q:q44", (o) => o.rows.length === 10 && o.rows[7][2] === 8 && o.rows[9][2] === 8, "dense top-8 keeps the three-way tie");
+spot("fraud-aml:q:q50", (o) => o.rows.length === 1 && o.rows[0][0] === 4880000 && o.rows[0][2] === 90.1, "risky share 4880000 / 90.1");
+spot("fraud-aml:q:q56", (o) => o.rows.length === 1 && o.rows[0][0] === 8 && o.rows[0][1] === 1, "band 8 vs 1 at the EDD line");
+spot("fraud-aml:q:q58", (o) => o.rows[0][0] === 2 && o.rows[0][2] === 2015000 && o.rows[0][3] === 90, "U2 RFM 2015000 / 90d");
+spot("fraud-aml:q:q60", (o) => o.rows.length === 1 && o.rows[0][2] === 40000 && o.rows[0][3] === 4, "ring skim 40000 across 4 legs");
+spot("fraud-aml:q:q22", (o) => o.rows.length === 1 && o.rows[0][0] === 9 && o.rows[0][1] === 1965900, "U9 leads received 1965900");
+spot("fraud-aml:c:c21:1", (o) => o.rows.length === 11 && o.rows[2][1] === 581200 && o.rows[3][1] === 581200, "U5/U7 mirror tie");
+spot("fraud-aml:c:c43:2", (o) => o.rows.length === 1 && o.rows[0][0] === 40000, "hand-off skim 40000");
+spot("fraud-aml:c:c60:2", (o) => o.rows.length === 1 && o.rows[0][2] === 3, "enforcement memo 3 SARs");
 
 if (fails > 0) {
   console.log(`\n${fails} FAILURE(S) — dm-expected.ts NOT written`);
