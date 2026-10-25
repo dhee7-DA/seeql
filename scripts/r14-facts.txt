@@ -1,0 +1,145 @@
+== counts ==
+PASS  customers = 12
+PASS  warehouses = 6
+PASS  drivers = 8
+PASS  shipments = 58
+PASS  shipment_events = 115
+PASS  driver_shifts = 28
+PASS  invoices = 52
+PASS  freight_claims = 12
+== customer/segment/region censuses ==
+PASS  regions NA 5 / EMEA 3 / APAC 2 / LATAM 2 · [{"region":"NA","n":5},{"region":"EMEA","n":3},{"region":"APAC","n":2},{"region":"LATAM","n":2}]
+PASS  segments enterprise 5 / smb 5 / startup 2 · [{"segment":"enterprise","n":5},{"segment":"smb","n":5},{"segment":"startup","n":2}]
+== onboarded calendar ==
+PASS  onboarded: 2025-10 x2, 2025-11 x2, 2025-12 x2, 2026-01 x1, 2026-02 x1, 2026-04 x1, 2025-05? no 2026-05 x2, 2026-06 x1 — March 2026 ZERO · [{"ym":"2025-10","n":2},{"ym":"2025-11","n":2},{"ym":"2025-12","n":2},{"ym":"2026-01","n":1},{"ym":"2026-02","n":1},{"ym":"2026-04","n":1},{"ym":"2026-05","n":2},{"ym":"2026-06","n":1}]
+== shipment status/service censuses ==
+PASS  statuses delivered 44 / in_transit 6 / exception 4 / cancelled 2 / returned 2 · [{"status":"delivered","n":44},{"status":"in_transit","n":6},{"status":"exception","n":4},{"status":"cancelled","n":2},{"status":"returned","n":2}]
+PASS  services standard 23 / economy 20 / express 15 · [{"service":"standard","n":23},{"service":"economy","n":20},{"service":"express","n":15}]
+== house rules hold on every row ==
+PASS  promised = ship + SLA (economy 7 / standard 4 / express 2) on ALL 58
+PASS  delivered rows all have delivered_date, others none
+PASS  cancelled freight all 0, others > 0
+PASS  all freight_cents multiples of 100
+PASS  all invoice bases multiples of 100
+PASS  fuel = ROUND(base * 0.12) on every invoice
+PASS  invoice issue = ship + 1 day
+== planted: SLA wall ==
+PASS  delivered census: 37 early / 1 exactly on line / 6 late · early 37 / line 1 / late 6
+PASS  the on-line row is s01 (express)
+PASS  late delivered sids = [2, 19, 23, 26, 30, 41] · [2,19,23,26,30,41]
+PASS  on-time inclusive 38 vs strict 37 (the wall) · 38 vs 37
+PASS  express on-time inclusive 9 vs strict 8 · 9 vs 8
+PASS  express delivered = 12 (8 early + 1 on-line + 3 late)
+PASS  express late = 3 (s02, s23, s41)
+PASS  standard late = 2 (s26, s30)
+PASS  economy late = 1 (s19)
+== planted: whale + region flip ==
+  delivered freight by customer: [{"cid":10,"name":"Junipero Outdoors","region":"NA","f":279000,"n":7},{"cid":2,"name":"Bitfrost Electronics","region":"EMEA","f":136500,"n":6},{"cid":7,"name":"Glacier Nordic Foods","region":"EMEA","f":128000,"n":4},{"cid":8,"name":"Harborlight Marine","region":"APAC","f":74000,"n":3},{"cid":1,"name":"Aurelia Home Goods","region":"NA","f":51800,"n":5},{"cid":4,"name":"Driftline Apparel","region":"NA","f":34200,"n":4},{"cid":12,"name":"Lumen Optics","region":"EMEA","f":34000,"n":3},{"cid":3,"name":"Cafetal Verde","region":"LATAM","f":18000,"n":3},{"cid":6,"name":"Fernway Botanics","region":"APAC","f":18000,"n":3},{"cid":5,"name":"Ember & Oak","region":"NA","f":13300,"n":3},{"cid":9,"name":"Iris Ink & Paper","region":"NA","f":10600,"n":3},{"cid":11,"name":"Kilnworks Pottery","region":"LATAM","f":0,"n":0}]
+PASS  whale C10 = 279000
+PASS  C2 = 136500, C7 = 128000, C8 = 74000, C1 = 51800
+PASS  C11 = 0 (dormant)
+PASS  total delivered freight = 797400
+PASS  whale share 35.0% (279000/797400)
+  region freight: [{"region":"NA","f":388900},{"region":"EMEA","f":298500},{"region":"APAC","f":92000},{"region":"LATAM","f":18000}]
+PASS  regions NA 388900 / EMEA 298500 / APAC 92000 / LATAM 18000 · [{"region":"NA","f":388900},{"region":"EMEA","f":298500},{"region":"APAC","f":92000},{"region":"LATAM","f":18000}]
+PASS  ex-whale: EMEA 298500 first, NA 109900 second (the flip) · [{"region":"EMEA","f":298500},{"region":"NA","f":109900},{"region":"APAC","f":92000},{"region":"LATAM","f":18000}]
+== planted: the 18000 tie ==
+PASS  C3 = C6 = 18000 (different shapes: 3 rows each? C6 3 rows / C3 3 rows)
+PASS  tie at RANK 8 / DENSE 8; next row RANK 10 / DENSE 9 · [{"cid":3,"f":18000,"r":8,"dr":8},{"cid":6,"f":18000,"r":8,"dr":8},{"cid":5,"f":13300,"r":10,"dr":9}]
+PASS  GROUP_CONCAT registry = '3,6' · 3,6
+== planted: dim weight ==
+PASS  air-tax rows = exactly 5 (s18, s31, s37, s49, s52) · [{"sid":18,"w":4800,"dw":5400},{"sid":31,"w":7600,"dw":8400},{"sid":37,"w":8200,"dw":9000},{"sid":49,"w":6200,"dw":6900},{"sid":52,"w":4600,"dw":5100}]
+PASS  dim tie = exactly 1 (s12)
+PASS  billed weight total = SUM(MAX(w,dw)) over all 58
+PASS  air-tax freight cents = 3800+8800+6000+4200+3900 = 26700
+== planted: honest zeros ==
+PASS  C11's entire book = 1 cancelled shipment
+PASS  C11 zero scans / invoices / claims
+PASS  W5 dark gateway: zero origin shipments
+PASS  W5 zero scans
+PASS  unbilled shipments = 6 (2 cancelled + 4 in_transit s43/s44/s45/s47)
+PASS  in_transit unbilled = 4; prepaid in_transit = 2 (s07, s46)
+PASS  delivered rows without scans (retention) = 28
+PASS  cancelled rows have zero scans
+PASS  LATAM dark in March 2026 (0 shipments)
+== planted: daily ship-date freight ties ==
+PASS  top day = 2026-04-20 (96000, the whale's record)
+  daily total ties: [{"f":4500,"c":2,"g":"2026-02-05,2026-05-08"},{"f":4600,"c":3,"g":"2026-03-28,2026-05-17,2026-05-20"},{"f":8800,"c":2,"g":"2026-02-12,2026-05-21"},{"f":9000,"c":2,"g":"2026-01-20,2026-06-22"},{"f":10500,"c":2,"g":"2026-03-22,2026-06-19"},{"f":11000,"c":2,"g":"2026-04-08,2026-06-15"},{"f":12000,"c":2,"g":"2026-01-08,2026-01-25"},{"f":24000,"c":2,"g":"2026-03-09,2026-06-09"},{"f":27000,"c":4,"g":"2026-01-15,2026-02-03,2026-02-25,2026-05-15"},{"f":33000,"c":2,"g":"2026-02-20,2026-06-05"}]
+PASS  10 daily tie groups; top tie = 4-way 27000 (01-15, 02-03, 02-25, 05-15); 3-way 4600 (03-28, 05-17, 05-20) · [{"f":4500,"c":2,"g":"2026-02-05,2026-05-08"},{"f":4600,"c":3,"g":"2026-03-28,2026-05-17,2026-05-20"},{"f":8800,"c":2,"g":"2026-02-12,2026-05-21"},{"f":9000,"c":2,"g":"2026-01-20,2026-06-22"},{"f":10500,"c":2,"g":"2026-03-22,2026-06-19"},{"f":11000,"c":2,"g":"2026-04-08,2026-06-15"},{"f":12000,"c":2,"g":"2026-01-08,2026-01-25"},{"f":24000,"c":2,"g":"2026-03-09,2026-06-09"},{"f":27000,"c":4,"g":"2026-01-15,2026-02-03,2026-02-25,2026-05-15"},{"f":33000,"c":2,"g":"2026-02-20,2026-06-05"}]
+== planted: scan clock — dwell ==
+  top dwells: [{"sid":48,"dw":259200},{"sid":41,"dw":172800},{"sid":42,"dw":86400},{"sid":7,"dw":64800},{"sid":43,"dw":57600},{"sid":55,"dw":21600}]
+PASS  dwell rows = 23
+PASS  max dwell = s48 259200 (customs)
+PASS  second = s41 172800, third = s42 EXACTLY 86400, fourth = s07 64800
+PASS  s42 EXACTLY 86400 (the dock-day line)
+PASS  dwell >= 86400 catches 3, > catches 2
+PASS  all dwells outside the top-5 are <= 21600
+== planted: scan clock — velocity + sessions ==
+PASS  driver 3's ONLY scans = the 8 burst scans (06-23)
+PASS  D3 scan times = 10:00/10:01/10:02/10:05 + 10:45/46/47/48 (gaps 60,60,180,2400,60,60,60) · [1782208800,1782208860,1782208920,1782209100,1782211500,1782211560,1782211620,1782211680]
+PASS  D3 velocity: 12 pairs <= 300s, 11 strict, exactly ONE pair = 300 · 12/11/1
+PASS  D3 sessions: 2 strict / 2 inclusive (the 2400 gap)
+PASS  velocity <= 300 across ALL drivers = 12, ALL driver 3 · n=12
+PASS  velocity = 300 pairs across ALL drivers = exactly 1 (the D3 wall)
+PASS  consecutive same-driver gaps = 1800: EXACTLY ONE (driver 5, 06-17) · [{"d":5,"g":1800}]
+  D5 scan days: [{"day":"2026-05-04","n":1},{"day":"2026-05-06","n":1},{"day":"2026-05-07","n":2},{"day":"2026-05-12","n":2},{"day":"2026-06-01","n":1},{"day":"2026-06-06","n":1},{"day":"2026-06-09","n":3},{"day":"2026-06-15","n":1},{"day":"2026-06-16","n":1},{"day":"2026-06-19","n":1},{"day":"2026-06-20","n":2}]
+  D5 sessions: strict 13 / inclusive 14
+PASS  D5 sessions differ across the cutoff (strict < inclusive) · 13 vs 14
+PASS  D8's entire book = 2 scans (s51 ofd + exception, 600s apart)
+PASS  driver 6 is the only other EMEA/APAC scanner with multi-day routes
+PASS  hub scans (NULL driver) = 49 = 26 arrived + 23 departed · 49
+PASS  event type census: picked_up 27 / arrived_hub 26 / departed_hub 23 / out_for_delivery 18 / delivered 16 / exception 5 · [{"event_type":"picked_up","n":27},{"event_type":"arrived_hub","n":26},{"event_type":"departed_hub","n":23},{"event_type":"out_for_delivery","n":18},{"event_type":"delivered","n":16},{"event_type":"exception","n":5}]
+PASS  exception scans = 5 (s48, s49, s50, s51, s53)
+PASS  s46's last scan is departed_hub 06-01 18:00 (the vanished express)
+PASS  s47's last scan is out_for_delivery (the phantom)
+PASS  every delivered event sits on the shipment's delivered_date
+PASS  event ts window = 2026-05-04 .. 2026-06-29
+== planted: HOS duty wall ==
+PASS  over-14h shifts = exactly 1 (shift 8, driver 2, 52200)
+PASS  ON-line shift = exactly 1 (shift 11, driver 3, 50400, 06-23)
+PASS  longest shift BELOW the line = 45000 (12.5h, driver 1)
+PASS  deliveries tie: drivers 2 and 4 both 58 (the only tie) · [{"d":1,"n":143},{"d":6,"n":66},{"d":5,"n":61},{"d":3,"n":60},{"d":4,"n":58},{"d":2,"n":58},{"d":7,"n":36},{"d":8,"n":14}]
+PASS  driver 1 = 3000 km crown (2.29x runner-up) · [{"d":1,"k":3000},{"d":2,"k":1310},{"d":4,"k":1090},{"d":6,"k":1060},{"d":3,"k":1040},{"d":5,"k":1030},{"d":7,"k":540},{"d":8,"k":200}]
+PASS  total shift deliveries = 496
+PASS  total shift km = 9270
+== planted: aging board (as of 2026-07-01) ==
+  in_transit ages: [{"sid":7,"age":3},{"sid":43,"age":9},{"sid":44,"age":15},{"sid":45,"age":22},{"sid":46,"age":30},{"sid":47,"age":45}]
+PASS  in_transit ages = 3, 9, 15, 22, 30, 45 · [{"sid":7,"age":3},{"sid":43,"age":9},{"sid":44,"age":15},{"sid":45,"age":22},{"sid":46,"age":30},{"sid":47,"age":45}]
+PASS  one sits EXACTLY on the 30-day line (s46, the overdue express)
+PASS  aging <= 30 = 5, < 30 = 4 (the wall)
+PASS  s46 promised 06-03 = 28 days past promise at 07-01
+PASS  s47 the phantom: out_for_delivery 05-20, 38 days past promise
+== planted: invoice ladder + drift trio ==
+PASS  drift rows = exactly 3 (s27 +1200 disputed, s41 +1300 disputed, s36 +1100 paid) · [{"invoice_id":27,"sid":27,"b":30200,"f":29000,"d":1200,"status":"disputed"},{"invoice_id":36,"sid":36,"b":23100,"f":22000,"d":1100,"status":"paid"},{"invoice_id":40,"sid":41,"b":22300,"f":21000,"d":1300,"status":"disputed"}]
+PASS  total drift = +3600
+PASS  invoice statuses paid 44 / pending 5 / disputed 3 · [{"status":"paid","n":44},{"status":"pending","n":5},{"status":"disputed","n":3}]
+PASS  accessorial rows = exactly 5 (s04 6400, s16 3500, s17 3500, s35 4200, s48 2900) · [{"sid":4,"a":6400},{"sid":16,"a":3500},{"sid":17,"a":3500},{"sid":35,"a":4200},{"sid":48,"a":2900}]
+PASS  largest invoice = s04's 113920 (96000 + 11520 + 6400)
+PASS  second-largest total = 40320, a MIRROR TIE (s01 delivered on the SLA line vs s07 still in transit — same 36000 quote)
+PASS  total invoiced = 986856? — probe reports
+  monthly invoiced: [{"ym":"2026-01","t":112000,"n":6},{"ym":"2026-02","t":165340,"n":8},{"ym":"2026-03","t":123536,"n":7},{"ym":"2026-04","t":199656,"n":6},{"ym":"2026-05","t":133856,"n":8},{"ym":"2026-06","t":303296,"n":17}]
+PASS  June is the record month; April second (the whale's 113920)
+== planted: claims book ==
+PASS  claim types lost 1 / damaged 11
+PASS  claim statuses open 5 / approved 4 / denied 3
+PASS  total claimed = 390600
+PASS  max claim = EXACTLY 200000 (c01, the lost shipment, open)
+PASS  claims >= 200000 = 1; > 200000 = 0 (the wall)
+PASS  runner-up = 48000
+PASS  the 48000 twins: c07 + c08, both open
+PASS  open claims have NULL decided_date, others set
+PASS  approved payout total = 8800+5200+6100+9900 = 30000 (claimed on approved rows)
+PASS  claims on delivered = 6 (concealed damage) / exception 4 / returned 2
+== planted: cross-border lanes ==
+PASS  cross-border lanes (hub region != customer region) = 5 (s37-s40, s48 — the LATAM lanes) · [{"sid":37,"f":6000,"wr":"NA","cr":"LATAM"},{"sid":38,"f":6200,"wr":"NA","cr":"LATAM"},{"sid":39,"f":5800,"wr":"NA","cr":"LATAM"},{"sid":40,"f":0,"wr":"NA","cr":"LATAM"},{"sid":48,"f":6400,"wr":"NA","cr":"LATAM"}]
+PASS  cross-border freight = 6000+6200+5800+0+6400 = 24400
+PASS  s41 has the longest distance (8200 km)
+PASS  the customs dwell belongs to cross-border s48; s41 is the longest Rotterdam hold
+PASS  s48 IS the cross-border customs exception (LATAM lane via Memphis)
+== service-level economics ==
+  delivered freight by service: [{"service":"express","f":410500,"n":12,"a":34208},{"service":"standard","f":231100,"n":15,"a":15407},{"service":"economy","f":155800,"n":17,"a":9165}]
+PASS  express carries the most delivered freight
+== s01 the SLA boundary survivor details ==
+PASS  s01: ship 06-01, promised 06-03, delivered 06-03, express
+
+ALL PROBES PASS

@@ -39,6 +39,11 @@ import { DM_HC_SEED } from "./content/dm-hc-seed";
 import { DM_HC_QUERIES } from "./content/dm-hc-queries";
 import { DM_HC_MCQS } from "./content/dm-hc-mcqs";
 import { DM_HC_CASES } from "./content/dm-hc-cases";
+import { DM_FREIGHT_SCHEMA } from "./content/dm-freight-schema";
+import { DM_FREIGHT_SEED } from "./content/dm-freight-seed";
+import { DM_FREIGHT_QUERIES } from "./content/dm-freight-queries";
+import { DM_FREIGHT_MCQS } from "./content/dm-freight-mcqs";
+import { DM_FREIGHT_CASES } from "./content/dm-freight-cases";
 
 export type DmDifficulty = "Easy" | "Medium" | "Hard";
 
@@ -291,6 +296,43 @@ export const DM_PACKS: DmPack[] = [
     queries: DM_HC_QUERIES,
     mcqs: DM_HC_MCQS,
     cases: DM_HC_CASES,
+  },
+  {
+    id: "logistics-freight",
+    title: "Logistics & Freight",
+    tagline: "SLA walls, dim-weight billing, hub dwell and the HOS line — the parcel network analytics stack on one shared dataset.",
+    companies: [
+      { name: "FedEx", real: true, blurb: "Parcel express — SLA screens, on-time matrices and the boundary survivor" },
+      { name: "UPS", real: true, blurb: "Parcel at scale — dim-weight billing, drift audits and the whale dossier" },
+      { name: "DHL", real: true, blurb: "Cross-border — customs holds, dwell forensics and velocity walls" },
+      { name: "Maersk", real: true, blurb: "Freight networks — dock economics, aging boards and rank registries" },
+      { name: "Freightline", real: false, blurb: "Fictional LTL carrier carrying the heavier case studies" },
+      { name: "Portside", real: false, blurb: "Fictional freight forwarder — exception forensics and honest zeros" },
+    ],
+    schema: { ...DM_FREIGHT_SCHEMA, seed: DM_FREIGHT_SEED },
+    primer: {
+      hook: "Every parcel and freight network runs the same core loop: what was promised, what was billed, where it stalled, and who drove it there. This pack teaches the SQL that answers all four on one shared dataset.",
+      concept: [
+        "The shipment grain carries its own clock: every row has a ship_date, a promised_date and — when it lands — a delivered_date. The promise is mechanical: promised_date = ship_date + service days (economy 7, standard 4, express 2), and the probe verifies it on all 58 rows. On-time is delivered_date <= promised_date, and the pack plants exactly ONE delivered shipment EXACTLY on its promise line — so the inclusive rule counts 38 on-time and the strict rule counts 37. Status is the second axis: delivered rows landed, in_transit rows are still moving (delivered_date NULL), exception rows stalled, returned rows came back, and cancelled rows never happened at all — freight 0, no scans, no invoice, no claim. Asking for 'late' without defining the boundary is the classic logistics interview trap.",
+        "Billing runs on a ladder with two weights and three money columns. Billed weight is MAX(weight_g, dim_weight_g) — dimensional weight prices the SPACE a box takes, so light bulky parcels pay the 'air tax' (exactly five rows here, plus one exact tie where the scales agree). The money ladder: freight_cents is the quoted linehaul snapshot on the shipment; the invoice carries base_cents (billed), fuel_cents (ROUND(base * 0.12) on every single row) and accessorial_cents (residential, address correction, oversize, liftgate). The drift audit joins invoices back to quotes and prices the repricing — exactly three rows drift here, and one of them PAID without a dispute. The largest invoice (113920) is the whale's April record, and a mirror pair of identical 36000 quotes ties at exactly 40320 invoiced cents — same lane, one delivered on its SLA line, one still in the wind.",
+        "Scans run on their own clock, and the table has a memory policy: events exist only inside the trailing retention window (pickups from 2026-05-04 onward) — 26 delivered shipments predate it and have NO scans, the honest gap every rollup must respect. Hub dwell is departed_hub minus arrived_hub on the same shipment; the book plants a 259200-second customs hold, a 172800 Rotterdam marathon, and one lane sitting EXACTLY on 86400 — a full dock day — where >= and > disagree. Per-driver scans support the two classic telemetry patterns: the velocity self-join (driver 3's 06-23 route makes 12 pairs within 300 seconds, one EXACTLY on the line) and sessionization (LAG + gap flags with a 1800-second cutoff, where driver 5 owns a pair EXACTLY on the boundary — 13 sessions strict, 14 inclusive).",
+        "Duty and risk round it out. The duty ledger measures end_ts - start_ts against the 14-hour HOS line of 50400 seconds: one shift runs OVER it, one lands EXACTLY on it, and the roster's productivity ties (drivers 2 and 4 at exactly 58 deliveries) sit next to a 3000 km crown. Claims run their own lifecycle — open, approved, denied, with decided_date NULL until decided — and the money story is boundaries again: the lost shipment claims EXACTLY 200000 (the insurance line that >= catches and > misses) ahead of the 48000 twins. Concentration is the final lens: the whale holds 34.99% of delivered freight, NA leads on his book alone, and excluding him flips the region board behind EMEA — while the honest zeros (the dark gateway with no scans, the dormant shipper whose whole book is one cancelled tender, the empty March in the LATAM spine) only appear if your JOINs and calendars keep them.",
+      ],
+      glossary: [
+        { term: "SLA window", def: "promised_date = ship_date + service days — economy 7, standard 4, express 2" },
+        { term: "dim weight", def: "the dimensional weight pricing box size; billed weight = MAX(weight_g, dim_weight_g)" },
+        { term: "air tax", def: "paying on dim weight because the box is light and bulky — five rows here" },
+        { term: "accessorial", def: "fees beyond linehaul — residential, address correction, oversize, liftgate" },
+        { term: "drift", def: "an invoice base that differs from the quoted freight snapshot — three rows, one paid" },
+        { term: "dwell", def: "departed_hub minus arrived_hub on the same shipment — the dock-time metric" },
+        { term: "HOS line", def: "the 50400-second (14h) duty limit on driver_shifts" },
+        { term: "retention window", def: "scans exist only for pickups from 2026-05-04 — earlier deliveries have none" },
+        { term: "honest zero", def: "a LEFT JOIN or calendar spine that keeps the dark gateway, the dormant shipper and the empty month visible" },
+      ],
+    },
+    queries: DM_FREIGHT_QUERIES,
+    mcqs: DM_FREIGHT_MCQS,
+    cases: DM_FREIGHT_CASES,
   },
 ];
 

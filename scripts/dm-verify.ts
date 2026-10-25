@@ -182,6 +182,28 @@ spot("healthcare-claims:q:q60", (o) => o.rows.length === 9 && o.rows[5][1] === 0
 spot("healthcare-claims:c:c45:2", (o) => o.rows.length === 1 && o.rows[0][0] === 28, "total sessions 28");
 spot("healthcare-claims:c:c43:2", (o) => o.rows.length === 1 && o.rows[0][0] === 25 && o.rows[0][3] === 12400, "survivor c25 paid 12400");
 spot("healthcare-claims:c:c46:1", (o) => o.rows.length === 4 && o.rows[0][2] === 360850, "whale flip case NA ex 360850");
+// logistics-freight (round 14 facts)
+spot("logistics-freight:q:q01", (o) => o.rows.length === 1 && o.rows[0][0] === 44, "delivered = 44");
+spot("logistics-freight:q:q21", (o) => o.rows.length === 12 && o.rows[0][2] === 279000 && o.rows[11][2] === 0, "whale leads 279000, C11 honest zero");
+spot("logistics-freight:q:q22", (o) => o.rows.length === 4 && o.rows[0][0] === "NA" && o.rows[0][1] === 388900, "NA leads 388900");
+spot("logistics-freight:q:q27", (o) => o.rows.length === 5 && o.rows[0][1] === 259200 && o.rows[2][1] === 86400, "dwell top5: customs, Rotterdam, 86400 line");
+spot("logistics-freight:q:q33", (o) => o.rows.length === 5 && o.rows[2][0] === 0 && o.rows[2][1] === 1, "delta 0 = one SLA-line survivor");
+spot("logistics-freight:q:q41", (o) => o.rows.length === 11 && o.rows[7][2] === 8 && o.rows[8][2] === 8 && o.rows[9][2] === 10 && o.rows[9][3] === 9, "18000 tie rank 8, next rank 10/dense 9, 11 rows");
+spot("logistics-freight:q:q42", (o) => o.rows.length === 4 && o.rows[0][0] === "EMEA" && o.rows[1][0] === "NA" && o.rows[1][1] === 109900, "whale flip NA->2nd");
+spot("logistics-freight:q:q43", (o) => o.rows.length === 1 && o.rows[0][0] === 12 && o.rows[0][1] === 11 && o.rows[0][2] === 1, "velocity 12/11/1 wall");
+spot("logistics-freight:q:q44", (o) => o.rows.length === 1 && o.rows[0][0] === 13 && o.rows[0][1] === 14, "D5 sessions 13 strict / 14 inclusive");
+spot("logistics-freight:q:q45", (o) => o.rows.length === 8 && o.rows[0][0] === "2026-04-20" && o.rows[0][1] === 96000 && o.rows[5][1] === 33000 && o.rows[6][2] === 6, "top day 96000, 33000 pair shares rank 6");
+spot("logistics-freight:q:q46", (o) => o.rows.length === 3 && o.rows[1][1] === 4, "aging buckets 1/4/1");
+spot("logistics-freight:q:q47", (o) => o.rows[1][1] === 9 && o.rows[1][2] === 8, "express 9 inclusive vs 8 strict");
+spot("logistics-freight:q:q48", (o) => o.rows.length === 4 && o.rows.reduce((a: number, r: unknown[]) => a + (r[1] as number), 0) === 26, "26 scanless deliveries, no June row");
+spot("logistics-freight:q:q50", (o) => o.rows.length === 1 && o.rows[0][0] === 1 && o.rows[0][1] === 0, "insurance line >=1 >0");
+spot("logistics-freight:q:q55", (o) => o.rows.length === 6 && o.rows[2][1] === 0 && o.rows[5][1] === 0, "LATAM March + June zeros");
+spot("logistics-freight:q:q56", (o) => o.rows.length === 14 && o.rows[0][0] === 1 && o.rows[1][0] === 7 && o.rows[0][4] === 36000, "mirror pair leads at 36000");
+spot("logistics-freight:q:q58", (o) => o.rows.length === 6 && o.rows[5][2] === 797400, "running curve ends 797400");
+spot("logistics-freight:q:q60", (o) => o.rows.length === 1 && o.rows[0][0] === 279000 && o.rows[0][2] === 34.99 && o.rows[0][4] === 109900, "whale dossier 34.99% / flip 109900");
+spot("logistics-freight:c:c42:1", (o) => o.rows.length === 1 && o.rows[0][2] === 34.99 && o.rows[0][4] === 109900, "case: whale dossier");
+spot("logistics-freight:c:c53:2", (o) => o.rows.length === 1 && o.rows[0][0] === 1, "case: exactly one dark hub");
+spot("logistics-freight:c:c54:1", (o) => o.rows.length === 6 && o.rows[2][1] === 0, "case: LATAM spine March zero");
 
 if (fails > 0) {
   console.log(`\n${fails} FAILURE(S) — dm-expected.ts NOT written`);
