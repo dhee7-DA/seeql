@@ -1,0 +1,77 @@
+# Round 12 — SaaS & Subscriptions AUTHORING FACTS (all probe-verified by r12-saas-probe.ts)
+# Content may cite ONLY numbers on this list.
+
+## world
+- tables: accounts 12 · subscriptions 16 · invoices 62 · seats 14 · events 72 · tickets 12
+- plans: Starter 4900 / Growth 9900 / Scale 24900 / Enterprise 100000 (cents/mo)
+- accounts: 11 active + 1 churned (A12); segments Enterprise 3 / MidMarket 4 / SMB 5;
+  regions NA 4 / APAC 3 / EMEA 3 / LATAM 2; owners Dana Whit 3 / Priya Nair 5 / Sam Ortega 4
+- events window: 2026-07-20..23, day openers 1784505600 / 1784592000 / 1784678400 / 1784764800
+- event census: login 36 / report_run 18 / api_call 11 / invite 4 / export 3
+- invoices: 53 paid / 7 failed / 1 pending / 1 refunded; paid_date NULL on exactly 8
+
+## MRR leaderboard (current subs)
+- total current MRR = 209000; ARPA = 19000 (11 active accounts)
+- whale A10 = 100000 at rank 1 (>= 100000 counts 1, > 100000 counts 0; max = 100000)
+- rank-2 tie: A1 + A4 at 24900 (dense 2)
+- rank-4 FOUR-way tie: A2 / A6 / A8 / A9 at 9900 (dense 3)
+- rank-8 FOUR-way tie: A3 / A5 / A7 / A11 at 4900 (dense 4)
+- current plan census: Enterprise x1 (100000) / Scale x2 (49800) / Growth x4 (39600) / Starter x4 (19600)
+
+## churn-rejoin wall (the marquee trap)
+- naive churn = SUM(mrr) over 5 end-dated rows = 54500 (11x too high)
+- TRUE churn = A12 only, 4900 (no successor sub; status 'churned')
+- A2: end-dated row (03-31) + rejoin sub (start 2026-05-01, same 9900) = 'flat-restart'
+- A2 has NO April invoice (churn gap); A12 invoices = Mar 18 + Apr 01 only (2)
+- movement ledger (LAG): 12 new / 2 expansion (A4 +5000 Feb, +15000 Apr = +20000)
+  / 1 contraction (A6 -15000 on 04-15) / 1 flat-restart (A2 rejoin)
+- new logos in 2026 = 6, new-logo MRR = 134500 (A7 4900, A8 9900, A9 9900, A11 4900, A12 4900, A10 100000)
+- new-logo months: Jan 14800 x2 / Feb 9900 x1 / Mar 9800 x2 / Jun 100000 x1
+- April AND May = ZERO new-logo months (honest zero)
+
+## invoices
+- issued total 754400 · collected (paid) 660300 · lost 94100 (failed 84300 + pending 4900 + refunded 4900)
+- collection rate 87.5%
+- monthly issued: Jan 108900 / Feb 104100 / Mar 113900 / Apr 111500 / May 108000 / Jun 208000
+- June MoM delta = EXACTLY +100000 (the whale's MRR); other deltas -4800 / +9800 / -2400 / -3500
+- daily issued ties: 104100 twice (02-01 vs 03-01); SIX lone 4900 days
+  (01-07 A7, 03-04 A11, 03-18 A12, 04-04 A11, 05-04 A11, 06-04 A11 — all single-invoice days)
+- peak day 06-01 = 203100 across 10 invoices
+- zero-COLLECTION days (paid total 0): 04-04 and 06-04 (A11 cadence, failed + pending)
+- drift rows (invoice != sub active at issue) = exactly 3: A2 May 8900, A2 Jun 8900 (promo; sub 9900),
+  A6 Apr-15 17400 (proration blend; subs switch Scale->Growth mid-day)
+- duplicate (account, day, amount) = only A3 on 01-19 x2 (one paid + one refunded); refunded rows = 1
+- dunning: failed per account A4 x4, A5 x1, A7 x1, A11 x1
+  - A4 streak: Feb/Mar/Apr/May all failed, Jun paid (recovery); A4 lost 69600 to dunning
+  - A5 and A7 failed exactly Feb (mirror)
+- account issued totals: A1 149400 / A2 47500 / A3 39200 / A4 99400 / A5 29400 / A6 111900
+  / A7 29400 / A8 59400 / A9 59400 / A10 100000 / A11 19600 / A12 9800
+
+## mirrors
+- A5/A7 invoice (amount,status) multisets IDENTICAL: {(4900,paid) x5, (4900,failed) x1}; 29400 each over 6
+- A8/A9 invoice multisets IDENTICAL: {(9900,paid) x6}; 59400 each over 6
+
+## dormant + seatless
+- A11 Mosslight Labs: zero events, seat 11 never activated (last_active NULL),
+  exactly 1 ticket (high/open), 1 failed invoice (April), still pays 4900 (2 paid invoices, 1 pending Jun)
+- seatless payers = A3 and A6 ONLY (zero seat rows); 2-seat club = A1/A2/A5/A8
+- seat 13 = A2's only member, joined 2026-07-21; seat 12 (A12) last active 04-28 (before 04-30 churn)
+
+## event clocks
+- seat-1 gap 2700s (event 3 api_call 32700 -> event 4 export 35400) — the 1800s session-cutoff split
+- seat-1 login->export pair EXACTLY 3600s on 07-22 (events 47 -> 48); only gap pair inside (1800, 20000] = {2700, 3600}
+- invite burst: 4 invites, all seat 3 on 07-21, 60s apart -> exactly 6 velocity pairs <= 300s
+- seat 13's first login 200s after the last invite; seat 13 has exactly ONE event ever
+- zero-event seats = 11 and 12
+- sessions @1800s cutoff: total 38; A1 = 9 (seat 1: 6, seat 2: 3); seat 4: 4; seat 7: 4; seat 14: 4
+- exports only from A1 (x2) and A10 (x1); whale seat 14 active all 4 days
+
+## rollups
+- segment MRR: Enterprise 134800 (64.5%) / SMB 44600 / MidMarket 29600
+- region MRR: LATAM 100000 / NA 49600 / APAC 34700 / EMEA 24700
+  (LATAM "leads" on the whale alone; ex-whale LATAM = 0 and NA leads)
+- owner MRR: Sam Ortega 119800 / Priya Nair 49500 / Dana Whit 39700
+  (ex-whale order flips: Priya 49500 / Dana 39700 / Sam 19800)
+- tickets: priority high 3 / medium 5 / low 4; status open 4 / closed 3 / resolved 3 / investigating 2
+- ticketless accounts = A3 / A7 / A9; 2-ticket club = A2 / A4 / A6
+- resolved_date NULL exactly on the 6 live tickets

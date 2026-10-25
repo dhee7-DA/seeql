@@ -29,6 +29,11 @@ import { DM_FRAUD_SEED } from "./content/dm-fraud-seed";
 import { DM_FRAUD_QUERIES } from "./content/dm-fraud-queries";
 import { DM_FRAUD_MCQS } from "./content/dm-fraud-mcqs";
 import { DM_FRAUD_CASES } from "./content/dm-fraud-cases";
+import { DM_SAAS_SCHEMA } from "./content/dm-saas-schema";
+import { DM_SAAS_SEED } from "./content/dm-saas-seed";
+import { DM_SAAS_QUERIES } from "./content/dm-saas-queries";
+import { DM_SAAS_MCQS } from "./content/dm-saas-mcqs";
+import { DM_SAAS_CASES } from "./content/dm-saas-cases";
 
 export type DmDifficulty = "Easy" | "Medium" | "Hard";
 
@@ -207,6 +212,43 @@ export const DM_PACKS: DmPack[] = [
     queries: DM_FRAUD_QUERIES,
     mcqs: DM_FRAUD_MCQS,
     cases: DM_FRAUD_CASES,
+  },
+  {
+    id: "saas-subscriptions",
+    title: "SaaS & Subscriptions",
+    tagline: "MRR, churn, cohorts, trials and dunning — the subscription analytics stack on one shared dataset.",
+    companies: [
+      { name: "Salesforce", real: true, blurb: "Enterprise SaaS — MRR leaderboards, movement waterfalls, tie registries" },
+      { name: "HubSpot", real: true, blurb: "Growth platform — churn corrections, drift audits, new-logo cohorting" },
+      { name: "Datadog", real: true, blurb: "Observability SaaS — usage telemetry, sessionization, power-seat cuts" },
+      { name: "Atlassian", real: true, blurb: "Seat-based economics — adoption holes, boundary bands, regional books" },
+      { name: "Nimbus Metrics", real: false, blurb: "Fictional product-analytics SaaS carrying the heavier case studies" },
+      { name: "Flowstack", real: false, blurb: "Fictional billing fintech — dunning, velocity and whale forensics" },
+    ],
+    schema: { ...DM_SAAS_SCHEMA, seed: DM_SAAS_SEED },
+    primer: {
+      hook: "Every subscription business runs the same core loop: who pays, what changed, who actually uses the product, and which bill will never land. This pack teaches the SQL that answers all four on one shared dataset.",
+      concept: [
+        "MRR starts at the subscription grain — but the grain is HISTORY, not a snapshot. A plan change CLOSES the old subscription row (sets end_date) and OPENS a new one, so the current book is the end_date IS NULL slice and everything else is history. The classification question writes itself: a successor row with higher MRR is expansion, lower is contraction, no successor at all is churn — and the pack plants a churn that came back, so SUM over end-dated rows overstates true churn by 11x. Segment (who the account is) and plan (what they pay for) are deliberately independent vocabularies here.",
+        "Invoices are a SECOND money grain. Most bill on the 1st at the plan rate, but promotions and mid-month proration make amounts drift from the subscription active at issue — the drift audit (join invoices to the sub covering the issue date, compare, price the delta) is a real revenue-integrity task, and same-day plan switches force a strict end_date > issued_date join. Billing also has its own status lifecycle: paid, failed (dunning), pending, refunded — and issued versus collected are different totals that disagree by exactly the failed + pending + refunded money.",
+        "Usage runs on a third clock: seat telemetry in epoch seconds. The invite burst is the velocity pattern (four invites 60 seconds apart make six pairs inside a 300-second window — the C(4,2) combinatorics every self-join detector relies on); sessionization cuts each seat's timeline with a 1800-second gap cutoff (LAG + running SUM of gap flags); and one login-export pair sits EXACTLY on a 3600-second line, where the choice between strict and inclusive operators decides the result.",
+        "Leaderboards round it out. Current MRR ties are planted at three heights — a two-way tie at 24900, four-way ties at 9900 and 4900 — so RANK (which skips after ties) and DENSE_RANK (which does not) give visibly different boards, and GROUP_CONCAT turns the ties into a registry. Concentration is the final lens: one whale at exactly 100000 carries a whole region and one owner's book, and the leaderboard FLIPS the moment that signature is excluded. The honest-zero rule from the earlier packs applies doubly — the seatless payers and the paying-but-dark account only appear if your JOINs keep them.",
+      ],
+      glossary: [
+        { term: "MRR", def: "monthly recurring revenue — mrr_cents on subscription rows; the current book is end_date IS NULL" },
+        { term: "plan history", def: "a plan change closes the old row and opens a new one; successors classify movements" },
+        { term: "expansion / contraction", def: "a successor subscription with higher / lower MRR than its predecessor" },
+        { term: "rejoin", def: "a churn whose account resubscribes later — a flat-restart, not a new logo and not churn" },
+        { term: "drift", def: "an invoice amount that differs from the subscription active at issue — promos and proration" },
+        { term: "dunning", def: "the failed-invoice recovery cycle; this book's saga runs four straight failures" },
+        { term: "session gap", def: "an inter-event gap over 1800 seconds starts a new session" },
+        { term: "whale", def: "the single 100000 signature that flips regional and owner leaderboards when excluded" },
+        { term: "honest zero", def: "a LEFT JOIN + COUNT that shows 0 for the seatless payers or the never-activated seat" },
+      ],
+    },
+    queries: DM_SAAS_QUERIES,
+    mcqs: DM_SAAS_MCQS,
+    cases: DM_SAAS_CASES,
   },
 ];
 

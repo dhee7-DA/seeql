@@ -148,6 +148,23 @@ spot("fraud-aml:q:q22", (o) => o.rows.length === 1 && o.rows[0][0] === 9 && o.ro
 spot("fraud-aml:c:c21:1", (o) => o.rows.length === 11 && o.rows[2][1] === 581200 && o.rows[3][1] === 581200, "U5/U7 mirror tie");
 spot("fraud-aml:c:c43:2", (o) => o.rows.length === 1 && o.rows[0][0] === 40000, "hand-off skim 40000");
 spot("fraud-aml:c:c60:2", (o) => o.rows.length === 1 && o.rows[0][2] === 3, "enforcement memo 3 SARs");
+// saas-subscriptions (round 12 facts)
+spot("saas-subscriptions:q:q01", (o) => o.rows.length === 1 && o.rows[0][0] === 53, "paid = 53");
+spot("saas-subscriptions:q:q10", (o) => o.rows.length === 1 && o.rows[0][0] === 1, "boundary 1 vs 0");
+spot("saas-subscriptions:q:q21", (o) => o.rows.length === 11 && o.rows[0][0] === 10 && o.rows[0][1] === 100000, "whale rank 1");
+spot("saas-subscriptions:q:q24", (o) => o.rows.length === 12 && o.rows.some((r) => r[0] === 3 && r[2] === 0), "A3 seatless honest zero");
+spot("saas-subscriptions:q:q26", (o) => o.rows[5][0] === "2026-06" && o.rows[5][2] === 100000, "June delta = whale");
+spot("saas-subscriptions:q:q28", (o) => o.rows.length === 3 && o.rows[2][3] === 17400, "3 drift rows, blend last");
+spot("saas-subscriptions:q:q30", (o) => o.rows.length === 14 && o.rows[1][1] === 4900, "01-07 lone 4900 day");
+spot("saas-subscriptions:q:q32", (o) => o.rows[0][1] === 6, "seat 1 = 6 sessions");
+spot("saas-subscriptions:q:q41", (o) => o.rows.length === 6 && o.rows[0][2] === 60, "6 velocity pairs, min 60s");
+spot("saas-subscriptions:q:q45", (o) => o.rows.length === 1 && o.rows[0][0] === 54500 && o.rows[0][1] === 4900, "naive 54500 vs true 4900");
+spot("saas-subscriptions:q:q47", (o) => o.rows.length === 4 && o.rows[2][2] === "2,6,8,9", "tie registry 9900 tier");
+spot("saas-subscriptions:q:q50", (o) => o.rows.length === 1 && o.rows[0][0] === 11 && o.rows[0][3] === 1, "A11 dossier 1 failed 1 open-high");
+spot("saas-subscriptions:q:q53", (o) => o.rows.length === 6 && o.rows[3][1] === 0 && o.rows[4][1] === 0, "Apr+May zero months");
+spot("saas-subscriptions:q:q58", (o) => o.rows.length === 1 && o.rows[0][2] === 17400, "proration blend 17400");
+spot("saas-subscriptions:c:c45:1", (o) => o.rows.length === 1 && o.rows[0][1] === 4900, "churn correction true 4900");
+spot("saas-subscriptions:c:c60:2", (o) => o.rows.length === 1 && o.rows[0][2] === 100000, "whale IS June's delta");
 
 if (fails > 0) {
   console.log(`\n${fails} FAILURE(S) — dm-expected.ts NOT written`);
