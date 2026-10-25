@@ -882,3 +882,17 @@ button:not(:disabled),
   outline: 2px solid color-mix(in srgb, var(--brand-accent) 80%, transparent);
   outline-offset: 2px;
 }
+
+/* =====================================================================
+   PRINT — the report/cheat-sheet routes print to a clean white sheet
+   ===================================================================== */
+@media print {
+  html,
+  body {
+    background: white !important;
+  }
+  /* the shell's dark surfaces and fixed backdrop wash out on paper */
+  .print\:bg-white {
+    background: white !important;
+  }
+}

@@ -17,6 +17,7 @@ import {
   Crosshair,
   Eye,
   FileStack,
+  FileText,
   FileUp,
   FlaskConical,
   Flag,
@@ -67,6 +68,7 @@ export type ToolKind =
   | "explain"
   | "mastery"
   | "sheet"
+  | "report"
   | "sandbox"
   | "notebook"
   | "lc";
@@ -116,6 +118,7 @@ export const TOOLS: ToolDef[] = [
   { kind: "explain", icon: MessagesSquare, label: "Explain back", note: "say what the query does", short: "Explain", section: "lab" },
   { kind: "mastery", icon: Activity, label: "Mastery map", note: "your skills, your daily quest", short: "Mastery", section: "lab" },
   { kind: "sheet", icon: Printer, label: "Cheat sheet", note: "personal revision, prints to PDF", short: "Sheet", section: "lab" },
+  { kind: "report", icon: FileText, label: "Progress report", note: "printable snapshot — save as PDF", short: "Report", section: "toolbox" },
   { kind: "notebook", icon: NotebookPen, label: "Query notebook", note: "save queries + margin notes", short: "Notes", section: "lab" },
   { kind: "lc", icon: Code2, label: "LeetCode Big Board", note: "every classic, deep-dived", short: "LC", section: "lab" },
 ];

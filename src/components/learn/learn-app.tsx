@@ -56,6 +56,7 @@ import { KeywordPractice } from "./keyword-practice";
 import { LeetCodeView } from "./leetcode-view";
 import { ReadinessDashboard } from "./readiness-dashboard";
 import { QueryPipeline } from "./query-pipeline";
+import { ProgressReport } from "./progress-report";
 import { CompaniesView } from "./companies-view";
 import { MockHq } from "./mock-hq";
 import { gauntletFor } from "@/lib/curriculum/gauntlet";
@@ -107,6 +108,7 @@ export type View =
   | { kind: "explain" }
   | { kind: "perf"; sql?: string; tab?: "pipeline" | "workbench" | "detective" }
   | { kind: "sheet" }
+  | { kind: "report" }
   | { kind: "mentor" }
   | { kind: "sandbox" }
   | { kind: "notebook" }
@@ -515,7 +517,7 @@ function ToolRail({ view, setView }: { view: View; setView: (v: View) => void })
   return (
     <nav
       aria-label="Quick tools"
-      className="sticky top-14 z-30 mb-4 -mx-4 flex gap-1.5 overflow-x-auto bg-zinc-950/90 px-4 py-2 backdrop-blur thin-scrollbar lg:hidden"
+      className="sticky top-14 z-30 mb-4 -mx-4 flex gap-1.5 overflow-x-auto bg-zinc-950/90 px-4 py-2 backdrop-blur thin-scrollbar print:hidden lg:hidden"
     >
       {TOOLS.map((t) => (
         <Btn
@@ -759,6 +761,8 @@ function ViewBody({
       return <QueryPipeline />;
     case "sheet":
       return <CheatSheet />;
+    case "report":
+      return <ProgressReport />;
     case "mentor":
       return <MentorChat />;
     case "sandbox":
@@ -956,7 +960,7 @@ export function LearnApp() {
           starve the curriculum: on a 1440x900 laptop the 21 pinned rows alone
           exceed the panel height, flex squeezed the lesson list to zero and
           the Lab clipped mid-row. */}
-      <aside className="order-2 w-full shrink-0 lg:order-1 lg:sticky lg:top-[76px] lg:h-[calc(100vh-96px)] lg:w-[300px] lg:self-start">
+      <aside className="order-2 w-full shrink-0 print:hidden lg:order-1 lg:sticky lg:top-[76px] lg:h-[calc(100vh-96px)] lg:w-[300px] lg:self-start">
         <Panel pad={0} className="flex max-h-full flex-col overflow-hidden">
           <div className="shrink-0 border-b border-zinc-800 p-4" data-tour="curriculum">
             <div className="flex items-center justify-between">
