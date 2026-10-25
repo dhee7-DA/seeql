@@ -1786,6 +1786,20 @@ export const SQL50_SECTIONS: LcSection[] = [
       "price-fill-forward-staleness",
     ],
   },
+  {
+    id: "boss3",
+    title: "Boss Level III — Chains & Graphs",
+    blurb:
+      "Six original recursive and graph problems: bill-of-materials leaf-demand explosion with path products, BFS min-hop reachability over directed flights, transitive-closure subtree roll-ups, canonical-edge triangle counting, referral generations pivoted per origin and effective equity ownership summed over every path.",
+    slugs: [
+      "bom-leaf-demand-explosion",
+      "min-hops-flight-reachability",
+      "subtree-budget-rollup",
+      "mutual-follow-triangles",
+      "referral-generations-pivot",
+      "effective-equity-ownership",
+    ],
+  },
 ];
 
 /** Flat solving order — every SQL 50 problem exactly once. */

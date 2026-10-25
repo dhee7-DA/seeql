@@ -3346,6 +3346,55 @@ export const FU_SPECS: Record<string, FuSpec[]> = {
       "kind": "top-n",
       "param": "2"
     }
+  ],
+
+  "bom-leaf-demand-explosion": [
+    {
+      "kind": "order-flip"
+    },
+    {
+      "kind": "where-not"
+    }
+  ],
+  "min-hops-flight-reachability": [
+    {
+      "kind": "min-max"
+    },
+    {
+      "kind": "having-add"
+    }
+  ],
+  "subtree-budget-rollup": [
+    {
+      "kind": "having"
+    },
+    {
+      "kind": "agg-swap"
+    }
+  ],
+  "mutual-follow-triangles": [
+    {
+      "kind": "having"
+    },
+    {
+      "kind": "order-flip"
+    }
+  ],
+  "referral-generations-pivot": [
+    {
+      "kind": "having-add"
+    },
+    {
+      "kind": "order-flip"
+    }
+  ],
+  "effective-equity-ownership": [
+    {
+      "kind": "agg-swap"
+    },
+    {
+      "kind": "order-flip"
+    }
   ]
 };
 

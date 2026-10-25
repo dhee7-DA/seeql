@@ -12844,6 +12844,207 @@ export const SQL_EXPECTED: LcSqlExpected[] = [
       ]
     ],
     "order": "exact"
+  },
+  {
+    "slug": "bom-leaf-demand-explosion",
+    "columns": [
+      "part_name",
+      "total_demand"
+    ],
+    "rows": [
+      [
+        "Rivet Kit",
+        50
+      ],
+      [
+        "Wing Skin",
+        10
+      ],
+      [
+        "Sensor Mount",
+        8
+      ],
+      [
+        "Wing Spar",
+        6
+      ],
+      [
+        "Cockpit Glass",
+        2
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "min-hops-flight-reachability",
+    "columns": [
+      "city",
+      "min_hops"
+    ],
+    "rows": [
+      [
+        "DEN",
+        1
+      ],
+      [
+        "PDX",
+        1
+      ],
+      [
+        "CHI",
+        2
+      ],
+      [
+        "SFO",
+        2
+      ],
+      [
+        "JFK",
+        3
+      ],
+      [
+        "LAX",
+        3
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "subtree-budget-rollup",
+    "columns": [
+      "project_name",
+      "subtree_total",
+      "subtree_size"
+    ],
+    "rows": [
+      [
+        "Platform",
+        180000,
+        7
+      ],
+      [
+        "Web",
+        100000,
+        3
+      ],
+      [
+        "Mobile",
+        55000,
+        2
+      ],
+      [
+        "Checkout",
+        45000,
+        1
+      ],
+      [
+        "iOS",
+        40000,
+        1
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "mutual-follow-triangles",
+    "columns": [
+      "user_id",
+      "triangle_count"
+    ],
+    "rows": [
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        4,
+        2
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "referral-generations-pivot",
+    "columns": [
+      "origin_id",
+      "gen1",
+      "gen2",
+      "gen3plus"
+    ],
+    "rows": [
+      [
+        1,
+        2,
+        3,
+        3
+      ],
+      [
+        10,
+        1,
+        0,
+        0
+      ]
+    ],
+    "order": "exact"
+  },
+  {
+    "slug": "effective-equity-ownership",
+    "columns": [
+      "holder_id",
+      "held_id",
+      "effective_pct"
+    ],
+    "rows": [
+      [
+        1,
+        2,
+        63
+      ],
+      [
+        2,
+        4,
+        50
+      ],
+      [
+        3,
+        4,
+        45
+      ],
+      [
+        1,
+        4,
+        43.5
+      ],
+      [
+        1,
+        3,
+        30
+      ],
+      [
+        4,
+        5,
+        20
+      ],
+      [
+        2,
+        5,
+        10
+      ],
+      [
+        3,
+        2,
+        10
+      ]
+    ],
+    "order": "exact"
   }
 ];
 

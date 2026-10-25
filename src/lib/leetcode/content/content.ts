@@ -122,6 +122,8 @@ import { SQL_BOSS_A } from "./sql-boss-a";
 import { SQL_BOSS_B } from "./sql-boss-b";
 import { SQL_BOSS2_A } from "./sql-boss2-a";
 import { SQL_BOSS2_B } from "./sql-boss2-b";
+import { SQL_BOSS3_A } from "./sql-boss3-a";
+import { SQL_BOSS3_B } from "./sql-boss3-b";
 
 export const LC_CONTENT: LcDeepDive[] = [
   ...ARRAYS,
@@ -248,6 +250,8 @@ export const LC_SQL_CONTENT: LcSqlDive[] = [
   ...SQL_BOSS_B,
   ...SQL_BOSS2_A,
   ...SQL_BOSS2_B,
+  ...SQL_BOSS3_A,
+  ...SQL_BOSS3_B,
 ];
 
 const bySlug = new Map(LC_CONTENT.map((d) => [d.slug, d]));
