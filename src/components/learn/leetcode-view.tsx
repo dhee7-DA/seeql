@@ -888,10 +888,32 @@ function LcDetail({ p, onBack, onOpen }: { p: LcRef; onBack: () => void; onOpen:
 /* ------------------------------------------------------------------ */
 
 function CompaniesIndex({ onPick, solvedOf }: { onPick: (company: string) => void; solvedOf: Set<string> }) {
+  const [q, setQ] = useState("");
+  const [sort, setSort] = useState<"sql" | "az">("sql");
   const tracks = TRACK_COMPANIES.map((name) => {
     const problems = companySqlTrack(name);
     return { name, total: problems.length, done: problems.filter((p) => solvedOf.has(p.slug)).length, mix: trackMix(problems) };
   });
+  const rows = useMemo(() => {
+    const enriched = LC_FILTER_COMPANIES.map((c) => {
+      const sql = companySqlTrack(c.name);
+      return {
+        name: c.name,
+        inSet: c.count,
+        sqlCount: sql.length,
+        done: sql.filter((p) => solvedOf.has(p.slug)).length,
+        preview: sql.slice(0, 3).map((p) => p.title),
+      };
+    }).filter((r) => r.name.toLowerCase().includes(q.trim().toLowerCase()));
+    enriched.sort((a, b) =>
+      sort === "az"
+        ? a.name.localeCompare(b.name)
+        : b.sqlCount - a.sqlCount || a.name.localeCompare(b.name),
+    );
+    return enriched;
+  }, [q, sort, solvedOf]);
+  const withSql = rows.filter((r) => r.sqlCount > 0).length;
+  const deep = LC_FILTER_COMPANIES.filter((c) => companySqlTrack(c.name).length >= 5).length;
   return (
     <div className="space-y-5">
       <Panel pad={4}>
@@ -900,9 +922,9 @@ function CompaniesIndex({ onPick, solvedOf }: { onPick: (company: string) => voi
           <h2 className="text-lg font-semibold">Company tracks</h2>
         </div>
         <p className="mt-1 text-[13px] leading-relaxed text-zinc-500">
-          Eight employers with deep enough SQL pools get a guided track — every SQL problem they are publicly
-          known to ask, ordered easy → hard, progress kept on the honest ledger. Every other company in the
-          index below opens a track too.
+          Employers with deep SQL pools get a guided track — every SQL problem they are publicly known to ask,
+          ordered easy → hard, progress kept on the honest ledger. Every company in the index below opens a
+          track too; {deep} of them carry five or more SQL problems.
         </p>
       </Panel>
       <div className="grid gap-3 sm:grid-cols-2">
@@ -942,20 +964,54 @@ function CompaniesIndex({ onPick, solvedOf }: { onPick: (company: string) => voi
         })}
       </div>
       <Panel pad={4}>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Building2 className="h-5 w-5 text-emerald-400" />
           <h2 className="text-lg font-semibold">Company index</h2>
+          <span className="tnum ml-auto font-mono text-[11px] text-zinc-500">
+            {withSql} of {rows.length} with SQL tracks
+          </span>
         </div>
         <p className="mt-1 text-[13px] leading-relaxed text-zinc-500">
-          Which companies ask which problems — top 3 per problem, ranked by how often they appear across the
-          registry. Community-sourced from public interview reports, not LeetCode premium data; treat it as a
-          prioritisation heuristic, not a guarantee.
+          Which companies ask which problems — ranked by how often they appear across the registry.
+          Community-sourced from public interview reports, not LeetCode premium data; treat it as a
+          prioritisation heuristic, not a guarantee. Every row opens that employer&apos;s ordered SQL track.
         </p>
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <label className="relative min-w-0 flex-1">
+            <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-600" />
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search companies…"
+              className={cn(
+                "w-full rounded-md border border-black/10 bg-zinc-900/60 py-1.5 pl-8 pr-3 text-[12px] text-zinc-200 placeholder:text-zinc-600 dark:border-white/10",
+                FOCUS_RING,
+              )}
+            />
+          </label>
+          <div className="flex shrink-0 overflow-hidden rounded-md border border-black/10 dark:border-white/10">
+            {([["sql", "by SQL pool"], ["az", "A–Z"]] as const).map(([mode, label]) => (
+              <button
+                key={mode}
+                type="button"
+                onClick={() => setSort(mode)}
+                className={cn(
+                  "px-2.5 py-1.5 font-mono text-[10px] transition-colors",
+                  sort === mode
+                    ? "bg-emerald-400/10 font-medium text-emerald-300"
+                    : "text-zinc-500 hover:text-zinc-300",
+                  FOCUS_RING,
+                )}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
       </Panel>
       <div className="overflow-hidden rounded-xl border border-black/10 dark:border-white/10">
-        {LC_FILTER_COMPANIES.map((c, i) => {
-          const problems = lcByCompany(c.name);
-          const done = problems.filter((p) => solvedOf.has(p.slug)).length;
+        {rows.map((c, i) => {
+          const featured = TRACK_COMPANIES.includes(c.name);
           return (
             <button
               key={c.name}
@@ -971,21 +1027,37 @@ function CompaniesIndex({ onPick, solvedOf }: { onPick: (company: string) => voi
                 {String(i + 1).padStart(2, "0")}
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-sm font-medium text-zinc-100">{c.name}</span>
+                <span className="flex items-center gap-2">
+                  <span className="truncate text-sm font-medium text-zinc-100">{c.name}</span>
+                  {featured && (
+                    <span className="shrink-0 rounded-full bg-emerald-400/10 px-2 py-0.5 text-[9px] font-medium uppercase tracking-wide text-emerald-300">
+                      featured
+                    </span>
+                  )}
+                </span>
                 <span className="mt-0.5 block truncate text-[11px] text-zinc-500">
-                  asks {problems.slice(0, 4).map((p) => p.title).join(" · ")}
+                  {c.sqlCount > 0
+                    ? c.preview.length > 0
+                      ? c.preview.join(" · ")
+                      : `${c.sqlCount} SQL problems`
+                    : `asks ${lcByCompany(c.name).slice(0, 4).map((p) => p.title).join(" · ")}`}
                 </span>
               </span>
-              {done > 0 && (
+              {c.done > 0 && (
                 <span className="shrink-0 rounded-full bg-emerald-400/10 px-2 py-0.5 text-[10px] font-medium text-emerald-300">
-                  {done} solved
+                  {c.done} solved
                 </span>
               )}
-              <span className="tnum shrink-0 font-mono text-[11px] text-zinc-500">{c.count} in set</span>
+              <span className="tnum shrink-0 font-mono text-[11px] text-zinc-500">
+                {c.sqlCount} SQL · {c.inSet} in set
+              </span>
               <ChevronRight className="h-4 w-4 shrink-0 text-zinc-600" />
             </button>
           );
         })}
+        {rows.length === 0 && (
+          <div className="px-4 py-6 text-center text-[12px] text-zinc-500">No company matches “{q}”.</div>
+        )}
       </div>
     </div>
   );
