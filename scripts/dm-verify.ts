@@ -165,6 +165,23 @@ spot("saas-subscriptions:q:q53", (o) => o.rows.length === 6 && o.rows[3][1] === 
 spot("saas-subscriptions:q:q58", (o) => o.rows.length === 1 && o.rows[0][2] === 17400, "proration blend 17400");
 spot("saas-subscriptions:c:c45:1", (o) => o.rows.length === 1 && o.rows[0][1] === 4900, "churn correction true 4900");
 spot("saas-subscriptions:c:c60:2", (o) => o.rows.length === 1 && o.rows[0][2] === 100000, "whale IS June's delta");
+// healthcare-claims (round 13 facts)
+spot("healthcare-claims:q:q01", (o) => o.rows.length === 1 && o.rows[0][0] === 37, "paid = 37");
+spot("healthcare-claims:q:q21", (o) => o.rows.length === 12 && o.rows[0][0] === 10 && o.rows[0][2] === 528800, "whale leads 528800");
+spot("healthcare-claims:q:q24", (o) => o.rows.length === 8 && o.rows[0][3] === "no_show", "8 claimless visits");
+spot("healthcare-claims:q:q29", (o) => o.rows.length === 4 && o.rows[1][1] === 60, "aging: c28 sits ON 60");
+spot("healthcare-claims:q:q41", (o) => o.rows.length === 3 && o.rows[1][3] === 30, "readmit gaps 6/30/31");
+spot("healthcare-claims:q:q43", (o) => o.rows.length === 3 && o.rows[2][1] === 90 && o.rows[2][2] === "paid", "boundary survivor on 90");
+spot("healthcare-claims:q:q45", (o) => o.rows.length === 1 && o.rows[0][0] === 7 && o.rows[0][1] === 6, "velocity 7 inclusive vs 6 strict");
+spot("healthcare-claims:q:q46", (o) => o.rows.length === 12 && o.rows.reduce((a: number, r: unknown[]) => a + (r[1] as number), 0) === 28, "28 sessions across 12 patients");
+spot("healthcare-claims:q:q47", (o) => o.rows[0][0] === "NA" && o.rows[0][2] === 360850 && o.rows[1][0] === "APAC", "whale flip NA->2nd");
+spot("healthcare-claims:q:q50", (o) => o.rows[0][0] === "CO-197" && o.rows[0][1] === 540000 && o.rows[0][2] === 65.5, "CO-197 = 65.5% of denials");
+spot("healthcare-claims:q:q52", (o) => o.rows.length === 1 && o.rows[0][0] === 40000 && o.rows[0][1] === "1,4", "tie registry 40000 -> '1,4'");
+spot("healthcare-claims:q:q58", (o) => o.rows.length === 3 && o.rows[2][2] === 1800, "bill_pay gaps incl 1800 boundary");
+spot("healthcare-claims:q:q60", (o) => o.rows.length === 9 && o.rows[5][1] === 0, "March 2026 = honest zero");
+spot("healthcare-claims:c:c45:2", (o) => o.rows.length === 1 && o.rows[0][0] === 28, "total sessions 28");
+spot("healthcare-claims:c:c43:2", (o) => o.rows.length === 1 && o.rows[0][0] === 25 && o.rows[0][3] === 12400, "survivor c25 paid 12400");
+spot("healthcare-claims:c:c46:1", (o) => o.rows.length === 4 && o.rows[0][2] === 360850, "whale flip case NA ex 360850");
 
 if (fails > 0) {
   console.log(`\n${fails} FAILURE(S) — dm-expected.ts NOT written`);

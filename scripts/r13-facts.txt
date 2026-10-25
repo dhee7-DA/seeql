@@ -1,0 +1,136 @@
+== epoch openers ==
+PASS  epoch 1784505600 = 2026-07-20 · 2026-07-20
+PASS  epoch 1784592000 = 2026-07-21 · 2026-07-21
+PASS  epoch 1784678400 = 2026-07-22 · 2026-07-22
+PASS  epoch 1784764800 = 2026-07-23 · 2026-07-23
+== counts ==
+PASS  patients = 12
+PASS  payer mix commercial 6 / medicaid 3 / medicare 3 · [{"plan_type":"commercial","n":6},{"plan_type":"medicaid","n":3},{"plan_type":"medicare","n":3}]
+PASS  regions NA 5 / EMEA 3 / APAC 2 / LATAM 2 · [{"region":"NA","n":5},{"region":"EMEA","n":3},{"region":"APAC","n":2},{"region":"LATAM","n":2}]
+PASS  providers = 8
+PASS  visits = 56
+PASS  visits completed 48 / no_show 5 / cancelled 3 · [{"status":"completed","n":48},{"status":"no_show","n":5},{"status":"cancelled","n":3}]
+PASS  types office 29 / telehealth 14 / inpatient 8 / er 5 · [{"visit_type":"office","n":29},{"visit_type":"telehealth","n":14},{"visit_type":"inpatient","n":8},{"visit_type":"er","n":5}]
+PASS  every no_show/cancelled row is an office visit
+PASS  no_show/cancelled billed_cents all 0
+PASS  claims = 49
+PASS  claims paid 37 / denied 7 / pending 4 / appealed 1 · [{"status":"paid","n":37},{"status":"denied","n":7},{"status":"pending","n":4},{"status":"appealed","n":1}]
+PASS  denial_code census CO-16 2 / CO-197 2 / CO-29 2 / PR-1 2 (the appeal reuses CO-16) · [{"denial_code":"CO-16","n":2},{"denial_code":"CO-197","n":2},{"denial_code":"CO-29","n":2},{"denial_code":"PR-1","n":2}]
+PASS  denied-only census CO-197 2 / CO-29 2 / PR-1 2 / CO-16 1
+PASS  diagnoses = 56 (48 primary + 8 secondary)
+PASS  primary dx = 48 (one per completed visit)
+PASS  no dx rows on no_show/cancelled visits
+PASS  portal_events = 56
+PASS  portal login 26 / refill 11 / message 9 / appt_book 7 / bill_pay 3 · [{"event_type":"login","n":26},{"event_type":"refill_request","n":11},{"event_type":"message","n":9},{"event_type":"appt_book","n":7},{"event_type":"bill_pay","n":3}]
+== planted: honest zeros ==
+PASS  P11 zero visits
+PASS  P11 zero claims
+PASS  P11 exactly ONE portal event (a login)
+PASS  visits without claims = 8 (5 no_show + 3 cancelled)
+PASS  claims always reference a completed visit
+PASS  no_show spread: V1 x1, V2 x0, V4 x2, V5 x1, V6? x0, V2? — check · [{"id":1,"n":1},{"id":2,"n":1},{"id":4,"n":2},{"id":5,"n":1}]
+== planted: readmission wall ==
+  inpatient stays: [{"visit_id":7,"pid":2,"visit_date":"2026-02-01","discharge_date":"2026-03-01","los":28},{"visit_id":8,"pid":2,"visit_date":"2026-03-31","discharge_date":"2026-04-04","los":4},{"visit_id":22,"pid":5,"visit_date":"2026-04-10","discharge_date":"2026-04-14","los":4},{"visit_id":23,"pid":5,"visit_date":"2026-04-20","discharge_date":"2026-04-23","los":3},{"visit_id":33,"pid":7,"visit_date":"2026-03-08","discharge_date":"2026-03-08","los":0},{"visit_id":37,"pid":8,"visit_date":"2026-01-12","discharge_date":"2026-01-15","los":3},{"visit_id":48,"pid":10,"visit_date":"2026-05-20","discharge_date":"2026-05-24","los":4},{"visit_id":49,"pid":10,"visit_date":"2026-06-24","discharge_date":"2026-06-26","los":2}]
+PASS  LOS census = 28,4,4,3,3,4,2,0 (8 stays) · [28,4,4,3,0,3,4,2]
+PASS  one same-day stay (LOS 0, v33)
+PASS  total LOS = 48 across 8 stays (avg 6.0)
+  discharge->readmit gaps: [{"pid":5,"prev_id":22,"discharge_date":"2026-04-14","next_id":23,"readmit_date":"2026-04-20","gap":6},{"pid":2,"prev_id":7,"discharge_date":"2026-03-01","next_id":8,"readmit_date":"2026-03-31","gap":30},{"pid":10,"prev_id":48,"discharge_date":"2026-05-24","next_id":49,"readmit_date":"2026-06-24","gap":31}]
+PASS  readmit gaps = exactly 3 pairs (6, 30, 31) · [{"pid":5,"prev_id":22,"discharge_date":"2026-04-14","next_id":23,"readmit_date":"2026-04-20","gap":6},{"pid":2,"prev_id":7,"discharge_date":"2026-03-01","next_id":8,"readmit_date":"2026-03-31","gap":30},{"pid":10,"prev_id":48,"discharge_date":"2026-05-24","next_id":49,"readmit_date":"2026-06-24","gap":31}]
+PASS  P2 gap EXACTLY 30 (v7 -> v8)
+PASS  P5 bounce 6 days
+PASS  P10 near-miss 31 days
+PASS  readmits within 30 INCLUSIVE = 2 patients (2, 5)
+PASS  readmits within 30 STRICT = 1 patient (5)
+== planted: timely filing boundary ==
+  top lags: [{"claim_id":34,"status":"denied","denial_code":"CO-29","lag":104},{"claim_id":18,"status":"denied","denial_code":"CO-29","lag":95},{"claim_id":25,"status":"paid","denial_code":null,"lag":90},{"claim_id":14,"status":"paid","denial_code":null,"lag":11},{"claim_id":15,"status":"pending","denial_code":null,"lag":3}]
+PASS  overall max lag = 104, a CO-29 denial (c34)
+PASS  max PAID lag = EXACTLY 90 (the boundary survivor c25)
+PASS  second-max PAID lag = 11 (the corrected resubmission c14)
+PASS  CO-29 lags = 95 and 104
+PASS  every paid claim except c25/c14 filed within 5 days
+== planted: denial book ==
+PASS  PR-1 twins: c4 and c23 both allowed 96000, paid 0 · [{"claim_id":4,"a":96000,"p":0},{"claim_id":23,"a":96000,"p":0}]
+PASS  CO-197 both on inpatient stays
+PASS  all denials have allowed set, paid 0, processed set
+PASS  denied billed total = 824000
+PASS  denied allowed total = 614200
+PASS  v13 carries the corrected-claim pair (denied CO-16 then paid) · [{"claim_id":13,"status":"denied","denial_code":"CO-16","submitted_date":"2026-02-16","processed_date":"2026-02-20"},{"claim_id":14,"status":"paid","denial_code":null,"submitted_date":"2026-02-25","processed_date":"2026-03-02"}]
+PASS  resubmission came 9 days after the original
+PASS  appealed row: paid + processed NULL, denial CO-16 (c48)
+== planted: aging board (as of 2026-07-01) ==
+  pending ages: [{"claim_id":32,"age":26},{"claim_id":37,"age":48},{"claim_id":28,"age":60},{"claim_id":15,"age":102}]
+PASS  pending ages = 26, 48, 60, 102 · [{"claim_id":32,"age":26},{"claim_id":37,"age":48},{"claim_id":28,"age":60},{"claim_id":15,"age":102}]
+PASS  one pending sits EXACTLY on the 60-day line (c28)
+PASS  buckets with <= 60 rule: 0-30 x1 / 31-60 x2 / 91+ x1 — 61-90 EMPTY · [{"b":"0-30","n":1},{"b":"31-60","n":2},{"b":"91+","n":1}]
+== planted: money ==
+PASS  total paid = 1634880
+PASS  total billed via claims (fan-out) = 3315100
+PASS  total billed via visits (completed) = 3301100
+PASS  fan-out delta = exactly 14000 (the duplicated visit)
+PASS  paid <= allowed <= billed on every adjudicated claim
+PASS  rate audit: 0 violations of 80/65/55% OUTSIDE the PR-1 deductible rows
+PASS  the PR-1 twins both bill 120000 and allow 96000 (same shape, different payers)
+PASS  write-off total (billed-allowed, adjudicated) = 916520
+== planted: patient leaderboards ==
+┌────┬────┬───────────────┬────────┬────┬────┐
+│    │ id │ name          │ paid   │ r  │ dr │
+├────┼────┼───────────────┼────────┼────┼────┤
+│  0 │ 10 │ Jonas Weber   │ 528800 │ 1  │ 1  │
+│  1 │ 2  │ Bilal Rahman  │ 403650 │ 2  │ 2  │
+│  2 │ 5  │ Emmy Okafor   │ 283400 │ 3  │ 3  │
+│  3 │ 8  │ Hugo Beaumont │ 217100 │ 4  │ 4  │
+│  4 │ 7  │ Grace Chen    │ 61050  │ 5  │ 5  │
+│  5 │ 1  │ Ava Lindqvist │ 40000  │ 6  │ 6  │
+│  6 │ 4  │ Dmitri Volkov │ 40000  │ 6  │ 6  │
+│  7 │ 6  │ Farid Azimi   │ 26480  │ 8  │ 7  │
+│  8 │ 3  │ Carla Mendes  │ 18000  │ 9  │ 8  │
+│  9 │ 12 │ Lena Marsh    │ 12000  │ 10 │ 9  │
+│ 10 │ 9  │ Iris Nakamura │ 4400   │ 11 │ 10 │
+│ 11 │ 11 │ Kaia Sund     │ 0      │ 12 │ 11 │
+└────┴────┴───────────────┴────────┴────┴────┘
+PASS  whale P10 = 528800 at rank 1
+PASS  P2 second at 403650
+PASS  32800... no — the 40000 club = P1 + P4 (ranks 6-7, dense 6)
+PASS  P1's shape = 4 paid claims (12800x2 + 7200x2), P4's = 2 (13600 + 26400)
+PASS  P11 honest zero at the bottom
+PASS  exactly ONE patient crosses the 500000 line
+PASS  P2's paid = 403650 > 400000 line, no one else
+== planted: region flip ==
+PASS  with whale: NA 889650 / APAC 430130 / EMEA 297100 / LATAM 18000 · [{"rg":"NA","paid":889650},{"rg":"APAC","paid":430130},{"rg":"EMEA","paid":297100},{"rg":"LATAM","paid":18000}]
+PASS  ex-whale: APAC 430130 / NA 360850 / EMEA 297100 / LATAM 18000 (NA 1st -> 2nd) · [{"rg":"APAC","paid":430130},{"rg":"NA","paid":360850},{"rg":"EMEA","paid":297100},{"rg":"LATAM","paid":18000}]
+PASS  whale share of NA book = 528800/889650 ~ 59.4%
+== planted: payer economics ==
+PASS  payer paid: medicare 904150 x3 / commercial 665280 x6 / medicaid 65450 x2 · [{"pt":"medicare","paid":904150,"members":3},{"pt":"commercial","paid":665280,"members":6},{"pt":"medicaid","paid":65450,"members":2}]
+PASS  medicare's 3 members outspend commercial's 6
+== planted: provider / facility leaderboards ==
+  provider paid: [{"id":3,"sp":"cardiology","paid":1081550},{"id":2,"sp":"primary","paid":271000},{"id":7,"sp":"primary","paid":79880},{"id":1,"sp":"primary","paid":71100},{"id":4,"sp":"endocrinology","paid":69000},{"id":5,"sp":"orthopedics","paid":26400},{"id":6,"sp":"pediatrics","paid":18350},{"id":8,"sp":"cardiology","paid":17600}]
+PASS  V3 cardiology leads at 1081550
+PASS  V7 79880 > V1 71100 > V4 69000
+PASS  facility: Heart Institute 1099150 / Main 411100 / Virtual 79880 / East 44750 · [{"f":"Meridian Heart Institute","paid":1099150},{"f":"Meridian Main","paid":411100},{"f":"Virtual Care Hub","paid":79880},{"f":"Meridian East","paid":44750}]
+== planted: chronic club ==
+PASS  E11+I10 primary club = exactly patients 2 and 10 · [{"patient_id":2},{"patient_id":10}]
+PASS  I50 primary = 9 encounters, all P2/P5/P8/P10
+PASS  M54 primary = exactly 1 (P4's ortho visit)
+PASS  primary census: I50 9 / E11 8 / I10 7 / Z00 7 / R05 6 / F41 5 / J45 5 / M54 1 · [{"icd_code":"I50","n":9},{"icd_code":"E11","n":8},{"icd_code":"I10","n":7},{"icd_code":"Z00","n":7},{"icd_code":"R05","n":6},{"icd_code":"F41","n":5},{"icd_code":"J45","n":5},{"icd_code":"M54","n":1}]
+PASS  visits with 2 dx = 6 (v4, v7, v8, v22, v33, v37, v48 = 7 actually)
+== planted: enrollment calendar ==
+PASS  2026 enrollments: Jan 1 / Feb 1 / Apr 1 / May 1 / Jun 2 — March ZERO · [{"ym":"2026-01","n":1},{"ym":"2026-02","n":1},{"ym":"2026-04","n":1},{"ym":"2026-05","n":1},{"ym":"2026-06","n":2}]
+PASS  no patient enrolled in March 2026
+== planted: portal clocks ==
+PASS  appt velocity pairs <= 300s = 7 · 7
+PASS  pairs < 300s = 6 (the strict/inclusive bait)
+PASS  min burst gap = 60s (P3's 4-up burst)
+PASS  ALL appt_book belong to P3 (5), P9 (2), P10 (1)
+PASS  EXACTLY ONE consecutive pair 1800s apart (P1 login->bill_pay, 07-22)
+PASS  that pair is login -> bill_pay on 07-22
+PASS  within-day gaps > 1800 = exactly {2400, 3700} · [2400,3700]
+PASS  bill_pay rows: P1 x2 + P10 x1 only
+PASS  P10 logs in on all 4 days
+  sessions @strict 1800: [{"pid":1,"n":3},{"pid":2,"n":3},{"pid":3,"n":2},{"pid":4,"n":2},{"pid":5,"n":3},{"pid":6,"n":2},{"pid":7,"n":2},{"pid":8,"n":2},{"pid":9,"n":2},{"pid":10,"n":4},{"pid":11,"n":1},{"pid":12,"n":2}]
+PASS  total sessions strict = 28 · 28
+PASS  P1 = 3 sessions strict (the 1800 pair stays together)
+PASS  P9 = 2 sessions (the 3700 gap splits)
+PASS  P10 = 4 sessions (one per day)
+PASS  P11 = 1 session (the lone login)
+
+ALL PROBES PASS

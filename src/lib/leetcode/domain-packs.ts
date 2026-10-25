@@ -34,6 +34,11 @@ import { DM_SAAS_SEED } from "./content/dm-saas-seed";
 import { DM_SAAS_QUERIES } from "./content/dm-saas-queries";
 import { DM_SAAS_MCQS } from "./content/dm-saas-mcqs";
 import { DM_SAAS_CASES } from "./content/dm-saas-cases";
+import { DM_HC_SCHEMA } from "./content/dm-hc-schema";
+import { DM_HC_SEED } from "./content/dm-hc-seed";
+import { DM_HC_QUERIES } from "./content/dm-hc-queries";
+import { DM_HC_MCQS } from "./content/dm-hc-mcqs";
+import { DM_HC_CASES } from "./content/dm-hc-cases";
 
 export type DmDifficulty = "Easy" | "Medium" | "Hard";
 
@@ -249,6 +254,43 @@ export const DM_PACKS: DmPack[] = [
     queries: DM_SAAS_QUERIES,
     mcqs: DM_SAAS_MCQS,
     cases: DM_SAAS_CASES,
+  },
+  {
+    id: "healthcare-claims",
+    title: "Healthcare & Claims",
+    tagline: "Claims, denials, readmissions and payer mix — the health analytics stack on one shared dataset.",
+    companies: [
+      { name: "UnitedHealth", real: true, blurb: "Payer at scale — utilization leaderboards, concentration and denial economics" },
+      { name: "CVS Health", real: true, blurb: "Care + pharmacy — encounter mixes, telehealth cadence, portal forensics" },
+      { name: "Cigna", real: true, blurb: "Payer ops — timely-filing walls, aging buckets, case-management dossiers" },
+      { name: "Oscar Health", real: true, blurb: "Insurtech — policy stress tests, rank semantics, growth calendars" },
+      { name: "Meridian Care", real: false, blurb: "Fictional provider network carrying the heavier case studies" },
+      { name: "Claimsbridge", real: false, blurb: "Fictional claims TPA — denial ledgers, corrected claims and velocity" },
+    ],
+    schema: { ...DM_HC_SCHEMA, seed: DM_HC_SEED },
+    primer: {
+      hook: "Every payer and provider team runs the same core loop: what happened, what it cost, what got paid, and which claims never will be. This pack teaches the SQL that answers all four on one shared dataset.",
+      concept: [
+        "Money starts at the encounter grain. A VISIT is one booked encounter with a status lifecycle — completed, no_show, cancelled — and only completed rows ever bill: no-shows and cancellations carry billed_cents 0 and produce NO claim row. The second discipline is the three-money ladder: billed is the charge-master price, allowed is what the payer's contract recognizes, and paid is what actually moves. billed − allowed is the contractual write-off; allowed − paid is the patient's responsibility. Asking for 'the cost' without naming the rung is the classic healthcare interview trap.",
+        "Claims run their own lifecycle: submitted → adjudicated, with statuses paid, denied, pending, appealed. Adjudication fills allowed and paid — pending rows carry NULLs, which is why aging analysis must never blindly SUM them. Denials carry codes with hard semantics: CO-29 is timely filing (this payer pays claims filed within 90 days of service — one claim lands EXACTLY on day 90 and survives, two beyond it die), CO-197 is missing prior authorization (both denials sit on inpatient stays, the costliest failure mode), CO-16 is missing info (corrected by a resubmission that paid — the book's only visit with two claims), and PR-1 passes cost to the patient (the deductible twins: two different patients, two different payers, identical 120000 billed / 96000 allowed / 0 paid — and the reason the clean 80/65/55 rate rule has exactly two exceptions).",
+        "Clinical quality runs on a second clock: the ADMISSION timeline. Length of stay is discharge minus admission — and a same-day observation is a legal 0. The readmission detector self-joins inpatient stays per patient and measures discharge → next admission: this book plants a 6-day bounce, a pair EXACTLY on the 30-day line (inclusive windows catch it, strict ones miss), and a 31-day near-miss on the other side. Patient portal telemetry runs on a third clock in epoch seconds: a 4-event booking burst 60s apart makes six velocity pairs (C(4,2)), one more pair sits EXACTLY on the 300s line (7 inclusive / 6 strict), one login→bill_pay pair sits EXACTLY on the 1800s session cutoff, and the dormant member's entire digital life is one login.",
+        "Leaderboards round it out. The whale is patient 10 — twelve encounters in six months, 528800 paid, 59.4% of his region's book; exclude him and NA falls from first to second behind APAC. Patients 1 and 4 tie at exactly 40000 with different claim shapes, so RANK and DENSE_RANK visibly part ways and GROUP_CONCAT builds the tie registry. And the honest-zero rule applies doubly: the member with zero visits (and one portal login) and the 61-90 aging bucket that is simply empty only appear if your JOINs and calendars keep them.",
+      ],
+      glossary: [
+        { term: "billed / allowed / paid", def: "charge-master price, contracted amount, money moved — three rungs, never one 'cost'" },
+        { term: "write-off", def: "billed − allowed: the contractual discount the network absorbs" },
+        { term: "denial code", def: "CO-29 timely filing · CO-197 no prior auth · CO-16 missing info · PR-1 deductible" },
+        { term: "timely filing", def: "claims must be filed within 90 days of service — day 90 survives, day 91 denies" },
+        { term: "readmission", def: "an inpatient admission following a discharge; this pack's window is 30 days" },
+        { term: "LOS", def: "length of stay = discharge − admission; a same-day observation is a legal 0" },
+        { term: "aging bucket", def: "pending-claim age bands (0-30 / 31-60 / 61-90 / 91+) built with <= CASE rules" },
+        { term: "corrected claim", def: "a resubmission that replaces a denied claim on the same visit — the fan-out source" },
+        { term: "honest zero", def: "a LEFT JOIN or calendar spine that shows 0 for the dormant member and the empty bucket" },
+      ],
+    },
+    queries: DM_HC_QUERIES,
+    mcqs: DM_HC_MCQS,
+    cases: DM_HC_CASES,
   },
 ];
 
