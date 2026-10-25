@@ -8812,3 +8812,18 @@ Stage Summary:
 - ALL TEN queued items shipped: company practice layer (gate fix, MS tags 1→12, tracks, tab redesign) + Daily Challenge + Error Coach + boss Predict drills + Boss Level II (681/681) + Readiness Dashboard + Query Pipeline. Six commits, each independently verified.
 - Known follow-ups: order-flip mutation is a no-op on bare ORDER BY clauses (mutator bug, upstream of this round — worth fixing in followups.ts); the Companies tab's old direct-to-filter path is preserved only via the track view's "Browse all" button; command palette picks up new tools automatically from TOOLS.
 - Key files: src/lib/leetcode/{lc-meta,company-tracks,daily,error-coach,followup-specs,registry,sections}.ts, src/lib/leetcode/{registry-sql-boss2,registry-sql50,registry-sql-more,registry-sql-final-free}.ts, src/lib/leetcode/content/{sql-boss2-a,sql-boss2-b,content,sql-expected}.ts, src/lib/curriculum/progress.ts, src/components/learn/{leetcode-view,readiness-dashboard,query-pipeline,learn-app,tools}.tsx, scripts/lc-boss2-*.ts, scripts/lc-{contest-pool-check,company-stats,boss-predict-probe}.ts
+
+---
+Task ID: lc-round6-fixup
+Agent: Super Z (main agent)
+Task: fix the flagged order-flip mutator no-op (bare ORDER BY + trailing `;` put DESC after the semicolon) and verify across the entire corpus.
+
+Work Log:
+- mutOrderFlip (src/lib/leetcode/followups.ts): when the clause span has no ASC/DESC keyword AND contains a trailing `;` (ORDER BY as last clause -> clauseSpan returns sql.length), DESC now inserts BEFORE the semicolon. Flip path (ASC<->DESC swap) untouched.
+- New scripts/lc-order-flip-sweep.ts: EVERY order-flip FU spec (118 across all dives) — derive mutant, run base + mutant through the live /api/lc-sql sandbox, compare rows AS ORDERED LISTS + structural clause-diff (first check was over-strict requiring "desc" to exist; corrected to compare the ORDER BY clause text, since a correct DESC->ASC flip removes it).
+- Result: 118/118 mutants produce DISTINCT ordered output, 0 identical, 0 broken. Before the fix, bare-ORDER-BY mutants graded identical to base (rewarded NOT doing the push: user's correct DESC answer would grade wrong against the no-op model).
+- Grading is live per request (FuCard runs derived.modelSql through /api/lc-sql then gradeSqlResult) — no cached expectations to regenerate; the mutator fix lands immediately.
+- Gates: tsc src 159 (= baseline, 0 in followups.ts; scripts/m4-* errors are pre-existing out-of-scope) · eslint clean on touched files · rebuild clean · supervisor+server killed together (stale-server gotcha), fresh server 07:44:40 > BUILD_ID 07:44:25 · public in sync · root 200 · re-ran sweep against rebuilt server: 118/118 · lc-followups-live sample 16: 30 FU ok / 0 fail, 6/6 drills built.
+
+Stage Summary:
+- Order-flip mutator fixed and proven across all 118 specs live. The round-6 follow-up list is now fully closed. scripts/lc-order-flip-sweep.ts kept as a reusable regression gate for any future mutator change.

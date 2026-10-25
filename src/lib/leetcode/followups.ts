@@ -135,7 +135,13 @@ function mutOrderFlip(code: string): string | null {
   if (i < 0) return null;
   const end = clauseSpan(code, i, CLAUSE_NEXT);
   const clause = code.slice(i, end);
-  if (!/\b(asc|desc)\b/i.test(clause)) return `${code.slice(0, i)}${clause} DESC${code.slice(end)}`;
+  if (!/\b(asc|desc)\b/i.test(clause)) {
+    // A trailing `;` (and any trailing space) sits inside the clause span when
+    // ORDER BY is the last clause — DESC must land BEFORE it, not after.
+    const semi = clause.lastIndexOf(";");
+    if (semi >= 0) return `${code.slice(0, i)}${clause.slice(0, semi)} DESC${clause.slice(semi)}${code.slice(end)}`;
+    return `${code.slice(0, i)}${clause} DESC${code.slice(end)}`;
+  }
   const flipped = clause.replace(/\basc\b/gi, "§§A").replace(/\bdesc\b/gi, "ASC").replace(/§§A/g, "DESC");
   return `${code.slice(0, i)}${flipped}${code.slice(end)}`;
 }
