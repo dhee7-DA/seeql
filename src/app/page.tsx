@@ -1081,10 +1081,10 @@ export default function Home() {
                     className="h-[26px] w-[26px]"
                     ariaLabel=""
                   />
-                  <span>SeeQ</span>
+                  <span className="hidden sm:inline">SeeQ</span>
                 </button>
-                <SoundToggle />
-                <ThemeSwitcher />
+                <SoundToggle className="hidden sm:flex" />
+                <ThemeSwitcher className="hidden sm:flex" />
                 <button
                   onClick={() => go("playground")}
                   className="hidden rounded-md border border-zinc-800 px-3.5 py-2 text-sm text-zinc-300 transition-colors hover:bg-zinc-900 sm:block"
