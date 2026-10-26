@@ -205,6 +205,31 @@ spot("logistics-freight:c:c42:1", (o) => o.rows.length === 1 && o.rows[0][2] ===
 spot("logistics-freight:c:c53:2", (o) => o.rows.length === 1 && o.rows[0][0] === 1, "case: exactly one dark hub");
 spot("logistics-freight:c:c54:1", (o) => o.rows.length === 6 && o.rows[2][1] === 0, "case: LATAM spine March zero");
 
+// marketing-attribution (round 15 facts)
+spot("marketing-attribution:q:q01", (o) => o.rows.length === 1 && o.rows[0][0] === 44, "confirmed = 44");
+spot("marketing-attribution:q:q21", (o) => o.rows.length === 12 && o.rows.some((r) => r[0] === 11 && r[2] === 0), "C11 honest zero");
+spot("marketing-attribution:q:q22", (o) => o.rows[0][0] === "search" && o.rows[0][1] === 461000, "search leads 461000");
+spot("marketing-attribution:q:q23", (o) => o.rows[0][0] === "social" && o.rows[0][1] === 190500, "flip: social first ex-whale");
+spot("marketing-attribution:q:q27", (o) => o.rows.length === 3 && o.rows[0][1] === 62 && o.rows[1][1] === 62, "device tie 62/62/1");
+spot("marketing-attribution:q:q30", (o) => o.rows.length === 1 && o.rows[0][0] === 6 && o.rows[0][1] === 5, "budget wall 6 vs 5");
+spot("marketing-attribution:q:q31", (o) => o.rows.length === 3 && o.rows[2][4] === "paid", "drift trio, last one PAID");
+spot("marketing-attribution:q:q36", (o) => o.rows.length === 3 && o.rows[0][0] === 21 && o.rows[0][1] === 5 && o.rows[0][2] === 9, "mismatch trio 21/24/39");
+spot("marketing-attribution:q:q37", (o) => o.rows.length === 1 && o.rows[0][1] === "5,6", "closer registry '5,6'");
+spot("marketing-attribution:q:q38", (o) => o.rows.length === 14, "retention gap = 14");
+spot("marketing-attribution:q:q39", (o) => o.rows.length === 4 && o.rows[0][3] === 120, "burst pairs, first 120s");
+spot("marketing-attribution:q:q41", (o) => o.rows.length === 9 && o.rows[6][2] === 7 && o.rows[6][3] === 6, "C9 rank 7 vs dense 6");
+spot("marketing-attribution:q:q42", (o) => o.rows.length === 1 && o.rows[0][2] === 39.69 && o.rows[0][3] === 165000, "whale dossier 39.69% / flip 165000");
+spot("marketing-attribution:q:q43", (o) => o.rows.length === 1 && o.rows[0][0] === 42 && o.rows[0][1] === 41 && o.rows[0][2] === 44, "window wall 42/41/c44");
+spot("marketing-attribution:q:q44", (o) => o.rows.length === 3 && o.rows[0][0] === "search" && o.rows[0][2] === 94200, "cookie vs linear: search first");
+spot("marketing-attribution:q:q45", (o) => o.rows.length === 1 && o.rows[0][0] === 14 && o.rows[0][3] === 14 && o.rows[0][4] === 1, "sessionization 14/13/13/14/1");
+spot("marketing-attribution:q:q47", (o) => o.rows.length === 1 && o.rows[0][0] === 42000 && o.rows[0][1] === "3,6", "tie registry 42000 -> '3,6'");
+spot("marketing-attribution:q:q49", (o) => o.rows.length === 1 && o.rows[0][0] === 3 && o.rows[0][1] === 28, "closers 3 views / 28 clicks");
+spot("marketing-attribution:q:q53", (o) => o.rows.length === 6 && o.rows[0][1] === 0 && o.rows[3][1] === 6000, "email spine zeros then 6000");
+spot("marketing-attribution:q:q56", (o) => o.rows[0][0] === 4000 && o.rows[0][1] === 7, "biggest tie: 7-way 4000");
+spot("marketing-attribution:q:q59", (o) => o.rows.length === 1 && o.rows[0][5] === 221000, "whale net 221000");
+spot("marketing-attribution:c:c42:1", (o) => o.rows.length === 1 && o.rows[0][2] === 39.69 && o.rows[0][3] === 165000, "case: whale flip row");
+spot("marketing-attribution:c:c60:2", (o) => o.rows.length === 1 && o.rows[0][0] === 296000 && o.rows[0][1] === 39.69, "case: executive whale row");
+
 if (fails > 0) {
   console.log(`\n${fails} FAILURE(S) — dm-expected.ts NOT written`);
   process.exit(1);

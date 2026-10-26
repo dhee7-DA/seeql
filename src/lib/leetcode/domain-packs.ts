@@ -39,6 +39,11 @@ import { DM_HC_SEED } from "./content/dm-hc-seed";
 import { DM_HC_QUERIES } from "./content/dm-hc-queries";
 import { DM_HC_MCQS } from "./content/dm-hc-mcqs";
 import { DM_HC_CASES } from "./content/dm-hc-cases";
+import { DM_MKT_SCHEMA } from "./content/dm-mkt-schema";
+import { DM_MKT_SEED } from "./content/dm-mkt-seed";
+import { DM_MKT_QUERIES } from "./content/dm-mkt-queries";
+import { DM_MKT_MCQS } from "./content/dm-mkt-mcqs";
+import { DM_MKT_CASES } from "./content/dm-mkt-cases";
 import { DM_FREIGHT_SCHEMA } from "./content/dm-freight-schema";
 import { DM_FREIGHT_SEED } from "./content/dm-freight-seed";
 import { DM_FREIGHT_QUERIES } from "./content/dm-freight-queries";
@@ -333,6 +338,43 @@ export const DM_PACKS: DmPack[] = [
     queries: DM_FREIGHT_QUERIES,
     mcqs: DM_FREIGHT_MCQS,
     cases: DM_FREIGHT_CASES,
+  },
+  {
+    id: "marketing-attribution",
+    title: "Marketing & Attribution",
+    tagline: "Campaigns, spend, funnels and attribution — the growth analytics stack on one shared dataset.",
+    companies: [
+      { name: "Google", real: true, blurb: "Ads platform — search ROAS, meter discipline and cookie audits" },
+      { name: "Meta", real: true, blurb: "Social buying — prospecting funnels, view-through and velocity walls" },
+      { name: "HubSpot", real: true, blurb: "Marketing cloud — email spines, nurture paths and lifecycle cuts" },
+      { name: "Salesforce", real: true, blurb: "Revenue ops — attribution boards, clawbacks and executive dossiers" },
+      { name: "Clickmosaic", real: false, blurb: "Fictional agency carrying the heavier audit case studies" },
+      { name: "Funnelworks", real: false, blurb: "Fictional martech startup — growth forensics and registry work" },
+    ],
+    schema: { ...DM_MKT_SCHEMA, seed: DM_MKT_SEED },
+    primer: {
+      hook: "Every growth team runs the same core loop: what did media cost, what converted, which touch deserves the credit, and which of it is coming back as refunds. This pack teaches the SQL that answers all four on one shared dataset.",
+      concept: [
+        "Attribution starts with two grains. The SESSION grain carries the last-click cookie: a conversion joins its session, the session carries utm_campaign_id, and that single join IS last-click attribution — which is why 'direct' sessions (utm NULL) make conversions that belong to no campaign at all. The PATH grain lives in touchpoints: each conversion can carry several ad touches, and the models differ only in how they read that table. Last-touch takes MAX(touched_at); first-touch takes MIN; linear splits the revenue evenly across every row. The pack's core lesson is that these models disagree by design — and the disagreements have names: the mismatch trio, the same-second tie, and the whale whose path predates the data.",
+        "The pixel window is the second discipline. The attribution pixel retains events only inside 2026-05-04..2026-06-29: conversions tendered before it keep their cookie but lose their path — fourteen rows of pure retention gap — and the 7-day eligibility wall (conv_ts - first touch <= 604800) has one conversion sitting EXACTLY on the line, so <= and < give different sets. The window also explains the pack's biggest business story: the 296000 whale conversion is cookie-only, so cookie-based boards crown search while both path-based boards crown social. Attribution model choice is not a settings toggle; it is a different query over different surviving evidence.",
+        "Money discipline rounds out the spend side. The meter (impressions) charges cpc_cents only on clicked rows — 47 of 125 serves; the billing ledger (spend) books daily media with platform_fee_cents = ROUND(media * 0.10) except a negotiated 8% drift trio (one of them PAID), creative fees on five days, and an overspend wall: exactly five days over the campaign's daily budget plus one day EXACTLY on it, so >= and > give 6 vs 5. Refunds are their own ledger that claws charged money back — 216800 of the 851700 charged book — and honest revenue work always names which rung of the ladder it means: confirmed 745700, charged 851700, net 634900.",
+        "Honest zeros are everywhere: campaign 11 is dormant (paused video — zero everything), ad 13 was disapproved and never served inside an otherwise-serving campaign, display serves impressions and converts nothing (ROAS a true 0), email owns no impression inventory yet banks 62700, and the two organic-direct conversions (31500) belong to NO campaign and NO path. Every LEFT JOIN rollup in this pack either shows those zeros or lies by omission — and every tie (the 42000 campaign twins, the five-way 8000 day club, the seven-way 4000 club, the desktop/mobile 62-62 device split, the '5,6' closer registry) demands a deterministic ORDER BY or a GROUP_CONCAT registry instead of luck.",
+      ],
+      glossary: [
+        { term: "last-click", def: "credit the session's utm_campaign_id — the cookie's answer, works even when the path is lost" },
+        { term: "last-touch", def: "credit the path row at MAX(touched_at) — ambiguous when two touches share the second" },
+        { term: "linear attribution", def: "split the conversion's revenue evenly across every touch on its path" },
+        { term: "pixel window", def: "the trailing date range the attribution log retains; before it, only cookies survive" },
+        { term: "attribution window", def: "the 7-day (604800s) eligibility wall between a path's first touch and the conversion" },
+        { term: "view-through", def: "a conversion closed by an ad VIEW (no click) — invisible to click-based cookies" },
+        { term: "ROAS", def: "revenue over media spend — blended ≈ 3.0 here, per-campaign from 0 to 10.96" },
+        { term: "overspend wall", def: "daily media above the campaign's daily_budget_cents — 5 rows over, 1 EXACTLY on" },
+        { term: "honest zero", def: "a LEFT JOIN + COALESCE that correctly shows 0 for dormant campaigns, dark channels and unattributed revenue" },
+      ],
+    },
+    queries: DM_MKT_QUERIES,
+    mcqs: DM_MKT_MCQS,
+    cases: DM_MKT_CASES,
   },
 ];
 

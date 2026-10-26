@@ -1,0 +1,94 @@
+== counts ==
+PASS  campaigns = 12
+PASS  ads = 14
+PASS  impressions = 125
+PASS  sessions = 72
+PASS  conversions = 58
+PASS  touchpoints = 108
+PASS  spend = 52
+PASS  refunds = 12
+== campaign censuses ==
+PASS  channels search 4 / social 3 / display 2 / email 2 / video 1 · [{"channel":"search","n":4},{"channel":"social","n":3},{"channel":"display","n":2},{"channel":"email","n":2},{"channel":"video","n":1}]
+PASS  objectives conversion 5 / awareness 4 / consideration 3 · [{"objective":"conversion","n":5},{"objective":"awareness","n":4},{"objective":"consideration","n":3}]
+PASS  C11 dormant: paused, video, zero impressions / spend / conversions / touches
+== impression walls ==
+PASS  device tie mobile 62 / desktop 62 / tablet 1 · [{"device":"desktop","n":62},{"device":"mobile","n":62},{"device":"tablet","n":1}]
+PASS  clicks = 47
+PASS  metered click spend = 40660
+PASS  cpc > 0 iff clicked (house rule)
+PASS  impressions all inside pixel window
+PASS  per-campaign: C1 18/12 · C2 20/6 · C3 8/2 · C4 16/6 · C5 10/5 · C6 6/2 · C7 8/0 · C8 5/0 · C10 34/14 · [{"campaign_id":1,"n":18,"c":12},{"campaign_id":2,"n":20,"c":6},{"campaign_id":3,"n":8,"c":2},{"campaign_id":4,"n":16,"c":6},{"campaign_id":5,"n":10,"c":5},{"campaign_id":6,"n":6,"c":2},{"campaign_id":7,"n":8,"c":0},{"campaign_id":8,"n":5,"c":0},{"campaign_id":10,"n":34,"c":14}]
+PASS  ad 13 never served (honest zero inside serving campaign C7)
+PASS  display zero clicks (the billboard wall)
+PASS  channel clicks: search 34 / social 13 / display 0
+PASS  metered click spend: search 33610 / social 7050
+== sessionization wall (campaign 2, 06-20) ==
+PASS  C2 06-20 run = 14 events, 13 gaps, exactly ONE gap = 1800 · [{"n":13,"on_line":1}]
+PASS  no OTHER consecutive same-campaign gap equals 1800
+== sessions ==
+PASS  utm census google 28 / meta 20 / newsletter 9 / bing 7 / direct 8 · [{"utm_source":"google","n":28},{"utm_source":"meta","n":20},{"utm_source":"newsletter","n":9},{"utm_source":"direct","n":8},{"utm_source":"bing","n":7}]
+PASS  direct sessions all NULL campaign, others all set
+PASS  one mega session 2700s; runner-up 1800s (the burst session)
+== conversion censuses & money ladder ==
+PASS  statuses confirmed 44 / pending 6 / duplicate 4 / refunded 2 / cancelled 2 · [{"status":"confirmed","n":44},{"status":"pending","n":6},{"status":"duplicate","n":4},{"status":"cancelled","n":2},{"status":"refunded","n":2}]
+PASS  revenue > 0 iff confirmed/refunded (house rule)
+PASS  confirmed revenue = 745700
+PASS  charged revenue (confirmed + refunded) = 851700
+PASS  whale c10 = 296000 purchase on 04-20, 39.69% of confirmed
+PASS  per-campaign confirmed: C10 345000 · C4 94000 · C1 55000 · C5 54500 · C3=C6 42000 · C9 40000 · unattr 31500 · C12 22700 · C2 19000 · [{"camp":10,"rev":345000,"n":8},{"camp":4,"rev":94000,"n":7},{"camp":1,"rev":55000,"n":5},{"camp":5,"rev":54500,"n":5},{"camp":3,"rev":42000,"n":2},{"camp":6,"rev":42000,"n":4},{"camp":9,"rev":40000,"n":5},{"camp":0,"rev":31500,"n":2},{"camp":12,"rev":22700,"n":3},{"camp":2,"rev":19000,"n":3}]
+PASS  display/video campaigns convert nothing (C7 C8 C11 all 0)
+PASS  last-click channel board: search 461000 / social 190500 / email 62700 · [{"channel":"search","rev":461000},{"channel":"social","rev":190500},{"channel":"email","rev":62700}]
+PASS  the flip: ex-whale search 116000 < social 190500
+PASS  monthly confirmed: Jan 7000 / Feb 68000 / Mar 43000 / Apr 321000 / May 166500 / Jun 140200
+== the daily tie ledger (confirmed revenue by day) ==
+PASS  daily tie groups: 4000 x7 · 5000 x2 · 6000 x3 · 7000 x3 · 8000 x5 · 9000 x3 · 10000 x2 · 12000 x2 · 14000 x2 · 18000 x2 · [["4000",["2026-03-22","2026-06-06","2026-06-19","2026-06-21","2026-06-24","2026-06-25","2026-06-26"]],["5000",["2026-04-12","2026-06-08"]],["6000",["2026-04-26","2026-04-30","2026-05-22"]],["7000",["2026-01-30","2026-05-28","2026-06-13"]],["8000",["2026-02-14","2026-04-18","2026-06-11","2026-06-14","2026-06-22"]],["9000",["2026-03-15","2026-05-25","2026-06-03"]],["10000",["2026-06-10","2026-06-12"]],["12000",["2026-05-15","2026-06-16"]],["14000",["2026-05-12","2026-06-18"]],["18000",["2026-05-08","2026-05-09"]]]
+PASS  the 3-way 7000 registry · ["2026-01-30","2026-05-28","2026-06-13"]
+PASS  the 14000 pair: c20's solo day ties the 2-sale 06-18 · ["2026-05-12","2026-06-18"]
+PASS  the 7-way 4000 registry · ["2026-03-22","2026-06-06","2026-06-19","2026-06-21","2026-06-24","2026-06-25","2026-06-26"]
+PASS  the 5-way 8000 registry · ["2026-02-14","2026-04-18","2026-06-11","2026-06-14","2026-06-22"]
+PASS  the 3-way 6000 registry · ["2026-04-26","2026-04-30","2026-05-22"]
+== the pixel window / retention gap ==
+PASS  window conversions = 44, pre-window = 14
+PASS  touchpoint-bearing conversions = 42 (window minus 2 organic-direct)
+PASS  all 14 pre-window conversions have a cookie (no direct pre-window)
+PASS  pre-window conversions have ZERO touchpoints (the retention gap)
+PASS  organic-direct conversions NEVER have paths; their confirmed revenue = 31500
+PASS  all touchpoints inside the window; whale c10 has NO path
+== attribution walls ==
+PASS  mismatch trio = exactly [21, 24, 39] · [{"id":21},{"id":24},{"id":39}]
+PASS  ambiguous last-touch = exactly c26 with registry '5,6' · [{"id":26,"reg":"5,6"}]
+PASS  window wall: c44's span = EXACTLY 604800; runner-up 598680 (c16) · [{"id":44,"span":604800},{"id":16,"span":598680},{"id":17,"span":534960}]
+PASS  window semantics: 42 paths eligible inclusive (<=604800) vs 41 strict (<604800)
+== the stuffing burst ==
+PASS  burst session s51: 3 pairs <= 300 (1 strict, 2 EXACTLY on the 300 line) · s51 inclusive 3
+PASS  global same-session pairs: 4 inclusive / 2 strict / 2 on the line (s55's 180s pair is the 4th) · 4/2/2
+PASS  burst = 4 duplicates from s51 at 10:00/10:02/10:07/10:12, revenue 0
+== spend walls ==
+PASS  spend status census paid 40 / pending 7 / disputed 5 · [{"status":"paid","n":40},{"status":"pending","n":7},{"status":"disputed","n":5}]
+PASS  media total 248800 · fees 24474 · creative 19500 · grand 292774
+PASS  exactly 5 overspend days: sp4 C1 8400 · sp18 C4 6500 · sp24 C5 3700 · sp33 C7 2650 · sp45 C10 12600 · [{"id":4,"camp":1,"media":8400,"budget":8000},{"id":18,"camp":4,"media":6500,"budget":6000},{"id":24,"camp":5,"media":3700,"budget":3500},{"id":33,"camp":7,"media":2650,"budget":2500},{"id":45,"camp":10,"media":12600,"budget":12000}]
+PASS  exactly ONE day EXACTLY on budget (sp44 C10 12000) — >= catches 6, > catches 5
+PASS  fee-drift trio = sp18 (C4) / sp39 (C9) / sp45 (C10), all at 8%, sp45 PAID · [{"spend_id":18,"campaign_id":4,"media_cents":6500,"platform_fee_cents":520,"status":"pending"},{"spend_id":39,"campaign_id":9,"media_cents":1200,"platform_fee_cents":96,"status":"disputed"},{"spend_id":45,"campaign_id":10,"media_cents":12600,"platform_fee_cents":1008,"status":"paid"}]
+PASS  creative fees on exactly 5 rows (8000/5000/3000/2000/1500)
+PASS  ROAS board: C9 10.96 · C3 5.79 · C10 4.22 · C12 3.66 · C5 3.42 · C6 3.0 · C4 2.4 · C1 1.24 · C2 0.96 · [{"id":9,"roas":10.96},{"id":3,"roas":5.79},{"id":10,"roas":4.22},{"id":12,"roas":3.66},{"id":5,"roas":3.42},{"id":6,"roas":3},{"id":4,"roas":2.4},{"id":1,"roas":1.24},{"id":2,"roas":0.96}]
+PASS  C6 ROAS EXACTLY 3.0 · C2 below 1 (0.96) · display ROAS 0 (NULLIF lesson)
+PASS  blended ROAS 745700/248800 rounds to 3.0 (raw 2.9972)
+== refund book ==
+PASS  refund sum 216800 · net revenue 634900
+PASS  reasons duplicate_charge 7 / chargeback 3 / goodwill 2 · [{"reason":"duplicate_charge","n":7},{"reason":"chargeback","n":3},{"reason":"goodwill","n":2}]
+PASS  statuses open 5 / approved 4 / denied 3 · [{"status":"open","n":5},{"status":"approved","n":4},{"status":"denied","n":3}]
+PASS  dispute line: r1 = 60000 chargeback on the whale, MAX of the book (>=1, >0)
+PASS  twins at 12000 (r5 chargeback open, r6 duplicate_charge denied)
+PASS  full refunds on the two refunded conversions (c46 52000 approved, c50 54000 open)
+PASS  whale's clawback total 75000 (60000 + 15000); whale net 221000
+== touchpoint structure ==
+PASS  touch type census: 67 clicks / 41 views
+PASS  per-campaign touches: C4 22 · C10 21 · C9 18 · C5 14 · C1 7 · C2 7 · C6 7 · C12 5 · C3 3 · C7 2 · C8 2
+PASS  path-length census: 5x2 · 4x7 · 3x12 · 2x13 · 1x8
+== house rules on every row ==
+PASS  conv_date = date(conv_ts) on all 58
+PASS  non-direct sessions map to same-channel campaigns (google/bing -> search except GDN google->display, meta -> social, newsletter -> email)
+PASS  ad->campaign integrity on impressions
+PASS  refunds reference charged conversions only, amount <= revenue
+
+ALL PROBES PASS
