@@ -578,6 +578,115 @@
   --sidebar-ring: #7c9a68;
 }
 
+/* ---- CLAIMS FLOOR · the Spade design language (light).
+        spade.com recon: cream-mint canvas #f4faed, forest-black ink
+        #090f05 (green, never grey), olive #4a5b38 brand, lime #b2eb76
+        signal, burnt-orange #c9753d ticker, gold #f2dfac chips.
+        Same light-theme inversion anatomy as builder/plum: zinc 950 =
+        the page, 900 = white cards, 200 = ink headline — with the
+        hairline steps 800/700 DARKER than the canvas so borders
+        survive on cream, and the brand ramp 200/300 running dark as
+        TEXT steps while 400 is the solid olive accent step. ---- */
+.theme-spade {
+  --color-zinc-50: #090f05;
+  --color-zinc-100: #23301b;
+  --color-zinc-200: #131c0d;
+  --color-zinc-300: #33422a;
+  --color-zinc-400: #4d5c42;
+  --color-zinc-500: #66755a;
+  --color-zinc-600: #8a977d;
+  --color-zinc-700: #c3d1b2;
+  --color-zinc-800: #dde8cc;
+  --color-zinc-900: #ffffff;
+  --color-zinc-950: #f4faed;
+  /* brand: olive — 200/300 are TEXT roles on cream, so they run dark;
+     400 is the solid button/accent step */
+  --color-emerald-50: #eef4e2;
+  --color-emerald-100: #3a4829;
+  --color-emerald-200: #3e4d2e;
+  --color-emerald-300: #44552f;
+  --color-emerald-400: #4a5b38;
+  --color-emerald-500: #42512f;
+  --color-emerald-600: #3a4829;
+  --color-emerald-700: #32401f;
+  --color-emerald-900: #18280e;
+  --color-emerald-950: #eef4e2;
+  /* secondary brand: sage */
+  --color-teal-50: #edf2e6;
+  --color-teal-100: #44523c;
+  --color-teal-200: #5c6f55;
+  --color-teal-300: #4e6047;
+  --color-teal-400: #66795c;
+  --color-teal-500: #56684e;
+  --color-teal-800: #2f3a28;
+  --color-teal-900: #2f3a28;
+  --color-teal-950: #dfe8d2;
+  /* chromatic text steps darkened for cream; the burnts carry the
+     ticker/chromatic voice (orange 400 = the burnt-orange solid) */
+  --color-amber-200: #7a5a10;
+  --color-amber-300: #8f6a15;
+  --color-amber-400: #a67b1a;
+  --color-rose-200: #9c3a30;
+  --color-rose-300: #b2453a;
+  --color-rose-400: #c25448;
+  --color-violet-200: #55418f;
+  --color-violet-300: #6550a8;
+  --color-violet-400: #7660bd;
+  --color-sky-200: #33625c;
+  --color-sky-300: #3d736c;
+  --color-sky-400: #4a847c;
+  --color-orange-200: #8a4a1f;
+  --color-orange-300: #a55a28;
+  --color-orange-400: #c9753d;
+  --color-lime-200: #4a6a1f;
+  --color-lime-300: #5e861f;
+  --color-lime-400: #7ba32c;
+  --color-fuchsia-300: #a63a92;
+  --color-red-300: #a8381f;
+  --color-red-400: #bf4526;
+  --color-red-50: #fdeeea;
+  --color-blue-200: #2f4a8f;
+  --color-blue-300: #3a58a8;
+  --color-pink-300: #b04a74;
+  /* tokens */
+  --brand-accent: #4a5b38;
+  --brand-ink: #f4faed;
+  --background: #f4faed;
+  --foreground: #131c0d;
+  --card: #ffffff;
+  --card-foreground: #131c0d;
+  --popover: #ffffff;
+  --popover-foreground: #131c0d;
+  --primary: #131c0d;
+  --primary-foreground: #f4faed;
+  --secondary: #eaf2de;
+  --secondary-foreground: #33422a;
+  --muted: #eaf2de;
+  --muted-foreground: #66755a;
+  --accent: #eaf2de;
+  --accent-foreground: #33422a;
+  --destructive: #b7402e;
+  --border: #dfe8d0;
+  --input: #cdd9bd;
+  --ring: #4a5b38;
+  --chart-1: #4a5b38;
+  --chart-2: #c9753d;
+  --chart-3: #66795c;
+  --chart-4: #8f6a15;
+  --chart-5: #b7402e;
+  --sidebar: #f9fcf3;
+  --sidebar-foreground: #131c0d;
+  --sidebar-primary: #4a5b38;
+  --sidebar-primary-foreground: #f4faed;
+  --sidebar-accent: #eaf2de;
+  --sidebar-accent-foreground: #33422a;
+  --sidebar-border: #dfe8d0;
+  --sidebar-ring: #4a5b38;
+  /* display voice — Inter Tight stands in for Spade's proprietary
+     Polar; every other theme keeps the Chivo Mono voice */
+  --font-display: var(--font-inter-tight), var(--font-chivo), system-ui, sans-serif;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -881,6 +990,208 @@ button:not(:disabled),
 :where(button, a, select, input, textarea, summary, [role="button"], [tabindex]):focus-visible {
   outline: 2px solid color-mix(in srgb, var(--brand-accent) 80%, transparent);
   outline-offset: 2px;
+}
+
+/* =====================================================================
+   SPADE MOTIF LAYER — the Claims Floor voice. Tokens live on :root so
+   the motifs resolve under every theme (the ticker/forest/grid read
+   correctly even when the active theme isn't spade); under .theme-spade
+   they meet the matching canvas. Self-authored — design language
+   studied from spade.com, assets and copy original.
+   ===================================================================== */
+:root {
+  --spade-canvas: #f4faed;
+  --spade-ink: #090f05;
+  --spade-forest: #18280e;
+  --spade-olive: #4a5b38;
+  --spade-lime: #b2eb76;
+  --spade-orange: #c9753d;
+  --spade-gold: #f2dfac;
+  --spade-grid-line: rgb(74 91 56 / 0.13);
+  --spade-hairline: rgb(9 15 5 / 0.16);
+}
+
+/* 56px grid paper — the canvas the whole landing floats on */
+.spade-grid {
+  background-image:
+    linear-gradient(to right, var(--spade-grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--spade-grid-line) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+/* Edge rulers — vertical tick strips hugging a section's left/right
+   edges, like measurement rules on drafting paper */
+.spade-ruler {
+  position: relative;
+}
+.spade-ruler::before,
+.spade-ruler::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 14px;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--spade-hairline) 0 1px,
+    transparent 1px 14px
+  );
+  background-size: 7px 100%;
+  background-repeat: no-repeat;
+  opacity: 0.7;
+}
+.spade-ruler::before {
+  left: 10px;
+  border-right: 1px solid var(--spade-hairline);
+}
+.spade-ruler::after {
+  right: 10px;
+  border-left: 1px solid var(--spade-hairline);
+}
+
+/* Mono eyebrow — the ► ▸ labels that tag every section */
+.mono-eyebrow {
+  font-family: var(--font-chivo), ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.mono-eyebrow::before {
+  content: "► ";
+  font-size: 9px;
+  vertical-align: 1px;
+}
+
+/* Display voice — big, tight, slightly-softened grotesque headlines
+   (the 84px/w560/-0.84px-per-100px scale from the recon) */
+.spade-display {
+  font-family: var(--font-display), var(--font-chivo), system-ui, sans-serif;
+  font-weight: 560;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+}
+
+/* White data card — flat, hairline, faint lift */
+.spade-card {
+  background: #ffffff;
+  border: 1px solid var(--spade-hairline);
+  box-shadow: 0 1px 0 0 rgb(9 15 5 / 0.04);
+}
+
+/* Gold chip — the metadata tag ([MONO] boxes, round chips) */
+.spade-gold-chip {
+  background: var(--spade-gold);
+  color: var(--spade-ink);
+  border: 1px solid rgb(9 15 5 / 0.22);
+  font-family: var(--font-chivo), ui-monospace, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+/* Lime pill — the signal CTA inside dark bands */
+.spade-lime-pill {
+  background: var(--spade-lime);
+  color: var(--spade-ink);
+  border: 1px solid rgb(9 15 5 / 0.3);
+  font-family: var(--font-chivo), ui-monospace, monospace;
+}
+
+/* Terminal box — dark forest, lime mono text, three dot header */
+.spade-terminal {
+  position: relative;
+  background: var(--spade-forest);
+  color: var(--spade-lime);
+  border: 1px solid rgb(9 15 5 / 0.5);
+  font-family: var(--font-chivo), ui-monospace, monospace;
+}
+.spade-terminal-dots {
+  display: inline-flex;
+  gap: 4px;
+}
+.spade-terminal-dots::before,
+.spade-terminal-dots::after,
+.spade-terminal-dots span {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgb(178 235 118 / 0.35);
+}
+.spade-terminal-dots span {
+  background: rgb(178 235 118 / 0.6);
+}
+.spade-terminal-dots::after {
+  background: var(--spade-orange);
+}
+
+/* Dashed [MONO] tab boxes — the bracket-tagged metadata frames */
+.spade-dashed {
+  border: 1px dashed rgb(9 15 5 / 0.3);
+  background: transparent;
+}
+.spade-bracket {
+  font-family: var(--font-chivo), ui-monospace, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+.spade-bracket::before {
+  content: "[";
+  opacity: 0.45;
+}
+.spade-bracket::after {
+  content: "]";
+  opacity: 0.45;
+}
+
+/* Burnt-orange ticker strip */
+.spade-ticker {
+  background: var(--spade-orange);
+  color: var(--spade-ink);
+  font-family: var(--font-chivo), ui-monospace, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  border-block: 1px solid rgb(9 15 5 / 0.3);
+}
+
+/* Engraved line-art — 1.5px strokes, olive ink at working opacity */
+.spade-engraved {
+  stroke: var(--spade-olive);
+  fill: none;
+  stroke-width: 1.5;
+  opacity: 0.5;
+}
+.spade-engraved-soft {
+  stroke: var(--spade-olive);
+  fill: none;
+  stroke-width: 1;
+  opacity: 0.28;
+}
+
+/* Deep-forest closing band — a theme within the theme: carries its OWN
+   zinc re-ramp so zinc utilities inside it flip to the dark-surface
+   anatomy, plus the shadcn token flip so brand glyphs read cream on
+   forest. Ink stays green-black, never grey. */
+.spade-forest {
+  --color-zinc-50: #f4faed;
+  --color-zinc-100: #dcead2;
+  --color-zinc-200: #c2d6ae;
+  --color-zinc-300: #93a97f;
+  --color-zinc-400: #6d815a;
+  --color-zinc-500: #526540;
+  --color-zinc-600: #3c4d2c;
+  --color-zinc-700: #2b3a1e;
+  --color-zinc-800: #22301a;
+  --color-zinc-900: #1d2c12;
+  --color-zinc-950: #18280e;
+  --background: #18280e;
+  --foreground: #f0f8e2;
+  --border: rgb(178 235 118 / 0.22);
+  background: var(--background);
+  color: var(--foreground);
+}
+.spade-forest ::selection {
+  background: rgb(178 235 118 / 0.3);
 }
 
 /* =====================================================================

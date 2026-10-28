@@ -9024,3 +9024,37 @@ Stage Summary:
 - New domain surface unlocked: cookie-vs-path attribution models (last-click / last-touch / linear) and their engineered disagreements, pixel retention windows and the cookie-only whale flip, 7-day eligibility walls with an exact-boundary conversion, metered-CPC vs billing-ledger money systems, fee-drift and overspend audits, view-through closers and the same-second tie registry, stuffing-burst velocity walls at session grain — none of it overlapping the six earlier packs.
 - Known follow-ups (unchanged): gauntlet runs session-only; pack XP not yet folded into the readiness score; pack cards could show per-bank progress breakdown.
 - Key files: src/lib/leetcode/content/dm-mkt-{schema,seed,queries,mcqs,cases}.ts, src/lib/leetcode/content/dm-expected.ts (1470 keys), src/lib/leetcode/domain-packs.ts, scripts/{r15-mkt-probe,r15-q-smoke,dm-verify,r15-e2e}.{ts,sh}, scripts/r15-facts.txt
+
+---
+Task ID: lc-rollback-incident
+Agent: Super Z (main agent)
+Task: Incident record — workspace rollback wiped rounds 16-22 (commits + untracked files); recovery executed
+
+Work Log:
+- Sometime after the lc-round22 session, the workspace was reset: git reset --hard to 234d844 (lc-round15) plus removal of ALL untracked files. The two round commits made in the follow-up session (3c5242f lc-round21, 40edecd lc-round22) are not valid objects anymore — the entire .git state rewound. Every round built after r15 existed only as uncommitted working-tree files and died with the reset: dm-icl-* (pack #8), the five retired dm drafts (travel/game/hr/ins/edu), the company-kit wave, scale-lab + /api/scale, pg-dialect, all r16-r21 gate scripts and screenshots, the spade-recon evidence, and the worklog entries for r16-r22.
+- Survivors: gitignored paths (db/custom.db with all pack datasets — carriers/claims there are FREIGHT/RETAIL tables, NOT the lost ICL set) and the conversation-context record of the r21/r22 worklog entries.
+- Recovery executed same session: lc-round22 (Spade reskin) rebuilt first from the round-22 spec preserved in conversation context — themes.ts (spade / Claims Floor as 7th theme + default), globals.css (.theme-spade ramp block + full motif utility layer with :root token defaults), layout.tsx (Inter Tight + theme-spade default + #f4faed chrome), landing.tsx (ticker + gold Round 22 chip, grid-paper rulers hero, engraved rings, data card + terminal box, white card grids, dashed mascot chips, deep-forest CTA+footer band with lime signals). Computed E2E reproduced the lost round's measured values EXACTLY (h1 Inter Tight 75.2px / -2.632px / w560, body #f4faed, ticker #c9753d, forest #18280e; theme round-trip spade→builder→spade green). Trophy/chip overlap at lg fixed (trophy moved to bottom-right).
+- Pack #8 (dm-icl) re-authoring follows as its own round from the design record (whale EXACTLY on 100000000 at 45.29% of paid, c05 on the R0 ceiling, FRS wall 60, the c44 leak, aging 30/60/91 boundary rows, ring RC-4471..4477, Ivy EXACTLY 100, velocity 2 pairs, three clocks 7/4/6).
+- Loss accepted (documented, not rebuilt): the five retired dm drafts (never registered; superseded by the 8-pack final state), r16-r21 gate scripts/screenshots, and the r16-r21 worklog entries themselves. Registered content (packs #1-7) was committed at r15 or earlier and survived intact.
+
+Stage Summary:
+- Root cause is environment-level (sandbox reset), not repo content. Mitigation adopted from now on: every completed round commits immediately; no round sits uncommitted across sessions.
+- Next: lc-round21-redo (pack #8 re-author), then the original lc-round23 queue (dm-detail motif polish, pack XP in readiness score, pack #9).
+
+---
+Task ID: lc-round22-redo
+Agent: Super Z (main agent)
+Task: lc-round22-redo — rebuild the full-app Spade reskin ("Claims Floor") after the workspace rollback
+
+Work Log:
+- themes.ts: "spade" (Claims Floor) added as the 7th theme + DEFAULT_THEME — swatch [#f4faed, #ffffff, #4a5b38], light, tag "Spade".
+- globals.css: .theme-spade block on the light-inversion anatomy — zinc 950 cream page → 200 ink headline, 50/100 near-ink text roles, 800/700 hairlines DARKER than the canvas (#dde8cc/#c3d1b2 on #f4faed) so borders survive on cream; olive brand ramp (emerald 200/300 dark text steps #3e4d2e/#44552f, 400 solid #4a5b38); sage teal ramp; darkened chromatic text steps (amber/rose/violet/sky/lime/orange with orange 400 = burnt #c9753d); shadcn tokens (cream bg, white cards, ink primary, olive ring #4a5b38); chart ramp (olive/burnt/sage/gold-dark/brick); --font-display wired to Inter Tight under spade only.
+- Spade motif utility layer (all tokens on :root so motifs resolve under every theme): .spade-grid 56px grid paper, .spade-ruler edge tick strips, .mono-eyebrow (► prefix), .spade-display (w560, -0.035em, lh 1.02), .spade-card white hairline card, .spade-gold-chip, .spade-lime-pill, .spade-terminal (+ .spade-terminal-dots), .spade-dashed, .spade-bracket ([ ] wrappers), .spade-ticker burnt strip, .spade-engraved/-soft stroke treatments, .spade-forest deep-forest band carrying its OWN zinc re-ramp + --background/--foreground flip (theme within the theme).
+- layout.tsx: Inter_Tight (OFL) as --font-inter-tight (the Polar stand-in); html default theme-spade; viewport themeColor #f4faed; boot script picks the new default up automatically from the registry.
+- landing.tsx rebuilt in the Spade language, behavior 1:1 (NAV scroll, resume chip, mascot + move chips, HeroDemo, stats, callbacks): burnt-orange ticker with gold "Round 22" chip + universe facts, mono numbered nav, ink pill CTAs, grid-paper hero with edge rulers + ► eyebrows + [BRACKET] tags, spade-display headline (75.2px live), EngravedRings SVG (concentric survey rings + DB cylinder), floating DataCard (TABLES SCANNED · 103 rows), terminal box (live query, 12ms, graded ✓), white card grids, curriculum table on a spade-card, dashed mascot move chips, and the CTA + footer merged into one spade-forest band — lime signal words, lime pill CTAs, gold chip, bracket column labels.
+- Gotcha caught and fixed on redo: trophy Icon3D overlapped the gold chip at lg (both right-aligned in the CTA card) — trophy moved to bottom-right of the card.
+- Gates: tsc 0 errors in the 4 touched files (pre-existing baseline untouched); eslint 0 on touched files; build clean; served standalone verified — HTML carries theme-spade/Claims Floor/#f4faed×3/#4a5b38/Round 22/TABLES SCANNED, compiled CSS carries all motif utilities; computed E2E (agent-browser) reproduced the pre-rollback round's measured values EXACTLY: h1 "Inter Tight" 75.2px / -2.632px / weight 560, body rgb(244,250,237), ticker rgb(201,117,61), forest rgb(24,40,14); theme round-trip spade→builder→spade green with motifs resolving under both; grid paper live under spade. Screenshots scripts/shots/r22-{hero,curriculum,forest}.png.
+
+Stage Summary:
+- The Claims Floor reskin stands again as default theme — visually byte-equivalent to the lost round (same computed tokens, same motifs, same copy), all six legacy themes intact one click away. Committed immediately per the new no-uncommitted-rounds rule (rollback mitigation).
+- Key files: src/lib/themes.ts, src/app/globals.css, src/app/layout.tsx, src/components/landing.tsx.

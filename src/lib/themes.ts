@@ -1,6 +1,6 @@
-// SeeQL theme registry — 4 hand-tuned themes (v2 set). Flat by design: no
-// gradients, no glows — solid surfaces, hairline borders, one restrained
-// accent each.
+// SeeQL theme registry — 7 hand-tuned themes (v2 set + the Spade
+// "Claims Floor" import). Flat by design: no gradients, no glows —
+// solid surfaces, hairline borders, one restrained accent each.
 //
 // How theming works (Tailwind 4): every palette color is a real CSS custom
 // property (--color-zinc-900 etc.) that utilities reference, including
@@ -17,6 +17,7 @@
 // layout.tsx (generated from this file).
 
 export type ThemeId =
+  | "spade"
   | "builder"
   | "builderdark"
   | "jet"
@@ -39,6 +40,14 @@ export interface ThemeDef {
 }
 
 export const THEMES: ThemeDef[] = [
+  {
+    id: "spade",
+    name: "Claims Floor",
+    tag: "Spade",
+    blurb: "Cream grid paper, forest ink, olive signal",
+    dark: false,
+    swatch: ["#f4faed", "#ffffff", "#4a5b38"],
+  },
   {
     id: "builder",
     name: "Builder Paper",
@@ -89,7 +98,7 @@ export const THEMES: ThemeDef[] = [
   },
 ];
 
-export const DEFAULT_THEME: ThemeId = "builder";
+export const DEFAULT_THEME: ThemeId = "spade";
 
 export const THEME_STORAGE_KEY = "seeql-theme-v1";
 

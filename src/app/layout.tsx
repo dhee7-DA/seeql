@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Chivo_Mono } from "next/font/google";
+import { Chivo_Mono, Inter_Tight } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { PwaRegister } from "@/components/pwa-register";
@@ -12,6 +12,17 @@ import { THEMES, DEFAULT_THEME, THEME_STORAGE_KEY } from "@/lib/themes";
 // the 900-black headline weight the AB look is built on.
 const chivoMono = Chivo_Mono({
   variable: "--font-chivo",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+// The Claims Floor display voice — Inter Tight is the free (OFL) stand-in
+// for Spade's proprietary Polar: same tight, slightly-softened grotesque
+// skeleton that takes the 560 display weight without going brittle.
+// Wired via .theme-spade's --font-display override, so every other theme
+// keeps the Chivo Mono voice untouched.
+const interTight = Inter_Tight({
+  variable: "--font-inter-tight",
   subsets: ["latin"],
   display: "swap",
 });
@@ -50,10 +61,10 @@ export const metadata: Metadata = {
   },
 };
 
-// Painted on the browser chrome so the installed app and the tab blend into
-// the zinc-950 shell on every platform.
+// Painted on the browser chrome so the installed app and the tab blend
+// into the Claims Floor cream on every platform.
 export const viewport: Viewport = {
-  themeColor: "#09090b",
+  themeColor: "#f4faed",
 };
 
 /**
@@ -75,7 +86,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`theme-builder ${chivoMono.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`theme-spade ${chivoMono.variable} ${interTight.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeBoot }} />
       </head>

@@ -1,11 +1,14 @@
 "use client";
 
-// SeeQL landing — the Active Builders anatomy, ported 1:1: numbered
-// eyebrow section markers, a giant black-weight mono headline, ink buttons
-// with arrows, hairline-separated sections, divided card grids with
-// bordered icon squares, a green-check perk list and a column footer.
-// The single Chivo Mono voice carries everything; colors come from the
-// theme ramps (ink on paper / paper on ink — the builder themes).
+// SeeQL landing — the Claims Floor voice (Spade design language, studied
+// from spade.com, rebuilt with original assets and copy). Cream grid paper
+// with edge rulers, ► mono eyebrows and [BRACKET] section tags, a giant
+// tight display headline, floating white data cards + a terminal box over
+// engraved line-art, dashed mascot chips, and the CTA + footer merged into
+// one deep-forest closing band with lime signal words. Substance and
+// behavior are preserved 1:1 from the previous anatomy: NAV scroll, resume
+// chip, mascot + move chips, HeroDemo, stats, sections, callbacks. Colors
+// ride the theme ramps, so the six legacy themes still dress this page.
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView, useMotionValue, useSpring } from "framer-motion";
@@ -83,46 +86,36 @@ const LEVEL_DOT: Record<string, string> = {
   Expert: "bg-amber-400",
 };
 
-/* ------------------------------------------------------------- AB pieces */
+/* --------------------------------------------------------- Spade pieces */
 
-/** AB section marker: `02 ——— WHY SEEQL`. */
-function Eyebrow({ n, children }: { n: string; children: React.ReactNode }) {
+/** Section tag: `[01] ► WHY SEEQL` — bracket + mono eyebrow on one line. */
+function SectionTag({ n, children }: { n: string; children: React.ReactNode }) {
   return (
-    <p className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-zinc-500">
-      <span className="tnum">{n}</span>
+    <p className="flex items-center gap-3">
+      <span className="spade-bracket tnum text-[11px] text-zinc-500">{n}</span>
       <span aria-hidden="true" className="h-px w-12 bg-zinc-700" />
-      <span>{children}</span>
+      <span className="mono-eyebrow text-zinc-500">{children}</span>
     </p>
   );
 }
 
-/** AB icon square: bordered rounded cell, plain ink glyph. */
-function IconSquare({ icon: Icon, className }: { icon: React.ComponentType<{ className?: string }>; className?: string }) {
-  return (
-    <span className={className ?? "inline-flex h-9 w-9 items-center justify-center rounded-md border border-zinc-700"}>
-      <Icon className="h-4 w-4 text-zinc-200" />
-    </span>
-  );
-}
-
-/** AB icon square carrying a glossy 3D render instead of a flat glyph — same
-    bordered cell, one size up so the object has room to sit. */
+/** Icon tile: white data card cell, hairline border, plain ink glyph. */
 function Icon3DTile({ name }: { name: Icon3DName }) {
   return (
-    <span className="inline-flex h-14 w-14 items-center justify-center rounded-lg border border-zinc-700">
+    <span className="inline-flex h-14 w-14 items-center justify-center rounded-lg border border-zinc-700 bg-zinc-900">
       <Icon3D name={name} size={40} />
     </span>
   );
 }
 
-/** AB primary action: ink button that flips with the theme + arrow. */
+/** Primary action: ink pill that flips with the theme + arrow. */
 function InkButton({ onClick, children, big = false }: { onClick: () => void; children: React.ReactNode; big?: boolean }) {
   return (
     <button
       onClick={onClick}
       className={cnx(
-        "inline-flex cursor-pointer items-center gap-2 rounded-md bg-foreground font-medium text-background transition-opacity hover:opacity-85",
-        big ? "px-6 py-3 text-sm" : "px-5 py-2.5 text-[13px]",
+        "inline-flex cursor-pointer items-center gap-2 rounded-full bg-foreground font-medium text-background transition-opacity hover:opacity-85",
+        big ? "px-7 py-3.5 text-sm" : "px-5 py-2.5 text-[13px]",
       )}
     >
       {children}
@@ -131,7 +124,23 @@ function InkButton({ onClick, children, big = false }: { onClick: () => void; ch
   );
 }
 
-/** AB secondary action: plain text + arrow. */
+/** Signal action: the lime pill reserved for the deep-forest closing band. */
+function LimeButton({ onClick, children, big = false }: { onClick: () => void; children: React.ReactNode; big?: boolean }) {
+  return (
+    <button
+      onClick={onClick}
+      className={cnx(
+        "spade-lime-pill inline-flex cursor-pointer items-center gap-2 rounded-full font-medium transition-opacity hover:opacity-85",
+        big ? "px-7 py-3.5 text-sm" : "px-5 py-2.5 text-[13px]",
+      )}
+    >
+      {children}
+      <ArrowRight className="h-4 w-4" />
+    </button>
+  );
+}
+
+/** Secondary action: plain text + arrow. */
 function ArrowLink({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
   return (
     <button
@@ -147,6 +156,90 @@ function ArrowLink({ onClick, children }: { onClick: () => void; children: React
 /** Tiny class joiner (avoids importing cn for three spots). */
 function cnx(...parts: Array<string | false | undefined>) {
   return parts.filter(Boolean).join(" ");
+}
+
+/** Burnt-orange ticker — the newsprint strip under the header. */
+function Ticker() {
+  return (
+    <div className="spade-ticker overflow-hidden">
+      <div className="mx-auto flex w-full max-w-5xl items-center gap-4 px-4 py-1.5 text-[10px] sm:px-6">
+        <span className="spade-gold-chip shrink-0 rounded-sm px-2 py-0.5 text-[9px]">Round 22</span>
+        <p className="flex min-w-0 items-center gap-3 truncate">
+          <span className="shrink-0">The visual SQL lab</span>
+          <span aria-hidden="true" className="shrink-0 opacity-50">·</span>
+          <span className="shrink-0">8 domain packs · 1,440 drills</span>
+          <span aria-hidden="true" className="hidden shrink-0 opacity-50 sm:inline">·</span>
+          <span className="hidden shrink-0 sm:inline">Every query graded on real rows</span>
+          <span aria-hidden="true" className="hidden shrink-0 opacity-50 md:inline">·</span>
+          <span className="hidden md:inline">No account · no setup</span>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/** Engraved line-art — concentric survey rings around a DB cylinder,
+    drawn once behind the hero stage. Pure SVG, olive ink, no motion. */
+function EngravedRings() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 520 520"
+      className="pointer-events-none absolute left-1/2 top-1/2 h-[130%] w-auto max-w-none -translate-x-1/2 -translate-y-1/2"
+    >
+      {[70, 110, 150, 190, 230, 258].map((r) => (
+        <circle key={r} cx="260" cy="260" r={r} className="spade-engraved-soft" strokeDasharray={r % 2 ? "3 6" : undefined} />
+      ))}
+      {/* engraved DB cylinder */}
+      <g className="spade-engraved">
+        <ellipse cx="260" cy="216" rx="34" ry="12" />
+        <path d="M226 216 v88 a34 12 0 0 0 68 0 v-88" />
+        <path d="M226 244 a34 12 0 0 0 68 0" strokeDasharray="3 4" />
+        <path d="M226 272 a34 12 0 0 0 68 0" strokeDasharray="3 4" />
+      </g>
+      {/* survey ticks on the outer ring */}
+      <g className="spade-engraved-soft">
+        {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((deg) => {
+          const rad = (deg * Math.PI) / 180;
+          const x1 = 260 + Math.cos(rad) * 244;
+          const y1 = 260 + Math.sin(rad) * 244;
+          const x2 = 260 + Math.cos(rad) * 254;
+          const y2 = 260 + Math.sin(rad) * 254;
+          return <line key={deg} x1={x1} y1={y1} x2={x2} y2={y2} />;
+        })}
+      </g>
+    </svg>
+  );
+}
+
+/** Floating data card — the hero's metadata readout, top-right. */
+function DataCard() {
+  return (
+    <div className="spade-card absolute -top-6 right-0 z-10 hidden px-4 py-3 sm:block lg:-right-4">
+      <p className="spade-bracket text-[9px] text-zinc-500">Tables scanned</p>
+      <p className="tnum mt-1 font-mono text-lg font-semibold leading-none text-zinc-100">103 rows</p>
+      <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-zinc-500">
+        orders · items · products
+      </p>
+    </div>
+  );
+}
+
+/** Terminal box — the live-query readout under the hero stage. */
+function TerminalBox() {
+  return (
+    <div className="spade-terminal relative mx-auto w-full max-w-sm rounded-md px-4 py-3 lg:mx-0">
+      <div className="flex items-center justify-between">
+        <span className="spade-terminal-dots"><span /></span>
+        <span className="text-[9px] uppercase tracking-[0.18em] opacity-70">seeql — live</span>
+      </div>
+      <p className="tnum mt-2 truncate text-[11px] leading-relaxed">
+        <span className="opacity-60">$ </span>
+        SELECT status, COUNT(*) FROM orders GROUP BY 1;
+      </p>
+      <p className="tnum mt-1 text-[10px] opacity-70">12ms · 3 groups · graded ✓</p>
+    </div>
+  );
 }
 
 /* ------------------------------------------------------------- SeeQ stage */
@@ -213,7 +306,7 @@ function SeeqMascot() {
             type="button"
             onClick={() => play(m.id, m.hold)}
             data-seeq-chip={m.id}
-            className="cursor-pointer rounded-md border border-zinc-800 px-2.5 py-1 text-[11px] text-zinc-400 transition-colors hover:border-zinc-600 hover:text-zinc-200"
+            className="spade-dashed cursor-pointer rounded-md px-2.5 py-1 font-mono text-[11px] uppercase tracking-[0.08em] text-zinc-500 transition-colors hover:text-zinc-200"
           >
             {m.label}
           </button>
@@ -259,7 +352,7 @@ export function Landing({
 
   return (
     <div className="flex min-h-screen flex-1 flex-col bg-zinc-950">
-      {/* header — AB bar: logo, numbered nav, ink CTA */}
+      {/* header — cream bar: logo, mono numbered nav, ink pill CTA */}
       <header className="sticky top-0 z-40 border-b border-zinc-800 bg-zinc-950/90 backdrop-blur">
         <div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between px-4 sm:px-6">
           <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="SeeQL — back to top">
@@ -270,7 +363,7 @@ export function Landing({
               <button
                 key={n.id}
                 onClick={() => scrollTo(n.id)}
-                className="group flex cursor-pointer items-baseline gap-2 text-[13px] text-zinc-400 transition-colors hover:text-zinc-100"
+                className="group flex cursor-pointer items-baseline gap-2 font-mono text-[13px] text-zinc-400 transition-colors hover:text-zinc-100"
               >
                 <span className="tnum text-[10px] text-zinc-600 group-hover:text-zinc-400">
                   {String(i + 1).padStart(2, "0")}
@@ -287,7 +380,7 @@ export function Landing({
               data-seeq-nav="1"
               aria-label="Meet SeeQ — your study buddy"
               title="Meet SeeQ — your study buddy"
-              className="hidden cursor-pointer items-center gap-1.5 rounded-md border border-zinc-800 py-1.5 pl-1.5 pr-3 text-[13px] text-zinc-300 transition-colors hover:bg-zinc-900 sm:flex"
+              className="hidden cursor-pointer items-center gap-1.5 rounded-full border border-zinc-800 py-1.5 pl-1.5 pr-3 text-[13px] text-zinc-300 transition-colors hover:bg-zinc-900 sm:flex"
             >
               <BloubBot
                 size={26}
@@ -304,7 +397,7 @@ export function Landing({
             <ThemeSwitcher />
             <InkButton onClick={onStart}>{resume ? "Continue" : "Start learning"}</InkButton>
             <button
-              className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-md border border-zinc-800 text-zinc-300 md:hidden"
+              className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-zinc-800 text-zinc-300 md:hidden"
               onClick={() => setMenuOpen((o) => !o)}
               aria-expanded={menuOpen}
               aria-label={menuOpen ? "Close menu" : "Open menu"}
@@ -323,7 +416,7 @@ export function Landing({
                     setMenuOpen(false);
                     scrollTo(n.id);
                   }}
-                  className="flex cursor-pointer items-baseline gap-2 border-b border-zinc-800/60 py-3 text-left text-[13px] text-zinc-300 last:border-b-0"
+                  className="flex cursor-pointer items-baseline gap-2 border-b border-zinc-800/60 py-3 text-left font-mono text-[13px] text-zinc-300 last:border-b-0"
                 >
                   <span className="tnum text-[10px] text-zinc-600">{String(i + 1).padStart(2, "0")}</span>
                   {n.label}
@@ -333,18 +426,20 @@ export function Landing({
           </nav>
         )}
       </header>
+      <Ticker />
       <UniverseStrip />
 
-      {/* hero — AB: eyebrow rule, giant black mono headline, body, ink CTA */}
-      <section className="border-b border-zinc-800">
-        <div className="mx-auto grid w-full max-w-5xl items-center gap-12 px-4 pb-20 pt-16 sm:px-6 lg:grid-cols-2 lg:pb-28 lg:pt-24">
+      {/* hero — grid paper, edge rulers, giant display headline, engraved
+          stage with floating data card + terminal box */}
+      <section className="spade-grid spade-ruler border-b border-zinc-800">
+        <div className="mx-auto grid w-full max-w-5xl items-center gap-12 px-6 pb-20 pt-16 sm:px-10 lg:grid-cols-2 lg:pb-28 lg:pt-24">
           <div>
-            <p className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-zinc-500">
-              <span>For self-taught analysts</span>
+            <p className="flex items-center gap-3">
+              <span className="mono-eyebrow text-zinc-500">For self-taught analysts</span>
               <span aria-hidden="true" className="h-px w-12 bg-zinc-700" />
-              <span className="tnum">EST. 2026</span>
+              <span className="spade-bracket tnum text-[11px] text-zinc-500">est. 2026</span>
             </p>
-            <h1 className="mt-8 font-display text-[2.7rem] font-black leading-[1.04] tracking-[-0.02em] text-zinc-100 sm:text-6xl lg:text-[3.9rem]">
+            <h1 className="spade-display mt-8 text-[2.9rem] text-zinc-100 sm:text-6xl lg:text-[4.7rem]">
               Stop memorizing SQL.{" "}
               <span className="text-emerald-400">Start seeing it.</span>
             </h1>
@@ -357,23 +452,24 @@ export function Landing({
               <InkButton onClick={onStart}>{resume ? "Continue learning" : "Start learning"}</InkButton>
               <ArrowLink onClick={onPlayground}>Open the Playground</ArrowLink>
             </div>
-            <p className="mt-5 text-xs text-zinc-500">
+            <p className="mt-5 font-mono text-xs text-zinc-500">
               {resume
                 ? `Welcome back — ${resume.rank} · ${resume.xp.toLocaleString()} XP saved on this device`
                 : "No account · no setup · everything runs in your browser"}
             </p>
           </div>
           <div className="relative flex justify-center lg:justify-end">
-            {/* floating 3D accents — decoration, never information */}
-            <Icon3D name="db" size={56} anim="float" className="absolute -top-7 left-6 z-10 hidden sm:block lg:left-10" />
-            <Icon3D name="bolt" size={38} anim="wiggle" className="absolute -right-1 top-20 z-10 hidden sm:block lg:-right-3" />
-            <Icon3D name="star" size={34} anim="bob" className="absolute bottom-10 -left-1 z-10 hidden lg:block lg:-left-6" />
-            <HeroDemo />
+            <EngravedRings />
+            <DataCard />
+            <div className="relative flex flex-col items-center gap-6 lg:items-end">
+              <HeroDemo />
+              <TerminalBox />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* stats strip — divided hairline cells, AB table rhythm */}
+      {/* stats strip — white data-card cells on the hairline grid */}
       <section className="border-b border-zinc-800">
         <div className="mx-auto grid w-full max-w-5xl grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
           {[
@@ -385,23 +481,24 @@ export function Landing({
           ].map(([n, label], i) => (
             <div
               key={label as string}
-              className={`px-6 py-8 ${i > 0 ? "border-l border-zinc-800" : ""} ${i >= 2 ? "max-sm:border-t max-sm:border-zinc-800" : ""} ${i === 2 ? "max-sm:border-l-0" : ""} ${i >= 3 ? "lg:max-sm:border-l" : ""}`}
+              className={`bg-zinc-900 px-6 py-8 ${i > 0 ? "border-l border-zinc-800" : ""} ${i >= 2 ? "max-sm:border-t max-sm:border-zinc-800" : ""} ${i === 2 ? "max-sm:border-l-0" : ""} ${i >= 3 ? "lg:max-sm:border-l" : ""}`}
             >
-              <p className="font-display tnum text-3xl font-black tracking-[-0.02em] text-zinc-100">
+              <p className="spade-display tnum text-3xl text-zinc-100">
                 <CountUp value={n as number} />
               </p>
-              <p className="mt-1.5 text-xs leading-snug text-zinc-500">{label}</p>
+              <p className="mt-1.5 font-mono text-[10px] uppercase leading-snug tracking-[0.1em] text-zinc-500">{label}</p>
             </div>
           ))}
         </div>
       </section>
-      {/* why — AB: heading left, paragraph right, divided perk grid */}
+
+      {/* why — bracket tag, heading left, paragraph right, white card grid */}
       <section id="why" className="border-b border-zinc-800">
         <div className="mx-auto w-full max-w-5xl px-4 py-20 sm:px-6 lg:py-24">
           <Reveal>
-            <Eyebrow n="01">Why SeeQL</Eyebrow>
+            <SectionTag n="01">Why SeeQL</SectionTag>
             <div className="mt-8 grid gap-6 lg:grid-cols-2 lg:gap-16">
-              <h2 className="font-display text-3xl font-black leading-[1.05] tracking-[-0.02em] text-zinc-100 sm:text-4xl">
+              <h2 className="spade-display text-3xl text-zinc-100 sm:text-4xl">
                 Built to make SQL click — not stick.
               </h2>
               <p className="text-[15px] leading-[1.7] text-zinc-400 lg:pt-1.5">
@@ -412,7 +509,7 @@ export function Landing({
             </div>
           </Reveal>
           <Reveal delay={0.05}>
-            <div className="mt-14 grid overflow-hidden rounded-xl border border-zinc-800 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="spade-card mt-14 grid overflow-hidden rounded-xl sm:grid-cols-2 lg:grid-cols-3">
               {[
                 { icon3d: "eye" as Icon3DName, title: "Diagrams that move", body: "Watch WHERE eat 103 rows and pass 65. Watch GROUP BY split them into buckets, then HAVING slam the gate. Every figure uses the real numbers from your database." },
                 { icon3d: "db" as Icon3DName, title: "A real database underneath", body: "Five related tables, 103 orders, 251 line items — messy enough to be honest. Every query you write executes on live SQLite, not a mock." },
@@ -432,13 +529,13 @@ export function Landing({
         </div>
       </section>
 
-      {/* method — three numbered cells */}
+      {/* method — three numbered white cells */}
       <section id="method" className="border-b border-zinc-800">
         <div className="mx-auto w-full max-w-5xl px-4 py-20 sm:px-6 lg:py-24">
           <Reveal>
-            <Eyebrow n="02">Method</Eyebrow>
+            <SectionTag n="02">Method</SectionTag>
             <div className="mt-8 grid gap-6 lg:grid-cols-2 lg:gap-16">
-              <h2 className="font-display text-3xl font-black leading-[1.05] tracking-[-0.02em] text-zinc-100 sm:text-4xl">
+              <h2 className="spade-display text-3xl text-zinc-100 sm:text-4xl">
                 Read it. Watch it. Prove it.
               </h2>
               <p className="text-[15px] leading-[1.7] text-zinc-400 lg:pt-1.5">
@@ -449,7 +546,7 @@ export function Landing({
             </div>
           </Reveal>
           <Reveal delay={0.05}>
-            <div className="mt-14 grid overflow-hidden rounded-xl border border-zinc-800 lg:grid-cols-3">
+            <div className="spade-card mt-14 grid overflow-hidden rounded-xl lg:grid-cols-3">
               {[
                 { n: "01", icon3d: "book" as Icon3DName, title: "Read the idea", body: "Short, plain-English explanations. The paragraph that matters, right next to the query it explains." },
                 { n: "02", icon3d: "eye" as Icon3DName, title: "Watch it move", body: "Each hard idea gets an animated diagram on real data, so your mental model is a picture instead of a memorized rule." },
@@ -457,7 +554,7 @@ export function Landing({
               ].map((s) => (
                 <div key={s.n} className="-ml-px -mt-px border border-zinc-800 p-6">
                   <div className="flex items-start justify-between">
-                    <span className="tnum text-[11px] text-zinc-500">{s.n}</span>
+                    <span className="spade-bracket tnum text-[11px] text-zinc-500">{s.n}</span>
                     <Icon3DTile name={s.icon3d} />
                   </div>
                   <h3 className="mt-5 text-[15px] font-semibold text-zinc-100">{s.title}</h3>
@@ -469,13 +566,13 @@ export function Landing({
         </div>
       </section>
 
-      {/* curriculum — the hairline module table */}
+      {/* curriculum — the module table on a white data card */}
       <section id="curriculum" className="border-b border-zinc-800">
         <div className="mx-auto w-full max-w-5xl px-4 py-20 sm:px-6 lg:py-24">
           <Reveal>
-            <Eyebrow n="03">Curriculum</Eyebrow>
+            <SectionTag n="03">Curriculum</SectionTag>
             <div className="mt-8 grid gap-6 lg:grid-cols-2 lg:gap-16">
-              <h2 className="flex items-center gap-4 font-display text-3xl font-black leading-[1.05] tracking-[-0.02em] text-zinc-100 sm:text-4xl">
+              <h2 className="spade-display flex items-center gap-4 text-3xl text-zinc-100 sm:text-4xl">
                 <Icon3D name="cap" size={44} anim="bob" className="hidden sm:block" />
                 Nine modules. One database.
               </h2>
@@ -488,10 +585,10 @@ export function Landing({
             </div>
           </Reveal>
           <Reveal delay={0.05}>
-            <div className="mt-14 overflow-hidden rounded-xl border border-zinc-800">
+            <div className="spade-card mt-14 overflow-hidden rounded-xl">
               {MODULES.map((m) => (
                 <div key={m.id}>
-                  <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-900/60 px-4 py-2.5 sm:px-5">
+                  <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-900/70 px-4 py-2.5 sm:px-5">
                     <span className="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.14em] text-zinc-300">
                       <span className={`h-1.5 w-1.5 rounded-full ${LEVEL_DOT[m.level] ?? "bg-zinc-500"}`} />
                       Module {m.num} — {m.title}
@@ -524,13 +621,13 @@ export function Landing({
         </div>
       </section>
 
-      {/* seeq — the mascot's own landing section */}
+      {/* seeq — the mascot's own landing section, dashed move chips */}
       <section id="seeq" data-seeq-landing="1" className="border-b border-zinc-800">
         <div className="mx-auto w-full max-w-5xl px-4 py-20 sm:px-6 lg:py-24">
           <Reveal>
-            <Eyebrow n="04">SeeQ</Eyebrow>
+            <SectionTag n="04">SeeQ</SectionTag>
             <div className="mt-8 grid gap-6 lg:grid-cols-2 lg:gap-16">
-              <h2 className="font-display text-3xl font-black leading-[1.05] tracking-[-0.02em] text-zinc-100 sm:text-4xl">
+              <h2 className="spade-display text-3xl text-zinc-100 sm:text-4xl">
                 Meet <span className="text-emerald-400">SeeQ</span> — your study buddy.
               </h2>
               <p className="text-[15px] leading-[1.7] text-zinc-400 lg:pt-1.5">
@@ -542,10 +639,10 @@ export function Landing({
             </div>
           </Reveal>
           <Reveal delay={0.06}>
-            <div className="mt-14 grid items-center gap-8 rounded-xl border border-zinc-800 p-6 sm:p-8 lg:grid-cols-[auto_1fr] lg:gap-12">
+            <div className="spade-card mt-14 grid items-center gap-8 rounded-xl p-6 sm:p-8 lg:grid-cols-[auto_1fr] lg:gap-12">
               <SeeqMascot />
               <div>
-                <h3 className="font-display text-xl font-bold tracking-[-0.01em] text-zinc-100">He learns with you</h3>
+                <h3 className="spade-display text-xl text-zinc-100">He learns with you</h3>
                 <p className="mt-2 max-w-lg text-[13px] leading-6 text-zinc-400">
                   SeeQ isn&apos;t a decoration — he&apos;s the coach. While you work through
                   lessons he surfaces quiet, practical tips, celebrates your pokes, and
@@ -569,9 +666,9 @@ export function Landing({
                 </ul>
                 <div className="mt-6 flex flex-wrap items-center gap-5">
                   <InkButton onClick={onSeeq}>Dress him up in the SeeQ workshop</InkButton>
-                  <span className="text-xs text-zinc-500">Shape, colour, mood — your buddy, your rules.</span>
+                  <span className="font-mono text-xs text-zinc-500">Shape, colour, mood — your buddy, your rules.</span>
                 </div>
-                <p className="mt-5 text-[11px] text-zinc-500">
+                <p className="mt-5 font-mono text-[11px] text-zinc-500">
                   SeeQ is an exact 1:1 clone of{" "}
                   <span className="text-zinc-400">bloub</span> by Jérémy Perret (MIT) — same engine,
                   same blink calendar, same soul.
@@ -582,94 +679,97 @@ export function Landing({
         </div>
       </section>
 
-      {/* CTA — AB pricing-card anatomy: big statement, green checks, ink CTA */}
-      <section className="border-b border-zinc-800">
-        <div className="mx-auto w-full max-w-5xl px-4 py-20 sm:px-6 lg:py-24">
-          <Reveal>
-            <div className="relative rounded-xl border border-zinc-800 px-6 py-14 sm:px-12">
-              <Icon3D name="trophy" size={72} anim="float" className="absolute right-8 top-10 hidden lg:block" />
-              <div className="flex flex-wrap items-baseline justify-between gap-4">
-                <h2 className="font-display text-3xl font-black tracking-[-0.02em] text-zinc-100 sm:text-4xl">
-                  Free<span className="text-zinc-500">. {LESSONS.length} lessons, one price.</span>
-                </h2>
-                <span className="rounded-md border border-zinc-700 px-3 py-1.5 text-[11px] text-zinc-400">
-                  No account. Rises at never.
-                </span>
-              </div>
-              <p className="mt-3 text-[15px] leading-[1.7] text-zinc-400">
-                Start at Data Novice. Solve your first graded query in lesson one, and
-                let the streak do the rest.
-              </p>
-              <div className="mt-8 grid gap-x-10 gap-y-3 text-[13px] leading-6 text-zinc-300 sm:grid-cols-2">
-                {[
-                  "Every lesson read · watched · graded live",
-                  "XP, ranks, streaks and badges that you earn",
-                  "Playground with parse trees, plans and charts",
-                  "SeeQ — a buddy who follows your cursor",
-                ].map((line) => (
-                  <span key={line} className="flex gap-2.5">
-                    <Check className="mt-1 h-4 w-4 shrink-0 text-emerald-400" />
-                    {line}
+      {/* closing band — CTA + footer merged into one deep-forest block with
+          lime signal words, lime pill CTAs and the gold chip */}
+      <div className="spade-forest mt-auto flex-1">
+        <section className="border-b border-zinc-800">
+          <div className="mx-auto w-full max-w-5xl px-4 py-20 sm:px-6 lg:py-24">
+            <Reveal>
+              <div className="relative rounded-xl border border-zinc-700 px-6 py-14 sm:px-12">
+                <Icon3D name="trophy" size={72} anim="float" className="absolute bottom-10 right-8 hidden lg:block" />
+                <div className="flex flex-wrap items-baseline justify-between gap-4">
+                  <h2 className="spade-display text-3xl text-zinc-100 sm:text-4xl">
+                    Free<span className="text-zinc-500">. {LESSONS.length} lessons, one price.</span>
+                  </h2>
+                  <span className="spade-gold-chip rounded-sm px-3 py-1.5 text-[10px]">
+                    No account. Rises at never.
                   </span>
-                ))}
+                </div>
+                <p className="mt-3 text-[15px] leading-[1.7] text-zinc-300">
+                  Start at <span className="text-[var(--spade-lime)]">Data Novice</span>. Solve your first{" "}
+                  <span className="text-[var(--spade-lime)]">graded query</span> in lesson one, and let the
+                  streak do the rest.
+                </p>
+                <div className="mt-8 grid gap-x-10 gap-y-3 text-[13px] leading-6 text-zinc-200 sm:grid-cols-2">
+                  {[
+                    "Every lesson read · watched · graded live",
+                    "XP, ranks, streaks and badges that you earn",
+                    "Playground with parse trees, plans and charts",
+                    "SeeQ — a buddy who follows your cursor",
+                  ].map((line) => (
+                    <span key={line} className="flex gap-2.5">
+                      <Check className="mt-1 h-4 w-4 shrink-0 text-[var(--spade-lime)]" />
+                      {line}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-10">
+                  <LimeButton onClick={onStart} big>
+                    Start learning — free
+                  </LimeButton>
+                </div>
+                <p className="mt-4 font-mono text-xs text-zinc-400">No account · 7 themes · everything on this device</p>
               </div>
-              <div className="mt-10">
-                <InkButton onClick={onStart} big>
-                  Start learning — free
-                </InkButton>
-              </div>
-              <p className="mt-4 text-xs text-zinc-500">No account · 6 themes · everything on this device</p>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+            </Reveal>
+          </div>
+        </section>
 
-      {/* footer — AB columns */}
-      <footer className="mt-auto flex-1">
-        <div className="mx-auto w-full max-w-5xl px-4 pb-8 pt-14 sm:px-6">
-          <div className="grid gap-10 sm:grid-cols-[1.4fr_1fr_1fr]">
-            <div>
-              <LogoFull />
-              <p className="mt-3 max-w-xs text-[13px] leading-6 text-zinc-500">
-                A visual way to learn SQL — animated figures, a real SQLite engine
-                and a grading loop that pays XP.
-              </p>
-              <div className="mt-5">
-                <InkButton onClick={onStart}>Start learning</InkButton>
+        {/* footer — forest columns */}
+        <footer className="flex-1">
+          <div className="mx-auto w-full max-w-5xl px-4 pb-8 pt-14 sm:px-6">
+            <div className="grid gap-10 sm:grid-cols-[1.4fr_1fr_1fr]">
+              <div>
+                <LogoFull />
+                <p className="mt-3 max-w-xs text-[13px] leading-6 text-zinc-400">
+                  A visual way to learn SQL — animated figures, a real SQLite engine
+                  and a grading loop that pays XP.
+                </p>
+                <div className="mt-5">
+                  <LimeButton onClick={onStart}>Start learning</LimeButton>
+                </div>
               </div>
-            </div>
-            <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-500">Site</p>
-              <div className="mt-4 flex flex-col items-start gap-2.5">
-                {NAV.map((n) => (
-                  <button key={n.id} onClick={() => scrollTo(n.id)} className="cursor-pointer text-[13px] text-zinc-400 transition-colors hover:text-zinc-100">
-                    {n.label}
+              <div>
+                <p className="spade-bracket text-[10px] text-zinc-500">Site</p>
+                <div className="mt-4 flex flex-col items-start gap-2.5">
+                  {NAV.map((n) => (
+                    <button key={n.id} onClick={() => scrollTo(n.id)} className="cursor-pointer text-[13px] text-zinc-300 transition-colors hover:text-zinc-100">
+                      {n.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <p className="spade-bracket text-[10px] text-zinc-500">Elsewhere</p>
+                <div className="mt-4 flex flex-col items-start gap-2.5">
+                  <button onClick={onPlayground} className="cursor-pointer text-[13px] text-zinc-300 transition-colors hover:text-zinc-100">
+                    Playground
                   </button>
-                ))}
+                  <button onClick={onStart} className="cursor-pointer text-[13px] text-zinc-300 transition-colors hover:text-zinc-100">
+                    The course
+                  </button>
+                  <button onClick={() => scrollTo("seeq")} className="cursor-pointer text-[13px] text-zinc-300 transition-colors hover:text-zinc-100">
+                    Meet SeeQ
+                  </button>
+                </div>
               </div>
             </div>
-            <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-500">Elsewhere</p>
-              <div className="mt-4 flex flex-col items-start gap-2.5">
-                <button onClick={onPlayground} className="cursor-pointer text-[13px] text-zinc-400 transition-colors hover:text-zinc-100">
-                  Playground
-                </button>
-                <button onClick={onStart} className="cursor-pointer text-[13px] text-zinc-400 transition-colors hover:text-zinc-100">
-                  The course
-                </button>
-                <button onClick={() => scrollTo("seeq")} className="cursor-pointer text-[13px] text-zinc-400 transition-colors hover:text-zinc-100">
-                  Meet SeeQ
-                </button>
-              </div>
+            <div className="mt-12 flex flex-col justify-between gap-2 border-t border-zinc-700 pt-6 font-mono text-[11px] text-zinc-400 sm:flex-row">
+              <span>(c) 2026 SeeQL. All rights reserved.</span>
+              <span>Built for learners, by learners.</span>
             </div>
           </div>
-          <div className="mt-12 flex flex-col justify-between gap-2 border-t border-zinc-800 pt-6 text-[11px] text-zinc-500 sm:flex-row">
-            <span>(c) 2026 SeeQL. All rights reserved.</span>
-            <span>Built for learners, by learners.</span>
-          </div>
-        </div>
-      </footer>
+        </footer>
+      </div>
     </div>
   );
 }
-
