@@ -229,6 +229,30 @@ spot("marketing-attribution:q:q56", (o) => o.rows[0][0] === 4000 && o.rows[0][1]
 spot("marketing-attribution:q:q59", (o) => o.rows.length === 1 && o.rows[0][5] === 221000, "whale net 221000");
 spot("marketing-attribution:c:c42:1", (o) => o.rows.length === 1 && o.rows[0][2] === 39.69 && o.rows[0][3] === 165000, "case: whale flip row");
 spot("marketing-attribution:c:c60:2", (o) => o.rows.length === 1 && o.rows[0][0] === 296000 && o.rows[0][1] === 39.69, "case: executive whale row");
+// insurance-claims-ops (round 21 facts)
+spot("insurance-claims-ops:q:q01", (o) => o.rows.length === 1 && o.rows[0][0] === 77, "paid = 77");
+spot("insurance-claims-ops:q:q11", (o) => o.rows.length === 1 && o.rows[0][0] === 12, "referrals inclusive = 12");
+spot("insurance-claims-ops:q:q23", (o) => o.rows[0][1] === 45.29 && o.rows[0][2] === 61300000, "whale 45.29% / liability ex 61300000");
+spot("insurance-claims-ops:q:q25", (o) => o.rows[0][1] === 100, "Ivy closed EXACTLY 100");
+spot("insurance-claims-ops:q:q28", (o) => o.rows.length === 1 && o.rows[0][0] === 12 && o.rows[0][1] === 10, "FRS wall 12 vs 10");
+spot("insurance-claims-ops:q:q29", (o) => o.rows.length === 4 && o.rows[2][1] === 0, "aging spine keeps empty 61-90");
+spot("insurance-claims-ops:q:q30", (o) => o.rows.length === 3 && o.rows[0][2] === 30 && o.rows[2][2] === 91, "aging boundary rows 30/91");
+spot("insurance-claims-ops:q:q32", (o) => o.rows.length === 1 && o.rows[0][0] === 2 && o.rows[0][1] === 1, "reopen ceiling 2 vs 1");
+spot("insurance-claims-ops:q:q33", (o) => o.rows.length === 1 && o.rows[0][0] === 44 && o.rows[0][1] === 9800000, "the leak: 44 / 9800000");
+spot("insurance-claims-ops:q:q34", (o) => o.rows.length === 1 && o.rows[0][0] === 0, "savings hard 0");
+spot("insurance-claims-ops:q:q35", (o) => o.rows.length === 1 && o.rows[0][0] === 7 && o.rows[0][1] === 4 && o.rows[0][2] === 6, "ring clocks 7/4/6");
+spot("insurance-claims-ops:q:q37", (o) => o.rows[0][0] === "RC-4471,RC-4472,RC-4473,RC-4474,RC-4475,RC-4476,RC-4477", "ring registry contiguous");
+spot("insurance-claims-ops:q:q38", (o) => o.rows.length === 1 && o.rows[0][0] === 2, "velocity pairs inclusive 2");
+spot("insurance-claims-ops:q:q39", (o) => o.rows.length === 1 && o.rows[0][0] === 1, "velocity strict 1");
+spot("insurance-claims-ops:q:q40", (o) => o.rows.length === 2 && o.rows[0][2] === 180 && o.rows[1][2] === 300, "gaps 180 then EXACTLY 300");
+spot("insurance-claims-ops:q:q51", (o) => o.rows.length === 1 && o.rows[0][0] === 100000000 && o.rows[0][2] === 0, "property IS the whale (ex 0)");
+spot("insurance-claims-ops:q:q52", (o) => o.rows[0][0] === 13000000 && o.rows[0][1] === 207800000, "ring 13000000 / book 207800000");
+spot("insurance-claims-ops:q:q53", (o) => o.rows[1][1] === 7 && o.rows[1][2] === 4 && o.rows[1][3] === 6, "cohort board: ring row 7/4/6");
+spot("insurance-claims-ops:q:q56", (o) => o.rows[0][1] === 0, "dark carrier sorts first");
+spot("insurance-claims-ops:q:q59", (o) => o.rows[0][4] === 2, "leak paid 2 days after SIU open");
+spot("insurance-claims-ops:q:q60", (o) => o.rows[0][0] === 220800000 && o.rows[0][1] === 45.29 && o.rows[0][2] === 12 && o.rows[0][3] === 3 && o.rows[0][4] === 9800000, "exec memo row");
+spot("insurance-claims-ops:c:c42:1", (o) => o.rows.length === 1 && o.rows[0][1] === 45.29, "case: whale memo share");
+spot("insurance-claims-ops:c:c60:2", (o) => o.rows.length === 1 && o.rows[0][2] === 13000000, "case: containment ring_paid");
 
 if (fails > 0) {
   console.log(`\n${fails} FAILURE(S) — dm-expected.ts NOT written`);

@@ -2523,4 +2523,466 @@ export const DM_EXPECTED: Record<string, { columns?: string[]; rows?: unknown[][
   "marketing-attribution:c:c59:2": { columns: ["closer_channel","row_count"], rows: [["social",19],["search",14],["email",8],["display",2]] },
   "marketing-attribution:c:c60:1": { columns: ["charged_cents","refund_cents","net_cents"], rows: [[851700,216800,634900]] },
   "marketing-attribution:c:c60:2": { columns: ["whale_cents","whale_share_pct","confirmed_count"], rows: [[296000,39.69,44]] },
+  "insurance-claims-ops:q:q01": { columns: ["paid_count"], rows: [[77]] },
+  "insurance-claims-ops:q:q02": { columns: ["claim_id","claim_number","claim_type","filed_date"], rows: [[121,"RC-4520","property","2026-05-09"],[122,"RC-4521","injury","2026-03-20"],[123,"RC-4522","theft","2026-01-04"],[124,"RC-4523","flood","2026-05-15"],[127,"RC-4526","injury","2026-05-21"],[128,"RC-4527","theft","2026-03-05"],[129,"RC-4528","flood","2026-01-16"],[131,"RC-4530","property","2026-03-11"],[132,"RC-4531","injury","2026-01-22"],[134,"RC-4533","flood","2026-03-17"],[136,"RC-4535","property","2026-05-12"],[137,"RC-4536","injury","2026-03-23"],[138,"RC-4537","theft","2026-01-07"],[139,"RC-4538","flood","2026-05-18"],[141,"RC-4540","property","2026-06-10"],[142,"RC-4541","injury","2026-06-10"],[143,"RC-4542","theft","2026-03-08"],[144,"RC-4543","flood","2026-01-19"],[146,"RC-4545","property","2026-03-14"],[148,"RC-4547","theft","2026-06-18"],[149,"RC-4548","flood","2026-06-18"],[151,"RC-4550","property","2026-05-15"],[152,"RC-4551","injury","2026-03-26"],[153,"RC-4552","theft","2026-01-10"],[155,"RC-4554","liability","2026-06-01"],[156,"RC-4555","property","2026-01-16"],[157,"RC-4556","injury","2026-05-27"],[158,"RC-4557","theft","2026-03-11"],[159,"RC-4558","flood","2026-01-22"],[163,"RC-4562","theft","2026-05-12"],[164,"RC-4563","flood","2026-03-23"],[166,"RC-4565","property","2026-05-18"],[167,"RC-4566","injury","2026-03-02"],[168,"RC-4567","theft","2026-04-01"],[169,"RC-4568","flood","2026-05-24"]] },
+  "insurance-claims-ops:q:q03": { columns: ["claim_type"], rows: [["flood"],["injury"],["liability"],["property"],["theft"]] },
+  "insurance-claims-ops:q:q04": { columns: ["status","claim_count"], rows: [["paid",77],["open",35],["denied",27],["closed",16],["under_review",10],["approved",5]] },
+  "insurance-claims-ops:q:q05": { columns: ["carrier_id","name","code","hq_city","founded"], rows: [[1,"Meridian Mutual","MER","Hartford",1958],[2,"Ridgeway","RDG","Leeds",1972],[3,"Harborline Assurance","HBR","Rotterdam",1981],[4,"Crestpoint Indemnity","CRS","Toronto",1964],[5,"Bluepine Mutual","BLP","Denver",1990],[6,"Atlas Casualty","ATL","Singapore",2003]] },
+  "insurance-claims-ops:q:q06": { columns: ["carrier_id","claim_count"], rows: [[1,46],[5,27],[6,27],[3,24],[2,23],[4,23]] },
+  "insurance-claims-ops:q:q07": { columns: ["adjuster_id","name","team","region","hired_on"], rows: [[1,"Ivy Chen","field","NA","2015-03-02"],[2,"Marcus Webb","field","NA","2017-06-12"],[3,"Priya Nair","desk","EMEA","2016-09-01"],[4,"Tom Okafor","field","EMEA","2019-01-21"],[5,"Lena Fischer","desk","APAC","2014-11-11"],[6,"Diego Santos","field","LATAM","2020-02-03"],[7,"Ada Marsh","siu","NA","2012-07-15"],[8,"Ravi Patel","desk","NA","2021-05-19"]] },
+  "insurance-claims-ops:q:q08": { columns: ["policy_type","policy_count"], rows: [["auto",9],["commercial_property",9],["home",9],["umbrella",9]] },
+  "insurance-claims-ops:q:q09": { columns: ["verdict","case_count"], rows: [["cleared",5],["confirmed",4],["open",3]] },
+  "insurance-claims-ops:q:q10": { columns: ["policy_id","policy_number","carrier_id","policy_type"], rows: [[1,"PL-2025-1001",1,"home"],[2,"PL-2025-1002",1,"auto"],[3,"PL-2025-1003",1,"commercial_property"]] },
+  "insurance-claims-ops:q:q11": { columns: ["referral_count"], rows: [[12]] },
+  "insurance-claims-ops:q:q12": { columns: ["method","payment_count"], rows: [["wire",31],["ach",26],["check",24]] },
+  "insurance-claims-ops:q:q13": { columns: ["payment_id","claim_id","amount_cents","paid_on"], rows: [[77,130,100000000,"2026-05-01"]] },
+  "insurance-claims-ops:q:q14": { columns: ["team","claim_count"], rows: [["field",130],["desk",30],["siu",10]] },
+  "insurance-claims-ops:q:q15": { columns: ["claim_id","claim_number","claim_type","status"], rows: [[72,"RC-4471","theft","paid"],[73,"RC-4472","theft","paid"],[74,"RC-4473","liability","paid"],[75,"RC-4474","injury","denied"],[76,"RC-4475","theft","paid"],[77,"RC-4476","liability","denied"],[78,"RC-4477","property","under_review"]] },
+  "insurance-claims-ops:q:q16": { columns: ["reopened_count"], rows: [[58]] },
+  "insurance-claims-ops:q:q17": { columns: ["status","payment_count"], rows: [["paid",77],["pending",2],["recovered",1],["void",1]] },
+  "insurance-claims-ops:q:q18": { columns: ["policy_type","avg_premium"], rows: [["auto",105222],["home",103278],["commercial_property",100500],["umbrella",98000]] },
+  "insurance-claims-ops:q:q19": { columns: ["region"], rows: [["APAC"],["EMEA"],["LATAM"],["NA"]] },
+  "insurance-claims-ops:q:q20": { columns: ["march_count"], rows: [[59]] },
+  "insurance-claims-ops:q:q21": { columns: ["claim_type","paid_total"], rows: [["property",100000000],["liability",61300000],["injury",28500000],["theft",17000000],["flood",14000000]] },
+  "insurance-claims-ops:q:q22": { columns: ["claim_type","paid_total"], rows: [["liability",61300000],["injury",28500000],["theft",17000000],["flood",14000000]] },
+  "insurance-claims-ops:q:q23": { columns: ["whale_amount","whale_share","liability_ex_whale"], rows: [[100000000,45.29,61300000]] },
+  "insurance-claims-ops:q:q24": { columns: ["name","paid_total"], rows: [["Atlas Casualty",117595455],["Meridian Mutual",32087120],["Crestpoint Indemnity",21906061],["Bluepine Mutual",18253789],["Ridgeway",17720454],["Harborline Assurance",13237121]] },
+  "insurance-claims-ops:q:q25": { columns: ["name","closed_count"], rows: [["Ivy Chen",100],["Lena Fischer",4],["Marcus Webb",4],["Priya Nair",3],["Tom Okafor",3],["Ada Marsh",2],["Diego Santos",2],["Ravi Patel",2]] },
+  "insurance-claims-ops:q:q26": { columns: ["name","wrap_rate"], rows: [["Ivy Chen",100],["Lena Fischer",36.4],["Marcus Webb",33.3],["Tom Okafor",33.3],["Priya Nair",30],["Diego Santos",22.2],["Ravi Patel",22.2],["Ada Marsh",20]] },
+  "insurance-claims-ops:q:q27": { columns: ["verdict","claim_count"], rows: [["cleared",5],["confirmed",4],["open",3]] },
+  "insurance-claims-ops:q:q28": { columns: ["referral_inclusive","referral_strict"], rows: [[12,10]] },
+  "insurance-claims-ops:q:q29": { columns: ["bucket","claim_count"], rows: [["0-30",5],["31-60",15],["61-90",0],["91+",30]] },
+  "insurance-claims-ops:q:q30": { columns: ["claim_id","filed_date","aging_days"], rows: [[155,"2026-06-01",30],[162,"2026-05-02",60],[168,"2026-04-01",91]] },
+  "insurance-claims-ops:q:q31": { columns: ["claim_id","claim_number","reopen_count","status"], rows: [[92,"RC-4491",7,"denied"],[5,"RC-4404",6,"paid"]] },
+  "insurance-claims-ops:q:q32": { columns: ["ceiling_inclusive","ceiling_strict"], rows: [[2,1]] },
+  "insurance-claims-ops:q:q33": { columns: ["claim_id","amount_cents","paid_on"], rows: [[44,9800000,"2026-05-30"]] },
+  "insurance-claims-ops:q:q34": { columns: ["recoverable_savings"], rows: [[0]] },
+  "insurance-claims-ops:q:q35": { columns: ["avg_contact","avg_decision","avg_payment"], rows: [[7,4,6]] },
+  "insurance-claims-ops:q:q36": { columns: ["claim_number","fraud_risk_score","status"], rows: [["RC-4477",91,"under_review"],["RC-4476",88,"denied"],["RC-4474",82,"denied"],["RC-4473",77,"paid"],["RC-4472",71,"paid"],["RC-4471",68,"paid"],["RC-4475",64,"paid"]] },
+  "insurance-claims-ops:q:q37": { columns: ["ring_registry"], rows: [["RC-4471,RC-4472,RC-4473,RC-4474,RC-4475,RC-4476,RC-4477"]] },
+  "insurance-claims-ops:q:q38": { columns: ["velocity_pairs"], rows: [[2]] },
+  "insurance-claims-ops:q:q39": { columns: ["velocity_strict"], rows: [[1]] },
+  "insurance-claims-ops:q:q40": { columns: ["first_claim","second_claim","gap_seconds"], rows: [[141,142,180],[148,149,300]] },
+  "insurance-claims-ops:q:q41": { columns: ["team","avg_contact"], rows: [["siu",6.22],["desk",7.97],["field",8.04]] },
+  "insurance-claims-ops:q:q42": { columns: ["claim_type","avg_decision"], rows: [["flood",5.41],["liability",5.59],["theft",5.69],["injury",5.96],["property",9]] },
+  "insurance-claims-ops:q:q43": { columns: ["claim_type","avg_payment"], rows: [["property",12],["injury",7.33],["theft",6.43],["liability",6.38],["flood",5.36]] },
+  "insurance-claims-ops:q:q44": { columns: ["region","claim_count"], rows: [["NA",131],["EMEA",19],["APAC",11],["LATAM",9]] },
+  "insurance-claims-ops:q:q45": { columns: ["name","premium_total"], rows: [["Meridian Mutual",1002000],["Bluepine Mutual",603000],["Atlas Casualty",588000],["Ridgeway",502500],["Harborline Assurance",490000],["Crestpoint Indemnity",477500]] },
+  "insurance-claims-ops:q:q46": { columns: ["month","claim_count"], rows: [["2026-01",50],["2026-03",59],["2026-04",2],["2026-05",54],["2026-06",5]] },
+  "insurance-claims-ops:q:q47": { columns: ["avg_lag_days"], rows: [[3.2]] },
+  "insurance-claims-ops:q:q48": { columns: ["name","referral_count"], rows: [["Meridian Mutual",7],["Atlas Casualty",2],["Crestpoint Indemnity",2],["Ridgeway",1],["Bluepine Mutual",0],["Harborline Assurance",0]] },
+  "insurance-claims-ops:q:q49": { columns: ["status","payment_count","cents_total"], rows: [["paid",77,220800000],["pending",2,3600000],["recovered",1,3000000],["void",1,900000]] },
+  "insurance-claims-ops:q:q50": { columns: ["method","paid_total"], rows: [["wire",155890909],["ach",33090909],["check",31818182]] },
+  "insurance-claims-ops:q:q51": { columns: ["property_paid","whale_share","property_ex_whale"], rows: [[100000000,45.29,0]] },
+  "insurance-claims-ops:q:q52": { columns: ["ring_paid","book_paid_ex_ring"], rows: [[13000000,207800000]] },
+  "insurance-claims-ops:q:q53": { columns: ["cohort","avg_contact","avg_decision","avg_payment"], rows: [["book",7.97,5.83,6.58],["ring",7,4,6]] },
+  "insurance-claims-ops:q:q54": { columns: ["month","month_total","running_total"], rows: [["2026-01",36507576,36507576],["2026-03",32459848,68967424],["2026-04",7500000,76467424],["2026-05",144332576,220800000]] },
+  "insurance-claims-ops:q:q55": { columns: ["name","paid_count","denied_count","closed_count"], rows: [["Ivy Chen",63,22,15],["Marcus Webb",4,0,0],["Priya Nair",0,3,0],["Tom Okafor",2,0,1],["Lena Fischer",4,0,0],["Diego Santos",1,1,0],["Ada Marsh",1,1,0],["Ravi Patel",2,0,0]] },
+  "insurance-claims-ops:q:q56": { columns: ["name","referral_count"], rows: [["Bluepine Mutual",0],["Harborline Assurance",0],["Ridgeway",1],["Atlas Casualty",2],["Crestpoint Indemnity",2],["Meridian Mutual",7]] },
+  "insurance-claims-ops:q:q57": { columns: ["bucket","demand_total"], rows: [["0-30",9250000],["31-60",39050000],["61-90",0],["91+",79950000]] },
+  "insurance-claims-ops:q:q58": { columns: ["verdict","avg_cycle_days"], rows: [["cleared",25.4],["confirmed",24]] },
+  "insurance-claims-ops:q:q59": { columns: ["claim_number","amount_cents","paid_amount","paid_on","days_after_siu_open"], rows: [["RC-4443",9800000,9800000,"2026-05-30",2]] },
+  "insurance-claims-ops:q:q60": { columns: ["paid_total","whale_share","referrals","open_siu","leaked_cents"], rows: [[220800000,45.29,12,3,9800000]] },
+  "insurance-claims-ops:m:m01:opts": { options: [
+    "77",
+    "170",
+    "35",
+    "27"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m02:opts": { options: [
+    "5 rows — first: flood",
+    "6 rows — first: approved",
+    "4 rows — first: APAC",
+    "4 rows — first: auto"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m03:opts": { options: [
+    "12",
+    "10",
+    "14",
+    "8"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m04:opts": { options: [
+    "77 · 130 · 100000000 · 2026-05-01",
+    "25 · 44 · 9800000 · 2026-05-30",
+    "2 rows — first: 78 · 157 · 1400000 · 2026-06-24",
+    "81 · 151 · 3000000 · 2026-06-05"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m05:opts": { options: [
+    "6 rows — first: paid · 77",
+    "4 rows — first: paid · 77",
+    "3 rows — first: cleared · 5",
+    "3 rows — first: field · 4"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m06:opts": { options: [
+    "7",
+    "8",
+    "1",
+    "10"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m07:opts": { options: [
+    "6 rows — first: 1 · Meridian Mutual · MER · Hartford · 1958",
+    "8 rows — first: 1 · Ivy Chen · field · NA · 2015-03-02",
+    "36 rows — first: 1 · PL-2025-1001 · 1 · Kessler Holdings · home",
+    "12 rows — first: 1 · 10 · 2026-02-10 · 2026-03-05 · confirmed"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m09:opts": { options: [
+    "3",
+    "36",
+    "9",
+    "1"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m10:opts": { options: [
+    "3 rows — first: cleared · 5",
+    "3 rows — first: open · 3",
+    "3",
+    "12"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m12:opts": { options: [
+    "58",
+    "2",
+    "1",
+    "112"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m13:opts": { options: [
+    "3 rows — first: wire · 31",
+    "3 rows — first: wire · 158890909",
+    "4 rows — first: paid · 77",
+    "3 rows — first: wire · 30"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m14:opts": { options: [
+    "35",
+    "10",
+    "5",
+    "50"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m16:opts": { options: [
+    "4 rows — first: auto · 105222",
+    "4 rows — first: auto · 947000",
+    "4 rows — first: auto · 9",
+    "4 rows — first: auto · 105222.22"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m17:opts": { options: [
+    "59",
+    "5",
+    "7",
+    "27"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m19:opts": { options: [
+    "45.29",
+    "45.3",
+    "45",
+    "100000000"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m20:opts": { options: [
+    "44 · 9800000 · 2026-05-30",
+    "4 rows — first: 10 · 1912500 · 2026-05-20",
+    "2 rows — first: 157 · 1400000 · 2026-06-24",
+    "no rows"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m21:opts": { options: [
+    "5 rows — first: property · 100000000",
+    "4 rows — first: liability · 61300000",
+    "2 rows — first: flood · 2200000",
+    "5 rows — first: liability · 26"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m23:opts": { options: [
+    "61300000",
+    "119900000",
+    "28500000",
+    "17000000"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m24:opts": { options: [
+    "8 rows — first: Ivy Chen · 100",
+    "8 rows — first: Ivy Chen · 63",
+    "8 rows — first: Ada Marsh · 8",
+    "8 rows — first: Ivy Chen · 22"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m26:opts": { options: [
+    "12 · 10",
+    "10 · 12",
+    "14 · 10",
+    "12 · 8"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m27:opts": { options: [
+    "3 rows — first: cleared · 5",
+    "3 rows — first: field · 10",
+    "4 rows — first: Meridian Mutual · 7",
+    "4 rows — first: theft · 5"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m28:opts": { options: [
+    "4 rows — first: 0-30 · 5",
+    "3 rows — first: 0-30 · 5",
+    "4 rows — first: 0-30 · 0",
+    "4 rows — first: 0-30 · 4"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m30:opts": { options: [
+    "2 rows — first: 92 · RC-4491 · 7 · denied",
+    "92 · RC-4491 · 7 · denied",
+    "no rows",
+    "2 rows — first: 92 · 7"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m32:opts": { options: [
+    "1",
+    "9800000",
+    "3",
+    "0"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m34:opts": { options: [
+    "7 · 4 · 6",
+    "7.97 · 5.83 · 6.58",
+    "4 · 6 · 9",
+    "10 · 6 · 9"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m35:opts": { options: [
+    "7 rows — first: RC-4477 · 91 · under_review",
+    "7 rows — first: RC-4475 · 64 · paid",
+    "4 rows — first: RC-4473 · 77 · paid",
+    "RC-4477 · 91 · under_review"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m36:opts": { options: [
+    "2",
+    "1",
+    "56",
+    "174"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m38:opts": { options: [
+    "2 rows — first: 141 · 142 · 180",
+    "2 rows — first: 148 · 149 · 300",
+    "2 rows — first: 142 · 141 · 180",
+    "141 · 142 · 180"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m39:opts": { options: [
+    "2 rows — first: 1",
+    "18253789",
+    "12",
+    "6"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m40:opts": { options: [
+    "3",
+    "1",
+    "17",
+    "30"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m41:opts": { options: [
+    "3 rows — first: siu · 6.22",
+    "3 rows — first: field · 8.04",
+    "3 rows — first: field · 127",
+    "4 rows — first: NA · 7.51"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m42:opts": { options: [
+    "5",
+    "1",
+    "4",
+    "3"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m43:opts": { options: [
+    "3.2",
+    "3",
+    "136",
+    "97.2"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m44:opts": { options: [
+    "13000000",
+    "0",
+    "40000000",
+    "4"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m46:opts": { options: [
+    "0",
+    "12",
+    "18253789",
+    "6"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m47:opts": { options: [
+    "2 rows — first: book · 2.96",
+    "2 rows — first: ring · 10",
+    "2 rows — first: book · 136",
+    "2 rows — first: book · 163"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m48:opts": { options: [
+    "8",
+    "4",
+    "12",
+    "0"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m49:opts": { options: [
+    "4 rows — first: paid · 220800000",
+    "4 rows — first: paid · 77",
+    "3 rows — first: pending · 3600000",
+    "3 rows — first: wire · 155890909"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m51:opts": { options: [
+    "NULL",
+    "12.91",
+    "27.76",
+    "45.29"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m52:opts": { options: [
+    "1",
+    "3",
+    "8",
+    "0"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m53:opts": { options: [
+    "3 rows — first: 3",
+    "33 rows — first: 1",
+    "36 rows — first: 6",
+    "36"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m54:opts": { options: [
+    "2",
+    "24",
+    "20",
+    "24.8"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m55:opts": { options: [
+    "46",
+    "45",
+    "5",
+    "166"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m56:opts": { options: [
+    "1",
+    "7",
+    "8",
+    "0"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m57:opts": { options: [
+    "77",
+    "120",
+    "292800000",
+    "27"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m58:opts": { options: [
+    "5714286",
+    "3250000",
+    "40000000",
+    "12000000"
+  ], answer: 0 },
+  "insurance-claims-ops:m:m60:opts": { options: [
+    "60",
+    "30",
+    "91",
+    "78"
+  ], answer: 0 },
+  "insurance-claims-ops:c:c01:1": { columns: ["paid_count"], rows: [[77]] },
+  "insurance-claims-ops:c:c01:2": { columns: ["status","claim_count"], rows: [["paid",77],["open",35],["denied",27],["closed",16],["under_review",10],["approved",5]] },
+  "insurance-claims-ops:c:c02:1": { columns: ["claim_id","claim_number","claim_type","filed_date"], rows: [[121,"RC-4520","property","2026-05-09"],[122,"RC-4521","injury","2026-03-20"],[123,"RC-4522","theft","2026-01-04"],[124,"RC-4523","flood","2026-05-15"],[127,"RC-4526","injury","2026-05-21"],[128,"RC-4527","theft","2026-03-05"],[129,"RC-4528","flood","2026-01-16"],[131,"RC-4530","property","2026-03-11"],[132,"RC-4531","injury","2026-01-22"],[134,"RC-4533","flood","2026-03-17"],[136,"RC-4535","property","2026-05-12"],[137,"RC-4536","injury","2026-03-23"],[138,"RC-4537","theft","2026-01-07"],[139,"RC-4538","flood","2026-05-18"],[141,"RC-4540","property","2026-06-10"],[142,"RC-4541","injury","2026-06-10"],[143,"RC-4542","theft","2026-03-08"],[144,"RC-4543","flood","2026-01-19"],[146,"RC-4545","property","2026-03-14"],[148,"RC-4547","theft","2026-06-18"],[149,"RC-4548","flood","2026-06-18"],[151,"RC-4550","property","2026-05-15"],[152,"RC-4551","injury","2026-03-26"],[153,"RC-4552","theft","2026-01-10"],[155,"RC-4554","liability","2026-06-01"],[156,"RC-4555","property","2026-01-16"],[157,"RC-4556","injury","2026-05-27"],[158,"RC-4557","theft","2026-03-11"],[159,"RC-4558","flood","2026-01-22"],[163,"RC-4562","theft","2026-05-12"],[164,"RC-4563","flood","2026-03-23"],[166,"RC-4565","property","2026-05-18"],[167,"RC-4566","injury","2026-03-02"],[168,"RC-4567","theft","2026-04-01"],[169,"RC-4568","flood","2026-05-24"]] },
+  "insurance-claims-ops:c:c02:2": { columns: ["status","claim_count"], rows: [["open",35],["under_review",10],["approved",5]] },
+  "insurance-claims-ops:c:c03:1": { columns: ["carrier_id","name","code","hq_city"], rows: [[1,"Meridian Mutual","MER","Hartford"],[2,"Ridgeway","RDG","Leeds"],[3,"Harborline Assurance","HBR","Rotterdam"],[4,"Crestpoint Indemnity","CRS","Toronto"],[5,"Bluepine Mutual","BLP","Denver"],[6,"Atlas Casualty","ATL","Singapore"]] },
+  "insurance-claims-ops:c:c03:2": { columns: ["carrier_id","claim_count"], rows: [[1,46],[5,27],[6,27],[3,24],[2,23],[4,23]] },
+  "insurance-claims-ops:c:c04:1": { columns: ["adjuster_id","name","team","region"], rows: [[1,"Ivy Chen","field","NA"],[2,"Marcus Webb","field","NA"],[3,"Priya Nair","desk","EMEA"],[4,"Tom Okafor","field","EMEA"],[5,"Lena Fischer","desk","APAC"],[6,"Diego Santos","field","LATAM"],[7,"Ada Marsh","siu","NA"],[8,"Ravi Patel","desk","NA"]] },
+  "insurance-claims-ops:c:c04:2": { columns: ["team","claim_count"], rows: [["field",130],["desk",30],["siu",10]] },
+  "insurance-claims-ops:c:c05:1": { columns: ["policy_type","policy_count"], rows: [["auto",9],["commercial_property",9],["home",9],["umbrella",9]] },
+  "insurance-claims-ops:c:c05:2": { columns: ["policy_type","avg_premium"], rows: [["auto",105222],["home",103278],["commercial_property",100500],["umbrella",98000]] },
+  "insurance-claims-ops:c:c06:1": { columns: ["siu_id","claim_id","opened_on","verdict"], rows: [[1,10,"2026-02-10","confirmed"],[2,28,"2026-02-20","cleared"],[3,42,"2026-03-01","confirmed"],[4,44,"2026-05-28","open"],[5,56,"2026-03-05","cleared"],[6,72,"2026-03-12","confirmed"],[7,73,"2026-03-14","cleared"],[8,74,"2026-03-16","confirmed"],[9,75,"2026-03-18","cleared"],[10,76,"2026-03-20","cleared"],[11,77,"2026-03-22","open"],[12,78,"2026-03-24","open"]] },
+  "insurance-claims-ops:c:c06:2": { columns: ["verdict","case_count"], rows: [["cleared",5],["confirmed",4],["open",3]] },
+  "insurance-claims-ops:c:c07:1": { columns: ["referral_count"], rows: [[12]] },
+  "insurance-claims-ops:c:c07:2": { columns: ["referral_strict"], rows: [[10]] },
+  "insurance-claims-ops:c:c08:1": { columns: ["method","payment_count"], rows: [["wire",31],["ach",26],["check",24]] },
+  "insurance-claims-ops:c:c08:2": { columns: ["status","payment_count"], rows: [["paid",77],["pending",2],["recovered",1],["void",1]] },
+  "insurance-claims-ops:c:c09:1": { columns: ["payment_id","claim_id","amount_cents","paid_on"], rows: [[77,130,100000000,"2026-05-01"]] },
+  "insurance-claims-ops:c:c09:2": { columns: ["claim_id","claim_number","claim_type","status","amount_cents"], rows: [[130,"RC-4529","property","paid",100000000]] },
+  "insurance-claims-ops:c:c10:1": { columns: ["claim_id","claim_number","claim_type","status"], rows: [[72,"RC-4471","theft","paid"],[73,"RC-4472","theft","paid"],[74,"RC-4473","liability","paid"],[75,"RC-4474","injury","denied"],[76,"RC-4475","theft","paid"],[77,"RC-4476","liability","denied"],[78,"RC-4477","property","under_review"]] },
+  "insurance-claims-ops:c:c10:2": { columns: ["status","claim_count"], rows: [["paid",4],["denied",2],["under_review",1]] },
+  "insurance-claims-ops:c:c11:1": { columns: ["reopened_count"], rows: [[58]] },
+  "insurance-claims-ops:c:c11:2": { columns: ["never_reopened"], rows: [[112]] },
+  "insurance-claims-ops:c:c12:1": { columns: ["policy_id","policy_number","carrier_id","policy_type"], rows: [[1,"PL-2025-1001",1,"home"],[2,"PL-2025-1002",1,"auto"],[3,"PL-2025-1003",1,"commercial_property"]] },
+  "insurance-claims-ops:c:c12:2": { columns: ["policy_id","claim_count"], rows: [[1,6],[2,7],[3,6]] },
+  "insurance-claims-ops:c:c13:1": { columns: ["claim_type"], rows: [["flood"],["injury"],["liability"],["property"],["theft"]] },
+  "insurance-claims-ops:c:c13:2": { columns: ["claim_type","claim_count"], rows: [["liability",43],["theft",43],["injury",40],["flood",32],["property",12]] },
+  "insurance-claims-ops:c:c14:1": { columns: ["march_count"], rows: [[59]] },
+  "insurance-claims-ops:c:c14:2": { columns: ["claim_type","claim_count"], rows: [["theft",22],["liability",13],["injury",12],["flood",8],["property",4]] },
+  "insurance-claims-ops:c:c15:1": { columns: ["uncontacted"], rows: [[4]] },
+  "insurance-claims-ops:c:c15:2": { columns: ["contacted"], rows: [[46]] },
+  "insurance-claims-ops:c:c16:1": { columns: ["policy_id","policy_number","carrier_id","status"], rows: [[35,"PL-2025-1035",6,"lapsed"]] },
+  "insurance-claims-ops:c:c16:2": { columns: ["status","policy_count"], rows: [["active",35],["lapsed",1]] },
+  "insurance-claims-ops:c:c17:1": { columns: ["region"], rows: [["APAC"],["EMEA"],["LATAM"],["NA"]] },
+  "insurance-claims-ops:c:c17:2": { columns: ["region","adjuster_count"], rows: [["NA",4],["EMEA",2],["APAC",1],["LATAM",1]] },
+  "insurance-claims-ops:c:c18:1": { columns: ["paid_total"], rows: [[220800000]] },
+  "insurance-claims-ops:c:c18:2": { columns: ["whale_share"], rows: [[45.29]] },
+  "insurance-claims-ops:c:c19:1": { columns: ["payment_id","claim_id","amount_cents","paid_on"], rows: [[78,157,1400000,"2026-06-24"],[79,164,2200000,"2026-06-26"]] },
+  "insurance-claims-ops:c:c19:2": { columns: ["pending_total"], rows: [[3600000]] },
+  "insurance-claims-ops:c:c20:1": { columns: ["avg_pay_days"], rows: [[6.55]] },
+  "insurance-claims-ops:c:c20:2": { columns: ["whale_pay_days"], rows: [[12]] },
+  "insurance-claims-ops:c:c21:1": { columns: ["claim_type","paid_total"], rows: [["property",100000000],["liability",61300000],["injury",28500000],["theft",17000000],["flood",14000000]] },
+  "insurance-claims-ops:c:c21:2": { columns: ["claim_type","paid_total"], rows: [["liability",61300000],["injury",28500000],["theft",17000000],["flood",14000000]] },
+  "insurance-claims-ops:c:c22:1": { columns: ["whale_amount","whale_share","liability_ex_whale"], rows: [[100000000,45.29,61300000]] },
+  "insurance-claims-ops:c:c22:2": { columns: ["property_paid","whale_share","property_ex_whale"], rows: [[100000000,45.29,0]] },
+  "insurance-claims-ops:c:c23:1": { columns: ["name","closed_count"], rows: [["Ivy Chen",100],["Lena Fischer",4],["Marcus Webb",4],["Priya Nair",3],["Tom Okafor",3],["Ada Marsh",2],["Diego Santos",2],["Ravi Patel",2]] },
+  "insurance-claims-ops:c:c23:2": { columns: ["name","wrap_rate"], rows: [["Ivy Chen",100],["Lena Fischer",36.4],["Marcus Webb",33.3],["Tom Okafor",33.3],["Priya Nair",30],["Diego Santos",22.2],["Ravi Patel",22.2],["Ada Marsh",20]] },
+  "insurance-claims-ops:c:c24:1": { columns: ["referral_inclusive","referral_strict"], rows: [[12,10]] },
+  "insurance-claims-ops:c:c24:2": { columns: ["verdict","claim_count"], rows: [["cleared",5],["confirmed",4],["open",3]] },
+  "insurance-claims-ops:c:c25:1": { columns: ["bucket","claim_count"], rows: [["0-30",5],["31-60",15],["61-90",0],["91+",30]] },
+  "insurance-claims-ops:c:c25:2": { columns: ["claim_id","filed_date","aging_days"], rows: [[155,"2026-06-01",30],[162,"2026-05-02",60],[168,"2026-04-01",91]] },
+  "insurance-claims-ops:c:c26:1": { columns: ["claim_id","amount_cents","paid_on"], rows: [[44,9800000,"2026-05-30"]] },
+  "insurance-claims-ops:c:c26:2": { columns: ["recoverable_savings"], rows: [[0]] },
+  "insurance-claims-ops:c:c27:1": { columns: ["ring_registry"], rows: [["RC-4471,RC-4472,RC-4473,RC-4474,RC-4475,RC-4476,RC-4477"]] },
+  "insurance-claims-ops:c:c27:2": { columns: ["claim_number","fraud_risk_score","status"], rows: [["RC-4477",91,"under_review"],["RC-4476",88,"denied"],["RC-4474",82,"denied"],["RC-4473",77,"paid"],["RC-4472",71,"paid"],["RC-4471",68,"paid"],["RC-4475",64,"paid"]] },
+  "insurance-claims-ops:c:c28:1": { columns: ["avg_contact","avg_decision","avg_payment"], rows: [[7,4,6]] },
+  "insurance-claims-ops:c:c28:2": { columns: ["ring_paid"], rows: [[13000000]] },
+  "insurance-claims-ops:c:c29:1": { columns: ["velocity_pairs"], rows: [[2]] },
+  "insurance-claims-ops:c:c29:2": { columns: ["velocity_strict"], rows: [[1]] },
+  "insurance-claims-ops:c:c30:1": { columns: ["claim_id","claim_number","reopen_count","status"], rows: [[92,"RC-4491",7,"denied"],[5,"RC-4404",6,"paid"]] },
+  "insurance-claims-ops:c:c30:2": { columns: ["ceiling_inclusive","ceiling_strict"], rows: [[2,1]] },
+  "insurance-claims-ops:c:c31:1": { columns: ["name","paid_total"], rows: [["Atlas Casualty",117595455],["Meridian Mutual",32087120],["Crestpoint Indemnity",21906061],["Bluepine Mutual",18253789],["Ridgeway",17720454],["Harborline Assurance",13237121]] },
+  "insurance-claims-ops:c:c31:2": { columns: ["name","referral_count"], rows: [["Meridian Mutual",7],["Atlas Casualty",2],["Crestpoint Indemnity",2],["Ridgeway",1],["Bluepine Mutual",0],["Harborline Assurance",0]] },
+  "insurance-claims-ops:c:c32:1": { columns: ["team","avg_contact"], rows: [["siu",6.22],["desk",7.97],["field",8.04]] },
+  "insurance-claims-ops:c:c32:2": { columns: ["claim_id","claim_number","filed_date"], rows: [[132,"RC-4531","2026-01-22"],[144,"RC-4543","2026-01-19"],[156,"RC-4555","2026-01-16"],[168,"RC-4567","2026-04-01"]] },
+  "insurance-claims-ops:c:c33:1": { columns: ["claim_type","avg_decision"], rows: [["flood",5.41],["liability",5.59],["theft",5.69],["injury",5.96],["property",9]] },
+  "insurance-claims-ops:c:c33:2": { columns: ["claim_id","claim_number","decision_days"], rows: [[8,"RC-4407",10]] },
+  "insurance-claims-ops:c:c34:1": { columns: ["claim_type","avg_payment"], rows: [["property",12],["injury",7.33],["theft",6.43],["liability",6.38],["flood",5.36]] },
+  "insurance-claims-ops:c:c34:2": { columns: ["method","paid_total"], rows: [["wire",155890909],["ach",33090909],["check",31818182]] },
+  "insurance-claims-ops:c:c35:1": { columns: ["region","claim_count"], rows: [["NA",131],["EMEA",19],["APAC",11],["LATAM",9]] },
+  "insurance-claims-ops:c:c35:2": { columns: ["name","premium_total"], rows: [["Meridian Mutual",1002000],["Bluepine Mutual",603000],["Atlas Casualty",588000],["Ridgeway",502500],["Harborline Assurance",490000],["Crestpoint Indemnity",477500]] },
+  "insurance-claims-ops:c:c36:1": { columns: ["month","claim_count"], rows: [["2026-01",50],["2026-03",59],["2026-04",2],["2026-05",54],["2026-06",5]] },
+  "insurance-claims-ops:c:c36:2": { columns: ["month_count"], rows: [[5]] },
+  "insurance-claims-ops:c:c37:1": { columns: ["status","payment_count","cents_total"], rows: [["paid",77,220800000],["pending",2,3600000],["recovered",1,3000000],["void",1,900000]] },
+  "insurance-claims-ops:c:c37:2": { columns: ["paid_total"], rows: [[220800000]] },
+  "insurance-claims-ops:c:c38:1": { columns: ["first_claim","second_claim","gap_seconds"], rows: [[141,142,180],[148,149,300]] },
+  "insurance-claims-ops:c:c38:2": { columns: ["first_claim","second_claim","gap_seconds","holder_name"], rows: [[141,142,180,"Mabry Holdings"],[148,149,300,"Sorrell Holdings"]] },
+  "insurance-claims-ops:c:c39:1": { columns: ["claim_id","claim_number","fraud_risk_score","status"], rows: [[78,"RC-4477",91,"under_review"]] },
+  "insurance-claims-ops:c:c39:2": { columns: ["pipeline_risk_demand"], rows: [[6200000]] },
+  "insurance-claims-ops:c:c40:1": { columns: ["ivy_closed"], rows: [[100]] },
+  "insurance-claims-ops:c:c40:2": { columns: ["ivy_live"], rows: [[0]] },
+  "insurance-claims-ops:c:c41:1": { columns: ["claim_number","amount_cents","paid_amount","paid_on","days_after_siu_open"], rows: [["RC-4443",9800000,9800000,"2026-05-30",2]] },
+  "insurance-claims-ops:c:c41:2": { columns: ["leaked_cents","recoverable_savings"], rows: [[9800000,0]] },
+  "insurance-claims-ops:c:c42:1": { columns: ["paid_total","whale_share","referral_count","open_siu"], rows: [[220800000,45.29,12,3]] },
+  "insurance-claims-ops:c:c42:2": { columns: ["property_paid","whale_share","property_ex_whale"], rows: [[100000000,45.29,0]] },
+  "insurance-claims-ops:c:c43:1": { columns: ["ring_paid","book_paid_ex_ring"], rows: [[13000000,207800000]] },
+  "insurance-claims-ops:c:c43:2": { columns: ["cohort","avg_contact","avg_decision","avg_payment"], rows: [["book",7.97,5.83,6.58],["ring",7,4,6]] },
+  "insurance-claims-ops:c:c44:1": { columns: ["month","month_total","running_total"], rows: [["2026-01",36507576,36507576],["2026-03",32459848,68967424],["2026-04",7500000,76467424],["2026-05",144332576,220800000]] },
+  "insurance-claims-ops:c:c44:2": { columns: ["month","month_total"], rows: [["2026-05",144332576]] },
+  "insurance-claims-ops:c:c45:1": { columns: ["name","paid_count","denied_count","closed_count"], rows: [["Ivy Chen",63,22,15],["Marcus Webb",4,0,0],["Priya Nair",0,3,0],["Tom Okafor",2,0,1],["Lena Fischer",4,0,0],["Diego Santos",1,1,0],["Ada Marsh",1,1,0],["Ravi Patel",2,0,0]] },
+  "insurance-claims-ops:c:c45:2": { columns: ["terminal_total"], rows: [[120]] },
+  "insurance-claims-ops:c:c46:1": { columns: ["name"], rows: [["Bluepine Mutual"],["Harborline Assurance"]] },
+  "insurance-claims-ops:c:c46:2": { columns: ["name","paid_total"], rows: [["Bluepine Mutual",18253789],["Harborline Assurance",13237121]] },
+  "insurance-claims-ops:c:c47:1": { columns: ["bucket","demand_total"], rows: [["0-30",9250000],["31-60",39050000],["61-90",0],["91+",79950000]] },
+  "insurance-claims-ops:c:c47:2": { columns: ["aged_91_plus"], rows: [[30]] },
+  "insurance-claims-ops:c:c48:1": { columns: ["verdict","avg_cycle_days"], rows: [["cleared",25.4],["confirmed",24]] },
+  "insurance-claims-ops:c:c48:2": { columns: ["claim_id","opened_on","verdict"], rows: [[77,"2026-03-22","open"],[78,"2026-03-24","open"],[44,"2026-05-28","open"]] },
+  "insurance-claims-ops:c:c49:1": { columns: ["settled_referrals"], rows: [[8]] },
+  "insurance-claims-ops:c:c49:2": { columns: ["contained_referrals"], rows: [[4]] },
+  "insurance-claims-ops:c:c50:1": { columns: ["claim_id","claim_number","first_contact_days"], rows: [[125,"RC-4524",14]] },
+  "insurance-claims-ops:c:c50:2": { columns: ["claim_id","claim_number","payment_days"], rows: [[130,"RC-4529",12]] },
+  "insurance-claims-ops:c:c51:1": { columns: ["claim_number","claim_type","status","adjuster"], rows: [["RC-4471","theft","paid","Ivy Chen"],["RC-4472","theft","paid","Ivy Chen"],["RC-4473","liability","paid","Ivy Chen"],["RC-4474","injury","denied","Ivy Chen"],["RC-4475","theft","paid","Ivy Chen"],["RC-4476","liability","denied","Ivy Chen"],["RC-4477","property","under_review","Ada Marsh"]] },
+  "insurance-claims-ops:c:c51:2": { columns: ["policy_id","claim_count","paid_total"], rows: [[1,6,11633333],[2,7,5600000],[3,6,2116667]] },
+  "insurance-claims-ops:c:c52:1": { columns: ["region","referral_count"], rows: [["NA",12]] },
+  "insurance-claims-ops:c:c52:2": { columns: ["name","referral_count"], rows: [["Ivy Chen",10],["Ada Marsh",1],["Ravi Patel",1],["Diego Santos",0],["Lena Fischer",0],["Marcus Webb",0],["Priya Nair",0],["Tom Okafor",0]] },
+  "insurance-claims-ops:c:c53:1": { columns: ["name"], rows: [["Ivy Chen"]] },
+  "insurance-claims-ops:c:c53:2": { columns: ["team","deny_rate"], rows: [["field",17.7],["desk",10],["siu",10]] },
+  "insurance-claims-ops:c:c54:1": { columns: ["avg_lag_days"], rows: [[3.2]] },
+  "insurance-claims-ops:c:c54:2": { columns: ["claim_id","claim_number","filed_date"], rows: [[27,"RC-4426","2026-01-01"],[54,"RC-4453","2026-01-01"],[81,"RC-4480","2026-01-01"],[108,"RC-4507","2026-01-01"],[135,"RC-4534","2026-01-01"]] },
+  "insurance-claims-ops:c:c55:1": { columns: ["claim_type","demand_total"], rows: [["property",129450000],["liability",119900000],["theft",110500000],["injury",101200000],["flood",75850000]] },
+  "insurance-claims-ops:c:c55:2": { columns: ["claim_type","paid_total"], rows: [["property",100000000],["liability",61300000],["injury",28500000],["theft",17000000],["flood",14000000]] },
+  "insurance-claims-ops:c:c56:1": { columns: ["claim_id","filed_date","aging_days"], rows: [[168,"2026-04-01",91]] },
+  "insurance-claims-ops:c:c56:2": { columns: ["past_the_line"], rows: [[29]] },
+  "insurance-claims-ops:c:c57:1": { columns: ["reopen_wide"], rows: [[2]] },
+  "insurance-claims-ops:c:c57:2": { columns: ["total_reopens"], rows: [[69]] },
+  "insurance-claims-ops:c:c58:1": { columns: ["policy_type","premium_total"], rows: [["auto",947000],["home",929500],["commercial_property",904500],["umbrella",882000]] },
+  "insurance-claims-ops:c:c58:2": { columns: ["premium_book","claim_demand"], rows: [[3663000,536900000]] },
+  "insurance-claims-ops:c:c59:1": { columns: ["method","paid_count","paid_total"], rows: [["wire",30,155890909],["ach",24,33090909],["check",23,31818182]] },
+  "insurance-claims-ops:c:c59:2": { columns: ["payment_id","claim_id","amount_cents","method","paid_on"], rows: [[77,130,100000000,"wire","2026-05-01"]] },
+  "insurance-claims-ops:c:c60:1": { columns: ["paid_total","whale_share","referrals","open_siu","leaked_cents"], rows: [[220800000,45.29,12,3,9800000]] },
+  "insurance-claims-ops:c:c60:2": { columns: ["settled_referrals","contained_referrals","ring_paid"], rows: [[8,4,13000000]] },
 };

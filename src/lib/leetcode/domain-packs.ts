@@ -49,6 +49,11 @@ import { DM_FREIGHT_SEED } from "./content/dm-freight-seed";
 import { DM_FREIGHT_QUERIES } from "./content/dm-freight-queries";
 import { DM_FREIGHT_MCQS } from "./content/dm-freight-mcqs";
 import { DM_FREIGHT_CASES } from "./content/dm-freight-cases";
+import { DM_ICL_SCHEMA } from "./content/dm-icl-schema";
+import { DM_ICL_SEED } from "./content/dm-icl-seed";
+import { DM_ICL_QUERIES } from "./content/dm-icl-queries";
+import { DM_ICL_MCQS } from "./content/dm-icl-mcqs";
+import { DM_ICL_CASES } from "./content/dm-icl-cases";
 
 export type DmDifficulty = "Easy" | "Medium" | "Hard";
 
@@ -375,6 +380,43 @@ export const DM_PACKS: DmPack[] = [
     queries: DM_MKT_QUERIES,
     mcqs: DM_MKT_MCQS,
     cases: DM_MKT_CASES,
+  },
+  {
+    id: "insurance-claims-ops",
+    title: "Insurance & Claims Ops",
+    tagline: "Carriers, policies, adjusters, SIU referrals and settlement leaks — the claims operations stack on one shared dataset.",
+    companies: [
+      { name: "Lemonade", real: true, blurb: "Insurtech book — AI-triaged claims, instant-pay rails and leak checks" },
+      { name: "Progressive", real: true, blurb: "Auto carrier — liability boards, adjuster wrap-up rates and SLA clocks" },
+      { name: "Allstate", real: true, blurb: "P&C carrier — aging buckets, referral geography and denial discipline" },
+      { name: "Travelers", real: true, blurb: "Commercial lines — property whales, reopen ceilings and board memos" },
+      { name: "Meridian Mutual", real: false, blurb: "Fictional mutual carrying the ring forensics and the leak dossier" },
+      { name: "Ridgeway", real: false, blurb: "Fictional carrier — velocity pairs, ceiling walls and executive memos" },
+    ],
+    schema: { ...DM_ICL_SCHEMA, seed: DM_ICL_SEED },
+    primer: {
+      hook: "Every claims operation runs the same loop: a loss happens, a file opens, an adjuster works it, a fraud score decides who gets investigated, and money either moves or doesn't. This pack teaches the SQL that answers the four questions behind that loop — how much settled, who is still holding risk, which files smell, and what leaked.",
+      concept: [
+        "The book splits by a vocabulary you must hold precisely. Six statuses live on claims: open, under_review and approved are the LIVE pipeline; paid, closed and denied are TERMINAL — the file stopped moving. Every wrap-up stat in this pack is terminal over handled, and the definition matters: Ivy Chen's EXACTLY 100 closed claims counts only files that reached paid, closed or denied. The claim grain carries three SLA clocks in days — first_contact_days, decision_days, payment_days — each NULL until its event happens, which is why honest clock averages always name their denominator.",
+        "Fraud discipline is a wall, not a vibe. Every claim carries a fraud_risk_score (0-100); the SIU referral rule fires at >= 60, and two claims sit EXACTLY on the line — 12 referrals inclusive, 10 strict. Every referral gets an siu_cases row whose verdict walks confirmed → cleared → open, and the pack's darkest lesson is the LEAK: claim 44's 9800000 settled while its SIU case was still open — money out the door before the investigation landed, recoverable savings a hard zero because 'paid' is final.",
+        "The money story is a whale with a flip. The paid book totals EXACTLY 220800000 cents; claim 130's 100000000 commercial-property settlement is 45.29% of it — and the ONLY settled property claim in the world, so the paid-type board flips to liability (61300000) the moment the whale is excluded. Property ex-whale is a true 0. The settle-side walls keep coming: a reopen ceiling at 6 (claim 5 sits EXACTLY on it — >= 6 vs > 6 splits 2 vs 1), aging boundary rows EXACTLY 30/60/91 days before the 2026-07-01 as-of, and two same-policy velocity pairs at 180s and EXACTLY 300s.",
+        "The ring is the pack's forensics capstone. Seven claims file as RC-4471 through RC-4477 — contiguous numbers, one Kessler cluster at Meridian Mutual, all seven over the referral wall (FRS 64..91), four of them settled for 13000000 — and their three SLA clocks average EXACTLY 7 / 4 / 6 days. Too clean to be organic. The honest zeros round it out: property has no paid claims outside the whale, the pipeline's 61-90 aging bucket is empty at the as-of (a calendar spine keeps it visible), and one carrier has never sent a referral at all.",
+      ],
+      glossary: [
+        { term: "terminal", def: "a claim whose status is paid, closed or denied — the only rows that count for wrap-up" },
+        { term: "FRS wall", def: "the SIU referral line at fraud_risk_score >= 60 — inclusive 12, strict 10" },
+        { term: "SIU verdict", def: "confirmed / cleared / open — every referred claim carries exactly one case row" },
+        { term: "the leak", def: "claim 44's 9800000 settled while its SIU case was open — savings a hard 0" },
+        { term: "the whale", def: "claim 130's 100000000 settlement — 45.29% of the 220800000 paid book, the only settled property claim" },
+        { term: "the flip", def: "exclude the whale and the paid-type board hands the crown to liability (61300000)" },
+        { term: "reopen ceiling", def: "the escalation line at 6 — claim 5 sits EXACTLY on it, >= 6 vs > 6 splits 2 vs 1" },
+        { term: "aging", def: "pipeline days since filing against the 2026-07-01 as-of — boundary rows sit EXACTLY on 30/60/91" },
+        { term: "velocity pair", def: "two same-policy claims filed within 300 seconds — 180s and EXACTLY 300s in this book" },
+      ],
+    },
+    queries: DM_ICL_QUERIES,
+    mcqs: DM_ICL_MCQS,
+    cases: DM_ICL_CASES,
   },
 ];
 

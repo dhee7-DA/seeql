@@ -9058,3 +9058,20 @@ Work Log:
 Stage Summary:
 - The Claims Floor reskin stands again as default theme — visually byte-equivalent to the lost round (same computed tokens, same motifs, same copy), all six legacy themes intact one click away. Committed immediately per the new no-uncommitted-rounds rule (rollback mitigation).
 - Key files: src/lib/themes.ts, src/app/globals.css, src/app/layout.tsx, src/components/landing.tsx.
+
+---
+Task ID: lc-round21-redo
+Agent: Super Z (main agent)
+Task: lc-round21-redo — re-author Domain Mastery pack #8 "Insurance & Claims Ops" after the workspace rollback
+
+Work Log:
+- The rollback took the original pack files with it; this round re-authors the full 180-item pack from the design record (whale EXACTLY on 100000000 at 45.29% of paid, c05 on the reopen ceiling, FRS wall 60, the c44 leak, aging 30/60/91, ring RC-4471..4477, Ivy EXACTLY 100, velocity 2 pairs, three clocks 7/4/6).
+- World rebuilt via scripts/r21-icl-world.ts (deterministic, no RNG): 6 carriers / 36 policies / 8 adjusters / 170 claims (RC-4401..RC-4570) / 81 payments / 12 SIU cases. Walls re-derived and probed: paid book EXACTLY 220800000 (property 100000000 = the whale and its only settled line; liability 61300000 / injury 28500000 / theft 17000000 / flood 14000000 — the ex-whale flip); Ivy EXACTLY 100 terminal; ring RC-4471..4477 contiguous with clocks averaging EXACTLY 7/4/6 and 4 paid; claim 5 reopen EXACTLY 6 (>=6 vs >6 = 2 vs 1); FRS walls at 59/60/61 (12 vs 10); claim 44's 9800000 paid while SIU open (savings 0); pipeline boundary rows EXACTLY 30/60/91 at the 2026-07-01 as-of; velocity pairs 180s and EXACTLY 300s (2 inclusive vs 1 strict). Generator emits scripts/r21-icl-seed.sql -> dm-icl-seed.ts.
+- Content authored: dm-icl-schema.ts (6-table DDL + table notes), dm-icl-queries.ts (60: 20/20/20 E/M/H), dm-icl-mcqs.ts (60), dm-icl-cases.ts (60 x 2 steps). Registry entry added to domain-packs.ts (id insurance-claims-ops, 6 companies, primer with hook/4 concepts/9 glossary terms). Probe scripts: r21-icl-qprobe.ts (all 60 queries run clean), dm-verify.ts got 23 ICL spot checks.
+- Honest zeros planted and surfaced: property ex-whale = 0, the empty 61-90 aging bucket kept visible by a VALUES calendar spine (q29/q57/c25/c47), Bluepine Mutual's zero referrals (q56/c46), February missing from the filing spine (q46 statement cites the gap).
+- Engine iteration: dm-verify caught 19 + 3 mutant collisions (4-way distinct rule) — all fixed by swapping mutants for provably-different queries (recovered-clawback, pending-on-open-SIU, demand sums, metric splits on the adjuster board, ring-month count). One OOM build kill from a leftover headless Chrome (known gotcha — closed browsers, rebuild green). FINAL: dm-expected.ts regenerated to 1697 keys (7 prior packs 1470 + ICL 227) — ALL VERIFIED, every spot green.
+- Gates: tsc 0 errors in all touched files; eslint 0 on the 7 touched files; build clean after closing browsers; browser E2E (agent-browser, fresh standalone): Domains tab lists 8 pack cards, ICL detail shows header + tagline + "pack progress 0/180" chip + "60 queries · 60 MCQs · 60 cases · one shared dataset" + 2 ORIGINAL badges (Meridian Mutual, Ridgeway), query rows render with carrier attributions on the Claims Floor canvas, case cards price at 16 XP. Screenshots scripts/shots/r21-domains-icl.png + r21-icl-detail.png.
+
+Stage Summary:
+- Pack #8 stands again: 180 engine-verified items, walls probed, honest zeros planted, registry complete (8 packs), dm-expected at 1697 keys ALL VERIFIED. The lc-round22 redo (Claims Floor) landed earlier this session; next queue: pack #9, dm-detail motif polish, pack XP in readiness score.
+- Key files: src/lib/leetcode/content/dm-icl-{schema,seed,queries,mcqs,cases}.ts, src/lib/leetcode/domain-packs.ts, src/lib/leetcode/content/dm-expected.ts, scripts/dm-verify.ts, scripts/r21-icl-world.ts, scripts/r21-icl-seed.sql.
