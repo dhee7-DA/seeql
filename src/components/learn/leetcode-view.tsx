@@ -1251,12 +1251,21 @@ function LcDailyStrip({ solvedOf, onOpen }: { solvedOf: Set<string>; onOpen: (sl
 /* Main view                                                           */
 /* ------------------------------------------------------------------ */
 
-export function LeetCodeView({ initialTopic, initialSlug }: { initialTopic?: string; initialSlug?: string }) {
+export function LeetCodeView({
+  initialTopic,
+  initialSlug,
+  initialTab,
+}: {
+  initialTopic?: string;
+  initialSlug?: string;
+  /** Deep-link landing tab (e.g. "domains" from the readiness dm row). */
+  initialTab?: Tab;
+}) {
   const xpEvents = useProgress((s) => s.xpEvents);
   const reviewSchedule = useProgress((s) => s.reviewSchedule);
   const lcContests = useProgress((s) => s.lcContests);
   const [sel, setSel] = useState<string | null>(initialSlug ?? null);
-  const [tab, setTab] = useState<Tab>("problems");
+  const [tab, setTab] = useState<Tab>(initialTab ?? "problems");
   const [topic, setTopic] = useState<string>(initialTopic ?? "All");
   const [diff, setDiff] = useState<Diff>("All");
   const [company, setCompany] = useState<string>("All");

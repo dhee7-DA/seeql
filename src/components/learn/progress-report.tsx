@@ -1,7 +1,8 @@
 "use client";
 
 // Progress report — the printable snapshot. One page: course readiness, the
-// 13-module table, the SQL band breakdown by section, company tracks, the
+// 14-module table (lessons, the two LC bands and the Domain Mastery band),
+// the SQL band breakdown by section, company tracks, the
 // streaks that keep the number alive and a "what's next" list computed from
 // the same honest ledger the dashboard reads. No navigation, no buttons in
 // the sheet — the controls are print:hidden, one click → save as PDF.
@@ -12,6 +13,7 @@ import { MODULES } from "@/lib/curriculum/lessons";
 import { useProgress, dueReviews } from "@/lib/curriculum/progress";
 import { puzzleStreak } from "@/lib/curriculum/daily";
 import { BAND_BY_MODULE, SQL_ALL_SECTIONS } from "@/lib/leetcode/sections";
+import { dmReadinessStats } from "@/lib/leetcode/domain-packs";
 import { lcBadgeStats } from "@/lib/leetcode/lc-meta";
 import { lcDailyStreak } from "@/lib/leetcode/daily";
 import { TRACK_COMPANIES, companySqlTrack } from "@/lib/leetcode/company-tracks";
@@ -41,8 +43,26 @@ export function ProgressReport() {
         ? undefined
         : m.lessons.find((l) => xpEvents[`lesson:${l.id}`] === undefined)?.title;
       const nextLc = band ? band.slugs.find((s) => xpEvents[`lc:${s}`] === undefined) : undefined;
-      return { num: m.num, title: m.title, isBand, total, done, pct, exam, nextLesson, nextLc };
+      return { num: m.num, title: m.title, isBand, dm: false, total, done, pct, exam, nextLesson, nextLc };
     });
+    // the Domain Mastery band folds into the same plain mean — pack XP moves
+    // the course number (a case counts once, matching the pack header chip)
+    const dm = dmReadinessStats(xpEvents);
+    const allRows = [
+      ...rows,
+      {
+        num: 14,
+        title: "Domain Mastery",
+        isBand: true,
+        dm: true,
+        total: dm.total,
+        done: dm.done,
+        pct: dm.total ? Math.round((dm.done / dm.total) * 100) : 0,
+        exam: undefined,
+        nextLesson: undefined,
+        nextLc: undefined,
+      },
+    ];
     const sections = SQL_ALL_SECTIONS.map((sec) => {
       const done = sec.slugs.filter((s) => xpEvents[`lc:${s}`] !== undefined).length;
       return { title: sec.title, total: sec.slugs.length, done };
@@ -51,18 +71,20 @@ export function ProgressReport() {
       const problems = companySqlTrack(name);
       return { name, total: problems.length, done: problems.filter((p) => xpEvents[`lc:${p.slug}`] !== undefined).length };
     });
-    const readiness = Math.round(rows.reduce((a, r) => a + r.pct, 0) / (rows.length || 1));
+    const readiness = Math.round(allRows.reduce((a, r) => a + r.pct, 0) / (allRows.length || 1));
     const badges = lcBadgeStats(xpEvents);
-    const examPasses = rows.filter((r) => r.exam?.passedAt).length;
+    const examPasses = allRows.filter((r) => r.exam?.passedAt).length;
     const reviewsDue = dueReviews(reviewSchedule).length + Object.keys(review).length;
     const pStreak = puzzleStreak(puzzleDone, freezes).streak;
     const lcStreak = lcDailyStreak(lcDailyDone);
-    const next = rows
+    const next = allRows
       .filter((r) => r.pct < 100)
       .slice(0, 8)
       .map((r) => ({
         label: `M${r.num} ${r.title}`,
-        detail: r.isBand
+        detail: r.dm
+          ? `${r.total - r.done} pack items left across the domain packs`
+          : r.isBand
           ? r.nextLc
             ? `next problem: ${r.nextLc.replaceAll("-", " ")}`
             : `${r.total - r.done} problems left in the band`
@@ -70,7 +92,7 @@ export function ProgressReport() {
             ? `next lesson: ${r.nextLesson}`
             : `${r.total - r.done} lessons left`,
       }));
-    return { rows, sections, tracks, readiness, badges, examPasses, reviewsDue, pStreak, lcStreak, next };
+    return { rows: allRows, sections, tracks, readiness, badges, examPasses, reviewsDue, pStreak, lcStreak, next };
   }, [xpEvents, exams, reviewSchedule, review, puzzleDone, freezes, lcDailyDone]);
 
   const generated = new Date().toLocaleDateString("en-US", {
@@ -132,7 +154,7 @@ export function ProgressReport() {
 
         <section className="break-inside-avoid">
           <h3 className="font-mono text-[11px] uppercase tracking-[0.18em] text-zinc-500 print:text-zinc-600">
-            Modules — 13 in parallel, none optional
+            Modules — 14 in parallel, none optional
           </h3>
           <div className="mt-2 overflow-hidden rounded-xl border border-black/10 print:rounded-none print:border-zinc-400">
             <table className="w-full text-left text-[12px]">

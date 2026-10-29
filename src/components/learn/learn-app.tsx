@@ -112,7 +112,7 @@ export type View =
   | { kind: "mentor" }
   | { kind: "sandbox" }
   | { kind: "notebook" }
-  | { kind: "lc"; topic?: string; slug?: string }
+  | { kind: "lc"; topic?: string; slug?: string; tab?: "domains" }
   | { kind: "windows" }
   | { kind: "recall" };
 
@@ -699,7 +699,7 @@ function ViewBody({
   openPerf: (sql: string) => void;
   openExam: (moduleId: string) => void;
   openDrills: () => void;
-  openLc: (topic?: string, slug?: string) => void;
+  openLc: (topic?: string, slug?: string, tab?: "domains") => void;
   exitExam: () => void;
   xp: number;
   level: ReturnType<typeof levelFor>;
@@ -756,7 +756,7 @@ function ViewBody({
     case "mastery":
       return <MasteryMap onOpenLesson={openLesson} onOpenLc={openLc} />;
     case "readiness":
-      return <ReadinessDashboard onOpenLc={() => openLc()} onOpenLesson={openLesson} />;
+      return <ReadinessDashboard onOpenLc={() => openLc()} onOpenDomains={() => openLc(undefined, undefined, "domains")} onOpenLesson={openLesson} />;
     case "pipeline":
       return <QueryPipeline />;
     case "sheet":
@@ -770,7 +770,7 @@ function ViewBody({
     case "notebook":
       return <QueryNotebook />;
     case "lc":
-      return <LeetCodeView key={`${view.topic ?? "lc"}:${view.slug ?? ""}`} initialTopic={view.topic} initialSlug={view.slug} />;
+      return <LeetCodeView key={`${view.topic ?? "lc"}:${view.slug ?? ""}`} initialTopic={view.topic} initialSlug={view.slug} initialTab={view.tab} />;
     case "windows":
       return <WindowsTrack openLesson={openLesson} />;
     case "recall":
@@ -927,7 +927,7 @@ export function LearnApp() {
   const openPerf = (sql: string) => setView({ kind: "perf", sql, tab: "workbench" });
   const openExam = (moduleId: string) => setView({ kind: "exam", moduleId });
   const openDrills = () => setView({ kind: "drills" });
-  const openLc = (topic?: string, slug?: string) => setView({ kind: "lc", topic, slug });
+  const openLc = (topic?: string, slug?: string, tab?: "domains") => setView({ kind: "lc", topic, slug, tab });
   const exitExam = () => setView({ kind: "overview" });
   const doneCount = LESSONS.filter((l) => xpEvents[`lesson:${l.id}`] !== undefined).length;
   const totalProblems = LESSONS.reduce((a, l) => a + l.problems.length, 0);

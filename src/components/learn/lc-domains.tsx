@@ -41,6 +41,7 @@ import { SqlEditor } from "@/components/sql-editor";
 import { ResultGrid } from "./result-grid";
 import { useProgress } from "@/lib/curriculum/progress";
 import { celebrate } from "./celebrate";
+import { cn } from "@/lib/utils";
 import { Btn, Chip, Panel, ProgressBar, SectionLabel } from "./ui/kit";
 
 type ExpectedOut = { columns?: string[]; rows?: unknown[][] };
@@ -58,11 +59,15 @@ function useSolved(packId: string) {
     const cases = new Set<string>();
     for (const k of Object.keys(xpEvents)) {
       if (!k.startsWith(`dm:${packId}:`)) continue;
-      if (k.includes(":q:")) q.add(k);
-      else if (k.includes(":m:")) m.add(k);
-      else if (k.includes(":c:")) {
-        steps.add(k);
-        cases.add(k.split(":").slice(0, 5).join(":"));
+      // bare key = ledger key without the "dm:" stem — matches the
+      // "<pack>:q:<id>" / "<pack>:m:<id>" / "<pack>:c:<id>" checks below
+      const bare = k.slice(3);
+      if (bare.includes(":q:")) q.add(bare);
+      else if (bare.includes(":m:")) m.add(bare);
+      else if (bare.includes(":c:")) {
+        steps.add(bare);
+        // collapse "<pack>:c:<id>:<step>" to "<pack>:c:<id>" — a case is one item
+        cases.add(bare.split(":").slice(0, 3).join(":"));
       }
     }
     return { q, m, steps, cases };
@@ -79,8 +84,8 @@ function usePackProgress() {
       if (!match) continue;
       const packId = match[1];
       if (k.includes(":c:")) {
-        // count case steps once per CASE (strip :step)
-        (map[packId] ??= new Set()).add(k.split(":").slice(0, 5).join(":"));
+        // count case steps once per CASE: "dm:<pack>:c:<id>:<step>" -> "dm:<pack>:c:<id>"
+        (map[packId] ??= new Set()).add(k.split(":").slice(0, 4).join(":"));
       } else {
         (map[packId] ??= new Set()).add(k);
       }
@@ -467,12 +472,35 @@ function BandSection({
         </div>
         <Chip k="done" v={`${doneCount}/${total}`} />
       </div>
-      <div className="flex gap-1.5 px-3.5 pt-3">
-        {DM_BANDS.map((b) => (
-          <Btn key={b.key} variant="pill" active={band === b.key} onClick={() => setBand(b.key)} className="text-[11px]">
-            {b.label} · {counts[b.key]}
-          </Btn>
-        ))}
+      <div className="flex flex-wrap gap-1.5 px-3.5 pt-3">
+        {DM_BANDS.map((b) => {
+          const active = band === b.key;
+          return (
+            <button
+              key={b.key}
+              type="button"
+              onClick={() => setBand(b.key)}
+              aria-pressed={active}
+              className={cn(
+                "inline-flex shrink-0 items-center gap-1 rounded-[3px] border border-dashed px-2.5 py-1.5",
+                "font-mono text-[10px] uppercase tracking-[0.14em] transition-all duration-150",
+                active
+                  ? "border-emerald-400/50 bg-emerald-400/[0.07] text-emerald-300"
+                  : "border-zinc-700/60 bg-transparent text-zinc-500 hover:border-zinc-600 hover:text-zinc-300",
+              )}
+            >
+              {/* ► marker: opaque when active, transparent when not — no label shift */}
+              <span aria-hidden className={cn("text-[9px] leading-none", active ? "opacity-90" : "opacity-0")}>
+                ►
+              </span>
+              <span aria-hidden className="opacity-45">[</span>
+              <span className="tnum">
+                {b.label} · {counts[b.key]}
+              </span>
+              <span aria-hidden className="opacity-45">]</span>
+            </button>
+          );
+        })}
       </div>
       <p className="px-3.5 pt-2 text-[11px] text-zinc-500">{DM_BANDS.find((b) => b.key === band)?.blurb}</p>
       <div className="space-y-2 p-3.5">{bands[band]}</div>

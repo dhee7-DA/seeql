@@ -426,3 +426,26 @@ export const DM_BANDS: Array<{ key: DmDifficulty; label: string; blurb: string }
   { key: "Medium", label: "core screens", blurb: "the joins, windows and funnel cuts interviews actually run" },
   { key: "Hard", label: "the wall", blurb: "multi-CTE builds, sessions, cohorts and boundary traps" },
 ];
+
+/** Course-readiness fold-in — how much of the Domain Mastery band is banked.
+ *  Counts ITEMS (a case once, not per step), matching the pack header chip's
+ *  "x/180" convention: queries + MCQs + collapsed cases across ALL packs.
+ *  Pure scan over the XP ledger; safe to call during render. */
+export function dmReadinessStats(xpEvents: Record<string, unknown>): {
+  done: number;
+  total: number;
+} {
+  const seen = new Set<string>();
+  for (const k of Object.keys(xpEvents)) {
+    const m = /^dm:([^:]+):(q|m|c):/.exec(k);
+    if (!m) continue;
+    // collapse "dm:<pack>:c:<id>:<step>" to "dm:<pack>:c:<id>" so a case
+    // counts once — queries and MCQs are already one-key-per-item
+    seen.add(m[3] === "c" ? k.split(":").slice(0, 4).join(":") : k);
+  }
+  const total = DM_PACKS.reduce(
+    (a, p) => a + p.queries.length + p.mcqs.length + p.cases.length,
+    0,
+  );
+  return { done: seen.size, total };
+}
