@@ -1,0 +1,33 @@
+money ladder: billed=24783750 collected=19946936 issued=3610461 delinquent=1226353 bills=104
+whale (meter 1 Aurora) = 14400000 = 58.1% of billed
+tariff board: industrial:18170820 | commercial:5897214 | residential:715716
+tariff board EX-WHALE: commercial:5897214 | industrial:3770820 | residential:715716 (flip: commercial leads)
+disconnect ladder >= 400000: m14:889740, m16:500000, m11:500000
+disconnect wall: >= 500000 = 3 meters, > 500000 = 1 meters
+drift trio: bill35/m12/2026-05 10->11 paid | bill59/m20/2026-05 10->12 issued | bill81/m27/2026-06 12->15 issued
+meter 1 readings = 100 (want 100)
+m1 gap == 1800: 1, gap > 1800: 6, gap >= 1800: 7
+m1 sessions: strict (gap > 1800) = 7, inclusive (>= 1800) = 8
+5-minute wall: momentary <= 300s = 7, < 300s = 5, EXACTLY 300 = 2
+on-line rows: OUT-2417(s2), OUT-2481(s10)
+flicker pairs <= 300s: 50-51:180s, 65-66:240s
+flicker wall: <= 240 = 2 pairs, < 240 = 1
+ring: OUT-2471:storm:restored:1200/180min | OUT-2472:storm:restored:1800/200min | OUT-2473:storm:restored:5600/220min | OUT-2474:storm:restored:2400/260min | OUT-2475:storm:restored:3100/290min | OUT-2476:storm:active:900 | OUT-2477:storm:active:1500
+ring clocks (restored 5): response 38 min, restore 230 min (want 38 / 230)
+ring utility/cause uniform: 1/1
+utility board: u1:30 u3:20 u2:15 u5:13 u4:12 u6:5 | ceiling >= 20 = 2 (u1:30, u3:20), > 20 = 1 (u1:30)
+substation board: s1:11 s2:12 s4:15 s5:6 s6:14 s7:4 s8:8 s9:7 s10:8 s11:5 s12:5 (s3 dark)
+mirror tie: 2 rows at 4200 = (62,79), 9 above -> RANK 10,10 next 12; DENSE 10,11
+response SLA: >= 3600 = 1, > 3600 = 0, the row = dispatch 28 (outage 31, crew 4, 3600s)
+crew board: c1:20c/20t c2:11c/12t c3:11c/11t c4:11c/11t c5:9c/10t c6:10c/11t c7:11c/11t c8:0c/0t
+dark substation: s3 outages = 0
+crew-less restorations (auto-reclose): 7
+idle/disconnected readings: m35 = 0, m36 = 0
+Bluewater delinquents = 0
+outage months: 2026-01:16 2026-03:22 2026-04:19 2026-05:20 2026-06:18 (Feb absent)
+capacity tie: 2 at 850 = (2,3), 5 above -> pair at RANK 6,6 / DENSE 6
+storm king: OUT-2405 = 62000 = 30.61% of 202533 affected-moments
+cause board: storm:95184 | equipment:49157 | animal:23005 | vegetation:14426 | traffic:10851 | operator:9910
+cause board EX-KING: equipment:49157 | storm:33184 | animal:23005 | vegetation:14426 | traffic:10851 | operator:9910 (flip: equipment leads)
+census: utilities=6 plants=14 substations=12 meters=36 readings=182 outages=95 crews=8 dispatches=86 bills=104
+active outages: OUT-2444, OUT-2454, OUT-2476, OUT-2477, OUT-2488

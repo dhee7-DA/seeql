@@ -253,6 +253,38 @@ spot("insurance-claims-ops:q:q59", (o) => o.rows[0][4] === 2, "leak paid 2 days 
 spot("insurance-claims-ops:q:q60", (o) => o.rows[0][0] === 220800000 && o.rows[0][1] === 45.29 && o.rows[0][2] === 12 && o.rows[0][3] === 3 && o.rows[0][4] === 9800000, "exec memo row");
 spot("insurance-claims-ops:c:c42:1", (o) => o.rows.length === 1 && o.rows[0][1] === 45.29, "case: whale memo share");
 spot("insurance-claims-ops:c:c60:2", (o) => o.rows.length === 1 && o.rows[0][2] === 13000000, "case: containment ring_paid");
+// energy-grid-ops (round 23 facts)
+spot("energy-grid-ops:q:q01", (o) => o.rows.length === 1 && o.rows[0][0] === 90, "restored = 90");
+spot("energy-grid-ops:q:q11", (o) => o.rows.length === 1 && o.rows[0][0] === 7, "momentary inclusive = 7");
+spot("energy-grid-ops:q:q16", (o) => o.rows.length === 1 && o.rows[0][0] === 100, "meter 1 telemetry EXACTLY 100");
+spot("energy-grid-ops:q:q19", (o) => o.rows.length === 1 && o.rows[0][0] === 3990000, "served base 3990000");
+spot("energy-grid-ops:q:q22", (o) => o.rows[0][2] === 58.1, "whale share 58.1");
+spot("energy-grid-ops:q:q23", (o) => o.rows[0][0] === "commercial" && o.rows[0][1] === 5897214, "flip: commercial leads ex-whale");
+spot("energy-grid-ops:q:q24", (o) => o.rows.length === 1 && o.rows[0][0] === 7 && o.rows[0][1] === 5, "5-minute wall 7 vs 5");
+spot("energy-grid-ops:q:q25", (o) => o.rows.length === 2 && o.rows[0][2] === 180 && o.rows[1][2] === 240, "flicker pairs 180 / EXACTLY 240");
+spot("energy-grid-ops:q:q26", (o) => o.rows[0][2] === 20 && o.rows.some((r) => r[0] === 8 && r[2] === 0), "crew board: Mara 20, dark crew 0");
+spot("energy-grid-ops:q:q28", (o) => o.rows.length === 1 && o.rows[0][0] === 1 && o.rows[0][1] === 0, "SLA wall 1 vs 0");
+spot("energy-grid-ops:q:q29", (o) => o.rows.length === 1 && o.rows[0][0] === 7, "sessions strict 7");
+spot("energy-grid-ops:q:q30", (o) => o.rows.length === 1 && o.rows[0][0] === 8, "sessions inclusive 8");
+spot("energy-grid-ops:q:q31", (o) => o.rows.length === 3 && o.rows[0][1] === 889740 && o.rows.some((r) => r[1] === 500000), "ladder: m14 889740 + two ON 500000");
+spot("energy-grid-ops:q:q33", (o) => o.rows.length === 2 && o.rows[0][0] === 44 && o.rows[0][3] === 9800, "the forgotten outage 44");
+spot("energy-grid-ops:q:q34", (o) => o.rows.length === 3 && o.rows[0][5] === "paid", "drift trio, first PAID");
+spot("energy-grid-ops:q:q35", (o) => o.rows[0][0] === 38 && o.rows[0][1] === 230, "ring clocks 38/230");
+spot("energy-grid-ops:q:q36", (o) => o.rows[0][0] === "OUT-2471,OUT-2472,OUT-2473,OUT-2474,OUT-2475,OUT-2476,OUT-2477", "ring registry contiguous");
+spot("energy-grid-ops:q:q37", (o) => o.rows.length === 1 && o.rows[0][0] === 2 && o.rows[0][1] === 1, "ceiling 2 vs 1");
+spot("energy-grid-ops:q:q38", (o) => o.rows.length === 6 && o.rows[1][1] === 0, "calendar spine keeps Feb 0");
+spot("energy-grid-ops:q:q40", (o) => o.rows[0][3] === 30.61, "king share 30.61");
+spot("energy-grid-ops:q:q42", (o) => o.rows[0][3] === "equipment" && o.rows[0][1] === 33184, "cause flip: equipment 49157 vs storm-ex 33184");
+spot("energy-grid-ops:q:q43", (o) => o.rows.length === 1 && o.rows[0][0] === 100 && o.rows[0][1] === 1 && o.rows[0][2] === 7 && o.rows[0][3] === 8, "session wall row 100/1/7/8");
+spot("energy-grid-ops:q:q44", (o) => o.rows[0][2] === 20, "foreman: Mara 20 clearances");
+spot("energy-grid-ops:q:q45", (o) => o.rows[0][0] === 3 && o.rows[0][4] === 82.64, "CRE leads intensity 82.64");
+spot("energy-grid-ops:q:q48", (o) => o.rows.length === 7 && o.rows[0][2] === 60, "7 auto-reclose rows, shortest 60s");
+spot("energy-grid-ops:q:q52", (o) => o.rows[0][0] === 4200 && o.rows[0][1] === "62,79" && o.rows[0][3] === 10, "tie registry 4200 -> '62,79' rank 10");
+spot("energy-grid-ops:q:q59", (o) => o.rows[0][3] === 38 && o.rows[0][4] === 230 && o.rows[0][5] === 16500, "ring dossier 7/5/2/38/230/16500");
+spot("energy-grid-ops:q:q60", (o) => o.rows[0][0] === 24783750 && o.rows[0][1] === 58.1 && o.rows[0][4] === 44 && o.rows[0][5] === 62000, "exec memo row");
+spot("energy-grid-ops:c:c22:1", (o) => o.rows.length === 1 && o.rows[0][0] === 7 && o.rows[0][1] === 5, "case: 5-minute wall row");
+spot("energy-grid-ops:c:c45:2", (o) => o.rows.length === 1 && o.rows[0][3] === 82.64, "case: CRE intensity row");
+spot("energy-grid-ops:c:c60:2", (o) => o.rows.length === 1 && o.rows[0][2] === "equipment" && o.rows[0][1] === 49157, "case: flip memo row");
 
 if (fails > 0) {
   console.log(`\n${fails} FAILURE(S) — dm-expected.ts NOT written`);

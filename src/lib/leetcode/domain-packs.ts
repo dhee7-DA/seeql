@@ -54,6 +54,11 @@ import { DM_ICL_SEED } from "./content/dm-icl-seed";
 import { DM_ICL_QUERIES } from "./content/dm-icl-queries";
 import { DM_ICL_MCQS } from "./content/dm-icl-mcqs";
 import { DM_ICL_CASES } from "./content/dm-icl-cases";
+import { DM_GRID_SCHEMA } from "./content/dm-grid-schema";
+import { DM_GRID_SEED } from "./content/dm-grid-seed";
+import { DM_GRID_QUERIES } from "./content/dm-grid-queries";
+import { DM_GRID_MCQS } from "./content/dm-grid-mcqs";
+import { DM_GRID_CASES } from "./content/dm-grid-cases";
 
 export type DmDifficulty = "Easy" | "Medium" | "Hard";
 
@@ -417,6 +422,44 @@ export const DM_PACKS: DmPack[] = [
     queries: DM_ICL_QUERIES,
     mcqs: DM_ICL_MCQS,
     cases: DM_ICL_CASES,
+  },
+  {
+    id: "energy-grid-ops",
+    title: "Energy & Grid Ops",
+    tagline: "Plants, substations, interval telemetry, outage clocks and billing ladders — the utility operations stack on one shared dataset.",
+    companies: [
+      { name: "National Grid", real: true, blurb: "Transmission operator — reliability boards, momentary walls and outage forensics" },
+      { name: "NextEra Energy", real: true, blurb: "Renewables at scale — fleet mix, capacity ties and generation-grade reporting" },
+      { name: "Duke Energy", real: true, blurb: "Regulated utility — SLA clocks, dispatch audits and regulatory filings" },
+      { name: "Schneider Electric", real: true, blurb: "Grid tech — AMI telemetry, sessionization and rate-drift audits" },
+      { name: "Cascadia Power", real: false, blurb: "Fictional utility carrying the storm ring and the whale dossiers" },
+      { name: "Columbia Rim Energy", real: false, blurb: "Fictional utility — the 20-outage ceiling, the flip memos and intensity boards" },
+    ],
+    schema: { ...DM_GRID_SCHEMA, seed: DM_GRID_SEED },
+    primer: {
+      hook: "Every grid operator runs the same loop: plants generate, substations distribute, meters report, outages interrupt, crews restore, and the ledger prices every kilowatt-hour. This pack teaches the SQL that answers the four questions behind that loop — what is still dark, who is fixing it, what did it cost, and which number lies on a boundary.",
+      concept: [
+        "The grid is a hierarchy you must join in the right order. Utilities own plants and substations; substations own meters; meters own readings and bills. The deliberate grain lesson: meters carry NO utility_id — every meter-to-territory question is a two-hop join through the substation, and the delinquency-by-territory board is a three-hop LEFT JOIN chain whose zero rows (Bluewater never issued a delinquent bill) only survive if every link is a LEFT JOIN.",
+        "Outage discipline is a vocabulary plus a wall. Six causes walk the register; a restoration's duration is restored_ts minus started_ts in epoch seconds; and the regulatory momentary line sits at 300 seconds — seven rows are momentaries inclusive, five strict, because OUT-2417 and OUT-2481 sit EXACTLY on the line. Statuses split restored from active, and active rows carry no duration at all: any clock average that forgets its denominator lies. The darkest audit: outage 44 has burned since May 28 with 9800 customers and NO dispatch row — NOT EXISTS finds it.",
+        "Crews and clocks are the operational heart. Dispatches carry dispatched_ts and arrived_ts, and response is their difference — the SLA line sits at 3600 seconds where dispatch 28 lands EXACTLY, so >= 3600 vs > 3600 splits 1 vs 0. Seven restorations needed no crew (all momentaries — the auto-reclose signature). Mara Quinn cleared EXACTLY 20; Simeon Okoye's crew 8 cleared zero and vanishes from any INNER JOIN board. The storm ring caps it: OUT-2471..2477, one March night, five restored with clocks averaging EXACTLY 38 response / 230 restore minutes, two still active.",
+        "Money and telemetry live on snapshot rules. Bills price each period at the rate captured at issuance while meters hold today's rate — three bills drift and one was PAID at its stale price. Aurora Alloys is the whale: three 4800000-cent bills, 58.1% of the 24783750-cent ledger, and the tariff board flips industrial -> commercial the moment it leaves. The disconnect ladder fires at 500000 unpaid cents with two meters EXACTLY on the line. Meter 1's telemetry holds EXACTLY 100 June readings with ONE gap of EXACTLY 1800s — 7 sessions strict, 8 inclusive — and the storm king (OUT-2405, 30.61% of all affected moments) flips the cause board to equipment when excluded.",
+      ],
+      glossary: [
+        { term: "momentary", def: "a restoration of at most 300 seconds — inclusive 7 vs strict 5, two rows EXACTLY on the line" },
+        { term: "the whale", def: "Aurora Alloys' 14400000-cent ledger share — 58.1% across three 4800000 bills" },
+        { term: "the flip", def: "ex-whale the tariff board hands commercial the crown (5897214 vs 3770820); ex-king the cause board hands it to equipment" },
+        { term: "response clock", def: "arrived_ts minus dispatched_ts — the SLA line at 3600s catches dispatch 28 exactly" },
+        { term: "auto-reclose", def: "a restoration with no dispatch row — all seven are momentaries" },
+        { term: "the storm ring", def: "OUT-2471..2477: one March night, all storm, five restored with 38/230-minute clocks, two still active" },
+        { term: "the forgotten outage", def: "outage 44: active since 2026-05-28, 9800 customers, no dispatch — found by NOT EXISTS" },
+        { term: "session gap", def: "an inter-reading gap over 1800s starts a new telemetry session — the boundary gap splits only under >=" },
+        { term: "rate drift", def: "bills.rate_cents (snapshot at issuance) <> meters.rate_cents (today) — three bills drift, one PAID anyway" },
+        { term: "honest zero", def: "a LEFT JOIN row that survives with zeros: Cedar's 0 outages, crew 8's 0 dispatches, February's 0 outages" },
+      ],
+    },
+    queries: DM_GRID_QUERIES,
+    mcqs: DM_GRID_MCQS,
+    cases: DM_GRID_CASES,
   },
 ];
 
