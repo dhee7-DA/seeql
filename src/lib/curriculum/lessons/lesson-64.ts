@@ -36,6 +36,7 @@ EXPLAIN QUERY PLAN SELECT SUBSTR(created_at,1,7) AS m, COUNT(*) FROM orders GROU
         "Plans don't show milliseconds. A SCAN on a small table, or over a filter that matches half the rows, may be the *cheapest* option. The plan tells you the shape; judgment decides whether the shape deserves it.",
       ],
     },
+    { kind: "diagram", figure: "l64-plan-tree" },
     { kind: "h", text: "Selectivity — the planner's whole verdict in one idea" },
     {
       kind: "table",
@@ -75,6 +76,7 @@ EXPLAIN QUERY PLAN SELECT SUBSTR(created_at,1,7) AS m, COUNT(*) FROM orders GROU
 -- WHERE customer_id = 1 AND created_at >= … → SEARCH (both columns)
 -- SELECT customer_id, created_at …          → COVERING (nothing to fetch)`,
     },
+    { kind: "diagram", figure: "l64-seek-vs-scan" },
     { kind: "h", text: "The index-hostile patterns — where scans sneak back" },
     {
       kind: "table",

@@ -26,6 +26,7 @@ export const lesson58: Lesson = {
         "**ORDER BY / LIMIT** — the final presentation pass, which *can* see window aliases (wrap them in a CTE or subquery when you need to filter on them).",
       ],
     },
+    { kind: "diagram", figure: "l58-eval-order" },
     {
       kind: "code",
       caption: "Empty OVER — every row sees the same grand total",
@@ -56,6 +57,7 @@ LIMIT 3;   -- the biggest delivered order is ~1.7% of all delivered revenue`,
       ],
       caption: "One function, four shapes — the partition and sort spec are the whole difference",
     },
+    { kind: "diagram", figure: "l58-four-shapes" },
     { kind: "h", text: "Windows meet GROUP BY" },
     {
       kind: "code",
@@ -76,6 +78,7 @@ LIMIT 4;   -- 2024-01 ranks 1: 3,731.97 — the strongest month on the books`,
         "Mixing both partitions — `GROUP BY month` with `OVER (PARTITION BY SUBSTR(created_at,1,4))` — ranks months within each year. The window expression must be grouped-legal: anything it references must be a GROUP BY key or an aggregate.",
       ],
     },
+    { kind: "diagram", figure: "l58-group-rank" },
     { kind: "h", text: "Determinism is your job" },
     {
       kind: "code",

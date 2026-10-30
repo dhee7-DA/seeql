@@ -12,9 +12,12 @@ for (const f of readdirSync(`${root}/src/lib/curriculum/lessons`)) {
   for (const m of src.matchAll(/figure:\s*"([a-z0-9-]+)"/g)) taught.add(m[1]);
 }
 
-// 2) ids implemented in the registry files
+// 2) ids implemented in the registry files — every bank + the 3D scenes
 const implemented = new Set<string>();
-for (const f of ["diagrams.tsx", "diagrams-m2.tsx", "diagrams-m3.tsx", "diagrams-m4.tsx", "diagrams-m5.tsx", "diagrams-m6.tsx", "diagrams-m7.tsx", "diagrams-m8.tsx"]) {
+const bankFiles = readdirSync(`${root}/src/components/learn`)
+  .filter((f) => /^diagrams-.+\.tsx$/.test(f) || f === "figures3d.tsx")
+  .sort();
+for (const f of ["diagrams.tsx", ...bankFiles]) {
   const src = readFileSync(`${root}/src/components/learn/${f}`, "utf8");
   for (const m of src.matchAll(/"([a-z0-9-]+)":\s*[A-Z][A-Za-z0-9]*\s*,/g)) implemented.add(m[1]);
 }

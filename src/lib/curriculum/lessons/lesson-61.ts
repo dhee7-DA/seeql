@@ -26,6 +26,7 @@ export const lesson61: Lesson = {
       ],
       caption: "RANGE is the default; ROWS is the ledger; GROUPS is the middle path",
     },
+    { kind: "diagram", figure: "l61-frame-zoo" },
     {
       kind: "code",
       caption: "One spec, three units — watch the same-date triple post",
@@ -70,6 +71,7 @@ FROM n ORDER BY rn;`,
         "Forward frames (`CURRENT ROW AND n FOLLOWING`) build look-ahead columns — tomorrow's load, remaining revenue.",
       ],
     },
+    { kind: "diagram", figure: "l61-rows-vs-range" },
     { kind: "warn", text: "ROWS over a sparse day series silently stretches time: six orders spread over three weeks still fit one 7-ROW frame. When the metric is 'last 7 days', either build the day spine (module 8's recursive CTEs) or switch to a RANGE frame over julianday — the calendar is the contract." },
     { kind: "h", text: "Value functions and the LAST_VALUE trap" },
     {

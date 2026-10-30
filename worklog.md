@@ -9134,3 +9134,21 @@ Work Log:
 Stage Summary:
 - Both standing follow-ups are closed: a gauntlet run now outlives the session (persisted, backed up, best-run marked), and the Domain packs list reads per-bank progress at a glance. The known-follow-ups line is EMPTY for the first time since r10. Domain Mastery stays at 9 packs / 1620 items; pack #10 remains optional — the domain surface is saturated, so the next round is a fresh call.
 - Key files: src/lib/leetcode/gauntlet-runs.ts, src/components/learn/lc-gauntlet.tsx, src/components/learn/lc-domains.tsx, scripts/r25-e2e.sh.
+
+---
+Task ID: r26-figures-w1
+Agent: Super Z (main agent)
+Task: r26-figures-w1 — explainer SVGs wave 1: cover the 7 diagram-less lessons (L58-L64, windows masterclass + query performance)
+
+Work Log:
+- Census first: scripts/figure-census.ts showed the real gap was exactly L58-L64 (figs=0 each); the figure-gaps.ts "runtime bug" list was a stale-registry false positive (fixed scripts/audit-figures.ts to scan every diagrams-*.tsx + figures3d.tsx bank — now taught-but-missing = 0). v1-v8/cs35+ "unused" entries are case-file/extra figures referenced outside lesson files.
+- NEW src/components/learn/diagrams-m10.tsx — 15 figures (FIGURES_M10), same kit language (720x300, diagrams-kit fade choreography, zinc/semantic classes, theme-ramped): l58-eval-order (5-pass pipeline, WHERE-blocked vs ORDER-BY-visible, CTE time machine), l58-four-shapes (GROUP BY collapses vs three OVER stamps), l58-group-rank (103 dots -> 14 folded months -> RANK stamped), l59-three-ranks (ROW_NUMBER/RANK/DENSE_RANK on two tie groups), l59-topn-per-group (partition lanes, stamp-inside-filter-out), l60-lag-lead-edges (LEAD above, LAG below, NULL edges), l60-mom-bridge (verified ledger: deltas + pct vs prev), l61-rows-vs-range (8,9,9,6 -> 8,17,26,32 vs 8,26,26,32), l61-frame-zoo (three frame policies on a 10-month strip), l62-ntile-quartiles (12 orders -> 4 tiles + PERCENT_RANK scale), l62-share-of-total (34833.28 stamp, bars to 44.0% top-5), l63-pattern-map (six-shape playbook), l63-dedupe-rn (7 signups -> 4 survivors), l64-plan-tree (SCAN/SEARCH/temp b-tree with cost ledger), l64-seek-vs-scan (103 dots vs 3-hop B-tree, sargable catch).
+- All storefront numbers verified by script before baking in (deltas -122.33/-992.56/-148.17/+441.40/-862.88/-853.57; mov3 2665.43; pcts 10.7/10.4/8.4/7.5/7.1; top-5 = 44.0%).
+- Wiring: 15 FigureId union entries in types.ts, FIGURES_M10 import+spread in diagrams.tsx, { kind: "diagram" } blocks inserted at 15 anchors across lesson-58..64.ts.
+- E2E hardening: first /figure-audit run crashed on l58-four-shapes — a leftover rowsOut.split("→")[1].trim() crashed on "16 out" (no arrow); fixed both copies. Then a full clip-budget pass (mono ~6.2px/char @ size 10): shortened 12 lines that ran past x=694, fixed NTILE scale-label collision, re-scaled share bars (330px cap), moved pattern-map's choice strip below the card row. Reshoot: 15 mounted / 0 missing on all three audit pages, screenshots verified in the light spade theme (theme re-skin confirmed).
+- Ops gotchas logged: next-server renames its process title (pkill -f "server.js" misses it — use pkill -f next-server / fuser -k 3100/tcp); builds OOM without closing agent-browser sessions first (NODE_OPTIONS=--max-old-space-size=4096 kept).
+- Gates: eslint clean on all touched files; bun run build green; audit-figures taught-but-missing=0; census union 162 / registry 197 / used 130.
+
+Stage Summary:
+- Wave 1 done: every lesson L1-L64 now carries at least one diagram (L58 x3, L59-L64 x2 each — 15 new, curriculum total 130 used figures). The windows masterclass now shows its own machinery instead of describing it; L64 got the plan-receipt + index-logarithm visuals. Wave 2 candidates remain in the legacy banks (v9-v16 never wired into lessons, cs* case figures) — next round can wire or retire them.
+- Key files: src/components/learn/diagrams-m10.tsx (new), src/components/learn/diagrams.tsx, src/lib/curriculum/types.ts, src/lib/curriculum/lessons/lesson-{58,59,60,61,62,63,64}.ts, scripts/{audit-figures.ts,r26-wave1-e2e.sh}.

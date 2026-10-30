@@ -25,6 +25,7 @@ import { FIGURES_M6 } from "./diagrams-m6";
 import { FIGURES_M7 } from "./diagrams-m7";
 import { FIGURES_M8 } from "./diagrams-m8";
 import { FIGURES_M9 } from "./diagrams-m9";
+import { FIGURES_M10 } from "./diagrams-m10";
 import { FIGURES_CASE } from "./diagrams-mcase";
 import { cn } from "@/lib/utils";
 
@@ -1680,6 +1681,7 @@ const FIGURES: Partial<Record<FigureId, () => React.JSX.Element>> = {
   ...FIGURES_M7,
   ...FIGURES_M8,
   ...FIGURES_M9,
+  ...FIGURES_M10,
   ...FIGURES_CASE,
   "l1-anatomy": L1Anatomy,
   "l2-projection": L2Projection,

@@ -149,6 +149,21 @@ export type FigureId =
   | "l40-exec-onepager"
   | "d50-fix-ticket"
   | "d51-reporting-layer"
+  | "l58-eval-order"
+  | "l58-four-shapes"
+  | "l58-group-rank"
+  | "l59-three-ranks"
+  | "l59-topn-per-group"
+  | "l60-lag-lead-edges"
+  | "l60-mom-bridge"
+  | "l61-rows-vs-range"
+  | "l61-frame-zoo"
+  | "l62-ntile-quartiles"
+  | "l62-share-of-total"
+  | "l63-pattern-map"
+  | "l63-dedupe-rn"
+  | "l64-plan-tree"
+  | "l64-seek-vs-scan"
 
 export type Block =
   | { kind: "p"; text: string }
