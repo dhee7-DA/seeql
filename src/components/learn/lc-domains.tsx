@@ -74,20 +74,24 @@ function useSolved(packId: string) {
   }, [xpEvents, packId]);
 }
 
-// Per-pack progress for the list screen (cheap scan over the ledger).
+// Per-pack progress for the list screen (cheap scan over the ledger) —
+// split per BANK (queries / MCQs / cases) so the pack cards can show the
+// per-bank breakdown instead of one flat x/180 number. Case steps collapse
+// to one item per case.
 function usePackProgress() {
   const xpEvents = useProgress((s) => s.xpEvents);
   return useMemo(() => {
-    const map: Record<string, Set<string>> = {};
+    const map: Record<string, { q: Set<string>; m: Set<string>; c: Set<string> }> = {};
     for (const k of Object.keys(xpEvents)) {
       const match = k.match(/^dm:([^:]+):(q|m|c):/);
       if (!match) continue;
-      const packId = match[1];
-      if (k.includes(":c:")) {
+      const bank = match[2] as "q" | "m" | "c";
+      const entry = (map[match[1]] ??= { q: new Set(), m: new Set(), c: new Set() });
+      if (bank === "c") {
         // count case steps once per CASE: "dm:<pack>:c:<id>:<step>" -> "dm:<pack>:c:<id>"
-        (map[packId] ??= new Set()).add(k.split(":").slice(0, 4).join(":"));
+        entry.c.add(k.split(":").slice(0, 4).join(":"));
       } else {
-        (map[packId] ??= new Set()).add(k);
+        entry[bank].add(k);
       }
     }
     return map;
@@ -666,9 +670,18 @@ export function DomainsView() {
 
       <div className="grid gap-3 lg:grid-cols-2">
         {DM_PACKS.map((p) => {
-          const done = progress[p.id]?.size ?? 0;
+          const banks = progress[p.id];
+          const qDone = banks?.q.size ?? 0;
+          const mDone = banks?.m.size ?? 0;
+          const cDone = banks?.c.size ?? 0;
+          const done = qDone + mDone + cDone;
           const total = p.queries.length + p.mcqs.length + p.cases.length;
           const realCount = p.companies.filter((c) => c.real).length;
+          const bankStat = (d: number, n: number, label: string) => (
+            <span className={d > 0 ? "text-emerald-400/90" : undefined}>
+              {d}/{n} {label}
+            </span>
+          );
           return (
             <button
               key={p.id}
@@ -696,7 +709,7 @@ export function DomainsView() {
                 )}
               </div>
               <p className="mt-2 font-mono text-[10px] text-zinc-600">
-                {p.queries.length} queries · {p.mcqs.length} MCQs · {p.cases.length} cases · {realCount} real +{" "}
+                {bankStat(qDone, p.queries.length, "queries")} · {bankStat(mDone, p.mcqs.length, "MCQs")} · {bankStat(cDone, p.cases.length, "cases")} · {realCount} real +{" "}
                 {p.companies.length - realCount} original carriers
               </p>
             </button>

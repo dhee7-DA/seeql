@@ -14,11 +14,21 @@
 // keyed child (<GauntletRound key={slug}>) so its deal/timer/pick state
 // resets by remount — no reset-effects, no cascading renders.
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { Check, Play, RotateCcw, Swords, Trophy, X } from "lucide-react";
 import { LC_ALL, lcBySlug } from "@/lib/leetcode/registry";
 import { lcSqlDive } from "@/lib/leetcode/content/content";
 import { readXpKey, stripComments } from "@/lib/leetcode/followups";
+import {
+  bestGauntletScore,
+  gauntletRunDay,
+  GAUNTLET_RUNS_MAX,
+  GAUNTLET_RUNS_SERVER_SNAPSHOT,
+  getGauntletRunsSnapshot,
+  saveGauntletRun,
+  subscribeGauntletRuns,
+  type GauntletRunRecord,
+} from "@/lib/leetcode/gauntlet-runs";
 import { useProgress } from "@/lib/curriculum/progress";
 import { celebrate } from "./celebrate";
 import { Btn, Chip, Panel } from "./ui/kit";
@@ -230,7 +240,13 @@ export function BossGauntlet() {
   const [round, setRound] = useState(0);
   const [results, setResults] = useState<RoundOutcome[]>([]);
   const [lastRun, setLastRun] = useState<{ score: number; sec: number } | null>(null);
+  const [newBest, setNewBest] = useState(false);
   const startedAtRef = useRef(0);
+
+  // the run ledger rides useSyncExternalStore — hydration-safe, and the write
+  // in advance() re-renders through the subscription (no effect-load, no
+  // session-only state)
+  const history = useSyncExternalStore(subscribeGauntletRuns, getGauntletRunsSnapshot, () => GAUNTLET_RUNS_SERVER_SNAPSHOT);
 
   const advance = useCallback(
     (outcome: RoundOutcome) => {
@@ -242,6 +258,17 @@ export function BossGauntlet() {
         const tier = TIERS.filter((t) => score >= t.min).pop() ?? null;
         const paid = tier ? awardXp(tier.key, tier.xp) : false;
         setLastRun({ score, sec });
+        // persist the run — the report used to be session-only
+        const record: GauntletRunRecord = {
+          id: `run-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+          ts: Date.now(),
+          score,
+          total: BOSS.length,
+          sec,
+          tier: tier?.name ?? null,
+        };
+        setNewBest(history.length === 0 || score > bestGauntletScore(history));
+        saveGauntletRun(record); // notifies the subscription — history re-renders
         if (paid && tier) {
           celebrate({ kind: "badge", title: `${tier.name} — ${score}/${BOSS.length}`, sub: `+${tier.xp} XP banked · Boss Gauntlet` });
         }
@@ -250,14 +277,14 @@ export function BossGauntlet() {
         setRound((r) => r + 1);
       }
     },
-    [results, awardXp],
+    [results, awardXp, history],
   );
 
   const startRun = () => {
     startedAtRef.current = Date.now();
     setLastRun(null);
-    setRound(0);
     setResults([]);
+    setNewBest(false);
     setPhase("run");
   };
 
@@ -298,6 +325,28 @@ export function BossGauntlet() {
             );
           })}
         </div>
+        {history.length > 0 && (
+          <div className="mt-3 space-y-1.5">
+            <p className="font-mono text-[9.5px] uppercase tracking-[0.14em] text-zinc-500">
+              run history · {history.length} run{history.length === 1 ? "" : "s"} · best {bestGauntletScore(history)}/{BOSS.length}
+            </p>
+            {history.slice(0, 5).map((r) => {
+              const isBest = r.score > 0 && r.score === bestGauntletScore(history);
+              return (
+                <div key={r.id} className="flex items-center gap-2.5 rounded-md border border-zinc-800/70 bg-zinc-950/40 px-2.5 py-1.5">
+                  {isBest ? <Trophy className="h-3.5 w-3.5 shrink-0 text-amber-400" /> : <Swords className="h-3.5 w-3.5 shrink-0 text-zinc-600" />}
+                  <span className="tnum shrink-0 font-mono text-[11px] text-zinc-400">{gauntletRunDay(r.ts)}</span>
+                  <span className="tnum ml-auto shrink-0 font-mono text-[11px] font-bold text-zinc-200">{r.score}/{r.total}</span>
+                  <span className="tnum shrink-0 font-mono text-[10px] text-zinc-500">{Math.floor(r.sec / 60)}m {r.sec % 60}s</span>
+                  <span className="max-w-40 shrink truncate text-right font-mono text-[10px] text-amber-200/70">{r.tier ?? "no tier"}</span>
+                </div>
+              );
+            })}
+            {history.length > 5 && (
+              <p className="font-mono text-[10px] text-zinc-600">…and {history.length - 5} more on the ledger (last {GAUNTLET_RUNS_MAX} kept)</p>
+            )}
+          </div>
+        )}
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <Btn variant="primary" onClick={startRun}>
             <Play className="h-3.5 w-3.5" /> Start the gauntlet
@@ -322,6 +371,7 @@ export function BossGauntlet() {
           <h2 className="text-lg font-semibold tracking-tight">Gauntlet report</h2>
           <Chip k="score" v={`${score}/${BOSS.length} correct`} />
           <Chip k="time" v={`${Math.floor(sec / 60)}m ${sec % 60}s`} />
+          {newBest && <Chip k="run" v="new personal best" />}
         </div>
         <p className="mt-3 text-[12.5px] leading-relaxed text-zinc-400">
           {score === BOSS.length
