@@ -1,0 +1,10 @@
+import { createJiti } from "jiti";
+const jiti = createJiti(import.meta.url, { alias: { "@": "/home/z/my-project/src/" } });
+const { CASES } = await jiti.import("@/lib/curriculum/cases");
+const n = CASES.filter((c) => /^n[1-6]/.test(c.topic));
+console.log("total CASES:", CASES.length, "| module-10 (n*) cases:", n.length);
+const byTier = {};
+for (const c of CASES) byTier[c.tier] = (byTier[c.tier] ?? 0) + 1;
+console.log("tiers:", byTier);
+const dupe = CASES.map((c) => c.id).filter((id, i, a) => a.indexOf(id) !== i);
+console.log("duplicate case ids:", dupe.length ? dupe : "none");
