@@ -6,6 +6,7 @@
 
 import type { Mcq, Problem } from "../../types";
 import { EXPECTED } from "../../expected";
+import { M10_MISTAKES } from "./m10-mistakes";
 
 export type McqRow = [
   prompt: string,
@@ -50,7 +51,11 @@ export function probBank(prefix: string, rows: ProbRow[]): Problem[] {
       hints: r[2],
       difficulty: r[3],
       solution: r[4],
-      mistakes: (r[5] ?? []).map(([test, message]) => ({ test, message })),
+      mistakes: [
+        ...(r[5] ?? []).map(([test, message]) => ({ test, message })),
+        // Retrofit coaching keyed by problem id (see m10-mistakes.ts).
+        ...(M10_MISTAKES[id] ?? []).map(([test, message]) => ({ test, message })),
+      ],
       ...(r[6] === true ? { ordered: true } : {}),
       expected: EXPECTED[id],
     };
