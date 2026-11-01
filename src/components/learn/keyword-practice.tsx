@@ -1,4 +1,4 @@
-// Keyword Practice — the Keyword Mastery hub. Every course keyword in
+// Keyword practice — the Keyword Mastery hub. Every course keyword in
 // dictionary order with its live practice pools (multi-label, tagged by the
 // same taxonomy as the coverage workbook), expandable into a runner deck.
 import { useMemo, useState } from "react";
@@ -60,7 +60,7 @@ export function KeywordPractice() {
       <header className="space-y-2">
         <div className="flex items-center gap-2">
           <Crosshair className="h-6 w-6 text-indigo-500" />
-          <h1 className="text-2xl font-bold tracking-tight">Keyword Practice</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Keyword practice</h1>
         </div>
         <p className="text-sm text-neutral-500 dark:text-neutral-400">
           The whole course, per keyword. Every quiz question, case file and graded problem tagged to each concept —

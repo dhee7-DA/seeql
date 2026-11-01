@@ -10,6 +10,7 @@
 // Module 10 (Window Functions Masterclass, lessons 58–63) and
 // Module 11 (Query Performance & Index Design, lesson 64).
 import type { Lesson } from "../types";
+import type { Mcq } from "../types";
 import { LC_SQL50_COUNT, LC_DATAFIN_COUNT, LC_SECTION_COUNT } from "@/lib/leetcode/lc-meta";
 import { lesson01 } from "./lesson-01";
 import { lesson02 } from "./lesson-02";
@@ -75,6 +76,47 @@ import { lesson61 } from "./lesson-61";
 import { lesson62 } from "./lesson-62";
 import { lesson63 } from "./lesson-63";
 import { lesson64 } from "./lesson-64";
+// MCQ expansion banks — per-lesson extra quiz decks (audited by
+// scripts/mcq-audit-500.ts; ids continue each lesson's inline sequence,
+// e.g. lesson-01 → l1-q13…l1-q58). Appended in place below so the lesson
+// Quiz tab, module exams, mixed quiz and blitz all draw from the full pool.
+import { L01_EXTRA_MCQS } from "./mcq-banks/l01-extra";
+import { L02_EXTRA_MCQS } from "./mcq-banks/l02-extra";
+import { L03_EXTRA_MCQS } from "./mcq-banks/l03-extra";
+import { L04_EXTRA_MCQS } from "./mcq-banks/l04-extra";
+import { L05_EXTRA_MCQS } from "./mcq-banks/l05-extra";
+import { L06_EXTRA_MCQS } from "./mcq-banks/l06-extra";
+import { L07_EXTRA_MCQS } from "./mcq-banks/l07-extra";
+import { L08_EXTRA_MCQS } from "./mcq-banks/l08-extra";
+import { L35_EXTRA_MCQS } from "./mcq-banks/l35-extra";
+
+const LESSON_EXTRA_MCQS = new Map<number, Mcq[]>([
+  [1, L01_EXTRA_MCQS],
+  [2, L02_EXTRA_MCQS],
+  [3, L03_EXTRA_MCQS],
+  [4, L04_EXTRA_MCQS],
+  [5, L05_EXTRA_MCQS],
+  [6, L06_EXTRA_MCQS],
+  [7, L07_EXTRA_MCQS],
+  [8, L08_EXTRA_MCQS],
+  [35, L35_EXTRA_MCQS],
+]);
+
+// Mutate in place BEFORE LESSONS/MODULES are built — both exports reference
+// the same lesson objects, so one pass enriches every consumer.
+for (const l of [
+  lesson01, lesson02, lesson03, lesson04, lesson05, lesson06, lesson07, lesson08,
+  lesson09, lesson10, lesson11, lesson12, lesson13, lesson14, lesson15, lesson16,
+  lesson17, lesson18, lesson19, lesson20, lesson21, lesson22, lesson23, lesson24,
+  lesson25, lesson26, lesson27, lesson28, lesson29, lesson30, lesson31, lesson32,
+  lesson33, lesson34, lesson35, lesson36, lesson37, lesson38, lesson39, lesson40,
+  lesson41, lesson42, lesson43, lesson44, lesson45, lesson46, lesson47, lesson48,
+  lesson49, lesson50, lesson51, lesson52, lesson53, lesson54, lesson55, lesson56,
+  lesson57, lesson58, lesson59, lesson60, lesson61, lesson62, lesson63, lesson64,
+]) {
+  const extra = LESSON_EXTRA_MCQS.get(l.num);
+  if (extra && extra.length) l.mcqs.push(...extra);
+}
 
 export const LESSONS: Lesson[] = [
   lesson01,

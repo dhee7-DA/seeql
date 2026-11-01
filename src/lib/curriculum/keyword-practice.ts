@@ -1,4 +1,4 @@
-// Keyword Practice pools — the client-side counterpart of the coverage
+// Keyword practice pools — the client-side counterpart of the coverage
 // census. Every practice surface (lesson MCQs/problems, case files, module
 // gauntlet banks) is tagged through the SAME keyword-taxonomy tag() the
 // workbook and quota tracker use, so the hub's counts can never drift from

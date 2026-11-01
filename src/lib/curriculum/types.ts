@@ -273,20 +273,6 @@ export interface Fill {
   notes?: Array<{ slot: number; why: string }>;
 }
 
-/** Scenario case — the fill machinery wearing a business memo. The lesson
- *  number comes from the case-studies registry; Card renders `ask` as the
- *  prompt and pays case XP (never enrolls in the review deck). */
-export interface CaseStudy extends Omit<Fill, "prompt"> {
-  title: string;
-  /** Optional one-line teaser under the title. */
-  subtitle?: string;
-  /** The business brief shown above the ask. */
-  brief: string;
-  /** The one-line ask — becomes the card's prompt. */
-  ask: string;
-  difficulty?: "easy" | "medium" | "hard";
-}
-
 /** Legacy theory-block union — matches the dormant TheoryBlocks renderer.
  *  Live lessons use `Block` / `DeepBlock` instead. */
 export type TheoryBlock =

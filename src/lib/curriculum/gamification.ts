@@ -1,7 +1,6 @@
 // XP economy, career ladder, daily goals and badges.
 // Pure functions + constants — no React, no storage.
 
-import type { CaseStudy } from "./types";
 import type { ProgressState } from "./progress";
 
 export const XP = {
@@ -9,8 +8,6 @@ export const XP = {
   mcqFirstBonus: 3,
   fill: 8,
   fillFirstBonus: 4,
-  case: 12,
-  caseFirstBonus: 6,
   examPass: 60,
   lessonBonus: 50,
   // universe layer — completion bonuses only: the timed screen itself stays
@@ -26,12 +23,6 @@ export type Difficulty = "easy" | "medium" | "hard";
 
 export function xpForDifficulty(d: Difficulty): number {
   return d === "easy" ? 5 : d === "medium" ? 10 : 20;
-}
-
-/** Difficulty of a scenario case — authored value wins, otherwise infer
- *  from the slot count (4+ slots to place reads as hard). */
-export function caseDifficulty(cs: Pick<CaseStudy, "difficulty" | "answers">): Difficulty {
-  return cs.difficulty ?? (cs.answers.length >= 4 ? "hard" : "medium");
 }
 
 /** Star string for a difficulty, e.g. medium → "★★☆". */

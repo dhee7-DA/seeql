@@ -1,7 +1,7 @@
 // Tool registry — ONE source of truth for every non-lesson destination in
 // the app. The desktop sidebar (Toolbox / Practice lab groups), the mobile
 // ToolRail chips and the drift-guard in learn-app.tsx all derive from this
-// list. Adding tool #18 is now: a View union member + one entry here.
+// list. Adding a tool is now: a View union member + one entry here.
 // (Labels live here too, so the three former parallel lists can't drift.)
 
 import {
@@ -100,7 +100,7 @@ export const TOOLS: ToolDef[] = [
   { kind: "explorer", icon: Table2, label: "Data explorer", note: "browse the live tables", short: "Data", section: "toolbox" },
   { kind: "library", icon: Shapes, label: "Diagram library", note: "every visual, one wall", short: "Diagrams", section: "toolbox" },
   { kind: "drills", icon: Dumbbell, label: "Keyword drills", note: "every keyword, six angles", short: "Drills", section: "toolbox" },
-  { kind: "practice", icon: Crosshair, label: "Keyword Practice", note: "the whole course, per keyword", short: "Practice", section: "toolbox" },
+  { kind: "practice", icon: Crosshair, label: "Keyword practice", note: "the whole course, per keyword", short: "Practice", section: "toolbox" },
   { kind: "mixed", icon: FlaskConical, label: "Mixed quiz", note: "10 from the whole course", short: "Quiz", section: "toolbox" },
   { kind: "recall", icon: Brain, label: "Review deck", note: "misses resurface, ladder runs", short: "Recall", section: "toolbox" },
   { kind: "blitz", icon: Zap, label: "Blitz mode", note: "90 seconds, all engines", short: "Blitz", section: "toolbox" },

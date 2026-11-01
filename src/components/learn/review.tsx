@@ -48,7 +48,7 @@ function useCatalog(): Map<string, Card> {
     // resolve here, or the Leitner store would hold unresolvable ids.
     for (const q of ALL_GAUNTLET_MCQS)
       map.set(q.id, { id: q.id, kind: "mcq", mcq: q, lessonNum: 0, lessonTitle: "Module gauntlet" });
-    // Keyword-bank MCQs likewise — misses in the Keyword Practice hub must resolve.
+    // Keyword-bank MCQs likewise — misses in the Keyword practice hub must resolve.
     for (const q of ALL_KEYWORD_BANK_MCQS)
       map.set(q.id, { id: q.id, kind: "mcq", mcq: q, lessonNum: 0, lessonTitle: "Keyword practice" });
     return map;

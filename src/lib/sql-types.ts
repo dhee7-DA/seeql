@@ -145,6 +145,59 @@ export interface ExecError {
 
 export type ExecResponse = ExecResult | ExecError;
 
+/* ---------------- query funnel (stage-by-stage row counts) ---------------- */
+
+/** One cumulative COUNT(*) probe — a stage of the SELECT pipeline. */
+export interface FunnelStage {
+  key: "from" | "where" | "group" | "having" | "distinct" | "order" | "result";
+  label: string;
+  detail: string;
+  /** Rows (or groups) after this stage — null when the probe failed. */
+  count: number | null;
+  kind: "rows" | "groups" | "final";
+  /** Percent change vs the previous stage, e.g. "±0%", "-62%". */
+  delta?: string;
+}
+
+/** One WHERE condition probed alone and cumulatively. */
+export interface FilterProbe {
+  text: string;
+  /** Rows passing this condition alone. */
+  individual: number | null;
+  /** Rows passing this condition and every earlier one. */
+  cumulative: number | null;
+}
+
+/** One JOIN probed: row counts before/after it joined in. */
+export interface JoinProbe {
+  left: string;
+  right: string;
+  type: string;
+  on: string;
+  before: number | null;
+  after: number | null;
+  /** after / before, rounded to 2 dp — the fan-out multiplier. */
+  multiplier: number | null;
+  /** Left rows with no matching right row (LEFT JOIN preservation audit). */
+  unmatchedLeft: number | null;
+}
+
+/** A successful funnel run. `applicable: false` means the query shape is
+ *  supported for the final count only — `reason` says why the stages are
+ *  empty (set operations, derived tables, non-SELECT). */
+export interface FunnelResult {
+  ok: true;
+  applicable: boolean;
+  reason?: string;
+  baseRows: number | null;
+  finalRows: number | null;
+  stages: FunnelStage[];
+  filters: FilterProbe[];
+  joins: JoinProbe[];
+}
+
+export type FunnelResponse = FunnelResult | { ok: false; error: string };
+
 /* ---------------- parse tree (AST) types ---------------- */
 
 export interface TreeNode {

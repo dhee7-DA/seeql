@@ -31,23 +31,17 @@
   },
   "include": [
     "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
-    "scripts/mascot-research",
-    "scripts/verify-curriculum.ts",
-    "src/lib/curriculum/mcqs",
-    "src/lib/curriculum/problems",
-    "src/lib/curriculum/cases/m2",
-    "src/lib/curriculum/case-studies.ts",
-    "src/lib/curriculum/case-studies-b.ts",
-    "src/lib/curriculum/case-studies-c.ts",
-    "src/lib/curriculum/index.ts",
-    "src/components/learn/case-study-view.tsx",
-    "src/components/learn/diagrams-m2x.tsx"
+    "examples",
+    "scripts",
+    "tests",
+    "skills",
+    "mini-services"
   ]
 }

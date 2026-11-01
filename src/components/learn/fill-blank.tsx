@@ -5,18 +5,13 @@
 // +8 XP (+4 first-try bonus); a miss enrolls the fill in the review deck.
 // In reviewMode the card pays zero XP and the first Check records the
 // recall/miss on the Leitner card instead.
-//
-// Case mode (caseMode): the same slot machinery wearing a scenario memo.
-// The card renders the business brief above the ask, pays +12 XP (+6
-// first-try bonus) under the `case:` ledger keys, and never enrolls in the
-// review deck — cases train translation, not spaced recall.
 
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { AlertCircle, Briefcase, CheckCircle2, Lock, RotateCcw, X } from "lucide-react";
+import { AlertCircle, CheckCircle2, Lock, RotateCcw, X } from "lucide-react";
 import { useProgress } from "@/lib/curriculum/progress";
-import { XP, caseDifficulty, starsFor } from "@/lib/curriculum/gamification";
-import type { CaseStudy, Fill } from "@/lib/curriculum/types";
+import { XP } from "@/lib/curriculum/gamification";
+import type { Fill } from "@/lib/curriculum/types";
 import { cn } from "@/lib/utils";
 import { RichNodes } from "./rich";
 import { SqlNodes } from "./sql-code";
@@ -41,15 +36,12 @@ export function FillCard({
   fill,
   reviewMode = false,
   examMode = false,
-  caseMode = false,
   onAnswered,
 }: {
   fill: Fill;
   reviewMode?: boolean;
   /** Exam mode: zero XP, feedback withheld until submit. */
   examMode?: boolean;
-  /** Scenario case mode: memo header + case XP keys + no review deck. */
-  caseMode?: boolean;
   onAnswered?: (correct: boolean) => void;
 }) {
   const slots = fill.answers.length;
@@ -118,25 +110,15 @@ export function FillCard({
       if (!awardRef.current) {
         awardRef.current = true;
         const first = tries.current === 1;
-        if (caseMode) {
-          store.awardXp(`case:${fill.id}`, XP.case);
-          if (first) store.awardXp(`casefirst:${fill.id}`, XP.caseFirstBonus);
-          celebrate({
-            kind: "xp",
-            title: `+${XP.case + (first ? XP.caseFirstBonus : 0)} XP`,
-            sub: first ? "Case closed on the first pass — bonus included" : "Case closed",
-          });
-        } else {
-          store.awardXp(`fill:${fill.id}`, XP.fill);
-          if (first) store.awardXp(`fillfirst:${fill.id}`, XP.fillFirstBonus);
-          celebrate({
-            kind: "xp",
-            title: `+${XP.fill + (first ? XP.fillFirstBonus : 0)} XP`,
-            sub: first ? "All slots right on the first try — bonus included" : "Query rebuilt",
-          });
-        }
+        store.awardXp(`fill:${fill.id}`, XP.fill);
+        if (first) store.awardXp(`fillfirst:${fill.id}`, XP.fillFirstBonus);
+        celebrate({
+          kind: "xp",
+          title: `+${XP.fill + (first ? XP.fillFirstBonus : 0)} XP`,
+          sub: first ? "All slots right on the first try — bonus included" : "Query rebuilt",
+        });
       }
-    } else if (!caseMode) {
+    } else {
       store.recordMiss(fill.id);
     }
     onAnswered?.(ok);
@@ -147,26 +129,8 @@ export function FillCard({
     ? placed.map((p, i) => (p !== fill.answers[i] ? i : -1)).filter((i) => i >= 0)
     : [];
 
-  const cs = caseMode ? (fill as unknown as CaseStudy) : null;
-
   return (
     <div className="rounded-lg border border-zinc-800 bg-zinc-950 p-4 sm:p-5">
-      {cs && (
-        <div className="mb-3.5 rounded-md border border-sky-400/25 bg-sky-400/[0.05] px-3.5 py-3">
-          <div className="flex items-center justify-between gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-400/30 bg-sky-400/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-sky-300">
-              <Briefcase className="h-2.5 w-2.5" /> Case file
-            </span>
-            <span className="font-mono text-[10px] text-zinc-500">
-              {starsFor(caseDifficulty(cs))} {cs.difficulty ?? caseDifficulty(cs)}
-            </span>
-          </div>
-          <p className="mt-2 text-sm font-semibold text-zinc-100">{cs.title}</p>
-          <p className="mt-1.5 text-xs leading-relaxed text-zinc-400">
-            <RichNodes text={cs.brief} />
-          </p>
-        </div>
-      )}
       <p className="text-sm font-medium leading-relaxed text-zinc-100">
         <RichNodes text={fill.prompt} />
       </p>
@@ -310,11 +274,6 @@ export function FillCard({
       )}
     </div>
   );
-}
-
-/** Scenario case card — FillCard wearing the memo header. */
-export function CaseCard({ cs }: { cs: CaseStudy }) {
-  return <FillCard fill={{ ...cs, prompt: cs.ask }} caseMode />;
 }
 
 /** Compact inline indicator used by the quiz header: e.g. "2 slots". */

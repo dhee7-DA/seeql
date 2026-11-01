@@ -16,6 +16,7 @@ export function Label({
   anchor = "start",
   cls = "fill-zinc-400",
   size = 11,
+  bold = false,
 }: {
   x: number;
   y: number;
@@ -23,9 +24,19 @@ export function Label({
   anchor?: "start" | "middle" | "end";
   cls?: string;
   size?: number;
+  /** Heavier weight for stage/section headers inside a figure. */
+  bold?: boolean;
 }) {
   return (
-    <text x={x} y={y} textAnchor={anchor} fontSize={size} className={cls} fontFamily={MONO}>
+    <text
+      x={x}
+      y={y}
+      textAnchor={anchor}
+      fontSize={size}
+      className={cls}
+      fontFamily={MONO}
+      fontWeight={bold ? 700 : 400}
+    >
       {children}
     </text>
   );
@@ -177,8 +188,8 @@ export function XMark({ x, y, cls = "stroke-zinc-500", s = 4, delay = 0 }: { x: 
   );
 }
 
-export function Panel({ x, y, w, h, cls = "fill-zinc-900 stroke-zinc-800" }: { x: number; y: number; w: number; h: number; cls?: string }) {
-  return <rect x={x} y={y} width={w} height={h} rx={8} className={cls} strokeWidth={1} />;
+export function Panel({ x, y, w, h, cls = "fill-zinc-900 stroke-zinc-800", dash }: { x: number; y: number; w: number; h: number; cls?: string; /** SVG stroke-dasharray — dashed outline for optional/conditional boxes. */ dash?: string }) {
+  return <rect x={x} y={y} width={w} height={h} rx={8} className={cls} strokeWidth={1} strokeDasharray={dash} />;
 }
 
 // ---- figure scrub (stage stepping) ---------------------------------------

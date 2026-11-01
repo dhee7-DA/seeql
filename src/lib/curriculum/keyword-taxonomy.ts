@@ -1,6 +1,6 @@
 // Keyword taxonomy — the canonical 61-keyword dictionary and the multi-label
 // tag() scanner. Single source of truth: the coverage census (scripts/) AND
-// the in-app Keyword Practice hub both attribute items through this module,
+// the in-app Keyword practice hub both attribute items through this module,
 // so the workbook, the quota tracker and the UI can never drift apart.
 // Client-safe: pure data + regex, no database imports.
 

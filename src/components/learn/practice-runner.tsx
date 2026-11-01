@@ -1,5 +1,5 @@
 // PracticeRunner — the deck runner shared by the module Gauntlet and the
-// Keyword Practice hub. Builds a 10-item deck from a filtered pool, renders
+// Keyword practice hub. Builds a 10-item deck from a filtered pool, renders
 // the right card per surface (McqCard / FillCard caseMode / ProblemCard) and
 // derives progress from the XP ledger + MCQ attempts, exactly like DrillYard.
 import { useMemo, useState } from "react";

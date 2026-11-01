@@ -39,6 +39,9 @@ export interface CaseStudy {
   topic: string;
   /** Business universe id — see CASE_UNIVERSES. */
   universe: string;
+  /** Authoring batch that introduced the case (deck 1 = the original M1/M2
+   *  banks, deck 2 = the joins expansion, …). Display/audit metadata. */
+  deck?: number;
   title: string;
   /** Memo-style brief from the stakeholder (2–4 sentences, in-world). */
   brief: string;

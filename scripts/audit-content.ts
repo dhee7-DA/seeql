@@ -2,7 +2,6 @@
 import { LESSONS, MODULES } from "@/lib/curriculum/lessons";
 import type { Lesson, Mcq, Problem, Block, DeepBlock, Fill } from "@/lib/curriculum/types";
 import { XP } from "@/lib/curriculum/gamification";
-import { caseStudies } from "@/lib/curriculum/case-studies";
 import { FIGURE_META } from "@/lib/curriculum/figure-meta";
 
 type W = [string, string]; // [severity, message]
@@ -146,28 +145,17 @@ const figIds = new Set(FIGURE_META.map((f) => f.figure as string));
 for (const f of usedFigures)
   if (!figIds.has(f))
     log("consistency", "HIGH", `figure "${f}" referenced by lessons but NOT in FIGURE_META (no library attribution)`);
-// figures in deep blocks only — FIGURE_META.scan() ignores deep, so these
-// never get library attribution
+// figures in deep blocks only — FIGURE_META.scan() now includes deep, so
+// nothing should be missing
 const deepOnlyFigs = new Set<string>();
 for (const L of LESSONS) for (const b of L.deep ?? [])
   if (b.kind === "diagram" && !usedFigures.has((b as { figure: string }).figure))
     deepOnlyFigs.add((b as { figure: string }).figure);
 for (const f of deepOnlyFigs)
   log("consistency", "MED", `figure "${f}" appears ONLY in a deep-dive — FIGURE_META scan misses it`);
-console.log(`  caseStudies: ${caseStudies.length}`);
-for (const cs of caseStudies) {
-  if (!cs || typeof cs !== "object") continue;
-  if (!Array.isArray(cs.chips) || cs.chips.length === 0) log("thin", "HIGH", `case ${cs.id}: no chips`);
-  const slots = (typeof cs.template === "string" ? cs.template.match(/\{\d+\}/g) : null)?.length ?? 0;
-  if (!Array.isArray(cs.answers) || cs.answers.length !== slots)
-    log("consistency", "HIGH", `case ${cs.id}: answers=${cs.answers?.length} vs slots=${slots}`);
-}
 
 // copy claims: tools
-console.log(`  TOOLS.length=${33}`);
-// "all 14 modules" claim:
-// XP: verify no hardcoded XP values that disagree with central constants
-// (checks in runtime dimension via grep outside this script)
+console.log(`  TOOLS.length=33`);
 
 // ================= DIMENSION 3: LANGUAGE =================
 console.log("=== D3: LANGUAGE SCAN ===");

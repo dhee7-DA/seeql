@@ -23,7 +23,9 @@ function scan(): FigureMeta[] {
   const seen = new Map<FigureId, FigureMeta>();
   for (const m of MODULES) {
     for (const l of m.lessons) {
-      for (const b of l.blocks) {
+      // theory blocks AND deep-dive blocks both carry diagrams — figures that
+      // only appear in a deep tab still belong on the library wall
+      for (const b of [...l.blocks, ...(l.deep ?? [])]) {
         if (b.kind === "diagram" && !seen.has(b.figure)) {
           seen.set(b.figure, {
             figure: b.figure,
@@ -52,7 +54,9 @@ export function figureMetaOf(id: FigureId): FigureMeta | undefined {
 
 /** All lessons a figure appears in (rarely more than one). */
 export function lessonsUsingFigure(id: FigureId) {
-  return LESSONS.filter((l) => l.blocks.some((b) => b.kind === "diagram" && b.figure === id));
+  return LESSONS.filter((l) =>
+    [...l.blocks, ...(l.deep ?? [])].some((b) => b.kind === "diagram" && b.figure === id),
+  );
 }
 
 const UPPERCASE = new Set(["fk", "pk", "sql", "cte", "vs", "null", "ai"]);
