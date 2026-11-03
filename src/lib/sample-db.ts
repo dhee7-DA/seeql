@@ -13,6 +13,13 @@ export const SAMPLE_TABLES = [
   "products",
   "suppliers",
   "customers",
+  "dim_date",
+  "dim_product",
+  "dim_customer",
+  "dim_store",
+  "fact_sales",
+  "fact_returns",
+  "events_dirty",
 ] as const;
 
 const DDL: string[] = [
@@ -85,6 +92,72 @@ const DDL: string[] = [
     debit_cents INTEGER NOT NULL DEFAULT 0,
     credit_cents INTEGER NOT NULL DEFAULT 0,
     memo TEXT NOT NULL
+  )`,
+  // ---- Module 14 · Dimensional modeling: the warehouse layer, built FROM the storefront ----
+  `CREATE TABLE IF NOT EXISTS dim_date (
+    date_key INTEGER PRIMARY KEY,
+    iso_date TEXT NOT NULL,
+    month TEXT NOT NULL,
+    month_name TEXT NOT NULL,
+    quarter INTEGER NOT NULL,
+    year INTEGER NOT NULL,
+    dow INTEGER NOT NULL,
+    is_weekend INTEGER NOT NULL
+  )`,
+  `CREATE TABLE IF NOT EXISTS dim_product (
+    product_key INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    category TEXT NOT NULL,
+    department TEXT NOT NULL,
+    list_price_cents INTEGER NOT NULL,
+    unit_cost_cents INTEGER NOT NULL
+  )`,
+  `CREATE TABLE IF NOT EXISTS dim_customer (
+    customer_sk INTEGER PRIMARY KEY,
+    customer_id INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    region TEXT NOT NULL,
+    active INTEGER NOT NULL,
+    valid_from TEXT NOT NULL,
+    valid_to TEXT NOT NULL,
+    is_current INTEGER NOT NULL
+  )`,
+  `CREATE TABLE IF NOT EXISTS dim_store (
+    store_key INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    city TEXT NOT NULL,
+    region TEXT NOT NULL
+  )`,
+  `CREATE TABLE IF NOT EXISTS fact_sales (
+    id INTEGER PRIMARY KEY,
+    order_id INTEGER NOT NULL,
+    date_key INTEGER NOT NULL REFERENCES dim_date(date_key),
+    customer_key INTEGER NOT NULL REFERENCES dim_customer(customer_sk),
+    product_key INTEGER NOT NULL REFERENCES dim_product(product_key),
+    store_key INTEGER NOT NULL REFERENCES dim_store(store_key),
+    quantity INTEGER NOT NULL,
+    gross_cents INTEGER NOT NULL,
+    discount_cents INTEGER NOT NULL DEFAULT 0,
+    net_cents INTEGER NOT NULL
+  )`,
+  `CREATE TABLE IF NOT EXISTS fact_returns (
+    id INTEGER PRIMARY KEY,
+    sales_line_id INTEGER NOT NULL REFERENCES fact_sales(id),
+    date_key INTEGER NOT NULL REFERENCES dim_date(date_key),
+    customer_key INTEGER NOT NULL REFERENCES dim_customer(customer_sk),
+    product_key INTEGER NOT NULL REFERENCES dim_product(product_key),
+    store_key INTEGER NOT NULL REFERENCES dim_store(store_key),
+    quantity INTEGER NOT NULL,
+    refund_cents INTEGER NOT NULL
+  )`,
+  // ---- Module 11 · messy-data tier: the hand-me-down event log ----
+  `CREATE TABLE IF NOT EXISTS events_dirty (
+    id INTEGER PRIMARY KEY,
+    event_ts TEXT NOT NULL,
+    user_id INTEGER,
+    action TEXT NOT NULL,
+    page TEXT NOT NULL,
+    amount_cents
   )`,
 ];
 
@@ -418,12 +491,285 @@ function buildFinanceSeed(): { rows: SeedRow[]; counts: Record<string, number> }
 
 export const FINANCE_FACTS = { asOf: FINANCE_AS_OF };
 
+/* ---------------- Module 14 · the warehouse layer ----------------
+ *
+ * Derived from the storefront at load time (fact_sales is literally
+ * order_items joined to non-cancelled orders), so every warehouse number
+ * can be contracted against its source. Four dimensions orbit the fact:
+ * dim_date (425-day spine), dim_product (with a department rollup and
+ * real unit costs), dim_store (4 locations) and dim_customer — an SCD
+ * Type 2 dimension: five buyers moved region during the window, so 16
+ * buyers become 21 versions with half-open [valid_from, valid_to)
+ * windows ('9999-12-31' as the open end). fact_returns re-uses the SAME
+ * dimensions — that conformance is what makes cross-fact analysis safe.
+ */
+
+const TECH_CATEGORIES = new Set(["Electronics", "Audio", "Video", "Accessories", "Wearables"]);
+
+/** unit cost per product id (cents) — hand-set so margin math is real. */
+const UNIT_COST_CENTS: Record<number, number> = {
+  1: 4400, 2: 1700, 3: 2600, 4: 8200, 5: 6400, 6: 3100, 7: 7100, 8: 2100,
+  9: 800, 10: 2300, 11: 1300, 12: 4100, 13: 10500, 14: 900, 15: 3300, 16: 1500,
+};
+
+/** region moves: customer_id → (new region, change date). Five movers turn
+ *  16 buyers into 21 SCD Type 2 versions. */
+const REGION_MOVES: Record<number, Array<[string, string]>> = {
+  1: [["US", "2024-10-01"]],
+  2: [["US", "2024-08-01"]],
+  7: [["EU", "2025-01-15"]],
+  10: [["APAC", "2024-06-15"]],
+  15: [["LATAM", "2024-11-01"]],
+};
+
+const STORES: Array<[string, string, string]> = [
+  ["Flagship Berlin", "Berlin", "EU"],
+  ["Austin Depot", "Austin", "US"],
+  ["Osaka Annex", "Osaka", "APAC"],
+  ["São Paulo Hub", "São Paulo", "LATAM"],
+];
+
+function isoAddDay(iso: string, days: number): string {
+  const d = new Date(`${iso}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+function buildWarehouseSeed(): { rows: SeedRow[]; counts: Record<string, number> } {
+  const rows: SeedRow[] = [];
+  const counts: Record<string, number> = {};
+
+  // dim_date — 2024-01-01 → 2025-02-28, 425 days.
+  let dateKey = 20240101;
+  let spine = 0;
+  {
+    const d = new Date("2024-01-01T00:00:00Z");
+    const end = new Date("2025-02-28T00:00:00Z");
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    while (d <= end) {
+      spine++;
+      const iso = d.toISOString().slice(0, 10);
+      const key = Number(iso.replaceAll("-", ""));
+      const y = d.getUTCFullYear();
+      const m = d.getUTCMonth();
+      const dow = d.getUTCDay(); // 0 = Sunday
+      rows.push({
+        table: "dim_date",
+        values: [key, iso, `${y}-${String(m + 1).padStart(2, "0")}`, monthNames[m], Math.floor(m / 3) + 1, y, dow, dow === 0 || dow === 6 ? 1 : 0],
+      });
+      d.setUTCDate(d.getUTCDate() + 1);
+    }
+    dateKey = Number("20240101");
+    void dateKey;
+  }
+
+  // dim_product — the storefront catalog with the merchandising rollup.
+  PRODUCTS.forEach((p, i) => {
+    const priceCents = Math.round(p[2] * 100);
+    rows.push({
+      table: "dim_product",
+      values: [i + 1, p[0], p[1], TECH_CATEGORIES.has(p[1]) ? "Tech" : "Lifestyle", priceCents, UNIT_COST_CENTS[i + 1]],
+    });
+  });
+
+  // dim_store — four locations.
+  STORES.forEach((s, i) => rows.push({ table: "dim_store", values: [i + 1, s[0], s[1], s[2]] }));
+
+  // dim_customer — SCD Type 2. Versions per buyer in id order; the
+  // surrogate key (customer_sk) is the fact's handle, not customer_id.
+  const CUSTOMER_SIGNUP = new Map<number, string>();
+  const CUSTOMER_ACTIVE = new Map<number, number>();
+  const CUSTOMER_NAME = new Map<number, string>();
+  let sk = 0;
+  const versionOf = new Map<number, Array<{ sk: number; validFrom: string; validTo: string; region: string }>>();
+  CUSTOMERS.forEach((c, i) => {
+    const cid = i + 1;
+    CUSTOMER_SIGNUP.set(cid, c[5]);
+    CUSTOMER_ACTIVE.set(cid, c[4]);
+    CUSTOMER_NAME.set(cid, c[0]);
+    const moves = REGION_MOVES[cid] ?? [];
+    // half-open windows: [from, to) — the dimension's history starts BEFORE
+    // the source's (1900-01-01) so every sale date resolves; the buyer's
+    // ORIGINAL region holds until the first move date, each move opens the
+    // next version, and the current one runs to the open end.
+    const versions: Array<{ region: string; from: string; to: string }> = [];
+    for (let v = 0; v <= moves.length; v++) {
+      versions.push({
+        region: v === 0 ? c[3] : moves[v - 1][0],
+        from: v === 0 ? "1900-01-01" : moves[v - 1][1],
+        to: v < moves.length ? moves[v][1] : "9999-12-31",
+      });
+    }
+    const list: Array<{ sk: number; validFrom: string; validTo: string; region: string }> = [];
+    for (const v of versions) {
+      sk++;
+      rows.push({
+        table: "dim_customer",
+        values: [sk, cid, c[0], v.region, c[4], v.from, v.to, v.to === "9999-12-31" ? 1 : 0],
+      });
+      list.push({ sk, validFrom: v.from, validTo: v.to, region: v.region });
+    }
+    versionOf.set(cid, list);
+  });
+
+  /** as-of resolution: the version whose half-open window contains `date`. */
+  const resolveSk = (cid: number, date: string): number => {
+    const list = versionOf.get(cid)!;
+    const hit = list.find((v) => date >= v.validFrom && date < v.validTo);
+    return (hit ?? list[list.length - 1]).sk;
+  };
+
+  // fact_sales — one row per order LINE of a non-cancelled order.
+  const storefront = buildSeed();
+  const orderById = new Map<number, { customer_id: number; created_at: string }>();
+  for (const r of storefront.rows) {
+    if (r.table === "orders") orderById.set(r.values[0] as number, { customer_id: r.values[1] as number, created_at: r.values[4] as string });
+  }
+  let factId = 0;
+  const facts: Array<{ id: number; orderId: number; dateKey: number; sk: number; productKey: number; storeKey: number; qty: number; gross: number; discount: number; net: number; saleDate: string }> = [];
+  for (const r of storefront.rows) {
+    if (r.table !== "order_items") continue;
+    const orderId = r.values[1] as number;
+    const order = orderById.get(orderId)!;
+    // the operational status lives on the order — cancelled never sold
+    const status = storefront.rows.find((o) => o.table === "orders" && o.values[0] === orderId)!.values[2] as string;
+    if (status === "cancelled") continue;
+    factId++;
+    const saleDate = order.created_at;
+    const dateKey = Number(saleDate.replaceAll("-", ""));
+    const qty = r.values[3] as number;
+    const gross = Math.round((r.values[4] as number) * 100) * qty;
+    const discount = factId % 8 === 3 ? Math.round(gross * 0.1) : 0;
+    const fact = {
+      id: factId,
+      orderId,
+      dateKey,
+      sk: resolveSk(order.customer_id, saleDate),
+      productKey: r.values[2] as number,
+      storeKey: ((orderId - 1) * 7 + 3) % 4 + 1,
+      qty,
+      gross,
+      discount,
+      net: gross - discount,
+      saleDate,
+    };
+    facts.push(fact);
+    rows.push({
+      table: "fact_sales",
+      values: [fact.id, fact.orderId, fact.dateKey, fact.sk, fact.productKey, fact.storeKey, fact.qty, fact.gross, fact.discount, fact.net],
+    });
+  }
+
+  // fact_returns — a slice of sold lines coming back, re-using the SAME
+  // dimensions (conformance): the return date resolves the customer afresh.
+  let returnId = 0;
+  for (const f of facts) {
+    if (f.id % 17 !== 5) continue;
+    returnId++;
+    const returnDate = isoAddDay(f.saleDate, 3 + (f.id % 10)) > "2025-02-28" ? "2025-02-28" : isoAddDay(f.saleDate, 3 + (f.id % 10));
+    const returnKey = Number(returnDate.replaceAll("-", ""));
+    const custId = [...versionOf.entries()].find(([, list]) => list.some((v) => v.sk === f.sk))![0];
+    rows.push({
+      table: "fact_returns",
+      values: [returnId, f.id, returnKey, resolveSk(custId, returnDate), f.productKey, f.storeKey, 1, Math.round(f.net / f.qty)],
+    });
+  }
+
+  for (const t of ["dim_date", "dim_product", "dim_customer", "dim_store", "fact_sales", "fact_returns"]) {
+    counts[t] = rows.filter((r) => r.table === t).length;
+  }
+  void spine;
+  return { rows, counts };
+}
+
+export const WAREHOUSE_FACTS = {
+  spine: 425,
+  buyers: 16,
+  versions: 21,
+  movers: 5,
+  stores: 4,
+  departments: ["Tech", "Lifestyle"],
+  openEnd: "9999-12-31",
+};
+
+/* ---------------- Module 11 · the hand-me-down event log ----------------
+ *
+ * 627 rows, January 2025, deterministic by construction. Six planted dirt
+ * classes with exact counts (verified by scripts/warehouse-facts.ts):
+ * replays (exact duplicate rows — 38 single pairs plus one 8-copy burst),
+ * anonymous traffic (user_id NULL), bot orphans (ids 901+), drifted
+ * timestamps (space instead of T), whitespace pages, and broken money
+ * (amounts that arrived as text). The fingerprint (event_ts, user,
+ * canonical action, trimmed page, amount) dedupes to a clean set with
+ * keep-first provenance; the publish gate re-checks every count.
+ */
+
+const DIRTY_ACTION_VARIANTS = [
+  "page_view", "Page_View", "page_view ", "PAGE_VIEW", // page_view × 4
+  "product_view", "Product_View", // product_view × 2
+  "add_to_cart", " add_to_cart", // add_to_cart × 2
+  "checkout", // checkout × 1
+] as const;
+const DIRTY_PAGE_VARIANTS = ["home", " home", "catalog", "catalog ", "cart", "pay", "confirm", "account"] as const;
+
+function buildDirtyEventsSeed(): { rows: SeedRow[]; counts: Record<string, number> } {
+  const rows: SeedRow[] = [];
+  // user pool: user 5 is the whale (the burst belongs to it)
+  const pool: number[] = [];
+  for (let u = 1; u <= 16; u++) for (let w = 0; w < (u === 5 ? 10 : 2); w++) pool.push(u);
+
+  const base: Array<{ ts: string; user: number | null; action: string; page: string; amount: number | string | null }> = [];
+  for (let i = 1; i <= 582; i++) {
+    // timestamps: 2025-01-01T00:01:40Z + i·4600s — one per ~77 minutes
+    const epoch = 1735689700 + i * 4600 + (i % 13) * 7;
+    const iso = new Date(epoch * 1000).toISOString().slice(0, 19);
+    const drifted = i % 7 === 2 ? iso.replace("T", " ") : iso;
+    let user: number | null;
+    if (i % 23 === 3) user = null; // anonymous
+    else if ((i - 9) % 23 === 0 && i <= 377) user = 900 + Math.ceil(i / 23) - 0; // bot orphan
+    else if (i === 123) user = 5; // the burst's owner
+    else user = pool[i % pool.length];
+    const action = DIRTY_ACTION_VARIANTS[i % 9];
+    const page = DIRTY_PAGE_VARIANTS[i % 8];
+    const isCheckout = action === "checkout";
+    let amount: number | string | null = isCheckout ? 1500 + ((i * 7) % 235) * 100 : null;
+    base.push({ ts: drifted, user, action, page, amount });
+  }
+  // five broken-money rows: checkout amounts that arrived as text
+  const checkoutRows = base.map((b, idx) => ({ b, idx })).filter(({ b }) => b.action === "checkout" && b.amount !== null);
+  for (const { b } of checkoutRows.slice(4, 9)) b.amount = ["12,500", "n/a", "3,140.50", "—", "980"][checkoutRows.findIndex(({ b: x }) => x === b) % 5] ?? "n/a";
+  // money contract: integer amounts sum to exactly 3,217,147 cents
+  let sum = 0;
+  for (const b of base) if (typeof b.amount === "number") sum += b.amount;
+  const lastNumeric = [...base].reverse().find((b) => typeof b.amount === "number")!;
+  lastNumeric.amount = (lastNumeric.amount as number) + (3217147 - sum);
+
+  // replays: 38 exact copies of spread known-user rows + one 8-copy burst
+  const replaySources: number[] = [];
+  for (let k = 0; replaySources.length < 38 && k < base.length; k += 3) {
+    const row = base[k];
+    if (row.user !== null && row.user < 900) replaySources.push(k);
+  }
+  const all: Array<typeof base[number]> = [...base];
+  for (const src of replaySources) all.push({ ...base[src] });
+  for (let c = 0; c < 7; c++) all.push({ ...base[122] }); // the burst (row 123, user 5)
+
+  all.forEach((r, idx) => rows.push({ table: "events_dirty", values: [idx + 1, r.ts, r.user, r.action, r.page, r.amount] }));
+
+  const counts = { events_dirty: rows.length };
+  return { rows, counts };
+}
+
+export const DIRTY_FACTS = { window: "2025-01", raw: 627, clean: 582, quarantined: 45 };
+
 /* ---------------- lifecycle ---------------- */
 
 async function insertSeed() {
   const storefront = buildSeed();
   const finance = buildFinanceSeed();
-  const rows = [...storefront.rows, ...finance.rows];
+  const warehouse = buildWarehouseSeed();
+  const dirty = buildDirtyEventsSeed();
+  const rows = [...storefront.rows, ...finance.rows, ...warehouse.rows, ...dirty.rows];
   const statements: Array<[string, Array<string | number | null>]> = [];
   const columns: Record<string, string[]> = {
     customers: ["id", "name", "email", "city", "region", "active", "created_at"],
@@ -435,6 +781,13 @@ async function insertSeed() {
     payments: ["id", "invoice_id", "paid_on", "amount_cents", "method"],
     expenses: ["id", "category", "vendor", "spent_on", "amount_cents"],
     ledger_entries: ["id", "entry_date", "account", "debit_cents", "credit_cents", "memo"],
+    dim_date: ["date_key", "iso_date", "month", "month_name", "quarter", "year", "dow", "is_weekend"],
+    dim_product: ["product_key", "name", "category", "department", "list_price_cents", "unit_cost_cents"],
+    dim_customer: ["customer_sk", "customer_id", "name", "region", "active", "valid_from", "valid_to", "is_current"],
+    dim_store: ["store_key", "name", "city", "region"],
+    fact_sales: ["id", "order_id", "date_key", "customer_key", "product_key", "store_key", "quantity", "gross_cents", "discount_cents", "net_cents"],
+    fact_returns: ["id", "sales_line_id", "date_key", "customer_key", "product_key", "store_key", "quantity", "refund_cents"],
+    events_dirty: ["id", "event_ts", "user_id", "action", "page", "amount_cents"],
   };
   for (const r of rows) {
     const cols = columns[r.table];
@@ -444,7 +797,39 @@ async function insertSeed() {
       r.values,
     ]);
   }
-  await db.$transaction(statements.map(([sql, args]) => db.$executeRawUnsafe(sql, ...args)));
+  await execBatched(statements);
+}
+
+/** Execute many parameterized statements in one transaction, chunked into
+ *  multi-row INSERTs where the statements share a table. 1,600 single-row
+ *  round-trips take minutes; ~30 chunked statements take under a second. */
+async function execBatched(statements: Array<[string, Array<string | number | null>]>): Promise<void> {
+  const INSERT_RE = /^INSERT INTO (\w+) \(([^(]+)\) VALUES \(([^)]+)\)$/;
+  const batched: Array<[string, Array<string | number | null>]> = [];
+  let i = 0;
+  while (i < statements.length) {
+    const [sql, args] = statements[i];
+    const m = INSERT_RE.exec(sql);
+    if (!m) {
+      batched.push([sql, args]);
+      i++;
+      continue;
+    }
+    const [, table, cols, oneRow] = m;
+    const width = args.length;
+    const tuples: Array<Array<string | number | null>> = [args];
+    let j = i + 1;
+    while (j < statements.length && tuples.length < 400) {
+      const m2 = INSERT_RE.exec(statements[j][0]);
+      if (!m2 || m2[1] !== table || m2[2] !== cols || statements[j][1].length !== width) break;
+      tuples.push(statements[j][1]);
+      j++;
+    }
+    if (tuples.length === 1) batched.push([sql, args]);
+    else batched.push([`INSERT INTO ${table} (${cols}) VALUES ${tuples.map(() => `(${oneRow})`).join(", ")}`, tuples.flat()]);
+    i = j;
+  }
+  await db.$transaction(batched.map(([sql, args]) => db.$executeRawUnsafe(sql, ...args)));
 }
 
 /** Create tables if missing and seed when empty. Safe to call repeatedly.
@@ -489,29 +874,63 @@ async function runEnsure(): Promise<void> {
     n: number | bigint;
   }>;
   if (Number(inv[0]?.n ?? 0) === 0) {
-    const { rows } = buildFinanceSeed();
-    const colsMap: Record<string, string[]> = {
+    await insertTier(buildFinanceSeed(), {
       invoices: ["id", "customer_id", "number", "issued_on", "due_on", "amount_cents", "status"],
       payments: ["id", "invoice_id", "paid_on", "amount_cents", "method"],
       expenses: ["id", "category", "vendor", "spent_on", "amount_cents"],
       ledger_entries: ["id", "entry_date", "account", "debit_cents", "credit_cents", "memo"],
-    };
-    const statements: Array<[string, Array<string | number | null>]> = [];
-    for (const r of rows) {
-      const cs = colsMap[r.table];
-      statements.push([
-        `INSERT INTO ${r.table} (${cs.join(", ")}) VALUES (${cs.map(() => "?").join(", ")})`,
-        r.values,
-      ]);
-    }
-    await db.$transaction(statements.map(([sql, args]) => db.$executeRawUnsafe(sql, ...args)));
+    });
   }
+  // Self-heal for databases seeded before Module 14: storefront and books
+  // present, warehouse missing — insert just the modeling rows.
+  const dim = (await db.$queryRawUnsafe(`SELECT COUNT(*) AS n FROM dim_date`)) as Array<{
+    n: number | bigint;
+  }>;
+  if (Number(dim[0]?.n ?? 0) === 0) {
+    await insertTier(buildWarehouseSeed(), {
+      dim_date: ["date_key", "iso_date", "month", "month_name", "quarter", "year", "dow", "is_weekend"],
+      dim_product: ["product_key", "name", "category", "department", "list_price_cents", "unit_cost_cents"],
+      dim_customer: ["customer_sk", "customer_id", "name", "region", "active", "valid_from", "valid_to", "is_current"],
+      dim_store: ["store_key", "name", "city", "region"],
+      fact_sales: ["id", "order_id", "date_key", "customer_key", "product_key", "store_key", "quantity", "gross_cents", "discount_cents", "net_cents"],
+      fact_returns: ["id", "sales_line_id", "date_key", "customer_key", "product_key", "store_key", "quantity", "refund_cents"],
+    });
+  }
+  // Self-heal for databases seeded before the messy-events tier: the log
+  // arrives after the warehouse — insert just the dirty rows.
+  const ev = (await db.$queryRawUnsafe(`SELECT COUNT(*) AS n FROM events_dirty`)) as Array<{
+    n: number | bigint;
+  }>;
+  if (Number(ev[0]?.n ?? 0) === 0) {
+    await insertTier(buildDirtyEventsSeed(), { events_dirty: ["id", "event_ts", "user_id", "action", "page", "amount_cents"] });
+  }
+}
+
+/** Insert one tier's rows with an explicit column map (self-heal path). */
+async function insertTier(
+  tier: { rows: SeedRow[] },
+  colsMap: Record<string, string[]>,
+): Promise<void> {
+  const statements: Array<[string, Array<string | number | null>]> = [];
+  for (const r of tier.rows) {
+    const cs = colsMap[r.table];
+    statements.push([
+      `INSERT INTO ${r.table} (${cs.join(", ")}) VALUES (${cs.map(() => "?").join(", ")})`,
+      r.values,
+    ]);
+  }
+  await execBatched(statements);
 }
 
 /** Drop + recreate + reseed everything. */
 export async function resetDatabase(): Promise<Record<string, number>> {
-  for (const t of SAMPLE_TABLES) await db.$executeRawUnsafe(`DROP TABLE IF EXISTS ${t}`);
+  await db.$executeRawUnsafe(`PRAGMA foreign_keys = OFF`);
+  try {
+    for (const t of SAMPLE_TABLES) await db.$executeRawUnsafe(`DROP TABLE IF EXISTS ${t}`);
+  } finally {
+    await db.$executeRawUnsafe(`PRAGMA foreign_keys = ON`);
+  }
   for (const stmt of DDL) await db.$executeRawUnsafe(stmt);
   await insertSeed();
-  return { ...buildSeed().counts, ...buildFinanceSeed().counts };
+  return { ...buildSeed().counts, ...buildFinanceSeed().counts, ...buildWarehouseSeed().counts, ...buildDirtyEventsSeed().counts };
 }
