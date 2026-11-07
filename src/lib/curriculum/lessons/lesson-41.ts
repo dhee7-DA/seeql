@@ -174,7 +174,7 @@ RETURNING id, name;   -- 2 rows: the two apparel items, re-priced`,
       prompt: "`INSERT INTO products (…) SELECT … FROM products WHERE category = 'Archived'` — and no product is archived. Result?",
       choices: [
         "An error — inserts require at least one row",
-        "One empty placeholder row lands",
+        "One empty stub row lands",
         "Zero rows land, no error — the statement did exactly what the SELECT told it",
         "The last inserted row is repeated",
       ],

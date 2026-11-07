@@ -7,8 +7,11 @@
 // Module 7 (Data Modification, lessons 41–44 + case study 50),
 // Module 8 (Schema, Views & Beyond, lessons 45–49 + case study 51),
 // Module 9 (SQL for Finance, lessons 52–57),
-// Module 10 (Window Functions Masterclass, lessons 58–63) and
-// Module 11 (Query Performance & Index Design, lesson 64).
+// Module 10 (Window Functions Masterclass, lessons 58–63),
+// Module 11 (Query Performance & Index Design, lesson 64),
+// Module 14 (Dimensional Modeling & the Warehouse, lessons 65–72),
+// Module 15 (Messy Data at Scale, lessons 73–75) and
+// Module 16 (SQL Dialects & Portability, lessons 76–78).
 import type { Lesson } from "../types";
 import type { Mcq } from "../types";
 import { LC_SQL50_COUNT, LC_DATAFIN_COUNT, LC_SECTION_COUNT } from "@/lib/leetcode/lc-meta";
@@ -76,6 +79,20 @@ import { lesson61 } from "./lesson-61";
 import { lesson62 } from "./lesson-62";
 import { lesson63 } from "./lesson-63";
 import { lesson64 } from "./lesson-64";
+import { lesson65 } from "./lesson-65";
+import { lesson66 } from "./lesson-66";
+import { lesson67 } from "./lesson-67";
+import { lesson68 } from "./lesson-68";
+import { lesson69 } from "./lesson-69";
+import { lesson70 } from "./lesson-70";
+import { lesson71 } from "./lesson-71";
+import { lesson72 } from "./lesson-72";
+import { lesson73 } from "./lesson-73";
+import { lesson74 } from "./lesson-74";
+import { lesson75 } from "./lesson-75";
+import { lesson76 } from "./lesson-76";
+import { lesson77 } from "./lesson-77";
+import { lesson78 } from "./lesson-78";
 // MCQ expansion banks — per-lesson extra quiz decks (audited by
 // scripts/mcq-audit-500.ts; ids continue each lesson's inline sequence,
 // e.g. lesson-01 → l1-q13…l1-q58). Appended in place below so the lesson
@@ -113,6 +130,9 @@ for (const l of [
   lesson41, lesson42, lesson43, lesson44, lesson45, lesson46, lesson47, lesson48,
   lesson49, lesson50, lesson51, lesson52, lesson53, lesson54, lesson55, lesson56,
   lesson57, lesson58, lesson59, lesson60, lesson61, lesson62, lesson63, lesson64,
+  lesson65, lesson66, lesson67, lesson68, lesson69, lesson70, lesson71, lesson72,
+  lesson73, lesson74, lesson75,
+  lesson76, lesson77, lesson78,
 ]) {
   const extra = LESSON_EXTRA_MCQS.get(l.num);
   if (extra && extra.length) l.mcqs.push(...extra);
@@ -183,6 +203,20 @@ export const LESSONS: Lesson[] = [
   lesson62,
   lesson63,
   lesson64,
+  lesson65,
+  lesson66,
+  lesson67,
+  lesson68,
+  lesson69,
+  lesson70,
+  lesson71,
+  lesson72,
+  lesson73,
+  lesson74,
+  lesson75,
+  lesson76,
+  lesson77,
+  lesson78,
 ];
 
 export interface ModuleInfo {
@@ -292,6 +326,33 @@ export const MODULES: Array<ModuleInfo & { lessons: Lesson[] }> = [
     blurb:
       "The discipline beyond CREATE INDEX: the storefront's zero-index secret, reading EXPLAIN QUERY PLAN as a contract (SCAN vs SEARCH vs the temp b-trees), selectivity arithmetic and the planner's verdict, composite design (equality first, range last), covering indexes, the index-hostile patterns — functions on columns, leading wildcards, cross-column ORs — and the measure → design → verify loop with the write cost owned knowingly.",
     lessons: [lesson64],
+  },
+  {
+    id: "dimensional",
+    num: 14,
+    title: "Dimensional Modeling & the Warehouse",
+    level: "Expert",
+    blurb:
+      "The warehouse, built from the store you already know: OLAP vs OLTP and why the board's questions need a second home, the star schema's grain contract and surrogate keys, SCD Type 2 history that answers as-of questions, the OLAP grammar of rollups and ratios, the hand-me-down event log triaged and cleaned through a gated staging pattern, conformed dimensions that let two facts share one vocabulary, and the metrics mart — materialized, reconciled and gated so dashboards read blind.",
+    lessons: [lesson65, lesson66, lesson67, lesson68, lesson69, lesson70, lesson71, lesson72],
+  },
+  {
+    id: "messy-scale",
+    num: 15,
+    title: "Messy Data at Scale",
+    level: "Expert",
+    blurb:
+      "The firehose: a deterministic million-row event log with the same six dirt classes you cleaned at 627 rows — replays, anonymous users, bots, drifted timestamps, padded spellings, money that arrived as text — priced honestly (13 ms to count, 45 ms to filter, 470 ms to fold), indexed with the measure-design-verify loop (covering, composite, expression and partial trees against a visible write tax), and made scale-proof: the four anti-patterns with million-row receipts, each rewritten and proven output-identical.",
+    lessons: [lesson73, lesson74, lesson75],
+  },
+  {
+    id: "dialects",
+    num: 16,
+    title: "SQL Dialects & Portability",
+    level: "Expert",
+    blurb:
+      "One language, many accents: the dialect map (DATEDIFF vs DATE_DIFF vs julianday, CONCAT vs ||, TOP vs LIMIT, ISNULL vs NVL vs IFNULL), the quiet semantic forks of types and NULLs (integer division, silent casts, NULL sort placement, three-valued logic with engines attached), and the portability playbook — QUALIFY rewritten as the standard CTE, ARRAY/STRUCT shimmed through json_extract, INTERVAL as modifier strings, NULLS LAST as a boolean key — every translation graded live and proven output-identical.",
+    lessons: [lesson76, lesson77, lesson78],
   },
   {
     id: "leetcode-sql50",

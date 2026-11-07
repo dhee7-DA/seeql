@@ -62,14 +62,18 @@ GROUP BY dd.year, dd.quarter, d.department;`,
   ["The gate: shares", "Quality gate 3 — every quarter's shares sum to 100 (±0.1 rounding slack). Return per-quarter sums and the count of violations.", ["SUM(share) OVER (PARTITION BY quarter) on the grid build; violations = |sum − 100| > 0.1.", "Rounding slack is honest; structural drift is not."], "hard",
     `SELECT COUNT(*) AS broken_quarters
 FROM (
-  SELECT dd.quarter,
-         SUM(ROUND(SUM(f.net_cents) * 100.0
-             / SUM(SUM(f.net_cents)) OVER (PARTITION BY dd.quarter), 1)) AS share_sum
-  FROM fact_sales f
-  JOIN dim_date dd ON dd.date_key = f.date_key
-  JOIN dim_product d ON d.product_key = f.product_key
-  WHERE dd.year = 2024
-  GROUP BY dd.quarter, d.department
+  SELECT quarter, SUM(share) AS share_sum
+  FROM (
+    SELECT dd.quarter AS quarter,
+           ROUND(SUM(f.net_cents) * 100.0
+                 / SUM(SUM(f.net_cents)) OVER (PARTITION BY dd.quarter), 1) AS share
+    FROM fact_sales f
+    JOIN dim_date dd ON dd.date_key = f.date_key
+    JOIN dim_product d ON d.product_key = f.product_key
+    WHERE dd.year = 2024
+    GROUP BY dd.quarter, d.department
+  )
+  GROUP BY quarter
 )
 WHERE ABS(share_sum - 100) > 0.1;`,
     [["share_sum\\s*=\\s*100", "Exact equality fails on rounding — the gate allows ±0.1; state the slack."],

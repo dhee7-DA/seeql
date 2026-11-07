@@ -267,7 +267,7 @@ GROUP BY b.label ORDER BY MIN(b.lo);   -- small 8 · medium 30 · large 40 · ju
         "A system table that must exist beforehand",
         "An inline table constructor — rows you type directly in SQL, given names by the CTE header",
         "A function that generates ranges",
-        "A placeholder for the orders table",
+        "A stand-in for the orders table",
       ],
       answer: 1,
       why: "VALUES (…),(…) builds a literal table on the fly; the CTE names it and its columns: bands(lo, hi, label). Four typed thresholds become a joinable table — no DDL, no temp table, one query.",

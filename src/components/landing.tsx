@@ -574,7 +574,7 @@ export function Landing({
             <div className="mt-8 grid gap-6 lg:grid-cols-2 lg:gap-16">
               <h2 className="spade-display flex items-center gap-4 text-3xl text-zinc-100 sm:text-4xl">
                 <Icon3D name="cap" size={44} anim="bob" className="hidden sm:block" />
-                Nine modules. One database.
+                {MODULES.length} modules. One database.
               </h2>
               <p className="text-[15px] leading-[1.7] text-zinc-400 lg:pt-1.5">
                 {MODULES.length} modules on one real storefront database — foundations,

@@ -49,7 +49,7 @@ JOIN dim_date dd ON dd.date_key = f.date_key
 JOIN dim_product d ON d.product_key = f.product_key
 WHERE dd.year = 2024
 GROUP BY dd.quarter, d.department
-ORDER BY dd.quarter, net_dollars DESC;`,
+ORDER BY dd.quarter, d.department;`,
     [["over\\s*\\(\\s*\\)", "The empty OVER shares against the company — the parent here is the QUARTER."], ["where.*department", "No department filter — both departments' shares must sum to 100 per quarter."]], true],
   ["Top product per quarter", "The champion drill: each 2024 quarter's biggest product by net — product name, quarter, net. Five windows deep but only one layered SELECT.", ["Inner layer: quarter × product net + ROW_NUMBER partitioned by quarter ordered by net DESC; outer: rn = 1.", "Join dim_product for the name in the outer SELECT — or carry it through."], "hard",
     `SELECT quarter, product_name,

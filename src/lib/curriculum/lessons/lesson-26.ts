@@ -384,7 +384,7 @@ ORDER BY o.total DESC;`,
   deep: [
     {
       kind: "mind",
-      text: "EXISTS is a **per-row phone call**: for every outer row, dial the inner query with that row's key and listen for a single bit — *anyone home?* The inner query never ships data back; the projection (`SELECT 1`) is a placeholder the engine ignores, because the only product of the call is true or false. That reframing explains every EXISTS quirk at once: why `SELECT 1` is enough, why the call stops early, and why a NULL in some other column can't poison it the way it poisons NOT IN — a verdict about row *existence* has no NULL value to trip over.",
+      text: "EXISTS is a **per-row phone call**: for every outer row, dial the inner query with that row's key and listen for a single bit — *anyone home?* The inner query never ships data back; the projection (`SELECT 1`) is a stand-in the engine ignores, because the only product of the call is true or false. That reframing explains every EXISTS quirk at once: why `SELECT 1` is enough, why the call stops early, and why a NULL in some other column can't poison it the way it poisons NOT IN — a verdict about row *existence* has no NULL value to trip over.",
     },
     {
       kind: "engine",

@@ -18011,7 +18011,39 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
       ],
       [
         "table",
+        "dim_customer"
+      ],
+      [
+        "table",
+        "dim_date"
+      ],
+      [
+        "table",
+        "dim_product"
+      ],
+      [
+        "table",
+        "dim_store"
+      ],
+      [
+        "table",
+        "events_dirty"
+      ],
+      [
+        "table",
+        "events_scale"
+      ],
+      [
+        "table",
         "expenses"
+      ],
+      [
+        "table",
+        "fact_returns"
+      ],
+      [
+        "table",
+        "fact_sales"
       ],
       [
         "table",
@@ -18040,6 +18072,10 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
       [
         "table",
         "suppliers"
+      ],
+      [
+        "table",
+        "webhook_events"
       ]
     ]
   },
@@ -89436,6 +89472,3809 @@ export const EXPECTED: Record<string, { columns: string[]; rows: Array<Array<str
       [
         13,
         13
+      ]
+    ]
+  },
+  "l65-p1": {
+    "columns": [
+      "orders_first_week"
+    ],
+    "rows": [
+      [
+        4
+      ]
+    ]
+  },
+  "l65-p2": {
+    "columns": [
+      "fact_lines",
+      "net_dollars"
+    ],
+    "rows": [
+      [
+        62,
+        9573.78
+      ]
+    ]
+  },
+  "l65-p3": {
+    "columns": [
+      "source_lines",
+      "fact_lines"
+    ],
+    "rows": [
+      [
+        3,
+        3
+      ]
+    ]
+  },
+  "l65-p4": {
+    "columns": [
+      "referencing_lines",
+      "product_name"
+    ],
+    "rows": [
+      [
+        11,
+        "Smart Watch S"
+      ]
+    ]
+  },
+  "l65-p5": {
+    "columns": [
+      "year",
+      "quarter",
+      "net_dollars"
+    ],
+    "rows": [
+      [
+        2024,
+        1,
+        9573.78
+      ],
+      [
+        2024,
+        2,
+        7322.81
+      ],
+      [
+        2024,
+        3,
+        6416.43
+      ],
+      [
+        2024,
+        4,
+        6142.17
+      ]
+    ]
+  },
+  "l65-p6": {
+    "columns": [
+      "id",
+      "status",
+      "item_writes"
+    ],
+    "rows": [
+      [
+        1,
+        "pending",
+        4
+      ]
+    ]
+  },
+  "l65-p7": {
+    "columns": [
+      "department",
+      "net_dollars",
+      "company_net_dollars"
+    ],
+    "rows": [
+      [
+        "Tech",
+        30702.42,
+        33234.66
+      ],
+      [
+        "Lifestyle",
+        2532.24,
+        33234.66
+      ]
+    ]
+  },
+  "l65-p8": {
+    "columns": [
+      "sale_days",
+      "fact_lines"
+    ],
+    "rows": [
+      [
+        79,
+        239
+      ]
+    ]
+  },
+  "l65-p9": {
+    "columns": [
+      "source_lines",
+      "cancelled_lines",
+      "fact_lines"
+    ],
+    "rows": [
+      [
+        251,
+        12,
+        239
+      ]
+    ]
+  },
+  "l65-p10": {
+    "columns": [
+      "quarter",
+      "department",
+      "net_dollars",
+      "share_of_quarter_pct"
+    ],
+    "rows": [
+      [
+        1,
+        "Tech",
+        8718.16,
+        91.1
+      ],
+      [
+        1,
+        "Lifestyle",
+        855.62,
+        8.9
+      ],
+      [
+        2,
+        "Tech",
+        6951.57,
+        94.9
+      ],
+      [
+        2,
+        "Lifestyle",
+        371.24,
+        5.1
+      ],
+      [
+        3,
+        "Tech",
+        6017.34,
+        93.8
+      ],
+      [
+        3,
+        "Lifestyle",
+        399.09,
+        6.2
+      ],
+      [
+        4,
+        "Tech",
+        5429.17,
+        88.4
+      ],
+      [
+        4,
+        "Lifestyle",
+        713,
+        11.6
+      ]
+    ]
+  },
+  "l66-p1": {
+    "columns": [
+      "spine_days",
+      "first_key",
+      "last_key"
+    ],
+    "rows": [
+      [
+        425,
+        20240101,
+        20250228
+      ]
+    ]
+  },
+  "l66-p2": {
+    "columns": [
+      "iso_date",
+      "month",
+      "month_name",
+      "quarter",
+      "year",
+      "dow",
+      "is_weekend"
+    ],
+    "rows": [
+      [
+        "2024-02-15",
+        "2024-02",
+        "February",
+        1,
+        2024,
+        4,
+        0
+      ]
+    ]
+  },
+  "l66-p3": {
+    "columns": [
+      "weekend_days",
+      "weekday_days"
+    ],
+    "rows": [
+      [
+        120,
+        305
+      ]
+    ]
+  },
+  "l66-p4": {
+    "columns": [
+      "department",
+      "products"
+    ],
+    "rows": [
+      [
+        "Tech",
+        13
+      ],
+      [
+        "Lifestyle",
+        3
+      ]
+    ]
+  },
+  "l66-p5": {
+    "columns": [
+      "first_sk",
+      "last_sk",
+      "buyers",
+      "versions"
+    ],
+    "rows": [
+      [
+        1,
+        21,
+        16,
+        21
+      ]
+    ]
+  },
+  "l66-p6": {
+    "columns": [
+      "region_july",
+      "region_september"
+    ],
+    "rows": [
+      [
+        "LATAM",
+        "US"
+      ]
+    ]
+  },
+  "l66-p7": {
+    "columns": [
+      "name",
+      "net_dollars"
+    ],
+    "rows": [
+      [
+        "Austin Depot",
+        9685.27
+      ],
+      [
+        "Flagship Berlin",
+        8271.17
+      ],
+      [
+        "São Paulo Hub",
+        8098.03
+      ],
+      [
+        "Osaka Annex",
+        7180.19
+      ]
+    ]
+  },
+  "l66-p8": {
+    "columns": [
+      "fact_lines_carrying_attrs",
+      "department_rows_needed"
+    ],
+    "rows": [
+      [
+        239,
+        2
+      ]
+    ]
+  },
+  "l66-p9": {
+    "columns": [
+      "fact_orders",
+      "source_orders"
+    ],
+    "rows": [
+      [
+        96,
+        96
+      ]
+    ]
+  },
+  "l66-p10": {
+    "columns": [
+      "orphaned_lines"
+    ],
+    "rows": [
+      [
+        0
+      ]
+    ]
+  },
+  "l66-p11": {
+    "columns": [
+      "year",
+      "quarter",
+      "department",
+      "net_dollars"
+    ],
+    "rows": [
+      [
+        2024,
+        1,
+        "Lifestyle",
+        855.62
+      ],
+      [
+        2024,
+        1,
+        "Tech",
+        8718.16
+      ],
+      [
+        2024,
+        2,
+        "Lifestyle",
+        371.24
+      ],
+      [
+        2024,
+        2,
+        "Tech",
+        6951.57
+      ],
+      [
+        2024,
+        3,
+        "Lifestyle",
+        399.09
+      ],
+      [
+        2024,
+        3,
+        "Tech",
+        6017.34
+      ],
+      [
+        2024,
+        4,
+        "Lifestyle",
+        713
+      ],
+      [
+        2024,
+        4,
+        "Tech",
+        5429.17
+      ]
+    ]
+  },
+  "l66-p12": {
+    "columns": [
+      "month_name",
+      "fact_lines"
+    ],
+    "rows": [
+      [
+        "January",
+        20
+      ]
+    ]
+  },
+  "l66-p13": {
+    "columns": [
+      "lines",
+      "net_dollars",
+      "margin_dollars"
+    ],
+    "rows": [
+      [
+        11,
+        4582.02,
+        2167.02
+      ]
+    ]
+  },
+  "l66-p14": {
+    "columns": [
+      "product_key",
+      "name",
+      "department",
+      "net_dollars"
+    ],
+    "rows": [
+      [
+        4,
+        "Noise-Canceling Headset",
+        "Tech",
+        6653.73
+      ],
+      [
+        13,
+        "Smart Watch S",
+        "Tech",
+        4582.02
+      ],
+      [
+        7,
+        "4K Webcam Pro",
+        "Tech",
+        3885.35
+      ],
+      [
+        5,
+        "Studio Desktop Mic",
+        "Tech",
+        3309.33
+      ],
+      [
+        1,
+        "Mechanical Keyboard K1",
+        "Tech",
+        2404.25
+      ]
+    ]
+  },
+  "l66-p15": {
+    "columns": [
+      "inactive_lines",
+      "net_dollars"
+    ],
+    "rows": [
+      [
+        11,
+        1287.35
+      ]
+    ]
+  },
+  "l66-p16": {
+    "columns": [
+      "fact_lines",
+      "spine_days",
+      "product_rows",
+      "customer_versions",
+      "store_rows"
+    ],
+    "rows": [
+      [
+        239,
+        425,
+        16,
+        21,
+        4
+      ]
+    ]
+  },
+  "l67-p1": {
+    "columns": [
+      "region",
+      "buyers"
+    ],
+    "rows": [
+      [
+        "APAC",
+        5
+      ],
+      [
+        "EU",
+        7
+      ],
+      [
+        "LATAM",
+        1
+      ],
+      [
+        "US",
+        3
+      ]
+    ]
+  },
+  "l67-p2": {
+    "columns": [
+      "region",
+      "net_dollars"
+    ],
+    "rows": [
+      [
+        "EU",
+        12508.42
+      ],
+      [
+        "APAC",
+        11346.29
+      ],
+      [
+        "US",
+        8095.84
+      ],
+      [
+        "LATAM",
+        1284.11
+      ]
+    ]
+  },
+  "l67-p3": {
+    "columns": [
+      "sk",
+      "region",
+      "lines",
+      "net_dollars"
+    ],
+    "rows": [
+      [
+        3,
+        "LATAM",
+        5,
+        852.44
+      ]
+    ]
+  },
+  "l67-p4": {
+    "columns": [
+      "customer_id",
+      "name",
+      "versions",
+      "history_from",
+      "history_to"
+    ],
+    "rows": [
+      [
+        1,
+        "Alice Chen",
+        2,
+        "1900-01-01",
+        "9999-12-31"
+      ],
+      [
+        2,
+        "Bruno Silva",
+        2,
+        "1900-01-01",
+        "9999-12-31"
+      ],
+      [
+        7,
+        "Grace Kim",
+        2,
+        "1900-01-01",
+        "9999-12-31"
+      ],
+      [
+        10,
+        "Jamal Wright",
+        2,
+        "1900-01-01",
+        "9999-12-31"
+      ],
+      [
+        15,
+        "Olivia Brown",
+        2,
+        "1900-01-01",
+        "9999-12-31"
+      ]
+    ]
+  },
+  "l67-p5": {
+    "columns": [
+      "broken_buyers"
+    ],
+    "rows": [
+      [
+        0
+      ]
+    ]
+  },
+  "l67-p6": {
+    "columns": [
+      "inverted_windows",
+      "unclosed_currents"
+    ],
+    "rows": [
+      [
+        0,
+        0
+      ]
+    ]
+  },
+  "l67-p7": {
+    "columns": [
+      "region",
+      "net_dollars"
+    ],
+    "rows": [
+      [
+        "EU",
+        7835.57
+      ],
+      [
+        "APAC",
+        4659.78
+      ],
+      [
+        "US",
+        3548.8
+      ],
+      [
+        "LATAM",
+        852.44
+      ]
+    ]
+  },
+  "l67-p8": {
+    "columns": [],
+    "rows": [],
+    "changes": 1
+  },
+  "l67-p9": {
+    "columns": [],
+    "rows": [],
+    "changes": 1
+  },
+  "l67-p10": {
+    "columns": [],
+    "rows": [],
+    "changes": 1
+  },
+  "l67-p11": {
+    "columns": [
+      "region_january",
+      "region_september",
+      "region_february"
+    ],
+    "rows": [
+      [
+        "LATAM",
+        "US",
+        "US"
+      ]
+    ]
+  },
+  "l67-p12": {
+    "columns": [
+      "region"
+    ],
+    "rows": [
+      [
+        "LATAM"
+      ]
+    ]
+  },
+  "l67-p13": {
+    "columns": [
+      "dimension_rows",
+      "current_rows",
+      "buyers"
+    ],
+    "rows": [
+      [
+        21,
+        16,
+        16
+      ]
+    ]
+  },
+  "l68-p1": {
+    "columns": [
+      "year",
+      "quarter",
+      "net_dollars"
+    ],
+    "rows": [
+      [
+        2024,
+        1,
+        9573.78
+      ],
+      [
+        2024,
+        2,
+        7322.81
+      ],
+      [
+        2024,
+        3,
+        6416.43
+      ],
+      [
+        2024,
+        4,
+        6142.17
+      ],
+      [
+        2025,
+        1,
+        3779.47
+      ]
+    ]
+  },
+  "l68-p2": {
+    "columns": [
+      "month",
+      "month_name",
+      "net_dollars"
+    ],
+    "rows": [
+      [
+        "2024-01",
+        "January",
+        3539.91
+      ],
+      [
+        "2024-02",
+        "February",
+        3572.71
+      ],
+      [
+        "2024-03",
+        "March",
+        2461.16
+      ]
+    ]
+  },
+  "l68-p3": {
+    "columns": [
+      "year",
+      "department",
+      "q1",
+      "q2",
+      "q3",
+      "q4"
+    ],
+    "rows": [
+      [
+        2024,
+        "Lifestyle",
+        855.62,
+        371.24,
+        399.09,
+        713
+      ],
+      [
+        2024,
+        "Tech",
+        8718.16,
+        6951.57,
+        6017.34,
+        5429.17
+      ]
+    ]
+  },
+  "l68-p4": {
+    "columns": [
+      "department",
+      "net_dollars",
+      "share_pct"
+    ],
+    "rows": [
+      [
+        "Tech",
+        30702.42,
+        92.4
+      ],
+      [
+        "Lifestyle",
+        2532.24,
+        7.6
+      ]
+    ]
+  },
+  "l68-p5": {
+    "columns": [
+      "quarter",
+      "department",
+      "share_of_quarter_pct"
+    ],
+    "rows": [
+      [
+        1,
+        "Lifestyle",
+        8.9
+      ],
+      [
+        1,
+        "Tech",
+        91.1
+      ],
+      [
+        2,
+        "Lifestyle",
+        5.1
+      ],
+      [
+        2,
+        "Tech",
+        94.9
+      ],
+      [
+        3,
+        "Lifestyle",
+        6.2
+      ],
+      [
+        3,
+        "Tech",
+        93.8
+      ],
+      [
+        4,
+        "Lifestyle",
+        11.6
+      ],
+      [
+        4,
+        "Tech",
+        88.4
+      ]
+    ]
+  },
+  "l68-p6": {
+    "columns": [
+      "quarter",
+      "product_name",
+      "net_dollars"
+    ],
+    "rows": [
+      [
+        1,
+        "Noise-Canceling Headset",
+        2511.06
+      ],
+      [
+        2,
+        "Smart Watch S",
+        1418.91
+      ],
+      [
+        3,
+        "Noise-Canceling Headset",
+        1331.03
+      ],
+      [
+        4,
+        "Smart Watch S",
+        1188.15
+      ]
+    ]
+  },
+  "l68-p7": {
+    "columns": [
+      "year",
+      "net_dollars",
+      "top_buyer_share_pct"
+    ],
+    "rows": [
+      [
+        2024,
+        5249.71,
+        17.8
+      ],
+      [
+        2025,
+        1175.99,
+        31.1
+      ]
+    ]
+  },
+  "l68-p8": {
+    "columns": [
+      "month",
+      "net_dollars",
+      "mom_delta"
+    ],
+    "rows": [
+      [
+        "2024-01",
+        3539.91,
+        null
+      ],
+      [
+        "2024-02",
+        3572.71,
+        32.8
+      ],
+      [
+        "2024-03",
+        2461.16,
+        -1111.55
+      ],
+      [
+        "2024-04",
+        2424.89,
+        -36.27
+      ],
+      [
+        "2024-05",
+        2878.58,
+        453.69
+      ],
+      [
+        "2024-06",
+        2019.34,
+        -859.24
+      ],
+      [
+        "2024-07",
+        1043.68,
+        -975.66
+      ],
+      [
+        "2024-08",
+        2289.97,
+        1246.29
+      ],
+      [
+        "2024-09",
+        3082.78,
+        792.81
+      ],
+      [
+        "2024-10",
+        2952.55,
+        -130.23
+      ],
+      [
+        "2024-11",
+        1105.45,
+        -1847.1
+      ],
+      [
+        "2024-12",
+        2084.17,
+        978.72
+      ],
+      [
+        "2025-01",
+        1437.66,
+        -646.51
+      ],
+      [
+        "2025-02",
+        2341.81,
+        904.15
+      ]
+    ]
+  },
+  "l68-p9": {
+    "columns": [
+      "day_class",
+      "lines",
+      "net_dollars"
+    ],
+    "rows": [
+      [
+        "weekday",
+        191,
+        26031.87
+      ],
+      [
+        "weekend",
+        48,
+        7202.79
+      ]
+    ]
+  },
+  "l68-p10": {
+    "columns": [
+      "month",
+      "department",
+      "share_of_month_pct"
+    ],
+    "rows": [
+      [
+        "2024-01",
+        "Lifestyle",
+        6.7
+      ],
+      [
+        "2024-01",
+        "Tech",
+        93.3
+      ],
+      [
+        "2024-02",
+        "Lifestyle",
+        14.5
+      ],
+      [
+        "2024-02",
+        "Tech",
+        85.5
+      ],
+      [
+        "2024-03",
+        "Lifestyle",
+        4.1
+      ],
+      [
+        "2024-03",
+        "Tech",
+        95.9
+      ],
+      [
+        "2024-04",
+        "Lifestyle",
+        3.8
+      ],
+      [
+        "2024-04",
+        "Tech",
+        96.2
+      ],
+      [
+        "2024-05",
+        "Lifestyle",
+        9.7
+      ],
+      [
+        "2024-05",
+        "Tech",
+        90.3
+      ],
+      [
+        "2024-06",
+        "Tech",
+        100
+      ],
+      [
+        "2024-07",
+        "Lifestyle",
+        15.5
+      ],
+      [
+        "2024-07",
+        "Tech",
+        84.5
+      ],
+      [
+        "2024-08",
+        "Lifestyle",
+        8.3
+      ],
+      [
+        "2024-08",
+        "Tech",
+        91.7
+      ],
+      [
+        "2024-09",
+        "Lifestyle",
+        1.6
+      ],
+      [
+        "2024-09",
+        "Tech",
+        98.4
+      ],
+      [
+        "2024-10",
+        "Lifestyle",
+        9.4
+      ],
+      [
+        "2024-10",
+        "Tech",
+        90.6
+      ],
+      [
+        "2024-11",
+        "Lifestyle",
+        33.1
+      ],
+      [
+        "2024-11",
+        "Tech",
+        66.9
+      ],
+      [
+        "2024-12",
+        "Lifestyle",
+        3.3
+      ],
+      [
+        "2024-12",
+        "Tech",
+        96.7
+      ],
+      [
+        "2025-01",
+        "Lifestyle",
+        4.7
+      ],
+      [
+        "2025-01",
+        "Tech",
+        95.3
+      ],
+      [
+        "2025-02",
+        "Lifestyle",
+        5.4
+      ],
+      [
+        "2025-02",
+        "Tech",
+        94.6
+      ]
+    ]
+  },
+  "l68-p11": {
+    "columns": [
+      "name",
+      "net_dollars",
+      "rk",
+      "cumulative_share_pct"
+    ],
+    "rows": [
+      [
+        "Noise-Canceling Headset",
+        6653.73,
+        1,
+        20
+      ],
+      [
+        "Smart Watch S",
+        4582.02,
+        2,
+        33.8
+      ],
+      [
+        "4K Webcam Pro",
+        3885.35,
+        3,
+        45.5
+      ],
+      [
+        "Studio Desktop Mic",
+        3309.33,
+        4,
+        55.5
+      ],
+      [
+        "Mechanical Keyboard K1",
+        2404.25,
+        5,
+        62.7
+      ],
+      [
+        "Fitness Band X2",
+        2315.38,
+        6,
+        69.7
+      ],
+      [
+        "Laptop Stand Aluminum",
+        1446.03,
+        7,
+        74
+      ],
+      [
+        "Bluetooth Speaker Mini",
+        1266.15,
+        8,
+        77.8
+      ],
+      [
+        "Wireless Mouse M3",
+        1215.93,
+        9,
+        81.5
+      ],
+      [
+        "Cycling Jersey Pro",
+        1213.1,
+        10,
+        85.1
+      ],
+      [
+        "Ring Light 14\"",
+        1195.9,
+        11,
+        88.7
+      ],
+      [
+        "Desk Mat Extended",
+        1148.02,
+        12,
+        92.2
+      ],
+      [
+        "Yoga Mat Eco 6mm",
+        732.63,
+        13,
+        94.4
+      ],
+      [
+        "USB-C Hub 7-in-1",
+        728.09,
+        14,
+        96.6
+      ],
+      [
+        "Running Socks 3-pack",
+        586.51,
+        15,
+        98.3
+      ],
+      [
+        "HDMI 2.1 Cable 2m",
+        552.24,
+        16,
+        100
+      ]
+    ]
+  },
+  "l68-p12": {
+    "columns": [
+      "department",
+      "rk",
+      "name",
+      "net_dollars"
+    ],
+    "rows": [
+      [
+        "Lifestyle",
+        1,
+        "Cycling Jersey Pro",
+        1213.1
+      ],
+      [
+        "Lifestyle",
+        2,
+        "Yoga Mat Eco 6mm",
+        732.63
+      ],
+      [
+        "Lifestyle",
+        3,
+        "Running Socks 3-pack",
+        586.51
+      ],
+      [
+        "Tech",
+        1,
+        "Noise-Canceling Headset",
+        6653.73
+      ],
+      [
+        "Tech",
+        2,
+        "Smart Watch S",
+        4582.02
+      ],
+      [
+        "Tech",
+        3,
+        "4K Webcam Pro",
+        3885.35
+      ],
+      [
+        "Tech",
+        4,
+        "Studio Desktop Mic",
+        3309.33
+      ],
+      [
+        "Tech",
+        5,
+        "Mechanical Keyboard K1",
+        2404.25
+      ],
+      [
+        "Tech",
+        6,
+        "Fitness Band X2",
+        2315.38
+      ],
+      [
+        "Tech",
+        7,
+        "Laptop Stand Aluminum",
+        1446.03
+      ],
+      [
+        "Tech",
+        8,
+        "Bluetooth Speaker Mini",
+        1266.15
+      ],
+      [
+        "Tech",
+        9,
+        "Wireless Mouse M3",
+        1215.93
+      ],
+      [
+        "Tech",
+        10,
+        "Ring Light 14\"",
+        1195.9
+      ],
+      [
+        "Tech",
+        11,
+        "Desk Mat Extended",
+        1148.02
+      ],
+      [
+        "Tech",
+        12,
+        "USB-C Hub 7-in-1",
+        728.09
+      ],
+      [
+        "Tech",
+        13,
+        "HDMI 2.1 Cable 2m",
+        552.24
+      ]
+    ]
+  },
+  "l68-p13": {
+    "columns": [
+      "month",
+      "net_dollars"
+    ],
+    "rows": [
+      [
+        "2024-01",
+        3301.68
+      ],
+      [
+        "2024-02",
+        3055.85
+      ],
+      [
+        "2024-03",
+        2360.63
+      ],
+      [
+        "2024-04",
+        2333.5
+      ],
+      [
+        "2024-05",
+        2598.73
+      ],
+      [
+        "2024-06",
+        2019.34
+      ],
+      [
+        "2024-07",
+        882.15
+      ],
+      [
+        "2024-08",
+        2100.77
+      ],
+      [
+        "2024-09",
+        3034.42
+      ],
+      [
+        "2024-10",
+        2674.08
+      ],
+      [
+        "2024-11",
+        739.07
+      ],
+      [
+        "2024-12",
+        2016.02
+      ],
+      [
+        "2025-01",
+        1370.75
+      ],
+      [
+        "2025-02",
+        2215.43
+      ],
+      [
+        "ALL",
+        33234.66
+      ]
+    ]
+  },
+  "l68-p14": {
+    "columns": [
+      "month",
+      "net_dollars",
+      "ma3"
+    ],
+    "rows": [
+      [
+        "2024-01",
+        3539.91,
+        3539.91
+      ],
+      [
+        "2024-02",
+        3572.71,
+        3556.31
+      ],
+      [
+        "2024-03",
+        2461.16,
+        3191.26
+      ],
+      [
+        "2024-04",
+        2424.89,
+        2819.59
+      ],
+      [
+        "2024-05",
+        2878.58,
+        2588.21
+      ],
+      [
+        "2024-06",
+        2019.34,
+        2440.94
+      ],
+      [
+        "2024-07",
+        1043.68,
+        1980.53
+      ],
+      [
+        "2024-08",
+        2289.97,
+        1784.33
+      ],
+      [
+        "2024-09",
+        3082.78,
+        2138.81
+      ],
+      [
+        "2024-10",
+        2952.55,
+        2775.1
+      ],
+      [
+        "2024-11",
+        1105.45,
+        2380.26
+      ],
+      [
+        "2024-12",
+        2084.17,
+        2047.39
+      ],
+      [
+        "2025-01",
+        1437.66,
+        1542.43
+      ],
+      [
+        "2025-02",
+        2341.81,
+        1954.55
+      ]
+    ]
+  },
+  "l68-p15": {
+    "columns": [
+      "lines",
+      "net_dollars",
+      "share_of_month_pct"
+    ],
+    "rows": [
+      [
+        12,
+        2674.08,
+        90.6
+      ]
+    ]
+  },
+  "l68-p16": {
+    "columns": [
+      "quarter",
+      "department",
+      "net_dollars",
+      "rk",
+      "quarter_net"
+    ],
+    "rows": [
+      [
+        1,
+        "Tech",
+        8718.16,
+        1,
+        9573.78
+      ],
+      [
+        1,
+        "Lifestyle",
+        855.62,
+        2,
+        9573.78
+      ],
+      [
+        2,
+        "Tech",
+        6951.57,
+        1,
+        7322.81
+      ],
+      [
+        2,
+        "Lifestyle",
+        371.24,
+        2,
+        7322.81
+      ],
+      [
+        3,
+        "Tech",
+        6017.34,
+        1,
+        6416.43
+      ],
+      [
+        3,
+        "Lifestyle",
+        399.09,
+        2,
+        6416.43
+      ],
+      [
+        4,
+        "Tech",
+        5429.17,
+        1,
+        6142.17
+      ],
+      [
+        4,
+        "Lifestyle",
+        713,
+        2,
+        6142.17
+      ]
+    ]
+  },
+  "l69-p1": {
+    "columns": [
+      "raw_rows"
+    ],
+    "rows": [
+      [
+        627
+      ]
+    ]
+  },
+  "l69-p2": {
+    "columns": [
+      "drifted_rows"
+    ],
+    "rows": [
+      [
+        89
+      ]
+    ]
+  },
+  "l69-p3": {
+    "columns": [
+      "unparseable"
+    ],
+    "rows": [
+      [
+        0
+      ]
+    ]
+  },
+  "l69-p4": {
+    "columns": [
+      "anonymous_rows"
+    ],
+    "rows": [
+      [
+        26
+      ]
+    ]
+  },
+  "l69-p5": {
+    "columns": [
+      "bot_rows",
+      "distinct_bots"
+    ],
+    "rows": [
+      [
+        17,
+        17
+      ]
+    ]
+  },
+  "l69-p6": {
+    "columns": [
+      "known_rows"
+    ],
+    "rows": [
+      [
+        584
+      ]
+    ]
+  },
+  "l69-p7": {
+    "columns": [
+      "raw_spellings",
+      "canonical_actions"
+    ],
+    "rows": [
+      [
+        9,
+        4
+      ]
+    ]
+  },
+  "l69-p8": {
+    "columns": [
+      "raw_spellings",
+      "canonical_pages",
+      "padded_rows"
+    ],
+    "rows": [
+      [
+        8,
+        6,
+        163
+      ]
+    ]
+  },
+  "l69-p9": {
+    "columns": [
+      "stored_as",
+      "rows"
+    ],
+    "rows": [
+      [
+        "text",
+        64
+      ]
+    ]
+  },
+  "l69-p10": {
+    "columns": [
+      "money_cents"
+    ],
+    "rows": [
+      [
+        null
+      ]
+    ]
+  },
+  "l69-p11": {
+    "columns": [
+      "n_copies",
+      "groups"
+    ],
+    "rows": [
+      [
+        2,
+        38
+      ],
+      [
+        8,
+        1
+      ]
+    ]
+  },
+  "l69-p12": {
+    "columns": [
+      "fingerprints"
+    ],
+    "rows": [
+      [
+        582
+      ]
+    ]
+  },
+  "l69-p13": {
+    "columns": [
+      "event_ts",
+      "user_id",
+      "action",
+      "copies"
+    ],
+    "rows": [
+      [
+        "2025-01-07T13:12:22",
+        5,
+        "add_to_cart",
+        8
+      ]
+    ]
+  },
+  "l69-p14": {
+    "columns": [
+      "user_id",
+      "raw_events"
+    ],
+    "rows": [
+      [
+        5,
+        153
+      ],
+      [
+        1,
+        31
+      ],
+      [
+        4,
+        31
+      ],
+      [
+        6,
+        31
+      ],
+      [
+        2,
+        30
+      ]
+    ]
+  },
+  "l69-p15": {
+    "columns": [
+      "overlap_rows"
+    ],
+    "rows": [
+      [
+        22
+      ]
+    ]
+  },
+  "l69-p16": {
+    "columns": [
+      "raw_rows",
+      "drifted",
+      "anonymous",
+      "bots",
+      "known",
+      "padded",
+      "raw_spellings",
+      "canonical_actions",
+      "money_cents"
+    ],
+    "rows": [
+      [
+        627,
+        89,
+        26,
+        17,
+        584,
+        163,
+        9,
+        4,
+        null
+      ]
+    ]
+  },
+  "l70-p1": {
+    "columns": [
+      "clean_events"
+    ],
+    "rows": [
+      [
+        582
+      ]
+    ]
+  },
+  "l70-p2": {
+    "columns": [
+      "clean_events"
+    ],
+    "rows": [
+      [
+        582
+      ]
+    ]
+  },
+  "l70-p3": {
+    "columns": [
+      "quarantined"
+    ],
+    "rows": [
+      [
+        45
+      ]
+    ]
+  },
+  "l70-p4": {
+    "columns": [
+      "action",
+      "replays"
+    ],
+    "rows": [
+      [
+        "add_to_cart",
+        13
+      ],
+      [
+        "product_view",
+        13
+      ],
+      [
+        "page_view",
+        12
+      ],
+      [
+        "add_to_cart",
+        7
+      ]
+    ]
+  },
+  "l70-p5": {
+    "columns": [
+      "user_class",
+      "events"
+    ],
+    "rows": [
+      [
+        "known",
+        539
+      ],
+      [
+        "anonymous",
+        26
+      ],
+      [
+        "bot",
+        17
+      ]
+    ]
+  },
+  "l70-p6": {
+    "columns": [
+      "raw_known",
+      "clean_known",
+      "quarantined"
+    ],
+    "rows": [
+      [
+        584,
+        539,
+        45
+      ]
+    ]
+  },
+  "l70-p7": {
+    "columns": [
+      "raw_money_cents",
+      "clean_money_cents"
+    ],
+    "rows": [
+      [
+        null,
+        null
+      ]
+    ]
+  },
+  "l70-p8": {
+    "columns": [
+      "format_violations"
+    ],
+    "rows": [
+      [
+        0
+      ]
+    ]
+  },
+  "l70-p9": {
+    "columns": [
+      "clean_rows",
+      "fingerprints"
+    ],
+    "rows": [
+      [
+        582,
+        582
+      ]
+    ]
+  },
+  "l70-p10": {
+    "columns": [
+      "user_id",
+      "clean_events"
+    ],
+    "rows": [
+      [
+        5,
+        138
+      ],
+      [
+        4,
+        29
+      ],
+      [
+        6,
+        29
+      ],
+      [
+        1,
+        28
+      ],
+      [
+        2,
+        28
+      ]
+    ]
+  },
+  "l70-p11": {
+    "columns": [
+      "kept_id",
+      "dropped",
+      "action"
+    ],
+    "rows": [
+      [
+        123,
+        7,
+        "add_to_cart"
+      ],
+      [
+        1,
+        1,
+        "page_view"
+      ],
+      [
+        4,
+        1,
+        "product_view"
+      ]
+    ]
+  },
+  "l70-p12": {
+    "columns": [
+      "first_run",
+      "second_run"
+    ],
+    "rows": [
+      [
+        582,
+        582
+      ]
+    ]
+  },
+  "l70-p13": {
+    "columns": [
+      "raw_rows",
+      "clean_rows",
+      "quarantined",
+      "money_cents",
+      "format_violations"
+    ],
+    "rows": [
+      [
+        627,
+        582,
+        45,
+        null,
+        0
+      ]
+    ]
+  },
+  "l70-p14": {
+    "columns": [
+      "tail_events"
+    ],
+    "rows": [
+      [
+        226
+      ]
+    ]
+  },
+  "l71-p1": {
+    "columns": [
+      "return_rows",
+      "distinct_products"
+    ],
+    "rows": [
+      [
+        14,
+        10
+      ]
+    ]
+  },
+  "l71-p2": {
+    "columns": [
+      "refund_dollars"
+    ],
+    "rows": [
+      [
+        1083.11
+      ]
+    ]
+  },
+  "l71-p3": {
+    "columns": [
+      "department",
+      "refund_dollars"
+    ],
+    "rows": [
+      [
+        "Tech",
+        984.88
+      ],
+      [
+        "Lifestyle",
+        98.23
+      ]
+    ]
+  },
+  "l71-p4": {
+    "columns": [
+      "department",
+      "return_rate_pct"
+    ],
+    "rows": [
+      [
+        "Tech",
+        5.9
+      ],
+      [
+        "Lifestyle",
+        5.9
+      ]
+    ]
+  },
+  "l71-p5": {
+    "columns": [
+      "orphaned_returns"
+    ],
+    "rows": [
+      [
+        0
+      ]
+    ]
+  },
+  "l71-p6": {
+    "columns": [
+      "region",
+      "refund_dollars"
+    ],
+    "rows": [
+      [
+        "APAC",
+        507.49
+      ],
+      [
+        "EU",
+        293.37
+      ],
+      [
+        "US",
+        282.25
+      ]
+    ]
+  },
+  "l71-p7": {
+    "columns": [
+      "avg_lag_days"
+    ],
+    "rows": [
+      [
+        7.2
+      ]
+    ]
+  },
+  "l71-p8": {
+    "columns": [
+      "department",
+      "net_dollars",
+      "refund_dollars"
+    ],
+    "rows": [
+      [
+        "Tech",
+        30702.42,
+        984.88
+      ],
+      [
+        "Lifestyle",
+        2532.24,
+        98.23
+      ]
+    ]
+  },
+  "l71-p9": {
+    "columns": [
+      "name",
+      "returns",
+      "refund_dollars"
+    ],
+    "rows": [
+      [
+        "USB-C Hub 7-in-1",
+        3,
+        144.89
+      ]
+    ]
+  },
+  "l71-p10": {
+    "columns": [
+      "name",
+      "refund_dollars"
+    ],
+    "rows": [
+      [
+        "Osaka Annex",
+        459.18
+      ],
+      [
+        "São Paulo Hub",
+        410.16
+      ],
+      [
+        "Austin Depot",
+        131.22
+      ],
+      [
+        "Flagship Berlin",
+        82.55
+      ]
+    ]
+  },
+  "l71-p11": {
+    "columns": [
+      "broken_links"
+    ],
+    "rows": [
+      [
+        0
+      ]
+    ]
+  },
+  "l71-p12": {
+    "columns": [
+      "month",
+      "refund_dollars"
+    ],
+    "rows": [
+      [
+        "2024-01",
+        41.77
+      ],
+      [
+        "2024-02",
+        67.15
+      ],
+      [
+        "2024-03",
+        157.77
+      ],
+      [
+        "2024-05",
+        74.58
+      ],
+      [
+        "2024-06",
+        84.26
+      ],
+      [
+        "2024-07",
+        31.08
+      ],
+      [
+        "2024-08",
+        48.31
+      ],
+      [
+        "2024-09",
+        46.96
+      ],
+      [
+        "2024-10",
+        194.34
+      ],
+      [
+        "2024-11",
+        87.57
+      ],
+      [
+        "2024-12",
+        205.81
+      ],
+      [
+        "2025-02",
+        43.51
+      ]
+    ]
+  },
+  "l71-p13": {
+    "columns": [
+      "date_conformed",
+      "product_conformed",
+      "customer_conformed",
+      "store_conformed"
+    ],
+    "rows": [
+      [
+        1,
+        1,
+        1,
+        1
+      ]
+    ]
+  },
+  "l72-p1": {
+    "columns": [
+      "year",
+      "quarter",
+      "department",
+      "net_dollars",
+      "share_of_quarter_pct"
+    ],
+    "rows": [
+      [
+        2024,
+        1,
+        "Tech",
+        8718.16,
+        91.1
+      ],
+      [
+        2024,
+        1,
+        "Lifestyle",
+        855.62,
+        8.9
+      ],
+      [
+        2024,
+        2,
+        "Tech",
+        6951.57,
+        94.9
+      ],
+      [
+        2024,
+        2,
+        "Lifestyle",
+        371.24,
+        5.1
+      ],
+      [
+        2024,
+        3,
+        "Tech",
+        6017.34,
+        93.8
+      ],
+      [
+        2024,
+        3,
+        "Lifestyle",
+        399.09,
+        6.2
+      ],
+      [
+        2024,
+        4,
+        "Tech",
+        5429.17,
+        88.4
+      ],
+      [
+        2024,
+        4,
+        "Lifestyle",
+        713,
+        11.6
+      ]
+    ]
+  },
+  "l72-p2": {
+    "columns": [
+      "mart_rows"
+    ],
+    "rows": [
+      [
+        8
+      ]
+    ]
+  },
+  "l72-p3": {
+    "columns": [
+      "mart_rows",
+      "distinct_cells"
+    ],
+    "rows": [
+      [
+        8,
+        8
+      ]
+    ]
+  },
+  "l72-p4": {
+    "columns": [
+      "mart_total_cents",
+      "fact_total_cents"
+    ],
+    "rows": [
+      [
+        2945519,
+        2945519
+      ]
+    ]
+  },
+  "l72-p5": {
+    "columns": [
+      "broken_quarters"
+    ],
+    "rows": [
+      [
+        0
+      ]
+    ]
+  },
+  "l72-p6": {
+    "columns": [
+      "department",
+      "net_dollars",
+      "margin_dollars"
+    ],
+    "rows": [
+      [
+        "Tech",
+        30702.42,
+        14227.42
+      ],
+      [
+        "Lifestyle",
+        2532.24,
+        1263.24
+      ]
+    ]
+  },
+  "l72-p7": {
+    "columns": [
+      "department",
+      "adjusted_net_dollars"
+    ],
+    "rows": [
+      [
+        "Tech",
+        29717.54
+      ],
+      [
+        "Lifestyle",
+        2434.01
+      ]
+    ]
+  },
+  "l72-p8": {
+    "columns": [
+      "best_quarter",
+      "best_quarter_net",
+      "top_department"
+    ],
+    "rows": [
+      [
+        1,
+        9573.78,
+        "Tech"
+      ]
+    ]
+  },
+  "l72-p9": {
+    "columns": [
+      "zero_return_months"
+    ],
+    "rows": [
+      [
+        2
+      ]
+    ]
+  },
+  "l72-p10": {
+    "columns": [
+      "year",
+      "net_dollars",
+      "top_buyer_share_pct"
+    ],
+    "rows": [
+      [
+        2024,
+        5249.71,
+        17.8
+      ],
+      [
+        2025,
+        1175.99,
+        31.1
+      ]
+    ]
+  },
+  "l72-p11": {
+    "columns": [
+      "source_lines",
+      "fact_lines",
+      "cancelled_dropped",
+      "mart_cells"
+    ],
+    "rows": [
+      [
+        251,
+        239,
+        12,
+        8
+      ]
+    ]
+  },
+  "l72-p12": {
+    "columns": [
+      "build_one",
+      "build_two"
+    ],
+    "rows": [
+      [
+        2945519,
+        2945519
+      ]
+    ]
+  },
+  "l72-p13": {
+    "columns": [
+      "quarter",
+      "department",
+      "net_dollars"
+    ],
+    "rows": [
+      [
+        4,
+        "Tech",
+        5429.17
+      ],
+      [
+        4,
+        "Lifestyle",
+        713
+      ]
+    ]
+  },
+  "l72-p14": {
+    "columns": [
+      "department",
+      "net_dollars",
+      "margin_dollars",
+      "refund_dollars",
+      "adjusted_net_dollars",
+      "share_of_company_pct"
+    ],
+    "rows": [
+      [
+        "Tech",
+        30702.42,
+        14227.42,
+        984.88,
+        29717.54,
+        92.4
+      ],
+      [
+        "Lifestyle",
+        2532.24,
+        1263.24,
+        98.23,
+        2434.01,
+        7.6
+      ]
+    ]
+  },
+  "l73-p1": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        1010317
+      ]
+    ]
+  },
+  "l73-p2": {
+    "columns": [
+      "id",
+      "parent",
+      "notused",
+      "detail"
+    ],
+    "rows": [
+      [
+        3,
+        0,
+        0,
+        "SCAN events_scale"
+      ]
+    ]
+  },
+  "l73-p3": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        10310
+      ]
+    ]
+  },
+  "l73-p4": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        9901
+      ]
+    ]
+  },
+  "l73-p5": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        990106
+      ]
+    ]
+  },
+  "l73-p6": {
+    "columns": [
+      "action",
+      "n"
+    ],
+    "rows": [
+      [
+        "page_view",
+        186526
+      ],
+      [
+        "add_to_cart",
+        186520
+      ],
+      [
+        "checkout",
+        186518
+      ],
+      [
+        "product_view",
+        186518
+      ],
+      [
+        "refund",
+        186518
+      ],
+      [
+        "CHECKOUT",
+        15544
+      ],
+      [
+        "Product_View",
+        15544
+      ],
+      [
+        "refund ",
+        15544
+      ],
+      [
+        "Page_View",
+        15543
+      ],
+      [
+        " add_to_cart",
+        15542
+      ]
+    ]
+  },
+  "l73-p7": {
+    "columns": [
+      "action",
+      "n"
+    ],
+    "rows": [
+      [
+        "add_to_cart",
+        15542
+      ],
+      [
+        "add_to_cart",
+        186520
+      ],
+      [
+        "checkout",
+        15544
+      ],
+      [
+        "checkout",
+        186518
+      ],
+      [
+        "page_view",
+        15543
+      ],
+      [
+        "page_view",
+        186526
+      ],
+      [
+        "product_view",
+        15544
+      ],
+      [
+        "product_view",
+        186518
+      ],
+      [
+        "refund",
+        186518
+      ],
+      [
+        "refund",
+        15544
+      ]
+    ]
+  },
+  "l73-p8": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        43926
+      ]
+    ]
+  },
+  "l73-p9": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        91847
+      ]
+    ]
+  },
+  "l73-p10": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        402
+      ]
+    ]
+  },
+  "l73-p11": {
+    "columns": [
+      "cents"
+    ],
+    "rows": [
+      [
+        1482453292
+      ]
+    ]
+  },
+  "l73-p12": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        10311
+      ]
+    ]
+  },
+  "l73-p13": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        10317
+      ]
+    ]
+  },
+  "l73-p14": {
+    "columns": [
+      "id",
+      "parent",
+      "notused",
+      "detail"
+    ],
+    "rows": [
+      [
+        4,
+        0,
+        0,
+        "SCAN events_scale"
+      ],
+      [
+        16,
+        0,
+        0,
+        "USE TEMP B-TREE FOR ORDER BY"
+      ]
+    ]
+  },
+  "l74-p1": {
+    "columns": [
+      "id",
+      "parent",
+      "notused",
+      "detail"
+    ],
+    "rows": [
+      [
+        3,
+        0,
+        0,
+        "SCAN events_scale"
+      ]
+    ]
+  },
+  "l74-p2": {
+    "columns": [
+      "id",
+      "parent",
+      "notused",
+      "detail"
+    ],
+    "rows": [
+      [
+        3,
+        0,
+        0,
+        "SEARCH events_scale USING COVERING INDEX idx_scale_user (user_id=?)"
+      ]
+    ]
+  },
+  "l74-p3": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        198
+      ]
+    ]
+  },
+  "l74-p4": {
+    "columns": [
+      "id",
+      "parent",
+      "notused",
+      "detail"
+    ],
+    "rows": [
+      [
+        4,
+        0,
+        0,
+        "SEARCH events_scale USING COVERING INDEX idx_scale_user_ts (user_id=?)"
+      ]
+    ]
+  },
+  "l74-p5": {
+    "columns": [
+      "id",
+      "parent",
+      "notused",
+      "detail"
+    ],
+    "rows": [
+      [
+        3,
+        0,
+        0,
+        "SCAN events_scale USING COVERING INDEX idx_scale_user_ts"
+      ]
+    ]
+  },
+  "l74-p6": {
+    "columns": [
+      "id",
+      "parent",
+      "notused",
+      "detail"
+    ],
+    "rows": [
+      [
+        6,
+        0,
+        0,
+        "SCAN events_scale"
+      ],
+      [
+        8,
+        0,
+        0,
+        "USE TEMP B-TREE FOR GROUP BY"
+      ]
+    ]
+  },
+  "l74-p7": {
+    "columns": [
+      "id",
+      "parent",
+      "notused",
+      "detail"
+    ],
+    "rows": [
+      [
+        3,
+        0,
+        0,
+        "SEARCH events_scale USING COVERING INDEX idx_scale_bots (user_id>?)"
+      ]
+    ]
+  },
+  "l74-p8": {
+    "columns": [
+      "id",
+      "parent",
+      "notused",
+      "detail"
+    ],
+    "rows": [
+      [
+        3,
+        0,
+        0,
+        "SCAN events_scale"
+      ]
+    ]
+  },
+  "l74-p9": {
+    "columns": [
+      "id",
+      "parent",
+      "notused",
+      "detail"
+    ],
+    "rows": [
+      [
+        6,
+        0,
+        0,
+        "SCAN events_scale USING COVERING INDEX idx_scale_action_amount"
+      ]
+    ]
+  },
+  "l74-p10": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        0
+      ]
+    ]
+  },
+  "l74-p11": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "user_id"
+      ],
+      [
+        "event_ts"
+      ]
+    ]
+  },
+  "l74-p12": {
+    "columns": [
+      "stat"
+    ],
+    "rows": [
+      [
+        "1010317"
+      ]
+    ]
+  },
+  "l74-p13": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        70175
+      ]
+    ]
+  },
+  "l74-p14": {
+    "columns": [
+      "id",
+      "parent",
+      "notused",
+      "detail"
+    ],
+    "rows": [
+      [
+        3,
+        0,
+        0,
+        "SEARCH events_scale USING COVERING INDEX idx_scale_user_ts (user_id=? AND event_ts>? AND event_ts<?)"
+      ]
+    ]
+  },
+  "l75-p1": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        362311
+      ]
+    ]
+  },
+  "l75-p2": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        313236
+      ]
+    ]
+  },
+  "l75-p3": {
+    "columns": [
+      "id",
+      "parent",
+      "notused",
+      "detail"
+    ],
+    "rows": [
+      [
+        3,
+        0,
+        0,
+        "SCAN events_scale"
+      ]
+    ]
+  },
+  "l75-p4": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        84482
+      ]
+    ]
+  },
+  "l75-p5": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        84482
+      ]
+    ]
+  },
+  "l75-p6": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        202069
+      ]
+    ]
+  },
+  "l75-p7": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        202069
+      ]
+    ]
+  },
+  "l75-p8": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        202260
+      ]
+    ]
+  },
+  "l75-p9": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        1000000
+      ]
+    ]
+  },
+  "l75-p10": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        10317
+      ]
+    ]
+  },
+  "l75-p11": {
+    "columns": [
+      "amount_cents",
+      "n"
+    ],
+    "rows": [
+      [
+        "3,140.50",
+        101
+      ],
+      [
+        "n/a",
+        101
+      ],
+      [
+        "12,500",
+        100
+      ],
+      [
+        "—",
+        100
+      ]
+    ]
+  },
+  "l75-p12": {
+    "columns": [
+      "cents"
+    ],
+    "rows": [
+      [
+        1128949093
+      ]
+    ]
+  },
+  "l75-p13": {
+    "columns": [
+      "cents"
+    ],
+    "rows": [
+      [
+        353504199
+      ]
+    ]
+  },
+  "l75-p14": {
+    "columns": [
+      "action",
+      "n",
+      "cents"
+    ],
+    "rows": [
+      [
+        "add_to_cart",
+        15542,
+        0
+      ],
+      [
+        "add_to_cart",
+        186520,
+        0
+      ],
+      [
+        "checkout",
+        15544,
+        86836405
+      ],
+      [
+        "checkout",
+        186518,
+        1042112688
+      ],
+      [
+        "page_view",
+        15543,
+        0
+      ],
+      [
+        "page_view",
+        186526,
+        0
+      ],
+      [
+        "product_view",
+        15544,
+        0
+      ],
+      [
+        "product_view",
+        186518,
+        0
+      ],
+      [
+        "refund",
+        186518,
+        326308841
+      ],
+      [
+        "refund",
+        15544,
+        27195358
+      ]
+    ]
+  },
+  "l76-p1": {
+    "columns": [
+      "id",
+      "ship_days"
+    ],
+    "rows": [
+      [
+        103,
+        3
+      ],
+      [
+        102,
+        2
+      ],
+      [
+        101,
+        3
+      ],
+      [
+        100,
+        2
+      ],
+      [
+        99,
+        3
+      ]
+    ]
+  },
+  "l76-p2": {
+    "columns": [
+      "id",
+      "label"
+    ],
+    "rows": [
+      [
+        1,
+        "16-pending"
+      ],
+      [
+        2,
+        "13-delivered"
+      ],
+      [
+        3,
+        "1-shipped"
+      ],
+      [
+        4,
+        "13-shipped"
+      ],
+      [
+        5,
+        "5-pending"
+      ]
+    ]
+  },
+  "l76-p3": {
+    "columns": [
+      "id",
+      "ship"
+    ],
+    "rows": [
+      [
+        1,
+        "not shipped"
+      ],
+      [
+        5,
+        "not shipped"
+      ],
+      [
+        7,
+        "not shipped"
+      ],
+      [
+        12,
+        "not shipped"
+      ],
+      [
+        19,
+        "not shipped"
+      ]
+    ]
+  },
+  "l76-p4": {
+    "columns": [
+      "id",
+      "total"
+    ],
+    "rows": [
+      [
+        74,
+        1088.44
+      ],
+      [
+        43,
+        945.21
+      ],
+      [
+        39,
+        845.92
+      ]
+    ]
+  },
+  "l76-p5": {
+    "columns": [
+      "name"
+    ],
+    "rows": [
+      [
+        "Nordic Gadgets AB"
+      ],
+      [
+        "Shenzhen Electro"
+      ],
+      [
+        "Pacific Textiles"
+      ]
+    ]
+  },
+  "l76-p6": {
+    "columns": [
+      "name",
+      "tag"
+    ],
+    "rows": [
+      [
+        "Nordic Gadgets AB",
+        "Nor"
+      ],
+      [
+        "Shenzhen Electro",
+        "She"
+      ],
+      [
+        "Pacific Textiles",
+        "Pac"
+      ],
+      [
+        "Midwest Hardware Co",
+        "Mid"
+      ],
+      [
+        "Alpine Audio GmbH",
+        "Alp"
+      ],
+      [
+        "Andes Naturals SA",
+        "And"
+      ]
+    ]
+  },
+  "l76-p7": {
+    "columns": [
+      "clamped"
+    ],
+    "rows": [
+      [
+        "2024-03-02"
+      ]
+    ]
+  },
+  "l76-p8": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        57
+      ]
+    ]
+  },
+  "l76-p9": {
+    "columns": [
+      "d"
+    ],
+    "rows": [
+      [
+        "2024-01-15"
+      ]
+    ]
+  },
+  "l76-p10": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        14
+      ]
+    ]
+  },
+  "l76-p11": {
+    "columns": [
+      "name",
+      "price"
+    ],
+    "rows": [
+      [
+        "4K Webcam Pro",
+        129
+      ],
+      [
+        "Studio Desktop Mic",
+        119
+      ],
+      [
+        "Mechanical Keyboard K1",
+        89.99
+      ]
+    ]
+  },
+  "l76-p12": {
+    "columns": [
+      "all_rows",
+      "with_ship"
+    ],
+    "rows": [
+      [
+        103,
+        82
+      ]
+    ]
+  },
+  "l77-p1": {
+    "columns": [
+      "a",
+      "b"
+    ],
+    "rows": [
+      [
+        0,
+        3
+      ]
+    ]
+  },
+  "l77-p2": {
+    "columns": [
+      "a",
+      "b"
+    ],
+    "rows": [
+      [
+        0.5,
+        "real"
+      ]
+    ]
+  },
+  "l77-p3": {
+    "columns": [
+      "a"
+    ],
+    "rows": [
+      [
+        null
+      ]
+    ]
+  },
+  "l77-p4": {
+    "columns": [
+      "v"
+    ],
+    "rows": [
+      [
+        129
+      ]
+    ]
+  },
+  "l77-p5": {
+    "columns": [
+      "v"
+    ],
+    "rows": [
+      [
+        12
+      ]
+    ]
+  },
+  "l77-p6": {
+    "columns": [
+      "v"
+    ],
+    "rows": [
+      [
+        0
+      ]
+    ]
+  },
+  "l77-p7": {
+    "columns": [
+      "eaten"
+    ],
+    "rows": [
+      [
+        null
+      ]
+    ]
+  },
+  "l77-p8": {
+    "columns": [
+      "rescued",
+      "plain"
+    ],
+    "rows": [
+      [
+        "fallback",
+        -1
+      ]
+    ]
+  },
+  "l77-p9": {
+    "columns": [
+      "storage",
+      "n"
+    ],
+    "rows": [
+      [
+        "null",
+        606193
+      ],
+      [
+        "text",
+        404124
+      ]
+    ]
+  },
+  "l77-p10": {
+    "columns": [
+      "shipped_at"
+    ],
+    "rows": [
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ]
+    ]
+  },
+  "l77-p11": {
+    "columns": [
+      "all_rows",
+      "with_ship"
+    ],
+    "rows": [
+      [
+        103,
+        82
+      ]
+    ]
+  },
+  "l77-p12": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        82
+      ]
+    ]
+  },
+  "l78-p1": {
+    "columns": [
+      "id",
+      "customer_id"
+    ],
+    "rows": [
+      [
+        100,
+        1
+      ],
+      [
+        23,
+        2
+      ],
+      [
+        67,
+        3
+      ],
+      [
+        80,
+        4
+      ],
+      [
+        97,
+        5
+      ],
+      [
+        87,
+        6
+      ],
+      [
+        92,
+        7
+      ],
+      [
+        102,
+        8
+      ],
+      [
+        98,
+        9
+      ],
+      [
+        60,
+        10
+      ],
+      [
+        94,
+        11
+      ],
+      [
+        20,
+        12
+      ],
+      [
+        103,
+        13
+      ],
+      [
+        99,
+        14
+      ],
+      [
+        91,
+        15
+      ],
+      [
+        71,
+        16
+      ]
+    ]
+  },
+  "l78-p2": {
+    "columns": [
+      "n"
+    ],
+    "rows": [
+      [
+        230
+      ]
+    ]
+  },
+  "l78-p3": {
+    "columns": [
+      "id",
+      "email"
+    ],
+    "rows": [
+      [
+        1,
+        "buyer1@example.com"
+      ],
+      [
+        2,
+        "buyer2@example.com"
+      ],
+      [
+        3,
+        "buyer3@example.com"
+      ]
+    ]
+  },
+  "l78-p4": {
+    "columns": [
+      "json_type",
+      "n"
+    ],
+    "rows": [
+      [
+        "integer",
+        250
+      ],
+      [
+        "text",
+        16
+      ]
+    ]
+  },
+  "l78-p5": {
+    "columns": [
+      "id",
+      "promise"
+    ],
+    "rows": [
+      [
+        1,
+        "2024-01-08"
+      ],
+      [
+        2,
+        "2024-01-18"
+      ],
+      [
+        3,
+        "2024-01-25"
+      ]
+    ]
+  },
+  "l78-p6": {
+    "columns": [
+      "clamped"
+    ],
+    "rows": [
+      [
+        "2024-03-02"
+      ]
+    ]
+  },
+  "l78-p7": {
+    "columns": [
+      "id",
+      "total"
+    ],
+    "rows": [
+      [
+        39,
+        845.92
+      ],
+      [
+        15,
+        826.03
+      ],
+      [
+        57,
+        785.79
+      ]
+    ]
+  },
+  "l78-p8": {
+    "columns": [
+      "delivered",
+      "shipped",
+      "pending",
+      "cancelled"
+    ],
+    "rows": [
+      [
+        52,
+        30,
+        14,
+        7
+      ]
+    ]
+  },
+  "l78-p9": {
+    "columns": [
+      "region"
+    ],
+    "rows": [
+      [
+        "APAC"
+      ],
+      [
+        "EU"
+      ],
+      [
+        "LATAM"
+      ],
+      [
+        "US"
+      ]
+    ]
+  },
+  "l78-p10": {
+    "columns": [
+      "product_key"
+    ],
+    "rows": [
+      [
+        4
+      ],
+      [
+        5
+      ],
+      [
+        6
+      ],
+      [
+        9
+      ],
+      [
+        12
+      ],
+      [
+        14
+      ]
+    ]
+  },
+  "l78-p11": {
+    "columns": [
+      "status",
+      "n",
+      "avg_total"
+    ],
+    "rows": [
+      [
+        "cancelled",
+        7,
+        164.64
+      ],
+      [
+        "delivered",
+        52,
+        299.44
+      ],
+      [
+        "pending",
+        14,
+        436.64
+      ],
+      [
+        "shipped",
+        30,
+        399.89
+      ]
+    ]
+  },
+  "l78-p12": {
+    "columns": [
+      "status",
+      "n"
+    ],
+    "rows": [
+      [
+        "delivered",
+        52
+      ],
+      [
+        "shipped",
+        30
+      ],
+      [
+        "pending",
+        14
       ]
     ]
   },

@@ -43,6 +43,8 @@ const DIALECT_META: Record<string, { label: string; pill: string }> = {
   postgres: { label: "PostgreSQL", pill: "border-teal-400/40 bg-teal-400/10 text-teal-300" },
   mysql: { label: "MySQL", pill: "border-orange-400/40 bg-orange-400/10 text-orange-300" },
   sqlite: { label: "SQLite", pill: "border-violet-400/40 bg-violet-400/10 text-violet-300" },
+  snowflake: { label: "Snowflake", pill: "border-sky-400/40 bg-sky-400/10 text-sky-300" },
+  bigquery: { label: "BigQuery", pill: "border-blue-400/40 bg-blue-400/10 text-blue-300" },
 };
 
 function looksLikeRead(sql: string): boolean {

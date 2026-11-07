@@ -20,6 +20,8 @@ export const SAMPLE_TABLES = [
   "fact_sales",
   "fact_returns",
   "events_dirty",
+  "events_scale",
+  "webhook_events",
 ] as const;
 
 const DDL: string[] = [
@@ -157,7 +159,23 @@ const DDL: string[] = [
     user_id INTEGER,
     action TEXT NOT NULL,
     page TEXT NOT NULL,
-    amount_cents
+    amount_cents TEXT
+  )`,
+  // ---- Module 15 · the million-row firehose (generated SQL-side, see
+  // buildScaleTiers) and the semi-structured webhook tier ----
+  `CREATE TABLE IF NOT EXISTS events_scale (
+    id INTEGER PRIMARY KEY,
+    event_ts TEXT NOT NULL,
+    user_id INTEGER,
+    action TEXT NOT NULL,
+    page TEXT NOT NULL,
+    amount_cents TEXT
+  )`,
+  `CREATE TABLE IF NOT EXISTS webhook_events (
+    id INTEGER PRIMARY KEY,
+    source TEXT NOT NULL,
+    received_at TEXT NOT NULL,
+    payload TEXT NOT NULL
   )`,
 ];
 
@@ -762,6 +780,235 @@ function buildDirtyEventsSeed(): { rows: SeedRow[]; counts: Record<string, numbe
 
 export const DIRTY_FACTS = { window: "2025-01", raw: 627, clean: 582, quarantined: 45 };
 
+/* ---------------- Module 15 · the million-row firehose ----------------
+ *
+ * 1,000,000 base rows + 10,310 replay copies + one 7-copy burst =
+ * 1,010,317 rows, generated ENTIRELY inside SQLite by deterministic
+ * arithmetic on the row index i (the seeded generator — same output on
+ * every engine, every machine, every reset). One recursive-CTE INSERT,
+ * ~0.8 s. The dirt mirrors the 627-row log at scale: five canonical
+ * actions with case/whitespace variants, NULL and bot-orphan users,
+ * drifted (space) timestamps, whitespace-padded pages, amounts that
+ * arrived as TEXT (with a comma/symbol dirt class) — every class
+ * exactly countable, verified by scripts/scale-probe.ts.
+ */
+
+/** Verified by scripts/scale-probe.ts against the exact statements above. */
+async function buildScaleTier(): Promise<void> {
+  await db.$executeRawUnsafe(`
+INSERT INTO events_scale (event_ts, user_id, action, page, amount_cents)
+WITH RECURSIVE seq(i) AS (
+  SELECT 1 UNION ALL SELECT i + 1 FROM seq WHERE i < 1000000
+)
+SELECT
+  CASE WHEN i % 23 = 9
+       THEN datetime(1735700400 + i * 31, 'unixepoch')
+       ELSE REPLACE(datetime(1735700400 + i * 31, 'unixepoch'), ' ', 'T')
+  END,
+  CASE WHEN i % 97 = 3 THEN NULL
+       WHEN i % 101 = 7 THEN 9000 + (i % 40)
+       ELSE 1 + (i * 7919) % 5000
+  END,
+  CASE i % 5
+    WHEN 0 THEN CASE WHEN i % 13 = 0 THEN 'Page_View'    ELSE 'page_view' END
+    WHEN 1 THEN CASE WHEN i % 13 = 0 THEN 'Product_View' ELSE 'product_view' END
+    WHEN 2 THEN CASE WHEN i % 13 = 0 THEN ' add_to_cart' ELSE 'add_to_cart' END
+    WHEN 3 THEN CASE WHEN i % 13 = 0 THEN 'CHECKOUT'     ELSE 'checkout' END
+    ELSE      CASE WHEN i % 13 = 0 THEN 'refund '        ELSE 'refund' END
+  END,
+  CASE WHEN i % 11 = 0
+       THEN (CASE i % 8 WHEN 0 THEN 'home' WHEN 1 THEN 'catalog' WHEN 2 THEN 'cart'
+                        WHEN 3 THEN 'pay'  WHEN 4 THEN 'confirm' WHEN 5 THEN 'account'
+                        WHEN 6 THEN 'search' ELSE 'profile' END) || ' '
+       ELSE (CASE i % 8 WHEN 0 THEN 'home' WHEN 1 THEN 'catalog' WHEN 2 THEN 'cart'
+                        WHEN 3 THEN 'pay'  WHEN 4 THEN 'confirm' WHEN 5 THEN 'account'
+                        WHEN 6 THEN 'search' ELSE 'profile' END)
+  END,
+  CASE
+    WHEN i % 5 = 3 THEN
+      CASE WHEN i % 503 = 5
+           THEN (CASE (i / 503) % 4 WHEN 0 THEN '12,500' WHEN 1 THEN 'n/a' WHEN 2 THEN '3,140.50' ELSE '—' END)
+           ELSE CAST(1200 + (i * 37) % 8800 AS TEXT)
+      END
+    WHEN i % 5 = 4 THEN CAST(300 + (i * 53) % 2900 AS TEXT)
+    ELSE NULL
+  END
+FROM seq`);
+  // replays — exact copies of every row whose id sits in the 13-of-97 class
+  await db.$executeRawUnsafe(`
+INSERT INTO events_scale (event_ts, user_id, action, page, amount_cents)
+SELECT event_ts, user_id, action, page, amount_cents FROM events_scale WHERE id % 97 = 13`);
+  // one burst — seven more copies of row 500000 (the whale's double-click)
+  await db.$executeRawUnsafe(`
+INSERT INTO events_scale (event_ts, user_id, action, page, amount_cents)
+SELECT e.event_ts, e.user_id, e.action, e.page, e.amount_cents
+FROM events_scale e
+JOIN (SELECT 1 a UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4
+      UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7) k
+WHERE e.id = 500000`);
+}
+
+/** Verified by scripts/scale-probe.ts against the exact statements above. */
+export const SCALE_FACTS = {
+  base: 1000000,
+  rows: 1010317,
+  replays: 10310,
+  burstCopies: 7,
+  dupGroups: 10311,
+  excessRows: 10317,
+  nullUsers: 10310,
+  botOrphans: 9901,
+  users: 5000,
+  driftedTs: 43926,
+  whitespacePages: 91847,
+  dirtyMoney: 402,
+  canonicalClasses: 5,
+  rawActionSpellings: 10,
+  perClass: 202062,
+  pageViewTotal: 202069,
+  checkoutRows: 202062,
+  refundRows: 202062,
+  numericAmountSum: 1482453292,
+  minTs: "2025-01-01T03:04:39",
+  maxTs: "2025-12-25T22:06:40",
+};
+
+/* ---------------- Module 15 · the webhook tier (semi-structured) --------
+ *
+ * 738 delivered events, four sources, JSON payloads as TEXT — SQLite has
+ * no JSON column type, so the lesson teaches json_valid / json_extract /
+ * json_each against payloads that arrive typed like real traffic: numbers
+ * that are sometimes strings, keys that go missing, NULLs that mean two
+ * different things, lowercase country codes, and six truncated (invalid)
+ * deliveries. Replays add 18 exact duplicates + one 4-copy burst.
+ */
+
+const WEBHOOK_TIER_COLUMNS = { webhook_events: ["id", "source", "received_at", "payload"] };
+
+function buildWebhookSeed(): { rows: SeedRow[]; counts: Record<string, number> } {
+  const rows: SeedRow[] = [];
+  let id = 0;
+  const push = (source: string, receivedAt: string, payload: string) => {
+    id++;
+    rows.push({ table: "webhook_events", values: [id, source, receivedAt, payload] });
+  };
+  const at = (i: number): string =>
+    new Date((1735699200 + i * 3603) * 1000).toISOString().slice(0, 19) + "Z";
+
+  // checkouts — 250 deliveries, ids 1..250
+  for (let i = 1; i <= 250; i++) {
+    const total = 899 + ((i * 613) % 9101);
+    const email = i % 19 === 4 ? null : `buyer${i % 83}@example.com`;
+    const items = JSON.stringify([`P-${1 + (i % 16)}`, `P-${1 + ((i * 7) % 16)}`].filter((v, k, a) => a.indexOf(v) === k));
+    let payload: string;
+    if (i % 41 === 7) {
+      // truncated delivery — invalid JSON (6 rows: 48, 89, 130, 171, 212, 247)
+      payload = `{"order_id":${9000 + i},"cart_id":"cart-${3000 + i}","email":`;
+    } else if (i % 17 === 3) {
+      // the money arrived as a string (14 rows)
+      payload = JSON.stringify({
+        order_id: 9000 + i,
+        cart_id: `cart-${3000 + i}`,
+        email,
+        total_cents: String(total),
+        currency: i % 3 === 0 ? "USD" : "EUR",
+        items: JSON.parse(items),
+      });
+    } else if (i % 19 === 4) {
+      // the email key is absent entirely (12 rows) — distinct from null
+      payload = JSON.stringify({
+        order_id: 9000 + i,
+        cart_id: `cart-${3000 + i}`,
+        total_cents: total,
+        currency: i % 3 === 0 ? "USD" : "EUR",
+        items: JSON.parse(items),
+      });
+    } else {
+      payload = JSON.stringify({
+        order_id: 9000 + i,
+        cart_id: `cart-${3000 + i}`,
+        email,
+        total_cents: total,
+        currency: i % 3 === 0 ? "USD" : "EUR",
+        items: JSON.parse(items),
+      });
+    }
+    push("checkout", at(i), payload);
+  }
+
+  // billing — 180 deliveries, ids 251..430
+  for (let i = 1; i <= 180; i++) {
+    const amount = 4500 + ((i * 977) % 24000);
+    const status = i % 17 === 9 ? "Paid" : ["paid", "open", "void"][i % 3];
+    const payload =
+      i % 29 === 11
+        ? JSON.stringify({ invoice_no: `IN-2025-${400 + i}`, amount_cents: String(amount), status })
+        : JSON.stringify({ invoice_no: `IN-2025-${400 + i}`, amount_cents: amount, status });
+    push("billing", at(250 + i), payload);
+  }
+
+  // kyc — 140 deliveries, ids 431..570
+  for (let i = 1; i <= 140; i++) {
+    const country = i % 18 === 5 ? ["DE", "US", "JP", "BR", "IN"][i % 5].toLowerCase() : ["DE", "US", "JP", "BR", "IN"][i % 5];
+    const payload = JSON.stringify({
+      applicant: `applicant-${i}`,
+      country,
+      result: ["clear", "review", "rejected"][i % 3],
+      docs: 1 + (i % 3),
+    });
+    push("kyc", at(430 + i), payload);
+  }
+
+  // inventory — 150 deliveries, ids 571..720
+  for (let i = 1; i <= 150; i++) {
+    const payload = JSON.stringify({
+      sku: `P-${1 + (i % 16)}`,
+      delta: ((i * 11) % 9) - 4,
+      warehouse: ["ber", "aus", "osa", "sao"][i % 4],
+    });
+    push("inventory", at(570 + i), payload);
+  }
+
+  // replays — 18 exact copies + one 4-copy burst of delivery 40
+  const replaySources = [3, 9, 14, 22, 31, 40, 55, 63, 78, 91, 104, 119, 133, 148, 166, 181, 199, 214];
+  for (const s of replaySources) {
+    const r = rows[s - 1];
+    id++;
+    rows.push({ table: "webhook_events", values: [id, r.values[1] as string, r.values[2] as string, r.values[3] as string] });
+  }
+  for (let c = 0; c < 4; c++) {
+    const r = rows[39]; // delivery 40 (the burst's owner)
+    id++;
+    rows.push({ table: "webhook_events", values: [id, r.values[1] as string, r.values[2] as string, r.values[3] as string] });
+  }
+
+  const counts = { webhook_events: rows.length };
+  return { rows, counts };
+}
+
+export const WEBHOOK_FACTS = {
+  delivered: 742,
+  base: 720,
+  replays: 18,
+  burstCopies: 4,
+  dupGroups: 18,
+  excessRows: 22,
+  checkout: 272,
+  billing: 180,
+  kyc: 140,
+  inventory: 150,
+  invalidJson: 6,
+  stringTotals: 16,
+  intTotals: 250,
+  missingEmail: 12,
+  nullEmail: 1,
+  presentEmail: 253,
+  stringAmounts: 6,
+  dirtyStatus: 11,
+  lowercaseCountries: 8,
+  checkoutTotalCents: 1433897,
+};
+
 /* ---------------- lifecycle ---------------- */
 
 async function insertSeed() {
@@ -798,6 +1045,10 @@ async function insertSeed() {
     ]);
   }
   await execBatched(statements);
+  // Module 15 tiers — the million-row firehose (SQL-side generation) and
+  // the semi-structured webhook log (JS-built, batch-inserted).
+  await buildScaleTier();
+  await insertTier(buildWebhookSeed(), WEBHOOK_TIER_COLUMNS);
 }
 
 /** Execute many parameterized statements in one transaction, chunked into
@@ -904,6 +1155,20 @@ async function runEnsure(): Promise<void> {
   if (Number(ev[0]?.n ?? 0) === 0) {
     await insertTier(buildDirtyEventsSeed(), { events_dirty: ["id", "event_ts", "user_id", "action", "page", "amount_cents"] });
   }
+  // Self-heal for databases seeded before Module 15: the firehose and the
+  // webhook log arrive last — build them independently.
+  const esc = (await db.$queryRawUnsafe(`SELECT COUNT(*) AS n FROM events_scale`)) as Array<{
+    n: number | bigint;
+  }>;
+  if (Number(esc[0]?.n ?? 0) === 0) {
+    await buildScaleTier();
+  }
+  const wh = (await db.$queryRawUnsafe(`SELECT COUNT(*) AS n FROM webhook_events`)) as Array<{
+    n: number | bigint;
+  }>;
+  if (Number(wh[0]?.n ?? 0) === 0) {
+    await insertTier(buildWebhookSeed(), WEBHOOK_TIER_COLUMNS);
+  }
 }
 
 /** Insert one tier's rows with an explicit column map (self-heal path). */
@@ -932,5 +1197,15 @@ export async function resetDatabase(): Promise<Record<string, number>> {
   }
   for (const stmt of DDL) await db.$executeRawUnsafe(stmt);
   await insertSeed();
-  return { ...buildSeed().counts, ...buildFinanceSeed().counts, ...buildWarehouseSeed().counts, ...buildDirtyEventsSeed().counts };
+  const scaleCount = (await db.$queryRawUnsafe(`SELECT COUNT(*) AS n FROM events_scale`)) as Array<{
+    n: number | bigint;
+  }>;
+  return {
+    ...buildSeed().counts,
+    ...buildFinanceSeed().counts,
+    ...buildWarehouseSeed().counts,
+    ...buildDirtyEventsSeed().counts,
+    ...buildWebhookSeed().counts,
+    events_scale: Number(scaleCount[0]?.n ?? 0),
+  };
 }

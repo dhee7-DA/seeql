@@ -164,6 +164,18 @@ export type FigureId =
   | "l63-dedupe-rn"
   | "l64-plan-tree"
   | "l64-seek-vs-scan"
+  | "m14-star-map"
+  | "m14-scd-timeline"
+  | "m14-conformed-bus"
+  | "m14-mart-layers"
+  | "l69-dirty-census"
+  | "l70-clean-pipeline"
+  | "l73-firehose-scale"
+  | "l74-index-economics"
+  | "l75-anti-patterns"
+  | "l76-dialect-map"
+  | "l77-type-ladders"
+  | "l78-portable-playbook"
 
 export type Block =
   | { kind: "p"; text: string }
@@ -178,7 +190,7 @@ export type Block =
   | { kind: "table"; headers: string[]; rows: string[][]; caption?: string };
 
 /** Engine whose behavior differs from SQLite in the context of the note. */
-export type DbDialect = "postgres" | "mysql" | "sqlite";
+export type DbDialect = "postgres" | "mysql" | "sqlite" | "snowflake" | "bigquery";
 
 /** Blocks for the Deep dive tab — the premium theory layer. Reuses the
  *  visual vocabulary of Block and adds four deep-dive-only kinds:

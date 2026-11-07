@@ -297,7 +297,7 @@ ALTER TABLE suppliers RENAME TO vendors;`,
       verify: "SELECT COUNT(*) AS n FROM pragma_table_info('suppliers') WHERE name = 'phone';",
       mistakes: [
         { test: "not null", message: "The brief says nullable — NOT NULL without a default would also be refused outright, since six existing suppliers would have no value." },
-        { test: "default", message: "No default needed — unknown numbers should read NULL, not a fake placeholder like 'unknown' that then pollutes every query." },
+        { test: "default", message: "No default needed — unknown numbers should read NULL, not a fake marker like 'unknown' that then pollutes every query." },
         { test: "alter table suppliers column phone", message: "There's no COLUMN keyword after the table name — the spelling is ALTER TABLE suppliers ADD COLUMN phone TEXT; the ADD carries the COLUMN." },
       ],
       mutating: true,

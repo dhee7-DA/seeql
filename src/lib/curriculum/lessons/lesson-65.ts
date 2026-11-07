@@ -79,7 +79,7 @@ ORDER BY net_dollars DESC;                        -- Tech $30,702.42 · Lifestyl
         ["writes", "hundreds per day, small", "none after load"],
         ["reads", "single rows by key", "aggregates over everything"],
         ["truth", "right now (status: pending/shipped)", "as it was (region at sale, promo at sale)"],
-        ["answers", \"did order 12 ship?\", "which quarter owned the most net?"],
+        ["answers", "did order 12 ship?", "which quarter owned the most net?"],
       ],
     },
     {
