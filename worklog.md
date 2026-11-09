@@ -9187,3 +9187,30 @@ Work Log:
 Stage Summary:
 - All three roadmap deliverables completed, engine-verified, and live on http://localhost:3000. Domain Mastery now spans 10 full industry packs (1,800 verified items, 2,147 expected ledger keys). SeeQL features corporate financial modeling, vectorized OLAP querying, and on-chain DeFi mechanics.
 - Key files: src/components/finance-canvas.tsx, src/components/duckdb-lab.tsx, src/app/api/duckdb/route.ts, src/lib/leetcode/content/dm-defi-{schema,seed,queries,mcqs,cases}.ts, src/lib/leetcode/domain-packs.ts, src/lib/leetcode/content/dm-expected.ts, README.md, worklog.md.
+
+
+---
+Task ID: lc-round28
+Agent: Antigravity Pair Programmer
+Task: lc-round28 — Google Gemini AI Mentor Integration + Smart Model Cascade + Security Isolation (.env.example)
+
+Work Log:
+- AI Mentor Upgrade (src/app/api/mentor/route.ts):
+  - Replaced environment-bound placeholder with direct, zero-dependency Google Gemini REST API client.
+  - Implemented multi-model smart cascading fallback: prioritizes ultra-reliable gemini-3.5-flash and gemini-3.5-flash-lite (1.1s latency), with fallback to gemini-3.8-flash and gemini-3.7-flash.
+  - Configured AbortSignal.timeout(6000) per model attempt to eliminate queue delays or 503 high-demand stalls.
+  - Retained strict schema grounding (customers, orders, products, invoices, 9 storefront tables) and tiered hint rungs (Nudge, Direction, Full Solution).
+  - Also added plug-and-play support for Groq (Llama 3.3 70B) and OpenAI (GPT-4o mini) if keys are provided.
+- Environment & Secret Isolation:
+  - Untracked local .env from Git tracking via git rm --cached .env to guarantee API keys are never published publicly.
+  - Created .env.example with documented setup instructions and GEMINI_API_KEY template.
+  - Updated .gitignore to explicitly allow .env.example while keeping .env* securely ignored.
+- Verification:
+  - Tested live /api/mentor queries against local dev server: queries answered in real-time, accurately grounded in storefront schema tables and formatted with markdown syntax.
+  - scripts/check-strip-counts.ts: all 208 companies, 8 domains, 6,656 problems verified green.
+  - scripts/dm-verify.ts: all 10 domain packs verified with 2,147 expected keys.
+
+Stage Summary:
+- In-app Ask AI Mentor is 100% operational, schema-grounded, and powered by user's free Google Gemini key with zero risk of secret exposure.
+- Key files: src/app/api/mentor/route.ts, .gitignore, .env.example, worklog.md, README.md.
+

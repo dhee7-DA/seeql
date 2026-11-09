@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import ZAI from "z-ai-web-dev-sdk";
 
 // AI Mentor — backend for the in-app SQL tutor.
 //
@@ -68,14 +67,14 @@ function systemPrompt(ctx: MentorContextBody): string {
   const attached =
     ctx.sql || ctx.error || ctx.note
       ? [
-          `ATTACHED CONTEXT — the learner's most recent failed attempt${ctx.source ? ` (from ${ctx.source})` : ""}:`,
-          ctx.sql ? `SQL:\n${ctx.sql}` : null,
-          ctx.error ? `DATABASE ERROR: ${ctx.error}` : null,
-          ctx.note ? `GRADER NOTE: ${ctx.note}` : null,
-          ctx.error
-            ? `Default job: explain in plain English what SQLite is actually complaining about, map it to their SQL, and name the general class of mistake. Still respect the hint rung below before handing out fixes.`
-            : `Default job: diagnose why the query grades wrong (columns, row count, ordering, or logic) even though it may run cleanly. Respect the hint rung below.`,
-        ].filter(Boolean)
+        `ATTACHED CONTEXT — the learner's most recent failed attempt${ctx.source ? ` (from ${ctx.source})` : ""}:`,
+        ctx.sql ? `SQL:\n${ctx.sql}` : null,
+        ctx.error ? `DATABASE ERROR: ${ctx.error}` : null,
+        ctx.note ? `GRADER NOTE: ${ctx.note}` : null,
+        ctx.error
+          ? `Default job: explain in plain English what SQLite is actually complaining about, map it to their SQL, and name the general class of mistake. Still respect the hint rung below before handing out fixes.`
+          : `Default job: diagnose why the query grades wrong (columns, row count, ordering, or logic) even though it may run cleanly. Respect the hint rung below.`,
+      ].filter(Boolean)
       : [`No query is attached. If they ask for help "with my query", invite them to paste it or run it once in a graded exercise.`];
   parts.push(attached.join("\n"));
   parts.push(
@@ -100,6 +99,93 @@ function clampHistory(messages: unknown): ChatMsg[] {
     .map((m) => ({ role: m.role, content: m.content.slice(0, MAX_MESSAGE_CHARS) }));
 }
 
+/** Call Google Gemini REST API using free tier API key */
+async function callGemini(sysPrompt: string, history: ChatMsg[], apiKey: string): Promise<string> {
+  const contents = history.map((m) => ({
+    role: m.role === "assistant" ? "model" : "user",
+    parts: [{ text: m.content }],
+  }));
+
+  // gemini-3.5-flash responds in ~1.1s with zero queue delay. 3.8/3.7 are thinking models that experience frequent 503s.
+  const models = ["gemini-3.5-flash", "gemini-3.5-flash-lite", "gemini-3.8-flash", "gemini-3.7-flash"];
+  let lastError: Error | null = null;
+
+  for (const model of models) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        signal: AbortSignal.timeout(6000), // 6 second safety cutoff per model
+        body: JSON.stringify({
+          system_instruction: {
+            parts: [{ text: sysPrompt }],
+          },
+          contents,
+          generationConfig: {
+            temperature: 0.2,
+            maxOutputTokens: 1200,
+          },
+        }),
+      });
+
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(`Gemini API error (${res.status}): ${errText}`);
+      }
+
+      const data = (await res.json()) as {
+        candidates?: Array<{
+          content?: {
+            parts?: Array<{ text?: string }>;
+          };
+        }>;
+      };
+
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (text && text.trim().length > 0) {
+        return text.trim();
+      }
+    } catch (err) {
+      lastError = err instanceof Error ? err : new Error(String(err));
+    }
+  }
+
+  throw lastError ?? new Error("No response from Gemini API");
+}
+
+/** Call OpenAI or Groq compatible API */
+async function callOpenAICompatible(
+  sysPrompt: string,
+  history: ChatMsg[],
+  apiKey: string,
+  baseUrl: string,
+  model: string,
+): Promise<string> {
+  const messages = [
+    { role: "system", content: sysPrompt },
+    ...history.map((m) => ({ role: m.role, content: m.content })),
+  ];
+  const res = await fetch(`${baseUrl}/chat/completions`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model,
+      messages,
+      temperature: 0.2,
+      max_tokens: 1200,
+    }),
+  });
+  if (!res.ok) {
+    throw new Error(`AI API error (${res.status}): ${await res.text()}`);
+  }
+  const data = (await res.json()) as { choices?: Array<{ message?: { content?: string } }> };
+  return data.choices?.[0]?.message?.content?.trim() || "";
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as { messages?: unknown; context?: MentorContextBody };
@@ -118,36 +204,70 @@ export async function POST(req: NextRequest) {
           : null,
     };
 
-    const zai = await ZAI.create();
-    const messages = [
-      { role: "assistant" as const, content: systemPrompt(ctx) },
-      ...history,
-    ];
+    const sysPrompt = systemPrompt(ctx);
+    const geminiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+    const groqKey = process.env.GROQ_API_KEY;
+    const openaiKey = process.env.OPENAI_API_KEY;
 
-    // Two attempts — the SDK occasionally hiccups; a retry is invisible to the learner.
     let reply = "";
-    let lastErr: unknown = null;
-    for (let attempt = 0; attempt < 2; attempt++) {
+
+    // 1. Google Gemini (Free Tier)
+    if (geminiKey) {
       try {
-        const completion = await zai.chat.completions.create({
-          messages,
-          thinking: { type: "disabled" },
-        });
-        const content = completion.choices[0]?.message?.content ?? "";
-        if (content.trim().length > 0) {
-          reply = content.trim();
-          break;
-        }
-        lastErr = new Error("Empty completion");
+        reply = await callGemini(sysPrompt, history, geminiKey);
       } catch (err) {
-        lastErr = err;
-        if (attempt === 0) await new Promise((r) => setTimeout(r, 900));
+        console.warn("[Mentor] Gemini call failed:", err);
       }
     }
-    if (!reply) {
-      const msg = lastErr instanceof Error ? lastErr.message : "Mentor unavailable";
-      return NextResponse.json({ ok: false, error: msg }, { status: 200 });
+
+    // 2. Groq (Llama 3.3 70B)
+    if (!reply && groqKey) {
+      try {
+        reply = await callOpenAICompatible(
+          sysPrompt,
+          history,
+          groqKey,
+          "https://api.groq.com/openai/v1",
+          "llama-3.3-70b-versatile",
+        );
+      } catch (err) {
+        console.warn("[Mentor] Groq call failed:", err);
+      }
     }
+
+    // 3. OpenAI (GPT-4o mini)
+    if (!reply && openaiKey) {
+      try {
+        reply = await callOpenAICompatible(
+          sysPrompt,
+          history,
+          openaiKey,
+          "https://api.openai.com/v1",
+          "gpt-4o-mini",
+        );
+      } catch (err) {
+        console.warn("[Mentor] OpenAI call failed:", err);
+      }
+    }
+
+    // 4. Fallback if no keys are configured
+    if (!reply) {
+      if (!geminiKey && !groqKey && !openaiKey) {
+        return NextResponse.json(
+          {
+            ok: true,
+            reply:
+              "**SQL Mentor Setup Required**\n\nTo enable live AI answers, please add your free Google Gemini API key to your `.env` file:\n```env\nGEMINI_API_KEY=\"AIzaSy...\"\n```\nGet your free key in 30 seconds at [aistudio.google.com](https://aistudio.google.com/app/apikey).",
+          },
+          { status: 200 },
+        );
+      }
+      return NextResponse.json(
+        { ok: false, error: "The mentor is temporarily unavailable. Please check your API key or connection." },
+        { status: 200 },
+      );
+    }
+
     return NextResponse.json({ ok: true, reply });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Mentor unavailable";

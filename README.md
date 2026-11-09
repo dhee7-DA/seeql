@@ -35,7 +35,16 @@ Every domain pack features a dedicated deterministic schema, seed data, 60 queri
 9. **Energy & Smart Grid Operations** — Outage restoration, telemetry sessions, and tariff drift.
 10. **DeFi & AMM Analytics** *(New)* — Constant product invariants, concentrated liquidity ticks, impermanent loss, MEV sandwich detection, flash loan arbitrage, and oracle heartbeats.
 
-### 4. 🧠 Interactive Visualizer & Curriculum Sandbox
+### 4. 🤖 AI SQL Mentor (Google Gemini Powered)
+Schema-grounded personal SQL tutor built directly into the exercise runner:
+- **Automatic Failure & Context Capture**: Silently captures learner's failing queries, SQLite engine errors, and grader notes so learners never have to copy-paste.
+- **Tiered Pedagogical Hint Rungs**:
+  - *Rung 1 (Nudge)*: Conceptual hints and guiding questions without spoiling any code.
+  - *Rung 2 (Direction)*: Clause ordering and query skeletons (`SELECT ... FROM ... GROUP BY ...`).
+  - *Rung 3 (Walkthrough)*: Complete working SQL with step-by-step logic breakdown.
+- **Multi-Model Smart Cascade**: Prioritizes ultra-low latency `gemini-3.5-flash` with graceful fallbacks and optional Groq/OpenAI support.
+
+### 5. 🧠 Interactive Visualizer & Curriculum Sandbox
 - **AST Parsing & Visual Tree**: Live SQL abstract syntax tree generation and relational algebra flowcharts.
 - **Stage-by-Stage Query Execution**: Step-through breakdown showing row filtering, join grouping, and projection stages.
 - **Interview Prep Universe**: 208 company-specific kits across 8 domains with 6,656 LeetCode-style challenges, theory modules, and mock gauntlets.
@@ -72,7 +81,12 @@ Every domain pack features a dedicated deterministic schema, seed data, 60 queri
    ```bash
    bun install
    ```
-3. Initialize database & generate Prisma client:
+3. Copy `.env.example` and optionally configure AI Mentor:
+   ```bash
+   cp .env.example .env
+   # Add your free Gemini API key from https://aistudio.google.com/app/apikey (optional)
+   ```
+4. Initialize database & generate Prisma client:
    ```bash
    bun run db:health
    bun run db:generate
