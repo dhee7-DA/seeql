@@ -28,6 +28,7 @@ const interTight = Inter_Tight({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: "SeeQL — stop memorizing SQL. Start seeing it.",
   description:
     "A visual SQL learning lab: animated diagrams for every hard idea, live-graded queries on a real SQLite storefront, quiz questions with instant feedback, and XP-driven progress. No account, no setup.",

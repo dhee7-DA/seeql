@@ -49,7 +49,7 @@ cogs AS (
   JOIN products p ON oi.product_id = p.id
 ),
 exp AS (
-  SELECT SUM(amount) AS operating_expenses
+  SELECT SUM(amount_cents) / 100.0 AS operating_expenses
   FROM expenses
 )
 SELECT 
@@ -95,9 +95,9 @@ FROM financials;`,
     sql: `SELECT 
   status,
   COUNT(*) AS invoice_count,
-  ROUND(SUM(amount), 2) AS total_amount,
-  ROUND(AVG(amount), 2) AS average_amount,
-  ROUND(100.0 * SUM(amount) / (SELECT SUM(amount) FROM invoices), 1) AS share_of_book_pct
+  ROUND(SUM(amount_cents) / 100.0, 2) AS total_amount,
+  ROUND(AVG(amount_cents) / 100.0, 2) AS average_amount,
+  ROUND(100.0 * SUM(amount_cents) / (SELECT SUM(amount_cents) FROM invoices), 1) AS share_of_book_pct
 FROM invoices
 GROUP BY status
 ORDER BY total_amount DESC;`,

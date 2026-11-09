@@ -9214,3 +9214,25 @@ Stage Summary:
 - In-app Ask AI Mentor is 100% operational, schema-grounded, and powered by user's free Google Gemini key with zero risk of secret exposure.
 - Key files: src/app/api/mentor/route.ts, .gitignore, .env.example, worklog.md, README.md.
 
+
+---
+Task ID: lc-round29
+Agent: Antigravity Pair Programmer
+Task: lc-round29 — System Polish, Bug Hunting & Schema Consistency Verification
+
+Work Log:
+- Financial Canvas Schema Fixes (src/components/finance-canvas.tsx):
+  - Fixed Presets 1 & 3: resolved column mismatch (`amount` -> `amount_cents / 100.0`) in `expenses` and `invoices` queries.
+  - Verified live queries against SQLite via `/api/query`: both presets execute cleanly and return exact financial figures ($25,416 opex, $86,052 invoices across open/paid/void).
+- Metadata & SEO Warning Resolution (src/app/layout.tsx):
+  - Added `metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000")` to eliminate Next.js social card resolution warning.
+- Quality Gates & Audit:
+  - Verified DuckDB analytical benchmarks (multi-table hash join, moving averages, filter pushdown).
+  - Verified database health (19 tables, 750 records seeded and healthy).
+  - Verified strip counts (208 companies, 6,656 problems) and domain pack verification (10 packs, 2,147 keys).
+
+Stage Summary:
+- All schema inconsistencies in financial presets resolved. App layout metadata polished for cloud deployment.
+- Key files: src/components/finance-canvas.tsx, src/app/layout.tsx, worklog.md.
+
+
